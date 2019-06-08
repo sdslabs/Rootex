@@ -1,6 +1,6 @@
 # Rootex
 
-My second attempt at making a game engine because why not
+A slightly advanced version of the Rubeus Engine created with goals of feature completeness
 
 # Setup
 
