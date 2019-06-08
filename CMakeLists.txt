@@ -18,7 +18,7 @@ file(GLOB_RECURSE RootexSource Source/**.cpp)
 file(GLOB_RECURSE RootexHeaders Source/**.h)
 
 add_library(RootexCore STATIC ${RootexSource} ${RootexHeaders})
-target_include_directories(RootexCore PUBLIC ${RootexHeaders})
+target_include_directories(RootexCore PUBLIC Source/)
 
 # Game project folder
 add_subdirectory(Game)
