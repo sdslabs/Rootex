@@ -1,4 +1,4 @@
-git submodule init
+git submodule update
 cd vcpkg
 if not exist vcpkg.exe ./bootstrap-vcpkg.bat
 vcpkg.exe install glew:x64-windows
