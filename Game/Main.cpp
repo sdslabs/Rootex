@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "Main.h"
-#include "EventsModule/EventModule.h"
+#include "Modules/EventsModule/EventModule.h"
 
 int main()
 {
