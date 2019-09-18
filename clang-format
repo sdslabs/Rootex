@@ -1,0 +1,15 @@
+﻿BasedOnStyle: Webkit
+AccessModifierOffset: '0'
+Standard: Auto
+TabWidth: '4'
+UseTab: ForIndentation
+BraceWrapping:
+  AfterCaseLabel: true
+  AfterClass: true
+  AfterControlStatement: true
+  AfterFunction: true
+  AfterEnum: true
+  AfterNamespace: true
+  AfterStruct: true
+  AfterUnion: true
+  BeforeElse: true

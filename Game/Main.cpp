@@ -1,12 +1,13 @@
-#include <iostream>
-
-#include "Main.h"
-#include "Modules/EventsModule/EventModule.h"
+#include <common.h>
 
 int main()
 {
-	std::cin.get();
-	print();
+    print("Print");
+    PANIC(false, "PrintIf");
+    WARN("PrintW");
+    ERR("PrintE");
+    printLine("PrintLine");
+    std::cin.get();
 
 	return 0;
 }
