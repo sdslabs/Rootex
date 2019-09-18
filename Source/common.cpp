@@ -6,8 +6,8 @@ void print(const std::string& msg)
 }
 
 void printLine(const std::string& msg)
-{ 
-	std::cout << msg << std::endl;
+{
+    std::cout << msg << std::endl;
 }
 
 void printWarning(const std::string& warning)
@@ -22,8 +22,7 @@ void printError(const std::string& error)
 
 void printIf(const bool& expr, const std::string& error)
 {
-    if (!expr) 
-	{
+    if (!expr) {
         printError(error);
     }
 }

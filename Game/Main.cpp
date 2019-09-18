@@ -9,5 +9,5 @@ int main()
     printLine("PrintLine");
     std::cin.get();
 
-	return 0;
+    return 0;
 }
