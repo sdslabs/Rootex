@@ -1,0 +1,32 @@
+version: 1.0.{build}
+image: Visual Studio 2017
+platform: x64
+configuration: Debug
+install:
+- ps: >-
+    cd c:/tools/vcpkg
+
+    .\bootstrap-vcpkg.bat
+
+    vcpkg update
+
+    vcpkg install glew:x64-windows
+
+    vcpkg install glfw3:x64-windows
+
+    vcpkg integrate install
+
+    cd C:\projects\rootex
+
+    mkdir Build
+
+    cd Build
+
+    cmake --version
+
+    cmake -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake ..
+
+    cd ../Build
+
+build_script:
+- ps: cmake --build .
