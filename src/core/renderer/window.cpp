@@ -1,22 +1,31 @@
-#include "window.h"
+#include <core/renderer/window.h>
 
-int RootexWindow::gameLoop()
+std::optional<int> RootexWindow::ProcessMessages()
 {
 	MSG msg;
-	BOOL msgRet;
-	while ((msgRet = GetMessage(&msg, nullptr, 0, 0)) > 0)
+	while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) //non-blocking message retrieval
 	{
+		if (msg.message == WM_QUIT)
+		{
+			return (int)msg.wParam;
+		}
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
-	if (msgRet == -1)
-		return -1;
-	else
-		return msg.wParam;
-	return 0;
+	return {};
 }
 
-LRESULT CALLBACK RootexWindow::customWindowsProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+int RootexWindow::gameLoop()
+{
+	while (true)
+	{
+		if (const std::optional<int> ecode = RootexWindow::ProcessMessages())
+			return *ecode;
+		this->getGraphics()->EndFrame();
+	}
+}
+
+LRESULT CALLBACK RootexWindow::customWindowsProc(HWND windowHandler, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
 	{
@@ -24,7 +33,12 @@ LRESULT CALLBACK RootexWindow::customWindowsProc(HWND hWnd, UINT msg, WPARAM wPa
 		PostQuitMessage(69);
 		break;
 	}
-	return DefWindowProc(hWnd, msg, wParam, lParam);
+	return DefWindowProc(windowHandler, msg, wParam, lParam);
+}
+
+RootexGraphics* RootexWindow::getGraphics()
+{
+	return m_rootexGraphics;
 }
 
 RootexWindow::RootexWindow(int xOffset, int yOffset, int width, int height)
@@ -52,8 +66,10 @@ RootexWindow::RootexWindow(int xOffset, int yOffset, int width, int height)
 	    nullptr, nullptr,
 	    hInstance, nullptr);
 	ShowWindow(windowHandler, SW_SHOW);
+	m_rootexGraphics = new RootexGraphics(windowHandler);
 }
 
 RootexWindow::~RootexWindow()
 {
+	delete m_rootexGraphics;
 }
