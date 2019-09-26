@@ -1,3 +1,4 @@
+/*
 #include <common.h>
 
 #include "core/resource_loader.h"
@@ -16,4 +17,15 @@ int main()
 	std::cin.get();
 
     return 0;
+}
+*/
+#include <core/renderer/DirectX/d3d_test.h>
+#include <iostream>
+#include <core/renderer/Win32/window.h>
+int main()
+{
+	RootexWindow* m_Window = new RootexWindow(100, 200, 640, 480);
+	int ret = m_Window->gameLoop();
+	delete m_Window;
+	return ret;
 }
