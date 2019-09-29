@@ -15,6 +15,7 @@ std::string OS::loadFileContents(std::string path)
 	if (!exists(path))
 	{
 		ERR("File does not exist: " + path);
+		return "";
 	}
 
 	std::ifstream stream;
@@ -25,6 +26,7 @@ std::string OS::loadFileContents(std::string path)
 	catch (std::exception e)
 	{
 		ERR("File IO error: " + e.what());
+		return "";
 	}
 
 	std::stringstream fileContents;

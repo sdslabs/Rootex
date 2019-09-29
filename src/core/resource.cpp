@@ -46,3 +46,9 @@ std::string TextFile::getContents()
 {
 	return m_Data;
 }
+
+Script::Script(const std::string& path, std::string& contents)
+    : TextFile(path, contents)
+    , m_Type("Lua")
+{
+}

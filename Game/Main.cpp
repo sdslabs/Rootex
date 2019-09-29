@@ -2,7 +2,7 @@
 
 #include "core/resource_loader.h"
 #include "os/os.h"
-#include "script/lua_interpreter.h"
+#include "script/interpreter.h"
 
 int main()
 {
@@ -16,21 +16,15 @@ int main()
 
 	std::cin.get();
 
-	char buff[256];
-	int error;
-
 	lua_State* L = luaL_newstate();
-	luaopen_base(L);
+
+	luaL_dostring(L, "x = 42");
 	
-	while (fgets(buff, sizeof(buff), stdin) != NULL)
-	{
-		error = luaL_loadbuffer(L, buff, strlen(buff), "line") || lua_pcall(L, 0, 0, 0);
-		if (error)
-		{
-			fprintf(stderr, "%s", lua_tostring(L, -1));
-			lua_pop(L, 1); /* pop error message from the stack */
-		}
-	}
+	lua_pushnumber(L, 42);
+	lua_pushnumber(L, 52);
+	lua_pushnumber(L, 62);
+
+	lua_close(L);
 
     return 0;
 }
