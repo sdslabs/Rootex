@@ -1,12 +1,14 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 class ResourceLoader;
 
 class Resource 
 {
 protected:
+
 	std::string m_Path;
 
 	Resource(const std::string& path);
@@ -32,7 +34,19 @@ public:
 	TextFile(const std::string& path, std::string& contents);
 	TextFile(TextFile&) = delete;
 	TextFile(TextFile&& oldFile);
-	~TextFile();
+	virtual ~TextFile();
 
 	std::string getContents();
+};
+
+class Script : public TextFile
+{
+	std::string m_Type;
+	
+	Script(const std::string& path, std::string& contents);
+
+	friend ResourceLoader;
+
+public:
+	std::string getType() const { return m_Type; }
 };
