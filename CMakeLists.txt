@@ -22,3 +22,8 @@ target_include_directories(RootexCore PUBLIC src/)
 
 # Game project folder
 add_subdirectory(Game)
+
+# Third-party acquired through vcpkg
+find_package(lua REQUIRED)
+target_include_directories(RootexCore PUBLIC ${LUA_INCLUDE_DIR})
+target_link_libraries(RootexCore ${LUA_LIBRARY})
