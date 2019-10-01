@@ -3,6 +3,7 @@
 #include "core/resource_loader.h"
 #include "os/os.h"
 #include "script/interpreter.h"
+#include "lua"
 
 int main()
 {
@@ -15,16 +16,6 @@ int main()
 	printLine(r->getContents());
 
 	std::cin.get();
-
-	lua_State* L = luaL_newstate();
-
-	luaL_dostring(L, "x = 42");
-	
-	lua_pushnumber(L, 42);
-	lua_pushnumber(L, 52);
-	lua_pushnumber(L, 62);
-
-	lua_close(L);
 
     return 0;
 }
