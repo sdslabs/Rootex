@@ -3,7 +3,6 @@
 #include "core/resource_loader.h"
 #include "os/os.h"
 #include "script/interpreter.h"
-#include "lua"
 
 int main()
 {
