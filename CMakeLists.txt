@@ -13,17 +13,6 @@ project(Rootex
     DESCRIPTION "Rootex Engine"
 )
 
-# RootexCore
-file(GLOB_RECURSE RootexSource src/**.cpp)
-file(GLOB_RECURSE RootexHeaders src/**.h)
-
-add_library(RootexCore STATIC ${RootexSource} ${RootexHeaders})
-target_include_directories(RootexCore PUBLIC src/)
-
-# Game project folder
-add_subdirectory(Game)
-
-# Third-party acquired through vcpkg
-find_package(lua REQUIRED)
-target_include_directories(RootexCore PUBLIC ${LUA_INCLUDE_DIR})
-target_link_libraries(RootexCore ${LUA_LIBRARY})
+add_subdirectory(src)
+add_subdirectory(game)
+add_subdirectory(vendor)
