@@ -14,5 +14,5 @@ project(Rootex
 )
 
 add_subdirectory(vendor)
-add_subdirectory(src)
+add_subdirectory(rootex)
 add_subdirectory(game)

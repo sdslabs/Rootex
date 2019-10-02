@@ -5,11 +5,11 @@
 
 extern "C"
 {
-#include "lauxlib.h"
-#include "lua.h"
-#include "lualib.h"
+#include "vendor/Lua/src/lauxlib.h"
+#include "vendor/Lua/src/lua.h"
+#include "vendor/Lua/src/lualib.h"
 }
-#include "LuaBridge/LuaBridge.h"
+#include "vendor/LuaBridge/Source/LuaBridge/LuaBridge.h"
 
 class Interpreter
 {
