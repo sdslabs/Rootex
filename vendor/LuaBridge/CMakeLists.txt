@@ -5,4 +5,10 @@ file(GLOB_RECURSE LuaBridge
 
 add_library(LuaBridge STATIC ${LuaBridge})
 set_target_properties(LuaBridge PROPERTIES LINKER_LANGUAGE CXX)
-include_directories(Source/)
+
+target_include_directories(LuaBridge PUBLIC
+	../Lua/src/
+	Source/
+	Source/LuaBridge/
+	Source/LuaBridge/detail
+)
