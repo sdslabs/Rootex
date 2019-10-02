@@ -16,22 +16,3 @@ project(Rootex
 add_subdirectory(vendor)
 add_subdirectory(src)
 add_subdirectory(game)
-
-set(RootexIncludeDirectories
-    src/
-)
-
-set(VendorIncludeDirectories 
-    vendor/Lua/src/
-    vendor/LuaBridge/Source/
-)
-
-target_include_directories(Rootex PUBLIC 
-    ${RootexIncludeDirectories}
-    ${VendorIncludeDirectories}
-)
-
-target_include_directories(Game PUBLIC 
-    ${RootexIncludeDirectories}
-    ${VendorIncludeDirectories}
-)
