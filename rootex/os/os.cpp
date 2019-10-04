@@ -4,24 +4,44 @@
 #include <sstream>
 #include "common/common.h"
 
+OS::OS()
+{
+	std::filesystem::path path = std::filesystem::current_path();
+	while (path.stem() != BUILD_SUBDIRECTORY)
+	{
+		path = path.parent_path();
+	}
+	path = path.parent_path();
+
+	m_GameDirectory = path / "game";
+	m_AssetsDirectory = path / "game" / "assets";
+	m_EngineDirectory = path / "rootex";
+}
+
+OS::~OS()
+{
+}
+
 OS OS::getSingleton()
 {
 	static OS singleton;
 	return singleton;
 }
 
-std::string OS::loadFileContents(std::string path)
+std::string OS::loadFileContents(DirectoryShortcut directory, std::string stringPath)
 {
-	if (!exists(path))
+	std::filesystem::path path = getAbsolutePath(directory, stringPath);
+
+	if (!exists(path.generic_string()))
 	{
-		ERR("File does not exist: " + path);
+		ERR("File does not exist: " + path.generic_string());
 		return "";
 	}
 
 	std::ifstream stream;
 	try
 	{
-		stream.open(path, std::ios::in);
+		stream.open(path.generic_string(), std::ios::in);
 	}
 	catch (std::exception e)
 	{
@@ -36,7 +56,27 @@ std::string OS::loadFileContents(std::string path)
 	return fileContents.str();
 }
 
-bool OS::exists(std::string path)
+std::filesystem::path OS::getAbsolutePath(DirectoryShortcut directory, std::string stringPath)
 {
-	return std::filesystem::exists(path);
+	std::filesystem::path newPath;
+
+	switch (directory)
+	{
+	case DirectoryShortcut::GAME:
+		newPath = m_GameDirectory / std::filesystem::path(stringPath);
+		break;
+	case DirectoryShortcut::ENGINE:
+		newPath = m_EngineDirectory / std::filesystem::path(stringPath);
+		break;
+	default:
+		ERR("Directory type not found for absolution");
+		break;
+	}
+
+	return newPath;
+}
+
+bool OS::exists(std::string filePath)
+{
+	return std::filesystem::exists(filePath);
 }

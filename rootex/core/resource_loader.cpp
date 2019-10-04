@@ -1,17 +1,32 @@
 #include "resource_loader.h"
 
 #include "common/common.h"
-#include "os/os.h"
 #include "resource_manager.h"
 
-TextFile* ResourceLoader::createFileResource(std::string path)
+TextFile* ResourceLoader::createFileResource(DirectoryShortcut directory, std::string path)
 {
-	PANIC(path == "", "Resource path requested is empty");
+	if (path == "")
+	{
+		return nullptr;
+	}
 
-	std::string r = OS::getSingleton().loadFileContents(path);
+	std::string r = OS::getSingleton().loadFileContents(directory, path);
 
 	TextFile* res = new TextFile(path, r);
 
-	ResourceManager::registerResource(res);
+	return res;
+}
+
+Script* ResourceLoader::createScriptResource(DirectoryShortcut directory, std::string path)
+{
+	if (path == "")
+	{
+		return nullptr;
+	}
+
+	std::string r = OS::getSingleton().loadFileContents(directory, path);
+
+	Script* res = new Script(path, r);
+
 	return res;
 }

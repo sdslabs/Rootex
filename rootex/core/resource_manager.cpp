@@ -14,7 +14,7 @@ int ResourceManager::getActiveCount()
 
 void ResourceManager::emptyAll()
 {
-	for (auto r : m_Resources) 
+	for (auto r : m_Resources)
 	{
 		delete r;
 	}
