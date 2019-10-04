@@ -13,6 +13,9 @@ project(Rootex
     DESCRIPTION "Rootex Engine"
 )
 
-add_subdirectory(vendor)
+set(ROOTEX_INCLUDES
+    ${CMAKE_CURRENT_LIST_DIR}
+CACHE INTERNAL "")
+
 add_subdirectory(rootex)
 add_subdirectory(game)
