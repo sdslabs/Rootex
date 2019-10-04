@@ -29,7 +29,7 @@
 
 #pragma once
 
-#include "detail/LuaRef.h"
+#include <LuaBridge/detail/LuaRef.h>
 
 #include <utility>
 

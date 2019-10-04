@@ -1,4 +1,4 @@
-#include "common.h"
+#include "common/common.h"
 
 #include "core/resource_loader.h"
 #include "os/os.h"

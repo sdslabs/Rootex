@@ -1,6 +1,6 @@
 #include "resource_loader.h"
 
-#include "common.h"
+#include "common/common.h"
 #include "os/os.h"
 #include "resource_manager.h"
 
