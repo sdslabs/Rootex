@@ -22,6 +22,7 @@ public:
 
 	bool isValid();
 	std::string getPath();
+	const char* getPathCStyle();
 };
 
 class TextFile : public Resource
@@ -36,7 +37,7 @@ public:
 	TextFile(TextFile&& oldFile);
 	virtual ~TextFile();
 
-	std::string getContents();
+	std::string getContents() const;
 };
 
 class Script : public TextFile
@@ -44,9 +45,10 @@ class Script : public TextFile
 	std::string m_Type;
 	
 	Script(const std::string& path, std::string& contents);
-
+	
 	friend ResourceLoader;
 
 public:
 	std::string getType() const { return m_Type; }
+	std::string getSource() const { return getContents(); }
 };

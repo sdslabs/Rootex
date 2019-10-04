@@ -7,9 +7,9 @@ class ResourceManager
 {
 	static std::vector<Resource*> m_Resources;
 
-	ResourceManager();
+	friend ResourceLoader;
 
-public:
+public:	
 	static void registerResource(Resource* resource);
 	static int getActiveCount();
 	static void emptyAll();

@@ -2,9 +2,11 @@
 
 #include <string>
 #include "resource.h"
+#include "os/os.h"
 
-class ResourceLoader 
+class ResourceLoader
 {
 public:
-	static TextFile* createFileResource(std::string path);
+	static TextFile* createFileResource(DirectoryShortcut directory, std::string path);
+	static Script* createScriptResource(DirectoryShortcut directory, std::string path);
 };

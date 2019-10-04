@@ -1,12 +1,17 @@
 #include "resource.h"
 
+#include "core/resource_manager.h"
+
 Resource::Resource(const std::string& path)
     : m_Path(path)
 {
+	ResourceManager::registerResource(this);
 }
 
 Resource::Resource(Resource&& oldResource)
 {
+	ResourceManager::registerResource(this);
+
 	m_Path = oldResource.m_Path;
 }
 
@@ -23,6 +28,11 @@ bool Resource::isValid()
 std::string Resource::getPath()
 {
 	return m_Path;
+}
+
+const char* Resource::getPathCStyle()
+{
+	return getPath().c_str();
 }
 
 TextFile::TextFile(const std::string& path, std::string& contents)
@@ -42,7 +52,7 @@ TextFile::~TextFile()
 	m_Data = "";
 }
 
-std::string TextFile::getContents()
+std::string TextFile::getContents() const
 {
 	return m_Data;
 }
