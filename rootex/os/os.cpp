@@ -62,6 +62,9 @@ std::filesystem::path OS::getAbsolutePath(DirectoryShortcut directory, std::stri
 
 	switch (directory)
 	{
+	case DirectoryShortcut::ASSETS:
+		newPath = m_AssetsDirectory / std::filesystem::path(stringPath);
+		break;
 	case DirectoryShortcut::GAME:
 		newPath = m_GameDirectory / std::filesystem::path(stringPath);
 		break;
