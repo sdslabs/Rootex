@@ -5,4 +5,4 @@ configuration: Debug
 install:	
 - ps: .\Setup.bat	
 build_script:
-- ps: cd build && cmake --build .
+- ps: cd build | cmake --build .
