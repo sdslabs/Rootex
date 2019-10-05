@@ -2,5 +2,10 @@ version: 1.0.{build}
 image: Visual Studio 2017
 platform: x64
 configuration: Debug
+install:	
+- ps: >-	
+  .\Setup.bat	
 build_script:
-- ps: .\Setup.bat
+- ps: >-	
+  cd build
+  cmake --build .
