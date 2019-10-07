@@ -1,3 +1,5 @@
+#include <string>
+
 #include "common/common.h"
 
 #include "core/resource_loader.h"
@@ -14,10 +16,21 @@ int main()
 	printLine(r->getContents());
 
 	Interpreter inter;
-	Script* luaScript = ResourceLoader::createScriptResource(DirectoryShortcut::GAME, "assets\\config\\test.lua");
-	inter.loadExecuteScript(luaScript);
+	
+	while (1)
+	{
+		Script* luaScript = ResourceLoader::createScriptResource(DirectoryShortcut::GAME, "assets\\config\\test.lua");
+		inter.loadExecuteScript(luaScript);
 
-	std::cin.get();
+		printLine(std::to_string((int)inter.getGlobal("test")));
+	
+		luabridge::LuaRef window = inter.getGlobal("window");
+		printLine(window["width"]);
+		printLine(window["height"]);
+		printLine(window["type"]);
+
+		std::cin.get();
+	}
 	ResourceManager::emptyAll();
     return 0;
 }
