@@ -17,5 +17,7 @@ public:
 	void loadExecuteScript(Script* script);
 	void loadExecuteScript(const std::string& script);
 
+	luabridge::LuaRef getGlobal(const std::string& name);
+
 protected:
 };

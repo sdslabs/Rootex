@@ -14,11 +14,21 @@ Interpreter::~Interpreter()
 void Interpreter::loadExecuteScript(Script* script)
 {
 	luaL_dostring(m_LuaState, script->getContents().c_str());
-	print(script->getPath() + " was run");
+	printLine(script->getPath() + " was run");
 }
 
 void Interpreter::loadExecuteScript(const std::string& script)
 {
 	PANIC(script == "", "Lua inline script was found empty");
 	luaL_dostring(m_LuaState, script.c_str());
+}
+
+luabridge::LuaRef Interpreter::getGlobal(const std::string& name)
+{
+	luabridge::LuaRef result = luabridge::getGlobal(m_LuaState, name.c_str());
+	if (result.isNil())
+	{
+		ERR("Lua variable (" + name + ") was not found");
+	}
+	return result;
 }
