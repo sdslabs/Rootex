@@ -28,6 +28,16 @@ OS OS::getSingleton()
 	return singleton;
 }
 
+std::string OS::getBuildDate()
+{
+	return std::string(__DATE__);
+}
+
+std::string OS::getBuildTime()
+{
+	return std::string(__TIME__);
+}
+
 std::string OS::loadFileContents(DirectoryShortcut directory, std::string stringPath)
 {
 	std::filesystem::path path = getAbsolutePath(directory, stringPath);
