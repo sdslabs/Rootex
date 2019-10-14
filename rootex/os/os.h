@@ -25,6 +25,9 @@ public:
 
 	static OS getSingleton();
 
+	std::string getBuildDate();
+	std::string getBuildTime();
+
 	std::string loadFileContents(DirectoryShortcut directory, std::string stringPath);
 	std::filesystem::path getAbsolutePath(DirectoryShortcut directory, std::string stringPath);
 	bool exists(std::string filePath);
