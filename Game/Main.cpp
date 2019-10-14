@@ -16,24 +16,18 @@ int main()
 
 	Interpreter inter;
 	
-	GameWindow* m_Window = new GameWindow(100, 200, 640, 480);
-	int ret = m_Window->gameLoop();
-	delete m_Window;
+	Script* windowSettings = ResourceLoader::createScriptResource(DirectoryShortcut::GAME, "assets\\config\\window.lua");
+	inter.loadExecuteScript(windowSettings);
+	LuaVariable window = inter.getGlobal("window");
+	GameWindow* gameWindow = new GameWindow(
+		window["x"], 
+		window["y"], 
+		window["deltaX"], 
+		window["deltaY"], 
+		window["title"]);
+	int ret = gameWindow->gameLoop();
+	delete gameWindow;
 
-	while (1)
-	{
-		Script* luaScript = ResourceLoader::createScriptResource(DirectoryShortcut::GAME, "assets\\config\\test.lua");
-		inter.loadExecuteScript(luaScript);
-
-		printLine(std::to_string((int)inter.getGlobal("test")));
-	
-		luabridge::LuaRef window = inter.getGlobal("window");
-		printLine(window["width"]);
-		printLine(window["height"]);
-		printLine(window["type"]);
-
-		std::cin.get();
-	}
 	ResourceManager::emptyAll();
     return ret;
 }

@@ -2,16 +2,16 @@
 
 #include <filesystem>
 #include <sstream>
+
 #include "common/common.h"
 
 OS::OS()
 {
 	std::filesystem::path path = std::filesystem::current_path();
-	while (path.stem() != BUILD_SUBDIRECTORY)
+	while (path.stem() != ENGINE_DIRECTORY)
 	{
 		path = path.parent_path();
 	}
-	path = path.parent_path();
 
 	m_GameDirectory = path / "game";
 	m_AssetsDirectory = path / "game" / "assets";
@@ -82,7 +82,7 @@ std::filesystem::path OS::getAbsolutePath(DirectoryShortcut directory, std::stri
 		newPath = m_EngineDirectory / std::filesystem::path(stringPath);
 		break;
 	default:
-		ERR("Directory type not found for absolution");
+		ERR("Directory type not found for converting path to absolute");
 		break;
 	}
 

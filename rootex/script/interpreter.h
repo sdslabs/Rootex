@@ -6,6 +6,8 @@
 #include "vendor/Lua/src/lua.hpp"
 #include "vendor/LuaBridge/Source/LuaBridge/LuaBridge.h"
 
+typedef luabridge::LuaRef LuaVariable;
+
 class Interpreter
 {
 	lua_State* m_LuaState;
