@@ -13,12 +13,9 @@ project(Rootex
     DESCRIPTION "Rootex Engine"
 )
 
-# RootexCore
-file(GLOB_RECURSE RootexSource src/**.cpp)
-file(GLOB_RECURSE RootexHeaders src/**.h)
+set(ROOTEX_INCLUDES
+    ${CMAKE_CURRENT_LIST_DIR}
+CACHE INTERNAL "")
 
-add_library(RootexCore STATIC ${RootexSource} ${RootexHeaders})
-target_include_directories(RootexCore PUBLIC src/)
-
-# Game project folder
-add_subdirectory(Game)
+add_subdirectory(rootex)
+add_subdirectory(game)
