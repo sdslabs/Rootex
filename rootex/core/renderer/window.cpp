@@ -1,4 +1,4 @@
-#include <core/renderer/window.h>
+#include "core/renderer/window.h"
 
 std::optional<int> GameWindow::ProcessMessages()
 {
@@ -21,34 +21,45 @@ int GameWindow::gameLoop()
 	{
 		if (const std::optional<int> ecode = GameWindow::ProcessMessages())
 			return *ecode;
-		this->getGraphics()->EndFrame();
+		m_GraphicsHandler->EndFrame();
 	}
 }
 
-LRESULT CALLBACK GameWindow::customWindowsProc(HWND windowHandler, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK GameWindow::windowsMessageListener(HWND windowHandler, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
 	{
-	case WM_CLOSE:
-		PostQuitMessage(69);
-		break;
+	case WM_CLOSE: // Same behaviour as WM_QUIT
+	case WM_QUIT:
+	{
+		// TODO: Perform safe shutdown procedure. Close down drivers
+		// TODO: Discuss if we need to track if they ever shut the game down
 	}
+	break;
+	case WM_DESTROY:
+	{
+		PostQuitMessage(0);
+		return 0;
+	}
+	break;
+	}
+
 	return DefWindowProc(windowHandler, msg, wParam, lParam);
 }
 
 RootexGraphics* GameWindow::getGraphics()
 {
-	return m_RootexGraphics;
+	return m_GraphicsHandler;
 }
 
-GameWindow::GameWindow(int xOffset, int yOffset, int width, int height)
+GameWindow::GameWindow(int xOffset, int yOffset, int width, int height, const std::string& title)
 {
 	WNDCLASSEX windowClass = { 0 };
 	LPCSTR className = "Game";
 	HINSTANCE hInstance = GetModuleHandle(0);
 	windowClass.cbSize = sizeof(windowClass);
 	windowClass.style = CS_OWNDC;
-	windowClass.lpfnWndProc = customWindowsProc;
+	windowClass.lpfnWndProc = windowsMessageListener;
 	windowClass.cbWndExtra = 0;
 	windowClass.cbClsExtra = 0;
 	windowClass.hInstance = hInstance;
@@ -58,18 +69,23 @@ GameWindow::GameWindow(int xOffset, int yOffset, int width, int height)
 	windowClass.lpszClassName = "Game";
 	windowClass.hIconSm = nullptr;
 	RegisterClassEx(&windowClass);
+	
+	PANIC(title == "", "Window title was read empty, using empty title");
 	HWND windowHandler = CreateWindowEx(
 	    0, className,
-	    "OH NOOOO",
+	    title.c_str(),
 	    WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
-	    100, 200, 640, 480,
+	    xOffset, yOffset, width, height,
 	    nullptr, nullptr,
 	    hInstance, nullptr);
+
 	ShowWindow(windowHandler, SW_SHOW);
-	m_RootexGraphics = new RootexGraphics(windowHandler);
+	
+	m_GraphicsHandler = new RootexGraphics(windowHandler);
+	PANIC(m_GraphicsHandler == nullptr, "Graphics could not be instantiated. Low memory.");
 }
 
 GameWindow::~GameWindow()
 {
-	delete m_RootexGraphics;
+	delete m_GraphicsHandler;
 }

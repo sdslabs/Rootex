@@ -3,7 +3,7 @@
 #include <fstream>
 #include <filesystem>
 
-#define BUILD_SUBDIRECTORY "build"
+#define ENGINE_DIRECTORY "Rootex"
 
 enum class DirectoryShortcut
 {
