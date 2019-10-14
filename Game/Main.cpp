@@ -1,13 +1,7 @@
-<<<<<<< HEAD
-/*
-#include <common.h>
-=======
-#include <string>
-
 #include "common/common.h"
->>>>>>> master
 
 #include "core/resource_loader.h"
+#include <core/renderer/window.h>
 #include "core/resource_manager.h"
 #include "os/os.h"
 #include "script/interpreter.h"
@@ -22,6 +16,10 @@ int main()
 
 	Interpreter inter;
 	
+	RootexWindow* m_Window = new RootexWindow(100, 200, 640, 480);
+	int ret = m_Window->gameLoop();
+	delete m_Window;
+
 	while (1)
 	{
 		Script* luaScript = ResourceLoader::createScriptResource(DirectoryShortcut::GAME, "assets\\config\\test.lua");
@@ -37,15 +35,5 @@ int main()
 		std::cin.get();
 	}
 	ResourceManager::emptyAll();
-    return 0;
-}
-*/
-#include <iostream>
-#include <core/renderer/window.h>
-int main()
-{
-	RootexWindow* m_Window = new RootexWindow(100, 200, 640, 480);
-	int ret = m_Window->gameLoop();
-	delete m_Window;
-	return ret;
+    return ret;
 }
