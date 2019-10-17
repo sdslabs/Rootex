@@ -6,7 +6,7 @@
 
 class ResourceLoader
 {
-	static std::string findData(DirectoryShortcut directory, String path);
+	static String findData(DirectoryShortcut directory, String path);
 
 public:
 	static TextFile* createFileResource(DirectoryShortcut directory, String path);

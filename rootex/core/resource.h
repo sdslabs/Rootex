@@ -62,3 +62,8 @@ class LuaScript : public TextFile
 public:
 	String getSource() const { return getContents(); }
 };
+
+class SoundResource : IResource
+{
+
+};
