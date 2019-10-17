@@ -59,6 +59,19 @@ String TextFile::getContents() const
 
 LuaScript::LuaScript(const String& path, String& contents)
     : TextFile(path, contents)
-    , m_Type("Lua")
 {
+}
+
+IResourcePointer::IResourcePointer()
+    : m_Resource(nullptr)
+{
+}
+
+IResourcePointer::~IResourcePointer()
+{
+}
+
+IResource* IResourcePointer::getResource() const
+{
+	return m_Resource;
 }

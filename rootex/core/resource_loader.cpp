@@ -3,30 +3,28 @@
 #include "common/common.h"
 #include "resource_manager.h"
 
-TextFile* ResourceLoader::createFileResource(DirectoryShortcut directory, String path)
+std::string ResourceLoader::findData(DirectoryShortcut directory, String path)
 {
 	if (path == "")
 	{
-		return nullptr;
+		WARN(String("File path in ").append(std::to_string((int)directory)).append(" was an empty string"));
+		return "";
 	}
 
 	String r = OS::getSingleton().loadFileContents(directory, path);
+	return r;
+}
 
-	TextFile* res = new TextFile(path, r);
+TextFile* ResourceLoader::createFileResource(DirectoryShortcut directory, String path)
+{
+	TextFile* res = new TextFile(path, findData(directory, path));
 
 	return res;
 }
 
 LuaScript* ResourceLoader::createScriptResource(DirectoryShortcut directory, String path)
 {
-	if (path == "")
-	{
-		return nullptr;
-	}
-
-	String r = OS::getSingleton().loadFileContents(directory, path);
-
-	LuaScript* res = new LuaScript(path, r);
+	LuaScript* res = new LuaScript(path, findData(directory, path));
 
 	return res;
 }
