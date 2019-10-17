@@ -11,12 +11,12 @@ int main()
 	printLine("Rootex Engine is starting: Build(" + OS::getSingleton().getBuildDate() + "|" + OS::getSingleton().getBuildTime() + ")");
     
 	// Engine starts from build/game/.
-	TextFile* r = ResourceLoader::createFileResource(DirectoryShortcut::ENGINE, "test\\abc.txt"); // So this loads build/game/abc.txt (However the binary exists in build/game/Debug/)
+	TextFile* r = ResourceLoader::createFileResource(DirectoryShortcut::ENGINE, "test/abc.txt"); // So this loads build/game/abc.txt (However the binary exists in build/game/Debug/)
 	printLine(r->getContents());
 
 	LuaInterpreter inter;
 	
-	LuaScript* windowSettings = ResourceLoader::createScriptResource(DirectoryShortcut::GAME, "assets\\config\\window.lua");
+	LuaScript* windowSettings = ResourceLoader::createScriptResource(DirectoryShortcut::GAME, "assets/config/window.lua");
 	inter.loadExecuteScript(windowSettings);
 	LuaVariable window = inter.getGlobal("window");
 	GameWindow* gameWindow = new GameWindow(

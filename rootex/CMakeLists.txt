@@ -24,4 +24,5 @@ target_link_libraries(Rootex PUBLIC
     RootexScript
     RootexVendor
     Lua
+	d3d11.lib
 )

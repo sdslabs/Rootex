@@ -1,6 +1,4 @@
-#include <core/renderer/d3d11graphics.h>
-
-#pragma comment(lib, "d3d11.lib")
+#include "core/renderer/rendering_device.h"
 
 RenderingDeviceD3D::RenderingDeviceD3D(HWND windowHandler)
 {

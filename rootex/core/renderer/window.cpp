@@ -25,7 +25,7 @@ int GameWindow::gameLoop()
 	}
 }
 
-LRESULT CALLBACK GameWindow::windowsMessageListener(HWND windowHandler, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK GameWindow::handleWindowsMessage(HWND windowHandler, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
 	{
@@ -59,7 +59,7 @@ GameWindow::GameWindow(int xOffset, int yOffset, int width, int height, const St
 	HINSTANCE hInstance = GetModuleHandle(0);
 	windowClass.cbSize = sizeof(windowClass);
 	windowClass.style = CS_OWNDC;
-	windowClass.lpfnWndProc = windowsMessageListener;
+	windowClass.lpfnWndProc = handleWindowsMessage;
 	windowClass.cbWndExtra = 0;
 	windowClass.cbClsExtra = 0;
 	windowClass.hInstance = hInstance;
