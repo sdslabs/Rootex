@@ -7,6 +7,6 @@
 class ResourceLoader
 {
 public:
-	static TextFile* createFileResource(DirectoryShortcut directory, std::string path);
-	static Script* createScriptResource(DirectoryShortcut directory, std::string path);
+	static TextFile* createFileResource(DirectoryShortcut directory, String path);
+	static LuaScript* createScriptResource(DirectoryShortcut directory, String path);
 };

@@ -1,18 +1,24 @@
 #pragma once
 #include <d3d11.h>
 
-class RootexGraphics
+class IRenderingDevice
+{
+public:
+	virtual void endFrame() = 0;
+};
+
+class RenderingDeviceD3D : public IRenderingDevice
 {
 private:
-	ID3D11Device* m_device;
-	IDXGISwapChain* m_swapChain;
-	ID3D11DeviceContext* m_context;
+	ID3D11Device* m_Device;
+	IDXGISwapChain* m_SwapChain;
+	ID3D11DeviceContext* m_Context;
 
 public:
-	RootexGraphics( HWND windowHandler );
-	RootexGraphics(const RootexGraphics&) = delete;
-	RootexGraphics& operator=(const RootexGraphics&) = delete;  
-	~RootexGraphics();
+	RenderingDeviceD3D(HWND windowHandler);
+	RenderingDeviceD3D(const RenderingDeviceD3D&) = delete;
+	RenderingDeviceD3D& operator=(const RenderingDeviceD3D&) = delete;  
+	~RenderingDeviceD3D();
 
-	void EndFrame();
+	void endFrame() override;
 };

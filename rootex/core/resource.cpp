@@ -2,46 +2,46 @@
 
 #include "core/resource_manager.h"
 
-Resource::Resource(const std::string& path)
+IResource::IResource(const String& path)
     : m_Path(path)
 {
 	ResourceManager::registerResource(this);
 }
 
-Resource::Resource(Resource&& oldResource)
+IResource::IResource(IResource&& oldResource)
 {
 	ResourceManager::registerResource(this);
 
 	m_Path = oldResource.m_Path;
 }
 
-Resource::~Resource()
+IResource::~IResource()
 {
 	m_Path = "";
 }
 
-bool Resource::isValid()
+bool IResource::isValid()
 {
 	return m_Path != "";
 }
 
-std::string Resource::getPath()
+String IResource::getPath()
 {
 	return m_Path;
 }
 
-const char* Resource::getPathCStyle()
+const char* IResource::getPathCStyle()
 {
 	return getPath().c_str();
 }
 
-TextFile::TextFile(const std::string& path, std::string& contents)
-    : Resource(path), m_Data(contents)
+TextFile::TextFile(const String& path, String& contents)
+    : IResource(path), m_Data(contents)
 {
 }
 
 TextFile::TextFile(TextFile&& oldFile)
-    : Resource(oldFile.m_Path)
+    : IResource(oldFile.m_Path)
 {
 	m_Data = oldFile.m_Data;
 	m_Path = oldFile.m_Path;
@@ -52,12 +52,12 @@ TextFile::~TextFile()
 	m_Data = "";
 }
 
-std::string TextFile::getContents() const
+String TextFile::getContents() const
 {
 	return m_Data;
 }
 
-Script::Script(const std::string& path, std::string& contents)
+LuaScript::LuaScript(const String& path, String& contents)
     : TextFile(path, contents)
     , m_Type("Lua")
 {

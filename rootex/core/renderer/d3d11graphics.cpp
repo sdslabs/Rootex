@@ -2,7 +2,7 @@
 
 #pragma comment(lib, "d3d11.lib")
 
-RootexGraphics::RootexGraphics(HWND windowHandler)
+RenderingDeviceD3D::RenderingDeviceD3D(HWND windowHandler)
 {
 	DXGI_SWAP_CHAIN_DESC descriptor = { 0 };
 	descriptor.BufferDesc.Width = 0;
@@ -30,24 +30,24 @@ RootexGraphics::RootexGraphics(HWND windowHandler)
 	    0,
 	    D3D11_SDK_VERSION,
 	    &descriptor,
-	    &m_swapChain,
-	    &m_device,
+	    &m_SwapChain,
+	    &m_Device,
 	    nullptr,
-	    &m_context
+	    &m_Context
 	);
 }
 
-RootexGraphics::~RootexGraphics()
+RenderingDeviceD3D::~RenderingDeviceD3D()
 {
-	if (m_context != nullptr)
-		m_context->Release();
-	if (m_swapChain != nullptr)
-		m_swapChain->Release();
-	if (m_device != nullptr)
-		m_device->Release();
+	if (m_Context != nullptr)
+		m_Context->Release();
+	if (m_SwapChain != nullptr)
+		m_SwapChain->Release();
+	if (m_Device != nullptr)
+		m_Device->Release();
 }
 
-void RootexGraphics::EndFrame()
+void RenderingDeviceD3D::endFrame()
 {
-	m_swapChain->Present(1u, 0);
+	m_SwapChain->Present(1u, 0);
 }

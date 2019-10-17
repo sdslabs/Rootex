@@ -3,7 +3,11 @@
 #include <fstream>
 #include <filesystem>
 
+#include "common/types.h"
+
 #define ENGINE_DIRECTORY "Rootex"
+#define GAME_DIRECTORY "game"
+#define ASSETS_DIRECTORY "assets"
 
 enum class DirectoryShortcut
 {
@@ -25,10 +29,10 @@ public:
 
 	static OS getSingleton();
 
-	std::string getBuildDate();
-	std::string getBuildTime();
+	String getBuildDate();
+	String getBuildTime();
 
-	std::string loadFileContents(DirectoryShortcut directory, std::string stringPath);
-	std::filesystem::path getAbsolutePath(DirectoryShortcut directory, std::string stringPath);
-	bool exists(std::string filePath);
+	String loadFileContents(DirectoryShortcut directory, String stringPath);
+	std::filesystem::path getAbsolutePath(DirectoryShortcut directory, String stringPath);
+	bool exists(String filePath);
 };

@@ -3,52 +3,54 @@
 #include <string>
 #include <vector>
 
+#include "common/types.h"
+
 class ResourceLoader;
 
-class Resource 
+class IResource 
 {
 protected:
 
-	std::string m_Path;
+	String m_Path;
 
-	Resource(const std::string& path);
-	Resource(Resource&) = delete;
-	Resource(Resource&& oldResource);
+	IResource(const String& path);
+	IResource(IResource&) = delete;
+	IResource(IResource&& oldResource);
 
 	friend class ResourceLoader;
 
 public:
-	virtual ~Resource();
+	virtual ~IResource();
 
 	bool isValid();
-	std::string getPath();
+	String getPath();
 	const char* getPathCStyle();
 };
 
-class TextFile : public Resource
+class TextFile : public IResource
 {
 protected:
-	std::string m_Data;
+	String m_Data;
 
 public:
 	TextFile() = delete;
-	TextFile(const std::string& path, std::string& contents);
+	TextFile(const String& path, String& contents);
 	TextFile(TextFile&) = delete;
 	TextFile(TextFile&& oldFile);
 	virtual ~TextFile();
 
-	std::string getContents() const;
+	String getContents() const;
 };
 
-class Script : public TextFile
+class LuaScript : public TextFile
 {
-	std::string m_Type;
+	String m_Type;
 	
-	Script(const std::string& path, std::string& contents);
+	LuaScript(const String& path, String& contents);
 	
 	friend ResourceLoader;
 
 public:
-	std::string getType() const { return m_Type; }
-	std::string getSource() const { return getContents(); }
+	String getType() const { return m_Type; }
+	String getSource() const { return getContents(); }
 };

@@ -13,9 +13,9 @@ OS::OS()
 		path = path.parent_path();
 	}
 
-	m_GameDirectory = path / "game";
-	m_AssetsDirectory = path / "game" / "assets";
-	m_EngineDirectory = path / "rootex";
+	m_GameDirectory = path / GAME_DIRECTORY;
+	m_AssetsDirectory = path / GAME_DIRECTORY / ASSETS_DIRECTORY;
+	m_EngineDirectory = path / ENGINE_DIRECTORY;
 }
 
 OS::~OS()
@@ -28,17 +28,17 @@ OS OS::getSingleton()
 	return singleton;
 }
 
-std::string OS::getBuildDate()
+String OS::getBuildDate()
 {
-	return std::string(__DATE__);
+	return String(__DATE__);
 }
 
-std::string OS::getBuildTime()
+String OS::getBuildTime()
 {
-	return std::string(__TIME__);
+	return String(__TIME__);
 }
 
-std::string OS::loadFileContents(DirectoryShortcut directory, std::string stringPath)
+String OS::loadFileContents(DirectoryShortcut directory, String stringPath)
 {
 	std::filesystem::path path = getAbsolutePath(directory, stringPath);
 
@@ -66,7 +66,7 @@ std::string OS::loadFileContents(DirectoryShortcut directory, std::string string
 	return fileContents.str();
 }
 
-std::filesystem::path OS::getAbsolutePath(DirectoryShortcut directory, std::string stringPath)
+std::filesystem::path OS::getAbsolutePath(DirectoryShortcut directory, String stringPath)
 {
 	std::filesystem::path newPath;
 
@@ -89,7 +89,7 @@ std::filesystem::path OS::getAbsolutePath(DirectoryShortcut directory, std::stri
 	return newPath;
 }
 
-bool OS::exists(std::string filePath)
+bool OS::exists(String filePath)
 {
 	return std::filesystem::exists(filePath);
 }

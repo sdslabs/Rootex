@@ -21,7 +21,7 @@ int GameWindow::gameLoop()
 	{
 		if (const std::optional<int> ecode = GameWindow::ProcessMessages())
 			return *ecode;
-		m_GraphicsHandler->EndFrame();
+		m_GraphicsHandler->endFrame();
 	}
 }
 
@@ -47,12 +47,12 @@ LRESULT CALLBACK GameWindow::windowsMessageListener(HWND windowHandler, UINT msg
 	return DefWindowProc(windowHandler, msg, wParam, lParam);
 }
 
-RootexGraphics* GameWindow::getGraphics()
+RenderingDeviceD3D* GameWindow::getRenderingDevice()
 {
 	return m_GraphicsHandler;
 }
 
-GameWindow::GameWindow(int xOffset, int yOffset, int width, int height, const std::string& title)
+GameWindow::GameWindow(int xOffset, int yOffset, int width, int height, const String& title)
 {
 	WNDCLASSEX windowClass = { 0 };
 	LPCSTR className = "Game";
@@ -81,7 +81,7 @@ GameWindow::GameWindow(int xOffset, int yOffset, int width, int height, const st
 
 	ShowWindow(windowHandler, SW_SHOW);
 	
-	m_GraphicsHandler = new RootexGraphics(windowHandler);
+	m_GraphicsHandler = new RenderingDeviceD3D(windowHandler);
 	PANIC(m_GraphicsHandler == nullptr, "Graphics could not be instantiated. Low memory.");
 }
 

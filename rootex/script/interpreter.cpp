@@ -1,29 +1,29 @@
 #include "interpreter.h"
 
-Interpreter::Interpreter()
+LuaInterpreter::LuaInterpreter()
 {
 	m_LuaState = luaL_newstate();
 	luaL_openlibs(m_LuaState);
 }
 
-Interpreter::~Interpreter()
+LuaInterpreter::~LuaInterpreter()
 {
 	lua_close(m_LuaState);
 }
 
-void Interpreter::loadExecuteScript(Script* script)
+void LuaInterpreter::loadExecuteScript(LuaScript* script)
 {
 	luaL_dostring(m_LuaState, script->getContents().c_str());
 	printLine(script->getPath() + " was run");
 }
 
-void Interpreter::loadExecuteScript(const std::string& script)
+void LuaInterpreter::loadExecuteScript(const String& script)
 {
 	PANIC(script == "", "Lua inline script was found empty");
 	luaL_dostring(m_LuaState, script.c_str());
 }
 
-luabridge::LuaRef Interpreter::getGlobal(const std::string& name)
+luabridge::LuaRef LuaInterpreter::getGlobal(const String& name)
 {
 	luabridge::LuaRef result = luabridge::getGlobal(m_LuaState, name.c_str());
 	if (result.isNil())
