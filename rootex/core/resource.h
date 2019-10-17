@@ -27,6 +27,17 @@ public:
 	const char* getPathCStyle();
 };
 
+class IResourcePointer
+{
+	IResource* m_Resource;
+
+public:
+	IResourcePointer();
+	~IResourcePointer();
+
+	IResource* getResource() const;
+};
+
 class TextFile : public IResource
 {
 protected:
@@ -43,14 +54,11 @@ public:
 };
 
 class LuaScript : public TextFile
-{
-	String m_Type;
-	
+{	
 	LuaScript(const String& path, String& contents);
 	
 	friend ResourceLoader;
 
 public:
-	String getType() const { return m_Type; }
 	String getSource() const { return getContents(); }
 };
