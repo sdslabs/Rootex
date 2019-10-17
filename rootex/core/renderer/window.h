@@ -4,7 +4,7 @@
 #include <optional>
 
 #include "common/common.h"
-#include "core/renderer/d3d11graphics.h"
+#include "core/renderer/rendering_device.h"
 
 class GameWindow
 {
@@ -23,7 +23,7 @@ public:
 	~GameWindow();
 
 	int gameLoop();
-	static LRESULT CALLBACK windowsMessageListener(HWND windowHandler, UINT msg, WPARAM wParam, LPARAM lParam);
+	static LRESULT CALLBACK handleWindowsMessage(HWND windowHandler, UINT msg, WPARAM wParam, LPARAM lParam);
 	RenderingDeviceD3D* getRenderingDevice();
 	std::optional<int> GameWindow::ProcessMessages();
 };
