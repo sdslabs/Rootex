@@ -24,5 +24,6 @@ target_link_libraries(Rootex PUBLIC
     RootexScript
     RootexVendor
     Lua
+	PortAudio
 	d3d11.lib
 )

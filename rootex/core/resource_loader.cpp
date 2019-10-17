@@ -3,7 +3,7 @@
 #include "common/common.h"
 #include "resource_manager.h"
 
-std::string ResourceLoader::findData(DirectoryShortcut directory, String path)
+String ResourceLoader::findData(DirectoryShortcut directory, String path)
 {
 	if (path == "")
 	{
