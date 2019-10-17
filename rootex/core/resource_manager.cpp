@@ -1,8 +1,8 @@
 #include "resource_manager.h"
 
-std::vector<Resource*> ResourceManager::m_Resources;
+std::vector<IResource*> ResourceManager::m_Resources;
 
-void ResourceManager::registerResource(Resource* resource)
+void ResourceManager::registerResource(IResource* resource)
 {
 	m_Resources.push_back(resource);
 }

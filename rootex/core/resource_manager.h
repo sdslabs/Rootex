@@ -5,12 +5,12 @@
 
 class ResourceManager 
 {
-	static std::vector<Resource*> m_Resources;
+	static std::vector<IResource*> m_Resources;
 
 	friend ResourceLoader;
 
 public:	
-	static void registerResource(Resource* resource);
+	static void registerResource(IResource* resource);
 	static int getActiveCount();
 	static void emptyAll();
 };

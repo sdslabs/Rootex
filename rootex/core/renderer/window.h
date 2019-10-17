@@ -13,11 +13,10 @@ private:
 	LPCSTR m_ClassName;
 	HINSTANCE m_AppInstance;
 	HWND m_WindowHandler;
-	RootexGraphics* m_GraphicsHandler = nullptr;
+	RenderingDeviceD3D* m_GraphicsHandler = nullptr;
 
 public:
-
-	GameWindow(int xOffset, int yOffset, int width, int height, const std::string& title);
+	GameWindow(int xOffset, int yOffset, int width, int height, const String& title);
 	GameWindow(const GameWindow&) = delete;
 	GameWindow& operator=(const GameWindow&) = delete;  
 
@@ -25,6 +24,6 @@ public:
 
 	int gameLoop();
 	static LRESULT CALLBACK windowsMessageListener(HWND windowHandler, UINT msg, WPARAM wParam, LPARAM lParam);
-	RootexGraphics* getGraphics();
+	RenderingDeviceD3D* getRenderingDevice();
 	std::optional<int> GameWindow::ProcessMessages();
 };

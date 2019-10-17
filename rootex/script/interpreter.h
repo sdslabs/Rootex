@@ -8,18 +8,18 @@
 
 typedef luabridge::LuaRef LuaVariable;
 
-class Interpreter
+class LuaInterpreter
 {
 	lua_State* m_LuaState;
 
 public:
-	Interpreter();
-	~Interpreter();
+	LuaInterpreter();
+	~LuaInterpreter();
 
-	void loadExecuteScript(Script* script);
-	void loadExecuteScript(const std::string& script);
+	void loadExecuteScript(LuaScript* script);
+	void loadExecuteScript(const String& script);
 
-	luabridge::LuaRef getGlobal(const std::string& name);
+	luabridge::LuaRef getGlobal(const String& name);
 
 protected:
 };
