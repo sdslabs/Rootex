@@ -1,0 +1,24 @@
+Game:
+- game/**
+
+RootexCommon:
+- rootex/common/**
+
+RootexCore:
+- rootex/core/**
+
+RootexOS:
+- rootex/os/**
+
+RootexScript:
+- rootex/script/**
+
+RootexVendor:
+- rootex/vendor/**
+
+CMake:
+- **/CMakeLists.txt
+- **/CMakeSettings.json
+
+Readme:
+- README.md
