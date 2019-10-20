@@ -16,9 +16,5 @@ RootexScript:
 RootexVendor:
 - rootex/vendor/**
 
-CMake:
-- **/CMakeLists.txt
-- **/CMakeSettings.json
-
 Readme:
 - README.md
