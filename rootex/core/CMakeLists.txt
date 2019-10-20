@@ -1,9 +1,17 @@
 file(GLOB_RECURSE CoreSources **.cpp **.h)
+file(GLOB_RECURSE CoreHeaders **.h)
 
-add_library(RootexCore STATIC ${CoreSources})
+set(ROOTEX_INCLUDES
+    ${ROOTEX_INCLUDES}
+    ${CMAKE_CURRENT_LIST_DIR}
+CACHE INTERNAL "")
 
-target_include_directories(RootexCore PUBLIC 
-	../
-	../vendor/PortAudio/include/
-	../vendor/PortAudio/include/src/common/
-)
+set(ROOTEX_HEADERS
+    ${ROOTEX_HEADERS}
+    ${CoreHeaders}
+CACHE INTERNAL "")
+
+set(ROOTEX_SOURCES
+    ${ROOTEX_SOURCES}
+    ${CoreSources}
+CACHE INTERNAL "")

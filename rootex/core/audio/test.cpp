@@ -1,7 +1,8 @@
-#include "vendor/PortAudio/include/portaudio.h"
+#include "test.h"
 
 int foo()
 {
-	PaStreamParameters();
+	ALuint s;
+	alGenSources(1, &s);
 	return 1;
 }
