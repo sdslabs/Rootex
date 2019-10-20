@@ -1,5 +1,6 @@
 #include "common/common.h"
 
+#include "core/audio/test.h"
 #include "core/resource_loader.h"
 #include "core/renderer/window.h"
 #include "core/resource_manager.h"
@@ -9,7 +10,8 @@
 int main()
 {
 	printLine("Rootex Engine is starting: Build(" + OS::getSingleton().getBuildDate() + "|" + OS::getSingleton().getBuildTime() + ")");
-    
+	ALuint s;
+	alGenSources(1, &s);
 	// Engine starts from build/game/.
 	TextFile* r = ResourceLoader::createFileResource(DirectoryShortcut::ENGINE, "test/abc.txt"); // So this loads build/game/abc.txt (However the binary exists in build/game/Debug/)
 	printLine(r->getContents());
