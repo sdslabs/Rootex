@@ -10,13 +10,13 @@ typedef luabridge::LuaRef LuaVariable;
 
 class LuaInterpreter
 {
-	lua_State* m_LuaState;
+	Ptr<lua_State> m_LuaState;
 
 public:
 	LuaInterpreter();
 	~LuaInterpreter();
 
-	void loadExecuteScript(LuaScript* script);
+	void loadExecuteScript(Ref<LuaScriptResource> script);
 	void loadExecuteScript(const String& script);
 
 	luabridge::LuaRef getGlobal(const String& name);

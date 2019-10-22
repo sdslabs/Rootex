@@ -22,7 +22,7 @@ add_subdirectory(script EXCLUDE_FROM_ALL)
 add_library(Rootex STATIC ${ROOTEX_SOURCES})
 
 target_include_directories(Rootex PUBLIC
-    ../${ROOTEX_INCLUDES}
+    ${ROOTEX_INCLUDES}
 )
 
 target_link_libraries(Rootex PUBLIC

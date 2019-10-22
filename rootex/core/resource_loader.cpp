@@ -22,9 +22,9 @@ TextFile* ResourceLoader::createFileResource(DirectoryShortcut directory, String
 	return res;
 }
 
-LuaScript* ResourceLoader::createScriptResource(DirectoryShortcut directory, String path)
+LuaScriptResource* ResourceLoader::createScriptResource(DirectoryShortcut directory, String path)
 {
-	LuaScript* res = new LuaScript(path, findData(directory, path));
+	LuaScriptResource* res = new LuaScriptResource(path, findData(directory, path));
 
 	return res;
 }

@@ -1,16 +1,15 @@
 #pragma once
 
-#include <vector>
-#include "resource.h"
+#include "common/common.h"
+#include "core/resource.h"
+#include "core/resource_data.h"
 
-class ResourceManager 
+class ResourceManager
 {
-	static std::vector<IResource*> m_Resources;
+	static HashMap<Ptr<IResourceData>, Vector<IResourceFile>> m_ResourceMap;
 
-	friend ResourceLoader;
-
-public:	
-	static void registerResource(IResource* resource);
+public:
+	static void registerResourceDataResourceFile(Ptr<IResourceData> resourceData, Ptr<IResourceFile> resourceFile);
 	static int getActiveCount();
-	static void emptyAll();
+	static void empty();
 };
