@@ -13,12 +13,12 @@ private:
 	LPCSTR m_ClassName;
 	HINSTANCE m_AppInstance;
 	HWND m_WindowHandler;
-	RenderingDeviceD3D* m_GraphicsHandler = nullptr;
+	Ptr<RenderingDeviceD3> m_GraphicsHandler = nullptr;
 
 public:
 	GameWindow(int xOffset, int yOffset, int width, int height, const String& title);
 	GameWindow(const GameWindow&) = delete;
-	GameWindow& operator=(const GameWindow&) = delete;  
+	GameWindow& operator=(const GameWindow&) = delete;
 
 	~GameWindow();
 

@@ -1,8 +1,8 @@
 #include "common/common.h"
 
-#include "core/audio/test.h"
-#include "core/resource_loader.h"
+#include "core/audio/audio.h"
 #include "core/renderer/window.h"
+#include "core/resource_loader.h"
 #include "core/resource_manager.h"
 #include "os/os.h"
 #include "script/interpreter.h"
@@ -17,19 +17,19 @@ int main()
 	printLine(r->getContents());
 
 	LuaInterpreter inter;
-	
-	LuaScript* windowSettings = ResourceLoader::createScriptResource(DirectoryShortcut::GAME, "assets/config/window.lua");
+
+	LuaScriptResource* windowSettings = ResourceLoader::createScriptResource(DirectoryShortcut::GAME, "assets/config/window.lua");
 	inter.loadExecuteScript(windowSettings);
 	LuaVariable window = inter.getGlobal("window");
 	GameWindow* gameWindow = new GameWindow(
-		window["x"],
-		window["y"],
-		window["deltaX"],
-		window["deltaY"],
-		window["title"]);
+	    window["x"],
+	    window["y"],
+	    window["deltaX"],
+	    window["deltaY"],
+	    window["title"]);
 	int ret = gameWindow->gameLoop();
 	delete gameWindow;
 
-	ResourceManager::emptyAll();
-    return ret;
+	ResourceManager::empty();
+	return ret;
 }

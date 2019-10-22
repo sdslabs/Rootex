@@ -7,63 +7,62 @@
 
 class ResourceLoader;
 
-class IResource 
+class IResourceFile
 {
+public:
+	enum class Type : int
+	{
+		NONE = 0,
+		LUA,
+		WAV,
+		TXT
+	};
+
 protected:
-
+	String m_Name;
 	String m_Path;
+	Type m_Type;
 
-	IResource(const String& path);
-	IResource(IResource&) = delete;
-	IResource(IResource&& oldResource);
+	explicit IResourceFile(const String& name, const String& path, const Type& type);
+	explicit IResourceFile(IResourceFile&) = delete;
+	explicit IResourceFile(IResourceFile&&) = delete;
 
 	friend class ResourceLoader;
 
 public:
-	virtual ~IResource();
+	virtual ~IResourceFile();
 
-	bool isValid();
+	virtual bool isValid() = 0;
+	virtual bool open() = 0;
+
+	String getName();
 	String getPath();
-	const char* getPathCStyle();
+	Type getType();
 };
 
-class IResourcePointer
+class TextFile : public IResourceFile
 {
-	IResource* m_Resource;
+	explicit TextFile(const String& name, const String& path, const Type& type);
 
-public:
-	IResourcePointer();
-	~IResourcePointer();
-
-	IResource* getResource() const;
-};
-
-class TextFile : public IResource
-{
-protected:
-	String m_Data;
-
-public:
-	TextFile() = delete;
-	TextFile(const String& path, String& contents);
-	TextFile(TextFile&) = delete;
-	TextFile(TextFile&& oldFile);
-	virtual ~TextFile();
-
-	String getContents() const;
-};
-
-class LuaScript : public TextFile
-{	
-	LuaScript(const String& path, String& contents);
-	
 	friend ResourceLoader;
 
 public:
-	String getSource() const { return getContents(); }
 };
 
-class SoundResource : IResource
+class LuaScriptResource : public IResourceFile
 {
+	explicit LuaScriptResource(const String& name, const String& path, const Type& type);
 
+	friend ResourceLoader;
+
+public:
+};
+
+class WAVResource : IResourceFile
+{
+	explicit WAVResource(const String& name, const String& path, const Type& type);
+
+	friend ResourceLoader;
+
+public:
 };

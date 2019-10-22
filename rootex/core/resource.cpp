@@ -2,76 +2,45 @@
 
 #include "core/resource_manager.h"
 
-IResource::IResource(const String& path)
-    : m_Path(path)
+IResourceFile::IResourceFile(const String& name, const String& path, const Type& type)
+    : m_Name(name)
+    , m_Path(path)
+    , m_Type(type)
 {
-	ResourceManager::registerResource(this);
+	ResourceManager::registerResourceDataResourceFile(this);
 }
 
-IResource::IResource(IResource&& oldResource)
-{
-	ResourceManager::registerResource(this);
-
-	m_Path = oldResource.m_Path;
-}
-
-IResource::~IResource()
+IResourceFile::~IResourceFile()
 {
 	m_Path = "";
 }
 
-bool IResource::isValid()
+bool IResourceFile::isValid()
 {
 	return m_Path != "";
 }
 
-String IResource::getPath()
+String IResourceFile::getName()
+{
+	return m_Name;
+}
+
+String IResourceFile::getPath()
 {
 	return m_Path;
 }
 
-const char* IResource::getPathCStyle()
+IResourceFile::Type IResourceFile::getType()
 {
-	return getPath().c_str();
+	return m_Type;
 }
 
-TextFile::TextFile(const String& path, String& contents)
-    : IResource(path), m_Data(contents)
-{
-}
-
-TextFile::TextFile(TextFile&& oldFile)
-    : IResource(oldFile.m_Path)
-{
-	m_Data = oldFile.m_Data;
-	m_Path = oldFile.m_Path;
-}
-
-TextFile::~TextFile()
-{
-	m_Data = "";
-}
-
-String TextFile::getContents() const
-{
-	return m_Data;
-}
-
-LuaScript::LuaScript(const String& path, String& contents)
-    : TextFile(path, contents)
+LuaScriptResource::LuaScriptResource(const String& name, const String& path, const Type& type)
+    : IResourceFile(name, path, Type::LUA)
 {
 }
 
-IResourcePointer::IResourcePointer()
-    : m_Resource(nullptr)
+WAVResource::WAVResource(const String& name, const String& path, const Type& type)
+    : IResourceFile(name, path, Type::WAV)
 {
-}
-
-IResourcePointer::~IResourcePointer()
-{
-}
-
-IResource* IResourcePointer::getResource() const
-{
-	return m_Resource;
 }
