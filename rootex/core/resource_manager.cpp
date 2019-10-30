@@ -1,39 +1,44 @@
 #include "resource_manager.h"
 
-HashMap<Ptr<IResourceData>, Vector<Ref<IResourceFile>>> ResourceManager::m_ResourceMap;
+Vector<Ptr<ResourceData>> ResourceManager::m_ResourcesData;
 
-void ResourceManager::registerResourceDataResourceFile(Ptr<IResourceData> resourceData, Ptr<IResourceFile> resourceFile)
+void ResourceManager::registerResourceDataResourceFile(Ptr<ResourceData> resourceData)
 {
-	auto it = m_ResourceMap.find(resourceData);
-	if (it != m_ResourceMap.end())
+	auto it = std::find(m_ResourcesData.begin(), m_ResourcesData.end(), resourceData);
+	if (it != m_ResourcesData.end())
 	{
-		m_ResourceMap[resourceData].push_back(resourceFile);
+		return;
 	}
 	else
 	{
-		auto fileIt = m_ResourceMap[resourceData].find(resourceFile);
-		if (fileIt != m_ResourceMap[resourceData].end())
-		{
-			ERR("ResourceManager: Added duplicate resource file under singular resource data");
-			m_ResourceMap[resourceData].push_back(resourceFile);
-		}
-		else
-		{
-			m_ResourceMap.insert(resourceData, { resourceFile });
-		}
+		WARN("Cache miss while fetching resource data");
+		m_ResourcesData.push_back(resourceData);
 	}
+}
+
+ResourceData* ResourceManager::getResourceData(ResourceData* resource)
+{
+	auto it = std::find(m_ResourcesData.begin(), m_ResourcesData.end(), resource);
+	if (it != m_ResourcesData.end())
+	{
+		return (*it).get();
+	}
+
+	m_ResourcesData.push_back(Ptr<ResourceData>(resource));
+
+	return resource;
 }
 
 int ResourceManager::getActiveCount()
 {
-	return m_ResourceMap.size();
+	return m_ResourcesData.size();
 }
 
 void ResourceManager::empty()
 {
-	for (auto& r : m_ResourceMap)
+	for (auto& r : m_ResourcesData)
 	{
-		r = nullptr;
+		r = nullptr; // This also deletes the resource data handled by r
 	}
-	m_ResourceMap.clear();
+	m_ResourcesData.clear();
 }

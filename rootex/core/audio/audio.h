@@ -1,7 +1,7 @@
 #pragma once
 
 #include "common/types.h"
-#include "core/resource.h"
+#include "core/resource_file.h"
 #include "vendor/OpenAL/include/al.h"
 
 class IAudioBuffer;

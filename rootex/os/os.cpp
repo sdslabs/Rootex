@@ -38,32 +38,33 @@ String OS::getBuildTime()
 	return String(__TIME__);
 }
 
-String OS::loadFileContents(DirectoryShortcut directory, String stringPath)
+FileBuffer OS::loadFileContents(DirectoryShortcut directory, String stringPath)
 {
 	std::filesystem::path path = getAbsolutePath(directory, stringPath);
 
 	if (!exists(path.generic_string()))
 	{
-		ERR("File does not exist: " + path.generic_string());
-		return "";
+		ERR("File IO error: " + path.generic_string() + " does not exist");
+		return FileBuffer(nullptr, 0);
 	}
 
 	std::ifstream stream;
 	try
 	{
-		stream.open(path.generic_string(), std::ios::in);
+		stream.open(path.generic_string(), std::ios::binary | std::ios::in);
 	}
 	catch (std::exception e)
 	{
 		ERR("File IO error: " + e.what());
-		return "";
+		return FileBuffer(nullptr, 0);
 	}
 
-	std::stringstream fileContents;
-	fileContents << stream.rdbuf();
+	std::streamsize size = stream.tellg();
+	char* buffer = new char(size);
+	stream.read(buffer, size);
 
 	stream.close();
-	return fileContents.str();
+	return FileBuffer(buffer, size);
 }
 
 std::filesystem::path OS::getAbsolutePath(DirectoryShortcut directory, String stringPath)
@@ -92,4 +93,10 @@ std::filesystem::path OS::getAbsolutePath(DirectoryShortcut directory, String st
 bool OS::exists(String filePath)
 {
 	return std::filesystem::exists(filePath);
+}
+
+FileBuffer::FileBuffer(char* buffer, unsigned int size)
+    : m_Buffer(buffer)
+    , m_Size(size)
+{
 }

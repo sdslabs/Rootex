@@ -13,7 +13,7 @@ int main()
 	ALuint s;
 	alGenSources(1, &s);
 	// Engine starts from build/game/.
-	TextFile* r = ResourceLoader::createFileResource(DirectoryShortcut::ENGINE, "test/abc.txt"); // So this loads build/game/abc.txt (However the binary exists in build/game/Debug/)
+	TextResource* r = ResourceLoader::createFileResource(DirectoryShortcut::ENGINE, "test/abc.txt"); // So this loads build/game/abc.txt (However the binary exists in build/game/Debug/)
 	printLine(r->getContents());
 
 	LuaInterpreter inter;
