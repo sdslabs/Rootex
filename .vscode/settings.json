@@ -1,5 +1,4 @@
 {
-    "C_Cpp.default.configurationProvider": "vector-of-bool.cmake-tools",
     "editor.formatOnSave": true,
     "clang-format.executable": "clang-format",
     "C_Cpp.intelliSenseEngineFallback": "Enabled",

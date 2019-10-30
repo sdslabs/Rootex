@@ -1,13 +1,21 @@
 #pragma once
 
-#include <fstream>
 #include <filesystem>
+#include <fstream>
 
 #include "common/types.h"
 
 #define ENGINE_DIRECTORY "Rootex"
 #define GAME_DIRECTORY "game"
 #define ASSETS_DIRECTORY "assets"
+
+struct FileBuffer
+{
+	char* m_Buffer;
+	unsigned int m_Size;
+
+	FileBuffer(char* buffer, unsigned int size);
+};
 
 enum class DirectoryShortcut
 {
@@ -32,7 +40,7 @@ public:
 	String getBuildDate();
 	String getBuildTime();
 
-	String loadFileContents(DirectoryShortcut directory, String stringPath);
+	FileBuffer loadFileContents(DirectoryShortcut directory, String stringPath);
 	std::filesystem::path getAbsolutePath(DirectoryShortcut directory, String stringPath);
 	bool exists(String filePath);
 };

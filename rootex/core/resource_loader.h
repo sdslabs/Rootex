@@ -2,13 +2,13 @@
 
 #include "common/types.h"
 #include "os/os.h"
-#include "resource.h"
+#include "resource_file.h"
 
 class ResourceLoader
 {
-	static String findData(DirectoryShortcut directory, String path);
+	static void assign(IResourceFile* file, ResourceData* resource);
 
 public:
-	static Ref<TextFile> createFileResource(DirectoryShortcut directory, String path);
-	static Ref<LuaScriptResource> createScriptResource(DirectoryShortcut directory, String path);
+	template<class ResourceFile>
+	static Ref<ResourceFile> createFileResource(DirectoryShortcut directory, String name, String path);
 };

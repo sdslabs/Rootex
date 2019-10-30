@@ -1,44 +1,22 @@
 #pragma once
 
 #include "common/types.h"
-#include "core/resource.h"
+#include "core/resource_file.h"
 
-class IResourceData
+class ResourceData
 {
 public:
 	virtual const char* getRawData();
 	virtual unsigned int getRawDataByteSize();
 
-	template <class T>
-	Ref<T> getData();
-
 protected:
 	const char* m_Buffer;
 	unsigned int m_BufferByteSize;
+	String m_Path;
 
-	explicit IResourceData(const char* data, const unsigned int byteSize);
-};
+	explicit ResourceData(const char* data, const unsigned int byteSize);
+	~ResourceData();
 
-class TextFileData : public IResourceData
-{
-	String m_Text;
-
-	explicit TextFileData(String contents);
-
-public:
-	String getData<String>();
-	unsigned int getSize();
-};
-
-class LuaScriptData : IResourceData
-{
-	String m_Source;
-
-	explicit LuaScriptData(String source);
-
-public:
-	String getData<String>();
-	unsigned int getSize();
-
-	String getSource();
+	friend class ResourceManager;
+	friend class ResourceLoader;
 };
