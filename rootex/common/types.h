@@ -16,6 +16,8 @@ typedef std::string String;
 #include <map>
 template <class P, class Q>
 using Map = std::map<P, Q>;
+
+#include <unordered_map>
 template <class P, class Q>
 using HashMap = std::unordered_map<P, Q>;
 

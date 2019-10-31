@@ -1,15 +1,18 @@
 #include "os.h"
 
 #include <filesystem>
-#include <sstream>
 
 #include "common/common.h"
 
 OS::OS()
 {
 	std::filesystem::path path = std::filesystem::current_path();
-	while (path.stem() != ENGINE_DIRECTORY)
+	while (true)
 	{
+		if (std::filesystem::exists(path / ROOT_MARKER_FILENAME))
+		{
+			break;
+		}
 		path = path.parent_path();
 	}
 
@@ -44,27 +47,29 @@ FileBuffer OS::loadFileContents(DirectoryShortcut directory, String stringPath)
 
 	if (!exists(path.generic_string()))
 	{
-		ERR("File IO error: " + path.generic_string() + " does not exist");
-		return FileBuffer(nullptr, 0);
+		ERR("OS: File IO error: " + path.generic_string() + " does not exist");
+		return FileBuffer();
 	}
 
 	std::ifstream stream;
 	try
 	{
-		stream.open(path.generic_string(), std::ios::binary | std::ios::in);
+		stream.open(path.generic_string(), std::ifstream::ate | std::ios::binary);
 	}
 	catch (std::exception e)
 	{
-		ERR("File IO error: " + e.what());
-		return FileBuffer(nullptr, 0);
+		ERR("OS: File IO error: " + e.what());
+		return FileBuffer();
 	}
 
-	std::streamsize size = stream.tellg();
-	char* buffer = new char(size);
-	stream.read(buffer, size);
+	std::ifstream::pos_type pos = stream.tellg();
+	std::vector<char> buffer(pos);
+
+	stream.seekg(0, std::ios_base::beg);
+	stream.read(buffer.data(), pos);
 
 	stream.close();
-	return FileBuffer(buffer, size);
+	return FileBuffer(buffer);
 }
 
 std::filesystem::path OS::getAbsolutePath(DirectoryShortcut directory, String stringPath)
@@ -83,7 +88,7 @@ std::filesystem::path OS::getAbsolutePath(DirectoryShortcut directory, String st
 		newPath = m_EngineDirectory / std::filesystem::path(stringPath);
 		break;
 	default:
-		ERR("Directory type not found for converting path to absolute");
+		ERR("ResourceLoader: Directory type not found for converting path to absolute");
 		break;
 	}
 
@@ -95,8 +100,12 @@ bool OS::exists(String filePath)
 	return std::filesystem::exists(filePath);
 }
 
-FileBuffer::FileBuffer(char* buffer, unsigned int size)
+FileBuffer::FileBuffer()
+    : m_Buffer()
+{
+}
+
+FileBuffer::FileBuffer(std::vector<char> buffer)
     : m_Buffer(buffer)
-    , m_Size(size)
 {
 }

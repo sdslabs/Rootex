@@ -5,16 +5,17 @@
 
 #include "common/types.h"
 
-#define ENGINE_DIRECTORY "Rootex"
+#define ROOT_MARKER_FILENAME "rootex.root"
+#define ENGINE_DIRECTORY "rootex"
 #define GAME_DIRECTORY "game"
 #define ASSETS_DIRECTORY "assets"
 
 struct FileBuffer
 {
-	char* m_Buffer;
-	unsigned int m_Size;
-
-	FileBuffer(char* buffer, unsigned int size);
+	std::vector<char> m_Buffer;
+	
+	FileBuffer();
+	FileBuffer(std::vector<char> buffer);
 };
 
 enum class DirectoryShortcut

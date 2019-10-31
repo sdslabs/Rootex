@@ -6,13 +6,14 @@
 
 class ResourceManager
 {
-	static Vector<Ptr<ResourceData>> m_ResourcesData;
+	static Vector<Ref<ResourceData>> s_ResourcesData;
 
 	ResourceManager() = delete;
+	~ResourceManager() = delete;
 
 public:
-	static void registerResourceDataResourceFile(Ptr<ResourceData> resourceData);
-	static ResourceData* getResourceData(ResourceData* resource);
-	static int getActiveCount();
+	static void registerResourceData(Ref<ResourceData> resourceData);
+	static ResourceData* getResourceData(unsigned int ID);
+	static size_t getActiveCount();
 	static void empty();	
 };

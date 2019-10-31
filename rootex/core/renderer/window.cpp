@@ -49,7 +49,7 @@ LRESULT CALLBACK GameWindow::handleWindowsMessage(HWND windowHandler, UINT msg, 
 
 RenderingDeviceD3D* GameWindow::getRenderingDevice()
 {
-	return m_GraphicsHandler;
+	return m_GraphicsHandler.get();
 }
 
 GameWindow::GameWindow(int xOffset, int yOffset, int width, int height, const String& title)
@@ -81,11 +81,10 @@ GameWindow::GameWindow(int xOffset, int yOffset, int width, int height, const St
 
 	ShowWindow(windowHandler, SW_SHOW);
 	
-	m_GraphicsHandler = new RenderingDeviceD3D(windowHandler);
+	m_GraphicsHandler = std::make_unique<RenderingDeviceD3D>(windowHandler);
 	PANIC(m_GraphicsHandler == nullptr, "Graphics could not be instantiated. Low memory.");
 }
 
 GameWindow::~GameWindow()
 {
-	delete m_GraphicsHandler;
 }

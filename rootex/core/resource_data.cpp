@@ -1,22 +1,29 @@
 #include "core/resource_data.h"
 
-const char* ResourceData::getRawData()
+unsigned int ResourceData::s_Count = 0;
+
+unsigned int ResourceData::getID()
+{
+	return m_ID;
+}
+
+std::vector<char> ResourceData::getRawData()
 {
 	return m_Buffer;
 }
 
 unsigned int ResourceData::getRawDataByteSize()
 {
-	return m_BufferByteSize;
+	return m_Buffer.size();
 }
 
-ResourceData::ResourceData(const char* data, const unsigned int byteSize)
-    : m_Buffer(data)
-    , m_BufferByteSize(byteSize)
+ResourceData::ResourceData(std::vector<char> data)
+    : m_ID(s_Count)
+    , m_Buffer(data)
 {
+	s_Count++;
 }
 
 ResourceData::~ResourceData()
 {
-	delete m_Buffer;
 }

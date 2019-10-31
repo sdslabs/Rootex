@@ -1,44 +1,40 @@
 #include "resource_manager.h"
 
-Vector<Ptr<ResourceData>> ResourceManager::m_ResourcesData;
+Vector<Ref<ResourceData>> ResourceManager::s_ResourcesData;
 
-void ResourceManager::registerResourceDataResourceFile(Ptr<ResourceData> resourceData)
+void ResourceManager::registerResourceData(Ref<ResourceData> resourceData)
 {
-	auto it = std::find(m_ResourcesData.begin(), m_ResourcesData.end(), resourceData);
-	if (it != m_ResourcesData.end())
+	auto it = std::find(s_ResourcesData.begin(), s_ResourcesData.end(), resourceData);
+	if (it != s_ResourcesData.end())
 	{
 		return;
 	}
 	else
 	{
-		WARN("Cache miss while fetching resource data");
-		m_ResourcesData.push_back(resourceData);
+		WARN("ResourceManager: Cache miss while fetching resource data");
+		s_ResourcesData.push_back(resourceData);
 	}
 }
 
-ResourceData* ResourceManager::getResourceData(ResourceData* resource)
+ResourceData* ResourceManager::getResourceData(unsigned int ID)
 {
-	auto it = std::find(m_ResourcesData.begin(), m_ResourcesData.end(), resource);
-	if (it != m_ResourcesData.end())
+	if (ID < s_ResourcesData.size())
 	{
-		return (*it).get();
+		return s_ResourcesData[ID].get();
 	}
-
-	m_ResourcesData.push_back(Ptr<ResourceData>(resource));
-
-	return resource;
+	return nullptr;
 }
 
-int ResourceManager::getActiveCount()
+size_t ResourceManager::getActiveCount()
 {
-	return m_ResourcesData.size();
+	return s_ResourcesData.size();
 }
 
 void ResourceManager::empty()
 {
-	for (auto& r : m_ResourcesData)
+	for (auto& r : s_ResourcesData)
 	{
-		r = nullptr; // This also deletes the resource data handled by r
+		r.reset(); // This also deletes the resource data handled by r
 	}
-	m_ResourcesData.clear();
+	s_ResourcesData.clear();
 }
