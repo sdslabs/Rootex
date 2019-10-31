@@ -13,12 +13,14 @@ int main()
 	ALuint s;
 	alGenSources(1, &s);
 	// Engine starts from build/game/.
-	TextResource* r = ResourceLoader::createFileResource(DirectoryShortcut::ENGINE, "test/abc.txt"); // So this loads build/game/abc.txt (However the binary exists in build/game/Debug/)
-	printLine(r->getContents());
+	Ref<TextResource> r = ResourceLoader::createTextResourceFile(DirectoryShortcut::ENGINE, "Test File", "test/abc.txt"); // So this loads build/game/abc.txt (However the binary exists in build/game/Debug/)
+	printLine(r->getText());
 
 	LuaInterpreter inter;
 
-	LuaScriptResource* windowSettings = ResourceLoader::createScriptResource(DirectoryShortcut::GAME, "assets/config/window.lua");
+	Ref<LuaScriptResource> windowSettings = ResourceLoader::createLuaScriptResourceFile(DirectoryShortcut::GAME,"Window load script", "assets/config/window.lua");
+	printLine(windowSettings->getText());
+	
 	inter.loadExecuteScript(windowSettings);
 	LuaVariable window = inter.getGlobal("window");
 	GameWindow* gameWindow = new GameWindow(

@@ -1,12 +1,9 @@
 #pragma once
 
-#include <string>
-#include <vector>
-
 #include "common/types.h"
-#include "core/resource_data.h"
 
 class ResourceLoader;
+class ResourceData;
 
 class IResourceFile
 {
@@ -23,7 +20,7 @@ protected:
 	String m_Name;
 	String m_Path;
 	Type m_Type;
-	Ref<ResourceData> m_ResourceData;
+	ResourceData* m_ResourceData;
 
 	explicit IResourceFile(const String& name, const String& path, const Type& type);
 	explicit IResourceFile(IResourceFile&) = delete;
@@ -45,20 +42,24 @@ public:
 
 class TextResource : public IResourceFile
 {
-	explicit TextResource(const String& name, const String& path);
+public:
+	String getText();
+
+protected:
+	explicit TextResource(const String& name, const String& path, const Type& type = Type::TXT);
 
 	friend ResourceLoader;
 
-public:
 };
 
-class LuaScriptResource : public IResourceFile
+class LuaScriptResource : public TextResource
 {
 	explicit LuaScriptResource(const String& name, const String& path);
 
 	friend ResourceLoader;
 
 public:
+	String getSource();
 };
 
 class WAVResource : IResourceFile

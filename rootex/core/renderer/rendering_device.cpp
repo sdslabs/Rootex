@@ -1,6 +1,9 @@
 #include "core/renderer/rendering_device.h"
 
 RenderingDeviceD3D::RenderingDeviceD3D(HWND windowHandler)
+    : m_Context(nullptr)
+    , m_Device(nullptr)
+    , m_SwapChain(nullptr)
 {
 	DXGI_SWAP_CHAIN_DESC descriptor = { 0 };
 	descriptor.BufferDesc.Width = 0;

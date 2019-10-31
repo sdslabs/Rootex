@@ -1,7 +1,7 @@
 #pragma once
 
 #include "common/common.h"
-#include "core/resource.h"
+#include "core/resource_file.h"
 
 #include "vendor/Lua/src/lua.hpp"
 #include "vendor/LuaBridge/Source/LuaBridge/LuaBridge.h"
@@ -10,7 +10,7 @@ typedef luabridge::LuaRef LuaVariable;
 
 class LuaInterpreter
 {
-	Ptr<lua_State> m_LuaState;
+	lua_State* m_LuaState;
 
 public:
 	LuaInterpreter();

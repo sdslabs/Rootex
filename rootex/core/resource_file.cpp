@@ -1,5 +1,8 @@
 #include "resource_file.h"
 
+#include <bitset>
+#include <sstream>
+
 #include "core/resource_manager.h"
 
 IResourceFile::IResourceFile(const String& name, const String& path, const Type& type)
@@ -43,17 +46,28 @@ IResourceFile::Type IResourceFile::getType()
 
 ResourceData* IResourceFile::getData()
 {
-	return m_ResourceData.get();
+	return m_ResourceData;
 }
 
-TextResource::TextResource(const String& name, const String& path)
-    : IResourceFile(name, path, Type::TXT)
+TextResource::TextResource(const String& name, const String& path, const Type& type)
+    : IResourceFile(name, path, type)
 {
+}
+
+String TextResource::getText()
+{
+	Vector<char> buffer = m_ResourceData->getRawData();
+	return String(buffer.data(), buffer.size());
 }
 
 LuaScriptResource::LuaScriptResource(const String& name, const String& path)
-	: IResourceFile(name, path, Type::LUA)
+	: TextResource(name, path, Type::LUA)
 {
+}
+
+String LuaScriptResource::getSource()
+{
+	return getText();
 }
 
 WAVResource::WAVResource(const String& name, const String& path)

@@ -13,9 +13,9 @@ public:
 class RenderingDeviceD3D : public IRenderingDevice
 {
 private:
-	Ptr<ID3D11Device> m_Device;
-	Ptr<IDXGISwapChain> m_SwapChain;
-	Ptr<ID3D11DeviceContext> m_Context;
+	ID3D11Device* m_Device;
+	IDXGISwapChain* m_SwapChain;
+	ID3D11DeviceContext* m_Context;
 
 public:
 	RenderingDeviceD3D(HWND windowHandler);

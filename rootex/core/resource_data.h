@@ -5,17 +5,20 @@
 
 class ResourceData
 {
+	static unsigned int s_Count;
+
 public:
-	virtual const char* getRawData();
-	virtual unsigned int getRawDataByteSize();
+	ResourceData(std::vector<char> data);
+	~ResourceData();
+
+	unsigned int getID();
+	std::vector<char> getRawData();
+	unsigned int getRawDataByteSize();
 
 protected:
-	const char* m_Buffer;
-	unsigned int m_BufferByteSize;
+	unsigned int m_ID;
+	Vector<char> m_Buffer;
 	String m_Path;
-
-	explicit ResourceData(const char* data, const unsigned int byteSize);
-	~ResourceData();
 
 	friend class ResourceManager;
 	friend class ResourceLoader;
