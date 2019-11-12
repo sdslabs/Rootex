@@ -21,45 +21,43 @@ int GameWindow::gameLoop()
 	{
 		if (const std::optional<int> ecode = GameWindow::ProcessMessages())
 			return *ecode;
-		m_GraphicsHandler->endFrame();
+		this->getGraphics()->EndFrame();
+
+		//The color change effect ->
+		std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - start;
+		float seconds = elapsed_seconds.count();
+		float r = (sin(seconds) + 1.0) * 0.5;
+		float g = (sin(seconds * 0.3) + 1.0) * 0.5;
+		float b = (sin(seconds * 0.7) + 1.0) * 0.5;
+		this->getGraphics()->ClearBuffer(r, g, b);
+		this->getGraphics()->EndFrame();
 	}
 }
 
-LRESULT CALLBACK GameWindow::handleWindowsMessage(HWND windowHandler, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK GameWindow::customWindowsProc(HWND windowHandler, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
 	{
-	case WM_CLOSE: // Same behaviour as WM_QUIT
-	case WM_QUIT:
-	{
-		// TODO: Perform safe shutdown procedure. Close down drivers
-		// TODO: Discuss if we need to track if they ever shut the game down
+	case WM_CLOSE:
+		PostQuitMessage(69);
+		break;
 	}
-	break;
-	case WM_DESTROY:
-	{
-		PostQuitMessage(0);
-		return 0;
-	}
-	break;
-	}
-
 	return DefWindowProc(windowHandler, msg, wParam, lParam);
 }
 
-RenderingDeviceD3D* GameWindow::getRenderingDevice()
+RootexGraphics* GameWindow::getGraphics()
 {
-	return m_GraphicsHandler.get();
+	return m_RootexGraphics;
 }
 
-GameWindow::GameWindow(int xOffset, int yOffset, int width, int height, const String& title)
+GameWindow::GameWindow(int xOffset, int yOffset, int width, int height)
 {
 	WNDCLASSEX windowClass = { 0 };
 	LPCSTR className = "Game";
 	HINSTANCE hInstance = GetModuleHandle(0);
 	windowClass.cbSize = sizeof(windowClass);
 	windowClass.style = CS_OWNDC;
-	windowClass.lpfnWndProc = handleWindowsMessage;
+	windowClass.lpfnWndProc = customWindowsProc;
 	windowClass.cbWndExtra = 0;
 	windowClass.cbClsExtra = 0;
 	windowClass.hInstance = hInstance;
@@ -71,20 +69,22 @@ GameWindow::GameWindow(int xOffset, int yOffset, int width, int height, const St
 	RegisterClassEx(&windowClass);
 
 	PANIC(title == "", "Window title was read empty, using empty title");
+
 	HWND windowHandler = CreateWindowEx(
 	    0, className,
-	    title.c_str(),
+	    "OH NOOOO",
 	    WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
-	    xOffset, yOffset, width, height,
+	    100, 200, 640, 480,
 	    nullptr, nullptr,
 	    hInstance, nullptr);
-
 	ShowWindow(windowHandler, SW_SHOW);
 
-	m_GraphicsHandler = std::make_unique<RenderingDeviceD3D>(windowHandler);
-	PANIC(m_GraphicsHandler == nullptr, "Graphics could not be instantiated. Low memory.");
+	m_RootexGraphics = new RootexGraphics(windowHandler);
+
+	start = std::chrono::system_clock::now();
 }
 
 GameWindow::~GameWindow()
 {
+	delete m_RootexGraphics;
 }
