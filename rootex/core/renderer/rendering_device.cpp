@@ -1,9 +1,8 @@
-#include "core/renderer/rendering_device.h"
+#include <core/renderer/d3d11graphics.h>
 
-RenderingDeviceD3D::RenderingDeviceD3D(HWND windowHandler)
-    : m_Context(nullptr)
-    , m_Device(nullptr)
-    , m_SwapChain(nullptr)
+#pragma comment(lib, "d3d11.lib")
+
+RootexGraphics::RootexGraphics(HWND windowHandler)
 {
 	DXGI_SWAP_CHAIN_DESC descriptor = { 0 };
 	descriptor.BufferDesc.Width = 0;
@@ -31,24 +30,40 @@ RenderingDeviceD3D::RenderingDeviceD3D(HWND windowHandler)
 	    0,
 	    D3D11_SDK_VERSION,
 	    &descriptor,
-	    &m_SwapChain,
-	    &m_Device,
+	    &pSwapChain,
+	    &pDevice,
 	    nullptr,
-	    &m_Context
+	    &pContext
 	);
+	ID3D11Resource* pBackBuffer = nullptr;
+	pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), reinterpret_cast<void**>(&pBackBuffer));
+	pDevice->CreateRenderTargetView(
+	    pBackBuffer,
+	    nullptr,
+	    &pTarget
+	);
+	pBackBuffer->Release();
 }
 
-RenderingDeviceD3D::~RenderingDeviceD3D()
+RootexGraphics::~RootexGraphics()
 {
-	if (m_Context != nullptr)
-		m_Context->Release();
-	if (m_SwapChain != nullptr)
-		m_SwapChain->Release();
-	if (m_Device != nullptr)
-		m_Device->Release();
+	if (pTarget != nullptr)
+		pTarget->Release();
+	if (pContext != nullptr)
+		pContext->Release();
+	if (pSwapChain != nullptr)
+		pSwapChain->Release();
+	if (pDevice != nullptr)
+		pDevice->Release();
 }
 
-void RenderingDeviceD3D::endFrame()
+void RootexGraphics::EndFrame()
 {
-	m_SwapChain->Present(1u, 0);
+	pSwapChain->Present(1u, 0);
+}
+
+void RootexGraphics::ClearBuffer(float r, float g, float b)
+{
+	const float color[] = { r, g, b, 1.0f };
+	pContext->ClearRenderTargetView(pTarget, color);
 }

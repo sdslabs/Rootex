@@ -1,3 +1,4 @@
+/*
 #include "common/common.h"
 
 #include "core/audio/audio_manager.h"
@@ -32,5 +33,16 @@ int main()
 	delete gameWindow;
 
 	ResourceDataReserve::clear();
+	return ret;
+}
+*/
+
+#include <core/renderer/window.h>
+#include <iostream>
+int main()
+{
+	GameWindow* m_Window = new GameWindow(100, 200, 640, 480);
+	int ret = m_Window->gameLoop();
+	delete m_Window;
 	return ret;
 }
