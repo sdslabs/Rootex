@@ -35,26 +35,13 @@ RootexGraphics::RootexGraphics(HWND windowHandler)
 	    nullptr,
 	    &pContext
 	);
-	ID3D11Resource* pBackBuffer = nullptr;
-	pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), reinterpret_cast<void**>(&pBackBuffer));
+	Microsoft::WRL::ComPtr<ID3D11Resource> pBackBuffer = nullptr;
+	pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), &pBackBuffer);
 	pDevice->CreateRenderTargetView(
-	    pBackBuffer,
+	    pBackBuffer.Get(),
 	    nullptr,
 	    &pTarget
 	);
-	pBackBuffer->Release();
-}
-
-RootexGraphics::~RootexGraphics()
-{
-	if (pTarget != nullptr)
-		pTarget->Release();
-	if (pContext != nullptr)
-		pContext->Release();
-	if (pSwapChain != nullptr)
-		pSwapChain->Release();
-	if (pDevice != nullptr)
-		pDevice->Release();
 }
 
 void RootexGraphics::EndFrame()
@@ -65,5 +52,5 @@ void RootexGraphics::EndFrame()
 void RootexGraphics::ClearBuffer(float r, float g, float b)
 {
 	const float color[] = { r, g, b, 1.0f };
-	pContext->ClearRenderTargetView(pTarget, color);
+	pContext->ClearRenderTargetView(pTarget.Get(), color);
 }
