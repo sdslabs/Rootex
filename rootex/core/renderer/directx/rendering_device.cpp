@@ -68,15 +68,22 @@ void RootexGraphics::ClearBuffer(float r, float g, float b)
 	pContext->ClearRenderTargetView(pTarget.Get(), color);
 }
 void RootexGraphics::DrawTestTriangle()
-{ 
+{
 	struct Vertex
 	{
-		float x, y;
+		struct
+		{
+			float x, y;
+		} pos;
+		struct
+		{
+			unsigned char r, g, b, a;
+		} color;
 	};
 	const Vertex vertices[] = {
-		{ 0.0f, 0.4f },
-		{ 0.7f, 0.5f },
-		{ -0.2f, -0.2f }
+		{ 0.0f, 0.4f, 255, 0, 0, 0 },
+		{ 0.7f, 0.5f, 0, 255, 0, 0 },
+		{ -0.2f, -0.2f, 0, 0, 255, 0 }
 	};
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pVertexBuffer;
 	D3D11_BUFFER_DESC desc = { 0 };
@@ -103,7 +110,6 @@ void RootexGraphics::DrawTestTriangle()
 	pDevice->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader);
 	pContext->PSSetShader(pPixelShader.Get(), nullptr, 0u);
 
-	
 	//load vertex shader
 	Microsoft::WRL::ComPtr<ID3D11VertexShader> pVertexShader;
 	D3DReadFileToBlob(L"VertexShader.cso", &pBlob);
@@ -112,16 +118,15 @@ void RootexGraphics::DrawTestTriangle()
 
 	//inout layout 2d
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> pInputLayout;
-	const D3D11_INPUT_ELEMENT_DESC ied[] = 
-	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+	const D3D11_INPUT_ELEMENT_DESC ied[] = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, 8u, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 	pDevice->CreateInputLayout(
 	    ied, (UINT)std::size(ied),
 	    pBlob->GetBufferPointer(),
 	    pBlob->GetBufferSize(),
-		&pInputLayout
-	);
+	    &pInputLayout);
 
 	//bind vertex layout
 	pContext->IASetInputLayout(pInputLayout.Get());
@@ -141,6 +146,5 @@ void RootexGraphics::DrawTestTriangle()
 	vp.TopLeftY = 0;
 	pContext->RSSetViewports(1u, &vp);
 
-	pContext->Draw( (UINT)std::size(vertices), 0u );
-	
+	pContext->Draw((UINT)std::size(vertices), 0u);
 }
