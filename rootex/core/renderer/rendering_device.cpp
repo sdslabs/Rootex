@@ -53,7 +53,7 @@ void RootexGraphics::ClearBuffer(float r, float g, float b)
 	const float color[] = { r, g, b, 1.0f };
 	pContext->ClearRenderTargetView(pTarget.Get(), color);
 }
-void RootexGraphics::DrawTestTriangle()
+void RootexGraphics::DrawTestTriangle(float angle)
 {
 	struct Vertex
 	{
@@ -113,6 +113,35 @@ void RootexGraphics::DrawTestTriangle()
 
 	pDevice->CreateBuffer(&ibd, &isd, &pIndexBuffer);
 	pContext->IASetIndexBuffer(pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0u);
+
+	struct ConstantBuffer
+	{
+		struct
+		{
+			float element[4][4];
+		} transformation;
+	};
+
+	//constant buffer(rot matrix) used in vertex shader
+	const ConstantBuffer cb = {
+		{ cos(angle), sin(angle), 0.0f, 0.0f,
+		    -sin(angle), cos(angle), 0.0f, 0.0f,
+		    0.0f, 0.0f, 1.0f, 0.0f,
+		    0.0f, 0.0f, 0.0f, 1.0f }
+	};
+	Microsoft::WRL::ComPtr<ID3D11Buffer> pConstantBuffer;
+	D3D11_BUFFER_DESC cbd = { 0 };
+	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	cbd.Usage = D3D11_USAGE_DYNAMIC;
+	cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	cbd.MiscFlags = 0u;
+	cbd.ByteWidth = sizeof(cb);
+	cbd.StructureByteStride = 0u;
+	D3D11_SUBRESOURCE_DATA csd = { 0 };
+	csd.pSysMem = &cb;
+
+	pDevice->CreateBuffer(&cbd, &csd, &pConstantBuffer);
+	pContext->VSSetConstantBuffers(0u, 1u, pConstantBuffer.GetAddressOf());
 
 	Microsoft::WRL::ComPtr<ID3DBlob> pBlob;
 
