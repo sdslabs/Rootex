@@ -124,10 +124,12 @@ void RootexGraphics::DrawTestTriangle(float angle)
 
 	//constant buffer(rot matrix) used in vertex shader
 	const ConstantBuffer cb = {
-		{ cos(angle), sin(angle), 0.0f, 0.0f,
-		    -sin(angle), cos(angle), 0.0f, 0.0f,
+		{ 
+			(3.0f/4.0f) * cos(angle), sin(angle), 0.0f, 0.0f,
+		    (3.0f/4.0f) * -sin(angle), cos(angle), 0.0f, 0.0f,
 		    0.0f, 0.0f, 1.0f, 0.0f,
-		    0.0f, 0.0f, 0.0f, 1.0f }
+		    0.0f, 0.0f, 0.0f, 1.0f 
+		}
 	};
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pConstantBuffer;
 	D3D11_BUFFER_DESC cbd = { 0 };
