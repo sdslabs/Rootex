@@ -20,6 +20,6 @@ public:
 	~RootexGraphics() = default;
 
 	void ClearBuffer(float r, float g, float b);
-	void DrawTestTriangle();
+	void DrawTestTriangle(float angle);
 	void EndFrame();
 };
