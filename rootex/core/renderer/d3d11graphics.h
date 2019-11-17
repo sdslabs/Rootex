@@ -1,6 +1,9 @@
 #pragma once
 #include <d3d11.h>
 #include <wrl.h>
+#include <d3dcompiler.h>
+#include <array>
+#include <iostream>
 
 class RootexGraphics
 {
@@ -17,5 +20,6 @@ public:
 	~RootexGraphics() = default;
 
 	void ClearBuffer(float r, float g, float b);
+	void DrawTestTriangle();
 	void EndFrame();
 };
