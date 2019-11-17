@@ -21,7 +21,7 @@ int GameWindow::gameLoop()
 	{
 		if (const std::optional<int> ecode = GameWindow::ProcessMessages())
 			return *ecode;
-		this->getGraphics()->EndFrame();
+		//this->getGraphics()->EndFrame();
 
 		//The color change effect ->
 		std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - start;
@@ -30,6 +30,8 @@ int GameWindow::gameLoop()
 		float g = (sin(seconds * 0.3) + 1.0) * 0.5;
 		float b = (sin(seconds * 0.7) + 1.0) * 0.5;
 		this->getGraphics()->ClearBuffer(r, g, b);
+
+		this->getGraphics()->DrawTestTriangle();
 		this->getGraphics()->EndFrame();
 	}
 }
