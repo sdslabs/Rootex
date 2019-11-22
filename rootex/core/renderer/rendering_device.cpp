@@ -35,10 +35,10 @@ RootexGraphics::RootexGraphics(HWND windowHandler)
 	    &pDevice,
 	    nullptr,
 	    &pContext);
-	Microsoft::WRL::ComPtr<ID3D11Resource> pBackBuffer = nullptr;
-	pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), &pBackBuffer);
+	ID3D11Resource* pBackBuffer = nullptr;
+	pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), reinterpret_cast<void **>(&pBackBuffer));
 	pDevice->CreateRenderTargetView(
-	    pBackBuffer.Get(),
+	    pBackBuffer,
 	    nullptr,
 	    &pTarget);
 }
@@ -48,10 +48,18 @@ void RootexGraphics::EndFrame()
 	pSwapChain->Present(1u, 0);
 }
 
+RootexGraphics::~RootexGraphics()
+{
+	SafeRelease(&pDevice);
+	SafeRelease(&pSwapChain);
+	SafeRelease(&pContext);
+	SafeRelease(&pTarget);
+}
+
 void RootexGraphics::ClearBuffer(float r, float g, float b)
 {
 	const float color[] = { r, g, b, 1.0f };
-	pContext->ClearRenderTargetView(pTarget.Get(), color);
+	pContext->ClearRenderTargetView(pTarget, color);
 }
 void RootexGraphics::DrawTestTriangle(float angle)
 {
@@ -75,7 +83,7 @@ void RootexGraphics::DrawTestTriangle(float angle)
 		{ 0.0f, -0.8f, 0, 0, 255, 0 }
 	};
 
-	Microsoft::WRL::ComPtr<ID3D11Buffer> pVertexBuffer;
+	ID3D11Buffer* pVertexBuffer = nullptr;
 	D3D11_BUFFER_DESC vbd = { 0 };
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vbd.Usage = D3D11_USAGE_DEFAULT;
@@ -91,7 +99,9 @@ void RootexGraphics::DrawTestTriangle(float angle)
 	pDevice->CreateBuffer(&vbd, &vsd, &pVertexBuffer);
 	const UINT stride = sizeof(Vertex);
 	const UINT offset = 0u;
-	pContext->IASetVertexBuffers(0u, 1u, pVertexBuffer.GetAddressOf(), &stride, &offset);
+	pContext->IASetVertexBuffers(0u, 1u, &pVertexBuffer, &stride, &offset);
+
+	SafeRelease(&pVertexBuffer);
 
 	//create and bind index buffer
 	const unsigned short indices[] = {
@@ -100,7 +110,7 @@ void RootexGraphics::DrawTestTriangle(float angle)
 		0,4,1,
 		2,1,5,
 	};
-	Microsoft::WRL::ComPtr<ID3D11Buffer> pIndexBuffer;
+	ID3D11Buffer* pIndexBuffer = nullptr;
 	D3D11_BUFFER_DESC ibd = { 0 };
 	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	ibd.Usage = D3D11_USAGE_DEFAULT;
@@ -112,7 +122,9 @@ void RootexGraphics::DrawTestTriangle(float angle)
 	isd.pSysMem = indices;
 
 	pDevice->CreateBuffer(&ibd, &isd, &pIndexBuffer);
-	pContext->IASetIndexBuffer(pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0u);
+	pContext->IASetIndexBuffer(pIndexBuffer, DXGI_FORMAT_R16_UINT, 0u);
+
+	SafeRelease(&pIndexBuffer);
 
 	struct ConstantBuffer
 	{
@@ -128,7 +140,7 @@ void RootexGraphics::DrawTestTriangle(float angle)
 			)
 		}
 	};
-	Microsoft::WRL::ComPtr<ID3D11Buffer> pConstantBuffer;
+	ID3D11Buffer* pConstantBuffer = nullptr;
 	D3D11_BUFFER_DESC cbd = { 0 };
 	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	cbd.Usage = D3D11_USAGE_DYNAMIC;
@@ -140,24 +152,31 @@ void RootexGraphics::DrawTestTriangle(float angle)
 	csd.pSysMem = &cb;
 
 	pDevice->CreateBuffer(&cbd, &csd, &pConstantBuffer);
-	pContext->VSSetConstantBuffers(0u, 1u, pConstantBuffer.GetAddressOf());
+	pContext->VSSetConstantBuffers(0u, 1u, &pConstantBuffer);
 
-	Microsoft::WRL::ComPtr<ID3DBlob> pBlob;
+	SafeRelease(&pConstantBuffer);
+
+	ID3DBlob* pBlob = nullptr;
 
 	//load pixel shader
-	Microsoft::WRL::ComPtr<ID3D11PixelShader> pPixelShader;
+	ID3D11PixelShader* pPixelShader = nullptr;
 	D3DReadFileToBlob(L"PixelShader.cso", &pBlob);
 	pDevice->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader);
-	pContext->PSSetShader(pPixelShader.Get(), nullptr, 0u);
+	pContext->PSSetShader(pPixelShader, nullptr, 0u);
+
+	SafeRelease(&pBlob);
+	SafeRelease(&pPixelShader);
 
 	//load vertex shader
-	Microsoft::WRL::ComPtr<ID3D11VertexShader> pVertexShader;
+	ID3D11VertexShader* pVertexShader = nullptr;
 	D3DReadFileToBlob(L"VertexShader.cso", &pBlob);
 	pDevice->CreateVertexShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pVertexShader);
-	pContext->VSSetShader(pVertexShader.Get(), nullptr, 0u);
+	pContext->VSSetShader(pVertexShader, nullptr, 0u);
+
+	SafeRelease(&pVertexShader);
 
 	//inout layout 2d
-	Microsoft::WRL::ComPtr<ID3D11InputLayout> pInputLayout;
+	ID3D11InputLayout* pInputLayout = nullptr;
 	const D3D11_INPUT_ELEMENT_DESC ied[] = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "COLOR", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, 8u, D3D11_INPUT_PER_VERTEX_DATA, 0 }
@@ -168,10 +187,15 @@ void RootexGraphics::DrawTestTriangle(float angle)
 	    pBlob->GetBufferSize(),
 	    &pInputLayout);
 
-	//bind vertex layout
-	pContext->IASetInputLayout(pInputLayout.Get());
+	
+	SafeRelease(&pBlob);
 
-	pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), nullptr);
+	//bind vertex layout
+	pContext->IASetInputLayout(pInputLayout);
+
+	SafeRelease(&pInputLayout);
+
+	pContext->OMSetRenderTargets(1u, &pTarget, nullptr);
 
 	//set topology
 	pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -187,4 +211,15 @@ void RootexGraphics::DrawTestTriangle(float angle)
 	pContext->RSSetViewports(1u, &vp);
 
 	pContext->DrawIndexed((UINT)std::size(indices), 0u, 0u);
+}
+
+
+template <class T>
+void SafeRelease(T** ppT)
+{
+	if (*ppT)
+	{
+		(*ppT)->Release();
+		*ppT = NULL;
+	}
 }
