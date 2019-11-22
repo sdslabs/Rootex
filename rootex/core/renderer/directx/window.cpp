@@ -31,7 +31,7 @@ int GameWindow::gameLoop()
 		float b = (sin(seconds * 0.7) + 1.0) * 0.5;
 		this->getGraphics()->ClearBuffer(r, g, b);
 
-		this->getGraphics()->DrawTestTriangle(seconds);
+		this->getGraphics()->DrawTestCube(seconds);
 		this->getGraphics()->EndFrame();
 	}
 }
