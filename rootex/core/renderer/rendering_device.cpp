@@ -69,20 +69,16 @@ void RootexGraphics::DrawTestCube(float angle)
 		{
 			float x, y, z;
 		} pos;
-		struct
-		{
-			unsigned char r, g, b, a;
-		} color;
 	};
 	const Vertex vertices[] = {
-		{ -1.0f, -1.0f, -1.0f, 255, 0, 0},
-		{ 1.0f, -1.0f, -1.0f, 0, 255, 0 },
-		{ -1.0f, 1.0f, -1.0f, 0, 0, 255 },
-		{ 1.0f, 1.0f, -1.0f, 255, 255, 0 },
-		{ -1.0f, -1.0f, 1.0f, 255, 0, 255 },
-		{ 1.0f, -1.0f, 1.0f, 0, 255, 255 },
-		{ -1.0f,1.0f, 1.0f, 0, 0, 0 },
-		{ 1.0f, 1.0f, 1.0f, 255, 255, 255 },
+		{ -1.0f, -1.0f, -1.0f },
+		{ 1.0f, -1.0f, -1.0f},
+		{ -1.0f, 1.0f, -1.0f },
+		{ 1.0f, 1.0f, -1.0f},
+		{ -1.0f, -1.0f, 1.0f},
+		{ 1.0f, -1.0f, 1.0f},
+		{ -1.0f, 1.0f, 1.0f},
+		{ 1.0f, 1.0f, 1.0f},
 	};
 
 	ID3D11Buffer* pVertexBuffer = nullptr;
@@ -107,18 +103,18 @@ void RootexGraphics::DrawTestCube(float angle)
 
 	//create and bind index buffer
 	const unsigned short indices[] = {
-		0,2,1,
-		2,3,1,
-		1,3,5,
-		3,7,5,
-		2,6,3,
-		3,6,7,
-		4,5,7,
-		4,7,6,
-		0,4,2,
-		2,4,6,
-		0,1,4,
-		1,5,4
+		0, 2, 1,
+		2, 3, 1,
+		1, 3, 5,
+		3, 7, 5,
+		2, 6, 3,
+		3, 6, 7,
+		4, 5, 7,
+		4, 7, 6,
+		0, 4, 2,
+		2, 4, 6,
+		0, 1, 4,
+		1, 5, 4
 	};
 	ID3D11Buffer* pIndexBuffer = nullptr;
 	D3D11_BUFFER_DESC ibd = { 0 };
@@ -144,13 +140,7 @@ void RootexGraphics::DrawTestCube(float angle)
 	//constant buffer(rot matrix) used in vertex shader
 	const ConstantBuffer cb = {
 		{ DirectX::XMMatrixTranspose(
-		    DirectX::XMMatrixRotationZ(angle) * 
-		    DirectX::XMMatrixRotationY(angle/2) * 
-		    DirectX::XMMatrixRotationX(angle/3) * 
-			DirectX::XMMatrixTranslation(0.0f, 0.0f, 4.0f) *
-			DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f/4.0f, 0.5f, 10.0f)
-		) 
-		}
+		    DirectX::XMMatrixRotationZ(angle) * DirectX::XMMatrixRotationY(angle / 2) * DirectX::XMMatrixRotationX(angle / 3) * DirectX::XMMatrixTranslation(0.0f, 0.0f, 4.0f) * DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 10.0f)) }
 	};
 	ID3D11Buffer* pConstantBuffer = nullptr;
 	D3D11_BUFFER_DESC cbd = { 0 };
@@ -167,6 +157,45 @@ void RootexGraphics::DrawTestCube(float angle)
 	pContext->VSSetConstantBuffers(0u, 1u, &pConstantBuffer);
 
 	SafeRelease(&pConstantBuffer);
+
+	struct ConstantBuffer2
+	{
+		struct
+		{
+			float r;
+			float g;
+			float b;
+			float a;
+		} face_colors[6];
+	};
+
+	const ConstantBuffer2 cb2 = 
+	{
+		{ 
+			{ 1.0f, 0.0f, 0.0f },
+		    { 0.0f, 1.0f, 0.0f },
+		    { 0.0f, 0.0f, 1.0f },
+		    { 1.0f, 1.0f, 0.0f },
+		    { 1.0f, 0.0f, 1.0f },
+		    { 0.0f, 1.0f, 1.0f } 
+		}
+	};
+
+	ID3D11Buffer* pConstantBuffer2 = nullptr;
+	D3D11_BUFFER_DESC cbd2 = { 0 };
+	cbd2.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	cbd2.Usage = D3D11_USAGE_DYNAMIC;
+	cbd2.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	cbd2.MiscFlags = 0u;
+	cbd2.ByteWidth = sizeof(cb2);
+	cbd2.StructureByteStride = 0u;
+	D3D11_SUBRESOURCE_DATA csd2 = { 0 };
+	csd2.pSysMem = &cb2;
+
+	pDevice->CreateBuffer(&cbd2, &csd2, &pConstantBuffer2);
+	pContext->PSSetConstantBuffers(0u, 1u, &pConstantBuffer2);
+
+	SafeRelease(&pConstantBuffer2);
 
 	ID3DBlob* pBlob = nullptr;
 
@@ -191,7 +220,7 @@ void RootexGraphics::DrawTestCube(float angle)
 	ID3D11InputLayout* pInputLayout = nullptr;
 	const D3D11_INPUT_ELEMENT_DESC ied[] = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "COLOR", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, 12u, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		//{ "COLOR", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, 12u, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 	pDevice->CreateInputLayout(
 	    ied, (UINT)std::size(ied),
