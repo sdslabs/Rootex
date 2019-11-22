@@ -36,7 +36,7 @@ RootexGraphics::RootexGraphics(HWND windowHandler)
 	    nullptr,
 	    &pContext);
 	ID3D11Resource* pBackBuffer = nullptr;
-	pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), reinterpret_cast<void **>(&pBackBuffer));
+	pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), reinterpret_cast<void**>(&pBackBuffer));
 	pDevice->CreateRenderTargetView(
 	    pBackBuffer,
 	    nullptr,
@@ -61,13 +61,13 @@ void RootexGraphics::ClearBuffer(float r, float g, float b)
 	const float color[] = { r, g, b, 1.0f };
 	pContext->ClearRenderTargetView(pTarget, color);
 }
-void RootexGraphics::DrawTestTriangle(float angle)
+void RootexGraphics::DrawTestCube(float angle)
 {
 	struct Vertex
 	{
 		struct
 		{
-			float x, y;
+			float x, y, z;
 		} pos;
 		struct
 		{
@@ -75,12 +75,14 @@ void RootexGraphics::DrawTestTriangle(float angle)
 		} color;
 	};
 	const Vertex vertices[] = {
-		{ 0.0f, 0.5f, 255, 0, 0, 0 },
-		{ 0.5f, -0.5f, 0, 255, 0, 0 },
-		{ -0.5f, -0.5f, 0, 0, 255, 0 },
-		{ -0.3f, 0.3f, 255, 0, 0, 0 },
-		{ 0.3f, 0.3f, 0, 255, 0, 0 },
-		{ 0.0f, -0.8f, 0, 0, 255, 0 }
+		{ -1.0f, -1.0f, -1.0f, 255, 0, 0},
+		{ 1.0f, -1.0f, -1.0f, 0, 255, 0 },
+		{ -1.0f, 1.0f, -1.0f, 0, 0, 255 },
+		{ 1.0f, 1.0f, -1.0f, 255, 255, 0 },
+		{ -1.0f, -1.0f, 1.0f, 255, 0, 255 },
+		{ 1.0f, -1.0f, 1.0f, 0, 255, 255 },
+		{ -1.0f,1.0f, 1.0f, 0, 0, 0 },
+		{ 1.0f, 1.0f, 1.0f, 255, 255, 255 },
 	};
 
 	ID3D11Buffer* pVertexBuffer = nullptr;
@@ -105,10 +107,18 @@ void RootexGraphics::DrawTestTriangle(float angle)
 
 	//create and bind index buffer
 	const unsigned short indices[] = {
-		0,1,2,
-		0,2,3,
-		0,4,1,
-		2,1,5,
+		0,2,1,
+		2,3,1,
+		1,3,5,
+		3,7,5,
+		2,6,3,
+		3,6,7,
+		4,5,7,
+		4,7,6,
+		0,4,2,
+		2,4,6,
+		0,1,4,
+		1,5,4
 	};
 	ID3D11Buffer* pIndexBuffer = nullptr;
 	D3D11_BUFFER_DESC ibd = { 0 };
@@ -133,11 +143,13 @@ void RootexGraphics::DrawTestTriangle(float angle)
 
 	//constant buffer(rot matrix) used in vertex shader
 	const ConstantBuffer cb = {
-		{ 
-			DirectX::XMMatrixTranspose(
-				DirectX::XMMatrixRotationZ(angle) *
-				DirectX::XMMatrixScaling(3.0f/4.0f, 1.0f, 1.0f)
-			)
+		{ DirectX::XMMatrixTranspose(
+		    DirectX::XMMatrixRotationZ(angle) * 
+		    DirectX::XMMatrixRotationY(angle/2) * 
+		    DirectX::XMMatrixRotationX(angle/3) * 
+			DirectX::XMMatrixTranslation(0.0f, 0.0f, 4.0f) *
+			DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f/4.0f, 0.5f, 10.0f)
+		) 
 		}
 	};
 	ID3D11Buffer* pConstantBuffer = nullptr;
@@ -178,8 +190,8 @@ void RootexGraphics::DrawTestTriangle(float angle)
 	//inout layout 2d
 	ID3D11InputLayout* pInputLayout = nullptr;
 	const D3D11_INPUT_ELEMENT_DESC ied[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "COLOR", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, 8u, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, 12u, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 	pDevice->CreateInputLayout(
 	    ied, (UINT)std::size(ied),
@@ -187,7 +199,6 @@ void RootexGraphics::DrawTestTriangle(float angle)
 	    pBlob->GetBufferSize(),
 	    &pInputLayout);
 
-	
 	SafeRelease(&pBlob);
 
 	//bind vertex layout
@@ -212,7 +223,6 @@ void RootexGraphics::DrawTestTriangle(float angle)
 
 	pContext->DrawIndexed((UINT)std::size(indices), 0u, 0u);
 }
-
 
 template <class T>
 void SafeRelease(T** ppT)

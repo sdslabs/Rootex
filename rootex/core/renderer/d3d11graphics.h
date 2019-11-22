@@ -21,7 +21,7 @@ public:
 	~RootexGraphics();
 
 	void ClearBuffer(float r, float g, float b);
-	void DrawTestTriangle(float angle);
+	void DrawTestCube(float angle);
 	void EndFrame();
 };
 template <class T>
