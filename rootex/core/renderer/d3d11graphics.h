@@ -9,18 +9,20 @@
 class RootexGraphics
 {
 private:
-	Microsoft::WRL::ComPtr<ID3D11Device> pDevice;
-	Microsoft::WRL::ComPtr<IDXGISwapChain> pSwapChain;
-	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pContext;
-	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTarget;
+	ID3D11Device* pDevice = nullptr;
+	IDXGISwapChain* pSwapChain = nullptr;
+	ID3D11DeviceContext* pContext = nullptr;
+	ID3D11RenderTargetView* pTarget = nullptr;
 
 public:
 	RootexGraphics( HWND windowHandler );
 	RootexGraphics(const RootexGraphics&) = delete;
 	RootexGraphics& operator=(const RootexGraphics&) = delete;  
-	~RootexGraphics() = default;
+	~RootexGraphics();
 
 	void ClearBuffer(float r, float g, float b);
 	void DrawTestTriangle(float angle);
 	void EndFrame();
 };
+template <class T>
+void SafeRelease(T** ppT);
