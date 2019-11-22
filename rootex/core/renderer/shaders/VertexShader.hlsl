@@ -8,10 +8,10 @@ cbuffer CBuf {
 	matrix transform;
 };
 
-VSOut main(float2 pos: POSITION, float3 color: COLOR)
+VSOut main(float3 pos: POSITION, float3 color: COLOR)
 {
 	VSOut output;
-	output.pos = mul(float4(pos.x, pos.y, 0, 1.0f), transform);
+	output.pos = mul(float4(pos, 1.0f), transform);
 	output.color = color;
 	return output;
 }
