@@ -4,6 +4,7 @@
 #include <d3dcompiler.h>
 #include <array>
 #include <iostream>
+#include <DirectXMath.h>
 
 class RootexGraphics
 {
