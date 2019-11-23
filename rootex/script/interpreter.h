@@ -1,23 +1,25 @@
 #pragma once
 
 #include "common/common.h"
-#include "core/resource.h"
+#include "core/resource_file.h"
 
 #include "vendor/Lua/src/lua.hpp"
 #include "vendor/LuaBridge/Source/LuaBridge/LuaBridge.h"
 
-class Interpreter
+typedef luabridge::LuaRef LuaVariable;
+
+class LuaInterpreter
 {
 	lua_State* m_LuaState;
 
 public:
-	Interpreter();
-	~Interpreter();
+	LuaInterpreter();
+	~LuaInterpreter();
 
-	void loadExecuteScript(Script* script);
-	void loadExecuteScript(const std::string& script);
+	void loadExecuteScript(Ref<ResourceFile> script);
+	void loadExecuteScript(const String& script);
 
-	luabridge::LuaRef getGlobal(const std::string& name);
+	LuaVariable getGlobal(const String& name);
 
 protected:
 };

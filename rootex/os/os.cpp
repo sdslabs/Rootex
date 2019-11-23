@@ -1,85 +1,147 @@
 #include "os.h"
 
 #include <filesystem>
-#include <sstream>
+
 #include "common/common.h"
 
-OS::OS()
+std::filesystem::path OS::s_AssetsDirectory;
+std::filesystem::path OS::s_EngineDirectory;
+std::filesystem::path OS::s_GameDirectory;
+
+bool OS::initialize()
 {
-	std::filesystem::path path = std::filesystem::current_path();
-	while (path.stem() != BUILD_SUBDIRECTORY)
+	try
 	{
-		path = path.parent_path();
+		std::filesystem::path path = std::filesystem::current_path();
+		while (true)
+		{
+			if (std::filesystem::exists(path / ROOT_MARKER_FILENAME))
+			{
+				break;
+			}
+			path = path.parent_path();
+		}
+
+		s_GameDirectory = path / GAME_DIRECTORY;
+		s_AssetsDirectory = path / GAME_DIRECTORY / ASSETS_DIRECTORY;
+		s_EngineDirectory = path / ENGINE_DIRECTORY;
 	}
-	path = path.parent_path();
+	catch (std::exception e)
+	{
+		ERR("OS: Failed to initialize OS: " + String(e.what()));
+		return false;
+	}
 
-	m_GameDirectory = path / "game";
-	m_AssetsDirectory = path / "game" / "assets";
-	m_EngineDirectory = path / "rootex";
+	return true;
 }
 
-OS::~OS()
+String OS::getBuildDate()
 {
+	return String(__DATE__);
 }
 
-OS OS::getSingleton()
+String OS::getBuildTime()
 {
-	static OS singleton;
-	return singleton;
+	return String(__TIME__);
 }
 
-std::string OS::loadFileContents(DirectoryShortcut directory, std::string stringPath)
+FileBuffer OS::loadFileContents(DirectoryShortcut directory, String stringPath)
 {
 	std::filesystem::path path = getAbsolutePath(directory, stringPath);
 
 	if (!exists(path.generic_string()))
 	{
-		ERR("File does not exist: " + path.generic_string());
-		return "";
+		ERR("OS: File IO error: " + path.generic_string() + " does not exist");
+		return FileBuffer();
 	}
 
 	std::ifstream stream;
 	try
 	{
-		stream.open(path.generic_string(), std::ios::in);
+		stream.open(path.generic_string(), std::ifstream::ate | std::ios::binary);
 	}
 	catch (std::exception e)
 	{
-		ERR("File IO error: " + e.what());
-		return "";
+		ERR("OS: File IO error: " + e.what());
+		return FileBuffer();
 	}
 
-	std::stringstream fileContents;
-	fileContents << stream.rdbuf();
+	std::ifstream::pos_type pos = stream.tellg();
+	std::vector<char> buffer(pos);
+
+	stream.seekg(0, std::ios_base::beg);
+	stream.read(buffer.data(), pos);
 
 	stream.close();
-	return fileContents.str();
+	return FileBuffer(buffer);
 }
 
-std::filesystem::path OS::getAbsolutePath(DirectoryShortcut directory, std::string stringPath)
+std::filesystem::path OS::getAbsolutePath(DirectoryShortcut directory, String stringPath)
 {
 	std::filesystem::path newPath;
 
 	switch (directory)
 	{
 	case DirectoryShortcut::ASSETS:
-		newPath = m_AssetsDirectory / std::filesystem::path(stringPath);
+		newPath = s_AssetsDirectory / std::filesystem::path(stringPath);
 		break;
 	case DirectoryShortcut::GAME:
-		newPath = m_GameDirectory / std::filesystem::path(stringPath);
+		newPath = s_GameDirectory / std::filesystem::path(stringPath);
 		break;
 	case DirectoryShortcut::ENGINE:
-		newPath = m_EngineDirectory / std::filesystem::path(stringPath);
+		newPath = s_EngineDirectory / std::filesystem::path(stringPath);
 		break;
 	default:
-		ERR("Directory type not found for absolution");
+		ERR("ResourceLoader: Directory type not found for converting path to absolute");
 		break;
 	}
 
 	return newPath;
 }
 
-bool OS::exists(std::string filePath)
+bool OS::exists(String filePath)
 {
 	return std::filesystem::exists(filePath);
+}
+
+FileBuffer::FileBuffer()
+    : m_Buffer()
+{
+}
+
+FileBuffer::FileBuffer(std::vector<char> buffer)
+    : m_Buffer(buffer)
+{
+}
+
+void OS::print(const String& msg)
+{
+	std::cout.clear();
+	std::cout << msg;
+}
+
+void OS::printLine(const String& msg)
+{
+	std::cout.clear();
+	std::cout << msg << std::endl;
+}
+
+void OS::printWarning(const String& warning)
+{
+	std::cout.clear();
+	std::cout << "\033[93m" << warning << "\033[0m" << std::endl;
+}
+
+void OS::printError(const String& error)
+{
+	std::cout.clear();
+	std::cout << "\033[91m" << error << "\033[0m" << std::endl;
+}
+
+void OS::printIf(const bool& expr, const String& error)
+{
+	if (expr)
+	{
+		printError(error);
+	}
 }

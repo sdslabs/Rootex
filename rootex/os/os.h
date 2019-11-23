@@ -1,9 +1,22 @@
 #pragma once
 
-#include <fstream>
 #include <filesystem>
+#include <fstream>
 
-#define BUILD_SUBDIRECTORY "build"
+#include "common/types.h"
+
+#define ROOT_MARKER_FILENAME "rootex.root"
+#define ENGINE_DIRECTORY "rootex"
+#define GAME_DIRECTORY "game"
+#define ASSETS_DIRECTORY "assets"
+
+struct FileBuffer
+{
+	std::vector<char> m_Buffer;
+	
+	FileBuffer();
+	FileBuffer(std::vector<char> buffer);
+};
 
 enum class DirectoryShortcut
 {
@@ -14,18 +27,26 @@ enum class DirectoryShortcut
 
 class OS
 {
-	std::filesystem::path m_GameDirectory;
-	std::filesystem::path m_AssetsDirectory;
-	std::filesystem::path m_EngineDirectory;
+	static std::filesystem::path s_GameDirectory;
+	static std::filesystem::path s_AssetsDirectory;
+	static std::filesystem::path s_EngineDirectory;
 
-	OS();
+	OS() = delete;
 
 public:
-	~OS();
+	~OS() = delete;
 
-	static OS getSingleton();
+	static bool initialize();
+	static String getBuildDate();
+	static String getBuildTime();
 
-	std::string loadFileContents(DirectoryShortcut directory, std::string stringPath);
-	std::filesystem::path getAbsolutePath(DirectoryShortcut directory, std::string stringPath);
-	bool exists(std::string filePath);
+	static FileBuffer loadFileContents(DirectoryShortcut directory, String stringPath);
+	static std::filesystem::path getAbsolutePath(DirectoryShortcut directory, String stringPath);
+	static bool exists(String filePath);
+
+	static void print(const String& msg);
+	static void printLine(const String& msg);
+	static void printWarning(const String& warning);
+	static void printError(const String& error);
+	static void printIf(const bool& expr, const String& error);
 };

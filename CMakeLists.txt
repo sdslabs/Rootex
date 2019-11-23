@@ -1,11 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-
-# Setting output directories
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "Bin")
-
 # Project metadata
 project(Rootex
     LANGUAGES CXX
@@ -13,8 +7,14 @@ project(Rootex
     DESCRIPTION "Rootex Engine"
 )
 
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
 set(ROOTEX_INCLUDES
-    ${CMAKE_CURRENT_LIST_DIR}
+${ROOTEX_INCLUDES}
+${CMAKE_CURRENT_LIST_DIR}
 CACHE INTERNAL "")
 
 add_subdirectory(rootex)

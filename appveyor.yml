@@ -3,6 +3,6 @@ image: Visual Studio 2019
 platform: x64
 configuration: Debug
 install:	
-- ps: .\Setup.bat	
+- ps: .\GenerateCache.bat	
 build_script:
-- ps: cd build | cmake --build .
+- ps: .\Build.bat

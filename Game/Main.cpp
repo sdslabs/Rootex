@@ -1,36 +1,36 @@
-#include <string>
-
 #include "common/common.h"
 
+#include "core/audio/audio_manager.h"
+#include "core/renderer/window.h"
 #include "core/resource_loader.h"
-#include "core/resource_manager.h"
+#include "core/resource_data_reserve.h"
 #include "os/os.h"
 #include "script/interpreter.h"
 
 int main()
 {
-	printLine("Rootex Engine is starting: Build(" + std::string(__DATE__) + "|" + std::string(__TIME__) + ")");
-    
+	OS::initialize();
+	OS::printLine("Rootex Engine is starting: Build(" + OS::getBuildDate() + "|" + OS::getBuildTime() + ")");
+	
 	// Engine starts from build/game/.
-	TextFile* r = ResourceLoader::createFileResource(DirectoryShortcut::ENGINE, "test\\abc.txt"); // So this loads build/game/abc.txt (However the binary exists in build/game/Debug/)
-	printLine(r->getContents());
+	Ref<ResourceFile> r = ResourceLoader::createResourceFile(DirectoryShortcut::ENGINE, "Test File", "test/abc.txt", ResourceFile::Type::TXT); // So this loads build/game/abc.txt (However the binary exists in build/game/Debug/)
+	OS::printLine(r->getText());
 
-	Interpreter inter;
-	
-	while (1)
-	{
-		Script* luaScript = ResourceLoader::createScriptResource(DirectoryShortcut::GAME, "assets\\config\\test.lua");
-		inter.loadExecuteScript(luaScript);
+	Ref<ResourceFile> windowSettings = ResourceLoader::createResourceFile(DirectoryShortcut::GAME, "Window load script", "assets/config/window.lua", ResourceFile::Type::LUA);
+	OS::printLine(windowSettings->getText());
 
-		printLine(std::to_string((int)inter.getGlobal("test")));
-	
-		luabridge::LuaRef window = inter.getGlobal("window");
-		printLine(window["width"]);
-		printLine(window["height"]);
-		printLine(window["type"]);
+	LuaInterpreter inter;
+	inter.loadExecuteScript(windowSettings);
+	LuaVariable window = inter.getGlobal("window");
+	GameWindow* gameWindow = new GameWindow(
+	    window["x"],
+	    window["y"],
+	    window["deltaX"],
+	    window["deltaY"],
+	    window["title"]);
+	int ret = gameWindow->gameLoop();
+	delete gameWindow;
 
-		std::cin.get();
-	}
-	ResourceManager::emptyAll();
-    return 0;
+	ResourceDataReserve::clear();
+	return ret;
 }
