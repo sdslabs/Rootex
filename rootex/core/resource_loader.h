@@ -1,12 +1,13 @@
 #pragma once
 
-#include <string>
-#include "resource.h"
+#include "common/types.h"
+#include "core/resource_file.h"
 #include "os/os.h"
 
-class ResourceLoader
+namespace ResourceLoader
 {
-public:
-	static TextFile* createFileResource(DirectoryShortcut directory, std::string path);
-	static Script* createScriptResource(DirectoryShortcut directory, std::string path);
+	void assign(ResourceFile* file, ResourceData* resource);
+	void loadDataInResourceFile(DirectoryShortcut directory, String& path, ResourceFile* res);
+
+	Ref<ResourceFile> createResourceFile(DirectoryShortcut directory, String name, String path, ResourceFile::Type type);
 };

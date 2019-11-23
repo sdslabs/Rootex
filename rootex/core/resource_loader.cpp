@@ -1,32 +1,30 @@
 #include "resource_loader.h"
 
 #include "common/common.h"
-#include "resource_manager.h"
+#include "resource_data_reserve.h"
 
-TextFile* ResourceLoader::createFileResource(DirectoryShortcut directory, std::string path)
+namespace ResourceLoader
 {
-	if (path == "")
-	{
-		return nullptr;
-	}
-
-	std::string r = OS::getSingleton().loadFileContents(directory, path);
-
-	TextFile* res = new TextFile(path, r);
-
-	return res;
+void assign(ResourceFile* file, ResourceData* resource)
+{
+	file->setResourceData(resource);
 }
 
-Script* ResourceLoader::createScriptResource(DirectoryShortcut directory, std::string path)
+void loadDataInResourceFile(DirectoryShortcut directory, String& path, ResourceFile* res)
 {
-	if (path == "")
-	{
-		return nullptr;
-	}
+	FileBuffer buffer = OS::loadFileContents(directory, path);
+	ResourceData* resData = new ResourceData(buffer.m_Buffer);
 
-	std::string r = OS::getSingleton().loadFileContents(directory, path);
+	resData->setPath(res->getPath());
+	assign(res, resData);
+}
 
-	Script* res = new Script(path, r);
+Ref<ResourceFile> createResourceFile(DirectoryShortcut directory, String name, String path, ResourceFile::Type type)
+{
+	ResourceFile* res = new ResourceFile(name, OS::getAbsolutePath(directory, path).generic_string(), type);
 
-	return res;
+	loadDataInResourceFile(directory, path, res);
+
+	return Ref<ResourceFile>(res);
+}
 }
