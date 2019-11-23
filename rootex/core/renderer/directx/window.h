@@ -2,6 +2,7 @@
 
 #include <Windows.h>
 #include <optional>
+#include <chrono>
 
 #include "common/common.h"
 #include "core/renderer/directx/rendering_device.h"
@@ -19,7 +20,7 @@ private:
 
 public:
 
-	GameWindow(int xOffset, int yOffset, int width, int height);
+	GameWindow(int xOffset, int yOffset, int width, int height, const String& title);
 	GameWindow(const GameWindow&) = delete;
 	GameWindow& operator=(const GameWindow&) = delete;  
 
