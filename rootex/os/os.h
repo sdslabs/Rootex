@@ -36,7 +36,7 @@ class OS
 public:
 	~OS();
 
-	static OS getSingleton();
+	static OS GetSingleton();
 
 	String getBuildDate();
 	String getBuildTime();

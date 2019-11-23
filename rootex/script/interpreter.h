@@ -19,7 +19,7 @@ public:
 	void loadExecuteScript(Ref<LuaScriptResource> script);
 	void loadExecuteScript(const String& script);
 
-	luabridge::LuaRef getGlobal(const String& name);
+	LuaVariable getGlobal(const String& name);
 
 protected:
 };

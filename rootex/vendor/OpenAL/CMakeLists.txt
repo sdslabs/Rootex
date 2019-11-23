@@ -9,7 +9,7 @@ set(ROOTEX_INCLUDES
     ${CMAKE_CURRENT_LIST_DIR}/include/
 CACHE INTERNAL "")
 
-add_library(OpenAL STATIC stub.cpp)
+add_library(OpenAL SHARED stub.cpp)
 
 target_include_directories(OpenAL PUBLIC
     ${OPENAL_INCLUDE_DIR}
