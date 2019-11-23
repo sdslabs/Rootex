@@ -52,7 +52,7 @@ RootexGraphics* GameWindow::getGraphics()
 	return m_RootexGraphics;
 }
 
-GameWindow::GameWindow(int xOffset, int yOffset, int width, int height)
+GameWindow::GameWindow(int xOffset, int yOffset, int width, int height, const String& title)
 {
 	WNDCLASSEX windowClass = { 0 };
 	LPCSTR className = "Game";
@@ -71,9 +71,9 @@ GameWindow::GameWindow(int xOffset, int yOffset, int width, int height)
 	RegisterClassEx(&windowClass);
 	HWND windowHandler = CreateWindowEx(
 	    0, className,
-	    "OH NOOOO",
+	    title.c_str(),
 	    WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
-	    100, 200, 640, 480,
+	    xOffset, yOffset, width, height,
 	    nullptr, nullptr,
 	    hInstance, nullptr);
 	ShowWindow(windowHandler, SW_SHOW);

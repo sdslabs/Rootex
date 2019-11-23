@@ -2,9 +2,10 @@
 
 #include <Windows.h>
 #include <optional>
-
-#include "core/renderer/d3d11graphics.h"
 #include <chrono>
+
+#include "common/common.h"
+#include "core/renderer/d3d11graphics.h"
 
 class GameWindow
 {
@@ -19,7 +20,7 @@ private:
 
 public:
 
-	GameWindow(int xOffset, int yOffset, int width, int height);
+	GameWindow(int xOffset, int yOffset, int width, int height, const String& title);
 	GameWindow(const GameWindow&) = delete;
 	GameWindow& operator=(const GameWindow&) = delete;  
 

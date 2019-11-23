@@ -19,6 +19,42 @@ add_subdirectory(os)
 add_subdirectory(vendor)
 add_subdirectory(script)
 
+# Adding shaders for pre-build compilation
+file(GLOB ShaderFiles
+    ./core/renderer/shaders/*.hlsl
+)
+
+file(GLOB VertexShaderFiles
+    ./core/renderer/shaders/VertexShader.hlsl
+)
+
+file(GLOB PixelShaderFiles
+    ./core/renderer/shaders/PixelShader.hlsl
+)
+
+set(ROOTEX_SOURCES
+    ${ROOTEX_SOURCES}
+    ${ShaderFiles}
+CACHE INTERNAL "")
+
+string(CONCAT ShaderCompileDestination ${PROJECT_BINARY_DIR} "/Game/%\(Filename\).cso")
+
+set_source_files_properties(${ShaderFiles} 
+    PROPERTIES
+        VS_SHADER_MODEL 4.0
+        VS_SHADER_OBJECT_FILE_NAME ${ShaderCompileDestination}
+)
+
+set_source_files_properties(${VertexShaderFiles}
+    PROPERTIES 
+        VS_SHADER_TYPE Vertex
+)
+
+set_source_files_properties(${PixelShaderFiles}
+    PROPERTIES 
+        VS_SHADER_TYPE Pixel
+)
+
 add_library(Rootex STATIC ${ROOTEX_SOURCES})
 
 source_group(TREE "../"
@@ -34,5 +70,5 @@ target_link_libraries(Rootex PUBLIC
     Lua
     LuaBridge
     OpenAL
-	d3d11.lib
+    d3d11.lib
 )

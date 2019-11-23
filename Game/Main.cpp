@@ -1,4 +1,3 @@
-/*
 #include "common/common.h"
 
 #include "core/audio/audio_manager.h"
@@ -29,22 +28,10 @@ int main()
 	    window["deltaX"],
 	    window["deltaY"],
 	    window["title"]);
+
 	int ret = gameWindow->gameLoop();
 	delete gameWindow;
-
 	ResourceDataReserve::clear();
-	return ret;
-}
-*/
 
-#include <core/renderer/window.h>
-#include <iostream>
-#include <filesystem>
-int main()
-{
-	std::cout << std::filesystem::current_path();
-	GameWindow* m_Window = new GameWindow(100, 200, 640, 480);
-	int ret = m_Window->gameLoop();
-	delete m_Window;
 	return ret;
 }
