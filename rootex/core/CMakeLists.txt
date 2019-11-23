@@ -15,3 +15,5 @@ set(ROOTEX_SOURCES
     ${ROOTEX_SOURCES}
     ${CoreSources}
 CACHE INTERNAL "")
+
+add_subdirectory(renderer)

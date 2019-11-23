@@ -19,3 +19,7 @@ CACHE INTERNAL "")
 
 add_subdirectory(rootex)
 add_subdirectory(game)
+
+set_directory_properties(PROPERTIES 
+    VS_STARTUP_PROJECT Game
+)
