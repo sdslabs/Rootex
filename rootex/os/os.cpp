@@ -25,7 +25,7 @@ OS::~OS()
 {
 }
 
-OS OS::getSingleton()
+OS OS::GetSingleton()
 {
 	static OS singleton;
 	return singleton;

@@ -24,9 +24,9 @@ void LuaInterpreter::loadExecuteScript(const String& script)
 	luaL_dostring(m_LuaState, script.c_str());
 }
 
-luabridge::LuaRef LuaInterpreter::getGlobal(const String& name)
+LuaVariable LuaInterpreter::getGlobal(const String& name)
 {
-	luabridge::LuaRef result = luabridge::getGlobal(m_LuaState, name.c_str());
+	LuaVariable result = luabridge::getGlobal(m_LuaState, name.c_str());
 	if (result.isNil())
 	{
 		ERR("Lua variable (" + name + ") was not found");
