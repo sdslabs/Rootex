@@ -16,7 +16,7 @@ public:
 	LuaInterpreter();
 	~LuaInterpreter();
 
-	void loadExecuteScript(Ref<LuaScriptResource> script);
+	void loadExecuteScript(Ref<ResourceFile> script);
 	void loadExecuteScript(const String& script);
 
 	LuaVariable getGlobal(const String& name);

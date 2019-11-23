@@ -1,26 +1,23 @@
 #include "common/common.h"
 
 #include "core/audio/audio_manager.h"
-#include "core/audio/openal/openal_audio_manager.h"
 #include "core/renderer/window.h"
 #include "core/resource_loader.h"
-#include "core/resource_manager.h"
+#include "core/resource_data_reserve.h"
 #include "os/os.h"
 #include "script/interpreter.h"
 
 int main()
 {
-	printLine("Rootex Engine is starting: Build(" + OS::GetSingleton().getBuildDate() + "|" + OS::GetSingleton().getBuildTime() + ")");
-	
-	AudioManager::SetSingleton(new AudioManagerOpenAL());
-	AudioManager::GetSingleton()->initialize();
+	OS::initialize();
+	OS::printLine("Rootex Engine is starting: Build(" + OS::getBuildDate() + "|" + OS::getBuildTime() + ")");
 	
 	// Engine starts from build/game/.
-	Ref<TextResource> r = ResourceLoader::createTextResourceFile(DirectoryShortcut::ENGINE, "Test File", "test/abc.txt"); // So this loads build/game/abc.txt (However the binary exists in build/game/Debug/)
-	printLine(r->getText());
+	Ref<ResourceFile> r = ResourceLoader::createResourceFile(DirectoryShortcut::ENGINE, "Test File", "test/abc.txt", ResourceFile::Type::TXT); // So this loads build/game/abc.txt (However the binary exists in build/game/Debug/)
+	OS::printLine(r->getText());
 
-	Ref<LuaScriptResource> windowSettings = ResourceLoader::createLuaScriptResourceFile(DirectoryShortcut::GAME, "Window load script", "assets/config/window.lua");
-	printLine(windowSettings->getText());
+	Ref<ResourceFile> windowSettings = ResourceLoader::createResourceFile(DirectoryShortcut::GAME, "Window load script", "assets/config/window.lua", ResourceFile::Type::LUA);
+	OS::printLine(windowSettings->getText());
 
 	LuaInterpreter inter;
 	inter.loadExecuteScript(windowSettings);
@@ -34,6 +31,6 @@ int main()
 	int ret = gameWindow->gameLoop();
 	delete gameWindow;
 
-	ResourceManager::empty();
+	ResourceDataReserve::clear();
 	return ret;
 }

@@ -3,9 +3,9 @@
 #include <bitset>
 #include <sstream>
 
-#include "core/resource_manager.h"
+#include "core/resource_data_reserve.h"
 
-IResourceFile::IResourceFile(const String& name, const String& path, const Type& type)
+ResourceFile::ResourceFile(const String& name, const String& path, const Type& type)
     : m_Name(name)
     , m_Path(path)
     , m_Type(type)
@@ -14,63 +14,53 @@ IResourceFile::IResourceFile(const String& name, const String& path, const Type&
 	// Registration in the ResourceManager is handled by ResourceLoader
 }
 
-IResourceFile::~IResourceFile()
+ResourceFile::~ResourceFile()
 {
-	m_Path = "";
 }
 
-bool IResourceFile::isValid()
+bool ResourceFile::isValid()
 {
 	return m_Path != "";
 }
 
-bool IResourceFile::isOpen()
+bool ResourceFile::isOpen()
 {
 	return m_ResourceData == nullptr;
 }
 
-String IResourceFile::getName()
+String ResourceFile::getName()
 {
 	return m_Name;
 }
 
-String IResourceFile::getPath()
+String ResourceFile::getPath()
 {
 	return m_Path;
 }
 
-IResourceFile::Type IResourceFile::getType()
+ResourceFile::Type ResourceFile::getType()
 {
 	return m_Type;
 }
 
-ResourceData* IResourceFile::getData()
+ResourceData* ResourceFile::getData()
 {
 	return m_ResourceData;
 }
 
-TextResource::TextResource(const String& name, const String& path, const Type& type)
-    : IResourceFile(name, path, type)
+String ResourceFile::getDataString()
 {
+	Vector<char>& buffer = m_ResourceData->getRawData();
+
+	return String(buffer.begin(), buffer.end());
 }
 
-String TextResource::getText()
+String ResourceFile::getText()
 {
-	Vector<char> buffer = m_ResourceData->getRawData();
-	return String(buffer.data(), buffer.size());
+	return getDataString();
 }
 
-LuaScriptResource::LuaScriptResource(const String& name, const String& path)
-	: TextResource(name, path, Type::LUA)
+void ResourceFile::setResourceData(ResourceData* resourceData)
 {
-}
-
-String LuaScriptResource::getSource()
-{
-	return getText();
-}
-
-WAVResource::WAVResource(const String& name, const String& path)
-    : IResourceFile(name, path, Type::WAV)
-{
+	m_ResourceData = resourceData;
 }

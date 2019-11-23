@@ -27,21 +27,26 @@ enum class DirectoryShortcut
 
 class OS
 {
-	std::filesystem::path m_GameDirectory;
-	std::filesystem::path m_AssetsDirectory;
-	std::filesystem::path m_EngineDirectory;
+	static std::filesystem::path s_GameDirectory;
+	static std::filesystem::path s_AssetsDirectory;
+	static std::filesystem::path s_EngineDirectory;
 
-	OS();
+	OS() = delete;
 
 public:
-	~OS();
+	~OS() = delete;
 
-	static OS GetSingleton();
+	static bool initialize();
+	static String getBuildDate();
+	static String getBuildTime();
 
-	String getBuildDate();
-	String getBuildTime();
+	static FileBuffer loadFileContents(DirectoryShortcut directory, String stringPath);
+	static std::filesystem::path getAbsolutePath(DirectoryShortcut directory, String stringPath);
+	static bool exists(String filePath);
 
-	FileBuffer loadFileContents(DirectoryShortcut directory, String stringPath);
-	std::filesystem::path getAbsolutePath(DirectoryShortcut directory, String stringPath);
-	bool exists(String filePath);
+	static void print(const String& msg);
+	static void printLine(const String& msg);
+	static void printWarning(const String& warning);
+	static void printError(const String& error);
+	static void printIf(const bool& expr, const String& error);
 };

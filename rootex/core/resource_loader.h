@@ -4,13 +4,10 @@
 #include "core/resource_file.h"
 #include "os/os.h"
 
-class ResourceLoader
+namespace ResourceLoader
 {
-	static void assign(IResourceFile* file, ResourceData* resource);
-	static void loadDataInResourceFile(DirectoryShortcut directory, String& path, IResourceFile* res);
+	void assign(ResourceFile* file, ResourceData* resource);
+	void loadDataInResourceFile(DirectoryShortcut directory, String& path, ResourceFile* res);
 
-public:
-	static Ref<TextResource> createTextResourceFile(DirectoryShortcut directory, String name, String path);
-	static Ref<LuaScriptResource> createLuaScriptResourceFile(DirectoryShortcut directory, String name, String path);
-	static Ref<WAVResource> createWAVResourceFile(DirectoryShortcut directory, String name, String path);
+	Ref<ResourceFile> createResourceFile(DirectoryShortcut directory, String name, String path, ResourceFile::Type type);
 };

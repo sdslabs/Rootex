@@ -1,22 +1,25 @@
 #pragma once
 
-#include "common/types.h"
-#include "core/resource_file.h"
+#include "common/common.h"
+#include "core/audio/audio_manager.h"
+#include "vendor/OpenAL/include/al.h"
+#include "vendor/OpenAL/include/alc.h"
 
-class IAudioBuffer;
-
-class AudioManager
+class AudioSystem
 {
-	static AudioManager* s_Singleton;
+	ALCdevice* m_Device;
+	ALCcontext* m_Context;
+
+	bool initialize();
+	void shutDown();
 
 public:
-	static void SetSingleton(AudioManager* singleton);
-	static AudioManager* GetSingleton();
+	AudioSystem();
+	AudioSystem(AudioSystem&) = delete;
+	~AudioSystem();
 
-	virtual bool initialize() = 0;
-	virtual void shutDown() = 0;
-
-protected:
-	explicit AudioManager();
-	~AudioManager();
+	static AudioSystem* GetSingleton();
+	
+	static String GetOpenALErrorString(int errID);
+	static void CheckOpenALError(const char* msg, const char* fname, int line);
 };
