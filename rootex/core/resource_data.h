@@ -9,17 +9,17 @@ class ResourceData
 
 public:
 	ResourceData(std::vector<char> data);
-	~ResourceData();
+	~ResourceData() = default;
 
 	unsigned int getID();
-	std::vector<char> getRawData();
+	String getPath();
+	std::vector<char>& getRawData();
 	unsigned int getRawDataByteSize();
+
+	void setPath(String path);
 
 protected:
 	unsigned int m_ID;
 	Vector<char> m_Buffer;
 	String m_Path;
-
-	friend class ResourceManager;
-	friend class ResourceLoader;
 };

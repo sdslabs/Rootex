@@ -4,31 +4,35 @@
 
 #include "common/common.h"
 
-OS::OS()
+std::filesystem::path OS::s_AssetsDirectory;
+std::filesystem::path OS::s_EngineDirectory;
+std::filesystem::path OS::s_GameDirectory;
+
+bool OS::initialize()
 {
-	std::filesystem::path path = std::filesystem::current_path();
-	while (true)
+	try
 	{
-		if (std::filesystem::exists(path / ROOT_MARKER_FILENAME))
+		std::filesystem::path path = std::filesystem::current_path();
+		while (true)
 		{
-			break;
+			if (std::filesystem::exists(path / ROOT_MARKER_FILENAME))
+			{
+				break;
+			}
+			path = path.parent_path();
 		}
-		path = path.parent_path();
+
+		s_GameDirectory = path / GAME_DIRECTORY;
+		s_AssetsDirectory = path / GAME_DIRECTORY / ASSETS_DIRECTORY;
+		s_EngineDirectory = path / ENGINE_DIRECTORY;
+	}
+	catch (std::exception e)
+	{
+		ERR("OS: Failed to initialize OS: " + String(e.what()));
+		return false;
 	}
 
-	m_GameDirectory = path / GAME_DIRECTORY;
-	m_AssetsDirectory = path / GAME_DIRECTORY / ASSETS_DIRECTORY;
-	m_EngineDirectory = path / ENGINE_DIRECTORY;
-}
-
-OS::~OS()
-{
-}
-
-OS OS::GetSingleton()
-{
-	static OS singleton;
-	return singleton;
+	return true;
 }
 
 String OS::getBuildDate()
@@ -79,13 +83,13 @@ std::filesystem::path OS::getAbsolutePath(DirectoryShortcut directory, String st
 	switch (directory)
 	{
 	case DirectoryShortcut::ASSETS:
-		newPath = m_AssetsDirectory / std::filesystem::path(stringPath);
+		newPath = s_AssetsDirectory / std::filesystem::path(stringPath);
 		break;
 	case DirectoryShortcut::GAME:
-		newPath = m_GameDirectory / std::filesystem::path(stringPath);
+		newPath = s_GameDirectory / std::filesystem::path(stringPath);
 		break;
 	case DirectoryShortcut::ENGINE:
-		newPath = m_EngineDirectory / std::filesystem::path(stringPath);
+		newPath = s_EngineDirectory / std::filesystem::path(stringPath);
 		break;
 	default:
 		ERR("ResourceLoader: Directory type not found for converting path to absolute");
@@ -108,4 +112,36 @@ FileBuffer::FileBuffer()
 FileBuffer::FileBuffer(std::vector<char> buffer)
     : m_Buffer(buffer)
 {
+}
+
+void OS::print(const String& msg)
+{
+	std::cout.clear();
+	std::cout << msg;
+}
+
+void OS::printLine(const String& msg)
+{
+	std::cout.clear();
+	std::cout << msg << std::endl;
+}
+
+void OS::printWarning(const String& warning)
+{
+	std::cout.clear();
+	std::cout << "\033[93m" << warning << "\033[0m" << std::endl;
+}
+
+void OS::printError(const String& error)
+{
+	std::cout.clear();
+	std::cout << "\033[91m" << error << "\033[0m" << std::endl;
+}
+
+void OS::printIf(const bool& expr, const String& error)
+{
+	if (expr)
+	{
+		printError(error);
+	}
 }

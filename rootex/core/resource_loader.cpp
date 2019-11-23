@@ -1,45 +1,30 @@
 #include "resource_loader.h"
 
 #include "common/common.h"
-#include "resource_manager.h"
+#include "resource_data_reserve.h"
 
-void ResourceLoader::assign(IResourceFile* file, ResourceData* resource)
+namespace ResourceLoader
 {
-	file->m_ResourceData = resource;
+void assign(ResourceFile* file, ResourceData* resource)
+{
+	file->setResourceData(resource);
 }
 
-void ResourceLoader::loadDataInResourceFile(DirectoryShortcut directory, String& path, IResourceFile* res)
+void loadDataInResourceFile(DirectoryShortcut directory, String& path, ResourceFile* res)
 {
-	FileBuffer buffer = OS::GetSingleton().loadFileContents(directory, path);
+	FileBuffer buffer = OS::loadFileContents(directory, path);
 	ResourceData* resData = new ResourceData(buffer.m_Buffer);
 
-	resData->m_Path = res->getPath();
+	resData->setPath(res->getPath());
 	assign(res, resData);
 }
 
-Ref<TextResource> ResourceLoader::createTextResourceFile(DirectoryShortcut directory, String name, String path)
+Ref<ResourceFile> createResourceFile(DirectoryShortcut directory, String name, String path, ResourceFile::Type type)
 {
-	TextResource* res = new TextResource(name, OS::GetSingleton().getAbsolutePath(directory, path).generic_string());
+	ResourceFile* res = new ResourceFile(name, OS::getAbsolutePath(directory, path).generic_string(), type);
 
 	loadDataInResourceFile(directory, path, res);
 
-	return Ref<TextResource>(res);
+	return Ref<ResourceFile>(res);
 }
-
-Ref<LuaScriptResource> ResourceLoader::createLuaScriptResourceFile(DirectoryShortcut directory, String name, String path)
-{
-	LuaScriptResource* res = new LuaScriptResource(name, OS::GetSingleton().getAbsolutePath(directory, path).generic_string());
-
-	loadDataInResourceFile(directory, path, res);
-
-	return Ref<LuaScriptResource>(res);
-}
-
-Ref<WAVResource> ResourceLoader::createWAVResourceFile(DirectoryShortcut directory, String name, String path)
-{
-	WAVResource* res = new WAVResource(name, OS::GetSingleton().getAbsolutePath(directory, path).generic_string());
-
-	loadDataInResourceFile(directory, path, res);
-
-	return Ref<WAVResource>(res);
 }

@@ -12,10 +12,12 @@ LuaInterpreter::~LuaInterpreter()
 	lua_close(m_LuaState);
 }
 
-void LuaInterpreter::loadExecuteScript(Ref<LuaScriptResource> script)
+void LuaInterpreter::loadExecuteScript(Ref<ResourceFile> script)
 {
-	luaL_dostring(m_LuaState, script->getSource().c_str());
-	printLine(script->getPath() + " was run");
+	PANIC(script->getType() != ResourceFile::Type::LUA, "LuaInterpreter: Running non-Lua scrip source");
+
+	luaL_dostring(m_LuaState, script->getDataString().c_str());
+	OS::printLine(script->getPath() + " was run");
 }
 
 void LuaInterpreter::loadExecuteScript(const String& script)

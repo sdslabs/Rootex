@@ -2,10 +2,9 @@
 
 #include "common/types.h"
 
-class ResourceLoader;
 class ResourceData;
 
-class IResourceFile
+class ResourceFile
 {
 public:
 	enum class Type : int
@@ -22,14 +21,11 @@ protected:
 	Type m_Type;
 	ResourceData* m_ResourceData;
 
-	explicit IResourceFile(const String& name, const String& path, const Type& type);
-	explicit IResourceFile(IResourceFile&) = delete;
-	explicit IResourceFile(IResourceFile&&) = delete;
-	
-	friend class ResourceLoader;
-
 public:
-	virtual ~IResourceFile();
+	explicit ResourceFile(const String& name, const String& path, const Type& type);
+	explicit ResourceFile(ResourceFile&) = delete;
+	explicit ResourceFile(ResourceFile&&) = delete;
+	~ResourceFile();
 
 	bool isValid();
 	bool isOpen();
@@ -38,35 +34,8 @@ public:
 	String getPath();
 	Type getType();
 	ResourceData* getData();
-};
-
-class TextResource : public IResourceFile
-{
-public:
+	String getDataString();
 	String getText();
 
-protected:
-	explicit TextResource(const String& name, const String& path, const Type& type = Type::TXT);
-
-	friend ResourceLoader;
-
-};
-
-class LuaScriptResource : public TextResource
-{
-	explicit LuaScriptResource(const String& name, const String& path);
-
-	friend ResourceLoader;
-
-public:
-	String getSource();
-};
-
-class WAVResource : IResourceFile
-{
-	explicit WAVResource(const String& name, const String& path);
-
-	friend ResourceLoader;
-
-public:
+	void setResourceData(ResourceData* resourceData);
 };
