@@ -3,6 +3,7 @@
 set(OPENAL_FOUND ON)
 set(OPENAL_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/include/")
 set(OPENAL_LIBRARY "${CMAKE_CURRENT_LIST_DIR}/libs/Win64/OpenAL32.lib")
+set(ALUT_LIBRARY "${CMAKE_CURRENT_LIST_DIR}/libs/Win64/alut.lib")
 
 set(ROOTEX_INCLUDES
     ${ROOTEX_INCLUDES}
@@ -16,5 +17,11 @@ target_include_directories(OpenAL PUBLIC
 )
 
 target_link_libraries(OpenAL PUBLIC
-	${OPENAL_LIBRARY}
+    ${OPENAL_LIBRARY}
+)
+
+add_library(ALUT STATIC stub.cpp)
+
+target_link_libraries(ALUT PUBLIC
+    ${ALUT_LIBRARY}
 )

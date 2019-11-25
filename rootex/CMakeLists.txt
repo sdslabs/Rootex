@@ -34,5 +34,11 @@ target_link_libraries(Rootex PUBLIC
     Lua
     LuaBridge
     OpenAL
+    ALUT
 	d3d11.lib
 )
+
+add_custom_command(TARGET Rootex POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "./vendor/DLLs"
+        $<TARGET_FILE_DIR:Rootex>)
