@@ -3,8 +3,11 @@
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "D3DCompiler.lib")
 
-RootexGraphics::RootexGraphics(HWND windowHandler)
+RootexGraphics::RootexGraphics(HWND windowHandler, unsigned int w, unsigned int h)
 {
+	width = w;
+	height = h;
+
 	DXGI_SWAP_CHAIN_DESC descriptor = { 0 };
 	descriptor.BufferDesc.Width = 0;
 	descriptor.BufferDesc.Height = 0;
@@ -26,7 +29,7 @@ RootexGraphics::RootexGraphics(HWND windowHandler)
 	    nullptr,
 	    D3D_DRIVER_TYPE_HARDWARE,
 	    nullptr,
-	    0,
+	    D3D11_CREATE_DEVICE_DEBUG, //to enable debug layer diagnostics
 	    nullptr,
 	    0,
 	    D3D11_SDK_VERSION,
@@ -40,6 +43,7 @@ RootexGraphics::RootexGraphics(HWND windowHandler)
 	pDevice->CreateRenderTargetView(
 	    pBackBuffer,
 	    nullptr,
+<<<<<<< HEAD
 	    &m_Context);
 	    &pTarget
 	);
@@ -55,6 +59,45 @@ RootexGraphics::~RootexGraphics()
 		pSwapChain->Release();
 	if (pDevice != nullptr)
 		pDevice->Release();
+=======
+	    &pTarget);
+
+	D3D11_DEPTH_STENCIL_DESC dsDesc = { 0 };
+	dsDesc.DepthEnable = TRUE;
+	dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
+	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	ID3D11DepthStencilState* pDSState;
+	pDevice->CreateDepthStencilState(&dsDesc, &pDSState);
+
+	pContext->OMSetDepthStencilState(pDSState, 1u);
+
+	SafeRelease(&pDSState);
+	
+	ID3D11Texture2D* pDepthStencil = nullptr;
+	D3D11_TEXTURE2D_DESC descDepth = { 0 };
+	descDepth.Width = width;
+	descDepth.Height = height;
+	descDepth.MipLevels = 1u;
+	descDepth.ArraySize = 1u;
+	descDepth.Format = DXGI_FORMAT_D32_FLOAT;
+	descDepth.SampleDesc.Count = 1u;
+	descDepth.SampleDesc.Quality = 0u;
+	descDepth.Usage = D3D11_USAGE_DEFAULT;
+	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	pDevice->CreateTexture2D(&descDepth, nullptr, &pDepthStencil);
+
+	D3D11_DEPTH_STENCIL_VIEW_DESC descDSView = { 0 };
+	descDSView.Format = DXGI_FORMAT_D32_FLOAT;
+	descDSView.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	descDSView.Texture2D.MipSlice = 0u;
+
+	pDevice->CreateDepthStencilView(pDepthStencil, &descDSView, &pDSView);
+
+	SafeRelease(&pDepthStencil);
+
+	pContext->OMSetRenderTargets(1u, &pTarget, pDSView);
+
+>>>>>>> add depth buffer
 }
 
 void RootexGraphics::EndFrame()
@@ -68,12 +111,14 @@ RootexGraphics::~RootexGraphics()
 	SafeRelease(&pSwapChain);
 	SafeRelease(&pContext);
 	SafeRelease(&pTarget);
+	SafeRelease(&pDSView);
 }
 
 void RootexGraphics::ClearBuffer(float r, float g, float b)
 {
 	const float color[] = { r, g, b, 1.0f };
 	pContext->ClearRenderTargetView(pTarget, color);
+	pContext->ClearDepthStencilView(pDSView, D3D11_CLEAR_DEPTH, 1.0f, 0u);
 }
 void RootexGraphics::DrawTestCube(float angle)
 {
@@ -86,13 +131,13 @@ void RootexGraphics::DrawTestCube(float angle)
 	};
 	const Vertex vertices[] = {
 		{ -1.0f, -1.0f, -1.0f },
-		{ 1.0f, -1.0f, -1.0f},
+		{ 1.0f, -1.0f, -1.0f },
 		{ -1.0f, 1.0f, -1.0f },
-		{ 1.0f, 1.0f, -1.0f},
-		{ -1.0f, -1.0f, 1.0f},
-		{ 1.0f, -1.0f, 1.0f},
-		{ -1.0f, 1.0f, 1.0f},
-		{ 1.0f, 1.0f, 1.0f},
+		{ 1.0f, 1.0f, -1.0f },
+		{ -1.0f, -1.0f, 1.0f },
+		{ 1.0f, -1.0f, 1.0f },
+		{ -1.0f, 1.0f, 1.0f },
+		{ 1.0f, 1.0f, 1.0f },
 	};
 
 	ID3D11Buffer* pVertexBuffer = nullptr;
@@ -154,7 +199,7 @@ void RootexGraphics::DrawTestCube(float angle)
 	//constant buffer(rot matrix) used in vertex shader
 	const ConstantBuffer cb = {
 		{ DirectX::XMMatrixTranspose(
-		    DirectX::XMMatrixRotationZ(angle) * DirectX::XMMatrixRotationY(angle / 2) * DirectX::XMMatrixRotationX(angle / 3) * DirectX::XMMatrixTranslation(0.0f, 0.0f, 4.0f) * DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 10.0f)) }
+		    DirectX::XMMatrixRotationZ(angle) * DirectX::XMMatrixRotationY(angle / 2) * DirectX::XMMatrixRotationX(angle / 3) * DirectX::XMMatrixTranslation(0.0f, 0.0f, 4.0f) * DirectX::XMMatrixPerspectiveLH(maxX, maxX * height / width, minZ, maxZ)) }
 	};
 	ID3D11Buffer* pConstantBuffer = nullptr;
 	D3D11_BUFFER_DESC cbd = { 0 };
@@ -183,16 +228,13 @@ void RootexGraphics::DrawTestCube(float angle)
 		} face_colors[6];
 	};
 
-	const ConstantBuffer2 cb2 = 
-	{
-		{ 
-			{ 1.0f, 0.0f, 0.0f },
+	const ConstantBuffer2 cb2 = {
+		{ { 1.0f, 0.0f, 0.0f },
 		    { 0.0f, 1.0f, 0.0f },
 		    { 0.0f, 0.0f, 1.0f },
 		    { 1.0f, 1.0f, 0.0f },
 		    { 1.0f, 0.0f, 1.0f },
-		    { 0.0f, 1.0f, 1.0f } 
-		}
+		    { 0.0f, 1.0f, 1.0f } }
 	};
 
 	ID3D11Buffer* pConstantBuffer2 = nullptr;
@@ -249,15 +291,13 @@ void RootexGraphics::DrawTestCube(float angle)
 
 	SafeRelease(&pInputLayout);
 
-	pContext->OMSetRenderTargets(1u, &pTarget, nullptr);
-
 	//set topology
 	pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	//viewport
 	D3D11_VIEWPORT vp;
-	vp.Width = 640;
-	vp.Height = 480;
+	vp.Width = width;
+	vp.Height = height;
 	vp.MinDepth = 0;
 	vp.MaxDepth = 1;
 	vp.TopLeftX = 0;

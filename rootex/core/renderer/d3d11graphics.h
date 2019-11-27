@@ -13,9 +13,16 @@ private:
 	IDXGISwapChain* pSwapChain = nullptr;
 	ID3D11DeviceContext* pContext = nullptr;
 	ID3D11RenderTargetView* pTarget = nullptr;
+	ID3D11DepthStencilView* pDSView = nullptr;
+
+	unsigned int height;
+	unsigned int width;
+	float maxX = 1.0f;
+	float minZ = 0.5f;
+	float maxZ = 10.0f;
 
 public:
-	RootexGraphics( HWND windowHandler );
+	RootexGraphics( HWND windowHandler, unsigned int w = 640, unsigned int h = 480 );
 	RootexGraphics(const RootexGraphics&) = delete;
 	RootexGraphics& operator=(const RootexGraphics&) = delete;  
 	~RootexGraphics();

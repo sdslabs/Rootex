@@ -32,6 +32,7 @@ int GameWindow::gameLoop()
 		this->getGraphics()->ClearBuffer(r, g, b);
 
 		this->getGraphics()->DrawTestCube(seconds);
+		this->getGraphics()->DrawTestCube(-seconds);
 		this->getGraphics()->EndFrame();
 	}
 }
@@ -81,9 +82,7 @@ GameWindow::GameWindow(int xOffset, int yOffset, int width, int height, const St
 	    hInstance, nullptr);
 	ShowWindow(windowHandler, SW_SHOW);
 
-	m_RootexGraphics = new RootexGraphics(windowHandler);
-
-	start = std::chrono::system_clock::now();
+	m_RootexGraphics = new RootexGraphics(windowHandler, width, height);
 }
 
 GameWindow::~GameWindow()
