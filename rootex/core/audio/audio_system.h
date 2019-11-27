@@ -16,7 +16,7 @@
 		AudioSystem::CheckALUTError(#alutFunction, __FILE__, __LINE__); \
 	} while (0)
 #else
-#define AL_CHECK(alutFunction) alutFunction
+#define ALUT_CHECK(alutFunction) alutFunction
 #endif
 #endif
 
@@ -67,6 +67,5 @@ public:
 	static void CheckALUTError(const char* msg, const char* fname, int line);
 
 	bool initialize();
-	unsigned int getBufferCount() const;
 	void play(AudioSource* source);
 };
