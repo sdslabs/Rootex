@@ -40,11 +40,6 @@ void AudioSystem::CheckALUTError(const char* msg, const char* fname, int line)
 	}
 }
 
-unsigned int AudioSystem::getBufferCount() const
-{
-	return NUM_BUFFERS;
-}
-
 void AudioSystem::play(AudioSource* source)
 {
 	alSourcePlay(source->m_SourceID);
