@@ -1,6 +1,8 @@
 #include "common/common.h"
 
 #include "core/audio/audio_system.h"
+#include "core/audio/audio_static_buffer.h"
+#include "core/audio/audio_source.h"
 #include "core/renderer/window.h"
 #include "core/resource_loader.h"
 #include "core/resource_data_reserve.h"
@@ -14,9 +16,10 @@ int main()
 	
 	AudioSystem::GetSingleton()->initialize();
 
-	Ref<ResourceFile> w = ResourceLoader::createResourceFile(DirectoryShortcut::ENGINE, "Test File", "test/abc.txt", ResourceFile::Type::WAV);
-	Ref<AudioBuffer> audio(new AudioBuffer(w, 2000, true));
-	Ref<AudioSource> source(new AudioSource(audio.get()));
+	Ref<ResourceFile> w = ResourceLoader::createResourceFile(DirectoryShortcut::ASSETS, "Test WAV File", "lost_in_istanbul.wav", ResourceFile::Type::WAV);
+	Ref<AudioStaticBuffer> audio(new AudioStaticBuffer(w));
+	Ref<StaticAudioSource> source(new StaticAudioSource(audio.get()));
+	source->setLooping(true);
 	source->play();
 
 	// Engine starts from build/game/.

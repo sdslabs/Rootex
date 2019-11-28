@@ -6,18 +6,21 @@ typedef unsigned int ALuint;
 
 class AudioBuffer
 {
+protected:
 	Ref<ResourceFile> m_AudioFile;
-	float m_Frequency;
-	bool m_Looping;
-	ALuint m_BufferID;
 
-	friend class AudioSystem;
+	AudioBuffer(Ref<ResourceFile> audioFile);
+
+	virtual void initializeBuffers() = 0;
+	virtual void destroyBuffers() = 0;
 
 public:
-	AudioBuffer(Ref<ResourceFile> audioFile, float frequency, bool looping);
-	~AudioBuffer();
+	AudioBuffer(AudioBuffer&) = default;
+	virtual ~AudioBuffer();
 
 	ResourceFile* getAudioFile();
-	float getFrequency();
-	bool isLooping();
+	
+	virtual int getFrequency() = 0;
+	virtual int getBitDepth() = 0;
+	virtual int getChannels() = 0;
 };

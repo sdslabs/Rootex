@@ -1,4 +1,10 @@
 #include "audio_system.h"
+
+#include <chrono>
+#include <thread>
+
+#include "audio_static_buffer.h"
+#include "audio_streaming_buffer.h"
 #include "audio_source.h"
 #include "core/resource_data.h"
 
@@ -40,14 +46,8 @@ void AudioSystem::CheckALUTError(const char* msg, const char* fname, int line)
 	}
 }
 
-void AudioSystem::play(AudioSource* source)
-{
-	alSourcePlay(source->m_SourceID);
-}
-
 bool AudioSystem::initialize()
 {
-
 	alGetError();
 
 	const char* ALDevice = alcGetString(NULL, ALC_DEVICE_SPECIFIER);
@@ -55,7 +55,7 @@ bool AudioSystem::initialize()
 
 	if (m_Device == nullptr)
 	{
-		ERR("AudioManager: Failed to Initialize OpenAL device");
+		ERR("AudioSystem: Failed to Initialize OpenAL device");
 		return false;
 	}
 
@@ -64,11 +64,24 @@ bool AudioSystem::initialize()
 
 	if (!alutInitWithoutContext(NULL, NULL))
 	{
-		ERR("AudioManager: ALUT failed to initialize");
+		ERR("AudioSystem: ALUT failed to initialize");
 		return false;
 	}
 
 	return true;
+}
+
+void AudioSystem::update()
+{
+	while (true)
+	{
+		for (auto& source : m_ActiveAudioSources)
+		{
+			source->queueNewBuffers();
+		}
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(m_UpdateInterval));
+	}
 }
 
 AudioSystem* AudioSystem::GetSingleton()
@@ -82,59 +95,37 @@ void AudioSystem::shutDown()
 {
 	alcCloseDevice(m_Device);
 
-	PANIC(m_Buffers.size() > 0, "AL buffers are still alive. Deleting leaked buffers.");
-
-	for (auto& it : m_Buffers)
-	{
-		AL_CHECK(alDeleteBuffers(1, &it));
-	}
+	PANIC(m_ActiveAudioSources.size() > 0, "AudioSystem: AL streaming buffers are still alive. Deleting leaked buffers.");
 
 	alutExit();
 }
 
-ALuint AudioSystem::makeBuffer(ResourceFile* audioFile)
+void AudioSystem::registerInstance(AudioSource* audio)
 {
-	PANIC(audioFile->getType() != ResourceFile::Type::WAV, "AudioSystem: Trying to load a non-WAV file in a sound buffer");
-
-	ALuint bufferID;
-	//AL_CHECK(bufferID = alutLoadMemoryFromFileImage(audioFile->getData()->getRawData().data(), audioFile->getData()->getRawDataByteSize()));
-	AL_CHECK(bufferID = alutCreateBufferHelloWorld());
-
-	m_Buffers.push_back(bufferID);
-
-	return bufferID;
+	m_ActiveAudioSources.push_back(audio);
 }
 
-void AudioSystem::destroyBuffer(AudioBuffer* buffer)
+void AudioSystem::deregisterInstance(AudioSource* audio)
 {
-	ALuint bufferID = buffer->m_BufferID;
+	auto findIt = std::find(m_ActiveAudioSources.begin(), m_ActiveAudioSources.end(), audio);
+	if (findIt != m_ActiveAudioSources.end())
+	{
+		m_ActiveAudioSources.erase(findIt);
+		return;
+	}
 
-	AL_CHECK(alDeleteBuffers(1, &bufferID));
-
-	m_Buffers.erase(std::find(m_Buffers.begin(), m_Buffers.end(), bufferID));
+	WARN("AudioSystem: Tried to double deregisterInstance a AudioStreamingBuffer. Delete aborted.");
 }
 
-ALuint AudioSystem::makeSource()
+void AudioSystem::setBufferUpdateRate(float milliseconds)
 {
-	ALuint source;
-	AL_CHECK(alGenSources(1, &source));
-	
-	return source;
-}
-
-void AudioSystem::attach(AudioSource* source, AudioBuffer* audio)
-{
-	alSourcei(source->m_SourceID, AL_BUFFER, audio->m_BufferID);
-}
-
-void AudioSystem::deleteSource(AudioSource* source)
-{
-	alDeleteSources(1, &source->m_SourceID);
+	m_UpdateInterval = milliseconds;
 }
 
 AudioSystem::AudioSystem()
     : m_Context(nullptr)
     , m_Device(nullptr)
+    , m_UpdateInterval(1000 * MILLISECONDS)
 {
 }
 
