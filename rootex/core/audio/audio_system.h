@@ -1,8 +1,7 @@
 #pragma once
 
 #include "common/common.h"
-#include "core/audio/audio_buffer.h"
-#include "core/audio/audio_source.h"
+
 #include "vendor/OpenAL/include/al.h"
 #include "vendor/OpenAL/include/alc.h"
 #include "vendor/OpenAL/include/alut.h"
@@ -33,28 +32,24 @@
 #endif
 #endif
 
+class AudioBuffer;
+class AudioStaticBuffer;
+class AudioStreamingBuffer;
+
 class AudioSource;
+class StreamingAudioSource;
+
+class ResourceFile;
 
 class AudioSystem
 {
-	Vector<AudioBuffer*> m_ActiveAudioBuffers;
-
-	const unsigned int NUM_BUFFERS = 100;
-
+	const int MILLISECONDS = 1;
+	int m_UpdateInterval;
 	ALCdevice* m_Device;
 	ALCcontext* m_Context;
-	Vector<ALuint> m_Buffers;
+	Vector<AudioSource*> m_ActiveAudioSources;
 
 	void shutDown();
-
-	ALuint makeBuffer(ResourceFile* audioFile);
-	void destroyBuffer(AudioBuffer* buffer);
-	ALuint makeSource();
-	void attach(AudioSource* source, AudioBuffer* audio);
-	void deleteSource(AudioSource* source);
-
-	friend class AudioBuffer;
-	friend class AudioSource;
 
 public:
 	AudioSystem();
@@ -66,6 +61,11 @@ public:
 	static void CheckOpenALError(const char* msg, const char* fname, int line);
 	static void CheckALUTError(const char* msg, const char* fname, int line);
 
+	void registerInstance(AudioSource* audio);
+	void deregisterInstance(AudioSource* audio);
+
+	void setBufferUpdateRate(float milliseconds);
+
 	bool initialize();
-	void play(AudioSource* source);
+	void update();
 };

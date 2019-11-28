@@ -16,6 +16,9 @@ struct FileBuffer
 	
 	FileBuffer();
 	FileBuffer(std::vector<char> buffer);
+
+	const char* getRawDataPointer();
+	unsigned int getSize();
 };
 
 enum class DirectoryShortcut
@@ -41,7 +44,7 @@ public:
 	static String getBuildTime();
 
 	static FileBuffer loadFileContents(DirectoryShortcut directory, String stringPath);
-	static std::filesystem::path getAbsolutePath(DirectoryShortcut directory, String stringPath);
+	static FilePath getAbsolutePath(DirectoryShortcut directory, String stringPath);
 	static bool exists(String filePath);
 
 	static void print(const String& msg);
