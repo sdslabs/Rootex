@@ -72,7 +72,7 @@ void StreamingAudioSource::queueNewBuffers()
 	int numUsedUp;
 	AL_CHECK(alGetSourcei(m_SourceID, AL_BUFFERS_PROCESSED, &numUsedUp));
 	
-	if (numUsedUp > 1)
+	if (numUsedUp > 0)
 	{
 		AL_CHECK(alSourceUnqueueBuffers(m_SourceID, numUsedUp, m_StreamingAudio->getBuffers()));
 		m_StreamingAudio->loadNewBuffers(numUsedUp, isLooping());
