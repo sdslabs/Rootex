@@ -8,7 +8,7 @@
 #include "audio_source.h"
 #include "core/resource_data.h"
 
-String AudioSystem::GetOpenALErrorString(int errID)
+String AudioSystem::GetALErrorString(int errID)
 {
 	switch (errID)
 	{
@@ -28,12 +28,41 @@ String AudioSystem::GetOpenALErrorString(int errID)
 	return "Unknown Error: " + std::to_string(errID);
 }
 
-void AudioSystem::CheckOpenALError(const char* msg, const char* fname, int line)
+String AudioSystem::GetALCErrorString(int errID)
+{
+	switch (errID)
+	{
+	case ALC_NO_ERROR:
+		return "OK";
+	case ALC_INVALID_DEVICE:
+		return "Invalid Device";
+	case ALC_INVALID_CONTEXT:
+		return "Invalid Context";
+	case ALC_INVALID_ENUM:
+		return "Invalid Enu,";
+	case ALC_INVALID_VALUE:
+		return "Invalid Value";
+	case ALC_OUT_OF_MEMORY:
+		return "Out of Memory";
+	}
+	return "Unknown Error: " + std::to_string(errID);
+}
+
+void AudioSystem::CheckALError(const char* msg, const char* fname, int line)
 {
 	ALenum err = alGetError();
 	if (err != AL_NO_ERROR)
 	{
-		ERR("OpenAL error (" + std::to_string(err) + "): " + GetOpenALErrorString(err) + " at " + String(fname) + ":" + std::to_string(line));
+		ERR("OpenAL error (" + std::to_string(err) + "): " + GetALErrorString(err) + " at " + String(fname) + ":" + std::to_string(line));
+	}
+}
+
+void AudioSystem::CheckALCError(const char* msg, const char* fname, int line)
+{
+	ALCenum err = alcGetError(GetSingleton()->m_Device);
+	if (err != ALC_NO_ERROR)
+	{
+		ERR("OpenALC error (" + std::to_string(err) + "): " + GetALCErrorString(err) + " at " + String(fname) + ":" + std::to_string(line));
 	}
 }
 
@@ -50,7 +79,7 @@ bool AudioSystem::initialize()
 {
 	if (!alutInit(NULL, NULL))
 	{
-		ERR("AudioSystem: AL/ALUT failed to initialize");
+		ERR("AudioSystem: AL, ALC, ALUT failed to initialize");
 		return false;
 	}
 
@@ -59,15 +88,12 @@ bool AudioSystem::initialize()
 
 void AudioSystem::update()
 {
-	while (true)
+	for (auto* source : m_ActiveAudioSources)
 	{
-		for (auto& source : m_ActiveAudioSources)
-		{
-			source->queueNewBuffers();
-		}
-
-		std::this_thread::sleep_for(std::chrono::milliseconds(m_UpdateInterval));
+		source->queueNewBuffers();
 	}
+
+	std::this_thread::sleep_for(std::chrono::milliseconds(m_UpdateInterval));
 }
 
 AudioSystem* AudioSystem::GetSingleton()
@@ -107,7 +133,7 @@ void AudioSystem::setBufferUpdateRate(float milliseconds)
 AudioSystem::AudioSystem()
     : m_Context(nullptr)
     , m_Device(nullptr)
-    , m_UpdateInterval(1000 * MILLISECONDS)
+    , m_UpdateInterval(1)
 {
 }
 

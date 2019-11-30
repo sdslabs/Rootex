@@ -25,7 +25,7 @@
 	do                                                                  \
 	{                                                                   \
 		alFunction;                                                     \
-		AudioSystem::CheckOpenALError(#alFunction, __FILE__, __LINE__); \
+		AudioSystem::CheckALError(#alFunction, __FILE__, __LINE__); \
 	} while (0)
 #else
 #define AL_CHECK(alFunction) alFunction
@@ -57,8 +57,10 @@ public:
 	~AudioSystem();
 
 	static AudioSystem* GetSingleton();
-	static String GetOpenALErrorString(int errID);
-	static void CheckOpenALError(const char* msg, const char* fname, int line);
+	static String GetALErrorString(int errID);
+	static String GetALCErrorString(int errID);
+	static void CheckALError(const char* msg, const char* fname, int line);
+	static void CheckALCError(const char* msg, const char* fname, int line);
 	static void CheckALUTError(const char* msg, const char* fname, int line);
 
 	void registerInstance(AudioSource* audio);

@@ -9,10 +9,10 @@ class StreamingAudioBuffer : public AudioBuffer
 {
 	ALuint m_Buffers[BUFFER_COUNT];
 
-	float m_Frequency;
+	ALsizei m_Frequency;
 	int m_BitDepth;
 	int m_Channels;
-	int m_BufferSize;
+	ALsizei m_BufferSize;
 	
 	const char* m_DecompressedAudioBuffer;
 	ALsizei m_AudioDataSize;

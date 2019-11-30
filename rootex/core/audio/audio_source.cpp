@@ -59,7 +59,6 @@ StreamingAudioSource::StreamingAudioSource(StreamingAudioBuffer* audio)
     : AudioSource(true)
     , m_StreamingAudio(audio)
 {
-	AudioSystem::GetSingleton()->registerInstance(this);
 	AL_CHECK(alSourceQueueBuffers(m_SourceID, BUFFER_COUNT, audio->getBuffers()));
 }
 
