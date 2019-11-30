@@ -24,3 +24,6 @@ using HashMap = std::unordered_map<P, Q>;
 #include <vector>
 template <class T>
 using Vector = std::vector<T>;
+
+#include <filesystem>
+using FilePath = std::filesystem::path;

@@ -114,6 +114,16 @@ FileBuffer::FileBuffer(std::vector<char> buffer)
 {
 }
 
+const char* FileBuffer::getRawDataPointer()
+{
+	return m_Buffer.data();
+}
+
+unsigned int FileBuffer::getSize()
+{
+	return m_Buffer.size();
+}
+
 void OS::print(const String& msg)
 {
 	std::cout.clear();

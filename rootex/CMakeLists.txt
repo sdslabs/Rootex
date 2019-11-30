@@ -34,5 +34,6 @@ target_link_libraries(Rootex PUBLIC
     Lua
     LuaBridge
     OpenAL
+    ALUT
 	d3d11.lib
 )
