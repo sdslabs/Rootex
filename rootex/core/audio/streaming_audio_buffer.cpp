@@ -17,8 +17,32 @@ void StreamingAudioBuffer::initializeBuffers()
 
 	AL_CHECK(alGenBuffers(BUFFER_COUNT, m_Buffers));
 	
-	m_Channels = 2;
-	m_BitDepth = 16;
+	switch (m_Format)
+	{
+	case AL_FORMAT_MONO8:
+		m_Channels = 1;
+		m_BitDepth = 8;
+		break;
+	
+	case AL_FORMAT_MONO16:
+		m_Channels = 1;
+		m_BitDepth = 16;
+		break;
+	
+	case AL_FORMAT_STEREO8:
+		m_Channels = 2;
+		m_BitDepth = 8;
+		break;
+	
+	case AL_FORMAT_STEREO16:
+		m_Channels = 2;
+		m_BitDepth = 16;
+		break;
+
+	default:
+		ERR("Unknown channels and bit depth in WAV data");
+	}
+
 	ALsizei blockAlign = m_Channels * (m_BitDepth / 8.0);
 	
 	m_BufferSize = m_AudioDataSize / BUFFER_COUNT;
@@ -27,13 +51,19 @@ void StreamingAudioBuffer::initializeBuffers()
 	m_BufferEnd = m_BufferCursor + m_AudioDataSize;
 
 	int i = 0;
-	while (i < BUFFER_COUNT)
+	while (i < MAX_BUFFER_QUEUE_LENGTH)
 	{
+		if (m_BufferCursor > m_DecompressedAudioBuffer + m_AudioDataSize)
+		{
+			break;
+		}
 		AL_CHECK(alBufferData(m_Buffers[i], m_Format, (const ALvoid*)m_BufferCursor, (ALsizei)m_BufferSize, m_Frequency));
 		
 		m_BufferCursor += m_BufferSize;
 		i++;
 	}
+
+	m_BufferQueueLength = i;
 }
 
 void StreamingAudioBuffer::destroyBuffers()
@@ -61,6 +91,10 @@ void StreamingAudioBuffer::loadNewBuffers(int count, bool isLooping)
 			{
 				m_BufferCursor = m_DecompressedAudioBuffer;
 			}
+			else
+			{
+				break;
+			}
 		}
 		
 		if (m_BufferEnd >= m_DecompressedAudioBuffer + m_AudioDataSize) // Data not left enough to entirely fill the next buffer
@@ -69,7 +103,7 @@ void StreamingAudioBuffer::loadNewBuffers(int count, bool isLooping)
 		}
 
 		AL_CHECK(alBufferData(m_Buffers[i], m_Format, m_BufferCursor, m_BufferEnd - m_BufferCursor, m_Frequency));
-		m_BufferCursor = m_BufferEnd;	
+		m_BufferCursor = m_BufferEnd;
 	}
 }
 
@@ -87,6 +121,11 @@ StreamingAudioBuffer::~StreamingAudioBuffer()
 ALuint* StreamingAudioBuffer::getBuffers()
 {
 	return m_Buffers;
+}
+
+int StreamingAudioBuffer::getBufferQueueLength()
+{
+	return m_BufferQueueLength;
 }
 
 int StreamingAudioBuffer::getFrequency()

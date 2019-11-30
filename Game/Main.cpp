@@ -20,14 +20,14 @@ int main()
 	Ref<ResourceFile> w = ResourceLoader::createResourceFile(DirectoryShortcut::ASSETS, "Test WAV File", "lost_in_istanbul.wav", ResourceFile::Type::WAV);
 	Ref<StreamingAudioBuffer> audio(new StreamingAudioBuffer(w));
 	Ref<StreamingAudioSource> source(new StreamingAudioSource(audio.get()));
-	source->setLooping(false);
+	source->setLooping(true);
 	source->play();
 
 	Ref<ResourceFile> w2 = ResourceLoader::createResourceFile(DirectoryShortcut::ASSETS, "Test WAV File", "ball.wav", ResourceFile::Type::WAV);
-	Ref<StreamingAudioBuffer> audio2(new StreamingAudioBuffer(w2));
-	Ref<StreamingAudioSource> source2(new StreamingAudioSource(audio2.get()));
+	Ref<StaticAudioBuffer> audio2(new StaticAudioBuffer(w2));
+	Ref<StaticAudioSource> source2(new StaticAudioSource(audio2.get()));
 	source2->setLooping(false);
-	source2->play();
+	//source2->play();
 
 	while (true)
 	{
