@@ -50,7 +50,7 @@ ResourceData* ResourceFile::getData()
 
 String ResourceFile::getDataString()
 {
-	Vector<char>& buffer = m_ResourceData->getRawData();
+	Vector<char>& buffer = m_ResourceData->getRawData()->m_Buffer;
 
 	return String(buffer.begin(), buffer.end());
 }
