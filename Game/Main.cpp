@@ -1,7 +1,8 @@
 #include "common/common.h"
 
 #include "core/audio/audio_system.h"
-#include "core/audio/audio_static_buffer.h"
+#include "core/audio/static_audio_buffer.h"
+#include "core/audio/streaming_audio_buffer.h"
 #include "core/audio/audio_source.h"
 #include "core/renderer/window.h"
 #include "core/resource_loader.h"
@@ -13,12 +14,12 @@ int main()
 {
 	OS::initialize();
 	OS::printLine("Rootex Engine is starting: Build(" + OS::getBuildDate() + "|" + OS::getBuildTime() + ")");
-	
+
 	AudioSystem::GetSingleton()->initialize();
 
 	Ref<ResourceFile> w = ResourceLoader::createResourceFile(DirectoryShortcut::ASSETS, "Test WAV File", "lost_in_istanbul.wav", ResourceFile::Type::WAV);
-	Ref<AudioStaticBuffer> audio(new AudioStaticBuffer(w));
-	Ref<StaticAudioSource> source(new StaticAudioSource(audio.get()));
+	Ref<StreamingAudioBuffer> audio(new StreamingAudioBuffer(w));
+	Ref<StreamingAudioSource> source(new StreamingAudioSource(audio.get()));
 	source->setLooping(true);
 	source->play();
 
