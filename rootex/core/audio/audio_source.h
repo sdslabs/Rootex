@@ -17,7 +17,7 @@ protected:
 	~AudioSource();
 
 public:
-	void setLooping(bool enabled);
+	virtual void setLooping(bool enabled);
 	virtual void queueNewBuffers();
 	
 	void play();
@@ -43,5 +43,6 @@ public:
 	StreamingAudioSource(StreamingAudioBuffer* audio);
 	~StreamingAudioSource();
 
+	void setLooping(bool enabled) override;
 	void queueNewBuffers() override;
 };

@@ -133,7 +133,7 @@ void AudioSystem::setBufferUpdateRate(float milliseconds)
 AudioSystem::AudioSystem()
     : m_Context(nullptr)
     , m_Device(nullptr)
-    , m_UpdateInterval(1)
+    , m_UpdateInterval(1 * MILLISECONDS)
 {
 }
 

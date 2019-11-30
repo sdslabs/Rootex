@@ -53,18 +53,25 @@ StaticAudioSource::StaticAudioSource(StaticAudioBuffer* audio)
 
 StaticAudioSource::~StaticAudioSource()
 {
+	// TODO: Remove StaticAudioSource from being tracked in AudioSystem
+	AudioSystem::GetSingleton()->deregisterInstance(this);
 }
 
 StreamingAudioSource::StreamingAudioSource(StreamingAudioBuffer* audio)
     : AudioSource(true)
     , m_StreamingAudio(audio)
 {
-	AL_CHECK(alSourceQueueBuffers(m_SourceID, BUFFER_COUNT, audio->getBuffers()));
+	AL_CHECK(alSourceQueueBuffers(m_SourceID, m_StreamingAudio->getBufferQueueLength(), m_StreamingAudio->getBuffers()));
 }
 
 StreamingAudioSource::~StreamingAudioSource()
 {
 	AudioSystem::GetSingleton()->deregisterInstance(this);
+}
+
+void StreamingAudioSource::setLooping(bool enabled)
+{
+	m_IsLooping = enabled;
 }
 
 void StreamingAudioSource::queueNewBuffers()
@@ -77,5 +84,12 @@ void StreamingAudioSource::queueNewBuffers()
 		AL_CHECK(alSourceUnqueueBuffers(m_SourceID, numUsedUp, m_StreamingAudio->getBuffers()));
 		m_StreamingAudio->loadNewBuffers(numUsedUp, isLooping());
 		AL_CHECK(alSourceQueueBuffers(m_SourceID, numUsedUp, m_StreamingAudio->getBuffers()));
+
+		static ALint val;
+		AL_CHECK(alGetSourcei(m_SourceID, AL_SOURCE_STATE, &val));
+		if (val != AL_PLAYING)
+		{
+			AL_CHECK(alSourcePlay(m_SourceID));
+		}
 	}
 }
