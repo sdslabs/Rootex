@@ -23,6 +23,12 @@ int main()
 	source->setLooping(false);
 	source->play();
 
+	Ref<ResourceFile> w2 = ResourceLoader::createResourceFile(DirectoryShortcut::ASSETS, "Test WAV File", "ball.wav", ResourceFile::Type::WAV);
+	Ref<StreamingAudioBuffer> audio2(new StreamingAudioBuffer(w2));
+	Ref<StreamingAudioSource> source2(new StreamingAudioSource(audio2.get()));
+	source2->setLooping(false);
+	source2->play();
+
 	while (true)
 	{
 		AudioSystem::GetSingleton()->update();
