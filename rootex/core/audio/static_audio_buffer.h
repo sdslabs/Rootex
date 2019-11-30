@@ -2,7 +2,7 @@
 
 #include "audio_buffer.h"
 
-class AudioStaticBuffer : public AudioBuffer
+class StaticAudioBuffer : public AudioBuffer
 {
 	ALuint m_BufferID;
 	int m_BufferSize;
@@ -15,8 +15,8 @@ class AudioStaticBuffer : public AudioBuffer
 	void destroyBuffers() override;
 
 public:
-	AudioStaticBuffer(Ref<ResourceFile> audioFile);
-	~AudioStaticBuffer();
+	StaticAudioBuffer(Ref<ResourceFile> audioFile);
+	~StaticAudioBuffer();
 
 	ALuint getBuffer();
 	int getBufferSize();

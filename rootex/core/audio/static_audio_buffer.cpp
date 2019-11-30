@@ -1,9 +1,9 @@
-#include "audio_static_buffer.h"
+#include "static_audio_buffer.h"
 
 #include "audio_system.h"
 #include "resource_data.h"
 
-void AudioStaticBuffer::initializeBuffers()
+void StaticAudioBuffer::initializeBuffers()
 {
 	PANIC(m_AudioFile->getType() != ResourceFile::Type::WAV, "AudioSystem: Trying to load a non-WAV file in a sound buffer");
 
@@ -17,43 +17,43 @@ void AudioStaticBuffer::initializeBuffers()
 	AL_CHECK(alGetBufferi(m_BufferID, AL_SIZE, &m_BufferSize));
 }
 
-void AudioStaticBuffer::destroyBuffers()
+void StaticAudioBuffer::destroyBuffers()
 {
 	AL_CHECK(alDeleteBuffers(1, &m_BufferID));
 }
 
-AudioStaticBuffer::AudioStaticBuffer(Ref<ResourceFile> audioFile)
+StaticAudioBuffer::StaticAudioBuffer(Ref<ResourceFile> audioFile)
     : AudioBuffer(audioFile)
 {
 	initializeBuffers();
 }
 
-AudioStaticBuffer::~AudioStaticBuffer()
+StaticAudioBuffer::~StaticAudioBuffer()
 {
 	destroyBuffers();
 }
 
-int AudioStaticBuffer::getFrequency()
+int StaticAudioBuffer::getFrequency()
 {
 	return m_Frequency;
 }
 
-int AudioStaticBuffer::getBitDepth()
+int StaticAudioBuffer::getBitDepth()
 {
 	return m_BitDepth;
 }
 
-int AudioStaticBuffer::getChannels()
+int StaticAudioBuffer::getChannels()
 {
 	return m_Channels;
 }
 
-ALuint AudioStaticBuffer::getBuffer()
+ALuint StaticAudioBuffer::getBuffer()
 {
 	return m_BufferID;
 }
 
-int AudioStaticBuffer::getBufferSize()
+int StaticAudioBuffer::getBufferSize()
 {
 	return m_BufferSize;
 }

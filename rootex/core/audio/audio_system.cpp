@@ -3,8 +3,8 @@
 #include <chrono>
 #include <thread>
 
-#include "audio_static_buffer.h"
-#include "audio_streaming_buffer.h"
+#include "static_audio_buffer.h"
+#include "streaming_audio_buffer.h"
 #include "audio_source.h"
 #include "core/resource_data.h"
 
@@ -48,23 +48,9 @@ void AudioSystem::CheckALUTError(const char* msg, const char* fname, int line)
 
 bool AudioSystem::initialize()
 {
-	alGetError();
-
-	const char* ALDevice = alcGetString(NULL, ALC_DEVICE_SPECIFIER);
-	m_Device = alcOpenDevice(ALDevice);
-
-	if (m_Device == nullptr)
+	if (!alutInit(NULL, NULL))
 	{
-		ERR("AudioSystem: Failed to Initialize OpenAL device");
-		return false;
-	}
-
-	m_Context = alcCreateContext(m_Device, nullptr);
-	AL_CHECK(alcMakeContextCurrent(m_Context));
-
-	if (!alutInitWithoutContext(NULL, NULL))
-	{
-		ERR("AudioSystem: ALUT failed to initialize");
+		ERR("AudioSystem: AL/ALUT failed to initialize");
 		return false;
 	}
 
@@ -93,10 +79,6 @@ AudioSystem* AudioSystem::GetSingleton()
 
 void AudioSystem::shutDown()
 {
-	alcCloseDevice(m_Device);
-
-	PANIC(m_ActiveAudioSources.size() > 0, "AudioSystem: AL streaming buffers are still alive. Deleting leaked buffers.");
-
 	alutExit();
 }
 
@@ -114,7 +96,7 @@ void AudioSystem::deregisterInstance(AudioSource* audio)
 		return;
 	}
 
-	WARN("AudioSystem: Tried to double deregisterInstance a AudioStreamingBuffer. Delete aborted.");
+	WARN("AudioSystem: Tried to double deregisterInstance a StreamingAudioBuffer. Delete aborted.");
 }
 
 void AudioSystem::setBufferUpdateRate(float milliseconds)

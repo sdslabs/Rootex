@@ -33,8 +33,8 @@
 #endif
 
 class AudioBuffer;
-class AudioStaticBuffer;
-class AudioStreamingBuffer;
+class StaticAudioBuffer;
+class StreamingAudioBuffer;
 
 class AudioSource;
 class StreamingAudioSource;

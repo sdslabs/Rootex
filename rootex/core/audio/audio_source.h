@@ -1,7 +1,7 @@
 #pragma once
 
-class AudioStreamingBuffer;
-class AudioStaticBuffer;
+class StreamingAudioBuffer;
+class StaticAudioBuffer;
 
 typedef unsigned int ALuint;
 
@@ -28,19 +28,19 @@ public:
 
 class StaticAudioSource : public AudioSource
 {
-	AudioStaticBuffer* m_StaticAudio;
+	StaticAudioBuffer* m_StaticAudio;
 
 public:
-	StaticAudioSource(AudioStaticBuffer* audio);
+	StaticAudioSource(StaticAudioBuffer* audio);
 	~StaticAudioSource();
 };
 
 class StreamingAudioSource : public AudioSource
 {
-	AudioStreamingBuffer* m_StreamingAudio;
+	StreamingAudioBuffer* m_StreamingAudio;
 
 public:
-	StreamingAudioSource(AudioStreamingBuffer* audio);
+	StreamingAudioSource(StreamingAudioBuffer* audio);
 	~StreamingAudioSource();
 
 	void queueNewBuffers() override;

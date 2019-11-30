@@ -1,8 +1,8 @@
 #include "audio_source.h"
 
 #include "audio_system.h"
-#include "audio_static_buffer.h"
-#include "audio_streaming_buffer.h"
+#include "static_audio_buffer.h"
+#include "streaming_audio_buffer.h"
 
 AudioSource::AudioSource(bool isStreaming)
     : m_IsStreaming(isStreaming)
@@ -44,7 +44,7 @@ ALuint AudioSource::getSourceID()
 	return m_SourceID;
 }
 
-StaticAudioSource::StaticAudioSource(AudioStaticBuffer* audio)
+StaticAudioSource::StaticAudioSource(StaticAudioBuffer* audio)
     : AudioSource(false)
     , m_StaticAudio(audio)
 {
@@ -55,7 +55,7 @@ StaticAudioSource::~StaticAudioSource()
 {
 }
 
-StreamingAudioSource::StreamingAudioSource(AudioStreamingBuffer* audio)
+StreamingAudioSource::StreamingAudioSource(StreamingAudioBuffer* audio)
     : AudioSource(true)
     , m_StreamingAudio(audio)
 {

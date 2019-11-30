@@ -1,21 +1,21 @@
 #pragma once
 
-#define MAX_BUFFER_SIZE 32000
 #define BUFFER_COUNT 5
 
 #include "audio_buffer.h"
 #include "audio_system.h"
 
-class AudioStreamingBuffer : public AudioBuffer
+class StreamingAudioBuffer : public AudioBuffer
 {
-	ALuint* m_Buffers;
+	ALuint m_Buffers[BUFFER_COUNT];
 
-	int m_Frequency;
+	float m_Frequency;
 	int m_BitDepth;
 	int m_Channels;
+	int m_BufferSize;
 	
-	const char* m_DecompressedFileBuffer;
-	ALsizei m_FileBufferSize;
+	const char* m_DecompressedAudioBuffer;
+	ALsizei m_AudioDataSize;
 	ALenum m_Format;
 
 	const char* m_BufferCursor;
@@ -25,8 +25,8 @@ class AudioStreamingBuffer : public AudioBuffer
 	void destroyBuffers() override;
 	
 public:
-	AudioStreamingBuffer(Ref<ResourceFile> audioFile);
-	~AudioStreamingBuffer();
+	StreamingAudioBuffer(Ref<ResourceFile> audioFile);
+	~StreamingAudioBuffer();
 	
 	void loadNewBuffers(int count, bool isLooping);
 
