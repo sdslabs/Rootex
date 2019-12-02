@@ -25,6 +25,8 @@ RootexGraphics::RootexGraphics(HWND windowHandler, unsigned int w, unsigned int 
 	descriptor.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 	descriptor.Flags = 0;
 
+	//TODO- add HRESULT error check and Device Removed exception
+
 	D3D11CreateDeviceAndSwapChain(
 	    nullptr,
 	    D3D_DRIVER_TYPE_HARDWARE,
@@ -69,7 +71,7 @@ RootexGraphics::RootexGraphics(HWND windowHandler, unsigned int w, unsigned int 
 	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 	pDevice->CreateTexture2D(&descDepth, nullptr, &pDepthStencil);
 
-	D3D11_DEPTH_STENCIL_VIEW_DESC descDSView = { 0 };
+	D3D11_DEPTH_STENCIL_VIEW_DESC descDSView = { };
 	descDSView.Format = DXGI_FORMAT_D32_FLOAT;
 	descDSView.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	descDSView.Texture2D.MipSlice = 0u;
@@ -287,14 +289,4 @@ void RootexGraphics::DrawTestCube(float angle)
 	pContext->RSSetViewports(1u, &vp);
 
 	pContext->DrawIndexed((UINT)std::size(indices), 0u, 0u);
-}
-
-template <class T>
-void SafeRelease(T** ppT)
-{
-	if (*ppT)
-	{
-		(*ppT)->Release();
-		*ppT = NULL;
-	}
 }

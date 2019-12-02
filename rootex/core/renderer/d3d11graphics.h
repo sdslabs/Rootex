@@ -5,6 +5,8 @@
 #include <array>
 #include <iostream>
 #include <DirectXMath.h>
+#include "d3d11utils.h"
+#include "dxgiDebugInterface.h"
 
 class RootexGraphics
 {
@@ -27,9 +29,9 @@ public:
 	RootexGraphics& operator=(const RootexGraphics&) = delete;  
 	~RootexGraphics();
 
+	DxgiDebugInterface dxgiDebugInterface;
+
 	void ClearBuffer(float r, float g, float b);
 	void DrawTestCube(float angle);
 	void EndFrame();
 };
-template <class T>
-void SafeRelease(T** ppT);
