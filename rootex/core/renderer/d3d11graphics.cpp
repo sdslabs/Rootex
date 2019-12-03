@@ -41,18 +41,18 @@ RootexGraphics::RootexGraphics(HWND windowHandler, unsigned int w, unsigned int 
 	    nullptr,
 	    &pContext));
 	ID3D11Resource* pBackBuffer = nullptr;
-	pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), reinterpret_cast<void**>(&pBackBuffer));
-	pDevice->CreateRenderTargetView(
+	GFX_ERR_CHECK(pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), reinterpret_cast<void**>(&pBackBuffer)));
+	GFX_ERR_CHECK(pDevice->CreateRenderTargetView(
 	    pBackBuffer,
 	    nullptr,
-	    &pTarget);
+	    &pTarget));
 
 	D3D11_DEPTH_STENCIL_DESC dsDesc = { 0 };
 	dsDesc.DepthEnable = TRUE;
 	dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
 	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 	ID3D11DepthStencilState* pDSState;
-	pDevice->CreateDepthStencilState(&dsDesc, &pDSState);
+	GFX_ERR_CHECK(pDevice->CreateDepthStencilState(&dsDesc, &pDSState));
 
 	pContext->OMSetDepthStencilState(pDSState, 1u);
 
@@ -69,14 +69,14 @@ RootexGraphics::RootexGraphics(HWND windowHandler, unsigned int w, unsigned int 
 	descDepth.SampleDesc.Quality = 0u;
 	descDepth.Usage = D3D11_USAGE_DEFAULT;
 	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	pDevice->CreateTexture2D(&descDepth, nullptr, &pDepthStencil);
+	GFX_ERR_CHECK(pDevice->CreateTexture2D(&descDepth, nullptr, &pDepthStencil));
 
 	D3D11_DEPTH_STENCIL_VIEW_DESC descDSView = { };
 	descDSView.Format = DXGI_FORMAT_D32_FLOAT;
 	descDSView.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	descDSView.Texture2D.MipSlice = 0u;
 
-	pDevice->CreateDepthStencilView(pDepthStencil, &descDSView, &pDSView);
+	GFX_ERR_CHECK(pDevice->CreateDepthStencilView(pDepthStencil, &descDSView, &pDSView));
 
 	SafeRelease(&pDepthStencil);
 
@@ -86,7 +86,7 @@ RootexGraphics::RootexGraphics(HWND windowHandler, unsigned int w, unsigned int 
 
 void RootexGraphics::EndFrame()
 {
-	pSwapChain->Present(1u, 0);
+	GFX_ERR_CHECK(pSwapChain->Present(1u, 0));
 }
 
 RootexGraphics::~RootexGraphics()
@@ -137,7 +137,7 @@ void RootexGraphics::DrawTestCube(float angle)
 
 	//create and bind vertex buffer
 
-	pDevice->CreateBuffer(&vbd, &vsd, &pVertexBuffer);
+	GFX_ERR_CHECK(pDevice->CreateBuffer(&vbd, &vsd, &pVertexBuffer));
 	const UINT stride = sizeof(Vertex);
 	const UINT offset = 0u;
 	pContext->IASetVertexBuffers(0u, 1u, &pVertexBuffer, &stride, &offset);
@@ -170,7 +170,7 @@ void RootexGraphics::DrawTestCube(float angle)
 	D3D11_SUBRESOURCE_DATA isd = { 0 };
 	isd.pSysMem = indices;
 
-	pDevice->CreateBuffer(&ibd, &isd, &pIndexBuffer);
+	GFX_ERR_CHECK(pDevice->CreateBuffer(&ibd, &isd, &pIndexBuffer));
 	pContext->IASetIndexBuffer(pIndexBuffer, DXGI_FORMAT_R16_UINT, 0u);
 
 	SafeRelease(&pIndexBuffer);
@@ -196,7 +196,7 @@ void RootexGraphics::DrawTestCube(float angle)
 	D3D11_SUBRESOURCE_DATA csd = { 0 };
 	csd.pSysMem = &cb;
 
-	pDevice->CreateBuffer(&cbd, &csd, &pConstantBuffer);
+	GFX_ERR_CHECK(pDevice->CreateBuffer(&cbd, &csd, &pConstantBuffer));
 	pContext->VSSetConstantBuffers(0u, 1u, &pConstantBuffer);
 
 	SafeRelease(&pConstantBuffer);
@@ -232,7 +232,7 @@ void RootexGraphics::DrawTestCube(float angle)
 	D3D11_SUBRESOURCE_DATA csd2 = { 0 };
 	csd2.pSysMem = &cb2;
 
-	pDevice->CreateBuffer(&cbd2, &csd2, &pConstantBuffer2);
+	GFX_ERR_CHECK(pDevice->CreateBuffer(&cbd2, &csd2, &pConstantBuffer2));
 	pContext->PSSetConstantBuffers(0u, 1u, &pConstantBuffer2);
 
 	SafeRelease(&pConstantBuffer2);
@@ -241,8 +241,8 @@ void RootexGraphics::DrawTestCube(float angle)
 
 	//load pixel shader
 	ID3D11PixelShader* pPixelShader = nullptr;
-	D3DReadFileToBlob(L"PixelShader.cso", &pBlob);
-	pDevice->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader);
+	GFX_ERR_CHECK(D3DReadFileToBlob(L"PixelShader.cso", &pBlob));
+	GFX_ERR_CHECK(pDevice->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader));
 	pContext->PSSetShader(pPixelShader, nullptr, 0u);
 
 	SafeRelease(&pBlob);
@@ -251,7 +251,7 @@ void RootexGraphics::DrawTestCube(float angle)
 	//load vertex shader
 	ID3D11VertexShader* pVertexShader = nullptr;
 	D3DReadFileToBlob(L"VertexShader.cso", &pBlob);
-	pDevice->CreateVertexShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pVertexShader);
+	GFX_ERR_CHECK(pDevice->CreateVertexShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pVertexShader));
 	pContext->VSSetShader(pVertexShader, nullptr, 0u);
 
 	SafeRelease(&pVertexShader);
@@ -262,11 +262,11 @@ void RootexGraphics::DrawTestCube(float angle)
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		//{ "COLOR", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, 12u, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
-	pDevice->CreateInputLayout(
+	GFX_ERR_CHECK(pDevice->CreateInputLayout(
 	    ied, (UINT)std::size(ied),
 	    pBlob->GetBufferPointer(),
 	    pBlob->GetBufferSize(),
-	    &pInputLayout);
+	    &pInputLayout));
 
 	SafeRelease(&pBlob);
 
