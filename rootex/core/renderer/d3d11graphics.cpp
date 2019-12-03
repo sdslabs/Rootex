@@ -27,7 +27,7 @@ RootexGraphics::RootexGraphics(HWND windowHandler, unsigned int w, unsigned int 
 
 	//TODO- add HRESULT error check and Device Removed exception
 
-	D3D11CreateDeviceAndSwapChain(
+	GFX_ERR_CHECK( D3D11CreateDeviceAndSwapChain(
 	    nullptr,
 	    D3D_DRIVER_TYPE_HARDWARE,
 	    nullptr,
@@ -39,7 +39,7 @@ RootexGraphics::RootexGraphics(HWND windowHandler, unsigned int w, unsigned int 
 	    &pSwapChain,
 	    &pDevice,
 	    nullptr,
-	    &pContext);
+	    &pContext));
 	ID3D11Resource* pBackBuffer = nullptr;
 	pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), reinterpret_cast<void**>(&pBackBuffer));
 	pDevice->CreateRenderTargetView(
