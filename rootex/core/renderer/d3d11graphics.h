@@ -8,6 +8,11 @@
 #include "d3d11utils.h"
 #include "dxgiDebugInterface.h"
 
+#define GFX_ERR_CHECK(hr)      \
+	dxgiDebugInterface.Set();  \
+	if (FAILED(hr)) \
+	dxgiDebugInterface.GetMessages(__FILE__, __func__)
+
 class RootexGraphics
 {
 private:

@@ -12,7 +12,7 @@ public:
 	DxgiDebugInterface(const DxgiDebugInterface&) = delete;
 	DxgiDebugInterface& operator=(const DxgiDebugInterface&) = delete;
 	void Set() noexcept;
-	Vector<String> GetMessages() const;
+	void GetMessages(String file, String func) const;
 
 private:
 	unsigned long long next = 0u;
