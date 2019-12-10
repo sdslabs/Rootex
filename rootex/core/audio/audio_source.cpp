@@ -53,8 +53,6 @@ StaticAudioSource::StaticAudioSource(StaticAudioBuffer* audio)
 
 StaticAudioSource::~StaticAudioSource()
 {
-	// TODO: Remove StaticAudioSource from being tracked in AudioSystem
-	AudioSystem::GetSingleton()->deregisterInstance(this);
 }
 
 StreamingAudioSource::StreamingAudioSource(StreamingAudioBuffer* audio)
@@ -66,7 +64,6 @@ StreamingAudioSource::StreamingAudioSource(StreamingAudioBuffer* audio)
 
 StreamingAudioSource::~StreamingAudioSource()
 {
-	AudioSystem::GetSingleton()->deregisterInstance(this);
 }
 
 void StreamingAudioSource::setLooping(bool enabled)
