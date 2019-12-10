@@ -122,7 +122,7 @@ void AudioSystem::deregisterInstance(AudioSource* audio)
 		return;
 	}
 
-	WARN("AudioSystem: Tried to double deregisterInstance a StreamingAudioBuffer. Delete aborted.");
+	WARN("AudioSystem: Tried to double deregister an AudioBuffer. Delete aborted.");
 }
 
 void AudioSystem::setBufferUpdateRate(float milliseconds)
