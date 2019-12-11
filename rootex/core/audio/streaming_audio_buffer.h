@@ -1,7 +1,7 @@
 #pragma once
 
-#define BUFFER_COUNT 10
-#define MAX_BUFFER_QUEUE_LENGTH BUFFER_COUNT / 2
+#define BUFFER_COUNT 50
+#define MAX_BUFFER_QUEUE_LENGTH BUFFER_COUNT / 25
 
 #include "audio_buffer.h"
 #include "audio_system.h"
