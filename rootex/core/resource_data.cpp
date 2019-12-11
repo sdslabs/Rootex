@@ -7,7 +7,7 @@ unsigned int ResourceData::getID()
 	return m_ID;
 }
 
-String ResourceData::getPath()
+FilePath ResourceData::getPath()
 {
 	return m_Path;
 }
@@ -19,7 +19,7 @@ FileBuffer* ResourceData::getRawData()
 
 unsigned int ResourceData::getRawDataByteSize()
 {
-	return m_FileBuffer.m_Buffer.size();
+	return m_FileBuffer.size();
 }
 
 void ResourceData::setPath(String path)
@@ -50,14 +50,15 @@ bool ResourceData::isEndOfFile()
 
 void ResourceData::resetStream()
 {
-	m_StreamStart = &m_FileBuffer.m_Buffer.front();
+	m_StreamStart = &m_FileBuffer.front();
 }
 
-ResourceData::ResourceData(std::vector<char> data)
+ResourceData::ResourceData(FilePath path, FileBuffer& data)
     : m_ID(s_Count)
     , m_FileBuffer(data)
     , m_StreamStart(&data.front())
     , m_StreamEnd(&data.back())
+    , m_Path(path)
 {
 	s_Count++;
 }

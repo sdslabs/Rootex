@@ -16,26 +16,78 @@ public:
 	};
 
 protected:
-	String m_Name;
-	String m_Path;
 	Type m_Type;
 	ResourceData* m_ResourceData;
 
+	explicit ResourceFile(const Type& type, ResourceData* resData);
+	
+	friend class ResourceLoader;
+
 public:
-	explicit ResourceFile(const String& name, const String& path, const Type& type);
+	~ResourceFile();
 	explicit ResourceFile(ResourceFile&) = delete;
 	explicit ResourceFile(ResourceFile&&) = delete;
-	~ResourceFile();
 
 	bool isValid();
 	bool isOpen();
 
-	String getName();
-	String getPath();
+	FilePath getPath();
 	Type getType();
 	ResourceData* getData();
-	String getDataString();
-	String getText();
+};
 
-	void setResourceData(ResourceData* resourceData);
+class TextResourceFile : public ResourceFile
+{	
+protected:
+	explicit TextResourceFile(const Type& type, ResourceData* resData);
+	~TextResourceFile();
+
+	friend class ResourceLoader;
+
+public:
+	explicit TextResourceFile(TextResourceFile&) = delete;
+	explicit TextResourceFile(TextResourceFile&&) = delete;
+
+	String getString() const;
+};
+
+class LuaTextResourceFile : public TextResourceFile
+{
+	explicit LuaTextResourceFile(ResourceData* resData);
+	~LuaTextResourceFile();
+
+	friend class ResourceLoader;
+
+public:
+	explicit LuaTextResourceFile(TextResourceFile&) = delete;
+	explicit LuaTextResourceFile(TextResourceFile&&) = delete;
+};
+
+typedef int ALsizei;
+typedef int ALenum;
+
+class AudioResourceFile : public ResourceFile
+{
+	ALenum m_Format;
+	float m_Frequency;
+	int m_BitDepth;
+	int m_Channels;
+
+	const char* m_DecompressedAudioBuffer;
+	ALsizei m_AudioDataSize;
+
+	explicit AudioResourceFile(ResourceData* resData);
+	~AudioResourceFile();
+
+	friend class ResourceLoader;
+
+public:
+	explicit AudioResourceFile(AudioResourceFile&) = delete;
+	explicit AudioResourceFile(AudioResourceFile&&) = delete;
+
+	ALsizei getAudioDataSize() const { return m_AudioDataSize; }
+	ALenum getFormat() const { return m_Format; }
+	float getFrequency() const { return m_Frequency; }
+	int getBitDepth() const { return m_BitDepth; }
+	int getChannels() const { return m_Channels; }
 };

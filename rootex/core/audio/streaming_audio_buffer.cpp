@@ -11,53 +11,28 @@ void StreamingAudioBuffer::initializeBuffers()
 	ResourceData* fileStream = m_AudioFile->getData();
 	FileBuffer* fileBuffer = fileStream->getRawData();
 
-	float frequencyFloat;
-	ALUT_CHECK(m_DecompressedAudioBuffer = (const char*)alutLoadMemoryFromFile(m_AudioFile->getPath().c_str(), &m_Format, &m_AudioDataSize, &frequencyFloat));
-	m_Frequency = (ALsizei)frequencyFloat;
-
 	AL_CHECK(alGenBuffers(BUFFER_COUNT, m_Buffers));
-	
-	switch (m_Format)
-	{
-	case AL_FORMAT_MONO8:
-		m_Channels = 1;
-		m_BitDepth = 8;
-		break;
-	
-	case AL_FORMAT_MONO16:
-		m_Channels = 1;
-		m_BitDepth = 16;
-		break;
-	
-	case AL_FORMAT_STEREO8:
-		m_Channels = 2;
-		m_BitDepth = 8;
-		break;
-	
-	case AL_FORMAT_STEREO16:
-		m_Channels = 2;
-		m_BitDepth = 16;
-		break;
 
-	default:
-		ERR("Unknown channels and bit depth in WAV data");
-	}
-
-	ALsizei blockAlign = m_Channels * (m_BitDepth / 8.0);
+	ALsizei blockAlign = m_AudioFile->getChannels() * (m_AudioFile->getBitDepth() / 8.0);
 	
-	m_BufferSize = m_AudioDataSize / BUFFER_COUNT;
+	m_BufferSize = m_AudioFile->getAudioDataSize() / BUFFER_COUNT;
 	m_BufferSize -= (m_BufferSize % blockAlign);
-	m_BufferCursor = m_DecompressedAudioBuffer;
-	m_BufferEnd = m_BufferCursor + m_AudioDataSize;
+	m_BufferCursor = m_AudioFile->getData()->getRawData()->data();
+	m_BufferEnd = m_BufferCursor + m_AudioFile->getAudioDataSize();
 
 	int i = 0;
 	while (i < MAX_BUFFER_QUEUE_LENGTH)
 	{
-		if (m_BufferCursor > m_DecompressedAudioBuffer + m_AudioDataSize)
+		if (m_BufferCursor > m_AudioFile->getData()->getRawData()->data() + m_AudioFile->getAudioDataSize())
 		{
 			break;
 		}
-		AL_CHECK(alBufferData(m_Buffers[i], m_Format, (const ALvoid*)m_BufferCursor, (ALsizei)m_BufferSize, m_Frequency));
+		AL_CHECK(alBufferData(
+			m_Buffers[i], 
+			m_AudioFile->getFormat(), 
+			(const ALvoid*)m_BufferCursor, 
+			(ALsizei)m_BufferSize, 
+			m_AudioFile->getFrequency()));
 		
 		m_BufferCursor += m_BufferSize;
 		i++;
@@ -72,11 +47,6 @@ void StreamingAudioBuffer::destroyBuffers()
 	{
 		AL_CHECK(alDeleteBuffers(1, &m_Buffers[i]));
 	}
-
-	for (int i = 0; i < m_AudioDataSize; i++)
-	{
-		delete (m_DecompressedAudioBuffer + i);
-	}
 }
 
 void StreamingAudioBuffer::loadNewBuffers(int count, bool isLooping)
@@ -85,11 +55,11 @@ void StreamingAudioBuffer::loadNewBuffers(int count, bool isLooping)
 	{
 		m_BufferEnd = m_BufferCursor + m_BufferSize;
 
-		if (m_BufferCursor == m_DecompressedAudioBuffer + m_AudioDataSize) // Data has exhausted
+		if (m_BufferCursor == m_AudioFile->getData()->getRawData()->data() + m_AudioFile->getAudioDataSize()) // Data has exhausted
 		{
 			if (isLooping) // Re-queue if looping
 			{
-				m_BufferCursor = m_DecompressedAudioBuffer;
+				m_BufferCursor = m_AudioFile->getData()->getRawData()->data();
 			}
 			else
 			{
@@ -97,17 +67,23 @@ void StreamingAudioBuffer::loadNewBuffers(int count, bool isLooping)
 			}
 		}
 		
-		if (m_BufferEnd >= m_DecompressedAudioBuffer + m_AudioDataSize) // Data not left enough to entirely fill the next buffer
+		if (m_BufferEnd >= m_AudioFile->getData()->getRawData()->data() + m_AudioFile->getAudioDataSize()) // Data not left enough to entirely fill the next buffer
 		{
-			m_BufferEnd = m_DecompressedAudioBuffer + m_AudioDataSize; // Only take what you can
+			m_BufferEnd = m_AudioFile->getData()->getRawData()->data() + m_AudioFile->getAudioDataSize(); // Only take what you can
 		}
 
-		AL_CHECK(alBufferData(m_Buffers[i], m_Format, m_BufferCursor, m_BufferEnd - m_BufferCursor, m_Frequency));
+		AL_CHECK(alBufferData(
+			m_Buffers[i], 
+			m_AudioFile->getFormat(), 
+			m_BufferCursor, 
+			m_BufferEnd - m_BufferCursor, 
+			m_AudioFile->getFrequency()));
+		
 		m_BufferCursor = m_BufferEnd;
 	}
 }
 
-StreamingAudioBuffer::StreamingAudioBuffer(Ref<ResourceFile> audioFile)
+StreamingAudioBuffer::StreamingAudioBuffer(AudioResourceFile* audioFile)
     : AudioBuffer(audioFile)
 {
 	initializeBuffers();
@@ -126,19 +102,4 @@ ALuint* StreamingAudioBuffer::getBuffers()
 int StreamingAudioBuffer::getBufferQueueLength()
 {
 	return m_BufferQueueLength;
-}
-
-int StreamingAudioBuffer::getFrequency()
-{
-	return m_Frequency;
-}
-
-int StreamingAudioBuffer::getBitDepth()
-{
-	return m_BitDepth;
-}
-
-int StreamingAudioBuffer::getChannels()
-{
-	return m_Channels;
 }

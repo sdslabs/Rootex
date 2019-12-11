@@ -8,44 +8,27 @@
 #define ROOT_MARKER_FILENAME "rootex.root"
 #define ENGINE_DIRECTORY "rootex"
 #define GAME_DIRECTORY "game"
-#define ASSETS_DIRECTORY "assets"
 
-struct FileBuffer
-{
-	std::vector<char> m_Buffer;
-	
-	FileBuffer();
-	FileBuffer(std::vector<char> buffer);
-
-	const char* getRawDataPointer();
-	unsigned int getSize();
-};
-
-enum class DirectoryShortcut
-{
-	ASSETS,
-	GAME,
-	ENGINE
-};
+typedef std::vector<char> FileBuffer;
 
 class OS
 {
-	static std::filesystem::path s_GameDirectory;
-	static std::filesystem::path s_AssetsDirectory;
-	static std::filesystem::path s_EngineDirectory;
-
 	OS() = delete;
 
 public:
+	static FilePath s_RootDirectory;
+	static FilePath s_GameDirectory;
+	static FilePath s_EngineDirectory;
+
 	~OS() = delete;
 
 	static bool initialize();
 	static String getBuildDate();
 	static String getBuildTime();
 
-	static FileBuffer loadFileContents(DirectoryShortcut directory, String stringPath);
-	static FilePath getAbsolutePath(DirectoryShortcut directory, String stringPath);
-	static bool exists(String filePath);
+	static FileBuffer loadFileContents(String stringPath);
+	static bool exists(String relativePath);
+	static FilePath OS::getAbsolutePath(String stringPath);
 
 	static void print(const String& msg);
 	static void printLine(const String& msg);

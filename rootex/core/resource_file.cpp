@@ -3,15 +3,14 @@
 #include <bitset>
 #include <sstream>
 
+#include "audio/audio_system.h"
 #include "core/resource_data_reserve.h"
 
-ResourceFile::ResourceFile(const String& name, const String& path, const Type& type)
-    : m_Name(name)
-    , m_Path(path)
-    , m_Type(type)
-    , m_ResourceData(nullptr)
+ResourceFile::ResourceFile(const Type& type, ResourceData* resData)
+    : m_Type(type)
+    , m_ResourceData(resData)
 {
-	// Registration in the ResourceManager is handled by ResourceLoader
+	PANIC(resData == nullptr, "Null resource found. Resource of this type has not been loaded correctly: " + std::to_string((int)type));
 }
 
 ResourceFile::~ResourceFile()
@@ -20,7 +19,7 @@ ResourceFile::~ResourceFile()
 
 bool ResourceFile::isValid()
 {
-	return m_Path != "";
+	return m_ResourceData != nullptr;
 }
 
 bool ResourceFile::isOpen()
@@ -28,14 +27,9 @@ bool ResourceFile::isOpen()
 	return m_ResourceData == nullptr;
 }
 
-String ResourceFile::getName()
+FilePath ResourceFile::getPath()
 {
-	return m_Name;
-}
-
-String ResourceFile::getPath()
-{
-	return m_Path;
+	return m_ResourceData->getPath();
 }
 
 ResourceFile::Type ResourceFile::getType()
@@ -48,19 +42,42 @@ ResourceData* ResourceFile::getData()
 	return m_ResourceData;
 }
 
-String ResourceFile::getDataString()
+AudioResourceFile::AudioResourceFile(ResourceData* resData)
+    : ResourceFile(Type::WAV, resData)
+    , m_AudioDataSize(0)
+    , m_BitDepth(0)
+    , m_Channels(0)
+    , m_DecompressedAudioBuffer(nullptr)
+    , m_Format(0)
+    , m_Frequency(0)
 {
-	Vector<char>& buffer = m_ResourceData->getRawData()->m_Buffer;
-
-	return String(buffer.begin(), buffer.end());
 }
 
-String ResourceFile::getText()
+AudioResourceFile::~AudioResourceFile()
 {
-	return getDataString();
 }
 
-void ResourceFile::setResourceData(ResourceData* resourceData)
+TextResourceFile::TextResourceFile(const Type& type, ResourceData* resData)
+    : ResourceFile(type, resData)
 {
-	m_ResourceData = resourceData;
+}
+
+TextResourceFile::~TextResourceFile()
+{
+}
+
+String TextResourceFile::getString() const
+{
+	return String(
+		m_ResourceData->getRawData()->begin(), 
+		m_ResourceData->getRawData()->end());
+}
+
+LuaTextResourceFile::LuaTextResourceFile(ResourceData* resData)
+    : TextResourceFile(Type::LUA, resData)
+{
+}
+
+LuaTextResourceFile::~LuaTextResourceFile()
+{
 }

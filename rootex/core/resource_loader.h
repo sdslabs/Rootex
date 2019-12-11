@@ -2,12 +2,15 @@
 
 #include "common/types.h"
 #include "core/resource_file.h"
+#include "core/resource_data.h"
 #include "os/os.h"
 
-namespace ResourceLoader
+class ResourceLoader
 {
-	void assign(ResourceFile* file, ResourceData* resource);
-	void loadDataInResourceFile(DirectoryShortcut directory, String& path, ResourceFile* res);
+	static HashMap<Ptr<ResourceData>, Ptr<ResourceFile>> s_ResourcesDataFiles;
 
-	Ref<ResourceFile> createResourceFile(DirectoryShortcut directory, String name, String path, ResourceFile::Type type);
+public:
+	static TextResourceFile* createTextResourceFile(String path);
+	static LuaTextResourceFile* createLuaTextResourceFile(String path);
+	static AudioResourceFile* createAudioResourceFile(String path);
 };

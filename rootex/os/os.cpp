@@ -4,9 +4,16 @@
 
 #include "common/common.h"
 
-std::filesystem::path OS::s_AssetsDirectory;
-std::filesystem::path OS::s_EngineDirectory;
-std::filesystem::path OS::s_GameDirectory;
+FilePath OS::s_RootDirectory;
+FilePath OS::s_EngineDirectory;
+FilePath OS::s_GameDirectory;
+
+FilePath OS::getAbsolutePath(String stringPath)
+{
+	FilePath absPath = s_RootDirectory / stringPath;
+
+	return absPath;
+}
 
 bool OS::initialize()
 {
@@ -22,8 +29,8 @@ bool OS::initialize()
 			path = path.parent_path();
 		}
 
+		s_RootDirectory = path;
 		s_GameDirectory = path / GAME_DIRECTORY;
-		s_AssetsDirectory = path / GAME_DIRECTORY / ASSETS_DIRECTORY;
 		s_EngineDirectory = path / ENGINE_DIRECTORY;
 	}
 	catch (std::exception e)
@@ -45,9 +52,9 @@ String OS::getBuildTime()
 	return String(__TIME__);
 }
 
-FileBuffer OS::loadFileContents(DirectoryShortcut directory, String stringPath)
+FileBuffer OS::loadFileContents(String stringPath)
 {
-	std::filesystem::path path = getAbsolutePath(directory, stringPath);
+	std::filesystem::path path = getAbsolutePath(stringPath);
 
 	if (!exists(path.generic_string()))
 	{
@@ -76,52 +83,9 @@ FileBuffer OS::loadFileContents(DirectoryShortcut directory, String stringPath)
 	return FileBuffer(buffer);
 }
 
-std::filesystem::path OS::getAbsolutePath(DirectoryShortcut directory, String stringPath)
+bool OS::exists(String relativePath)
 {
-	std::filesystem::path newPath;
-
-	switch (directory)
-	{
-	case DirectoryShortcut::ASSETS:
-		newPath = s_AssetsDirectory / std::filesystem::path(stringPath);
-		break;
-	case DirectoryShortcut::GAME:
-		newPath = s_GameDirectory / std::filesystem::path(stringPath);
-		break;
-	case DirectoryShortcut::ENGINE:
-		newPath = s_EngineDirectory / std::filesystem::path(stringPath);
-		break;
-	default:
-		ERR("ResourceLoader: Directory type not found for converting path to absolute");
-		break;
-	}
-
-	return newPath;
-}
-
-bool OS::exists(String filePath)
-{
-	return std::filesystem::exists(filePath);
-}
-
-FileBuffer::FileBuffer()
-    : m_Buffer()
-{
-}
-
-FileBuffer::FileBuffer(std::vector<char> buffer)
-    : m_Buffer(buffer)
-{
-}
-
-const char* FileBuffer::getRawDataPointer()
-{
-	return m_Buffer.data();
-}
-
-unsigned int FileBuffer::getSize()
-{
-	return m_Buffer.size();
+	return std::filesystem::exists(OS::getAbsolutePath(relativePath));
 }
 
 void OS::print(const String& msg)

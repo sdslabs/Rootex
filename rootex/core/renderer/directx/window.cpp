@@ -1,4 +1,4 @@
-#include "core/renderer/window.h"
+#include "core/renderer/directx/window.h"
 
 std::optional<int> GameWindow::ProcessMessages()
 {
