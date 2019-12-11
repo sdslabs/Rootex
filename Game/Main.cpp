@@ -27,14 +27,9 @@ int main()
 	Ref<StaticAudioBuffer> audio2(new StaticAudioBuffer(w2));
 	Ref<StaticAudioSource> source2(new StaticAudioSource(audio2.get()));
 	source2->setLooping(false);
-	source2->play();
-
-	/*while (true)
-	{
-	}*/
-
-	//AudioSystem::GetSingleton()->update();
-	// Engine starts from build/game/.
+	
+	AudioSystem::GetSingleton()->update();
+	
 	TextResourceFile* r = ResourceLoader::createTextResourceFile("rootex/test/abc.txt"); // So this loads build/game/abc.txt (However the binary exists in build/game/Debug/)
 	OS::printLine(r->getString());
 
