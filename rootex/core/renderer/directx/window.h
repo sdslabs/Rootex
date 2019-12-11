@@ -4,7 +4,7 @@
 #include <optional>
 
 #include "common/common.h"
-#include "core/renderer/rendering_device.h"
+#include "core/renderer/directx/rendering_device.h"
 
 class GameWindow
 {

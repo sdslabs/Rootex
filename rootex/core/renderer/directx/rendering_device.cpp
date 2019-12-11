@@ -1,4 +1,4 @@
-#include "core/renderer/rendering_device.h"
+#include "core/renderer/directx/rendering_device.h"
 
 RenderingDeviceD3D::RenderingDeviceD3D(HWND windowHandler)
     : m_Context(nullptr)

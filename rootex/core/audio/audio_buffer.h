@@ -7,9 +7,9 @@ typedef unsigned int ALuint;
 class AudioBuffer
 {
 protected:
-	Ref<ResourceFile> m_AudioFile;
+	AudioResourceFile* m_AudioFile;
 
-	AudioBuffer(Ref<ResourceFile> audioFile);
+	AudioBuffer(AudioResourceFile* audioFile);
 
 	virtual void initializeBuffers() = 0;
 	virtual void destroyBuffers() = 0;
@@ -19,8 +19,4 @@ public:
 	virtual ~AudioBuffer();
 
 	ResourceFile* getAudioFile();
-	
-	virtual int getFrequency() = 0;
-	virtual int getBitDepth() = 0;
-	virtual int getChannels() = 0;
 };

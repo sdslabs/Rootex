@@ -7,13 +7,13 @@
 class ResourceData
 {
 	static unsigned int s_Count;
-
+	
 public:
-	ResourceData(std::vector<char> data);
+	ResourceData(FilePath path, FileBuffer& data);
 	~ResourceData() = default;
 
 	unsigned int getID();
-	String getPath();
+	FilePath getPath();
 	FileBuffer* getRawData();
 	unsigned int getRawDataByteSize();
 
@@ -27,7 +27,7 @@ public:
 protected:
 	unsigned int m_ID;
 	FileBuffer m_FileBuffer;
-	String m_Path;
+	FilePath m_Path;
 
 	char* m_StreamStart;
 	const char* m_StreamEnd;

@@ -9,16 +9,8 @@
 class StreamingAudioBuffer : public AudioBuffer
 {
 	ALuint m_Buffers[BUFFER_COUNT];
-
-	ALsizei m_Frequency;
-	int m_BitDepth;
-	int m_Channels;
 	ALsizei m_BufferSize;
 	
-	const char* m_DecompressedAudioBuffer;
-	ALsizei m_AudioDataSize;
-	ALenum m_Format;
-
 	const char* m_BufferCursor;
 	int m_BufferQueueLength;
 	const char* m_BufferEnd;
@@ -27,14 +19,11 @@ class StreamingAudioBuffer : public AudioBuffer
 	void destroyBuffers() override;
 	
 public:
-	StreamingAudioBuffer(Ref<ResourceFile> audioFile);
+	StreamingAudioBuffer(AudioResourceFile* audioFile);
 	~StreamingAudioBuffer();
 	
 	void loadNewBuffers(int count, bool isLooping);
 
 	ALuint* getBuffers();
 	int getBufferQueueLength();
-	int getFrequency() override;
-	int getBitDepth() override;
-	int getChannels() override;
 };
