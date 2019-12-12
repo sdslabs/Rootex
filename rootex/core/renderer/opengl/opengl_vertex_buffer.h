@@ -7,6 +7,6 @@ class OpenGLVertexBuffer : public VertexBuffer
 	unsigned int m_BufferID;
 
 public:
-	OpenGLVertexBuffer(Vector<char> buffer);
+	OpenGLVertexBuffer(const Vector<char>& buffer);
 	~OpenGLVertexBuffer();
 };

@@ -1,6 +1,6 @@
 #include "opengl_vertex_buffer.h"
 
-OpenGLVertexBuffer::OpenGLVertexBuffer(Vector<char> buffer)
+OpenGLVertexBuffer::OpenGLVertexBuffer(const Vector<char>& buffer)
     : VertexBuffer(buffer)
 {
 }

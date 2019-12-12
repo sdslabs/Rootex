@@ -5,7 +5,7 @@
 class IndexBuffer
 {
 protected:
-	IndexBuffer(Vector<unsigned int> indices) {}
+	IndexBuffer(const Vector<unsigned int>& indices) {}
 	virtual ~IndexBuffer() = default;
 
 	virtual void bind() const = 0;
