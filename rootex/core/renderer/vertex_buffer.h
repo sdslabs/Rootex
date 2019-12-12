@@ -5,7 +5,7 @@
 class VertexBuffer
 {
 protected:
-	VertexBuffer(Vector<char> buffer) {}
+	VertexBuffer(const Vector<char>& buffer) {}
 	virtual ~VertexBuffer() = default;
 
 public:
