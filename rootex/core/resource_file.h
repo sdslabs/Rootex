@@ -24,7 +24,7 @@ protected:
 	friend class ResourceLoader;
 
 public:
-	~ResourceFile();
+	virtual ~ResourceFile();
 	explicit ResourceFile(ResourceFile&) = delete;
 	explicit ResourceFile(ResourceFile&&) = delete;
 
@@ -40,7 +40,7 @@ class TextResourceFile : public ResourceFile
 {	
 protected:
 	explicit TextResourceFile(const Type& type, ResourceData* resData);
-	~TextResourceFile();
+	virtual ~TextResourceFile();
 
 	friend class ResourceLoader;
 
