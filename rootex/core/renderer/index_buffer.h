@@ -4,8 +4,14 @@
 
 class IndexBuffer
 {
+	Vector<unsigned int>& m_Indices;
+
 protected:
-	IndexBuffer(const Vector<unsigned int>& indices) {}
+	IndexBuffer(Vector<unsigned int>& indices)
+	    : m_Indices(indices)
+	{
+	}
+
 	virtual ~IndexBuffer() = default;
 
 	virtual void bind() const = 0;

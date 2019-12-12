@@ -35,5 +35,7 @@ target_link_libraries(Rootex PUBLIC
     LuaBridge
     OpenAL
     ALUT
-	d3d11.lib
+    GLEW
+    d3d11.lib
+    opengl32.lib
 )

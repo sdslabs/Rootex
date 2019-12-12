@@ -16,6 +16,7 @@ ${ROOTEX_SOURCES}
 ${VendorSources}
 CACHE INTERNAL "")
 
+add_subdirectory(GLEW)
 add_subdirectory(Lua)
 add_subdirectory(LuaBridge)
 add_subdirectory(Bullet3D)
