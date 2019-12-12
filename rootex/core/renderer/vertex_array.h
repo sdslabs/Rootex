@@ -11,4 +11,6 @@ public:
 	virtual ~VertexArray() {}
 
 	virtual void addBuffer(const VertexBuffer& vertexBuffer, const VertexBufferFormat& vertexBufferFormat) = 0;
+	virtual void bind() const {}
+	virtual void unbind() const {}
 };
