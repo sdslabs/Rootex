@@ -1,20 +1,14 @@
 #pragma once
 
-#include "vertex_array.h"
 #include "index_buffer.h"
 #include "shader.h"
-
-enum class RendererType
-{
-	DIRECTX,
-	OPENGL
-};
+#include "vertex_array.h"
 
 class Renderer
 {
 protected:
-	Renderer(RendererType type);
-	~Renderer();
+	Renderer() {}
+	virtual ~Renderer() {}
 
 public:
 	virtual void clear() const = 0;
