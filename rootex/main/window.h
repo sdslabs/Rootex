@@ -1,0 +1,38 @@
+#pragma once
+
+#include <optional>
+#include <windows.h>
+
+#include "common/common.h"
+#include "core/renderer/d3d11graphics.h"
+
+class Window
+{
+	int m_Width;
+	int m_Height;
+
+	WNDCLASSEX m_WindowClass = { 0 };
+	LPCSTR m_ClassName;
+	HINSTANCE m_AppInstance;
+	HWND m_WindowHandle;
+
+	std::optional<int> processMessages();
+	
+	static LRESULT CALLBACK WindowsProc(HWND windowHandler, UINT msg, WPARAM wParam, LPARAM lParam);
+
+public:
+	Window(int xOffset, int yOffset, int width, int height, const String& title);
+	Window(const Window&) = delete;
+	Window& operator=(const Window&) = delete;
+	~Window() = default;
+
+	// TODO: Put this outside Window someday
+	int gameLoop();
+	void swapBuffers();
+
+	void clear();
+	void setWindowTitle(String title);
+
+	int getWidth() const;
+	int getHeight() const;
+};

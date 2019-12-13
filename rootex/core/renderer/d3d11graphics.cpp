@@ -3,108 +3,33 @@
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "D3DCompiler.lib")
 
+#include "renderer/d3d11rendering_device.h"
+
 RootexGraphics::RootexGraphics(HWND windowHandler, unsigned int w, unsigned int h)
 {
-	width = w;
-	height = h;
-
-	DXGI_SWAP_CHAIN_DESC descriptor = { 0 };
-	descriptor.BufferDesc.Width = 0;
-	descriptor.BufferDesc.Height = 0;
-	descriptor.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-	descriptor.BufferDesc.RefreshRate.Numerator = 0;
-	descriptor.BufferDesc.RefreshRate.Denominator = 0;
-	descriptor.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-	descriptor.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-	descriptor.SampleDesc.Count = 1;
-	descriptor.SampleDesc.Quality = 0;
-	descriptor.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	descriptor.BufferCount = 1;
-	descriptor.OutputWindow = windowHandler;
-	descriptor.Windowed = TRUE;
-	descriptor.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-	descriptor.Flags = 0;
-
-	//TODO- add HRESULT error check and Device Removed exception
-
-	GFX_ERR_CHECK( D3D11CreateDeviceAndSwapChain(
-	    nullptr,
-	    D3D_DRIVER_TYPE_HARDWARE,
-	    nullptr,
-	    D3D11_CREATE_DEVICE_DEBUG, //to enable debug layer diagnostics
-	    nullptr,
-	    0,
-	    D3D11_SDK_VERSION,
-	    &descriptor,
-	    &pSwapChain,
-	    &pDevice,
-	    nullptr,
-	    &pContext));
-	ID3D11Resource* pBackBuffer = nullptr;
-	GFX_ERR_CHECK(pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), reinterpret_cast<void**>(&pBackBuffer)));
-	GFX_ERR_CHECK(pDevice->CreateRenderTargetView(
-	    pBackBuffer,
-	    nullptr,
-	    &pTarget));
-
-	D3D11_DEPTH_STENCIL_DESC dsDesc = { 0 };
-	dsDesc.DepthEnable = TRUE;
-	dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
-	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-	ID3D11DepthStencilState* pDSState;
-	GFX_ERR_CHECK(pDevice->CreateDepthStencilState(&dsDesc, &pDSState));
-
-	pContext->OMSetDepthStencilState(pDSState, 1u);
-
-	SafeRelease(&pDSState);
-	
-	ID3D11Texture2D* pDepthStencil = nullptr;
-	D3D11_TEXTURE2D_DESC descDepth = { 0 };
-	descDepth.Width = width;
-	descDepth.Height = height;
-	descDepth.MipLevels = 1u;
-	descDepth.ArraySize = 1u;
-	descDepth.Format = DXGI_FORMAT_D32_FLOAT;
-	descDepth.SampleDesc.Count = 1u;
-	descDepth.SampleDesc.Quality = 0u;
-	descDepth.Usage = D3D11_USAGE_DEFAULT;
-	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	GFX_ERR_CHECK(pDevice->CreateTexture2D(&descDepth, nullptr, &pDepthStencil));
-
-	D3D11_DEPTH_STENCIL_VIEW_DESC descDSView = { };
-	descDSView.Format = DXGI_FORMAT_D32_FLOAT;
-	descDSView.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-	descDSView.Texture2D.MipSlice = 0u;
-
-	GFX_ERR_CHECK(pDevice->CreateDepthStencilView(pDepthStencil, &descDSView, &pDSView));
-
-	SafeRelease(&pDepthStencil);
-
-	pContext->OMSetRenderTargets(1u, &pTarget, pDSView);
-
-}
-
-void RootexGraphics::EndFrame()
-{
-	GFX_ERR_CHECK(pSwapChain->Present(1u, 0));
+	m_StartTime = std::chrono::system_clock::now();
 }
 
 RootexGraphics::~RootexGraphics()
 {
-	SafeRelease(&pDevice);
-	SafeRelease(&pSwapChain);
-	SafeRelease(&pContext);
-	SafeRelease(&pTarget);
-	SafeRelease(&pDSView);
 }
 
-void RootexGraphics::ClearBuffer(float r, float g, float b)
+void RootexGraphics::drawTest()
 {
-	const float color[] = { r, g, b, 1.0f };
-	pContext->ClearRenderTargetView(pTarget, color);
-	pContext->ClearDepthStencilView(pDSView, D3D11_CLEAR_DEPTH, 1.0f, 0u);
+	// The color change effect ->
+	std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - m_StartTime;
+	float seconds = elapsed_seconds.count();
+	float r = (sin(seconds) + 1.0) * 0.5;
+	float g = (sin(seconds * 0.3) + 1.0) * 0.5;
+	float b = (sin(seconds * 0.7) + 1.0) * 0.5;
+	RenderingDevice::GetSingleton()->clearBuffer(r, g, b);
+
+	drawTestCube(seconds);
+	drawTestCube(-seconds);
+	RenderingDevice::GetSingleton()->swapBuffers();
 }
-void RootexGraphics::DrawTestCube(float angle)
+
+void RootexGraphics::drawTestCube(float angle)
 {
 	struct Vertex
 	{

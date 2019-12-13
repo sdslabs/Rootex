@@ -35,12 +35,18 @@ DxgiDebugInterface::~DxgiDebugInterface()
 	SafeRelease(&pDxgiInfoQueue);
 }
 
-void DxgiDebugInterface::Set() noexcept
+DxgiDebugInterface* DxgiDebugInterface::GetSingleton()
+{
+	static DxgiDebugInterface singleton;
+	return &singleton;
+}
+
+void DxgiDebugInterface::set() noexcept
 {
 	next = pDxgiInfoQueue->GetNumStoredMessages(DXGI_DEBUG_ALL);
 }
 
-void DxgiDebugInterface::GetMessages(String file, String func) const
+void DxgiDebugInterface::getMessages(String file, String func) const
 {
 	const auto end = pDxgiInfoQueue->GetNumStoredMessages(DXGI_DEBUG_ALL);
 	for (auto i = next; i < end; i++)

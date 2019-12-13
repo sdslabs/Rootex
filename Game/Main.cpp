@@ -1,9 +1,9 @@
 #include "common/common.h"
 
 #include "core/audio/audio_manager.h"
-#include "core/renderer/window.h"
 #include "core/resource_loader.h"
 #include "core/resource_data_reserve.h"
+#include "main/window.h"
 #include "os/os.h"
 #include "script/interpreter.h"
 
@@ -21,8 +21,9 @@ int main()
 
 	LuaInterpreter inter;
 	inter.loadExecuteScript(windowSettings);
+
 	LuaVariable window = inter.getGlobal("window");
-	GameWindow* gameWindow = new GameWindow(
+	Window* gameWindow = new Window(
 	    window["x"],
 	    window["y"],
 	    window["deltaX"],

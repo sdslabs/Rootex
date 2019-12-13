@@ -15,6 +15,7 @@ CACHE INTERNAL "")
 
 add_subdirectory(common)
 add_subdirectory(core)
+add_subdirectory(main)
 add_subdirectory(os)
 add_subdirectory(vendor)
 add_subdirectory(script)

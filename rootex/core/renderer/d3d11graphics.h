@@ -1,4 +1,5 @@
 #pragma once
+
 #include <d3d11.h>
 #include <wrl.h>
 #include <d3dcompiler.h>
@@ -8,20 +9,12 @@
 #include "d3d11utils.h"
 #include "dxgiDebugInterface.h"
 
-#define GFX_ERR_CHECK(hr)      \
-	dxgiDebugInterface.Set();  \
-	if (FAILED(hr)) \
-	dxgiDebugInterface.GetMessages(__FILE__, __func__)
-
 class RootexGraphics
 {
-private:
-	ID3D11Device* pDevice = nullptr;
-	IDXGISwapChain* pSwapChain = nullptr;
-	ID3D11DeviceContext* pContext = nullptr;
-	ID3D11RenderTargetView* pTarget = nullptr;
-	ID3D11DepthStencilView* pDSView = nullptr;
-
+private:	
+	// TODO: Implement this as a separate Rootex class
+	std::chrono::time_point<std::chrono::system_clock> m_StartTime;
+	
 	unsigned int height;
 	unsigned int width;
 	float maxX = 1.0f;
@@ -34,9 +27,6 @@ public:
 	RootexGraphics& operator=(const RootexGraphics&) = delete;  
 	~RootexGraphics();
 
-	DxgiDebugInterface dxgiDebugInterface;
-
-	void ClearBuffer(float r, float g, float b);
-	void DrawTestCube(float angle);
-	void EndFrame();
+	void drawTest();
+	void drawTestCube(float angle);
 };
