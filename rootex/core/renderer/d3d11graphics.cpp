@@ -3,6 +3,7 @@
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "D3DCompiler.lib")
 
+<<<<<<< HEAD
 RootexGraphics::RootexGraphics(HWND windowHandler, unsigned int w, unsigned int h)
 {
 	width = w;
@@ -105,28 +106,35 @@ RootexGraphics::~RootexGraphics()
 
 >>>>>>> add depth buffer
 }
+=======
+#include "renderer/d3d11rendering_device.h"
+>>>>>>> Refactor context and device away from window
 
-void RootexGraphics::EndFrame()
+RootexGraphics::RootexGraphics(HWND windowHandler, unsigned int w, unsigned int h)
 {
-	GFX_ERR_CHECK(pSwapChain->Present(1u, 0));
+	m_StartTime = std::chrono::system_clock::now();
 }
 
 RootexGraphics::~RootexGraphics()
 {
-	SafeRelease(&pDevice);
-	SafeRelease(&pSwapChain);
-	SafeRelease(&pContext);
-	SafeRelease(&pTarget);
-	SafeRelease(&pDSView);
 }
 
-void RootexGraphics::ClearBuffer(float r, float g, float b)
+void RootexGraphics::drawTest()
 {
-	const float color[] = { r, g, b, 1.0f };
-	pContext->ClearRenderTargetView(pTarget, color);
-	pContext->ClearDepthStencilView(pDSView, D3D11_CLEAR_DEPTH, 1.0f, 0u);
+	// The color change effect ->
+	std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - m_StartTime;
+	float seconds = elapsed_seconds.count();
+	float r = (sin(seconds) + 1.0) * 0.5;
+	float g = (sin(seconds * 0.3) + 1.0) * 0.5;
+	float b = (sin(seconds * 0.7) + 1.0) * 0.5;
+	RenderingDevice::GetSingleton()->clearBuffer(r, g, b);
+
+	drawTestCube(seconds);
+	drawTestCube(-seconds);
+	RenderingDevice::GetSingleton()->swapBuffers();
 }
-void RootexGraphics::DrawTestCube(float angle)
+
+void RootexGraphics::drawTestCube(float angle)
 {
 	struct Vertex
 	{

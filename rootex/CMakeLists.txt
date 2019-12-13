@@ -15,7 +15,11 @@ CACHE INTERNAL "")
 
 add_subdirectory(common)
 add_subdirectory(core)
+<<<<<<< HEAD
 add_subdirectory(framework)
+=======
+add_subdirectory(main)
+>>>>>>> Refactor context and device away from window
 add_subdirectory(os)
 add_subdirectory(scene)
 add_subdirectory(script)
