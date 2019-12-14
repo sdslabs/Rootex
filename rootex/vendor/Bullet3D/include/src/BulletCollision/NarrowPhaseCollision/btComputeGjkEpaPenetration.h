@@ -16,10 +16,10 @@ subject to the following restrictions:
 #ifndef BT_GJK_EPA_PENETATION_CONVEX_COLLISION_H
 #define BT_GJK_EPA_PENETATION_CONVEX_COLLISION_H
 
-#include "BulletCollision/NarrowPhaseCollision/btVoronoiSimplexSolver.h"
 #include "LinearMath/btTransform.h"  // Note that btVector3 might be double precision...
-#include "btGjkCollisionDescription.h"
 #include "btGjkEpa3.h"
+#include "btGjkCollisionDescription.h"
+#include "BulletCollision/NarrowPhaseCollision/btVoronoiSimplexSolver.h"
 
 template <typename btConvexTemplate>
 bool btGjkEpaCalcPenDepth(const btConvexTemplate& a, const btConvexTemplate& b,

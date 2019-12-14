@@ -15,8 +15,8 @@ subject to the following restrictions:
 #ifndef B3_GEOMETRY_UTIL_H
 #define B3_GEOMETRY_UTIL_H
 
-#include "Bullet3Common/b3AlignedObjectArray.h"
 #include "Bullet3Common/b3Vector3.h"
+#include "Bullet3Common/b3AlignedObjectArray.h"
 
 ///The b3GeometryUtil helper class provides a few methods to convert between plane equations and vertices.
 class b3GeometryUtil

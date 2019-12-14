@@ -15,16 +15,16 @@
 
 #ifndef BT_BACKWARD_EULER_OBJECTIVE_H
 #define BT_BACKWARD_EULER_OBJECTIVE_H
-#include "LinearMath/btQuickprof.h"
 #include "btConjugateGradient.h"
-#include "btDeformableContactProjection.h"
-#include "btDeformableCorotatedForce.h"
-#include "btDeformableGravityForce.h"
 #include "btDeformableLagrangianForce.h"
 #include "btDeformableMassSpringForce.h"
-#include "btDeformableMultiBodyDynamicsWorld.h"
+#include "btDeformableGravityForce.h"
+#include "btDeformableCorotatedForce.h"
 #include "btDeformableNeoHookeanForce.h"
+#include "btDeformableContactProjection.h"
 #include "btPreconditioner.h"
+#include "btDeformableMultiBodyDynamicsWorld.h"
+#include "LinearMath/btQuickprof.h"
 
 class btDeformableBackwardEulerObjective
 {

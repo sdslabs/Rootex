@@ -28,9 +28,9 @@ subject to the following restrictions:
 struct btBroadphaseProxy;
 class btCollisionShape;
 struct btCollisionShapeData;
+#include "LinearMath/btMotionState.h"
 #include "LinearMath/btAlignedAllocator.h"
 #include "LinearMath/btAlignedObjectArray.h"
-#include "LinearMath/btMotionState.h"
 
 typedef btAlignedObjectArray<class btCollisionObject*> btCollisionObjectArray;
 

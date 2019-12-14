@@ -2,8 +2,8 @@
 #define B3_RIGIDBODY_DATA_H
 
 #include "Bullet3Common/shared/b3Float4.h"
-#include "Bullet3Common/shared/b3Mat3x3.h"
 #include "Bullet3Common/shared/b3Quat.h"
+#include "Bullet3Common/shared/b3Mat3x3.h"
 
 typedef struct b3RigidBodyData b3RigidBodyData_t;
 

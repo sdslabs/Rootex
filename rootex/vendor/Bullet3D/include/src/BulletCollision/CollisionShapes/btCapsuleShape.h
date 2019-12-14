@@ -16,8 +16,8 @@ subject to the following restrictions:
 #ifndef BT_CAPSULE_SHAPE_H
 #define BT_CAPSULE_SHAPE_H
 
-#include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h"  // for the types
 #include "btConvexInternalShape.h"
+#include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h"  // for the types
 
 ///The btCapsuleShape represents a capsule around the Y axis, there is also the btCapsuleShapeX aligned around the X axis and btCapsuleShapeZ around the Z axis.
 ///The total height is height+2*radius, so the height is just the height between the center of each 'sphere' of the capsule caps.

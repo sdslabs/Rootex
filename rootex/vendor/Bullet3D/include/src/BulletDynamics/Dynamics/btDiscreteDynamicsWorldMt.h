@@ -16,9 +16,9 @@ subject to the following restrictions:
 #ifndef BT_DISCRETE_DYNAMICS_WORLD_MT_H
 #define BT_DISCRETE_DYNAMICS_WORLD_MT_H
 
-#include "BulletDynamics/ConstraintSolver/btConstraintSolver.h"
 #include "btDiscreteDynamicsWorld.h"
 #include "btSimulationIslandManagerMt.h"
+#include "BulletDynamics/ConstraintSolver/btConstraintSolver.h"
 
 ///
 /// btConstraintSolverPoolMt - masquerades as a constraint solver, but really it is a threadsafe pool of them.

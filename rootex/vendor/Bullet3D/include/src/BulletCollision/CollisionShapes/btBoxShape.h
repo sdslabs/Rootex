@@ -16,11 +16,11 @@ subject to the following restrictions:
 #ifndef BT_OBB_BOX_MINKOWSKI_H
 #define BT_OBB_BOX_MINKOWSKI_H
 
-#include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h"
-#include "LinearMath/btMinMax.h"
-#include "LinearMath/btVector3.h"
-#include "btCollisionMargin.h"
 #include "btPolyhedralConvexShape.h"
+#include "btCollisionMargin.h"
+#include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h"
+#include "LinearMath/btVector3.h"
+#include "LinearMath/btMinMax.h"
 
 ///The btBoxShape is a box primitive around the origin, its sides axis aligned with length specified by half extents, in local shape coordinates. When used as part of a btCollisionObject or btRigidBody it will be an oriented box in world space.
 ATTRIBUTE_ALIGNED16(class)

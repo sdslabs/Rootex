@@ -15,8 +15,8 @@ subject to the following restrictions:
 #ifndef BT_SIMD__QUATERNION_H_
 #define BT_SIMD__QUATERNION_H_
 
-#include "btQuadWord.h"
 #include "btVector3.h"
+#include "btQuadWord.h"
 
 #ifdef BT_USE_DOUBLE_PRECISION
 #define btQuaternionData btQuaternionDoubleData

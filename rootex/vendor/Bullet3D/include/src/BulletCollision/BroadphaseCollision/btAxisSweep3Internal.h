@@ -20,11 +20,11 @@
 #define BT_AXIS_SWEEP_3_INTERNAL_H
 
 #include "LinearMath/btVector3.h"
+#include "btOverlappingPairCache.h"
 #include "btBroadphaseInterface.h"
 #include "btBroadphaseProxy.h"
-#include "btDbvtBroadphase.h"
-#include "btOverlappingPairCache.h"
 #include "btOverlappingPairCallback.h"
+#include "btDbvtBroadphase.h"
 
 //#define DEBUG_BROADPHASE 1
 #define USE_OVERLAP_TEST_ON_REMOVES 1
