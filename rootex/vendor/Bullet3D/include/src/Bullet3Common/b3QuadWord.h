@@ -15,8 +15,8 @@ subject to the following restrictions:
 #ifndef B3_SIMD_QUADWORD_H
 #define B3_SIMD_QUADWORD_H
 
-#include "b3MinMax.h"
 #include "b3Scalar.h"
+#include "b3MinMax.h"
 
 #if defined(__CELLOS_LV2) && defined(__SPU__)
 #include <altivec.h>

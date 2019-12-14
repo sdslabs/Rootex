@@ -15,8 +15,8 @@ subject to the following restrictions:
 #ifndef BT_SIMD_QUADWORD_H
 #define BT_SIMD_QUADWORD_H
 
-#include "btMinMax.h"
 #include "btScalar.h"
+#include "btMinMax.h"
 
 #if defined(__CELLOS_LV2) && defined(__SPU__)
 #include <altivec.h>

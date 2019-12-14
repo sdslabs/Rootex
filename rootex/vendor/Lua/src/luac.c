@@ -15,8 +15,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "lauxlib.h"
 #include "lua.h"
+#include "lauxlib.h"
 
 #include "lobject.h"
 #include "lstate.h"

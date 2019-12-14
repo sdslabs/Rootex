@@ -16,8 +16,8 @@ subject to the following restrictions:
 #ifndef B3_OVERLAPPING_PAIR_CACHE_H
 #define B3_OVERLAPPING_PAIR_CACHE_H
 
-#include "Bullet3Common/b3AlignedObjectArray.h"
 #include "Bullet3Common/shared/b3Int2.h"
+#include "Bullet3Common/b3AlignedObjectArray.h"
 
 class b3Dispatcher;
 #include "b3OverlappingPair.h"

@@ -21,10 +21,10 @@ subject to the following restrictions:
 #ifndef BT_GENERIC_POOL_ALLOCATOR_H
 #define BT_GENERIC_POOL_ALLOCATOR_H
 
-#include "LinearMath/btAlignedAllocator.h"
 #include <limits.h>
 #include <stdio.h>
 #include <string.h>
+#include "LinearMath/btAlignedAllocator.h"
 
 #define BT_UINT_MAX UINT_MAX
 #define BT_DEFAULT_MAX_POOLS 16

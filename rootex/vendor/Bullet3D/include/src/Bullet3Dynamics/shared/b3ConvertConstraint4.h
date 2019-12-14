@@ -1,8 +1,8 @@
 
 
 #include "Bullet3Collision/NarrowPhaseCollision/shared/b3Contact4Data.h"
-#include "Bullet3Collision/NarrowPhaseCollision/shared/b3RigidBodyData.h"
 #include "Bullet3Dynamics/shared/b3ContactConstraint4.h"
+#include "Bullet3Collision/NarrowPhaseCollision/shared/b3RigidBodyData.h"
 
 void b3PlaneSpace1(b3Float4ConstArg n, b3Float4* p, b3Float4* q);
 void b3PlaneSpace1(b3Float4ConstArg n, b3Float4* p, b3Float4* q)

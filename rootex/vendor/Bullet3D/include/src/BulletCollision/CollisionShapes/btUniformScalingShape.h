@@ -16,8 +16,8 @@ subject to the following restrictions:
 #ifndef BT_UNIFORM_SCALING_SHAPE_H
 #define BT_UNIFORM_SCALING_SHAPE_H
 
-#include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h"  // for the types
 #include "btConvexShape.h"
+#include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h"  // for the types
 
 ///The btUniformScalingShape allows to re-use uniform scaled instances of btConvexShape in a memory efficient way.
 ///Istead of using btUniformScalingShape, it is better to use the non-uniform setLocalScaling method on convex shapes that implement it.

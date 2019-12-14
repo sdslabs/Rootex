@@ -15,8 +15,8 @@ subject to the following restrictions:
 #ifndef B3_SIMD__QUATERNION_H_
 #define B3_SIMD__QUATERNION_H_
 
-#include "b3QuadWord.h"
 #include "b3Vector3.h"
+#include "b3QuadWord.h"
 
 #ifdef B3_USE_SSE
 

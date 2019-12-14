@@ -24,11 +24,11 @@
 #ifndef BT_MULTIBODY_H
 #define BT_MULTIBODY_H
 
-#include "LinearMath/btAlignedObjectArray.h"
-#include "LinearMath/btMatrix3x3.h"
-#include "LinearMath/btQuaternion.h"
 #include "LinearMath/btScalar.h"
 #include "LinearMath/btVector3.h"
+#include "LinearMath/btQuaternion.h"
+#include "LinearMath/btMatrix3x3.h"
+#include "LinearMath/btAlignedObjectArray.h"
 
 ///serialization data, don't change them if you are not familiar with the details of the serialization mechanisms
 #ifdef BT_USE_DOUBLE_PRECISION

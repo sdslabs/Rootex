@@ -16,8 +16,8 @@ subject to the following restrictions:
 #ifndef B3_GRAHAM_SCAN_2D_CONVEX_HULL_H
 #define B3_GRAHAM_SCAN_2D_CONVEX_HULL_H
 
-#include "Bullet3Common/b3AlignedObjectArray.h"
 #include "Bullet3Common/b3Vector3.h"
+#include "Bullet3Common/b3AlignedObjectArray.h"
 
 struct b3GrahamVector3 : public b3Vector3
 {

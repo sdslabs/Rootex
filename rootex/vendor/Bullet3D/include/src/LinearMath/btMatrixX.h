@@ -17,14 +17,14 @@ subject to the following restrictions:
 #ifndef BT_MATRIX_X_H
 #define BT_MATRIX_X_H
 
-#include "LinearMath/btAlignedObjectArray.h"
 #include "LinearMath/btQuickprof.h"
+#include "LinearMath/btAlignedObjectArray.h"
 #include <stdio.h>
 
 //#define BT_DEBUG_OSTREAM
 #ifdef BT_DEBUG_OSTREAM
-#include <iomanip>  // std::setw
 #include <iostream>
+#include <iomanip>  // std::setw
 #endif              //BT_DEBUG_OSTREAM
 
 class btIntSortPredicate
