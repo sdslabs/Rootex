@@ -11,6 +11,6 @@ jobs:
     - uses: DoozyX/clang-format-lint-action@v0.5
       with:
         source: '.'
-        exclude: './rootex/vendor/'
+        exclude: './rootex/vendor'
         extensions: 'h,cpp'
         clangFormatVersion: 9
