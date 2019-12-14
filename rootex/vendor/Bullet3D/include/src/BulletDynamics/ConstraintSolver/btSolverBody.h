@@ -17,8 +17,8 @@ subject to the following restrictions:
 #define BT_SOLVER_BODY_H
 
 class btRigidBody;
-#include "LinearMath/btVector3.h"
 #include "LinearMath/btMatrix3x3.h"
+#include "LinearMath/btVector3.h"
 
 #include "LinearMath/btAlignedAllocator.h"
 #include "LinearMath/btTransformUtil.h"

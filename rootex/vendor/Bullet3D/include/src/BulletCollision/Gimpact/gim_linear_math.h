@@ -34,8 +34,8 @@ email: projectileman@yahoo.com
 -----------------------------------------------------------------------------
 */
 
-#include "gim_math.h"
 #include "gim_geom_types.h"
+#include "gim_math.h"
 
 //! Zero out a 2D vector
 #define VEC_ZERO_2(a)           \

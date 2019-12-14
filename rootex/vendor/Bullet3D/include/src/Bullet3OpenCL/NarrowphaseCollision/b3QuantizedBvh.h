@@ -28,8 +28,8 @@ class b3Serializer;
 #include <stdlib.h>
 #endif  //DEBUG_CHECK_DEQUANTIZATION
 
-#include "Bullet3Common/b3Vector3.h"
 #include "Bullet3Common/b3AlignedAllocator.h"
+#include "Bullet3Common/b3Vector3.h"
 
 #ifdef B3_USE_DOUBLE_PRECISION
 #define b3QuantizedBvhData b3QuantizedBvhDoubleData
@@ -41,8 +41,8 @@ class b3Serializer;
 #define b3QuantizedBvhDataName "b3QuantizedBvhFloatData"
 #endif
 
-#include "Bullet3Collision/NarrowPhaseCollision/shared/b3QuantizedBvhNodeData.h"
 #include "Bullet3Collision/NarrowPhaseCollision/shared/b3BvhSubtreeInfoData.h"
+#include "Bullet3Collision/NarrowPhaseCollision/shared/b3QuantizedBvhNodeData.h"
 
 //http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vclang/html/vclrf__m128.asp
 

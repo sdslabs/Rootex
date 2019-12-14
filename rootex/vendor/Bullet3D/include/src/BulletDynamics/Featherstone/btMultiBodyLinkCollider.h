@@ -18,8 +18,8 @@ subject to the following restrictions:
 
 #include "BulletCollision/CollisionDispatch/btCollisionObject.h"
 
-#include "btMultiBody.h"
 #include "LinearMath/btSerializer.h"
+#include "btMultiBody.h"
 
 #ifdef BT_USE_DOUBLE_PRECISION
 #define btMultiBodyLinkColliderData btMultiBodyLinkColliderDoubleData

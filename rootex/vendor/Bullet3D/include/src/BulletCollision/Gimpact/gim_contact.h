@@ -32,9 +32,9 @@ email: projectileman@yahoo.com
 
 -----------------------------------------------------------------------------
 */
+#include "gim_array.h"
 #include "gim_geometry.h"
 #include "gim_radixsort.h"
-#include "gim_array.h"
 
 /**
 Configuration var for applying interpolation of  contact normals

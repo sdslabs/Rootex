@@ -30,8 +30,8 @@
 
 #pragma once
 
-#include <LuaBridge/detail/Config.h>
 #include <LuaBridge/detail/ClassInfo.h>
+#include <LuaBridge/detail/Config.h>
 #include <LuaBridge/detail/Security.h>
 #include <LuaBridge/detail/TypeTraits.h>
 

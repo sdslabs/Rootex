@@ -19,16 +19,16 @@ subject to the following restrictions:
 
 #include "btSoftBody.h"
 
-#include "LinearMath/btQuickprof.h"
-#include "LinearMath/btPolarDecomposition.h"
 #include "BulletCollision/BroadphaseCollision/btBroadphaseInterface.h"
 #include "BulletCollision/CollisionDispatch/btCollisionDispatcher.h"
 #include "BulletCollision/CollisionShapes/btConvexInternalShape.h"
 #include "BulletCollision/NarrowPhaseCollision/btGjkEpa2.h"
-#include "BulletDynamics/Featherstone/btMultiBodyLinkCollider.h"
 #include "BulletDynamics/Featherstone/btMultiBodyConstraint.h"
-#include <string.h>  //for memset
+#include "BulletDynamics/Featherstone/btMultiBodyLinkCollider.h"
+#include "LinearMath/btPolarDecomposition.h"
+#include "LinearMath/btQuickprof.h"
 #include <cmath>
+#include <string.h>  //for memset
 
 // Given a multibody link, a contact point and a contact direction, fill in the jacobian data needed to calculate the velocity change given an impulse in the contact direction
 static void findJacobian(const btMultiBodyLinkCollider* multibodyLinkCol,
