@@ -22,7 +22,7 @@ private:
 	float maxZ = 10.0f;
 
 public:
-	RootexGraphics( HWND windowHandler, unsigned int w = 640, unsigned int h = 480 );
+	RootexGraphics(unsigned int w = 640, unsigned int h = 480 );
 	RootexGraphics(const RootexGraphics&) = delete;
 	RootexGraphics& operator=(const RootexGraphics&) = delete;  
 	~RootexGraphics();
