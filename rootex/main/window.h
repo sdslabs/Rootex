@@ -15,8 +15,6 @@ class Window
 	LPCSTR m_ClassName;
 	HINSTANCE m_AppInstance;
 	HWND m_WindowHandle;
-
-	std::optional<int> processMessages();
 	
 	static LRESULT CALLBACK WindowsProc(HWND windowHandler, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -26,8 +24,7 @@ public:
 	Window& operator=(const Window&) = delete;
 	~Window() = default;
 
-	// TODO: Put this outside Window someday
-	int gameLoop();
+	std::optional<int> processMessages();
 	void swapBuffers();
 
 	void clear();
