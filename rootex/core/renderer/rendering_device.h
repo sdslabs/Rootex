@@ -23,6 +23,8 @@ class RenderingDevice
 
 public:
 	static RenderingDevice* GetSingleton();
+	ID3D11Device* GetDevice();
+	ID3D11DeviceContext* GetContext();
 
 	void initialize(HWND hWnd, int width, int height);
 
