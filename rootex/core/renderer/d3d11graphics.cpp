@@ -3,7 +3,7 @@
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "D3DCompiler.lib")
 
-#include "renderer/d3d11rendering_device.h"
+//#include "renderer/d3d11rendering_device.h"
 
 RootexGraphics::RootexGraphics(HWND windowHandler, unsigned int w, unsigned int h)
 {

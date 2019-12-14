@@ -30,9 +30,15 @@ int main()
 	    window["deltaY"],
 	    window["title"]);
 
-	int ret = gameWindow->gameLoop();
+	std::optional<int> ret = {};
+	while (true)
+	{
+		if (ret = gameWindow->processMessages())
+			break;
+
+	}
 	delete gameWindow;
 	ResourceDataReserve::clear();
 
-	return ret;
+	return *ret;
 }
