@@ -1,8 +1,8 @@
 #ifndef B3_FILL_CL_H
 #define B3_FILL_CL_H
 
-#include "b3OpenCLArray.h"
 #include "Bullet3Common/b3Scalar.h"
+#include "b3OpenCLArray.h"
 
 #include "Bullet3Common/shared/b3Int2.h"
 #include "Bullet3Common/shared/b3Int4.h"

@@ -16,9 +16,9 @@ subject to the following restrictions:
 #ifndef B3_TRIANGLE_INDEX_VERTEX_ARRAY_H
 #define B3_TRIANGLE_INDEX_VERTEX_ARRAY_H
 
-#include "b3StridingMeshInterface.h"
 #include "Bullet3Common/b3AlignedObjectArray.h"
 #include "Bullet3Common/b3Scalar.h"
+#include "b3StridingMeshInterface.h"
 
 ///The b3IndexedMesh indexes a single vertex and index array. Multiple b3IndexedMesh objects can be passed into a b3TriangleIndexVertexArray using addIndexedMesh.
 ///Instead of the number of indices, we pass the number of triangles.

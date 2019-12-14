@@ -18,8 +18,8 @@ subject to the following restrictions:
 #ifndef _BT_POLYHEDRAL_FEATURES_H
 #define _BT_POLYHEDRAL_FEATURES_H
 
-#include "LinearMath/btTransform.h"
 #include "LinearMath/btAlignedObjectArray.h"
+#include "LinearMath/btTransform.h"
 
 #define TEST_INTERNAL_OBJECTS 1
 

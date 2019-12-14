@@ -11,8 +11,8 @@
 #ifndef BT_WHEEL_INFO_H
 #define BT_WHEEL_INFO_H
 
-#include "LinearMath/btVector3.h"
 #include "LinearMath/btTransform.h"
+#include "LinearMath/btVector3.h"
 
 class btRigidBody;
 

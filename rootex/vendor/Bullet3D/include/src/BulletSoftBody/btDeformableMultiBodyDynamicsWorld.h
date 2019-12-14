@@ -16,13 +16,13 @@
 #ifndef BT_DEFORMABLE_MULTIBODY_DYNAMICS_WORLD_H
 #define BT_DEFORMABLE_MULTIBODY_DYNAMICS_WORLD_H
 
-#include "btSoftMultiBodyDynamicsWorld.h"
+#include "BulletCollision/CollisionDispatch/btSimulationIslandManager.h"
+#include "btDeformableBodySolver.h"
 #include "btDeformableLagrangianForce.h"
 #include "btDeformableMassSpringForce.h"
-#include "btDeformableBodySolver.h"
 #include "btDeformableMultiBodyConstraintSolver.h"
 #include "btSoftBodyHelpers.h"
-#include "BulletCollision/CollisionDispatch/btSimulationIslandManager.h"
+#include "btSoftMultiBodyDynamicsWorld.h"
 #include <functional>
 typedef btAlignedObjectArray<btSoftBody*> btSoftBodyArray;
 

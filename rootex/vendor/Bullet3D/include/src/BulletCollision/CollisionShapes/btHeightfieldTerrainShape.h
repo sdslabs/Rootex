@@ -16,8 +16,8 @@ subject to the following restrictions:
 #ifndef BT_HEIGHTFIELD_TERRAIN_SHAPE_H
 #define BT_HEIGHTFIELD_TERRAIN_SHAPE_H
 
-#include "btConcaveShape.h"
 #include "LinearMath/btAlignedObjectArray.h"
+#include "btConcaveShape.h"
 
 ///btHeightfieldTerrainShape simulates a 2D heightfield terrain
 /**

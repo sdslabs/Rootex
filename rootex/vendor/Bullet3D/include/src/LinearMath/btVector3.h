@@ -16,9 +16,9 @@ subject to the following restrictions:
 #define BT_VECTOR3_H
 
 //#include <stdint.h>
-#include "btScalar.h"
-#include "btMinMax.h"
 #include "btAlignedAllocator.h"
+#include "btMinMax.h"
+#include "btScalar.h"
 
 #ifdef BT_USE_DOUBLE_PRECISION
 #define btVector3Data btVector3DoubleData

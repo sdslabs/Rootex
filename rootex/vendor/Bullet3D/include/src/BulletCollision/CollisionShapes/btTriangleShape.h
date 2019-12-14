@@ -16,8 +16,8 @@ subject to the following restrictions:
 #ifndef BT_OBB_TRIANGLE_MINKOWSKI_H
 #define BT_OBB_TRIANGLE_MINKOWSKI_H
 
-#include "btConvexShape.h"
 #include "btBoxShape.h"
+#include "btConvexShape.h"
 
 ATTRIBUTE_ALIGNED16(class)
 btTriangleShape : public btPolyhedralConvexShape

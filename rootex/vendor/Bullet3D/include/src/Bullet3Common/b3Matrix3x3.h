@@ -15,8 +15,8 @@ subject to the following restrictions:
 #ifndef B3_MATRIX3x3_H
 #define B3_MATRIX3x3_H
 
-#include "b3Vector3.h"
 #include "b3Quaternion.h"
+#include "b3Vector3.h"
 #include <stdio.h>
 
 #ifdef B3_USE_SSE

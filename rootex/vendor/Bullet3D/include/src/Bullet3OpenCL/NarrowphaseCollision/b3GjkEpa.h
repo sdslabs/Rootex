@@ -25,9 +25,9 @@ GJK-EPA collision solver by Nathanael Presson, 2008
 #ifndef B3_GJK_EPA2_H
 #define B3_GJK_EPA2_H
 
+#include "Bullet3Collision/NarrowPhaseCollision/shared/b3ConvexPolyhedronData.h"
 #include "Bullet3Common/b3AlignedObjectArray.h"
 #include "Bullet3Common/b3Transform.h"
-#include "Bullet3Collision/NarrowPhaseCollision/shared/b3ConvexPolyhedronData.h"
 
 ///btGjkEpaSolver contributed under zlib by Nathanael Presson
 struct b3GjkEpaSolver2

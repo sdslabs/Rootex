@@ -24,17 +24,17 @@ subject to the following restrictions:
 #ifndef GIMPACT_SHAPE_H
 #define GIMPACT_SHAPE_H
 
-#include "BulletCollision/CollisionShapes/btCollisionShape.h"
-#include "BulletCollision/CollisionShapes/btTriangleShape.h"
-#include "BulletCollision/CollisionShapes/btStridingMeshInterface.h"
-#include "BulletCollision/CollisionShapes/btCollisionMargin.h"
 #include "BulletCollision/CollisionDispatch/btCollisionWorld.h"
+#include "BulletCollision/CollisionShapes/btCollisionMargin.h"
+#include "BulletCollision/CollisionShapes/btCollisionShape.h"
 #include "BulletCollision/CollisionShapes/btConcaveShape.h"
+#include "BulletCollision/CollisionShapes/btStridingMeshInterface.h"
 #include "BulletCollision/CollisionShapes/btTetrahedronShape.h"
-#include "LinearMath/btVector3.h"
-#include "LinearMath/btTransform.h"
-#include "LinearMath/btMatrix3x3.h"
+#include "BulletCollision/CollisionShapes/btTriangleShape.h"
 #include "LinearMath/btAlignedObjectArray.h"
+#include "LinearMath/btMatrix3x3.h"
+#include "LinearMath/btTransform.h"
+#include "LinearMath/btVector3.h"
 
 #include "btGImpactQuantizedBvh.h"  // box tree class
 

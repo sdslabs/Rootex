@@ -16,9 +16,9 @@ subject to the following restrictions:
 #ifndef BT_SEQUENTIAL_IMPULSE_CONSTRAINT_SOLVER_MT_H
 #define BT_SEQUENTIAL_IMPULSE_CONSTRAINT_SOLVER_MT_H
 
-#include "btSequentialImpulseConstraintSolver.h"
-#include "btBatchedConstraints.h"
 #include "LinearMath/btThreads.h"
+#include "btBatchedConstraints.h"
+#include "btSequentialImpulseConstraintSolver.h"
 
 ///
 /// btSequentialImpulseConstraintSolverMt

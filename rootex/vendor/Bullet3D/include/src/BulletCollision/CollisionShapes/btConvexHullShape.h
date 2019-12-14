@@ -16,9 +16,9 @@ subject to the following restrictions:
 #ifndef BT_CONVEX_HULL_SHAPE_H
 #define BT_CONVEX_HULL_SHAPE_H
 
-#include "btPolyhedralConvexShape.h"
 #include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h"  // for the types
 #include "LinearMath/btAlignedObjectArray.h"
+#include "btPolyhedralConvexShape.h"
 
 ///The btConvexHullShape implements an implicit convex hull of an array of vertices.
 ///Bullet provides a general and fast collision detector for convex shapes based on GJK and EPA using localGetSupportingVertex.
