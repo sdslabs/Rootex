@@ -20,8 +20,8 @@ Nov.2006
 #ifndef BT_STACK_ALLOC
 #define BT_STACK_ALLOC
 
+#include "btScalar.h"  //for btAssert
 #include "btAlignedAllocator.h"
-#include "btScalar.h" //for btAssert
 
 ///The btBlock class is an internal structure for the btStackAlloc memory allocator.
 struct btBlock
@@ -115,4 +115,4 @@ private:
 	bool ischild;
 };
 
-#endif //BT_STACK_ALLOC
+#endif  //BT_STACK_ALLOC

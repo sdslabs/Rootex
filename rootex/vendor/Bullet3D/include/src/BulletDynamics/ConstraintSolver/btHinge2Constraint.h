@@ -17,8 +17,8 @@ subject to the following restrictions:
 #define BT_HINGE2_CONSTRAINT_H
 
 #include "LinearMath/btVector3.h"
-#include "btGeneric6DofSpring2Constraint.h"
 #include "btTypedConstraint.h"
+#include "btGeneric6DofSpring2Constraint.h"
 
 // Constraint similar to ODE Hinge2 Joint
 // has 3 degrees of frredom:
@@ -52,4 +52,4 @@ public:
 	void setLowerLimit(btScalar ang1min) { setAngularLowerLimit(btVector3(1.f, 0.f, ang1min)); }
 };
 
-#endif // BT_HINGE2_CONSTRAINT_H
+#endif  // BT_HINGE2_CONSTRAINT_H

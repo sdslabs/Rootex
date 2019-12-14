@@ -31,8 +31,8 @@ class b3ResizablePool
 {
 protected:
 	b3AlignedObjectArray<T> m_bodyHandles;
-	int m_numUsedHandles; // number of active handles
-	int m_firstFreeHandle; // free handles list
+	int m_numUsedHandles;   // number of active handles
+	int m_firstFreeHandle;  // free handles list
 
 	T* getHandleInternal(int handle)
 	{
@@ -168,4 +168,4 @@ public:
 };
 ///end handle management
 
-#endif //B3_RESIZABLE_POOL_H
+#endif  //B3_RESIZABLE_POOL_H

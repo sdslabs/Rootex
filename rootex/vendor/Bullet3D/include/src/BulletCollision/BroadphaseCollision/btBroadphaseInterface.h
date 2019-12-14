@@ -76,4 +76,4 @@ public:
 	virtual void printStats() = 0;
 };
 
-#endif //BT_BROADPHASE_INTERFACE_H
+#endif  //BT_BROADPHASE_INTERFACE_H

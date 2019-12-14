@@ -16,14 +16,14 @@ subject to the following restrictions:
 #ifndef GRAHAM_SCAN_2D_CONVEX_HULL_H
 #define GRAHAM_SCAN_2D_CONVEX_HULL_H
 
-#include "btAlignedObjectArray.h"
 #include "btVector3.h"
+#include "btAlignedObjectArray.h"
 
 struct GrahamVector3 : public btVector3
 {
 	GrahamVector3(const btVector3& org, int orgIndex)
-	    : btVector3(org)
-	    , m_orgIndex(orgIndex)
+		: btVector3(org),
+		  m_orgIndex(orgIndex)
 	{
 	}
 	btScalar m_angle;
@@ -34,7 +34,7 @@ struct btAngleCompareFunc
 {
 	btVector3 m_anchor;
 	btAngleCompareFunc(const btVector3& anchor)
-	    : m_anchor(anchor)
+		: m_anchor(anchor)
 	{
 	}
 	bool operator()(const GrahamVector3& a, const GrahamVector3& b) const
@@ -126,4 +126,4 @@ inline void GrahamScanConvexHull2D(btAlignedObjectArray<GrahamVector3>& original
 	}
 }
 
-#endif //GRAHAM_SCAN_2D_CONVEX_HULL_H
+#endif  //GRAHAM_SCAN_2D_CONVEX_HULL_H

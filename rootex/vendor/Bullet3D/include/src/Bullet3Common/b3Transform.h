@@ -40,9 +40,9 @@ public:
    * @param q Rotation from quaternion 
    * @param c Translation from Vector (default 0,0,0) */
 	explicit B3_FORCE_INLINE b3Transform(const b3Quaternion& q,
-	    const b3Vector3& c = b3MakeVector3(b3Scalar(0), b3Scalar(0), b3Scalar(0)))
-	    : m_basis(q)
-	    , m_origin(c)
+										 const b3Vector3& c = b3MakeVector3(b3Scalar(0), b3Scalar(0), b3Scalar(0)))
+		: m_basis(q),
+		  m_origin(c)
 	{
 	}
 
@@ -50,15 +50,15 @@ public:
    * @param b Rotation from Matrix 
    * @param c Translation from Vector default (0,0,0)*/
 	explicit B3_FORCE_INLINE b3Transform(const b3Matrix3x3& b,
-	    const b3Vector3& c = b3MakeVector3(b3Scalar(0), b3Scalar(0), b3Scalar(0)))
-	    : m_basis(b)
-	    , m_origin(c)
+										 const b3Vector3& c = b3MakeVector3(b3Scalar(0), b3Scalar(0), b3Scalar(0)))
+		: m_basis(b),
+		  m_origin(c)
 	{
 	}
 	/**@brief Copy constructor */
 	B3_FORCE_INLINE b3Transform(const b3Transform& other)
-	    : m_basis(other.m_basis)
-	    , m_origin(other.m_origin)
+		: m_basis(other.m_basis),
+		  m_origin(other.m_origin)
 	{
 	}
 	/**@brief Assignment Operator */
@@ -223,20 +223,21 @@ b3Transform::inverseTimes(const b3Transform& t) const
 {
 	b3Vector3 v = t.getOrigin() - m_origin;
 	return b3Transform(m_basis.transposeTimes(t.m_basis),
-	    v * m_basis);
+					   v * m_basis);
 }
 
 B3_FORCE_INLINE b3Transform
-    b3Transform::operator*(const b3Transform& t) const
+	b3Transform::operator*(const b3Transform& t) const
 {
 	return b3Transform(m_basis * t.m_basis,
-	    (*this)(t.m_origin));
+					   (*this)(t.m_origin));
 }
 
 /**@brief Test if two transforms have all elements equal */
 B3_FORCE_INLINE bool operator==(const b3Transform& t1, const b3Transform& t2)
 {
-	return (t1.getBasis() == t2.getBasis() && t1.getOrigin() == t2.getOrigin());
+	return (t1.getBasis() == t2.getBasis() &&
+			t1.getOrigin() == t2.getOrigin());
 }
 
 ///for serialization
@@ -282,4 +283,4 @@ B3_FORCE_INLINE void b3Transform::deSerializeDouble(const b3TransformDoubleData&
 	m_origin.deSerializeDouble(dataIn.m_origin);
 }
 
-#endif //B3_TRANSFORM_H
+#endif  //B3_TRANSFORM_H

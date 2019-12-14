@@ -16,8 +16,8 @@ subject to the following restrictions:
 #ifndef BT_SERIALIZER_H
 #define BT_SERIALIZER_H
 
+#include "btScalar.h"  // has definitions like SIMD_FORCE_INLINE
 #include "btHashMap.h"
-#include "btScalar.h" // has definitions like SIMD_FORCE_INLINE
 
 #if !defined(__CELLOS_LV2__) && !defined(__MWERKS__)
 #include <memory.h>
@@ -146,7 +146,7 @@ struct btBulletSerializedArrays
 	btAlignedObjectArray<struct btCollisionObjectFloatData*> m_collisionObjectDataFloat;
 	btAlignedObjectArray<struct btTypedConstraintFloatData*> m_constraintDataFloat;
 	btAlignedObjectArray<struct btTypedConstraintDoubleData*> m_constraintDataDouble;
-	btAlignedObjectArray<struct btTypedConstraintData*> m_constraintData; //for backwards compatibility
+	btAlignedObjectArray<struct btTypedConstraintData*> m_constraintData;  //for backwards compatibility
 	btAlignedObjectArray<struct btSoftBodyFloatData*> m_softBodyFloatData;
 	btAlignedObjectArray<struct btSoftBodyDoubleData*> m_softBodyDoubleData;
 };
@@ -252,8 +252,7 @@ protected:
 		int i;
 		for (i = 0; i < dataLen; i++)
 		{
-			while (*cp)
-				cp++;
+			while (*cp) cp++;
 			cp++;
 		}
 		cp = btAlignPointer(cp, 4);
@@ -279,8 +278,7 @@ protected:
 		for (i = 0; i < dataLen; i++)
 		{
 			mTypes.push_back(cp);
-			while (*cp)
-				cp++;
+			while (*cp) cp++;
 			cp++;
 		}
 
@@ -307,8 +305,7 @@ protected:
 			mTlens.push_back(shtPtr[0]);
 		}
 
-		if (dataLen & 1)
-			shtPtr++;
+		if (dataLen & 1) shtPtr++;
 
 		/*
 				STRC (4 bytes)
@@ -369,12 +366,12 @@ public:
 	btHashMap<btHashPtr, void*> m_skipPointers;
 
 	btDefaultSerializer(int totalSize = 0, unsigned char* buffer = 0)
-	    : m_uniqueIdGenerator(0)
-	    , m_totalSize(totalSize)
-	    , m_currentSize(0)
-	    , m_dna(0)
-	    , m_dnaLength(0)
-	    , m_serializationFlags(0)
+		: m_uniqueIdGenerator(0),
+		  m_totalSize(totalSize),
+		  m_currentSize(0),
+		  m_dna(0),
+		  m_dnaLength(0),
+		  m_serializationFlags(0)
 	{
 		if (buffer == 0)
 		{
@@ -407,7 +404,7 @@ public:
 #endif
 		}
 
-#else //BT_INTERNAL_UPDATE_SERIALIZATION_STRUCTURES
+#else   //BT_INTERNAL_UPDATE_SERIALIZATION_STRUCTURES
 		if (VOID_IS_8)
 		{
 			initDNA((const char*)sBulletDNAstr64, sBulletDNAlen64);
@@ -416,7 +413,7 @@ public:
 		{
 			initDNA((const char*)sBulletDNAstr, sBulletDNAlen);
 		}
-#endif //BT_INTERNAL_UPDATE_SERIALIZATION_STRUCTURES
+#endif  //BT_INTERNAL_UPDATE_SERIALIZATION_STRUCTURES
 	}
 
 	virtual ~btDefaultSerializer()
@@ -459,7 +456,7 @@ public:
 		memcpy(buffer, "BULLETd", 7);
 #else
 		memcpy(buffer, "BULLETf", 7);
-#endif //BT_USE_DOUBLE_PRECISION
+#endif  //BT_USE_DOUBLE_PRECISION
 
 		int littleEndian = 1;
 		littleEndian = ((char*)&littleEndian)[0];
@@ -587,8 +584,8 @@ public:
 
 		void* uniquePtr = getUniquePointer(oldPtr);
 
-		m_chunkP.insert(oldPtr, uniquePtr); //chunk->m_oldPtr);
-		chunk->m_oldPtr = uniquePtr; //oldPtr;
+		m_chunkP.insert(oldPtr, uniquePtr);  //chunk->m_oldPtr);
+		chunk->m_oldPtr = uniquePtr;         //oldPtr;
 	}
 
 	virtual unsigned char* internalAlloc(size_t size)
@@ -703,7 +700,7 @@ struct btInMemorySerializer : public btDefaultSerializer
 	btBulletSerializedArrays m_arrays;
 
 	btInMemorySerializer(int totalSize = 0, unsigned char* buffer = 0)
-	    : btDefaultSerializer(totalSize, buffer)
+		: btDefaultSerializer(totalSize, buffer)
 	{
 	}
 
@@ -782,7 +779,7 @@ struct btInMemorySerializer : public btDefaultSerializer
 		chunk->m_dna_nr = getReverseType(structType);
 		chunk->m_chunkCode = chunkCode;
 		//void* uniquePtr = getUniquePointer(oldPtr);
-		m_chunkP.insert(oldPtr, oldPtr); //chunk->m_oldPtr);
+		m_chunkP.insert(oldPtr, oldPtr);  //chunk->m_oldPtr);
 		// chunk->m_oldPtr = uniquePtr;//oldPtr;
 
 		void* uid = findPointer(oldPtr);
@@ -790,70 +787,70 @@ struct btInMemorySerializer : public btDefaultSerializer
 
 		switch (chunk->m_chunkCode)
 		{
-		case BT_SOFTBODY_CODE:
-		{
+			case BT_SOFTBODY_CODE:
+			{
 #ifdef BT_USE_DOUBLE_PRECISION
-			m_arrays.m_softBodyDoubleData.push_back((btSoftBodyDoubleData*)chunk->m_oldPtr);
+				m_arrays.m_softBodyDoubleData.push_back((btSoftBodyDoubleData*)chunk->m_oldPtr);
 #else
-			m_arrays.m_softBodyFloatData.push_back((btSoftBodyFloatData*)chunk->m_oldPtr);
+				m_arrays.m_softBodyFloatData.push_back((btSoftBodyFloatData*)chunk->m_oldPtr);
 #endif
-			break;
-		}
-		case BT_COLLISIONOBJECT_CODE:
-		{
+				break;
+			}
+			case BT_COLLISIONOBJECT_CODE:
+			{
 #ifdef BT_USE_DOUBLE_PRECISION
-			m_arrays.m_collisionObjectDataDouble.push_back((btCollisionObjectDoubleData*)chunk->m_oldPtr);
-#else //BT_USE_DOUBLE_PRECISION
-			m_arrays.m_collisionObjectDataFloat.push_back((btCollisionObjectFloatData*)chunk->m_oldPtr);
-#endif //BT_USE_DOUBLE_PRECISION
-			break;
-		}
-		case BT_RIGIDBODY_CODE:
-		{
+				m_arrays.m_collisionObjectDataDouble.push_back((btCollisionObjectDoubleData*)chunk->m_oldPtr);
+#else   //BT_USE_DOUBLE_PRECISION
+				m_arrays.m_collisionObjectDataFloat.push_back((btCollisionObjectFloatData*)chunk->m_oldPtr);
+#endif  //BT_USE_DOUBLE_PRECISION
+				break;
+			}
+			case BT_RIGIDBODY_CODE:
+			{
 #ifdef BT_USE_DOUBLE_PRECISION
-			m_arrays.m_rigidBodyDataDouble.push_back((btRigidBodyDoubleData*)chunk->m_oldPtr);
+				m_arrays.m_rigidBodyDataDouble.push_back((btRigidBodyDoubleData*)chunk->m_oldPtr);
 #else
-			m_arrays.m_rigidBodyDataFloat.push_back((btRigidBodyFloatData*)chunk->m_oldPtr);
-#endif //BT_USE_DOUBLE_PRECISION
-			break;
-		};
-		case BT_CONSTRAINT_CODE:
-		{
+				m_arrays.m_rigidBodyDataFloat.push_back((btRigidBodyFloatData*)chunk->m_oldPtr);
+#endif  //BT_USE_DOUBLE_PRECISION
+				break;
+			};
+			case BT_CONSTRAINT_CODE:
+			{
 #ifdef BT_USE_DOUBLE_PRECISION
-			m_arrays.m_constraintDataDouble.push_back((btTypedConstraintDoubleData*)chunk->m_oldPtr);
+				m_arrays.m_constraintDataDouble.push_back((btTypedConstraintDoubleData*)chunk->m_oldPtr);
 #else
-			m_arrays.m_constraintDataFloat.push_back((btTypedConstraintFloatData*)chunk->m_oldPtr);
+				m_arrays.m_constraintDataFloat.push_back((btTypedConstraintFloatData*)chunk->m_oldPtr);
 #endif
-			break;
-		}
-		case BT_QUANTIZED_BVH_CODE:
-		{
+				break;
+			}
+			case BT_QUANTIZED_BVH_CODE:
+			{
 #ifdef BT_USE_DOUBLE_PRECISION
-			m_arrays.m_bvhsDouble.push_back((btQuantizedBvhDoubleData*)chunk->m_oldPtr);
+				m_arrays.m_bvhsDouble.push_back((btQuantizedBvhDoubleData*)chunk->m_oldPtr);
 #else
-			m_arrays.m_bvhsFloat.push_back((btQuantizedBvhFloatData*)chunk->m_oldPtr);
+				m_arrays.m_bvhsFloat.push_back((btQuantizedBvhFloatData*)chunk->m_oldPtr);
 #endif
-			break;
-		}
+				break;
+			}
 
-		case BT_SHAPE_CODE:
-		{
-			btCollisionShapeData* shapeData = (btCollisionShapeData*)chunk->m_oldPtr;
-			m_arrays.m_colShapeData.push_back(shapeData);
-			break;
-		}
-		case BT_TRIANLGE_INFO_MAP:
-		case BT_ARRAY_CODE:
-		case BT_SBMATERIAL_CODE:
-		case BT_SBNODE_CODE:
-		case BT_DYNAMICSWORLD_CODE:
-		case BT_DNA_CODE:
-		{
-			break;
-		}
-		default:
-		{
-		}
+			case BT_SHAPE_CODE:
+			{
+				btCollisionShapeData* shapeData = (btCollisionShapeData*)chunk->m_oldPtr;
+				m_arrays.m_colShapeData.push_back(shapeData);
+				break;
+			}
+			case BT_TRIANLGE_INFO_MAP:
+			case BT_ARRAY_CODE:
+			case BT_SBMATERIAL_CODE:
+			case BT_SBNODE_CODE:
+			case BT_DYNAMICSWORLD_CODE:
+			case BT_DNA_CODE:
+			{
+				break;
+			}
+			default:
+			{
+			}
 		};
 	}
 
@@ -867,6 +864,6 @@ struct btInMemorySerializer : public btDefaultSerializer
 		return *m_uid2ChunkPtr.getAtIndex(chunkIndex);
 	}
 };
-#endif //ENABLE_INMEMORY_SERIALIZER
+#endif  //ENABLE_INMEMORY_SERIALIZER
 
-#endif //BT_SERIALIZER_H
+#endif  //BT_SERIALIZER_H

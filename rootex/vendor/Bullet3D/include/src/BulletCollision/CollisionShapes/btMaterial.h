@@ -35,4 +35,4 @@ public:
 	}
 };
 
-#endif // BT_MATERIAL_H
+#endif  // BT_MATERIAL_H

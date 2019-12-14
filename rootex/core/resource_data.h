@@ -7,7 +7,7 @@
 class ResourceData
 {
 	static unsigned int s_Count;
-
+	
 public:
 	ResourceData(FilePath path, FileBuffer& data);
 	~ResourceData() = default;

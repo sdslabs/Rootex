@@ -35,15 +35,15 @@
 #define BT_ID_SNPRINTF _snprintf
 #else
 #define BT_ID_SNPRINTF snprintf
-#endif //
+#endif  //
 #endif
 // error messages
 #include "IDErrorMessages.hpp"
 
 #ifdef BT_CUSTOM_INVERSE_DYNAMICS_CONFIG_H
 /*
-#include "IDConfigBuiltin.hpp"
 #include "IDConfigEigen.hpp"
+#include "IDConfigBuiltin.hpp"
 */
 #define INVDYN_INCLUDE_HELPER_2(x) #x
 #define INVDYN_INCLUDE_HELPER(x) INVDYN_INCLUDE_HELPER_2(x)
@@ -84,7 +84,7 @@ struct idArray
 typedef int idArrayIdx;
 #define ID_DECLARE_ALIGNED_ALLOCATOR() B3_DECLARE_ALIGNED_ALLOCATOR()
 
-#else // BT_USE_INVERSE_DYNAMICS_WITH_BULLET2
+#else  // BT_USE_INVERSE_DYNAMICS_WITH_BULLET2
 
 #include "LinearMath/btAlignedObjectArray.h"
 template <typename T>
@@ -95,7 +95,7 @@ struct idArray
 typedef int idArrayIdx;
 #define ID_DECLARE_ALIGNED_ALLOCATOR() BT_DECLARE_ALIGNED_ALLOCATOR()
 
-#endif // BT_USE_INVERSE_DYNAMICS_WITH_BULLET2
+#endif  // BT_USE_INVERSE_DYNAMICS_WITH_BULLET2
 
 // use bullet's allocator functions
 #define idMalloc btAllocFunc

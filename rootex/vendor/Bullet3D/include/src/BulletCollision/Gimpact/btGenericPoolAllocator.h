@@ -21,10 +21,10 @@ subject to the following restrictions:
 #ifndef BT_GENERIC_POOL_ALLOCATOR_H
 #define BT_GENERIC_POOL_ALLOCATOR_H
 
-#include "LinearMath/btAlignedAllocator.h"
 #include <limits.h>
 #include <stdio.h>
 #include <string.h>
+#include "LinearMath/btAlignedAllocator.h"
 
 #define BT_UINT_MAX UINT_MAX
 #define BT_DEFAULT_MAX_POOLS 16
@@ -33,9 +33,9 @@ subject to the following restrictions:
 class btGenericMemoryPool
 {
 public:
-	unsigned char* m_pool; //[m_element_size*m_max_element_count];
-	size_t* m_free_nodes; //[m_max_element_count];//! free nodes
-	size_t* m_allocated_sizes; //[m_max_element_count];//! Number of elements allocated per node
+	unsigned char *m_pool;      //[m_element_size*m_max_element_count];
+	size_t *m_free_nodes;       //[m_max_element_count];//! free nodes
+	size_t *m_allocated_sizes;  //[m_max_element_count];//! Number of elements allocated per node
 	size_t m_allocated_count;
 	size_t m_free_nodes_count;
 
@@ -86,7 +86,7 @@ public:
 		return m_free_nodes_count;
 	}
 
-	inline void* get_element_data(size_t element_index)
+	inline void *get_element_data(size_t element_index)
 	{
 		return &m_pool[element_index * m_element_size];
 	}
@@ -95,9 +95,9 @@ public:
 	/*!
 	\param size_bytes size in bytes of the buffer
 	*/
-	void* allocate(size_t size_bytes);
+	void *allocate(size_t size_bytes);
 
-	bool freeMemory(void* pointer);
+	bool freeMemory(void *pointer);
 };
 
 //! Generic Allocator with pools
@@ -111,7 +111,7 @@ protected:
 	size_t m_pool_element_count;
 
 public:
-	btGenericMemoryPool* m_pools[BT_DEFAULT_MAX_POOLS];
+	btGenericMemoryPool *m_pools[BT_DEFAULT_MAX_POOLS];
 	size_t m_pool_count;
 
 	inline size_t get_pool_capacity()
@@ -121,11 +121,11 @@ public:
 
 protected:
 	// creates a pool
-	btGenericMemoryPool* push_new_pool();
+	btGenericMemoryPool *push_new_pool();
 
-	void* failback_alloc(size_t size_bytes);
+	void *failback_alloc(size_t size_bytes);
 
-	bool failback_free(void* pointer);
+	bool failback_free(void *pointer);
 
 public:
 	btGenericPoolAllocator(size_t pool_element_size, size_t pool_element_count)
@@ -141,13 +141,13 @@ public:
 	/*!
 	\param size_bytes size in bytes of the buffer
 	*/
-	void* allocate(size_t size_bytes);
+	void *allocate(size_t size_bytes);
 
-	bool freeMemory(void* pointer);
+	bool freeMemory(void *pointer);
 };
 
-void* btPoolAlloc(size_t size);
-void* btPoolRealloc(void* ptr, size_t oldsize, size_t newsize);
-void btPoolFree(void* ptr);
+void *btPoolAlloc(size_t size);
+void *btPoolRealloc(void *ptr, size_t oldsize, size_t newsize);
+void btPoolFree(void *ptr);
 
 #endif

@@ -66,4 +66,4 @@ SIMD_FORCE_INLINE void btClamp(T& a, const T& lb, const T& ub)
 	}
 }
 
-#endif //BT_GEN_MINMAX_H
+#endif  //BT_GEN_MINMAX_H

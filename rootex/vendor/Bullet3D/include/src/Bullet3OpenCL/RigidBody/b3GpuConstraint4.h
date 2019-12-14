@@ -14,4 +14,4 @@ b3GpuConstraint4 : public b3ContactConstraint4
 	inline float getFrictionCoeff() const { return m_linear[3]; }
 };
 
-#endif //B3_CONSTRAINT4_h
+#endif  //B3_CONSTRAINT4_h

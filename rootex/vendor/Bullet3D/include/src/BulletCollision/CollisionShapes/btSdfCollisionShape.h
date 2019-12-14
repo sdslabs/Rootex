@@ -26,4 +26,4 @@ public:
 	bool queryPoint(const btVector3& ptInSDF, btScalar& distOut, btVector3& normal);
 };
 
-#endif //BT_SDF_COLLISION_SHAPE_H
+#endif  //BT_SDF_COLLISION_SHAPE_H

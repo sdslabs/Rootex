@@ -105,33 +105,33 @@
 #define B3_STRC B3_MAKE_ID('S', 'T', 'R', 'C')
 
 // ------------------------------------------------------------
-#define B3_SWITCH_INT(a)   \
-	{                      \
-		char s_i, *p_i;    \
-		p_i = (char*)&(a); \
-		s_i = p_i[0];      \
-		p_i[0] = p_i[3];   \
-		p_i[3] = s_i;      \
-		s_i = p_i[1];      \
-		p_i[1] = p_i[2];   \
-		p_i[2] = s_i;      \
+#define B3_SWITCH_INT(a)    \
+	{                       \
+		char s_i, *p_i;     \
+		p_i = (char *)&(a); \
+		s_i = p_i[0];       \
+		p_i[0] = p_i[3];    \
+		p_i[3] = s_i;       \
+		s_i = p_i[1];       \
+		p_i[1] = p_i[2];    \
+		p_i[2] = s_i;       \
 	}
 
 // ------------------------------------------------------------
-#define B3_SWITCH_SHORT(a) \
-	{                      \
-		char s_i, *p_i;    \
-		p_i = (char*)&(a); \
-		s_i = p_i[0];      \
-		p_i[0] = p_i[1];   \
-		p_i[1] = s_i;      \
+#define B3_SWITCH_SHORT(a)  \
+	{                       \
+		char s_i, *p_i;     \
+		p_i = (char *)&(a); \
+		s_i = p_i[0];       \
+		p_i[0] = p_i[1];    \
+		p_i[1] = s_i;       \
 	}
 
 // ------------------------------------------------------------
 #define B3_SWITCH_LONGINT(a) \
 	{                        \
 		char s_i, *p_i;      \
-		p_i = (char*)&(a);   \
+		p_i = (char *)&(a);  \
 		s_i = p_i[0];        \
 		p_i[0] = p_i[7];     \
 		p_i[7] = s_i;        \
@@ -146,4 +146,4 @@
 		p_i[4] = s_i;        \
 	}
 
-#endif //__B_DEFINES_H__
+#endif  //__B_DEFINES_H__

@@ -34,4 +34,4 @@ protected:
 	int m_grainSize;
 };
 
-#endif //BT_COLLISION_DISPATCHER_MT_H
+#endif  //BT_COLLISION_DISPATCHER_MT_H

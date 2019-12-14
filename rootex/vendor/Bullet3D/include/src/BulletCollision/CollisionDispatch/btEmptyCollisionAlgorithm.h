@@ -49,4 +49,4 @@ public:
 
 } ATTRIBUTE_ALIGNED(16);
 
-#endif //BT_EMPTY_ALGORITH
+#endif  //BT_EMPTY_ALGORITH

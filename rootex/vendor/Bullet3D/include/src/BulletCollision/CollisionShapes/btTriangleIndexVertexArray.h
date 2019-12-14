@@ -16,9 +16,9 @@ subject to the following restrictions:
 #ifndef BT_TRIANGLE_INDEX_VERTEX_ARRAY_H
 #define BT_TRIANGLE_INDEX_VERTEX_ARRAY_H
 
+#include "btStridingMeshInterface.h"
 #include "LinearMath/btAlignedObjectArray.h"
 #include "LinearMath/btScalar.h"
-#include "btStridingMeshInterface.h"
 
 ///The btIndexedMesh indexes a single vertex and index array. Multiple btIndexedMesh objects can be passed into a btTriangleIndexVertexArray using addIndexedMesh.
 ///Instead of the number of indices, we pass the number of triangles.
@@ -46,13 +46,12 @@ btIndexedMesh
 	PHY_ScalarType m_vertexType;
 
 	btIndexedMesh()
-	    : m_indexType(PHY_INTEGER)
-	    ,
+		: m_indexType(PHY_INTEGER),
 #ifdef BT_USE_DOUBLE_PRECISION
-	    m_vertexType(PHY_DOUBLE)
-#else // BT_USE_DOUBLE_PRECISION
-	    m_vertexType(PHY_FLOAT)
-#endif // BT_USE_DOUBLE_PRECISION
+		  m_vertexType(PHY_DOUBLE)
+#else   // BT_USE_DOUBLE_PRECISION
+		  m_vertexType(PHY_FLOAT)
+#endif  // BT_USE_DOUBLE_PRECISION
 	{
 	}
 };
@@ -69,15 +68,14 @@ btTriangleIndexVertexArray : public btStridingMeshInterface
 protected:
 	IndexedMeshArray m_indexedMeshes;
 	int m_pad[2];
-	mutable int m_hasAabb; // using int instead of bool to maintain alignment
+	mutable int m_hasAabb;  // using int instead of bool to maintain alignment
 	mutable btVector3 m_aabbMin;
 	mutable btVector3 m_aabbMax;
 
 public:
 	BT_DECLARE_ALIGNED_ALLOCATOR();
 
-	btTriangleIndexVertexArray()
-	    : m_hasAabb(0)
+	btTriangleIndexVertexArray() : m_hasAabb(0)
 	{
 	}
 
@@ -127,4 +125,4 @@ public:
 	virtual void getPremadeAabb(btVector3 * aabbMin, btVector3 * aabbMax) const;
 };
 
-#endif //BT_TRIANGLE_INDEX_VERTEX_ARRAY_H
+#endif  //BT_TRIANGLE_INDEX_VERTEX_ARRAY_H

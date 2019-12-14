@@ -68,8 +68,7 @@ private:
 class vecx
 {
 public:
-	vecx(int size)
-	    : m_size(size)
+	vecx(int size) : m_size(size)
 	{
 		m_data = static_cast<idScalar*>(idMalloc(sizeof(idScalar) * size));
 	}
@@ -100,9 +99,7 @@ public:
 		m_cols = 0;
 		m_rows = 0;
 	}
-	matxx(int rows, int cols)
-	    : m_rows(rows)
-	    , m_cols(cols)
+	matxx(int rows, int cols) : m_rows(rows), m_cols(cols)
 	{
 		m_data = static_cast<idScalar*>(idMalloc(sizeof(idScalar) * rows * cols));
 	}
@@ -132,8 +129,7 @@ public:
 		allocate();
 		*this = rhs;
 	}
-	mat3x(int rows, int cols)
-	    : m_cols(cols)
+	mat3x(int rows, int cols) : m_cols(cols)
 	{
 		allocate();
 	};
@@ -239,15 +235,24 @@ inline mat33 mat33::transpose() const
 inline mat33 operator*(const mat33& a, const mat33& b)
 {
 	mat33 result;
-	result.m_data[0] = a.m_data[0] * b.m_data[0] + a.m_data[1] * b.m_data[3] + a.m_data[2] * b.m_data[6];
-	result.m_data[1] = a.m_data[0] * b.m_data[1] + a.m_data[1] * b.m_data[4] + a.m_data[2] * b.m_data[7];
-	result.m_data[2] = a.m_data[0] * b.m_data[2] + a.m_data[1] * b.m_data[5] + a.m_data[2] * b.m_data[8];
-	result.m_data[3] = a.m_data[3] * b.m_data[0] + a.m_data[4] * b.m_data[3] + a.m_data[5] * b.m_data[6];
-	result.m_data[4] = a.m_data[3] * b.m_data[1] + a.m_data[4] * b.m_data[4] + a.m_data[5] * b.m_data[7];
-	result.m_data[5] = a.m_data[3] * b.m_data[2] + a.m_data[4] * b.m_data[5] + a.m_data[5] * b.m_data[8];
-	result.m_data[6] = a.m_data[6] * b.m_data[0] + a.m_data[7] * b.m_data[3] + a.m_data[8] * b.m_data[6];
-	result.m_data[7] = a.m_data[6] * b.m_data[1] + a.m_data[7] * b.m_data[4] + a.m_data[8] * b.m_data[7];
-	result.m_data[8] = a.m_data[6] * b.m_data[2] + a.m_data[7] * b.m_data[5] + a.m_data[8] * b.m_data[8];
+	result.m_data[0] =
+		a.m_data[0] * b.m_data[0] + a.m_data[1] * b.m_data[3] + a.m_data[2] * b.m_data[6];
+	result.m_data[1] =
+		a.m_data[0] * b.m_data[1] + a.m_data[1] * b.m_data[4] + a.m_data[2] * b.m_data[7];
+	result.m_data[2] =
+		a.m_data[0] * b.m_data[2] + a.m_data[1] * b.m_data[5] + a.m_data[2] * b.m_data[8];
+	result.m_data[3] =
+		a.m_data[3] * b.m_data[0] + a.m_data[4] * b.m_data[3] + a.m_data[5] * b.m_data[6];
+	result.m_data[4] =
+		a.m_data[3] * b.m_data[1] + a.m_data[4] * b.m_data[4] + a.m_data[5] * b.m_data[7];
+	result.m_data[5] =
+		a.m_data[3] * b.m_data[2] + a.m_data[4] * b.m_data[5] + a.m_data[5] * b.m_data[8];
+	result.m_data[6] =
+		a.m_data[6] * b.m_data[0] + a.m_data[7] * b.m_data[3] + a.m_data[8] * b.m_data[6];
+	result.m_data[7] =
+		a.m_data[6] * b.m_data[1] + a.m_data[7] * b.m_data[4] + a.m_data[8] * b.m_data[7];
+	result.m_data[8] =
+		a.m_data[6] * b.m_data[2] + a.m_data[7] * b.m_data[5] + a.m_data[8] * b.m_data[8];
 
 	return result;
 }
@@ -275,9 +280,12 @@ inline vec3 operator*(const mat33& a, const vec3& b)
 {
 	vec3 result;
 
-	result.m_data[0] = a.m_data[0] * b.m_data[0] + a.m_data[1] * b.m_data[1] + a.m_data[2] * b.m_data[2];
-	result.m_data[1] = a.m_data[3] * b.m_data[0] + a.m_data[4] * b.m_data[1] + a.m_data[5] * b.m_data[2];
-	result.m_data[2] = a.m_data[6] * b.m_data[0] + a.m_data[7] * b.m_data[1] + a.m_data[8] * b.m_data[2];
+	result.m_data[0] =
+		a.m_data[0] * b.m_data[0] + a.m_data[1] * b.m_data[1] + a.m_data[2] * b.m_data[2];
+	result.m_data[1] =
+		a.m_data[3] * b.m_data[0] + a.m_data[4] * b.m_data[1] + a.m_data[5] * b.m_data[2];
+	result.m_data[2] =
+		a.m_data[6] * b.m_data[0] + a.m_data[7] * b.m_data[1] + a.m_data[8] * b.m_data[2];
 
 	return result;
 }
@@ -477,5 +485,5 @@ inline void setMat3xElem(const idArrayIdx row, const idArrayIdx col, const idSca
 	(*m)(row, col) = val;
 }
 
-} // namespace btInverseDynamics
+}  // namespace btInverseDynamics
 #endif

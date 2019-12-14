@@ -17,8 +17,8 @@ subject to the following restrictions:
 #define BT_SOLVER_BODY_H
 
 class btRigidBody;
-#include "LinearMath/btMatrix3x3.h"
 #include "LinearMath/btVector3.h"
+#include "LinearMath/btMatrix3x3.h"
 
 #include "LinearMath/btAlignedAllocator.h"
 #include "LinearMath/btTransformUtil.h"
@@ -26,7 +26,7 @@ class btRigidBody;
 ///Until we get other contributions, only use SIMD on Windows, when using Visual Studio 2008 or later, and not double precision
 #ifdef BT_USE_SSE
 #define USE_SIMD 1
-#endif //
+#endif  //
 
 #ifdef USE_SIMD
 
@@ -37,12 +37,12 @@ struct btSimdScalar
 	}
 
 	SIMD_FORCE_INLINE btSimdScalar(float fl)
-	    : m_vec128(_mm_set1_ps(fl))
+		: m_vec128(_mm_set1_ps(fl))
 	{
 	}
 
 	SIMD_FORCE_INLINE btSimdScalar(__m128 v128)
-	    : m_vec128(v128)
+		: m_vec128(v128)
 	{
 	}
 	union {
@@ -282,4 +282,4 @@ btSolverBody
 	}
 };
 
-#endif //BT_SOLVER_BODY_H
+#endif  //BT_SOLVER_BODY_H

@@ -30,18 +30,18 @@ ATTRIBUTE_ALIGNED16(class)
 btJacobianEntry
 {
 public:
-	btJacobianEntry() {};
+	btJacobianEntry(){};
 	//constraint between two different rigidbodies
 	btJacobianEntry(
-	    const btMatrix3x3& world2A,
-	    const btMatrix3x3& world2B,
-	    const btVector3& rel_pos1, const btVector3& rel_pos2,
-	    const btVector3& jointAxis,
-	    const btVector3& inertiaInvA,
-	    const btScalar massInvA,
-	    const btVector3& inertiaInvB,
-	    const btScalar massInvB)
-	    : m_linearJointAxis(jointAxis)
+		const btMatrix3x3& world2A,
+		const btMatrix3x3& world2B,
+		const btVector3& rel_pos1, const btVector3& rel_pos2,
+		const btVector3& jointAxis,
+		const btVector3& inertiaInvA,
+		const btScalar massInvA,
+		const btVector3& inertiaInvB,
+		const btScalar massInvB)
+		: m_linearJointAxis(jointAxis)
 	{
 		m_aJ = world2A * (rel_pos1.cross(m_linearJointAxis));
 		m_bJ = world2B * (rel_pos2.cross(-m_linearJointAxis));
@@ -54,11 +54,11 @@ public:
 
 	//angular constraint between two different rigidbodies
 	btJacobianEntry(const btVector3& jointAxis,
-	    const btMatrix3x3& world2A,
-	    const btMatrix3x3& world2B,
-	    const btVector3& inertiaInvA,
-	    const btVector3& inertiaInvB)
-	    : m_linearJointAxis(btVector3(btScalar(0.), btScalar(0.), btScalar(0.)))
+					const btMatrix3x3& world2A,
+					const btMatrix3x3& world2B,
+					const btVector3& inertiaInvA,
+					const btVector3& inertiaInvB)
+		: m_linearJointAxis(btVector3(btScalar(0.), btScalar(0.), btScalar(0.)))
 	{
 		m_aJ = world2A * jointAxis;
 		m_bJ = world2B * -jointAxis;
@@ -71,12 +71,10 @@ public:
 
 	//angular constraint between two different rigidbodies
 	btJacobianEntry(const btVector3& axisInA,
-	    const btVector3& axisInB,
-	    const btVector3& inertiaInvA,
-	    const btVector3& inertiaInvB)
-	    : m_linearJointAxis(btVector3(btScalar(0.), btScalar(0.), btScalar(0.)))
-	    , m_aJ(axisInA)
-	    , m_bJ(-axisInB)
+					const btVector3& axisInB,
+					const btVector3& inertiaInvA,
+					const btVector3& inertiaInvB)
+		: m_linearJointAxis(btVector3(btScalar(0.), btScalar(0.), btScalar(0.))), m_aJ(axisInA), m_bJ(-axisInB)
 	{
 		m_0MinvJt = inertiaInvA * m_aJ;
 		m_1MinvJt = inertiaInvB * m_bJ;
@@ -87,12 +85,12 @@ public:
 
 	//constraint on one rigidbody
 	btJacobianEntry(
-	    const btMatrix3x3& world2A,
-	    const btVector3& rel_pos1, const btVector3& rel_pos2,
-	    const btVector3& jointAxis,
-	    const btVector3& inertiaInvA,
-	    const btScalar massInvA)
-	    : m_linearJointAxis(jointAxis)
+		const btMatrix3x3& world2A,
+		const btVector3& rel_pos1, const btVector3& rel_pos2,
+		const btVector3& jointAxis,
+		const btVector3& inertiaInvA,
+		const btScalar massInvA)
+		: m_linearJointAxis(jointAxis)
 	{
 		m_aJ = world2A * (rel_pos1.cross(jointAxis));
 		m_bJ = world2A * (rel_pos2.cross(-jointAxis));
@@ -149,4 +147,4 @@ public:
 	btScalar m_Adiag;
 };
 
-#endif //BT_JACOBIAN_ENTRY_H
+#endif  //BT_JACOBIAN_ENTRY_H

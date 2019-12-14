@@ -19,9 +19,9 @@ protected:
 public:
 	virtual void setLooping(bool enabled);
 	virtual void queueNewBuffers();
-
+	
 	void play();
-
+	
 	bool isLooping();
 	ALuint getSourceID();
 };

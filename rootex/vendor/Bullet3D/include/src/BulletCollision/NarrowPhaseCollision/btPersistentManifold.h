@@ -16,8 +16,8 @@ subject to the following restrictions:
 #ifndef BT_PERSISTENT_MANIFOLD_H
 #define BT_PERSISTENT_MANIFOLD_H
 
-#include "LinearMath/btTransform.h"
 #include "LinearMath/btVector3.h"
+#include "LinearMath/btTransform.h"
 #include "btManifoldPoint.h"
 class btCollisionObject;
 #include "LinearMath/btAlignedAllocator.h"
@@ -40,7 +40,7 @@ extern ContactDestroyedCallback gContactDestroyedCallback;
 extern ContactProcessedCallback gContactProcessedCallback;
 extern ContactStartedCallback gContactStartedCallback;
 extern ContactEndedCallback gContactEndedCallback;
-#endif //SWIG
+#endif  //SWIG
 
 //the enum starts at 1024 to avoid type conflicts with btTypedConstraint
 enum btContactManifoldTypes
@@ -90,15 +90,15 @@ public:
 	btPersistentManifold();
 
 	btPersistentManifold(const btCollisionObject* body0, const btCollisionObject* body1, int, btScalar contactBreakingThreshold, btScalar contactProcessingThreshold)
-	    : btTypedObject(BT_PERSISTENT_MANIFOLD_TYPE)
-	    , m_body0(body0)
-	    , m_body1(body1)
-	    , m_cachedPoints(0)
-	    , m_contactBreakingThreshold(contactBreakingThreshold)
-	    , m_contactProcessingThreshold(contactProcessingThreshold)
-	    , m_companionIdA(0)
-	    , m_companionIdB(0)
-	    , m_index1a(0)
+		: btTypedObject(BT_PERSISTENT_MANIFOLD_TYPE),
+		  m_body0(body0),
+		  m_body1(body1),
+		  m_cachedPoints(0),
+		  m_contactBreakingThreshold(contactBreakingThreshold),
+		  m_contactProcessingThreshold(contactProcessingThreshold),
+		  m_companionIdA(0),
+		  m_companionIdB(0),
+		  m_index1a(0)
 	{
 	}
 
@@ -115,7 +115,7 @@ public:
 
 #ifdef DEBUG_PERSISTENCY
 	void DebugPersistency();
-#endif //
+#endif  //
 
 	SIMD_FORCE_INLINE int getNumContacts() const
 	{
@@ -210,7 +210,7 @@ public:
 			//   printf("appliedLateralImpulse2=%f\n", appliedLateralImpulse2);
 			//   printf("mu = %f\n", m_pointCache[insertIndex].m_combinedFriction);
 			btScalar mu = m_pointCache[insertIndex].m_combinedFriction;
-			btScalar eps = 0; //we could allow to enlarge or shrink the tolerance to check against the friction cone a bit, say 1e-7
+			btScalar eps = 0;  //we could allow to enlarge or shrink the tolerance to check against the friction cone a bit, say 1e-7
 			btScalar a = appliedLateralImpulse1 * appliedLateralImpulse1 + appliedLateralImpulse2 * appliedLateralImpulse2;
 			btScalar b = eps + mu * appliedImpulse;
 			b = b * b;
@@ -369,6 +369,6 @@ struct btPersistentManifoldFloatData
 #else
 #define btPersistentManifoldData btPersistentManifoldFloatData
 #define btPersistentManifoldDataName "btPersistentManifoldFloatData"
-#endif //BT_USE_DOUBLE_PRECISION
+#endif  //BT_USE_DOUBLE_PRECISION
 
-#endif //BT_PERSISTENT_MANIFOLD_H
+#endif  //BT_PERSISTENT_MANIFOLD_H

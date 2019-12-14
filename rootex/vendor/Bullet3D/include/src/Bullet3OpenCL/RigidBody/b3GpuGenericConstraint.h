@@ -125,4 +125,4 @@ b3GpuGenericConstraint
 	void getInfo2(b3GpuConstraintInfo2 * info, const b3RigidBodyData* bodies);
 };
 
-#endif //B3_GPU_GENERIC_CONSTRAINT_H
+#endif  //B3_GPU_GENERIC_CONSTRAINT_H

@@ -16,8 +16,8 @@ subject to the following restrictions:
 #ifndef BT_GJK_PAIR_DETECTOR_H
 #define BT_GJK_PAIR_DETECTOR_H
 
-#include "BulletCollision/CollisionShapes/btCollisionMargin.h"
 #include "btDiscreteCollisionDetectorInterface.h"
+#include "BulletCollision/CollisionShapes/btCollisionMargin.h"
 
 class btConvexShape;
 #include "btSimplexSolverInterface.h"
@@ -49,7 +49,7 @@ public:
 
 	btGjkPairDetector(const btConvexShape* objectA, const btConvexShape* objectB, btSimplexSolverInterface* simplexSolver, btConvexPenetrationDepthSolver* penetrationDepthSolver);
 	btGjkPairDetector(const btConvexShape* objectA, const btConvexShape* objectB, int shapeTypeA, int shapeTypeB, btScalar marginA, btScalar marginB, btSimplexSolverInterface* simplexSolver, btConvexPenetrationDepthSolver* penetrationDepthSolver);
-	virtual ~btGjkPairDetector() {};
+	virtual ~btGjkPairDetector(){};
 
 	virtual void getClosestPoints(const ClosestPointInput& input, Result& output, class btIDebugDraw* debugDraw, bool swapResults = false);
 
@@ -90,4 +90,4 @@ public:
 	}
 };
 
-#endif //BT_GJK_PAIR_DETECTOR_H
+#endif  //BT_GJK_PAIR_DETECTOR_H

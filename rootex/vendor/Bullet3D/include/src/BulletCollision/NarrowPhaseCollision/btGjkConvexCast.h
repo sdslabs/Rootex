@@ -36,11 +36,11 @@ public:
 
 	/// cast a convex against another convex object
 	virtual bool calcTimeOfImpact(
-	    const btTransform& fromA,
-	    const btTransform& toA,
-	    const btTransform& fromB,
-	    const btTransform& toB,
-	    CastResult& result);
+		const btTransform& fromA,
+		const btTransform& toA,
+		const btTransform& fromB,
+		const btTransform& toB,
+		CastResult& result);
 };
 
-#endif //BT_GJK_CONVEX_CAST_H
+#endif  //BT_GJK_CONVEX_CAST_H

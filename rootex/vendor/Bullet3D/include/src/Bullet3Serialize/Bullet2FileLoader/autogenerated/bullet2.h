@@ -98,7 +98,7 @@ class PointerArray
 public:
 	int m_size;
 	int m_capacity;
-	void* m_data;
+	void *m_data;
 };
 
 // -------------------------------------------------- //
@@ -114,8 +114,8 @@ public:
 class ListBase
 {
 public:
-	void* first;
-	void* last;
+	void *first;
+	void *last;
 };
 
 // -------------------------------------------------- //
@@ -216,9 +216,9 @@ public:
 	int m_useQuantization;
 	int m_numContiguousLeafNodes;
 	int m_numQuantizedContiguousNodes;
-	b3OptimizedBvhNodeFloatData* m_contiguousNodesPtr;
-	b3QuantizedBvhNodeData* m_quantizedContiguousNodesPtr;
-	b3BvhSubtreeInfoData* m_subTreeInfoPtr;
+	b3OptimizedBvhNodeFloatData *m_contiguousNodesPtr;
+	b3QuantizedBvhNodeData *m_quantizedContiguousNodesPtr;
+	b3BvhSubtreeInfoData *m_subTreeInfoPtr;
 	int m_traversalMode;
 	int m_numSubtreeHeaders;
 };
@@ -234,18 +234,18 @@ public:
 	int m_useQuantization;
 	int m_numContiguousLeafNodes;
 	int m_numQuantizedContiguousNodes;
-	b3OptimizedBvhNodeDoubleData* m_contiguousNodesPtr;
-	b3QuantizedBvhNodeData* m_quantizedContiguousNodesPtr;
+	b3OptimizedBvhNodeDoubleData *m_contiguousNodesPtr;
+	b3QuantizedBvhNodeData *m_quantizedContiguousNodesPtr;
 	int m_traversalMode;
 	int m_numSubtreeHeaders;
-	b3BvhSubtreeInfoData* m_subTreeInfoPtr;
+	b3BvhSubtreeInfoData *m_subTreeInfoPtr;
 };
 
 // -------------------------------------------------- //
 class b3CollisionShapeData
 {
 public:
-	char* m_name;
+	char *m_name;
 	int m_shapeType;
 	char m_padding[4];
 };
@@ -285,7 +285,7 @@ class b3MultiSphereShapeData
 {
 public:
 	b3ConvexInternalShapeData m_convexInternalShapeData;
-	b3PositionAndRadius* m_localPositionArrayPtr;
+	b3PositionAndRadius *m_localPositionArrayPtr;
 	int m_localPositionArraySize;
 	char m_padding[4];
 };
@@ -325,12 +325,12 @@ public:
 class b3MeshPartData
 {
 public:
-	b3Vector3FloatData* m_vertices3f;
-	b3Vector3DoubleData* m_vertices3d;
-	b3IntIndexData* m_indices32;
-	b3ShortIntIndexTripletData* m_3indices16;
-	b3CharIndexTripletData* m_3indices8;
-	b3ShortIntIndexData* m_indices16;
+	b3Vector3FloatData *m_vertices3f;
+	b3Vector3DoubleData *m_vertices3d;
+	b3IntIndexData *m_indices32;
+	b3ShortIntIndexTripletData *m_3indices16;
+	b3CharIndexTripletData *m_3indices8;
+	b3ShortIntIndexData *m_indices16;
 	int m_numTriangles;
 	int m_numVertices;
 };
@@ -339,7 +339,7 @@ public:
 class b3StridingMeshInterfaceData
 {
 public:
-	b3MeshPartData* m_meshPartsPtr;
+	b3MeshPartData *m_meshPartsPtr;
 	b3Vector3FloatData m_scaling;
 	int m_numMeshParts;
 	char m_padding[4];
@@ -351,9 +351,9 @@ class b3TriangleMeshShapeData
 public:
 	b3CollisionShapeData m_collisionShapeData;
 	b3StridingMeshInterfaceData m_meshInterface;
-	b3QuantizedBvhFloatData* m_quantizedFloatBvh;
-	b3QuantizedBvhDoubleData* m_quantizedDoubleBvh;
-	b3TriangleInfoMapData* m_triangleInfoMap;
+	b3QuantizedBvhFloatData *m_quantizedFloatBvh;
+	b3QuantizedBvhDoubleData *m_quantizedDoubleBvh;
+	b3TriangleInfoMapData *m_triangleInfoMap;
 	float m_collisionMargin;
 	char m_pad3[4];
 };
@@ -371,7 +371,7 @@ class b3CompoundShapeChildData
 {
 public:
 	b3TransformFloatData m_transform;
-	b3CollisionShapeData* m_childShape;
+	b3CollisionShapeData *m_childShape;
 	int m_childShapeType;
 	float m_childMargin;
 };
@@ -381,7 +381,7 @@ class b3CompoundShapeData
 {
 public:
 	b3CollisionShapeData m_collisionShapeData;
-	b3CompoundShapeChildData* m_childShapePtr;
+	b3CompoundShapeChildData *m_childShapePtr;
 	int m_numChildShapes;
 	float m_collisionMargin;
 };
@@ -418,10 +418,10 @@ public:
 class b3TriangleInfoMapData
 {
 public:
-	int* m_hashTablePtr;
-	int* m_nextPtr;
-	b3TriangleInfoData* m_valueArrayPtr;
-	int* m_keyArrayPtr;
+	int *m_hashTablePtr;
+	int *m_nextPtr;
+	b3TriangleInfoData *m_valueArrayPtr;
+	int *m_keyArrayPtr;
 	float m_convexEpsilon;
 	float m_planarEpsilon;
 	float m_equalVertexThreshold;
@@ -450,8 +450,8 @@ class b3ConvexHullShapeData
 {
 public:
 	b3ConvexInternalShapeData m_convexInternalShapeData;
-	b3Vector3FloatData* m_unscaledPointsFloatPtr;
-	b3Vector3DoubleData* m_unscaledPointsDoublePtr;
+	b3Vector3FloatData *m_unscaledPointsFloatPtr;
+	b3Vector3DoubleData *m_unscaledPointsDoublePtr;
 	int m_numUnscaledPoints;
 	char m_padding3[4];
 };
@@ -460,10 +460,10 @@ public:
 class b3CollisionObjectDoubleData
 {
 public:
-	void* m_broadphaseHandle;
-	void* m_collisionShape;
-	b3CollisionShapeData* m_rootCollisionShape;
-	char* m_name;
+	void *m_broadphaseHandle;
+	void *m_collisionShape;
+	b3CollisionShapeData *m_rootCollisionShape;
+	char *m_name;
 	b3TransformDoubleData m_worldTransform;
 	b3TransformDoubleData m_interpolationWorldTransform;
 	b3Vector3DoubleData m_interpolationLinearVelocity;
@@ -491,10 +491,10 @@ public:
 class b3CollisionObjectFloatData
 {
 public:
-	void* m_broadphaseHandle;
-	void* m_collisionShape;
-	b3CollisionShapeData* m_rootCollisionShape;
-	char* m_name;
+	void *m_broadphaseHandle;
+	void *m_collisionShape;
+	b3CollisionShapeData *m_rootCollisionShape;
+	char *m_name;
 	b3TransformFloatData m_worldTransform;
 	b3TransformFloatData m_interpolationWorldTransform;
 	b3Vector3FloatData m_interpolationLinearVelocity;
@@ -585,9 +585,9 @@ public:
 class b3TypedConstraintData
 {
 public:
-	bInvalidHandle* m_rbA;
-	bInvalidHandle* m_rbB;
-	char* m_name;
+	bInvalidHandle *m_rbA;
+	bInvalidHandle *m_rbB;
+	char *m_name;
 	int m_objectType;
 	int m_userConstraintType;
 	int m_userConstraintId;
@@ -800,7 +800,7 @@ public:
 class SoftBodyNodeData
 {
 public:
-	SoftBodyMaterialData* m_material;
+	SoftBodyMaterialData *m_material;
 	b3Vector3FloatData m_position;
 	b3Vector3FloatData m_previousPosition;
 	b3Vector3FloatData m_velocity;
@@ -816,7 +816,7 @@ public:
 class SoftBodyLinkData
 {
 public:
-	SoftBodyMaterialData* m_material;
+	SoftBodyMaterialData *m_material;
 	int m_nodeIndices[2];
 	float m_restLength;
 	int m_bbending;
@@ -827,7 +827,7 @@ class SoftBodyFaceData
 {
 public:
 	b3Vector3FloatData m_normal;
-	SoftBodyMaterialData* m_material;
+	SoftBodyMaterialData *m_material;
 	int m_nodeIndices[3];
 	float m_restArea;
 };
@@ -837,7 +837,7 @@ class SoftBodyTetraData
 {
 public:
 	b3Vector3FloatData m_c0[4];
-	SoftBodyMaterialData* m_material;
+	SoftBodyMaterialData *m_material;
 	int m_nodeIndices[4];
 	float m_restVolume;
 	float m_c1;
@@ -852,7 +852,7 @@ public:
 	b3Matrix3x3FloatData m_c0;
 	b3Vector3FloatData m_c1;
 	b3Vector3FloatData m_localFrame;
-	bInvalidHandle* m_rigidBody;
+	bInvalidHandle *m_rigidBody;
 	int m_nodeIndex;
 	float m_c2;
 };
@@ -897,8 +897,8 @@ public:
 	b3Matrix3x3FloatData m_scale;
 	b3Matrix3x3FloatData m_aqq;
 	b3Vector3FloatData m_com;
-	b3Vector3FloatData* m_positions;
-	float* m_weights;
+	b3Vector3FloatData *m_positions;
+	float *m_weights;
 	int m_numPositions;
 	int m_numWeigts;
 	int m_bvolume;
@@ -919,9 +919,9 @@ public:
 	b3Vector3FloatData m_dimpulses[2];
 	b3Vector3FloatData m_lv;
 	b3Vector3FloatData m_av;
-	b3Vector3FloatData* m_framerefs;
-	int* m_nodeIndices;
-	float* m_masses;
+	b3Vector3FloatData *m_framerefs;
+	int *m_nodeIndices;
+	float *m_masses;
 	int m_numFrameRefs;
 	int m_numNodes;
 	int m_numMasses;
@@ -944,8 +944,8 @@ public:
 class b3SoftBodyJointData
 {
 public:
-	void* m_bodyA;
-	void* m_bodyB;
+	void *m_bodyA;
+	void *m_bodyB;
 	b3Vector3FloatData m_refs[2];
 	float m_cfm;
 	float m_erp;
@@ -963,15 +963,15 @@ class b3SoftBodyFloatData
 {
 public:
 	b3CollisionObjectFloatData m_collisionObjectData;
-	SoftBodyPoseData* m_pose;
-	SoftBodyMaterialData** m_materials;
-	SoftBodyNodeData* m_nodes;
-	SoftBodyLinkData* m_links;
-	SoftBodyFaceData* m_faces;
-	SoftBodyTetraData* m_tetrahedra;
-	SoftRigidAnchorData* m_anchors;
-	SoftBodyClusterData* m_clusters;
-	b3SoftBodyJointData* m_joints;
+	SoftBodyPoseData *m_pose;
+	SoftBodyMaterialData **m_materials;
+	SoftBodyNodeData *m_nodes;
+	SoftBodyLinkData *m_links;
+	SoftBodyFaceData *m_faces;
+	SoftBodyTetraData *m_tetrahedra;
+	SoftRigidAnchorData *m_anchors;
+	SoftBodyClusterData *m_clusters;
+	b3SoftBodyJointData *m_joints;
 	int m_numMaterials;
 	int m_numNodes;
 	int m_numLinks;
@@ -983,5 +983,5 @@ public:
 	SoftBodyConfigData m_config;
 };
 
-} // namespace Bullet3SerializeBullet2
-#endif //__BULLET2_H__
+}  // namespace Bullet3SerializeBullet2
+#endif  //__BULLET2_H__

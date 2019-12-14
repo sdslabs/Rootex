@@ -30,7 +30,7 @@ subject to the following restrictions:
 class btSimplexSolverInterface
 {
 public:
-	virtual ~btSimplexSolverInterface() {};
+	virtual ~btSimplexSolverInterface(){};
 
 	virtual void reset() = 0;
 
@@ -55,4 +55,4 @@ public:
 	virtual int numVertices() const = 0;
 };
 #endif
-#endif //BT_SIMPLEX_SOLVER_INTERFACE_H
+#endif  //BT_SIMPLEX_SOLVER_INTERFACE_H

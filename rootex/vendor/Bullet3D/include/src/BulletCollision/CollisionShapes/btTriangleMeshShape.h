@@ -79,4 +79,4 @@ public:
 	virtual const char* getName() const { return "TRIANGLEMESH"; }
 };
 
-#endif //BT_TRIANGLE_MESH_SHAPE_H
+#endif  //BT_TRIANGLE_MESH_SHAPE_H

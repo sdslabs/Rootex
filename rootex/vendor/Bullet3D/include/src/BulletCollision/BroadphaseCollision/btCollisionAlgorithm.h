@@ -16,8 +16,8 @@ subject to the following restrictions:
 #ifndef BT_COLLISION_ALGORITHM_H
 #define BT_COLLISION_ALGORITHM_H
 
-#include "LinearMath/btAlignedObjectArray.h"
 #include "LinearMath/btScalar.h"
+#include "LinearMath/btAlignedObjectArray.h"
 
 struct btBroadphaseProxy;
 class btDispatcher;
@@ -32,12 +32,12 @@ typedef btAlignedObjectArray<btPersistentManifold*> btManifoldArray;
 struct btCollisionAlgorithmConstructionInfo
 {
 	btCollisionAlgorithmConstructionInfo()
-	    : m_dispatcher1(0)
-	    , m_manifold(0)
+		: m_dispatcher1(0),
+		  m_manifold(0)
 	{
 	}
 	btCollisionAlgorithmConstructionInfo(btDispatcher* dispatcher, int temp)
-	    : m_dispatcher1(dispatcher)
+		: m_dispatcher1(dispatcher)
 	{
 		(void)temp;
 	}
@@ -59,11 +59,11 @@ protected:
 	//	int	getDispatcherId();
 
 public:
-	btCollisionAlgorithm() {};
+	btCollisionAlgorithm(){};
 
 	btCollisionAlgorithm(const btCollisionAlgorithmConstructionInfo& ci);
 
-	virtual ~btCollisionAlgorithm() {};
+	virtual ~btCollisionAlgorithm(){};
 
 	virtual void processCollision(const btCollisionObjectWrapper* body0Wrap, const btCollisionObjectWrapper* body1Wrap, const btDispatcherInfo& dispatchInfo, btManifoldResult* resultOut) = 0;
 
@@ -72,4 +72,4 @@ public:
 	virtual void getAllContactManifolds(btManifoldArray& manifoldArray) = 0;
 };
 
-#endif //BT_COLLISION_ALGORITHM_H
+#endif  //BT_COLLISION_ALGORITHM_H

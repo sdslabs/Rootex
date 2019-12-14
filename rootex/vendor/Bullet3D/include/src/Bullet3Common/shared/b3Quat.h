@@ -1,8 +1,8 @@
 #ifndef B3_QUAT_H
 #define B3_QUAT_H
 
-#include "Bullet3Common/shared/b3Float4.h"
 #include "Bullet3Common/shared/b3PlatformDefinitions.h"
+#include "Bullet3Common/shared/b3Float4.h"
 
 #ifdef __cplusplus
 #include "Bullet3Common/b3Quaternion.h"
@@ -97,4 +97,4 @@ inline b3Float4 b3TransformPoint(b3Float4ConstArg point, b3Float4ConstArg transl
 
 #endif
 
-#endif //B3_QUAT_H
+#endif  //B3_QUAT_H

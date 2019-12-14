@@ -16,8 +16,8 @@ subject to the following restrictions:
 #ifndef BT_MULTIBODY_CONSTRAINT_H
 #define BT_MULTIBODY_CONSTRAINT_H
 
-#include "LinearMath/btAlignedObjectArray.h"
 #include "LinearMath/btScalar.h"
+#include "LinearMath/btAlignedObjectArray.h"
 #include "btMultiBody.h"
 
 class btMultiBody;
@@ -28,8 +28,8 @@ struct btSolverInfo;
 struct btMultiBodyJacobianData
 {
 	btAlignedObjectArray<btScalar> m_jacobians;
-	btAlignedObjectArray<btScalar> m_deltaVelocitiesUnitImpulse; //holds the joint-space response of the corresp. tree to the test impulse in each constraint space dimension
-	btAlignedObjectArray<btScalar> m_deltaVelocities; //holds joint-space vectors of all the constrained trees accumulating the effect of corrective impulses applied in SI
+	btAlignedObjectArray<btScalar> m_deltaVelocitiesUnitImpulse;  //holds the joint-space response of the corresp. tree to the test impulse in each constraint space dimension
+	btAlignedObjectArray<btScalar> m_deltaVelocities;             //holds joint-space vectors of all the constrained trees accumulating the effect of corrective impulses applied in SI
 	btAlignedObjectArray<btScalar> scratch_r;
 	btAlignedObjectArray<btVector3> scratch_v;
 	btAlignedObjectArray<btMatrix3x3> scratch_m;
@@ -65,19 +65,19 @@ protected:
 	void applyDeltaVee(btMultiBodyJacobianData & data, btScalar * delta_vee, btScalar impulse, int velocityIndex, int ndof);
 
 	btScalar fillMultiBodyConstraint(btMultiBodySolverConstraint & solverConstraint,
-	    btMultiBodyJacobianData & data,
-	    btScalar * jacOrgA, btScalar * jacOrgB,
-	    const btVector3& constraintNormalAng,
+									 btMultiBodyJacobianData & data,
+									 btScalar * jacOrgA, btScalar * jacOrgB,
+									 const btVector3& constraintNormalAng,
 
-	    const btVector3& constraintNormalLin,
-	    const btVector3& posAworld, const btVector3& posBworld,
-	    btScalar posError,
-	    const btContactSolverInfo& infoGlobal,
-	    btScalar lowerLimit, btScalar upperLimit,
-	    bool angConstraint = false,
+									 const btVector3& constraintNormalLin,
+									 const btVector3& posAworld, const btVector3& posBworld,
+									 btScalar posError,
+									 const btContactSolverInfo& infoGlobal,
+									 btScalar lowerLimit, btScalar upperLimit,
+									 bool angConstraint = false,
 
-	    btScalar relaxation = 1.f,
-	    bool isFriction = false, btScalar desiredVelocity = 0, btScalar cfmSlip = 0);
+									 btScalar relaxation = 1.f,
+									 bool isFriction = false, btScalar desiredVelocity = 0, btScalar cfmSlip = 0);
 
 public:
 	BT_DECLARE_ALIGNED_ALLOCATOR();
@@ -98,9 +98,8 @@ public:
 	virtual int getIslandIdB() const = 0;
 
 	virtual void createConstraintRows(btMultiBodyConstraintArray & constraintRows,
-	    btMultiBodyJacobianData & data,
-	    const btContactSolverInfo& infoGlobal)
-	    = 0;
+									  btMultiBodyJacobianData & data,
+									  const btContactSolverInfo& infoGlobal) = 0;
 
 	int getNumRows() const
 	{
@@ -192,4 +191,4 @@ public:
 	virtual void setErp(btScalar erp) {}
 };
 
-#endif //BT_MULTIBODY_CONSTRAINT_H
+#endif  //BT_MULTIBODY_CONSTRAINT_H

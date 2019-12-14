@@ -17,8 +17,8 @@ subject to the following restrictions:
 #define BT_GENERIC_6DOF_SPRING_CONSTRAINT_H
 
 #include "LinearMath/btVector3.h"
-#include "btGeneric6DofConstraint.h"
 #include "btTypedConstraint.h"
+#include "btGeneric6DofConstraint.h"
 
 #ifdef BT_USE_DOUBLE_PRECISION
 #define btGeneric6DofSpringConstraintData2 btGeneric6DofSpringConstraintDoubleData2
@@ -26,7 +26,7 @@ subject to the following restrictions:
 #else
 #define btGeneric6DofSpringConstraintData2 btGeneric6DofSpringConstraintData
 #define btGeneric6DofSpringConstraintDataName "btGeneric6DofSpringConstraintData"
-#endif //BT_USE_DOUBLE_PRECISION
+#endif  //BT_USE_DOUBLE_PRECISION
 
 /// Generic 6 DOF constraint that allows to set spring motors to any translational and rotational DOF
 
@@ -45,7 +45,7 @@ protected:
 	bool m_springEnabled[6];
 	btScalar m_equilibriumPoint[6];
 	btScalar m_springStiffness[6];
-	btScalar m_springDamping[6]; // between 0 and 1 (1 == no damping)
+	btScalar m_springDamping[6];  // between 0 and 1 (1 == no damping)
 	void init();
 	void internalUpdateSprings(btConstraintInfo2 * info);
 
@@ -57,8 +57,8 @@ public:
 	void enableSpring(int index, bool onOff);
 	void setStiffness(int index, btScalar stiffness);
 	void setDamping(int index, btScalar damping);
-	void setEquilibriumPoint(); // set the current constraint position/orientation as an equilibrium point for all DOF
-	void setEquilibriumPoint(int index); // set the current constraint position/orientation as an equilibrium point for given DOF
+	void setEquilibriumPoint();           // set the current constraint position/orientation as an equilibrium point for all DOF
+	void setEquilibriumPoint(int index);  // set the current constraint position/orientation as an equilibrium point for given DOF
 	void setEquilibriumPoint(int index, btScalar val);
 
 	bool isSpringEnabled(int index) const
@@ -132,4 +132,4 @@ SIMD_FORCE_INLINE const char* btGeneric6DofSpringConstraint::serialize(void* dat
 	return btGeneric6DofSpringConstraintDataName;
 }
 
-#endif // BT_GENERIC_6DOF_SPRING_CONSTRAINT_H
+#endif  // BT_GENERIC_6DOF_SPRING_CONSTRAINT_H

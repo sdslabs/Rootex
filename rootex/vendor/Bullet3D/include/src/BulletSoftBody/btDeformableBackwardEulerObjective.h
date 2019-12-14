@@ -15,119 +15,119 @@
 
 #ifndef BT_BACKWARD_EULER_OBJECTIVE_H
 #define BT_BACKWARD_EULER_OBJECTIVE_H
-#include "LinearMath/btQuickprof.h"
 #include "btConjugateGradient.h"
-#include "btDeformableContactProjection.h"
-#include "btDeformableCorotatedForce.h"
-#include "btDeformableGravityForce.h"
 #include "btDeformableLagrangianForce.h"
 #include "btDeformableMassSpringForce.h"
-#include "btDeformableMultiBodyDynamicsWorld.h"
+#include "btDeformableGravityForce.h"
+#include "btDeformableCorotatedForce.h"
 #include "btDeformableNeoHookeanForce.h"
+#include "btDeformableContactProjection.h"
 #include "btPreconditioner.h"
+#include "btDeformableMultiBodyDynamicsWorld.h"
+#include "LinearMath/btQuickprof.h"
 
 class btDeformableBackwardEulerObjective
 {
 public:
-	typedef btAlignedObjectArray<btVector3> TVStack;
-	btScalar m_dt;
-	btAlignedObjectArray<btDeformableLagrangianForce*> m_lf;
-	btAlignedObjectArray<btSoftBody*>& m_softBodies;
-	Preconditioner* m_preconditioner;
-	btDeformableContactProjection m_projection;
-	const TVStack& m_backupVelocity;
-	btAlignedObjectArray<btSoftBody::Node*> m_nodes;
-	bool m_implicit;
+    typedef btAlignedObjectArray<btVector3> TVStack;
+    btScalar m_dt;
+    btAlignedObjectArray<btDeformableLagrangianForce*> m_lf;
+    btAlignedObjectArray<btSoftBody *>& m_softBodies;
+    Preconditioner* m_preconditioner;
+    btDeformableContactProjection m_projection;
+    const TVStack& m_backupVelocity;
+    btAlignedObjectArray<btSoftBody::Node* > m_nodes;
+    bool m_implicit;
 
-	btDeformableBackwardEulerObjective(btAlignedObjectArray<btSoftBody*>& softBodies, const TVStack& backup_v);
+    btDeformableBackwardEulerObjective(btAlignedObjectArray<btSoftBody *>& softBodies, const TVStack& backup_v);
+    
+    virtual ~btDeformableBackwardEulerObjective();
+    
+    void initialize(){}
+    
+    // compute the rhs for CG solve, i.e, add the dt scaled implicit force to residual
+    void computeResidual(btScalar dt, TVStack& residual);
+    
+    // add explicit force to the velocity
+    void applyExplicitForce(TVStack& force);
+    
+    // apply force to velocity and optionally reset the force to zero
+    void applyForce(TVStack& force, bool setZero);
+    
+    // compute the norm of the residual
+    btScalar computeNorm(const TVStack& residual) const;
+    
+    // compute one step of the solve (there is only one solve if the system is linear)
+    void computeStep(TVStack& dv, const TVStack& residual, const btScalar& dt);
+    
+    // perform A*x = b
+    void multiply(const TVStack& x, TVStack& b) const;
+    
+    // set initial guess for CG solve
+    void initialGuess(TVStack& dv, const TVStack& residual);
+    
+    // reset data structure and reset dt
+    void reinitialize(bool nodeUpdated, btScalar dt);
+    
+    void setDt(btScalar dt);
+    
+    // add friction force to residual
+    void applyDynamicFriction(TVStack& r);
+    
+    // add dv to velocity
+    void updateVelocity(const TVStack& dv);
+    
+    //set constraints as projections
+    void setConstraints();
+    
+    // update the projections and project the residual
+    void project(TVStack& r)
+    {
+        BT_PROFILE("project");
+        m_projection.project(r);
+    }
+    
+    // perform precondition M^(-1) x = b
+    void precondition(const TVStack& x, TVStack& b)
+    {
+        m_preconditioner->operator()(x,b);
+    }
 
-	virtual ~btDeformableBackwardEulerObjective();
+    // reindex all the vertices 
+    virtual void updateId()
+    {
+        size_t node_id = 0;
+        size_t face_id = 0;
+        m_nodes.clear();
+        for (int i = 0; i < m_softBodies.size(); ++i)
+        {
+            btSoftBody* psb = m_softBodies[i];
+            for (int j = 0; j < psb->m_nodes.size(); ++j)
+            {
+                psb->m_nodes[j].index = node_id;
+                m_nodes.push_back(&psb->m_nodes[j]);
+                ++node_id;
+            }
+            for (int j = 0; j < psb->m_faces.size(); ++j)
+            {
+                psb->m_faces[j].m_index = face_id;
+                ++face_id;
+            }
+        }
+    }
+    
+    const btAlignedObjectArray<btSoftBody::Node*>* getIndices() const
+    {
+        return &m_nodes;
+    }
+    
+    void setImplicit(bool implicit)
+    {
+        m_implicit = implicit;
+    }
 
-	void initialize() {}
-
-	// compute the rhs for CG solve, i.e, add the dt scaled implicit force to residual
-	void computeResidual(btScalar dt, TVStack& residual);
-
-	// add explicit force to the velocity
-	void applyExplicitForce(TVStack& force);
-
-	// apply force to velocity and optionally reset the force to zero
-	void applyForce(TVStack& force, bool setZero);
-
-	// compute the norm of the residual
-	btScalar computeNorm(const TVStack& residual) const;
-
-	// compute one step of the solve (there is only one solve if the system is linear)
-	void computeStep(TVStack& dv, const TVStack& residual, const btScalar& dt);
-
-	// perform A*x = b
-	void multiply(const TVStack& x, TVStack& b) const;
-
-	// set initial guess for CG solve
-	void initialGuess(TVStack& dv, const TVStack& residual);
-
-	// reset data structure and reset dt
-	void reinitialize(bool nodeUpdated, btScalar dt);
-
-	void setDt(btScalar dt);
-
-	// add friction force to residual
-	void applyDynamicFriction(TVStack& r);
-
-	// add dv to velocity
-	void updateVelocity(const TVStack& dv);
-
-	//set constraints as projections
-	void setConstraints();
-
-	// update the projections and project the residual
-	void project(TVStack& r)
-	{
-		BT_PROFILE("project");
-		m_projection.project(r);
-	}
-
-	// perform precondition M^(-1) x = b
-	void precondition(const TVStack& x, TVStack& b)
-	{
-		m_preconditioner->operator()(x, b);
-	}
-
-	// reindex all the vertices
-	virtual void updateId()
-	{
-		size_t node_id = 0;
-		size_t face_id = 0;
-		m_nodes.clear();
-		for (int i = 0; i < m_softBodies.size(); ++i)
-		{
-			btSoftBody* psb = m_softBodies[i];
-			for (int j = 0; j < psb->m_nodes.size(); ++j)
-			{
-				psb->m_nodes[j].index = node_id;
-				m_nodes.push_back(&psb->m_nodes[j]);
-				++node_id;
-			}
-			for (int j = 0; j < psb->m_faces.size(); ++j)
-			{
-				psb->m_faces[j].m_index = face_id;
-				++face_id;
-			}
-		}
-	}
-
-	const btAlignedObjectArray<btSoftBody::Node*>* getIndices() const
-	{
-		return &m_nodes;
-	}
-
-	void setImplicit(bool implicit)
-	{
-		m_implicit = implicit;
-	}
-
-	// Calculate the total potential energy in the system
-	btScalar totalEnergy(btScalar dt);
+    // Calculate the total potential energy in the system
+    btScalar totalEnergy(btScalar dt);
 };
 
 #endif /* btBackwardEulerObjective_h */

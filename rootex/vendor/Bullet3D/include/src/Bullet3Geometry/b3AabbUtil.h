@@ -15,14 +15,14 @@ subject to the following restrictions:
 #ifndef B3_AABB_UTIL2
 #define B3_AABB_UTIL2
 
-#include "Bullet3Common/b3MinMax.h"
 #include "Bullet3Common/b3Transform.h"
 #include "Bullet3Common/b3Vector3.h"
+#include "Bullet3Common/b3MinMax.h"
 
 B3_FORCE_INLINE void b3AabbExpand(b3Vector3& aabbMin,
-    b3Vector3& aabbMax,
-    const b3Vector3& expansionMin,
-    const b3Vector3& expansionMax)
+								  b3Vector3& aabbMax,
+								  const b3Vector3& expansionMin,
+								  const b3Vector3& expansionMax)
 {
 	aabbMin = aabbMin + expansionMin;
 	aabbMax = aabbMax + expansionMax;
@@ -30,7 +30,7 @@ B3_FORCE_INLINE void b3AabbExpand(b3Vector3& aabbMin,
 
 /// conservative test for overlap between two aabbs
 B3_FORCE_INLINE bool b3TestPointAgainstAabb2(const b3Vector3& aabbMin1, const b3Vector3& aabbMax1,
-    const b3Vector3& point)
+											 const b3Vector3& point)
 {
 	bool overlap = true;
 	overlap = (aabbMin1.getX() > point.getX() || aabbMax1.getX() < point.getX()) ? false : overlap;
@@ -41,7 +41,7 @@ B3_FORCE_INLINE bool b3TestPointAgainstAabb2(const b3Vector3& aabbMin1, const b3
 
 /// conservative test for overlap between two aabbs
 B3_FORCE_INLINE bool b3TestAabbAgainstAabb2(const b3Vector3& aabbMin1, const b3Vector3& aabbMax1,
-    const b3Vector3& aabbMin2, const b3Vector3& aabbMax2)
+											const b3Vector3& aabbMin2, const b3Vector3& aabbMax2)
 {
 	bool overlap = true;
 	overlap = (aabbMin1.getX() > aabbMax2.getX() || aabbMax1.getX() < aabbMin2.getX()) ? false : overlap;
@@ -52,41 +52,40 @@ B3_FORCE_INLINE bool b3TestAabbAgainstAabb2(const b3Vector3& aabbMin1, const b3V
 
 /// conservative test for overlap between triangle and aabb
 B3_FORCE_INLINE bool b3TestTriangleAgainstAabb2(const b3Vector3* vertices,
-    const b3Vector3& aabbMin, const b3Vector3& aabbMax)
+												const b3Vector3& aabbMin, const b3Vector3& aabbMax)
 {
 	const b3Vector3& p1 = vertices[0];
 	const b3Vector3& p2 = vertices[1];
 	const b3Vector3& p3 = vertices[2];
 
-	if (b3Min(b3Min(p1[0], p2[0]), p3[0]) > aabbMax[0])
-		return false;
-	if (b3Max(b3Max(p1[0], p2[0]), p3[0]) < aabbMin[0])
-		return false;
+	if (b3Min(b3Min(p1[0], p2[0]), p3[0]) > aabbMax[0]) return false;
+	if (b3Max(b3Max(p1[0], p2[0]), p3[0]) < aabbMin[0]) return false;
 
-	if (b3Min(b3Min(p1[2], p2[2]), p3[2]) > aabbMax[2])
-		return false;
-	if (b3Max(b3Max(p1[2], p2[2]), p3[2]) < aabbMin[2])
-		return false;
+	if (b3Min(b3Min(p1[2], p2[2]), p3[2]) > aabbMax[2]) return false;
+	if (b3Max(b3Max(p1[2], p2[2]), p3[2]) < aabbMin[2]) return false;
 
-	if (b3Min(b3Min(p1[1], p2[1]), p3[1]) > aabbMax[1])
-		return false;
-	if (b3Max(b3Max(p1[1], p2[1]), p3[1]) < aabbMin[1])
-		return false;
+	if (b3Min(b3Min(p1[1], p2[1]), p3[1]) > aabbMax[1]) return false;
+	if (b3Max(b3Max(p1[1], p2[1]), p3[1]) < aabbMin[1]) return false;
 	return true;
 }
 
 B3_FORCE_INLINE int b3Outcode(const b3Vector3& p, const b3Vector3& halfExtent)
 {
-	return (p.getX() < -halfExtent.getX() ? 0x01 : 0x0) | (p.getX() > halfExtent.getX() ? 0x08 : 0x0) | (p.getY() < -halfExtent.getY() ? 0x02 : 0x0) | (p.getY() > halfExtent.getY() ? 0x10 : 0x0) | (p.getZ() < -halfExtent.getZ() ? 0x4 : 0x0) | (p.getZ() > halfExtent.getZ() ? 0x20 : 0x0);
+	return (p.getX() < -halfExtent.getX() ? 0x01 : 0x0) |
+		   (p.getX() > halfExtent.getX() ? 0x08 : 0x0) |
+		   (p.getY() < -halfExtent.getY() ? 0x02 : 0x0) |
+		   (p.getY() > halfExtent.getY() ? 0x10 : 0x0) |
+		   (p.getZ() < -halfExtent.getZ() ? 0x4 : 0x0) |
+		   (p.getZ() > halfExtent.getZ() ? 0x20 : 0x0);
 }
 
 B3_FORCE_INLINE bool b3RayAabb2(const b3Vector3& rayFrom,
-    const b3Vector3& rayInvDirection,
-    const unsigned int raySign[3],
-    const b3Vector3 bounds[2],
-    b3Scalar& tmin,
-    b3Scalar lambda_min,
-    b3Scalar lambda_max)
+								const b3Vector3& rayInvDirection,
+								const unsigned int raySign[3],
+								const b3Vector3 bounds[2],
+								b3Scalar& tmin,
+								b3Scalar lambda_min,
+								b3Scalar lambda_max)
 {
 	b3Scalar tmax, tymin, tymax, tzmin, tzmax;
 	tmin = (bounds[raySign[0]].getX() - rayFrom.getX()) * rayInvDirection.getX();
@@ -116,10 +115,10 @@ B3_FORCE_INLINE bool b3RayAabb2(const b3Vector3& rayFrom,
 }
 
 B3_FORCE_INLINE bool b3RayAabb(const b3Vector3& rayFrom,
-    const b3Vector3& rayTo,
-    const b3Vector3& aabbMin,
-    const b3Vector3& aabbMax,
-    b3Scalar& param, b3Vector3& normal)
+							   const b3Vector3& rayTo,
+							   const b3Vector3& aabbMin,
+							   const b3Vector3& aabbMax,
+							   b3Scalar& param, b3Vector3& normal)
 {
 	b3Vector3 aabbHalfExtent = (aabbMax - aabbMin) * b3Scalar(0.5);
 	b3Vector3 aabbCenter = (aabbMax + aabbMin) * b3Scalar(0.5);
@@ -202,7 +201,7 @@ B3_FORCE_INLINE void b3TransformAabb(const b3Vector3& localAabbMin, const b3Vect
 B3_FORCE_INLINE unsigned b3TestQuantizedAabbAgainstQuantizedAabb(const unsigned short int* aabbMin1, const unsigned short int* aabbMax1, const unsigned short int* aabbMin2, const unsigned short int* aabbMax2)
 {
 	return static_cast<unsigned int>(b3Select((unsigned)((aabbMin1[0] <= aabbMax2[0]) & (aabbMax1[0] >= aabbMin2[0]) & (aabbMin1[2] <= aabbMax2[2]) & (aabbMax1[2] >= aabbMin2[2]) & (aabbMin1[1] <= aabbMax2[1]) & (aabbMax1[1] >= aabbMin2[1])),
-	    1, 0));
+											  1, 0));
 }
 #else
 B3_FORCE_INLINE bool b3TestQuantizedAabbAgainstQuantizedAabb(const unsigned short int* aabbMin1, const unsigned short int* aabbMax1, const unsigned short int* aabbMin2, const unsigned short int* aabbMax2)
@@ -213,6 +212,6 @@ B3_FORCE_INLINE bool b3TestQuantizedAabbAgainstQuantizedAabb(const unsigned shor
 	overlap = (aabbMin1[1] > aabbMax2[1] || aabbMax1[1] < aabbMin2[1]) ? false : overlap;
 	return overlap;
 }
-#endif //B3_USE_BANCHLESS
+#endif  //B3_USE_BANCHLESS
 
-#endif //B3_AABB_UTIL2
+#endif  //B3_AABB_UTIL2

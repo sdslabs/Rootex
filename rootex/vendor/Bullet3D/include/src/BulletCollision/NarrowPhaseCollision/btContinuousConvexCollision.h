@@ -43,11 +43,11 @@ public:
 	btContinuousConvexCollision(const btConvexShape* shapeA, const btStaticPlaneShape* plane);
 
 	virtual bool calcTimeOfImpact(
-	    const btTransform& fromA,
-	    const btTransform& toA,
-	    const btTransform& fromB,
-	    const btTransform& toB,
-	    CastResult& result);
+		const btTransform& fromA,
+		const btTransform& toA,
+		const btTransform& fromB,
+		const btTransform& toB,
+		CastResult& result);
 };
 
-#endif //BT_CONTINUOUS_COLLISION_CONVEX_CAST_H
+#endif  //BT_CONTINUOUS_COLLISION_CONVEX_CAST_H

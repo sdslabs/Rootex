@@ -24,10 +24,10 @@ struct btSimpleBroadphaseProxy : public btBroadphaseProxy
 
 	//	int			m_handleId;
 
-	btSimpleBroadphaseProxy() {};
+	btSimpleBroadphaseProxy(){};
 
 	btSimpleBroadphaseProxy(const btVector3& minpt, const btVector3& maxpt, int shapeType, void* userPtr, int collisionFilterGroup, int collisionFilterMask)
-	    : btBroadphaseProxy(minpt, maxpt, userPtr, collisionFilterGroup, collisionFilterMask)
+		: btBroadphaseProxy(minpt, maxpt, userPtr, collisionFilterGroup, collisionFilterMask)
 	{
 		(void)shapeType;
 	}
@@ -41,14 +41,14 @@ struct btSimpleBroadphaseProxy : public btBroadphaseProxy
 class btSimpleBroadphase : public btBroadphaseInterface
 {
 protected:
-	int m_numHandles; // number of active handles
-	int m_maxHandles; // max number of handles
+	int m_numHandles;  // number of active handles
+	int m_maxHandles;  // max number of handles
 	int m_LastHandleIndex;
 
-	btSimpleBroadphaseProxy* m_pHandles; // handles pool
+	btSimpleBroadphaseProxy* m_pHandles;  // handles pool
 
 	void* m_pHandlesRawPtr;
-	int m_firstFreeHandle; // free handles list
+	int m_firstFreeHandle;  // free handles list
 
 	int allocHandle()
 	{
@@ -145,4 +145,4 @@ public:
 	}
 };
 
-#endif //BT_SIMPLE_BROADPHASE_H
+#endif  //BT_SIMPLE_BROADPHASE_H

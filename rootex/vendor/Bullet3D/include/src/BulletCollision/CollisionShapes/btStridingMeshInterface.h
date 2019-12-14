@@ -17,8 +17,8 @@ subject to the following restrictions:
 #define BT_STRIDING_MESHINTERFACE_H
 
 #include "LinearMath/btVector3.h"
-#include "btConcaveShape.h"
 #include "btTriangleCallback.h"
+#include "btConcaveShape.h"
 
 ///	The btStridingMeshInterface is the interface class for high performance generic access to triangle meshes, used in combination with btBvhTriangleMeshShape and some other collision shapes.
 /// Using index striding of 3*sizeof(integer) it can use triangle arrays, using index striding of 1*sizeof(integer) it can handle triangle strips.
@@ -32,8 +32,7 @@ protected:
 public:
 	BT_DECLARE_ALIGNED_ALLOCATOR();
 
-	btStridingMeshInterface()
-	    : m_scaling(btScalar(1.), btScalar(1.), btScalar(1.))
+	btStridingMeshInterface() : m_scaling(btScalar(1.), btScalar(1.), btScalar(1.))
 	{
 	}
 
@@ -151,4 +150,4 @@ SIMD_FORCE_INLINE int btStridingMeshInterface::calculateSerializeBufferSize() co
 	return sizeof(btStridingMeshInterfaceData);
 }
 
-#endif //BT_STRIDING_MESHINTERFACE_H
+#endif  //BT_STRIDING_MESHINTERFACE_H

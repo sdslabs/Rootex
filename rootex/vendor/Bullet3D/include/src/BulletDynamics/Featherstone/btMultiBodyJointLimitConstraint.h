@@ -35,8 +35,8 @@ public:
 	virtual int getIslandIdB() const;
 
 	virtual void createConstraintRows(btMultiBodyConstraintArray& constraintRows,
-	    btMultiBodyJacobianData& data,
-	    const btContactSolverInfo& infoGlobal);
+									  btMultiBodyJacobianData& data,
+									  const btContactSolverInfo& infoGlobal);
 
 	virtual void debugDraw(class btIDebugDraw* drawer)
 	{
@@ -44,4 +44,4 @@ public:
 	}
 };
 
-#endif //BT_MULTIBODY_JOINT_LIMIT_CONSTRAINT_H
+#endif  //BT_MULTIBODY_JOINT_LIMIT_CONSTRAINT_H

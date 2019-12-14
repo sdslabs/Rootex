@@ -16,9 +16,9 @@ subject to the following restrictions:
 #ifndef BT_DISCRETE_DYNAMICS_WORLD_MT_H
 #define BT_DISCRETE_DYNAMICS_WORLD_MT_H
 
-#include "BulletDynamics/ConstraintSolver/btConstraintSolver.h"
 #include "btDiscreteDynamicsWorld.h"
 #include "btSimulationIslandManagerMt.h"
+#include "BulletDynamics/ConstraintSolver/btConstraintSolver.h"
 
 ///
 /// btConstraintSolverPoolMt - masquerades as a constraint solver, but really it is a threadsafe pool of them.
@@ -42,14 +42,14 @@ public:
 
 	///solve a group of constraints
 	virtual btScalar solveGroup(btCollisionObject** bodies,
-	    int numBodies,
-	    btPersistentManifold** manifolds,
-	    int numManifolds,
-	    btTypedConstraint** constraints,
-	    int numConstraints,
-	    const btContactSolverInfo& info,
-	    btIDebugDraw* debugDrawer,
-	    btDispatcher* dispatcher) BT_OVERRIDE;
+								int numBodies,
+								btPersistentManifold** manifolds,
+								int numManifolds,
+								btTypedConstraint** constraints,
+								int numConstraints,
+								const btContactSolverInfo& info,
+								btIDebugDraw* debugDrawer,
+								btDispatcher* dispatcher) BT_OVERRIDE;
 
 	virtual void reset() BT_OVERRIDE;
 	virtual btConstraintSolverType getSolverType() const BT_OVERRIDE { return m_solverType; }
@@ -60,7 +60,7 @@ private:
 	{
 		btConstraintSolver* solver;
 		btSpinMutex mutex;
-		char _cachelinePadding[kCacheLineSize - sizeof(btSpinMutex) - sizeof(void*)]; // keep mutexes from sharing a cache line
+		char _cachelinePadding[kCacheLineSize - sizeof(btSpinMutex) - sizeof(void*)];  // keep mutexes from sharing a cache line
 	};
 	btAlignedObjectArray<ThreadSolver> m_solvers;
 	btConstraintSolverType m_solverType;
@@ -119,13 +119,13 @@ public:
 	BT_DECLARE_ALIGNED_ALLOCATOR();
 
 	btDiscreteDynamicsWorldMt(btDispatcher * dispatcher,
-	    btBroadphaseInterface * pairCache,
-	    btConstraintSolverPoolMt * solverPool, // Note this should be a solver-pool for multi-threading
-	    btConstraintSolver * constraintSolverMt, // single multi-threaded solver for large islands (or NULL)
-	    btCollisionConfiguration * collisionConfiguration);
+							  btBroadphaseInterface * pairCache,
+							  btConstraintSolverPoolMt * solverPool,        // Note this should be a solver-pool for multi-threading
+							  btConstraintSolver * constraintSolverMt,      // single multi-threaded solver for large islands (or NULL)
+							  btCollisionConfiguration * collisionConfiguration);
 	virtual ~btDiscreteDynamicsWorldMt();
 
 	virtual int stepSimulation(btScalar timeStep, int maxSubSteps, btScalar fixedTimeStep) BT_OVERRIDE;
 };
 
-#endif //BT_DISCRETE_DYNAMICS_WORLD_H
+#endif  //BT_DISCRETE_DYNAMICS_WORLD_H

@@ -154,4 +154,4 @@ __inline b3Float4 mtMul3(b3Float4 a, b3Mat3x3 b)
 
 #endif
 
-#endif //B3_MAT3x3_H
+#endif  //B3_MAT3x3_H

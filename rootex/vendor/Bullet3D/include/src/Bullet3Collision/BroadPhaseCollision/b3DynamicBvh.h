@@ -18,8 +18,8 @@ subject to the following restrictions:
 #define B3_DYNAMIC_BOUNDING_VOLUME_TREE_H
 
 #include "Bullet3Common/b3AlignedObjectArray.h"
-#include "Bullet3Common/b3Transform.h"
 #include "Bullet3Common/b3Vector3.h"
+#include "Bullet3Common/b3Transform.h"
 #include "Bullet3Geometry/b3AabbUtil.h"
 
 //
@@ -27,8 +27,8 @@ subject to the following restrictions:
 //
 
 // Implementation profiles
-#define B3_DBVT_IMPL_GENERIC 0 // Generic implementation
-#define B3_DBVT_IMPL_SSE 1 // SSE
+#define B3_DBVT_IMPL_GENERIC 0  // Generic implementation
+#define B3_DBVT_IMPL_SSE 1      // SSE
 
 // Template implementation of ICollide
 #ifdef _WIN32
@@ -56,7 +56,7 @@ subject to the following restrictions:
 // Specific methods implementation
 
 //SSE gives errors on a MSVC 7.1
-#if defined(B3_USE_SSE) //&& defined (_WIN32)
+#if defined(B3_USE_SSE)  //&& defined (_WIN32)
 #define B3_DBVT_SELECT_IMPL B3_DBVT_IMPL_SSE
 #define B3_DBVT_MERGE_IMPL B3_DBVT_IMPL_SSE
 #define B3_DBVT_INT0_IMPL B3_DBVT_IMPL_SSE
@@ -66,7 +66,9 @@ subject to the following restrictions:
 #define B3_DBVT_INT0_IMPL B3_DBVT_IMPL_GENERIC
 #endif
 
-#if (B3_DBVT_SELECT_IMPL == B3_DBVT_IMPL_SSE) || (B3_DBVT_MERGE_IMPL == B3_DBVT_IMPL_SSE) || (B3_DBVT_INT0_IMPL == B3_DBVT_IMPL_SSE)
+#if (B3_DBVT_SELECT_IMPL == B3_DBVT_IMPL_SSE) || \
+	(B3_DBVT_MERGE_IMPL == B3_DBVT_IMPL_SSE) ||  \
+	(B3_DBVT_INT0_IMPL == B3_DBVT_IMPL_SSE)
 #include <emmintrin.h>
 #endif
 
@@ -145,21 +147,21 @@ struct b3DbvtAabbMm
 	B3_DBVT_INLINE int Classify(const b3Vector3& n, b3Scalar o, int s) const;
 	B3_DBVT_INLINE b3Scalar ProjectMinimum(const b3Vector3& v, unsigned signs) const;
 	B3_DBVT_INLINE friend bool b3Intersect(const b3DbvtAabbMm& a,
-	    const b3DbvtAabbMm& b);
+										   const b3DbvtAabbMm& b);
 
 	B3_DBVT_INLINE friend bool b3Intersect(const b3DbvtAabbMm& a,
-	    const b3Vector3& b);
+										   const b3Vector3& b);
 
 	B3_DBVT_INLINE friend b3Scalar b3Proximity(const b3DbvtAabbMm& a,
-	    const b3DbvtAabbMm& b);
+											   const b3DbvtAabbMm& b);
 	B3_DBVT_INLINE friend int b3Select(const b3DbvtAabbMm& o,
-	    const b3DbvtAabbMm& a,
-	    const b3DbvtAabbMm& b);
+									   const b3DbvtAabbMm& a,
+									   const b3DbvtAabbMm& b);
 	B3_DBVT_INLINE friend void b3Merge(const b3DbvtAabbMm& a,
-	    const b3DbvtAabbMm& b,
-	    b3DbvtAabbMm& r);
+									   const b3DbvtAabbMm& b,
+									   b3DbvtAabbMm& r);
 	B3_DBVT_INLINE friend bool b3NotEqual(const b3DbvtAabbMm& a,
-	    const b3DbvtAabbMm& b);
+										  const b3DbvtAabbMm& b);
 
 	B3_DBVT_INLINE b3Vector3& tMins() { return (mi); }
 	B3_DBVT_INLINE b3Vector3& tMaxs() { return (mx); }
@@ -199,21 +201,13 @@ struct b3DynamicBvh
 		const b3DbvtNode* a;
 		const b3DbvtNode* b;
 		sStkNN() {}
-		sStkNN(const b3DbvtNode* na, const b3DbvtNode* nb)
-		    : a(na)
-		    , b(nb)
-		{
-		}
+		sStkNN(const b3DbvtNode* na, const b3DbvtNode* nb) : a(na), b(nb) {}
 	};
 	struct sStkNP
 	{
 		const b3DbvtNode* node;
 		int mask;
-		sStkNP(const b3DbvtNode* n, unsigned m)
-		    : node(n)
-		    , mask(m)
-		{
-		}
+		sStkNP(const b3DbvtNode* n, unsigned m) : node(n), mask(m) {}
 	};
 	struct sStkNPS
 	{
@@ -221,22 +215,13 @@ struct b3DynamicBvh
 		int mask;
 		b3Scalar value;
 		sStkNPS() {}
-		sStkNPS(const b3DbvtNode* n, unsigned m, b3Scalar v)
-		    : node(n)
-		    , mask(m)
-		    , value(v)
-		{
-		}
+		sStkNPS(const b3DbvtNode* n, unsigned m, b3Scalar v) : node(n), mask(m), value(v) {}
 	};
 	struct sStkCLN
 	{
 		const b3DbvtNode* node;
 		b3DbvtNode* parent;
-		sStkCLN(const b3DbvtNode* n, b3DbvtNode* p)
-		    : node(n)
-		    , parent(p)
-		{
-		}
+		sStkCLN(const b3DbvtNode* n, b3DbvtNode* p) : node(n), parent(p) {}
 	};
 	// Policies/Interfaces
 
@@ -312,19 +297,19 @@ struct b3DynamicBvh
 	// B3_DBVT_IPOLICY must support ICollide policy/interface
 	B3_DBVT_PREFIX
 	static void enumNodes(const b3DbvtNode* root,
-	    B3_DBVT_IPOLICY);
+						  B3_DBVT_IPOLICY);
 	B3_DBVT_PREFIX
 	static void enumLeaves(const b3DbvtNode* root,
-	    B3_DBVT_IPOLICY);
+						   B3_DBVT_IPOLICY);
 	B3_DBVT_PREFIX
 	void collideTT(const b3DbvtNode* root0,
-	    const b3DbvtNode* root1,
-	    B3_DBVT_IPOLICY);
+				   const b3DbvtNode* root1,
+				   B3_DBVT_IPOLICY);
 
 	B3_DBVT_PREFIX
 	void collideTTpersistentStack(const b3DbvtNode* root0,
-	    const b3DbvtNode* root1,
-	    B3_DBVT_IPOLICY);
+								  const b3DbvtNode* root1,
+								  B3_DBVT_IPOLICY);
 #if 0
 	B3_DBVT_PREFIX
 		void		collideTT(	const b3DbvtNode* root0,
@@ -341,45 +326,45 @@ struct b3DynamicBvh
 
 	B3_DBVT_PREFIX
 	void collideTV(const b3DbvtNode* root,
-	    const b3DbvtVolume& volume,
-	    B3_DBVT_IPOLICY) const;
+				   const b3DbvtVolume& volume,
+				   B3_DBVT_IPOLICY) const;
 	///rayTest is a re-entrant ray test, and can be called in parallel as long as the b3AlignedAlloc is thread-safe (uses locking etc)
 	///rayTest is slower than rayTestInternal, because it builds a local stack, using memory allocations, and it recomputes signs/rayDirectionInverses each time
 	B3_DBVT_PREFIX
 	static void rayTest(const b3DbvtNode* root,
-	    const b3Vector3& rayFrom,
-	    const b3Vector3& rayTo,
-	    B3_DBVT_IPOLICY);
+						const b3Vector3& rayFrom,
+						const b3Vector3& rayTo,
+						B3_DBVT_IPOLICY);
 	///rayTestInternal is faster than rayTest, because it uses a persistent stack (to reduce dynamic memory allocations to a minimum) and it uses precomputed signs/rayInverseDirections
 	///rayTestInternal is used by b3DynamicBvhBroadphase to accelerate world ray casts
 	B3_DBVT_PREFIX
 	void rayTestInternal(const b3DbvtNode* root,
-	    const b3Vector3& rayFrom,
-	    const b3Vector3& rayTo,
-	    const b3Vector3& rayDirectionInverse,
-	    unsigned int signs[3],
-	    b3Scalar lambda_max,
-	    const b3Vector3& aabbMin,
-	    const b3Vector3& aabbMax,
-	    B3_DBVT_IPOLICY) const;
+						 const b3Vector3& rayFrom,
+						 const b3Vector3& rayTo,
+						 const b3Vector3& rayDirectionInverse,
+						 unsigned int signs[3],
+						 b3Scalar lambda_max,
+						 const b3Vector3& aabbMin,
+						 const b3Vector3& aabbMax,
+						 B3_DBVT_IPOLICY) const;
 
 	B3_DBVT_PREFIX
 	static void collideKDOP(const b3DbvtNode* root,
-	    const b3Vector3* normals,
-	    const b3Scalar* offsets,
-	    int count,
-	    B3_DBVT_IPOLICY);
+							const b3Vector3* normals,
+							const b3Scalar* offsets,
+							int count,
+							B3_DBVT_IPOLICY);
 	B3_DBVT_PREFIX
 	static void collideOCL(const b3DbvtNode* root,
-	    const b3Vector3* normals,
-	    const b3Scalar* offsets,
-	    const b3Vector3& sortaxis,
-	    int count,
-	    B3_DBVT_IPOLICY,
-	    bool fullsort = true);
+						   const b3Vector3* normals,
+						   const b3Scalar* offsets,
+						   const b3Vector3& sortaxis,
+						   int count,
+						   B3_DBVT_IPOLICY,
+						   bool fullsort = true);
 	B3_DBVT_PREFIX
 	static void collideTU(const b3DbvtNode* root,
-	    B3_DBVT_IPOLICY);
+						  B3_DBVT_IPOLICY);
 	// Helpers
 	static B3_DBVT_INLINE int nearest(const int* i, const b3DynamicBvh::sStkNPS* a, b3Scalar v, int l, int h)
 	{
@@ -395,8 +380,8 @@ struct b3DynamicBvh
 		return (h);
 	}
 	static B3_DBVT_INLINE int allocate(b3AlignedObjectArray<int>& ifree,
-	    b3AlignedObjectArray<sStkNPS>& stock,
-	    const sStkNPS& value)
+									   b3AlignedObjectArray<sStkNPS>& stock,
+									   const sStkNPS& value)
 	{
 		int i;
 		if (ifree.size() > 0)
@@ -498,7 +483,12 @@ B3_DBVT_INLINE void b3DbvtAabbMm::SignedExpand(const b3Vector3& e)
 //
 B3_DBVT_INLINE bool b3DbvtAabbMm::Contain(const b3DbvtAabbMm& a) const
 {
-	return ((mi.x <= a.mi.x) && (mi.y <= a.mi.y) && (mi.z <= a.mi.z) && (mx.x >= a.mx.x) && (mx.y >= a.mx.y) && (mx.z >= a.mx.z));
+	return ((mi.x <= a.mi.x) &&
+			(mi.y <= a.mi.y) &&
+			(mi.z <= a.mi.z) &&
+			(mx.x >= a.mx.x) &&
+			(mx.y >= a.mx.y) &&
+			(mx.z >= a.mx.z));
 }
 
 //
@@ -507,53 +497,51 @@ B3_DBVT_INLINE int b3DbvtAabbMm::Classify(const b3Vector3& n, b3Scalar o, int s)
 	b3Vector3 pi, px;
 	switch (s)
 	{
-	case (0 + 0 + 0):
-		px = b3MakeVector3(mi.x, mi.y, mi.z);
-		pi = b3MakeVector3(mx.x, mx.y, mx.z);
-		break;
-	case (1 + 0 + 0):
-		px = b3MakeVector3(mx.x, mi.y, mi.z);
-		pi = b3MakeVector3(mi.x, mx.y, mx.z);
-		break;
-	case (0 + 2 + 0):
-		px = b3MakeVector3(mi.x, mx.y, mi.z);
-		pi = b3MakeVector3(mx.x, mi.y, mx.z);
-		break;
-	case (1 + 2 + 0):
-		px = b3MakeVector3(mx.x, mx.y, mi.z);
-		pi = b3MakeVector3(mi.x, mi.y, mx.z);
-		break;
-	case (0 + 0 + 4):
-		px = b3MakeVector3(mi.x, mi.y, mx.z);
-		pi = b3MakeVector3(mx.x, mx.y, mi.z);
-		break;
-	case (1 + 0 + 4):
-		px = b3MakeVector3(mx.x, mi.y, mx.z);
-		pi = b3MakeVector3(mi.x, mx.y, mi.z);
-		break;
-	case (0 + 2 + 4):
-		px = b3MakeVector3(mi.x, mx.y, mx.z);
-		pi = b3MakeVector3(mx.x, mi.y, mi.z);
-		break;
-	case (1 + 2 + 4):
-		px = b3MakeVector3(mx.x, mx.y, mx.z);
-		pi = b3MakeVector3(mi.x, mi.y, mi.z);
-		break;
+		case (0 + 0 + 0):
+			px = b3MakeVector3(mi.x, mi.y, mi.z);
+			pi = b3MakeVector3(mx.x, mx.y, mx.z);
+			break;
+		case (1 + 0 + 0):
+			px = b3MakeVector3(mx.x, mi.y, mi.z);
+			pi = b3MakeVector3(mi.x, mx.y, mx.z);
+			break;
+		case (0 + 2 + 0):
+			px = b3MakeVector3(mi.x, mx.y, mi.z);
+			pi = b3MakeVector3(mx.x, mi.y, mx.z);
+			break;
+		case (1 + 2 + 0):
+			px = b3MakeVector3(mx.x, mx.y, mi.z);
+			pi = b3MakeVector3(mi.x, mi.y, mx.z);
+			break;
+		case (0 + 0 + 4):
+			px = b3MakeVector3(mi.x, mi.y, mx.z);
+			pi = b3MakeVector3(mx.x, mx.y, mi.z);
+			break;
+		case (1 + 0 + 4):
+			px = b3MakeVector3(mx.x, mi.y, mx.z);
+			pi = b3MakeVector3(mi.x, mx.y, mi.z);
+			break;
+		case (0 + 2 + 4):
+			px = b3MakeVector3(mi.x, mx.y, mx.z);
+			pi = b3MakeVector3(mx.x, mi.y, mi.z);
+			break;
+		case (1 + 2 + 4):
+			px = b3MakeVector3(mx.x, mx.y, mx.z);
+			pi = b3MakeVector3(mi.x, mi.y, mi.z);
+			break;
 	}
-	if ((b3Dot(n, px) + o) < 0)
-		return (-1);
-	if ((b3Dot(n, pi) + o) >= 0)
-		return (+1);
+	if ((b3Dot(n, px) + o) < 0) return (-1);
+	if ((b3Dot(n, pi) + o) >= 0) return (+1);
 	return (0);
 }
 
 //
 B3_DBVT_INLINE b3Scalar b3DbvtAabbMm::ProjectMinimum(const b3Vector3& v, unsigned signs) const
 {
-	const b3Vector3* b[] = { &mx, &mi };
+	const b3Vector3* b[] = {&mx, &mi};
 	const b3Vector3 p = b3MakeVector3(b[(signs >> 0) & 1]->x,
-	    b[(signs >> 1) & 1]->y,
-	    b[(signs >> 2) & 1]->z);
+									  b[(signs >> 1) & 1]->y,
+									  b[(signs >> 2) & 1]->z);
 	return (b3Dot(p, v));
 }
 
@@ -577,11 +565,11 @@ B3_DBVT_INLINE void b3DbvtAabbMm::AddSpan(const b3Vector3& d, b3Scalar& smi, b3S
 
 //
 B3_DBVT_INLINE bool b3Intersect(const b3DbvtAabbMm& a,
-    const b3DbvtAabbMm& b)
+								const b3DbvtAabbMm& b)
 {
 #if B3_DBVT_INT0_IMPL == B3_DBVT_IMPL_SSE
 	const __m128 rt(_mm_or_ps(_mm_cmplt_ps(_mm_load_ps(b.mx), _mm_load_ps(a.mi)),
-	    _mm_cmplt_ps(_mm_load_ps(a.mx), _mm_load_ps(b.mi))));
+							  _mm_cmplt_ps(_mm_load_ps(a.mx), _mm_load_ps(b.mi))));
 #if defined(_WIN32)
 	const __int32* pu((const __int32*)&rt);
 #else
@@ -589,22 +577,32 @@ B3_DBVT_INLINE bool b3Intersect(const b3DbvtAabbMm& a,
 #endif
 	return ((pu[0] | pu[1] | pu[2]) == 0);
 #else
-	return ((a.mi.x <= b.mx.x) && (a.mx.x >= b.mi.x) && (a.mi.y <= b.mx.y) && (a.mx.y >= b.mi.y) && (a.mi.z <= b.mx.z) && (a.mx.z >= b.mi.z));
+	return ((a.mi.x <= b.mx.x) &&
+			(a.mx.x >= b.mi.x) &&
+			(a.mi.y <= b.mx.y) &&
+			(a.mx.y >= b.mi.y) &&
+			(a.mi.z <= b.mx.z) &&
+			(a.mx.z >= b.mi.z));
 #endif
 }
 
 //
 B3_DBVT_INLINE bool b3Intersect(const b3DbvtAabbMm& a,
-    const b3Vector3& b)
+								const b3Vector3& b)
 {
-	return ((b.x >= a.mi.x) && (b.y >= a.mi.y) && (b.z >= a.mi.z) && (b.x <= a.mx.x) && (b.y <= a.mx.y) && (b.z <= a.mx.z));
+	return ((b.x >= a.mi.x) &&
+			(b.y >= a.mi.y) &&
+			(b.z >= a.mi.z) &&
+			(b.x <= a.mx.x) &&
+			(b.y <= a.mx.y) &&
+			(b.z <= a.mx.z));
 }
 
 //////////////////////////////////////
 
 //
 B3_DBVT_INLINE b3Scalar b3Proximity(const b3DbvtAabbMm& a,
-    const b3DbvtAabbMm& b)
+									const b3DbvtAabbMm& b)
 {
 	const b3Vector3 d = (a.mi + a.mx) - (b.mi + b.mx);
 	return (b3Fabs(d.x) + b3Fabs(d.y) + b3Fabs(d.z));
@@ -612,20 +610,20 @@ B3_DBVT_INLINE b3Scalar b3Proximity(const b3DbvtAabbMm& a,
 
 //
 B3_DBVT_INLINE int b3Select(const b3DbvtAabbMm& o,
-    const b3DbvtAabbMm& a,
-    const b3DbvtAabbMm& b)
+							const b3DbvtAabbMm& a,
+							const b3DbvtAabbMm& b)
 {
 #if B3_DBVT_SELECT_IMPL == B3_DBVT_IMPL_SSE
 
 #if defined(_WIN32)
-	static B3_ATTRIBUTE_ALIGNED16(const unsigned __int32) mask[] = { 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff };
+	static B3_ATTRIBUTE_ALIGNED16(const unsigned __int32) mask[] = {0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff};
 #else
-	static B3_ATTRIBUTE_ALIGNED16(const unsigned int) mask[] = { 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x00000000 /*0x7fffffff*/ };
+	static B3_ATTRIBUTE_ALIGNED16(const unsigned int) mask[] = {0x7fffffff, 0x7fffffff, 0x7fffffff, 0x00000000 /*0x7fffffff*/};
 #endif
 	///@todo: the intrinsic version is 11% slower
 #if B3_DBVT_USE_INTRINSIC_SSE
 
-	union b3SSEUnion ///NOTE: if we use more intrinsics, move b3SSEUnion into the LinearMath directory
+	union b3SSEUnion  ///NOTE: if we use more intrinsics, move b3SSEUnion into the LinearMath directory
 	{
 		__m128 ssereg;
 		float floats[4];
@@ -691,8 +689,8 @@ B3_DBVT_INLINE int b3Select(const b3DbvtAabbMm& o,
 
 //
 B3_DBVT_INLINE void b3Merge(const b3DbvtAabbMm& a,
-    const b3DbvtAabbMm& b,
-    b3DbvtAabbMm& r)
+							const b3DbvtAabbMm& b,
+							b3DbvtAabbMm& r)
 {
 #if B3_DBVT_MERGE_IMPL == B3_DBVT_IMPL_SSE
 	__m128 ami(_mm_load_ps(a.mi));
@@ -720,9 +718,14 @@ B3_DBVT_INLINE void b3Merge(const b3DbvtAabbMm& a,
 
 //
 B3_DBVT_INLINE bool b3NotEqual(const b3DbvtAabbMm& a,
-    const b3DbvtAabbMm& b)
+							   const b3DbvtAabbMm& b)
 {
-	return ((a.mi.x != b.mi.x) || (a.mi.y != b.mi.y) || (a.mi.z != b.mi.z) || (a.mx.x != b.mx.x) || (a.mx.y != b.mx.y) || (a.mx.z != b.mx.z));
+	return ((a.mi.x != b.mi.x) ||
+			(a.mi.y != b.mi.y) ||
+			(a.mi.z != b.mi.z) ||
+			(a.mx.x != b.mx.x) ||
+			(a.mx.y != b.mx.y) ||
+			(a.mx.z != b.mx.z));
 }
 
 //
@@ -732,7 +735,7 @@ B3_DBVT_INLINE bool b3NotEqual(const b3DbvtAabbMm& a,
 //
 B3_DBVT_PREFIX
 inline void b3DynamicBvh::enumNodes(const b3DbvtNode* root,
-    B3_DBVT_IPOLICY)
+									B3_DBVT_IPOLICY)
 {
 	B3_DBVT_CHECKTYPE
 	policy.Process(root);
@@ -746,7 +749,7 @@ inline void b3DynamicBvh::enumNodes(const b3DbvtNode* root,
 //
 B3_DBVT_PREFIX
 inline void b3DynamicBvh::enumLeaves(const b3DbvtNode* root,
-    B3_DBVT_IPOLICY)
+									 B3_DBVT_IPOLICY)
 {
 	B3_DBVT_CHECKTYPE
 	if (root->isinternal())
@@ -763,8 +766,8 @@ inline void b3DynamicBvh::enumLeaves(const b3DbvtNode* root,
 //
 B3_DBVT_PREFIX
 inline void b3DynamicBvh::collideTT(const b3DbvtNode* root0,
-    const b3DbvtNode* root1,
-    B3_DBVT_IPOLICY)
+									const b3DbvtNode* root1,
+									B3_DBVT_IPOLICY)
 {
 	B3_DBVT_CHECKTYPE
 	if (root0 && root1)
@@ -827,8 +830,8 @@ inline void b3DynamicBvh::collideTT(const b3DbvtNode* root0,
 
 B3_DBVT_PREFIX
 inline void b3DynamicBvh::collideTTpersistentStack(const b3DbvtNode* root0,
-    const b3DbvtNode* root1,
-    B3_DBVT_IPOLICY)
+												   const b3DbvtNode* root1,
+												   B3_DBVT_IPOLICY)
 {
 	B3_DBVT_CHECKTYPE
 	if (root0 && root1)
@@ -961,8 +964,8 @@ inline void		b3DynamicBvh::collideTT(	const b3DbvtNode* root0,
 //
 B3_DBVT_PREFIX
 inline void b3DynamicBvh::collideTV(const b3DbvtNode* root,
-    const b3DbvtVolume& vol,
-    B3_DBVT_IPOLICY) const
+									const b3DbvtVolume& vol,
+									B3_DBVT_IPOLICY) const
 {
 	B3_DBVT_CHECKTYPE
 	if (root)
@@ -995,14 +998,14 @@ inline void b3DynamicBvh::collideTV(const b3DbvtNode* root,
 
 B3_DBVT_PREFIX
 inline void b3DynamicBvh::rayTestInternal(const b3DbvtNode* root,
-    const b3Vector3& rayFrom,
-    const b3Vector3& rayTo,
-    const b3Vector3& rayDirectionInverse,
-    unsigned int signs[3],
-    b3Scalar lambda_max,
-    const b3Vector3& aabbMin,
-    const b3Vector3& aabbMax,
-    B3_DBVT_IPOLICY) const
+										  const b3Vector3& rayFrom,
+										  const b3Vector3& rayTo,
+										  const b3Vector3& rayDirectionInverse,
+										  unsigned int signs[3],
+										  b3Scalar lambda_max,
+										  const b3Vector3& aabbMin,
+										  const b3Vector3& aabbMax,
+										  B3_DBVT_IPOLICY) const
 {
 	(void)rayTo;
 	B3_DBVT_CHECKTYPE
@@ -1046,9 +1049,9 @@ inline void b3DynamicBvh::rayTestInternal(const b3DbvtNode* root,
 //
 B3_DBVT_PREFIX
 inline void b3DynamicBvh::rayTest(const b3DbvtNode* root,
-    const b3Vector3& rayFrom,
-    const b3Vector3& rayTo,
-    B3_DBVT_IPOLICY)
+								  const b3Vector3& rayFrom,
+								  const b3Vector3& rayTo,
+								  B3_DBVT_IPOLICY)
 {
 	B3_DBVT_CHECKTYPE
 	if (root)
@@ -1061,12 +1064,12 @@ inline void b3DynamicBvh::rayTest(const b3DbvtNode* root,
 		rayDirectionInverse[0] = rayDir[0] == b3Scalar(0.0) ? b3Scalar(B3_LARGE_FLOAT) : b3Scalar(1.0) / rayDir[0];
 		rayDirectionInverse[1] = rayDir[1] == b3Scalar(0.0) ? b3Scalar(B3_LARGE_FLOAT) : b3Scalar(1.0) / rayDir[1];
 		rayDirectionInverse[2] = rayDir[2] == b3Scalar(0.0) ? b3Scalar(B3_LARGE_FLOAT) : b3Scalar(1.0) / rayDir[2];
-		unsigned int signs[3] = { rayDirectionInverse[0] < 0.0, rayDirectionInverse[1] < 0.0, rayDirectionInverse[2] < 0.0 };
+		unsigned int signs[3] = {rayDirectionInverse[0] < 0.0, rayDirectionInverse[1] < 0.0, rayDirectionInverse[2] < 0.0};
 
 		b3Scalar lambda_max = rayDir.dot(rayTo - rayFrom);
 #ifdef COMPARE_BTRAY_AABB2
 		b3Vector3 resultNormal;
-#endif //COMPARE_BTRAY_AABB2
+#endif  //COMPARE_BTRAY_AABB2
 
 		b3AlignedObjectArray<const b3DbvtNode*> stack;
 
@@ -1090,7 +1093,7 @@ inline void b3DynamicBvh::rayTest(const b3DbvtNode* root,
 			b3Scalar param = 1.f;
 			bool result2 = b3RayAabb(rayFrom, rayTo, node->volume.Mins(), node->volume.Maxs(), param, resultNormal);
 			b3Assert(result1 == result2);
-#endif //TEST_BTRAY_AABB2
+#endif  //TEST_BTRAY_AABB2
 
 			if (result1)
 			{
@@ -1116,10 +1119,10 @@ inline void b3DynamicBvh::rayTest(const b3DbvtNode* root,
 //
 B3_DBVT_PREFIX
 inline void b3DynamicBvh::collideKDOP(const b3DbvtNode* root,
-    const b3Vector3* normals,
-    const b3Scalar* offsets,
-    int count,
-    B3_DBVT_IPOLICY)
+									  const b3Vector3* normals,
+									  const b3Scalar* offsets,
+									  int count,
+									  B3_DBVT_IPOLICY)
 {
 	B3_DBVT_CHECKTYPE
 	if (root)
@@ -1130,7 +1133,9 @@ inline void b3DynamicBvh::collideKDOP(const b3DbvtNode* root,
 		b3Assert(count < int(sizeof(signs) / sizeof(signs[0])));
 		for (int i = 0; i < count; ++i)
 		{
-			signs[i] = ((normals[i].x >= 0) ? 1 : 0) + ((normals[i].y >= 0) ? 2 : 0) + ((normals[i].z >= 0) ? 4 : 0);
+			signs[i] = ((normals[i].x >= 0) ? 1 : 0) +
+					   ((normals[i].y >= 0) ? 2 : 0) +
+					   ((normals[i].z >= 0) ? 4 : 0);
 		}
 		stack.reserve(B3_SIMPLE_STACKSIZE);
 		stack.push_back(sStkNP(root, 0));
@@ -1146,12 +1151,12 @@ inline void b3DynamicBvh::collideKDOP(const b3DbvtNode* root,
 					const int side = se.node->volume.Classify(normals[i], offsets[i], signs[i]);
 					switch (side)
 					{
-					case -1:
-						out = true;
-						break;
-					case +1:
-						se.mask |= j;
-						break;
+						case -1:
+							out = true;
+							break;
+						case +1:
+							se.mask |= j;
+							break;
 					}
 				}
 			}
@@ -1164,8 +1169,7 @@ inline void b3DynamicBvh::collideKDOP(const b3DbvtNode* root,
 				}
 				else
 				{
-					if (policy.AllLeaves(se.node))
-						enumLeaves(se.node, policy);
+					if (policy.AllLeaves(se.node)) enumLeaves(se.node, policy);
 				}
 			}
 		} while (stack.size());
@@ -1175,17 +1179,19 @@ inline void b3DynamicBvh::collideKDOP(const b3DbvtNode* root,
 //
 B3_DBVT_PREFIX
 inline void b3DynamicBvh::collideOCL(const b3DbvtNode* root,
-    const b3Vector3* normals,
-    const b3Scalar* offsets,
-    const b3Vector3& sortaxis,
-    int count,
-    B3_DBVT_IPOLICY,
-    bool fsort)
+									 const b3Vector3* normals,
+									 const b3Scalar* offsets,
+									 const b3Vector3& sortaxis,
+									 int count,
+									 B3_DBVT_IPOLICY,
+									 bool fsort)
 {
 	B3_DBVT_CHECKTYPE
 	if (root)
 	{
-		const unsigned srtsgns = (sortaxis[0] >= 0 ? 1 : 0) + (sortaxis[1] >= 0 ? 2 : 0) + (sortaxis[2] >= 0 ? 4 : 0);
+		const unsigned srtsgns = (sortaxis[0] >= 0 ? 1 : 0) +
+								 (sortaxis[1] >= 0 ? 2 : 0) +
+								 (sortaxis[2] >= 0 ? 4 : 0);
 		const int inside = (1 << count) - 1;
 		b3AlignedObjectArray<sStkNPS> stock;
 		b3AlignedObjectArray<int> ifree;
@@ -1194,7 +1200,9 @@ inline void b3DynamicBvh::collideOCL(const b3DbvtNode* root,
 		b3Assert(count < int(sizeof(signs) / sizeof(signs[0])));
 		for (int i = 0; i < count; ++i)
 		{
-			signs[i] = ((normals[i].x >= 0) ? 1 : 0) + ((normals[i].y >= 0) ? 2 : 0) + ((normals[i].z >= 0) ? 4 : 0);
+			signs[i] = ((normals[i].x >= 0) ? 1 : 0) +
+					   ((normals[i].y >= 0) ? 2 : 0) +
+					   ((normals[i].z >= 0) ? 4 : 0);
 		}
 		stock.reserve(B3_SIMPLE_STACKSIZE);
 		stack.reserve(B3_SIMPLE_STACKSIZE);
@@ -1216,25 +1224,24 @@ inline void b3DynamicBvh::collideOCL(const b3DbvtNode* root,
 						const int side = se.node->volume.Classify(normals[i], offsets[i], signs[i]);
 						switch (side)
 						{
-						case -1:
-							out = true;
-							break;
-						case +1:
-							se.mask |= j;
-							break;
+							case -1:
+								out = true;
+								break;
+							case +1:
+								se.mask |= j;
+								break;
 						}
 					}
 				}
-				if (out)
-					continue;
+				if (out) continue;
 			}
 			if (policy.Descent(se.node))
 			{
 				if (se.node->isinternal())
 				{
-					const b3DbvtNode* pns[] = { se.node->childs[0], se.node->childs[1] };
-					sStkNPS nes[] = { sStkNPS(pns[0], se.mask, pns[0]->volume.ProjectMinimum(sortaxis, srtsgns)),
-						sStkNPS(pns[1], se.mask, pns[1]->volume.ProjectMinimum(sortaxis, srtsgns)) };
+					const b3DbvtNode* pns[] = {se.node->childs[0], se.node->childs[1]};
+					sStkNPS nes[] = {sStkNPS(pns[0], se.mask, pns[0]->volume.ProjectMinimum(sortaxis, srtsgns)),
+									 sStkNPS(pns[1], se.mask, pns[1]->volume.ProjectMinimum(sortaxis, srtsgns))};
 					const int q = nes[0].value < nes[1].value ? 1 : 0;
 					int j = stack.size();
 					if (fsort && (j > 0))
@@ -1245,8 +1252,7 @@ inline void b3DynamicBvh::collideOCL(const b3DbvtNode* root,
 #if B3_DBVT_USE_MEMMOVE
 						memmove(&stack[j + 1], &stack[j], sizeof(int) * (stack.size() - j - 1));
 #else
-						for (int k = stack.size() - 1; k > j; --k)
-							stack[k] = stack[k - 1];
+						for (int k = stack.size() - 1; k > j; --k) stack[k] = stack[k - 1];
 #endif
 						stack[j] = allocate(ifree, stock, nes[q]);
 						/* Insert 1	*/
@@ -1255,8 +1261,7 @@ inline void b3DynamicBvh::collideOCL(const b3DbvtNode* root,
 #if B3_DBVT_USE_MEMMOVE
 						memmove(&stack[j + 1], &stack[j], sizeof(int) * (stack.size() - j - 1));
 #else
-						for (int k = stack.size() - 1; k > j; --k)
-							stack[k] = stack[k - 1];
+						for (int k = stack.size() - 1; k > j; --k) stack[k] = stack[k - 1];
 #endif
 						stack[j] = allocate(ifree, stock, nes[1 - q]);
 					}
@@ -1278,7 +1283,7 @@ inline void b3DynamicBvh::collideOCL(const b3DbvtNode* root,
 //
 B3_DBVT_PREFIX
 inline void b3DynamicBvh::collideTU(const b3DbvtNode* root,
-    B3_DBVT_IPOLICY)
+									B3_DBVT_IPOLICY)
 {
 	B3_DBVT_CHECKTYPE
 	if (root)

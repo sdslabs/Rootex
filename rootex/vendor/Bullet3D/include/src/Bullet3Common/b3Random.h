@@ -43,4 +43,4 @@ inline b3Scalar b3RandRange(b3Scalar minRange, b3Scalar maxRange)
 	return (b3rand() / (b3Scalar(B3_RAND_MAX) + b3Scalar(1.0))) * (maxRange - minRange) + minRange;
 }
 
-#endif //B3_GEN_RANDOM_H
+#endif  //B3_GEN_RANDOM_H

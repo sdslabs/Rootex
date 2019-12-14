@@ -59,9 +59,9 @@ public:
 	InitCache();
 	///\copydoc MultiBodyTree::addBody
 	int addBody(const int body_index, const int parent_index, const JointType joint_type,
-	    const vec3& parent_r_parent_body_ref, const mat33& body_T_parent_ref,
-	    const vec3& body_axis_of_motion, idScalar mass, const vec3& body_r_body_com,
-	    const mat33& body_I_body, const int user_int, void* user_ptr);
+				const vec3 &parent_r_parent_body_ref, const mat33 &body_T_parent_ref,
+				const vec3 &body_axis_of_motion, idScalar mass, const vec3 &body_r_body_com,
+				const mat33 &body_I_body, const int user_int, void *user_ptr);
 	/// build index arrays
 	/// @return 0 on success, -1 on failure
 	int buildIndexSets();
@@ -73,25 +73,25 @@ public:
 	/// @param index of the body
 	/// @param inertia pointer for return data
 	/// @return 0 on success, -1 on failure
-	int getInertiaData(const int index, InertiaData* inertia) const;
+	int getInertiaData(const int index, InertiaData *inertia) const;
 	/// get joint data for index
 	/// @param index of the body
 	/// @param joint pointer for return data
 	/// @return 0 on success, -1 on failure
-	int getJointData(const int index, JointData* joint) const;
+	int getJointData(const int index, JointData *joint) const;
 	/// get parent index array (paren_index[i] is the index of the parent of i)
 	/// @param parent_index pointer for return data
-	void getParentIndexArray(idArray<int>::type* parent_index) { *parent_index = m_parent_index; }
+	void getParentIndexArray(idArray<int>::type *parent_index) { *parent_index = m_parent_index; }
 	/// get user integer
 	/// @param index body index
 	/// @param user_int user integer
 	/// @return 0 on success, -1 on failure
-	int getUserInt(const int index, int* user_int) const;
+	int getUserInt(const int index, int *user_int) const;
 	/// get user pointer
 	/// @param index body index
 	/// @param user_int user pointer
 	/// @return 0 on success, -1 on failure
-	int getUserPtr(const int index, void** user_ptr) const;
+	int getUserPtr(const int index, void **user_ptr) const;
 
 private:
 	// vector of bodies
@@ -105,9 +105,9 @@ private:
 	// user integers
 	idArray<int>::type m_user_int;
 	// user pointers
-	idArray<void*>::type m_user_ptr;
+	idArray<void *>::type m_user_ptr;
 	// index of root body (or -1 if not set)
 	int m_root_index;
 };
-} // namespace btInverseDynamics
-#endif // MULTIBODYTREEINITCACHE_HPP_
+}  // namespace btInverseDynamics
+#endif  // MULTIBODYTREEINITCACHE_HPP_

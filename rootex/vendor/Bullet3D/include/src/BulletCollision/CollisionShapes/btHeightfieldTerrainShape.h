@@ -16,8 +16,8 @@ subject to the following restrictions:
 #ifndef BT_HEIGHTFIELD_TERRAIN_SHAPE_H
 #define BT_HEIGHTFIELD_TERRAIN_SHAPE_H
 
-#include "LinearMath/btAlignedObjectArray.h"
 #include "btConcaveShape.h"
+#include "LinearMath/btAlignedObjectArray.h"
 
 ///btHeightfieldTerrainShape simulates a 2D heightfield terrain
 /**
@@ -128,9 +128,9 @@ protected:
 	  backwards-compatible without a lot of copy/paste.
 	 */
 	void initialize(int heightStickWidth, int heightStickLength,
-	    const void* heightfieldData, btScalar heightScale,
-	    btScalar minHeight, btScalar maxHeight, int upAxis,
-	    PHY_ScalarType heightDataType, bool flipQuadEdges);
+					const void* heightfieldData, btScalar heightScale,
+					btScalar minHeight, btScalar maxHeight, int upAxis,
+					PHY_ScalarType heightDataType, bool flipQuadEdges);
 
 public:
 	BT_DECLARE_ALIGNED_ALLOCATOR();
@@ -142,10 +142,10 @@ public:
 	  heightScale is needed for any integer-based heightfield data types.
 	 */
 	btHeightfieldTerrainShape(int heightStickWidth, int heightStickLength,
-	    const void* heightfieldData, btScalar heightScale,
-	    btScalar minHeight, btScalar maxHeight,
-	    int upAxis, PHY_ScalarType heightDataType,
-	    bool flipQuadEdges);
+							  const void* heightfieldData, btScalar heightScale,
+							  btScalar minHeight, btScalar maxHeight,
+							  int upAxis, PHY_ScalarType heightDataType,
+							  bool flipQuadEdges);
 
 	/// legacy constructor
 	/**
@@ -191,6 +191,7 @@ public:
 	//debugging
 	virtual const char* getName() const { return "HEIGHTFIELD"; }
 
+	
 	void setUserIndex2(int index)
 	{
 		m_userIndex2 = index;
@@ -215,7 +216,7 @@ public:
 	{
 		return m_triangleInfoMap;
 	}
-	void setTriangleInfoMap(btTriangleInfoMap * map)
+	void setTriangleInfoMap(btTriangleInfoMap* map)
 	{
 		m_triangleInfoMap = map;
 	}
@@ -225,4 +226,4 @@ public:
 	}
 };
 
-#endif //BT_HEIGHTFIELD_TERRAIN_SHAPE_H
+#endif  //BT_HEIGHTFIELD_TERRAIN_SHAPE_H

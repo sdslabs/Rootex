@@ -20,12 +20,12 @@ class btIDebugDraw;
 class btPersistentManifold;
 class btDispatcher;
 class btCollisionObject;
-#include "BulletCollision/NarrowPhaseCollision/btManifoldPoint.h"
-#include "BulletDynamics/ConstraintSolver/btConstraintSolver.h"
+#include "BulletDynamics/ConstraintSolver/btTypedConstraint.h"
 #include "BulletDynamics/ConstraintSolver/btContactSolverInfo.h"
 #include "BulletDynamics/ConstraintSolver/btSolverBody.h"
 #include "BulletDynamics/ConstraintSolver/btSolverConstraint.h"
-#include "BulletDynamics/ConstraintSolver/btTypedConstraint.h"
+#include "BulletCollision/NarrowPhaseCollision/btManifoldPoint.h"
+#include "BulletDynamics/ConstraintSolver/btConstraintSolver.h"
 
 typedef btScalar (*btSingleConstraintRowSolver)(btSolverBody&, btSolverBody&, const btSolverConstraint&);
 
@@ -50,6 +50,7 @@ struct btSolverAnalyticsData
 ATTRIBUTE_ALIGNED16(class)
 btSequentialImpulseConstraintSolver : public btConstraintSolver
 {
+	
 
 protected:
 	btAlignedObjectArray<btSolverBody> m_tmpSolverBodyPool;
@@ -71,37 +72,37 @@ protected:
 	// (and therefore one thread) at a time. But kinematic bodies can be in multiple islands at once.
 	// To avoid this race condition, this solver does not write the companionId, instead it stores the solver body
 	// index in this solver-local table, indexed by the uniqueId of the body.
-	btAlignedObjectArray<int> m_kinematicBodyUniqueIdToSolverBodyTable; // only used for multithreading
+	btAlignedObjectArray<int> m_kinematicBodyUniqueIdToSolverBodyTable;  // only used for multithreading
 
 	btSingleConstraintRowSolver m_resolveSingleConstraintRowGeneric;
 	btSingleConstraintRowSolver m_resolveSingleConstraintRowLowerLimit;
 	btSingleConstraintRowSolver m_resolveSplitPenetrationImpulse;
-	int m_cachedSolverMode; // used to check if SOLVER_SIMD flag has been changed
+	int m_cachedSolverMode;  // used to check if SOLVER_SIMD flag has been changed
 	void setupSolverFunctions(bool useSimd);
 
 	btScalar m_leastSquaresResidual;
 
 	void setupFrictionConstraint(btSolverConstraint & solverConstraint, const btVector3& normalAxis, int solverBodyIdA, int solverBodyIdB,
-	    btManifoldPoint& cp, const btVector3& rel_pos1, const btVector3& rel_pos2,
-	    btCollisionObject* colObj0, btCollisionObject* colObj1, btScalar relaxation,
-	    const btContactSolverInfo& infoGlobal,
-	    btScalar desiredVelocity = 0., btScalar cfmSlip = 0.);
+		btManifoldPoint& cp, const btVector3& rel_pos1, const btVector3& rel_pos2,
+		btCollisionObject* colObj0, btCollisionObject* colObj1, btScalar relaxation,
+		const btContactSolverInfo& infoGlobal,
+		btScalar desiredVelocity = 0., btScalar cfmSlip = 0.);
 
 	void setupTorsionalFrictionConstraint(btSolverConstraint & solverConstraint, const btVector3& normalAxis, int solverBodyIdA, int solverBodyIdB,
-	    btManifoldPoint& cp, btScalar combinedTorsionalFriction, const btVector3& rel_pos1, const btVector3& rel_pos2,
-	    btCollisionObject* colObj0, btCollisionObject* colObj1, btScalar relaxation,
-	    btScalar desiredVelocity = 0., btScalar cfmSlip = 0.);
+		btManifoldPoint& cp, btScalar combinedTorsionalFriction, const btVector3& rel_pos1, const btVector3& rel_pos2,
+		btCollisionObject* colObj0, btCollisionObject* colObj1, btScalar relaxation,
+		btScalar desiredVelocity = 0., btScalar cfmSlip = 0.);
 
 	btSolverConstraint& addFrictionConstraint(const btVector3& normalAxis, int solverBodyIdA, int solverBodyIdB, int frictionIndex, btManifoldPoint& cp, const btVector3& rel_pos1, const btVector3& rel_pos2, btCollisionObject* colObj0, btCollisionObject* colObj1, btScalar relaxation, const btContactSolverInfo& infoGlobal, btScalar desiredVelocity = 0., btScalar cfmSlip = 0.);
 	btSolverConstraint& addTorsionalFrictionConstraint(const btVector3& normalAxis, int solverBodyIdA, int solverBodyIdB, int frictionIndex, btManifoldPoint& cp, btScalar torsionalFriction, const btVector3& rel_pos1, const btVector3& rel_pos2, btCollisionObject* colObj0, btCollisionObject* colObj1, btScalar relaxation, btScalar desiredVelocity = 0, btScalar cfmSlip = 0.f);
 
 	void setupContactConstraint(btSolverConstraint & solverConstraint, int solverBodyIdA, int solverBodyIdB, btManifoldPoint& cp,
-	    const btContactSolverInfo& infoGlobal, btScalar& relaxation, const btVector3& rel_pos1, const btVector3& rel_pos2);
+		const btContactSolverInfo& infoGlobal, btScalar& relaxation, const btVector3& rel_pos1, const btVector3& rel_pos2);
 
 	static void applyAnisotropicFriction(btCollisionObject * colObj, btVector3 & frictionDirection, int frictionMode);
 
 	void setFrictionConstraintImpulse(btSolverConstraint & solverConstraint, int solverBodyIdA, int solverBodyIdB,
-	    btManifoldPoint& cp, const btContactSolverInfo& infoGlobal);
+		btManifoldPoint& cp, const btContactSolverInfo& infoGlobal);
 
 	///m_btSeed2 is used for re-arranging the constraint rows. improves convergence/quality of friction
 	unsigned long m_btSeed2;
@@ -197,6 +198,8 @@ public:
 		m_resolveSingleConstraintRowLowerLimit = rowSolver;
 	}
 
+
+
 	///Various implementations of solving a single constraint row using a generic equality constraint, using scalar reference, SSE2 or SSE4
 	btSingleConstraintRowSolver getScalarConstraintRowSolverGeneric();
 	btSingleConstraintRowSolver getSSE2ConstraintRowSolverGeneric();
@@ -209,4 +212,4 @@ public:
 	btSolverAnalyticsData m_analyticsData;
 };
 
-#endif //BT_SEQUENTIAL_IMPULSE_CONSTRAINT_SOLVER_H
+#endif  //BT_SEQUENTIAL_IMPULSE_CONSTRAINT_SOLVER_H
