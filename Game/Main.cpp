@@ -1,12 +1,12 @@
 #include "common/common.h"
 
+#include "core/audio/audio_source.h"
 #include "core/audio/audio_system.h"
 #include "core/audio/static_audio_buffer.h"
 #include "core/audio/streaming_audio_buffer.h"
-#include "core/audio/audio_source.h"
 #include "core/renderer/directx/window.h"
-#include "core/resource_loader.h"
 #include "core/resource_data_reserve.h"
+#include "core/resource_loader.h"
 #include "os/os.h"
 #include "script/interpreter.h"
 
@@ -27,9 +27,9 @@ int main()
 	Ref<StaticAudioBuffer> audio2(new StaticAudioBuffer(w2));
 	Ref<StaticAudioSource> source2(new StaticAudioSource(audio2.get()));
 	source2->setLooping(false);
-	
+
 	AudioSystem::GetSingleton()->update();
-	
+
 	TextResourceFile* r = ResourceLoader::createTextResourceFile("rootex/test/abc.txt"); // So this loads build/game/abc.txt (However the binary exists in build/game/Debug/)
 	OS::printLine(r->getString());
 
