@@ -6,6 +6,7 @@
 #include "main/window.h"
 #include "os/os.h"
 #include "script/interpreter.h"
+#include "core/renderer/d3d11graphics.h"
 
 int main()
 {
@@ -30,12 +31,17 @@ int main()
 	    window["deltaY"],
 	    window["title"]);
 
+	RootexGraphics* renderer = new RootexGraphics(window["deltaX"], window["deltaY"]);
+
 	std::optional<int> ret = {};
 	while (true)
 	{
 		if (ret = gameWindow->processMessages())
 			break;
 
+		renderer->drawTest();
+
+		gameWindow->swapBuffers();
 	}
 	delete gameWindow;
 	ResourceDataReserve::clear();

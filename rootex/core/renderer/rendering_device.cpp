@@ -56,7 +56,8 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height)
 	m_Device->CheckMultisampleQualityLevels(DXGI_FORMAT_R8G8B8A8_UNORM, 4, &m_4XMSQuality);
 	PANIC(m_4XMSQuality <= 0, "MSAA is not supported on this hardware");
 
-	if (m_4XMSQuality)
+	//if (m_4XMSQuality)
+	if (false)
 	{
 		sd.SampleDesc.Count = 4;
 		sd.SampleDesc.Quality = m_4XMSQuality - 1;
@@ -133,6 +134,16 @@ RenderingDevice* RenderingDevice::GetSingleton()
 {
 	static RenderingDevice singleton;
 	return &singleton;
+}
+
+ID3D11Device* RenderingDevice::GetDevice()
+{
+	return m_Device;
+}
+
+ID3D11DeviceContext* RenderingDevice::GetContext()
+{
+	return m_Context;
 }
 
 void RenderingDevice::swapBuffers()
