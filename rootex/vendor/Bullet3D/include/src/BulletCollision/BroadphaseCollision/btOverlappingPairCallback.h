@@ -38,4 +38,4 @@ public:
 	virtual void removeOverlappingPairsContainingProxy(btBroadphaseProxy* proxy0, btDispatcher* dispatcher) = 0;
 };
 
-#endif  //OVERLAPPING_PAIR_CALLBACK_H
+#endif //OVERLAPPING_PAIR_CALLBACK_H

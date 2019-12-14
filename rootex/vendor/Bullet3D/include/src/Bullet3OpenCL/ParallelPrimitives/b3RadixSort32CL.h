@@ -60,9 +60,9 @@ public:
 		BITS_PER_PASS = 4,
 		NUM_BUCKET = (1 << BITS_PER_PASS),
 		//	if you change this, change nPerWI in kernel as well
-		NUM_WGS = 20 * 6,  //	cypress
-						   //			NUM_WGS = 24*6,	//	cayman
-						   //			NUM_WGS = 32*4,	//	nv
+		NUM_WGS = 20 * 6, //	cypress
+		//			NUM_WGS = 24*6,	//	cayman
+		//			NUM_WGS = 32*4,	//	nv
 	};
 
 private:
@@ -72,7 +72,7 @@ public:
 	virtual ~b3RadixSort32CL();
 
 	void execute(b3OpenCLArray<unsigned int>& keysIn, b3OpenCLArray<unsigned int>& keysOut, b3OpenCLArray<unsigned int>& valuesIn,
-				 b3OpenCLArray<unsigned int>& valuesOut, int n, int sortBits = 32);
+	    b3OpenCLArray<unsigned int>& valuesOut, int n, int sortBits = 32);
 
 	///keys only
 	void execute(b3OpenCLArray<unsigned int>& keysInOut, int sortBits = 32);
@@ -81,4 +81,4 @@ public:
 	void executeHost(b3OpenCLArray<b3SortData>& keyValuesInOut, int sortBits = 32);
 	void executeHost(b3AlignedObjectArray<b3SortData>& keyValuesInOut, int sortBits = 32);
 };
-#endif  //B3_RADIXSORT32_H
+#endif //B3_RADIXSORT32_H

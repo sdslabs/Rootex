@@ -38,7 +38,7 @@ class btRigidBody;
 #else
 #define btGeneric6DofConstraintData2 btGeneric6DofConstraintData
 #define btGeneric6DofConstraintDataName "btGeneric6DofConstraintData"
-#endif  //BT_USE_DOUBLE_PRECISION
+#endif //BT_USE_DOUBLE_PRECISION
 
 //! Rotation Limit structure for generic joints
 class btRotationalLimitMotor
@@ -46,26 +46,26 @@ class btRotationalLimitMotor
 public:
 	//! limit_parameters
 	//!@{
-	btScalar m_loLimit;         //!< joint limit
-	btScalar m_hiLimit;         //!< joint limit
-	btScalar m_targetVelocity;  //!< target motor velocity
-	btScalar m_maxMotorForce;   //!< max force on motor
-	btScalar m_maxLimitForce;   //!< max force on limit
-	btScalar m_damping;         //!< Damping.
-	btScalar m_limitSoftness;   //! Relaxation factor
-	btScalar m_normalCFM;       //!< Constraint force mixing factor
-	btScalar m_stopERP;         //!< Error tolerance factor when joint is at limit
-	btScalar m_stopCFM;         //!< Constraint force mixing factor when joint is at limit
-	btScalar m_bounce;          //!< restitution factor
+	btScalar m_loLimit; //!< joint limit
+	btScalar m_hiLimit; //!< joint limit
+	btScalar m_targetVelocity; //!< target motor velocity
+	btScalar m_maxMotorForce; //!< max force on motor
+	btScalar m_maxLimitForce; //!< max force on limit
+	btScalar m_damping; //!< Damping.
+	btScalar m_limitSoftness; //! Relaxation factor
+	btScalar m_normalCFM; //!< Constraint force mixing factor
+	btScalar m_stopERP; //!< Error tolerance factor when joint is at limit
+	btScalar m_stopCFM; //!< Constraint force mixing factor when joint is at limit
+	btScalar m_bounce; //!< restitution factor
 	bool m_enableMotor;
 
 	//!@}
 
 	//! temp_variables
 	//!@{
-	btScalar m_currentLimitError;  //!  How much is violated this limit
-	btScalar m_currentPosition;    //!  current value of angle
-	int m_currentLimit;            //!< 0=free, 1=at lo limit, 2=at hi limit
+	btScalar m_currentLimitError; //!  How much is violated this limit
+	btScalar m_currentPosition; //!  current value of angle
+	int m_currentLimit; //!< 0=free, 1=at lo limit, 2=at hi limit
 	btScalar m_accumulatedImpulse;
 	//!@}
 
@@ -107,14 +107,16 @@ public:
 	//! Is limited
 	bool isLimited() const
 	{
-		if (m_loLimit > m_hiLimit) return false;
+		if (m_loLimit > m_hiLimit)
+			return false;
 		return true;
 	}
 
 	//! Need apply correction
 	bool needApplyTorques() const
 	{
-		if (m_currentLimit == 0 && m_enableMotor == false) return false;
+		if (m_currentLimit == 0 && m_enableMotor == false)
+			return false;
 		return true;
 	}
 
@@ -131,24 +133,24 @@ public:
 class btTranslationalLimitMotor
 {
 public:
-	btVector3 m_lowerLimit;  //!< the constraint lower limits
-	btVector3 m_upperLimit;  //!< the constraint upper limits
+	btVector3 m_lowerLimit; //!< the constraint lower limits
+	btVector3 m_upperLimit; //!< the constraint upper limits
 	btVector3 m_accumulatedImpulse;
 	//! Linear_Limit_parameters
 	//!@{
-	btScalar m_limitSoftness;  //!< Softness for linear limit
-	btScalar m_damping;        //!< Damping for linear limit
-	btScalar m_restitution;    //! Bounce parameter for linear limit
-	btVector3 m_normalCFM;     //!< Constraint force mixing factor
-	btVector3 m_stopERP;       //!< Error tolerance factor when joint is at limit
-	btVector3 m_stopCFM;       //!< Constraint force mixing factor when joint is at limit
-							   //!@}
+	btScalar m_limitSoftness; //!< Softness for linear limit
+	btScalar m_damping; //!< Damping for linear limit
+	btScalar m_restitution; //! Bounce parameter for linear limit
+	btVector3 m_normalCFM; //!< Constraint force mixing factor
+	btVector3 m_stopERP; //!< Error tolerance factor when joint is at limit
+	btVector3 m_stopCFM; //!< Constraint force mixing factor when joint is at limit
+	    //!@}
 	bool m_enableMotor[3];
-	btVector3 m_targetVelocity;     //!< target motor velocity
-	btVector3 m_maxMotorForce;      //!< max force on motor
-	btVector3 m_currentLimitError;  //!  How much is violated this limit
-	btVector3 m_currentLinearDiff;  //!  Current relative offset of constraint frames
-	int m_currentLimit[3];          //!< 0=free, 1=at lower limit, 2=at upper limit
+	btVector3 m_targetVelocity; //!< target motor velocity
+	btVector3 m_maxMotorForce; //!< max force on motor
+	btVector3 m_currentLimitError; //!  How much is violated this limit
+	btVector3 m_currentLinearDiff; //!  Current relative offset of constraint frames
+	int m_currentLimit[3]; //!< 0=free, 1=at lower limit, 2=at upper limit
 
 	btTranslationalLimitMotor()
 	{
@@ -204,19 +206,20 @@ public:
 	}
 	inline bool needApplyForce(int limitIndex) const
 	{
-		if (m_currentLimit[limitIndex] == 0 && m_enableMotor[limitIndex] == false) return false;
+		if (m_currentLimit[limitIndex] == 0 && m_enableMotor[limitIndex] == false)
+			return false;
 		return true;
 	}
 	int testLimitValue(int limitIndex, btScalar test_value);
 
 	btScalar solveLinearAxis(
-		btScalar timeStep,
-		btScalar jacDiagABInv,
-		btRigidBody& body1, const btVector3& pointInA,
-		btRigidBody& body2, const btVector3& pointInB,
-		int limit_index,
-		const btVector3& axis_normal_on_a,
-		const btVector3& anchorPos);
+	    btScalar timeStep,
+	    btScalar jacDiagABInv,
+	    btRigidBody& body1, const btVector3& pointInA,
+	    btRigidBody& body2, const btVector3& pointInB,
+	    int limit_index,
+	    const btVector3& axis_normal_on_a,
+	    const btVector3& anchorPos);
 };
 
 enum bt6DofFlags
@@ -225,7 +228,7 @@ enum bt6DofFlags
 	BT_6DOF_FLAGS_CFM_STOP = 2,
 	BT_6DOF_FLAGS_ERP_STOP = 4
 };
-#define BT_6DOF_FLAGS_AXIS_SHIFT 3  // bits per axis
+#define BT_6DOF_FLAGS_AXIS_SHIFT 3 // bits per axis
 
 /// btGeneric6DofConstraint between two rigidbodies each with a pivotpoint that descibes the axis location in local space
 /*!
@@ -269,14 +272,14 @@ btGeneric6DofConstraint : public btTypedConstraint
 protected:
 	//! relative_frames
 	//!@{
-	btTransform m_frameInA;  //!< the constraint space w.r.t body A
-	btTransform m_frameInB;  //!< the constraint space w.r.t body B
+	btTransform m_frameInA; //!< the constraint space w.r.t body A
+	btTransform m_frameInB; //!< the constraint space w.r.t body B
 	//!@}
 
 	//! Jacobians
 	//!@{
-	btJacobianEntry m_jacLinear[3];  //!< 3 orthogonal linear constraints
-	btJacobianEntry m_jacAng[3];     //!< 3 orthogonal angular constraints
+	btJacobianEntry m_jacLinear[3]; //!< 3 orthogonal linear constraints
+	btJacobianEntry m_jacAng[3]; //!< 3 orthogonal angular constraints
 	//!@}
 
 	//! Linear_Limit_parameters
@@ -302,7 +305,7 @@ protected:
 	btScalar m_factB;
 	bool m_hasStaticBody;
 
-	btVector3 m_AnchorPos;  // point betwen pivots of bodies A and B to solve linear axes
+	btVector3 m_AnchorPos; // point betwen pivots of bodies A and B to solve linear axes
 
 	bool m_useLinearReferenceFrameA;
 	bool m_useOffsetForConstraintFrame;
@@ -323,8 +326,8 @@ protected:
 	int setLinearLimits(btConstraintInfo2 * info, int row, const btTransform& transA, const btTransform& transB, const btVector3& linVelA, const btVector3& linVelB, const btVector3& angVelA, const btVector3& angVelB);
 
 	void buildLinearJacobian(
-		btJacobianEntry & jacLinear, const btVector3& normalWorld,
-		const btVector3& pivotAInW, const btVector3& pivotBInW);
+	    btJacobianEntry & jacLinear, const btVector3& normalWorld,
+	    const btVector3& pivotAInW, const btVector3& pivotBInW);
 
 	void buildAngularJacobian(btJacobianEntry & jacAngular, const btVector3& jointAxisW);
 
@@ -519,11 +522,11 @@ public:
 		return m_angularLimits[limitIndex - 3].isLimited();
 	}
 
-	virtual void calcAnchorPos(void);  // overridable
+	virtual void calcAnchorPos(void); // overridable
 
 	int get_limit_motor_info2(btRotationalLimitMotor * limot,
-							  const btTransform& transA, const btTransform& transB, const btVector3& linVelA, const btVector3& linVelB, const btVector3& angVelA, const btVector3& angVelB,
-							  btConstraintInfo2* info, int row, btVector3& ax1, int rotational, int rotAllowed = false);
+	    const btTransform& transA, const btTransform& transB, const btVector3& linVelA, const btVector3& linVelB, const btVector3& angVelA, const btVector3& angVelB,
+	    btConstraintInfo2* info, int row, btVector3& ax1, int rotational, int rotAllowed = false);
 
 	// access for UseFrameOffset
 	bool getUseFrameOffset() const { return m_useOffsetForConstraintFrame; }
@@ -554,7 +557,7 @@ public:
 struct btGeneric6DofConstraintData
 {
 	btTypedConstraintData m_typeConstraintData;
-	btTransformFloatData m_rbAFrame;  // constraint axii. Assumes z is hinge axis.
+	btTransformFloatData m_rbAFrame; // constraint axii. Assumes z is hinge axis.
 	btTransformFloatData m_rbBFrame;
 
 	btVector3FloatData m_linearUpperLimit;
@@ -570,7 +573,7 @@ struct btGeneric6DofConstraintData
 struct btGeneric6DofConstraintDoubleData2
 {
 	btTypedConstraintDoubleData m_typeConstraintData;
-	btTransformDoubleData m_rbAFrame;  // constraint axii. Assumes z is hinge axis.
+	btTransformDoubleData m_rbAFrame; // constraint axii. Assumes z is hinge axis.
 	btTransformDoubleData m_rbBFrame;
 
 	btVector3DoubleData m_linearUpperLimit;
@@ -612,4 +615,4 @@ SIMD_FORCE_INLINE const char* btGeneric6DofConstraint::serialize(void* dataBuffe
 	return btGeneric6DofConstraintDataName;
 }
 
-#endif  //BT_GENERIC_6DOF_CONSTRAINT_H
+#endif //BT_GENERIC_6DOF_CONSTRAINT_H

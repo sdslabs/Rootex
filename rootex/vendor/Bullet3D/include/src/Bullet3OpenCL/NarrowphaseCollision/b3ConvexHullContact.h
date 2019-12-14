@@ -2,18 +2,18 @@
 #ifndef _CONVEX_HULL_CONTACT_H
 #define _CONVEX_HULL_CONTACT_H
 
-#include "Bullet3OpenCL/ParallelPrimitives/b3OpenCLArray.h"
 #include "Bullet3Collision/NarrowPhaseCollision/shared/b3RigidBodyData.h"
 #include "Bullet3Common/b3AlignedObjectArray.h"
+#include "Bullet3OpenCL/ParallelPrimitives/b3OpenCLArray.h"
 
-#include "Bullet3Collision/NarrowPhaseCollision/shared/b3ConvexPolyhedronData.h"
-#include "Bullet3Collision/NarrowPhaseCollision/shared/b3Collidable.h"
+#include "Bullet3Collision/BroadPhaseCollision/shared/b3Aabb.h"
 #include "Bullet3Collision/NarrowPhaseCollision/b3Contact4.h"
+#include "Bullet3Collision/NarrowPhaseCollision/shared/b3Collidable.h"
+#include "Bullet3Collision/NarrowPhaseCollision/shared/b3ConvexPolyhedronData.h"
 #include "Bullet3Common/shared/b3Int2.h"
 #include "Bullet3Common/shared/b3Int4.h"
-#include "b3OptimizedBvh.h"
 #include "b3BvhInfo.h"
-#include "Bullet3Collision/BroadPhaseCollision/shared/b3Aabb.h"
+#include "b3OptimizedBvh.h"
 
 //#include "../../dynamics/basic_demo/Stubs/ChNarrowPhase.h"
 
@@ -72,35 +72,35 @@ struct GpuSatCollision
 	virtual ~GpuSatCollision();
 
 	void computeConvexConvexContactsGPUSAT(b3OpenCLArray<b3Int4>* pairs, int nPairs,
-										   const b3OpenCLArray<b3RigidBodyData>* bodyBuf,
-										   b3OpenCLArray<b3Contact4>* contactOut, int& nContacts,
-										   const b3OpenCLArray<b3Contact4>* oldContacts,
-										   int maxContactCapacity,
-										   int compoundPairCapacity,
-										   const b3OpenCLArray<b3ConvexPolyhedronData>& hostConvexData,
-										   const b3OpenCLArray<b3Vector3>& vertices,
-										   const b3OpenCLArray<b3Vector3>& uniqueEdges,
-										   const b3OpenCLArray<b3GpuFace>& faces,
-										   const b3OpenCLArray<int>& indices,
-										   const b3OpenCLArray<b3Collidable>& gpuCollidables,
-										   const b3OpenCLArray<b3GpuChildShape>& gpuChildShapes,
+	    const b3OpenCLArray<b3RigidBodyData>* bodyBuf,
+	    b3OpenCLArray<b3Contact4>* contactOut, int& nContacts,
+	    const b3OpenCLArray<b3Contact4>* oldContacts,
+	    int maxContactCapacity,
+	    int compoundPairCapacity,
+	    const b3OpenCLArray<b3ConvexPolyhedronData>& hostConvexData,
+	    const b3OpenCLArray<b3Vector3>& vertices,
+	    const b3OpenCLArray<b3Vector3>& uniqueEdges,
+	    const b3OpenCLArray<b3GpuFace>& faces,
+	    const b3OpenCLArray<int>& indices,
+	    const b3OpenCLArray<b3Collidable>& gpuCollidables,
+	    const b3OpenCLArray<b3GpuChildShape>& gpuChildShapes,
 
-										   const b3OpenCLArray<b3Aabb>& clAabbsWorldSpace,
-										   const b3OpenCLArray<b3Aabb>& clAabbsLocalSpace,
+	    const b3OpenCLArray<b3Aabb>& clAabbsWorldSpace,
+	    const b3OpenCLArray<b3Aabb>& clAabbsLocalSpace,
 
-										   b3OpenCLArray<b3Vector3>& worldVertsB1GPU,
-										   b3OpenCLArray<b3Int4>& clippingFacesOutGPU,
-										   b3OpenCLArray<b3Vector3>& worldNormalsAGPU,
-										   b3OpenCLArray<b3Vector3>& worldVertsA1GPU,
-										   b3OpenCLArray<b3Vector3>& worldVertsB2GPU,
-										   b3AlignedObjectArray<class b3OptimizedBvh*>& bvhData,
-										   b3OpenCLArray<b3QuantizedBvhNode>* treeNodesGPU,
-										   b3OpenCLArray<b3BvhSubtreeInfo>* subTreesGPU,
-										   b3OpenCLArray<b3BvhInfo>* bvhInfo,
-										   int numObjects,
-										   int maxTriConvexPairCapacity,
-										   b3OpenCLArray<b3Int4>& triangleConvexPairs,
-										   int& numTriConvexPairsOut);
+	    b3OpenCLArray<b3Vector3>& worldVertsB1GPU,
+	    b3OpenCLArray<b3Int4>& clippingFacesOutGPU,
+	    b3OpenCLArray<b3Vector3>& worldNormalsAGPU,
+	    b3OpenCLArray<b3Vector3>& worldVertsA1GPU,
+	    b3OpenCLArray<b3Vector3>& worldVertsB2GPU,
+	    b3AlignedObjectArray<class b3OptimizedBvh*>& bvhData,
+	    b3OpenCLArray<b3QuantizedBvhNode>* treeNodesGPU,
+	    b3OpenCLArray<b3BvhSubtreeInfo>* subTreesGPU,
+	    b3OpenCLArray<b3BvhInfo>* bvhInfo,
+	    int numObjects,
+	    int maxTriConvexPairCapacity,
+	    b3OpenCLArray<b3Int4>& triangleConvexPairs,
+	    int& numTriConvexPairsOut);
 };
 
-#endif  //_CONVEX_HULL_CONTACT_H
+#endif //_CONVEX_HULL_CONTACT_H

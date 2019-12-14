@@ -32,4 +32,4 @@ void b3ComputeWorldAabb(int bodyId, __global const b3RigidBodyData_t* bodies, __
 	}
 }
 
-#endif  //B3_UPDATE_AABBS_H
+#endif //B3_UPDATE_AABBS_H

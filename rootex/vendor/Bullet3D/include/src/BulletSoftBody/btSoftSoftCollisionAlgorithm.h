@@ -16,8 +16,8 @@ subject to the following restrictions:
 #ifndef BT_SOFT_SOFT_COLLISION_ALGORITHM_H
 #define BT_SOFT_SOFT_COLLISION_ALGORITHM_H
 
-#include "BulletCollision/BroadphaseCollision/btCollisionAlgorithm.h"
 #include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h"
+#include "BulletCollision/BroadphaseCollision/btCollisionAlgorithm.h"
 #include "BulletCollision/BroadphaseCollision/btDispatcher.h"
 #include "BulletCollision/CollisionDispatch/btCollisionCreateFunc.h"
 
@@ -35,7 +35,9 @@ class btSoftSoftCollisionAlgorithm : public btCollisionAlgorithm
 
 public:
 	btSoftSoftCollisionAlgorithm(const btCollisionAlgorithmConstructionInfo& ci)
-		: btCollisionAlgorithm(ci) {}
+	    : btCollisionAlgorithm(ci)
+	{
+	}
 
 	virtual void processCollision(const btCollisionObjectWrapper* body0Wrap, const btCollisionObjectWrapper* body1Wrap, const btDispatcherInfo& dispatchInfo, btManifoldResult* resultOut);
 
@@ -62,4 +64,4 @@ public:
 	};
 };
 
-#endif  //BT_SOFT_SOFT_COLLISION_ALGORITHM_H
+#endif //BT_SOFT_SOFT_COLLISION_ALGORITHM_H

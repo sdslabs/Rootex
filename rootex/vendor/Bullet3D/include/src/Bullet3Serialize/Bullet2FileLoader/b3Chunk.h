@@ -60,7 +60,7 @@ class bChunkInd
 public:
 	bChunkInd() {}
 	int code, len;
-	void *oldPtr;
+	void* oldPtr;
 	int dna_nr, nr;
 };
 
@@ -78,7 +78,7 @@ public:
 };
 
 const int CHUNK_HEADER_LEN = ((sizeof(bChunkInd)));
-const bool VOID_IS_8 = ((sizeof(void *) == 8));
-}  // namespace bParse
+const bool VOID_IS_8 = ((sizeof(void*) == 8));
+} // namespace bParse
 
-#endif  //__BCHUNK_H__
+#endif //__BCHUNK_H__

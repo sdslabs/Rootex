@@ -89,4 +89,4 @@ typedef GREAL quatf[4];
 
 //typedef struct _aabb3f aabb3f;
 
-#endif  // GIM_GEOM_TYPES_H_INCLUDED
+#endif // GIM_GEOM_TYPES_H_INCLUDED

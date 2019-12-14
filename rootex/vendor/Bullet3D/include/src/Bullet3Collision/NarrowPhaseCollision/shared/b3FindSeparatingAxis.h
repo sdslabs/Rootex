@@ -18,8 +18,10 @@ inline void b3ProjectAxis(const b3ConvexPolyhedronData& hull, const b3Float4& po
 		//b3Vector3 vertex = vertices[hull.m_vertexOffset+i];
 		b3Scalar dp = b3Dot3F4((b3Float4&)vertices[hull.m_vertexOffset + i], localDir);
 		//b3Assert(dp==dpL);
-		if (dp < min) min = dp;
-		if (dp > max) max = dp;
+		if (dp < min)
+			min = dp;
+		if (dp > max)
+			max = dp;
 	}
 	if (min > max)
 	{
@@ -32,9 +34,9 @@ inline void b3ProjectAxis(const b3ConvexPolyhedronData& hull, const b3Float4& po
 }
 
 inline bool b3TestSepAxis(const b3ConvexPolyhedronData& hullA, const b3ConvexPolyhedronData& hullB,
-						  const b3Float4& posA, const b3Quaternion& ornA,
-						  const b3Float4& posB, const b3Quaternion& ornB,
-						  const b3Float4& sep_axis, const b3AlignedObjectArray<b3Vector3>& verticesA, const b3AlignedObjectArray<b3Vector3>& verticesB, b3Scalar& depth)
+    const b3Float4& posA, const b3Quaternion& ornA,
+    const b3Float4& posB, const b3Quaternion& ornB,
+    const b3Float4& sep_axis, const b3AlignedObjectArray<b3Vector3>& verticesA, const b3AlignedObjectArray<b3Vector3>& verticesB, b3Scalar& depth)
 {
 	b3Scalar Min0, Max0;
 	b3Scalar Min1, Max1;
@@ -53,20 +55,20 @@ inline bool b3TestSepAxis(const b3ConvexPolyhedronData& hullA, const b3ConvexPol
 }
 
 inline bool b3FindSeparatingAxis(const b3ConvexPolyhedronData& hullA, const b3ConvexPolyhedronData& hullB,
-								 const b3Float4& posA1,
-								 const b3Quaternion& ornA,
-								 const b3Float4& posB1,
-								 const b3Quaternion& ornB,
-								 const b3AlignedObjectArray<b3Vector3>& verticesA,
-								 const b3AlignedObjectArray<b3Vector3>& uniqueEdgesA,
-								 const b3AlignedObjectArray<b3GpuFace>& facesA,
-								 const b3AlignedObjectArray<int>& indicesA,
-								 const b3AlignedObjectArray<b3Vector3>& verticesB,
-								 const b3AlignedObjectArray<b3Vector3>& uniqueEdgesB,
-								 const b3AlignedObjectArray<b3GpuFace>& facesB,
-								 const b3AlignedObjectArray<int>& indicesB,
+    const b3Float4& posA1,
+    const b3Quaternion& ornA,
+    const b3Float4& posB1,
+    const b3Quaternion& ornB,
+    const b3AlignedObjectArray<b3Vector3>& verticesA,
+    const b3AlignedObjectArray<b3Vector3>& uniqueEdgesA,
+    const b3AlignedObjectArray<b3GpuFace>& facesA,
+    const b3AlignedObjectArray<int>& indicesA,
+    const b3AlignedObjectArray<b3Vector3>& verticesB,
+    const b3AlignedObjectArray<b3Vector3>& uniqueEdgesB,
+    const b3AlignedObjectArray<b3GpuFace>& facesB,
+    const b3AlignedObjectArray<int>& indicesB,
 
-								 b3Vector3& sep)
+    b3Vector3& sep)
 {
 	B3_PROFILE("findSeparatingAxis");
 
@@ -194,4 +196,4 @@ inline bool b3FindSeparatingAxis(const b3ConvexPolyhedronData& hullA, const b3Co
 	return true;
 }
 
-#endif  //B3_FIND_SEPARATING_AXIS_H
+#endif //B3_FIND_SEPARATING_AXIS_H

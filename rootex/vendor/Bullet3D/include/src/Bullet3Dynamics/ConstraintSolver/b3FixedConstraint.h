@@ -31,4 +31,4 @@ public:
 	}
 };
 
-#endif  //B3_FIXED_CONSTRAINT_H
+#endif //B3_FIXED_CONSTRAINT_H

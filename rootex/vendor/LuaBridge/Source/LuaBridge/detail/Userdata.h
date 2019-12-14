@@ -34,8 +34,8 @@
 #include <cassert>
 #include <stdexcept>
 
-
-namespace luabridge {
+namespace luabridge
+{
 
 //==============================================================================
 /**
@@ -57,33 +57,33 @@ namespace luabridge {
 class Userdata
 {
 protected:
-  void* m_p; // subclasses must set this
+	void* m_p; // subclasses must set this
 
-  //--------------------------------------------------------------------------
-  /**
+	//--------------------------------------------------------------------------
+	/**
     Get an untyped pointer to the contained class.
   */
-  void* const getPointer ()
-  {
-    return m_p;
-  }
+	void* const getPointer()
+	{
+		return m_p;
+	}
 
 private:
-  //--------------------------------------------------------------------------
-  /**
+	//--------------------------------------------------------------------------
+	/**
     Validate and retrieve a Userdata on the stack.
 
     The Userdata must exactly match the corresponding class table or
     const table, or else a Lua error is raised. This is used for the
     __gc metamethod.
   */
-  static Userdata* getExactClass (lua_State* L, int index, void const* classKey)
-  {
-    return static_cast <Userdata*> (lua_touserdata (L, lua_absindex (L, index)));
-  }
+	static Userdata* getExactClass(lua_State* L, int index, void const* classKey)
+	{
+		return static_cast<Userdata*>(lua_touserdata(L, lua_absindex(L, index)));
+	}
 
-  //--------------------------------------------------------------------------
-  /**
+	//--------------------------------------------------------------------------
+	/**
     Validate and retrieve a Userdata on the stack.
 
     The Userdata must be derived from or the same as the given base class,
@@ -91,137 +91,138 @@ private:
     the resulting Userdata represents to a const object. We do the type check
     first so that the error message is informative.
   */
-  static Userdata* getClass (lua_State* L,
-                             int index,
-                             void const* registryConstKey,
-                             void const* registryClassKey,
-                             bool canBeConst)
-  {
-    index = lua_absindex (L, index);
+	static Userdata* getClass(lua_State* L,
+	    int index,
+	    void const* registryConstKey,
+	    void const* registryClassKey,
+	    bool canBeConst)
+	{
+		index = lua_absindex(L, index);
 
-    lua_getmetatable (L, index); // Stack: ot | nil
-    if (!lua_istable (L, -1))
-    {
-      lua_rawgetp (L, LUA_REGISTRYINDEX, registryClassKey); // Stack: registry metatable (rt) | nil
-      return throwBadArg (L, index);
-    }
+		lua_getmetatable(L, index); // Stack: ot | nil
+		if (!lua_istable(L, -1))
+		{
+			lua_rawgetp(L, LUA_REGISTRYINDEX, registryClassKey); // Stack: registry metatable (rt) | nil
+			return throwBadArg(L, index);
+		}
 
-    lua_rawgetp (L, -1, getConstKey ()); // Stack: ot | nil, const table (co) | nil
-    assert (lua_istable (L, -1) || lua_isnil (L, -1));
+		lua_rawgetp(L, -1, getConstKey()); // Stack: ot | nil, const table (co) | nil
+		assert(lua_istable(L, -1) || lua_isnil(L, -1));
 
-    // If const table is NOT present, object is const. Use non-const registry table
-    // if object cannot be const, so constness validation is done automatically.
-    // E.g. nonConstFn (constObj)
-    // -> canBeConst = false, isConst = true
-    // -> 'Class' registry table, 'const Class' object table
-    // -> 'expected Class, got const Class' 
-    bool isConst = lua_isnil (L, -1); // Stack: ot | nil, nil, rt
-    if (isConst && canBeConst)
-    {
-      lua_rawgetp (L, LUA_REGISTRYINDEX, registryConstKey); // Stack: ot, nil, rt
-    }
-    else
-    {
-      lua_rawgetp (L, LUA_REGISTRYINDEX, registryClassKey); // Stack: ot, co, rt
-    }
+		// If const table is NOT present, object is const. Use non-const registry table
+		// if object cannot be const, so constness validation is done automatically.
+		// E.g. nonConstFn (constObj)
+		// -> canBeConst = false, isConst = true
+		// -> 'Class' registry table, 'const Class' object table
+		// -> 'expected Class, got const Class'
+		bool isConst = lua_isnil(L, -1); // Stack: ot | nil, nil, rt
+		if (isConst && canBeConst)
+		{
+			lua_rawgetp(L, LUA_REGISTRYINDEX, registryConstKey); // Stack: ot, nil, rt
+		}
+		else
+		{
+			lua_rawgetp(L, LUA_REGISTRYINDEX, registryClassKey); // Stack: ot, co, rt
+		}
 
-    lua_insert (L, -3); // Stack: rt, ot, co | nil
-    lua_pop (L, 1); // Stack: rt, ot
+		lua_insert(L, -3); // Stack: rt, ot, co | nil
+		lua_pop(L, 1); // Stack: rt, ot
 
-    for (;;)
-    {
-      if (lua_rawequal (L, -1, -2))
-      {
-        lua_pop (L, 2); // Stack: -
-        return static_cast <Userdata*> (lua_touserdata (L, index));
-      }
+		for (;;)
+		{
+			if (lua_rawequal(L, -1, -2))
+			{
+				lua_pop(L, 2); // Stack: -
+				return static_cast<Userdata*>(lua_touserdata(L, index));
+			}
 
-      // Replace current metatable with it's base class.
-      lua_rawgetp (L, -1, getParentKey ()); // Stack: rt, ot, parent ot (pot) | nil
+			// Replace current metatable with it's base class.
+			lua_rawgetp(L, -1, getParentKey()); // Stack: rt, ot, parent ot (pot) | nil
 
-      if (lua_isnil (L, -1)) // Stack: rt, ot, nil
-      {
-        // Drop the object metatable because it may be some parent metatable
-        lua_pop (L, 2); // Stack: rt
-        return throwBadArg (L, index);
-      }
+			if (lua_isnil(L, -1)) // Stack: rt, ot, nil
+			{
+				// Drop the object metatable because it may be some parent metatable
+				lua_pop(L, 2); // Stack: rt
+				return throwBadArg(L, index);
+			}
 
-      lua_remove (L, -2); // Stack: rt, pot
-    }
+			lua_remove(L, -2); // Stack: rt, pot
+		}
 
-    // no return
-  }
+		// no return
+	}
 
-  static Userdata* throwBadArg (lua_State* L, int index)
-  {
-    assert (lua_istable (L, -1) || lua_isnil (L, -1)); // Stack: rt | nil
+	static Userdata* throwBadArg(lua_State* L, int index)
+	{
+		assert(lua_istable(L, -1) || lua_isnil(L, -1)); // Stack: rt | nil
 
-    const char* expected = 0;
-    if (lua_isnil (L, -1)) // Stack: nil
-    {
-      expected = "unregistered class";
-    }
-    else
-    {
-      lua_rawgetp (L, -1, getTypeKey ()); // Stack: rt, registry type
-      expected = lua_tostring (L, -1);
-    }
+		const char* expected = 0;
+		if (lua_isnil(L, -1)) // Stack: nil
+		{
+			expected = "unregistered class";
+		}
+		else
+		{
+			lua_rawgetp(L, -1, getTypeKey()); // Stack: rt, registry type
+			expected = lua_tostring(L, -1);
+		}
 
-    const char* got = 0;
-    if (lua_isuserdata (L, index))
-    {
-      lua_getmetatable (L, index); // Stack: ..., ot | nil
-      if (lua_istable (L, -1)) // Stack: ..., ot
-      {
-        lua_rawgetp (L, -1, getTypeKey ()); // Stack: ..., ot, object type | nil
-        if (lua_isstring (L, -1))
-        {
-          got = lua_tostring (L, -1);
-        }
-      }
-    }
-    if (!got)
-    {
-      got = lua_typename (L, lua_type (L, index));
-    }
+		const char* got = 0;
+		if (lua_isuserdata(L, index))
+		{
+			lua_getmetatable(L, index); // Stack: ..., ot | nil
+			if (lua_istable(L, -1)) // Stack: ..., ot
+			{
+				lua_rawgetp(L, -1, getTypeKey()); // Stack: ..., ot, object type | nil
+				if (lua_isstring(L, -1))
+				{
+					got = lua_tostring(L, -1);
+				}
+			}
+		}
+		if (!got)
+		{
+			got = lua_typename(L, lua_type(L, index));
+		}
 
-    luaL_argerror (L, index, lua_pushfstring (L, "%s expected, got %s", expected, got));
-    return 0;
-  }
+		luaL_argerror(L, index, lua_pushfstring(L, "%s expected, got %s", expected, got));
+		return 0;
+	}
 
 public:
-  virtual ~Userdata () { }
+	virtual ~Userdata() {}
 
-  //--------------------------------------------------------------------------
-  /**
+	//--------------------------------------------------------------------------
+	/**
     Returns the Userdata* if the class on the Lua stack matches.
 
     If the class does not match, a Lua error is raised.
   */
-  template <class T>
-  static inline Userdata* getExact (lua_State* L, int index)
-  {
-    return getExactClass (L, index, ClassInfo <T>::getClassKey ());
-  }
+	template <class T>
+	static inline Userdata* getExact(lua_State* L, int index)
+	{
+		return getExactClass(L, index, ClassInfo<T>::getClassKey());
+	}
 
-  //--------------------------------------------------------------------------
-  /**
+	//--------------------------------------------------------------------------
+	/**
     Get a pointer to the class from the Lua stack.
 
     If the object is not the class or a subclass, or it violates the
     const-ness, a Lua error is raised.
   */
-  template <class T>
-  static inline T* get (lua_State* L, int index, bool canBeConst)
-  {
-    if (lua_isnil (L, index))
-      return 0;
+	template <class T>
+	static inline T* get(lua_State* L, int index, bool canBeConst)
+	{
+		if (lua_isnil(L, index))
+			return 0;
 
-    return static_cast <T*> (getClass (
-      L, index, ClassInfo <T>::getConstKey (),
-      ClassInfo <T>::getClassKey (),
-      canBeConst)->getPointer ());
-  }
+		return static_cast<T*>(getClass(
+		    L, index, ClassInfo<T>::getConstKey(),
+		    ClassInfo<T>::getClassKey(),
+		    canBeConst)
+		                           ->getPointer());
+	}
 };
 
 //----------------------------------------------------------------------------
@@ -235,61 +236,61 @@ template <class T>
 class UserdataValue : public Userdata
 {
 private:
-  UserdataValue <T> (UserdataValue <T> const&);
-  UserdataValue <T> operator= (UserdataValue <T> const&);
+	UserdataValue<T>(UserdataValue<T> const&);
+	UserdataValue<T> operator=(UserdataValue<T> const&);
 
-  char m_storage [sizeof (T)];
+	char m_storage[sizeof(T)];
 
-  inline T* getObject ()
-  {
-    // If this fails to compile it means you forgot to provide
-    // a Container specialization for your container!
-    //
-    return reinterpret_cast <T*> (&m_storage [0]);
-  }
+	inline T* getObject()
+	{
+		// If this fails to compile it means you forgot to provide
+		// a Container specialization for your container!
+		//
+		return reinterpret_cast<T*>(&m_storage[0]);
+	}
 
 private:
-  /**
+	/**
     Used for placement construction.
   */
-  UserdataValue ()
-  {
-    m_p = getObject ();
-  }
+	UserdataValue()
+	{
+		m_p = getObject();
+	}
 
-  ~UserdataValue ()
-  {
-    getObject ()->~T ();
-  }
+	~UserdataValue()
+	{
+		getObject()->~T();
+	}
 
 public:
-  /**
+	/**
     Push a T via placement new.
 
     The caller is responsible for calling placement new using the
     returned uninitialized storage.
   */
-  static void* place (lua_State* const L)
-  {
-    UserdataValue <T>* const ud = new (
-      lua_newuserdata (L, sizeof (UserdataValue <T>))) UserdataValue <T> ();
-    lua_rawgetp (L, LUA_REGISTRYINDEX, ClassInfo <T>::getClassKey ());
-    if (!lua_istable (L, -1))
-    {
-      throw std::logic_error ("The class is not registered in LuaBridge");
-    }
-    lua_setmetatable (L, -2);
-    return ud->getPointer ();
-  }
+	static void* place(lua_State* const L)
+	{
+		UserdataValue<T>* const ud = new (
+		    lua_newuserdata(L, sizeof(UserdataValue<T>))) UserdataValue<T>();
+		lua_rawgetp(L, LUA_REGISTRYINDEX, ClassInfo<T>::getClassKey());
+		if (!lua_istable(L, -1))
+		{
+			throw std::logic_error("The class is not registered in LuaBridge");
+		}
+		lua_setmetatable(L, -2);
+		return ud->getPointer();
+	}
 
-  /**
+	/**
     Push T via copy construction from U.
   */
-  template <class U>
-  static inline void push (lua_State* const L, U const& u)
-  {
-    new (place (L)) U (u);
-  }
+	template <class U>
+	static inline void push(lua_State* const L, U const& u)
+	{
+		new (place(L)) U(u);
+	}
 };
 
 //----------------------------------------------------------------------------
@@ -301,54 +302,54 @@ public:
 class UserdataPtr : public Userdata
 {
 private:
-  UserdataPtr (UserdataPtr const&);
-  UserdataPtr operator= (UserdataPtr const&);
+	UserdataPtr(UserdataPtr const&);
+	UserdataPtr operator=(UserdataPtr const&);
 
 private:
-  /** Push a pointer to object using metatable key.
+	/** Push a pointer to object using metatable key.
   */
-  static void push (lua_State* L, const void* p, void const* const key)
-  {
-    new (lua_newuserdata (L, sizeof (UserdataPtr))) UserdataPtr (const_cast <void*> (p));
-    lua_rawgetp (L, LUA_REGISTRYINDEX, key);
-    if (!lua_istable (L, -1))
-    {
-      throw std::logic_error ("The class is not registered in LuaBridge");
-    }
-    lua_setmetatable (L, -2);
-  }
+	static void push(lua_State* L, const void* p, void const* const key)
+	{
+		new (lua_newuserdata(L, sizeof(UserdataPtr))) UserdataPtr(const_cast<void*>(p));
+		lua_rawgetp(L, LUA_REGISTRYINDEX, key);
+		if (!lua_istable(L, -1))
+		{
+			throw std::logic_error("The class is not registered in LuaBridge");
+		}
+		lua_setmetatable(L, -2);
+	}
 
-  explicit UserdataPtr (void* const p)
-  {
-    m_p = p;
+	explicit UserdataPtr(void* const p)
+	{
+		m_p = p;
 
-    // Can't construct with a null pointer!
-    //
-    assert (m_p != 0);
-  }
+		// Can't construct with a null pointer!
+		//
+		assert(m_p != 0);
+	}
 
 public:
-  /** Push non-const pointer to object.
+	/** Push non-const pointer to object.
   */
-  template <class T>
-  static void push (lua_State* const L, T* const p)
-  {
-    if (p)
-      push (L, p, ClassInfo <T>::getClassKey ());
-    else
-      lua_pushnil (L);
-  }
+	template <class T>
+	static void push(lua_State* const L, T* const p)
+	{
+		if (p)
+			push(L, p, ClassInfo<T>::getClassKey());
+		else
+			lua_pushnil(L);
+	}
 
-  /** Push const pointer to object.
+	/** Push const pointer to object.
   */
-  template <class T>
-  static void push (lua_State* const L, T const* const p)
-  {
-    if (p)
-      push (L, p, ClassInfo <T>::getConstKey ());
-    else
-      lua_pushnil (L);
-  }
+	template <class T>
+	static void push(lua_State* const L, T const* const p)
+	{
+		if (p)
+			push(L, p, ClassInfo<T>::getConstKey());
+		else
+			lua_pushnil(L);
+	}
 };
 
 //============================================================================
@@ -362,39 +363,41 @@ template <class C>
 class UserdataShared : public Userdata
 {
 private:
-  UserdataShared (UserdataShared <C> const&);
-  UserdataShared <C>& operator= (UserdataShared <C> const&);
+	UserdataShared(UserdataShared<C> const&);
+	UserdataShared<C>& operator=(UserdataShared<C> const&);
 
-  typedef typename TypeTraits::removeConst <
-    typename ContainerTraits <C>::Type>::Type T;
+	typedef typename TypeTraits::removeConst<
+	    typename ContainerTraits<C>::Type>::Type T;
 
-  C m_c;
+	C m_c;
 
 private:
-  ~UserdataShared ()
-  {
-  }
+	~UserdataShared()
+	{
+	}
 
 public:
-  /**
+	/**
     Construct from a container to the class or a derived class.
   */
-  template <class U>
-  explicit UserdataShared (U const& u) : m_c (u)
-  {
-    m_p = const_cast <void*> (reinterpret_cast <void const*> (
-        (ContainerTraits <C>::get (m_c))));
-  }
+	template <class U>
+	explicit UserdataShared(U const& u)
+	    : m_c(u)
+	{
+		m_p = const_cast<void*>(reinterpret_cast<void const*>(
+		    (ContainerTraits<C>::get(m_c))));
+	}
 
-  /**
+	/**
     Construct from a pointer to the class or a derived class.
   */
-  template <class U>
-  explicit UserdataShared (U* u) : m_c (u)
-  {
-    m_p = const_cast <void*> (reinterpret_cast <void const*> (
-        (ContainerTraits <C>::get (m_c))));
-  }
+	template <class U>
+	explicit UserdataShared(U* u)
+	    : m_c(u)
+	{
+		m_p = const_cast<void*>(reinterpret_cast<void const*>(
+		    (ContainerTraits<C>::get(m_c))));
+	}
 };
 
 //----------------------------------------------------------------------------
@@ -406,80 +409,80 @@ public:
 template <class C, bool makeObjectConst>
 struct UserdataSharedHelper
 {
-  typedef typename TypeTraits::removeConst <
-    typename ContainerTraits <C>::Type>::Type T;
+	typedef typename TypeTraits::removeConst<
+	    typename ContainerTraits<C>::Type>::Type T;
 
-  static void push (lua_State* L, C const& c)
-  {
-    if (ContainerTraits <C>::get (c) != 0)
-    {
-      new (lua_newuserdata (L, sizeof (UserdataShared <C>))) UserdataShared <C> (c);
-      lua_rawgetp (L, LUA_REGISTRYINDEX, ClassInfo <T>::getClassKey ());
-      // If this goes off it means the class T is unregistered!
-      assert (lua_istable (L, -1));
-      lua_setmetatable (L, -2);
-    }
-    else
-    {
-      lua_pushnil (L);
-    }
-  }
+	static void push(lua_State* L, C const& c)
+	{
+		if (ContainerTraits<C>::get(c) != 0)
+		{
+			new (lua_newuserdata(L, sizeof(UserdataShared<C>))) UserdataShared<C>(c);
+			lua_rawgetp(L, LUA_REGISTRYINDEX, ClassInfo<T>::getClassKey());
+			// If this goes off it means the class T is unregistered!
+			assert(lua_istable(L, -1));
+			lua_setmetatable(L, -2);
+		}
+		else
+		{
+			lua_pushnil(L);
+		}
+	}
 
-  static void push (lua_State* L, T* const t)
-  {
-    if (t)
-    {
-      new (lua_newuserdata (L, sizeof (UserdataShared <C>))) UserdataShared <C> (t);
-      lua_rawgetp (L, LUA_REGISTRYINDEX, ClassInfo <T>::getClassKey ());
-      // If this goes off it means the class T is unregistered!
-      assert (lua_istable (L, -1));
-      lua_setmetatable (L, -2);
-    }
-    else
-    {
-      lua_pushnil (L);
-    }
-  }
+	static void push(lua_State* L, T* const t)
+	{
+		if (t)
+		{
+			new (lua_newuserdata(L, sizeof(UserdataShared<C>))) UserdataShared<C>(t);
+			lua_rawgetp(L, LUA_REGISTRYINDEX, ClassInfo<T>::getClassKey());
+			// If this goes off it means the class T is unregistered!
+			assert(lua_istable(L, -1));
+			lua_setmetatable(L, -2);
+		}
+		else
+		{
+			lua_pushnil(L);
+		}
+	}
 };
 
 // const objects
 template <class C>
-struct UserdataSharedHelper <C, true>
+struct UserdataSharedHelper<C, true>
 {
-  typedef typename TypeTraits::removeConst <
-    typename ContainerTraits <C>::Type>::Type T;
+	typedef typename TypeTraits::removeConst<
+	    typename ContainerTraits<C>::Type>::Type T;
 
-  static void push (lua_State* L, C const& c)
-  {
-    if (ContainerTraits <C>::get (c) != 0)
-    {
-      new (lua_newuserdata (L, sizeof (UserdataShared <C>))) UserdataShared <C> (c);
-      lua_rawgetp (L, LUA_REGISTRYINDEX, ClassInfo <T>::getConstKey ());
-      // If this goes off it means the class T is unregistered!
-      assert (lua_istable (L, -1));
-      lua_setmetatable (L, -2);
-    }
-    else
-    {
-      lua_pushnil (L);
-    }
-  }
+	static void push(lua_State* L, C const& c)
+	{
+		if (ContainerTraits<C>::get(c) != 0)
+		{
+			new (lua_newuserdata(L, sizeof(UserdataShared<C>))) UserdataShared<C>(c);
+			lua_rawgetp(L, LUA_REGISTRYINDEX, ClassInfo<T>::getConstKey());
+			// If this goes off it means the class T is unregistered!
+			assert(lua_istable(L, -1));
+			lua_setmetatable(L, -2);
+		}
+		else
+		{
+			lua_pushnil(L);
+		}
+	}
 
-  static void push (lua_State* L, T* const t)
-  {
-    if (t)
-    {
-      new (lua_newuserdata (L, sizeof (UserdataShared <C>))) UserdataShared <C> (t);
-      lua_rawgetp (L, LUA_REGISTRYINDEX, ClassInfo <T>::getConstKey ());
-      // If this goes off it means the class T is unregistered!
-      assert (lua_istable (L, -1));
-      lua_setmetatable (L, -2);
-    }
-    else
-    {
-      lua_pushnil (L);
-    }
-  }
+	static void push(lua_State* L, T* const t)
+	{
+		if (t)
+		{
+			new (lua_newuserdata(L, sizeof(UserdataShared<C>))) UserdataShared<C>(t);
+			lua_rawgetp(L, LUA_REGISTRYINDEX, ClassInfo<T>::getConstKey());
+			// If this goes off it means the class T is unregistered!
+			assert(lua_istable(L, -1));
+			lua_setmetatable(L, -2);
+		}
+		else
+		{
+			lua_pushnil(L);
+		}
+	}
 };
 
 /**
@@ -494,19 +497,19 @@ struct UserdataSharedHelper <C, true>
 template <class C, bool byContainer>
 struct StackHelper
 {
-  static void push (lua_State* L, C const& c)
-  {
-    UserdataSharedHelper <C,
-      TypeTraits::isConst <typename ContainerTraits <C>::Type>::value>::push (L, c);
-  }
+	static void push(lua_State* L, C const& c)
+	{
+		UserdataSharedHelper<C,
+		    TypeTraits::isConst<typename ContainerTraits<C>::Type>::value>::push(L, c);
+	}
 
-  typedef typename TypeTraits::removeConst <
-    typename ContainerTraits <C>::Type>::Type T;
+	typedef typename TypeTraits::removeConst<
+	    typename ContainerTraits<C>::Type>::Type T;
 
-  static C get (lua_State* L, int index)
-  {
-    return Userdata::get <T> (L, index, true);
-  }
+	static C get(lua_State* L, int index)
+	{
+		return Userdata::get<T>(L, index, true);
+	}
 };
 
 /**
@@ -517,19 +520,18 @@ struct StackHelper
   retrieved may result in undefined behavior if Lua garbage collected it.
 */
 template <class T>
-struct StackHelper <T, false>
+struct StackHelper<T, false>
 {
-  static inline void push (lua_State* L, T const& t)
-  {
-    UserdataValue <T>::push (L, t);
-  }
+	static inline void push(lua_State* L, T const& t)
+	{
+		UserdataValue<T>::push(L, t);
+	}
 
-  static inline T const& get (lua_State* L, int index)
-  {
-    return *Userdata::get <T> (L, index, true);
-  }
+	static inline T const& get(lua_State* L, int index)
+	{
+		return *Userdata::get<T>(L, index, true);
+	}
 };
-
 
 //------------------------------------------------------------------------------
 /**
@@ -543,43 +545,42 @@ struct StackHelper <T, false>
 template <class C, bool byContainer>
 struct RefStackHelper
 {
-  typedef C return_type;
+	typedef C return_type;
 
-  static inline void push (lua_State* L, C const& t)
-  {
-    UserdataSharedHelper <C,
-      TypeTraits::isConst <typename ContainerTraits <C>::Type>::value>::push (L, t);
-  }
+	static inline void push(lua_State* L, C const& t)
+	{
+		UserdataSharedHelper<C,
+		    TypeTraits::isConst<typename ContainerTraits<C>::Type>::value>::push(L, t);
+	}
 
-  typedef typename TypeTraits::removeConst <
-    typename ContainerTraits <C>::Type>::Type T;
+	typedef typename TypeTraits::removeConst<
+	    typename ContainerTraits<C>::Type>::Type T;
 
-  static return_type get (lua_State* L, int index)
-  {
-    return Userdata::get <T> (L, index, true);
-  }
+	static return_type get(lua_State* L, int index)
+	{
+		return Userdata::get<T>(L, index, true);
+	}
 };
 
 template <class T>
-struct RefStackHelper <T, false>
+struct RefStackHelper<T, false>
 {
-  typedef T& return_type;
+	typedef T& return_type;
 
-  static void push (lua_State* L, T const& t)
-  {
-    UserdataPtr::push (L, &t);
-  }
+	static void push(lua_State* L, T const& t)
+	{
+		UserdataPtr::push(L, &t);
+	}
 
-  static return_type get (lua_State* L, int index)
-  {
-    T* t = Userdata::get <T> (L, index, true);
+	static return_type get(lua_State* L, int index)
+	{
+		T* t = Userdata::get<T>(L, index, true);
 
-    if (!t)
-      luaL_error (L, "nil passed to reference");
-    return *t;
-  }
+		if (!t)
+			luaL_error(L, "nil passed to reference");
+		return *t;
+	}
 };
-
 
 /**
  * Voider class template. Used to force a comiler to instantiate
@@ -589,9 +590,8 @@ struct RefStackHelper <T, false>
 template <class T>
 struct Void
 {
-  typedef void Type;
+	typedef void Type;
 };
-
 
 /**
  * Trait class that selects whether to return a user registered
@@ -601,23 +601,23 @@ struct Void
 template <class T, class Enabler = void>
 struct UserdataGetter
 {
-  typedef T* ReturnType;
+	typedef T* ReturnType;
 
-  static ReturnType get (lua_State* L, int index)
-  {
-    return Userdata::get <T> (L, index, false);
-  }
+	static ReturnType get(lua_State* L, int index)
+	{
+		return Userdata::get<T>(L, index, false);
+	}
 };
 
 template <class T>
-struct UserdataGetter <T, typename Void <T (*) ()>::Type>
+struct UserdataGetter<T, typename Void<T (*)()>::Type>
 {
-  typedef T ReturnType;
+	typedef T ReturnType;
 
-  static ReturnType get (lua_State* L, int index)
-  {
-    return StackHelper <T, TypeTraits::isContainer <T>::value>::get (L, index);
-  }
+	static ReturnType get(lua_State* L, int index)
+	{
+		return StackHelper<T, TypeTraits::isContainer<T>::value>::get(L, index);
+	}
 };
 
 //==============================================================================
@@ -628,22 +628,21 @@ struct UserdataGetter <T, typename Void <T (*) ()>::Type>
 template <class T>
 struct Stack
 {
-  typedef void IsUserdata;
+	typedef void IsUserdata;
 
-  typedef UserdataGetter <T> Getter;
-  typedef typename Getter::ReturnType ReturnType;
+	typedef UserdataGetter<T> Getter;
+	typedef typename Getter::ReturnType ReturnType;
 
-  static void push (lua_State* L, T const& value)
-  {
-    StackHelper <T, TypeTraits::isContainer <T>::value>::push (L, value);
-  }
+	static void push(lua_State* L, T const& value)
+	{
+		StackHelper<T, TypeTraits::isContainer<T>::value>::push(L, value);
+	}
 
-  static ReturnType get (lua_State* L, int index)
-  {
-    return Getter::get (L, index);
-  }
+	static ReturnType get(lua_State* L, int index)
+	{
+		return Getter::get(L, index);
+	}
 };
-
 
 /**
  * Trait class indicating whether the parameter type must be
@@ -653,15 +652,14 @@ struct Stack
 template <class T, class Enable = void>
 struct IsUserdata
 {
-  static const bool value = false;
+	static const bool value = false;
 };
 
 template <class T>
-struct IsUserdata <T, typename Void <typename Stack <T>::IsUserdata>::Type>
+struct IsUserdata<T, typename Void<typename Stack<T>::IsUserdata>::Type>
 {
-  static const bool value = true;
+	static const bool value = true;
 };
-
 
 /**
  * Trait class that selects a specific push/get implemenation.
@@ -671,72 +669,72 @@ struct StackOpSelector;
 
 // pointer
 template <class T>
-struct StackOpSelector <T*, true>
+struct StackOpSelector<T*, true>
 {
-  typedef T* ReturnType;
+	typedef T* ReturnType;
 
-  static void push (lua_State* L, T* value)
-  {
-    UserdataPtr::push (L, value);
-  }
+	static void push(lua_State* L, T* value)
+	{
+		UserdataPtr::push(L, value);
+	}
 
-  static T* get (lua_State* L, int index)
-  {
-    return Userdata::get <T> (L, index, false);
-  }
+	static T* get(lua_State* L, int index)
+	{
+		return Userdata::get<T>(L, index, false);
+	}
 };
 
 // pointer to const
 template <class T>
-struct StackOpSelector <const T*, true>
+struct StackOpSelector<const T*, true>
 {
-  typedef const T* ReturnType;
+	typedef const T* ReturnType;
 
-  static void push (lua_State* L, const T* value)
-  {
-    UserdataPtr::push (L, value);
-  }
+	static void push(lua_State* L, const T* value)
+	{
+		UserdataPtr::push(L, value);
+	}
 
-  static const T* get (lua_State* L, int index)
-  {
-    return Userdata::get <T> (L, index, true);
-  }
+	static const T* get(lua_State* L, int index)
+	{
+		return Userdata::get<T>(L, index, true);
+	}
 };
 
 // reference
 template <class T>
-struct StackOpSelector <T&, true>
+struct StackOpSelector<T&, true>
 {
-  typedef RefStackHelper <T, TypeTraits::isContainer <T>::value> Helper;
-  typedef typename Helper::return_type ReturnType;
+	typedef RefStackHelper<T, TypeTraits::isContainer<T>::value> Helper;
+	typedef typename Helper::return_type ReturnType;
 
-  static void push (lua_State* L, T& value)
-  {
-    UserdataPtr::push (L, &value);
-  }
+	static void push(lua_State* L, T& value)
+	{
+		UserdataPtr::push(L, &value);
+	}
 
-  static ReturnType get (lua_State* L, int index)
-  {
-    return Helper::get (L, index);
-  }
+	static ReturnType get(lua_State* L, int index)
+	{
+		return Helper::get(L, index);
+	}
 };
 
 // reference to const
 template <class T>
-struct StackOpSelector <const T&, true>
+struct StackOpSelector<const T&, true>
 {
-  typedef RefStackHelper <T, TypeTraits::isContainer <T>::value> Helper;
-  typedef typename Helper::return_type ReturnType;
+	typedef RefStackHelper<T, TypeTraits::isContainer<T>::value> Helper;
+	typedef typename Helper::return_type ReturnType;
 
-  static void push (lua_State* L, const T& value)
-  {
-    Helper::push (L, value);
-  }
+	static void push(lua_State* L, const T& value)
+	{
+		Helper::push(L, value);
+	}
 
-  static ReturnType get (lua_State* L, int index)
-  {
-    return Helper::get (L, index);
-  }
+	static ReturnType get(lua_State* L, int index)
+	{
+		return Helper::get(L, index);
+	}
 };
 
 } // namespace luabridge

@@ -24,7 +24,7 @@ subject to the following restrictions:
 #else
 #define btGearConstraintData btGearConstraintFloatData
 #define btGearConstraintDataName "btGearConstraintFloatData"
-#endif  //BT_USE_DOUBLE_PRECISION
+#endif //BT_USE_DOUBLE_PRECISION
 
 ///The btGeatConstraint will couple the angular velocity for two bodies around given local axis and ratio.
 ///See Bullet/Demos/ConstraintDemo for an example use.
@@ -143,4 +143,4 @@ SIMD_FORCE_INLINE const char* btGearConstraint::serialize(void* dataBuffer, btSe
 	return btGearConstraintDataName;
 }
 
-#endif  //BT_GEAR_CONSTRAINT_H
+#endif //BT_GEAR_CONSTRAINT_H

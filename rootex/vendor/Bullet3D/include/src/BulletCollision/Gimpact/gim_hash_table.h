@@ -34,12 +34,12 @@ email: projectileman@yahoo.com
 
 #include "gim_radixsort.h"
 
-#define GIM_INVALID_HASH 0xffffffff  //!< A very very high value
+#define GIM_INVALID_HASH 0xffffffff //!< A very very high value
 #define GIM_DEFAULT_HASH_TABLE_SIZE 380
 #define GIM_DEFAULT_HASH_TABLE_NODE_SIZE 4
 #define GIM_HASH_TABLE_GROW_FACTOR 2
 
-#define GIM_MIN_RADIX_SORT_SIZE 860  //!< calibrated on a PIII
+#define GIM_MIN_RADIX_SORT_SIZE 860 //!< calibrated on a PIII
 
 template <typename T>
 struct GIM_HASH_TABLE_NODE
@@ -65,21 +65,24 @@ struct GIM_HASH_TABLE_NODE
 	bool operator<(const GIM_HASH_TABLE_NODE<T>& other) const
 	{
 		///inverse order, further objects are first
-		if (m_key < other.m_key) return true;
+		if (m_key < other.m_key)
+			return true;
 		return false;
 	}
 
 	bool operator>(const GIM_HASH_TABLE_NODE<T>& other) const
 	{
 		///inverse order, further objects are first
-		if (m_key > other.m_key) return true;
+		if (m_key > other.m_key)
+			return true;
 		return false;
 	}
 
 	bool operator==(const GIM_HASH_TABLE_NODE<T>& other) const
 	{
 		///inverse order, further objects are first
-		if (m_key == other.m_key) return true;
+		if (m_key == other.m_key)
+			return true;
 		return false;
 	}
 };
@@ -138,14 +141,14 @@ void gim_sort_hash_node_array(T* array, GUINT array_count)
 // Note: assumes long is at least 32 bits.
 #define GIM_NUM_PRIME 28
 
-static const GUINT gim_prime_list[GIM_NUM_PRIME] =
-	{
-		53ul, 97ul, 193ul, 389ul, 769ul,
-		1543ul, 3079ul, 6151ul, 12289ul, 24593ul,
-		49157ul, 98317ul, 196613ul, 393241ul, 786433ul,
-		1572869ul, 3145739ul, 6291469ul, 12582917ul, 25165843ul,
-		50331653ul, 100663319ul, 201326611ul, 402653189ul, 805306457ul,
-		1610612741ul, 3221225473ul, 4294967291ul};
+static const GUINT gim_prime_list[GIM_NUM_PRIME] = {
+	53ul, 97ul, 193ul, 389ul, 769ul,
+	1543ul, 3079ul, 6151ul, 12289ul, 24593ul,
+	49157ul, 98317ul, 196613ul, 393241ul, 786433ul,
+	1572869ul, 3145739ul, 6291469ul, 12582917ul, 25165843ul,
+	50331653ul, 100663319ul, 201326611ul, 402653189ul, 805306457ul,
+	1610612741ul, 3221225473ul, 4294967291ul
+};
 
 inline GUINT gim_next_prime(GUINT number)
 {
@@ -185,9 +188,9 @@ protected:
 	bool m_sorted;
 
 	///Hash table data management. The hash table has the indices to the corresponding m_nodes array
-	GUINT* m_hash_table;  //!<
-	GUINT m_table_size;   //!<
-	GUINT m_node_size;    //!<
+	GUINT* m_hash_table; //!<
+	GUINT m_table_size; //!<
+	GUINT m_node_size; //!<
 	GUINT m_min_hash_table_size;
 
 	//! Returns the cell index
@@ -202,7 +205,8 @@ protected:
 			GUINT value = m_hash_table[start_index];
 			if (value != GIM_INVALID_HASH)
 			{
-				if (nodesptr[value].m_key == hashkey) return start_index;
+				if (nodesptr[value].m_key == hashkey)
+					return start_index;
 			}
 			start_index++;
 		}
@@ -243,8 +247,10 @@ protected:
     */
 	inline void _reserve_table_memory(GUINT newtablesize)
 	{
-		if (newtablesize == 0) return;
-		if (m_node_size == 0) return;
+		if (newtablesize == 0)
+			return;
+		if (m_node_size == 0)
+			return;
 
 		//Get a Prime size
 
@@ -260,14 +266,15 @@ protected:
 		GUINT datasize = m_table_size * m_node_size;
 		for (GUINT i = 0; i < datasize; i++)
 		{
-			m_hash_table[i] = GIM_INVALID_HASH;  // invalidate keys
+			m_hash_table[i] = GIM_INVALID_HASH; // invalidate keys
 		}
 	}
 
 	//! Clear all memory for the hash table
 	inline void _clear_table_memory()
 	{
-		if (m_hash_table == NULL) return;
+		if (m_hash_table == NULL)
+			return;
 		gim_free(m_hash_table);
 		m_hash_table = NULL;
 		m_table_size = 0;
@@ -288,7 +295,7 @@ protected:
 				GUINT index = _find_avaliable_cell(nodekey);
 
 				if (m_hash_table[index] != GIM_INVALID_HASH)
-				{  //The new index is alreade used... discard this new incomming object, repeated key
+				{ //The new index is alreade used... discard this new incomming object, repeated key
 					btAssert(m_hash_table[index] == nodekey);
 					nodesptr[i].m_key = GIM_INVALID_HASH;
 				}
@@ -316,7 +323,8 @@ protected:
 	//! Destroy hash table memory
 	inline void _destroy()
 	{
-		if (m_hash_table == NULL) return;
+		if (m_hash_table == NULL)
+			return;
 		_clear_table_memory();
 	}
 
@@ -338,7 +346,8 @@ protected:
 	//! erase by index in hash table
 	inline bool _erase_by_index_hash_table(GUINT index)
 	{
-		if (index >= m_nodes.size()) return false;
+		if (index >= m_nodes.size())
+			return false;
 		if (m_nodes[index].m_key != GIM_INVALID_HASH)
 		{
 			//Search for the avaliable cell in buffer
@@ -356,11 +365,13 @@ protected:
 	//! erase by key in hash table
 	inline bool _erase_hash_table(GUINT hashkey)
 	{
-		if (hashkey == GIM_INVALID_HASH) return false;
+		if (hashkey == GIM_INVALID_HASH)
+			return false;
 
 		//Search for the avaliable cell in buffer
 		GUINT cell_index = _find_cell(hashkey);
-		if (cell_index == GIM_INVALID_HASH) return false;
+		if (cell_index == GIM_INVALID_HASH)
+			return false;
 
 		GUINT index = m_hash_table[cell_index];
 		m_hash_table[cell_index] = GIM_INVALID_HASH;
@@ -387,7 +398,8 @@ protected:
 
 		GUINT value_key = m_hash_table[cell_index];
 
-		if (value_key != GIM_INVALID_HASH) return value_key;  // Not overrited
+		if (value_key != GIM_INVALID_HASH)
+			return value_key; // Not overrited
 
 		m_hash_table[cell_index] = m_nodes.size();
 
@@ -415,9 +427,9 @@ protected:
 		GUINT value_key = m_hash_table[cell_index];
 
 		if (value_key != GIM_INVALID_HASH)
-		{  //replaces the existing
+		{ //replaces the existing
 			m_nodes[value_key] = _node_type(hashkey, value);
-			return value_key;  // index of the replaced element
+			return value_key; // index of the replaced element
 		}
 
 		m_hash_table[cell_index] = m_nodes.size();
@@ -429,16 +441,19 @@ protected:
 	///Sorted array data management. The hash table has the indices to the corresponding m_nodes array
 	inline bool _erase_sorted(GUINT index)
 	{
-		if (index >= (GUINT)m_nodes.size()) return false;
+		if (index >= (GUINT)m_nodes.size())
+			return false;
 		m_nodes.erase_sorted(index);
-		if (m_nodes.size() < 2) m_sorted = false;
+		if (m_nodes.size() < 2)
+			m_sorted = false;
 		return true;
 	}
 
 	//! faster, but unsorted
 	inline bool _erase_unsorted(GUINT index)
 	{
-		if (index >= m_nodes.size()) return false;
+		if (index >= m_nodes.size())
+			return false;
 
 		GUINT lastindex = m_nodes.size() - 1;
 		if (index < lastindex && m_hash_table != 0)
@@ -484,7 +499,7 @@ protected:
 		_node_type* ptr = m_nodes.pointer();
 
 		bool found = gim_binary_search_ex(
-			ptr, 0, last_index, result_ind, hashkey, GIM_HASH_NODE_CMP_KEY_MACRO());
+		    ptr, 0, last_index, result_ind, hashkey, GIM_HASH_NODE_CMP_KEY_MACRO());
 
 		//Insert before found index
 		if (found)
@@ -512,7 +527,7 @@ protected:
 		_node_type* ptr = m_nodes.pointer();
 
 		bool found = gim_binary_search_ex(
-			ptr, 0, last_index, result_ind, hashkey, GIM_HASH_NODE_CMP_KEY_MACRO());
+		    ptr, 0, last_index, result_ind, hashkey, GIM_HASH_NODE_CMP_KEY_MACRO());
 
 		//Insert before found index
 		if (found)
@@ -542,8 +557,8 @@ public:
         </ul>
     */
 	gim_hash_table(GUINT reserve_size = GIM_DEFAULT_HASH_TABLE_SIZE,
-				   GUINT node_size = GIM_DEFAULT_HASH_TABLE_NODE_SIZE,
-				   GUINT min_hash_table_size = GIM_INVALID_HASH)
+	    GUINT node_size = GIM_DEFAULT_HASH_TABLE_NODE_SIZE,
+	    GUINT min_hash_table_size = GIM_INVALID_HASH)
 	{
 		m_hash_table = NULL;
 		m_table_size = 0;
@@ -579,20 +594,24 @@ public:
 
 	inline bool is_hash_table()
 	{
-		if (m_hash_table) return true;
+		if (m_hash_table)
+			return true;
 		return false;
 	}
 
 	inline bool is_sorted()
 	{
-		if (size() < 2) return true;
+		if (size() < 2)
+			return true;
 		return m_sorted;
 	}
 
 	bool sort()
 	{
-		if (is_sorted()) return true;
-		if (m_nodes.size() < 2) return false;
+		if (is_sorted())
+			return true;
+		if (m_nodes.size() < 2)
+			return false;
 
 		_node_type* ptr = m_nodes.pointer();
 		GUINT siz = m_nodes.size();
@@ -608,8 +627,10 @@ public:
 
 	bool switch_to_hashtable()
 	{
-		if (m_hash_table) return false;
-		if (m_node_size == 0) m_node_size = GIM_DEFAULT_HASH_TABLE_NODE_SIZE;
+		if (m_hash_table)
+			return false;
+		if (m_node_size == 0)
+			m_node_size = GIM_DEFAULT_HASH_TABLE_NODE_SIZE;
 		if (m_nodes.size() < GIM_DEFAULT_HASH_TABLE_SIZE)
 		{
 			_resize_table(GIM_DEFAULT_HASH_TABLE_SIZE);
@@ -624,7 +645,8 @@ public:
 
 	bool switch_to_sorted_array()
 	{
-		if (m_hash_table == NULL) return true;
+		if (m_hash_table == NULL)
+			return true;
 		_clear_table_memory();
 		return sort();
 	}
@@ -632,7 +654,8 @@ public:
 	//!If the container reaches the
 	bool check_for_switching_to_hashtable()
 	{
-		if (this->m_hash_table) return true;
+		if (this->m_hash_table)
+			return true;
 
 		if (!(m_nodes.size() < m_min_hash_table_size))
 		{
@@ -692,14 +715,17 @@ public:
 		if (m_hash_table)
 		{
 			GUINT cell_index = _find_cell(hashkey);
-			if (cell_index == GIM_INVALID_HASH) return GIM_INVALID_HASH;
+			if (cell_index == GIM_INVALID_HASH)
+				return GIM_INVALID_HASH;
 			return m_hash_table[cell_index];
 		}
 		GUINT last_index = m_nodes.size();
 		if (last_index < 2)
 		{
-			if (last_index == 0) return GIM_INVALID_HASH;
-			if (m_nodes[0].m_key == hashkey) return 0;
+			if (last_index == 0)
+				return GIM_INVALID_HASH;
+			if (m_nodes[0].m_key == hashkey)
+				return 0;
 			return GIM_INVALID_HASH;
 		}
 		else if (m_sorted)
@@ -711,7 +737,8 @@ public:
 
 			bool found = gim_binary_search_ex(ptr, 0, last_index, result_ind, hashkey, GIM_HASH_NODE_CMP_KEY_MACRO());
 
-			if (found) return result_ind;
+			if (found)
+				return result_ind;
 		}
 		return GIM_INVALID_HASH;
 	}
@@ -723,7 +750,8 @@ public:
 	inline T* get_value(GUINT hashkey)
 	{
 		GUINT index = find(hashkey);
-		if (index == GIM_INVALID_HASH) return NULL;
+		if (index == GIM_INVALID_HASH)
+			return NULL;
 		return &m_nodes[index].m_data;
 	}
 
@@ -731,7 +759,8 @@ public:
     */
 	inline bool erase_by_index(GUINT index)
 	{
-		if (index > m_nodes.size()) return false;
+		if (index > m_nodes.size())
+			return false;
 
 		if (m_hash_table == NULL)
 		{
@@ -753,7 +782,8 @@ public:
 
 	inline bool erase_by_index_unsorted(GUINT index)
 	{
-		if (index > m_nodes.size()) return false;
+		if (index > m_nodes.size())
+			return false;
 
 		if (m_hash_table == NULL)
 		{
@@ -771,7 +801,8 @@ public:
     */
 	inline bool erase_by_key(GUINT hashkey)
 	{
-		if (size() == 0) return false;
+		if (size() == 0)
+			return false;
 
 		if (m_hash_table)
 		{
@@ -779,7 +810,8 @@ public:
 		}
 		//Binary search
 
-		if (is_sorted() == false) return false;
+		if (is_sorted() == false)
+			return false;
 
 		GUINT result_ind = find(hashkey);
 		if (result_ind != GIM_INVALID_HASH)
@@ -793,13 +825,14 @@ public:
 	{
 		m_nodes.clear();
 
-		if (m_hash_table == NULL) return;
+		if (m_hash_table == NULL)
+			return;
 		GUINT datasize = m_table_size * m_node_size;
 		//Initialize the hashkeys.
 		GUINT i;
 		for (i = 0; i < datasize; i++)
 		{
-			m_hash_table[i] = GIM_INVALID_HASH;  // invalidate keys
+			m_hash_table[i] = GIM_INVALID_HASH; // invalidate keys
 		}
 		m_sorted = false;
 	}
@@ -854,4 +887,4 @@ public:
 	}
 };
 
-#endif  // GIM_CONTAINERS_H_INCLUDED
+#endif // GIM_CONTAINERS_H_INCLUDED

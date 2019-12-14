@@ -10,7 +10,7 @@
 #define bt_id_error_message(...) b3Error(__VA_ARGS__)
 #define bt_id_warning_message(...) b3Warning(__VA_ARGS__)
 #define id_printf(...) b3Printf(__VA_ARGS__)
-#else  // BT_ID_WO_BULLET
+#else // BT_ID_WO_BULLET
 #include <cstdio>
 /// print error message with file/line information
 #define bt_id_error_message(...)                                             \
@@ -27,5 +27,5 @@
 		fprintf(stderr, __VA_ARGS__);                                          \
 	} while (0)
 #define id_printf(...) printf(__VA_ARGS__)
-#endif  // BT_ID_WO_BULLET
+#endif // BT_ID_WO_BULLET
 #endif

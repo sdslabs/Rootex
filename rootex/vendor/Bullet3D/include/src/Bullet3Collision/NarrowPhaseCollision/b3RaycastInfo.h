@@ -22,4 +22,4 @@ b3RayHit
 	b3Vector3 m_hitNormal;
 };
 
-#endif  //B3_RAYCAST_INFO_H
+#endif //B3_RAYCAST_INFO_H

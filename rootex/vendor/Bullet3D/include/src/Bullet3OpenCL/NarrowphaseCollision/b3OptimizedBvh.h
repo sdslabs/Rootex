@@ -53,4 +53,4 @@ public:
 	static b3OptimizedBvh* deSerializeInPlace(void* i_alignedDataBuffer, unsigned int i_dataBufferSize, bool i_swapEndian);
 };
 
-#endif  //B3_OPTIMIZED_BVH_H
+#endif //B3_OPTIMIZED_BVH_H

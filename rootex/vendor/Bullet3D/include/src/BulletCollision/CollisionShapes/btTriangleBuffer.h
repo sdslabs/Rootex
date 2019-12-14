@@ -16,8 +16,8 @@ subject to the following restrictions:
 #ifndef BT_TRIANGLE_BUFFER_H
 #define BT_TRIANGLE_BUFFER_H
 
-#include "btTriangleCallback.h"
 #include "LinearMath/btAlignedObjectArray.h"
+#include "btTriangleCallback.h"
 
 struct btTriangle
 {
@@ -60,4 +60,4 @@ public:
 	}
 };
 
-#endif  //BT_TRIANGLE_BUFFER_H
+#endif //BT_TRIANGLE_BUFFER_H

@@ -56,4 +56,4 @@ public:
 	virtual btConstraintSolverType getSolverType() const = 0;
 };
 
-#endif  //BT_CONSTRAINT_SOLVER_H
+#endif //BT_CONSTRAINT_SOLVER_H

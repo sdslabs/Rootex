@@ -22,12 +22,13 @@ struct btPointCollector : public btDiscreteCollisionDetectorInterface::Result
 {
 	btVector3 m_normalOnBInWorld;
 	btVector3 m_pointInWorld;
-	btScalar m_distance;  //negative means penetration
+	btScalar m_distance; //negative means penetration
 
 	bool m_hasResult;
 
 	btPointCollector()
-		: m_distance(btScalar(BT_LARGE_FLOAT)), m_hasResult(false)
+	    : m_distance(btScalar(BT_LARGE_FLOAT))
+	    , m_hasResult(false)
 	{
 	}
 
@@ -55,4 +56,4 @@ struct btPointCollector : public btDiscreteCollisionDetectorInterface::Result
 	}
 };
 
-#endif  //BT_POINT_COLLECTOR_H
+#endif //BT_POINT_COLLECTOR_H

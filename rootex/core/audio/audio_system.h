@@ -21,10 +21,10 @@
 
 #ifndef AL_CHECK
 #ifdef _DEBUG
-#define AL_CHECK(alFunction)                                            \
-	do                                                                  \
-	{                                                                   \
-		alFunction;                                                     \
+#define AL_CHECK(alFunction)                                        \
+	do                                                              \
+	{                                                               \
+		alFunction;                                                 \
 		AudioSystem::CheckALError(#alFunction, __FILE__, __LINE__); \
 	} while (0)
 #else

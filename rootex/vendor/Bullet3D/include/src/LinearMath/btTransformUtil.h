@@ -21,8 +21,8 @@ subject to the following restrictions:
 SIMD_FORCE_INLINE btVector3 btAabbSupport(const btVector3& halfExtents, const btVector3& supportDir)
 {
 	return btVector3(supportDir.x() < btScalar(0.0) ? -halfExtents.x() : halfExtents.x(),
-					 supportDir.y() < btScalar(0.0) ? -halfExtents.y() : halfExtents.y(),
-					 supportDir.z() < btScalar(0.0) ? -halfExtents.z() : halfExtents.z());
+	    supportDir.y() < btScalar(0.0) ? -halfExtents.y() : halfExtents.y(),
+	    supportDir.z() < btScalar(0.0) ? -halfExtents.z() : halfExtents.z());
 }
 
 /// Utils related to temporal transforms
@@ -159,9 +159,9 @@ class btConvexSeparatingDistanceUtil
 
 public:
 	btConvexSeparatingDistanceUtil(btScalar boundingRadiusA, btScalar boundingRadiusB)
-		: m_boundingRadiusA(boundingRadiusA),
-		  m_boundingRadiusB(boundingRadiusB),
-		  m_separatingDistance(0.f)
+	    : m_boundingRadiusA(boundingRadiusA)
+	    , m_boundingRadiusB(boundingRadiusB)
+	    , m_separatingDistance(0.f)
 	{
 	}
 
@@ -220,4 +220,4 @@ public:
 	}
 };
 
-#endif  //BT_TRANSFORM_UTIL_H
+#endif //BT_TRANSFORM_UTIL_H

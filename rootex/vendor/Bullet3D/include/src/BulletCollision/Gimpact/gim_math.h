@@ -50,7 +50,7 @@ email: projectileman@yahoo.com
 //71795864
 #define G_ROOT3 1.73205f
 #define G_ROOT2 1.41421f
-#define G_UINT_INFINITY 0xffffffff  //!< A very very high value
+#define G_UINT_INFINITY 0xffffffff //!< A very very high value
 #define G_REAL_INFINITY FLT_MAX
 #define G_SIGN_BITMASK 0x80000000
 #define G_EPSILON SIMD_EPSILON
@@ -145,4 +145,4 @@ inline GREAL gim_sqrt(GREAL f)
 	return r;
 }
 
-#endif  // GIM_MATH_H_INCLUDED
+#endif // GIM_MATH_H_INCLUDED

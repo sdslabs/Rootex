@@ -42,7 +42,7 @@ and swing 1 and 2 are along the z and y axes respectively.
 #else
 #define btConeTwistConstraintData2 btConeTwistConstraintData
 #define btConeTwistConstraintDataName "btConeTwistConstraintData"
-#endif  //BT_USE_DOUBLE_PRECISION
+#endif //BT_USE_DOUBLE_PRECISION
 
 class btRigidBody;
 
@@ -60,7 +60,7 @@ btConeTwistConstraint : public btTypedConstraint
 #ifdef IN_PARALLELL_SOLVER
 public:
 #endif
-	btJacobianEntry m_jac[3];  //3 orthogonal linear constraints
+	btJacobianEntry m_jac[3]; //3 orthogonal linear constraints
 
 	btTransform m_rbAFrame;
 	btTransform m_rbBFrame;
@@ -119,11 +119,11 @@ public:
 protected:
 	void init();
 
-	void computeConeLimitInfo(const btQuaternion& qCone,                                           // in
-							  btScalar& swingAngle, btVector3& vSwingAxis, btScalar& swingLimit);  // all outs
+	void computeConeLimitInfo(const btQuaternion& qCone, // in
+	    btScalar& swingAngle, btVector3& vSwingAxis, btScalar& swingLimit); // all outs
 
-	void computeTwistLimitInfo(const btQuaternion& qTwist,                    // in
-							   btScalar& twistAngle, btVector3& vTwistAxis);  // all outs
+	void computeTwistLimitInfo(const btQuaternion& qTwist, // in
+	    btScalar& twistAngle, btVector3& vTwistAxis); // all outs
 
 	void adjustSwingAxisToUseEllipseNormal(btVector3 & vSwingAxis) const;
 
@@ -171,24 +171,24 @@ public:
 	{
 		switch (limitIndex)
 		{
-			case 3:
-			{
-				m_twistSpan = limitValue;
-				break;
-			}
-			case 4:
-			{
-				m_swingSpan2 = limitValue;
-				break;
-			}
-			case 5:
-			{
-				m_swingSpan1 = limitValue;
-				break;
-			}
-			default:
-			{
-			}
+		case 3:
+		{
+			m_twistSpan = limitValue;
+			break;
+		}
+		case 4:
+		{
+			m_swingSpan2 = limitValue;
+			break;
+		}
+		case 5:
+		{
+			m_swingSpan1 = limitValue;
+			break;
+		}
+		default:
+		{
+		}
 		};
 	}
 
@@ -196,26 +196,26 @@ public:
 	{
 		switch (limitIndex)
 		{
-			case 3:
-			{
-				return m_twistSpan;
-				break;
-			}
-			case 4:
-			{
-				return m_swingSpan2;
-				break;
-			}
-			case 5:
-			{
-				return m_swingSpan1;
-				break;
-			}
-			default:
-			{
-				btAssert(0 && "Invalid limitIndex specified for btConeTwistConstraint");
-				return 0.0;
-			}
+		case 3:
+		{
+			return m_twistSpan;
+			break;
+		}
+		case 4:
+		{
+			return m_swingSpan2;
+			break;
+		}
+		case 5:
+		{
+			return m_swingSpan1;
+			break;
+		}
+		default:
+		{
+			btAssert(0 && "Invalid limitIndex specified for btConeTwistConstraint");
+			return 0.0;
+		}
 		};
 	}
 
@@ -392,7 +392,7 @@ struct btConeTwistConstraintData
 
 	char m_pad[4];
 };
-#endif  //BT_BACKWARDS_COMPATIBLE_SERIALIZATION
+#endif //BT_BACKWARDS_COMPATIBLE_SERIALIZATION
 //
 
 SIMD_FORCE_INLINE int btConeTwistConstraint::calculateSerializeBufferSize() const
@@ -420,4 +420,4 @@ SIMD_FORCE_INLINE const char* btConeTwistConstraint::serialize(void* dataBuffer,
 	return btConeTwistConstraintDataName;
 }
 
-#endif  //BT_CONETWISTCONSTRAINT_H
+#endif //BT_CONETWISTCONSTRAINT_H

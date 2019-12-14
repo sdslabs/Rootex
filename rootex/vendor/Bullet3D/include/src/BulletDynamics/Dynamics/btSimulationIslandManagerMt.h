@@ -42,10 +42,10 @@ public:
 		btAlignedObjectArray<btCollisionObject*> bodyArray;
 		btAlignedObjectArray<btPersistentManifold*> manifoldArray;
 		btAlignedObjectArray<btTypedConstraint*> constraintArray;
-		int id;  // island id
+		int id; // island id
 		bool isSleeping;
 
-		void append(const Island& other);  // add bodies, manifolds, constraints to my own
+		void append(const Island& other); // add bodies, manifolds, constraints to my own
 	};
 	struct SolverParams
 	{
@@ -62,10 +62,10 @@ public:
 	static void parallelIslandDispatch(btAlignedObjectArray<Island*>* islandsPtr, const SolverParams& solverParams);
 
 protected:
-	btAlignedObjectArray<Island*> m_allocatedIslands;    // owner of all Islands
-	btAlignedObjectArray<Island*> m_activeIslands;       // islands actively in use
-	btAlignedObjectArray<Island*> m_freeIslands;         // islands ready to be reused
-	btAlignedObjectArray<Island*> m_lookupIslandFromId;  // big lookup table to map islandId to Island pointer
+	btAlignedObjectArray<Island*> m_allocatedIslands; // owner of all Islands
+	btAlignedObjectArray<Island*> m_activeIslands; // islands actively in use
+	btAlignedObjectArray<Island*> m_freeIslands; // islands ready to be reused
+	btAlignedObjectArray<Island*> m_lookupIslandFromId; // big lookup table to map islandId to Island pointer
 	Island* m_batchIsland;
 	int m_minimumSolverBatchSize;
 	int m_batchIslandMinBodyCount;
@@ -84,9 +84,9 @@ public:
 	virtual ~btSimulationIslandManagerMt();
 
 	virtual void buildAndProcessIslands(btDispatcher* dispatcher,
-										btCollisionWorld* collisionWorld,
-										btAlignedObjectArray<btTypedConstraint*>& constraints,
-										const SolverParams& solverParams);
+	    btCollisionWorld* collisionWorld,
+	    btAlignedObjectArray<btTypedConstraint*>& constraints,
+	    const SolverParams& solverParams);
 
 	virtual void buildIslands(btDispatcher* dispatcher, btCollisionWorld* colWorld);
 
@@ -109,4 +109,4 @@ public:
 	}
 };
 
-#endif  //BT_SIMULATION_ISLAND_MANAGER_H
+#endif //BT_SIMULATION_ISLAND_MANAGER_H

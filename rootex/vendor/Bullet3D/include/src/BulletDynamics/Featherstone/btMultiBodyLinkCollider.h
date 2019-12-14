@@ -18,8 +18,8 @@ subject to the following restrictions:
 
 #include "BulletCollision/CollisionDispatch/btCollisionObject.h"
 
-#include "btMultiBody.h"
 #include "LinearMath/btSerializer.h"
+#include "btMultiBody.h"
 
 #ifdef BT_USE_DOUBLE_PRECISION
 #define btMultiBodyLinkColliderData btMultiBodyLinkColliderDoubleData
@@ -38,11 +38,10 @@ public:
 
 	virtual ~btMultiBodyLinkCollider()
 	{
-
 	}
 	btMultiBodyLinkCollider(btMultiBody* multiBody, int link)
-		: m_multiBody(multiBody),
-		  m_link(link)
+	    : m_multiBody(multiBody)
+	    , m_link(link)
 	{
 		m_checkCollideWith = true;
 		//we need to remove the 'CF_STATIC_OBJECT' flag, otherwise links/base doesn't merge islands
@@ -175,4 +174,4 @@ SIMD_FORCE_INLINE const char* btMultiBodyLinkCollider::serialize(void* dataBuffe
 	return btMultiBodyLinkColliderDataName;
 }
 
-#endif  //BT_FEATHERSTONE_LINK_COLLIDER_H
+#endif //BT_FEATHERSTONE_LINK_COLLIDER_H

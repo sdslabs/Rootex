@@ -27,4 +27,4 @@ public:
 	virtual ~btFixedConstraint();
 };
 
-#endif  //BT_FIXED_CONSTRAINT_H
+#endif //BT_FIXED_CONSTRAINT_H

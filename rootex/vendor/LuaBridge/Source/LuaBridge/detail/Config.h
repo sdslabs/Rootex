@@ -5,6 +5,6 @@
 
 #pragma once
 
-#if !defined (LUABRIDGE_NO_CXX11) && (__cplusplus >= 201103L || (defined (_MSC_VER) && _MSC_VER >= 1900))
+#if !defined(LUABRIDGE_NO_CXX11) && (__cplusplus >= 201103L || (defined(_MSC_VER) && _MSC_VER >= 1900))
 #define LUABRIDGE_CXX11
 #endif

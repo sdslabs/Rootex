@@ -2,8 +2,8 @@
 #define BT_COMPOUND_FROM_GIMPACT
 
 #include "BulletCollision/CollisionShapes/btCompoundShape.h"
-#include "btGImpactShape.h"
 #include "BulletCollision/NarrowPhaseCollision/btRaycastCallback.h"
+#include "btGImpactShape.h"
 
 ATTRIBUTE_ALIGNED16(class)
 btCompoundFromGimpactShape : public btCompoundShape
@@ -27,9 +27,9 @@ struct MyCallback : public btTriangleRaycastCallback
 	int m_ignoreTriangleIndex;
 
 	MyCallback(const btVector3& from, const btVector3& to, int ignorePart, int ignoreTriangleIndex)
-		: btTriangleRaycastCallback(from, to),
-		  m_ignorePart(ignorePart),
-		  m_ignoreTriangleIndex(ignoreTriangleIndex)
+	    : btTriangleRaycastCallback(from, to)
+	    , m_ignorePart(ignorePart)
+	    , m_ignoreTriangleIndex(ignoreTriangleIndex)
 	{
 	}
 	virtual btScalar reportHit(const btVector3& hitNormalLocal, btScalar hitFraction, int partId, int triangleIndex)
@@ -50,9 +50,9 @@ struct MyInternalTriangleIndexCallback : public btInternalTriangleIndexCallback
 	btScalar m_depth;
 
 	MyInternalTriangleIndexCallback(btCompoundShape* colShape, const btGImpactMeshShape* meshShape, btScalar depth)
-		: m_colShape(colShape),
-		  m_gimpactShape(meshShape),
-		  m_depth(depth)
+	    : m_colShape(colShape)
+	    , m_gimpactShape(meshShape)
+	    , m_depth(depth)
 	{
 	}
 
@@ -102,4 +102,4 @@ btCompoundShape* btCreateCompoundFromGimpactShape(const btGImpactMeshShape* gimp
 	return colShape;
 }
 
-#endif  //BT_COMPOUND_FROM_GIMPACT
+#endif //BT_COMPOUND_FROM_GIMPACT

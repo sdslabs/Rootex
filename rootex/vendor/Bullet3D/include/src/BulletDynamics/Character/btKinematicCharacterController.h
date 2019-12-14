@@ -39,7 +39,7 @@ protected:
 	btScalar m_halfHeight;
 
 	btPairCachingGhostObject* m_ghostObject;
-	btConvexShape* m_convexShape;  //is also in m_ghostObject, but it needs to be convex, so we store it here to avoid upcast
+	btConvexShape* m_convexShape; //is also in m_ghostObject, but it needs to be convex, so we store it here to avoid upcast
 
 	btScalar m_maxPenetrationDepth;
 	btScalar m_verticalVelocity;
@@ -48,15 +48,15 @@ protected:
 	btScalar m_jumpSpeed;
 	btScalar m_SetjumpSpeed;
 	btScalar m_maxJumpHeight;
-	btScalar m_maxSlopeRadians;  // Slope angle that is set (used for returning the exact value)
-	btScalar m_maxSlopeCosine;   // Cosine equivalent of m_maxSlopeRadians (calculated once when set, for optimization)
+	btScalar m_maxSlopeRadians; // Slope angle that is set (used for returning the exact value)
+	btScalar m_maxSlopeCosine; // Cosine equivalent of m_maxSlopeRadians (calculated once when set, for optimization)
 	btScalar m_gravity;
 
 	btScalar m_turnAngle;
 
 	btScalar m_stepHeight;
 
-	btScalar m_addedMargin;  //@todo: remove this and fix the code
+	btScalar m_addedMargin; //@todo: remove this and fix the code
 
 	///this is the desired walk direction, set by the user
 	btVector3 m_walkDirection;
@@ -144,7 +144,7 @@ public:
 	/// This call will reset any walk direction set by setWalkDirection().
 	/// Negative time intervals will result in no motion.
 	virtual void setVelocityForTimeInterval(const btVector3& velocity,
-											btScalar timeInterval);
+	    btScalar timeInterval);
 
 	virtual void setAngularVelocity(const btVector3& velocity);
 	virtual const btVector3& getAngularVelocity() const;
@@ -197,4 +197,4 @@ public:
 	void setUpInterpolate(bool value);
 };
 
-#endif  // BT_KINEMATIC_CHARACTER_CONTROLLER_H
+#endif // BT_KINEMATIC_CHARACTER_CONTROLLER_H

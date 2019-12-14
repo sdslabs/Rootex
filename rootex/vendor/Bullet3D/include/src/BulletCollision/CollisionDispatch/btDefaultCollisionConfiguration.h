@@ -30,12 +30,12 @@ struct btDefaultCollisionConstructionInfo
 	int m_useEpaPenetrationAlgorithm;
 
 	btDefaultCollisionConstructionInfo()
-		: m_persistentManifoldPool(0),
-		  m_collisionAlgorithmPool(0),
-		  m_defaultMaxPersistentManifoldPoolSize(4096),
-		  m_defaultMaxCollisionAlgorithmPoolSize(4096),
-		  m_customCollisionAlgorithmMaxElementSize(0),
-		  m_useEpaPenetrationAlgorithm(true)
+	    : m_persistentManifoldPool(0)
+	    , m_collisionAlgorithmPool(0)
+	    , m_defaultMaxPersistentManifoldPoolSize(4096)
+	    , m_defaultMaxCollisionAlgorithmPoolSize(4096)
+	    , m_customCollisionAlgorithmMaxElementSize(0)
+	    , m_useEpaPenetrationAlgorithm(true)
 	{
 	}
 };
@@ -108,4 +108,4 @@ public:
 	void setPlaneConvexMultipointIterations(int numPerturbationIterations = 3, int minimumPointsPerturbationThreshold = 3);
 };
 
-#endif  //BT_DEFAULT_COLLISION_CONFIGURATION
+#endif //BT_DEFAULT_COLLISION_CONFIGURATION

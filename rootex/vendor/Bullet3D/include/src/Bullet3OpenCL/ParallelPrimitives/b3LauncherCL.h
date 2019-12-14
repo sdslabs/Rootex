@@ -2,8 +2,8 @@
 #ifndef B3_LAUNCHER_CL_H
 #define B3_LAUNCHER_CL_H
 
-#include "b3BufferInfoCL.h"
 #include "Bullet3Common/b3MinMax.h"
+#include "b3BufferInfoCL.h"
 #include "b3OpenCLArray.h"
 #include <stdio.h>
 
@@ -101,8 +101,8 @@ public:
 
 	inline void launch2D(int numThreadsX, int numThreadsY, int localSizeX, int localSizeY)
 	{
-		size_t gRange[3] = {1, 1, 1};
-		size_t lRange[3] = {1, 1, 1};
+		size_t gRange[3] = { 1, 1, 1 };
+		size_t lRange[3] = { 1, 1, 1 };
 		lRange[0] = localSizeX;
 		lRange[1] = localSizeY;
 		gRange[0] = b3Max((size_t)1, (numThreadsX / lRange[0]) + (!(numThreadsX % lRange[0]) ? 0 : 1));
@@ -111,7 +111,7 @@ public:
 		gRange[1] *= lRange[1];
 
 		cl_int status = clEnqueueNDRangeKernel(m_commandQueue,
-											   m_kernel, 2, NULL, gRange, lRange, 0, 0, 0);
+		    m_kernel, 2, NULL, gRange, lRange, 0, 0, 0);
 		if (status != CL_SUCCESS)
 		{
 			printf("Error: OpenCL status = %d\n", status);
@@ -125,4 +125,4 @@ public:
 	}
 };
 
-#endif  //B3_LAUNCHER_CL_H
+#endif //B3_LAUNCHER_CL_H

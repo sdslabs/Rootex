@@ -16,10 +16,10 @@ subject to the following restrictions:
 #ifndef BT_COLLISION_SHAPE_H
 #define BT_COLLISION_SHAPE_H
 
+#include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h" //for the shape types
+#include "LinearMath/btMatrix3x3.h"
 #include "LinearMath/btTransform.h"
 #include "LinearMath/btVector3.h"
-#include "LinearMath/btMatrix3x3.h"
-#include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h"  //for the shape types
 class btSerializer;
 
 ///The btCollisionShape class provides an interface for collision shapes that can be shared among btCollisionObjects.
@@ -34,7 +34,10 @@ protected:
 public:
 	BT_DECLARE_ALIGNED_ALLOCATOR();
 
-	btCollisionShape() : m_shapeType(INVALID_SHAPE_PROXYTYPE), m_userPointer(0), m_userIndex(-1)
+	btCollisionShape()
+	    : m_shapeType(INVALID_SHAPE_PROXYTYPE)
+	    , m_userPointer(0)
+	    , m_userIndex(-1)
 	{
 	}
 
@@ -101,7 +104,7 @@ public:
 
 	//debugging support
 	virtual const char* getName() const = 0;
-#endif  //__SPU__
+#endif //__SPU__
 
 	int getShapeType() const
 	{
@@ -160,4 +163,4 @@ SIMD_FORCE_INLINE int btCollisionShape::calculateSerializeBufferSize() const
 	return sizeof(btCollisionShapeData);
 }
 
-#endif  //BT_COLLISION_SHAPE_H
+#endif //BT_COLLISION_SHAPE_H

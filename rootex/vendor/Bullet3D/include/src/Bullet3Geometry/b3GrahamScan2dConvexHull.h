@@ -16,14 +16,14 @@ subject to the following restrictions:
 #ifndef B3_GRAHAM_SCAN_2D_CONVEX_HULL_H
 #define B3_GRAHAM_SCAN_2D_CONVEX_HULL_H
 
-#include "Bullet3Common/b3Vector3.h"
 #include "Bullet3Common/b3AlignedObjectArray.h"
+#include "Bullet3Common/b3Vector3.h"
 
 struct b3GrahamVector3 : public b3Vector3
 {
 	b3GrahamVector3(const b3Vector3& org, int orgIndex)
-		: b3Vector3(org),
-		  m_orgIndex(orgIndex)
+	    : b3Vector3(org)
+	    , m_orgIndex(orgIndex)
 	{
 	}
 	b3Scalar m_angle;
@@ -34,7 +34,7 @@ struct b3AngleCompareFunc
 {
 	b3Vector3 m_anchor;
 	b3AngleCompareFunc(const b3Vector3& anchor)
-		: m_anchor(anchor)
+	    : m_anchor(anchor)
 	{
 	}
 	bool operator()(const b3GrahamVector3& a, const b3GrahamVector3& b) const
@@ -113,4 +113,4 @@ inline void b3GrahamScanConvexHull2D(b3AlignedObjectArray<b3GrahamVector3>& orig
 	}
 }
 
-#endif  //B3_GRAHAM_SCAN_2D_CONVEX_HULL_H
+#endif //B3_GRAHAM_SCAN_2D_CONVEX_HULL_H

@@ -91,12 +91,12 @@ public:
 	/// In a future implementation, we consider moving the ray test as a virtual method in btCollisionShape.
 	/// This allows more customization.
 	static void rayTestSingle(const btTransform& rayFromTrans, const btTransform& rayToTrans,
-							  btCollisionObject* collisionObject,
-							  const btCollisionShape* collisionShape,
-							  const btTransform& colObjWorldTransform,
-							  RayResultCallback& resultCallback);
+	    btCollisionObject* collisionObject,
+	    const btCollisionShape* collisionShape,
+	    const btTransform& colObjWorldTransform,
+	    RayResultCallback& resultCallback);
 
 	virtual void serialize(btSerializer* serializer);
 };
 
-#endif  //BT_SOFT_RIGID_DYNAMICS_WORLD_H
+#endif //BT_SOFT_RIGID_DYNAMICS_WORLD_H

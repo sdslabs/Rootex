@@ -45,8 +45,8 @@ public:
 	virtual int getIslandIdB() const;
 
 	virtual void createConstraintRows(btMultiBodyConstraintArray & constraintRows,
-									  btMultiBodyJacobianData & data,
-									  const btContactSolverInfo& infoGlobal);
+	    btMultiBodyJacobianData & data,
+	    const btContactSolverInfo& infoGlobal);
 
 	const btVector3& getPivotInB() const
 	{
@@ -61,4 +61,4 @@ public:
 	virtual void debugDraw(class btIDebugDraw * drawer);
 };
 
-#endif  //BT_MULTIBODY_POINT2POINT_H
+#endif //BT_MULTIBODY_POINT2POINT_H

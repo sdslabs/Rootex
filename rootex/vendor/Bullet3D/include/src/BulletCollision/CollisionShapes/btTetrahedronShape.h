@@ -16,8 +16,8 @@ subject to the following restrictions:
 #ifndef BT_SIMPLEX_1TO4_SHAPE
 #define BT_SIMPLEX_1TO4_SHAPE
 
-#include "btPolyhedralConvexShape.h"
 #include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h"
+#include "btPolyhedralConvexShape.h"
 
 ///The btBU_Simplex1to4 implements tetrahedron, triangle, line, vertex collision shapes. In most cases it is better to use btConvexHullShape instead.
 ATTRIBUTE_ALIGNED16(class)
@@ -68,4 +68,4 @@ public:
 	virtual const char* getName() const { return "btBU_Simplex1to4"; }
 };
 
-#endif  //BT_SIMPLEX_1TO4_SHAPE
+#endif //BT_SIMPLEX_1TO4_SHAPE

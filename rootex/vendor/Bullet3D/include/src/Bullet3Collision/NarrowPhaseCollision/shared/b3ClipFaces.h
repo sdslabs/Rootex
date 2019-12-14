@@ -1,20 +1,20 @@
 #ifndef B3_CLIP_FACES_H
 #define B3_CLIP_FACES_H
 
-#include "Bullet3Common/shared/b3Int4.h"
-#include "Bullet3Collision/NarrowPhaseCollision/shared/b3RigidBodyData.h"
-#include "Bullet3Collision/NarrowPhaseCollision/shared/b3Collidable.h"
 #include "Bullet3Collision/BroadPhaseCollision/shared/b3Aabb.h"
 #include "Bullet3Collision/NarrowPhaseCollision/shared/b3BvhSubtreeInfoData.h"
-#include "Bullet3Collision/NarrowPhaseCollision/shared/b3QuantizedBvhNodeData.h"
+#include "Bullet3Collision/NarrowPhaseCollision/shared/b3Collidable.h"
 #include "Bullet3Collision/NarrowPhaseCollision/shared/b3ConvexPolyhedronData.h"
+#include "Bullet3Collision/NarrowPhaseCollision/shared/b3QuantizedBvhNodeData.h"
+#include "Bullet3Collision/NarrowPhaseCollision/shared/b3RigidBodyData.h"
+#include "Bullet3Common/shared/b3Int4.h"
 
 inline b3Float4 b3Lerp3(b3Float4ConstArg a, b3Float4ConstArg b, float t)
 {
 	return b3MakeFloat4(a.x + (b.x - a.x) * t,
-						a.y + (b.y - a.y) * t,
-						a.z + (b.z - a.z) * t,
-						0.f);
+	    a.y + (b.y - a.y) * t,
+	    a.z + (b.z - a.z) * t,
+	    0.f);
 }
 
 // Clips a face to the back of a plane, return the number of vertices out, stored in ppVtxOut
@@ -65,14 +65,14 @@ int clipFaceGlobal(__global const b3Float4* pVtxIn, int numVertsIn, b3Float4Cons
 }
 
 __kernel void clipFacesAndFindContactsKernel(__global const b3Float4* separatingNormals,
-											 __global const int* hasSeparatingAxis,
-											 __global b3Int4* clippingFacesOut,
-											 __global b3Float4* worldVertsA1,
-											 __global b3Float4* worldNormalsA1,
-											 __global b3Float4* worldVertsB1,
-											 __global b3Float4* worldVertsB2,
-											 int vertexFaceCapacity,
-											 int pairIndex)
+    __global const int* hasSeparatingAxis,
+    __global b3Int4* clippingFacesOut,
+    __global b3Float4* worldVertsA1,
+    __global b3Float4* worldNormalsA1,
+    __global b3Float4* worldVertsB1,
+    __global b3Float4* worldVertsB2,
+    int vertexFaceCapacity,
+    int pairIndex)
 {
 	//    int i = get_global_id(0);
 	//int pairIndex = i;
@@ -164,8 +164,8 @@ __kernel void clipFacesAndFindContactsKernel(__global const b3Float4* separating
 			for (int i = 0; i < numLocalContactsOut; i++)
 				pVtxIn[i] = pVtxOut[i];
 
-		}  //		if (hasSeparatingAxis[i])
-	}      //	if (i<numPairs)
+		} //		if (hasSeparatingAxis[i])
+	} //	if (i<numPairs)
 }
 
-#endif  //B3_CLIP_FACES_H
+#endif //B3_CLIP_FACES_H

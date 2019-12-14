@@ -14,4 +14,4 @@ struct b3BvhInfo
 	int m_subTreeOffset;
 };
 
-#endif  //B3_BVH_INFO_H
+#endif //B3_BVH_INFO_H

@@ -18,8 +18,8 @@ subject to the following restrictions:
 #ifndef _BT_POLYHEDRAL_FEATURES_H
 #define _BT_POLYHEDRAL_FEATURES_H
 
-#include "LinearMath/btTransform.h"
 #include "LinearMath/btAlignedObjectArray.h"
+#include "LinearMath/btTransform.h"
 
 #define TEST_INTERNAL_OBJECTS 1
 
@@ -56,4 +56,4 @@ public:
 	void project(const btTransform& trans, const btVector3& dir, btScalar& minProj, btScalar& maxProj, btVector3& witnesPtMin, btVector3& witnesPtMax) const;
 };
 
-#endif  //_BT_POLYHEDRAL_FEATURES_H
+#endif //_BT_POLYHEDRAL_FEATURES_H

@@ -6,10 +6,10 @@ struct b3ContactPoint;
 
 class b3Dispatcher;
 
-#include "b3TypedConstraint.h"
 #include "b3ContactSolverInfo.h"
 #include "b3SolverBody.h"
 #include "b3SolverConstraint.h"
+#include "b3TypedConstraint.h"
 
 struct b3RigidBodyData;
 struct b3InertiaData;
@@ -46,25 +46,25 @@ protected:
 		return 0.02f;
 	}
 	void setupFrictionConstraint(b3RigidBodyData* bodies, b3InertiaData* inertias, b3SolverConstraint& solverConstraint, const b3Vector3& normalAxis, int solverBodyIdA, int solverBodyIdB,
-								 b3ContactPoint& cp, const b3Vector3& rel_pos1, const b3Vector3& rel_pos2,
-								 b3RigidBodyData* colObj0, b3RigidBodyData* colObj1, b3Scalar relaxation,
-								 b3Scalar desiredVelocity = 0., b3Scalar cfmSlip = 0.);
+	    b3ContactPoint& cp, const b3Vector3& rel_pos1, const b3Vector3& rel_pos2,
+	    b3RigidBodyData* colObj0, b3RigidBodyData* colObj1, b3Scalar relaxation,
+	    b3Scalar desiredVelocity = 0., b3Scalar cfmSlip = 0.);
 
 	void setupRollingFrictionConstraint(b3RigidBodyData* bodies, b3InertiaData* inertias, b3SolverConstraint& solverConstraint, const b3Vector3& normalAxis, int solverBodyIdA, int solverBodyIdB,
-										b3ContactPoint& cp, const b3Vector3& rel_pos1, const b3Vector3& rel_pos2,
-										b3RigidBodyData* colObj0, b3RigidBodyData* colObj1, b3Scalar relaxation,
-										b3Scalar desiredVelocity = 0., b3Scalar cfmSlip = 0.);
+	    b3ContactPoint& cp, const b3Vector3& rel_pos1, const b3Vector3& rel_pos2,
+	    b3RigidBodyData* colObj0, b3RigidBodyData* colObj1, b3Scalar relaxation,
+	    b3Scalar desiredVelocity = 0., b3Scalar cfmSlip = 0.);
 
 	b3SolverConstraint& addFrictionConstraint(b3RigidBodyData* bodies, b3InertiaData* inertias, const b3Vector3& normalAxis, int solverBodyIdA, int solverBodyIdB, int frictionIndex, b3ContactPoint& cp, const b3Vector3& rel_pos1, const b3Vector3& rel_pos2, b3RigidBodyData* colObj0, b3RigidBodyData* colObj1, b3Scalar relaxation, b3Scalar desiredVelocity = 0., b3Scalar cfmSlip = 0.);
 	b3SolverConstraint& addRollingFrictionConstraint(b3RigidBodyData* bodies, b3InertiaData* inertias, const b3Vector3& normalAxis, int solverBodyIdA, int solverBodyIdB, int frictionIndex, b3ContactPoint& cp, const b3Vector3& rel_pos1, const b3Vector3& rel_pos2, b3RigidBodyData* colObj0, b3RigidBodyData* colObj1, b3Scalar relaxation, b3Scalar desiredVelocity = 0, b3Scalar cfmSlip = 0.f);
 
 	void setupContactConstraint(b3RigidBodyData* bodies, b3InertiaData* inertias,
-								b3SolverConstraint& solverConstraint, int solverBodyIdA, int solverBodyIdB, b3ContactPoint& cp,
-								const b3ContactSolverInfo& infoGlobal, b3Vector3& vel, b3Scalar& rel_vel, b3Scalar& relaxation,
-								b3Vector3& rel_pos1, b3Vector3& rel_pos2);
+	    b3SolverConstraint& solverConstraint, int solverBodyIdA, int solverBodyIdB, b3ContactPoint& cp,
+	    const b3ContactSolverInfo& infoGlobal, b3Vector3& vel, b3Scalar& rel_vel, b3Scalar& relaxation,
+	    b3Vector3& rel_pos1, b3Vector3& rel_pos2);
 
 	void setFrictionConstraintImpulse(b3RigidBodyData* bodies, b3InertiaData* inertias, b3SolverConstraint& solverConstraint, int solverBodyIdA, int solverBodyIdB,
-									  b3ContactPoint& cp, const b3ContactSolverInfo& infoGlobal);
+	    b3ContactPoint& cp, const b3ContactSolverInfo& infoGlobal);
 
 	///m_btSeed2 is used for re-arranging the constraint rows. improves convergence/quality of friction
 	unsigned long m_btSeed2;
@@ -74,12 +74,12 @@ protected:
 	void convertContact(b3RigidBodyData* bodies, b3InertiaData* inertias, b3Contact4* manifold, const b3ContactSolverInfo& infoGlobal);
 
 	void resolveSplitPenetrationSIMD(
-		b3SolverBody& bodyA, b3SolverBody& bodyB,
-		const b3SolverConstraint& contactConstraint);
+	    b3SolverBody& bodyA, b3SolverBody& bodyB,
+	    const b3SolverConstraint& contactConstraint);
 
 	void resolveSplitPenetrationImpulseCacheFriendly(
-		b3SolverBody& bodyA, b3SolverBody& bodyB,
-		const b3SolverConstraint& contactConstraint);
+	    b3SolverBody& bodyA, b3SolverBody& bodyB,
+	    const b3SolverConstraint& contactConstraint);
 
 	//internal method
 	int getOrInitSolverBody(int bodyIndex, b3RigidBodyData* bodies, b3InertiaData* inertias);
@@ -130,4 +130,4 @@ public:
 	}
 };
 
-#endif  //B3_PGS_JACOBI_SOLVER
+#endif //B3_PGS_JACOBI_SOLVER

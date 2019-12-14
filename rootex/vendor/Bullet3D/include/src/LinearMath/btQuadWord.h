@@ -15,8 +15,8 @@ subject to the following restrictions:
 #ifndef BT_SIMD_QUADWORD_H
 #define BT_SIMD_QUADWORD_H
 
-#include "btScalar.h"
 #include "btMinMax.h"
+#include "btScalar.h"
 
 #if defined(__CELLOS_LV2) && defined(__SPU__)
 #include <altivec.h>
@@ -46,7 +46,7 @@ public:
 	}
 
 protected:
-#else  //__CELLOS_LV2__ __SPU__
+#else //__CELLOS_LV2__ __SPU__
 
 #if defined(BT_USE_SSE) || defined(BT_USE_NEON)
 	union {
@@ -65,9 +65,9 @@ public:
 	}
 #else
 	btScalar m_floats[4];
-#endif  // BT_USE_SSE
+#endif // BT_USE_SSE
 
-#endif  //__CELLOS_LV2__ __SPU__
+#endif //__CELLOS_LV2__ __SPU__
 
 public:
 #if (defined(BT_USE_SSE_IN_API) && defined(BT_USE_SSE)) || defined(BT_USE_NEON)
@@ -129,10 +129,7 @@ public:
 #ifdef BT_USE_SSE
 		return (0xf == _mm_movemask_ps((__m128)_mm_cmpeq_ps(mVec128, other.mVec128)));
 #else
-		return ((m_floats[3] == other.m_floats[3]) &&
-				(m_floats[2] == other.m_floats[2]) &&
-				(m_floats[1] == other.m_floats[1]) &&
-				(m_floats[0] == other.m_floats[0]));
+		return ((m_floats[3] == other.m_floats[3]) && (m_floats[2] == other.m_floats[2]) && (m_floats[1] == other.m_floats[1]) && (m_floats[0] == other.m_floats[0]));
 #endif
 	}
 
@@ -235,4 +232,4 @@ public:
 	}
 };
 
-#endif  //BT_SIMD_QUADWORD_H
+#endif //BT_SIMD_QUADWORD_H

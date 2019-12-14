@@ -73,14 +73,9 @@ BT_QUANTIZED_BVH_NODE
 	}
 
 	SIMD_FORCE_INLINE bool testQuantizedBoxOverlapp(
-		unsigned short* quantizedMin, unsigned short* quantizedMax) const
+	    unsigned short* quantizedMin, unsigned short* quantizedMax) const
 	{
-		if (m_quantizedAabbMin[0] > quantizedMax[0] ||
-			m_quantizedAabbMax[0] < quantizedMin[0] ||
-			m_quantizedAabbMin[1] > quantizedMax[1] ||
-			m_quantizedAabbMax[1] < quantizedMin[1] ||
-			m_quantizedAabbMin[2] > quantizedMax[2] ||
-			m_quantizedAabbMax[2] < quantizedMin[2])
+		if (m_quantizedAabbMin[0] > quantizedMax[0] || m_quantizedAabbMax[0] < quantizedMin[0] || m_quantizedAabbMin[1] > quantizedMax[1] || m_quantizedAabbMax[1] < quantizedMin[1] || m_quantizedAabbMin[2] > quantizedMax[2] || m_quantizedAabbMax[2] < quantizedMin[2])
 		{
 			return false;
 		}
@@ -88,4 +83,4 @@ BT_QUANTIZED_BVH_NODE
 	}
 };
 
-#endif  // GIM_QUANTIZED_SET_STRUCTS_H_INCLUDED
+#endif // GIM_QUANTIZED_SET_STRUCTS_H_INCLUDED

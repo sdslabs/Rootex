@@ -107,4 +107,4 @@ public:
 	friend bool operator==(const self_type&, const self_type&) { return true; }
 };
 
-#endif  //B3_ALIGNED_ALLOCATOR
+#endif //B3_ALIGNED_ALLOCATOR

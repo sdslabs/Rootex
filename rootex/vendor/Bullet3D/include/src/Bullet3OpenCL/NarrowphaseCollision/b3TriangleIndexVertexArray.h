@@ -16,9 +16,9 @@ subject to the following restrictions:
 #ifndef B3_TRIANGLE_INDEX_VERTEX_ARRAY_H
 #define B3_TRIANGLE_INDEX_VERTEX_ARRAY_H
 
-#include "b3StridingMeshInterface.h"
 #include "Bullet3Common/b3AlignedObjectArray.h"
 #include "Bullet3Common/b3Scalar.h"
+#include "b3StridingMeshInterface.h"
 
 ///The b3IndexedMesh indexes a single vertex and index array. Multiple b3IndexedMesh objects can be passed into a b3TriangleIndexVertexArray using addIndexedMesh.
 ///Instead of the number of indices, we pass the number of triangles.
@@ -46,12 +46,13 @@ b3IndexedMesh
 	PHY_ScalarType m_vertexType;
 
 	b3IndexedMesh()
-		: m_indexType(PHY_INTEGER),
+	    : m_indexType(PHY_INTEGER)
+	    ,
 #ifdef B3_USE_DOUBLE_PRECISION
-		  m_vertexType(PHY_DOUBLE)
-#else   // B3_USE_DOUBLE_PRECISION
-		  m_vertexType(PHY_FLOAT)
-#endif  // B3_USE_DOUBLE_PRECISION
+	    m_vertexType(PHY_DOUBLE)
+#else // B3_USE_DOUBLE_PRECISION
+	    m_vertexType(PHY_FLOAT)
+#endif // B3_USE_DOUBLE_PRECISION
 	{
 	}
 };
@@ -68,14 +69,15 @@ b3TriangleIndexVertexArray : public b3StridingMeshInterface
 protected:
 	IndexedMeshArray m_indexedMeshes;
 	int m_pad[2];
-	mutable int m_hasAabb;  // using int instead of bool to maintain alignment
+	mutable int m_hasAabb; // using int instead of bool to maintain alignment
 	mutable b3Vector3 m_aabbMin;
 	mutable b3Vector3 m_aabbMax;
 
 public:
 	B3_DECLARE_ALIGNED_ALLOCATOR();
 
-	b3TriangleIndexVertexArray() : m_hasAabb(0)
+	b3TriangleIndexVertexArray()
+	    : m_hasAabb(0)
 	{
 	}
 
@@ -125,4 +127,4 @@ public:
 	virtual void getPremadeAabb(b3Vector3 * aabbMin, b3Vector3 * aabbMax) const;
 };
 
-#endif  //B3_TRIANGLE_INDEX_VERTEX_ARRAY_H
+#endif //B3_TRIANGLE_INDEX_VERTEX_ARRAY_H

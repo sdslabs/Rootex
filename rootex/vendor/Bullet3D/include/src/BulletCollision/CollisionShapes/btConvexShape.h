@@ -18,11 +18,11 @@ subject to the following restrictions:
 
 #include "btCollisionShape.h"
 
-#include "LinearMath/btVector3.h"
-#include "LinearMath/btTransform.h"
-#include "LinearMath/btMatrix3x3.h"
-#include "btCollisionMargin.h"
 #include "LinearMath/btAlignedAllocator.h"
+#include "LinearMath/btMatrix3x3.h"
+#include "LinearMath/btTransform.h"
+#include "LinearMath/btVector3.h"
+#include "btCollisionMargin.h"
 
 #define MAX_PREFERRED_PENETRATION_DIRECTIONS 10
 
@@ -43,7 +43,7 @@ public:
 ////////
 #ifndef __SPU__
 	virtual btVector3 localGetSupportingVertexWithoutMargin(const btVector3& vec) const = 0;
-#endif  //#ifndef __SPU__
+#endif //#ifndef __SPU__
 
 	btVector3 localGetSupportVertexWithoutMarginNonVirtual(const btVector3& vec) const;
 	btVector3 localGetSupportVertexNonVirtual(const btVector3& vec) const;
@@ -72,4 +72,4 @@ public:
 	virtual void getPreferredPenetrationDirection(int index, btVector3& penetrationVector) const = 0;
 };
 
-#endif  //BT_CONVEX_SHAPE_INTERFACE1
+#endif //BT_CONVEX_SHAPE_INTERFACE1

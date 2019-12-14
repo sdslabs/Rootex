@@ -27,8 +27,8 @@ public:
 	btScalar m_leastSquaresResidual;
 
 	btSolveProjectedGaussSeidel()
-		: m_leastSquaresResidualThreshold(0),
-		  m_leastSquaresResidual(0)
+	    : m_leastSquaresResidualThreshold(0)
+	    , m_leastSquaresResidual(0)
 	{
 	}
 
@@ -57,7 +57,7 @@ public:
 					for (int h = 0; h < A.m_rowNonZeroElements1[i].size(); h++)
 					{
 						j = A.m_rowNonZeroElements1[i][h];
-						if (j != i)  //skip main diagonal
+						if (j != i) //skip main diagonal
 						{
 							delta += A(i, j) * x[j];
 						}
@@ -104,4 +104,4 @@ public:
 	}
 };
 
-#endif  //BT_SOLVE_PROJECTED_GAUSS_SEIDEL_H
+#endif //BT_SOLVE_PROJECTED_GAUSS_SEIDEL_H

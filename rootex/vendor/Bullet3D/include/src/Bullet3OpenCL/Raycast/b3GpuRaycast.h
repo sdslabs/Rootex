@@ -4,8 +4,8 @@
 #include "Bullet3Common/b3Vector3.h"
 #include "Bullet3OpenCL/Initialize/b3OpenCLInclude.h"
 
-#include "Bullet3Common/b3AlignedObjectArray.h"
 #include "Bullet3Collision/NarrowPhaseCollision/b3RaycastInfo.h"
+#include "Bullet3Common/b3AlignedObjectArray.h"
 
 class b3GpuRaycast
 {
@@ -17,12 +17,12 @@ public:
 	virtual ~b3GpuRaycast();
 
 	void castRaysHost(const b3AlignedObjectArray<b3RayInfo>& raysIn, b3AlignedObjectArray<b3RayHit>& hitResults,
-					  int numBodies, const struct b3RigidBodyData* bodies, int numCollidables, const struct b3Collidable* collidables,
-					  const struct b3GpuNarrowPhaseInternalData* narrowphaseData);
+	    int numBodies, const struct b3RigidBodyData* bodies, int numCollidables, const struct b3Collidable* collidables,
+	    const struct b3GpuNarrowPhaseInternalData* narrowphaseData);
 
 	void castRays(const b3AlignedObjectArray<b3RayInfo>& rays, b3AlignedObjectArray<b3RayHit>& hitResults,
-				  int numBodies, const struct b3RigidBodyData* bodies, int numCollidables, const struct b3Collidable* collidables,
-				  const struct b3GpuNarrowPhaseInternalData* narrowphaseData, class b3GpuBroadphaseInterface* broadphase);
+	    int numBodies, const struct b3RigidBodyData* bodies, int numCollidables, const struct b3Collidable* collidables,
+	    const struct b3GpuNarrowPhaseInternalData* narrowphaseData, class b3GpuBroadphaseInterface* broadphase);
 };
 
-#endif  //B3_GPU_RAYCAST_H
+#endif //B3_GPU_RAYCAST_H

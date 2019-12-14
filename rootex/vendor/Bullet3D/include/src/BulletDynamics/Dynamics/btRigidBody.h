@@ -16,10 +16,10 @@ subject to the following restrictions:
 #ifndef BT_RIGIDBODY_H
 #define BT_RIGIDBODY_H
 
-#include "LinearMath/btAlignedObjectArray.h"
-#include "LinearMath/btTransform.h"
 #include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h"
 #include "BulletCollision/CollisionDispatch/btCollisionObject.h"
+#include "LinearMath/btAlignedObjectArray.h"
+#include "LinearMath/btTransform.h"
 
 class btCollisionShape;
 class btMotionState;
@@ -34,7 +34,7 @@ extern bool gDisableDeactivation;
 #else
 #define btRigidBodyData btRigidBodyFloatData
 #define btRigidBodyDataName "btRigidBodyFloatData"
-#endif  //BT_USE_DOUBLE_PRECISION
+#endif //BT_USE_DOUBLE_PRECISION
 
 enum btRigidBodyFlags
 {
@@ -125,7 +125,7 @@ public:
 		///the m_rollingFriction prevents rounded shapes, such as spheres, cylinders and capsules from rolling forever.
 		///See Bullet/Demos/RollingFrictionDemo for usage
 		btScalar m_rollingFriction;
-		btScalar m_spinningFriction;  //torsional friction around contact normal
+		btScalar m_spinningFriction; //torsional friction around contact normal
 
 		///best simulation results using zero restitution.
 		btScalar m_restitution;
@@ -141,23 +141,24 @@ public:
 		btScalar m_additionalAngularDampingThresholdSqr;
 		btScalar m_additionalAngularDampingFactor;
 
-		btRigidBodyConstructionInfo(btScalar mass, btMotionState* motionState, btCollisionShape* collisionShape, const btVector3& localInertia = btVector3(0, 0, 0)) : m_mass(mass),
-																																									   m_motionState(motionState),
-																																									   m_collisionShape(collisionShape),
-																																									   m_localInertia(localInertia),
-																																									   m_linearDamping(btScalar(0.)),
-																																									   m_angularDamping(btScalar(0.)),
-																																									   m_friction(btScalar(0.5)),
-																																									   m_rollingFriction(btScalar(0)),
-																																									   m_spinningFriction(btScalar(0)),
-																																									   m_restitution(btScalar(0.)),
-																																									   m_linearSleepingThreshold(btScalar(0.8)),
-																																									   m_angularSleepingThreshold(btScalar(1.f)),
-																																									   m_additionalDamping(false),
-																																									   m_additionalDampingFactor(btScalar(0.005)),
-																																									   m_additionalLinearDampingThresholdSqr(btScalar(0.01)),
-																																									   m_additionalAngularDampingThresholdSqr(btScalar(0.01)),
-																																									   m_additionalAngularDampingFactor(btScalar(0.01))
+		btRigidBodyConstructionInfo(btScalar mass, btMotionState* motionState, btCollisionShape* collisionShape, const btVector3& localInertia = btVector3(0, 0, 0))
+		    : m_mass(mass)
+		    , m_motionState(motionState)
+		    , m_collisionShape(collisionShape)
+		    , m_localInertia(localInertia)
+		    , m_linearDamping(btScalar(0.))
+		    , m_angularDamping(btScalar(0.))
+		    , m_friction(btScalar(0.5))
+		    , m_rollingFriction(btScalar(0))
+		    , m_spinningFriction(btScalar(0))
+		    , m_restitution(btScalar(0.))
+		    , m_linearSleepingThreshold(btScalar(0.8))
+		    , m_angularSleepingThreshold(btScalar(1.f))
+		    , m_additionalDamping(false)
+		    , m_additionalDampingFactor(btScalar(0.005))
+		    , m_additionalLinearDampingThresholdSqr(btScalar(0.01))
+		    , m_additionalAngularDampingThresholdSqr(btScalar(0.01))
+		    , m_additionalAngularDampingFactor(btScalar(0.01))
 		{
 			m_startWorldTransform.setIdentity();
 		}
@@ -410,8 +411,7 @@ public:
 		if ((getActivationState() == ISLAND_SLEEPING) || (getActivationState() == DISABLE_DEACTIVATION))
 			return;
 
-		if ((getLinearVelocity().length2() < m_linearSleepingThreshold * m_linearSleepingThreshold) &&
-			(getAngularVelocity().length2() < m_angularSleepingThreshold * m_angularSleepingThreshold))
+		if ((getLinearVelocity().length2() < m_linearSleepingThreshold * m_linearSleepingThreshold) && (getAngularVelocity().length2() < m_angularSleepingThreshold * m_angularSleepingThreshold))
 		{
 			m_deactivationTime += timeStep;
 		}
@@ -593,4 +593,4 @@ struct btRigidBodyDoubleData
 	char m_padding[4];
 };
 
-#endif  //BT_RIGIDBODY_H
+#endif //BT_RIGIDBODY_H

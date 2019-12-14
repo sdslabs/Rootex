@@ -16,8 +16,8 @@ subject to the following restrictions:
 #ifndef BT_OBJECT_ARRAY__
 #define BT_OBJECT_ARRAY__
 
-#include "btScalar.h"  // has definitions like SIMD_FORCE_INLINE
 #include "btAlignedAllocator.h"
+#include "btScalar.h" // has definitions like SIMD_FORCE_INLINE
 
 ///If the platform doesn't support placement new, you can disable BT_USE_PLACEMENT_NEW
 ///then the btAlignedObjectArray doesn't support objects with virtual methods, and non-trivial constructors/destructors
@@ -27,16 +27,16 @@ subject to the following restrictions:
 
 #define BT_USE_PLACEMENT_NEW 1
 //#define BT_USE_MEMCPY 1 //disable, because it is cumbersome to find out for each platform where memcpy is defined. It can be in <memory.h> or <string.h> or otherwise...
-#define BT_ALLOW_ARRAY_COPY_OPERATOR  // enabling this can accidently perform deep copies of data if you are not careful
+#define BT_ALLOW_ARRAY_COPY_OPERATOR // enabling this can accidently perform deep copies of data if you are not careful
 
 #ifdef BT_USE_MEMCPY
 #include <memory.h>
 #include <string.h>
-#endif  //BT_USE_MEMCPY
+#endif //BT_USE_MEMCPY
 
 #ifdef BT_USE_PLACEMENT_NEW
-#include <new>  //for placement new
-#endif          //BT_USE_PLACEMENT_NEW
+#include <new> //for placement new
+#endif //BT_USE_PLACEMENT_NEW
 
 ///The btAlignedObjectArray template class uses a subset of the stl::vector interface for its methods
 ///It is developed to replace stl::vector to avoid portability issues, including STL alignment issues to add SIMD/SSE data
@@ -59,10 +59,10 @@ public:
 		copyFromArray(other);
 		return *this;
 	}
-#else   //BT_ALLOW_ARRAY_COPY_OPERATOR
+#else //BT_ALLOW_ARRAY_COPY_OPERATOR
 private:
 	SIMD_FORCE_INLINE btAlignedObjectArray<T>& operator=(const btAlignedObjectArray<T>& other);
-#endif  //BT_ALLOW_ARRAY_COPY_OPERATOR
+#endif //BT_ALLOW_ARRAY_COPY_OPERATOR
 
 protected:
 	SIMD_FORCE_INLINE int allocSize(int size)
@@ -77,7 +77,7 @@ protected:
 			new (&dest[i]) T(m_data[i]);
 #else
 			dest[i] = m_data[i];
-#endif  //BT_USE_PLACEMENT_NEW
+#endif //BT_USE_PLACEMENT_NEW
 	}
 
 	SIMD_FORCE_INLINE void init()
@@ -222,7 +222,7 @@ public:
 			{
 				new (&m_data[i]) T(fillData);
 			}
-#endif  //BT_USE_PLACEMENT_NEW
+#endif //BT_USE_PLACEMENT_NEW
 		}
 
 		m_size = newsize;
@@ -248,7 +248,7 @@ public:
 		}
 		m_size++;
 #ifdef BT_USE_PLACEMENT_NEW
-		new (&m_data[sz]) T(fillValue);  //use the in-place new (not really allocating heap memory)
+		new (&m_data[sz]) T(fillValue); //use the in-place new (not really allocating heap memory)
 #endif
 
 		return m_data[sz];
@@ -266,7 +266,7 @@ public:
 		new (&m_data[m_size]) T(_Val);
 #else
 		m_data[size()] = _Val;
-#endif  //BT_USE_PLACEMENT_NEW
+#endif //BT_USE_PLACEMENT_NEW
 
 		m_size++;
 	}
@@ -278,9 +278,9 @@ public:
 	}
 
 	SIMD_FORCE_INLINE void reserve(int _Count)
-	{  // determine new minimum length of allocated storage
+	{ // determine new minimum length of allocated storage
 		if (capacity() < _Count)
-		{  // not enough room, reallocate
+		{ // not enough room, reallocate
 			T* s = (T*)allocate(_Count);
 
 			copy(0, size(), s);
@@ -390,7 +390,7 @@ public:
 		T temp = m_data[index0];
 		m_data[index0] = m_data[index1];
 		m_data[index1] = temp;
-#endif  //BT_USE_PLACEMENT_NEW
+#endif //BT_USE_PLACEMENT_NEW
 	}
 
 	template <typename L>
@@ -424,15 +424,15 @@ public:
 		//assume sorted array
 		while (first <= last)
 		{
-			int mid = (first + last) / 2;  // compute mid point.
+			int mid = (first + last) / 2; // compute mid point.
 			if (key > m_data[mid])
-				first = mid + 1;  // repeat search in top half.
+				first = mid + 1; // repeat search in top half.
 			else if (key < m_data[mid])
-				last = mid - 1;  // repeat search in bottom half.
+				last = mid - 1; // repeat search in bottom half.
 			else
-				return mid;  // found it. return position /////
+				return mid; // found it. return position /////
 		}
-		return size();  // failed to find key
+		return size(); // failed to find key
 	}
 
 	int findLinearSearch(const T& key) const
@@ -501,4 +501,4 @@ public:
 	}
 };
 
-#endif  //BT_OBJECT_ARRAY__
+#endif //BT_OBJECT_ARRAY__

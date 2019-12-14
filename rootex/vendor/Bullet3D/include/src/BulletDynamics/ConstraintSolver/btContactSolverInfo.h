@@ -37,18 +37,18 @@ enum btSolverMode
 struct btContactSolverInfoData
 {
 	btScalar m_tau;
-	btScalar m_damping;  //global non-contact constraint damping, can be locally overridden by constraints during 'getInfo2'.
+	btScalar m_damping; //global non-contact constraint damping, can be locally overridden by constraints during 'getInfo2'.
 	btScalar m_friction;
 	btScalar m_timeStep;
 	btScalar m_restitution;
 	int m_numIterations;
 	btScalar m_maxErrorReduction;
-	btScalar m_sor;          //successive over-relaxation term
-	btScalar m_erp;          //error reduction for non-contact constraints
-	btScalar m_erp2;         //error reduction for contact constraints
-	btScalar m_globalCfm;    //constraint force mixing for contacts and non-contacts
-	btScalar m_frictionERP;  //error reduction for friction constraints
-	btScalar m_frictionCFM;  //constraint force mixing for friction constraints
+	btScalar m_sor; //successive over-relaxation term
+	btScalar m_erp; //error reduction for non-contact constraints
+	btScalar m_erp2; //error reduction for contact constraints
+	btScalar m_globalCfm; //constraint force mixing for contacts and non-contacts
+	btScalar m_frictionERP; //error reduction for friction constraints
+	btScalar m_frictionCFM; //constraint force mixing for friction constraints
 
 	int m_splitImpulse;
 	btScalar m_splitImpulsePenetrationThreshold;
@@ -82,7 +82,7 @@ struct btContactSolverInfo : public btContactSolverInfoData
 		m_erp = btScalar(0.2);
 		m_erp2 = btScalar(0.2);
 		m_globalCfm = btScalar(0.);
-		m_frictionERP = btScalar(0.2);  //positional friction 'anchors' are disabled by default
+		m_frictionERP = btScalar(0.2); //positional friction 'anchors' are disabled by default
 		m_frictionCFM = btScalar(0.);
 		m_sor = btScalar(1.);
 		m_splitImpulse = true;
@@ -92,13 +92,13 @@ struct btContactSolverInfo : public btContactSolverInfoData
 		m_warmstartingFactor = btScalar(0.85);
 		m_articulatedWarmstartingFactor = btScalar(0.85);
 		//m_solverMode =  SOLVER_USE_WARMSTARTING |  SOLVER_SIMD | SOLVER_DISABLE_VELOCITY_DEPENDENT_FRICTION_DIRECTION|SOLVER_USE_2_FRICTION_DIRECTIONS|SOLVER_ENABLE_FRICTION_DIRECTION_CACHING;// | SOLVER_RANDMIZE_ORDER;
-		m_solverMode = SOLVER_USE_WARMSTARTING | SOLVER_SIMD;  // | SOLVER_RANDMIZE_ORDER;
-		m_restingContactRestitutionThreshold = 2;              //unused as of 2.81
-		m_minimumSolverBatchSize = 128;                        //try to combine islands until the amount of constraints reaches this limit
-		m_maxGyroscopicForce = 100.f;                          ///it is only used for 'explicit' version of gyroscopic force
-		m_singleAxisRollingFrictionThreshold = 1e30f;          ///if the velocity is above this threshold, it will use a single constraint row (axis), otherwise 3 rows.
+		m_solverMode = SOLVER_USE_WARMSTARTING | SOLVER_SIMD; // | SOLVER_RANDMIZE_ORDER;
+		m_restingContactRestitutionThreshold = 2; //unused as of 2.81
+		m_minimumSolverBatchSize = 128; //try to combine islands until the amount of constraints reaches this limit
+		m_maxGyroscopicForce = 100.f; ///it is only used for 'explicit' version of gyroscopic force
+		m_singleAxisRollingFrictionThreshold = 1e30f; ///if the velocity is above this threshold, it will use a single constraint row (axis), otherwise 3 rows.
 		m_leastSquaresResidualThreshold = 0.f;
-		m_restitutionVelocityThreshold = 0.2f;  //if the relative velocity is below this threshold, there is zero restitution
+		m_restitutionVelocityThreshold = 0.2f; //if the relative velocity is below this threshold, there is zero restitution
 		m_jointFeedbackInWorldSpace = false;
 		m_jointFeedbackInJointFrame = false;
 		m_reportSolverAnalytics = 0;
@@ -109,21 +109,21 @@ struct btContactSolverInfo : public btContactSolverInfoData
 struct btContactSolverInfoDoubleData
 {
 	double m_tau;
-	double m_damping;  //global non-contact constraint damping, can be locally overridden by constraints during 'getInfo2'.
+	double m_damping; //global non-contact constraint damping, can be locally overridden by constraints during 'getInfo2'.
 	double m_friction;
 	double m_timeStep;
 	double m_restitution;
 	double m_maxErrorReduction;
 	double m_sor;
-	double m_erp;        //used as Baumgarte factor
-	double m_erp2;       //used in Split Impulse
-	double m_globalCfm;  //constraint force mixing
+	double m_erp; //used as Baumgarte factor
+	double m_erp2; //used in Split Impulse
+	double m_globalCfm; //constraint force mixing
 	double m_splitImpulsePenetrationThreshold;
 	double m_splitImpulseTurnErp;
 	double m_linearSlop;
 	double m_warmstartingFactor;
 	double m_articulatedWarmstartingFactor;
-	double m_maxGyroscopicForce;  ///it is only used for 'explicit' version of gyroscopic force
+	double m_maxGyroscopicForce; ///it is only used for 'explicit' version of gyroscopic force
 	double m_singleAxisRollingFrictionThreshold;
 
 	int m_numIterations;
@@ -137,17 +137,17 @@ struct btContactSolverInfoDoubleData
 struct btContactSolverInfoFloatData
 {
 	float m_tau;
-	float m_damping;  //global non-contact constraint damping, can be locally overridden by constraints during 'getInfo2'.
+	float m_damping; //global non-contact constraint damping, can be locally overridden by constraints during 'getInfo2'.
 	float m_friction;
 	float m_timeStep;
 
 	float m_restitution;
 	float m_maxErrorReduction;
 	float m_sor;
-	float m_erp;  //used as Baumgarte factor
+	float m_erp; //used as Baumgarte factor
 
-	float m_erp2;       //used in Split Impulse
-	float m_globalCfm;  //constraint force mixing
+	float m_erp2; //used in Split Impulse
+	float m_globalCfm; //constraint force mixing
 	float m_splitImpulsePenetrationThreshold;
 	float m_splitImpulseTurnErp;
 
@@ -163,7 +163,6 @@ struct btContactSolverInfoFloatData
 
 	int m_minimumSolverBatchSize;
 	int m_splitImpulse;
-	
 };
 
-#endif  //BT_CONTACT_SOLVER_INFO
+#endif //BT_CONTACT_SOLVER_INFO

@@ -24,9 +24,9 @@ class btManifoldPoint;
 
 #include "BulletCollision/NarrowPhaseCollision/btDiscreteCollisionDetectorInterface.h"
 
-#include "LinearMath/btTransform.h"
-#include "BulletCollision/CollisionDispatch/btCollisionObjectWrapper.h"
 #include "BulletCollision/CollisionDispatch/btCollisionObject.h"
+#include "BulletCollision/CollisionDispatch/btCollisionObjectWrapper.h"
+#include "LinearMath/btTransform.h"
 
 typedef bool (*ContactAddedCallback)(btManifoldPoint& cp, const btCollisionObjectWrapper* colObj0Wrap, int partId0, int index0, const btCollisionObjectWrapper* colObj1Wrap, int partId1, int index1);
 extern ContactAddedCallback gContactAddedCallback;
@@ -58,21 +58,21 @@ protected:
 
 public:
 	btManifoldResult()
-		:
+	    :
 #ifdef DEBUG_PART_INDEX
 
-		  m_partId0(-1),
-		  m_partId1(-1),
-		  m_index0(-1),
-		  m_index1(-1)
-#endif  //DEBUG_PART_INDEX
-			  m_closestPointDistanceThreshold(0)
+	    m_partId0(-1)
+	    , m_partId1(-1)
+	    , m_index0(-1)
+	    , m_index1(-1)
+#endif //DEBUG_PART_INDEX
+	          m_closestPointDistanceThreshold(0)
 	{
 	}
 
 	btManifoldResult(const btCollisionObjectWrapper* body0Wrap, const btCollisionObjectWrapper* body1Wrap);
 
-	virtual ~btManifoldResult(){};
+	virtual ~btManifoldResult() {};
 
 	void setPersistentManifold(btPersistentManifold* manifoldPtr)
 	{
@@ -160,4 +160,4 @@ public:
 	static btScalar calculateCombinedContactStiffness(const btCollisionObject* body0, const btCollisionObject* body1);
 };
 
-#endif  //BT_MANIFOLD_RESULT_H
+#endif //BT_MANIFOLD_RESULT_H

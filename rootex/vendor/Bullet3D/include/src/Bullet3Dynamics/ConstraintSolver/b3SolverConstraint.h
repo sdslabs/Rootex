@@ -16,8 +16,8 @@ subject to the following restrictions:
 #ifndef B3_SOLVER_CONSTRAINT_H
 #define B3_SOLVER_CONSTRAINT_H
 
-#include "Bullet3Common/b3Vector3.h"
 #include "Bullet3Common/b3Matrix3x3.h"
+#include "Bullet3Common/b3Vector3.h"
 //#include "b3JacobianEntry.h"
 #include "Bullet3Common/b3AlignedObjectArray.h"
 
@@ -70,4 +70,4 @@ b3SolverConstraint
 
 typedef b3AlignedObjectArray<b3SolverConstraint> b3ConstraintArray;
 
-#endif  //B3_SOLVER_CONSTRAINT_H
+#endif //B3_SOLVER_CONSTRAINT_H

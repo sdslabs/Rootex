@@ -16,21 +16,21 @@ subject to the following restrictions:
 #ifndef BT_GJK_EPA_PENETATION_CONVEX_COLLISION_H
 #define BT_GJK_EPA_PENETATION_CONVEX_COLLISION_H
 
-#include "LinearMath/btTransform.h"  // Note that btVector3 might be double precision...
-#include "btGjkEpa3.h"
-#include "btGjkCollisionDescription.h"
 #include "BulletCollision/NarrowPhaseCollision/btVoronoiSimplexSolver.h"
+#include "LinearMath/btTransform.h" // Note that btVector3 might be double precision...
+#include "btGjkCollisionDescription.h"
+#include "btGjkEpa3.h"
 
 template <typename btConvexTemplate>
 bool btGjkEpaCalcPenDepth(const btConvexTemplate& a, const btConvexTemplate& b,
-						  const btGjkCollisionDescription& colDesc,
-						  btVector3& v, btVector3& wWitnessOnA, btVector3& wWitnessOnB)
+    const btGjkCollisionDescription& colDesc,
+    btVector3& v, btVector3& wWitnessOnA, btVector3& wWitnessOnB)
 {
 	(void)v;
 
 	//	const btScalar				radialmargin(btScalar(0.));
 
-	btVector3 guessVector(b.getWorldTransform().getOrigin() - a.getWorldTransform().getOrigin());  //?? why not use the GJK input?
+	btVector3 guessVector(b.getWorldTransform().getOrigin() - a.getWorldTransform().getOrigin()); //?? why not use the GJK input?
 
 	btGjkEpaSolver3::sResults results;
 
@@ -74,7 +74,7 @@ int btComputeGjkEpaPenetration(const btConvexTemplate& a, const btConvexTemplate
 	btScalar marginB = b.getMargin();
 
 	int m_curIter = 0;
-	int gGjkMaxIter = colDesc.m_maxGjkIterations;  //this is to catch invalid input, perhaps check for #NaN?
+	int gGjkMaxIter = colDesc.m_maxGjkIterations; //this is to catch invalid input, perhaps check for #NaN?
 	btVector3 m_cachedSeparatingAxis = colDesc.m_firstDir;
 
 	bool isValid = false;
@@ -172,7 +172,7 @@ int btComputeGjkEpaPenetration(const btConvexTemplate& a, const btConvexTemplate
                 checkSimplex = false;
                 break;
             }
-#endif  //
+#endif //
 
 			//redundant m_simplexSolver->compute_points(pointOnA, pointOnB);
 
@@ -195,10 +195,10 @@ int btComputeGjkEpaPenetration(const btConvexTemplate& a, const btConvexTemplate
 
 				printf("btGjkPairDetector maxIter exceeded:%i\n", m_curIter);
 				printf("sepAxis=(%f,%f,%f), squaredDistance = %f\n",
-					   m_cachedSeparatingAxis.getX(),
-					   m_cachedSeparatingAxis.getY(),
-					   m_cachedSeparatingAxis.getZ(),
-					   squaredDistance);
+				    m_cachedSeparatingAxis.getX(),
+				    m_cachedSeparatingAxis.getY(),
+				    m_cachedSeparatingAxis.getZ(),
+				    squaredDistance);
 #endif
 
 				break;
@@ -231,7 +231,7 @@ int btComputeGjkEpaPenetration(const btConvexTemplate& a, const btConvexTemplate
 			if (lenSqr > SIMD_EPSILON * SIMD_EPSILON)
 			{
 				btScalar rlen = btScalar(1.) / btSqrt(lenSqr);
-				normalInB *= rlen;  //normalize
+				normalInB *= rlen; //normalize
 
 				btScalar s = btSqrt(squaredDistance);
 
@@ -249,8 +249,7 @@ int btComputeGjkEpaPenetration(const btConvexTemplate& a, const btConvexTemplate
 			}
 		}
 
-		bool catchDegeneratePenetrationCase =
-			(m_catchDegeneracies && m_degenerateSimplex && ((distance + margin) < 0.01));
+		bool catchDegeneratePenetrationCase = (m_catchDegeneracies && m_degenerateSimplex && ((distance + margin) < 0.01));
 
 		//if (checkPenetration && !isValid)
 		if (checkPenetration && (!isValid || catchDegeneratePenetrationCase))
@@ -265,8 +264,8 @@ int btComputeGjkEpaPenetration(const btConvexTemplate& a, const btConvexTemplate
 			m_cachedSeparatingAxis.setZero();
 
 			bool isValid2 = btGjkEpaCalcPenDepth(a, b,
-												 colDesc,
-												 m_cachedSeparatingAxis, tmpPointOnA, tmpPointOnB);
+			    colDesc,
+			    m_cachedSeparatingAxis, tmpPointOnA, tmpPointOnB);
 
 			if (isValid2)
 			{
@@ -351,4 +350,4 @@ int btComputeGjkEpaPenetration(const btConvexTemplate& a, const btConvexTemplate
 	return -m_lastUsedMethod;
 }
 
-#endif  //BT_GJK_EPA_PENETATION_CONVEX_COLLISION_H
+#endif //BT_GJK_EPA_PENETATION_CONVEX_COLLISION_H

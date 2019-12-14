@@ -185,6 +185,6 @@ struct b3OpenCLUtils
 	}
 };
 
-#endif  //__cplusplus
+#endif //__cplusplus
 
-#endif  // B3_OPENCL_UTILS_H
+#endif // B3_OPENCL_UTILS_H

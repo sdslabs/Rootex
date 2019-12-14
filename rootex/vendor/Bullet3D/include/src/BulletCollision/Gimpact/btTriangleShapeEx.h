@@ -63,7 +63,7 @@ struct GIM_TRIANGLE_CONTACT
 
 	//! classify points that are closer
 	void merge_points(const btVector4& plane,
-					  btScalar margin, const btVector3* points, int point_count);
+	    btScalar margin, const btVector3* points, int point_count);
 };
 
 class btPrimitiveTriangle
@@ -73,7 +73,8 @@ public:
 	btVector4 m_plane;
 	btScalar m_margin;
 	btScalar m_dummy;
-	btPrimitiveTriangle() : m_margin(0.01f)
+	btPrimitiveTriangle()
+	    : m_margin(0.01f)
 	{
 	}
 
@@ -126,15 +127,18 @@ This class implements a better getAabb method than the previous btTriangleShape 
 class btTriangleShapeEx : public btTriangleShape
 {
 public:
-	btTriangleShapeEx() : btTriangleShape(btVector3(0, 0, 0), btVector3(0, 0, 0), btVector3(0, 0, 0))
+	btTriangleShapeEx()
+	    : btTriangleShape(btVector3(0, 0, 0), btVector3(0, 0, 0), btVector3(0, 0, 0))
 	{
 	}
 
-	btTriangleShapeEx(const btVector3& p0, const btVector3& p1, const btVector3& p2) : btTriangleShape(p0, p1, p2)
+	btTriangleShapeEx(const btVector3& p0, const btVector3& p1, const btVector3& p2)
+	    : btTriangleShape(p0, p1, p2)
 	{
 	}
 
-	btTriangleShapeEx(const btTriangleShapeEx& other) : btTriangleShape(other.m_vertices1[0], other.m_vertices1[1], other.m_vertices1[2])
+	btTriangleShapeEx(const btTriangleShapeEx& other)
+	    : btTriangleShape(other.m_vertices1[0], other.m_vertices1[1], other.m_vertices1[2])
 	{
 	}
 
@@ -166,4 +170,4 @@ public:
 	bool overlap_test_conservative(const btTriangleShapeEx& other);
 };
 
-#endif  //GIMPACT_TRIANGLE_MESH_SHAPE_H
+#endif //GIMPACT_TRIANGLE_MESH_SHAPE_H

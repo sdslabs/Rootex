@@ -16,9 +16,9 @@ subject to the following restrictions:
 #ifndef BT_BROADPHASE_PROXY_H
 #define BT_BROADPHASE_PROXY_H
 
-#include "LinearMath/btScalar.h"  //for SIMD_FORCE_INLINE
-#include "LinearMath/btVector3.h"
 #include "LinearMath/btAlignedAllocator.h"
+#include "LinearMath/btScalar.h" //for SIMD_FORCE_INLINE
+#include "LinearMath/btVector3.h"
 
 /// btDispatcher uses these types
 /// IMPORTANT NOTE:The types are ordered polyhedral, implicit convex and concave
@@ -95,7 +95,7 @@ btBroadphaseProxy
 		DebrisFilter = 8,
 		SensorTrigger = 16,
 		CharacterFilter = 32,
-		AllFilter = -1  //all bits sets: DefaultFilter | StaticFilter | KinematicFilter | DebrisFilter | SensorTrigger
+		AllFilter = -1 //all bits sets: DefaultFilter | StaticFilter | KinematicFilter | DebrisFilter | SensorTrigger
 	};
 
 	//Usually the client btCollisionObject or Rigidbody class
@@ -103,7 +103,7 @@ btBroadphaseProxy
 	int m_collisionFilterGroup;
 	int m_collisionFilterMask;
 
-	int m_uniqueId;  //m_uniqueId is introduced for paircache. could get rid of this, by calculating the address offset etc.
+	int m_uniqueId; //m_uniqueId is introduced for paircache. could get rid of this, by calculating the address offset etc.
 
 	btVector3 m_aabbMin;
 	btVector3 m_aabbMax;
@@ -114,16 +114,17 @@ btBroadphaseProxy
 	}
 
 	//used for memory pools
-	btBroadphaseProxy() : m_clientObject(0)
+	btBroadphaseProxy()
+	    : m_clientObject(0)
 	{
 	}
 
 	btBroadphaseProxy(const btVector3& aabbMin, const btVector3& aabbMax, void* userPtr, int collisionFilterGroup, int collisionFilterMask)
-		: m_clientObject(userPtr),
-		  m_collisionFilterGroup(collisionFilterGroup),
-		  m_collisionFilterMask(collisionFilterMask),
-		  m_aabbMin(aabbMin),
-		  m_aabbMax(aabbMax)
+	    : m_clientObject(userPtr)
+	    , m_collisionFilterGroup(collisionFilterGroup)
+	    , m_collisionFilterMask(collisionFilterMask)
+	    , m_aabbMin(aabbMin)
+	    , m_aabbMax(aabbMax)
 	{
 	}
 
@@ -144,8 +145,7 @@ btBroadphaseProxy
 
 	static SIMD_FORCE_INLINE bool isConcave(int proxyType)
 	{
-		return ((proxyType > CONCAVE_SHAPES_START_HERE) &&
-				(proxyType < CONCAVE_SHAPES_END_HERE));
+		return ((proxyType > CONCAVE_SHAPES_START_HERE) && (proxyType < CONCAVE_SHAPES_END_HERE));
 	}
 	static SIMD_FORCE_INLINE bool isCompound(int proxyType)
 	{
@@ -178,20 +178,20 @@ ATTRIBUTE_ALIGNED16(struct)
 btBroadphasePair
 {
 	btBroadphasePair()
-		: m_pProxy0(0),
-		  m_pProxy1(0),
-		  m_algorithm(0),
-		  m_internalInfo1(0)
+	    : m_pProxy0(0)
+	    , m_pProxy1(0)
+	    , m_algorithm(0)
+	    , m_internalInfo1(0)
 	{
 	}
 
 	BT_DECLARE_ALIGNED_ALLOCATOR();
 
 	btBroadphasePair(const btBroadphasePair& other)
-		: m_pProxy0(other.m_pProxy0),
-		  m_pProxy1(other.m_pProxy1),
-		  m_algorithm(other.m_algorithm),
-		  m_internalInfo1(other.m_internalInfo1)
+	    : m_pProxy0(other.m_pProxy0)
+	    , m_pProxy1(other.m_pProxy1)
+	    , m_algorithm(other.m_algorithm)
+	    , m_internalInfo1(other.m_internalInfo1)
 	{
 	}
 	btBroadphasePair(btBroadphaseProxy & proxy0, btBroadphaseProxy & proxy1)
@@ -219,7 +219,7 @@ btBroadphasePair
 	union {
 		void* m_internalInfo1;
 		int m_internalTmpValue;
-	};  //don't use this data, it will be removed in future version.
+	}; //don't use this data, it will be removed in future version.
 };
 
 /*
@@ -241,9 +241,7 @@ public:
 		const int uidA1 = a.m_pProxy1 ? a.m_pProxy1->m_uniqueId : -1;
 		const int uidB1 = b.m_pProxy1 ? b.m_pProxy1->m_uniqueId : -1;
 
-		return uidA0 > uidB0 ||
-			   (a.m_pProxy0 == b.m_pProxy0 && uidA1 > uidB1) ||
-			   (a.m_pProxy0 == b.m_pProxy0 && a.m_pProxy1 == b.m_pProxy1 && a.m_algorithm > b.m_algorithm);
+		return uidA0 > uidB0 || (a.m_pProxy0 == b.m_pProxy0 && uidA1 > uidB1) || (a.m_pProxy0 == b.m_pProxy0 && a.m_pProxy1 == b.m_pProxy1 && a.m_algorithm > b.m_algorithm);
 	}
 };
 
@@ -252,4 +250,4 @@ SIMD_FORCE_INLINE bool operator==(const btBroadphasePair& a, const btBroadphaseP
 	return (a.m_pProxy0 == b.m_pProxy0) && (a.m_pProxy1 == b.m_pProxy1);
 }
 
-#endif  //BT_BROADPHASE_PROXY_H
+#endif //BT_BROADPHASE_PROXY_H

@@ -15,8 +15,8 @@ subject to the following restrictions:
 #ifndef BT_GEOMETRY_UTIL_H
 #define BT_GEOMETRY_UTIL_H
 
-#include "btVector3.h"
 #include "btAlignedObjectArray.h"
+#include "btVector3.h"
 
 ///The btGeometryUtil helper class provides a few methods to convert between plane equations and vertices.
 class btGeometryUtil
@@ -33,4 +33,4 @@ public:
 	static bool areVerticesBehindPlane(const btVector3& planeNormal, const btAlignedObjectArray<btVector3>& vertices, btScalar margin);
 };
 
-#endif  //BT_GEOMETRY_UTIL_H
+#endif //BT_GEOMETRY_UTIL_H

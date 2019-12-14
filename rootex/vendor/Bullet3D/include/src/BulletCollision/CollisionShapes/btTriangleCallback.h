@@ -34,4 +34,4 @@ public:
 	virtual void internalProcessTriangleIndex(btVector3* triangle, int partId, int triangleIndex) = 0;
 };
 
-#endif  //BT_TRIANGLE_CALLBACK_H
+#endif //BT_TRIANGLE_CALLBACK_H

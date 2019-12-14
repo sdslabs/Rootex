@@ -16,8 +16,8 @@ subject to the following restrictions:
 #ifndef B3_SOLVER_BODY_H
 #define B3_SOLVER_BODY_H
 
-#include "Bullet3Common/b3Vector3.h"
 #include "Bullet3Common/b3Matrix3x3.h"
+#include "Bullet3Common/b3Vector3.h"
 
 #include "Bullet3Common/b3AlignedAllocator.h"
 #include "Bullet3Common/b3TransformUtil.h"
@@ -25,7 +25,7 @@ subject to the following restrictions:
 ///Until we get other contributions, only use SIMD on Windows, when using Visual Studio 2008 or later, and not double precision
 #ifdef B3_USE_SSE
 #define USE_SIMD 1
-#endif  //
+#endif //
 
 #ifdef USE_SIMD
 
@@ -36,12 +36,12 @@ struct b3SimdScalar
 	}
 
 	B3_FORCE_INLINE b3SimdScalar(float fl)
-		: m_vec128(_mm_set1_ps(fl))
+	    : m_vec128(_mm_set1_ps(fl))
 	{
 	}
 
 	B3_FORCE_INLINE b3SimdScalar(__m128 v128)
-		: m_vec128(v128)
+	    : m_vec128(v128)
 	{
 	}
 	union {
@@ -278,4 +278,4 @@ b3SolverBody
 	}
 };
 
-#endif  //B3_SOLVER_BODY_H
+#endif //B3_SOLVER_BODY_H

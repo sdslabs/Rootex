@@ -16,8 +16,8 @@ subject to the following restrictions:
 #ifndef BT_CONCAVE_SHAPE_H
 #define BT_CONCAVE_SHAPE_H
 
+#include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h" // for the types
 #include "btCollisionShape.h"
-#include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h"  // for the types
 #include "btTriangleCallback.h"
 
 /// PHY_ScalarType enumerates possible scalar types.
@@ -59,4 +59,4 @@ public:
 	}
 };
 
-#endif  //BT_CONCAVE_SHAPE_H
+#endif //BT_CONCAVE_SHAPE_H

@@ -3,16 +3,16 @@
 
 #define B3_TRIANGLE_NUM_CONVEX_FACES 5
 
-#include "Bullet3Common/shared/b3Int4.h"
-#include "Bullet3Collision/NarrowPhaseCollision/shared/b3RigidBodyData.h"
-#include "Bullet3Collision/NarrowPhaseCollision/shared/b3Collidable.h"
 #include "Bullet3Collision/BroadPhaseCollision/shared/b3Aabb.h"
 #include "Bullet3Collision/NarrowPhaseCollision/shared/b3BvhSubtreeInfoData.h"
-#include "Bullet3Collision/NarrowPhaseCollision/shared/b3QuantizedBvhNodeData.h"
+#include "Bullet3Collision/NarrowPhaseCollision/shared/b3Collidable.h"
 #include "Bullet3Collision/NarrowPhaseCollision/shared/b3ConvexPolyhedronData.h"
+#include "Bullet3Collision/NarrowPhaseCollision/shared/b3QuantizedBvhNodeData.h"
+#include "Bullet3Collision/NarrowPhaseCollision/shared/b3RigidBodyData.h"
+#include "Bullet3Common/shared/b3Int4.h"
 
 inline void b3Project(__global const b3ConvexPolyhedronData* hull, b3Float4ConstArg pos, b3QuatConstArg orn,
-					  const b3Float4* dir, __global const b3Float4* vertices, float* min, float* max)
+    const b3Float4* dir, __global const b3Float4* vertices, float* min, float* max)
 {
 	min[0] = FLT_MAX;
 	max[0] = -FLT_MAX;
@@ -39,9 +39,9 @@ inline void b3Project(__global const b3ConvexPolyhedronData* hull, b3Float4Const
 }
 
 inline bool b3TestSepAxis(const b3ConvexPolyhedronData* hullA, __global const b3ConvexPolyhedronData* hullB,
-						  b3Float4ConstArg posA, b3QuatConstArg ornA,
-						  b3Float4ConstArg posB, b3QuatConstArg ornB,
-						  b3Float4* sep_axis, const b3Float4* verticesA, __global const b3Float4* verticesB, float* depth)
+    b3Float4ConstArg posA, b3QuatConstArg ornA,
+    b3Float4ConstArg posB, b3QuatConstArg ornB,
+    b3Float4* sep_axis, const b3Float4* verticesA, __global const b3Float4* verticesB, float* depth)
 {
 	float Min0, Max0;
 	float Min1, Max1;
@@ -58,23 +58,23 @@ inline bool b3TestSepAxis(const b3ConvexPolyhedronData* hullA, __global const b3
 }
 
 bool b3FindSeparatingAxis(const b3ConvexPolyhedronData* hullA, __global const b3ConvexPolyhedronData* hullB,
-						  b3Float4ConstArg posA1,
-						  b3QuatConstArg ornA,
-						  b3Float4ConstArg posB1,
-						  b3QuatConstArg ornB,
-						  b3Float4ConstArg DeltaC2,
+    b3Float4ConstArg posA1,
+    b3QuatConstArg ornA,
+    b3Float4ConstArg posB1,
+    b3QuatConstArg ornB,
+    b3Float4ConstArg DeltaC2,
 
-						  const b3Float4* verticesA,
-						  const b3Float4* uniqueEdgesA,
-						  const b3GpuFace* facesA,
-						  const int* indicesA,
+    const b3Float4* verticesA,
+    const b3Float4* uniqueEdgesA,
+    const b3GpuFace* facesA,
+    const int* indicesA,
 
-						  __global const b3Float4* verticesB,
-						  __global const b3Float4* uniqueEdgesB,
-						  __global const b3GpuFace* facesB,
-						  __global const int* indicesB,
-						  b3Float4* sep,
-						  float* dmin)
+    __global const b3Float4* verticesB,
+    __global const b3Float4* uniqueEdgesB,
+    __global const b3GpuFace* facesB,
+    __global const int* indicesB,
+    b3Float4* sep,
+    float* dmin)
 {
 	b3Float4 posA = posA1;
 	posA.w = 0.f;
@@ -124,188 +124,188 @@ bool b3FindSeparatingAxis(const b3ConvexPolyhedronData* hullA, __global const b3
 	return true;
 }
 
-b3Vector3 unitSphere162[] =
-	{
-		b3MakeVector3(0.000000, -1.000000, 0.000000),
-		b3MakeVector3(0.203181, -0.967950, 0.147618),
-		b3MakeVector3(-0.077607, -0.967950, 0.238853),
-		b3MakeVector3(0.723607, -0.447220, 0.525725),
-		b3MakeVector3(0.609547, -0.657519, 0.442856),
-		b3MakeVector3(0.812729, -0.502301, 0.295238),
-		b3MakeVector3(-0.251147, -0.967949, 0.000000),
-		b3MakeVector3(-0.077607, -0.967950, -0.238853),
-		b3MakeVector3(0.203181, -0.967950, -0.147618),
-		b3MakeVector3(0.860698, -0.251151, 0.442858),
-		b3MakeVector3(-0.276388, -0.447220, 0.850649),
-		b3MakeVector3(-0.029639, -0.502302, 0.864184),
-		b3MakeVector3(-0.155215, -0.251152, 0.955422),
-		b3MakeVector3(-0.894426, -0.447216, 0.000000),
-		b3MakeVector3(-0.831051, -0.502299, 0.238853),
-		b3MakeVector3(-0.956626, -0.251149, 0.147618),
-		b3MakeVector3(-0.276388, -0.447220, -0.850649),
-		b3MakeVector3(-0.483971, -0.502302, -0.716565),
-		b3MakeVector3(-0.436007, -0.251152, -0.864188),
-		b3MakeVector3(0.723607, -0.447220, -0.525725),
-		b3MakeVector3(0.531941, -0.502302, -0.681712),
-		b3MakeVector3(0.687159, -0.251152, -0.681715),
-		b3MakeVector3(0.687159, -0.251152, 0.681715),
-		b3MakeVector3(-0.436007, -0.251152, 0.864188),
-		b3MakeVector3(-0.956626, -0.251149, -0.147618),
-		b3MakeVector3(-0.155215, -0.251152, -0.955422),
-		b3MakeVector3(0.860698, -0.251151, -0.442858),
-		b3MakeVector3(0.276388, 0.447220, 0.850649),
-		b3MakeVector3(0.483971, 0.502302, 0.716565),
-		b3MakeVector3(0.232822, 0.657519, 0.716563),
-		b3MakeVector3(-0.723607, 0.447220, 0.525725),
-		b3MakeVector3(-0.531941, 0.502302, 0.681712),
-		b3MakeVector3(-0.609547, 0.657519, 0.442856),
-		b3MakeVector3(-0.723607, 0.447220, -0.525725),
-		b3MakeVector3(-0.812729, 0.502301, -0.295238),
-		b3MakeVector3(-0.609547, 0.657519, -0.442856),
-		b3MakeVector3(0.276388, 0.447220, -0.850649),
-		b3MakeVector3(0.029639, 0.502302, -0.864184),
-		b3MakeVector3(0.232822, 0.657519, -0.716563),
-		b3MakeVector3(0.894426, 0.447216, 0.000000),
-		b3MakeVector3(0.831051, 0.502299, -0.238853),
-		b3MakeVector3(0.753442, 0.657515, 0.000000),
-		b3MakeVector3(-0.232822, -0.657519, 0.716563),
-		b3MakeVector3(-0.162456, -0.850654, 0.499995),
-		b3MakeVector3(0.052790, -0.723612, 0.688185),
-		b3MakeVector3(0.138199, -0.894429, 0.425321),
-		b3MakeVector3(0.262869, -0.525738, 0.809012),
-		b3MakeVector3(0.361805, -0.723611, 0.587779),
-		b3MakeVector3(0.531941, -0.502302, 0.681712),
-		b3MakeVector3(0.425323, -0.850654, 0.309011),
-		b3MakeVector3(0.812729, -0.502301, -0.295238),
-		b3MakeVector3(0.609547, -0.657519, -0.442856),
-		b3MakeVector3(0.850648, -0.525736, 0.000000),
-		b3MakeVector3(0.670817, -0.723611, -0.162457),
-		b3MakeVector3(0.670817, -0.723610, 0.162458),
-		b3MakeVector3(0.425323, -0.850654, -0.309011),
-		b3MakeVector3(0.447211, -0.894428, 0.000001),
-		b3MakeVector3(-0.753442, -0.657515, 0.000000),
-		b3MakeVector3(-0.525730, -0.850652, 0.000000),
-		b3MakeVector3(-0.638195, -0.723609, 0.262864),
-		b3MakeVector3(-0.361801, -0.894428, 0.262864),
-		b3MakeVector3(-0.688189, -0.525736, 0.499997),
-		b3MakeVector3(-0.447211, -0.723610, 0.525729),
-		b3MakeVector3(-0.483971, -0.502302, 0.716565),
-		b3MakeVector3(-0.232822, -0.657519, -0.716563),
-		b3MakeVector3(-0.162456, -0.850654, -0.499995),
-		b3MakeVector3(-0.447211, -0.723611, -0.525727),
-		b3MakeVector3(-0.361801, -0.894429, -0.262863),
-		b3MakeVector3(-0.688189, -0.525736, -0.499997),
-		b3MakeVector3(-0.638195, -0.723609, -0.262863),
-		b3MakeVector3(-0.831051, -0.502299, -0.238853),
-		b3MakeVector3(0.361804, -0.723612, -0.587779),
-		b3MakeVector3(0.138197, -0.894429, -0.425321),
-		b3MakeVector3(0.262869, -0.525738, -0.809012),
-		b3MakeVector3(0.052789, -0.723611, -0.688186),
-		b3MakeVector3(-0.029639, -0.502302, -0.864184),
-		b3MakeVector3(0.956626, 0.251149, 0.147618),
-		b3MakeVector3(0.956626, 0.251149, -0.147618),
-		b3MakeVector3(0.951058, -0.000000, 0.309013),
-		b3MakeVector3(1.000000, 0.000000, 0.000000),
-		b3MakeVector3(0.947213, -0.276396, 0.162458),
-		b3MakeVector3(0.951058, 0.000000, -0.309013),
-		b3MakeVector3(0.947213, -0.276396, -0.162458),
-		b3MakeVector3(0.155215, 0.251152, 0.955422),
-		b3MakeVector3(0.436007, 0.251152, 0.864188),
-		b3MakeVector3(-0.000000, -0.000000, 1.000000),
-		b3MakeVector3(0.309017, 0.000000, 0.951056),
-		b3MakeVector3(0.138199, -0.276398, 0.951055),
-		b3MakeVector3(0.587786, 0.000000, 0.809017),
-		b3MakeVector3(0.447216, -0.276398, 0.850648),
-		b3MakeVector3(-0.860698, 0.251151, 0.442858),
-		b3MakeVector3(-0.687159, 0.251152, 0.681715),
-		b3MakeVector3(-0.951058, -0.000000, 0.309013),
-		b3MakeVector3(-0.809018, 0.000000, 0.587783),
-		b3MakeVector3(-0.861803, -0.276396, 0.425324),
-		b3MakeVector3(-0.587786, 0.000000, 0.809017),
-		b3MakeVector3(-0.670819, -0.276397, 0.688191),
-		b3MakeVector3(-0.687159, 0.251152, -0.681715),
-		b3MakeVector3(-0.860698, 0.251151, -0.442858),
-		b3MakeVector3(-0.587786, -0.000000, -0.809017),
-		b3MakeVector3(-0.809018, -0.000000, -0.587783),
-		b3MakeVector3(-0.670819, -0.276397, -0.688191),
-		b3MakeVector3(-0.951058, 0.000000, -0.309013),
-		b3MakeVector3(-0.861803, -0.276396, -0.425324),
-		b3MakeVector3(0.436007, 0.251152, -0.864188),
-		b3MakeVector3(0.155215, 0.251152, -0.955422),
-		b3MakeVector3(0.587786, -0.000000, -0.809017),
-		b3MakeVector3(0.309017, -0.000000, -0.951056),
-		b3MakeVector3(0.447216, -0.276398, -0.850648),
-		b3MakeVector3(0.000000, 0.000000, -1.000000),
-		b3MakeVector3(0.138199, -0.276398, -0.951055),
-		b3MakeVector3(0.670820, 0.276396, 0.688190),
-		b3MakeVector3(0.809019, -0.000002, 0.587783),
-		b3MakeVector3(0.688189, 0.525736, 0.499997),
-		b3MakeVector3(0.861804, 0.276394, 0.425323),
-		b3MakeVector3(0.831051, 0.502299, 0.238853),
-		b3MakeVector3(-0.447216, 0.276397, 0.850649),
-		b3MakeVector3(-0.309017, -0.000001, 0.951056),
-		b3MakeVector3(-0.262869, 0.525738, 0.809012),
-		b3MakeVector3(-0.138199, 0.276397, 0.951055),
-		b3MakeVector3(0.029639, 0.502302, 0.864184),
-		b3MakeVector3(-0.947213, 0.276396, -0.162458),
-		b3MakeVector3(-1.000000, 0.000001, 0.000000),
-		b3MakeVector3(-0.850648, 0.525736, -0.000000),
-		b3MakeVector3(-0.947213, 0.276397, 0.162458),
-		b3MakeVector3(-0.812729, 0.502301, 0.295238),
-		b3MakeVector3(-0.138199, 0.276397, -0.951055),
-		b3MakeVector3(-0.309016, -0.000000, -0.951057),
-		b3MakeVector3(-0.262869, 0.525738, -0.809012),
-		b3MakeVector3(-0.447215, 0.276397, -0.850649),
-		b3MakeVector3(-0.531941, 0.502302, -0.681712),
-		b3MakeVector3(0.861804, 0.276396, -0.425322),
-		b3MakeVector3(0.809019, 0.000000, -0.587782),
-		b3MakeVector3(0.688189, 0.525736, -0.499997),
-		b3MakeVector3(0.670821, 0.276397, -0.688189),
-		b3MakeVector3(0.483971, 0.502302, -0.716565),
-		b3MakeVector3(0.077607, 0.967950, 0.238853),
-		b3MakeVector3(0.251147, 0.967949, 0.000000),
-		b3MakeVector3(0.000000, 1.000000, 0.000000),
-		b3MakeVector3(0.162456, 0.850654, 0.499995),
-		b3MakeVector3(0.361800, 0.894429, 0.262863),
-		b3MakeVector3(0.447209, 0.723612, 0.525728),
-		b3MakeVector3(0.525730, 0.850652, 0.000000),
-		b3MakeVector3(0.638194, 0.723610, 0.262864),
-		b3MakeVector3(-0.203181, 0.967950, 0.147618),
-		b3MakeVector3(-0.425323, 0.850654, 0.309011),
-		b3MakeVector3(-0.138197, 0.894430, 0.425320),
-		b3MakeVector3(-0.361804, 0.723612, 0.587778),
-		b3MakeVector3(-0.052790, 0.723612, 0.688185),
-		b3MakeVector3(-0.203181, 0.967950, -0.147618),
-		b3MakeVector3(-0.425323, 0.850654, -0.309011),
-		b3MakeVector3(-0.447210, 0.894429, 0.000000),
-		b3MakeVector3(-0.670817, 0.723611, -0.162457),
-		b3MakeVector3(-0.670817, 0.723611, 0.162457),
-		b3MakeVector3(0.077607, 0.967950, -0.238853),
-		b3MakeVector3(0.162456, 0.850654, -0.499995),
-		b3MakeVector3(-0.138197, 0.894430, -0.425320),
-		b3MakeVector3(-0.052790, 0.723612, -0.688185),
-		b3MakeVector3(-0.361804, 0.723612, -0.587778),
-		b3MakeVector3(0.361800, 0.894429, -0.262863),
-		b3MakeVector3(0.638194, 0.723610, -0.262864),
-		b3MakeVector3(0.447209, 0.723612, -0.525728)};
+b3Vector3 unitSphere162[] = {
+	b3MakeVector3(0.000000, -1.000000, 0.000000),
+	b3MakeVector3(0.203181, -0.967950, 0.147618),
+	b3MakeVector3(-0.077607, -0.967950, 0.238853),
+	b3MakeVector3(0.723607, -0.447220, 0.525725),
+	b3MakeVector3(0.609547, -0.657519, 0.442856),
+	b3MakeVector3(0.812729, -0.502301, 0.295238),
+	b3MakeVector3(-0.251147, -0.967949, 0.000000),
+	b3MakeVector3(-0.077607, -0.967950, -0.238853),
+	b3MakeVector3(0.203181, -0.967950, -0.147618),
+	b3MakeVector3(0.860698, -0.251151, 0.442858),
+	b3MakeVector3(-0.276388, -0.447220, 0.850649),
+	b3MakeVector3(-0.029639, -0.502302, 0.864184),
+	b3MakeVector3(-0.155215, -0.251152, 0.955422),
+	b3MakeVector3(-0.894426, -0.447216, 0.000000),
+	b3MakeVector3(-0.831051, -0.502299, 0.238853),
+	b3MakeVector3(-0.956626, -0.251149, 0.147618),
+	b3MakeVector3(-0.276388, -0.447220, -0.850649),
+	b3MakeVector3(-0.483971, -0.502302, -0.716565),
+	b3MakeVector3(-0.436007, -0.251152, -0.864188),
+	b3MakeVector3(0.723607, -0.447220, -0.525725),
+	b3MakeVector3(0.531941, -0.502302, -0.681712),
+	b3MakeVector3(0.687159, -0.251152, -0.681715),
+	b3MakeVector3(0.687159, -0.251152, 0.681715),
+	b3MakeVector3(-0.436007, -0.251152, 0.864188),
+	b3MakeVector3(-0.956626, -0.251149, -0.147618),
+	b3MakeVector3(-0.155215, -0.251152, -0.955422),
+	b3MakeVector3(0.860698, -0.251151, -0.442858),
+	b3MakeVector3(0.276388, 0.447220, 0.850649),
+	b3MakeVector3(0.483971, 0.502302, 0.716565),
+	b3MakeVector3(0.232822, 0.657519, 0.716563),
+	b3MakeVector3(-0.723607, 0.447220, 0.525725),
+	b3MakeVector3(-0.531941, 0.502302, 0.681712),
+	b3MakeVector3(-0.609547, 0.657519, 0.442856),
+	b3MakeVector3(-0.723607, 0.447220, -0.525725),
+	b3MakeVector3(-0.812729, 0.502301, -0.295238),
+	b3MakeVector3(-0.609547, 0.657519, -0.442856),
+	b3MakeVector3(0.276388, 0.447220, -0.850649),
+	b3MakeVector3(0.029639, 0.502302, -0.864184),
+	b3MakeVector3(0.232822, 0.657519, -0.716563),
+	b3MakeVector3(0.894426, 0.447216, 0.000000),
+	b3MakeVector3(0.831051, 0.502299, -0.238853),
+	b3MakeVector3(0.753442, 0.657515, 0.000000),
+	b3MakeVector3(-0.232822, -0.657519, 0.716563),
+	b3MakeVector3(-0.162456, -0.850654, 0.499995),
+	b3MakeVector3(0.052790, -0.723612, 0.688185),
+	b3MakeVector3(0.138199, -0.894429, 0.425321),
+	b3MakeVector3(0.262869, -0.525738, 0.809012),
+	b3MakeVector3(0.361805, -0.723611, 0.587779),
+	b3MakeVector3(0.531941, -0.502302, 0.681712),
+	b3MakeVector3(0.425323, -0.850654, 0.309011),
+	b3MakeVector3(0.812729, -0.502301, -0.295238),
+	b3MakeVector3(0.609547, -0.657519, -0.442856),
+	b3MakeVector3(0.850648, -0.525736, 0.000000),
+	b3MakeVector3(0.670817, -0.723611, -0.162457),
+	b3MakeVector3(0.670817, -0.723610, 0.162458),
+	b3MakeVector3(0.425323, -0.850654, -0.309011),
+	b3MakeVector3(0.447211, -0.894428, 0.000001),
+	b3MakeVector3(-0.753442, -0.657515, 0.000000),
+	b3MakeVector3(-0.525730, -0.850652, 0.000000),
+	b3MakeVector3(-0.638195, -0.723609, 0.262864),
+	b3MakeVector3(-0.361801, -0.894428, 0.262864),
+	b3MakeVector3(-0.688189, -0.525736, 0.499997),
+	b3MakeVector3(-0.447211, -0.723610, 0.525729),
+	b3MakeVector3(-0.483971, -0.502302, 0.716565),
+	b3MakeVector3(-0.232822, -0.657519, -0.716563),
+	b3MakeVector3(-0.162456, -0.850654, -0.499995),
+	b3MakeVector3(-0.447211, -0.723611, -0.525727),
+	b3MakeVector3(-0.361801, -0.894429, -0.262863),
+	b3MakeVector3(-0.688189, -0.525736, -0.499997),
+	b3MakeVector3(-0.638195, -0.723609, -0.262863),
+	b3MakeVector3(-0.831051, -0.502299, -0.238853),
+	b3MakeVector3(0.361804, -0.723612, -0.587779),
+	b3MakeVector3(0.138197, -0.894429, -0.425321),
+	b3MakeVector3(0.262869, -0.525738, -0.809012),
+	b3MakeVector3(0.052789, -0.723611, -0.688186),
+	b3MakeVector3(-0.029639, -0.502302, -0.864184),
+	b3MakeVector3(0.956626, 0.251149, 0.147618),
+	b3MakeVector3(0.956626, 0.251149, -0.147618),
+	b3MakeVector3(0.951058, -0.000000, 0.309013),
+	b3MakeVector3(1.000000, 0.000000, 0.000000),
+	b3MakeVector3(0.947213, -0.276396, 0.162458),
+	b3MakeVector3(0.951058, 0.000000, -0.309013),
+	b3MakeVector3(0.947213, -0.276396, -0.162458),
+	b3MakeVector3(0.155215, 0.251152, 0.955422),
+	b3MakeVector3(0.436007, 0.251152, 0.864188),
+	b3MakeVector3(-0.000000, -0.000000, 1.000000),
+	b3MakeVector3(0.309017, 0.000000, 0.951056),
+	b3MakeVector3(0.138199, -0.276398, 0.951055),
+	b3MakeVector3(0.587786, 0.000000, 0.809017),
+	b3MakeVector3(0.447216, -0.276398, 0.850648),
+	b3MakeVector3(-0.860698, 0.251151, 0.442858),
+	b3MakeVector3(-0.687159, 0.251152, 0.681715),
+	b3MakeVector3(-0.951058, -0.000000, 0.309013),
+	b3MakeVector3(-0.809018, 0.000000, 0.587783),
+	b3MakeVector3(-0.861803, -0.276396, 0.425324),
+	b3MakeVector3(-0.587786, 0.000000, 0.809017),
+	b3MakeVector3(-0.670819, -0.276397, 0.688191),
+	b3MakeVector3(-0.687159, 0.251152, -0.681715),
+	b3MakeVector3(-0.860698, 0.251151, -0.442858),
+	b3MakeVector3(-0.587786, -0.000000, -0.809017),
+	b3MakeVector3(-0.809018, -0.000000, -0.587783),
+	b3MakeVector3(-0.670819, -0.276397, -0.688191),
+	b3MakeVector3(-0.951058, 0.000000, -0.309013),
+	b3MakeVector3(-0.861803, -0.276396, -0.425324),
+	b3MakeVector3(0.436007, 0.251152, -0.864188),
+	b3MakeVector3(0.155215, 0.251152, -0.955422),
+	b3MakeVector3(0.587786, -0.000000, -0.809017),
+	b3MakeVector3(0.309017, -0.000000, -0.951056),
+	b3MakeVector3(0.447216, -0.276398, -0.850648),
+	b3MakeVector3(0.000000, 0.000000, -1.000000),
+	b3MakeVector3(0.138199, -0.276398, -0.951055),
+	b3MakeVector3(0.670820, 0.276396, 0.688190),
+	b3MakeVector3(0.809019, -0.000002, 0.587783),
+	b3MakeVector3(0.688189, 0.525736, 0.499997),
+	b3MakeVector3(0.861804, 0.276394, 0.425323),
+	b3MakeVector3(0.831051, 0.502299, 0.238853),
+	b3MakeVector3(-0.447216, 0.276397, 0.850649),
+	b3MakeVector3(-0.309017, -0.000001, 0.951056),
+	b3MakeVector3(-0.262869, 0.525738, 0.809012),
+	b3MakeVector3(-0.138199, 0.276397, 0.951055),
+	b3MakeVector3(0.029639, 0.502302, 0.864184),
+	b3MakeVector3(-0.947213, 0.276396, -0.162458),
+	b3MakeVector3(-1.000000, 0.000001, 0.000000),
+	b3MakeVector3(-0.850648, 0.525736, -0.000000),
+	b3MakeVector3(-0.947213, 0.276397, 0.162458),
+	b3MakeVector3(-0.812729, 0.502301, 0.295238),
+	b3MakeVector3(-0.138199, 0.276397, -0.951055),
+	b3MakeVector3(-0.309016, -0.000000, -0.951057),
+	b3MakeVector3(-0.262869, 0.525738, -0.809012),
+	b3MakeVector3(-0.447215, 0.276397, -0.850649),
+	b3MakeVector3(-0.531941, 0.502302, -0.681712),
+	b3MakeVector3(0.861804, 0.276396, -0.425322),
+	b3MakeVector3(0.809019, 0.000000, -0.587782),
+	b3MakeVector3(0.688189, 0.525736, -0.499997),
+	b3MakeVector3(0.670821, 0.276397, -0.688189),
+	b3MakeVector3(0.483971, 0.502302, -0.716565),
+	b3MakeVector3(0.077607, 0.967950, 0.238853),
+	b3MakeVector3(0.251147, 0.967949, 0.000000),
+	b3MakeVector3(0.000000, 1.000000, 0.000000),
+	b3MakeVector3(0.162456, 0.850654, 0.499995),
+	b3MakeVector3(0.361800, 0.894429, 0.262863),
+	b3MakeVector3(0.447209, 0.723612, 0.525728),
+	b3MakeVector3(0.525730, 0.850652, 0.000000),
+	b3MakeVector3(0.638194, 0.723610, 0.262864),
+	b3MakeVector3(-0.203181, 0.967950, 0.147618),
+	b3MakeVector3(-0.425323, 0.850654, 0.309011),
+	b3MakeVector3(-0.138197, 0.894430, 0.425320),
+	b3MakeVector3(-0.361804, 0.723612, 0.587778),
+	b3MakeVector3(-0.052790, 0.723612, 0.688185),
+	b3MakeVector3(-0.203181, 0.967950, -0.147618),
+	b3MakeVector3(-0.425323, 0.850654, -0.309011),
+	b3MakeVector3(-0.447210, 0.894429, 0.000000),
+	b3MakeVector3(-0.670817, 0.723611, -0.162457),
+	b3MakeVector3(-0.670817, 0.723611, 0.162457),
+	b3MakeVector3(0.077607, 0.967950, -0.238853),
+	b3MakeVector3(0.162456, 0.850654, -0.499995),
+	b3MakeVector3(-0.138197, 0.894430, -0.425320),
+	b3MakeVector3(-0.052790, 0.723612, -0.688185),
+	b3MakeVector3(-0.361804, 0.723612, -0.587778),
+	b3MakeVector3(0.361800, 0.894429, -0.262863),
+	b3MakeVector3(0.638194, 0.723610, -0.262864),
+	b3MakeVector3(0.447209, 0.723612, -0.525728)
+};
 
 bool b3FindSeparatingAxisEdgeEdge(const b3ConvexPolyhedronData* hullA, __global const b3ConvexPolyhedronData* hullB,
-								  b3Float4ConstArg posA1,
-								  b3QuatConstArg ornA,
-								  b3Float4ConstArg posB1,
-								  b3QuatConstArg ornB,
-								  b3Float4ConstArg DeltaC2,
-								  const b3Float4* verticesA,
-								  const b3Float4* uniqueEdgesA,
-								  const b3GpuFace* facesA,
-								  const int* indicesA,
-								  __global const b3Float4* verticesB,
-								  __global const b3Float4* uniqueEdgesB,
-								  __global const b3GpuFace* facesB,
-								  __global const int* indicesB,
-								  b3Float4* sep,
-								  float* dmin,
-								  bool searchAllEdgeEdge)
+    b3Float4ConstArg posA1,
+    b3QuatConstArg ornA,
+    b3Float4ConstArg posB1,
+    b3QuatConstArg ornB,
+    b3Float4ConstArg DeltaC2,
+    const b3Float4* verticesA,
+    const b3Float4* uniqueEdgesA,
+    const b3GpuFace* facesA,
+    const int* indicesA,
+    __global const b3Float4* verticesB,
+    __global const b3Float4* uniqueEdgesB,
+    __global const b3GpuFace* facesB,
+    __global const int* indicesB,
+    b3Float4* sep,
+    float* dmin,
+    bool searchAllEdgeEdge)
 {
 	b3Float4 posA = posA1;
 	posA.w = 0.f;
@@ -419,21 +419,21 @@ bool b3FindSeparatingAxisEdgeEdge(const b3ConvexPolyhedronData* hullA, __global 
 }
 
 inline int b3FindClippingFaces(b3Float4ConstArg separatingNormal,
-							   __global const b3ConvexPolyhedronData_t* hullA, __global const b3ConvexPolyhedronData_t* hullB,
-							   b3Float4ConstArg posA, b3QuatConstArg ornA, b3Float4ConstArg posB, b3QuatConstArg ornB,
-							   __global b3Float4* worldVertsA1,
-							   __global b3Float4* worldNormalsA1,
-							   __global b3Float4* worldVertsB1,
-							   int capacityWorldVerts,
-							   const float minDist, float maxDist,
-							   __global const b3Float4* verticesA,
-							   __global const b3GpuFace_t* facesA,
-							   __global const int* indicesA,
-							   __global const b3Float4* verticesB,
-							   __global const b3GpuFace_t* facesB,
-							   __global const int* indicesB,
+    __global const b3ConvexPolyhedronData_t* hullA, __global const b3ConvexPolyhedronData_t* hullB,
+    b3Float4ConstArg posA, b3QuatConstArg ornA, b3Float4ConstArg posB, b3QuatConstArg ornB,
+    __global b3Float4* worldVertsA1,
+    __global b3Float4* worldNormalsA1,
+    __global b3Float4* worldVertsB1,
+    int capacityWorldVerts,
+    const float minDist, float maxDist,
+    __global const b3Float4* verticesA,
+    __global const b3GpuFace_t* facesA,
+    __global const int* indicesA,
+    __global const b3Float4* verticesB,
+    __global const b3GpuFace_t* facesB,
+    __global const int* indicesB,
 
-							   __global b3Int4* clippingFaces, int pairIndex)
+    __global b3Int4* clippingFaces, int pairIndex)
 {
 	int numContactsOut = 0;
 	int numWorldVertsB1 = 0;
@@ -445,7 +445,7 @@ inline int b3FindClippingFaces(b3Float4ConstArg separatingNormal,
 		for (int face = 0; face < hullB->m_numFaces; face++)
 		{
 			const b3Float4 Normal = b3MakeFloat4(facesB[hullB->m_faceOffset + face].m_plane.x,
-												 facesB[hullB->m_faceOffset + face].m_plane.y, facesB[hullB->m_faceOffset + face].m_plane.z, 0.f);
+			    facesB[hullB->m_faceOffset + face].m_plane.y, facesB[hullB->m_faceOffset + face].m_plane.z, 0.f);
 			const b3Float4 WorldNormal = b3QuatRotate(ornB, Normal);
 			float d = b3Dot(WorldNormal, separatingNormal);
 			if (d > dmax)
@@ -472,10 +472,10 @@ inline int b3FindClippingFaces(b3Float4ConstArg separatingNormal,
 		for (int face = 0; face < hullA->m_numFaces; face++)
 		{
 			const b3Float4 Normal = b3MakeFloat4(
-				facesA[hullA->m_faceOffset + face].m_plane.x,
-				facesA[hullA->m_faceOffset + face].m_plane.y,
-				facesA[hullA->m_faceOffset + face].m_plane.z,
-				0.f);
+			    facesA[hullA->m_faceOffset + face].m_plane.x,
+			    facesA[hullA->m_faceOffset + face].m_plane.y,
+			    facesA[hullA->m_faceOffset + face].m_plane.z,
+			    0.f);
 			const b3Float4 faceANormalWS = b3QuatRotate(ornA, Normal);
 
 			float d = b3Dot(faceANormalWS, separatingNormal);
@@ -504,24 +504,24 @@ inline int b3FindClippingFaces(b3Float4ConstArg separatingNormal,
 }
 
 __kernel void b3FindConcaveSeparatingAxisKernel(__global b3Int4* concavePairs,
-												__global const b3RigidBodyData* rigidBodies,
-												__global const b3Collidable* collidables,
-												__global const b3ConvexPolyhedronData* convexShapes,
-												__global const b3Float4* vertices,
-												__global const b3Float4* uniqueEdges,
-												__global const b3GpuFace* faces,
-												__global const int* indices,
-												__global const b3GpuChildShape* gpuChildShapes,
-												__global b3Aabb* aabbs,
-												__global b3Float4* concaveSeparatingNormalsOut,
-												__global b3Int4* clippingFacesOut,
-												__global b3Vector3* worldVertsA1Out,
-												__global b3Vector3* worldNormalsA1Out,
-												__global b3Vector3* worldVertsB1Out,
-												__global int* hasSeparatingNormals,
-												int vertexFaceCapacity,
-												int numConcavePairs,
-												int pairIdx)
+    __global const b3RigidBodyData* rigidBodies,
+    __global const b3Collidable* collidables,
+    __global const b3ConvexPolyhedronData* convexShapes,
+    __global const b3Float4* vertices,
+    __global const b3Float4* uniqueEdges,
+    __global const b3GpuFace* faces,
+    __global const int* indices,
+    __global const b3GpuChildShape* gpuChildShapes,
+    __global b3Aabb* aabbs,
+    __global b3Float4* concaveSeparatingNormalsOut,
+    __global b3Int4* clippingFacesOut,
+    __global b3Vector3* worldVertsA1Out,
+    __global b3Vector3* worldNormalsA1Out,
+    __global b3Vector3* worldVertsB1Out,
+    __global int* hasSeparatingNormals,
+    int vertexFaceCapacity,
+    int numConcavePairs,
+    int pairIdx)
 {
 	int i = pairIdx;
 	/*	int i = get_global_id(0);
@@ -539,8 +539,7 @@ __kernel void b3FindConcaveSeparatingAxisKernel(__global b3Int4* concavePairs,
 	int shapeIndexA = collidables[collidableIndexA].m_shapeIndex;
 	int shapeIndexB = collidables[collidableIndexB].m_shapeIndex;
 
-	if (collidables[collidableIndexB].m_shapeType != SHAPE_CONVEX_HULL &&
-		collidables[collidableIndexB].m_shapeType != SHAPE_COMPOUND_OF_CONVEX_HULLS)
+	if (collidables[collidableIndexB].m_shapeType != SHAPE_CONVEX_HULL && collidables[collidableIndexB].m_shapeType != SHAPE_COMPOUND_OF_CONVEX_HULLS)
 	{
 		concavePairs[pairIdx].w = -1;
 		return;
@@ -686,7 +685,7 @@ __kernel void b3FindConcaveSeparatingAxisKernel(__global b3Int4* concavePairs,
 		if (collidables[collidableIndexB].m_shapeType == SHAPE_COMPOUND_OF_CONVEX_HULLS)
 		{
 			int compoundChild = concavePairs[pairIdx].w;
-			int childShapeIndexB = compoundChild;  //collidables[collidableIndexB].m_shapeIndex+compoundChild;
+			int childShapeIndexB = compoundChild; //collidables[collidableIndexB].m_shapeIndex+compoundChild;
 			int childColIndexB = gpuChildShapes[childShapeIndexB].m_shapeIndex;
 			b3Float4 childPosB = gpuChildShapes[childShapeIndexB].m_childPosition;
 			b3Quaternion childOrnB = gpuChildShapes[childShapeIndexB].m_childOrientation;
@@ -705,12 +704,12 @@ __kernel void b3FindConcaveSeparatingAxisKernel(__global b3Int4* concavePairs,
 		const b3Float4 DeltaC2 = c0 - c1;
 
 		bool sepA = b3FindSeparatingAxis(&convexPolyhedronA, &convexShapes[shapeIndexB],
-										 posA, ornA,
-										 posB, ornB,
-										 DeltaC2,
-										 verticesA, uniqueEdgesA, facesA, indicesA,
-										 vertices, uniqueEdges, faces, indices,
-										 &sepAxis, &dmin);
+		    posA, ornA,
+		    posB, ornB,
+		    DeltaC2,
+		    verticesA, uniqueEdgesA, facesA, indicesA,
+		    vertices, uniqueEdges, faces, indices,
+		    &sepAxis, &dmin);
 		hasSeparatingAxis = 4;
 		if (!sepA)
 		{
@@ -719,12 +718,12 @@ __kernel void b3FindConcaveSeparatingAxisKernel(__global b3Int4* concavePairs,
 		else
 		{
 			bool sepB = b3FindSeparatingAxis(&convexShapes[shapeIndexB], &convexPolyhedronA,
-											 posB, ornB,
-											 posA, ornA,
-											 DeltaC2,
-											 vertices, uniqueEdges, faces, indices,
-											 verticesA, uniqueEdgesA, facesA, indicesA,
-											 &sepAxis, &dmin);
+			    posB, ornB,
+			    posA, ornA,
+			    DeltaC2,
+			    vertices, uniqueEdges, faces, indices,
+			    verticesA, uniqueEdgesA, facesA, indicesA,
+			    &sepAxis, &dmin);
 
 			if (!sepB)
 			{
@@ -733,12 +732,12 @@ __kernel void b3FindConcaveSeparatingAxisKernel(__global b3Int4* concavePairs,
 			else
 			{
 				bool sepEE = b3FindSeparatingAxisEdgeEdge(&convexPolyhedronA, &convexShapes[shapeIndexB],
-														  posA, ornA,
-														  posB, ornB,
-														  DeltaC2,
-														  verticesA, uniqueEdgesA, facesA, indicesA,
-														  vertices, uniqueEdges, faces, indices,
-														  &sepAxis, &dmin, true);
+				    posA, ornA,
+				    posB, ornB,
+				    DeltaC2,
+				    verticesA, uniqueEdgesA, facesA, indicesA,
+				    vertices, uniqueEdges, faces, indices,
+				    &sepAxis, &dmin, true);
 
 				if (!sepEE)
 				{
@@ -763,23 +762,23 @@ __kernel void b3FindConcaveSeparatingAxisKernel(__global b3Int4* concavePairs,
 			float maxDist = 0.02f;
 
 			b3FindClippingFaces(sepAxis,
-								&convexPolyhedronA,
-								&convexShapes[shapeIndexB],
-								posA, ornA,
-								posB, ornB,
-								worldVertsA1Out,
-								worldNormalsA1Out,
-								worldVertsB1Out,
-								vertexFaceCapacity,
-								minDist, maxDist,
-								verticesA,
-								facesA,
-								indicesA,
+			    &convexPolyhedronA,
+			    &convexShapes[shapeIndexB],
+			    posA, ornA,
+			    posB, ornB,
+			    worldVertsA1Out,
+			    worldNormalsA1Out,
+			    worldVertsB1Out,
+			    vertexFaceCapacity,
+			    minDist, maxDist,
+			    verticesA,
+			    facesA,
+			    indicesA,
 
-								vertices,
-								faces,
-								indices,
-								clippingFacesOut, pairIdx);
+			    vertices,
+			    faces,
+			    indices,
+			    clippingFacesOut, pairIdx);
 		}
 		else
 		{
@@ -794,4 +793,4 @@ __kernel void b3FindConcaveSeparatingAxisKernel(__global b3Int4* concavePairs,
 	}
 }
 
-#endif  //B3_FIND_CONCAVE_SEPARATING_AXIS_H
+#endif //B3_FIND_CONCAVE_SEPARATING_AXIS_H

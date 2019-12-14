@@ -25,9 +25,9 @@ GJK-EPA collision solver by Nathanael Presson, 2008
 #ifndef B3_GJK_EPA2_H
 #define B3_GJK_EPA2_H
 
+#include "Bullet3Collision/NarrowPhaseCollision/shared/b3ConvexPolyhedronData.h"
 #include "Bullet3Common/b3AlignedObjectArray.h"
 #include "Bullet3Common/b3Transform.h"
-#include "Bullet3Collision/NarrowPhaseCollision/shared/b3ConvexPolyhedronData.h"
 
 ///btGjkEpaSolver contributed under zlib by Nathanael Presson
 struct b3GjkEpaSolver2
@@ -36,10 +36,10 @@ struct b3GjkEpaSolver2
 	{
 		enum eStatus
 		{
-			Separated,   /* Shapes doesnt penetrate												*/
+			Separated, /* Shapes doesnt penetrate												*/
 			Penetrating, /* Shapes are penetrating												*/
-			GJK_Failed,  /* GJK phase fail, no big issue, shapes are probably just 'touching'	*/
-			EPA_Failed   /* EPA phase fail, bigger problem, need to save parameters, and debug	*/
+			GJK_Failed, /* GJK phase fail, no big issue, shapes are probably just 'touching'	*/
+			EPA_Failed /* EPA phase fail, bigger problem, need to save parameters, and debug	*/
 		} status;
 		b3Vector3 witnesses[2];
 		b3Vector3 normal;
@@ -49,19 +49,19 @@ struct b3GjkEpaSolver2
 	static int StackSizeRequirement();
 
 	static bool Distance(const b3Transform& transA, const b3Transform& transB,
-						 const b3ConvexPolyhedronData* hullA, const b3ConvexPolyhedronData* hullB,
-						 const b3AlignedObjectArray<b3Vector3>& verticesA,
-						 const b3AlignedObjectArray<b3Vector3>& verticesB,
-						 const b3Vector3& guess,
-						 sResults& results);
+	    const b3ConvexPolyhedronData* hullA, const b3ConvexPolyhedronData* hullB,
+	    const b3AlignedObjectArray<b3Vector3>& verticesA,
+	    const b3AlignedObjectArray<b3Vector3>& verticesB,
+	    const b3Vector3& guess,
+	    sResults& results);
 
 	static bool Penetration(const b3Transform& transA, const b3Transform& transB,
-							const b3ConvexPolyhedronData* hullA, const b3ConvexPolyhedronData* hullB,
-							const b3AlignedObjectArray<b3Vector3>& verticesA,
-							const b3AlignedObjectArray<b3Vector3>& verticesB,
-							const b3Vector3& guess,
-							sResults& results,
-							bool usemargins = true);
+	    const b3ConvexPolyhedronData* hullA, const b3ConvexPolyhedronData* hullB,
+	    const b3AlignedObjectArray<b3Vector3>& verticesA,
+	    const b3AlignedObjectArray<b3Vector3>& verticesB,
+	    const b3Vector3& guess,
+	    sResults& results,
+	    bool usemargins = true);
 #if 0
 static b3Scalar	SignedDistance(	const b3Vector3& position,
 								b3Scalar margin,
@@ -76,4 +76,4 @@ static bool		SignedDistance(	const btConvexShape* shape0,const btTransform& wtrs
 #endif
 };
 
-#endif  //B3_GJK_EPA2_H
+#endif //B3_GJK_EPA2_H

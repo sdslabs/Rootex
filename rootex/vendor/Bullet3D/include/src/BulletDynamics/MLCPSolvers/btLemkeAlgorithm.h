@@ -24,12 +24,13 @@ subject to the following restrictions:
 
 #include "LinearMath/btMatrixX.h"
 
-#include <vector>  //todo: replace by btAlignedObjectArray
+#include <vector> //todo: replace by btAlignedObjectArray
 
 class btLemkeAlgorithm
 {
 public:
-	btLemkeAlgorithm(const btMatrixXu& M_, const btVectorXu& q_, const int& DEBUGLEVEL_ = 0) : DEBUGLEVEL(DEBUGLEVEL_)
+	btLemkeAlgorithm(const btMatrixXu& M_, const btVectorXu& q_, const int& DEBUGLEVEL_ = 0)
+	    : DEBUGLEVEL(DEBUGLEVEL_)
 	{
 		setSystem(M_, q_);
 	}

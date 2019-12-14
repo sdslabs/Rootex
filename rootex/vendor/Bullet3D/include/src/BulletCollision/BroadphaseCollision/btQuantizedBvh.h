@@ -22,14 +22,14 @@ class btSerializer;
 #ifdef DEBUG_CHECK_DEQUANTIZATION
 #ifdef __SPU__
 #define printf spu_printf
-#endif  //__SPU__
+#endif //__SPU__
 
 #include <stdio.h>
 #include <stdlib.h>
-#endif  //DEBUG_CHECK_DEQUANTIZATION
+#endif //DEBUG_CHECK_DEQUANTIZATION
 
-#include "LinearMath/btVector3.h"
 #include "LinearMath/btAlignedAllocator.h"
+#include "LinearMath/btVector3.h"
 
 #ifdef BT_USE_DOUBLE_PRECISION
 #define btQuantizedBvhData btQuantizedBvhDoubleData
@@ -147,7 +147,7 @@ public:
 class btNodeOverlapCallback
 {
 public:
-	virtual ~btNodeOverlapCallback(){};
+	virtual ~btNodeOverlapCallback() {};
 
 	virtual void processNode(int subPart, int triangleIndex) = 0;
 };
@@ -179,7 +179,7 @@ protected:
 	btVector3 m_bvhAabbMax;
 	btVector3 m_bvhQuantization;
 
-	int m_bulletVersion;  //for serialization versioning. It could also be used to detect endianess.
+	int m_bulletVersion; //for serialization versioning. It could also be used to detect endianess.
 
 	int m_curNodeIndex;
 	//quantization data
@@ -384,7 +384,7 @@ public:
 				printf("unconservative Z, diffZ = %f, oldZ=%f,newZ=%f\n", newPoint.getZ() - point.getZ(), newPoint.getZ(), point.getZ());
 			}
 		}
-#endif  //DEBUG_CHECK_DEQUANTIZATION
+#endif //DEBUG_CHECK_DEQUANTIZATION
 	}
 
 	SIMD_FORCE_INLINE void quantizeWithClamp(unsigned short* out, const btVector3& point2, int isMax) const
@@ -402,9 +402,9 @@ public:
 	{
 		btVector3 vecOut;
 		vecOut.setValue(
-			(btScalar)(vecIn[0]) / (m_bvhQuantization.getX()),
-			(btScalar)(vecIn[1]) / (m_bvhQuantization.getY()),
-			(btScalar)(vecIn[2]) / (m_bvhQuantization.getZ()));
+		    (btScalar)(vecIn[0]) / (m_bvhQuantization.getX()),
+		    (btScalar)(vecIn[1]) / (m_bvhQuantization.getY()),
+		    (btScalar)(vecIn[2]) / (m_bvhQuantization.getZ()));
 		vecOut += m_bvhAabbMin;
 		return vecOut;
 	}
@@ -540,4 +540,4 @@ SIMD_FORCE_INLINE int btQuantizedBvh::calculateSerializeBufferSizeNew() const
 	return sizeof(btQuantizedBvhData);
 }
 
-#endif  //BT_QUANTIZED_BVH_H
+#endif //BT_QUANTIZED_BVH_H

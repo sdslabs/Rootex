@@ -46,8 +46,8 @@ public:
 	virtual int getIslandIdB() const;
 
 	virtual void createConstraintRows(btMultiBodyConstraintArray& constraintRows,
-									  btMultiBodyJacobianData& data,
-									  const btContactSolverInfo& infoGlobal);
+	    btMultiBodyJacobianData& data,
+	    const btContactSolverInfo& infoGlobal);
 
 	const btVector3& getPivotInA() const
 	{
@@ -112,4 +112,4 @@ public:
 	}
 };
 
-#endif  //BT_MULTIBODY_GEAR_CONSTRAINT_H
+#endif //BT_MULTIBODY_GEAR_CONSTRAINT_H

@@ -22,14 +22,14 @@ class b3Serializer;
 #ifdef DEBUG_CHECK_DEQUANTIZATION
 #ifdef __SPU__
 #define printf spu_printf
-#endif  //__SPU__
+#endif //__SPU__
 
 #include <stdio.h>
 #include <stdlib.h>
-#endif  //DEBUG_CHECK_DEQUANTIZATION
+#endif //DEBUG_CHECK_DEQUANTIZATION
 
-#include "Bullet3Common/b3Vector3.h"
 #include "Bullet3Common/b3AlignedAllocator.h"
+#include "Bullet3Common/b3Vector3.h"
 
 #ifdef B3_USE_DOUBLE_PRECISION
 #define b3QuantizedBvhData b3QuantizedBvhDoubleData
@@ -41,8 +41,8 @@ class b3Serializer;
 #define b3QuantizedBvhDataName "b3QuantizedBvhFloatData"
 #endif
 
-#include "Bullet3Collision/NarrowPhaseCollision/shared/b3QuantizedBvhNodeData.h"
 #include "Bullet3Collision/NarrowPhaseCollision/shared/b3BvhSubtreeInfoData.h"
+#include "Bullet3Collision/NarrowPhaseCollision/shared/b3QuantizedBvhNodeData.h"
 
 //http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vclang/html/vclrf__m128.asp
 
@@ -135,7 +135,7 @@ public:
 class b3NodeOverlapCallback
 {
 public:
-	virtual ~b3NodeOverlapCallback(){};
+	virtual ~b3NodeOverlapCallback() {};
 
 	virtual void processNode(int subPart, int triangleIndex) = 0;
 };
@@ -167,7 +167,7 @@ public:
 	b3Vector3 m_bvhQuantization;
 
 protected:
-	int m_bulletVersion;  //for serialization versioning. It could also be used to detect endianess.
+	int m_bulletVersion; //for serialization versioning. It could also be used to detect endianess.
 
 	int m_curNodeIndex;
 	//quantization data
@@ -372,7 +372,7 @@ public:
 				printf("unconservative Z, diffZ = %f, oldZ=%f,newZ=%f\n", newPoint.getZ() - point.getZ(), newPoint.getZ(), point.getZ());
 			}
 		}
-#endif  //DEBUG_CHECK_DEQUANTIZATION
+#endif //DEBUG_CHECK_DEQUANTIZATION
 	}
 
 	B3_FORCE_INLINE void quantizeWithClamp(unsigned short* out, const b3Vector3& point2, int isMax) const
@@ -390,9 +390,9 @@ public:
 	{
 		b3Vector3 vecOut;
 		vecOut.setValue(
-			(b3Scalar)(vecIn[0]) / (m_bvhQuantization.getX()),
-			(b3Scalar)(vecIn[1]) / (m_bvhQuantization.getY()),
-			(b3Scalar)(vecIn[2]) / (m_bvhQuantization.getZ()));
+		    (b3Scalar)(vecIn[0]) / (m_bvhQuantization.getX()),
+		    (b3Scalar)(vecIn[1]) / (m_bvhQuantization.getY()),
+		    (b3Scalar)(vecIn[2]) / (m_bvhQuantization.getZ()));
 		vecOut += m_bvhAabbMin;
 		return vecOut;
 	}
@@ -508,4 +508,4 @@ B3_FORCE_INLINE int b3QuantizedBvh::calculateSerializeBufferSizeNew() const
 	return sizeof(b3QuantizedBvhData);
 }
 
-#endif  //B3_QUANTIZED_BVH_H
+#endif //B3_QUANTIZED_BVH_H

@@ -60,10 +60,10 @@ inline void b3QuantizeWithClamp(unsigned short* out, b3Float4ConstArg point2, in
 }
 
 inline int b3TestQuantizedAabbAgainstQuantizedAabbSlow(
-	const unsigned short int* aabbMin1,
-	const unsigned short int* aabbMax1,
-	const unsigned short int* aabbMin2,
-	const unsigned short int* aabbMax2)
+    const unsigned short int* aabbMin1,
+    const unsigned short int* aabbMax1,
+    const unsigned short int* aabbMin2,
+    const unsigned short int* aabbMax2)
 {
 	//int overlap = 1;
 	if (aabbMin1[0] > aabbMax2[0])
@@ -85,4 +85,4 @@ inline int b3TestQuantizedAabbAgainstQuantizedAabbSlow(
 	//return overlap;
 }
 
-#endif  //B3_QUANTIZED_BVH_NODE_H
+#endif //B3_QUANTIZED_BVH_NODE_H

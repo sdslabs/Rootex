@@ -20,7 +20,7 @@ idScalar maxAbs(const vecx& v);
 #ifndef ID_LINEAR_MATH_USE_EIGEN
 /// return maximum absolute value
 idScalar maxAbs(const vec3& v);
-#endif  //ID_LINEAR_MATH_USE_EIGEN
+#endif //ID_LINEAR_MATH_USE_EIGEN
 
 #if (defined BT_ID_HAVE_MAT3X)
 idScalar maxAbsMat3x(const mat3x& m);
@@ -96,5 +96,5 @@ mat33 transformZ(const idScalar& gamma);
 /// @param rot rotation matrix
 /// @returns x-y-z Euler angles
 vec3 rpyFromMatrix(const mat33& rot);
-}  // namespace btInverseDynamics
-#endif  // IDMATH_HPP_
+} // namespace btInverseDynamics
+#endif // IDMATH_HPP_

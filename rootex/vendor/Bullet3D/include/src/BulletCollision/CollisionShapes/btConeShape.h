@@ -16,8 +16,8 @@ subject to the following restrictions:
 #ifndef BT_CONE_MINKOWSKI_H
 #define BT_CONE_MINKOWSKI_H
 
+#include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h" // for the types
 #include "btConvexInternalShape.h"
-#include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h"  // for the types
 
 ///The btConeShape implements a cone shape primitive, centered around the origin and aligned with the Y axis. The btConeShapeX is aligned around the X axis and btConeShapeZ around the Z axis.
 ATTRIBUTE_ALIGNED16(class)
@@ -172,4 +172,4 @@ SIMD_FORCE_INLINE const char* btConeShape::serialize(void* dataBuffer, btSeriali
 	return "btConeShapeData";
 }
 
-#endif  //BT_CONE_MINKOWSKI_H
+#endif //BT_CONE_MINKOWSKI_H

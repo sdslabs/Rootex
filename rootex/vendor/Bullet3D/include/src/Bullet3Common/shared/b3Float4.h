@@ -87,4 +87,4 @@ inline int b3MaxDot(b3Float4ConstArg vec, __global const b3Float4* vecArray, int
 	return ptIndex;
 }
 
-#endif  //B3_FLOAT4_H
+#endif //B3_FLOAT4_H

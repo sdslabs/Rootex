@@ -16,8 +16,8 @@ subject to the following restrictions:
 #ifndef B3_CONTACT4_H
 #define B3_CONTACT4_H
 
-#include "Bullet3Common/b3Vector3.h"
 #include "Bullet3Collision/NarrowPhaseCollision/shared/b3Contact4Data.h"
+#include "Bullet3Common/b3Vector3.h"
 
 B3_ATTRIBUTE_ALIGNED16(struct)
 b3Contact4 : public b3Contact4Data
@@ -52,4 +52,4 @@ b3Contact4 : public b3Contact4Data
 	bool isInvalid() const { return (getBodyA() == 0 || getBodyB() == 0); }
 };
 
-#endif  //B3_CONTACT4_H
+#endif //B3_CONTACT4_H

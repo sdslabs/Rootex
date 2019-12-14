@@ -17,8 +17,8 @@ subject to the following restrictions:
 #define BT_UNIVERSAL_CONSTRAINT_H
 
 #include "LinearMath/btVector3.h"
-#include "btTypedConstraint.h"
 #include "btGeneric6DofConstraint.h"
+#include "btTypedConstraint.h"
 
 /// Constraint similar to ODE Universal Joint
 /// has 2 rotatioonal degrees of freedom, similar to Euler rotations around Z (axis 1)
@@ -56,4 +56,4 @@ public:
 	void setAxis(const btVector3& axis1, const btVector3& axis2);
 };
 
-#endif  // BT_UNIVERSAL_CONSTRAINT_H
+#endif // BT_UNIVERSAL_CONSTRAINT_H
