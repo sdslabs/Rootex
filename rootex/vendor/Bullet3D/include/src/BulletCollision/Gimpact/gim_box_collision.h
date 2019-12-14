@@ -32,8 +32,8 @@ email: projectileman@yahoo.com
 
 -----------------------------------------------------------------------------
 */
-#include "LinearMath/btTransform.h"
 #include "gim_basic_geometry_operations.h"
+#include "LinearMath/btTransform.h"
 
 //SIMD_FORCE_INLINE bool test_cross_edge_box(
 //	const btVector3 & edge,
@@ -110,8 +110,7 @@ email: projectileman@yahoo.com
 		const btScalar abs_dir0 = absolute_edge[i_dir_0];                                                           \
 		const btScalar abs_dir1 = absolute_edge[i_dir_1];                                                           \
 		const btScalar rad = _extend[i_comp_0] * abs_dir0 + _extend[i_comp_1] * abs_dir1;                           \
-		if (pmin > rad || -rad > pmax)                                                                              \
-			return false;                                                                                           \
+		if (pmin > rad || -rad > pmax) return false;                                                                \
 	}
 
 #endif
@@ -135,9 +134,9 @@ email: projectileman@yahoo.com
 class GIM_BOX_BOX_TRANSFORM_CACHE
 {
 public:
-	btVector3 m_T1to0; //!< Transforms translation of model1 to model 0
-	btMatrix3x3 m_R1to0; //!< Transforms Rotation of model1 to model 0, equal  to R0' * R1
-	btMatrix3x3 m_AR; //!< Absolute value of m_R1to0
+	btVector3 m_T1to0;    //!< Transforms translation of model1 to model 0
+	btMatrix3x3 m_R1to0;  //!< Transforms Rotation of model1 to model 0, equal  to R0' * R1
+	btMatrix3x3 m_AR;     //!< Absolute value of m_R1to0
 
 	SIMD_FORCE_INLINE void calc_absolute_matrix()
 	{
@@ -159,7 +158,7 @@ public:
 	}
 
 	//! Calc the transformation relative  1 to 0. Inverts matrics by transposing
-	SIMD_FORCE_INLINE void calc_from_homogenic(const btTransform& trans0, const btTransform& trans1)
+	SIMD_FORCE_INLINE void calc_from_homogenic(const btTransform &trans0, const btTransform &trans1)
 	{
 		m_R1to0 = trans0.getBasis().transpose();
 		m_T1to0 = m_R1to0 * (-trans0.getOrigin());
@@ -171,7 +170,7 @@ public:
 	}
 
 	//! Calcs the full invertion of the matrices. Useful for scaling matrices
-	SIMD_FORCE_INLINE void calc_from_full_invert(const btTransform& trans0, const btTransform& trans1)
+	SIMD_FORCE_INLINE void calc_from_full_invert(const btTransform &trans0, const btTransform &trans1)
 	{
 		m_R1to0 = trans0.getBasis().inverse();
 		m_T1to0 = m_R1to0 * (-trans0.getOrigin());
@@ -182,7 +181,7 @@ public:
 		calc_absolute_matrix();
 	}
 
-	SIMD_FORCE_INLINE btVector3 transform(const btVector3& point)
+	SIMD_FORCE_INLINE btVector3 transform(const btVector3 &point)
 	{
 		return point.dot3(m_R1to0[0], m_R1to0[1], m_R1to0[2]) + m_T1to0;
 	}
@@ -203,9 +202,9 @@ public:
 	{
 	}
 
-	GIM_AABB(const btVector3& V1,
-	    const btVector3& V2,
-	    const btVector3& V3)
+	GIM_AABB(const btVector3 &V1,
+			 const btVector3 &V2,
+			 const btVector3 &V3)
 	{
 		m_min[0] = GIM_MIN3(V1[0], V2[0], V3[0]);
 		m_min[1] = GIM_MIN3(V1[1], V2[1], V3[1]);
@@ -216,10 +215,10 @@ public:
 		m_max[2] = GIM_MAX3(V1[2], V2[2], V3[2]);
 	}
 
-	GIM_AABB(const btVector3& V1,
-	    const btVector3& V2,
-	    const btVector3& V3,
-	    GREAL margin)
+	GIM_AABB(const btVector3 &V1,
+			 const btVector3 &V2,
+			 const btVector3 &V3,
+			 GREAL margin)
 	{
 		m_min[0] = GIM_MIN3(V1[0], V2[0], V3[0]);
 		m_min[1] = GIM_MIN3(V1[1], V2[1], V3[1]);
@@ -237,15 +236,11 @@ public:
 		m_max[2] += margin;
 	}
 
-	GIM_AABB(const GIM_AABB& other)
-	    : m_min(other.m_min)
-	    , m_max(other.m_max)
+	GIM_AABB(const GIM_AABB &other) : m_min(other.m_min), m_max(other.m_max)
 	{
 	}
 
-	GIM_AABB(const GIM_AABB& other, btScalar margin)
-	    : m_min(other.m_min)
-	    , m_max(other.m_max)
+	GIM_AABB(const GIM_AABB &other, btScalar margin) : m_min(other.m_min), m_max(other.m_max)
 	{
 		m_min[0] -= margin;
 		m_min[1] -= margin;
@@ -275,7 +270,7 @@ public:
 		m_max[2] += margin;
 	}
 
-	SIMD_FORCE_INLINE void copy_with_margin(const GIM_AABB& other, btScalar margin)
+	SIMD_FORCE_INLINE void copy_with_margin(const GIM_AABB &other, btScalar margin)
 	{
 		m_min[0] = other.m_min[0] - margin;
 		m_min[1] = other.m_min[1] - margin;
@@ -288,9 +283,9 @@ public:
 
 	template <typename CLASS_POINT>
 	SIMD_FORCE_INLINE void calc_from_triangle(
-	    const CLASS_POINT& V1,
-	    const CLASS_POINT& V2,
-	    const CLASS_POINT& V3)
+		const CLASS_POINT &V1,
+		const CLASS_POINT &V2,
+		const CLASS_POINT &V3)
 	{
 		m_min[0] = GIM_MIN3(V1[0], V2[0], V3[0]);
 		m_min[1] = GIM_MIN3(V1[1], V2[1], V3[1]);
@@ -303,9 +298,9 @@ public:
 
 	template <typename CLASS_POINT>
 	SIMD_FORCE_INLINE void calc_from_triangle_margin(
-	    const CLASS_POINT& V1,
-	    const CLASS_POINT& V2,
-	    const CLASS_POINT& V3, btScalar margin)
+		const CLASS_POINT &V1,
+		const CLASS_POINT &V2,
+		const CLASS_POINT &V3, btScalar margin)
 	{
 		m_min[0] = GIM_MIN3(V1[0], V2[0], V3[0]);
 		m_min[1] = GIM_MIN3(V1[1], V2[1], V3[1]);
@@ -324,7 +319,7 @@ public:
 	}
 
 	//! Apply a transform to an AABB
-	SIMD_FORCE_INLINE void appy_transform(const btTransform& trans)
+	SIMD_FORCE_INLINE void appy_transform(const btTransform &trans)
 	{
 		btVector3 center = (m_max + m_min) * 0.5f;
 		btVector3 extends = m_max - center;
@@ -332,15 +327,15 @@ public:
 		center = trans(center);
 
 		btVector3 textends = extends.dot3(trans.getBasis().getRow(0).absolute(),
-		    trans.getBasis().getRow(1).absolute(),
-		    trans.getBasis().getRow(2).absolute());
+										  trans.getBasis().getRow(1).absolute(),
+										  trans.getBasis().getRow(2).absolute());
 
 		m_min = center - textends;
 		m_max = center + textends;
 	}
 
 	//! Merges a Box
-	SIMD_FORCE_INLINE void merge(const GIM_AABB& box)
+	SIMD_FORCE_INLINE void merge(const GIM_AABB &box)
 	{
 		m_min[0] = GIM_MIN(m_min[0], box.m_min[0]);
 		m_min[1] = GIM_MIN(m_min[1], box.m_min[1]);
@@ -353,7 +348,7 @@ public:
 
 	//! Merges a point
 	template <typename CLASS_POINT>
-	SIMD_FORCE_INLINE void merge_point(const CLASS_POINT& point)
+	SIMD_FORCE_INLINE void merge_point(const CLASS_POINT &point)
 	{
 		m_min[0] = GIM_MIN(m_min[0], point[0]);
 		m_min[1] = GIM_MIN(m_min[1], point[1]);
@@ -365,14 +360,14 @@ public:
 	}
 
 	//! Gets the extend and center
-	SIMD_FORCE_INLINE void get_center_extend(btVector3& center, btVector3& extend) const
+	SIMD_FORCE_INLINE void get_center_extend(btVector3 &center, btVector3 &extend) const
 	{
 		center = (m_max + m_min) * 0.5f;
 		extend = m_max - center;
 	}
 
 	//! Finds the intersecting box between this box and the other.
-	SIMD_FORCE_INLINE void find_intersection(const GIM_AABB& other, GIM_AABB& intersection) const
+	SIMD_FORCE_INLINE void find_intersection(const GIM_AABB &other, GIM_AABB &intersection) const
 	{
 		intersection.m_min[0] = GIM_MAX(other.m_min[0], m_min[0]);
 		intersection.m_min[1] = GIM_MAX(other.m_min[1], m_min[1]);
@@ -383,9 +378,14 @@ public:
 		intersection.m_max[2] = GIM_MIN(other.m_max[2], m_max[2]);
 	}
 
-	SIMD_FORCE_INLINE bool has_collision(const GIM_AABB& other) const
+	SIMD_FORCE_INLINE bool has_collision(const GIM_AABB &other) const
 	{
-		if (m_min[0] > other.m_max[0] || m_max[0] < other.m_min[0] || m_min[1] > other.m_max[1] || m_max[1] < other.m_min[1] || m_min[2] > other.m_max[2] || m_max[2] < other.m_min[2])
+		if (m_min[0] > other.m_max[0] ||
+			m_max[0] < other.m_min[0] ||
+			m_min[1] > other.m_max[1] ||
+			m_max[1] < other.m_min[1] ||
+			m_min[2] > other.m_max[2] ||
+			m_max[2] < other.m_min[2])
 		{
 			return false;
 		}
@@ -397,35 +397,29 @@ public:
 	\param vorigin A vec3f with the origin of the ray
 	\param vdir A vec3f with the direction of the ray
 	*/
-	SIMD_FORCE_INLINE bool collide_ray(const btVector3& vorigin, const btVector3& vdir)
+	SIMD_FORCE_INLINE bool collide_ray(const btVector3 &vorigin, const btVector3 &vdir)
 	{
 		btVector3 extents, center;
 		this->get_center_extend(center, extents);
 		;
 
 		btScalar Dx = vorigin[0] - center[0];
-		if (GIM_GREATER(Dx, extents[0]) && Dx * vdir[0] >= 0.0f)
-			return false;
+		if (GIM_GREATER(Dx, extents[0]) && Dx * vdir[0] >= 0.0f) return false;
 		btScalar Dy = vorigin[1] - center[1];
-		if (GIM_GREATER(Dy, extents[1]) && Dy * vdir[1] >= 0.0f)
-			return false;
+		if (GIM_GREATER(Dy, extents[1]) && Dy * vdir[1] >= 0.0f) return false;
 		btScalar Dz = vorigin[2] - center[2];
-		if (GIM_GREATER(Dz, extents[2]) && Dz * vdir[2] >= 0.0f)
-			return false;
+		if (GIM_GREATER(Dz, extents[2]) && Dz * vdir[2] >= 0.0f) return false;
 
 		btScalar f = vdir[1] * Dz - vdir[2] * Dy;
-		if (btFabs(f) > extents[1] * btFabs(vdir[2]) + extents[2] * btFabs(vdir[1]))
-			return false;
+		if (btFabs(f) > extents[1] * btFabs(vdir[2]) + extents[2] * btFabs(vdir[1])) return false;
 		f = vdir[2] * Dx - vdir[0] * Dz;
-		if (btFabs(f) > extents[0] * btFabs(vdir[2]) + extents[2] * btFabs(vdir[0]))
-			return false;
+		if (btFabs(f) > extents[0] * btFabs(vdir[2]) + extents[2] * btFabs(vdir[0])) return false;
 		f = vdir[0] * Dy - vdir[1] * Dx;
-		if (btFabs(f) > extents[0] * btFabs(vdir[1]) + extents[1] * btFabs(vdir[0]))
-			return false;
+		if (btFabs(f) > extents[0] * btFabs(vdir[1]) + extents[1] * btFabs(vdir[0])) return false;
 		return true;
 	}
 
-	SIMD_FORCE_INLINE void projection_interval(const btVector3& direction, btScalar& vmin, btScalar& vmax) const
+	SIMD_FORCE_INLINE void projection_interval(const btVector3 &direction, btScalar &vmin, btScalar &vmax) const
 	{
 		btVector3 center = (m_max + m_min) * 0.5f;
 		btVector3 extend = m_max - center;
@@ -436,24 +430,24 @@ public:
 		vmax = _fOrigin + _fMaximumExtent;
 	}
 
-	SIMD_FORCE_INLINE ePLANE_INTERSECTION_TYPE plane_classify(const btVector4& plane) const
+	SIMD_FORCE_INLINE ePLANE_INTERSECTION_TYPE plane_classify(const btVector4 &plane) const
 	{
 		btScalar _fmin, _fmax;
 		this->projection_interval(plane, _fmin, _fmax);
 
 		if (plane[3] > _fmax + BOX_PLANE_EPSILON)
 		{
-			return G_BACK_PLANE; // 0
+			return G_BACK_PLANE;  // 0
 		}
 
 		if (plane[3] + BOX_PLANE_EPSILON >= _fmin)
 		{
-			return G_COLLIDE_PLANE; //1
+			return G_COLLIDE_PLANE;  //1
 		}
-		return G_FRONT_PLANE; //2
+		return G_FRONT_PLANE;  //2
 	}
 
-	SIMD_FORCE_INLINE bool overlapping_trans_conservative(const GIM_AABB& box, btTransform& trans1_to_0)
+	SIMD_FORCE_INLINE bool overlapping_trans_conservative(const GIM_AABB &box, btTransform &trans1_to_0)
 	{
 		GIM_AABB tbox = box;
 		tbox.appy_transform(trans1_to_0);
@@ -462,11 +456,11 @@ public:
 
 	//! transcache is the transformation cache from box to this AABB
 	SIMD_FORCE_INLINE bool overlapping_trans_cache(
-	    const GIM_AABB& box, const GIM_BOX_BOX_TRANSFORM_CACHE& transcache, bool fulltest)
+		const GIM_AABB &box, const GIM_BOX_BOX_TRANSFORM_CACHE &transcache, bool fulltest)
 	{
 		//Taken from OPCODE
-		btVector3 ea, eb; //extends
-		btVector3 ca, cb; //extends
+		btVector3 ea, eb;  //extends
+		btVector3 ca, cb;  //extends
 		get_center_extend(ca, ea);
 		box.get_center_extend(cb, eb);
 
@@ -479,16 +473,14 @@ public:
 		{
 			T[i] = transcache.m_R1to0[i].dot(cb) + transcache.m_T1to0[i] - ca[i];
 			t = transcache.m_AR[i].dot(eb) + ea[i];
-			if (GIM_GREATER(T[i], t))
-				return false;
+			if (GIM_GREATER(T[i], t)) return false;
 		}
 		// Class II : B's basis vectors
 		for (i = 0; i < 3; i++)
 		{
 			t = MAT_DOT_COL(transcache.m_R1to0, T, i);
 			t2 = MAT_DOT_COL(transcache.m_AR, ea, i) + eb[i];
-			if (GIM_GREATER(t, t2))
-				return false;
+			if (GIM_GREATER(t, t2)) return false;
 		}
 		// Class III : 9 cross products
 		if (fulltest)
@@ -505,9 +497,9 @@ public:
 					q = j == 2 ? 1 : 2;
 					r = j == 0 ? 1 : 0;
 					t = T[n] * transcache.m_R1to0[m][j] - T[m] * transcache.m_R1to0[n][j];
-					t2 = ea[o] * transcache.m_AR[p][j] + ea[p] * transcache.m_AR[o][j] + eb[r] * transcache.m_AR[i][q] + eb[q] * transcache.m_AR[i][r];
-					if (GIM_GREATER(t, t2))
-						return false;
+					t2 = ea[o] * transcache.m_AR[p][j] + ea[p] * transcache.m_AR[o][j] +
+						 eb[r] * transcache.m_AR[i][q] + eb[q] * transcache.m_AR[i][r];
+					if (GIM_GREATER(t, t2)) return false;
 				}
 			}
 		}
@@ -516,7 +508,7 @@ public:
 
 	//! Simple test for planes.
 	SIMD_FORCE_INLINE bool collide_plane(
-	    const btVector4& plane)
+		const btVector4 &plane)
 	{
 		ePLANE_INTERSECTION_TYPE classify = plane_classify(plane);
 		return (classify == G_COLLIDE_PLANE);
@@ -524,13 +516,12 @@ public:
 
 	//! test for a triangle, with edges
 	SIMD_FORCE_INLINE bool collide_triangle_exact(
-	    const btVector3& p1,
-	    const btVector3& p2,
-	    const btVector3& p3,
-	    const btVector4& triangle_plane)
+		const btVector3 &p1,
+		const btVector3 &p2,
+		const btVector3 &p3,
+		const btVector4 &triangle_plane)
 	{
-		if (!collide_plane(triangle_plane))
-			return false;
+		if (!collide_plane(triangle_plane)) return false;
 
 		btVector3 center, extends;
 		this->get_center_extend(center, extends);
@@ -573,19 +564,15 @@ public:
 
 #ifndef BT_BOX_COLLISION_H_INCLUDED
 //! Compairison of transformation objects
-SIMD_FORCE_INLINE bool btCompareTransformsEqual(const btTransform& t1, const btTransform& t2)
+SIMD_FORCE_INLINE bool btCompareTransformsEqual(const btTransform &t1, const btTransform &t2)
 {
-	if (!(t1.getOrigin() == t2.getOrigin()))
-		return false;
+	if (!(t1.getOrigin() == t2.getOrigin())) return false;
 
-	if (!(t1.getBasis().getRow(0) == t2.getBasis().getRow(0)))
-		return false;
-	if (!(t1.getBasis().getRow(1) == t2.getBasis().getRow(1)))
-		return false;
-	if (!(t1.getBasis().getRow(2) == t2.getBasis().getRow(2)))
-		return false;
+	if (!(t1.getBasis().getRow(0) == t2.getBasis().getRow(0))) return false;
+	if (!(t1.getBasis().getRow(1) == t2.getBasis().getRow(1))) return false;
+	if (!(t1.getBasis().getRow(2) == t2.getBasis().getRow(2))) return false;
 	return true;
 }
 #endif
 
-#endif // GIM_BOX_COLLISION_H_INCLUDED
+#endif  // GIM_BOX_COLLISION_H_INCLUDED

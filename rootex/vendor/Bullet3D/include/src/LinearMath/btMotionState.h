@@ -33,4 +33,4 @@ public:
 	virtual void setWorldTransform(const btTransform& worldTrans) = 0;
 };
 
-#endif //BT_MOTIONSTATE_H
+#endif  //BT_MOTIONSTATE_H

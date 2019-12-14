@@ -13,11 +13,12 @@
  3. This notice may not be removed or altered from any source distribution.
  */
 
+
 #ifndef BT_DEFORMABLE_MULTIBODY_CONSTRAINT_SOLVER_H
 #define BT_DEFORMABLE_MULTIBODY_CONSTRAINT_SOLVER_H
 
-#include "BulletDynamics/Featherstone/btMultiBodyConstraintSolver.h"
 #include "btDeformableBodySolver.h"
+#include "BulletDynamics/Featherstone/btMultiBodyConstraintSolver.h"
 
 class btDeformableBodySolver;
 
@@ -31,27 +32,27 @@ class btDeformableBodySolver;
 ATTRIBUTE_ALIGNED16(class)
 btDeformableMultiBodyConstraintSolver : public btMultiBodyConstraintSolver
 {
-	btDeformableBodySolver* m_deformableSolver;
-
+    btDeformableBodySolver* m_deformableSolver;
+    
 protected:
-	// override the iterations method to include deformable/multibody contact
-	virtual btScalar solveGroupCacheFriendlyIterations(btCollisionObject * *bodies, int numBodies, btPersistentManifold** manifoldPtr, int numManifolds, btTypedConstraint** constraints, int numConstraints, const btContactSolverInfo& infoGlobal, btIDebugDraw* debugDrawer);
+    // override the iterations method to include deformable/multibody contact
+    virtual btScalar solveGroupCacheFriendlyIterations(btCollisionObject** bodies,int numBodies,btPersistentManifold** manifoldPtr, int numManifolds,btTypedConstraint** constraints,int numConstraints,const btContactSolverInfo& infoGlobal,btIDebugDraw* debugDrawer);
+    
+    // write the velocity of the the solver body to the underlying rigid body
+    void solverBodyWriteBack(const btContactSolverInfo& infoGlobal);
 
-	// write the velocity of the the solver body to the underlying rigid body
-	void solverBodyWriteBack(const btContactSolverInfo& infoGlobal);
-
-	// write the velocity of the underlying rigid body to the the the solver body
-	void writeToSolverBody(btCollisionObject * *bodies, int numBodies, const btContactSolverInfo& infoGlobal);
-
+    // write the velocity of the underlying rigid body to the the the solver body
+    void writeToSolverBody(btCollisionObject** bodies, int numBodies, const btContactSolverInfo& infoGlobal);
+    
 public:
-	BT_DECLARE_ALIGNED_ALLOCATOR();
-
-	void setDeformableSolver(btDeformableBodySolver * deformableSolver)
-	{
-		m_deformableSolver = deformableSolver;
-	}
-
-	virtual void solveMultiBodyGroup(btCollisionObject * *bodies, int numBodies, btPersistentManifold** manifold, int numManifolds, btTypedConstraint** constraints, int numConstraints, btMultiBodyConstraint** multiBodyConstraints, int numMultiBodyConstraints, const btContactSolverInfo& info, btIDebugDraw* debugDrawer, btDispatcher* dispatcher);
+    BT_DECLARE_ALIGNED_ALLOCATOR();
+    
+    void setDeformableSolver(btDeformableBodySolver* deformableSolver)
+    {
+        m_deformableSolver = deformableSolver;
+    }
+    
+    virtual void solveMultiBodyGroup(btCollisionObject * *bodies, int numBodies, btPersistentManifold** manifold, int numManifolds, btTypedConstraint** constraints, int numConstraints, btMultiBodyConstraint** multiBodyConstraints, int numMultiBodyConstraints, const btContactSolverInfo& info, btIDebugDraw* debugDrawer, btDispatcher* dispatcher);
 };
 
 #endif /* BT_DEFORMABLE_MULTIBODY_CONSTRAINT_SOLVER_H */

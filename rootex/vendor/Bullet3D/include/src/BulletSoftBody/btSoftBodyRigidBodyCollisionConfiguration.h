@@ -40,4 +40,4 @@ public:
 	virtual btCollisionAlgorithmCreateFunc* getCollisionAlgorithmCreateFunc(int proxyType0, int proxyType1);
 };
 
-#endif //BT_SOFTBODY_RIGIDBODY_COLLISION_CONFIGURATION
+#endif  //BT_SOFTBODY_RIGIDBODY_COLLISION_CONFIGURATION

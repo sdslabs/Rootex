@@ -94,7 +94,7 @@ public:
 #else
 		m_elements[i].m_id = j;
 		m_elements[j].m_sz += m_elements[i].m_sz;
-#endif //USE_PATH_COMPRESSION
+#endif  //USE_PATH_COMPRESSION
 	}
 
 	int find(int x)
@@ -110,7 +110,7 @@ public:
 			const btElement* elementPtr = &m_elements[m_elements[x].m_id];
 			m_elements[x].m_id = elementPtr->m_id;
 			x = elementPtr->m_id;
-#else //
+#else  //
 			x = m_elements[x].m_id;
 #endif
 			//btAssert(x < m_N);
@@ -120,4 +120,4 @@ public:
 	}
 };
 
-#endif //BT_UNION_FIND_H
+#endif  //BT_UNION_FIND_H

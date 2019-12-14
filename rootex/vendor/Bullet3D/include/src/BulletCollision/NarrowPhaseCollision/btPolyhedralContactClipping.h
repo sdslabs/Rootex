@@ -39,4 +39,4 @@ struct btPolyhedralContactClipping
 	static void clipFace(const btVertexArray& pVtxIn, btVertexArray& ppVtxOut, const btVector3& planeNormalWS, btScalar planeEqWS);
 };
 
-#endif // BT_POLYHEDRAL_CONTACT_CLIPPING_H
+#endif  // BT_POLYHEDRAL_CONTACT_CLIPPING_H

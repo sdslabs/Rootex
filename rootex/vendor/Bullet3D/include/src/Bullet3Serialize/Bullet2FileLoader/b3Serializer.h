@@ -16,9 +16,9 @@ subject to the following restrictions:
 #ifndef B3_SERIALIZER_H
 #define B3_SERIALIZER_H
 
-#include "Bullet3Common/b3HashMap.h"
-#include "Bullet3Common/b3Scalar.h" // has definitions like B3_FORCE_INLINE
+#include "Bullet3Common/b3Scalar.h"  // has definitions like B3_FORCE_INLINE
 #include "Bullet3Common/b3StackAlloc.h"
+#include "Bullet3Common/b3HashMap.h"
 
 #if !defined(__CELLOS_LV2__) && !defined(__MWERKS__)
 #include <memory.h>
@@ -222,8 +222,7 @@ protected:
 		int i;
 		for (i = 0; i < dataLen; i++)
 		{
-			while (*cp)
-				cp++;
+			while (*cp) cp++;
 			cp++;
 		}
 		cp = b3AlignPointer(cp, 4);
@@ -249,8 +248,7 @@ protected:
 		for (i = 0; i < dataLen; i++)
 		{
 			mTypes.push_back(cp);
-			while (*cp)
-				cp++;
+			while (*cp) cp++;
 			cp++;
 		}
 
@@ -277,8 +275,7 @@ protected:
 			mTlens.push_back(shtPtr[0]);
 		}
 
-		if (dataLen & 1)
-			shtPtr++;
+		if (dataLen & 1) shtPtr++;
 
 		/*
 				STRC (4 bytes)
@@ -337,11 +334,11 @@ protected:
 
 public:
 	b3DefaultSerializer(int totalSize = 0)
-	    : m_totalSize(totalSize)
-	    , m_currentSize(0)
-	    , m_dna(0)
-	    , m_dnaLength(0)
-	    , m_serializationFlags(0)
+		: m_totalSize(totalSize),
+		  m_currentSize(0),
+		  m_dna(0),
+		  m_dnaLength(0),
+		  m_serializationFlags(0)
 	{
 		m_buffer = m_totalSize ? (unsigned char*)b3AlignedAlloc(totalSize, 16) : 0;
 
@@ -365,7 +362,7 @@ public:
 #endif
 		}
 
-#else //B3_INTERNAL_UPDATE_SERIALIZATION_STRUCTURES
+#else   //B3_INTERNAL_UPDATE_SERIALIZATION_STRUCTURES
 		if (VOID_IS_8)
 		{
 			initDNA((const char*)b3s_bulletDNAstr64, b3s_bulletDNAlen64);
@@ -374,7 +371,7 @@ public:
 		{
 			initDNA((const char*)b3s_bulletDNAstr, b3s_bulletDNAlen);
 		}
-#endif //B3_INTERNAL_UPDATE_SERIALIZATION_STRUCTURES
+#endif  //B3_INTERNAL_UPDATE_SERIALIZATION_STRUCTURES
 	}
 
 	virtual ~b3DefaultSerializer()
@@ -391,7 +388,7 @@ public:
 		memcpy(buffer, "BULLETd", 7);
 #else
 		memcpy(buffer, "BULLETf", 7);
-#endif //B3_USE_DOUBLE_PRECISION
+#endif  //B3_USE_DOUBLE_PRECISION
 
 		int littleEndian = 1;
 		littleEndian = ((char*)&littleEndian)[0];
@@ -510,8 +507,8 @@ public:
 
 		void* uniquePtr = getUniquePointer(oldPtr);
 
-		m_chunkP.insert(oldPtr, uniquePtr); //chunk->m_oldPtr);
-		chunk->m_oldPtr = uniquePtr; //oldPtr;
+		m_chunkP.insert(oldPtr, uniquePtr);  //chunk->m_oldPtr);
+		chunk->m_oldPtr = uniquePtr;         //oldPtr;
 	}
 
 	virtual unsigned char* internalAlloc(size_t size)
@@ -601,4 +598,4 @@ public:
 	}
 };
 
-#endif //B3_SERIALIZER_H
+#endif  //B3_SERIALIZER_H

@@ -54,8 +54,7 @@ public:
 	inline void destroyData()
 	{
 		m_allocated_size = 0;
-		if (m_data == NULL)
-			return;
+		if (m_data == NULL) return;
 		gim_free(m_data);
 		m_data = NULL;
 	}
@@ -86,8 +85,7 @@ public:
 		{
 			GUINT requestsize = m_size;
 			m_size = m_allocated_size;
-			if (resizeData((requestsize + GIM_ARRAY_GROW_INCREMENT) * GIM_ARRAY_GROW_FACTOR) == false)
-				return false;
+			if (resizeData((requestsize + GIM_ARRAY_GROW_INCREMENT) * GIM_ARRAY_GROW_FACTOR) == false) return false;
 		}
 		return true;
 	}
@@ -97,8 +95,7 @@ public:
 	//!@{
 	inline bool reserve(GUINT size)
 	{
-		if (m_allocated_size >= size)
-			return false;
+		if (m_allocated_size >= size) return false;
 		return resizeData(size);
 	}
 
@@ -112,8 +109,7 @@ public:
 
 	inline void clear()
 	{
-		if (m_size == 0)
-			return;
+		if (m_size == 0) return;
 		clear_range(0);
 	}
 
@@ -308,8 +304,7 @@ public:
 		}
 		else if (size < m_size)
 		{
-			if (call_constructor)
-				clear_range(size);
+			if (call_constructor) clear_range(size);
 			m_size = size;
 		}
 	}
@@ -320,4 +315,4 @@ public:
 	}
 };
 
-#endif // GIM_CONTAINERS_H_INCLUDED
+#endif  // GIM_CONTAINERS_H_INCLUDED

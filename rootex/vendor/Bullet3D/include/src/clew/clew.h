@@ -272,7 +272,7 @@ typedef double cl_double __attribute__((aligned(8)));
 #else
 #define CL_HUGE_VALF ((cl_float)1e50)
 #define CL_HUGE_VAL ((cl_double)1e500)
-float nanf(const char*);
+float nanf(const char *);
 #define CL_NAN nanf("")
 #endif
 #define CL_MAXFLOAT CL_FLT_MAX
@@ -1558,15 +1558,15 @@ float nanf(const char*);
 	//  CL.h contents
 	/******************************************************************************/
 
-	typedef struct _cl_platform_id* cl_platform_id;
-	typedef struct _cl_device_id* cl_device_id;
-	typedef struct _cl_context* cl_context;
-	typedef struct _cl_command_queue* cl_command_queue;
-	typedef struct _cl_mem* cl_mem;
-	typedef struct _cl_program* cl_program;
-	typedef struct _cl_kernel* cl_kernel;
-	typedef struct _cl_event* cl_event;
-	typedef struct _cl_sampler* cl_sampler;
+	typedef struct _cl_platform_id *cl_platform_id;
+	typedef struct _cl_device_id *cl_device_id;
+	typedef struct _cl_context *cl_context;
+	typedef struct _cl_command_queue *cl_command_queue;
+	typedef struct _cl_mem *cl_mem;
+	typedef struct _cl_program *cl_program;
+	typedef struct _cl_kernel *cl_kernel;
+	typedef struct _cl_event *cl_event;
+	typedef struct _cl_sampler *cl_sampler;
 
 	typedef cl_uint cl_bool; /* WARNING!  Unlike cl_ types in cl_platform.h, cl_bool is not guaranteed to be the same size as the bool in kernels. */
 	typedef cl_ulong cl_bitfield;
@@ -1969,529 +1969,529 @@ float nanf(const char*);
 	/*  Function signature typedef's */
 
 	/* Platform API */
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLGETPLATFORMIDS)(cl_uint /* num_entries */,
-	    cl_platform_id* /* platforms */,
-	    cl_uint* /* num_platforms */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLGETPLATFORMIDS)(cl_uint /* num_entries */,
+														 cl_platform_id * /* platforms */,
+														 cl_uint * /* num_platforms */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLGETPLATFORMINFO)(cl_platform_id /* platform */,
-	    cl_platform_info /* param_name */,
-	    size_t /* param_value_size */,
-	    void* /* param_value */,
-	    size_t* /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLGETPLATFORMINFO)(cl_platform_id /* platform */,
+														  cl_platform_info /* param_name */,
+														  size_t /* param_value_size */,
+														  void * /* param_value */,
+														  size_t * /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
 
 	/* Device APIs */
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLGETDEVICEIDS)(cl_platform_id /* platform */,
-	    cl_device_type /* device_type */,
-	    cl_uint /* num_entries */,
-	    cl_device_id* /* devices */,
-	    cl_uint* /* num_devices */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLGETDEVICEIDS)(cl_platform_id /* platform */,
+													   cl_device_type /* device_type */,
+													   cl_uint /* num_entries */,
+													   cl_device_id * /* devices */,
+													   cl_uint * /* num_devices */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLGETDEVICEINFO)(cl_device_id /* device */,
-	    cl_device_info /* param_name */,
-	    size_t /* param_value_size */,
-	    void* /* param_value */,
-	    size_t* /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLGETDEVICEINFO)(cl_device_id /* device */,
+														cl_device_info /* param_name */,
+														size_t /* param_value_size */,
+														void * /* param_value */,
+														size_t * /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
 
 	// Context APIs
-	typedef CL_API_ENTRY cl_context(CL_API_CALL*
-	        PFNCLCREATECONTEXT)(const cl_context_properties* /* properties */,
-	    cl_uint /* num_devices */,
-	    const cl_device_id* /* devices */,
-	    void(CL_CALLBACK* /* pfn_notify */)(const char*, const void*, size_t, void*),
-	    void* /* user_data */,
-	    cl_int* /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_context(CL_API_CALL *
+										PFNCLCREATECONTEXT)(const cl_context_properties * /* properties */,
+															cl_uint /* num_devices */,
+															const cl_device_id * /* devices */,
+															void(CL_CALLBACK * /* pfn_notify */)(const char *, const void *, size_t, void *),
+															void * /* user_data */,
+															cl_int * /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_context(CL_API_CALL*
-	        PFNCLCREATECONTEXTFROMTYPE)(const cl_context_properties* /* properties */,
-	    cl_device_type /* device_type */,
-	    void(CL_CALLBACK* /* pfn_notify*/)(const char*, const void*, size_t, void*),
-	    void* /* user_data */,
-	    cl_int* /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_context(CL_API_CALL *
+										PFNCLCREATECONTEXTFROMTYPE)(const cl_context_properties * /* properties */,
+																	cl_device_type /* device_type */,
+																	void(CL_CALLBACK * /* pfn_notify*/)(const char *, const void *, size_t, void *),
+																	void * /* user_data */,
+																	cl_int * /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLRETAINCONTEXT)(cl_context /* context */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLRETAINCONTEXT)(cl_context /* context */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLRELEASECONTEXT)(cl_context /* context */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLRELEASECONTEXT)(cl_context /* context */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLGETCONTEXTINFO)(cl_context /* context */,
-	    cl_context_info /* param_name */,
-	    size_t /* param_value_size */,
-	    void* /* param_value */,
-	    size_t* /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLGETCONTEXTINFO)(cl_context /* context */,
+														 cl_context_info /* param_name */,
+														 size_t /* param_value_size */,
+														 void * /* param_value */,
+														 size_t * /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
 
 	/* Command Queue APIs */
-	typedef CL_API_ENTRY cl_command_queue(CL_API_CALL*
-	        PFNCLCREATECOMMANDQUEUE)(cl_context /* context */,
-	    cl_device_id /* device */,
-	    cl_command_queue_properties /* properties */,
-	    cl_int* /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_command_queue(CL_API_CALL *
+											  PFNCLCREATECOMMANDQUEUE)(cl_context /* context */,
+																	   cl_device_id /* device */,
+																	   cl_command_queue_properties /* properties */,
+																	   cl_int * /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLRETAINCOMMANDQUEUE)(cl_command_queue /* command_queue */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLRETAINCOMMANDQUEUE)(cl_command_queue /* command_queue */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLRELEASECOMMANDQUEUE)(cl_command_queue /* command_queue */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLRELEASECOMMANDQUEUE)(cl_command_queue /* command_queue */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLGETCOMMANDQUEUEINFO)(cl_command_queue /* command_queue */,
-	    cl_command_queue_info /* param_name */,
-	    size_t /* param_value_size */,
-	    void* /* param_value */,
-	    size_t* /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLGETCOMMANDQUEUEINFO)(cl_command_queue /* command_queue */,
+															  cl_command_queue_info /* param_name */,
+															  size_t /* param_value_size */,
+															  void * /* param_value */,
+															  size_t * /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLSETCOMMANDQUEUEPROPERTY)(cl_command_queue /* command_queue */,
-	    cl_command_queue_properties /* properties */,
-	    cl_bool /* enable */,
-	    cl_command_queue_properties* /* old_properties */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLSETCOMMANDQUEUEPROPERTY)(cl_command_queue /* command_queue */,
+																  cl_command_queue_properties /* properties */,
+																  cl_bool /* enable */,
+																  cl_command_queue_properties * /* old_properties */) CL_API_SUFFIX__VERSION_1_0;
 
 	/* Memory Object APIs */
-	typedef CL_API_ENTRY cl_mem(CL_API_CALL*
-	        PFNCLCREATEBUFFER)(cl_context /* context */,
-	    cl_mem_flags /* flags */,
-	    size_t /* size */,
-	    void* /* host_ptr */,
-	    cl_int* /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_mem(CL_API_CALL *
+									PFNCLCREATEBUFFER)(cl_context /* context */,
+													   cl_mem_flags /* flags */,
+													   size_t /* size */,
+													   void * /* host_ptr */,
+													   cl_int * /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_mem(CL_API_CALL*
-	        PFNCLCREATESUBBUFFER)(cl_mem /* buffer */,
-	    cl_mem_flags /* flags */,
-	    cl_buffer_create_type /* buffer_create_type */,
-	    const void* /* buffer_create_info */,
-	    cl_int* /* errcode_ret */) CL_API_SUFFIX__VERSION_1_1;
+	typedef CL_API_ENTRY cl_mem(CL_API_CALL *
+									PFNCLCREATESUBBUFFER)(cl_mem /* buffer */,
+														  cl_mem_flags /* flags */,
+														  cl_buffer_create_type /* buffer_create_type */,
+														  const void * /* buffer_create_info */,
+														  cl_int * /* errcode_ret */) CL_API_SUFFIX__VERSION_1_1;
 
-	typedef CL_API_ENTRY cl_mem(CL_API_CALL*
-	        PFNCLCREATEIMAGE2D)(cl_context /* context */,
-	    cl_mem_flags /* flags */,
-	    const cl_image_format* /* image_format */,
-	    size_t /* image_width */,
-	    size_t /* image_height */,
-	    size_t /* image_row_pitch */,
-	    void* /* host_ptr */,
-	    cl_int* /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_mem(CL_API_CALL *
+									PFNCLCREATEIMAGE2D)(cl_context /* context */,
+														cl_mem_flags /* flags */,
+														const cl_image_format * /* image_format */,
+														size_t /* image_width */,
+														size_t /* image_height */,
+														size_t /* image_row_pitch */,
+														void * /* host_ptr */,
+														cl_int * /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_mem(CL_API_CALL*
-	        PFNCLCREATEIMAGE3D)(cl_context /* context */,
-	    cl_mem_flags /* flags */,
-	    const cl_image_format* /* image_format */,
-	    size_t /* image_width */,
-	    size_t /* image_height */,
-	    size_t /* image_depth */,
-	    size_t /* image_row_pitch */,
-	    size_t /* image_slice_pitch */,
-	    void* /* host_ptr */,
-	    cl_int* /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_mem(CL_API_CALL *
+									PFNCLCREATEIMAGE3D)(cl_context /* context */,
+														cl_mem_flags /* flags */,
+														const cl_image_format * /* image_format */,
+														size_t /* image_width */,
+														size_t /* image_height */,
+														size_t /* image_depth */,
+														size_t /* image_row_pitch */,
+														size_t /* image_slice_pitch */,
+														void * /* host_ptr */,
+														cl_int * /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLRETAINMEMOBJECT)(cl_mem /* memobj */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLRETAINMEMOBJECT)(cl_mem /* memobj */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLRELEASEMEMOBJECT)(cl_mem /* memobj */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLRELEASEMEMOBJECT)(cl_mem /* memobj */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLGETSUPPORTEDIMAGEFORMATS)(cl_context /* context */,
-	    cl_mem_flags /* flags */,
-	    cl_mem_object_type /* image_type */,
-	    cl_uint /* num_entries */,
-	    cl_image_format* /* image_formats */,
-	    cl_uint* /* num_image_formats */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLGETSUPPORTEDIMAGEFORMATS)(cl_context /* context */,
+																   cl_mem_flags /* flags */,
+																   cl_mem_object_type /* image_type */,
+																   cl_uint /* num_entries */,
+																   cl_image_format * /* image_formats */,
+																   cl_uint * /* num_image_formats */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLGETMEMOBJECTINFO)(cl_mem /* memobj */,
-	    cl_mem_info /* param_name */,
-	    size_t /* param_value_size */,
-	    void* /* param_value */,
-	    size_t* /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLGETMEMOBJECTINFO)(cl_mem /* memobj */,
+														   cl_mem_info /* param_name */,
+														   size_t /* param_value_size */,
+														   void * /* param_value */,
+														   size_t * /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLGETIMAGEINFO)(cl_mem /* image */,
-	    cl_image_info /* param_name */,
-	    size_t /* param_value_size */,
-	    void* /* param_value */,
-	    size_t* /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLGETIMAGEINFO)(cl_mem /* image */,
+													   cl_image_info /* param_name */,
+													   size_t /* param_value_size */,
+													   void * /* param_value */,
+													   size_t * /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLSETMEMOBJECTDESTRUCTORCALLBACK)(cl_mem /* memobj */,
-	    void(CL_CALLBACK* /*pfn_notify*/)(cl_mem /* memobj */, void* /*user_data*/),
-	    void* /*user_data */) CL_API_SUFFIX__VERSION_1_1;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLSETMEMOBJECTDESTRUCTORCALLBACK)(cl_mem /* memobj */,
+																		 void(CL_CALLBACK * /*pfn_notify*/)(cl_mem /* memobj */, void * /*user_data*/),
+																		 void * /*user_data */) CL_API_SUFFIX__VERSION_1_1;
 
 	/* Sampler APIs  */
-	typedef CL_API_ENTRY cl_sampler(CL_API_CALL*
-	        PFNCLCREATESAMPLER)(cl_context /* context */,
-	    cl_bool /* normalized_coords */,
-	    cl_addressing_mode /* addressing_mode */,
-	    cl_filter_mode /* filter_mode */,
-	    cl_int* /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_sampler(CL_API_CALL *
+										PFNCLCREATESAMPLER)(cl_context /* context */,
+															cl_bool /* normalized_coords */,
+															cl_addressing_mode /* addressing_mode */,
+															cl_filter_mode /* filter_mode */,
+															cl_int * /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLRETAINSAMPLER)(cl_sampler /* sampler */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLRETAINSAMPLER)(cl_sampler /* sampler */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLRELEASESAMPLER)(cl_sampler /* sampler */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLRELEASESAMPLER)(cl_sampler /* sampler */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLGETSAMPLERINFO)(cl_sampler /* sampler */,
-	    cl_sampler_info /* param_name */,
-	    size_t /* param_value_size */,
-	    void* /* param_value */,
-	    size_t* /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLGETSAMPLERINFO)(cl_sampler /* sampler */,
+														 cl_sampler_info /* param_name */,
+														 size_t /* param_value_size */,
+														 void * /* param_value */,
+														 size_t * /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
 
 	/* Program Object APIs  */
-	typedef CL_API_ENTRY cl_program(CL_API_CALL*
-	        PFNCLCREATEPROGRAMWITHSOURCE)(cl_context /* context */,
-	    cl_uint /* count */,
-	    const char** /* strings */,
-	    const size_t* /* lengths */,
-	    cl_int* /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_program(CL_API_CALL *
+										PFNCLCREATEPROGRAMWITHSOURCE)(cl_context /* context */,
+																	  cl_uint /* count */,
+																	  const char ** /* strings */,
+																	  const size_t * /* lengths */,
+																	  cl_int * /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_program(CL_API_CALL*
-	        PFNCLCREATEPROGRAMWITHBINARY)(cl_context /* context */,
-	    cl_uint /* num_devices */,
-	    const cl_device_id* /* device_list */,
-	    const size_t* /* lengths */,
-	    const unsigned char** /* binaries */,
-	    cl_int* /* binary_status */,
-	    cl_int* /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_program(CL_API_CALL *
+										PFNCLCREATEPROGRAMWITHBINARY)(cl_context /* context */,
+																	  cl_uint /* num_devices */,
+																	  const cl_device_id * /* device_list */,
+																	  const size_t * /* lengths */,
+																	  const unsigned char ** /* binaries */,
+																	  cl_int * /* binary_status */,
+																	  cl_int * /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLRETAINPROGRAM)(cl_program /* program */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLRETAINPROGRAM)(cl_program /* program */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLRELEASEPROGRAM)(cl_program /* program */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLRELEASEPROGRAM)(cl_program /* program */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLBUILDPROGRAM)(cl_program /* program */,
-	    cl_uint /* num_devices */,
-	    const cl_device_id* /* device_list */,
-	    const char* /* options */,
-	    void(CL_CALLBACK* /* pfn_notify */)(cl_program /* program */, void* /* user_data */),
-	    void* /* user_data */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLBUILDPROGRAM)(cl_program /* program */,
+													   cl_uint /* num_devices */,
+													   const cl_device_id * /* device_list */,
+													   const char * /* options */,
+													   void(CL_CALLBACK * /* pfn_notify */)(cl_program /* program */, void * /* user_data */),
+													   void * /* user_data */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLUNLOADCOMPILER)(void) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLUNLOADCOMPILER)(void) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLGETPROGRAMINFO)(cl_program /* program */,
-	    cl_program_info /* param_name */,
-	    size_t /* param_value_size */,
-	    void* /* param_value */,
-	    size_t* /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLGETPROGRAMINFO)(cl_program /* program */,
+														 cl_program_info /* param_name */,
+														 size_t /* param_value_size */,
+														 void * /* param_value */,
+														 size_t * /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLGETPROGRAMBUILDINFO)(cl_program /* program */,
-	    cl_device_id /* device */,
-	    cl_program_build_info /* param_name */,
-	    size_t /* param_value_size */,
-	    void* /* param_value */,
-	    size_t* /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLGETPROGRAMBUILDINFO)(cl_program /* program */,
+															  cl_device_id /* device */,
+															  cl_program_build_info /* param_name */,
+															  size_t /* param_value_size */,
+															  void * /* param_value */,
+															  size_t * /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
 
 	/* Kernel Object APIs */
-	typedef CL_API_ENTRY cl_kernel(CL_API_CALL*
-	        PFNCLCREATEKERNEL)(cl_program /* program */,
-	    const char* /* kernel_name */,
-	    cl_int* /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_kernel(CL_API_CALL *
+									   PFNCLCREATEKERNEL)(cl_program /* program */,
+														  const char * /* kernel_name */,
+														  cl_int * /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLCREATEKERNELSINPROGRAM)(cl_program /* program */,
-	    cl_uint /* num_kernels */,
-	    cl_kernel* /* kernels */,
-	    cl_uint* /* num_kernels_ret */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLCREATEKERNELSINPROGRAM)(cl_program /* program */,
+																 cl_uint /* num_kernels */,
+																 cl_kernel * /* kernels */,
+																 cl_uint * /* num_kernels_ret */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLRETAINKERNEL)(cl_kernel /* kernel */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLRETAINKERNEL)(cl_kernel /* kernel */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLRELEASEKERNEL)(cl_kernel /* kernel */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLRELEASEKERNEL)(cl_kernel /* kernel */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLSETKERNELARG)(cl_kernel /* kernel */,
-	    cl_uint /* arg_index */,
-	    size_t /* arg_size */,
-	    const void* /* arg_value */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLSETKERNELARG)(cl_kernel /* kernel */,
+													   cl_uint /* arg_index */,
+													   size_t /* arg_size */,
+													   const void * /* arg_value */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLGETKERNELINFO)(cl_kernel /* kernel */,
-	    cl_kernel_info /* param_name */,
-	    size_t /* param_value_size */,
-	    void* /* param_value */,
-	    size_t* /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLGETKERNELINFO)(cl_kernel /* kernel */,
+														cl_kernel_info /* param_name */,
+														size_t /* param_value_size */,
+														void * /* param_value */,
+														size_t * /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLGETKERNELWORKGROUPINFO)(cl_kernel /* kernel */,
-	    cl_device_id /* device */,
-	    cl_kernel_work_group_info /* param_name */,
-	    size_t /* param_value_size */,
-	    void* /* param_value */,
-	    size_t* /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLGETKERNELWORKGROUPINFO)(cl_kernel /* kernel */,
+																 cl_device_id /* device */,
+																 cl_kernel_work_group_info /* param_name */,
+																 size_t /* param_value_size */,
+																 void * /* param_value */,
+																 size_t * /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
 
 	// Event Object APIs
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLWAITFOREVENTS)(cl_uint /* num_events */,
-	    const cl_event* /* event_list */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLWAITFOREVENTS)(cl_uint /* num_events */,
+														const cl_event * /* event_list */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLGETEVENTINFO)(cl_event /* event */,
-	    cl_event_info /* param_name */,
-	    size_t /* param_value_size */,
-	    void* /* param_value */,
-	    size_t* /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLGETEVENTINFO)(cl_event /* event */,
+													   cl_event_info /* param_name */,
+													   size_t /* param_value_size */,
+													   void * /* param_value */,
+													   size_t * /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_event(CL_API_CALL*
-	        PFNCLCREATEUSEREVENT)(cl_context /* context */,
-	    cl_int* /* errcode_ret */) CL_API_SUFFIX__VERSION_1_1;
+	typedef CL_API_ENTRY cl_event(CL_API_CALL *
+									  PFNCLCREATEUSEREVENT)(cl_context /* context */,
+															cl_int * /* errcode_ret */) CL_API_SUFFIX__VERSION_1_1;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLRETAINEVENT)(cl_event /* event */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLRETAINEVENT)(cl_event /* event */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLRELEASEEVENT)(cl_event /* event */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLRELEASEEVENT)(cl_event /* event */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLSETUSEREVENTSTATUS)(cl_event /* event */,
-	    cl_int /* execution_status */) CL_API_SUFFIX__VERSION_1_1;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLSETUSEREVENTSTATUS)(cl_event /* event */,
+															 cl_int /* execution_status */) CL_API_SUFFIX__VERSION_1_1;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLSETEVENTCALLBACK)(cl_event /* event */,
-	    cl_int /* command_exec_callback_type */,
-	    void(CL_CALLBACK* /* pfn_notify */)(cl_event, cl_int, void*),
-	    void* /* user_data */) CL_API_SUFFIX__VERSION_1_1;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLSETEVENTCALLBACK)(cl_event /* event */,
+														   cl_int /* command_exec_callback_type */,
+														   void(CL_CALLBACK * /* pfn_notify */)(cl_event, cl_int, void *),
+														   void * /* user_data */) CL_API_SUFFIX__VERSION_1_1;
 
 	/* Profiling APIs  */
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLGETEVENTPROFILINGINFO)(cl_event /* event */,
-	    cl_profiling_info /* param_name */,
-	    size_t /* param_value_size */,
-	    void* /* param_value */,
-	    size_t* /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLGETEVENTPROFILINGINFO)(cl_event /* event */,
+																cl_profiling_info /* param_name */,
+																size_t /* param_value_size */,
+																void * /* param_value */,
+																size_t * /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
 
 	// Flush and Finish APIs
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLFLUSH)(cl_command_queue /* command_queue */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLFLUSH)(cl_command_queue /* command_queue */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLFINISH)(cl_command_queue /* command_queue */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLFINISH)(cl_command_queue /* command_queue */) CL_API_SUFFIX__VERSION_1_0;
 
 	/* Enqueued Commands APIs */
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLENQUEUEREADBUFFER)(cl_command_queue /* command_queue */,
-	    cl_mem /* buffer */,
-	    cl_bool /* blocking_read */,
-	    size_t /* offset */,
-	    size_t /* cb */,
-	    void* /* ptr */,
-	    cl_uint /* num_events_in_wait_list */,
-	    const cl_event* /* event_wait_list */,
-	    cl_event* /* event */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLENQUEUEREADBUFFER)(cl_command_queue /* command_queue */,
+															cl_mem /* buffer */,
+															cl_bool /* blocking_read */,
+															size_t /* offset */,
+															size_t /* cb */,
+															void * /* ptr */,
+															cl_uint /* num_events_in_wait_list */,
+															const cl_event * /* event_wait_list */,
+															cl_event * /* event */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLENQUEUEREADBUFFERRECT)(cl_command_queue /* command_queue */,
-	    cl_mem /* buffer */,
-	    cl_bool /* blocking_read */,
-	    const size_t* /* buffer_origin */,
-	    const size_t* /* host_origin */,
-	    const size_t* /* region */,
-	    size_t /* buffer_row_pitch */,
-	    size_t /* buffer_slice_pitch */,
-	    size_t /* host_row_pitch */,
-	    size_t /* host_slice_pitch */,
-	    void* /* ptr */,
-	    cl_uint /* num_events_in_wait_list */,
-	    const cl_event* /* event_wait_list */,
-	    cl_event* /* event */) CL_API_SUFFIX__VERSION_1_1;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLENQUEUEREADBUFFERRECT)(cl_command_queue /* command_queue */,
+																cl_mem /* buffer */,
+																cl_bool /* blocking_read */,
+																const size_t * /* buffer_origin */,
+																const size_t * /* host_origin */,
+																const size_t * /* region */,
+																size_t /* buffer_row_pitch */,
+																size_t /* buffer_slice_pitch */,
+																size_t /* host_row_pitch */,
+																size_t /* host_slice_pitch */,
+																void * /* ptr */,
+																cl_uint /* num_events_in_wait_list */,
+																const cl_event * /* event_wait_list */,
+																cl_event * /* event */) CL_API_SUFFIX__VERSION_1_1;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLENQUEUEWRITEBUFFER)(cl_command_queue /* command_queue */,
-	    cl_mem /* buffer */,
-	    cl_bool /* blocking_write */,
-	    size_t /* offset */,
-	    size_t /* cb */,
-	    const void* /* ptr */,
-	    cl_uint /* num_events_in_wait_list */,
-	    const cl_event* /* event_wait_list */,
-	    cl_event* /* event */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLENQUEUEWRITEBUFFER)(cl_command_queue /* command_queue */,
+															 cl_mem /* buffer */,
+															 cl_bool /* blocking_write */,
+															 size_t /* offset */,
+															 size_t /* cb */,
+															 const void * /* ptr */,
+															 cl_uint /* num_events_in_wait_list */,
+															 const cl_event * /* event_wait_list */,
+															 cl_event * /* event */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLENQUEUEWRITEBUFFERRECT)(cl_command_queue /* command_queue */,
-	    cl_mem /* buffer */,
-	    cl_bool /* blocking_write */,
-	    const size_t* /* buffer_origin */,
-	    const size_t* /* host_origin */,
-	    const size_t* /* region */,
-	    size_t /* buffer_row_pitch */,
-	    size_t /* buffer_slice_pitch */,
-	    size_t /* host_row_pitch */,
-	    size_t /* host_slice_pitch */,
-	    const void* /* ptr */,
-	    cl_uint /* num_events_in_wait_list */,
-	    const cl_event* /* event_wait_list */,
-	    cl_event* /* event */) CL_API_SUFFIX__VERSION_1_1;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLENQUEUEWRITEBUFFERRECT)(cl_command_queue /* command_queue */,
+																 cl_mem /* buffer */,
+																 cl_bool /* blocking_write */,
+																 const size_t * /* buffer_origin */,
+																 const size_t * /* host_origin */,
+																 const size_t * /* region */,
+																 size_t /* buffer_row_pitch */,
+																 size_t /* buffer_slice_pitch */,
+																 size_t /* host_row_pitch */,
+																 size_t /* host_slice_pitch */,
+																 const void * /* ptr */,
+																 cl_uint /* num_events_in_wait_list */,
+																 const cl_event * /* event_wait_list */,
+																 cl_event * /* event */) CL_API_SUFFIX__VERSION_1_1;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLENQUEUECOPYBUFFER)(cl_command_queue /* command_queue */,
-	    cl_mem /* src_buffer */,
-	    cl_mem /* dst_buffer */,
-	    size_t /* src_offset */,
-	    size_t /* dst_offset */,
-	    size_t /* cb */,
-	    cl_uint /* num_events_in_wait_list */,
-	    const cl_event* /* event_wait_list */,
-	    cl_event* /* event */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLENQUEUECOPYBUFFER)(cl_command_queue /* command_queue */,
+															cl_mem /* src_buffer */,
+															cl_mem /* dst_buffer */,
+															size_t /* src_offset */,
+															size_t /* dst_offset */,
+															size_t /* cb */,
+															cl_uint /* num_events_in_wait_list */,
+															const cl_event * /* event_wait_list */,
+															cl_event * /* event */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLENQUEUECOPYBUFFERRECT)(cl_command_queue /* command_queue */,
-	    cl_mem /* src_buffer */,
-	    cl_mem /* dst_buffer */,
-	    const size_t* /* src_origin */,
-	    const size_t* /* dst_origin */,
-	    const size_t* /* region */,
-	    size_t /* src_row_pitch */,
-	    size_t /* src_slice_pitch */,
-	    size_t /* dst_row_pitch */,
-	    size_t /* dst_slice_pitch */,
-	    cl_uint /* num_events_in_wait_list */,
-	    const cl_event* /* event_wait_list */,
-	    cl_event* /* event */) CL_API_SUFFIX__VERSION_1_1;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLENQUEUECOPYBUFFERRECT)(cl_command_queue /* command_queue */,
+																cl_mem /* src_buffer */,
+																cl_mem /* dst_buffer */,
+																const size_t * /* src_origin */,
+																const size_t * /* dst_origin */,
+																const size_t * /* region */,
+																size_t /* src_row_pitch */,
+																size_t /* src_slice_pitch */,
+																size_t /* dst_row_pitch */,
+																size_t /* dst_slice_pitch */,
+																cl_uint /* num_events_in_wait_list */,
+																const cl_event * /* event_wait_list */,
+																cl_event * /* event */) CL_API_SUFFIX__VERSION_1_1;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLENQUEUEREADIMAGE)(cl_command_queue /* command_queue */,
-	    cl_mem /* image */,
-	    cl_bool /* blocking_read */,
-	    const size_t* /* origin[3] */,
-	    const size_t* /* region[3] */,
-	    size_t /* row_pitch */,
-	    size_t /* slice_pitch */,
-	    void* /* ptr */,
-	    cl_uint /* num_events_in_wait_list */,
-	    const cl_event* /* event_wait_list */,
-	    cl_event* /* event */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLENQUEUEREADIMAGE)(cl_command_queue /* command_queue */,
+														   cl_mem /* image */,
+														   cl_bool /* blocking_read */,
+														   const size_t * /* origin[3] */,
+														   const size_t * /* region[3] */,
+														   size_t /* row_pitch */,
+														   size_t /* slice_pitch */,
+														   void * /* ptr */,
+														   cl_uint /* num_events_in_wait_list */,
+														   const cl_event * /* event_wait_list */,
+														   cl_event * /* event */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLENQUEUEWRITEIMAGE)(cl_command_queue /* command_queue */,
-	    cl_mem /* image */,
-	    cl_bool /* blocking_write */,
-	    const size_t* /* origin[3] */,
-	    const size_t* /* region[3] */,
-	    size_t /* input_row_pitch */,
-	    size_t /* input_slice_pitch */,
-	    const void* /* ptr */,
-	    cl_uint /* num_events_in_wait_list */,
-	    const cl_event* /* event_wait_list */,
-	    cl_event* /* event */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLENQUEUEWRITEIMAGE)(cl_command_queue /* command_queue */,
+															cl_mem /* image */,
+															cl_bool /* blocking_write */,
+															const size_t * /* origin[3] */,
+															const size_t * /* region[3] */,
+															size_t /* input_row_pitch */,
+															size_t /* input_slice_pitch */,
+															const void * /* ptr */,
+															cl_uint /* num_events_in_wait_list */,
+															const cl_event * /* event_wait_list */,
+															cl_event * /* event */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLENQUEUECOPYIMAGE)(cl_command_queue /* command_queue */,
-	    cl_mem /* src_image */,
-	    cl_mem /* dst_image */,
-	    const size_t* /* src_origin[3] */,
-	    const size_t* /* dst_origin[3] */,
-	    const size_t* /* region[3] */,
-	    cl_uint /* num_events_in_wait_list */,
-	    const cl_event* /* event_wait_list */,
-	    cl_event* /* event */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLENQUEUECOPYIMAGE)(cl_command_queue /* command_queue */,
+														   cl_mem /* src_image */,
+														   cl_mem /* dst_image */,
+														   const size_t * /* src_origin[3] */,
+														   const size_t * /* dst_origin[3] */,
+														   const size_t * /* region[3] */,
+														   cl_uint /* num_events_in_wait_list */,
+														   const cl_event * /* event_wait_list */,
+														   cl_event * /* event */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLENQUEUECOPYIMAGETOBUFFER)(cl_command_queue /* command_queue */,
-	    cl_mem /* src_image */,
-	    cl_mem /* dst_buffer */,
-	    const size_t* /* src_origin[3] */,
-	    const size_t* /* region[3] */,
-	    size_t /* dst_offset */,
-	    cl_uint /* num_events_in_wait_list */,
-	    const cl_event* /* event_wait_list */,
-	    cl_event* /* event */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLENQUEUECOPYIMAGETOBUFFER)(cl_command_queue /* command_queue */,
+																   cl_mem /* src_image */,
+																   cl_mem /* dst_buffer */,
+																   const size_t * /* src_origin[3] */,
+																   const size_t * /* region[3] */,
+																   size_t /* dst_offset */,
+																   cl_uint /* num_events_in_wait_list */,
+																   const cl_event * /* event_wait_list */,
+																   cl_event * /* event */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLENQUEUECOPYBUFFERTOIMAGE)(cl_command_queue /* command_queue */,
-	    cl_mem /* src_buffer */,
-	    cl_mem /* dst_image */,
-	    size_t /* src_offset */,
-	    const size_t* /* dst_origin[3] */,
-	    const size_t* /* region[3] */,
-	    cl_uint /* num_events_in_wait_list */,
-	    const cl_event* /* event_wait_list */,
-	    cl_event* /* event */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLENQUEUECOPYBUFFERTOIMAGE)(cl_command_queue /* command_queue */,
+																   cl_mem /* src_buffer */,
+																   cl_mem /* dst_image */,
+																   size_t /* src_offset */,
+																   const size_t * /* dst_origin[3] */,
+																   const size_t * /* region[3] */,
+																   cl_uint /* num_events_in_wait_list */,
+																   const cl_event * /* event_wait_list */,
+																   cl_event * /* event */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY void*(CL_API_CALL*
-	        PFNCLENQUEUEMAPBUFFER)(cl_command_queue /* command_queue */,
-	    cl_mem /* buffer */,
-	    cl_bool /* blocking_map */,
-	    cl_map_flags /* map_flags */,
-	    size_t /* offset */,
-	    size_t /* cb */,
-	    cl_uint /* num_events_in_wait_list */,
-	    const cl_event* /* event_wait_list */,
-	    cl_event* /* event */,
-	    cl_int* /* errcode_ret */)CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY void *(CL_API_CALL *
+									PFNCLENQUEUEMAPBUFFER)(cl_command_queue /* command_queue */,
+														   cl_mem /* buffer */,
+														   cl_bool /* blocking_map */,
+														   cl_map_flags /* map_flags */,
+														   size_t /* offset */,
+														   size_t /* cb */,
+														   cl_uint /* num_events_in_wait_list */,
+														   const cl_event * /* event_wait_list */,
+														   cl_event * /* event */,
+														   cl_int * /* errcode_ret */)CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY void*(CL_API_CALL*
-	        PFNCLENQUEUEMAPIMAGE)(cl_command_queue /* command_queue */,
-	    cl_mem /* image */,
-	    cl_bool /* blocking_map */,
-	    cl_map_flags /* map_flags */,
-	    const size_t* /* origin[3] */,
-	    const size_t* /* region[3] */,
-	    size_t* /* image_row_pitch */,
-	    size_t* /* image_slice_pitch */,
-	    cl_uint /* num_events_in_wait_list */,
-	    const cl_event* /* event_wait_list */,
-	    cl_event* /* event */,
-	    cl_int* /* errcode_ret */)CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY void *(CL_API_CALL *
+									PFNCLENQUEUEMAPIMAGE)(cl_command_queue /* command_queue */,
+														  cl_mem /* image */,
+														  cl_bool /* blocking_map */,
+														  cl_map_flags /* map_flags */,
+														  const size_t * /* origin[3] */,
+														  const size_t * /* region[3] */,
+														  size_t * /* image_row_pitch */,
+														  size_t * /* image_slice_pitch */,
+														  cl_uint /* num_events_in_wait_list */,
+														  const cl_event * /* event_wait_list */,
+														  cl_event * /* event */,
+														  cl_int * /* errcode_ret */)CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLENQUEUEUNMAPMEMOBJECT)(cl_command_queue /* command_queue */,
-	    cl_mem /* memobj */,
-	    void* /* mapped_ptr */,
-	    cl_uint /* num_events_in_wait_list */,
-	    const cl_event* /* event_wait_list */,
-	    cl_event* /* event */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLENQUEUEUNMAPMEMOBJECT)(cl_command_queue /* command_queue */,
+																cl_mem /* memobj */,
+																void * /* mapped_ptr */,
+																cl_uint /* num_events_in_wait_list */,
+																const cl_event * /* event_wait_list */,
+																cl_event * /* event */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLENQUEUENDRANGEKERNEL)(cl_command_queue /* command_queue */,
-	    cl_kernel /* kernel */,
-	    cl_uint /* work_dim */,
-	    const size_t* /* global_work_offset */,
-	    const size_t* /* global_work_size */,
-	    const size_t* /* local_work_size */,
-	    cl_uint /* num_events_in_wait_list */,
-	    const cl_event* /* event_wait_list */,
-	    cl_event* /* event */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLENQUEUENDRANGEKERNEL)(cl_command_queue /* command_queue */,
+															   cl_kernel /* kernel */,
+															   cl_uint /* work_dim */,
+															   const size_t * /* global_work_offset */,
+															   const size_t * /* global_work_size */,
+															   const size_t * /* local_work_size */,
+															   cl_uint /* num_events_in_wait_list */,
+															   const cl_event * /* event_wait_list */,
+															   cl_event * /* event */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLENQUEUETASK)(cl_command_queue /* command_queue */,
-	    cl_kernel /* kernel */,
-	    cl_uint /* num_events_in_wait_list */,
-	    const cl_event* /* event_wait_list */,
-	    cl_event* /* event */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLENQUEUETASK)(cl_command_queue /* command_queue */,
+													  cl_kernel /* kernel */,
+													  cl_uint /* num_events_in_wait_list */,
+													  const cl_event * /* event_wait_list */,
+													  cl_event * /* event */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLENQUEUENATIVEKERNEL)(cl_command_queue /* command_queue */,
-	    void (*user_func)(void*),
-	    void* /* args */,
-	    size_t /* cb_args */,
-	    cl_uint /* num_mem_objects */,
-	    const cl_mem* /* mem_list */,
-	    const void** /* args_mem_loc */,
-	    cl_uint /* num_events_in_wait_list */,
-	    const cl_event* /* event_wait_list */,
-	    cl_event* /* event */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLENQUEUENATIVEKERNEL)(cl_command_queue /* command_queue */,
+															  void (*user_func)(void *),
+															  void * /* args */,
+															  size_t /* cb_args */,
+															  cl_uint /* num_mem_objects */,
+															  const cl_mem * /* mem_list */,
+															  const void ** /* args_mem_loc */,
+															  cl_uint /* num_events_in_wait_list */,
+															  const cl_event * /* event_wait_list */,
+															  cl_event * /* event */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLENQUEUEMARKER)(cl_command_queue /* command_queue */,
-	    cl_event* /* event */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLENQUEUEMARKER)(cl_command_queue /* command_queue */,
+														cl_event * /* event */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLENQUEUEWAITFOREVENTS)(cl_command_queue /* command_queue */,
-	    cl_uint /* num_events */,
-	    const cl_event* /* event_list */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLENQUEUEWAITFOREVENTS)(cl_command_queue /* command_queue */,
+															   cl_uint /* num_events */,
+															   const cl_event * /* event_list */) CL_API_SUFFIX__VERSION_1_0;
 
-	typedef CL_API_ENTRY cl_int(CL_API_CALL*
-	        PFNCLENQUEUEBARRIER)(cl_command_queue /* command_queue */) CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY cl_int(CL_API_CALL *
+									PFNCLENQUEUEBARRIER)(cl_command_queue /* command_queue */) CL_API_SUFFIX__VERSION_1_0;
 
 	// Extension function access
 	//
@@ -2500,7 +2500,7 @@ float nanf(const char*);
 	// check to make sure the address is not NULL, before using or
 	// calling the returned function address.
 	//
-	typedef CL_API_ENTRY void*(CL_API_CALL* PFNCLGETEXTENSIONFUNCTIONADDRESS)(const char* /* func_name */)CL_API_SUFFIX__VERSION_1_0;
+	typedef CL_API_ENTRY void *(CL_API_CALL *PFNCLGETEXTENSIONFUNCTIONADDRESS)(const char * /* func_name */)CL_API_SUFFIX__VERSION_1_0;
 
 #define CLEW_STATIC
 
@@ -2688,21 +2688,21 @@ float nanf(const char*);
 #define clEnqueueBarrier CLEW_GET_FUN(__clewEnqueueBarrier)
 #define clGetExtensionFunctionAddress CLEW_GET_FUN(__clewGetExtensionFunctionAddress)
 
-#define CLEW_SUCCESS 0 //!<    Success error code
-#define CLEW_ERROR_OPEN_FAILED -1 //!<    Error code for failing to open the dynamic library
-#define CLEW_ERROR_ATEXIT_FAILED -2 //!<    Error code for failing to queue the closing of the dynamic library to atexit()
+#define CLEW_SUCCESS 0               //!<    Success error code
+#define CLEW_ERROR_OPEN_FAILED -1    //!<    Error code for failing to open the dynamic library
+#define CLEW_ERROR_ATEXIT_FAILED -2  //!<    Error code for failing to queue the closing of the dynamic library to atexit()
 
 	//! \brief Load OpenCL dynamic library and set function entry points
-	int clewInit(const char*);
+	int clewInit(const char *);
 
 	//! \brief Exit clew and unload OpenCL dynamic library
 	void clewExit();
 
 	//! \brief Convert an OpenCL error code to its string equivalent
-	const char* clewErrorString(cl_int error);
+	const char *clewErrorString(cl_int error);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif //  CLEW_HPP_INCLUDED
+#endif  //  CLEW_HPP_INCLUDED

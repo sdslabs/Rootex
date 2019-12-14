@@ -16,4 +16,4 @@ struct b3BvhSubtreeInfoData
 	int m_padding[3];
 };
 
-#endif //B3_BVH_SUBTREE_INFO_DATA_H
+#endif  //B3_BVH_SUBTREE_INFO_DATA_H

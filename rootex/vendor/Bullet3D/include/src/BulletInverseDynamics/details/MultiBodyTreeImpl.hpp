@@ -148,11 +148,11 @@ public:
 
 	/// \copydoc MultiBodyTree::calculateInverseDynamics
 	int calculateInverseDynamics(const vecx& q, const vecx& u, const vecx& dot_u,
-	    vecx* joint_forces);
+								 vecx* joint_forces);
 	///\copydoc MultiBodyTree::calculateMassMatrix
 	int calculateMassMatrix(const vecx& q, const bool update_kinematics,
-	    const bool initialize_matrix, const bool set_lower_triangular_matrix,
-	    matxx* mass_matrix);
+							const bool initialize_matrix, const bool set_lower_triangular_matrix,
+							matxx* mass_matrix);
 	/// calculate kinematics (vector quantities)
 	/// Depending on type, update positions only, positions & velocities, or positions, velocities
 	/// and accelerations.
@@ -284,5 +284,5 @@ private:
 	mat3x m_m3x;
 #endif
 };
-} // namespace btInverseDynamics
+}  // namespace btInverseDynamics
 #endif

@@ -27,7 +27,7 @@ subject to the following restrictions:
 #include "LinearMath/btTransform.h"
 
 SIMD_FORCE_INLINE btVector3 gim_inertia_add_transformed(
-    const btVector3& source_inertia, const btVector3& added_inertia, const btTransform& transform)
+	const btVector3& source_inertia, const btVector3& added_inertia, const btTransform& transform)
 {
 	btMatrix3x3 rotatedTensor = transform.getBasis().scaled(added_inertia) * transform.getBasis().transpose();
 
@@ -53,4 +53,4 @@ SIMD_FORCE_INLINE btVector3 gim_get_point_inertia(const btVector3& point, btScal
 	return btVector3(mass * (y2 + z2), mass * (x2 + z2), mass * (x2 + y2));
 }
 
-#endif //GIMPACT_MESH_SHAPE_H
+#endif  //GIMPACT_MESH_SHAPE_H

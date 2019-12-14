@@ -17,15 +17,15 @@ subject to the following restrictions:
 #ifndef BT_MATRIX_X_H
 #define BT_MATRIX_X_H
 
-#include "LinearMath/btAlignedObjectArray.h"
 #include "LinearMath/btQuickprof.h"
+#include "LinearMath/btAlignedObjectArray.h"
 #include <stdio.h>
 
 //#define BT_DEBUG_OSTREAM
 #ifdef BT_DEBUG_OSTREAM
-#include <iomanip> // std::setw
 #include <iostream>
-#endif //BT_DEBUG_OSTREAM
+#include <iomanip>  // std::setw
+#endif              //BT_DEBUG_OSTREAM
 
 class btIntSortPredicate
 {
@@ -170,19 +170,19 @@ struct btMatrixX
 		return m_storage.size() ? &m_storage[0] : 0;
 	}
 	btMatrixX()
-	    : m_rows(0)
-	    , m_cols(0)
-	    , m_operations(0)
-	    , m_resizeOperations(0)
-	    , m_setElemOperations(0)
+		: m_rows(0),
+		  m_cols(0),
+		  m_operations(0),
+		  m_resizeOperations(0),
+		  m_setElemOperations(0)
 	{
 	}
 	btMatrixX(int rows, int cols)
-	    : m_rows(rows)
-	    , m_cols(cols)
-	    , m_operations(0)
-	    , m_resizeOperations(0)
-	    , m_setElemOperations(0)
+		: m_rows(rows),
+		  m_cols(cols),
+		  m_operations(0),
+		  m_resizeOperations(0),
+		  m_setElemOperations(0)
 	{
 		resize(rows, cols);
 	}
@@ -510,7 +510,7 @@ std::ostream& operator<<(std::ostream& os, const btVectorX<T>& mat)
 	return os;
 }
 
-#endif //BT_DEBUG_OSTREAM
+#endif  //BT_DEBUG_OSTREAM
 
 inline void setElem(btMatrixXd& mat, int row, int col, double val)
 {
@@ -528,6 +528,6 @@ inline void setElem(btMatrixXf& mat, int row, int col, float val)
 #else
 #define btVectorXu btVectorXf
 #define btMatrixXu btMatrixXf
-#endif //BT_USE_DOUBLE_PRECISION
+#endif  //BT_USE_DOUBLE_PRECISION
 
-#endif //BT_MATRIX_H_H
+#endif  //BT_MATRIX_H_H

@@ -2,9 +2,9 @@
 #define B3_GPU_NARROWPHASE_H
 
 #include "Bullet3Collision/NarrowPhaseCollision/shared/b3Collidable.h"
+#include "Bullet3OpenCL/Initialize/b3OpenCLInclude.h"
 #include "Bullet3Common/b3AlignedObjectArray.h"
 #include "Bullet3Common/b3Vector3.h"
-#include "Bullet3OpenCL/Initialize/b3OpenCLInclude.h"
 
 class b3GpuNarrowPhase
 {
@@ -98,4 +98,4 @@ public:
 	const struct b3SapAabb& getLocalSpaceAabb(int collidableIndex) const;
 };
 
-#endif //B3_GPU_NARROWPHASE_H
+#endif  //B3_GPU_NARROWPHASE_H

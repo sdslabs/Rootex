@@ -35,4 +35,4 @@ struct b3ConvexPolyhedronData
 	int m_unused;
 };
 
-#endif //B3_CONVEX_POLYHEDRON_DATA_H
+#endif  //B3_CONVEX_POLYHEDRON_DATA_H

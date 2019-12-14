@@ -51,13 +51,13 @@ extern "C"
 #define B3_PROFILE(name) b3ProfileZone __profile(name)
 #endif
 
-#else //B3_NO_PROFILE
+#else  //B3_NO_PROFILE
 
 #define B3_PROFILE(name)
 #define b3StartProfile(a)
 #define b3StopProfile
 
-#endif //#ifndef B3_NO_PROFILE
+#endif  //#ifndef B3_NO_PROFILE
 
 	typedef void(b3PrintfFunc)(const char* msg);
 	typedef void(b3WarningMessageFunc)(const char* msg);
@@ -83,4 +83,4 @@ extern "C"
 }
 #endif
 
-#endif //B3_LOGGING_H
+#endif  //B3_LOGGING_H

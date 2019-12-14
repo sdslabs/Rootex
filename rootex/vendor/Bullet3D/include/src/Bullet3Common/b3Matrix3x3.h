@@ -15,26 +15,26 @@ subject to the following restrictions:
 #ifndef B3_MATRIX3x3_H
 #define B3_MATRIX3x3_H
 
-#include "b3Quaternion.h"
 #include "b3Vector3.h"
+#include "b3Quaternion.h"
 #include <stdio.h>
 
 #ifdef B3_USE_SSE
 //const __m128 B3_ATTRIBUTE_ALIGNED16(b3v2220) = {2.0f, 2.0f, 2.0f, 0.0f};
-const __m128 B3_ATTRIBUTE_ALIGNED16(b3vMPPP) = { -0.0f, +0.0f, +0.0f, +0.0f };
+const __m128 B3_ATTRIBUTE_ALIGNED16(b3vMPPP) = {-0.0f, +0.0f, +0.0f, +0.0f};
 #endif
 
 #if defined(B3_USE_SSE) || defined(B3_USE_NEON)
-const b3SimdFloat4 B3_ATTRIBUTE_ALIGNED16(b3v1000) = { 1.0f, 0.0f, 0.0f, 0.0f };
-const b3SimdFloat4 B3_ATTRIBUTE_ALIGNED16(b3v0100) = { 0.0f, 1.0f, 0.0f, 0.0f };
-const b3SimdFloat4 B3_ATTRIBUTE_ALIGNED16(b3v0010) = { 0.0f, 0.0f, 1.0f, 0.0f };
+const b3SimdFloat4 B3_ATTRIBUTE_ALIGNED16(b3v1000) = {1.0f, 0.0f, 0.0f, 0.0f};
+const b3SimdFloat4 B3_ATTRIBUTE_ALIGNED16(b3v0100) = {0.0f, 1.0f, 0.0f, 0.0f};
+const b3SimdFloat4 B3_ATTRIBUTE_ALIGNED16(b3v0010) = {0.0f, 0.0f, 1.0f, 0.0f};
 #endif
 
 #ifdef B3_USE_DOUBLE_PRECISION
 #define b3Matrix3x3Data b3Matrix3x3DoubleData
 #else
 #define b3Matrix3x3Data b3Matrix3x3FloatData
-#endif //B3_USE_DOUBLE_PRECISION
+#endif  //B3_USE_DOUBLE_PRECISION
 
 /**@brief The b3Matrix3x3 class implements a 3x3 rotation matrix, to perform linear algebra in combination with b3Quaternion, b3Transform and b3Vector3.
 * Make sure to only include a pure orthogonal matrix without scaling. */
@@ -61,12 +61,12 @@ public:
 	*/
 	/** @brief Constructor with row major formatting */
 	b3Matrix3x3(const b3Scalar& xx, const b3Scalar& xy, const b3Scalar& xz,
-	    const b3Scalar& yx, const b3Scalar& yy, const b3Scalar& yz,
-	    const b3Scalar& zx, const b3Scalar& zy, const b3Scalar& zz)
+				const b3Scalar& yx, const b3Scalar& yy, const b3Scalar& yz,
+				const b3Scalar& zx, const b3Scalar& zy, const b3Scalar& zz)
 	{
 		setValue(xx, xy, xz,
-		    yx, yy, yz,
-		    zx, zy, zz);
+				 yx, yy, yz,
+				 zx, zy, zz);
 	}
 
 #if (defined(B3_USE_SSE_IN_API) && defined(B3_USE_SSE)) || defined(B3_USE_NEON)
@@ -188,8 +188,8 @@ public:
 	*  @param zy Bottom Middle
 	*  @param zz Bottom Right*/
 	void setValue(const b3Scalar& xx, const b3Scalar& xy, const b3Scalar& xz,
-	    const b3Scalar& yx, const b3Scalar& yy, const b3Scalar& yz,
-	    const b3Scalar& zx, const b3Scalar& zy, const b3Scalar& zz)
+				  const b3Scalar& yx, const b3Scalar& yy, const b3Scalar& yz,
+				  const b3Scalar& zx, const b3Scalar& zy, const b3Scalar& zz)
 	{
 		m_el[0].setValue(xx, xy, xz);
 		m_el[1].setValue(yx, yy, yz);
@@ -213,26 +213,26 @@ public:
 		__m128 NQ = _mm_xor_ps(Q, b3vMzeroMask);
 		__m128i NQi = b3CastfTo128i(NQ);
 
-		V1 = b3CastiTo128f(_mm_shuffle_epi32(Qi, B3_SHUFFLE(1, 0, 2, 3))); // Y X Z W
-		V2 = _mm_shuffle_ps(NQ, Q, B3_SHUFFLE(0, 0, 1, 3)); // -X -X  Y  W
-		V3 = b3CastiTo128f(_mm_shuffle_epi32(Qi, B3_SHUFFLE(2, 1, 0, 3))); // Z Y X W
-		V1 = _mm_xor_ps(V1, b3vMPPP); //	change the sign of the first element
+		V1 = b3CastiTo128f(_mm_shuffle_epi32(Qi, B3_SHUFFLE(1, 0, 2, 3)));  // Y X Z W
+		V2 = _mm_shuffle_ps(NQ, Q, B3_SHUFFLE(0, 0, 1, 3));                 // -X -X  Y  W
+		V3 = b3CastiTo128f(_mm_shuffle_epi32(Qi, B3_SHUFFLE(2, 1, 0, 3)));  // Z Y X W
+		V1 = _mm_xor_ps(V1, b3vMPPP);                                       //	change the sign of the first element
 
-		V11 = b3CastiTo128f(_mm_shuffle_epi32(Qi, B3_SHUFFLE(1, 1, 0, 3))); // Y Y X W
-		V21 = _mm_unpackhi_ps(Q, Q); //  Z  Z  W  W
-		V31 = _mm_shuffle_ps(Q, NQ, B3_SHUFFLE(0, 2, 0, 3)); //  X  Z -X -W
+		V11 = b3CastiTo128f(_mm_shuffle_epi32(Qi, B3_SHUFFLE(1, 1, 0, 3)));  // Y Y X W
+		V21 = _mm_unpackhi_ps(Q, Q);                                         //  Z  Z  W  W
+		V31 = _mm_shuffle_ps(Q, NQ, B3_SHUFFLE(0, 2, 0, 3));                 //  X  Z -X -W
 
-		V2 = V2 * V1; //
-		V1 = V1 * V11; //
-		V3 = V3 * V31; //
+		V2 = V2 * V1;   //
+		V1 = V1 * V11;  //
+		V3 = V3 * V31;  //
 
-		V11 = _mm_shuffle_ps(NQ, Q, B3_SHUFFLE(2, 3, 1, 3)); //	-Z -W  Y  W
-		V11 = V11 * V21; //
-		V21 = _mm_xor_ps(V21, b3vMPPP); //	change the sign of the first element
-		V31 = _mm_shuffle_ps(Q, NQ, B3_SHUFFLE(3, 3, 1, 3)); //	 W  W -Y -W
-		V31 = _mm_xor_ps(V31, b3vMPPP); //	change the sign of the first element
-		Y = b3CastiTo128f(_mm_shuffle_epi32(NQi, B3_SHUFFLE(3, 2, 0, 3))); // -W -Z -X -W
-		Z = b3CastiTo128f(_mm_shuffle_epi32(Qi, B3_SHUFFLE(1, 0, 1, 3))); //  Y  X  Y  W
+		V11 = _mm_shuffle_ps(NQ, Q, B3_SHUFFLE(2, 3, 1, 3));                //	-Z -W  Y  W
+		V11 = V11 * V21;                                                    //
+		V21 = _mm_xor_ps(V21, b3vMPPP);                                     //	change the sign of the first element
+		V31 = _mm_shuffle_ps(Q, NQ, B3_SHUFFLE(3, 3, 1, 3));                //	 W  W -Y -W
+		V31 = _mm_xor_ps(V31, b3vMPPP);                                     //	change the sign of the first element
+		Y = b3CastiTo128f(_mm_shuffle_epi32(NQi, B3_SHUFFLE(3, 2, 0, 3)));  // -W -Z -X -W
+		Z = b3CastiTo128f(_mm_shuffle_epi32(Qi, B3_SHUFFLE(1, 0, 1, 3)));   //  Y  X  Y  W
 
 		vs = _mm_load_ss(&s);
 		V21 = V21 * Y;
@@ -261,9 +261,9 @@ public:
 		b3Scalar xx = q.getX() * xs, xy = q.getX() * ys, xz = q.getX() * zs;
 		b3Scalar yy = q.getY() * ys, yz = q.getY() * zs, zz = q.getZ() * zs;
 		setValue(
-		    b3Scalar(1.0) - (yy + zz), xy - wz, xz + wy,
-		    xy + wz, b3Scalar(1.0) - (xx + zz), yz - wx,
-		    xz - wy, yz + wx, b3Scalar(1.0) - (xx + yy));
+			b3Scalar(1.0) - (yy + zz), xy - wz, xz + wy,
+			xy + wz, b3Scalar(1.0) - (xx + zz), yz - wx,
+			xz - wy, yz + wx, b3Scalar(1.0) - (xx + yy));
 #endif
 	}
 
@@ -301,8 +301,8 @@ public:
 		b3Scalar ss = si * sh;
 
 		setValue(cj * ch, sj * sc - cs, sj * cc + ss,
-		    cj * sh, sj * ss + cc, sj * cs - sc,
-		    -sj, cj * si, cj * ci);
+				 cj * sh, sj * ss + cc, sj * cs - sc,
+				 -sj, cj * si, cj * ci);
 	}
 
 	/**@brief Set the matrix to the identity */
@@ -314,8 +314,8 @@ public:
 		m_el[2] = b3MakeVector3(b3v0010);
 #else
 		setValue(b3Scalar(1.0), b3Scalar(0.0), b3Scalar(0.0),
-		    b3Scalar(0.0), b3Scalar(1.0), b3Scalar(0.0),
-		    b3Scalar(0.0), b3Scalar(0.0), b3Scalar(1.0));
+				 b3Scalar(0.0), b3Scalar(1.0), b3Scalar(0.0),
+				 b3Scalar(0.0), b3Scalar(0.0), b3Scalar(1.0));
 #endif
 	}
 
@@ -323,13 +323,13 @@ public:
 	{
 #if (defined(B3_USE_SSE_IN_API) && defined(B3_USE_SSE)) || defined(B3_USE_NEON)
 		static const b3Matrix3x3
-		    identityMatrix(b3v1000, b3v0100, b3v0010);
+			identityMatrix(b3v1000, b3v0100, b3v0010);
 #else
 		static const b3Matrix3x3
-		    identityMatrix(
-		        b3Scalar(1.0), b3Scalar(0.0), b3Scalar(0.0),
-		        b3Scalar(0.0), b3Scalar(1.0), b3Scalar(0.0),
-		        b3Scalar(0.0), b3Scalar(0.0), b3Scalar(1.0));
+			identityMatrix(
+				b3Scalar(1.0), b3Scalar(0.0), b3Scalar(0.0),
+				b3Scalar(0.0), b3Scalar(1.0), b3Scalar(0.0),
+				b3Scalar(0.0), b3Scalar(0.0), b3Scalar(1.0));
 #endif
 		return identityMatrix;
 	}
@@ -341,32 +341,32 @@ public:
 #if defined(B3_USE_SSE_IN_API) && defined(B3_USE_SSE)
 		__m128 v0 = m_el[0].mVec128;
 		__m128 v1 = m_el[1].mVec128;
-		__m128 v2 = m_el[2].mVec128; //  x2 y2 z2 w2
+		__m128 v2 = m_el[2].mVec128;  //  x2 y2 z2 w2
 		__m128* vm = (__m128*)m;
 		__m128 vT;
 
-		v2 = _mm_and_ps(v2, b3vFFF0fMask); //  x2 y2 z2 0
+		v2 = _mm_and_ps(v2, b3vFFF0fMask);  //  x2 y2 z2 0
 
-		vT = _mm_unpackhi_ps(v0, v1); //	z0 z1 * *
-		v0 = _mm_unpacklo_ps(v0, v1); //	x0 x1 y0 y1
+		vT = _mm_unpackhi_ps(v0, v1);  //	z0 z1 * *
+		v0 = _mm_unpacklo_ps(v0, v1);  //	x0 x1 y0 y1
 
-		v1 = _mm_shuffle_ps(v0, v2, B3_SHUFFLE(2, 3, 1, 3)); // y0 y1 y2 0
-		v0 = _mm_shuffle_ps(v0, v2, B3_SHUFFLE(0, 1, 0, 3)); // x0 x1 x2 0
-		v2 = b3CastdTo128f(_mm_move_sd(b3CastfTo128d(v2), b3CastfTo128d(vT))); // z0 z1 z2 0
+		v1 = _mm_shuffle_ps(v0, v2, B3_SHUFFLE(2, 3, 1, 3));                    // y0 y1 y2 0
+		v0 = _mm_shuffle_ps(v0, v2, B3_SHUFFLE(0, 1, 0, 3));                    // x0 x1 x2 0
+		v2 = b3CastdTo128f(_mm_move_sd(b3CastfTo128d(v2), b3CastfTo128d(vT)));  // z0 z1 z2 0
 
 		vm[0] = v0;
 		vm[1] = v1;
 		vm[2] = v2;
 #elif defined(B3_USE_NEON)
 		// note: zeros the w channel. We can preserve it at the cost of two more vtrn instructions.
-		static const uint32x2_t zMask = (const uint32x2_t) { -1, 0 };
+		static const uint32x2_t zMask = (const uint32x2_t){-1, 0};
 		float32x4_t* vm = (float32x4_t*)m;
-		float32x4x2_t top = vtrnq_f32(m_el[0].mVec128, m_el[1].mVec128); // {x0 x1 z0 z1}, {y0 y1 w0 w1}
-		float32x2x2_t bl = vtrn_f32(vget_low_f32(m_el[2].mVec128), vdup_n_f32(0.0f)); // {x2  0 }, {y2 0}
+		float32x4x2_t top = vtrnq_f32(m_el[0].mVec128, m_el[1].mVec128);               // {x0 x1 z0 z1}, {y0 y1 w0 w1}
+		float32x2x2_t bl = vtrn_f32(vget_low_f32(m_el[2].mVec128), vdup_n_f32(0.0f));  // {x2  0 }, {y2 0}
 		float32x4_t v0 = vcombine_f32(vget_low_f32(top.val[0]), bl.val[0]);
 		float32x4_t v1 = vcombine_f32(vget_low_f32(top.val[1]), bl.val[1]);
 		float32x2_t q = (float32x2_t)vand_u32((uint32x2_t)vget_high_f32(m_el[2].mVec128), zMask);
-		float32x4_t v2 = vcombine_f32(vget_high_f32(top.val[0]), q); // z0 z1 z2  0
+		float32x4_t v2 = vcombine_f32(vget_high_f32(top.val[0]), q);  // z0 z1 z2  0
 
 		vm[0] = v0;
 		vm[1] = v1;
@@ -532,7 +532,7 @@ public:
 		};
 
 		Euler euler_out;
-		Euler euler_out2; //second solution
+		Euler euler_out2;  //second solution
 		//get the pointer to the raw data
 
 		// Check that pitch is not at a singularity
@@ -543,14 +543,14 @@ public:
 
 			// From difference of angles formula
 			b3Scalar delta = b3Atan2(m_el[0].getX(), m_el[0].getZ());
-			if (m_el[2].getX() > 0) //gimbal locked up
+			if (m_el[2].getX() > 0)  //gimbal locked up
 			{
 				euler_out.pitch = B3_PI / b3Scalar(2.0);
 				euler_out2.pitch = B3_PI / b3Scalar(2.0);
 				euler_out.roll = euler_out.pitch + delta;
 				euler_out2.roll = euler_out.pitch + delta;
 			}
-			else // gimbal locked down
+			else  // gimbal locked down
 			{
 				euler_out.pitch = -B3_PI / b3Scalar(2.0);
 				euler_out2.pitch = -B3_PI / b3Scalar(2.0);
@@ -564,14 +564,14 @@ public:
 			euler_out2.pitch = B3_PI - euler_out.pitch;
 
 			euler_out.roll = b3Atan2(m_el[2].getY() / b3Cos(euler_out.pitch),
-			    m_el[2].getZ() / b3Cos(euler_out.pitch));
+									 m_el[2].getZ() / b3Cos(euler_out.pitch));
 			euler_out2.roll = b3Atan2(m_el[2].getY() / b3Cos(euler_out2.pitch),
-			    m_el[2].getZ() / b3Cos(euler_out2.pitch));
+									  m_el[2].getZ() / b3Cos(euler_out2.pitch));
 
 			euler_out.yaw = b3Atan2(m_el[1].getX() / b3Cos(euler_out.pitch),
-			    m_el[0].getX() / b3Cos(euler_out.pitch));
+									m_el[0].getX() / b3Cos(euler_out.pitch));
 			euler_out2.yaw = b3Atan2(m_el[1].getX() / b3Cos(euler_out2.pitch),
-			    m_el[0].getX() / b3Cos(euler_out2.pitch));
+									 m_el[0].getX() / b3Cos(euler_out2.pitch));
 		}
 
 		if (solution_number == 1)
@@ -597,9 +597,9 @@ public:
 		return b3Matrix3x3(m_el[0] * s, m_el[1] * s, m_el[2] * s);
 #else
 		return b3Matrix3x3(
-		    m_el[0].getX() * s.getX(), m_el[0].getY() * s.getY(), m_el[0].getZ() * s.getZ(),
-		    m_el[1].getX() * s.getX(), m_el[1].getY() * s.getY(), m_el[1].getZ() * s.getZ(),
-		    m_el[2].getX() * s.getX(), m_el[2].getY() * s.getY(), m_el[2].getZ() * s.getZ());
+			m_el[0].getX() * s.getX(), m_el[0].getY() * s.getY(), m_el[0].getZ() * s.getZ(),
+			m_el[1].getX() * s.getX(), m_el[1].getY() * s.getY(), m_el[1].getZ() * s.getZ(),
+			m_el[2].getX() * s.getX(), m_el[2].getY() * s.getY(), m_el[2].getZ() * s.getZ());
 #endif
 	}
 
@@ -684,7 +684,7 @@ public:
 			if (theta2 * theta2 < b3Scalar(10 / B3_EPSILON))
 			{
 				t = (theta >= 0) ? 1 / (theta + b3Sqrt(1 + theta2))
-				                 : 1 / (theta - b3Sqrt(1 + theta2));
+								 : 1 / (theta - b3Sqrt(1 + theta2));
 				cos = 1 / b3Sqrt(1 + t * t);
 				sin = cos * t;
 			}
@@ -823,9 +823,9 @@ b3Matrix3x3::operator*=(const b3Matrix3x3& m)
 	m_el[2].mVec128 = rv2;
 #else
 	setValue(
-	    m.tdotx(m_el[0]), m.tdoty(m_el[0]), m.tdotz(m_el[0]),
-	    m.tdotx(m_el[1]), m.tdoty(m_el[1]), m.tdotz(m_el[1]),
-	    m.tdotx(m_el[2]), m.tdoty(m_el[2]), m.tdotz(m_el[2]));
+		m.tdotx(m_el[0]), m.tdoty(m_el[0]), m.tdotz(m_el[0]),
+		m.tdotx(m_el[1]), m.tdoty(m_el[1]), m.tdotz(m_el[1]),
+		m.tdotx(m_el[2]), m.tdoty(m_el[2]), m.tdotz(m_el[2]));
 #endif
 	return *this;
 }
@@ -839,15 +839,15 @@ b3Matrix3x3::operator+=(const b3Matrix3x3& m)
 	m_el[2].mVec128 = m_el[2].mVec128 + m.m_el[2].mVec128;
 #else
 	setValue(
-	    m_el[0][0] + m.m_el[0][0],
-	    m_el[0][1] + m.m_el[0][1],
-	    m_el[0][2] + m.m_el[0][2],
-	    m_el[1][0] + m.m_el[1][0],
-	    m_el[1][1] + m.m_el[1][1],
-	    m_el[1][2] + m.m_el[1][2],
-	    m_el[2][0] + m.m_el[2][0],
-	    m_el[2][1] + m.m_el[2][1],
-	    m_el[2][2] + m.m_el[2][2]);
+		m_el[0][0] + m.m_el[0][0],
+		m_el[0][1] + m.m_el[0][1],
+		m_el[0][2] + m.m_el[0][2],
+		m_el[1][0] + m.m_el[1][0],
+		m_el[1][1] + m.m_el[1][1],
+		m_el[1][2] + m.m_el[1][2],
+		m_el[2][0] + m.m_el[2][0],
+		m_el[2][1] + m.m_el[2][1],
+		m_el[2][2] + m.m_el[2][2]);
 #endif
 	return *this;
 }
@@ -858,19 +858,19 @@ operator*(const b3Matrix3x3& m, const b3Scalar& k)
 #if (defined(B3_USE_SSE_IN_API) && defined(B3_USE_SSE))
 	__m128 vk = b3_splat_ps(_mm_load_ss((float*)&k), 0x80);
 	return b3Matrix3x3(
-	    _mm_mul_ps(m[0].mVec128, vk),
-	    _mm_mul_ps(m[1].mVec128, vk),
-	    _mm_mul_ps(m[2].mVec128, vk));
+		_mm_mul_ps(m[0].mVec128, vk),
+		_mm_mul_ps(m[1].mVec128, vk),
+		_mm_mul_ps(m[2].mVec128, vk));
 #elif defined(B3_USE_NEON)
 	return b3Matrix3x3(
-	    vmulq_n_f32(m[0].mVec128, k),
-	    vmulq_n_f32(m[1].mVec128, k),
-	    vmulq_n_f32(m[2].mVec128, k));
+		vmulq_n_f32(m[0].mVec128, k),
+		vmulq_n_f32(m[1].mVec128, k),
+		vmulq_n_f32(m[2].mVec128, k));
 #else
 	return b3Matrix3x3(
-	    m[0].getX() * k, m[0].getY() * k, m[0].getZ() * k,
-	    m[1].getX() * k, m[1].getY() * k, m[1].getZ() * k,
-	    m[2].getX() * k, m[2].getY() * k, m[2].getZ() * k);
+		m[0].getX() * k, m[0].getY() * k, m[0].getZ() * k,
+		m[1].getX() * k, m[1].getY() * k, m[1].getZ() * k,
+		m[2].getX() * k, m[2].getY() * k, m[2].getZ() * k);
 #endif
 }
 
@@ -879,22 +879,22 @@ operator+(const b3Matrix3x3& m1, const b3Matrix3x3& m2)
 {
 #if (defined(B3_USE_SSE_IN_API) && defined(B3_USE_SSE)) || defined(B3_USE_NEON)
 	return b3Matrix3x3(
-	    m1[0].mVec128 + m2[0].mVec128,
-	    m1[1].mVec128 + m2[1].mVec128,
-	    m1[2].mVec128 + m2[2].mVec128);
+		m1[0].mVec128 + m2[0].mVec128,
+		m1[1].mVec128 + m2[1].mVec128,
+		m1[2].mVec128 + m2[2].mVec128);
 #else
 	return b3Matrix3x3(
-	    m1[0][0] + m2[0][0],
-	    m1[0][1] + m2[0][1],
-	    m1[0][2] + m2[0][2],
+		m1[0][0] + m2[0][0],
+		m1[0][1] + m2[0][1],
+		m1[0][2] + m2[0][2],
 
-	    m1[1][0] + m2[1][0],
-	    m1[1][1] + m2[1][1],
-	    m1[1][2] + m2[1][2],
+		m1[1][0] + m2[1][0],
+		m1[1][1] + m2[1][1],
+		m1[1][2] + m2[1][2],
 
-	    m1[2][0] + m2[2][0],
-	    m1[2][1] + m2[2][1],
-	    m1[2][2] + m2[2][2]);
+		m1[2][0] + m2[2][0],
+		m1[2][1] + m2[2][1],
+		m1[2][2] + m2[2][2]);
 #endif
 }
 
@@ -903,22 +903,22 @@ operator-(const b3Matrix3x3& m1, const b3Matrix3x3& m2)
 {
 #if (defined(B3_USE_SSE_IN_API) && defined(B3_USE_SSE)) || defined(B3_USE_NEON)
 	return b3Matrix3x3(
-	    m1[0].mVec128 - m2[0].mVec128,
-	    m1[1].mVec128 - m2[1].mVec128,
-	    m1[2].mVec128 - m2[2].mVec128);
+		m1[0].mVec128 - m2[0].mVec128,
+		m1[1].mVec128 - m2[1].mVec128,
+		m1[2].mVec128 - m2[2].mVec128);
 #else
 	return b3Matrix3x3(
-	    m1[0][0] - m2[0][0],
-	    m1[0][1] - m2[0][1],
-	    m1[0][2] - m2[0][2],
+		m1[0][0] - m2[0][0],
+		m1[0][1] - m2[0][1],
+		m1[0][2] - m2[0][2],
 
-	    m1[1][0] - m2[1][0],
-	    m1[1][1] - m2[1][1],
-	    m1[1][2] - m2[1][2],
+		m1[1][0] - m2[1][0],
+		m1[1][1] - m2[1][1],
+		m1[1][2] - m2[1][2],
 
-	    m1[2][0] - m2[2][0],
-	    m1[2][1] - m2[2][1],
-	    m1[2][2] - m2[2][2]);
+		m1[2][0] - m2[2][0],
+		m1[2][1] - m2[2][1],
+		m1[2][2] - m2[2][2]);
 #endif
 }
 
@@ -931,15 +931,15 @@ b3Matrix3x3::operator-=(const b3Matrix3x3& m)
 	m_el[2].mVec128 = m_el[2].mVec128 - m.m_el[2].mVec128;
 #else
 	setValue(
-	    m_el[0][0] - m.m_el[0][0],
-	    m_el[0][1] - m.m_el[0][1],
-	    m_el[0][2] - m.m_el[0][2],
-	    m_el[1][0] - m.m_el[1][0],
-	    m_el[1][1] - m.m_el[1][1],
-	    m_el[1][2] - m.m_el[1][2],
-	    m_el[2][0] - m.m_el[2][0],
-	    m_el[2][1] - m.m_el[2][1],
-	    m_el[2][2] - m.m_el[2][2]);
+		m_el[0][0] - m.m_el[0][0],
+		m_el[0][1] - m.m_el[0][1],
+		m_el[0][2] - m.m_el[0][2],
+		m_el[1][0] - m.m_el[1][0],
+		m_el[1][1] - m.m_el[1][1],
+		m_el[1][2] - m.m_el[1][2],
+		m_el[2][0] - m.m_el[2][0],
+		m_el[2][1] - m.m_el[2][1],
+		m_el[2][2] - m.m_el[2][2]);
 #endif
 	return *this;
 }
@@ -955,19 +955,19 @@ b3Matrix3x3::absolute() const
 {
 #if (defined(B3_USE_SSE_IN_API) && defined(B3_USE_SSE))
 	return b3Matrix3x3(
-	    _mm_and_ps(m_el[0].mVec128, b3vAbsfMask),
-	    _mm_and_ps(m_el[1].mVec128, b3vAbsfMask),
-	    _mm_and_ps(m_el[2].mVec128, b3vAbsfMask));
+		_mm_and_ps(m_el[0].mVec128, b3vAbsfMask),
+		_mm_and_ps(m_el[1].mVec128, b3vAbsfMask),
+		_mm_and_ps(m_el[2].mVec128, b3vAbsfMask));
 #elif defined(B3_USE_NEON)
 	return b3Matrix3x3(
-	    (float32x4_t)vandq_s32((int32x4_t)m_el[0].mVec128, b3v3AbsMask),
-	    (float32x4_t)vandq_s32((int32x4_t)m_el[1].mVec128, b3v3AbsMask),
-	    (float32x4_t)vandq_s32((int32x4_t)m_el[2].mVec128, b3v3AbsMask));
+		(float32x4_t)vandq_s32((int32x4_t)m_el[0].mVec128, b3v3AbsMask),
+		(float32x4_t)vandq_s32((int32x4_t)m_el[1].mVec128, b3v3AbsMask),
+		(float32x4_t)vandq_s32((int32x4_t)m_el[2].mVec128, b3v3AbsMask));
 #else
 	return b3Matrix3x3(
-	    b3Fabs(m_el[0].getX()), b3Fabs(m_el[0].getY()), b3Fabs(m_el[0].getZ()),
-	    b3Fabs(m_el[1].getX()), b3Fabs(m_el[1].getY()), b3Fabs(m_el[1].getZ()),
-	    b3Fabs(m_el[2].getX()), b3Fabs(m_el[2].getY()), b3Fabs(m_el[2].getZ()));
+		b3Fabs(m_el[0].getX()), b3Fabs(m_el[0].getY()), b3Fabs(m_el[0].getZ()),
+		b3Fabs(m_el[1].getX()), b3Fabs(m_el[1].getY()), b3Fabs(m_el[1].getZ()),
+		b3Fabs(m_el[2].getX()), b3Fabs(m_el[2].getY()), b3Fabs(m_el[2].getZ()));
 #endif
 }
 
@@ -977,33 +977,33 @@ b3Matrix3x3::transpose() const
 #if (defined(B3_USE_SSE_IN_API) && defined(B3_USE_SSE))
 	__m128 v0 = m_el[0].mVec128;
 	__m128 v1 = m_el[1].mVec128;
-	__m128 v2 = m_el[2].mVec128; //  x2 y2 z2 w2
+	__m128 v2 = m_el[2].mVec128;  //  x2 y2 z2 w2
 	__m128 vT;
 
-	v2 = _mm_and_ps(v2, b3vFFF0fMask); //  x2 y2 z2 0
+	v2 = _mm_and_ps(v2, b3vFFF0fMask);  //  x2 y2 z2 0
 
-	vT = _mm_unpackhi_ps(v0, v1); //	z0 z1 * *
-	v0 = _mm_unpacklo_ps(v0, v1); //	x0 x1 y0 y1
+	vT = _mm_unpackhi_ps(v0, v1);  //	z0 z1 * *
+	v0 = _mm_unpacklo_ps(v0, v1);  //	x0 x1 y0 y1
 
-	v1 = _mm_shuffle_ps(v0, v2, B3_SHUFFLE(2, 3, 1, 3)); // y0 y1 y2 0
-	v0 = _mm_shuffle_ps(v0, v2, B3_SHUFFLE(0, 1, 0, 3)); // x0 x1 x2 0
-	v2 = b3CastdTo128f(_mm_move_sd(b3CastfTo128d(v2), b3CastfTo128d(vT))); // z0 z1 z2 0
+	v1 = _mm_shuffle_ps(v0, v2, B3_SHUFFLE(2, 3, 1, 3));                    // y0 y1 y2 0
+	v0 = _mm_shuffle_ps(v0, v2, B3_SHUFFLE(0, 1, 0, 3));                    // x0 x1 x2 0
+	v2 = b3CastdTo128f(_mm_move_sd(b3CastfTo128d(v2), b3CastfTo128d(vT)));  // z0 z1 z2 0
 
 	return b3Matrix3x3(v0, v1, v2);
 #elif defined(B3_USE_NEON)
 	// note: zeros the w channel. We can preserve it at the cost of two more vtrn instructions.
-	static const uint32x2_t zMask = (const uint32x2_t) { -1, 0 };
-	float32x4x2_t top = vtrnq_f32(m_el[0].mVec128, m_el[1].mVec128); // {x0 x1 z0 z1}, {y0 y1 w0 w1}
-	float32x2x2_t bl = vtrn_f32(vget_low_f32(m_el[2].mVec128), vdup_n_f32(0.0f)); // {x2  0 }, {y2 0}
+	static const uint32x2_t zMask = (const uint32x2_t){-1, 0};
+	float32x4x2_t top = vtrnq_f32(m_el[0].mVec128, m_el[1].mVec128);               // {x0 x1 z0 z1}, {y0 y1 w0 w1}
+	float32x2x2_t bl = vtrn_f32(vget_low_f32(m_el[2].mVec128), vdup_n_f32(0.0f));  // {x2  0 }, {y2 0}
 	float32x4_t v0 = vcombine_f32(vget_low_f32(top.val[0]), bl.val[0]);
 	float32x4_t v1 = vcombine_f32(vget_low_f32(top.val[1]), bl.val[1]);
 	float32x2_t q = (float32x2_t)vand_u32((uint32x2_t)vget_high_f32(m_el[2].mVec128), zMask);
-	float32x4_t v2 = vcombine_f32(vget_high_f32(top.val[0]), q); // z0 z1 z2  0
+	float32x4_t v2 = vcombine_f32(vget_high_f32(top.val[0]), q);  // z0 z1 z2  0
 	return b3Matrix3x3(v0, v1, v2);
 #else
 	return b3Matrix3x3(m_el[0].getX(), m_el[1].getX(), m_el[2].getX(),
-	    m_el[0].getY(), m_el[1].getY(), m_el[2].getY(),
-	    m_el[0].getZ(), m_el[1].getZ(), m_el[2].getZ());
+					   m_el[0].getY(), m_el[1].getY(), m_el[2].getY(),
+					   m_el[0].getZ(), m_el[1].getZ(), m_el[2].getZ());
 #endif
 }
 
@@ -1011,8 +1011,8 @@ B3_FORCE_INLINE b3Matrix3x3
 b3Matrix3x3::adjoint() const
 {
 	return b3Matrix3x3(cofac(1, 1, 2, 2), cofac(0, 2, 2, 1), cofac(0, 1, 1, 2),
-	    cofac(1, 2, 2, 0), cofac(0, 0, 2, 2), cofac(0, 2, 1, 0),
-	    cofac(1, 0, 2, 1), cofac(0, 1, 2, 0), cofac(0, 0, 1, 1));
+					   cofac(1, 2, 2, 0), cofac(0, 0, 2, 2), cofac(0, 2, 1, 0),
+					   cofac(1, 0, 2, 1), cofac(0, 1, 2, 0), cofac(0, 0, 1, 1));
 }
 
 B3_FORCE_INLINE b3Matrix3x3
@@ -1023,8 +1023,8 @@ b3Matrix3x3::inverse() const
 	b3FullAssert(det != b3Scalar(0.0));
 	b3Scalar s = b3Scalar(1.0) / det;
 	return b3Matrix3x3(co.getX() * s, cofac(0, 2, 2, 1) * s, cofac(0, 1, 1, 2) * s,
-	    co.getY() * s, cofac(0, 0, 2, 2) * s, cofac(0, 2, 1, 0) * s,
-	    co.getZ() * s, cofac(0, 1, 2, 0) * s, cofac(0, 0, 1, 1) * s);
+					   co.getY() * s, cofac(0, 0, 2, 2) * s, cofac(0, 2, 1, 0) * s,
+					   co.getZ() * s, cofac(0, 1, 2, 0) * s, cofac(0, 0, 1, 1) * s);
 }
 
 B3_FORCE_INLINE b3Matrix3x3
@@ -1052,7 +1052,7 @@ b3Matrix3x3::transposeTimes(const b3Matrix3x3& m) const
 
 #elif defined B3_USE_NEON
 	// zeros w
-	static const uint32x4_t xyzMask = (const uint32x4_t) { -1, -1, -1, 0 };
+	static const uint32x4_t xyzMask = (const uint32x4_t){-1, -1, -1, 0};
 	float32x4_t m0 = (float32x4_t)vandq_u32((uint32x4_t)m.getRow(0).mVec128, xyzMask);
 	float32x4_t m1 = (float32x4_t)vandq_u32((uint32x4_t)m.getRow(1).mVec128, xyzMask);
 	float32x4_t m2 = (float32x4_t)vandq_u32((uint32x4_t)m.getRow(2).mVec128, xyzMask);
@@ -1071,15 +1071,15 @@ b3Matrix3x3::transposeTimes(const b3Matrix3x3& m) const
 	return b3Matrix3x3(r0, r1, r2);
 #else
 	return b3Matrix3x3(
-	    m_el[0].getX() * m[0].getX() + m_el[1].getX() * m[1].getX() + m_el[2].getX() * m[2].getX(),
-	    m_el[0].getX() * m[0].getY() + m_el[1].getX() * m[1].getY() + m_el[2].getX() * m[2].getY(),
-	    m_el[0].getX() * m[0].getZ() + m_el[1].getX() * m[1].getZ() + m_el[2].getX() * m[2].getZ(),
-	    m_el[0].getY() * m[0].getX() + m_el[1].getY() * m[1].getX() + m_el[2].getY() * m[2].getX(),
-	    m_el[0].getY() * m[0].getY() + m_el[1].getY() * m[1].getY() + m_el[2].getY() * m[2].getY(),
-	    m_el[0].getY() * m[0].getZ() + m_el[1].getY() * m[1].getZ() + m_el[2].getY() * m[2].getZ(),
-	    m_el[0].getZ() * m[0].getX() + m_el[1].getZ() * m[1].getX() + m_el[2].getZ() * m[2].getX(),
-	    m_el[0].getZ() * m[0].getY() + m_el[1].getZ() * m[1].getY() + m_el[2].getZ() * m[2].getY(),
-	    m_el[0].getZ() * m[0].getZ() + m_el[1].getZ() * m[1].getZ() + m_el[2].getZ() * m[2].getZ());
+		m_el[0].getX() * m[0].getX() + m_el[1].getX() * m[1].getX() + m_el[2].getX() * m[2].getX(),
+		m_el[0].getX() * m[0].getY() + m_el[1].getX() * m[1].getY() + m_el[2].getX() * m[2].getY(),
+		m_el[0].getX() * m[0].getZ() + m_el[1].getX() * m[1].getZ() + m_el[2].getX() * m[2].getZ(),
+		m_el[0].getY() * m[0].getX() + m_el[1].getY() * m[1].getX() + m_el[2].getY() * m[2].getX(),
+		m_el[0].getY() * m[0].getY() + m_el[1].getY() * m[1].getY() + m_el[2].getY() * m[2].getY(),
+		m_el[0].getY() * m[0].getZ() + m_el[1].getY() * m[1].getZ() + m_el[2].getY() * m[2].getZ(),
+		m_el[0].getZ() * m[0].getX() + m_el[1].getZ() * m[1].getX() + m_el[2].getZ() * m[2].getX(),
+		m_el[0].getZ() * m[0].getY() + m_el[1].getZ() * m[1].getY() + m_el[2].getZ() * m[2].getY(),
+		m_el[0].getZ() * m[0].getZ() + m_el[1].getZ() * m[1].getZ() + m_el[2].getZ() * m[2].getZ());
 #endif
 }
 
@@ -1091,7 +1091,7 @@ b3Matrix3x3::timesTranspose(const b3Matrix3x3& m) const
 	__m128 a1 = m_el[1].mVec128;
 	__m128 a2 = m_el[2].mVec128;
 
-	b3Matrix3x3 mT = m.transpose(); // we rely on transpose() zeroing w channel so that we don't have to do it here
+	b3Matrix3x3 mT = m.transpose();  // we rely on transpose() zeroing w channel so that we don't have to do it here
 	__m128 mx = mT[0].mVec128;
 	__m128 my = mT[1].mVec128;
 	__m128 mz = mT[2].mVec128;
@@ -1112,7 +1112,7 @@ b3Matrix3x3::timesTranspose(const b3Matrix3x3& m) const
 	float32x4_t a1 = m_el[1].mVec128;
 	float32x4_t a2 = m_el[2].mVec128;
 
-	b3Matrix3x3 mT = m.transpose(); // we rely on transpose() zeroing w channel so that we don't have to do it here
+	b3Matrix3x3 mT = m.transpose();  // we rely on transpose() zeroing w channel so that we don't have to do it here
 	float32x4_t mx = mT[0].mVec128;
 	float32x4_t my = mT[1].mVec128;
 	float32x4_t mz = mT[2].mVec128;
@@ -1130,9 +1130,9 @@ b3Matrix3x3::timesTranspose(const b3Matrix3x3& m) const
 
 #else
 	return b3Matrix3x3(
-	    m_el[0].dot(m[0]), m_el[0].dot(m[1]), m_el[0].dot(m[2]),
-	    m_el[1].dot(m[0]), m_el[1].dot(m[1]), m_el[1].dot(m[2]),
-	    m_el[2].dot(m[0]), m_el[2].dot(m[1]), m_el[2].dot(m[2]));
+		m_el[0].dot(m[0]), m_el[0].dot(m[1]), m_el[0].dot(m[2]),
+		m_el[1].dot(m[0]), m_el[1].dot(m[1]), m_el[1].dot(m[2]),
+		m_el[2].dot(m[0]), m_el[2].dot(m[1]), m_el[2].dot(m[2]));
 #endif
 }
 
@@ -1265,9 +1265,9 @@ operator*(const b3Matrix3x3& m1, const b3Matrix3x3& m2)
 
 #else
 	return b3Matrix3x3(
-	    m2.tdotx(m1[0]), m2.tdoty(m1[0]), m2.tdotz(m1[0]),
-	    m2.tdotx(m1[1]), m2.tdoty(m1[1]), m2.tdotz(m1[1]),
-	    m2.tdotx(m1[2]), m2.tdoty(m1[2]), m2.tdotz(m1[2]));
+		m2.tdotx(m1[0]), m2.tdoty(m1[0]), m2.tdotz(m1[0]),
+		m2.tdotx(m1[1]), m2.tdoty(m1[1]), m2.tdotz(m1[1]),
+		m2.tdotx(m1[2]), m2.tdoty(m1[2]), m2.tdotz(m1[2]));
 #endif
 }
 
@@ -1303,7 +1303,9 @@ B3_FORCE_INLINE bool operator==(const b3Matrix3x3& m1, const b3Matrix3x3& m2)
 
 	return (0x7 == _mm_movemask_ps((__m128)c0));
 #else
-	return (m1[0][0] == m2[0][0] && m1[1][0] == m2[1][0] && m1[2][0] == m2[2][0] && m1[0][1] == m2[0][1] && m1[1][1] == m2[1][1] && m1[2][1] == m2[2][1] && m1[0][2] == m2[0][2] && m1[1][2] == m2[1][2] && m1[2][2] == m2[2][2]);
+	return (m1[0][0] == m2[0][0] && m1[1][0] == m2[1][0] && m1[2][0] == m2[2][0] &&
+			m1[0][1] == m2[0][1] && m1[1][1] == m2[1][1] && m1[2][1] == m2[2][1] &&
+			m1[0][2] == m2[0][2] && m1[1][2] == m2[1][2] && m1[2][2] == m2[2][2]);
 #endif
 }
 
@@ -1349,4 +1351,4 @@ B3_FORCE_INLINE void b3Matrix3x3::deSerializeDouble(const struct b3Matrix3x3Doub
 		m_el[i].deSerializeDouble(dataIn.m_el[i]);
 }
 
-#endif //B3_MATRIX3x3_H
+#endif  //B3_MATRIX3x3_H

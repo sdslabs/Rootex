@@ -2,10 +2,10 @@
 #ifndef B3_PREFIX_SCAN_CL_H
 #define B3_PREFIX_SCAN_CL_H
 
+#include "b3OpenCLArray.h"
+#include "b3BufferInfoCL.h"
 #include "Bullet3Common/b3AlignedObjectArray.h"
 #include "Bullet3Common/b3Vector3.h"
-#include "b3BufferInfoCL.h"
-#include "b3OpenCLArray.h"
 
 class b3PrefixScanFloat4CL
 {
@@ -33,4 +33,4 @@ public:
 	void executeHost(b3AlignedObjectArray<b3Vector3>& src, b3AlignedObjectArray<b3Vector3>& dst, int n, b3Vector3* sum);
 };
 
-#endif //B3_PREFIX_SCAN_CL_H
+#endif  //B3_PREFIX_SCAN_CL_H

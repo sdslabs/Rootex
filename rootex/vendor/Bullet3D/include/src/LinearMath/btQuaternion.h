@@ -15,8 +15,8 @@ subject to the following restrictions:
 #ifndef BT_SIMD__QUATERNION_H_
 #define BT_SIMD__QUATERNION_H_
 
-#include "btQuadWord.h"
 #include "btVector3.h"
+#include "btQuadWord.h"
 
 #ifdef BT_USE_DOUBLE_PRECISION
 #define btQuaternionData btQuaternionDoubleData
@@ -24,7 +24,7 @@ subject to the following restrictions:
 #else
 #define btQuaternionData btQuaternionFloatData
 #define btQuaternionDataName "btQuaternionFloatData"
-#endif //BT_USE_DOUBLE_PRECISION
+#endif  //BT_USE_DOUBLE_PRECISION
 
 #ifdef BT_USE_SSE
 
@@ -40,8 +40,8 @@ subject to the following restrictions:
 
 #elif defined(BT_USE_NEON)
 
-const btSimdFloat4 ATTRIBUTE_ALIGNED16(vQInv) = { -0.0f, -0.0f, -0.0f, +0.0f };
-const btSimdFloat4 ATTRIBUTE_ALIGNED16(vPPPM) = { +0.0f, +0.0f, +0.0f, -0.0f };
+const btSimdFloat4 ATTRIBUTE_ALIGNED16(vQInv) = {-0.0f, -0.0f, -0.0f, +0.0f};
+const btSimdFloat4 ATTRIBUTE_ALIGNED16(vPPPM) = {+0.0f, +0.0f, +0.0f, -0.0f};
 
 #endif
 
@@ -80,7 +80,7 @@ public:
 	//		explicit Quaternion(const btScalar *v) : Tuple4<btScalar>(v) {}
 	/**@brief Constructor from scalars */
 	btQuaternion(const btScalar& _x, const btScalar& _y, const btScalar& _z, const btScalar& _w)
-	    : btQuadWord(_x, _y, _z, _w)
+		: btQuadWord(_x, _y, _z, _w)
 	{
 	}
 	/**@brief Axis angle Constructor
@@ -111,7 +111,7 @@ public:
 		btAssert(d != btScalar(0.0));
 		btScalar s = btSin(_angle * btScalar(0.5)) / d;
 		setValue(axis.x() * s, axis.y() * s, axis.z() * s,
-		    btCos(_angle * btScalar(0.5)));
+				 btCos(_angle * btScalar(0.5)));
 	}
 	/**@brief Set the quaternion using Euler angles
    * @param yaw Angle around Y
@@ -129,9 +129,9 @@ public:
 		btScalar cosRoll = btCos(halfRoll);
 		btScalar sinRoll = btSin(halfRoll);
 		setValue(cosRoll * sinPitch * cosYaw + sinRoll * cosPitch * sinYaw,
-		    cosRoll * cosPitch * sinYaw - sinRoll * sinPitch * cosYaw,
-		    sinRoll * cosPitch * cosYaw - cosRoll * sinPitch * sinYaw,
-		    cosRoll * cosPitch * cosYaw + sinRoll * sinPitch * sinYaw);
+				 cosRoll * cosPitch * sinYaw - sinRoll * sinPitch * cosYaw,
+				 sinRoll * cosPitch * cosYaw - cosRoll * sinPitch * sinYaw,
+				 cosRoll * cosPitch * cosYaw + sinRoll * sinPitch * sinYaw);
 	}
 	/**@brief Set the quaternion using euler angles 
    * @param yaw Angle around Z
@@ -148,10 +148,10 @@ public:
 		btScalar sinPitch = btSin(halfPitch);
 		btScalar cosRoll = btCos(halfRoll);
 		btScalar sinRoll = btSin(halfRoll);
-		setValue(sinRoll * cosPitch * cosYaw - cosRoll * sinPitch * sinYaw, //x
-		    cosRoll * sinPitch * cosYaw + sinRoll * cosPitch * sinYaw, //y
-		    cosRoll * cosPitch * sinYaw - sinRoll * sinPitch * cosYaw, //z
-		    cosRoll * cosPitch * cosYaw + sinRoll * sinPitch * sinYaw); //formerly yzx
+		setValue(sinRoll * cosPitch * cosYaw - cosRoll * sinPitch * sinYaw,   //x
+				 cosRoll * sinPitch * cosYaw + sinRoll * cosPitch * sinYaw,   //y
+				 cosRoll * cosPitch * sinYaw - sinRoll * sinPitch * cosYaw,   //z
+				 cosRoll * cosPitch * cosYaw + sinRoll * sinPitch * sinYaw);  //formerly yzx
 	}
 
 	/**@brief Get the euler angles from this quaternion
@@ -234,8 +234,8 @@ public:
 	btQuaternion& operator*=(const btScalar& s)
 	{
 #if defined(BT_USE_SSE_IN_API) && defined(BT_USE_SSE)
-		__m128 vs = _mm_load_ss(&s); //	(S 0 0 0)
-		vs = bt_pshufd_ps(vs, 0); //	(S S S S)
+		__m128 vs = _mm_load_ss(&s);  //	(S 0 0 0)
+		vs = bt_pshufd_ps(vs, 0);     //	(S S S S)
 		mVec128 = _mm_mul_ps(mVec128, vs);
 #elif defined(BT_USE_NEON)
 		mVec128 = vmulq_n_f32(mVec128, s);
@@ -269,15 +269,15 @@ public:
 		B1 = bt_pshufd_ps(mVec128, BT_SHUFFLE(2, 0, 1, 2));
 		B2 = bt_pshufd_ps(vQ2, BT_SHUFFLE(1, 2, 0, 2));
 
-		B1 = B1 * B2; //	A3 *= B3
+		B1 = B1 * B2;  //	A3 *= B3
 
-		mVec128 = bt_splat_ps(mVec128, 3); //	A0
-		mVec128 = mVec128 * vQ2; //	A0 * B0
+		mVec128 = bt_splat_ps(mVec128, 3);  //	A0
+		mVec128 = mVec128 * vQ2;            //	A0 * B0
 
-		A1 = A1 + A2; //	AB12
-		mVec128 = mVec128 - B1; //	AB03 = AB0 - AB3
-		A1 = _mm_xor_ps(A1, vPPPM); //	change sign of the last element
-		mVec128 = mVec128 + A1; //	AB03 + AB12
+		A1 = A1 + A2;                //	AB12
+		mVec128 = mVec128 - B1;      //	AB03 = AB0 - AB3
+		A1 = _mm_xor_ps(A1, vPPPM);  //	change sign of the last element
+		mVec128 = mVec128 + A1;      //	AB03 + AB12
 
 #elif defined(BT_USE_NEON)
 
@@ -288,10 +288,10 @@ public:
 
 		{
 			float32x2x2_t tmp;
-			tmp = vtrn_f32(vget_high_f32(vQ1), vget_low_f32(vQ1)); // {z x}, {w y}
+			tmp = vtrn_f32(vget_high_f32(vQ1), vget_low_f32(vQ1));  // {z x}, {w y}
 			vQ1zx = tmp.val[0];
 
-			tmp = vtrn_f32(vget_high_f32(vQ2), vget_low_f32(vQ2)); // {z x}, {w y}
+			tmp = vtrn_f32(vget_high_f32(vQ2), vget_low_f32(vQ2));  // {z x}, {w y}
 			vQ2zx = tmp.val[0];
 		}
 		vQ2wx = vext_f32(vget_high_f32(vQ2), vget_low_f32(vQ2), 1);
@@ -301,34 +301,34 @@ public:
 		vQ2yz = vext_f32(vget_low_f32(vQ2), vget_high_f32(vQ2), 1);
 		vQ2xz = vext_f32(vQ2zx, vQ2zx, 1);
 
-		A1 = vcombine_f32(vget_low_f32(vQ1), vQ1zx); // X Y  z x
-		B1 = vcombine_f32(vdup_lane_f32(vget_high_f32(vQ2), 1), vQ2wx); // W W  W X
+		A1 = vcombine_f32(vget_low_f32(vQ1), vQ1zx);                     // X Y  z x
+		B1 = vcombine_f32(vdup_lane_f32(vget_high_f32(vQ2), 1), vQ2wx);  // W W  W X
 
 		A2 = vcombine_f32(vQ1yz, vget_low_f32(vQ1));
 		B2 = vcombine_f32(vQ2zx, vdup_lane_f32(vget_low_f32(vQ2), 1));
 
-		A3 = vcombine_f32(vQ1zx, vQ1yz); // Z X Y Z
-		B3 = vcombine_f32(vQ2yz, vQ2xz); // Y Z x z
+		A3 = vcombine_f32(vQ1zx, vQ1yz);  // Z X Y Z
+		B3 = vcombine_f32(vQ2yz, vQ2xz);  // Y Z x z
 
 		A1 = vmulq_f32(A1, B1);
 		A2 = vmulq_f32(A2, B2);
-		A3 = vmulq_f32(A3, B3); //	A3 *= B3
-		A0 = vmulq_lane_f32(vQ2, vget_high_f32(vQ1), 1); //	A0 * B0
+		A3 = vmulq_f32(A3, B3);                           //	A3 *= B3
+		A0 = vmulq_lane_f32(vQ2, vget_high_f32(vQ1), 1);  //	A0 * B0
 
-		A1 = vaddq_f32(A1, A2); //	AB12 = AB1 + AB2
-		A0 = vsubq_f32(A0, A3); //	AB03 = AB0 - AB3
+		A1 = vaddq_f32(A1, A2);  //	AB12 = AB1 + AB2
+		A0 = vsubq_f32(A0, A3);  //	AB03 = AB0 - AB3
 
 		//	change the sign of the last element
 		A1 = (btSimdFloat4)veorq_s32((int32x4_t)A1, (int32x4_t)vPPPM);
-		A0 = vaddq_f32(A0, A1); //	AB03 + AB12
+		A0 = vaddq_f32(A0, A1);  //	AB03 + AB12
 
 		mVec128 = A0;
 #else
 		setValue(
-		    m_floats[3] * q.x() + m_floats[0] * q.m_floats[3] + m_floats[1] * q.z() - m_floats[2] * q.y(),
-		    m_floats[3] * q.y() + m_floats[1] * q.m_floats[3] + m_floats[2] * q.x() - m_floats[0] * q.z(),
-		    m_floats[3] * q.z() + m_floats[2] * q.m_floats[3] + m_floats[0] * q.y() - m_floats[1] * q.x(),
-		    m_floats[3] * q.m_floats[3] - m_floats[0] * q.x() - m_floats[1] * q.y() - m_floats[2] * q.z());
+			m_floats[3] * q.x() + m_floats[0] * q.m_floats[3] + m_floats[1] * q.z() - m_floats[2] * q.y(),
+			m_floats[3] * q.y() + m_floats[1] * q.m_floats[3] + m_floats[2] * q.x() - m_floats[0] * q.z(),
+			m_floats[3] * q.z() + m_floats[2] * q.m_floats[3] + m_floats[0] * q.y() - m_floats[1] * q.x(),
+			m_floats[3] * q.m_floats[3] - m_floats[0] * q.x() - m_floats[1] * q.y() - m_floats[2] * q.z());
 #endif
 		return *this;
 	}
@@ -353,7 +353,10 @@ public:
 		x = vpadd_f32(x, x);
 		return vget_lane_f32(x, 0);
 #else
-		return m_floats[0] * q.x() + m_floats[1] * q.y() + m_floats[2] * q.z() + m_floats[3] * q.m_floats[3];
+		return m_floats[0] * q.x() +
+			   m_floats[1] * q.y() +
+			   m_floats[2] * q.z() +
+			   m_floats[3] * q.m_floats[3];
 #endif
 	}
 
@@ -393,7 +396,7 @@ public:
 
 		vd = _mm_sqrt_ss(vd);
 		vd = _mm_div_ss(vOnes, vd);
-		vd = bt_pshufd_ps(vd, 0); // splat
+		vd = bt_pshufd_ps(vd, 0);  // splat
 		mVec128 = _mm_mul_ps(mVec128, vd);
 
 		return *this;
@@ -408,8 +411,8 @@ public:
 	operator*(const btScalar& s) const
 	{
 #if defined(BT_USE_SSE_IN_API) && defined(BT_USE_SSE)
-		__m128 vs = _mm_load_ss(&s); //	(S 0 0 0)
-		vs = bt_pshufd_ps(vs, 0x00); //	(S S S S)
+		__m128 vs = _mm_load_ss(&s);  //	(S 0 0 0)
+		vs = bt_pshufd_ps(vs, 0x00);  //	(S S S S)
 
 		return btQuaternion(_mm_mul_ps(mVec128, vs));
 #elif defined(BT_USE_NEON)
@@ -455,7 +458,7 @@ public:
 	{
 		btScalar s = btSqrt(length2() * q.length2());
 		btAssert(s != btScalar(0.0));
-		if (dot(q) < 0) // Take care of long angle case see http://en.wikipedia.org/wiki/Slerp
+		if (dot(q) < 0)  // Take care of long angle case see http://en.wikipedia.org/wiki/Slerp
 			return btAcos(dot(-q) / s) * btScalar(2.0);
 		else
 			return btAcos(dot(q) / s) * btScalar(2.0);
@@ -484,8 +487,8 @@ public:
 	{
 		btScalar s_squared = 1.f - m_floats[3] * m_floats[3];
 
-		if (s_squared < btScalar(10.) * SIMD_EPSILON) //Check for divide by zero
-			return btVector3(1.0, 0.0, 0.0); // Arbitrary
+		if (s_squared < btScalar(10.) * SIMD_EPSILON)  //Check for divide by zero
+			return btVector3(1.0, 0.0, 0.0);           // Arbitrary
 		btScalar s = 1.f / btSqrt(s_squared);
 		return btVector3(m_floats[0] * s, m_floats[1] * s, m_floats[2] * s);
 	}
@@ -591,10 +594,10 @@ public:
 			const btScalar s1 = btSin(sign * t * theta) / d;
 
 			return btQuaternion(
-			    (m_floats[0] * s0 + q.x() * s1),
-			    (m_floats[1] * s0 + q.y() * s1),
-			    (m_floats[2] * s0 + q.z() * s1),
-			    (m_floats[3] * s0 + q.w() * s1));
+				(m_floats[0] * s0 + q.x() * s1),
+				(m_floats[1] * s0 + q.y() * s1),
+				(m_floats[2] * s0 + q.z() * s1),
+				(m_floats[3] * s0 + q.w() * s1));
 		}
 		else
 		{
@@ -634,29 +637,29 @@ operator*(const btQuaternion& q1, const btQuaternion& q2)
 	__m128 vQ2 = q2.get128();
 	__m128 A0, A1, B1, A2, B2;
 
-	A1 = bt_pshufd_ps(vQ1, BT_SHUFFLE(0, 1, 2, 0)); // X Y  z x     //      vtrn
-	B1 = bt_pshufd_ps(vQ2, BT_SHUFFLE(3, 3, 3, 0)); // W W  W X     // vdup vext
+	A1 = bt_pshufd_ps(vQ1, BT_SHUFFLE(0, 1, 2, 0));  // X Y  z x     //      vtrn
+	B1 = bt_pshufd_ps(vQ2, BT_SHUFFLE(3, 3, 3, 0));  // W W  W X     // vdup vext
 
 	A1 = A1 * B1;
 
-	A2 = bt_pshufd_ps(vQ1, BT_SHUFFLE(1, 2, 0, 1)); // Y Z  X Y     // vext
-	B2 = bt_pshufd_ps(vQ2, BT_SHUFFLE(2, 0, 1, 1)); // z x  Y Y     // vtrn vdup
+	A2 = bt_pshufd_ps(vQ1, BT_SHUFFLE(1, 2, 0, 1));  // Y Z  X Y     // vext
+	B2 = bt_pshufd_ps(vQ2, BT_SHUFFLE(2, 0, 1, 1));  // z x  Y Y     // vtrn vdup
 
 	A2 = A2 * B2;
 
-	B1 = bt_pshufd_ps(vQ1, BT_SHUFFLE(2, 0, 1, 2)); // z x Y Z      // vtrn vext
-	B2 = bt_pshufd_ps(vQ2, BT_SHUFFLE(1, 2, 0, 2)); // Y Z x z      // vext vtrn
+	B1 = bt_pshufd_ps(vQ1, BT_SHUFFLE(2, 0, 1, 2));  // z x Y Z      // vtrn vext
+	B2 = bt_pshufd_ps(vQ2, BT_SHUFFLE(1, 2, 0, 2));  // Y Z x z      // vext vtrn
 
-	B1 = B1 * B2; //	A3 *= B3
+	B1 = B1 * B2;  //	A3 *= B3
 
-	A0 = bt_splat_ps(vQ1, 3); //	A0
-	A0 = A0 * vQ2; //	A0 * B0
+	A0 = bt_splat_ps(vQ1, 3);  //	A0
+	A0 = A0 * vQ2;             //	A0 * B0
 
-	A1 = A1 + A2; //	AB12
-	A0 = A0 - B1; //	AB03 = AB0 - AB3
+	A1 = A1 + A2;  //	AB12
+	A0 = A0 - B1;  //	AB03 = AB0 - AB3
 
-	A1 = _mm_xor_ps(A1, vPPPM); //	change sign of the last element
-	A0 = A0 + A1; //	AB03 + AB12
+	A1 = _mm_xor_ps(A1, vPPPM);  //	change sign of the last element
+	A0 = A0 + A1;                //	AB03 + AB12
 
 	return btQuaternion(A0);
 
@@ -669,10 +672,10 @@ operator*(const btQuaternion& q1, const btQuaternion& q2)
 
 	{
 		float32x2x2_t tmp;
-		tmp = vtrn_f32(vget_high_f32(vQ1), vget_low_f32(vQ1)); // {z x}, {w y}
+		tmp = vtrn_f32(vget_high_f32(vQ1), vget_low_f32(vQ1));  // {z x}, {w y}
 		vQ1zx = tmp.val[0];
 
-		tmp = vtrn_f32(vget_high_f32(vQ2), vget_low_f32(vQ2)); // {z x}, {w y}
+		tmp = vtrn_f32(vget_high_f32(vQ2), vget_low_f32(vQ2));  // {z x}, {w y}
 		vQ2zx = tmp.val[0];
 	}
 	vQ2wx = vext_f32(vget_high_f32(vQ2), vget_low_f32(vQ2), 1);
@@ -682,35 +685,35 @@ operator*(const btQuaternion& q1, const btQuaternion& q2)
 	vQ2yz = vext_f32(vget_low_f32(vQ2), vget_high_f32(vQ2), 1);
 	vQ2xz = vext_f32(vQ2zx, vQ2zx, 1);
 
-	A1 = vcombine_f32(vget_low_f32(vQ1), vQ1zx); // X Y  z x
-	B1 = vcombine_f32(vdup_lane_f32(vget_high_f32(vQ2), 1), vQ2wx); // W W  W X
+	A1 = vcombine_f32(vget_low_f32(vQ1), vQ1zx);                     // X Y  z x
+	B1 = vcombine_f32(vdup_lane_f32(vget_high_f32(vQ2), 1), vQ2wx);  // W W  W X
 
 	A2 = vcombine_f32(vQ1yz, vget_low_f32(vQ1));
 	B2 = vcombine_f32(vQ2zx, vdup_lane_f32(vget_low_f32(vQ2), 1));
 
-	A3 = vcombine_f32(vQ1zx, vQ1yz); // Z X Y Z
-	B3 = vcombine_f32(vQ2yz, vQ2xz); // Y Z x z
+	A3 = vcombine_f32(vQ1zx, vQ1yz);  // Z X Y Z
+	B3 = vcombine_f32(vQ2yz, vQ2xz);  // Y Z x z
 
 	A1 = vmulq_f32(A1, B1);
 	A2 = vmulq_f32(A2, B2);
-	A3 = vmulq_f32(A3, B3); //	A3 *= B3
-	A0 = vmulq_lane_f32(vQ2, vget_high_f32(vQ1), 1); //	A0 * B0
+	A3 = vmulq_f32(A3, B3);                           //	A3 *= B3
+	A0 = vmulq_lane_f32(vQ2, vget_high_f32(vQ1), 1);  //	A0 * B0
 
-	A1 = vaddq_f32(A1, A2); //	AB12 = AB1 + AB2
-	A0 = vsubq_f32(A0, A3); //	AB03 = AB0 - AB3
+	A1 = vaddq_f32(A1, A2);  //	AB12 = AB1 + AB2
+	A0 = vsubq_f32(A0, A3);  //	AB03 = AB0 - AB3
 
 	//	change the sign of the last element
 	A1 = (btSimdFloat4)veorq_s32((int32x4_t)A1, (int32x4_t)vPPPM);
-	A0 = vaddq_f32(A0, A1); //	AB03 + AB12
+	A0 = vaddq_f32(A0, A1);  //	AB03 + AB12
 
 	return btQuaternion(A0);
 
 #else
 	return btQuaternion(
-	    q1.w() * q2.x() + q1.x() * q2.w() + q1.y() * q2.z() - q1.z() * q2.y(),
-	    q1.w() * q2.y() + q1.y() * q2.w() + q1.z() * q2.x() - q1.x() * q2.z(),
-	    q1.w() * q2.z() + q1.z() * q2.w() + q1.x() * q2.y() - q1.y() * q2.x(),
-	    q1.w() * q2.w() - q1.x() * q2.x() - q1.y() * q2.y() - q1.z() * q2.z());
+		q1.w() * q2.x() + q1.x() * q2.w() + q1.y() * q2.z() - q1.z() * q2.y(),
+		q1.w() * q2.y() + q1.y() * q2.w() + q1.z() * q2.x() - q1.x() * q2.z(),
+		q1.w() * q2.z() + q1.z() * q2.w() + q1.x() * q2.y() - q1.y() * q2.x(),
+		q1.w() * q2.w() - q1.x() * q2.x() - q1.y() * q2.y() - q1.z() * q2.z());
 #endif
 }
 
@@ -735,11 +738,11 @@ operator*(const btQuaternion& q, const btVector3& w)
 	A3 = bt_pshufd_ps(vQ1, BT_SHUFFLE(2, 0, 1, 2));
 	B3 = bt_pshufd_ps(vQ2, BT_SHUFFLE(1, 2, 0, 2));
 
-	A3 = A3 * B3; //	A3 *= B3
+	A3 = A3 * B3;  //	A3 *= B3
 
-	A1 = A1 + A2; //	AB12
-	A1 = _mm_xor_ps(A1, vPPPM); //	change sign of the last element
-	A1 = A1 - A3; //	AB123 = AB12 - AB3
+	A1 = A1 + A2;                //	AB12
+	A1 = _mm_xor_ps(A1, vPPPM);  //	change sign of the last element
+	A1 = A1 - A3;                //	AB123 = AB12 - AB3
 
 	return btQuaternion(A1);
 
@@ -754,10 +757,10 @@ operator*(const btQuaternion& q, const btVector3& w)
 	{
 		float32x2x2_t tmp;
 
-		tmp = vtrn_f32(vget_high_f32(vQ2), vget_low_f32(vQ2)); // {z x}, {w y}
+		tmp = vtrn_f32(vget_high_f32(vQ2), vget_low_f32(vQ2));  // {z x}, {w y}
 		vQ2zx = tmp.val[0];
 
-		tmp = vtrn_f32(vget_high_f32(vQ1), vget_low_f32(vQ1)); // {z x}, {w y}
+		tmp = vtrn_f32(vget_high_f32(vQ1), vget_low_f32(vQ1));  // {z x}, {w y}
 		vQ1zx = tmp.val[0];
 	}
 
@@ -766,34 +769,34 @@ operator*(const btQuaternion& q, const btVector3& w)
 	vQ2yz = vext_f32(vget_low_f32(vQ2), vget_high_f32(vQ2), 1);
 	vQ2xz = vext_f32(vQ2zx, vQ2zx, 1);
 
-	A1 = vcombine_f32(vdup_lane_f32(vget_high_f32(vQ1), 1), vQ1wx); // W W  W X
-	B1 = vcombine_f32(vget_low_f32(vQ2), vQ2zx); // X Y  z x
+	A1 = vcombine_f32(vdup_lane_f32(vget_high_f32(vQ1), 1), vQ1wx);  // W W  W X
+	B1 = vcombine_f32(vget_low_f32(vQ2), vQ2zx);                     // X Y  z x
 
 	A2 = vcombine_f32(vQ1yz, vget_low_f32(vQ1));
 	B2 = vcombine_f32(vQ2zx, vdup_lane_f32(vget_low_f32(vQ2), 1));
 
-	A3 = vcombine_f32(vQ1zx, vQ1yz); // Z X Y Z
-	B3 = vcombine_f32(vQ2yz, vQ2xz); // Y Z x z
+	A3 = vcombine_f32(vQ1zx, vQ1yz);  // Z X Y Z
+	B3 = vcombine_f32(vQ2yz, vQ2xz);  // Y Z x z
 
 	A1 = vmulq_f32(A1, B1);
 	A2 = vmulq_f32(A2, B2);
-	A3 = vmulq_f32(A3, B3); //	A3 *= B3
+	A3 = vmulq_f32(A3, B3);  //	A3 *= B3
 
-	A1 = vaddq_f32(A1, A2); //	AB12 = AB1 + AB2
+	A1 = vaddq_f32(A1, A2);  //	AB12 = AB1 + AB2
 
 	//	change the sign of the last element
 	A1 = (btSimdFloat4)veorq_s32((int32x4_t)A1, (int32x4_t)vPPPM);
 
-	A1 = vsubq_f32(A1, A3); //	AB123 = AB12 - AB3
+	A1 = vsubq_f32(A1, A3);  //	AB123 = AB12 - AB3
 
 	return btQuaternion(A1);
 
 #else
 	return btQuaternion(
-	    q.w() * w.x() + q.y() * w.z() - q.z() * w.y(),
-	    q.w() * w.y() + q.z() * w.x() - q.x() * w.z(),
-	    q.w() * w.z() + q.x() * w.y() - q.y() * w.x(),
-	    -q.x() * w.x() - q.y() * w.y() - q.z() * w.z());
+		q.w() * w.x() + q.y() * w.z() - q.z() * w.y(),
+		q.w() * w.y() + q.z() * w.x() - q.x() * w.z(),
+		q.w() * w.z() + q.x() * w.y() - q.y() * w.x(),
+		-q.x() * w.x() - q.y() * w.y() - q.z() * w.z());
 #endif
 }
 
@@ -805,8 +808,8 @@ operator*(const btVector3& w, const btQuaternion& q)
 	__m128 vQ2 = q.get128();
 	__m128 A1, B1, A2, B2, A3, B3;
 
-	A1 = bt_pshufd_ps(vQ1, BT_SHUFFLE(0, 1, 2, 0)); // X Y  z x
-	B1 = bt_pshufd_ps(vQ2, BT_SHUFFLE(3, 3, 3, 0)); // W W  W X
+	A1 = bt_pshufd_ps(vQ1, BT_SHUFFLE(0, 1, 2, 0));  // X Y  z x
+	B1 = bt_pshufd_ps(vQ2, BT_SHUFFLE(3, 3, 3, 0));  // W W  W X
 
 	A1 = A1 * B1;
 
@@ -818,11 +821,11 @@ operator*(const btVector3& w, const btQuaternion& q)
 	A3 = bt_pshufd_ps(vQ1, BT_SHUFFLE(2, 0, 1, 2));
 	B3 = bt_pshufd_ps(vQ2, BT_SHUFFLE(1, 2, 0, 2));
 
-	A3 = A3 * B3; //	A3 *= B3
+	A3 = A3 * B3;  //	A3 *= B3
 
-	A1 = A1 + A2; //	AB12
-	A1 = _mm_xor_ps(A1, vPPPM); //	change sign of the last element
-	A1 = A1 - A3; //	AB123 = AB12 - AB3
+	A1 = A1 + A2;                //	AB12
+	A1 = _mm_xor_ps(A1, vPPPM);  //	change sign of the last element
+	A1 = A1 - A3;                //	AB123 = AB12 - AB3
 
 	return btQuaternion(A1);
 
@@ -836,10 +839,10 @@ operator*(const btVector3& w, const btQuaternion& q)
 	{
 		float32x2x2_t tmp;
 
-		tmp = vtrn_f32(vget_high_f32(vQ1), vget_low_f32(vQ1)); // {z x}, {w y}
+		tmp = vtrn_f32(vget_high_f32(vQ1), vget_low_f32(vQ1));  // {z x}, {w y}
 		vQ1zx = tmp.val[0];
 
-		tmp = vtrn_f32(vget_high_f32(vQ2), vget_low_f32(vQ2)); // {z x}, {w y}
+		tmp = vtrn_f32(vget_high_f32(vQ2), vget_low_f32(vQ2));  // {z x}, {w y}
 		vQ2zx = tmp.val[0];
 	}
 	vQ2wx = vext_f32(vget_high_f32(vQ2), vget_low_f32(vQ2), 1);
@@ -849,34 +852,34 @@ operator*(const btVector3& w, const btQuaternion& q)
 	vQ2yz = vext_f32(vget_low_f32(vQ2), vget_high_f32(vQ2), 1);
 	vQ2xz = vext_f32(vQ2zx, vQ2zx, 1);
 
-	A1 = vcombine_f32(vget_low_f32(vQ1), vQ1zx); // X Y  z x
-	B1 = vcombine_f32(vdup_lane_f32(vget_high_f32(vQ2), 1), vQ2wx); // W W  W X
+	A1 = vcombine_f32(vget_low_f32(vQ1), vQ1zx);                     // X Y  z x
+	B1 = vcombine_f32(vdup_lane_f32(vget_high_f32(vQ2), 1), vQ2wx);  // W W  W X
 
 	A2 = vcombine_f32(vQ1yz, vget_low_f32(vQ1));
 	B2 = vcombine_f32(vQ2zx, vdup_lane_f32(vget_low_f32(vQ2), 1));
 
-	A3 = vcombine_f32(vQ1zx, vQ1yz); // Z X Y Z
-	B3 = vcombine_f32(vQ2yz, vQ2xz); // Y Z x z
+	A3 = vcombine_f32(vQ1zx, vQ1yz);  // Z X Y Z
+	B3 = vcombine_f32(vQ2yz, vQ2xz);  // Y Z x z
 
 	A1 = vmulq_f32(A1, B1);
 	A2 = vmulq_f32(A2, B2);
-	A3 = vmulq_f32(A3, B3); //	A3 *= B3
+	A3 = vmulq_f32(A3, B3);  //	A3 *= B3
 
-	A1 = vaddq_f32(A1, A2); //	AB12 = AB1 + AB2
+	A1 = vaddq_f32(A1, A2);  //	AB12 = AB1 + AB2
 
 	//	change the sign of the last element
 	A1 = (btSimdFloat4)veorq_s32((int32x4_t)A1, (int32x4_t)vPPPM);
 
-	A1 = vsubq_f32(A1, A3); //	AB123 = AB12 - AB3
+	A1 = vsubq_f32(A1, A3);  //	AB123 = AB12 - AB3
 
 	return btQuaternion(A1);
 
 #else
 	return btQuaternion(
-	    +w.x() * q.w() + w.y() * q.z() - w.z() * q.y(),
-	    +w.y() * q.w() + w.z() * q.x() - w.x() * q.z(),
-	    +w.z() * q.w() + w.x() * q.y() - w.y() * q.x(),
-	    -w.x() * q.x() - w.y() * q.y() - w.z() * q.z());
+		+w.x() * q.w() + w.y() * q.z() - w.z() * q.y(),
+		+w.y() * q.w() + w.z() * q.x() - w.x() * q.z(),
+		+w.z() * q.w() + w.x() * q.y() - w.y() * q.x(),
+		-w.x() * q.x() - w.y() * q.y() - w.z() * q.z());
 #endif
 }
 
@@ -934,7 +937,7 @@ quatRotate(const btQuaternion& rotation, const btVector3& v)
 }
 
 SIMD_FORCE_INLINE btQuaternion
-shortestArcQuat(const btVector3& v0, const btVector3& v1) // Game Programming Gems 2.10. make sure v0,v1 are normalized
+shortestArcQuat(const btVector3& v0, const btVector3& v1)  // Game Programming Gems 2.10. make sure v0,v1 are normalized
 {
 	btVector3 c = v0.cross(v1);
 	btScalar d = v0.dot(v1);
@@ -943,7 +946,7 @@ shortestArcQuat(const btVector3& v0, const btVector3& v1) // Game Programming Ge
 	{
 		btVector3 n, unused;
 		btPlaneSpace1(v0, n, unused);
-		return btQuaternion(n.x(), n.y(), n.z(), 0.0f); // just pick any vector that is orthogonal to v0
+		return btQuaternion(n.x(), n.y(), n.z(), 0.0f);  // just pick any vector that is orthogonal to v0
 	}
 
 	btScalar s = btSqrt((1.0f + d) * 2.0f);
@@ -1015,4 +1018,4 @@ SIMD_FORCE_INLINE void btQuaternion::deSerialize(const struct btQuaternionDouble
 		m_floats[i] = (btScalar)dataIn.m_floats[i];
 }
 
-#endif //BT_SIMD__QUATERNION_H_
+#endif  //BT_SIMD__QUATERNION_H_

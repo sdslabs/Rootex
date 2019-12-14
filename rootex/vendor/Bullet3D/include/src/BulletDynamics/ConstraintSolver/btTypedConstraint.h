@@ -16,9 +16,9 @@ subject to the following restrictions:
 #ifndef BT_TYPED_CONSTRAINT_H
 #define BT_TYPED_CONSTRAINT_H
 
-#include "BulletDynamics/Dynamics/btRigidBody.h"
 #include "LinearMath/btScalar.h"
 #include "btSolverConstraint.h"
+#include "BulletDynamics/Dynamics/btRigidBody.h"
 
 #ifdef BT_USE_DOUBLE_PRECISION
 #define btTypedConstraintData2 btTypedConstraintDoubleData
@@ -26,7 +26,7 @@ subject to the following restrictions:
 #else
 #define btTypedConstraintData2 btTypedConstraintFloatData
 #define btTypedConstraintDataName "btTypedConstraintFloatData"
-#endif //BT_USE_DOUBLE_PRECISION
+#endif  //BT_USE_DOUBLE_PRECISION
 
 class btSerializer;
 
@@ -106,7 +106,7 @@ protected:
 public:
 	BT_DECLARE_ALIGNED_ALLOCATOR();
 
-	virtual ~btTypedConstraint() {};
+	virtual ~btTypedConstraint(){};
 	btTypedConstraint(btTypedConstraintType type, btRigidBody & rbA);
 	btTypedConstraint(btTypedConstraintType type, btRigidBody & rbA, btRigidBody & rbB);
 
@@ -160,7 +160,7 @@ public:
 	}
 
 	///internal method used by the constraint solver, don't use them directly
-	virtual void buildJacobian() {};
+	virtual void buildJacobian(){};
 
 	///internal method used by the constraint solver, don't use them directly
 	virtual void setupSolverConstraint(btConstraintArray & ca, int solverBodyA, int solverBodyB, btScalar timeStep)
@@ -209,7 +209,7 @@ public:
 	}
 
 	///internal method used by the constraint solver, don't use them directly
-	virtual void solveConstraintObsolete(btSolverBody& /*bodyA*/, btSolverBody& /*bodyB*/, btScalar /*timeStep*/) {};
+	virtual void solveConstraintObsolete(btSolverBody& /*bodyA*/, btSolverBody& /*bodyB*/, btScalar /*timeStep*/){};
 
 	const btRigidBody& getRigidBodyA() const
 	{
@@ -441,28 +441,28 @@ class btAngularLimit
 {
 private:
 	btScalar
-	    m_center,
-	    m_halfRange,
-	    m_softness,
-	    m_biasFactor,
-	    m_relaxationFactor,
-	    m_correction,
-	    m_sign;
+		m_center,
+		m_halfRange,
+		m_softness,
+		m_biasFactor,
+		m_relaxationFactor,
+		m_correction,
+		m_sign;
 
 	bool
-	    m_solveLimit;
+		m_solveLimit;
 
 public:
 	/// Default constructor initializes limit as inactive, allowing free constraint movement
 	btAngularLimit()
-	    : m_center(0.0f)
-	    , m_halfRange(-1.0f)
-	    , m_softness(0.9f)
-	    , m_biasFactor(0.3f)
-	    , m_relaxationFactor(1.0f)
-	    , m_correction(0.0f)
-	    , m_sign(0.0f)
-	    , m_solveLimit(false)
+		: m_center(0.0f),
+		  m_halfRange(-1.0f),
+		  m_softness(0.9f),
+		  m_biasFactor(0.3f),
+		  m_relaxationFactor(1.0f),
+		  m_correction(0.0f),
+		  m_sign(0.0f),
+		  m_solveLimit(false)
 	{
 	}
 
@@ -529,4 +529,4 @@ public:
 	btScalar getHigh() const;
 };
 
-#endif //BT_TYPED_CONSTRAINT_H
+#endif  //BT_TYPED_CONSTRAINT_H

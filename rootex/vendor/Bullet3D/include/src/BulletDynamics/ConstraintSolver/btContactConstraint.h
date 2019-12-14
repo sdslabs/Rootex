@@ -16,10 +16,10 @@ subject to the following restrictions:
 #ifndef BT_CONTACT_CONSTRAINT_H
 #define BT_CONTACT_CONSTRAINT_H
 
-#include "BulletCollision/NarrowPhaseCollision/btPersistentManifold.h"
 #include "LinearMath/btVector3.h"
 #include "btJacobianEntry.h"
 #include "btTypedConstraint.h"
+#include "BulletCollision/NarrowPhaseCollision/btPersistentManifold.h"
 
 ///btContactConstraint can be automatically created to solve contact constraints using the unified btTypedConstraint interface
 ATTRIBUTE_ALIGNED16(class)
@@ -59,7 +59,7 @@ btScalar resolveSingleCollision(btRigidBody* body1, class btCollisionObject* col
 
 ///resolveSingleBilateral is an obsolete methods used for vehicle friction between two dynamic objects
 void resolveSingleBilateral(btRigidBody& body1, const btVector3& pos1,
-    btRigidBody& body2, const btVector3& pos2,
-    btScalar distance, const btVector3& normal, btScalar& impulse, btScalar timeStep);
+							btRigidBody& body2, const btVector3& pos2,
+							btScalar distance, const btVector3& normal, btScalar& impulse, btScalar timeStep);
 
-#endif //BT_CONTACT_CONSTRAINT_H
+#endif  //BT_CONTACT_CONSTRAINT_H

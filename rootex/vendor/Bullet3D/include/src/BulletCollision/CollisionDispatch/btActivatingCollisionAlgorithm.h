@@ -32,4 +32,4 @@ protected:
 public:
 	virtual ~btActivatingCollisionAlgorithm();
 };
-#endif //__BT_ACTIVATING_COLLISION_ALGORITHM_H
+#endif  //__BT_ACTIVATING_COLLISION_ALGORITHM_H

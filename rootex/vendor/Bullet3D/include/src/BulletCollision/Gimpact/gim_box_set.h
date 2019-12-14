@@ -34,17 +34,16 @@ email: projectileman@yahoo.com
 */
 
 #include "gim_array.h"
-#include "gim_box_collision.h"
-#include "gim_pair.h"
 #include "gim_radixsort.h"
+#include "gim_box_collision.h"
 #include "gim_tri_collision.h"
+#include "gim_pair.h"
 
 //! A pairset array
 class gim_pair_set : public gim_array<GIM_PAIR>
 {
 public:
-	gim_pair_set()
-	    : gim_array<GIM_PAIR>(32)
+	gim_pair_set() : gim_array<GIM_PAIR>(32)
 	{
 	}
 	inline void push_pair(GUINT index1, GUINT index2)
@@ -85,10 +84,10 @@ struct GIM_AABB_DATA
 struct GIM_BOX_TREE_NODE
 {
 	GIM_AABB m_bound;
-	GUINT m_left; //!< Left subtree
-	GUINT m_right; //!< Right subtree
-	GUINT m_escapeIndex; //!< Scape index for traversing
-	GUINT m_data; //!< primitive index if apply
+	GUINT m_left;         //!< Left subtree
+	GUINT m_right;        //!< Right subtree
+	GUINT m_escapeIndex;  //!< Scape index for traversing
+	GUINT m_data;         //!< primitive index if apply
 
 	GIM_BOX_TREE_NODE()
 	{
@@ -113,8 +112,8 @@ protected:
 
 protected:
 	GUINT _sort_and_calc_splitting_index(
-	    gim_array<GIM_AABB_DATA>& primitive_boxes,
-	    GUINT startIndex, GUINT endIndex, GUINT splitAxis);
+		gim_array<GIM_AABB_DATA>& primitive_boxes,
+		GUINT startIndex, GUINT endIndex, GUINT splitAxis);
 
 	GUINT _calc_splitting_axis(gim_array<GIM_AABB_DATA>& primitive_boxes, GUINT startIndex, GUINT endIndex);
 
@@ -308,14 +307,13 @@ public:
 				curIndex += getScapeNodeIndex(curIndex);
 			}
 		}
-		if (collided_results.size() > 0)
-			return true;
+		if (collided_results.size() > 0) return true;
 		return false;
 	}
 
 	//! returns the indices of the primitives in the m_primitive_manager
 	SIMD_FORCE_INLINE bool boxQueryTrans(const GIM_AABB& box,
-	    const btTransform& transform, gim_array<GUINT>& collided_results) const
+										 const btTransform& transform, gim_array<GUINT>& collided_results) const
 	{
 		GIM_AABB transbox = box;
 		transbox.appy_transform(transform);
@@ -324,8 +322,8 @@ public:
 
 	//! returns the indices of the primitives in the m_primitive_manager
 	SIMD_FORCE_INLINE bool rayQuery(
-	    const btVector3& ray_dir, const btVector3& ray_origin,
-	    gim_array<GUINT>& collided_results) const
+		const btVector3& ray_dir, const btVector3& ray_origin,
+		gim_array<GUINT>& collided_results) const
 	{
 		GUINT curIndex = 0;
 		GUINT numNodes = getNodeCount();
@@ -356,8 +354,7 @@ public:
 				curIndex += getScapeNodeIndex(curIndex);
 			}
 		}
-		if (collided_results.size() > 0)
-			return true;
+		if (collided_results.size() > 0) return true;
 		return false;
 	}
 
@@ -466,8 +463,7 @@ public:
 protected:
 	SIMD_FORCE_INLINE void retrieve_node0_triangle(GUINT node0)
 	{
-		if (node0_has_triangle)
-			return;
+		if (node0_has_triangle) return;
 		m_boxset0->getNodeTriangle(node0, m_tri0);
 		//transform triangle
 		m_tri0.m_vertices[0] = trans_cache_0to1(m_tri0.m_vertices[0]);
@@ -480,8 +476,7 @@ protected:
 
 	SIMD_FORCE_INLINE void retrieve_node1_triangle(GUINT node1)
 	{
-		if (node1_has_triangle)
-			return;
+		if (node1_has_triangle) return;
 		m_boxset1->getNodeTriangle(node1, m_tri1);
 		//transform triangle
 		m_tri1.m_vertices[0] = trans_cache_1to0.transform(m_tri1.m_vertices[0]);
@@ -494,8 +489,7 @@ protected:
 
 	SIMD_FORCE_INLINE void retrieve_node0_info(GUINT node0)
 	{
-		if (node0 == current_node0)
-			return;
+		if (node0 == current_node0) return;
 		m_boxset0->getNodeBound(node0, m_box0);
 		node0_is_leaf = m_boxset0->isLeafNode(node0);
 		node0_has_triangle = false;
@@ -504,8 +498,7 @@ protected:
 
 	SIMD_FORCE_INLINE void retrieve_node1_info(GUINT node1)
 	{
-		if (node1 == current_node1)
-			return;
+		if (node1 == current_node1) return;
 		m_boxset1->getNodeBound(node1, m_box1);
 		node1_is_leaf = m_boxset1->isLeafNode(node1);
 		node1_has_triangle = false;
@@ -517,8 +510,7 @@ protected:
 		retrieve_node0_info(node0);
 		retrieve_node1_info(node1);
 		bool result = m_box0.overlapping_trans_cache(m_box1, trans_cache_1to0, true);
-		if (!result)
-			return false;
+		if (!result) return false;
 
 		if (t0_is_trimesh && node0_is_leaf)
 		{
@@ -528,12 +520,11 @@ protected:
 			m_box1.increment_margin(m_tri0.m_margin);
 
 			result = m_box1.collide_triangle_exact(
-			    m_tri0.m_vertices[0], m_tri0.m_vertices[1], m_tri0.m_vertices[2], m_tri0_plane);
+				m_tri0.m_vertices[0], m_tri0.m_vertices[1], m_tri0.m_vertices[2], m_tri0_plane);
 
 			m_box1.increment_margin(-m_tri0.m_margin);
 
-			if (!result)
-				return false;
+			if (!result) return false;
 			return true;
 		}
 		else if (t1_is_trimesh && node1_is_leaf)
@@ -544,12 +535,11 @@ protected:
 			m_box0.increment_margin(m_tri1.m_margin);
 
 			result = m_box0.collide_triangle_exact(
-			    m_tri1.m_vertices[0], m_tri1.m_vertices[1], m_tri1.m_vertices[2], m_tri1_plane);
+				m_tri1.m_vertices[0], m_tri1.m_vertices[1], m_tri1.m_vertices[2], m_tri1_plane);
 
 			m_box0.increment_margin(-m_tri1.m_margin);
 
-			if (!result)
-				return false;
+			if (!result) return false;
 			return true;
 		}
 		return true;
@@ -570,7 +560,7 @@ protected:
 			GUINT node0 = stack_collisions.back().m_index1;
 			GUINT node1 = stack_collisions.back().m_index2;
 			stack_collisions.pop_back();
-			if (node_collision(node0, node1)) // a collision is found
+			if (node_collision(node0, node1))  // a collision is found
 			{
 				if (node0_is_leaf)
 				{
@@ -611,17 +601,17 @@ protected:
 						//collide right
 						stack_collisions.push_pair(right0, right1);
 
-					} // else if node1 is not a leaf
-				} // else if node0 is not a leaf
+					}  // else if node1 is not a leaf
+				}      // else if node0 is not a leaf
 
-			} // if(node_collision(node0,node1))
-		} //while(stack_collisions.size())
+			}  // if(node_collision(node0,node1))
+		}      //while(stack_collisions.size())
 	}
 
 public:
 	void find_collision(BOX_SET_CLASS0* boxset1, const btTransform& trans1,
-	    BOX_SET_CLASS1* boxset2, const btTransform& trans2,
-	    gim_pair_set& collision_pairs, bool complete_primitive_tests = true)
+						BOX_SET_CLASS1* boxset2, const btTransform& trans2,
+						gim_pair_set& collision_pairs, bool complete_primitive_tests = true)
 	{
 		m_collision_pairs = &collision_pairs;
 		m_boxset0 = boxset1;
@@ -647,4 +637,4 @@ public:
 	}
 };
 
-#endif // GIM_BOXPRUNING_H_INCLUDED
+#endif  // GIM_BOXPRUNING_H_INCLUDED

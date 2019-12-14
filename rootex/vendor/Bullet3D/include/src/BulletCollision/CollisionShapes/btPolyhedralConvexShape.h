@@ -103,4 +103,4 @@ public:
 	void recalcLocalAabb();
 };
 
-#endif //BT_POLYHEDRAL_CONVEX_SHAPE_H
+#endif  //BT_POLYHEDRAL_CONVEX_SHAPE_H

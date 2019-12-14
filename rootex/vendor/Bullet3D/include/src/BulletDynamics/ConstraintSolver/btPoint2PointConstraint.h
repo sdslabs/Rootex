@@ -28,14 +28,13 @@ class btRigidBody;
 #else
 #define btPoint2PointConstraintData2 btPoint2PointConstraintFloatData
 #define btPoint2PointConstraintDataName "btPoint2PointConstraintFloatData"
-#endif //BT_USE_DOUBLE_PRECISION
+#endif  //BT_USE_DOUBLE_PRECISION
 
 struct btConstraintSetting
 {
-	btConstraintSetting()
-	    : m_tau(btScalar(0.3))
-	    , m_damping(btScalar(1.))
-	    , m_impulseClamp(btScalar(0.))
+	btConstraintSetting() : m_tau(btScalar(0.3)),
+							m_damping(btScalar(1.)),
+							m_impulseClamp(btScalar(0.))
 	{
 	}
 	btScalar m_tau;
@@ -56,7 +55,7 @@ btPoint2PointConstraint : public btTypedConstraint
 #ifdef IN_PARALLELL_SOLVER
 public:
 #endif
-	btJacobianEntry m_jac[3]; //3 orthogonal linear constraints
+	btJacobianEntry m_jac[3];  //3 orthogonal linear constraints
 
 	btVector3 m_pivotInA;
 	btVector3 m_pivotInB;
@@ -152,7 +151,7 @@ struct btPoint2PointConstraintDoubleData
 	btVector3DoubleData m_pivotInA;
 	btVector3DoubleData m_pivotInB;
 };
-#endif //BT_BACKWARDS_COMPATIBLE_SERIALIZATION
+#endif  //BT_BACKWARDS_COMPATIBLE_SERIALIZATION
 
 SIMD_FORCE_INLINE int btPoint2PointConstraint::calculateSerializeBufferSize() const
 {
@@ -171,4 +170,4 @@ SIMD_FORCE_INLINE const char* btPoint2PointConstraint::serialize(void* dataBuffe
 	return btPoint2PointConstraintDataName;
 }
 
-#endif //BT_POINT2POINTCONSTRAINT_H
+#endif  //BT_POINT2POINTCONSTRAINT_H

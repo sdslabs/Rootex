@@ -24,19 +24,19 @@ subject to the following restrictions:
 #ifndef GIMPACT_SHAPE_H
 #define GIMPACT_SHAPE_H
 
-#include "BulletCollision/CollisionDispatch/btCollisionWorld.h"
-#include "BulletCollision/CollisionShapes/btCollisionMargin.h"
 #include "BulletCollision/CollisionShapes/btCollisionShape.h"
-#include "BulletCollision/CollisionShapes/btConcaveShape.h"
-#include "BulletCollision/CollisionShapes/btStridingMeshInterface.h"
-#include "BulletCollision/CollisionShapes/btTetrahedronShape.h"
 #include "BulletCollision/CollisionShapes/btTriangleShape.h"
-#include "LinearMath/btAlignedObjectArray.h"
-#include "LinearMath/btMatrix3x3.h"
-#include "LinearMath/btTransform.h"
+#include "BulletCollision/CollisionShapes/btStridingMeshInterface.h"
+#include "BulletCollision/CollisionShapes/btCollisionMargin.h"
+#include "BulletCollision/CollisionDispatch/btCollisionWorld.h"
+#include "BulletCollision/CollisionShapes/btConcaveShape.h"
+#include "BulletCollision/CollisionShapes/btTetrahedronShape.h"
 #include "LinearMath/btVector3.h"
+#include "LinearMath/btTransform.h"
+#include "LinearMath/btMatrix3x3.h"
+#include "LinearMath/btAlignedObjectArray.h"
 
-#include "btGImpactQuantizedBvh.h" // box tree class
+#include "btGImpactQuantizedBvh.h"  // box tree class
 
 //! declare Quantized trees, (you can change to float based trees)
 typedef btGImpactQuantizedBvh btGImpactBoxSet;
@@ -58,8 +58,8 @@ public:
 	}
 
 	SIMD_FORCE_INLINE void setVertices(
-	    const btVector3& v0, const btVector3& v1,
-	    const btVector3& v2, const btVector3& v3)
+		const btVector3& v0, const btVector3& v1,
+		const btVector3& v2, const btVector3& v3)
 	{
 		m_vertices[0] = v0;
 		m_vertices[1] = v1;
@@ -76,7 +76,7 @@ protected:
 	btAABB m_localAABB;
 	bool m_needs_update;
 	btVector3 localScaling;
-	btGImpactBoxSet m_box_set; // optionally boxset
+	btGImpactBoxSet m_box_set;  // optionally boxset
 
 	//! use this function for perfofm refit in bounding boxes
 	//! use this function for perfofm refit in bounding boxes
@@ -114,8 +114,7 @@ public:
 	*/
 	SIMD_FORCE_INLINE void updateBound()
 	{
-		if (!m_needs_update)
-			return;
+		if (!m_needs_update) return;
 		calcLocalAABB();
 		m_needs_update = false;
 	}
@@ -191,8 +190,7 @@ public:
 	//! Determines if this class has a hierarchy structure for sorting its primitives
 	SIMD_FORCE_INLINE bool hasBoxSet() const
 	{
-		if (m_box_set.getNodeCount() == 0)
-			return false;
+		if (m_box_set.getNodeCount() == 0) return false;
 		return true;
 	}
 
@@ -304,7 +302,7 @@ public:
 		btGImpactCompoundShape* m_compoundShape;
 
 		CompoundPrimitiveManager(const CompoundPrimitiveManager& compound)
-		    : btPrimitiveManagerBase()
+			: btPrimitiveManagerBase()
 		{
 			m_compoundShape = compound.m_compoundShape;
 		}
@@ -372,8 +370,7 @@ public:
 	//! if true, then its children must get transforms.
 	virtual bool childrenHasTransform() const
 	{
-		if (m_childTransforms.size() == 0)
-			return false;
+		if (m_childTransforms.size() == 0) return false;
 		return true;
 	}
 
@@ -542,7 +539,7 @@ public:
 		}
 
 		TrimeshPrimitiveManager(const TrimeshPrimitiveManager& manager)
-		    : btPrimitiveManagerBase()
+			: btPrimitiveManagerBase()
 		{
 			m_meshInterface = manager.m_meshInterface;
 			m_part = manager.m_part;
@@ -558,7 +555,7 @@ public:
 		}
 
 		TrimeshPrimitiveManager(
-		    btStridingMeshInterface* meshInterface, int part)
+			btStridingMeshInterface* meshInterface, int part)
 		{
 			m_meshInterface = meshInterface;
 			m_part = part;
@@ -583,16 +580,15 @@ public:
 				return;
 			}
 			m_meshInterface->getLockedReadOnlyVertexIndexBase(
-			    &vertexbase, numverts,
-			    type, stride, &indexbase, indexstride, numfaces, indicestype, m_part);
+				&vertexbase, numverts,
+				type, stride, &indexbase, indexstride, numfaces, indicestype, m_part);
 
 			m_lock_count = 1;
 		}
 
 		void unlock()
 		{
-			if (m_lock_count == 0)
-				return;
+			if (m_lock_count == 0) return;
 			if (m_lock_count > 1)
 			{
 				--m_lock_count;
@@ -659,8 +655,8 @@ public:
 			btPrimitiveTriangle triangle;
 			get_primitive_triangle(prim_index, triangle);
 			primbox.calc_from_triangle_margin(
-			    triangle.m_vertices[0],
-			    triangle.m_vertices[1], triangle.m_vertices[2], triangle.m_margin);
+				triangle.m_vertices[0],
+				triangle.m_vertices[1], triangle.m_vertices[2], triangle.m_margin);
 		}
 
 		virtual void get_primitive_triangle(int prim_index, btPrimitiveTriangle& triangle) const
@@ -1108,4 +1104,4 @@ SIMD_FORCE_INLINE int btGImpactMeshShape::calculateSerializeBufferSize() const
 	return sizeof(btGImpactMeshShapeData);
 }
 
-#endif //GIMPACT_MESH_SHAPE_H
+#endif  //GIMPACT_MESH_SHAPE_H

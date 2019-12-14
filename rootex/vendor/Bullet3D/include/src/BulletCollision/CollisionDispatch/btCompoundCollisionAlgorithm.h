@@ -17,16 +17,16 @@ subject to the following restrictions:
 #ifndef BT_COMPOUND_COLLISION_ALGORITHM_H
 #define BT_COMPOUND_COLLISION_ALGORITHM_H
 
-#include "BulletCollision/BroadphaseCollision/btBroadphaseInterface.h"
-#include "BulletCollision/BroadphaseCollision/btDispatcher.h"
 #include "btActivatingCollisionAlgorithm.h"
+#include "BulletCollision/BroadphaseCollision/btDispatcher.h"
+#include "BulletCollision/BroadphaseCollision/btBroadphaseInterface.h"
 
 #include "BulletCollision/NarrowPhaseCollision/btPersistentManifold.h"
 class btDispatcher;
 #include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h"
-#include "BulletCollision/BroadphaseCollision/btDbvt.h"
-#include "LinearMath/btAlignedObjectArray.h"
 #include "btCollisionCreateFunc.h"
+#include "LinearMath/btAlignedObjectArray.h"
+#include "BulletCollision/BroadphaseCollision/btDbvt.h"
 class btDispatcher;
 class btCollisionObject;
 
@@ -47,7 +47,7 @@ protected:
 	class btPersistentManifold* m_sharedManifold;
 	bool m_ownsManifold;
 
-	int m_compoundShapeRevision; //to keep track of changes, so that childAlgorithm array can be updated
+	int m_compoundShapeRevision;  //to keep track of changes, so that childAlgorithm array can be updated
 
 	void removeChildAlgorithms();
 
@@ -96,4 +96,4 @@ public:
 	};
 };
 
-#endif //BT_COMPOUND_COLLISION_ALGORITHM_H
+#endif  //BT_COMPOUND_COLLISION_ALGORITHM_H

@@ -34,8 +34,8 @@ email: projectileman@yahoo.com
 -----------------------------------------------------------------------------
 */
 
-#include "gim_geom_types.h"
 #include "gim_math.h"
+#include "gim_geom_types.h"
 
 //! Zero out a 2D vector
 #define VEC_ZERO_2(a)           \
@@ -369,7 +369,7 @@ Takes two vectors a, b, blends them together with s <=1 */
 //! Finds the bigger cartesian coordinate from a vector
 #define VEC_MAYOR_COORD(vec, maxc)                                          \
 	{                                                                       \
-		GREAL A[] = { fabs(vec[0]), fabs(vec[1]), fabs(vec[2]) };           \
+		GREAL A[] = {fabs(vec[0]), fabs(vec[1]), fabs(vec[2])};             \
 		maxc = A[0] > A[1] ? (A[0] > A[2] ? 0 : 2) : (A[1] > A[2] ? 1 : 2); \
 	}
 
@@ -966,8 +966,8 @@ Last column is added as the position
 	{                                                                     \
 		GREAL len;                                                        \
                                                                           \
-		/* do nothing if off-diagonals are zero and diagonals are         \
-		 * equal */                                                       \
+		/* do nothing if off-diagonals are zero and diagonals are 	\
+    * equal */      \
 		if ((m[0][1] != 0.0) || (m[1][0] != 0.0) || (m[0][0] != m[1][1])) \
 		{                                                                 \
 			p[0] = m[1][1] * v[0] - m[1][0] * v[1];                       \
@@ -1135,14 +1135,10 @@ Last column is added as the position
 	{                                                                                                                           \
 		GUINT __ii[4], __jj[4], __k;                                                                                            \
                                                                                                                                 \
-		for (__k = 0; __k < i; __k++)                                                                                           \
-			__ii[__k] = __k;                                                                                                    \
-		for (__k = i; __k < 3; __k++)                                                                                           \
-			__ii[__k] = __k + 1;                                                                                                \
-		for (__k = 0; __k < j; __k++)                                                                                           \
-			__jj[__k] = __k;                                                                                                    \
-		for (__k = j; __k < 3; __k++)                                                                                           \
-			__jj[__k] = __k + 1;                                                                                                \
+		for (__k = 0; __k < i; __k++) __ii[__k] = __k;                                                                          \
+		for (__k = i; __k < 3; __k++) __ii[__k] = __k + 1;                                                                      \
+		for (__k = 0; __k < j; __k++) __jj[__k] = __k;                                                                          \
+		for (__k = j; __k < 3; __k++) __jj[__k] = __k + 1;                                                                      \
                                                                                                                                 \
 		(fac) = m[__ii[0]][__jj[0]] * (m[__ii[1]][__jj[1]] * m[__ii[2]][__jj[2]] - m[__ii[1]][__jj[2]] * m[__ii[2]][__jj[1]]);  \
 		(fac) -= m[__ii[0]][__jj[1]] * (m[__ii[1]][__jj[0]] * m[__ii[2]][__jj[2]] - m[__ii[1]][__jj[2]] * m[__ii[2]][__jj[0]]); \
@@ -1489,4 +1485,4 @@ and m is a mat4f<br>
 		p[2] = MAT_DOT_COL(m, v, 2); \
 	}
 
-#endif // GIM_VECTOR_H_INCLUDED
+#endif  // GIM_VECTOR_H_INCLUDED

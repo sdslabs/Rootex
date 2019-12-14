@@ -50,7 +50,7 @@ const int BT_NULL_PAIR = 0xffffffff;
 class btOverlappingPairCache : public btOverlappingPairCallback
 {
 public:
-	virtual ~btOverlappingPairCache() {} // this is needed so we can get to the derived class destructor
+	virtual ~btOverlappingPairCache() {}  // this is needed so we can get to the derived class destructor
 
 	virtual btBroadphasePair* getOverlappingPairArrayPtr() = 0;
 
@@ -217,7 +217,7 @@ private:
 	{
 		int proxyId1 = proxy0->getUid();
 		int proxyId2 = proxy1->getUid();
-#if 0 // wrong, 'equalsPair' use unsorted uids, copy-past devil striked again. Nat.
+#if 0  // wrong, 'equalsPair' use unsorted uids, copy-past devil striked again. Nat.
 		if (proxyId1 > proxyId2) 
 			btSwap(proxyId1, proxyId2);
 #endif
@@ -422,4 +422,4 @@ public:
 	}
 };
 
-#endif //BT_OVERLAPPING_PAIR_CACHE_H
+#endif  //BT_OVERLAPPING_PAIR_CACHE_H

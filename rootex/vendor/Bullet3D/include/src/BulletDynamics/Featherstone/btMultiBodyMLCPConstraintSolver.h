@@ -16,9 +16,9 @@ subject to the following restrictions:
 #ifndef BT_MULTIBODY_MLCP_CONSTRAINT_SOLVER_H
 #define BT_MULTIBODY_MLCP_CONSTRAINT_SOLVER_H
 
-#include "BulletDynamics/Featherstone/btMultiBodyConstraintSolver.h"
 #include "LinearMath/btMatrixX.h"
 #include "LinearMath/btThreads.h"
+#include "BulletDynamics/Featherstone/btMultiBodyConstraintSolver.h"
 
 class btMLCPSolverInterface;
 class btMultiBody;
@@ -138,25 +138,25 @@ protected:
 
 	// Documentation inherited
 	btScalar solveGroupCacheFriendlySetup(
-	    btCollisionObject** bodies,
-	    int numBodies,
-	    btPersistentManifold** manifoldPtr,
-	    int numManifolds,
-	    btTypedConstraint** constraints,
-	    int numConstraints,
-	    const btContactSolverInfo& infoGlobal,
-	    btIDebugDraw* debugDrawer) BT_OVERRIDE;
+		btCollisionObject** bodies,
+		int numBodies,
+		btPersistentManifold** manifoldPtr,
+		int numManifolds,
+		btTypedConstraint** constraints,
+		int numConstraints,
+		const btContactSolverInfo& infoGlobal,
+		btIDebugDraw* debugDrawer) BT_OVERRIDE;
 
 	// Documentation inherited
 	btScalar solveGroupCacheFriendlyIterations(
-	    btCollisionObject** bodies,
-	    int numBodies,
-	    btPersistentManifold** manifoldPtr,
-	    int numManifolds,
-	    btTypedConstraint** constraints,
-	    int numConstraints,
-	    const btContactSolverInfo& infoGlobal,
-	    btIDebugDraw* debugDrawer);
+		btCollisionObject** bodies,
+		int numBodies,
+		btPersistentManifold** manifoldPtr,
+		int numManifolds,
+		btTypedConstraint** constraints,
+		int numConstraints,
+		const btContactSolverInfo& infoGlobal,
+		btIDebugDraw* debugDrawer) ;
 
 public:
 	BT_DECLARE_ALIGNED_ALLOCATOR()
@@ -184,4 +184,4 @@ public:
 	virtual btConstraintSolverType getSolverType() const;
 };
 
-#endif // BT_MULTIBODY_MLCP_CONSTRAINT_SOLVER_H
+#endif  // BT_MULTIBODY_MLCP_CONSTRAINT_SOLVER_H

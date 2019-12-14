@@ -19,12 +19,12 @@ subject to the following restrictions:
 #include "Bullet3OpenCL/ParallelPrimitives/b3OpenCLArray.h"
 #include "b3GpuConstraint4.h"
 
-#include "Bullet3Collision/NarrowPhaseCollision/b3Contact4.h"
 #include "Bullet3Collision/NarrowPhaseCollision/shared/b3RigidBodyData.h"
+#include "Bullet3Collision/NarrowPhaseCollision/b3Contact4.h"
 
-#include "Bullet3OpenCL/ParallelPrimitives/b3BoundSearchCL.h"
 #include "Bullet3OpenCL/ParallelPrimitives/b3PrefixScanCL.h"
 #include "Bullet3OpenCL/ParallelPrimitives/b3RadixSort32CL.h"
+#include "Bullet3OpenCL/ParallelPrimitives/b3BoundSearchCL.h"
 
 #include "Bullet3OpenCL/Initialize/b3OpenCLUtils.h"
 
@@ -32,11 +32,11 @@ subject to the following restrictions:
 
 enum
 {
-	B3_SOLVER_N_SPLIT_X = 8, //16,//4,
-	B3_SOLVER_N_SPLIT_Y = 4, //16,//4,
-	B3_SOLVER_N_SPLIT_Z = 8, //,
+	B3_SOLVER_N_SPLIT_X = 8,  //16,//4,
+	B3_SOLVER_N_SPLIT_Y = 4,  //16,//4,
+	B3_SOLVER_N_SPLIT_Z = 8,  //,
 	B3_SOLVER_N_CELLS = B3_SOLVER_N_SPLIT_X * B3_SOLVER_N_SPLIT_Y * B3_SOLVER_N_SPLIT_Z,
-	B3_SOLVER_N_BATCHES = 8, //4,//8,//4,
+	B3_SOLVER_N_BATCHES = 8,  //4,//8,//4,
 	B3_MAX_NUM_BATCHES = 128,
 };
 
@@ -45,13 +45,7 @@ class b3SolverBase
 public:
 	struct ConstraintCfg
 	{
-		ConstraintCfg(float dt = 0.f)
-		    : m_positionDrift(0.005f)
-		    , m_positionConstraintCoeff(0.2f)
-		    , m_dt(dt)
-		    , m_staticIdx(-1)
-		{
-		}
+		ConstraintCfg(float dt = 0.f) : m_positionDrift(0.005f), m_positionConstraintCoeff(0.2f), m_dt(dt), m_staticIdx(-1) {}
 
 		float m_positionDrift;
 		float m_positionConstraintCoeff;
@@ -100,17 +94,17 @@ public:
 	virtual ~b3Solver();
 
 	void solveContactConstraint(const b3OpenCLArray<b3RigidBodyData>* bodyBuf, const b3OpenCLArray<b3InertiaData>* inertiaBuf,
-	    b3OpenCLArray<b3GpuConstraint4>* constraint, void* additionalData, int n, int maxNumBatches);
+								b3OpenCLArray<b3GpuConstraint4>* constraint, void* additionalData, int n, int maxNumBatches);
 
 	void solveContactConstraintHost(b3OpenCLArray<b3RigidBodyData>* bodyBuf, b3OpenCLArray<b3InertiaData>* shapeBuf,
-	    b3OpenCLArray<b3GpuConstraint4>* constraint, void* additionalData, int n, int maxNumBatches, b3AlignedObjectArray<int>* batchSizes);
+									b3OpenCLArray<b3GpuConstraint4>* constraint, void* additionalData, int n, int maxNumBatches, b3AlignedObjectArray<int>* batchSizes);
 
 	void convertToConstraints(const b3OpenCLArray<b3RigidBodyData>* bodyBuf,
-	    const b3OpenCLArray<b3InertiaData>* shapeBuf,
-	    b3OpenCLArray<b3Contact4>* contactsIn, b3OpenCLArray<b3GpuConstraint4>* contactCOut, void* additionalData,
-	    int nContacts, const ConstraintCfg& cfg);
+							  const b3OpenCLArray<b3InertiaData>* shapeBuf,
+							  b3OpenCLArray<b3Contact4>* contactsIn, b3OpenCLArray<b3GpuConstraint4>* contactCOut, void* additionalData,
+							  int nContacts, const ConstraintCfg& cfg);
 
 	void batchContacts(b3OpenCLArray<b3Contact4>* contacts, int nContacts, b3OpenCLArray<unsigned int>* n, b3OpenCLArray<unsigned int>* offsets, int staticIdx);
 };
 
-#endif //__ADL_SOLVER_H
+#endif  //__ADL_SOLVER_H

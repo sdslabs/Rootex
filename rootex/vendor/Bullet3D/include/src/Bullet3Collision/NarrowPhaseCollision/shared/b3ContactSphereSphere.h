@@ -3,17 +3,17 @@
 #define B3_CONTACT_SPHERE_SPHERE_H
 
 void computeContactSphereConvex(int pairIndex,
-    int bodyIndexA, int bodyIndexB,
-    int collidableIndexA, int collidableIndexB,
-    const b3RigidBodyData* rigidBodies,
-    const b3Collidable* collidables,
-    const b3ConvexPolyhedronData* convexShapes,
-    const b3Vector3* convexVertices,
-    const int* convexIndices,
-    const b3GpuFace* faces,
-    b3Contact4* globalContactsOut,
-    int& nGlobalContactsOut,
-    int maxContactCapacity)
+								int bodyIndexA, int bodyIndexB,
+								int collidableIndexA, int collidableIndexB,
+								const b3RigidBodyData* rigidBodies,
+								const b3Collidable* collidables,
+								const b3ConvexPolyhedronData* convexShapes,
+								const b3Vector3* convexVertices,
+								const int* convexIndices,
+								const b3GpuFace* faces,
+								b3Contact4* globalContactsOut,
+								int& nGlobalContactsOut,
+								int maxContactCapacity)
 {
 	float radius = collidables[collidableIndexA].m_radius;
 	float4 spherePos1 = rigidBodies[bodyIndexA].m_pos;
@@ -36,7 +36,7 @@ void computeContactSphereConvex(int pairIndex,
 	int numFaces = convexShapes[shapeIndex].m_numFaces;
 	float4 closestPnt = b3MakeVector3(0, 0, 0, 0);
 	float4 hitNormalWorld = b3MakeVector3(0, 0, 0, 0);
-	float minDist = -1000000.f; // TODO: What is the largest/smallest float?
+	float minDist = -1000000.f;  // TODO: What is the largest/smallest float?
 	bool bCollide = true;
 	int region = -1;
 	float4 localHitNormal;
@@ -45,7 +45,7 @@ void computeContactSphereConvex(int pairIndex,
 		b3GpuFace face = faces[convexShapes[shapeIndex].m_faceOffset + f];
 		float4 planeEqn;
 		float4 localPlaneNormal = b3MakeVector3(face.m_plane.x, face.m_plane.y, face.m_plane.z, 0.f);
-		float4 n1 = localPlaneNormal; //quatRotate(quat,localPlaneNormal);
+		float4 n1 = localPlaneNormal;  //quatRotate(quat,localPlaneNormal);
 		planeEqn = n1;
 		planeEqn[3] = face.m_plane.w;
 
@@ -64,10 +64,10 @@ void computeContactSphereConvex(int pairIndex,
 			b3Vector3 out;
 
 			bool isInPoly = IsPointInPolygon(spherePos,
-			    &face,
-			    &convexVertices[convexShapes[shapeIndex].m_vertexOffset],
-			    convexIndices,
-			    &out);
+											 &face,
+											 &convexVertices[convexShapes[shapeIndex].m_vertexOffset],
+											 convexIndices,
+											 &out);
 			if (isInPoly)
 			{
 				if (dist > minDist)
@@ -116,7 +116,7 @@ void computeContactSphereConvex(int pairIndex,
 
 	if (bCollide && minDist > -10000)
 	{
-		float4 normalOnSurfaceB1 = tr.getBasis() * localHitNormal; //-hitNormalWorld;
+		float4 normalOnSurfaceB1 = tr.getBasis() * localHitNormal;  //-hitNormalWorld;
 		float4 pOnB1 = tr(closestPnt);
 		//printf("dist ,%f,",minDist);
 		float actualDepth = minDist - radius;
@@ -146,8 +146,8 @@ void computeContactSphereConvex(int pairIndex,
 				c->m_worldPosB[0] = pOnB1;
 				int numPoints = 1;
 				c->m_worldNormalOnB.w = (b3Scalar)numPoints;
-			} //if (dstIdx < numPairs)
+			}  //if (dstIdx < numPairs)
 		}
-	} //if (hasCollision)
+	}  //if (hasCollision)
 }
-#endif //B3_CONTACT_SPHERE_SPHERE_H
+#endif  //B3_CONTACT_SPHERE_SPHERE_H

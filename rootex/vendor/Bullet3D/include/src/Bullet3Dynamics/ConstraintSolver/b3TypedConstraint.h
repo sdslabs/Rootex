@@ -97,7 +97,7 @@ protected:
 public:
 	B3_DECLARE_ALIGNED_ALLOCATOR();
 
-	virtual ~b3TypedConstraint() {};
+	virtual ~b3TypedConstraint(){};
 	b3TypedConstraint(b3TypedConstraintType type, int bodyA, int bodyB);
 
 	struct b3ConstraintInfo1
@@ -199,7 +199,7 @@ public:
 	}
 
 	///internal method used by the constraint solver, don't use them directly
-	virtual void solveConstraintObsolete(b3SolverBody& /*bodyA*/, b3SolverBody& /*bodyB*/, b3Scalar /*timeStep*/) {};
+	virtual void solveConstraintObsolete(b3SolverBody& /*bodyA*/, b3SolverBody& /*bodyB*/, b3Scalar /*timeStep*/){};
 
 	int getRigidBodyA() const
 	{
@@ -378,28 +378,28 @@ class b3AngularLimit
 {
 private:
 	b3Scalar
-	    m_center,
-	    m_halfRange,
-	    m_softness,
-	    m_biasFactor,
-	    m_relaxationFactor,
-	    m_correction,
-	    m_sign;
+		m_center,
+		m_halfRange,
+		m_softness,
+		m_biasFactor,
+		m_relaxationFactor,
+		m_correction,
+		m_sign;
 
 	bool
-	    m_solveLimit;
+		m_solveLimit;
 
 public:
 	/// Default constructor initializes limit as inactive, allowing free constraint movement
 	b3AngularLimit()
-	    : m_center(0.0f)
-	    , m_halfRange(-1.0f)
-	    , m_softness(0.9f)
-	    , m_biasFactor(0.3f)
-	    , m_relaxationFactor(1.0f)
-	    , m_correction(0.0f)
-	    , m_sign(0.0f)
-	    , m_solveLimit(false)
+		: m_center(0.0f),
+		  m_halfRange(-1.0f),
+		  m_softness(0.9f),
+		  m_biasFactor(0.3f),
+		  m_relaxationFactor(1.0f),
+		  m_correction(0.0f),
+		  m_sign(0.0f),
+		  m_solveLimit(false)
 	{
 	}
 
@@ -466,4 +466,4 @@ public:
 	b3Scalar getHigh() const;
 };
 
-#endif //B3_TYPED_CONSTRAINT_H
+#endif  //B3_TYPED_CONSTRAINT_H

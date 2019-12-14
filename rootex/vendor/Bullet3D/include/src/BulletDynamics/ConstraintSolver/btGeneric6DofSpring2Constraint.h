@@ -52,7 +52,7 @@ class btRigidBody;
 #else
 #define btGeneric6DofSpring2ConstraintData2 btGeneric6DofSpring2ConstraintData
 #define btGeneric6DofSpring2ConstraintDataName "btGeneric6DofSpring2ConstraintData"
-#endif //BT_USE_DOUBLE_PRECISION
+#endif  //BT_USE_DOUBLE_PRECISION
 
 enum RotateOrder
 {
@@ -150,8 +150,7 @@ public:
 
 	bool isLimited()
 	{
-		if (m_loLimit > m_hiLimit)
-			return false;
+		if (m_loLimit > m_hiLimit) return false;
 		return true;
 	}
 
@@ -267,7 +266,7 @@ enum bt6DofFlags2
 	BT_6DOF_FLAGS_CFM_MOTO2 = 4,
 	BT_6DOF_FLAGS_ERP_MOTO2 = 8,
 };
-#define BT_6DOF_FLAGS_AXIS_SHIFT2 4 // bits per axis
+#define BT_6DOF_FLAGS_AXIS_SHIFT2 4  // bits per axis
 
 ATTRIBUTE_ALIGNED16(class)
 btGeneric6DofSpring2Constraint : public btTypedConstraint
@@ -310,8 +309,8 @@ protected:
 
 	void calculateJacobi(btRotationalLimitMotor2 * limot, const btTransform& transA, const btTransform& transB, btConstraintInfo2* info, int srow, btVector3& ax1, int rotational, int rotAllowed);
 	int get_limit_motor_info2(btRotationalLimitMotor2 * limot,
-	    const btTransform& transA, const btTransform& transB, const btVector3& linVelA, const btVector3& linVelB, const btVector3& angVelA, const btVector3& angVelB,
-	    btConstraintInfo2* info, int row, btVector3& ax1, int rotational, int rotAllowed = false);
+							  const btTransform& transA, const btTransform& transB, const btVector3& linVelA, const btVector3& linVelB, const btVector3& angVelA, const btVector3& angVelB,
+							  btConstraintInfo2* info, int row, btVector3& ax1, int rotational, int rotAllowed = false);
 
 public:
 	BT_DECLARE_ALIGNED_ALLOCATOR();
@@ -458,16 +457,16 @@ public:
 	void setBounce(int index, btScalar bounce);
 
 	void enableMotor(int index, bool onOff);
-	void setServo(int index, bool onOff); // set the type of the motor (servo or not) (the motor has to be turned on for servo also)
+	void setServo(int index, bool onOff);  // set the type of the motor (servo or not) (the motor has to be turned on for servo also)
 	void setTargetVelocity(int index, btScalar velocity);
 	void setServoTarget(int index, btScalar target);
 	void setMaxMotorForce(int index, btScalar force);
 
 	void enableSpring(int index, bool onOff);
-	void setStiffness(int index, btScalar stiffness, bool limitIfNeeded = true); // if limitIfNeeded is true the system will automatically limit the stiffness in necessary situations where otherwise the spring would move unrealistically too widely
-	void setDamping(int index, btScalar damping, bool limitIfNeeded = true); // if limitIfNeeded is true the system will automatically limit the damping in necessary situations where otherwise the spring would blow up
-	void setEquilibriumPoint(); // set the current constraint position/orientation as an equilibrium point for all DOF
-	void setEquilibriumPoint(int index); // set the current constraint position/orientation as an equilibrium point for given DOF
+	void setStiffness(int index, btScalar stiffness, bool limitIfNeeded = true);  // if limitIfNeeded is true the system will automatically limit the stiffness in necessary situations where otherwise the spring would move unrealistically too widely
+	void setDamping(int index, btScalar damping, bool limitIfNeeded = true);      // if limitIfNeeded is true the system will automatically limit the damping in necessary situations where otherwise the spring would blow up
+	void setEquilibriumPoint();                                                   // set the current constraint position/orientation as an equilibrium point for all DOF
+	void setEquilibriumPoint(int index);                                          // set the current constraint position/orientation as an equilibrium point for given DOF
 	void setEquilibriumPoint(int index, btScalar val);
 
 	//override the default global value of a parameter (such as ERP or CFM), optionally provide the axis (0..5).
@@ -664,4 +663,4 @@ SIMD_FORCE_INLINE const char* btGeneric6DofSpring2Constraint::serialize(void* da
 	return btGeneric6DofSpring2ConstraintDataName;
 }
 
-#endif //BT_GENERIC_6DOF_CONSTRAINT_H
+#endif  //BT_GENERIC_6DOF_CONSTRAINT_H

@@ -16,8 +16,8 @@ subject to the following restrictions:
 #ifndef BT_CHARACTER_CONTROLLER_INTERFACE_H
 #define BT_CHARACTER_CONTROLLER_INTERFACE_H
 
-#include "BulletDynamics/Dynamics/btActionInterface.h"
 #include "LinearMath/btVector3.h"
+#include "BulletDynamics/Dynamics/btActionInterface.h"
 
 class btCollisionShape;
 class btRigidBody;
@@ -26,8 +26,8 @@ class btCollisionWorld;
 class btCharacterControllerInterface : public btActionInterface
 {
 public:
-	btCharacterControllerInterface() {};
-	virtual ~btCharacterControllerInterface() {};
+	btCharacterControllerInterface(){};
+	virtual ~btCharacterControllerInterface(){};
 
 	virtual void setWalkDirection(const btVector3& walkDirection) = 0;
 	virtual void setVelocityForTimeInterval(const btVector3& velocity, btScalar timeInterval) = 0;
@@ -43,4 +43,4 @@ public:
 	virtual void setUpInterpolate(bool value) = 0;
 };
 
-#endif //BT_CHARACTER_CONTROLLER_INTERFACE_H
+#endif  //BT_CHARACTER_CONTROLLER_INTERFACE_H

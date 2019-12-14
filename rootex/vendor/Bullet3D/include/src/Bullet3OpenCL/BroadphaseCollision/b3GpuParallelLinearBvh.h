@@ -15,14 +15,14 @@ subject to the following restrictions:
 #define B3_GPU_PARALLEL_LINEAR_BVH_H
 
 //#include "Bullet3Collision/BroadPhaseCollision/shared/b3Aabb.h"
-#include "Bullet3Collision/NarrowPhaseCollision/b3RaycastInfo.h"
+#include "Bullet3OpenCL/BroadphaseCollision/b3SapAabb.h"
 #include "Bullet3Common/shared/b3Int2.h"
 #include "Bullet3Common/shared/b3Int4.h"
-#include "Bullet3OpenCL/BroadphaseCollision/b3SapAabb.h"
+#include "Bullet3Collision/NarrowPhaseCollision/b3RaycastInfo.h"
 
 #include "Bullet3OpenCL/ParallelPrimitives/b3FillCL.h"
-#include "Bullet3OpenCL/ParallelPrimitives/b3PrefixScanCL.h"
 #include "Bullet3OpenCL/ParallelPrimitives/b3RadixSort32CL.h"
+#include "Bullet3OpenCL/ParallelPrimitives/b3PrefixScanCL.h"
 
 #include "Bullet3OpenCL/BroadphaseCollision/kernels/parallelLinearBvhKernels.h"
 
@@ -74,26 +74,26 @@ class b3GpuParallelLinearBvh
 	b3RadixSort32CL m_radixSorter;
 
 	//1 element
-	b3OpenCLArray<int> m_rootNodeIndex; //Most significant bit(0x80000000) is set to indicate internal node
-	b3OpenCLArray<int> m_maxDistanceFromRoot; //Max number of internal nodes between an internal node and the root node
-	b3OpenCLArray<int> m_temp; //Used to hold the number of pairs in calculateOverlappingPairs()
+	b3OpenCLArray<int> m_rootNodeIndex;        //Most significant bit(0x80000000) is set to indicate internal node
+	b3OpenCLArray<int> m_maxDistanceFromRoot;  //Max number of internal nodes between an internal node and the root node
+	b3OpenCLArray<int> m_temp;                 //Used to hold the number of pairs in calculateOverlappingPairs()
 
 	//1 element per internal node (number_of_internal_nodes == number_of_leaves - 1)
 	b3OpenCLArray<b3SapAabb> m_internalNodeAabbs;
-	b3OpenCLArray<b3Int2> m_internalNodeLeafIndexRanges; //x == min leaf index, y == max leaf index
-	b3OpenCLArray<b3Int2> m_internalNodeChildNodes; //x == left child, y == right child; msb(0x80000000) is set to indicate internal node
-	b3OpenCLArray<int> m_internalNodeParentNodes; //For parent node index, msb(0x80000000) is not set since it is always internal
+	b3OpenCLArray<b3Int2> m_internalNodeLeafIndexRanges;  //x == min leaf index, y == max leaf index
+	b3OpenCLArray<b3Int2> m_internalNodeChildNodes;       //x == left child, y == right child; msb(0x80000000) is set to indicate internal node
+	b3OpenCLArray<int> m_internalNodeParentNodes;         //For parent node index, msb(0x80000000) is not set since it is always internal
 
 	//1 element per internal node; for binary radix tree construction
 	b3OpenCLArray<b3Int64> m_commonPrefixes;
 	b3OpenCLArray<int> m_commonPrefixLengths;
-	b3OpenCLArray<int> m_distanceFromRoot; //Number of internal nodes between this node and the root
+	b3OpenCLArray<int> m_distanceFromRoot;  //Number of internal nodes between this node and the root
 
 	//1 element per leaf node (leaf nodes only include small AABBs)
-	b3OpenCLArray<int> m_leafNodeParentNodes; //For parent node index, msb(0x80000000) is not set since it is always internal
-	b3OpenCLArray<b3SortData> m_mortonCodesAndAabbIndicies; //m_key == morton code, m_value == aabb index in m_leafNodeAabbs
-	b3OpenCLArray<b3SapAabb> m_mergedAabb; //m_mergedAabb[0] contains the merged AABB of all leaf nodes
-	b3OpenCLArray<b3SapAabb> m_leafNodeAabbs; //Contains only small AABBs
+	b3OpenCLArray<int> m_leafNodeParentNodes;                //For parent node index, msb(0x80000000) is not set since it is always internal
+	b3OpenCLArray<b3SortData> m_mortonCodesAndAabbIndicies;  //m_key == morton code, m_value == aabb index in m_leafNodeAabbs
+	b3OpenCLArray<b3SapAabb> m_mergedAabb;                   //m_mergedAabb[0] contains the merged AABB of all leaf nodes
+	b3OpenCLArray<b3SapAabb> m_leafNodeAabbs;                //Contains only small AABBs
 
 	//1 element per large AABB, which is not stored in the BVH
 	b3OpenCLArray<b3SapAabb> m_largeAabbs;
@@ -104,7 +104,7 @@ public:
 
 	///Must be called before any other function
 	void build(const b3OpenCLArray<b3SapAabb>& worldSpaceAabbs, const b3OpenCLArray<int>& smallAabbIndices,
-	    const b3OpenCLArray<int>& largeAabbIndices);
+			   const b3OpenCLArray<int>& largeAabbIndices);
 
 	///calculateOverlappingPairs() uses the worldSpaceAabbs parameter of b3GpuParallelLinearBvh::build() as the query AABBs.
 	///@param out_overlappingPairs The size() of this array is used to determine the max number of pairs.
@@ -116,7 +116,7 @@ public:
 	///@param out_rayRigidPairs Contains an array of rays intersecting rigid AABBs; x == ray index, y == rigid body index.
 	///If the size of this array is insufficient to hold all ray-rigid AABB intersections, additional intersections are discarded.
 	void testRaysAgainstBvhAabbs(const b3OpenCLArray<b3RayInfo>& rays,
-	    b3OpenCLArray<int>& out_numRayRigidPairs, b3OpenCLArray<b3Int2>& out_rayRigidPairs);
+								 b3OpenCLArray<int>& out_numRayRigidPairs, b3OpenCLArray<b3Int2>& out_rayRigidPairs);
 
 private:
 	void constructBinaryRadixTree();

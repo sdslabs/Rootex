@@ -35,19 +35,19 @@ struct btDispatcherInfo
 		DISPATCH_CONTINUOUS
 	};
 	btDispatcherInfo()
-	    : m_timeStep(btScalar(0.))
-	    , m_stepCount(0)
-	    , m_dispatchFunc(DISPATCH_DISCRETE)
-	    , m_timeOfImpact(btScalar(1.))
-	    , m_useContinuous(true)
-	    , m_debugDraw(0)
-	    , m_enableSatConvex(false)
-	    , m_enableSPU(true)
-	    , m_useEpa(true)
-	    , m_allowedCcdPenetration(btScalar(0.04))
-	    , m_useConvexConservativeDistanceUtil(false)
-	    , m_convexConservativeDistanceThreshold(0.0f)
-	    , m_deterministicOverlappingPairs(false)
+		: m_timeStep(btScalar(0.)),
+		  m_stepCount(0),
+		  m_dispatchFunc(DISPATCH_DISCRETE),
+		  m_timeOfImpact(btScalar(1.)),
+		  m_useContinuous(true),
+		  m_debugDraw(0),
+		  m_enableSatConvex(false),
+		  m_enableSPU(true),
+		  m_useEpa(true),
+		  m_allowedCcdPenetration(btScalar(0.04)),
+		  m_useConvexConservativeDistanceUtil(false),
+		  m_convexConservativeDistanceThreshold(0.0f),
+		  m_deterministicOverlappingPairs(false)
 	{
 	}
 	btScalar m_timeStep;
@@ -107,4 +107,4 @@ public:
 	virtual void freeCollisionAlgorithm(void* ptr) = 0;
 };
 
-#endif //BT_DISPATCHER_H
+#endif  //BT_DISPATCHER_H

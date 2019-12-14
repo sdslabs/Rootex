@@ -28,11 +28,11 @@ subject to the following restrictions:
 #include "LinearMath/btTransform.h"
 
 SIMD_FORCE_INLINE void bt_calc_quantization_parameters(
-    btVector3& outMinBound,
-    btVector3& outMaxBound,
-    btVector3& bvhQuantization,
-    const btVector3& srcMinBound, const btVector3& srcMaxBound,
-    btScalar quantizationMargin)
+	btVector3& outMinBound,
+	btVector3& outMaxBound,
+	btVector3& bvhQuantization,
+	const btVector3& srcMinBound, const btVector3& srcMaxBound,
+	btScalar quantizationMargin)
 {
 	//enlarge the AABB to avoid division by zero when initializing the quantization values
 	btVector3 clampValue(quantizationMargin, quantizationMargin, quantizationMargin);
@@ -40,17 +40,17 @@ SIMD_FORCE_INLINE void bt_calc_quantization_parameters(
 	outMaxBound = srcMaxBound + clampValue;
 	btVector3 aabbSize = outMaxBound - outMinBound;
 	bvhQuantization = btVector3(btScalar(65535.0),
-	                      btScalar(65535.0),
-	                      btScalar(65535.0))
-	    / aabbSize;
+								btScalar(65535.0),
+								btScalar(65535.0)) /
+					  aabbSize;
 }
 
 SIMD_FORCE_INLINE void bt_quantize_clamp(
-    unsigned short* out,
-    const btVector3& point,
-    const btVector3& min_bound,
-    const btVector3& max_bound,
-    const btVector3& bvhQuantization)
+	unsigned short* out,
+	const btVector3& point,
+	const btVector3& min_bound,
+	const btVector3& max_bound,
+	const btVector3& bvhQuantization)
 {
 	btVector3 clampedPoint(point);
 	clampedPoint.setMax(min_bound);
@@ -63,17 +63,17 @@ SIMD_FORCE_INLINE void bt_quantize_clamp(
 }
 
 SIMD_FORCE_INLINE btVector3 bt_unquantize(
-    const unsigned short* vecIn,
-    const btVector3& offset,
-    const btVector3& bvhQuantization)
+	const unsigned short* vecIn,
+	const btVector3& offset,
+	const btVector3& bvhQuantization)
 {
 	btVector3 vecOut;
 	vecOut.setValue(
-	    (btScalar)(vecIn[0]) / (bvhQuantization.getX()),
-	    (btScalar)(vecIn[1]) / (bvhQuantization.getY()),
-	    (btScalar)(vecIn[2]) / (bvhQuantization.getZ()));
+		(btScalar)(vecIn[0]) / (bvhQuantization.getX()),
+		(btScalar)(vecIn[1]) / (bvhQuantization.getY()),
+		(btScalar)(vecIn[2]) / (bvhQuantization.getZ()));
 	vecOut += offset;
 	return vecOut;
 }
 
-#endif // BT_GIMPACT_QUANTIZATION_H_INCLUDED
+#endif  // BT_GIMPACT_QUANTIZATION_H_INCLUDED

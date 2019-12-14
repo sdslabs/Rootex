@@ -16,8 +16,8 @@ subject to the following restrictions:
 #ifndef BT_OBB_TRIANGLE_MINKOWSKI_H
 #define BT_OBB_TRIANGLE_MINKOWSKI_H
 
-#include "btBoxShape.h"
 #include "btConvexShape.h"
+#include "btBoxShape.h"
 
 ATTRIBUTE_ALIGNED16(class)
 btTriangleShape : public btPolyhedralConvexShape
@@ -79,14 +79,12 @@ public:
 		}
 	}
 
-	btTriangleShape()
-	    : btPolyhedralConvexShape()
+	btTriangleShape() : btPolyhedralConvexShape()
 	{
 		m_shapeType = TRIANGLE_SHAPE_PROXYTYPE;
 	}
 
-	btTriangleShape(const btVector3& p0, const btVector3& p1, const btVector3& p2)
-	    : btPolyhedralConvexShape()
+	btTriangleShape(const btVector3& p0, const btVector3& p1, const btVector3& p2) : btPolyhedralConvexShape()
 	{
 		m_shapeType = TRIANGLE_SHAPE_PROXYTYPE;
 		m_vertices1[0] = p0;
@@ -174,4 +172,4 @@ public:
 	}
 };
 
-#endif //BT_OBB_TRIANGLE_MINKOWSKI_H
+#endif  //BT_OBB_TRIANGLE_MINKOWSKI_H

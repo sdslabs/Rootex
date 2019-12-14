@@ -32,7 +32,7 @@ struct b3HashString
 	}
 
 	b3HashString(const char* name)
-	    : m_string(name)
+		: m_string(name)
 	{
 		/* magic numbers from http://www.isthe.com/chongo/tech/comp/fnv/ */
 		static const unsigned int InitialFNV = 2166136261u;
@@ -44,7 +44,7 @@ struct b3HashString
 		for (int i = 0; i < len; i++)
 		{
 			hash = hash ^ (m_string[i]); /* xor  the low 8 bits */
-			hash = hash * FNVMultiple; /* multiply by the magic number */
+			hash = hash * FNVMultiple;   /* multiply by the magic number */
 		}
 		m_hash = hash;
 	}
@@ -77,8 +77,7 @@ class b3HashInt
 	int m_uid;
 
 public:
-	b3HashInt(int uid)
-	    : m_uid(uid)
+	b3HashInt(int uid) : m_uid(uid)
 	{
 	}
 
@@ -120,7 +119,7 @@ class b3HashPtr
 
 public:
 	b3HashPtr(const void* ptr)
-	    : m_pointer(ptr)
+		: m_pointer(ptr)
 	{
 	}
 
@@ -158,8 +157,7 @@ class b3HashKeyPtr
 	int m_uid;
 
 public:
-	b3HashKeyPtr(int uid)
-	    : m_uid(uid)
+	b3HashKeyPtr(int uid) : m_uid(uid)
 	{
 	}
 
@@ -194,8 +192,7 @@ class b3HashKey
 	int m_uid;
 
 public:
-	b3HashKey(int uid)
-	    : m_uid(uid)
+	b3HashKey(int uid) : m_uid(uid)
 	{
 	}
 
@@ -263,7 +260,7 @@ protected:
 				//const Value& value = m_valueArray[i];
 				//const Key& key = m_keyArray[i];
 
-				int hashValue = m_keyArray[i].getHash() & (m_valueArray.capacity() - 1); // New hash value with new mask
+				int hashValue = m_keyArray[i].getHash() & (m_valueArray.capacity() - 1);  // New hash value with new mask
 				m_next[i] = m_hashTable[hashValue];
 				m_hashTable[hashValue] = i;
 			}
@@ -462,4 +459,4 @@ public:
 	}
 };
 
-#endif //B3_HASH_MAP_H
+#endif  //B3_HASH_MAP_H

@@ -102,7 +102,7 @@ public:
 class btCPUVertexBufferDescriptor : public btVertexBufferDescriptor
 {
 protected:
-	float* m_basePointer;
+	float *m_basePointer;
 
 public:
 	/**
@@ -110,7 +110,7 @@ public:
 	 * vertexOffset is the offset in floats to the first vertex.
 	 * vertexStride is the stride in floats between vertices.
 	 */
-	btCPUVertexBufferDescriptor(float* basePointer, int vertexOffset, int vertexStride)
+	btCPUVertexBufferDescriptor(float *basePointer, int vertexOffset, int vertexStride)
 	{
 		m_basePointer = basePointer;
 		m_vertexOffset = vertexOffset;
@@ -123,7 +123,7 @@ public:
 	 * vertexOffset is the offset in floats to the first vertex.
 	 * vertexStride is the stride in floats between vertices.
 	 */
-	btCPUVertexBufferDescriptor(float* basePointer, int vertexOffset, int vertexStride, int normalOffset, int normalStride)
+	btCPUVertexBufferDescriptor(float *basePointer, int vertexOffset, int vertexStride, int normalOffset, int normalStride)
 	{
 		m_basePointer = basePointer;
 
@@ -151,10 +151,10 @@ public:
 	/**
 	 * Return the base pointer in memory to the first vertex.
 	 */
-	virtual float* getBasePointer() const
+	virtual float *getBasePointer() const
 	{
 		return m_basePointer;
 	}
 };
 
-#endif // #ifndef BT_SOFT_BODY_SOLVER_VERTEX_BUFFER_H
+#endif  // #ifndef BT_SOFT_BODY_SOLVER_VERTEX_BUFFER_H

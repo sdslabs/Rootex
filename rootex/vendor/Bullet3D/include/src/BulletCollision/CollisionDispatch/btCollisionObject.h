@@ -28,9 +28,9 @@ subject to the following restrictions:
 struct btBroadphaseProxy;
 class btCollisionShape;
 struct btCollisionShapeData;
+#include "LinearMath/btMotionState.h"
 #include "LinearMath/btAlignedAllocator.h"
 #include "LinearMath/btAlignedObjectArray.h"
-#include "LinearMath/btMotionState.h"
 
 typedef btAlignedObjectArray<class btCollisionObject*> btCollisionObjectArray;
 
@@ -77,15 +77,15 @@ protected:
 
 	int m_islandTag1;
 	int m_companionId;
-	int m_worldArrayIndex; // index of object in world's collisionObjects array
+	int m_worldArrayIndex;  // index of object in world's collisionObjects array
 
 	mutable int m_activationState1;
 	mutable btScalar m_deactivationTime;
 
 	btScalar m_friction;
 	btScalar m_restitution;
-	btScalar m_rollingFriction; //torsional friction orthogonal to contact normal (useful to stop spheres rolling forever)
-	btScalar m_spinningFriction; // torsional friction around the contact normal (useful for grasping)
+	btScalar m_rollingFriction;   //torsional friction orthogonal to contact normal (useful to stop spheres rolling forever)
+	btScalar m_spinningFriction;  // torsional friction around the contact normal (useful for grasping)
 	btScalar m_contactDamping;
 	btScalar m_contactStiffness;
 
@@ -130,10 +130,10 @@ public:
 		CF_STATIC_OBJECT = 1,
 		CF_KINEMATIC_OBJECT = 2,
 		CF_NO_CONTACT_RESPONSE = 4,
-		CF_CUSTOM_MATERIAL_CALLBACK = 8, //this allows per-triangle material (friction/restitution)
+		CF_CUSTOM_MATERIAL_CALLBACK = 8,  //this allows per-triangle material (friction/restitution)
 		CF_CHARACTER_OBJECT = 16,
-		CF_DISABLE_VISUALIZE_OBJECT = 32, //disable debug drawing
-		CF_DISABLE_SPU_COLLISION_PROCESSING = 64, //disable parallel/SPU processing
+		CF_DISABLE_VISUALIZE_OBJECT = 32,          //disable debug drawing
+		CF_DISABLE_SPU_COLLISION_PROCESSING = 64,  //disable parallel/SPU processing
 		CF_HAS_CONTACT_STIFFNESS_DAMPING = 128,
 		CF_HAS_CUSTOM_DEBUG_RENDERING_COLOR = 256,
 		CF_HAS_FRICTION_ANCHOR = 512,
@@ -675,4 +675,4 @@ SIMD_FORCE_INLINE int btCollisionObject::calculateSerializeBufferSize() const
 	return sizeof(btCollisionObjectData);
 }
 
-#endif //BT_COLLISION_OBJECT_H
+#endif  //BT_COLLISION_OBJECT_H

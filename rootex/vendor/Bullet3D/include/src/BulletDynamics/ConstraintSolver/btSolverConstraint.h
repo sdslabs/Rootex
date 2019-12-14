@@ -17,10 +17,10 @@ subject to the following restrictions:
 #define BT_SOLVER_CONSTRAINT_H
 
 class btRigidBody;
-#include "LinearMath/btAlignedObjectArray.h"
-#include "LinearMath/btMatrix3x3.h"
 #include "LinearMath/btVector3.h"
+#include "LinearMath/btMatrix3x3.h"
 #include "btJacobianEntry.h"
+#include "LinearMath/btAlignedObjectArray.h"
 
 //#define NO_FRICTION_TANGENTIALS 1
 #include "btSolverBody.h"
@@ -35,7 +35,7 @@ btSolverConstraint
 	btVector3 m_contactNormal1;
 
 	btVector3 m_relpos2CrossNormal;
-	btVector3 m_contactNormal2; //usually m_contactNormal2 == -m_contactNormal1, but not always
+	btVector3 m_contactNormal2;  //usually m_contactNormal2 == -m_contactNormal1, but not always
 
 	btVector3 m_angularComponentA;
 	btVector3 m_angularComponentB;
@@ -71,4 +71,4 @@ btSolverConstraint
 
 typedef btAlignedObjectArray<btSolverConstraint> btConstraintArray;
 
-#endif //BT_SOLVER_CONSTRAINT_H
+#endif  //BT_SOLVER_CONSTRAINT_H

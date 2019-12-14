@@ -70,7 +70,7 @@ struct btSparseSdf
 
 	btAlignedObjectArray<Cell*> cells;
 	btScalar voxelsz;
-	btScalar m_defaultVoxelsz;
+    btScalar m_defaultVoxelsz;
 	int puid;
 	int ncells;
 	int m_clampCells;
@@ -88,16 +88,16 @@ struct btSparseSdf
 		//if this limit is reached, the SDF is reset (at the cost of some performance during the reset)
 		m_clampCells = clampCells;
 		cells.resize(hashsize, 0);
-		m_defaultVoxelsz = 0.25;
+        m_defaultVoxelsz = 0.25;
 		Reset();
 	}
 	//
-
-	void setDefaultVoxelsz(btScalar sz)
-	{
-		m_defaultVoxelsz = sz;
-	}
-
+    
+    void setDefaultVoxelsz(btScalar sz)
+    {
+        m_defaultVoxelsz = sz;
+    }
+    
 	void Reset()
 	{
 		for (int i = 0, ni = cells.size(); i < ni; ++i)
@@ -146,8 +146,8 @@ struct btSparseSdf
 		//printf("GC[%d]: %d cells, PpQ: %f\r\n",puid,ncells,nprobes/(btScalar)nqueries);
 		nqueries = 1;
 		nprobes = 1;
-		++puid; ///@todo: Reset puid's when int range limit is reached	*/
-		/* else setup a priority list...						*/
+		++puid;  ///@todo: Reset puid's when int range limit is reached	*/
+				 /* else setup a priority list...						*/
 	}
 	//
 	int RemoveReferences(btCollisionShape* pcs)
@@ -179,9 +179,9 @@ struct btSparseSdf
 	}
 	//
 	btScalar Evaluate(const btVector3& x,
-	    const btCollisionShape* shape,
-	    btVector3& normal,
-	    btScalar margin)
+					  const btCollisionShape* shape,
+					  btVector3& normal,
+					  btScalar margin)
 	{
 		/* Lookup cell			*/
 		const btVector3 scx = x / voxelsz;
@@ -195,7 +195,11 @@ struct btSparseSdf
 		while (c)
 		{
 			++nprobes;
-			if ((c->hash == h) && (c->c[0] == ix.b) && (c->c[1] == iy.b) && (c->c[2] == iz.b) && (c->pclient == shape))
+			if ((c->hash == h) &&
+				(c->c[0] == ix.b) &&
+				(c->c[1] == iy.b) &&
+				(c->c[2] == iz.b) &&
+				(c->pclient == shape))
 			{
 				break;
 			}
@@ -229,47 +233,47 @@ struct btSparseSdf
 		}
 		c->puid = puid;
 		/* Extract infos		*/
-		const int o[] = { ix.i, iy.i, iz.i };
-		const btScalar d[] = { c->d[o[0] + 0][o[1] + 0][o[2] + 0],
-			c->d[o[0] + 1][o[1] + 0][o[2] + 0],
-			c->d[o[0] + 1][o[1] + 1][o[2] + 0],
-			c->d[o[0] + 0][o[1] + 1][o[2] + 0],
-			c->d[o[0] + 0][o[1] + 0][o[2] + 1],
-			c->d[o[0] + 1][o[1] + 0][o[2] + 1],
-			c->d[o[0] + 1][o[1] + 1][o[2] + 1],
-			c->d[o[0] + 0][o[1] + 1][o[2] + 1] };
+		const int o[] = {ix.i, iy.i, iz.i};
+		const btScalar d[] = {c->d[o[0] + 0][o[1] + 0][o[2] + 0],
+							  c->d[o[0] + 1][o[1] + 0][o[2] + 0],
+							  c->d[o[0] + 1][o[1] + 1][o[2] + 0],
+							  c->d[o[0] + 0][o[1] + 1][o[2] + 0],
+							  c->d[o[0] + 0][o[1] + 0][o[2] + 1],
+							  c->d[o[0] + 1][o[1] + 0][o[2] + 1],
+							  c->d[o[0] + 1][o[1] + 1][o[2] + 1],
+							  c->d[o[0] + 0][o[1] + 1][o[2] + 1]};
 		/* Normal	*/
 #if 1
-		const btScalar gx[] = { d[1] - d[0], d[2] - d[3],
-			d[5] - d[4], d[6] - d[7] };
-		const btScalar gy[] = { d[3] - d[0], d[2] - d[1],
-			d[7] - d[4], d[6] - d[5] };
-		const btScalar gz[] = { d[4] - d[0], d[5] - d[1],
-			d[7] - d[3], d[6] - d[2] };
+		const btScalar gx[] = {d[1] - d[0], d[2] - d[3],
+							   d[5] - d[4], d[6] - d[7]};
+		const btScalar gy[] = {d[3] - d[0], d[2] - d[1],
+							   d[7] - d[4], d[6] - d[5]};
+		const btScalar gz[] = {d[4] - d[0], d[5] - d[1],
+							   d[7] - d[3], d[6] - d[2]};
 		normal.setX(Lerp(Lerp(gx[0], gx[1], iy.f),
-		    Lerp(gx[2], gx[3], iy.f), iz.f));
+						 Lerp(gx[2], gx[3], iy.f), iz.f));
 		normal.setY(Lerp(Lerp(gy[0], gy[1], ix.f),
-		    Lerp(gy[2], gy[3], ix.f), iz.f));
+						 Lerp(gy[2], gy[3], ix.f), iz.f));
 		normal.setZ(Lerp(Lerp(gz[0], gz[1], ix.f),
-		    Lerp(gz[2], gz[3], ix.f), iy.f));
+						 Lerp(gz[2], gz[3], ix.f), iy.f));
 		normal = normal.normalized();
 #else
 		normal = btVector3(d[1] - d[0], d[3] - d[0], d[4] - d[0]).normalized();
 #endif
 		/* Distance	*/
 		const btScalar d0 = Lerp(Lerp(d[0], d[1], ix.f),
-		    Lerp(d[3], d[2], ix.f), iy.f);
+								 Lerp(d[3], d[2], ix.f), iy.f);
 		const btScalar d1 = Lerp(Lerp(d[4], d[5], ix.f),
-		    Lerp(d[7], d[6], ix.f), iy.f);
+								 Lerp(d[7], d[6], ix.f), iy.f);
 		return (Lerp(d0, d1, iz.f) - margin);
 	}
 	//
 	void BuildCell(Cell& c)
 	{
 		const btVector3 org = btVector3((btScalar)c.c[0],
-		                          (btScalar)c.c[1],
-		                          (btScalar)c.c[2])
-		    * CELLSIZE * voxelsz;
+										(btScalar)c.c[1],
+										(btScalar)c.c[2]) *
+							  CELLSIZE * voxelsz;
 		for (int k = 0; k <= CELLSIZE; ++k)
 		{
 			const btScalar z = voxelsz * k + org.z();
@@ -280,14 +284,14 @@ struct btSparseSdf
 				{
 					const btScalar x = voxelsz * i + org.x();
 					c.d[i][j][k] = DistanceToShape(btVector3(x, y, z),
-					    c.pclient);
+												   c.pclient);
 				}
 			}
 		}
 	}
 	//
 	static inline btScalar DistanceToShape(const btVector3& x,
-	    const btCollisionShape* shape)
+										   const btCollisionShape* shape)
 	{
 		btTransform unit;
 		unit.setIdentity();
@@ -344,4 +348,4 @@ struct btSparseSdf
 	}
 };
 
-#endif //BT_SPARSE_SDF_H
+#endif  //BT_SPARSE_SDF_H

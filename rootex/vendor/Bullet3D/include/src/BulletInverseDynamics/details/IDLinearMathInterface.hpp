@@ -6,8 +6,8 @@
 #include "../IDConfig.hpp"
 
 #include "../../LinearMath/btMatrix3x3.h"
-#include "../../LinearMath/btMatrixX.h"
 #include "../../LinearMath/btVector3.h"
+#include "../../LinearMath/btMatrixX.h"
 #define BT_ID_HAVE_MAT3X
 
 namespace btInverseDynamics
@@ -20,10 +20,7 @@ typedef btMatrixX<idScalar> matxx;
 class vec3 : public btVector3
 {
 public:
-	vec3()
-	    : btVector3()
-	{
-	}
+	vec3() : btVector3() {}
 	vec3(const btVector3& btv) { *this = btv; }
 	idScalar& operator()(int i) { return (*this)[i]; }
 	const idScalar& operator()(int i) const { return (*this)[i]; }
@@ -38,10 +35,7 @@ public:
 class mat33 : public btMatrix3x3
 {
 public:
-	mat33()
-	    : btMatrix3x3()
-	{
-	}
+	mat33() : btMatrix3x3() {}
 	mat33(const btMatrix3x3& btm) { *this = btm; }
 	idScalar& operator()(int i, int j) { return (*this)[i][j]; }
 	const idScalar& operator()(int i, int j) const { return (*this)[i][j]; }
@@ -61,10 +55,7 @@ inline mat33 operator*(const idScalar& s, const mat33& a) { return a * s; }
 class vecx : public btVectorX<idScalar>
 {
 public:
-	vecx(int size)
-	    : btVectorX<idScalar>(size)
-	{
-	}
+	vecx(int size) : btVectorX<idScalar>(size) {}
 	const vecx& operator=(const btVectorX<idScalar>& rhs)
 	{
 		*static_cast<btVectorX<idScalar>*>(this) = rhs;
@@ -145,8 +136,7 @@ public:
 		matxx::resize(rhs.rows(), rhs.cols());
 		*this = rhs;
 	}
-	mat3x(int rows, int cols)
-	    : matxx(3, cols)
+	mat3x(int rows, int cols) : matxx(3, cols)
 	{
 	}
 	void operator=(const mat3x& rhs)
@@ -207,6 +197,6 @@ inline void setMat3xElem(const idArrayIdx row, const idArrayIdx col, const idSca
 	m->setElem(row, col, val);
 }
 
-} // namespace btInverseDynamics
+}  // namespace btInverseDynamics
 
-#endif // IDLINEARMATHINTERFACE_HPP_
+#endif  // IDLINEARMATHINTERFACE_HPP_

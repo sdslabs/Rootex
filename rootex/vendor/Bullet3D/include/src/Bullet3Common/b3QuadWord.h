@@ -15,8 +15,8 @@ subject to the following restrictions:
 #ifndef B3_SIMD_QUADWORD_H
 #define B3_SIMD_QUADWORD_H
 
-#include "b3MinMax.h"
 #include "b3Scalar.h"
+#include "b3MinMax.h"
 
 #if defined(__CELLOS_LV2) && defined(__SPU__)
 #include <altivec.h>
@@ -45,7 +45,7 @@ public:
 		return mVec128;
 	}
 
-#else //__CELLOS_LV2__ __SPU__
+#else  //__CELLOS_LV2__ __SPU__
 
 #if defined(B3_USE_SSE) || defined(B3_USE_NEON)
 public:
@@ -76,9 +76,9 @@ public:
 			b3Scalar x, y, z, w;
 		};
 	};
-#endif // B3_USE_SSE
+#endif  // B3_USE_SSE
 
-#endif //__CELLOS_LV2__ __SPU__
+#endif  //__CELLOS_LV2__ __SPU__
 
 public:
 #if defined(B3_USE_SSE) || defined(B3_USE_NEON)
@@ -133,7 +133,10 @@ public:
 #ifdef B3_USE_SSE
 		return (0xf == _mm_movemask_ps((__m128)_mm_cmpeq_ps(mVec128, other.mVec128)));
 #else
-		return ((m_floats[3] == other.m_floats[3]) && (m_floats[2] == other.m_floats[2]) && (m_floats[1] == other.m_floats[1]) && (m_floats[0] == other.m_floats[0]));
+		return ((m_floats[3] == other.m_floats[3]) &&
+				(m_floats[2] == other.m_floats[2]) &&
+				(m_floats[1] == other.m_floats[1]) &&
+				(m_floats[0] == other.m_floats[0]));
 #endif
 	}
 
@@ -236,4 +239,4 @@ public:
 	}
 };
 
-#endif //B3_SIMD_QUADWORD_H
+#endif  //B3_SIMD_QUADWORD_H

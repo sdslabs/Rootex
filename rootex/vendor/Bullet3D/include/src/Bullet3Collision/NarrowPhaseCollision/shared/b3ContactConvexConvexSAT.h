@@ -11,9 +11,9 @@
 inline b3Float4 b3Lerp3(const b3Float4& a, const b3Float4& b, float t)
 {
 	return b3MakeVector3(a.x + (b.x - a.x) * t,
-	    a.y + (b.y - a.y) * t,
-	    a.z + (b.z - a.z) * t,
-	    0.f);
+						 a.y + (b.y - a.y) * t,
+						 a.z + (b.z - a.z) * t,
+						 0.f);
 }
 
 // Clips a face to the back of a plane, return the number of vertices out, stored in ppVtxOut
@@ -65,13 +65,13 @@ inline int b3ClipFace(const b3Float4* pVtxIn, int numVertsIn, b3Float4& planeNor
 }
 
 inline int b3ClipFaceAgainstHull(const b3Float4& separatingNormal, const b3ConvexPolyhedronData* hullA,
-    const b3Float4& posA, const b3Quaternion& ornA, b3Float4* worldVertsB1, int numWorldVertsB1,
-    b3Float4* worldVertsB2, int capacityWorldVertsB2,
-    const float minDist, float maxDist,
-    const b3AlignedObjectArray<b3Float4>& verticesA, const b3AlignedObjectArray<b3GpuFace>& facesA, const b3AlignedObjectArray<int>& indicesA,
-    //const b3Float4* verticesB,	const b3GpuFace* facesB,	const int* indicesB,
-    b3Float4* contactsOut,
-    int contactCapacity)
+								 const b3Float4& posA, const b3Quaternion& ornA, b3Float4* worldVertsB1, int numWorldVertsB1,
+								 b3Float4* worldVertsB2, int capacityWorldVertsB2,
+								 const float minDist, float maxDist,
+								 const b3AlignedObjectArray<b3Float4>& verticesA, const b3AlignedObjectArray<b3GpuFace>& facesA, const b3AlignedObjectArray<int>& indicesA,
+								 //const b3Float4* verticesB,	const b3GpuFace* facesB,	const int* indicesB,
+								 b3Float4* contactsOut,
+								 int contactCapacity)
 {
 	int numContactsOut = 0;
 
@@ -87,9 +87,9 @@ inline int b3ClipFaceAgainstHull(const b3Float4& separatingNormal, const b3Conve
 		for (int face = 0; face < hullA->m_numFaces; face++)
 		{
 			const b3Float4 Normal = b3MakeVector3(
-			    facesA[hullA->m_faceOffset + face].m_plane.x,
-			    facesA[hullA->m_faceOffset + face].m_plane.y,
-			    facesA[hullA->m_faceOffset + face].m_plane.z, 0.f);
+				facesA[hullA->m_faceOffset + face].m_plane.x,
+				facesA[hullA->m_faceOffset + face].m_plane.y,
+				facesA[hullA->m_faceOffset + face].m_plane.z, 0.f);
 			const b3Float4 faceANormalWS = b3QuatRotate(ornA, Normal);
 
 			float d = b3Dot3F4(faceANormalWS, separatingNormal);
@@ -170,15 +170,15 @@ inline int b3ClipFaceAgainstHull(const b3Float4& separatingNormal, const b3Conve
 }
 
 inline int b3ClipHullAgainstHull(const b3Float4& separatingNormal,
-    const b3ConvexPolyhedronData& hullA, const b3ConvexPolyhedronData& hullB,
-    const b3Float4& posA, const b3Quaternion& ornA, const b3Float4& posB, const b3Quaternion& ornB,
-    b3Float4* worldVertsB1, b3Float4* worldVertsB2, int capacityWorldVerts,
-    const float minDist, float maxDist,
-    const b3AlignedObjectArray<b3Float4>& verticesA, const b3AlignedObjectArray<b3GpuFace>& facesA, const b3AlignedObjectArray<int>& indicesA,
-    const b3AlignedObjectArray<b3Float4>& verticesB, const b3AlignedObjectArray<b3GpuFace>& facesB, const b3AlignedObjectArray<int>& indicesB,
+								 const b3ConvexPolyhedronData& hullA, const b3ConvexPolyhedronData& hullB,
+								 const b3Float4& posA, const b3Quaternion& ornA, const b3Float4& posB, const b3Quaternion& ornB,
+								 b3Float4* worldVertsB1, b3Float4* worldVertsB2, int capacityWorldVerts,
+								 const float minDist, float maxDist,
+								 const b3AlignedObjectArray<b3Float4>& verticesA, const b3AlignedObjectArray<b3GpuFace>& facesA, const b3AlignedObjectArray<int>& indicesA,
+								 const b3AlignedObjectArray<b3Float4>& verticesB, const b3AlignedObjectArray<b3GpuFace>& facesB, const b3AlignedObjectArray<int>& indicesB,
 
-    b3Float4* contactsOut,
-    int contactCapacity)
+								 b3Float4* contactsOut,
+								 int contactCapacity)
 {
 	int numContactsOut = 0;
 	int numWorldVertsB1 = 0;
@@ -212,11 +212,11 @@ inline int b3ClipHullAgainstHull(const b3Float4& separatingNormal,
 					printf("vert[%d] = %f,%f,%f\n", i, vert.x, vert.y, vert.z);
 				}
 			}
-#endif //BT_DEBUG_SAT_FACE \
+#endif  //BT_DEBUG_SAT_FACE \
 	//if (facesB[hullB.m_faceOffset+face].m_numIndices>2)
 			{
 				const b3Float4 Normal = b3MakeVector3(facesB[hullB.m_faceOffset + face].m_plane.x,
-				    facesB[hullB.m_faceOffset + face].m_plane.y, facesB[hullB.m_faceOffset + face].m_plane.z, 0.f);
+													  facesB[hullB.m_faceOffset + face].m_plane.y, facesB[hullB.m_faceOffset + face].m_plane.z, 0.f);
 				const b3Float4 WorldNormal = b3QuatRotate(ornB, Normal);
 #ifdef BT_DEBUG_SAT_FACE
 				if (once)
@@ -249,45 +249,45 @@ inline int b3ClipHullAgainstHull(const b3Float4& separatingNormal,
 	{
 		//B3_PROFILE("clipFaceAgainstHull");
 		numContactsOut = b3ClipFaceAgainstHull((b3Float4&)separatingNormal, &hullA,
-		    posA, ornA,
-		    worldVertsB1, numWorldVertsB1, worldVertsB2, capacityWorldVerts, minDist, maxDist,
-		    verticesA, facesA, indicesA,
-		    contactsOut, contactCapacity);
+											   posA, ornA,
+											   worldVertsB1, numWorldVertsB1, worldVertsB2, capacityWorldVerts, minDist, maxDist,
+											   verticesA, facesA, indicesA,
+											   contactsOut, contactCapacity);
 	}
 
 	return numContactsOut;
 }
 
 inline int b3ClipHullHullSingle(
-    int bodyIndexA, int bodyIndexB,
-    const b3Float4& posA,
-    const b3Quaternion& ornA,
-    const b3Float4& posB,
-    const b3Quaternion& ornB,
+	int bodyIndexA, int bodyIndexB,
+	const b3Float4& posA,
+	const b3Quaternion& ornA,
+	const b3Float4& posB,
+	const b3Quaternion& ornB,
 
-    int collidableIndexA, int collidableIndexB,
+	int collidableIndexA, int collidableIndexB,
 
-    const b3AlignedObjectArray<b3RigidBodyData>* bodyBuf,
-    b3AlignedObjectArray<b3Contact4Data>* globalContactOut,
-    int& nContacts,
+	const b3AlignedObjectArray<b3RigidBodyData>* bodyBuf,
+	b3AlignedObjectArray<b3Contact4Data>* globalContactOut,
+	int& nContacts,
 
-    const b3AlignedObjectArray<b3ConvexPolyhedronData>& hostConvexDataA,
-    const b3AlignedObjectArray<b3ConvexPolyhedronData>& hostConvexDataB,
+	const b3AlignedObjectArray<b3ConvexPolyhedronData>& hostConvexDataA,
+	const b3AlignedObjectArray<b3ConvexPolyhedronData>& hostConvexDataB,
 
-    const b3AlignedObjectArray<b3Vector3>& verticesA,
-    const b3AlignedObjectArray<b3Vector3>& uniqueEdgesA,
-    const b3AlignedObjectArray<b3GpuFace>& facesA,
-    const b3AlignedObjectArray<int>& indicesA,
+	const b3AlignedObjectArray<b3Vector3>& verticesA,
+	const b3AlignedObjectArray<b3Vector3>& uniqueEdgesA,
+	const b3AlignedObjectArray<b3GpuFace>& facesA,
+	const b3AlignedObjectArray<int>& indicesA,
 
-    const b3AlignedObjectArray<b3Vector3>& verticesB,
-    const b3AlignedObjectArray<b3Vector3>& uniqueEdgesB,
-    const b3AlignedObjectArray<b3GpuFace>& facesB,
-    const b3AlignedObjectArray<int>& indicesB,
+	const b3AlignedObjectArray<b3Vector3>& verticesB,
+	const b3AlignedObjectArray<b3Vector3>& uniqueEdgesB,
+	const b3AlignedObjectArray<b3GpuFace>& facesB,
+	const b3AlignedObjectArray<int>& indicesB,
 
-    const b3AlignedObjectArray<b3Collidable>& hostCollidablesA,
-    const b3AlignedObjectArray<b3Collidable>& hostCollidablesB,
-    const b3Vector3& sepNormalWorldSpace,
-    int maxContactCapacity)
+	const b3AlignedObjectArray<b3Collidable>& hostCollidablesA,
+	const b3AlignedObjectArray<b3Collidable>& hostCollidablesB,
+	const b3Vector3& sepNormalWorldSpace,
+	int maxContactCapacity)
 {
 	int contactIndex = -1;
 	b3ConvexPolyhedronData hullA, hullB;
@@ -336,16 +336,16 @@ inline int b3ClipHullHullSingle(
 		b3Quaternion trBorn = trB.getRotation();
 
 		int numContactsOut = b3ClipHullAgainstHull(hostNormal,
-		    hostConvexDataA.at(shapeA),
-		    hostConvexDataB.at(shapeB),
-		    (b3Float4&)trA.getOrigin(), (b3Quaternion&)trAorn,
-		    (b3Float4&)trB.getOrigin(), (b3Quaternion&)trBorn,
-		    worldVertsB1, worldVertsB2, capacityWorldVerts,
-		    minDist, maxDist,
-		    verticesA, facesA, indicesA,
-		    verticesB, facesB, indicesB,
+												   hostConvexDataA.at(shapeA),
+												   hostConvexDataB.at(shapeB),
+												   (b3Float4&)trA.getOrigin(), (b3Quaternion&)trAorn,
+												   (b3Float4&)trB.getOrigin(), (b3Quaternion&)trBorn,
+												   worldVertsB1, worldVertsB2, capacityWorldVerts,
+												   minDist, maxDist,
+												   verticesA, facesA, indicesA,
+												   verticesB, facesB, indicesB,
 
-		    contactsOut, localContactCapacity);
+												   contactsOut, localContactCapacity);
 
 		if (numContactsOut > 0)
 		{
@@ -374,7 +374,7 @@ inline int b3ClipHullHullSingle(
 				contactIndex = nContacts;
 				globalContactOut->expand();
 				b3Contact4Data& contact = globalContactOut->at(nContacts);
-				contact.m_batchIdx = 0; //i;
+				contact.m_batchIdx = 0;  //i;
 				contact.m_bodyAPtrAndSignBit = (bodyBuf->at(bodyIndexA).m_invMass == 0) ? -bodyIndexA : bodyIndexA;
 				contact.m_bodyBPtrAndSignBit = (bodyBuf->at(bodyIndexB).m_invMass == 0) ? -bodyIndexB : bodyIndexB;
 
@@ -384,7 +384,7 @@ inline int b3ClipHullHullSingle(
 				//	float distance = 0.f;
 				for (int p = 0; p < numPoints; p++)
 				{
-					contact.m_worldPosB[p] = contactsOut[contactIdx.s[p]]; //check if it is actually on B
+					contact.m_worldPosB[p] = contactsOut[contactIdx.s[p]];  //check if it is actually on B
 					contact.m_worldNormalOnB = normalOnSurfaceB;
 				}
 				//printf("bodyIndexA %d,bodyIndexB %d,normal=%f,%f,%f numPoints %d\n",bodyIndexA,bodyIndexB,normalOnSurfaceB.x,normalOnSurfaceB.y,normalOnSurfaceB.z,numPoints);
@@ -401,19 +401,19 @@ inline int b3ClipHullHullSingle(
 }
 
 inline int b3ContactConvexConvexSAT(
-    int pairIndex,
-    int bodyIndexA, int bodyIndexB,
-    int collidableIndexA, int collidableIndexB,
-    const b3AlignedObjectArray<b3RigidBodyData>& rigidBodies,
-    const b3AlignedObjectArray<b3Collidable>& collidables,
-    const b3AlignedObjectArray<b3ConvexPolyhedronData>& convexShapes,
-    const b3AlignedObjectArray<b3Float4>& convexVertices,
-    const b3AlignedObjectArray<b3Float4>& uniqueEdges,
-    const b3AlignedObjectArray<int>& convexIndices,
-    const b3AlignedObjectArray<b3GpuFace>& faces,
-    b3AlignedObjectArray<b3Contact4Data>& globalContactsOut,
-    int& nGlobalContactsOut,
-    int maxContactCapacity)
+	int pairIndex,
+	int bodyIndexA, int bodyIndexB,
+	int collidableIndexA, int collidableIndexB,
+	const b3AlignedObjectArray<b3RigidBodyData>& rigidBodies,
+	const b3AlignedObjectArray<b3Collidable>& collidables,
+	const b3AlignedObjectArray<b3ConvexPolyhedronData>& convexShapes,
+	const b3AlignedObjectArray<b3Float4>& convexVertices,
+	const b3AlignedObjectArray<b3Float4>& uniqueEdges,
+	const b3AlignedObjectArray<int>& convexIndices,
+	const b3AlignedObjectArray<b3GpuFace>& faces,
+	b3AlignedObjectArray<b3Contact4Data>& globalContactsOut,
+	int& nGlobalContactsOut,
+	int maxContactCapacity)
 {
 	int contactIndex = -1;
 
@@ -440,47 +440,47 @@ inline int b3ContactConvexConvexSAT(
 #endif
 
 	bool foundSepAxis = b3FindSeparatingAxis(hullA, hullB,
-	    posA,
-	    ornA,
-	    posB,
-	    ornB,
+											 posA,
+											 ornA,
+											 posB,
+											 ornB,
 
-	    convexVertices, uniqueEdges, faces, convexIndices,
-	    convexVertices, uniqueEdges, faces, convexIndices,
+											 convexVertices, uniqueEdges, faces, convexIndices,
+											 convexVertices, uniqueEdges, faces, convexIndices,
 
-	    sepNormalWorldSpace);
+											 sepNormalWorldSpace);
 
 	if (foundSepAxis)
 	{
 		contactIndex = b3ClipHullHullSingle(
-		    bodyIndexA, bodyIndexB,
-		    posA, ornA,
-		    posB, ornB,
-		    collidableIndexA, collidableIndexB,
-		    &rigidBodies,
-		    &globalContactsOut,
-		    nGlobalContactsOut,
+			bodyIndexA, bodyIndexB,
+			posA, ornA,
+			posB, ornB,
+			collidableIndexA, collidableIndexB,
+			&rigidBodies,
+			&globalContactsOut,
+			nGlobalContactsOut,
 
-		    convexShapes,
-		    convexShapes,
+			convexShapes,
+			convexShapes,
 
-		    convexVertices,
-		    uniqueEdges,
-		    faces,
-		    convexIndices,
+			convexVertices,
+			uniqueEdges,
+			faces,
+			convexIndices,
 
-		    convexVertices,
-		    uniqueEdges,
-		    faces,
-		    convexIndices,
+			convexVertices,
+			uniqueEdges,
+			faces,
+			convexIndices,
 
-		    collidables,
-		    collidables,
-		    sepNormalWorldSpace,
-		    maxContactCapacity);
+			collidables,
+			collidables,
+			sepNormalWorldSpace,
+			maxContactCapacity);
 	}
 
 	return contactIndex;
 }
 
-#endif //B3_CONTACT_CONVEX_CONVEX_SAT_H
+#endif  //B3_CONTACT_CONVEX_CONVEX_SAT_H

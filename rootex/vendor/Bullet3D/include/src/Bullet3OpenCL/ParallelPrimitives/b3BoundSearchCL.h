@@ -19,14 +19,14 @@ subject to the following restrictions:
 #pragma once
 
 /*#include <Adl/Adl.h>
-#include <AdlPrimitives/Fill/Fill.h>
 #include <AdlPrimitives/Math/Math.h>
 #include <AdlPrimitives/Sort/SortData.h>
+#include <AdlPrimitives/Fill/Fill.h>
 */
 
-#include "b3FillCL.h"
 #include "b3OpenCLArray.h"
-#include "b3RadixSort32CL.h" //for b3SortData (perhaps move it?)
+#include "b3FillCL.h"
+#include "b3RadixSort32CL.h"  //for b3SortData (perhaps move it?)
 class b3BoundSearchCL
 {
 public:
@@ -61,4 +61,4 @@ public:
 	void executeHost(b3AlignedObjectArray<b3SortData>& src, int nSrc, b3AlignedObjectArray<unsigned int>& dst, int nDst, Option option = BOUND_LOWER);
 };
 
-#endif //B3_BOUNDSEARCH_H
+#endif  //B3_BOUNDSEARCH_H

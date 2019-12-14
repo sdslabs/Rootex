@@ -16,10 +16,10 @@ subject to the following restrictions:
 #ifndef BT_COLLISION_WORLD_IMPORTER_H
 #define BT_COLLISION_WORLD_IMPORTER_H
 
-#include "LinearMath/btAlignedObjectArray.h"
-#include "LinearMath/btHashMap.h"
 #include "LinearMath/btTransform.h"
 #include "LinearMath/btVector3.h"
+#include "LinearMath/btAlignedObjectArray.h"
+#include "LinearMath/btHashMap.h"
 
 class btCollisionShape;
 class btCollisionObject;
@@ -150,7 +150,7 @@ public:
 	virtual btCollisionShape* createConvexTriangleMeshShape(btStridingMeshInterface* trimesh);
 #ifdef SUPPORT_GIMPACT_SHAPE_IMPORT
 	virtual btGImpactMeshShape* createGimpactShape(btStridingMeshInterface* trimesh);
-#endif //SUPPORT_GIMPACT_SHAPE_IMPORT
+#endif  //SUPPORT_GIMPACT_SHAPE_IMPORT
 	virtual btStridingMeshInterfaceData* createStridingMeshInterfaceData(btStridingMeshInterfaceData* interfaceData);
 
 	virtual class btConvexHullShape* createConvexHullShape();
@@ -166,4 +166,4 @@ public:
 	virtual btTriangleInfoMap* createTriangleInfoMap();
 };
 
-#endif //BT_WORLD_IMPORTER_H
+#endif  //BT_WORLD_IMPORTER_H

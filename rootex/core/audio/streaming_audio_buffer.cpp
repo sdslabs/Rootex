@@ -14,7 +14,7 @@ void StreamingAudioBuffer::initializeBuffers()
 	AL_CHECK(alGenBuffers(BUFFER_COUNT, m_Buffers));
 
 	ALsizei blockAlign = m_AudioFile->getChannels() * (m_AudioFile->getBitDepth() / 8.0);
-
+	
 	m_BufferSize = m_AudioFile->getAudioDataSize() / BUFFER_COUNT;
 	m_BufferSize -= (m_BufferSize % blockAlign);
 	m_BufferCursor = m_AudioFile->getData()->getRawData()->data();
@@ -28,12 +28,12 @@ void StreamingAudioBuffer::initializeBuffers()
 			break;
 		}
 		AL_CHECK(alBufferData(
-		    m_Buffers[i],
-		    m_AudioFile->getFormat(),
-		    (const ALvoid*)m_BufferCursor,
-		    (ALsizei)m_BufferSize,
-		    m_AudioFile->getFrequency()));
-
+			m_Buffers[i], 
+			m_AudioFile->getFormat(), 
+			(const ALvoid*)m_BufferCursor, 
+			(ALsizei)m_BufferSize, 
+			m_AudioFile->getFrequency()));
+		
 		m_BufferCursor += m_BufferSize;
 		i++;
 	}
@@ -66,19 +66,19 @@ void StreamingAudioBuffer::loadNewBuffers(int count, bool isLooping)
 				break;
 			}
 		}
-
+		
 		if (m_BufferEnd >= m_AudioFile->getData()->getRawData()->data() + m_AudioFile->getAudioDataSize()) // Data not left enough to entirely fill the next buffer
 		{
 			m_BufferEnd = m_AudioFile->getData()->getRawData()->data() + m_AudioFile->getAudioDataSize(); // Only take what you can
 		}
 
 		AL_CHECK(alBufferData(
-		    m_Buffers[i],
-		    m_AudioFile->getFormat(),
-		    m_BufferCursor,
-		    m_BufferEnd - m_BufferCursor,
-		    m_AudioFile->getFrequency()));
-
+			m_Buffers[i], 
+			m_AudioFile->getFormat(), 
+			m_BufferCursor, 
+			m_BufferEnd - m_BufferCursor, 
+			m_AudioFile->getFrequency()));
+		
 		m_BufferCursor = m_BufferEnd;
 	}
 }

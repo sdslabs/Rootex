@@ -16,11 +16,11 @@ subject to the following restrictions:
 #ifndef BT_OBB_BOX_2D_SHAPE_H
 #define BT_OBB_BOX_2D_SHAPE_H
 
-#include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h"
-#include "BulletCollision/CollisionShapes/btCollisionMargin.h"
 #include "BulletCollision/CollisionShapes/btPolyhedralConvexShape.h"
-#include "LinearMath/btMinMax.h"
+#include "BulletCollision/CollisionShapes/btCollisionMargin.h"
+#include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h"
 #include "LinearMath/btVector3.h"
+#include "LinearMath/btMinMax.h"
 
 ///The btBox2dShape is a box primitive around the origin, its sides axis aligned with length specified by half extents, in local shape coordinates. When used as part of a btCollisionObject or btRigidBody it will be an oriented box in world space.
 ATTRIBUTE_ALIGNED16(class)
@@ -45,7 +45,7 @@ public:
 
 	const btVector3& getHalfExtentsWithoutMargin() const
 	{
-		return m_implicitShapeDimensions; //changed in Bullet 2.63: assume the scaling and margin are included
+		return m_implicitShapeDimensions;  //changed in Bullet 2.63: assume the scaling and margin are included
 	}
 
 	virtual btVector3 localGetSupportingVertex(const btVector3& vec) const
@@ -55,8 +55,8 @@ public:
 		halfExtents += margin;
 
 		return btVector3(btFsels(vec.x(), halfExtents.x(), -halfExtents.x()),
-		    btFsels(vec.y(), halfExtents.y(), -halfExtents.y()),
-		    btFsels(vec.z(), halfExtents.z(), -halfExtents.z()));
+						 btFsels(vec.y(), halfExtents.y(), -halfExtents.y()),
+						 btFsels(vec.z(), halfExtents.z(), -halfExtents.z()));
 	}
 
 	SIMD_FORCE_INLINE btVector3 localGetSupportingVertexWithoutMargin(const btVector3& vec) const
@@ -64,8 +64,8 @@ public:
 		const btVector3& halfExtents = getHalfExtentsWithoutMargin();
 
 		return btVector3(btFsels(vec.x(), halfExtents.x(), -halfExtents.x()),
-		    btFsels(vec.y(), halfExtents.y(), -halfExtents.y()),
-		    btFsels(vec.z(), halfExtents.z(), -halfExtents.z()));
+						 btFsels(vec.y(), halfExtents.y(), -halfExtents.y()),
+						 btFsels(vec.z(), halfExtents.z(), -halfExtents.z()));
 	}
 
 	virtual void batchedUnitVectorGetSupportingVertexWithoutMargin(const btVector3* vectors, btVector3* supportVerticesOut, int numVectors) const
@@ -76,15 +76,15 @@ public:
 		{
 			const btVector3& vec = vectors[i];
 			supportVerticesOut[i].setValue(btFsels(vec.x(), halfExtents.x(), -halfExtents.x()),
-			    btFsels(vec.y(), halfExtents.y(), -halfExtents.y()),
-			    btFsels(vec.z(), halfExtents.z(), -halfExtents.z()));
+										   btFsels(vec.y(), halfExtents.y(), -halfExtents.y()),
+										   btFsels(vec.z(), halfExtents.z(), -halfExtents.z()));
 		}
 	}
 
 	///a btBox2dShape is a flat 2D box in the X-Y plane (Z extents are zero)
 	btBox2dShape(const btVector3& boxHalfExtents)
-	    : btPolyhedralConvexShape()
-	    , m_centroid(0, 0, 0)
+		: btPolyhedralConvexShape(),
+		  m_centroid(0, 0, 0)
 	{
 		m_vertices[0].setValue(-boxHalfExtents.getX(), -boxHalfExtents.getY(), 0);
 		m_vertices[1].setValue(boxHalfExtents.getX(), -boxHalfExtents.getY(), 0);
@@ -181,9 +181,9 @@ public:
 		btVector3 halfExtents = getHalfExtentsWithoutMargin();
 
 		vtx = btVector3(
-		    halfExtents.x() * (1 - (i & 1)) - halfExtents.x() * (i & 1),
-		    halfExtents.y() * (1 - ((i & 2) >> 1)) - halfExtents.y() * ((i & 2) >> 1),
-		    halfExtents.z() * (1 - ((i & 4) >> 2)) - halfExtents.z() * ((i & 4) >> 2));
+			halfExtents.x() * (1 - (i & 1)) - halfExtents.x() * (i & 1),
+			halfExtents.y() * (1 - ((i & 2) >> 1)) - halfExtents.y() * ((i & 2) >> 1),
+			halfExtents.z() * (1 - ((i & 4) >> 2)) - halfExtents.z() * ((i & 4) >> 2));
 	}
 
 	virtual void getPlaneEquation(btVector4 & plane, int i) const
@@ -192,26 +192,26 @@ public:
 
 		switch (i)
 		{
-		case 0:
-			plane.setValue(btScalar(1.), btScalar(0.), btScalar(0.), -halfExtents.x());
-			break;
-		case 1:
-			plane.setValue(btScalar(-1.), btScalar(0.), btScalar(0.), -halfExtents.x());
-			break;
-		case 2:
-			plane.setValue(btScalar(0.), btScalar(1.), btScalar(0.), -halfExtents.y());
-			break;
-		case 3:
-			plane.setValue(btScalar(0.), btScalar(-1.), btScalar(0.), -halfExtents.y());
-			break;
-		case 4:
-			plane.setValue(btScalar(0.), btScalar(0.), btScalar(1.), -halfExtents.z());
-			break;
-		case 5:
-			plane.setValue(btScalar(0.), btScalar(0.), btScalar(-1.), -halfExtents.z());
-			break;
-		default:
-			btAssert(0);
+			case 0:
+				plane.setValue(btScalar(1.), btScalar(0.), btScalar(0.), -halfExtents.x());
+				break;
+			case 1:
+				plane.setValue(btScalar(-1.), btScalar(0.), btScalar(0.), -halfExtents.x());
+				break;
+			case 2:
+				plane.setValue(btScalar(0.), btScalar(1.), btScalar(0.), -halfExtents.y());
+				break;
+			case 3:
+				plane.setValue(btScalar(0.), btScalar(-1.), btScalar(0.), -halfExtents.y());
+				break;
+			case 4:
+				plane.setValue(btScalar(0.), btScalar(0.), btScalar(1.), -halfExtents.z());
+				break;
+			case 5:
+				plane.setValue(btScalar(0.), btScalar(0.), btScalar(-1.), -halfExtents.z());
+				break;
+			default:
+				btAssert(0);
 		}
 	}
 
@@ -223,58 +223,58 @@ public:
 
 		switch (i)
 		{
-		case 0:
-			edgeVert0 = 0;
-			edgeVert1 = 1;
-			break;
-		case 1:
-			edgeVert0 = 0;
-			edgeVert1 = 2;
-			break;
-		case 2:
-			edgeVert0 = 1;
-			edgeVert1 = 3;
+			case 0:
+				edgeVert0 = 0;
+				edgeVert1 = 1;
+				break;
+			case 1:
+				edgeVert0 = 0;
+				edgeVert1 = 2;
+				break;
+			case 2:
+				edgeVert0 = 1;
+				edgeVert1 = 3;
 
-			break;
-		case 3:
-			edgeVert0 = 2;
-			edgeVert1 = 3;
-			break;
-		case 4:
-			edgeVert0 = 0;
-			edgeVert1 = 4;
-			break;
-		case 5:
-			edgeVert0 = 1;
-			edgeVert1 = 5;
+				break;
+			case 3:
+				edgeVert0 = 2;
+				edgeVert1 = 3;
+				break;
+			case 4:
+				edgeVert0 = 0;
+				edgeVert1 = 4;
+				break;
+			case 5:
+				edgeVert0 = 1;
+				edgeVert1 = 5;
 
-			break;
-		case 6:
-			edgeVert0 = 2;
-			edgeVert1 = 6;
-			break;
-		case 7:
-			edgeVert0 = 3;
-			edgeVert1 = 7;
-			break;
-		case 8:
-			edgeVert0 = 4;
-			edgeVert1 = 5;
-			break;
-		case 9:
-			edgeVert0 = 4;
-			edgeVert1 = 6;
-			break;
-		case 10:
-			edgeVert0 = 5;
-			edgeVert1 = 7;
-			break;
-		case 11:
-			edgeVert0 = 6;
-			edgeVert1 = 7;
-			break;
-		default:
-			btAssert(0);
+				break;
+			case 6:
+				edgeVert0 = 2;
+				edgeVert1 = 6;
+				break;
+			case 7:
+				edgeVert0 = 3;
+				edgeVert1 = 7;
+				break;
+			case 8:
+				edgeVert0 = 4;
+				edgeVert1 = 5;
+				break;
+			case 9:
+				edgeVert0 = 4;
+				edgeVert1 = 6;
+				break;
+			case 10:
+				edgeVert0 = 5;
+				edgeVert1 = 7;
+				break;
+			case 11:
+				edgeVert0 = 6;
+				edgeVert1 = 7;
+				break;
+			default:
+				btAssert(0);
 		}
 
 		getVertex(edgeVert0, pa);
@@ -287,7 +287,12 @@ public:
 
 		//btScalar minDist = 2*tolerance;
 
-		bool result = (pt.x() <= (halfExtents.x() + tolerance)) && (pt.x() >= (-halfExtents.x() - tolerance)) && (pt.y() <= (halfExtents.y() + tolerance)) && (pt.y() >= (-halfExtents.y() - tolerance)) && (pt.z() <= (halfExtents.z() + tolerance)) && (pt.z() >= (-halfExtents.z() - tolerance));
+		bool result = (pt.x() <= (halfExtents.x() + tolerance)) &&
+					  (pt.x() >= (-halfExtents.x() - tolerance)) &&
+					  (pt.y() <= (halfExtents.y() + tolerance)) &&
+					  (pt.y() >= (-halfExtents.y() - tolerance)) &&
+					  (pt.z() <= (halfExtents.z() + tolerance)) &&
+					  (pt.z() >= (-halfExtents.z() - tolerance));
 
 		return result;
 	}
@@ -307,28 +312,28 @@ public:
 	{
 		switch (index)
 		{
-		case 0:
-			penetrationVector.setValue(btScalar(1.), btScalar(0.), btScalar(0.));
-			break;
-		case 1:
-			penetrationVector.setValue(btScalar(-1.), btScalar(0.), btScalar(0.));
-			break;
-		case 2:
-			penetrationVector.setValue(btScalar(0.), btScalar(1.), btScalar(0.));
-			break;
-		case 3:
-			penetrationVector.setValue(btScalar(0.), btScalar(-1.), btScalar(0.));
-			break;
-		case 4:
-			penetrationVector.setValue(btScalar(0.), btScalar(0.), btScalar(1.));
-			break;
-		case 5:
-			penetrationVector.setValue(btScalar(0.), btScalar(0.), btScalar(-1.));
-			break;
-		default:
-			btAssert(0);
+			case 0:
+				penetrationVector.setValue(btScalar(1.), btScalar(0.), btScalar(0.));
+				break;
+			case 1:
+				penetrationVector.setValue(btScalar(-1.), btScalar(0.), btScalar(0.));
+				break;
+			case 2:
+				penetrationVector.setValue(btScalar(0.), btScalar(1.), btScalar(0.));
+				break;
+			case 3:
+				penetrationVector.setValue(btScalar(0.), btScalar(-1.), btScalar(0.));
+				break;
+			case 4:
+				penetrationVector.setValue(btScalar(0.), btScalar(0.), btScalar(1.));
+				break;
+			case 5:
+				penetrationVector.setValue(btScalar(0.), btScalar(0.), btScalar(-1.));
+				break;
+			default:
+				btAssert(0);
 		}
 	}
 };
 
-#endif //BT_OBB_BOX_2D_SHAPE_H
+#endif  //BT_OBB_BOX_2D_SHAPE_H

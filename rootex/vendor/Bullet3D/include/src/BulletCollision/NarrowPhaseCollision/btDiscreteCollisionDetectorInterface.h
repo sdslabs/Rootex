@@ -39,7 +39,7 @@ struct btDiscreteCollisionDetectorInterface
 	struct ClosestPointInput
 	{
 		ClosestPointInput()
-		    : m_maximumDistanceSquared(btScalar(BT_LARGE_FLOAT))
+			: m_maximumDistanceSquared(btScalar(BT_LARGE_FLOAT))
 		{
 		}
 
@@ -48,7 +48,7 @@ struct btDiscreteCollisionDetectorInterface
 		btScalar m_maximumDistanceSquared;
 	};
 
-	virtual ~btDiscreteCollisionDetectorInterface() {};
+	virtual ~btDiscreteCollisionDetectorInterface(){};
 
 	//
 	// give either closest points (distance > 0) or penetration (distance)
@@ -61,16 +61,15 @@ struct btStorageResult : public btDiscreteCollisionDetectorInterface::Result
 {
 	btVector3 m_normalOnSurfaceB;
 	btVector3 m_closestPointInB;
-	btScalar m_distance; //negative means penetration !
+	btScalar m_distance;  //negative means penetration !
 
 protected:
-	btStorageResult()
-	    : m_distance(btScalar(BT_LARGE_FLOAT))
+	btStorageResult() : m_distance(btScalar(BT_LARGE_FLOAT))
 	{
 	}
 
 public:
-	virtual ~btStorageResult() {};
+	virtual ~btStorageResult(){};
 
 	virtual void addContactPoint(const btVector3& normalOnBInWorld, const btVector3& pointInWorld, btScalar depth)
 	{
@@ -83,4 +82,4 @@ public:
 	}
 };
 
-#endif //BT_DISCRETE_COLLISION_DETECTOR1_INTERFACE_H
+#endif  //BT_DISCRETE_COLLISION_DETECTOR1_INTERFACE_H

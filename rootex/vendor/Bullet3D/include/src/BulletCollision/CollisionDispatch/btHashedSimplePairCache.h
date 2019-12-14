@@ -23,9 +23,9 @@ const int BT_SIMPLE_NULL_PAIR = 0xffffffff;
 struct btSimplePair
 {
 	btSimplePair(int indexA, int indexB)
-	    : m_indexA(indexA)
-	    , m_indexB(indexB)
-	    , m_userPointer(0)
+		: m_indexA(indexA),
+		  m_indexB(indexB),
+		  m_userPointer(0)
 	{
 	}
 
@@ -44,7 +44,7 @@ extern int gOverlappingSimplePairs;
 extern int gRemoveSimplePairs;
 extern int gAddedSimplePairs;
 extern int gFindSimplePairs;
-#endif //BT_DEBUG_COLLISION_PAIRS
+#endif  //BT_DEBUG_COLLISION_PAIRS
 
 class btHashedSimplePairCache
 {
@@ -146,4 +146,4 @@ private:
 	}
 };
 
-#endif //BT_HASHED_SIMPLE_PAIR_CACHE_H
+#endif  //BT_HASHED_SIMPLE_PAIR_CACHE_H

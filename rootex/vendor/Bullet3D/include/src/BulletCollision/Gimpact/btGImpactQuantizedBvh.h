@@ -25,8 +25,8 @@ subject to the following restrictions:
 */
 
 #include "btGImpactBvh.h"
-#include "btGImpactQuantizedBvhStructs.h"
 #include "btQuantization.h"
+#include "btGImpactQuantizedBvhStructs.h"
 
 class GIM_QUANTIZED_BVH_NODE_ARRAY : public btAlignedObjectArray<BT_QUANTIZED_BVH_NODE>
 {
@@ -45,8 +45,8 @@ protected:
 	void calc_quantization(GIM_BVH_DATA_ARRAY& primitive_boxes, btScalar boundMargin = btScalar(1.0));
 
 	int _sort_and_calc_splitting_index(
-	    GIM_BVH_DATA_ARRAY& primitive_boxes,
-	    int startIndex, int endIndex, int splitAxis);
+		GIM_BVH_DATA_ARRAY& primitive_boxes,
+		int startIndex, int endIndex, int splitAxis);
 
 	int _calc_splitting_axis(GIM_BVH_DATA_ARRAY& primitive_boxes, int startIndex, int endIndex);
 
@@ -63,14 +63,14 @@ public:
 	void build_tree(GIM_BVH_DATA_ARRAY& primitive_boxes);
 
 	SIMD_FORCE_INLINE void quantizePoint(
-	    unsigned short* quantizedpoint, const btVector3& point) const
+		unsigned short* quantizedpoint, const btVector3& point) const
 	{
 		bt_quantize_clamp(quantizedpoint, point, m_global_bound.m_min, m_global_bound.m_max, m_bvhQuantization);
 	}
 
 	SIMD_FORCE_INLINE bool testQuantizedBoxOverlapp(
-	    int node_index,
-	    unsigned short* quantizedMin, unsigned short* quantizedMax) const
+		int node_index,
+		unsigned short* quantizedMin, unsigned short* quantizedMax) const
 	{
 		return m_node_array[node_index].testQuantizedBoxOverlapp(quantizedMin, quantizedMax);
 	}
@@ -101,27 +101,27 @@ public:
 	SIMD_FORCE_INLINE void getNodeBound(int nodeindex, btAABB& bound) const
 	{
 		bound.m_min = bt_unquantize(
-		    m_node_array[nodeindex].m_quantizedAabbMin,
-		    m_global_bound.m_min, m_bvhQuantization);
+			m_node_array[nodeindex].m_quantizedAabbMin,
+			m_global_bound.m_min, m_bvhQuantization);
 
 		bound.m_max = bt_unquantize(
-		    m_node_array[nodeindex].m_quantizedAabbMax,
-		    m_global_bound.m_min, m_bvhQuantization);
+			m_node_array[nodeindex].m_quantizedAabbMax,
+			m_global_bound.m_min, m_bvhQuantization);
 	}
 
 	SIMD_FORCE_INLINE void setNodeBound(int nodeindex, const btAABB& bound)
 	{
 		bt_quantize_clamp(m_node_array[nodeindex].m_quantizedAabbMin,
-		    bound.m_min,
-		    m_global_bound.m_min,
-		    m_global_bound.m_max,
-		    m_bvhQuantization);
+						  bound.m_min,
+						  m_global_bound.m_min,
+						  m_global_bound.m_max,
+						  m_bvhQuantization);
 
 		bt_quantize_clamp(m_node_array[nodeindex].m_quantizedAabbMax,
-		    bound.m_max,
-		    m_global_bound.m_min,
-		    m_global_bound.m_max,
-		    m_bvhQuantization);
+						  bound.m_max,
+						  m_global_bound.m_min,
+						  m_global_bound.m_max,
+						  m_bvhQuantization);
 	}
 
 	SIMD_FORCE_INLINE int getLeftNode(int nodeindex) const
@@ -131,8 +131,7 @@ public:
 
 	SIMD_FORCE_INLINE int getRightNode(int nodeindex) const
 	{
-		if (m_node_array[nodeindex + 1].isLeafNode())
-			return nodeindex + 2;
+		if (m_node_array[nodeindex + 1].isLeafNode()) return nodeindex + 2;
 		return nodeindex + 1 + m_node_array[nodeindex + 1].getEscapeIndex();
 	}
 
@@ -211,7 +210,7 @@ public:
 
 	//! returns the indices of the primitives in the m_primitive_manager
 	SIMD_FORCE_INLINE bool boxQueryTrans(const btAABB& box,
-	    const btTransform& transform, btAlignedObjectArray<int>& collided_results) const
+										 const btTransform& transform, btAlignedObjectArray<int>& collided_results) const
 	{
 		btAABB transbox = box;
 		transbox.appy_transform(transform);
@@ -220,8 +219,8 @@ public:
 
 	//! returns the indices of the primitives in the m_primitive_manager
 	bool rayQuery(
-	    const btVector3& ray_dir, const btVector3& ray_origin,
-	    btAlignedObjectArray<int>& collided_results) const;
+		const btVector3& ray_dir, const btVector3& ray_origin,
+		btAlignedObjectArray<int>& collided_results) const;
 
 	//! tells if this set has hierarcht
 	SIMD_FORCE_INLINE bool hasHierarchy() const
@@ -289,11 +288,11 @@ public:
 
 #ifdef TRI_COLLISION_PROFILING
 	static float getAverageTreeCollisionTime();
-#endif //TRI_COLLISION_PROFILING
+#endif  //TRI_COLLISION_PROFILING
 
 	static void find_collision(const btGImpactQuantizedBvh* boxset1, const btTransform& trans1,
-	    const btGImpactQuantizedBvh* boxset2, const btTransform& trans2,
-	    btPairSet& collision_pairs);
+							   const btGImpactQuantizedBvh* boxset2, const btTransform& trans2,
+							   btPairSet& collision_pairs);
 };
 
-#endif // GIM_BOXPRUNING_H_INCLUDED
+#endif  // GIM_BOXPRUNING_H_INCLUDED

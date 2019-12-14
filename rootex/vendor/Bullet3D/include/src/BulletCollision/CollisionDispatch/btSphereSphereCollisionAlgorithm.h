@@ -16,9 +16,9 @@ subject to the following restrictions:
 #ifndef BT_SPHERE_SPHERE_COLLISION_ALGORITHM_H
 #define BT_SPHERE_SPHERE_COLLISION_ALGORITHM_H
 
+#include "btActivatingCollisionAlgorithm.h"
 #include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h"
 #include "BulletCollision/CollisionDispatch/btCollisionCreateFunc.h"
-#include "btActivatingCollisionAlgorithm.h"
 #include "btCollisionDispatcher.h"
 
 class btPersistentManifold;
@@ -35,9 +35,7 @@ public:
 	btSphereSphereCollisionAlgorithm(btPersistentManifold* mf, const btCollisionAlgorithmConstructionInfo& ci, const btCollisionObjectWrapper* col0Wrap, const btCollisionObjectWrapper* col1Wrap);
 
 	btSphereSphereCollisionAlgorithm(const btCollisionAlgorithmConstructionInfo& ci)
-	    : btActivatingCollisionAlgorithm(ci)
-	{
-	}
+		: btActivatingCollisionAlgorithm(ci) {}
 
 	virtual void processCollision(const btCollisionObjectWrapper* body0Wrap, const btCollisionObjectWrapper* body1Wrap, const btDispatcherInfo& dispatchInfo, btManifoldResult* resultOut);
 
@@ -63,4 +61,4 @@ public:
 	};
 };
 
-#endif //BT_SPHERE_SPHERE_COLLISION_ALGORITHM_H
+#endif  //BT_SPHERE_SPHERE_COLLISION_ALGORITHM_H

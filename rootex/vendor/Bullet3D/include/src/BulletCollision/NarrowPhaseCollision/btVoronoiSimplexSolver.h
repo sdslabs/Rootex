@@ -27,7 +27,7 @@ subject to the following restrictions:
 #define VORONOI_DEFAULT_EQUAL_VERTEX_THRESHOLD 1e-12f
 #else
 #define VORONOI_DEFAULT_EQUAL_VERTEX_THRESHOLD 0.0001f
-#endif //BT_USE_DOUBLE_PRECISION
+#endif  //BT_USE_DOUBLE_PRECISION
 
 struct btUsageBitfield
 {
@@ -71,7 +71,10 @@ struct btSubSimplexClosestResult
 	}
 	bool isValid()
 	{
-		bool valid = (m_barycentricCoords[0] >= btScalar(0.)) && (m_barycentricCoords[1] >= btScalar(0.)) && (m_barycentricCoords[2] >= btScalar(0.)) && (m_barycentricCoords[3] >= btScalar(0.));
+		bool valid = (m_barycentricCoords[0] >= btScalar(0.)) &&
+					 (m_barycentricCoords[1] >= btScalar(0.)) &&
+					 (m_barycentricCoords[2] >= btScalar(0.)) &&
+					 (m_barycentricCoords[3] >= btScalar(0.));
 
 		return valid;
 	}
@@ -125,7 +128,7 @@ public:
 
 public:
 	btVoronoiSimplexSolver()
-	    : m_equalVertexThreshold(VORONOI_DEFAULT_EQUAL_VERTEX_THRESHOLD)
+		: m_equalVertexThreshold(VORONOI_DEFAULT_EQUAL_VERTEX_THRESHOLD)
 	{
 	}
 	void reset();
@@ -167,4 +170,4 @@ public:
 	}
 };
 
-#endif //BT_VORONOI_SIMPLEX_SOLVER_H
+#endif  //BT_VORONOI_SIMPLEX_SOLVER_H

@@ -20,7 +20,7 @@ protected:
 	ResourceData* m_ResourceData;
 
 	explicit ResourceFile(const Type& type, ResourceData* resData);
-
+	
 	friend class ResourceLoader;
 
 public:
@@ -37,7 +37,7 @@ public:
 };
 
 class TextResourceFile : public ResourceFile
-{
+{	
 protected:
 	explicit TextResourceFile(const Type& type, ResourceData* resData);
 	virtual ~TextResourceFile();

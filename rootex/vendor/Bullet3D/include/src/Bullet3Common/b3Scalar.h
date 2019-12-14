@@ -20,9 +20,9 @@ subject to the following restrictions:
 #pragma unmanaged
 #endif
 
-#include <float.h>
 #include <math.h>
-#include <stdlib.h> //size_t for MSVC 6.0
+#include <stdlib.h>  //size_t for MSVC 6.0
+#include <float.h>
 
 //Original repository is at http://github.com/erwincoumans/bullet3
 #define B3_BULLET_VERSION 300
@@ -36,25 +36,25 @@ inline int b3GetVersion()
 #define B3_DEBUG
 #endif
 
-#include "b3Logging.h" //for b3Error
+#include "b3Logging.h"  //for b3Error
 
 #ifdef _WIN32
 
-#if defined(__GNUC__) // it should handle both MINGW and CYGWIN
-#define B3_FORCE_INLINE __inline__ __attribute__((always_inline))
-#define B3_ATTRIBUTE_ALIGNED16(a) a __attribute__((aligned(16)))
-#define B3_ATTRIBUTE_ALIGNED64(a) a __attribute__((aligned(64)))
-#define B3_ATTRIBUTE_ALIGNED128(a) a __attribute__((aligned(128)))
-#elif (defined(_MSC_VER) && _MSC_VER < 1300)
+#if  defined(__GNUC__)	// it should handle both MINGW and CYGWIN
+#define B3_FORCE_INLINE             __inline__ __attribute__((always_inline))
+#define B3_ATTRIBUTE_ALIGNED16(a)   a __attribute__((aligned(16)))
+#define B3_ATTRIBUTE_ALIGNED64(a)   a __attribute__((aligned(64)))
+#define B3_ATTRIBUTE_ALIGNED128(a)  a __attribute__((aligned(128)))
+#elif ( defined(_MSC_VER) && _MSC_VER < 1300 )
 #define B3_FORCE_INLINE inline
 #define B3_ATTRIBUTE_ALIGNED16(a) a
 #define B3_ATTRIBUTE_ALIGNED64(a) a
 #define B3_ATTRIBUTE_ALIGNED128(a) a
 #else
 //#define B3_HAS_ALIGNED_ALLOCATOR
-#pragma warning(disable : 4324) // disable padding warning
+#pragma warning(disable : 4324)  // disable padding warning
 //			#pragma warning(disable:4530) // Disable the exception disable but used in MSCV Stl warning.
-#pragma warning(disable : 4996) //Turn off warnings about deprecated C routines
+#pragma warning(disable : 4996)  //Turn off warnings about deprecated C routines
 //			#pragma warning(disable:4786) // Disable the "debug name too long" warning
 
 #define B3_FORCE_INLINE __forceinline
@@ -80,14 +80,14 @@ inline int b3GetVersion()
 //If you are not embedded Bullet data in your classes, or make sure that you align those classes on 16-byte boundaries
 //you can manually enable this line or set it in the build system for a bit of performance gain (a few percent, dependent on usage)
 //#define B3_USE_SSE_IN_API
-#endif //B3_USE_SSE
+#endif  //B3_USE_SSE
 #include <emmintrin.h>
 #endif
 #endif
 
-#endif //_XBOX
+#endif  //_XBOX
 
-#endif //__MINGW32__
+#endif  //__MINGW32__
 
 #ifdef B3_DEBUG
 #ifdef _MSC_VER
@@ -97,16 +97,16 @@ inline int b3GetVersion()
 		if (!(x))                 \
 		{                         \
 			b3Error(              \
-			    "Assert "__FILE__ \
-			    ":%u (" #x ")\n", \
-			    __LINE__);        \
+				"Assert "__FILE__ \
+				":%u (" #x ")\n", \
+				__LINE__);        \
 			__debugbreak();       \
 		}                         \
 	}
-#else //_MSC_VER
+#else  //_MSC_VER
 #include <assert.h>
 #define b3Assert assert
-#endif //_MSC_VER
+#endif  //_MSC_VER
 #else
 #define b3Assert(x)
 #endif
@@ -135,9 +135,9 @@ inline int b3GetVersion()
 		if (!(x))                 \
 		{                         \
 			b3Error(              \
-			    "Assert "__FILE__ \
-			    ":%u (" #x ")\n", \
-			    __LINE__);        \
+				"Assert "__FILE__ \
+				":%u (" #x ")\n", \
+				__LINE__);        \
 			spu_hcmpeq(0, 0);     \
 		}                         \
 	}
@@ -196,16 +196,16 @@ inline int b3GetVersion()
 #else
 #include <emmintrin.h>
 #endif
-#endif //B3_USE_SSE
+#endif  //B3_USE_SSE
 #elif defined(__armv7__)
 #ifdef __clang__
 #define B3_USE_NEON 1
 
 #if defined B3_USE_NEON && defined(__clang__)
 #include <arm_neon.h>
-#endif //B3_USE_NEON
-#endif //__clang__
-#endif //__arm__
+#endif  //B3_USE_NEON
+#endif  //__clang__
+#endif  //__arm__
 
 #define B3_FORCE_INLINE inline __attribute__((always_inline))
 ///@todo: check out alignment methods for other platforms/compilers
@@ -227,12 +227,12 @@ inline int b3GetVersion()
 			asm volatile("int3");                                               \
 		}                                                                       \
 	}
-#else //defined (__i386__) || defined (__x86_64__)
+#else  //defined (__i386__) || defined (__x86_64__)
 #define b3Assert assert
-#endif //defined (__i386__) || defined (__x86_64__)
-#else //defined(DEBUG) || defined (_DEBUG)
+#endif  //defined (__i386__) || defined (__x86_64__)
+#else   //defined(DEBUG) || defined (_DEBUG)
 #define b3Assert(x)
-#endif //defined(DEBUG) || defined (_DEBUG)
+#endif  //defined(DEBUG) || defined (_DEBUG)
 
 //b3FullAssert is optional, slows down a lot
 #define b3FullAssert(x)
@@ -263,11 +263,11 @@ inline int b3GetVersion()
 #define b3FullAssert(x)
 #define b3Likely(_c) _c
 #define b3Unlikely(_c) _c
-#endif //__APPLE__
+#endif  //__APPLE__
 
-#endif // LIBSPE2
+#endif  // LIBSPE2
 
-#endif //__CELLOS_LV2__
+#endif  //__CELLOS_LV2__
 #endif
 
 ///The b3Scalar type abstracts floating point numbers, to easily switch between double and single floating point precision.
@@ -283,19 +283,19 @@ typedef float b3Scalar;
 
 #ifdef B3_USE_SSE
 typedef __m128 b3SimdFloat4;
-#endif //B3_USE_SSE
+#endif  //B3_USE_SSE
 
 #if defined B3_USE_SSE_IN_API && defined(B3_USE_SSE)
 #ifdef _WIN32
 
 #ifndef B3_NAN
 static int b3NanMask = 0x7F800001;
-#define B3_NAN (*(float*)&b3NanMask)
+#define B3_NAN (*(float *)&b3NanMask)
 #endif
 
 #ifndef B3_INFINITY_MASK
 static int b3InfinityMask = 0x7F800000;
-#define B3_INFINITY_MASK (*(float*)&b3InfinityMask)
+#define B3_INFINITY_MASK (*(float *)&b3InfinityMask)
 #endif
 
 inline __m128 operator+(const __m128 A, const __m128 B)
@@ -320,7 +320,7 @@ inline __m128 operator*(const __m128 A, const __m128 B)
 #define b3CastdTo128i(a) (_mm_castpd_si128(a))
 #define b3Assign128(r0, r1, r2, r3) _mm_setr_ps(r0, r1, r2, r3)
 
-#else //_WIN32
+#else  //_WIN32
 
 #define b3CastfTo128i(a) ((__m128i)(a))
 #define b3CastfTo128d(a) ((__m128d)(a))
@@ -329,8 +329,8 @@ inline __m128 operator*(const __m128 A, const __m128 B)
 #define b3CastdTo128i(a) ((__m128i)(a))
 #define b3Assign128(r0, r1, r2, r3) \
 	(__m128) { r0, r1, r2, r3 }
-#endif //_WIN32
-#endif //B3_USE_SSE_IN_API
+#endif  //_WIN32
+#endif  //B3_USE_SSE_IN_API
 
 #ifdef B3_USE_NEON
 #include <arm_neon.h>
@@ -343,14 +343,14 @@ typedef float32x4_t b3SimdFloat4;
 #endif
 
 #define B3_DECLARE_ALIGNED_ALLOCATOR()                                                                   \
-	B3_FORCE_INLINE void* operator new(size_t sizeInBytes) { return b3AlignedAlloc(sizeInBytes, 16); }   \
-	B3_FORCE_INLINE void operator delete(void* ptr) { b3AlignedFree(ptr); }                              \
-	B3_FORCE_INLINE void* operator new(size_t, void* ptr) { return ptr; }                                \
-	B3_FORCE_INLINE void operator delete(void*, void*) {}                                                \
-	B3_FORCE_INLINE void* operator new[](size_t sizeInBytes) { return b3AlignedAlloc(sizeInBytes, 16); } \
-	B3_FORCE_INLINE void operator delete[](void* ptr) { b3AlignedFree(ptr); }                            \
-	B3_FORCE_INLINE void* operator new[](size_t, void* ptr) { return ptr; }                              \
-	B3_FORCE_INLINE void operator delete[](void*, void*) {}
+	B3_FORCE_INLINE void *operator new(size_t sizeInBytes) { return b3AlignedAlloc(sizeInBytes, 16); }   \
+	B3_FORCE_INLINE void operator delete(void *ptr) { b3AlignedFree(ptr); }                              \
+	B3_FORCE_INLINE void *operator new(size_t, void *ptr) { return ptr; }                                \
+	B3_FORCE_INLINE void operator delete(void *, void *) {}                                              \
+	B3_FORCE_INLINE void *operator new[](size_t sizeInBytes) { return b3AlignedAlloc(sizeInBytes, 16); } \
+	B3_FORCE_INLINE void operator delete[](void *ptr) { b3AlignedFree(ptr); }                            \
+	B3_FORCE_INLINE void *operator new[](size_t, void *ptr) { return ptr; }                              \
+	B3_FORCE_INLINE void operator delete[](void *, void *) {}
 
 #if defined(B3_USE_DOUBLE_PRECISION) || defined(B3_FORCE_DOUBLE_FUNCTIONS)
 
@@ -364,18 +364,14 @@ B3_FORCE_INLINE b3Scalar b3Sin(b3Scalar x) { return sin(x); }
 B3_FORCE_INLINE b3Scalar b3Tan(b3Scalar x) { return tan(x); }
 B3_FORCE_INLINE b3Scalar b3Acos(b3Scalar x)
 {
-	if (x < b3Scalar(-1))
-		x = b3Scalar(-1);
-	if (x > b3Scalar(1))
-		x = b3Scalar(1);
+	if (x < b3Scalar(-1)) x = b3Scalar(-1);
+	if (x > b3Scalar(1)) x = b3Scalar(1);
 	return acos(x);
 }
 B3_FORCE_INLINE b3Scalar b3Asin(b3Scalar x)
 {
-	if (x < b3Scalar(-1))
-		x = b3Scalar(-1);
-	if (x > b3Scalar(1))
-		x = b3Scalar(1);
+	if (x < b3Scalar(-1)) x = b3Scalar(-1);
+	if (x > b3Scalar(1)) x = b3Scalar(1);
 	return asin(x);
 }
 B3_FORCE_INLINE b3Scalar b3Atan(b3Scalar x) { return atan(x); }
@@ -391,7 +387,7 @@ B3_FORCE_INLINE b3Scalar b3Sqrt(b3Scalar y)
 {
 #ifdef USE_APPROXIMATION
 	double x, z, tempf;
-	unsigned long* tfptr = ((unsigned long*)&tempf) + 1;
+	unsigned long *tfptr = ((unsigned long *)&tempf) + 1;
 
 	tempf = y;
 	*tfptr = (0xbfcdd90a - *tfptr) >> 1; /* estimate of 1/sqrt(y) */
@@ -508,8 +504,8 @@ B3_FORCE_INLINE b3Scalar b3Fsel(b3Scalar a, b3Scalar b, b3Scalar c)
 B3_FORCE_INLINE bool b3MachineIsLittleEndian()
 {
 	long int i = 1;
-	const char* p = (const char*)&i;
-	if (p[0] == 1) // Lowest address contains the least significant byte
+	const char *p = (const char *)&i;
+	if (p[0] == 1)  // Lowest address contains the least significant byte
 		return true;
 	else
 		return false;
@@ -543,7 +539,7 @@ B3_FORCE_INLINE float b3Select(unsigned condition, float valueIfConditionNonZero
 }
 
 template <typename T>
-B3_FORCE_INLINE void b3Swap(T& a, T& b)
+B3_FORCE_INLINE void b3Swap(T &a, T &b)
 {
 	T tmp = a;
 	a = b;
@@ -580,8 +576,8 @@ B3_FORCE_INLINE unsigned short b3SwapEndian(short val)
 B3_FORCE_INLINE unsigned int b3SwapEndianFloat(float d)
 {
 	unsigned int a = 0;
-	unsigned char* dst = (unsigned char*)&a;
-	unsigned char* src = (unsigned char*)&d;
+	unsigned char *dst = (unsigned char *)&a;
+	unsigned char *src = (unsigned char *)&d;
 
 	dst[0] = src[3];
 	dst[1] = src[2];
@@ -594,8 +590,8 @@ B3_FORCE_INLINE unsigned int b3SwapEndianFloat(float d)
 B3_FORCE_INLINE float b3UnswapEndianFloat(unsigned int a)
 {
 	float d = 0.0f;
-	unsigned char* src = (unsigned char*)&a;
-	unsigned char* dst = (unsigned char*)&d;
+	unsigned char *src = (unsigned char *)&a;
+	unsigned char *dst = (unsigned char *)&d;
 
 	dst[0] = src[3];
 	dst[1] = src[2];
@@ -606,9 +602,9 @@ B3_FORCE_INLINE float b3UnswapEndianFloat(unsigned int a)
 }
 
 // swap using char pointers
-B3_FORCE_INLINE void b3SwapEndianDouble(double d, unsigned char* dst)
+B3_FORCE_INLINE void b3SwapEndianDouble(double d, unsigned char *dst)
 {
-	unsigned char* src = (unsigned char*)&d;
+	unsigned char *src = (unsigned char *)&d;
 
 	dst[0] = src[7];
 	dst[1] = src[6];
@@ -621,10 +617,10 @@ B3_FORCE_INLINE void b3SwapEndianDouble(double d, unsigned char* dst)
 }
 
 // unswap using char pointers
-B3_FORCE_INLINE double b3UnswapEndianDouble(const unsigned char* src)
+B3_FORCE_INLINE double b3UnswapEndianDouble(const unsigned char *src)
 {
 	double d = 0.0;
-	unsigned char* dst = (unsigned char*)&d;
+	unsigned char *dst = (unsigned char *)&d;
 
 	dst[0] = src[7];
 	dst[1] = src[6];
@@ -660,7 +656,7 @@ B3_FORCE_INLINE b3Scalar b3NormalizeAngle(b3Scalar angleInRadians)
 struct b3TypedObject
 {
 	b3TypedObject(int objectType)
-	    : m_objectType(objectType)
+		: m_objectType(objectType)
 	{
 	}
 	int m_objectType;
@@ -672,12 +668,12 @@ struct b3TypedObject
 
 ///align a pointer to the provided alignment, upwards
 template <typename T>
-T* b3AlignPointer(T* unalignedPtr, size_t alignment)
+T *b3AlignPointer(T *unalignedPtr, size_t alignment)
 {
 	struct b3ConvertPointerSizeT
 	{
 		union {
-			T* ptr;
+			T *ptr;
 			size_t integer;
 		};
 	};
@@ -690,4 +686,4 @@ T* b3AlignPointer(T* unalignedPtr, size_t alignment)
 	return converter.ptr;
 }
 
-#endif //B3_SCALAR_H
+#endif  //B3_SCALAR_H

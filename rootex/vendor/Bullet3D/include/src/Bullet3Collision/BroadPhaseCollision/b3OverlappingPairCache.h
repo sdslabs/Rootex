@@ -16,8 +16,8 @@ subject to the following restrictions:
 #ifndef B3_OVERLAPPING_PAIR_CACHE_H
 #define B3_OVERLAPPING_PAIR_CACHE_H
 
-#include "Bullet3Common/b3AlignedObjectArray.h"
 #include "Bullet3Common/shared/b3Int2.h"
+#include "Bullet3Common/b3AlignedObjectArray.h"
 
 class b3Dispatcher;
 #include "b3OverlappingPair.h"
@@ -53,7 +53,7 @@ const int B3_NULL_PAIR = 0xffffffff;
 class b3OverlappingPairCache
 {
 public:
-	virtual ~b3OverlappingPairCache() {} // this is needed so we can get to the derived class destructor
+	virtual ~b3OverlappingPairCache() {}  // this is needed so we can get to the derived class destructor
 
 	virtual b3BroadphasePair* getOverlappingPairArrayPtr() = 0;
 
@@ -104,7 +104,7 @@ public:
 		if (m_overlapFilterCallback)
 			return m_overlapFilterCallback->needBroadphaseCollision(proxy0, proxy1);
 
-		bool collides = true; //(proxy0->m_collisionFilterGroup & proxy1->m_collisionFilterMask) != 0;
+		bool collides = true;  //(proxy0->m_collisionFilterGroup & proxy1->m_collisionFilterMask) != 0;
 		//collides = collides && (proxy1->m_collisionFilterGroup & proxy0->m_collisionFilterMask);
 
 		return collides;
@@ -212,7 +212,7 @@ private:
 	{
 		int proxyId1 = proxy0;
 		int proxyId2 = proxy1;
-#if 0 // wrong, 'equalsPair' use unsorted uids, copy-past devil striked again. Nat.
+#if 0  // wrong, 'equalsPair' use unsorted uids, copy-past devil striked again. Nat.
 		if (proxyId1 > proxyId2) 
 			b3Swap(proxyId1, proxyId2);
 #endif
@@ -295,7 +295,7 @@ public:
 		if (m_overlapFilterCallback)
 			return m_overlapFilterCallback->needBroadphaseCollision(proxy0, proxy1);
 
-		bool collides = true; //(proxy0->m_collisionFilterGroup & proxy1->m_collisionFilterMask) != 0;
+		bool collides = true;  //(proxy0->m_collisionFilterGroup & proxy1->m_collisionFilterMask) != 0;
 		//collides = collides && (proxy1->m_collisionFilterGroup & proxy0->m_collisionFilterMask);
 
 		return collides;
@@ -424,4 +424,4 @@ public:
 	}
 };
 
-#endif //B3_OVERLAPPING_PAIR_CACHE_H
+#endif  //B3_OVERLAPPING_PAIR_CACHE_H

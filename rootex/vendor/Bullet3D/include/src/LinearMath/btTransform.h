@@ -40,9 +40,9 @@ public:
    * @param q Rotation from quaternion 
    * @param c Translation from Vector (default 0,0,0) */
 	explicit SIMD_FORCE_INLINE btTransform(const btQuaternion& q,
-	    const btVector3& c = btVector3(btScalar(0), btScalar(0), btScalar(0)))
-	    : m_basis(q)
-	    , m_origin(c)
+										   const btVector3& c = btVector3(btScalar(0), btScalar(0), btScalar(0)))
+		: m_basis(q),
+		  m_origin(c)
 	{
 	}
 
@@ -50,15 +50,15 @@ public:
    * @param b Rotation from Matrix 
    * @param c Translation from Vector default (0,0,0)*/
 	explicit SIMD_FORCE_INLINE btTransform(const btMatrix3x3& b,
-	    const btVector3& c = btVector3(btScalar(0), btScalar(0), btScalar(0)))
-	    : m_basis(b)
-	    , m_origin(c)
+										   const btVector3& c = btVector3(btScalar(0), btScalar(0), btScalar(0)))
+		: m_basis(b),
+		  m_origin(c)
 	{
 	}
 	/**@brief Copy constructor */
 	SIMD_FORCE_INLINE btTransform(const btTransform& other)
-	    : m_basis(other.m_basis)
-	    , m_origin(other.m_origin)
+		: m_basis(other.m_basis),
+		  m_origin(other.m_origin)
 	{
 	}
 	/**@brief Assignment Operator */
@@ -223,20 +223,21 @@ btTransform::inverseTimes(const btTransform& t) const
 {
 	btVector3 v = t.getOrigin() - m_origin;
 	return btTransform(m_basis.transposeTimes(t.m_basis),
-	    v * m_basis);
+					   v * m_basis);
 }
 
 SIMD_FORCE_INLINE btTransform
-    btTransform::operator*(const btTransform& t) const
+	btTransform::operator*(const btTransform& t) const
 {
 	return btTransform(m_basis * t.m_basis,
-	    (*this)(t.m_origin));
+					   (*this)(t.m_origin));
 }
 
 /**@brief Test if two transforms have all elements equal */
 SIMD_FORCE_INLINE bool operator==(const btTransform& t1, const btTransform& t2)
 {
-	return (t1.getBasis() == t2.getBasis() && t1.getOrigin() == t2.getOrigin());
+	return (t1.getBasis() == t2.getBasis() &&
+			t1.getOrigin() == t2.getOrigin());
 }
 
 ///for serialization
@@ -282,4 +283,4 @@ SIMD_FORCE_INLINE void btTransform::deSerializeDouble(const btTransformDoubleDat
 	m_origin.deSerializeDouble(dataIn.m_origin);
 }
 
-#endif //BT_TRANSFORM_H
+#endif  //BT_TRANSFORM_H

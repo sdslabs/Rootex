@@ -16,9 +16,9 @@ subject to the following restrictions:
 #ifndef BT_CYLINDER_MINKOWSKI_H
 #define BT_CYLINDER_MINKOWSKI_H
 
-#include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h" // for the types
-#include "LinearMath/btVector3.h"
 #include "btBoxShape.h"
+#include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h"  // for the types
+#include "LinearMath/btVector3.h"
 
 /// The btCylinderShape class implements a cylinder shape primitive, centered around the origin. Its central axis aligned with the Y axis. btCylinderShapeX is aligned with the X axis and btCylinderShapeZ around the Z axis.
 ATTRIBUTE_ALIGNED16(class)
@@ -41,7 +41,7 @@ public:
 
 	const btVector3& getHalfExtentsWithoutMargin() const
 	{
-		return m_implicitShapeDimensions; //changed in Bullet 2.63: assume the scaling and margin are included
+		return m_implicitShapeDimensions;  //changed in Bullet 2.63: assume the scaling and margin are included
 	}
 
 	btCylinderShape(const btVector3& halfExtents);
@@ -203,4 +203,4 @@ SIMD_FORCE_INLINE const char* btCylinderShape::serialize(void* dataBuffer, btSer
 	return "btCylinderShapeData";
 }
 
-#endif //BT_CYLINDER_MINKOWSKI_H
+#endif  //BT_CYLINDER_MINKOWSKI_H

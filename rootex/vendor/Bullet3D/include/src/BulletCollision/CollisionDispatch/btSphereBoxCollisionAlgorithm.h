@@ -16,9 +16,9 @@ subject to the following restrictions:
 #ifndef BT_SPHERE_BOX_COLLISION_ALGORITHM_H
 #define BT_SPHERE_BOX_COLLISION_ALGORITHM_H
 
+#include "btActivatingCollisionAlgorithm.h"
 #include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h"
 #include "BulletCollision/CollisionDispatch/btCollisionCreateFunc.h"
-#include "btActivatingCollisionAlgorithm.h"
 class btPersistentManifold;
 #include "btCollisionDispatcher.h"
 
@@ -70,4 +70,4 @@ public:
 	};
 };
 
-#endif //BT_SPHERE_BOX_COLLISION_ALGORITHM_H
+#endif  //BT_SPHERE_BOX_COLLISION_ALGORITHM_H

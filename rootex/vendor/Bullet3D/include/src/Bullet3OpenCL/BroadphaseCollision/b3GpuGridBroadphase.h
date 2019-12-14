@@ -1,8 +1,8 @@
 #ifndef B3_GPU_GRID_BROADPHASE_H
 #define B3_GPU_GRID_BROADPHASE_H
 
-#include "Bullet3OpenCL/ParallelPrimitives/b3RadixSort32CL.h"
 #include "b3GpuBroadphaseInterface.h"
+#include "Bullet3OpenCL/ParallelPrimitives/b3RadixSort32CL.h"
 
 struct b3ParamsGridBroadphaseCL
 {
@@ -77,4 +77,4 @@ public:
 	virtual b3OpenCLArray<int>& getLargeAabbIndicesGPU();
 };
 
-#endif //B3_GPU_GRID_BROADPHASE_H
+#endif  //B3_GPU_GRID_BROADPHASE_H
