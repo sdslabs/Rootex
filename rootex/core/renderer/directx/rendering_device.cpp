@@ -34,8 +34,7 @@ RenderingDeviceD3D::RenderingDeviceD3D(HWND windowHandler)
 	    &m_SwapChain,
 	    &m_Device,
 	    nullptr,
-	    &m_Context
-	);
+	    &m_Context);
 }
 
 RenderingDeviceD3D::~RenderingDeviceD3D()
