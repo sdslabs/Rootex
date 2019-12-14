@@ -1,16 +1,11 @@
-name: clang-format-action
-
-on: [push]
-
+on: push
+name: clang-format Code Formatter
 jobs:
-  build:
+  lint:
+    name: clang-format Code Formatter
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v1
-    - uses: DoozyX/clang-format-lint-action@v0.5
-      with:
-        source: '.'
-        exclude: './rootex/vendor'
-        extensions: 'h,cpp'
-        clangFormatVersion: 9
+    - name: Clang Code Formatter
+      uses: antoinealb/clang-format-action@clang9
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
