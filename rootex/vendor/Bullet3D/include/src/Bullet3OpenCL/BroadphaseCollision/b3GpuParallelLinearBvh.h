@@ -15,14 +15,14 @@ subject to the following restrictions:
 #define B3_GPU_PARALLEL_LINEAR_BVH_H
 
 //#include "Bullet3Collision/BroadPhaseCollision/shared/b3Aabb.h"
-#include "Bullet3OpenCL/BroadphaseCollision/b3SapAabb.h"
+#include "Bullet3Collision/NarrowPhaseCollision/b3RaycastInfo.h"
 #include "Bullet3Common/shared/b3Int2.h"
 #include "Bullet3Common/shared/b3Int4.h"
-#include "Bullet3Collision/NarrowPhaseCollision/b3RaycastInfo.h"
+#include "Bullet3OpenCL/BroadphaseCollision/b3SapAabb.h"
 
 #include "Bullet3OpenCL/ParallelPrimitives/b3FillCL.h"
-#include "Bullet3OpenCL/ParallelPrimitives/b3RadixSort32CL.h"
 #include "Bullet3OpenCL/ParallelPrimitives/b3PrefixScanCL.h"
+#include "Bullet3OpenCL/ParallelPrimitives/b3RadixSort32CL.h"
 
 #include "Bullet3OpenCL/BroadphaseCollision/kernels/parallelLinearBvhKernels.h"
 

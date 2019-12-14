@@ -27,8 +27,8 @@ subject to the following restrictions:
 #include "LinearMath/btAlignedObjectArray.h"
 
 #include "btBoxCollision.h"
-#include "btTriangleShapeEx.h"
 #include "btGImpactBvhStructs.h"
+#include "btTriangleShapeEx.h"
 
 //! A pairset array
 class btPairSet : public btAlignedObjectArray<GIM_PAIR>

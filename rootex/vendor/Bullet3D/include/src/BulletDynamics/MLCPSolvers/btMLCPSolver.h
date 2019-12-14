@@ -18,8 +18,8 @@ subject to the following restrictions:
 #define BT_MLCP_SOLVER_H
 
 #include "BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolver.h"
-#include "LinearMath/btMatrixX.h"
 #include "BulletDynamics/MLCPSolvers/btMLCPSolverInterface.h"
+#include "LinearMath/btMatrixX.h"
 
 class btMLCPSolver : public btSequentialImpulseConstraintSolver
 {

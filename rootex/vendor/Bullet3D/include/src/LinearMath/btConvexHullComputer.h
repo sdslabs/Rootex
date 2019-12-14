@@ -15,8 +15,8 @@ subject to the following restrictions:
 #ifndef BT_CONVEX_HULL_COMPUTER_H
 #define BT_CONVEX_HULL_COMPUTER_H
 
-#include "btVector3.h"
 #include "btAlignedObjectArray.h"
+#include "btVector3.h"
 
 /// Convex hull implementation based on Preparata and Hong
 /// See http://code.google.com/p/bullet/issues/detail?id=275

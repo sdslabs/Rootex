@@ -16,8 +16,8 @@ subject to the following restrictions:
 #ifndef BT_OBJECT_ARRAY__
 #define BT_OBJECT_ARRAY__
 
-#include "btScalar.h"  // has definitions like SIMD_FORCE_INLINE
 #include "btAlignedAllocator.h"
+#include "btScalar.h"  // has definitions like SIMD_FORCE_INLINE
 
 ///If the platform doesn't support placement new, you can disable BT_USE_PLACEMENT_NEW
 ///then the btAlignedObjectArray doesn't support objects with virtual methods, and non-trivial constructors/destructors

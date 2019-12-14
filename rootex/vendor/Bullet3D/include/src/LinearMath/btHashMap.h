@@ -16,8 +16,8 @@ subject to the following restrictions:
 #ifndef BT_HASH_MAP_H
 #define BT_HASH_MAP_H
 
-#include <string>
 #include "btAlignedObjectArray.h"
+#include <string>
 
 ///very basic hashable string implementation, compatible with btHashMap
 struct btHashString

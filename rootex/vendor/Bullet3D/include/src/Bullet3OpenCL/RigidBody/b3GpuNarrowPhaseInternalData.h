@@ -2,23 +2,23 @@
 #ifndef B3_GPU_NARROWPHASE_INTERNAL_DATA_H
 #define B3_GPU_NARROWPHASE_INTERNAL_DATA_H
 
-#include "Bullet3OpenCL/ParallelPrimitives/b3OpenCLArray.h"
-#include "Bullet3Collision/NarrowPhaseCollision/shared/b3ConvexPolyhedronData.h"
 #include "Bullet3Collision/NarrowPhaseCollision/b3Config.h"
 #include "Bullet3Collision/NarrowPhaseCollision/shared/b3Collidable.h"
+#include "Bullet3Collision/NarrowPhaseCollision/shared/b3ConvexPolyhedronData.h"
+#include "Bullet3OpenCL/ParallelPrimitives/b3OpenCLArray.h"
 
-#include "Bullet3OpenCL/Initialize/b3OpenCLInclude.h"
 #include "Bullet3Common/b3AlignedObjectArray.h"
 #include "Bullet3Common/b3Vector3.h"
+#include "Bullet3OpenCL/Initialize/b3OpenCLInclude.h"
 
-#include "Bullet3Collision/NarrowPhaseCollision/shared/b3RigidBodyData.h"
 #include "Bullet3Collision/NarrowPhaseCollision/b3Contact4.h"
+#include "Bullet3Collision/NarrowPhaseCollision/shared/b3RigidBodyData.h"
 #include "Bullet3OpenCL/BroadphaseCollision/b3SapAabb.h"
 
-#include "Bullet3OpenCL/NarrowphaseCollision/b3QuantizedBvh.h"
-#include "Bullet3OpenCL/NarrowphaseCollision/b3BvhInfo.h"
-#include "Bullet3Common/shared/b3Int4.h"
 #include "Bullet3Common/shared/b3Int2.h"
+#include "Bullet3Common/shared/b3Int4.h"
+#include "Bullet3OpenCL/NarrowphaseCollision/b3BvhInfo.h"
+#include "Bullet3OpenCL/NarrowphaseCollision/b3QuantizedBvh.h"
 
 class b3ConvexUtility;
 
