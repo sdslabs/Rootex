@@ -16,8 +16,8 @@ subject to the following restrictions:
 #ifndef BT_CONVEX_INTERNAL_SHAPE_H
 #define BT_CONVEX_INTERNAL_SHAPE_H
 
-#include "LinearMath/btAabbUtil2.h"
 #include "btConvexShape.h"
+#include "LinearMath/btAabbUtil2.h"
 
 ///The btConvexInternalShape is an internal base class, shared by most convex shape implementations.
 ///The btConvexInternalShape uses a default collision margin set to CONVEX_DISTANCE_MARGIN.

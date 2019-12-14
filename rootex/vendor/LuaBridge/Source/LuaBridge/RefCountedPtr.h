@@ -30,8 +30,8 @@
 
 #pragma once
 
-#include "RefCountedObject.h"
 #include <unordered_map>
+#include "RefCountedObject.h"
 
 namespace luabridge {
 

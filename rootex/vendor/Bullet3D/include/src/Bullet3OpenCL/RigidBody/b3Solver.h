@@ -19,12 +19,12 @@ subject to the following restrictions:
 #include "Bullet3OpenCL/ParallelPrimitives/b3OpenCLArray.h"
 #include "b3GpuConstraint4.h"
 
-#include "Bullet3Collision/NarrowPhaseCollision/b3Contact4.h"
 #include "Bullet3Collision/NarrowPhaseCollision/shared/b3RigidBodyData.h"
+#include "Bullet3Collision/NarrowPhaseCollision/b3Contact4.h"
 
-#include "Bullet3OpenCL/ParallelPrimitives/b3BoundSearchCL.h"
 #include "Bullet3OpenCL/ParallelPrimitives/b3PrefixScanCL.h"
 #include "Bullet3OpenCL/ParallelPrimitives/b3RadixSort32CL.h"
+#include "Bullet3OpenCL/ParallelPrimitives/b3BoundSearchCL.h"
 
 #include "Bullet3OpenCL/Initialize/b3OpenCLUtils.h"
 

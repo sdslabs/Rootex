@@ -16,8 +16,8 @@ subject to the following restrictions:
 #ifndef BT_GJK_PAIR_DETECTOR_H
 #define BT_GJK_PAIR_DETECTOR_H
 
-#include "BulletCollision/CollisionShapes/btCollisionMargin.h"
 #include "btDiscreteCollisionDetectorInterface.h"
+#include "BulletCollision/CollisionShapes/btCollisionMargin.h"
 
 class btConvexShape;
 #include "btSimplexSolverInterface.h"

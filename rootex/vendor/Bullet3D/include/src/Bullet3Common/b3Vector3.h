@@ -16,9 +16,9 @@ subject to the following restrictions:
 #define B3_VECTOR3_H
 
 //#include <stdint.h>
-#include "b3AlignedAllocator.h"
-#include "b3MinMax.h"
 #include "b3Scalar.h"
+#include "b3MinMax.h"
+#include "b3AlignedAllocator.h"
 
 #ifdef B3_USE_DOUBLE_PRECISION
 #define b3Vector3Data b3Vector3DoubleData

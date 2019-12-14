@@ -19,13 +19,13 @@ subject to the following restrictions:
 #pragma once
 
 /*#include <Adl/Adl.h>
-#include <AdlPrimitives/Fill/Fill.h>
 #include <AdlPrimitives/Math/Math.h>
 #include <AdlPrimitives/Sort/SortData.h>
+#include <AdlPrimitives/Fill/Fill.h>
 */
 
-#include "b3FillCL.h"
 #include "b3OpenCLArray.h"
+#include "b3FillCL.h"
 #include "b3RadixSort32CL.h"  //for b3SortData (perhaps move it?)
 class b3BoundSearchCL
 {

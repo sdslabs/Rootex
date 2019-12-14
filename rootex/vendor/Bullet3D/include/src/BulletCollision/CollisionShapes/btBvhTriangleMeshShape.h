@@ -16,10 +16,10 @@ subject to the following restrictions:
 #ifndef BT_BVH_TRIANGLE_MESH_SHAPE_H
 #define BT_BVH_TRIANGLE_MESH_SHAPE_H
 
-#include "LinearMath/btAlignedAllocator.h"
-#include "btOptimizedBvh.h"
-#include "btTriangleInfoMap.h"
 #include "btTriangleMeshShape.h"
+#include "btOptimizedBvh.h"
+#include "LinearMath/btAlignedAllocator.h"
+#include "btTriangleInfoMap.h"
 
 ///The btBvhTriangleMeshShape is a static-triangle mesh shape, it can only be used for fixed/non-moving objects.
 ///If you required moving concave triangle meshes, it is recommended to perform convex decomposition
