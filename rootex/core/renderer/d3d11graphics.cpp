@@ -4,6 +4,7 @@
 #pragma comment(lib, "D3DCompiler.lib")
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 RootexGraphics::RootexGraphics(HWND windowHandler, unsigned int w, unsigned int h)
 {
 	width = w;
@@ -109,6 +110,9 @@ RootexGraphics::~RootexGraphics()
 =======
 #include "renderer/d3d11rendering_device.h"
 >>>>>>> Refactor context and device away from window
+=======
+//#include "renderer/d3d11rendering_device.h"
+>>>>>>> shift gameLoop() out of Window
 
 RootexGraphics::RootexGraphics(HWND windowHandler, unsigned int w, unsigned int h)
 {

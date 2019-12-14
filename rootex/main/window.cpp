@@ -22,16 +22,6 @@ void Window::swapBuffers()
 	RenderingDevice::GetSingleton()->swapBuffers();
 }
 
-int Window::gameLoop()
-{
-	while (true)
-	{
-		if (const std::optional<int> ecode = processMessages())
-			return *ecode;
-		//m_RootexGraphics->drawTest();
-	}
-}
-
 void Window::clear()
 {
 	RenderingDevice::GetSingleton()->clearBuffer(0.0f, 0.0f, 0.0f);
@@ -91,23 +81,6 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
 	    nullptr, nullptr,
 	    hInstance, nullptr);
 	ShowWindow(m_WindowHandle, SW_SHOW);
-	
-	DXGI_SWAP_CHAIN_DESC descriptor = { 0 };
-	descriptor.BufferDesc.Width = 0;
-	descriptor.BufferDesc.Height = 0;
-	descriptor.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-	descriptor.BufferDesc.RefreshRate.Numerator = 0;
-	descriptor.BufferDesc.RefreshRate.Denominator = 0;
-	descriptor.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-	descriptor.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-	descriptor.SampleDesc.Count = 1;
-	descriptor.SampleDesc.Quality = 0;
-	descriptor.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	descriptor.BufferCount = 1;
-	descriptor.OutputWindow = m_WindowHandle;
-	descriptor.Windowed = TRUE;
-	descriptor.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-	descriptor.Flags = 0;
 
 	RenderingDevice::GetSingleton()->initialize(m_WindowHandle, width, height);
 }
