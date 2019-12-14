@@ -16,10 +16,10 @@ subject to the following restrictions:
 #ifndef BT_BOX_BOX__COLLISION_ALGORITHM_H
 #define BT_BOX_BOX__COLLISION_ALGORITHM_H
 
+#include "btActivatingCollisionAlgorithm.h"
 #include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h"
 #include "BulletCollision/BroadphaseCollision/btDispatcher.h"
 #include "BulletCollision/CollisionDispatch/btCollisionCreateFunc.h"
-#include "btActivatingCollisionAlgorithm.h"
 
 class btPersistentManifold;
 

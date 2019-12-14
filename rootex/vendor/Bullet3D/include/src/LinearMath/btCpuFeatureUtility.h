@@ -15,8 +15,8 @@
 #if defined BT_USE_NEON
 #define ARM_NEON_GCC_COMPATIBILITY 1
 #include <arm_neon.h>
-#include <sys/sysctl.h>  //for sysctlbyname
 #include <sys/types.h>
+#include <sys/sysctl.h>  //for sysctlbyname
 #endif                   //BT_USE_NEON
 
 ///Rudimentary btCpuFeatureUtility for CPU features: only report the features that Bullet actually uses (SSE4/FMA3, NEON_HPFP)

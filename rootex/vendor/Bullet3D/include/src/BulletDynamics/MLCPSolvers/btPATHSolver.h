@@ -22,9 +22,9 @@ subject to the following restrictions:
 
 extern "C"
 {
-#include "PATH/Error_Interface.h"
-#include "PATH/License.h"
 #include "PATH/SimpleLCP.h"
+#include "PATH/License.h"
+#include "PATH/Error_Interface.h"
 };
 void __stdcall MyError(Void *data, Char *msg)
 {
@@ -37,8 +37,8 @@ void __stdcall MyWarning(Void *data, Char *msg)
 
 Error_Interface e;
 
-#include "Dantzig/lcp.h"
 #include "btMLCPSolverInterface.h"
+#include "Dantzig/lcp.h"
 
 class btPathSolver : public btMLCPSolverInterface
 {

@@ -3,13 +3,13 @@
 
 #define B3_TRIANGLE_NUM_CONVEX_FACES 5
 
+#include "Bullet3Common/shared/b3Int4.h"
+#include "Bullet3Collision/NarrowPhaseCollision/shared/b3RigidBodyData.h"
+#include "Bullet3Collision/NarrowPhaseCollision/shared/b3Collidable.h"
 #include "Bullet3Collision/BroadPhaseCollision/shared/b3Aabb.h"
 #include "Bullet3Collision/NarrowPhaseCollision/shared/b3BvhSubtreeInfoData.h"
-#include "Bullet3Collision/NarrowPhaseCollision/shared/b3Collidable.h"
-#include "Bullet3Collision/NarrowPhaseCollision/shared/b3ConvexPolyhedronData.h"
 #include "Bullet3Collision/NarrowPhaseCollision/shared/b3QuantizedBvhNodeData.h"
-#include "Bullet3Collision/NarrowPhaseCollision/shared/b3RigidBodyData.h"
-#include "Bullet3Common/shared/b3Int4.h"
+#include "Bullet3Collision/NarrowPhaseCollision/shared/b3ConvexPolyhedronData.h"
 
 inline void b3Project(__global const b3ConvexPolyhedronData* hull, b3Float4ConstArg pos, b3QuatConstArg orn,
 					  const b3Float4* dir, __global const b3Float4* vertices, float* min, float* max)

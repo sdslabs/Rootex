@@ -1,9 +1,9 @@
 #ifndef MINISDF_H
 #define MINISDF_H
 
+#include "LinearMath/btVector3.h"
 #include "LinearMath/btAabbUtil2.h"
 #include "LinearMath/btAlignedObjectArray.h"
-#include "LinearMath/btVector3.h"
 
 struct btMultiIndex
 {

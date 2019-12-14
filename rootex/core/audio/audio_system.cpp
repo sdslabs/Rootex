@@ -3,10 +3,10 @@
 #include <chrono>
 #include <thread>
 
-#include "audio_source.h"
-#include "core/resource_data.h"
 #include "static_audio_buffer.h"
 #include "streaming_audio_buffer.h"
+#include "audio_source.h"
+#include "core/resource_data.h"
 
 String AudioSystem::GetALErrorString(int errID)
 {

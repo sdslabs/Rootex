@@ -17,9 +17,9 @@ subject to the following restrictions:
 #ifndef B3_CONTACT_CACHE_H
 #define B3_CONTACT_CACHE_H
 
-#include "Bullet3Common/b3AlignedAllocator.h"
-#include "Bullet3Common/b3Transform.h"
 #include "Bullet3Common/b3Vector3.h"
+#include "Bullet3Common/b3Transform.h"
+#include "Bullet3Common/b3AlignedAllocator.h"
 
 ///maximum contact breaking and merging threshold
 extern b3Scalar gContactBreakingThreshold;

@@ -16,8 +16,8 @@ subject to the following restrictions:
 #ifndef BT_IDEBUG_DRAW__H
 #define BT_IDEBUG_DRAW__H
 
-#include "btTransform.h"
 #include "btVector3.h"
+#include "btTransform.h"
 
 ///The btIDebugDraw interface class allows hooking up a debug renderer to visually debug simulations.
 ///Typical use case: create a debug drawer object, and assign it to a btCollisionWorld or btDynamicsWorld using setDebugDrawer and call debugDrawWorld.

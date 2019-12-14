@@ -34,10 +34,10 @@ email: projectileman@yahoo.com
 */
 
 #include "gim_array.h"
-#include "gim_box_collision.h"
-#include "gim_pair.h"
 #include "gim_radixsort.h"
+#include "gim_box_collision.h"
 #include "gim_tri_collision.h"
+#include "gim_pair.h"
 
 //! A pairset array
 class gim_pair_set : public gim_array<GIM_PAIR>

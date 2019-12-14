@@ -15,8 +15,8 @@ subject to the following restrictions:
 #ifndef _BT_POOL_ALLOCATOR_H
 #define _BT_POOL_ALLOCATOR_H
 
-#include "b3AlignedAllocator.h"
 #include "b3Scalar.h"
+#include "b3AlignedAllocator.h"
 
 ///The b3PoolAllocator class allows to efficiently allocate a large pool of objects, instead of dynamically allocating them separately.
 class b3PoolAllocator

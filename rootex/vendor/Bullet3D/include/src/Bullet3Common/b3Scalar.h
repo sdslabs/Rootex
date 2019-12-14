@@ -20,9 +20,9 @@ subject to the following restrictions:
 #pragma unmanaged
 #endif
 
-#include <float.h>
 #include <math.h>
 #include <stdlib.h>  //size_t for MSVC 6.0
+#include <float.h>
 
 //Original repository is at http://github.com/erwincoumans/bullet3
 #define B3_BULLET_VERSION 300

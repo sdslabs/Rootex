@@ -16,8 +16,8 @@ subject to the following restrictions:
 #ifndef BT_CONVEX_2D_SHAPE_H
 #define BT_CONVEX_2D_SHAPE_H
 
-#include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h"  // for the types
 #include "BulletCollision/CollisionShapes/btConvexShape.h"
+#include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h"  // for the types
 
 ///The btConvex2dShape allows to use arbitrary convex shapes as 2d convex shapes, with the Z component assumed to be 0.
 ///For 2d boxes, the btBox2dShape is recommended.

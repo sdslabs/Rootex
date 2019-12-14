@@ -16,10 +16,10 @@ subject to the following restrictions:
 #ifndef BT_MULTI_SPHERE_MINKOWSKI_H
 #define BT_MULTI_SPHERE_MINKOWSKI_H
 
-#include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h"  // for the types
-#include "LinearMath/btAabbUtil2.h"
-#include "LinearMath/btAlignedObjectArray.h"
 #include "btConvexInternalShape.h"
+#include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h"  // for the types
+#include "LinearMath/btAlignedObjectArray.h"
+#include "LinearMath/btAabbUtil2.h"
 
 ///The btMultiSphereShape represents the convex hull of a collection of spheres. You can create special capsules or other smooth volumes.
 ///It is possible to animate the spheres for deformation, but call 'recalcLocalAabb' after changing any sphere position/radius

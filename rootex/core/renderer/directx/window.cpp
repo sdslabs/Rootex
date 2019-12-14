@@ -69,7 +69,7 @@ GameWindow::GameWindow(int xOffset, int yOffset, int width, int height, const St
 	windowClass.lpszClassName = "Game";
 	windowClass.hIconSm = nullptr;
 	RegisterClassEx(&windowClass);
-
+	
 	PANIC(title == "", "Window title was read empty, using empty title");
 	HWND windowHandler = CreateWindowEx(
 	    0, className,
@@ -80,7 +80,7 @@ GameWindow::GameWindow(int xOffset, int yOffset, int width, int height, const St
 	    hInstance, nullptr);
 
 	ShowWindow(windowHandler, SW_SHOW);
-
+	
 	m_GraphicsHandler = std::make_unique<RenderingDeviceD3D>(windowHandler);
 	PANIC(m_GraphicsHandler == nullptr, "Graphics could not be instantiated. Low memory.");
 }

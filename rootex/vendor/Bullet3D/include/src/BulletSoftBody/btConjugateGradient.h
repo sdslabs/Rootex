@@ -15,12 +15,12 @@
 
 #ifndef BT_CONJUGATE_GRADIENT_H
 #define BT_CONJUGATE_GRADIENT_H
-#include "LinearMath/btQuickprof.h"
+#include <iostream>
+#include <cmath>
+#include <limits>
 #include <LinearMath/btAlignedObjectArray.h>
 #include <LinearMath/btVector3.h>
-#include <cmath>
-#include <iostream>
-#include <limits>
+#include "LinearMath/btQuickprof.h"
 template <class MatrixX>
 class btConjugateGradient
 {

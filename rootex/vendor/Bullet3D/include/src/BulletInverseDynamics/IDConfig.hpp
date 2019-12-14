@@ -42,8 +42,8 @@
 
 #ifdef BT_CUSTOM_INVERSE_DYNAMICS_CONFIG_H
 /*
-#include "IDConfigBuiltin.hpp"
 #include "IDConfigEigen.hpp"
+#include "IDConfigBuiltin.hpp"
 */
 #define INVDYN_INCLUDE_HELPER_2(x) #x
 #define INVDYN_INCLUDE_HELPER(x) INVDYN_INCLUDE_HELPER_2(x)

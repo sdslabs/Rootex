@@ -18,9 +18,9 @@ subject to the following restrictions:
 
 #include "btConcaveShape.h"
 
-#include "LinearMath/btMatrix3x3.h"
-#include "LinearMath/btTransform.h"
 #include "LinearMath/btVector3.h"
+#include "LinearMath/btTransform.h"
+#include "LinearMath/btMatrix3x3.h"
 #include "btCollisionMargin.h"
 
 /// The btEmptyShape is a collision shape without actual collision detection shape, so most users should ignore this class.

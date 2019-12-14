@@ -2,8 +2,8 @@
 #define BT_COMPOUND_FROM_GIMPACT
 
 #include "BulletCollision/CollisionShapes/btCompoundShape.h"
-#include "BulletCollision/NarrowPhaseCollision/btRaycastCallback.h"
 #include "btGImpactShape.h"
+#include "BulletCollision/NarrowPhaseCollision/btRaycastCallback.h"
 
 ATTRIBUTE_ALIGNED16(class)
 btCompoundFromGimpactShape : public btCompoundShape

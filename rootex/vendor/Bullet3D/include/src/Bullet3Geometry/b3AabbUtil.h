@@ -15,9 +15,9 @@ subject to the following restrictions:
 #ifndef B3_AABB_UTIL2
 #define B3_AABB_UTIL2
 
-#include "Bullet3Common/b3MinMax.h"
 #include "Bullet3Common/b3Transform.h"
 #include "Bullet3Common/b3Vector3.h"
+#include "Bullet3Common/b3MinMax.h"
 
 B3_FORCE_INLINE void b3AabbExpand(b3Vector3& aabbMin,
 								  b3Vector3& aabbMax,

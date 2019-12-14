@@ -4,11 +4,11 @@
 /******************************************************************************
  * Command-line parsing
  ******************************************************************************/
-#include <algorithm>
-#include <cstring>
 #include <map>
-#include <sstream>
+#include <algorithm>
 #include <string>
+#include <cstring>
+#include <sstream>
 class b3CommandLineArgs
 {
 protected:
