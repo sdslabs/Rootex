@@ -66,10 +66,7 @@ struct b3SubSimplexClosestResult
 	}
 	bool isValid()
 	{
-		bool valid = (m_barycentricCoords[0] >= b3Scalar(0.)) &&
-					 (m_barycentricCoords[1] >= b3Scalar(0.)) &&
-					 (m_barycentricCoords[2] >= b3Scalar(0.)) &&
-					 (m_barycentricCoords[3] >= b3Scalar(0.));
+		bool valid = (m_barycentricCoords[0] >= b3Scalar(0.)) && (m_barycentricCoords[1] >= b3Scalar(0.)) && (m_barycentricCoords[2] >= b3Scalar(0.)) && (m_barycentricCoords[3] >= b3Scalar(0.));
 
 		return valid;
 	}
@@ -119,7 +116,7 @@ public:
 
 public:
 	b3VoronoiSimplexSolver()
-		: m_equalVertexThreshold(VORONOI_DEFAULT_EQUAL_VERTEX_THRESHOLD)
+	    : m_equalVertexThreshold(VORONOI_DEFAULT_EQUAL_VERTEX_THRESHOLD)
 	{
 	}
 	void reset();
@@ -161,4 +158,4 @@ public:
 	}
 };
 
-#endif  //B3_VORONOI_SIMPLEX_SOLVER_H
+#endif //B3_VORONOI_SIMPLEX_SOLVER_H

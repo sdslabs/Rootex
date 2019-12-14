@@ -83,4 +83,4 @@ SIMD_FORCE_INLINE const char* btScaledBvhTriangleMeshShape::serialize(void* data
 	return "btScaledTriangleMeshShapeData";
 }
 
-#endif  //BT_SCALED_BVH_TRIANGLE_MESH_SHAPE_H
+#endif //BT_SCALED_BVH_TRIANGLE_MESH_SHAPE_H

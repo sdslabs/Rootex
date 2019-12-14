@@ -23,11 +23,11 @@ struct b3JacobiSolverInfo
 	int m_numIterations;
 
 	b3JacobiSolverInfo()
-		: m_fixedBodyIndex(0),
-		  m_deltaTime(1. / 60.f),
-		  m_positionDrift(0.005f),
-		  m_positionConstraintCoeff(0.99f),
-		  m_numIterations(7)
+	    : m_fixedBodyIndex(0)
+	    , m_deltaTime(1. / 60.f)
+	    , m_positionDrift(0.005f)
+	    , m_positionConstraintCoeff(0.99f)
+	    , m_numIterations(7)
 	{
 	}
 };
@@ -53,4 +53,4 @@ public:
 	//void  solveGroup(btOpenCLArray<btRigidBodyCL>* bodies,btOpenCLArray<btInertiaCL>* inertias,btOpenCLArray<btContact4>* manifoldPtr,const btJacobiSolverInfo& solverInfo);
 	//void  solveGroupMixed(btOpenCLArray<btRigidBodyCL>* bodies,btOpenCLArray<btInertiaCL>* inertias,btOpenCLArray<btContact4>* manifoldPtr,const btJacobiSolverInfo& solverInfo);
 };
-#endif  //B3_GPU_JACOBI_CONTACT_SOLVER_H
+#endif //B3_GPU_JACOBI_CONTACT_SOLVER_H

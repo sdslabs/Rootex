@@ -15,8 +15,8 @@ subject to the following restrictions:
 #ifndef B3_GEOMETRY_UTIL_H
 #define B3_GEOMETRY_UTIL_H
 
-#include "Bullet3Common/b3Vector3.h"
 #include "Bullet3Common/b3AlignedObjectArray.h"
+#include "Bullet3Common/b3Vector3.h"
 
 ///The b3GeometryUtil helper class provides a few methods to convert between plane equations and vertices.
 class b3GeometryUtil
@@ -33,4 +33,4 @@ public:
 	static bool areVerticesBehindPlane(const b3Vector3& planeNormal, const b3AlignedObjectArray<b3Vector3>& vertices, b3Scalar margin);
 };
 
-#endif  //B3_GEOMETRY_UTIL_H
+#endif //B3_GEOMETRY_UTIL_H

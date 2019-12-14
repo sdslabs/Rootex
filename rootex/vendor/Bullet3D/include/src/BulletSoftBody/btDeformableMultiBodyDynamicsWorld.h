@@ -16,13 +16,13 @@
 #ifndef BT_DEFORMABLE_MULTIBODY_DYNAMICS_WORLD_H
 #define BT_DEFORMABLE_MULTIBODY_DYNAMICS_WORLD_H
 
-#include "btSoftMultiBodyDynamicsWorld.h"
+#include "BulletCollision/CollisionDispatch/btSimulationIslandManager.h"
+#include "btDeformableBodySolver.h"
 #include "btDeformableLagrangianForce.h"
 #include "btDeformableMassSpringForce.h"
-#include "btDeformableBodySolver.h"
 #include "btDeformableMultiBodyConstraintSolver.h"
 #include "btSoftBodyHelpers.h"
-#include "BulletCollision/CollisionDispatch/btSimulationIslandManager.h"
+#include "btSoftMultiBodyDynamicsWorld.h"
 #include <functional>
 typedef btAlignedObjectArray<btSoftBody*> btSoftBodyArray;
 
@@ -35,145 +35,146 @@ typedef btAlignedObjectArray<btSoftBody*> btSoftBodyArray;
 
 class btDeformableMultiBodyDynamicsWorld : public btMultiBodyDynamicsWorld
 {
-    typedef btAlignedObjectArray<btVector3> TVStack;
-    ///Solver classes that encapsulate multiple deformable bodies for solving
-    btDeformableBodySolver* m_deformableBodySolver;
-    btSoftBodyArray m_softBodies;
-    int m_drawFlags;
-    bool m_drawNodeTree;
-    bool m_drawFaceTree;
-    bool m_drawClusterTree;
-    btSoftBodyWorldInfo m_sbi;
-    btScalar m_internalTime;
-    int m_contact_iterations;
-    bool m_implicit;
-    bool m_lineSearch;
-    bool m_selfCollision;
-    
-    typedef void (*btSolverCallback)(btScalar time, btDeformableMultiBodyDynamicsWorld* world);
-    btSolverCallback m_solverCallback;
-    
+	typedef btAlignedObjectArray<btVector3> TVStack;
+	///Solver classes that encapsulate multiple deformable bodies for solving
+	btDeformableBodySolver* m_deformableBodySolver;
+	btSoftBodyArray m_softBodies;
+	int m_drawFlags;
+	bool m_drawNodeTree;
+	bool m_drawFaceTree;
+	bool m_drawClusterTree;
+	btSoftBodyWorldInfo m_sbi;
+	btScalar m_internalTime;
+	int m_contact_iterations;
+	bool m_implicit;
+	bool m_lineSearch;
+	bool m_selfCollision;
+
+	typedef void (*btSolverCallback)(btScalar time, btDeformableMultiBodyDynamicsWorld* world);
+	btSolverCallback m_solverCallback;
+
 protected:
-    virtual void internalSingleStepSimulation(btScalar timeStep);
-    
-    virtual void integrateTransforms(btScalar timeStep);
-    
-    void positionCorrection(btScalar timeStep);
-    
-    void solveConstraints(btScalar timeStep);
-    
-    void updateActivationState(btScalar timeStep);
+	virtual void internalSingleStepSimulation(btScalar timeStep);
+
+	virtual void integrateTransforms(btScalar timeStep);
+
+	void positionCorrection(btScalar timeStep);
+
+	void solveConstraints(btScalar timeStep);
+
+	void updateActivationState(btScalar timeStep);
 
 public:
-    btDeformableMultiBodyDynamicsWorld(btDispatcher* dispatcher, btBroadphaseInterface* pairCache, btDeformableMultiBodyConstraintSolver* constraintSolver, btCollisionConfiguration* collisionConfiguration, btDeformableBodySolver* deformableBodySolver = 0)
-    : btMultiBodyDynamicsWorld(dispatcher, pairCache, (btMultiBodyConstraintSolver*)constraintSolver, collisionConfiguration),
-    m_deformableBodySolver(deformableBodySolver), m_solverCallback(0)
-    {
-        m_drawFlags = fDrawFlags::Std;
-        m_drawNodeTree = true;
-        m_drawFaceTree = false;
-        m_drawClusterTree = false;
-        m_sbi.m_broadphase = pairCache;
-        m_sbi.m_dispatcher = dispatcher;
-        m_sbi.m_sparsesdf.Initialize();
-        m_sbi.m_sparsesdf.setDefaultVoxelsz(0.005);
-        m_sbi.m_sparsesdf.Reset();
-        
-        m_sbi.air_density = (btScalar)1.2;
-        m_sbi.water_density = 0;
-        m_sbi.water_offset = 0;
-        m_sbi.water_normal = btVector3(0, 0, 0);
-        m_sbi.m_gravity.setValue(0, -10, 0);
-        m_internalTime = 0.0;
-        m_implicit = false;
-        m_lineSearch = false;
-        m_selfCollision = true;
-    }
+	btDeformableMultiBodyDynamicsWorld(btDispatcher* dispatcher, btBroadphaseInterface* pairCache, btDeformableMultiBodyConstraintSolver* constraintSolver, btCollisionConfiguration* collisionConfiguration, btDeformableBodySolver* deformableBodySolver = 0)
+	    : btMultiBodyDynamicsWorld(dispatcher, pairCache, (btMultiBodyConstraintSolver*)constraintSolver, collisionConfiguration)
+	    , m_deformableBodySolver(deformableBodySolver)
+	    , m_solverCallback(0)
+	{
+		m_drawFlags = fDrawFlags::Std;
+		m_drawNodeTree = true;
+		m_drawFaceTree = false;
+		m_drawClusterTree = false;
+		m_sbi.m_broadphase = pairCache;
+		m_sbi.m_dispatcher = dispatcher;
+		m_sbi.m_sparsesdf.Initialize();
+		m_sbi.m_sparsesdf.setDefaultVoxelsz(0.005);
+		m_sbi.m_sparsesdf.Reset();
 
-    void setSolverCallback(btSolverCallback cb)
-    {
-        m_solverCallback = cb;
-    }
-    
-    virtual ~btDeformableMultiBodyDynamicsWorld()
-    {
-    }
-    
-    virtual btMultiBodyDynamicsWorld* getMultiBodyDynamicsWorld()
-    {
-        return (btMultiBodyDynamicsWorld*)(this);
-    }
-    
-    virtual const btMultiBodyDynamicsWorld* getMultiBodyDynamicsWorld() const
-    {
-        return (const btMultiBodyDynamicsWorld*)(this);
-    }
-    
-    virtual btDynamicsWorldType getWorldType() const
-    {
-        return BT_DEFORMABLE_MULTIBODY_DYNAMICS_WORLD;
-    }
-    
-    virtual void predictUnconstraintMotion(btScalar timeStep);
-    
-    virtual void addSoftBody(btSoftBody* body, int collisionFilterGroup = btBroadphaseProxy::DefaultFilter, int collisionFilterMask = btBroadphaseProxy::AllFilter);
-    
-    btSoftBodyArray& getSoftBodyArray()
-    {
-        return m_softBodies;
-    }
-    
-    const btSoftBodyArray& getSoftBodyArray() const
-    {
-        return m_softBodies;
-    }
-    
-    btSoftBodyWorldInfo& getWorldInfo()
-    {
-        return m_sbi;
-    }
-    
-    const btSoftBodyWorldInfo& getWorldInfo() const
-    {
-        return m_sbi;
-    }
-    
-    void reinitialize(btScalar timeStep);
-    
-    void applyRigidBodyGravity(btScalar timeStep);
-    
-    void beforeSolverCallbacks(btScalar timeStep);
-    
-    void afterSolverCallbacks(btScalar timeStep);
-    
-    void addForce(btSoftBody* psb, btDeformableLagrangianForce* force);
-    
-    void removeSoftBody(btSoftBody* body);
-    
-    void removeCollisionObject(btCollisionObject* collisionObject);
-    
-    int getDrawFlags() const { return (m_drawFlags); }
-    void setDrawFlags(int f) { m_drawFlags = f; }
-    
-    void setupConstraints();
-    
-    void solveMultiBodyConstraints();
-    
-    void solveContactConstraints();
-    
-    void sortConstraints();
-    
-    void softBodySelfCollision();
-    
-    void setImplicit(bool implicit)
-    {
-        m_implicit = implicit;
-    }
-    
-    void setLineSearch(bool lineSearch)
-    {
-        m_lineSearch = lineSearch;
-    }
+		m_sbi.air_density = (btScalar)1.2;
+		m_sbi.water_density = 0;
+		m_sbi.water_offset = 0;
+		m_sbi.water_normal = btVector3(0, 0, 0);
+		m_sbi.m_gravity.setValue(0, -10, 0);
+		m_internalTime = 0.0;
+		m_implicit = false;
+		m_lineSearch = false;
+		m_selfCollision = true;
+	}
+
+	void setSolverCallback(btSolverCallback cb)
+	{
+		m_solverCallback = cb;
+	}
+
+	virtual ~btDeformableMultiBodyDynamicsWorld()
+	{
+	}
+
+	virtual btMultiBodyDynamicsWorld* getMultiBodyDynamicsWorld()
+	{
+		return (btMultiBodyDynamicsWorld*)(this);
+	}
+
+	virtual const btMultiBodyDynamicsWorld* getMultiBodyDynamicsWorld() const
+	{
+		return (const btMultiBodyDynamicsWorld*)(this);
+	}
+
+	virtual btDynamicsWorldType getWorldType() const
+	{
+		return BT_DEFORMABLE_MULTIBODY_DYNAMICS_WORLD;
+	}
+
+	virtual void predictUnconstraintMotion(btScalar timeStep);
+
+	virtual void addSoftBody(btSoftBody* body, int collisionFilterGroup = btBroadphaseProxy::DefaultFilter, int collisionFilterMask = btBroadphaseProxy::AllFilter);
+
+	btSoftBodyArray& getSoftBodyArray()
+	{
+		return m_softBodies;
+	}
+
+	const btSoftBodyArray& getSoftBodyArray() const
+	{
+		return m_softBodies;
+	}
+
+	btSoftBodyWorldInfo& getWorldInfo()
+	{
+		return m_sbi;
+	}
+
+	const btSoftBodyWorldInfo& getWorldInfo() const
+	{
+		return m_sbi;
+	}
+
+	void reinitialize(btScalar timeStep);
+
+	void applyRigidBodyGravity(btScalar timeStep);
+
+	void beforeSolverCallbacks(btScalar timeStep);
+
+	void afterSolverCallbacks(btScalar timeStep);
+
+	void addForce(btSoftBody* psb, btDeformableLagrangianForce* force);
+
+	void removeSoftBody(btSoftBody* body);
+
+	void removeCollisionObject(btCollisionObject* collisionObject);
+
+	int getDrawFlags() const { return (m_drawFlags); }
+	void setDrawFlags(int f) { m_drawFlags = f; }
+
+	void setupConstraints();
+
+	void solveMultiBodyConstraints();
+
+	void solveContactConstraints();
+
+	void sortConstraints();
+
+	void softBodySelfCollision();
+
+	void setImplicit(bool implicit)
+	{
+		m_implicit = implicit;
+	}
+
+	void setLineSearch(bool lineSearch)
+	{
+		m_lineSearch = lineSearch;
+	}
 };
 
-#endif  //BT_DEFORMABLE_MULTIBODY_DYNAMICS_WORLD_H
+#endif //BT_DEFORMABLE_MULTIBODY_DYNAMICS_WORLD_H

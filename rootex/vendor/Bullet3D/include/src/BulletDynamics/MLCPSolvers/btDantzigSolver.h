@@ -17,8 +17,8 @@ subject to the following restrictions:
 #ifndef BT_DANTZIG_SOLVER_H
 #define BT_DANTZIG_SOLVER_H
 
-#include "btMLCPSolverInterface.h"
 #include "btDantzigLCP.h"
+#include "btMLCPSolverInterface.h"
 
 class btDantzigSolver : public btMLCPSolverInterface
 {
@@ -37,7 +37,7 @@ protected:
 
 public:
 	btDantzigSolver()
-		: m_acceptableUpperLimitSolution(btScalar(1000))
+	    : m_acceptableUpperLimitSolution(btScalar(1000))
 	{
 	}
 
@@ -103,4 +103,4 @@ public:
 	}
 };
 
-#endif  //BT_DANTZIG_SOLVER_H
+#endif //BT_DANTZIG_SOLVER_H

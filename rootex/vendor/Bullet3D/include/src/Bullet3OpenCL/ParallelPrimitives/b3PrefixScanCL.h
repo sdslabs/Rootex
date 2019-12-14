@@ -2,9 +2,9 @@
 #ifndef B3_PREFIX_SCAN_CL_H
 #define B3_PREFIX_SCAN_CL_H
 
-#include "b3OpenCLArray.h"
-#include "b3BufferInfoCL.h"
 #include "Bullet3Common/b3AlignedObjectArray.h"
+#include "b3BufferInfoCL.h"
+#include "b3OpenCLArray.h"
 
 class b3PrefixScanCL
 {
@@ -32,4 +32,4 @@ public:
 	void executeHost(b3AlignedObjectArray<unsigned int>& src, b3AlignedObjectArray<unsigned int>& dst, int n, unsigned int* sum = 0);
 };
 
-#endif  //B3_PREFIX_SCAN_CL_H
+#endif //B3_PREFIX_SCAN_CL_H

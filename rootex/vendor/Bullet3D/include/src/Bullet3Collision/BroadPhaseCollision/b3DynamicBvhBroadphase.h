@@ -53,14 +53,14 @@ b3BroadphaseProxy
 		DebrisFilter = 8,
 		SensorTrigger = 16,
 		CharacterFilter = 32,
-		AllFilter = -1  //all bits sets: DefaultFilter | StaticFilter | KinematicFilter | DebrisFilter | SensorTrigger
+		AllFilter = -1 //all bits sets: DefaultFilter | StaticFilter | KinematicFilter | DebrisFilter | SensorTrigger
 	};
 
 	//Usually the client b3CollisionObject or Rigidbody class
 	void* m_clientObject;
 	int m_collisionFilterGroup;
 	int m_collisionFilterMask;
-	int m_uniqueId;  //m_uniqueId is introduced for paircache. could get rid of this, by calculating the address offset etc.
+	int m_uniqueId; //m_uniqueId is introduced for paircache. could get rid of this, by calculating the address offset etc.
 
 	b3Vector3 m_aabbMin;
 	b3Vector3 m_aabbMax;
@@ -71,16 +71,17 @@ b3BroadphaseProxy
 	}
 
 	//used for memory pools
-	b3BroadphaseProxy() : m_clientObject(0)
+	b3BroadphaseProxy()
+	    : m_clientObject(0)
 	{
 	}
 
 	b3BroadphaseProxy(const b3Vector3& aabbMin, const b3Vector3& aabbMax, void* userPtr, int collisionFilterGroup, int collisionFilterMask)
-		: m_clientObject(userPtr),
-		  m_collisionFilterGroup(collisionFilterGroup),
-		  m_collisionFilterMask(collisionFilterMask),
-		  m_aabbMin(aabbMin),
-		  m_aabbMax(aabbMax)
+	    : m_clientObject(userPtr)
+	    , m_collisionFilterGroup(collisionFilterGroup)
+	    , m_collisionFilterMask(collisionFilterMask)
+	    , m_aabbMin(aabbMin)
+	    , m_aabbMax(aabbMax)
 	{
 	}
 };
@@ -98,7 +99,8 @@ struct b3DbvtProxy : b3BroadphaseProxy
 	/* ctor			*/
 
 	explicit b3DbvtProxy() {}
-	b3DbvtProxy(const b3Vector3& aabbMin, const b3Vector3& aabbMax, void* userPtr, int collisionFilterGroup, int collisionFilterMask) : b3BroadphaseProxy(aabbMin, aabbMax, userPtr, collisionFilterGroup, collisionFilterMask)
+	b3DbvtProxy(const b3Vector3& aabbMin, const b3Vector3& aabbMax, void* userPtr, int collisionFilterGroup, int collisionFilterMask)
+	    : b3BroadphaseProxy(aabbMin, aabbMax, userPtr, collisionFilterGroup, collisionFilterMask)
 	{
 		links[0] = links[1] = 0;
 	}
@@ -115,30 +117,30 @@ struct b3DynamicBvhBroadphase
 	enum
 	{
 		DYNAMIC_SET = 0, /* Dynamic set index	*/
-		FIXED_SET = 1,   /* Fixed set index		*/
-		STAGECOUNT = 2   /* Number of stages		*/
+		FIXED_SET = 1, /* Fixed set index		*/
+		STAGECOUNT = 2 /* Number of stages		*/
 	};
 	/* Fields		*/
-	b3DynamicBvh m_sets[2];                     // Dbvt sets
-	b3DbvtProxy* m_stageRoots[STAGECOUNT + 1];  // Stages list
+	b3DynamicBvh m_sets[2]; // Dbvt sets
+	b3DbvtProxy* m_stageRoots[STAGECOUNT + 1]; // Stages list
 
 	b3AlignedObjectArray<b3DbvtProxy> m_proxies;
-	b3OverlappingPairCache* m_paircache;  // Pair cache
-	b3Scalar m_prediction;                // Velocity prediction
-	int m_stageCurrent;                   // Current stage
-	int m_fupdates;                       // % of fixed updates per frame
-	int m_dupdates;                       // % of dynamic updates per frame
-	int m_cupdates;                       // % of cleanup updates per frame
-	int m_newpairs;                       // Number of pairs created
-	int m_fixedleft;                      // Fixed optimization left
-	unsigned m_updates_call;              // Number of updates call
-	unsigned m_updates_done;              // Number of updates done
-	b3Scalar m_updates_ratio;             // m_updates_done/m_updates_call
-	int m_pid;                            // Parse id
-	int m_cid;                            // Cleanup index
-	bool m_releasepaircache;              // Release pair cache on delete
-	bool m_deferedcollide;                // Defere dynamic/static collision to collide call
-	bool m_needcleanup;                   // Need to run cleanup?
+	b3OverlappingPairCache* m_paircache; // Pair cache
+	b3Scalar m_prediction; // Velocity prediction
+	int m_stageCurrent; // Current stage
+	int m_fupdates; // % of fixed updates per frame
+	int m_dupdates; // % of dynamic updates per frame
+	int m_cupdates; // % of cleanup updates per frame
+	int m_newpairs; // Number of pairs created
+	int m_fixedleft; // Fixed optimization left
+	unsigned m_updates_call; // Number of updates call
+	unsigned m_updates_done; // Number of updates done
+	b3Scalar m_updates_ratio; // m_updates_done/m_updates_call
+	int m_pid; // Parse id
+	int m_cid; // Cleanup index
+	bool m_releasepaircache; // Release pair cache on delete
+	bool m_deferedcollide; // Defere dynamic/static collision to collide call
+	bool m_needcleanup; // Need to run cleanup?
 #if B3_DBVT_BP_PROFILE
 	b3Clock m_clock;
 	struct

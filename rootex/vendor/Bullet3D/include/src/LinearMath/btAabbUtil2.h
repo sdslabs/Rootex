@@ -15,14 +15,14 @@ subject to the following restrictions:
 #ifndef BT_AABB_UTIL2
 #define BT_AABB_UTIL2
 
+#include "btMinMax.h"
 #include "btTransform.h"
 #include "btVector3.h"
-#include "btMinMax.h"
 
 SIMD_FORCE_INLINE void AabbExpand(btVector3& aabbMin,
-								  btVector3& aabbMax,
-								  const btVector3& expansionMin,
-								  const btVector3& expansionMax)
+    btVector3& aabbMax,
+    const btVector3& expansionMin,
+    const btVector3& expansionMax)
 {
 	aabbMin = aabbMin + expansionMin;
 	aabbMax = aabbMax + expansionMax;
@@ -30,7 +30,7 @@ SIMD_FORCE_INLINE void AabbExpand(btVector3& aabbMin,
 
 /// conservative test for overlap between two aabbs
 SIMD_FORCE_INLINE bool TestPointAgainstAabb2(const btVector3& aabbMin1, const btVector3& aabbMax1,
-											 const btVector3& point)
+    const btVector3& point)
 {
 	bool overlap = true;
 	overlap = (aabbMin1.getX() > point.getX() || aabbMax1.getX() < point.getX()) ? false : overlap;
@@ -41,7 +41,7 @@ SIMD_FORCE_INLINE bool TestPointAgainstAabb2(const btVector3& aabbMin1, const bt
 
 /// conservative test for overlap between two aabbs
 SIMD_FORCE_INLINE bool TestAabbAgainstAabb2(const btVector3& aabbMin1, const btVector3& aabbMax1,
-											const btVector3& aabbMin2, const btVector3& aabbMax2)
+    const btVector3& aabbMin2, const btVector3& aabbMax2)
 {
 	bool overlap = true;
 	overlap = (aabbMin1.getX() > aabbMax2.getX() || aabbMax1.getX() < aabbMin2.getX()) ? false : overlap;
@@ -52,40 +52,41 @@ SIMD_FORCE_INLINE bool TestAabbAgainstAabb2(const btVector3& aabbMin1, const btV
 
 /// conservative test for overlap between triangle and aabb
 SIMD_FORCE_INLINE bool TestTriangleAgainstAabb2(const btVector3* vertices,
-												const btVector3& aabbMin, const btVector3& aabbMax)
+    const btVector3& aabbMin, const btVector3& aabbMax)
 {
 	const btVector3& p1 = vertices[0];
 	const btVector3& p2 = vertices[1];
 	const btVector3& p3 = vertices[2];
 
-	if (btMin(btMin(p1[0], p2[0]), p3[0]) > aabbMax[0]) return false;
-	if (btMax(btMax(p1[0], p2[0]), p3[0]) < aabbMin[0]) return false;
+	if (btMin(btMin(p1[0], p2[0]), p3[0]) > aabbMax[0])
+		return false;
+	if (btMax(btMax(p1[0], p2[0]), p3[0]) < aabbMin[0])
+		return false;
 
-	if (btMin(btMin(p1[2], p2[2]), p3[2]) > aabbMax[2]) return false;
-	if (btMax(btMax(p1[2], p2[2]), p3[2]) < aabbMin[2]) return false;
+	if (btMin(btMin(p1[2], p2[2]), p3[2]) > aabbMax[2])
+		return false;
+	if (btMax(btMax(p1[2], p2[2]), p3[2]) < aabbMin[2])
+		return false;
 
-	if (btMin(btMin(p1[1], p2[1]), p3[1]) > aabbMax[1]) return false;
-	if (btMax(btMax(p1[1], p2[1]), p3[1]) < aabbMin[1]) return false;
+	if (btMin(btMin(p1[1], p2[1]), p3[1]) > aabbMax[1])
+		return false;
+	if (btMax(btMax(p1[1], p2[1]), p3[1]) < aabbMin[1])
+		return false;
 	return true;
 }
 
 SIMD_FORCE_INLINE int btOutcode(const btVector3& p, const btVector3& halfExtent)
 {
-	return (p.getX() < -halfExtent.getX() ? 0x01 : 0x0) |
-		   (p.getX() > halfExtent.getX() ? 0x08 : 0x0) |
-		   (p.getY() < -halfExtent.getY() ? 0x02 : 0x0) |
-		   (p.getY() > halfExtent.getY() ? 0x10 : 0x0) |
-		   (p.getZ() < -halfExtent.getZ() ? 0x4 : 0x0) |
-		   (p.getZ() > halfExtent.getZ() ? 0x20 : 0x0);
+	return (p.getX() < -halfExtent.getX() ? 0x01 : 0x0) | (p.getX() > halfExtent.getX() ? 0x08 : 0x0) | (p.getY() < -halfExtent.getY() ? 0x02 : 0x0) | (p.getY() > halfExtent.getY() ? 0x10 : 0x0) | (p.getZ() < -halfExtent.getZ() ? 0x4 : 0x0) | (p.getZ() > halfExtent.getZ() ? 0x20 : 0x0);
 }
 
 SIMD_FORCE_INLINE bool btRayAabb2(const btVector3& rayFrom,
-								  const btVector3& rayInvDirection,
-								  const unsigned int raySign[3],
-								  const btVector3 bounds[2],
-								  btScalar& tmin,
-								  btScalar lambda_min,
-								  btScalar lambda_max)
+    const btVector3& rayInvDirection,
+    const unsigned int raySign[3],
+    const btVector3 bounds[2],
+    btScalar& tmin,
+    btScalar lambda_min,
+    btScalar lambda_max)
 {
 	btScalar tmax, tymin, tymax, tzmin, tzmax;
 	tmin = (bounds[raySign[0]].getX() - rayFrom.getX()) * rayInvDirection.getX();
@@ -115,10 +116,10 @@ SIMD_FORCE_INLINE bool btRayAabb2(const btVector3& rayFrom,
 }
 
 SIMD_FORCE_INLINE bool btRayAabb(const btVector3& rayFrom,
-								 const btVector3& rayTo,
-								 const btVector3& aabbMin,
-								 const btVector3& aabbMax,
-								 btScalar& param, btVector3& normal)
+    const btVector3& rayTo,
+    const btVector3& aabbMin,
+    const btVector3& aabbMax,
+    btScalar& param, btVector3& normal)
 {
 	btVector3 aabbHalfExtent = (aabbMax - aabbMin) * btScalar(0.5);
 	btVector3 aabbCenter = (aabbMax + aabbMin) * btScalar(0.5);
@@ -201,7 +202,7 @@ SIMD_FORCE_INLINE void btTransformAabb(const btVector3& localAabbMin, const btVe
 SIMD_FORCE_INLINE unsigned testQuantizedAabbAgainstQuantizedAabb(const unsigned short int* aabbMin1, const unsigned short int* aabbMax1, const unsigned short int* aabbMin2, const unsigned short int* aabbMax2)
 {
 	return static_cast<unsigned int>(btSelect((unsigned)((aabbMin1[0] <= aabbMax2[0]) & (aabbMax1[0] >= aabbMin2[0]) & (aabbMin1[2] <= aabbMax2[2]) & (aabbMax1[2] >= aabbMin2[2]) & (aabbMin1[1] <= aabbMax2[1]) & (aabbMax1[1] >= aabbMin2[1])),
-											  1, 0));
+	    1, 0));
 }
 #else
 SIMD_FORCE_INLINE bool testQuantizedAabbAgainstQuantizedAabb(const unsigned short int* aabbMin1, const unsigned short int* aabbMax1, const unsigned short int* aabbMin2, const unsigned short int* aabbMax2)
@@ -212,6 +213,6 @@ SIMD_FORCE_INLINE bool testQuantizedAabbAgainstQuantizedAabb(const unsigned shor
 	overlap = (aabbMin1[1] > aabbMax2[1] || aabbMax1[1] < aabbMin2[1]) ? false : overlap;
 	return overlap;
 }
-#endif  //USE_BANCHLESS
+#endif //USE_BANCHLESS
 
-#endif  //BT_AABB_UTIL2
+#endif //BT_AABB_UTIL2

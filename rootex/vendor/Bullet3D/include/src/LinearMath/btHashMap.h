@@ -16,8 +16,8 @@ subject to the following restrictions:
 #ifndef BT_HASH_MAP_H
 #define BT_HASH_MAP_H
 
-#include <string>
 #include "btAlignedObjectArray.h"
+#include <string>
 
 ///very basic hashable string implementation, compatible with btHashMap
 struct btHashString
@@ -36,7 +36,7 @@ struct btHashString
 		m_hash = 0;
 	}
 	btHashString(const char* name)
-		: m_string1(name)
+	    : m_string1(name)
 	{
 		/* magic numbers from http://www.isthe.com/chongo/tech/comp/fnv/ */
 		static const unsigned int InitialFNV = 2166136261u;
@@ -48,7 +48,7 @@ struct btHashString
 		for (int i = 0; m_string1.c_str()[i]; i++)
 		{
 			hash = hash ^ (m_string1.c_str()[i]); /* xor  the low 8 bits */
-			hash = hash * FNVMultiple;            /* multiply by the magic number */
+			hash = hash * FNVMultiple; /* multiply by the magic number */
 		}
 		m_hash = hash;
 	}
@@ -70,7 +70,8 @@ public:
 	{
 	}
 
-	btHashInt(int uid) : m_uid(uid)
+	btHashInt(int uid)
+	    : m_uid(uid)
 	{
 	}
 
@@ -113,7 +114,7 @@ class btHashPtr
 
 public:
 	btHashPtr(const void* ptr)
-		: m_pointer(ptr)
+	    : m_pointer(ptr)
 	{
 	}
 
@@ -150,7 +151,8 @@ class btHashKeyPtr
 	int m_uid;
 
 public:
-	btHashKeyPtr(int uid) : m_uid(uid)
+	btHashKeyPtr(int uid)
+	    : m_uid(uid)
 	{
 	}
 
@@ -185,7 +187,8 @@ class btHashKey
 	int m_uid;
 
 public:
-	btHashKey(int uid) : m_uid(uid)
+	btHashKey(int uid)
+	    : m_uid(uid)
 	{
 	}
 
@@ -253,7 +256,7 @@ protected:
 				//const Value& value = m_valueArray[i];
 				//const Key& key = m_keyArray[i];
 
-				int hashValue = m_keyArray[i].getHash() & (m_valueArray.capacity() - 1);  // New hash value with new mask
+				int hashValue = m_keyArray[i].getHash() & (m_valueArray.capacity() - 1); // New hash value with new mask
 				m_next[i] = m_hashTable[hashValue];
 				m_hashTable[hashValue] = i;
 			}
@@ -467,4 +470,4 @@ public:
 	}
 };
 
-#endif  //BT_HASH_MAP_H
+#endif //BT_HASH_MAP_H

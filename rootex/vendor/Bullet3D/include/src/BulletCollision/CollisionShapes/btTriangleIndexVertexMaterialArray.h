@@ -61,9 +61,9 @@ public:
 	}
 
 	btTriangleIndexVertexMaterialArray(int numTriangles, int* triangleIndexBase, int triangleIndexStride,
-									   int numVertices, btScalar* vertexBase, int vertexStride,
-									   int numMaterials, unsigned char* materialBase, int materialStride,
-									   int* triangleMaterialsBase, int materialIndexStride);
+	    int numVertices, btScalar* vertexBase, int vertexStride,
+	    int numMaterials, unsigned char* materialBase, int materialStride,
+	    int* triangleMaterialsBase, int materialIndexStride);
 
 	virtual ~btTriangleIndexVertexMaterialArray() {}
 
@@ -74,10 +74,10 @@ public:
 	}
 
 	virtual void getLockedMaterialBase(unsigned char** materialBase, int& numMaterials, PHY_ScalarType& materialType, int& materialStride,
-									   unsigned char** triangleMaterialBase, int& numTriangles, int& triangleMaterialStride, PHY_ScalarType& triangleType, int subpart = 0);
+	    unsigned char** triangleMaterialBase, int& numTriangles, int& triangleMaterialStride, PHY_ScalarType& triangleType, int subpart = 0);
 
 	virtual void getLockedReadOnlyMaterialBase(const unsigned char** materialBase, int& numMaterials, PHY_ScalarType& materialType, int& materialStride,
-											   const unsigned char** triangleMaterialBase, int& numTriangles, int& triangleMaterialStride, PHY_ScalarType& triangleType, int subpart = 0);
+	    const unsigned char** triangleMaterialBase, int& numTriangles, int& triangleMaterialStride, PHY_ScalarType& triangleType, int subpart = 0);
 };
 
-#endif  //BT_MULTIMATERIAL_TRIANGLE_INDEX_VERTEX_ARRAY_H
+#endif //BT_MULTIMATERIAL_TRIANGLE_INDEX_VERTEX_ARRAY_H

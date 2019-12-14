@@ -21,11 +21,11 @@ struct b3ContactPoint;
 
 class b3Dispatcher;
 
-#include "Bullet3Dynamics/ConstraintSolver/b3TypedConstraint.h"
 #include "Bullet3Dynamics/ConstraintSolver/b3ContactSolverInfo.h"
+#include "Bullet3Dynamics/ConstraintSolver/b3TypedConstraint.h"
+#include "Bullet3OpenCL/ParallelPrimitives/b3OpenCLArray.h"
 #include "b3GpuSolverBody.h"
 #include "b3GpuSolverConstraint.h"
-#include "Bullet3OpenCL/ParallelPrimitives/b3OpenCLArray.h"
 struct b3RigidBodyData;
 struct b3InertiaData;
 
@@ -67,10 +67,10 @@ public:
 
 	b3Scalar solveGroup(b3OpenCLArray<b3RigidBodyData>* gpuBodies, b3OpenCLArray<b3InertiaData>* gpuInertias, int numBodies, b3OpenCLArray<b3GpuGenericConstraint>* gpuConstraints, int numConstraints, const b3ContactSolverInfo& infoGlobal);
 	void solveJoints(int numBodies, b3OpenCLArray<b3RigidBodyData>* gpuBodies, b3OpenCLArray<b3InertiaData>* gpuInertias,
-					 int numConstraints, b3OpenCLArray<b3GpuGenericConstraint>* gpuConstraints);
+	    int numConstraints, b3OpenCLArray<b3GpuGenericConstraint>* gpuConstraints);
 
 	int sortConstraintByBatch3(struct b3BatchConstraint* cs, int numConstraints, int simdWidth, int staticIdx, int numBodies);
 	void recomputeBatches();
 };
 
-#endif  //B3_GPU_PGS_CONSTRAINT_SOLVER_H
+#endif //B3_GPU_PGS_CONSTRAINT_SOLVER_H

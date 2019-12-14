@@ -16,8 +16,8 @@ subject to the following restrictions:
 #ifndef BT_IDEBUG_DRAW__H
 #define BT_IDEBUG_DRAW__H
 
-#include "btVector3.h"
 #include "btTransform.h"
+#include "btVector3.h"
 
 ///The btIDebugDraw interface class allows hooking up a debug renderer to visually debug simulations.
 ///Typical use case: create a debug drawer object, and assign it to a btCollisionWorld or btDynamicsWorld using setDebugDrawer and call debugDrawWorld.
@@ -38,13 +38,13 @@ public:
 		btVector3 m_contactPoint;
 
 		DefaultColors()
-			: m_activeObject(1, 1, 1),
-			  m_deactivatedObject(0, 1, 0),
-			  m_wantsDeactivationObject(0, 1, 1),
-			  m_disabledDeactivationObject(1, 0, 0),
-			  m_disabledSimulationObject(1, 1, 0),
-			  m_aabb(1, 0, 0),
-			  m_contactPoint(1, 1, 0)
+		    : m_activeObject(1, 1, 1)
+		    , m_deactivatedObject(0, 1, 0)
+		    , m_wantsDeactivationObject(0, 1, 1)
+		    , m_disabledDeactivationObject(1, 0, 0)
+		    , m_disabledSimulationObject(1, 1, 0)
+		    , m_aabb(1, 0, 0)
+		    , m_contactPoint(1, 1, 0)
 		{
 		}
 	};
@@ -71,7 +71,7 @@ public:
 		DBG_MAX_DEBUG_DRAW_MODE
 	};
 
-	virtual ~btIDebugDraw(){};
+	virtual ~btIDebugDraw() {};
 
 	virtual DefaultColors getDefaultColors() const
 	{
@@ -144,13 +144,13 @@ public:
 			for (j = 0; j < 3; j++)
 			{
 				pa = btVector3(edgecoord[0] * halfExtents[0], edgecoord[1] * halfExtents[1],
-							   edgecoord[2] * halfExtents[2]);
+				    edgecoord[2] * halfExtents[2]);
 				pa += center;
 
 				int othercoord = j % 3;
 				edgecoord[othercoord] *= -1.f;
 				pb = btVector3(edgecoord[0] * halfExtents[0], edgecoord[1] * halfExtents[1],
-							   edgecoord[2] * halfExtents[2]);
+				    edgecoord[2] * halfExtents[2]);
 				pb += center;
 
 				drawLine(pa, pb, color);
@@ -169,13 +169,14 @@ public:
 	}
 
 	virtual void drawArc(const btVector3& center, const btVector3& normal, const btVector3& axis, btScalar radiusA, btScalar radiusB, btScalar minAngle, btScalar maxAngle,
-						 const btVector3& color, bool drawSect, btScalar stepDegrees = btScalar(10.f))
+	    const btVector3& color, bool drawSect, btScalar stepDegrees = btScalar(10.f))
 	{
 		const btVector3& vx = axis;
 		btVector3 vy = normal.cross(axis);
 		btScalar step = stepDegrees * SIMD_RADS_PER_DEG;
 		int nSteps = (int)btFabs((maxAngle - minAngle) / step);
-		if (!nSteps) nSteps = 1;
+		if (!nSteps)
+			nSteps = 1;
 		btVector3 prev = center + radiusA * vx * btCos(minAngle) + radiusB * vy * btSin(minAngle);
 		if (drawSect)
 		{
@@ -194,7 +195,7 @@ public:
 		}
 	}
 	virtual void drawSpherePatch(const btVector3& center, const btVector3& up, const btVector3& axis, btScalar radius,
-								 btScalar minTh, btScalar maxTh, btScalar minPs, btScalar maxPs, const btVector3& color, btScalar stepDegrees = btScalar(10.f), bool drawCenter = true)
+	    btScalar minTh, btScalar maxTh, btScalar minPs, btScalar maxPs, const btVector3& color, btScalar stepDegrees = btScalar(10.f), bool drawCenter = true)
 	{
 		btVector3 vA[74];
 		btVector3 vB[74];
@@ -225,7 +226,8 @@ public:
 			drawN = drawS = true;
 		}
 		int n_hor = (int)((maxTh - minTh) / step) + 1;
-		if (n_hor < 2) n_hor = 2;
+		if (n_hor < 2)
+			n_hor = 2;
 		btScalar step_h = (maxTh - minTh) / btScalar(n_hor - 1);
 		bool isClosed = false;
 		if (minPs > maxPs)
@@ -243,7 +245,8 @@ public:
 			isClosed = false;
 		}
 		int n_vert = (int)((maxPs - minPs) / step) + 1;
-		if (n_vert < 2) n_vert = 2;
+		if (n_vert < 2)
+			n_vert = 2;
 		btScalar step_v = (maxPs - minPs) / btScalar(n_vert - 1);
 		for (int i = 0; i < n_hor; i++)
 		{
@@ -470,4 +473,4 @@ public:
 	}
 };
 
-#endif  //BT_IDEBUG_DRAW__H
+#endif //BT_IDEBUG_DRAW__H

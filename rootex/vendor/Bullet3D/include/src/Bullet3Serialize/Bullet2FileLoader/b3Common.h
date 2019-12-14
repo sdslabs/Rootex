@@ -35,6 +35,6 @@ typedef struct bStructHandle
 } bStructHandle;
 typedef b3AlignedObjectArray<bStructHandle*> bListBasePtr;
 typedef b3HashMap<b3HashPtr, bStructHandle*> bPtrMap;
-}  // namespace bParse
+} // namespace bParse
 
-#endif  //__BCOMMON_H__
+#endif //__BCOMMON_H__

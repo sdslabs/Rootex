@@ -17,8 +17,8 @@ subject to the following restrictions:
 #ifndef BT_LEMKE_SOLVER_H
 #define BT_LEMKE_SOLVER_H
 
-#include "btMLCPSolverInterface.h"
 #include "btLemkeAlgorithm.h"
+#include "btMLCPSolverInterface.h"
 
 ///The btLemkeSolver is based on "Fast Implementation of Lemke’s Algorithm for Rigid Body Contact Simulation (John E. Lloyd) "
 ///It is a slower but more accurate solver. Increase the m_maxLoops for better convergence, at the cost of more CPU time.
@@ -33,10 +33,10 @@ public:
 	bool m_useLoHighBounds;
 
 	btLemkeSolver()
-		: m_maxValue(100000),
-		  m_debugLevel(0),
-		  m_maxLoops(1000),
-		  m_useLoHighBounds(true)
+	    : m_maxValue(100000)
+	    , m_debugLevel(0)
+	    , m_maxLoops(1000)
+	    , m_useLoHighBounds(true)
 	{
 	}
 	virtual bool solveMLCP(const btMatrixXu& A, const btVectorXu& b, btVectorXu& x, const btVectorXu& lo, const btVectorXu& hi, const btAlignedObjectArray<int>& limitDependency, int numIterations, bool useSparsity = true)
@@ -194,7 +194,7 @@ public:
 
 			for (int row = 0; row < n; row++)
 			{
-				solution[row] = x1(row, 0);  //n];
+				solution[row] = x1(row, 0); //n];
 			}
 
 			int errorIndexMax = -1;
@@ -335,4 +335,4 @@ public:
 	}
 };
 
-#endif  //BT_LEMKE_SOLVER_H
+#endif //BT_LEMKE_SOLVER_H

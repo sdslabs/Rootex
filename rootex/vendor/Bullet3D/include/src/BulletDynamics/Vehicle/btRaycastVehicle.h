@@ -11,13 +11,13 @@
 #ifndef BT_RAYCASTVEHICLE_H
 #define BT_RAYCASTVEHICLE_H
 
-#include "BulletDynamics/Dynamics/btRigidBody.h"
 #include "BulletDynamics/ConstraintSolver/btTypedConstraint.h"
+#include "BulletDynamics/Dynamics/btRigidBody.h"
 #include "btVehicleRaycaster.h"
 class btDynamicsWorld;
+#include "BulletDynamics/Dynamics/btActionInterface.h"
 #include "LinearMath/btAlignedObjectArray.h"
 #include "btWheelInfo.h"
-#include "BulletDynamics/Dynamics/btActionInterface.h"
 
 //class btVehicleTuning;
 
@@ -38,12 +38,12 @@ public:
 	{
 	public:
 		btVehicleTuning()
-			: m_suspensionStiffness(btScalar(5.88)),
-			  m_suspensionCompression(btScalar(0.83)),
-			  m_suspensionDamping(btScalar(0.88)),
-			  m_maxSuspensionTravelCm(btScalar(500.)),
-			  m_frictionSlip(btScalar(10.5)),
-			  m_maxSuspensionForce(btScalar(6000.))
+		    : m_suspensionStiffness(btScalar(5.88))
+		    , m_suspensionCompression(btScalar(0.83))
+		    , m_suspensionDamping(btScalar(0.88))
+		    , m_maxSuspensionTravelCm(btScalar(500.))
+		    , m_frictionSlip(btScalar(10.5))
+		    , m_maxSuspensionForce(btScalar(6000.))
 		{
 		}
 		btScalar m_suspensionStiffness;
@@ -160,9 +160,9 @@ public:
 		const btTransform& chassisTrans = getChassisWorldTransform();
 
 		btVector3 forwardW(
-			chassisTrans.getBasis()[0][m_indexForwardAxis],
-			chassisTrans.getBasis()[1][m_indexForwardAxis],
-			chassisTrans.getBasis()[2][m_indexForwardAxis]);
+		    chassisTrans.getBasis()[0][m_indexForwardAxis],
+		    chassisTrans.getBasis()[1][m_indexForwardAxis],
+		    chassisTrans.getBasis()[2][m_indexForwardAxis]);
 
 		return forwardW;
 	}
@@ -208,11 +208,11 @@ class btDefaultVehicleRaycaster : public btVehicleRaycaster
 
 public:
 	btDefaultVehicleRaycaster(btDynamicsWorld* world)
-		: m_dynamicsWorld(world)
+	    : m_dynamicsWorld(world)
 	{
 	}
 
 	virtual void* castRay(const btVector3& from, const btVector3& to, btVehicleRaycasterResult& result);
 };
 
-#endif  //BT_RAYCASTVEHICLE_H
+#endif //BT_RAYCASTVEHICLE_H

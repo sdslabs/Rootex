@@ -1,13 +1,13 @@
 #ifndef B3_GPU_SAP_BROADPHASE_H
 #define B3_GPU_SAP_BROADPHASE_H
 
+#include "Bullet3OpenCL/ParallelPrimitives/b3FillCL.h" //b3Int2
 #include "Bullet3OpenCL/ParallelPrimitives/b3OpenCLArray.h"
-#include "Bullet3OpenCL/ParallelPrimitives/b3FillCL.h"  //b3Int2
 class b3Vector3;
 #include "Bullet3OpenCL/ParallelPrimitives/b3RadixSort32CL.h"
 
-#include "b3SapAabb.h"
 #include "Bullet3Common/shared/b3Int2.h"
+#include "b3SapAabb.h"
 
 #include "b3GpuBroadphaseInterface.h"
 
@@ -140,4 +140,4 @@ public:
 	virtual b3OpenCLArray<int>& getLargeAabbIndicesGPU();
 };
 
-#endif  //B3_GPU_SAP_BROADPHASE_H
+#endif //B3_GPU_SAP_BROADPHASE_H

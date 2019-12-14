@@ -135,8 +135,8 @@ public:
 
 ///Radix sort for unsigned integer keys
 inline void gim_radix_sort_rtokens(
-	GIM_RSORT_TOKEN* array,
-	GIM_RSORT_TOKEN* sorted, GUINT element_count)
+    GIM_RSORT_TOKEN* array,
+    GIM_RSORT_TOKEN* sorted, GUINT element_count)
 {
 	GUINT i;
 	GUINT b0[kHist * 3];
@@ -206,9 +206,9 @@ inline void gim_radix_sort_rtokens(
 */
 template <typename T, class GETKEY_CLASS>
 void gim_radix_sort_array_tokens(
-	T* array,
-	GIM_RSORT_TOKEN* sorted_tokens,
-	GUINT element_count, GETKEY_CLASS uintkey_macro)
+    T* array,
+    GIM_RSORT_TOKEN* sorted_tokens,
+    GUINT element_count, GETKEY_CLASS uintkey_macro)
 {
 	GIM_RSORT_TOKEN* _unsorted = (GIM_RSORT_TOKEN*)gim_alloc(sizeof(GIM_RSORT_TOKEN) * element_count);
 	for (GUINT _i = 0; _i < element_count; ++_i)
@@ -231,8 +231,8 @@ void gim_radix_sort_array_tokens(
 */
 template <typename T, class GETKEY_CLASS, class COPY_CLASS>
 void gim_radix_sort(
-	T* array, GUINT element_count,
-	GETKEY_CLASS get_uintkey_macro, COPY_CLASS copy_elements_macro)
+    T* array, GUINT element_count,
+    GETKEY_CLASS get_uintkey_macro, COPY_CLASS copy_elements_macro)
 {
 	GIM_RSORT_TOKEN* _sorted = (GIM_RSORT_TOKEN*)gim_alloc(sizeof(GIM_RSORT_TOKEN) * element_count);
 	gim_radix_sort_array_tokens(array, _sorted, element_count, get_uintkey_macro);
@@ -259,10 +259,10 @@ If the element is not found, it returns the nearest upper element position, may 
 */
 template <class T, typename KEYCLASS, typename COMP_CLASS>
 bool gim_binary_search_ex(
-	const T* _array, GUINT _start_i,
-	GUINT _end_i, GUINT& _result_index,
-	const KEYCLASS& _search_key,
-	COMP_CLASS _comp_macro)
+    const T* _array, GUINT _start_i,
+    GUINT _end_i, GUINT& _result_index,
+    const KEYCLASS& _search_key,
+    COMP_CLASS _comp_macro)
 {
 	GUINT _k;
 	int _comp_result;
@@ -302,9 +302,9 @@ If the element is not found, it returns the nearest upper element position, may 
 */
 template <class T>
 bool gim_binary_search(
-	const T* _array, GUINT _start_i,
-	GUINT _end_i, const T& _search_key,
-	GUINT& _result_index)
+    const T* _array, GUINT _start_i,
+    GUINT _end_i, const T& _search_key,
+    GUINT& _result_index)
 {
 	GUINT _i = _start_i;
 	GUINT _j = _end_i + 1;
@@ -383,4 +383,4 @@ void gim_heap_sort(T* pArr, GUINT element_count, COMP_CLASS CompareFunc)
 	}
 }
 
-#endif  // GIM_RADIXSORT_H_INCLUDED
+#endif // GIM_RADIXSORT_H_INCLUDED

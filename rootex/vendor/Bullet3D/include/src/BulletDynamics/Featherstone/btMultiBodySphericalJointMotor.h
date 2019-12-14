@@ -29,11 +29,11 @@ protected:
 	btScalar m_kd;
 	btScalar m_kp;
 	btScalar m_erp;
-	btScalar m_rhsClamp;  //maximum error
+	btScalar m_rhsClamp; //maximum error
 
 public:
 	btMultiBodySphericalJointMotor(btMultiBody* body, int link, btScalar maxMotorImpulse);
-	
+
 	virtual ~btMultiBodySphericalJointMotor();
 	virtual void finalizeMultiDof();
 
@@ -41,8 +41,8 @@ public:
 	virtual int getIslandIdB() const;
 
 	virtual void createConstraintRows(btMultiBodyConstraintArray& constraintRows,
-									  btMultiBodyJacobianData& data,
-									  const btContactSolverInfo& infoGlobal);
+	    btMultiBodyJacobianData& data,
+	    const btContactSolverInfo& infoGlobal);
 
 	virtual void setVelocityTarget(const btVector3& velTarget, btScalar kd = 1.f)
 	{
@@ -74,4 +74,4 @@ public:
 	}
 };
 
-#endif  //BT_MULTIBODY_SPHERICAL_JOINT_MOTOR_H
+#endif //BT_MULTIBODY_SPHERICAL_JOINT_MOTOR_H

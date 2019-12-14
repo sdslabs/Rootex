@@ -74,12 +74,12 @@ class btConvexShape;
 class btBroadphaseInterface;
 class btSerializer;
 
-#include "LinearMath/btVector3.h"
-#include "LinearMath/btTransform.h"
-#include "btCollisionObject.h"
-#include "btCollisionDispatcher.h"
 #include "BulletCollision/BroadphaseCollision/btOverlappingPairCache.h"
 #include "LinearMath/btAlignedObjectArray.h"
+#include "LinearMath/btTransform.h"
+#include "LinearMath/btVector3.h"
+#include "btCollisionDispatcher.h"
+#include "btCollisionObject.h"
 
 ///CollisionWorld is interface and container for the collision detection
 class btCollisionWorld
@@ -175,13 +175,13 @@ public:
 	struct LocalRayResult
 	{
 		LocalRayResult(const btCollisionObject* collisionObject,
-					   LocalShapeInfo* localShapeInfo,
-					   const btVector3& hitNormalLocal,
-					   btScalar hitFraction)
-			: m_collisionObject(collisionObject),
-			  m_localShapeInfo(localShapeInfo),
-			  m_hitNormalLocal(hitNormalLocal),
-			  m_hitFraction(hitFraction)
+		    LocalShapeInfo* localShapeInfo,
+		    const btVector3& hitNormalLocal,
+		    btScalar hitFraction)
+		    : m_collisionObject(collisionObject)
+		    , m_localShapeInfo(localShapeInfo)
+		    , m_hitNormalLocal(hitNormalLocal)
+		    , m_hitFraction(hitFraction)
 		{
 		}
 
@@ -210,12 +210,13 @@ public:
 		}
 
 		RayResultCallback()
-			: m_closestHitFraction(btScalar(1.)),
-			  m_collisionObject(0),
-			  m_collisionFilterGroup(btBroadphaseProxy::DefaultFilter),
-			  m_collisionFilterMask(btBroadphaseProxy::AllFilter),
-			  //@BP Mod
-			  m_flags(0)
+		    : m_closestHitFraction(btScalar(1.))
+		    , m_collisionObject(0)
+		    , m_collisionFilterGroup(btBroadphaseProxy::DefaultFilter)
+		    , m_collisionFilterMask(btBroadphaseProxy::AllFilter)
+		    ,
+		    //@BP Mod
+		    m_flags(0)
 		{
 		}
 
@@ -232,12 +233,12 @@ public:
 	struct ClosestRayResultCallback : public RayResultCallback
 	{
 		ClosestRayResultCallback(const btVector3& rayFromWorld, const btVector3& rayToWorld)
-			: m_rayFromWorld(rayFromWorld),
-			  m_rayToWorld(rayToWorld)
+		    : m_rayFromWorld(rayFromWorld)
+		    , m_rayToWorld(rayToWorld)
 		{
 		}
 
-		btVector3 m_rayFromWorld;  //used to calculate hitPointWorld from hitFraction
+		btVector3 m_rayFromWorld; //used to calculate hitPointWorld from hitFraction
 		btVector3 m_rayToWorld;
 
 		btVector3 m_hitNormalWorld;
@@ -267,14 +268,14 @@ public:
 	struct AllHitsRayResultCallback : public RayResultCallback
 	{
 		AllHitsRayResultCallback(const btVector3& rayFromWorld, const btVector3& rayToWorld)
-			: m_rayFromWorld(rayFromWorld),
-			  m_rayToWorld(rayToWorld)
+		    : m_rayFromWorld(rayFromWorld)
+		    , m_rayToWorld(rayToWorld)
 		{
 		}
 
 		btAlignedObjectArray<const btCollisionObject*> m_collisionObjects;
 
-		btVector3 m_rayFromWorld;  //used to calculate hitPointWorld from hitFraction
+		btVector3 m_rayFromWorld; //used to calculate hitPointWorld from hitFraction
 		btVector3 m_rayToWorld;
 
 		btAlignedObjectArray<btVector3> m_hitNormalWorld;
@@ -307,15 +308,15 @@ public:
 	struct LocalConvexResult
 	{
 		LocalConvexResult(const btCollisionObject* hitCollisionObject,
-						  LocalShapeInfo* localShapeInfo,
-						  const btVector3& hitNormalLocal,
-						  const btVector3& hitPointLocal,
-						  btScalar hitFraction)
-			: m_hitCollisionObject(hitCollisionObject),
-			  m_localShapeInfo(localShapeInfo),
-			  m_hitNormalLocal(hitNormalLocal),
-			  m_hitPointLocal(hitPointLocal),
-			  m_hitFraction(hitFraction)
+		    LocalShapeInfo* localShapeInfo,
+		    const btVector3& hitNormalLocal,
+		    const btVector3& hitPointLocal,
+		    btScalar hitFraction)
+		    : m_hitCollisionObject(hitCollisionObject)
+		    , m_localShapeInfo(localShapeInfo)
+		    , m_hitNormalLocal(hitNormalLocal)
+		    , m_hitPointLocal(hitPointLocal)
+		    , m_hitFraction(hitFraction)
 		{
 		}
 
@@ -334,9 +335,9 @@ public:
 		int m_collisionFilterMask;
 
 		ConvexResultCallback()
-			: m_closestHitFraction(btScalar(1.)),
-			  m_collisionFilterGroup(btBroadphaseProxy::DefaultFilter),
-			  m_collisionFilterMask(btBroadphaseProxy::AllFilter)
+		    : m_closestHitFraction(btScalar(1.))
+		    , m_collisionFilterGroup(btBroadphaseProxy::DefaultFilter)
+		    , m_collisionFilterMask(btBroadphaseProxy::AllFilter)
 		{
 		}
 
@@ -362,13 +363,13 @@ public:
 	struct ClosestConvexResultCallback : public ConvexResultCallback
 	{
 		ClosestConvexResultCallback(const btVector3& convexFromWorld, const btVector3& convexToWorld)
-			: m_convexFromWorld(convexFromWorld),
-			  m_convexToWorld(convexToWorld),
-			  m_hitCollisionObject(0)
+		    : m_convexFromWorld(convexFromWorld)
+		    , m_convexToWorld(convexToWorld)
+		    , m_hitCollisionObject(0)
 		{
 		}
 
-		btVector3 m_convexFromWorld;  //used to calculate hitPointWorld from hitFraction
+		btVector3 m_convexFromWorld; //used to calculate hitPointWorld from hitFraction
 		btVector3 m_convexToWorld;
 
 		btVector3 m_hitNormalWorld;
@@ -404,9 +405,9 @@ public:
 		btScalar m_closestDistanceThreshold;
 
 		ContactResultCallback()
-			: m_collisionFilterGroup(btBroadphaseProxy::DefaultFilter),
-			  m_collisionFilterMask(btBroadphaseProxy::AllFilter),
-			  m_closestDistanceThreshold(0)
+		    : m_collisionFilterGroup(btBroadphaseProxy::DefaultFilter)
+		    , m_collisionFilterMask(btBroadphaseProxy::AllFilter)
+		    , m_closestDistanceThreshold(0)
 		{
 		}
 
@@ -449,25 +450,25 @@ public:
 	/// In a future implementation, we consider moving the ray test as a virtual method in btCollisionShape.
 	/// This allows more customization.
 	static void rayTestSingle(const btTransform& rayFromTrans, const btTransform& rayToTrans,
-							  btCollisionObject* collisionObject,
-							  const btCollisionShape* collisionShape,
-							  const btTransform& colObjWorldTransform,
-							  RayResultCallback& resultCallback);
+	    btCollisionObject* collisionObject,
+	    const btCollisionShape* collisionShape,
+	    const btTransform& colObjWorldTransform,
+	    RayResultCallback& resultCallback);
 
 	static void rayTestSingleInternal(const btTransform& rayFromTrans, const btTransform& rayToTrans,
-									  const btCollisionObjectWrapper* collisionObjectWrap,
-									  RayResultCallback& resultCallback);
+	    const btCollisionObjectWrapper* collisionObjectWrap,
+	    RayResultCallback& resultCallback);
 
 	/// objectQuerySingle performs a collision detection query and calls the resultCallback. It is used internally by rayTest.
 	static void objectQuerySingle(const btConvexShape* castShape, const btTransform& rayFromTrans, const btTransform& rayToTrans,
-								  btCollisionObject* collisionObject,
-								  const btCollisionShape* collisionShape,
-								  const btTransform& colObjWorldTransform,
-								  ConvexResultCallback& resultCallback, btScalar allowedPenetration);
+	    btCollisionObject* collisionObject,
+	    const btCollisionShape* collisionShape,
+	    const btTransform& colObjWorldTransform,
+	    ConvexResultCallback& resultCallback, btScalar allowedPenetration);
 
 	static void objectQuerySingleInternal(const btConvexShape* castShape, const btTransform& convexFromTrans, const btTransform& convexToTrans,
-										  const btCollisionObjectWrapper* colObjWrap,
-										  ConvexResultCallback& resultCallback, btScalar allowedPenetration);
+	    const btCollisionObjectWrapper* colObjWrap,
+	    ConvexResultCallback& resultCallback, btScalar allowedPenetration);
 
 	virtual void addCollisionObject(btCollisionObject* collisionObject, int collisionFilterGroup = btBroadphaseProxy::DefaultFilter, int collisionFilterMask = btBroadphaseProxy::AllFilter);
 
@@ -510,4 +511,4 @@ public:
 	virtual void serialize(btSerializer* serializer);
 };
 
-#endif  //BT_COLLISION_WORLD_H
+#endif //BT_COLLISION_WORLD_H

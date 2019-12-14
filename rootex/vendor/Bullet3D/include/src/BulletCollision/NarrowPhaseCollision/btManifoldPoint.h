@@ -16,8 +16,8 @@ subject to the following restrictions:
 #ifndef BT_MANIFOLD_CONTACT_POINT_H
 #define BT_MANIFOLD_CONTACT_POINT_H
 
-#include "LinearMath/btVector3.h"
 #include "LinearMath/btTransformUtil.h"
+#include "LinearMath/btVector3.h"
 
 #ifdef PFX_USE_FREE_VECTORMATH
 #include "physics_effects/base_level/solver/pfx_constraint_row.h"
@@ -35,7 +35,7 @@ btConstraintRow
 	btScalar m_accumImpulse;
 };
 typedef btConstraintRow PfxConstraintRow;
-#endif  //PFX_USE_FREE_VECTORMATH
+#endif //PFX_USE_FREE_VECTORMATH
 
 enum btContactPointFlags
 {
@@ -52,43 +52,44 @@ class btManifoldPoint
 {
 public:
 	btManifoldPoint()
-		: m_userPersistentData(0),
-		  m_contactPointFlags(0),
-		  m_appliedImpulse(0.f),
-		  m_prevRHS(0.f),
-		  m_appliedImpulseLateral1(0.f),
-		  m_appliedImpulseLateral2(0.f),
-		  m_contactMotion1(0.f),
-		  m_contactMotion2(0.f),
-		  m_contactCFM(0.f),
-		  m_contactERP(0.f),
-		  m_frictionCFM(0.f),
-		  m_lifeTime(0)
+	    : m_userPersistentData(0)
+	    , m_contactPointFlags(0)
+	    , m_appliedImpulse(0.f)
+	    , m_prevRHS(0.f)
+	    , m_appliedImpulseLateral1(0.f)
+	    , m_appliedImpulseLateral2(0.f)
+	    , m_contactMotion1(0.f)
+	    , m_contactMotion2(0.f)
+	    , m_contactCFM(0.f)
+	    , m_contactERP(0.f)
+	    , m_frictionCFM(0.f)
+	    , m_lifeTime(0)
 	{
 	}
 
 	btManifoldPoint(const btVector3& pointA, const btVector3& pointB,
-					const btVector3& normal,
-					btScalar distance) : m_localPointA(pointA),
-										 m_localPointB(pointB),
-										 m_normalWorldOnB(normal),
-										 m_distance1(distance),
-										 m_combinedFriction(btScalar(0.)),
-										 m_combinedRollingFriction(btScalar(0.)),
-										 m_combinedSpinningFriction(btScalar(0.)),
-										 m_combinedRestitution(btScalar(0.)),
-										 m_userPersistentData(0),
-										 m_contactPointFlags(0),
-										 m_appliedImpulse(0.f),
-										 m_prevRHS(0.f),
-										 m_appliedImpulseLateral1(0.f),
-										 m_appliedImpulseLateral2(0.f),
-										 m_contactMotion1(0.f),
-										 m_contactMotion2(0.f),
-										 m_contactCFM(0.f),
-										 m_contactERP(0.f),
-										 m_frictionCFM(0.f),
-										 m_lifeTime(0)
+	    const btVector3& normal,
+	    btScalar distance)
+	    : m_localPointA(pointA)
+	    , m_localPointB(pointB)
+	    , m_normalWorldOnB(normal)
+	    , m_distance1(distance)
+	    , m_combinedFriction(btScalar(0.))
+	    , m_combinedRollingFriction(btScalar(0.))
+	    , m_combinedSpinningFriction(btScalar(0.))
+	    , m_combinedRestitution(btScalar(0.))
+	    , m_userPersistentData(0)
+	    , m_contactPointFlags(0)
+	    , m_appliedImpulse(0.f)
+	    , m_prevRHS(0.f)
+	    , m_appliedImpulseLateral1(0.f)
+	    , m_appliedImpulseLateral2(0.f)
+	    , m_contactMotion1(0.f)
+	    , m_contactMotion2(0.f)
+	    , m_contactCFM(0.f)
+	    , m_contactERP(0.f)
+	    , m_frictionCFM(0.f)
+	    , m_lifeTime(0)
 	{
 	}
 
@@ -101,8 +102,8 @@ public:
 
 	btScalar m_distance1;
 	btScalar m_combinedFriction;
-	btScalar m_combinedRollingFriction;   //torsional friction orthogonal to contact normal, useful to make spheres stop rolling forever
-	btScalar m_combinedSpinningFriction;  //torsional friction around contact normal, useful for grasping objects
+	btScalar m_combinedRollingFriction; //torsional friction orthogonal to contact normal, useful to make spheres stop rolling forever
+	btScalar m_combinedSpinningFriction; //torsional friction around contact normal, useful for grasping objects
 	btScalar m_combinedRestitution;
 
 	//BP mod, store contact triangles.
@@ -134,7 +135,7 @@ public:
 
 	btScalar m_frictionCFM;
 
-	int m_lifeTime;  //lifetime of the contactpoint in frames
+	int m_lifeTime; //lifetime of the contactpoint in frames
 
 	btVector3 m_lateralFrictionDir1;
 	btVector3 m_lateralFrictionDir2;
@@ -171,4 +172,4 @@ public:
 	}
 };
 
-#endif  //BT_MANIFOLD_CONTACT_POINT_H
+#endif //BT_MANIFOLD_CONTACT_POINT_H

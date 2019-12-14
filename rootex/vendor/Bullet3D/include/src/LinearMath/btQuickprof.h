@@ -50,7 +50,7 @@ private:
 	struct btClockData* m_data;
 };
 
-#endif  //USE_BT_CLOCK
+#endif //USE_BT_CLOCK
 
 typedef void(btEnterProfileZoneFunc)(const char* msg);
 typedef void(btLeaveProfileZoneFunc)();
@@ -63,7 +63,7 @@ void btSetCustomLeaveProfileZoneFunc(btLeaveProfileZoneFunc* leaveFunc);
 
 #ifndef BT_ENABLE_PROFILE
 #define BT_NO_PROFILE 1
-#endif  //BT_NO_PROFILE
+#endif //BT_NO_PROFILE
 
 const unsigned int BT_QUICKPROF_MAX_THREAD_COUNT = 64;
 
@@ -73,8 +73,7 @@ unsigned int btQuickprofGetCurrentThreadIndex2();
 
 #ifndef BT_NO_PROFILE
 
-
-#include <stdio.h>  //@todo remove this, backwards compatibility
+#include <stdio.h> //@todo remove this, backwards compatibility
 
 #include "btAlignedAllocator.h"
 #include <new>
@@ -126,9 +125,9 @@ public:
 	bool Is_Done(void);
 	bool Is_Root(void) { return (CurrentParent->Get_Parent() == 0); }
 
-	void Enter_Child(int index);     // Make the given child the new parent
-	void Enter_Largest_Child(void);  // Make the largest child the new parent
-	void Enter_Parent(void);         // Make the current parent's parent the new parent
+	void Enter_Child(int index); // Make the given child the new parent
+	void Enter_Largest_Child(void); // Make the largest child the new parent
+	void Enter_Parent(void); // Make the current parent's parent the new parent
 
 	// Access the current child
 	const char* Get_Current_Name(void) { return CurrentChild->Get_Name(); }
@@ -183,7 +182,7 @@ private:
 	static unsigned long int ResetTime;
 };
 
-#endif  //#ifndef BT_NO_PROFILE
+#endif //#ifndef BT_NO_PROFILE
 
 ///ProfileSampleClass is a simple way to profile a function's scope
 ///Use the BT_PROFILE macro at the start of scope to time
@@ -197,4 +196,4 @@ public:
 
 #define BT_PROFILE(name) CProfileSample __profile(name)
 
-#endif  //BT_QUICK_PROF_H
+#endif //BT_QUICK_PROF_H

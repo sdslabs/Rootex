@@ -23,7 +23,7 @@ public:
      *                        convergence
      */
 	btPolarDecomposition(btScalar tolerance = btScalar(0.0001),
-						 unsigned int maxIterations = 16);
+	    unsigned int maxIterations = 16);
 
 	/**
      * Decomposes a matrix into orthogonal and symmetric, positive-definite
@@ -66,4 +66,4 @@ private:
  */
 unsigned int polarDecompose(const btMatrix3x3& a, btMatrix3x3& u, btMatrix3x3& h);
 
-#endif  // POLARDECOMPOSITION_H
+#endif // POLARDECOMPOSITION_H

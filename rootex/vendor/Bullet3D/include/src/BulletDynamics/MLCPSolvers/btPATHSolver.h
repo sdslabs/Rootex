@@ -22,23 +22,23 @@ subject to the following restrictions:
 
 extern "C"
 {
-#include "PATH/SimpleLCP.h"
-#include "PATH/License.h"
 #include "PATH/Error_Interface.h"
+#include "PATH/License.h"
+#include "PATH/SimpleLCP.h"
 };
-void __stdcall MyError(Void *data, Char *msg)
+void __stdcall MyError(Void* data, Char* msg)
 {
 	printf("Path Error: %s\n", msg);
 }
-void __stdcall MyWarning(Void *data, Char *msg)
+void __stdcall MyWarning(Void* data, Char* msg)
 {
 	printf("Path Warning: %s\n", msg);
 }
 
 Error_Interface e;
 
-#include "btMLCPSolverInterface.h"
 #include "Dantzig/lcp.h"
+#include "btMLCPSolverInterface.h"
 
 class btPathSolver : public btMLCPSolverInterface
 {
@@ -52,7 +52,7 @@ public:
 		Error_SetInterface(&e);
 	}
 
-	virtual bool solveMLCP(const btMatrixXu &A, const btVectorXu &b, btVectorXu &x, const btVectorXu &lo, const btVectorXu &hi, const btAlignedObjectArray<int> &limitDependency, int numIterations, bool useSparsity = true)
+	virtual bool solveMLCP(const btMatrixXu& A, const btVectorXu& b, btVectorXu& x, const btVectorXu& lo, const btVectorXu& hi, const btAlignedObjectArray<int>& limitDependency, int numIterations, bool useSparsity = true)
 	{
 		MCP_Termination status;
 
@@ -103,7 +103,7 @@ public:
 
 		if (status != MCP_Solved)
 		{
-			static const char *gReturnMsgs[] = {
+			static const char* gReturnMsgs[] = {
 				"Invalid return",
 				"MCP_Solved: The problem was solved",
 				"MCP_NoProgress: A stationary point was found",
@@ -116,9 +116,10 @@ public:
 				"MCP_Infeasible: Problem has no solution",
 				"MCP_Error: An error occurred within the code",
 				"MCP_LicenseError: License could not be found",
-				"MCP_OK"};
+				"MCP_OK"
+			};
 
-			printf("ERROR: The PATH MCP solver failed: %s\n", gReturnMsgs[(unsigned int)status]);  // << std::endl;
+			printf("ERROR: The PATH MCP solver failed: %s\n", gReturnMsgs[(unsigned int)status]); // << std::endl;
 			printf("using Projected Gauss Seidel fallback\n");
 
 			return false;
@@ -137,6 +138,6 @@ public:
 	}
 };
 
-#endif  //BT_USE_PATH
+#endif //BT_USE_PATH
 
-#endif  //BT_PATH_SOLVER_H
+#endif //BT_PATH_SOLVER_H

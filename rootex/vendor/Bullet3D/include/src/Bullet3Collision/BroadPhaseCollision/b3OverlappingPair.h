@@ -67,4 +67,4 @@ B3_FORCE_INLINE bool operator==(const b3BroadphasePair& a, const b3BroadphasePai
 	return (a.x == b.x) && (a.y == b.y);
 }
 
-#endif  //B3_OVERLAPPING_PAIR_H
+#endif //B3_OVERLAPPING_PAIR_H

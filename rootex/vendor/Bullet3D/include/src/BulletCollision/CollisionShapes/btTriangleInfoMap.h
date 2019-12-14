@@ -52,12 +52,12 @@ typedef btHashMap<btHashInt, btTriangleInfo> btInternalTriangleInfoMap;
 ///The btTriangleInfoMap stores edge angle information for some triangles. You can compute this information yourself or using btGenerateInternalEdgeInfo.
 struct btTriangleInfoMap : public btInternalTriangleInfoMap
 {
-	btScalar m_convexEpsilon;          ///used to determine if an edge or contact normal is convex, using the dot product
-	btScalar m_planarEpsilon;          ///used to determine if a triangle edge is planar with zero angle
-	btScalar m_equalVertexThreshold;   ///used to compute connectivity: if the distance between two vertices is smaller than m_equalVertexThreshold, they are considered to be 'shared'
-	btScalar m_edgeDistanceThreshold;  ///used to determine edge contacts: if the closest distance between a contact point and an edge is smaller than this distance threshold it is considered to "hit the edge"
-	btScalar m_maxEdgeAngleThreshold;  //ignore edges that connect triangles at an angle larger than this m_maxEdgeAngleThreshold
-	btScalar m_zeroAreaThreshold;      ///used to determine if a triangle is degenerate (length squared of cross product of 2 triangle edges < threshold)
+	btScalar m_convexEpsilon; ///used to determine if an edge or contact normal is convex, using the dot product
+	btScalar m_planarEpsilon; ///used to determine if a triangle edge is planar with zero angle
+	btScalar m_equalVertexThreshold; ///used to compute connectivity: if the distance between two vertices is smaller than m_equalVertexThreshold, they are considered to be 'shared'
+	btScalar m_edgeDistanceThreshold; ///used to determine edge contacts: if the closest distance between a contact point and an edge is smaller than this distance threshold it is considered to "hit the edge"
+	btScalar m_maxEdgeAngleThreshold; //ignore edges that connect triangles at an angle larger than this m_maxEdgeAngleThreshold
+	btScalar m_zeroAreaThreshold; ///used to determine if a triangle is degenerate (length squared of cross product of 2 triangle edges < threshold)
 
 	btTriangleInfoMap()
 	{
@@ -235,4 +235,4 @@ SIMD_FORCE_INLINE void btTriangleInfoMap::deSerialize(btTriangleInfoMapData& tma
 	}
 }
 
-#endif  //_BT_TRIANGLE_INFO_MAP_H
+#endif //_BT_TRIANGLE_INFO_MAP_H

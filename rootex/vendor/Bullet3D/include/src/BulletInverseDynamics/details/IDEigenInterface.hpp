@@ -19,21 +19,21 @@ typedef Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::DontAlign> m
 typedef Eigen::Matrix<float, 3, Eigen::Dynamic, Eigen::DontAlign> mat3x;
 #endif
 
-inline void resize(mat3x &m, Eigen::Index size)
+inline void resize(mat3x& m, Eigen::Index size)
 {
 	m.resize(3, size);
 	m.setZero();
 }
 
-inline void setMatxxElem(const idArrayIdx row, const idArrayIdx col, const idScalar val, matxx *m)
+inline void setMatxxElem(const idArrayIdx row, const idArrayIdx col, const idScalar val, matxx* m)
 {
 	(*m)(row, col) = val;
 }
 
-inline void setMat3xElem(const idArrayIdx row, const idArrayIdx col, const idScalar val, mat3x *m)
+inline void setMat3xElem(const idArrayIdx row, const idArrayIdx col, const idScalar val, mat3x* m)
 {
 	(*m)(row, col) = val;
 }
 
-}  // namespace btInverseDynamics
-#endif  // INVDYNEIGENINTERFACE_HPP_
+} // namespace btInverseDynamics
+#endif // INVDYNEIGENINTERFACE_HPP_

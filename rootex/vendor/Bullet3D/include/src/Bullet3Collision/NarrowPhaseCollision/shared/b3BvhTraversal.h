@@ -1,25 +1,25 @@
 
 
-#include "Bullet3Common/shared/b3Int4.h"
-#include "Bullet3Collision/NarrowPhaseCollision/shared/b3RigidBodyData.h"
-#include "Bullet3Collision/NarrowPhaseCollision/shared/b3Collidable.h"
 #include "Bullet3Collision/BroadPhaseCollision/shared/b3Aabb.h"
 #include "Bullet3Collision/NarrowPhaseCollision/shared/b3BvhSubtreeInfoData.h"
+#include "Bullet3Collision/NarrowPhaseCollision/shared/b3Collidable.h"
 #include "Bullet3Collision/NarrowPhaseCollision/shared/b3QuantizedBvhNodeData.h"
+#include "Bullet3Collision/NarrowPhaseCollision/shared/b3RigidBodyData.h"
+#include "Bullet3Common/shared/b3Int4.h"
 
 // work-in-progress
 void b3BvhTraversal(__global const b3Int4* pairs,
-					__global const b3RigidBodyData* rigidBodies,
-					__global const b3Collidable* collidables,
-					__global b3Aabb* aabbs,
-					__global b3Int4* concavePairsOut,
-					__global volatile int* numConcavePairsOut,
-					__global const b3BvhSubtreeInfo* subtreeHeadersRoot,
-					__global const b3QuantizedBvhNode* quantizedNodesRoot,
-					__global const b3BvhInfo* bvhInfos,
-					int numPairs,
-					int maxNumConcavePairsCapacity,
-					int id)
+    __global const b3RigidBodyData* rigidBodies,
+    __global const b3Collidable* collidables,
+    __global b3Aabb* aabbs,
+    __global b3Int4* concavePairsOut,
+    __global volatile int* numConcavePairsOut,
+    __global const b3BvhSubtreeInfo* subtreeHeadersRoot,
+    __global const b3QuantizedBvhNode* quantizedNodesRoot,
+    __global const b3BvhInfo* bvhInfos,
+    int numPairs,
+    int maxNumConcavePairsCapacity,
+    int id)
 {
 	int bodyIndexA = pairs[id].x;
 	int bodyIndexB = pairs[id].y;
@@ -37,9 +37,7 @@ void b3BvhTraversal(__global const b3Int4* pairs,
 
 	int shapeTypeB = collidables[collidableIndexB].m_shapeType;
 
-	if (shapeTypeB != SHAPE_CONVEX_HULL &&
-		shapeTypeB != SHAPE_SPHERE &&
-		shapeTypeB != SHAPE_COMPOUND_OF_CONVEX_HULLS)
+	if (shapeTypeB != SHAPE_CONVEX_HULL && shapeTypeB != SHAPE_SPHERE && shapeTypeB != SHAPE_COMPOUND_OF_CONVEX_HULLS)
 		return;
 
 	b3BvhInfo bvhInfo = bvhInfos[collidables[collidableIndexA].m_numChildShapes];

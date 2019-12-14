@@ -16,11 +16,11 @@ subject to the following restrictions:
 #ifndef B3_GPU_RIGIDBODY_PIPELINE_H
 #define B3_GPU_RIGIDBODY_PIPELINE_H
 
-#include "Bullet3OpenCL/Initialize/b3OpenCLInclude.h"
 #include "Bullet3Collision/NarrowPhaseCollision/b3Config.h"
+#include "Bullet3OpenCL/Initialize/b3OpenCLInclude.h"
 
-#include "Bullet3Common/b3AlignedObjectArray.h"
 #include "Bullet3Collision/NarrowPhaseCollision/b3RaycastInfo.h"
+#include "Bullet3Common/b3AlignedObjectArray.h"
 
 class b3GpuRigidBodyPipeline
 {
@@ -67,4 +67,4 @@ public:
 	int getNumBodies() const;
 };
 
-#endif  //B3_GPU_RIGIDBODY_PIPELINE_H
+#endif //B3_GPU_RIGIDBODY_PIPELINE_H

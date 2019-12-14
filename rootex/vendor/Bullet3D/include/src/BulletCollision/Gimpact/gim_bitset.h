@@ -103,8 +103,7 @@ public:
 		{
 			return 0;
 		}
-		char value = m_container[bit_index >> GUINT_EXPONENT] &
-					 (1 << (bit_index & (GUINT_BIT_COUNT - 1)));
+		char value = m_container[bit_index >> GUINT_EXPONENT] & (1 << (bit_index & (GUINT_BIT_COUNT - 1)));
 		return value;
 	}
 
@@ -114,4 +113,4 @@ public:
 	}
 };
 
-#endif  // GIM_CONTAINERS_H_INCLUDED
+#endif // GIM_CONTAINERS_H_INCLUDED

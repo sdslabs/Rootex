@@ -19,16 +19,16 @@ subject to the following restrictions:
 
 #include "btCompoundCollisionAlgorithm.h"
 
-#include "BulletCollision/CollisionDispatch/btActivatingCollisionAlgorithm.h"
-#include "BulletCollision/BroadphaseCollision/btDispatcher.h"
 #include "BulletCollision/BroadphaseCollision/btBroadphaseInterface.h"
+#include "BulletCollision/BroadphaseCollision/btDispatcher.h"
+#include "BulletCollision/CollisionDispatch/btActivatingCollisionAlgorithm.h"
 
 #include "BulletCollision/NarrowPhaseCollision/btPersistentManifold.h"
 class btDispatcher;
 #include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h"
 #include "BulletCollision/CollisionDispatch/btCollisionCreateFunc.h"
-#include "LinearMath/btAlignedObjectArray.h"
 #include "BulletCollision/CollisionDispatch/btHashedSimplePairCache.h"
+#include "LinearMath/btAlignedObjectArray.h"
 class btDispatcher;
 class btCollisionObject;
 
@@ -42,7 +42,7 @@ class btCompoundCompoundCollisionAlgorithm : public btCompoundCollisionAlgorithm
 	class btHashedSimplePairCache* m_childCollisionAlgorithmCache;
 	btSimplePairArray m_removePairs;
 
-	int m_compoundShapeRevision0;  //to keep track of changes, so that childAlgorithm array can be updated
+	int m_compoundShapeRevision0; //to keep track of changes, so that childAlgorithm array can be updated
 	int m_compoundShapeRevision1;
 
 	void removeChildAlgorithms();
@@ -79,4 +79,4 @@ public:
 	};
 };
 
-#endif  //BT_COMPOUND_COMPOUND_COLLISION_ALGORITHM_H
+#endif //BT_COMPOUND_COMPOUND_COLLISION_ALGORITHM_H

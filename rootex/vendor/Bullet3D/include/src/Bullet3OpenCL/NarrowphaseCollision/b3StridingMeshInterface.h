@@ -42,7 +42,8 @@ protected:
 public:
 	B3_DECLARE_ALIGNED_ALLOCATOR();
 
-	b3StridingMeshInterface() : m_scaling(b3MakeVector3(b3Scalar(1.), b3Scalar(1.), b3Scalar(1.)))
+	b3StridingMeshInterface()
+	    : m_scaling(b3MakeVector3(b3Scalar(1.), b3Scalar(1.), b3Scalar(1.)))
 	{
 	}
 
@@ -135,9 +136,9 @@ struct b3MeshPartData
 	b3ShortIntIndexTripletData* m_3indices16;
 	b3CharIndexTripletData* m_3indices8;
 
-	b3ShortIntIndexData* m_indices16;  //backwards compatibility
+	b3ShortIntIndexData* m_indices16; //backwards compatibility
 
-	int m_numTriangles;  //length of m_indices = m_numTriangles
+	int m_numTriangles; //length of m_indices = m_numTriangles
 	int m_numVertices;
 };
 
@@ -155,4 +156,4 @@ B3_FORCE_INLINE int b3StridingMeshInterface::calculateSerializeBufferSize() cons
 	return sizeof(b3StridingMeshInterfaceData);
 }
 
-#endif  //B3_STRIDING_MESHINTERFACE_H
+#endif //B3_STRIDING_MESHINTERFACE_H

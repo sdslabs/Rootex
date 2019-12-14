@@ -17,8 +17,8 @@ subject to the following restrictions:
 #define BT_SIMULATION_ISLAND_MANAGER_H
 
 #include "BulletCollision/CollisionDispatch/btUnionFind.h"
-#include "btCollisionCreateFunc.h"
 #include "LinearMath/btAlignedObjectArray.h"
+#include "btCollisionCreateFunc.h"
 #include "btCollisionObject.h"
 
 class btCollisionObject;
@@ -51,17 +51,17 @@ public:
 
 	struct IslandCallback
 	{
-		virtual ~IslandCallback(){};
+		virtual ~IslandCallback() {};
 
 		virtual void processIsland(btCollisionObject** bodies, int numBodies, class btPersistentManifold** manifolds, int numManifolds, int islandId) = 0;
 	};
 
 	void buildAndProcessIslands(btDispatcher* dispatcher, btCollisionWorld* collisionWorld, IslandCallback* callback);
-    
+
 	void buildIslands(btDispatcher* dispatcher, btCollisionWorld* colWorld);
 
-    void processIslands(btDispatcher* dispatcher, btCollisionWorld* collisionWorld, IslandCallback* callback);
-    
+	void processIslands(btDispatcher* dispatcher, btCollisionWorld* collisionWorld, IslandCallback* callback);
+
 	bool getSplitIslands()
 	{
 		return m_splitIslands;
@@ -72,4 +72,4 @@ public:
 	}
 };
 
-#endif  //BT_SIMULATION_ISLAND_MANAGER_H
+#endif //BT_SIMULATION_ISLAND_MANAGER_H

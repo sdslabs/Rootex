@@ -66,6 +66,6 @@ B3_FORCE_INLINE b3UnsignedInt4 b3MakeUnsignedInt4(unsigned int x, unsigned int y
 #define b3MakeInt4 (int4)
 #define b3MakeUnsignedInt4 (uint4)
 
-#endif  //__cplusplus
+#endif //__cplusplus
 
-#endif  //B3_INT4_H
+#endif //B3_INT4_H

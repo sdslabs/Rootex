@@ -15,8 +15,8 @@ subject to the following restrictions:
 #ifndef BT_SPHERE_MINKOWSKI_H
 #define BT_SPHERE_MINKOWSKI_H
 
+#include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h" // for the types
 #include "btConvexInternalShape.h"
-#include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h"  // for the types
 
 ///The btSphereShape implements an implicit sphere, centered around a local origin with radius.
 ATTRIBUTE_ALIGNED16(class)
@@ -26,7 +26,8 @@ btSphereShape : public btConvexInternalShape
 public:
 	BT_DECLARE_ALIGNED_ALLOCATOR();
 
-	btSphereShape(btScalar radius) : btConvexInternalShape()
+	btSphereShape(btScalar radius)
+	    : btConvexInternalShape()
 	{
 		m_shapeType = SPHERE_SHAPE_PROXYTYPE;
 		m_localScaling.setValue(1.0, 1.0, 1.0);
@@ -68,4 +69,4 @@ public:
 	}
 };
 
-#endif  //BT_SPHERE_MINKOWSKI_H
+#endif //BT_SPHERE_MINKOWSKI_H

@@ -16,8 +16,8 @@ subject to the following restrictions:
 #ifndef B3_OBJECT_ARRAY__
 #define B3_OBJECT_ARRAY__
 
-#include "b3Scalar.h"  // has definitions like B3_FORCE_INLINE
 #include "b3AlignedAllocator.h"
+#include "b3Scalar.h" // has definitions like B3_FORCE_INLINE
 
 ///If the platform doesn't support placement new, you can disable B3_USE_PLACEMENT_NEW
 ///then the b3AlignedObjectArray doesn't support objects with virtual methods, and non-trivial constructors/destructors
@@ -27,16 +27,16 @@ subject to the following restrictions:
 
 #define B3_USE_PLACEMENT_NEW 1
 //#define B3_USE_MEMCPY 1 //disable, because it is cumbersome to find out for each platform where memcpy is defined. It can be in <memory.h> or <string.h> or otherwise...
-#define B3_ALLOW_ARRAY_COPY_OPERATOR  // enabling this can accidently perform deep copies of data if you are not careful
+#define B3_ALLOW_ARRAY_COPY_OPERATOR // enabling this can accidently perform deep copies of data if you are not careful
 
 #ifdef B3_USE_MEMCPY
 #include <memory.h>
 #include <string.h>
-#endif  //B3_USE_MEMCPY
+#endif //B3_USE_MEMCPY
 
 #ifdef B3_USE_PLACEMENT_NEW
-#include <new>  //for placement new
-#endif          //B3_USE_PLACEMENT_NEW
+#include <new> //for placement new
+#endif //B3_USE_PLACEMENT_NEW
 
 ///The b3AlignedObjectArray template class uses a subset of the stl::vector interface for its methods
 ///It is developed to replace stl::vector to avoid portability issues, including STL alignment issues to add SIMD/SSE data
@@ -59,10 +59,10 @@ public:
 		copyFromArray(other);
 		return *this;
 	}
-#else   //B3_ALLOW_ARRAY_COPY_OPERATOR
+#else //B3_ALLOW_ARRAY_COPY_OPERATOR
 private:
 	B3_FORCE_INLINE b3AlignedObjectArray<T>& operator=(const b3AlignedObjectArray<T>& other);
-#endif  //B3_ALLOW_ARRAY_COPY_OPERATOR
+#endif //B3_ALLOW_ARRAY_COPY_OPERATOR
 
 protected:
 	B3_FORCE_INLINE int allocSize(int size)
@@ -77,7 +77,7 @@ protected:
 			new (&dest[i]) T(m_data[i]);
 #else
 			dest[i] = m_data[i];
-#endif  //B3_USE_PLACEMENT_NEW
+#endif //B3_USE_PLACEMENT_NEW
 	}
 
 	B3_FORCE_INLINE void init()
@@ -231,7 +231,7 @@ public:
 			{
 				new (&m_data[i]) T(fillData);
 			}
-#endif  //B3_USE_PLACEMENT_NEW
+#endif //B3_USE_PLACEMENT_NEW
 		}
 
 		m_size = newsize;
@@ -257,7 +257,7 @@ public:
 		}
 		m_size++;
 #ifdef B3_USE_PLACEMENT_NEW
-		new (&m_data[sz]) T(fillValue);  //use the in-place new (not really allocating heap memory)
+		new (&m_data[sz]) T(fillValue); //use the in-place new (not really allocating heap memory)
 #endif
 
 		return m_data[sz];
@@ -275,7 +275,7 @@ public:
 		new (&m_data[m_size]) T(_Val);
 #else
 		m_data[size()] = _Val;
-#endif  //B3_USE_PLACEMENT_NEW
+#endif //B3_USE_PLACEMENT_NEW
 
 		m_size++;
 	}
@@ -287,9 +287,9 @@ public:
 	}
 
 	B3_FORCE_INLINE void reserve(int _Count)
-	{  // determine new minimum length of allocated storage
+	{ // determine new minimum length of allocated storage
 		if (capacity() < _Count)
-		{  // not enough room, reallocate
+		{ // not enough room, reallocate
 			T* s = (T*)allocate(_Count);
 			b3Assert(s);
 			if (s == 0)
@@ -405,7 +405,7 @@ public:
 		T temp = m_data[index0];
 		m_data[index0] = m_data[index1];
 		m_data[index1] = temp;
-#endif  //B3_USE_PLACEMENT_NEW
+#endif //B3_USE_PLACEMENT_NEW
 	}
 
 	template <typename L>
@@ -439,15 +439,15 @@ public:
 		//assume sorted array
 		while (first <= last)
 		{
-			int mid = (first + last) / 2;  // compute mid point.
+			int mid = (first + last) / 2; // compute mid point.
 			if (key > m_data[mid])
-				first = mid + 1;  // repeat search in top half.
+				first = mid + 1; // repeat search in top half.
 			else if (key < m_data[mid])
-				last = mid - 1;  // repeat search in bottom half.
+				last = mid - 1; // repeat search in bottom half.
 			else
-				return mid;  // found it. return position /////
+				return mid; // found it. return position /////
 		}
-		return size();  // failed to find key
+		return size(); // failed to find key
 	}
 
 	int findLinearSearch(const T& key) const
@@ -519,4 +519,4 @@ public:
 	}
 };
 
-#endif  //B3_OBJECT_ARRAY__
+#endif //B3_OBJECT_ARRAY__

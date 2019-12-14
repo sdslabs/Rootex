@@ -28,13 +28,14 @@ class b3RigidBody;
 #else
 #define b3Point2PointConstraintData b3Point2PointConstraintFloatData
 #define b3Point2PointConstraintDataName "b3Point2PointConstraintFloatData"
-#endif  //B3_USE_DOUBLE_PRECISION
+#endif //B3_USE_DOUBLE_PRECISION
 
 struct b3ConstraintSetting
 {
-	b3ConstraintSetting() : m_tau(b3Scalar(0.3)),
-							m_damping(b3Scalar(1.)),
-							m_impulseClamp(b3Scalar(0.))
+	b3ConstraintSetting()
+	    : m_tau(b3Scalar(0.3))
+	    , m_damping(b3Scalar(1.))
+	    , m_impulseClamp(b3Scalar(0.))
 	{
 	}
 	b3Scalar m_tau;
@@ -150,4 +151,4 @@ B3_FORCE_INLINE	const char*	b3Point2PointConstraint::serialize(void* dataBuffer,
 }
 */
 
-#endif  //B3_POINT2POINTCONSTRAINT_H
+#endif //B3_POINT2POINTCONSTRAINT_H

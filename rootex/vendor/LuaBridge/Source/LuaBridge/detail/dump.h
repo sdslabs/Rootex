@@ -35,109 +35,111 @@
 #include <iostream>
 #include <string>
 
-
-namespace luabridge {
-namespace debug {
-
-inline void putIndent (std::ostream& stream, unsigned level)
+namespace luabridge
 {
-  for (unsigned i = 0; i < level; ++i)
-  {
-    stream << "  ";
-  }
-}
-
-inline void dumpTable (lua_State* L, int index, std::ostream& stream, unsigned level);
-
-inline void dumpValue (lua_State* L, int index, std::ostream& stream, unsigned level = 0)
+namespace debug
 {
-  const int type = lua_type (L, index);
-  switch (type)
-  {
-  case LUA_TNIL:
-    stream << "nil";
-    break;
 
-  case LUA_TBOOLEAN:
-    stream << (lua_toboolean (L, index) ? "true" : "false");
-    break;
+	inline void putIndent(std::ostream& stream, unsigned level)
+	{
+		for (unsigned i = 0; i < level; ++i)
+		{
+			stream << "  ";
+		}
+	}
 
-  case LUA_TNUMBER:
-    stream << lua_tonumber (L, index);
-    break;
+	inline void dumpTable(lua_State* L, int index, std::ostream& stream, unsigned level);
 
-  case LUA_TSTRING:
-    stream << '"' << lua_tostring (L, index) << '"';
-    break;
+	inline void dumpValue(lua_State* L, int index, std::ostream& stream, unsigned level = 0)
+	{
+		const int type = lua_type(L, index);
+		switch (type)
+		{
+		case LUA_TNIL:
+			stream << "nil";
+			break;
 
-  case LUA_TFUNCTION:
-    if (lua_iscfunction (L, index))
-    {
-      stream << "cfunction@" << lua_topointer (L, index);
-    }
-    else
-    {
-      stream << "function@" << lua_topointer (L, index);
-    }
-    break;
+		case LUA_TBOOLEAN:
+			stream << (lua_toboolean(L, index) ? "true" : "false");
+			break;
 
-  case LUA_TTHREAD:
-    stream << "thread@" << lua_tothread (L, index);
-    break;
+		case LUA_TNUMBER:
+			stream << lua_tonumber(L, index);
+			break;
 
-  case LUA_TLIGHTUSERDATA:
-    stream << "lightuserdata@" << lua_touserdata (L, index);
-    break;
+		case LUA_TSTRING:
+			stream << '"' << lua_tostring(L, index) << '"';
+			break;
 
-  case LUA_TTABLE:
-    dumpTable (L, index, stream, level);
-    break;
+		case LUA_TFUNCTION:
+			if (lua_iscfunction(L, index))
+			{
+				stream << "cfunction@" << lua_topointer(L, index);
+			}
+			else
+			{
+				stream << "function@" << lua_topointer(L, index);
+			}
+			break;
 
-  case LUA_TUSERDATA:
-    stream << "userdata@" << lua_touserdata (L, index);
-    break;
+		case LUA_TTHREAD:
+			stream << "thread@" << lua_tothread(L, index);
+			break;
 
-  default:
-    stream << lua_typename (L, type);;
-    break;
-  }
-}
+		case LUA_TLIGHTUSERDATA:
+			stream << "lightuserdata@" << lua_touserdata(L, index);
+			break;
 
-inline void dumpTable (lua_State* L, int index, std::ostream& stream, unsigned level)
-{
-  stream << "table@" << lua_topointer (L, index);
+		case LUA_TTABLE:
+			dumpTable(L, index, stream, level);
+			break;
 
-  if (level > 0)
-  {
-    return;
-  }
+		case LUA_TUSERDATA:
+			stream << "userdata@" << lua_touserdata(L, index);
+			break;
 
-  index = lua_absindex (L, index);
-  stream << " {";
-  lua_pushnil (L); // Initial key
-  while (lua_next (L, index))
-  {
-    stream << "\n";
-    putIndent (stream, level + 1);
-    dumpValue (L, -2, stream, level + 1); // Key
-    stream << ": ";
-    dumpValue (L, -1, stream, level + 1); // Value
-    lua_pop (L, 1); // Value
-  }
-  putIndent (stream, level);
-  stream << "\n}";
-}
+		default:
+			stream << lua_typename(L, type);
+			;
+			break;
+		}
+	}
 
-inline void dumpState (lua_State *L, std::ostream& stream = std::cerr)
-{
-  int top = lua_gettop (L);
-  for (int i = 1; i <= top; ++i)
-  {
-    stream << "stack #" << i << ": ";
-    dumpValue (L, i, stream, 0);
-    stream << "\n";
-  }
-}
+	inline void dumpTable(lua_State* L, int index, std::ostream& stream, unsigned level)
+	{
+		stream << "table@" << lua_topointer(L, index);
+
+		if (level > 0)
+		{
+			return;
+		}
+
+		index = lua_absindex(L, index);
+		stream << " {";
+		lua_pushnil(L); // Initial key
+		while (lua_next(L, index))
+		{
+			stream << "\n";
+			putIndent(stream, level + 1);
+			dumpValue(L, -2, stream, level + 1); // Key
+			stream << ": ";
+			dumpValue(L, -1, stream, level + 1); // Value
+			lua_pop(L, 1); // Value
+		}
+		putIndent(stream, level);
+		stream << "\n}";
+	}
+
+	inline void dumpState(lua_State* L, std::ostream& stream = std::cerr)
+	{
+		int top = lua_gettop(L);
+		for (int i = 1; i <= top; ++i)
+		{
+			stream << "stack #" << i << ": ";
+			dumpValue(L, i, stream, 0);
+			stream << "\n";
+		}
+	}
 
 } // namespace debug
 } // namespace luabridge

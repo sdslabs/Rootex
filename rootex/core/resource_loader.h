@@ -1,8 +1,8 @@
 #pragma once
 
 #include "common/types.h"
-#include "core/resource_file.h"
 #include "core/resource_data.h"
+#include "core/resource_file.h"
 #include "os/os.h"
 
 class ResourceLoader

@@ -35,4 +35,4 @@ struct b3BroadphaseRayCallback : public b3BroadphaseAabbCallback
 	virtual ~b3BroadphaseRayCallback() {}
 };
 
-#endif  //B3_BROADPHASE_CALLBACK_H
+#endif //B3_BROADPHASE_CALLBACK_H

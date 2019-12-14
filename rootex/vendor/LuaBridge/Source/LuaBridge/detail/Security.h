@@ -1,6 +1,7 @@
 #pragma once
 
-namespace luabridge {
+namespace luabridge
+{
 
 //------------------------------------------------------------------------------
 /**
@@ -9,31 +10,32 @@ security options.
 class Security
 {
 public:
-  static bool hideMetatables()
-  {
-    return getSettings().hideMetatables;
-  }
+	static bool hideMetatables()
+	{
+		return getSettings().hideMetatables;
+	}
 
-  static void setHideMetatables(bool shouldHide)
-  {
-    getSettings().hideMetatables = shouldHide;
-  }
+	static void setHideMetatables(bool shouldHide)
+	{
+		getSettings().hideMetatables = shouldHide;
+	}
 
 private:
-  struct Settings
-  {
-    Settings() : hideMetatables(true)
-    {
-    }
+	struct Settings
+	{
+		Settings()
+		    : hideMetatables(true)
+		{
+		}
 
-    bool hideMetatables;
-  };
+		bool hideMetatables;
+	};
 
-  static Settings& getSettings()
-  {
-    static Settings settings;
-    return settings;
-  }
+	static Settings& getSettings()
+	{
+		static Settings settings;
+		return settings;
+	}
 };
 
 //------------------------------------------------------------------------------
@@ -43,7 +45,7 @@ Push an object onto the Lua stack.
 template <class T>
 inline void push(lua_State* L, T t)
 {
-  Stack <T>::push(L, t);
+	Stack<T>::push(L, t);
 }
 
 //------------------------------------------------------------------------------
@@ -56,8 +58,8 @@ its table proxies.
 template <class T>
 inline void setGlobal(lua_State* L, T t, char const* name)
 {
-  push(L, t);
-  lua_setglobal(L, name);
+	push(L, t);
+	lua_setglobal(L, name);
 }
 
 //------------------------------------------------------------------------------
@@ -66,7 +68,7 @@ Change whether or not metatables are hidden (on by default).
 */
 inline void setHideMetatables(bool shouldHide)
 {
-  Security::setHideMetatables(shouldHide);
+	Security::setHideMetatables(shouldHide);
 }
 
 } // namespace luabridge

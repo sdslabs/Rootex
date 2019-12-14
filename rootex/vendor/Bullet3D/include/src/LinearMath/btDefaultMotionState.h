@@ -15,10 +15,10 @@ btDefaultMotionState : public btMotionState
 	BT_DECLARE_ALIGNED_ALLOCATOR();
 
 	btDefaultMotionState(const btTransform& startTrans = btTransform::getIdentity(), const btTransform& centerOfMassOffset = btTransform::getIdentity())
-		: m_graphicsWorldTrans(startTrans),
-		  m_centerOfMassOffset(centerOfMassOffset),
-		  m_startWorldTrans(startTrans),
-		  m_userPointer(0)
+	    : m_graphicsWorldTrans(startTrans)
+	    , m_centerOfMassOffset(centerOfMassOffset)
+	    , m_startWorldTrans(startTrans)
+	    , m_userPointer(0)
 
 	{
 	}
@@ -37,4 +37,4 @@ btDefaultMotionState : public btMotionState
 	}
 };
 
-#endif  //BT_DEFAULT_MOTION_STATE_H
+#endif //BT_DEFAULT_MOTION_STATE_H

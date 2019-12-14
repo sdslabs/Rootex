@@ -16,11 +16,11 @@ subject to the following restrictions:
 #ifndef BT_CONVEX_CONCAVE_COLLISION_ALGORITHM_H
 #define BT_CONVEX_CONCAVE_COLLISION_ALGORITHM_H
 
-#include "btActivatingCollisionAlgorithm.h"
-#include "BulletCollision/BroadphaseCollision/btDispatcher.h"
 #include "BulletCollision/BroadphaseCollision/btBroadphaseInterface.h"
+#include "BulletCollision/BroadphaseCollision/btDispatcher.h"
 #include "BulletCollision/CollisionShapes/btTriangleCallback.h"
 #include "BulletCollision/NarrowPhaseCollision/btPersistentManifold.h"
+#include "btActivatingCollisionAlgorithm.h"
 class btDispatcher;
 #include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h"
 #include "btCollisionCreateFunc.h"
@@ -114,4 +114,4 @@ public:
 	};
 };
 
-#endif  //BT_CONVEX_CONCAVE_COLLISION_ALGORITHM_H
+#endif //BT_CONVEX_CONCAVE_COLLISION_ALGORITHM_H

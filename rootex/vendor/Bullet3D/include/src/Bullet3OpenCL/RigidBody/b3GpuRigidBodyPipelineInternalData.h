@@ -16,15 +16,15 @@ subject to the following restrictions:
 #ifndef B3_GPU_RIGIDBODY_PIPELINE_INTERNAL_DATA_H
 #define B3_GPU_RIGIDBODY_PIPELINE_INTERNAL_DATA_H
 
-#include "Bullet3OpenCL/Initialize/b3OpenCLInclude.h"
 #include "Bullet3Common/b3AlignedObjectArray.h"
+#include "Bullet3OpenCL/Initialize/b3OpenCLInclude.h"
 
-#include "Bullet3OpenCL/ParallelPrimitives/b3OpenCLArray.h"
 #include "Bullet3Collision/NarrowPhaseCollision/shared/b3Collidable.h"
+#include "Bullet3OpenCL/ParallelPrimitives/b3OpenCLArray.h"
 
-#include "Bullet3OpenCL/BroadphaseCollision/b3SapAabb.h"
-#include "Bullet3Dynamics/ConstraintSolver/b3TypedConstraint.h"
 #include "Bullet3Collision/NarrowPhaseCollision/b3Config.h"
+#include "Bullet3Dynamics/ConstraintSolver/b3TypedConstraint.h"
+#include "Bullet3OpenCL/BroadphaseCollision/b3SapAabb.h"
 
 #include "Bullet3Collision/BroadPhaseCollision/b3OverlappingPair.h"
 #include "Bullet3OpenCL/RigidBody/b3GpuGenericConstraint.h"
@@ -65,4 +65,4 @@ struct b3GpuRigidBodyPipelineInternalData
 	b3Config m_config;
 };
 
-#endif  //B3_GPU_RIGIDBODY_PIPELINE_INTERNAL_DATA_H
+#endif //B3_GPU_RIGIDBODY_PIPELINE_INTERNAL_DATA_H

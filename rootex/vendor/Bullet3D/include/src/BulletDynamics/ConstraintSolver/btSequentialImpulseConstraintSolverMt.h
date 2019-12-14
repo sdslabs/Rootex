@@ -16,9 +16,9 @@ subject to the following restrictions:
 #ifndef BT_SEQUENTIAL_IMPULSE_CONSTRAINT_SOLVER_MT_H
 #define BT_SEQUENTIAL_IMPULSE_CONSTRAINT_SOLVER_MT_H
 
-#include "btSequentialImpulseConstraintSolver.h"
-#include "btBatchedConstraints.h"
 #include "LinearMath/btThreads.h"
+#include "btBatchedConstraints.h"
+#include "btSequentialImpulseConstraintSolver.h"
 
 ///
 /// btSequentialImpulseConstraintSolverMt
@@ -85,11 +85,11 @@ public:
 	void internalConvertMultipleJoints(const btAlignedObjectArray<JointParams>& jointParamsArray, btTypedConstraint** constraints, int iBegin, int iEnd, const btContactSolverInfo& infoGlobal);
 
 	// parameters to control batching
-	static bool s_allowNestedParallelForLoops;        // whether to allow nested parallel operations
-	static int s_minimumContactManifoldsForBatching;  // don't even try to batch if fewer manifolds than this
+	static bool s_allowNestedParallelForLoops; // whether to allow nested parallel operations
+	static int s_minimumContactManifoldsForBatching; // don't even try to batch if fewer manifolds than this
 	static btBatchedConstraints::BatchingMethod s_contactBatchingMethod;
 	static btBatchedConstraints::BatchingMethod s_jointBatchingMethod;
-	static int s_minBatchSize;  // desired number of constraints per batch
+	static int s_minBatchSize; // desired number of constraints per batch
 	static int s_maxBatchSize;
 
 protected:
@@ -101,9 +101,9 @@ protected:
 	bool m_useBatching;
 	bool m_useObsoleteJointConstraints;
 	btAlignedObjectArray<btContactManifoldCachedInfo> m_manifoldCachedInfoArray;
-	btAlignedObjectArray<int> m_rollingFrictionIndexTable;  // lookup table mapping contact index to rolling friction index
+	btAlignedObjectArray<int> m_rollingFrictionIndexTable; // lookup table mapping contact index to rolling friction index
 	btSpinMutex m_bodySolverArrayMutex;
-	char m_antiFalseSharingPadding[CACHE_LINE_SIZE];  // padding to keep mutexes in separate cachelines
+	char m_antiFalseSharingPadding[CACHE_LINE_SIZE]; // padding to keep mutexes in separate cachelines
 	btSpinMutex m_kinematicBodyUniqueIdToSolverBodyTableMutex;
 	btAlignedObjectArray<char> m_scratchMemory;
 
@@ -147,4 +147,4 @@ public:
 	void internalWriteBackBodies(int iBegin, int iEnd, const btContactSolverInfo& infoGlobal);
 };
 
-#endif  //BT_SEQUENTIAL_IMPULSE_CONSTRAINT_SOLVER_MT_H
+#endif //BT_SEQUENTIAL_IMPULSE_CONSTRAINT_SOLVER_MT_H

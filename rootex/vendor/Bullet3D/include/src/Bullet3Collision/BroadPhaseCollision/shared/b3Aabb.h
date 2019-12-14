@@ -22,9 +22,9 @@ struct b3Aabb
 };
 
 inline void b3TransformAabb2(b3Float4ConstArg localAabbMin, b3Float4ConstArg localAabbMax, float margin,
-							 b3Float4ConstArg pos,
-							 b3QuatConstArg orn,
-							 b3Float4* aabbMinOut, b3Float4* aabbMaxOut)
+    b3Float4ConstArg pos,
+    b3QuatConstArg orn,
+    b3Float4* aabbMinOut, b3Float4* aabbMaxOut)
 {
 	b3Float4 localHalfExtents = 0.5f * (localAabbMax - localAabbMin);
 	localHalfExtents += b3MakeFloat4(margin, margin, margin, 0.f);
@@ -35,16 +35,16 @@ inline void b3TransformAabb2(b3Float4ConstArg localAabbMin, b3Float4ConstArg loc
 	b3Float4 center = b3TransformPoint(localCenter, pos, orn);
 
 	b3Float4 extent = b3MakeFloat4(b3Dot3F4(localHalfExtents, b3GetRow(abs_b, 0)),
-								   b3Dot3F4(localHalfExtents, b3GetRow(abs_b, 1)),
-								   b3Dot3F4(localHalfExtents, b3GetRow(abs_b, 2)),
-								   0.f);
+	    b3Dot3F4(localHalfExtents, b3GetRow(abs_b, 1)),
+	    b3Dot3F4(localHalfExtents, b3GetRow(abs_b, 2)),
+	    0.f);
 	*aabbMinOut = center - extent;
 	*aabbMaxOut = center + extent;
 }
 
 /// conservative test for overlap between two aabbs
 inline bool b3TestAabbAgainstAabb(b3Float4ConstArg aabbMin1, b3Float4ConstArg aabbMax1,
-								  b3Float4ConstArg aabbMin2, b3Float4ConstArg aabbMax2)
+    b3Float4ConstArg aabbMin2, b3Float4ConstArg aabbMax2)
 {
 	bool overlap = true;
 	overlap = (aabbMin1.x > aabbMax2.x || aabbMax1.x < aabbMin2.x) ? false : overlap;
@@ -53,4 +53,4 @@ inline bool b3TestAabbAgainstAabb(b3Float4ConstArg aabbMin1, b3Float4ConstArg aa
 	return overlap;
 }
 
-#endif  //B3_AABB_H
+#endif //B3_AABB_H

@@ -10,8 +10,7 @@ TextResourceFile* ResourceLoader::createTextResourceFile(String path)
 {
 	for (auto& item : s_ResourcesDataFiles)
 	{
-		if (item.first->getPath() == path &&
-			item.second->getType() == ResourceFile::Type::TXT)
+		if (item.first->getPath() == path && item.second->getType() == ResourceFile::Type::TXT)
 		{
 			return reinterpret_cast<TextResourceFile*>(item.second.get());
 		}
@@ -27,7 +26,7 @@ TextResourceFile* ResourceLoader::createTextResourceFile(String path)
 	FileBuffer& buffer = OS::loadFileContents(path);
 	ResourceData* resData = new ResourceData(path, buffer);
 	TextResourceFile* resFile = new TextResourceFile(ResourceFile::Type::TXT, resData);
-	
+
 	s_ResourcesDataFiles[Ptr<ResourceData>(resData)] = Ptr<ResourceFile>(resFile);
 
 	return resFile;
@@ -85,7 +84,7 @@ AudioResourceFile* ResourceLoader::createAudioResourceFile(String path)
 	               &format,
 	               &size,
 	               &frequency));
-	
+
 	Vector<char> dataArray;
 	dataArray.insert(
 	    dataArray.begin(),

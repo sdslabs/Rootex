@@ -25,7 +25,7 @@ TODO:
 #ifndef BT_SLIDER_CONSTRAINT_H
 #define BT_SLIDER_CONSTRAINT_H
 
-#include "LinearMath/btScalar.h"  //for BT_USE_DOUBLE_PRECISION
+#include "LinearMath/btScalar.h" //for BT_USE_DOUBLE_PRECISION
 
 #ifdef BT_USE_DOUBLE_PRECISION
 #define btSliderConstraintData2 btSliderConstraintDoubleData
@@ -33,7 +33,7 @@ TODO:
 #else
 #define btSliderConstraintData2 btSliderConstraintData
 #define btSliderConstraintDataName "btSliderConstraintData"
-#endif  //BT_USE_DOUBLE_PRECISION
+#endif //BT_USE_DOUBLE_PRECISION
 
 #include "LinearMath/btVector3.h"
 #include "btJacobianEntry.h"
@@ -291,7 +291,7 @@ public:
 struct btSliderConstraintData
 {
 	btTypedConstraintData m_typeConstraintData;
-	btTransformFloatData m_rbAFrame;  // constraint axii. Assumes z is hinge axis.
+	btTransformFloatData m_rbAFrame; // constraint axii. Assumes z is hinge axis.
 	btTransformFloatData m_rbBFrame;
 
 	float m_linearUpperLimit;
@@ -307,7 +307,7 @@ struct btSliderConstraintData
 struct btSliderConstraintDoubleData
 {
 	btTypedConstraintDoubleData m_typeConstraintData;
-	btTransformDoubleData m_rbAFrame;  // constraint axii. Assumes z is hinge axis.
+	btTransformDoubleData m_rbAFrame; // constraint axii. Assumes z is hinge axis.
 	btTransformDoubleData m_rbBFrame;
 
 	double m_linearUpperLimit;
@@ -346,4 +346,4 @@ SIMD_FORCE_INLINE const char* btSliderConstraint::serialize(void* dataBuffer, bt
 	return btSliderConstraintDataName;
 }
 
-#endif  //BT_SLIDER_CONSTRAINT_H
+#endif //BT_SLIDER_CONSTRAINT_H

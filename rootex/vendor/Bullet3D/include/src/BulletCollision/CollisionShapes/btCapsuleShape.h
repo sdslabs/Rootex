@@ -16,8 +16,8 @@ subject to the following restrictions:
 #ifndef BT_CAPSULE_SHAPE_H
 #define BT_CAPSULE_SHAPE_H
 
+#include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h" // for the types
 #include "btConvexInternalShape.h"
-#include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h"  // for the types
 
 ///The btCapsuleShape represents a capsule around the Y axis, there is also the btCapsuleShapeX aligned around the X axis and btCapsuleShapeZ around the Z axis.
 ///The total height is height+2*radius, so the height is just the height between the center of each 'sphere' of the capsule caps.
@@ -30,7 +30,11 @@ protected:
 
 protected:
 	///only used for btCapsuleShapeZ and btCapsuleShapeX subclasses.
-	btCapsuleShape() : btConvexInternalShape() { m_shapeType = CAPSULE_SHAPE_PROXYTYPE; };
+	btCapsuleShape()
+	    : btConvexInternalShape()
+	{
+		m_shapeType = CAPSULE_SHAPE_PROXYTYPE;
+	};
 
 public:
 	BT_DECLARE_ALIGNED_ALLOCATOR();
@@ -179,4 +183,4 @@ SIMD_FORCE_INLINE void btCapsuleShape::deSerializeFloat(btCapsuleShapeData* data
 	m_upAxis = dataBuffer->m_upAxis;
 }
 
-#endif  //BT_CAPSULE_SHAPE_H
+#endif //BT_CAPSULE_SHAPE_H

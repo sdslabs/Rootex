@@ -35,7 +35,7 @@ enum btDynamicsWorldType
 	BT_SOFT_RIGID_DYNAMICS_WORLD = 4,
 	BT_GPU_DYNAMICS_WORLD = 5,
 	BT_SOFT_MULTIBODY_DYNAMICS_WORLD = 6,
-    BT_DEFORMABLE_MULTIBODY_DYNAMICS_WORLD = 7
+	BT_DEFORMABLE_MULTIBODY_DYNAMICS_WORLD = 7
 };
 
 ///The btDynamicsWorld is the interface class for several dynamics implementation, basic, discrete, parallel, and continuous etc.
@@ -50,7 +50,10 @@ protected:
 
 public:
 	btDynamicsWorld(btDispatcher* dispatcher, btBroadphaseInterface* broadphase, btCollisionConfiguration* collisionConfiguration)
-		: btCollisionWorld(dispatcher, broadphase, collisionConfiguration), m_internalTickCallback(0), m_internalPreTickCallback(0), m_worldUserInfo(0)
+	    : btCollisionWorld(dispatcher, broadphase, collisionConfiguration)
+	    , m_internalTickCallback(0)
+	    , m_internalPreTickCallback(0)
+	    , m_worldUserInfo(0)
 	{
 	}
 
@@ -171,4 +174,4 @@ struct btDynamicsWorldFloatData
 	btVector3FloatData m_gravity;
 };
 
-#endif  //BT_DYNAMICS_WORLD_H
+#endif //BT_DYNAMICS_WORLD_H

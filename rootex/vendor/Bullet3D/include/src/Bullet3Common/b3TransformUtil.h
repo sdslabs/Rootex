@@ -21,8 +21,8 @@ subject to the following restrictions:
 B3_FORCE_INLINE b3Vector3 b3AabbSupport(const b3Vector3& halfExtents, const b3Vector3& supportDir)
 {
 	return b3MakeVector3(supportDir.getX() < b3Scalar(0.0) ? -halfExtents.getX() : halfExtents.getX(),
-						 supportDir.getY() < b3Scalar(0.0) ? -halfExtents.getY() : halfExtents.getY(),
-						 supportDir.getZ() < b3Scalar(0.0) ? -halfExtents.getZ() : halfExtents.getZ());
+	    supportDir.getY() < b3Scalar(0.0) ? -halfExtents.getY() : halfExtents.getY(),
+	    supportDir.getZ() < b3Scalar(0.0) ? -halfExtents.getZ() : halfExtents.getZ());
 }
 
 /// Utils related to temporal transforms
@@ -146,9 +146,9 @@ class b3ConvexSeparatingDistanceUtil
 
 public:
 	b3ConvexSeparatingDistanceUtil(b3Scalar boundingRadiusA, b3Scalar boundingRadiusB)
-		: m_boundingRadiusA(boundingRadiusA),
-		  m_boundingRadiusB(boundingRadiusB),
-		  m_separatingDistance(0.f)
+	    : m_boundingRadiusA(boundingRadiusA)
+	    , m_boundingRadiusB(boundingRadiusB)
+	    , m_separatingDistance(0.f)
 	{
 	}
 
@@ -207,4 +207,4 @@ public:
 	}
 };
 
-#endif  //B3_TRANSFORM_UTIL_H
+#endif //B3_TRANSFORM_UTIL_H

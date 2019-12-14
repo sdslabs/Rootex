@@ -67,16 +67,14 @@ protected:
 	bool m_latencyMotionStateInterpolation;
 
 	btAlignedObjectArray<btPersistentManifold*> m_predictiveManifolds;
-	btSpinMutex m_predictiveManifoldsMutex;  // used to synchronize threads creating predictive contacts
+	btSpinMutex m_predictiveManifoldsMutex; // used to synchronize threads creating predictive contacts
 
 	virtual void predictUnconstraintMotion(btScalar timeStep);
 
-	void integrateTransformsInternal(btRigidBody * *bodies, int numBodies, btScalar timeStep);  // can be called in parallel
+	void integrateTransformsInternal(btRigidBody * *bodies, int numBodies, btScalar timeStep); // can be called in parallel
 	virtual void integrateTransforms(btScalar timeStep);
 
 	virtual void calculateSimulationIslands();
-
-	
 
 	virtual void updateActivationState(btScalar timeStep);
 
@@ -87,7 +85,7 @@ protected:
 	virtual void internalSingleStepSimulation(btScalar timeStep);
 
 	void releasePredictiveContacts();
-	void createPredictiveContactsInternal(btRigidBody * *bodies, int numBodies, btScalar timeStep);  // can be called in parallel
+	void createPredictiveContactsInternal(btRigidBody * *bodies, int numBodies, btScalar timeStep); // can be called in parallel
 	virtual void createPredictiveContacts(btScalar timeStep);
 
 	virtual void saveKinematicState(btScalar timeStep);
@@ -95,7 +93,7 @@ protected:
 	void serializeRigidBodies(btSerializer * serializer);
 
 	void serializeDynamicsWorldInfo(btSerializer * serializer);
-    
+
 public:
 	BT_DECLARE_ALIGNED_ALLOCATOR();
 
@@ -107,8 +105,8 @@ public:
 	///if maxSubSteps > 0, it will interpolate motion between fixedTimeStep's
 	virtual int stepSimulation(btScalar timeStep, int maxSubSteps = 1, btScalar fixedTimeStep = btScalar(1.) / btScalar(60.));
 
-    virtual void solveConstraints(btContactSolverInfo & solverInfo);
-    
+	virtual void solveConstraints(btContactSolverInfo & solverInfo);
+
 	virtual void synchronizeMotionStates();
 
 	///this can be useful to synchronize a single rigid body -> graphics object
@@ -229,16 +227,16 @@ public:
 	{
 		return m_latencyMotionStateInterpolation;
 	}
-    
-    btAlignedObjectArray<btRigidBody*>& getNonStaticRigidBodies()
-    {
-        return m_nonStaticRigidBodies;
-    }
-    
-    const btAlignedObjectArray<btRigidBody*>& getNonStaticRigidBodies() const
-    {
-        return m_nonStaticRigidBodies;
-    }
+
+	btAlignedObjectArray<btRigidBody*>& getNonStaticRigidBodies()
+	{
+		return m_nonStaticRigidBodies;
+	}
+
+	const btAlignedObjectArray<btRigidBody*>& getNonStaticRigidBodies() const
+	{
+		return m_nonStaticRigidBodies;
+	}
 };
 
-#endif  //BT_DISCRETE_DYNAMICS_WORLD_H
+#endif //BT_DISCRETE_DYNAMICS_WORLD_H

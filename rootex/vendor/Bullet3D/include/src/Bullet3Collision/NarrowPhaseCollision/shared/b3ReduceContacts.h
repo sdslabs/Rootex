@@ -86,4 +86,4 @@ inline int b3ReduceContacts(const b3Float4* p, int nPoints, const b3Float4& near
 	return 4;
 }
 
-#endif  //B3_REDUCE_CONTACTS_H
+#endif //B3_REDUCE_CONTACTS_H

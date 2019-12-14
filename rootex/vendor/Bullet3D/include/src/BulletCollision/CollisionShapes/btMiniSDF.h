@@ -1,9 +1,9 @@
 #ifndef MINISDF_H
 #define MINISDF_H
 
-#include "LinearMath/btVector3.h"
 #include "LinearMath/btAabbUtil2.h"
 #include "LinearMath/btAlignedObjectArray.h"
+#include "LinearMath/btVector3.h"
 
 struct btMultiIndex
 {
@@ -31,8 +31,8 @@ struct btAlignedBox3d
 	}
 
 	btAlignedBox3d(const btVector3& mn, const btVector3& mx)
-		: m_min(mn),
-		  m_max(mx)
+	    : m_min(mn)
+	    , m_max(mx)
 	{
 	}
 
@@ -102,7 +102,7 @@ struct btMiniSDF
 	btAlignedObjectArray<btAlignedObjectArray<unsigned int> > m_cell_map;
 
 	btMiniSDF()
-		: m_isValid(false)
+	    : m_isValid(false)
 	{
 	}
 	bool load(const char* data, int size);
@@ -124,4 +124,4 @@ struct btMiniSDF
 	bool interpolate(unsigned int field_id, double& dist, btVector3 const& x, btVector3* gradient) const;
 };
 
-#endif  //MINISDF_H
+#endif //MINISDF_H

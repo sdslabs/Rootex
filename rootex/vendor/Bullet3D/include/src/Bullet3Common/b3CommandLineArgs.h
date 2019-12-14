@@ -4,11 +4,11 @@
 /******************************************************************************
  * Command-line parsing
  ******************************************************************************/
-#include <map>
 #include <algorithm>
-#include <string>
 #include <cstring>
+#include <map>
 #include <sstream>
+#include <string>
 class b3CommandLineArgs
 {
 protected:
@@ -16,12 +16,12 @@ protected:
 
 public:
 	// Constructor
-	b3CommandLineArgs(int argc, char **argv)
+	b3CommandLineArgs(int argc, char** argv)
 	{
 		addArgs(argc, argv);
 	}
 
-	void addArgs(int argc, char **argv)
+	void addArgs(int argc, char** argv)
 	{
 		for (int i = 1; i < argc; i++)
 		{
@@ -53,7 +53,7 @@ public:
 		}
 	}
 
-	bool CheckCmdLineFlag(const char *arg_name)
+	bool CheckCmdLineFlag(const char* arg_name)
 	{
 		std::map<std::string, std::string>::iterator itr;
 		if ((itr = pairs.find(arg_name)) != pairs.end())
@@ -64,7 +64,7 @@ public:
 	}
 
 	template <typename T>
-	bool GetCmdLineArgument(const char *arg_name, T &val);
+	bool GetCmdLineArgument(const char* arg_name, T& val);
 
 	int ParsedArgc()
 	{
@@ -73,7 +73,7 @@ public:
 };
 
 template <typename T>
-inline bool b3CommandLineArgs::GetCmdLineArgument(const char *arg_name, T &val)
+inline bool b3CommandLineArgs::GetCmdLineArgument(const char* arg_name, T& val)
 {
 	std::map<std::string, std::string>::iterator itr;
 	if ((itr = pairs.find(arg_name)) != pairs.end())
@@ -86,13 +86,13 @@ inline bool b3CommandLineArgs::GetCmdLineArgument(const char *arg_name, T &val)
 }
 
 template <>
-inline bool b3CommandLineArgs::GetCmdLineArgument<char *>(const char *arg_name, char *&val)
+inline bool b3CommandLineArgs::GetCmdLineArgument<char*>(const char* arg_name, char*& val)
 {
 	std::map<std::string, std::string>::iterator itr;
 	if ((itr = pairs.find(arg_name)) != pairs.end())
 	{
 		std::string s = itr->second;
-		val = (char *)malloc(sizeof(char) * (s.length() + 1));
+		val = (char*)malloc(sizeof(char) * (s.length() + 1));
 		std::strcpy(val, s.c_str());
 		return true;
 	}
@@ -103,4 +103,4 @@ inline bool b3CommandLineArgs::GetCmdLineArgument<char *>(const char *arg_name, 
 	return false;
 }
 
-#endif  //COMMAND_LINE_ARGS_H
+#endif //COMMAND_LINE_ARGS_H

@@ -18,11 +18,11 @@ subject to the following restrictions:
 
 #include "btCollisionShape.h"
 
-#include "LinearMath/btVector3.h"
-#include "LinearMath/btTransform.h"
-#include "LinearMath/btMatrix3x3.h"
-#include "btCollisionMargin.h"
 #include "LinearMath/btAlignedObjectArray.h"
+#include "LinearMath/btMatrix3x3.h"
+#include "LinearMath/btTransform.h"
+#include "LinearMath/btVector3.h"
+#include "btCollisionMargin.h"
 
 //class btOptimizedBvh;
 struct btDbvt;
@@ -41,10 +41,7 @@ btCompoundShapeChild
 
 SIMD_FORCE_INLINE bool operator==(const btCompoundShapeChild& c1, const btCompoundShapeChild& c2)
 {
-	return (c1.m_transform == c2.m_transform &&
-			c1.m_childShape == c2.m_childShape &&
-			c1.m_childShapeType == c2.m_childShapeType &&
-			c1.m_childMargin == c2.m_childMargin);
+	return (c1.m_transform == c2.m_transform && c1.m_childShape == c2.m_childShape && c1.m_childShapeType == c2.m_childShapeType && c1.m_childMargin == c2.m_childMargin);
 }
 
 /// The btCompoundShape allows to store multiple other btCollisionShapes
@@ -204,4 +201,4 @@ SIMD_FORCE_INLINE int btCompoundShape::calculateSerializeBufferSize() const
 	return sizeof(btCompoundShapeData);
 }
 
-#endif  //BT_COMPOUND_SHAPE_H
+#endif //BT_COMPOUND_SHAPE_H

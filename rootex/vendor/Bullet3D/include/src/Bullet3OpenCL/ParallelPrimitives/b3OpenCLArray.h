@@ -37,7 +37,13 @@ class b3OpenCLArray
 
 public:
 	b3OpenCLArray(cl_context ctx, cl_command_queue queue, size_t initialCapacity = 0, bool allowGrowingCapacity = true)
-		: m_size(0), m_capacity(0), m_clBuffer(0), m_clContext(ctx), m_commandQueue(queue), m_ownsMemory(true), m_allowGrowingCapacity(true)
+	    : m_size(0)
+	    , m_capacity(0)
+	    , m_clBuffer(0)
+	    , m_clContext(ctx)
+	    , m_commandQueue(queue)
+	    , m_ownsMemory(true)
+	    , m_allowGrowingCapacity(true)
 	{
 		if (initialCapacity)
 		{
@@ -153,7 +159,7 @@ public:
 		bool result = true;
 		// determine new minimum length of allocated storage
 		if (capacity() < _Count)
-		{  // not enough room, reallocate
+		{ // not enough room, reallocate
 
 			if (m_allowGrowingCapacity)
 			{
@@ -176,7 +182,7 @@ public:
 				b3Assert(ciErrNum == CL_SUCCESS);
 				clFinish(m_commandQueue);
 				free(src);
-#endif  //B3_ALWAYS_INITIALIZE_OPENCL_BUFFERS
+#endif //B3_ALWAYS_INITIALIZE_OPENCL_BUFFERS
 
 				if (result)
 				{
@@ -224,7 +230,7 @@ public:
 		size_t dstOffsetInBytes = sizeof(T) * dstOffsetInElems;
 
 		status = clEnqueueCopyBuffer(m_commandQueue, m_clBuffer, destination,
-									 srcOffsetBytes, dstOffsetInBytes, sizeof(T) * numElements, 0, 0, 0);
+		    srcOffsetBytes, dstOffsetInBytes, sizeof(T) * numElements, 0, 0, 0);
 
 		b3Assert(status == CL_SUCCESS);
 	}
@@ -248,7 +254,7 @@ public:
 			cl_int status = 0;
 			size_t sizeInBytes = sizeof(T) * numElems;
 			status = clEnqueueWriteBuffer(m_commandQueue, m_clBuffer, 0, sizeof(T) * destFirstElem, sizeInBytes,
-										  src, 0, 0, 0);
+			    src, 0, 0, 0);
 			b3Assert(status == CL_SUCCESS);
 			if (waitForCompletion)
 				clFinish(m_commandQueue);
@@ -274,7 +280,7 @@ public:
 		{
 			cl_int status = 0;
 			status = clEnqueueReadBuffer(m_commandQueue, m_clBuffer, 0, sizeof(T) * srcFirstElem, sizeof(T) * numElem,
-										 destPtr, 0, 0, 0);
+			    destPtr, 0, 0, 0);
 			b3Assert(status == CL_SUCCESS);
 
 			if (waitForCompletion)
@@ -297,4 +303,4 @@ public:
 	}
 };
 
-#endif  //B3_OPENCL_ARRAY_H
+#endif //B3_OPENCL_ARRAY_H

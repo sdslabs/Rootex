@@ -66,4 +66,4 @@ B3_FORCE_INLINE void b3Clamp(T& a, const T& lb, const T& ub)
 	}
 }
 
-#endif  //B3_GEN_MINMAX_H
+#endif //B3_GEN_MINMAX_H

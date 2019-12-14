@@ -16,9 +16,9 @@ subject to the following restrictions:
 #ifndef BT_BOX_2D_BOX_2D__COLLISION_ALGORITHM_H
 #define BT_BOX_2D_BOX_2D__COLLISION_ALGORITHM_H
 
-#include "BulletCollision/CollisionDispatch/btActivatingCollisionAlgorithm.h"
 #include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h"
 #include "BulletCollision/BroadphaseCollision/btDispatcher.h"
+#include "BulletCollision/CollisionDispatch/btActivatingCollisionAlgorithm.h"
 #include "BulletCollision/CollisionDispatch/btCollisionCreateFunc.h"
 
 class btPersistentManifold;
@@ -31,7 +31,9 @@ class btBox2dBox2dCollisionAlgorithm : public btActivatingCollisionAlgorithm
 
 public:
 	btBox2dBox2dCollisionAlgorithm(const btCollisionAlgorithmConstructionInfo& ci)
-		: btActivatingCollisionAlgorithm(ci) {}
+	    : btActivatingCollisionAlgorithm(ci)
+	{
+	}
 
 	virtual void processCollision(const btCollisionObjectWrapper* body0Wrap, const btCollisionObjectWrapper* body1Wrap, const btDispatcherInfo& dispatchInfo, btManifoldResult* resultOut);
 
@@ -60,4 +62,4 @@ public:
 	};
 };
 
-#endif  //BT_BOX_2D_BOX_2D__COLLISION_ALGORITHM_H
+#endif //BT_BOX_2D_BOX_2D__COLLISION_ALGORITHM_H
