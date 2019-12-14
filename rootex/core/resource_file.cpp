@@ -69,8 +69,8 @@ TextResourceFile::~TextResourceFile()
 String TextResourceFile::getString() const
 {
 	return String(
-		m_ResourceData->getRawData()->begin(), 
-		m_ResourceData->getRawData()->end());
+	    m_ResourceData->getRawData()->begin(),
+	    m_ResourceData->getRawData()->end());
 }
 
 LuaTextResourceFile::LuaTextResourceFile(ResourceData* resData)
