@@ -6,8 +6,8 @@
 #include "../IDConfig.hpp"
 
 #include "../../LinearMath/btMatrix3x3.h"
-#include "../../LinearMath/btVector3.h"
 #include "../../LinearMath/btMatrixX.h"
+#include "../../LinearMath/btVector3.h"
 #define BT_ID_HAVE_MAT3X
 
 namespace btInverseDynamics

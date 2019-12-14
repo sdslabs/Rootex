@@ -17,11 +17,11 @@
 #define BT_DEFORMABLE_BODY_SOLVERS_H
 
 
-#include "btSoftBodySolvers.h"
+#include "BulletDynamics/Featherstone/btMultiBodyConstraint.h"
+#include "BulletDynamics/Featherstone/btMultiBodyLinkCollider.h"
 #include "btDeformableBackwardEulerObjective.h"
 #include "btDeformableMultiBodyDynamicsWorld.h"
-#include "BulletDynamics/Featherstone/btMultiBodyLinkCollider.h"
-#include "BulletDynamics/Featherstone/btMultiBodyConstraint.h"
+#include "btSoftBodySolvers.h"
 
 struct btCollisionObjectWrapper;
 class btDeformableBackwardEulerObjective;

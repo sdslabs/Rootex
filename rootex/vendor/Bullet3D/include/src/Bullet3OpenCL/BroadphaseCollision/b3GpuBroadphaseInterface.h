@@ -2,12 +2,12 @@
 #ifndef B3_GPU_BROADPHASE_INTERFACE_H
 #define B3_GPU_BROADPHASE_INTERFACE_H
 
-#include "Bullet3OpenCL/Initialize/b3OpenCLInclude.h"
 #include "Bullet3Common/b3Vector3.h"
-#include "b3SapAabb.h"
 #include "Bullet3Common/shared/b3Int2.h"
 #include "Bullet3Common/shared/b3Int4.h"
+#include "Bullet3OpenCL/Initialize/b3OpenCLInclude.h"
 #include "Bullet3OpenCL/ParallelPrimitives/b3OpenCLArray.h"
+#include "b3SapAabb.h"
 
 class b3GpuBroadphaseInterface
 {

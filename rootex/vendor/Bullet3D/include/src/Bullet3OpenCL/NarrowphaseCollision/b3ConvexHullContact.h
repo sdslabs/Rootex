@@ -2,18 +2,18 @@
 #ifndef _CONVEX_HULL_CONTACT_H
 #define _CONVEX_HULL_CONTACT_H
 
-#include "Bullet3OpenCL/ParallelPrimitives/b3OpenCLArray.h"
 #include "Bullet3Collision/NarrowPhaseCollision/shared/b3RigidBodyData.h"
 #include "Bullet3Common/b3AlignedObjectArray.h"
+#include "Bullet3OpenCL/ParallelPrimitives/b3OpenCLArray.h"
 
-#include "Bullet3Collision/NarrowPhaseCollision/shared/b3ConvexPolyhedronData.h"
-#include "Bullet3Collision/NarrowPhaseCollision/shared/b3Collidable.h"
+#include "Bullet3Collision/BroadPhaseCollision/shared/b3Aabb.h"
 #include "Bullet3Collision/NarrowPhaseCollision/b3Contact4.h"
+#include "Bullet3Collision/NarrowPhaseCollision/shared/b3Collidable.h"
+#include "Bullet3Collision/NarrowPhaseCollision/shared/b3ConvexPolyhedronData.h"
 #include "Bullet3Common/shared/b3Int2.h"
 #include "Bullet3Common/shared/b3Int4.h"
-#include "b3OptimizedBvh.h"
 #include "b3BvhInfo.h"
-#include "Bullet3Collision/BroadPhaseCollision/shared/b3Aabb.h"
+#include "b3OptimizedBvh.h"
 
 //#include "../../dynamics/basic_demo/Stubs/ChNarrowPhase.h"
 

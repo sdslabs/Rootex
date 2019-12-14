@@ -4,8 +4,8 @@
 #include "Bullet3Common/b3Vector3.h"
 #include "Bullet3OpenCL/Initialize/b3OpenCLInclude.h"
 
-#include "Bullet3Common/b3AlignedObjectArray.h"
 #include "Bullet3Collision/NarrowPhaseCollision/b3RaycastInfo.h"
+#include "Bullet3Common/b3AlignedObjectArray.h"
 
 class b3GpuRaycast
 {

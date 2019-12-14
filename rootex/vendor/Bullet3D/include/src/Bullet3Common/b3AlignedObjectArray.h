@@ -16,8 +16,8 @@ subject to the following restrictions:
 #ifndef B3_OBJECT_ARRAY__
 #define B3_OBJECT_ARRAY__
 
-#include "b3Scalar.h"  // has definitions like B3_FORCE_INLINE
 #include "b3AlignedAllocator.h"
+#include "b3Scalar.h"  // has definitions like B3_FORCE_INLINE
 
 ///If the platform doesn't support placement new, you can disable B3_USE_PLACEMENT_NEW
 ///then the b3AlignedObjectArray doesn't support objects with virtual methods, and non-trivial constructors/destructors

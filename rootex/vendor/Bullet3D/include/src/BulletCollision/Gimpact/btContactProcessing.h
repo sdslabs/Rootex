@@ -24,10 +24,10 @@ subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
-#include "LinearMath/btTransform.h"
 #include "LinearMath/btAlignedObjectArray.h"
-#include "btTriangleShapeEx.h"
+#include "LinearMath/btTransform.h"
 #include "btContactProcessingStructs.h"
+#include "btTriangleShapeEx.h"
 
 class btContactArray : public btAlignedObjectArray<GIM_CONTACT>
 {

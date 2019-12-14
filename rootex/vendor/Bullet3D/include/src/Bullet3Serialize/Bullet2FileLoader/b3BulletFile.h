@@ -16,9 +16,9 @@ subject to the following restrictions:
 #ifndef B3_BULLET_FILE_H
 #define B3_BULLET_FILE_H
 
-#include "b3File.h"
 #include "Bullet3Common/b3AlignedObjectArray.h"
 #include "b3Defines.h"
+#include "b3File.h"
 
 #include "Bullet3Serialize/Bullet2FileLoader/b3Serializer.h"
 

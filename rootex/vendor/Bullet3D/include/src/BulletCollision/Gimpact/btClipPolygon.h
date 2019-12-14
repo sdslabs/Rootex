@@ -24,8 +24,8 @@ subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
-#include "LinearMath/btTransform.h"
 #include "LinearMath/btGeometryUtil.h"
+#include "LinearMath/btTransform.h"
 
 SIMD_FORCE_INLINE btScalar bt_distance_point_plane(const btVector4 &plane, const btVector3 &point)
 {
