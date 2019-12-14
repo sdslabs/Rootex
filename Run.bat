@@ -1,2 +1,2 @@
-cd build/game/Bin/Debug
+cd build/game/Debug
 start Game.exe
