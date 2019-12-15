@@ -2,6 +2,9 @@
 
 #include <d3d11.h>
 
+#include <d3dcompiler.h>
+#include <string>
+
 class RenderingDevice
 {
 	ID3D11Device* m_Device;
@@ -23,10 +26,20 @@ class RenderingDevice
 
 public:
 	static RenderingDevice* GetSingleton();
-	ID3D11Device* GetDevice();
-	ID3D11DeviceContext* GetContext();
 
 	void initialize(HWND hWnd, int width, int height);
+
+	ID3DBlob* createBlob(LPCWSTR path);
+	void initVertexBuffer(D3D11_BUFFER_DESC* vbd, D3D11_SUBRESOURCE_DATA* vsd, const UINT* stride, const UINT* offset);
+	void initIndexBuffer(D3D11_BUFFER_DESC* ibd, D3D11_SUBRESOURCE_DATA* isd, DXGI_FORMAT format);
+	void initVSConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd);
+	void initPSConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd);
+	void initPixelShader(LPCWSTR shader_path);
+	ID3DBlob* initVertexShader(LPCWSTR shader_path);
+	void initVertexLayout(ID3DBlob* vertexShaderBlob, const D3D11_INPUT_ELEMENT_DESC* ied, UINT size);
+	void setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY pt);
+	void setViewports(D3D11_VIEWPORT* vp);
+	void drawIndexed(UINT number);
 
 	void clearBuffer(float r, float g, float b);
 };
