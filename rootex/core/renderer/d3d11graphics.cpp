@@ -163,7 +163,6 @@ void RootexGraphics::drawTestCube(float angle)
 		{ 1.0f, 1.0f, 1.0f },
 	};
 
-	ID3D11Buffer* pVertexBuffer = nullptr;
 	D3D11_BUFFER_DESC vbd = { 0 };
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vbd.Usage = D3D11_USAGE_DEFAULT;
@@ -176,12 +175,10 @@ void RootexGraphics::drawTestCube(float angle)
 
 	//create and bind vertex buffer
 
-	GFX_ERR_CHECK(RenderingDevice::GetSingleton()->GetDevice()->CreateBuffer(&vbd, &vsd, &pVertexBuffer));
 	const UINT stride = sizeof(Vertex);
 	const UINT offset = 0u;
-	RenderingDevice::GetSingleton()->GetContext()->IASetVertexBuffers(0u, 1u, &pVertexBuffer, &stride, &offset);
 
-	SafeRelease(&pVertexBuffer);
+	RenderingDevice::GetSingleton()->initVertexBuffer(&vbd, &vsd, &stride, &offset);
 
 	//create and bind index buffer
 	const unsigned short indices[] = {
@@ -198,7 +195,6 @@ void RootexGraphics::drawTestCube(float angle)
 		0, 1, 4,
 		1, 5, 4
 	};
-	ID3D11Buffer* pIndexBuffer = nullptr;
 	D3D11_BUFFER_DESC ibd = { 0 };
 	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	ibd.Usage = D3D11_USAGE_DEFAULT;
@@ -209,10 +205,7 @@ void RootexGraphics::drawTestCube(float angle)
 	D3D11_SUBRESOURCE_DATA isd = { 0 };
 	isd.pSysMem = indices;
 
-	GFX_ERR_CHECK(RenderingDevice::GetSingleton()->GetDevice()->CreateBuffer(&ibd, &isd, &pIndexBuffer));
-	RenderingDevice::GetSingleton()->GetContext()->IASetIndexBuffer(pIndexBuffer, DXGI_FORMAT_R16_UINT, 0u);
-
-	SafeRelease(&pIndexBuffer);
+	RenderingDevice::GetSingleton()->initIndexBuffer(&ibd, &isd, DXGI_FORMAT_R16_UINT);
 
 	struct ConstantBuffer
 	{
@@ -224,7 +217,6 @@ void RootexGraphics::drawTestCube(float angle)
 		{ DirectX::XMMatrixTranspose(
 		    DirectX::XMMatrixRotationZ(angle) * DirectX::XMMatrixRotationY(angle / 2) * DirectX::XMMatrixRotationX(angle / 3) * DirectX::XMMatrixTranslation(0.0f, 0.0f, 4.0f) * DirectX::XMMatrixPerspectiveLH(maxX, maxX * height / width, minZ, maxZ)) }
 	};
-	ID3D11Buffer* pConstantBuffer = nullptr;
 	D3D11_BUFFER_DESC cbd = { 0 };
 	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	cbd.Usage = D3D11_USAGE_DYNAMIC;
@@ -235,10 +227,7 @@ void RootexGraphics::drawTestCube(float angle)
 	D3D11_SUBRESOURCE_DATA csd = { 0 };
 	csd.pSysMem = &cb;
 
-	GFX_ERR_CHECK(RenderingDevice::GetSingleton()->GetDevice()->CreateBuffer(&cbd, &csd, &pConstantBuffer));
-	RenderingDevice::GetSingleton()->GetContext()->VSSetConstantBuffers(0u, 1u, &pConstantBuffer);
-
-	SafeRelease(&pConstantBuffer);
+	RenderingDevice::GetSingleton()->initVSConstantBuffer(&cbd, &csd);
 
 	struct ConstantBuffer2
 	{
@@ -260,7 +249,6 @@ void RootexGraphics::drawTestCube(float angle)
 		    { 0.0f, 1.0f, 1.0f } }
 	};
 
-	ID3D11Buffer* pConstantBuffer2 = nullptr;
 	D3D11_BUFFER_DESC cbd2 = { 0 };
 	cbd2.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	cbd2.Usage = D3D11_USAGE_DYNAMIC;
@@ -271,51 +259,22 @@ void RootexGraphics::drawTestCube(float angle)
 	D3D11_SUBRESOURCE_DATA csd2 = { 0 };
 	csd2.pSysMem = &cb2;
 
-	GFX_ERR_CHECK(RenderingDevice::GetSingleton()->GetDevice()->CreateBuffer(&cbd2, &csd2, &pConstantBuffer2));
-	RenderingDevice::GetSingleton()->GetContext()->PSSetConstantBuffers(0u, 1u, &pConstantBuffer2);
+	RenderingDevice::GetSingleton()->initPSConstantBuffer(&cbd2, &csd2);
 
-	SafeRelease(&pConstantBuffer2);
+	RenderingDevice::GetSingleton()->initPixelShader(L"PixelShader.cso");
 
-	ID3DBlob* pBlob = nullptr;
-
-	//load pixel shader
-	ID3D11PixelShader* pPixelShader = nullptr;
-	GFX_ERR_CHECK(D3DReadFileToBlob(L"PixelShader.cso", &pBlob));
-	GFX_ERR_CHECK(RenderingDevice::GetSingleton()->GetDevice()->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader));
-	RenderingDevice::GetSingleton()->GetContext()->PSSetShader(pPixelShader, nullptr, 0u);
-
-	SafeRelease(&pBlob);
-	SafeRelease(&pPixelShader);
-
-	//load vertex shader
-	ID3D11VertexShader* pVertexShader = nullptr;
-	D3DReadFileToBlob(L"VertexShader.cso", &pBlob);
-	GFX_ERR_CHECK(RenderingDevice::GetSingleton()->GetDevice()->CreateVertexShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pVertexShader));
-	RenderingDevice::GetSingleton()->GetContext()->VSSetShader(pVertexShader, nullptr, 0u);
-
-	SafeRelease(&pVertexShader);
+	ID3DBlob* vertrxShaderBlob = RenderingDevice::GetSingleton()->initVertexShader(L"VertexShader.cso");
 
 	//inout layout 2d
-	ID3D11InputLayout* pInputLayout = nullptr;
 	const D3D11_INPUT_ELEMENT_DESC ied[] = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		//{ "COLOR", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, 12u, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
-	GFX_ERR_CHECK(RenderingDevice::GetSingleton()->GetDevice()->CreateInputLayout(
-	    ied, (UINT)std::size(ied),
-	    pBlob->GetBufferPointer(),
-	    pBlob->GetBufferSize(),
-	    &pInputLayout));
 
-	SafeRelease(&pBlob);
-
-	//bind vertex layout
-	RenderingDevice::GetSingleton()->GetContext()->IASetInputLayout(pInputLayout);
-
-	SafeRelease(&pInputLayout);
+	RenderingDevice::GetSingleton()->initVertexLayout(vertrxShaderBlob, ied, std::size(ied));
 
 	//set topology
-	RenderingDevice::GetSingleton()->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	RenderingDevice::GetSingleton()->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	//viewport
 	D3D11_VIEWPORT vp;
@@ -325,7 +284,8 @@ void RootexGraphics::drawTestCube(float angle)
 	vp.MaxDepth = 1;
 	vp.TopLeftX = 0;
 	vp.TopLeftY = 0;
-	RenderingDevice::GetSingleton()->GetContext()->RSSetViewports(1u, &vp);
+	
+	RenderingDevice::GetSingleton()->setViewports(&vp);
 
-	RenderingDevice::GetSingleton()->GetContext()->DrawIndexed((UINT)std::size(indices), 0u, 0u);
+	RenderingDevice::GetSingleton()->drawIndexed(std::size(indices));
 }
