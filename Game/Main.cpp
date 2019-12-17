@@ -22,11 +22,7 @@ int main()
 
 	Vector<Ref<Task>> ju;
 	Ref<DebugTask> db(new DebugTask());
-	ju.push_back(db);
-	ThreadPool th;
-
-	th.threadPoolInitialise();
-	th.threadPoolSubmitTasks(ju);
+	Ref<RenderTask> rb(new RenderTask());	
 	
 	LuaInterpreter inter;
 	inter.loadExecuteScript(windowSettings);
