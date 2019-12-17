@@ -2,43 +2,15 @@
 
 //TODO is key pressed
 //TODO capturing the left out key_down calls
-// Where to have the switch case for mouse clicks ??
-// SERIOUS SAARE FUNCTIONS BANA DIYE HAI LEKIN SWITCH CASE KAHA AAYEGA
 
-//switch(msg.message)
-//{
-//	case WM_LBUTTONDBLCLK : //trigger double left click event
-//								break;
-//	case WM_LBUTTONDOWN		:	mouseButtonChange(1,true);
-//								break;
-//	case WM_LBUTTONUP		:	mouseButtonChange(1,false);
-//								break;
-//	case WM_MBUTTONDBLCLK	:	//trigger double middle click event
-//								break;
-//	case WM_MBUTTONDOWN		:	mouseButtonChange(3,true);
-//								break;
-//	case WM_MBUTTONUP		:	mouseButtonChange(3,false);
-//								break;
-//	case WM_RBUTTONDBLCLK	:	trigger double right click event
-//								break;
-//	case WM_RBUTTONDOWN		:	mouseButtonChange(2,true);
-//								break;
-//	case WM_RBUTTONUP		:	mouseButtonChange(2,false);
-//								break;
-//	case WM_MOUSEMOVE		: mouseMove(lparam);
-//								break;
-//}
 
-InputManager* InputManager::getInputManager()
+InputManager* InputManager::getSingleton()
 {
-	if (inputManager == NULL)
-	{
-		inputManager = new InputManager();
-	}
-	return (inputManager);
+	static InputManager singleton;
+	return &singleton;
 }
 
-InputManager::keyPressed(uint32_t Wparam)
+void InputManager::keyPressed(uint32_t Wparam)
 {
 	if (m_IsEnabled == false)
 		return;
