@@ -8,7 +8,10 @@ void DebugTask::execute()
 	std::cout << "Task1 is running";
 }
 
-
+void RenderTask::execute()
+{
+	std::cout << "Task2 is running";
+}
 
 void ThreadPool::threadPoolInitialise()
 {
@@ -70,11 +73,11 @@ DWORD WINAPI mainLoop(LPVOID voidParameters)
 			return 0;
 		}
 
-		taskId = m_ThreadPool.m_TaskQueue.jobs[m_ThreadPool.m_TaskQueue.m_Write]->id;
+		taskId = m_ThreadPool.m_TaskQueue.jobs[m_ThreadPool.m_TaskQueue.m_Read]->id;
 		__int32 m_ReadTemp = m_ThreadPool.m_TaskQueue.m_Read;
 		m_ThreadPool.m_TaskQueue.m_Jobs--;
-		m_ThreadPool.m_TaskQueue.m_Read = (m_ThreadPool.m_TaskQueue.m_Read + 1) & taskQueue::BATCH_MODULO;		
-
+		m_ThreadPool.m_TaskQueue.m_Read = m_ThreadPool.m_TaskQueue.m_Read + 1;
+	
 		LeaveCriticalSection(&m_ThreadPool.m_CriticalSection);
 
 		m_ThreadPool.m_TaskQueue.jobs[m_ReadTemp]->execute();
@@ -95,24 +98,21 @@ void ThreadPool::threadPoolSubmitTasks(Vector<Ref<Task>>& tasks)
 	m_TasksFinished = 0;
 
 	{
-		for (auto i_job : tasks)
+		__int32 idIndex = 0;
+		for (auto i_Job : tasks)
 		{
-			i_job->m_Dependencies = 0;
-			m_TaskQueue.jobs.push_back(i_job);
+			i_Job->m_Dependencies = 0;
+			m_TaskQueue.jobs.push_back(i_Job);
+			m_TaskQueue.jobs[idIndex]->id = idIndex;
+			idIndex++;
 			m_TaskQueue.m_Jobs++;
 		}
 
-		for (__int32 i_job = 0; i_job < tasks.size(); i_job++)
+		for (__int32 i_Job = 0; i_Job < tasks.size(); i_Job++)
 		{
-			for (__int32 i_permission = 0; i_permission < tasks[i_job]->m_Permisions; i_permission++)
+			for (__int32 i_Permission = 0; i_Permission < tasks[i_Job]->m_Permisions; i_Permission++)
 			{
-				const __int32 i_first = tasks[i_job]->permissions[i_permission][0];
-				const __int32 i_last = i_first + tasks[i_job]->permissions[i_permission][1];
-
-				for (__int32 i_job_permit = i_first; i_job_permit < i_last; i_job_permit++)
-				{
-					tasks[i_job_permit]->m_Dependencies++;
-				}
+				tasks[tasks[i_Job]->i_Permissions[i_Permission]]->m_Dependencies++;
 			}
 		}
 	}
@@ -125,53 +125,42 @@ void ThreadPool::threadPoolSubmitTasks(Vector<Ref<Task>>& tasks)
 			{
 				__int32 taskId = master_thread.m_TasksComplete.ids[i_job];
 
-				for (__int32 i_permission = 0; i_permission < tasks[taskId]->m_Permisions; i_permission++)
+				for (__int32 i_Permission = 0; i_Permission < tasks[taskId]->m_Permisions; i_Permission++)
 				{
-					const __int32 i_first = tasks[taskId]->permissions[i_permission][0];
-					const __int32 i_last = i_first + tasks[taskId]->permissions[i_permission][1];
-
-					for (__int32 i_job_permit = i_first; i_job_permit < i_last; i_job_permit++)
-					{
-						tasks[i_job_permit]->m_Dependencies--;
-					}
+					tasks[tasks[taskId]->i_Permissions[i_Permission]]->m_Dependencies--;
 				}
 				master_thread.m_TasksComplete.m_Jobs--;
 			}
 		}
 		{
-			__int32 i_job = 0;
-			while ((master_thread.m_TasksReady.m_Jobs < taskQueue::NUM_JOBS_BATCH) && (i_job < tasks.size()))
+			__int32 i_Job = 0;
+			while (i_Job < tasks.size())
 			{
-
-				if (tasks[i_job]->m_Dependencies == 0)
+				if (tasks[i_Job]->m_Dependencies == 0)
 				{
-					master_thread.m_TasksReady.ids[master_thread.m_TasksReady.m_Write] = tasks[i_job]->id;
-					master_thread.m_TasksReady.m_Write = (master_thread.m_TasksReady.m_Write + 1) & taskQueue::BATCH_MODULO;
+					master_thread.m_TasksReady.ids[master_thread.m_TasksReady.m_Write] = tasks[i_Job]->id;
+					master_thread.m_TasksReady.m_Write = (master_thread.m_TasksReady.m_Write + 1);
 					master_thread.m_TasksReady.m_Jobs++;
-					tasks[i_job]->m_Dependencies--;
+					tasks[i_Job]->m_Dependencies--;
 				}
-				i_job++;
+				i_Job++;
 			}
 		}
 
 		EnterCriticalSection(&m_CriticalSection);
-		
-		{
-			const __int32 nJobs = (((master_thread.m_TasksReady.m_Jobs) < (taskQueue::NUM_JOBS_BATCH - m_TaskQueue.m_Jobs)) ? (master_thread.m_TasksReady.m_Jobs) : (taskQueue::NUM_JOBS_BATCH - m_TaskQueue.m_Jobs));
 
-			/*	for (__int32 i_job = 0; i_job < nJobs; i_job++)
+	/*	{
+			__int32 nJobs = master_thread.m_TasksReady.m_Jobs;
+			m_TaskQueue.m_Write--;
+				for (__int32 i_Job = 0; i_Job < nJobs; i_Job++)
 			{
-				//const __int32 taskId = master_thread.m_TasksReady.ids[master_thread.m_TasksReady.m_Read];
-				//m_TaskQueue.jobs[m_TaskQueue.m_Write]->id = taskId;
-				//m_TaskQueue.jobs[m_TaskQueue.m_Write]->execute();
-				//	m_ThreadPool.m_TaskQueue.jobs[m_ThreadPool.m_TaskQueue.iWrite].function = jobs_in[taskId].function;
-				//	m_ThreadPool.m_TaskQueue.jobs[m_ThreadPool.m_TaskQueue.iWrite].parameters = jobs_in[taskId].parameters;
-//				m_TaskQueue.m_Write = (m_TaskQueue.m_Write + 1) & taskQueue::BATCH_MODULO;
+				m_TaskQueue.jobs[m_TaskQueue.m_Write]->id = master_thread.m_TasksReady.ids[master_thread.m_TasksReady.m_Read];
+				m_TaskQueue.m_Write = (m_TaskQueue.m_Write + 1);
 				m_TaskQueue.m_Jobs++;
-				master_thread.m_TasksReady.m_Read = (master_thread.m_TasksReady.m_Read + 1) & taskQueue::BATCH_MODULO;
+				master_thread.m_TasksReady.m_Read = (master_thread.m_TasksReady.m_Read + 1);
 				master_thread.m_TasksReady.m_Jobs--;
-			} */
-		} 
+			} 
+		} */
 
 		WakeAllConditionVariable(&m_ConsumerVariable);
 
@@ -182,10 +171,10 @@ void ThreadPool::threadPoolSubmitTasks(Vector<Ref<Task>>& tasks)
 
 		{
 			const __int32 nJobs = m_TasksComplete.m_Jobs;
-			for (__int32 i_job = 0; i_job < nJobs; i_job++)
+			for (__int32 i_Job = 0; i_Job < nJobs; i_Job++)
 			{
 
-				master_thread.m_TasksComplete.ids[i_job] = m_TasksComplete.ids[i_job];
+				master_thread.m_TasksComplete.ids[i_Job] = m_TasksComplete.ids[i_Job];
 				master_thread.m_TasksComplete.m_Jobs++;
 				m_TasksComplete.m_Jobs--;
 			}
@@ -207,8 +196,3 @@ void ThreadPool::threadPoolShutdown()
 	WakeAllConditionVariable(&this->m_ConsumerVariable);
 	WaitForMultipleObjects(m_Threads, handles, TRUE, INFINITE);
 }
-
-//RenderTask rt;
-
-//taskmanager.submit(db);
-//taskmanager.submit(rt);

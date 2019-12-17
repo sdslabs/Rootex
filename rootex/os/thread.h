@@ -17,13 +17,20 @@ public:
 	__int32 id;
 	__int32 m_Dependencies;
 	__int32 m_Permisions;
-	__int32 permissions[maxPermissions][2];
+	Vector<__int32> i_Permissions;
+	//__int32 permissions[maxPermissions][2];
 
 	virtual void execute() = 0;
 	virtual void undo() {}
 };
 
 class DebugTask : public Task
+{
+protected:
+	void execute() override;
+};
+
+class RenderTask : public Task
 {
 protected:
 	void execute() override;
@@ -57,6 +64,7 @@ struct taskComplete
 	};
 
 	__int32 m_Jobs;
+	//Vector<__int32> ids;
 	__int32 ids[MAX_JOBS];
 };
 
@@ -65,11 +73,12 @@ struct taskReady
 	__int32 m_Jobs;
 	unsigned __int32 m_Write;
 	unsigned __int32 m_Read;
+	//Vector<__int32> ids;
 	__int32 ids[taskQueue::NUM_JOBS_BATCH];
 };
 
 struct MasterThread
-{
+{	
 	taskComplete m_TasksComplete;
 	taskReady m_TasksReady;
 };
