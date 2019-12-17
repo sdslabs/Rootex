@@ -24,7 +24,7 @@ class EventManager
 	typedef Vector<Ref<Event>> EventQueue;
 	EventListenerMap m_EventListeners;
 	EventQueue m_Queues[EVENTMANAGER_NUM_QUEUES];
-	int m_ActiveQueue;
+	unsigned int m_ActiveQueue;
 
 public:
 	enum CONSTANT
