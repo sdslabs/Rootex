@@ -8,8 +8,8 @@
 class InputManager
 {
 public:
-	static InputManager* getInputManager();
-	keyPressed(uint32_t Wparam);
+	static InputManager* getSingleton();
+	void keyPressed(uint32_t Wparam);
 	bool isKeyPressed(const uint32_t key);
 	void addKeyBindingToKey(const uint32_t key, const std::string& keyBinding);
 	void addEventToKeyBinding(const std::string& keyBinding, const uint32_t Event, bool priority);
@@ -21,7 +21,6 @@ public:
 	void disable() { m_IsEnabled = false; }
 
 private:
-	static InputManager* inputManager;
 	InputManager()
 	{
 		m_IsEnabled = true;
