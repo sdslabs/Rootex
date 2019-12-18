@@ -7,8 +7,14 @@ common:
 core:
 - rootex/core/**
 
+framework:
+- rootex/framework/**
+
 os:
 - rootex/os/**
+
+scene:
+- rootex/scene/**
 
 script:
 - rootex/script/**
@@ -17,4 +23,4 @@ vendor:
 - rootex/vendor/**
 
 cmake:
-- /**/CMakeLists.txt
+- **/CMakeLists.txt
