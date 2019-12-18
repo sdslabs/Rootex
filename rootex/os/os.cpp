@@ -8,14 +8,14 @@ FilePath OS::s_RootDirectory;
 FilePath OS::s_EngineDirectory;
 FilePath OS::s_GameDirectory;
 
-FilePath OS::getAbsolutePath(String stringPath)
+FilePath OS::GetAbsolutePath(String stringPath)
 {
 	FilePath absPath = s_RootDirectory / stringPath;
 
 	return absPath;
 }
 
-bool OS::initialize()
+bool OS::Initialize()
 {
 	try
 	{
@@ -35,28 +35,28 @@ bool OS::initialize()
 	}
 	catch (std::exception e)
 	{
-		ERR("OS: Failed to initialize OS: " + String(e.what()));
+		ERR("OS: Failed to Initialize OS: " + String(e.what()));
 		return false;
 	}
 
 	return true;
 }
 
-String OS::getBuildDate()
+String OS::GetBuildDate()
 {
 	return String(__DATE__);
 }
 
-String OS::getBuildTime()
+String OS::GetBuildTime()
 {
 	return String(__TIME__);
 }
 
-FileBuffer OS::loadFileContents(String stringPath)
+FileBuffer OS::LoadFileContents(String stringPath)
 {
-	std::filesystem::path path = getAbsolutePath(stringPath);
+	std::filesystem::path path = GetAbsolutePath(stringPath);
 
-	if (!exists(path.generic_string()))
+	if (!Exists(path.generic_string()))
 	{
 		ERR("OS: File IO error: " + path.generic_string() + " does not exist");
 		return FileBuffer();
@@ -83,39 +83,49 @@ FileBuffer OS::loadFileContents(String stringPath)
 	return FileBuffer(buffer);
 }
 
-bool OS::exists(String relativePath)
+bool OS::Exists(String relativePath)
 {
-	return std::filesystem::exists(OS::getAbsolutePath(relativePath));
+	return std::filesystem::exists(OS::GetAbsolutePath(relativePath));
 }
 
-void OS::print(const String& msg)
+void OS::Print(const String& msg)
 {
 	std::cout.clear();
 	std::cout << msg;
 }
 
-void OS::printLine(const String& msg)
+void OS::Print(const int& number)
+{
+	Print(std::to_string(number));
+}
+
+void OS::Print(const unsigned int& number)
+{
+	Print(std::to_string(number));
+}
+
+void OS::PrintLine(const String& msg)
 {
 	std::cout.clear();
 	std::cout << msg << std::endl;
 }
 
-void OS::printWarning(const String& warning)
+void OS::PrintWarning(const String& warning)
 {
 	std::cout.clear();
 	std::cout << "\033[93m" << warning << "\033[0m" << std::endl;
 }
 
-void OS::printError(const String& error)
+void OS::PrintError(const String& error)
 {
 	std::cout.clear();
 	std::cout << "\033[91m" << error << "\033[0m" << std::endl;
 }
 
-void OS::printIf(const bool& expr, const String& error)
+void OS::PrintIf(const bool& expr, const String& error)
 {
 	if (expr)
 	{
-		printError(error);
+		PrintError(error);
 	}
 }

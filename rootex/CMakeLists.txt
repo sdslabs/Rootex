@@ -15,9 +15,11 @@ CACHE INTERNAL "")
 
 add_subdirectory(common)
 add_subdirectory(core)
+add_subdirectory(framework)
 add_subdirectory(os)
-add_subdirectory(vendor)
+add_subdirectory(scene)
 add_subdirectory(script)
+add_subdirectory(vendor)
 
 add_library(Rootex STATIC ${ROOTEX_SOURCES})
 

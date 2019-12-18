@@ -10,7 +10,7 @@ class ResourceLoader
 	static HashMap<Ptr<ResourceData>, Ptr<ResourceFile>> s_ResourcesDataFiles;
 
 public:
-	static TextResourceFile* createTextResourceFile(String path);
-	static LuaTextResourceFile* createLuaTextResourceFile(String path);
-	static AudioResourceFile* createAudioResourceFile(String path);
+	static TextResourceFile* CreateTextResourceFile(String path);
+	static LuaTextResourceFile* CreateLuaTextResourceFile(String path);
+	static AudioResourceFile* CreateAudioResourceFile(String path);
 };
