@@ -1,0 +1,6 @@
+﻿BasedOnStyle: Webkit
+AccessModifierOffset: '-4'
+Standard: Auto
+TabWidth: '4'
+UseTab: ForIndentation
+BreakBeforeBraces: Allman
