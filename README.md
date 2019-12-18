@@ -1,6 +1,6 @@
 # Rootex
 
-A slightly advanced version of the Rubeus Engine created with goals of feature completeness
+An advanced C++ multithreaded 3D game engine powering an in-production game yet to be announced.
 
 # Setup
 
