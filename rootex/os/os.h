@@ -22,17 +22,19 @@ public:
 
 	~OS() = delete;
 
-	static bool initialize();
-	static String getBuildDate();
-	static String getBuildTime();
+	static bool Initialize();
+	static String GetBuildDate();
+	static String GetBuildTime();
 
-	static FileBuffer loadFileContents(String stringPath);
-	static bool exists(String relativePath);
-	static FilePath OS::getAbsolutePath(String stringPath);
+	static FileBuffer LoadFileContents(String stringPath);
+	static bool Exists(String relativePath);
+	static FilePath OS::GetAbsolutePath(String stringPath);
 
-	static void print(const String& msg);
-	static void printLine(const String& msg);
-	static void printWarning(const String& warning);
-	static void printError(const String& error);
-	static void printIf(const bool& expr, const String& error);
+	static void Print(const String& msg);
+	static void Print(const int& number);
+	static void Print(const unsigned int& number);
+	static void PrintLine(const String& msg);
+	static void PrintWarning(const String& warning);
+	static void PrintError(const String& error);
+	static void PrintIf(const bool& expr, const String& error);
 };

@@ -6,7 +6,7 @@
 
 HashMap<Ptr<ResourceData>, Ptr<ResourceFile>> ResourceLoader::s_ResourcesDataFiles;
 
-TextResourceFile* ResourceLoader::createTextResourceFile(String path)
+TextResourceFile* ResourceLoader::CreateTextResourceFile(String path)
 {
 	for (auto& item : s_ResourcesDataFiles)
 	{
@@ -16,14 +16,14 @@ TextResourceFile* ResourceLoader::createTextResourceFile(String path)
 		}
 	}
 
-	if (OS::exists(path) == false)
+	if (OS::Exists(path) == false)
 	{
 		ERR("File not found: " + path);
 		return nullptr;
 	}
 
 	// File not found in cache, load it only once
-	FileBuffer& buffer = OS::loadFileContents(path);
+	FileBuffer& buffer = OS::LoadFileContents(path);
 	ResourceData* resData = new ResourceData(path, buffer);
 	TextResourceFile* resFile = new TextResourceFile(ResourceFile::Type::TXT, resData);
 
@@ -32,7 +32,7 @@ TextResourceFile* ResourceLoader::createTextResourceFile(String path)
 	return resFile;
 }
 
-LuaTextResourceFile* ResourceLoader::createLuaTextResourceFile(String path)
+LuaTextResourceFile* ResourceLoader::CreateLuaTextResourceFile(String path)
 {
 	for (auto& item : s_ResourcesDataFiles)
 	{
@@ -42,14 +42,14 @@ LuaTextResourceFile* ResourceLoader::createLuaTextResourceFile(String path)
 		}
 	}
 
-	if (OS::exists(path) == false)
+	if (OS::Exists(path) == false)
 	{
 		ERR("File not found: " + path);
 		return nullptr;
 	}
 
 	// File not found in cache, load it only once
-	FileBuffer& buffer = OS::loadFileContents(path);
+	FileBuffer& buffer = OS::LoadFileContents(path);
 	ResourceData* resData = new ResourceData(path, buffer);
 	LuaTextResourceFile* resFile = new LuaTextResourceFile(resData);
 
@@ -58,7 +58,7 @@ LuaTextResourceFile* ResourceLoader::createLuaTextResourceFile(String path)
 	return resFile;
 }
 
-AudioResourceFile* ResourceLoader::createAudioResourceFile(String path)
+AudioResourceFile* ResourceLoader::CreateAudioResourceFile(String path)
 {
 	for (auto& item : s_ResourcesDataFiles)
 	{
@@ -68,7 +68,7 @@ AudioResourceFile* ResourceLoader::createAudioResourceFile(String path)
 		}
 	}
 
-	if (OS::exists(path) == false)
+	if (OS::Exists(path) == false)
 	{
 		ERR("File not found: " + path);
 		return nullptr;
@@ -80,7 +80,7 @@ AudioResourceFile* ResourceLoader::createAudioResourceFile(String path)
 	int size;
 	float frequency;
 	ALUT_CHECK(audioBuffer = (const char*)alutLoadMemoryFromFile(
-	               OS::getAbsolutePath(path).generic_string().c_str(),
+	               OS::GetAbsolutePath(path).generic_string().c_str(),
 	               &format,
 	               &size,
 	               &frequency));

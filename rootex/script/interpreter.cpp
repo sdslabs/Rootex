@@ -17,7 +17,7 @@ void LuaInterpreter::loadExecuteScript(LuaTextResourceFile* script)
 	PANIC(script->getType() != ResourceFile::Type::LUA, "LuaInterpreter: Running non-Lua script source");
 
 	luaL_dostring(m_LuaState, script->getString().c_str());
-	OS::printLine(script->getPath().generic_string() + " was run");
+	OS::PrintLine(script->getPath().generic_string() + " was run");
 }
 
 void LuaInterpreter::loadExecuteScript(const String& script)
