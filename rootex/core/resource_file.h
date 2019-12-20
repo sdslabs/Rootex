@@ -1,8 +1,7 @@
 #pragma once
 
 #include "common/types.h"
-
-class ResourceData;
+#include "core/resource_data.h"
 
 class ResourceFile
 {

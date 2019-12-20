@@ -2,7 +2,6 @@
 
 #include "audio/audio_system.h"
 #include "common/common.h"
-#include "resource_data_reserve.h"
 
 HashMap<Ptr<ResourceData>, Ptr<ResourceFile>> ResourceLoader::s_ResourcesDataFiles;
 

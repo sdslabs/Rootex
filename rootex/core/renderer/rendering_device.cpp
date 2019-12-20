@@ -4,8 +4,6 @@
 #include "dxgiDebugInterface.h"
 #include "d3d11utils.h"
 
-
-
 RenderingDevice::RenderingDevice()
 {
 }

@@ -9,17 +9,14 @@ set(ROOTEX_HEADERS
 CACHE INTERNAL "")
 
 set(ROOTEX_SOURCES
-    ${ROOTEX_SOURCES}
-    ""
+${ROOTEX_SOURCES}
+""
 CACHE INTERNAL "")
 
 add_subdirectory(common)
 add_subdirectory(core)
-<<<<<<< HEAD
 add_subdirectory(framework)
-=======
 add_subdirectory(main)
->>>>>>> Refactor context and device away from window
 add_subdirectory(os)
 add_subdirectory(scene)
 add_subdirectory(script)
@@ -27,20 +24,20 @@ add_subdirectory(vendor)
 
 # Adding shaders for pre-build compilation
 file(GLOB ShaderFiles
-    ./core/renderer/shaders/*.hlsl
+./core/renderer/shaders/*.hlsl
 )
 
 file(GLOB VertexShaderFiles
-    ./core/renderer/shaders/VertexShader.hlsl
+./core/renderer/shaders/VertexShader.hlsl
 )
 
 file(GLOB PixelShaderFiles
-    ./core/renderer/shaders/PixelShader.hlsl
+./core/renderer/shaders/PixelShader.hlsl
 )
 
 set(ROOTEX_SOURCES
-    ${ROOTEX_SOURCES}
-    ${ShaderFiles}
+${ROOTEX_SOURCES}
+${ShaderFiles}
 CACHE INTERNAL "")
 
 string(CONCAT ShaderCompileDestination ${PROJECT_BINARY_DIR} "/Game/%\(Filename\).cso")
@@ -76,10 +73,6 @@ target_link_libraries(Rootex PUBLIC
     Lua
     LuaBridge
     OpenAL
-<<<<<<< HEAD
     ALUT
 	d3d11.lib
-=======
-    d3d11.lib
->>>>>>> rebase to master
 )
