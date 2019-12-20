@@ -1,8 +1,8 @@
 #pragma once
 #include "common.h"
+#include "d3d11utils.h"
 #include <dxgidebug.h>
 #include <vector>
-#include "d3d11utils.h"
 
 class DxgiDebugInterface
 {
@@ -21,7 +21,7 @@ public:
 	void getMessages(String file, String func) const;
 };
 
-#define GFX_ERR_CHECK(hr)                                              \
-	DxgiDebugInterface::GetSingleton()->set();                         \
-	if (FAILED(hr))                                                    \
+#define GFX_ERR_CHECK(hr)                      \
+	DxgiDebugInterface::GetSingleton()->set(); \
+	if (FAILED(hr))                            \
 	DxgiDebugInterface::GetSingleton()->getMessages(__FILE__, __func__)

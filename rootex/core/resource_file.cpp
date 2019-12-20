@@ -4,7 +4,6 @@
 #include <sstream>
 
 #include "audio/audio_system.h"
-#include "core/resource_data_reserve.h"
 
 ResourceFile::ResourceFile(const Type& type, ResourceData* resData)
     : m_Type(type)
