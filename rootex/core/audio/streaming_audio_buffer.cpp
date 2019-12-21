@@ -43,10 +43,7 @@ void StreamingAudioBuffer::initializeBuffers()
 
 void StreamingAudioBuffer::destroyBuffers()
 {
-	for (int i = 0; i < BUFFER_COUNT; i++)
-	{
-		AL_CHECK(alDeleteBuffers(1, &m_Buffers[i]));
-	}
+	AL_CHECK(alDeleteBuffers(BUFFER_COUNT, m_Buffers));
 }
 
 void StreamingAudioBuffer::loadNewBuffers(int count, bool isLooping)

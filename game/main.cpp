@@ -111,10 +111,9 @@ int main()
 	PSConstantBuffer.m_FaceColors[5] = { 0.0f, 1.0f, 1.0f };
 	shader.setConstantBuffer(VSConstantBuffer);
 	shader.setConstantBuffer(PSConstantBuffer);
-	
-	Ptr<Renderer> renderer(new Renderer(windowLua["deltaX"], windowLua["deltaY"]));
-	renderer->setViewport(Viewport(windowLua["deltaX"], windowLua["deltaY"], 0.0f, 1.0f, 0.0f, 0.0f));
 
+	Ptr<Renderer> renderer(new Renderer(windowLua["deltaX"], windowLua["deltaY"]));
+	
 	std::optional<int> ret = {};
 	while (true)
 	{
@@ -126,7 +125,6 @@ int main()
 		{
 			static std::chrono::time_point<std::chrono::system_clock> startTime = std::chrono::system_clock::now();
 
-			// The color change effect ->
 			std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - startTime;
 			float seconds = elapsed_seconds.count();
 			float r = (sin(seconds) + 1.0) * 0.5;
@@ -138,7 +136,7 @@ int main()
 
 		AudioSystem::GetSingleton()->update();
 
-		renderer->draw(indexBuffer);
+		renderer->draw(indexBuffer, shader);
 
 		window->swapBuffers();
 	}

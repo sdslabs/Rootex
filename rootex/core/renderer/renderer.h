@@ -21,9 +21,5 @@ public:
 	void setViewport(Viewport& viewport);
 
 	void clear() const;
-	void draw(const IndexBuffer& indexBuffer) const;
-
-	// Testing purposes
-	void drawTest();
-	void drawTestCube(float angle);
+	void draw(const IndexBuffer& indexBuffer, const Shader& shader) const;
 };
