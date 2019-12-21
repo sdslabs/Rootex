@@ -26,6 +26,7 @@ void Renderer::setViewport(Viewport& viewport)
 
 void Renderer::draw(const IndexBuffer& indexBuffer, const Shader& shader) const
 {
+	indexBuffer.bind();
 	shader.bind();
 	RenderingDevice::GetSingleton()->drawIndexed(indexBuffer.getCount());
 }

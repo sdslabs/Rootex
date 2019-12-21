@@ -30,14 +30,16 @@ public:
 	void initialize(HWND hWnd, int width, int height);
 
 	ID3DBlob* createBlob(LPCWSTR path);
-	void initVertexBuffer(D3D11_BUFFER_DESC* vbd, D3D11_SUBRESOURCE_DATA* vsd, const UINT* stride, const UINT* offset);
-	void initIndexBuffer(D3D11_BUFFER_DESC* ibd, D3D11_SUBRESOURCE_DATA* isd, DXGI_FORMAT format);
+	ID3D11Buffer* initVertexBuffer(D3D11_BUFFER_DESC* vbd, D3D11_SUBRESOURCE_DATA* vsd, const UINT* stride, const UINT* offset);
+	ID3D11Buffer* initIndexBuffer(D3D11_BUFFER_DESC* ibd, D3D11_SUBRESOURCE_DATA* isd, DXGI_FORMAT format);
 	void initVSConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd);
 	void initPSConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd);
 	ID3D11PixelShader* initPixelShader(ID3DBlob* blob);
 	ID3D11VertexShader* initVertexShader(ID3DBlob* blob);
 	void initVertexLayout(ID3DBlob* vertexShaderBlob, const D3D11_INPUT_ELEMENT_DESC* ied, UINT size);
 	
+	void bind(ID3D11Buffer* vertexBuffer, const unsigned int* stride, const unsigned int* offset);
+	void bind(ID3D11Buffer* indexBuffer, DXGI_FORMAT format);
 	void bind(ID3D11VertexShader* vertexShader);
 	void bind(ID3D11PixelShader* pixelShader);
 
