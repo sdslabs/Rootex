@@ -1,11 +1,30 @@
 #include "shader.h"
 
+#include "utils.h"
+
 Shader::Shader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath)
     : m_VertexPath(vertexPath)
     , m_PixelPath(pixelPath)
 {
-	m_VertexShaderBlob = RenderingDevice::GetSingleton()->initVertexShader(vertexPath);
-	m_PixelShaderBlob = RenderingDevice::GetSingleton()->initPixelShader(pixelPath);
+	m_VertexShaderBlob = RenderingDevice::GetSingleton()->createBlob(vertexPath);
+	m_VertexShader = RenderingDevice::GetSingleton()->initVertexShader(m_VertexShaderBlob);
+	
+	m_PixelShaderBlob = RenderingDevice::GetSingleton()->createBlob(pixelPath);
+	m_PixelShader = RenderingDevice::GetSingleton()->initPixelShader(m_PixelShaderBlob);
+}
+
+Shader::~Shader()
+{
+	SafeRelease(&m_VertexShaderBlob);
+	SafeRelease(&m_VertexShader);
+	SafeRelease(&m_PixelShaderBlob);
+	SafeRelease(&m_PixelShader);
+}
+
+void Shader::bind() const
+{
+	RenderingDevice::GetSingleton()->bind(m_VertexShader);
+	RenderingDevice::GetSingleton()->bind(m_PixelShader);
 }
 
 void Shader::setVertexBufferFormat(const BufferFormat& vertexBufferFormat)

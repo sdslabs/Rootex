@@ -24,7 +24,7 @@ public:
 	~Window() = default;
 
 	std::optional<int> processMessages();
-	void setViewport();
+	void applyDefaultViewport();
 	void swapBuffers();
 
 	void clear();

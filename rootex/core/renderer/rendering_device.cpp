@@ -173,25 +173,18 @@ void RenderingDevice::initPSConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESO
 	SafeRelease(&pConstantBuffer);
 }
 
-ID3DBlob* RenderingDevice::initPixelShader(LPCWSTR shader_path)
+ID3D11PixelShader* RenderingDevice::initPixelShader(ID3DBlob* blob)
 {
-	ID3D11PixelShader* pPixelShader = nullptr;
-	ID3DBlob* blob = createBlob(shader_path);
-	GFX_ERR_CHECK(m_Device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &pPixelShader));
-	m_Context->PSSetShader(pPixelShader, nullptr, 0u);
-	SafeRelease(&blob);
-	SafeRelease(&pPixelShader);
-	return blob;
+	ID3D11PixelShader* pixelShader = nullptr;
+	GFX_ERR_CHECK(m_Device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &pixelShader));
+	return pixelShader;
 }
 
-ID3DBlob* RenderingDevice::initVertexShader(LPCWSTR shader_path)
+ID3D11VertexShader* RenderingDevice::initVertexShader(ID3DBlob* blob)
 {
-	ID3D11VertexShader* m_VertexShader = nullptr;
-	ID3DBlob* blob = createBlob(shader_path);
-	GFX_ERR_CHECK(m_Device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &m_VertexShader));
-	m_Context->VSSetShader(m_VertexShader, nullptr, 0u);
-	SafeRelease(&m_VertexShader);
-	return blob;
+	ID3D11VertexShader* vertexShader = nullptr;
+	GFX_ERR_CHECK(m_Device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &vertexShader));
+	return vertexShader;
 }
 
 void RenderingDevice::initVertexLayout(ID3DBlob* vertexShaderBlob, const D3D11_INPUT_ELEMENT_DESC* ied, UINT size)
@@ -209,6 +202,16 @@ void RenderingDevice::initVertexLayout(ID3DBlob* vertexShaderBlob, const D3D11_I
 	m_Context->IASetInputLayout(inputLayout);
 
 	SafeRelease(&inputLayout);
+}
+
+void RenderingDevice::bind(ID3D11VertexShader* vertexShader)
+{
+	m_Context->VSSetShader(vertexShader, nullptr, 0u);
+}
+
+void RenderingDevice::bind(ID3D11PixelShader* pixelShader)
+{
+	m_Context->PSSetShader(pixelShader, nullptr, 0u);
 }
 
 void RenderingDevice::setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY pt)

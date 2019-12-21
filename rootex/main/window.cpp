@@ -17,7 +17,7 @@ std::optional<int> Window::processMessages()
 	return {};
 }
 
-void Window::setViewport()
+void Window::applyDefaultViewport()
 {
 	D3D11_VIEWPORT vp;
 	vp.Width = m_Width;
@@ -96,4 +96,5 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
 	ShowWindow(m_WindowHandle, SW_SHOW);
 
 	RenderingDevice::GetSingleton()->initialize(m_WindowHandle, width, height);
+	applyDefaultViewport();
 }
