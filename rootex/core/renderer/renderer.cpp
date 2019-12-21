@@ -1,25 +1,40 @@
-#include <core/renderer/d3d11graphics.h>
+#include "renderer.h"
 
-#pragma comment(lib, "d3d11.lib")
-#pragma comment(lib, "D3DCompiler.lib")
+#include <d3d11.h>
+#include <wrl.h>
+#include <d3dcompiler.h>
+#include <DirectXMath.h>
+#include <array>
+#include <iostream>
 
-#include "renderer/rendering_device.h"
-
-RootexGraphics::RootexGraphics(unsigned int w, unsigned int h)
+Renderer::Renderer(unsigned int w, unsigned int h)
 {
-	width = w;
-	height = h;
-	m_StartTime = std::chrono::system_clock::now();
+	m_Width = w;
+	m_Height = h;
+	RenderingDevice::GetSingleton()->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
-RootexGraphics::~RootexGraphics()
+void Renderer::clear() const
 {
+	RenderingDevice::GetSingleton()->clearBuffer(0.0f, 0.0f, 0.0f);
 }
 
-void RootexGraphics::drawTest()
+void Renderer::setViewport(Viewport& viewport)
 {
+	RenderingDevice::GetSingleton()->setViewport(viewport.getViewport());
+}
+
+void Renderer::draw(const IndexBuffer& indexBuffer) const
+{
+	RenderingDevice::GetSingleton()->drawIndexed(indexBuffer.getCount());
+}
+
+void Renderer::drawTest()
+{
+	static std::chrono::time_point<std::chrono::system_clock> startTime = std::chrono::system_clock::now();
+
 	// The color change effect ->
-	std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - m_StartTime;
+	std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - startTime;
 	float seconds = elapsed_seconds.count();
 	float r = (sin(seconds) + 1.0) * 0.5;
 	float g = (sin(seconds * 0.3) + 1.0) * 0.5;
@@ -30,7 +45,7 @@ void RootexGraphics::drawTest()
 	drawTestCube(-seconds);
 }
 
-void RootexGraphics::drawTestCube(float angle)
+void Renderer::drawTestCube(float angle)
 {
 	struct Vertex
 	{
@@ -99,10 +114,14 @@ void RootexGraphics::drawTestCube(float angle)
 		DirectX::XMMATRIX transform;
 	};
 
+	float maxX = 1.0f;
+	float minZ = 0.5f;
+	float maxZ = 10.0f;
+
 	//constant buffer(rot matrix) used in vertex shader
 	const ConstantBuffer cb = {
 		{ DirectX::XMMatrixTranspose(
-		    DirectX::XMMatrixRotationZ(angle) * DirectX::XMMatrixRotationY(angle / 2) * DirectX::XMMatrixRotationX(angle / 3) * DirectX::XMMatrixTranslation(0.0f, 0.0f, 4.0f) * DirectX::XMMatrixPerspectiveLH(maxX, maxX * height / width, minZ, maxZ)) }
+		    DirectX::XMMatrixRotationZ(angle) * DirectX::XMMatrixRotationY(angle / 2) * DirectX::XMMatrixRotationX(angle / 3) * DirectX::XMMatrixTranslation(0.0f, 0.0f, 4.0f) * DirectX::XMMatrixPerspectiveLH(maxX, maxX * m_Height / m_Width, minZ, maxZ)) }
 	};
 	D3D11_BUFFER_DESC cbd = { 0 };
 	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -150,7 +169,7 @@ void RootexGraphics::drawTestCube(float angle)
 
 	RenderingDevice::GetSingleton()->initPixelShader(L"PixelShader.cso");
 
-	ID3DBlob* vertrxShaderBlob = RenderingDevice::GetSingleton()->initVertexShader(L"VertexShader.cso");
+	ID3DBlob* vertexShaderBlob = RenderingDevice::GetSingleton()->initVertexShader(L"VertexShader.cso");
 
 	//inout layout 2d
 	const D3D11_INPUT_ELEMENT_DESC ied[] = {
@@ -158,21 +177,21 @@ void RootexGraphics::drawTestCube(float angle)
 		//{ "COLOR", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, 12u, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 
-	RenderingDevice::GetSingleton()->initVertexLayout(vertrxShaderBlob, ied, std::size(ied));
+	RenderingDevice::GetSingleton()->initVertexLayout(vertexShaderBlob, ied, std::size(ied));
 
 	//set topology
 	RenderingDevice::GetSingleton()->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	//viewport
 	D3D11_VIEWPORT vp;
-	vp.Width = width;
-	vp.Height = height;
+	vp.Width = m_Width;
+	vp.Height = m_Height;
 	vp.MinDepth = 0;
 	vp.MaxDepth = 1;
 	vp.TopLeftX = 0;
 	vp.TopLeftY = 0;
-	
-	RenderingDevice::GetSingleton()->setViewports(&vp);
+
+	RenderingDevice::GetSingleton()->setViewport(&vp);
 
 	RenderingDevice::GetSingleton()->drawIndexed(std::size(indices));
 }

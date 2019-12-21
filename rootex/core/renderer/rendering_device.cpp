@@ -2,7 +2,7 @@
 
 #include "common/common.h"
 #include "dxgiDebugInterface.h"
-#include "d3d11utils.h"
+#include "utils.h"
 
 RenderingDevice::RenderingDevice()
 {
@@ -11,8 +11,10 @@ RenderingDevice::RenderingDevice()
 RenderingDevice::~RenderingDevice()
 {
 	SafeRelease(&m_Device);
-	SafeRelease(&m_SwapChain);
 	SafeRelease(&m_Context);
+	SafeRelease(&m_SwapChain);
+	SafeRelease(&m_RenderTargetView);
+	SafeRelease(&m_DepthStencilView);
 }
 
 void RenderingDevice::initialize(HWND hWnd, int width, int height)
@@ -171,41 +173,42 @@ void RenderingDevice::initPSConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESO
 	SafeRelease(&pConstantBuffer);
 }
 
-void RenderingDevice::initPixelShader(LPCWSTR shader_path)
+ID3DBlob* RenderingDevice::initPixelShader(LPCWSTR shader_path)
 {
 	ID3D11PixelShader* pPixelShader = nullptr;
-	ID3DBlob* m_Blob = createBlob(shader_path);
-	GFX_ERR_CHECK(m_Device->CreatePixelShader(m_Blob->GetBufferPointer(), m_Blob->GetBufferSize(), nullptr, &pPixelShader));
+	ID3DBlob* blob = createBlob(shader_path);
+	GFX_ERR_CHECK(m_Device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &pPixelShader));
 	m_Context->PSSetShader(pPixelShader, nullptr, 0u);
-	SafeRelease(&m_Blob);
+	SafeRelease(&blob);
 	SafeRelease(&pPixelShader);
+	return blob;
 }
 
 ID3DBlob* RenderingDevice::initVertexShader(LPCWSTR shader_path)
 {
 	ID3D11VertexShader* m_VertexShader = nullptr;
-	ID3DBlob* m_Blob = createBlob(shader_path);
-	GFX_ERR_CHECK(m_Device->CreateVertexShader(m_Blob->GetBufferPointer(), m_Blob->GetBufferSize(), nullptr, &m_VertexShader));
+	ID3DBlob* blob = createBlob(shader_path);
+	GFX_ERR_CHECK(m_Device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &m_VertexShader));
 	m_Context->VSSetShader(m_VertexShader, nullptr, 0u);
 	SafeRelease(&m_VertexShader);
-	return m_Blob;
+	return blob;
 }
 
 void RenderingDevice::initVertexLayout(ID3DBlob* vertexShaderBlob, const D3D11_INPUT_ELEMENT_DESC* ied, UINT size)
 {
-	ID3D11InputLayout* pInputLayout = nullptr;
+	ID3D11InputLayout* inputLayout = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateInputLayout(
 	    ied, size,
 	    vertexShaderBlob->GetBufferPointer(),
 	    vertexShaderBlob->GetBufferSize(),
-	    &pInputLayout));
+	    &inputLayout));
 
 	SafeRelease(&vertexShaderBlob);
 
 	//bind vertex layout
-	m_Context->IASetInputLayout(pInputLayout);
+	m_Context->IASetInputLayout(inputLayout);
 
-	SafeRelease(&pInputLayout);
+	SafeRelease(&inputLayout);
 }
 
 void RenderingDevice::setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY pt)
@@ -213,7 +216,7 @@ void RenderingDevice::setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY pt)
 	m_Context->IASetPrimitiveTopology(pt);
 }
 
-void RenderingDevice::setViewports(D3D11_VIEWPORT* vp)
+void RenderingDevice::setViewport(const D3D11_VIEWPORT* vp)
 {
 	m_Context->RSSetViewports(1u, vp);
 }

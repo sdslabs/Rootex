@@ -1,8 +1,10 @@
 #pragma once
-#include "common.h"
-#include "d3d11utils.h"
+
 #include <dxgidebug.h>
 #include <vector>
+
+#include "common.h"
+#include "utils.h"
 
 class DxgiDebugInterface
 {
