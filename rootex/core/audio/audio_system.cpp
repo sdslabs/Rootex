@@ -93,7 +93,7 @@ void AudioSystem::update()
 		source->queueNewBuffers();
 	}
 
-	std::this_thread::sleep_for(std::chrono::milliseconds(m_UpdateInterval));
+	std::this_thread::sleep_for(std::chrono::milliseconds(m_UpdateIntervalMilliseconds));
 }
 
 AudioSystem* AudioSystem::GetSingleton()
@@ -127,13 +127,13 @@ void AudioSystem::deregisterInstance(AudioSource* audio)
 
 void AudioSystem::setBufferUpdateRate(float milliseconds)
 {
-	m_UpdateInterval = milliseconds;
+	m_UpdateIntervalMilliseconds = milliseconds;
 }
 
 AudioSystem::AudioSystem()
     : m_Context(nullptr)
     , m_Device(nullptr)
-    , m_UpdateInterval(1 * MILLISECONDS)
+    , m_UpdateIntervalMilliseconds(0)
 {
 }
 

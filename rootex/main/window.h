@@ -4,7 +4,6 @@
 #include <windows.h>
 
 #include "common/common.h"
-#include "core/renderer/d3d11graphics.h"
 
 class Window
 {
@@ -25,6 +24,7 @@ public:
 	~Window() = default;
 
 	std::optional<int> processMessages();
+	void setViewport();
 	void swapBuffers();
 
 	void clear();

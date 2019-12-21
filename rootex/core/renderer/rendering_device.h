@@ -34,12 +34,13 @@ public:
 	void initIndexBuffer(D3D11_BUFFER_DESC* ibd, D3D11_SUBRESOURCE_DATA* isd, DXGI_FORMAT format);
 	void initVSConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd);
 	void initPSConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd);
-	void initPixelShader(LPCWSTR shader_path);
+	ID3DBlob* initPixelShader(LPCWSTR shader_path);
 	ID3DBlob* initVertexShader(LPCWSTR shader_path);
 	void initVertexLayout(ID3DBlob* vertexShaderBlob, const D3D11_INPUT_ELEMENT_DESC* ied, UINT size);
+	
 	void setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY pt);
-	void setViewports(D3D11_VIEWPORT* vp);
+	void setViewport(const D3D11_VIEWPORT* vp);
+	
 	void drawIndexed(UINT number);
-
 	void clearBuffer(float r, float g, float b);
 };

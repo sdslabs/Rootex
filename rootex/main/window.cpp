@@ -17,6 +17,19 @@ std::optional<int> Window::processMessages()
 	return {};
 }
 
+void Window::setViewport()
+{
+	D3D11_VIEWPORT vp;
+	vp.Width = m_Width;
+	vp.Height = m_Height;
+	vp.MinDepth = 0;
+	vp.MaxDepth = 1;
+	vp.TopLeftX = 0;
+	vp.TopLeftY = 0;
+
+	RenderingDevice::GetSingleton()->setViewport(&vp);
+}
+
 void Window::swapBuffers()
 {
 	RenderingDevice::GetSingleton()->swapBuffers();

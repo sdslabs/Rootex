@@ -43,8 +43,7 @@ class ResourceFile;
 
 class AudioSystem
 {
-	const int MILLISECONDS = 1;
-	int m_UpdateInterval;
+	unsigned int m_UpdateIntervalMilliseconds;
 	ALCdevice* m_Device;
 	ALCcontext* m_Context;
 	Vector<AudioSource*> m_ActiveAudioSources;
