@@ -1,5 +1,7 @@
 #include "index_buffer.h"
+
 #include "rendering_device.h"
+#include "utils.h"
 
 IndexBuffer::IndexBuffer(const Vector<unsigned short>& indices)
     : m_Buffer(indices)
@@ -14,7 +16,17 @@ IndexBuffer::IndexBuffer(const Vector<unsigned short>& indices)
 	D3D11_SUBRESOURCE_DATA isd = { 0 };
 	isd.pSysMem = indices.data();
 
-	RenderingDevice::GetSingleton()->initIndexBuffer(&ibd, &isd, DXGI_FORMAT_R16_UINT);
+	m_IndexBuffer = RenderingDevice::GetSingleton()->initIndexBuffer(&ibd, &isd, DXGI_FORMAT_R16_UINT);
+}
+
+IndexBuffer::~IndexBuffer()
+{
+	SafeRelease(&m_IndexBuffer);
+}
+
+void IndexBuffer::bind() const
+{
+	RenderingDevice::GetSingleton()->bind(m_IndexBuffer, DXGI_FORMAT_R16_UINT);
 }
 
 unsigned int IndexBuffer::getCount() const

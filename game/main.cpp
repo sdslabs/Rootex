@@ -136,6 +136,7 @@ int main()
 
 		AudioSystem::GetSingleton()->update();
 
+		vertexBuffer.bind();
 		renderer->draw(indexBuffer, shader);
 
 		window->swapBuffers();

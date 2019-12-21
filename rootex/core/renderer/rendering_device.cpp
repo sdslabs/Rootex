@@ -139,20 +139,18 @@ ID3DBlob* RenderingDevice::createBlob(LPCWSTR path)
 	return pBlob;
 }
 
-void RenderingDevice::initVertexBuffer(D3D11_BUFFER_DESC* vbd, D3D11_SUBRESOURCE_DATA* vsd, const UINT* stride, const UINT* const offset)
+ID3D11Buffer* RenderingDevice::initVertexBuffer(D3D11_BUFFER_DESC* vbd, D3D11_SUBRESOURCE_DATA* vsd, const UINT* stride, const UINT* const offset)
 {
-	ID3D11Buffer* pVertexBuffer = nullptr;
-	GFX_ERR_CHECK(m_Device->CreateBuffer(vbd, vsd, &pVertexBuffer));
-	m_Context->IASetVertexBuffers(0u, 1u, &pVertexBuffer, stride, offset);
-	SafeRelease(&pVertexBuffer);
+	ID3D11Buffer* vertexBuffer = nullptr;
+	GFX_ERR_CHECK(m_Device->CreateBuffer(vbd, vsd, &vertexBuffer));
+	return vertexBuffer;
 }
 
-void RenderingDevice::initIndexBuffer(D3D11_BUFFER_DESC* ibd, D3D11_SUBRESOURCE_DATA* isd, DXGI_FORMAT format)
+ID3D11Buffer* RenderingDevice::initIndexBuffer(D3D11_BUFFER_DESC* ibd, D3D11_SUBRESOURCE_DATA* isd, DXGI_FORMAT format)
 {
-	ID3D11Buffer* pIndexBuffer = nullptr;
-	GFX_ERR_CHECK(m_Device->CreateBuffer(ibd, isd, &pIndexBuffer));
-	m_Context->IASetIndexBuffer(pIndexBuffer, format, 0u);
-	SafeRelease(&pIndexBuffer);
+	ID3D11Buffer* indexBuffer = nullptr;
+	GFX_ERR_CHECK(m_Device->CreateBuffer(ibd, isd, &indexBuffer));
+	return indexBuffer;
 }
 
 void RenderingDevice::initVSConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
@@ -202,6 +200,16 @@ void RenderingDevice::initVertexLayout(ID3DBlob* vertexShaderBlob, const D3D11_I
 	m_Context->IASetInputLayout(inputLayout);
 
 	SafeRelease(&inputLayout);
+}
+
+void RenderingDevice::bind(ID3D11Buffer* vertexBuffer, const unsigned int* stride, const unsigned int* offset)
+{
+	m_Context->IASetVertexBuffers(0u, 1u, &vertexBuffer, stride, offset);
+}
+
+void RenderingDevice::bind(ID3D11Buffer* indexBuffer, DXGI_FORMAT format)
+{
+	m_Context->IASetIndexBuffer(indexBuffer, format, 0u);
 }
 
 void RenderingDevice::bind(ID3D11VertexShader* vertexShader)
