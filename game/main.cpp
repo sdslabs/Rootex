@@ -88,28 +88,23 @@ int main()
 	    2, 4, 6,
 	    0, 1, 4,
 	    1, 5, 4 });
-	
+
+	BufferFormat bufferFormat;
+	bufferFormat.push(VertexBufferElement::Type::POSITION, "POSITION");
+	Shader shader(L"VertexShader.cso", L"PixelShader.cso", bufferFormat);
 	float width = windowLua["deltaX"];
 	float height = windowLua["deltaY"];
 	float maxX = 1.0f;
 	float minZ = 0.5f;
 	float maxZ = 10.0f;
-	float angle = 40.0f;
-
-	Shader shader(L"VertexShader.cso", L"PixelShader.cso");
-	BufferFormat bufferFormat;
-	bufferFormat.push(VertexBufferElement::Type::POSITION, "POSITION");
-	shader.setVertexBufferFormat(bufferFormat);
-	VSConstantBuffer VSConstantBuffer;
-	VSConstantBuffer.m_Transform = { DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationZ(angle) * DirectX::XMMatrixRotationY(angle / 2) * DirectX::XMMatrixRotationX(angle / 3) * DirectX::XMMatrixTranslation(0.0f, 0.0f, 4.0f) * DirectX::XMMatrixPerspectiveLH(maxX, maxX * height / width, minZ, maxZ)) };
+	float seconds = 10.0f;
 	PSConstantBuffer PSConstantBuffer;
-	PSConstantBuffer.m_FaceColors[0] = { 1.0f, 0.0f, 0.0f };
-	PSConstantBuffer.m_FaceColors[1] = { 0.0f, 1.0f, 0.0f };
-	PSConstantBuffer.m_FaceColors[2] = { 0.0f, 0.0f, 1.0f };
-	PSConstantBuffer.m_FaceColors[3] = { 0.0f, 0.0f, 1.0f };
-	PSConstantBuffer.m_FaceColors[4] = { 1.0f, 1.0f, 0.0f };
-	PSConstantBuffer.m_FaceColors[5] = { 0.0f, 1.0f, 1.0f };
-	shader.setConstantBuffer(VSConstantBuffer);
+	PSConstantBuffer.m_Colors[0] = { 1.0f, 0.0f, 0.0f, 1.0f };
+	PSConstantBuffer.m_Colors[1] = { 0.0f, 1.0f, 0.0f, 1.0f };
+	PSConstantBuffer.m_Colors[2] = { 0.0f, 0.0f, 1.0f, 1.0f };
+	PSConstantBuffer.m_Colors[3] = { 0.0f, 0.0f, 1.0f, 1.0f };
+	PSConstantBuffer.m_Colors[4] = { 1.0f, 1.0f, 0.0f, 1.0f };
+	PSConstantBuffer.m_Colors[5] = { 0.0f, 1.0f, 1.0f, 1.0f };
 	shader.setConstantBuffer(PSConstantBuffer);
 
 	Ptr<Renderer> renderer(new Renderer(windowLua["deltaX"], windowLua["deltaY"]));
@@ -122,22 +117,22 @@ int main()
 
 		renderer->clear();
 
-		{
-			static std::chrono::time_point<std::chrono::system_clock> startTime = std::chrono::system_clock::now();
-
-			std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - startTime;
-			float seconds = elapsed_seconds.count();
-			float r = (sin(seconds) + 1.0) * 0.5;
-			float g = (sin(seconds * 0.3) + 1.0) * 0.5;
-			float b = (sin(seconds * 0.7) + 1.0) * 0.5;
-			VSConstantBuffer.m_Transform = { DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationZ(seconds) * DirectX::XMMatrixRotationY(seconds / 2) * DirectX::XMMatrixRotationX(seconds / 3) * DirectX::XMMatrixTranslation(0.0f, 0.0f, 4.0f) * DirectX::XMMatrixPerspectiveLH(maxX, maxX * height / width, minZ, maxZ)) };
-			shader.setConstantBuffer(VSConstantBuffer);
-		}
-
 		AudioSystem::GetSingleton()->update();
 
-		vertexBuffer.bind();
-		renderer->draw(indexBuffer, shader);
+		static float up = 0;
+		if (GetKeyState(VK_UP))
+		{
+			up++;
+		}
+		DirectX::XMMATRIX model = DirectX::XMMatrixTranslation(0.0f, up, 4.0f);
+		DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH({ 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f, 0.0f });
+		DirectX::XMMATRIX projection = DirectX::XMMatrixPerspectiveLH(maxX, maxX * height / width, minZ, maxZ);
+		VSConstantBuffer VSConstantBuffer;
+		VSConstantBuffer.m_MVP = model * view * projection;
+		VSConstantBuffer.m_MVP = DirectX::XMMatrixTranspose(VSConstantBuffer.m_MVP);
+		shader.setConstantBuffer(VSConstantBuffer);
+		
+		renderer->draw(vertexBuffer, indexBuffer, shader);
 
 		window->swapBuffers();
 	}

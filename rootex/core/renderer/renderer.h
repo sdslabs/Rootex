@@ -21,5 +21,5 @@ public:
 	void setViewport(Viewport& viewport);
 
 	void clear() const;
-	void draw(const IndexBuffer& indexBuffer, const Shader& shader) const;
+	void draw(const VertexBuffer& vertexBuffer, const IndexBuffer& indexBuffer, const Shader& shader) const;
 };
