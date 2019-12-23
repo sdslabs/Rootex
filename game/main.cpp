@@ -2,19 +2,19 @@
 
 #include "core/audio/audio_source.h"
 #include "core/audio/audio_system.h"
-#include "core/renderer/vertex_buffer.h"
-#include "core/renderer/index_buffer.h"
-#include "core/renderer/shader.h"
-#include "core/renderer/buffer_format.h"
-#include "core/renderer/renderer.h"
 #include "core/audio/static_audio_buffer.h"
 #include "core/audio/streaming_audio_buffer.h"
+#include "core/renderer/buffer_format.h"
+#include "core/renderer/index_buffer.h"
+#include "core/renderer/renderer.h"
+#include "core/renderer/shader.h"
+#include "core/renderer/vertex_buffer.h"
 #include "core/resource_loader.h"
 
-#include "framework/entity_factory.h"
 #include "framework/components/test_component.h"
-#include "framework/systems/test_system.h"
+#include "framework/entity_factory.h"
 #include "framework/systems/debug_system.h"
+#include "framework/systems/test_system.h"
 
 #include "main/window.h"
 
@@ -65,8 +65,7 @@ int main()
 	    windowLua["deltaY"],
 	    windowLua["title"]));
 
-	VertexBuffer vertexBuffer({
-	    { -1.0f, -1.0f, -1.0f },
+	VertexBuffer vertexBuffer({ { -1.0f, -1.0f, -1.0f },
 	    { +1.0f, -1.0f, -1.0f },
 	    { -1.0f, +1.0f, -1.0f },
 	    { +1.0f, +1.0f, -1.0f },
@@ -75,8 +74,7 @@ int main()
 	    { -1.0f, +1.0f, +1.0f },
 	    { +1.0f, +1.0f, +1.0f } });
 
-	IndexBuffer indexBuffer({ 
-		0, 2, 1,
+	IndexBuffer indexBuffer({ 0, 2, 1,
 	    2, 3, 1,
 	    1, 3, 5,
 	    3, 7, 5,
@@ -91,13 +89,13 @@ int main()
 
 	BufferFormat bufferFormat;
 	bufferFormat.push(VertexBufferElement::Type::POSITION, "POSITION");
-	Shader shader(L"VertexShader.cso", L"PixelShader.cso", bufferFormat);
 	float width = windowLua["deltaX"];
 	float height = windowLua["deltaY"];
 	float maxX = 1.0f;
 	float minZ = 0.5f;
 	float maxZ = 10.0f;
 	float seconds = 10.0f;
+	VSConstantBuffer VSConstantBuffer;
 	PSConstantBuffer PSConstantBuffer;
 	PSConstantBuffer.m_Colors[0] = { 1.0f, 0.0f, 0.0f, 1.0f };
 	PSConstantBuffer.m_Colors[1] = { 0.0f, 1.0f, 0.0f, 1.0f };
@@ -105,10 +103,10 @@ int main()
 	PSConstantBuffer.m_Colors[3] = { 0.0f, 0.0f, 1.0f, 1.0f };
 	PSConstantBuffer.m_Colors[4] = { 1.0f, 1.0f, 0.0f, 1.0f };
 	PSConstantBuffer.m_Colors[5] = { 0.0f, 1.0f, 1.0f, 1.0f };
-	shader.setConstantBuffer(PSConstantBuffer);
+	Shader shader(L"VertexShader.cso", L"PixelShader.cso", bufferFormat, VSConstantBuffer, PSConstantBuffer);
 
 	Ptr<Renderer> renderer(new Renderer(windowLua["deltaX"], windowLua["deltaY"]));
-	
+
 	std::optional<int> ret = {};
 	while (true)
 	{
@@ -122,37 +120,36 @@ int main()
 		static float x = 0;
 		static float y = 0;
 		static float u = 0;
-		static float r = 0;
+		static float l = 0;
 		if (GetAsyncKeyState(VK_UP))
 		{
-			u = 0.01;
+			u += 0.01;
 		}
 		if (GetAsyncKeyState(VK_DOWN))
 		{
-			u = -0.01;
+			u += -0.01;
 		}
 		if (GetAsyncKeyState(VK_LEFT))
 		{
-			r = -0.01;
+			l += -0.01;
 		}
 		if (GetAsyncKeyState(VK_RIGHT))
 		{
-			r = 0.01;
+			l += 0.01;
 		}
-		x += r;
+		x -= l;
 		y += u;
-		DirectX::XMMATRIX model = DirectX::XMMatrixTranslation(x, y, 4.0f);
-		DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH({ 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f, 0.0f });
+		DirectX::XMMATRIX model = DirectX::XMMatrixRotationRollPitchYaw(0.0f, 0.0f, 0.0f) * DirectX::XMMatrixTranslation(x, y, 0.0f);
+		DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH({ 0.0f, 0.0f, 4.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f });
 		DirectX::XMMATRIX projection = DirectX::XMMatrixPerspectiveLH(maxX, maxX * height / width, minZ, maxZ);
-		VSConstantBuffer VSConstantBuffer;
 		VSConstantBuffer.m_MVP = model * view * projection;
 		VSConstantBuffer.m_MVP = DirectX::XMMatrixTranspose(VSConstantBuffer.m_MVP);
 		shader.setConstantBuffer(VSConstantBuffer);
-		
+
 		renderer->draw(vertexBuffer, indexBuffer, shader);
 
 		window->swapBuffers();
 	}
-	
+
 	return ret.value();
 }

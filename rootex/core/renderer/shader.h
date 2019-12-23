@@ -26,7 +26,7 @@ public:
 		Pixel
 	};
 
-	Shader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat);
+	Shader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormatconst, const VSConstantBuffer& vsConstantBuffer, const PSConstantBuffer& psConstantBuffer);
 	~Shader();
 
 	void bind() const;
