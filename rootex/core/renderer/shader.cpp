@@ -2,7 +2,7 @@
 
 #include "utils.h"
 
-Shader::Shader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath)
+Shader::Shader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat)
     : m_VertexPath(vertexPath)
     , m_PixelPath(pixelPath)
 {
@@ -11,14 +11,17 @@ Shader::Shader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath)
 	
 	m_PixelShaderBlob = RenderingDevice::GetSingleton()->createBlob(pixelPath);
 	m_PixelShader = RenderingDevice::GetSingleton()->initPixelShader(m_PixelShaderBlob);
+
+	setVertexBufferFormat(vertexBufferFormat);
+
+	SafeRelease(&m_PixelShaderBlob);
+	SafeRelease(&m_VertexShaderBlob);
 }
 
 Shader::~Shader()
 {
-	SafeRelease(&m_VertexShaderBlob);
-	SafeRelease(&m_VertexShader);
-	SafeRelease(&m_PixelShaderBlob);
 	SafeRelease(&m_PixelShader);
+	SafeRelease(&m_VertexShader);
 }
 
 void Shader::bind() const

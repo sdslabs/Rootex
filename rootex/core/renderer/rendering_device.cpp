@@ -74,7 +74,7 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height)
 	sd.BufferCount = 1;
 	sd.OutputWindow = hWnd;
 	sd.Windowed = true;
-	sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+	sd.SwapEffect = DXGI_SWAP_EFFECT::DXGI_SWAP_EFFECT_SEQUENTIAL;
 	sd.Flags = 0;
 
 	IDXGIDevice* dxgiDevice = 0;

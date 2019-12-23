@@ -17,6 +17,8 @@ protected:
 	ID3D11VertexShader* m_VertexShader;
 	ID3D11PixelShader* m_PixelShader;
 
+	void setVertexBufferFormat(const BufferFormat& vertexBufferFormat);
+
 public:
 	enum class Type
 	{
@@ -24,12 +26,11 @@ public:
 		Pixel
 	};
 
-	Shader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath);
+	Shader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat);
 	~Shader();
 
 	void bind() const;
 	
-	void setVertexBufferFormat(const BufferFormat& vertexBufferFormat);
 	void setConstantBuffer(const VSConstantBuffer& constantBuffer);
 	void setConstantBuffer(const PSConstantBuffer& constantBuffer);
 };

@@ -1,20 +1,13 @@
 #pragma once
 
-#include <d3d11.h>
 #include <DirectXMath.h>
 
 struct VSConstantBuffer
 {
-	DirectX::XMMATRIX m_Transform;
+	DirectX::XMMATRIX m_MVP;
 };
 
 struct PSConstantBuffer
 {
-	struct Color
-	{
-		float r;
-		float g;
-		float b;
-		float a;
-	} m_FaceColors[6];
+	DirectX::XMFLOAT4 m_Colors[6];
 };
