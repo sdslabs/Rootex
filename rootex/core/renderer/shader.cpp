@@ -2,7 +2,7 @@
 
 #include "utils.h"
 
-Shader::Shader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat)
+Shader::Shader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat, const VSConstantBuffer& vsConstantBuffer, const PSConstantBuffer& psConstantBuffer)
     : m_VertexPath(vertexPath)
     , m_PixelPath(pixelPath)
 {
@@ -16,6 +16,9 @@ Shader::Shader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const Buffer
 
 	SafeRelease(&m_PixelShaderBlob);
 	SafeRelease(&m_VertexShaderBlob);
+
+	setConstantBuffer(vsConstantBuffer);
+	setConstantBuffer(psConstantBuffer);
 }
 
 Shader::~Shader()
