@@ -119,12 +119,29 @@ int main()
 
 		AudioSystem::GetSingleton()->update();
 
-		static float up = 0;
-		if (GetKeyState(VK_UP))
+		static float x = 0;
+		static float y = 0;
+		static float u = 0;
+		static float r = 0;
+		if (GetAsyncKeyState(VK_UP))
 		{
-			up++;
+			u = 0.01;
 		}
-		DirectX::XMMATRIX model = DirectX::XMMatrixTranslation(0.0f, up, 4.0f);
+		if (GetAsyncKeyState(VK_DOWN))
+		{
+			u = -0.01;
+		}
+		if (GetAsyncKeyState(VK_LEFT))
+		{
+			r = -0.01;
+		}
+		if (GetAsyncKeyState(VK_RIGHT))
+		{
+			r = 0.01;
+		}
+		x += r;
+		y += u;
+		DirectX::XMMATRIX model = DirectX::XMMatrixTranslation(x, y, 4.0f);
 		DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH({ 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f, 0.0f });
 		DirectX::XMMATRIX projection = DirectX::XMMatrixPerspectiveLH(maxX, maxX * height / width, minZ, maxZ);
 		VSConstantBuffer VSConstantBuffer;
