@@ -11,6 +11,7 @@ class Renderer
 protected:
 	unsigned int m_Height;
 	unsigned int m_Width;
+	const DirectX::XMMATRIX* m_ImmediateTransform;
 
 public:
 	Renderer(unsigned int w = 640, unsigned int h = 480);
@@ -20,6 +21,7 @@ public:
 
 	void setViewport(Viewport& viewport);
 
+	void setImmediateTransform(const DirectX::XMMATRIX* transformMatrix);
 	void clear() const;
 	void draw(const VertexBuffer& vertexBuffer, const IndexBuffer& indexBuffer, const Shader& shader) const;
 };
