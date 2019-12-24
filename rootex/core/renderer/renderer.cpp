@@ -8,10 +8,15 @@
 #include <iostream>
 
 Renderer::Renderer(unsigned int w, unsigned int h)
+    : m_Width(w)
+    , m_Height(h)
 {
-	m_Width = w;
-	m_Height = h;
 	RenderingDevice::GetSingleton()->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+}
+
+void Renderer::setImmediateTransform(const DirectX::XMMATRIX* transformMatrix)
+{
+	m_ImmediateTransform = transformMatrix;
 }
 
 void Renderer::clear() const

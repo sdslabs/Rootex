@@ -139,6 +139,25 @@ ID3DBlob* RenderingDevice::createBlob(LPCWSTR path)
 	return pBlob;
 }
 
+void RenderingDevice::enableSkyDepthStencilState()
+{
+	D3D11_DEPTH_STENCIL_DESC DSDesc;
+	ZeroMemory(&DSDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
+	DSDesc.DepthEnable = TRUE;
+	DSDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+	DSDesc.DepthFunc = D3D11_COMPARISON_LESS;
+	DSDesc.StencilEnable = FALSE;
+	m_Device->CreateDepthStencilState(&DSDesc, &m_NewSkyDepthStencilState);
+	//DXUT_SetDebugName(m_pSkyboxDepthStencilState, “SkyboxDepthStencil” );
+	m_Context->OMGetDepthStencilState(&m_OldSkyDepthStencilState, &m_StencilRef);
+	m_Context->OMSetDepthStencilState(m_NewSkyDepthStencilState, 0);
+}
+
+void RenderingDevice::disableSkyDepthStencilState()
+{
+	m_Context->OMSetDepthStencilState(m_OldSkyDepthStencilState, m_StencilRef);
+}
+
 ID3D11Buffer* RenderingDevice::initVertexBuffer(D3D11_BUFFER_DESC* vbd, D3D11_SUBRESOURCE_DATA* vsd, const UINT* stride, const UINT* const offset)
 {
 	ID3D11Buffer* vertexBuffer = nullptr;
