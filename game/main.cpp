@@ -17,11 +17,14 @@
 
 #include "script/interpreter.h"
 
+#include "vendor//SimpleMath/SimpleMath.h"
+
 int main()
 {
 	OS::Initialize();
 	OS::PrintLine("Rootex Engine is starting: Build(" + OS::GetBuildDate() + "|" + OS::GetBuildTime() + ")");
-
+	DirectX::SimpleMath::Vector2 v2(1.0f, 1.0f);
+	OS::PrintLine(std::to_string(v2.Length()));
 	AudioSystem::GetSingleton()->initialize();
 
 	AudioResourceFile* w = ResourceLoader::CreateAudioResourceFile("game/assets/lost_in_istanbul.wav");
