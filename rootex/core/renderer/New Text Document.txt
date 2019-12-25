@@ -1,0 +1,11 @@
+#include "material.h"
+
+Material::Material()
+{
+}
+
+Material::Material(const VSConstantBuffer& vcb, const PSConstantBuffer& pcb)
+    : m_VSConstantBuffer(vcb)
+    , m_PSConstantBuffer(pcb)
+{
+}

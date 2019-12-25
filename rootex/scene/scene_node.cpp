@@ -25,7 +25,7 @@ void SceneNode::setTransforms(AlignedMatrix* transform, AlignedMatrix* inverse)
 	}
 	else
 	{
-		m_Attributes.m_InverseTransform = DirectX::XMMatrixInverse(nullptr, *inverse);
+		m_Attributes.m_InverseTransform = DirectX::XMMatrixInverse(nullptr, *transform);
 	}
 }
 
@@ -41,6 +41,7 @@ bool SceneNode::load(Scene* scene)
 bool SceneNode::preRender(Scene* scene)
 {
 	scene->pushMatrix(m_Attributes.getTransform());
+	m_Attributes.getShader()->setTransformConstantBuffer(VSTransformBuffer({ m_Attributes.getTransform() }));
 	return true;
 }
 
@@ -61,6 +62,7 @@ void SceneNode::update(Scene* scene, float deltaMilliseconds)
 
 void SceneNode::render(Scene* scene)
 {
+	scene->getRenderer()->draw(m_Attributes.m_VertexBuffer, m_Attributes.m_IndexBuffer, m_Attributes.m_Shader);
 }
 
 void SceneNode::renderChildren(Scene* scene)
@@ -121,4 +123,9 @@ DirectX::XMFLOAT3 SceneNode::getPosition() const
 	return {
 		transform.m[0][3], transform.m[1][3], transform.m[2][3]
 	};
+}
+
+SceneNodeAttributes::SceneNodeAttributes()
+    : m_Shader(ShaderLibrary::GetShader("Default"))
+{
 }

@@ -21,7 +21,6 @@ public:
 
 	void setViewport(Viewport& viewport);
 
-	void setImmediateTransform(const DirectX::XMMATRIX* transformMatrix);
 	void clear() const;
-	void draw(const VertexBuffer& vertexBuffer, const IndexBuffer& indexBuffer, const Shader& shader) const;
+	void draw(const VertexBuffer& vertexBuffer, const IndexBuffer& indexBuffer, const Shader* shader) const;
 };

@@ -7,12 +7,13 @@
 #include "framework/entity.h"
 #include "scene/scene_node.h"
 #include "scene/camera_node.h"
+#include "scene/root_node.h"
 
 class Scene
 {
 protected:
-	Ptr<SceneNode> m_Root;
-	Ptr<CameraNode> m_Camera;
+	Ptr<RootNode> m_Root;
+	Ref<CameraNode> m_Camera;
 	Ptr<Renderer> m_Renderer;
 	Vector<DirectX::XMMATRIX> m_TransformationStack;
 	HashMap<EntityID, Ref<SceneNode>> m_SceneEntityNodeMap;
@@ -31,10 +32,12 @@ public:
 	bool removeChild(EntityID id);
 	SceneNode* findNode(EntityID id);
 
-	void setCamera(Ref<CameraNode> camera) { m_Camera = std::make_unique<CameraNode>(camera); }
-	const CameraNode* getCamera() const { return m_Camera.get(); }
+	void setCamera(Ref<CameraNode> camera);
 
 	void pushMatrix(const AlignedMatrix& transform);
 	void popMatrix();
+	
+	const CameraNode* getCamera() const { return m_Camera.get(); }
 	const DirectX::XMMATRIX* getTopMatrix() const;
+	const Renderer* getRenderer() const { return m_Renderer.get(); }
 };

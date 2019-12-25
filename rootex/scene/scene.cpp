@@ -80,13 +80,17 @@ SceneNode* Scene::findNode(EntityID id)
 void Scene::pushMatrix(const AlignedMatrix& transform)
 {
 	m_TransformationStack.push_back(DirectX::XMMatrixMultiply(transform, m_TransformationStack.back()));
-	m_Renderer->setImmediateTransform(&m_TransformationStack.back());
 }
 
 void Scene::popMatrix()
 {
 	m_TransformationStack.pop_back();
-	m_Renderer->setImmediateTransform(&m_TransformationStack.back());
+}
+
+void Scene::setCamera(Ref<CameraNode> camera)
+{
+	m_Camera.reset();
+	m_Camera = camera;
 }
 
 const DirectX::XMMATRIX* Scene::getTopMatrix() const

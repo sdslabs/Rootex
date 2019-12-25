@@ -2,11 +2,10 @@
 
 #include "common/common.h"
 #include "framework/entity.h"
-
-class Material
-{
-	// Flesh out and move to a separate file
-};
+#include "renderer/material.h"
+#include "renderer/vertex_buffer.h"
+#include "renderer/index_buffer.h"
+#include "renderer/shader_library.h"
 
 enum class RenderPass
 {
@@ -30,17 +29,23 @@ protected:
 	//float m_Radius; Needed only while raycasting
 	RenderPass m_RenderPassSetting;
 	Material m_Material;
+	VertexBuffer m_VertexBuffer;
+	IndexBuffer m_IndexBuffer;
+	Shader* m_Shader;
 
 public:
-	SceneNodeAttributes() = default;
+	SceneNodeAttributes();
 	~SceneNodeAttributes() = default;
 
 	const EntityID& getEntityID() const { return m_EntityID; }
 	const String& getName() const { return m_Name; }
+	const VertexBuffer& getVertexBuffer() const { return m_VertexBuffer; }
+	const IndexBuffer& getIndexBuffer() const { return m_IndexBuffer; }
 	const AlignedMatrix& getTransform() const { return m_Transform; }
 	const AlignedMatrix& getInverseTransform() const { return m_InverseTransform; }
 	const RenderPass& getRenderPass() const { return m_RenderPassSetting; }
-	const Material& getMaterial() const { return m_Material; }
+	Material& getMaterial() { return m_Material; }
+	Shader* getShader() const { return m_Shader; }
 };
 
 class Scene;
