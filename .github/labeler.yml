@@ -21,6 +21,3 @@ script:
 
 vendor:
 - rootex/vendor/**
-
-cmake:
-- **/CMakeLists.txt
