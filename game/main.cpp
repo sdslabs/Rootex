@@ -152,8 +152,9 @@ int main()
 		DirectX::XMMATRIX model = DirectX::XMMatrixRotationRollPitchYaw(0.0f, 0.0f, 0.0f) * DirectX::XMMatrixTranslation(x, y, 0.0f);
 		DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH({ 0.0f, 0.0f, 4.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f });
 		DirectX::XMMATRIX projection = DirectX::XMMatrixPerspectiveLH(maxX, maxX * height / width, minZ, maxZ);
-		VSConstantBuffer.m_MVP = model * view * projection;
-		VSConstantBuffer.m_MVP = DirectX::XMMatrixTranspose(VSConstantBuffer.m_MVP);
+		VSConstantBuffer.m_M = model;
+		VSConstantBuffer.m_V = view;
+		VSConstantBuffer.m_P = projection;
 		shader->setConstantBuffer(VSConstantBuffer);
 		//scene.render();
 		renderer->draw(vertexBuffer, indexBuffer, shader);

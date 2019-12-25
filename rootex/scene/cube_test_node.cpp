@@ -45,9 +45,9 @@ void CubeTestNode::render(Scene* scene)
 	DirectX::XMMATRIX model = DirectX::XMMatrixRotationRollPitchYaw(0.0f, 0.0f, 0.0f) * DirectX::XMMatrixTranslation(x, y, 0.0f);
 	DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH({ 0.0f, 0.0f, 4.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f });
 	DirectX::XMMATRIX projection = DirectX::XMMatrixPerspectiveLH(maxX, maxX * 640 / 480, minZ, maxZ);
-	
-	m_Attributes.getMaterial().m_VSConstantBuffer.m_MVP = model * view * projection;
-	m_Attributes.getMaterial().m_VSConstantBuffer.m_MVP = DirectX::XMMatrixTranspose(m_Attributes.getMaterial().m_VSConstantBuffer.m_MVP);
-
+	m_Attributes.getMaterial().m_VSConstantBuffer.m_M = model;
+	m_Attributes.getMaterial().m_VSConstantBuffer.m_V = view;
+	m_Attributes.getMaterial().m_VSConstantBuffer.m_P = projection;
+	m_Attributes.getShader()->setConstantBuffer(m_Attributes.getMaterial().m_VSConstantBuffer);
 	SceneNode::render(scene);
 }
