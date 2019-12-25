@@ -7,6 +7,15 @@ RootNode::RootNode(Entity* entity)
     : SceneNode(INVALID_ID, "Root", &DirectX::XMMatrixIdentity(), &DirectX::XMMatrixIdentity(), RenderPass::Global, Material())
 {
 	m_Children.reserve((size_t)RenderPass::End);
+
+	Ref<SceneNode> globalGroup(new SceneNode(
+	    INVALID_ID,
+	    "GlobalGroup",
+	    &DirectX::XMMatrixIdentity(),
+	    &DirectX::XMMatrixIdentity(), RenderPass::Global, Material()));
+	m_Children.push_back(globalGroup);
+	m_GlobalGroup = globalGroup;
+
 	Ref<SceneNode> staticGroup(new SceneNode(
 	    INVALID_ID,
 	    "StaticGroup",
@@ -51,41 +60,54 @@ bool RootNode::addChild(Ref<SceneNode> child)
 	switch (pass)
 	{
 	case RenderPass::Global:
+		m_GlobalGroup->addChild(child);
+		return true;
 		break;
 	case RenderPass::Background:
 		m_SkyGroup->addChild(child);
+		return true;
 		break;
 	case RenderPass::Static:
 		m_StaticGroup->addChild(child);
+		return true;
 		break;
 	case RenderPass::Dynamic:
 		m_EntityGroup->addChild(child);
+		return true;
 		break;
 	case RenderPass::Editor:
 		m_EditorGroup->addChild(child);
+		return true;
 		break;
 	case RenderPass::End:
 		break;
 	default:
 		break;
 	}
+	return false;
 }
 
-void RootNode::render(Scene* scene)
+void RootNode::renderChildren(Scene* scene)
 {
-	if (int pass = (int)RenderPass::Global; pass <= (int)RenderPass::End; pass++)
+	for (int pass = (int)RenderPass::Global; pass <= (int)RenderPass::End; pass++)
 	{
 		switch (pass)
 		{
+		case (int)RenderPass::Global:
+			m_GlobalGroup->renderChildren(scene);
+			break;
 		case (int)RenderPass::Static:
 			m_StaticGroup->renderChildren(scene);
+			break;
 		case (int)RenderPass::Dynamic:
 			m_EntityGroup->renderChildren(scene);
+			break;
 		case (int)RenderPass::Background:
 		{
 			SkyBoxHelper skyBoxHelper;
 			m_SkyGroup->renderChildren(scene);
 		}
+		case (int)RenderPass::Editor:
 		default:
 			break;
 		}

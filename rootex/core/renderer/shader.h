@@ -11,13 +11,8 @@ protected:
 	LPCWSTR m_VertexPath;
 	LPCWSTR m_PixelPath;
 
-	ID3DBlob* m_VertexShaderBlob;
-	ID3DBlob* m_PixelShaderBlob;
-
 	ID3D11VertexShader* m_VertexShader;
 	ID3D11PixelShader* m_PixelShader;
-
-	void setVertexBufferFormat(const BufferFormat& vertexBufferFormat);
 
 public:
 	enum class Type
@@ -26,11 +21,13 @@ public:
 		Pixel
 	};
 
-	Shader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormatconst, const VSConstantBuffer& vsConstantBuffer, const PSConstantBuffer& psConstantBuffer);
+	Shader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormatconst);
 	~Shader();
 
 	void bind() const;
+	void unbind() const;
 	
+	void setTransformConstantBuffer(const VSTransformBuffer& transformBuffer);
 	void setConstantBuffer(const VSConstantBuffer& constantBuffer);
 	void setConstantBuffer(const PSConstantBuffer& constantBuffer);
 };

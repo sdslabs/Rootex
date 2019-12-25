@@ -7,7 +7,8 @@
 #include "core/renderer/buffer_format.h"
 #include "core/renderer/index_buffer.h"
 #include "core/renderer/renderer.h"
-#include "core/renderer/shader.h"
+#include "core/renderer/shader_library.h"
+#include "core/renderer/material.h"
 #include "core/renderer/vertex_buffer.h"
 #include "core/resource_loader.h"
 
@@ -19,6 +20,9 @@
 #include "main/window.h"
 
 #include "os/os.h"
+
+#include "scene/scene.h"
+#include "scene/cube_test_node.h"
 
 #include "script/interpreter.h"
 
@@ -88,7 +92,6 @@ int main()
 	    1, 5, 4 });
 
 	BufferFormat bufferFormat;
-	bufferFormat.push(VertexBufferElement::Type::POSITION, "POSITION");
 	float width = windowLua["deltaX"];
 	float height = windowLua["deltaY"];
 	float maxX = 1.0f;
@@ -103,10 +106,17 @@ int main()
 	PSConstantBuffer.m_Colors[3] = { 0.0f, 0.0f, 1.0f, 1.0f };
 	PSConstantBuffer.m_Colors[4] = { 1.0f, 1.0f, 0.0f, 1.0f };
 	PSConstantBuffer.m_Colors[5] = { 0.0f, 1.0f, 1.0f, 1.0f };
-	Shader shader(L"VertexShader.cso", L"PixelShader.cso", bufferFormat, VSConstantBuffer, PSConstantBuffer);
-
+	Shader* shader = ShaderLibrary::MakeShader("Default", L"VertexShader.cso", L"PixelShader.cso", bufferFormat);
+	shader->setConstantBuffer(VSConstantBuffer);
+	shader->setConstantBuffer(PSConstantBuffer);
 	Ptr<Renderer> renderer(new Renderer(windowLua["deltaX"], windowLua["deltaY"]));
 
+	Scene scene(width, height);
+	Material mat(VSConstantBuffer, PSConstantBuffer);
+	
+	Ref<SceneNode> node(new CubeTestNode(testEntity->getID(), mat));
+	scene.addChild(testEntity->getID(), node);
+	
 	std::optional<int> ret = {};
 	while (true)
 	{
@@ -144,10 +154,9 @@ int main()
 		DirectX::XMMATRIX projection = DirectX::XMMatrixPerspectiveLH(maxX, maxX * height / width, minZ, maxZ);
 		VSConstantBuffer.m_MVP = model * view * projection;
 		VSConstantBuffer.m_MVP = DirectX::XMMatrixTranspose(VSConstantBuffer.m_MVP);
-		shader.setConstantBuffer(VSConstantBuffer);
-
+		shader->setConstantBuffer(VSConstantBuffer);
+		//scene.render();
 		renderer->draw(vertexBuffer, indexBuffer, shader);
-
 		window->swapBuffers();
 	}
 

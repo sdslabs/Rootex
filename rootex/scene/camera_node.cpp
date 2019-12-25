@@ -3,12 +3,6 @@
 #include "scene.h"
 #include "entity_factory.h"
 
-const AlignedMatrix& CameraNode::getView() const
-{
-	AlignedMatrix v =  DirectX::XMLoadFloat4x4(&m_ViewMatrix);
-	return v;
-}
-
 CameraNode::CameraNode(AlignedMatrix transform)
     : SceneNode(INVALID_ID, "Camera", &transform, nullptr, RenderPass::Global, Material())
     , m_DebugCamera(false)
