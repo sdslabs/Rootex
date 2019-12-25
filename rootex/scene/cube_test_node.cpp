@@ -44,10 +44,20 @@ void CubeTestNode::render(Scene* scene)
 	y += u;
 	DirectX::XMMATRIX model = DirectX::XMMatrixRotationRollPitchYaw(0.0f, 0.0f, 0.0f) * DirectX::XMMatrixTranslation(x, y, 0.0f);
 	DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH({ 0.0f, 0.0f, 4.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f });
-	DirectX::XMMATRIX projection = DirectX::XMMatrixPerspectiveLH(maxX, maxX * 640 / 480, minZ, maxZ);
-	m_Attributes.getMaterial().m_VSConstantBuffer.m_M = model;
-	m_Attributes.getMaterial().m_VSConstantBuffer.m_V = view;
-	m_Attributes.getMaterial().m_VSConstantBuffer.m_P = projection;
-	m_Attributes.getShader()->setConstantBuffer(m_Attributes.getMaterial().m_VSConstantBuffer);
+	DirectX::XMMATRIX projection = DirectX::XMMatrixPerspectiveLH(maxX, maxX * 640.0f / 480.0f, minZ, maxZ);
+		
+	m_Attributes.getShader()->setConstantBuffer(Shader::ConstantBufferType::Model, model);
+	m_Attributes.getShader()->setConstantBuffer(Shader::ConstantBufferType::View, view);
+	m_Attributes.getShader()->setConstantBuffer(Shader::ConstantBufferType::Projection, projection);
+	
+	PSConstantBuffer pcb;
+	pcb.m_Colors[0] = { 0.0f, 0.0f, 1.0f, 1.0f };
+	pcb.m_Colors[1] = { 0.0f, 1.0f, 1.0f, 1.0f };
+	pcb.m_Colors[2] = { 0.0f, 0.0f, 1.0f, 1.0f };
+	pcb.m_Colors[3] = { 1.0f, 0.0f, 0.0f, 1.0f };
+	pcb.m_Colors[4] = { 0.0f, 1.0f, 0.0f, 1.0f };
+	pcb.m_Colors[5] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	m_Attributes.getShader()->setConstantBuffer(pcb);
+
 	SceneNode::render(scene);
 }

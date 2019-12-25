@@ -2,11 +2,6 @@
 
 #include <DirectXMath.h>
 
-struct VSTransformBuffer
-{
-	DirectX::XMMATRIX m_Transform;
-};
-
 struct VSConstantBuffer
 {
 	DirectX::XMMATRIX m_M;

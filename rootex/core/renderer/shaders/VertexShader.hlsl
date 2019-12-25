@@ -1,20 +1,19 @@
 cbuffer CBuf : register(b0)
 {
-	matrix M;
-	matrix V;
-    matrix P;
+    matrix M;
 };
 
-cbuffer TCBuf : register(b1)
+cbuffer CBuf : register(b1)
 {
-    matrix transform;
+    matrix V;
+};
+
+cbuffer CBuf : register(b2)
+{
+    matrix P;
 };
 
 float4 main(float3 pos: POSITION) : SV_POSITION
 {
-    matrix T = M;
-    T = V * T;
-    T = P * T;
-    
-    return mul(T, float4(pos, 1.0f));
+    return mul(mul(P, mul(V, M)), float4(pos, 1.0f));
 }

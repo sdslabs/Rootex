@@ -4,7 +4,15 @@
 #include "utils.h"
 
 VertexBuffer::VertexBuffer()
-    : m_Buffer({ { -0.5, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, { 0.5f, 0.0f, 0.0f } })
+    : m_Buffer({ 
+		{ -1.0f, -1.0f, -1.0f },
+        { +1.0f, -1.0f, -1.0f },
+        { -1.0f, +1.0f, -1.0f },
+        { +1.0f, +1.0f, -1.0f },
+        { -1.0f, -1.0f, +1.0f },
+        { +1.0f, -1.0f, +1.0f },
+        { -1.0f, +1.0f, +1.0f },
+        { +1.0f, +1.0f, +1.0f } })
 {
 	D3D11_BUFFER_DESC vbd = { 0 };
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;

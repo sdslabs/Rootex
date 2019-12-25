@@ -69,52 +69,24 @@ int main()
 	    windowLua["deltaY"],
 	    windowLua["title"]));
 
-	VertexBuffer vertexBuffer({ { -1.0f, -1.0f, -1.0f },
-	    { +1.0f, -1.0f, -1.0f },
-	    { -1.0f, +1.0f, -1.0f },
-	    { +1.0f, +1.0f, -1.0f },
-	    { -1.0f, -1.0f, +1.0f },
-	    { +1.0f, -1.0f, +1.0f },
-	    { -1.0f, +1.0f, +1.0f },
-	    { +1.0f, +1.0f, +1.0f } });
-
-	IndexBuffer indexBuffer({ 0, 2, 1,
-	    2, 3, 1,
-	    1, 3, 5,
-	    3, 7, 5,
-	    2, 6, 3,
-	    3, 6, 7,
-	    4, 5, 7,
-	    4, 7, 6,
-	    0, 4, 2,
-	    2, 4, 6,
-	    0, 1, 4,
-	    1, 5, 4 });
-
-	BufferFormat bufferFormat;
-	float width = windowLua["deltaX"];
-	float height = windowLua["deltaY"];
-	float maxX = 1.0f;
-	float minZ = 0.5f;
-	float maxZ = 10.0f;
-	float seconds = 10.0f;
-	VSConstantBuffer VSConstantBuffer;
-	PSConstantBuffer PSConstantBuffer;
-	PSConstantBuffer.m_Colors[0] = { 1.0f, 0.0f, 0.0f, 1.0f };
-	PSConstantBuffer.m_Colors[1] = { 0.0f, 1.0f, 0.0f, 1.0f };
-	PSConstantBuffer.m_Colors[2] = { 0.0f, 0.0f, 1.0f, 1.0f };
-	PSConstantBuffer.m_Colors[3] = { 0.0f, 0.0f, 1.0f, 1.0f };
-	PSConstantBuffer.m_Colors[4] = { 1.0f, 1.0f, 0.0f, 1.0f };
-	PSConstantBuffer.m_Colors[5] = { 0.0f, 1.0f, 1.0f, 1.0f };
-	Shader* shader = ShaderLibrary::MakeShader("Default", L"VertexShader.cso", L"PixelShader.cso", bufferFormat);
-	shader->setConstantBuffer(VSConstantBuffer);
-	shader->setConstantBuffer(PSConstantBuffer);
+	PSConstantBuffer pcb;
+	pcb.m_Colors[0] = { 0.0f, 0.0f, 1.0f, 1.0f };
+	pcb.m_Colors[1] = { 0.0f, 1.0f, 1.0f, 1.0f };
+	pcb.m_Colors[2] = { 0.0f, 0.0f, 1.0f, 1.0f };
+	pcb.m_Colors[3] = { 1.0f, 0.0f, 0.0f, 1.0f };
+	pcb.m_Colors[4] = { 0.0f, 1.0f, 0.0f, 1.0f };
+	pcb.m_Colors[5] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	Shader* shader = ShaderLibrary::MakeShader("Default", L"VertexShader.cso", L"PixelShader.cso", BufferFormat());
 	Ptr<Renderer> renderer(new Renderer(windowLua["deltaX"], windowLua["deltaY"]));
 
+	float width = windowLua["deltaX"];
+	float height = windowLua["deltaY"];
 	Scene scene(width, height);
-	Material mat(VSConstantBuffer, PSConstantBuffer);
 	
-	Ref<SceneNode> node(new CubeTestNode(testEntity->getID(), mat));
+	Ref<SceneNode> node(new CubeTestNode(testEntity->getID(), Material()));
+	Ref<SceneNode> child(new CubeTestNode(testEntity->getID(), Material()));
+	child->setTransforms(&DirectX::XMMatrixTranslationFromVector({ 1.0f, 0.0f, 0.0f }), nullptr);
+	node->addChild(child);
 	scene.addChild(testEntity->getID(), node);
 	
 	std::optional<int> ret = {};
@@ -127,7 +99,7 @@ int main()
 
 		AudioSystem::GetSingleton()->update();
 
-		static float x = 0;
+		/*static float x = 0;
 		static float y = 0;
 		static float u = 0;
 		static float l = 0;
@@ -151,13 +123,13 @@ int main()
 		y += u;
 		DirectX::XMMATRIX model = DirectX::XMMatrixRotationRollPitchYaw(0.0f, 0.0f, 0.0f) * DirectX::XMMatrixTranslation(x, y, 0.0f);
 		DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH({ 0.0f, 0.0f, 4.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f });
-		DirectX::XMMATRIX projection = DirectX::XMMatrixPerspectiveLH(maxX, maxX * height / width, minZ, maxZ);
-		VSConstantBuffer.m_M = model;
-		VSConstantBuffer.m_V = view;
-		VSConstantBuffer.m_P = projection;
-		shader->setConstantBuffer(VSConstantBuffer);
-		//scene.render();
-		renderer->draw(vertexBuffer, indexBuffer, shader);
+		DirectX::XMMATRIX projection = DirectX::XMMatrixPerspectiveLH(1.0f, 1.0f * height / width, 0.5f, 10.0f);
+		shader->setConstantBuffer(Shader::ConstantBufferType::Model, model);
+		shader->setConstantBuffer(Shader::ConstantBufferType::View, view);
+		shader->setConstantBuffer(Shader::ConstantBufferType::Projection, projection);
+		shader->setConstantBuffer(pcb);
+		renderer->draw(node->getAttributes()->getVertexBuffer(), node->getAttributes()->getIndexBuffer(), shader);*/
+		scene.render();
 		window->swapBuffers();
 	}
 

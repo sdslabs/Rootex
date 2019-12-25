@@ -1,9 +1,9 @@
 #pragma once
 
-#include "common/common.h"
-#include "rendering_device.h"
 #include "buffer_format.h"
+#include "common/common.h"
 #include "constant_buffer.h"
+#include "rendering_device.h"
 
 class Shader
 {
@@ -21,13 +21,19 @@ public:
 		Pixel
 	};
 
+	enum class ConstantBufferType
+	{
+		Model,
+		View,
+		Projection
+	};
+
 	Shader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormatconst);
 	~Shader();
 
 	void bind() const;
 	void unbind() const;
-	
-	void setTransformConstantBuffer(const VSTransformBuffer& transformBuffer);
-	void setConstantBuffer(const VSConstantBuffer& constantBuffer);
+
+	void setConstantBuffer(const ConstantBufferType& type, const DirectX::XMMATRIX& constantBuffer);
 	void setConstantBuffer(const PSConstantBuffer& constantBuffer);
 };

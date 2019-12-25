@@ -172,7 +172,16 @@ ID3D11Buffer* RenderingDevice::initIndexBuffer(D3D11_BUFFER_DESC* ibd, D3D11_SUB
 	return indexBuffer;
 }
 
-void RenderingDevice::initVSTransformConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
+void RenderingDevice::initVSModelConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
+{
+	ID3D11Buffer* pConstantBuffer = nullptr;
+	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &pConstantBuffer));
+	m_Context->VSSetConstantBuffers(0u, 1u, &pConstantBuffer);
+
+	SafeRelease(&pConstantBuffer);
+}
+
+void RenderingDevice::initVSViewConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
 {
 	ID3D11Buffer* pConstantBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &pConstantBuffer));
@@ -181,11 +190,11 @@ void RenderingDevice::initVSTransformConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D1
 	SafeRelease(&pConstantBuffer);
 }
 
-void RenderingDevice::initVSConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
+void RenderingDevice::initVSProjectionConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
 {
 	ID3D11Buffer* pConstantBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &pConstantBuffer));
-	m_Context->VSSetConstantBuffers(0u, 1u, &pConstantBuffer);
+	m_Context->VSSetConstantBuffers(2u, 1u, &pConstantBuffer);
 
 	SafeRelease(&pConstantBuffer);
 }
