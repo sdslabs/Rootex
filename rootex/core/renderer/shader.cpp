@@ -30,8 +30,8 @@ Shader::Shader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const Buffer
 		vertexDescArray.data(), 
 		vertexDescArray.size());
 
-	SafeRelease(&vertexShaderBlob);
 	SafeRelease(&pixelShaderBlob);
+	SafeRelease(&vertexShaderBlob);
 }
 
 Shader::~Shader()
@@ -51,22 +51,7 @@ void Shader::unbind() const
 	RenderingDevice::GetSingleton()->unbindShaderResources();
 }
 
-void Shader::setTransformConstantBuffer(const VSTransformBuffer& transformBuffer)
-{
-	D3D11_BUFFER_DESC cbd = { 0 };
-	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	cbd.Usage = D3D11_USAGE_DYNAMIC;
-	cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	cbd.MiscFlags = 0u;
-	cbd.ByteWidth = sizeof(transformBuffer);
-	cbd.StructureByteStride = 0u;
-	D3D11_SUBRESOURCE_DATA csd = { 0 };
-	csd.pSysMem = &transformBuffer;
-
-	RenderingDevice::GetSingleton()->initVSTransformConstantBuffer(&cbd, &csd);
-}
-
-void Shader::setConstantBuffer(const VSConstantBuffer& constantBuffer)
+void Shader::setConstantBuffer(const ConstantBufferType& type, const DirectX::XMMATRIX& constantBuffer)
 {
 	D3D11_BUFFER_DESC cbd = { 0 };
 	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -78,7 +63,20 @@ void Shader::setConstantBuffer(const VSConstantBuffer& constantBuffer)
 	D3D11_SUBRESOURCE_DATA csd = { 0 };
 	csd.pSysMem = &constantBuffer;
 
-	RenderingDevice::GetSingleton()->initVSConstantBuffer(&cbd, &csd);
+	switch (type)
+	{
+	case Shader::ConstantBufferType::Model:
+		RenderingDevice::GetSingleton()->initVSModelConstantBuffer(&cbd, &csd);
+		break;
+	case Shader::ConstantBufferType::View:
+		RenderingDevice::GetSingleton()->initVSViewConstantBuffer(&cbd, &csd);
+		break;
+	case Shader::ConstantBufferType::Projection:
+		RenderingDevice::GetSingleton()->initVSProjectionConstantBuffer(&cbd, &csd);
+		break;
+	default:
+		break;
+	}
 }
 
 void Shader::setConstantBuffer(const PSConstantBuffer& constantBuffer)

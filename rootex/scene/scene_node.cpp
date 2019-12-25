@@ -41,7 +41,7 @@ bool SceneNode::load(Scene* scene)
 bool SceneNode::preRender(Scene* scene)
 {
 	scene->pushMatrix(m_Attributes.getTransform());
-	m_Attributes.getShader()->setTransformConstantBuffer(VSTransformBuffer({ m_Attributes.getTransform() }));
+	m_Attributes.getShader()->setConstantBuffer(Shader::ConstantBufferType::Model, *scene->getTopMatrix());
 	return true;
 }
 

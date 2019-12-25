@@ -4,7 +4,7 @@
 
 Scene::Scene(int width, int height)
     : m_Root(new RootNode(nullptr))
-    , m_Camera(new CameraNode(DirectX::XMMatrixIdentity()))
+    , m_Camera(new CameraNode())
     , m_Renderer(new Renderer(width, height))
 {
 	m_TransformationStack.push_back(DirectX::XMMatrixIdentity());
@@ -18,7 +18,8 @@ void Scene::render()
 {
 	if (m_Root && m_Camera)
 	{
-		m_Camera->setSceneView(this);
+		m_Root->getAttributes()->getShader()->setConstantBuffer(Shader::ConstantBufferType::View, m_Camera->getView());
+		m_Root->getAttributes()->getShader()->setConstantBuffer(Shader::ConstantBufferType::Projection, m_Camera->getProjection());
 
 		if (m_Root->preRender(this))
 		{

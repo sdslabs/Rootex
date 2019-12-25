@@ -1,6 +1,6 @@
 #pragma once
 
-#include <DirectXCollision.h>
+#include <DirectXMath.h>
 
 #include "common/types.h"
 #include "scene_node.h"
@@ -8,15 +8,15 @@
 class CameraNode : public SceneNode
 {
 protected:
-	DirectX::XMFLOAT4X4 m_ViewMatrix;
-	DirectX::BoundingFrustum m_Frustum;
+	AlignedMatrix m_ViewMatrix;
+	AlignedMatrix m_ProjectionMatrix;
 	bool m_Active;
 	bool m_DebugCamera;
 	Ref<SceneNode> m_Target;
 	AlignedVector m_CameraOffset;
 
 public:
-	CameraNode(AlignedMatrix transform);
+	CameraNode();
 	CameraNode(CameraNode&) = delete;
 	~CameraNode();
 
@@ -25,13 +25,11 @@ public:
 	virtual bool reset(Scene* scene, int windowWidth, int windowHeight);
 	virtual bool isVisible(Scene* scene) const override;
 
-	virtual void setFrustum(const DirectX::BoundingFrustum& frustum) { m_Frustum = frustum; }
-	void setSceneView(Scene* scene);
 	virtual void setViewTransform(const AlignedMatrix& view);
 	virtual void setTarget(Ref<SceneNode> target) { m_Target = target; }
 
 	virtual SceneNode* getTarget() const { return m_Target.get(); }
-	virtual const AlignedMatrix& getView() const { return DirectX::XMLoadFloat4x4(&m_ViewMatrix); }
-
+	virtual const AlignedMatrix& getView() const { return m_ViewMatrix; }
+	virtual const AlignedMatrix& getProjection() const { return m_ProjectionMatrix; }
 	void setOffset(const AlignedVector& offset) { m_CameraOffset = offset; }
 };
