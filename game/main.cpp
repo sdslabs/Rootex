@@ -121,6 +121,9 @@ int main()
 		static float y = 0;
 		static float u = 0;
 		static float l = 0;
+		static float roll = 0;
+		static float pitch = 0;
+		static float yaw = 0;
 		if (GetAsyncKeyState(VK_UP))
 		{
 			u += 0.01;
@@ -137,9 +140,37 @@ int main()
 		{
 			l += 0.01;
 		}
-		x -= l;
-		y += u;
-		DirectX::XMMATRIX model = DirectX::XMMatrixRotationRollPitchYaw(0.0f, 0.0f, 0.0f) * DirectX::XMMatrixTranslation(x, y, 0.0f);
+		if (GetAsyncKeyState(VK_NUMPAD7))
+		{
+			roll += 0.01;
+		}
+		if (GetAsyncKeyState(VK_NUMPAD4))
+		{
+			roll += -0.01;
+		}
+		if (GetAsyncKeyState(VK_NUMPAD8))
+		{
+			pitch += 0.01;
+		}
+		if (GetAsyncKeyState(VK_NUMPAD5))
+		{
+			pitch += -0.01;
+		}
+		if (GetAsyncKeyState(VK_NUMPAD9))
+		{
+			yaw += 0.01;
+		}
+		if (GetAsyncKeyState(VK_NUMPAD6))
+		{
+			yaw += -0.01;
+		}
+		if (GetAsyncKeyState('R'))
+		{
+			u = l = roll = pitch = yaw = 0;
+		}
+		x = l;
+		y = u;
+		DirectX::XMMATRIX model = DirectX::XMMatrixRotationRollPitchYaw(roll, pitch, yaw) * DirectX::XMMatrixTranslation(x, y, 0.0f);
 		DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH({ 0.0f, 0.0f, 4.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f });
 		DirectX::XMMATRIX projection = DirectX::XMMatrixPerspectiveLH(maxX, maxX * height / width, minZ, maxZ);
 		VSConstantBuffer.m_MVP = model * view * projection;
