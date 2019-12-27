@@ -66,7 +66,7 @@ int main()
 	    windowLua["deltaY"],
 	    windowLua["title"]));
 
-	Cube cube;
+	Cube cube, cube1;
 	/*
 	VertexBuffer vertexBuffer({ { -1.0f, -1.0f, -1.0f },
 	    { +1.0f, -1.0f, -1.0f },
@@ -132,19 +132,19 @@ int main()
 		static float roll = 0;
 		static float pitch = 0;
 		static float yaw = 0;
-		if (GetAsyncKeyState(VK_UP))
+		if (GetAsyncKeyState(VK_LEFT))
 		{
 			u += 0.01;
 		}
-		if (GetAsyncKeyState(VK_DOWN))
+		if (GetAsyncKeyState(VK_RIGHT))
 		{
 			u += -0.01;
 		}
-		if (GetAsyncKeyState(VK_LEFT))
+		if (GetAsyncKeyState(VK_DOWN))
 		{
 			l += -0.01;
 		}
-		if (GetAsyncKeyState(VK_RIGHT))
+		if (GetAsyncKeyState(VK_UP))
 		{
 			l += 0.01;
 		}
@@ -179,7 +179,6 @@ int main()
 		x = l;
 		y = u;
 		
-		cube.GetSpatialData(u, l, roll, yaw, pitch, projection);
 		/*
 		DirectX::XMMATRIX model = DirectX::XMMatrixRotationRollPitchYaw(roll, pitch, yaw) * DirectX::XMMatrixTranslation(x, y, 0.0f);
 		DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH({ 0.0f, 0.0f, 4.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f });
@@ -189,8 +188,13 @@ int main()
 		shader.setConstantBuffer(VSConstantBuffer);
 		*/
 		//renderer->draw(vertexBuffer, indexBuffer, shader);
+		cube.GetSpatialData(u, l, roll, yaw, pitch, projection);
 		cube.Update();
 		cube.Draw();
+
+		cube1.GetSpatialData(0, 0, 0, 0, 0, projection);
+		cube1.Update();
+		cube1.Draw();
 
 		window->swapBuffers();
 	}
