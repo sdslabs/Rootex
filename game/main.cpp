@@ -174,7 +174,7 @@ int main()
 		node->setTransform(DirectX::XMMatrixTranslation(x, y, 0.0f));
 		child->addTransform(DirectX::XMMatrixRotationRollPitchYaw(0.0f, 0.1f, 0.0f));
 
-    if (GetAsyncKeyState(VK_NUMPAD7))
+		if (GetAsyncKeyState(VK_NUMPAD7))
 		{
 			roll += 0.01;
 		}
@@ -219,6 +219,7 @@ int main()
 		cube.Draw();
 
 		scene.render();
+
 		window->swapBuffers();
 	}
 
