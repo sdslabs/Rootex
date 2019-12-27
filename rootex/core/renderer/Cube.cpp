@@ -24,6 +24,7 @@ Cube::Cube()
 	    2, 4, 6,
 	    0, 1, 4,
 	    1, 5, 4 }));
+	BufferFormat bufferFormat;
 	bufferFormat.push(VertexBufferElement::Type::POSITION, "POSITION");
 	vsConstantBuffer.reset( new VSConstantBuffer());
 	psConstantBuffer.reset( new PSConstantBuffer());
@@ -46,6 +47,7 @@ void Cube::GetSpatialData(float u, float l, float roll, float yaw, float pitch, 
 	vsConstantBuffer->m_V = view;
 	vsConstantBuffer->m_P = projection;
 }
+
 void Cube::Update()
 {
 	shader->setConstantBuffer(Shader::ConstantBufferType::Model, vsConstantBuffer->m_M);
