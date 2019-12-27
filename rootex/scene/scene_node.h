@@ -6,6 +6,8 @@
 #include "renderer/vertex_buffer.h"
 #include "renderer/index_buffer.h"
 #include "renderer/shader_library.h"
+#include "renderer/renderable_object.h"
+#include "renderer/Empty.h"
 
 enum class RenderPass
 {
@@ -33,6 +35,8 @@ protected:
 	IndexBuffer m_IndexBuffer;
 	Shader* m_Shader;
 
+	Ptr<RenderableObject> m_RenderableObject;
+
 public:
 	SceneNodeAttributes();
 	~SceneNodeAttributes() = default;
@@ -44,6 +48,7 @@ public:
 	const AlignedMatrix& getTransform() const { return m_Transform; }
 	const AlignedMatrix& getInverseTransform() const { return m_InverseTransform; }
 	const RenderPass& getRenderPass() const { return m_RenderPassSetting; }
+	RenderableObject* getRenderableObject() const { return m_RenderableObject.get(); }
 	Material& getMaterial() { return m_Material; }
 	Shader* getShader() const { return m_Shader; }
 };
@@ -59,6 +64,14 @@ protected:
 	bool m_IsVisible;
 
 public:
+	SceneNode(const EntityID& entityID,
+	    const String& name,
+	    const AlignedMatrix& transform,
+	    AlignedMatrix* inverse,
+	    //float m_Radius; Needed only while raycasting
+	    const RenderPass& renderPassSetting,
+	    const Material& material,
+		RenderableObject* object);
 	SceneNode(const EntityID& entityID,
 	    const String& name,
 	    const AlignedMatrix& transform,

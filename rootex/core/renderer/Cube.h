@@ -6,6 +6,6 @@ class Cube : public RenderableObject
 
 public :
 	Cube();
-	void Update();
+	void Update(const AlignedMatrix& transform) override;
 	void GetSpatialData(float u, float l, float roll, float yaw, float pitch, DirectX::XMMATRIX& projection);
 };

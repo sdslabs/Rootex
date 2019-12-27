@@ -2,6 +2,17 @@
 
 #include "scene/scene.h"
 
+SceneNode::SceneNode(const EntityID& entityID, const String& name, const AlignedMatrix& transform, AlignedMatrix* inverse, const RenderPass& renderPassSetting, const Material& material, RenderableObject* object)
+    : m_IsVisible(true)
+{
+	m_Attributes.m_EntityID = entityID;
+	m_Attributes.m_Name = name;
+	setTransforms(transform, inverse);
+	m_Attributes.m_RenderPassSetting = renderPassSetting;
+	m_Attributes.m_Material = material;
+	m_Attributes.m_RenderableObject.reset(object);
+}
+
 SceneNode::SceneNode(const EntityID& entityID, const String& name, const AlignedMatrix& transform, AlignedMatrix* inverse, const RenderPass& renderPassSetting, const Material& material)
     : m_IsVisible(true)
 {
@@ -10,6 +21,7 @@ SceneNode::SceneNode(const EntityID& entityID, const String& name, const Aligned
 	setTransforms(transform, inverse);
 	m_Attributes.m_RenderPassSetting = renderPassSetting;
 	m_Attributes.m_Material = material;
+	m_Attributes.m_RenderableObject.reset(new Empty());
 }
 
 SceneNode::~SceneNode()
@@ -42,7 +54,8 @@ bool SceneNode::load(Scene* scene)
 bool SceneNode::preRender(Scene* scene)
 {
 	scene->pushMatrix(m_Attributes.getTransform());
-	m_Attributes.getShader()->setConstantBuffer(Shader::ConstantBufferType::Model, *scene->getTopMatrix());
+	//m_Attributes.getShader()->setConstantBuffer(Shader::ConstantBufferType::Model, *scene->getTopMatrix());
+	m_Attributes.getRenderableObject()->Update(*scene->getTopMatrix());
 	return true;
 }
 
@@ -63,7 +76,8 @@ void SceneNode::update(Scene* scene, float deltaMilliseconds)
 
 void SceneNode::render(Scene* scene)
 {
-	scene->getRenderer()->draw(m_Attributes.m_VertexBuffer, m_Attributes.m_IndexBuffer, m_Attributes.m_Shader);
+	//scene->getRenderer()->draw(m_Attributes.m_VertexBuffer, m_Attributes.m_IndexBuffer, m_Attributes.m_Shader);
+	m_Attributes.getRenderableObject()->Draw();
 }
 
 void SceneNode::renderChildren(Scene* scene)
