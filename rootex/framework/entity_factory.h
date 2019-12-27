@@ -5,6 +5,8 @@
 #include "script/interpreter.h"
 #include "entity.h"
 
+#define INVALID_ID 0
+
 class Component;
 class Entity;
 
@@ -13,7 +15,7 @@ typedef unsigned int EntityID;
 
 class EntityFactory
 {
-	static EntityID s_Count;
+	static EntityID s_CurrentID;
 
 	LuaInterpreter m_LuaState;
 

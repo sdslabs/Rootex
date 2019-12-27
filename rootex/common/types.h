@@ -27,3 +27,8 @@ using Vector = std::vector<T>;
 
 #include <filesystem>
 using FilePath = std::filesystem::path;
+
+// Math Containers
+#include <DirectXMath.h>
+typedef DirectX::XMMATRIX AlignedMatrix;
+typedef DirectX::XMVECTOR AlignedVector;
