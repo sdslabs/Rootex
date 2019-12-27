@@ -2,7 +2,8 @@
 
 #include "scene/scene.h"
 
-SceneNode::SceneNode(const EntityID& entityID, const String& name, AlignedMatrix* transform, AlignedMatrix* inverse, const RenderPass& renderPassSetting, const Material& material)
+SceneNode::SceneNode(const EntityID& entityID, const String& name, const AlignedMatrix& transform, AlignedMatrix* inverse, const RenderPass& renderPassSetting, const Material& material)
+    : m_IsVisible(true)
 {
 	m_Attributes.m_EntityID = entityID;
 	m_Attributes.m_Name = name;
@@ -15,9 +16,9 @@ SceneNode::~SceneNode()
 {
 }
 
-void SceneNode::setTransforms(AlignedMatrix* transform, AlignedMatrix* inverse)
+void SceneNode::setTransforms(const AlignedMatrix& transform, AlignedMatrix* inverse)
 {
-	m_Attributes.m_Transform = *transform;
+	m_Attributes.m_Transform = transform;
 	
 	if (inverse)
 	{
@@ -25,7 +26,7 @@ void SceneNode::setTransforms(AlignedMatrix* transform, AlignedMatrix* inverse)
 	}
 	else
 	{
-		m_Attributes.m_InverseTransform = DirectX::XMMatrixInverse(nullptr, *transform);
+		m_Attributes.m_InverseTransform = DirectX::XMMatrixInverse(nullptr, transform);
 	}
 }
 
@@ -48,8 +49,8 @@ bool SceneNode::preRender(Scene* scene)
 bool SceneNode::isVisible(Scene* scene) const
 {
 	// TODO: Add culling
-	WARN("Add visibility code");
-	return true;
+	WARN("Add culling code");
+	return m_IsVisible;
 }
 
 void SceneNode::update(Scene* scene, float deltaMilliseconds)
@@ -103,6 +104,16 @@ bool SceneNode::removeChild(Ref<SceneNode> node)
 		m_Children.erase(findIt);
 	}
 	return true;
+}
+
+void SceneNode::addTransform(const AlignedMatrix& applyTransform)
+{
+	setTransforms(m_Attributes.m_Transform * applyTransform, nullptr);
+}
+
+void SceneNode::setTransform(const AlignedMatrix& newTransform)
+{
+	setTransforms(newTransform, nullptr);
 }
 
 void SceneNode::setMaterial(const Material& material)

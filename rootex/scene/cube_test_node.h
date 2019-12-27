@@ -5,6 +5,8 @@
 
 class CubeTestNode : public SceneNode
 {
+	PSConstantBuffer m_PCB;
+
 public:
 	CubeTestNode(EntityID id, Material mat);
 	~CubeTestNode();

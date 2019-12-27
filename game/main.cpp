@@ -6,9 +6,9 @@
 #include "core/audio/streaming_audio_buffer.h"
 #include "core/renderer/buffer_format.h"
 #include "core/renderer/index_buffer.h"
+#include "core/renderer/material.h"
 #include "core/renderer/renderer.h"
 #include "core/renderer/shader_library.h"
-#include "core/renderer/material.h"
 #include "core/renderer/vertex_buffer.h"
 #include "core/resource_loader.h"
 
@@ -21,8 +21,8 @@
 
 #include "os/os.h"
 
-#include "scene/scene.h"
 #include "scene/cube_test_node.h"
+#include "scene/scene.h"
 
 #include "script/interpreter.h"
 
@@ -69,26 +69,23 @@ int main()
 	    windowLua["deltaY"],
 	    windowLua["title"]));
 
-	PSConstantBuffer pcb;
-	pcb.m_Colors[0] = { 0.0f, 0.0f, 1.0f, 1.0f };
-	pcb.m_Colors[1] = { 0.0f, 1.0f, 1.0f, 1.0f };
-	pcb.m_Colors[2] = { 0.0f, 0.0f, 1.0f, 1.0f };
-	pcb.m_Colors[3] = { 1.0f, 0.0f, 0.0f, 1.0f };
-	pcb.m_Colors[4] = { 0.0f, 1.0f, 0.0f, 1.0f };
-	pcb.m_Colors[5] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	Shader* shader = ShaderLibrary::MakeShader("Default", L"VertexShader.cso", L"PixelShader.cso", BufferFormat());
 	Ptr<Renderer> renderer(new Renderer(windowLua["deltaX"], windowLua["deltaY"]));
 
 	float width = windowLua["deltaX"];
 	float height = windowLua["deltaY"];
 	Scene scene(width, height);
-	
+
 	Ref<SceneNode> node(new CubeTestNode(testEntity->getID(), Material()));
 	Ref<SceneNode> child(new CubeTestNode(testEntity->getID(), Material()));
-	child->setTransforms(&DirectX::XMMatrixTranslationFromVector({ 1.0f, 0.0f, 0.0f }), nullptr);
+	child->setTransforms(DirectX::XMMatrixTranslationFromVector({ 0.0f, 3.0f, 0.0f }), nullptr);
 	node->addChild(child);
 	scene.addChild(testEntity->getID(), node);
-	
+	//      Global - node - child
+	//     /
+	// Root- ...
+	//     \ ...
+	//     \ ...
 	std::optional<int> ret = {};
 	while (true)
 	{
@@ -99,7 +96,7 @@ int main()
 
 		AudioSystem::GetSingleton()->update();
 
-		/*static float x = 0;
+		static float x = 0;
 		static float y = 0;
 		static float u = 0;
 		static float l = 0;
@@ -121,14 +118,10 @@ int main()
 		}
 		x -= l;
 		y += u;
-		DirectX::XMMATRIX model = DirectX::XMMatrixRotationRollPitchYaw(0.0f, 0.0f, 0.0f) * DirectX::XMMatrixTranslation(x, y, 0.0f);
-		DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH({ 0.0f, 0.0f, 4.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f });
-		DirectX::XMMATRIX projection = DirectX::XMMatrixPerspectiveLH(1.0f, 1.0f * height / width, 0.5f, 10.0f);
-		shader->setConstantBuffer(Shader::ConstantBufferType::Model, model);
-		shader->setConstantBuffer(Shader::ConstantBufferType::View, view);
-		shader->setConstantBuffer(Shader::ConstantBufferType::Projection, projection);
-		shader->setConstantBuffer(pcb);
-		renderer->draw(node->getAttributes()->getVertexBuffer(), node->getAttributes()->getIndexBuffer(), shader);*/
+
+		node->setTransform(DirectX::XMMatrixTranslation(x, y, 0.0f));
+		child->addTransform(DirectX::XMMatrixRotationRollPitchYaw(0.0f, 0.1f, 0.0f));
+
 		scene.render();
 		window->swapBuffers();
 	}

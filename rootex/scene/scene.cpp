@@ -23,7 +23,10 @@ void Scene::render()
 
 		if (m_Root->preRender(this))
 		{
-			m_Root->render(this);
+			if (m_Root->isVisible(this))
+			{
+				m_Root->render(this);
+			}
 			m_Root->renderChildren(this);
 			m_Root->postRender(this);
 		}
