@@ -4,7 +4,9 @@
 
 struct VSConstantBuffer
 {
-	DirectX::XMMATRIX m_MVP;
+	DirectX::XMMATRIX m_M;
+	DirectX::XMMATRIX m_V;
+	DirectX::XMMATRIX m_P;
 };
 
 struct PSConstantBuffer

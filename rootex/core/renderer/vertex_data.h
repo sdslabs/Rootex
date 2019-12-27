@@ -1,5 +1,7 @@
 #pragma once
 
+#include "common/types.h"
+
 struct VertexData
 {
 	struct
@@ -7,3 +9,6 @@ struct VertexData
 		float x, y, z;
 	} pos;
 };
+
+Vector<VertexData> MakeTriangleVertices();
+Vector<unsigned short> MakeTriangleIndices();
