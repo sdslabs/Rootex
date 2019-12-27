@@ -139,6 +139,25 @@ ID3DBlob* RenderingDevice::createBlob(LPCWSTR path)
 	return pBlob;
 }
 
+void RenderingDevice::enableSkyDepthStencilState()
+{
+	D3D11_DEPTH_STENCIL_DESC DSDesc;
+	ZeroMemory(&DSDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
+	DSDesc.DepthEnable = TRUE;
+	DSDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+	DSDesc.DepthFunc = D3D11_COMPARISON_LESS;
+	DSDesc.StencilEnable = FALSE;
+	m_Device->CreateDepthStencilState(&DSDesc, &m_NewSkyDepthStencilState);
+	//DXUT_SetDebugName(m_pSkyboxDepthStencilState, “SkyboxDepthStencil” );
+	m_Context->OMGetDepthStencilState(&m_OldSkyDepthStencilState, &m_StencilRef);
+	m_Context->OMSetDepthStencilState(m_NewSkyDepthStencilState, 0);
+}
+
+void RenderingDevice::disableSkyDepthStencilState()
+{
+	m_Context->OMSetDepthStencilState(m_OldSkyDepthStencilState, m_StencilRef);
+}
+
 ID3D11Buffer* RenderingDevice::initVertexBuffer(D3D11_BUFFER_DESC* vbd, D3D11_SUBRESOURCE_DATA* vsd, const UINT* stride, const UINT* const offset)
 {
 	ID3D11Buffer* vertexBuffer = nullptr;
@@ -153,11 +172,29 @@ ID3D11Buffer* RenderingDevice::initIndexBuffer(D3D11_BUFFER_DESC* ibd, D3D11_SUB
 	return indexBuffer;
 }
 
-void RenderingDevice::initVSConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
+void RenderingDevice::initVSModelConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
 {
 	ID3D11Buffer* pConstantBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &pConstantBuffer));
 	m_Context->VSSetConstantBuffers(0u, 1u, &pConstantBuffer);
+
+	SafeRelease(&pConstantBuffer);
+}
+
+void RenderingDevice::initVSViewConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
+{
+	ID3D11Buffer* pConstantBuffer = nullptr;
+	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &pConstantBuffer));
+	m_Context->VSSetConstantBuffers(1u, 1u, &pConstantBuffer);
+
+	SafeRelease(&pConstantBuffer);
+}
+
+void RenderingDevice::initVSProjectionConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
+{
+	ID3D11Buffer* pConstantBuffer = nullptr;
+	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &pConstantBuffer));
+	m_Context->VSSetConstantBuffers(2u, 1u, &pConstantBuffer);
 
 	SafeRelease(&pConstantBuffer);
 }
@@ -220,6 +257,12 @@ void RenderingDevice::bind(ID3D11VertexShader* vertexShader)
 void RenderingDevice::bind(ID3D11PixelShader* pixelShader)
 {
 	m_Context->PSSetShader(pixelShader, nullptr, 0u);
+}
+
+void RenderingDevice::unbindShaderResources()
+{
+	m_Context->VSSetShaderResources(0, 1, nullptr);
+	m_Context->PSSetShaderResources(0, 1, nullptr);
 }
 
 void RenderingDevice::setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY pt)

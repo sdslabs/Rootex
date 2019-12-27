@@ -13,7 +13,7 @@ protected:
 	//VertexBuffer* vertexBuffer;
 	std::shared_ptr<IndexBuffer> indexBuffer;
 	//IndexBuffer* indexBuffer;
-	std::unique_ptr<BufferFormat> bufferFormat;
+	BufferFormat bufferFormat;
 	std::unique_ptr<PSConstantBuffer> psConstantBuffer;
 	std::unique_ptr<Shader> shader;
 

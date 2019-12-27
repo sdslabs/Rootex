@@ -6,8 +6,9 @@
 #include "core/audio/streaming_audio_buffer.h"
 #include "core/renderer/buffer_format.h"
 #include "core/renderer/index_buffer.h"
+#include "core/renderer/material.h"
 #include "core/renderer/renderer.h"
-#include "core/renderer/shader.h"
+#include "core/renderer/shader_library.h"
 #include "core/renderer/vertex_buffer.h"
 #include "core/resource_loader.h"
 #include "core/renderer/Cube.h"
@@ -20,6 +21,9 @@
 #include "main/window.h"
 
 #include "os/os.h"
+
+#include "scene/cube_test_node.h"
+#include "scene/scene.h"
 
 #include "script/interpreter.h"
 
@@ -65,6 +69,9 @@ int main()
 	    windowLua["deltaX"],
 	    windowLua["deltaY"],
 	    windowLua["title"]));
+	BufferFormat bufferFormat;
+	bufferFormat.push(VertexBufferElement::Type::POSITION, "POSITION");
+	Shader* shader = ShaderLibrary::MakeShader("Default", L"VertexShader.cso", L"PixelShader.cso", bufferFormat);
 
 	Cube cube, cube1;
 	/*
@@ -110,8 +117,21 @@ int main()
 	PSConstantBuffer.m_Colors[5] = { 0.0f, 1.0f, 1.0f, 1.0f };
 	Shader shader(L"VertexShader.cso", L"PixelShader.cso", bufferFormat, VSConstantBuffer, PSConstantBuffer);
 	*/
-	Ptr<Renderer> renderer(new Renderer(windowLua["deltaX"], windowLua["deltaY"]));
 
+	Ptr<Renderer> renderer(new Renderer(width, height));
+
+	Scene scene(width, height);
+
+	Ref<SceneNode> node(new CubeTestNode(testEntity->getID(), Material()));
+	Ref<SceneNode> child(new CubeTestNode(testEntity->getID(), Material()));
+	child->setTransforms(DirectX::XMMatrixTranslationFromVector({ 0.0f, 3.0f, 0.0f }), nullptr);
+	node->addChild(child);
+	scene.addChild(testEntity->getID(), node);
+	//      Global - node - child
+	//     /
+	// Root- ...
+	//     \ ...
+	//     \ ...
 	std::optional<int> ret = {};
 
 	DirectX::XMMATRIX projection = DirectX::XMMatrixPerspectiveLH(maxX, maxX * height / width, minZ, maxZ);
@@ -148,6 +168,12 @@ int main()
 		{
 			l += 0.01;
 		}
+		x -= l;
+		y += u;
+
+		node->setTransform(DirectX::XMMatrixTranslation(x, y, 0.0f));
+		child->addTransform(DirectX::XMMatrixRotationRollPitchYaw(0.0f, 0.1f, 0.0f));
+
 		if (GetAsyncKeyState(VK_NUMPAD7))
 		{
 			roll += 0.01;
@@ -192,9 +218,13 @@ int main()
 		cube.Update();
 		cube.Draw();
 
+<<<<<<< HEAD
 		cube1.GetSpatialData(0, 0, 0, 0, 0, projection);
 		cube1.Update();
 		cube1.Draw();
+=======
+		scene.render();
+>>>>>>> 988e5ee0320a7ed7ae76e197a8962d07a8b7140b
 
 		window->swapBuffers();
 	}

@@ -46,6 +46,7 @@ set_source_files_properties(${ShaderFiles}
     PROPERTIES
         VS_SHADER_MODEL 4.0
         VS_SHADER_OBJECT_FILE_NAME ${ShaderCompileDestination}
+        VS_SHADER_ENABLE_DEBUG true
 )
 
 set_source_files_properties(${VertexShaderFiles}
