@@ -56,11 +56,12 @@ protected:
 	SceneNode* m_Parent;
 	Vector<Ref<SceneNode>> m_Children;
 	SceneNodeAttributes m_Attributes;
+	bool m_IsVisible;
 
 public:
 	SceneNode(const EntityID& entityID,
 	    const String& name,
-	    AlignedMatrix* transform,
+	    const AlignedMatrix& transform,
 	    AlignedMatrix* inverse,
 	    //float m_Radius; Needed only while raycasting
 	    const RenderPass& renderPassSetting,
@@ -69,7 +70,7 @@ public:
 	~SceneNode();
 
 	virtual const SceneNodeAttributes* getAttributes() const { return &m_Attributes; }
-	virtual void setTransforms(AlignedMatrix* transform, AlignedMatrix* inverse);
+	virtual void setTransforms(const AlignedMatrix& transform, AlignedMatrix* inverse);
 	
 	virtual bool load(Scene* scene);
 	
@@ -82,9 +83,12 @@ public:
 
 	virtual bool addChild(Ref<SceneNode> child);
 	virtual bool removeChild(Ref<SceneNode> node);
+	void addTransform(const AlignedMatrix& applyTransform);
 
+	void setTransform(const AlignedMatrix& newTransform);
 	void setMaterial(const Material& material);
 	void setPosition(const AlignedVector& position);
+	void setVisibility(bool enabled) { m_IsVisible = enabled; }
 	
 	DirectX::XMFLOAT3 getPosition() const;
 };

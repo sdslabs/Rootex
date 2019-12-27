@@ -4,49 +4,49 @@
 #include "sky_box.h"
 
 RootNode::RootNode(Entity* entity)
-    : SceneNode(INVALID_ID, "Root", &DirectX::XMMatrixIdentity(), &DirectX::XMMatrixIdentity(), RenderPass::Global, Material())
+    : SceneNode(INVALID_ID, "Root", DirectX::XMMatrixIdentity(), &DirectX::XMMatrixIdentity(), RenderPass::Global, Material())
 {
 	m_Children.reserve((size_t)RenderPass::End);
 
-	Ref<SceneNode> globalGroup(new SceneNode(
+	m_GlobalGroup.reset(new SceneNode(
 	    INVALID_ID,
 	    "GlobalGroup",
-	    &DirectX::XMMatrixIdentity(),
+	    DirectX::XMMatrixIdentity(),
 	    &DirectX::XMMatrixIdentity(), RenderPass::Global, Material()));
-	m_Children.push_back(globalGroup);
-	m_GlobalGroup = globalGroup;
+	m_GlobalGroup->setVisibility(false);
+	m_Children.push_back(m_GlobalGroup);
 
-	Ref<SceneNode> staticGroup(new SceneNode(
+	m_StaticGroup.reset(new SceneNode(
 	    INVALID_ID,
 	    "StaticGroup",
-	    &DirectX::XMMatrixIdentity(),
+	    DirectX::XMMatrixIdentity(),
 	    &DirectX::XMMatrixIdentity(), RenderPass::Static, Material()));
-	m_Children.push_back(staticGroup);
-	m_StaticGroup = staticGroup;
+	m_StaticGroup->setVisibility(false);
+	m_Children.push_back(m_StaticGroup);
 
-	Ref<SceneNode> entityGroup(new SceneNode(
+	m_EntityGroup.reset(new SceneNode(
 	    INVALID_ID,
 	    "EntityGroup",
-	    &DirectX::XMMatrixIdentity(),
+	    DirectX::XMMatrixIdentity(),
 	    &DirectX::XMMatrixIdentity(), RenderPass::Dynamic, Material()));
-	m_Children.push_back(entityGroup);
-	m_EntityGroup = entityGroup;
+	m_EntityGroup->setVisibility(false);
+	m_Children.push_back(m_EntityGroup);
 
-	Ref<SceneNode> skyGroup(new SceneNode(
+	m_SkyGroup.reset(new SceneNode(
 	    INVALID_ID,
 	    "SkyGroup",
-	    &DirectX::XMMatrixIdentity(),
+	    DirectX::XMMatrixIdentity(),
 	    &DirectX::XMMatrixIdentity(), RenderPass::Background, Material()));
-	m_Children.push_back(skyGroup);
-	m_SkyGroup = skyGroup;
+	m_SkyGroup->setVisibility(false);
+	m_Children.push_back(m_SkyGroup);
 
-	Ref<SceneNode> editorGroup(new SceneNode(
+	m_EditorGroup.reset(new SceneNode(
 	    INVALID_ID,
 	    "EditorGroup",
-	    &DirectX::XMMatrixIdentity(),
+	    DirectX::XMMatrixIdentity(),
 	    &DirectX::XMMatrixIdentity(), RenderPass::Editor, Material()));
-	m_Children.push_back(editorGroup);
-	m_EditorGroup = editorGroup;
+	m_EditorGroup->setVisibility(false);
+	m_Children.push_back(m_EditorGroup);
 }
 
 RootNode::~RootNode()
