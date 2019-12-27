@@ -32,7 +32,7 @@ class BufferFormat
 	Vector<VertexBufferElement> m_Elements;
 	
 public:
-	BufferFormat() { push(VertexBufferElement::Type::POSITION, "POSITION"); }
+	BufferFormat() = default;
 
 	void push(VertexBufferElement::Type type, LPCSTR name) { m_Elements.push_back({ type, name }); }
 
