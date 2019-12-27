@@ -69,8 +69,9 @@ int main()
 	    windowLua["deltaX"],
 	    windowLua["deltaY"],
 	    windowLua["title"]));
-
-	Shader* shader = ShaderLibrary::MakeShader("Default", L"VertexShader.cso", L"PixelShader.cso", BufferFormat());
+	BufferFormat bufferFormat;
+	bufferFormat.push(VertexBufferElement::Type::POSITION, "POSITION");
+	Shader* shader = ShaderLibrary::MakeShader("Default", L"VertexShader.cso", L"PixelShader.cso", bufferFormat);
 
 	Cube cube;
 	/*
