@@ -25,7 +25,7 @@ protected:
 public:
 
 	virtual void Update(const AlignedMatrix& transform) {};
-	void Draw() {
+	virtual void Draw() {
 		 vertexBuffer->bind();
 		 indexBuffer->bind();
 		 shader->bind();
