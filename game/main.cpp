@@ -74,56 +74,25 @@ int main()
 	Shader* shader = ShaderLibrary::MakeShader("Default", L"VertexShader.cso", L"PixelShader.cso", bufferFormat);
 
 	Cube cube, cube1;
-	/*
-	VertexBuffer vertexBuffer({ { -1.0f, -1.0f, -1.0f },
-	    { +1.0f, -1.0f, -1.0f },
-	    { -1.0f, +1.0f, -1.0f },
-	    { +1.0f, +1.0f, -1.0f },
-	    { -1.0f, -1.0f, +1.0f },
-	    { +1.0f, -1.0f, +1.0f },
-	    { -1.0f, +1.0f, +1.0f },
-	    { +1.0f, +1.0f, +1.0f } });
 
-	IndexBuffer indexBuffer({ 0, 2, 1,
-	    2, 3, 1,
-	    1, 3, 5,
-	    3, 7, 5,
-	    2, 6, 3,
-	    3, 6, 7,
-	    4, 5, 7,
-	    4, 7, 6,
-	    0, 4, 2,
-	    2, 4, 6,
-	    0, 1, 4,
-	    1, 5, 4 });
-
-	BufferFormat bufferFormat;
-	bufferFormat.push(VertexBufferElement::Type::POSITION, "POSITION");
-	*/
 	float width = windowLua["deltaX"];
 	float height = windowLua["deltaY"];
 	float maxX = 1.0f;
 	float minZ = 0.5f;
 	float maxZ = 10.0f;
 	float seconds = 10.0f;
-	/*
-	VSConstantBuffer VSConstantBuffer;
-	PSConstantBuffer PSConstantBuffer;
-	PSConstantBuffer.m_Colors[0] = { 1.0f, 0.0f, 0.0f, 1.0f };
-	PSConstantBuffer.m_Colors[1] = { 0.0f, 1.0f, 0.0f, 1.0f };
-	PSConstantBuffer.m_Colors[2] = { 0.0f, 0.0f, 1.0f, 1.0f };
-	PSConstantBuffer.m_Colors[3] = { 0.0f, 0.0f, 1.0f, 1.0f };
-	PSConstantBuffer.m_Colors[4] = { 1.0f, 1.0f, 0.0f, 1.0f };
-	PSConstantBuffer.m_Colors[5] = { 0.0f, 1.0f, 1.0f, 1.0f };
-	Shader shader(L"VertexShader.cso", L"PixelShader.cso", bufferFormat, VSConstantBuffer, PSConstantBuffer);
-	*/
 
 	Ptr<Renderer> renderer(new Renderer(width, height));
 
 	Scene scene(width, height);
 
-	Ref<SceneNode> node(new CubeTestNode(testEntity->getID(), Material()));
-	Ref<SceneNode> child(new CubeTestNode(testEntity->getID(), Material()));
+	//TEMP WORKAROUND
+	EntityID id = testEntity->getID();
+
+	//Ref<SceneNode> node(new CubeTestNode(testEntity->getID(), Material()));
+	Ref<SceneNode> node( new SceneNode(id, "CubeTestNode", DirectX::XMMatrixIdentity(), &DirectX::XMMatrixIdentity(), RenderPass::Global, Material(), new Cube()));
+	//Ref<SceneNode> child(new CubeTestNode(testEntity->getID(), Material()));
+	Ref<SceneNode> child( new SceneNode(id, "CubeTestNode", DirectX::XMMatrixIdentity(), &DirectX::XMMatrixIdentity(), RenderPass::Global, Material(), new Cube()));
 	child->setTransforms(DirectX::XMMatrixTranslationFromVector({ 0.0f, 3.0f, 0.0f }), nullptr);
 	node->addChild(child);
 	scene.addChild(testEntity->getID(), node);
@@ -171,8 +140,7 @@ int main()
 		x -= l;
 		y += u;
 
-		node->setTransform(DirectX::XMMatrixTranslation(x, y, 0.0f));
-		child->addTransform(DirectX::XMMatrixRotationRollPitchYaw(0.0f, 0.1f, 0.0f));
+
 
 		if (GetAsyncKeyState(VK_NUMPAD7))
 		{
@@ -204,6 +172,9 @@ int main()
 		}
 		x = l;
 		y = u;
+
+		node->setTransform(DirectX::XMMatrixRotationRollPitchYaw(roll, pitch, yaw) * DirectX::XMMatrixTranslation(x, y, 0.0f));
+		child->addTransform(DirectX::XMMatrixRotationRollPitchYaw(0.0f, 0.1f, 0.0f));
 		
 		/*
 		DirectX::XMMATRIX model = DirectX::XMMatrixRotationRollPitchYaw(roll, pitch, yaw) * DirectX::XMMatrixTranslation(x, y, 0.0f);
@@ -214,17 +185,15 @@ int main()
 		shader.setConstantBuffer(VSConstantBuffer);
 		*/
 		//renderer->draw(vertexBuffer, indexBuffer, shader);
-		cube.GetSpatialData(u, l, roll, yaw, pitch, projection);
-		cube.Update();
-		cube.Draw();
+		//cube.GetSpatialData(u, l, roll, yaw, pitch, projection);
+		//cube.Update();
+		//cube.Draw();
 
-<<<<<<< HEAD
-		cube1.GetSpatialData(0, 0, 0, 0, 0, projection);
-		cube1.Update();
-		cube1.Draw();
-=======
+		//cube1.GetSpatialData(0, 0, 0, 0, 0, projection);
+		//cube1.Update();
+		//cube1.Draw();
+
 		scene.render();
->>>>>>> 988e5ee0320a7ed7ae76e197a8962d07a8b7140b
 
 		window->swapBuffers();
 	}

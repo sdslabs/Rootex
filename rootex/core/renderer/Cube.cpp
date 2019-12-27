@@ -48,9 +48,8 @@ void Cube::GetSpatialData(float u, float l, float roll, float yaw, float pitch, 
 	vsConstantBuffer->m_P = projection;
 }
 
-void Cube::Update()
+void Cube::Update(const AlignedMatrix& transform)
 {
-	shader->setConstantBuffer(Shader::ConstantBufferType::Model, vsConstantBuffer->m_M);
-	shader->setConstantBuffer(Shader::ConstantBufferType::View, vsConstantBuffer->m_V);
-	shader->setConstantBuffer(Shader::ConstantBufferType::Projection, vsConstantBuffer->m_P);
+	shader->setConstantBuffer(Shader::ConstantBufferType::Model, transform);
+	shader->setConstantBuffer(*psConstantBuffer);
 }
