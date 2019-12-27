@@ -10,6 +10,7 @@
 #include "core/renderer/shader.h"
 #include "core/renderer/vertex_buffer.h"
 #include "core/resource_loader.h"
+#include "core/renderer/Cube.h"
 
 #include "framework/components/test_component.h"
 #include "framework/entity_factory.h"
@@ -65,6 +66,8 @@ int main()
 	    windowLua["deltaY"],
 	    windowLua["title"]));
 
+	Cube cube;
+	/*
 	VertexBuffer vertexBuffer({ { -1.0f, -1.0f, -1.0f },
 	    { +1.0f, -1.0f, -1.0f },
 	    { -1.0f, +1.0f, -1.0f },
@@ -89,12 +92,14 @@ int main()
 
 	BufferFormat bufferFormat;
 	bufferFormat.push(VertexBufferElement::Type::POSITION, "POSITION");
+	*/
 	float width = windowLua["deltaX"];
 	float height = windowLua["deltaY"];
 	float maxX = 1.0f;
 	float minZ = 0.5f;
 	float maxZ = 10.0f;
 	float seconds = 10.0f;
+	/*
 	VSConstantBuffer VSConstantBuffer;
 	PSConstantBuffer PSConstantBuffer;
 	PSConstantBuffer.m_Colors[0] = { 1.0f, 0.0f, 0.0f, 1.0f };
@@ -104,10 +109,13 @@ int main()
 	PSConstantBuffer.m_Colors[4] = { 1.0f, 1.0f, 0.0f, 1.0f };
 	PSConstantBuffer.m_Colors[5] = { 0.0f, 1.0f, 1.0f, 1.0f };
 	Shader shader(L"VertexShader.cso", L"PixelShader.cso", bufferFormat, VSConstantBuffer, PSConstantBuffer);
-
+	*/
 	Ptr<Renderer> renderer(new Renderer(windowLua["deltaX"], windowLua["deltaY"]));
 
 	std::optional<int> ret = {};
+
+	DirectX::XMMATRIX projection = DirectX::XMMatrixPerspectiveLH(maxX, maxX * height / width, minZ, maxZ);
+
 	while (true)
 	{
 		if (ret = window->processMessages())
@@ -170,14 +178,19 @@ int main()
 		}
 		x = l;
 		y = u;
+		
+		cube.GetSpatialData(u, l, roll, yaw, pitch, projection);
+		/*
 		DirectX::XMMATRIX model = DirectX::XMMatrixRotationRollPitchYaw(roll, pitch, yaw) * DirectX::XMMatrixTranslation(x, y, 0.0f);
 		DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH({ 0.0f, 0.0f, 4.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f });
 		DirectX::XMMATRIX projection = DirectX::XMMatrixPerspectiveLH(maxX, maxX * height / width, minZ, maxZ);
 		VSConstantBuffer.m_MVP = model * view * projection;
 		VSConstantBuffer.m_MVP = DirectX::XMMatrixTranspose(VSConstantBuffer.m_MVP);
 		shader.setConstantBuffer(VSConstantBuffer);
-
-		renderer->draw(vertexBuffer, indexBuffer, shader);
+		*/
+		//renderer->draw(vertexBuffer, indexBuffer, shader);
+		cube.Update();
+		cube.Draw();
 
 		window->swapBuffers();
 	}
