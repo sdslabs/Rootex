@@ -12,6 +12,10 @@ class RenderingDevice
 	ID3D11RenderTargetView* m_RenderTargetView;
 	ID3D11DepthStencilView* m_DepthStencilView;
 
+	ID3D11DepthStencilState* m_OldSkyDepthStencilState;
+	UINT m_StencilRef;
+	ID3D11DepthStencilState* m_NewSkyDepthStencilState;
+
 	IDXGISwapChain* m_SwapChain;
 	unsigned int m_4XMSQuality;
 
@@ -30,9 +34,13 @@ public:
 	void initialize(HWND hWnd, int width, int height);
 
 	ID3DBlob* createBlob(LPCWSTR path);
+	void enableSkyDepthStencilState();
+	void disableSkyDepthStencilState();
 	ID3D11Buffer* initVertexBuffer(D3D11_BUFFER_DESC* vbd, D3D11_SUBRESOURCE_DATA* vsd, const UINT* stride, const UINT* offset);
 	ID3D11Buffer* initIndexBuffer(D3D11_BUFFER_DESC* ibd, D3D11_SUBRESOURCE_DATA* isd, DXGI_FORMAT format);
-	void initVSConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd);
+	void initVSModelConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd);
+	void initVSViewConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd);
+	void initVSProjectionConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd);
 	void initPSConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd);
 	ID3D11PixelShader* initPixelShader(ID3DBlob* blob);
 	ID3D11VertexShader* initVertexShader(ID3DBlob* blob);
@@ -42,6 +50,8 @@ public:
 	void bind(ID3D11Buffer* indexBuffer, DXGI_FORMAT format);
 	void bind(ID3D11VertexShader* vertexShader);
 	void bind(ID3D11PixelShader* pixelShader);
+
+	void unbindShaderResources();
 
 	void setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY pt);
 	void setViewport(const D3D11_VIEWPORT* vp);

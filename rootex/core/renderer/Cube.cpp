@@ -24,8 +24,8 @@ Cube::Cube()
 	    2, 4, 6,
 	    0, 1, 4,
 	    1, 5, 4 }));
-	bufferFormat.reset(new BufferFormat());
-	bufferFormat->push(VertexBufferElement::Type::POSITION, "POSITION");
+	BufferFormat bufferFormat;
+	bufferFormat.push(VertexBufferElement::Type::POSITION, "POSITION");
 	vsConstantBuffer.reset( new VSConstantBuffer());
 	psConstantBuffer.reset( new PSConstantBuffer());
 	psConstantBuffer->m_Colors[0] = { 1.0f, 0.0f, 0.0f, 1.0f };
@@ -34,7 +34,7 @@ Cube::Cube()
 	psConstantBuffer->m_Colors[3] = { 0.0f, 0.0f, 1.0f, 1.0f };
 	psConstantBuffer->m_Colors[4] = { 1.0f, 1.0f, 0.0f, 1.0f };
 	psConstantBuffer->m_Colors[5] = { 0.0f, 1.0f, 1.0f, 1.0f };
-	shader.reset(new Shader(L"VertexShader.cso", L"PixelShader.cso", *bufferFormat, *vsConstantBuffer, *psConstantBuffer));
+	shader.reset(new Shader(L"VertexShader.cso", L"PixelShader.cso", bufferFormat));
 	std::cout << "lol yaha bhi aaya";
 }
 
@@ -43,10 +43,14 @@ void Cube::GetSpatialData(float u, float l, float roll, float yaw, float pitch, 
 {
 	DirectX::XMMATRIX model = DirectX::XMMatrixRotationRollPitchYaw(roll, pitch, yaw) * DirectX::XMMatrixTranslation(u, l, 0.0f);
 	DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH({ 0.0f, 0.0f, 4.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f });
-	vsConstantBuffer->m_MVP = model * view * projection;
-	vsConstantBuffer->m_MVP = DirectX::XMMatrixTranspose(vsConstantBuffer->m_MVP);
+	vsConstantBuffer->m_M = model;
+	vsConstantBuffer->m_V = view;
+	vsConstantBuffer->m_P = projection;
 }
+
 void Cube::Update()
 {
-	shader->setConstantBuffer(*vsConstantBuffer);
+	shader->setConstantBuffer(Shader::ConstantBufferType::Model, vsConstantBuffer->m_M);
+	shader->setConstantBuffer(Shader::ConstantBufferType::View, vsConstantBuffer->m_V);
+	shader->setConstantBuffer(Shader::ConstantBufferType::Projection, vsConstantBuffer->m_P);
 }

@@ -11,6 +11,7 @@ protected:
 	Vector<unsigned short> m_Buffer;
 
 public:
+	IndexBuffer();
 	IndexBuffer(const Vector<unsigned short>& indices);
 	~IndexBuffer();
 

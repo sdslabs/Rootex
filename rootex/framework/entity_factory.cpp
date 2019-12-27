@@ -7,7 +7,7 @@
 #include "components/test_component.h"
 #include "components/debug_component.h"
 
-EntityID EntityFactory::s_Count = 0;
+EntityID EntityFactory::s_CurrentID = 1;
 
 EntityFactory* EntityFactory::GetSingleton()
 {
@@ -17,7 +17,7 @@ EntityFactory* EntityFactory::GetSingleton()
 
 EntityID EntityFactory::getNextID()
 {
-	return s_Count++;
+	return s_CurrentID++;
 }
 
 EntityFactory::EntityFactory()
