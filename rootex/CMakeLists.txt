@@ -75,6 +75,7 @@ target_link_libraries(Rootex PUBLIC
     LuaBridge
     OpenAL
     ALUT
+    SimpleMath
     d3d11.lib
     D3DCompiler.lib
 )
