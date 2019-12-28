@@ -12,18 +12,19 @@ Cube::Cube()
 	    { -1.0f, +1.0f, +1.0f },
 	    { +1.0f, +1.0f, +1.0f } }));
 
-	indexBuffer.reset( new IndexBuffer({ 0, 2, 1,
-	    2, 3, 1,
-	    1, 3, 5,
-	    3, 7, 5,
-	    2, 6, 3,
-	    3, 6, 7,
-	    4, 5, 7,
-	    4, 7, 6,
-	    0, 4, 2,
-	    2, 4, 6,
-	    0, 1, 4,
-	    1, 5, 4 }));
+	indexBuffer.reset( new IndexBuffer({ 
+		2, 0, 1,
+	    3, 2, 1,
+	    3, 1, 5,
+	    7, 3, 5,
+	    6, 2, 3,
+	    6, 3, 7,
+	    5, 4, 7,
+	    7, 4, 6,
+	    4, 0, 2,
+	    4, 2, 6,
+	    1, 0, 4,
+	    5, 1, 4 }));
 	BufferFormat bufferFormat;
 	bufferFormat.push(VertexBufferElement::Type::POSITION, "POSITION");
 	vsConstantBuffer.reset( new VSConstantBuffer());
