@@ -26,8 +26,8 @@ class SceneNodeAttributes
 protected:
 	EntityID m_EntityID;
 	String m_Name;
-	AlignedMatrix m_Transform;
-	AlignedMatrix m_InverseTransform;
+	Matrix m_Transform;
+	Matrix m_InverseTransform;
 	//float m_Radius; Needed only while raycasting
 	RenderPass m_RenderPassSetting;
 	Material m_Material;
@@ -45,8 +45,8 @@ public:
 	const String& getName() const { return m_Name; }
 	const VertexBuffer& getVertexBuffer() const { return m_VertexBuffer; }
 	const IndexBuffer& getIndexBuffer() const { return m_IndexBuffer; }
-	const AlignedMatrix& getTransform() const { return m_Transform; }
-	const AlignedMatrix& getInverseTransform() const { return m_InverseTransform; }
+	const Matrix& getTransform() const { return m_Transform; }
+	const Matrix& getInverseTransform() const { return m_InverseTransform; }
 	const RenderPass& getRenderPass() const { return m_RenderPassSetting; }
 	RenderableObject* getRenderableObject() const { return m_RenderableObject.get(); }
 	Material& getMaterial() { return m_Material; }
@@ -66,16 +66,16 @@ protected:
 public:
 	SceneNode(const EntityID& entityID,
 	    const String& name,
-	    const AlignedMatrix& transform,
-	    AlignedMatrix* inverse,
+	    const Matrix& transform,
+	    Matrix* inverse,
 	    //float m_Radius; Needed only while raycasting
 	    const RenderPass& renderPassSetting,
 	    const Material& material,
 		RenderableObject* object);
 	SceneNode(const EntityID& entityID,
 	    const String& name,
-	    const AlignedMatrix& transform,
-	    AlignedMatrix* inverse,
+	    const Matrix& transform,
+	    Matrix* inverse,
 	    //float m_Radius; Needed only while raycasting
 	    const RenderPass& renderPassSetting,
 	    const Material& material);
@@ -83,7 +83,7 @@ public:
 	~SceneNode();
 
 	virtual const SceneNodeAttributes* getAttributes() const { return &m_Attributes; }
-	virtual void setTransforms(const AlignedMatrix& transform, AlignedMatrix* inverse);
+	virtual void setTransforms(const Matrix& transform, Matrix* inverse);
 	
 	virtual bool load(Scene* scene);
 	
@@ -96,12 +96,12 @@ public:
 
 	virtual bool addChild(Ref<SceneNode> child);
 	virtual bool removeChild(Ref<SceneNode> node);
-	void addTransform(const AlignedMatrix& applyTransform);
+	void addTransform(const Matrix& applyTransform);
 
-	void setTransform(const AlignedMatrix& newTransform);
+	void setTransform(const Matrix& newTransform);
 	void setMaterial(const Material& material);
-	void setPosition(const AlignedVector& position);
+	void setPosition(const Vector3& position);
 	void setVisibility(bool enabled) { m_IsVisible = enabled; }
 	
-	DirectX::XMFLOAT3 getPosition() const;
+	Vector3 getPosition() const;
 };

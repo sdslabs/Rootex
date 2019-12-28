@@ -4,10 +4,10 @@
 #include "scene.h"
 
 CameraNode::CameraNode()
-    : SceneNode(INVALID_ID, "Camera", DirectX::XMMatrixTranslationFromVector({ 0.0f, 0.0f, 4.0f }), nullptr, RenderPass::Global, Material())
+    : SceneNode(INVALID_ID, "Camera", Matrix::CreateTranslation({ 0.0f, 0.0f, 4.0f }), nullptr, RenderPass::Global, Material())
     , m_DebugCamera(false)
-    , m_ViewMatrix(DirectX::XMMatrixLookAtLH({ 0.0f, 0.0f, 4.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }))
-    , m_ProjectionMatrix(DirectX::XMMatrixPerspectiveLH(1.0f, 1.0f * 480.0f / 640.0f, 0.5f, 10.0f))
+    , m_ViewMatrix(Matrix::CreateLookAt({ 0.0f, 0.0f, 4.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }))
+    , m_ProjectionMatrix(Matrix::CreatePerspective(1.0f, 1.0f * 480.0f / 640.0f, 0.5f, 10.0f))
     , m_Active(true)
     , m_Target(nullptr)
     , m_CameraOffset({ 0.0f, 1.0f, -10.0f, 0.0f })
@@ -43,7 +43,7 @@ CameraNode::CameraNode()
 		return false;
 	}
 
-	void CameraNode::setViewTransform(const AlignedMatrix& view)
+	void CameraNode::setViewTransform(const Matrix& view)
 	{
 		m_ViewMatrix = view;
 	}

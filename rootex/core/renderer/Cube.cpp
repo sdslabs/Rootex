@@ -39,16 +39,16 @@ Cube::Cube()
 }
 
 //TODO- remove the reference to Projection matrix part
-void Cube::GetSpatialData(float u, float l, float roll, float yaw, float pitch, DirectX::XMMATRIX& projection)
+void Cube::GetSpatialData(float u, float l, float roll, float yaw, float pitch, Matrix& projection)
 {
-	DirectX::XMMATRIX model = DirectX::XMMatrixRotationRollPitchYaw(roll, pitch, yaw) * DirectX::XMMatrixTranslation(u, l, 0.0f);
-	DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH({ 0.0f, 0.0f, 4.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f });
+	Matrix model = Matrix::CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix::CreateTranslation(u, l, 0.0f);
+	Matrix view = Matrix::CreateLookAt({ 0.0f, 0.0f, 4.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f });
 	vsConstantBuffer->m_M = model;
 	vsConstantBuffer->m_V = view;
 	vsConstantBuffer->m_P = projection;
 }
 
-void Cube::Update(const AlignedMatrix& transform)
+void Cube::Update(const Matrix& transform)
 {
 	shader->setConstantBuffer(Shader::ConstantBufferType::Model, transform);
 	shader->setConstantBuffer(*psConstantBuffer);

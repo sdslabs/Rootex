@@ -2,7 +2,7 @@
 
 #include "scene/scene.h"
 
-SceneNode::SceneNode(const EntityID& entityID, const String& name, const AlignedMatrix& transform, AlignedMatrix* inverse, const RenderPass& renderPassSetting, const Material& material, RenderableObject* object)
+SceneNode::SceneNode(const EntityID& entityID, const String& name, const Matrix& transform, Matrix* inverse, const RenderPass& renderPassSetting, const Material& material, RenderableObject* object)
     : m_IsVisible(true)
 {
 	m_Attributes.m_EntityID = entityID;
@@ -13,7 +13,7 @@ SceneNode::SceneNode(const EntityID& entityID, const String& name, const Aligned
 	m_Attributes.m_RenderableObject.reset(object);
 }
 
-SceneNode::SceneNode(const EntityID& entityID, const String& name, const AlignedMatrix& transform, AlignedMatrix* inverse, const RenderPass& renderPassSetting, const Material& material)
+SceneNode::SceneNode(const EntityID& entityID, const String& name, const Matrix& transform, Matrix* inverse, const RenderPass& renderPassSetting, const Material& material)
     : m_IsVisible(true)
 {
 	m_Attributes.m_EntityID = entityID;
@@ -28,7 +28,7 @@ SceneNode::~SceneNode()
 {
 }
 
-void SceneNode::setTransforms(const AlignedMatrix& transform, AlignedMatrix* inverse)
+void SceneNode::setTransforms(const Matrix& transform, Matrix* inverse)
 {
 	m_Attributes.m_Transform = transform;
 	
@@ -38,7 +38,7 @@ void SceneNode::setTransforms(const AlignedMatrix& transform, AlignedMatrix* inv
 	}
 	else
 	{
-		m_Attributes.m_InverseTransform = DirectX::XMMatrixInverse(nullptr, transform);
+		m_Attributes.m_InverseTransform = transform.Invert();
 	}
 }
 
@@ -120,12 +120,12 @@ bool SceneNode::removeChild(Ref<SceneNode> node)
 	return true;
 }
 
-void SceneNode::addTransform(const AlignedMatrix& applyTransform)
+void SceneNode::addTransform(const Matrix& applyTransform)
 {
 	setTransforms(m_Attributes.m_Transform * applyTransform, nullptr);
 }
 
-void SceneNode::setTransform(const AlignedMatrix& newTransform)
+void SceneNode::setTransform(const Matrix& newTransform)
 {
 	setTransforms(newTransform, nullptr);
 }
@@ -135,19 +135,14 @@ void SceneNode::setMaterial(const Material& material)
 	m_Attributes.m_Material = material;
 }
 
-void SceneNode::setPosition(const AlignedVector& position)
+void SceneNode::setPosition(const Vector3& position)
 {
-	m_Attributes.m_Transform = DirectX::XMMatrixTranslationFromVector(position);
+	m_Attributes.m_Transform = Matrix::CreateTranslation(position);
 }
 
-DirectX::XMFLOAT3 SceneNode::getPosition() const
+Vector3 SceneNode::getPosition() const
 {
-	DirectX::XMFLOAT4X4 transform;
-	DirectX::XMStoreFloat4x4(&transform, m_Attributes.m_Transform);
-
-	return {
-		transform.m[0][3], transform.m[1][3], transform.m[2][3]
-	};
+	return m_Attributes.m_Transform.Translation();
 }
 
 SceneNodeAttributes::SceneNodeAttributes()

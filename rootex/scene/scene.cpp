@@ -7,7 +7,7 @@ Scene::Scene(int width, int height)
     , m_Camera(new CameraNode())
     , m_Renderer(new Renderer(width, height))
 {
-	m_TransformationStack.push_back(DirectX::XMMatrixIdentity());
+	m_TransformationStack.push_back(Matrix::Identity);
 }
 
 Scene::~Scene()
@@ -81,9 +81,9 @@ SceneNode* Scene::findNode(EntityID id)
 	return nullptr;
 }
 
-void Scene::pushMatrix(const AlignedMatrix& transform)
+void Scene::pushMatrix(const Matrix& transform)
 {
-	m_TransformationStack.push_back(DirectX::XMMatrixMultiply(transform, m_TransformationStack.back()));
+	m_TransformationStack.push_back(transform * m_TransformationStack.back());
 }
 
 void Scene::popMatrix()
@@ -97,7 +97,7 @@ void Scene::setCamera(Ref<CameraNode> camera)
 	m_Camera = camera;
 }
 
-const DirectX::XMMATRIX* Scene::getTopMatrix() const
+const Matrix* Scene::getTopMatrix() const
 {
 	return &m_TransformationStack.back();
 }

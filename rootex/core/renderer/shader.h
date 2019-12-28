@@ -34,6 +34,6 @@ public:
 	void bind() const;
 	void unbind() const;
 
-	void setConstantBuffer(const ConstantBufferType& type, const DirectX::XMMATRIX& constantBuffer);
+	void setConstantBuffer(const ConstantBufferType& type, const Matrix& constantBuffer);
 	void setConstantBuffer(const PSConstantBuffer& constantBuffer);
 };

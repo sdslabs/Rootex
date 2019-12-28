@@ -15,7 +15,7 @@ protected:
 	Ptr<RootNode> m_Root;
 	Ref<CameraNode> m_Camera;
 	Ptr<Renderer> m_Renderer;
-	Vector<DirectX::XMMATRIX> m_TransformationStack;
+	Vector<Matrix> m_TransformationStack;
 	HashMap<EntityID, Ref<SceneNode>> m_SceneEntityNodeMap;
 
 public:
@@ -34,10 +34,10 @@ public:
 
 	void setCamera(Ref<CameraNode> camera);
 
-	void pushMatrix(const AlignedMatrix& transform);
+	void pushMatrix(const Matrix& transform);
 	void popMatrix();
 	
 	const CameraNode* getCamera() const { return m_Camera.get(); }
-	const DirectX::XMMATRIX* getTopMatrix() const;
+	const Matrix* getTopMatrix() const;
 	const Renderer* getRenderer() const { return m_Renderer.get(); }
 };

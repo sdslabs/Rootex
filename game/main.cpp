@@ -93,10 +93,10 @@ int main()
 	EntityID id = testEntity->getID();
 
 	//Ref<SceneNode> node(new CubeTestNode(testEntity->getID(), Material()));
-	Ref<SceneNode> node( new SceneNode(id, "CubeTestNode", DirectX::XMMatrixIdentity(), &DirectX::XMMatrixIdentity(), RenderPass::Global, Material(), new Cube()));
+	Ref<SceneNode> node(new SceneNode(id, "CubeTestNode", Matrix::Identity, nullptr, RenderPass::Global, Material(), new Cube()));
 	//Ref<SceneNode> child(new CubeTestNode(testEntity->getID(), Material()));
-	Ref<SceneNode> child( new SceneNode(id, "CubeTestNode", DirectX::XMMatrixIdentity(), &DirectX::XMMatrixIdentity(), RenderPass::Global, Material(), new Cube()));
-	child->setTransforms(DirectX::XMMatrixTranslationFromVector({ 0.0f, 3.0f, 0.0f }), nullptr);
+	Ref<SceneNode> child( new SceneNode(id, "CubeTestNode", Matrix::Identity, nullptr, RenderPass::Global, Material(), new Cube()));
+	child->setTransforms(Matrix::CreateTranslation({ 0.0f, 3.0f, 0.0f }), nullptr);
 	node->addChild(child);
 	scene.addChild(testEntity->getID(), node);
 	//      Global - node - child
@@ -106,7 +106,7 @@ int main()
 	//     \ ...
 	std::optional<int> ret = {};
 
-	DirectX::XMMATRIX projection = DirectX::XMMatrixPerspectiveLH(maxX, maxX * height / width, minZ, maxZ);
+	Matrix projection = Matrix::CreatePerspective(maxX, maxX * height / width, minZ, maxZ);
 
 	while (true)
 	{
@@ -176,8 +176,8 @@ int main()
 		x = l;
 		y = u;
 
-		node->setTransform(DirectX::XMMatrixRotationRollPitchYaw(roll, pitch, yaw) * DirectX::XMMatrixTranslation(x, y, 0.0f));
-		child->addTransform(DirectX::XMMatrixRotationRollPitchYaw(0.0f, 0.1f, 0.0f));
+		node->setTransform(Matrix::CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix::CreateTranslation(x, y, 0.0f));
+		child->addTransform(Matrix::CreateFromYawPitchRoll(0.1f, 0.0f, 0.0f));
 		
 		/*
 		DirectX::XMMATRIX model = DirectX::XMMatrixRotationRollPitchYaw(roll, pitch, yaw) * DirectX::XMMatrixTranslation(x, y, 0.0f);
