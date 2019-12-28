@@ -11,7 +11,7 @@ class Renderer
 protected:
 	unsigned int m_Height;
 	unsigned int m_Width;
-	const DirectX::XMMATRIX* m_ImmediateTransform;
+	const Matrix* m_ImmediateTransform;
 
 public:
 	Renderer(unsigned int w = 640, unsigned int h = 480);

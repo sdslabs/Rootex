@@ -51,7 +51,7 @@ void Shader::unbind() const
 	RenderingDevice::GetSingleton()->unbindShaderResources();
 }
 
-void Shader::setConstantBuffer(const ConstantBufferType& type, const DirectX::XMMATRIX& constantBuffer)
+void Shader::setConstantBuffer(const ConstantBufferType& type, const Matrix& constantBuffer)
 {
 	D3D11_BUFFER_DESC cbd = { 0 };
 	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;

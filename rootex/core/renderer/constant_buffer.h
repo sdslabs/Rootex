@@ -1,15 +1,15 @@
 #pragma once
 
-#include <DirectXMath.h>
+#include "common/types.h"
 
 struct VSConstantBuffer
 {
-	DirectX::XMMATRIX m_M;
-	DirectX::XMMATRIX m_V;
-	DirectX::XMMATRIX m_P;
+	Matrix m_M;
+	Matrix m_V;
+	Matrix m_P;
 };
 
 struct PSConstantBuffer
 {
-	DirectX::XMFLOAT4 m_Colors[6];
+	Color m_Colors[6];
 };
