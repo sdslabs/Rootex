@@ -29,6 +29,7 @@ using Vector = std::vector<T>;
 using FilePath = std::filesystem::path;
 
 // Math Containers
+#include <d3d11.h>
 #include "vendor/SimpleMath/SimpleMath.h"
 typedef DirectX::SimpleMath::Matrix Matrix;
 typedef DirectX::SimpleMath::Vector2 Vector2;
