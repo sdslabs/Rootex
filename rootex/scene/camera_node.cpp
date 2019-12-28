@@ -10,7 +10,7 @@ CameraNode::CameraNode()
     , m_ProjectionMatrix(Matrix::CreatePerspective(1.0f, 1.0f * 480.0f / 640.0f, 0.5f, 10.0f))
     , m_Active(true)
     , m_Target(nullptr)
-    , m_CameraOffset({ 0.0f, 1.0f, -10.0f, 0.0f })
+    , m_CameraOffset(0.0f, 1.0f, -10.0f, 0.0f)
 	{
 	}
 
