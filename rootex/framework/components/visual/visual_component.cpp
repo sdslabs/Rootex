@@ -47,11 +47,12 @@ bool VisualComponent::setup()
 
 bool VisualComponent::load(VisualComponentGraph* graph)
 {
+	bool status = true;
 	for (auto& child : m_Children)
 	{
-		child->load(graph);
+		status = status & child->load(graph);
 	}
-	return true;
+	return status;
 }
 
 bool VisualComponent::preRender(VisualComponentGraph* graph)

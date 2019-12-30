@@ -69,3 +69,8 @@ void TransformComponent::setTransform(const Matrix& transform)
 	m_TransformBuffer.m_Transform = transform;
 	updatePositionRotationScaleFromTransform(m_TransformBuffer.m_Transform);
 }
+
+void TransformComponent::addTransform(const Matrix& applyTransform)
+{
+	setTransform(getTransform() * applyTransform);
+}

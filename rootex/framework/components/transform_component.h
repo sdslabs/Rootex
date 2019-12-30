@@ -36,6 +36,7 @@ public:
 	void setRotation(const float& yaw, const float& pitch, const float& roll);
 	void setScale(const Vector3& scale);
 	void setTransform(const Matrix& transform);
+	void addTransform(const Matrix& applyTransform);
 
 	const Vector3& getPosition() const { return m_TransformBuffer.m_Position; }
 	const Quaternion& getRotation() const { return m_TransformBuffer.m_Rotation; }
