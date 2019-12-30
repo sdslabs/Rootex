@@ -15,6 +15,9 @@ class Entity
 	void addComponent(const Ref<Component>& component);
 
 	Entity(EntityID id);
+
+	bool setupComponents();
+
 	friend class EntityFactory;
 
 public:

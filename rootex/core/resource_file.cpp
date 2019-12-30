@@ -80,3 +80,14 @@ LuaTextResourceFile::LuaTextResourceFile(ResourceData* resData)
 LuaTextResourceFile::~LuaTextResourceFile()
 {
 }
+
+VisualModelResourceFile::VisualModelResourceFile(Ptr<VertexBuffer> vertexBuffer, Ptr<IndexBuffer> indexBuffer, ResourceData* resData)
+    : ResourceFile(Type::OBJ, resData)
+    , m_VertexBuffer(std::move(vertexBuffer))
+    , m_IndexBuffer(std::move(indexBuffer))
+{
+}
+
+VisualModelResourceFile::~VisualModelResourceFile()
+{
+}

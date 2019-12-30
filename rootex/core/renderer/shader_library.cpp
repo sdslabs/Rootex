@@ -7,7 +7,7 @@ Shader* ShaderLibrary::MakeShader(const String& name, const LPCWSTR& vertexPath,
 	auto& findIt = s_Shaders.find(name); 
 	if (findIt != s_Shaders.end())
 	{
-		WARN("Duplicate shader assigned. Older one returned: " + name);
+		WARN("Duplicate m_Shader assigned. Older one returned: " + name);
 		return s_Shaders[name].get();
 	}
 

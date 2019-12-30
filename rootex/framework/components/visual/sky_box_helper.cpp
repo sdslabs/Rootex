@@ -1,4 +1,4 @@
-#include "sky_box.h"
+#include "sky_box_helper.h"
 
 #include "renderer/rendering_device.h"
 

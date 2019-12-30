@@ -30,9 +30,12 @@ using FilePath = std::filesystem::path;
 
 // Math Containers
 #include <d3d11.h>
+#include <DirectXColors.h>
 #include "vendor/SimpleMath/SimpleMath.h"
 typedef DirectX::SimpleMath::Matrix Matrix;
 typedef DirectX::SimpleMath::Vector2 Vector2;
 typedef DirectX::SimpleMath::Vector3 Vector3;
 typedef DirectX::SimpleMath::Vector4 Vector4;
+typedef DirectX::SimpleMath::Quaternion Quaternion;
 typedef DirectX::SimpleMath::Color Color;
+namespace ColorPresets = DirectX::Colors;
