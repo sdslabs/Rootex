@@ -18,7 +18,6 @@ add_subdirectory(core)
 add_subdirectory(framework)
 add_subdirectory(main)
 add_subdirectory(os)
-add_subdirectory(scene)
 add_subdirectory(script)
 add_subdirectory(vendor)
 

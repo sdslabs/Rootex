@@ -1,59 +1,60 @@
-#include "root_node.h"
+#include "root_visual_component.h"
 
 #include "entity_factory.h"
-#include "sky_box.h"
+#include "sky_box_helper.h"
+#include "resource_loader.h"
 
-RootNode::RootNode(Entity* entity)
-    : SceneNode(INVALID_ID, "Root", Matrix::Identity, nullptr, RenderPass::Global, Material())
+RootVisualComponent::RootVisualComponent()
+    : VisualComponent(RenderPass::Global, Material::CreateDefault(), nullptr)
 {
 	m_Children.reserve((size_t)RenderPass::End);
 
-	m_GlobalGroup.reset(new SceneNode(
-	    INVALID_ID,
-	    "GlobalGroup",
-	    Matrix::Identity, nullptr, 
-		RenderPass::Global, Material()));
+	m_GlobalGroup.reset(new VisualComponent(
+	    RenderPass::Global,
+	    Material::CreateDefault(), 
+		nullptr));
 	m_GlobalGroup->setVisibility(false);
 	m_Children.push_back(m_GlobalGroup);
 
-	m_StaticGroup.reset(new SceneNode(
-	    INVALID_ID,
-	    "StaticGroup",
-	    Matrix::Identity, nullptr, 
-		RenderPass::Static, Material()));
+	m_StaticGroup.reset(new VisualComponent(
+	    RenderPass::Static, 
+		Material::CreateDefault(), 
+		nullptr));
 	m_StaticGroup->setVisibility(false);
 	m_Children.push_back(m_StaticGroup);
 
-	m_EntityGroup.reset(new SceneNode(
-	    INVALID_ID,
-	    "EntityGroup",
-	    Matrix::Identity, nullptr, 
-		RenderPass::Dynamic, Material()));
+	m_EntityGroup.reset(new VisualComponent(
+	    RenderPass::Dynamic, 
+		Material::CreateDefault(), 
+		nullptr));
 	m_EntityGroup->setVisibility(false);
 	m_Children.push_back(m_EntityGroup);
 
-	m_SkyGroup.reset(new SceneNode(
-	    INVALID_ID,
-	    "SkyGroup",
-	    Matrix::Identity, nullptr, 
-		RenderPass::Background, Material()));
+	m_SkyGroup.reset(new VisualComponent(
+	    RenderPass::Background, 
+	    Material::CreateDefault(),
+	    nullptr));
 	m_SkyGroup->setVisibility(false);
 	m_Children.push_back(m_SkyGroup);
 
-	m_EditorGroup.reset(new SceneNode(
-	    INVALID_ID,
-	    "EditorGroup",
-	    Matrix::Identity, nullptr, 
-		RenderPass::Editor, Material()));
+	m_EditorGroup.reset(new VisualComponent(
+	    RenderPass::Editor, 
+		Material::CreateDefault(),
+	    nullptr));
 	m_EditorGroup->setVisibility(false);
 	m_Children.push_back(m_EditorGroup);
 }
 
-RootNode::~RootNode()
+RootVisualComponent::~RootVisualComponent()
 {
 }
 
-bool RootNode::addChild(Ref<SceneNode> child)
+bool RootVisualComponent::preRender(VisualComponentGraph* visualComponentGraph)
+{
+	return true;
+}
+
+bool RootVisualComponent::addChild(VisualComponent* child)
 {
 	RenderPass pass = child->getAttributes()->getRenderPass();
 
@@ -87,7 +88,7 @@ bool RootNode::addChild(Ref<SceneNode> child)
 	return false;
 }
 
-void RootNode::renderChildren(Scene* scene)
+void RootVisualComponent::renderChildren(VisualComponentGraph* scene)
 {
 	for (int pass = (int)RenderPass::Global; pass <= (int)RenderPass::End; pass++)
 	{
@@ -114,7 +115,11 @@ void RootNode::renderChildren(Scene* scene)
 	}
 }
 
-bool RootNode::isVisible(Scene* scene) const
+bool RootVisualComponent::isVisible(VisualComponentGraph* scene) const
 {
 	return false;
+}
+
+void RootVisualComponent::postRender(VisualComponentGraph* visualComponentGraph)
+{
 }
