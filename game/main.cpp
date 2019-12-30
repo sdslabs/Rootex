@@ -4,30 +4,29 @@
 #include "core/audio/audio_system.h"
 #include "core/audio/static_audio_buffer.h"
 #include "core/audio/streaming_audio_buffer.h"
+
 #include "core/renderer/buffer_format.h"
 #include "core/renderer/index_buffer.h"
 #include "core/renderer/material.h"
 #include "core/renderer/renderer.h"
 #include "core/renderer/shader_library.h"
 #include "core/renderer/vertex_buffer.h"
-#include "core/resource_loader.h"
-#include "core/renderer/Cube.h"
 
+#include "core/resource_loader.h"
+
+#include "framework/components/visual/visual_component.h"
+#include "framework/components/visual/visual_component_graph.h"
 #include "framework/components/test_component.h"
 #include "framework/entity_factory.h"
 #include "framework/systems/debug_system.h"
 #include "framework/systems/test_system.h"
+#include "framework/systems/render_system.h"
 
 #include "main/window.h"
 
 #include "os/os.h"
 
-#include "scene/cube_test_node.h"
-#include "scene/scene.h"
-
 #include "script/interpreter.h"
-
-#include "vendor//SimpleMath/SimpleMath.h"
 
 int main()
 {
@@ -53,15 +52,6 @@ int main()
 	LuaTextResourceFile* windowSettings = ResourceLoader::CreateLuaTextResourceFile("game/assets/config/window.lua");
 	OS::PrintLine(windowSettings->getString());
 
-	LuaTextResourceFile* testEntityRes = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/entity.lua");
-	Ref<Entity> testEntity = EntityFactory::GetSingleton()->createEntity(testEntityRes);
-
-	TestSystem testSystem;
-	testSystem.update(0.0f);
-
-	DebugSystem debugSystem;
-	debugSystem.update(0.0f);
-
 	LuaInterpreter inter;
 	inter.loadExecuteScript(windowSettings);
 
@@ -76,44 +66,38 @@ int main()
 	bufferFormat.push(VertexBufferElement::Type::POSITION, "POSITION");
 	Shader* shader = ShaderLibrary::MakeShader("Default", L"VertexShader.cso", L"PixelShader.cso", bufferFormat);
 
-	Cube cube, cube1;
+	Ref<VisualComponentGraph> visualGraph(new VisualComponentGraph(windowLua["deltaX"], windowLua["deltaY"]));
+	Ref<RenderSystem> renderSystem(new RenderSystem());
+	
+	LuaTextResourceFile* testCubeFile = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/cube_entity.lua");
+	LuaTextResourceFile* testCubeChildFile = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/cube_entity.lua");
+	Ref<Entity> testCube = EntityFactory::GetSingleton()->createEntity(testCubeFile);
+	Ref<Entity> testCubeChild = EntityFactory::GetSingleton()->createEntity(testCubeChildFile);
+	testCubeChild->getComponent<VisualComponent>()->setTransform(Matrix::CreateTranslation({ 0.0f, 3.0f, 0.0f }));
 
-	float width = windowLua["deltaX"];
-	float height = windowLua["deltaY"];
-	float maxX = 1.0f;
-	float minZ = 0.5f;
-	float maxZ = 10.0f;
-	float seconds = 10.0f;
-
-	Ptr<Renderer> renderer(new Renderer(width, height));
-
-	Scene scene(width, height);
+	visualGraph->addChild(testCube->getComponent<VisualComponent>());
+	testCube->getComponent<VisualComponent>()->addChild(testCubeChild->getComponent<VisualComponent>());
 
 	//TEMP WORKAROUND
-	EntityID id = testEntity->getID();
+	//EntityID id = testEntity->getID();
 
 	//Ref<SceneNode> node(new CubeTestNode(testEntity->getID(), Material()));
-	Ref<SceneNode> node(new SceneNode(id, "CubeTestNode", Matrix::Identity, nullptr, RenderPass::Global, Material(), new Cube()));
+	//Ref<SceneNode> node(new SceneNode(id, "CubeTestNode", Matrix::Identity, nullptr, RenderPass::Global, Material(), new DefaultCubeRenderableObject()));
 	//Ref<SceneNode> child(new CubeTestNode(testEntity->getID(), Material()));
-	Ref<SceneNode> child( new SceneNode(id, "CubeTestNode", Matrix::Identity, nullptr, RenderPass::Global, Material(), new Cube()));
-	child->setTransforms(Matrix::CreateTranslation({ 0.0f, 3.0f, 0.0f }), nullptr);
-	node->addChild(child);
-	scene.addChild(testEntity->getID(), node);
+	//Ref<SceneNode> child(new SceneNode(id, "CubeTestNode", Matrix::Identity, nullptr, RenderPass::Global, Material(), new DefaultCubeRenderableObject()));
+	//child->setTransforms(Matrix::CreateTranslation({ 0.0f, 3.0f, 0.0f }), nullptr);
+	//node->addChild(child);
+	//scene->addChild(testEntity->getID(), node);
 	//      Global - node - child
 	//     /
 	// Root- ...
 	//     \ ...
 	//     \ ...
 	std::optional<int> ret = {};
-
-	Matrix projection = Matrix::CreatePerspective(maxX, maxX * height / width, minZ, maxZ);
-
 	while (true)
 	{
 		if (ret = window->processMessages())
 			break;
-
-		renderer->clear();
 
 		AudioSystem::GetSingleton()->update();
 
@@ -142,8 +126,6 @@ int main()
 		}
 		x -= l;
 		y += u;
-
-
 
 		if (GetAsyncKeyState(VK_NUMPAD7))
 		{
@@ -176,29 +158,10 @@ int main()
 		x = l;
 		y = u;
 
-		node->setTransform(Matrix::CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix::CreateTranslation(x, y, 0.0f));
-		child->addTransform(Matrix::CreateFromYawPitchRoll(0.1f, 0.0f, 0.0f));
-		
-		/*
-		DirectX::XMMATRIX model = DirectX::XMMatrixRotationRollPitchYaw(roll, pitch, yaw) * DirectX::XMMatrixTranslation(x, y, 0.0f);
-		DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH({ 0.0f, 0.0f, 4.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f });
-		DirectX::XMMATRIX projection = DirectX::XMMatrixPerspectiveLH(maxX, maxX * height / width, minZ, maxZ);
-		VSConstantBuffer.m_MVP = model * view * projection;
-		VSConstantBuffer.m_MVP = DirectX::XMMatrixTranspose(VSConstantBuffer.m_MVP);
-		shader.setConstantBuffer(VSConstantBuffer);
-		*/
-		//renderer->draw(vertexBuffer, indexBuffer, shader);
-		//cube.GetSpatialData(u, l, roll, yaw, pitch, projection);
-		//cube.Update();
-		//cube.Draw();
+		testCube->getComponent<VisualComponent>()->setTransform(Matrix::CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix::CreateTranslation(x, y, 0.0f));
+		testCubeChild->getComponent<VisualComponent>()->addTransform(Matrix::CreateFromYawPitchRoll(0.1f, 0.0f, 0.0f));
 
-		//cube1.GetSpatialData(0, 0, 0, 0, 0, projection);
-		//cube1.Update();
-		//cube1.Draw();
-
-		scene.render();
-
-		window->swapBuffers();
+		RenderSystem::GetSingleton()->render(visualGraph.get(), window.get());
 	}
 
 	return ret.value();
