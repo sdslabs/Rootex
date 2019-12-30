@@ -1,7 +1,10 @@
 #include "resource_loader.h"
 
-#include "audio/audio_system.h"
 #include "common/common.h"
+
+#include "core/audio/audio_system.h"
+#include "core/renderer/vertex_buffer.h"
+#include "core/renderer/index_buffer.h"
 
 HashMap<Ptr<ResourceData>, Ptr<ResourceFile>> ResourceLoader::s_ResourcesDataFiles;
 
@@ -126,4 +129,55 @@ AudioResourceFile* ResourceLoader::CreateAudioResourceFile(String path)
 	s_ResourcesDataFiles[Ptr<ResourceData>(resData)] = Ptr<ResourceFile>(audioRes);
 
 	return audioRes;
+}
+
+VisualModelResourceFile* ResourceLoader::CreateVisualModelResourceFile(String path)
+{
+	for (auto& item : s_ResourcesDataFiles)
+	{
+		if (item.first->getPath() == path && item.second->getType() == ResourceFile::Type::TXT)
+		{
+			return reinterpret_cast<VisualModelResourceFile*>(item.second.get());
+		}
+	}
+
+	if (OS::Exists(path) == false)
+	{
+		ERR("File not found: " + path);
+		return nullptr;
+	}
+
+	// File not found in cache, load it only once
+	/// TODO: Add OBJ file loader
+	FileBuffer& buffer = OS::LoadFileContents(path);
+	Ptr<VertexBuffer> vertexBuffer(new VertexBuffer(
+	    { 
+			{ -1.0f, -1.0f, -1.0f },
+	        { +1.0f, -1.0f, -1.0f },
+	        { -1.0f, +1.0f, -1.0f },
+	        { +1.0f, +1.0f, -1.0f },
+	        { -1.0f, -1.0f, +1.0f },
+	        { +1.0f, -1.0f, +1.0f },
+	        { -1.0f, +1.0f, +1.0f },
+	        { +1.0f, +1.0f, +1.0f } 
+		}));
+	Ptr<IndexBuffer> indexBuffer(new IndexBuffer({
+		2, 0, 1,
+		3, 2, 1,
+		3, 1, 5,
+		7, 3, 5,
+		6, 2, 3,
+		6, 3, 7,
+		5, 4, 7,
+		7, 4, 6,
+		4, 0, 2,
+		4, 2, 6,
+		1, 0, 4,
+		5, 1, 4 }));
+	ResourceData* resData = new ResourceData(path, buffer);
+	VisualModelResourceFile* resFile = new VisualModelResourceFile(std::move(vertexBuffer), std::move(indexBuffer), resData);
+
+	s_ResourcesDataFiles[Ptr<ResourceData>(resData)] = Ptr<ResourceFile>(resFile);
+
+	return resFile;
 }

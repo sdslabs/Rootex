@@ -22,6 +22,8 @@ public:
 	Component();
 	virtual ~Component();
 	
+	virtual bool setup();
+
 	Entity* getOwner() const;
 	virtual ComponentID getComponentID() const = 0;
 };

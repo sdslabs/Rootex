@@ -13,6 +13,16 @@ Entity::Entity(EntityID id)
 {
 }
 
+bool Entity::setupComponents()
+{
+	bool status = true;
+	for (auto& component : m_Components)
+	{
+		status = status & component.second->setup();
+	}
+	return status;
+}
+
 void Entity::destroy()
 {
 	for (auto& component : m_Components)
