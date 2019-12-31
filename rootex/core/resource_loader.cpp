@@ -5,6 +5,8 @@
 #include "core/audio/audio_system.h"
 #include "core/renderer/vertex_buffer.h"
 #include "core/renderer/index_buffer.h"
+#include "vendor/OBJLoader/Source/OBJ_Loader.h"
+#include "core/renderer/vertex_data.h"
 
 HashMap<Ptr<ResourceData>, Ptr<ResourceFile>> ResourceLoader::s_ResourcesDataFiles;
 
@@ -149,8 +151,24 @@ VisualModelResourceFile* ResourceLoader::CreateVisualModelResourceFile(String pa
 
 	// File not found in cache, load it only once
 	/// TODO: Add OBJ file loader
+	objl::Loader loader;
+	std::cout<<loader.LoadFile( OS::GetAbsolutePath(path).generic_string() );
+
+	VertexData vertice;
+
+	Vector<VertexData> vertices;
+	vertices.reserve(loader.LoadedVertices.size());
+
+	for (auto& x : loader.LoadedVertices)
+	{
+		vertice.pos.x = x.Position.X;
+		vertice.pos.y = x.Position.Y;
+		vertice.pos.z = x.Position.Z;
+		vertices.push_back(vertice);
+	}
+
 	FileBuffer& buffer = OS::LoadFileContents(path);
-	Ptr<VertexBuffer> vertexBuffer(new VertexBuffer(
+	/*Ptr<VertexBuffer> vertexBuffer(new VertexBuffer(
 	    { 
 			{ -1.0f, -1.0f, -1.0f },
 	        { +1.0f, -1.0f, -1.0f },
@@ -160,8 +178,9 @@ VisualModelResourceFile* ResourceLoader::CreateVisualModelResourceFile(String pa
 	        { +1.0f, -1.0f, +1.0f },
 	        { -1.0f, +1.0f, +1.0f },
 	        { +1.0f, +1.0f, +1.0f } 
-		}));
-	Ptr<IndexBuffer> indexBuffer(new IndexBuffer({
+		}));*/
+	Ptr<VertexBuffer> vertexBuffer(new VertexBuffer(vertices));
+	/*Ptr<IndexBuffer> indexBuffer(new IndexBuffer({
 		2, 0, 1,
 		3, 2, 1,
 		3, 1, 5,
@@ -173,7 +192,9 @@ VisualModelResourceFile* ResourceLoader::CreateVisualModelResourceFile(String pa
 		4, 0, 2,
 		4, 2, 6,
 		1, 0, 4,
-		5, 1, 4 }));
+		5, 1, 4 }));*/
+	Ptr<IndexBuffer> indexBuffer(new IndexBuffer(loader.LoadedIndices));
+
 	ResourceData* resData = new ResourceData(path, buffer);
 	VisualModelResourceFile* resFile = new VisualModelResourceFile(std::move(vertexBuffer), std::move(indexBuffer), resData);
 

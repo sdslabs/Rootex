@@ -717,7 +717,7 @@ namespace objl
 		// Loaded Vertex Objects
 		std::vector<Vertex> LoadedVertices;
 		// Loaded Index Positions
-		std::vector<unsigned int> LoadedIndices;
+		std::vector<unsigned short> LoadedIndices; // Rootex: Changed to unsigned short for compatibility with our IndexBuffer
 		// Loaded Material Objects
 		std::vector<Material> LoadedMaterials;
 
