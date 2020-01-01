@@ -137,7 +137,7 @@ VisualModelResourceFile* ResourceLoader::CreateVisualModelResourceFile(String pa
 {
 	for (auto& item : s_ResourcesDataFiles)
 	{
-		if (item.first->getPath() == path && item.second->getType() == ResourceFile::Type::TXT)
+		if (item.first->getPath() == path && item.second->getType() == ResourceFile::Type::OBJ)
 		{
 			return reinterpret_cast<VisualModelResourceFile*>(item.second.get());
 		}
@@ -150,7 +150,6 @@ VisualModelResourceFile* ResourceLoader::CreateVisualModelResourceFile(String pa
 	}
 
 	// File not found in cache, load it only once
-	/// TODO: Add OBJ file loader
 	objl::Loader loader;
 	std::cout<<loader.LoadFile( OS::GetAbsolutePath(path).generic_string() );
 
@@ -168,31 +167,7 @@ VisualModelResourceFile* ResourceLoader::CreateVisualModelResourceFile(String pa
 	}
 
 	FileBuffer& buffer = OS::LoadFileContents(path);
-	/*Ptr<VertexBuffer> vertexBuffer(new VertexBuffer(
-	    { 
-			{ -1.0f, -1.0f, -1.0f },
-	        { +1.0f, -1.0f, -1.0f },
-	        { -1.0f, +1.0f, -1.0f },
-	        { +1.0f, +1.0f, -1.0f },
-	        { -1.0f, -1.0f, +1.0f },
-	        { +1.0f, -1.0f, +1.0f },
-	        { -1.0f, +1.0f, +1.0f },
-	        { +1.0f, +1.0f, +1.0f } 
-		}));*/
 	Ptr<VertexBuffer> vertexBuffer(new VertexBuffer(vertices));
-	/*Ptr<IndexBuffer> indexBuffer(new IndexBuffer({
-		2, 0, 1,
-		3, 2, 1,
-		3, 1, 5,
-		7, 3, 5,
-		6, 2, 3,
-		6, 3, 7,
-		5, 4, 7,
-		7, 4, 6,
-		4, 0, 2,
-		4, 2, 6,
-		1, 0, 4,
-		5, 1, 4 }));*/
 	Ptr<IndexBuffer> indexBuffer(new IndexBuffer(loader.LoadedIndices));
 
 	ResourceData* resData = new ResourceData(path, buffer);
