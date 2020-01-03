@@ -25,6 +25,7 @@
 #include "main/window.h"
 
 #include "os/os.h"
+#include "os/timer.h"
 
 #include "script/interpreter.h"
 
@@ -94,8 +95,12 @@ int main()
 	//     \ ...
 	//     \ ...
 	std::optional<int> ret = {};
+	FrameTimer frameTimer;
+	LoggingScopeTimer gameScopedLogger("Game");
 	while (true)
 	{
+		frameTimer.reset();
+
 		if (ret = window->processMessages())
 			break;
 
@@ -162,6 +167,7 @@ int main()
 		testCubeChild->getComponent<TransformComponent>()->addTransform(Matrix::CreateFromYawPitchRoll(0.1f, 0.0f, 0.0f));
 
 		RenderSystem::GetSingleton()->render(visualGraph.get(), window.get());
+		frameTimer.showTime();
 	}
 
 	return ret.value();
