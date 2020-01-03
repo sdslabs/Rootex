@@ -31,6 +31,7 @@ public:
 	static FilePath OS::GetAbsolutePath(String stringPath);
 
 	static void Print(const String& msg);
+	static void Print(const float& real);
 	static void Print(const int& number);
 	static void Print(const unsigned int& number);
 	static void PrintLine(const String& msg);
