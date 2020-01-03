@@ -147,6 +147,7 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height)
 	ID3D11RasterizerState* rsState;
 	GFX_ERR_CHECK(m_Device->CreateRasterizerState(&rsDesc, &rsState));
 	m_Context->RSSetState(rsState);
+	SafeRelease(&rsState);
 }
 
 ID3DBlob* RenderingDevice::createBlob(LPCWSTR path)
