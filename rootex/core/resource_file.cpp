@@ -4,7 +4,6 @@
 #include <sstream>
 
 #include "audio/audio_system.h"
-#include "core/resource_data_reserve.h"
 
 ResourceFile::ResourceFile(const Type& type, ResourceData* resData)
     : m_Type(type)
@@ -79,5 +78,16 @@ LuaTextResourceFile::LuaTextResourceFile(ResourceData* resData)
 }
 
 LuaTextResourceFile::~LuaTextResourceFile()
+{
+}
+
+VisualModelResourceFile::VisualModelResourceFile(Ptr<VertexBuffer> vertexBuffer, Ptr<IndexBuffer> indexBuffer, ResourceData* resData)
+    : ResourceFile(Type::OBJ, resData)
+    , m_VertexBuffer(std::move(vertexBuffer))
+    , m_IndexBuffer(std::move(indexBuffer))
+{
+}
+
+VisualModelResourceFile::~VisualModelResourceFile()
 {
 }

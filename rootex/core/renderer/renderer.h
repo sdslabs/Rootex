@@ -1,16 +1,25 @@
 #pragma once
 
+#include "vertex_buffer.h"
 #include "index_buffer.h"
-#include "shader.h"
-#include "vertex_array.h"
+#include "material.h"
+#include "rendering_device.h"
+#include "viewport.h"
 
 class Renderer
 {
 protected:
-	Renderer() {}
-	virtual ~Renderer() {}
+	unsigned int m_Height;
+	unsigned int m_Width;
 
 public:
-	virtual void clear() const = 0;
-	virtual void draw(const VertexArray& vertexArray, const IndexBuffer& indexBuffer, const Shader& shader) = 0;
+	Renderer(unsigned int w = 640, unsigned int h = 480);
+	Renderer(const Renderer&) = delete;
+	Renderer& operator=(const Renderer&) = delete;
+	virtual ~Renderer() = default;
+
+	void setViewport(Viewport& viewport);
+
+	void clear() const;
+	void draw(const VertexBuffer* vertexBuffer, const IndexBuffer* indexBuffer, const Material* material) const;
 };

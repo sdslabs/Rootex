@@ -1,8 +1,12 @@
 #include "resource_loader.h"
 
-#include "audio/audio_system.h"
 #include "common/common.h"
-#include "resource_data_reserve.h"
+
+#include "core/audio/audio_system.h"
+#include "core/renderer/vertex_buffer.h"
+#include "core/renderer/index_buffer.h"
+#include "vendor/OBJLoader/Source/OBJ_Loader.h"
+#include "core/renderer/vertex_data.h"
 
 HashMap<Ptr<ResourceData>, Ptr<ResourceFile>> ResourceLoader::s_ResourcesDataFiles;
 
@@ -127,4 +131,49 @@ AudioResourceFile* ResourceLoader::CreateAudioResourceFile(String path)
 	s_ResourcesDataFiles[Ptr<ResourceData>(resData)] = Ptr<ResourceFile>(audioRes);
 
 	return audioRes;
+}
+
+VisualModelResourceFile* ResourceLoader::CreateVisualModelResourceFile(String path)
+{
+	for (auto& item : s_ResourcesDataFiles)
+	{
+		if (item.first->getPath() == path && item.second->getType() == ResourceFile::Type::OBJ)
+		{
+			return reinterpret_cast<VisualModelResourceFile*>(item.second.get());
+		}
+	}
+
+	if (OS::Exists(path) == false)
+	{
+		ERR("File not found: " + path);
+		return nullptr;
+	}
+
+	// File not found in cache, load it only once
+	objl::Loader loader;
+	std::cout<<loader.LoadFile( OS::GetAbsolutePath(path).generic_string() );
+
+	VertexData vertice;
+
+	Vector<VertexData> vertices;
+	vertices.reserve(loader.LoadedVertices.size());
+
+	for (auto& x : loader.LoadedVertices)
+	{
+		vertice.pos.x = x.Position.X;
+		vertice.pos.y = x.Position.Y;
+		vertice.pos.z = x.Position.Z;
+		vertices.push_back(vertice);
+	}
+
+	FileBuffer& buffer = OS::LoadFileContents(path);
+	Ptr<VertexBuffer> vertexBuffer(new VertexBuffer(vertices));
+	Ptr<IndexBuffer> indexBuffer(new IndexBuffer(loader.LoadedIndices));
+
+	ResourceData* resData = new ResourceData(path, buffer);
+	VisualModelResourceFile* resFile = new VisualModelResourceFile(std::move(vertexBuffer), std::move(indexBuffer), resData);
+
+	s_ResourcesDataFiles[Ptr<ResourceData>(resData)] = Ptr<ResourceFile>(resFile);
+
+	return resFile;
 }

@@ -1,8 +1,9 @@
 #pragma once
 
 #include "common/types.h"
-
-class ResourceData;
+#include "core/resource_data.h"
+#include "core/renderer/vertex_buffer.h"
+#include "core/renderer/index_buffer.h"
 
 class ResourceFile
 {
@@ -12,7 +13,8 @@ public:
 		NONE = 0,
 		LUA,
 		WAV,
-		TXT
+		TXT,
+		OBJ
 	};
 
 protected:
@@ -90,4 +92,22 @@ public:
 	float getFrequency() const { return m_Frequency; }
 	int getBitDepth() const { return m_BitDepth; }
 	int getChannels() const { return m_Channels; }
+};
+
+class VisualModelResourceFile : public ResourceFile
+{
+	explicit VisualModelResourceFile(Ptr<VertexBuffer> vertexBuffer, Ptr<IndexBuffer> indexBuffer, ResourceData* resData);
+	~VisualModelResourceFile();
+
+	Ptr<VertexBuffer> m_VertexBuffer;
+	Ptr<IndexBuffer> m_IndexBuffer;
+
+	friend class ResourceLoader;
+
+public:
+	explicit VisualModelResourceFile(VisualModelResourceFile&) = delete;
+	explicit VisualModelResourceFile(VisualModelResourceFile&&) = delete;
+
+	const VertexBuffer* getVertexBuffer() const { return m_VertexBuffer.get(); }
+	const IndexBuffer* getIndexBuffer() const { return m_IndexBuffer.get(); }
 };
