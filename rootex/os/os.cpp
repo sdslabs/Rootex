@@ -94,6 +94,11 @@ void OS::Print(const String& msg)
 	std::cout << msg;
 }
 
+void OS::Print(const float& real)
+{
+	Print(std::to_string(real));
+}
+
 void OS::Print(const int& number)
 {
 	Print(std::to_string(number));

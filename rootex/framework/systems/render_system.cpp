@@ -1,6 +1,7 @@
 #include "render_system.h"
 
 #include "framework/components/visual/visual_component.h"
+#include "os/timer.h"
 
 RenderSystem* RenderSystem::GetSingleton()
 {
