@@ -4,10 +4,12 @@
 #include "entity.h"
 #include "system.h"
 
-#include "components/test_component.h"
 #include "components/debug_component.h"
+#include "components/test_component.h"
+#include "components/transform_component.h"
+#include "components/visual/visual_component.h"
 
-EntityID EntityFactory::s_Count = 0;
+EntityID EntityFactory::s_CurrentID = 1;
 
 EntityFactory* EntityFactory::GetSingleton()
 {
@@ -17,13 +19,15 @@ EntityFactory* EntityFactory::GetSingleton()
 
 EntityID EntityFactory::getNextID()
 {
-	return s_Count++;
+	return s_CurrentID++;
 }
 
 EntityFactory::EntityFactory()
 {
 	m_ComponentCreators["TestComponent"] = TestComponent::Create;
 	m_ComponentCreators["DebugComponent"] = DebugComponent::Create;
+	m_ComponentCreators["VisualComponent"] = VisualComponent::Create;
+	m_ComponentCreators["TransformComponent"] = TransformComponent::Create;
 }
 
 Ref<Component> EntityFactory::createComponent(const String& name, const LuaVariable& componentData)
@@ -77,6 +81,11 @@ Ref<Entity> EntityFactory::createEntity(LuaTextResourceFile* actorLuaDescription
 				componentObject->setOwner(entity);
 			}
 		}
+	}
+
+	if (!entity->setupComponents())
+	{
+		ERR("Entity was not setup properly: " + std::to_string(entity->m_ID));
 	}
 
 	return entity;

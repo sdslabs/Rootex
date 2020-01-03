@@ -3,5 +3,7 @@
 enum class ComponentIDs : unsigned int
 {
 	Test,
-	Debug
+	Debug,
+	Visual,
+	Transform
 };

@@ -1,5 +1,5 @@
-file(GLOB_RECURSE SceneSources **.cpp **.h)
-file(GLOB_RECURSE ScenetHeaders **.h)
+file(GLOB_RECURSE MainSources **.cpp **.h)
+file(GLOB_RECURSE MainHeaders **.h)
 
 set(ROOTEX_INCLUDES
     ${ROOTEX_INCLUDES}
@@ -8,10 +8,10 @@ CACHE INTERNAL "")
 
 set(ROOTEX_HEADERS
     ${ROOTEX_HEADERS}
-    ${SceneHeaders}
+    ${MainHeaders}
 CACHE INTERNAL "")
 
 set(ROOTEX_SOURCES
     ${ROOTEX_SOURCES}
-    ${SceneSources}
+    ${MainSources}
 CACHE INTERNAL "")

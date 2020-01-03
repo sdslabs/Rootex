@@ -1,15 +1,20 @@
 #pragma once
 
+#include <d3d11.h>
+
 #include "common/common.h"
 
 class IndexBuffer
 {
 protected:
-	IndexBuffer(const Vector<unsigned int>& indices) {}
-	virtual ~IndexBuffer() = default;
+	ID3D11Buffer* m_IndexBuffer;
+	Vector<unsigned short> m_Buffer;
 
-	virtual void bind() const = 0;
-	virtual void unbind() const = 0;
+public:
+	IndexBuffer();
+	IndexBuffer(const Vector<unsigned short>& indices);
+	~IndexBuffer();
 
-	virtual unsigned int getCount() = 0;
+	void bind() const;
+	unsigned int getCount() const;
 };

@@ -13,4 +13,5 @@ public:
 	static TextResourceFile* CreateTextResourceFile(String path);
 	static LuaTextResourceFile* CreateLuaTextResourceFile(String path);
 	static AudioResourceFile* CreateAudioResourceFile(String path);
+	static VisualModelResourceFile* CreateVisualModelResourceFile(String path);
 };
