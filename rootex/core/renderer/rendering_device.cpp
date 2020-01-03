@@ -130,6 +130,23 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height)
 	SafeRelease(&depthStencil);
 
 	m_Context->OMSetRenderTargets(1u, &m_RenderTargetView, m_DepthStencilView);
+
+	//REMARK- reversed winding order to allow ccw .obj files to be rendered properly, can trouble later
+	D3D11_RASTERIZER_DESC rsDesc;
+	rsDesc.FillMode = D3D11_FILL_SOLID;
+	rsDesc.CullMode = D3D11_CULL_FRONT;
+	rsDesc.FrontCounterClockwise = FALSE;
+	rsDesc.DepthBias = 0;
+	rsDesc.SlopeScaledDepthBias = 0.0f;
+	rsDesc.DepthBiasClamp = 0.0f;
+	rsDesc.DepthClipEnable = TRUE;
+	rsDesc.ScissorEnable = FALSE;
+	rsDesc.MultisampleEnable = FALSE;
+	rsDesc.AntialiasedLineEnable = FALSE;
+
+	ID3D11RasterizerState* rsState;
+	GFX_ERR_CHECK(m_Device->CreateRasterizerState(&rsDesc, &rsState));
+	m_Context->RSSetState(rsState);
 }
 
 ID3DBlob* RenderingDevice::createBlob(LPCWSTR path)
