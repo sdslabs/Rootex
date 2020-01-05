@@ -46,7 +46,7 @@ int main()
 
 	GameObject* gameObject = new GameObject();
 	Ref<Example> test_event(new Example());
-	EventManager::GetSingleton()->addListener(gameObject, 0);
+	EventManager::GetSingleton()->addListener(gameObject, Example::s_ExampleID);
 	EventManager::GetSingleton()->call(test_event);
 	EventManager::GetSingleton()->deferredCall(test_event);
 
