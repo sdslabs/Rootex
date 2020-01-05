@@ -5,16 +5,22 @@ common:
 - rootex/common/**
 
 core:
-- rootex/core/**
+- rootex/core/*
+
+core-renderer:
+- rootex/core/renderer/**
+
+core-audio:
+- rootex/core/audio/**
 
 framework:
 - rootex/framework/**
 
+main:
+- rootex/main/**
+
 os:
 - rootex/os/**
-
-scene:
-- rootex/scene/**
 
 script:
 - rootex/script/**
