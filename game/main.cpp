@@ -13,6 +13,7 @@
 #include "core/renderer/vertex_buffer.h"
 
 #include "core/resource_loader.h"
+#include "core/event_manager.h"
 
 #include "framework/components/visual/visual_component.h"
 #include "framework/components/visual/visual_component_graph.h"
@@ -42,6 +43,12 @@ int main()
 	Ref<StreamingAudioSource> source(new StreamingAudioSource(audio.get()));
 	source->setLooping(true);
 	source->play();
+
+	GameObject* gameObject = new GameObject();
+	Ref<Example> test_event(new Example());
+	EventManager::GetSingleton()->addListener(gameObject, 0);
+	EventManager::GetSingleton()->call(test_event);
+	EventManager::GetSingleton()->deferredCall(test_event);
 
 	AudioResourceFile* w2 = ResourceLoader::CreateAudioResourceFile("game/assets/lost_in_istanbul.wav");
 	Ref<StaticAudioBuffer> audio2(new StaticAudioBuffer(w2));
@@ -181,6 +188,9 @@ int main()
 		testCubeChild->getComponent<TransformComponent>()->addTransform(Matrix::CreateFromYawPitchRoll(0.1f, 0.0f, 0.0f));
 
 		RenderSystem::GetSingleton()->render(visualGraph.get(), window.get());
+
+		EventManager::GetSingleton()->tick();
+
 		frameTimer.showFPS();
 	}
 

@@ -7,6 +7,13 @@ EventManager::EventManager()
 
 EventManager ::~EventManager() {}
 
+EventManager* EventManager::GetSingleton()
+{
+	static EventManager singleton;
+
+	return &singleton;
+}
+
 //returns true if listner successfully added
 bool EventManager::addListener(GameObject* instance, EventType type)
 {
@@ -43,10 +50,6 @@ bool EventManager::removeListener(GameObject* instance, EventType type)
 			{
 				listeners.erase(vecIt);
 				success = true;
-
-				// We don’t need to continue because it should be impossible for
-				// the same delegate function to be registered for the same event
-				// more than once.
 				break;
 			}
 		}
@@ -87,12 +90,12 @@ bool EventManager::deferredCall(const Ref<Event> event)
 		return true;
 	}
 	else
-	{ 
+	{
 		return false;
 	}
 }
 
-bool EventManager::tick(unsigned long maxMillis = INFINITE)
+bool EventManager::tick(unsigned long maxMillis)
 {
 	int queueToProcess = m_ActiveQueue;
 	m_ActiveQueue = (m_ActiveQueue + 1) % EVENTMANAGER_NUM_QUEUES;
@@ -102,8 +105,8 @@ bool EventManager::tick(unsigned long maxMillis = INFINITE)
 	{
 		Ref<Event> pEvent = m_Queues[queueToProcess].front();
 		m_Queues[queueToProcess].erase(m_Queues[queueToProcess].begin());
-
 		const EventType eventType = pEvent->getEventType();
+
 		auto findIt = m_EventListeners.find(eventType);
 		if (findIt != m_EventListeners.end())
 		{
@@ -123,7 +126,7 @@ bool EventManager::tick(unsigned long maxMillis = INFINITE)
 		//  	break;
 		// }
 	}
-	// If we couldn’t process all of the events, push the remaining events to
+	// If we couldn't process all of the events, push the remaining events to
 	// the new active queue.
 	bool queueFlushed = (m_Queues[queueToProcess].empty());
 	if (!queueFlushed)

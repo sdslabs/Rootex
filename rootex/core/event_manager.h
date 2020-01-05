@@ -1,12 +1,9 @@
 #pragma once
 
-#include "common.h"
+#include "common/common.h"
 #include "event.h"
 #include <algorithm>
-#include <map>
-#include <string>
 #include <utility>
-#include <vector>
 
 const unsigned int EVENTMANAGER_NUM_QUEUES = 2;
 
@@ -14,7 +11,7 @@ const unsigned int EVENTMANAGER_NUM_QUEUES = 2;
 class GameObject
 {
 public:
-	virtual void handleEvent(const Event* event) {}
+	virtual void handleEvent(const Event* event) { OS::PrintLine("event handled"); }
 };
 
 class EventManager
@@ -27,17 +24,18 @@ class EventManager
 	unsigned int m_ActiveQueue;
 
 public:
-	enum CONSTANT
+	enum Constant
 	{
-		INFINITE = 0xffffffff
+		Infinite = 0xffffffff
 	};
 
 	EventManager();
 	~EventManager();
+	static EventManager* GetSingleton();
 
 	bool addListener(GameObject* instance, EventType type);
 	bool removeListener(GameObject* instance, EventType type);
 	bool call(const Ref<Event> event);
 	bool deferredCall(const Ref<Event> event);
-	bool tick(unsigned long maxMillis);
+	bool tick(unsigned long maxMillis = Infinite);
 };
