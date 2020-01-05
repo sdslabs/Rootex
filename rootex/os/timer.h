@@ -5,6 +5,7 @@
 #include "common/common.h"
 
 #define NS_TO_MS 1e-6f
+#define MS_TO_S 1e-3f
 
 class Timer
 {
@@ -45,4 +46,5 @@ public:
 
 	void reset();
 	void showTime();
+	void showFPS();
 };
