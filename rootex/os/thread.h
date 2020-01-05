@@ -9,10 +9,10 @@ class ThreadPool;
 class Task
 {
 public:
-	__int32 id;
+	__int32 m_ID;
 	__int32 m_Dependencies;
 	__int32 m_Permisions;
-	Vector<__int32> i_Permissions;
+	Vector<__int32> m_Permissions;
 
 	virtual void execute() = 0;
 	virtual void undo() {}
@@ -30,63 +30,65 @@ protected:
 	void execute() override;
 };
 
-struct workerParameters
+struct WorkerParameters
 {
-	__int32 iThread;
+	__int32 m_Thread;
 	ThreadPool* m_ThreadPool;
 };
 
-struct taskQueue
+struct TaskQueue
 {
 	__int32 m_Jobs;
 	unsigned __int32 m_Write;
 	unsigned __int32 m_Read;
-	Vector<Ref<Task>> jobs;
+	Vector<Ref<Task>> m_QueueJobs;
 };
 
-struct taskComplete
+struct TaskComplete
 {
 	__int32 m_Jobs;
-	Vector<__int32> ids;
+	Vector<__int32> m_IDs;
 };
 
-struct taskReady
+struct TaskReady
 {	
 	__int32 m_Jobs;
 	unsigned __int32 m_Write;
 	unsigned __int32 m_Read;
-	Vector<__int32> ids;
+	Vector<__int32> m_IDs;
 };
 
 struct MasterThread
 {	
-	taskComplete m_TasksComplete;
-	taskReady m_TasksReady;
+	TaskComplete m_TasksComplete;
+	TaskReady m_TasksReady;
 };
 
 class ThreadPool
 {
-public:
 	enum
 	{
-		maxWorkerThreads = 8,
+		MaxWorkerThreads = 8,
 	};
 
-	bool isRunning;
+	bool m_IsRunning;
 	__int32 m_Threads;
-	workerParameters m_WorkerParameters[maxWorkerThreads];
-	HANDLE handles[maxWorkerThreads];
+	WorkerParameters m_WorkerParameters[MaxWorkerThreads];
+	HANDLE m_Handles[MaxWorkerThreads];
 	CONDITION_VARIABLE m_ConsumerVariable;
 	CONDITION_VARIABLE m_ProducerVariable;
 	CRITICAL_SECTION m_CriticalSection;
 
 	__int32 m_TasksFinished;
-	taskQueue m_TaskQueue;
-	taskComplete m_TasksComplete;
+	TaskQueue m_TaskQueue;
+	TaskComplete m_TasksComplete;
 
-	void threadPoolInitialise();
+	friend DWORD WINAPI MainLoop(LPVOID voidParameters);
 
-	void threadPoolSubmitTasks(Vector<Ref<Task>>& tasks);
+public:
+	void initialize();
 
-	void threadPoolShutdown();
+	void submit(Vector<Ref<Task>>& tasks);
+
+	void shutdown();
 };
