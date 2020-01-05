@@ -28,10 +28,10 @@ int main()
 	ju.push_back(rb);
 
 	ThreadPool th;
-	th.threadPoolInitialise();
-	th.threadPoolSubmitTasks(ju);
-	th.threadPoolSubmitTasks(ju);
-	th.threadPoolShutdown();
+	th.initialize();
+	th.submit(ju);
+	th.submit(ju);
+	th.shutdown();
 	
 	LuaInterpreter inter;
 	inter.loadExecuteScript(windowSettings);
