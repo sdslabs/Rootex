@@ -4,11 +4,18 @@
 
 #include "common/common.h"
 
-std::filesystem::path OS::s_AssetsDirectory;
-std::filesystem::path OS::s_EngineDirectory;
-std::filesystem::path OS::s_GameDirectory;
+FilePath OS::s_RootDirectory;
+FilePath OS::s_EngineDirectory;
+FilePath OS::s_GameDirectory;
 
-bool OS::initialize()
+FilePath OS::GetAbsolutePath(String stringPath)
+{
+	FilePath absPath = s_RootDirectory / stringPath;
+
+	return absPath;
+}
+
+bool OS::Initialize()
 {
 	try
 	{
@@ -22,34 +29,34 @@ bool OS::initialize()
 			path = path.parent_path();
 		}
 
+		s_RootDirectory = path;
 		s_GameDirectory = path / GAME_DIRECTORY;
-		s_AssetsDirectory = path / GAME_DIRECTORY / ASSETS_DIRECTORY;
 		s_EngineDirectory = path / ENGINE_DIRECTORY;
 	}
 	catch (std::exception e)
 	{
-		ERR("OS: Failed to initialize OS: " + String(e.what()));
+		ERR("OS: Failed to Initialize OS: " + String(e.what()));
 		return false;
 	}
 
 	return true;
 }
 
-String OS::getBuildDate()
+String OS::GetBuildDate()
 {
 	return String(__DATE__);
 }
 
-String OS::getBuildTime()
+String OS::GetBuildTime()
 {
 	return String(__TIME__);
 }
 
-FileBuffer OS::loadFileContents(DirectoryShortcut directory, String stringPath)
+FileBuffer OS::LoadFileContents(String stringPath)
 {
-	std::filesystem::path path = getAbsolutePath(directory, stringPath);
+	std::filesystem::path path = GetAbsolutePath(stringPath);
 
-	if (!exists(path.generic_string()))
+	if (!Exists(path.generic_string()))
 	{
 		ERR("OS: File IO error: " + path.generic_string() + " does not exist");
 		return FileBuffer();
@@ -76,72 +83,54 @@ FileBuffer OS::loadFileContents(DirectoryShortcut directory, String stringPath)
 	return FileBuffer(buffer);
 }
 
-std::filesystem::path OS::getAbsolutePath(DirectoryShortcut directory, String stringPath)
+bool OS::Exists(String relativePath)
 {
-	std::filesystem::path newPath;
-
-	switch (directory)
-	{
-	case DirectoryShortcut::ASSETS:
-		newPath = s_AssetsDirectory / std::filesystem::path(stringPath);
-		break;
-	case DirectoryShortcut::GAME:
-		newPath = s_GameDirectory / std::filesystem::path(stringPath);
-		break;
-	case DirectoryShortcut::ENGINE:
-		newPath = s_EngineDirectory / std::filesystem::path(stringPath);
-		break;
-	default:
-		ERR("ResourceLoader: Directory type not found for converting path to absolute");
-		break;
-	}
-
-	return newPath;
+	return std::filesystem::exists(OS::GetAbsolutePath(relativePath));
 }
 
-bool OS::exists(String filePath)
-{
-	return std::filesystem::exists(filePath);
-}
-
-FileBuffer::FileBuffer()
-    : m_Buffer()
-{
-}
-
-FileBuffer::FileBuffer(std::vector<char> buffer)
-    : m_Buffer(buffer)
-{
-}
-
-void OS::print(const String& msg)
+void OS::Print(const String& msg)
 {
 	std::cout.clear();
 	std::cout << msg;
 }
 
-void OS::printLine(const String& msg)
+void OS::Print(const float& real)
+{
+	Print(std::to_string(real));
+}
+
+void OS::Print(const int& number)
+{
+	Print(std::to_string(number));
+}
+
+void OS::Print(const unsigned int& number)
+{
+	Print(std::to_string(number));
+}
+
+void OS::PrintLine(const String& msg)
 {
 	std::cout.clear();
 	std::cout << msg << std::endl;
 }
 
-void OS::printWarning(const String& warning)
+void OS::PrintWarning(const String& warning)
 {
 	std::cout.clear();
 	std::cout << "\033[93m" << warning << "\033[0m" << std::endl;
 }
 
-void OS::printError(const String& error)
+void OS::PrintError(const String& error)
 {
 	std::cout.clear();
 	std::cout << "\033[91m" << error << "\033[0m" << std::endl;
 }
 
-void OS::printIf(const bool& expr, const String& error)
+void OS::PrintIf(const bool& expr, const String& error)
 {
 	if (expr)
 	{
-		printError(error);
+		PrintError(error);
 	}
 }

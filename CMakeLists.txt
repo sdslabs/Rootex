@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.12)
 
 # Project metadata
 project(Rootex
@@ -19,3 +19,7 @@ CACHE INTERNAL "")
 
 add_subdirectory(rootex)
 add_subdirectory(game)
+
+set_directory_properties(PROPERTIES 
+    VS_STARTUP_PROJECT Game
+)
