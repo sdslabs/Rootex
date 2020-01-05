@@ -167,7 +167,7 @@ int main()
 		testCubeChild->getComponent<TransformComponent>()->addTransform(Matrix::CreateFromYawPitchRoll(0.1f, 0.0f, 0.0f));
 
 		RenderSystem::GetSingleton()->render(visualGraph.get(), window.get());
-		frameTimer.showTime();
+		frameTimer.showFPS();
 	}
 
 	return ret.value();
