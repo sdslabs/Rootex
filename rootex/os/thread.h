@@ -9,16 +9,10 @@ class ThreadPool;
 class Task
 {
 public:
-	enum
-	{
-		maxPermissions = 8,
-	};
-
 	__int32 id;
 	__int32 m_Dependencies;
 	__int32 m_Permisions;
 	Vector<__int32> i_Permissions;
-	//__int32 permissions[maxPermissions][2];
 
 	virtual void execute() = 0;
 	virtual void undo() {}
@@ -44,12 +38,6 @@ struct workerParameters
 
 struct taskQueue
 {
-	enum
-	{
-		NUM_JOBS_BATCH = 16,
-		BATCH_MODULO = NUM_JOBS_BATCH - 1,
-	};
-
 	__int32 m_Jobs;
 	unsigned __int32 m_Write;
 	unsigned __int32 m_Read;
@@ -58,14 +46,8 @@ struct taskQueue
 
 struct taskComplete
 {
-	enum
-	{
-		MAX_JOBS = taskQueue::NUM_JOBS_BATCH * 2,
-	};
-
 	__int32 m_Jobs;
-	//Vector<__int32> ids;
-	__int32 ids[MAX_JOBS];
+	Vector<__int32> ids;
 };
 
 struct taskReady
@@ -73,8 +55,7 @@ struct taskReady
 	__int32 m_Jobs;
 	unsigned __int32 m_Write;
 	unsigned __int32 m_Read;
-	//Vector<__int32> ids;
-	__int32 ids[taskQueue::NUM_JOBS_BATCH];
+	Vector<__int32> ids;
 };
 
 struct MasterThread

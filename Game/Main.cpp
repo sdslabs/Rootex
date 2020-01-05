@@ -22,7 +22,16 @@ int main()
 
 	Vector<Ref<Task>> ju;
 	Ref<DebugTask> db(new DebugTask());
-	Ref<RenderTask> rb(new RenderTask());	
+	Ref<RenderTask> rb(new RenderTask());
+
+	ju.push_back(db);
+	ju.push_back(rb);
+
+	ThreadPool th;
+	th.threadPoolInitialise();
+	th.threadPoolSubmitTasks(ju);
+	th.threadPoolSubmitTasks(ju);
+	th.threadPoolShutdown();
 	
 	LuaInterpreter inter;
 	inter.loadExecuteScript(windowSettings);
@@ -38,4 +47,8 @@ int main()
 
 	ResourceDataReserve::clear();
 	return ret;
+
+	/*th.threadPoolInitialise();
+	th.threadPoolSubmitTasks(ju);
+	th.threadPoolShutdown();*/
 }

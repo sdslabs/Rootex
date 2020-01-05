@@ -55,10 +55,14 @@ DWORD WINAPI mainLoop(LPVOID voidParameters)
 	{
 		EnterCriticalSection(&m_ThreadPool.m_CriticalSection);
 
-		m_ThreadPool.m_TasksComplete.ids[m_ThreadPool.m_TasksComplete.m_Jobs] = taskId;
-		m_ThreadPool.m_TasksComplete.m_Jobs += increment;
-		m_ThreadPool.m_TasksFinished += increment;
-		increment = 1;
+		/*if (m_ThreadPool.m_TasksComplete.m_Jobs > 0)
+		{
+			m_ThreadPool.m_TasksComplete.ids.push_back(taskId);
+			m_ThreadPool.m_TasksComplete.m_Jobs += increment;
+			m_ThreadPool.m_TasksFinished += increment;
+			increment++;
+			std::cout << increment;
+		}*/
 
 		WakeAllConditionVariable(&m_ThreadPool.m_ProducerVariable);
 
@@ -76,11 +80,12 @@ DWORD WINAPI mainLoop(LPVOID voidParameters)
 		taskId = m_ThreadPool.m_TaskQueue.jobs[m_ThreadPool.m_TaskQueue.m_Read]->id;
 		__int32 m_ReadTemp = m_ThreadPool.m_TaskQueue.m_Read;
 		m_ThreadPool.m_TaskQueue.m_Jobs--;
-		m_ThreadPool.m_TaskQueue.m_Read = m_ThreadPool.m_TaskQueue.m_Read + 1;
-	
+		m_ThreadPool.m_TaskQueue.m_Read++;
+
 		LeaveCriticalSection(&m_ThreadPool.m_CriticalSection);
 
 		m_ThreadPool.m_TaskQueue.jobs[m_ReadTemp]->execute();
+		m_ThreadPool.m_TasksComplete.m_Jobs++;
 	}
 	return 0;
 }
@@ -98,28 +103,28 @@ void ThreadPool::threadPoolSubmitTasks(Vector<Ref<Task>>& tasks)
 	m_TasksFinished = 0;
 
 	{
-		__int32 idIndex = 0;
+		static __int32 idIndex = 0;
 		for (auto i_Job : tasks)
 		{
 			i_Job->m_Dependencies = 0;
 			m_TaskQueue.jobs.push_back(i_Job);
 			m_TaskQueue.jobs[idIndex]->id = idIndex;
 			idIndex++;
-			m_TaskQueue.m_Jobs++;
 		}
 
-		for (__int32 i_Job = 0; i_Job < tasks.size(); i_Job++)
+		/*for (__int32 i_Job = 0; i_Job < tasks.size(); i_Job++)
 		{
 			for (__int32 i_Permission = 0; i_Permission < tasks[i_Job]->m_Permisions; i_Permission++)
 			{
 				tasks[tasks[i_Job]->i_Permissions[i_Permission]]->m_Dependencies++;
 			}
-		}
+		}*/
 	}
 
 	while (isTasksRemaining)
 	{
-		{
+
+		/*{
 			const __int32 nJobs = master_thread.m_TasksComplete.m_Jobs;
 			for (__int32 i_job = 0; i_job < nJobs; i_job++)
 			{
@@ -131,15 +136,15 @@ void ThreadPool::threadPoolSubmitTasks(Vector<Ref<Task>>& tasks)
 				}
 				master_thread.m_TasksComplete.m_Jobs--;
 			}
-		}
+		}*/
 		{
 			__int32 i_Job = 0;
 			while (i_Job < tasks.size())
 			{
 				if (tasks[i_Job]->m_Dependencies == 0)
 				{
-					master_thread.m_TasksReady.ids[master_thread.m_TasksReady.m_Write] = tasks[i_Job]->id;
-					master_thread.m_TasksReady.m_Write = (master_thread.m_TasksReady.m_Write + 1);
+					master_thread.m_TasksReady.ids.push_back(tasks[i_Job]->id);
+					master_thread.m_TasksReady.m_Write++;
 					master_thread.m_TasksReady.m_Jobs++;
 					tasks[i_Job]->m_Dependencies--;
 				}
@@ -149,18 +154,18 @@ void ThreadPool::threadPoolSubmitTasks(Vector<Ref<Task>>& tasks)
 
 		EnterCriticalSection(&m_CriticalSection);
 
-	/*	{
+		{
 			__int32 nJobs = master_thread.m_TasksReady.m_Jobs;
-			m_TaskQueue.m_Write--;
-				for (__int32 i_Job = 0; i_Job < nJobs; i_Job++)
+			for (__int32 i_Job = 0; i_Job < nJobs; i_Job++)
 			{
 				m_TaskQueue.jobs[m_TaskQueue.m_Write]->id = master_thread.m_TasksReady.ids[master_thread.m_TasksReady.m_Read];
-				m_TaskQueue.m_Write = (m_TaskQueue.m_Write + 1);
+				m_TaskQueue.m_Write++;
 				m_TaskQueue.m_Jobs++;
-				master_thread.m_TasksReady.m_Read = (master_thread.m_TasksReady.m_Read + 1);
+				m_TasksFinished++;
+				master_thread.m_TasksReady.m_Read++;
 				master_thread.m_TasksReady.m_Jobs--;
-			} 
-		} */
+			}
+		}
 
 		WakeAllConditionVariable(&m_ConsumerVariable);
 
@@ -169,7 +174,7 @@ void ThreadPool::threadPoolSubmitTasks(Vector<Ref<Task>>& tasks)
 			SleepConditionVariableCS(&m_ProducerVariable, &m_CriticalSection, INFINITE);
 		}
 
-		{
+		/*{
 			const __int32 nJobs = m_TasksComplete.m_Jobs;
 			for (__int32 i_Job = 0; i_Job < nJobs; i_Job++)
 			{
@@ -178,7 +183,7 @@ void ThreadPool::threadPoolSubmitTasks(Vector<Ref<Task>>& tasks)
 				master_thread.m_TasksComplete.m_Jobs++;
 				m_TasksComplete.m_Jobs--;
 			}
-		}
+		}*/
 
 		isTasksRemaining = m_TasksFinished < tasks.size();
 
