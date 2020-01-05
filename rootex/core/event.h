@@ -1,3 +1,4 @@
+#pragma once
 
 #include "common/common.h"
 typedef unsigned long EventType;
