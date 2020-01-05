@@ -25,6 +25,7 @@
 #include "main/window.h"
 
 #include "os/os.h"
+#include "os/thread.h"
 #include "os/timer.h"
 
 #include "script/interpreter.h"
@@ -52,6 +53,19 @@ int main()
 
 	LuaTextResourceFile* windowSettings = ResourceLoader::CreateLuaTextResourceFile("game/assets/config/window.lua");
 	OS::PrintLine(windowSettings->getString());
+
+	Vector<Ref<Task>> ju;
+	Ref<DebugTask> db(new DebugTask());
+	Ref<RenderTask> rb(new RenderTask());
+
+	ju.push_back(db);
+	ju.push_back(rb);
+
+	ThreadPool th;
+	th.initialize();
+	th.submit(ju);
+	th.submit(ju);
+	th.shutdown();
 
 	LuaInterpreter inter;
 	inter.loadExecuteScript(windowSettings);
