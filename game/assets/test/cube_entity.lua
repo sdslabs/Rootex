@@ -6,6 +6,7 @@ Entity = {
             m_Scale = { x = 1, y = 1, z = 1 }
         },
         VisualComponent = {
+            renderPass = 0,
             resFile = "game/assets/test/cube.obj"
         }
     }

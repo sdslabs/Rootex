@@ -8,8 +8,10 @@
 
 Component* VisualComponent::Create(const LuaVariable& componentData)
 {
+	RenderPass renderPass = componentData["renderPass"].isNil() ? RenderPass::Global : (RenderPass)(int)componentData["renderPass"];
+
 	VisualComponent* visualComponent = new VisualComponent(
-	    RenderPass::Global,
+	    renderPass,
 	    Material::CreateDefault(),
 	    ResourceLoader::CreateVisualModelResourceFile(componentData["resFile"].tostring()));
 
