@@ -8,21 +8,26 @@
 
 Component* VisualComponent::Create(const LuaVariable& componentData)
 {
+	ImageResourceFile* imageRes = ResourceLoader::CreateImageResourceFile(componentData["texturePath"].tostring());
+	Ref<Texture> texture(new Texture(imageRes));
+
 	VisualComponent* visualComponent = new VisualComponent(
 	    RenderPass::Global,
 	    Material::CreateDefault(),
+		texture,
 	    ResourceLoader::CreateVisualModelResourceFile(componentData["resFile"].tostring()));
 
 	return visualComponent;
 }
 
-VisualComponent::VisualComponent(const RenderPass& renderPassSetting, Ref<Material> material, VisualModelResourceFile* resFile)
+VisualComponent::VisualComponent(const RenderPass& renderPassSetting, Ref<Material> material, Ref<Texture> texture, VisualModelResourceFile* resFile)
     : m_IsVisible(true)
 {
 	m_Attributes.m_TransformComponent = nullptr;
 	m_Attributes.m_RenderPassSetting = renderPassSetting;
 	m_Attributes.m_Material = material;
 	m_Attributes.m_VisualModelResourceFile = resFile;
+	m_Attributes.m_Texture = texture;
 	m_Parent = nullptr;
 }
 
@@ -78,7 +83,7 @@ bool VisualComponent::isVisible(VisualComponentGraph* graph) const
 
 void VisualComponent::render(VisualComponentGraph* graph)
 {
-	graph->getRenderer()->draw(m_Attributes.getVertexBuffer(), m_Attributes.getIndexBuffer(), m_Attributes.getMaterial());
+	graph->getRenderer()->draw(m_Attributes.getVertexBuffer(), m_Attributes.getIndexBuffer(), m_Attributes.getMaterial(), m_Attributes.getTexture());
 }
 
 void VisualComponent::renderChildren(VisualComponentGraph* graph)

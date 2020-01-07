@@ -6,6 +6,7 @@
 #include "renderer/index_buffer.h"
 #include "renderer/material.h"
 #include "renderer/shader.h"
+#include "renderer/texture.h"
 #include "renderer/vertex_buffer.h"
 
 #include "components/transform_component.h"
@@ -31,6 +32,7 @@ protected:
 	RenderPass m_RenderPassSetting;
 	VisualModelResourceFile* m_VisualModelResourceFile;
 	Ref<Material> m_Material;
+	Ref<Texture> m_Texture;
 
 public:
 	VisualComponentAttributes();
@@ -42,6 +44,7 @@ public:
 	const Matrix& getInverseTransform() const { return m_TransformComponent->getTransform().Invert(); }
 	const RenderPass& getRenderPass() const { return m_RenderPassSetting; }
 	Material* getMaterial() { return m_Material.get(); }
+	Texture* getTexture() { return m_Texture.get(); }
 	VisualModelResourceFile* getModelResourceFile() const { return m_VisualModelResourceFile; }
 };
 
@@ -60,7 +63,7 @@ protected:
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::Visual;
 	
-	VisualComponent(const RenderPass& renderPassSetting, Ref<Material> material, VisualModelResourceFile* resFile);
+	VisualComponent(const RenderPass& renderPassSetting, Ref<Material> material, Ref<Texture> texture, VisualModelResourceFile* resFile);
 	VisualComponent(VisualComponent&) = delete;
 	virtual ~VisualComponent();
 

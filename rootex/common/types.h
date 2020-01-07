@@ -8,6 +8,7 @@ template <class T>
 using Ref = std::shared_ptr<T>;
 template <class T>
 using Weak = std::weak_ptr<T>;
+#include <wrl.h> // For using Microsoft::WRL::ComPtr<T>
 
 // Containers
 #include <string>
@@ -30,12 +31,12 @@ using FilePath = std::filesystem::path;
 
 // Math Containers
 #include <d3d11.h>
-#include <DirectXColors.h>
-#include "vendor/SimpleMath/SimpleMath.h"
+#include "vendor/DirectXTK/Inc/SimpleMath.h"
 typedef DirectX::SimpleMath::Matrix Matrix;
 typedef DirectX::SimpleMath::Vector2 Vector2;
 typedef DirectX::SimpleMath::Vector3 Vector3;
 typedef DirectX::SimpleMath::Vector4 Vector4;
 typedef DirectX::SimpleMath::Quaternion Quaternion;
 typedef DirectX::SimpleMath::Color Color;
+#include <DirectXColors.h>
 namespace ColorPresets = DirectX::Colors;

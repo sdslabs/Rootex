@@ -1,9 +1,13 @@
 #pragma once
 
+#include "common/common.h"
+
 #include <d3d11.h>
 
 #include <d3dcompiler.h>
 #include <string>
+
+#include "resource_file.h"
 
 class RenderingDevice
 {
@@ -33,7 +37,6 @@ public:
 
 	void initialize(HWND hWnd, int width, int height);
 
-	ID3DBlob* createBlob(LPCWSTR path);
 	void enableSkyDepthStencilState();
 	void disableSkyDepthStencilState();
 	ID3D11Buffer* initVertexBuffer(D3D11_BUFFER_DESC* vbd, D3D11_SUBRESOURCE_DATA* vsd, const UINT* stride, const UINT* offset);
@@ -46,10 +49,16 @@ public:
 	ID3D11VertexShader* initVertexShader(ID3DBlob* blob);
 	void initVertexLayout(ID3DBlob* vertexShaderBlob, const D3D11_INPUT_ELEMENT_DESC* ied, UINT size);
 	
+	ID3DBlob* createBlob(LPCWSTR path);
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createTexture(ImageResourceFile* imageRes);
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> createSamplerState();
+
 	void bind(ID3D11Buffer* vertexBuffer, const unsigned int* stride, const unsigned int* offset);
 	void bind(ID3D11Buffer* indexBuffer, DXGI_FORMAT format);
+	void bind(ID3D11ShaderResourceView* texture);
 	void bind(ID3D11VertexShader* vertexShader);
 	void bind(ID3D11PixelShader* pixelShader);
+	void bind(ID3D11SamplerState* samplerState);
 
 	void unbindShaderResources();
 

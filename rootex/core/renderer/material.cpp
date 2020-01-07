@@ -1,6 +1,7 @@
 #include "material.h"
 
 #include "shader_library.h"
+#include "texture.h"
 
 Ref<CubeMaterial> Material::CreateDefault()
 {

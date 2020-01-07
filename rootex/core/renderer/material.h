@@ -3,6 +3,7 @@
 #include "constant_buffer.h"
 #include "shader.h"
 
+class Texture;
 class CubeMaterial;
 
 class Material
@@ -21,6 +22,7 @@ public:
 
 	virtual void bind() const;
 
+	void bindShaderTexture(const Texture* texture) const { m_Shader->bindTexture(texture); }
 	void setShaderMatrix(Shader::ConstantBufferType matrixType, const Matrix& matrix) { m_Shader->setConstantBuffer(matrixType, matrix); }
 };
 
