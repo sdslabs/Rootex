@@ -1,16 +1,25 @@
 #include "shader.h"
 
 #include "utils.h"
+#include "texture.h"
 
 Shader::Shader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat)
     : m_VertexPath(vertexPath)
     , m_PixelPath(pixelPath)
 {
-	ID3DBlob* vertexShaderBlob = RenderingDevice::GetSingleton()->createBlob(vertexPath);
-	m_VertexShader = RenderingDevice::GetSingleton()->initVertexShader(vertexShaderBlob);
-	
-	ID3DBlob* pixelShaderBlob = RenderingDevice::GetSingleton()->createBlob(pixelPath);
-	m_PixelShader = RenderingDevice::GetSingleton()->initPixelShader(pixelShaderBlob);
+	Microsoft::WRL::ComPtr<ID3DBlob> vertexShaderBlob = RenderingDevice::GetSingleton()->createBlob(vertexPath);
+	if (!vertexShaderBlob)
+	{
+		ERR("Vertex Shader not found");
+	}
+	m_VertexShader = RenderingDevice::GetSingleton()->initVertexShader(vertexShaderBlob.Get());
+
+	Microsoft::WRL::ComPtr<ID3DBlob> pixelShaderBlob = RenderingDevice::GetSingleton()->createBlob(pixelPath);
+	if (!pixelShaderBlob)
+	{
+		ERR("Pixel Shader not found");
+	}
+	m_PixelShader = RenderingDevice::GetSingleton()->initPixelShader(pixelShaderBlob.Get());
 
 	const Vector<VertexBufferElement>& elements = vertexBufferFormat.getElements();
 
@@ -26,29 +35,32 @@ Shader::Shader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const Buffer
 	}
 
 	RenderingDevice::GetSingleton()->initVertexLayout(
-	    vertexShaderBlob, 
-		vertexDescArray.data(), 
-		vertexDescArray.size());
-
-	SafeRelease(&pixelShaderBlob);
-	SafeRelease(&vertexShaderBlob);
+	    vertexShaderBlob.Get(),
+	    vertexDescArray.data(),
+	    vertexDescArray.size());
+	
+	m_SamplerState = RenderingDevice::GetSingleton()->createSamplerState();
 }
 
 Shader::~Shader()
 {
-	SafeRelease(&m_VertexShader);
-	SafeRelease(&m_PixelShader);
 }
 
 void Shader::bind() const
 {
-	RenderingDevice::GetSingleton()->bind(m_VertexShader);
-	RenderingDevice::GetSingleton()->bind(m_PixelShader);
+	RenderingDevice::GetSingleton()->bind(m_VertexShader.Get());
+	RenderingDevice::GetSingleton()->bind(m_PixelShader.Get());
+	RenderingDevice::GetSingleton()->bind(m_SamplerState.Get());
 }
 
 void Shader::unbind() const
 {
 	RenderingDevice::GetSingleton()->unbindShaderResources();
+}
+
+void Shader::bindTexture(const Texture* texture)
+{
+	RenderingDevice::GetSingleton()->bind(texture->getTextureResourceView());
 }
 
 void Shader::setConstantBuffer(const ConstantBufferType& type, const Matrix& constantBuffer)

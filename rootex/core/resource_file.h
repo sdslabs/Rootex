@@ -14,7 +14,8 @@ public:
 		LUA,
 		WAV,
 		TXT,
-		OBJ
+		OBJ,
+		IMAGE
 	};
 
 protected:
@@ -110,4 +111,16 @@ public:
 
 	const VertexBuffer* getVertexBuffer() const { return m_VertexBuffer.get(); }
 	const IndexBuffer* getIndexBuffer() const { return m_IndexBuffer.get(); }
+};
+
+class ImageResourceFile : public ResourceFile
+{
+	explicit ImageResourceFile(ResourceData* resData);
+	~ImageResourceFile();
+
+	friend class ResourceLoader;
+
+public:
+	explicit ImageResourceFile(ImageResourceFile&) = delete;
+	explicit ImageResourceFile(ImageResourceFile&&) = delete;
 };

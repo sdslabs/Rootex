@@ -86,7 +86,8 @@ int main()
 	    windowLua["title"]));
 	BufferFormat bufferFormat;
 	bufferFormat.push(VertexBufferElement::Type::POSITION, "POSITION");
-	Shader* shader = ShaderLibrary::MakeShader("Default", L"VertexShader.cso", L"PixelShader.cso", bufferFormat);
+	bufferFormat.push(VertexBufferElement::Type::TEXCOORD, "TEXCOORD");
+	Shader* shader = ShaderLibrary::MakeShader("Default", L"vertex_shader.cso", L"pixel_shader.cso", bufferFormat);
 
 	Ref<VisualComponentGraph> visualGraph(new VisualComponentGraph(windowLua["deltaX"], windowLua["deltaY"]));
 	Ref<RenderSystem> renderSystem(new RenderSystem());
@@ -94,11 +95,11 @@ int main()
 	LuaTextResourceFile* testCubeFile = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/cube_entity.lua");
 	LuaTextResourceFile* testCubeChildFile = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/cube_entity.lua");
 	Ref<Entity> testCube = EntityFactory::GetSingleton()->createEntity(testCubeFile);
-	Ref<Entity> testCubeChild = EntityFactory::GetSingleton()->createEntity(testCubeChildFile);
-	testCubeChild->getComponent<VisualComponent>()->setTransform(Matrix::CreateTranslation({ 0.0f, 3.0f, 0.0f }));
+	//Ref<Entity> testCubeChild = EntityFactory::GetSingleton()->createEntity(testCubeChildFile);
+	//testCubeChild->getComponent<VisualComponent>()->setTransform(Matrix::CreateTranslation({ 0.0f, 3.0f, 0.0f }));
 
 	visualGraph->addChild(testCube->getComponent<VisualComponent>());
-	testCube->getComponent<VisualComponent>()->addChild(testCubeChild->getComponent<VisualComponent>());
+	//testCube->getComponent<VisualComponent>()->addChild(testCubeChild->getComponent<VisualComponent>());
 
 	//TEMP WORKAROUND
 	//EntityID id = testEntity->getID();
@@ -184,8 +185,8 @@ int main()
 		x = l;
 		y = u;
 
-		testCube->getComponent<TransformComponent>()->setTransform(Matrix::CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix::CreateTranslation(x, y, 0.0f));
-		testCubeChild->getComponent<TransformComponent>()->addTransform(Matrix::CreateFromYawPitchRoll(0.1f, 0.0f, 0.0f));
+		testCube->getComponent<TransformComponent>()->setTransform(Matrix::CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix::CreateTranslation(0, y, x));
+		//testCubeChild->getComponent<TransformComponent>()->addTransform(Matrix::CreateFromYawPitchRoll(0.1f, 0.0f, 0.0f));
 
 		RenderSystem::GetSingleton()->render(visualGraph.get(), window.get());
 

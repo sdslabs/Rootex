@@ -91,3 +91,13 @@ VisualModelResourceFile::VisualModelResourceFile(Ptr<VertexBuffer> vertexBuffer,
 VisualModelResourceFile::~VisualModelResourceFile()
 {
 }
+
+ImageResourceFile::ImageResourceFile(ResourceData* resData)
+    : ResourceFile(Type::IMAGE, resData)
+{
+    // Height and Width are set by ResourceLoader
+}
+
+ImageResourceFile::~ImageResourceFile()
+{
+}

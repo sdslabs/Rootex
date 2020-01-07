@@ -5,13 +5,14 @@
 #include "resource_loader.h"
 
 RootVisualComponent::RootVisualComponent()
-    : VisualComponent(RenderPass::Global, Material::CreateDefault(), nullptr)
+    : VisualComponent(RenderPass::Global, Material::CreateDefault(), nullptr, nullptr)
 {
 	m_Children.reserve((size_t)RenderPass::End);
 
 	m_GlobalGroup.reset(new VisualComponent(
 	    RenderPass::Global,
-	    Material::CreateDefault(), 
+	    Material::CreateDefault(),
+		nullptr,
 		nullptr));
 	m_GlobalGroup->setVisibility(false);
 	m_Children.push_back(m_GlobalGroup);
@@ -19,6 +20,7 @@ RootVisualComponent::RootVisualComponent()
 	m_StaticGroup.reset(new VisualComponent(
 	    RenderPass::Static, 
 		Material::CreateDefault(), 
+		nullptr,
 		nullptr));
 	m_StaticGroup->setVisibility(false);
 	m_Children.push_back(m_StaticGroup);
@@ -26,6 +28,7 @@ RootVisualComponent::RootVisualComponent()
 	m_EntityGroup.reset(new VisualComponent(
 	    RenderPass::Dynamic, 
 		Material::CreateDefault(), 
+		nullptr,
 		nullptr));
 	m_EntityGroup->setVisibility(false);
 	m_Children.push_back(m_EntityGroup);
@@ -33,6 +36,7 @@ RootVisualComponent::RootVisualComponent()
 	m_SkyGroup.reset(new VisualComponent(
 	    RenderPass::Background, 
 	    Material::CreateDefault(),
+		nullptr,
 	    nullptr));
 	m_SkyGroup->setVisibility(false);
 	m_Children.push_back(m_SkyGroup);
@@ -40,6 +44,7 @@ RootVisualComponent::RootVisualComponent()
 	m_EditorGroup.reset(new VisualComponent(
 	    RenderPass::Editor, 
 		Material::CreateDefault(),
+		nullptr,
 	    nullptr));
 	m_EditorGroup->setVisibility(false);
 	m_Children.push_back(m_EditorGroup);

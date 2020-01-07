@@ -9,7 +9,7 @@
 #define ENGINE_DIRECTORY "rootex"
 #define GAME_DIRECTORY "game"
 
-typedef std::vector<char> FileBuffer;
+typedef Vector<char> FileBuffer;
 
 class OS
 {

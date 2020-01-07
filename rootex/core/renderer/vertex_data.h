@@ -4,11 +4,7 @@
 
 struct VertexData
 {
-	struct
-	{
-		float x, y, z;
-	} pos;
+	Vector3 m_Position;
+	//Vector3 m_Normal;
+	Vector2 m_TextureCoord;
 };
-
-Vector<VertexData> MakeTriangleVertices();
-Vector<unsigned short> MakeTriangleIndices();

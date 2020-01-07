@@ -1,0 +1,1 @@
+This copy of DirectXTK was picked up for Rootex Engine from here (https://github.com/microsoft/DirectXTK) at commit eb4f3c0222a35f24058b829d0c4e46502c3dd681.
