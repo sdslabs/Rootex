@@ -55,10 +55,11 @@ public:
 
 	void bind(ID3D11Buffer* vertexBuffer, const unsigned int* stride, const unsigned int* offset);
 	void bind(ID3D11Buffer* indexBuffer, DXGI_FORMAT format);
-	void bind(ID3D11ShaderResourceView* texture);
 	void bind(ID3D11VertexShader* vertexShader);
 	void bind(ID3D11PixelShader* pixelShader);
-	void bind(ID3D11SamplerState* samplerState);
+	
+	void setInPixelShader(unsigned int slot, unsigned int number, ID3D11ShaderResourceView* texture);
+	void setInPixelShader(ID3D11SamplerState* samplerState);
 
 	void unbindShaderResources();
 

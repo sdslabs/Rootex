@@ -4,35 +4,31 @@
 #include "shader.h"
 
 class Texture;
-class CubeMaterial;
 
 class Material
 {
 protected:
 	Shader* m_Shader;
 
-public:
-	static Ref<CubeMaterial> CreateDefault();
+	Material(Shader* shader);
 
-	Material(Shader* shader)
-	    : m_Shader(shader)
-	{
-	}
+public:
+	Material();
 	virtual ~Material() = default;
 
 	virtual void bind() const;
 
-	void bindShaderTexture(const Texture* texture) const { m_Shader->bindTexture(texture); }
-	void setShaderMatrix(Shader::ConstantBufferType matrixType, const Matrix& matrix) { m_Shader->setConstantBuffer(matrixType, matrix); }
+	void setShaderConstantBuffer(Shader::ConstantBufferType matrixType, const Matrix& matrix) { m_Shader->set(matrixType, matrix); }
 };
 
-class CubeMaterial : public Material
+class DiffuseMaterial : public Material
 {
-	PSConstantBuffer m_ConstantBufferColors;
-
+	DiffuseShader* m_DiffuseShader;
+	Ref<Texture> m_DiffuseTexture;
+	
 public:
-	CubeMaterial();
-	~CubeMaterial() = default;
+	DiffuseMaterial(Ref<Texture> diffuseTexture);
+	~DiffuseMaterial() = default;
 
 	void bind() const override;
 };

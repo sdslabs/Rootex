@@ -27,11 +27,11 @@ file(GLOB ShaderFiles
 )
 
 file(GLOB VertexShaderFiles
-    ./core/renderer/shaders/vertex_shader.hlsl
+    ./core/renderer/shaders/*vertex_shader.hlsl
 )
 
 file(GLOB PixelShaderFiles
-./core/renderer/shaders/pixel_shader.hlsl
+    ./core/renderer/shaders/*pixel_shader.hlsl
 )
 
 set(ROOTEX_SOURCES
