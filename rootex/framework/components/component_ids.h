@@ -2,8 +2,9 @@
 
 enum class ComponentIDs : unsigned int
 {
-	Test,
-	Debug,
-	Visual,
-	Transform
+	TestComponent,
+	DebugComponent,
+	VisualComponent,
+	DiffuseVisualComponent,
+	TransformComponent
 };

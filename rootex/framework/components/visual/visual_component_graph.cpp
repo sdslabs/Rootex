@@ -16,9 +16,6 @@ void VisualComponentGraph::render()
 {
 	if (m_Root && m_Camera)
 	{
-		m_Root->getAttributes()->getMaterial()->setShaderMatrix(Shader::ConstantBufferType::View, m_Camera->getView());
-		m_Root->getAttributes()->getMaterial()->setShaderMatrix(Shader::ConstantBufferType::Projection, m_Camera->getProjection());
-
 		if (m_Root->preRender(this))
 		{
 			if (m_Root->isVisible(this))

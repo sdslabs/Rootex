@@ -9,7 +9,7 @@ class DebugComponent : public Component
 	friend class EntityFactory;
 
 public:
-	static const ComponentID s_ID = (ComponentID)ComponentIDs::Debug;
+	static const ComponentID s_ID = (ComponentID)ComponentIDs::DebugComponent;
 
 	ComponentID getComponentID() const { return s_ID; }
 };

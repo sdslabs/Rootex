@@ -5,9 +5,20 @@
 
 class ShaderLibrary
 {
-	static HashMap<String, Ptr<Shader>> s_Shaders;
+	enum class ShaderType
+	{
+		Default,
+		Diffuse
+	};
+
+private:
+	static HashMap<ShaderType, Ptr<Shader>> s_Shaders;
+
+	static Shader* MakeShader(ShaderType shaderType, const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat);
 
 public:
-	static Shader* MakeShader(const String& name, const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat);
-	static Shader* GetShader(const String& name);
+	static void MakeShaders();
+
+	static Shader* GetDefaultShader();
+	static DiffuseShader* GetDiffuseShader();
 };

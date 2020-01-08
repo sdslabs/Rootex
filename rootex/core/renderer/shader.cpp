@@ -38,8 +38,6 @@ Shader::Shader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const Buffer
 	    vertexShaderBlob.Get(),
 	    vertexDescArray.data(),
 	    vertexDescArray.size());
-	
-	m_SamplerState = RenderingDevice::GetSingleton()->createSamplerState();
 }
 
 Shader::~Shader()
@@ -50,7 +48,6 @@ void Shader::bind() const
 {
 	RenderingDevice::GetSingleton()->bind(m_VertexShader.Get());
 	RenderingDevice::GetSingleton()->bind(m_PixelShader.Get());
-	RenderingDevice::GetSingleton()->bind(m_SamplerState.Get());
 }
 
 void Shader::unbind() const
@@ -58,12 +55,7 @@ void Shader::unbind() const
 	RenderingDevice::GetSingleton()->unbindShaderResources();
 }
 
-void Shader::bindTexture(const Texture* texture)
-{
-	RenderingDevice::GetSingleton()->bind(texture->getTextureResourceView());
-}
-
-void Shader::setConstantBuffer(const ConstantBufferType& type, const Matrix& constantBuffer)
+void Shader::set(const ConstantBufferType& type, const Matrix& constantBuffer)
 {
 	D3D11_BUFFER_DESC cbd = { 0 };
 	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -91,7 +83,7 @@ void Shader::setConstantBuffer(const ConstantBufferType& type, const Matrix& con
 	}
 }
 
-void Shader::setConstantBuffer(const PSConstantBuffer& constantBuffer)
+void Shader::set(const PSConstantBuffer& constantBuffer)
 {
 	D3D11_BUFFER_DESC cbd = { 0 };
 	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -104,4 +96,21 @@ void Shader::setConstantBuffer(const PSConstantBuffer& constantBuffer)
 	csd.pSysMem = &constantBuffer;
 
 	RenderingDevice::GetSingleton()->initPSConstantBuffer(&cbd, &csd);
+}
+
+DiffuseShader::DiffuseShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat)
+    : Shader(vertexPath, pixelPath, vertexBufferFormat)
+{
+	m_SamplerState = RenderingDevice::GetSingleton()->createSamplerState();
+}
+
+void DiffuseShader::set(const Texture* texture)
+{
+	RenderingDevice::GetSingleton()->setInPixelShader(0, 1, texture->getTextureResourceView());
+}
+
+void DiffuseShader::bind() const
+{
+	Shader::bind();
+	RenderingDevice::GetSingleton()->setInPixelShader(m_SamplerState.Get());
 }

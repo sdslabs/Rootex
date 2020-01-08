@@ -288,11 +288,6 @@ void RenderingDevice::bind(ID3D11Buffer* indexBuffer, DXGI_FORMAT format)
 	m_Context->IASetIndexBuffer(indexBuffer, format, 0u);
 }
 
-void RenderingDevice::bind(ID3D11ShaderResourceView* texture)
-{
-	m_Context->PSSetShaderResources(0, 1, &texture);
-}
-
 void RenderingDevice::bind(ID3D11VertexShader* vertexShader)
 {
 	m_Context->VSSetShader(vertexShader, nullptr, 0u);
@@ -303,7 +298,12 @@ void RenderingDevice::bind(ID3D11PixelShader* pixelShader)
 	m_Context->PSSetShader(pixelShader, nullptr, 0u);
 }
 
-void RenderingDevice::bind(ID3D11SamplerState* samplerState)
+void RenderingDevice::setInPixelShader(unsigned int slot, unsigned int number, ID3D11ShaderResourceView* texture)
+{
+	m_Context->PSSetShaderResources(slot, number, &texture);
+}
+
+void RenderingDevice::setInPixelShader(ID3D11SamplerState* samplerState)
 {
 	m_Context->PSSetSamplers(0, 1, &samplerState);
 }

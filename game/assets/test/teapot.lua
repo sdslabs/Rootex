@@ -6,7 +6,7 @@ Entity = {
             m_Scale = { x = 1, y = 1, z = 1 }
         },
         VisualComponent = {
-            resFile = "game/assets/test/hello_teapot.obj",
+            resFile = "game/assets/test/suzanne.obj",
             texturePath = "game/assets/test/yellow.png"
         }
     }
