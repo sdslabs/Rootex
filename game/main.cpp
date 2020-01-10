@@ -16,6 +16,7 @@
 #include "core/event_manager.h"
 
 #include "framework/components/visual/visual_component.h"
+#include "framework/components/visual/diffuse_visual_component.h"
 #include "framework/components/visual/visual_component_graph.h"
 #include "framework/components/test_component.h"
 #include "framework/entity_factory.h"
@@ -96,12 +97,12 @@ int main()
 	Ref<Entity> grass = EntityFactory::GetSingleton()->createEntity(grassEntity);
 	grass->getComponent<TransformComponent>()->addTransform(Matrix::CreateScale(5.0f));
 
-	visualGraph->addChild(teapot->getComponent<VisualComponent>());
+	visualGraph->addChild(teapot->getComponent<DiffuseVisualComponent>());
 	visualGraph->addChild(grass->getComponent<VisualComponent>());
 
 	std::optional<int> ret = {};
 	FrameTimer frameTimer;
-	LoggingScopeTimer gameScopedLogger("Game");
+	LoggingScopeTimer gameScopedLogger("GameTime");
 	while (true)
 	{
 		frameTimer.reset();
