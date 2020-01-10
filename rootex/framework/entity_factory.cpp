@@ -8,6 +8,7 @@
 #include "components/test_component.h"
 #include "components/transform_component.h"
 #include "components/visual/visual_component.h"
+#include "components/visual/diffuse_visual_component.h"
 
 EntityID EntityFactory::s_CurrentID = 1;
 
@@ -28,6 +29,7 @@ EntityFactory::EntityFactory()
 	m_ComponentCreators["DebugComponent"] = DebugComponent::Create;
 	m_ComponentCreators["VisualComponent"] = VisualComponent::Create;
 	m_ComponentCreators["TransformComponent"] = TransformComponent::Create;
+	m_ComponentCreators["DiffuseVisualComponent"] = DiffuseVisualComponent::Create;
 }
 
 Ref<Component> EntityFactory::createComponent(const String& name, const LuaVariable& componentData)

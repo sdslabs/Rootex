@@ -1,13 +1,15 @@
 #pragma once
 
 #include "visual_component.h"
-#include "renderer/texture.h"
+#include "renderer/material.h"
 
 class DiffuseVisualComponent : public VisualComponent
 {
 	static Component* Create(const LuaVariable& componentData);
 
-	DiffuseVisualComponent();
+	Ref<DiffuseMaterial> m_DiffuseMaterial;
+
+	DiffuseVisualComponent(RenderPass renderPass, Ref<DiffuseMaterial> material, VisualModelResourceFile* resF);
 	virtual ~DiffuseVisualComponent();
 
 	friend class EntityFactory;
