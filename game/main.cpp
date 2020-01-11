@@ -92,14 +92,10 @@ int main()
 	Ref<RenderSystem> renderSystem(new RenderSystem());
 	
 	LuaTextResourceFile* teapotEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/teapot.lua");
-	LuaTextResourceFile* grassEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/grass.lua");
 	Ref<Entity> teapot = EntityFactory::GetSingleton()->createEntity(teapotEntity);
-	Ref<Entity> grass = EntityFactory::GetSingleton()->createEntity(grassEntity);
-	grass->getComponent<TransformComponent>()->addTransform(Matrix::CreateScale(5.0f));
-
+	
 	visualGraph->addChild(teapot->getComponent<DiffuseVisualComponent>());
-	visualGraph->addChild(grass->getComponent<VisualComponent>());
-
+	
 	std::optional<int> ret = {};
 	FrameTimer frameTimer;
 	LoggingScopeTimer gameScopedLogger("GameTime");
@@ -170,7 +166,6 @@ int main()
 		y = u;
 
 		teapot->getComponent<TransformComponent>()->setTransform(Matrix::CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix::CreateTranslation(0, y, 0.0f) * Matrix::CreateScale(x));
-		grass->getComponent<TransformComponent>()->addTransform(Matrix::CreateFromYawPitchRoll(0.1f, 0.0f, 0.0f));
 
 		RenderSystem::GetSingleton()->render(visualGraph.get(), window.get());
 
