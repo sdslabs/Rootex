@@ -21,14 +21,18 @@ struct VertexInputType
 
 struct PixelInputType
 {
-    float4 position : SV_POSITION;
+    float4 screenPosition : SV_POSITION;
+    matrix M : MATRIX;
+    float4 originalPosition : POSITION;
     float2 tex : TEXCOORD0;
 };
 
 PixelInputType main(VertexInputType input)
 {
     PixelInputType output;
-    output.position = mul(mul(P, mul(V, M)), float4(input.position));
+    output.screenPosition = mul(mul(P, mul(V, M)), input.position);
+    output.M = M;
+    output.originalPosition = input.position;
     output.tex = input.tex;
     
     return output;

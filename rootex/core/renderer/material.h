@@ -25,7 +25,8 @@ class DiffuseMaterial : public Material
 {
 	DiffuseShader* m_DiffuseShader;
 	Ref<Texture> m_DiffuseTexture;
-	
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_SamplerState;
+
 public:
 	DiffuseMaterial(Ref<Texture> diffuseTexture);
 	~DiffuseMaterial() = default;

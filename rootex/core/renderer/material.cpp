@@ -23,6 +23,7 @@ DiffuseMaterial::DiffuseMaterial(Ref<Texture> diffuseTexture)
     , m_DiffuseTexture(diffuseTexture)
     , m_DiffuseShader(reinterpret_cast<DiffuseShader*>(m_Shader))
 {
+	m_SamplerState = RenderingDevice::GetSingleton()->createSamplerState();
 }
 
 void DiffuseMaterial::bind() const
