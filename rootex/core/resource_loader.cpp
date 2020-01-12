@@ -1,12 +1,15 @@
 #include "resource_loader.h"
 
+#include <d3d11.h>
+
 #include "common/common.h"
 
 #include "core/audio/audio_system.h"
+#include "core/renderer/vertex_data.h"
 #include "core/renderer/vertex_buffer.h"
 #include "core/renderer/index_buffer.h"
+
 #include "vendor/OBJLoader/Source/OBJ_Loader.h"
-#include "core/renderer/vertex_data.h"
 
 HashMap<Ptr<ResourceData>, Ptr<ResourceFile>> ResourceLoader::s_ResourcesDataFiles;
 
@@ -29,11 +32,11 @@ TextResourceFile* ResourceLoader::CreateTextResourceFile(String path)
 	// File not found in cache, load it only once
 	FileBuffer& buffer = OS::LoadFileContents(path);
 	ResourceData* resData = new ResourceData(path, buffer);
-	TextResourceFile* resFile = new TextResourceFile(ResourceFile::Type::TXT, resData);
+	TextResourceFile* textRes = new TextResourceFile(ResourceFile::Type::TXT, resData);
 
-	s_ResourcesDataFiles[Ptr<ResourceData>(resData)] = Ptr<ResourceFile>(resFile);
+	s_ResourcesDataFiles[Ptr<ResourceData>(resData)] = Ptr<ResourceFile>(textRes);
 
-	return resFile;
+	return textRes;
 }
 
 LuaTextResourceFile* ResourceLoader::CreateLuaTextResourceFile(String path)
@@ -55,11 +58,11 @@ LuaTextResourceFile* ResourceLoader::CreateLuaTextResourceFile(String path)
 	// File not found in cache, load it only once
 	FileBuffer& buffer = OS::LoadFileContents(path);
 	ResourceData* resData = new ResourceData(path, buffer);
-	LuaTextResourceFile* resFile = new LuaTextResourceFile(resData);
+	LuaTextResourceFile* luaRes = new LuaTextResourceFile(resData);
 
-	s_ResourcesDataFiles[Ptr<ResourceData>(resData)] = Ptr<ResourceFile>(resFile);
+	s_ResourcesDataFiles[Ptr<ResourceData>(resData)] = Ptr<ResourceFile>(luaRes);
 
-	return resFile;
+	return luaRes;
 }
 
 AudioResourceFile* ResourceLoader::CreateAudioResourceFile(String path)
@@ -153,17 +156,19 @@ VisualModelResourceFile* ResourceLoader::CreateVisualModelResourceFile(String pa
 	objl::Loader loader;
 	std::cout<<loader.LoadFile( OS::GetAbsolutePath(path).generic_string() );
 
-	VertexData vertice;
+	VertexData vertex;
 
 	Vector<VertexData> vertices;
 	vertices.reserve(loader.LoadedVertices.size());
 
-	for (auto& x : loader.LoadedVertices)
+	for (auto& v : loader.LoadedVertices)
 	{
-		vertice.pos.x = x.Position.X;
-		vertice.pos.y = x.Position.Y;
-		vertice.pos.z = x.Position.Z;
-		vertices.push_back(vertice);
+		vertex.m_Position.x = v.Position.X;
+		vertex.m_Position.y = v.Position.Y;
+		vertex.m_Position.z = v.Position.Z;
+		vertex.m_TextureCoord.x = v.TextureCoordinate.X;
+		vertex.m_TextureCoord.y = v.TextureCoordinate.Y;
+		vertices.push_back(vertex);
 	}
 
 	FileBuffer& buffer = OS::LoadFileContents(path);
@@ -171,9 +176,35 @@ VisualModelResourceFile* ResourceLoader::CreateVisualModelResourceFile(String pa
 	Ptr<IndexBuffer> indexBuffer(new IndexBuffer(loader.LoadedIndices));
 
 	ResourceData* resData = new ResourceData(path, buffer);
-	VisualModelResourceFile* resFile = new VisualModelResourceFile(std::move(vertexBuffer), std::move(indexBuffer), resData);
+	VisualModelResourceFile* visualRes = new VisualModelResourceFile(std::move(vertexBuffer), std::move(indexBuffer), resData);
 
-	s_ResourcesDataFiles[Ptr<ResourceData>(resData)] = Ptr<ResourceFile>(resFile);
+	s_ResourcesDataFiles[Ptr<ResourceData>(resData)] = Ptr<ResourceFile>(visualRes);
 
-	return resFile;
+	return visualRes;
+}
+
+ImageResourceFile* ResourceLoader::CreateImageResourceFile(String path)
+{
+	for (auto& item : s_ResourcesDataFiles)
+	{
+		if (item.first->getPath() == path && item.second->getType() == ResourceFile::Type::IMAGE)
+		{
+			return reinterpret_cast<ImageResourceFile*>(item.second.get());
+		}
+	}
+
+	if (OS::Exists(path) == false)
+	{
+		ERR("File not found: " + path);
+		return nullptr;
+	}
+
+	// File not found in cache, load it only once
+	FileBuffer& buffer = OS::LoadFileContents(path);
+	ResourceData* resData = new ResourceData(path, buffer);
+	ImageResourceFile* imageRes = new ImageResourceFile(resData);
+	
+	s_ResourcesDataFiles[Ptr<ResourceData>(resData)] = Ptr<ResourceFile>(imageRes);
+
+	return imageRes;
 }

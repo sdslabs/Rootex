@@ -27,11 +27,11 @@ file(GLOB ShaderFiles
 )
 
 file(GLOB VertexShaderFiles
-./core/renderer/shaders/VertexShader.hlsl
+    ./core/renderer/shaders/*vertex_shader.hlsl
 )
 
 file(GLOB PixelShaderFiles
-./core/renderer/shaders/PixelShader.hlsl
+    ./core/renderer/shaders/*pixel_shader.hlsl
 )
 
 set(ROOTEX_SOURCES
@@ -74,7 +74,7 @@ target_link_libraries(Rootex PUBLIC
     LuaBridge
     OpenAL
     ALUT
-    SimpleMath
+    DirectXTK
     d3d11.lib
     D3DCompiler.lib
 )

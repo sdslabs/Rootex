@@ -30,7 +30,7 @@ class TransformComponent : public Component
 	friend class EntityFactory;
 
 public:
-	static const ComponentID s_ID = (ComponentID)ComponentIDs::Transform;
+	static const ComponentID s_ID = (ComponentID)ComponentIDs::TransformComponent;
 
 	void setPosition(const Vector3& position);
 	void setRotation(const float& yaw, const float& pitch, const float& roll);

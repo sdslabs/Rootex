@@ -1,10 +1,16 @@
 #include "material.h"
 
 #include "shader_library.h"
+#include "texture.h"
 
-Ref<CubeMaterial> Material::CreateDefault()
+Material::Material()
+    : m_Shader(ShaderLibrary::GetDefaultShader())
 {
-	return Ref<CubeMaterial>(new CubeMaterial());
+}
+
+Material::Material(Shader* shader)
+    : m_Shader(shader)
+{
 }
 
 void Material::bind() const
@@ -12,19 +18,16 @@ void Material::bind() const
 	m_Shader->bind();
 }
 
-CubeMaterial::CubeMaterial()
-    : Material(ShaderLibrary::GetShader("Default"))
+DiffuseMaterial::DiffuseMaterial(Ref<Texture> diffuseTexture)
+    : Material(ShaderLibrary::GetDiffuseShader())
+    , m_DiffuseTexture(diffuseTexture)
+    , m_DiffuseShader(reinterpret_cast<DiffuseShader*>(m_Shader))
 {
-	m_ConstantBufferColors.m_Colors[0] = ColorPresets::Red;
-	m_ConstantBufferColors.m_Colors[1] = ColorPresets::Green;
-	m_ConstantBufferColors.m_Colors[2] = ColorPresets::Blue;
-	m_ConstantBufferColors.m_Colors[3] = ColorPresets::Yellow;
-	m_ConstantBufferColors.m_Colors[4] = ColorPresets::White;
-	m_ConstantBufferColors.m_Colors[5] = ColorPresets::Orange;
+	m_SamplerState = RenderingDevice::GetSingleton()->createSamplerState();
 }
 
-void CubeMaterial::bind() const
+void DiffuseMaterial::bind() const
 {
-	m_Shader->setConstantBuffer(m_ConstantBufferColors);
-	Material::bind();
+	m_DiffuseShader->set(m_DiffuseTexture.get());
+    Material::bind();
 }
