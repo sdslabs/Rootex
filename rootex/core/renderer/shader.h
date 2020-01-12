@@ -4,6 +4,7 @@
 #include "common/common.h"
 #include "constant_buffer.h"
 #include "rendering_device.h"
+#include "texture.h"
 
 class Shader
 {
@@ -11,10 +12,16 @@ protected:
 	LPCWSTR m_VertexPath;
 	LPCWSTR m_PixelPath;
 
-	ID3D11VertexShader* m_VertexShader;
-	ID3D11PixelShader* m_PixelShader;
+	Microsoft::WRL::ComPtr<ID3D11VertexShader> m_VertexShader;
+	Microsoft::WRL::ComPtr<ID3D11PixelShader> m_PixelShader;
+
+	Shader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat);
+
+	friend class ShaderLibrary;
 
 public:
+	virtual ~Shader();
+
 	enum class Type
 	{
 		Vertex,
@@ -28,12 +35,24 @@ public:
 		Projection
 	};
 
-	Shader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormatconst);
-	~Shader();
-
-	void bind() const;
+	virtual void bind() const;
 	void unbind() const;
 
-	void setConstantBuffer(const ConstantBufferType& type, const Matrix& constantBuffer);
-	void setConstantBuffer(const PSConstantBuffer& constantBuffer);
+	void set(const ConstantBufferType& type, const Matrix& constantBuffer);
+	void set(const PSConstantBuffer& constantBuffer);
+};
+
+class DiffuseShader : public Shader
+{
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_SamplerState;
+
+	DiffuseShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat);
+	DiffuseShader();
+
+	friend class ShaderLibrary;
+
+public:
+	virtual void bind() const override;
+	
+	void set(const Texture* texture);
 };

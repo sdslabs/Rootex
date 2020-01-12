@@ -10,7 +10,7 @@ Component* VisualComponent::Create(const LuaVariable& componentData)
 {
 	VisualComponent* visualComponent = new VisualComponent(
 	    RenderPass::Global,
-	    Material::CreateDefault(),
+	    Ref<Material>(new Material()),
 	    ResourceLoader::CreateVisualModelResourceFile(componentData["resFile"].tostring()));
 
 	return visualComponent;
@@ -60,12 +60,12 @@ bool VisualComponent::preRender(VisualComponentGraph* graph)
 	if (m_Attributes.m_TransformComponent)
 	{
 		graph->pushMatrix(m_Attributes.getTransform());
-		m_Attributes.m_Material->setShaderMatrix(Shader::ConstantBufferType::Model, graph->getTopMatrix());
+		m_Attributes.m_Material->setShaderConstantBuffer(Shader::ConstantBufferType::Model, graph->getTopMatrix());
 	}
 	else
 	{
 		graph->pushMatrix(Matrix::Identity);
-		m_Attributes.m_Material->setShaderMatrix(Shader::ConstantBufferType::Model, graph->getTopMatrix());
+		m_Attributes.m_Material->setShaderConstantBuffer(Shader::ConstantBufferType::Model, graph->getTopMatrix());
 	}
 	return true;
 }
@@ -83,6 +83,12 @@ void VisualComponent::render(VisualComponentGraph* graph)
 
 void VisualComponent::renderChildren(VisualComponentGraph* graph)
 {
+	if (isVisible(graph))
+	{
+		m_Attributes.m_Material->setShaderConstantBuffer(Shader::ConstantBufferType::View, graph->getCamera()->getView());
+		m_Attributes.m_Material->setShaderConstantBuffer(Shader::ConstantBufferType::Projection, graph->getCamera()->getProjection());
+	}
+
 	for (auto& child : m_Children)
 	{
 		child->preRender(graph);
@@ -148,6 +154,6 @@ Vector3 VisualComponent::getPosition() const
 
 VisualComponentAttributes::VisualComponentAttributes()
     : m_RenderPassSetting(RenderPass::Global)
-    , m_Material(Material::CreateDefault())
+    , m_Material(Ref<Material>(new Material()))
 {
 }

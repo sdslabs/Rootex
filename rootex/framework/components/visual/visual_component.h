@@ -6,6 +6,7 @@
 #include "renderer/index_buffer.h"
 #include "renderer/material.h"
 #include "renderer/shader.h"
+#include "renderer/texture.h"
 #include "renderer/vertex_buffer.h"
 
 #include "components/transform_component.h"
@@ -58,7 +59,7 @@ protected:
 	friend class EntityFactory;
 
 public:
-	static const ComponentID s_ID = (ComponentID)ComponentIDs::Visual;
+	static const ComponentID s_ID = (ComponentID)ComponentIDs::VisualComponent;
 	
 	VisualComponent(const RenderPass& renderPassSetting, Ref<Material> material, VisualModelResourceFile* resFile);
 	VisualComponent(VisualComponent&) = delete;

@@ -9,7 +9,7 @@ class TestComponent : public Component
 	friend class EntityFactory;
 
 public:
-	static const ComponentID s_ID = (ComponentID)ComponentIDs::Test;
+	static const ComponentID s_ID = (ComponentID)ComponentIDs::TestComponent;
 
 	int m_TestVariable;
 	ComponentID getComponentID() const override { return s_ID; }

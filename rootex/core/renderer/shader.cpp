@@ -1,16 +1,25 @@
 #include "shader.h"
 
 #include "utils.h"
+#include "texture.h"
 
 Shader::Shader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat)
     : m_VertexPath(vertexPath)
     , m_PixelPath(pixelPath)
 {
-	ID3DBlob* vertexShaderBlob = RenderingDevice::GetSingleton()->createBlob(vertexPath);
-	m_VertexShader = RenderingDevice::GetSingleton()->initVertexShader(vertexShaderBlob);
-	
-	ID3DBlob* pixelShaderBlob = RenderingDevice::GetSingleton()->createBlob(pixelPath);
-	m_PixelShader = RenderingDevice::GetSingleton()->initPixelShader(pixelShaderBlob);
+	Microsoft::WRL::ComPtr<ID3DBlob> vertexShaderBlob = RenderingDevice::GetSingleton()->createBlob(vertexPath);
+	if (!vertexShaderBlob)
+	{
+		ERR("Vertex Shader not found");
+	}
+	m_VertexShader = RenderingDevice::GetSingleton()->initVertexShader(vertexShaderBlob.Get());
+
+	Microsoft::WRL::ComPtr<ID3DBlob> pixelShaderBlob = RenderingDevice::GetSingleton()->createBlob(pixelPath);
+	if (!pixelShaderBlob)
+	{
+		ERR("Pixel Shader not found");
+	}
+	m_PixelShader = RenderingDevice::GetSingleton()->initPixelShader(pixelShaderBlob.Get());
 
 	const Vector<VertexBufferElement>& elements = vertexBufferFormat.getElements();
 
@@ -26,24 +35,19 @@ Shader::Shader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const Buffer
 	}
 
 	RenderingDevice::GetSingleton()->initVertexLayout(
-	    vertexShaderBlob, 
-		vertexDescArray.data(), 
-		vertexDescArray.size());
-
-	SafeRelease(&pixelShaderBlob);
-	SafeRelease(&vertexShaderBlob);
+	    vertexShaderBlob.Get(),
+	    vertexDescArray.data(),
+	    vertexDescArray.size());
 }
 
 Shader::~Shader()
 {
-	SafeRelease(&m_VertexShader);
-	SafeRelease(&m_PixelShader);
 }
 
 void Shader::bind() const
 {
-	RenderingDevice::GetSingleton()->bind(m_VertexShader);
-	RenderingDevice::GetSingleton()->bind(m_PixelShader);
+	RenderingDevice::GetSingleton()->bind(m_VertexShader.Get());
+	RenderingDevice::GetSingleton()->bind(m_PixelShader.Get());
 }
 
 void Shader::unbind() const
@@ -51,7 +55,7 @@ void Shader::unbind() const
 	RenderingDevice::GetSingleton()->unbindShaderResources();
 }
 
-void Shader::setConstantBuffer(const ConstantBufferType& type, const Matrix& constantBuffer)
+void Shader::set(const ConstantBufferType& type, const Matrix& constantBuffer)
 {
 	D3D11_BUFFER_DESC cbd = { 0 };
 	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -79,7 +83,7 @@ void Shader::setConstantBuffer(const ConstantBufferType& type, const Matrix& con
 	}
 }
 
-void Shader::setConstantBuffer(const PSConstantBuffer& constantBuffer)
+void Shader::set(const PSConstantBuffer& constantBuffer)
 {
 	D3D11_BUFFER_DESC cbd = { 0 };
 	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -92,4 +96,21 @@ void Shader::setConstantBuffer(const PSConstantBuffer& constantBuffer)
 	csd.pSysMem = &constantBuffer;
 
 	RenderingDevice::GetSingleton()->initPSConstantBuffer(&cbd, &csd);
+}
+
+DiffuseShader::DiffuseShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat)
+    : Shader(vertexPath, pixelPath, vertexBufferFormat)
+{
+	m_SamplerState = RenderingDevice::GetSingleton()->createSamplerState();
+}
+
+void DiffuseShader::set(const Texture* texture)
+{
+	RenderingDevice::GetSingleton()->setInPixelShader(0, 1, texture->getTextureResourceView());
+}
+
+void DiffuseShader::bind() const
+{
+	Shader::bind();
+	RenderingDevice::GetSingleton()->setInPixelShader(m_SamplerState.Get());
 }

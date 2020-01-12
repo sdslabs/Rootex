@@ -4,6 +4,8 @@
 #include "dxgiDebugInterface.h"
 #include "utils.h"
 
+#include "vendor/DirectXTK/Inc/WICTextureLoader.h"
+
 RenderingDevice::RenderingDevice()
 {
 }
@@ -15,6 +17,7 @@ RenderingDevice::~RenderingDevice()
 	SafeRelease(&m_SwapChain);
 	SafeRelease(&m_RenderTargetView);
 	SafeRelease(&m_DepthStencilView);
+	CoUninitialize();
 }
 
 void RenderingDevice::initialize(HWND hWnd, int width, int height)
@@ -79,15 +82,15 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height)
 
 	IDXGIDevice* dxgiDevice = 0;
 	m_Device->QueryInterface(__uuidof(IDXGIDevice), (void**)&dxgiDevice);
-	
-	IDXGIAdapter* dxgiAdapter = 0; 
+
+	IDXGIAdapter* dxgiAdapter = 0;
 	dxgiDevice->GetParent(__uuidof(IDXGIAdapter), (void**)&dxgiAdapter);
 
-	IDXGIFactory* dxgiFactory = 0; 
-	dxgiAdapter->GetParent(__uuidof(IDXGIFactory),(void**)&dxgiFactory);
+	IDXGIFactory* dxgiFactory = 0;
+	dxgiAdapter->GetParent(__uuidof(IDXGIFactory), (void**)&dxgiFactory);
 
 	dxgiFactory->CreateSwapChain(m_Device, &sd, &m_SwapChain);
-	
+
 	SafeRelease(&dxgiDevice);
 	SafeRelease(&dxgiAdapter);
 	SafeRelease(&dxgiFactory);
@@ -148,6 +151,11 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height)
 	GFX_ERR_CHECK(m_Device->CreateRasterizerState(&rsDesc, &rsState));
 	m_Context->RSSetState(rsState);
 	SafeRelease(&rsState);
+
+	if (FAILED(CoInitialize(nullptr)))
+	{
+		ERR("CoInitialize failed");
+	}
 }
 
 ID3DBlob* RenderingDevice::createBlob(LPCWSTR path)
@@ -257,6 +265,19 @@ void RenderingDevice::initVertexLayout(ID3DBlob* vertexShaderBlob, const D3D11_I
 	SafeRelease(&inputLayout);
 }
 
+Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::createTexture(ImageResourceFile* imageRes)
+{
+	Microsoft::WRL::ComPtr<ID3D11Resource> textureResource;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> textureView;
+
+	if (FAILED(DirectX::CreateWICTextureFromMemory(m_Device, (const uint8_t*)imageRes->getData()->getRawData()->data(), (size_t)imageRes->getData()->getRawDataByteSize(), textureResource.GetAddressOf(), textureView.GetAddressOf())))
+	{
+		ERR("Could not create texture: " + imageRes->getPath().generic_string());
+	}
+
+	return textureView;
+}
+
 void RenderingDevice::bind(ID3D11Buffer* vertexBuffer, const unsigned int* stride, const unsigned int* offset)
 {
 	m_Context->IASetVertexBuffers(0u, 1u, &vertexBuffer, stride, offset);
@@ -277,6 +298,16 @@ void RenderingDevice::bind(ID3D11PixelShader* pixelShader)
 	m_Context->PSSetShader(pixelShader, nullptr, 0u);
 }
 
+void RenderingDevice::setInPixelShader(unsigned int slot, unsigned int number, ID3D11ShaderResourceView* texture)
+{
+	m_Context->PSSetShaderResources(slot, number, &texture);
+}
+
+void RenderingDevice::setInPixelShader(ID3D11SamplerState* samplerState)
+{
+	m_Context->PSSetSamplers(0, 1, &samplerState);
+}
+
 void RenderingDevice::unbindShaderResources()
 {
 	m_Context->VSSetShaderResources(0, 1, nullptr);
@@ -291,6 +322,32 @@ void RenderingDevice::setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY pt)
 void RenderingDevice::setViewport(const D3D11_VIEWPORT* vp)
 {
 	m_Context->RSSetViewports(1u, vp);
+}
+
+Microsoft::WRL::ComPtr<ID3D11SamplerState> RenderingDevice::createSamplerState()
+{
+	D3D11_SAMPLER_DESC samplerDesc;
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.MipLODBias = 0.0f;
+	samplerDesc.MaxAnisotropy = 1;
+	samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+	samplerDesc.BorderColor[0] = 0;
+	samplerDesc.BorderColor[1] = 0;
+	samplerDesc.BorderColor[2] = 0;
+	samplerDesc.BorderColor[3] = 0;
+	samplerDesc.MinLOD = 0;
+	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerState; 
+	if (FAILED(m_Device->CreateSamplerState(&samplerDesc, &samplerState)))
+	{
+		ERR("SamplerState could not be created");
+	}
+
+	return samplerState;
 }
 
 void RenderingDevice::drawIndexed(UINT number)

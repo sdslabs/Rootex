@@ -16,6 +16,7 @@
 #include "core/event_manager.h"
 
 #include "framework/components/visual/visual_component.h"
+#include "framework/components/visual/diffuse_visual_component.h"
 #include "framework/components/visual/visual_component_graph.h"
 #include "framework/components/test_component.h"
 #include "framework/entity_factory.h"
@@ -84,40 +85,20 @@ int main()
 	    windowLua["deltaX"],
 	    windowLua["deltaY"],
 	    windowLua["title"]));
-	BufferFormat bufferFormat;
-	bufferFormat.push(VertexBufferElement::Type::POSITION, "POSITION");
-	Shader* shader = ShaderLibrary::MakeShader("Default", L"VertexShader.cso", L"PixelShader.cso", bufferFormat);
+
+	ShaderLibrary::MakeShaders();
 
 	Ref<VisualComponentGraph> visualGraph(new VisualComponentGraph(windowLua["deltaX"], windowLua["deltaY"]));
 	Ref<RenderSystem> renderSystem(new RenderSystem());
 	
-	LuaTextResourceFile* testCubeFile = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/cube_entity.lua");
-	LuaTextResourceFile* testCubeChildFile = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/cube_entity.lua");
-	Ref<Entity> testCube = EntityFactory::GetSingleton()->createEntity(testCubeFile);
-	Ref<Entity> testCubeChild = EntityFactory::GetSingleton()->createEntity(testCubeChildFile);
-	testCubeChild->getComponent<VisualComponent>()->setTransform(Matrix::CreateTranslation({ 0.0f, 3.0f, 0.0f }));
-
-	visualGraph->addChild(testCube->getComponent<VisualComponent>());
-	testCube->getComponent<VisualComponent>()->addChild(testCubeChild->getComponent<VisualComponent>());
-
-	//TEMP WORKAROUND
-	//EntityID id = testEntity->getID();
-
-	//Ref<SceneNode> node(new CubeTestNode(testEntity->getID(), Material()));
-	//Ref<SceneNode> node(new SceneNode(id, "CubeTestNode", Matrix::Identity, nullptr, RenderPass::Global, Material(), new DefaultCubeRenderableObject()));
-	//Ref<SceneNode> child(new CubeTestNode(testEntity->getID(), Material()));
-	//Ref<SceneNode> child(new SceneNode(id, "CubeTestNode", Matrix::Identity, nullptr, RenderPass::Global, Material(), new DefaultCubeRenderableObject()));
-	//child->setTransforms(Matrix::CreateTranslation({ 0.0f, 3.0f, 0.0f }), nullptr);
-	//node->addChild(child);
-	//scene->addChild(testEntity->getID(), node);
-	//      Global - node - child
-	//     /
-	// Root- ...
-	//     \ ...
-	//     \ ...
+	LuaTextResourceFile* teapotEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/teapot.lua");
+	Ref<Entity> teapot = EntityFactory::GetSingleton()->createEntity(teapotEntity);
+	
+	visualGraph->addChild(teapot->getComponent<DiffuseVisualComponent>());
+	
 	std::optional<int> ret = {};
 	FrameTimer frameTimer;
-	LoggingScopeTimer gameScopedLogger("Game");
+	LoggingScopeTimer gameScopedLogger("GameTime");
 	while (true)
 	{
 		frameTimer.reset();
@@ -184,8 +165,7 @@ int main()
 		x = l;
 		y = u;
 
-		testCube->getComponent<TransformComponent>()->setTransform(Matrix::CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix::CreateTranslation(x, y, 0.0f));
-		testCubeChild->getComponent<TransformComponent>()->addTransform(Matrix::CreateFromYawPitchRoll(0.1f, 0.0f, 0.0f));
+		teapot->getComponent<TransformComponent>()->setTransform(Matrix::CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix::CreateTranslation(0, y, 0.0f) * Matrix::CreateScale(x));
 
 		RenderSystem::GetSingleton()->render(visualGraph.get(), window.get());
 
