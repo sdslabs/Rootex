@@ -10,6 +10,7 @@
 #include "renderer/vertex_buffer.h"
 
 #include "components/transform_component.h"
+#include "components/hierarchy_component.h"
 
 class VisualComponentGraph;
 
