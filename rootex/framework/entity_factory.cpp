@@ -7,6 +7,7 @@
 #include "components/debug_component.h"
 #include "components/test_component.h"
 #include "components/transform_component.h"
+#include "components/hierarchy_component.h"
 #include "components/visual/visual_component.h"
 #include "components/visual/diffuse_visual_component.h"
 
@@ -30,6 +31,7 @@ EntityFactory::EntityFactory()
 	m_ComponentCreators["VisualComponent"] = VisualComponent::Create;
 	m_ComponentCreators["TransformComponent"] = TransformComponent::Create;
 	m_ComponentCreators["DiffuseVisualComponent"] = DiffuseVisualComponent::Create;
+	m_ComponentCreators["HierarchyComponent"] = HierarchyComponent::Create;
 }
 
 Ref<Component> EntityFactory::createComponent(const String& name, const LuaVariable& componentData)
@@ -49,6 +51,14 @@ Ref<Component> EntityFactory::createComponent(const String& name, const LuaVaria
 		ERR("Could not find componentDescription: " + name);
 		return nullptr;
 	}
+}
+
+Ref<Component> EntityFactory::createHierarchyComponent()
+{
+	Ref<HierarchyComponent> component(new HierarchyComponent());
+	System::RegisterComponent(component.get());
+
+	return component;
 }
 
 Ref<Entity> EntityFactory::createEntity(LuaTextResourceFile* actorLuaDescription)
@@ -84,6 +94,10 @@ Ref<Entity> EntityFactory::createEntity(LuaTextResourceFile* actorLuaDescription
 			}
 		}
 	}
+
+	Ref<Component> hierarchyComponent = createHierarchyComponent();
+	entity->addComponent(hierarchyComponent);
+	hierarchyComponent->setOwner(entity);
 
 	if (!entity->setupComponents())
 	{

@@ -6,5 +6,6 @@ enum class ComponentIDs : unsigned int
 	DebugComponent,
 	VisualComponent,
 	DiffuseVisualComponent,
-	TransformComponent
+	TransformComponent,
+	HierarchyComponent
 };

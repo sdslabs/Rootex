@@ -68,7 +68,7 @@ class ThreadPool
 {
 	enum
 	{
-		MaxWorkerThreads = 8,
+		MaxWorkerThreads = 12,
 	};
 
 	bool m_IsRunning;

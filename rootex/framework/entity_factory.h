@@ -25,6 +25,7 @@ protected:
 	HashMap<String, ComponentCreator> m_ComponentCreators;
 
 	Ref<Component> createComponent(const String& name, const LuaVariable& componentData);
+	Ref<Component> EntityFactory::createHierarchyComponent();
 
 	EntityFactory();
 	~EntityFactory() = default;
@@ -33,4 +34,6 @@ public:
 	static EntityFactory* GetSingleton();
 
 	Ref<Entity> createEntity(LuaTextResourceFile* actorLuaDescription);
+
+
 };
