@@ -19,6 +19,7 @@
 #include "framework/components/visual/diffuse_visual_component.h"
 #include "framework/components/visual/visual_component_graph.h"
 #include "framework/components/test_component.h"
+#include "framework/components/hierarchy_component.h"
 #include "framework/entity_factory.h"
 #include "framework/systems/debug_system.h"
 #include "framework/systems/test_system.h"
@@ -87,6 +88,20 @@ int main()
 	    windowLua["title"]));
 
 	ShaderLibrary::MakeShaders();
+
+	LuaTextResourceFile* testEntityRes = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/entity.lua");
+	Ref<Entity> testEntity = EntityFactory::GetSingleton()->createEntity(testEntityRes);
+	Ref<Entity> testEntity2 = EntityFactory::GetSingleton()->createEntity(testEntityRes);
+	
+	testEntity->getComponent<HierarchyComponent>()->addChild(testEntity2.get());
+
+	std::cout << testEntity->getID() << std::endl;
+	std::cout << testEntity->getComponent<HierarchyComponent>()->m_Children.size() << std::endl;
+	std::cout << testEntity2->getID() << std::endl;
+	std::cout << testEntity->getComponent<HierarchyComponent>()->m_Children[0]->getID() << std::endl;
+	testEntity->getComponent<HierarchyComponent>()->removeChild(testEntity2);
+	std::cout << testEntity->getComponent<HierarchyComponent>()->m_Children.size() << std::endl;
+
 
 	Ref<VisualComponentGraph> visualGraph(new VisualComponentGraph(windowLua["deltaX"], windowLua["deltaY"]));
 	Ref<RenderSystem> renderSystem(new RenderSystem());
