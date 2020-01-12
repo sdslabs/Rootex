@@ -99,8 +99,10 @@ int main()
 	std::cout << testEntity->getComponent<HierarchyComponent>()->m_Children.size() << std::endl;
 	std::cout << testEntity2->getID() << std::endl;
 	std::cout << testEntity->getComponent<HierarchyComponent>()->m_Children[0]->getID() << std::endl;
-	testEntity->getComponent<HierarchyComponent>()->removeChild(testEntity2);
-	std::cout << testEntity->getComponent<HierarchyComponent>()->m_Children.size() << std::endl;
+	
+	//THIS LINE CAUSES SEGFAULT ON CLOSING THE GAME-
+	//testEntity->getComponent<HierarchyComponent>()->removeChild(testEntity2);
+	//std::cout << testEntity->getComponent<HierarchyComponent>()->m_Children.size() << std::endl;
 
 
 	Ref<VisualComponentGraph> visualGraph(new VisualComponentGraph(windowLua["deltaX"], windowLua["deltaY"]));
@@ -109,7 +111,11 @@ int main()
 	LuaTextResourceFile* teapotEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/teapot.lua");
 	Ref<Entity> teapot = EntityFactory::GetSingleton()->createEntity(teapotEntity);
 	
+	Ref<Entity> teapotChild = EntityFactory::GetSingleton()->createEntity(teapotEntity);
+	teapotChild->getComponent<DiffuseVisualComponent>()->setTransform(Matrix::CreateTranslation({ 0.0f, 3.0f, 0.0f }));
+
 	visualGraph->addChild(teapot->getComponent<DiffuseVisualComponent>());
+	teapot->getComponent<DiffuseVisualComponent>()->addChild(teapotChild->getComponent<DiffuseVisualComponent>());
 	
 	std::optional<int> ret = {};
 	FrameTimer frameTimer;
