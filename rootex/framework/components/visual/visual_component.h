@@ -52,8 +52,8 @@ class VisualComponent : public Component
 	static Component* Create(const LuaVariable& componentData);
 
 protected:
-	VisualComponent* m_Parent;
-	Vector<Ref<VisualComponent>> m_Children;
+	//VisualComponent* m_Parent;
+	//Vector<Ref<VisualComponent>> m_Children;
 	VisualComponentAttributes m_Attributes;
 	bool m_IsVisible;
 	
@@ -77,8 +77,8 @@ public:
 	virtual void renderChildren(VisualComponentGraph* visualComponentGraph);
 	virtual void postRender(VisualComponentGraph* visualComponentGraph);
 
-	virtual bool addChild(VisualComponent* child);
-	virtual bool removeChild(Ref<VisualComponent> node);
+	//virtual bool addChild(VisualComponent* child);
+	//virtual bool removeChild(Ref<VisualComponent> node);
 	void addTransform(const Matrix& applyTransform);
 
 	void setTransform(const Matrix& newTransform);

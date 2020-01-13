@@ -89,18 +89,18 @@ int main()
 
 	ShaderLibrary::MakeShaders();
 
-	LuaTextResourceFile* testEntityRes = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/entity.lua");
-	Ref<Entity> testEntity = EntityFactory::GetSingleton()->createEntity(testEntityRes);
-	Ref<Entity> testEntity2 = EntityFactory::GetSingleton()->createEntity(testEntityRes);
-	
-	testEntity->getComponent<HierarchyComponent>()->addChild(testEntity2.get());
+	//LuaTextResourceFile* testEntityRes = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/entity.lua");
+	//Ref<Entity> testEntity = EntityFactory::GetSingleton()->createEntity(testEntityRes);
+	//Ref<Entity> testEntity2 = EntityFactory::GetSingleton()->createEntity(testEntityRes);
+	//
+	//testEntity->getComponent<HierarchyComponent>()->addChild(testEntity2.get());
 
-	std::cout << testEntity->getID() << std::endl;
-	std::cout << testEntity->getComponent<HierarchyComponent>()->m_Children.size() << std::endl;
-	std::cout << testEntity2->getID() << std::endl;
-	std::cout << testEntity->getComponent<HierarchyComponent>()->m_Children[0]->getID() << std::endl;
+	//std::cout << testEntity->getID() << std::endl;
+	//std::cout << testEntity->getComponent<HierarchyComponent>()->m_Children.size() << std::endl;
+	//std::cout << testEntity2->getID() << std::endl;
+	//std::cout << testEntity->getComponent<HierarchyComponent>()->m_Children[0]->getID() << std::endl;
 	
-	//THIS LINE CAUSES SEGFAULT ON CLOSING THE GAME-
+	//TODO- THIS LINE CAUSES SEGFAULT ON CLOSING THE GAME-
 	//testEntity->getComponent<HierarchyComponent>()->removeChild(testEntity2);
 	//std::cout << testEntity->getComponent<HierarchyComponent>()->m_Children.size() << std::endl;
 
@@ -112,10 +112,10 @@ int main()
 	Ref<Entity> teapot = EntityFactory::GetSingleton()->createEntity(teapotEntity);
 	
 	Ref<Entity> teapotChild = EntityFactory::GetSingleton()->createEntity(teapotEntity);
-	teapotChild->getComponent<DiffuseVisualComponent>()->setTransform(Matrix::CreateTranslation({ 0.0f, 3.0f, 0.0f }));
+	teapotChild->getComponent<DiffuseVisualComponent>()->setTransform(Matrix::CreateTranslation({ 0.0f, 1.0f, 0.0f }));
 
-	visualGraph->addChild(teapot->getComponent<DiffuseVisualComponent>());
-	teapot->getComponent<DiffuseVisualComponent>()->addChild(teapotChild->getComponent<DiffuseVisualComponent>());
+	visualGraph->addChild(teapot);
+	teapot->getComponent<HierarchyComponent>()->addChild(teapotChild);
 	
 	std::optional<int> ret = {};
 	FrameTimer frameTimer;
@@ -192,7 +192,7 @@ int main()
 
 		EventManager::GetSingleton()->tick();
 
-		frameTimer.showFPS();
+		//frameTimer.showFPS();
 	}
 
 	return ret.value();

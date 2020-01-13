@@ -2,21 +2,23 @@
 
 #include "common/common.h"
 #include "visual_component.h"
+#include "diffuse_visual_component.h"
+#include "components/hierarchy_component.h"
 
-class RootVisualComponent : public VisualComponent
+class RootVisualHierarchyComponent : public VisualComponent, public HierarchyComponent
 {
-	Ref<VisualComponent> m_StaticGroup;
-	Ref<VisualComponent> m_EntityGroup;
-	Ref<VisualComponent> m_GlobalGroup;
-	Ref<VisualComponent> m_SkyGroup;
-	Ref<VisualComponent> m_EditorGroup;
+	HierarchyComponent m_StaticGroup;
+	HierarchyComponent m_EntityGroup;
+	HierarchyComponent m_GlobalGroup;
+	HierarchyComponent m_SkyGroup;
+	HierarchyComponent m_EditorGroup;
 
 public:
-	RootVisualComponent();
-	~RootVisualComponent();
+	RootVisualHierarchyComponent();
+	~RootVisualHierarchyComponent();
 
 	virtual bool preRender(VisualComponentGraph* visualComponentGraph) override;
-	virtual bool addChild(VisualComponent* child) override;
+	virtual bool addChild(Ref<Entity> child) override;
 	virtual void renderChildren(VisualComponentGraph* visualComponentGraph) override;
 	virtual bool isVisible(VisualComponentGraph* visualComponentGraph) const;
 	virtual void postRender(VisualComponentGraph* visualComponentGraph) override;

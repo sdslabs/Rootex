@@ -3,12 +3,13 @@
 #include "common/common.h"
 #include "root_visual_component.h"
 #include "camera_visual_component.h"
+//#include "components/hierarchy_component.h"
 #include "renderer/renderer.h"
 
 class VisualComponentGraph
 {
 protected:
-	Ptr<RootVisualComponent> m_Root;
+	Ptr<RootVisualHierarchyComponent> m_Root;
 	Ref<CameraVisualComponent> m_Camera;
 	Ptr<Renderer> m_Renderer;
 	Vector<Matrix> m_TransformationStack;
@@ -22,8 +23,8 @@ public:
 	bool load();
 	void recoverLostDevice();
 	
-	bool addChild(VisualComponent* child);
-	bool removeChild(Ref<VisualComponent> child);
+	bool addChild(Ref<Entity> child);
+	bool removeChild(Ref<Entity> child);
 
 	void setCamera(Ref<CameraVisualComponent> camera);
 

@@ -18,6 +18,6 @@ public:
 	Vector<Ref<Entity>> m_Children;
 	Ref<Entity> m_Parent = nullptr;
 
-	bool addChild(Entity* child);
-	bool removeChild(Ref<Entity> node);
+	virtual bool addChild(Ref<Entity> child);
+	virtual bool removeChild(Ref<Entity> node);
 };
