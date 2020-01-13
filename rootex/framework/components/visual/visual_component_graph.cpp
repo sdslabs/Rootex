@@ -1,7 +1,7 @@
 #include "visual_component_graph.h"
 
 VisualComponentGraph::VisualComponentGraph(int width, int height)
-    : m_Root(new RootVisualComponent())
+    : m_Root(new RootVisualHierarchyComponent())
     , m_Camera(new CameraVisualComponent())
     , m_Renderer(new Renderer(width, height))
 {
@@ -42,12 +42,12 @@ void VisualComponentGraph::recoverLostDevice()
 	ERR("Fatal error: D3D Device lost");
 }
 
-bool VisualComponentGraph::addChild(VisualComponent* child)
+bool VisualComponentGraph::addChild(Ref<Entity> child)
 {
 	return m_Root->addChild(child);
 }
 
-bool VisualComponentGraph::removeChild(Ref<VisualComponent> child)
+bool VisualComponentGraph::removeChild(Ref<Entity> child)
 {
 	return m_Root->removeChild(child);
 }

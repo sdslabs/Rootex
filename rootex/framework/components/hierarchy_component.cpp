@@ -6,9 +6,9 @@ Component* HierarchyComponent::Create(const LuaVariable& componentData)
 	return component;
 }
 
-bool HierarchyComponent::addChild(Entity* child)
+bool HierarchyComponent::addChild(Ref<Entity> child)
 {
-	m_Children.push_back(Ref<Entity>(child));
+	m_Children.push_back(child);
 	child->getComponent<HierarchyComponent>()->m_Parent = this->m_Owner;
 	return true;
 }

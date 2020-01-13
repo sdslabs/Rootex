@@ -23,7 +23,6 @@ VisualComponent::VisualComponent(const RenderPass& renderPassSetting, Ref<Materi
 	m_Attributes.m_RenderPassSetting = renderPassSetting;
 	m_Attributes.m_Material = material;
 	m_Attributes.m_VisualModelResourceFile = resFile;
-	m_Parent = nullptr;
 }
 
 VisualComponent::~VisualComponent()
@@ -48,9 +47,9 @@ bool VisualComponent::setup()
 bool VisualComponent::load(VisualComponentGraph* graph)
 {
 	bool status = true;
-	for (auto& child : m_Children)
+	for (auto& child : m_Owner->getComponent<HierarchyComponent>()->m_Children)
 	{
-		status = status & child->load(graph);
+		status = status & child->getComponent<VisualComponent>()->load(graph);
 	}
 	return status;
 }
@@ -89,18 +88,21 @@ void VisualComponent::renderChildren(VisualComponentGraph* graph)
 		m_Attributes.m_Material->setShaderConstantBuffer(Shader::ConstantBufferType::Projection, graph->getCamera()->getProjection());
 	}
 
-	for (auto& child : m_Children)
+	for (auto& child : m_Owner->getComponent<HierarchyComponent>()->m_Children)
 	{
-		child->preRender(graph);
+		//TODO-FIX THIS
+		VisualComponent* childVisualComponent = child->getComponent<DiffuseVisualComponent>();
 
-		if (child->isVisible(graph))
+		childVisualComponent->preRender(graph);
+
+		if (childVisualComponent->isVisible(graph))
 		{
 			// Assumed to be opaque
-			child->render(graph);
+			childVisualComponent->render(graph);
 		}
-		child->renderChildren(graph);
+		childVisualComponent->renderChildren(graph);
 
-		child->postRender(graph);
+		childVisualComponent->postRender(graph);
 	}
 }
 
@@ -108,7 +110,7 @@ void VisualComponent::postRender(VisualComponentGraph* graph)
 {
 	graph->popMatrix();
 }
-
+/*
 bool VisualComponent::addChild(VisualComponent* child)
 {
 	m_Children.push_back(Ref<VisualComponent>(child));
@@ -126,7 +128,7 @@ bool VisualComponent::removeChild(Ref<VisualComponent> node)
 	}
 	return true;
 }
-
+*/
 void VisualComponent::addTransform(const Matrix& applyTransform)
 {
 	m_Attributes.m_TransformComponent->setTransform(m_Attributes.m_TransformComponent->getTransform() * applyTransform);
