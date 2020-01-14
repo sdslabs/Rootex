@@ -113,9 +113,9 @@ int main()
 	
 	Ref<Entity> teapotChild = EntityFactory::GetSingleton()->createEntity(teapotEntity);
 	teapotChild->getComponent<DiffuseVisualComponent>()->setTransform(Matrix::CreateTranslation({ 0.0f, 1.0f, 0.0f }));
+	teapot->getComponent<HierarchyComponent>()->addChild(teapotChild);
 
 	visualGraph->addChild(teapot);
-	teapot->getComponent<HierarchyComponent>()->addChild(teapotChild);
 	
 	std::optional<int> ret = {};
 	FrameTimer frameTimer;

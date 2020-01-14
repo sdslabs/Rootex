@@ -57,7 +57,7 @@ bool RootVisualHierarchyComponent::preRender(VisualComponentGraph* visualCompone
 bool RootVisualHierarchyComponent::addChild(Ref<Entity> child)
 {
 	//TODO- FIX THIS
-	RenderPass pass = child->getComponent<DiffuseVisualComponent>()->getAttributes()->getRenderPass();
+	RenderPass pass = child->getComponent<VisualComponent>()->getAttributes()->getRenderPass();
 
 	switch (pass)
 	{
@@ -100,9 +100,9 @@ void RootVisualHierarchyComponent::renderChildren(VisualComponentGraph* scene)
 			for (auto& x : m_GlobalGroup.m_Children)
 			{
 				//TODO- FIX THIS
-				x->getComponent<DiffuseVisualComponent>()->renderChildren(scene);
+				//x->getComponent<VisualComponent>()->renderChildren(scene);
 
-				VisualComponent* childVisualComponent = x->getComponent<DiffuseVisualComponent>();
+				VisualComponent* childVisualComponent = x->getComponent<VisualComponent>();
 
 				childVisualComponent->preRender(scene);
 

@@ -1,5 +1,7 @@
 #include "visual_component.h"
 
+#include "common/common.h"
+
 #include "visual_component_graph.h"
 
 #include "core/resource_loader.h"
@@ -91,7 +93,7 @@ void VisualComponent::renderChildren(VisualComponentGraph* graph)
 	for (auto& child : m_Owner->getComponent<HierarchyComponent>()->m_Children)
 	{
 		//TODO-FIX THIS
-		VisualComponent* childVisualComponent = child->getComponent<DiffuseVisualComponent>();
+		VisualComponent* childVisualComponent = child->getComponent<VisualComponent>();
 
 		childVisualComponent->preRender(graph);
 
