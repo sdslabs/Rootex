@@ -26,7 +26,6 @@ public:
 	void destroy();
 
 	EntityID getID() const;
-
 	template <class ComponentType>
 	ComponentType* getComponent();
 	const HashMap<ComponentID, Ref<Component>>& getAllComponents() const;
