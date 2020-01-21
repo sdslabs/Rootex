@@ -2,10 +2,9 @@
 
 #include "common/common.h"
 
-#include "visual_component_graph.h"
-
 #include "core/resource_loader.h"
 
+#include "framework/components/visual/visual_component_graph.h"
 #include "framework/entity.h"
 
 Component* VisualComponent::Create(const LuaVariable& componentData)
@@ -41,18 +40,15 @@ bool VisualComponent::setup()
 		{
 			status = false;
 		}
+
+		m_Attributes.m_HierarchyComponent = m_Owner->getComponent<HierarchyComponent>();
+		if (m_Attributes.m_HierarchyComponent == nullptr)
+		{
+			WARN("Entity without hierarchy component found");
+			status = false;
+		}
 	}
 
-	return status;
-}
-
-bool VisualComponent::load(VisualComponentGraph* graph)
-{
-	bool status = true;
-	for (auto& child : m_Owner->getComponent<HierarchyComponent>()->m_Children)
-	{
-		status = status & child->getComponent<VisualComponent>()->load(graph);
-	}
 	return status;
 }
 
@@ -112,25 +108,7 @@ void VisualComponent::postRender(VisualComponentGraph* graph)
 {
 	graph->popMatrix();
 }
-/*
-bool VisualComponent::addChild(VisualComponent* child)
-{
-	m_Children.push_back(Ref<VisualComponent>(child));
-	child->m_Parent = this;
-	return true;
-}
 
-bool VisualComponent::removeChild(Ref<VisualComponent> node)
-{
-	auto& findIt = std::find(m_Children.begin(), m_Children.end(), node);
-	if (findIt != m_Children.end())
-	{
-		(*findIt)->m_Parent = nullptr;
-		m_Children.erase(findIt);
-	}
-	return true;
-}
-*/
 void VisualComponent::addTransform(const Matrix& applyTransform)
 {
 	m_Attributes.m_TransformComponent->setTransform(m_Attributes.m_TransformComponent->getTransform() * applyTransform);
@@ -159,5 +137,8 @@ Vector3 VisualComponent::getPosition() const
 VisualComponentAttributes::VisualComponentAttributes()
     : m_RenderPassSetting(RenderPass::Global)
     , m_Material(Ref<Material>(new Material()))
+    , m_VisualModelResourceFile(nullptr)
+    , m_TransformComponent(nullptr)
+    , m_HierarchyComponent(nullptr)
 {
 }

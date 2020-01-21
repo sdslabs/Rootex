@@ -1,10 +1,16 @@
 #include "visual_component_graph.h"
 
+#include "resource_loader.h"
+
 VisualComponentGraph::VisualComponentGraph(int width, int height)
-    : m_Root(new RootVisualHierarchyComponent())
-    , m_Camera(new CameraVisualComponent())
+    : m_Camera(new CameraVisualComponent())
     , m_Renderer(new Renderer(width, height))
 {
+	m_Root = EntityFactory::GetSingleton()->createEmptyEntity();
+	m_RootHierarchyComponent.reset(new RootHierarchyComponent());
+	m_Root->addComponent(m_RootHierarchyComponent);
+	m_RootHierarchyComponent->setOwner(m_Root);
+
 	m_TransformationStack.push_back(Matrix::Identity);
 }
 
@@ -14,27 +20,11 @@ VisualComponentGraph::~VisualComponentGraph()
 
 void VisualComponentGraph::render()
 {
-	if (m_Root && m_Camera)
+	if (m_RootHierarchyComponent->preRender(this))
 	{
-		if (m_Root->preRender(this))
-		{
-			if (m_Root->isVisible(this))
-			{
-				m_Root->render(this);
-			}
-			m_Root->renderChildren(this);
-			m_Root->postRender(this);
-		}
+		m_RootHierarchyComponent->renderChildren(this);
+		m_RootHierarchyComponent->postRender(this);
 	}
-}
-
-bool VisualComponentGraph::load()
-{
-	if (!m_Root)
-	{
-		return true;
-	}
-	return m_Root->load(this);
 }
 
 void VisualComponentGraph::recoverLostDevice()
@@ -44,12 +34,12 @@ void VisualComponentGraph::recoverLostDevice()
 
 bool VisualComponentGraph::addChild(Ref<Entity> child)
 {
-	return m_Root->addChild(child);
+	return m_RootHierarchyComponent->addChild(child);
 }
 
 bool VisualComponentGraph::removeChild(Ref<Entity> child)
 {
-	return m_Root->removeChild(child);
+	return m_RootHierarchyComponent->removeChild(child);
 }
 
 void VisualComponentGraph::pushMatrix(const Matrix& transform)

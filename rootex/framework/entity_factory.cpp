@@ -31,7 +31,6 @@ EntityFactory::EntityFactory()
 	m_ComponentCreators["VisualComponent"] = VisualComponent::Create;
 	m_ComponentCreators["TransformComponent"] = TransformComponent::Create;
 	m_ComponentCreators["DiffuseVisualComponent"] = DiffuseVisualComponent::Create;
-	m_ComponentCreators["HierarchyComponent"] = HierarchyComponent::Create;
 }
 
 Ref<Component> EntityFactory::createComponent(const String& name, const LuaVariable& componentData)
@@ -103,6 +102,14 @@ Ref<Entity> EntityFactory::createEntity(LuaTextResourceFile* actorLuaDescription
 	{
 		ERR("Entity was not setup properly: " + std::to_string(entity->m_ID));
 	}
+
+	return entity;
+}
+
+Ref<Entity> EntityFactory::createEmptyEntity()
+{
+	Ref<Entity> entity;
+	entity.reset(new Entity(getNextID()));
 
 	return entity;
 }
