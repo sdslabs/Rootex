@@ -11,10 +11,6 @@ class Entity;
 
 class Component
 {
-	void setOwner(Ref<Entity> newOwner) { m_Owner = newOwner; }
-	
-	friend class EntityFactory;
-
 protected:
 	Ref<Entity> m_Owner;
 
@@ -26,4 +22,6 @@ public:
 
 	Entity* getOwner() const;
 	virtual ComponentID getComponentID() const = 0;
+	
+	void setOwner(Ref<Entity> newOwner) { m_Owner = newOwner; }
 };

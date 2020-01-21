@@ -19,7 +19,6 @@ public:
 
 	virtual bool preRender(VisualComponentGraph* visualComponentGraph) override;
 	virtual void render(VisualComponentGraph* visualComponentGraph) override;
-	virtual bool load(VisualComponentGraph* visualComponentGraph) override;
 	virtual bool reset(VisualComponentGraph* visualComponentGraph, int windowWidth, int windowHeight);
 	virtual bool isVisible(VisualComponentGraph* visualComponentGraph) const override;
 	virtual void postRender(VisualComponentGraph* visualComponentGraph) override;

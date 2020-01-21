@@ -1,15 +1,16 @@
 #pragma once
 
 #include "common/common.h"
-#include "root_visual_component.h"
 #include "camera_visual_component.h"
-//#include "components/hierarchy_component.h"
+#include "entity_factory.h"
+#include "framework/components/root_hierarchy_component.h"
 #include "renderer/renderer.h"
 
 class VisualComponentGraph
 {
 protected:
-	Ptr<RootVisualHierarchyComponent> m_Root;
+	Ref<Entity> m_Root;
+	Ref<RootHierarchyComponent> m_RootHierarchyComponent;
 	Ref<CameraVisualComponent> m_Camera;
 	Ptr<Renderer> m_Renderer;
 	Vector<Matrix> m_TransformationStack;
@@ -20,7 +21,6 @@ public:
 	~VisualComponentGraph();
 
 	void render();
-	bool load();
 	void recoverLostDevice();
 	
 	bool addChild(Ref<Entity> child);

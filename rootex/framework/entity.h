@@ -12,8 +12,6 @@ class Entity
 	EntityID m_ID;
 	HashMap<ComponentID, Ref<Component>> m_Components;
 
-	void addComponent(const Ref<Component>& component);
-
 	Entity(EntityID id);
 
 	bool setupComponents();
@@ -23,13 +21,26 @@ class Entity
 public:
 	virtual ~Entity() = default;
 
+	void addComponent(const Ref<Component>& component);
+	
+	template <class ComponentType>
+	void removeComponent();
+
 	void destroy();
 
 	EntityID getID() const;
+	
 	template <class ComponentType>
 	ComponentType* getComponent();
+	
 	const HashMap<ComponentID, Ref<Component>>& getAllComponents() const;
 };
+
+template <class ComponentType>
+inline void Entity::removeComponent()
+{
+	m_Components.erase(ComponentType::s_ID);
+}
 
 template <class ComponentType>
 inline ComponentType* Entity::getComponent()

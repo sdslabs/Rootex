@@ -34,6 +34,5 @@ public:
 	static EntityFactory* GetSingleton();
 
 	Ref<Entity> createEntity(LuaTextResourceFile* actorLuaDescription);
-
-
+	Ref<Entity> createEmptyEntity();
 };
