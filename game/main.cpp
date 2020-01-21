@@ -19,6 +19,7 @@
 #include "framework/components/visual/diffuse_visual_component.h"
 #include "framework/components/visual/visual_component_graph.h"
 #include "framework/components/test_component.h"
+#include "framework/components/hierarchy_component.h"
 #include "framework/entity_factory.h"
 #include "framework/systems/debug_system.h"
 #include "framework/systems/test_system.h"
@@ -94,7 +95,11 @@ int main()
 	LuaTextResourceFile* teapotEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/teapot.lua");
 	Ref<Entity> teapot = EntityFactory::GetSingleton()->createEntity(teapotEntity);
 	
-	visualGraph->addChild(teapot->getComponent<DiffuseVisualComponent>());
+	Ref<Entity> teapotChild = EntityFactory::GetSingleton()->createEntity(teapotEntity);
+	teapotChild->getComponent<DiffuseVisualComponent>()->setTransform(Matrix::CreateTranslation({ 0.0f, 1.0f, 0.0f }));
+	teapot->getComponent<HierarchyComponent>()->addChild(teapotChild);
+
+	visualGraph->addChild(teapot);
 	
 	std::optional<int> ret = {};
 	FrameTimer frameTimer;
@@ -171,7 +176,7 @@ int main()
 
 		EventManager::GetSingleton()->tick();
 
-		frameTimer.showFPS();
+		//frameTimer.showFPS();
 	}
 
 	return ret.value();

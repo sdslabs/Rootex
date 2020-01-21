@@ -31,11 +31,6 @@ void CameraVisualComponent::render(VisualComponentGraph* visualComponentGraph)
 	}
 }
 
-bool CameraVisualComponent::load(VisualComponentGraph* visualComponentGraph)
-{
-	return true;
-}
-
 bool CameraVisualComponent::reset(VisualComponentGraph* scene, int windowWidth, int windowHeight)
 {
 	// TODO: Add window resize logic that set the perspective matrix and frustum correctly
