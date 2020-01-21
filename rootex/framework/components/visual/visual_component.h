@@ -10,6 +10,7 @@
 #include "renderer/vertex_buffer.h"
 
 #include "components/transform_component.h"
+#include "components/hierarchy_component.h"
 
 class VisualComponentGraph;
 
@@ -32,6 +33,7 @@ protected:
 	RenderPass m_RenderPassSetting;
 	VisualModelResourceFile* m_VisualModelResourceFile;
 	Ref<Material> m_Material;
+	HierarchyComponent* m_HierarchyComponent;
 
 public:
 	VisualComponentAttributes();
@@ -51,8 +53,6 @@ class VisualComponent : public Component
 	static Component* Create(const LuaVariable& componentData);
 
 protected:
-	VisualComponent* m_Parent;
-	Vector<Ref<VisualComponent>> m_Children;
 	VisualComponentAttributes m_Attributes;
 	bool m_IsVisible;
 	
@@ -68,7 +68,6 @@ public:
 	virtual VisualComponentAttributes* getAttributes() { return &m_Attributes; }
 
 	bool setup() override;
-	virtual bool load(VisualComponentGraph* visualComponentGraph);
 
 	virtual bool preRender(VisualComponentGraph* visualComponentGraph);
 	virtual bool isVisible(VisualComponentGraph* visualComponentGraph) const;
@@ -76,8 +75,6 @@ public:
 	virtual void renderChildren(VisualComponentGraph* visualComponentGraph);
 	virtual void postRender(VisualComponentGraph* visualComponentGraph);
 
-	virtual bool addChild(VisualComponent* child);
-	virtual bool removeChild(Ref<VisualComponent> node);
 	void addTransform(const Matrix& applyTransform);
 
 	void setTransform(const Matrix& newTransform);

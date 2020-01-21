@@ -1,9 +1,10 @@
 #include "visual_component.h"
 
-#include "visual_component_graph.h"
+#include "common/common.h"
 
 #include "core/resource_loader.h"
 
+#include "framework/components/visual/visual_component_graph.h"
 #include "framework/entity.h"
 
 Component* VisualComponent::Create(const LuaVariable& componentData)
@@ -23,7 +24,6 @@ VisualComponent::VisualComponent(const RenderPass& renderPassSetting, Ref<Materi
 	m_Attributes.m_RenderPassSetting = renderPassSetting;
 	m_Attributes.m_Material = material;
 	m_Attributes.m_VisualModelResourceFile = resFile;
-	m_Parent = nullptr;
 }
 
 VisualComponent::~VisualComponent()
@@ -40,18 +40,15 @@ bool VisualComponent::setup()
 		{
 			status = false;
 		}
+
+		m_Attributes.m_HierarchyComponent = m_Owner->getComponent<HierarchyComponent>();
+		if (m_Attributes.m_HierarchyComponent == nullptr)
+		{
+			WARN("Entity without hierarchy component found");
+			status = false;
+		}
 	}
 
-	return status;
-}
-
-bool VisualComponent::load(VisualComponentGraph* graph)
-{
-	bool status = true;
-	for (auto& child : m_Children)
-	{
-		status = status & child->load(graph);
-	}
 	return status;
 }
 
@@ -89,42 +86,27 @@ void VisualComponent::renderChildren(VisualComponentGraph* graph)
 		m_Attributes.m_Material->setShaderConstantBuffer(Shader::ConstantBufferType::Projection, graph->getCamera()->getProjection());
 	}
 
-	for (auto& child : m_Children)
+	for (auto& child : m_Owner->getComponent<HierarchyComponent>()->m_Children)
 	{
-		child->preRender(graph);
+		//TODO-FIX THIS
+		VisualComponent* childVisualComponent = child->getComponent<VisualComponent>();
 
-		if (child->isVisible(graph))
+		childVisualComponent->preRender(graph);
+
+		if (childVisualComponent->isVisible(graph))
 		{
 			// Assumed to be opaque
-			child->render(graph);
+			childVisualComponent->render(graph);
 		}
-		child->renderChildren(graph);
+		childVisualComponent->renderChildren(graph);
 
-		child->postRender(graph);
+		childVisualComponent->postRender(graph);
 	}
 }
 
 void VisualComponent::postRender(VisualComponentGraph* graph)
 {
 	graph->popMatrix();
-}
-
-bool VisualComponent::addChild(VisualComponent* child)
-{
-	m_Children.push_back(Ref<VisualComponent>(child));
-	child->m_Parent = this;
-	return true;
-}
-
-bool VisualComponent::removeChild(Ref<VisualComponent> node)
-{
-	auto& findIt = std::find(m_Children.begin(), m_Children.end(), node);
-	if (findIt != m_Children.end())
-	{
-		(*findIt)->m_Parent = nullptr;
-		m_Children.erase(findIt);
-	}
-	return true;
 }
 
 void VisualComponent::addTransform(const Matrix& applyTransform)
@@ -155,5 +137,8 @@ Vector3 VisualComponent::getPosition() const
 VisualComponentAttributes::VisualComponentAttributes()
     : m_RenderPassSetting(RenderPass::Global)
     , m_Material(Ref<Material>(new Material()))
+    , m_VisualModelResourceFile(nullptr)
+    , m_TransformComponent(nullptr)
+    , m_HierarchyComponent(nullptr)
 {
 }

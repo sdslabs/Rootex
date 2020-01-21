@@ -15,7 +15,7 @@ class DiffuseVisualComponent : public VisualComponent
 	friend class EntityFactory;
 
 public:
-	static const ComponentID s_ID = (ComponentID)ComponentIDs::DiffuseVisualComponent;
+	static const ComponentID s_ID = (ComponentID)ComponentIDs::VisualComponent;
 
 	ComponentID getComponentID() const override { return s_ID; }
 };

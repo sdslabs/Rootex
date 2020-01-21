@@ -7,6 +7,7 @@
 #include "components/debug_component.h"
 #include "components/test_component.h"
 #include "components/transform_component.h"
+#include "components/hierarchy_component.h"
 #include "components/visual/visual_component.h"
 #include "components/visual/diffuse_visual_component.h"
 
@@ -51,6 +52,14 @@ Ref<Component> EntityFactory::createComponent(const String& name, const LuaVaria
 	}
 }
 
+Ref<Component> EntityFactory::createHierarchyComponent()
+{
+	Ref<HierarchyComponent> component(new HierarchyComponent());
+	System::RegisterComponent(component.get());
+
+	return component;
+}
+
 Ref<Entity> EntityFactory::createEntity(LuaTextResourceFile* actorLuaDescription)
 {
 	m_LuaState.loadExecuteScript(actorLuaDescription);
@@ -85,10 +94,22 @@ Ref<Entity> EntityFactory::createEntity(LuaTextResourceFile* actorLuaDescription
 		}
 	}
 
+	Ref<Component> hierarchyComponent = createHierarchyComponent();
+	entity->addComponent(hierarchyComponent);
+	hierarchyComponent->setOwner(entity);
+
 	if (!entity->setupComponents())
 	{
 		ERR("Entity was not setup properly: " + std::to_string(entity->m_ID));
 	}
+
+	return entity;
+}
+
+Ref<Entity> EntityFactory::createEmptyEntity()
+{
+	Ref<Entity> entity;
+	entity.reset(new Entity(getNextID()));
 
 	return entity;
 }
