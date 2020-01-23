@@ -92,6 +92,9 @@ int main()
 	Ref<VisualComponentGraph> visualGraph(new VisualComponentGraph(windowLua["deltaX"], windowLua["deltaY"]));
 	Ref<RenderSystem> renderSystem(new RenderSystem());
 	
+	LuaTextResourceFile* pointLightEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/sphere.lua");
+	Ref<Entity> pointLight = EntityFactory::GetSingleton()->createEntity(pointLightEntity);
+	
 	LuaTextResourceFile* teapotEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/teapot.lua");
 	Ref<Entity> teapot = EntityFactory::GetSingleton()->createEntity(teapotEntity);
 	
@@ -100,6 +103,7 @@ int main()
 	teapot->getComponent<HierarchyComponent>()->addChild(teapotChild);
 
 	visualGraph->addChild(teapot);
+	visualGraph->addChild(pointLight);
 	
 	std::optional<int> ret = {};
 	FrameTimer frameTimer;
@@ -112,6 +116,10 @@ int main()
 			break;
 
 		AudioSystem::GetSingleton()->update();
+
+		static float xp = 0;
+		static float yp = 0;
+		static float zp = 0;
 
 		static float x = 0;
 		static float y = 0;
@@ -167,10 +175,38 @@ int main()
 		{
 			u = l = roll = pitch = yaw = 0;
 		}
+
+		if (GetAsyncKeyState('W'))
+		{
+			yp += 1.0;
+		}
+		if (GetAsyncKeyState('S'))
+		{
+			yp -= 1.0;
+		}
+		if (GetAsyncKeyState('A'))
+		{
+			xp -= 1.0;
+		}
+		if (GetAsyncKeyState('D'))
+		{
+			xp += 1.0;
+		}
+		if (GetAsyncKeyState('Q'))
+		{
+			zp += 1.0;
+		}
+		if (GetAsyncKeyState('E'))
+		{
+			zp -= 1.0;
+		}
+
 		x = l;
 		y = u;
 
 		teapot->getComponent<TransformComponent>()->setTransform(Matrix::CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix::CreateTranslation(0, y, 0.0f) * Matrix::CreateScale(x));
+		
+		pointLight->getComponent<TransformComponent>()->setPosition(Vector3(xp, yp, zp));
 
 		RenderSystem::GetSingleton()->render(visualGraph.get(), window.get());
 
