@@ -20,6 +20,7 @@
 project = 'Rootex'
 copyright = '2020, SDSLabs'
 author = 'SDSLabs'
+master_doc = 'index'
 
 # -- Source information ------------------------------------------------------
 
