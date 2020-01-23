@@ -24,6 +24,7 @@
 #include "framework/systems/debug_system.h"
 #include "framework/systems/test_system.h"
 #include "framework/systems/render_system.h"
+#include "framework/systems/point_light_system.h"
 
 #include "main/window.h"
 
@@ -91,6 +92,7 @@ int main()
 
 	Ref<VisualComponentGraph> visualGraph(new VisualComponentGraph(windowLua["deltaX"], windowLua["deltaY"]));
 	Ref<RenderSystem> renderSystem(new RenderSystem());
+	Ref<PointLightSystem> pointLightSystem(new PointLightSystem());
 	
 	LuaTextResourceFile* pointLightEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/sphere.lua");
 	Ref<Entity> pointLight = EntityFactory::GetSingleton()->createEntity(pointLightEntity);
@@ -98,9 +100,9 @@ int main()
 	LuaTextResourceFile* teapotEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/teapot.lua");
 	Ref<Entity> teapot = EntityFactory::GetSingleton()->createEntity(teapotEntity);
 	
-	Ref<Entity> teapotChild = EntityFactory::GetSingleton()->createEntity(teapotEntity);
-	teapotChild->getComponent<DiffuseVisualComponent>()->setTransform(Matrix::CreateTranslation({ 0.0f, 1.0f, 0.0f }));
-	teapot->getComponent<HierarchyComponent>()->addChild(teapotChild);
+	//Ref<Entity> teapotChild = EntityFactory::GetSingleton()->createEntity(teapotEntity);
+	//teapotChild->getComponent<DiffuseVisualComponent>()->setTransform(Matrix::CreateTranslation({ 0.0f, 1.0f, 0.0f }));
+	//teapot->getComponent<HierarchyComponent>()->addChild(teapotChild);
 
 	visualGraph->addChild(teapot);
 	visualGraph->addChild(pointLight);
@@ -208,6 +210,8 @@ int main()
 		
 		pointLight->getComponent<TransformComponent>()->setPosition(Vector3(xp, yp, zp));
 
+		PointLightSystem::GetSingleton()->apply();
+		
 		RenderSystem::GetSingleton()->render(visualGraph.get(), window.get());
 
 		EventManager::GetSingleton()->tick();
