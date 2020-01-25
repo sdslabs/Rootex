@@ -207,5 +207,5 @@ void ThreadPool::shutdown()
 	}
 	LeaveCriticalSection(&this->m_CriticalSection);
 	WakeAllConditionVariable(&this->m_ConsumerVariable);
-	WaitForMultipleObjects(m_Threads, m_Handles, TRUE, INFINITE);
+	WaitForMultipleObjects(m_Threads, m_Handles.data(), TRUE, INFINITE);
 }
