@@ -66,15 +66,10 @@ struct MasterThread
 
 class ThreadPool
 {
-	enum
-	{
-		MaxWorkerThreads = 12,
-	};
-
 	bool m_IsRunning;
 	__int32 m_Threads;
-	WorkerParameters m_WorkerParameters[MaxWorkerThreads];
-	HANDLE m_Handles[MaxWorkerThreads];
+	Vector<WorkerParameters> m_WorkerParameters;
+	Vector<HANDLE> m_Handles;
 	CONDITION_VARIABLE m_ConsumerVariable;
 	CONDITION_VARIABLE m_ProducerVariable;
 	CRITICAL_SECTION m_CriticalSection;
