@@ -97,14 +97,14 @@ int main()
 	LuaTextResourceFile* pointLightEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/sphere.lua");
 	Ref<Entity> pointLight = EntityFactory::GetSingleton()->createEntity(pointLightEntity);
 	
-	LuaTextResourceFile* teapotEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/teapot.lua");
-	Ref<Entity> teapot = EntityFactory::GetSingleton()->createEntity(teapotEntity);
+	//LuaTextResourceFile* teapotEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/teapot.lua");
+	//Ref<Entity> teapot = EntityFactory::GetSingleton()->createEntity(teapotEntity);
 	
 	//Ref<Entity> teapotChild = EntityFactory::GetSingleton()->createEntity(teapotEntity);
 	//teapotChild->getComponent<DiffuseVisualComponent>()->setTransform(Matrix::CreateTranslation({ 0.0f, 1.0f, 0.0f }));
 	//teapot->getComponent<HierarchyComponent>()->addChild(teapotChild);
 
-	visualGraph->addChild(teapot);
+	//visualGraph->addChild(teapot);
 	visualGraph->addChild(pointLight);
 	
 	std::optional<int> ret = {};
@@ -206,7 +206,7 @@ int main()
 		x = l;
 		y = u;
 
-		teapot->getComponent<TransformComponent>()->setTransform(Matrix::CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix::CreateTranslation(0, y, 0.0f) * Matrix::CreateScale(x));
+		//teapot->getComponent<TransformComponent>()->setTransform(Matrix::CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix::CreateTranslation(0, y, 0.0f) * Matrix::CreateScale(x));
 		
 		pointLight->getComponent<TransformComponent>()->setPosition(Vector3(xp, yp, zp));
 
