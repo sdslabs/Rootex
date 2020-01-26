@@ -25,7 +25,7 @@ struct PixelInputType
     float4 screenPosition : SV_POSITION;
     float3 normal : NORMAL;
     matrix M : MATRIX;
-    float4 originalPosition : POSITION;
+    float4 worldPosition : POSITION;
     float2 tex : TEXCOORD0;
 };
 
@@ -35,7 +35,7 @@ PixelInputType main(VertexInputType input)
     output.screenPosition = mul(mul(P, mul(V, M)), input.position);
     output.normal = mul((float3x3) M, (float3)input.normal);
     output.M = M;
-    output.originalPosition = input.position;
+    output.worldPosition = mul(M, input.position);
     output.tex = input.tex;
     
     return output;
