@@ -2,6 +2,8 @@
 
 #include "component.h"
 
+#include"btBulletDynamicsCommon.h"
+
 class PhysicsComponent : public Component
 {
 	static Component* Create(const LuaVariable& componentData);
@@ -20,4 +22,9 @@ public:
 
 		MaterialData(float restitution, float friction);
 	};
+
+	static btTransform Mat4x4_to_btTransform(Matrix const& mat);
+
+	static Matrix btTransform_to_Mat4x4(btTransform const& trans);
+
 };
