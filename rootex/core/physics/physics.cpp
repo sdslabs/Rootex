@@ -3,11 +3,11 @@
 
 void GamePhysics::initialize()
 {
-	m_CollisionConfiguration = new btDefaultCollisionConfiguration();
-	m_Dispatcher = new btCollisionDispatcher(m_CollisionConfiguration);
-	m_Broadphase = new btDbvtBroadphase();
-	m_Solver = new btSequentialImpulseConstraintSolver;
-	m_DynamicsWorld = new btDiscreteDynamicsWorld(m_Dispatcher, m_Broadphase, m_Solver, m_CollisionConfiguration);
+	m_CollisionConfiguration.reset(new btDefaultCollisionConfiguration());
+	m_Dispatcher.reset(new btCollisionDispatcher(m_CollisionConfiguration.get()));
+	m_Broadphase.reset(new btDbvtBroadphase());
+	m_Solver.reset(new btSequentialImpulseConstraintSolver);
+	m_DynamicsWorld.reset(new btDiscreteDynamicsWorld(m_Dispatcher.get(), m_Broadphase.get(), m_Solver.get(), m_CollisionConfiguration.get()));
 
 	if (!m_CollisionConfiguration || !m_Dispatcher || !m_Broadphase || !m_Solver || !m_DynamicsWorld)
 	{
@@ -32,10 +32,9 @@ GamePhysics::~GamePhysics()
 		m_DynamicsWorld->removeCollisionObject(obj);
 		delete obj;
 	}
+}
 
-	delete (m_DynamicsWorld);
-	delete (m_Solver);
-	delete (m_Broadphase);
-	delete (m_Dispatcher);
-	delete (m_CollisionConfiguration);
+void GamePhysics::update(float deltaMilliseconds)
+{
+	m_DynamicsWorld.get()->stepSimulation(deltaMilliseconds, 10);
 }
