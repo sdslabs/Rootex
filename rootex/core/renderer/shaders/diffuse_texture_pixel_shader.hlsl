@@ -9,39 +9,57 @@ struct PixelInputType
     float4 worldPosition : POSITION;
     float2 tex : TEXCOORD0;
 };
-
-cbuffer LightingInfo : register(b0)
+struct LightInfo
 {
-    float4 materialColor = { 0.7f, 0.7f, 0.0f, .10f };
-    float4 ambientColor = { 0.05f, 0.05f, 0.05f, 1.0f };
-    float4 diffuseColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-    float diffuseIntensity = 2.0f;
-    float specularIntensity = 0.6f;
-    float attConst = 1.0f;
-    float attLin = 0.045f;
-    float attQuad = 0.0075f;
-    float specPow = 30.0f;
-    float3 lightPos = { 0.0f, 0.0f, +2.0f };
+    float4 ambientColor;
+    float4 diffuseColor;
+    float diffuseIntensity;
+    float attConst;
+    float attLin;
+    float attQuad;
+    float3 lightPos;
 };
+
+
+cbuffer Lights : register(b0)
+{
+    int lightCount;
+    LightInfo lightInfos[4];
+};
+
+cbuffer Material: register(b1)
+{
+    float4 materialColor;
+    float specularIntensity;
+    float specPow;
+};
+
 
 float4 main(PixelInputType input) : SV_TARGET
 {    
-    float3 relative = lightPos - (float3) input.worldPosition;
-    float dist = length(relative);
-    float3 normalizedRelative = relative / dist;
-    float att = 1.0f / (attConst + attLin * dist + attQuad * (dist * dist));
-    float cosAngle = max(0.0f, dot(normalizedRelative, input.normal));
-    float3 diffuse = diffuseColor * diffuseIntensity * cosAngle;
+    float4 finalColor = { 0.0f, 0.0f, 0.0f, 1.0f };
+    for (int i = 0; i < lightCount; i++)
+    {
+        float3 relative = lightInfos[i].lightPos - (float3) input.worldPosition;
+        float dist = length(relative);
+        float3 normalizedRelative = relative / dist;
+        float att = 1.0f / (lightInfos[i].attConst + lightInfos[i].attLin * dist + lightInfos[i].attQuad * (dist * dist));
+        float cosAngle = max(0.0f, dot(normalizedRelative, input.normal));
+        float3 diffuse = lightInfos[i].diffuseColor * lightInfos[i].diffuseIntensity * cosAngle;
     
-    float3 reflected = reflect(normalizedRelative, input.normal);
+        float3 reflected = reflect(normalizedRelative, input.normal);
     
     //TODO- FIX THIS
-    float3 toEye = float3(0.0f, 0.0f, 4.0f) - (float3) input.worldPosition;
+        float3 toEye = float3(0.0f, 0.0f, 4.0f) - (float3) input.worldPosition;
     
-    float specFactor = pow(max(dot(normalize(reflected), normalize(toEye)), 0.0f), specPow);
+        float specFactor = pow(max(dot(normalize(reflected), normalize(toEye)), 0.0f), specPow);
     
-    float3 specular = specularIntensity * specFactor * diffuse ;
+        float3 specular = specularIntensity * specFactor * diffuse;
+        
+        finalColor += float4(saturate((diffuse + (float3) lightInfos[i].ambientColor + specular) * (float3) materialColor * att), 0.0f);
+        
+    }
     
-    return float4(saturate((diffuse + ambientColor +specular )*materialColor*att), 1.0f);
+    return finalColor;
     
 }
