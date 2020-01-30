@@ -19,8 +19,6 @@ void PointLightSystem::apply()
 	for (auto& pointLightComponent : pointLightComponents)
 	{
 		PointLightComponent* light = (PointLightComponent *)(pointLightComponent);
-
-		std::cout << "Light component- " << light->m_constAtt;
 	}
 }
 

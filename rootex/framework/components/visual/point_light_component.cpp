@@ -3,9 +3,9 @@
 Component* PointLightComponent::Create(const LuaVariable& componentData)
 {
 	PointLightComponent* pointLightComponent = new PointLightComponent(
-	    (float)componentData["constAtt"],
-	    (float)componentData["linAtt"],
-	    (float)componentData["quadAtt"],
+	    (float)componentData["attConst"],
+	    (float)componentData["attLin"],
+	    (float)componentData["attQuad"],
 	    (float)componentData["range"],
 	    (float)componentData["diffuseIntensity"],
 	    Color((float)componentData["diffuseColor"]["r"], (float)componentData["diffuseColor"]["g"],
