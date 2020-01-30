@@ -6,6 +6,7 @@
 
 #include "framework/components/visual/visual_component_graph.h"
 #include "framework/entity.h"
+#include "framework/systems/point_light_system.h"
 
 Component* VisualComponent::Create(const LuaVariable& componentData)
 {
@@ -64,7 +65,7 @@ bool VisualComponent::preRender(VisualComponentGraph* graph)
 		graph->pushMatrix(Matrix::Identity);
 		m_Attributes.m_Material->setShaderConstantBuffer(Shader::ConstantBufferType::Model, graph->getTopMatrix());
 	}
-	PSConstantBuffer Cb;
+	PSConstantBuffer Cb = { PointLightSystem::GetSingleton()->getPointLights(), { { 0.7f, 0.7f, 0.0f, 1.0f }, 0.6f, 30.0f, {0.0f,0.0f} }};
 	m_Attributes.m_Material->setShaderConstantBuffer(Cb);
 	return true;
 }

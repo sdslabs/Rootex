@@ -28,13 +28,14 @@ struct MaterialInfo
 	float pad1[2];
 };
 
+struct Lights
+{
+	int lightCount = 2;
+	float pad[3];
+	LightInfo lightInfos[4];
+};
 struct PSConstantBuffer
 {
-	struct Lights
-	{
-		int lightCount = 2;
-		float pad[3];
-		LightInfo lightInfos[4];
-	} lights;
+	Lights lights;
 	MaterialInfo material;
 };
