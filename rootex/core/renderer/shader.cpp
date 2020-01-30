@@ -90,12 +90,16 @@ void Shader::set(const PSConstantBuffer& constantBuffer)
 	cbd.Usage = D3D11_USAGE_DYNAMIC;
 	cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	cbd.MiscFlags = 0u;
-	cbd.ByteWidth = sizeof(constantBuffer);
+	cbd.ByteWidth = sizeof(constantBuffer.lights);
 	cbd.StructureByteStride = 0u;
 	D3D11_SUBRESOURCE_DATA csd = { 0 };
-	csd.pSysMem = &constantBuffer;
+	csd.pSysMem = &constantBuffer.lights;
 
-	RenderingDevice::GetSingleton()->initPSConstantBuffer(&cbd, &csd);
+	RenderingDevice::GetSingleton()->initPSConstantBuffer(&cbd, &csd, 0);
+
+	cbd.ByteWidth = sizeof(constantBuffer.material);
+	csd.pSysMem = &constantBuffer.material;
+	RenderingDevice::GetSingleton()->initPSConstantBuffer(&cbd, &csd, 1);
 }
 
 DiffuseShader::DiffuseShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat)
