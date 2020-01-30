@@ -94,8 +94,10 @@ int main()
 	Ref<RenderSystem> renderSystem(new RenderSystem());
 	Ref<PointLightSystem> pointLightSystem(new PointLightSystem());
 	
-	LuaTextResourceFile* pointLightEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/sphere.lua");
-	Ref<Entity> pointLight = EntityFactory::GetSingleton()->createEntity(pointLightEntity);
+	LuaTextResourceFile* sphereEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/sphere.lua");
+	Ref<Entity> sphere = EntityFactory::GetSingleton()->createEntity(sphereEntity);
+	LuaTextResourceFile* pointLightEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/light.lua");
+	Ref<Entity> light = EntityFactory::GetSingleton()->createEntity(pointLightEntity);
 	
 	//LuaTextResourceFile* teapotEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/teapot.lua");
 	//Ref<Entity> teapot = EntityFactory::GetSingleton()->createEntity(teapotEntity);
@@ -105,7 +107,8 @@ int main()
 	//teapot->getComponent<HierarchyComponent>()->addChild(teapotChild);
 
 	//visualGraph->addChild(teapot);
-	visualGraph->addChild(pointLight);
+	visualGraph->addChild(sphere);
+	visualGraph->addChild(light);
 	
 	std::optional<int> ret = {};
 	FrameTimer frameTimer;
@@ -208,7 +211,7 @@ int main()
 
 		//teapot->getComponent<TransformComponent>()->setTransform(Matrix::CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix::CreateTranslation(0, y, 0.0f) * Matrix::CreateScale(x));
 		
-		pointLight->getComponent<TransformComponent>()->setPosition(Vector3(xp, yp, zp));
+		sphere->getComponent<TransformComponent>()->setPosition(Vector3(xp, yp, zp));
 
 		PointLightSystem::GetSingleton()->apply();
 		
