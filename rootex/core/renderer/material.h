@@ -19,6 +19,7 @@ public:
 	virtual void bind() const;
 
 	void setShaderConstantBuffer(Shader::ConstantBufferType matrixType, const Matrix& matrix) { m_Shader->set(matrixType, matrix); }
+	void setShaderConstantBuffer(PSConstantBuffer& Cb) { m_Shader->set(Cb); }
 };
 
 class DiffuseMaterial : public Material

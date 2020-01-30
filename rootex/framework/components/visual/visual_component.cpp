@@ -64,6 +64,8 @@ bool VisualComponent::preRender(VisualComponentGraph* graph)
 		graph->pushMatrix(Matrix::Identity);
 		m_Attributes.m_Material->setShaderConstantBuffer(Shader::ConstantBufferType::Model, graph->getTopMatrix());
 	}
+	PSConstantBuffer Cb;
+	m_Attributes.m_Material->setShaderConstantBuffer(Cb);
 	return true;
 }
 
