@@ -12,19 +12,19 @@
 #include "core/renderer/shader_library.h"
 #include "core/renderer/vertex_buffer.h"
 
-#include "core/resource_loader.h"
 #include "core/event_manager.h"
+#include "core/resource_loader.h"
 
-#include "framework/components/visual/visual_component.h"
-#include "framework/components/visual/diffuse_visual_component.h"
-#include "framework/components/visual/visual_component_graph.h"
-#include "framework/components/test_component.h"
 #include "framework/components/hierarchy_component.h"
+#include "framework/components/test_component.h"
+#include "framework/components/visual/diffuse_visual_component.h"
+#include "framework/components/visual/visual_component.h"
+#include "framework/components/visual/visual_component_graph.h"
 #include "framework/entity_factory.h"
 #include "framework/systems/debug_system.h"
-#include "framework/systems/test_system.h"
-#include "framework/systems/render_system.h"
 #include "framework/systems/point_light_system.h"
+#include "framework/systems/render_system.h"
+#include "framework/systems/test_system.h"
 
 #include "main/window.h"
 
@@ -93,15 +93,15 @@ int main()
 	Ref<VisualComponentGraph> visualGraph(new VisualComponentGraph(windowLua["deltaX"], windowLua["deltaY"]));
 	Ref<RenderSystem> renderSystem(new RenderSystem());
 	Ref<PointLightSystem> pointLightSystem(new PointLightSystem());
-	
-	LuaTextResourceFile* sphereEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/sphere.lua");
+
+	LuaTextResourceFile* sphereEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/cube.lua");
 	Ref<Entity> sphere = EntityFactory::GetSingleton()->createEntity(sphereEntity);
 	LuaTextResourceFile* pointLightEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/light.lua");
 	Ref<Entity> light = EntityFactory::GetSingleton()->createEntity(pointLightEntity);
-	
+
 	//LuaTextResourceFile* teapotEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/teapot.lua");
 	//Ref<Entity> teapot = EntityFactory::GetSingleton()->createEntity(teapotEntity);
-	
+
 	//Ref<Entity> teapotChild = EntityFactory::GetSingleton()->createEntity(teapotEntity);
 	//teapotChild->getComponent<DiffuseVisualComponent>()->setTransform(Matrix::CreateTranslation({ 0.0f, 1.0f, 0.0f }));
 	//teapot->getComponent<HierarchyComponent>()->addChild(teapotChild);
@@ -109,7 +109,7 @@ int main()
 	//visualGraph->addChild(teapot);
 	visualGraph->addChild(sphere);
 	visualGraph->addChild(light);
-	
+
 	std::optional<int> ret = {};
 	FrameTimer frameTimer;
 	LoggingScopeTimer gameScopedLogger("GameTime");
@@ -128,29 +128,40 @@ int main()
 
 		static float x = 0;
 		static float y = 0;
+		static float z = 0;
 		static float u = 0;
 		static float l = 0;
+		static float in = -2;
 		static float roll = 0;
 		static float pitch = 0;
 		static float yaw = 0;
 		if (GetAsyncKeyState(VK_LEFT))
 		{
-			u += 0.01;
+			u += 0.1;
 		}
 		if (GetAsyncKeyState(VK_RIGHT))
 		{
-			u += -0.01;
+			u += -0.1;
 		}
 		if (GetAsyncKeyState(VK_DOWN))
 		{
-			l += -0.01;
+			l += -0.1;
 		}
 		if (GetAsyncKeyState(VK_UP))
 		{
-			l += 0.01;
+			l += 0.1;
+		}
+		if (GetAsyncKeyState(VK_NUMPAD4))
+		{
+			in += -0.1;
+		}
+		if (GetAsyncKeyState(VK_NUMPAD7))
+		{
+			in += 0.1;
 		}
 		x -= l;
 		y += u;
+		z -= in;
 
 		if (GetAsyncKeyState(VK_NUMPAD7))
 		{
@@ -208,13 +219,14 @@ int main()
 
 		x = l;
 		y = u;
-
+		z = in;
 		//teapot->getComponent<TransformComponent>()->setTransform(Matrix::CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix::CreateTranslation(0, y, 0.0f) * Matrix::CreateScale(x));
-		
-		sphere->getComponent<TransformComponent>()->setPosition(Vector3(xp, yp, zp));
+
+		sphere->getComponent<TransformComponent>()->setPosition({ x, y, z });
+		light->getComponent<TransformComponent>()->setPosition({ xp, yp, zp });
 
 		PointLightSystem::GetSingleton()->apply();
-		
+
 		RenderSystem::GetSingleton()->render(visualGraph.get(), window.get());
 
 		EventManager::GetSingleton()->tick();
@@ -223,4 +235,4 @@ int main()
 	}
 
 	return ret.value();
-}
+	}

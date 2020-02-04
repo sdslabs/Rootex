@@ -32,11 +32,11 @@ struct PixelInputType
 PixelInputType main(VertexInputType input)
 {
     PixelInputType output;
-    output.screenPosition = mul(mul(P, mul(V, M)), input.position);
+    output.screenPosition = mul(input.position, mul(M, mul(V, P)));
     //inverse transpose is needed for normals, how is this even working...
     output.normal = mul((float3x3) M, (float3)input.normal);
     output.M = M;
-    output.worldPosition = mul(M, input.position);
+    output.worldPosition = mul(input.position, M);
     output.tex = input.tex;
     
     return output;
