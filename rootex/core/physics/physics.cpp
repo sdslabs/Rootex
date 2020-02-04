@@ -1,6 +1,12 @@
 #include "physics.h"
 #include "common/common.h"
 
+GamePhysics* GamePhysics::GetSingleton()
+{
+	static GamePhysics singleton;
+	return &singleton;
+}
+
 void GamePhysics::initialize()
 {
 	m_CollisionConfiguration.reset(new btDefaultCollisionConfiguration());
@@ -32,6 +38,11 @@ GamePhysics::~GamePhysics()
 		m_DynamicsWorld->removeCollisionObject(obj);
 		delete obj;
 	}
+}
+
+void GamePhysics::addRigidBody(btRigidBody* body)
+{
+	m_DynamicsWorld->addRigidBody(body);
 }
 
 void GamePhysics::update(float deltaMilliseconds)
