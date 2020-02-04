@@ -94,7 +94,7 @@ int main()
 	Ref<RenderSystem> renderSystem(new RenderSystem());
 	Ref<PointLightSystem> pointLightSystem(new PointLightSystem());
 
-	LuaTextResourceFile* sphereEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/sphere.lua");
+	LuaTextResourceFile* sphereEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/cube.lua");
 	Ref<Entity> sphere = EntityFactory::GetSingleton()->createEntity(sphereEntity);
 	LuaTextResourceFile* pointLightEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/light.lua");
 	Ref<Entity> light = EntityFactory::GetSingleton()->createEntity(pointLightEntity);
@@ -122,11 +122,11 @@ int main()
 
 		AudioSystem::GetSingleton()->update();
 
-		static float xp = 0;
+		static float xp = 1;
 		static float yp = 0;
 		static float zp = 0;
 
-		static float x = 0;
+		static float x = 1;
 		static float y = 0;
 		static float z = 0;
 		static float u = 0;

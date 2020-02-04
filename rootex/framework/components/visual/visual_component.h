@@ -41,8 +41,8 @@ public:
 
 	const VertexBuffer* getVertexBuffer() const { return m_VisualModelResourceFile->getVertexBuffer(); }
 	const IndexBuffer* getIndexBuffer() const { return m_VisualModelResourceFile->getIndexBuffer(); }
-	const Matrix& getTransform() const { return m_TransformComponent->getTransform(); }
-	const Matrix& getInverseTransform() const { return m_TransformComponent->getTransform().Invert(); }
+	const Matrix& getTransform() const { return m_TransformComponent->getLocalTransform(); }
+	const Matrix& getInverseTransform() const { return m_TransformComponent->getLocalTransform().Invert(); }
 	const RenderPass& getRenderPass() const { return m_RenderPassSetting; }
 	Material* getMaterial() { return m_Material.get(); }
 	VisualModelResourceFile* getModelResourceFile() const { return m_VisualModelResourceFile; }

@@ -14,6 +14,7 @@ class TransformComponent : public Component
 		Vector3 m_Scale;
 
 		Matrix m_Transform;
+		Matrix m_AbsoluteTransform;
 	};
 	TransformBuffer m_TransformBuffer;
 
@@ -38,9 +39,10 @@ public:
 	void setTransform(const Matrix& transform);
 	void addTransform(const Matrix& applyTransform);
 
-	const Vector3& getPosition() const { return m_TransformBuffer.m_Position; }
+	Vector3 getPosition() const { return m_TransformBuffer.m_Position; }
 	const Quaternion& getRotation() const { return m_TransformBuffer.m_Rotation; }
 	const Vector3& getScale() const { return m_TransformBuffer.m_Scale; }
-	const Matrix& getTransform() const { return m_TransformBuffer.m_Transform; }
+	const Matrix& getLocalTransform() const { return m_TransformBuffer.m_Transform; }
+	Matrix getAbsoluteTransform() const { return m_TransformBuffer.m_AbsoluteTransform; }
 	ComponentID getComponentID() const override { return s_ID; }
 };

@@ -32,14 +32,15 @@ Lights PointLightSystem::getPointLights()
 	Lights lights;
 	
 	int i = 0;
-	for (; i < pointLightComponents.size() && i<4; i++)
+	for (; i < pointLightComponents.size() && i < 4; i++)
 	{
 		PointLightComponent* light = dynamic_cast<PointLightComponent*>(pointLightComponents[i]);
 		TransformComponent* transform = light->getOwner()->getComponent<TransformComponent>();
+		Vector3 transformedPosition = Vector3::Transform(transform->getPosition(), transform->getAbsoluteTransform());
 		lights.lightInfos[i] = {
 			light->m_ambientColor, light->m_diffuseColor, light->m_diffuseIntensity,
 			light->m_constAtt, light->m_linAtt, light->m_quadAtt,
-			transform->getPosition(),
+			transformedPosition,
 			0.0f
 		};
 	}
