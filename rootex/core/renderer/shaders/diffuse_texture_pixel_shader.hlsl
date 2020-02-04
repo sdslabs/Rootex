@@ -37,13 +37,8 @@ float4 main(PixelInputType input) : SV_TARGET
     float4 finalColor = { 0.0f, 0.0f, 0.0f, 1.0f };
     for (int i = 0; i < lightCount; i++)
     {
-        float3 relative = (lightInfos[i].lightPos) - (float3) input.worldPosition;
+        float3 relative = lightInfos[i].lightPos - (float3) input.worldPosition;
         float dist = length(relative);
-        if (abs(input.worldPosition.x - floor(input.worldPosition.x)) < 0.05)
-        {
-            return float4(0.0f, 0.0f, 1.0f, 1.0f);
-        }
-            return float4(1.1f, 0.1f, 0.1f, 0.1f) / dist;
         float3 normalizedRelative = relative / dist;
         float att = 1.0f / (lightInfos[i].attConst + lightInfos[i].attLin * dist + lightInfos[i].attQuad * (dist * dist));
         float cosAngle = max(0.0f, dot(normalizedRelative, input.normal));
