@@ -2,7 +2,6 @@
 
 void PointLightSystem::update(float deltaMilliseconds)
 {
-
 }
 
 void PointLightSystem::apply()
@@ -26,7 +25,9 @@ Lights PointLightSystem::getPointLights()
 	const Vector<Component*> pointLightComponents = s_Components[PointLightComponent::s_ID];
 
 	if (pointLightComponents.size() > 4)
+	{
 		WARN("Point Lights used are greater than 4");
+	}
 
 	Lights lights;
 	
