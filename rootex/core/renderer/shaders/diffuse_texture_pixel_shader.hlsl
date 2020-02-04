@@ -20,7 +20,6 @@ struct LightInfo
     float3 lightPos;
 };
 
-
 cbuffer Lights : register(b0)
 {
     int lightCount;
@@ -34,13 +33,12 @@ cbuffer Material: register(b1)
     float specPow;
 };
 
-
 float4 main(PixelInputType input) : SV_TARGET
 {    
     float4 finalColor = { 0.0f, 0.0f, 0.0f, 1.0f };
     for (int i = 0; i < lightCount; i++)
     {
-        float3 relative = lightInfos[i].lightPos - (float3) input.worldPosition;
+        float3 relative = (float3) input.worldPosition - lightInfos[i].lightPos;
         float dist = length(relative);
         float3 normalizedRelative = relative / dist;
         float att = 1.0f / (lightInfos[i].attConst + lightInfos[i].attLin * dist + lightInfos[i].attQuad * (dist * dist));

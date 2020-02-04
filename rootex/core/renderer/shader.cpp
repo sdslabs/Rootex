@@ -72,6 +72,9 @@ void Shader::set(const ConstantBufferType& type, const Matrix& constantBuffer)
 	case Shader::ConstantBufferType::Model:
 		RenderingDevice::GetSingleton()->initVSModelConstantBuffer(&cbd, &csd);
 		break;
+	case Shader::ConstantBufferType::ModelInverse:
+		RenderingDevice::GetSingleton()->initVSModelInverseConstantBuffer(&cbd, &csd);
+		break;
 	case Shader::ConstantBufferType::View:
 		RenderingDevice::GetSingleton()->initVSViewConstantBuffer(&cbd, &csd);
 		break;

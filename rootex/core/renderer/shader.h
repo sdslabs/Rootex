@@ -31,6 +31,7 @@ public:
 	enum class ConstantBufferType
 	{
 		Model,
+		ModelInverse,
 		View,
 		Projection
 	};
