@@ -58,6 +58,7 @@ bool VisualComponent::preRender(VisualComponentGraph* graph)
 	if (m_Attributes.m_TransformComponent)
 	{
 		graph->pushMatrix(m_Attributes.getTransform());
+		m_Attributes.m_TransformComponent->m_TransformBuffer.m_AbsoluteTransform = graph->getTopMatrix();
 		m_Attributes.m_Material->setShaderConstantBuffer(Shader::ConstantBufferType::Model, graph->getTopMatrix());
 		m_Attributes.m_Material->setShaderConstantBuffer(Shader::ConstantBufferType::ModelInverse, graph->getTopMatrix().Invert());
 	}
@@ -116,7 +117,7 @@ void VisualComponent::postRender(VisualComponentGraph* graph)
 
 void VisualComponent::addTransform(const Matrix& applyTransform)
 {
-	m_Attributes.m_TransformComponent->setTransform(m_Attributes.m_TransformComponent->getTransform() * applyTransform);
+	m_Attributes.m_TransformComponent->setTransform(m_Attributes.m_TransformComponent->getLocalTransform() * applyTransform);
 }
 
 void VisualComponent::setTransform(const Matrix& newTransform)

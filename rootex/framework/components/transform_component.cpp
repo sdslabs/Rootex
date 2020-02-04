@@ -17,20 +17,22 @@ Component* TransformComponent::Create(const LuaVariable& componentData)
 	transformComponent->m_TransformBuffer.m_Scale.y = componentData["m_Scale"]["y"];
 	transformComponent->m_TransformBuffer.m_Scale.z = componentData["m_Scale"]["z"];
 
-	transformComponent->m_TransformBuffer.m_Transform = Matrix::CreateTranslation(transformComponent->m_TransformBuffer.m_Position);
-	transformComponent->m_TransformBuffer.m_Transform = transformComponent->m_TransformBuffer.m_Transform * Matrix::CreateFromQuaternion(transformComponent->m_TransformBuffer.m_Rotation);
-	transformComponent->m_TransformBuffer.m_Transform = transformComponent->m_TransformBuffer.m_Transform * Matrix::CreateScale(transformComponent->m_TransformBuffer.m_Scale);
+	transformComponent->m_TransformBuffer.m_Transform = Matrix::Identity;
+	transformComponent->m_TransformBuffer.m_Transform = Matrix::CreateTranslation(transformComponent->m_TransformBuffer.m_Position) * transformComponent->m_TransformBuffer.m_Transform;
+	transformComponent->m_TransformBuffer.m_Transform = Matrix::CreateFromQuaternion(transformComponent->m_TransformBuffer.m_Rotation) * transformComponent->m_TransformBuffer.m_Transform;
+	transformComponent->m_TransformBuffer.m_Transform = Matrix::CreateScale(transformComponent->m_TransformBuffer.m_Scale) * transformComponent->m_TransformBuffer.m_Transform;
 	// Transform = Translation * Rotation * Scale
-	// Final vec = Tranform * vec = Translation * (Rotation * (Scale * vec))
+	// Final vec = Transform * vec = Translation * (Rotation * (Scale * vec))
 
 	return transformComponent;
 }
 
 void TransformComponent::updateTransformFromPositionRotationScale()
 {
-	m_TransformBuffer.m_Transform = Matrix::CreateTranslation(m_TransformBuffer.m_Position);
-	m_TransformBuffer.m_Transform = m_TransformBuffer.m_Transform * Matrix::CreateFromQuaternion(m_TransformBuffer.m_Rotation);
-	m_TransformBuffer.m_Transform = m_TransformBuffer.m_Transform * Matrix::CreateScale(m_TransformBuffer.m_Scale);
+	m_TransformBuffer.m_Transform = Matrix::Identity;
+	m_TransformBuffer.m_Transform = Matrix::CreateTranslation(m_TransformBuffer.m_Position) * m_TransformBuffer.m_Transform;
+	m_TransformBuffer.m_Transform = Matrix::CreateFromQuaternion(m_TransformBuffer.m_Rotation) * m_TransformBuffer.m_Transform;
+	m_TransformBuffer.m_Transform = Matrix::CreateScale(m_TransformBuffer.m_Scale) * m_TransformBuffer.m_Transform;
 }
 
 void TransformComponent::updatePositionRotationScaleFromTransform(Matrix& transform)
@@ -72,5 +74,5 @@ void TransformComponent::setTransform(const Matrix& transform)
 
 void TransformComponent::addTransform(const Matrix& applyTransform)
 {
-	setTransform(getTransform() * applyTransform);
+	setTransform(getLocalTransform() * applyTransform);
 }
