@@ -45,7 +45,7 @@ int main()
 	Ref<StreamingAudioBuffer> audio(new StreamingAudioBuffer(w));
 	Ref<StreamingAudioSource> source(new StreamingAudioSource(audio.get()));
 	source->setLooping(true);
-	source->play();
+	//source->play();
 
 	GameObject* gameObject = new GameObject();
 	Ref<Example> test_event(new Example());
@@ -94,7 +94,7 @@ int main()
 	Ref<RenderSystem> renderSystem(new RenderSystem());
 	Ref<PointLightSystem> pointLightSystem(new PointLightSystem());
 
-	LuaTextResourceFile* sphereEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/cube.lua");
+	LuaTextResourceFile* sphereEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/sphere.lua");
 	Ref<Entity> sphere = EntityFactory::GetSingleton()->createEntity(sphereEntity);
 	LuaTextResourceFile* pointLightEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/light.lua");
 	Ref<Entity> light = EntityFactory::GetSingleton()->createEntity(pointLightEntity);
@@ -137,19 +137,19 @@ int main()
 		static float yaw = 0;
 		if (GetAsyncKeyState(VK_LEFT))
 		{
-			u += 0.1;
+			l += 0.1;
 		}
 		if (GetAsyncKeyState(VK_RIGHT))
 		{
-			u += -0.1;
+			l += -0.1;
 		}
 		if (GetAsyncKeyState(VK_DOWN))
 		{
-			l += -0.1;
+			u += -0.1;
 		}
 		if (GetAsyncKeyState(VK_UP))
 		{
-			l += 0.1;
+			u += 0.1;
 		}
 		if (GetAsyncKeyState(VK_NUMPAD4))
 		{
@@ -159,10 +159,7 @@ int main()
 		{
 			in += 0.1;
 		}
-		x -= l;
-		y += u;
-		z -= in;
-
+		
 		if (GetAsyncKeyState(VK_NUMPAD7))
 		{
 			roll += 0.01;

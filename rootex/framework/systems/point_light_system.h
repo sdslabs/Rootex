@@ -9,8 +9,9 @@
 class PointLightSystem : public System
 {
 public:
+	static PointLightSystem* GetSingleton();
+
 	void update(float deltaMilliseconds) override;
 	void apply();
-	static PointLightSystem* GetSingleton();
 	Lights getPointLights();
 };
