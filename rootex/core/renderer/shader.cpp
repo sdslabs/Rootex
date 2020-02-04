@@ -65,7 +65,7 @@ void Shader::set(const ConstantBufferType& type, const Matrix& constantBuffer)
 	cbd.ByteWidth = sizeof(constantBuffer);
 	cbd.StructureByteStride = 0u;
 	D3D11_SUBRESOURCE_DATA csd = { 0 };
-	csd.pSysMem = &constantBuffer;
+	csd.pSysMem = &constantBuffer.Transpose();
 
 	switch (type)
 	{
