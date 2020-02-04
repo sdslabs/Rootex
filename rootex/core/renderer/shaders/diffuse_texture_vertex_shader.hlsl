@@ -13,6 +13,11 @@ cbuffer CBuf : register(b2)
     matrix P;
 };
 
+cbuffer CBuf : register(b3)
+{
+    matrix MInverse;
+};
+
 struct VertexInputType
 {
     float4 position : POSITION;
@@ -34,7 +39,7 @@ PixelInputType main(VertexInputType input)
     PixelInputType output;
     output.screenPosition = mul(input.position, mul(M, mul(V, P)));
     //inverse transpose is needed for normals, how is this even working...
-    output.normal = mul((float3x3) M, (float3)input.normal);
+    output.normal = mul((float3x3) transpose(MInverse), (float3) input.normal);
     output.M = M;
     output.worldPosition = mul(input.position, M);
     output.tex = input.tex;

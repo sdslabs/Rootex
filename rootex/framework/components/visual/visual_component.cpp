@@ -59,11 +59,13 @@ bool VisualComponent::preRender(VisualComponentGraph* graph)
 	{
 		graph->pushMatrix(m_Attributes.getTransform());
 		m_Attributes.m_Material->setShaderConstantBuffer(Shader::ConstantBufferType::Model, graph->getTopMatrix());
+		m_Attributes.m_Material->setShaderConstantBuffer(Shader::ConstantBufferType::ModelInverse, graph->getTopMatrix().Invert());
 	}
 	else
 	{
 		graph->pushMatrix(Matrix::Identity);
 		m_Attributes.m_Material->setShaderConstantBuffer(Shader::ConstantBufferType::Model, graph->getTopMatrix());
+		m_Attributes.m_Material->setShaderConstantBuffer(Shader::ConstantBufferType::ModelInverse, graph->getTopMatrix().Invert());
 	}
 	PSConstantBuffer Cb = { PointLightSystem::GetSingleton()->getPointLights(), { { 0.7f, 0.7f, 0.0f, 1.0f }, 0.6f, 30.0f, {0.0f,0.0f} }};
 	m_Attributes.m_Material->setShaderConstantBuffer(Cb);
