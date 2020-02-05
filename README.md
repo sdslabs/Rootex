@@ -2,15 +2,6 @@
 
 Rootex is an advanced C++ multithreaded 3D game engine powering an in-production game yet to be announced. Rootex is planned to support a free 2.5D local multiplayer physics based sidescroller game to be shipped on Windows and using the DirectX 11 Graphics API.
 
-# Setup
-
-## Windows:
-
-1. Install [Visual Studio 2019](https://visualstudio.microsoft.com/vs/), [CMake build system](https://cmake.org/download/) and [OpenAL](https://www.openal.org/).
-2. Install Visual Studio Desktop C++ development pack (or anything similar, since C++ is no longer a default language since at least Visual Studio 19)
-3. Run `GenerateCache.bat`.
-4. Use `Build.bat` to build Rootex.
-
 ## Contents
 
 * [What is Rootex?](#what)
@@ -32,6 +23,11 @@ Rootex is the direct successor of [Rubeus, our 2D Game Engine](https://github.co
 ## <a name=setup>How do I use Rootex?
 
 Rootex runs only on Windows and there are no plans to port it to other platforms.
+
+1. Install [Visual Studio 2019](https://visualstudio.microsoft.com/vs/), [CMake build system](https://cmake.org/download/) and [OpenAL](https://www.openal.org/).
+2. Install Visual Studio Desktop C++ development pack (or anything similar, since C++ is no longer a default language since at least Visual Studio 19)
+3. Run `GenerateCache.bat`.
+4. Use `Build.bat` to build Rootex.
 
 ## <a name=license>License
 
