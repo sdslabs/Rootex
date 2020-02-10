@@ -1,7 +1,5 @@
 # Rootex
 
-Rootex is an advanced C++ multithreaded 3D game engine powering an in-production game yet to be announced. Rootex is planned to support a free 2.5D local multiplayer physics based sidescroller game to be shipped on Windows and using the DirectX 11 Graphics API.
-
 ## Contents
 
 * [What is Rootex?](#what)
