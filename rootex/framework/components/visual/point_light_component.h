@@ -8,7 +8,7 @@ class PointLightComponent : public Component
 	friend class EntityFactory;
 
 public:
-	static const ComponentID s_ID = (ComponentID)ComponentIDs::TestComponent;
+	static const ComponentID s_ID = (ComponentID)ComponentIDs::PointLightComponent;
 
 	float m_constAtt;
 	float m_linAtt;

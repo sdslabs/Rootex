@@ -9,7 +9,7 @@ struct VSConstantBuffer
 	Matrix m_P;
 };
 
-struct LightInfo
+struct PointLightInfo
 {
 	// TODO: Get rid of all these magic numbers
 	Color ambientColor = { 0.05f, 0.05f, 0.05f, 1.0f };
@@ -22,6 +22,14 @@ struct LightInfo
 	float range = 10;
 };
 
+struct DirectionalLightInfo
+{
+	Vector3 direction = { 1.0f, 0.0f, 0.0f };
+	float diffuseIntensity = 2.0f;
+	Color ambientColor = { 0.05f, 0.05f, 0.05f, 1.0f };
+	Color diffuseColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+};
+
 struct MaterialInfo
 {
 	Color materialColor = { 0.7f, 0.7f, 0.0f, 1.0f };
@@ -32,9 +40,10 @@ struct MaterialInfo
 
 struct Lights
 {
-	int lightCount = 2;
+	int pointLightCount = 1;
 	float pad[3];
-	LightInfo lightInfos[4];
+	PointLightInfo pointLightInfos[4];
+	DirectionalLightInfo directionalLightInfo;
 };
 
 struct PSConstantBuffer

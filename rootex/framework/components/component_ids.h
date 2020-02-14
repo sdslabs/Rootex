@@ -8,5 +8,6 @@ enum class ComponentIDs : unsigned int
 	DiffuseVisualComponent,
 	TransformComponent,
 	HierarchyComponent,
-	PointLightComponent
+	PointLightComponent,
+	DirectionalLightComponent
 };

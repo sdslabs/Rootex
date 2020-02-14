@@ -92,12 +92,14 @@ int main()
 
 	Ref<VisualComponentGraph> visualGraph(new VisualComponentGraph(windowLua["deltaX"], windowLua["deltaY"]));
 	Ref<RenderSystem> renderSystem(new RenderSystem());
-	Ref<LightSystem> pointLightSystem(new LightSystem());
+	Ref<LightSystem> lightSystem(new LightSystem());
 
 	LuaTextResourceFile* sphereEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/cube.lua");
 	Ref<Entity> sphere = EntityFactory::GetSingleton()->createEntity(sphereEntity);
-	LuaTextResourceFile* pointLightEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/light.lua");
-	Ref<Entity> light = EntityFactory::GetSingleton()->createEntity(pointLightEntity);
+	LuaTextResourceFile* pointLightEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/point_light.lua");
+	Ref<Entity> pointLight = EntityFactory::GetSingleton()->createEntity(pointLightEntity);
+	LuaTextResourceFile* directionalLightEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/directional_light.lua");
+	Ref<Entity> directionalLight = EntityFactory::GetSingleton()->createEntity(directionalLightEntity);
 
 	//LuaTextResourceFile* teapotEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/teapot.lua");
 	//Ref<Entity> teapot = EntityFactory::GetSingleton()->createEntity(teapotEntity);
@@ -108,7 +110,8 @@ int main()
 
 	//visualGraph->addChild(teapot);
 	visualGraph->addChild(sphere);
-	visualGraph->addChild(light);
+	visualGraph->addChild(pointLight);
+	//visualGraph->addChild(directionalLight);
 
 	std::optional<int> ret = {};
 	FrameTimer frameTimer;
@@ -220,7 +223,7 @@ int main()
 		//teapot->getComponent<TransformComponent>()->setTransform(Matrix::CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix::CreateTranslation(0, y, 0.0f) * Matrix::CreateScale(x));
 
 		sphere->getComponent<TransformComponent>()->setPosition({ x, y, z });
-		light->getComponent<TransformComponent>()->setPosition({ xp, yp, zp });
+		pointLight->getComponent<TransformComponent>()->setPosition({ xp, yp, zp });
 
 		//LightSystem::GetSingleton()->apply();
 
