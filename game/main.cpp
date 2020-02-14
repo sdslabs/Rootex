@@ -94,7 +94,7 @@ int main()
 	Ref<RenderSystem> renderSystem(new RenderSystem());
 	Ref<LightSystem> lightSystem(new LightSystem());
 
-	LuaTextResourceFile* sphereEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/cube.lua");
+	LuaTextResourceFile* sphereEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/sphere.lua");
 	Ref<Entity> sphere = EntityFactory::GetSingleton()->createEntity(sphereEntity);
 	LuaTextResourceFile* pointLightEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/point_light.lua");
 	Ref<Entity> pointLight = EntityFactory::GetSingleton()->createEntity(pointLightEntity);
@@ -111,7 +111,6 @@ int main()
 	//visualGraph->addChild(teapot);
 	visualGraph->addChild(sphere);
 	visualGraph->addChild(pointLight);
-	//visualGraph->addChild(directionalLight);
 
 	std::optional<int> ret = {};
 	FrameTimer frameTimer;
