@@ -43,6 +43,8 @@ struct Lights
 	int pointLightCount = 1;
 	float pad[3];
 	PointLightInfo pointLightInfos[4];
+	int directionalLightPresent = 0;
+	float pad2[3];
 	DirectionalLightInfo directionalLightInfo;
 };
 

@@ -41,12 +41,16 @@ Lights LightSystem::getLights()
 	{
 		WARN("Directional Lights specified are greater than 1");
 	}
-	DirectionalLightComponent* light = dynamic_cast<DirectionalLightComponent*>(directionalLightComponents[0]);
+	if (directionalLightComponents.size() > 0)
+	{
+		DirectionalLightComponent* light = dynamic_cast<DirectionalLightComponent*>(directionalLightComponents[0]);
 
-	lights.directionalLightInfo = {
-		light->m_direction, light->m_diffuseIntensity, light->m_diffuseColor,
-		light->m_ambientColor
-	};
+		lights.directionalLightInfo = {
+			light->m_direction, light->m_diffuseIntensity, light->m_diffuseColor,
+			light->m_ambientColor
+		};
+		lights.directionalLightPresent = 1;
+	}
 
 	return lights;
 }
