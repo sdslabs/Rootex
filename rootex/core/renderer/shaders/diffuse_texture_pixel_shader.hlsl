@@ -32,6 +32,7 @@ cbuffer Lights : register(b0)
 {
     int pointLightCount;
     PointLightInfo pointLightInfos[4];
+    int directionLightPresent;
     DirectionalLightInfo directionalLightInfo;
 };
 
@@ -66,14 +67,17 @@ float4 main(PixelInputType input) : SV_TARGET
             finalColor += float4(saturate((diffuse + (float3) pointLightInfos[i].ambientColor + specular) * (float3) materialColor * att), 0.0f);
         }
     }
-    float3 direction = normalize(directionalLightInfo.direction);
-    float cosAngle = max(0.0f, dot(-direction, input.normal));
-    float3 diffuse = pointLightInfos[i].diffuseColor * directionalLightInfo.diffuseIntensity * cosAngle;
-    float3 reflected = reflect(-direction, input.normal);
-    float specFactor = pow(max(dot(normalize(reflected), toEye), 0.0f), specPow);
-    float3 specular = specularIntensity * specFactor * diffuse;
-    finalColor += float4(saturate((diffuse + (float3) directionalLightInfo.ambientColor + specular) * (float3) materialColor), 0.0f);
-        
+    
+    if (directionLightPresent == 1)
+    {
+        float3 direction = normalize(directionalLightInfo.direction);
+        float cosAngle = max(0.0f, dot(-direction, input.normal));
+        float3 diffuse = pointLightInfos[i].diffuseColor * directionalLightInfo.diffuseIntensity * cosAngle;
+        float3 reflected = reflect(-direction, input.normal);
+        float specFactor = pow(max(dot(normalize(reflected), toEye), 0.0f), specPow);
+        float3 specular = specularIntensity * specFactor * diffuse;
+        finalColor += float4(saturate((diffuse + (float3) directionalLightInfo.ambientColor + specular) * (float3) materialColor), 0.0f);
+    }
     
     return finalColor;
 }
