@@ -19,7 +19,7 @@ struct LightInfo
 	float attLin = 0.045f;
 	float attQuad = 0.0075f;
 	Vector3 lightPos = { 0.0f, 0.0f, 0.0f };
-	float pad2;
+	float range = 10;
 };
 
 struct MaterialInfo

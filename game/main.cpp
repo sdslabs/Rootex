@@ -22,7 +22,7 @@
 #include "framework/components/visual/visual_component_graph.h"
 #include "framework/entity_factory.h"
 #include "framework/systems/debug_system.h"
-#include "framework/systems/point_light_system.h"
+#include "framework/systems/light_system.h"
 #include "framework/systems/render_system.h"
 #include "framework/systems/test_system.h"
 
@@ -92,7 +92,7 @@ int main()
 
 	Ref<VisualComponentGraph> visualGraph(new VisualComponentGraph(windowLua["deltaX"], windowLua["deltaY"]));
 	Ref<RenderSystem> renderSystem(new RenderSystem());
-	Ref<PointLightSystem> pointLightSystem(new PointLightSystem());
+	Ref<LightSystem> pointLightSystem(new LightSystem());
 
 	LuaTextResourceFile* sphereEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/cube.lua");
 	Ref<Entity> sphere = EntityFactory::GetSingleton()->createEntity(sphereEntity);
@@ -222,7 +222,7 @@ int main()
 		sphere->getComponent<TransformComponent>()->setPosition({ x, y, z });
 		light->getComponent<TransformComponent>()->setPosition({ xp, yp, zp });
 
-		PointLightSystem::GetSingleton()->apply();
+		//LightSystem::GetSingleton()->apply();
 
 		RenderSystem::GetSingleton()->render(visualGraph.get(), window.get());
 
