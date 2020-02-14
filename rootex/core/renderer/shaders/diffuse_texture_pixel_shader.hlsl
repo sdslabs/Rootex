@@ -46,7 +46,7 @@ float4 main(PixelInputType input) : SV_TARGET
 {    
     float4 finalColor = { 0.0f, 0.0f, 0.0f, 1.0f };
     //TODO- FIX THIS HARDCODE
-    float3 toEye = float3(0.0f, 0.0f, 4.0f) - (float3) input.worldPosition;
+    float3 toEye = normalize(float3(0.0f, 0.0f, 4.0f) - (float3) input.worldPosition);
     
     for (int i = 0; i < pointLightCount; i++)
     {
@@ -60,17 +60,17 @@ float4 main(PixelInputType input) : SV_TARGET
             float3 diffuse = pointLightInfos[i].diffuseColor * pointLightInfos[i].diffuseIntensity * cosAngle;
             float3 reflected = reflect(normalizedRelative, input.normal);
             //TODO- FIX THIS
-            float specFactor = pow(max(dot(normalize(reflected), normalize(toEye)), 0.0f), specPow);
+            float specFactor = pow(max(dot(normalize(reflected), toEye), 0.0f), specPow);
             float3 specular = specularIntensity * specFactor * diffuse;
         
             finalColor += float4(saturate((diffuse + (float3) pointLightInfos[i].ambientColor + specular) * (float3) materialColor * att), 0.0f);
         }
     }
-    
-    float cosAngle = max(0.0f, dot(-directionalLightInfo.direction, input.normal));
+    float3 direction = normalize(directionalLightInfo.direction);
+    float cosAngle = max(0.0f, dot(-direction, input.normal));
     float3 diffuse = pointLightInfos[i].diffuseColor * directionalLightInfo.diffuseIntensity * cosAngle;
-    float3 reflected = reflect(-directionalLightInfo.direction, input.normal);
-    float specFactor = pow(max(dot(normalize(reflected), normalize(toEye)), 0.0f), specPow);
+    float3 reflected = reflect(-direction, input.normal);
+    float specFactor = pow(max(dot(normalize(reflected), toEye), 0.0f), specPow);
     float3 specular = specularIntensity * specFactor * diffuse;
     finalColor += float4(saturate((diffuse + (float3) directionalLightInfo.ambientColor + specular) * (float3) materialColor), 0.0f);
         
