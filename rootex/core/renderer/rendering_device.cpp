@@ -372,3 +372,13 @@ void RenderingDevice::clearBuffer(float r, float g, float b)
 	m_Context->ClearRenderTargetView(m_RenderTargetView, color);
 	m_Context->ClearDepthStencilView(m_DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0u);
 }
+
+ID3D11Device* RenderingDevice::getDevice()
+{
+	return m_Device;
+}
+
+ID3D11DeviceContext* RenderingDevice::getContext()
+{
+	return m_Context;
+}

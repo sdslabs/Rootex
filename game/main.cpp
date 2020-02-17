@@ -12,18 +12,18 @@
 #include "core/renderer/shader_library.h"
 #include "core/renderer/vertex_buffer.h"
 
-#include "core/resource_loader.h"
 #include "core/event_manager.h"
+#include "core/resource_loader.h"
 
-#include "framework/components/visual/visual_component.h"
-#include "framework/components/visual/diffuse_visual_component.h"
-#include "framework/components/visual/visual_component_graph.h"
-#include "framework/components/test_component.h"
 #include "framework/components/hierarchy_component.h"
+#include "framework/components/test_component.h"
+#include "framework/components/visual/diffuse_visual_component.h"
+#include "framework/components/visual/visual_component.h"
+#include "framework/components/visual/visual_component_graph.h"
 #include "framework/entity_factory.h"
 #include "framework/systems/debug_system.h"
-#include "framework/systems/test_system.h"
 #include "framework/systems/render_system.h"
+#include "framework/systems/test_system.h"
 
 #include "main/window.h"
 
@@ -32,6 +32,10 @@
 #include "os/timer.h"
 
 #include "script/interpreter.h"
+
+#include "vendor/ImGUI/imgui.h"
+#include "vendor/ImGUI/imgui_impl_win32.h"
+#include "vendor/ImGUI/imgui_impl_dx11.h"
 
 int main()
 {
@@ -91,19 +95,32 @@ int main()
 
 	Ref<VisualComponentGraph> visualGraph(new VisualComponentGraph(windowLua["deltaX"], windowLua["deltaY"]));
 	Ref<RenderSystem> renderSystem(new RenderSystem());
-	
+
 	LuaTextResourceFile* teapotEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/teapot.lua");
 	Ref<Entity> teapot = EntityFactory::GetSingleton()->createEntity(teapotEntity);
-	
+
 	Ref<Entity> teapotChild = EntityFactory::GetSingleton()->createEntity(teapotEntity);
 	teapotChild->getComponent<DiffuseVisualComponent>()->setTransform(Matrix::CreateTranslation({ 0.0f, 1.0f, 0.0f }));
 	teapot->getComponent<HierarchyComponent>()->addChild(teapotChild);
 
 	visualGraph->addChild(teapot);
-	
+
 	std::optional<int> ret = {};
 	FrameTimer frameTimer;
 	LoggingScopeTimer gameScopedLogger("GameTime");
+
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	(void)io;
+	ImGui::StyleColorsDark();
+	ImGui_ImplWin32_Init(window->getWindowHandle());
+	ImGui_ImplDX11_Init(RenderingDevice::GetSingleton()->getDevice(), RenderingDevice::GetSingleton()->getContext());
+	bool showWindow;
+	bool show_demo_window = true;
+	bool show_another_window = true;
+	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
 	while (true)
 	{
 		frameTimer.reset();
@@ -173,11 +190,52 @@ int main()
 		teapot->getComponent<TransformComponent>()->setTransform(Matrix::CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix::CreateTranslation(0, y, 0.0f) * Matrix::CreateScale(x));
 
 		RenderSystem::GetSingleton()->render(visualGraph.get(), window.get());
+		
+		ImGui_ImplDX11_NewFrame();
+		ImGui_ImplWin32_NewFrame();
+		ImGui::NewFrame();
+		
+		{
+			static float f = 0.0f;
+			static int counter = 0;
+			ImGui::Begin("Hello, world!"); // Create a window called "Hello, world!" and append into it.
+
+			ImGui::Text("This is some useful text."); // Display some text (you can use a format strings too)
+			ImGui::Checkbox("Demo Window", &show_demo_window); // Edit bools storing our window open/close state
+			ImGui::Checkbox("Another Window", &show_another_window);
+
+			ImGui::SliderFloat("float", &f, 0.0f, 1.0f); // Edit 1 float using a slider from 0.0f to 1.0f
+			ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
+
+			if (ImGui::Button("Button")) // Buttons return true when clicked (most widgets return true when edited/activated)
+				counter++;
+			ImGui::SameLine();
+			ImGui::Text("counter = %d", counter);
+
+			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+			ImGui::End();
+		}
+
+		if (show_another_window)
+		{
+			ImGui::Begin("Another Window", &show_another_window); // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+			ImGui::Text("Hello from another window!");
+			if (ImGui::Button("Close Me"))
+				show_another_window = false;
+			ImGui::End();
+		}
+
+		ImGui::Render();
+		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
 		EventManager::GetSingleton()->tick();
 
 		//frameTimer.showFPS();
 	}
+
+	ImGui_ImplDX11_Shutdown();
+	ImGui_ImplWin32_Shutdown();
+	ImGui::DestroyContext();
 
 	return ret.value();
 }

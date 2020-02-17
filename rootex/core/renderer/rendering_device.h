@@ -35,6 +35,9 @@ class RenderingDevice
 public:
 	static RenderingDevice* GetSingleton();
 
+	ID3D11Device* getDevice();
+	ID3D11DeviceContext* getContext();
+
 	void initialize(HWND hWnd, int width, int height);
 
 	void enableSkyDepthStencilState();

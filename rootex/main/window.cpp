@@ -2,6 +2,10 @@
 
 #include "renderer/rendering_device.h"
 
+#include "vendor/ImGUI/imgui.h"
+#include "vendor/ImGUI/imgui_impl_dx11.h"
+#include "vendor/ImGUI/imgui_impl_win32.h"
+
 std::optional<int> Window::processMessages()
 {
 	MSG msg;
@@ -55,6 +59,8 @@ int Window::getHeight() const
 	return m_Height;
 }
 
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 LRESULT CALLBACK Window::WindowsProc(HWND windowHandler, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
@@ -63,6 +69,9 @@ LRESULT CALLBACK Window::WindowsProc(HWND windowHandler, UINT msg, WPARAM wParam
 		PostQuitMessage(0);
 		break;
 	}
+
+	ImGui_ImplWin32_WndProcHandler(windowHandler, msg, wParam, lParam);
+
 	return DefWindowProc(windowHandler, msg, wParam, lParam);
 }
 
@@ -97,4 +106,9 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
 
 	RenderingDevice::GetSingleton()->initialize(m_WindowHandle, width, height);
 	applyDefaultViewport();
+}
+
+HWND Window::getWindowHandle()
+{
+	return m_WindowHandle;
 }

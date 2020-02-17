@@ -18,7 +18,7 @@ Renderer::Renderer(unsigned int w, unsigned int h)
 
 void Renderer::clear() const
 {
-	RenderingDevice::GetSingleton()->clearBuffer(0.0f, 0.0f, 0.0f);
+	RenderingDevice::GetSingleton()->clearBuffer(1.0f, 0.0f, 0.0f);
 }
 
 void Renderer::setViewport(Viewport& viewport)

@@ -75,6 +75,7 @@ target_link_libraries(Rootex PUBLIC
     OpenAL
     ALUT
     DirectXTK
+    ImGUI
     d3d11.lib
     D3DCompiler.lib
 )
