@@ -6,7 +6,7 @@ Entity = {
             m_Scale = {x = 1, y = 1, z = 1}
         },
         DiffuseVisualComponent = {
-            resFile = "game/assets/test/sphere.obj",
+            resFile = "game/assets/test/hello_teapot.obj",
             texturePath = "game/assets/test/yellow.png"
         }
     }
