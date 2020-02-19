@@ -13,6 +13,7 @@
 #include "components/visual/point_light_component.h"
 #include "components/visual/directional_light_component.h"
 #include "components/visual/spot_light_component.h"
+#include "components/physics/sphere_component.h"
 
 EntityID EntityFactory::s_CurrentID = 1;
 
@@ -34,9 +35,13 @@ EntityFactory::EntityFactory()
 	m_ComponentCreators["VisualComponent"] = VisualComponent::Create;
 	m_ComponentCreators["TransformComponent"] = TransformComponent::Create;
 	m_ComponentCreators["DiffuseVisualComponent"] = DiffuseVisualComponent::Create;
+<<<<<<< HEAD
 	m_ComponentCreators["PointLightComponent"] = PointLightComponent::Create;
 	m_ComponentCreators["DirectionalLightComponent"] = DirectionalLightComponent::Create;
 	m_ComponentCreators["SpotLightComponent"] = SpotLightComponent::Create;
+=======
+	m_ComponentCreators["SphereComponent"] = SphereComponent::Create;
+>>>>>>> Add Bullet
 }
 
 Ref<Component> EntityFactory::createComponent(const String& name, const LuaVariable& componentData)

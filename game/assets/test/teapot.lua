@@ -8,6 +8,10 @@ Entity = {
         DiffuseVisualComponent = {
             resFile = "game/assets/test/hello_teapot.obj",
             texturePath = "game/assets/test/yellow.png"
-        }
+        },
+	SphereComponent = {
+		m_Radius = 5,
+		matName = "Air"
+	}
     }
 }
