@@ -94,7 +94,7 @@ int main()
 	Ref<RenderSystem> renderSystem(new RenderSystem());
 	Ref<LightSystem> lightSystem(new LightSystem());
 
-	LuaTextResourceFile* sphereEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/cube.lua");
+	LuaTextResourceFile* sphereEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/sphere.lua");
 	Ref<Entity> sphere = EntityFactory::GetSingleton()->createEntity(sphereEntity);
 	LuaTextResourceFile* spotLightEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/spot_light.lua");
 	Ref<Entity> spotLight = EntityFactory::GetSingleton()->createEntity(spotLightEntity);
@@ -126,7 +126,7 @@ int main()
 
 		static float xp = 1;
 		static float yp = 0;
-		static float zp = 0;
+		static float zp = 2;
 
 		static float x = 1;
 		static float y = 0;
@@ -164,27 +164,27 @@ int main()
 		
 		if (GetAsyncKeyState(VK_NUMPAD7))
 		{
-			roll += 0.01;
+			roll += 0.1;
 		}
 		if (GetAsyncKeyState(VK_NUMPAD4))
 		{
-			roll += -0.01;
+			roll += -0.1;
 		}
 		if (GetAsyncKeyState(VK_NUMPAD8))
 		{
-			pitch += 0.01;
+			pitch += 0.1;
 		}
 		if (GetAsyncKeyState(VK_NUMPAD5))
 		{
-			pitch += -0.01;
+			pitch += -0.1;
 		}
 		if (GetAsyncKeyState(VK_NUMPAD9))
 		{
-			yaw += 0.01;
+			yaw += 0.1;
 		}
 		if (GetAsyncKeyState(VK_NUMPAD6))
 		{
-			yaw += -0.01;
+			yaw += -0.1;
 		}
 		if (GetAsyncKeyState('R'))
 		{
@@ -220,8 +220,8 @@ int main()
 		y = u;
 		z = in;
 		spotLight->getComponent<TransformComponent>()->setPosition(Vector3(xp, yp, zp));
-		spotLight->getComponent<TransformComponent>()->setRotation(3.14, pitch, roll);
-		sphere->getComponent<TransformComponent>()->setPosition({ 0, 0, -10 });
+		spotLight->getComponent<TransformComponent>()->setRotation(yaw, pitch, roll);
+		sphere->getComponent<TransformComponent>()->setPosition({ 0, -1.5, -2 });
 		//spotLight->getComponent<TransformComponent>()->setPosition({ xp, yp, zp });
 
 		//LightSystem::GetSingleton()->apply();

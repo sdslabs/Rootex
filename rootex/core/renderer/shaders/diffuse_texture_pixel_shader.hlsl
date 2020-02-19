@@ -102,7 +102,8 @@ float4 main(PixelInputType input) : SV_TARGET
         {
             float3 normalizedRelative = relative / dist;
             float cosAngle = max(0.0f, dot(normalizedRelative, input.normal));
-            if (cosAngle > spotLightInfos[i].angleRange)
+            float rangeAngle = max(dot(-normalizedRelative, spotLightInfos[i].direction), 0.0f);
+            if (rangeAngle > spotLightInfos[i].angleRange)
             {
                 float att = 1.0f / (spotLightInfos[i].attConst + spotLightInfos[i].attLin * dist + spotLightInfos[i].attQuad * (dist * dist));
                 float3 diffuse = spotLightInfos[i].diffuseColor * spotLightInfos[i].diffuseIntensity * cosAngle;
@@ -111,7 +112,7 @@ float4 main(PixelInputType input) : SV_TARGET
                 float specFactor = pow(max(dot(normalize(reflected), toEye), 0.0f), specPow);
                 float3 specular = specularIntensity * specFactor * diffuse;
             
-                float spotFactor = pow(max(dot(-normalizedRelative, spotLightInfos[i].direction), 0.0f), spotLightInfos[i].spot);
+                float spotFactor = pow(rangeAngle, spotLightInfos[i].spot);
         
                 finalColor += float4(saturate((diffuse + (float3) spotLightInfos[i].ambientColor + specular) * (float3) materialColor * att * spotFactor), 0.0f);
             }
