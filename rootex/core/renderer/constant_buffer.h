@@ -42,6 +42,8 @@ struct SpotLightInfo
 	float range = 10;
 	Vector3 direction;
 	float spot;
+	float angleRange;
+	float pad[3];
 };
 
 struct MaterialInfo

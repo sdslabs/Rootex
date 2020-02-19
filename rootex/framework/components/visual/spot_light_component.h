@@ -18,12 +18,13 @@ public:
 	Color m_diffuseColor;
 	Color m_ambientColor;
 	float m_spot;
+	float m_angleRange;
 	
 	ComponentID getComponentID() const override { return s_ID; }
 
 	SpotLightComponent::SpotLightComponent(const float constAtt, const float linAtt, const float quadAtt,
 	    const float range, const float diffuseIntensity, const Color& diffuseColor, const Color& ambientColor,
-		float spot);
+		float spot, float angleRange);
 	SpotLightComponent(SpotLightComponent&) = delete;
 	~SpotLightComponent();
 };

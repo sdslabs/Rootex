@@ -12,14 +12,14 @@ Component* SpotLightComponent::Create(const LuaVariable& componentData)
 	        (float)componentData["diffuseColor"]["b"], (float)componentData["diffuseColor"]["a"]),
 	    Color((float)componentData["ambientColor"]["r"], (float)componentData["ambientColor"]["g"],
 	        (float)componentData["ambientColor"]["b"], (float)componentData["ambientColor"]["a"]),
-		(float)componentData["spot"]);
+		(float)componentData["spot"], (float)componentData["angleRange"]);
 
 	return spotLightComponent;
 }
 
 SpotLightComponent::SpotLightComponent(const float constAtt, const float linAtt, const float quadAtt,
     const float range, const float diffuseIntensity, const Color& diffuseColor, const Color& ambientColor,
-	float spot)
+	float spot, float angleRange)
     : m_constAtt(constAtt)
     , m_linAtt(linAtt)
     , m_quadAtt(quadAtt)
@@ -29,6 +29,7 @@ SpotLightComponent::SpotLightComponent(const float constAtt, const float linAtt,
     , m_diffuseIntensity(diffuseIntensity)
     , m_spot(spot)
 {
+	m_angleRange = cos(angleRange * 3.1415 / 180);
 }
 
 SpotLightComponent::~SpotLightComponent()
