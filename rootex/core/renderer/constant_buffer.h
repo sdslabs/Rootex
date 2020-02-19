@@ -29,6 +29,7 @@ struct DirectionalLightInfo
 	Color ambientColor = { 0.05f, 0.05f, 0.05f, 1.0f };
 	Color diffuseColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 };
+
 struct SpotLightInfo
 {
 	Color ambientColor = { 0.05f, 0.05f, 0.05f, 1.0f };

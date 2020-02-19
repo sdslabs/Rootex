@@ -12,7 +12,7 @@ LightSystem* LightSystem::GetSingleton()
 
 Lights LightSystem::getLights()
 {
-	const Vector<Component*> pointLightComponents = s_Components[PointLightComponent::s_ID];
+	const Vector<Component*>& pointLightComponents = s_Components[PointLightComponent::s_ID];
 
 	if (pointLightComponents.size() > 4)
 	{
@@ -35,7 +35,7 @@ Lights LightSystem::getLights()
 	}
 	lights.pointLightCount = i;
 
-	const Vector<Component*> directionalLightComponents = s_Components[DirectionalLightComponent::s_ID];
+	const Vector<Component*>& directionalLightComponents = s_Components[DirectionalLightComponent::s_ID];
 
 	if (directionalLightComponents.size() > 1)
 	{
@@ -52,19 +52,18 @@ Lights LightSystem::getLights()
 		lights.directionalLightPresent = 1;
 	}
 
-	const Vector<Component*> spotLightComponents = s_Components[SpotLightComponent::s_ID];
+	const Vector<Component*>& spotLightComponents = s_Components[SpotLightComponent::s_ID];
 
 	i = 0;
 	for (; i < spotLightComponents.size() && i < 4; i++)
 	{
 		SpotLightComponent* light = dynamic_cast<SpotLightComponent*>(spotLightComponents[i]);
 		TransformComponent* transform = light->getOwner()->getComponent<TransformComponent>();
-		Vector3 transformedPosition = Vector3::Transform(transform->getPosition(), transform->getAbsoluteTransform());
 		Vector3 direction = DirectX::XMVector3Rotate( Vector3(0.0f, 0.0f, 1.0f), transform->getRotation() );
 		lights.spotLightInfos[i] = {
 			light->m_ambientColor, light->m_diffuseColor, light->m_diffuseIntensity,
 			light->m_constAtt, light->m_linAtt, light->m_quadAtt,
-			transformedPosition, light->m_range, direction, light->m_spot
+			transform->getPosition(), light->m_range, direction, light->m_spot
 		};
 	}
 	lights.spotLightCount = i;
