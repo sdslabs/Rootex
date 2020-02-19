@@ -94,7 +94,7 @@ int main()
 	Ref<RenderSystem> renderSystem(new RenderSystem());
 	Ref<LightSystem> lightSystem(new LightSystem());
 
-	LuaTextResourceFile* sphereEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/sphere.lua");
+	LuaTextResourceFile* sphereEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/cube.lua");
 	Ref<Entity> sphere = EntityFactory::GetSingleton()->createEntity(sphereEntity);
 	LuaTextResourceFile* spotLightEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/spot_light.lua");
 	Ref<Entity> spotLight = EntityFactory::GetSingleton()->createEntity(spotLightEntity);
@@ -220,8 +220,8 @@ int main()
 		y = u;
 		z = in;
 		spotLight->getComponent<TransformComponent>()->setPosition(Vector3(xp, yp, zp));
-		spotLight->getComponent<TransformComponent>()->setRotation(yaw, pitch, roll);
-		sphere->getComponent<TransformComponent>()->setPosition({ x, y, z });
+		spotLight->getComponent<TransformComponent>()->setRotation(3.14, pitch, roll);
+		sphere->getComponent<TransformComponent>()->setPosition({ 0, 0, -10 });
 		//spotLight->getComponent<TransformComponent>()->setPosition({ xp, yp, zp });
 
 		//LightSystem::GetSingleton()->apply();

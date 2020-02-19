@@ -73,7 +73,7 @@ float4 main(PixelInputType input) : SV_TARGET
             float att = 1.0f / (pointLightInfos[i].attConst + pointLightInfos[i].attLin * dist + pointLightInfos[i].attQuad * (dist * dist));
             float cosAngle = max(0.0f, dot(normalizedRelative, input.normal));
             float3 diffuse = pointLightInfos[i].diffuseColor * pointLightInfos[i].diffuseIntensity * cosAngle;
-            float3 reflected = reflect(normalizedRelative, input.normal);
+            float3 reflected = reflect(-normalizedRelative, input.normal);
             //TODO- FIX THIS
             float specFactor = pow(max(dot(normalize(reflected), toEye), 0.0f), specPow);
             float3 specular = specularIntensity * specFactor * diffuse;
