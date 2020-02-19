@@ -17,7 +17,7 @@ void GamePhysics::initialize()
 
 	if (!m_CollisionConfiguration || !m_Dispatcher || !m_Broadphase || !m_Solver || !m_DynamicsWorld)
 	{
-		ERR("Initialization Failed !!");
+		ERR("Initialization Failed!");
 		return;
 	}
 }
