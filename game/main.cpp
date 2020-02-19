@@ -96,10 +96,10 @@ int main()
 
 	LuaTextResourceFile* sphereEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/sphere.lua");
 	Ref<Entity> sphere = EntityFactory::GetSingleton()->createEntity(sphereEntity);
-	LuaTextResourceFile* pointLightEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/point_light.lua");
-	Ref<Entity> pointLight = EntityFactory::GetSingleton()->createEntity(pointLightEntity);
-	LuaTextResourceFile* directionalLightEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/directional_light.lua");
-	Ref<Entity> directionalLight = EntityFactory::GetSingleton()->createEntity(directionalLightEntity);
+	LuaTextResourceFile* spotLightEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/spot_light.lua");
+	Ref<Entity> spotLight = EntityFactory::GetSingleton()->createEntity(spotLightEntity);
+	//LuaTextResourceFile* directionalLightEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/directional_light.lua");
+	//Ref<Entity> directionalLight = EntityFactory::GetSingleton()->createEntity(directionalLightEntity);
 
 	//LuaTextResourceFile* teapotEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/teapot.lua");
 	//Ref<Entity> teapot = EntityFactory::GetSingleton()->createEntity(teapotEntity);
@@ -110,7 +110,7 @@ int main()
 
 	//visualGraph->addChild(teapot);
 	visualGraph->addChild(sphere);
-	visualGraph->addChild(pointLight);
+	visualGraph->addChild(spotLight);
 
 	std::optional<int> ret = {};
 	FrameTimer frameTimer;
@@ -136,7 +136,7 @@ int main()
 		static float in = -2;
 		static float roll = 0;
 		static float pitch = 0;
-		static float yaw = 0;
+		static float yaw = 3.14;
 		if (GetAsyncKeyState(VK_LEFT))
 		{
 			l += 0.1;
@@ -153,14 +153,14 @@ int main()
 		{
 			u += 0.1;
 		}
-		if (GetAsyncKeyState(VK_NUMPAD4))
-		{
-			in += -0.1;
-		}
-		if (GetAsyncKeyState(VK_NUMPAD7))
-		{
-			in += 0.1;
-		}
+		//if (GetAsyncKeyState(VK_NUMPAD4))
+		//{
+		//	in += -0.1;
+		//}
+		//if (GetAsyncKeyState(VK_NUMPAD7))
+		//{
+		//	in += 0.1;
+		//}
 		
 		if (GetAsyncKeyState(VK_NUMPAD7))
 		{
@@ -219,10 +219,10 @@ int main()
 		x = l;
 		y = u;
 		z = in;
-		//teapot->getComponent<TransformComponent>()->setTransform(Matrix::CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix::CreateTranslation(0, y, 0.0f) * Matrix::CreateScale(x));
-
+		spotLight->getComponent<TransformComponent>()->setPosition(Vector3(xp, yp, zp));
+		spotLight->getComponent<TransformComponent>()->setRotation(yaw, pitch, roll);
 		sphere->getComponent<TransformComponent>()->setPosition({ x, y, z });
-		pointLight->getComponent<TransformComponent>()->setPosition({ xp, yp, zp });
+		//spotLight->getComponent<TransformComponent>()->setPosition({ xp, yp, zp });
 
 		//LightSystem::GetSingleton()->apply();
 

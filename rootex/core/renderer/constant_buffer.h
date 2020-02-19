@@ -29,6 +29,19 @@ struct DirectionalLightInfo
 	Color ambientColor = { 0.05f, 0.05f, 0.05f, 1.0f };
 	Color diffuseColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 };
+struct SpotLightInfo
+{
+	Color ambientColor = { 0.05f, 0.05f, 0.05f, 1.0f };
+	Color diffuseColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+	float diffuseIntensity = 2.0f;
+	float attConst = 1.0f;
+	float attLin = 0.045f;
+	float attQuad = 0.0075f;
+	Vector3 lightPos = { 0.0f, 0.0f, 0.0f };
+	float range = 10;
+	Vector3 direction;
+	float spot;
+};
 
 struct MaterialInfo
 {
@@ -40,12 +53,15 @@ struct MaterialInfo
 
 struct Lights
 {
-	int pointLightCount = 1;
+	int pointLightCount = 0;
 	float pad[3];
 	PointLightInfo pointLightInfos[4];
 	int directionalLightPresent = 0;
 	float pad2[3];
 	DirectionalLightInfo directionalLightInfo;
+	int spotLightCount = 0;
+	float pad3[3];
+	SpotLightInfo spotLightInfos[4];
 };
 
 struct PSConstantBuffer
