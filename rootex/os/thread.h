@@ -69,7 +69,9 @@ class ThreadPool
 	bool m_IsRunning;
 	__int32 m_Threads;
 	Vector<WorkerParameters> m_WorkerParameters;
+	WorkerParameters defaultWorkerParameter;
 	Vector<HANDLE> m_Handles;
+	HANDLE defaultHandle = 0;
 	CONDITION_VARIABLE m_ConsumerVariable;
 	CONDITION_VARIABLE m_ProducerVariable;
 	CRITICAL_SECTION m_CriticalSection;

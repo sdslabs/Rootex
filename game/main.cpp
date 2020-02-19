@@ -12,18 +12,19 @@
 #include "core/renderer/shader_library.h"
 #include "core/renderer/vertex_buffer.h"
 
-#include "core/resource_loader.h"
 #include "core/event_manager.h"
+#include "core/resource_loader.h"
 
-#include "framework/components/visual/visual_component.h"
-#include "framework/components/visual/diffuse_visual_component.h"
-#include "framework/components/visual/visual_component_graph.h"
-#include "framework/components/test_component.h"
 #include "framework/components/hierarchy_component.h"
+#include "framework/components/test_component.h"
+#include "framework/components/visual/diffuse_visual_component.h"
+#include "framework/components/visual/visual_component.h"
+#include "framework/components/visual/visual_component_graph.h"
 #include "framework/entity_factory.h"
 #include "framework/systems/debug_system.h"
-#include "framework/systems/test_system.h"
+#include "framework/systems/physics_system.h"
 #include "framework/systems/render_system.h"
+#include "framework/systems/test_system.h"
 
 #include "main/window.h"
 
@@ -35,6 +36,7 @@
 
 int main()
 {
+	PhysicsSystem::GetSingleton()->initialize();
 	OS::Initialize();
 	OS::PrintLine("Rootex Engine is starting: Build(" + OS::GetBuildDate() + "|" + OS::GetBuildTime() + ")");
 	DirectX::SimpleMath::Vector2 v2(1.0f, 1.0f);
@@ -91,16 +93,16 @@ int main()
 
 	Ref<VisualComponentGraph> visualGraph(new VisualComponentGraph(windowLua["deltaX"], windowLua["deltaY"]));
 	Ref<RenderSystem> renderSystem(new RenderSystem());
-	
+
 	LuaTextResourceFile* teapotEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/teapot.lua");
 	Ref<Entity> teapot = EntityFactory::GetSingleton()->createEntity(teapotEntity);
-	
+
 	Ref<Entity> teapotChild = EntityFactory::GetSingleton()->createEntity(teapotEntity);
 	teapotChild->getComponent<DiffuseVisualComponent>()->setTransform(Matrix::CreateTranslation({ 0.0f, 1.0f, 0.0f }));
 	teapot->getComponent<HierarchyComponent>()->addChild(teapotChild);
 
 	visualGraph->addChild(teapot);
-	
+
 	std::optional<int> ret = {};
 	FrameTimer frameTimer;
 	LoggingScopeTimer gameScopedLogger("GameTime");

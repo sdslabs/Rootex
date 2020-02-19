@@ -8,7 +8,6 @@
 
 class GamePhysics : public System
 {
-	
 	//The btDynamicsWorld is the interface class for several dynamics implementation, basic, discrete, parallel, and continuous etc.
 	Ptr<btDynamicsWorld> m_DynamicsWorld;
 
@@ -57,7 +56,6 @@ public:
 
 		return btTransform(bulletRotation, bulletPosition);
 	}
-
 
 	void update(float deltaMilliseconds) override;
 };
