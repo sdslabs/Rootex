@@ -6,15 +6,16 @@
 
 class SphereComponent : public PhysicsComponent
 {
-	static Component* Create(const LuaVariable& componentData);
+	static Component* Create(const LuaVariable& sphereComponentData);
 
 	friend class EntityFactory;
 
-	float radius;
-
-	btSphereShape* const collisionShape = new btSphereShape(radius);
+public:
+	
+	float m_Radius;
+	SphereComponent(float rad, const String& matName);
+	//collisionShape.reset(new btSphereShape(radius));
 
 	// calculate absolute mass from specificGravity
-	volume = (4.f / 3.f) * 3.14 * radius * radius * radius;
-	
-}
+	//volume = (4.f / 3.f) * 3.14 * radius * radius * radius;
+};

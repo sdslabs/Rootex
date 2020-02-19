@@ -4,7 +4,7 @@
 
 void TestSystem::update(float deltaMilliseconds)
 {
-	const Vector<Component*> testComponents = s_Components[TestComponent::s_ID];
+	const Vector<Component*>& testComponents = s_Components[TestComponent::s_ID];
 
 	for (auto& testComponent : testComponents)
 	{

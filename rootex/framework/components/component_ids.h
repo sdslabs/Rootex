@@ -11,5 +11,6 @@ enum class ComponentIDs : unsigned int
 	PointLightComponent,
 	DirectionalLightComponent,
 	SpotLightComponent,
-	PhysicsComponent
+	PhysicsComponent,
+	SphereComponent
 };
