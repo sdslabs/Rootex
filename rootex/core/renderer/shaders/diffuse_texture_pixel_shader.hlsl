@@ -38,6 +38,7 @@ struct SpotLightInfo
     float range;
     float3 direction;
     float spot;
+    float angleRange;
 };
 
 cbuffer Lights : register(b0)
@@ -100,17 +101,20 @@ float4 main(PixelInputType input) : SV_TARGET
         if (dist <= spotLightInfos[i].range)
         {
             float3 normalizedRelative = relative / dist;
-            float att = 1.0f / (spotLightInfos[i].attConst + spotLightInfos[i].attLin * dist + spotLightInfos[i].attQuad * (dist * dist));
             float cosAngle = max(0.0f, dot(normalizedRelative, input.normal));
-            float3 diffuse = spotLightInfos[i].diffuseColor * spotLightInfos[i].diffuseIntensity * cosAngle;
-            float3 reflected = reflect(-normalizedRelative, input.normal);
-            //TODO- FIX THIS
-            float specFactor = pow(max(dot(normalize(reflected), toEye), 0.0f), specPow);
-            float3 specular = specularIntensity * specFactor * diffuse;
+            if (cosAngle > spotLightInfos[i].angleRange)
+            {
+                float att = 1.0f / (spotLightInfos[i].attConst + spotLightInfos[i].attLin * dist + spotLightInfos[i].attQuad * (dist * dist));
+                float3 diffuse = spotLightInfos[i].diffuseColor * spotLightInfos[i].diffuseIntensity * cosAngle;
+                float3 reflected = reflect(-normalizedRelative, input.normal);
+                //TODO- FIX THIS
+                float specFactor = pow(max(dot(normalize(reflected), toEye), 0.0f), specPow);
+                float3 specular = specularIntensity * specFactor * diffuse;
             
-            float spotFactor = pow(max(dot(-normalizedRelative, spotLightInfos[i].direction), 0.0f), spotLightInfos[i].spot);
+                float spotFactor = pow(max(dot(-normalizedRelative, spotLightInfos[i].direction), 0.0f), spotLightInfos[i].spot);
         
-            finalColor += float4(saturate((diffuse + (float3) spotLightInfos[i].ambientColor + specular) * (float3) materialColor * att * spotFactor), 0.0f);
+                finalColor += float4(saturate((diffuse + (float3) spotLightInfos[i].ambientColor + specular) * (float3) materialColor * att * spotFactor), 0.0f);
+            }
         }
     }
     

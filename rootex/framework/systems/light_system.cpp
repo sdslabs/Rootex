@@ -63,7 +63,8 @@ Lights LightSystem::getLights()
 		lights.spotLightInfos[i] = {
 			light->m_ambientColor, light->m_diffuseColor, light->m_diffuseIntensity,
 			light->m_constAtt, light->m_linAtt, light->m_quadAtt,
-			transform->getPosition(), light->m_range, direction, light->m_spot
+			transform->getPosition(), light->m_range, direction, light->m_spot,
+			light->m_angleRange
 		};
 	}
 	lights.spotLightCount = i;
