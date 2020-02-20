@@ -1,5 +1,7 @@
 # Rootex
 
+![Logo](/game/assets/test/rootex.png)
+
 ## Contents
 
 * [What is Rootex?](#what)
