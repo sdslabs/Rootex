@@ -75,6 +75,8 @@ target_link_libraries(Rootex PUBLIC
     OpenAL
     ALUT
     DirectXTK
+    Gainput
     d3d11.lib
+    xinput.lib
     D3DCompiler.lib
 )

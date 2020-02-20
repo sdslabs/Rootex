@@ -5,6 +5,8 @@
 #include "core/audio/static_audio_buffer.h"
 #include "core/audio/streaming_audio_buffer.h"
 
+#include "core/input/input_manager.h"
+
 #include "core/renderer/buffer_format.h"
 #include "core/renderer/index_buffer.h"
 #include "core/renderer/material.h"
@@ -86,6 +88,11 @@ int main()
 	    windowLua["deltaX"],
 	    windowLua["deltaY"],
 	    windowLua["title"]));
+	InputManager::GetSingleton()->initialize(windowLua["deltaX"], windowLua["deltaY"]);
+	// Jump is spacebar
+	InputManager::GetSingleton()->mapBool(InputAction::Jump, Device::Keyboard, Key::KeySpace);
+	InputManager::GetSingleton()->mapFloat(InputAction::MouseX, Device::Mouse, MouseButton::MouseAxisX);
+	InputManager::GetSingleton()->mapFloat(InputAction::MouseY, Device::Mouse, MouseButton::MouseAxisY);
 
 	ShaderLibrary::MakeShaders();
 
@@ -169,11 +176,13 @@ int main()
 		}
 		x = l;
 		y = u;
-
+		WARN(std::to_string(InputManager::GetSingleton()->isPressed(InputAction::Jump)));
+		//WARN(std::to_string(InputManager::GetSingleton()->getDelta(InputAction::MouseX)));
+		//WARN(std::to_string(InputManager::GetSingleton()->getDelta(InputAction::MouseY)));
 		teapot->getComponent<TransformComponent>()->setTransform(Matrix::CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix::CreateTranslation(0, y, 0.0f) * Matrix::CreateScale(x));
 
 		RenderSystem::GetSingleton()->render(visualGraph.get(), window.get());
-
+		InputManager::GetSingleton()->update();
 		EventManager::GetSingleton()->tick();
 
 		//frameTimer.showFPS();
