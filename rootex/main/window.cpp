@@ -1,5 +1,6 @@
 #include "main/window.h"
 
+#include "input/input_manager.h"
 #include "renderer/rendering_device.h"
 
 std::optional<int> Window::processMessages()
@@ -63,6 +64,9 @@ LRESULT CALLBACK Window::WindowsProc(HWND windowHandler, UINT msg, WPARAM wParam
 		PostQuitMessage(0);
 		break;
 	}
+
+	InputManager::GetSingleton()->forwardMessage({ windowHandler, msg, wParam, lParam });
+
 	return DefWindowProc(windowHandler, msg, wParam, lParam);
 }
 
