@@ -1,6 +1,6 @@
 # Rootex
 
-![Logo](/game/assets/test/rootex.png)
+<img src="/game/assets/test/rootex.png" width=600 />
 
 ## Contents
 
