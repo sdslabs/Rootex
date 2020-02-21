@@ -41,6 +41,7 @@ public:
 
 	bool isPressed(InputAction action);
 	bool wasPressed(InputAction action);
+	float getFloat(InputAction action);
 	float getDelta(InputAction action);
 
 	void update();
