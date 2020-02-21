@@ -42,7 +42,7 @@ int main()
 	DirectX::SimpleMath::Vector2 v2(1.0f, 1.0f);
 	OS::PrintLine(std::to_string(v2.Length()));
 	AudioSystem::GetSingleton()->initialize();
-	AudioResourceFile* w = ResourceLoader::CreateAudioResourceFile("game/assets/lost_in_istanbul.wav");
+	AudioResourceFile* w = ResourceLoader::CreateAudioResourceFile("game/assets/jungle.wav");
 	Ref<StreamingAudioBuffer> audio(new StreamingAudioBuffer(w));
 	Ref<StreamingAudioSource> source(new StreamingAudioSource(audio.get()));
 	source->setLooping(true);
@@ -53,11 +53,6 @@ int main()
 	Ref<Event> testEvent(new Event("Test Event", Event::Type::Test, String("SDSLabs")));
 	EventManager::GetSingleton()->call(testEvent);
 	EventManager::GetSingleton()->deferredCall(testEvent);
-
-	AudioResourceFile* w2 = ResourceLoader::CreateAudioResourceFile("game/assets/lost_in_istanbul.wav");
-	Ref<StaticAudioBuffer> audio2(new StaticAudioBuffer(w2));
-	Ref<StaticAudioSource> source2(new StaticAudioSource(audio2.get()));
-	source2->setLooping(false);
 
 	TextResourceFile* r = ResourceLoader::CreateTextResourceFile("rootex/test/abc.txt"); // So this loads build/game/abc.txt (However the binary exists in build/game/Debug/)
 	OS::PrintLine(r->getString());
@@ -123,7 +118,7 @@ int main()
 		static float x = 0;
 		static float y = 0;
 		static float u = 0;
-		static float l = 0;
+		static float l = 1;
 		static float roll = 0;
 		static float pitch = 0;
 		static float yaw = 0;
@@ -179,6 +174,10 @@ int main()
 		//WARN(std::to_string(InputManager::GetSingleton()->isPressed(InputAction::Jump)));
 		WARN(std::to_string(InputManager::GetSingleton()->getFloat(InputAction::MouseX)));
 		WARN(std::to_string(InputManager::GetSingleton()->getFloat(InputAction::MouseY)));
+		visualGraph->getCamera()->setViewTransform(Matrix::CreateLookAt(
+		    { 0.0f, 0.0f, +4.0f },
+		    { InputManager::GetSingleton()->getFloat(InputAction::MouseX), InputManager::GetSingleton()->getFloat(InputAction::MouseY), 0.0f }, 
+			{ 0.0f, 1.0f, 0.0f }));
 		teapot->getComponent<TransformComponent>()->setTransform(Matrix::CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix::CreateTranslation(0, y, 0.0f) * Matrix::CreateScale(x));
 
 		RenderSystem::GetSingleton()->render(visualGraph.get(), window.get());
