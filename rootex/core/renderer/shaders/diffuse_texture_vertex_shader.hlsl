@@ -42,7 +42,9 @@ PixelInputType main(VertexInputType input)
     //hold my beer...
     output.normal = mul((float3x3) transpose(MInverse), (float3) input.normal);
     output.worldPosition = mul(input.position, M);
-    output.tex = input.tex;
+    output.tex.x = input.tex.x;
+    output.tex.y = 1 - input.tex.y;
+    input.normal = normalize(input.normal);
     
     return output;
 }
