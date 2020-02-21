@@ -19,7 +19,7 @@ class InputManager
 {
 	gainput::InputManager m_GainputManager;
 	gainput::InputMap m_GainputMap;
-	::HashMap<Device, unsigned int> DeviceIDs;
+	HashMap<Device, unsigned int> DeviceIDs;
 
 	InputManager();
 	InputManager(InputManager&) = delete;

@@ -31,7 +31,7 @@ public:
 	void pushMatrix(const Matrix& transform);
 	void popMatrix();
 
-	const CameraVisualComponent* getCamera() const { return m_Camera.get(); }
+	CameraVisualComponent* getCamera() const { return m_Camera.get(); }
 	const Matrix& getTopMatrix() const;
 	const Renderer* getRenderer() const { return m_Renderer.get(); }
 };
