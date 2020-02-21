@@ -45,7 +45,7 @@ int main()
 	Ref<StreamingAudioBuffer> audio(new StreamingAudioBuffer(w));
 	Ref<StreamingAudioSource> source(new StreamingAudioSource(audio.get()));
 	source->setLooping(true);
-	//source->play();
+	source->play();
 
 	GameObject* gameObject = new GameObject();
 	Ref<Example> test_event(new Example());

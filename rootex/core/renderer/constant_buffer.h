@@ -48,7 +48,6 @@ struct SpotLightInfo
 
 struct MaterialInfo
 {
-	Color materialColor = { 0.7f, 0.7f, 0.0f, 1.0f };
 	float specularIntensity = 2.0f;
 	float specPow = 30.0f;
 	float pad1[2];

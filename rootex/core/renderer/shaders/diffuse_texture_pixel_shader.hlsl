@@ -53,13 +53,15 @@ cbuffer Lights : register(b0)
 
 cbuffer Material: register(b1)
 {
-    float4 materialColor;
     float specularIntensity;
     float specPow;
 };
 
 float4 main(PixelInputType input) : SV_TARGET
 {    
+    input.normal = normalize(input.normal);
+    float4 materialColor = ShaderTexture.Sample(SampleType, input.tex);
+
     float4 finalColor = { 0.0f, 0.0f, 0.0f, 1.0f };
     //TODO- FIX THIS HARDCODE
     float3 toEye = normalize(float3(0.0f, 0.0f, 4.0f) - (float3) input.worldPosition);
