@@ -18,8 +18,8 @@ public:
 
 	virtual void bind() const;
 
-	void setShaderConstantBuffer(Shader::ConstantBufferType matrixType, const Matrix& matrix) { m_Shader->set(matrixType, matrix); }
-	void setShaderConstantBuffer(PSConstantBuffer& Cb) { m_Shader->set(Cb); }
+	void setShaderConstantBuffer(Shader::VertexConstantBufferType matrixType, const Matrix& matrix) { m_Shader->set(matrixType, matrix); }
+	void setShaderConstantBuffer(PSSolidConstantBuffer& Cb) { m_Shader->set(Cb); }
 };
 
 class DiffuseMaterial : public Material
@@ -31,6 +31,7 @@ class DiffuseMaterial : public Material
 public:
 	DiffuseMaterial(Ref<Texture> diffuseTexture);
 	~DiffuseMaterial() = default;
+	void setShaderConstantBuffer(PSDiffuseConstantBuffer& Cb) { m_Shader->set(Cb); }
 
 	void bind() const override;
 };
