@@ -40,6 +40,11 @@ bool InputManager::wasPressed(InputAction action)
 	return m_GainputMap.GetBoolWasDown((gainput::UserButtonId)(int)action);
 }
 
+float InputManager::getFloat(InputAction action)
+{
+	return m_GainputMap.GetFloat((gainput::UserButtonId)(int)action);
+}
+
 float InputManager::getDelta(InputAction action)
 {
 	return m_GainputMap.GetFloatDelta((gainput::UserButtonId)(int)action);

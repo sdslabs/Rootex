@@ -48,11 +48,11 @@ int main()
 	source->setLooping(true);
 	source->play();
 
-	GameObject* gameObject = new GameObject();
-	Ref<Example> test_event(new Example());
-	EventManager::GetSingleton()->addListener(gameObject, Example::s_ExampleID);
-	EventManager::GetSingleton()->call(test_event);
-	EventManager::GetSingleton()->deferredCall(test_event);
+	EventHandler* gameEventHandler = new EventHandler([](const Event* event) { WARN(std::get<String>(event->getData())); });
+	EventManager::GetSingleton()->addListener(gameEventHandler, Event::Type::Test);
+	Ref<Event> testEvent(new Event("Test Event", Event::Type::Test, String("SDSLabs")));
+	EventManager::GetSingleton()->call(testEvent);
+	EventManager::GetSingleton()->deferredCall(testEvent);
 
 	AudioResourceFile* w2 = ResourceLoader::CreateAudioResourceFile("game/assets/lost_in_istanbul.wav");
 	Ref<StaticAudioBuffer> audio2(new StaticAudioBuffer(w2));
@@ -176,9 +176,9 @@ int main()
 		}
 		x = l;
 		y = u;
-		WARN(std::to_string(InputManager::GetSingleton()->isPressed(InputAction::Jump)));
-		//WARN(std::to_string(InputManager::GetSingleton()->getDelta(InputAction::MouseX)));
-		//WARN(std::to_string(InputManager::GetSingleton()->getDelta(InputAction::MouseY)));
+		//WARN(std::to_string(InputManager::GetSingleton()->isPressed(InputAction::Jump)));
+		WARN(std::to_string(InputManager::GetSingleton()->getFloat(InputAction::MouseX)));
+		WARN(std::to_string(InputManager::GetSingleton()->getFloat(InputAction::MouseY)));
 		teapot->getComponent<TransformComponent>()->setTransform(Matrix::CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix::CreateTranslation(0, y, 0.0f) * Matrix::CreateScale(x));
 
 		RenderSystem::GetSingleton()->render(visualGraph.get(), window.get());

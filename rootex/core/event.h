@@ -1,28 +1,26 @@
 #pragma once
 
 #include "common/common.h"
-typedef unsigned long EventType;
 
 class Event
 {
 public:
-	Event() {}
-	virtual ~Event() {}
-	virtual String getName() const = 0;
-	virtual const EventType getEventType() const = 0;
-};
+	enum class Type
+	{
+		Test
+	};
 
-//for testing purposes only
-class Example : public Event
-{
+private:
+	Type m_Type;
+	String m_Name;
+	Variant m_Data;
+
 public:
-	static const EventType s_ExampleID = 0;
-	String getName() const override
-	{
-		return "hello";
-	}
-	const EventType getEventType() const override
-	{
-		return s_ExampleID;
-	}
+	Event(const String& name, const Type type, const Variant data);
+	Event(Event&) = delete;
+	~Event() = default;
+	
+	const String& getName() const { return m_Name; };
+	const Type getEventType() const { return m_Type; };
+	const Variant& getData() const { return m_Data; }
 };
