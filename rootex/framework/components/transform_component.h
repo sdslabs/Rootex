@@ -27,6 +27,7 @@ class TransformComponent : public Component
 	virtual ~TransformComponent() = default;
 
 	friend class VisualComponent;
+	friend class DiffuseVisualComponent;
 	friend class VisualComponentAttributes;
 	friend class EntityFactory;
 

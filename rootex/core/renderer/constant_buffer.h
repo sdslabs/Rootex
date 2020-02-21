@@ -66,8 +66,13 @@ struct Lights
 	SpotLightInfo spotLightInfos[4];
 };
 
-struct PSConstantBuffer
+struct PSDiffuseConstantBuffer
 {
 	Lights lights;
 	MaterialInfo material;
+};
+
+struct PSSolidConstantBuffer
+{
+	Color color;
 };

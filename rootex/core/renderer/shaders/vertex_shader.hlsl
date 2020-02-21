@@ -15,5 +15,5 @@ cbuffer CBuf : register(b2)
 
 float4 main(float3 pos : POSITION) : SV_POSITION
 {
-    return mul(mul(P, mul(V, M)), float4(pos, 1.0f));
+    return mul(float4(pos, 1.0f), mul(M, mul(V, P)));
 }
