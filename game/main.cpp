@@ -12,18 +12,18 @@
 #include "core/renderer/shader_library.h"
 #include "core/renderer/vertex_buffer.h"
 
-#include "core/resource_loader.h"
 #include "core/event_manager.h"
+#include "core/resource_loader.h"
 
-#include "framework/components/visual/visual_component.h"
-#include "framework/components/visual/diffuse_visual_component.h"
-#include "framework/components/visual/visual_component_graph.h"
-#include "framework/components/test_component.h"
 #include "framework/components/hierarchy_component.h"
+#include "framework/components/test_component.h"
+#include "framework/components/visual/diffuse_visual_component.h"
+#include "framework/components/visual/visual_component.h"
+#include "framework/components/visual/visual_component_graph.h"
 #include "framework/entity_factory.h"
 #include "framework/systems/debug_system.h"
-#include "framework/systems/test_system.h"
 #include "framework/systems/render_system.h"
+#include "framework/systems/test_system.h"
 
 #include "main/window.h"
 
@@ -32,6 +32,12 @@
 #include "os/timer.h"
 
 #include "script/interpreter.h"
+
+class TestClass
+{
+public:
+	void exit() { PostQuitMessage(0); }
+};
 
 int main()
 {
@@ -44,7 +50,7 @@ int main()
 	Ref<StreamingAudioBuffer> audio(new StreamingAudioBuffer(w));
 	Ref<StreamingAudioSource> source(new StreamingAudioSource(audio.get()));
 	source->setLooping(true);
-	source->play();
+	//source->play();
 
 	GameObject* gameObject = new GameObject();
 	Ref<Example> test_event(new Example());
@@ -76,10 +82,9 @@ int main()
 	th.submit(ju);
 	th.shutdown();
 
-	LuaInterpreter inter;
-	inter.loadExecuteScript(windowSettings);
+	LuaInterpreter::GetSingleton()->loadExecuteScript(windowSettings);
 
-	LuaVariable windowLua = inter.getGlobal("window");
+	LuaVariable windowLua = LuaInterpreter::GetSingleton()->getGlobal("window");
 	Ptr<Window> window(new Window(
 	    windowLua["x"],
 	    windowLua["y"],
@@ -91,19 +96,25 @@ int main()
 
 	Ref<VisualComponentGraph> visualGraph(new VisualComponentGraph(windowLua["deltaX"], windowLua["deltaY"]));
 	Ref<RenderSystem> renderSystem(new RenderSystem());
-	
+
 	LuaTextResourceFile* teapotEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/teapot.lua");
 	Ref<Entity> teapot = EntityFactory::GetSingleton()->createEntity(teapotEntity);
-	
+
 	Ref<Entity> teapotChild = EntityFactory::GetSingleton()->createEntity(teapotEntity);
 	teapotChild->getComponent<DiffuseVisualComponent>()->setTransform(Matrix::CreateTranslation({ 0.0f, 1.0f, 0.0f }));
 	teapot->getComponent<HierarchyComponent>()->addChild(teapotChild);
 
 	visualGraph->addChild(teapot);
-	
+
 	std::optional<int> ret = {};
 	FrameTimer frameTimer;
 	LoggingScopeTimer gameScopedLogger("GameTime");
+
+	luabridge::getGlobalNamespace(LuaInterpreter::GetSingleton()->getState())
+	    .beginClass<TestClass>("TestClass")
+	    .addConstructor<void (*)(void)>()
+	    .addFunction("exit", &TestClass::exit)
+		.endClass();
 	while (true)
 	{
 		frameTimer.reset();
@@ -169,6 +180,12 @@ int main()
 		}
 		x = l;
 		y = u;
+
+		if (GetAsyncKeyState(VK_SPACE))
+		{
+			LuaVariable var = LuaInterpreter::GetSingleton()->getGlobal("testFunction");
+			var();
+		}
 
 		teapot->getComponent<TransformComponent>()->setTransform(Matrix::CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix::CreateTranslation(0, y, 0.0f) * Matrix::CreateScale(x));
 

@@ -12,13 +12,17 @@ class LuaInterpreter
 {
 	lua_State* m_LuaState;
 
-public:
 	LuaInterpreter();
+	LuaInterpreter(LuaInterpreter&) = delete;
 	~LuaInterpreter();
+
+public:
+	static LuaInterpreter* GetSingleton();
 
 	void loadExecuteScript(LuaTextResourceFile* script);
 	void loadExecuteScript(const String& script);
 
+	lua_State* getState() const { return m_LuaState; }
 	LuaVariable getGlobal(const String& name);
 
 protected:

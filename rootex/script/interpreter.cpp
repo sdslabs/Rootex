@@ -12,6 +12,12 @@ LuaInterpreter::~LuaInterpreter()
 	lua_close(m_LuaState);
 }
 
+LuaInterpreter* LuaInterpreter::GetSingleton()
+{
+	static LuaInterpreter singleton;
+	return &singleton;
+}
+
 void LuaInterpreter::loadExecuteScript(LuaTextResourceFile* script)
 {
 	PANIC(script->getType() != ResourceFile::Type::LUA, "LuaInterpreter: Running non-Lua script source");
