@@ -10,10 +10,15 @@ class EventHandler
 {
 	EventFunction m_Handler;
 
+	friend class Entity;
+
 public:
-	EventHandler(const EventFunction& handler);
+	EventHandler();
 	EventHandler(EventHandler&) = delete;
 	~EventHandler() = default;
 
-	void handleEvent(const Event* event) { m_Handler(event); }
+	void handleEvent(const Event* event);
+
+	const EventFunction& getHandler() const { return m_Handler; }
+	void setHandler(EventFunction function) { m_Handler = function; }
 };

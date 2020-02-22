@@ -11,6 +11,8 @@ protected:
 	bool m_DebugCamera;
 	Ref<VisualComponent> m_Target;
 	Vector4 m_CameraOffset;
+	Vector3 m_Position;
+	Vector3 m_Direction;
 
 public:
 	CameraVisualComponent();
@@ -24,6 +26,7 @@ public:
 	virtual void postRender(VisualComponentGraph* visualComponentGraph) override;
 
 	virtual void setViewTransform(const Matrix& view);
+	void setPosition(Vector3 position);
 	virtual void setTarget(Ref<VisualComponent> target) { m_Target = target; }
 
 	virtual VisualComponent* getTarget() const { return m_Target.get(); }

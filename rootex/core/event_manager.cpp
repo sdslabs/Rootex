@@ -58,7 +58,7 @@ bool EventManager::removeListener(EventHandler* instance, Event::Type type)
 	return success;
 }
 
-bool EventManager::call(const Ref<Event> event)
+bool EventManager::call(Event* event)
 {
 	bool processed = false;
 	auto&& findIt = m_EventListeners.find(event->getEventType());
@@ -69,7 +69,8 @@ bool EventManager::call(const Ref<Event> event)
 		for (auto it = eventListenerList.begin(); it != eventListenerList.end(); ++it)
 		{
 			EventHandler* listener = (*it);
-			listener->handleEvent(event.get());
+			
+			listener->handleEvent(event);
 			processed = true;
 		}
 	}
