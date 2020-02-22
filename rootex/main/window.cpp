@@ -38,6 +38,8 @@ void Window::swapBuffers()
 
 void Window::clear()
 {
+	ClipCursor(&m_Clip);
+	SetCursorPos(m_Clip.left, m_Clip.top);
 	RenderingDevice::GetSingleton()->clearBuffer(0.0f, 0.0f, 0.0f);
 }
 
@@ -101,4 +103,15 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
 
 	RenderingDevice::GetSingleton()->initialize(m_WindowHandle, width, height);
 	applyDefaultViewport();
+
+	GetWindowRect(m_WindowHandle, &m_Clip);
+
+	// Modify the rect slightly, so the frame doesn't get clipped with
+	m_Clip.left += 5;
+	m_Clip.top += 30;
+	m_Clip.right -= 5;
+	m_Clip.bottom -= 5;
+
+	ClipCursor(&m_Clip);
+	ShowCursor(false);
 }

@@ -58,7 +58,7 @@ bool EventManager::removeListener(EventHandler* instance, Event::Type type)
 	return success;
 }
 
-bool EventManager::call(Event* event)
+void EventManager::call(Event* event)
 {
 	bool processed = false;
 	auto&& findIt = m_EventListeners.find(event->getEventType());
@@ -69,30 +69,34 @@ bool EventManager::call(Event* event)
 		for (auto it = eventListenerList.begin(); it != eventListenerList.end(); ++it)
 		{
 			EventHandler* listener = (*it);
-			
+
 			listener->handleEvent(event);
 			processed = true;
 		}
 	}
 
-	return processed;
+	if (!processed)
+	{
+		WARN("Event left unhandled: " + event->getName());
+	}
 }
 
-bool EventManager::deferredCall(const Ref<Event> event)
+void EventManager::deferredCall(const Ref<Event> event)
 {
 	if (!(m_ActiveQueue >= 0 && m_ActiveQueue < EVENTMANAGER_NUM_QUEUES))
-		return false;
+	{
+		WARN("Event left unhandled: " + event->getName());
+	}
 
 	auto&& findIt = m_EventListeners.find(event->getEventType());
-
 	if (findIt != m_EventListeners.end())
 	{
 		m_Queues[m_ActiveQueue].push_back(event);
-		return true;
+		return;
 	}
 	else
 	{
-		return false;
+		WARN("Event left unhandled: " + event->getName());
 	}
 }
 

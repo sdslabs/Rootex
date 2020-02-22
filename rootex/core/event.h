@@ -33,10 +33,9 @@ public:
 		InputLeft,
 	    InputTestAction,
 		InputJump,
-		InputMouseLeftClick,
-		InputMouseX,
-		InputMouseY,
 		InputExit,
-		InputEnd // Loop index ender
+		InputEnd, // Loop index ender
+		InputMouseX, // Mouse is handled separately
+		InputMouseY
 	};
 };

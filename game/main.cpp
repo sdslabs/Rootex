@@ -48,10 +48,13 @@ int main()
 	source->setLooping(true);
 	source->play();
 
+	Ref<EventHandler> gameQuitter(new EventHandler());
+	gameQuitter->setHandler([](const Event* event) { PostQuitMessage(0); });
+	EventManager::GetSingleton()->addListener(gameQuitter.get(), Event::Type::InputExit);
 	Ref<EventHandler> gameEventHandler(new EventHandler());
 	EventManager::GetSingleton()->addListener(gameEventHandler.get(), Event::Type::Test);
 	Ref<Event> testEvent(new Event("Test Event", Event::Type::Test, String("SDSLabs")));
-	EventManager::GetSingleton()->call(testEvent.get());
+	EventManager::GetSingleton()->call(testEvent.get()); // This should show warning because there is no handling function set for the event handler
 	EventManager::GetSingleton()->deferredCall(testEvent);
 
 	TextResourceFile* r = ResourceLoader::CreateTextResourceFile("rootex/test/abc.txt"); // So this loads build/game/abc.txt (However the binary exists in build/game/Debug/)
@@ -84,7 +87,6 @@ int main()
 	    windowLua["deltaY"],
 	    windowLua["title"]));
 	InputManager::GetSingleton()->initialize(windowLua["deltaX"], windowLua["deltaY"]);
-
 	ShaderLibrary::MakeShaders();
 
 	Ref<VisualComponentGraph> visualGraph(new VisualComponentGraph(windowLua["deltaX"], windowLua["deltaY"]));
@@ -96,14 +98,21 @@ int main()
 	Ref<Entity> teapotChild = EntityFactory::GetSingleton()->createEntity(teapotEntity);
 	teapotChild->getComponent<DiffuseVisualComponent>()->setTransform(Matrix::CreateTranslation({ 0.0f, 1.0f, 0.0f }));
 	teapot->getComponent<HierarchyComponent>()->addChild(teapotChild);
-	teapot->setEventHandler([](const Event* event) { WARN("Event captured!"); });
+	teapot->setEventHandler([](const Event* event) {
+		Vector2 inputData = InputManager::GetSingleton()->getMousePositionDelta();
+		OS::PrintLine("Event received: " + std::to_string(inputData.x) + "," + std::to_string(inputData.y));
+	});
 	teapot->subscribe(Event::Type::InputForward);
+	teapot->subscribe(Event::Type::InputBackward);
+	teapot->subscribe(Event::Type::InputLeft);
+	teapot->subscribe(Event::Type::InputRight);
 	visualGraph->addChild(teapot);
 	
 	std::optional<int> ret = {};
 	FrameTimer frameTimer;
 	LoggingScopeTimer gameScopedLogger("GameTime");
 	teapot->getComponent<TransformComponent>()->setTransform(Matrix::CreateFromYawPitchRoll(0, 0, 0) * Matrix::CreateTranslation(0, 0, -5.0f) * Matrix::CreateScale(1));
+	
 	while (true)
 	{
 		frameTimer.reset();
@@ -117,8 +126,6 @@ int main()
 		static float y = 0;
 		x += 0.1f * (InputManager::GetSingleton()->isPressed(Event::Type::InputForward) - InputManager::GetSingleton()->isPressed(Event::Type::InputBackward));
 		y += 0.1f * (InputManager::GetSingleton()->isPressed(Event::Type::InputRight) - InputManager::GetSingleton()->isPressed(Event::Type::InputLeft));
-		WARN(std::to_string(InputManager::GetSingleton()->getFloat(Event::Type::InputMouseX)));
-		WARN(std::to_string(InputManager::GetSingleton()->getFloat(Event::Type::InputMouseY)));
 		visualGraph->getCamera()->setPosition({ y, 0.0f, -x });
 		
 		RenderSystem::GetSingleton()->render(visualGraph.get(), window.get());
