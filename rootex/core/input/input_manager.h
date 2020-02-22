@@ -23,12 +23,17 @@ enum class Device
 
 class InputManager
 {
-	static bool Listen(int userButton, float oldValue, float newValue);
+	static bool BoolListen(int userButton, bool oldValue, bool newValue);
+	static bool FloatListen(int userButton, float oldValue, float newValue);
 
 	gainput::InputManager m_GainputManager;
 	gainput::InputMap m_GainputMap;
 	InputListener m_Listener;
 	HashMap<Device, unsigned int> DeviceIDs;
+	
+	unsigned int m_Width;
+	unsigned int m_Height;
+	Vector2 m_MousePositionDelta;
 
 	InputManager();
 	InputManager(InputManager&) = delete;
@@ -52,6 +57,8 @@ public:
 	bool wasPressed(Event::Type action);
 	float getFloat(Event::Type action);
 	float getDelta(Event::Type action);
+
+	const Vector2& getMousePositionDelta() const { return m_MousePositionDelta; }
 
 	void update();
 

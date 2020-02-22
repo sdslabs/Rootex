@@ -4,6 +4,8 @@
 void InputManager::initialize(unsigned int width, unsigned int height)
 {
 	m_GainputManager.SetDisplaySize(width, height);
+	m_Width = width;
+	m_Height = height;
 
 	DeviceIDs[Device::Mouse] = m_GainputManager.CreateDevice<gainput::InputDeviceMouse>();
 	DeviceIDs[Device::Keyboard] = m_GainputManager.CreateDevice<gainput::InputDeviceKeyboard>();
@@ -58,25 +60,9 @@ float InputManager::getDelta(Event::Type action)
 
 void InputManager::update()
 {
-	static gainput::DeviceButtonSpec buttons[MAX_BUTTON_BINDINGS];
-	static unsigned int numButtons = 0;
-
+	m_MousePositionDelta.x = 0.0f;
+	m_MousePositionDelta.y = 0.0f;
 	m_GainputManager.Update();
-
-	for (unsigned int inputMapping = (unsigned int)Event::Type::InputStart + 1; inputMapping != (unsigned int)Event::Type::InputEnd; inputMapping++)
-	{
-		numButtons = m_GainputMap.GetMappings(inputMapping, buttons, MAX_BUTTON_BINDINGS);
-
-		while (numButtons != 0)
-		{
-			if (m_GainputMap.GetBool(inputMapping))
-			{
-				Event inputEvent("InputEvent", (Event::Type)inputMapping, m_GainputMap.GetBool(inputMapping));
-				EventManager::GetSingleton()->call(&inputEvent);
-			}
-			numButtons--;
-		}
-	}
 }
 
 InputManager* InputManager::GetSingleton()
@@ -85,14 +71,33 @@ InputManager* InputManager::GetSingleton()
 	return &singleton;
 }
 
-bool InputManager::Listen(int userButton, float oldValue, float newValue)
+bool InputManager::BoolListen(int userButton, bool oldValue, bool newValue)
 {
-	return false;
+	Event inputEvent("BoolInputEvent", (Event::Type)userButton, Vector2(oldValue, newValue));
+	EventManager::GetSingleton()->call(&inputEvent);
+	return true;
+}
+
+bool InputManager::FloatListen(int userButton, float oldValue, float newValue)
+{
+	switch ((Event::Type)userButton)
+	{
+	case Event::Type::InputMouseX:
+		InputManager::GetSingleton()->m_MousePositionDelta.x = newValue - oldValue;
+		break;
+	case Event::Type::InputMouseY:
+		InputManager::GetSingleton()->m_MousePositionDelta.y = newValue - oldValue;
+		break;
+	}
+
+	return true;
 }
 
 InputManager::InputManager()
     : m_GainputMap(m_GainputManager)
-    , m_Listener(Listen)
+    , m_Listener(BoolListen, FloatListen)
+    , m_Width(0)
+    , m_Height(0)
 {
 }
 
