@@ -314,6 +314,11 @@ void RenderingDevice::unbindShaderResources()
 	m_Context->PSSetShaderResources(0, 1, nullptr);
 }
 
+void RenderingDevice::resetRenderTargetView()
+{
+	m_Context->OMSetRenderTargets(1, &m_RenderTargetView, nullptr);
+}
+
 void RenderingDevice::setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY pt)
 {
 	m_Context->IASetPrimitiveTopology(pt);

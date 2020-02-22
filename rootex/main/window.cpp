@@ -63,14 +63,17 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 
 LRESULT CALLBACK Window::WindowsProc(HWND windowHandler, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+	if (ImGui_ImplWin32_WndProcHandler(windowHandler, msg, wParam, lParam))
+	{
+		return true;
+	}
+
 	switch (msg)
 	{
 	case WM_CLOSE:
 		PostQuitMessage(0);
 		break;
 	}
-
-	ImGui_ImplWin32_WndProcHandler(windowHandler, msg, wParam, lParam);
 
 	return DefWindowProc(windowHandler, msg, wParam, lParam);
 }

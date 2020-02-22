@@ -14,9 +14,8 @@ void RenderSystem::update(float deltaMilliseconds)
 	ERR("RenderSystem will not update based on time");
 }
 
-void RenderSystem::render(VisualComponentGraph* graph, Window* window)
+void RenderSystem::render(VisualComponentGraph* graph)
 {
 	graph->getRenderer()->clear();
 	graph->render();
-	window->swapBuffers();
 }
