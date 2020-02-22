@@ -1,11 +1,17 @@
 #pragma once
 
 #include "common/common.h"
-#include "input_action.h"
+#include "event.h"
+#include "input_listener.h"
+
 #include "vendor/Gainput/include/gainput/gainput.h"
 
-typedef gainput::Key Key;
+#define MAX_BUTTON_BINDINGS 10
+
+typedef gainput::Key KeyboardButton;
 typedef gainput::MouseButton MouseButton;
+typedef gainput::PadButton PadButton;
+typedef gainput::DeviceButtonId DeviceButtonID;
 
 enum class Device
 {
@@ -17,8 +23,11 @@ enum class Device
 
 class InputManager
 {
+	static bool Listen(int userButton, float oldValue, float newValue);
+
 	gainput::InputManager m_GainputManager;
 	gainput::InputMap m_GainputMap;
+	InputListener m_Listener;
 	HashMap<Device, unsigned int> DeviceIDs;
 
 	InputManager();
@@ -34,20 +43,20 @@ public:
 
 	void initialize(unsigned int width, unsigned int height);
 
-	void mapBool(InputAction action, Device device, MouseButton button);
-	void mapBool(InputAction action, Device device, Key key);
-	void mapFloat(InputAction action, Device device, MouseButton button);
-	void mapFloat(InputAction action, Device device, Key key);
+	void enableDefaultContext();
 
-	bool isPressed(InputAction action);
-	bool wasPressed(InputAction action);
-	float getFloat(InputAction action);
-	float getDelta(InputAction action);
+	void mapBool(Event::Type action, Device device, DeviceButtonID button);
+	void mapFloat(Event::Type action, Device device, DeviceButtonID button);
+
+	bool isPressed(Event::Type action);
+	bool wasPressed(Event::Type action);
+	float getFloat(Event::Type action);
+	float getDelta(Event::Type action);
 
 	void update();
 
 	gainput::InputDeviceMouse* getMouse() { return static_cast<gainput::InputDeviceMouse*>(m_GainputManager.GetDevice(DeviceIDs[Device::Mouse])); }
 	gainput::InputDeviceKeyboard* getKeyboard() { return static_cast<gainput::InputDeviceKeyboard*>(m_GainputManager.GetDevice(DeviceIDs[Device::Keyboard])); }
-	gainput::InputDevicePad* getPad1() {return static_cast<gainput::InputDevicePad*>(m_GainputManager.GetDevice(DeviceIDs[Device::Pad1])); }
+	gainput::InputDevicePad* getPad1() { return static_cast<gainput::InputDevicePad*>(m_GainputManager.GetDevice(DeviceIDs[Device::Pad1])); }
 	gainput::InputDevicePad* getPad2() { return static_cast<gainput::InputDevicePad*>(m_GainputManager.GetDevice(DeviceIDs[Device::Pad2])); }
 };

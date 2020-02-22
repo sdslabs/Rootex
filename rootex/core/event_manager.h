@@ -31,7 +31,7 @@ public:
 
 	bool addListener(EventHandler* instance, Event::Type type);
 	bool removeListener(EventHandler* instance, Event::Type type);
-	bool call(const Ref<Event> event);
+	bool call(Event* event);
 	bool deferredCall(const Ref<Event> event);
 	bool tick(unsigned long maxMillis = Infinite);
 };
