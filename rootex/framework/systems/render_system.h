@@ -11,5 +11,5 @@ public:
 
 	void update(float deltaMilliseconds) override;
 	
-	void render(VisualComponentGraph* graph, Window* window);
+	void render(VisualComponentGraph* graph);
 };

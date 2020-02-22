@@ -66,6 +66,8 @@ public:
 
 	void unbindShaderResources();
 
+	void resetRenderTargetView();
+
 	void setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY pt);
 	void setViewport(const D3D11_VIEWPORT* vp);
 	
