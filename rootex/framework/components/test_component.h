@@ -1,16 +1,16 @@
-	#pragma once
+#pragma once
 
-	#include "component.h"
+#include "component.h"
 
-	class TestComponent : public Component
-	{
-		static Component* Create(const LuaVariable& componentData);
+class TestComponent : public Component
+{
+	static Component* Create(const LuaVariable& componentData);
 
-		friend class EntityFactory;
+	friend class EntityFactory;
 
-	public:
-		static const ComponentID s_ID = (ComponentID)ComponentIDs::TestComponent;
+public:
+	static const ComponentID s_ID = (ComponentID)ComponentIDs::TestComponent;
 
-		int m_TestVariable;
-		ComponentID getComponentID() const override { return s_ID; }
-	};
+	int m_TestVariable;
+	ComponentID getComponentID() const override { return s_ID; }
+};
