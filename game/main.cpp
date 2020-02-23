@@ -110,6 +110,8 @@ int main()
 	FrameTimer frameTimer;
 	LoggingScopeTimer gameScopedLogger("GameTime");
 
+	LuaTextResourceFile* luaTest = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/lua_test.lua");
+	LuaInterpreter::GetSingleton()->loadExecuteScript(luaTest);
 	luabridge::getGlobalNamespace(LuaInterpreter::GetSingleton()->getState())
 	    .beginNamespace("Rootex")
 		.beginClass<StreamingAudioSource>("StreamingAudioSource")

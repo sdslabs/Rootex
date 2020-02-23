@@ -131,6 +131,6 @@ void OS::PrintIf(const bool& expr, const String& error)
 {
 	if (expr)
 	{
-		PrintError(error);
+		PrintWarning(error);
 	}
 }

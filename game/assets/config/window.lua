@@ -5,7 +5,3 @@ window = {
     deltaY = 480,
     title = "Rootex"
 }
-
-testFunction = function ()
-    Rootex.audio:play()
-end
