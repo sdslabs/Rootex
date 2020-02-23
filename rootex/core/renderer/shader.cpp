@@ -86,7 +86,7 @@ void Shader::set(const VertexConstantBufferType& type, const Matrix& constantBuf
 	}
 }
 
-void Shader::set(const PSDiffuseConstantBuffer& constantBuffer)
+void Shader::set(const PSDiffuseConstantBuffer& constantBuffer) const
 {
 	D3D11_BUFFER_DESC cbd = { 0 };
 	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
