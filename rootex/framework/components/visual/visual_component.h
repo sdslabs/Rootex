@@ -27,6 +27,7 @@ enum class RenderPass
 class VisualComponentAttributes
 {
 	friend class VisualComponent;
+	friend class DiffuseVisualComponent;
 
 protected:
 	TransformComponent* m_TransformComponent;
@@ -41,8 +42,8 @@ public:
 
 	const VertexBuffer* getVertexBuffer() const { return m_VisualModelResourceFile->getVertexBuffer(); }
 	const IndexBuffer* getIndexBuffer() const { return m_VisualModelResourceFile->getIndexBuffer(); }
-	const Matrix& getTransform() const { return m_TransformComponent->getTransform(); }
-	const Matrix& getInverseTransform() const { return m_TransformComponent->getTransform().Invert(); }
+	const Matrix& getTransform() const { return m_TransformComponent->getLocalTransform(); }
+	const Matrix& getInverseTransform() const { return m_TransformComponent->getLocalTransform().Invert(); }
 	const RenderPass& getRenderPass() const { return m_RenderPassSetting; }
 	Material* getMaterial() { return m_Material.get(); }
 	VisualModelResourceFile* getModelResourceFile() const { return m_VisualModelResourceFile; }
@@ -51,6 +52,8 @@ public:
 class VisualComponent : public Component
 {
 	static Component* Create(const LuaVariable& componentData);
+	Color m_Color;
+	void setColor(const Color& color) { m_Color = color; };
 
 protected:
 	VisualComponentAttributes m_Attributes;
@@ -69,11 +72,11 @@ public:
 
 	bool setup() override;
 
-	virtual bool preRender(VisualComponentGraph* visualComponentGraph);
-	virtual bool isVisible(VisualComponentGraph* visualComponentGraph) const;
-	virtual void render(VisualComponentGraph* visualComponentGraph);
-	virtual void renderChildren(VisualComponentGraph* visualComponentGraph);
-	virtual void postRender(VisualComponentGraph* visualComponentGraph);
+	virtual bool preRender(VisualComponentGraph* graph);
+	virtual bool isVisible(VisualComponentGraph* graph) const;
+	virtual void render(VisualComponentGraph* graph);
+	virtual void renderChildren(VisualComponentGraph* graph);
+	virtual void postRender(VisualComponentGraph* graph);
 
 	void addTransform(const Matrix& applyTransform);
 

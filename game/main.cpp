@@ -14,18 +14,19 @@
 #include "core/renderer/shader_library.h"
 #include "core/renderer/vertex_buffer.h"
 
-#include "core/resource_loader.h"
 #include "core/event_manager.h"
+#include "core/resource_loader.h"
 
-#include "framework/components/visual/visual_component.h"
-#include "framework/components/visual/diffuse_visual_component.h"
-#include "framework/components/visual/visual_component_graph.h"
-#include "framework/components/test_component.h"
 #include "framework/components/hierarchy_component.h"
+#include "framework/components/test_component.h"
+#include "framework/components/visual/diffuse_visual_component.h"
+#include "framework/components/visual/visual_component.h"
+#include "framework/components/visual/visual_component_graph.h"
 #include "framework/entity_factory.h"
 #include "framework/systems/debug_system.h"
-#include "framework/systems/test_system.h"
+#include "framework/systems/light_system.h"
 #include "framework/systems/render_system.h"
+#include "framework/systems/test_system.h"
 
 #include "main/window.h"
 
@@ -91,6 +92,23 @@ int main()
 
 	Ref<VisualComponentGraph> visualGraph(new VisualComponentGraph(windowLua["deltaX"], windowLua["deltaY"]));
 	Ref<RenderSystem> renderSystem(new RenderSystem());
+	Ref<LightSystem> lightSystem(new LightSystem());
+
+	LuaTextResourceFile* spotLightEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/spot_light.lua");
+	Ref<Entity> spotLight = EntityFactory::GetSingleton()->createEntity(spotLightEntity);
+	//LuaTextResourceFile* directionalLightEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/directional_light.lua");
+	//Ref<Entity> directionalLight = EntityFactory::GetSingleton()->createEntity(directionalLightEntity);
+
+	//LuaTextResourceFile* teapotEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/teapot.lua");
+	//Ref<Entity> teapot = EntityFactory::GetSingleton()->createEntity(teapotEntity);
+
+	//Ref<Entity> teapotChild = EntityFactory::GetSingleton()->createEntity(teapotEntity);
+	//teapotChild->getComponent<DiffuseVisualComponent>()->setTransform(Matrix::CreateTranslation({ 0.0f, 1.0f, 0.0f }));
+	//teapot->getComponent<HierarchyComponent>()->addChild(teapotChild);
+
+	//visualGraph->addChild(teapot);
+	visualGraph->addChild(spotLight);
+
 	
 	LuaTextResourceFile* teapotEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/teapot.lua");
 	Ref<Entity> teapot = EntityFactory::GetSingleton()->createEntity(teapotEntity);
@@ -122,8 +140,107 @@ int main()
 
 		AudioSystem::GetSingleton()->update();
 
-		static float x = 0;
+		static float xp = 1;
+		static float yp = 0;
+		static float zp = 2;
+
+		static float x = 1;
 		static float y = 0;
+		static float z = 0;
+		static float u = 0;
+		static float l = 0;
+		static float in = -2;
+		static float roll = 0;
+		static float pitch = 0;
+		static float yaw = 3.14;
+		if (GetAsyncKeyState(VK_LEFT))
+		{
+			l += 0.1;
+		}
+		if (GetAsyncKeyState(VK_RIGHT))
+		{
+			l += -0.1;
+		}
+		if (GetAsyncKeyState(VK_DOWN))
+		{
+			u += -0.1;
+		}
+		if (GetAsyncKeyState(VK_UP))
+		{
+			u += 0.1;
+		}
+		//if (GetAsyncKeyState(VK_NUMPAD4))
+		//{
+		//	in += -0.1;
+		//}
+		//if (GetAsyncKeyState(VK_NUMPAD7))
+		//{
+		//	in += 0.1;
+		//}
+		
+		if (GetAsyncKeyState(VK_NUMPAD7))
+		{
+			roll += 0.1;
+		}
+		if (GetAsyncKeyState(VK_NUMPAD4))
+		{
+			roll += -0.1;
+		}
+		if (GetAsyncKeyState(VK_NUMPAD8))
+		{
+			pitch += 0.1;
+		}
+		if (GetAsyncKeyState(VK_NUMPAD5))
+		{
+			pitch += -0.1;
+		}
+		if (GetAsyncKeyState(VK_NUMPAD9))
+		{
+			yaw += 0.1;
+		}
+		if (GetAsyncKeyState(VK_NUMPAD6))
+		{
+			yaw += -0.1;
+		}
+		if (GetAsyncKeyState('R'))
+		{
+			u = l = roll = pitch = yaw = 0;
+		}
+
+		if (GetAsyncKeyState('W'))
+		{
+			yp += 1.0;
+		}
+		if (GetAsyncKeyState('S'))
+		{
+			yp -= 1.0;
+		}
+		if (GetAsyncKeyState('A'))
+		{
+			xp -= 1.0;
+		}
+		if (GetAsyncKeyState('D'))
+		{
+			xp += 1.0;
+		}
+		if (GetAsyncKeyState('Q'))
+		{
+			zp += 1.0;
+		}
+		if (GetAsyncKeyState('E'))
+		{
+			zp -= 1.0;
+		}
+
+		x = l;
+		y = u;
+		z = in;
+		spotLight->getComponent<TransformComponent>()->setPosition(Vector3(xp, yp, zp));
+		spotLight->getComponent<TransformComponent>()->setRotation(yaw, pitch, roll);
+		//spotLight->getComponent<TransformComponent>()->setPosition({ xp, yp, zp });
+
+		//LightSystem::GetSingleton()->apply();
+
 		x += 0.1f * (InputManager::GetSingleton()->isPressed(Event::Type::InputForward) - InputManager::GetSingleton()->isPressed(Event::Type::InputBackward));
 		y += 0.1f * (InputManager::GetSingleton()->isPressed(Event::Type::InputRight) - InputManager::GetSingleton()->isPressed(Event::Type::InputLeft));
 		visualGraph->getCamera()->setPosition({ y, 0.0f, -x });
@@ -136,4 +253,4 @@ int main()
 	}
 
 	return ret.value();
-}
+	}

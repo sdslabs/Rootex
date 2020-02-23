@@ -10,6 +10,9 @@
 #include "components/hierarchy_component.h"
 #include "components/visual/visual_component.h"
 #include "components/visual/diffuse_visual_component.h"
+#include "components/visual/point_light_component.h"
+#include "components/visual/directional_light_component.h"
+#include "components/visual/spot_light_component.h"
 
 EntityID EntityFactory::s_CurrentID = 1;
 
@@ -31,6 +34,9 @@ EntityFactory::EntityFactory()
 	m_ComponentCreators["VisualComponent"] = VisualComponent::Create;
 	m_ComponentCreators["TransformComponent"] = TransformComponent::Create;
 	m_ComponentCreators["DiffuseVisualComponent"] = DiffuseVisualComponent::Create;
+	m_ComponentCreators["PointLightComponent"] = PointLightComponent::Create;
+	m_ComponentCreators["DirectionalLightComponent"] = DirectionalLightComponent::Create;
+	m_ComponentCreators["SpotLightComponent"] = SpotLightComponent::Create;
 }
 
 Ref<Component> EntityFactory::createComponent(const String& name, const LuaVariable& componentData)
