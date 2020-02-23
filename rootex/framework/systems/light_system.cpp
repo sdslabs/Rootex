@@ -59,7 +59,7 @@ Lights LightSystem::getLights()
 	{
 		SpotLightComponent* light = dynamic_cast<SpotLightComponent*>(spotLightComponents[i]);
 		TransformComponent* transform = light->getOwner()->getComponent<TransformComponent>();
-		Vector3 direction = DirectX::XMVector3Rotate( Vector3(0.0f, 0.0f, 1.0f), transform->getRotation() );
+		Vector3 direction = DirectX::XMVector3Rotate(Vector3(0.0f, 0.0f, 1.0f), transform->getRotation());
 		lights.spotLightInfos[i] = {
 			light->m_ambientColor, light->m_diffuseColor, light->m_diffuseIntensity,
 			light->m_constAtt, light->m_linAtt, light->m_quadAtt,
