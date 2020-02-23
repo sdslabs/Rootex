@@ -2,7 +2,7 @@
 
 #include "rendering_device.h"
 #include "utils.h"
-
+/*
 VertexBuffer::VertexBuffer()
     : m_Buffer({
 	    // Position              // TexCoords	
@@ -29,7 +29,7 @@ VertexBuffer::VertexBuffer()
 	const UINT offset = 0u;
 
 	m_VertexBuffer = RenderingDevice::GetSingleton()->initVertexBuffer(&vbd, &vsd, &stride, &offset);
-}
+}*/
 
 VertexBuffer::VertexBuffer(const Vector<VertexData>& buffer)
     : m_Buffer(buffer)
