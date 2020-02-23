@@ -2,6 +2,7 @@
 
 #include "framework/component.h"
 #include "framework/system.h"
+#include "event_manager.h"
 
 void Entity::addComponent(const Ref<Component>& component)
 {
@@ -11,6 +12,14 @@ void Entity::addComponent(const Ref<Component>& component)
 Entity::Entity(EntityID id)
     : m_ID(id)
 {
+}
+
+void Entity::subscribe(const Event::Type type)
+{
+	if (m_EventHandler.getHandler())
+	{
+		EventManager::GetSingleton()->addListener(&m_EventHandler, type);
+	}
 }
 
 bool Entity::setupComponents()
@@ -41,4 +50,9 @@ EntityID Entity::getID() const
 const HashMap<ComponentID, Ref<Component>>& Entity::getAllComponents() const
 {
 	return m_Components;
+}
+
+void Entity::setEventHandler(const EventFunction& function)
+{
+	m_EventHandler.setHandler(function);
 }
