@@ -111,10 +111,12 @@ int main()
 	LoggingScopeTimer gameScopedLogger("GameTime");
 
 	luabridge::getGlobalNamespace(LuaInterpreter::GetSingleton()->getState())
-	    .beginClass<TestClass>("TestClass")
-	    .addConstructor<void (*)(void)>()
-	    .addFunction("exit", &TestClass::exit)
-		.endClass();
+	    .beginNamespace("Rootex")
+		.beginClass<StreamingAudioSource>("StreamingAudioSource")
+	    .addFunction("play", &StreamingAudioSource::play)
+	    .endClass()
+	    .addVariable<StreamingAudioSource>("audio", source.get())
+		.endNamespace();
 	while (true)
 	{
 		frameTimer.reset();
@@ -183,6 +185,7 @@ int main()
 
 		if (GetAsyncKeyState(VK_SPACE))
 		{
+			// Press Space to start music
 			LuaVariable var = LuaInterpreter::GetSingleton()->getGlobal("testFunction");
 			var();
 		}

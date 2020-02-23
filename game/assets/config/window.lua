@@ -7,8 +7,5 @@ window = {
 }
 
 testFunction = function ()
-    print("Wow I was actually called this time")
-    local a = TestClass()
-    print("a is made")
-    a:exit()
+    Rootex.audio:play()
 end
