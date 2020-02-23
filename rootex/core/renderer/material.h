@@ -31,7 +31,7 @@ class DiffuseMaterial : public Material
 public:
 	DiffuseMaterial(Ref<Texture> diffuseTexture);
 	~DiffuseMaterial() = default;
-	void setShaderConstantBuffer(PSDiffuseConstantBuffer& Cb) { m_Shader->set(Cb); }
+	void setShaderConstantBuffer(const PSDiffuseConstantBuffer& Cb) const { m_Shader->set(Cb); }
 
 	void bind() const override;
 };

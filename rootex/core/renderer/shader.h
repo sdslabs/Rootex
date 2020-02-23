@@ -40,7 +40,7 @@ public:
 	void unbind() const;
 
 	void set(const VertexConstantBufferType& type, const Matrix& constantBuffer);
-	void set(const PSDiffuseConstantBuffer& constantBuffer);
+	void set(const PSDiffuseConstantBuffer& constantBuffer) const;
 	void set(const PSSolidConstantBuffer& constantBuffer);
 };
 

@@ -45,7 +45,5 @@ bool DiffuseVisualComponent::preRender(VisualComponentGraph* graph)
 		m_Attributes.m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::Model, graph->getTopMatrix());
 		m_Attributes.m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::ModelInverse, graph->getTopMatrix().Invert());
 	}
-	PSDiffuseConstantBuffer Cb = { LightSystem::GetSingleton()->getLights(), { 0.6f, 30.0f, { 0.0f, 0.0f } } };
-	dynamic_cast<DiffuseMaterial*>(m_Attributes.m_Material.get())->setShaderConstantBuffer(Cb);
 	return true;
 }
