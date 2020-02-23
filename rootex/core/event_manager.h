@@ -1,24 +1,20 @@
 #pragma once
 
-#include "common/common.h"
-#include "event.h"
 #include <algorithm>
 #include <utility>
 
-const unsigned int EVENTMANAGER_NUM_QUEUES = 2;
+#include "common/common.h"
+#include "event_handler.h"
+#include "event.h"
 
-//GameObject Generic parent class for all game objects
-class GameObject
-{
-public:
-	virtual void handleEvent(const Event* event) { OS::PrintLine("event handled"); }
-};
+const unsigned int EVENTMANAGER_NUM_QUEUES = 2;
 
 class EventManager
 {
-	typedef Vector<GameObject*> EventListenerList;
-	typedef Map<EventType, EventListenerList> EventListenerMap;
+	typedef Vector<EventHandler*> EventListenerList;
+	typedef Map<Event::Type, EventListenerList> EventListenerMap;
 	typedef Vector<Ref<Event>> EventQueue;
+
 	EventListenerMap m_EventListeners;
 	EventQueue m_Queues[EVENTMANAGER_NUM_QUEUES];
 	unsigned int m_ActiveQueue;
@@ -33,9 +29,9 @@ public:
 	~EventManager();
 	static EventManager* GetSingleton();
 
-	bool addListener(GameObject* instance, EventType type);
-	bool removeListener(GameObject* instance, EventType type);
-	bool call(const Ref<Event> event);
-	bool deferredCall(const Ref<Event> event);
+	bool addListener(EventHandler* instance, Event::Type type);
+	bool removeListener(EventHandler* instance, Event::Type type);
+	void call(Event* event);
+	void deferredCall(const Ref<Event> event);
 	bool tick(unsigned long maxMillis = Infinite);
 };
