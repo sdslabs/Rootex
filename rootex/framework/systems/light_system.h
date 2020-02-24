@@ -13,6 +13,6 @@ class LightSystem : public System
 public:
 	static LightSystem* GetSingleton();
 
-	void update(float deltaMilliseconds) override;
+	void update(float deltaMilliseconds);
 	Lights getLights();
 };

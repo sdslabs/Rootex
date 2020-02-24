@@ -5,5 +5,5 @@
 class TestSystem : public System
 {
 public:
-	void update(float deltaMilliseconds) override;
+	void update(float deltaMilliseconds);
 };
