@@ -61,12 +61,14 @@ void PhysicsSystem::internalTickCallback(btDynamicsWorld* const world, btScalar 
 		// get the two bodies used in the manifold.
 		btRigidBody const* const body0 = static_cast<btRigidBody const*>(manifold->getBody0());
 		btRigidBody const* const body1 = static_cast<btRigidBody const*>(manifold->getBody1());
+
+		WARN("Body collided");
 	}
 }
 
 void PhysicsSystem::update(float deltaMilliseconds)
 {
-	m_DynamicsWorld.get()->stepSimulation(deltaMilliseconds, 10);
+	m_DynamicsWorld->stepSimulation(deltaMilliseconds, 10);
 }
 
 void PhysicsSystem::syncVisibleScene()
