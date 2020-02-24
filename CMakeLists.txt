@@ -1,16 +1,18 @@
 cmake_minimum_required(VERSION 3.12)
 
 # Project metadata
-project(Rootex
+project(
+    Rootex
     LANGUAGES CXX
     VERSION 1.0
     DESCRIPTION "Rootex Engine"
 )
 
+option(BUILD_EDITOR "Build editor executable" OFF)
+
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 set(ROOTEX_INCLUDES
     ${ROOTEX_INCLUDES}
@@ -20,6 +22,6 @@ CACHE INTERNAL "")
 add_subdirectory(rootex)
 add_subdirectory(game)
 
-set_directory_properties(PROPERTIES 
-    VS_STARTUP_PROJECT Game
-)
+if (BUILD_EDITOR)
+    add_subdirectory(editor)
+endif(BUILD_EDITOR)
