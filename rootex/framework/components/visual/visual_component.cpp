@@ -6,18 +6,22 @@
 
 #include "framework/components/visual/visual_component_graph.h"
 #include "framework/entity.h"
+#include "framework/systems/light_system.h"
 
 Component* VisualComponent::Create(const LuaVariable& componentData)
 {
 	VisualComponent* visualComponent = new VisualComponent(
 	    RenderPass::Global,
 	    Ref<Material>(new Material()),
-	    ResourceLoader::CreateVisualModelResourceFile(componentData["resFile"].tostring()));
-
+	    ResourceLoader::CreateVisualModelResourceFile(componentData["resFile"].tostring())
+	);
+	visualComponent->setColor(Color((float)componentData["color"]["r"], (float)componentData["color"]["g"],
+	    (float)componentData["color"]["b"], (float)componentData["color"]["a"]));
 	return visualComponent;
 }
 
-VisualComponent::VisualComponent(const RenderPass& renderPassSetting, Ref<Material> material, VisualModelResourceFile* resFile)
+VisualComponent::VisualComponent(const RenderPass& renderPassSetting, Ref<Material> material,
+	VisualModelResourceFile* resFile)
     : m_IsVisible(true)
 {
 	m_Attributes.m_TransformComponent = nullptr;
@@ -57,13 +61,17 @@ bool VisualComponent::preRender(VisualComponentGraph* graph)
 	if (m_Attributes.m_TransformComponent)
 	{
 		graph->pushMatrix(m_Attributes.getTransform());
-		m_Attributes.m_Material->setShaderConstantBuffer(Shader::ConstantBufferType::Model, graph->getTopMatrix());
+		m_Attributes.m_TransformComponent->m_TransformBuffer.m_AbsoluteTransform = graph->getTopMatrix();
+		m_Attributes.m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::Model, graph->getTopMatrix());
 	}
 	else
 	{
 		graph->pushMatrix(Matrix::Identity);
-		m_Attributes.m_Material->setShaderConstantBuffer(Shader::ConstantBufferType::Model, graph->getTopMatrix());
+		m_Attributes.m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::Model, graph->getTopMatrix());
 	}
+	PSSolidConstantBuffer Cb = { m_Color };
+	m_Attributes.m_Material->setShaderConstantBuffer(Cb);
+	
 	return true;
 }
 
@@ -82,8 +90,8 @@ void VisualComponent::renderChildren(VisualComponentGraph* graph)
 {
 	if (isVisible(graph))
 	{
-		m_Attributes.m_Material->setShaderConstantBuffer(Shader::ConstantBufferType::View, graph->getCamera()->getView());
-		m_Attributes.m_Material->setShaderConstantBuffer(Shader::ConstantBufferType::Projection, graph->getCamera()->getProjection());
+		m_Attributes.m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::View, graph->getCamera()->getView());
+		m_Attributes.m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::Projection, graph->getCamera()->getProjection());
 	}
 
 	for (auto& child : m_Owner->getComponent<HierarchyComponent>()->m_Children)
@@ -111,7 +119,7 @@ void VisualComponent::postRender(VisualComponentGraph* graph)
 
 void VisualComponent::addTransform(const Matrix& applyTransform)
 {
-	m_Attributes.m_TransformComponent->setTransform(m_Attributes.m_TransformComponent->getTransform() * applyTransform);
+	m_Attributes.m_TransformComponent->setTransform(m_Attributes.m_TransformComponent->getLocalTransform() * applyTransform);
 }
 
 void VisualComponent::setTransform(const Matrix& newTransform)

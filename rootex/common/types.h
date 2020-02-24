@@ -38,5 +38,9 @@ typedef DirectX::SimpleMath::Vector3 Vector3;
 typedef DirectX::SimpleMath::Vector4 Vector4;
 typedef DirectX::SimpleMath::Quaternion Quaternion;
 typedef DirectX::SimpleMath::Color Color;
+
 #include <DirectXColors.h>
 namespace ColorPresets = DirectX::Colors;
+
+#include <variant>
+using Variant = std::variant<int, float, bool, String, Vector2, Vector3, Vector4, Matrix, Quaternion, Color>;

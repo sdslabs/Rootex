@@ -38,4 +38,6 @@ public:
 	static void PrintWarning(const String& warning);
 	static void PrintError(const String& error);
 	static void PrintIf(const bool& expr, const String& error);
+
+	static void PostError(String message, LPSTR caption);
 };

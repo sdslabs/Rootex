@@ -14,6 +14,7 @@ class Window
 	LPCSTR m_ClassName;
 	HINSTANCE m_AppInstance;
 	HWND m_WindowHandle;
+	RECT m_Clip;
 	
 	static LRESULT CALLBACK WindowsProc(HWND windowHandler, UINT msg, WPARAM wParam, LPARAM lParam);
 
