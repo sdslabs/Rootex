@@ -24,11 +24,8 @@
 #include "framework/components/visual/visual_component_graph.h"
 #include "framework/entity_factory.h"
 #include "framework/systems/debug_system.h"
-<<<<<<< HEAD:game/game_main.cpp
 #include "framework/systems/light_system.h"
-=======
 #include "framework/systems/physics_system.h"
->>>>>>> Add Bullet:game/main.cpp
 #include "framework/systems/render_system.h"
 #include "framework/systems/test_system.h"
 
@@ -102,7 +99,6 @@ int main()
 
 	Ref<VisualComponentGraph> visualGraph(new VisualComponentGraph());
 	Ref<RenderSystem> renderSystem(new RenderSystem());
-<<<<<<< HEAD:game/game_main.cpp
 	Ref<LightSystem> lightSystem(new LightSystem());
 
 	LuaTextResourceFile* spotLightEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/spot_light.lua");
@@ -119,8 +115,6 @@ int main()
 
 	//visualGraph->addChild(teapot);
 	//visualGraph->addChild(spotLight);
-=======
->>>>>>> Add Bullet:game/main.cpp
 
 	LuaTextResourceFile* teapotEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/teapot.lua");
 	Ref<Entity> teapot = EntityFactory::GetSingleton()->createEntity(teapotEntity);
