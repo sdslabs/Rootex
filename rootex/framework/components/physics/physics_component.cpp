@@ -4,21 +4,22 @@
 
 #include "entity.h"
 
-PhysicsComponent::PhysicsComponent(const String& matName, float volume)
+PhysicsComponent::PhysicsComponent(const String& matName, float volume, const Ref<btCollisionShape>& collisionShape)
     : m_MaterialName(matName)
     , m_MotionState(Matrix::Identity)
 	, m_Material(0, 0)
     , m_Volume(volume)
 {
+	m_CollisionShape = collisionShape;
 	m_TransformComponent = nullptr;
 	physicsMaterial = ResourceLoader::CreateLuaTextResourceFile("game/assets/config/physics.lua");
 	physicsLua.loadExecuteScript(physicsMaterial);
 	LuaVariable materialLua = physicsLua.getGlobal("PhysicsMaterial");
-	specificGravity = float(materialLua[matName]["specificgravity"]);
+	m_SpecificGravity = float(materialLua[matName]["specificgravity"]);
 	m_Material.m_Friction = float(materialLua[matName]["friction"]);
 	m_Material.m_Restitution = float(materialLua[matName]["restitution"]);
 
-	m_Mass = volume * specificGravity;
+	m_Mass = volume * m_SpecificGravity;
 	localInertia = btVector3(0.f, 0.f, 0.f);
 	if (m_Mass > 0.f)
 	{
@@ -39,16 +40,16 @@ bool PhysicsComponent::setup()
 		else
 		{
 			transform = m_TransformComponent->getTransform();
-
-			btRigidBody::btRigidBodyConstructionInfo rbInfo(m_Mass, &m_MotionState, collisionShape.get(), localInertia);
+			m_MotionState.setWorldTransform(matTobtTransform(transform));
+			btRigidBody::btRigidBodyConstructionInfo rbInfo(m_Mass, &m_MotionState, m_CollisionShape.get(), localInertia);
 
 			// set up the materal properties
 			rbInfo.m_restitution = m_Material.m_Restitution;
 			rbInfo.m_friction = m_Material.m_Friction;
 
-			body = new btRigidBody(rbInfo);
+			m_Body = new btRigidBody(rbInfo);
 
-			PhysicsSystem::GetSingleton()->addRigidBody(body);
+			PhysicsSystem::GetSingleton()->addRigidBody(m_Body);
 		}
 	}
 
@@ -78,55 +79,55 @@ void PhysicsComponent::MotionState::setWorldTransform(const btTransform& worldTr
 
 void PhysicsComponent::applyForce(const Vector3 force)
 {
-	body->applyCentralImpulse(vecTobtVector3(force));
+	m_Body->applyCentralImpulse(vecTobtVector3(force));
 }
 
 void PhysicsComponent::applyTorque(const Vector3 torque)
 {
-	body->applyTorqueImpulse(vecTobtVector3(torque));
+	m_Body->applyTorqueImpulse(vecTobtVector3(torque));
 }
 
 void PhysicsComponent::kinematicMove(const Matrix& matrix)
 {
-	body->setActivationState(DISABLE_DEACTIVATION);
-	body->setWorldTransform(matTobtTransform(matrix));
+	m_Body->setActivationState(DISABLE_DEACTIVATION);
+	m_Body->setWorldTransform(matTobtTransform(matrix));
 }
 
 void PhysicsComponent::setTransform(const Matrix& mat)
 {
-	body->setActivationState(DISABLE_DEACTIVATION);
+	m_Body->setActivationState(DISABLE_DEACTIVATION);
 	// warp the body to the new position
-	body->setWorldTransform(matTobtTransform(mat));
+	m_Body->setWorldTransform(matTobtTransform(mat));
 }
 
 Matrix PhysicsComponent::getTransform()
 {
-	return btTransformToMat(body->getCenterOfMassTransform());
+	return btTransformToMat(m_Body->getCenterOfMassTransform());
 }
 
 void PhysicsComponent::setVelocity(const Vector3& velocity)
 {
-	body->setLinearVelocity(vecTobtVector3(velocity));
+	m_Body->setLinearVelocity(vecTobtVector3(velocity));
 }
 
 Vector3 PhysicsComponent::getVelocity()
 {
-	return btVector3ToVec(body->getLinearVelocity());
+	return btVector3ToVec(m_Body->getLinearVelocity());
 }
 
 void PhysicsComponent::setAngularVelocity(const Vector3& angularVel)
 {
-	body->setAngularVelocity(vecTobtVector3(angularVel));
+	m_Body->setAngularVelocity(vecTobtVector3(angularVel));
 }
 
 Vector3 PhysicsComponent::getAngularVelocity()
 {
-	return btVector3ToVec(body->getAngularVelocity());
+	return btVector3ToVec(m_Body->getAngularVelocity());
 }
 
 void PhysicsComponent::translate(const Vector3& vec)
 {
-	body->translate(vecTobtVector3(vec));
+	m_Body->translate(vecTobtVector3(vec));
 }
 
 btTransform PhysicsComponent::matTobtTransform(Matrix const& mat)
