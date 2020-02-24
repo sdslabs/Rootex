@@ -55,7 +55,7 @@ void Window::swapBuffers()
 
 void Window::clear()
 {
-	RenderingDevice::GetSingleton()->clearBuffer(0.2f, 0.2f, 0.2f);
+	RenderingDevice::GetSingleton()->clearBuffer(0.3f, 0.8f, 0.3f);
 }
 
 void Window::setWindowTitle(String title)
