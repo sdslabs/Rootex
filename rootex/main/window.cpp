@@ -77,10 +77,12 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 
 LRESULT CALLBACK Window::WindowsProc(HWND windowHandler, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+#ifdef ROOTEX_EDITOR
 	if (ImGui_ImplWin32_WndProcHandler(windowHandler, msg, wParam, lParam))
 	{
 		return true;
 	}
+#endif // ROOTEX_EDITOR
 
 	switch (msg)
 	{

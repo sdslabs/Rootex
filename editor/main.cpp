@@ -36,9 +36,7 @@
 
 #include "script/interpreter.h"
 
-#include "vendor/ImGUI/imgui.h"
-#include "vendor/ImGUI/imgui_impl_dx11.h"
-#include "vendor/ImGUI/imgui_impl_win32.h"
+#include "editor/editor.h"
 
 int main()
 {
@@ -76,26 +74,32 @@ int main()
 	Ref<LightSystem> lightSystem(new LightSystem());
 
 	Ref<Entity> cube = EntityFactory::GetSingleton()->createEntity(ResourceLoader::CreateLuaTextResourceFile("game/assets/test/cube.lua"));
-	cube->getComponent<TransformComponent>()->addTransform(Matrix::CreateTranslation({ 0.0f, 0.0f, 0.0f }));
+	cube->getComponent<TransformComponent>()->addTransform(Matrix::CreateTranslation({ 0.0f, 0.0f, -5.0f }));
 	visualGraph->addChild(cube);
 
 	OS::PrintLine("Project loaded successfully: " + projectName);
+	Editor::GetSingleton()->initialize(editorWindow->getWindowHandle());
+	
 	std::optional<int> ret;
 	while (true)
 	{
-		editorWindow->clear();
-
 		if (ret = editorWindow->processMessages())
+		{
 			break;
+		}
 
 		AudioSystem::GetSingleton()->update();
-
-		RenderSystem::GetSingleton()->render(visualGraph.get());
 		InputManager::GetSingleton()->update();
 		EventManager::GetSingleton()->dispatchDeferred();
 
+		Editor::GetSingleton()->begin(visualGraph.get());
+		Editor::GetSingleton()->displayVisualGraph(visualGraph.get());
+		Editor::GetSingleton()->end(visualGraph.get());
+
 		editorWindow->swapBuffers();
+		editorWindow->clear();
 	}
+
 
 	return ret.value();
 }
