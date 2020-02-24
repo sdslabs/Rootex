@@ -1,4 +1,9 @@
-float4 main(uint tid : SV_PRIMITIVEID) : SV_TARGET
+cbuffer CBuf : register(b0)
 {
-    return float4(1.0f, 1.0f, 1.0f, 1.0f);
+    float4 color;
+};
+
+float4 main() : SV_TARGET
+{
+    return color;
 }

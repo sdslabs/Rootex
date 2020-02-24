@@ -1,5 +1,7 @@
 # Rootex
 
+<img src="/game/assets/test/rootex.png" width=600 />
+
 ## Contents
 
 * [What is Rootex?](#what)

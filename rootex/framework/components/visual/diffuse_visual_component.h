@@ -17,5 +17,7 @@ class DiffuseVisualComponent : public VisualComponent
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::VisualComponent;
 
+	bool preRender(VisualComponentGraph* graph) override;
+
 	ComponentID getComponentID() const override { return s_ID; }
 };

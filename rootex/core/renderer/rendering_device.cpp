@@ -207,6 +207,15 @@ void RenderingDevice::initVSModelConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SU
 	SafeRelease(&pConstantBuffer);
 }
 
+void RenderingDevice::initVSModelInverseConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
+{
+	ID3D11Buffer* pConstantBuffer = nullptr;
+	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &pConstantBuffer));
+	m_Context->VSSetConstantBuffers(3u, 1u, &pConstantBuffer);
+
+	SafeRelease(&pConstantBuffer);
+}
+
 void RenderingDevice::initVSViewConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
 {
 	ID3D11Buffer* pConstantBuffer = nullptr;
@@ -225,11 +234,11 @@ void RenderingDevice::initVSProjectionConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D
 	SafeRelease(&pConstantBuffer);
 }
 
-void RenderingDevice::initPSConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
+void RenderingDevice::initPSConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd, UINT offset)
 {
 	ID3D11Buffer* pConstantBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &pConstantBuffer));
-	m_Context->PSSetConstantBuffers(0u, 1u, &pConstantBuffer);
+	m_Context->PSSetConstantBuffers(offset, 1u, &pConstantBuffer);
 
 	SafeRelease(&pConstantBuffer);
 }
