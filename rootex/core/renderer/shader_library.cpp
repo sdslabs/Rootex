@@ -34,6 +34,7 @@ void ShaderLibrary::MakeShaders()
 	{
 		BufferFormat diffuseTextureBufferFormat;
 		diffuseTextureBufferFormat.push(VertexBufferElement::Type::POSITION, "POSITION");
+		diffuseTextureBufferFormat.push(VertexBufferElement::Type::POSITION, "NORMAL");
 		diffuseTextureBufferFormat.push(VertexBufferElement::Type::TEXCOORD, "TEXCOORD");
 		MakeShader(ShaderType::Diffuse, L"diffuse_texture_vertex_shader.cso", L"diffuse_texture_pixel_shader.cso", diffuseTextureBufferFormat);
 	}

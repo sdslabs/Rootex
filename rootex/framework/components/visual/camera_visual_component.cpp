@@ -6,11 +6,13 @@
 CameraVisualComponent::CameraVisualComponent()
     : VisualComponent(RenderPass::Global, nullptr, nullptr)
     , m_DebugCamera(false)
-    , m_ViewMatrix(Matrix::CreateLookAt({ 0.0f, 0.0f, 30.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }))
+    , m_ViewMatrix(Matrix::CreateLookAt({ 0.0f, 0.0f, 4.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }))
     , m_ProjectionMatrix(Matrix::CreatePerspective(1.0f, 1.0f * 480.0f / 640.0f, 0.5f, 100.0f))
     , m_Active(true)
     , m_Target(nullptr)
     , m_CameraOffset(0.0f, 1.0f, -10.0f, 0.0f)
+    , m_Position(0.0f, 0.0f, 4.0f)
+    , m_Direction(0.0f, 0.0f, -1.0f)
 {
 }
 
@@ -45,6 +47,12 @@ bool CameraVisualComponent::isVisible(VisualComponentGraph* scene) const
 
 void CameraVisualComponent::postRender(VisualComponentGraph* visualComponentGraph)
 {
+}
+
+void CameraVisualComponent::setPosition(Vector3 position)
+{
+	m_Position = position;
+	m_ViewMatrix = Matrix::CreateLookAt(m_Position, m_Position + m_Direction, { 0.0f, 1.0f, 0.0f });
 }
 
 void CameraVisualComponent::setViewTransform(const Matrix& view)

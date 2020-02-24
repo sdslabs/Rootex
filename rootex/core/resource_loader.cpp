@@ -166,6 +166,9 @@ VisualModelResourceFile* ResourceLoader::CreateVisualModelResourceFile(String pa
 		vertex.m_Position.x = v.Position.X;
 		vertex.m_Position.y = v.Position.Y;
 		vertex.m_Position.z = v.Position.Z;
+		vertex.m_Normal.x = v.Normal.X;
+		vertex.m_Normal.y = v.Normal.Y;
+		vertex.m_Normal.z = v.Normal.Z;
 		vertex.m_TextureCoord.x = v.TextureCoordinate.X;
 		vertex.m_TextureCoord.y = v.TextureCoordinate.Y;
 		vertices.push_back(vertex);

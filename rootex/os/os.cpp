@@ -69,7 +69,7 @@ FileBuffer OS::LoadFileContents(String stringPath)
 	}
 	catch (std::exception e)
 	{
-		ERR("OS: File IO error: " + e.what());
+		ERR(std::string("OS: File IO error: ") + std::string(e.what()));
 		return FileBuffer();
 	}
 
@@ -125,6 +125,7 @@ void OS::PrintError(const String& error)
 {
 	std::cout.clear();
 	std::cout << "\033[91m" << error << "\033[0m" << std::endl;
+	PostError(error, "Fatal Error");
 }
 
 void OS::PrintIf(const bool& expr, const String& error)
@@ -133,4 +134,9 @@ void OS::PrintIf(const bool& expr, const String& error)
 	{
 		PrintError(error);
 	}
+}
+
+void OS::PostError(String message, LPSTR caption)
+{
+	MessageBoxA(GetActiveWindow(), message.c_str(), caption, MB_OK);
 }

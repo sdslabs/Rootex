@@ -28,9 +28,10 @@ public:
 		Pixel
 	};
 
-	enum class ConstantBufferType
+	enum class VertexConstantBufferType
 	{
 		Model,
+		ModelInverse,
 		View,
 		Projection
 	};
@@ -38,8 +39,9 @@ public:
 	virtual void bind() const;
 	void unbind() const;
 
-	void set(const ConstantBufferType& type, const Matrix& constantBuffer);
-	void set(const PSConstantBuffer& constantBuffer);
+	void set(const VertexConstantBufferType& type, const Matrix& constantBuffer);
+	void set(const PSDiffuseConstantBuffer& constantBuffer) const;
+	void set(const PSSolidConstantBuffer& constantBuffer);
 };
 
 class DiffuseShader : public Shader
