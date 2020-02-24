@@ -9,16 +9,14 @@
 
 #include "shader_library.h"
 
-Renderer::Renderer(unsigned int w, unsigned int h)
-    : m_Width(w)
-    , m_Height(h)
+Renderer::Renderer()
 {
-	RenderingDevice::GetSingleton()->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	RenderingDevice::GetSingleton()->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
-void Renderer::clear() const
+void Renderer::clear(float r, float g, float b) const
 {
-	RenderingDevice::GetSingleton()->clearBuffer(1.0f, 0.0f, 0.0f);
+	RenderingDevice::GetSingleton()->clearBuffer(r, g, b);
 }
 
 void Renderer::setViewport(Viewport& viewport)

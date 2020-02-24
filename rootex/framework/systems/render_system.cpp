@@ -16,6 +16,5 @@ void RenderSystem::update(float deltaMilliseconds)
 
 void RenderSystem::render(VisualComponentGraph* graph)
 {
-	graph->getRenderer()->clear();
 	graph->render();
 }

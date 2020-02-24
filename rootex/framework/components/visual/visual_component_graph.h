@@ -16,7 +16,7 @@ protected:
 	Vector<Matrix> m_TransformationStack;
 
 public:
-	VisualComponentGraph(int width, int height);
+	VisualComponentGraph();
 	VisualComponentGraph(VisualComponentGraph&) = delete;
 	~VisualComponentGraph();
 

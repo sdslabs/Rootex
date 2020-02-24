@@ -39,7 +39,7 @@ set(ROOTEX_SOURCES
     ${ShaderFiles}
 CACHE INTERNAL "")
 
-string(CONCAT ShaderCompileDestination ${PROJECT_BINARY_DIR} "/Game/%\(Filename\).cso")
+string(CONCAT ShaderCompileDestination ${CMAKE_CURRENT_LIST_DIR} "/core/renderer/shaders/%\(Filename\).cso")
 
 set_source_files_properties(${ShaderFiles} 
     PROPERTIES
@@ -58,6 +58,10 @@ set_source_files_properties(${PixelShaderFiles}
     PROPERTIES 
         VS_SHADER_TYPE Pixel
 )
+
+if (BUILD_EDITOR)
+    add_definitions(-DROOTEX_EDITOR)
+endif(BUILD_EDITOR)
 
 add_library(Rootex STATIC ${ROOTEX_SOURCES})
 

@@ -90,7 +90,8 @@ int main()
 	    windowLua["y"],
 	    windowLua["deltaX"],
 	    windowLua["deltaY"],
-	    windowLua["title"]));
+	    windowLua["title"], 
+		false));
 	InputManager::GetSingleton()->initialize(windowLua["deltaX"], windowLua["deltaY"]);
 	ShaderLibrary::MakeShaders();
 

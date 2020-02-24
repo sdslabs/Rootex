@@ -7,6 +7,7 @@
 
 class Window
 {
+protected:
 	int m_Width;
 	int m_Height;
 
@@ -19,12 +20,13 @@ class Window
 	static LRESULT CALLBACK WindowsProc(HWND windowHandler, UINT msg, WPARAM wParam, LPARAM lParam);
 
 public:
-	Window(int xOffset, int yOffset, int width, int height, const String& title);
+	Window(int xOffset, int yOffset, int width, int height, const String& title, bool isEditor);
 	Window(const Window&) = delete;
 	Window& operator=(const Window&) = delete;
 	~Window() = default;
 
 	std::optional<int> processMessages();
+	void applyEditorViewport();
 	void applyDefaultViewport();
 	void swapBuffers();
 
