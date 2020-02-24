@@ -31,10 +31,10 @@ void explore(const HierarchyComponent* component)
 	ImGui::Button(std::to_string(component->getOwner()->getID()).c_str());
 	if (ImGui::IsItemClicked())
 	{
-		ImGui::OpenPopup("Popup");
 		y = true;
 		if (ImGui::BeginPopup("Info"))
 		{
+			ImGui::OpenPopup("Popup");
 			ImGui::Text("This has %d components", component->getOwner()->getAllComponents().size());
 			ImGui::EndPopup();
 		}
