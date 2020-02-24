@@ -21,10 +21,6 @@ PhysicsComponent::PhysicsComponent(const String& matName, float volume, const Re
 
 	m_Mass = volume * m_SpecificGravity;
 	localInertia = btVector3(0.f, 0.f, 0.f);
-	if (m_Mass > 0.f)
-	{
-		collisionShape->calculateLocalInertia(m_Mass, localInertia);
-	}
 }
 
 bool PhysicsComponent::setup()
@@ -188,6 +184,11 @@ Matrix PhysicsComponent::btTransformToMat(btTransform const& trans)
 	}
 
 	return returnValue;
+}
+
+void PhysicsComponent::disableGravity()
+{
+	body->setGravity({ 0.0f, 0.0f, 0.0f });	
 }
 
 btVector3 PhysicsComponent::vecTobtVector3(Vector3 const& vec3)

@@ -20,6 +20,7 @@
 #include "framework/components/visual/diffuse_visual_component.h"
 #include "framework/components/visual/visual_component.h"
 #include "framework/components/visual/visual_component_graph.h"
+#include "framework/components/physics/sphere_component.h"
 #include "framework/entity_factory.h"
 #include "framework/systems/debug_system.h"
 #include "framework/systems/physics_system.h"
@@ -97,16 +98,23 @@ int main()
 
 	LuaTextResourceFile* teapotEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/teapot.lua");
 	Ref<Entity> teapot = EntityFactory::GetSingleton()->createEntity(teapotEntity);
+	teapot->getComponent<DiffuseVisualComponent>()->setTransform(Matrix::CreateTranslation({ 0.0f, 0.0f, 0.0f }));
+	teapot->getComponent<SphereComponent>()->setTransform(Matrix::CreateTranslation({ 0.0f, 0.0f, 0.0f }));
 
 	Ref<Entity> teapotChild = EntityFactory::GetSingleton()->createEntity(teapotEntity);
-	teapotChild->getComponent<DiffuseVisualComponent>()->setTransform(Matrix::CreateTranslation({ 0.0f, 1.0f, 0.0f }));
-	teapot->getComponent<HierarchyComponent>()->addChild(teapotChild);
+	teapotChild->getComponent<DiffuseVisualComponent>()->setTransform(Matrix::CreateTranslation({ 0.0f, 10.0f, 0.0f }));
+	teapotChild->getComponent<SphereComponent>()->setTransform(Matrix::CreateTranslation({ 0.0f, 10.0f, 0.0f }));
+	//teapot->getComponent<HierarchyComponent>()->addChild(teapotChild);
 
 	visualGraph->addChild(teapot);
+	visualGraph->addChild(teapotChild);
 
 	std::optional<int> ret = {};
 	FrameTimer frameTimer;
 	LoggingScopeTimer gameScopedLogger("GameTime");
+	teapot->getComponent<SphereComponent>()->disableGravity();
+	teapotChild->getComponent<SphereComponent>()->disableGravity();
+	teapotChild->getComponent<SphereComponent>()->applyForce({ 0.0f, -5.0f, 0.0f });
 	while (true)
 	{
 		frameTimer.reset();
@@ -173,12 +181,14 @@ int main()
 		x = l;
 		y = u;
 
-		teapot->getComponent<TransformComponent>()->setTransform(Matrix::CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix::CreateTranslation(0, y, 0.0f) * Matrix::CreateScale(x));
-		teapot->getComponent<SphereComponent>()->getTransform();
+		teapotChild->getComponent<TransformComponent>()->setTransform(teapotChild->getComponent<SphereComponent>()->getTransform());
+		teapot->getComponent<TransformComponent>()->setTransform(teapot->getComponent<SphereComponent>()->getTransform());
+		
+		OS::PrintLine(
+		    std::to_string(teapot->getComponent<SphereComponent>()->getVelocity().x) + "," + std::to_string(teapot->getComponent<SphereComponent>()->getVelocity().y) + "," + std::to_string(teapot->getComponent<SphereComponent>()->getVelocity().z));
 
 		RenderSystem::GetSingleton()->render(visualGraph.get(), window.get());
-		PhysicsSystem::GetSingleton()->update(1/60.0f);
-
+		PhysicsSystem::GetSingleton()->update(frameTimer.getFrameTime() / 100);
 		EventManager::GetSingleton()->tick();
 
 		//frameTimer.showFPS();

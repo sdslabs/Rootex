@@ -62,6 +62,7 @@ public:
 
 	void applyForce(const Vector3 force);
 	void applyTorque(const Vector3 torque);
+	void disableGravity();
 	// Forces a physics object to a new location/orientation
 	void kinematicMove(const Matrix& matrix);
 	void setVelocity(const Vector3& velocity);
