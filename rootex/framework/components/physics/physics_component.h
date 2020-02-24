@@ -14,7 +14,11 @@ public:
 
 	ComponentID getComponentID() const { return s_ID; }
 
-	PhysicsComponent(const String& matName, float volume);
+	static btTransform matTobtTransform(Matrix const& mat);
+	static Matrix btTransformToMat(btTransform const& trans);
+	static btVector3 vecTobtVector3(Vector3 const& vec3);
+	static Vector3 btVector3ToVec(btVector3 const& btvec);
+	PhysicsComponent(const String& matName, float volume, const Ref<btCollisionShape>& collisionShape);
 	~PhysicsComponent() = default;
 
 	struct MotionState : public btMotionState
@@ -41,8 +45,8 @@ public:
 		}
 	} m_Material;
 
-	Ptr<btCollisionShape> collisionShape;
-	btRigidBody* body;
+	Ref<btCollisionShape> m_CollisionShape;
+	btRigidBody* m_Body;
 
 	TransformComponent* m_TransformComponent;
 	bool setup() override;
@@ -50,16 +54,12 @@ public:
 	Matrix transform;
 	btScalar m_Mass;
 	btVector3 localInertia;
-	float specificGravity;
+	float m_SpecificGravity;
 	float m_Volume;
 	LuaInterpreter physicsLua;
 	LuaTextResourceFile* physicsMaterial;
 	std::string m_MaterialName;
 
-	static btTransform matTobtTransform(Matrix const& mat);
-	static Matrix btTransformToMat(btTransform const& trans);
-	static btVector3 vecTobtVector3(Vector3 const& vec3);
-	static Vector3 btVector3ToVec(btVector3 const& btvec);
 	void applyForce(const Vector3 force);
 	void applyTorque(const Vector3 torque);
 	// Forces a physics object to a new location/orientation

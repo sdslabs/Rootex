@@ -33,8 +33,8 @@ void ThreadPool::initialize()
 	InitializeConditionVariable(&m_ProducerVariable);
 	InitializeCriticalSection(&m_CriticalSection);
 
-	defaultWorkerParameter.m_Thread = 0;
-	defaultWorkerParameter.m_ThreadPool = NULL;
+	m_DefaultWorkerParameter.m_Thread = 0;
+	m_DefaultWorkerParameter.m_ThreadPool = NULL;
 
 	{
 		m_TaskQueue.m_Read = 0;
@@ -46,8 +46,8 @@ void ThreadPool::initialize()
 
 	for (__int32 iThread = 0; iThread < m_Threads; iThread++)
 	{
-		m_WorkerParameters.push_back(defaultWorkerParameter);
-		m_Handles.push_back(defaultHandle);
+		m_WorkerParameters.push_back(m_DefaultWorkerParameter);
+		m_Handles.push_back(m_DefaultHandle);
 	}
 
 	for (__int32 iThread = 0; iThread < m_Threads; iThread++)

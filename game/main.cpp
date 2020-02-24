@@ -25,6 +25,7 @@
 #include "framework/systems/physics_system.h"
 #include "framework/systems/render_system.h"
 #include "framework/systems/test_system.h"
+#include "framework/components/physics/sphere_component.h"
 
 #include "main/window.h"
 
@@ -173,8 +174,10 @@ int main()
 		y = u;
 
 		teapot->getComponent<TransformComponent>()->setTransform(Matrix::CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix::CreateTranslation(0, y, 0.0f) * Matrix::CreateScale(x));
+		teapot->getComponent<SphereComponent>()->getTransform();
 
 		RenderSystem::GetSingleton()->render(visualGraph.get(), window.get());
+		PhysicsSystem::GetSingleton()->update(1/60.0f);
 
 		EventManager::GetSingleton()->tick();
 
