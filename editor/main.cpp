@@ -76,6 +76,7 @@ int main()
 	Ref<LightSystem> lightSystem(new LightSystem());
 
 	Ref<Entity> cube = EntityFactory::GetSingleton()->createEntity(ResourceLoader::CreateLuaTextResourceFile("game/assets/test/cube.lua"));
+	cube->getComponent<TransformComponent>()->addTransform(Matrix::CreateTranslation({ 0.0f, 0.0f, 0.0f }));
 	visualGraph->addChild(cube);
 
 	OS::PrintLine("Project loaded successfully: " + projectName);
@@ -89,13 +90,9 @@ int main()
 
 		AudioSystem::GetSingleton()->update();
 
-		{
-			cube->getComponent<TransformComponent>()->addTransform(Matrix::CreateTranslation(InputManager::GetSingleton()->isPressed(Event::Type::InputRight), 0.0f, 0.0f));
-		}
-
 		RenderSystem::GetSingleton()->render(visualGraph.get());
 		InputManager::GetSingleton()->update();
-		EventManager::GetSingleton()->tick();
+		EventManager::GetSingleton()->dispatchDeferred();
 
 		editorWindow->swapBuffers();
 	}

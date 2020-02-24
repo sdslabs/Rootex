@@ -5,9 +5,9 @@ Entity = {
             m_Rotation = {yaw = 0, pitch = 0, roll = 0},
             m_Scale = {x = 10, y = 10, z = 1}
         },
-        DiffuseVisualComponent = {
+        VisualComponent = {
             resFile = "game/assets/test/cube.obj",
-            texturePath = "game/assets/test/yellow.png"
+            color = {r = 0.1, g = 0.1, b = 0.1, a = 1.0}
         }
     }
 }

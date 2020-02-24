@@ -254,7 +254,7 @@ int main()
 		
 		RenderSystem::GetSingleton()->render(visualGraph.get());
 		InputManager::GetSingleton()->update();
-		EventManager::GetSingleton()->tick();
+		EventManager::GetSingleton()->dispatchDeferred();
 
 		//frameTimer.showFPS();
 		window->swapBuffers();

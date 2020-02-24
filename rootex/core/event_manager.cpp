@@ -74,11 +74,6 @@ void EventManager::call(Event* event)
 			processed = true;
 		}
 	}
-
-	if (!processed)
-	{
-		WARN("Event left unhandled: " + event->getName());
-	}
 }
 
 void EventManager::deferredCall(const Ref<Event> event)
@@ -100,7 +95,7 @@ void EventManager::deferredCall(const Ref<Event> event)
 	}
 }
 
-bool EventManager::tick(unsigned long maxMillis)
+bool EventManager::dispatchDeferred(unsigned long maxMillis)
 {
 	int queueToProcess = m_ActiveQueue;
 	m_ActiveQueue = (m_ActiveQueue + 1) % EVENTMANAGER_NUM_QUEUES;
