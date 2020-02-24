@@ -25,7 +25,7 @@ bool RootHierarchyComponent::preRender(VisualComponentGraph* graph)
 
 void RootHierarchyComponent::renderPassRender(HierarchyComponent& renderPassGraph, VisualComponentGraph* graph)
 {
-	for (auto& child : renderPassGraph.m_Children)
+	for (auto& child : renderPassGraph.getChildren())
 	{
 		VisualComponent* childVisualComponent = child->getComponent<VisualComponent>();
 
