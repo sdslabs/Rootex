@@ -14,10 +14,10 @@ EventManager* EventManager::GetSingleton()
 	return &singleton;
 }
 
-//returns true if listner successfully added
-bool EventManager::addListener(GameObject* instance, EventType type)
+//returns true if listener successfully added
+bool EventManager::addListener(EventHandler* instance, Event::Type type)
 {
-	auto it = m_EventListeners.find(type);
+	auto&& it = m_EventListeners.find(type);
 
 	if (it == m_EventListeners.end())
 	{
@@ -36,10 +36,10 @@ bool EventManager::addListener(GameObject* instance, EventType type)
 	}
 }
 
-bool EventManager::removeListener(GameObject* instance, EventType type)
+bool EventManager::removeListener(EventHandler* instance, Event::Type type)
 {
 	bool success = false;
-	auto it = m_EventListeners.find(type);
+	auto&& it = m_EventListeners.find(type);
 
 	if (it != m_EventListeners.end())
 	{
@@ -58,40 +58,45 @@ bool EventManager::removeListener(GameObject* instance, EventType type)
 	return success;
 }
 
-bool EventManager::call(const Ref<Event> event)
+void EventManager::call(Event* event)
 {
 	bool processed = false;
-	auto findIt = m_EventListeners.find(event->getEventType());
+	auto&& findIt = m_EventListeners.find(event->getEventType());
 
 	if (findIt != m_EventListeners.end())
 	{
 		const EventListenerList& eventListenerList = findIt->second;
 		for (auto it = eventListenerList.begin(); it != eventListenerList.end(); ++it)
 		{
-			GameObject* listener = (*it);
-			listener->handleEvent(event.get());
+			EventHandler* listener = (*it);
+
+			listener->handleEvent(event);
 			processed = true;
 		}
 	}
 
-	return processed;
+	if (!processed)
+	{
+		WARN("Event left unhandled: " + event->getName());
+	}
 }
 
-bool EventManager::deferredCall(const Ref<Event> event)
+void EventManager::deferredCall(const Ref<Event> event)
 {
 	if (!(m_ActiveQueue >= 0 && m_ActiveQueue < EVENTMANAGER_NUM_QUEUES))
-		return false;
+	{
+		WARN("Event left unhandled: " + event->getName());
+	}
 
-	auto findIt = m_EventListeners.find(event->getEventType());
-
+	auto&& findIt = m_EventListeners.find(event->getEventType());
 	if (findIt != m_EventListeners.end())
 	{
 		m_Queues[m_ActiveQueue].push_back(event);
-		return true;
+		return;
 	}
 	else
 	{
-		return false;
+		WARN("Event left unhandled: " + event->getName());
 	}
 }
 
@@ -105,7 +110,7 @@ bool EventManager::tick(unsigned long maxMillis)
 	{
 		Ref<Event> pEvent = m_Queues[queueToProcess].front();
 		m_Queues[queueToProcess].erase(m_Queues[queueToProcess].begin());
-		const EventType eventType = pEvent->getEventType();
+		const Event::Type eventType = pEvent->getEventType();
 
 		auto findIt = m_EventListeners.find(eventType);
 		if (findIt != m_EventListeners.end())
@@ -113,7 +118,7 @@ bool EventManager::tick(unsigned long maxMillis)
 			const EventListenerList& eventListeners = findIt->second;
 			for (auto it = eventListeners.begin(); it != eventListeners.end(); ++it)
 			{
-				GameObject* listener = (*it);
+				EventHandler* listener = (*it);
 				listener->handleEvent(pEvent.get());
 			}
 		}

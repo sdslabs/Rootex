@@ -3,6 +3,8 @@
 #include "shader_library.h"
 #include "texture.h"
 
+#include "framework/systems/light_system.h"
+
 Material::Material()
     : m_Shader(ShaderLibrary::GetDefaultShader())
 {
@@ -29,5 +31,7 @@ DiffuseMaterial::DiffuseMaterial(Ref<Texture> diffuseTexture)
 void DiffuseMaterial::bind() const
 {
 	m_DiffuseShader->set(m_DiffuseTexture.get());
+	const PSDiffuseConstantBuffer Cb = { LightSystem::GetSingleton()->getLights(), { 0.6f, 30.0f, { 0.0f, 0.0f } } };
+	setShaderConstantBuffer(Cb);
     Material::bind();
 }

@@ -55,7 +55,7 @@ void Shader::unbind() const
 	RenderingDevice::GetSingleton()->unbindShaderResources();
 }
 
-void Shader::set(const ConstantBufferType& type, const Matrix& constantBuffer)
+void Shader::set(const VertexConstantBufferType& type, const Matrix& constantBuffer)
 {
 	D3D11_BUFFER_DESC cbd = { 0 };
 	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -65,17 +65,20 @@ void Shader::set(const ConstantBufferType& type, const Matrix& constantBuffer)
 	cbd.ByteWidth = sizeof(constantBuffer);
 	cbd.StructureByteStride = 0u;
 	D3D11_SUBRESOURCE_DATA csd = { 0 };
-	csd.pSysMem = &constantBuffer;
+	csd.pSysMem = &constantBuffer.Transpose();
 
 	switch (type)
 	{
-	case Shader::ConstantBufferType::Model:
+	case Shader::VertexConstantBufferType::Model:
 		RenderingDevice::GetSingleton()->initVSModelConstantBuffer(&cbd, &csd);
 		break;
-	case Shader::ConstantBufferType::View:
+	case Shader::VertexConstantBufferType::ModelInverse:
+		RenderingDevice::GetSingleton()->initVSModelInverseConstantBuffer(&cbd, &csd);
+		break;
+	case Shader::VertexConstantBufferType::View:
 		RenderingDevice::GetSingleton()->initVSViewConstantBuffer(&cbd, &csd);
 		break;
-	case Shader::ConstantBufferType::Projection:
+	case Shader::VertexConstantBufferType::Projection:
 		RenderingDevice::GetSingleton()->initVSProjectionConstantBuffer(&cbd, &csd);
 		break;
 	default:
@@ -83,7 +86,26 @@ void Shader::set(const ConstantBufferType& type, const Matrix& constantBuffer)
 	}
 }
 
-void Shader::set(const PSConstantBuffer& constantBuffer)
+void Shader::set(const PSDiffuseConstantBuffer& constantBuffer) const
+{
+	D3D11_BUFFER_DESC cbd = { 0 };
+	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	cbd.Usage = D3D11_USAGE_DYNAMIC;
+	cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	cbd.MiscFlags = 0u;
+	cbd.ByteWidth = sizeof(constantBuffer.lights);
+	cbd.StructureByteStride = 0u;
+	D3D11_SUBRESOURCE_DATA csd = { 0 };
+	csd.pSysMem = &constantBuffer.lights;
+
+	RenderingDevice::GetSingleton()->initPSConstantBuffer(&cbd, &csd, 0);
+
+	cbd.ByteWidth = sizeof(constantBuffer.material);
+	csd.pSysMem = &constantBuffer.material;
+	RenderingDevice::GetSingleton()->initPSConstantBuffer(&cbd, &csd, 1);
+}
+
+void Shader::set(const PSSolidConstantBuffer& constantBuffer)
 {
 	D3D11_BUFFER_DESC cbd = { 0 };
 	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -95,7 +117,7 @@ void Shader::set(const PSConstantBuffer& constantBuffer)
 	D3D11_SUBRESOURCE_DATA csd = { 0 };
 	csd.pSysMem = &constantBuffer;
 
-	RenderingDevice::GetSingleton()->initPSConstantBuffer(&cbd, &csd);
+	RenderingDevice::GetSingleton()->initPSConstantBuffer(&cbd, &csd, 0);
 }
 
 DiffuseShader::DiffuseShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat)

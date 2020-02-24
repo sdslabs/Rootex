@@ -44,7 +44,7 @@ bool VisualComponentGraph::removeChild(Ref<Entity> child)
 
 void VisualComponentGraph::pushMatrix(const Matrix& transform)
 {
-	m_TransformationStack.push_back(transform * m_TransformationStack.back());
+	m_TransformationStack.push_back(m_TransformationStack.back() * transform);
 }
 
 void VisualComponentGraph::popMatrix()

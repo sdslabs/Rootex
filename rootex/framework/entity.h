@@ -2,6 +2,7 @@
 
 #include "common/common.h"
 #include "script/interpreter.h"
+#include "core/event_handler.h"
 
 class Component;
 typedef unsigned int ComponentID;
@@ -9,8 +10,10 @@ typedef unsigned int EntityID;
 
 class Entity
 {
+protected:
 	EntityID m_ID;
 	HashMap<ComponentID, Ref<Component>> m_Components;
+	EventHandler m_EventHandler;
 
 	Entity(EntityID id);
 
@@ -22,7 +25,8 @@ public:
 	virtual ~Entity() = default;
 
 	void addComponent(const Ref<Component>& component);
-	
+	void subscribe(const Event::Type type);
+
 	template <class ComponentType>
 	void removeComponent();
 
@@ -34,6 +38,8 @@ public:
 	ComponentType* getComponent();
 	
 	const HashMap<ComponentID, Ref<Component>>& getAllComponents() const;
+	
+	void setEventHandler(const EventFunction& function);
 };
 
 template <class ComponentType>
