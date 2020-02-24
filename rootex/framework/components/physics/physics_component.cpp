@@ -188,7 +188,7 @@ Matrix PhysicsComponent::btTransformToMat(btTransform const& trans)
 
 void PhysicsComponent::disableGravity()
 {
-	body->setGravity({ 0.0f, 0.0f, 0.0f });	
+	m_Body->setGravity({ 0.0f, 0.0f, 0.0f });	
 }
 
 btVector3 PhysicsComponent::vecTobtVector3(Vector3 const& vec3)
