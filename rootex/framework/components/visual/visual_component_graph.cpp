@@ -2,9 +2,9 @@
 
 #include "resource_loader.h"
 
-VisualComponentGraph::VisualComponentGraph(int width, int height)
+VisualComponentGraph::VisualComponentGraph()
     : m_Camera(new CameraVisualComponent())
-    , m_Renderer(new Renderer(width, height))
+    , m_Renderer(new Renderer())
 {
 	m_Root = EntityFactory::GetSingleton()->createEmptyEntity();
 	m_RootHierarchyComponent.reset(new RootHierarchyComponent());

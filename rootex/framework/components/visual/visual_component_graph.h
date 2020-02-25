@@ -16,7 +16,7 @@ protected:
 	Vector<Matrix> m_TransformationStack;
 
 public:
-	VisualComponentGraph(int width, int height);
+	VisualComponentGraph();
 	VisualComponentGraph(VisualComponentGraph&) = delete;
 	~VisualComponentGraph();
 
@@ -31,6 +31,7 @@ public:
 	void pushMatrix(const Matrix& transform);
 	void popMatrix();
 
+	const RootHierarchyComponent* getRoot() const { return m_RootHierarchyComponent.get(); }
 	CameraVisualComponent* getCamera() const { return m_Camera.get(); }
 	const Matrix& getTopMatrix() const;
 	const Renderer* getRenderer() const { return m_Renderer.get(); }

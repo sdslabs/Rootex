@@ -9,7 +9,7 @@ Entity = {
             attLin = 0.045,
             attQuad = 0.0075,
             attConst = 1.0,
-            range = 10.0,
+            range = 100.0,
             diffuseIntensity = 1.0,
             diffuseColor = {r = 1.0, g = 1.0, b = 1.0, a = 1.0},
             ambientColor = {r = 0.05, g = 0.05, b = 0.05, a = 1.0},

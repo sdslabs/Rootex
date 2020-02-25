@@ -154,7 +154,7 @@ VisualModelResourceFile* ResourceLoader::CreateVisualModelResourceFile(String pa
 
 	// File not found in cache, load it only once
 	objl::Loader loader;
-	std::cout<<loader.LoadFile( OS::GetAbsolutePath(path).generic_string() );
+	PANIC(loader.LoadFile(OS::GetAbsolutePath(path).generic_string()) == false, "Model could not be loaded: " + OS::GetAbsolutePath(path).generic_string());
 
 	VertexData vertex;
 

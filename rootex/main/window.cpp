@@ -3,6 +3,10 @@
 #include "input/input_manager.h"
 #include "renderer/rendering_device.h"
 
+#include "vendor/ImGUI/imgui.h"
+#include "vendor/ImGUI/imgui_impl_dx11.h"
+#include "vendor/ImGUI/imgui_impl_win32.h"
+
 std::optional<int> Window::processMessages()
 {
 	MSG msg;
@@ -38,9 +42,7 @@ void Window::swapBuffers()
 
 void Window::clear()
 {
-	ClipCursor(&m_Clip);
-	SetCursorPos(m_Clip.left, m_Clip.top);
-	RenderingDevice::GetSingleton()->clearBuffer(0.0f, 0.0f, 0.0f);
+	RenderingDevice::GetSingleton()->clearBuffer(0.15f, 0.15f, 0.15f);
 }
 
 void Window::setWindowTitle(String title)
@@ -58,8 +60,17 @@ int Window::getHeight() const
 	return m_Height;
 }
 
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 LRESULT CALLBACK Window::WindowsProc(HWND windowHandler, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+#ifdef ROOTEX_EDITOR
+	if (ImGui_ImplWin32_WndProcHandler(windowHandler, msg, wParam, lParam))
+	{
+		return true;
+	}
+#endif // ROOTEX_EDITOR
+
 	switch (msg)
 	{
 	case WM_CLOSE:
@@ -72,7 +83,7 @@ LRESULT CALLBACK Window::WindowsProc(HWND windowHandler, UINT msg, WPARAM wParam
 	return DefWindowProc(windowHandler, msg, wParam, lParam);
 }
 
-Window::Window(int xOffset, int yOffset, int width, int height, const String& title)
+Window::Window(int xOffset, int yOffset, int width, int height, const String& title, bool isEditor)
     : m_Width(width)
     , m_Height(height)
 {
@@ -92,26 +103,50 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
 	windowClass.hIconSm = nullptr;
 	RegisterClassEx(&windowClass);
 
-	m_WindowHandle = CreateWindowEx(
-	    0, className,
-	    title.c_str(),
-	    WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
-	    xOffset, yOffset, width, height,
-	    nullptr, nullptr,
-	    hInstance, nullptr);
-	ShowWindow(m_WindowHandle, SW_SHOW);
+	if (isEditor)
+	{
+		m_WindowHandle = CreateWindowEx(
+		    0, className,
+		    title.c_str(),
+		    WS_CAPTION | WS_BORDER | WS_MAXIMIZE | WS_MINIMIZEBOX | WS_SYSMENU,
+		    xOffset, yOffset, width, height,
+		    nullptr, nullptr,
+		    hInstance, nullptr);
+		ShowWindow(m_WindowHandle, SW_SHOW);
 
-	RenderingDevice::GetSingleton()->initialize(m_WindowHandle, width, height);
+		RenderingDevice::GetSingleton()->initialize(m_WindowHandle, width, height);
+	}
+	else
+	{
+		m_WindowHandle = CreateWindowEx(
+			0, className,
+			title.c_str(),
+			WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
+			xOffset, yOffset, width, height,
+			nullptr, nullptr,
+			hInstance, nullptr);
+		ShowWindow(m_WindowHandle, SW_SHOW);
+
+		RenderingDevice::GetSingleton()->initialize(m_WindowHandle, width, height);
+
+		GetWindowRect(m_WindowHandle, &m_Clip);
+
+		// Modify the rect slightly, so the frame doesn't get clipped with
+		m_Clip.left += 5;
+		m_Clip.top += 30;
+		m_Clip.right -= 5;
+		m_Clip.bottom -= 5;
+
+		ClipCursor(&m_Clip);
+		ShowCursor(false);
+
+		RenderingDevice::GetSingleton()->setBackBufferRenderTarget();
+	}
+
 	applyDefaultViewport();
+}
 
-	GetWindowRect(m_WindowHandle, &m_Clip);
-
-	// Modify the rect slightly, so the frame doesn't get clipped with
-	m_Clip.left += 5;
-	m_Clip.top += 30;
-	m_Clip.right -= 5;
-	m_Clip.bottom -= 5;
-
-	ClipCursor(&m_Clip);
-	ShowCursor(false);
+HWND Window::getWindowHandle()
+{
+	return m_WindowHandle;
 }

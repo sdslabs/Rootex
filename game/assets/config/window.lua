@@ -1,7 +1,7 @@
 window = {
-    x = 100,
-    y = 200,
-    deltaX = 640,
-    deltaY = 480,
+    x = 0,
+    y = 0,
+    deltaX = 1920,
+    deltaY = 1080,
     title = "Rootex"
 }

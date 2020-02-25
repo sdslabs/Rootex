@@ -28,15 +28,15 @@ void ShaderLibrary::MakeShaders()
 	{
 		BufferFormat defaultBufferFormat;
 		defaultBufferFormat.push(VertexBufferElement::Type::POSITION, "POSITION");
-		MakeShader(ShaderType::Default, L"vertex_shader.cso", L"pixel_shader.cso", defaultBufferFormat);
+		MakeShader(ShaderType::Default, L"../../rootex/core/renderer/shaders/vertex_shader.cso", L"../../rootex/core/renderer/shaders/pixel_shader.cso", defaultBufferFormat);
 	}
-	
+
 	{
 		BufferFormat diffuseTextureBufferFormat;
 		diffuseTextureBufferFormat.push(VertexBufferElement::Type::POSITION, "POSITION");
 		diffuseTextureBufferFormat.push(VertexBufferElement::Type::POSITION, "NORMAL");
 		diffuseTextureBufferFormat.push(VertexBufferElement::Type::TEXCOORD, "TEXCOORD");
-		MakeShader(ShaderType::Diffuse, L"diffuse_texture_vertex_shader.cso", L"diffuse_texture_pixel_shader.cso", diffuseTextureBufferFormat);
+		MakeShader(ShaderType::Diffuse, L"../../rootex/core/renderer/shaders/diffuse_texture_vertex_shader.cso", L"../../rootex/core/renderer/shaders/diffuse_texture_pixel_shader.cso", diffuseTextureBufferFormat);
 	}
 }
 

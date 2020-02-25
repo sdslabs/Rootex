@@ -94,7 +94,7 @@ void VisualComponent::renderChildren(VisualComponentGraph* graph)
 		m_Attributes.m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::Projection, graph->getCamera()->getProjection());
 	}
 
-	for (auto& child : m_Owner->getComponent<HierarchyComponent>()->m_Children)
+	for (auto& child : m_Owner->getComponent<HierarchyComponent>()->getChildren())
 	{
 		//TODO-FIX THIS
 		VisualComponent* childVisualComponent = child->getComponent<VisualComponent>();

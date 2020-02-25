@@ -18,6 +18,4 @@ protected:
 public:
 	System() = default;
 	virtual ~System() = default;
-
-	virtual void update(float deltaMilliseconds) = 0;
 };
