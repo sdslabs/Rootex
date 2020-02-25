@@ -154,6 +154,8 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
 
 		ClipCursor(&m_Clip);
 		ShowCursor(false);
+
+		RenderingDevice::GetSingleton()->setBackBufferRenderTarget();
 	}
 }
 
