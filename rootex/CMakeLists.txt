@@ -9,7 +9,7 @@ set(ROOTEX_HEADERS
 CACHE INTERNAL "")
 
 set(ROOTEX_SOURCES
-${ROOTEX_SOURCES}
+    ${ROOTEX_SOURCES}
 ""
 CACHE INTERNAL "")
 
@@ -23,7 +23,7 @@ add_subdirectory(vendor)
 
 # Adding shaders for pre-build compilation
 file(GLOB ShaderFiles
-./core/renderer/shaders/*.hlsl
+    ./core/renderer/shaders/*.hlsl
 )
 
 file(GLOB VertexShaderFiles
@@ -35,11 +35,11 @@ file(GLOB PixelShaderFiles
 )
 
 set(ROOTEX_SOURCES
-${ROOTEX_SOURCES}
-${ShaderFiles}
+    ${ROOTEX_SOURCES}
+    ${ShaderFiles}
 CACHE INTERNAL "")
 
-string(CONCAT ShaderCompileDestination ${PROJECT_BINARY_DIR} "/Game/%\(Filename\).cso")
+string(CONCAT ShaderCompileDestination ${CMAKE_CURRENT_LIST_DIR} "/core/renderer/shaders/%\(Filename\).cso")
 
 set_source_files_properties(${ShaderFiles} 
     PROPERTIES
@@ -59,6 +59,10 @@ set_source_files_properties(${PixelShaderFiles}
         VS_SHADER_TYPE Pixel
 )
 
+if (BUILD_EDITOR)
+    add_definitions(-DROOTEX_EDITOR)
+endif(BUILD_EDITOR)
+
 add_library(Rootex STATIC ${ROOTEX_SOURCES})
 
 source_group(TREE "../"
@@ -76,6 +80,7 @@ target_link_libraries(Rootex PUBLIC
     OpenAL
     ALUT
     DirectXTK
+    ImGUI
     Gainput
     d3d11.lib
     xinput.lib

@@ -10,7 +10,7 @@ Shader::Shader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const Buffer
 	Microsoft::WRL::ComPtr<ID3DBlob> vertexShaderBlob = RenderingDevice::GetSingleton()->createBlob(vertexPath);
 	if (!vertexShaderBlob)
 	{
-		ERR("Vertex Shader not found");
+		ERR("Vertex Shader not found: ");
 	}
 	m_VertexShader = RenderingDevice::GetSingleton()->initVertexShader(vertexShaderBlob.Get());
 

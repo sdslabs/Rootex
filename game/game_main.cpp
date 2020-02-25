@@ -36,6 +36,10 @@
 
 #include "script/interpreter.h"
 
+#include "vendor/ImGUI/imgui.h"
+#include "vendor/ImGUI/imgui_impl_dx11.h"
+#include "vendor/ImGUI/imgui_impl_win32.h"
+
 int main()
 {
 	OS::Initialize();
@@ -86,11 +90,12 @@ int main()
 	    windowLua["y"],
 	    windowLua["deltaX"],
 	    windowLua["deltaY"],
-	    windowLua["title"]));
+	    windowLua["title"], 
+		false));
 	InputManager::GetSingleton()->initialize(windowLua["deltaX"], windowLua["deltaY"]);
 	ShaderLibrary::MakeShaders();
 
-	Ref<VisualComponentGraph> visualGraph(new VisualComponentGraph(windowLua["deltaX"], windowLua["deltaY"]));
+	Ref<VisualComponentGraph> visualGraph(new VisualComponentGraph());
 	Ref<RenderSystem> renderSystem(new RenderSystem());
 	Ref<LightSystem> lightSystem(new LightSystem());
 
@@ -107,15 +112,14 @@ int main()
 	//teapot->getComponent<HierarchyComponent>()->addChild(teapotChild);
 
 	//visualGraph->addChild(teapot);
-	visualGraph->addChild(spotLight);
+	//visualGraph->addChild(spotLight);
 
-	
 	LuaTextResourceFile* teapotEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/teapot.lua");
 	Ref<Entity> teapot = EntityFactory::GetSingleton()->createEntity(teapotEntity);
 
 	Ref<Entity> teapotChild = EntityFactory::GetSingleton()->createEntity(teapotEntity);
 	teapotChild->getComponent<DiffuseVisualComponent>()->setTransform(Matrix::CreateTranslation({ 0.0f, 1.0f, 0.0f }));
-	teapot->getComponent<HierarchyComponent>()->addChild(teapotChild);
+	//teapot->getComponent<HierarchyComponent>()->addChild(teapotChild);
 	teapot->setEventHandler([](const Event* event) {
 		Vector2 inputData = InputManager::GetSingleton()->getMousePositionDelta();
 		OS::PrintLine("Event received: " + std::to_string(inputData.x) + "," + std::to_string(inputData.y));
@@ -125,12 +129,12 @@ int main()
 	teapot->subscribe(Event::Type::InputLeft);
 	teapot->subscribe(Event::Type::InputRight);
 	visualGraph->addChild(teapot);
-	
+
 	std::optional<int> ret = {};
 	FrameTimer frameTimer;
 	LoggingScopeTimer gameScopedLogger("GameTime");
+
 	teapot->getComponent<TransformComponent>()->setTransform(Matrix::CreateFromYawPitchRoll(0, 0, 0) * Matrix::CreateTranslation(0, 0, -5.0f) * Matrix::CreateScale(1));
-	
 	while (true)
 	{
 		frameTimer.reset();
@@ -139,118 +143,22 @@ int main()
 			break;
 
 		AudioSystem::GetSingleton()->update();
-
-		static float xp = 1;
-		static float yp = 0;
-		static float zp = 2;
-
-		static float x = 1;
+		static float x = 0;
+		static float dx = 0;
 		static float y = 0;
-		static float z = 0;
-		static float u = 0;
-		static float l = 0;
-		static float in = -2;
-		static float roll = 0;
-		static float pitch = 0;
-		static float yaw = 3.14;
-		if (GetAsyncKeyState(VK_LEFT))
-		{
-			l += 0.1;
-		}
-		if (GetAsyncKeyState(VK_RIGHT))
-		{
-			l += -0.1;
-		}
-		if (GetAsyncKeyState(VK_DOWN))
-		{
-			u += -0.1;
-		}
-		if (GetAsyncKeyState(VK_UP))
-		{
-			u += 0.1;
-		}
-		//if (GetAsyncKeyState(VK_NUMPAD4))
-		//{
-		//	in += -0.1;
-		//}
-		//if (GetAsyncKeyState(VK_NUMPAD7))
-		//{
-		//	in += 0.1;
-		//}
+		static float dy = 0;
+		dx += 0.001f * (InputManager::GetSingleton()->isPressed(Event::Type::InputForward) - InputManager::GetSingleton()->isPressed(Event::Type::InputBackward));
+		dy += 0.001f * (InputManager::GetSingleton()->isPressed(Event::Type::InputRight) - InputManager::GetSingleton()->isPressed(Event::Type::InputLeft));
+		visualGraph->getCamera()->setPosition({ y += dy, 0.0f, -(x += dx) });
 		
-		if (GetAsyncKeyState(VK_NUMPAD7))
-		{
-			roll += 0.1;
-		}
-		if (GetAsyncKeyState(VK_NUMPAD4))
-		{
-			roll += -0.1;
-		}
-		if (GetAsyncKeyState(VK_NUMPAD8))
-		{
-			pitch += 0.1;
-		}
-		if (GetAsyncKeyState(VK_NUMPAD5))
-		{
-			pitch += -0.1;
-		}
-		if (GetAsyncKeyState(VK_NUMPAD9))
-		{
-			yaw += 0.1;
-		}
-		if (GetAsyncKeyState(VK_NUMPAD6))
-		{
-			yaw += -0.1;
-		}
-		if (GetAsyncKeyState('R'))
-		{
-			u = l = roll = pitch = yaw = 0;
-		}
-
-		if (GetAsyncKeyState('W'))
-		{
-			yp += 1.0;
-		}
-		if (GetAsyncKeyState('S'))
-		{
-			yp -= 1.0;
-		}
-		if (GetAsyncKeyState('A'))
-		{
-			xp -= 1.0;
-		}
-		if (GetAsyncKeyState('D'))
-		{
-			xp += 1.0;
-		}
-		if (GetAsyncKeyState('Q'))
-		{
-			zp += 1.0;
-		}
-		if (GetAsyncKeyState('E'))
-		{
-			zp -= 1.0;
-		}
-
-		x = l;
-		y = u;
-		z = in;
-		spotLight->getComponent<TransformComponent>()->setPosition(Vector3(xp, yp, zp));
-		spotLight->getComponent<TransformComponent>()->setRotation(yaw, pitch, roll);
-		//spotLight->getComponent<TransformComponent>()->setPosition({ xp, yp, zp });
-
-		//LightSystem::GetSingleton()->apply();
-
-		x += 0.1f * (InputManager::GetSingleton()->isPressed(Event::Type::InputForward) - InputManager::GetSingleton()->isPressed(Event::Type::InputBackward));
-		y += 0.1f * (InputManager::GetSingleton()->isPressed(Event::Type::InputRight) - InputManager::GetSingleton()->isPressed(Event::Type::InputLeft));
-		visualGraph->getCamera()->setPosition({ y, 0.0f, -x });
-		
-		RenderSystem::GetSingleton()->render(visualGraph.get(), window.get());
+		RenderSystem::GetSingleton()->render(visualGraph.get());
 		InputManager::GetSingleton()->update();
-		EventManager::GetSingleton()->tick();
+		EventManager::GetSingleton()->dispatchDeferred();
 
 		//frameTimer.showFPS();
+		window->swapBuffers();
+		window->clear();
 	}
 
 	return ret.value();
-	}
+}

@@ -1,9 +1,5 @@
 #include "light_system.h"
 
-void LightSystem::update(float deltaMilliseconds)
-{
-}
-
 LightSystem* LightSystem::GetSingleton()
 {
 	static LightSystem singleton;

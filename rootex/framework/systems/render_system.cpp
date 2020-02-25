@@ -9,14 +9,7 @@ RenderSystem* RenderSystem::GetSingleton()
 	return &singleton;
 }
 
-void RenderSystem::update(float deltaMilliseconds)
+void RenderSystem::render(VisualComponentGraph* graph)
 {
-	ERR("RenderSystem will not update based on time");
-}
-
-void RenderSystem::render(VisualComponentGraph* graph, Window* window)
-{
-	graph->getRenderer()->clear();
 	graph->render();
-	window->swapBuffers();
 }
