@@ -39,7 +39,7 @@ void explore(const HierarchyComponent* component)
 			ImGui::EndPopup();
 		}
 	}
-	
+
 	for (auto&& child : component->getChildren())
 	{
 		explore(child->getComponent<HierarchyComponent>());
@@ -48,17 +48,25 @@ void explore(const HierarchyComponent* component)
 
 void Editor::displayVisualGraph(VisualComponentGraph* graph)
 {
-	ImGui::Begin("Visual Graph");
+	if (ImGui::Begin("Visual Graph"))
 	{
-		explore(graph->getRoot());
+		ImGui::SetNextWindowBgAlpha(1.0f);
+		if (ImGui::Begin("Viewport"))
+		{
+			ImGui::Image(RenderingDevice::GetSingleton()->getRenderTextureShaderResourceView(), { 1280, 720 });
+		}
+		ImGui::End();
+		//explore(graph->getRoot());
 	}
 	ImGui::End();
 }
 
 void Editor::end(VisualComponentGraph* visualGraph)
 {
-	ImGui::Render();
+	RenderingDevice::GetSingleton()->setTextureRenderTarget();
 	RenderSystem::GetSingleton()->render(visualGraph);
+	RenderingDevice::GetSingleton()->setBackBufferRenderTarget();
+	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }
 

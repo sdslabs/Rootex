@@ -1,6 +1,7 @@
 file(GLOB_RECURSE EditorSource ./**.cpp)
 file(GLOB_RECURSE EditorHeaders ./**.h)
 
+add_definitions(-DROOTEX_EDITOR)
 add_executable(Editor ${EditorSource} ${EditorHeaders})
 
 target_include_directories(Editor PUBLIC ../)
