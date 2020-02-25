@@ -63,7 +63,7 @@ int main()
 	    windowSize.x,
 	    windowSize.y,
 	    projectName,
-	    true));
+		true));
 
 	InputManager::GetSingleton()->initialize(windowSize.x, windowSize.y);
 
@@ -99,7 +99,6 @@ int main()
 		editorWindow->swapBuffers();
 		editorWindow->clear();
 	}
-
 
 	return ret.value();
 }

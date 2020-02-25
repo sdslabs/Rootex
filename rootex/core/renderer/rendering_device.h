@@ -9,18 +9,28 @@
 
 #include "resource_file.h"
 
+#ifdef ROOTEX_EDITOR
+class Editor;
+#endif // ROOTEX_EDITOR
+
+
 class RenderingDevice
 {
-	ID3D11Device* m_Device;
-	ID3D11DeviceContext* m_Context;
-	ID3D11RenderTargetView* m_RenderTargetView;
-	ID3D11DepthStencilView* m_DepthStencilView;
+	Microsoft::WRL::ComPtr<ID3D11Device> m_Device;
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_Context;
 
-	ID3D11DepthStencilState* m_OldSkyDepthStencilState;
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> m_RenderTargetTexture;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_RenderTargetTextureView;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_RenderTargetBackBufferView;
+	ID3D11RenderTargetView** m_CurrentRenderTarget;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_RenderTextureShaderResourceView;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_DepthStencilView;
+
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_OldSkyDepthStencilState;
 	UINT m_StencilRef;
-	ID3D11DepthStencilState* m_NewSkyDepthStencilState;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_NewSkyDepthStencilState;
 
-	IDXGISwapChain* m_SwapChain;
+	Microsoft::WRL::ComPtr<IDXGISwapChain> m_SwapChain;
 	unsigned int m_4XMSQuality;
 
 	RenderingDevice();
@@ -32,11 +42,14 @@ class RenderingDevice
 
 	friend class Window;
 
-public:
-	static RenderingDevice* GetSingleton();
-
+#ifdef ROOTEX_EDITOR
 	ID3D11Device* getDevice();
 	ID3D11DeviceContext* getContext();
+	friend class Editor;
+#endif // ROOTEX_EDITOR
+
+public:
+	static RenderingDevice* GetSingleton();
 
 	void initialize(HWND hWnd, int width, int height);
 
@@ -54,6 +67,7 @@ public:
 	void initVertexLayout(ID3DBlob* vertexShaderBlob, const D3D11_INPUT_ELEMENT_DESC* ied, UINT size);
 	
 	ID3DBlob* createBlob(LPCWSTR path);
+	void createRenderTextureTarget(int width, int height);
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createTexture(ImageResourceFile* imageRes);
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> createSamplerState();
 
@@ -67,7 +81,10 @@ public:
 
 	void unbindShaderResources();
 
-	void resetRenderTargetView();
+	void setTextureRenderTarget();
+	void setBackBufferRenderTarget();
+
+	ID3D11ShaderResourceView* getRenderTextureShaderResourceView();
 
 	void setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY pt);
 	void setViewport(const D3D11_VIEWPORT* vp);

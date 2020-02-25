@@ -14,11 +14,6 @@ Renderer::Renderer()
 	RenderingDevice::GetSingleton()->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
-void Renderer::clear(float r, float g, float b) const
-{
-	RenderingDevice::GetSingleton()->clearBuffer(r, g, b);
-}
-
 void Renderer::setViewport(Viewport& viewport)
 {
 	RenderingDevice::GetSingleton()->setViewport(viewport.getViewport());

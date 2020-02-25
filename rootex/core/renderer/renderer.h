@@ -16,6 +16,5 @@ public:
 
 	void setViewport(Viewport& viewport);
 
-	void clear(float r, float g, float b) const;
 	void draw(const VertexBuffer* vertexBuffer, const IndexBuffer* indexBuffer, const Material* material) const;
 };
