@@ -5,9 +5,9 @@
 #include "common/common.h"
 
 #include "core/audio/audio_system.h"
-#include "core/renderer/vertex_data.h"
-#include "core/renderer/vertex_buffer.h"
 #include "core/renderer/index_buffer.h"
+#include "core/renderer/vertex_buffer.h"
+#include "core/renderer/vertex_data.h"
 
 #include "vendor/OBJLoader/Source/OBJ_Loader.h"
 
@@ -206,8 +206,14 @@ ImageResourceFile* ResourceLoader::CreateImageResourceFile(String path)
 	FileBuffer& buffer = OS::LoadFileContents(path);
 	ResourceData* resData = new ResourceData(path, buffer);
 	ImageResourceFile* imageRes = new ImageResourceFile(resData);
-	
+
 	s_ResourcesDataFiles[Ptr<ResourceData>(resData)] = Ptr<ResourceFile>(imageRes);
 
 	return imageRes;
+}
+
+void ResourceLoader::SaveResourceFile(TextResourceFile*& resourceFile)
+{
+	bool saved = OS::SaveFile(resourceFile->getPath(), resourceFile->getData());
+	PANIC(saved == false, "Old resource could not be located for saving file: " + resourceFile->getPath().generic_string());
 }

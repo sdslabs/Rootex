@@ -15,4 +15,6 @@ public:
 	static AudioResourceFile* CreateAudioResourceFile(String path);
 	static VisualModelResourceFile* CreateVisualModelResourceFile(String path);
 	static ImageResourceFile* CreateImageResourceFile(String path);
+
+	static void SaveResourceFile(TextResourceFile*& resourceFile);
 };

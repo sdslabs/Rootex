@@ -10,15 +10,18 @@ class VisualComponentGraph;
 
 class Editor
 {
+	int m_DockSpaceID;
+
 	Editor() = default;
 	Editor(Editor&) = delete;
 	~Editor();
+
+	void applyDockspace();
 
 public:
 	static Editor* GetSingleton();
 
 	void initialize(HWND hWnd);
 	void begin(VisualComponentGraph* visualGraph);
-	void displayVisualGraph(VisualComponentGraph* graph);
 	void end(VisualComponentGraph* visualGraph);
 };

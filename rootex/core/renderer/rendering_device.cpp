@@ -1,7 +1,7 @@
 #include "rendering_device.h"
 
 #include "common/common.h"
-#include "dxgiDebugInterface.h"
+#include "dxgi_debug_interface.h"
 #include "utils.h"
 
 #include "vendor/DirectXTK/Inc/WICTextureLoader.h"

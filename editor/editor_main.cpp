@@ -80,6 +80,12 @@ int main()
 	OS::PrintLine("Project loaded successfully: " + projectName);
 	Editor::GetSingleton()->initialize(editorWindow->getWindowHandle());
 	
+	AudioResourceFile* w = ResourceLoader::CreateAudioResourceFile("game/assets/hipshop.wav");
+	Ref<StreamingAudioBuffer> audio(new StreamingAudioBuffer(w));
+	Ref<StreamingAudioSource> source(new StreamingAudioSource(audio.get()));
+	source->setLooping(true);
+	source->play();
+
 	std::optional<int> ret;
 	while (true)
 	{
@@ -93,7 +99,6 @@ int main()
 		EventManager::GetSingleton()->dispatchDeferred();
 
 		Editor::GetSingleton()->begin(visualGraph.get());
-		Editor::GetSingleton()->displayVisualGraph(visualGraph.get());
 		Editor::GetSingleton()->end(visualGraph.get());
 
 		editorWindow->swapBuffers();
