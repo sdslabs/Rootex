@@ -26,7 +26,6 @@ public:
 	~Window() = default;
 
 	std::optional<int> processMessages();
-	void applyEditorViewport();
 	void applyDefaultViewport();
 	void swapBuffers();
 

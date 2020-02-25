@@ -22,19 +22,6 @@ std::optional<int> Window::processMessages()
 	return {};
 }
 
-void Window::applyEditorViewport()
-{
-	D3D11_VIEWPORT vp;
-	vp.Width = m_Width * 2.0f / 3.0f;
-	vp.Height = m_Height * 2.0f / 3.0f;
-	vp.MinDepth = 0;
-	vp.MaxDepth = 1;
-	vp.TopLeftX = 8;
-	vp.TopLeftY = 8 + 10;
-
-	RenderingDevice::GetSingleton()->setViewport(&vp);
-}
-
 void Window::applyDefaultViewport()
 {
 	D3D11_VIEWPORT vp;
@@ -128,7 +115,6 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
 		ShowWindow(m_WindowHandle, SW_SHOW);
 
 		RenderingDevice::GetSingleton()->initialize(m_WindowHandle, width, height);
-		applyEditorViewport();	
 	}
 	else
 	{
@@ -142,7 +128,6 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
 		ShowWindow(m_WindowHandle, SW_SHOW);
 
 		RenderingDevice::GetSingleton()->initialize(m_WindowHandle, width, height);
-		applyDefaultViewport();
 
 		GetWindowRect(m_WindowHandle, &m_Clip);
 
@@ -157,6 +142,8 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
 
 		RenderingDevice::GetSingleton()->setBackBufferRenderTarget();
 	}
+
+	applyDefaultViewport();
 }
 
 HWND Window::getWindowHandle()
