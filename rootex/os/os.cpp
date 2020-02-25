@@ -3,6 +3,7 @@
 #include <filesystem>
 
 #include "common/common.h"
+#include "resource_data.h"
 
 FilePath OS::s_RootDirectory;
 FilePath OS::s_EngineDirectory;
@@ -139,4 +140,23 @@ void OS::PrintIf(const bool& expr, const String& error)
 void OS::PostError(String message, LPSTR caption)
 {
 	MessageBoxA(GetActiveWindow(), message.c_str(), caption, MB_OK);
+}
+
+bool OS::SaveFile(const FilePath& filePath, ResourceData* fileData)
+{
+	std::ofstream outFile;
+
+	try
+	{
+		outFile.open(GetAbsolutePath(filePath.generic_string()), std::ios::out | std::ios::binary);
+		outFile.write(fileData->getRawData()->data(), fileData->getRawDataByteSize());
+	}
+	catch (std::exception e)
+	{
+		ERR(std::string("OS: File IO error: ") + std::string(e.what()));
+		return false;
+	}
+	
+	outFile.close();
+	return true;
 }

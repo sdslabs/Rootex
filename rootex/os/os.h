@@ -11,6 +11,8 @@
 
 typedef Vector<char> FileBuffer;
 
+class ResourceData;
+
 class OS
 {
 	OS() = delete;
@@ -40,4 +42,6 @@ public:
 	static void PrintIf(const bool& expr, const String& error);
 
 	static void PostError(String message, LPSTR caption);
+
+	static bool SaveFile(const FilePath& filePath, ResourceData* fileData);
 };

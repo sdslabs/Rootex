@@ -2,6 +2,7 @@
 
 #include "core/renderer/rendering_device.h"
 
+#include "resource_loader.h"
 #include "framework/components/visual/visual_component_graph.h"
 #include "framework/components/hierarchy_component.h"
 #include "framework/systems/render_system.h"
@@ -11,6 +12,7 @@ void Editor::initialize(HWND hWnd)
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	ImGui_ImplWin32_Init(hWnd);
 	ImGui_ImplDX11_Init(RenderingDevice::GetSingleton()->getDevice(), RenderingDevice::GetSingleton()->getContext());
 	ImGui::StyleColorsDark();
@@ -21,44 +23,8 @@ void Editor::begin(VisualComponentGraph* visualGraph)
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
-	ImGui::ShowDemoWindow();
-}
 
-void explore(const HierarchyComponent* component)
-{
-	bool x;
-	static bool y = false;
-	ImGui::Button(std::to_string(component->getOwner()->getID()).c_str());
-	if (ImGui::IsItemClicked())
-	{
-		y = true;
-		if (ImGui::BeginPopup("Info"))
-		{
-			ImGui::OpenPopup("Popup");
-			ImGui::Text("This has %d components", component->getOwner()->getAllComponents().size());
-			ImGui::EndPopup();
-		}
-	}
-
-	for (auto&& child : component->getChildren())
-	{
-		explore(child->getComponent<HierarchyComponent>());
-	}
-}
-
-void Editor::displayVisualGraph(VisualComponentGraph* graph)
-{
-	if (ImGui::Begin("Visual Graph"))
-	{
-		ImGui::SetNextWindowBgAlpha(1.0f);
-		if (ImGui::Begin("Viewport"))
-		{
-			ImGui::Image(RenderingDevice::GetSingleton()->getRenderTextureShaderResourceView(), { 1280, 720 });
-		}
-		ImGui::End();
-		//explore(graph->getRoot());
-	}
-	ImGui::End();
+	applyDockspace();
 }
 
 void Editor::end(VisualComponentGraph* visualGraph)
@@ -75,6 +41,90 @@ Editor::~Editor()
 	ImGui_ImplDX11_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
+}
+
+void Editor::applyDockspace()
+{
+	static bool optFullscreenPersistant = true;
+	bool optFullscreen = optFullscreenPersistant;
+	static ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_None;
+
+	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+	if (optFullscreen)
+	{
+		ImGuiViewport* viewport = ImGui::GetMainViewport();
+		ImGui::SetNextWindowPos(viewport->Pos);
+		ImGui::SetNextWindowSize(viewport->Size);
+		ImGui::SetNextWindowViewport(viewport->ID);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+		windowFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+		windowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+	}
+
+	if (dockspaceFlags & ImGuiDockNodeFlags_PassthruCentralNode)
+		windowFlags |= ImGuiWindowFlags_NoBackground;
+
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+
+	ImGui::Begin("Rootex Edtior", nullptr, windowFlags);
+	{
+		ImGui::PopStyleVar();
+
+		if (optFullscreen)
+		{
+			ImGui::PopStyleVar(2);
+		}
+
+		ImGuiID dockspaceId = ImGui::GetID("Rootex Editor Dockspace");
+		ImGui::DockSpace(dockspaceId, ImVec2(0.0f, 0.0f), dockspaceFlags);
+
+		if (ImGui::BeginMenuBar())
+		{
+			if (ImGui::BeginMenu("File"))
+			{
+				if (ImGui::MenuItem("New Lua File", ""))
+				{
+					OS::PrintLine("Yay");
+				}
+				ImGui::MenuItem("Save", "Ctrl+S");
+				ImGui::MenuItem("Save All", "");
+				ImGui::Separator();
+				ImGui::MenuItem("Quit", "");
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenuBar();
+		}
+
+		if (ImGui::BeginMenuBar())
+		{
+			static String menuAction = "";
+			if (ImGui::BeginMenu("About"))
+			{
+				if (ImGui::MenuItem("Rootex Editor"))
+				{
+					menuAction = "Rootex Editor";
+				}
+				ImGui::EndMenu();
+			}
+			
+			if (menuAction == "Rootex Editor")
+			{
+				ImGui::OpenPopup("About Rootex Editor");
+			}
+
+			if (ImGui::BeginPopup("About Rootex Editor", ImGuiWindowFlags_AlwaysAutoResize))
+			{
+				static TextResourceFile* license = ResourceLoader::CreateLuaTextResourceFile("LICENSE");
+				ImGui::Text(license->getString().c_str());
+				ImGui::Separator();
+				ImGui::EndPopup();
+				menuAction = "";
+			}
+			ImGui::EndMenuBar();
+		}
+		ImGui::End();
+	}
 }
 
 Editor* Editor::GetSingleton()
