@@ -22,17 +22,44 @@ class Editor
 		ImVec4 m_Accent;
 		ImVec4 m_MediumAccent;
 		ImVec4 m_HeavyAccent;
+		ImVec4 m_Inactive;
 	} m_Colors;
+
+	struct ToolbarSettings
+	{
+		bool m_IsActive = true;
+	} m_ToolbarSettings;
 
 	struct ViewportSettings
 	{
+		bool m_IsActive = true;
+		bool m_IsClosed;
+
 		ImVec2 m_ImageSize;
 		ImVec4 m_ImageTint;
 		ImVec4 m_ImageBorderColor;
 		float m_AspectRatio;
-
-		bool m_IsClosed;
 	} m_ViewportSettings;
+
+	struct HierarchySettings
+	{
+		bool m_IsActive = true;
+	} m_HierarchySettings;
+
+	struct InspectorSettings
+	{
+		bool m_IsActive = true;
+	} m_InspectorSettings;
+
+	struct OutputSettings
+	{
+		bool m_IsActive = true;
+	} m_OutputSettings;
+
+	struct FileSystemSettings
+	{
+		bool m_IsActive = true;
+	} m_FileSystemSettings;
 
 	Vector<String> m_Logs;
 
@@ -61,8 +88,7 @@ class Editor
 public:
 	static Editor* GetSingleton();
 
-
 	void initialize(HWND hWnd);
-	void draw(VisualComponentGraph* visualGraph);
+	void start(VisualComponentGraph* visualGraph);
 	void end(VisualComponentGraph* visualGraph);
 };

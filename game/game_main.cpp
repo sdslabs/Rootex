@@ -159,7 +159,7 @@ int main()
 
 		//frameTimer.showFPS();
 		window->swapBuffers();
-		window->clear();
+		window->clearCurrentTarget();
 	}
 
 	return ret.value();

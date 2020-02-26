@@ -45,15 +45,28 @@ void Window::swapBuffers()
 	RenderingDevice::GetSingleton()->swapBuffers();
 }
 
-void Window::clear()
+void Window::clearCurrentTarget()
 {
 #ifdef ROOTEX_EDITOR
-	RenderingDevice::GetSingleton()->clearBuffer(0.15f, 0.15f, 0.15f);
+	RenderingDevice::GetSingleton()->clearCurrentRenderTarget(0.15f, 0.15f, 0.15f);
 #else
 #ifdef DEBUG
-	RenderingDevice::GetSingleton()->clearBuffer(0.3f, 0.7f, 0.3f);
+	RenderingDevice::GetSingleton()->clearCurrentRenderTarget(0.3f, 0.7f, 0.3f);
 #else
-	RenderingDevice::GetSingleton()->clearBuffer(0.0f, 0.0f, 0.0f);
+	RenderingDevice::GetSingleton()->clearCurrentRenderTarget(0.0f, 0.0f, 0.0f);
+#endif // DEBUG
+#endif // ROOTEX_EDITOR
+}
+
+void Window::clearUnboundTarget()
+{
+#ifdef ROOTEX_EDITOR
+	RenderingDevice::GetSingleton()->clearUnboundRenderTarget(0.15f, 0.15f, 0.15f);
+#else
+#ifdef DEBUG
+	RenderingDevice::GetSingleton()->clearUnboundRenderTarget(0.3f, 0.7f, 0.3f);
+#else
+	RenderingDevice::GetSingleton()->clearUnboundRenderTarget(0.0f, 0.0f, 0.0f);
 #endif // DEBUG
 #endif // ROOTEX_EDITOR
 }
@@ -121,7 +134,7 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
 		m_WindowHandle = CreateWindowEx(
 		    0, className,
 		    title.c_str(),
-		    WS_CAPTION | WS_BORDER | WS_MAXIMIZE | WS_MINIMIZEBOX | WS_SYSMENU,
+		    WS_CAPTION | WS_BORDER | WS_MAXIMIZE | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SYSMENU,
 		    xOffset, yOffset, width, height,
 		    nullptr, nullptr,
 		    hInstance, nullptr);

@@ -29,6 +29,12 @@ void Editor::initialize(HWND hWnd)
 		(float)m_EditorConfig.getGlobal("general")["colors"]["heavyAccent"]["b"],
 		(float)m_EditorConfig.getGlobal("general")["colors"]["heavyAccent"]["a"],
 	};
+	m_Colors.m_Inactive = {
+		(float)m_EditorConfig.getGlobal("general")["colors"]["inactive"]["r"],
+		(float)m_EditorConfig.getGlobal("general")["colors"]["inactive"]["g"],
+		(float)m_EditorConfig.getGlobal("general")["colors"]["inactive"]["b"],
+		(float)m_EditorConfig.getGlobal("general")["colors"]["inactive"]["a"],
+	};
 
 	m_ViewportSettings.m_AspectRatio = (float)m_EditorConfig.getGlobal("viewport")["aspectRatio"];
 	m_ViewportSettings.m_ImageTint = {
@@ -55,7 +61,7 @@ void Editor::initialize(HWND hWnd)
 	ImGui::StyleColorsDark();
 }
 
-void Editor::draw(VisualComponentGraph* visualGraph)
+void Editor::start(VisualComponentGraph* visualGraph)
 {
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
@@ -117,7 +123,7 @@ void Editor::applyDefaultUI()
 
 void Editor::applyMainMenu(const ImGuiWindowFlags& windowFlags, bool optFullscreen, const ImGuiDockNodeFlags& dockspaceFlags)
 {
-	ImGui::Begin("Rootex Edtior", nullptr, windowFlags);
+	ImGui::Begin("Rootex Editor", nullptr, windowFlags);
 	{
 		ImGui::PopStyleVar();
 
@@ -131,11 +137,11 @@ void Editor::applyMainMenu(const ImGuiWindowFlags& windowFlags, bool optFullscre
 
 		if (ImGui::BeginMenuBar())
 		{
+			static String menuAction = "";
 			if (ImGui::BeginMenu("File"))
 			{
 				if (ImGui::MenuItem("New Lua File", ""))
 				{
-					logToOutput("Yay");
 				}
 				ImGui::MenuItem("Save");
 				ImGui::MenuItem("Save All", "");
@@ -143,31 +149,102 @@ void Editor::applyMainMenu(const ImGuiWindowFlags& windowFlags, bool optFullscre
 				ImGui::MenuItem("Quit", "");
 				ImGui::EndMenu();
 			}
-			ImGui::EndMenuBar();
-		}
-
-		if (ImGui::BeginMenuBar())
-		{
-			static String menuAction = "";
-			if (ImGui::BeginMenu("About"))
+			if (ImGui::BeginMenu("View"))
 			{
-				if (ImGui::MenuItem("Rootex Editor"))
+				if (ImGui::BeginMenu("Windows"))
 				{
-					menuAction = "Rootex Editor";
+					ImGui::Checkbox("Toolbar", &m_ToolbarSettings.m_IsActive);
+					ImGui::Checkbox("Output", &m_OutputSettings.m_IsActive);
+					ImGui::Checkbox("Hierarchy", &m_HierarchySettings.m_IsActive);
+					ImGui::Checkbox("Viewport", &m_ViewportSettings.m_IsActive);
+					ImGui::Checkbox("File System", &m_FileSystemSettings.m_IsActive);
+					ImGui::EndMenu();
+				}
+				ImGui::EndMenu();
+			}
+			if (ImGui::BeginMenu("Help"))
+			{
+				if (ImGui::MenuItem("About Rootex Editor"))
+				{
+					menuAction = "About Rootex Editor";
+				}
+				if (ImGui::MenuItem("Open Source Licenses"))
+				{
+					menuAction = "Open Source Licenses";
 				}
 				ImGui::EndMenu();
 			}
 
-			if (menuAction == "Rootex Editor")
+			if (menuAction != "")
 			{
-				ImGui::OpenPopup("About Rootex Editor");
+				ImGui::OpenPopup(menuAction.c_str());
 			}
 
-			if (ImGui::BeginPopup("About Rootex Editor", ImGuiWindowFlags_AlwaysAutoResize))
+			if (ImGui::BeginPopup("About Rootex Editor"))
 			{
+				ImGui::Text(String("Rootex Engine and Rootex Editor developed by SDSLabs. Built on " + OS::GetBuildDate() + " at " + OS::GetBuildTime() + "\n" + "Source available at https://www.github.com/sdslabs/rootex").c_str());
+
 				static TextResourceFile* license = ResourceLoader::CreateLuaTextResourceFile("LICENSE");
-				ImGui::Text(license->getString().c_str());
+				ImGui::Text(license->getData()->getRawData()->data());
 				ImGui::Separator();
+				menuAction = "";
+				ImGui::EndPopup();
+			}
+			if (ImGui::BeginPopup("Proprietary Licenses"))
+			{
+				ImGui::Text("To be added");
+				ImGui::EndPopup();
+			}
+			if (ImGui::BeginPopup("Open Source Licenses"))
+			{
+				ImGui::BulletText("Bullet3D");
+				ImGui::NewLine();
+				static TextResourceFile* bulletLicense = ResourceLoader::CreateLuaTextResourceFile("rootex/vendor/Bullet3D/LICENSE.txt");
+				ImGui::Text(bulletLicense->getData()->getRawData()->data());
+				ImGui::Separator();
+
+				ImGui::BulletText("DirectXTK");
+				ImGui::NewLine();
+				static TextResourceFile* directXTKLicense = ResourceLoader::CreateLuaTextResourceFile("rootex/vendor/DirectXTK/LICENSE");
+				ImGui::Text(directXTKLicense->getData()->getRawData()->data());
+				ImGui::Separator();
+
+				ImGui::BulletText("Gainput");
+				ImGui::NewLine();
+				static TextResourceFile* gainputLicense = ResourceLoader::CreateLuaTextResourceFile("rootex/vendor/Gainput/LICENSE");
+				ImGui::Text(gainputLicense->getData()->getRawData()->data());
+				ImGui::Separator();
+
+				ImGui::BulletText("Dear ImGui");
+				ImGui::NewLine();
+				static TextResourceFile* imGuiLicense = ResourceLoader::CreateLuaTextResourceFile("rootex/vendor/ImGUI/LICENSE.txt");
+				ImGui::Text(imGuiLicense->getData()->getRawData()->data());
+				ImGui::Separator();
+				
+				ImGui::BulletText("Lua C API");
+				ImGui::NewLine();
+				static TextResourceFile* luaCAPILicense = ResourceLoader::CreateLuaTextResourceFile("rootex/vendor/Lua/LICENSE.txt");
+				ImGui::Text(luaCAPILicense->getData()->getRawData()->data());
+				ImGui::Separator();
+
+				ImGui::BulletText("LuaBridge");
+				ImGui::NewLine();
+				static TextResourceFile* luaBridgeLicense = ResourceLoader::CreateLuaTextResourceFile("rootex/vendor/LuaBridge/LICENSE.txt");
+				ImGui::Text(luaBridgeLicense->getData()->getRawData()->data());
+				ImGui::Separator();
+
+				ImGui::BulletText("OBJLoader");
+				ImGui::NewLine();
+				static TextResourceFile* objLoaderLicense = ResourceLoader::CreateLuaTextResourceFile("rootex/vendor/OBJLoader/License.txt");
+				ImGui::Text(objLoaderLicense->getData()->getRawData()->data());
+				ImGui::Separator();
+
+				ImGui::BulletText("ALUT");
+				ImGui::NewLine();
+				static TextResourceFile* alutLicense = ResourceLoader::CreateLuaTextResourceFile("rootex/vendor/OpenAL/COPYING.txt");
+				ImGui::Text(alutLicense->getData()->getRawData()->data());
+				ImGui::Separator();
+				
 				menuAction = "";
 				ImGui::EndPopup();
 			}
@@ -179,17 +256,23 @@ void Editor::applyMainMenu(const ImGuiWindowFlags& windowFlags, bool optFullscre
 
 void Editor::applyDocks()
 {
-	applyFileSystemDock();
-	applyToolbarDock();
-	applyHierarchyDock();
-	applyInspectorDock();
-	applyOutputDock();
-	applyViewportDock();
+	if (m_FileSystemSettings.m_IsActive)
+		applyFileSystemDock();
+	if (m_ToolbarSettings.m_IsActive)
+		applyToolbarDock();
+	if (m_HierarchySettings.m_IsActive)
+		applyHierarchyDock();
+	if (m_InspectorSettings.m_IsActive)
+		applyInspectorDock();
+	if (m_OutputSettings.m_IsActive)
+		applyOutputDock();
+	if (m_ViewportSettings.m_IsActive)
+		applyViewportDock();
 }
 
 void Editor::applyFileSystemDock()
 {
-	if (ImGui::Begin("FileSystem"))
+	if (ImGui::Begin("File System"))
 	{
 	}
 	ImGui::End();
@@ -218,7 +301,7 @@ void Editor::applyOutputDock()
 void Editor::applyViewportDock()
 {
 	ImGui::SetNextWindowBgAlpha(1.0f);
-	if (ImGui::Begin("Viewport", &m_ViewportSettings.m_IsClosed))
+	if (ImGui::Begin("Viewport"))
 	{
 		ImVec2 region = ImGui::GetContentRegionAvail();
 		if (region.x / region.y != m_ViewportSettings.m_AspectRatio)
@@ -263,6 +346,12 @@ void Editor::pushEditorStyleColors()
 	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_DockingEmptyBg, m_Colors.m_MediumAccent);
 	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_Separator, m_Colors.m_HeavyAccent);
+	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_SeparatorActive, m_Colors.m_Accent);
+	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_SeparatorHovered, m_Colors.m_MediumAccent);
+	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_BorderShadow, m_Colors.m_HeavyAccent);
 	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_FrameBg, m_Colors.m_HeavyAccent);
@@ -285,7 +374,7 @@ void Editor::pushEditorStyleColors()
 	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_HeaderHovered, m_Colors.m_Accent);
 	m_EditorStyleColorPushCount++;
-	ImGui::PushStyleColor(ImGuiCol_PopupBg, m_Colors.m_HeavyAccent);
+	ImGui::PushStyleColor(ImGuiCol_PopupBg, m_Colors.m_Inactive);
 	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_Tab, m_Colors.m_HeavyAccent);
 	m_EditorStyleColorPushCount++;
@@ -322,6 +411,10 @@ void Editor::pushEditorStyleColors()
 	ImGui::PushStyleColor(ImGuiCol_ScrollbarGrabActive, m_Colors.m_Accent);
 	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_ScrollbarGrabHovered, m_Colors.m_MediumAccent);
+	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_SliderGrab, m_Colors.m_Inactive);
+	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_SliderGrabActive, m_Colors.m_Accent);
 	m_EditorStyleColorPushCount++;
 }
 
