@@ -23,6 +23,7 @@ class RenderingDevice
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_RenderTargetTextureView;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_RenderTargetBackBufferView;
 	ID3D11RenderTargetView** m_CurrentRenderTarget;
+	ID3D11RenderTargetView** m_UnboundRenderTarget;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_RenderTextureShaderResourceView;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_DepthStencilView;
 
@@ -91,5 +92,6 @@ public:
 	void setViewport(const D3D11_VIEWPORT* vp);
 	
 	void drawIndexed(UINT number);
-	void clearBuffer(float r, float g, float b);
+	void clearCurrentRenderTarget(float r, float g, float b);
+	void clearUnboundRenderTarget(float r, float g, float b);
 };

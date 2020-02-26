@@ -360,12 +360,14 @@ void RenderingDevice::setTextureRenderTarget()
 {
 	m_Context->OMSetRenderTargets(1, m_RenderTargetTextureView.GetAddressOf(), m_DepthStencilView.Get());
 	m_CurrentRenderTarget = m_RenderTargetTextureView.GetAddressOf();
+	m_UnboundRenderTarget = m_RenderTargetBackBufferView.GetAddressOf();
 }
 
 void RenderingDevice::setBackBufferRenderTarget()
 {
 	m_Context->OMSetRenderTargets(1, m_RenderTargetBackBufferView.GetAddressOf(), m_DepthStencilView.Get());
 	m_CurrentRenderTarget = m_RenderTargetBackBufferView.GetAddressOf();
+	m_UnboundRenderTarget = m_RenderTargetTextureView.GetAddressOf();
 }
 
 ID3D11ShaderResourceView* RenderingDevice::getRenderTextureShaderResourceView()
@@ -425,10 +427,17 @@ void RenderingDevice::swapBuffers()
 	GFX_ERR_CHECK(m_SwapChain->Present(1u, 0));
 }
 
-void RenderingDevice::clearBuffer(float r, float g, float b)
+void RenderingDevice::clearCurrentRenderTarget(float r, float g, float b)
 {
 	const float color[] = { r, g, b, 1.0f };
 	m_Context->ClearRenderTargetView(*m_CurrentRenderTarget, color);
+	m_Context->ClearDepthStencilView(m_DepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
+}
+
+void RenderingDevice::clearUnboundRenderTarget(float r, float g, float b)
+{
+	const float color[] = { r, g, b, 1.0f };
+	m_Context->ClearRenderTargetView(*m_UnboundRenderTarget, color);
 	m_Context->ClearDepthStencilView(m_DepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
 }
 

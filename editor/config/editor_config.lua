@@ -7,6 +7,7 @@ general = {
         noneLogColor = {r = 1.0, g = 1.0, b = 1.0, a = 1.0},
         warnLogColor = {r = 0.5, g = 0.8, b = 0.8, a = 1.0},
         errorLogColor = {r = 1.0, g = 0.3, b = 0.3, a = 1.0},
+        inactive = {r = 0.3, g = 0.3, b = 0.3, a = 1.0}
     }
 }
 

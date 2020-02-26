@@ -29,7 +29,8 @@ public:
 	void applyDefaultViewport();
 	void swapBuffers();
 
-	void clear();
+	void clearCurrentTarget();
+	void clearUnboundTarget();
 	void setWindowTitle(String title);
 
 	int getWidth() const;

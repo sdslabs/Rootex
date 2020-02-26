@@ -64,8 +64,8 @@ int main()
 	    windowSize.x,
 	    windowSize.y,
 	    projectName,
-		true, 
-		windowMSAA));
+	    true,
+	    windowMSAA));
 
 	InputManager::GetSingleton()->initialize(windowSize.x, windowSize.y);
 
@@ -81,7 +81,7 @@ int main()
 
 	OS::PrintLine("Project loaded successfully: " + projectName);
 	Editor::GetSingleton()->initialize(editorWindow->getWindowHandle());
-	
+
 	AudioResourceFile* w = ResourceLoader::CreateAudioResourceFile("game/assets/hipshop.wav");
 	Ref<StreamingAudioBuffer> audio(new StreamingAudioBuffer(w));
 	Ref<StreamingAudioSource> source(new StreamingAudioSource(audio.get()));
@@ -101,11 +101,38 @@ int main()
 		InputManager::GetSingleton()->update();
 		EventManager::GetSingleton()->dispatchDeferred();
 
-		Editor::GetSingleton()->draw(visualGraph.get());
+		Editor::GetSingleton()->start(visualGraph.get());
+		if (ImGui::Begin("Cube"))
+		{
+			static float yaw = 0;
+			static float pitch = 0;
+			static float roll = 0;
+			ImGui::SliderAngle("Yaw", &yaw, -180.0f, 180.0f);
+			ImGui::SameLine();
+			if (ImGui::SmallButton("Reset Yaw"))
+			{
+				yaw = 0;
+			}
+			ImGui::SliderAngle("Pitch", &pitch, -180.0f, 180.0f);
+			ImGui::SameLine();
+			if (ImGui::SmallButton("Reset Pitch"))
+			{
+				pitch = 0;
+			}
+			ImGui::SliderAngle("Roll", &roll, -180.0f, 180.0f);
+			ImGui::SameLine();
+			if (ImGui::SmallButton("Reset Roll"))
+			{
+				roll = 0;
+			}
+			cube->getComponent<TransformComponent>()->setRotation(yaw, pitch, roll);
+		}
+		ImGui::End();
 		Editor::GetSingleton()->end(visualGraph.get());
 
 		editorWindow->swapBuffers();
-		editorWindow->clear();
+		editorWindow->clearCurrentTarget();
+		editorWindow->clearUnboundTarget();
 	}
 
 	return ret.value();

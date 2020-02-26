@@ -5,10 +5,6 @@
 #include "common/common.h"
 #include "resource_data.h"
 
-#ifdef ROOTEX_EDITOR
-#include "editor/editor.h"
-#endif // ROOTEX_EDITOR
-
 FilePath OS::s_RootDirectory;
 FilePath OS::s_EngineDirectory;
 FilePath OS::s_GameDirectory;
@@ -95,10 +91,6 @@ bool OS::Exists(String relativePath)
 
 void OS::Print(const String& msg)
 {
-#ifdef ROOTEX_EDITOR
-	Editor::GetSingleton()->logToOutput(msg);
-#endif // ROOTEX_EDITOR
-
 	std::cout.clear();
 	std::cout << msg << std::endl;
 }
