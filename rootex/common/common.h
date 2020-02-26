@@ -16,4 +16,4 @@
 #define ERR(m_Msg) ::OS::PrintError(String(__FILE__) + ":" + String(__func__) + ": " + m_Msg);
 #define PANIC(m_expr, m_Msg) ::OS::PrintIf(m_expr, String(__FILE__) + ":" + String(__func__) + ": " + m_Msg);
 #define ERR_CUSTOM(m_file, m_func, m_Msg) ::OS::PrintError(String(m_file) + ":" + String(m_func) + ": " + m_Msg);
-#endif
+#endif // _DEBUG

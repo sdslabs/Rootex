@@ -46,7 +46,7 @@ int main()
 
 	AudioSystem::GetSingleton()->initialize();
 
-	LuaTextResourceFile* configFile = ResourceLoader::CreateLuaTextResourceFile("editor/config/config.lua");
+	LuaTextResourceFile* configFile = ResourceLoader::CreateLuaTextResourceFile("editor/project.lua");
 	LuaInterpreter interpreter;
 	interpreter.loadExecuteScript(configFile);
 
@@ -101,7 +101,7 @@ int main()
 		InputManager::GetSingleton()->update();
 		EventManager::GetSingleton()->dispatchDeferred();
 
-		Editor::GetSingleton()->begin(visualGraph.get());
+		Editor::GetSingleton()->draw(visualGraph.get());
 		Editor::GetSingleton()->end(visualGraph.get());
 
 		editorWindow->swapBuffers();
