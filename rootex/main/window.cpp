@@ -47,7 +47,15 @@ void Window::swapBuffers()
 
 void Window::clear()
 {
+#ifdef ROOTEX_EDITOR
 	RenderingDevice::GetSingleton()->clearBuffer(0.15f, 0.15f, 0.15f);
+#else
+#ifdef DEBUG
+	RenderingDevice::GetSingleton()->clearBuffer(0.3f, 0.7f, 0.3f);
+#else
+	RenderingDevice::GetSingleton()->clearBuffer(0.0f, 0.0f, 0.0f);
+#endif // DEBUG
+#endif // ROOTEX_EDITOR
 }
 
 void Window::setWindowTitle(String title)

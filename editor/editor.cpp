@@ -9,6 +9,41 @@
 
 void Editor::initialize(HWND hWnd)
 {
+	m_EditorConfig.loadExecuteScript(ResourceLoader::CreateLuaTextResourceFile("editor/config/editor_config.lua"));
+
+	m_Colors.m_Accent = {
+		(float)m_EditorConfig.getGlobal("general")["colors"]["accent"]["r"],
+		(float)m_EditorConfig.getGlobal("general")["colors"]["accent"]["g"],
+		(float)m_EditorConfig.getGlobal("general")["colors"]["accent"]["b"],
+		(float)m_EditorConfig.getGlobal("general")["colors"]["accent"]["a"],
+	};
+	m_Colors.m_MediumAccent = {
+		(float)m_EditorConfig.getGlobal("general")["colors"]["mediumAccent"]["r"],
+		(float)m_EditorConfig.getGlobal("general")["colors"]["mediumAccent"]["g"],
+		(float)m_EditorConfig.getGlobal("general")["colors"]["mediumAccent"]["b"],
+		(float)m_EditorConfig.getGlobal("general")["colors"]["mediumAccent"]["a"],
+	};
+	m_Colors.m_HeavyAccent = {
+		(float)m_EditorConfig.getGlobal("general")["colors"]["heavyAccent"]["r"],
+		(float)m_EditorConfig.getGlobal("general")["colors"]["heavyAccent"]["g"],
+		(float)m_EditorConfig.getGlobal("general")["colors"]["heavyAccent"]["b"],
+		(float)m_EditorConfig.getGlobal("general")["colors"]["heavyAccent"]["a"],
+	};
+
+	m_ViewportSettings.m_AspectRatio = (float)m_EditorConfig.getGlobal("viewport")["aspectRatio"];
+	m_ViewportSettings.m_ImageTint = {
+		(float)m_EditorConfig.getGlobal("viewport")["imageTint"]["r"],
+		(float)m_EditorConfig.getGlobal("viewport")["imageTint"]["g"],
+		(float)m_EditorConfig.getGlobal("viewport")["imageTint"]["b"],
+		(float)m_EditorConfig.getGlobal("viewport")["imageTint"]["a"],
+	};
+	m_ViewportSettings.m_ImageBorderColor = {
+		(float)m_EditorConfig.getGlobal("viewport")["borderColor"]["r"],
+		(float)m_EditorConfig.getGlobal("viewport")["borderColor"]["g"],
+		(float)m_EditorConfig.getGlobal("viewport")["borderColor"]["b"],
+		(float)m_EditorConfig.getGlobal("viewport")["borderColor"]["a"],
+	};
+
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
@@ -20,18 +55,21 @@ void Editor::initialize(HWND hWnd)
 	ImGui::StyleColorsDark();
 }
 
-void Editor::begin(VisualComponentGraph* visualGraph)
+void Editor::draw(VisualComponentGraph* visualGraph)
 {
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
-	applyDockspace();
+	applyDefaultUI();
 	applyDocks();
 }
 
 void Editor::end(VisualComponentGraph* visualGraph)
 {
+	ImGui::PopStyleColor(m_EditorStyleColorPushCount);
+	ImGui::PopStyleVar(m_EditorStyleVarPushCount);
+
 	RenderingDevice::GetSingleton()->setTextureRenderTarget();
 	RenderSystem::GetSingleton()->render(visualGraph);
 	RenderingDevice::GetSingleton()->setBackBufferRenderTarget();
@@ -46,7 +84,7 @@ Editor::~Editor()
 	ImGui::DestroyContext();
 }
 
-void Editor::applyDockspace()
+void Editor::applyDefaultUI()
 {
 	static bool optFullscreenPersistant = true;
 	bool optFullscreen = optFullscreenPersistant;
@@ -59,8 +97,12 @@ void Editor::applyDockspace()
 		ImGui::SetNextWindowPos(viewport->Pos);
 		ImGui::SetNextWindowSize(viewport->Size);
 		ImGui::SetNextWindowViewport(viewport->ID);
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 2.0f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+
+		pushEditorStyleColors();
+		pushEditorStyleVars();
+
 		windowFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
 		windowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 	}
@@ -70,6 +112,11 @@ void Editor::applyDockspace()
 
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 
+	applyMainMenu(windowFlags, optFullscreen, dockspaceFlags);
+}
+
+void Editor::applyMainMenu(const ImGuiWindowFlags& windowFlags, bool optFullscreen, const ImGuiDockNodeFlags& dockspaceFlags)
+{
 	ImGui::Begin("Rootex Edtior", nullptr, windowFlags);
 	{
 		ImGui::PopStyleVar();
@@ -88,7 +135,7 @@ void Editor::applyDockspace()
 			{
 				if (ImGui::MenuItem("New Lua File", ""))
 				{
-					OS::PrintLine("Yay");
+					logToOutput("Yay");
 				}
 				ImGui::MenuItem("Save");
 				ImGui::MenuItem("Save All", "");
@@ -132,25 +179,62 @@ void Editor::applyDockspace()
 
 void Editor::applyDocks()
 {
+	applyFileSystemDock();
 	applyToolbarDock();
+	applyHierarchyDock();
+	applyInspectorDock();
+	applyOutputDock();
 	applyViewportDock();
+}
+
+void Editor::applyFileSystemDock()
+{
+	if (ImGui::Begin("FileSystem"))
+	{
+	}
+	ImGui::End();
+}
+
+void Editor::applyInspectorDock()
+{
+	if (ImGui::Begin("Inspector"))
+	{
+	}
+	ImGui::End();
+}
+
+void Editor::applyOutputDock()
+{
+	if (ImGui::Begin("Output"))
+	{
+		for (auto&& log : m_Logs)
+		{
+			ImGui::Text(log.c_str());
+		}
+	}
+	ImGui::End();
 }
 
 void Editor::applyViewportDock()
 {
-	if (ImGui::Begin("Viewport"))
+	ImGui::SetNextWindowBgAlpha(1.0f);
+	if (ImGui::Begin("Viewport", &m_ViewportSettings.m_IsClosed))
 	{
-		m_ViewportWidth = ImGui::GetWindowWidth();
-		m_ViewportHeight = ImGui::GetWindowHeight();
-
-		ImGui::Image(RenderingDevice::GetSingleton()->getRenderTextureShaderResourceView(), { m_ViewportZoom * m_ViewportWidth, m_ViewportZoom * m_ViewportHeight });
-
-		ImGui::Checkbox("Enable Zoom", &m_ViewportZoomEnabled);
-
-		if (m_ViewportZoomEnabled)
+		ImVec2 region = ImGui::GetContentRegionAvail();
+		if (region.x / region.y != m_ViewportSettings.m_AspectRatio)
 		{
-			ImGui::SliderFloat("Zoom", &m_ViewportZoom, 0.0f, 1.0f);
+			region.y = region.x / m_ViewportSettings.m_AspectRatio;
 		}
+
+		m_ViewportSettings.m_ImageSize = region;
+
+		ImGui::Image(
+		    RenderingDevice::GetSingleton()->getRenderTextureShaderResourceView(),
+		    m_ViewportSettings.m_ImageSize,
+		    { 0, 0 },
+		    { 1, 1 },
+		    m_ViewportSettings.m_ImageTint,
+		    m_ViewportSettings.m_ImageBorderColor);
 	}
 	ImGui::End();
 }
@@ -163,8 +247,99 @@ void Editor::applyToolbarDock()
 	ImGui::End();
 }
 
+void Editor::applyHierarchyDock()
+{
+	if (ImGui::Begin("Hierarchy"))
+	{
+	}
+	ImGui::End();
+}
+
+void Editor::pushEditorStyleColors()
+{
+	m_EditorStyleColorPushCount = 0;
+
+	ImGui::PushStyleColor(ImGuiCol_DockingPreview, m_Colors.m_Accent);
+	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_DockingEmptyBg, m_Colors.m_MediumAccent);
+	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_BorderShadow, m_Colors.m_HeavyAccent);
+	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_FrameBg, m_Colors.m_HeavyAccent);
+	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_FrameBgActive, m_Colors.m_MediumAccent);
+	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, m_Colors.m_HeavyAccent);
+	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_TitleBg, m_Colors.m_HeavyAccent);
+	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_TitleBgActive, m_Colors.m_Accent);
+	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_TitleBgCollapsed, m_Colors.m_HeavyAccent);
+	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_MenuBarBg, m_Colors.m_HeavyAccent);
+	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_Header, m_Colors.m_HeavyAccent);
+	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_HeaderActive, m_Colors.m_MediumAccent);
+	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_HeaderHovered, m_Colors.m_Accent);
+	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_PopupBg, m_Colors.m_HeavyAccent);
+	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_Tab, m_Colors.m_HeavyAccent);
+	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_TabActive, m_Colors.m_Accent);
+	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_TabHovered, m_Colors.m_Accent);
+	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_TabUnfocused, m_Colors.m_MediumAccent);
+	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_TabUnfocusedActive, m_Colors.m_Accent);
+	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_Border, m_Colors.m_HeavyAccent);
+	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_Button, m_Colors.m_Accent);
+	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_Button, m_Colors.m_Accent);
+	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, m_Colors.m_Accent);
+	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, m_Colors.m_Accent);
+	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_CheckMark, m_Colors.m_Accent);
+	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_TextSelectedBg, m_Colors.m_MediumAccent);
+	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_ResizeGrip, m_Colors.m_HeavyAccent);
+	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_ResizeGripActive, m_Colors.m_Accent);
+	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_ResizeGripHovered, m_Colors.m_MediumAccent);
+	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_ScrollbarGrab, m_Colors.m_HeavyAccent);
+	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_ScrollbarGrabActive, m_Colors.m_Accent);
+	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_ScrollbarGrabHovered, m_Colors.m_MediumAccent);
+	m_EditorStyleColorPushCount++;
+}
+
+void Editor::pushEditorStyleVars()
+{
+	m_EditorStyleVarPushCount = 0;
+
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, { 0 });
+	m_EditorStyleVarPushCount++;
+}
+
 Editor* Editor::GetSingleton()
 {
 	static Editor singleton;
 	return &singleton;
+}
+
+void Editor::logToOutput(const String& log)
+{
+	m_Logs.emplace_back(log);
 }

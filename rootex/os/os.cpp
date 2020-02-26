@@ -5,6 +5,10 @@
 #include "common/common.h"
 #include "resource_data.h"
 
+#ifdef ROOTEX_EDITOR
+#include "editor/editor.h"
+#endif // ROOTEX_EDITOR
+
 FilePath OS::s_RootDirectory;
 FilePath OS::s_EngineDirectory;
 FilePath OS::s_GameDirectory;
@@ -91,8 +95,12 @@ bool OS::Exists(String relativePath)
 
 void OS::Print(const String& msg)
 {
+#ifdef ROOTEX_EDITOR
+	Editor::GetSingleton()->logToOutput(msg);
+#endif // ROOTEX_EDITOR
+
 	std::cout.clear();
-	std::cout << msg;
+	std::cout << msg << std::endl;
 }
 
 void OS::Print(const float& real)
@@ -112,20 +120,22 @@ void OS::Print(const unsigned int& number)
 
 void OS::PrintLine(const String& msg)
 {
-	std::cout.clear();
-	std::cout << msg << std::endl;
+	Print(msg);
 }
 
 void OS::PrintWarning(const String& warning)
 {
-	std::cout.clear();
-	std::cout << "\033[93m" << warning << "\033[0m" << std::endl;
+	std::cout << "\033[93m";
+	Print(warning);
+	std::cout << "\033[0m" << std::endl;
 }
 
 void OS::PrintError(const String& error)
 {
 	std::cout.clear();
-	std::cout << "\033[91m" << error << "\033[0m" << std::endl;
+	std::cout << "\033[91m";
+	Print(error);
+	std::cout << "\033[0m" << std::endl;
 	PostError(error, "Fatal Error");
 }
 
