@@ -56,6 +56,7 @@ int main()
 	LuaVariable windowLua = interpreter.getGlobal("window");
 	Vector2 windowPosition = { windowLua["x"], windowLua["y"] };
 	Vector2 windowSize = { windowLua["width"], windowLua["height"] };
+	bool windowMSAA = windowLua["msaa"];
 
 	Ptr<Window> editorWindow(new Window(
 	    windowPosition.x,
@@ -63,7 +64,8 @@ int main()
 	    windowSize.x,
 	    windowSize.y,
 	    projectName,
-		true));
+		true, 
+		windowMSAA));
 
 	InputManager::GetSingleton()->initialize(windowSize.x, windowSize.y);
 
@@ -87,6 +89,7 @@ int main()
 	source->play();
 
 	std::optional<int> ret;
+	editorWindow->show();
 	while (true)
 	{
 		if (ret = editorWindow->processMessages())

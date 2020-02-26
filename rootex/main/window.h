@@ -15,16 +15,16 @@ protected:
 	LPCSTR m_ClassName;
 	HINSTANCE m_AppInstance;
 	HWND m_WindowHandle;
-	RECT m_Clip;
 	
 	static LRESULT CALLBACK WindowsProc(HWND windowHandler, UINT msg, WPARAM wParam, LPARAM lParam);
 
 public:
-	Window(int xOffset, int yOffset, int width, int height, const String& title, bool isEditor);
+	Window(int xOffset, int yOffset, int width, int height, const String& title, bool isEditor, bool MSAA);
 	Window(const Window&) = delete;
 	Window& operator=(const Window&) = delete;
 	~Window() = default;
 
+	void show();
 	std::optional<int> processMessages();
 	void applyDefaultViewport();
 	void swapBuffers();
