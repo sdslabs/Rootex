@@ -91,7 +91,8 @@ int main()
 	    windowLua["deltaX"],
 	    windowLua["deltaY"],
 	    windowLua["title"], 
-		false));
+		false, 
+		windowLua["msaa"]));
 	InputManager::GetSingleton()->initialize(windowLua["deltaX"], windowLua["deltaY"]);
 	ShaderLibrary::MakeShaders();
 
@@ -135,6 +136,7 @@ int main()
 	LoggingScopeTimer gameScopedLogger("GameTime");
 
 	teapot->getComponent<TransformComponent>()->setTransform(Matrix::CreateFromYawPitchRoll(0, 0, 0) * Matrix::CreateTranslation(0, 0, -5.0f) * Matrix::CreateScale(1));
+	window->show();
 	while (true)
 	{
 		frameTimer.reset();

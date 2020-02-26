@@ -7,6 +7,11 @@
 #include "vendor/ImGUI/imgui_impl_dx11.h"
 #include "vendor/ImGUI/imgui_impl_win32.h"
 
+void Window::show()
+{
+	ShowWindow(m_WindowHandle, SW_SHOW);
+}
+
 std::optional<int> Window::processMessages()
 {
 	MSG msg;
@@ -83,7 +88,7 @@ LRESULT CALLBACK Window::WindowsProc(HWND windowHandler, UINT msg, WPARAM wParam
 	return DefWindowProc(windowHandler, msg, wParam, lParam);
 }
 
-Window::Window(int xOffset, int yOffset, int width, int height, const String& title, bool isEditor)
+Window::Window(int xOffset, int yOffset, int width, int height, const String& title, bool isEditor, bool MSAA)
     : m_Width(width)
     , m_Height(height)
 {
@@ -112,9 +117,14 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
 		    xOffset, yOffset, width, height,
 		    nullptr, nullptr,
 		    hInstance, nullptr);
-		ShowWindow(m_WindowHandle, SW_SHOW);
 
-		RenderingDevice::GetSingleton()->initialize(m_WindowHandle, width, height);
+		RECT clientRect;
+		GetClientRect(m_WindowHandle, &clientRect);
+		RenderingDevice::GetSingleton()->initialize(
+			m_WindowHandle, 
+			clientRect.right - clientRect.left, 
+			clientRect.bottom - clientRect.top, 
+			MSAA);
 	}
 	else
 	{
@@ -125,19 +135,16 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
 			xOffset, yOffset, width, height,
 			nullptr, nullptr,
 			hInstance, nullptr);
-		ShowWindow(m_WindowHandle, SW_SHOW);
 
-		RenderingDevice::GetSingleton()->initialize(m_WindowHandle, width, height);
+		RECT clientRect;
+		GetClientRect(m_WindowHandle, &clientRect);
+		RenderingDevice::GetSingleton()->initialize(
+		    m_WindowHandle,
+		    clientRect.right - clientRect.left,
+		    clientRect.bottom - clientRect.top,
+		    MSAA);
 
-		GetWindowRect(m_WindowHandle, &m_Clip);
-
-		// Modify the rect slightly, so the frame doesn't get clipped with
-		m_Clip.left += 5;
-		m_Clip.top += 30;
-		m_Clip.right -= 5;
-		m_Clip.bottom -= 5;
-
-		ClipCursor(&m_Clip);
+		ClipCursor(&clientRect);
 		ShowCursor(false);
 
 		RenderingDevice::GetSingleton()->setBackBufferRenderTarget();

@@ -16,8 +16,9 @@ RenderingDevice::~RenderingDevice()
 	CoUninitialize();
 }
 
-void RenderingDevice::initialize(HWND hWnd, int width, int height)
+void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 {
+	m_MSAA = MSAA;
 	UINT createDeviceFlags = 0;
 #if defined(DEBUG) || defined(_DEBUG)
 	createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
@@ -57,8 +58,7 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height)
 	m_Device->CheckMultisampleQualityLevels(DXGI_FORMAT_R8G8B8A8_UNORM, 4, &m_4XMSQuality);
 	PANIC(m_4XMSQuality <= 0, "MSAA is not supported on this hardware");
 
-	//if (m_4XMSQuality)
-	if (false)
+	if (m_4XMSQuality && MSAA)
 	{
 		sd.SampleDesc.Count = 4;
 		sd.SampleDesc.Quality = m_4XMSQuality - 1;
@@ -108,14 +108,14 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height)
 	descDepth.MipLevels = 1u;
 	descDepth.ArraySize = 1u;
 	descDepth.Format = DXGI_FORMAT_D32_FLOAT;
-	descDepth.SampleDesc.Count = 1u;
-	descDepth.SampleDesc.Quality = 0u;
+	descDepth.SampleDesc.Count = sd.SampleDesc.Count;
+	descDepth.SampleDesc.Quality = sd.SampleDesc.Quality;
 	descDepth.Usage = D3D11_USAGE_DEFAULT;
 	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 	GFX_ERR_CHECK(m_Device->CreateTexture2D(&descDepth, nullptr, &depthStencil));
 	D3D11_DEPTH_STENCIL_VIEW_DESC descDSView = {};
 	descDSView.Format = DXGI_FORMAT_D32_FLOAT;
-	descDSView.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	descDSView.ViewDimension = MSAA ? D3D11_DSV_DIMENSION_TEXTURE2DMS : D3D11_DSV_DIMENSION_TEXTURE2D;
 	descDSView.Texture2D.MipSlice = 0u;
 	GFX_ERR_CHECK(m_Device->CreateDepthStencilView(depthStencil, &descDSView, &m_DepthStencilView));
 	SafeRelease(&depthStencil);
@@ -142,7 +142,7 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height)
 	rsDesc.DepthBiasClamp = 0.0f;
 	rsDesc.DepthClipEnable = TRUE;
 	rsDesc.ScissorEnable = FALSE;
-	rsDesc.MultisampleEnable = FALSE;
+	rsDesc.MultisampleEnable = MSAA;
 	rsDesc.AntialiasedLineEnable = FALSE;
 
 	ID3D11RasterizerState* rsState;
@@ -184,7 +184,7 @@ void RenderingDevice::createRenderTextureTarget(int width, int height)
 	GFX_ERR_CHECK(m_Device->CreateTexture2D(&textureDesc, NULL, &m_RenderTargetTexture));
 
 	renderTargetViewDesc.Format = textureDesc.Format;
-	renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+	renderTargetViewDesc.ViewDimension = m_MSAA ? D3D11_RTV_DIMENSION_TEXTURE2DMS : D3D11_RTV_DIMENSION_TEXTURE2D;
 	renderTargetViewDesc.Texture2D.MipSlice = 0;
 	ID3D11Resource* backBuffer = nullptr;
 

@@ -11,12 +11,23 @@ class VisualComponentGraph;
 class Editor
 {
 	int m_DockSpaceID;
+	float m_ViewportWidth;
+	float m_ViewportHeight;
+	bool m_ViewportZoomEnabled;
+	float m_ViewportZoom = 1.0f;
+
+	bool m_FileSystemShow = true;
 
 	Editor() = default;
 	Editor(Editor&) = delete;
 	~Editor();
 
 	void applyDockspace();
+	void applyDocks();
+
+	void applyViewportDock();
+
+	void applyToolbarDock();
 
 public:
 	static Editor* GetSingleton();

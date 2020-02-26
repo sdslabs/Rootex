@@ -13,6 +13,8 @@ void Editor::initialize(HWND hWnd)
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	io.ConfigDockingWithShift = true;
+
 	ImGui_ImplWin32_Init(hWnd);
 	ImGui_ImplDX11_Init(RenderingDevice::GetSingleton()->getDevice(), RenderingDevice::GetSingleton()->getContext());
 	ImGui::StyleColorsDark();
@@ -25,6 +27,7 @@ void Editor::begin(VisualComponentGraph* visualGraph)
 	ImGui::NewFrame();
 
 	applyDockspace();
+	applyDocks();
 }
 
 void Editor::end(VisualComponentGraph* visualGraph)
@@ -49,7 +52,7 @@ void Editor::applyDockspace()
 	bool optFullscreen = optFullscreenPersistant;
 	static ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_None;
 
-	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_MenuBar;
 	if (optFullscreen)
 	{
 		ImGuiViewport* viewport = ImGui::GetMainViewport();
@@ -87,7 +90,7 @@ void Editor::applyDockspace()
 				{
 					OS::PrintLine("Yay");
 				}
-				ImGui::MenuItem("Save", "Ctrl+S");
+				ImGui::MenuItem("Save");
 				ImGui::MenuItem("Save All", "");
 				ImGui::Separator();
 				ImGui::MenuItem("Quit", "");
@@ -107,7 +110,7 @@ void Editor::applyDockspace()
 				}
 				ImGui::EndMenu();
 			}
-			
+
 			if (menuAction == "Rootex Editor")
 			{
 				ImGui::OpenPopup("About Rootex Editor");
@@ -118,13 +121,46 @@ void Editor::applyDockspace()
 				static TextResourceFile* license = ResourceLoader::CreateLuaTextResourceFile("LICENSE");
 				ImGui::Text(license->getString().c_str());
 				ImGui::Separator();
-				ImGui::EndPopup();
 				menuAction = "";
+				ImGui::EndPopup();
 			}
 			ImGui::EndMenuBar();
 		}
-		ImGui::End();
 	}
+	ImGui::End();
+}
+
+void Editor::applyDocks()
+{
+	applyToolbarDock();
+	applyViewportDock();
+}
+
+void Editor::applyViewportDock()
+{
+	if (ImGui::Begin("Viewport"))
+	{
+		m_ViewportWidth = ImGui::GetWindowWidth();
+		m_ViewportHeight = ImGui::GetWindowHeight();
+
+		ImGui::Image(RenderingDevice::GetSingleton()->getRenderTextureShaderResourceView(), { m_ViewportZoom * m_ViewportWidth, m_ViewportZoom * m_ViewportHeight });
+
+		ImGui::Checkbox("Enable Zoom", &m_ViewportZoomEnabled);
+
+		if (m_ViewportZoomEnabled)
+		{
+			ImGui::SliderFloat("Zoom", &m_ViewportZoom, 0.0f, 1.0f);
+		}
+	}
+	ImGui::End();
+}
+
+void Editor::applyToolbarDock()
+{
+	if (ImGui::Begin("Toolbar"))
+	{
+	}
+	ImGui::End();
 }
 
 Editor* Editor::GetSingleton()

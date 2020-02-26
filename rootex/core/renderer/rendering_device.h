@@ -31,6 +31,7 @@ class RenderingDevice
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_NewSkyDepthStencilState;
 
 	Microsoft::WRL::ComPtr<IDXGISwapChain> m_SwapChain;
+	bool m_MSAA;
 	unsigned int m_4XMSQuality;
 
 	RenderingDevice();
@@ -51,7 +52,7 @@ class RenderingDevice
 public:
 	static RenderingDevice* GetSingleton();
 
-	void initialize(HWND hWnd, int width, int height);
+	void initialize(HWND hWnd, int width, int height, bool MSAA);
 
 	void enableSkyDepthStencilState();
 	void disableSkyDepthStencilState();
