@@ -13,6 +13,9 @@ set(ROOTEX_SOURCES
 ""
 CACHE INTERNAL "")
 
+set(ROOTEX_PCH_HEADERS
+CACHE INTERNAL "")
+
 add_subdirectory(common)
 add_subdirectory(core)
 add_subdirectory(framework)
@@ -20,6 +23,7 @@ add_subdirectory(main)
 add_subdirectory(os)
 add_subdirectory(script)
 add_subdirectory(vendor)
+add_subdirectory(pch)
 
 # Adding shaders for pre-build compilation
 file(GLOB ShaderFiles
@@ -64,6 +68,8 @@ if (BUILD_EDITOR)
 endif(BUILD_EDITOR)
 
 add_library(Rootex STATIC ${ROOTEX_SOURCES})
+
+target_precompile_headers(Rootex PUBLIC ${ROOTEX_PCH_HEADERS})
 
 source_group(TREE "../"
     PREFIX "Rootex"
