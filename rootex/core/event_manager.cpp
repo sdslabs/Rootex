@@ -96,7 +96,7 @@ bool EventManager::dispatchDeferred(unsigned long maxMillis)
 	return queueFlushed;
 }
 
-bool EventManager::addListener(Event::Type type, EventHandlingFunction instance)
+bool EventManager::addListener(const Event::Type& type, EventHandlingFunction instance)
 {
 	auto&& it = m_EventListeners.find(type);
 	if (it == m_EventListeners.end())
@@ -116,7 +116,7 @@ bool EventManager::addListener(Event::Type type, EventHandlingFunction instance)
 	}
 }
 
-bool EventManager::removeListener(const EventHandlingFunction handlerFunction, Event::Type type)
+bool EventManager::removeListener(const EventHandlingFunction handlerFunction, const Event::Type& type)
 {
 	bool success = false;
 	auto&& it = m_EventListeners.find(type);

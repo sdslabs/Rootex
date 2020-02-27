@@ -88,7 +88,7 @@ int main()
 	source->setLooping(true);
 	source->play();
 
-	EventManager::GetSingleton()->addListener(Event::Type::InputExit, CreateDelegate([](const Event* event)->void
+	EventManager::GetSingleton()->addListener("InputExit", CreateDelegate([](const Event* event)->void
 	{
 		PostQuitMessage(0);
 	}));
