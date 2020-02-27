@@ -14,14 +14,6 @@ Entity::Entity(EntityID id)
 {
 }
 
-void Entity::subscribe(const Event::Type type)
-{
-	if (m_EventHandler.getHandler())
-	{
-		EventManager::GetSingleton()->addListener(&m_EventHandler, type);
-	}
-}
-
 bool Entity::setupComponents()
 {
 	bool status = true;
@@ -50,9 +42,4 @@ EntityID Entity::getID() const
 const HashMap<ComponentID, Ref<Component>>& Entity::getAllComponents() const
 {
 	return m_Components;
-}
-
-void Entity::setEventHandler(const EventFunction& function)
-{
-	m_EventHandler.setHandler(function);
 }
