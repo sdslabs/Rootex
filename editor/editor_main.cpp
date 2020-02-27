@@ -88,6 +88,11 @@ int main()
 	source->setLooping(true);
 	source->play();
 
+	EventManager::GetSingleton()->addListener(Event::Type::InputExit, CreateDelegate([](const Event* event)->void
+	{
+		PostQuitMessage(0);
+	}));
+
 	std::optional<int> ret;
 	editorWindow->show();
 	while (true)
