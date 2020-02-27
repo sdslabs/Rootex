@@ -1,5 +1,6 @@
 #include "os.h"
 
+#include <iostream>
 #include <filesystem>
 
 #include "common/common.h"

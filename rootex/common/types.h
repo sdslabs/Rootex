@@ -44,3 +44,7 @@ namespace ColorPresets = DirectX::Colors;
 
 #include <variant>
 using Variant = std::variant<int, float, bool, String, Vector2, Vector3, Vector4, Matrix, Quaternion, Color>;
+
+#include <functional>
+template <class T>
+using Function = std::function<T>;

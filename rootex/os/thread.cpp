@@ -8,7 +8,7 @@ void DebugTask::execute()
 	int i = 10;
 	while (i-- > 0)
 	{
-		std::cout << "Task1 is running\n";
+		OS::Print("Task1 is running\n");
 	}
 }
 
@@ -17,7 +17,7 @@ void RenderTask::execute()
 	int i = 10;
 	while (i-- > 0)
 	{
-		std::cout << "Task2 is running\n";
+		OS::Print("Task2 is running\n");
 	}
 }
 
