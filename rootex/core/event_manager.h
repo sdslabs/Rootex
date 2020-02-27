@@ -34,8 +34,8 @@ public:
 		Infinite = 0xffffffff
 	};
 
-	bool addListener(Event::Type type, EventHandlingFunction instance);
-	bool removeListener(const EventHandlingFunction handlerName, Event::Type type);
+	bool addListener(const Event::Type& type, EventHandlingFunction instance);
+	bool removeListener(const EventHandlingFunction handlerName, const Event::Type& type);
 
 	void call(Event* event);
 	void deferredCall(const Ref<Event> event);

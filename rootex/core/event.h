@@ -5,7 +5,7 @@
 class Event
 {
 public:
-	enum class Type;
+	typedef String Type;
 
 private:
 	Type m_Type;
@@ -20,22 +20,4 @@ public:
 	const String& getName() const { return m_Name; };
 	const Type getEventType() const { return m_Type; };
 	const Variant& getData() const { return m_Data; }
-
-public:
-	enum class Type
-	{
-		Test,
-
-		InputStart, // Loop index starter
-		InputForward,
-		InputRight,
-		InputBackward,
-		InputLeft,
-	    InputTestAction,
-		InputJump,
-		InputExit,
-		InputEnd, // Loop index ender
-		InputMouseX, // Mouse is handled separately
-		InputMouseY
-	};
 };
