@@ -30,7 +30,10 @@ class InputManager
 	gainput::InputMap m_GainputMap;
 	InputListener m_Listener;
 	HashMap<Device, unsigned int> DeviceIDs;
-	
+
+	HashMap<unsigned int, Event::Type> m_InputEventNames;
+	HashMap<Event::Type, unsigned int> m_InputEventIDs;
+
 	unsigned int m_Width;
 	unsigned int m_Height;
 	Vector2 m_MousePositionDelta;
@@ -39,6 +42,7 @@ class InputManager
 	InputManager(InputManager&) = delete;
 	~InputManager();
 
+	void registerInput(const String& input);
 	void forwardMessage(const MSG& msg);
 
 	friend class Window;
