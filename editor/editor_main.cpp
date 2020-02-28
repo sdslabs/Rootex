@@ -84,14 +84,9 @@ int main()
 
 	AudioResourceFile* w = ResourceLoader::CreateAudioResourceFile("game/assets/hipshop.wav");
 	Ref<StreamingAudioBuffer> audio(new StreamingAudioBuffer(w));
-	Ref<StreamingAudioSource> source(new StreamingAudioSource(audio.get()));
+	Ref<StreamingAudioSource> source(new StreamingAudioSource(audio));
 	source->setLooping(true);
 	source->play();
-
-	EventManager::GetSingleton()->addListener("InputExit", CreateDelegate([](const Event* event)->void
-	{
-		PostQuitMessage(0);
-	}));
 
 	std::optional<int> ret;
 	editorWindow->show();
@@ -139,6 +134,8 @@ int main()
 		editorWindow->clearCurrentTarget();
 		editorWindow->clearUnboundTarget();
 	}
+
+	AudioSystem::GetSingleton()->shutDown();
 
 	return ret.value();
 }

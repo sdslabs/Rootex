@@ -95,8 +95,7 @@ InputManager* InputManager::GetSingleton()
 
 bool InputManager::BoolListen(int userButton, bool oldValue, bool newValue)
 {
-	Event inputEvent("BoolInputEvent", GetSingleton()->m_InputEventNames[userButton], Vector2(oldValue, newValue));
-	EventManager::GetSingleton()->call(&inputEvent);
+	EventManager::GetSingleton()->call("BoolInputEvent", GetSingleton()->m_InputEventNames[userButton], Vector2(oldValue, newValue));
 	return true;
 }
 
