@@ -24,7 +24,6 @@ public:
 	virtual ~Entity() = default;
 
 	void addComponent(const Ref<Component>& component);
-	void subscribe(const Event::Type type);
 
 	template <class ComponentType>
 	void removeComponent();

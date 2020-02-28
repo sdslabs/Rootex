@@ -48,8 +48,6 @@ class AudioSystem
 	ALCcontext* m_Context;
 	Vector<AudioSource*> m_ActiveAudioSources;
 
-	void shutDown();
-
 public:
 	AudioSystem();
 	AudioSystem(AudioSystem&) = delete;
@@ -69,4 +67,5 @@ public:
 
 	bool initialize();
 	void update();
+	void shutDown();
 };

@@ -12,37 +12,46 @@ protected:
 
 	bool m_IsStreaming;
 	bool m_IsLooping;
+	bool m_IsPaused;
+	bool m_IsPlaying;
 
 	AudioSource(bool isStreaming);
-	~AudioSource();
+	virtual ~AudioSource();
 
 public:
 	virtual void setLooping(bool enabled);
 	virtual void queueNewBuffers();
 
 	void play();
+	void pause();
+	void stop();
 
-	bool isLooping();
-	ALuint getSourceID();
+	bool isPlaying() const;
+	bool isPaused() const;
+	bool isLooping() const;
+	ALuint getSourceID() const;
 };
 
 class StaticAudioSource : public AudioSource
 {
-	StaticAudioBuffer* m_StaticAudio;
+	Ref<StaticAudioBuffer> m_StaticAudio;
 
 public:
-	StaticAudioSource(StaticAudioBuffer* audio);
+	StaticAudioSource(Ref<StaticAudioBuffer> audio);
 	~StaticAudioSource();
+
+	void unqueueBuffers();
 };
 
 class StreamingAudioSource : public AudioSource
 {
-	StreamingAudioBuffer* m_StreamingAudio;
+	Ref<StreamingAudioBuffer> m_StreamingAudio;
 
 public:
-	StreamingAudioSource(StreamingAudioBuffer* audio);
+	StreamingAudioSource(Ref<StreamingAudioBuffer> audio);
 	~StreamingAudioSource();
 
 	void setLooping(bool enabled) override;
 	void queueNewBuffers() override;
+	void unqueueBuffers();
 };
