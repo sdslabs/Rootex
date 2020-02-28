@@ -41,6 +41,8 @@
 #include "vendor/ImGUI/imgui_impl_dx11.h"
 #include "vendor/ImGUI/imgui_impl_win32.h"
 
+Variant function(const Event* event) { return true; };
+
 int main()
 {
 	PhysicsSystem::GetSingleton()->initialize();
@@ -55,14 +57,14 @@ int main()
 	source->setLooping(true);
 	//source->play();
 
-	EventManager::GetSingleton()->addListener("InputExit", CreateDelegate([](const Event* event) -> void {
+	BIND_EVENT_FUNCTION("InputExit", [](const Event* event) -> Variant {
 		PostQuitMessage(0);
-	}));
+		return true;
+	});
 
-	EventManager::GetSingleton()->addListener("InputBackward", CreateDelegate([source](const Event* event) -> void 
-	{
+	EventManager::GetSingleton()->addListener("InputBackward", CreateDelegate([source](const Event* event) -> Variant {
 		if (std::get<Vector2>(event->getData()).x)
-			return;
+			return nullptr;
 		if (source->isPaused())
 		{
 			source->play();
@@ -71,11 +73,11 @@ int main()
 		{
 			source->pause();
 		}
+		return true;
 	}));
 
-	Ref<Event> testEvent(new Event("Test Event", "TestEvent", String("SDSLabs")));
-	EventManager::GetSingleton()->call(testEvent.get());
-	EventManager::GetSingleton()->deferredCall(testEvent);
+	EventManager::GetSingleton()->call("Test Event", "TestEvent", String("SDSLabs"));
+	EventManager::GetSingleton()->deferredCall("Test Event", "TestEvent", String("SDSLabs"));
 
 	TextResourceFile* r = ResourceLoader::CreateTextResourceFile("rootex/test/abc.txt"); // So this loads build/game/abc.txt (However the binary exists in build/game/Debug/)
 	OS::PrintLine(r->getString());
@@ -105,9 +107,9 @@ int main()
 	    windowLua["y"],
 	    windowLua["deltaX"],
 	    windowLua["deltaY"],
-	    windowLua["title"], 
-		false, 
-		windowLua["msaa"]));
+	    windowLua["title"],
+	    false,
+	    windowLua["msaa"]));
 	InputManager::GetSingleton()->initialize(windowLua["deltaX"], windowLua["deltaY"]);
 	ShaderLibrary::MakeShaders();
 
@@ -136,12 +138,16 @@ int main()
 	Ref<Entity> teapotChild = EntityFactory::GetSingleton()->createEntity(teapotEntity);
 	teapotChild->getComponent<DiffuseVisualComponent>()->setTransform(Matrix::CreateTranslation({ 0.0f, 1.0f, 0.0f }));
 	//teapot->getComponent<HierarchyComponent>()->addChild(teapotChild);
-	
-	EventManager::GetSingleton()->addListener("InputForward", CreateDelegate([&](const Event* event) -> void {
+
+
+	BIND_EVENT_FUNCTION("InputForward", function);
+	BIND_EVENT_FUNCTION("InputForward", [&](const Event* event) -> Variant
+	{
 		Vector2 keyData = std::get<Vector2>(event->getData());
 		OS::PrintLine("Event received: " + std::to_string(keyData.x) + "," + std::to_string(keyData.y));
-	}));
-
+		return true;
+	});
+	
 	visualGraph->addChild(teapot);
 
 	std::optional<int> ret = {};
@@ -165,7 +171,7 @@ int main()
 		dx += 0.001f * (InputManager::GetSingleton()->isPressed("InputForward") - InputManager::GetSingleton()->isPressed("InputBackward"));
 		dy += 0.001f * (InputManager::GetSingleton()->isPressed("InputRight") - InputManager::GetSingleton()->isPressed("InputLeft"));
 		visualGraph->getCamera()->setPosition({ y += dy, 0.0f, -(x += dx) });
-		
+
 		RenderSystem::GetSingleton()->render(visualGraph.get());
 		InputManager::GetSingleton()->update();
 		EventManager::GetSingleton()->dispatchDeferred();
