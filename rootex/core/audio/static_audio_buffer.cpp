@@ -32,7 +32,7 @@ StaticAudioBuffer::~StaticAudioBuffer()
 	destroyBuffers();
 }
 
-ALuint StaticAudioBuffer::getBuffer()
+ALuint& StaticAudioBuffer::getBuffer()
 {
 	return m_BufferID;
 }
