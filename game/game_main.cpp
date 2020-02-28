@@ -51,17 +51,30 @@ int main()
 	AudioSystem::GetSingleton()->initialize();
 	AudioResourceFile* w = ResourceLoader::CreateAudioResourceFile("game/assets/hipshop.wav");
 	Ref<StreamingAudioBuffer> audio(new StreamingAudioBuffer(w));
-	Ref<StreamingAudioSource> source(new StreamingAudioSource(audio.get()));
+	Ref<StreamingAudioSource> source(new StreamingAudioSource(audio));
 	source->setLooping(true);
-	source->play();
+	//source->play();
 
-	Ref<EventHandler> gameQuitter(new EventHandler());
-	gameQuitter->setHandler([](const Event* event) { PostQuitMessage(0); });
-	EventManager::GetSingleton()->addListener(gameQuitter.get(), Event::Type::InputExit);
-	Ref<EventHandler> gameEventHandler(new EventHandler());
-	EventManager::GetSingleton()->addListener(gameEventHandler.get(), Event::Type::Test);
-	Ref<Event> testEvent(new Event("Test Event", Event::Type::Test, String("SDSLabs")));
-	EventManager::GetSingleton()->call(testEvent.get()); // This should show warning because there is no handling function set for the event handler
+	EventManager::GetSingleton()->addListener("InputExit", CreateDelegate([](const Event* event) -> void {
+		PostQuitMessage(0);
+	}));
+
+	EventManager::GetSingleton()->addListener("InputBackward", CreateDelegate([source](const Event* event) -> void 
+	{
+		if (std::get<Vector2>(event->getData()).x)
+			return;
+		if (source->isPaused())
+		{
+			source->play();
+		}
+		else
+		{
+			source->pause();
+		}
+	}));
+
+	Ref<Event> testEvent(new Event("Test Event", "TestEvent", String("SDSLabs")));
+	EventManager::GetSingleton()->call(testEvent.get());
 	EventManager::GetSingleton()->deferredCall(testEvent);
 
 	TextResourceFile* r = ResourceLoader::CreateTextResourceFile("rootex/test/abc.txt"); // So this loads build/game/abc.txt (However the binary exists in build/game/Debug/)
@@ -123,14 +136,12 @@ int main()
 	Ref<Entity> teapotChild = EntityFactory::GetSingleton()->createEntity(teapotEntity);
 	teapotChild->getComponent<DiffuseVisualComponent>()->setTransform(Matrix::CreateTranslation({ 0.0f, 1.0f, 0.0f }));
 	//teapot->getComponent<HierarchyComponent>()->addChild(teapotChild);
-	teapot->setEventHandler([](const Event* event) {
-		Vector2 inputData = InputManager::GetSingleton()->getMousePositionDelta();
-		OS::PrintLine("Event received: " + std::to_string(inputData.x) + "," + std::to_string(inputData.y));
-	});
-	teapot->subscribe(Event::Type::InputForward);
-	teapot->subscribe(Event::Type::InputBackward);
-	teapot->subscribe(Event::Type::InputLeft);
-	teapot->subscribe(Event::Type::InputRight);
+	
+	EventManager::GetSingleton()->addListener("InputForward", CreateDelegate([&](const Event* event) -> void {
+		Vector2 keyData = std::get<Vector2>(event->getData());
+		OS::PrintLine("Event received: " + std::to_string(keyData.x) + "," + std::to_string(keyData.y));
+	}));
+
 	visualGraph->addChild(teapot);
 
 	std::optional<int> ret = {};
@@ -151,8 +162,8 @@ int main()
 		static float dx = 0;
 		static float y = 0;
 		static float dy = 0;
-		dx += 0.001f * (InputManager::GetSingleton()->isPressed(Event::Type::InputForward) - InputManager::GetSingleton()->isPressed(Event::Type::InputBackward));
-		dy += 0.001f * (InputManager::GetSingleton()->isPressed(Event::Type::InputRight) - InputManager::GetSingleton()->isPressed(Event::Type::InputLeft));
+		dx += 0.001f * (InputManager::GetSingleton()->isPressed("InputForward") - InputManager::GetSingleton()->isPressed("InputBackward"));
+		dy += 0.001f * (InputManager::GetSingleton()->isPressed("InputRight") - InputManager::GetSingleton()->isPressed("InputLeft"));
 		visualGraph->getCamera()->setPosition({ y += dy, 0.0f, -(x += dx) });
 		
 		RenderSystem::GetSingleton()->render(visualGraph.get());
@@ -163,6 +174,8 @@ int main()
 		window->swapBuffers();
 		window->clearCurrentTarget();
 	}
+
+	AudioSystem::GetSingleton()->shutDown();
 
 	return ret.value();
 }
