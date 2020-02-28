@@ -43,7 +43,9 @@ typedef DirectX::SimpleMath::Color Color;
 namespace ColorPresets = DirectX::Colors;
 
 #include <variant>
-using Variant = std::variant<int, float, bool, String, Vector2, Vector3, Vector4, Matrix, Quaternion, Color>;
+typedef Vector<std::variant<bool, int, char, float, String, Vector2, Vector3, Vector4, Matrix>> VariantVector;
+using Variant = std::variant<bool, int, char, float, String, Vector2, Vector3, Vector4, Matrix, VariantVector>;
+#define Extract(TypeName, variant) std::get<TypeName>((variant))
 
 #include <functional>
 template <class T>
