@@ -9,7 +9,7 @@
 
 void Editor::initialize(HWND hWnd)
 {
-	BIND_MEMBER("EditorQuit", Editor::quit);
+	BIND_EVENT_MEMBER_FUNCTION("EditorQuit", Editor::quit);
 
 	m_EditorConfig.loadExecuteScript(ResourceLoader::CreateLuaTextResourceFile("editor/config/editor_config.lua"));
 
