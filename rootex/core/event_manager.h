@@ -5,7 +5,8 @@
 
 #include <cstdarg>
 
-#define BIND_MEMBER(stringEventType, classFunction) EventManager::GetSingleton()->addListener(stringEventType, CreateDelegate([this](const Event* event) -> Variant { return this->classFunction(event); }));
+#define BIND_EVENT_FUNCTION(stringEventType, function) EventManager::GetSingleton()->addListener(stringEventType, CreateDelegate(function))
+#define BIND_EVENT_MEMBER_FUNCTION(stringEventType, classFunction) EventManager::GetSingleton()->addListener(stringEventType, CreateDelegate([this](const Event* event) -> Variant { return this->classFunction(event); }))
 
 const unsigned int EVENTMANAGER_NUM_QUEUES = 2;
 
