@@ -14,10 +14,24 @@ EventManager* EventManager::GetSingleton()
 	return &singleton;
 }
 
-void EventManager::call(Event* event)
+Variant EventManager::returnCall(const String& eventName, const Event::Type& eventType, const Variant& data)
 {
 	bool processed = false;
-	auto&& findIt = m_EventListeners.find(event->getEventType());
+	Event event(eventName, eventType, data);
+	auto&& findIt = m_EventListeners.find(event.getEventType());
+
+	if (findIt != m_EventListeners.end())
+	{
+		return (*findIt->second.front().get())(&event);
+	}
+	return nullptr;
+}
+
+void EventManager::call(const String& eventName, const Event::Type& eventType, const Variant& data)
+{
+	bool processed = false;
+	Event event(eventName, eventType, data);
+	auto&& findIt = m_EventListeners.find(event.getEventType());
 
 	if (findIt != m_EventListeners.end())
 	{
@@ -25,14 +39,16 @@ void EventManager::call(Event* event)
 		for (auto it = eventListenerList.begin(); it != eventListenerList.end(); ++it)
 		{
 			EventHandlingFunction listener = *it;
-			(*listener.get())(event);
+ 			(*listener.get())(&event);
 			processed = true;
 		}
 	}
 }
 
-void EventManager::deferredCall(const Ref<Event> event)
+void EventManager::deferredCall(const String& eventName, const Event::Type& eventType, const Variant& data)
 {
+	Ref<Event> event(new Event(eventName, eventType, data));
+
 	if (!(m_ActiveQueue >= 0 && m_ActiveQueue < EVENTMANAGER_NUM_QUEUES))
 	{
 		WARN("Event left unhandled: " + event->getName());
