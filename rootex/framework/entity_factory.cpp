@@ -1,9 +1,7 @@
 #include "entity_factory.h"
 
-#include "script/interpreter.h"
-
-#include "entity.h"
 #include "component.h"
+#include "entity.h"
 #include "system.h"
 
 #include "components/debug_component.h"
