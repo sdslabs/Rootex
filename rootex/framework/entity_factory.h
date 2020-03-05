@@ -2,9 +2,7 @@
 
 #include "common/common.h"
 #include "resource_file.h"
-#ifndef SWIG
 #include "script/interpreter.h"
-#endif
 #include "entity.h"
 
 #define INVALID_ID 0
