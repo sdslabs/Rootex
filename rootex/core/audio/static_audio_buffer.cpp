@@ -2,6 +2,7 @@
 
 #include "audio_system.h"
 #include "resource_data.h"
+#include "audio_utils.h"
 
 void StaticAudioBuffer::initializeBuffers()
 {
