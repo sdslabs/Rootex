@@ -68,9 +68,9 @@ Ref<Component> EntityFactory::createHierarchyComponent()
 
 Ref<Entity> EntityFactory::createEntity(LuaTextResourceFile* actorLuaDescription)
 {
-	m_LuaState.loadExecuteScript(actorLuaDescription);
+	LuaInterpreter::GetSingleton()->loadExecuteScript(actorLuaDescription);
 
-	LuaVariable entityDescription = m_LuaState.getGlobal("Entity");
+	LuaVariable entityDescription = LuaInterpreter::GetSingleton()->getGlobal("Entity");
 	if (entityDescription.isNil())
 	{
 		ERR("Entity not found:" + actorLuaDescription->getPath().generic_string());
