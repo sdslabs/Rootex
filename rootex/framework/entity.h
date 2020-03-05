@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common/common.h"
+#include "script/interpreter.h"
 #include "event.h"
 
 class Component;
