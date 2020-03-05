@@ -1,5 +1,6 @@
-a = Rootex.FrameTimer()
-print(a.getTimeMS())
+print(#Rootex)
+a = Rootex.Timer()
+print(a:getTimeMs())
 
 window = {
     x = 0,
