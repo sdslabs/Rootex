@@ -4,7 +4,10 @@
 #include "core/resource_file.h"
 
 #include "vendor/Lua/src/lua.hpp"
+
+#ifndef SWIG
 #include "vendor/LuaBridge/Source/LuaBridge/LuaBridge.h"
+#endif
 
 typedef luabridge::LuaRef LuaVariable;
 

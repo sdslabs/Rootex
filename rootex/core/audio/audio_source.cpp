@@ -3,6 +3,7 @@
 #include "audio_system.h"
 #include "static_audio_buffer.h"
 #include "streaming_audio_buffer.h"
+#include "audio_utils.h"
 
 AudioSource::AudioSource(bool isStreaming)
     : m_IsStreaming(isStreaming)
