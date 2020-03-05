@@ -1,10 +1,7 @@
 #pragma once
 
 #include "common/common.h"
-
-#ifndef SWIG
 #include "script/interpreter.h"
-#endif
 
 #include "components/component_ids.h"
 

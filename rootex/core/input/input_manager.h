@@ -8,8 +8,6 @@
 
 #define MAX_BUTTON_BINDINGS 10
 
-class InputListener;
-
 typedef gainput::Key KeyboardButton;
 typedef gainput::MouseButton MouseButton;
 typedef gainput::PadButton PadButton;
