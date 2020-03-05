@@ -26,12 +26,12 @@ Rootex runs only on Windows and there are no plans to port it to other platforms
 
 1. Install [Visual Studio 2019](https://visualstudio.microsoft.com/vs/), [CMake build system](https://cmake.org/download/) and [OpenAL](https://www.openal.org/).
 2. Install Visual Studio Desktop C++ development pack (or anything similar, since C++ is no longer a default language since at least Visual Studio 19)
-3. Run `GenerateCache.bat`.
-4. Use `Build.bat` to build Rootex.
+3. Run `generate_cache.bat`.
+4. Use `build.bat` to build Rootex.
 
 ## <a name=how>How can I contribute?
 
-Join our [Discord server](https://discord.gg/HtVxfqt) for Rootex and Rubeus, or optionally ping us at chat.sdslabs.co to get guidance. You can start with setting up Rootex on your Windows machine and try solving a few bugs listed here: https://github.com/sdslabs/Rootex/issues
+Read [here](CONTRIBUTING.md) to know our contribution guidelines. Join our [Discord server](https://discord.gg/HtVxfqt) for Rootex and Rubeus, or optionally ping us at chat.sdslabs.co to get guidance. You can start with setting up Rootex on your Windows machine and try solving a few bugs listed here: https://github.com/sdslabs/Rootex/issues
 
 ## <a name=license>License
 

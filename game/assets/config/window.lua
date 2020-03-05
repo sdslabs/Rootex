@@ -1,3 +1,6 @@
+a = Rootex.FrameTimer()
+print(a.getTimeMS())
+
 window = {
     x = 0,
     y = 0,
