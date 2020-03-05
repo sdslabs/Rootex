@@ -98,10 +98,9 @@ int main()
 	th.submit(ju);
 	th.shutdown();
 
-	LuaInterpreter inter;
-	inter.loadExecuteScript(windowSettings);
+	LuaInterpreter::GetSingleton()->loadExecuteScript(windowSettings);
 
-	LuaVariable windowLua = inter.getGlobal("window");
+	LuaVariable windowLua = LuaInterpreter::GetSingleton()->getGlobal("window");
 	Ptr<Window> window(new Window(
 	    windowLua["x"],
 	    windowLua["y"],

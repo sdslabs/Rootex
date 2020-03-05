@@ -13,6 +13,10 @@ set(ROOTEX_SOURCES
 ""
 CACHE INTERNAL "")
 
+set(ROOTEX_SWIG_INTERFACE
+    ${CMAKE_CURRENT_LIST_DIR}/rootex.i
+CACHE INTERNAL "")
+
 set(ROOTEX_PCH_HEADERS
 CACHE INTERNAL "")
 
@@ -21,7 +25,7 @@ add_subdirectory(core)
 add_subdirectory(framework)
 add_subdirectory(main)
 add_subdirectory(os)
-add_subdirectory(script)
+add_subdirectory(script) # Needs to be the last amongst the Rootex sources. vendor/ and pch/ should be added later
 add_subdirectory(vendor)
 add_subdirectory(pch)
 
