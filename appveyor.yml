@@ -1,8 +1,0 @@
-version: 1.0.{build}
-image: Visual Studio 2019
-platform: x64
-configuration: Debug
-install:	
-- ps: .\GenerateCache.bat	
-build_script:
-- ps: .\Build.bat
