@@ -12,13 +12,23 @@ LuaInterpreter::LuaInterpreter()
 {
 	m_LuaState = luaL_newstate();
 	luaopen_base(m_LuaState);
-	luaopen_Rootex(m_LuaState);
 	luaL_openlibs(m_LuaState);
+	bool error = luaopen_Rootex(m_LuaState);
+	if (!error)
+	{
+		ERR("Error occured in loading Rootex Lua bindings: " + String(lua_tostring(m_LuaState, -1)));
+	}
 }
 
 LuaInterpreter::~LuaInterpreter()
 {
 	lua_close(m_LuaState);
+}
+
+LuaInterpreter* LuaInterpreter::GetSingleton()
+{
+	static LuaInterpreter singleton;
+	return &singleton;
 }
 
 void LuaInterpreter::loadExecuteScript(LuaTextResourceFile* script)
