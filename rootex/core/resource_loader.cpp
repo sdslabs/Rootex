@@ -4,6 +4,8 @@
 
 #include "common/common.h"
 
+#include "core/audio/audio_utils.h"
+
 #include "core/audio/audio_system.h"
 #include "core/renderer/index_buffer.h"
 #include "core/renderer/vertex_buffer.h"
