@@ -83,6 +83,7 @@ target_include_directories(Rootex PUBLIC
 target_link_libraries(Rootex PUBLIC
     Lua
     LuaBridge
+    LuaBindings
     OpenAL
     ALUT
     DirectXTK
