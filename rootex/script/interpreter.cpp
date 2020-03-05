@@ -1,9 +1,18 @@
 #include "interpreter.h"
 #include "core/resource_data.h"
 
+extern "C"
+{
+	int luaopen_Rootex(lua_State* L);
+}
+
+#define LUA_EXTRALIBS { "Rootex", luaopen_Rootex },
+
 LuaInterpreter::LuaInterpreter()
 {
 	m_LuaState = luaL_newstate();
+	luaopen_base(m_LuaState);
+	luaopen_Rootex(m_LuaState);
 	luaL_openlibs(m_LuaState);
 }
 
