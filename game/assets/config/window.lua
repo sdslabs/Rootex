@@ -1,4 +1,6 @@
 print(#Rootex)
+b = Rootex.ResourceLoader.CreateTextResourceFile('LICENSE')
+print(b:getString())
 a = Rootex.Timer()
 print(a:getTimeMs())
 
