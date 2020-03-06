@@ -11,45 +11,45 @@ void Editor::initialize(HWND hWnd)
 {
 	BIND_EVENT_MEMBER_FUNCTION("EditorQuit", Editor::quit);
 
-	m_EditorConfig.loadExecuteScript(ResourceLoader::CreateLuaTextResourceFile("editor/config/editor_config.lua"));
+	LuaInterpreter::GetSingleton()->loadExecuteScript(ResourceLoader::CreateLuaTextResourceFile("editor/config/editor_config.lua"));
 
 	m_Colors.m_Accent = {
-		(float)m_EditorConfig.getGlobal("general")["colors"]["accent"]["r"],
-		(float)m_EditorConfig.getGlobal("general")["colors"]["accent"]["g"],
-		(float)m_EditorConfig.getGlobal("general")["colors"]["accent"]["b"],
-		(float)m_EditorConfig.getGlobal("general")["colors"]["accent"]["a"],
+		(float)LuaInterpreter::GetSingleton()->getGlobal("general")["colors"]["accent"]["r"],
+		(float)LuaInterpreter::GetSingleton()->getGlobal("general")["colors"]["accent"]["g"],
+		(float)LuaInterpreter::GetSingleton()->getGlobal("general")["colors"]["accent"]["b"],
+		(float)LuaInterpreter::GetSingleton()->getGlobal("general")["colors"]["accent"]["a"],
 	};
 	m_Colors.m_MediumAccent = {
-		(float)m_EditorConfig.getGlobal("general")["colors"]["mediumAccent"]["r"],
-		(float)m_EditorConfig.getGlobal("general")["colors"]["mediumAccent"]["g"],
-		(float)m_EditorConfig.getGlobal("general")["colors"]["mediumAccent"]["b"],
-		(float)m_EditorConfig.getGlobal("general")["colors"]["mediumAccent"]["a"],
+		(float)LuaInterpreter::GetSingleton()->getGlobal("general")["colors"]["mediumAccent"]["r"],
+		(float)LuaInterpreter::GetSingleton()->getGlobal("general")["colors"]["mediumAccent"]["g"],
+		(float)LuaInterpreter::GetSingleton()->getGlobal("general")["colors"]["mediumAccent"]["b"],
+		(float)LuaInterpreter::GetSingleton()->getGlobal("general")["colors"]["mediumAccent"]["a"],
 	};
 	m_Colors.m_HeavyAccent = {
-		(float)m_EditorConfig.getGlobal("general")["colors"]["heavyAccent"]["r"],
-		(float)m_EditorConfig.getGlobal("general")["colors"]["heavyAccent"]["g"],
-		(float)m_EditorConfig.getGlobal("general")["colors"]["heavyAccent"]["b"],
-		(float)m_EditorConfig.getGlobal("general")["colors"]["heavyAccent"]["a"],
+		(float)LuaInterpreter::GetSingleton()->getGlobal("general")["colors"]["heavyAccent"]["r"],
+		(float)LuaInterpreter::GetSingleton()->getGlobal("general")["colors"]["heavyAccent"]["g"],
+		(float)LuaInterpreter::GetSingleton()->getGlobal("general")["colors"]["heavyAccent"]["b"],
+		(float)LuaInterpreter::GetSingleton()->getGlobal("general")["colors"]["heavyAccent"]["a"],
 	};
 	m_Colors.m_Inactive = {
-		(float)m_EditorConfig.getGlobal("general")["colors"]["inactive"]["r"],
-		(float)m_EditorConfig.getGlobal("general")["colors"]["inactive"]["g"],
-		(float)m_EditorConfig.getGlobal("general")["colors"]["inactive"]["b"],
-		(float)m_EditorConfig.getGlobal("general")["colors"]["inactive"]["a"],
+		(float)LuaInterpreter::GetSingleton()->getGlobal("general")["colors"]["inactive"]["r"],
+		(float)LuaInterpreter::GetSingleton()->getGlobal("general")["colors"]["inactive"]["g"],
+		(float)LuaInterpreter::GetSingleton()->getGlobal("general")["colors"]["inactive"]["b"],
+		(float)LuaInterpreter::GetSingleton()->getGlobal("general")["colors"]["inactive"]["a"],
 	};
 
-	m_ViewportSettings.m_AspectRatio = (float)m_EditorConfig.getGlobal("viewport")["aspectRatio"];
+	m_ViewportSettings.m_AspectRatio = (float)LuaInterpreter::GetSingleton()->getGlobal("viewport")["aspectRatio"];
 	m_ViewportSettings.m_ImageTint = {
-		(float)m_EditorConfig.getGlobal("viewport")["imageTint"]["r"],
-		(float)m_EditorConfig.getGlobal("viewport")["imageTint"]["g"],
-		(float)m_EditorConfig.getGlobal("viewport")["imageTint"]["b"],
-		(float)m_EditorConfig.getGlobal("viewport")["imageTint"]["a"],
+		(float)LuaInterpreter::GetSingleton()->getGlobal("viewport")["imageTint"]["r"],
+		(float)LuaInterpreter::GetSingleton()->getGlobal("viewport")["imageTint"]["g"],
+		(float)LuaInterpreter::GetSingleton()->getGlobal("viewport")["imageTint"]["b"],
+		(float)LuaInterpreter::GetSingleton()->getGlobal("viewport")["imageTint"]["a"],
 	};
 	m_ViewportSettings.m_ImageBorderColor = {
-		(float)m_EditorConfig.getGlobal("viewport")["borderColor"]["r"],
-		(float)m_EditorConfig.getGlobal("viewport")["borderColor"]["g"],
-		(float)m_EditorConfig.getGlobal("viewport")["borderColor"]["b"],
-		(float)m_EditorConfig.getGlobal("viewport")["borderColor"]["a"],
+		(float)LuaInterpreter::GetSingleton()->getGlobal("viewport")["borderColor"]["r"],
+		(float)LuaInterpreter::GetSingleton()->getGlobal("viewport")["borderColor"]["g"],
+		(float)LuaInterpreter::GetSingleton()->getGlobal("viewport")["borderColor"]["b"],
+		(float)LuaInterpreter::GetSingleton()->getGlobal("viewport")["borderColor"]["a"],
 	};
 
 	IMGUI_CHECKVERSION();
