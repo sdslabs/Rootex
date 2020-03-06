@@ -1,0 +1,17 @@
+file(GLOB_RECURSE AvlSources **.cpp **.h)
+file(GLOB_RECURSE AvlHeaders **.h)
+
+set(ROOTEX_INCLUDES
+    ${ROOTEX_INCLUDES}
+    ${CMAKE_CURRENT_LIST_DIR}
+CACHE INTERNAL "")
+
+set(ROOTEX_HEADERS
+    ${ROOTEX_HEADERS}
+    ${AvlHeaders}
+CACHE INTERNAL "")
+
+set(ROOTEX_SOURCES
+    ${ROOTEX_SOURCES}
+    ${AvlSources}
+CACHE INTERNAL "")

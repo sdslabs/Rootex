@@ -114,7 +114,7 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
     , m_Height(height)
 {
 	WNDCLASSEX windowClass = { 0 };
-	LPCSTR className = "Game";
+	LPCSTR className = title.c_str();
 	HINSTANCE hInstance = GetModuleHandle(0);
 	windowClass.cbSize = sizeof(windowClass);
 	windowClass.style = CS_OWNDC;
@@ -125,7 +125,7 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
 	windowClass.hIcon = nullptr;
 	windowClass.hCursor = nullptr;
 	windowClass.hbrBackground = nullptr;
-	windowClass.lpszClassName = "Game";
+	windowClass.lpszClassName = className;
 	windowClass.hIconSm = nullptr;
 	RegisterClassEx(&windowClass);
 
