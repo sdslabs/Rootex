@@ -21,6 +21,7 @@ set(ROOTEX_PCH_HEADERS
 CACHE INTERNAL "")
 
 add_subdirectory(common)
+add_subdirectory(avl)
 add_subdirectory(core)
 add_subdirectory(framework)
 add_subdirectory(main)

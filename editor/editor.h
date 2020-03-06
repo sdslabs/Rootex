@@ -13,7 +13,6 @@ class Editor
 {
 	int m_DockSpaceID;
 	bool m_FileSystemShow = true;
-	LuaInterpreter m_EditorConfig;
 
 	unsigned int m_EditorStyleColorPushCount;
 	unsigned int m_EditorStyleVarPushCount;
