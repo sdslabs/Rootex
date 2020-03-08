@@ -6,8 +6,14 @@
 
 class RenderSystem : public System
 {
+	VisualComponentGraph m_VisualGraph;
+
+	void addToVisualGraph(VisualComponent* vc);
+
+	friend class VisualComponent;
+
 public:
 	static RenderSystem* GetSingleton();
 	
-	void render(VisualComponentGraph* graph);
+	void render();
 };

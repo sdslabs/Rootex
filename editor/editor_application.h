@@ -1,6 +1,7 @@
 #pragma once
 
-#include "rootex/avl/application.h"
+#include "rootex/app/application.h"
+#include "rootex/framework/entity_factory.h"
 
 class EditorApplication : public Application
 {
@@ -9,5 +10,8 @@ public:
 	EditorApplication(EditorApplication&) = delete;
 	~EditorApplication();
 
-	virtual void createGameAndView() override {}
+	virtual void run() override;
+	virtual void shutDown() override;
+
+	virtual String getAppTitle() const override { return "Rootex Editor"; }
 };
