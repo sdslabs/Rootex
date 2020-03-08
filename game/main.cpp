@@ -95,6 +95,7 @@ int main()
 
 	Ref<VisualComponentGraph> visualGraph(new VisualComponentGraph(windowLua["deltaX"], windowLua["deltaY"]));
 	Ref<RenderSystem> renderSystem(new RenderSystem());
+<<<<<<< HEAD
 
 	LuaTextResourceFile* teapotEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/teapot.lua");
 	Ref<Entity> teapot = EntityFactory::GetSingleton()->createEntity(teapotEntity);
@@ -106,6 +107,36 @@ int main()
 	teapotChild->getComponent<SphereComponent>()->setTransform(Matrix::CreateTranslation({ 0.0f, 10.0f, 0.0f }));
 	//teapot->getComponent<HierarchyComponent>()->addChild(teapotChild);
 
+=======
+	Ref<LightSystem> lightSystem(new LightSystem());
+
+	LuaTextResourceFile* spotLightEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/spot_light.lua");
+	Ref<Entity> spotLight = EntityFactory::GetSingleton()->createEntity(spotLightEntity);
+	//LuaTextResourceFile* directionalLightEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/directional_light.lua");
+	//Ref<Entity> directionalLight = EntityFactory::GetSingleton()->createEntity(directionalLightEntity);
+
+	LuaTextResourceFile* teapotEntity = ResourceLoader::CreateLuaTextResourceFile("game/assets/test/teapot.lua");
+	Ref<Entity> teapot = EntityFactory::GetSingleton()->createEntity(teapotEntity);
+  teapot->getComponent<DiffuseVisualComponent>()->setTransform(Matrix::CreateTranslation({ 0.0f, 0.0f, 0.0f }));
+	teapot->getComponent<SphereComponent>()->setTransform(Matrix::CreateTranslation({ 0.0f, 0.0f, 0.0f }));
+
+	Ref<Entity> teapotChild = EntityFactory::GetSingleton()->createEntity(teapotEntity);
+	teapotChild->getComponent<DiffuseVisualComponent>()->setTransform(Matrix::CreateTranslation({ 0.0f, 1.0f, 0.0f }));
+  teapotChild->getComponent<SphereComponent>()->setTransform(Matrix::CreateTranslation({ 0.0f, 10.0f, 0.0f }));
+	teapot->getComponent<HierarchyComponent>()->addChild(teapotChild);
+
+	//visualGraph->addChild(teapot);
+	visualGraph->addChild(spotLight);
+
+	teapot->setEventHandler([](const Event* event) {
+		Vector2 inputData = InputManager::GetSingleton()->getMousePositionDelta();
+		OS::PrintLine("Event received: " + std::to_string(inputData.x) + "," + std::to_string(inputData.y));
+	});
+	teapot->subscribe(Event::Type::InputForward);
+	teapot->subscribe(Event::Type::InputBackward);
+	teapot->subscribe(Event::Type::InputLeft);
+	teapot->subscribe(Event::Type::InputRight);
+>>>>>>> c0a7a6852185416c746b239795c4bb3f16600b1e
 	visualGraph->addChild(teapot);
 	visualGraph->addChild(teapotChild);
 
@@ -115,6 +146,11 @@ int main()
 	teapot->getComponent<SphereComponent>()->disableGravity();
 	teapotChild->getComponent<SphereComponent>()->disableGravity();
 	teapotChild->getComponent<SphereComponent>()->applyForce({ 0.0f, -5.0f, 0.0f });
+<<<<<<< HEAD
+=======
+	teapot->getComponent<TransformComponent>()->setTransform(Matrix::CreateFromYawPitchRoll(0, 0, 0) * Matrix::CreateTranslation(0, 0, -5.0f) * Matrix::CreateScale(1));
+	
+>>>>>>> c0a7a6852185416c746b239795c4bb3f16600b1e
 	while (true)
 	{
 		frameTimer.reset();
@@ -182,8 +218,17 @@ int main()
 		y = u;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 		teapot->getComponent<TransformComponent>()->setTransform(Matrix::CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix::CreateTranslation(0, y, 0.0f) * Matrix::CreateScale(x));
 		teapot->getComponent<SphereComponent>()->getTransform();
+=======
+		teapotChild->getComponent<TransformComponent>()->setTransform(teapotChild->getComponent<SphereComponent>()->getTransform());
+		teapot->getComponent<TransformComponent>()->setTransform(teapot->getComponent<SphereComponent>()->getTransform());
+		
+		OS::PrintLine(
+		    std::to_string(teapot->getComponent<SphereComponent>()->getVelocity().x) + "," + std::to_string(teapot->getComponent<SphereComponent>()->getVelocity().y) + "," + std::to_string(teapot->getComponent<SphereComponent>()->getVelocity().z));
+		//LightSystem::GetSingleton()->apply();
+>>>>>>> c0a7a6852185416c746b239795c4bb3f16600b1e
 
 		RenderSystem::GetSingleton()->render(visualGraph.get(), window.get());
 		PhysicsSystem::GetSingleton()->update(1/60.0f);
@@ -197,7 +242,11 @@ int main()
 
 		RenderSystem::GetSingleton()->render(visualGraph.get(), window.get());
 		PhysicsSystem::GetSingleton()->update(frameTimer.getFrameTime() / 100);
+<<<<<<< HEAD
 >>>>>>> Add phyics demo
+=======
+		InputManager::GetSingleton()->update();
+>>>>>>> c0a7a6852185416c746b239795c4bb3f16600b1e
 		EventManager::GetSingleton()->tick();
 
 		//frameTimer.showFPS();
