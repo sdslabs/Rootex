@@ -9,7 +9,12 @@ RenderSystem* RenderSystem::GetSingleton()
 	return &singleton;
 }
 
-void RenderSystem::render(VisualComponentGraph* graph)
+void RenderSystem::addToVisualGraph(VisualComponent* vc)
 {
-	graph->render();
+	m_VisualGraph.addChild(vc->getOwner());
+}
+
+void RenderSystem::render()
+{
+	m_VisualGraph.render();
 }

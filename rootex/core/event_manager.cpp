@@ -5,12 +5,13 @@ EventManager::EventManager()
 	m_ActiveQueue = 0;
 }
 
-EventManager ::~EventManager() {}
+EventManager ::~EventManager() 
+{
+}
 
 EventManager* EventManager::GetSingleton()
 {
 	static EventManager singleton;
-
 	return &singleton;
 }
 
