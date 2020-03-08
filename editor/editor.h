@@ -89,7 +89,6 @@ public:
 	static Editor* GetSingleton();
 
 	void initialize(HWND hWnd);
-	void start(VisualComponentGraph* visualGraph);
-	void end(VisualComponentGraph* visualGraph);
+	void render();
 	Variant quit(const Event* event);
 };

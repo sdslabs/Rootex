@@ -39,6 +39,11 @@ EntityFactory::EntityFactory()
 	m_ComponentCreators["SpotLightComponent"] = SpotLightComponent::Create;
 }
 
+EntityFactory::~EntityFactory()
+{
+	destroyEntities();
+}
+
 Ref<Component> EntityFactory::createComponent(const String& name, const LuaVariable& componentData)
 {
 	auto findIt = m_ComponentCreators.find(name);
@@ -109,6 +114,7 @@ Ref<Entity> EntityFactory::createEntity(LuaTextResourceFile* actorLuaDescription
 		ERR("Entity was not setup properly: " + std::to_string(entity->m_ID));
 	}
 
+	m_Entities.push_back(entity);
 	return entity;
 }
 
@@ -118,4 +124,20 @@ Ref<Entity> EntityFactory::createEmptyEntity()
 	entity.reset(new Entity(getNextID()));
 
 	return entity;
+}
+
+void EntityFactory::destroyEntities()
+{
+	for (auto& entity : m_Entities)
+	{
+		if (entity)
+		{
+			entity->destroy();
+			WARN("Destroyed entity: " + std::to_string(entity->getID()));
+		}
+		else
+		{
+			WARN("Found nullptr while browsing entities for destruction. Skipped during shutdown");
+		}
+	}
 }

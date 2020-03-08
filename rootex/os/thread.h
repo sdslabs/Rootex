@@ -85,10 +85,13 @@ class ThreadPool
 
 	friend DWORD WINAPI MainLoop(LPVOID voidParameters);
 
-public:
 	void initialize();
+	void shutDown();
 
+public:
+	ThreadPool();
+	ThreadPool(ThreadPool&) = delete;
+	~ThreadPool();
+	
 	void submit(Vector<Ref<Task>>& tasks);
-
-	void shutdown();
 };

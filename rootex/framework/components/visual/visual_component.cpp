@@ -6,6 +6,7 @@
 
 #include "framework/components/visual/visual_component_graph.h"
 #include "framework/entity.h"
+#include "framework/systems/render_system.h"
 #include "framework/systems/light_system.h"
 
 Component* VisualComponent::Create(const LuaVariable& componentData)
@@ -17,6 +18,7 @@ Component* VisualComponent::Create(const LuaVariable& componentData)
 	);
 	visualComponent->setColor(Color((float)componentData["color"]["r"], (float)componentData["color"]["g"],
 	    (float)componentData["color"]["b"], (float)componentData["color"]["a"]));
+
 	return visualComponent;
 }
 
@@ -51,6 +53,8 @@ bool VisualComponent::setup()
 			WARN("Entity without hierarchy component found");
 			status = false;
 		}
+		
+		RenderSystem::GetSingleton()->addToVisualGraph(this);
 	}
 
 	return status;
@@ -96,7 +100,6 @@ void VisualComponent::renderChildren(VisualComponentGraph* graph)
 
 	for (auto& child : m_Owner->getComponent<HierarchyComponent>()->getChildren())
 	{
-		//TODO-FIX THIS
 		VisualComponent* childVisualComponent = child->getComponent<VisualComponent>();
 
 		childVisualComponent->preRender(graph);

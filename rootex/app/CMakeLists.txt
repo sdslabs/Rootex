@@ -1,5 +1,5 @@
-file(GLOB_RECURSE AvlSources **.cpp **.h)
-file(GLOB_RECURSE AvlHeaders **.h)
+file(GLOB_RECURSE AppSources **.cpp **.h)
+file(GLOB_RECURSE AppHeaders **.h)
 
 set(ROOTEX_INCLUDES
     ${ROOTEX_INCLUDES}
@@ -8,10 +8,10 @@ CACHE INTERNAL "")
 
 set(ROOTEX_HEADERS
     ${ROOTEX_HEADERS}
-    ${AvlHeaders}
+    ${AppHeaders}
 CACHE INTERNAL "")
 
 set(ROOTEX_SOURCES
     ${ROOTEX_SOURCES}
-    ${AvlSources}
+    ${AppSources}
 CACHE INTERNAL "")
