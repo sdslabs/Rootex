@@ -17,6 +17,8 @@ class EntityFactory
 {
 	static EntityID s_CurrentID;
 
+	Vector<Ref<Entity>> m_Entities;
+
 	EntityID getNextID();
 
 protected:
@@ -26,11 +28,14 @@ protected:
 	Ref<Component> EntityFactory::createHierarchyComponent();
 
 	EntityFactory();
-	~EntityFactory() = default;
+	EntityFactory(EntityFactory&) = delete;
+	~EntityFactory();
 
 public:
 	static EntityFactory* GetSingleton();
 
 	Ref<Entity> createEntity(LuaTextResourceFile* actorLuaDescription);
 	Ref<Entity> createEmptyEntity();
+
+	void destroyEntities();
 };

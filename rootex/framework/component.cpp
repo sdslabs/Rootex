@@ -13,7 +13,7 @@ bool Component::setup()
 	return true;
 }
 
-Entity* Component::getOwner() const
+Ref<Entity> Component::getOwner() const
 {
-	return m_Owner.get();
+	return m_Owner;
 }
