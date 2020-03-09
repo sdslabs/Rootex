@@ -3,6 +3,7 @@
 #include <filesystem>
 
 #include "common/common.h"
+#include "resource_data.h"
 
 FilePath OS::s_RootDirectory;
 FilePath OS::s_EngineDirectory;
@@ -91,7 +92,7 @@ bool OS::Exists(String relativePath)
 void OS::Print(const String& msg)
 {
 	std::cout.clear();
-	std::cout << msg;
+	std::cout << msg << std::endl;
 }
 
 void OS::Print(const float& real)
@@ -111,20 +112,22 @@ void OS::Print(const unsigned int& number)
 
 void OS::PrintLine(const String& msg)
 {
-	std::cout.clear();
-	std::cout << msg << std::endl;
+	Print(msg);
 }
 
 void OS::PrintWarning(const String& warning)
 {
-	std::cout.clear();
-	std::cout << "\033[93m" << warning << "\033[0m" << std::endl;
+	std::cout << "\033[93m";
+	Print(warning);
+	std::cout << "\033[0m" << std::endl;
 }
 
 void OS::PrintError(const String& error)
 {
 	std::cout.clear();
-	std::cout << "\033[91m" << error << "\033[0m" << std::endl;
+	std::cout << "\033[91m";
+	Print(error);
+	std::cout << "\033[0m" << std::endl;
 	PostError(error, "Fatal Error");
 }
 
@@ -139,4 +142,23 @@ void OS::PrintIf(const bool& expr, const String& error)
 void OS::PostError(String message, LPSTR caption)
 {
 	MessageBoxA(GetActiveWindow(), message.c_str(), caption, MB_OK);
+}
+
+bool OS::SaveFile(const FilePath& filePath, ResourceData* fileData)
+{
+	std::ofstream outFile;
+
+	try
+	{
+		outFile.open(GetAbsolutePath(filePath.generic_string()), std::ios::out | std::ios::binary);
+		outFile.write(fileData->getRawData()->data(), fileData->getRawDataByteSize());
+	}
+	catch (std::exception e)
+	{
+		ERR(std::string("OS: File IO error: ") + std::string(e.what()));
+		return false;
+	}
+	
+	outFile.close();
+	return true;
 }

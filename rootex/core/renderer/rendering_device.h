@@ -23,6 +23,7 @@ class RenderingDevice
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_RenderTargetTextureView;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_RenderTargetBackBufferView;
 	ID3D11RenderTargetView** m_CurrentRenderTarget;
+	ID3D11RenderTargetView** m_UnboundRenderTarget;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_RenderTextureShaderResourceView;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_DepthStencilView;
 
@@ -31,6 +32,7 @@ class RenderingDevice
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_NewSkyDepthStencilState;
 
 	Microsoft::WRL::ComPtr<IDXGISwapChain> m_SwapChain;
+	bool m_MSAA;
 	unsigned int m_4XMSQuality;
 
 	RenderingDevice();
@@ -51,7 +53,7 @@ class RenderingDevice
 public:
 	static RenderingDevice* GetSingleton();
 
-	void initialize(HWND hWnd, int width, int height);
+	void initialize(HWND hWnd, int width, int height, bool MSAA);
 
 	void enableSkyDepthStencilState();
 	void disableSkyDepthStencilState();
@@ -90,5 +92,6 @@ public:
 	void setViewport(const D3D11_VIEWPORT* vp);
 	
 	void drawIndexed(UINT number);
-	void clearBuffer(float r, float g, float b);
+	void clearCurrentRenderTarget(float r, float g, float b);
+	void clearUnboundRenderTarget(float r, float g, float b);
 };

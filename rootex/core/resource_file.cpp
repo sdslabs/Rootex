@@ -65,6 +65,16 @@ TextResourceFile::~TextResourceFile()
 {
 }
 
+void TextResourceFile::popBack()
+{
+	m_ResourceData->getRawData()->pop_back();
+}
+
+void TextResourceFile::append(const String& add)
+{
+	m_ResourceData->getRawData()->insert(m_ResourceData->getRawData()->end(), add.begin(), add.end());
+}
+
 String TextResourceFile::getString() const
 {
 	return String(
