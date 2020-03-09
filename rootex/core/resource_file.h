@@ -51,6 +51,8 @@ public:
 	explicit TextResourceFile(TextResourceFile&) = delete;
 	explicit TextResourceFile(TextResourceFile&&) = delete;
 
+	void popBack();
+	void append(const String& add);
 	String getString() const;
 };
 

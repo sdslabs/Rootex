@@ -7,6 +7,14 @@ class ResourceData
 {
 	static unsigned int s_Count;
 
+protected:
+	unsigned int m_ID;
+	FileBuffer m_FileBuffer;
+	FilePath m_Path;
+
+	char* m_StreamStart;
+	const char* m_StreamEnd;
+
 public:
 	ResourceData(FilePath path, FileBuffer& data);
 	~ResourceData() = default;
@@ -22,12 +30,4 @@ public:
 	operator bool() const;
 	bool isEndOfFile();
 	void resetStream();
-
-protected:
-	unsigned int m_ID;
-	FileBuffer m_FileBuffer;
-	FilePath m_Path;
-
-	char* m_StreamStart;
-	const char* m_StreamEnd;
 };

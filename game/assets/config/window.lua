@@ -3,5 +3,6 @@ window = {
     y = 0,
     deltaX = 1920,
     deltaY = 1080,
-    title = "Rootex"
+    title = "Rootex",
+    msaa = true
 }

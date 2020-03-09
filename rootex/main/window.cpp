@@ -7,6 +7,11 @@
 #include "vendor/ImGUI/imgui_impl_dx11.h"
 #include "vendor/ImGUI/imgui_impl_win32.h"
 
+void Window::show()
+{
+	ShowWindow(m_WindowHandle, SW_SHOW);
+}
+
 std::optional<int> Window::processMessages()
 {
 	MSG msg;
@@ -40,9 +45,30 @@ void Window::swapBuffers()
 	RenderingDevice::GetSingleton()->swapBuffers();
 }
 
-void Window::clear()
+void Window::clearCurrentTarget()
 {
-	RenderingDevice::GetSingleton()->clearBuffer(0.15f, 0.15f, 0.15f);
+#ifdef ROOTEX_EDITOR
+	RenderingDevice::GetSingleton()->clearCurrentRenderTarget(0.15f, 0.15f, 0.15f);
+#else
+#ifdef DEBUG
+	RenderingDevice::GetSingleton()->clearCurrentRenderTarget(0.3f, 0.7f, 0.3f);
+#else
+	RenderingDevice::GetSingleton()->clearCurrentRenderTarget(0.0f, 0.0f, 0.0f);
+#endif // DEBUG
+#endif // ROOTEX_EDITOR
+}
+
+void Window::clearUnboundTarget()
+{
+#ifdef ROOTEX_EDITOR
+	RenderingDevice::GetSingleton()->clearUnboundRenderTarget(0.15f, 0.15f, 0.15f);
+#else
+#ifdef DEBUG
+	RenderingDevice::GetSingleton()->clearUnboundRenderTarget(0.3f, 0.7f, 0.3f);
+#else
+	RenderingDevice::GetSingleton()->clearUnboundRenderTarget(0.0f, 0.0f, 0.0f);
+#endif // DEBUG
+#endif // ROOTEX_EDITOR
 }
 
 void Window::setWindowTitle(String title)
@@ -83,7 +109,7 @@ LRESULT CALLBACK Window::WindowsProc(HWND windowHandler, UINT msg, WPARAM wParam
 	return DefWindowProc(windowHandler, msg, wParam, lParam);
 }
 
-Window::Window(int xOffset, int yOffset, int width, int height, const String& title, bool isEditor)
+Window::Window(int xOffset, int yOffset, int width, int height, const String& title, bool isEditor, bool MSAA)
     : m_Width(width)
     , m_Height(height)
 {
@@ -108,13 +134,18 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
 		m_WindowHandle = CreateWindowEx(
 		    0, className,
 		    title.c_str(),
-		    WS_CAPTION | WS_BORDER | WS_MAXIMIZE | WS_MINIMIZEBOX | WS_SYSMENU,
+		    WS_CAPTION | WS_BORDER | WS_MAXIMIZE | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SYSMENU,
 		    xOffset, yOffset, width, height,
 		    nullptr, nullptr,
 		    hInstance, nullptr);
-		ShowWindow(m_WindowHandle, SW_SHOW);
 
-		RenderingDevice::GetSingleton()->initialize(m_WindowHandle, width, height);
+		RECT clientRect;
+		GetClientRect(m_WindowHandle, &clientRect);
+		RenderingDevice::GetSingleton()->initialize(
+			m_WindowHandle, 
+			clientRect.right - clientRect.left, 
+			clientRect.bottom - clientRect.top, 
+			MSAA);
 	}
 	else
 	{
@@ -125,19 +156,16 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
 			xOffset, yOffset, width, height,
 			nullptr, nullptr,
 			hInstance, nullptr);
-		ShowWindow(m_WindowHandle, SW_SHOW);
 
-		RenderingDevice::GetSingleton()->initialize(m_WindowHandle, width, height);
+		RECT clientRect;
+		GetClientRect(m_WindowHandle, &clientRect);
+		RenderingDevice::GetSingleton()->initialize(
+		    m_WindowHandle,
+		    clientRect.right - clientRect.left,
+		    clientRect.bottom - clientRect.top,
+		    MSAA);
 
-		GetWindowRect(m_WindowHandle, &m_Clip);
-
-		// Modify the rect slightly, so the frame doesn't get clipped with
-		m_Clip.left += 5;
-		m_Clip.top += 30;
-		m_Clip.right -= 5;
-		m_Clip.bottom -= 5;
-
-		ClipCursor(&m_Clip);
+		ClipCursor(&clientRect);
 		ShowCursor(false);
 
 		RenderingDevice::GetSingleton()->setBackBufferRenderTarget();
