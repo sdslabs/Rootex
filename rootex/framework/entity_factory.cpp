@@ -118,7 +118,6 @@ Ref<Entity> EntityFactory::createEntity(LuaTextResourceFile* actorLuaDescription
 	}
 
 	m_Entities.push_back(entity);
-	HierarchySystem::GetSingleton()->addChild(entity);
 	return entity;
 }
 
