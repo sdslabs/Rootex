@@ -6,9 +6,10 @@ project(
     LANGUAGES CXX
     VERSION 1.0
     DESCRIPTION "Rootex Engine"
-)
-
+    )
+    
 option(BUILD_EDITOR "Build editor executable" OFF)
+option(BUILD_LUA "Build Lua SWIG module" ON)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(CMAKE_CXX_STANDARD 17)

@@ -11,10 +11,12 @@ typedef luabridge::LuaRef LuaVariable;
 class LuaInterpreter
 {
 	lua_State* m_LuaState;
-
-public:
+	
 	LuaInterpreter();
 	~LuaInterpreter();
+
+public:
+	static LuaInterpreter* GetSingleton();
 
 	void loadExecuteScript(LuaTextResourceFile* script);
 	void loadExecuteScript(const String& script);
