@@ -17,8 +17,6 @@ class EntityFactory
 {
 	static EntityID s_CurrentID;
 
-	LuaInterpreter m_LuaState;
-
 	EntityID getNextID();
 
 protected:
