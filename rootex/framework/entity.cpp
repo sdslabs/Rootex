@@ -14,8 +14,9 @@ void Entity::addComponent(const Ref<Component>& component)
 	m_Components.insert(std::make_pair(component->getComponentID(), component));
 }
 
-Entity::Entity(EntityID id)
+Entity::Entity(EntityID id, const String& name)
     : m_ID(id)
+    , m_Name(name)
 {
 }
 
@@ -42,6 +43,11 @@ void Entity::destroy()
 EntityID Entity::getID() const
 {
 	return m_ID;
+}
+
+String Entity::getName() const
+{
+	return m_Name;
 }
 
 const HashMap<ComponentID, Ref<Component>>& Entity::getAllComponents() const

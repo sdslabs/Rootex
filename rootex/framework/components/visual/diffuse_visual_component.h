@@ -19,5 +19,6 @@ public:
 
 	bool preRender(HierarchyGraph* graph) override;
 
+	virtual String getName() const override { return "DiffuseVisualComponent"; }
 	ComponentID getComponentID() const override { return s_ID; }
 };

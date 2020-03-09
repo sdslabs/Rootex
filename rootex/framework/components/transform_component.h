@@ -22,7 +22,7 @@ class TransformComponent : public Component
 
 	void updateTransformFromPositionRotationScale();
 	void updatePositionRotationScaleFromTransform(Matrix& transform);
-	
+
 	TransformComponent();
 	virtual ~TransformComponent() = default;
 
@@ -30,6 +30,13 @@ class TransformComponent : public Component
 	friend class DiffuseVisualComponent;
 	friend class VisualComponentAttributes;
 	friend class EntityFactory;
+
+#ifdef ROOTEX_EDITOR
+	static inline const float s_EditorDecimalSpeed = 0.01f;
+
+	float m_EditorRotation[3] = { 0.0f, 0.0f, 0.0f };
+#endif // ROOTEX_EDITOR
+
 
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::TransformComponent;
@@ -46,4 +53,9 @@ public:
 	const Matrix& getLocalTransform() const { return m_TransformBuffer.m_Transform; }
 	Matrix getAbsoluteTransform() const { return m_TransformBuffer.m_AbsoluteTransform; }
 	ComponentID getComponentID() const override { return s_ID; }
+	virtual String getName() const override { return "TransformComponent"; }
+
+#ifdef ROOTEX_EDITOR
+	void draw();
+#endif // ROOTEX_EDITOR
 };

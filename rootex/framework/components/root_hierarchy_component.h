@@ -23,4 +23,6 @@ public:
 	void postRender(HierarchyGraph* graph);
 	
 	virtual bool addChild(Ref<Entity> child) override;
+
+	virtual String getName() const override { return "RootHierarchyComponent"; }
 };

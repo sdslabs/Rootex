@@ -18,6 +18,7 @@ public:
 	Color m_diffuseColor;
 	Color m_ambientColor;
 	
+	virtual String getName() const override { return "PointLightComponent"; }
 	ComponentID getComponentID() const override { return s_ID; }
 
 	PointLightComponent::PointLightComponent(const float constAtt, const float linAtt, const float quadAtt,

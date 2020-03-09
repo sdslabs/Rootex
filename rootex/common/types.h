@@ -44,7 +44,8 @@ namespace ColorPresets = DirectX::Colors;
 
 #include <variant>
 typedef Vector<std::variant<bool, int, char, float, String, Vector2, Vector3, Vector4, Matrix>> VariantVector;
-using Variant = std::variant<bool, int, char, float, String, Vector2, Vector3, Vector4, Matrix, VariantVector>;
+class Entity;
+using Variant = std::variant<bool, int, char, float, String, Vector2, Vector3, Vector4, Matrix, VariantVector, Ref<Entity>>;
 #define Extract(TypeName, variant) std::get<TypeName>((variant))
 
 #include <functional>

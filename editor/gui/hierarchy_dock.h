@@ -1,5 +1,7 @@
 #pragma once
 
+#include "components/hierarchy_component.h"
+
 class HierarchyDock
 {
 public:
@@ -10,6 +12,8 @@ public:
 
 private:
 	HierarchySettings m_HierarchySettings;
+
+	void showHierarchySubTree(HierarchyComponent* node);
 
 public:
 	HierarchyDock() = default;
