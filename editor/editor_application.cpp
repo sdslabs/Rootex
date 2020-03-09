@@ -19,8 +19,8 @@ EditorApplication::EditorApplication()
 
 	HierarchySystem::GetSingleton()->addChild(addEntity("game/assets/test/cube.lua"));
 	Ref<Entity> teapot = addEntity("game/assets/test/teapot.lua");
-	teapot->addChild(addEntity("game/assets/test/point_light.lua"));
 	HierarchySystem::GetSingleton()->addChild(teapot);
+	teapot->addChild(addEntity("game/assets/test/point_light.lua"));
 }
 
 EditorApplication::~EditorApplication()
