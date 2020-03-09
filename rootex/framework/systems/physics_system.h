@@ -36,6 +36,6 @@ public:
 	// callback from bullet for each physics time step.
 	static void internalTickCallback(btDynamicsWorld* const world, btScalar const timeStep);
 
-	void update(float deltaMilliseconds) override;
+	void update(float deltaMilliseconds);
 	virtual void syncVisibleScene();
 };

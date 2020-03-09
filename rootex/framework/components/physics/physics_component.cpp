@@ -35,7 +35,7 @@ bool PhysicsComponent::setup()
 		}
 		else
 		{
-			transform = m_TransformComponent->getTransform();
+			transform = m_TransformComponent->getAbsoluteTransform();
 			m_MotionState.setWorldTransform(matTobtTransform(transform));
 			btRigidBody::btRigidBodyConstructionInfo rbInfo(m_Mass, &m_MotionState, m_CollisionShape.get(), localInertia);
 
