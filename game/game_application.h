@@ -1,7 +1,7 @@
 #pragma once
 
 #include "rootex/app/application.h"
-#include "rootex/framework/components/visual/visual_component_graph.h"
+#include "rootex/framework/systems/hierarchy_system.h"
 #include "rootex/script/interpreter.h"
 
 class HierarchyGraph;

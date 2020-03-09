@@ -27,6 +27,7 @@ void InspectorDock::draw()
 	{
 		if (m_OpenedEntity)
 		{
+			ImGui::LabelText(m_OpenedEntity->getName().c_str(), "Entity");
 			for (auto& component : m_OpenedEntity->getAllComponents())
 			{
 				ImGui::SetNextItemOpen(true);
