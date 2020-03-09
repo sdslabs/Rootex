@@ -120,7 +120,7 @@ void OS::PrintWarning(const String& warning)
 {
 	std::cout << "\033[93m";
 	Print(warning);
-	std::cout << "\033[0m" << std::endl;
+	std::cout << "\033[0m";
 }
 
 void OS::PrintError(const String& error)
@@ -128,7 +128,7 @@ void OS::PrintError(const String& error)
 	std::cout.clear();
 	std::cout << "\033[91m";
 	Print(error);
-	std::cout << "\033[0m" << std::endl;
+	std::cout << "\033[0m";
 	PostError(error, "Fatal Error");
 }
 

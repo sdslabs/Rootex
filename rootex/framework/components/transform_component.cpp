@@ -77,10 +77,27 @@ void TransformComponent::addTransform(const Matrix& applyTransform)
 void TransformComponent::draw()
 {
 	ImGui::DragFloat3("Position", &m_TransformBuffer.m_Position.x, s_EditorDecimalSpeed);
-	ImGui::DragFloat3("Rotation", m_EditorRotation, s_EditorDecimalSpeed);
-	ImGui::DragFloat3("Scale", &m_TransformBuffer.m_Scale.x, s_EditorDecimalSpeed);
+	ImGui::SameLine();
+	if (ImGui::SmallButton("R"))
+	{
+		m_TransformBuffer.m_Position = { 0.0f, 0.0f, 0.0f };
+	}
 
+	ImGui::DragFloat3("Rotation", m_EditorRotation, s_EditorDecimalSpeed);
 	m_TransformBuffer.m_Rotation = Quaternion::CreateFromYawPitchRoll(m_EditorRotation[0], m_EditorRotation[1], m_EditorRotation[2]);
+	ImGui::SameLine();
+	if (ImGui::SmallButton("R"))
+	{
+		m_TransformBuffer.m_Rotation = { 0.0f, 0.0f, 0.0f, 0.0f };
+	}
+
+	ImGui::DragFloat3("Scale", &m_TransformBuffer.m_Scale.x, s_EditorDecimalSpeed);
+	ImGui::SameLine();
+	if (ImGui::SmallButton("R"))
+	{
+		m_TransformBuffer.m_Scale = { 1.0f, 1.0f, 1.0f };
+	}
+
 	updateTransformFromPositionRotationScale();
 }
 #endif // ROOTEX_EDITOR
