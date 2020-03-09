@@ -18,6 +18,8 @@ EditorApplication::EditorApplication()
 	Editor::GetSingleton()->initialize(m_Window->getWindowHandle());
 
 	addEntity("game/assets/test/cube.lua");
+	addEntity("game/assets/test/teapot.lua");
+	addEntity("game/assets/test/point_light.lua");
 }
 
 EditorApplication::~EditorApplication()

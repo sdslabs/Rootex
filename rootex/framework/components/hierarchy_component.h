@@ -17,6 +17,7 @@ protected:
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::HierarchyComponent;
 
+	virtual String getName() const override { return "HierarchyComponent"; }
 	ComponentID getComponentID() const { return s_ID; }
 
 	virtual bool addChild(Ref<Entity> child);

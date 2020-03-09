@@ -92,7 +92,8 @@ Ref<Entity> EntityFactory::createEntity(LuaTextResourceFile* actorLuaDescription
 	}
 
 	Ref<Entity> entity;
-	entity.reset(new Entity(getNextID()));
+	LuaVariable name = entityDescription["name"];
+	entity.reset(new Entity(getNextID(), name.isNil() ? "Entity" : name));
 
 	for (auto& componentDescription : pairs(componentDescriptions))
 	{
@@ -124,10 +125,12 @@ Ref<Entity> EntityFactory::createEntity(LuaTextResourceFile* actorLuaDescription
 Ref<Entity> EntityFactory::createRootEntity()
 {
 	Ref<Entity> root;
-	root.reset(new Entity(getNextID()));
+	root.reset(new Entity(getNextID(), "Root"));
 	
 	Ref<RootHierarchyComponent> rootComponent(new RootHierarchyComponent());
 	root->addComponent(rootComponent);
+	rootComponent->setOwner(root);
+
 	System::RegisterComponent(rootComponent.get());
 
 	m_Entities.push_back(root);
@@ -141,7 +144,7 @@ void EntityFactory::destroyEntities()
 		if (entity)
 		{
 			entity->destroy();
-			WARN("Destroyed entity: " + std::to_string(entity->getID()));
+			WARN("Destroyed entity: " + entity->getName());
 		}
 		else
 		{

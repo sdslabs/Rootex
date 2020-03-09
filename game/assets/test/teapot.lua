@@ -1,4 +1,5 @@
 Entity = {
+    name = "Teapot",
     Components = {
         TransformComponent = {
             m_Position = {x = 0, y = 0, z = 0},

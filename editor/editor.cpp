@@ -82,6 +82,11 @@ void Editor::quit()
 	PostQuitMessage(0);
 }
 
+void Editor::log(const String& log)
+{
+	m_Output->log(log);
+}
+
 Editor::~Editor()
 {
 	ImGui_ImplDX11_Shutdown();

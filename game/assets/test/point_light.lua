@@ -1,9 +1,10 @@
 Entity = {
+    name = "Point light",
     Components = {
         TransformComponent = {
             m_Position = {x = 0, y = 0, z = 0},
             m_Rotation = {yaw = 0, pitch = 0, roll = 0},
-            m_Scale = {x = .01, y = .01, z = .01}
+            m_Scale = {x = 0.1, y = 0.1, z = 0.1}
         },
         PointLightComponent = {
             attLin = 0.045,
@@ -15,7 +16,7 @@ Entity = {
             ambientColor = {r = 0.05, g = 0.05, b = 0.05, a = 1.0}
         },
         DiffuseVisualComponent = {
-            resFile = "game/assets/test/sphere.obj",
+            resFile = "game/assets/test/cube.obj",
             texturePath = "game/assets/test/yellow.png"
         }
     }

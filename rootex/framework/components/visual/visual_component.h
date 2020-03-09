@@ -87,5 +87,6 @@ public:
 
 	Vector3 getPosition() const;
 
+	virtual String getName() const override { return "VisualComponent"; }
 	ComponentID getComponentID() const override { return s_ID; }
 };

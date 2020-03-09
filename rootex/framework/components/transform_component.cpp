@@ -3,26 +3,21 @@
 Component* TransformComponent::Create(const LuaVariable& componentData)
 {
 	TransformComponent* transformComponent = new TransformComponent();
-	
+
 	transformComponent->m_TransformBuffer.m_Position.x = componentData["m_Position"]["x"];
 	transformComponent->m_TransformBuffer.m_Position.y = componentData["m_Position"]["y"];
 	transformComponent->m_TransformBuffer.m_Position.z = componentData["m_Position"]["z"];
-	
+
 	transformComponent->m_TransformBuffer.m_Rotation = Quaternion::CreateFromYawPitchRoll(
-		componentData["m_Rotation"]["yaw"], 
-		componentData["m_Rotation"]["pitch"], 
-		componentData["m_Rotation"]["roll"]);
-	
+	    componentData["m_Rotation"]["yaw"],
+	    componentData["m_Rotation"]["pitch"],
+	    componentData["m_Rotation"]["roll"]);
+
 	transformComponent->m_TransformBuffer.m_Scale.x = componentData["m_Scale"]["x"];
 	transformComponent->m_TransformBuffer.m_Scale.y = componentData["m_Scale"]["y"];
 	transformComponent->m_TransformBuffer.m_Scale.z = componentData["m_Scale"]["z"];
 
-	transformComponent->m_TransformBuffer.m_Transform = Matrix::Identity;
-	transformComponent->m_TransformBuffer.m_Transform = Matrix::CreateTranslation(transformComponent->m_TransformBuffer.m_Position) * transformComponent->m_TransformBuffer.m_Transform;
-	transformComponent->m_TransformBuffer.m_Transform = Matrix::CreateFromQuaternion(transformComponent->m_TransformBuffer.m_Rotation) * transformComponent->m_TransformBuffer.m_Transform;
-	transformComponent->m_TransformBuffer.m_Transform = Matrix::CreateScale(transformComponent->m_TransformBuffer.m_Scale) * transformComponent->m_TransformBuffer.m_Transform;
-	// Transform = Translation * Rotation * Scale
-	// Final vec = Transform * vec = Translation * (Rotation * (Scale * vec))
+	transformComponent->updateTransformFromPositionRotationScale();
 
 	return transformComponent;
 }
@@ -76,3 +71,16 @@ void TransformComponent::addTransform(const Matrix& applyTransform)
 {
 	setTransform(getLocalTransform() * applyTransform);
 }
+
+#ifdef ROOTEX_EDITOR
+#include "imgui.h"
+void TransformComponent::draw()
+{
+	ImGui::DragFloat3("Position", &m_TransformBuffer.m_Position.x, s_EditorDecimalSpeed);
+	ImGui::DragFloat3("Rotation", m_EditorRotation, s_EditorDecimalSpeed);
+	ImGui::DragFloat3("Scale", &m_TransformBuffer.m_Scale.x, s_EditorDecimalSpeed);
+
+	m_TransformBuffer.m_Rotation = Quaternion::CreateFromYawPitchRoll(m_EditorRotation[0], m_EditorRotation[1], m_EditorRotation[2]);
+	updateTransformFromPositionRotationScale();
+}
+#endif // ROOTEX_EDITOR

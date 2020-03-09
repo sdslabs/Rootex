@@ -1,10 +1,29 @@
 #include "hierarchy_dock.h"
 
-#include "framework/systems/render_system.h"
+#include "editor/editor.h"
+
+#include "framework/systems/hierarchy_system.h"
 
 #include "vendor/ImGUI/imgui.h"
 #include "vendor/ImGUI/imgui_impl_dx11.h"
 #include "vendor/ImGUI/imgui_impl_win32.h"
+
+void HierarchyDock::showHierarchySubTree(HierarchyComponent* node)
+{
+	if (ImGui::TreeNodeEx(node->getOwner()->getName().c_str(), ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanAvailWidth | (node->getChildren().size() ? ImGuiTreeNodeFlags_None : ImGuiTreeNodeFlags_Leaf)))
+	{
+		if (ImGui::IsItemClicked())
+		{
+			EventManager::GetSingleton()->call("OpenEntity", "EditorInspectorOpenEntity", node->getOwner());
+		}
+		
+		for (auto& child : node->getChildren())
+		{
+			showHierarchySubTree(child->getComponent<HierarchyComponent>());
+		}
+		ImGui::TreePop();
+	}
+}
 
 void HierarchyDock::draw()
 {
@@ -12,9 +31,8 @@ void HierarchyDock::draw()
 	{
 		if (ImGui::Begin("Hierarchy"))
 		{
-			//const HierarchyGraph& graph =  RenderSystem::GetSingleton()->getHierarchyGraph();
-			//const RootHierarchyComponent* child = graph.getRoot();
-			//child->
+			RootHierarchyComponent* rootComponent = HierarchySystem::GetSingleton()->getRoot();
+			showHierarchySubTree(rootComponent);
 		}
 		ImGui::End();
 	}

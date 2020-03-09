@@ -58,5 +58,7 @@ public:
 	void render();
 	void quit();
 
+	void log(const String& log);
+
 	const Colors& getColors() const { return m_Colors; }
 };

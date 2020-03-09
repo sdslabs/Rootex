@@ -12,9 +12,10 @@ class Entity
 {
 protected:
 	EntityID m_ID;
+	String m_Name;
 	HashMap<ComponentID, Ref<Component>> m_Components;
 
-	Entity(EntityID id);
+	Entity(EntityID id, const String& name);
 
 	bool setupComponents();
 
@@ -31,6 +32,7 @@ public:
 	void destroy();
 
 	EntityID getID() const;
+	String getName() const;
 	
 	template <class ComponentType>
 	ComponentType* getComponent();

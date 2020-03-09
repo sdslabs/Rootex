@@ -20,6 +20,7 @@ public:
 	float m_spot;
 	float m_angleRange;
 	
+	virtual String getName() const override { return "SpotLightComponent"; }
 	ComponentID getComponentID() const override { return s_ID; }
 
 	SpotLightComponent::SpotLightComponent(const float constAtt, const float linAtt, const float quadAtt,

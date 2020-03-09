@@ -1,5 +1,7 @@
 #pragma once
 
+#include "event_manager.h"
+
 class InspectorDock
 {
 public:
@@ -10,9 +12,12 @@ public:
 
 private:
 	InspectorSettings m_InspectorSettings;
+	Entity* m_OpenedEntity;
+	
+	Variant openEntity(const Event* event);
 
 public:
-	InspectorDock() = default;
+	InspectorDock();
 	InspectorDock(InspectorDock&) = delete;
 	~InspectorDock() = default;
 
