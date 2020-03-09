@@ -107,6 +107,16 @@ DWORD WINAPI MainLoop(LPVOID voidParameters)
 	return 0;
 }
 
+ThreadPool::ThreadPool()
+{
+	initialize();
+}
+
+ThreadPool::~ThreadPool()
+{
+	shutDown();
+}
+
 void ThreadPool::submit(Vector<Ref<Task>>& tasks)
 {
 	MasterThread master_thread;
@@ -208,7 +218,7 @@ void ThreadPool::submit(Vector<Ref<Task>>& tasks)
 	}
 }
 
-void ThreadPool::shutdown()
+void ThreadPool::shutDown()
 {
 	EnterCriticalSection(&this->m_CriticalSection);
 	{

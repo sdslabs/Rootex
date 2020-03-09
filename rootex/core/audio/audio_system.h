@@ -48,12 +48,13 @@ class AudioSystem
 	ALCcontext* m_Context;
 	Vector<AudioSource*> m_ActiveAudioSources;
 
-public:
 	AudioSystem();
 	AudioSystem(AudioSystem&) = delete;
 	~AudioSystem();
 
+public:
 	static AudioSystem* GetSingleton();
+
 	static String GetALErrorString(int errID);
 	static String GetALCErrorString(int errID);
 	static void CheckALError(const char* msg, const char* fname, int line);

@@ -13,7 +13,6 @@ class Editor
 {
 	int m_DockSpaceID;
 	bool m_FileSystemShow = true;
-	LuaInterpreter m_EditorConfig;
 
 	unsigned int m_EditorStyleColorPushCount;
 	unsigned int m_EditorStyleVarPushCount;
@@ -90,7 +89,6 @@ public:
 	static Editor* GetSingleton();
 
 	void initialize(HWND hWnd);
-	void start(VisualComponentGraph* visualGraph);
-	void end(VisualComponentGraph* visualGraph);
+	void render();
 	Variant quit(const Event* event);
 };

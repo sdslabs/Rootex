@@ -13,9 +13,6 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: configure
-      run: ./GenerateCache.bat
+      run: ./generate_cache.bat
     - name: build
-      run: ./Build.bat
-    - name: test
-      run: ./Run.bat
-      
+      run: ./build.bat      
