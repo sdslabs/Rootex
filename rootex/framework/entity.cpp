@@ -4,6 +4,11 @@
 #include "framework/system.h"
 #include "event_manager.h"
 
+Entity::~Entity()
+{
+	destroy();
+}
+
 void Entity::addComponent(const Ref<Component>& component)
 {
 	m_Components.insert(std::make_pair(component->getComponentID(), component));

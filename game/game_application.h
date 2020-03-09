@@ -4,7 +4,7 @@
 #include "rootex/framework/components/visual/visual_component_graph.h"
 #include "rootex/script/interpreter.h"
 
-class VisualComponentGraph;
+class HierarchyGraph;
 
 class GameApplication : public Application
 {

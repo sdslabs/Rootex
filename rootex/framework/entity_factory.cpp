@@ -4,6 +4,8 @@
 #include "entity.h"
 #include "system.h"
 
+#include "systems/hierarchy_system.h"
+
 #include "components/debug_component.h"
 #include "components/test_component.h"
 #include "components/transform_component.h"
@@ -115,15 +117,21 @@ Ref<Entity> EntityFactory::createEntity(LuaTextResourceFile* actorLuaDescription
 	}
 
 	m_Entities.push_back(entity);
+	HierarchySystem::GetSingleton()->addChild(entity);
 	return entity;
 }
 
-Ref<Entity> EntityFactory::createEmptyEntity()
+Ref<Entity> EntityFactory::createRootEntity()
 {
-	Ref<Entity> entity;
-	entity.reset(new Entity(getNextID()));
+	Ref<Entity> root;
+	root.reset(new Entity(getNextID()));
+	
+	Ref<RootHierarchyComponent> rootComponent(new RootHierarchyComponent());
+	root->addComponent(rootComponent);
+	System::RegisterComponent(rootComponent.get());
 
-	return entity;
+	m_Entities.push_back(root);
+	return root;
 }
 
 void EntityFactory::destroyEntities()

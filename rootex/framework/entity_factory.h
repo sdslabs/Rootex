@@ -31,11 +31,13 @@ protected:
 	EntityFactory(EntityFactory&) = delete;
 	~EntityFactory();
 
+	Ref<Entity> createRootEntity();
+	friend class HierarchyGraph;
+
 public:
 	static EntityFactory* GetSingleton();
 
 	Ref<Entity> createEntity(LuaTextResourceFile* actorLuaDescription);
-	Ref<Entity> createEmptyEntity();
 
 	void destroyEntities();
 };

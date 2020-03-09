@@ -9,12 +9,50 @@ RenderSystem* RenderSystem::GetSingleton()
 	return &singleton;
 }
 
-void RenderSystem::addToVisualGraph(VisualComponent* vc)
+RenderSystem::RenderSystem()
+    : m_Renderer(new Renderer())
+    , m_Camera(new CameraVisualComponent())
 {
-	m_VisualGraph.addChild(vc->getOwner());
+	m_TransformationStack.push_back(Matrix::Identity);
+	m_Root = HierarchySystem::GetSingleton()->getRoot();
+	m_HierarchyGraph = HierarchySystem::GetSingleton()->getHierarchyGraph();
+}
+
+RenderSystem::~RenderSystem()
+{
+}
+
+void RenderSystem::recoverLostDevice()
+{
+	ERR("Fatal error: D3D Device lost");
 }
 
 void RenderSystem::render()
 {
-	m_VisualGraph.render();
+	if (m_Root->preRender(m_HierarchyGraph))
+	{
+		m_Root->renderChildren(m_HierarchyGraph);
+		m_Root->postRender(m_HierarchyGraph);
+	}
+}
+
+void RenderSystem::pushMatrix(const Matrix& transform)
+{
+	m_TransformationStack.push_back(m_TransformationStack.back() * transform);
+}
+
+void RenderSystem::popMatrix()
+{
+	m_TransformationStack.pop_back();
+}
+
+void RenderSystem::setCamera(Ref<CameraVisualComponent> camera)
+{
+	m_Camera.reset();
+	m_Camera = camera;
+}
+
+const Matrix& RenderSystem::getTopMatrix() const
+{
+	return m_TransformationStack.back();
 }

@@ -6,24 +6,23 @@
 
 RootHierarchyComponent::RootHierarchyComponent()
 {
-	m_Children.reserve((size_t)RenderPass::End);
 }
 
 RootHierarchyComponent::~RootHierarchyComponent()
 {
 }
 
-bool RootHierarchyComponent::isVisible(VisualComponentGraph* graph)
+bool RootHierarchyComponent::isVisible(HierarchyGraph* graph)
 {
 	return false;
 }
 
-bool RootHierarchyComponent::preRender(VisualComponentGraph* graph)
+bool RootHierarchyComponent::preRender(HierarchyGraph* graph)
 {
 	return true;
 }
 
-void RootHierarchyComponent::renderPassRender(HierarchyComponent& renderPassGraph, VisualComponentGraph* graph)
+void RootHierarchyComponent::renderPassRender(HierarchyComponent& renderPassGraph, HierarchyGraph* graph)
 {
 	for (auto& child : renderPassGraph.getChildren())
 	{
@@ -42,7 +41,7 @@ void RootHierarchyComponent::renderPassRender(HierarchyComponent& renderPassGrap
 	}
 }
 
-void RootHierarchyComponent::renderChildren(VisualComponentGraph* graph)
+void RootHierarchyComponent::renderChildren(HierarchyGraph* graph)
 {
 	renderPassRender(m_GlobalGroup, graph);
 	renderPassRender(m_StaticGroup, graph);
@@ -54,40 +53,43 @@ void RootHierarchyComponent::renderChildren(VisualComponentGraph* graph)
 	}
 }
 
-void RootHierarchyComponent::postRender(VisualComponentGraph* graph)
+void RootHierarchyComponent::postRender(HierarchyGraph* graph)
 {
 }
 
 bool RootHierarchyComponent::addChild(Ref<Entity> child)
 {
-	RenderPass pass = child->getComponent<VisualComponent>()->getAttributes()->getRenderPass();
-
 	HierarchyComponent::addChild(child);
 
-	switch (pass)
+	VisualComponent* vc = child->getComponent<VisualComponent>();
+	if (vc)
 	{
-	case RenderPass::Global:
-		m_GlobalGroup.addChild(child);
-		return true;
-		break;
-	case RenderPass::Background:
-		m_SkyGroup.addChild(child);
-		return true;
-		break;
-	case RenderPass::Static:
-		m_StaticGroup.addChild(child);
-		return true;
-		break;
-	case RenderPass::Dynamic:
-		m_EntityGroup.addChild(child);
-		return true;
-		break;
-	case RenderPass::Editor:
-		m_EditorGroup.addChild(child);
-		return true;
-		break;
-	default:
-		break;
+		RenderPass pass = vc->getAttributes()->getRenderPass();
+		switch (pass)
+		{
+		case RenderPass::Global:
+			m_GlobalGroup.addChild(child);
+			return true;
+			break;
+		case RenderPass::Background:
+			m_SkyGroup.addChild(child);
+			return true;
+			break;
+		case RenderPass::Static:
+			m_StaticGroup.addChild(child);
+			return true;
+			break;
+		case RenderPass::Dynamic:
+			m_EntityGroup.addChild(child);
+			return true;
+			break;
+		case RenderPass::Editor:
+			m_EditorGroup.addChild(child);
+			return true;
+			break;
+		default:
+			break;
+		}
+		return false;
 	}
-	return false;
 }
