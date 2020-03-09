@@ -8,8 +8,6 @@ enum class ComponentIDs : unsigned int
 	DiffuseVisualComponent,
 	TransformComponent,
 	HierarchyComponent,
-	PhysicsComponent,
-	SphereComponent,
 	PointLightComponent,
 	DirectionalLightComponent,
 	SpotLightComponent,
