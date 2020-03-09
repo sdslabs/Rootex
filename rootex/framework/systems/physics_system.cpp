@@ -86,7 +86,7 @@ void PhysicsSystem::syncVisibleScene()
 			TransformComponent* ptc = component->m_TransformComponent;
 			if (ptc)
 			{
-				if (ptc->getTransform() != component->m_MotionState.m_WorldToPositionTransform)
+				if (ptc->getAbsoluteTransform() != component->m_MotionState.m_WorldToPositionTransform)
 				{
 					ptc->setTransform(component->m_MotionState.m_WorldToPositionTransform);
 				}
