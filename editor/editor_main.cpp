@@ -84,7 +84,7 @@ int main()
 
 	AudioResourceFile* w = ResourceLoader::CreateAudioResourceFile("game/assets/hipshop.wav");
 	Ref<StreamingAudioBuffer> audio(new StreamingAudioBuffer(w));
-	Ref<StreamingAudioSource> source(new StreamingAudioSource(audio.get()));
+	Ref<StreamingAudioSource> source(new StreamingAudioSource(audio));
 	source->setLooping(true);
 	source->play();
 
@@ -134,6 +134,8 @@ int main()
 		editorWindow->clearCurrentTarget();
 		editorWindow->clearUnboundTarget();
 	}
+
+	AudioSystem::GetSingleton()->shutDown();
 
 	return ret.value();
 }

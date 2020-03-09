@@ -1,14 +1,16 @@
 #include "editor.h"
 
 #include "core/renderer/rendering_device.h"
+#include "core/resource_loader.h"
 
-#include "resource_loader.h"
 #include "framework/components/visual/visual_component_graph.h"
 #include "framework/components/hierarchy_component.h"
 #include "framework/systems/render_system.h"
 
 void Editor::initialize(HWND hWnd)
 {
+	BIND_EVENT_MEMBER_FUNCTION("EditorQuit", Editor::quit);
+
 	m_EditorConfig.loadExecuteScript(ResourceLoader::CreateLuaTextResourceFile("editor/config/editor_config.lua"));
 
 	m_Colors.m_Accent = {
@@ -83,6 +85,17 @@ void Editor::end(VisualComponentGraph* visualGraph)
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }
 
+Variant Editor::quit(const Event* event)
+{
+	for (auto&& arg : Extract(VariantVector, event->getData()))
+	{
+		OS::Print(Extract(String, arg));
+	}
+	PostQuitMessage(0);
+
+	return String("Rootex Editor is quitting");
+}
+
 Editor::~Editor()
 {
 	ImGui_ImplDX11_Shutdown();
@@ -146,7 +159,11 @@ void Editor::applyMainMenu(const ImGuiWindowFlags& windowFlags, bool optFullscre
 				ImGui::MenuItem("Save");
 				ImGui::MenuItem("Save All", "");
 				ImGui::Separator();
-				ImGui::MenuItem("Quit", "");
+				if (ImGui::MenuItem("Quit", ""))
+				{
+					Variant v = EventManager::GetSingleton()->returnCall("EditorQuitEvent", "EditorQuit", VariantVector({ String("SDSLabs"), String("IITR") }));
+					OS::Print(Extract(String, v));
+				}
 				ImGui::EndMenu();
 			}
 			if (ImGui::BeginMenu("View"))
@@ -220,7 +237,7 @@ void Editor::applyMainMenu(const ImGuiWindowFlags& windowFlags, bool optFullscre
 				static TextResourceFile* imGuiLicense = ResourceLoader::CreateLuaTextResourceFile("rootex/vendor/ImGUI/LICENSE.txt");
 				ImGui::Text(imGuiLicense->getData()->getRawData()->data());
 				ImGui::Separator();
-				
+
 				ImGui::BulletText("Lua C API");
 				ImGui::NewLine();
 				static TextResourceFile* luaCAPILicense = ResourceLoader::CreateLuaTextResourceFile("rootex/vendor/Lua/LICENSE.txt");
@@ -244,7 +261,7 @@ void Editor::applyMainMenu(const ImGuiWindowFlags& windowFlags, bool optFullscre
 				static TextResourceFile* alutLicense = ResourceLoader::CreateLuaTextResourceFile("rootex/vendor/OpenAL/COPYING.txt");
 				ImGui::Text(alutLicense->getData()->getRawData()->data());
 				ImGui::Separator();
-				
+
 				menuAction = "";
 				ImGui::EndPopup();
 			}

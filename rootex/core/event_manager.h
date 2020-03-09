@@ -1,17 +1,26 @@
 #pragma once
 
-#include <algorithm>
-#include <utility>
-
 #include "common/common.h"
-#include "event_handler.h"
 #include "event.h"
+
+#include <cstdarg>
+
+#define BIND_EVENT_FUNCTION(stringEventType, function) EventManager::GetSingleton()->addListener(stringEventType, CreateDelegate(function))
+#define BIND_EVENT_MEMBER_FUNCTION(stringEventType, classFunction) EventManager::GetSingleton()->addListener(stringEventType, CreateDelegate([this](const Event* event) -> Variant { return this->classFunction(event); }))
 
 const unsigned int EVENTMANAGER_NUM_QUEUES = 2;
 
+typedef Ref<Function<Variant(const Event*)>> EventHandlingFunction;
+
+template <class Functor>
+EventHandlingFunction CreateDelegate(Functor f)
+{
+	return EventHandlingFunction(new Function<Variant(const Event*)>(f));
+}
+
 class EventManager
 {
-	typedef Vector<EventHandler*> EventListenerList;
+	typedef Vector<EventHandlingFunction> EventListenerList;
 	typedef Map<Event::Type, EventListenerList> EventListenerMap;
 	typedef Vector<Ref<Event>> EventQueue;
 
@@ -19,19 +28,22 @@ class EventManager
 	EventQueue m_Queues[EVENTMANAGER_NUM_QUEUES];
 	unsigned int m_ActiveQueue;
 
+	EventManager();
+	~EventManager();
+
 public:
+	static EventManager* GetSingleton();
+
 	enum Constant
 	{
 		Infinite = 0xffffffff
 	};
 
-	EventManager();
-	~EventManager();
-	static EventManager* GetSingleton();
+	bool addListener(const Event::Type& type, EventHandlingFunction instance);
+	bool removeListener(const EventHandlingFunction handlerName, const Event::Type& type);
 
-	bool addListener(EventHandler* instance, Event::Type type);
-	bool removeListener(EventHandler* instance, Event::Type type);
-	void call(Event* event);
-	void deferredCall(const Ref<Event> event);
+	Variant returnCall(const String& eventName, const Event::Type& eventType, const Variant& data);
+	void call(const String& eventName, const Event::Type& eventType, const Variant& data);
+	void deferredCall(const String& eventName, const Event::Type& eventType, const Variant& data);
 	bool dispatchDeferred(unsigned long maxMillis = Infinite);
 };

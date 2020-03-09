@@ -14,70 +14,41 @@ EventManager* EventManager::GetSingleton()
 	return &singleton;
 }
 
-//returns true if listener successfully added
-bool EventManager::addListener(EventHandler* instance, Event::Type type)
-{
-	auto&& it = m_EventListeners.find(type);
-
-	if (it == m_EventListeners.end())
-	{
-		m_EventListeners[type] = { instance };
-		return true;
-	}
-
-	if (std::find(it->second.begin(), it->second.end(), instance) != it->second.end())
-	{
-		return false;
-	}
-	else
-	{
-		it->second.push_back(instance);
-		return true;
-	}
-}
-
-bool EventManager::removeListener(EventHandler* instance, Event::Type type)
-{
-	bool success = false;
-	auto&& it = m_EventListeners.find(type);
-
-	if (it != m_EventListeners.end())
-	{
-		EventListenerList& listeners = it->second;
-		for (auto vecIt = listeners.begin(); vecIt != listeners.end(); ++vecIt)
-		{
-			if (instance == (*vecIt))
-			{
-				listeners.erase(vecIt);
-				success = true;
-				break;
-			}
-		}
-	}
-
-	return success;
-}
-
-void EventManager::call(Event* event)
+Variant EventManager::returnCall(const String& eventName, const Event::Type& eventType, const Variant& data)
 {
 	bool processed = false;
-	auto&& findIt = m_EventListeners.find(event->getEventType());
+	Event event(eventName, eventType, data);
+	auto&& findIt = m_EventListeners.find(event.getEventType());
+
+	if (findIt != m_EventListeners.end())
+	{
+		return (*findIt->second.front().get())(&event);
+	}
+	return nullptr;
+}
+
+void EventManager::call(const String& eventName, const Event::Type& eventType, const Variant& data)
+{
+	bool processed = false;
+	Event event(eventName, eventType, data);
+	auto&& findIt = m_EventListeners.find(event.getEventType());
 
 	if (findIt != m_EventListeners.end())
 	{
 		const EventListenerList& eventListenerList = findIt->second;
 		for (auto it = eventListenerList.begin(); it != eventListenerList.end(); ++it)
 		{
-			EventHandler* listener = (*it);
-
-			listener->handleEvent(event);
+			EventHandlingFunction listener = *it;
+ 			(*listener.get())(&event);
 			processed = true;
 		}
 	}
 }
 
-void EventManager::deferredCall(const Ref<Event> event)
+void EventManager::deferredCall(const String& eventName, const Event::Type& eventType, const Variant& data)
 {
+	Ref<Event> event(new Event(eventName, eventType, data));
+
 	if (!(m_ActiveQueue >= 0 && m_ActiveQueue < EVENTMANAGER_NUM_QUEUES))
 	{
 		WARN("Event left unhandled: " + event->getName());
@@ -103,9 +74,9 @@ bool EventManager::dispatchDeferred(unsigned long maxMillis)
 
 	while (!m_Queues[queueToProcess].empty())
 	{
-		Ref<Event> pEvent = m_Queues[queueToProcess].front();
+		Ref<Event> event = m_Queues[queueToProcess].front();
 		m_Queues[queueToProcess].erase(m_Queues[queueToProcess].begin());
-		const Event::Type eventType = pEvent->getEventType();
+		const Event::Type eventType = event->getEventType();
 
 		auto findIt = m_EventListeners.find(eventType);
 		if (findIt != m_EventListeners.end())
@@ -113,8 +84,8 @@ bool EventManager::dispatchDeferred(unsigned long maxMillis)
 			const EventListenerList& eventListeners = findIt->second;
 			for (auto it = eventListeners.begin(); it != eventListeners.end(); ++it)
 			{
-				EventHandler* listener = (*it);
-				listener->handleEvent(pEvent.get());
+				EventHandlingFunction listener = *it;
+				(*listener.get())(event.get());
 			}
 		}
 
@@ -139,4 +110,46 @@ bool EventManager::dispatchDeferred(unsigned long maxMillis)
 		}
 	}
 	return queueFlushed;
+}
+
+bool EventManager::addListener(const Event::Type& type, EventHandlingFunction instance)
+{
+	auto&& it = m_EventListeners.find(type);
+	if (it == m_EventListeners.end())
+	{
+		m_EventListeners[type].push_back(instance);
+		return true;
+	}
+
+	if (std::find(it->second.begin(), it->second.end(), instance) != it->second.end())
+	{
+		return false;
+	}
+	else
+	{
+		it->second.push_back(instance);
+		return true;
+	}
+}
+
+bool EventManager::removeListener(const EventHandlingFunction handlerFunction, const Event::Type& type)
+{
+	bool success = false;
+	auto&& it = m_EventListeners.find(type);
+
+	if (it != m_EventListeners.end())
+	{
+		EventListenerList& listeners = it->second;
+		for (auto& registeredHandler = listeners.begin(); registeredHandler != listeners.end(); ++registeredHandler)
+		{
+			if (handlerFunction == *registeredHandler)
+			{
+				listeners.erase(registeredHandler);
+				success = true;
+				break;
+			}
+		}
+	}
+
+	return success;
 }
