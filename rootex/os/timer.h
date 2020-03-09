@@ -47,4 +47,6 @@ public:
 	void reset();
 	void showTime();
 	void showFPS();
+
+	float getFrameTime() const { return (s_Clock.now() - m_FrameStartTime).count() * NS_TO_MS; }
 };

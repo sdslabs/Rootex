@@ -82,6 +82,7 @@ target_link_libraries(Rootex PUBLIC
     DirectXTK
     ImGUI
     Gainput
+    Bullet3D
     d3d11.lib
     xinput.lib
     D3DCompiler.lib
