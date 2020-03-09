@@ -25,6 +25,7 @@ public:
 	virtual ~Entity();
 
 	void addComponent(const Ref<Component>& component);
+	void addChild(Ref<Entity> child);
 
 	template <class ComponentType>
 	void removeComponent();

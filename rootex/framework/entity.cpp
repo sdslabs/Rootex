@@ -1,6 +1,7 @@
 #include "entity.h"
 
 #include "framework/component.h"
+#include "framework/components/hierarchy_component.h"
 #include "framework/system.h"
 #include "event_manager.h"
 
@@ -12,6 +13,11 @@ Entity::~Entity()
 void Entity::addComponent(const Ref<Component>& component)
 {
 	m_Components.insert(std::make_pair(component->getComponentID(), component));
+}
+
+void Entity::addChild(Ref<Entity> child)
+{
+	getComponent<HierarchyComponent>()->addChild(child);
 }
 
 Entity::Entity(EntityID id, const String& name)
