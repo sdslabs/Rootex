@@ -1,6 +1,7 @@
 #include "component.h"
 
 Component::Component()
+    : m_Owner(nullptr)
 {
 }
 

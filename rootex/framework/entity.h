@@ -21,7 +21,7 @@ protected:
 	friend class EntityFactory;
 
 public:
-	virtual ~Entity() = default;
+	virtual ~Entity();
 
 	void addComponent(const Ref<Component>& component);
 

@@ -4,7 +4,6 @@
 
 #include "core/resource_loader.h"
 
-#include "framework/components/visual/visual_component_graph.h"
 #include "framework/entity.h"
 #include "framework/systems/render_system.h"
 #include "framework/systems/light_system.h"
@@ -53,25 +52,23 @@ bool VisualComponent::setup()
 			WARN("Entity without hierarchy component found");
 			status = false;
 		}
-		
-		RenderSystem::GetSingleton()->addToVisualGraph(this);
 	}
 
 	return status;
 }
 
-bool VisualComponent::preRender(VisualComponentGraph* graph)
+bool VisualComponent::preRender(HierarchyGraph* graph)
 {
 	if (m_Attributes.m_TransformComponent)
 	{
-		graph->pushMatrix(m_Attributes.getTransform());
-		m_Attributes.m_TransformComponent->m_TransformBuffer.m_AbsoluteTransform = graph->getTopMatrix();
-		m_Attributes.m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::Model, graph->getTopMatrix());
+		RenderSystem::GetSingleton()->pushMatrix(m_Attributes.getTransform());
+		m_Attributes.m_TransformComponent->m_TransformBuffer.m_AbsoluteTransform = RenderSystem::GetSingleton()->getTopMatrix();
+		m_Attributes.m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::Model, RenderSystem::GetSingleton()->getTopMatrix());
 	}
 	else
 	{
-		graph->pushMatrix(Matrix::Identity);
-		m_Attributes.m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::Model, graph->getTopMatrix());
+		RenderSystem::GetSingleton()->pushMatrix(Matrix::Identity);
+		m_Attributes.m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::Model, RenderSystem::GetSingleton()->getTopMatrix());
 	}
 	PSSolidConstantBuffer Cb = { m_Color };
 	m_Attributes.m_Material->setShaderConstantBuffer(Cb);
@@ -79,23 +76,23 @@ bool VisualComponent::preRender(VisualComponentGraph* graph)
 	return true;
 }
 
-bool VisualComponent::isVisible(VisualComponentGraph* graph) const
+bool VisualComponent::isVisible(HierarchyGraph* graph) const
 {
 	// TODO: Add culling
 	return m_IsVisible;
 }
 
-void VisualComponent::render(VisualComponentGraph* graph)
+void VisualComponent::render(HierarchyGraph* graph)
 {
-	graph->getRenderer()->draw(m_Attributes.getVertexBuffer(), m_Attributes.getIndexBuffer(), m_Attributes.getMaterial());
+	RenderSystem::GetSingleton()->getRenderer()->draw(m_Attributes.getVertexBuffer(), m_Attributes.getIndexBuffer(), m_Attributes.getMaterial());
 }
 
-void VisualComponent::renderChildren(VisualComponentGraph* graph)
+void VisualComponent::renderChildren(HierarchyGraph* graph)
 {
 	if (isVisible(graph))
 	{
-		m_Attributes.m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::View, graph->getCamera()->getView());
-		m_Attributes.m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::Projection, graph->getCamera()->getProjection());
+		m_Attributes.m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::View, RenderSystem::GetSingleton()->getCamera()->getView());
+		m_Attributes.m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::Projection, RenderSystem::GetSingleton()->getCamera()->getProjection());
 	}
 
 	for (auto& child : m_Owner->getComponent<HierarchyComponent>()->getChildren())
@@ -115,9 +112,9 @@ void VisualComponent::renderChildren(VisualComponentGraph* graph)
 	}
 }
 
-void VisualComponent::postRender(VisualComponentGraph* graph)
+void VisualComponent::postRender(HierarchyGraph* graph)
 {
-	graph->popMatrix();
+	RenderSystem::GetSingleton()->popMatrix();
 }
 
 void VisualComponent::addTransform(const Matrix& applyTransform)
