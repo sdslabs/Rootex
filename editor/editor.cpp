@@ -11,45 +11,48 @@ void Editor::initialize(HWND hWnd)
 {
 	BIND_EVENT_MEMBER_FUNCTION("EditorQuit", Editor::quit);
 
-	m_EditorConfig.loadExecuteScript(ResourceLoader::CreateLuaTextResourceFile("editor/config/editor_config.lua"));
+	LuaInterpreter::GetSingleton()->loadExecuteScript(ResourceLoader::CreateLuaTextResourceFile("editor/config/editor_config.lua"));
+
+	LuaVariable general = LuaInterpreter::GetSingleton()->getGlobal("general");
 
 	m_Colors.m_Accent = {
-		(float)m_EditorConfig.getGlobal("general")["colors"]["accent"]["r"],
-		(float)m_EditorConfig.getGlobal("general")["colors"]["accent"]["g"],
-		(float)m_EditorConfig.getGlobal("general")["colors"]["accent"]["b"],
-		(float)m_EditorConfig.getGlobal("general")["colors"]["accent"]["a"],
+		(float)general["colors"]["accent"]["r"],
+		(float)general["colors"]["accent"]["g"],
+		(float)general["colors"]["accent"]["b"],
+		(float)general["colors"]["accent"]["a"],
 	};
 	m_Colors.m_MediumAccent = {
-		(float)m_EditorConfig.getGlobal("general")["colors"]["mediumAccent"]["r"],
-		(float)m_EditorConfig.getGlobal("general")["colors"]["mediumAccent"]["g"],
-		(float)m_EditorConfig.getGlobal("general")["colors"]["mediumAccent"]["b"],
-		(float)m_EditorConfig.getGlobal("general")["colors"]["mediumAccent"]["a"],
+		(float)general["colors"]["mediumAccent"]["r"],
+		(float)general["colors"]["mediumAccent"]["g"],
+		(float)general["colors"]["mediumAccent"]["b"],
+		(float)general["colors"]["mediumAccent"]["a"],
 	};
 	m_Colors.m_HeavyAccent = {
-		(float)m_EditorConfig.getGlobal("general")["colors"]["heavyAccent"]["r"],
-		(float)m_EditorConfig.getGlobal("general")["colors"]["heavyAccent"]["g"],
-		(float)m_EditorConfig.getGlobal("general")["colors"]["heavyAccent"]["b"],
-		(float)m_EditorConfig.getGlobal("general")["colors"]["heavyAccent"]["a"],
+		(float)general["colors"]["heavyAccent"]["r"],
+		(float)general["colors"]["heavyAccent"]["g"],
+		(float)general["colors"]["heavyAccent"]["b"],
+		(float)general["colors"]["heavyAccent"]["a"],
 	};
 	m_Colors.m_Inactive = {
-		(float)m_EditorConfig.getGlobal("general")["colors"]["inactive"]["r"],
-		(float)m_EditorConfig.getGlobal("general")["colors"]["inactive"]["g"],
-		(float)m_EditorConfig.getGlobal("general")["colors"]["inactive"]["b"],
-		(float)m_EditorConfig.getGlobal("general")["colors"]["inactive"]["a"],
+		(float)general["colors"]["inactive"]["r"],
+		(float)general["colors"]["inactive"]["g"],
+		(float)general["colors"]["inactive"]["b"],
+		(float)general["colors"]["inactive"]["a"],
 	};
 
-	m_ViewportSettings.m_AspectRatio = (float)m_EditorConfig.getGlobal("viewport")["aspectRatio"];
+	LuaVariable viewport = LuaInterpreter::GetSingleton()->getGlobal("viewport");
+	m_ViewportSettings.m_AspectRatio = (float)LuaInterpreter::GetSingleton()->getGlobal("viewport")["aspectRatio"];
 	m_ViewportSettings.m_ImageTint = {
-		(float)m_EditorConfig.getGlobal("viewport")["imageTint"]["r"],
-		(float)m_EditorConfig.getGlobal("viewport")["imageTint"]["g"],
-		(float)m_EditorConfig.getGlobal("viewport")["imageTint"]["b"],
-		(float)m_EditorConfig.getGlobal("viewport")["imageTint"]["a"],
+		(float)viewport["imageTint"]["r"],
+		(float)viewport["imageTint"]["g"],
+		(float)viewport["imageTint"]["b"],
+		(float)viewport["imageTint"]["a"],
 	};
 	m_ViewportSettings.m_ImageBorderColor = {
-		(float)m_EditorConfig.getGlobal("viewport")["borderColor"]["r"],
-		(float)m_EditorConfig.getGlobal("viewport")["borderColor"]["g"],
-		(float)m_EditorConfig.getGlobal("viewport")["borderColor"]["b"],
-		(float)m_EditorConfig.getGlobal("viewport")["borderColor"]["a"],
+		(float)viewport["borderColor"]["r"],
+		(float)viewport["borderColor"]["g"],
+		(float)viewport["borderColor"]["b"],
+		(float)viewport["borderColor"]["a"],
 	};
 
 	IMGUI_CHECKVERSION();
@@ -63,7 +66,7 @@ void Editor::initialize(HWND hWnd)
 	ImGui::StyleColorsDark();
 }
 
-void Editor::start(VisualComponentGraph* visualGraph)
+void Editor::render()
 {
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
@@ -71,15 +74,12 @@ void Editor::start(VisualComponentGraph* visualGraph)
 
 	applyDefaultUI();
 	applyDocks();
-}
 
-void Editor::end(VisualComponentGraph* visualGraph)
-{
 	ImGui::PopStyleColor(m_EditorStyleColorPushCount);
 	ImGui::PopStyleVar(m_EditorStyleVarPushCount);
 
 	RenderingDevice::GetSingleton()->setTextureRenderTarget();
-	RenderSystem::GetSingleton()->render(visualGraph);
+	RenderSystem::GetSingleton()->render();
 	RenderingDevice::GetSingleton()->setBackBufferRenderTarget();
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());

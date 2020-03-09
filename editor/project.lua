@@ -7,5 +7,7 @@ window = {
     y = 100,
     width = 1920,
     height = 1080,
-    msaa = false
+    msaa = false,
+    title = "Rootex Editor",
+    isEditor = true
 }

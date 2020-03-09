@@ -1,0 +1,17 @@
+file(GLOB_RECURSE AppSources **.cpp **.h)
+file(GLOB_RECURSE AppHeaders **.h)
+
+set(ROOTEX_INCLUDES
+    ${ROOTEX_INCLUDES}
+    ${CMAKE_CURRENT_LIST_DIR}
+CACHE INTERNAL "")
+
+set(ROOTEX_HEADERS
+    ${ROOTEX_HEADERS}
+    ${AppHeaders}
+CACHE INTERNAL "")
+
+set(ROOTEX_SOURCES
+    ${ROOTEX_SOURCES}
+    ${AppSources}
+CACHE INTERNAL "")
