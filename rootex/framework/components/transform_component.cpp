@@ -78,7 +78,7 @@ void TransformComponent::draw()
 {
 	ImGui::DragFloat3("Position", &m_TransformBuffer.m_Position.x, s_EditorDecimalSpeed);
 	ImGui::SameLine();
-	if (ImGui::SmallButton("R"))
+	if (ImGui::ArrowButton("Reset Position", ImGuiDir_Down))
 	{
 		m_TransformBuffer.m_Position = { 0.0f, 0.0f, 0.0f };
 	}
@@ -86,14 +86,17 @@ void TransformComponent::draw()
 	ImGui::DragFloat3("Rotation", m_EditorRotation, s_EditorDecimalSpeed);
 	m_TransformBuffer.m_Rotation = Quaternion::CreateFromYawPitchRoll(m_EditorRotation[0], m_EditorRotation[1], m_EditorRotation[2]);
 	ImGui::SameLine();
-	if (ImGui::SmallButton("R"))
+	if (ImGui::ArrowButton("Reset Rotation", ImGuiDir_Down))
 	{
-		m_TransformBuffer.m_Rotation = { 0.0f, 0.0f, 0.0f, 0.0f };
+		m_EditorRotation[0] = 0.0f;
+		m_EditorRotation[1] = 0.0f;
+		m_EditorRotation[2] = 0.0f;
+		m_EditorRotation[3] = 0.0f;
 	}
 
 	ImGui::DragFloat3("Scale", &m_TransformBuffer.m_Scale.x, s_EditorDecimalSpeed);
 	ImGui::SameLine();
-	if (ImGui::SmallButton("R"))
+	if (ImGui::ArrowButton("Reset Scale", ImGuiDir_Down))
 	{
 		m_TransformBuffer.m_Scale = { 1.0f, 1.0f, 1.0f };
 	}
