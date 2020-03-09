@@ -7,6 +7,8 @@
 AudioSource::AudioSource(bool isStreaming)
     : m_IsStreaming(isStreaming)
     , m_IsLooping(false)
+    , m_IsPaused(true)
+    , m_IsPlaying(false)
 {
 	AudioSystem::GetSingleton()->registerInstance(this);
 	AL_CHECK(alGenSources(1, &m_SourceID));
@@ -32,19 +34,48 @@ void AudioSource::queueNewBuffers()
 void AudioSource::play()
 {
 	AL_CHECK(alSourcePlay(m_SourceID));
+	m_IsPlaying = true;
+	m_IsPaused = false;
 }
 
-bool AudioSource::isLooping()
+void AudioSource::pause()
+{
+	AL_CHECK(alSourcePause(m_SourceID));
+	m_IsPaused = true;	
+}
+
+void AudioSource::stop()
+{
+	if (isPlaying())
+	{
+		pause();
+		AL_CHECK(alSourceStop(m_SourceID));
+		m_IsPlaying = false;
+		m_IsPaused = true;
+	}
+}
+
+bool AudioSource::isPlaying() const
+{
+	return m_IsPlaying;
+}
+
+bool AudioSource::isPaused() const
+{
+	return m_IsPaused;
+}
+
+bool AudioSource::isLooping() const
 {
 	return m_IsLooping;
 }
 
-ALuint AudioSource::getSourceID()
+ALuint AudioSource::getSourceID() const
 {
 	return m_SourceID;
 }
 
-StaticAudioSource::StaticAudioSource(StaticAudioBuffer* audio)
+StaticAudioSource::StaticAudioSource(Ref<StaticAudioBuffer> audio)
     : AudioSource(false)
     , m_StaticAudio(audio)
 {
@@ -53,9 +84,15 @@ StaticAudioSource::StaticAudioSource(StaticAudioBuffer* audio)
 
 StaticAudioSource::~StaticAudioSource()
 {
+	unqueueBuffers();
 }
 
-StreamingAudioSource::StreamingAudioSource(StreamingAudioBuffer* audio)
+void StaticAudioSource::unqueueBuffers()
+{
+	AL_CHECK(alSourceUnqueueBuffers(m_SourceID, 1, &m_StaticAudio->getBuffer()));
+}
+
+StreamingAudioSource::StreamingAudioSource(Ref<StreamingAudioBuffer> audio)
     : AudioSource(true)
     , m_StreamingAudio(audio)
 {
@@ -64,6 +101,7 @@ StreamingAudioSource::StreamingAudioSource(StreamingAudioBuffer* audio)
 
 StreamingAudioSource::~StreamingAudioSource()
 {
+	unqueueBuffers();
 }
 
 void StreamingAudioSource::setLooping(bool enabled)
@@ -89,4 +127,9 @@ void StreamingAudioSource::queueNewBuffers()
 			AL_CHECK(alSourcePlay(m_SourceID));
 		}
 	}
+}
+
+void StreamingAudioSource::unqueueBuffers()
+{
+	AL_CHECK(alSourceUnqueueBuffers(m_SourceID, BUFFER_COUNT, m_StreamingAudio->getBuffers()));
 }

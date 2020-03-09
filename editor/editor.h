@@ -1,10 +1,11 @@
 #pragma once
 
+#include "core/event_manager.h"
+#include "script/interpreter.h"
+
 #include "vendor/ImGUI/imgui.h"
 #include "vendor/ImGUI/imgui_impl_dx11.h"
 #include "vendor/ImGUI/imgui_impl_win32.h"
-
-#include "script/interpreter.h"
 
 class VisualComponentGraph;
 
@@ -91,4 +92,5 @@ public:
 	void initialize(HWND hWnd);
 	void start(VisualComponentGraph* visualGraph);
 	void end(VisualComponentGraph* visualGraph);
+	Variant quit(const Event* event);
 };

@@ -13,6 +13,6 @@ public:
 	StaticAudioBuffer(AudioResourceFile* audioFile);
 	~StaticAudioBuffer();
 
-	ALuint getBuffer();
+	ALuint& getBuffer();
 	int getBufferSize();
 };

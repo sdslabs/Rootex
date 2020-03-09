@@ -105,6 +105,10 @@ AudioSystem* AudioSystem::GetSingleton()
 
 void AudioSystem::shutDown()
 {
+	for (auto& source : m_ActiveAudioSources)
+	{
+		source->stop();
+	}
 	alutExit();
 }
 
@@ -139,5 +143,4 @@ AudioSystem::AudioSystem()
 
 AudioSystem::~AudioSystem()
 {
-	shutDown();
 }

@@ -41,6 +41,8 @@
 #include "vendor/ImGUI/imgui_impl_dx11.h"
 #include "vendor/ImGUI/imgui_impl_win32.h"
 
+Variant function(const Event* event) { return true; };
+
 int main()
 {
 	PhysicsSystem::GetSingleton()->initialize();
@@ -51,18 +53,31 @@ int main()
 	AudioSystem::GetSingleton()->initialize();
 	AudioResourceFile* w = ResourceLoader::CreateAudioResourceFile("game/assets/hipshop.wav");
 	Ref<StreamingAudioBuffer> audio(new StreamingAudioBuffer(w));
-	Ref<StreamingAudioSource> source(new StreamingAudioSource(audio.get()));
+	Ref<StreamingAudioSource> source(new StreamingAudioSource(audio));
 	source->setLooping(true);
-	source->play();
+	//source->play();
 
-	Ref<EventHandler> gameQuitter(new EventHandler());
-	gameQuitter->setHandler([](const Event* event) { PostQuitMessage(0); });
-	EventManager::GetSingleton()->addListener(gameQuitter.get(), Event::Type::InputExit);
-	Ref<EventHandler> gameEventHandler(new EventHandler());
-	EventManager::GetSingleton()->addListener(gameEventHandler.get(), Event::Type::Test);
-	Ref<Event> testEvent(new Event("Test Event", Event::Type::Test, String("SDSLabs")));
-	EventManager::GetSingleton()->call(testEvent.get()); // This should show warning because there is no handling function set for the event handler
-	EventManager::GetSingleton()->deferredCall(testEvent);
+	BIND_EVENT_FUNCTION("InputExit", [](const Event* event) -> Variant {
+		PostQuitMessage(0);
+		return true;
+	});
+
+	EventManager::GetSingleton()->addListener("InputBackward", CreateDelegate([source](const Event* event) -> Variant {
+		if (std::get<Vector2>(event->getData()).x)
+			return nullptr;
+		if (source->isPaused())
+		{
+			source->play();
+		}
+		else
+		{
+			source->pause();
+		}
+		return true;
+	}));
+
+	EventManager::GetSingleton()->call("Test Event", "TestEvent", String("SDSLabs"));
+	EventManager::GetSingleton()->deferredCall("Test Event", "TestEvent", String("SDSLabs"));
 
 	TextResourceFile* r = ResourceLoader::CreateTextResourceFile("rootex/test/abc.txt"); // So this loads build/game/abc.txt (However the binary exists in build/game/Debug/)
 	OS::PrintLine(r->getString());
@@ -92,9 +107,9 @@ int main()
 	    windowLua["y"],
 	    windowLua["deltaX"],
 	    windowLua["deltaY"],
-	    windowLua["title"], 
-		false, 
-		windowLua["msaa"]));
+	    windowLua["title"],
+	    false,
+	    windowLua["msaa"]));
 	InputManager::GetSingleton()->initialize(windowLua["deltaX"], windowLua["deltaY"]);
 	ShaderLibrary::MakeShaders();
 
@@ -123,14 +138,16 @@ int main()
 	Ref<Entity> teapotChild = EntityFactory::GetSingleton()->createEntity(teapotEntity);
 	teapotChild->getComponent<DiffuseVisualComponent>()->setTransform(Matrix::CreateTranslation({ 0.0f, 1.0f, 0.0f }));
 	//teapot->getComponent<HierarchyComponent>()->addChild(teapotChild);
-	teapot->setEventHandler([](const Event* event) {
-		Vector2 inputData = InputManager::GetSingleton()->getMousePositionDelta();
-		OS::PrintLine("Event received: " + std::to_string(inputData.x) + "," + std::to_string(inputData.y));
+
+
+	BIND_EVENT_FUNCTION("InputForward", function);
+	BIND_EVENT_FUNCTION("InputForward", [&](const Event* event) -> Variant
+	{
+		Vector2 keyData = std::get<Vector2>(event->getData());
+		OS::PrintLine("Event received: " + std::to_string(keyData.x) + "," + std::to_string(keyData.y));
+		return true;
 	});
-	teapot->subscribe(Event::Type::InputForward);
-	teapot->subscribe(Event::Type::InputBackward);
-	teapot->subscribe(Event::Type::InputLeft);
-	teapot->subscribe(Event::Type::InputRight);
+	
 	visualGraph->addChild(teapot);
 
 	std::optional<int> ret = {};
@@ -151,10 +168,10 @@ int main()
 		static float dx = 0;
 		static float y = 0;
 		static float dy = 0;
-		dx += 0.001f * (InputManager::GetSingleton()->isPressed(Event::Type::InputForward) - InputManager::GetSingleton()->isPressed(Event::Type::InputBackward));
-		dy += 0.001f * (InputManager::GetSingleton()->isPressed(Event::Type::InputRight) - InputManager::GetSingleton()->isPressed(Event::Type::InputLeft));
+		dx += 0.001f * (InputManager::GetSingleton()->isPressed("InputForward") - InputManager::GetSingleton()->isPressed("InputBackward"));
+		dy += 0.001f * (InputManager::GetSingleton()->isPressed("InputRight") - InputManager::GetSingleton()->isPressed("InputLeft"));
 		visualGraph->getCamera()->setPosition({ y += dy, 0.0f, -(x += dx) });
-		
+
 		RenderSystem::GetSingleton()->render(visualGraph.get());
 		InputManager::GetSingleton()->update();
 		EventManager::GetSingleton()->dispatchDeferred();
@@ -163,6 +180,8 @@ int main()
 		window->swapBuffers();
 		window->clearCurrentTarget();
 	}
+
+	AudioSystem::GetSingleton()->shutDown();
 
 	return ret.value();
 }
