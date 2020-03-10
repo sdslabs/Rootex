@@ -32,6 +32,7 @@ class Editor
 		ImVec4 m_Inactive;
 		ImVec4 m_Success;
 		ImVec4 m_Failure;
+		ImVec4 m_Warning;
 	} m_Colors;
 
 	Ptr<FileSystemDock> m_FileSystem;

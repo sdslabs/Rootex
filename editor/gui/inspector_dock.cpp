@@ -44,47 +44,51 @@ static int TextInputResizeCallback(ImGuiInputTextCallbackData* data)
 
 void InspectorDock::draw()
 {
-	if (ImGui::Begin("Inspector"))
+	if (m_InspectorSettings.m_IsActive)
 	{
-		if (m_OpenedEntity)
+		if (ImGui::Begin("Inspector"))
 		{
-			ImGui::Text("%s", m_OpenedEntity->getName().c_str());
-			ImGui::SameLine();
-			if (ImGui::Button("Relink Components"))
+			if (m_OpenedEntity)
 			{
-				m_OpenedEntity->setupComponents();
-			}
-			ImGui::PushStyleColor(ImGuiCol_Button, Editor::GetSingleton()->getColors().m_Success);
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, Editor::GetSingleton()->getColors().m_Accent);
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, Editor::GetSingleton()->getColors().m_Success);
-			if (ImGui::Button("Add Components"))
-			{
-				ImGui::OpenPopup(("Add Components: " + m_OpenedEntity->getName()).c_str());
-			}
-			ImGui::PopStyleColor(3);
-			ImGui::PushStyleColor(ImGuiCol_Button, Editor::GetSingleton()->getColors().m_Failure);
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, Editor::GetSingleton()->getColors().m_FailAccent);
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, Editor::GetSingleton()->getColors().m_Failure);
-			ImGui::SameLine();
-			if (ImGui::Button("Remove Components"))
-			{
-				ImGui::OpenPopup(("Remove Components: " + m_OpenedEntity->getName()).c_str());
-			}
-			ImGui::PopStyleColor(3);
-
-			for (auto& component : m_OpenedEntity->getAllComponents())
-			{
-				if (ImGui::TreeNodeEx(component.second->getName().c_str(), ImGuiTreeNodeFlags_CollapsingHeader))
+				ImGui::Text("Entity: %s", m_OpenedEntity->getName().c_str());
+				ImGui::PushStyleColor(ImGuiCol_Button, Editor::GetSingleton()->getColors().m_Success);
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, Editor::GetSingleton()->getColors().m_Accent);
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, Editor::GetSingleton()->getColors().m_Success);
+				if (ImGui::Button("Add Components"))
 				{
-					component.second->draw();
+					ImGui::OpenPopup(("Add Components: " + m_OpenedEntity->getName()).c_str());
 				}
-			}
+				ImGui::PopStyleColor(3);
+				ImGui::PushStyleColor(ImGuiCol_Button, Editor::GetSingleton()->getColors().m_Failure);
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, Editor::GetSingleton()->getColors().m_FailAccent);
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, Editor::GetSingleton()->getColors().m_Failure);
+				ImGui::SameLine();
+				if (ImGui::Button("Remove Components"))
+				{
+					ImGui::OpenPopup(("Remove Components: " + m_OpenedEntity->getName()).c_str());
+				}
+				ImGui::PopStyleColor(3);
+				ImGui::SameLine();
+				if (ImGui::Button("Reset"))
+				{
+					m_OpenedEntity->setupComponents();
+				}
+				ImGui::Separator();
+				ImGui::Text("Components");
+				for (auto& component : m_OpenedEntity->getAllComponents())
+				{
+					if (ImGui::TreeNodeEx(component.second->getName().c_str(), ImGuiTreeNodeFlags_CollapsingHeader))
+					{
+						component.second->draw();
+					}
+				}
 
-			drawAddComponentWindow();
-			drawRemoveComponentWindow();
+				drawAddComponentWindow();
+				drawRemoveComponentWindow();
+			}
 		}
+		ImGui::End();
 	}
-	ImGui::End();
 }
 
 void InspectorDock::drawAddComponentWindow()
@@ -121,6 +125,10 @@ void InspectorDock::drawAddComponentWindow()
 			ImGui::ListBoxFooter();
 		}
 
+		ImGui::PushStyleColor(ImGuiCol_Text, Editor::GetSingleton()->getColors().m_Warning);
+		ImGui::TextWrapped("Entities need to be reset to function make some new components function properly.");
+		ImGui::PopStyleColor(1);
+
 		if (ImGui::Button("Add"))
 		{
 			for (auto&& [componentID, componentName, isComponentSelected] : m_AddNewComponentSelectionCache)
@@ -129,11 +137,13 @@ void InspectorDock::drawAddComponentWindow()
 				{
 					Ref<Component> component = EntityFactory::GetSingleton()->createDefaultComponent(componentName);
 					EntityFactory::GetSingleton()->addComponent(m_OpenedEntity, component);
+					Editor::GetSingleton()->log("Added " + componentName + " to " + m_OpenedEntity->getName());
 				}
 			}
 			refreshAddNewComponentSelectionCache();
 			ImGui::CloseCurrentPopup();
 		}
+
 		ImGui::SameLine();
 
 		if (ImGui::Button("Cancel"))

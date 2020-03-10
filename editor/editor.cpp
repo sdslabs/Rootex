@@ -52,6 +52,12 @@ void Editor::initialize(HWND hWnd)
 		(float)general["colors"]["failAccent"]["b"],
 		(float)general["colors"]["failAccent"]["a"],
 	};
+	m_Colors.m_Warning = {
+		(float)general["colors"]["warning"]["r"],
+		(float)general["colors"]["warning"]["g"],
+		(float)general["colors"]["warning"]["b"],
+		(float)general["colors"]["warning"]["a"],
+	};
 
 	m_FileSystem.reset(new FileSystemDock());
 	m_Hierarchy.reset(new HierarchyDock());
@@ -178,6 +184,7 @@ void Editor::drawDefaultUI()
 					ImGui::Checkbox("Hierarchy", &m_Hierarchy->getSettings().m_IsActive);
 					ImGui::Checkbox("Viewport", &m_Viewport->getSettings().m_IsActive);
 					ImGui::Checkbox("File System", &m_FileSystem->getSettings().m_IsActive);
+					ImGui::Checkbox("Inspector", &m_Inspector->getSettings().m_IsActive);
 					ImGui::EndMenu();
 				}
 				ImGui::EndMenu();
@@ -324,13 +331,11 @@ void Editor::pushEditorStyleColors()
 	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_Border, m_Colors.m_HeavyAccent);
 	m_EditorStyleColorPushCount++;
-	ImGui::PushStyleColor(ImGuiCol_Button, m_Colors.m_Accent);
-	m_EditorStyleColorPushCount++;
-	ImGui::PushStyleColor(ImGuiCol_Button, m_Colors.m_Accent);
-	m_EditorStyleColorPushCount++;
-	ImGui::PushStyleColor(ImGuiCol_ButtonActive, m_Colors.m_Accent);
+	ImGui::PushStyleColor(ImGuiCol_Button, m_Colors.m_Success);
 	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, m_Colors.m_Accent);
+	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, m_Colors.m_Success);
 	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_CheckMark, m_Colors.m_Accent);
 	m_EditorStyleColorPushCount++;
