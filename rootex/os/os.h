@@ -31,6 +31,15 @@ public:
 	static FileBuffer LoadFileContents(String stringPath);
 	static bool Exists(String relativePath);
 	static FilePath OS::GetAbsolutePath(String stringPath);
+	static FilePath OS::GetRootRelativePath(String stringPath);
+	static FilePath OS::GetRelativePath(String stringPath, String base);
+
+	static Vector<FilePath> GetAllInDirectory(const String& directory);
+	static Vector<FilePath> GetDirectoriesInDirectory(const String& directory);
+	static Vector<FilePath> GetFilesInDirectory(const String& directory);
+
+	static bool IsDirectory(const String& path);
+	static bool IsFile(const String& path);
 
 	static void Print(const String& msg);
 	static void Print(const float& real);

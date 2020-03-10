@@ -1,7 +1,7 @@
 #include "os.h"
 
-#include <iostream>
 #include <filesystem>
+#include <iostream>
 
 #include "common/common.h"
 #include "resource_data.h"
@@ -15,6 +15,70 @@ FilePath OS::GetAbsolutePath(String stringPath)
 	FilePath absPath = s_RootDirectory / stringPath;
 
 	return absPath;
+}
+
+FilePath OS::GetRootRelativePath(String stringPath)
+{
+	return std::filesystem::relative(stringPath, s_RootDirectory);
+}
+
+FilePath OS::GetRelativePath(String stringPath, String base)
+{
+	return std::filesystem::relative(GetAbsolutePath(stringPath), GetAbsolutePath(base));
+}
+
+Vector<FilePath> OS::GetDirectoriesInDirectory(const String& directory)
+{
+	if (!std::filesystem::is_directory(GetAbsolutePath(directory)))
+	{
+		WARN("Not a directory: " + directory);
+		return {};
+	}
+
+	Vector<FilePath> result;
+	for (auto&& file : std::filesystem::directory_iterator(GetAbsolutePath(directory)))
+	{
+		if (file.is_directory())
+		{
+			result.push_back(GetRootRelativePath(((FilePath)file).generic_string()));
+		}
+	}
+	return result;
+}
+
+Vector<FilePath> OS::GetAllInDirectory(const String& directory)
+{
+	if (!std::filesystem::is_directory(GetAbsolutePath(directory)))
+	{
+		WARN("Not a directory: " + directory);
+		return {};
+	}
+
+	Vector<FilePath> result;
+	for (auto&& file : std::filesystem::directory_iterator(GetAbsolutePath(directory)))
+	{
+		result.push_back(GetRootRelativePath(((FilePath)file).generic_string()));
+	}
+	return result;
+}
+
+Vector<FilePath> OS::GetFilesInDirectory(const String& directory)
+{
+	if (!std::filesystem::is_directory(GetAbsolutePath(directory)))
+	{
+		WARN("Not a directory: " + directory);
+		return {};
+	}
+
+	Vector<FilePath> result;
+	for (auto&& file : std::filesystem::directory_iterator(GetAbsolutePath(directory)))
+	{
+		if (file.is_regular_file())
+		{
+			result.push_back(GetRootRelativePath(((FilePath)file).generic_string()));
+		}
+	}
+	return result;
 }
 
 bool OS::Initialize()
@@ -52,6 +116,16 @@ String OS::GetBuildDate()
 String OS::GetBuildTime()
 {
 	return String(__TIME__);
+}
+
+bool OS::IsDirectory(const String& path)
+{
+	return std::filesystem::is_directory(GetAbsolutePath(path));
+}
+
+bool OS::IsFile(const String& path)
+{
+	return std::filesystem::is_regular_file(GetAbsolutePath(path));
 }
 
 FileBuffer OS::LoadFileContents(String stringPath)
@@ -159,7 +233,7 @@ bool OS::SaveFile(const FilePath& filePath, ResourceData* fileData)
 		ERR(std::string("OS: File IO error: ") + std::string(e.what()));
 		return false;
 	}
-	
+
 	outFile.close();
 	return true;
 }

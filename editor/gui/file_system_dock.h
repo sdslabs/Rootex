@@ -10,6 +10,9 @@ public:
 
 private:
 	FileSystemSettings m_FileSystemSettings;
+	String m_OpenedFileName;
+
+	void drawFileSystemTree(const FilePath& path);
 
 public:
 	FileSystemDock() = default;

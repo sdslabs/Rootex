@@ -63,11 +63,10 @@ void HierarchyComponent::draw()
 	{
 		ImGui::Text(child->getName().c_str());
 		ImGui::SameLine();
-		if (ImGui::Button("Go"))
+		if (ImGui::Button(("Go##" + child->getName()).c_str()))
 		{
 			EventManager::GetSingleton()->call("OpenChildEntity", "EditorInspectorOpenEntity", child);
 		}
-		ImGui::NewLine();
 	}
 
 	ImGui::Columns(1);

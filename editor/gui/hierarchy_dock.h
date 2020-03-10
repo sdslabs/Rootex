@@ -12,8 +12,9 @@ public:
 
 private:
 	HierarchySettings m_HierarchySettings;
+	String m_OpenedEntityName;
 
-	void showHierarchySubTree(HierarchyComponent* node);
+	void showHierarchySubTree(Ref<Entity> node);
 
 public:
 	HierarchyDock() = default;
