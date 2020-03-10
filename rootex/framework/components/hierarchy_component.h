@@ -24,4 +24,8 @@ public:
 	virtual bool removeChild(Ref<Entity> node);
 
 	const Vector<Ref<Entity>>& getChildren() const { return m_Children; }
+
+#ifdef ROOTEX_EDITOR
+	void draw() override;
+#endif // ROOTEX_EDITOR
 };

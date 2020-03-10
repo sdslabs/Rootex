@@ -51,9 +51,14 @@ EntityID Entity::getID() const
 	return m_ID;
 }
 
-String Entity::getName() const
+const String& Entity::getName() const
 {
 	return m_Name;
+}
+
+void Entity::setName(const String& name)
+{
+	m_Name = name;
 }
 
 const HashMap<ComponentID, Ref<Component>>& Entity::getAllComponents() const

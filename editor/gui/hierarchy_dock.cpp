@@ -10,7 +10,7 @@
 
 void HierarchyDock::showHierarchySubTree(HierarchyComponent* node)
 {
-	if (ImGui::TreeNodeEx(node->getOwner()->getName().c_str(), ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanAvailWidth | (node->getChildren().size() ? ImGuiTreeNodeFlags_None : ImGuiTreeNodeFlags_Leaf)))
+	if (ImGui::TreeNodeEx(node->getOwner()->getName().c_str(), ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanAvailWidth | (node->getChildren().size() ? ImGuiTreeNodeFlags_None : ImGuiTreeNodeFlags_Leaf)))
 	{
 		if (ImGui::IsItemClicked())
 		{

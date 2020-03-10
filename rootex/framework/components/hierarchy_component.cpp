@@ -1,4 +1,5 @@
 #include "hierarchy_component.h"
+#include "event_manager.h"
 
 Component* HierarchyComponent::Create(const LuaVariable& componentData)
 {
@@ -23,3 +24,50 @@ bool HierarchyComponent::removeChild(Ref<Entity> node)
 	}
 	return true;
 }
+
+#ifdef ROOTEX_EDITOR
+#include "imgui.h"
+void HierarchyComponent::draw()
+{
+	ImGui::Columns(2);
+
+	if (m_Parent)
+	{
+		ImGui::Text("Parent");
+		ImGui::NextColumn();
+		ImGui::Text(m_Parent->getName().c_str());
+		ImGui::SameLine();
+		if (ImGui::Button("Go"))
+		{
+			EventManager::GetSingleton()->call("OpenChildEntity", "EditorInspectorOpenEntity", m_Parent);
+		}
+		ImGui::NextColumn();
+	}
+	else
+	{
+		ImGui::Text("Parent");
+		ImGui::NextColumn();
+		ImGui::Text("None");
+		ImGui::NextColumn();
+	}
+
+	ImGui::Text("Children");
+	ImGui::NextColumn();
+	if (m_Children.size() == 0)
+	{
+		ImGui::Text("None");
+	}
+	for (auto& child : m_Children)
+	{
+		ImGui::Text(child->getName().c_str());
+		ImGui::SameLine();
+		if (ImGui::Button("Go"))
+		{
+			EventManager::GetSingleton()->call("OpenChildEntity", "EditorInspectorOpenEntity", child);
+		}
+		ImGui::NewLine();
+	}
+
+	ImGui::Columns(1);
+}
+#endif // ROOTEX_EDITOR

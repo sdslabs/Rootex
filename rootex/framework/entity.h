@@ -33,7 +33,8 @@ public:
 	void destroy();
 
 	EntityID getID() const;
-	String getName() const;
+	const String& getName() const;
+	void setName(const String& name);
 	
 	template <class ComponentType>
 	ComponentType* getComponent();

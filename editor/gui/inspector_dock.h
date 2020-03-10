@@ -11,6 +11,8 @@ public:
 	};
 
 private:
+	constexpr static unsigned int s_InputTextBufferSize = 256;
+
 	InspectorSettings m_InspectorSettings;
 	Entity* m_OpenedEntity;
 	

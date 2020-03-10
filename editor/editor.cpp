@@ -109,7 +109,7 @@ void Editor::drawDefaultUI()
 		ImGui::SetNextWindowViewport(viewport->ID);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 2.0f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-
+		
 		pushEditorStyleColors();
 		pushEditorStyleVars();
 
@@ -316,7 +316,9 @@ void Editor::pushEditorStyleColors()
 	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_CheckMark, m_Colors.m_Accent);
 	m_EditorStyleColorPushCount++;
-	ImGui::PushStyleColor(ImGuiCol_TextSelectedBg, m_Colors.m_MediumAccent);
+	ImGui::PushStyleColor(ImGuiCol_TextSelectedBg, m_Colors.m_Accent);
+	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_TextDisabled, m_Colors.m_Inactive);
 	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_ResizeGrip, m_Colors.m_HeavyAccent);
 	m_EditorStyleColorPushCount++;
