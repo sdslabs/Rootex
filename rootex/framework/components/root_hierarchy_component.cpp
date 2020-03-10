@@ -26,18 +26,21 @@ void RootHierarchyComponent::renderPassRender(HierarchyComponent& renderPassGrap
 {
 	for (auto& child : renderPassGraph.getChildren())
 	{
-		VisualComponent* childVisualComponent = child->getComponent<VisualComponent>();
+		Ref<VisualComponent> childVisualComponent = child->getComponent<VisualComponent>();
 
-		childVisualComponent->preRender(graph);
-
-		if (childVisualComponent->isVisible(graph))
+		if (childVisualComponent)
 		{
-			// Assumed to be opaque
-			childVisualComponent->render(graph);
-		}
-		childVisualComponent->renderChildren(graph);
+			childVisualComponent->preRender(graph);
 
-		childVisualComponent->postRender(graph);
+			if (childVisualComponent->isVisible(graph))
+			{
+				// Assumed to be opaque
+				childVisualComponent->render(graph);
+			}
+			childVisualComponent->renderChildren(graph);
+
+			childVisualComponent->postRender(graph);
+		}
 	}
 }
 
@@ -61,7 +64,7 @@ bool RootHierarchyComponent::addChild(Ref<Entity> child)
 {
 	HierarchyComponent::addChild(child);
 
-	VisualComponent* vc = child->getComponent<VisualComponent>();
+	Ref<VisualComponent> vc = child->getComponent<VisualComponent>();
 	if (vc)
 	{
 		RenderPass pass = vc->getAttributes()->getRenderPass();
@@ -92,4 +95,5 @@ bool RootHierarchyComponent::addChild(Ref<Entity> child)
 		}
 		return false;
 	}
+	return true;
 }

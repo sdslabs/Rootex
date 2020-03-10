@@ -7,3 +7,10 @@ Component* TestComponent::Create(const LuaVariable& componentData)
 
 	return component;
 }
+
+Component* TestComponent::CreateDefault()
+{
+	TestComponent* component = new TestComponent();
+	component->m_TestVariable = 0;
+	return component;
+}

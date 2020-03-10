@@ -22,6 +22,12 @@ Component* TransformComponent::Create(const LuaVariable& componentData)
 	return transformComponent;
 }
 
+Component* TransformComponent::CreateDefault()
+{
+	TransformComponent* transformComponent = new TransformComponent();
+	return transformComponent;
+}
+
 void TransformComponent::updateTransformFromPositionRotationScale()
 {
 	m_TransformBuffer.m_Transform = Matrix::Identity;
@@ -76,31 +82,31 @@ void TransformComponent::addTransform(const Matrix& applyTransform)
 #include "imgui.h"
 void TransformComponent::draw()
 {
-	ImGui::DragFloat3("Position", &m_TransformBuffer.m_Position.x, s_EditorDecimalSpeed);
+	ImGui::DragFloat3("##P", &m_TransformBuffer.m_Position.x, s_EditorDecimalSpeed);
 	ImGui::SameLine();
-	if (ImGui::ArrowButton("Reset Position", ImGuiDir_Down))
+	if (ImGui::Button("Position"))
 	{
 		m_TransformBuffer.m_Position = { 0.0f, 0.0f, 0.0f };
 	}
-
-	ImGui::DragFloat3("Rotation", m_EditorRotation, s_EditorDecimalSpeed);
-	m_TransformBuffer.m_Rotation = Quaternion::CreateFromYawPitchRoll(m_EditorRotation[0], m_EditorRotation[1], m_EditorRotation[2]);
+	
+	ImGui::DragFloat3("##R", m_EditorRotation, s_EditorDecimalSpeed);
 	ImGui::SameLine();
-	if (ImGui::ArrowButton("Reset Rotation", ImGuiDir_Down))
+	if (ImGui::Button("Rotation"))
 	{
 		m_EditorRotation[0] = 0.0f;
 		m_EditorRotation[1] = 0.0f;
 		m_EditorRotation[2] = 0.0f;
 		m_EditorRotation[3] = 0.0f;
 	}
-
-	ImGui::DragFloat3("Scale", &m_TransformBuffer.m_Scale.x, s_EditorDecimalSpeed);
+	m_TransformBuffer.m_Rotation = Quaternion::CreateFromYawPitchRoll(m_EditorRotation[0], m_EditorRotation[1], m_EditorRotation[2]);
+	
+	ImGui::DragFloat3("##S", &m_TransformBuffer.m_Scale.x, s_EditorDecimalSpeed, 0.0f, 0.0f);
 	ImGui::SameLine();
-	if (ImGui::ArrowButton("Reset Scale", ImGuiDir_Down))
+	if (ImGui::Button("Scale"))
 	{
 		m_TransformBuffer.m_Scale = { 1.0f, 1.0f, 1.0f };
 	}
-
+	
 	updateTransformFromPositionRotationScale();
 }
 #endif // ROOTEX_EDITOR

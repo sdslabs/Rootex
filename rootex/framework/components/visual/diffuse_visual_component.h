@@ -6,6 +6,7 @@
 class DiffuseVisualComponent : public VisualComponent
 {
 	static Component* Create(const LuaVariable& componentData);
+	static Component* CreateDefault();
 
 	Ref<DiffuseMaterial> m_DiffuseMaterial;
 

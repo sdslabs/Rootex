@@ -52,6 +52,8 @@ public:
 class VisualComponent : public Component
 {
 	static Component* Create(const LuaVariable& componentData);
+	static Component* CreateDefault();
+
 	Color m_Color;
 	void setColor(const Color& color) { m_Color = color; };
 

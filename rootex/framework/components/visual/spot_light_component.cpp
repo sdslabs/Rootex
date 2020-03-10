@@ -17,6 +17,22 @@ Component* SpotLightComponent::Create(const LuaVariable& componentData)
 	return spotLightComponent;
 }
 
+Component* SpotLightComponent::CreateDefault()
+{
+	SpotLightComponent* spotLightComponent = new SpotLightComponent(
+	    1.0f,
+		0.045f,
+	    0.0075f,
+	    100.0f,
+	    1.0f,
+	    Color(1.0f, 1.0f, 1.0f, 1.0f),
+	    Color(0.05f, 0.05f, 0.05f, 1.0f),
+	    4, 
+		30);
+
+	return spotLightComponent;
+}
+
 SpotLightComponent::SpotLightComponent(const float constAtt, const float linAtt, const float quadAtt,
     const float range, const float diffuseIntensity, const Color& diffuseColor, const Color& ambientColor,
 	float spot, float angleRange)
