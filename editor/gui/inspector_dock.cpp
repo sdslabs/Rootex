@@ -21,21 +21,31 @@ InspectorDock::InspectorDock()
 	BIND_EVENT_MEMBER_FUNCTION("EditorInspectorOpenEntity", openEntity);
 }
 
+static int TextInputResizeCallback(ImGuiInputTextCallbackData* data)
+{
+	if (data->EventFlag == ImGuiInputTextFlags_CallbackResize)
+	{
+		String* myStr = (String*)data->UserData;
+		myStr->resize(data->BufSize);
+		data->Buf = myStr->data();
+	}
+	return 0;
+}
+
 void InspectorDock::draw()
 {
 	if (ImGui::Begin("Inspector"))
 	{
 		if (m_OpenedEntity)
 		{
-			ImGui::LabelText(m_OpenedEntity->getName().c_str(), "Entity");
+			ImGui::LabelText("", "%s", m_OpenedEntity->getName().c_str());
 			for (auto& component : m_OpenedEntity->getAllComponents())
 			{
-				ImGui::SetNextItemOpen(true);
 				if (ImGui::TreeNodeEx(component.second->getName().c_str(), ImGuiTreeNodeFlags_CollapsingHeader))
 				{
 					component.second->draw();
 				}
-			}	
+			}
 		}
 	}
 	ImGui::End();

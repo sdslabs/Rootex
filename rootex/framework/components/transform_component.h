@@ -56,6 +56,6 @@ public:
 	virtual String getName() const override { return "TransformComponent"; }
 
 #ifdef ROOTEX_EDITOR
-	void draw();
+	void draw() override;
 #endif // ROOTEX_EDITOR
 };
