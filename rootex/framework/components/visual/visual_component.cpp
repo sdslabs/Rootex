@@ -21,6 +21,17 @@ Component* VisualComponent::Create(const LuaVariable& componentData)
 	return visualComponent;
 }
 
+Component* VisualComponent::CreateDefault()
+{
+	VisualComponent* visualComponent = new VisualComponent(
+	    RenderPass::Global,
+	    Ref<Material>(new Material()),
+	    ResourceLoader::CreateVisualModelResourceFile("rootex/assets/cube.obj"));
+	visualComponent->setColor(Color(0.5f, 0.5f, 0.5f));
+
+	return visualComponent;
+}
+
 VisualComponent::VisualComponent(const RenderPass& renderPassSetting, Ref<Material> material,
 	VisualModelResourceFile* resFile)
     : m_IsVisible(true)
@@ -40,13 +51,13 @@ bool VisualComponent::setup()
 	bool status = true;
 	if (m_Owner)
 	{
-		m_Attributes.m_TransformComponent = m_Owner->getComponent<TransformComponent>();
+		m_Attributes.m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
 		if (m_Attributes.m_TransformComponent == nullptr)
 		{
 			status = false;
 		}
 
-		m_Attributes.m_HierarchyComponent = m_Owner->getComponent<HierarchyComponent>();
+		m_Attributes.m_HierarchyComponent = m_Owner->getComponent<HierarchyComponent>().get();
 		if (m_Attributes.m_HierarchyComponent == nullptr)
 		{
 			WARN("Entity without hierarchy component found");
@@ -97,18 +108,21 @@ void VisualComponent::renderChildren(HierarchyGraph* graph)
 
 	for (auto& child : m_Owner->getComponent<HierarchyComponent>()->getChildren())
 	{
-		VisualComponent* childVisualComponent = child->getComponent<VisualComponent>();
+		VisualComponent* childVisualComponent = child->getComponent<VisualComponent>().get();
 
-		childVisualComponent->preRender(graph);
-
-		if (childVisualComponent->isVisible(graph))
+		if (childVisualComponent)
 		{
-			// Assumed to be opaque
-			childVisualComponent->render(graph);
-		}
-		childVisualComponent->renderChildren(graph);
+			childVisualComponent->preRender(graph);
 
-		childVisualComponent->postRender(graph);
+			if (childVisualComponent->isVisible(graph))
+			{
+				// Assumed to be opaque
+				childVisualComponent->render(graph);
+			}
+			childVisualComponent->renderChildren(graph);
+
+			childVisualComponent->postRender(graph);
+		}
 	}
 }
 

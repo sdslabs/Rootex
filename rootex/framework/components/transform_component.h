@@ -6,6 +6,7 @@
 class TransformComponent : public Component
 {
 	static Component* Create(const LuaVariable& componentData);
+	static Component* CreateDefault();
 
 	struct TransformBuffer
 	{

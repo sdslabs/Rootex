@@ -1,6 +1,7 @@
 #pragma once
 
 #include "event_manager.h"
+#include "rootex/framework/component.h"
 
 class InspectorDock
 {
@@ -14,9 +15,14 @@ private:
 	constexpr static unsigned int s_InputTextBufferSize = 256;
 
 	InspectorSettings m_InspectorSettings;
-	Entity* m_OpenedEntity;
+	Ref<Entity> m_OpenedEntity;
+	Vector<Tuple<ComponentID, String, bool>> m_AddNewComponentSelectionCache;
 	
 	Variant openEntity(const Event* event);
+
+	void drawAddComponentWindow();
+	void drawRemoveComponentWindow();
+	void refreshAddNewComponentSelectionCache();
 
 public:
 	InspectorDock();

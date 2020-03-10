@@ -22,6 +22,12 @@ using Map = std::map<P, Q>;
 template <class P, class Q>
 using HashMap = std::unordered_map<P, Q>;
 
+#include <utility>
+template <typename...P>
+using Tuple = std::tuple<P...>;
+template <class P, class Q>
+using Pair = std::pair<P, Q>;
+
 #include <vector>
 template <class T>
 using Vector = std::vector<T>;

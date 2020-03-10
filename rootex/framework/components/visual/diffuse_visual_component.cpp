@@ -20,6 +20,18 @@ Component* DiffuseVisualComponent::Create(const LuaVariable& componentData)
 	return diffuseComponent;
 }
 
+Component* DiffuseVisualComponent::CreateDefault()
+{
+	ImageResourceFile* imageRes = ResourceLoader::CreateImageResourceFile("rootex/assets/rootex.png");
+	Ref<Texture> texture(new Texture(imageRes));
+
+	Ref<DiffuseMaterial> material(new DiffuseMaterial(texture));
+
+	DiffuseVisualComponent* diffuseComponent = new DiffuseVisualComponent(RenderPass::Global, material, ResourceLoader::CreateVisualModelResourceFile("rootex/assets/cube.obj"));
+
+	return diffuseComponent;
+}
+
 DiffuseVisualComponent::DiffuseVisualComponent(RenderPass renderPass, Ref<DiffuseMaterial> material, VisualModelResourceFile* resFile)
     : VisualComponent(renderPass, material, resFile)
     , m_DiffuseMaterial(material)

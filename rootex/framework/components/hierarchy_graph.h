@@ -8,7 +8,7 @@ class HierarchyGraph
 {
 protected:
 	Ref<Entity> m_Root;
-	RootHierarchyComponent* m_RootHierarchyComponent;
+	Ref<RootHierarchyComponent> m_RootHierarchyComponent;
 
 public:
 	HierarchyGraph();
@@ -18,5 +18,5 @@ public:
 	bool addChild(Ref<Entity> child);
 	bool removeChild(Ref<Entity> child);
 
-	RootHierarchyComponent* getRoot() const { return m_RootHierarchyComponent; }
+	Ref<RootHierarchyComponent> getRoot() const { return m_RootHierarchyComponent; }
 };

@@ -46,6 +46,13 @@ void Entity::destroy()
 	m_Components.clear();
 }
 
+void Entity::removeComponent(Ref<Component> component)
+{
+	m_Components.erase(component->getComponentID());
+	System::DeregisterComponent(component.get());
+	component.reset();
+}
+
 EntityID Entity::getID() const
 {
 	return m_ID;
@@ -54,6 +61,11 @@ EntityID Entity::getID() const
 const String& Entity::getName() const
 {
 	return m_Name;
+}
+
+bool Entity::hasComponent(ComponentID componentID)
+{
+	return m_Components.find(componentID) != m_Components.end();
 }
 
 void Entity::setName(const String& name)

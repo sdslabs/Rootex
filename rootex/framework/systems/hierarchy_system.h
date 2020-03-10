@@ -13,6 +13,6 @@ public:
 
 	void addChild(Ref<Entity> child);
 
-	RootHierarchyComponent* getRoot() const { return m_HierarchyGraph.getRoot(); }
+	Ref<RootHierarchyComponent> getRoot() const { return m_HierarchyGraph.getRoot(); }
 	HierarchyGraph* getHierarchyGraph() { return &m_HierarchyGraph; }
 };

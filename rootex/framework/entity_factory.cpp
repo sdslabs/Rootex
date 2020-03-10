@@ -16,6 +16,10 @@
 #include "components/visual/directional_light_component.h"
 #include "components/visual/spot_light_component.h"
 
+#define REGISTER_COMPONENT(ComponentClass) \
+m_ComponentCreators.push_back({ ComponentClass::s_ID, #ComponentClass, ComponentClass::Create }); \
+m_DefaultComponentCreators.push_back({ ComponentClass::s_ID, #ComponentClass, ComponentClass::CreateDefault })
+
 EntityID EntityFactory::s_CurrentID = 1;
 
 EntityFactory* EntityFactory::GetSingleton()
@@ -31,14 +35,14 @@ EntityID EntityFactory::getNextID()
 
 EntityFactory::EntityFactory()
 {
-	m_ComponentCreators["TestComponent"] = TestComponent::Create;
-	m_ComponentCreators["DebugComponent"] = DebugComponent::Create;
-	m_ComponentCreators["VisualComponent"] = VisualComponent::Create;
-	m_ComponentCreators["TransformComponent"] = TransformComponent::Create;
-	m_ComponentCreators["DiffuseVisualComponent"] = DiffuseVisualComponent::Create;
-	m_ComponentCreators["PointLightComponent"] = PointLightComponent::Create;
-	m_ComponentCreators["DirectionalLightComponent"] = DirectionalLightComponent::Create;
-	m_ComponentCreators["SpotLightComponent"] = SpotLightComponent::Create;
+	REGISTER_COMPONENT(TestComponent);
+	REGISTER_COMPONENT(DebugComponent);
+	REGISTER_COMPONENT(VisualComponent);
+	REGISTER_COMPONENT(TransformComponent);
+	REGISTER_COMPONENT(DiffuseVisualComponent);
+	REGISTER_COMPONENT(PointLightComponent);
+	REGISTER_COMPONENT(DirectionalLightComponent);
+	REGISTER_COMPONENT(SpotLightComponent);
 }
 
 EntityFactory::~EntityFactory()
@@ -48,10 +52,17 @@ EntityFactory::~EntityFactory()
 
 Ref<Component> EntityFactory::createComponent(const String& name, const LuaVariable& componentData)
 {
-	auto findIt = m_ComponentCreators.find(name);
+	auto& findIt = m_ComponentCreators.end();
+	for (auto& componentClass = m_ComponentCreators.begin(); componentClass != m_ComponentCreators.end(); componentClass++)
+	{
+		if (Extract(String, *componentClass) == name)
+		{
+			findIt = componentClass;
+		}
+	}
 	if (findIt != m_ComponentCreators.end())
 	{
-		ComponentCreator create = findIt->second;
+		ComponentCreator create = Extract(ComponentCreator, *findIt);
 		Ref<Component> component(create(componentData));
 
 		System::RegisterComponent(component.get());
@@ -71,6 +82,32 @@ Ref<Component> EntityFactory::createHierarchyComponent()
 	System::RegisterComponent(component.get());
 
 	return component;
+}
+
+Ref<Component> EntityFactory::createDefaultComponent(const String& name)
+{
+	auto& findIt = m_DefaultComponentCreators.end();
+	for (auto& componentClass = m_DefaultComponentCreators.begin(); componentClass != m_DefaultComponentCreators.end(); componentClass++)
+	{
+		if (Extract(String, *componentClass) == name)
+		{
+			findIt = componentClass;
+		}
+	}
+	if (findIt != m_DefaultComponentCreators.end())
+	{
+		ComponentDefaultCreator create = Extract(ComponentDefaultCreator, *findIt);
+		Ref<Component> component(create());
+
+		System::RegisterComponent(component.get());
+
+		return component;
+	}
+	else
+	{
+		ERR("Could not find componentDescription: " + name);
+		return nullptr;
+	}
 }
 
 Ref<Entity> EntityFactory::createEntity(LuaTextResourceFile* actorLuaDescription)
@@ -134,6 +171,18 @@ Ref<Entity> EntityFactory::createRootEntity()
 
 	m_Entities.push_back(root);
 	return root;
+}
+
+void EntityFactory::addDefaultComponent(Ref<Entity> entity, String componentName)
+{
+	entity->addComponent(createDefaultComponent(componentName));
+	entity->setupComponents();
+}
+
+void EntityFactory::addComponent(Ref<Entity> entity, Ref<Component> component)
+{
+	entity->addComponent(component);
+	component->setOwner(entity);
 }
 
 void EntityFactory::destroyEntities()

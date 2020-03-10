@@ -19,7 +19,7 @@ void HierarchyDock::showHierarchySubTree(HierarchyComponent* node)
 		
 		for (auto& child : node->getChildren())
 		{
-			showHierarchySubTree(child->getComponent<HierarchyComponent>());
+			showHierarchySubTree(child->getComponent<HierarchyComponent>().get());
 		}
 		ImGui::TreePop();
 	}
@@ -31,7 +31,7 @@ void HierarchyDock::draw()
 	{
 		if (ImGui::Begin("Hierarchy"))
 		{
-			RootHierarchyComponent* rootComponent = HierarchySystem::GetSingleton()->getRoot();
+			RootHierarchyComponent* rootComponent = HierarchySystem::GetSingleton()->getRoot().get();
 			showHierarchySubTree(rootComponent);
 		}
 		ImGui::End();

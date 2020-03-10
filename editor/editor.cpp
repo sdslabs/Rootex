@@ -34,6 +34,24 @@ void Editor::initialize(HWND hWnd)
 		(float)general["colors"]["inactive"]["b"],
 		(float)general["colors"]["inactive"]["a"],
 	};
+	m_Colors.m_Success = {
+		(float)general["colors"]["success"]["r"],
+		(float)general["colors"]["success"]["g"],
+		(float)general["colors"]["success"]["b"],
+		(float)general["colors"]["success"]["a"],
+	};
+	m_Colors.m_Failure = {
+		(float)general["colors"]["failure"]["r"],
+		(float)general["colors"]["failure"]["g"],
+		(float)general["colors"]["failure"]["b"],
+		(float)general["colors"]["failure"]["a"],
+	};
+	m_Colors.m_FailAccent = {
+		(float)general["colors"]["failAccent"]["r"],
+		(float)general["colors"]["failAccent"]["g"],
+		(float)general["colors"]["failAccent"]["b"],
+		(float)general["colors"]["failAccent"]["a"],
+	};
 
 	m_FileSystem.reset(new FileSystemDock());
 	m_Hierarchy.reset(new HierarchyDock());

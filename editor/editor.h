@@ -26,9 +26,12 @@ class Editor
 	struct Colors
 	{
 		ImVec4 m_Accent;
+		ImVec4 m_FailAccent;
 		ImVec4 m_MediumAccent;
 		ImVec4 m_HeavyAccent;
 		ImVec4 m_Inactive;
+		ImVec4 m_Success;
+		ImVec4 m_Failure;
 	} m_Colors;
 
 	Ptr<FileSystemDock> m_FileSystem;

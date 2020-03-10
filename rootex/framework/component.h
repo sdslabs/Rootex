@@ -15,6 +15,8 @@ protected:
 	Ref<Entity> m_Owner;
 
 public:
+	static const ComponentID s_ID = (ComponentID)ComponentIDs::Component;
+
 	Component();
 	virtual ~Component();
 	

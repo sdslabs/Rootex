@@ -51,6 +51,8 @@ void HierarchyComponent::draw()
 		ImGui::NextColumn();
 	}
 
+	ImGui::Separator();
+
 	ImGui::Text("Children");
 	ImGui::NextColumn();
 	if (m_Children.size() == 0)
