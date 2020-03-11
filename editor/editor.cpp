@@ -160,7 +160,6 @@ void Editor::drawDefaultUI()
 			static String menuAction = "";
 			if (ImGui::BeginMenu("File"))
 			{
-				ImGui::Separator();
 				if (ImGui::MenuItem("Quit", ""))
 				{
 					quit();
