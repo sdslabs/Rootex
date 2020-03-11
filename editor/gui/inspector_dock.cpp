@@ -137,7 +137,7 @@ void InspectorDock::drawAddComponentWindow()
 				{
 					Ref<Component> component = EntityFactory::GetSingleton()->createDefaultComponent(componentName);
 					EntityFactory::GetSingleton()->addComponent(m_OpenedEntity, component);
-					Editor::GetSingleton()->log("Added " + componentName + " to " + m_OpenedEntity->getName());
+					PRINT("Added " + componentName + " to " + m_OpenedEntity->getName());
 				}
 			}
 			refreshAddNewComponentSelectionCache();
@@ -199,7 +199,7 @@ void InspectorDock::drawRemoveComponentWindow()
 					if (component)
 					{
 						m_OpenedEntity->removeComponent(component);
-						Editor::GetSingleton()->log("Deleted " + componentName + " from " + m_OpenedEntity->getName());
+						PRINT("Deleted " + componentName + " from " + m_OpenedEntity->getName());
 					}
 				}
 			}

@@ -8,8 +8,10 @@ class TextViewer
 {
 	TextResourceFile* m_TextResourceFile;
 
+	void drawFileInfo();
+
 public:
-	void load(const FilePath& filePath);
+	ResourceFile* load(const FilePath& filePath);
 	void unload();
 	void draw();
 };

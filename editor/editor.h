@@ -49,11 +49,9 @@ class Editor
 	~Editor();
 
 	void drawDefaultUI();
-	
+
 	void pushEditorStyleColors();
 	void pushEditorStyleVars();
-
-	void logToOutput(const String& log);
 
 	friend class OS;
 
@@ -63,8 +61,6 @@ public:
 	void initialize(HWND hWnd);
 	void render();
 	void quit();
-
-	void log(const String& log);
 
 	const Colors& getColors() const { return m_Colors; }
 };

@@ -108,11 +108,6 @@ void Editor::quit()
 	PostQuitMessage(0);
 }
 
-void Editor::log(const String& log)
-{
-	m_Output->log(log);
-}
-
 Editor::~Editor()
 {
 	ImGui_ImplDX11_Shutdown();
@@ -378,9 +373,4 @@ Editor* Editor::GetSingleton()
 {
 	static Editor singleton;
 	return &singleton;
-}
-
-void Editor::logToOutput(const String& log)
-{
-	m_Output->log(log);
 }

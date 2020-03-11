@@ -9,9 +9,11 @@ class ImageViewer
 {
 	Ref<Texture> m_Texture;
 	ImageResourceFile* m_ImageResourceFile;
+	
+	void drawFileInfo();
 
 public:
-	void load(const FilePath& filePath);
+	ResourceFile* load(const FilePath& filePath);
 	void unload();
 	void draw();
 };
