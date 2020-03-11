@@ -14,7 +14,6 @@ set(ROOTEX_SOURCES
 CACHE INTERNAL "")
 
 set(ROOTEX_SWIG_INTERFACE
-    ${CMAKE_CURRENT_LIST_DIR}/rootex.i
 CACHE INTERNAL "")
 
 set(ROOTEX_PCH_HEADERS
@@ -26,7 +25,8 @@ add_subdirectory(core)
 add_subdirectory(framework)
 add_subdirectory(main)
 add_subdirectory(os)
-add_subdirectory(script) # Needs to be the last amongst the Rootex sources. vendor/ and pch/ should be added later
+add_subdirectory(script)
+add_subdirectory(serialize)
 add_subdirectory(vendor)
 add_subdirectory(pch)
 
@@ -88,10 +88,12 @@ target_include_directories(Rootex PUBLIC
 target_link_libraries(Rootex PUBLIC
     Lua
     LuaBridge
-    LuaBindings
+    SWIGBindings
     OpenAL
     ALUT
     DirectXTK
+    flatbuffers
+    SerializationGeneratedHeaders
     ImGUI
     Gainput
     Bullet3D

@@ -37,8 +37,8 @@ public:
 	static void EditFileInSystemEditor(const String& filePath);
 	static FileTimePoint GetFileLastChangedTime(const String& filePath);
 
+	static bool IsExists(String relativePath);
 	static FileBuffer LoadFileContents(String stringPath);
-	static bool Exists(String relativePath);
 	static FilePath OS::GetAbsolutePath(String stringPath);
 	static FilePath OS::GetRootRelativePath(String stringPath);
 	static FilePath OS::GetRelativePath(String stringPath, String base);
@@ -50,6 +50,11 @@ public:
 	static bool IsDirectory(const String& path);
 	static bool IsFile(const String& path);
 
+	static void CreateDirectoryName(const String& dirPath);
+	static InputOutputFileStream CreateFileName(const String& filePath);
+
+	static bool SaveFile(const FilePath& filePath, ResourceData* fileData);
+
 	static void Print(const String& msg);
 	static void Print(const float& real);
 	static void Print(const int& number);
@@ -60,6 +65,4 @@ public:
 	static void PrintIf(const bool& expr, const String& error);
 
 	static void PostError(String message, LPSTR caption);
-
-	static bool SaveFile(const FilePath& filePath, ResourceData* fileData);
 };

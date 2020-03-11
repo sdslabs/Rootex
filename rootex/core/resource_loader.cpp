@@ -24,7 +24,7 @@ TextResourceFile* ResourceLoader::CreateTextResourceFile(String path)
 		}
 	}
 
-	if (OS::Exists(path) == false)
+	if (OS::IsExists(path) == false)
 	{
 		ERR("File not found: " + path);
 		return nullptr;
@@ -40,6 +40,15 @@ TextResourceFile* ResourceLoader::CreateTextResourceFile(String path)
 	return textRes;
 }
 
+TextResourceFile* ResourceLoader::CreateNewTextResourceFile(String path)
+{
+	if (!OS::IsExists(path))
+	{
+		OS::CreateFileName(path);
+	}
+	return CreateTextResourceFile(path);
+}
+
 LuaTextResourceFile* ResourceLoader::CreateLuaTextResourceFile(String path)
 {
 	for (auto& item : s_ResourcesDataFiles)
@@ -50,7 +59,7 @@ LuaTextResourceFile* ResourceLoader::CreateLuaTextResourceFile(String path)
 		}
 	}
 
-	if (OS::Exists(path) == false)
+	if (OS::IsExists(path) == false)
 	{
 		ERR("File not found: " + path);
 		return nullptr;
@@ -76,7 +85,7 @@ AudioResourceFile* ResourceLoader::CreateAudioResourceFile(String path)
 		}
 	}
 
-	if (OS::Exists(path) == false)
+	if (OS::IsExists(path) == false)
 	{
 		ERR("File not found: " + path);
 		return nullptr;
@@ -150,7 +159,7 @@ VisualModelResourceFile* ResourceLoader::CreateVisualModelResourceFile(String pa
 		}
 	}
 
-	if (OS::Exists(path) == false)
+	if (OS::IsExists(path) == false)
 	{
 		ERR("File not found: " + path);
 		return nullptr;
@@ -199,7 +208,7 @@ ImageResourceFile* ResourceLoader::CreateImageResourceFile(String path)
 		}
 	}
 
-	if (OS::Exists(path) == false)
+	if (OS::IsExists(path) == false)
 	{
 		ERR("File not found: " + path);
 		return nullptr;

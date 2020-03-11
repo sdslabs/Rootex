@@ -2,7 +2,6 @@
 
 #include "common/common.h"
 #include "script/interpreter.h"
-
 #include "components/component_ids.h"
 
 typedef unsigned int ComponentID;
