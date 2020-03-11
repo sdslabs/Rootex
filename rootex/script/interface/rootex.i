@@ -9,6 +9,6 @@
 
 namespace DirectX { namespace Colors {} }
 
-%include "core/resource_loader.h"
+%include "rootex/core/resource_loader.h"
 %include "core/resource_file.h"
 %include "os/timer.h"
