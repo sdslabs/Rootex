@@ -31,6 +31,7 @@ public:
 	bool isLooping() const;
 	ALuint getSourceID() const;
 	virtual float getDuration() const = 0;
+
 };
 
 class StaticAudioSource : public AudioSource

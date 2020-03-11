@@ -12,9 +12,11 @@
 #include "components/hierarchy_component.h"
 #include "components/visual/visual_component.h"
 #include "components/visual/diffuse_visual_component.h"
+#include "components/physics/sphere_component.h"
 #include "components/visual/point_light_component.h"
 #include "components/visual/directional_light_component.h"
 #include "components/visual/spot_light_component.h"
+#include "components/physics/sphere_component.h"
 
 #define REGISTER_COMPONENT(ComponentClass) \
 m_ComponentCreators.push_back({ ComponentClass::s_ID, #ComponentClass, ComponentClass::Create }); \
@@ -193,6 +195,22 @@ void EntityFactory::destroyEntities()
 		{
 			entity->destroy();
 			WARN("Destroyed entity: " + entity->getName());
+		}
+		else
+		{
+			WARN("Found nullptr while browsing entities for destruction. Skipped during shutdown");
+		}
+	}
+}
+
+void EntityFactory::destroyEntities()
+{
+	for (auto& entity : m_Entities)
+	{
+		if (entity)
+		{
+			entity->destroy();
+			WARN("Destroyed entity: " + std::to_string(entity->getID()));
 		}
 		else
 		{

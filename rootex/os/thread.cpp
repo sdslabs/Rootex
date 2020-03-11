@@ -33,12 +33,21 @@ void ThreadPool::initialize()
 	InitializeConditionVariable(&m_ProducerVariable);
 	InitializeCriticalSection(&m_CriticalSection);
 
+	m_DefaultWorkerParameter.m_Thread = 0;
+	m_DefaultWorkerParameter.m_ThreadPool = NULL;
+
 	{
 		m_TaskQueue.m_Read = 0;
 		m_TaskQueue.m_Write = 0;
 		m_TaskQueue.m_Jobs = 0;
 		m_TasksFinished = 0;
 		m_TasksComplete.m_Jobs = 0;
+	}
+
+	for (__int32 iThread = 0; iThread < m_Threads; iThread++)
+	{
+		m_WorkerParameters.push_back(m_DefaultWorkerParameter);
+		m_Handles.push_back(m_DefaultHandle);
 	}
 
 	for (__int32 iThread = 0; iThread < m_Threads; iThread++)
@@ -217,5 +226,5 @@ void ThreadPool::shutDown()
 	}
 	LeaveCriticalSection(&this->m_CriticalSection);
 	WakeAllConditionVariable(&this->m_ConsumerVariable);
-	WaitForMultipleObjects(m_Threads, m_Handles, TRUE, INFINITE);
+	WaitForMultipleObjects(m_Threads, m_Handles.data(), TRUE, INFINITE);
 }
