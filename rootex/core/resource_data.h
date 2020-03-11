@@ -3,6 +3,10 @@
 #include "common/types.h"
 #include "os/os.h"
 
+#define B_TO_KB (1.0f / 1024.0f)
+#define KB_TO_MB (1.0f / 1024.0f)
+#define MB_TO_GB (1.0f / 1024.0f)
+
 class ResourceData
 {
 	static unsigned int s_Count;

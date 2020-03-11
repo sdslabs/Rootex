@@ -16,12 +16,14 @@ class AudioPlayer
 
 	StopTimer m_Timer;
 
+	void drawFileInfo();
+
 public:
 	AudioPlayer();
 	AudioPlayer(AudioPlayer&) = delete;
 	~AudioPlayer() = default;
 
-	void load(const FilePath& filePath);
+	ResourceFile* load(const FilePath& filePath);
 	void unload();
 	void draw();
 };

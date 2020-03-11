@@ -6,9 +6,6 @@
 
 AudioSource::AudioSource(bool isStreaming)
     : m_IsStreaming(isStreaming)
-    , m_IsLooping(false)
-    , m_IsPaused(true)
-    , m_IsPlaying(false)
 {
 	AudioSystem::GetSingleton()->registerInstance(this);
 	AL_CHECK(alGenSources(1, &m_SourceID));
@@ -22,7 +19,6 @@ AudioSource::~AudioSource()
 
 void AudioSource::setLooping(bool enabled)
 {
-	m_IsLooping = enabled;
 	AL_CHECK(alSourcei(m_SourceID, AL_LOOPING, enabled));
 }
 
@@ -34,36 +30,44 @@ void AudioSource::queueNewBuffers()
 void AudioSource::play()
 {
 	AL_CHECK(alSourcePlay(m_SourceID));
-	m_IsPlaying = true;
-	m_IsPaused = false;
 }
 
 void AudioSource::pause()
 {
 	AL_CHECK(alSourcePause(m_SourceID));
-	m_IsPaused = true;	
 }
 
 void AudioSource::stop()
 {
-	AL_CHECK(alSourceStop(m_SourceID));
-	m_IsPlaying = false;
-	m_IsPaused = true;	
+	AL_CHECK(alSourceStop(m_SourceID));	
 }
 
 bool AudioSource::isPlaying() const
 {
-	return m_IsPlaying;
+	ALenum state;
+	AL_CHECK(alGetSourcei(m_SourceID, AL_SOURCE_STATE, &state));
+	return state == AL_PLAYING;
 }
 
 bool AudioSource::isPaused() const
 {
-	return m_IsPaused;
+	ALenum state;
+	AL_CHECK(alGetSourcei(m_SourceID, AL_SOURCE_STATE, &state));
+	return state == AL_PAUSED;
+}
+
+bool AudioSource::isStopped() const
+{
+	ALenum state;
+	AL_CHECK(alGetSourcei(m_SourceID, AL_SOURCE_STATE, &state));
+	return state == AL_STOPPED;
 }
 
 bool AudioSource::isLooping() const
 {
-	return m_IsLooping;
+	ALenum state;
+	AL_CHECK(alGetSourcei(m_SourceID, AL_SOURCE_STATE, &state));
+	return (state == AL_LOOPING);
 }
 
 ALuint AudioSource::getSourceID() const
@@ -87,6 +91,13 @@ StaticAudioSource::~StaticAudioSource()
 	}
 }
 
+float StaticAudioSource::getElapsedTimeS()
+{
+	float pos = 0;
+	AL_CHECK(alGetSourcef(m_SourceID, AL_SEC_OFFSET, &pos));
+	return pos;
+}
+
 void StaticAudioSource::unqueueBuffers()
 {
 	AL_CHECK(alSourceUnqueueBuffers(m_SourceID, 1, &m_StaticAudio->getBuffer()));
@@ -100,6 +111,7 @@ float StaticAudioSource::getDuration() const
 StreamingAudioSource::StreamingAudioSource(Ref<StreamingAudioBuffer> audio)
     : AudioSource(true)
     , m_StreamingAudio(audio)
+    , m_IsLooping(false)
 {
 	AL_CHECK(alSourceQueueBuffers(m_SourceID, m_StreamingAudio->getBufferQueueLength(), m_StreamingAudio->getBuffers()));
 }

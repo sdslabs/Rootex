@@ -4,6 +4,54 @@
 
 #include "imgui.h"
 
+void FileViewer::drawFileInfo()
+{
+	ImGui::Columns(2);
+
+	ImGui::Text("Path");
+	ImGui::NextColumn();
+	ImGui::Text(OS::GetAbsolutePath(m_OpenFile->getPath().string()).string().c_str());
+	ImGui::NextColumn();
+
+	ImGui::Text("Type");
+	ImGui::NextColumn();
+	ImGui::Text(m_OpenFilePath.extension().string().c_str());
+	ImGui::NextColumn();
+
+	ImGui::Text("Size");
+	ImGui::NextColumn();
+	float size = m_OpenFile->getData()->getRawDataByteSize();
+	float sizeUI = size;
+	String sizeUnitUI = " B";
+	if (sizeUI > 1.0f / B_TO_KB)
+	{
+		sizeUI = size * B_TO_KB;
+		sizeUnitUI = " KB";
+		if (sizeUI > 1.0f / KB_TO_MB)
+		{
+			sizeUI = size * B_TO_KB * KB_TO_MB;
+			sizeUnitUI = " MB";
+		}
+	}
+	else
+	{
+		sizeUI = m_OpenFile->getData()->getRawDataByteSize();
+	}
+	ImGui::Text((std::to_string(sizeUI) + sizeUnitUI).c_str());
+	ImGui::NextColumn();
+
+	ImGui::Text("Last Modified");
+	ImGui::NextColumn();
+	SYSTEMTIME systemTime;
+	if (FileTimeToSystemTime((const FILETIME*)&m_OpenFile->getLastChangedTime(), &systemTime))
+	{
+		ImGui::Text("%d:%d:%d - %d/%d/%d", systemTime.wHour, systemTime.wMinute, systemTime.wSecond, systemTime.wDay, systemTime.wMonth, systemTime.wYear);
+	}
+	ImGui::NextColumn();
+
+	ImGui::Columns(1);
+}
+
 Variant FileViewer::openFile(const Event* event)
 {
 	m_IsFileOpened = true;
@@ -18,15 +66,15 @@ Variant FileViewer::openFile(const Event* event)
 	const String& ext = m_OpenFilePath.extension().string();
 	if (ext == ".wav")
 	{
-		m_AudioPlayer.load(m_OpenFilePath);
+		m_OpenFile = m_AudioPlayer.load(m_OpenFilePath);
 	}
 	else if (ext == ".jpg" || ext == ".png" || ext == ".jpeg")
 	{
-		m_ImageViewer.load(m_OpenFilePath);
+		m_OpenFile = m_ImageViewer.load(m_OpenFilePath);
 	}
 	else
 	{
-		m_TextViewer.load(m_OpenFilePath);
+		m_OpenFile = m_TextViewer.load(m_OpenFilePath);
 	}
 
 	return true;
@@ -54,6 +102,24 @@ void FileViewer::draw()
 		}
 		if (ImGui::Begin("File Viewer"))
 		{
+			ImGui::Separator();
+			if (ImGui::Button("Open"))
+			{
+				OS::OpenFileInSystemEditor(m_OpenFilePath.string());
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Edit"))
+			{
+				OS::EditFileInSystemEditor(m_OpenFilePath.string());
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Open In File Explorer"))
+			{
+				OS::OpenFileInExplorer(m_OpenFilePath.string());
+			}
+
+			drawFileInfo();
+			
 			if (m_OpenFilePath.extension() == ".wav")
 			{
 				m_AudioPlayer.draw();

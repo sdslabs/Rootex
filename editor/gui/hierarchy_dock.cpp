@@ -16,7 +16,7 @@ void HierarchyDock::showHierarchySubTree(Ref<Entity> node)
 		if (ImGui::Selectable(node->getName().c_str(), m_OpenedEntityName == node->getName()))
 		{
 			m_OpenedEntityName = node->getName();
-			Editor::GetSingleton()->log("Viewed " + node->getName() + " through Hierarchy Dock");
+			PRINT("Viewed " + node->getName() + " through Hierarchy Dock");
 			EventManager::GetSingleton()->call("OpenEntity", "EditorInspectorOpenEntity", node);
 		}
 		

@@ -18,6 +18,10 @@ class FileViewer
 	ImageViewer m_ImageViewer;
 	TextViewer m_TextViewer;
 
+	ResourceFile* m_OpenFile;
+
+	void drawFileInfo();
+
 	Variant openFile(const Event* event);
 
 public:
