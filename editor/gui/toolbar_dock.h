@@ -2,6 +2,8 @@
 
 class ToolbarDock
 {
+	float m_LastUpdateTime = 0.0f;
+
 public:
 	struct ToolbarDockSettings
 	{

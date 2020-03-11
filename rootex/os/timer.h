@@ -22,8 +22,8 @@ public:
 	Timer(Timer&) = delete;
 	virtual ~Timer() = default;
 
-	float getTimeMs() { return (float)(s_Clock.now() - m_StartTime).count() * NS_TO_MS; }
-	float getTimeNs() { return (s_Clock.now() - m_StartTime).count(); }
+	float getTimeMs() const { return (float)(s_Clock.now() - m_StartTime).count() * NS_TO_MS; }
+	float getTimeNs() const { return (s_Clock.now() - m_StartTime).count(); }
 };
 
 class StopTimer : public Timer

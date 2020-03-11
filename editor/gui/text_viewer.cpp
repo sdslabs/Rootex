@@ -24,7 +24,7 @@ void TextViewer::draw()
 {
 	drawFileInfo();
 	ImGui::Separator();
-	ImGui::TextWrapped(m_TextResourceFile->getString().c_str());
+	ImGui::TextUnformatted(m_TextResourceFile->getString().c_str());
 	
 	if (m_TextResourceFile->isDirty())
 	{

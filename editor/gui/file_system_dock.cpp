@@ -8,7 +8,8 @@
 
 void FileSystemDock::drawFileSystemTree(const FilePath& path)
 {
-	if (ImGui::TreeNodeEx(path.string().c_str(), ImGuiTreeNodeFlags_SpanAvailWidth))
+	FilePath dirPath = path;
+	if (ImGui::TreeNodeEx(path.lexically_relative(dirPath.remove_filename()).string().c_str(), ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_Framed))
 	{
 		for (auto&& item : OS::GetDirectoriesInDirectory(path.string()))
 		{
