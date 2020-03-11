@@ -1,6 +1,8 @@
 # Rootex
 
-<img src="/game/assets/test/rootex.png" width=600 />
+<img src="/rootex/assets/rootex.png" width=400 />
+
+![C/C++ CI](https://github.com/sdslabs/Rootex/workflows/C/C++%20CI/badge.svg)
 
 ## Contents
 
