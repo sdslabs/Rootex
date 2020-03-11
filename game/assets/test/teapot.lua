@@ -10,9 +10,9 @@ Entity = {
             resFile = "game/assets/test/hello_teapot.obj",
             texturePath = "game/assets/test/yellow.png"
         },
-	    SphereComponent = {
-		    m_Radius = 1,
-		    matName = "Air"
-	    }
+        SphereComponent = {
+            m_Radius = 1,
+            matName = "Air"
+        }
     }
 }

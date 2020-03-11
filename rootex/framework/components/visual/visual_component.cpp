@@ -63,8 +63,6 @@ bool VisualComponent::setup()
 			WARN("Entity without hierarchy component found");
 			status = false;
 		}
-		
-		RenderSystem::GetSingleton()->addToVisualGraph(this);
 	}
 
 	return status;

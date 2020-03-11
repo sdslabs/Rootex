@@ -67,7 +67,6 @@ bool Entity::hasComponent(ComponentID componentID)
 {
 	return m_Components.find(componentID) != m_Components.end();
 }
-<<<<<<< HEAD
 
 void Entity::setName(const String& name)
 {
@@ -78,5 +77,3 @@ const HashMap<ComponentID, Ref<Component>>& Entity::getAllComponents() const
 {
 	return m_Components;
 }
-=======
->>>>>>> master

@@ -29,7 +29,7 @@ bool PhysicsComponent::setup()
 	if (m_Owner)
 	{
 		m_TransformComponent = m_Owner->getComponent<TransformComponent>();
-		if (m_TransformComponent == nullptr)
+		if (!m_TransformComponent)
 		{
 			status = false;
 		}

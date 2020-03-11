@@ -25,10 +25,10 @@ public:
 	Ref<Entity> getOwner() const;
 	virtual ComponentID getComponentID() const = 0;
 
+	virtual String getName() const = 0;
+	void setOwner(Ref<Entity>& newOwner) { m_Owner = newOwner; }
+
 #ifdef ROOTEX_EDITOR
 	virtual void draw();
 #endif
-
-	virtual String getName() const = 0;
-	void setOwner(Ref<Entity>& newOwner) { m_Owner = newOwner; }
 };
