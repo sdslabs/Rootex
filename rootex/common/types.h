@@ -10,6 +10,14 @@ template <class T>
 using Weak = std::weak_ptr<T>;
 #include <wrl.h> // For using Microsoft::WRL::ComPtr<T>
 
+// Serialization streams
+#include <fstream>
+typedef std::fstream InputOutputFileStream;
+typedef std::ofstream OutputFileStream;
+typedef std::ifstream InputFileStream;
+#include <sstream>
+typedef std::stringstream StringStream;
+
 // Containers
 #include <string>
 typedef std::string String;

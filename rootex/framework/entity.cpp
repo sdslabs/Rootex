@@ -20,9 +20,10 @@ void Entity::addChild(Ref<Entity> child)
 	getComponent<HierarchyComponent>()->addChild(child);
 }
 
-Entity::Entity(EntityID id, const String& name)
+Entity::Entity(EntityID id, const String& name, const HashMap<ComponentID, Ref<Component>>& components)
     : m_ID(id)
     , m_Name(name)
+    , m_Components(components)
 {
 }
 

@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "definitions": {
+    "Rootex_Entity" : {
+      "type" : "object",
+      "properties" : {
+        "m_ID" : {
+                "type" : "number"
+              },
+        "m_Name" : {
+                "type" : "string"
+              }
+      },
+      "additionalProperties" : false
+    }
+  },
+  "$ref" : "#/definitions/Rootex_Entity"
+}
