@@ -8,9 +8,8 @@
 
 void FileSystemDock::drawFileSystemTree(const FilePath& path)
 {
-	if (ImGui::TreeNodeEx(path.string().c_str(), ImGuiTreeNodeFlags_CollapsingHeader))
+	if (ImGui::TreeNodeEx(path.string().c_str(), ImGuiTreeNodeFlags_SpanAvailWidth))
 	{
-		ImGui::Indent();
 		for (auto&& item : OS::GetDirectoriesInDirectory(path.string()))
 		{
 			drawFileSystemTree(item);
@@ -24,7 +23,7 @@ void FileSystemDock::drawFileSystemTree(const FilePath& path)
 				EventManager::GetSingleton()->call("OpenFile", "EditorOpenFile", item);
 			}
 		}
-		ImGui::Unindent();
+		ImGui::TreePop();
 	}
 }
 
