@@ -15,7 +15,7 @@ void OutputDock::draw()
 	{
 		if (ImGui::Begin("Output"))
 		{
-			ImGui::TextWrapped(m_StdOutBuffer.str().c_str());
+			ImGui::TextUnformatted(m_StdOutBuffer.str().c_str());
 		}
 		ImGui::End();
 	}

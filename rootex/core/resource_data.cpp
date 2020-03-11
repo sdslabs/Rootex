@@ -43,6 +43,12 @@ ResourceData::operator bool() const
 	return m_StreamStart != m_StreamEnd;
 }
 
+void ResourceData::startStream()
+{
+	m_StreamStart = &m_FileBuffer.front();
+	m_StreamEnd = &m_FileBuffer.back();
+}
+
 bool ResourceData::isEndOfFile()
 {
 	return m_StreamStart == m_StreamEnd;
@@ -56,8 +62,6 @@ void ResourceData::resetStream()
 ResourceData::ResourceData(FilePath path, FileBuffer& data)
     : m_ID(s_Count)
     , m_FileBuffer(data)
-    , m_StreamStart(&data.front())
-    , m_StreamEnd(&data.back())
     , m_Path(path)
 {
 	s_Count++;

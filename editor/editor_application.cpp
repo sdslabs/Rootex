@@ -7,14 +7,27 @@
 #include "rootex/core/resource_loader.h"
 #include "rootex/framework/systems/render_system.h"
 
+EditorApplication* EditorApplication::s_Instance = nullptr;
+
 Ref<Application> CreateRootexApplication()
 {
 	return Ref<Application>(new EditorApplication());
 }
 
+EditorApplication* EditorApplication::GetSingleton()
+{
+	return s_Instance;
+}
+
+void EditorApplication::SetSingleton(EditorApplication* app)
+{
+	s_Instance = app;
+}
+
 EditorApplication::EditorApplication()
     : Application("editor/project.lua")
 {
+	SetSingleton(this);
 	Editor::GetSingleton()->initialize(m_Window->getWindowHandle());
 
 	HierarchySystem::GetSingleton()->addChild(addEntity("game/assets/test/cube.lua"));
@@ -31,6 +44,8 @@ void EditorApplication::run()
 {
 	while (true)
 	{
+		m_FrameTimer.reset();
+
 		if (m_Window->processMessages())
 		{
 			break;

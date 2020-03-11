@@ -8,7 +8,9 @@ void ImageViewer::draw()
 {
 	drawFileInfo();
 	ImGui::Separator();
-	ImGui::Image(m_Texture->getTextureResourceView(), { (float)m_Texture->getWidth(), (float)m_Texture->getHeight() });
+	ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
+	ImGui::SliderFloat("##Zoom", &m_Zoom , m_MinZoom, m_MaxZoom, "Zoom %.3fx");
+	ImGui::Image(m_Texture->getTextureResourceView(), { m_Zoom * (float) m_Texture->getWidth(), m_Zoom * (float)m_Texture->getHeight() });
 	if (m_ImageResourceFile->isDirty())
 	{
 		ImGui::TextColored(Editor::GetSingleton()->getColors().m_Warning, "File may be changed on disk");
