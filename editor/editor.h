@@ -9,6 +9,7 @@
 #include "gui/toolbar_dock.h"
 #include "gui/viewport_dock.h"
 #include "gui/inspector_dock.h"
+#include "gui/file_viewer.h"
 
 #include "vendor/ImGUI/imgui.h"
 #include "vendor/ImGUI/imgui_impl_dx11.h"
@@ -41,6 +42,7 @@ class Editor
 	Ptr<ToolbarDock> m_Toolbar;
 	Ptr<ViewportDock> m_Viewport;
 	Ptr<InspectorDock> m_Inspector;
+	Ptr<FileViewer> m_FileViewer;
 
 	Editor() = default;
 	Editor(Editor&) = delete;

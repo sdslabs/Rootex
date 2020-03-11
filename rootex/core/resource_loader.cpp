@@ -131,6 +131,9 @@ AudioResourceFile* ResourceLoader::CreateAudioResourceFile(String path)
 		ERR("Unknown channels and bit depth in WAV data");
 	}
 
+	audioRes->m_Duration = size * 8 / (audioRes->m_Channels * audioRes->m_BitDepth);
+	audioRes->m_Duration /= frequency;
+
 	s_ResourcesDataFiles[Ptr<ResourceData>(resData)] = Ptr<ResourceFile>(audioRes);
 
 	return audioRes;

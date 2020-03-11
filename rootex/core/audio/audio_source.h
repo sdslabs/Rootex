@@ -30,6 +30,7 @@ public:
 	bool isPaused() const;
 	bool isLooping() const;
 	ALuint getSourceID() const;
+	virtual float getDuration() const = 0;
 };
 
 class StaticAudioSource : public AudioSource
@@ -41,6 +42,8 @@ public:
 	~StaticAudioSource();
 
 	void unqueueBuffers();
+
+	virtual float getDuration() const override;
 };
 
 class StreamingAudioSource : public AudioSource
@@ -54,4 +57,6 @@ public:
 	void setLooping(bool enabled) override;
 	void queueNewBuffers() override;
 	void unqueueBuffers();
+
+	virtual float getDuration() const override;
 };

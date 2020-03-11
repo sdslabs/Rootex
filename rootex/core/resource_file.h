@@ -77,6 +77,7 @@ class AudioResourceFile : public ResourceFile
 	float m_Frequency;
 	int m_BitDepth;
 	int m_Channels;
+	float m_Duration;
 
 	const char* m_DecompressedAudioBuffer;
 	ALsizei m_AudioDataSize;
@@ -95,6 +96,7 @@ public:
 	float getFrequency() const { return m_Frequency; }
 	int getBitDepth() const { return m_BitDepth; }
 	int getChannels() const { return m_Channels; }
+	float getDuration() const { return m_Duration; }
 };
 
 class VisualModelResourceFile : public ResourceFile

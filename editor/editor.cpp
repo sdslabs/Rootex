@@ -65,6 +65,7 @@ void Editor::initialize(HWND hWnd)
 	m_Toolbar.reset(new ToolbarDock());
 	m_Viewport.reset(new ViewportDock(LuaInterpreter::GetSingleton()->getGlobal("viewport")));
 	m_Inspector.reset(new InspectorDock());
+	m_FileViewer.reset(new FileViewer());
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -90,6 +91,7 @@ void Editor::render()
 	m_Toolbar->draw();
 	m_Viewport->draw();
 	m_Inspector->draw();
+	m_FileViewer->draw();
 
 	ImGui::PopStyleColor(m_EditorStyleColorPushCount);
 	ImGui::PopStyleVar(m_EditorStyleVarPushCount);
@@ -163,11 +165,6 @@ void Editor::drawDefaultUI()
 			static String menuAction = "";
 			if (ImGui::BeginMenu("File"))
 			{
-				if (ImGui::MenuItem("New Lua File", ""))
-				{
-				}
-				ImGui::MenuItem("Save");
-				ImGui::MenuItem("Save All", "");
 				ImGui::Separator();
 				if (ImGui::MenuItem("Quit", ""))
 				{
@@ -185,6 +182,14 @@ void Editor::drawDefaultUI()
 					ImGui::Checkbox("Viewport", &m_Viewport->getSettings().m_IsActive);
 					ImGui::Checkbox("File System", &m_FileSystem->getSettings().m_IsActive);
 					ImGui::Checkbox("Inspector", &m_Inspector->getSettings().m_IsActive);
+					ImGui::EndMenu();
+				}
+				ImGui::EndMenu();
+			}
+			if (ImGui::BeginMenu("Editor"))
+			{
+				if (ImGui::BeginMenu("Settings"))
+				{
 					ImGui::EndMenu();
 				}
 				ImGui::EndMenu();
@@ -313,7 +318,7 @@ void Editor::pushEditorStyleColors()
 	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_Header, m_Colors.m_HeavyAccent);
 	m_EditorStyleColorPushCount++;
-	ImGui::PushStyleColor(ImGuiCol_HeaderActive, m_Colors.m_MediumAccent);
+	ImGui::PushStyleColor(ImGuiCol_HeaderActive, m_Colors.m_Success);
 	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_HeaderHovered, m_Colors.m_Accent);
 	m_EditorStyleColorPushCount++;

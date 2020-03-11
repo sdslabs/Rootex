@@ -5,6 +5,11 @@ Timer::Timer()
 {
 }
 
+void StopTimer::reset()
+{
+	m_StartTime = s_Clock.now();
+}
+
 LoggingScopeTimer::LoggingScopeTimer(const String& msg)
     : Timer()
     , m_Message(msg)

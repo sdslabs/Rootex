@@ -126,7 +126,7 @@ void InspectorDock::drawAddComponentWindow()
 		}
 
 		ImGui::PushStyleColor(ImGuiCol_Text, Editor::GetSingleton()->getColors().m_Warning);
-		ImGui::TextWrapped("Entities need to be reset to function make some new components function properly.");
+		ImGui::TextWrapped("Entities need to be reset to make some new components function properly.");
 		ImGui::PopStyleColor(1);
 
 		if (ImGui::Button("Add"))
