@@ -46,13 +46,9 @@ void AudioSource::pause()
 
 void AudioSource::stop()
 {
-	if (isPlaying())
-	{
-		pause();
-		AL_CHECK(alSourceStop(m_SourceID));
-		m_IsPlaying = false;
-		m_IsPaused = true;
-	}
+	AL_CHECK(alSourceStop(m_SourceID));
+	m_IsPlaying = false;
+	m_IsPaused = true;	
 }
 
 bool AudioSource::isPlaying() const
@@ -84,12 +80,21 @@ StaticAudioSource::StaticAudioSource(Ref<StaticAudioBuffer> audio)
 
 StaticAudioSource::~StaticAudioSource()
 {
-	unqueueBuffers();
+	if (isPlaying())
+	{
+		stop();
+		unqueueBuffers();
+	}
 }
 
 void StaticAudioSource::unqueueBuffers()
 {
 	AL_CHECK(alSourceUnqueueBuffers(m_SourceID, 1, &m_StaticAudio->getBuffer()));
+}
+
+float StaticAudioSource::getDuration() const
+{
+	return m_StaticAudio->getAudioFile()->getDuration();
 }
 
 StreamingAudioSource::StreamingAudioSource(Ref<StreamingAudioBuffer> audio)
@@ -132,4 +137,9 @@ void StreamingAudioSource::queueNewBuffers()
 void StreamingAudioSource::unqueueBuffers()
 {
 	AL_CHECK(alSourceUnqueueBuffers(m_SourceID, BUFFER_COUNT, m_StreamingAudio->getBuffers()));
+}
+
+float StreamingAudioSource::getDuration() const
+{
+	return m_StreamingAudio->getAudioFile()->getDuration();
 }

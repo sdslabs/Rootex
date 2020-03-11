@@ -18,5 +18,5 @@ public:
 	AudioBuffer(AudioBuffer&) = default;
 	virtual ~AudioBuffer();
 
-	ResourceFile* getAudioFile();
+	AudioResourceFile* getAudioFile();
 };
