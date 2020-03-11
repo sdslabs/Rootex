@@ -45,6 +45,7 @@ EntityFactory::EntityFactory()
 	REGISTER_COMPONENT(PointLightComponent);
 	REGISTER_COMPONENT(DirectionalLightComponent);
 	REGISTER_COMPONENT(SpotLightComponent);
+	REGISTER_COMPONENT(SphereComponent);
 }
 
 EntityFactory::~EntityFactory()
@@ -195,22 +196,6 @@ void EntityFactory::destroyEntities()
 		{
 			entity->destroy();
 			WARN("Destroyed entity: " + entity->getName());
-		}
-		else
-		{
-			WARN("Found nullptr while browsing entities for destruction. Skipped during shutdown");
-		}
-	}
-}
-
-void EntityFactory::destroyEntities()
-{
-	for (auto& entity : m_Entities)
-	{
-		if (entity)
-		{
-			entity->destroy();
-			WARN("Destroyed entity: " + std::to_string(entity->getID()));
 		}
 		else
 		{

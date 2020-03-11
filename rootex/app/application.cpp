@@ -5,6 +5,7 @@
 #include "core/input/input_manager.h"
 #include "core/renderer/shader_library.h"
 #include "script/interpreter.h"
+#include "systems/physics_system.h"
 
 Application::Application(const String& windowConfigFilePath)
 {
@@ -57,6 +58,8 @@ bool Application::initialize(String windowConfigFilePath)
 	{
 		LuaInterpreter::GetSingleton()->loadExecuteScript(ResourceLoader::CreateLuaTextResourceFile(postInitialize));
 	}
+
+	PhysicsSystem::GetSingleton()->initialize();
 
 	m_Window->show();
 	return true;
