@@ -131,6 +131,51 @@ bool OS::IsFile(const String& path)
 	return std::filesystem::is_regular_file(GetAbsolutePath(path));
 }
 
+void OS::CreateDirectoryName(const String& dirPath)
+{
+	FilePath path = OS::GetAbsolutePath(dirPath);
+
+	if (IsExists(dirPath))
+	{
+		WARN("Directory already exists: " + dirPath);
+		return;
+	}
+
+	if (std::filesystem::create_directories(path))
+	{
+		PRINT("Created directory: " + path.string());
+	}
+	else
+	{
+		WARN("Could not create directory: " + path.string());
+	}
+}
+
+InputOutputFileStream OS::CreateFileName(const String& filePath)
+{
+	FilePath path = OS::GetAbsolutePath(filePath);
+
+	InputOutputFileStream file(OS::GetAbsolutePath(filePath), std::ios::binary | std::ios::in | std::ios::out);
+
+	if (file)
+	{
+		if (IsExists(filePath))
+		{
+			WARN("Directory already exists: " + filePath);
+		}
+		else
+		{
+			PRINT("Created file: " + path.string());
+		}
+	}
+	else
+	{
+		WARN("Could not create directory: " + path.string());
+	}
+
+	return file;
+}
+
 void OS::OpenFileInSystemEditor(const String& filePath)
 {
 	const String& absolutePath = GetAbsolutePath(filePath).string();
@@ -161,7 +206,7 @@ void OS::OpenFileInSystemEditor(const String& filePath)
 
 void OS::OpenFileInExplorer(const String& filePath)
 {
-	if (!Exists(filePath))
+	if (!IsExists(filePath))
 	{
 		WARN("File not found: " + filePath);
 		return;
@@ -241,7 +286,7 @@ FileBuffer OS::LoadFileContents(String stringPath)
 {
 	std::filesystem::path path = GetAbsolutePath(stringPath);
 
-	if (!Exists(path.generic_string()))
+	if (!IsExists(path.generic_string()))
 	{
 		ERR("OS: File IO error: " + path.generic_string() + " does not exist");
 		return FileBuffer();
@@ -268,7 +313,7 @@ FileBuffer OS::LoadFileContents(String stringPath)
 	return FileBuffer(buffer);
 }
 
-bool OS::Exists(String relativePath)
+bool OS::IsExists(String relativePath)
 {
 	return std::filesystem::exists(OS::GetAbsolutePath(relativePath));
 }

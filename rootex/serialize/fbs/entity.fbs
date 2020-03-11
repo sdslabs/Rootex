@@ -1,0 +1,9 @@
+namespace Rootex;
+
+table Entity
+{
+	m_ID:int = 0;
+	m_Name:string;
+}
+
+root_type Entity;

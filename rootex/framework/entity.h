@@ -15,7 +15,7 @@ protected:
 	String m_Name;
 	HashMap<ComponentID, Ref<Component>> m_Components;
 
-	Entity(EntityID id, const String& name);
+	Entity(EntityID id, const String& name, const HashMap<ComponentID, Ref<Component>>& components = {});
 
 	bool setupComponents();
 

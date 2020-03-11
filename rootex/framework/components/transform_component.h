@@ -25,7 +25,6 @@ class TransformComponent : public Component
 	void updatePositionRotationScaleFromTransform(Matrix& transform);
 
 	TransformComponent();
-	virtual ~TransformComponent() = default;
 
 	friend class VisualComponent;
 	friend class DiffuseVisualComponent;
@@ -38,9 +37,10 @@ class TransformComponent : public Component
 	float m_EditorRotation[3] = { 0.0f, 0.0f, 0.0f };
 #endif // ROOTEX_EDITOR
 
-
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::TransformComponent;
+	
+	virtual ~TransformComponent() = default;
 
 	void setPosition(const Vector3& position);
 	void setRotation(const float& yaw, const float& pitch, const float& roll);

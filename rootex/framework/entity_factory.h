@@ -4,11 +4,9 @@
 #include "resource_file.h"
 #include "script/interpreter.h"
 #include "entity.h"
+#include "component.h"
 
 #define INVALID_ID 0
-
-class Component;
-class Entity;
 
 typedef Component* (*ComponentCreator)(const LuaVariable& componentDescription);
 typedef Component* (*ComponentDefaultCreator)();
@@ -49,4 +47,5 @@ public:
 	void destroyEntities();
 
 	const ComponentDatabase& getComponentDatabase() const { return m_ComponentCreators; }
+	const Vector<Ref<Entity>>& getEntities() const { return m_Entities; }
 };
