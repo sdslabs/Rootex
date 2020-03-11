@@ -12,7 +12,7 @@ void ToolbarDock::draw()
 	{
 		if (ImGui::Begin("Toolbar"))
 		{
-			if (ImGui::TreeNodeEx("Application", ImGuiTreeNodeFlags_CollapsingHeader))
+			if (ImGui::TreeNodeEx("Editor", ImGuiTreeNodeFlags_CollapsingHeader))
 			{
 				float currentTime = EditorApplication::GetSingleton()->getAppFrameTimer().getTimeMs();
 				ImGui::LabelText(std::to_string(currentTime - m_LastUpdateTime).c_str(), "Frame Time");
