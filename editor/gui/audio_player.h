@@ -12,6 +12,7 @@ class AudioPlayer
 	AudioResourceFile* m_OpenFile = nullptr;
 	Ref<StaticAudioBuffer> m_Buffer;
 	Ref<StaticAudioSource> m_Source;
+	bool m_Looping = false;
 
 	StopTimer m_Timer;
 

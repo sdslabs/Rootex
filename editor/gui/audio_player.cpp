@@ -27,6 +27,7 @@ void AudioPlayer::unload()
 		{
 			m_Source->stop();
 		}
+		m_Looping = false;
 		m_Timer.reset();
 		m_Source.reset();
 		m_Buffer.reset();
@@ -48,8 +49,12 @@ void AudioPlayer::draw()
 	if (m_Source->isPlaying())
 	{
 		m_FractionProgress = m_Timer.getTimeMs() * MS_TO_S / m_Buffer->getAudioFile()->getDuration();
+		if (m_FractionProgress > 1.0f)
+		{
+			m_FractionProgress = 1.0f;
+		}
 	}
-	ImGui::ProgressBar(m_FractionProgress, { 0.0f, 0.0f }, m_OpenFile->getPath().filename().string().c_str());
+	ImGui::ProgressBar(m_FractionProgress, { 0.0f, 0.0f }, (std::to_string(m_FractionProgress * 100.0f) + "% | " + m_OpenFile->getPath().filename().string()).c_str());
 	
 	ImGui::SameLine();
 	
@@ -59,5 +64,10 @@ void AudioPlayer::draw()
 		{
 			m_Source->stop();
 		}
+	}
+	ImGui::SameLine();
+	if (ImGui::Checkbox("Loop", &m_Looping))
+	{
+		m_Source->setLooping(m_Looping);
 	}
 }
