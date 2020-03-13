@@ -25,6 +25,7 @@ class TransformComponent : public Component
 	void updatePositionRotationScaleFromTransform(Matrix& transform);
 
 	TransformComponent();
+	TransformComponent(TransformComponent&) = delete;
 
 	friend class VisualComponent;
 	friend class DiffuseVisualComponent;

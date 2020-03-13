@@ -25,7 +25,7 @@ Variant EventManager::returnCall(const String& eventName, const Event::Type& eve
 	{
 		return (*findIt->second.front().get())(&event);
 	}
-	return nullptr;
+	return false;
 }
 
 void EventManager::call(const String& eventName, const Event::Type& eventType, const Variant& data)

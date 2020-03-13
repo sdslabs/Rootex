@@ -5,7 +5,7 @@
 #include "component.h"
 #include "entity_factory.h"
 
-void SerializationSystem::saveAllEntities(const String& dirPath, const String& projectName)
+void SerializationSystem::saveAllEntities(const String& dirPath)
 {
 	if (!OS::IsExists(dirPath))
 	{
@@ -14,7 +14,7 @@ void SerializationSystem::saveAllEntities(const String& dirPath, const String& p
 
 	for (auto&& entity : EntityFactory::GetSingleton()->getEntities())
 	{
-		InputOutputFileStream file = OS::CreateFileName(dirPath + "/" + entity->getName() + ".entity.json");
-		file << std::setw(4) << entity->getJSON() << std::endl;
+		InputOutputFileStream file = OS::CreateFileName(dirPath + "/" + entity.second->getName() + "_" + std::to_string(entity.second->getID()) + ".entity.json");
+		file << std::setw(4) << entity.second->getJSON() << std::endl;
 	}
 }

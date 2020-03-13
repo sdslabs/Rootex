@@ -10,12 +10,12 @@
 
 void HierarchyDock::showHierarchySubTree(Ref<Entity> node)
 {
-	if (ImGui::TreeNodeEx(("##" + node->getName()).c_str(), ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_AllowItemOverlap | (node->getComponent<HierarchyComponent>()->getChildren().size() ? ImGuiTreeNodeFlags_None : ImGuiTreeNodeFlags_Leaf)))
+	if (ImGui::TreeNodeEx(("##" + std::to_string(node->getID())).c_str(), ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_AllowItemOverlap | (node->getComponent<HierarchyComponent>()->getChildren().size() ? ImGuiTreeNodeFlags_None : ImGuiTreeNodeFlags_Leaf)))
 	{
 		ImGui::SameLine();
-		if (ImGui::Selectable(node->getName().c_str(), m_OpenedEntityName == node->getName()))
+		if (ImGui::Selectable(node->getName().c_str(), m_OpenedEntityID == node->getID()))
 		{
-			m_OpenedEntityName = node->getName();
+			m_OpenedEntityID = node->getID();
 			PRINT("Viewed " + node->getName() + " through Hierarchy Dock");
 			EventManager::GetSingleton()->call("OpenEntity", "EditorInspectorOpenEntity", node);
 		}
@@ -35,7 +35,7 @@ void HierarchyDock::draw()
 	{
 		if (ImGui::Begin("Hierarchy"))
 		{
-			RootHierarchyComponent* rootComponent = HierarchySystem::GetSingleton()->getRoot().get();
+			RootHierarchyComponent* rootComponent = HierarchySystem::GetSingleton()->getRootHierarchyComponent().get();
 			showHierarchySubTree(rootComponent->getOwner());
 		}
 		ImGui::End();
