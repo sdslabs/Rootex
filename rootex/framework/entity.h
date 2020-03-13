@@ -14,7 +14,7 @@ protected:
 	EntityID m_ID;
 	String m_Name;
 	HashMap<ComponentID, Ref<Component>> m_Components;
-
+	
 	Entity(EntityID id, const String& name, const HashMap<ComponentID, Ref<Component>>& components = {});
 
 	bool setupComponents();
@@ -32,15 +32,16 @@ public:
 	void removeComponent(Ref<Component> component);
 	void destroy();
 
+	bool hasComponent(ComponentID componentID);
+	
 	EntityID getID() const;
 	const String& getName() const;
-	bool hasComponent(ComponentID componentID);
-	void setName(const String& name);
-	
 	template <class ComponentType = Component>
 	Ref<ComponentType> getComponent(ComponentID ID = ComponentType::s_ID);
-	
+	JSON::json getJSON() const;
 	const HashMap<ComponentID, Ref<Component>>& getAllComponents() const;
+	
+	void setName(const String& name);
 };
 
 template <class ComponentType>

@@ -8,12 +8,12 @@
 #include "framework/systems/render_system.h"
 #include "framework/systems/light_system.h"
 
-Component* VisualComponent::Create(const LuaVariable& componentData)
+Component* VisualComponent::Create(const JSON::json& componentData)
 {
 	VisualComponent* visualComponent = new VisualComponent(
 	    RenderPass::Global,
 	    Ref<Material>(new Material()),
-	    ResourceLoader::CreateVisualModelResourceFile(componentData["resFile"].tostring())
+	    ResourceLoader::CreateVisualModelResourceFile(componentData["resFile"])
 	);
 	visualComponent->setColor(Color((float)componentData["color"]["r"], (float)componentData["color"]["g"],
 	    (float)componentData["color"]["b"], (float)componentData["color"]["a"]));
@@ -154,6 +154,20 @@ void VisualComponent::setPosition(const Vector3& position)
 Vector3 VisualComponent::getPosition() const
 {
 	return m_Attributes.m_TransformComponent->getPosition();
+}
+
+JSON::json VisualComponent::getJSON() const
+{
+	JSON::json j;
+
+	j["resFile"] = m_Attributes.m_VisualModelResourceFile->getPath().string();
+
+	j["color"]["r"] = m_Color.x;
+	j["color"]["g"] = m_Color.y;
+	j["color"]["b"] = m_Color.z;
+	j["color"]["a"] = m_Color.w;
+
+	return j;
 }
 
 VisualComponentAttributes::VisualComponentAttributes()

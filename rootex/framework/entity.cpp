@@ -1,9 +1,9 @@
 #include "entity.h"
 
+#include "event_manager.h"
 #include "framework/component.h"
 #include "framework/components/hierarchy_component.h"
 #include "framework/system.h"
-#include "event_manager.h"
 
 Entity::~Entity()
 {
@@ -25,6 +25,20 @@ Entity::Entity(EntityID id, const String& name, const HashMap<ComponentID, Ref<C
     , m_Name(name)
     , m_Components(components)
 {
+}
+
+JSON::json Entity::getJSON() const
+{
+	JSON::json j;
+	j["Entity"]["name"] = getName();
+	j["Entity"]["ID"] = getID();
+	j["Components"] = {};
+	for (auto&& [componentID, component] : m_Components)
+	{
+		j["Components"][component->getName()] = component->getJSON();
+	}
+
+	return j;
 }
 
 bool Entity::setupComponents()

@@ -19,6 +19,11 @@ Ref<Entity> Component::getOwner() const
 	return m_Owner;
 }
 
+JSON::json Component::getJSON() const
+{
+	return {};
+}
+
 #ifdef ROOTEX_EDITOR
 #include "imgui.h"
 void Component::draw()

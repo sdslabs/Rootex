@@ -8,14 +8,18 @@
 
 #include "core/renderer/material.h"
 
-Component* DiffuseVisualComponent::Create(const LuaVariable& componentData)
+Component* DiffuseVisualComponent::Create(const JSON::json& componentData)
 {
-	ImageResourceFile* imageRes = ResourceLoader::CreateImageResourceFile(componentData["texturePath"].tostring());
+	ImageResourceFile* imageRes = ResourceLoader::CreateImageResourceFile(componentData["texturePath"]);
 	Ref<Texture> texture(new Texture(imageRes));
 
 	Ref<DiffuseMaterial> material(new DiffuseMaterial(texture));
 
-	DiffuseVisualComponent* diffuseComponent = new DiffuseVisualComponent(RenderPass::Global, material, ResourceLoader::CreateVisualModelResourceFile(componentData["resFile"].tostring()));
+	VisualModelResourceFile* vmr = ResourceLoader::CreateVisualModelResourceFile(componentData["resFile"]);
+	DiffuseVisualComponent* diffuseComponent = new DiffuseVisualComponent(RenderPass::Global, material, vmr);
+	diffuseComponent->m_ImageFile = imageRes;
+	diffuseComponent->m_Texture = texture.get();
+	diffuseComponent->m_ModelFile = vmr;
 
 	return diffuseComponent;
 }
@@ -27,7 +31,11 @@ Component* DiffuseVisualComponent::CreateDefault()
 
 	Ref<DiffuseMaterial> material(new DiffuseMaterial(texture));
 
-	DiffuseVisualComponent* diffuseComponent = new DiffuseVisualComponent(RenderPass::Global, material, ResourceLoader::CreateVisualModelResourceFile("rootex/assets/cube.obj"));
+	VisualModelResourceFile* vmr = ResourceLoader::CreateVisualModelResourceFile("rootex/assets/cube.obj");
+	DiffuseVisualComponent* diffuseComponent = new DiffuseVisualComponent(RenderPass::Global, material, vmr);
+	diffuseComponent->m_ImageFile = imageRes;
+	diffuseComponent->m_Texture = texture.get();
+	diffuseComponent->m_ModelFile = vmr;
 
 	return diffuseComponent;
 }
@@ -58,4 +66,14 @@ bool DiffuseVisualComponent::preRender(HierarchyGraph* graph)
 		m_Attributes.m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::ModelInverse, RenderSystem::GetSingleton()->getTopMatrix().Invert());
 	}
 	return true;
+}
+
+JSON::json DiffuseVisualComponent::getJSON() const
+{
+	JSON::json j;
+
+	j["texturePath"] = m_ImageFile->getPath().string();
+	j["resFile"] = m_ModelFile->getPath().string();
+
+	return j;
 }

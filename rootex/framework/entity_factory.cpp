@@ -53,7 +53,7 @@ EntityFactory::~EntityFactory()
 	destroyEntities();
 }
 
-Ref<Component> EntityFactory::createComponent(const String& name, const LuaVariable& componentData)
+Ref<Component> EntityFactory::createComponent(const String& name, const JSON::json& componentData)
 {
 	auto& findIt = m_ComponentCreators.end();
 	for (auto& componentClass = m_ComponentCreators.begin(); componentClass != m_ComponentCreators.end(); componentClass++)
@@ -113,38 +113,33 @@ Ref<Component> EntityFactory::createDefaultComponent(const String& name)
 	}
 }
 
-Ref<Entity> EntityFactory::createEntity(LuaTextResourceFile* actorLuaDescription)
+Ref<Entity> EntityFactory::createEntity(TextResourceFile* entityJSONDescription)
 {
-	LuaInterpreter::GetSingleton()->loadExecuteScript(actorLuaDescription);
-
-	LuaVariable entityDescription = LuaInterpreter::GetSingleton()->getGlobal("Entity");
-	if (entityDescription.isNil())
+	const JSON::json entityJSON = JSON::json::parse(entityJSONDescription->getString());
+	if (entityJSON.is_null())
 	{
-		ERR("Entity not found:" + actorLuaDescription->getPath().generic_string());
+		ERR("Entity not found:" + entityJSONDescription->getPath().generic_string());
 		return nullptr;
 	}
 
-	LuaVariable componentDescriptions = entityDescription["Components"];
-	if (componentDescriptions.isNil())
+	JSON::json componentJSON = entityJSON["Components"];
+	if (componentJSON.is_null())
 	{
-		ERR("Components not found while creating Entity:" + actorLuaDescription->getPath().generic_string());
+		ERR("Components not found while creating Entity:" + entityJSONDescription->getPath().generic_string());
 		return nullptr;
 	}
 
 	Ref<Entity> entity;
-	LuaVariable name = entityDescription["name"];
-	entity.reset(new Entity(getNextID(), name.isNil() ? "Entity" : name));
+	JSON::json name = entityJSON["Entity"]["name"];
+	entity.reset(new Entity(getNextID(), name.is_null() ? "Entity" : name));
 
-	for (auto& componentDescription : pairs(componentDescriptions))
+	for (auto&& [componentName, componentDescription] : componentJSON.items())
 	{
-		if (componentDescription.first.type() == LUA_TSTRING)
+		Ref<Component> componentObject = createComponent(componentName, componentDescription);
+		if (componentObject)
 		{
-			Ref<Component> componentObject = createComponent(componentDescription.first, componentDescription.second);
-			if (componentObject)
-			{
-				entity->addComponent(componentObject);
-				componentObject->setOwner(entity);
-			}
+			entity->addComponent(componentObject);
+			componentObject->setOwner(entity);
 		}
 	}
 
