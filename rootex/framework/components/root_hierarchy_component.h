@@ -25,4 +25,5 @@ public:
 	virtual bool addChild(Ref<Entity> child) override;
 
 	virtual String getName() const override { return "RootHierarchyComponent"; }
+	virtual JSON::json getJSON() const override;
 };

@@ -2,6 +2,7 @@
 
 #include "core/event_manager.h"
 #include "script/interpreter.h"
+#include "systems/serialization_system.h"
 
 #include "gui/file_system_dock.h"
 #include "gui/hierarchy_dock.h"
@@ -44,6 +45,8 @@ class Editor
 	Ptr<InspectorDock> m_Inspector;
 	Ptr<FileViewer> m_FileViewer;
 
+	SerializationSystem m_SerializationSystem;
+
 	Editor() = default;
 	Editor(Editor&) = delete;
 	~Editor();
@@ -54,6 +57,8 @@ class Editor
 	void pushEditorStyleVars();
 
 	friend class OS;
+	
+	Variant saveAll(const Event* event);
 
 public:
 	static Editor* GetSingleton();

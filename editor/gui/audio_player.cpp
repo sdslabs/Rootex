@@ -75,6 +75,16 @@ void AudioPlayer::unload()
 void AudioPlayer::draw()
 {
 	drawFileInfo();
+
+	if (m_OpenFile->isDirty())
+	{
+		ImGui::TextColored(Editor::GetSingleton()->getColors().m_Warning, "File may be changed on disk");
+		ImGui::SameLine();
+		if (ImGui::Button("Reload"))
+		{
+			m_OpenFile->reload();
+		}
+	}
 	ImGui::NewLine();
 	if (ImGui::Button("Play"))
 	{
@@ -112,16 +122,6 @@ void AudioPlayer::draw()
 		{
 			m_Source->stop();
 			m_FractionProgress = 0.0f;
-		}
-	}
-
-	if (m_OpenFile->isDirty())
-	{
-		ImGui::TextColored(Editor::GetSingleton()->getColors().m_Warning, "File may be changed on disk");
-		ImGui::SameLine();
-		if (ImGui::Button("Reload"))
-		{
-			m_OpenFile->reload();
 		}
 	}
 }

@@ -1,21 +1,21 @@
 #include "transform_component.h"
 
-Component* TransformComponent::Create(const LuaVariable& componentData)
+Component* TransformComponent::Create(const JSON::json& componentData)
 {
 	TransformComponent* transformComponent = new TransformComponent();
 
-	transformComponent->m_TransformBuffer.m_Position.x = componentData["m_Position"]["x"];
-	transformComponent->m_TransformBuffer.m_Position.y = componentData["m_Position"]["y"];
-	transformComponent->m_TransformBuffer.m_Position.z = componentData["m_Position"]["z"];
+	transformComponent->m_TransformBuffer.m_Position.x = componentData["position"]["x"];
+	transformComponent->m_TransformBuffer.m_Position.y = componentData["position"]["y"];
+	transformComponent->m_TransformBuffer.m_Position.z = componentData["position"]["z"];
 
-	transformComponent->m_TransformBuffer.m_Rotation = Quaternion::CreateFromYawPitchRoll(
-	    componentData["m_Rotation"]["yaw"],
-	    componentData["m_Rotation"]["pitch"],
-	    componentData["m_Rotation"]["roll"]);
+	transformComponent->m_TransformBuffer.m_Rotation.x = componentData["rotation"]["x"];
+	transformComponent->m_TransformBuffer.m_Rotation.y = componentData["rotation"]["y"];
+	transformComponent->m_TransformBuffer.m_Rotation.z = componentData["rotation"]["z"];
+	transformComponent->m_TransformBuffer.m_Rotation.w = componentData["rotation"]["w"];
 
-	transformComponent->m_TransformBuffer.m_Scale.x = componentData["m_Scale"]["x"];
-	transformComponent->m_TransformBuffer.m_Scale.y = componentData["m_Scale"]["y"];
-	transformComponent->m_TransformBuffer.m_Scale.z = componentData["m_Scale"]["z"];
+	transformComponent->m_TransformBuffer.m_Scale.x = componentData["scale"]["x"];
+	transformComponent->m_TransformBuffer.m_Scale.y = componentData["scale"]["y"];
+	transformComponent->m_TransformBuffer.m_Scale.z = componentData["scale"]["z"];
 
 	transformComponent->updateTransformFromPositionRotationScale();
 
@@ -76,6 +76,26 @@ void TransformComponent::setTransform(const Matrix& transform)
 void TransformComponent::addTransform(const Matrix& applyTransform)
 {
 	setTransform(getLocalTransform() * applyTransform);
+}
+
+JSON::json TransformComponent::getJSON() const
+{
+	JSON::json j;
+
+	j["position"]["x"] = m_TransformBuffer.m_Position.x;
+	j["position"]["y"] = m_TransformBuffer.m_Position.y;
+	j["position"]["z"] = m_TransformBuffer.m_Position.z;
+
+	j["rotation"]["x"] = m_TransformBuffer.m_Rotation.x;
+	j["rotation"]["y"] = m_TransformBuffer.m_Rotation.y;
+	j["rotation"]["z"] = m_TransformBuffer.m_Rotation.z;
+	j["rotation"]["w"] = m_TransformBuffer.m_Rotation.w;
+
+	j["scale"]["x"] = m_TransformBuffer.m_Scale.x;
+	j["scale"]["y"] = m_TransformBuffer.m_Scale.y;
+	j["scale"]["z"] = m_TransformBuffer.m_Scale.z;
+
+	return j;
 }
 
 #ifdef ROOTEX_EDITOR

@@ -7,10 +7,6 @@
 #include "rootex/core/resource_loader.h"
 #include "rootex/framework/systems/render_system.h"
 
-#undef min
-#include "flatbuffers/idl.h"
-#include "serialize/generated/entity_generated.h"
-
 EditorApplication* EditorApplication::s_Instance = nullptr;
 
 Ref<Application> CreateRootexApplication()
@@ -41,18 +37,7 @@ EditorApplication::EditorApplication()
 	}
 	Editor::GetSingleton()->initialize(m_Window->getWindowHandle());
 
-	HierarchySystem::GetSingleton()->addChild(addEntity("game/assets/test/cube.lua"));
-	Ref<Entity> teapot = addEntity("game/assets/test/teapot.lua");
-	HierarchySystem::GetSingleton()->addChild(teapot);
-	teapot->addChild(addEntity("game/assets/test/point_light.lua"));
-
-	BIND_EVENT_FUNCTION("InputRight", [&](const Event* event) -> Variant {
-		if (Extract(Vector2, event->getData()).x)
-		{
-			m_SerializationSystem.saveAllComponents("save", "editor");
-		}
-		return true;
-	});
+	HierarchySystem::GetSingleton()->addChild(addEntity("game/assets/test/cube.entity.json"));
 }
 
 EditorApplication::~EditorApplication()

@@ -2,12 +2,14 @@
 
 #include "core/renderer/rendering_device.h"
 #include "core/resource_loader.h"
-
+#include "editor_application.h"
 #include "framework/components/hierarchy_component.h"
 #include "framework/systems/render_system.h"
 
 void Editor::initialize(HWND hWnd)
 {
+	BIND_EVENT_MEMBER_FUNCTION("EditorSaveAll", Editor::saveAll);
+
 	LuaVariable general = LuaInterpreter::GetSingleton()->getGlobal("general");
 
 	m_Colors.m_Accent = {
@@ -130,7 +132,7 @@ void Editor::drawDefaultUI()
 		ImGui::SetNextWindowViewport(viewport->ID);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 2.0f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-		
+
 		pushEditorStyleColors();
 		pushEditorStyleVars();
 
@@ -160,6 +162,11 @@ void Editor::drawDefaultUI()
 			static String menuAction = "";
 			if (ImGui::BeginMenu("File"))
 			{
+				if (ImGui::MenuItem("Save All", ""))
+				{
+					EventManager::GetSingleton()->call("EditorSaveEvent", "EditorSaveAll", 0);
+				}
+				ImGui::Separator();
 				if (ImGui::MenuItem("Quit", ""))
 				{
 					quit();
@@ -366,6 +373,13 @@ void Editor::pushEditorStyleVars()
 
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, { 0 });
 	m_EditorStyleVarPushCount++;
+}
+
+Variant Editor::saveAll(const Event* event)
+{
+	m_SerializationSystem.saveAllEntities("editor/saves/", "editor");
+	PRINT("Successfully saved " + std::to_string(EntityFactory::GetSingleton()->getEntities().size()) + " entities");
+	return true;
 }
 
 Editor* Editor::GetSingleton()

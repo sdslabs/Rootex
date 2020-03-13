@@ -17,13 +17,13 @@ protected:
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::HierarchyComponent;
 
-	virtual String getName() const override { return "HierarchyComponent"; }
-	ComponentID getComponentID() const { return s_ID; }
-
 	virtual bool addChild(Ref<Entity> child);
 	virtual bool removeChild(Ref<Entity> node);
 
+	virtual String getName() const override { return "HierarchyComponent"; }
+	ComponentID getComponentID() const { return s_ID; }
 	const Vector<Ref<Entity>>& getChildren() const { return m_Children; }
+	virtual JSON::json getJSON() const override;
 
 #ifdef ROOTEX_EDITOR
 	void draw() override;

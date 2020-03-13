@@ -1,0 +1,17 @@
+{
+    "Components": {
+        "RootHierarchyComponent": {
+            "children": {
+                "2": "Cube"
+            },
+            "parent": {
+                "ID": 0,
+                "name": "None"
+            }
+        }
+    },
+    "Entity": {
+        "ID": 1,
+        "name": "Root"
+    }
+}

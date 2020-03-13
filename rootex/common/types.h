@@ -65,3 +65,6 @@ using Variant = std::variant<bool, int, char, float, String, Vector2, Vector3, V
 #include <functional>
 template <class T>
 using Function = std::function<T>;
+
+#include "JSON/json.hpp"
+namespace JSON = nlohmann;
