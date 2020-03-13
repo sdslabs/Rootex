@@ -51,7 +51,7 @@ public:
 
 class VisualComponent : public Component
 {
-	static Component* Create(const LuaVariable& componentData);
+	static Component* Create(const JSON::json& componentData);
 	static Component* CreateDefault();
 
 	Color m_Color;
@@ -91,4 +91,5 @@ public:
 
 	virtual String getName() const override { return "VisualComponent"; }
 	ComponentID getComponentID() const override { return s_ID; }
+	virtual JSON::json getJSON() const override;
 };

@@ -37,7 +37,7 @@ public:
 	bool isDirty();
 	bool isOpen();
 
-	virtual void reload() = 0;
+	virtual void reload();
 
 	FilePath getPath() const;
 	Type getType() const;

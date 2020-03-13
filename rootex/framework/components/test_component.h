@@ -4,7 +4,7 @@
 
 class TestComponent : public Component
 {
-	static Component* Create(const LuaVariable& componentData);
+	static Component* Create(const JSON::json& componentData);
 	static Component* CreateDefault();
 
 	friend class EntityFactory;
@@ -15,4 +15,5 @@ public:
 
 	int m_TestVariable;
 	ComponentID getComponentID() const override { return s_ID; }
+	virtual JSON::json getJSON() const override;
 };

@@ -2,13 +2,12 @@
 
 #include "common/common.h"
 #include "resource_file.h"
-#include "script/interpreter.h"
 #include "entity.h"
 #include "component.h"
 
 #define INVALID_ID 0
 
-typedef Component* (*ComponentCreator)(const LuaVariable& componentDescription);
+typedef Component* (*ComponentCreator)(const JSON::json& componentDescription);
 typedef Component* (*ComponentDefaultCreator)();
 typedef unsigned int EntityID;
 
@@ -38,9 +37,9 @@ protected:
 public:
 	static EntityFactory* GetSingleton();
 
-	Ref<Component> createComponent(const String& name, const LuaVariable& componentData);
+	Ref<Component> createComponent(const String& name, const JSON::json& componentData);
 	Ref<Component> createDefaultComponent(const String& name);
-	Ref<Entity> createEntity(LuaTextResourceFile* actorLuaDescription);
+	Ref<Entity> createEntity(TextResourceFile* actorLuaDescription);
 
 	void addDefaultComponent(Ref<Entity> entity, String componentName);
 	void addComponent(Ref<Entity> entity, Ref<Component> component);

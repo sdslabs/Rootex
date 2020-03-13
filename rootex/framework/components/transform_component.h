@@ -5,7 +5,7 @@
 
 class TransformComponent : public Component
 {
-	static Component* Create(const LuaVariable& componentData);
+	static Component* Create(const JSON::json& componentData);
 	static Component* CreateDefault();
 
 	struct TransformBuffer
@@ -55,6 +55,7 @@ public:
 	Matrix getAbsoluteTransform() const { return m_TransformBuffer.m_AbsoluteTransform; }
 	ComponentID getComponentID() const override { return s_ID; }
 	virtual String getName() const override { return "TransformComponent"; }
+	virtual JSON::json getJSON() const override;
 
 #ifdef ROOTEX_EDITOR
 	void draw() override;

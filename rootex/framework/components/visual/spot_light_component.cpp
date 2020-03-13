@@ -1,6 +1,6 @@
 #include "spot_light_component.h"
 
-Component* SpotLightComponent::Create(const LuaVariable& componentData)
+Component* SpotLightComponent::Create(const JSON::json& componentData)
 {
 	SpotLightComponent* spotLightComponent = new SpotLightComponent(
 	    (float)componentData["attConst"],
@@ -50,4 +50,30 @@ SpotLightComponent::SpotLightComponent(const float constAtt, const float linAtt,
 
 SpotLightComponent::~SpotLightComponent()
 {
+}
+
+JSON::json SpotLightComponent::getJSON() const
+{
+	JSON::json j;
+
+	j["attConst"] = m_constAtt;
+	j["attLin"] = m_linAtt;
+	j["attQuad"] = m_quadAtt;
+	j["range"] = m_range;
+	j["diffuseIntensity"] = m_diffuseIntensity;
+	
+	j["diffuseColor"]["r"] = m_diffuseColor.x;
+	j["diffuseColor"]["g"] = m_diffuseColor.y;
+	j["diffuseColor"]["b"] = m_diffuseColor.z;
+	j["diffuseColor"]["a"] = m_diffuseColor.w;
+
+	j["ambientColor"]["r"] = m_ambientColor.x;
+	j["ambientColor"]["g"] = m_ambientColor.y;
+	j["ambientColor"]["b"] = m_ambientColor.z;
+	j["ambientColor"]["a"] = m_ambientColor.w;
+
+	j["spot"] = m_spot;
+	j["angleRange"] = m_angleRange;
+
+	return j;
 }

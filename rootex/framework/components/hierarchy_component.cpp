@@ -25,6 +25,30 @@ bool HierarchyComponent::removeChild(Ref<Entity> node)
 	return true;
 }
 
+JSON::json HierarchyComponent::getJSON() const
+{
+	JSON::json j;
+
+	if (!m_Parent)
+	{
+		j["parent"]["ID"] = 1;
+		j["parent"]["name"] = "Root";	
+	}
+	else
+	{
+		j["parent"]["ID"] = m_Parent->getID();
+		j["parent"]["name"] = m_Parent->getName();
+	}
+
+	JSON::json& jc = j["children"];
+	for (auto&& child : m_Children)
+	{
+		jc[child->getID()] = child->getName();
+	}
+
+	return j;
+}
+
 #ifdef ROOTEX_EDITOR
 #include "imgui.h"
 void HierarchyComponent::draw()

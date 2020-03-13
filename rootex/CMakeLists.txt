@@ -26,7 +26,6 @@ add_subdirectory(framework)
 add_subdirectory(main)
 add_subdirectory(os)
 add_subdirectory(script)
-add_subdirectory(serialize)
 add_subdirectory(vendor)
 add_subdirectory(pch)
 
@@ -92,8 +91,7 @@ target_link_libraries(Rootex PUBLIC
     OpenAL
     ALUT
     DirectXTK
-    flatbuffers
-    SerializationGeneratedHeaders
+    JSON
     ImGUI
     Gainput
     Bullet3D

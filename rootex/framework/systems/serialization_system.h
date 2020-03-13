@@ -9,5 +9,5 @@ public:
 	SerializationSystem(SerializationSystem&) = delete;
 	~SerializationSystem() = default;
 
-	void saveAllComponents(const String& dirPath, const String& projectName);
+	void saveAllEntities(const String& dirPath, const String& projectName);
 };

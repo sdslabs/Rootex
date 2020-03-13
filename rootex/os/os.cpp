@@ -155,7 +155,7 @@ InputOutputFileStream OS::CreateFileName(const String& filePath)
 {
 	FilePath path = OS::GetAbsolutePath(filePath);
 
-	InputOutputFileStream file(OS::GetAbsolutePath(filePath), std::ios::binary | std::ios::in | std::ios::out);
+	InputOutputFileStream file(OS::GetAbsolutePath(filePath), std::ios::binary | std::ios::in | std::ios::out | std::ios::trunc);
 
 	if (file)
 	{
