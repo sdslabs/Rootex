@@ -4,7 +4,13 @@
 #include "resource_loader.h"
 #include "visual/sky_box_helper.h"
 
-RootHierarchyComponent::RootHierarchyComponent()
+RootHierarchyComponent::RootHierarchyComponent(EntityID parentID, const Vector<EntityID>& childrenIDs)
+    : HierarchyComponent(parentID, childrenIDs)
+    , m_StaticGroup(parentID, {})
+    , m_EntityGroup(parentID, {})
+    , m_GlobalGroup(parentID, {})
+    , m_SkyGroup(parentID, {})
+    , m_EditorGroup(parentID, {})
 {
 }
 

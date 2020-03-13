@@ -6,6 +6,7 @@
 #include "component.h"
 
 #define INVALID_ID 0
+#define ROOT_ENTITY_ID 1
 
 typedef Component* (*ComponentCreator)(const JSON::json& componentDescription);
 typedef Component* (*ComponentDefaultCreator)();
@@ -15,7 +16,7 @@ class EntityFactory
 {
 	static EntityID s_CurrentID;
 
-	Vector<Ref<Entity>> m_Entities;
+	HashMap<EntityID, Ref<Entity>> m_Entities;
 
 	EntityID getNextID();
 
@@ -24,8 +25,6 @@ protected:
 	ComponentDatabase m_ComponentCreators;
 	typedef Vector<Tuple<ComponentID, String, ComponentDefaultCreator>> DefaultComponentDatabase;
 	DefaultComponentDatabase m_DefaultComponentCreators;
-
-	Ref<Component> EntityFactory::createHierarchyComponent();
 
 	EntityFactory();
 	EntityFactory(EntityFactory&) = delete;
@@ -39,12 +38,14 @@ public:
 
 	Ref<Component> createComponent(const String& name, const JSON::json& componentData);
 	Ref<Component> createDefaultComponent(const String& name);
-	Ref<Entity> createEntity(TextResourceFile* actorLuaDescription);
+	Ref<Entity> createEntity(TextResourceFile* entityJSONDescription);
+	Ref<Entity> findEntity(EntityID entityID);
 
 	void addDefaultComponent(Ref<Entity> entity, String componentName);
 	void addComponent(Ref<Entity> entity, Ref<Component> component);
 	void destroyEntities();
 
 	const ComponentDatabase& getComponentDatabase() const { return m_ComponentCreators; }
-	const Vector<Ref<Entity>>& getEntities() const { return m_Entities; }
+	const HashMap<EntityID, Ref<Entity>>& getEntities() const { return m_Entities; }
+	HashMap<EntityID, Ref<Entity>>& getMutableEntities() { return m_Entities; }
 };
