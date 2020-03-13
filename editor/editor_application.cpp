@@ -36,6 +36,7 @@ EditorApplication::EditorApplication()
 		ERR("More than 1 instances of Editor Application detected");
 	}
 	Editor::GetSingleton()->initialize(m_Window->getWindowHandle());
+	m_PointAtLast10Second = m_ApplicationTimer.Now();
 
 	HierarchySystem::GetSingleton()->addChild(addEntity("game/assets/test/cube.entity.json"));
 }
@@ -49,6 +50,11 @@ void EditorApplication::run()
 	while (true)
 	{
 		m_FrameTimer.reset();
+		if (((m_ApplicationTimer.Now() - m_PointAtLast10Second).count()) * NS_TO_MS * MS_TO_S > m_AutosaveDurationS)
+		{
+			EventManager::GetSingleton()->call("EditorAutosaveEvent", "EditorAutosave", 0);
+			m_PointAtLast10Second = m_ApplicationTimer.Now();
+		}
 
 		if (m_Window->processMessages())
 		{

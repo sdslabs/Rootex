@@ -9,6 +9,7 @@
 void Editor::initialize(HWND hWnd)
 {
 	BIND_EVENT_MEMBER_FUNCTION("EditorSaveAll", Editor::saveAll);
+	BIND_EVENT_MEMBER_FUNCTION("EditorAutosave", Editor::autoSave);
 
 	LuaVariable general = LuaInterpreter::GetSingleton()->getGlobal("general");
 
@@ -377,8 +378,16 @@ void Editor::pushEditorStyleVars()
 
 Variant Editor::saveAll(const Event* event)
 {
-	m_SerializationSystem.saveAllEntities("editor/saves/", "editor");
+	m_SerializationSystem.saveAllEntities("editor/saves", "editor");
 	PRINT("Successfully saved " + std::to_string(EntityFactory::GetSingleton()->getEntities().size()) + " entities");
+	return true;
+}
+
+Variant Editor::autoSave(const Event* event)
+{
+	PRINT("Autosaving entities...");
+	saveAll(event);
+
 	return true;
 }
 

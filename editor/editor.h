@@ -59,6 +59,7 @@ class Editor
 	friend class OS;
 	
 	Variant saveAll(const Event* event);
+	Variant autoSave(const Event* event);
 
 public:
 	static Editor* GetSingleton();
