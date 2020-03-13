@@ -6,13 +6,14 @@
 
 typedef unsigned int ComponentID;
 
-class Entity;
-
 class Component
 {
+	void setOwner(Ref<Entity>& newOwner) { m_Owner = newOwner; }
+	friend class EntityFactory;
+
 protected:
 	Ref<Entity> m_Owner;
-
+	
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::Component;
 
@@ -25,8 +26,6 @@ public:
 	virtual ComponentID getComponentID() const = 0;
 	virtual String getName() const = 0;
 	virtual JSON::json getJSON() const;
-	
-	void setOwner(Ref<Entity>& newOwner) { m_Owner = newOwner; }
 
 #ifdef ROOTEX_EDITOR
 	virtual void draw();

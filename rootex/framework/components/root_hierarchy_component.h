@@ -12,9 +12,12 @@ class RootHierarchyComponent : public HierarchyComponent
 	HierarchyComponent m_SkyGroup;
 	HierarchyComponent m_EditorGroup;
 
+	friend class EntityFactory;
+
 public:
-	RootHierarchyComponent();
-	~RootHierarchyComponent();
+	RootHierarchyComponent(EntityID parentID, const Vector<EntityID>& childrenIDs);
+	RootHierarchyComponent(RootHierarchyComponent&) = delete;
+	virtual ~RootHierarchyComponent();
 
 	bool isVisible(HierarchyGraph* graph);
 	bool preRender(HierarchyGraph* graph);

@@ -12,17 +12,17 @@
 #include "components/hierarchy_component.h"
 #include "components/visual/visual_component.h"
 #include "components/visual/diffuse_visual_component.h"
-#include "components/physics/sphere_component.h"
 #include "components/visual/point_light_component.h"
 #include "components/visual/directional_light_component.h"
 #include "components/visual/spot_light_component.h"
+#include "components/physics/sphere_component.h"
 #include "components/physics/sphere_component.h"
 
 #define REGISTER_COMPONENT(ComponentClass) \
 m_ComponentCreators.push_back({ ComponentClass::s_ID, #ComponentClass, ComponentClass::Create }); \
 m_DefaultComponentCreators.push_back({ ComponentClass::s_ID, #ComponentClass, ComponentClass::CreateDefault })
 
-EntityID EntityFactory::s_CurrentID = 1;
+EntityID EntityFactory::s_CurrentID = ROOT_ENTITY_ID;
 
 EntityFactory* EntityFactory::GetSingleton()
 {
@@ -32,7 +32,7 @@ EntityFactory* EntityFactory::GetSingleton()
 
 EntityID EntityFactory::getNextID()
 {
-	return s_CurrentID++;
+	return ++s_CurrentID;
 }
 
 EntityFactory::EntityFactory()
@@ -46,6 +46,7 @@ EntityFactory::EntityFactory()
 	REGISTER_COMPONENT(DirectionalLightComponent);
 	REGISTER_COMPONENT(SpotLightComponent);
 	REGISTER_COMPONENT(SphereComponent);
+	REGISTER_COMPONENT(HierarchyComponent);
 }
 
 EntityFactory::~EntityFactory()
@@ -77,14 +78,6 @@ Ref<Component> EntityFactory::createComponent(const String& name, const JSON::js
 		ERR("Could not find componentDescription: " + name);
 		return nullptr;
 	}
-}
-
-Ref<Component> EntityFactory::createHierarchyComponent()
-{
-	Ref<HierarchyComponent> component(new HierarchyComponent());
-	System::RegisterComponent(component.get());
-
-	return component;
 }
 
 Ref<Component> EntityFactory::createDefaultComponent(const String& name)
@@ -143,37 +136,52 @@ Ref<Entity> EntityFactory::createEntity(TextResourceFile* entityJSONDescription)
 		}
 	}
 
-	Ref<Component> hierarchyComponent = createHierarchyComponent();
-	entity->addComponent(hierarchyComponent);
-	hierarchyComponent->setOwner(entity);
-
 	if (!entity->setupComponents())
 	{
 		ERR("Entity was not setup properly: " + std::to_string(entity->m_ID));
 	}
 
-	m_Entities.push_back(entity);
+	m_Entities[entity->m_ID] = entity;
 	return entity;
+}
+
+Ref<Entity> EntityFactory::findEntity(EntityID entityID)
+{
+	auto&& findIt = m_Entities.find(entityID);
+
+	if (findIt != m_Entities.end())
+	{
+		return findIt->second;
+	}
+	return nullptr;
 }
 
 Ref<Entity> EntityFactory::createRootEntity()
 {
 	Ref<Entity> root;
-	root.reset(new Entity(getNextID(), "Root"));
+	root.reset(new Entity(ROOT_ENTITY_ID, "Root"));
 	
-	Ref<RootHierarchyComponent> rootComponent(new RootHierarchyComponent());
+	Ref<RootHierarchyComponent> rootComponent(new RootHierarchyComponent(INVALID_ID, {}));
+	rootComponent->m_StaticGroup.m_Owner = root;
+	rootComponent->m_EntityGroup.m_Owner = root;
+	rootComponent->m_GlobalGroup.m_Owner = root;
+	rootComponent->m_SkyGroup.m_Owner = root;
+	rootComponent->m_EditorGroup.m_Owner = root;
+
 	root->addComponent(rootComponent);
 	rootComponent->setOwner(root);
 
 	System::RegisterComponent(rootComponent.get());
 
-	m_Entities.push_back(root);
+	m_Entities[root->m_ID] = root;
 	return root;
 }
 
 void EntityFactory::addDefaultComponent(Ref<Entity> entity, String componentName)
 {
-	entity->addComponent(createDefaultComponent(componentName));
+	Ref<Component> component = createDefaultComponent(componentName);
+	entity->addComponent(component);
+	component->setOwner(entity);
 	entity->setupComponents();
 }
 
@@ -185,16 +193,23 @@ void EntityFactory::addComponent(Ref<Entity> entity, Ref<Component> component)
 
 void EntityFactory::destroyEntities()
 {
+	Vector<Ref<Entity>> markedForRemoval;
 	for (auto& entity : m_Entities)
 	{
-		if (entity)
+		if (entity.second)
 		{
-			entity->destroy();
-			WARN("Destroyed entity: " + entity->getName());
+			markedForRemoval.push_back(entity.second);
 		}
 		else
 		{
 			WARN("Found nullptr while browsing entities for destruction. Skipped during shutdown");
 		}
+	}
+
+	for (auto&& entity : markedForRemoval)
+	{
+		WARN("Destroyed entity: " + entity->getName());
+		entity->destroy();
+		m_Entities.erase(entity->getID());
 	}
 }

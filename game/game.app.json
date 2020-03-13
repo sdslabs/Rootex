@@ -1,0 +1,18 @@
+{
+	"game": {
+		"version": 1.0,
+		"project": "Rootex Game",
+
+		"window": {
+			"x": 0,
+			"y": 0,
+			"width": 1920,
+			"height": 1080,
+			"msaa": "true",
+			"title": "Rootex Game",
+			"isEditor": "false"
+		},
+
+		"startLevel" : "game/assets/levels/level_0"
+	}
+}

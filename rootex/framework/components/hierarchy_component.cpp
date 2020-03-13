@@ -1,16 +1,60 @@
 #include "hierarchy_component.h"
+#include "entity_factory.h"
 #include "event_manager.h"
 
-Component* HierarchyComponent::Create(const LuaVariable& componentData)
+Component* HierarchyComponent::Create(const JSON::json& componentData)
 {
-	HierarchyComponent* component = new HierarchyComponent();
+	PANIC(componentData["parent"] == INVALID_ID, "Found a invalid ID while constructing HierarchyComponent. Only the Root is allowed to use it.");
+
+	HierarchyComponent* component = new HierarchyComponent(componentData["parent"], componentData["children"]);
 	return component;
+}
+
+Component* HierarchyComponent::CreateDefault()
+{
+	HierarchyComponent* component = new HierarchyComponent(ROOT_ENTITY_ID, {});
+	return component;
+}
+
+HierarchyComponent::HierarchyComponent(EntityID parentID, const Vector<EntityID>& childrenIDs)
+    : m_ParentID(parentID)
+    , m_ChildrenIDs(childrenIDs)
+{
+	if (parentID == INVALID_ID)
+	{
+		return;
+	}
+
+	Ref<Entity> parent = EntityFactory::GetSingleton()->findEntity(parentID);
+	if (parent)
+	{
+		m_Parent = parent;
+	}
+	else
+	{
+		WARN("Tried searching for a parent that is not yet constructed. Reset hierarchies to identify correct parent");
+	}
+
+	for (auto&& childID : childrenIDs)
+	{
+		Ref<Entity> child = EntityFactory::GetSingleton()->findEntity(parentID);
+		if (child)
+		{
+			m_Children.push_back(child);
+		}
+		else
+		{
+			WARN("Tried searching for a child that is not yet constructed. Reset hierarchies to identify correct child");
+		}
+	}
 }
 
 bool HierarchyComponent::addChild(Ref<Entity> child)
 {
 	m_Children.push_back(child);
+	m_ChildrenIDs.push_back(child->getID());
 	child->getComponent<HierarchyComponent>()->m_Parent = this->m_Owner;
+	child->getComponent<HierarchyComponent>()->m_ParentID = this->m_Owner->getID();
 	return true;
 }
 
@@ -20,7 +64,12 @@ bool HierarchyComponent::removeChild(Ref<Entity> node)
 	if (findIt != m_Children.end())
 	{
 		(*findIt)->getComponent<HierarchyComponent>()->m_Parent = nullptr;
+		(*findIt)->getComponent<HierarchyComponent>()->m_ParentID = INVALID_ID;
+		
+		auto&& findItID = std::find(m_ChildrenIDs.begin(), m_ChildrenIDs.end(), (*findIt)->getID());
+
 		m_Children.erase(findIt);
+		m_ChildrenIDs.erase(findItID);
 	}
 	return true;
 }
@@ -31,19 +80,17 @@ JSON::json HierarchyComponent::getJSON() const
 
 	if (!m_Parent)
 	{
-		j["parent"]["ID"] = 1;
-		j["parent"]["name"] = "Root";	
+		j["parent"]["ID"] = 0;
 	}
 	else
 	{
 		j["parent"]["ID"] = m_Parent->getID();
-		j["parent"]["name"] = m_Parent->getName();
 	}
 
 	JSON::json& jc = j["children"];
 	for (auto&& child : m_Children)
 	{
-		jc[child->getID()] = child->getName();
+		jc.push_back(child->getName());
 	}
 
 	return j;
@@ -87,7 +134,7 @@ void HierarchyComponent::draw()
 	{
 		ImGui::Text(child->getName().c_str());
 		ImGui::SameLine();
-		if (ImGui::Button(("Go##" + child->getName()).c_str()))
+		if (ImGui::Button(("Go##" + std::to_string(child->getID())).c_str()))
 		{
 			EventManager::GetSingleton()->call("OpenChildEntity", "EditorInspectorOpenEntity", child);
 		}

@@ -14,7 +14,7 @@ RenderSystem::RenderSystem()
     , m_Camera(new CameraVisualComponent())
 {
 	m_TransformationStack.push_back(Matrix::Identity);
-	m_Root = HierarchySystem::GetSingleton()->getRoot().get();
+	m_Root = HierarchySystem::GetSingleton()->getRootHierarchyComponent().get();
 	m_HierarchyGraph = HierarchySystem::GetSingleton()->getHierarchyGraph();
 }
 

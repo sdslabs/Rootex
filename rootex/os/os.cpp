@@ -76,7 +76,7 @@ Vector<FilePath> OS::GetFilesInDirectory(const String& directory)
 	Vector<FilePath> result;
 	for (auto&& file : std::filesystem::directory_iterator(GetAbsolutePath(directory)))
 	{
-		if (file.is_regular_file())
+		if (!file.is_directory())
 		{
 			result.push_back(GetRootRelativePath(((FilePath)file).generic_string()));
 		}

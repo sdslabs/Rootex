@@ -12,7 +12,7 @@ public:
 
 private:
 	HierarchySettings m_HierarchySettings;
-	String m_OpenedEntityName;
+	EntityID m_OpenedEntityID;
 
 	void showHierarchySubTree(Ref<Entity> node);
 
