@@ -25,6 +25,11 @@ Component* TransformComponent::Create(const JSON::json& componentData)
 Component* TransformComponent::CreateDefault()
 {
 	TransformComponent* transformComponent = new TransformComponent();
+
+	// Position and Rotation will default to zero vectors here
+	// Only Scale needs a default value of (1, 1, 1)
+	transformComponent->m_TransformBuffer.m_Scale = { 1.0f, 1.0f, 1.0f };
+
 	return transformComponent;
 }
 
@@ -108,7 +113,7 @@ void TransformComponent::draw()
 	{
 		m_TransformBuffer.m_Position = { 0.0f, 0.0f, 0.0f };
 	}
-	
+
 	ImGui::DragFloat3("##R", m_EditorRotation, s_EditorDecimalSpeed);
 	ImGui::SameLine();
 	if (ImGui::Button("Rotation"))
@@ -119,14 +124,14 @@ void TransformComponent::draw()
 		m_EditorRotation[3] = 0.0f;
 	}
 	m_TransformBuffer.m_Rotation = Quaternion::CreateFromYawPitchRoll(m_EditorRotation[0], m_EditorRotation[1], m_EditorRotation[2]);
-	
+
 	ImGui::DragFloat3("##S", &m_TransformBuffer.m_Scale.x, s_EditorDecimalSpeed, 0.0f, 0.0f);
 	ImGui::SameLine();
 	if (ImGui::Button("Scale"))
 	{
 		m_TransformBuffer.m_Scale = { 1.0f, 1.0f, 1.0f };
 	}
-	
+
 	updateTransformFromPositionRotationScale();
 }
 #endif // ROOTEX_EDITOR
