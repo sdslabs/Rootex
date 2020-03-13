@@ -159,11 +159,7 @@ InputOutputFileStream OS::CreateFileName(const String& filePath)
 
 	if (file)
 	{
-		if (IsExists(filePath))
-		{
-			WARN("Directory already exists: " + filePath);
-		}
-		else
+		if (!IsExists(filePath))
 		{
 			PRINT("Created file: " + path.string());
 		}
