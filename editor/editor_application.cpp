@@ -25,7 +25,7 @@ void EditorApplication::SetSingleton(EditorApplication* app)
 }
 
 EditorApplication::EditorApplication()
-    : Application("editor/project.lua")
+    : Application()
 {
 	if (!s_Instance)
 	{
@@ -35,10 +35,11 @@ EditorApplication::EditorApplication()
 	{
 		ERR("More than 1 instances of Editor Application detected");
 	}
-	Editor::GetSingleton()->initialize(m_Window->getWindowHandle());
-	m_PointAtLast10Second = m_ApplicationTimer.Now();
 
-	HierarchySystem::GetSingleton()->addChild(addEntity("game/assets/test/cube.entity.json"));
+	JSON::json projectJSON = JSON::json::parse(ResourceLoader::CreateTextResourceFile("editor/editor.app.json")->getString());
+	initialize(projectJSON);
+	Editor::GetSingleton()->initialize(m_Window->getWindowHandle(), projectJSON);
+	m_PointAtLast10Second = m_ApplicationTimer.Now();
 }
 
 EditorApplication::~EditorApplication()

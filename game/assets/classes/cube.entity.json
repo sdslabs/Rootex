@@ -3,6 +3,10 @@
 		"name": "Cube"
 	},
 	"Components": {
+		"HierarchyComponent": {
+			"parent": 1,
+			"children": []
+		},
 		"TransformComponent": {
 			"position": {
 				"x": 0,

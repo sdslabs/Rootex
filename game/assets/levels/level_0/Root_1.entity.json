@@ -2,7 +2,8 @@
     "Components": {
         "RootHierarchyComponent": {
             "children": {
-                "2": "Cube"
+                "2": "Cube",
+                "3": "Cube"
             },
             "parent": {
                 "ID": 0,

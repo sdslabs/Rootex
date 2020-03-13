@@ -25,6 +25,8 @@ class Editor
 	unsigned int m_EditorStyleColorPushCount;
 	unsigned int m_EditorStyleVarPushCount;
 
+	String m_CurrentLevelName;
+
 	struct Colors
 	{
 		ImVec4 m_Accent;
@@ -35,6 +37,7 @@ class Editor
 		ImVec4 m_Success;
 		ImVec4 m_Failure;
 		ImVec4 m_Warning;
+		ImVec4 m_White;
 	} m_Colors;
 
 	Ptr<FileSystemDock> m_FileSystem;
@@ -56,17 +59,19 @@ class Editor
 	void pushEditorStyleColors();
 	void pushEditorStyleVars();
 
-	friend class OS;
-	
 	Variant saveAll(const Event* event);
 	Variant autoSave(const Event* event);
+	Variant openLevel(const Event* event);
+	Variant createNewLevel(const Event* event);
+	Variant createNewEntity(const Event* event);
 
 public:
 	static Editor* GetSingleton();
 
-	void initialize(HWND hWnd);
+	void initialize(HWND hWnd, const JSON::json& projectJSON);
 	void render();
 	void quit();
 
 	const Colors& getColors() const { return m_Colors; }
+	const String& getCurrentLevelName() const { return m_CurrentLevelName; }
 };
