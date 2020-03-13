@@ -97,3 +97,18 @@ bool RootHierarchyComponent::addChild(Ref<Entity> child)
 	}
 	return true;
 }
+
+JSON::json RootHierarchyComponent::getJSON() const
+{
+	JSON::json j;
+
+	j["parent"]["ID"] = INVALID_ID;
+	j["parent"]["name"] = "None";
+
+	for (auto&& child : m_Children)
+	{
+		j["children"][std::to_string(child->getID())] = child->getName();
+	}
+
+	return j;
+}

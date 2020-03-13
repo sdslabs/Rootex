@@ -23,8 +23,9 @@ public:
 
 	Ref<Entity> getOwner() const;
 	virtual ComponentID getComponentID() const = 0;
-
 	virtual String getName() const = 0;
+	virtual JSON::json getJSON() const;
+	
 	void setOwner(Ref<Entity>& newOwner) { m_Owner = newOwner; }
 
 #ifdef ROOTEX_EDITOR

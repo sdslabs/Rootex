@@ -10,9 +10,19 @@ SphereComponent::SphereComponent(float rad, const String& matName)
 	}
 }
 
-Component* SphereComponent::Create(const LuaVariable& sphereComponentData)
+JSON::json SphereComponent::getJSON() const
 {
-	SphereComponent* component = new SphereComponent(sphereComponentData["m_Radius"], sphereComponentData["matName"]);
+	JSON::json j;
+
+	j["radius"] = m_Radius;
+	j["matName"] = m_MaterialName;
+
+	return j;
+}
+
+Component* SphereComponent::Create(const JSON::json& sphereComponentData)
+{
+	SphereComponent* component = new SphereComponent(sphereComponentData["radius"], sphereComponentData["matName"]);
 	return component;
 }
 

@@ -22,7 +22,7 @@ Application::~Application()
 
 Ref<Entity> Application::addEntity(String path)
 {
-	return EntityFactory::GetSingleton()->createEntity(ResourceLoader::CreateLuaTextResourceFile(path));
+	return EntityFactory::GetSingleton()->createEntity(ResourceLoader::CreateTextResourceFile(path));
 }
 
 bool Application::initialize(String windowConfigFilePath)

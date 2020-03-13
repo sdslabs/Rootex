@@ -3,7 +3,7 @@
 
 class PointLightComponent : public Component
 {
-	static Component* Create(const LuaVariable& componentData);
+	static Component* Create(const JSON::json& componentData);
 	static Component* CreateDefault();
 
 	friend class EntityFactory;
@@ -26,4 +26,5 @@ public:
 	    const float range, const float diffuseIntensity, const Color& diffuseColor, const Color& ambientColor);
 	PointLightComponent(PointLightComponent&) = delete;
 	~PointLightComponent();
+	virtual JSON::json getJSON() const override;
 };
