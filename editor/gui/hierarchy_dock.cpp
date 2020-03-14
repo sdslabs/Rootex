@@ -16,7 +16,7 @@ void HierarchyDock::showHierarchySubTree(Ref<Entity> node)
 		if (ImGui::TreeNodeEx(("##" + std::to_string(node->getID())).c_str(), ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_AllowItemOverlap | (hierarchy->getChildren().size() ? ImGuiTreeNodeFlags_None : ImGuiTreeNodeFlags_Leaf)))
 		{
 			ImGui::SameLine();
-			if (ImGui::Selectable(node->getName().c_str(), m_OpenedEntityID == node->getID()))
+			if (ImGui::Selectable((node->getName() + " #" + std::to_string(node->getID())).c_str(), m_OpenedEntityID == node->getID()))
 			{
 				m_OpenedEntityID = node->getID();
 				PRINT("Viewed " + node->getName() + " through Hierarchy Dock");
