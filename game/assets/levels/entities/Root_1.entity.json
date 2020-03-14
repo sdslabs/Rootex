@@ -1,0 +1,9 @@
+{
+    "Components": {
+        "RootHierarchyComponent": {}
+    },
+    "Entity": {
+        "ID": 1,
+        "name": "Root"
+    }
+}
