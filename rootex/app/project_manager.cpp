@@ -11,10 +11,10 @@ ProjectManager* ProjectManager::GetSingleton()
 	return &singleton;
 }
 
-void ProjectManager::openLevel(FilePath levelPath)
+void ProjectManager::openLevel(String levelPath)
 {
-	PRINT("Loading level: " + levelPath.string());
-	m_CurrentLevelName = levelPath.filename().string();
+	PRINT("Loading level: " + levelPath);
+	m_CurrentLevelName = FilePath(levelPath).filename().string();
 
 	EntityFactory::GetSingleton()->destroyEntities(true);
 	Ref<RootHierarchyComponent> rootComponent = HierarchySystem::GetSingleton()->getRootHierarchyComponent();
@@ -22,12 +22,12 @@ void ProjectManager::openLevel(FilePath levelPath)
 	rootComponent = HierarchySystem::GetSingleton()->getRootHierarchyComponent();
 	rootComponent->clear();
 
-	for (auto&& entityFile : OS::GetFilesInDirectory((levelPath / "entities/").string()))
+	for (auto&& entityFile : OS::GetFilesInDirectory(levelPath + "/entities/"))
 	{
 		EntityFactory::GetSingleton()->createEntity(ResourceLoader::CreateTextResourceFile(entityFile.string()));
 	}
 
 	HierarchySystem::GetSingleton()->resetHierarchy();
 
-	PRINT("Loaded level: " + levelPath.string());
+	PRINT("Loaded level: " + levelPath);
 }
