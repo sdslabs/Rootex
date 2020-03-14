@@ -234,7 +234,7 @@ void EntityFactory::destroyEntities(bool saveRoot)
 
 	for (auto&& entity : markedForRemoval)
 	{
-		WARN("Destroyed entity: " + entity->getName());
+		PRINT("Destroyed entity: " + entity->getName());
 		entity->destroy();
 		m_Entities.erase(entity->getID());
 	}
