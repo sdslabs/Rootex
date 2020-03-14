@@ -14,8 +14,6 @@ RenderSystem::RenderSystem()
     , m_Camera(new CameraVisualComponent())
 {
 	m_TransformationStack.push_back(Matrix::Identity);
-	m_Root = HierarchySystem::GetSingleton()->getRootHierarchyComponent().get();
-	m_HierarchyGraph = HierarchySystem::GetSingleton()->getHierarchyGraph();
 }
 
 RenderSystem::~RenderSystem()
@@ -29,10 +27,10 @@ void RenderSystem::recoverLostDevice()
 
 void RenderSystem::render()
 {
-	if (m_Root->preRender(m_HierarchyGraph))
+	if (HierarchySystem::GetSingleton()->getRootHierarchyComponent()->preRender(HierarchySystem::GetSingleton()->getHierarchyGraph()))
 	{
-		m_Root->renderChildren(m_HierarchyGraph);
-		m_Root->postRender(m_HierarchyGraph);
+		HierarchySystem::GetSingleton()->getRootHierarchyComponent()->renderChildren(HierarchySystem::GetSingleton()->getHierarchyGraph());
+		HierarchySystem::GetSingleton()->getRootHierarchyComponent()->postRender(HierarchySystem::GetSingleton()->getHierarchyGraph());
 	}
 }
 

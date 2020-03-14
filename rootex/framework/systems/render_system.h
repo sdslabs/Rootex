@@ -7,8 +7,6 @@
 
 class RenderSystem : public System
 {
-	RootHierarchyComponent* m_Root;
-	HierarchyGraph* m_HierarchyGraph;
 	Ref<CameraVisualComponent> m_Camera;
 	Ptr<Renderer> m_Renderer;
 	Vector<Matrix> m_TransformationStack;

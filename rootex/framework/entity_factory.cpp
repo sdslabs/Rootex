@@ -178,23 +178,12 @@ Ref<Entity> EntityFactory::createRootEntity()
 	
 	Ref<RootHierarchyComponent> rootComponent(new RootHierarchyComponent(INVALID_ID, {}));
 
-	root->addComponent(rootComponent);
-	rootComponent->setOwner(root);
-
-	root->addComponent(rootComponent->m_StaticGroup);
-	rootComponent->m_StaticGroup->setOwner(root);
-	
-	root->addComponent(rootComponent->m_EntityGroup);
-	rootComponent->m_EntityGroup->setOwner(root);
-	
-	root->addComponent(rootComponent->m_GlobalGroup);
-	rootComponent->m_GlobalGroup->setOwner(root);
-	
-	root->addComponent(rootComponent->m_SkyGroup);
-	rootComponent->m_SkyGroup->setOwner(root);
-	
-	root->addComponent(rootComponent->m_EditorGroup);
-	rootComponent->m_EditorGroup->setOwner(root);
+	EntityFactory::addComponent(root, rootComponent);
+	EntityFactory::addComponent(root, rootComponent->m_StaticGroup);
+	EntityFactory::addComponent(root, rootComponent->m_GlobalGroup);
+	EntityFactory::addComponent(root, rootComponent->m_EntityGroup);
+	EntityFactory::addComponent(root, rootComponent->m_SkyGroup);
+	EntityFactory::addComponent(root, rootComponent->m_EditorGroup);
 
 	System::RegisterComponent(rootComponent.get());
 
@@ -222,7 +211,15 @@ void EntityFactory::destroyEntities(bool saveRoot)
 	{
 		if (entity.second)
 		{
-			if ((entity.second->getID() == ROOT_ENTITY_ID) && saveRoot)
+			if (entity.second->getID() == ROOT_ENTITY_ID)
+			{
+				if (saveRoot)
+				{
+					continue;
+				}
+			}
+
+			if ((entity.second->getID() == INVALID_ID))
 			{
 				continue;
 			}
