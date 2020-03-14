@@ -16,5 +16,5 @@ Component* DebugComponent::CreateDefault()
 
 JSON::json DebugComponent::getJSON() const
 {
-	return {};
+	return JSON::json::object();
 }

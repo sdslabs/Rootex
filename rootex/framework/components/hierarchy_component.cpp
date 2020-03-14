@@ -80,19 +80,16 @@ JSON::json HierarchyComponent::getJSON() const
 
 	if (!m_Parent)
 	{
-		j["parent"]["ID"] = 0;
+		j["parent"] = 0;
 	}
 	else
 	{
-		j["parent"]["ID"] = m_Parent->getID();
+		j["parent"] = m_Parent->getID();
 	}
 
 	JSON::json& jc = j["children"];
-	for (auto&& child : m_Children)
-	{
-		jc.push_back(child->getName());
-	}
-
+	jc = m_ChildrenIDs;
+	
 	return j;
 }
 
@@ -110,7 +107,7 @@ void HierarchyComponent::draw()
 		ImGui::SameLine();
 		if (ImGui::Button("Go"))
 		{
-			EventManager::GetSingleton()->call("OpenChildEntity", "EditorInspectorOpenEntity", m_Parent);
+			EventManager::GetSingleton()->call("OpenChildEntity", "EditorOpenEntity", m_Parent);
 		}
 		ImGui::NextColumn();
 	}
@@ -136,7 +133,7 @@ void HierarchyComponent::draw()
 		ImGui::SameLine();
 		if (ImGui::Button(("Go##" + std::to_string(child->getID())).c_str()))
 		{
-			EventManager::GetSingleton()->call("OpenChildEntity", "EditorInspectorOpenEntity", child);
+			EventManager::GetSingleton()->call("OpenChildEntity", "EditorOpenEntity", child);
 		}
 	}
 
