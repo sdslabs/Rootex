@@ -1,10 +1,8 @@
 {
     "Components": {
         "HierarchyComponent": {
-            "children": null,
-            "parent": {
-                "ID": 1
-            }
+            "children": [],
+            "parent": 1
         },
         "TransformComponent": {
             "position": {
@@ -13,7 +11,7 @@
                 "z": 0.0
             },
             "rotation": {
-                "w": 1.0,
+                "w": 0.0,
                 "x": 0.0,
                 "y": 0.0,
                 "z": 0.0
@@ -35,7 +33,7 @@
         }
     },
     "Entity": {
-        "ID": 3,
+        "ID": 4,
         "name": "Cube"
     }
 }

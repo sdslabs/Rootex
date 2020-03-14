@@ -11,26 +11,38 @@ void HierarchySystem::addChild(Ref<Entity> child)
 	m_HierarchyGraph.addChild(child);
 }
 
-void HierarchySystem::setParentAndChildren(Ref<Entity> entity, HashMap<EntityID, Ref<Entity>>& entities)
+void HierarchySystem::setParentAndChildren(HashMap<EntityID, Ref<Entity>>& entities)
 {
-	HierarchyComponent* hierarchyComponent = nullptr;
-	for (auto&& component : s_Components[HierarchyComponent::s_ID])
+	Vector<Ref<Entity>> rootChildren;
+	for (auto&& entity : entities)
 	{
-		hierarchyComponent = dynamic_cast<HierarchyComponent*>(component);
-		
-		if (hierarchyComponent->m_ParentID != INVALID_ID)
+		if (entity.second->getID() != ROOT_ENTITY_ID)
 		{
-			hierarchyComponent->m_Parent = entities[hierarchyComponent->m_ParentID];
-		}
+			HierarchyComponent* hierarchyComponent = entity.second->getComponent<HierarchyComponent>().get();
+			if (hierarchyComponent)
+			{
+				hierarchyComponent->m_Parent = entities[hierarchyComponent->m_ParentID];
+				if (hierarchyComponent->m_ParentID == ROOT_ENTITY_ID)
+				{
+					rootChildren.push_back(entity.second);
+				}
 
-		for (auto&& childID : hierarchyComponent->m_ChildrenIDs)
-		{
-			hierarchyComponent->m_Children.push_back(entities[childID]);
+				for (auto& childID : hierarchyComponent->m_ChildrenIDs)
+				{
+					hierarchyComponent->m_Children.push_back(entities[childID]);
+				}
+			}
 		}
+	}
+
+	getRootHierarchyComponent()->clear();
+	for (auto&& rootChild : rootChildren)
+	{
+		getRootHierarchyComponent()->addChild(rootChild);
 	}
 }
 
 void HierarchySystem::resetHierarchy()
 {
-	setParentAndChildren(getRootEntity(), EntityFactory::GetSingleton()->getMutableEntities());
+	setParentAndChildren(EntityFactory::GetSingleton()->getMutableEntities());
 }

@@ -8,7 +8,7 @@ class HierarchySystem : public System
 {
 	HierarchyGraph m_HierarchyGraph;
 
-	void setParentAndChildren(Ref<Entity> entity, HashMap<EntityID, Ref<Entity>>& entities);
+	void setParentAndChildren(HashMap<EntityID, Ref<Entity>>& entities);
 
 public:
 	static HierarchySystem* GetSingleton();

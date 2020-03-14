@@ -10,23 +10,38 @@
 
 void HierarchyDock::showHierarchySubTree(Ref<Entity> node)
 {
-	if (ImGui::TreeNodeEx(("##" + std::to_string(node->getID())).c_str(), ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_AllowItemOverlap | (node->getComponent<HierarchyComponent>()->getChildren().size() ? ImGuiTreeNodeFlags_None : ImGuiTreeNodeFlags_Leaf)))
+	Ref<HierarchyComponent> hierarchy = node->getComponent<HierarchyComponent>();
+	if (hierarchy)
 	{
-		ImGui::SameLine();
-		if (ImGui::Selectable(node->getName().c_str(), m_OpenedEntityID == node->getID()))
+		if (ImGui::TreeNodeEx(("##" + std::to_string(node->getID())).c_str(), ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_AllowItemOverlap | (hierarchy->getChildren().size() ? ImGuiTreeNodeFlags_None : ImGuiTreeNodeFlags_Leaf)))
 		{
-			m_OpenedEntityID = node->getID();
-			PRINT("Viewed " + node->getName() + " through Hierarchy Dock");
-			EventManager::GetSingleton()->call("OpenEntity", "EditorInspectorOpenEntity", node);
-		}
-		
-		for (auto& child : node->getComponent<HierarchyComponent>()->getChildren())
-		{
-			showHierarchySubTree(child);
-		}
+			ImGui::SameLine();
+			if (ImGui::Selectable(node->getName().c_str(), m_OpenedEntityID == node->getID()))
+			{
+				m_OpenedEntityID = node->getID();
+				PRINT("Viewed " + node->getName() + " through Hierarchy Dock");
+				EventManager::GetSingleton()->call("OpenEntity", "EditorOpenEntity", node);
+			}
 
-		ImGui::TreePop();
+			for (auto& child : node->getComponent<HierarchyComponent>()->getChildren())
+			{
+				showHierarchySubTree(child);
+			}
+
+			ImGui::TreePop();
+		}
 	}
+}
+
+Variant HierarchyDock::selectOpenEntity(const Event* event)
+{
+	m_OpenedEntityID = Extract(Ref<Entity>, event->getData())->getID();
+	return true;
+}
+
+HierarchyDock::HierarchyDock()
+{
+	BIND_EVENT_MEMBER_FUNCTION("EditorOpenEntity", HierarchyDock::selectOpenEntity);
 }
 
 void HierarchyDock::draw()

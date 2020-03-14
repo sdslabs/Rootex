@@ -17,5 +17,5 @@ Component* TestComponent::CreateDefault()
 
 JSON::json TestComponent::getJSON() const
 {
-	return {};
+	return JSON::json::object();
 }
