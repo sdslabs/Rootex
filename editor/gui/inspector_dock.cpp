@@ -39,7 +39,7 @@ void InspectorDock::draw()
 		{
 			if (m_OpenedEntity)
 			{
-				ImGui::Text("Entity: %s (%d)", m_OpenedEntity->getName().c_str(), m_OpenedEntity->getID());
+				ImGui::Text("Entity: %s #%d", m_OpenedEntity->getName().c_str(), m_OpenedEntity->getID());
 				ImGui::PushStyleColor(ImGuiCol_Button, Editor::GetSingleton()->getColors().m_Success);
 				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, Editor::GetSingleton()->getColors().m_Accent);
 				ImGui::PushStyleColor(ImGuiCol_ButtonActive, Editor::GetSingleton()->getColors().m_Success);
