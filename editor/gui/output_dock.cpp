@@ -4,9 +4,15 @@
 #include "vendor/ImGUI/imgui_impl_dx11.h"
 #include "vendor/ImGUI/imgui_impl_win32.h"
 
-OutputDock::OutputDock()
-    : m_CoutRedirect(m_StdOutBuffer.rdbuf())
+Variant OutputDock::catchOutput(const Event* event)
 {
+	m_CaughtOutputs.push_back(Extract(String, event->getData()));
+	return true;
+}
+
+OutputDock::OutputDock()
+{
+	BIND_EVENT_MEMBER_FUNCTION("OSPrint", catchOutput);
 }
 
 void OutputDock::draw()
@@ -15,8 +21,12 @@ void OutputDock::draw()
 	{
 		if (ImGui::Begin("Output"))
 		{
-			ImGui::TextUnformatted(m_StdOutBuffer.str().c_str());
+			for (auto&& outputString : m_CaughtOutputs)
+			{
+				ImGui::TextUnformatted(outputString.c_str());
+			}
 		}
+		ImGui::SetScrollHere(1.0f);
 		ImGui::End();
 	}
 }
