@@ -55,7 +55,7 @@ public:
 
 	static bool SaveFile(const FilePath& filePath, ResourceData* fileData);
 
-	static void Print(const String& msg);
+	static void Print(const String& msg, const String& type = "Print");
 	static void Print(const float& real);
 	static void Print(const int& number);
 	static void Print(const unsigned int& number);

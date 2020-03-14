@@ -318,12 +318,11 @@ bool OS::IsExists(String relativePath)
 	return std::filesystem::exists(OS::GetAbsolutePath(relativePath));
 }
 
-void OS::Print(const String& msg)
+void OS::Print(const String& msg, const String& type)
 {
 #ifdef ROOTEX_EDITOR
-	EventManager::GetSingleton()->call("OSPrint", "OSPrint", msg);
+	EventManager::GetSingleton()->call(type, "OSPrint", msg);
 #endif // ROOTEX_EDITOR
-
 	std::cout.clear();
 	std::cout << msg << std::endl;
 }
@@ -351,18 +350,16 @@ void OS::PrintLine(const String& msg)
 void OS::PrintWarning(const String& warning)
 {
 	std::cout << "\033[93m";
-	Print("WARNING: " + warning);
-	std::cout << "\033[0m" << std::endl;
+	Print("WARNING: " + warning, "Warning");
+	std::cout << "\033[0m";
 }
 
 void OS::PrintError(const String& error)
 {
-	std::cout.clear();
-
 	std::cout << "\033[91m";
-	Print("ERROR: " + error);
-	std::cout << "\033[0m" << std::endl;
-	PostError(error, "Fatal Error");
+	Print("ERROR: " + error, "Error");
+	std::cout << "\033[0m";
+	PostError(error, "Error");
 }
 
 void OS::PrintIf(const bool& expr, const String& error)
