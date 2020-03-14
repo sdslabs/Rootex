@@ -6,15 +6,20 @@
 
 class RootHierarchyComponent : public HierarchyComponent
 {
-	HierarchyComponent m_StaticGroup;
-	HierarchyComponent m_EntityGroup;
-	HierarchyComponent m_GlobalGroup;
-	HierarchyComponent m_SkyGroup;
-	HierarchyComponent m_EditorGroup;
+	static Component* Create(const JSON::json& componentData);
+	static Component* CreateDefault();
+
+	Ref<HierarchyComponent> m_StaticGroup;
+	Ref<HierarchyComponent> m_EntityGroup;
+	Ref<HierarchyComponent> m_GlobalGroup;
+	Ref<HierarchyComponent> m_SkyGroup;
+	Ref<HierarchyComponent> m_EditorGroup;
 
 	friend class EntityFactory;
 
 public:
+	static const ComponentID s_ID = (ComponentID)ComponentIDs::RootHierarchyComponent;
+
 	RootHierarchyComponent(EntityID parentID, const Vector<EntityID>& childrenIDs);
 	RootHierarchyComponent(RootHierarchyComponent&) = delete;
 	virtual ~RootHierarchyComponent();
@@ -26,6 +31,7 @@ public:
 	void postRender(HierarchyGraph* graph);
 	
 	virtual bool addChild(Ref<Entity> child) override;
+	void clear();
 
 	virtual String getName() const override { return "RootHierarchyComponent"; }
 	virtual JSON::json getJSON() const override;

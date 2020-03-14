@@ -10,6 +10,7 @@
 #include "components/test_component.h"
 #include "components/transform_component.h"
 #include "components/hierarchy_component.h"
+#include "components/root_hierarchy_component.h"
 #include "components/visual/visual_component.h"
 #include "components/visual/diffuse_visual_component.h"
 #include "components/visual/point_light_component.h"
@@ -47,11 +48,12 @@ EntityFactory::EntityFactory()
 	REGISTER_COMPONENT(SpotLightComponent);
 	REGISTER_COMPONENT(SphereComponent);
 	REGISTER_COMPONENT(HierarchyComponent);
+	REGISTER_COMPONENT(RootHierarchyComponent);
 }
 
 EntityFactory::~EntityFactory()
 {
-	destroyEntities();
+	destroyEntities(false);
 }
 
 Ref<Component> EntityFactory::createComponent(const String& name, const JSON::json& componentData)
@@ -124,7 +126,19 @@ Ref<Entity> EntityFactory::createEntity(TextResourceFile* entityJSONDescription)
 
 	Ref<Entity> entity;
 	JSON::json name = entityJSON["Entity"]["name"];
-	entity.reset(new Entity(getNextID(), name.is_null() ? "Entity" : name));
+
+	EntityID newID = 0;
+	auto&& findItID = entityJSON["Entity"].find("ID");
+	if (findItID != entityJSON["Entity"].end())
+	{
+		newID = *findItID;
+	}
+	else
+	{
+		newID = getNextID();
+	}
+
+	entity.reset(new Entity(newID, name.is_null() ? "Entity" : name));
 
 	for (auto&& [componentName, componentDescription] : componentJSON.items())
 	{
@@ -160,20 +174,30 @@ Ref<Entity> EntityFactory::createRootEntity()
 {
 	Ref<Entity> root;
 	root.reset(new Entity(ROOT_ENTITY_ID, "Root"));
+	m_Entities[root->m_ID] = root;
 	
 	Ref<RootHierarchyComponent> rootComponent(new RootHierarchyComponent(INVALID_ID, {}));
-	rootComponent->m_StaticGroup.m_Owner = root;
-	rootComponent->m_EntityGroup.m_Owner = root;
-	rootComponent->m_GlobalGroup.m_Owner = root;
-	rootComponent->m_SkyGroup.m_Owner = root;
-	rootComponent->m_EditorGroup.m_Owner = root;
 
 	root->addComponent(rootComponent);
 	rootComponent->setOwner(root);
 
+	root->addComponent(rootComponent->m_StaticGroup);
+	rootComponent->m_StaticGroup->setOwner(root);
+	
+	root->addComponent(rootComponent->m_EntityGroup);
+	rootComponent->m_EntityGroup->setOwner(root);
+	
+	root->addComponent(rootComponent->m_GlobalGroup);
+	rootComponent->m_GlobalGroup->setOwner(root);
+	
+	root->addComponent(rootComponent->m_SkyGroup);
+	rootComponent->m_SkyGroup->setOwner(root);
+	
+	root->addComponent(rootComponent->m_EditorGroup);
+	rootComponent->m_EditorGroup->setOwner(root);
+
 	System::RegisterComponent(rootComponent.get());
 
-	m_Entities[root->m_ID] = root;
 	return root;
 }
 
@@ -191,13 +215,18 @@ void EntityFactory::addComponent(Ref<Entity> entity, Ref<Component> component)
 	component->setOwner(entity);
 }
 
-void EntityFactory::destroyEntities()
+void EntityFactory::destroyEntities(bool saveRoot)
 {
 	Vector<Ref<Entity>> markedForRemoval;
 	for (auto& entity : m_Entities)
 	{
 		if (entity.second)
 		{
+			if ((entity.second->getID() == ROOT_ENTITY_ID) && saveRoot)
+			{
+				continue;
+			}
+
 			markedForRemoval.push_back(entity.second);
 		}
 		else

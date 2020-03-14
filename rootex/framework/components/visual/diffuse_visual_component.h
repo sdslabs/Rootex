@@ -19,7 +19,7 @@ class DiffuseVisualComponent : public VisualComponent
 	friend class EntityFactory;
 
 public:
-	static const ComponentID s_ID = (ComponentID)ComponentIDs::VisualComponent;
+	static const ComponentID s_ID = (ComponentID)ComponentIDs::DiffuseVisualComponent;
 
 	bool preRender(HierarchyGraph* graph) override;
 
