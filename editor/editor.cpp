@@ -6,6 +6,8 @@
 #include "framework/components/hierarchy_component.h"
 #include "framework/systems/render_system.h"
 
+#include "project_manager.h"
+
 #include "imgui_stdlib.h"
 
 void Editor::initialize(HWND hWnd, const JSON::json& projectJSON)
@@ -95,15 +97,12 @@ void Editor::render()
 
 	drawDefaultUI();
 
-	if (m_CurrentLevelName != "")
-	{
-		m_FileSystem->draw();
-		m_Hierarchy->draw();
-		m_Toolbar->draw();
-		m_Viewport->draw();
-		m_Inspector->draw();
-		m_FileViewer->draw();
-	}
+	m_FileSystem->draw();
+	m_Hierarchy->draw();
+    m_Toolbar->draw();
+	m_Viewport->draw();
+    m_Inspector->draw();
+	m_FileViewer->draw();
 	m_Output->draw();
 
 	ImGui::PopStyleColor(m_EditorStyleColorPushCount);
@@ -387,7 +386,7 @@ void Editor::pushEditorStyleVars()
 
 Variant Editor::saveAll(const Event* event)
 {
-	m_SerializationSystem.saveAllEntities("game/assets/levels/" + getCurrentLevelName() + "/entities/");
+	m_SerializationSystem.saveAllEntities("game/assets/levels/" + ProjectManager::GetSingleton()->getCurrentLevelName() + "/entities/");
 	PRINT("Successfully saved " + std::to_string(EntityFactory::GetSingleton()->getEntities().size()) + " entities");
 	return true;
 }
@@ -402,23 +401,8 @@ Variant Editor::autoSave(const Event* event)
 Variant Editor::openLevel(const Event* event)
 {
 	FilePath levelPath(Extract(FilePath, event->getData()));
-	PRINT("Loading level: " + levelPath.string());
-	m_CurrentLevelName = levelPath.filename().string();
 
-	EntityFactory::GetSingleton()->destroyEntities(true);
-
-	Ref<RootHierarchyComponent> rootComponent = HierarchySystem::GetSingleton()->getRootHierarchyComponent();
-
-	rootComponent->clear();
-
-	for (auto&& entityFile : OS::GetFilesInDirectory((levelPath / "entities/").string()))
-	{
-		EntityFactory::GetSingleton()->createEntity(ResourceLoader::CreateTextResourceFile(entityFile.string()));
-	}
-
-	HierarchySystem::GetSingleton()->resetHierarchy();
-
-	PRINT("Loaded level: " + levelPath.string());
+	ProjectManager::GetSingleton()->openLevel(levelPath);
 
 	return true;
 }

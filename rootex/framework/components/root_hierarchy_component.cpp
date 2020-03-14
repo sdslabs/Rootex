@@ -40,9 +40,9 @@ bool RootHierarchyComponent::preRender(HierarchyGraph* graph)
 	return true;
 }
 
-void RootHierarchyComponent::renderPassRender(HierarchyComponent& renderPassGraph, HierarchyGraph* graph)
+void RootHierarchyComponent::renderPassRender(Ref<HierarchyComponent> renderPassGraph, HierarchyGraph* graph)
 {
-	for (auto& child : renderPassGraph.getChildren())
+	for (auto& child : renderPassGraph->getChildren())
 	{
 		Ref<VisualComponent> childVisualComponent = child->getComponent<VisualComponent>();
 
@@ -64,13 +64,13 @@ void RootHierarchyComponent::renderPassRender(HierarchyComponent& renderPassGrap
 
 void RootHierarchyComponent::renderChildren(HierarchyGraph* graph)
 {
-	renderPassRender(*m_GlobalGroup, graph);
-	renderPassRender(*m_StaticGroup, graph);
-	renderPassRender(*m_EntityGroup, graph);
-	renderPassRender(*m_EditorGroup, graph);
+	renderPassRender(m_GlobalGroup, graph);
+	renderPassRender(m_StaticGroup, graph);
+	renderPassRender(m_EntityGroup, graph);
+	renderPassRender(m_EditorGroup, graph);
 	{
 		SkyBoxHelper skyBoxHelper;
-		renderPassRender(*m_SkyGroup, graph);
+		renderPassRender(m_SkyGroup, graph);
 	}
 }
 
