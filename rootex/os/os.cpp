@@ -7,6 +7,10 @@
 #include "common/common.h"
 #include "resource_data.h"
 
+#ifdef ROOTEX_EDITOR
+#include"event_manager.h"
+#endif // ROOTEX_EDITOR
+
 std::filesystem::file_time_type::clock OS::s_FileSystemClock;
 const std::chrono::time_point<std::chrono::system_clock> OS::s_ApplicationStartTime = std::chrono::system_clock::now();
 FilePath OS::s_RootDirectory;
@@ -316,6 +320,10 @@ bool OS::IsExists(String relativePath)
 
 void OS::Print(const String& msg)
 {
+#ifdef ROOTEX_EDITOR
+	EventManager::GetSingleton()->call("OSPrint", "OSPrint", msg);
+#endif // ROOTEX_EDITOR
+
 	std::cout.clear();
 	std::cout << msg << std::endl;
 }
@@ -342,13 +350,18 @@ void OS::PrintLine(const String& msg)
 
 void OS::PrintWarning(const String& warning)
 {
+	std::cout << "\033[93m";
 	Print("WARNING: " + warning);
+	std::cout << "\033[0m" << std::endl;
 }
 
 void OS::PrintError(const String& error)
 {
 	std::cout.clear();
+
+	std::cout << "\033[91m";
 	Print("ERROR: " + error);
+	std::cout << "\033[0m" << std::endl;
 	PostError(error, "Fatal Error");
 }
 
