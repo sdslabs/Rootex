@@ -192,7 +192,7 @@ void Editor::drawDefaultUI()
 					if (ImGui::Button("Create"))
 					{
 						EventManager::GetSingleton()->call("EditorFileNewLevel", "EditorCreateNewLevel", newLevelName);
-						EventManager::GetSingleton()->call("EditorOpenNewLevel", "EditorOpenLevel", "game/assets/levels/" + newLevelName);
+						EventManager::GetSingleton()->call("EditorOpenNewLevel", "EditorOpenLevel", FilePath("game/assets/levels/" + newLevelName));
 					}
 					ImGui::EndMenu();
 				}
