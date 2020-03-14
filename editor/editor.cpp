@@ -1,12 +1,11 @@
 #include "editor.h"
 
+#include "app/project_manager.h"
 #include "core/renderer/rendering_device.h"
 #include "core/resource_loader.h"
 #include "editor_application.h"
 #include "framework/components/hierarchy_component.h"
 #include "framework/systems/render_system.h"
-
-#include "project_manager.h"
 
 #include "imgui_stdlib.h"
 
@@ -179,7 +178,7 @@ void Editor::drawDefaultUI()
 						if (ImGui::MenuItem(entityClassFile.string().c_str(), ""))
 						{
 							Variant callReturn = EventManager::GetSingleton()->returnCall("EditorFileCreateNewEntity", "EditorCreateNewEntity", entityClassFile);
-							Ref<Entity> newEntity = Extract(Ref<Entity>, callReturn);
+				 			Ref<Entity> newEntity = Extract(Ref<Entity>, callReturn);
 							EventManager::GetSingleton()->call("EditorFileOpenNewlyCreatedEntity", "EditorOpenEntity", newEntity);
 						}
 					}
