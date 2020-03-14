@@ -1,0 +1,39 @@
+{
+    "Components": {
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 1
+        },
+        "TransformComponent": {
+            "position": {
+                "x": -0.6399999856948853,
+                "y": 0.8700000047683716,
+                "z": -2.2699999809265137
+            },
+            "rotation": {
+                "w": 1.0,
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.090000033378601,
+                "y": 0.9900000095367432,
+                "z": 1.0
+            }
+        },
+        "VisualComponent": {
+            "color": {
+                "a": 1.0,
+                "b": 0.20000000298023224,
+                "g": 1.0,
+                "r": 0.20000000298023224
+            },
+            "resFile": "game/assets/test/cube.obj"
+        }
+    },
+    "Entity": {
+        "ID": 6,
+        "name": "Cube"
+    }
+}

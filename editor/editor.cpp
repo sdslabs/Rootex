@@ -178,7 +178,9 @@ void Editor::drawDefaultUI()
 					{
 						if (ImGui::MenuItem(entityClassFile.string().c_str(), ""))
 						{
-							EventManager::GetSingleton()->call("EditorFileCreateNewEntity", "EditorCreateNewEntity", entityClassFile);
+							Variant callReturn = EventManager::GetSingleton()->returnCall("EditorFileCreateNewEntity", "EditorCreateNewEntity", entityClassFile);
+							Ref<Entity> newEntity = Extract(Ref<Entity>, callReturn);
+							EventManager::GetSingleton()->call("EditorFileOpenNewlyCreatedEntity", "EditorOpenEntity", newEntity);
 						}
 					}
 					ImGui::EndMenu();
@@ -427,7 +429,7 @@ Variant Editor::createNewEntity(const Event* event)
 	Ref<Entity> newEntity = EntityFactory::GetSingleton()->createEntity(entityClassFile);
 
 	HierarchySystem::GetSingleton()->addChild(newEntity);
-	return true;
+	return newEntity;
 }
 
 Editor* Editor::GetSingleton()
