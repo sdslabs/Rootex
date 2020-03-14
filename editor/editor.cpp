@@ -3,9 +3,9 @@
 #include "app/project_manager.h"
 #include "core/renderer/rendering_device.h"
 #include "core/resource_loader.h"
-#include "editor_application.h"
 #include "framework/components/hierarchy_component.h"
 #include "framework/systems/render_system.h"
+#include "editor_application.h"
 
 #include "imgui_stdlib.h"
 
@@ -193,7 +193,7 @@ void Editor::drawDefaultUI()
 					if (ImGui::Button("Create"))
 					{
 						EventManager::GetSingleton()->call("EditorFileNewLevel", "EditorCreateNewLevel", newLevelName);
-						EventManager::GetSingleton()->call("EditorOpenNewLevel", "EditorOpenLevel", FilePath("game/assets/levels/" + newLevelName));
+						EventManager::GetSingleton()->call("EditorOpenNewLevel", "EditorOpenLevel", "game/assets/levels/" + newLevelName);
 					}
 					ImGui::EndMenu();
 				}
@@ -203,7 +203,7 @@ void Editor::drawDefaultUI()
 					{
 						if (ImGui::MenuItem(levelName.string().c_str()))
 						{
-							EventManager::GetSingleton()->call("EditorFileMenuOpenLevel", "EditorOpenLevel", levelName);
+							EventManager::GetSingleton()->call("EditorFileMenuOpenLevel", "EditorOpenLevel", levelName.string());
 						}
 					}
 					ImGui::EndMenu();
@@ -401,7 +401,7 @@ Variant Editor::autoSave(const Event* event)
 
 Variant Editor::openLevel(const Event* event)
 {
-	FilePath levelPath(Extract(FilePath, event->getData()));
+	String levelPath(Extract(String, event->getData()));
 
 	ProjectManager::GetSingleton()->openLevel(levelPath);
 

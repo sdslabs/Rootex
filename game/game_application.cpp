@@ -22,7 +22,7 @@ GameApplication::GameApplication()
 	JSON::json projectJSON = JSON::json::parse(ResourceLoader::CreateNewTextResourceFile("game/game.app.json")->getString());
 	initialize(projectJSON);
 
-	ProjectManager::GetSingleton()->openLevel(FilePath((String)projectJSON["startLevel"]));
+	ProjectManager::GetSingleton()->openLevel(projectJSON["startLevel"]);
 }
 
 GameApplication::~GameApplication()
