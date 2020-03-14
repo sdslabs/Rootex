@@ -25,8 +25,6 @@ class Editor
 	unsigned int m_EditorStyleColorPushCount;
 	unsigned int m_EditorStyleVarPushCount;
 
-	String m_CurrentLevelName;
-
 	struct Colors
 	{
 		ImVec4 m_Accent;
@@ -73,5 +71,4 @@ public:
 	void quit();
 
 	const Colors& getColors() const { return m_Colors; }
-	const String& getCurrentLevelName() const { return m_CurrentLevelName; }
 };

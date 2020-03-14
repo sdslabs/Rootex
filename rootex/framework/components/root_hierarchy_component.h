@@ -26,7 +26,7 @@ public:
 
 	bool isVisible(HierarchyGraph* graph);
 	bool preRender(HierarchyGraph* graph);
-	void renderPassRender(HierarchyComponent& renderPassGraph, HierarchyGraph* graph);
+	void renderPassRender(Ref<HierarchyComponent> renderPassGraph, HierarchyGraph* graph);
 	void renderChildren(HierarchyGraph* graph);
 	void postRender(HierarchyGraph* graph);
 	
