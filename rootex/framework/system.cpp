@@ -26,6 +26,6 @@ void System::DeregisterComponent(Component* component)
 	}
 	else
 	{
-		ERR("Found an unregistered component queued for deregisteration: " + std::to_string(component->getComponentID()));
+		ERR("Found an unregistered component queued for deregisteration: " + component->getName());
 	}
 }

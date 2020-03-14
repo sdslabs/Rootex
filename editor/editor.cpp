@@ -387,7 +387,7 @@ void Editor::pushEditorStyleVars()
 
 Variant Editor::saveAll(const Event* event)
 {
-	m_SerializationSystem.saveAllEntities("game/assets/levels/" + getCurrentLevelName());
+	m_SerializationSystem.saveAllEntities("game/assets/levels/" + getCurrentLevelName() + "/entities/");
 	PRINT("Successfully saved " + std::to_string(EntityFactory::GetSingleton()->getEntities().size()) + " entities");
 	return true;
 }
@@ -404,6 +404,12 @@ Variant Editor::openLevel(const Event* event)
 	FilePath levelPath(Extract(FilePath, event->getData()));
 	PRINT("Loading level: " + levelPath.string());
 	m_CurrentLevelName = levelPath.filename().string();
+
+	EntityFactory::GetSingleton()->destroyEntities(true);
+
+	Ref<RootHierarchyComponent> rootComponent = HierarchySystem::GetSingleton()->getRootHierarchyComponent();
+
+	rootComponent->clear();
 
 	for (auto&& entityFile : OS::GetFilesInDirectory((levelPath / "entities/").string()))
 	{

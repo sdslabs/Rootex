@@ -28,7 +28,7 @@ void InspectorDock::refreshAddNewComponentSelectionCache()
 InspectorDock::InspectorDock()
     : m_OpenedEntity(nullptr)
 {
-	BIND_EVENT_MEMBER_FUNCTION("EditorInspectorOpenEntity", openEntity);
+	BIND_EVENT_MEMBER_FUNCTION("EditorOpenEntity", openEntity);
 }
 
 static int TextInputResizeCallback(ImGuiInputTextCallbackData* data)
