@@ -3,13 +3,11 @@
 #include <iostream>
 #include <sstream>
 
-#include "rootex/common/common.h"
+#include "common/common.h"
 #include "event_manager.h"
 
 class OutputDock
 {
-	Vector<String> m_CaughtOutputs;
-
 public:
 	struct OutputDockSettings
 	{
@@ -18,6 +16,7 @@ public:
 
 private:
 	OutputDockSettings m_OutputDockSettings;
+	Vector<Pair<String, String>> m_CaughtOutputs;
 
 	Variant catchOutput(const Event* event);
 
