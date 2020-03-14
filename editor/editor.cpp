@@ -68,7 +68,7 @@ void Editor::initialize(HWND hWnd, const JSON::json& projectJSON)
 		(float)general["colors"]["warning"]["b"],
 		(float)general["colors"]["warning"]["a"],
 	};
-	m_Colors.m_White = { 0.0f, 0.0f, 0.0f, 0.0f };
+	m_Colors.m_White = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 	m_FileSystem.reset(new FileSystemDock());
 	m_Hierarchy.reset(new HierarchyDock());
@@ -107,7 +107,7 @@ void Editor::render()
 
 	ImGui::PopStyleColor(m_EditorStyleColorPushCount);
 	ImGui::PopStyleVar(m_EditorStyleVarPushCount);
-
+	
 	RenderingDevice::GetSingleton()->setTextureRenderTarget();
 	RenderSystem::GetSingleton()->render();
 	RenderingDevice::GetSingleton()->setBackBufferRenderTarget();

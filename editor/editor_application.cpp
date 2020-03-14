@@ -68,8 +68,8 @@ void EditorApplication::run()
 		InputManager::GetSingleton()->update();
 		EventManager::GetSingleton()->dispatchDeferred();
 
+		m_Window->clearUnboundTarget();
 		m_Window->swapBuffers();
-		m_Window->clearCurrentTarget();
 	}
 }
 
