@@ -2,8 +2,7 @@
 
 #include "editor/editor_application.h"
 
-#include "core/resource_loader.h"
-#include "core/renderer/texture.h"
+#include "app/project_manager.h"
 
 #include "vendor/ImGUI/imgui.h"
 #include "vendor/ImGUI/imgui_impl_dx11.h"
@@ -20,7 +19,11 @@ void ToolbarDock::draw()
 			ImGui::Text("Play Level");
 			ImGui::SameLine();
 			if (ImGui::ArrowButton("Play Level", ImGuiDir_Right))
-			{
+			{				
+				EventManager::GetSingleton()->call("PreGameStartupSaveEvent", "EditorSaveAll", 0);
+				PRINT("Launched Game process");
+				OS::Execute("\"" + OS::GetGameExecutablePath() + "\" " + ProjectManager::GetSingleton()->getCurrentLevelName());
+				PRINT("Game process ended");
 			}
 
 			ImGui::NextColumn();
