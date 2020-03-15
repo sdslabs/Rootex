@@ -9,6 +9,7 @@ set_source_files_properties(${EditorLuaScripts} ${EditorJSONs} PROPERTIES
 
 add_definitions(-DROOTEX_EDITOR)
 add_executable(Editor ${EditorSource} ${EditorHeaders} ${EditorLuaScripts} ${EditorJSONs})
+add_dependencies(Editor Rootex Game)
 
 target_include_directories(Editor PUBLIC ../)
 target_link_libraries(Editor PUBLIC Rootex)
