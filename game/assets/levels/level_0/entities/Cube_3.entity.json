@@ -1,14 +1,34 @@
 {
     "Components": {
+        "DirectionalLightComponent": {
+            "ambientColor": {
+                "a": 1.0,
+                "b": 0.9999899864196777,
+                "g": 0.9999899864196777,
+                "r": 1.0
+            },
+            "diffuseColor": {
+                "a": 1.0,
+                "b": 1.0,
+                "g": 0.9999899864196777,
+                "r": 0.9999969601631165
+            },
+            "diffuseIntensity": 1.0,
+            "direction": {
+                "x": 77.5,
+                "y": -31.5,
+                "z": 24.5
+            }
+        },
         "HierarchyComponent": {
             "children": [],
             "parent": 1
         },
         "TransformComponent": {
             "position": {
-                "x": -1.649999976158142,
-                "y": -0.9900000095367432,
-                "z": -2.180000066757202
+                "x": -1.7300000190734863,
+                "y": 0.0,
+                "z": 0.0
             },
             "rotation": {
                 "w": 1.0,
@@ -17,19 +37,19 @@
                 "z": 0.0
             },
             "scale": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
+                "x": 0.10000000149011612,
+                "y": 0.10000000149011612,
+                "z": 0.10000000149011612
             }
         },
         "VisualComponent": {
             "color": {
                 "a": 1.0,
-                "b": 0.20000000298023224,
-                "g": 1.0,
-                "r": 0.20000000298023224
+                "b": 1.0,
+                "g": 0.05885052680969238,
+                "r": 0.0
             },
-            "resFile": "game/assets/test/cube.obj"
+            "resFile": "game/assets/test/teapot.obj"
         }
     },
     "Entity": {
