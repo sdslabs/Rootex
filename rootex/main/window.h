@@ -28,12 +28,14 @@ public:
 	std::optional<int> processMessages();
 	void applyDefaultViewport();
 	void swapBuffers();
+	void clipCursor();
 
 	void clearCurrentTarget();
 	void clearUnboundTarget();
-	void setWindowTitle(String title);
 
 	int getWidth() const;
 	int getHeight() const;
 	HWND getWindowHandle();
+
+	void setWindowTitle(String title);
 };
