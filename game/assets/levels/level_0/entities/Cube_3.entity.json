@@ -45,9 +45,9 @@
         "VisualComponent": {
             "color": {
                 "a": 1.0,
-                "b": 1.0,
-                "g": 0.05885052680969238,
-                "r": 0.0
+                "b": 0.0,
+                "g": 0.0,
+                "r": 1.0
             },
             "resFile": "game/assets/test/teapot.obj"
         }

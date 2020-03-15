@@ -393,9 +393,16 @@ void Editor::pushEditorStyleVars()
 
 Variant Editor::saveAll(const Event* event)
 {
-	PRINT("Saving level: " + ProjectManager::GetSingleton()->getCurrentLevelName());
-	ProjectManager::GetSingleton()->saveCurrentLevel();
-	PRINT("Successfully saved " + std::to_string(EntityFactory::GetSingleton()->getEntities().size()) + " entities");
+	if (ProjectManager::GetSingleton()->isAnyLevelOpen())
+	{
+		PRINT("Saving level: " + ProjectManager::GetSingleton()->getCurrentLevelName());
+		ProjectManager::GetSingleton()->saveCurrentLevel();
+		PRINT("Successfully saved " + std::to_string(EntityFactory::GetSingleton()->getEntities().size()) + " entities");
+	}
+	else
+	{
+		PRINT("No level is open. Did not save current level");
+	}
 	return true;
 }
 
