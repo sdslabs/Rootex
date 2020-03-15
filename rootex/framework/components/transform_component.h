@@ -24,7 +24,7 @@ class TransformComponent : public Component
 	void updateTransformFromPositionRotationScale();
 	void updatePositionRotationScaleFromTransform(Matrix& transform);
 
-	TransformComponent();
+	TransformComponent(const Vector3& position, const Vector4& rotation, const Vector3& scale);
 	TransformComponent(TransformComponent&) = delete;
 
 	friend class VisualComponent;
@@ -35,7 +35,7 @@ class TransformComponent : public Component
 #ifdef ROOTEX_EDITOR
 	static inline const float s_EditorDecimalSpeed = 0.01f;
 
-	float m_EditorRotation[3] = { 0.0f, 0.0f, 0.0f };
+	Vector3 m_EditorRotation;
 #endif // ROOTEX_EDITOR
 
 public:
