@@ -31,6 +31,7 @@ class Editor
 		ImVec4 m_FailAccent;
 		ImVec4 m_MediumAccent;
 		ImVec4 m_HeavyAccent;
+		ImVec4 m_Background;
 		ImVec4 m_Inactive;
 		ImVec4 m_Success;
 		ImVec4 m_Failure;
@@ -45,8 +46,6 @@ class Editor
 	Ptr<ViewportDock> m_Viewport;
 	Ptr<InspectorDock> m_Inspector;
 	Ptr<FileViewer> m_FileViewer;
-
-	SerializationSystem m_SerializationSystem;
 
 	Editor() = default;
 	Editor(Editor&) = delete;
