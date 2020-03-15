@@ -115,6 +115,11 @@ bool OS::Initialize()
 	return true;
 }
 
+void OS::Execute(const String string)
+{
+	std::system(string.c_str());
+}
+
 String OS::GetBuildDate()
 {
 	return String(__DATE__);
@@ -123,6 +128,21 @@ String OS::GetBuildDate()
 String OS::GetBuildTime()
 {
 	return String(__TIME__);
+}
+
+String OS::GetBuildType()
+{
+#ifdef _DEBUG || DEBUG
+	return "Debug";
+#else
+	return "Release";
+#endif // DEBUG
+
+}
+
+String OS::GetGameExecutablePath()
+{
+	return GetAbsolutePath("build/game/" + GetBuildType() + "/Game.exe").string();
 }
 
 bool OS::IsDirectory(const String& path)

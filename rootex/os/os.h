@@ -29,8 +29,11 @@ public:
 	~OS() = delete;
 
 	static bool Initialize();
+	static void Execute(const String string);
 	static String GetBuildDate();
 	static String GetBuildTime();
+	static String GetBuildType();
+	static String GetGameExecutablePath();
 
 	static void OpenFileInSystemEditor(const String& filePath);
 	static void OpenFileInExplorer(const String& filePath);
