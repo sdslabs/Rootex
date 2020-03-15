@@ -24,7 +24,13 @@ void ProjectManager::openLevel(String levelPath)
 
 	for (auto&& entityFile : OS::GetFilesInDirectory(levelPath + "/entities/"))
 	{
-		EntityFactory::GetSingleton()->createEntity(ResourceLoader::CreateTextResourceFile(entityFile.string()));
+		TextResourceFile* textResource = ResourceLoader::CreateTextResourceFile(entityFile.string());
+		if (textResource->isDirty())
+		{
+			textResource->reload();
+		}
+
+		EntityFactory::GetSingleton()->createEntity(textResource);
 	}
 
 	HierarchySystem::GetSingleton()->resetHierarchy();

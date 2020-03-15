@@ -40,6 +40,14 @@ VisualComponent::VisualComponent(const RenderPass& renderPassSetting, Ref<Materi
 	m_Attributes.m_RenderPassSetting = renderPassSetting;
 	m_Attributes.m_Material = material;
 	m_Attributes.m_VisualModelResourceFile = resFile;
+
+#ifdef ROOTEX_EDITOR
+	// TODO: Remove this if statement when camera gets a resource file
+	if (resFile)
+	{
+		m_ModelPathUI = resFile->getPath().string();
+	}
+#endif // ROOTEX_EDITOR
 }
 
 VisualComponent::~VisualComponent()
@@ -178,3 +186,25 @@ VisualComponentAttributes::VisualComponentAttributes()
     , m_HierarchyComponent(nullptr)
 {
 }
+
+#ifdef ROOTEX_EDITOR
+#include "imgui.h"
+#include "imgui_stdlib.h"
+void VisualComponent::draw()
+{
+	if (ImGui::InputText("Visual Model", &m_ModelPathUI, ImGuiInputTextFlags_EnterReturnsTrue))
+	{
+		VisualModelResourceFile* model = ResourceLoader::CreateVisualModelResourceFile(m_ModelPathUI);
+		if (model)
+		{
+			m_Attributes.m_VisualModelResourceFile = model;
+		}
+		else
+		{
+			m_ModelPathUI = m_Attributes.m_VisualModelResourceFile->getPath().string();
+		}
+	}
+
+	ImGui::ColorEdit4("Color", &m_Color.x);
+}
+#endif // ROOTEX_EDITOR

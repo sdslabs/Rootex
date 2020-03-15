@@ -132,6 +132,8 @@ Ref<Entity> EntityFactory::createEntity(TextResourceFile* entityJSONDescription)
 	if (findItID != entityJSON["Entity"].end())
 	{
 		newID = *findItID;
+		while (getNextID() <= *findItID)
+			;
 	}
 	else
 	{

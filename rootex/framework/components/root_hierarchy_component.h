@@ -35,4 +35,8 @@ public:
 
 	virtual String getName() const override { return "RootHierarchyComponent"; }
 	virtual JSON::json getJSON() const override;
+
+#ifdef ROOTEX_EDITOR
+	void draw() override;
+#endif // ROOTEX_EDITOR
 };
