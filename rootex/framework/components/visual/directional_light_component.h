@@ -24,4 +24,8 @@ public:
 	DirectionalLightComponent(DirectionalLightComponent&) = delete;
 	~DirectionalLightComponent();
 	virtual JSON::json getJSON() const override;
+
+#ifdef ROOTEX_EDITOR
+	void draw() override;
+#endif // ROOTEX_EDITOR
 };

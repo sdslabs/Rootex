@@ -141,3 +141,39 @@ JSON::json RootHierarchyComponent::getJSON() const
 {
 	return JSON::json::object();
 }
+
+#ifdef ROOTEX_EDITOR
+#include "imgui.h"
+void RootHierarchyComponent::draw()
+{
+	HierarchyComponent::draw();
+	ImGui::Separator();
+	ImGui::Indent();
+	if (ImGui::TreeNodeEx("Render Passes", ImGuiTreeNodeFlags_CollapsingHeader))
+	{
+		ImGui::Indent();
+		if (ImGui::TreeNodeEx("Static Render Pass", ImGuiTreeNodeFlags_CollapsingHeader))
+		{
+			m_StaticGroup->draw();
+		}
+		if (ImGui::TreeNodeEx("Entity Render Pass", ImGuiTreeNodeFlags_CollapsingHeader))
+		{
+			m_EntityGroup->draw();
+		}
+		if (ImGui::TreeNodeEx("Global Render Pass", ImGuiTreeNodeFlags_CollapsingHeader))
+		{
+			m_GlobalGroup->draw();
+		}
+		if (ImGui::TreeNodeEx("Sky Render Pass", ImGuiTreeNodeFlags_CollapsingHeader))
+		{
+			m_SkyGroup->draw();
+		}
+		if (ImGui::TreeNodeEx("Editor Render Pass", ImGuiTreeNodeFlags_CollapsingHeader))
+		{
+			m_EditorGroup->draw();
+		}
+		ImGui::Unindent();
+	}
+	ImGui::Unindent();
+}
+#endif // ROOTEX_EDITOR

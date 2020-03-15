@@ -68,3 +68,17 @@ JSON::json PointLightComponent::getJSON() const
 
 	return j;
 }
+
+#ifdef ROOTEX_EDITOR
+#include"imgui.h"
+void PointLightComponent::draw()
+{
+	ImGui::DragFloat("Diffuse Intensity##Point", &m_diffuseIntensity);
+	ImGui::ColorEdit4("Diffuse Color##Point", &m_diffuseColor.x);
+	ImGui::ColorEdit4("Ambient Color##Point", &m_ambientColor.x);
+	ImGui::DragFloat("Constant Attenuation##Point", &m_constAtt);
+	ImGui::DragFloat("Linear Attenuation##Point", &m_linAtt);
+	ImGui::DragFloat("Quadratic Attenuation##Point", &m_quadAtt);
+	ImGui::DragFloat("Range##Point", &m_range);
+}
+#endif // ROOTEX_EDITOR

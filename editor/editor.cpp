@@ -177,7 +177,7 @@ void Editor::drawDefaultUI()
 					{
 						if (ImGui::MenuItem(entityClassFile.string().c_str(), ""))
 						{
-							Variant callReturn = EventManager::GetSingleton()->returnCall("EditorFileCreateNewEntity", "EditorCreateNewEntity", entityClassFile);
+							Variant callReturn = EventManager::GetSingleton()->returnCall("EditorFileCreateNewEntity", "EditorCreateNewEntity", entityClassFile.string());
 				 			Ref<Entity> newEntity = Extract(Ref<Entity>, callReturn);
 							EventManager::GetSingleton()->call("EditorFileOpenNewlyCreatedEntity", "EditorOpenEntity", newEntity);
 						}
@@ -422,8 +422,8 @@ Variant Editor::createNewLevel(const Event* event)
 
 Variant Editor::createNewEntity(const Event* event)
 {
-	const FilePath& entityClassFilePath = Extract(FilePath, event->getData());
-	TextResourceFile* entityClassFile = ResourceLoader::CreateNewTextResourceFile(entityClassFilePath.string());
+	const String& entityClassFilePath = Extract(String, event->getData());
+	TextResourceFile* entityClassFile = ResourceLoader::CreateNewTextResourceFile(entityClassFilePath);
 
 	Ref<Entity> newEntity = EntityFactory::GetSingleton()->createEntity(entityClassFile);
 

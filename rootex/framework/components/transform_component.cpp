@@ -1,35 +1,23 @@
 #include "transform_component.h"
 
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 Component* TransformComponent::Create(const JSON::json& componentData)
 {
-	TransformComponent* transformComponent = new TransformComponent();
-
-	transformComponent->m_TransformBuffer.m_Position.x = componentData["position"]["x"];
-	transformComponent->m_TransformBuffer.m_Position.y = componentData["position"]["y"];
-	transformComponent->m_TransformBuffer.m_Position.z = componentData["position"]["z"];
-
-	transformComponent->m_TransformBuffer.m_Rotation.x = componentData["rotation"]["x"];
-	transformComponent->m_TransformBuffer.m_Rotation.y = componentData["rotation"]["y"];
-	transformComponent->m_TransformBuffer.m_Rotation.z = componentData["rotation"]["z"];
-	transformComponent->m_TransformBuffer.m_Rotation.w = componentData["rotation"]["w"];
-
-	transformComponent->m_TransformBuffer.m_Scale.x = componentData["scale"]["x"];
-	transformComponent->m_TransformBuffer.m_Scale.y = componentData["scale"]["y"];
-	transformComponent->m_TransformBuffer.m_Scale.z = componentData["scale"]["z"];
-
-	transformComponent->updateTransformFromPositionRotationScale();
-
+	TransformComponent* transformComponent = new TransformComponent(
+	    { componentData["position"]["x"], componentData["position"]["y"], componentData["position"]["z"] },
+	    { componentData["rotation"]["x"], componentData["rotation"]["y"], componentData["rotation"]["z"], componentData["rotation"]["w"] },
+	    { componentData["scale"]["x"], componentData["scale"]["y"], componentData["scale"]["z"] });
 	return transformComponent;
 }
 
 Component* TransformComponent::CreateDefault()
 {
-	TransformComponent* transformComponent = new TransformComponent();
-
-	// Position and Rotation will default to zero vectors here
-	// Only Scale needs a default value of (1, 1, 1)
-	transformComponent->m_TransformBuffer.m_Scale = { 1.0f, 1.0f, 1.0f };
-
+	TransformComponent* transformComponent = new TransformComponent(
+	    { 0.0f, 0.0f, 0.0f },
+	    Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, 0.0f),
+	    { 1.0f, 1.0f, 1.0f });
 	return transformComponent;
 }
 
@@ -46,12 +34,17 @@ void TransformComponent::updatePositionRotationScaleFromTransform(Matrix& transf
 	transform.Decompose(m_TransformBuffer.m_Scale, m_TransformBuffer.m_Rotation, m_TransformBuffer.m_Position);
 }
 
-TransformComponent::TransformComponent()
+TransformComponent::TransformComponent(const Vector3& position, const Vector4& rotation, const Vector3& scale)
 {
-	m_TransformBuffer.m_Position = Vector3::Zero;
-	m_TransformBuffer.m_Rotation = Vector4::Zero;
-	m_TransformBuffer.m_Scale = Vector3::Zero;
-	m_TransformBuffer.m_Transform = Matrix::Identity;
+	m_TransformBuffer.m_Position = position;
+	m_TransformBuffer.m_Rotation = rotation;
+	m_TransformBuffer.m_Scale = scale;
+
+	updateTransformFromPositionRotationScale();
+
+#ifdef ROOTEX_EDITOR
+	m_EditorRotation = { 0.0f, 0.0f, 0.0f };
+#endif // ROOTEX_EDITOR
 }
 
 void TransformComponent::setPosition(const Vector3& position)
@@ -114,16 +107,16 @@ void TransformComponent::draw()
 		m_TransformBuffer.m_Position = { 0.0f, 0.0f, 0.0f };
 	}
 
-	ImGui::DragFloat3("##R", m_EditorRotation, s_EditorDecimalSpeed);
+	if (ImGui::DragFloat3("##R", &m_EditorRotation.x, s_EditorDecimalSpeed))
+	{
+		m_TransformBuffer.m_Rotation = Quaternion::CreateFromYawPitchRoll(m_EditorRotation.x, m_EditorRotation.y, m_EditorRotation.z);
+	}
 	ImGui::SameLine();
 	if (ImGui::Button("Rotation"))
 	{
-		m_EditorRotation[0] = 0.0f;
-		m_EditorRotation[1] = 0.0f;
-		m_EditorRotation[2] = 0.0f;
-		m_EditorRotation[3] = 0.0f;
+		m_EditorRotation = { 0.0f, 0.0f, 0.0f };
+		m_TransformBuffer.m_Rotation = Quaternion::CreateFromYawPitchRoll(m_EditorRotation.x, m_EditorRotation.y, m_EditorRotation.z);
 	}
-	m_TransformBuffer.m_Rotation = Quaternion::CreateFromYawPitchRoll(m_EditorRotation[0], m_EditorRotation[1], m_EditorRotation[2]);
 
 	ImGui::DragFloat3("##S", &m_TransformBuffer.m_Scale.x, s_EditorDecimalSpeed, 0.0f, 0.0f);
 	ImGui::SameLine();

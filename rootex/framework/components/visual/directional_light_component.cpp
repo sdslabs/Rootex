@@ -60,3 +60,14 @@ JSON::json DirectionalLightComponent::getJSON() const
 
 	return j;
 }
+
+#ifdef ROOTEX_EDITOR
+#include "imgui.h"
+void DirectionalLightComponent::draw()
+{
+	ImGui::SliderFloat("Diffuse Intensity##Directional", &m_diffuseIntensity, 0.0f, 1.0f);
+	ImGui::ColorEdit4("Diffuse Color##Directional", &m_diffuseColor.x);
+	ImGui::ColorEdit4("Ambient Color##Directional", &m_ambientColor.x);
+	ImGui::DragFloat3("Direction##Directional", &m_direction.x);
+}
+#endif // ROOTEX_EDITOR
