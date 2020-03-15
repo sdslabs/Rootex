@@ -13,16 +13,21 @@ ProjectManager* ProjectManager::GetSingleton()
 	return &singleton;
 }
 
-void ProjectManager::openLevel(String levelPath)
+void ProjectManager::openLevel(const String& levelPath)
 {
-	PRINT("Loading level: " + levelPath);
 	m_CurrentLevelName = FilePath(levelPath).filename().string();
 
 	EntityFactory::GetSingleton()->destroyEntities(true);
-	Ref<RootHierarchyComponent> rootComponent = HierarchySystem::GetSingleton()->getRootHierarchyComponent();
+	HierarchySystem::GetSingleton()->getRootHierarchyComponent()->clear();
 
-	rootComponent = HierarchySystem::GetSingleton()->getRootHierarchyComponent();
-	rootComponent->clear();
+	if (!OS::IsExists(levelPath))
+	{
+		OS::CreateDirectoryName(levelPath);
+	}
+	if (!OS::IsExists(levelPath + "/entities/"))
+	{
+		OS::CreateDirectoryName(levelPath + "/entities/");
+	}
 
 	for (auto&& entityFile : OS::GetFilesInDirectory(levelPath + "/entities/"))
 	{
@@ -33,7 +38,7 @@ void ProjectManager::openLevel(String levelPath)
 		}
 
 		EntityFactory::GetSingleton()->createEntity(textResource);
-	}
+	}	
 
 	HierarchySystem::GetSingleton()->resetHierarchy();
 
@@ -43,4 +48,16 @@ void ProjectManager::openLevel(String levelPath)
 void ProjectManager::saveCurrentLevel()
 {
 	SerializationSystem::GetSingleton()->saveAllEntities("game/assets/levels/" + getCurrentLevelName() + "/entities/");
+}
+
+void ProjectManager::createLevel(const String& newLevelName)
+{
+	OS::CreateDirectoryName("game/assets/levels/" + newLevelName);
+	OS::CreateDirectoryName("game/assets/levels/" + newLevelName + "/entities/");
+	PRINT("Created new level: " + "game/assets/levels/" + newLevelName);
+}
+
+Vector<FilePath> ProjectManager::getLibrariesPaths()
+{
+	return OS::GetDirectoriesInDirectory("rootex/vendor/");
 }
