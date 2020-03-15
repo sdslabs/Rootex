@@ -79,6 +79,7 @@ void GameApplication::run()
 
 		m_Window->swapBuffers();
 		m_Window->clearCurrentTarget();
+		m_Window->clipCursor();
 	}
 }
 

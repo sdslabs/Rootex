@@ -45,6 +45,15 @@ void Window::swapBuffers()
 	RenderingDevice::GetSingleton()->swapBuffers();
 }
 
+void Window::clipCursor()
+{
+	static RECT clip;
+	GetClientRect(m_WindowHandle, &clip);
+
+	ClipCursor(&clip);
+	ShowCursor(false);
+}
+
 void Window::clearCurrentTarget()
 {
 #ifdef ROOTEX_EDITOR
