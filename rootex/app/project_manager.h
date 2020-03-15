@@ -14,6 +14,8 @@ public:
 	static ProjectManager* GetSingleton();
 
 	void openLevel(String levelPath);
+	void saveCurrentLevel();
+
 	String getCurrentLevelName() const { return m_CurrentLevelName; }
 	bool isAnyLevelOpen() const { return m_CurrentLevelName != ""; }
 };

@@ -37,6 +37,12 @@ void Editor::initialize(HWND hWnd, const JSON::json& projectJSON)
 		(float)general["colors"]["heavyAccent"]["b"],
 		(float)general["colors"]["heavyAccent"]["a"],
 	};
+	m_Colors.m_Background = {
+		(float)general["colors"]["background"]["r"],
+		(float)general["colors"]["background"]["g"],
+		(float)general["colors"]["background"]["b"],
+		(float)general["colors"]["background"]["a"],
+	};
 	m_Colors.m_Inactive = {
 		(float)general["colors"]["inactive"]["r"],
 		(float)general["colors"]["inactive"]["g"],
@@ -208,7 +214,7 @@ void Editor::drawDefaultUI()
 					}
 					ImGui::EndMenu();
 				}
-				if (ImGui::MenuItem("Save All", ""))
+				if (ImGui::MenuItem("Save Level", "", false, ProjectManager::GetSingleton()->isAnyLevelOpen()))
 				{
 					EventManager::GetSingleton()->call("EditorSaveEvent", "EditorSaveAll", 0);
 				}
@@ -353,7 +359,7 @@ void Editor::pushEditorStyleColors()
 	ImGui::PushStyleColor(ImGuiCol_Header, m_Colors.m_HeavyAccent);
 	ImGui::PushStyleColor(ImGuiCol_HeaderActive, m_Colors.m_Success);
 	ImGui::PushStyleColor(ImGuiCol_HeaderHovered, m_Colors.m_Accent);
-	ImGui::PushStyleColor(ImGuiCol_PopupBg, m_Colors.m_Inactive);
+	ImGui::PushStyleColor(ImGuiCol_PopupBg, m_Colors.m_Background);
 	ImGui::PushStyleColor(ImGuiCol_Tab, m_Colors.m_HeavyAccent);
 	ImGui::PushStyleColor(ImGuiCol_TabActive, m_Colors.m_Accent);
 	ImGui::PushStyleColor(ImGuiCol_TabHovered, m_Colors.m_Accent);
@@ -387,7 +393,8 @@ void Editor::pushEditorStyleVars()
 
 Variant Editor::saveAll(const Event* event)
 {
-	m_SerializationSystem.saveAllEntities("game/assets/levels/" + ProjectManager::GetSingleton()->getCurrentLevelName() + "/entities/");
+	PRINT("Saving level: " + ProjectManager::GetSingleton()->getCurrentLevelName());
+	ProjectManager::GetSingleton()->saveCurrentLevel();
 	PRINT("Successfully saved " + std::to_string(EntityFactory::GetSingleton()->getEntities().size()) + " entities");
 	return true;
 }

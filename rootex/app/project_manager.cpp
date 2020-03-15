@@ -5,6 +5,8 @@
 #include "framework/systems/hierarchy_system.h"
 #include "resource_loader.h"
 
+#include "systems/serialization_system.h"
+
 ProjectManager* ProjectManager::GetSingleton()
 {
 	static ProjectManager singleton;
@@ -36,4 +38,9 @@ void ProjectManager::openLevel(String levelPath)
 	HierarchySystem::GetSingleton()->resetHierarchy();
 
 	PRINT("Loaded level: " + levelPath);
+}
+
+void ProjectManager::saveCurrentLevel()
+{
+	SerializationSystem::GetSingleton()->saveAllEntities("game/assets/levels/" + getCurrentLevelName() + "/entities/");
 }
