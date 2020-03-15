@@ -132,12 +132,11 @@ String OS::GetBuildTime()
 
 String OS::GetBuildType()
 {
-#ifdef _DEBUG || DEBUG
+#ifdef _DEBUG
 	return "Debug";
 #else
 	return "Release";
-#endif // DEBUG
-
+#endif // _DEBUG
 }
 
 String OS::GetGameExecutablePath()
@@ -165,14 +164,8 @@ void OS::CreateDirectoryName(const String& dirPath)
 		return;
 	}
 
-	if (std::filesystem::create_directories(path))
-	{
-		PRINT("Created directory: " + path.string());
-	}
-	else
-	{
-		WARN("Could not create directory: " + path.string());
-	}
+	std::filesystem::create_directories(path);
+	PRINT("Created directory: " + path.string());
 }
 
 InputOutputFileStream OS::CreateFileName(const String& filePath)
