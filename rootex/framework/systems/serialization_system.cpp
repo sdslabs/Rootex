@@ -5,6 +5,12 @@
 #include "component.h"
 #include "entity_factory.h"
 
+SerializationSystem* SerializationSystem::GetSingleton()
+{
+	static SerializationSystem singleton;
+	return &singleton;
+}
+
 void SerializationSystem::saveAllEntities(const String& dirPath)
 {
 	if (!OS::IsExists(dirPath))
