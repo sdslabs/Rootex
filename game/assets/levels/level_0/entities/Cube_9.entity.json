@@ -7,22 +7,23 @@
         "TextVisual2DComponent": {
             "color": {
                 "a": 1.0,
-                "b": 0.17799828946590424,
-                "g": 0.7647058963775635,
-                "r": 0.056228384375572205
+                "b": 1.0,
+                "g": 1.0,
+                "r": 1.0
             },
             "fontResource": "game/assets/fonts/noto_sans_50_regular.spritefont",
+            "mode": 0,
             "name": "Noto Sans",
             "text": "Hello World!"
         },
         "TransformComponent": {
             "position": {
-                "x": 0.0,
-                "y": 0.0,
+                "x": 1000.0,
+                "y": 500.0,
                 "z": 0.0
             },
             "rotation": {
-                "w": 1.0,
+                "w": 0.0,
                 "x": 0.0,
                 "y": 0.0,
                 "z": 0.0

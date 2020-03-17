@@ -73,7 +73,7 @@ void RootHierarchyComponent::renderChildren(HierarchyGraph* graph)
 		SkyBoxHelper skyBoxHelper;
 		renderPassRender(m_SkyGroup, graph);
 	}
-	RenderingDevice::GetSingleton()->getUIBatch()->Begin();
+	RenderingDevice::GetSingleton()->getUIBatch()->Begin(DirectX::SpriteSortMode_Deferred);
 	renderPassRender(m_UIGroup, graph);
 	RenderingDevice::GetSingleton()->getUIBatch()->End();
 }
