@@ -16,6 +16,7 @@
 #include "components/visual/point_light_component.h"
 #include "components/visual/directional_light_component.h"
 #include "components/visual/spot_light_component.h"
+#include "components/visual/text_visual_2d_component.h"
 #include "components/physics/sphere_component.h"
 #include "components/physics/sphere_component.h"
 
@@ -41,8 +42,9 @@ EntityFactory::EntityFactory()
 	REGISTER_COMPONENT(TestComponent);
 	REGISTER_COMPONENT(DebugComponent);
 	REGISTER_COMPONENT(VisualComponent);
-	REGISTER_COMPONENT(TransformComponent);
+	REGISTER_COMPONENT(TextVisual2DComponent);
 	REGISTER_COMPONENT(DiffuseVisualComponent);
+	REGISTER_COMPONENT(TransformComponent);
 	REGISTER_COMPONENT(PointLightComponent);
 	REGISTER_COMPONENT(DirectionalLightComponent);
 	REGISTER_COMPONENT(SpotLightComponent);
@@ -186,6 +188,7 @@ Ref<Entity> EntityFactory::createRootEntity()
 	EntityFactory::addComponent(root, rootComponent->m_EntityGroup);
 	EntityFactory::addComponent(root, rootComponent->m_SkyGroup);
 	EntityFactory::addComponent(root, rootComponent->m_EditorGroup);
+	EntityFactory::addComponent(root, rootComponent->m_UIGroup);
 
 	System::RegisterComponent(rootComponent.get());
 

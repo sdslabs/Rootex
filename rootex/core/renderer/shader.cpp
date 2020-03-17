@@ -36,7 +36,7 @@ Shader::Shader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const Buffer
 		vertexDescArray.push_back(desc);
 	}
 
-	RenderingDevice::GetSingleton()->initVertexLayout(
+	m_InputLayout = RenderingDevice::GetSingleton()->initVertexLayout(
 	    vertexShaderBlob.Get(),
 	    vertexDescArray.data(),
 	    vertexDescArray.size());
@@ -50,6 +50,7 @@ void Shader::bind() const
 {
 	RenderingDevice::GetSingleton()->bind(m_VertexShader.Get());
 	RenderingDevice::GetSingleton()->bind(m_PixelShader.Get());
+	RenderingDevice::GetSingleton()->bind(m_InputLayout.Get());
 }
 
 void Shader::unbind() const

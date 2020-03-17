@@ -10,6 +10,8 @@ class GameApplication : public Application
 {
 	FrameTimer m_FrameTimer;
 
+	String getLevelNameFromCommandLine(const char* s);
+
 	Variant onExitEvent(const Event* event);
 
 public:

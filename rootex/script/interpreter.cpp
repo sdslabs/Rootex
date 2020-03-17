@@ -33,7 +33,7 @@ LuaInterpreter* LuaInterpreter::GetSingleton()
 
 void LuaInterpreter::loadExecuteScript(LuaTextResourceFile* script)
 {
-	PANIC(script->getType() != ResourceFile::Type::LUA, "LuaInterpreter: Running non-Lua script source");
+	PANIC(script->getType() != ResourceFile::Type::Lua, "LuaInterpreter: Running non-Lua script source");
 
 	bool error = luaL_dostring(m_LuaState, script->getString().c_str());
 	OS::PrintLine(script->getPath().generic_string() + " was run");

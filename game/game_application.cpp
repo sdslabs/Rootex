@@ -11,19 +11,9 @@ Ref<Application> CreateRootexApplication()
 	return Ref<Application>(new GameApplication());
 }
 
-Variant GameApplication::onExitEvent(const Event* event)
+String GameApplication::getLevelNameFromCommandLine(const char* s)
 {
-	PostQuitMessage(0);
-	return true;
-}
-
-GameApplication::GameApplication()
-{
-	JSON::json projectJSON = JSON::json::parse(ResourceLoader::CreateNewTextResourceFile("game/game.app.json")->getString());
-	initialize(projectJSON);
-
 	// https://github.com/wine-mirror/wine/blob/7ec5f555b05152dda53b149d5994152115e2c623/dlls/shell32/shell32_main.c#L58
-	char* s = GetCommandLine();
 	if (*s == '"')
 	{
 		++s;
@@ -46,7 +36,21 @@ GameApplication::GameApplication()
 	while (*s == ' ' || *s == '\t')
 		s++;
 
-	String levelName(s);
+	return String(s);
+}
+
+Variant GameApplication::onExitEvent(const Event* event)
+{
+	PostQuitMessage(0);
+	return true;
+}
+
+GameApplication::GameApplication()
+{
+	JSON::json projectJSON = JSON::json::parse(ResourceLoader::CreateNewTextResourceFile("game/game.app.json")->getString());
+	initialize(projectJSON);
+
+	String levelName = getLevelNameFromCommandLine(GetCommandLine());
 	if (levelName == "")
 	{
 		ProjectManager::GetSingleton()->openLevel(projectJSON["startLevel"]);

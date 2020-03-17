@@ -14,11 +14,11 @@
 HashMap<Ptr<ResourceData>, Ptr<ResourceFile>> ResourceLoader::s_ResourcesDataFiles;
 objl::Loader ResourceLoader::s_ModelLoader;
 
-TextResourceFile* ResourceLoader::CreateTextResourceFile(String path)
+TextResourceFile* ResourceLoader::CreateTextResourceFile(const String& path)
 {
 	for (auto& item : s_ResourcesDataFiles)
 	{
-		if (item.first->getPath() == path && item.second->getType() == ResourceFile::Type::TXT)
+		if (item.first->getPath() == path && item.second->getType() == ResourceFile::Type::Text)
 		{
 			return reinterpret_cast<TextResourceFile*>(item.second.get());
 		}
@@ -33,14 +33,14 @@ TextResourceFile* ResourceLoader::CreateTextResourceFile(String path)
 	// File not found in cache, load it only once
 	FileBuffer& buffer = OS::LoadFileContents(path);
 	ResourceData* resData = new ResourceData(path, buffer);
-	TextResourceFile* textRes = new TextResourceFile(ResourceFile::Type::TXT, resData);
+	TextResourceFile* textRes = new TextResourceFile(ResourceFile::Type::Text, resData);
 
 	s_ResourcesDataFiles[Ptr<ResourceData>(resData)] = Ptr<ResourceFile>(textRes);
 
 	return textRes;
 }
 
-TextResourceFile* ResourceLoader::CreateNewTextResourceFile(String path)
+TextResourceFile* ResourceLoader::CreateNewTextResourceFile(const String& path)
 {
 	if (!OS::IsExists(path))
 	{
@@ -49,11 +49,11 @@ TextResourceFile* ResourceLoader::CreateNewTextResourceFile(String path)
 	return CreateTextResourceFile(path);
 }
 
-LuaTextResourceFile* ResourceLoader::CreateLuaTextResourceFile(String path)
+LuaTextResourceFile* ResourceLoader::CreateLuaTextResourceFile(const String& path)
 {
 	for (auto& item : s_ResourcesDataFiles)
 	{
-		if (item.first->getPath() == path && item.second->getType() == ResourceFile::Type::LUA)
+		if (item.first->getPath() == path && item.second->getType() == ResourceFile::Type::Lua)
 		{
 			return reinterpret_cast<LuaTextResourceFile*>(item.second.get());
 		}
@@ -75,11 +75,11 @@ LuaTextResourceFile* ResourceLoader::CreateLuaTextResourceFile(String path)
 	return luaRes;
 }
 
-AudioResourceFile* ResourceLoader::CreateAudioResourceFile(String path)
+AudioResourceFile* ResourceLoader::CreateAudioResourceFile(const String& path)
 {
 	for (auto& item : s_ResourcesDataFiles)
 	{
-		if (item.first->getPath() == path && item.second->getType() == ResourceFile::Type::WAV)
+		if (item.first->getPath() == path && item.second->getType() == ResourceFile::Type::Wav)
 		{
 			return reinterpret_cast<AudioResourceFile*>(item.second.get());
 		}
@@ -149,11 +149,11 @@ AudioResourceFile* ResourceLoader::CreateAudioResourceFile(String path)
 	return audioRes;
 }
 
-VisualModelResourceFile* ResourceLoader::CreateVisualModelResourceFile(String path)
+VisualModelResourceFile* ResourceLoader::CreateVisualModelResourceFile(const String& path)
 {
 	for (auto& item : s_ResourcesDataFiles)
 	{
-		if (item.first->getPath() == path && item.second->getType() == ResourceFile::Type::OBJ)
+		if (item.first->getPath() == path && item.second->getType() == ResourceFile::Type::Obj)
 		{
 			return reinterpret_cast<VisualModelResourceFile*>(item.second.get());
 		}
@@ -198,11 +198,11 @@ VisualModelResourceFile* ResourceLoader::CreateVisualModelResourceFile(String pa
 	return visualRes;
 }
 
-ImageResourceFile* ResourceLoader::CreateImageResourceFile(String path)
+ImageResourceFile* ResourceLoader::CreateImageResourceFile(const String& path)
 {
 	for (auto& item : s_ResourcesDataFiles)
 	{
-		if (item.first->getPath() == path && item.second->getType() == ResourceFile::Type::IMAGE)
+		if (item.first->getPath() == path && item.second->getType() == ResourceFile::Type::Image)
 		{
 			return reinterpret_cast<ImageResourceFile*>(item.second.get());
 		}
@@ -224,6 +224,32 @@ ImageResourceFile* ResourceLoader::CreateImageResourceFile(String path)
 	return imageRes;
 }
 
+FontResourceFile* ResourceLoader::CreateFontResourceFile(const String& path, const String& name)
+{
+	for (auto& item : s_ResourcesDataFiles)
+	{
+		if (item.first->getPath() == path && item.second->getType() == ResourceFile::Type::Font)
+		{
+			return reinterpret_cast<FontResourceFile*>(item.second.get());
+		}
+	}
+
+	if (OS::IsExists(path) == false)
+	{
+		ERR("File not found: " + path);
+		return nullptr;
+	}
+
+	// File not found in cache, load it only once
+	FileBuffer& buffer = OS::LoadFileContents(path);
+	ResourceData* resData = new ResourceData(path, buffer);
+	FontResourceFile* fontRes = new FontResourceFile(name, resData);
+
+	s_ResourcesDataFiles[Ptr<ResourceData>(resData)] = Ptr<ResourceFile>(fontRes);
+
+	return fontRes;
+}
+
 void ResourceLoader::SaveResourceFile(TextResourceFile*& resourceFile)
 {
 	bool saved = OS::SaveFile(resourceFile->getPath(), resourceFile->getData());
@@ -239,6 +265,7 @@ void ResourceLoader::ReloadResourceData(const String& path)
 		if (resData->getPath() == path)
 		{
 			*resData->getRawData() = buffer;
+			break;
 		}
 	}
 }
