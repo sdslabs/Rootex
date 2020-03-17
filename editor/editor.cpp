@@ -17,6 +17,8 @@ void Editor::initialize(HWND hWnd, const JSON::json& projectJSON)
 	BIND_EVENT_MEMBER_FUNCTION("EditorCreateNewLevel", Editor::createNewLevel);
 	BIND_EVENT_MEMBER_FUNCTION("EditorCreateNewEntity", Editor::createNewEntity);
 
+	OS::Execute("\"" + OS::GetAbsolutePath("build_fonts.bat").string() + "\"");
+
 	const JSON::json& general = projectJSON["general"];
 
 	m_Colors.m_Accent = {
