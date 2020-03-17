@@ -14,6 +14,7 @@ class RootHierarchyComponent : public HierarchyComponent
 	Ref<HierarchyComponent> m_GlobalGroup;
 	Ref<HierarchyComponent> m_SkyGroup;
 	Ref<HierarchyComponent> m_EditorGroup;
+	Ref<HierarchyComponent> m_UIGroup;
 
 	friend class EntityFactory;
 

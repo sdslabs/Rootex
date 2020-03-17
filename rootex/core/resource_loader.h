@@ -13,12 +13,13 @@ class ResourceLoader
 	static HashMap<Ptr<ResourceData>, Ptr<ResourceFile>> s_ResourcesDataFiles;
 
 public:
-	static TextResourceFile* CreateTextResourceFile(String path);
-	static TextResourceFile* CreateNewTextResourceFile(String path);
-	static LuaTextResourceFile* CreateLuaTextResourceFile(String path);
-	static AudioResourceFile* CreateAudioResourceFile(String path);
-	static VisualModelResourceFile* CreateVisualModelResourceFile(String path);
-	static ImageResourceFile* CreateImageResourceFile(String path);
+	static TextResourceFile* CreateTextResourceFile(const String& path);
+	static TextResourceFile* CreateNewTextResourceFile(const String& path);
+	static LuaTextResourceFile* CreateLuaTextResourceFile(const String& path);
+	static AudioResourceFile* CreateAudioResourceFile(const String& path);
+	static VisualModelResourceFile* CreateVisualModelResourceFile(const String& path);
+	static ImageResourceFile* CreateImageResourceFile(const String& path);
+	static FontResourceFile* CreateFontResourceFile(const String& path, const String& name);
 
 	static void SaveResourceFile(TextResourceFile*& resourceFile);
 	static void ReloadResourceData(const String& path);

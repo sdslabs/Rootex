@@ -23,6 +23,7 @@ RootHierarchyComponent::RootHierarchyComponent(EntityID parentID, const Vector<E
     , m_GlobalGroup(new HierarchyComponent(parentID, childrenIDs))
     , m_SkyGroup(new HierarchyComponent(parentID, childrenIDs))
     , m_EditorGroup(new HierarchyComponent(parentID, childrenIDs))
+    , m_UIGroup(new HierarchyComponent(parentID, childrenIDs))
 {
 }
 
@@ -72,6 +73,9 @@ void RootHierarchyComponent::renderChildren(HierarchyGraph* graph)
 		SkyBoxHelper skyBoxHelper;
 		renderPassRender(m_SkyGroup, graph);
 	}
+	RenderingDevice::GetSingleton()->getUIBatch()->Begin();
+	renderPassRender(m_UIGroup, graph);
+	RenderingDevice::GetSingleton()->getUIBatch()->End();
 }
 
 void RootHierarchyComponent::postRender(HierarchyGraph* graph)
@@ -108,6 +112,10 @@ bool RootHierarchyComponent::addChild(Ref<Entity> child)
 			m_EditorGroup->addChild(child);
 			return true;
 			break;
+		case RenderPass::UI:
+			m_UIGroup->addChild(child);
+			return true;
+			break;
 		default:
 			break;
 		}
@@ -135,6 +143,9 @@ void RootHierarchyComponent::clear()
 	
 	m_EditorGroup->m_ChildrenIDs.clear();
 	m_EditorGroup->m_Children.clear();
+
+	m_UIGroup->m_ChildrenIDs.clear();
+	m_UIGroup->m_Children.clear();
 }
 
 JSON::json RootHierarchyComponent::getJSON() const
@@ -171,6 +182,10 @@ void RootHierarchyComponent::draw()
 		if (ImGui::TreeNodeEx("Editor Render Pass", ImGuiTreeNodeFlags_CollapsingHeader))
 		{
 			m_EditorGroup->draw();
+		}
+		if (ImGui::TreeNodeEx("UI Render Pass", ImGuiTreeNodeFlags_CollapsingHeader))
+		{
+			m_UIGroup->draw();
 		}
 		ImGui::Unindent();
 	}

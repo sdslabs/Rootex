@@ -14,6 +14,7 @@ RenderSystem::RenderSystem()
     , m_Camera(new CameraVisualComponent())
 {
 	m_TransformationStack.push_back(Matrix::Identity);
+	m_UITransformationStack.push_back(Matrix::Identity);
 }
 
 RenderSystem::~RenderSystem()
@@ -27,6 +28,9 @@ void RenderSystem::recoverLostDevice()
 
 void RenderSystem::render()
 {
+	RenderingDevice::GetSingleton()->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	RenderingDevice::GetSingleton()->setRasterizerState();
+
 	if (HierarchySystem::GetSingleton()->getRootHierarchyComponent()->preRender(HierarchySystem::GetSingleton()->getHierarchyGraph()))
 	{
 		HierarchySystem::GetSingleton()->getRootHierarchyComponent()->renderChildren(HierarchySystem::GetSingleton()->getHierarchyGraph());
@@ -44,13 +48,27 @@ void RenderSystem::popMatrix()
 	m_TransformationStack.pop_back();
 }
 
+void RenderSystem::pushUIMatrix(const Matrix& transform)
+{
+	m_UITransformationStack.push_back(m_TransformationStack.back() * transform);
+}
+
+void RenderSystem::popUIMatrix()
+{
+	m_UITransformationStack.pop_back();
+}
+
 void RenderSystem::setCamera(Ref<CameraVisualComponent> camera)
 {
-	m_Camera.reset();
 	m_Camera = camera;
 }
 
 const Matrix& RenderSystem::getTopMatrix() const
 {
 	return m_TransformationStack.back();
+}
+
+Matrix& RenderSystem::getTopUIMatrix()
+{
+	return m_UITransformationStack.back();
 }

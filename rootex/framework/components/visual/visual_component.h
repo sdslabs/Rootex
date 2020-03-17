@@ -21,6 +21,7 @@ enum class RenderPass
 	Static,
 	Dynamic,
 	Editor,
+	UI,
 	End
 };
 
@@ -28,6 +29,7 @@ class VisualComponentAttributes
 {
 	friend class VisualComponent;
 	friend class DiffuseVisualComponent;
+	friend class Visual2DComponent;
 
 protected:
 	TransformComponent* m_TransformComponent;
@@ -66,7 +68,6 @@ protected:
 #ifdef ROOTEX_EDITOR
 	String m_ModelPathUI;
 #endif // ROOTEX_EDITOR
-
 
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::VisualComponent;

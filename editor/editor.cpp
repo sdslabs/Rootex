@@ -177,7 +177,7 @@ void Editor::drawDefaultUI()
 			static String menuAction = "";
 			if (ImGui::BeginMenu("File"))
 			{
-				if (ImGui::BeginMenu("Create Entity"))
+				if (ImGui::BeginMenu("Create Entity", ProjectManager::GetSingleton()->isAnyLevelOpen()))
 				{
 					for (auto&& entityClassFile : OS::GetFilesInDirectory("game/assets/classes/"))
 					{

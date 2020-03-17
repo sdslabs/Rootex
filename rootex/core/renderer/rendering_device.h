@@ -9,10 +9,8 @@
 
 #include "resource_file.h"
 
-#ifdef ROOTEX_EDITOR
-class Editor;
-#endif // ROOTEX_EDITOR
-
+#include "vendor/DirectXTK/Inc/SpriteBatch.h"
+#include "vendor/DirectXTK/Inc/SpriteFont.h"
 
 class RenderingDevice
 {
@@ -31,6 +29,9 @@ class RenderingDevice
 	UINT m_StencilRef;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_NewSkyDepthStencilState;
 
+	Ref<DirectX::SpriteBatch> m_FontBatch;
+
+	Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_RSState;
 	Microsoft::WRL::ComPtr<IDXGISwapChain> m_SwapChain;
 	bool m_MSAA;
 	unsigned int m_4XMSQuality;
@@ -66,8 +67,9 @@ public:
 	void initPSConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd, UINT offset);
 	ID3D11PixelShader* initPixelShader(ID3DBlob* blob);
 	ID3D11VertexShader* initVertexShader(ID3DBlob* blob);
-	void initVertexLayout(ID3DBlob* vertexShaderBlob, const D3D11_INPUT_ELEMENT_DESC* ied, UINT size);
+	Microsoft::WRL::ComPtr<ID3D11InputLayout> initVertexLayout(ID3DBlob* vertexShaderBlob, const D3D11_INPUT_ELEMENT_DESC* ied, UINT size);
 	
+	Ref<DirectX::SpriteFont> createFont(FileBuffer* fontFileBuffer);
 	ID3DBlob* createBlob(LPCWSTR path);
 	void createRenderTextureTarget(int width, int height);
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createTexture(ImageResourceFile* imageRes);
@@ -77,21 +79,27 @@ public:
 	void bind(ID3D11Buffer* indexBuffer, DXGI_FORMAT format);
 	void bind(ID3D11VertexShader* vertexShader);
 	void bind(ID3D11PixelShader* pixelShader);
+	void bind(ID3D11InputLayout* inputLayout);
 	
 	void setInPixelShader(unsigned int slot, unsigned int number, ID3D11ShaderResourceView* texture);
 	void setInPixelShader(ID3D11SamplerState* samplerState);
 
 	void unbindShaderResources();
 
+	void setRasterizerState();
+
 	void setTextureRenderTarget();
 	void setBackBufferRenderTarget();
 
 	ID3D11ShaderResourceView* getRenderTextureShaderResourceView();
+	Ref<DirectX::SpriteBatch> getUIBatch();
 
 	void setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY pt);
 	void setViewport(const D3D11_VIEWPORT* vp);
 	
 	void drawIndexed(UINT number);
+	void beginDrawUI();
+	void endDrawUI();
 	void clearCurrentRenderTarget(float r, float g, float b);
 	void clearUnboundRenderTarget(float r, float g, float b);
 };
