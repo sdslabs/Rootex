@@ -87,6 +87,11 @@ bool RootHierarchyComponent::addChild(Ref<Entity> child)
 	HierarchyComponent::addChild(child);
 
 	Ref<VisualComponent> vc = child->getComponent<VisualComponent>();
+	return addVCToRenderPass(vc, child);
+}
+
+bool RootHierarchyComponent::addVCToRenderPass(Ref<VisualComponent> vc, Ref<Entity>& child)
+{
 	if (vc)
 	{
 		RenderPass pass = vc->getAttributes()->getRenderPass();
@@ -114,6 +119,53 @@ bool RootHierarchyComponent::addChild(Ref<Entity> child)
 			break;
 		case RenderPass::UI:
 			m_UIGroup->addChild(child);
+			return true;
+			break;
+		default:
+			break;
+		}
+		return false;
+	}
+	return true;
+}
+
+bool RootHierarchyComponent::removeChild(Ref<Entity> node)
+{
+	HierarchyComponent::removeChild(node);
+
+	Ref<VisualComponent> vc = node->getComponent<VisualComponent>();
+	return removeVCFromRenderPass(vc, node);
+}
+
+bool RootHierarchyComponent::removeVCFromRenderPass(Ref<VisualComponent>& vc, Ref<Entity>& node)
+{
+	if (vc)
+	{
+		RenderPass pass = vc->getAttributes()->getRenderPass();
+		switch (pass)
+		{
+		case RenderPass::Global:
+			m_GlobalGroup->removeChild(node);
+			return true;
+			break;
+		case RenderPass::Background:
+			m_SkyGroup->removeChild(node);
+			return true;
+			break;
+		case RenderPass::Static:
+			m_StaticGroup->removeChild(node);
+			return true;
+			break;
+		case RenderPass::Dynamic:
+			m_EntityGroup->removeChild(node);
+			return true;
+			break;
+		case RenderPass::Editor:
+			m_EditorGroup->removeChild(node);
+			return true;
+			break;
+		case RenderPass::UI:
+			m_UIGroup->removeChild(node);
 			return true;
 			break;
 		default:

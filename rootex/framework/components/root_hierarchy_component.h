@@ -32,6 +32,11 @@ public:
 	void postRender(HierarchyGraph* graph);
 	
 	virtual bool addChild(Ref<Entity> child) override;
+	virtual bool removeChild(Ref<Entity> node) override;
+
+	bool addVCToRenderPass(Ref<VisualComponent> vc, Ref<Entity>& child);
+	bool removeVCFromRenderPass(Ref<VisualComponent>& vc, Ref<Entity>& node);
+
 	void clear();
 
 	virtual String getName() const override { return "RootHierarchyComponent"; }

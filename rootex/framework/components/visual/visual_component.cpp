@@ -71,6 +71,8 @@ bool VisualComponent::setup()
 			WARN("Entity without hierarchy component found");
 			status = false;
 		}
+
+		HierarchySystem::GetSingleton()->getRootHierarchyComponent()->addVCToRenderPass(m_Owner->getComponent<VisualComponent>(), m_Owner);
 	}
 
 	return status;
@@ -157,6 +159,19 @@ void VisualComponent::setMaterial(Ref<Material> material)
 void VisualComponent::setPosition(const Vector3& position)
 {
 	m_Attributes.m_TransformComponent->setPosition(position);
+}
+
+void VisualComponent::onRemove()
+{
+	if (m_Owner)
+	{
+		Ref<Entity> parent = m_Owner->getComponent<HierarchyComponent>()->getParent();
+		if (parent->getID() == ROOT_ENTITY_ID)
+		{
+			Ref<RootHierarchyComponent> rootHC = std::dynamic_pointer_cast<RootHierarchyComponent>(parent->getComponent<HierarchyComponent>());
+			rootHC->removeVCFromRenderPass(m_Owner->getComponent<VisualComponent>(), m_Owner);
+		}
+	}
 }
 
 Vector3 VisualComponent::getPosition() const

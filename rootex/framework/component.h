@@ -21,6 +21,7 @@ public:
 	virtual ~Component();
 	
 	virtual bool setup();
+	virtual void onRemove();
 
 	Ref<Entity> getOwner() const;
 	virtual ComponentID getComponentID() const = 0;

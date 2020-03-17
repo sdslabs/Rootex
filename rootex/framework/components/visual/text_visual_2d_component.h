@@ -10,8 +10,9 @@ class TextVisual2DComponent : public Visual2DComponent
 
 	FontResourceFile* m_Font;
 	String m_Text;
+	Color m_Color;
 
-	TextVisual2DComponent(FontResourceFile* font, const String& text);
+	TextVisual2DComponent(FontResourceFile* font, const String& text, const Color& color);
 	virtual ~TextVisual2DComponent();
 
 	friend class EntityFactory;
