@@ -51,11 +51,15 @@ HierarchyComponent::HierarchyComponent(EntityID parentID, const Vector<EntityID>
 
 bool HierarchyComponent::addChild(Ref<Entity> child)
 {
-	m_Children.push_back(child);
-	m_ChildrenIDs.push_back(child->getID());
-	child->getComponent<HierarchyComponent>()->m_Parent = this->m_Owner;
-	child->getComponent<HierarchyComponent>()->m_ParentID = this->m_Owner->getID();
-	return true;
+	if (auto&& findIt = std::find(m_Children.begin(), m_Children.end(), child) == m_Children.end())
+	{
+		m_Children.push_back(child);
+		m_ChildrenIDs.push_back(child->getID());
+		child->getComponent<HierarchyComponent>()->m_Parent = this->m_Owner;
+		child->getComponent<HierarchyComponent>()->m_ParentID = this->m_Owner->getID();
+		return true;
+	}
+	return false;
 }
 
 bool HierarchyComponent::removeChild(Ref<Entity> node)
@@ -65,7 +69,7 @@ bool HierarchyComponent::removeChild(Ref<Entity> node)
 	{
 		(*findIt)->getComponent<HierarchyComponent>()->m_Parent = nullptr;
 		(*findIt)->getComponent<HierarchyComponent>()->m_ParentID = INVALID_ID;
-		
+
 		auto&& findItID = std::find(m_ChildrenIDs.begin(), m_ChildrenIDs.end(), (*findIt)->getID());
 
 		m_Children.erase(findIt);
@@ -89,7 +93,7 @@ JSON::json HierarchyComponent::getJSON() const
 
 	JSON::json& jc = j["children"];
 	jc = m_ChildrenIDs;
-	
+
 	return j;
 }
 

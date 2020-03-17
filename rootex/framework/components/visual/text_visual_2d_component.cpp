@@ -4,18 +4,29 @@
 
 Component* TextVisual2DComponent::Create(const JSON::json& componentData)
 {
-	TextVisual2DComponent* tV2DC = new TextVisual2DComponent(ResourceLoader::CreateFontResourceFile(componentData["fontResource"], componentData["name"]), componentData["text"]);
+	TextVisual2DComponent* tV2DC = new TextVisual2DComponent(
+		ResourceLoader::CreateFontResourceFile(
+			componentData["fontResource"], 
+			componentData["name"]), 
+		componentData["text"], 
+		{ 
+			componentData["color"]["r"], 
+			componentData["color"]["g"], 
+			componentData["color"]["b"], 
+			componentData["color"]["a"] 
+		});
 	return tV2DC;
 }
 
 Component* TextVisual2DComponent::CreateDefault()
 {
-	return new TextVisual2DComponent(ResourceLoader::CreateFontResourceFile("game/assets/fonts/noto_sans_50_regular.spritefont", "Noto Sans"), "Hello World!");
+	return new TextVisual2DComponent(ResourceLoader::CreateFontResourceFile("game/assets/fonts/noto_sans_50_regular.spritefont", "Noto Sans"), "Hello World!", { 1.0f, 1.0f, 1.0f, 1.0f });
 }
 
-TextVisual2DComponent::TextVisual2DComponent(FontResourceFile* font, const String& text)
+TextVisual2DComponent::TextVisual2DComponent(FontResourceFile* font, const String& text, const Color& color)
     : m_Font(font)
     , m_Text(text)
+    , m_Color(color)
 {
 }
 
@@ -37,9 +48,9 @@ void TextVisual2DComponent::render(HierarchyGraph* graph)
 	    RenderingDevice::GetSingleton()->getUIBatch().get(),
 	    m_Text.c_str(),
 	    position,
-	    ColorPresets::White,
+	    m_Color,
 		rotationAngle, 
-		{ 0.0f, 0.0f }, 
+		{ 0.0f, 0.0f },
 		scale);
 }
 
@@ -51,6 +62,11 @@ JSON::json TextVisual2DComponent::getJSON() const
 	j["name"] = m_Font->getFontName();
 	j["text"] = m_Text;
 
+	j["color"]["r"] = m_Color.x;
+	j["color"]["g"] = m_Color.y;
+	j["color"]["b"] = m_Color.z;
+	j["color"]["a"] = m_Color.w;
+
 	return j;
 }
 
@@ -60,5 +76,6 @@ JSON::json TextVisual2DComponent::getJSON() const
 void TextVisual2DComponent::draw()
 {
 	ImGui::InputText("Text", &m_Text);
+	ImGui::ColorEdit4("Color", &m_Color.x);
 }
 #endif // ROOTEX_EDITOR

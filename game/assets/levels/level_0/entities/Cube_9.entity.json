@@ -5,6 +5,12 @@
             "parent": 1
         },
         "TextVisual2DComponent": {
+            "color": {
+                "a": 1.0,
+                "b": 0.17799828946590424,
+                "g": 0.7647058963775635,
+                "r": 0.056228384375572205
+            },
             "fontResource": "game/assets/fonts/noto_sans_50_regular.spritefont",
             "name": "Noto Sans",
             "text": "Hello World!"
