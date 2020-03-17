@@ -12,6 +12,7 @@
 #include "vendor/OBJLoader/Source/OBJ_Loader.h"
 
 HashMap<Ptr<ResourceData>, Ptr<ResourceFile>> ResourceLoader::s_ResourcesDataFiles;
+HashMap<ResourceFile::Type, Vector<ResourceFile*>> ResourceLoader::s_ResourceFileLibrary;
 objl::Loader ResourceLoader::s_ModelLoader;
 
 TextResourceFile* ResourceLoader::CreateTextResourceFile(const String& path)
@@ -36,7 +37,7 @@ TextResourceFile* ResourceLoader::CreateTextResourceFile(const String& path)
 	TextResourceFile* textRes = new TextResourceFile(ResourceFile::Type::Text, resData);
 
 	s_ResourcesDataFiles[Ptr<ResourceData>(resData)] = Ptr<ResourceFile>(textRes);
-
+	s_ResourceFileLibrary[ResourceFile::Type::Text].push_back(textRes);
 	return textRes;
 }
 
@@ -71,6 +72,7 @@ LuaTextResourceFile* ResourceLoader::CreateLuaTextResourceFile(const String& pat
 	LuaTextResourceFile* luaRes = new LuaTextResourceFile(resData);
 
 	s_ResourcesDataFiles[Ptr<ResourceData>(resData)] = Ptr<ResourceFile>(luaRes);
+	s_ResourceFileLibrary[ResourceFile::Type::Lua].push_back(luaRes);
 
 	return luaRes;
 }
@@ -145,6 +147,7 @@ AudioResourceFile* ResourceLoader::CreateAudioResourceFile(const String& path)
 	audioRes->m_Duration /= frequency;
 
 	s_ResourcesDataFiles[Ptr<ResourceData>(resData)] = Ptr<ResourceFile>(audioRes);
+	s_ResourceFileLibrary[ResourceFile::Type::Wav].push_back(audioRes);
 
 	return audioRes;
 }
@@ -194,6 +197,7 @@ VisualModelResourceFile* ResourceLoader::CreateVisualModelResourceFile(const Str
 	VisualModelResourceFile* visualRes = new VisualModelResourceFile(std::move(vertexBuffer), std::move(indexBuffer), resData);
 
 	s_ResourcesDataFiles[Ptr<ResourceData>(resData)] = Ptr<ResourceFile>(visualRes);
+	s_ResourceFileLibrary[ResourceFile::Type::Obj].push_back(visualRes);
 
 	return visualRes;
 }
@@ -220,6 +224,7 @@ ImageResourceFile* ResourceLoader::CreateImageResourceFile(const String& path)
 	ImageResourceFile* imageRes = new ImageResourceFile(resData);
 
 	s_ResourcesDataFiles[Ptr<ResourceData>(resData)] = Ptr<ResourceFile>(imageRes);
+	s_ResourceFileLibrary[ResourceFile::Type::Image].push_back(imageRes);
 
 	return imageRes;
 }
@@ -246,6 +251,7 @@ FontResourceFile* ResourceLoader::CreateFontResourceFile(const String& path, con
 	FontResourceFile* fontRes = new FontResourceFile(name, resData);
 
 	s_ResourcesDataFiles[Ptr<ResourceData>(resData)] = Ptr<ResourceFile>(fontRes);
+	s_ResourceFileLibrary[ResourceFile::Type::Font].push_back(fontRes);
 
 	return fontRes;
 }
@@ -268,4 +274,9 @@ void ResourceLoader::ReloadResourceData(const String& path)
 			break;
 		}
 	}
+}
+
+Vector<ResourceFile*>& ResourceLoader::GetFilesOfType(ResourceFile::Type type)
+{
+	return s_ResourceFileLibrary[type];
 }

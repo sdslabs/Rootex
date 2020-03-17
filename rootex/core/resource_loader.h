@@ -11,6 +11,7 @@ class ResourceLoader
 {
 	static objl::Loader s_ModelLoader;
 	static HashMap<Ptr<ResourceData>, Ptr<ResourceFile>> s_ResourcesDataFiles;
+	static HashMap<ResourceFile::Type, Vector<ResourceFile*>> s_ResourceFileLibrary;
 
 public:
 	static TextResourceFile* CreateTextResourceFile(const String& path);
@@ -25,4 +26,5 @@ public:
 	static void ReloadResourceData(const String& path);
 
 	static objl::Loader& GetModelLoader() { return s_ModelLoader; }
+	static Vector<ResourceFile*>& GetFilesOfType(ResourceFile::Type type);
 };
