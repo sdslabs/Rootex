@@ -25,7 +25,7 @@ Component* TextVisual2DComponent::CreateDefault()
 }
 
 TextVisual2DComponent::TextVisual2DComponent(FontResourceFile* font, const String& text, const Color& color, const Mode& mode)
-    : m_Font(font)
+    : m_FontFile(font)
     , m_Text(text)
     , m_Color(color)
     , m_Mode(mode)
@@ -46,12 +46,12 @@ void TextVisual2DComponent::render(HierarchyGraph* graph)
 	RenderSystem::GetSingleton()->getTopUIMatrix().Decompose(scale, rotation, position);
 	rotationAngle = Vector3((Vector3(0.0f, 0.0f, 1.0f) * rotation)).z;
 
-	m_Font->getFont()->DrawString(
+	m_FontFile->getFont()->DrawString(
 	    RenderingDevice::GetSingleton()->getUIBatch().get(),
 	    m_Text.c_str(),
 	    position,
 	    m_Color,
-		rotationAngle, 
+		rotationAngle,
 		{ 0.0f, 0.0f },
 		scale, 
 		(DirectX::SpriteEffects)m_Mode);
@@ -61,8 +61,8 @@ JSON::json TextVisual2DComponent::getJSON() const
 {
 	JSON::json j;
 
-	j["fontResource"] = m_Font->getPath().string();
-	j["name"] = m_Font->getFontName();
+	j["fontResource"] = m_FontFile->getPath().string();
+	j["name"] = m_FontFile->getFontName();
 	j["text"] = m_Text;
 
 	j["color"]["r"] = m_Color.x;
@@ -93,5 +93,34 @@ void TextVisual2DComponent::draw()
 	static int choice = 0;
 	ImGui::Combo("Mode", &choice, modes, IM_ARRAYSIZE(modes));
 	m_Mode = (Mode)choice;
+
+	if (ImGui::BeginCombo("Font", m_FontFile->getFontName().c_str()))
+	{
+		for (auto&& file : ResourceLoader::GetFilesOfType(ResourceFile::Type::Font))
+		{
+			FontResourceFile* fontFile = (FontResourceFile*)file;
+			if (ImGui::Selectable(fontFile->getFontName().c_str()))
+			{
+				setFont(fontFile);
+			}
+		}
+		static String inputPath = "Path";
+		ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth() / 3.0f);
+		ImGui::InputText("##Path", &inputPath);
+		ImGui::SameLine();
+		static String inputName = "Name";
+		ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth() / 3.0f);
+		ImGui::InputText("##Name", &inputName);
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth() / 3.0f);
+		if (ImGui::Button("Create Font"))
+		{
+			if (!ResourceLoader::CreateFontResourceFile(inputPath, inputName))
+			{
+				WARN("Could not create font");
+			}
+		}
+		ImGui::EndCombo();
+	}
 }
 #endif // ROOTEX_EDITOR

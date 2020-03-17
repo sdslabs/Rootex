@@ -17,7 +17,7 @@ public:
 	static Component* Create(const JSON::json& componentData);
 	static Component* CreateDefault();
 
-	FontResourceFile* m_Font;
+	FontResourceFile* m_FontFile;
 	String m_Text;
 	Color m_Color;
 	Mode m_Mode;
@@ -35,6 +35,8 @@ public:
 	virtual ComponentID getComponentID() const override { return s_ID; }
 	virtual String getName() const override { return "TextVisual2DComponent"; };
 	virtual JSON::json getJSON() const override;
+
+	void setFont(FontResourceFile* fontFile) { m_FontFile = fontFile; }
 
 #ifdef ROOTEX_EDITOR
 	virtual void draw() override;
