@@ -5,14 +5,24 @@
 
 class TextVisual2DComponent : public Visual2DComponent
 {
+public:
+	enum class Mode
+	{
+		None = DirectX::SpriteEffects_None,
+		FlipX = DirectX::SpriteEffects_FlipHorizontally,
+		FlipY = DirectX::SpriteEffects_FlipVertically,
+		FlipXY = DirectX::SpriteEffects_FlipBoth,
+	};
+
 	static Component* Create(const JSON::json& componentData);
 	static Component* CreateDefault();
 
 	FontResourceFile* m_Font;
 	String m_Text;
 	Color m_Color;
+	Mode m_Mode;
 
-	TextVisual2DComponent(FontResourceFile* font, const String& text, const Color& color);
+	TextVisual2DComponent(FontResourceFile* font, const String& text, const Color& color, const Mode& mode);
 	virtual ~TextVisual2DComponent();
 
 	friend class EntityFactory;

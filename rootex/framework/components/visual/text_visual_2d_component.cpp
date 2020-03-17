@@ -14,19 +14,21 @@ Component* TextVisual2DComponent::Create(const JSON::json& componentData)
 			componentData["color"]["g"], 
 			componentData["color"]["b"], 
 			componentData["color"]["a"] 
-		});
+		}, 
+		(Mode)(int)componentData["mode"]);
 	return tV2DC;
 }
 
 Component* TextVisual2DComponent::CreateDefault()
 {
-	return new TextVisual2DComponent(ResourceLoader::CreateFontResourceFile("game/assets/fonts/noto_sans_50_regular.spritefont", "Noto Sans"), "Hello World!", { 1.0f, 1.0f, 1.0f, 1.0f });
+	return new TextVisual2DComponent(ResourceLoader::CreateFontResourceFile("game/assets/fonts/noto_sans_50_regular.spritefont", "Noto Sans"), "Hello World!", { 1.0f, 1.0f, 1.0f, 1.0f }, Mode::None);
 }
 
-TextVisual2DComponent::TextVisual2DComponent(FontResourceFile* font, const String& text, const Color& color)
+TextVisual2DComponent::TextVisual2DComponent(FontResourceFile* font, const String& text, const Color& color, const Mode& mode)
     : m_Font(font)
     , m_Text(text)
     , m_Color(color)
+    , m_Mode(mode)
 {
 }
 
@@ -51,7 +53,8 @@ void TextVisual2DComponent::render(HierarchyGraph* graph)
 	    m_Color,
 		rotationAngle, 
 		{ 0.0f, 0.0f },
-		scale);
+		scale, 
+		(DirectX::SpriteEffects)m_Mode);
 }
 
 JSON::json TextVisual2DComponent::getJSON() const
@@ -67,6 +70,8 @@ JSON::json TextVisual2DComponent::getJSON() const
 	j["color"]["b"] = m_Color.z;
 	j["color"]["a"] = m_Color.w;
 
+	j["mode"] = (int)m_Mode;
+
 	return j;
 }
 
@@ -77,5 +82,16 @@ void TextVisual2DComponent::draw()
 {
 	ImGui::InputText("Text", &m_Text);
 	ImGui::ColorEdit4("Color", &m_Color.x);
+
+	static const char* modes[] = {
+		"None",
+		"FlipX",
+		"FlipY",
+		"FlipXY"
+	};
+
+	static int choice = 0;
+	ImGui::Combo("Mode", &choice, modes, IM_ARRAYSIZE(modes));
+	m_Mode = (Mode)choice;
 }
 #endif // ROOTEX_EDITOR
