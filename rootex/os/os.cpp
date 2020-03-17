@@ -105,6 +105,13 @@ bool OS::Initialize()
 		s_RootDirectory = path;
 		s_GameDirectory = path / GAME_DIRECTORY;
 		s_EngineDirectory = path / ENGINE_DIRECTORY;
+
+		if (!SetCurrentDirectory(s_RootDirectory.string().c_str()))
+		{
+			ERR("SetCurrentDirectory failed (%d)\n");
+			Print((unsigned int)GetLastError());
+			return false;
+		}
 	}
 	catch (std::exception e)
 	{
