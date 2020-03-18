@@ -27,4 +27,5 @@ public:
 
 	static objl::Loader& GetModelLoader() { return s_ModelLoader; }
 	static Vector<ResourceFile*>& GetFilesOfType(ResourceFile::Type type);
+	static HashMap<ResourceFile::Type, Vector<ResourceFile*>>& GetAllFiles();
 };

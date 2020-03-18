@@ -17,8 +17,6 @@ void Editor::initialize(HWND hWnd, const JSON::json& projectJSON)
 	BIND_EVENT_MEMBER_FUNCTION("EditorCreateNewLevel", Editor::createNewLevel);
 	BIND_EVENT_MEMBER_FUNCTION("EditorCreateNewEntity", Editor::createNewEntity);
 
-	OS::Execute("\"" + OS::GetAbsolutePath("build_fonts.bat").string() + "\"");
-
 	const JSON::json& general = projectJSON["general"];
 
 	m_Colors.m_Accent = {
@@ -224,6 +222,29 @@ void Editor::drawDefaultUI()
 				if (ImGui::MenuItem("Quit", ""))
 				{
 					quit();
+				}
+				ImGui::EndMenu();
+			}
+			if (ImGui::BeginMenu("Assets"))
+			{
+				if (ImGui::MenuItem("Build Fonts"))
+				{
+					PRINT("Building fonts...");
+					OS::Execute("start \"\" \"" + OS::GetAbsolutePath("build_fonts.bat").string() + "\"");
+					PRINT("Built fonts");
+				}
+				if (ImGui::BeginMenu("Library"))
+				{
+					for (auto&& fileType : ResourceLoader::GetAllFiles())
+					{
+						for (auto&& file : fileType.second)
+						{
+							ImGui::SetNextItemWidth(file->getPath().string().size() * 8);
+							ImGui::LabelText(std::to_string((int)file->getType()).c_str(), file->getPath().string().c_str());
+						}
+					}
+
+					ImGui::EndMenu();
 				}
 				ImGui::EndMenu();
 			}
