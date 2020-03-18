@@ -280,3 +280,8 @@ Vector<ResourceFile*>& ResourceLoader::GetFilesOfType(ResourceFile::Type type)
 {
 	return s_ResourceFileLibrary[type];
 }
+
+HashMap<ResourceFile::Type, Vector<ResourceFile*>>& ResourceLoader::GetAllFiles()
+{
+	return s_ResourceFileLibrary;
+}
