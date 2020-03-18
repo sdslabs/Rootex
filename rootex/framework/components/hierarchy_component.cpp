@@ -4,7 +4,10 @@
 
 Component* HierarchyComponent::Create(const JSON::json& componentData)
 {
-	PANIC(componentData["parent"] == INVALID_ID, "Found a invalid ID while constructing HierarchyComponent. Only the Root is allowed to use it.");
+	if (componentData["parent"] == INVALID_ID)
+	{
+		ERR("Found a invalid ID while constructing HierarchyComponent. Only the Root is allowed to use it.");
+	}
 
 	HierarchyComponent* component = new HierarchyComponent(componentData["parent"], componentData["children"]);
 	return component;
@@ -84,7 +87,7 @@ JSON::json HierarchyComponent::getJSON() const
 
 	if (!m_Parent)
 	{
-		j["parent"] = 0;
+		j["parent"] = 1;
 	}
 	else
 	{
