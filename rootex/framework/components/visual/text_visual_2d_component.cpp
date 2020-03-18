@@ -104,14 +104,11 @@ void TextVisual2DComponent::draw()
 		}
 		
 		static String inputPath = "Path";
-		ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth() / 3.0f);
 		ImGui::InputText("##Path", &inputPath);
 		ImGui::SameLine();
 		static String inputName = "Name";
-		ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth() / 3.0f);
 		ImGui::InputText("##Name", &inputName);
 		ImGui::SameLine();
-		ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth() / 3.0f);
 		if (ImGui::Button("Create Font"))
 		{
 			if (!ResourceLoader::CreateFontResourceFile(inputPath, inputName))

@@ -9,7 +9,7 @@ public:
 	static inline ResourceFile* DrawSelect(const Vector<ResourceFile::Type>& filters = {})
 	{
 		ResourceFile* selected = nullptr;
-		if (ImGui::BeginCombo("Select a File", ""))
+		if (ImGui::BeginCombo("##Select a File", ""))
 		{
 			for (auto&& filter : filters)
 			{
