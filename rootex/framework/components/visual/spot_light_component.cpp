@@ -82,14 +82,14 @@ JSON::json SpotLightComponent::getJSON() const
 #include "imgui.h"
 void SpotLightComponent::draw()
 {
-	ImGui::DragFloat("Diffuse Intensity##Spot", &m_diffuseIntensity, 0.01f, 0.0f, 1.0f);
+	ImGui::DragFloat("Diffuse Intensity##Spot", &m_diffuseIntensity, 0.001f, 0.0f, 1.0f);
 	ImGui::ColorEdit4("Diffuse Color##Spot", &m_diffuseColor.x);
 	ImGui::ColorEdit4("Ambient Color##Spot", &m_ambientColor.x);
-	ImGui::DragFloat("Constant Attenuation##Spot", &m_constAtt, 0.01f, 0.0f, 10.0f);
-	ImGui::DragFloat("Linear Attenuation##Spot", &m_linAtt, 0.01f, 0.0f, 1.0f);
-	ImGui::DragFloat("Quadratic Attenuation##Spot", &m_quadAtt, 0.01f, 0.0f, 1.0f);
-	ImGui::DragFloat("Range##Spot", &m_range, 0.01f, 0.0f, 100.0f);
-	ImGui::SliderAngle("Spot##Spot", &m_spot, 1.0f, 10.0f);
-	ImGui::DragFloat("Cone Sub-Angle##Spot", &m_angleRange, 0.01f, 0.0f, 90.0f);
+	ImGui::DragFloat("Constant Attenuation##Spot", &m_constAtt, 0.001f, 0.0f, 1.0f);
+	ImGui::DragFloat("Linear Attenuation##Spot", &m_linAtt, 0.001f, 0.0f, 1.0f);
+	ImGui::DragFloat("Quadratic Attenuation##Spot", &m_quadAtt, 0.001f, 0.0f, 1.0f);
+	ImGui::DragFloat("Range##Spot", &m_range, 0.001f, 0.0f, 100.0f);
+	ImGui::DragFloat("Spot##Spot", &m_spot, 0.01f, 0.0f, 50.0f);
+	ImGui::SliderAngle("Cone Sub-Angle##Spot", &m_angleRange, 90.0f, 0.0f);
 }
 #endif // ROOTEX_EDITOR
