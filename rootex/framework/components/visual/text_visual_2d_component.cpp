@@ -52,7 +52,7 @@ void TextVisual2DComponent::render()
 	    position,
 	    m_Color,
 		rotationAngle,
-		{ 0.0f, 0.0f },
+		-m_Origin,
 		scale,
 	    (DirectX::SpriteEffects)m_Mode);
 }
