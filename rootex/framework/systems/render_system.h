@@ -16,7 +16,8 @@ class RenderSystem : public System
 	RenderSystem(RenderSystem&) = delete;
 	~RenderSystem();
 
-	friend class VisualComponent;
+	void calculateTransforms(HierarchyComponent* hierarchyComponent);
+	void renderPassRender(VisualComponent* vc, const RenderPass& renderPass);
 
 public:
 	static RenderSystem* GetSingleton();
