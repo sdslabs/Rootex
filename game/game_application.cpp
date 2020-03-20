@@ -61,6 +61,7 @@ GameApplication::GameApplication()
 	}
 
 	RenderingDevice::GetSingleton()->setBackBufferRenderTarget();
+	RenderingDevice::GetSingleton()->setRasterizerState();
 }
 
 GameApplication::~GameApplication()
