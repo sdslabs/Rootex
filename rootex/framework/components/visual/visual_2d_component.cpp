@@ -21,28 +21,6 @@ bool Visual2DComponent::preRender()
 	return true;
 }
 
-void Visual2DComponent::renderChildren(const unsigned int& renderPass)
-{
-	for (auto& child : m_Owner->getComponent<HierarchyComponent>()->getChildren())
-	{
-		Visual2DComponent* childVisualComponent = child->getOwner()->getComponent<Visual2DComponent>().get();
-
-		if (childVisualComponent)
-		{
-			childVisualComponent->preRender();
-
-			if (childVisualComponent->isVisible())
-			{
-				// Assumed to be opaque
-				childVisualComponent->render();
-			}
-			childVisualComponent->renderChildren(renderPass);
-
-			childVisualComponent->postRender();
-		}
-	}
-}
-
 void Visual2DComponent::postRender()
 {
 	RenderSystem::GetSingleton()->popUIMatrix();
