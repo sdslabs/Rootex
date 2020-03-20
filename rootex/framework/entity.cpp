@@ -8,7 +8,7 @@
 void Entity::bindFunctions()
 {
 	luabridge::getGlobalNamespace(LuaInterpreter::GetSingleton()->getLuaState())
-	    //.beginNamespace("Rootex")
+	    .beginNamespace("Rootex")
 	    .beginClass<Entity>("Entity")
 	    .addFunction("getName", &Entity::getName)
 	    .addFunction("setName", &Entity::setName)
@@ -18,8 +18,8 @@ void Entity::bindFunctions()
 	    .addFunction("getID", &Entity::getID)
 	    .addFunction("getAllComponents", &Entity::getAllComponents)
 	    .addFunction("getComponent", &Entity::getComponent<Component>)
-	    .endClass();
-	    //.endNamespace();
+	    .endClass()
+	    .endNamespace();
 }
 
 Entity::~Entity()
