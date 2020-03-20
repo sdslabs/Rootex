@@ -18,6 +18,7 @@ class LuaInterpreter
 public:
 	static LuaInterpreter* GetSingleton();
 
+	void registerTypes();
 	void loadExecuteScript(LuaTextResourceFile* script);
 	void loadExecuteScript(const String& script);
 
