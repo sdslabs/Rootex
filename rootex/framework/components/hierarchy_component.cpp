@@ -4,11 +4,6 @@
 
 Component* HierarchyComponent::Create(const JSON::json& componentData)
 {
-	if (componentData["parent"] == INVALID_ID)
-	{
-		ERR("Found a invalid ID while constructing HierarchyComponent. Only the Root is allowed to use it.");
-	}
-
 	HierarchyComponent* component = new HierarchyComponent(componentData["parent"], componentData["children"]);
 	return component;
 }
@@ -25,13 +20,14 @@ HierarchyComponent::HierarchyComponent(EntityID parentID, const Vector<EntityID>
 {
 	if (parentID == INVALID_ID)
 	{
+		m_Parent = nullptr;
 		return;
 	}
 
 	Ref<Entity> parent = EntityFactory::GetSingleton()->findEntity(parentID);
 	if (parent)
 	{
-		m_Parent = parent;
+		m_Parent = parent->getComponent<HierarchyComponent>().get();
 	}
 	else
 	{
@@ -43,7 +39,7 @@ HierarchyComponent::HierarchyComponent(EntityID parentID, const Vector<EntityID>
 		Ref<Entity> child = EntityFactory::GetSingleton()->findEntity(parentID);
 		if (child)
 		{
-			m_Children.push_back(child);
+			m_Children.push_back(child->getComponent<HierarchyComponent>().get());
 		}
 		else
 		{
@@ -54,11 +50,11 @@ HierarchyComponent::HierarchyComponent(EntityID parentID, const Vector<EntityID>
 
 bool HierarchyComponent::addChild(Ref<Entity> child)
 {
-	if (auto&& findIt = std::find(m_Children.begin(), m_Children.end(), child) == m_Children.end())
+	if (auto&& findIt = std::find(m_Children.begin(), m_Children.end(), child->getComponent<HierarchyComponent>().get()) == m_Children.end())
 	{
-		m_Children.push_back(child);
+		m_Children.push_back(child->getComponent<HierarchyComponent>().get());
 		m_ChildrenIDs.push_back(child->getID());
-		child->getComponent<HierarchyComponent>()->m_Parent = this->m_Owner;
+		child->getComponent<HierarchyComponent>()->m_Parent = this;
 		child->getComponent<HierarchyComponent>()->m_ParentID = this->m_Owner->getID();
 		return true;
 	}
@@ -67,13 +63,13 @@ bool HierarchyComponent::addChild(Ref<Entity> child)
 
 bool HierarchyComponent::removeChild(Ref<Entity> node)
 {
-	auto& findIt = std::find(m_Children.begin(), m_Children.end(), node);
+	auto& findIt = std::find(m_Children.begin(), m_Children.end(), node->getComponent<HierarchyComponent>().get());
 	if (findIt != m_Children.end())
 	{
-		(*findIt)->getComponent<HierarchyComponent>()->m_Parent = nullptr;
-		(*findIt)->getComponent<HierarchyComponent>()->m_ParentID = INVALID_ID;
+		(*findIt)->m_Parent = nullptr;
+		(*findIt)->m_ParentID = INVALID_ID;
 
-		auto&& findItID = std::find(m_ChildrenIDs.begin(), m_ChildrenIDs.end(), (*findIt)->getID());
+		auto&& findItID = std::find(m_ChildrenIDs.begin(), m_ChildrenIDs.end(), (*findIt)->getOwner()->getID());
 
 		m_Children.erase(findIt);
 		m_ChildrenIDs.erase(findItID);
@@ -81,21 +77,28 @@ bool HierarchyComponent::removeChild(Ref<Entity> node)
 	return true;
 }
 
+void HierarchyComponent::clear()
+{
+	m_Parent = nullptr;
+	m_ParentID = INVALID_ID;
+	m_Children.clear();
+	m_ChildrenIDs.clear();
+}
+
 JSON::json HierarchyComponent::getJSON() const
 {
 	JSON::json j;
 
-	if (!m_Parent)
+	if (m_Parent)
 	{
-		j["parent"] = 1;
+		j["parent"] = m_Parent->getOwner()->getID();
+		j["children"] = m_ChildrenIDs;
 	}
 	else
 	{
-		j["parent"] = m_Parent->getID();
+		j["parent"] = INVALID_ID;
+		j["children"] = m_ChildrenIDs;
 	}
-
-	JSON::json& jc = j["children"];
-	jc = m_ChildrenIDs;
 
 	return j;
 }
@@ -110,11 +113,11 @@ void HierarchyComponent::draw()
 	{
 		ImGui::Text("Parent");
 		ImGui::NextColumn();
-		ImGui::Text(m_Parent->getName().c_str());
+		ImGui::Text(m_Parent->getOwner()->getName().c_str());
 		ImGui::SameLine();
 		if (ImGui::Button("Go"))
 		{
-			EventManager::GetSingleton()->call("OpenChildEntity", "EditorOpenEntity", m_Parent);
+			EventManager::GetSingleton()->call("OpenChildEntity", "EditorOpenEntity", m_Parent->getOwner());
 		}
 		ImGui::NextColumn();
 	}
@@ -136,11 +139,11 @@ void HierarchyComponent::draw()
 	}
 	for (auto& child : m_Children)
 	{
-		ImGui::Text(child->getName().c_str());
+		ImGui::Text(child->getOwner()->getName().c_str());
 		ImGui::SameLine();
-		if (ImGui::Button(("Go##" + std::to_string(child->getID())).c_str()))
+		if (ImGui::Button(("Go##" + std::to_string(child->getOwner()->getID())).c_str()))
 		{
-			EventManager::GetSingleton()->call("OpenChildEntity", "EditorOpenEntity", child);
+			EventManager::GetSingleton()->call("OpenChildEntity", "EditorOpenEntity", child->getOwner());
 		}
 	}
 

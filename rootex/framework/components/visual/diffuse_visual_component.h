@@ -10,7 +10,7 @@ class DiffuseVisualComponent : public VisualComponent
 
 	ImageResourceFile* m_ImageFile;
 	
-	DiffuseVisualComponent(RenderPass renderPass, Ref<DiffuseMaterial> material, VisualModelResourceFile* resFile, ImageResourceFile* imageRes, Texture* texture);
+	DiffuseVisualComponent(const unsigned int& renderPass, Ref<DiffuseMaterial> material, VisualModelResourceFile* resFile, ImageResourceFile* imageRes, Texture* texture);
 	virtual ~DiffuseVisualComponent();
 
 	friend class EntityFactory;
@@ -22,7 +22,7 @@ class DiffuseVisualComponent : public VisualComponent
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::DiffuseVisualComponent;
 
-	bool preRender(HierarchyGraph* graph) override;
+	bool preRender() override;
 
 	virtual String getName() const override { return "DiffuseVisualComponent"; }
 	ComponentID getComponentID() const override { return s_ID; }

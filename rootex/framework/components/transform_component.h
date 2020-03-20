@@ -30,6 +30,7 @@ class TransformComponent : public Component
 	friend class VisualComponent;
 	friend class DiffuseVisualComponent;
 	friend class VisualComponentAttributes;
+	friend class RenderSystem;
 	friend class EntityFactory;
 
 #ifdef ROOTEX_EDITOR
