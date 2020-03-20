@@ -189,7 +189,8 @@ Ref<Entity> EntityFactory::createRootEntity()
 		System::RegisterComponent(rootTransformComponent.get());
 	}
 	{
-		Ref<Component> rootVisualComponent = createDefaultComponent("VisualComponent");
+		Ref<VisualComponent> rootVisualComponent = std::dynamic_pointer_cast<VisualComponent>(createDefaultComponent("VisualComponent"));
+		rootVisualComponent->setVisibility(false);
 		EntityFactory::addComponent(root, rootVisualComponent);
 		System::RegisterComponent(rootVisualComponent.get());
 	}
