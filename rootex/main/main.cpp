@@ -1,8 +1,6 @@
 #include "common/common.h"
 
-#include "app/application.h" 
-
-#define MAX_STACK_TRACE_DEPTH 32
+#include "app/application.h"
 
 int main()
 {
