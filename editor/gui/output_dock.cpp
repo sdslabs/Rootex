@@ -37,7 +37,7 @@ void OutputDock::draw()
 				}
 				else
 				{
-					ImGui::PushStyleColor(ImGuiCol_Text, Editor::GetSingleton()->getColors().m_White);
+					ImGui::PushStyleColor(ImGuiCol_Text, Editor::GetSingleton()->getColors().m_Text);
 				}
 
 				ImGui::TextUnformatted(outputString.second.c_str());
