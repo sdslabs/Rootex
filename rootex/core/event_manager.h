@@ -21,7 +21,7 @@ EventHandlingFunction CreateDelegate(Functor f)
 class EventManager
 {
 	typedef Vector<EventHandlingFunction> EventListenerList;
-	typedef Map<Event::Type, EventListenerList> EventListenerMap;
+	typedef HashMap<Event::Type, EventListenerList> EventListenerMap;
 	typedef Vector<Ref<Event>> EventQueue;
 
 	EventListenerMap m_EventListeners;
