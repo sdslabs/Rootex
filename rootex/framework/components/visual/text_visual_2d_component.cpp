@@ -36,7 +36,7 @@ TextVisual2DComponent::~TextVisual2DComponent()
 {
 }
 
-void TextVisual2DComponent::render(HierarchyGraph* graph)
+void TextVisual2DComponent::render()
 {
 	static Vector3 position;
 	static Quaternion rotation;
@@ -53,7 +53,7 @@ void TextVisual2DComponent::render(HierarchyGraph* graph)
 	    m_Color,
 		rotationAngle,
 		{ 0.0f, 0.0f },
-		scale, 
+		scale,
 		(DirectX::SpriteEffects)m_Mode);
 }
 

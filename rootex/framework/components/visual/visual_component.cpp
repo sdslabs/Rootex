@@ -5,18 +5,22 @@
 #include "core/resource_loader.h"
 
 #include "framework/entity.h"
-#include "framework/systems/render_system.h"
 #include "framework/systems/light_system.h"
+#include "framework/systems/render_system.h"
 
 Component* VisualComponent::Create(const JSON::json& componentData)
 {
 	VisualComponent* visualComponent = new VisualComponent(
-	    RenderPass::Global,
+	    componentData["renderPass"],
 	    Ref<Material>(new Material()),
-	    ResourceLoader::CreateVisualModelResourceFile(componentData["resFile"])
-	);
-	visualComponent->setColor(Color((float)componentData["color"]["r"], (float)componentData["color"]["g"],
-	    (float)componentData["color"]["b"], (float)componentData["color"]["a"]));
+	    ResourceLoader::CreateVisualModelResourceFile(componentData["resFile"]));
+	
+	visualComponent->setColor(
+	    Color(
+	        (float)componentData["color"]["r"], 
+			(float)componentData["color"]["g"],
+	        (float)componentData["color"]["b"], 
+			(float)componentData["color"]["a"]));
 
 	return visualComponent;
 }
@@ -24,7 +28,7 @@ Component* VisualComponent::Create(const JSON::json& componentData)
 Component* VisualComponent::CreateDefault()
 {
 	VisualComponent* visualComponent = new VisualComponent(
-	    RenderPass::Global,
+	    RenderPassMain | RenderPassEditor,
 	    Ref<Material>(new Material()),
 	    ResourceLoader::CreateVisualModelResourceFile("rootex/assets/cube.obj"));
 	visualComponent->setColor(Color(0.5f, 0.5f, 0.5f));
@@ -32,8 +36,8 @@ Component* VisualComponent::CreateDefault()
 	return visualComponent;
 }
 
-VisualComponent::VisualComponent(const RenderPass& renderPassSetting, Ref<Material> material,
-	VisualModelResourceFile* resFile)
+VisualComponent::VisualComponent(const unsigned int& renderPassSetting, Ref<Material> material,
+    VisualModelResourceFile* resFile)
     : m_IsVisible(true)
 {
 	m_Attributes.m_TransformComponent = nullptr;
@@ -71,14 +75,12 @@ bool VisualComponent::setup()
 			WARN("Entity without hierarchy component found");
 			status = false;
 		}
-
-		HierarchySystem::GetSingleton()->getRootHierarchyComponent()->addVCToRenderPass(m_Owner->getComponent<VisualComponent>(), m_Owner);
 	}
 
 	return status;
 }
 
-bool VisualComponent::preRender(HierarchyGraph* graph)
+bool VisualComponent::preRender()
 {
 	if (m_Attributes.m_TransformComponent)
 	{
@@ -93,24 +95,24 @@ bool VisualComponent::preRender(HierarchyGraph* graph)
 	}
 	PSSolidConstantBuffer Cb = { m_Color };
 	m_Attributes.m_Material->setShaderConstantBuffer(Cb);
-	
+
 	return true;
 }
 
-bool VisualComponent::isVisible(HierarchyGraph* graph) const
+bool VisualComponent::isVisible() const
 {
 	// TODO: Add culling
 	return m_IsVisible;
 }
 
-void VisualComponent::render(HierarchyGraph* graph)
+void VisualComponent::render()
 {
 	RenderSystem::GetSingleton()->getRenderer()->draw(m_Attributes.getVertexBuffer(), m_Attributes.getIndexBuffer(), m_Attributes.getMaterial());
 }
 
-void VisualComponent::renderChildren(HierarchyGraph* graph)
+void VisualComponent::renderChildren(const unsigned int& renderPass)
 {
-	if (isVisible(graph))
+	if (isVisible())
 	{
 		m_Attributes.m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::View, RenderSystem::GetSingleton()->getCamera()->getView());
 		m_Attributes.m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::Projection, RenderSystem::GetSingleton()->getCamera()->getProjection());
@@ -118,25 +120,25 @@ void VisualComponent::renderChildren(HierarchyGraph* graph)
 
 	for (auto& child : m_Owner->getComponent<HierarchyComponent>()->getChildren())
 	{
-		VisualComponent* childVisualComponent = child->getComponent<VisualComponent>().get();
+		VisualComponent* childVisualComponent = child->getOwner()->getComponent<VisualComponent>().get();
 
-		if (childVisualComponent)
+		if (childVisualComponent && childVisualComponent->getAttributes()->getRenderPass() & renderPass)
 		{
-			childVisualComponent->preRender(graph);
+			childVisualComponent->preRender();
 
-			if (childVisualComponent->isVisible(graph))
+			if (childVisualComponent->isVisible())
 			{
 				// Assumed to be opaque
-				childVisualComponent->render(graph);
+				childVisualComponent->render();
 			}
-			childVisualComponent->renderChildren(graph);
+			childVisualComponent->renderChildren(renderPass);
 
-			childVisualComponent->postRender(graph);
+			childVisualComponent->postRender();
 		}
 	}
 }
 
-void VisualComponent::postRender(HierarchyGraph* graph)
+void VisualComponent::postRender()
 {
 	RenderSystem::GetSingleton()->popMatrix();
 }
@@ -161,19 +163,6 @@ void VisualComponent::setPosition(const Vector3& position)
 	m_Attributes.m_TransformComponent->setPosition(position);
 }
 
-void VisualComponent::onRemove()
-{
-	if (m_Owner)
-	{
-		Ref<Entity> parent = m_Owner->getComponent<HierarchyComponent>()->getParent();
-		if (parent->getID() == ROOT_ENTITY_ID)
-		{
-			Ref<RootHierarchyComponent> rootHC = std::dynamic_pointer_cast<RootHierarchyComponent>(parent->getComponent<HierarchyComponent>());
-			rootHC->removeVCFromRenderPass(m_Owner->getComponent<VisualComponent>(), m_Owner);
-		}
-	}
-}
-
 Vector3 VisualComponent::getPosition() const
 {
 	return m_Attributes.m_TransformComponent->getPosition();
@@ -184,6 +173,7 @@ JSON::json VisualComponent::getJSON() const
 	JSON::json j;
 
 	j["resFile"] = m_Attributes.m_VisualModelResourceFile->getPath().string();
+	j["renderPass"] = m_Attributes.m_RenderPassSetting;
 
 	j["color"]["r"] = m_Color.x;
 	j["color"]["g"] = m_Color.y;
@@ -194,7 +184,7 @@ JSON::json VisualComponent::getJSON() const
 }
 
 VisualComponentAttributes::VisualComponentAttributes()
-    : m_RenderPassSetting(RenderPass::Global)
+    : m_RenderPassSetting(RenderPassMain)
     , m_Material(Ref<Material>(new Material()))
     , m_VisualModelResourceFile(nullptr)
     , m_TransformComponent(nullptr)
@@ -221,5 +211,15 @@ void VisualComponent::draw()
 	}
 
 	ImGui::ColorEdit4("Color", &m_Color.x);
+
+	ImGui::Separator();
+
+	ImGui::Text("Render passes");
+	ImGui::Indent();
+	ImGui::CheckboxFlags("Main pass", &m_Attributes.m_RenderPassSetting, RenderPassMain);
+	ImGui::CheckboxFlags("Sky pass", &m_Attributes.m_RenderPassSetting, RenderPassSky);
+	ImGui::CheckboxFlags("UI pass", &m_Attributes.m_RenderPassSetting, RenderPassUI);
+	ImGui::CheckboxFlags("Editor pass", &m_Attributes.m_RenderPassSetting, RenderPassEditor);
+	ImGui::Unindent();
 }
 #endif // ROOTEX_EDITOR

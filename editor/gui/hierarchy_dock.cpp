@@ -8,11 +8,11 @@
 #include "vendor/ImGUI/imgui_impl_dx11.h"
 #include "vendor/ImGUI/imgui_impl_win32.h"
 
-void HierarchyDock::showHierarchySubTree(Ref<Entity> node)
+void HierarchyDock::showHierarchySubTree(HierarchyComponent* hierarchy)
 {
-	Ref<HierarchyComponent> hierarchy = node->getComponent<HierarchyComponent>();
 	if (hierarchy)
 	{
+		Ref<Entity> node = hierarchy->getOwner();
 		if (ImGui::TreeNodeEx(("##" + std::to_string(node->getID())).c_str(), ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_AllowItemOverlap | (hierarchy->getChildren().size() ? ImGuiTreeNodeFlags_None : ImGuiTreeNodeFlags_Leaf)))
 		{
 			ImGui::SameLine();
@@ -50,8 +50,8 @@ void HierarchyDock::draw()
 	{
 		if (ImGui::Begin("Hierarchy"))
 		{
-			RootHierarchyComponent* rootComponent = HierarchySystem::GetSingleton()->getRootHierarchyComponent().get();
-			showHierarchySubTree(rootComponent->getOwner());
+			HierarchyComponent* rootComponent = HierarchySystem::GetSingleton()->getRootHierarchyComponent().get();
+			showHierarchySubTree(rootComponent);
 		}
 		ImGui::End();
 	}

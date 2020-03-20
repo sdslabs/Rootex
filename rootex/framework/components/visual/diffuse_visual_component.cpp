@@ -16,7 +16,7 @@ Component* DiffuseVisualComponent::Create(const JSON::json& componentData)
 	Ref<DiffuseMaterial> material(new DiffuseMaterial(texture));
 
 	VisualModelResourceFile* vmr = ResourceLoader::CreateVisualModelResourceFile(componentData["resFile"]);
-	DiffuseVisualComponent* diffuseComponent = new DiffuseVisualComponent(RenderPass::Global, material, vmr, imageRes, texture.get());
+	DiffuseVisualComponent* diffuseComponent = new DiffuseVisualComponent(componentData["renderPass"], material, vmr, imageRes, texture.get());
 
 	return diffuseComponent;
 }
@@ -29,12 +29,12 @@ Component* DiffuseVisualComponent::CreateDefault()
 	Ref<DiffuseMaterial> material(new DiffuseMaterial(texture));
 
 	VisualModelResourceFile* vmr = ResourceLoader::CreateVisualModelResourceFile("rootex/assets/cube.obj");
-	DiffuseVisualComponent* diffuseComponent = new DiffuseVisualComponent(RenderPass::Global, material, vmr, imageRes, texture.get());
+	DiffuseVisualComponent* diffuseComponent = new DiffuseVisualComponent(RenderPassMain | RenderPassEditor, material, vmr, imageRes, texture.get());
 
 	return diffuseComponent;
 }
 
-DiffuseVisualComponent::DiffuseVisualComponent(RenderPass renderPass, Ref<DiffuseMaterial> material, VisualModelResourceFile* resFile, ImageResourceFile* imageRes, Texture* texture)
+DiffuseVisualComponent::DiffuseVisualComponent(const unsigned int& renderPass, Ref<DiffuseMaterial> material, VisualModelResourceFile* resFile, ImageResourceFile* imageRes, Texture* texture)
     : VisualComponent(renderPass, material, resFile)
     , m_ImageFile(imageRes)
 {
@@ -47,7 +47,7 @@ DiffuseVisualComponent::~DiffuseVisualComponent()
 {
 }
 
-bool DiffuseVisualComponent::preRender(HierarchyGraph* graph)
+bool DiffuseVisualComponent::preRender()
 {
 	if (m_Attributes.m_TransformComponent)
 	{
@@ -71,6 +71,7 @@ JSON::json DiffuseVisualComponent::getJSON() const
 
 	j["texturePath"] = m_ImageFile->getPath().string();
 	j["resFile"] = m_Attributes.m_VisualModelResourceFile->getPath().string();
+	j["renderPass"] = m_Attributes.m_RenderPassSetting;
 
 	return j;
 }
@@ -80,6 +81,8 @@ JSON::json DiffuseVisualComponent::getJSON() const
 #include "imgui_stdlib.h"
 void DiffuseVisualComponent::draw()
 {
+	VisualComponent::draw();
+
 	if (ImGui::InputText("Visual Model", &m_ModelPathUI, ImGuiInputTextFlags_EnterReturnsTrue))
 	{
 		VisualModelResourceFile* model = ResourceLoader::CreateVisualModelResourceFile(m_ModelPathUI);
