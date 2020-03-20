@@ -1,5 +1,5 @@
 #include "interpreter.h"
-#include "core/resource_data.h"
+#include "core/resource_loader.h"
 
 extern "C"
 {
@@ -18,6 +18,8 @@ LuaInterpreter::LuaInterpreter()
 	{
 		ERR("Error occured in loading Rootex Lua bindings: " + String(lua_tostring(m_LuaState, -1)));
 	}
+
+	loadExecuteScript(ResourceLoader::CreateLuaTextResourceFile("rootex/script/script_env.lua"));
 }
 
 LuaInterpreter::~LuaInterpreter()
@@ -53,6 +55,11 @@ void LuaInterpreter::loadExecuteScript(const String& script)
 	}
 }
 
+LuaVariable LuaInterpreter::createTable(const String& name)
+{
+	return luabridge::newTable(m_LuaState);
+}
+
 LuaVariable LuaInterpreter::getGlobal(const String& name)
 {
 	LuaVariable result = luabridge::getGlobal(m_LuaState, name.c_str());
@@ -61,4 +68,9 @@ LuaVariable LuaInterpreter::getGlobal(const String& name)
 		ERR("Lua variable (" + name + ") was not found");
 	}
 	return result;
+}
+
+void LuaInterpreter::setGlobal(LuaVariable luaVar, const String& name)
+{
+	luabridge::setGlobal(m_LuaState, luaVar, name.c_str());
 }
