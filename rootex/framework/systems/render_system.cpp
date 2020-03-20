@@ -56,12 +56,6 @@ void RenderSystem::render()
 	calculateTransforms(rootHC.get());
 
 	Ref<VisualComponent> rootVC = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<VisualComponent>();
-
-	{
-		RenderingDevice::GetSingleton()->beginDrawUI();
-		renderPassRender(rootVC.get(), RenderPassUI);
-		RenderingDevice::GetSingleton()->endDrawUI();
-	}
 	
 	RenderingDevice::GetSingleton()->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	RenderingDevice::GetSingleton()->setRasterizerState();
