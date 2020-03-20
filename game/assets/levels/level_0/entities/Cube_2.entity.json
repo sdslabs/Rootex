@@ -6,7 +6,7 @@
         },
         "TransformComponent": {
             "position": {
-                "x": -2.2100000381469727,
+                "x": 0.0,
                 "y": 0.0,
                 "z": 0.0
             },
@@ -25,12 +25,12 @@
         "VisualComponent": {
             "color": {
                 "a": 1.0,
-                "b": 0.5,
-                "g": 0.5,
-                "r": 0.5
+                "b": 0.20000000298023224,
+                "g": 1.0,
+                "r": 0.20000000298023224
             },
-            "renderPass": 5,
-            "resFile": "rootex/assets/cube.obj"
+            "renderPass": 1,
+            "resFile": "game/assets/test/cube.obj"
         }
     },
     "Entity": {

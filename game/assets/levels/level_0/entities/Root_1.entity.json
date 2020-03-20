@@ -3,9 +3,7 @@
         "HierarchyComponent": {
             "children": [
                 2,
-                3,
-                4,
-                5
+                3
             ],
             "parent": 0
         },
@@ -34,7 +32,7 @@
                 "g": 0.5,
                 "r": 0.5
             },
-            "renderPass": 5,
+            "renderPass": 1,
             "resFile": "rootex/assets/cube.obj"
         }
     },
