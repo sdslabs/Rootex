@@ -14,7 +14,7 @@ private:
 	HierarchySettings m_HierarchySettings;
 	EntityID m_OpenedEntityID;
 
-	void showHierarchySubTree(Ref<Entity> node);
+	void showHierarchySubTree(HierarchyComponent* hierarchy);
 	
 	Variant selectOpenEntity(const Event* event);
 

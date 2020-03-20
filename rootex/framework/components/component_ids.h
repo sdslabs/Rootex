@@ -11,7 +11,6 @@ enum class ComponentIDs : unsigned int
 	TextVisual2DComponent = Visual2DComponent,
 	TransformComponent,
 	HierarchyComponent,
-	RootHierarchyComponent = HierarchyComponent,
 	PointLightComponent,
 	DirectionalLightComponent,
 	SpotLightComponent,
