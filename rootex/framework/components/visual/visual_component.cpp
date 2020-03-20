@@ -214,7 +214,7 @@ void VisualComponent::draw()
 
 	ImGui::Separator();
 
-	ImGui::Text("Render passes");
+	ImGui::Checkbox("Visible", &m_IsVisible);
 
 	if (ImGui::BeginCombo("Render pass", m_RenderPassName.c_str()))
 	{

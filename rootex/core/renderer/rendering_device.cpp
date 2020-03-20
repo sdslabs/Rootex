@@ -96,10 +96,9 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 	dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
 	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 
-	ID3D11DepthStencilState* DSState;
-	GFX_ERR_CHECK(m_Device->CreateDepthStencilState(&dsDesc, &DSState));
-	m_Context->OMSetDepthStencilState(DSState, 1u);
-	SafeRelease(&DSState);
+	GFX_ERR_CHECK(m_Device->CreateDepthStencilState(&dsDesc, &m_DepthStencilState));
+	m_Context->OMSetDepthStencilState(m_DepthStencilState.Get(), 1u);
+	m_StencilRef = 1u;
 
 	ID3D11Texture2D* depthStencil = nullptr;
 	D3D11_TEXTURE2D_DESC descDepth = { 0 };
@@ -369,6 +368,11 @@ void RenderingDevice::unbindShaderResources()
 void RenderingDevice::setRasterizerState()
 {
 	m_Context->RSSetState(m_RSState.Get());
+}
+
+void RenderingDevice::setDepthStencilState()
+{
+	m_Context->OMSetDepthStencilState(m_DepthStencilState.Get(), m_StencilRef);
 }
 
 void RenderingDevice::setTextureRenderTarget()

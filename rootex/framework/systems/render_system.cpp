@@ -37,6 +37,10 @@ void RenderSystem::calculateTransforms(HierarchyComponent* hierarchyComponent)
 void RenderSystem::renderPassRender(VisualComponent* vc, const RenderPass& renderPass)
 {
 	vc->preRender();
+	if (vc->isVisible())
+	{
+		vc->render();
+	}
 	vc->renderChildren(renderPass);
 	vc->postRender();
 }
@@ -48,13 +52,20 @@ void RenderSystem::recoverLostDevice()
 
 void RenderSystem::render()
 {
-	RenderingDevice::GetSingleton()->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	RenderingDevice::GetSingleton()->setRasterizerState();
-
 	Ref<HierarchyComponent> rootHC = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<HierarchyComponent>();
 	calculateTransforms(rootHC.get());
 
 	Ref<VisualComponent> rootVC = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<VisualComponent>();
+
+	{
+		RenderingDevice::GetSingleton()->beginDrawUI();
+		renderPassRender(rootVC.get(), RenderPassUI);
+		RenderingDevice::GetSingleton()->endDrawUI();
+	}
+	
+	RenderingDevice::GetSingleton()->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	RenderingDevice::GetSingleton()->setRasterizerState();
+	RenderingDevice::GetSingleton()->setDepthStencilState();
 
 #ifdef ROOTEX_EDITOR
 	renderPassRender(rootVC.get(), RenderPassEditor);
@@ -63,11 +74,6 @@ void RenderSystem::render()
 	{
 		SkyBoxHelper skyHelper;
 		renderPassRender(rootVC.get(), RenderPassSky);
-	}
-	{
-		RenderingDevice::GetSingleton()->beginDrawUI();
-		renderPassRender(rootVC.get(), RenderPassUI);
-		RenderingDevice::GetSingleton()->endDrawUI();
 	}
 }
 
