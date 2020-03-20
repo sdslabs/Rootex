@@ -79,6 +79,12 @@ void Editor::initialize(HWND hWnd, const JSON::json& projectJSON)
 		(float)general["colors"]["warning"]["b"],
 		(float)general["colors"]["warning"]["a"],
 	};
+	m_Colors.m_Text = { 
+		(float)general["colors"]["text"]["r"],
+		(float)general["colors"]["text"]["g"],
+		(float)general["colors"]["text"]["b"],
+		(float)general["colors"]["text"]["a"],
+	};
 	m_Colors.m_White = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 	m_FileSystem.reset(new FileSystemDock());
@@ -365,6 +371,7 @@ void Editor::pushEditorStyleColors()
 	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, m_Colors.m_Accent);
 	ImGui::PushStyleColor(ImGuiCol_ButtonActive, m_Colors.m_Success);
 	ImGui::PushStyleColor(ImGuiCol_CheckMark, m_Colors.m_Accent);
+	ImGui::PushStyleColor(ImGuiCol_Text, m_Colors.m_Text);
 	ImGui::PushStyleColor(ImGuiCol_TextSelectedBg, m_Colors.m_Accent);
 	ImGui::PushStyleColor(ImGuiCol_TextDisabled, m_Colors.m_Inactive);
 	ImGui::PushStyleColor(ImGuiCol_ResizeGrip, m_Colors.m_HeavyAccent);
