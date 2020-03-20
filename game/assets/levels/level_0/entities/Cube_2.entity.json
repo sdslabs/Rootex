@@ -4,14 +4,17 @@
             "children": [],
             "parent": 1
         },
+        "ScriptComponent": {
+            "script": "game/assets/scripts/cube.lua"
+        },
         "TransformComponent": {
             "position": {
-                "x": -0.8600000143051147,
+                "x": 0.0,
                 "y": 0.0,
                 "z": 0.0
             },
             "rotation": {
-                "w": 1.0,
+                "w": 0.0,
                 "x": 0.0,
                 "y": 0.0,
                 "z": 0.0
@@ -29,7 +32,7 @@
                 "g": 1.0,
                 "r": 0.20000000298023224
             },
-            "renderPass": 4,
+            "renderPass": 1,
             "resFile": "game/assets/test/cube.obj"
         }
     },
