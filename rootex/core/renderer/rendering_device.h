@@ -25,6 +25,7 @@ class RenderingDevice
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_RenderTextureShaderResourceView;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_DepthStencilView;
 
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_DepthStencilState;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_OldSkyDepthStencilState;
 	UINT m_StencilRef;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_NewSkyDepthStencilState;
@@ -87,6 +88,7 @@ public:
 	void unbindShaderResources();
 
 	void setRasterizerState();
+	void setDepthStencilState();
 
 	void setTextureRenderTarget();
 	void setBackBufferRenderTarget();
