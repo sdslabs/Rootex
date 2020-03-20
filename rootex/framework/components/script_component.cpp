@@ -31,17 +31,17 @@ bool ScriptComponent::setup()
 	return true;
 }
 
-void ScriptComponent::begin()
+void ScriptComponent::onBegin()
 {
 	LuaInterpreter::GetSingleton()->getGlobal(m_EntityTable)["onBegin"]();
 }
 
-void ScriptComponent::update(float deltaMilliSeconds)
+void ScriptComponent::onUpdate(float deltaMilliSeconds)
 {
-	LuaInterpreter::GetSingleton()->getGlobal(m_EntityTable)["onUpdate"](deltaMilliSeconds);
+	LuaInterpreter::GetSingleton()->getGlobal(m_EntityTable)["onUpdate"](deltaMilliSeconds, m_Owner->getID());
 }
 
-void ScriptComponent::end()
+void ScriptComponent::onEnd()
 {
 	LuaInterpreter::GetSingleton()->getGlobal(m_EntityTable)["onEnd"]();
 }
@@ -57,13 +57,35 @@ JSON::json ScriptComponent::getJSON() const
 
 #ifdef ROOTEX_EDITOR
 #include "imgui.h"
-#include "editor/gui/resource_selector.h"
+#include "imgui_stdlib.h"
 void ScriptComponent::draw()
 {
-	ResourceFile* selected = ResourceSelector::DrawSelect({ ResourceFile::Type::Lua });
-	if (selected)
+	if (ImGui::BeginCombo("Script", m_ScriptFile->getPath().filename().string().c_str(), ImGuiComboFlags_HeightRegular))
 	{
-		m_ScriptFile = (LuaTextResourceFile*)selected;
+		for (auto&& file : ResourceLoader::GetFilesOfType(ResourceFile::Type::Lua))
+		{
+			if (ImGui::MenuItem(file->getPath().string().c_str(), ""))
+			{
+				m_ScriptFile = (LuaTextResourceFile*)file;
+			}
+		}
+
+		static String inputPath = "Path";
+		ImGui::InputText("##Path", &inputPath);
+		ImGui::SameLine();
+		ImGui::SameLine();
+		if (ImGui::Button("Create Script"))
+		{
+			if (!ResourceLoader::CreateLuaTextResourceFile(inputPath))
+			{
+				WARN("Could not create script");
+			}
+			else
+			{
+				inputPath = "";
+			}
+		}
+		ImGui::EndCombo();
 	}
 }
 #endif // ROOTEX_EDITOR

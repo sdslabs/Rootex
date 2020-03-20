@@ -78,7 +78,6 @@ JSON::json TextVisual2DComponent::getJSON() const
 #ifdef ROOTEX_EDITOR
 #include "imgui.h"
 #include "imgui_stdlib.h"
-#include "editor/gui/resource_selector.h"
 void TextVisual2DComponent::draw()
 {
 	ImGui::InputText("Text", &m_Text);
@@ -98,10 +97,12 @@ void TextVisual2DComponent::draw()
 
 	if (ImGui::BeginCombo("Font", m_FontFile->getFontName().c_str()))
 	{
-		ResourceFile* selected = ResourceSelector::DrawSelect({ ResourceFile::Type::Font });
-		if (selected)
+		for (auto&& file : ResourceLoader::GetFilesOfType(ResourceFile::Type::Font))
 		{
-			setFont((FontResourceFile*)selected);
+			if (ImGui::MenuItem(file->getPath().string().c_str(), ""))
+			{
+				setFont((FontResourceFile*)file);
+			}
 		}
 		
 		static String inputPath = "Path";
