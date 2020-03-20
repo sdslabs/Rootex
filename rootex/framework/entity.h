@@ -26,6 +26,8 @@ protected:
 #endif // ROOTEX_EDITOR
 
 public:
+	static void bindFunctions();
+
 	virtual ~Entity();
 
 	void addChild(Ref<Entity> child);

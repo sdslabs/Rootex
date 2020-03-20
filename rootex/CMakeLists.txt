@@ -13,9 +13,6 @@ set(ROOTEX_SOURCES
 ""
 CACHE INTERNAL "")
 
-set(ROOTEX_SWIG_INTERFACE
-CACHE INTERNAL "")
-
 set(ROOTEX_PCH_HEADERS
 CACHE INTERNAL "")
 
@@ -87,7 +84,6 @@ target_include_directories(Rootex PUBLIC
 target_link_libraries(Rootex PUBLIC
     Lua
     LuaBridge
-    SWIGBindings
     OpenAL
     ALUT
     DirectXTK

@@ -42,6 +42,8 @@ bool Application::initialize(const JSON::json& projectJSON)
 
 	ShaderLibrary::MakeShaders();
 	
+	LuaInterpreter::GetSingleton()->registerTypes();
+
 	auto&& postInitialize = projectJSON.find("postInitialize");
 	if (postInitialize != projectJSON.end())
 	{
