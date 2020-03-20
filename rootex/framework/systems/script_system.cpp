@@ -14,7 +14,7 @@ void ScriptSystem::begin()
 	for (auto&& component : s_Components[ScriptComponent::s_ID])
 	{
 		scriptComponent = (ScriptComponent*)component;
-		scriptComponent->begin();
+		scriptComponent->onBegin();
 	}
 }
 
@@ -24,7 +24,7 @@ void ScriptSystem::update(float deltaMilliseconds)
 	for (auto&& component : s_Components[ScriptComponent::s_ID])
 	{
 		scriptComponent = (ScriptComponent*)component;
-		scriptComponent->update(deltaMilliseconds);
+		scriptComponent->onUpdate(deltaMilliseconds);
 	}
 }
 
@@ -34,6 +34,6 @@ void ScriptSystem::end()
 	for (auto&& component : s_Components[ScriptComponent::s_ID])
 	{
 		scriptComponent = (ScriptComponent*)component;
-		scriptComponent->end();
+		scriptComponent->onEnd();
 	}
 }

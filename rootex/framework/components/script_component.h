@@ -24,9 +24,9 @@ public:
 
 	virtual bool setup() override;
 
-	void begin();
-	virtual void update(float deltaMilliSeconds);
-	void end();
+	void onBegin();
+	virtual void onUpdate(float deltaMilliSeconds);
+	void onEnd();
 
 	ComponentID getComponentID() const override { return s_ID; }
 	virtual String getName() const override { return "ScriptComponent"; }

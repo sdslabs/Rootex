@@ -10,7 +10,7 @@
             "parent": 1
         },
         "ScriptComponent": {
-            "script": "rootex/assets/scripts/empty.lua"
+            "script": "game/assets/scripts/cube.lua"
         },
         "TransformComponent": {
             "position": {
