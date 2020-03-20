@@ -123,7 +123,6 @@ void VisualComponent::renderChildren(const unsigned int& renderPass)
 		VisualComponent* childVisualComponent = child->getOwner()->getComponent<VisualComponent>().get();
 
 		if (childVisualComponent && (childVisualComponent->getAttributes()->getRenderPass() & renderPass))
-
 		{
 			childVisualComponent->preRender();
 
