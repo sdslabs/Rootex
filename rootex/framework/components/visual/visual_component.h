@@ -65,6 +65,7 @@ protected:
 
 #ifdef ROOTEX_EDITOR
 	String m_ModelPathUI;
+	String m_RenderPassName;
 #endif // ROOTEX_EDITOR
 
 public:

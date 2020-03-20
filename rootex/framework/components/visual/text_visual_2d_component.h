@@ -21,6 +21,7 @@ public:
 	String m_Text;
 	Color m_Color;
 	Mode m_Mode;
+	Vector2 m_Origin;
 
 	TextVisual2DComponent(FontResourceFile* font, const String& text, const Color& color, const Mode& mode);
 	virtual ~TextVisual2DComponent();

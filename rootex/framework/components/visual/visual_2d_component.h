@@ -17,7 +17,6 @@ public:
 
 	virtual bool preRender() override;
 	virtual void render() override {}
-	virtual void renderChildren(const unsigned int& renderPass) override;
 	virtual void postRender() override;
 
 	virtual ComponentID getComponentID() const override { return s_ID; }
