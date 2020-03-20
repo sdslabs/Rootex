@@ -38,7 +38,7 @@ void ScriptComponent::onBegin()
 
 void ScriptComponent::onUpdate(float deltaMilliSeconds)
 {
-	LuaInterpreter::GetSingleton()->getGlobal(m_EntityTable)["onUpdate"](deltaMilliSeconds, m_Owner->getID());
+	LuaInterpreter::GetSingleton()->getGlobal(m_EntityTable)["onUpdate"](deltaMilliSeconds, m_Owner.get());
 }
 
 void ScriptComponent::onEnd()
