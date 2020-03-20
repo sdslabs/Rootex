@@ -54,7 +54,7 @@ void TextVisual2DComponent::render()
 		rotationAngle,
 		{ 0.0f, 0.0f },
 		scale,
-		(DirectX::SpriteEffects)m_Mode);
+	    (DirectX::SpriteEffects)m_Mode);
 }
 
 JSON::json TextVisual2DComponent::getJSON() const
@@ -83,6 +83,7 @@ void TextVisual2DComponent::draw()
 {
 	ImGui::InputText("Text", &m_Text);
 	ImGui::ColorEdit4("Color", &m_Color.x);
+	ImGui::DragFloat2("Origin", &m_Origin.x);
 
 	static const char* modes[] = {
 		"None",

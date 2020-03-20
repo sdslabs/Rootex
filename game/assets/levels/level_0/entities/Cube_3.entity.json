@@ -1,7 +1,7 @@
 {
     "Components": {
         "DiffuseVisualComponent": {
-            "renderPass": 5,
+            "renderPass": 1,
             "resFile": "rootex/assets/cube.obj",
             "texturePath": "rootex/assets/rootex.png"
         },
@@ -11,12 +11,12 @@
         },
         "TransformComponent": {
             "position": {
-                "x": 0.0,
+                "x": 0.75,
                 "y": 0.0,
-                "z": 0.0
+                "z": -1.4299999475479126
             },
             "rotation": {
-                "w": 0.0,
+                "w": 1.0,
                 "x": 0.0,
                 "y": 0.0,
                 "z": 0.0
