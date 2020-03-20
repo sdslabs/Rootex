@@ -9,6 +9,9 @@
             "children": [],
             "parent": 1
         },
+        "ScriptComponent": {
+            "script": "rootex/assets/scripts/empty.lua"
+        },
         "TransformComponent": {
             "position": {
                 "x": 0.75,

@@ -21,7 +21,10 @@ public:
 	void loadExecuteScript(LuaTextResourceFile* script);
 	void loadExecuteScript(const String& script);
 
-	LuaVariable getGlobal(const String& name);
+	LuaVariable createTable(const String& name);
 
-protected:
+	LuaVariable getGlobal(const String& name);
+	lua_State* getLuaState() const { return m_LuaState; }
+	
+	void setGlobal(LuaVariable luaVar, const String& name);
 };
