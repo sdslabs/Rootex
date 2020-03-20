@@ -14,7 +14,11 @@
             "fontResource": "game/assets/fonts/noto_sans_50_regular.spritefont",
             "mode": 0,
             "name": "Noto Sans",
-            "text": "Hello World!"
+            "text": "Hello World!",
+            "origin": {
+                "x": 100,
+                "y": 100
+            }
         },
         "TransformComponent": {
             "position": {
@@ -36,7 +40,7 @@
         }
     },
     "Entity": {
-        "ID": 6,
+        "ID": 5,
         "name": "Cube"
     }
 }

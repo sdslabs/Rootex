@@ -11,6 +11,7 @@
 #include "components/physics/sphere_component.h"
 #include "components/test_component.h"
 #include "components/transform_component.h"
+#include "components/visual/visual_component.h"
 #include "components/visual/diffuse_visual_component.h"
 #include "components/visual/directional_light_component.h"
 #include "components/visual/point_light_component.h"
@@ -191,6 +192,7 @@ Ref<Entity> EntityFactory::createRootEntity()
 	{
 		Ref<VisualComponent> rootVisualComponent = std::dynamic_pointer_cast<VisualComponent>(createDefaultComponent("VisualComponent"));
 		rootVisualComponent->setVisibility(false);
+
 		EntityFactory::addComponent(root, rootVisualComponent);
 		System::RegisterComponent(rootVisualComponent.get());
 	}

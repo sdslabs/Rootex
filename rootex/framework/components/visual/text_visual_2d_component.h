@@ -23,7 +23,7 @@ public:
 	Mode m_Mode;
 	Vector2 m_Origin;
 
-	TextVisual2DComponent(FontResourceFile* font, const String& text, const Color& color, const Mode& mode);
+	TextVisual2DComponent(FontResourceFile* font, const String& text, const Color& color, const Mode& mode, const Vector2& origin);
 	virtual ~TextVisual2DComponent();
 
 	friend class EntityFactory;

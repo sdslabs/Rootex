@@ -1,12 +1,17 @@
 {
     "Components": {
+        "DiffuseVisualComponent": {
+            "renderPass": 5,
+            "resFile": "rootex/assets/cube.obj",
+            "texturePath": "rootex/assets/rootex.png"
+        },
         "HierarchyComponent": {
             "children": [],
             "parent": 1
         },
         "TransformComponent": {
             "position": {
-                "x": 1.2999999523162842,
+                "x": 2.2100000381469727,
                 "y": 0.0,
                 "z": 0.0
             },
@@ -21,16 +26,6 @@
                 "y": 1.0,
                 "z": 1.0
             }
-        },
-        "VisualComponent": {
-            "color": {
-                "a": 1.0,
-                "b": 0.20000000298023224,
-                "g": 1.0,
-                "r": 0.20000000298023224
-            },
-            "renderPass": 1,
-            "resFile": "game/assets/test/cube.obj"
         }
     },
     "Entity": {

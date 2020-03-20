@@ -55,17 +55,15 @@ void RenderSystem::render()
 	Ref<HierarchyComponent> rootHC = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<HierarchyComponent>();
 	calculateTransforms(rootHC.get());
 
-	Ref<VisualComponent> rootVC = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<VisualComponent>();
-	
 	RenderingDevice::GetSingleton()->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	RenderingDevice::GetSingleton()->setRasterizerState();
 	RenderingDevice::GetSingleton()->setDepthStencilState();
 
+	Ref<VisualComponent> rootVC = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<VisualComponent>();
 #ifdef ROOTEX_EDITOR
 	renderPassRender(rootVC.get(), RenderPassEditor);
 #endif // ROOTEX_EDITOR
 	renderPassRender(rootVC.get(), RenderPassMain);
-
 	{
 		SkyBoxHelper skyHelper;
 		renderPassRender(rootVC.get(), RenderPassSky);
