@@ -71,9 +71,15 @@ void RenderSystem::render()
 	renderPassRender(rootVC.get(), RenderPassEditor);
 #endif // ROOTEX_EDITOR
 	renderPassRender(rootVC.get(), RenderPassMain);
+
 	{
 		SkyBoxHelper skyHelper;
 		renderPassRender(rootVC.get(), RenderPassSky);
+	}
+	{
+		RenderingDevice::GetSingleton()->beginDrawUI();
+		renderPassRender(rootVC.get(), RenderPassUI);
+		RenderingDevice::GetSingleton()->endDrawUI();
 	}
 }
 
