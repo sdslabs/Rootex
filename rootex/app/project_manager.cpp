@@ -1,7 +1,6 @@
 #include "project_manager.h"
 
 #include "framework/entity_factory.h"
-#include "framework/components/root_hierarchy_component.h"
 #include "framework/systems/hierarchy_system.h"
 #include "resource_loader.h"
 

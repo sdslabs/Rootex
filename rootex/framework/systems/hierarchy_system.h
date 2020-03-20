@@ -17,6 +17,6 @@ public:
 	void resetHierarchy();
 
 	Ref<Entity> getRootEntity() const { return m_HierarchyGraph.getRootEntity(); }
-	Ref<RootHierarchyComponent> getRootHierarchyComponent() const { return m_HierarchyGraph.getRootHierarchyComponent(); }
+	Ref<HierarchyComponent> getRootHierarchyComponent() const { return m_HierarchyGraph.getRootHierarchyComponent(); }
 	HierarchyGraph* getHierarchyGraph() { return &m_HierarchyGraph; }
 };
