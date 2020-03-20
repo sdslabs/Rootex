@@ -25,8 +25,8 @@
         },
         "TransformComponent": {
             "position": {
-                "x": 0.0,
-                "y": 1.3700000047683716,
+                "x": 0.07999999821186066,
+                "y": 1.4700000286102295,
                 "z": 0.0
             },
             "rotation": {
@@ -44,16 +44,16 @@
         "VisualComponent": {
             "color": {
                 "a": 1.0,
-                "b": 0.20000000298023224,
-                "g": 1.0,
-                "r": 0.20000000298023224
+                "b": 0.5,
+                "g": 0.5,
+                "r": 0.5
             },
             "renderPass": 1,
-            "resFile": "game/assets/test/cube.obj"
+            "resFile": "rootex/assets/cube.obj"
         }
     },
     "Entity": {
-        "ID": 4,
+        "ID": 7,
         "name": "Cube"
     }
 }
