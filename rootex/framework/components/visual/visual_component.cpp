@@ -28,7 +28,7 @@ Component* VisualComponent::Create(const JSON::json& componentData)
 Component* VisualComponent::CreateDefault()
 {
 	VisualComponent* visualComponent = new VisualComponent(
-	    RenderPassMain | RenderPassEditor,
+	    RenderPassMain,
 	    Ref<Material>(new Material()),
 	    ResourceLoader::CreateVisualModelResourceFile("rootex/assets/cube.obj"));
 	visualComponent->setColor(Color(0.5f, 0.5f, 0.5f));
@@ -112,7 +112,7 @@ void VisualComponent::render()
 
 void VisualComponent::renderChildren(const unsigned int& renderPass)
 {
-	if (isVisible())
+	if (isVisible() && !(renderPass & RenderPassUI))
 	{
 		m_Attributes.m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::View, RenderSystem::GetSingleton()->getCamera()->getView());
 		m_Attributes.m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::Projection, RenderSystem::GetSingleton()->getCamera()->getProjection());
@@ -122,7 +122,7 @@ void VisualComponent::renderChildren(const unsigned int& renderPass)
 	{
 		VisualComponent* childVisualComponent = child->getOwner()->getComponent<VisualComponent>().get();
 
-		if (childVisualComponent && childVisualComponent->getAttributes()->getRenderPass() & renderPass)
+		if (childVisualComponent && (childVisualComponent->getAttributes()->getRenderPass() & renderPass))
 		{
 			childVisualComponent->preRender();
 
@@ -215,11 +215,30 @@ void VisualComponent::draw()
 	ImGui::Separator();
 
 	ImGui::Text("Render passes");
-	ImGui::Indent();
-	ImGui::CheckboxFlags("Main pass", &m_Attributes.m_RenderPassSetting, RenderPassMain);
-	ImGui::CheckboxFlags("Sky pass", &m_Attributes.m_RenderPassSetting, RenderPassSky);
-	ImGui::CheckboxFlags("UI pass", &m_Attributes.m_RenderPassSetting, RenderPassUI);
-	ImGui::CheckboxFlags("Editor pass", &m_Attributes.m_RenderPassSetting, RenderPassEditor);
-	ImGui::Unindent();
+
+	if (ImGui::BeginCombo("Render pass", m_RenderPassName.c_str()))
+	{
+		if (ImGui::Selectable("Main"))
+		{
+			m_Attributes.m_RenderPassSetting = RenderPassMain;
+			m_RenderPassName = "Main";
+		}
+		if (ImGui::Selectable("Sky"))
+		{
+			m_Attributes.m_RenderPassSetting = RenderPassSky;
+			m_RenderPassName = "Sky";
+		}
+		if (ImGui::Selectable("UI"))
+		{
+			m_Attributes.m_RenderPassSetting = RenderPassUI;
+			m_RenderPassName = "UI";
+		}
+		if (ImGui::Selectable("Editor"))
+		{
+			m_Attributes.m_RenderPassSetting = RenderPassEditor;
+			m_RenderPassName = "Editor";
+		}
+		ImGui::EndCombo();
+	}
 }
 #endif // ROOTEX_EDITOR

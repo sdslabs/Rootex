@@ -59,6 +59,8 @@ GameApplication::GameApplication()
 	{
 		ProjectManager::GetSingleton()->openLevel("game/assets/levels/" + levelName);
 	}
+
+	RenderingDevice::GetSingleton()->setBackBufferRenderTarget();
 }
 
 GameApplication::~GameApplication()
