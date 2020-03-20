@@ -7,23 +7,20 @@
 #include "systems/hierarchy_system.h"
 
 #include "components/debug_component.h"
+#include "components/hierarchy_component.h"
+#include "components/physics/sphere_component.h"
 #include "components/test_component.h"
 #include "components/transform_component.h"
-#include "components/hierarchy_component.h"
-#include "components/root_hierarchy_component.h"
-#include "components/visual/visual_component.h"
 #include "components/visual/diffuse_visual_component.h"
-#include "components/visual/point_light_component.h"
 #include "components/visual/directional_light_component.h"
+#include "components/visual/point_light_component.h"
 #include "components/visual/spot_light_component.h"
 #include "components/visual/text_visual_2d_component.h"
 #include "components/physics/sphere_component.h"
-#include "components/physics/sphere_component.h"
-#include "components/physics/sphere_component.h"
 
-#define REGISTER_COMPONENT(ComponentClass) \
-m_ComponentCreators.push_back({ ComponentClass::s_ID, #ComponentClass, ComponentClass::Create }); \
-m_DefaultComponentCreators.push_back({ ComponentClass::s_ID, #ComponentClass, ComponentClass::CreateDefault })
+#define REGISTER_COMPONENT(ComponentClass)                                                            \
+	m_ComponentCreators.push_back({ ComponentClass::s_ID, #ComponentClass, ComponentClass::Create }); \
+	m_DefaultComponentCreators.push_back({ ComponentClass::s_ID, #ComponentClass, ComponentClass::CreateDefault })
 
 EntityID EntityFactory::s_CurrentID = ROOT_ENTITY_ID;
 
@@ -51,7 +48,6 @@ EntityFactory::EntityFactory()
 	REGISTER_COMPONENT(SpotLightComponent);
 	REGISTER_COMPONENT(SphereComponent);
 	REGISTER_COMPONENT(HierarchyComponent);
-	REGISTER_COMPONENT(RootHierarchyComponent);
 }
 
 EntityFactory::~EntityFactory()
@@ -80,7 +76,7 @@ Ref<Component> EntityFactory::createComponent(const String& name, const JSON::js
 	}
 	else
 	{
-		ERR("Could not find componentDescription: " + name);
+		ERR("Could not find component creator: " + name);
 		return nullptr;
 	}
 }
@@ -106,7 +102,7 @@ Ref<Component> EntityFactory::createDefaultComponent(const String& name)
 	}
 	else
 	{
-		ERR("Could not find componentDescription: " + name);
+		ERR("Could not find default component creator: " + name);
 		return nullptr;
 	}
 }
@@ -136,7 +132,9 @@ Ref<Entity> EntityFactory::createEntity(TextResourceFile* entityJSONDescription)
 	{
 		newID = *findItID;
 		while (getNextID() <= *findItID)
+		{
 			;
+		}
 	}
 	else
 	{
@@ -179,35 +177,37 @@ Ref<Entity> EntityFactory::createRootEntity()
 {
 	Ref<Entity> root;
 	root.reset(new Entity(ROOT_ENTITY_ID, "Root"));
+
+	{
+		Ref<HierarchyComponent> rootComponent(new HierarchyComponent(INVALID_ID, {}));
+		EntityFactory::addComponent(root, rootComponent);
+		System::RegisterComponent(rootComponent.get());
+	}
+	{
+		Ref<Component> rootTransformComponent = createDefaultComponent("TransformComponent");
+		EntityFactory::addComponent(root, rootTransformComponent);
+		System::RegisterComponent(rootTransformComponent.get());
+	}
+	{
+		Ref<Component> rootVisualComponent = createDefaultComponent("VisualComponent");
+		EntityFactory::addComponent(root, rootVisualComponent);
+		System::RegisterComponent(rootVisualComponent.get());
+	}
+
 	m_Entities[root->m_ID] = root;
-	
-	Ref<RootHierarchyComponent> rootComponent(new RootHierarchyComponent(INVALID_ID, {}));
-
-	EntityFactory::addComponent(root, rootComponent);
-	EntityFactory::addComponent(root, rootComponent->m_StaticGroup);
-	EntityFactory::addComponent(root, rootComponent->m_GlobalGroup);
-	EntityFactory::addComponent(root, rootComponent->m_EntityGroup);
-	EntityFactory::addComponent(root, rootComponent->m_SkyGroup);
-	EntityFactory::addComponent(root, rootComponent->m_EditorGroup);
-	EntityFactory::addComponent(root, rootComponent->m_UIGroup);
-
-	System::RegisterComponent(rootComponent.get());
-
 	return root;
 }
 
 void EntityFactory::addDefaultComponent(Ref<Entity> entity, String componentName)
 {
-	Ref<Component> component = createDefaultComponent(componentName);
-	entity->addComponent(component);
-	component->setOwner(entity);
-	entity->setupComponents();
+	addComponent(entity, createDefaultComponent(componentName));
 }
 
 void EntityFactory::addComponent(Ref<Entity> entity, Ref<Component> component)
 {
 	entity->addComponent(component);
 	component->setOwner(entity);
+	entity->setupComponents();
 }
 
 void EntityFactory::destroyEntities(bool saveRoot)

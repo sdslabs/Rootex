@@ -3,11 +3,11 @@
 #include "systems/render_system.h"
 
 Visual2DComponent::Visual2DComponent()
-    : VisualComponent(RenderPass::UI, nullptr, nullptr)
+    : VisualComponent(RenderPassUI, nullptr, nullptr)
 {
 }
 
-bool Visual2DComponent::preRender(HierarchyGraph* graph)
+bool Visual2DComponent::preRender()
 {
 	if (m_Attributes.m_TransformComponent)
 	{
@@ -21,29 +21,29 @@ bool Visual2DComponent::preRender(HierarchyGraph* graph)
 	return true;
 }
 
-void Visual2DComponent::renderChildren(HierarchyGraph* graph)
+void Visual2DComponent::renderChildren(const unsigned int& renderPass)
 {
 	for (auto& child : m_Owner->getComponent<HierarchyComponent>()->getChildren())
 	{
-		Visual2DComponent* childVisualComponent = child->getComponent<Visual2DComponent>().get();
+		Visual2DComponent* childVisualComponent = child->getOwner()->getComponent<Visual2DComponent>().get();
 
 		if (childVisualComponent)
 		{
-			childVisualComponent->preRender(graph);
+			childVisualComponent->preRender();
 
-			if (childVisualComponent->isVisible(graph))
+			if (childVisualComponent->isVisible())
 			{
 				// Assumed to be opaque
-				childVisualComponent->render(graph);
+				childVisualComponent->render();
 			}
-			childVisualComponent->renderChildren(graph);
+			childVisualComponent->renderChildren(renderPass);
 
-			childVisualComponent->postRender(graph);
+			childVisualComponent->postRender();
 		}
 	}
 }
 
-void Visual2DComponent::postRender(HierarchyGraph* graph)
+void Visual2DComponent::postRender()
 {
 	RenderSystem::GetSingleton()->popUIMatrix();
 }

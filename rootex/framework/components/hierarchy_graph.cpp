@@ -5,7 +5,7 @@
 HierarchyGraph::HierarchyGraph()
 {
 	m_Root = EntityFactory::GetSingleton()->createRootEntity();
-	m_RootHierarchyComponent = m_Root->getComponent<RootHierarchyComponent>();
+	m_RootHierarchyComponent = m_Root->getComponent<HierarchyComponent>();
 }
 
 HierarchyGraph::~HierarchyGraph()
