@@ -43,6 +43,12 @@ void Editor::initialize(HWND hWnd, const JSON::json& projectJSON)
 		(float)general["colors"]["background"]["b"],
 		(float)general["colors"]["background"]["a"],
 	};
+	m_Colors.m_ItemBackground = {
+		(float)general["colors"]["itemBackground"]["r"],
+		(float)general["colors"]["itemBackground"]["g"],
+		(float)general["colors"]["itemBackground"]["b"],
+		(float)general["colors"]["itemBackground"]["a"],
+	};
 	m_Colors.m_Inactive = {
 		(float)general["colors"]["inactive"]["r"],
 		(float)general["colors"]["inactive"]["g"],
@@ -194,7 +200,7 @@ void Editor::drawDefaultUI()
 				if (ImGui::BeginMenu("Create Level"))
 				{
 					static String newLevelName;
-					ImGui::InputText("Level Name", &newLevelName);
+					ImGui::InputText("Level Name", &newLevelName, ImGuiInputTextFlags_AlwaysInsertMode);
 					ImGui::SameLine();
 					if (ImGui::Button("Create"))
 					{
@@ -338,7 +344,7 @@ void Editor::pushEditorStyleColors()
 	ImGui::PushStyleColor(ImGuiCol_SeparatorActive, m_Colors.m_Accent);
 	ImGui::PushStyleColor(ImGuiCol_SeparatorHovered, m_Colors.m_MediumAccent);
 	ImGui::PushStyleColor(ImGuiCol_BorderShadow, m_Colors.m_HeavyAccent);
-	ImGui::PushStyleColor(ImGuiCol_FrameBg, m_Colors.m_HeavyAccent);
+	ImGui::PushStyleColor(ImGuiCol_FrameBg, m_Colors.m_ItemBackground);
 	ImGui::PushStyleColor(ImGuiCol_FrameBgActive, m_Colors.m_MediumAccent);
 	ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, m_Colors.m_HeavyAccent);
 	ImGui::PushStyleColor(ImGuiCol_TitleBg, m_Colors.m_HeavyAccent);
