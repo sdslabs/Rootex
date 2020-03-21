@@ -345,11 +345,10 @@ void Editor::pushEditorStyleColors()
 	// Every line in this function body should push a style color
 	static const int starting = __LINE__;
 	ImGui::PushStyleColor(ImGuiCol_DockingPreview, m_Colors.m_Accent);
-	ImGui::PushStyleColor(ImGuiCol_DockingEmptyBg, m_Colors.m_MediumAccent);
+	ImGui::PushStyleColor(ImGuiCol_DockingEmptyBg, m_Colors.m_Background);
 	ImGui::PushStyleColor(ImGuiCol_Separator, m_Colors.m_HeavyAccent);
 	ImGui::PushStyleColor(ImGuiCol_SeparatorActive, m_Colors.m_Accent);
 	ImGui::PushStyleColor(ImGuiCol_SeparatorHovered, m_Colors.m_MediumAccent);
-	ImGui::PushStyleColor(ImGuiCol_BorderShadow, m_Colors.m_HeavyAccent);
 	ImGui::PushStyleColor(ImGuiCol_FrameBg, m_Colors.m_ItemBackground);
 	ImGui::PushStyleColor(ImGuiCol_FrameBgActive, m_Colors.m_MediumAccent);
 	ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, m_Colors.m_HeavyAccent);
@@ -366,7 +365,8 @@ void Editor::pushEditorStyleColors()
 	ImGui::PushStyleColor(ImGuiCol_TabHovered, m_Colors.m_Accent);
 	ImGui::PushStyleColor(ImGuiCol_TabUnfocused, m_Colors.m_MediumAccent);
 	ImGui::PushStyleColor(ImGuiCol_TabUnfocusedActive, m_Colors.m_Accent);
-	ImGui::PushStyleColor(ImGuiCol_Border, m_Colors.m_HeavyAccent);
+	ImGui::PushStyleColor(ImGuiCol_Border, m_Colors.m_MediumAccent);
+	ImGui::PushStyleColor(ImGuiCol_BorderShadow, m_Colors.m_HeavyAccent);
 	ImGui::PushStyleColor(ImGuiCol_Button, m_Colors.m_Success);
 	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, m_Colors.m_Accent);
 	ImGui::PushStyleColor(ImGuiCol_ButtonActive, m_Colors.m_Success);

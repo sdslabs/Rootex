@@ -74,8 +74,8 @@ void ScriptComponent::draw()
 		}
 
 		static String inputPath = "Path";
+		ImGui::Separator();
 		ImGui::InputText("##Path", &inputPath);
-		ImGui::SameLine();
 		ImGui::SameLine();
 		if (ImGui::Button("Create Script"))
 		{
