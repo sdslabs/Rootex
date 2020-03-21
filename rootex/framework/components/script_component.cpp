@@ -1,6 +1,7 @@
 #include "script_component.h"
 
 #include "resource_loader.h"
+#include "event_manager.h"
 #include "entity.h"
 
 Component* ScriptComponent::Create(const JSON::json& componentData)
@@ -62,7 +63,7 @@ JSON::json ScriptComponent::getJSON() const
 #include "imgui_stdlib.h"
 void ScriptComponent::draw()
 {
-	if (ImGui::BeginCombo("Script", m_ScriptFile->getPath().filename().string().c_str(), ImGuiComboFlags_HeightRegular))
+	if (ImGui::BeginCombo("##Script", m_ScriptFile->getPath().filename().string().c_str(), ImGuiComboFlags_HeightRegular))
 	{
 		for (auto&& file : ResourceLoader::GetFilesOfType(ResourceFile::Type::Lua))
 		{
@@ -88,6 +89,11 @@ void ScriptComponent::draw()
 			}
 		}
 		ImGui::EndCombo();
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Script"))
+	{
+		EventManager::GetSingleton()->call("OpenScript", "EditorOpenFile", m_ScriptFile->getPath());
 	}
 }
 #endif // ROOTEX_EDITOR
