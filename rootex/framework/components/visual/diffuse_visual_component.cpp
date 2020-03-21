@@ -82,19 +82,6 @@ JSON::json DiffuseVisualComponent::getJSON() const
 void DiffuseVisualComponent::draw()
 {
 	VisualComponent::draw();
-
-	if (ImGui::InputText("Visual Model", &m_ModelPathUI, ImGuiInputTextFlags_EnterReturnsTrue))
-	{
-		VisualModelResourceFile* model = ResourceLoader::CreateVisualModelResourceFile(m_ModelPathUI);
-		if (model)
-		{
-			m_Attributes.m_VisualModelResourceFile = model;
-		}
-		else
-		{
-			m_ModelPathUI = m_Attributes.m_VisualModelResourceFile->getPath().string();
-		}
-	}
 	
 	if (ImGui::InputText("Texture", &m_ImagePathUI, ImGuiInputTextFlags_EnterReturnsTrue))
 	{
