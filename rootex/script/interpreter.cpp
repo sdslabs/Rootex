@@ -3,7 +3,7 @@
 
 #include "common/common.h"
 #include "script/interpreter.h"
-#include "entity.h"
+#include "entity_factory.h"
 #include "components/transform_component.h"
 
 LuaInterpreter::LuaInterpreter()
@@ -129,6 +129,7 @@ void LuaInterpreter::registerTypes()
 	BindClass<ResourceLoader>();
 	
 	BindClass<Entity>();
+	BindClass<EntityFactory>();
 	
 	BindClass<Component>();
 	BindClass<TransformComponent>();
