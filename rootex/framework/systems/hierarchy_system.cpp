@@ -1,5 +1,17 @@
 #include "hierarchy_system.h"
 
+void HierarchySystem::BindFunctions()
+{
+	luabridge::getGlobalNamespace(LuaInterpreter::GetSingleton()->getLuaState())
+	    .beginNamespace("Rootex")
+
+		.beginClass<HierarchySystem>("HierarchySystem")
+	    .addStaticFunction("addChild", addChild)
+		.endClass()
+
+	    .endNamespace()
+}
+
 HierarchySystem* HierarchySystem::GetSingleton()
 {
 	static HierarchySystem singleton;
