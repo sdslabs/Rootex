@@ -2,10 +2,13 @@
 
 #include <iostream>
 #include <filesystem>
+#include <iostream>
 
 #include "common/common.h"
 #include "resource_data.h"
 
+std::filesystem::file_time_type::clock OS::s_FileSystemClock;
+const std::chrono::time_point<std::chrono::system_clock> OS::s_ApplicationStartTime = std::chrono::system_clock::now();
 FilePath OS::s_RootDirectory;
 FilePath OS::s_EngineDirectory;
 FilePath OS::s_GameDirectory;
@@ -15,6 +18,70 @@ FilePath OS::GetAbsolutePath(String stringPath)
 	FilePath absPath = s_RootDirectory / stringPath;
 
 	return absPath;
+}
+
+FilePath OS::GetRootRelativePath(String stringPath)
+{
+	return std::filesystem::relative(stringPath, s_RootDirectory);
+}
+
+FilePath OS::GetRelativePath(String stringPath, String base)
+{
+	return std::filesystem::relative(GetAbsolutePath(stringPath), GetAbsolutePath(base));
+}
+
+Vector<FilePath> OS::GetDirectoriesInDirectory(const String& directory)
+{
+	if (!std::filesystem::is_directory(GetAbsolutePath(directory)))
+	{
+		WARN("Not a directory: " + directory);
+		return {};
+	}
+
+	Vector<FilePath> result;
+	for (auto&& file : std::filesystem::directory_iterator(GetAbsolutePath(directory)))
+	{
+		if (file.is_directory())
+		{
+			result.push_back(GetRootRelativePath(((FilePath)file).generic_string()));
+		}
+	}
+	return result;
+}
+
+Vector<FilePath> OS::GetAllInDirectory(const String& directory)
+{
+	if (!std::filesystem::is_directory(GetAbsolutePath(directory)))
+	{
+		WARN("Not a directory: " + directory);
+		return {};
+	}
+
+	Vector<FilePath> result;
+	for (auto&& file : std::filesystem::directory_iterator(GetAbsolutePath(directory)))
+	{
+		result.push_back(GetRootRelativePath(((FilePath)file).generic_string()));
+	}
+	return result;
+}
+
+Vector<FilePath> OS::GetFilesInDirectory(const String& directory)
+{
+	if (!std::filesystem::is_directory(GetAbsolutePath(directory)))
+	{
+		WARN("Not a directory: " + directory);
+		return {};
+	}
+
+	Vector<FilePath> result;
+	for (auto&& file : std::filesystem::directory_iterator(GetAbsolutePath(directory)))
+	{
+		if (file.is_regular_file())
+		{
+			result.push_back(GetRootRelativePath(((FilePath)file).generic_string()));
+		}
+	}
+	return result;
 }
 
 bool OS::Initialize()
@@ -52,6 +119,122 @@ String OS::GetBuildDate()
 String OS::GetBuildTime()
 {
 	return String(__TIME__);
+}
+
+bool OS::IsDirectory(const String& path)
+{
+	return std::filesystem::is_directory(GetAbsolutePath(path));
+}
+
+bool OS::IsFile(const String& path)
+{
+	return std::filesystem::is_regular_file(GetAbsolutePath(path));
+}
+
+void OS::OpenFileInSystemEditor(const String& filePath)
+{
+	const String& absolutePath = GetAbsolutePath(filePath).string();
+	HINSTANCE error = 0;
+	SHELLEXECUTEINFO cmdInfo;
+	ZeroMemory(&cmdInfo, sizeof(cmdInfo));
+	cmdInfo.cbSize = sizeof(cmdInfo);
+	cmdInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
+	cmdInfo.hwnd = GetActiveWindow();
+	cmdInfo.lpVerb = "open";
+	cmdInfo.lpFile = absolutePath.c_str();
+	cmdInfo.nShow = SW_SHOW;
+	cmdInfo.hInstApp = error;
+
+	ShellExecuteEx(&cmdInfo);
+
+	switch ((int)error)
+	{
+	case SE_ERR_FNF:
+		ERR("File not found: " + filePath);
+		break;
+	case SE_ERR_ASSOCINCOMPLETE:
+	case SE_ERR_NOASSOC:
+		ERR("File association not found on system: " + filePath);
+		break;
+	}
+}
+
+void OS::OpenFileInExplorer(const String& filePath)
+{
+	if (!Exists(filePath))
+	{
+		WARN("File not found: " + filePath);
+		return;
+	}
+
+	const String& absolutePath = GetAbsolutePath(filePath).parent_path().string();
+	HINSTANCE error = 0;
+	SHELLEXECUTEINFO cmdInfo;
+	ZeroMemory(&cmdInfo, sizeof(cmdInfo));
+	cmdInfo.cbSize = sizeof(cmdInfo);
+	cmdInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
+	cmdInfo.hwnd = GetActiveWindow();
+	cmdInfo.lpVerb = "explore";
+	cmdInfo.lpFile = absolutePath.c_str();
+	cmdInfo.nShow = SW_SHOW;
+	cmdInfo.hInstApp = error;
+
+	ShellExecuteEx(&cmdInfo);
+
+	switch ((int)error)
+	{
+	case SE_ERR_FNF:
+		ERR("File not found: " + filePath);
+		break;
+	case SE_ERR_ASSOCINCOMPLETE:
+	case SE_ERR_NOASSOC:
+		ERR("File association not found on system: " + filePath);
+		break;
+	}
+}
+
+void OS::EditFileInSystemEditor(const String& filePath)
+{
+	const String& absolutePath = GetAbsolutePath(filePath).string();
+	HINSTANCE error = 0;
+	SHELLEXECUTEINFO cmdInfo;
+	ZeroMemory(&cmdInfo, sizeof(cmdInfo));
+	cmdInfo.cbSize = sizeof(cmdInfo);
+	cmdInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
+	cmdInfo.hwnd = GetActiveWindow();
+	cmdInfo.lpVerb = "edit";
+	cmdInfo.lpFile = absolutePath.c_str();
+	cmdInfo.nShow = SW_SHOW;
+	cmdInfo.hInstApp = error;
+
+	ShellExecuteEx(&cmdInfo);
+
+	switch ((int)error)
+	{
+	case SE_ERR_FNF:
+		ERR("File not found: " + filePath);
+		break;
+	case SE_ERR_ASSOCINCOMPLETE:
+	case SE_ERR_NOASSOC:
+		ERR("File association not found on system: " + filePath);
+		break;
+	}
+}
+
+FileTimePoint OS::GetFileLastChangedTime(const String& filePath)
+{
+	FileTimePoint result = FileTimePoint::clock::now();
+
+	try
+	{
+		result = std::filesystem::last_write_time(GetAbsolutePath(filePath));
+	}
+	catch (std::exception e)
+	{
+		ERR("Cannot find last changed time for " + filePath + ": " + String(e.what()));
+	}
+
+	return result;
 }
 
 FileBuffer OS::LoadFileContents(String stringPath)
@@ -118,17 +301,13 @@ void OS::PrintLine(const String& msg)
 
 void OS::PrintWarning(const String& warning)
 {
-	std::cout << "\033[93m";
-	Print(warning);
-	std::cout << "\033[0m" << std::endl;
+	Print("WARNING: " + warning);
 }
 
 void OS::PrintError(const String& error)
 {
 	std::cout.clear();
-	std::cout << "\033[91m";
-	Print(error);
-	std::cout << "\033[0m" << std::endl;
+	Print("ERROR: " + error);
 	PostError(error, "Fatal Error");
 }
 
@@ -159,7 +338,7 @@ bool OS::SaveFile(const FilePath& filePath, ResourceData* fileData)
 		ERR(std::string("OS: File IO error: ") + std::string(e.what()));
 		return false;
 	}
-	
+
 	outFile.close();
 	return true;
 }

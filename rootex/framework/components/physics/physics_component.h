@@ -48,7 +48,7 @@ public:
 	Ref<btCollisionShape> m_CollisionShape;
 	btRigidBody* m_Body;
 
-	TransformComponent* m_TransformComponent;
+	Ref<TransformComponent> m_TransformComponent;
 	bool setup() override;
 
 	Matrix transform;
@@ -73,4 +73,6 @@ public:
 	void setTransform(const Matrix& mat);
 	//   Returns the current transform of the phyics object
 	Matrix getTransform();
+
+	virtual String getName() const override { return "PhysicsComponent"; };
 };

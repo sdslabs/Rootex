@@ -95,6 +95,7 @@ target_link_libraries(Rootex PUBLIC
     ImGUI
     Gainput
     Bullet3D
+    Shell32.lib
     d3d11.lib
     xinput.lib
     D3DCompiler.lib

@@ -20,6 +20,8 @@ public:
 	Texture& operator=(Texture&) = delete;
 	~Texture();
 
+	void reload();
+
 	ID3D11ShaderResourceView* getTextureResourceView() const { return m_TextureView.Get(); }
 	ID3D11Texture2D* getD3D11Texture2D() const { return m_Texture.Get(); }
 	unsigned int getWidth() const { return m_Width; }

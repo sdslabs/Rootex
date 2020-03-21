@@ -5,8 +5,11 @@
 #include "core/resource_file.h"
 #include "os/os.h"
 
+#include "vendor/OBJLoader/Source/OBJ_Loader.h"
+
 class ResourceLoader
 {
+	static objl::Loader s_ModelLoader;
 	static HashMap<Ptr<ResourceData>, Ptr<ResourceFile>> s_ResourcesDataFiles;
 
 public:
@@ -17,4 +20,7 @@ public:
 	static ImageResourceFile* CreateImageResourceFile(String path);
 
 	static void SaveResourceFile(TextResourceFile*& resourceFile);
+	static void ReloadResourceData(const String& path);
+
+	static objl::Loader& GetModelLoader() { return s_ModelLoader; }
 };

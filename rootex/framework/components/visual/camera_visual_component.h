@@ -19,11 +19,11 @@ public:
 	CameraVisualComponent(CameraVisualComponent&) = delete;
 	~CameraVisualComponent();
 
-	virtual bool preRender(VisualComponentGraph* visualComponentGraph) override;
-	virtual void render(VisualComponentGraph* visualComponentGraph) override;
-	virtual bool reset(VisualComponentGraph* visualComponentGraph, int windowWidth, int windowHeight);
-	virtual bool isVisible(VisualComponentGraph* visualComponentGraph) const override;
-	virtual void postRender(VisualComponentGraph* visualComponentGraph) override;
+	virtual bool preRender(HierarchyGraph* visualComponentGraph) override;
+	virtual void render(HierarchyGraph* visualComponentGraph) override;
+	virtual bool reset(HierarchyGraph* visualComponentGraph, int windowWidth, int windowHeight);
+	virtual bool isVisible(HierarchyGraph* visualComponentGraph) const override;
+	virtual void postRender(HierarchyGraph* visualComponentGraph) override;
 
 	virtual void setViewTransform(const Matrix& view);
 	void setPosition(Vector3 position);
@@ -33,4 +33,5 @@ public:
 	virtual const Matrix& getView() const { return m_ViewMatrix; }
 	virtual const Matrix& getProjection() const { return m_ProjectionMatrix; }
 	void setOffset(const Vector4& offset) { m_CameraOffset = offset; }
+	virtual String getName() const override { return "CameraVisualComponent"; }
 };

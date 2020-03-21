@@ -14,6 +14,17 @@ Component* DirectionalLightComponent::Create(const LuaVariable& componentData)
 	return directionalLightComponent;
 }
 
+Component* DirectionalLightComponent::CreateDefault()
+{
+	DirectionalLightComponent* directionalLightComponent = new DirectionalLightComponent(
+	    Vector3(0.5f, 0.5f, 0.5f),
+	    0.8f,
+	    Color(0.3f, 0.1f, 0.4f, 1.0f),
+	    Color(0.05f, 0.05f, 0.05f, 1.0f));
+
+	return directionalLightComponent;
+}
+
 DirectionalLightComponent::DirectionalLightComponent(const Vector3& direction, const float diffuseIntensity, 
 	const Color& diffuseColor, const Color& ambientColor)
     : m_direction(direction)

@@ -21,6 +21,8 @@ public:
 protected:
 	Type m_Type;
 	ResourceData* m_ResourceData;
+	FileTimePoint m_LastReadTime;
+	FileTimePoint m_LastChangedTime;
 
 	explicit ResourceFile(const Type& type, ResourceData* resData);
 
@@ -32,11 +34,16 @@ public:
 	explicit ResourceFile(ResourceFile&&) = delete;
 
 	bool isValid();
+	bool isDirty();
 	bool isOpen();
 
-	FilePath getPath();
-	Type getType();
+	virtual void reload() = 0;
+
+	FilePath getPath() const;
+	Type getType() const;
 	ResourceData* getData();
+	const FileTimePoint& getLastReadTime() const { return m_LastReadTime; }
+	const FileTimePoint& getLastChangedTime();
 };
 
 class TextResourceFile : public ResourceFile
@@ -50,6 +57,8 @@ protected:
 public:
 	explicit TextResourceFile(TextResourceFile&) = delete;
 	explicit TextResourceFile(TextResourceFile&&) = delete;
+
+	virtual void reload() override;
 
 	void popBack();
 	void append(const String& add);
@@ -77,6 +86,7 @@ class AudioResourceFile : public ResourceFile
 	float m_Frequency;
 	int m_BitDepth;
 	int m_Channels;
+	float m_Duration;
 
 	const char* m_DecompressedAudioBuffer;
 	ALsizei m_AudioDataSize;
@@ -90,11 +100,14 @@ public:
 	explicit AudioResourceFile(AudioResourceFile&) = delete;
 	explicit AudioResourceFile(AudioResourceFile&&) = delete;
 
+	virtual void reload() override;
+
 	ALsizei getAudioDataSize() const { return m_AudioDataSize; }
 	ALenum getFormat() const { return m_Format; }
 	float getFrequency() const { return m_Frequency; }
 	int getBitDepth() const { return m_BitDepth; }
 	int getChannels() const { return m_Channels; }
+	float getDuration() const { return m_Duration; }
 };
 
 class VisualModelResourceFile : public ResourceFile
@@ -111,6 +124,8 @@ public:
 	explicit VisualModelResourceFile(VisualModelResourceFile&) = delete;
 	explicit VisualModelResourceFile(VisualModelResourceFile&&) = delete;
 
+	virtual void reload() override;
+
 	const VertexBuffer* getVertexBuffer() const { return m_VertexBuffer.get(); }
 	const IndexBuffer* getIndexBuffer() const { return m_IndexBuffer.get(); }
 };
@@ -125,4 +140,6 @@ class ImageResourceFile : public ResourceFile
 public:
 	explicit ImageResourceFile(ImageResourceFile&) = delete;
 	explicit ImageResourceFile(ImageResourceFile&&) = delete;
+
+	virtual void reload() override;
 };

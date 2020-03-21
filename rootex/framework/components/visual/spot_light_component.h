@@ -4,6 +4,7 @@
 class SpotLightComponent : public Component
 {
 	static Component* Create(const LuaVariable& componentData);
+	static Component* CreateDefault();
 
 	friend class EntityFactory;
 
@@ -20,6 +21,7 @@ public:
 	float m_spot;
 	float m_angleRange;
 	
+	virtual String getName() const override { return "SpotLightComponent"; }
 	ComponentID getComponentID() const override { return s_ID; }
 
 	SpotLightComponent::SpotLightComponent(const float constAtt, const float linAtt, const float quadAtt,

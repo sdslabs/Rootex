@@ -12,7 +12,7 @@
 #include "components/transform_component.h"
 #include "components/hierarchy_component.h"
 
-class VisualComponentGraph;
+class HierarchyGraph;
 
 enum class RenderPass
 {
@@ -52,6 +52,8 @@ public:
 class VisualComponent : public Component
 {
 	static Component* Create(const LuaVariable& componentData);
+	static Component* CreateDefault();
+
 	Color m_Color;
 	void setColor(const Color& color) { m_Color = color; };
 
@@ -72,11 +74,11 @@ public:
 
 	bool setup() override;
 
-	virtual bool preRender(VisualComponentGraph* graph);
-	virtual bool isVisible(VisualComponentGraph* graph) const;
-	virtual void render(VisualComponentGraph* graph);
-	virtual void renderChildren(VisualComponentGraph* graph);
-	virtual void postRender(VisualComponentGraph* graph);
+	virtual bool preRender(HierarchyGraph* graph);
+	virtual bool isVisible(HierarchyGraph* graph) const;
+	virtual void render(HierarchyGraph* graph);
+	virtual void renderChildren(HierarchyGraph* graph);
+	virtual void postRender(HierarchyGraph* graph);
 
 	void addTransform(const Matrix& applyTransform);
 
@@ -87,5 +89,6 @@ public:
 
 	Vector3 getPosition() const;
 
+	virtual String getName() const override { return "VisualComponent"; }
 	ComponentID getComponentID() const override { return s_ID; }
 };

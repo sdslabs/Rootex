@@ -16,11 +16,13 @@ public:
 	RootHierarchyComponent();
 	~RootHierarchyComponent();
 
-	bool isVisible(VisualComponentGraph* graph);
-	bool preRender(VisualComponentGraph* graph);
-	void renderPassRender(HierarchyComponent& renderPassGraph, VisualComponentGraph* graph);
-	void renderChildren(VisualComponentGraph* graph);
-	void postRender(VisualComponentGraph* graph);
+	bool isVisible(HierarchyGraph* graph);
+	bool preRender(HierarchyGraph* graph);
+	void renderPassRender(HierarchyComponent& renderPassGraph, HierarchyGraph* graph);
+	void renderChildren(HierarchyGraph* graph);
+	void postRender(HierarchyGraph* graph);
 	
 	virtual bool addChild(Ref<Entity> child) override;
+
+	virtual String getName() const override { return "RootHierarchyComponent"; }
 };

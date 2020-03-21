@@ -22,3 +22,21 @@ Texture::Texture(ImageResourceFile* imageFile)
 Texture::~Texture()
 {
 }
+
+void Texture::reload()
+{
+	m_TextureView.Reset();
+	m_ImageFile->reload();
+	m_TextureView = RenderingDevice::GetSingleton()->createTexture(m_ImageFile);
+
+	Microsoft::WRL::ComPtr<ID3D11Resource> res;
+	m_TextureView->GetResource(&res);
+	res->QueryInterface<ID3D11Texture2D>(&m_Texture);
+
+	CD3D11_TEXTURE2D_DESC textureDesc;
+	m_Texture->GetDesc(&textureDesc);
+
+	m_Width = textureDesc.Width;
+	m_Height = textureDesc.Height;
+	m_MipLevels = textureDesc.MipLevels;
+}

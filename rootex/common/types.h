@@ -22,6 +22,12 @@ using Map = std::map<P, Q>;
 template <class P, class Q>
 using HashMap = std::unordered_map<P, Q>;
 
+#include <utility>
+template <typename...P>
+using Tuple = std::tuple<P...>;
+template <class P, class Q>
+using Pair = std::pair<P, Q>;
+
 #include <vector>
 template <class T>
 using Vector = std::vector<T>;
@@ -44,7 +50,8 @@ namespace ColorPresets = DirectX::Colors;
 
 #include <variant>
 typedef Vector<std::variant<bool, int, char, float, String, Vector2, Vector3, Vector4, Matrix>> VariantVector;
-using Variant = std::variant<bool, int, char, float, String, Vector2, Vector3, Vector4, Matrix, VariantVector>;
+class Entity;
+using Variant = std::variant<bool, int, char, float, String, Vector2, Vector3, Vector4, Matrix, VariantVector, Ref<Entity>, FilePath>;
 #define Extract(TypeName, variant) std::get<TypeName>((variant))
 
 #include <functional>

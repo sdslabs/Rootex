@@ -83,7 +83,7 @@ void PhysicsSystem::syncVisibleScene()
 		PhysicsComponent* const component = static_cast<PhysicsComponent*>(physicsComponent);
 		if (component)
 		{
-			TransformComponent* ptc = component->m_TransformComponent;
+			Ref<TransformComponent> ptc = component->m_TransformComponent;
 			if (ptc)
 			{
 				if (ptc->getAbsoluteTransform() != component->m_MotionState.m_WorldToPositionTransform)

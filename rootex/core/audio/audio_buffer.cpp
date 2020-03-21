@@ -10,7 +10,7 @@ AudioBuffer::~AudioBuffer()
 {
 }
 
-ResourceFile* AudioBuffer::getAudioFile()
+AudioResourceFile* AudioBuffer::getAudioFile()
 {
 	return m_AudioFile;
 }

@@ -5,7 +5,14 @@
 
 class EditorApplication : public Application
 {
+	static EditorApplication* s_Instance;
+	static void SetSingleton(EditorApplication* app);
+
+	FrameTimer m_FrameTimer;
+
 public:
+	static EditorApplication* GetSingleton();
+
 	EditorApplication();
 	EditorApplication(EditorApplication&) = delete;
 	~EditorApplication();
@@ -14,4 +21,5 @@ public:
 	virtual void shutDown() override;
 
 	virtual String getAppTitle() const override { return "Rootex Editor"; }
+	const FrameTimer& getAppFrameTimer() const { return m_FrameTimer; }
 };

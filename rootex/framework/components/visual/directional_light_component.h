@@ -4,6 +4,7 @@
 class DirectionalLightComponent : public Component
 {
 	static Component* Create(const LuaVariable& componentData);
+	static Component* CreateDefault();
 
 	friend class EntityFactory;
 
@@ -15,6 +16,7 @@ public:
 	Color m_diffuseColor;
 	Color m_ambientColor;
 	
+	virtual String getName() const override { return "DirectionalLightComponent"; }
 	ComponentID getComponentID() const override { return s_ID; }
 
 	DirectionalLightComponent(const Vector3& direction, const float diffuseIntensity,

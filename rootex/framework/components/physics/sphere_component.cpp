@@ -15,3 +15,9 @@ Component* SphereComponent::Create(const LuaVariable& sphereComponentData)
 	SphereComponent* component = new SphereComponent(sphereComponentData["m_Radius"], sphereComponentData["matName"]);
 	return component;
 }
+
+Component* SphereComponent::CreateDefault()
+{
+	SphereComponent* component = new SphereComponent(1.0f, "Air");
+	return component;
+}

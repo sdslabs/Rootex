@@ -3,16 +3,11 @@
 #include "core/renderer/rendering_device.h"
 #include "core/resource_loader.h"
 
-#include "framework/components/visual/visual_component_graph.h"
 #include "framework/components/hierarchy_component.h"
 #include "framework/systems/render_system.h"
 
 void Editor::initialize(HWND hWnd)
 {
-	BIND_EVENT_MEMBER_FUNCTION("EditorQuit", Editor::quit);
-
-	LuaInterpreter::GetSingleton()->loadExecuteScript(ResourceLoader::CreateLuaTextResourceFile("editor/config/editor_config.lua"));
-
 	LuaVariable general = LuaInterpreter::GetSingleton()->getGlobal("general");
 
 	m_Colors.m_Accent = {
@@ -39,21 +34,38 @@ void Editor::initialize(HWND hWnd)
 		(float)general["colors"]["inactive"]["b"],
 		(float)general["colors"]["inactive"]["a"],
 	};
+	m_Colors.m_Success = {
+		(float)general["colors"]["success"]["r"],
+		(float)general["colors"]["success"]["g"],
+		(float)general["colors"]["success"]["b"],
+		(float)general["colors"]["success"]["a"],
+	};
+	m_Colors.m_Failure = {
+		(float)general["colors"]["failure"]["r"],
+		(float)general["colors"]["failure"]["g"],
+		(float)general["colors"]["failure"]["b"],
+		(float)general["colors"]["failure"]["a"],
+	};
+	m_Colors.m_FailAccent = {
+		(float)general["colors"]["failAccent"]["r"],
+		(float)general["colors"]["failAccent"]["g"],
+		(float)general["colors"]["failAccent"]["b"],
+		(float)general["colors"]["failAccent"]["a"],
+	};
+	m_Colors.m_Warning = {
+		(float)general["colors"]["warning"]["r"],
+		(float)general["colors"]["warning"]["g"],
+		(float)general["colors"]["warning"]["b"],
+		(float)general["colors"]["warning"]["a"],
+	};
 
-	LuaVariable viewport = LuaInterpreter::GetSingleton()->getGlobal("viewport");
-	m_ViewportSettings.m_AspectRatio = (float)LuaInterpreter::GetSingleton()->getGlobal("viewport")["aspectRatio"];
-	m_ViewportSettings.m_ImageTint = {
-		(float)viewport["imageTint"]["r"],
-		(float)viewport["imageTint"]["g"],
-		(float)viewport["imageTint"]["b"],
-		(float)viewport["imageTint"]["a"],
-	};
-	m_ViewportSettings.m_ImageBorderColor = {
-		(float)viewport["borderColor"]["r"],
-		(float)viewport["borderColor"]["g"],
-		(float)viewport["borderColor"]["b"],
-		(float)viewport["borderColor"]["a"],
-	};
+	m_FileSystem.reset(new FileSystemDock());
+	m_Hierarchy.reset(new HierarchyDock());
+	m_Output.reset(new OutputDock());
+	m_Toolbar.reset(new ToolbarDock());
+	m_Viewport.reset(new ViewportDock(LuaInterpreter::GetSingleton()->getGlobal("viewport")));
+	m_Inspector.reset(new InspectorDock());
+	m_FileViewer.reset(new FileViewer());
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -72,8 +84,14 @@ void Editor::render()
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
-	applyDefaultUI();
-	applyDocks();
+	drawDefaultUI();
+	m_FileSystem->draw();
+	m_Hierarchy->draw();
+	m_Output->draw();
+	m_Toolbar->draw();
+	m_Viewport->draw();
+	m_Inspector->draw();
+	m_FileViewer->draw();
 
 	ImGui::PopStyleColor(m_EditorStyleColorPushCount);
 	ImGui::PopStyleVar(m_EditorStyleVarPushCount);
@@ -85,15 +103,9 @@ void Editor::render()
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }
 
-Variant Editor::quit(const Event* event)
+void Editor::quit()
 {
-	for (auto&& arg : Extract(VariantVector, event->getData()))
-	{
-		OS::Print(Extract(String, arg));
-	}
 	PostQuitMessage(0);
-
-	return String("Rootex Editor is quitting");
 }
 
 Editor::~Editor()
@@ -103,7 +115,7 @@ Editor::~Editor()
 	ImGui::DestroyContext();
 }
 
-void Editor::applyDefaultUI()
+void Editor::drawDefaultUI()
 {
 	static bool optFullscreenPersistant = true;
 	bool optFullscreen = optFullscreenPersistant;
@@ -118,7 +130,7 @@ void Editor::applyDefaultUI()
 		ImGui::SetNextWindowViewport(viewport->ID);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 2.0f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-
+		
 		pushEditorStyleColors();
 		pushEditorStyleVars();
 
@@ -131,11 +143,6 @@ void Editor::applyDefaultUI()
 
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 
-	applyMainMenu(windowFlags, optFullscreen, dockspaceFlags);
-}
-
-void Editor::applyMainMenu(const ImGuiWindowFlags& windowFlags, bool optFullscreen, const ImGuiDockNodeFlags& dockspaceFlags)
-{
 	ImGui::Begin("Rootex Editor", nullptr, windowFlags);
 	{
 		ImGui::PopStyleVar();
@@ -153,16 +160,9 @@ void Editor::applyMainMenu(const ImGuiWindowFlags& windowFlags, bool optFullscre
 			static String menuAction = "";
 			if (ImGui::BeginMenu("File"))
 			{
-				if (ImGui::MenuItem("New Lua File", ""))
-				{
-				}
-				ImGui::MenuItem("Save");
-				ImGui::MenuItem("Save All", "");
-				ImGui::Separator();
 				if (ImGui::MenuItem("Quit", ""))
 				{
-					Variant v = EventManager::GetSingleton()->returnCall("EditorQuitEvent", "EditorQuit", VariantVector({ String("SDSLabs"), String("IITR") }));
-					OS::Print(Extract(String, v));
+					quit();
 				}
 				ImGui::EndMenu();
 			}
@@ -170,11 +170,20 @@ void Editor::applyMainMenu(const ImGuiWindowFlags& windowFlags, bool optFullscre
 			{
 				if (ImGui::BeginMenu("Windows"))
 				{
-					ImGui::Checkbox("Toolbar", &m_ToolbarSettings.m_IsActive);
-					ImGui::Checkbox("Output", &m_OutputSettings.m_IsActive);
-					ImGui::Checkbox("Hierarchy", &m_HierarchySettings.m_IsActive);
-					ImGui::Checkbox("Viewport", &m_ViewportSettings.m_IsActive);
-					ImGui::Checkbox("File System", &m_FileSystemSettings.m_IsActive);
+					ImGui::Checkbox("Toolbar", &m_Toolbar->getSettings().m_IsActive);
+					ImGui::Checkbox("Output", &m_Output->getSettings().m_IsActive);
+					ImGui::Checkbox("Hierarchy", &m_Hierarchy->getSettings().m_IsActive);
+					ImGui::Checkbox("Viewport", &m_Viewport->getSettings().m_IsActive);
+					ImGui::Checkbox("File System", &m_FileSystem->getSettings().m_IsActive);
+					ImGui::Checkbox("Inspector", &m_Inspector->getSettings().m_IsActive);
+					ImGui::EndMenu();
+				}
+				ImGui::EndMenu();
+			}
+			if (ImGui::BeginMenu("Editor"))
+			{
+				if (ImGui::BeginMenu("Settings"))
+				{
 					ImGui::EndMenu();
 				}
 				ImGui::EndMenu();
@@ -271,90 +280,6 @@ void Editor::applyMainMenu(const ImGuiWindowFlags& windowFlags, bool optFullscre
 	ImGui::End();
 }
 
-void Editor::applyDocks()
-{
-	if (m_FileSystemSettings.m_IsActive)
-		applyFileSystemDock();
-	if (m_ToolbarSettings.m_IsActive)
-		applyToolbarDock();
-	if (m_HierarchySettings.m_IsActive)
-		applyHierarchyDock();
-	if (m_InspectorSettings.m_IsActive)
-		applyInspectorDock();
-	if (m_OutputSettings.m_IsActive)
-		applyOutputDock();
-	if (m_ViewportSettings.m_IsActive)
-		applyViewportDock();
-}
-
-void Editor::applyFileSystemDock()
-{
-	if (ImGui::Begin("File System"))
-	{
-	}
-	ImGui::End();
-}
-
-void Editor::applyInspectorDock()
-{
-	if (ImGui::Begin("Inspector"))
-	{
-	}
-	ImGui::End();
-}
-
-void Editor::applyOutputDock()
-{
-	if (ImGui::Begin("Output"))
-	{
-		for (auto&& log : m_Logs)
-		{
-			ImGui::Text(log.c_str());
-		}
-	}
-	ImGui::End();
-}
-
-void Editor::applyViewportDock()
-{
-	ImGui::SetNextWindowBgAlpha(1.0f);
-	if (ImGui::Begin("Viewport"))
-	{
-		ImVec2 region = ImGui::GetContentRegionAvail();
-		if (region.x / region.y != m_ViewportSettings.m_AspectRatio)
-		{
-			region.y = region.x / m_ViewportSettings.m_AspectRatio;
-		}
-
-		m_ViewportSettings.m_ImageSize = region;
-
-		ImGui::Image(
-		    RenderingDevice::GetSingleton()->getRenderTextureShaderResourceView(),
-		    m_ViewportSettings.m_ImageSize,
-		    { 0, 0 },
-		    { 1, 1 },
-		    m_ViewportSettings.m_ImageTint,
-		    m_ViewportSettings.m_ImageBorderColor);
-	}
-	ImGui::End();
-}
-
-void Editor::applyToolbarDock()
-{
-	if (ImGui::Begin("Toolbar"))
-	{
-	}
-	ImGui::End();
-}
-
-void Editor::applyHierarchyDock()
-{
-	if (ImGui::Begin("Hierarchy"))
-	{
-	}
-	ImGui::End();
-}
-
 void Editor::pushEditorStyleColors()
 {
 	m_EditorStyleColorPushCount = 0;
@@ -387,7 +312,7 @@ void Editor::pushEditorStyleColors()
 	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_Header, m_Colors.m_HeavyAccent);
 	m_EditorStyleColorPushCount++;
-	ImGui::PushStyleColor(ImGuiCol_HeaderActive, m_Colors.m_MediumAccent);
+	ImGui::PushStyleColor(ImGuiCol_HeaderActive, m_Colors.m_Success);
 	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_HeaderHovered, m_Colors.m_Accent);
 	m_EditorStyleColorPushCount++;
@@ -405,17 +330,17 @@ void Editor::pushEditorStyleColors()
 	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_Border, m_Colors.m_HeavyAccent);
 	m_EditorStyleColorPushCount++;
-	ImGui::PushStyleColor(ImGuiCol_Button, m_Colors.m_Accent);
-	m_EditorStyleColorPushCount++;
-	ImGui::PushStyleColor(ImGuiCol_Button, m_Colors.m_Accent);
-	m_EditorStyleColorPushCount++;
-	ImGui::PushStyleColor(ImGuiCol_ButtonActive, m_Colors.m_Accent);
+	ImGui::PushStyleColor(ImGuiCol_Button, m_Colors.m_Success);
 	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, m_Colors.m_Accent);
 	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, m_Colors.m_Success);
+	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_CheckMark, m_Colors.m_Accent);
 	m_EditorStyleColorPushCount++;
-	ImGui::PushStyleColor(ImGuiCol_TextSelectedBg, m_Colors.m_MediumAccent);
+	ImGui::PushStyleColor(ImGuiCol_TextSelectedBg, m_Colors.m_Accent);
+	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_TextDisabled, m_Colors.m_Inactive);
 	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_ResizeGrip, m_Colors.m_HeavyAccent);
 	m_EditorStyleColorPushCount++;
@@ -447,9 +372,4 @@ Editor* Editor::GetSingleton()
 {
 	static Editor singleton;
 	return &singleton;
-}
-
-void Editor::logToOutput(const String& log)
-{
-	m_Logs.emplace_back(log);
 }
