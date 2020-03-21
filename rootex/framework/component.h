@@ -16,6 +16,7 @@ protected:
 	
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::Component;
+	static void bindFunctions();
 
 	Component();
 	virtual ~Component();
@@ -24,6 +25,7 @@ public:
 	virtual void onRemove();
 
 	Ref<Entity> getOwner() const;
+	Entity* getOwnerPointer() const;
 	virtual ComponentID getComponentID() const = 0;
 	virtual String getName() const = 0;
 	virtual JSON::json getJSON() const;
