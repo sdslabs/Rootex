@@ -41,7 +41,7 @@ class TransformComponent : public Component
 
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::TransformComponent;
-	static void bindFunctions();
+	static void BindFunctions();
 
 	virtual ~TransformComponent() = default;
 

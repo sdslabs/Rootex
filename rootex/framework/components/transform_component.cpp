@@ -3,6 +3,8 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
+#include "entity.h"
+
 Component* TransformComponent::Create(const JSON::json& componentData)
 {
 	TransformComponent* transformComponent = new TransformComponent(
@@ -47,21 +49,22 @@ TransformComponent::TransformComponent(const Vector3& position, const Vector4& r
 #endif // ROOTEX_EDITOR
 }
 
-void TransformComponent::bindFunctions()
+void TransformComponent::BindFunctions()
 {
 	luabridge::getGlobalNamespace(LuaInterpreter::GetSingleton()->getLuaState())
 	    .beginNamespace("Rootex")
-	    .beginClass<TransformComponent>("TransformComponent")
-	    .addStaticData("ID", (unsigned int*)&TransformComponent::s_ID, false)
-	    .addFunction("setPosition", &setPosition)
-	    .addFunction("setRotation", &setRotation)
-	    .addFunction("setScale", &setScale)
-	    .addFunction("setTransform", &setTransform)
+	    .beginClass<Entity>("Entity")
+	    .addFunction("getTransform", 
+			Function<TransformComponent*(const Entity*)>(
+	            [](const Entity* e) { return e->getComponent<TransformComponent>().get(); }))
+		.endClass()
+		.deriveClass<TransformComponent, Component>("TransformComponent")
 	    .addFunction("getPosition", &getPosition)
+	    .addFunction("setPosition", &setPosition)
 	    .addFunction("getRotation", &getRotation)
+	    .addFunction("setRotation", &setRotation)
 	    .addFunction("getScale", &getScale)
-	    .addFunction("getName", &getName)
-	    .addFunction("getComponentID", &getComponentID)
+	    .addFunction("setScale", &setScale)
 	    .endClass()
 	    .endNamespace();
 }

@@ -5,7 +5,7 @@
 #include "framework/components/hierarchy_component.h"
 #include "framework/system.h"
 
-void Entity::bindFunctions()
+void Entity::BindFunctions()
 {
 	luabridge::getGlobalNamespace(LuaInterpreter::GetSingleton()->getLuaState())
 	    .beginNamespace("Rootex")

@@ -31,6 +31,8 @@ protected:
 	friend class ResourceLoader;
 
 public:
+	static void BindFunctions();
+
 	virtual ~ResourceFile();
 	explicit ResourceFile(ResourceFile&) = delete;
 	explicit ResourceFile(ResourceFile&&) = delete;
@@ -57,6 +59,8 @@ protected:
 	friend class ResourceLoader;
 
 public:
+	static void BindFunctions();
+	
 	explicit TextResourceFile(TextResourceFile&) = delete;
 	explicit TextResourceFile(TextResourceFile&&) = delete;
 
@@ -75,6 +79,8 @@ class LuaTextResourceFile : public TextResourceFile
 	friend class ResourceLoader;
 
 public:
+	static void BindFunctions();
+
 	explicit LuaTextResourceFile(TextResourceFile&) = delete;
 	explicit LuaTextResourceFile(TextResourceFile&&) = delete;
 };
@@ -99,6 +105,8 @@ class AudioResourceFile : public ResourceFile
 	friend class ResourceLoader;
 
 public:
+	static void BindFunctions();
+
 	explicit AudioResourceFile(AudioResourceFile&) = delete;
 	explicit AudioResourceFile(AudioResourceFile&&) = delete;
 
@@ -123,6 +131,8 @@ class VisualModelResourceFile : public ResourceFile
 	friend class ResourceLoader;
 
 public:
+	static void BindFunctions();
+
 	explicit VisualModelResourceFile(VisualModelResourceFile&) = delete;
 	explicit VisualModelResourceFile(VisualModelResourceFile&&) = delete;
 
@@ -140,6 +150,8 @@ class ImageResourceFile : public ResourceFile
 	friend class ResourceLoader;
 
 public:
+	static void BindFunctions();
+
 	explicit ImageResourceFile(ImageResourceFile&) = delete;
 	explicit ImageResourceFile(ImageResourceFile&&) = delete;
 
@@ -157,6 +169,8 @@ class FontResourceFile : public ResourceFile
 	friend class ResourceLoader;
 
 public:
+	static void BindFunctions();
+
 	explicit FontResourceFile(ImageResourceFile&) = delete;
 	explicit FontResourceFile(ImageResourceFile&&) = delete;
 

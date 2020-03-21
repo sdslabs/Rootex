@@ -69,14 +69,67 @@ void LuaInterpreter::setGlobal(LuaVariable luaVar, const String& name)
 }
 
 template<class T>
-void BindFunctions()
+void BindClass()
 {
-	T::bindFunctions();
+	T::BindFunctions();
 }
 
 void LuaInterpreter::registerTypes()
 {
-	BindFunctions<Entity>();
-	BindFunctions<Component>();
-	BindFunctions<TransformComponent>();
+	luabridge::getGlobalNamespace(m_LuaState)
+	    .beginNamespace("Rootex")
+
+		.beginClass<Vector2>("Vector2")
+	    .addConstructor<void (*)(float x, float y)>()
+	    .addData<float>("x", &Vector2::x)
+	    .addData<float>("y", &Vector2::y)
+	    .endClass()
+
+		.beginClass<Vector3>("Vector3")
+	    .addConstructor<void (*)(float x, float y, float z)>()
+	    .addData<float>("x", &Vector3::x)
+	    .addData<float>("y", &Vector3::y)
+	    .addData<float>("z", &Vector3::z)
+	    .endClass()
+
+		.beginClass<Vector4>("Vector4")
+	    .addConstructor<void (*)(float x, float y, float z, float w)>()
+	    .addData<float>("x", &Vector4::x)
+	    .addData<float>("y", &Vector4::y)
+	    .addData<float>("z", &Vector4::z)
+	    .addData<float>("w", &Vector4::w)
+	    .endClass()
+
+		.beginClass<Color>("Color")
+	    .addConstructor<void (*)(float x, float y, float z, float w)>()
+	    .addData<float>("x", &Color::x)
+	    .addData<float>("y", &Color::y)
+	    .addData<float>("z", &Color::z)
+	    .addData<float>("w", &Color::w)
+	    .endClass()
+
+	    .beginClass<Quaternion>("Quaternion")
+	    .addConstructor<void (*)(float x, float y, float z, float w)>()
+	    .addData<float>("x", &Quaternion::x)
+	    .addData<float>("y", &Quaternion::y)
+	    .addData<float>("z", &Quaternion::z)
+	    .addData<float>("w", &Quaternion::w)
+		.endClass()
+	    
+		.endNamespace();
+
+	BindClass<ResourceFile>();
+	BindClass<TextResourceFile>();
+	BindClass<LuaTextResourceFile>();
+	BindClass<AudioResourceFile>();
+	BindClass<VisualModelResourceFile>();
+	BindClass<ImageResourceFile>();
+	BindClass<FontResourceFile>();
+
+	BindClass<ResourceLoader>();
+	
+	BindClass<Entity>();
+	
+	BindClass<Component>();
+	BindClass<TransformComponent>();
 }
