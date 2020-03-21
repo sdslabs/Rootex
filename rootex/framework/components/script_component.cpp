@@ -17,6 +17,7 @@ Component* ScriptComponent::CreateDefault()
 
 ScriptComponent::ScriptComponent(LuaTextResourceFile* luaFile)
     : m_ScriptFile(luaFile)
+    , m_EntityTable(LuaInterpreter::GetSingleton()->getLuaState())
 {
 }
 
@@ -26,24 +27,25 @@ ScriptComponent::~ScriptComponent()
 
 bool ScriptComponent::setup()
 {
-	m_EntityTable = m_Owner->getName() + std::to_string(m_Owner->getID());
-	LuaInterpreter::GetSingleton()->loadExecuteScript(m_EntityTable + " = loadEnv(\"" + m_ScriptFile->getPath().string() + "\")");
+	String entityTableName = m_Owner->getName() + std::to_string(m_Owner->getID());
+	LuaInterpreter::GetSingleton()->loadExecuteScript(entityTableName + " = loadEnv(\"" + m_ScriptFile->getPath().string() + "\")");
+	m_EntityTable = LuaInterpreter::GetSingleton()->getGlobal(entityTableName);
 	return true;
 }
 
 void ScriptComponent::onBegin()
 {
-	LuaInterpreter::GetSingleton()->getGlobal(m_EntityTable)["onBegin"]();
+	m_EntityTable["onBegin"](m_Owner.get());
 }
 
 void ScriptComponent::onUpdate(float deltaMilliSeconds)
 {
-	LuaInterpreter::GetSingleton()->getGlobal(m_EntityTable)["onUpdate"](deltaMilliSeconds, m_Owner.get());
+	m_EntityTable["onUpdate"](deltaMilliSeconds, m_Owner.get());
 }
 
 void ScriptComponent::onEnd()
 {
-	LuaInterpreter::GetSingleton()->getGlobal(m_EntityTable)["onEnd"]();
+	m_EntityTable["onEnd"](m_Owner.get());
 }
 
 JSON::json ScriptComponent::getJSON() const
