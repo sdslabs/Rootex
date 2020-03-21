@@ -63,7 +63,7 @@ protected:
   /**
     Get an untyped pointer to the contained class.
   */
-  void* const getPointer ()
+  void* getPointer ()
   {
     return m_p;
   }
@@ -99,7 +99,7 @@ private:
   {
     index = lua_absindex (L, index);
 
-    lua_getmetatable (L, index); // Stack: ot | nil
+    lua_getmetatable (L, index); // Stack: object metatable (ot) | nil
     if (!lua_istable (L, -1))
     {
       lua_rawgetp (L, LUA_REGISTRYINDEX, registryClassKey); // Stack: registry metatable (rt) | nil
@@ -130,7 +130,7 @@ private:
 
     for (;;)
     {
-      if (lua_rawequal (L, -1, -2))
+      if (lua_rawequal (L, -1, -2)) // Stack: rt, ot
       {
         lua_pop (L, 2); // Stack: -
         return static_cast <Userdata*> (lua_touserdata (L, index));
@@ -150,6 +150,41 @@ private:
     }
 
     // no return
+  }
+
+  static bool isInstance (lua_State* L, int index, void const* registryClassKey)
+  {
+    index = lua_absindex (L, index);
+
+    lua_getmetatable (L, index); // Stack: object metatable (ot) | nil
+    if (!lua_istable (L, -1))
+    {
+      lua_pop (L, 1); // Stack: -
+      return false;
+    }
+
+    lua_rawgetp (L, LUA_REGISTRYINDEX, registryClassKey); // Stack: ot, rt
+    lua_insert (L, -2); // Stack: rt, ot
+
+    for (;;)
+    {
+      if (lua_rawequal (L, -1, -2)) // Stack: rt, ot
+      {
+        lua_pop (L, 2); // Stack: -
+        return true;
+      }
+
+      // Replace current metatable with it's base class.
+      lua_rawgetp (L, -1, getParentKey ()); // Stack: rt, ot, parent ot (pot) | nil
+
+      if (lua_isnil (L, -1)) // Stack: rt, ot, nil
+      {
+        lua_pop (L, 3); // Stack: -
+        return false;
+      }
+
+      lua_remove (L, -2); // Stack: rt, pot
+    }
   }
 
   static Userdata* throwBadArg (lua_State* L, int index)
@@ -199,7 +234,7 @@ public:
     If the class does not match, a Lua error is raised.
   */
   template <class T>
-  static inline Userdata* getExact (lua_State* L, int index)
+  static Userdata* getExact (lua_State* L, int index)
   {
     return getExactClass (L, index, ClassInfo <T>::getClassKey ());
   }
@@ -212,7 +247,7 @@ public:
     const-ness, a Lua error is raised.
   */
   template <class T>
-  static inline T* get (lua_State* L, int index, bool canBeConst)
+  static T* get (lua_State* L, int index, bool canBeConst)
   {
     if (lua_isnil (L, index))
       return 0;
@@ -221,6 +256,12 @@ public:
       L, index, ClassInfo <T>::getConstKey (),
       ClassInfo <T>::getClassKey (),
       canBeConst)->getPointer ());
+  }
+
+  template <class T>
+  static bool isInstance (lua_State* L, int index)
+  {
+    return isInstance (L, index, ClassInfo <T>::getClassKey ());
   }
 };
 
@@ -240,26 +281,21 @@ private:
 
   char m_storage [sizeof (T)];
 
-  inline T* getObject ()
-  {
-    // If this fails to compile it means you forgot to provide
-    // a Container specialization for your container!
-    //
-    return reinterpret_cast <T*> (&m_storage [0]);
-  }
-
 private:
   /**
     Used for placement construction.
   */
   UserdataValue ()
   {
-    m_p = getObject ();
+    m_p = 0;
   }
 
   ~UserdataValue ()
   {
-    getObject ()->~T ();
+    if (getPointer () != 0)
+    {
+      getObject ()->~T ();
+    }
   }
 
 public:
@@ -269,7 +305,7 @@ public:
     The caller is responsible for calling placement new using the
     returned uninitialized storage.
   */
-  static void* place (lua_State* const L)
+  static UserdataValue <T>* place (lua_State* const L)
   {
     UserdataValue <T>* const ud = new (
       lua_newuserdata (L, sizeof (UserdataValue <T>))) UserdataValue <T> ();
@@ -279,7 +315,7 @@ public:
       throw std::logic_error ("The class is not registered in LuaBridge");
     }
     lua_setmetatable (L, -2);
-    return ud->getPointer ();
+    return ud;
   }
 
   /**
@@ -288,7 +324,25 @@ public:
   template <class U>
   static inline void push (lua_State* const L, U const& u)
   {
-    new (place (L)) U (u);
+    UserdataValue <T>* ud = place (L);
+    new (ud->getObject ()) U (u);
+    ud->commit ();
+  }
+
+  /**
+    Confirm object construction.
+  */
+  void commit ()
+  {
+    m_p = getObject ();
+  }
+
+  T* getObject ()
+  {
+    // If this fails to compile it means you forgot to provide
+    // a Container specialization for your container!
+    //
+    return reinterpret_cast <T*> (&m_storage [0]);
   }
 };
 
@@ -642,6 +696,11 @@ struct Stack
   {
     return Getter::get (L, index);
   }
+
+  static bool isInstance (lua_State* L, int index)
+  {
+    return Userdata::isInstance <T> (L, index);
+  }
 };
 
 
@@ -684,6 +743,11 @@ struct StackOpSelector <T*, true>
   {
     return Userdata::get <T> (L, index, false);
   }
+
+  static bool isInstance (lua_State* L, int index)
+  {
+    return Userdata::isInstance <T> (L, index);
+  }
 };
 
 // pointer to const
@@ -700,6 +764,11 @@ struct StackOpSelector <const T*, true>
   static const T* get (lua_State* L, int index)
   {
     return Userdata::get <T> (L, index, true);
+  }
+
+  static bool isInstance (lua_State* L, int index)
+  {
+    return Userdata::isInstance <T> (L, index);
   }
 };
 
@@ -719,6 +788,11 @@ struct StackOpSelector <T&, true>
   {
     return Helper::get (L, index);
   }
+
+  static bool isInstance (lua_State* L, int index)
+  {
+    return Userdata::isInstance <T> (L, index);
+  }
 };
 
 // reference to const
@@ -736,6 +810,11 @@ struct StackOpSelector <const T&, true>
   static ReturnType get (lua_State* L, int index)
   {
     return Helper::get (L, index);
+  }
+
+  static bool isInstance (lua_State* L, int index)
+  {
+    return Userdata::isInstance <T> (L, index);
   }
 };
 

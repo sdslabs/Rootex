@@ -14,6 +14,8 @@ class ResourceLoader
 	static HashMap<ResourceFile::Type, Vector<ResourceFile*>> s_ResourceFileLibrary;
 
 public:
+	static void BindFunctions();
+
 	static TextResourceFile* CreateTextResourceFile(const String& path);
 	static TextResourceFile* CreateNewTextResourceFile(const String& path);
 	static LuaTextResourceFile* CreateLuaTextResourceFile(const String& path);
@@ -22,7 +24,7 @@ public:
 	static ImageResourceFile* CreateImageResourceFile(const String& path);
 	static FontResourceFile* CreateFontResourceFile(const String& path, const String& name);
 
-	static void SaveResourceFile(TextResourceFile*& resourceFile);
+	static void SaveResourceFile(ResourceFile* resourceFile);
 	static void ReloadResourceData(const String& path);
 
 	static objl::Loader& GetModelLoader() { return s_ModelLoader; }

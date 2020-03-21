@@ -6,6 +6,7 @@
 #include "resource_loader.h"
 #include "audio/audio_system.h"
 #include "renderer/rendering_device.h"
+#include "interpreter.h"
 
 ResourceFile::ResourceFile(const Type& type, ResourceData* resData)
     : m_Type(type)
@@ -14,6 +15,24 @@ ResourceFile::ResourceFile(const Type& type, ResourceData* resData)
 	PANIC(resData == nullptr, "Null resource found. Resource of this type has not been loaded correctly: " + std::to_string((int)type));
 	m_LastReadTime = OS::s_FileSystemClock.now();
 	m_LastChangedTime = OS::GetFileLastChangedTime(getPath().string());
+}
+
+void ResourceFile::BindFunctions()
+{
+	luabridge::getGlobalNamespace(LuaInterpreter::GetSingleton()->getLuaState())
+	    .beginNamespace("Rootex")
+
+	    .beginClass<ResourceFile>("ResourceFile")
+	    .addFunction("reload", &reload)
+	    .addFunction("isValid", &isValid)
+	    .addFunction("isDirty", &isDirty)
+	    .addFunction("isOpen", &isOpen)
+	    .addFunction("getPath", &getPath)
+	    .addFunction("getType", &getType)
+	    .addFunction("getData", &getData)
+	    .endClass()
+
+	    .endNamespace();
 }
 
 ResourceFile::~ResourceFile()
@@ -75,6 +94,24 @@ AudioResourceFile::AudioResourceFile(ResourceData* resData)
 
 AudioResourceFile::~AudioResourceFile()
 {
+}
+
+void AudioResourceFile::BindFunctions()
+{
+	luabridge::getGlobalNamespace(LuaInterpreter::GetSingleton()->getLuaState())
+	    .beginNamespace("Rootex")
+
+	    .deriveClass<AudioResourceFile, ResourceFile>("AudioResourceFile")
+	    .addFunction("reload", &reload)
+	    .addFunction("getAudioDataSize", &getAudioDataSize)
+	    .addFunction("getFormat", &getFormat)
+	    .addFunction("getFrequency", &getFrequency)
+	    .addFunction("getBitDepth", &getBitDepth)
+	    .addFunction("getChannels", &getChannels)
+	    .addFunction("getDuration", &getDuration)
+	    .endClass()
+
+	    .endNamespace();
 }
 
 void AudioResourceFile::reload()
@@ -141,6 +178,20 @@ TextResourceFile::~TextResourceFile()
 {
 }
 
+void TextResourceFile::BindFunctions()
+{
+	luabridge::getGlobalNamespace(LuaInterpreter::GetSingleton()->getLuaState())
+	    .beginNamespace("Rootex")
+
+	    .deriveClass<TextResourceFile, ResourceFile>("TextResourceFile")
+	    .addFunction("reload", &reload)
+	    .addFunction("getString", &getString)
+	    .addFunction("append", &append)
+		.endClass()
+		
+		.endNamespace();
+}
+
 void TextResourceFile::popBack()
 {
 	m_ResourceData->getRawData()->pop_back();
@@ -173,6 +224,17 @@ LuaTextResourceFile::~LuaTextResourceFile()
 {
 }
 
+void LuaTextResourceFile::BindFunctions()
+{
+	luabridge::getGlobalNamespace(LuaInterpreter::GetSingleton()->getLuaState())
+	    .beginNamespace("Rootex")
+
+	    .deriveClass<LuaTextResourceFile, TextResourceFile>("LuaTextResourceFile")
+	    .endClass()
+
+	    .endNamespace();
+}
+
 VisualModelResourceFile::VisualModelResourceFile(Ptr<VertexBuffer> vertexBuffer, Ptr<IndexBuffer> indexBuffer, ResourceData* resData)
     : ResourceFile(Type::Obj, resData)
     , m_VertexBuffer(std::move(vertexBuffer))
@@ -182,6 +244,20 @@ VisualModelResourceFile::VisualModelResourceFile(Ptr<VertexBuffer> vertexBuffer,
 
 VisualModelResourceFile::~VisualModelResourceFile()
 {
+}
+
+void VisualModelResourceFile::BindFunctions()
+{
+	luabridge::getGlobalNamespace(LuaInterpreter::GetSingleton()->getLuaState())
+	    .beginNamespace("Rootex")
+
+	    .deriveClass<VisualModelResourceFile, ResourceFile>("VisualModelResourceFile")
+	    .addFunction("reload", &reload)
+	    .addFunction("getVertexBuffer", &getVertexBuffer)
+	    .addFunction("getIndexBuffer", &getIndexBuffer)
+	    .endClass()
+
+	    .endNamespace();
 }
 
 void VisualModelResourceFile::reload()
@@ -221,6 +297,18 @@ ImageResourceFile::~ImageResourceFile()
 {
 }
 
+void ImageResourceFile::BindFunctions()
+{
+	luabridge::getGlobalNamespace(LuaInterpreter::GetSingleton()->getLuaState())
+	    .beginNamespace("Rootex")
+
+	    .deriveClass<ImageResourceFile, ResourceFile>("ImageResourceFile")
+	    .addFunction("reload", &reload)
+	    .endClass()
+
+	    .endNamespace();
+}
+
 void ImageResourceFile::reload()
 {
 	ResourceFile::reload();
@@ -237,6 +325,19 @@ FontResourceFile::FontResourceFile(const String& name, ResourceData* resData)
 
 FontResourceFile::~FontResourceFile()
 {
+}
+
+void FontResourceFile::BindFunctions()
+{
+	luabridge::getGlobalNamespace(LuaInterpreter::GetSingleton()->getLuaState())
+	    .beginNamespace("Rootex")
+
+	    .deriveClass<FontResourceFile, ResourceFile>("FontResourceFile")
+	    .addFunction("reload", &reload)
+	    .addFunction("getFontName", &getFontName)
+	    .endClass()
+
+	    .endNamespace();
 }
 
 void FontResourceFile::reload()
