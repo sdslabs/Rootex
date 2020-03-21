@@ -25,6 +25,19 @@
 
 EntityID EntityFactory::s_CurrentID = ROOT_ENTITY_ID;
 
+void EntityFactory::BindFunctions()
+{
+	luabridge::getGlobalNamespace(LuaInterpreter::GetSingleton()->getLuaState())
+	    .beginNamespace("Rootex")
+
+		.beginClass<EntityFactory>("EntityFactory")
+	    .addStaticFunction("GetSingleton", GetSingleton)
+	    .addFunction("createEntity", Function<Entity*(EntityFactory*, String)>([](EntityFactory* e, String entityFile) { return e->createEntity(ResourceLoader::CreateTextResourceFile(entityFile)).get(); }))
+	    .endClass()
+
+	    .endNamespace();
+}
+
 EntityFactory* EntityFactory::GetSingleton()
 {
 	static EntityFactory singleton;

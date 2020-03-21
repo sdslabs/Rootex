@@ -53,11 +53,13 @@ void TransformComponent::BindFunctions()
 {
 	luabridge::getGlobalNamespace(LuaInterpreter::GetSingleton()->getLuaState())
 	    .beginNamespace("Rootex")
-	    .beginClass<Entity>("Entity")
+	    
+		.beginClass<Entity>("Entity")
 	    .addFunction("getTransform", 
 			Function<TransformComponent*(const Entity*)>(
 	            [](const Entity* e) { return e->getComponent<TransformComponent>().get(); }))
 		.endClass()
+
 		.deriveClass<TransformComponent, Component>("TransformComponent")
 	    .addFunction("getPosition", &getPosition)
 	    .addFunction("setPosition", &setPosition)
@@ -66,7 +68,8 @@ void TransformComponent::BindFunctions()
 	    .addFunction("getScale", &getScale)
 	    .addFunction("setScale", &setScale)
 	    .endClass()
-	    .endNamespace();
+	    
+		.endNamespace();
 }
 
 void TransformComponent::setPosition(const Vector3& position)

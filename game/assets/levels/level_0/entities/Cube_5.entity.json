@@ -1,17 +1,19 @@
 {
     "Components": {
+        "DiffuseVisualComponent": {
+            "renderPass": 5,
+            "resFile": "rootex/assets/cube.obj",
+            "texturePath": "game\\assets\\test\\yellow.png"
+        },
         "HierarchyComponent": {
             "children": [],
             "parent": 1
         },
-        "ScriptComponent": {
-            "script": "game/assets/scripts/cube2.lua"
-        },
         "TransformComponent": {
             "position": {
-                "x": -1.3300000429153442,
+                "x": 0.0,
                 "y": 0.0,
-                "z": 1.0299999713897705
+                "z": -2.0799999237060547
             },
             "rotation": {
                 "w": 1.0,
@@ -20,20 +22,10 @@
                 "z": 0.0
             },
             "scale": {
-                "x": 0.05000000074505806,
-                "y": 0.05000000074505806,
-                "z": 0.05000000074505806
+                "x": 10.970000267028809,
+                "y": 7.900000095367432,
+                "z": 1.350000023841858
             }
-        },
-        "VisualComponent": {
-            "color": {
-                "a": 1.0,
-                "b": 0.20000000298023224,
-                "g": 1.0,
-                "r": 0.20000000298023224
-            },
-            "renderPass": 1,
-            "resFile": "game/assets/test/teapot.obj"
         }
     },
     "Entity": {

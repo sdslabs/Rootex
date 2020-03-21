@@ -4,9 +4,6 @@
             "children": [],
             "parent": 1
         },
-        "ScriptComponent": {
-            "script": "game/assets/scripts/cube2.lua"
-        },
         "TransformComponent": {
             "position": {
                 "x": 2.0299999713897705,

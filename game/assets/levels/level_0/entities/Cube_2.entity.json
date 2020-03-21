@@ -4,17 +4,36 @@
             "children": [],
             "parent": 1
         },
+        "PointLightComponent": {
+            "ambientColor": {
+                "a": 1.0,
+                "b": 0.45098036527633667,
+                "g": 0.45098036527633667,
+                "r": 1.0
+            },
+            "attConst": -1.9550000429153442,
+            "attLin": 1.0,
+            "attQuad": 0.007499999832361937,
+            "diffuseColor": {
+                "a": 1.0,
+                "b": 0.0,
+                "g": 0.0,
+                "r": 1.0
+            },
+            "diffuseIntensity": 1.0,
+            "range": 10.0
+        },
         "ScriptComponent": {
             "script": "game/assets/scripts/cube.lua"
         },
         "TransformComponent": {
             "position": {
-                "x": 0.0,
+                "x": -2.549999952316284,
                 "y": 0.0,
                 "z": 0.0
             },
             "rotation": {
-                "w": 0.0,
+                "w": 1.0,
                 "x": 0.0,
                 "y": 0.0,
                 "z": 0.0
@@ -28,9 +47,9 @@
         "VisualComponent": {
             "color": {
                 "a": 1.0,
-                "b": 0.20000000298023224,
-                "g": 1.0,
-                "r": 0.20000000298023224
+                "b": 0.10272488743066788,
+                "g": 0.10272488743066788,
+                "r": 0.8382352590560913
             },
             "renderPass": 1,
             "resFile": "game/assets/test/cube.obj"
