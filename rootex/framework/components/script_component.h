@@ -10,7 +10,7 @@ public:
 	static Component* CreateDefault();
 
 private:
-	String m_EntityTable;
+	LuaVariable m_EntityTable;
 	LuaTextResourceFile* m_ScriptFile;
 
 	friend class EntityFactory;
