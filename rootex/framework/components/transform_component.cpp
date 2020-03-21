@@ -47,6 +47,25 @@ TransformComponent::TransformComponent(const Vector3& position, const Vector4& r
 #endif // ROOTEX_EDITOR
 }
 
+void TransformComponent::bindFunctions()
+{
+	luabridge::getGlobalNamespace(LuaInterpreter::GetSingleton()->getLuaState())
+	    .beginNamespace("Rootex")
+	    .beginClass<TransformComponent>("TransformComponent")
+	    .addStaticData("ID", (unsigned int*)&TransformComponent::s_ID, false)
+	    .addFunction("setPosition", &setPosition)
+	    .addFunction("setRotation", &setRotation)
+	    .addFunction("setScale", &setScale)
+	    .addFunction("setTransform", &setTransform)
+	    .addFunction("getPosition", &getPosition)
+	    .addFunction("getRotation", &getRotation)
+	    .addFunction("getScale", &getScale)
+	    .addFunction("getName", &getName)
+	    .addFunction("getComponentID", &getComponentID)
+	    .endClass()
+	    .endNamespace();
+}
+
 void TransformComponent::setPosition(const Vector3& position)
 {
 	m_TransformBuffer.m_Position = position;

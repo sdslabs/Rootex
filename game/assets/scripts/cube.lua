@@ -1,9 +1,9 @@
-function onBegin()
+function onBegin(entity)
+    --print(entity:getComponent(Rootex.TransformComponent.ID))
 end
 
 function onUpdate(delta, entity)
-    print(entity:getName())
 end
 
-function onEnd( )
+function onEnd(entity)
 end

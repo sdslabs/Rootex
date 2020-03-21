@@ -38,8 +38,11 @@ public:
 	
 	EntityID getID() const;
 	const String& getName() const;
+	
 	template <class ComponentType = Component>
 	Ref<ComponentType> getComponent(ComponentID ID = ComponentType::s_ID);
+
+	Component* getComponentPointer(ComponentID ID);
 	JSON::json getJSON() const;
 	const HashMap<ComponentID, Ref<Component>>& getAllComponents() const;
 	

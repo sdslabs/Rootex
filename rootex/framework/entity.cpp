@@ -10,14 +10,14 @@ void Entity::bindFunctions()
 	luabridge::getGlobalNamespace(LuaInterpreter::GetSingleton()->getLuaState())
 	    .beginNamespace("Rootex")
 	    .beginClass<Entity>("Entity")
-	    .addFunction("getName", &Entity::getName)
-	    .addFunction("setName", &Entity::setName)
-	    .addFunction("addChild", &Entity::addChild)
-	    .addFunction("destroy", &Entity::destroy)
-	    .addFunction("hasComponent", &Entity::hasComponent)
-	    .addFunction("getID", &Entity::getID)
-	    .addFunction("getAllComponents", &Entity::getAllComponents)
-	    .addFunction("getComponent", &Entity::getComponent<Component>)
+	    .addFunction("getName", &getName)
+	    .addFunction("setName", &setName)
+	    .addFunction("addChild", &addChild)
+	    .addFunction("destroy", &destroy)
+	    .addFunction("hasComponent", &hasComponent)
+	    .addFunction("getID", &getID)
+	    .addFunction("getAllComponents", &getAllComponents)
+	    .addFunction("getComponent", &getComponentPointer)
 	    .endClass()
 	    .endNamespace();
 }
@@ -42,6 +42,11 @@ Entity::Entity(EntityID id, const String& name, const HashMap<ComponentID, Ref<C
     , m_Name(name)
     , m_Components(components)
 {
+}
+
+Component* Entity::getComponentPointer(ComponentID ID)
+{
+	return getComponent<Component>(ID).get();
 }
 
 JSON::json Entity::getJSON() const

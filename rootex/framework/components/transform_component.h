@@ -41,7 +41,8 @@ class TransformComponent : public Component
 
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::TransformComponent;
-	
+	static void bindFunctions();
+
 	virtual ~TransformComponent() = default;
 
 	void setPosition(const Vector3& position);
