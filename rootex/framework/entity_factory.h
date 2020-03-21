@@ -11,6 +11,7 @@ class Component;
 class Entity;
 
 typedef Component* (*ComponentCreator)(const LuaVariable& componentDescription);
+typedef Component* (*ComponentDefaultCreator)();
 typedef unsigned int EntityID;
 
 class EntityFactory
@@ -22,20 +23,30 @@ class EntityFactory
 	EntityID getNextID();
 
 protected:
-	HashMap<String, ComponentCreator> m_ComponentCreators;
+	typedef Vector<Tuple<ComponentID, String, ComponentCreator>> ComponentDatabase;
+	ComponentDatabase m_ComponentCreators;
+	typedef Vector<Tuple<ComponentID, String, ComponentDefaultCreator>> DefaultComponentDatabase;
+	DefaultComponentDatabase m_DefaultComponentCreators;
 
-	Ref<Component> createComponent(const String& name, const LuaVariable& componentData);
 	Ref<Component> EntityFactory::createHierarchyComponent();
 
 	EntityFactory();
 	EntityFactory(EntityFactory&) = delete;
 	~EntityFactory();
 
+	Ref<Entity> createRootEntity();
+	friend class HierarchyGraph;
+
 public:
 	static EntityFactory* GetSingleton();
 
+	Ref<Component> createComponent(const String& name, const LuaVariable& componentData);
+	Ref<Component> createDefaultComponent(const String& name);
 	Ref<Entity> createEntity(LuaTextResourceFile* actorLuaDescription);
-	Ref<Entity> createEmptyEntity();
 
+	void addDefaultComponent(Ref<Entity> entity, String componentName);
+	void addComponent(Ref<Entity> entity, Ref<Component> component);
 	void destroyEntities();
+
+	const ComponentDatabase& getComponentDatabase() const { return m_ComponentCreators; }
 };

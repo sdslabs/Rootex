@@ -21,7 +21,7 @@ Lights LightSystem::getLights()
 	for (; i < pointLightComponents.size() && i < 4; i++)
 	{
 		PointLightComponent* light = dynamic_cast<PointLightComponent*>(pointLightComponents[i]);
-		TransformComponent* transform = light->getOwner()->getComponent<TransformComponent>();
+		TransformComponent* transform = light->getOwner()->getComponent<TransformComponent>().get();
 		Vector3 transformedPosition = Vector3::Transform(transform->getPosition(), transform->getAbsoluteTransform());
 		lights.pointLightInfos[i] = {
 			light->m_ambientColor, light->m_diffuseColor, light->m_diffuseIntensity,
@@ -54,7 +54,7 @@ Lights LightSystem::getLights()
 	for (; i < spotLightComponents.size() && i < 4; i++)
 	{
 		SpotLightComponent* light = dynamic_cast<SpotLightComponent*>(spotLightComponents[i]);
-		TransformComponent* transform = light->getOwner()->getComponent<TransformComponent>();
+		TransformComponent* transform = light->getOwner()->getComponent<TransformComponent>().get();
 		Vector3 direction = DirectX::XMVector3Rotate(Vector3(0.0f, 0.0f, 1.0f), transform->getRotation());
 		lights.spotLightInfos[i] = {
 			light->m_ambientColor, light->m_diffuseColor, light->m_diffuseIntensity,

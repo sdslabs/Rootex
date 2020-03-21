@@ -3,27 +3,28 @@
 Component* TransformComponent::Create(const LuaVariable& componentData)
 {
 	TransformComponent* transformComponent = new TransformComponent();
-	
+
 	transformComponent->m_TransformBuffer.m_Position.x = componentData["m_Position"]["x"];
 	transformComponent->m_TransformBuffer.m_Position.y = componentData["m_Position"]["y"];
 	transformComponent->m_TransformBuffer.m_Position.z = componentData["m_Position"]["z"];
-	
+
 	transformComponent->m_TransformBuffer.m_Rotation = Quaternion::CreateFromYawPitchRoll(
-		componentData["m_Rotation"]["yaw"], 
-		componentData["m_Rotation"]["pitch"], 
-		componentData["m_Rotation"]["roll"]);
-	
+	    componentData["m_Rotation"]["yaw"],
+	    componentData["m_Rotation"]["pitch"],
+	    componentData["m_Rotation"]["roll"]);
+
 	transformComponent->m_TransformBuffer.m_Scale.x = componentData["m_Scale"]["x"];
 	transformComponent->m_TransformBuffer.m_Scale.y = componentData["m_Scale"]["y"];
 	transformComponent->m_TransformBuffer.m_Scale.z = componentData["m_Scale"]["z"];
 
-	transformComponent->m_TransformBuffer.m_Transform = Matrix::Identity;
-	transformComponent->m_TransformBuffer.m_Transform = Matrix::CreateTranslation(transformComponent->m_TransformBuffer.m_Position) * transformComponent->m_TransformBuffer.m_Transform;
-	transformComponent->m_TransformBuffer.m_Transform = Matrix::CreateFromQuaternion(transformComponent->m_TransformBuffer.m_Rotation) * transformComponent->m_TransformBuffer.m_Transform;
-	transformComponent->m_TransformBuffer.m_Transform = Matrix::CreateScale(transformComponent->m_TransformBuffer.m_Scale) * transformComponent->m_TransformBuffer.m_Transform;
-	// Transform = Translation * Rotation * Scale
-	// Final vec = Transform * vec = Translation * (Rotation * (Scale * vec))
+	transformComponent->updateTransformFromPositionRotationScale();
 
+	return transformComponent;
+}
+
+Component* TransformComponent::CreateDefault()
+{
+	TransformComponent* transformComponent = new TransformComponent();
 	return transformComponent;
 }
 
@@ -76,3 +77,36 @@ void TransformComponent::addTransform(const Matrix& applyTransform)
 {
 	setTransform(getLocalTransform() * applyTransform);
 }
+
+#ifdef ROOTEX_EDITOR
+#include "imgui.h"
+void TransformComponent::draw()
+{
+	ImGui::DragFloat3("##P", &m_TransformBuffer.m_Position.x, s_EditorDecimalSpeed);
+	ImGui::SameLine();
+	if (ImGui::Button("Position"))
+	{
+		m_TransformBuffer.m_Position = { 0.0f, 0.0f, 0.0f };
+	}
+	
+	ImGui::DragFloat3("##R", m_EditorRotation, s_EditorDecimalSpeed);
+	ImGui::SameLine();
+	if (ImGui::Button("Rotation"))
+	{
+		m_EditorRotation[0] = 0.0f;
+		m_EditorRotation[1] = 0.0f;
+		m_EditorRotation[2] = 0.0f;
+		m_EditorRotation[3] = 0.0f;
+	}
+	m_TransformBuffer.m_Rotation = Quaternion::CreateFromYawPitchRoll(m_EditorRotation[0], m_EditorRotation[1], m_EditorRotation[2]);
+	
+	ImGui::DragFloat3("##S", &m_TransformBuffer.m_Scale.x, s_EditorDecimalSpeed, 0.0f, 0.0f);
+	ImGui::SameLine();
+	if (ImGui::Button("Scale"))
+	{
+		m_TransformBuffer.m_Scale = { 1.0f, 1.0f, 1.0f };
+	}
+	
+	updateTransformFromPositionRotationScale();
+}
+#endif // ROOTEX_EDITOR

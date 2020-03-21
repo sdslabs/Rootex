@@ -2,6 +2,7 @@
 
 enum class ComponentIDs : unsigned int
 {
+	Component,
 	TestComponent,
 	DebugComponent,
 	VisualComponent,

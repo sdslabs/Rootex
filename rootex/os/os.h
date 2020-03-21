@@ -2,6 +2,7 @@
 
 #include <filesystem>
 #include <fstream>
+#include <chrono>
 
 #include "common/types.h"
 
@@ -10,6 +11,7 @@
 #define GAME_DIRECTORY "game"
 
 typedef Vector<char> FileBuffer;
+typedef std::chrono::time_point<std::filesystem::file_time_type::clock> FileTimePoint; 
 
 class ResourceData;
 
@@ -18,6 +20,8 @@ class OS
 	OS() = delete;
 
 public:
+	static std::filesystem::file_time_type::clock s_FileSystemClock;
+	static const std::chrono::time_point<std::chrono::system_clock> s_ApplicationStartTime;
 	static FilePath s_RootDirectory;
 	static FilePath s_GameDirectory;
 	static FilePath s_EngineDirectory;
@@ -28,9 +32,23 @@ public:
 	static String GetBuildDate();
 	static String GetBuildTime();
 
+	static void OpenFileInSystemEditor(const String& filePath);
+	static void OpenFileInExplorer(const String& filePath);
+	static void EditFileInSystemEditor(const String& filePath);
+	static FileTimePoint GetFileLastChangedTime(const String& filePath);
+
 	static FileBuffer LoadFileContents(String stringPath);
 	static bool Exists(String relativePath);
 	static FilePath OS::GetAbsolutePath(String stringPath);
+	static FilePath OS::GetRootRelativePath(String stringPath);
+	static FilePath OS::GetRelativePath(String stringPath, String base);
+
+	static Vector<FilePath> GetAllInDirectory(const String& directory);
+	static Vector<FilePath> GetDirectoriesInDirectory(const String& directory);
+	static Vector<FilePath> GetFilesInDirectory(const String& directory);
+
+	static bool IsDirectory(const String& path);
+	static bool IsFile(const String& path);
 
 	static void Print(const String& msg);
 	static void Print(const float& real);

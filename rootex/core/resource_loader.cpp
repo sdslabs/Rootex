@@ -12,6 +12,7 @@
 #include "vendor/OBJLoader/Source/OBJ_Loader.h"
 
 HashMap<Ptr<ResourceData>, Ptr<ResourceFile>> ResourceLoader::s_ResourcesDataFiles;
+objl::Loader ResourceLoader::s_ModelLoader;
 
 TextResourceFile* ResourceLoader::CreateTextResourceFile(String path)
 {
@@ -131,6 +132,9 @@ AudioResourceFile* ResourceLoader::CreateAudioResourceFile(String path)
 		ERR("Unknown channels and bit depth in WAV data");
 	}
 
+	audioRes->m_Duration = size * 8 / (audioRes->m_Channels * audioRes->m_BitDepth);
+	audioRes->m_Duration /= frequency;
+
 	s_ResourcesDataFiles[Ptr<ResourceData>(resData)] = Ptr<ResourceFile>(audioRes);
 
 	return audioRes;
@@ -153,15 +157,14 @@ VisualModelResourceFile* ResourceLoader::CreateVisualModelResourceFile(String pa
 	}
 
 	// File not found in cache, load it only once
-	objl::Loader loader;
-	PANIC(loader.LoadFile(OS::GetAbsolutePath(path).generic_string()) == false, "Model could not be loaded: " + OS::GetAbsolutePath(path).generic_string());
+	PANIC(s_ModelLoader.LoadFile(OS::GetAbsolutePath(path).generic_string()) == false, "Model could not be loaded: " + OS::GetAbsolutePath(path).generic_string());
 
 	VertexData vertex;
 
 	Vector<VertexData> vertices;
-	vertices.reserve(loader.LoadedVertices.size());
+	vertices.reserve(s_ModelLoader.LoadedVertices.size());
 
-	for (auto& v : loader.LoadedVertices)
+	for (auto& v : s_ModelLoader.LoadedVertices)
 	{
 		vertex.m_Position.x = v.Position.X;
 		vertex.m_Position.y = v.Position.Y;
@@ -176,7 +179,7 @@ VisualModelResourceFile* ResourceLoader::CreateVisualModelResourceFile(String pa
 
 	FileBuffer& buffer = OS::LoadFileContents(path);
 	Ptr<VertexBuffer> vertexBuffer(new VertexBuffer(vertices));
-	Ptr<IndexBuffer> indexBuffer(new IndexBuffer(loader.LoadedIndices));
+	Ptr<IndexBuffer> indexBuffer(new IndexBuffer(s_ModelLoader.LoadedIndices));
 
 	ResourceData* resData = new ResourceData(path, buffer);
 	VisualModelResourceFile* visualRes = new VisualModelResourceFile(std::move(vertexBuffer), std::move(indexBuffer), resData);
@@ -216,4 +219,17 @@ void ResourceLoader::SaveResourceFile(TextResourceFile*& resourceFile)
 {
 	bool saved = OS::SaveFile(resourceFile->getPath(), resourceFile->getData());
 	PANIC(saved == false, "Old resource could not be located for saving file: " + resourceFile->getPath().generic_string());
+}
+
+void ResourceLoader::ReloadResourceData(const String& path)
+{
+	FileBuffer& buffer = OS::LoadFileContents(path);
+
+	for (auto&& [resData, resFile] : s_ResourcesDataFiles)
+	{
+		if (resData->getPath() == path)
+		{
+			*resData->getRawData() = buffer;
+		}
+	}
 }

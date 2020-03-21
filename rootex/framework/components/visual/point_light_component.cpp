@@ -16,6 +16,20 @@ Component* PointLightComponent::Create(const LuaVariable& componentData)
 	return pointLightComponent;
 }
 
+Component* PointLightComponent::CreateDefault()
+{
+	PointLightComponent* pointLightComponent = new PointLightComponent(
+	    0.045f,
+	    1.0f,
+	    0.0075f,
+	    10.0f,
+	    1.0f,
+	    Color(1.0f, 1.0f, 1.0f, 1.0f),
+	    Color(0.5f, 0.5f, 0.5f, 1.0f));
+	    
+	return pointLightComponent;
+}
+
 PointLightComponent::PointLightComponent(const float constAtt, const float linAtt, const float quadAtt,
     const float range, const float diffuseIntensity, const Color& diffuseColor, const Color& ambientColor)
     : m_constAtt(constAtt)

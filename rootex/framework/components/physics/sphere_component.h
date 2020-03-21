@@ -7,6 +7,7 @@
 class SphereComponent : public PhysicsComponent
 {
 	static Component* Create(const LuaVariable& sphereComponentData);
+	static Component* CreateDefault();
 
 	float m_Radius;
 	
@@ -16,4 +17,6 @@ public:
 	SphereComponent(float rad, const String& matName);
 
 	float getRadius() const { return m_Radius; }
+
+	virtual String getName() const override { return "SphereComponent"; };
 };

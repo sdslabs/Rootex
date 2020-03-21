@@ -15,6 +15,8 @@ protected:
 	Ref<Entity> m_Owner;
 
 public:
+	static const ComponentID s_ID = (ComponentID)ComponentIDs::Component;
+
 	Component();
 	virtual ~Component();
 	
@@ -22,6 +24,11 @@ public:
 
 	Ref<Entity> getOwner() const;
 	virtual ComponentID getComponentID() const = 0;
-	
-	void setOwner(Ref<Entity> newOwner) { m_Owner = newOwner; }
+
+	virtual String getName() const = 0;
+	void setOwner(Ref<Entity>& newOwner) { m_Owner = newOwner; }
+
+#ifdef ROOTEX_EDITOR
+	virtual void draw();
+#endif
 };

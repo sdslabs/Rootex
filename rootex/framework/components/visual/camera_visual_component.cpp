@@ -1,6 +1,5 @@
 #include "camera_visual_component.h"
 
-#include "visual_component_graph.h"
 #include "entity_factory.h"
 
 CameraVisualComponent::CameraVisualComponent()
@@ -20,12 +19,12 @@ CameraVisualComponent::~CameraVisualComponent()
 {
 }
 
-bool CameraVisualComponent::preRender(VisualComponentGraph* visualComponentGraph)
+bool CameraVisualComponent::preRender(HierarchyGraph* visualComponentGraph)
 {
 	return true;
 }
 
-void CameraVisualComponent::render(VisualComponentGraph* visualComponentGraph)
+void CameraVisualComponent::render(HierarchyGraph* visualComponentGraph)
 {
 	if (m_DebugCamera)
 	{
@@ -33,19 +32,19 @@ void CameraVisualComponent::render(VisualComponentGraph* visualComponentGraph)
 	}
 }
 
-bool CameraVisualComponent::reset(VisualComponentGraph* scene, int windowWidth, int windowHeight)
+bool CameraVisualComponent::reset(HierarchyGraph* scene, int windowWidth, int windowHeight)
 {
 	// TODO: Add window resize logic that set the perspective matrix and frustum correctly
 
 	return false;
 }
 
-bool CameraVisualComponent::isVisible(VisualComponentGraph* scene) const
+bool CameraVisualComponent::isVisible(HierarchyGraph* scene) const
 {
 	return false;
 }
 
-void CameraVisualComponent::postRender(VisualComponentGraph* visualComponentGraph)
+void CameraVisualComponent::postRender(HierarchyGraph* visualComponentGraph)
 {
 }
 

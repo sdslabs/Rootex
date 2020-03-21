@@ -12,46 +12,45 @@ class Entity
 {
 protected:
 	EntityID m_ID;
+	String m_Name;
 	HashMap<ComponentID, Ref<Component>> m_Components;
 
-	Entity(EntityID id);
+	Entity(EntityID id, const String& name);
 
 	bool setupComponents();
 
+	void addComponent(const Ref<Component>& component);
 	friend class EntityFactory;
+#ifdef ROOTEX_EDITOR
+	friend class InspectorDock;
+#endif // ROOTEX_EDITOR
 
 public:
-	virtual ~Entity() = default;
+	virtual ~Entity();
 
-	void addComponent(const Ref<Component>& component);
-
-	template <class ComponentType>
-	void removeComponent();
-
+	void addChild(Ref<Entity> child);
+	void removeComponent(Ref<Component> component);
 	void destroy();
 
 	EntityID getID() const;
+	const String& getName() const;
+	bool hasComponent(ComponentID componentID);
+	void setName(const String& name);
 	
-	template <class ComponentType>
-	ComponentType* getComponent();
+	template <class ComponentType = Component>
+	Ref<ComponentType> getComponent(ComponentID ID = ComponentType::s_ID);
 	
 	const HashMap<ComponentID, Ref<Component>>& getAllComponents() const;
 };
 
 template <class ComponentType>
-inline void Entity::removeComponent()
+inline Ref<ComponentType> Entity::getComponent(ComponentID ID)
 {
-	m_Components.erase(ComponentType::s_ID);
-}
-
-template <class ComponentType>
-inline ComponentType* Entity::getComponent()
-{
-	auto findIt = m_Components.find(ComponentType::s_ID);
+	auto findIt = m_Components.find(ID);
 	if (findIt != m_Components.end())
 	{
 		Ref<Component> baseTypeComponent = findIt->second;
-		return reinterpret_cast<ComponentType*>(baseTypeComponent.get());
+		return std::dynamic_pointer_cast<ComponentType>(baseTypeComponent);
 	}
 
 	return nullptr;
