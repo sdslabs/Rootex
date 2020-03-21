@@ -8,12 +8,31 @@
 #include "core/renderer/index_buffer.h"
 #include "core/renderer/vertex_buffer.h"
 #include "core/renderer/vertex_data.h"
+#include "script/interpreter.h"
 
 #include "vendor/OBJLoader/Source/OBJ_Loader.h"
 
 HashMap<Ptr<ResourceData>, Ptr<ResourceFile>> ResourceLoader::s_ResourcesDataFiles;
 HashMap<ResourceFile::Type, Vector<ResourceFile*>> ResourceLoader::s_ResourceFileLibrary;
 objl::Loader ResourceLoader::s_ModelLoader;
+
+void ResourceLoader::BindFunctions()
+{
+	luabridge::getGlobalNamespace(LuaInterpreter::GetSingleton()->getLuaState())
+	    .beginNamespace("Rootex")
+
+	    .beginClass<ResourceLoader>("ResourceLoader")
+	    .addStaticFunction("CreateTextResourceFile", &CreateTextResourceFile)
+	    .addStaticFunction("CreateNewTextResourceFile", &CreateNewTextResourceFile)
+	    .addStaticFunction("CreateLuaTextResourceFile", &CreateLuaTextResourceFile)
+	    .addStaticFunction("CreateAudioResourceFile", &CreateAudioResourceFile)
+	    .addStaticFunction("CreateImageResourceFile", &CreateImageResourceFile)
+	    .addStaticFunction("CreateFontResourceFile", &CreateFontResourceFile)
+	    .addStaticFunction("SaveResourceFile", &SaveResourceFile)
+	    .endClass()
+
+	    .endNamespace();
+}
 
 TextResourceFile* ResourceLoader::CreateTextResourceFile(const String& path)
 {
@@ -256,7 +275,7 @@ FontResourceFile* ResourceLoader::CreateFontResourceFile(const String& path, con
 	return fontRes;
 }
 
-void ResourceLoader::SaveResourceFile(TextResourceFile*& resourceFile)
+void ResourceLoader::SaveResourceFile(ResourceFile* resourceFile)
 {
 	bool saved = OS::SaveFile(resourceFile->getPath(), resourceFile->getData());
 	PANIC(saved == false, "Old resource could not be located for saving file: " + resourceFile->getPath().generic_string());

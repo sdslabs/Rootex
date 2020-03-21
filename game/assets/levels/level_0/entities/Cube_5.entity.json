@@ -1,0 +1,43 @@
+{
+    "Components": {
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 1
+        },
+        "ScriptComponent": {
+            "script": "game/assets/scripts/cube2.lua"
+        },
+        "TransformComponent": {
+            "position": {
+                "x": -1.9500000476837158,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rotation": {
+                "w": 0.9596616625785828,
+                "x": 0.0,
+                "y": 0.0,
+                "z": -0.2811574339866638
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            }
+        },
+        "VisualComponent": {
+            "color": {
+                "a": 1.0,
+                "b": 0.20000000298023224,
+                "g": 1.0,
+                "r": 0.20000000298023224
+            },
+            "renderPass": 1,
+            "resFile": "game/assets/test/cube.obj"
+        }
+    },
+    "Entity": {
+        "ID": 5,
+        "name": "Cube"
+    }
+}

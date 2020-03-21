@@ -42,6 +42,7 @@
 #error "Lua headers must be included prior to LuaBridge ones"
 #endif
 
+
 #include <LuaBridge/detail/LuaHelpers.h>
 #include <LuaBridge/detail/TypeTraits.h>
 #include <LuaBridge/detail/TypeList.h>

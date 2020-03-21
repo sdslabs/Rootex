@@ -1,6 +1,6 @@
 #include "component.h"
 
-void Component::bindFunctions()
+void Component::BindFunctions()
 {
 	luabridge::getGlobalNamespace(LuaInterpreter::GetSingleton()->getLuaState())
 	    .beginNamespace("Rootex")

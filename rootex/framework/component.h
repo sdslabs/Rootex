@@ -16,7 +16,7 @@ protected:
 	
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::Component;
-	static void bindFunctions();
+	static void BindFunctions();
 
 	Component();
 	virtual ~Component();

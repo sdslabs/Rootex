@@ -1,5 +1,6 @@
 function onBegin(entity)
-    print(entity:getComponent(Rootex.TransformComponent.ID):getName())
+    textFile = Rootex.ResourceLoader.CreateTextResourceFile("LICENSE")
+    print(textFile:getString())
 end
 
 function onUpdate(delta, entity)
