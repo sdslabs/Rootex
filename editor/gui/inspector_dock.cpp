@@ -31,17 +31,6 @@ InspectorDock::InspectorDock()
 	BIND_EVENT_MEMBER_FUNCTION("EditorInspectorOpenEntity", openEntity);
 }
 
-static int TextInputResizeCallback(ImGuiInputTextCallbackData* data)
-{
-	if (data->EventFlag == ImGuiInputTextFlags_CallbackResize)
-	{
-		String* myStr = (String*)data->UserData;
-		myStr->resize(data->BufSize);
-		data->Buf = myStr->data();
-	}
-	return 0;
-}
-
 void InspectorDock::draw()
 {
 	if (m_InspectorSettings.m_IsActive)

@@ -33,10 +33,6 @@ void FileViewer::drawFileInfo()
 			sizeUnitUI = " MB";
 		}
 	}
-	else
-	{
-		sizeUI = m_OpenFile->getData()->getRawDataByteSize();
-	}
 	ImGui::Text((std::to_string(sizeUI) + sizeUnitUI).c_str());
 	ImGui::NextColumn();
 
