@@ -77,5 +77,6 @@ void BindFunctions()
 void LuaInterpreter::registerTypes()
 {
 	BindFunctions<Entity>();
+	BindFunctions<Component>();
 	BindFunctions<TransformComponent>();
 }
