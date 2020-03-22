@@ -5,23 +5,6 @@
 #include "framework/components/hierarchy_component.h"
 #include "framework/system.h"
 
-void Entity::BindFunctions()
-{
-	luabridge::getGlobalNamespace(LuaInterpreter::GetSingleton()->getLuaState())
-	    .beginNamespace("Rootex")
-	    .beginClass<Entity>("Entity")
-	    .addFunction("getName", &getName)
-	    .addFunction("setName", &setName)
-	    .addFunction("addChild", &addChild)
-	    .addFunction("destroy", &destroy)
-	    .addFunction("hasComponent", &hasComponent)
-	    .addFunction("getID", &getID)
-	    .addFunction("getAllComponents", &getAllComponents)
-	    .addFunction("getComponent", &getComponentPointer)
-	    .endClass()
-	    .endNamespace();
-}
-
 Entity::~Entity()
 {
 	destroy();

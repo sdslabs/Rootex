@@ -34,7 +34,6 @@ protected:
 	friend class HierarchyGraph;
 
 public:
-	static void BindFunctions();
 	static EntityFactory* GetSingleton();
 
 	Ref<Component> createComponent(const String& name, const JSON::json& componentData);

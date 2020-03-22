@@ -41,13 +41,11 @@ bool Application::initialize(const JSON::json& projectJSON)
 	InputManager::GetSingleton()->initialize(windowJSON["width"], windowJSON["height"]);
 
 	ShaderLibrary::MakeShaders();
-	
-	LuaInterpreter::GetSingleton()->registerTypes();
 
 	auto&& postInitialize = projectJSON.find("postInitialize");
 	if (postInitialize != projectJSON.end())
 	{
-		LuaInterpreter::GetSingleton()->loadExecuteScript(ResourceLoader::CreateLuaTextResourceFile(*postInitialize));
+		LuaInterpreter::GetSingleton()->getLuaState().script(ResourceLoader::CreateLuaTextResourceFile(*postInitialize)->getString());
 	}
 
 	m_Window->show();

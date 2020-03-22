@@ -14,8 +14,6 @@ class ResourceLoader
 	static HashMap<ResourceFile::Type, Vector<ResourceFile*>> s_ResourceFileLibrary;
 
 public:
-	static void BindFunctions();
-
 	static TextResourceFile* CreateTextResourceFile(const String& path);
 	static TextResourceFile* CreateNewTextResourceFile(const String& path);
 	static LuaTextResourceFile* CreateLuaTextResourceFile(const String& path);
