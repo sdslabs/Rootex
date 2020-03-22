@@ -51,6 +51,7 @@ GameApplication::GameApplication()
 	initialize(projectJSON);
 
 	String levelName = getLevelNameFromCommandLine(GetCommandLine());
+
 	if (levelName == "")
 	{
 		ProjectManager::GetSingleton()->openLevel(projectJSON["startLevel"]);
