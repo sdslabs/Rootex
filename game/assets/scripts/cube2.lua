@@ -6,7 +6,7 @@ end
 function onUpdate(delta, entity)
     local pos = transform:getPosition()
     number = number + 0.1
-    pos.y = math.sin(number)
+    pos.x = math.sin(number)
     transform:setPosition(pos)
 end
 

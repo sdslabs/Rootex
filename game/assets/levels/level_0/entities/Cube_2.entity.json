@@ -1,5 +1,10 @@
 {
     "Components": {
+        "DiffuseVisualComponent": {
+            "renderPass": 5,
+            "resFile": "rootex/assets/cube.obj",
+            "texturePath": "rootex/assets/rootex.png"
+        },
         "HierarchyComponent": {
             "children": [],
             "parent": 1
@@ -11,9 +16,9 @@
                 "g": 0.45098036527633667,
                 "r": 1.0
             },
-            "attConst": -1.9550000429153442,
-            "attLin": 1.0,
-            "attQuad": 0.007499999832361937,
+            "attConst": 5.045000076293945,
+            "attLin": -2.0,
+            "attQuad": 0.00800000037997961,
             "diffuseColor": {
                 "a": 1.0,
                 "b": 0.0,
@@ -23,14 +28,11 @@
             "diffuseIntensity": 1.0,
             "range": 10.0
         },
-        "ScriptComponent": {
-            "script": "game/assets/scripts/cube2.lua"
-        },
         "TransformComponent": {
             "position": {
-                "x": -2.549999952316284,
+                "x": -1.600000023841858,
                 "y": 0.0,
-                "z": 0.0
+                "z": -0.28999999165534973
             },
             "rotation": {
                 "w": 1.0,
@@ -43,16 +45,6 @@
                 "y": 1.0,
                 "z": 1.0
             }
-        },
-        "VisualComponent": {
-            "color": {
-                "a": 1.0,
-                "b": 0.10272488743066788,
-                "g": 0.10272488743066788,
-                "r": 0.8382352590560913
-            },
-            "renderPass": 1,
-            "resFile": "game/assets/test/cube.obj"
         }
     },
     "Entity": {
