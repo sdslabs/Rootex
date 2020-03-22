@@ -267,6 +267,7 @@ void Editor::drawDefaultUI()
 					ImGui::Checkbox("Toolbar", &m_Toolbar->getSettings().m_IsActive);
 					ImGui::Checkbox("Output", &m_Output->getSettings().m_IsActive);
 					ImGui::Checkbox("Hierarchy", &m_Hierarchy->getSettings().m_IsActive);
+					ImGui::Checkbox("Entities", &m_Hierarchy->getSettings().m_IsEntitiesDockActive);
 					ImGui::Checkbox("Viewport", &m_Viewport->getSettings().m_IsActive);
 					ImGui::Checkbox("File System", &m_FileSystem->getSettings().m_IsActive);
 					ImGui::Checkbox("Inspector", &m_Inspector->getSettings().m_IsActive);
@@ -397,9 +398,8 @@ Variant Editor::saveAll(const Event* event)
 {
 	if (ProjectManager::GetSingleton()->isAnyLevelOpen())
 	{
-		PRINT("Saving level: " + ProjectManager::GetSingleton()->getCurrentLevelName());
 		ProjectManager::GetSingleton()->saveCurrentLevel();
-		PRINT("Successfully saved " + std::to_string(EntityFactory::GetSingleton()->getEntities().size()) + " entities");
+		PRINT("Successfully saved level: " + ProjectManager::GetSingleton()->getCurrentLevelName());
 	}
 	else
 	{
@@ -419,6 +419,7 @@ Variant Editor::openLevel(const Event* event)
 {
 	String levelPath(Extract(String, event->getData()));
 	ProjectManager::GetSingleton()->openLevel(levelPath);
+	SetWindowText(GetActiveWindow(), ("Rootex Editor: " + ProjectManager::GetSingleton()->getCurrentLevelName()).c_str());
 	return true;
 }
 
