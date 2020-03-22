@@ -28,6 +28,7 @@ public:
 	
 	virtual bool addChild(Ref<Entity> child);
 	virtual bool removeChild(Ref<Entity> node);
+	virtual bool snatchChild(Ref<Entity> node);
 	void clear();
 
 	virtual String getName() const override { return "HierarchyComponent"; }

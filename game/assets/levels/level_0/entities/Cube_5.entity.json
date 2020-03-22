@@ -9,6 +9,9 @@
             "children": [],
             "parent": 1
         },
+        "ScriptComponent": {
+            "script": "game/assets/scripts/rotator.lua"
+        },
         "TransformComponent": {
             "position": {
                 "x": 0.0,
