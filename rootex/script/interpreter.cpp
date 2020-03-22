@@ -164,7 +164,6 @@ void LuaInterpreter::registerTypes()
 	}
 	{
 		sol::usertype<Entity> entity = rootex.new_usertype<Entity>("Entity");
-		entity["addChild"] = &Entity::addChild;
 		entity["removeComponent"] = &Entity::removeComponent;
 		entity["destroy"] = &Entity::destroy;
 		entity["hasComponent"] = &Entity::hasComponent;
