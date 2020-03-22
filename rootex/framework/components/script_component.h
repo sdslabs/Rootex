@@ -19,7 +19,7 @@ private:
 	ScriptComponent(ScriptComponent&) = delete;
 	virtual ~ScriptComponent();
 
-	void isSuccessful(sol::protected_function_result& result);
+	void isSuccessful(const sol::function_result& result);
 
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::ScriptComponent;

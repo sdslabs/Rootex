@@ -32,7 +32,7 @@ bool ScriptComponent::setup()
 	return true;
 }
 
-void ScriptComponent::isSuccessful(sol::protected_function_result& result)
+void ScriptComponent::isSuccessful(const sol::function_result& result)
 {
 	if (!result.valid())
 	{

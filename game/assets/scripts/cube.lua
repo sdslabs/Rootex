@@ -6,12 +6,12 @@ function onBegin(entity)
     print(Rootex.ResourceLoader.CreateAudio("game/assets/jungle.wav"):getPath())
     text = Rootex.ResourceLoader.CreateText("game/assets/classes/cube.entity.json")
     transform = entity:getTransform()
+    pos = transform:getPosition()
     print(transform)
     number = 0
 end
 
 function onUpdate(delta, entity)
-    pos = transform:getPosition()
     pos.x = math.sin(number)
     number = number + 0.05
     transform:setPosition(pos)
