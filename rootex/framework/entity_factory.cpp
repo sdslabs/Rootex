@@ -19,6 +19,7 @@
 #include "components/visual/text_visual_2d_component.h"
 #include "components/physics/sphere_component.h"
 #include "components/physics/sphere_component.h"
+#include "components/physics/sphere_component.h"
 
 #define REGISTER_COMPONENT(ComponentClass) \
 m_ComponentCreators.push_back({ ComponentClass::s_ID, #ComponentClass, ComponentClass::Create }); \

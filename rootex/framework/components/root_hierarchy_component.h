@@ -36,7 +36,6 @@ public:
 
 	bool addVCToRenderPass(Ref<VisualComponent> vc, Ref<Entity>& child);
 	bool removeVCFromRenderPass(Ref<VisualComponent>& vc, Ref<Entity>& node);
-
 	void clear();
 
 	virtual String getName() const override { return "RootHierarchyComponent"; }
