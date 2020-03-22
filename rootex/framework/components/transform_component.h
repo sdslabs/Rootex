@@ -5,7 +5,7 @@
 
 class TransformComponent : public Component
 {
-	static Component* Create(const LuaVariable& componentData);
+	static Component* Create(const JSON::json& componentData);
 	static Component* CreateDefault();
 
 	struct TransformBuffer
@@ -24,8 +24,8 @@ class TransformComponent : public Component
 	void updateTransformFromPositionRotationScale();
 	void updatePositionRotationScaleFromTransform(Matrix& transform);
 
-	TransformComponent();
-	virtual ~TransformComponent() = default;
+	TransformComponent(const Vector3& position, const Vector4& rotation, const Vector3& scale);
+	TransformComponent(TransformComponent&) = delete;
 
 	friend class VisualComponent;
 	friend class DiffuseVisualComponent;
@@ -35,12 +35,13 @@ class TransformComponent : public Component
 #ifdef ROOTEX_EDITOR
 	static inline const float s_EditorDecimalSpeed = 0.01f;
 
-	float m_EditorRotation[3] = { 0.0f, 0.0f, 0.0f };
+	Vector3 m_EditorRotation;
 #endif // ROOTEX_EDITOR
-
 
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::TransformComponent;
+	
+	virtual ~TransformComponent() = default;
 
 	void setPosition(const Vector3& position);
 	void setRotation(const float& yaw, const float& pitch, const float& roll);
@@ -55,6 +56,7 @@ public:
 	Matrix getAbsoluteTransform() const { return m_TransformBuffer.m_AbsoluteTransform; }
 	ComponentID getComponentID() const override { return s_ID; }
 	virtual String getName() const override { return "TransformComponent"; }
+	virtual JSON::json getJSON() const override;
 
 #ifdef ROOTEX_EDITOR
 	void draw() override;

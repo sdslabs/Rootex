@@ -23,9 +23,6 @@ void TextViewer::unload()
 void TextViewer::draw()
 {
 	drawFileInfo();
-	ImGui::Separator();
-	ImGui::TextUnformatted(m_TextResourceFile->getString().c_str());
-	
 	if (m_TextResourceFile->isDirty())
 	{
 		ImGui::TextColored(Editor::GetSingleton()->getColors().m_Warning, "File may be changed on disk");
@@ -35,4 +32,6 @@ void TextViewer::draw()
 			m_TextResourceFile->reload();
 		}
 	}
+	ImGui::Separator();
+	ImGui::TextUnformatted(m_TextResourceFile->getString().c_str());
 }

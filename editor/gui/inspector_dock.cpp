@@ -28,7 +28,7 @@ void InspectorDock::refreshAddNewComponentSelectionCache()
 InspectorDock::InspectorDock()
     : m_OpenedEntity(nullptr)
 {
-	BIND_EVENT_MEMBER_FUNCTION("EditorInspectorOpenEntity", openEntity);
+	BIND_EVENT_MEMBER_FUNCTION("EditorOpenEntity", openEntity);
 }
 
 void InspectorDock::draw()
@@ -39,7 +39,7 @@ void InspectorDock::draw()
 		{
 			if (m_OpenedEntity)
 			{
-				ImGui::Text("Entity: %s", m_OpenedEntity->getName().c_str());
+				ImGui::Text("Entity: %s #%d", m_OpenedEntity->getName().c_str(), m_OpenedEntity->getID());
 				ImGui::PushStyleColor(ImGuiCol_Button, Editor::GetSingleton()->getColors().m_Success);
 				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, Editor::GetSingleton()->getColors().m_Accent);
 				ImGui::PushStyleColor(ImGuiCol_ButtonActive, Editor::GetSingleton()->getColors().m_Success);
@@ -66,7 +66,7 @@ void InspectorDock::draw()
 				ImGui::Text("Components");
 				for (auto& component : m_OpenedEntity->getAllComponents())
 				{
-					if (ImGui::TreeNodeEx(component.second->getName().c_str(), ImGuiTreeNodeFlags_CollapsingHeader))
+					if (ImGui::TreeNodeEx(component.second->getName().c_str(), ImGuiTreeNodeFlags_CollapsingHeader | ImGuiTreeNodeFlags_DefaultOpen))
 					{
 						component.second->draw();
 					}
@@ -114,9 +114,7 @@ void InspectorDock::drawAddComponentWindow()
 			ImGui::ListBoxFooter();
 		}
 
-		ImGui::PushStyleColor(ImGuiCol_Text, Editor::GetSingleton()->getColors().m_Warning);
-		ImGui::TextWrapped("Entities need to be reset to make some new components function properly.");
-		ImGui::PopStyleColor(1);
+		ImGui::TextWrapped("Entities will be automatically reset to make new components function properly.");
 
 		if (ImGui::Button("Add"))
 		{
@@ -128,6 +126,7 @@ void InspectorDock::drawAddComponentWindow()
 					EntityFactory::GetSingleton()->addComponent(m_OpenedEntity, component);
 					PRINT("Added " + componentName + " to " + m_OpenedEntity->getName());
 				}
+				m_OpenedEntity->setupComponents();
 			}
 			refreshAddNewComponentSelectionCache();
 			ImGui::CloseCurrentPopup();
@@ -178,6 +177,8 @@ void InspectorDock::drawRemoveComponentWindow()
 			ImGui::ListBoxFooter();
 		}
 
+		ImGui::TextWrapped("Entities will be automatically reset to make old components function properly.");
+
 		if (ImGui::Button("Remove"))
 		{
 			for (auto&& [componentID, componentName, isComponentSelected] : m_AddNewComponentSelectionCache)
@@ -191,6 +192,7 @@ void InspectorDock::drawRemoveComponentWindow()
 						PRINT("Deleted " + componentName + " from " + m_OpenedEntity->getName());
 					}
 				}
+				m_OpenedEntity->setupComponents();
 			}
 			refreshAddNewComponentSelectionCache();
 			ImGui::CloseCurrentPopup();

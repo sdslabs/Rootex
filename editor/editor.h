@@ -2,6 +2,7 @@
 
 #include "core/event_manager.h"
 #include "script/interpreter.h"
+#include "systems/serialization_system.h"
 
 #include "gui/file_system_dock.h"
 #include "gui/hierarchy_dock.h"
@@ -30,10 +31,12 @@ class Editor
 		ImVec4 m_FailAccent;
 		ImVec4 m_MediumAccent;
 		ImVec4 m_HeavyAccent;
+		ImVec4 m_Background;
 		ImVec4 m_Inactive;
 		ImVec4 m_Success;
 		ImVec4 m_Failure;
 		ImVec4 m_Warning;
+		ImVec4 m_White;
 	} m_Colors;
 
 	Ptr<FileSystemDock> m_FileSystem;
@@ -53,12 +56,16 @@ class Editor
 	void pushEditorStyleColors();
 	void pushEditorStyleVars();
 
-	friend class OS;
+	Variant saveAll(const Event* event);
+	Variant autoSave(const Event* event);
+	Variant openLevel(const Event* event);
+	Variant createNewLevel(const Event* event);
+	Variant createNewEntity(const Event* event);
 
 public:
 	static Editor* GetSingleton();
 
-	void initialize(HWND hWnd);
+	void initialize(HWND hWnd, const JSON::json& projectJSON);
 	void render();
 	void quit();
 

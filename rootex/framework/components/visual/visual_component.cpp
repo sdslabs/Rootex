@@ -8,12 +8,12 @@
 #include "framework/systems/render_system.h"
 #include "framework/systems/light_system.h"
 
-Component* VisualComponent::Create(const LuaVariable& componentData)
+Component* VisualComponent::Create(const JSON::json& componentData)
 {
 	VisualComponent* visualComponent = new VisualComponent(
 	    RenderPass::Global,
 	    Ref<Material>(new Material()),
-	    ResourceLoader::CreateVisualModelResourceFile(componentData["resFile"].tostring())
+	    ResourceLoader::CreateVisualModelResourceFile(componentData["resFile"])
 	);
 	visualComponent->setColor(Color((float)componentData["color"]["r"], (float)componentData["color"]["g"],
 	    (float)componentData["color"]["b"], (float)componentData["color"]["a"]));
@@ -40,6 +40,14 @@ VisualComponent::VisualComponent(const RenderPass& renderPassSetting, Ref<Materi
 	m_Attributes.m_RenderPassSetting = renderPassSetting;
 	m_Attributes.m_Material = material;
 	m_Attributes.m_VisualModelResourceFile = resFile;
+
+#ifdef ROOTEX_EDITOR
+	// TODO: Remove this if statement when camera gets a resource file
+	if (resFile)
+	{
+		m_ModelPathUI = resFile->getPath().string();
+	}
+#endif // ROOTEX_EDITOR
 }
 
 VisualComponent::~VisualComponent()
@@ -156,6 +164,20 @@ Vector3 VisualComponent::getPosition() const
 	return m_Attributes.m_TransformComponent->getPosition();
 }
 
+JSON::json VisualComponent::getJSON() const
+{
+	JSON::json j;
+
+	j["resFile"] = m_Attributes.m_VisualModelResourceFile->getPath().string();
+
+	j["color"]["r"] = m_Color.x;
+	j["color"]["g"] = m_Color.y;
+	j["color"]["b"] = m_Color.z;
+	j["color"]["a"] = m_Color.w;
+
+	return j;
+}
+
 VisualComponentAttributes::VisualComponentAttributes()
     : m_RenderPassSetting(RenderPass::Global)
     , m_Material(Ref<Material>(new Material()))
@@ -164,3 +186,25 @@ VisualComponentAttributes::VisualComponentAttributes()
     , m_HierarchyComponent(nullptr)
 {
 }
+
+#ifdef ROOTEX_EDITOR
+#include "imgui.h"
+#include "imgui_stdlib.h"
+void VisualComponent::draw()
+{
+	if (ImGui::InputText("Visual Model", &m_ModelPathUI, ImGuiInputTextFlags_EnterReturnsTrue))
+	{
+		VisualModelResourceFile* model = ResourceLoader::CreateVisualModelResourceFile(m_ModelPathUI);
+		if (model)
+		{
+			m_Attributes.m_VisualModelResourceFile = model;
+		}
+		else
+		{
+			m_ModelPathUI = m_Attributes.m_VisualModelResourceFile->getPath().string();
+		}
+	}
+
+	ImGui::ColorEdit4("Color", &m_Color.x);
+}
+#endif // ROOTEX_EDITOR

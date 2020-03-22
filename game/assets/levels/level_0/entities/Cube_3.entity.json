@@ -1,0 +1,59 @@
+{
+    "Components": {
+        "DirectionalLightComponent": {
+            "ambientColor": {
+                "a": 1.0,
+                "b": 0.9999899864196777,
+                "g": 0.9999899864196777,
+                "r": 1.0
+            },
+            "diffuseColor": {
+                "a": 1.0,
+                "b": 1.0,
+                "g": 0.9999899864196777,
+                "r": 0.9999969601631165
+            },
+            "diffuseIntensity": 1.0,
+            "direction": {
+                "x": 77.5,
+                "y": -31.5,
+                "z": 24.5
+            }
+        },
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 1
+        },
+        "TransformComponent": {
+            "position": {
+                "x": -1.7300000190734863,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rotation": {
+                "w": 0.9915618896484375,
+                "x": 0.0,
+                "y": 0.12963414192199707,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 0.10000000149011612,
+                "y": 0.10000000149011612,
+                "z": 0.10000000149011612
+            }
+        },
+        "VisualComponent": {
+            "color": {
+                "a": 1.0,
+                "b": 0.0,
+                "g": 0.0,
+                "r": 1.0
+            },
+            "resFile": "game/assets/test/teapot.obj"
+        }
+    },
+    "Entity": {
+        "ID": 3,
+        "name": "Cube"
+    }
+}

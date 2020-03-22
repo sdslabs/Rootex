@@ -24,7 +24,7 @@ private:
 	ViewportDockSettings m_ViewportDockSettings;
 
 public:
-	ViewportDock(LuaVariable viewportSettings);
+	ViewportDock(const JSON::json& viewportJSON);
 	ViewportDock(ViewportDock&) = delete;
 	~ViewportDock() = default;
 

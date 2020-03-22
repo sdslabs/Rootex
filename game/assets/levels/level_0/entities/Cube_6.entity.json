@@ -1,0 +1,34 @@
+{
+    "Components": {
+        "DiffuseVisualComponent": {
+            "resFile": "game/assets/test/teapot.obj",
+            "texturePath": "game/assets/test/blue.png"
+        },
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 1
+        },
+        "TransformComponent": {
+            "position": {
+                "x": 1.7300000190734863,
+                "y": -0.019999999552965164,
+                "z": 0.0
+            },
+            "rotation": {
+                "w": -0.1486506462097168,
+                "x": -0.0,
+                "y": -0.988889753818512,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 0.10000000149011612,
+                "y": 0.10000000149011612,
+                "z": 0.10000000149011612
+            }
+        }
+    },
+    "Entity": {
+        "ID": 6,
+        "name": "Cube"
+    }
+}

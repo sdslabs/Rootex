@@ -29,6 +29,12 @@ bool ResourceFile::isOpen()
 	return m_ResourceData == nullptr;
 }
 
+void ResourceFile::reload()
+{
+	m_LastReadTime = OS::s_FileSystemClock.now();
+	m_LastChangedTime = OS::GetFileLastChangedTime(getPath().string());
+}
+
 FilePath ResourceFile::getPath() const
 {
 	return m_ResourceData->getPath();
@@ -72,6 +78,7 @@ AudioResourceFile::~AudioResourceFile()
 
 void AudioResourceFile::reload()
 {
+	ResourceFile::reload();
 	const char* audioBuffer;
 	int format;
 	int size;
@@ -145,6 +152,7 @@ void TextResourceFile::append(const String& add)
 
 void TextResourceFile::reload()
 {
+	ResourceFile::reload();
 	ResourceLoader::ReloadResourceData(m_ResourceData->getPath().string());
 }
 
@@ -177,6 +185,7 @@ VisualModelResourceFile::~VisualModelResourceFile()
 
 void VisualModelResourceFile::reload()
 {
+	ResourceFile::reload();
 	PANIC(ResourceLoader::GetModelLoader().LoadFile(OS::GetAbsolutePath(m_ResourceData->getPath().string()).generic_string()) == false, "Model could not be loaded: " + OS::GetAbsolutePath(m_ResourceData->getPath().string()).generic_string());
 
 	VertexData vertex;
@@ -213,5 +222,6 @@ ImageResourceFile::~ImageResourceFile()
 
 void ImageResourceFile::reload()
 {
+	ResourceFile::reload();
 	ResourceLoader::ReloadResourceData(m_ResourceData->getPath().string());
 }

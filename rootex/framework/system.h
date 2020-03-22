@@ -17,5 +17,6 @@ protected:
 
 public:
 	System() = default;
+	System(System&) = delete;
 	virtual ~System() = default;
 };

@@ -51,7 +51,7 @@ public:
 
 class VisualComponent : public Component
 {
-	static Component* Create(const LuaVariable& componentData);
+	static Component* Create(const JSON::json& componentData);
 	static Component* CreateDefault();
 
 	Color m_Color;
@@ -62,6 +62,11 @@ protected:
 	bool m_IsVisible;
 	
 	friend class EntityFactory;
+
+#ifdef ROOTEX_EDITOR
+	String m_ModelPathUI;
+#endif // ROOTEX_EDITOR
+
 
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::VisualComponent;
@@ -91,4 +96,9 @@ public:
 
 	virtual String getName() const override { return "VisualComponent"; }
 	ComponentID getComponentID() const override { return s_ID; }
+	virtual JSON::json getJSON() const override;
+
+#ifdef ROOTEX_EDITOR
+	void draw() override;
+#endif // ROOTEX_EDITOR
 };

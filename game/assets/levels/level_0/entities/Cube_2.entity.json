@@ -1,0 +1,34 @@
+{
+    "Components": {
+        "DiffuseVisualComponent": {
+            "resFile": "rootex/assets/cube.obj",
+            "texturePath": "game/assets/test/green.png"
+        },
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 1
+        },
+        "TransformComponent": {
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": -0.9399999976158142
+            },
+            "rotation": {
+                "w": 1.0,
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 7.659999847412109,
+                "y": 5.389999866485596,
+                "z": 1.0
+            }
+        }
+    },
+    "Entity": {
+        "ID": 2,
+        "name": "Cube"
+    }
+}

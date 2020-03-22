@@ -12,12 +12,14 @@ public:
 
 private:
 	HierarchySettings m_HierarchySettings;
-	String m_OpenedEntityName;
+	EntityID m_OpenedEntityID;
 
 	void showHierarchySubTree(Ref<Entity> node);
+	
+	Variant selectOpenEntity(const Event* event);
 
 public:
-	HierarchyDock() = default;
+	HierarchyDock();
 	HierarchyDock(HierarchyDock&) = delete;
 	~HierarchyDock() = default;
 

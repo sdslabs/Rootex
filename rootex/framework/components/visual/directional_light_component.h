@@ -3,7 +3,7 @@
 
 class DirectionalLightComponent : public Component
 {
-	static Component* Create(const LuaVariable& componentData);
+	static Component* Create(const JSON::json& componentData);
 	static Component* CreateDefault();
 
 	friend class EntityFactory;
@@ -23,4 +23,9 @@ public:
 	    const Color& diffuseColor, const Color& ambientColor);
 	DirectionalLightComponent(DirectionalLightComponent&) = delete;
 	~DirectionalLightComponent();
+	virtual JSON::json getJSON() const override;
+
+#ifdef ROOTEX_EDITOR
+	void draw() override;
+#endif // ROOTEX_EDITOR
 };

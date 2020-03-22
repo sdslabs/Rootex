@@ -1,14 +1,23 @@
 #include "editor.h"
 
+#include "app/project_manager.h"
 #include "core/renderer/rendering_device.h"
 #include "core/resource_loader.h"
-
 #include "framework/components/hierarchy_component.h"
 #include "framework/systems/render_system.h"
+#include "editor_application.h"
 
-void Editor::initialize(HWND hWnd)
+#include "imgui_stdlib.h"
+
+void Editor::initialize(HWND hWnd, const JSON::json& projectJSON)
 {
-	LuaVariable general = LuaInterpreter::GetSingleton()->getGlobal("general");
+	BIND_EVENT_MEMBER_FUNCTION("EditorSaveAll", Editor::saveAll);
+	BIND_EVENT_MEMBER_FUNCTION("EditorAutosave", Editor::autoSave);
+	BIND_EVENT_MEMBER_FUNCTION("EditorOpenLevel", Editor::openLevel);
+	BIND_EVENT_MEMBER_FUNCTION("EditorCreateNewLevel", Editor::createNewLevel);
+	BIND_EVENT_MEMBER_FUNCTION("EditorCreateNewEntity", Editor::createNewEntity);
+
+	const JSON::json& general = projectJSON["general"];
 
 	m_Colors.m_Accent = {
 		(float)general["colors"]["accent"]["r"],
@@ -27,6 +36,12 @@ void Editor::initialize(HWND hWnd)
 		(float)general["colors"]["heavyAccent"]["g"],
 		(float)general["colors"]["heavyAccent"]["b"],
 		(float)general["colors"]["heavyAccent"]["a"],
+	};
+	m_Colors.m_Background = {
+		(float)general["colors"]["background"]["r"],
+		(float)general["colors"]["background"]["g"],
+		(float)general["colors"]["background"]["b"],
+		(float)general["colors"]["background"]["a"],
 	};
 	m_Colors.m_Inactive = {
 		(float)general["colors"]["inactive"]["r"],
@@ -58,12 +73,13 @@ void Editor::initialize(HWND hWnd)
 		(float)general["colors"]["warning"]["b"],
 		(float)general["colors"]["warning"]["a"],
 	};
+	m_Colors.m_White = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 	m_FileSystem.reset(new FileSystemDock());
 	m_Hierarchy.reset(new HierarchyDock());
 	m_Output.reset(new OutputDock());
 	m_Toolbar.reset(new ToolbarDock());
-	m_Viewport.reset(new ViewportDock(LuaInterpreter::GetSingleton()->getGlobal("viewport")));
+	m_Viewport.reset(new ViewportDock(projectJSON["viewport"]));
 	m_Inspector.reset(new InspectorDock());
 	m_FileViewer.reset(new FileViewer());
 
@@ -85,17 +101,18 @@ void Editor::render()
 	ImGui::NewFrame();
 
 	drawDefaultUI();
+
 	m_FileSystem->draw();
 	m_Hierarchy->draw();
-	m_Output->draw();
-	m_Toolbar->draw();
+    m_Toolbar->draw();
 	m_Viewport->draw();
-	m_Inspector->draw();
+    m_Inspector->draw();
 	m_FileViewer->draw();
+	m_Output->draw();
 
 	ImGui::PopStyleColor(m_EditorStyleColorPushCount);
 	ImGui::PopStyleVar(m_EditorStyleVarPushCount);
-
+	
 	RenderingDevice::GetSingleton()->setTextureRenderTarget();
 	RenderSystem::GetSingleton()->render();
 	RenderingDevice::GetSingleton()->setBackBufferRenderTarget();
@@ -130,7 +147,7 @@ void Editor::drawDefaultUI()
 		ImGui::SetNextWindowViewport(viewport->ID);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 2.0f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-		
+
 		pushEditorStyleColors();
 		pushEditorStyleVars();
 
@@ -160,6 +177,48 @@ void Editor::drawDefaultUI()
 			static String menuAction = "";
 			if (ImGui::BeginMenu("File"))
 			{
+				if (ImGui::BeginMenu("Create Entity"))
+				{
+					for (auto&& entityClassFile : OS::GetFilesInDirectory("game/assets/classes/"))
+					{
+						if (ImGui::MenuItem(entityClassFile.string().c_str(), ""))
+						{
+							Variant callReturn = EventManager::GetSingleton()->returnCall("EditorFileCreateNewEntity", "EditorCreateNewEntity", entityClassFile.string());
+				 			Ref<Entity> newEntity = Extract(Ref<Entity>, callReturn);
+							EventManager::GetSingleton()->call("EditorFileOpenNewlyCreatedEntity", "EditorOpenEntity", newEntity);
+						}
+					}
+					ImGui::EndMenu();
+				}
+				ImGui::Separator();
+				if (ImGui::BeginMenu("Create Level"))
+				{
+					static String newLevelName;
+					ImGui::InputText("Level Name", &newLevelName);
+					ImGui::SameLine();
+					if (ImGui::Button("Create"))
+					{
+						EventManager::GetSingleton()->call("EditorFileNewLevel", "EditorCreateNewLevel", newLevelName);
+						EventManager::GetSingleton()->call("EditorOpenNewLevel", "EditorOpenLevel", "game/assets/levels/" + newLevelName);
+					}
+					ImGui::EndMenu();
+				}
+				if (ImGui::BeginMenu("Open Level"))
+				{
+					for (auto&& levelName : OS::GetDirectoriesInDirectory("game/assets/levels"))
+					{
+						if (ImGui::MenuItem(levelName.string().c_str()))
+						{
+							EventManager::GetSingleton()->call("EditorFileMenuOpenLevel", "EditorOpenLevel", levelName.string());
+						}
+					}
+					ImGui::EndMenu();
+				}
+				if (ImGui::MenuItem("Save Level", "", false, ProjectManager::GetSingleton()->isAnyLevelOpen()))
+				{
+					EventManager::GetSingleton()->call("EditorSaveEvent", "EditorSaveAll", 0);
+				}
+				ImGui::Separator();
 				if (ImGui::MenuItem("Quit", ""))
 				{
 					quit();
@@ -282,90 +341,108 @@ void Editor::drawDefaultUI()
 
 void Editor::pushEditorStyleColors()
 {
-	m_EditorStyleColorPushCount = 0;
-
+	// Every line in this function body should push a style color
+	static const int starting = __LINE__;
 	ImGui::PushStyleColor(ImGuiCol_DockingPreview, m_Colors.m_Accent);
-	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_DockingEmptyBg, m_Colors.m_MediumAccent);
-	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_Separator, m_Colors.m_HeavyAccent);
-	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_SeparatorActive, m_Colors.m_Accent);
-	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_SeparatorHovered, m_Colors.m_MediumAccent);
-	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_BorderShadow, m_Colors.m_HeavyAccent);
-	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_FrameBg, m_Colors.m_HeavyAccent);
-	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_FrameBgActive, m_Colors.m_MediumAccent);
-	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, m_Colors.m_HeavyAccent);
-	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_TitleBg, m_Colors.m_HeavyAccent);
-	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_TitleBgActive, m_Colors.m_Accent);
-	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_TitleBgCollapsed, m_Colors.m_HeavyAccent);
-	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_MenuBarBg, m_Colors.m_HeavyAccent);
-	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_Header, m_Colors.m_HeavyAccent);
-	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_HeaderActive, m_Colors.m_Success);
-	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_HeaderHovered, m_Colors.m_Accent);
-	m_EditorStyleColorPushCount++;
-	ImGui::PushStyleColor(ImGuiCol_PopupBg, m_Colors.m_Inactive);
-	m_EditorStyleColorPushCount++;
+	ImGui::PushStyleColor(ImGuiCol_PopupBg, m_Colors.m_Background);
 	ImGui::PushStyleColor(ImGuiCol_Tab, m_Colors.m_HeavyAccent);
-	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_TabActive, m_Colors.m_Accent);
-	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_TabHovered, m_Colors.m_Accent);
-	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_TabUnfocused, m_Colors.m_MediumAccent);
-	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_TabUnfocusedActive, m_Colors.m_Accent);
-	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_Border, m_Colors.m_HeavyAccent);
-	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_Button, m_Colors.m_Success);
-	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, m_Colors.m_Accent);
-	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_ButtonActive, m_Colors.m_Success);
-	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_CheckMark, m_Colors.m_Accent);
-	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_TextSelectedBg, m_Colors.m_Accent);
-	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_TextDisabled, m_Colors.m_Inactive);
-	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_ResizeGrip, m_Colors.m_HeavyAccent);
-	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_ResizeGripActive, m_Colors.m_Accent);
-	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_ResizeGripHovered, m_Colors.m_MediumAccent);
-	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_ScrollbarGrab, m_Colors.m_HeavyAccent);
-	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_ScrollbarGrabActive, m_Colors.m_Accent);
-	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_ScrollbarGrabHovered, m_Colors.m_MediumAccent);
-	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_SliderGrab, m_Colors.m_Inactive);
-	m_EditorStyleColorPushCount++;
 	ImGui::PushStyleColor(ImGuiCol_SliderGrabActive, m_Colors.m_Accent);
-	m_EditorStyleColorPushCount++;
+	static const int ending = m_EditorStyleColorPushCount = __LINE__ - starting - 1;
 }
 
 void Editor::pushEditorStyleVars()
 {
-	m_EditorStyleVarPushCount = 0;
-
+	// Every line in this function body should push a style var
+	static const int starting = __LINE__;
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, { 0 });
-	m_EditorStyleVarPushCount++;
+	static const int ending = m_EditorStyleVarPushCount = __LINE__ - starting - 1;
+}
+
+Variant Editor::saveAll(const Event* event)
+{
+	if (ProjectManager::GetSingleton()->isAnyLevelOpen())
+	{
+		PRINT("Saving level: " + ProjectManager::GetSingleton()->getCurrentLevelName());
+		ProjectManager::GetSingleton()->saveCurrentLevel();
+		PRINT("Successfully saved " + std::to_string(EntityFactory::GetSingleton()->getEntities().size()) + " entities");
+	}
+	else
+	{
+		PRINT("No level is open. Did not save current level");
+	}
+	return true;
+}
+
+Variant Editor::autoSave(const Event* event)
+{
+	PRINT("Autosaving entities...");
+	saveAll(nullptr);
+	return true;
+}
+
+Variant Editor::openLevel(const Event* event)
+{
+	String levelPath(Extract(String, event->getData()));
+
+	ProjectManager::GetSingleton()->openLevel(levelPath);
+
+	return true;
+}
+
+Variant Editor::createNewLevel(const Event* event)
+{
+	const String& newLevelName = Extract(String, event->getData());
+	PRINT("Creating new level: " + newLevelName);
+
+	OS::CreateDirectoryName("game/assets/levels/" + newLevelName);
+	
+	PRINT("Created new level: " + "game/assets/levels/" + newLevelName);
+
+	return true;
+}
+
+Variant Editor::createNewEntity(const Event* event)
+{
+	const String& entityClassFilePath = Extract(String, event->getData());
+	TextResourceFile* entityClassFile = ResourceLoader::CreateNewTextResourceFile(entityClassFilePath);
+
+	Ref<Entity> newEntity = EntityFactory::GetSingleton()->createEntity(entityClassFile);
+
+	HierarchySystem::GetSingleton()->addChild(newEntity);
+	return newEntity;
 }
 
 Editor* Editor::GetSingleton()

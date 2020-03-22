@@ -1,6 +1,6 @@
 #include "point_light_component.h"
 
-Component* PointLightComponent::Create(const LuaVariable& componentData)
+Component* PointLightComponent::Create(const JSON::json& componentData)
 {
 	PointLightComponent* pointLightComponent = new PointLightComponent(
 	    (float)componentData["attConst"],
@@ -45,3 +45,40 @@ PointLightComponent::PointLightComponent(const float constAtt, const float linAt
 PointLightComponent::~PointLightComponent()
 {
 }
+
+JSON::json PointLightComponent::getJSON() const
+{
+	JSON::json j;
+
+	j["attConst"] = m_constAtt;
+	j["attLin"] = m_linAtt;
+	j["attQuad"] = m_quadAtt;
+	j["range"] = m_range;
+	j["diffuseIntensity"] = m_diffuseIntensity;
+
+	j["diffuseColor"]["r"] = m_diffuseColor.x;
+	j["diffuseColor"]["g"] = m_diffuseColor.y;
+	j["diffuseColor"]["b"] = m_diffuseColor.z;
+	j["diffuseColor"]["a"] = m_diffuseColor.w;
+
+	j["ambientColor"]["r"] = m_ambientColor.x;
+	j["ambientColor"]["g"] = m_ambientColor.y;
+	j["ambientColor"]["b"] = m_ambientColor.z;
+	j["ambientColor"]["a"] = m_ambientColor.w;
+
+	return j;
+}
+
+#ifdef ROOTEX_EDITOR
+#include"imgui.h"
+void PointLightComponent::draw()
+{
+	ImGui::DragFloat("Diffuse Intensity##Point", &m_diffuseIntensity);
+	ImGui::ColorEdit4("Diffuse Color##Point", &m_diffuseColor.x);
+	ImGui::ColorEdit4("Ambient Color##Point", &m_ambientColor.x);
+	ImGui::DragFloat("Constant Attenuation##Point", &m_constAtt);
+	ImGui::DragFloat("Linear Attenuation##Point", &m_linAtt);
+	ImGui::DragFloat("Quadratic Attenuation##Point", &m_quadAtt);
+	ImGui::DragFloat("Range##Point", &m_range);
+}
+#endif // ROOTEX_EDITOR
