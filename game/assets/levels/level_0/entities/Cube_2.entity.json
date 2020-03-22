@@ -24,7 +24,7 @@
             "range": 10.0
         },
         "ScriptComponent": {
-            "script": "game/assets/scripts/cube.lua"
+            "script": "game/assets/scripts/cube2.lua"
         },
         "TransformComponent": {
             "position": {

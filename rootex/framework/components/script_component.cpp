@@ -1,8 +1,8 @@
 #include "script_component.h"
 
-#include "resource_loader.h"
-#include "event_manager.h"
 #include "entity.h"
+#include "event_manager.h"
+#include "resource_loader.h"
 
 Component* ScriptComponent::Create(const JSON::json& componentData)
 {
@@ -18,7 +18,7 @@ Component* ScriptComponent::CreateDefault()
 
 ScriptComponent::ScriptComponent(LuaTextResourceFile* luaFile)
     : m_ScriptFile(luaFile)
-    , m_EntityTable(LuaInterpreter::GetSingleton()->getLuaState())
+    , m_Env(LuaInterpreter::GetSingleton()->getLuaState(), sol::create, LuaInterpreter::GetSingleton()->getLuaState().globals())
 {
 }
 
@@ -28,25 +28,32 @@ ScriptComponent::~ScriptComponent()
 
 bool ScriptComponent::setup()
 {
-	String entityTableName = m_Owner->getName() + std::to_string(m_Owner->getID());
-	LuaInterpreter::GetSingleton()->loadExecuteScript(entityTableName + " = loadEnv(\"" + m_ScriptFile->getPath().string() + "\")");
-	m_EntityTable = LuaInterpreter::GetSingleton()->getGlobal(entityTableName);
+	LuaInterpreter::GetSingleton()->getLuaState().script(m_ScriptFile->getString(), m_Env);
 	return true;
+}
+
+void ScriptComponent::isSuccessful(sol::protected_function_result& result)
+{
+	if (!result.valid())
+	{
+		sol::error e = result;
+		PRINT(e.what());
+	}
 }
 
 void ScriptComponent::onBegin()
 {
-	m_EntityTable["onBegin"](m_Owner.get());
+	isSuccessful(m_Env["onBegin"](m_Owner));
 }
 
 void ScriptComponent::onUpdate(float deltaMilliSeconds)
 {
-	m_EntityTable["onUpdate"](deltaMilliSeconds, m_Owner.get());
+	isSuccessful(m_Env["onUpdate"](deltaMilliSeconds, m_Owner));
 }
 
 void ScriptComponent::onEnd()
 {
-	m_EntityTable["onEnd"](m_Owner.get());
+	isSuccessful(m_Env["onEnd"](m_Owner));
 }
 
 JSON::json ScriptComponent::getJSON() const

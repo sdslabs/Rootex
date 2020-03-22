@@ -13,6 +13,7 @@ option(BUILD_EDITOR "Build editor executable" OFF)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+add_compile_options(/bigobj)
 
 set(ROOTEX_INCLUDES
     ${ROOTEX_INCLUDES}
