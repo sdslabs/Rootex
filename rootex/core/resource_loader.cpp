@@ -16,24 +16,6 @@ HashMap<Ptr<ResourceData>, Ptr<ResourceFile>> ResourceLoader::s_ResourcesDataFil
 HashMap<ResourceFile::Type, Vector<ResourceFile*>> ResourceLoader::s_ResourceFileLibrary;
 objl::Loader ResourceLoader::s_ModelLoader;
 
-void ResourceLoader::BindFunctions()
-{
-	luabridge::getGlobalNamespace(LuaInterpreter::GetSingleton()->getLuaState())
-	    .beginNamespace("Rootex")
-
-	    .beginClass<ResourceLoader>("ResourceLoader")
-	    .addStaticFunction("CreateTextResourceFile", &CreateTextResourceFile)
-	    .addStaticFunction("CreateNewTextResourceFile", &CreateNewTextResourceFile)
-	    .addStaticFunction("CreateLuaTextResourceFile", &CreateLuaTextResourceFile)
-	    .addStaticFunction("CreateAudioResourceFile", &CreateAudioResourceFile)
-	    .addStaticFunction("CreateImageResourceFile", &CreateImageResourceFile)
-	    .addStaticFunction("CreateFontResourceFile", &CreateFontResourceFile)
-	    .addStaticFunction("SaveResourceFile", &SaveResourceFile)
-	    .endClass()
-
-	    .endNamespace();
-}
-
 TextResourceFile* ResourceLoader::CreateTextResourceFile(const String& path)
 {
 	for (auto& item : s_ResourcesDataFiles)
