@@ -17,7 +17,7 @@ set(ROOTEX_SOURCES
 CACHE INTERNAL "")
 
 add_subdirectory(Lua)
-add_subdirectory(LuaBridge)
+add_subdirectory(Sol3)
 add_subdirectory(Bullet3D)
 add_subdirectory(OpenAL)
 add_subdirectory(OBJLoader)

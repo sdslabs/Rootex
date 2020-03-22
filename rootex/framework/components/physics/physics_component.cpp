@@ -13,8 +13,8 @@ PhysicsComponent::PhysicsComponent(const String& matName, float volume, const Re
 	m_CollisionShape = collisionShape;
 	m_TransformComponent = nullptr;
 	physicsMaterial = ResourceLoader::CreateLuaTextResourceFile("game/assets/config/physics.lua");
-	LuaInterpreter::GetSingleton()->loadExecuteScript(physicsMaterial);
-	LuaVariable materialLua = LuaInterpreter::GetSingleton()->getGlobal("PhysicsMaterial");
+	LuaInterpreter::GetSingleton()->getLuaState().script(physicsMaterial->getString());
+	sol::table materialLua = LuaInterpreter::GetSingleton()->getLuaState()["PhysicsMaterial"];
 	m_SpecificGravity = float(materialLua[matName]["specificgravity"]);
 	m_Material.m_Friction = float(materialLua[matName]["friction"]);
 	m_Material.m_Restitution = float(materialLua[matName]["restitution"]);

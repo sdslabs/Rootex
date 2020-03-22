@@ -10,7 +10,7 @@ public:
 	static Component* CreateDefault();
 
 private:
-	LuaVariable m_EntityTable;
+	sol::environment m_Env;
 	LuaTextResourceFile* m_ScriptFile;
 
 	friend class EntityFactory;
@@ -18,6 +18,8 @@ private:
 	ScriptComponent(LuaTextResourceFile* luaFile);
 	ScriptComponent(ScriptComponent&) = delete;
 	virtual ~ScriptComponent();
+
+	void isSuccessful(sol::protected_function_result& result);
 
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::ScriptComponent;
