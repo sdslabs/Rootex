@@ -9,15 +9,19 @@
 #define MS_TO_S 1e-3f
 #define S_TO_MS 1e+3f
 
+typedef std::chrono::time_point<std::chrono::high_resolution_clock> TimePoint;
+
 class Timer
 {
 protected:
 	static const std::chrono::high_resolution_clock s_Clock;
 
-	std::chrono::time_point<std::chrono::high_resolution_clock> m_StartTime;
-	std::chrono::time_point<std::chrono::high_resolution_clock> m_EndTime;
+	TimePoint m_StartTime;
+	TimePoint m_EndTime;
 
 public:
+	static TimePoint Now();
+	
 	Timer();
 	Timer(Timer&) = delete;
 	virtual ~Timer() = default;

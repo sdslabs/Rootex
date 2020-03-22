@@ -18,5 +18,6 @@ public:
 	bool addChild(Ref<Entity> child);
 	bool removeChild(Ref<Entity> child);
 
-	Ref<RootHierarchyComponent> getRoot() const { return m_RootHierarchyComponent; }
+	Ref<Entity> getRootEntity() const { return m_Root; }
+	Ref<RootHierarchyComponent> getRootHierarchyComponent() const { return m_RootHierarchyComponent; }
 };

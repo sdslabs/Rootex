@@ -1,22 +1,13 @@
 #include "viewport_dock.h"
 
 #include "renderer/rendering_device.h"
+#include "editor/editor.h"
 
-ViewportDock::ViewportDock(LuaVariable viewportSettings)
+ViewportDock::ViewportDock(const JSON::json& viewportJSON)
 {
-	m_ViewportDockSettings.m_AspectRatio = (float)LuaInterpreter::GetSingleton()->getGlobal("viewport")["aspectRatio"];
-	m_ViewportDockSettings.m_ImageTint = {
-		(float)viewportSettings["imageTint"]["r"],
-		(float)viewportSettings["imageTint"]["g"],
-		(float)viewportSettings["imageTint"]["b"],
-		(float)viewportSettings["imageTint"]["a"],
-	};
-	m_ViewportDockSettings.m_ImageBorderColor = {
-		(float)viewportSettings["borderColor"]["r"],
-		(float)viewportSettings["borderColor"]["g"],
-		(float)viewportSettings["borderColor"]["b"],
-		(float)viewportSettings["borderColor"]["a"],
-	};
+	m_ViewportDockSettings.m_AspectRatio = (float)viewportJSON["aspectRatio"]["x"] / (float)viewportJSON["aspectRatio"]["y"];
+	m_ViewportDockSettings.m_ImageTint = Editor::GetSingleton()->getColors().m_White;
+	m_ViewportDockSettings.m_ImageBorderColor = Editor::GetSingleton()->getColors().m_Accent;
 }
 
 void ViewportDock::draw()

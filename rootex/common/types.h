@@ -10,6 +10,14 @@ template <class T>
 using Weak = std::weak_ptr<T>;
 #include <wrl.h> // For using Microsoft::WRL::ComPtr<T>
 
+// Serialization streams
+#include <fstream>
+typedef std::fstream InputOutputFileStream;
+typedef std::ofstream OutputFileStream;
+typedef std::ifstream InputFileStream;
+#include <sstream>
+typedef std::stringstream StringStream;
+
 // Containers
 #include <string>
 typedef std::string String;
@@ -51,9 +59,12 @@ namespace ColorPresets = DirectX::Colors;
 #include <variant>
 typedef Vector<std::variant<bool, int, char, float, String, Vector2, Vector3, Vector4, Matrix>> VariantVector;
 class Entity;
-using Variant = std::variant<bool, int, char, float, String, Vector2, Vector3, Vector4, Matrix, VariantVector, Ref<Entity>, FilePath>;
+using Variant = std::variant<bool, int, char, float, String, FilePath, Vector2, Vector3, Vector4, Matrix, VariantVector, Ref<Entity>, Vector<String>>;
 #define Extract(TypeName, variant) std::get<TypeName>((variant))
 
 #include <functional>
 template <class T>
 using Function = std::function<T>;
+
+#include "JSON/json.hpp"
+namespace JSON = nlohmann;

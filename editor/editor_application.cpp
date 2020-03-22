@@ -25,15 +25,21 @@ void EditorApplication::SetSingleton(EditorApplication* app)
 }
 
 EditorApplication::EditorApplication()
-    : Application("editor/project.lua")
+    : Application()
 {
-	SetSingleton(this);
-	Editor::GetSingleton()->initialize(m_Window->getWindowHandle());
+	if (!s_Instance)
+	{
+		SetSingleton(this);
+	}
+	else
+	{
+		ERR("More than 1 instances of Editor Application detected");
+	}
 
-	HierarchySystem::GetSingleton()->addChild(addEntity("game/assets/test/cube.lua"));
-	Ref<Entity> teapot = addEntity("game/assets/test/teapot.lua");
-	HierarchySystem::GetSingleton()->addChild(teapot);
-	teapot->addChild(addEntity("game/assets/test/point_light.lua"));
+	JSON::json projectJSON = JSON::json::parse(ResourceLoader::CreateTextResourceFile("editor/editor.app.json")->getString());
+	initialize(projectJSON);
+	Editor::GetSingleton()->initialize(m_Window->getWindowHandle(), projectJSON);
+	m_PointAtLast10Second = m_ApplicationTimer.Now();
 }
 
 EditorApplication::~EditorApplication()
@@ -45,6 +51,11 @@ void EditorApplication::run()
 	while (true)
 	{
 		m_FrameTimer.reset();
+		if (((m_ApplicationTimer.Now() - m_PointAtLast10Second).count()) * NS_TO_MS * MS_TO_S > m_AutosaveDurationS)
+		{
+			EventManager::GetSingleton()->call("EditorAutosaveEvent", "EditorAutosave", 0);
+			m_PointAtLast10Second = m_ApplicationTimer.Now();
+		}
 
 		if (m_Window->processMessages())
 		{
@@ -57,8 +68,8 @@ void EditorApplication::run()
 		InputManager::GetSingleton()->update();
 		EventManager::GetSingleton()->dispatchDeferred();
 
+		m_Window->clearUnboundTarget();
 		m_Window->swapBuffers();
-		m_Window->clearCurrentTarget();
 	}
 }
 

@@ -1,19 +1,21 @@
 file(GLOB_RECURSE GameSource ./**.cpp)
 file(GLOB_RECURSE GameHeaders ./**.h)
 file(GLOB_RECURSE GameLuaScripts ./**.lua)
+file(GLOB_RECURSE GameJSONs ./**.json)
 
-set_source_files_properties(${GameLuaScripts} PROPERTIES
+set_source_files_properties(${GameLuaScripts} ${GameJSONs} PROPERTIES
     HEADER_FILE_ONLY TRUE
 )
 
-add_executable(Game ${GameSource} ${GameHeaders} ${GameLuaScripts})
+add_executable(Game ${GameSource} ${GameHeaders} ${GameLuaScripts} ${GameJSONs})
 
 target_include_directories(Game PUBLIC ../)
 target_link_libraries(Game PUBLIC Rootex)
+add_dependencies(Game Rootex)
 
 source_group(TREE "../game/"
     PREFIX "Game"
-    FILES ${GameSource} ${GameHeaders} ${GameLuaScripts}
+    FILES ${GameSource} ${GameHeaders} ${GameLuaScripts} ${GameJSONs}
 )
 
 add_custom_command(TARGET Game POST_BUILD

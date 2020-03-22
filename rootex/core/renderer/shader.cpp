@@ -1,7 +1,5 @@
 #include "shader.h"
 
-#include <atlstr.h>
-
 #include "utils.h"
 #include "texture.h"
 
@@ -12,14 +10,14 @@ Shader::Shader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const Buffer
 	Microsoft::WRL::ComPtr<ID3DBlob> vertexShaderBlob = RenderingDevice::GetSingleton()->createBlob(vertexPath);
 	if (!vertexShaderBlob)
 	{
-		ERR("Vertex Shader not found: " + String(CW2A(vertexPath)));
+		ERR("Vertex Shader not found");
 	}
 	m_VertexShader = RenderingDevice::GetSingleton()->initVertexShader(vertexShaderBlob.Get());
 
 	Microsoft::WRL::ComPtr<ID3DBlob> pixelShaderBlob = RenderingDevice::GetSingleton()->createBlob(pixelPath);
 	if (!pixelShaderBlob)
 	{
-		ERR("Pixel Shader not found: " + String(CW2A(pixelPath)));
+		ERR("Pixel Shader not found");
 	}
 	m_PixelShader = RenderingDevice::GetSingleton()->initPixelShader(pixelShaderBlob.Get());
 

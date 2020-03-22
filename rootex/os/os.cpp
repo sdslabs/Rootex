@@ -7,6 +7,10 @@
 #include "common/common.h"
 #include "resource_data.h"
 
+#ifdef ROOTEX_EDITOR
+#include"event_manager.h"
+#endif // ROOTEX_EDITOR
+
 std::filesystem::file_time_type::clock OS::s_FileSystemClock;
 const std::chrono::time_point<std::chrono::system_clock> OS::s_ApplicationStartTime = std::chrono::system_clock::now();
 FilePath OS::s_RootDirectory;
@@ -76,7 +80,7 @@ Vector<FilePath> OS::GetFilesInDirectory(const String& directory)
 	Vector<FilePath> result;
 	for (auto&& file : std::filesystem::directory_iterator(GetAbsolutePath(directory)))
 	{
-		if (file.is_regular_file())
+		if (!file.is_directory())
 		{
 			result.push_back(GetRootRelativePath(((FilePath)file).generic_string()));
 		}
@@ -111,6 +115,11 @@ bool OS::Initialize()
 	return true;
 }
 
+void OS::Execute(const String string)
+{
+	std::system(string.c_str());
+}
+
 String OS::GetBuildDate()
 {
 	return String(__DATE__);
@@ -121,6 +130,21 @@ String OS::GetBuildTime()
 	return String(__TIME__);
 }
 
+String OS::GetBuildType()
+{
+#ifdef _DEBUG || DEBUG
+	return "Debug";
+#else
+	return "Release";
+#endif // DEBUG
+
+}
+
+String OS::GetGameExecutablePath()
+{
+	return GetAbsolutePath("build/game/" + GetBuildType() + "/Game.exe").string();
+}
+
 bool OS::IsDirectory(const String& path)
 {
 	return std::filesystem::is_directory(GetAbsolutePath(path));
@@ -129,6 +153,47 @@ bool OS::IsDirectory(const String& path)
 bool OS::IsFile(const String& path)
 {
 	return std::filesystem::is_regular_file(GetAbsolutePath(path));
+}
+
+void OS::CreateDirectoryName(const String& dirPath)
+{
+	FilePath path = OS::GetAbsolutePath(dirPath);
+
+	if (IsExists(dirPath))
+	{
+		WARN("Directory already exists: " + dirPath);
+		return;
+	}
+
+	if (std::filesystem::create_directories(path))
+	{
+		PRINT("Created directory: " + path.string());
+	}
+	else
+	{
+		WARN("Could not create directory: " + path.string());
+	}
+}
+
+InputOutputFileStream OS::CreateFileName(const String& filePath)
+{
+	FilePath path = OS::GetAbsolutePath(filePath);
+
+	InputOutputFileStream file(OS::GetAbsolutePath(filePath), std::ios::binary | std::ios::in | std::ios::out | std::ios::trunc);
+
+	if (file)
+	{
+		if (!IsExists(filePath))
+		{
+			PRINT("Created file: " + path.string());
+		}
+	}
+	else
+	{
+		WARN("Could not create directory: " + path.string());
+	}
+
+	return file;
 }
 
 void OS::OpenFileInSystemEditor(const String& filePath)
@@ -161,7 +226,7 @@ void OS::OpenFileInSystemEditor(const String& filePath)
 
 void OS::OpenFileInExplorer(const String& filePath)
 {
-	if (!Exists(filePath))
+	if (!IsExists(filePath))
 	{
 		WARN("File not found: " + filePath);
 		return;
@@ -241,7 +306,7 @@ FileBuffer OS::LoadFileContents(String stringPath)
 {
 	std::filesystem::path path = GetAbsolutePath(stringPath);
 
-	if (!Exists(path.generic_string()))
+	if (!IsExists(path.generic_string()))
 	{
 		ERR("OS: File IO error: " + path.generic_string() + " does not exist");
 		return FileBuffer();
@@ -268,13 +333,16 @@ FileBuffer OS::LoadFileContents(String stringPath)
 	return FileBuffer(buffer);
 }
 
-bool OS::Exists(String relativePath)
+bool OS::IsExists(String relativePath)
 {
 	return std::filesystem::exists(OS::GetAbsolutePath(relativePath));
 }
 
-void OS::Print(const String& msg)
+void OS::Print(const String& msg, const String& type)
 {
+#ifdef ROOTEX_EDITOR
+	EventManager::GetSingleton()->call(type, "OSPrint", msg);
+#endif // ROOTEX_EDITOR
 	std::cout.clear();
 	std::cout << msg << std::endl;
 }
@@ -301,14 +369,17 @@ void OS::PrintLine(const String& msg)
 
 void OS::PrintWarning(const String& warning)
 {
-	Print("WARNING: " + warning);
+	std::cout << "\033[93m";
+	Print("WARNING: " + warning, "Warning");
+	std::cout << "\033[0m";
 }
 
 void OS::PrintError(const String& error)
 {
-	std::cout.clear();
-	Print("ERROR: " + error);
-	PostError(error, "Fatal Error");
+	std::cout << "\033[91m";
+	Print("ERROR: " + error, "Error");
+	std::cout << "\033[0m";
+	PostError(error, "Error");
 }
 
 void OS::PrintIf(const bool& expr, const String& error)

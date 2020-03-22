@@ -7,11 +7,11 @@
 #include "script/interpreter.h"
 #include "systems/physics_system.h"
 
-Application::Application(const String& windowConfigFilePath)
+Application::Application()
 {
-	if (!initialize(windowConfigFilePath))
+	if (!OS::Initialize())
 	{
-		ERR("Rootex Application could not be initialized");
+		ERR("Application OS was not initialized");
 	}
 }
 
@@ -20,46 +20,33 @@ Application::~Application()
 	AudioSystem::GetSingleton()->shutDown();
 }
 
-Ref<Entity> Application::addEntity(String path)
+bool Application::initialize(const JSON::json& projectJSON)
 {
-	return EntityFactory::GetSingleton()->createEntity(ResourceLoader::CreateLuaTextResourceFile(path));
-}
-
-bool Application::initialize(String windowConfigFilePath)
-{
-	if (!OS::Initialize())
-	{
-		ERR("Game Operating System was not initialized");
-		return false;
-	}
-
 	if (!AudioSystem::GetSingleton()->initialize())
 	{
 		ERR("Audio System was not initialized");
-		return false;
 	}
-
-	LuaInterpreter::GetSingleton()->loadExecuteScript(ResourceLoader::CreateLuaTextResourceFile(windowConfigFilePath));
-	LuaVariable windowLua = LuaInterpreter::GetSingleton()->getGlobal("window");
+	
+	PhysicsSystem::GetSingleton()->initialize();
+	
+	JSON::json windowJSON = projectJSON["window"];
 	m_Window.reset(new Window(
-	    windowLua["x"],
-	    windowLua["y"],
-	    windowLua["width"],
-	    windowLua["height"],
-	    windowLua["title"],
-	    windowLua["isEditor"],
-	    windowLua["msaa"]));
-	InputManager::GetSingleton()->initialize(windowLua["width"], windowLua["height"]);
+	    windowJSON["x"],
+	    windowJSON["y"],
+	    windowJSON["width"],
+	    windowJSON["height"],
+	    windowJSON["title"],
+	    windowJSON["isEditor"],
+	    windowJSON["msaa"]));
+	InputManager::GetSingleton()->initialize(windowJSON["width"], windowJSON["height"]);
 
 	ShaderLibrary::MakeShaders();
-
-	LuaVariable postInitialize = windowLua["postInitialize"];
-	if (!postInitialize.isNil() && postInitialize.isString())
+	
+	auto&& postInitialize = projectJSON.find("postInitialize");
+	if (postInitialize != projectJSON.end())
 	{
-		LuaInterpreter::GetSingleton()->loadExecuteScript(ResourceLoader::CreateLuaTextResourceFile(postInitialize));
+		LuaInterpreter::GetSingleton()->loadExecuteScript(ResourceLoader::CreateLuaTextResourceFile(*postInitialize));
 	}
-
-	PhysicsSystem::GetSingleton()->initialize();
 
 	m_Window->show();
 	return true;

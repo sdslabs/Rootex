@@ -8,19 +8,17 @@
 
 class Application
 {
-	bool initialize(String windowConfigFilePath);
-
 protected:
 	ThreadPool m_ThreadPool;
 	Timer m_ApplicationTimer;
 	Ptr<Window> m_Window;
+	
+	bool initialize(const JSON::json& projectJSON);
 
 public:
-	Application(const String& windowConfigFilePath);
+	Application();
 	Application(Application&) = delete;
 	virtual ~Application();
-	
-	Ref<Entity> addEntity(String path);
 
 	virtual void run() = 0;
 	virtual void shutDown() = 0;

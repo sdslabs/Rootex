@@ -3,7 +3,7 @@
 
 class SpotLightComponent : public Component
 {
-	static Component* Create(const LuaVariable& componentData);
+	static Component* Create(const JSON::json& componentData);
 	static Component* CreateDefault();
 
 	friend class EntityFactory;
@@ -29,4 +29,9 @@ public:
 		float spot, float angleRange);
 	SpotLightComponent(SpotLightComponent&) = delete;
 	~SpotLightComponent();
+	virtual JSON::json getJSON() const override;
+
+#ifdef ROOTEX_EDITOR
+	void draw() override;
+#endif // ROOTEX_EDITOR
 };
