@@ -28,8 +28,17 @@ ScriptComponent::~ScriptComponent()
 
 bool ScriptComponent::setup()
 {
-	LuaInterpreter::GetSingleton()->getLuaState().script(m_ScriptFile->getString(), m_Env);
-	return true;
+	bool status = true;
+	try
+	{
+		LuaInterpreter::GetSingleton()->getLuaState().script(m_ScriptFile->getString(), m_Env);
+	}
+	catch (std::exception e)
+	{
+		ERR(e.what());
+		status = false;
+	}
+	return status;
 }
 
 void ScriptComponent::isSuccessful(const sol::function_result& result)
