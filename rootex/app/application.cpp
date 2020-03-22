@@ -17,6 +17,7 @@ Application::Application()
 
 Application::~Application()
 {
+	EntityFactory::GetSingleton()->destroyEntities(false);
 	AudioSystem::GetSingleton()->shutDown();
 }
 
