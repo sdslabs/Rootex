@@ -13,15 +13,8 @@ void ScriptSystem::begin()
 	ScriptComponent* scriptComponent = nullptr;
 	for (auto&& component : s_Components[ScriptComponent::s_ID])
 	{
-		try
-		{
-			scriptComponent = (ScriptComponent*)component;
-			scriptComponent->onBegin();
-		}
-		catch (std::exception e)
-		{
-			ERR(e.what());
-		}
+		scriptComponent = (ScriptComponent*)component;
+		scriptComponent->onBegin();
 	}
 }
 
@@ -30,15 +23,8 @@ void ScriptSystem::update(float deltaMilliseconds)
 	ScriptComponent* scriptComponent = nullptr;
 	for (auto&& component : s_Components[ScriptComponent::s_ID])
 	{
-		try
-		{
-			scriptComponent = (ScriptComponent*)component;
-			scriptComponent->onUpdate(deltaMilliseconds);
-		}
-		catch (std::exception e)
-		{
-			ERR(e.what());
-		}
+		scriptComponent = (ScriptComponent*)component;
+		scriptComponent->onUpdate(deltaMilliseconds);
 	}
 }
 
@@ -47,14 +33,7 @@ void ScriptSystem::end()
 	ScriptComponent* scriptComponent = nullptr;
 	for (auto&& component : s_Components[ScriptComponent::s_ID])
 	{
-		try
-		{
-			scriptComponent = (ScriptComponent*)component;
-			scriptComponent->onEnd();
-		}
-		catch (std::exception e)
-		{
-			ERR(e.what());
-		}
+		scriptComponent = (ScriptComponent*)component;
+		scriptComponent->onEnd();
 	}
 }
