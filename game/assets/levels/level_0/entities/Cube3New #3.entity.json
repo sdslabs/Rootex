@@ -4,21 +4,6 @@
             "children": [],
             "parent": 1
         },
-        "ScriptComponent": {
-            "script": "game/assets/scripts/cube.lua"
-        },
-        "TextVisual2DComponent": {
-            "color": {
-                "a": 1.0,
-                "b": 1.0,
-                "g": 1.0,
-                "r": 1.0
-            },
-            "fontResource": "game/assets/fonts/noto_sans_50_regular.spritefont",
-            "mode": 0,
-            "name": "Noto Sans",
-            "text": "Hello World!"
-        },
         "TransformComponent": {
             "position": {
                 "x": 0.0,
@@ -36,10 +21,20 @@
                 "y": 1.0,
                 "z": 1.0
             }
+        },
+        "VisualComponent": {
+            "color": {
+                "a": 1.0,
+                "b": 0.20000000298023224,
+                "g": 1.0,
+                "r": 0.20000000298023224
+            },
+            "renderPass": 1,
+            "resFile": "game/assets/test/cube.obj"
         }
     },
     "Entity": {
-        "ID": 9,
-        "name": "Cube"
+        "ID": 3,
+        "name": "Cube3New"
     }
 }

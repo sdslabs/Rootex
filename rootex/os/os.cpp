@@ -53,6 +53,24 @@ Vector<FilePath> OS::GetDirectoriesInDirectory(const String& directory)
 	return result;
 }
 
+bool OS::DeleteDirectory(const String& dirPath)
+{
+	bool status = std::filesystem::remove_all(GetAbsolutePath(dirPath));
+
+	if (status)
+	{
+		PRINT("Deleted directory: " + dirPath);
+	}
+
+	return status;
+}
+
+void OS::Rename(const String& sourcePath, const String& destinationPath)
+{
+	std::filesystem::rename(GetAbsolutePath(sourcePath), GetAbsolutePath(destinationPath));
+	PRINT("Renamed " + sourcePath + " to " + destinationPath);
+}
+
 Vector<FilePath> OS::GetAllInDirectory(const String& directory)
 {
 	if (!std::filesystem::is_directory(GetAbsolutePath(directory)))
