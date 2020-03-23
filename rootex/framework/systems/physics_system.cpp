@@ -1,5 +1,5 @@
-#include "common/common.h"
 #include "physics_system.h"
+#include "common/common.h"
 #include "components/physics/physics_component.h"
 
 PhysicsSystem* PhysicsSystem::GetSingleton()
@@ -93,4 +93,9 @@ void PhysicsSystem::syncVisibleScene()
 			}
 		}
 	}
+}
+
+void PhysicsSystem::phsicsTestFunction()
+{
+	std::cout << "Physics was here.";
 }

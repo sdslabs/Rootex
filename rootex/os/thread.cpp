@@ -1,7 +1,11 @@
 #include "thread.h"
 #include <Windows.h>
 
+#include "framework/systems/render_system.h"
+#include "framework/systems/physics_system.h"
+
 DWORD WINAPI MainLoop(LPVOID voidParameters);
+DWORD WINAPI DoubleBuffer(LPVOID voidParameters);
 
 void DebugTask::execute()
 {
@@ -50,12 +54,44 @@ void ThreadPool::initialize()
 		m_Handles.push_back(m_DefaultHandle);
 	}
 
-	for (__int32 iThread = 0; iThread < m_Threads; iThread++)
+	for (__int32 iThread = 0; iThread < 1; iThread++)
+	{
+		m_WorkerParameters[iThread].m_Thread = iThread;
+		m_WorkerParameters[iThread].m_ThreadPool = NULL;
+		m_Handles[iThread] = CreateThread(NULL, 0, DoubleBuffer, &m_WorkerParameters[iThread], 0, 0);
+	}
+
+	for (__int32 iThread = 2; iThread < m_Threads; iThread++)
 	{
 		m_WorkerParameters[iThread].m_Thread = iThread;
 		m_WorkerParameters[iThread].m_ThreadPool = this;
 		m_Handles[iThread] = CreateThread(NULL, 0, MainLoop, &m_WorkerParameters[iThread], 0, 0);
 	}
+}
+
+DWORD WINAPI DoubleBuffer(LPVOID voidParameters)
+{
+	const struct WorkerParameters* parameters = (struct WorkerParameters*)voidParameters;
+
+	const __int32 iThread = parameters->m_Thread;
+	//ThreadPool& m_ThreadPool = *parameters->m_ThreadPool;
+
+	if (iThread == 0)
+	{
+		while (true)
+		{
+			PhysicsSystem::GetSingleton()->phsicsTestFunction();
+		}
+	}
+	else if (iThread == 1)
+	{
+		while (true)
+		{
+			RenderSystem::GetSingleton()->render();
+		}
+	}
+
+	return 0;
 }
 
 DWORD WINAPI MainLoop(LPVOID voidParameters)

@@ -5,6 +5,7 @@
 #include "core/input/input_manager.h"
 #include "core/resource_loader.h"
 #include "framework/systems/render_system.h"
+#include "os/thread.h"
 
 Ref<Application> CreateRootexApplication()
 {
@@ -91,6 +92,9 @@ void GameApplication::run()
 		EventManager::GetSingleton()->dispatchDeferred();
 		ScriptSystem::GetSingleton()->update(m_FrameTimer.getFrameTime());
 	}
+
+	ThreadPool th;
+
 }
 
 void GameApplication::shutDown()

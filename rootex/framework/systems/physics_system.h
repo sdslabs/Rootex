@@ -38,4 +38,5 @@ public:
 
 	void update(float deltaMilliseconds);
 	virtual void syncVisibleScene();
+	void phsicsTestFunction();
 };
