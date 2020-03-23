@@ -10,13 +10,13 @@
 #include "entity_factory.h"
 #include "script/interpreter.h"
 
-void SolPanic(sol::optional<std::string> maybe_msg)
+void SolPanic(std::optional<String> maybeMsg)
 {
-	std::cerr << "Lua is in a panic state and will now abort() the application" << std::endl;
-	if (maybe_msg)
+	ERR("Lua is in a panic state and will now abort() the application");
+	if (maybeMsg)
 	{
-		const std::string& msg = maybe_msg.value();
-		ERR("\tError message: " + msg);
+		const String& msg = maybeMsg.value();
+		ERR("\tError: " + msg);
 	}
 }
 
