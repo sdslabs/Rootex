@@ -113,7 +113,6 @@ void Editor::render()
 	ImGui::NewFrame();
 
 	drawDefaultUI();
-
 	m_FileSystem->draw();
 	m_Hierarchy->draw();
     m_Toolbar->draw();
