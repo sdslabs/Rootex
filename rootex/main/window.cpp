@@ -7,6 +7,18 @@
 #include "vendor/ImGUI/imgui_impl_dx11.h"
 #include "vendor/ImGUI/imgui_impl_win32.h"
 
+Window* Window::s_Instance = nullptr;
+
+Window* Window::GetSingleton()
+{
+	return s_Instance;
+}
+
+void Window::SetSingleton(Window* window)
+{
+	s_Instance = window;
+}
+
 void Window::show()
 {
 	ShowWindow(m_WindowHandle, SW_SHOW);
@@ -122,6 +134,15 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
     : m_Width(width)
     , m_Height(height)
 {
+	if (!s_Instance)
+	{
+		SetSingleton(this);
+	}
+	else
+	{
+		ERR("More than 1 instances of Window detected");
+	}
+	
 	WNDCLASSEX windowClass = { 0 };
 	LPCSTR className = title.c_str();
 	HINSTANCE hInstance = GetModuleHandle(0);

@@ -7,6 +7,9 @@
 
 class Window
 {
+	static Window* s_Instance;
+	static void SetSingleton(Window* window);
+
 protected:
 	int m_Width;
 	int m_Height;
@@ -19,6 +22,8 @@ protected:
 	static LRESULT CALLBACK WindowsProc(HWND windowHandler, UINT msg, WPARAM wParam, LPARAM lParam);
 
 public:
+	static Window* GetSingleton();
+	
 	Window(int xOffset, int yOffset, int width, int height, const String& title, bool isEditor, bool MSAA);
 	Window(const Window&) = delete;
 	Window& operator=(const Window&) = delete;
