@@ -91,10 +91,6 @@ void InspectorDock::draw()
 				}
 				ImGui::PopStyleColor(3);
 				ImGui::SameLine();
-				if (ImGui::Button("Reset"))
-				{
-					m_OpenedEntity->setupComponents();
-				}
 				ImGui::PushStyleColor(ImGuiCol_Button, Editor::GetSingleton()->getColors().m_Failure);
 				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, Editor::GetSingleton()->getColors().m_FailAccent);
 				ImGui::PushStyleColor(ImGuiCol_ButtonActive, Editor::GetSingleton()->getColors().m_Failure);
