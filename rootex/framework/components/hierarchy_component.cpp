@@ -60,7 +60,7 @@ void HierarchyComponent::onRemove()
 	}
 	else
 	{
-		PRINT("Removed Root entity");
+		PRINT("Cannot remove Root entity");
 	}
 }
 
