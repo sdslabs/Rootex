@@ -33,6 +33,8 @@ protected:
 	Ref<Entity> createRootEntity();
 	friend class HierarchyGraph;
 
+	Variant deleteEntityEvent(const Event* event);
+
 public:
 	static EntityFactory* GetSingleton();
 
@@ -44,6 +46,7 @@ public:
 	void addDefaultComponent(Ref<Entity> entity, String componentName);
 	void addComponent(Ref<Entity> entity, Ref<Component> component);
 	void destroyEntities(bool saveRoot);
+	void deleteEntity(Ref<Entity> entity);
 
 	const ComponentDatabase& getComponentDatabase() const { return m_ComponentCreators; }
 	const HashMap<EntityID, Ref<Entity>>& getEntities() const { return m_Entities; }

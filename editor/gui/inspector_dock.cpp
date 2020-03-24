@@ -95,7 +95,25 @@ void InspectorDock::draw()
 				{
 					m_OpenedEntity->setupComponents();
 				}
+				ImGui::PushStyleColor(ImGuiCol_Button, Editor::GetSingleton()->getColors().m_Failure);
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, Editor::GetSingleton()->getColors().m_FailAccent);
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, Editor::GetSingleton()->getColors().m_Failure);
+				ImGui::SameLine();
+				if (ImGui::Button("Delete Entity"))
+				{
+					if (m_OpenedEntity->getID() != ROOT_ENTITY_ID)
+					{
+						EventManager::GetSingleton()->deferredCall("EditorDeleteEntity", "DeleteEntity", m_OpenedEntity);
+					}
+					else
+					{
+						WARN("Cannot delete Root Entity");
+					}
+				}
+				ImGui::PopStyleColor(3);
+
 				ImGui::Separator();
+				
 				ImGui::Text("Components");
 				for (auto& component : m_OpenedEntity->getAllComponents())
 				{
