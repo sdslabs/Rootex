@@ -145,6 +145,11 @@ void VisualComponent::setTransform(const Matrix& newTransform)
 	m_Attributes.m_TransformComponent->setTransform(newTransform);
 }
 
+void VisualComponent::setVisualModel(VisualModelResourceFile* newModel)
+{
+	m_Attributes.m_VisualModelResourceFile = newModel;
+}
+
 void VisualComponent::setMaterial(Ref<Material> material)
 {
 	m_Attributes.m_Material = material;
@@ -189,13 +194,15 @@ VisualComponentAttributes::VisualComponentAttributes()
 #include "imgui_stdlib.h"
 void VisualComponent::draw()
 {
+	ImGui::BeginGroup();
 	if (ImGui::BeginCombo("##Visual Model", m_Attributes.m_VisualModelResourceFile->getPath().filename().string().c_str(), ImGuiComboFlags_HeightRegular))
 	{
 		for (auto&& file : ResourceLoader::GetFilesOfType(ResourceFile::Type::Obj))
 		{
+
 			if (ImGui::MenuItem(file->getPath().string().c_str(), ""))
 			{
-				m_Attributes.m_VisualModelResourceFile = (VisualModelResourceFile*)file;
+				setVisualModel((VisualModelResourceFile*)file);
 			}
 		}
 
@@ -217,12 +224,33 @@ void VisualComponent::draw()
 		}
 		ImGui::EndCombo();
 	}
+
 	ImGui::SameLine();
+
 	if (ImGui::Button("Visual Model"))
 	{
 		EventManager::GetSingleton()->call("OpenScript", "EditorOpenFile", m_Attributes.m_VisualModelResourceFile->getPath());
 	}
+	ImGui::EndGroup();
 
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Resource Drop"))
+		{
+			const char* payloadFileName = (const char*)payload->Data;
+			FilePath payloadPath(payloadFileName);
+			if (payloadPath.extension() == ".obj")
+			{
+				setVisualModel(ResourceLoader::CreateVisualModelResourceFile(payloadPath.string()));
+			}
+			else
+			{
+				WARN("Cannot assign a non-obj file to Visual Model");
+			}
+		}
+		ImGui::EndDragDropTarget();
+	}
+	
 	ImGui::ColorEdit4("Color", &m_Color.x);
 
 	ImGui::Separator();

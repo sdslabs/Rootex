@@ -30,9 +30,12 @@ public:
 	virtual void onUpdate(float deltaMilliSeconds);
 	void onEnd();
 
+	LuaTextResourceFile* getScript() const { return m_ScriptFile; }
 	ComponentID getComponentID() const override { return s_ID; }
 	virtual String getName() const override { return "ScriptComponent"; }
 	virtual JSON::json getJSON() const override;
+
+	void setScript(LuaTextResourceFile* newScript) { m_ScriptFile = newScript; }
 
 #ifdef ROOTEX_EDITOR
 	virtual void draw();

@@ -233,9 +233,8 @@ void ImageResourceFile::reload()
 	ResourceLoader::ReloadResourceData(m_ResourceData->getPath().string());
 }
 
-FontResourceFile::FontResourceFile(const String& name, ResourceData* resData)
+FontResourceFile::FontResourceFile(ResourceData* resData)
     : ResourceFile(Type::Font, resData)
-    , m_Name(name)
 {
 	m_Font = RenderingDevice::GetSingleton()->createFont(resData->getRawData());
 	m_Font->SetDefaultCharacter('X');

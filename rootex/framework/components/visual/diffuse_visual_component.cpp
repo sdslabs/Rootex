@@ -76,6 +76,13 @@ JSON::json DiffuseVisualComponent::getJSON() const
 	return j;
 }
 
+void DiffuseVisualComponent::setTexture(ImageResourceFile* image)
+{
+	Ref<Texture> texture(new Texture(image));
+	m_Attributes.m_Material.reset(new DiffuseMaterial(texture));
+	m_ImageFile = image;
+}
+
 #ifdef ROOTEX_EDITOR
 #include "imgui.h"
 #include "imgui_stdlib.h"
@@ -88,14 +95,31 @@ void DiffuseVisualComponent::draw()
 		ImageResourceFile* image = ResourceLoader::CreateImageResourceFile(m_ImagePathUI);
 		if (image)
 		{
-			Ref<Texture> texture(new Texture(image));
-			m_Attributes.m_Material.reset(new DiffuseMaterial(texture));
-			m_ImageFile = image;
+			setTexture(image);
 		}
 		else
 		{
 			m_ImagePathUI = m_ImageFile->getPath().string();
 		}
+	}
+
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Resource Drop"))
+		{
+			const char* payloadFileName = (const char*)payload->Data;
+			FilePath payloadPath(payloadFileName);
+			FilePath ext = payloadPath.extension();
+			if (ext == ".jpg" || ext == ".png" || ext == ".jpeg")
+			{
+				setTexture(ResourceLoader::CreateImageResourceFile(payloadPath.string()));
+			}
+			else
+			{
+				WARN("Cannot assign a non-image file to Diffuse Visual Texture");
+			}
+		}
+		ImGui::EndDragDropTarget();
 	}
 }
 #endif // ROOTEX_EDITOR

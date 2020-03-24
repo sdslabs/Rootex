@@ -30,5 +30,6 @@ public:
 
 #ifdef ROOTEX_EDITOR
 	void draw() override;
+	void setTexture(ImageResourceFile* image);
 #endif // ROOTEX_EDITOR
 };
