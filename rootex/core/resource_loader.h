@@ -20,7 +20,7 @@ public:
 	static AudioResourceFile* CreateAudioResourceFile(const String& path);
 	static VisualModelResourceFile* CreateVisualModelResourceFile(const String& path);
 	static ImageResourceFile* CreateImageResourceFile(const String& path);
-	static FontResourceFile* CreateFontResourceFile(const String& path, const String& name);
+	static FontResourceFile* CreateFontResourceFile(const String& path);
 
 	static void SaveResourceFile(ResourceFile* resourceFile);
 	static void ReloadResourceData(const String& path);

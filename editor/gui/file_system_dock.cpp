@@ -23,6 +23,13 @@ void FileSystemDock::drawFileSystemTree(const FilePath& path)
 				m_OpenedFileName = item.string();
 				EventManager::GetSingleton()->call("OpenFile", "EditorOpenFile", item);
 			}
+		
+			if (ImGui::BeginDragDropSource())
+			{
+				ImGui::SetDragDropPayload("Resource Drop", item.string().c_str(), item.string().size() + 1);
+				ImGui::Text(item.string().c_str());
+				ImGui::EndDragDropSource();
+			}
 		}
 		ImGui::TreePop();
 	}

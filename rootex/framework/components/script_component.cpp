@@ -79,13 +79,14 @@ JSON::json ScriptComponent::getJSON() const
 #include "imgui_stdlib.h"
 void ScriptComponent::draw()
 {
+	ImGui::BeginGroup();
 	if (ImGui::BeginCombo("##Script", m_ScriptFile->getPath().filename().string().c_str(), ImGuiComboFlags_HeightRegular))
 	{
 		for (auto&& file : ResourceLoader::GetFilesOfType(ResourceFile::Type::Lua))
 		{
 			if (ImGui::MenuItem(file->getPath().string().c_str(), ""))
 			{
-				m_ScriptFile = (LuaTextResourceFile*)file;
+				setScript((LuaTextResourceFile*)file);
 			}
 		}
 
@@ -110,6 +111,25 @@ void ScriptComponent::draw()
 	if (ImGui::Button("Script"))
 	{
 		EventManager::GetSingleton()->call("OpenScript", "EditorOpenFile", m_ScriptFile->getPath());
+	}
+	ImGui::EndGroup();
+
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Resource Drop"))
+		{
+			const char* payloadFileName = (const char*)payload->Data;
+			FilePath payloadPath(payloadFileName);
+			if (payloadPath.extension() == ".lua")
+			{
+				setScript(ResourceLoader::CreateLuaTextResourceFile(payloadPath.string()));
+			}
+			else
+			{
+				WARN("Cannot assign a non-lua file as Script");
+			}
+		}
+		ImGui::EndDragDropTarget();
 	}
 }
 #endif // ROOTEX_EDITOR

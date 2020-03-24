@@ -150,10 +150,9 @@ public:
 
 class FontResourceFile : public ResourceFile
 {
-	explicit FontResourceFile(const String& name, ResourceData* resData);
+	explicit FontResourceFile(ResourceData* resData);
 	~FontResourceFile();
 
-	String m_Name;
 	Ref<DirectX::SpriteFont> m_Font;
 
 	friend class ResourceLoader;
@@ -164,6 +163,5 @@ public:
 
 	virtual void reload() override;
 
-	String getFontName() const { return m_Name; }
 	Ref<DirectX::SpriteFont> getFont() const { return m_Font; }
 };

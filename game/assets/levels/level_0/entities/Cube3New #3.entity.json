@@ -1,9 +1,78 @@
 {
     "Components": {
+        "DebugComponent": {},
+        "DirectionalLightComponent": {
+            "ambientColor": {
+                "a": 1.0,
+                "b": 0.05000000074505806,
+                "g": 0.05000000074505806,
+                "r": 0.05000000074505806
+            },
+            "diffuseColor": {
+                "a": 1.0,
+                "b": 0.4000000059604645,
+                "g": 0.10000000149011612,
+                "r": 0.30000001192092896
+            },
+            "diffuseIntensity": 0.800000011920929,
+            "direction": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0.5
+            }
+        },
         "HierarchyComponent": {
             "children": [],
             "parent": 1
         },
+        "PointLightComponent": {
+            "ambientColor": {
+                "a": 1.0,
+                "b": 0.5,
+                "g": 0.5,
+                "r": 0.5
+            },
+            "attConst": 0.04500000178813934,
+            "attLin": 1.0,
+            "attQuad": 0.007499999832361937,
+            "diffuseColor": {
+                "a": 1.0,
+                "b": 1.0,
+                "g": 1.0,
+                "r": 1.0
+            },
+            "diffuseIntensity": 1.0,
+            "range": 10.0
+        },
+        "ScriptComponent": {
+            "script": "game\\assets\\scripts\\rotator.lua"
+        },
+        "SphereComponent": {
+            "matName": "Air",
+            "radius": 1.0
+        },
+        "SpotLightComponent": {
+            "ambientColor": {
+                "a": 1.0,
+                "b": 0.05000000074505806,
+                "g": 0.05000000074505806,
+                "r": 0.05000000074505806
+            },
+            "angleRange": 0.9998857975006104,
+            "attConst": 1.0,
+            "attLin": 0.04500000178813934,
+            "attQuad": 0.007499999832361937,
+            "diffuseColor": {
+                "a": 1.0,
+                "b": 1.0,
+                "g": 1.0,
+                "r": 1.0
+            },
+            "diffuseIntensity": 1.0,
+            "range": 100.0,
+            "spot": 4.0
+        },
+        "TestComponent": {},
         "TransformComponent": {
             "position": {
                 "x": 0.0,
