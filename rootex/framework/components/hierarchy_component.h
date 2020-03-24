@@ -26,6 +26,8 @@ public:
 	HierarchyComponent(HierarchyComponent&) = delete;
 	virtual ~HierarchyComponent() = default;
 	
+	void onRemove() override;
+
 	virtual bool addChild(Ref<Entity> child);
 	virtual bool removeChild(Ref<Entity> node);
 	virtual bool snatchChild(Ref<Entity> node);

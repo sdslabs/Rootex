@@ -48,6 +48,22 @@ HierarchyComponent::HierarchyComponent(EntityID parentID, const Vector<EntityID>
 	}
 }
 
+void HierarchyComponent::onRemove()
+{
+	if (m_Parent)
+	{
+		for (auto&& child : m_Children)
+		{
+			m_Parent->snatchChild(child->getOwner());
+		}
+		m_Parent->removeChild(getOwner());
+	}
+	else
+	{
+		PRINT("Removed Root entity");
+	}
+}
+
 bool HierarchyComponent::addChild(Ref<Entity> child)
 {
 	if (auto&& findIt = std::find(m_ChildrenIDs.begin(), m_ChildrenIDs.end(), child->getID()) == m_ChildrenIDs.end())
