@@ -6,6 +6,7 @@
 #include "core/resource_loader.h"
 #include "framework/systems/render_system.h"
 #include "os/thread.h"
+#include "main/window.h"
 
 Ref<Application> CreateRootexApplication()
 {
@@ -82,19 +83,16 @@ void GameApplication::run()
 			break;
 		}
 
-		m_Window->swapBuffers();
+		/*m_Window->swapBuffers();
 		m_Window->clearCurrentTarget();
-		m_Window->clipCursor();
+		m_Window->clipCursor();*/
 
-		RenderSystem::GetSingleton()->render();
+		//RenderSystem::GetSingleton()->render();
 		AudioSystem::GetSingleton()->update();
 		InputManager::GetSingleton()->update();
 		EventManager::GetSingleton()->dispatchDeferred();
 		ScriptSystem::GetSingleton()->update(m_FrameTimer.getFrameTime());
 	}
-
-	ThreadPool th;
-
 }
 
 void GameApplication::shutDown()

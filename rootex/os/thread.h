@@ -80,8 +80,9 @@ class ThreadPool
 	TaskComplete m_TasksComplete;
 
 	friend DWORD WINAPI MainLoop(LPVOID voidParameters);
-	friend DWORD WINAPI DoubleBuffer(LPVOID voidParameters);
-
+	friend DWORD WINAPI physicsUpdate(LPVOID voidParameters);
+	friend DWORD WINAPI renderUpdate(LPVOID voidParameters);
+	
 	void initialize();
 	void shutDown();
 

@@ -3,9 +3,12 @@
 
 #include "framework/systems/render_system.h"
 #include "framework/systems/physics_system.h"
+#include "main/window.h"
+#include "app/application.h"
 
 DWORD WINAPI MainLoop(LPVOID voidParameters);
-DWORD WINAPI DoubleBuffer(LPVOID voidParameters);
+DWORD WINAPI physicsUpdate(LPVOID voidParameters);
+DWORD WINAPI renderUpdate(LPVOID voidParameters);
 
 void DebugTask::execute()
 {
@@ -54,13 +57,10 @@ void ThreadPool::initialize()
 		m_Handles.push_back(m_DefaultHandle);
 	}
 
-	for (__int32 iThread = 0; iThread < 1; iThread++)
-	{
-		m_WorkerParameters[iThread].m_Thread = iThread;
-		m_WorkerParameters[iThread].m_ThreadPool = NULL;
-		m_Handles[iThread] = CreateThread(NULL, 0, DoubleBuffer, &m_WorkerParameters[iThread], 0, 0);
-	}
-
+	// Threads for physics and render
+	m_Handles[0] = CreateThread(NULL, 0, physicsUpdate, &m_WorkerParameters[0], 0, 0);
+	m_Handles[1] = CreateThread(NULL, 0, renderUpdate, &m_WorkerParameters[1], 0, 0);
+	
 	for (__int32 iThread = 2; iThread < m_Threads; iThread++)
 	{
 		m_WorkerParameters[iThread].m_Thread = iThread;
@@ -69,26 +69,30 @@ void ThreadPool::initialize()
 	}
 }
 
-DWORD WINAPI DoubleBuffer(LPVOID voidParameters)
+DWORD WINAPI physicsUpdate(LPVOID voidParameters)
 {
-	const struct WorkerParameters* parameters = (struct WorkerParameters*)voidParameters;
+	//const struct WorkerParameters* parameters = (struct WorkerParameters*)voidParameters;
 
-	const __int32 iThread = parameters->m_Thread;
-	//ThreadPool& m_ThreadPool = *parameters->m_ThreadPool;
-
-	if (iThread == 0)
+	while (true)
 	{
-		while (true)
-		{
-			PhysicsSystem::GetSingleton()->phsicsTestFunction();
-		}
+		PhysicsSystem::GetSingleton()->phsicsTestFunction();
 	}
-	else if (iThread == 1)
+
+	return 0;
+}
+
+DWORD WINAPI renderUpdate(LPVOID voidParameters)
+{
+// const struct WorkerParameters* parameters = (struct WorkerParameters*)voidParameters;
+
+	while (true)
 	{
-		while (true)
-		{
-			RenderSystem::GetSingleton()->render();
-		}
+		Window::GetSingleton()->swapBuffers();
+		Window::GetSingleton()->clearCurrentTarget();
+		Window::GetSingleton()->clipCursor();
+
+		RenderSystem::GetSingleton()->render();
+		std::cout << "1";
 	}
 
 	return 0;
@@ -255,7 +259,7 @@ void ThreadPool::submit(Vector<Ref<Task>>& tasks)
 }
 
 void ThreadPool::shutDown()
-{
+{	
 	EnterCriticalSection(&this->m_CriticalSection);
 	{
 		m_IsRunning = false;

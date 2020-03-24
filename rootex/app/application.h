@@ -9,7 +9,6 @@
 class Application
 {
 protected:
-	ThreadPool m_ThreadPool;
 	Timer m_ApplicationTimer;
 	Ptr<Window> m_Window;
 	
