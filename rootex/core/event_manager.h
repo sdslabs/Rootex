@@ -39,6 +39,8 @@ public:
 		Infinite = 0xffffffff
 	};
 
+	bool addEvent(const Event::Type& event);
+	void removeEvent(const Event::Type& event);
 	bool addListener(const Event::Type& type, EventHandlingFunction instance);
 	bool removeListener(const EventHandlingFunction handlerName, const Event::Type& type);
 
@@ -46,4 +48,6 @@ public:
 	void call(const String& eventName, const Event::Type& eventType, const Variant& data);
 	void deferredCall(const String& eventName, const Event::Type& eventType, const Variant& data);
 	bool dispatchDeferred(unsigned long maxMillis = Infinite);
+
+	const EventListenerMap& getRegisteredEvents() const { return m_EventListeners; }
 };

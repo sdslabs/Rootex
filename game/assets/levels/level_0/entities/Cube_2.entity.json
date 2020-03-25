@@ -4,6 +4,12 @@
             "children": [],
             "parent": 1
         },
+        "ScriptComponent": {
+            "connections": {
+                "newFunction": "CubeEvent"
+            },
+            "script": "game/assets/scripts/cube.lua"
+        },
         "TextVisual2DComponent": {
             "color": {
                 "a": 1.0,
