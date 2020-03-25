@@ -5,7 +5,26 @@
             "parent": 1
         },
         "ScriptComponent": {
+<<<<<<< HEAD
             "script": "game/assets/scripts/rotator.lua"
+=======
+            "connections": {
+                "newFunction": "CubeEvent"
+            },
+            "script": "game/assets/scripts/cube.lua"
+        },
+        "TextVisual2DComponent": {
+            "color": {
+                "a": 1.0,
+                "b": 1.0,
+                "g": 1.0,
+                "r": 1.0
+            },
+            "fontResource": "game/assets/fonts/noto_sans_50_regular.spritefont",
+            "mode": 0,
+            "name": "Noto Sans",
+            "text": "Hello World!"
+>>>>>>> Add event listener to script component
         },
         "TransformComponent": {
             "position": {
