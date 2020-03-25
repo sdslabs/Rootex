@@ -1,10 +1,5 @@
 {
     "Components": {
-        "DiffuseVisualComponent": {
-            "renderPass": 5,
-            "resFile": "rootex/assets/cube.obj",
-            "texturePath": "game\\assets\\test\\yellow.png"
-        },
         "HierarchyComponent": {
             "children": [],
             "parent": 1
@@ -13,23 +8,33 @@
             "position": {
                 "x": 0.0,
                 "y": 0.0,
-                "z": -2.0799999237060547
+                "z": 0.0
             },
             "rotation": {
-                "w": 1.0,
+                "w": 0.0,
                 "x": 0.0,
                 "y": 0.0,
                 "z": 0.0
             },
             "scale": {
-                "x": 10.970000267028809,
-                "y": 7.900000095367432,
-                "z": 1.350000023841858
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
             }
+        },
+        "VisualComponent": {
+            "color": {
+                "a": 1.0,
+                "b": 0.20000000298023224,
+                "g": 1.0,
+                "r": 0.20000000298023224
+            },
+            "renderPass": 1,
+            "resFile": "game/assets/test/cube.obj"
         }
     },
     "Entity": {
-        "ID": 5,
+        "ID": 3,
         "name": "Cube"
     }
 }

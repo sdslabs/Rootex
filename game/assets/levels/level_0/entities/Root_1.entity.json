@@ -2,7 +2,8 @@
     "Components": {
         "HierarchyComponent": {
             "children": [
-                2
+                2,
+                3
             ],
             "parent": 0
         },

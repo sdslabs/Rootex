@@ -1,41 +1,29 @@
 {
     "Components": {
-        "DiffuseVisualComponent": {
-            "renderPass": 5,
-            "resFile": "rootex/assets/cube.obj",
-            "texturePath": "rootex/assets/rootex.png"
-        },
         "HierarchyComponent": {
             "children": [],
             "parent": 1
         },
-        "PointLightComponent": {
-            "ambientColor": {
+        "TextVisual2DComponent": {
+            "color": {
                 "a": 1.0,
-                "b": 0.45098036527633667,
-                "g": 0.45098036527633667,
+                "b": 1.0,
+                "g": 1.0,
                 "r": 1.0
             },
-            "attConst": 5.045000076293945,
-            "attLin": -2.0,
-            "attQuad": 0.00800000037997961,
-            "diffuseColor": {
-                "a": 1.0,
-                "b": 0.0,
-                "g": 0.0,
-                "r": 1.0
-            },
-            "diffuseIntensity": 1.0,
-            "range": 10.0
+            "fontResource": "game/assets/fonts/noto_sans_50_regular.spritefont",
+            "mode": 0,
+            "name": "Noto Sans",
+            "text": "Hello World!"
         },
         "TransformComponent": {
             "position": {
-                "x": -1.600000023841858,
+                "x": 1.4600000381469727,
                 "y": 0.0,
-                "z": -0.28999999165534973
+                "z": 0.0
             },
             "rotation": {
-                "w": 1.0,
+                "w": 0.0,
                 "x": 0.0,
                 "y": 0.0,
                 "z": 0.0
