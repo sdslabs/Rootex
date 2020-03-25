@@ -419,6 +419,7 @@ Variant Editor::openLevel(const Event* event)
 {
 	String levelPath(Extract(String, event->getData()));
 	ProjectManager::GetSingleton()->openLevel(levelPath);
+
 	return true;
 }
 
@@ -433,6 +434,7 @@ Variant Editor::createNewLevel(const Event* event)
 	}
 
 	ProjectManager::GetSingleton()->createLevel(newLevelName);
+
 	return true;
 }
 
