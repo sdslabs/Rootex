@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common/types.h"
+#include "common/common.h"
 #include "core/resource_data.h"
 #include "core/resource_file.h"
 #include "os/os.h"
