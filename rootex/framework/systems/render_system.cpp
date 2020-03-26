@@ -58,7 +58,7 @@ void RenderSystem::render()
 	//in that case it might be possible that render() never does any rendering
 	//I am 99.99% sure that this won't ever happen as render() is being constantly called in an infinite while() but has to also run the logic
 	//still for that 0.01% chance I left these comments here
-	if (!m_physicsCompleteOnce )
+	if (m_physicsCompleteOnce )
 	{
 		Ref<HierarchyComponent> rootHC = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<HierarchyComponent>();
 		calculateTransforms(rootHC.get());

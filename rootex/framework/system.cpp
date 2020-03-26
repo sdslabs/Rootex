@@ -4,7 +4,7 @@ HashMap<ComponentID, Vector<Component*>> System::s_Components;
 
 void System::RegisterComponent(Component* component)
 {
-	auto findIt = s_Components.find(component->getComponentID());
+	auto&& findIt = s_Components.find(component->getComponentID());
 	if (findIt != s_Components.end())
 	{
 		s_Components[component->getComponentID()].push_back(component);
