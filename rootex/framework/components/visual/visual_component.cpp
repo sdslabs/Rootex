@@ -199,7 +199,6 @@ void VisualComponent::draw()
 	{
 		for (auto&& file : ResourceLoader::GetFilesOfType(ResourceFile::Type::Obj))
 		{
-
 			if (ImGui::MenuItem(file->getPath().string().c_str(), ""))
 			{
 				setVisualModel((VisualModelResourceFile*)file);
