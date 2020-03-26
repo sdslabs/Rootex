@@ -34,7 +34,7 @@ void FileSystemDock::draw()
 	{
 		if (ImGui::Begin("File System"))
 		{
-			drawFileSystemTree("./");
+			drawFileSystemTree("game/assets/");
 		}
 		ImGui::End();
 	}

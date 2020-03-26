@@ -31,6 +31,17 @@ InspectorDock::InspectorDock()
 	BIND_EVENT_MEMBER_FUNCTION("EditorOpenEntity", openEntity);
 }
 
+static int TextInputResizeCallback(ImGuiInputTextCallbackData* data)
+{
+	if (data->EventFlag == ImGuiInputTextFlags_CallbackResize)
+	{
+		String* myStr = (String*)data->UserData;
+		myStr->resize(data->BufSize);
+		data->Buf = myStr->data();
+	}
+	return 0;
+}
+
 void InspectorDock::draw()
 {
 	if (m_InspectorSettings.m_IsActive)
@@ -125,6 +136,7 @@ void InspectorDock::drawAddComponentWindow()
 					Ref<Component> component = EntityFactory::GetSingleton()->createDefaultComponent(componentName);
 					EntityFactory::GetSingleton()->addComponent(m_OpenedEntity, component);
 					PRINT("Added " + componentName + " to " + m_OpenedEntity->getName());
+					m_OpenedEntity->setupComponents();
 				}
 				m_OpenedEntity->setupComponents();
 			}

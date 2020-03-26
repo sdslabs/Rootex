@@ -14,6 +14,7 @@ class RootHierarchyComponent : public HierarchyComponent
 	Ref<HierarchyComponent> m_GlobalGroup;
 	Ref<HierarchyComponent> m_SkyGroup;
 	Ref<HierarchyComponent> m_EditorGroup;
+	Ref<HierarchyComponent> m_UIGroup;
 
 	friend class EntityFactory;
 
@@ -31,6 +32,10 @@ public:
 	void postRender(HierarchyGraph* graph);
 	
 	virtual bool addChild(Ref<Entity> child) override;
+	virtual bool removeChild(Ref<Entity> node) override;
+
+	bool addVCToRenderPass(Ref<VisualComponent> vc, Ref<Entity>& child);
+	bool removeVCFromRenderPass(Ref<VisualComponent>& vc, Ref<Entity>& node);
 	void clear();
 
 	virtual String getName() const override { return "RootHierarchyComponent"; }

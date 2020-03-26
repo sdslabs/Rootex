@@ -13,9 +13,11 @@ class ProjectManager
 public:
 	static ProjectManager* GetSingleton();
 
-	void openLevel(String levelPath);
+	void openLevel(const String& levelPath);
 	void saveCurrentLevel();
+	void createLevel(const String& newLevelName);
 
+	Vector<FilePath> getLibrariesPaths();
 	String getCurrentLevelName() const { return m_CurrentLevelName; }
 	bool isAnyLevelOpen() const { return m_CurrentLevelName != ""; }
 };
