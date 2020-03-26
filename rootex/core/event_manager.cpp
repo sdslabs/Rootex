@@ -15,6 +15,21 @@ EventManager* EventManager::GetSingleton()
 	return &singleton;
 }
 
+bool EventManager::addEvent(const Event::Type& event)
+{
+	if (m_EventListeners.find(event) == m_EventListeners.end())
+	{
+		m_EventListeners[event] = {};
+		return true;
+	}
+	return false;
+}
+
+void EventManager::removeEvent(const Event::Type& event)
+{
+	m_EventListeners.erase(event);
+}
+
 Variant EventManager::returnCall(const String& eventName, const Event::Type& eventType, const Variant& data)
 {
 	bool processed = false;

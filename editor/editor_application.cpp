@@ -51,9 +51,9 @@ void EditorApplication::run()
 	while (true)
 	{
 		m_FrameTimer.reset();
-		if (((m_ApplicationTimer.Now() - m_PointAtLast10Second).count()) * NS_TO_MS * MS_TO_S > m_AutosaveDurationS)
+		if (((m_ApplicationTimer.Now() - m_PointAtLast10Second).count()) * NS_TO_MS * MS_TO_S > m_AutoSaveDurationS)
 		{
-			EventManager::GetSingleton()->call("EditorAutosaveEvent", "EditorAutosave", 0);
+			EventManager::GetSingleton()->call("EditorAutoSaveEvent", "EditorAutoSave", 0);
 			m_PointAtLast10Second = m_ApplicationTimer.Now();
 		}
 
