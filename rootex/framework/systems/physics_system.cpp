@@ -83,8 +83,6 @@ void PhysicsSystem::update(float deltaMilliseconds)
 			TransformComponent* tc = dynamic_cast<TransformComponent*>(transformComponent);
 			tc->syncRenderingBuffer();
 			tc->exchangeBuffers();
-
-			OS::PrintWarning("TestComponent was processed by TestSystem");
 		}
 		physicsCompleteOnce = m_renderCompleteOnce = false;
 	}
@@ -116,5 +114,5 @@ void PhysicsSystem::syncVisibleScene()
 
 void PhysicsSystem::phsicsTestFunction()
 {
-	std::cout << "Physics was here.";
+	//std::cout << "Physics was here.";
 }

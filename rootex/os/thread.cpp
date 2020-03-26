@@ -76,6 +76,7 @@ DWORD WINAPI physicsUpdate(LPVOID voidParameters)
 	while (true)
 	{
 		PhysicsSystem::GetSingleton()->phsicsTestFunction();
+		PhysicsSystem::GetSingleton()->update(0.1f);
 	}
 
 	return 0;
