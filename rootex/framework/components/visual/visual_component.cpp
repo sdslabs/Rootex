@@ -77,7 +77,7 @@ bool VisualComponent::preRender()
 	if (m_Attributes.m_TransformComponent)
 	{
 		RenderSystem::GetSingleton()->pushMatrix(m_Attributes.getTransform());
-		m_Attributes.m_TransformComponent->m_TransformBuffer.m_AbsoluteTransform = RenderSystem::GetSingleton()->getTopMatrix();
+		m_Attributes.setAbsoluteTransform(RenderSystem::GetSingleton()->getTopMatrix());
 		m_Attributes.m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::Model, RenderSystem::GetSingleton()->getTopMatrix());
 	}
 	else
@@ -137,12 +137,12 @@ void VisualComponent::postRender()
 
 void VisualComponent::addTransform(const Matrix& applyTransform)
 {
-	m_Attributes.m_TransformComponent->setTransform(m_Attributes.m_TransformComponent->getLocalTransform() * applyTransform);
+	m_Attributes.setTransform(m_Attributes.getTransform() * applyTransform);
 }
 
 void VisualComponent::setTransform(const Matrix& newTransform)
 {
-	m_Attributes.m_TransformComponent->setTransform(newTransform);
+	m_Attributes.setTransform(newTransform);
 }
 
 void VisualComponent::setVisualModel(VisualModelResourceFile* newModel)
@@ -162,7 +162,7 @@ void VisualComponent::setPosition(const Vector3& position)
 
 Vector3 VisualComponent::getPosition() const
 {
-	return m_Attributes.m_TransformComponent->getPosition();
+	return m_Attributes.getPosition();
 }
 
 JSON::json VisualComponent::getJSON() const

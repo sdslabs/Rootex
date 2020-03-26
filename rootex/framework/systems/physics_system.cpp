@@ -1,6 +1,7 @@
 #include "physics_system.h"
 #include "common/common.h"
 #include "components/physics/physics_component.h"
+#include "framework/components/transform_component.h"
 
 PhysicsSystem* PhysicsSystem::GetSingleton()
 {
@@ -68,7 +69,25 @@ void PhysicsSystem::internalTickCallback(btDynamicsWorld* const world, btScalar 
 
 void PhysicsSystem::update(float deltaMilliseconds)
 {
-	m_DynamicsWorld->stepSimulation(deltaMilliseconds, 10);
+	if (!m_renderCompleteOnce)
+		m_DynamicsWorld->stepSimulation(deltaMilliseconds, 10);
+	
+	bool& physicsCompleteOnce = RenderSystem::GetSingleton()->m_physicsCompleteOnce;
+	physicsCompleteOnce = true;
+	if (m_renderCompleteOnce && physicsCompleteOnce)
+	{
+		const Vector<Component*>& transformComponents = s_Components[TransformComponent::s_ID];
+
+		for (auto& transformComponent : transformComponents)
+		{
+			TransformComponent* tc = dynamic_cast<TransformComponent*>(transformComponent);
+			tc->syncRenderingBuffer();
+			tc->exchangeBuffers();
+
+			OS::PrintWarning("TestComponent was processed by TestSystem");
+		}
+		physicsCompleteOnce = m_renderCompleteOnce = false;
+	}
 }
 
 void PhysicsSystem::syncVisibleScene()

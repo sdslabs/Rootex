@@ -3,9 +3,12 @@
 #include "btBulletDynamicsCommon.h"
 #include "entity.h"
 #include "framework/system.h"
+#include "framework/systems/render_system.h"
 
 class PhysicsSystem : public System
 {
+	friend class RenderSystem;
+
 	//The btDynamicsWorld is the interface class for several dynamics implementation, basic, discrete, parallel, and continuous etc.
 	Ptr<btDynamicsWorld> m_DynamicsWorld;
 
@@ -23,6 +26,8 @@ class PhysicsSystem : public System
 	Ptr<btDefaultCollisionConfiguration> m_CollisionConfiguration;
 
 	PhysicsSystem() = default;
+
+	bool m_renderCompleteOnce = false;
 
 public:
 	static PhysicsSystem* GetSingleton();

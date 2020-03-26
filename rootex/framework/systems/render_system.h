@@ -4,20 +4,25 @@
 #include "framework/system.h"
 #include "framework/systems/hierarchy_system.h"
 #include "main/window.h"
+#include "framework/systems/physics_system.h"
 
 class RenderSystem : public System
 {
+	friend class PhysicsSystem;
+
 	Ref<CameraVisualComponent> m_Camera;
 	Ptr<Renderer> m_Renderer;
 	Vector<Matrix> m_TransformationStack;
 	Vector<Matrix> m_UITransformationStack;
+
+	bool m_physicsCompleteOnce = false;
 
 	RenderSystem();
 	RenderSystem(RenderSystem&) = delete;
 	~RenderSystem();
 
 	void calculateTransforms(HierarchyComponent* hierarchyComponent);
-	void renderPassRender(VisualComponent* vc, const RenderPass& renderPass);
+	void renderPassRender(VisualComponent* vc, const RenderPass& renderPass); 
 
 public:
 	static RenderSystem* GetSingleton();

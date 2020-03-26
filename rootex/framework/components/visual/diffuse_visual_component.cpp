@@ -52,7 +52,7 @@ bool DiffuseVisualComponent::preRender()
 	if (m_Attributes.m_TransformComponent)
 	{
 		RenderSystem::GetSingleton()->pushMatrix(m_Attributes.getTransform());
-		m_Attributes.m_TransformComponent->m_TransformBuffer.m_AbsoluteTransform = RenderSystem::GetSingleton()->getTopMatrix();
+		m_Attributes.setAbsoluteTransform(RenderSystem::GetSingleton()->getTopMatrix());
 		m_Attributes.m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::Model, RenderSystem::GetSingleton()->getTopMatrix());
 		m_Attributes.m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::ModelInverse, RenderSystem::GetSingleton()->getTopMatrix().Invert());
 	}

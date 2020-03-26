@@ -9,8 +9,8 @@
 #include "renderer/texture.h"
 #include "renderer/vertex_buffer.h"
 
-#include "components/transform_component.h"
 #include "components/hierarchy_component.h"
+#include "components/transform_component.h"
 
 class HierarchyGraph;
 
@@ -42,8 +42,15 @@ public:
 
 	const VertexBuffer* getVertexBuffer() const { return m_VisualModelResourceFile->getVertexBuffer(); }
 	const IndexBuffer* getIndexBuffer() const { return m_VisualModelResourceFile->getIndexBuffer(); }
-	const Matrix& getTransform() const { return m_TransformComponent->getLocalTransform(); }
-	const Matrix& getInverseTransform() const { return m_TransformComponent->getLocalTransform().Invert(); }
+
+	const Matrix& getTransform() const { return m_TransformComponent->getRenderingBuffer()->m_Transform; }
+	const Matrix& getAbsoluteTransform() const { return m_TransformComponent->getRenderingBuffer()->m_AbsoluteTransform; }
+	const Matrix& getInverseTransform() const { return m_TransformComponent->getRenderingBuffer()->m_Transform.Invert(); }
+	const Vector3& getPosition() const { return m_TransformComponent->getRenderingBuffer()->m_Position; }
+
+	void setTransform(const Matrix& transform) { m_TransformComponent->getRenderingBuffer()->m_Transform = transform; };
+	const void setAbsoluteTransform(const Matrix& transform) { m_TransformComponent->getRenderingBuffer()->m_AbsoluteTransform = transform; }
+
 	const unsigned int& getRenderPass() const { return m_RenderPassSetting; }
 	Material* getMaterial() { return m_Material.get(); }
 	VisualModelResourceFile* getModelResourceFile() const { return m_VisualModelResourceFile; }
@@ -60,7 +67,7 @@ class VisualComponent : public Component
 protected:
 	VisualComponentAttributes m_Attributes;
 	bool m_IsVisible;
-	
+
 	friend class EntityFactory;
 
 #ifdef ROOTEX_EDITOR
@@ -69,7 +76,7 @@ protected:
 
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::VisualComponent;
-	
+
 	VisualComponent(const unsigned int& renderPassSetting, Ref<Material> material, VisualModelResourceFile* resFile);
 	VisualComponent(VisualComponent&) = delete;
 	virtual ~VisualComponent();

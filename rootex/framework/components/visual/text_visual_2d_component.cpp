@@ -53,7 +53,10 @@ void TextVisual2DComponent::render()
 	static Vector3 scale;
 
 	RenderSystem::GetSingleton()->getTopUIMatrix().Decompose(scale, rotation, position);
-	rotationAngle = Vector3((Vector3(0.0f, 0.0f, 1.0f) * rotation)).z;
+	//TODO: remove this hack
+	DirectX::XMFLOAT3 hack;
+	DirectX::XMStoreFloat3(&hack, DirectX::XMVector3Rotate(Vector3(0.0f, 0.0f, 1.0f), rotation));
+	rotationAngle = hack.z;
 
 	m_FontFile->getFont()->DrawString(
 	    RenderingDevice::GetSingleton()->getUIBatch().get(),

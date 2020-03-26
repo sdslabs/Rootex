@@ -27,7 +27,7 @@ void RenderSystem::calculateTransforms(HierarchyComponent* hierarchyComponent)
 
 	for (auto&& child : hierarchyComponent->getChildren())
 	{
-		child->getOwner()->getComponent<TransformComponent>()->m_TransformBuffer.m_AbsoluteTransform = getTopMatrix();
+		child->getOwner()->getComponent<TransformComponent>()->getRenderingBuffer()->m_AbsoluteTransform = getTopMatrix();
 		calculateTransforms(child);
 	}
 
@@ -52,27 +52,38 @@ void RenderSystem::recoverLostDevice()
 
 void RenderSystem::render()
 {
-	Ref<HierarchyComponent> rootHC = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<HierarchyComponent>();
-	calculateTransforms(rootHC.get());
+	//Thing to consider here-
+	//lets say that physics completes before this even get called, if this happens one time, it isnt an issue
+	//but if we fall in a weird condition where physics always seems to complete before render() is called
+	//in that case it might be possible that render() never does any rendering
+	//I am 99.99% sure that this won't ever happen as render() is being constantly called in an infinite while() but has to also run the logic
+	//still for that 0.01% chance I left these comments here
+	if (!m_physicsCompleteOnce )
+	{
+		Ref<HierarchyComponent> rootHC = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<HierarchyComponent>();
+		calculateTransforms(rootHC.get());
 
-	RenderingDevice::GetSingleton()->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	RenderingDevice::GetSingleton()->setRasterizerState();
-	RenderingDevice::GetSingleton()->setDepthStencilState();
+		Ref<VisualComponent> rootVC = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<VisualComponent>();
 
-	Ref<VisualComponent> rootVC = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<VisualComponent>();
+		RenderingDevice::GetSingleton()->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		RenderingDevice::GetSingleton()->setRasterizerState();
+		RenderingDevice::GetSingleton()->setDepthStencilState();
+
 #ifdef ROOTEX_EDITOR
-	renderPassRender(rootVC.get(), RenderPassEditor);
+		renderPassRender(rootVC.get(), RenderPassEditor);
 #endif // ROOTEX_EDITOR
-	renderPassRender(rootVC.get(), RenderPassMain);
-	{
-		SkyBoxHelper skyHelper;
-		renderPassRender(rootVC.get(), RenderPassSky);
+		renderPassRender(rootVC.get(), RenderPassMain);
+		{
+			SkyBoxHelper skyHelper;
+			renderPassRender(rootVC.get(), RenderPassSky);
+		}
+		{
+			RenderingDevice::GetSingleton()->beginDrawUI();
+			renderPassRender(rootVC.get(), RenderPassUI);
+			RenderingDevice::GetSingleton()->endDrawUI();
+		}
 	}
-	{
-		RenderingDevice::GetSingleton()->beginDrawUI();
-		renderPassRender(rootVC.get(), RenderPassUI);
-		RenderingDevice::GetSingleton()->endDrawUI();
-	}
+	PhysicsSystem::GetSingleton()->m_renderCompleteOnce = true;
 }
 
 void RenderSystem::pushMatrix(const Matrix& transform)
