@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common/types.h"
+#include "common/common.h"
 #include "core/resource_data.h"
 #include "core/renderer/vertex_buffer.h"
 #include "core/renderer/index_buffer.h"

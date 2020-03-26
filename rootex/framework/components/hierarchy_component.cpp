@@ -58,10 +58,6 @@ void HierarchyComponent::onRemove()
 		}
 		m_Parent->removeChild(getOwner());
 	}
-	else
-	{
-		PRINT("Cannot remove Root entity");
-	}
 }
 
 bool HierarchyComponent::addChild(Ref<Entity> child)
