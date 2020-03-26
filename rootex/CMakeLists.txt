@@ -13,9 +13,6 @@ set(ROOTEX_SOURCES
 ""
 CACHE INTERNAL "")
 
-set(ROOTEX_SWIG_INTERFACE
-CACHE INTERNAL "")
-
 set(ROOTEX_PCH_HEADERS
 CACHE INTERNAL "")
 
@@ -72,7 +69,6 @@ if (BUILD_EDITOR)
 endif(BUILD_EDITOR)
 
 add_library(Rootex STATIC ${ROOTEX_SOURCES})
-
 target_precompile_headers(Rootex PUBLIC ${ROOTEX_PCH_HEADERS})
 
 source_group(TREE "../"
@@ -86,8 +82,7 @@ target_include_directories(Rootex PUBLIC
 
 target_link_libraries(Rootex PUBLIC
     Lua
-    LuaBridge
-    SWIGBindings
+    Sol3
     OpenAL
     ALUT
     DirectXTK

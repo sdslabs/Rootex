@@ -28,7 +28,6 @@ protected:
 public:
 	virtual ~Entity();
 
-	void addChild(Ref<Entity> child);
 	void removeComponent(Ref<Component> component);
 	void destroy();
 
@@ -36,8 +35,12 @@ public:
 	
 	EntityID getID() const;
 	const String& getName() const;
+	String getFullName() const;
+	
 	template <class ComponentType = Component>
-	Ref<ComponentType> getComponent(ComponentID ID = ComponentType::s_ID);
+	Ref<ComponentType> getComponent(ComponentID ID = ComponentType::s_ID) const;
+
+	Component* getComponentPointer(ComponentID ID);
 	JSON::json getJSON() const;
 	const HashMap<ComponentID, Ref<Component>>& getAllComponents() const;
 	
@@ -45,7 +48,7 @@ public:
 };
 
 template <class ComponentType>
-inline Ref<ComponentType> Entity::getComponent(ComponentID ID)
+inline Ref<ComponentType> Entity::getComponent(ComponentID ID) const
 {
 	auto findIt = m_Components.find(ID);
 	if (findIt != m_Components.end())

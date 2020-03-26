@@ -9,8 +9,10 @@
 #include "components/debug_component.h"
 #include "components/hierarchy_component.h"
 #include "components/physics/sphere_component.h"
+#include "components/script_component.h"
 #include "components/test_component.h"
 #include "components/transform_component.h"
+#include "components/visual/visual_component.h"
 #include "components/visual/diffuse_visual_component.h"
 #include "components/visual/directional_light_component.h"
 #include "components/visual/point_light_component.h"
@@ -48,6 +50,7 @@ EntityFactory::EntityFactory()
 	REGISTER_COMPONENT(SpotLightComponent);
 	REGISTER_COMPONENT(SphereComponent);
 	REGISTER_COMPONENT(HierarchyComponent);
+	REGISTER_COMPONENT(ScriptComponent);
 }
 
 EntityFactory::~EntityFactory()
@@ -191,6 +194,7 @@ Ref<Entity> EntityFactory::createRootEntity()
 	{
 		Ref<VisualComponent> rootVisualComponent = std::dynamic_pointer_cast<VisualComponent>(createDefaultComponent("VisualComponent"));
 		rootVisualComponent->setVisibility(false);
+
 		EntityFactory::addComponent(root, rootVisualComponent);
 		System::RegisterComponent(rootVisualComponent.get());
 	}
@@ -241,7 +245,6 @@ void EntityFactory::destroyEntities(bool saveRoot)
 
 	for (auto&& entity : markedForRemoval)
 	{
-		PRINT("Destroyed entity: " + entity->getName());
 		entity->destroy();
 		m_Entities.erase(entity->getID());
 	}

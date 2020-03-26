@@ -11,6 +11,8 @@
 typedef Component* (*ComponentCreator)(const JSON::json& componentDescription);
 typedef Component* (*ComponentDefaultCreator)();
 typedef unsigned int EntityID;
+typedef Vector<Tuple<ComponentID, String, ComponentCreator>> ComponentDatabase;
+typedef Vector<Tuple<ComponentID, String, ComponentDefaultCreator>> DefaultComponentDatabase;
 
 class EntityFactory
 {
@@ -21,9 +23,7 @@ class EntityFactory
 	EntityID getNextID();
 
 protected:
-	typedef Vector<Tuple<ComponentID, String, ComponentCreator>> ComponentDatabase;
 	ComponentDatabase m_ComponentCreators;
-	typedef Vector<Tuple<ComponentID, String, ComponentDefaultCreator>> DefaultComponentDatabase;
 	DefaultComponentDatabase m_DefaultComponentCreators;
 
 	EntityFactory();

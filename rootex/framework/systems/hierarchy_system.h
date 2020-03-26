@@ -11,6 +11,7 @@ class HierarchySystem : public System
 	void setParentAndChildren(HashMap<EntityID, Ref<Entity>>& entities);
 
 public:
+	static void BindFunctions();
 	static HierarchySystem* GetSingleton();
 
 	void addChild(Ref<Entity> child);

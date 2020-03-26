@@ -8,6 +8,7 @@
 #include "core/renderer/index_buffer.h"
 #include "core/renderer/vertex_buffer.h"
 #include "core/renderer/vertex_data.h"
+#include "script/interpreter.h"
 
 #include "vendor/OBJLoader/Source/OBJ_Loader.h"
 
@@ -256,7 +257,7 @@ FontResourceFile* ResourceLoader::CreateFontResourceFile(const String& path, con
 	return fontRes;
 }
 
-void ResourceLoader::SaveResourceFile(TextResourceFile*& resourceFile)
+void ResourceLoader::SaveResourceFile(ResourceFile* resourceFile)
 {
 	bool saved = OS::SaveFile(resourceFile->getPath(), resourceFile->getData());
 	PANIC(saved == false, "Old resource could not be located for saving file: " + resourceFile->getPath().generic_string());

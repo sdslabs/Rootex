@@ -46,7 +46,7 @@ void ProjectManager::openLevel(const String& levelPath)
 
 void ProjectManager::saveCurrentLevel()
 {
-	SerializationSystem::GetSingleton()->saveAllEntities("game/assets/levels/" + getCurrentLevelName() + "/entities/");
+	SerializationSystem::GetSingleton()->saveAllEntities("game/assets/levels/" + getCurrentLevelName() + "/entities");
 }
 
 void ProjectManager::createLevel(const String& newLevelName)
