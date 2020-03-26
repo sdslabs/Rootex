@@ -90,16 +90,13 @@ void DiffuseVisualComponent::draw()
 {
 	VisualComponent::draw();
 	
+	m_ImagePathUI = m_ImageFile->getPath().string();
 	if (ImGui::InputText("Texture", &m_ImagePathUI, ImGuiInputTextFlags_EnterReturnsTrue))
 	{
 		ImageResourceFile* image = ResourceLoader::CreateImageResourceFile(m_ImagePathUI);
 		if (image)
 		{
 			setTexture(image);
-		}
-		else
-		{
-			m_ImagePathUI = m_ImageFile->getPath().string();
 		}
 	}
 

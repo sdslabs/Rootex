@@ -1,0 +1,35 @@
+{
+    "Components": {
+        "DiffuseVisualComponent": {
+            "renderPass": 5,
+            "resFile": "game/assets/test/cube.obj",
+            "texturePath": "game\\assets\\test\\sdslabs.png"
+        },
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 1
+        },
+        "TransformComponent": {
+            "position": {
+                "x": -1.809999942779541,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rotation": {
+                "w": 1.0,
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            }
+        }
+    },
+    "Entity": {
+        "ID": 5,
+        "name": "TexturedCube"
+    }
+}
