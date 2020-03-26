@@ -174,6 +174,7 @@ void InspectorDock::drawAddComponentWindow()
 					PRINT("Added " + componentName + " to " + m_OpenedEntity->getName());
 					m_OpenedEntity->setupComponents();
 				}
+				m_OpenedEntity->setupComponents();
 			}
 			refreshAddNewComponentSelectionCache();
 			ImGui::CloseCurrentPopup();

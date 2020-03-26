@@ -12,7 +12,7 @@
 void Editor::initialize(HWND hWnd, const JSON::json& projectJSON)
 {
 	BIND_EVENT_MEMBER_FUNCTION("EditorSaveAll", Editor::saveAll);
-	BIND_EVENT_MEMBER_FUNCTION("EditorAutosave", Editor::autoSave);
+	BIND_EVENT_MEMBER_FUNCTION("EditorAutoSave", Editor::autoSave);
 	BIND_EVENT_MEMBER_FUNCTION("EditorOpenLevel", Editor::openLevel);
 	BIND_EVENT_MEMBER_FUNCTION("EditorCreateNewLevel", Editor::createNewLevel);
 	BIND_EVENT_MEMBER_FUNCTION("EditorCreateNewEntity", Editor::createNewEntity);
@@ -409,7 +409,7 @@ Variant Editor::saveAll(const Event* event)
 
 Variant Editor::autoSave(const Event* event)
 {
-	PRINT("Autosaving entities...");
+	PRINT("Auto-saving entities...");
 	saveAll(nullptr);
 	return true;
 }
@@ -419,6 +419,7 @@ Variant Editor::openLevel(const Event* event)
 	String levelPath(Extract(String, event->getData()));
 	ProjectManager::GetSingleton()->openLevel(levelPath);
 	SetWindowText(GetActiveWindow(), ("Rootex Editor: " + ProjectManager::GetSingleton()->getCurrentLevelName()).c_str());
+
 	return true;
 }
 
@@ -433,6 +434,7 @@ Variant Editor::createNewLevel(const Event* event)
 	}
 
 	ProjectManager::GetSingleton()->createLevel(newLevelName);
+
 	return true;
 }
 
