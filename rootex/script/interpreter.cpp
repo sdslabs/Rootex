@@ -2,11 +2,12 @@
 #include "core/resource_loader.h"
 
 #include "common/common.h"
-#include "components/transform_component.h"
+#include "event_manager.h"
 #include "components/hierarchy_component.h"
-#include "components/visual/visual_component.h"
-#include "components/visual/visual_2d_component.h"
+#include "components/transform_component.h"
 #include "components/visual/text_visual_2d_component.h"
+#include "components/visual/visual_2d_component.h"
+#include "components/visual/visual_component.h"
 #include "entity_factory.h"
 #include "script/interpreter.h"
 
@@ -44,8 +45,8 @@ void LuaInterpreter::registerTypes()
 	sol::table rootex = m_Lua.create_named_table("Rootex");
 	{
 		sol::usertype<Vector2> vector2 = rootex.new_usertype<Vector2>(
-			"Vector2", 
-			sol::constructors<Vector2(), Vector2(float, float)>(),
+		    "Vector2",
+		    sol::constructors<Vector2(), Vector2(float, float)>(),
 		    sol::meta_function::addition, [](Vector2& l, Vector2& r) { return l + r; },
 		    sol::meta_function::subtraction, [](Vector2& l, Vector2& r) { return l - r; });
 		vector2["dot"] = &Vector2::Dot;
@@ -55,8 +56,8 @@ void LuaInterpreter::registerTypes()
 	}
 	{
 		sol::usertype<Vector3> vector3 = rootex.new_usertype<Vector3>(
-			"Vector3", 
-			sol::constructors<Vector3(), Vector3(float, float, float)>(),
+		    "Vector3",
+		    sol::constructors<Vector3(), Vector3(float, float, float)>(),
 		    sol::meta_function::addition, [](Vector3& l, Vector3& r) { return l + r; },
 		    sol::meta_function::subtraction, [](Vector3& l, Vector3& r) { return l - r; });
 		vector3["dot"] = &Vector3::Dot;
@@ -93,13 +94,18 @@ void LuaInterpreter::registerTypes()
 	}
 	{
 		sol::usertype<Matrix> matrix = rootex.new_usertype<Matrix>(
-			"Matrix", 
-			sol::constructors<Matrix()>(),
+		    "Matrix",
+		    sol::constructors<Matrix()>(),
 		    sol::meta_function::addition, [](Matrix& l, Matrix& r) { return l + r; },
 		    sol::meta_function::subtraction, [](Matrix& l, Matrix& r) { return l - r; },
 		    sol::meta_function::multiplication, [](Matrix& l, Matrix& r) { return l * r; });
 		matrix["Identity"] = sol::var(Matrix::Identity);
 	}
+	{
+		rootex["AddEvent"] = [](const String& eventType) { EventManager::GetSingleton()->addEvent(eventType); };
+		rootex["RemoveEvent"] = [](const String& eventType) { EventManager::GetSingleton()->removeEvent(eventType); };
+		rootex["CallEvent"] = [](const String& eventName, const String& eventType) { EventManager::GetSingleton()->call(eventName, eventType, true); };
+	} 
 	{
 		sol::usertype<ResourceLoader> resourceLoader = rootex.new_usertype<ResourceLoader>("ResourceLoader");
 		resourceLoader["CreateAudio"] = &ResourceLoader::CreateAudioResourceFile;
