@@ -8,7 +8,7 @@
 #include "resource_data.h"
 
 #ifdef ROOTEX_EDITOR
-#include"event_manager.h"
+#include "event_manager.h"
 #endif // ROOTEX_EDITOR
 
 std::filesystem::file_time_type::clock OS::s_FileSystemClock;
@@ -139,11 +139,11 @@ String OS::GetBuildTime()
 
 String OS::GetBuildType()
 {
-#ifdef _DEBUG
+#ifdef _DEBUG || DEBUG
 	return "Debug";
 #else
 	return "Release";
-#endif // _DEBUG
+#endif // DEBUG
 }
 
 String OS::GetGameExecutablePath()
