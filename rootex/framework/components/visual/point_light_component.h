@@ -1,5 +1,5 @@
 #include "component.h"
-#include "common/types.h"
+#include "common/common.h"
 
 class PointLightComponent : public Component
 {
