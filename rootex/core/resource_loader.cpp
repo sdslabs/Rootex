@@ -230,7 +230,7 @@ ImageResourceFile* ResourceLoader::CreateImageResourceFile(const String& path)
 	return imageRes;
 }
 
-FontResourceFile* ResourceLoader::CreateFontResourceFile(const String& path, const String& name)
+FontResourceFile* ResourceLoader::CreateFontResourceFile(const String& path)
 {
 	for (auto& item : s_ResourcesDataFiles)
 	{
@@ -249,7 +249,7 @@ FontResourceFile* ResourceLoader::CreateFontResourceFile(const String& path, con
 	// File not found in cache, load it only once
 	FileBuffer& buffer = OS::LoadFileContents(path);
 	ResourceData* resData = new ResourceData(path, buffer);
-	FontResourceFile* fontRes = new FontResourceFile(name, resData);
+	FontResourceFile* fontRes = new FontResourceFile(resData);
 
 	s_ResourcesDataFiles[Ptr<ResourceData>(resData)] = Ptr<ResourceFile>(fontRes);
 	s_ResourceFileLibrary[ResourceFile::Type::Font].push_back(fontRes);

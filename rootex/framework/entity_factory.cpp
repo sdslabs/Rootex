@@ -1,11 +1,12 @@
 #include "entity_factory.h"
 
+#include "core/event_manager.h"
+
 #include "component.h"
 #include "entity.h"
 #include "system.h"
 
 #include "systems/hierarchy_system.h"
-
 #include "components/debug_component.h"
 #include "components/hierarchy_component.h"
 #include "components/physics/sphere_component.h"
@@ -39,6 +40,8 @@ EntityID EntityFactory::getNextID()
 
 EntityFactory::EntityFactory()
 {
+	BIND_EVENT_MEMBER_FUNCTION("DeleteEntity", deleteEntityEvent);
+
 	REGISTER_COMPONENT(TestComponent);
 	REGISTER_COMPONENT(DebugComponent);
 	REGISTER_COMPONENT(VisualComponent);
@@ -203,6 +206,12 @@ Ref<Entity> EntityFactory::createRootEntity()
 	return root;
 }
 
+Variant EntityFactory::deleteEntityEvent(const Event* event)
+{
+	deleteEntity(Extract(Ref<Entity>, event->getData()));
+	return true;
+}
+
 void EntityFactory::addDefaultComponent(Ref<Entity> entity, String componentName)
 {
 	addComponent(entity, createDefaultComponent(componentName));
@@ -245,7 +254,13 @@ void EntityFactory::destroyEntities(bool saveRoot)
 
 	for (auto&& entity : markedForRemoval)
 	{
-		entity->destroy();
-		m_Entities.erase(entity->getID());
+		deleteEntity(entity);
 	}
+}
+
+void EntityFactory::deleteEntity(Ref<Entity> entity)
+{
+	entity->destroy();
+	m_Entities.erase(entity->getID());
+	entity.reset();
 }

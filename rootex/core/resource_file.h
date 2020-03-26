@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common/types.h"
+#include "common/common.h"
 #include "core/resource_data.h"
 #include "core/renderer/vertex_buffer.h"
 #include "core/renderer/index_buffer.h"
@@ -150,10 +150,9 @@ public:
 
 class FontResourceFile : public ResourceFile
 {
-	explicit FontResourceFile(const String& name, ResourceData* resData);
+	explicit FontResourceFile(ResourceData* resData);
 	~FontResourceFile();
 
-	String m_Name;
 	Ref<DirectX::SpriteFont> m_Font;
 
 	friend class ResourceLoader;
@@ -164,6 +163,5 @@ public:
 
 	virtual void reload() override;
 
-	String getFontName() const { return m_Name; }
 	Ref<DirectX::SpriteFont> getFont() const { return m_Font; }
 };

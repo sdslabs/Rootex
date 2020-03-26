@@ -55,6 +55,7 @@ void Entity::destroy()
 {
 	for (auto& component : m_Components)
 	{
+		component.second->onRemove();
 		System::DeregisterComponent(component.second.get());
 		component.second.reset();
 	}

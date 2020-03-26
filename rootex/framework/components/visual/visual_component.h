@@ -87,6 +87,7 @@ public:
 	void addTransform(const Matrix& applyTransform);
 
 	void setTransform(const Matrix& newTransform);
+	void setVisualModel(VisualModelResourceFile* newModel);
 	void setMaterial(Ref<Material> material);
 	void setPosition(const Vector3& position);
 	void setVisibility(bool enabled) { m_IsVisible = enabled; }
