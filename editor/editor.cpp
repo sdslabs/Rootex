@@ -12,7 +12,7 @@
 void Editor::initialize(HWND hWnd, const JSON::json& projectJSON)
 {
 	BIND_EVENT_MEMBER_FUNCTION("EditorSaveAll", Editor::saveAll);
-	BIND_EVENT_MEMBER_FUNCTION("EditorAutosave", Editor::autoSave);
+	BIND_EVENT_MEMBER_FUNCTION("EditorAutoSave", Editor::autoSave);
 	BIND_EVENT_MEMBER_FUNCTION("EditorOpenLevel", Editor::openLevel);
 	BIND_EVENT_MEMBER_FUNCTION("EditorCreateNewLevel", Editor::createNewLevel);
 	BIND_EVENT_MEMBER_FUNCTION("EditorCreateNewEntity", Editor::createNewEntity);
@@ -113,7 +113,6 @@ void Editor::render()
 	ImGui::NewFrame();
 
 	drawDefaultUI();
-
 	m_FileSystem->draw();
 	m_Hierarchy->draw();
     m_Toolbar->draw();
@@ -267,6 +266,7 @@ void Editor::drawDefaultUI()
 					ImGui::Checkbox("Toolbar", &m_Toolbar->getSettings().m_IsActive);
 					ImGui::Checkbox("Output", &m_Output->getSettings().m_IsActive);
 					ImGui::Checkbox("Hierarchy", &m_Hierarchy->getSettings().m_IsActive);
+					ImGui::Checkbox("Entities", &m_Hierarchy->getSettings().m_IsEntitiesDockActive);
 					ImGui::Checkbox("Viewport", &m_Viewport->getSettings().m_IsActive);
 					ImGui::Checkbox("File System", &m_FileSystem->getSettings().m_IsActive);
 					ImGui::Checkbox("Inspector", &m_Inspector->getSettings().m_IsActive);
@@ -345,11 +345,10 @@ void Editor::pushEditorStyleColors()
 	// Every line in this function body should push a style color
 	static const int starting = __LINE__;
 	ImGui::PushStyleColor(ImGuiCol_DockingPreview, m_Colors.m_Accent);
-	ImGui::PushStyleColor(ImGuiCol_DockingEmptyBg, m_Colors.m_MediumAccent);
+	ImGui::PushStyleColor(ImGuiCol_DockingEmptyBg, m_Colors.m_Background);
 	ImGui::PushStyleColor(ImGuiCol_Separator, m_Colors.m_HeavyAccent);
 	ImGui::PushStyleColor(ImGuiCol_SeparatorActive, m_Colors.m_Accent);
 	ImGui::PushStyleColor(ImGuiCol_SeparatorHovered, m_Colors.m_MediumAccent);
-	ImGui::PushStyleColor(ImGuiCol_BorderShadow, m_Colors.m_HeavyAccent);
 	ImGui::PushStyleColor(ImGuiCol_FrameBg, m_Colors.m_ItemBackground);
 	ImGui::PushStyleColor(ImGuiCol_FrameBgActive, m_Colors.m_MediumAccent);
 	ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, m_Colors.m_HeavyAccent);
@@ -366,7 +365,8 @@ void Editor::pushEditorStyleColors()
 	ImGui::PushStyleColor(ImGuiCol_TabHovered, m_Colors.m_Accent);
 	ImGui::PushStyleColor(ImGuiCol_TabUnfocused, m_Colors.m_MediumAccent);
 	ImGui::PushStyleColor(ImGuiCol_TabUnfocusedActive, m_Colors.m_Accent);
-	ImGui::PushStyleColor(ImGuiCol_Border, m_Colors.m_HeavyAccent);
+	ImGui::PushStyleColor(ImGuiCol_Border, m_Colors.m_MediumAccent);
+	ImGui::PushStyleColor(ImGuiCol_BorderShadow, m_Colors.m_HeavyAccent);
 	ImGui::PushStyleColor(ImGuiCol_Button, m_Colors.m_Success);
 	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, m_Colors.m_Accent);
 	ImGui::PushStyleColor(ImGuiCol_ButtonActive, m_Colors.m_Success);
@@ -397,9 +397,8 @@ Variant Editor::saveAll(const Event* event)
 {
 	if (ProjectManager::GetSingleton()->isAnyLevelOpen())
 	{
-		PRINT("Saving level: " + ProjectManager::GetSingleton()->getCurrentLevelName());
 		ProjectManager::GetSingleton()->saveCurrentLevel();
-		PRINT("Successfully saved " + std::to_string(EntityFactory::GetSingleton()->getEntities().size()) + " entities");
+		PRINT("Successfully saved level: " + ProjectManager::GetSingleton()->getCurrentLevelName());
 	}
 	else
 	{
@@ -410,7 +409,7 @@ Variant Editor::saveAll(const Event* event)
 
 Variant Editor::autoSave(const Event* event)
 {
-	PRINT("Autosaving entities...");
+	PRINT("Auto-saving entities...");
 	saveAll(nullptr);
 	return true;
 }
@@ -419,6 +418,7 @@ Variant Editor::openLevel(const Event* event)
 {
 	String levelPath(Extract(String, event->getData()));
 	ProjectManager::GetSingleton()->openLevel(levelPath);
+	SetWindowText(GetActiveWindow(), ("Rootex Editor: " + ProjectManager::GetSingleton()->getCurrentLevelName()).c_str());
 
 	return true;
 }

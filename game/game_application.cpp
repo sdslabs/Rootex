@@ -62,6 +62,8 @@ GameApplication::GameApplication()
 	}
 
 	RenderingDevice::GetSingleton()->setBackBufferRenderTarget();
+
+	ScriptSystem::GetSingleton()->begin();
 }
 
 GameApplication::~GameApplication()
@@ -79,17 +81,19 @@ void GameApplication::run()
 			break;
 		}
 
+		m_Window->swapBuffers();
+		m_Window->clearCurrentTarget();
+		m_Window->clipCursor();
+
 		RenderSystem::GetSingleton()->render();
 		AudioSystem::GetSingleton()->update();
 		InputManager::GetSingleton()->update();
 		EventManager::GetSingleton()->dispatchDeferred();
-
-		m_Window->swapBuffers();
-		m_Window->clearCurrentTarget();
-		m_Window->clipCursor();
+		ScriptSystem::GetSingleton()->update(m_FrameTimer.getFrameTime());
 	}
 }
 
 void GameApplication::shutDown()
 {
+	ScriptSystem::GetSingleton()->end();
 }

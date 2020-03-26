@@ -6,6 +6,7 @@
 #include "resource_loader.h"
 #include "audio/audio_system.h"
 #include "renderer/rendering_device.h"
+#include "interpreter.h"
 
 ResourceFile::ResourceFile(const Type& type, ResourceData* resData)
     : m_Type(type)
@@ -171,6 +172,11 @@ LuaTextResourceFile::LuaTextResourceFile(ResourceData* resData)
 
 LuaTextResourceFile::~LuaTextResourceFile()
 {
+}
+
+void LuaTextResourceFile::reload()
+{
+	TextResourceFile::reload();
 }
 
 VisualModelResourceFile::VisualModelResourceFile(Ptr<VertexBuffer> vertexBuffer, Ptr<IndexBuffer> indexBuffer, ResourceData* resData)

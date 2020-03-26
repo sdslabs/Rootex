@@ -4,24 +4,23 @@
 #include "core/resource_file.h"
 
 #include "vendor/Lua/src/lua.hpp"
-#include "vendor/LuaBridge/Source/LuaBridge/LuaBridge.h"
-
-typedef luabridge::LuaRef LuaVariable;
+#define SOL_ALL_SAFETIES_ON	1
+#define SOL_USING_CXX_LUA 1
+#define SOL_PRINT_ERRORS 1
+#include "sol/sol.hpp"
 
 class LuaInterpreter
 {
-	lua_State* m_LuaState;
+	sol::state m_Lua;
 	
 	LuaInterpreter();
-	~LuaInterpreter();
+	LuaInterpreter(LuaInterpreter&) = delete;
+	~LuaInterpreter() = default;
+
+	void registerTypes();
 
 public:
 	static LuaInterpreter* GetSingleton();
 
-	void loadExecuteScript(LuaTextResourceFile* script);
-	void loadExecuteScript(const String& script);
-
-	LuaVariable getGlobal(const String& name);
-
-protected:
+	sol::state& getLuaState() { return m_Lua; }
 };

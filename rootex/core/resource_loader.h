@@ -22,7 +22,7 @@ public:
 	static ImageResourceFile* CreateImageResourceFile(const String& path);
 	static FontResourceFile* CreateFontResourceFile(const String& path, const String& name);
 
-	static void SaveResourceFile(TextResourceFile*& resourceFile);
+	static void SaveResourceFile(ResourceFile* resourceFile);
 	static void ReloadResourceData(const String& path);
 
 	static objl::Loader& GetModelLoader() { return s_ModelLoader; }

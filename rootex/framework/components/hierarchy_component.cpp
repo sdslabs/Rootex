@@ -50,7 +50,7 @@ HierarchyComponent::HierarchyComponent(EntityID parentID, const Vector<EntityID>
 
 bool HierarchyComponent::addChild(Ref<Entity> child)
 {
-	if (auto&& findIt = std::find(m_Children.begin(), m_Children.end(), child->getComponent<HierarchyComponent>().get()) == m_Children.end())
+	if (auto&& findIt = std::find(m_ChildrenIDs.begin(), m_ChildrenIDs.end(), child->getID()) == m_ChildrenIDs.end())
 	{
 		m_Children.push_back(child->getComponent<HierarchyComponent>().get());
 		m_ChildrenIDs.push_back(child->getID());
@@ -63,18 +63,29 @@ bool HierarchyComponent::addChild(Ref<Entity> child)
 
 bool HierarchyComponent::removeChild(Ref<Entity> node)
 {
-	auto& findIt = std::find(m_Children.begin(), m_Children.end(), node->getComponent<HierarchyComponent>().get());
-	if (findIt != m_Children.end())
+	auto& findIt = std::find(m_ChildrenIDs.begin(), m_ChildrenIDs.end(), node->getID());
+	if (findIt != m_ChildrenIDs.end())
 	{
-		(*findIt)->m_Parent = nullptr;
-		(*findIt)->m_ParentID = INVALID_ID;
+		Ref<HierarchyComponent> hc = node->getComponent<HierarchyComponent>();
+		hc->m_Parent = nullptr;
+		hc->m_ParentID = INVALID_ID;
 
-		auto&& findItID = std::find(m_ChildrenIDs.begin(), m_ChildrenIDs.end(), (*findIt)->getOwner()->getID());
+		auto&& findItPtr = std::find(m_Children.begin(), m_Children.end(), hc.get());
 
-		m_Children.erase(findIt);
-		m_ChildrenIDs.erase(findItID);
+		m_Children.erase(findItPtr);
+		m_ChildrenIDs.erase(findIt);
+
+		return true;
 	}
-	return true;
+	return false;
+}
+
+bool HierarchyComponent::snatchChild(Ref<Entity> node)
+{
+	bool status = node->getComponent<HierarchyComponent>()->getParent()->removeChild(node);
+	status &= addChild(node);
+
+	return status;
 }
 
 void HierarchyComponent::clear()
@@ -107,46 +118,38 @@ JSON::json HierarchyComponent::getJSON() const
 #include "imgui.h"
 void HierarchyComponent::draw()
 {
-	ImGui::Columns(2);
-
+	String parentName = m_Parent ? m_Parent->getOwner()->getFullName() : "None";
 	if (m_Parent)
 	{
-		ImGui::Text("Parent");
-		ImGui::NextColumn();
-		ImGui::Text(m_Parent->getOwner()->getName().c_str());
+		if (ImGui::BeginCombo("##Parent", parentName.c_str(), ImGuiComboFlags_HeightLarge))
+		{
+			for (auto&& [entityID, entity] : EntityFactory::GetSingleton()->getEntities())
+			{
+				if (ImGui::Selectable(entity->getFullName().c_str()))
+				{
+					bool status = entity->getComponent<HierarchyComponent>()->snatchChild(getOwner());
+					PANIC(status == false, "Could not set parent as " + entity->getFullName() + " for entity " + getOwner()->getFullName());
+				}
+			}
+			ImGui::EndCombo();
+		}
 		ImGui::SameLine();
-		if (ImGui::Button("Go"))
+		if (ImGui::Button("Parent")) // Not available for Root (Root.m_Parent is nullptr)
 		{
 			EventManager::GetSingleton()->call("OpenChildEntity", "EditorOpenEntity", m_Parent->getOwner());
 		}
-		ImGui::NextColumn();
-	}
-	else
-	{
-		ImGui::Text("Parent");
-		ImGui::NextColumn();
-		ImGui::Text("None");
-		ImGui::NextColumn();
 	}
 
-	ImGui::Separator();
-
-	ImGui::Text("Children");
-	ImGui::NextColumn();
-	if (m_Children.size() == 0)
+	if (ImGui::ListBoxHeader("Children", m_Children.size() ? m_Children.size() : 1))
 	{
-		ImGui::Text("None");
-	}
-	for (auto& child : m_Children)
-	{
-		ImGui::Text(child->getOwner()->getName().c_str());
-		ImGui::SameLine();
-		if (ImGui::Button(("Go##" + std::to_string(child->getOwner()->getID())).c_str()))
+		for (auto&& child : m_Children)
 		{
-			EventManager::GetSingleton()->call("OpenChildEntity", "EditorOpenEntity", child->getOwner());
+			if (ImGui::Selectable(child->getOwner()->getFullName().c_str()))
+			{
+				EventManager::GetSingleton()->call("OpenChildEntity", "EditorOpenEntity", child->getOwner());
+			}
 		}
+		ImGui::ListBoxFooter();
 	}
-
-	ImGui::Columns(1);
 }
 #endif // ROOTEX_EDITOR

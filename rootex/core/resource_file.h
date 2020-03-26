@@ -77,6 +77,8 @@ class LuaTextResourceFile : public TextResourceFile
 public:
 	explicit LuaTextResourceFile(TextResourceFile&) = delete;
 	explicit LuaTextResourceFile(TextResourceFile&&) = delete;
+
+	virtual void reload() override;
 };
 
 typedef int ALsizei;
