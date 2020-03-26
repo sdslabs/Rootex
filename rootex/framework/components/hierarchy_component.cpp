@@ -134,13 +134,13 @@ void HierarchyComponent::draw()
 			ImGui::EndCombo();
 		}
 		ImGui::SameLine();
-		if (ImGui::Button("Parent")) // Not available for Root (m_Parent is nullptr)
+		if (ImGui::Button("Parent")) // Not available for Root (Root.m_Parent is nullptr)
 		{
 			EventManager::GetSingleton()->call("OpenChildEntity", "EditorOpenEntity", m_Parent->getOwner());
 		}
 	}
 
-	if (ImGui::ListBoxHeader("Children"))
+	if (ImGui::ListBoxHeader("Children", m_Children.size() ? m_Children.size() : 1))
 	{
 		for (auto&& child : m_Children)
 		{

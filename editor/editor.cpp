@@ -113,7 +113,6 @@ void Editor::render()
 	ImGui::NewFrame();
 
 	drawDefaultUI();
-
 	m_FileSystem->draw();
 	m_Hierarchy->draw();
     m_Toolbar->draw();
@@ -420,6 +419,7 @@ Variant Editor::openLevel(const Event* event)
 	String levelPath(Extract(String, event->getData()));
 	ProjectManager::GetSingleton()->openLevel(levelPath);
 	SetWindowText(GetActiveWindow(), ("Rootex Editor: " + ProjectManager::GetSingleton()->getCurrentLevelName()).c_str());
+
 	return true;
 }
 
