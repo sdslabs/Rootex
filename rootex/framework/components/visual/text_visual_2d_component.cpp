@@ -6,8 +6,7 @@ Component* TextVisual2DComponent::Create(const JSON::json& componentData)
 {
 	TextVisual2DComponent* tV2DC = new TextVisual2DComponent(
 		ResourceLoader::CreateFontResourceFile(
-			componentData["fontResource"], 
-			componentData["name"]), 
+			componentData["fontResource"]), 
 		componentData["text"], 
 		{ 
 			componentData["color"]["r"], 
@@ -26,7 +25,7 @@ Component* TextVisual2DComponent::Create(const JSON::json& componentData)
 Component* TextVisual2DComponent::CreateDefault()
 {
 	return new TextVisual2DComponent(
-		ResourceLoader::CreateFontResourceFile("game/assets/fonts/noto_sans_50_regular.spritefont", "Noto Sans"), 
+		ResourceLoader::CreateFontResourceFile("game/assets/fonts/noto_sans_50_regular.spritefont"), 
 		"Hello World!", 
 		{ 1.0f, 1.0f, 1.0f, 1.0f }, 
 		Mode::None, 
@@ -72,7 +71,6 @@ JSON::json TextVisual2DComponent::getJSON() const
 	JSON::json j;
 
 	j["fontResource"] = m_FontFile->getPath().string();
-	j["name"] = m_FontFile->getFontName();
 	j["text"] = m_Text;
 
 	j["color"]["r"] = m_Color.x;
@@ -108,7 +106,8 @@ void TextVisual2DComponent::draw()
 	ImGui::Combo("Mode", &choice, modes, IM_ARRAYSIZE(modes));
 	m_Mode = (Mode)choice;
 
-	if (ImGui::BeginCombo("Font", m_FontFile->getFontName().c_str()))
+	ImGui::BeginGroup();
+	if (ImGui::BeginCombo("Font", m_FontFile->getPath().filename().string().c_str()))
 	{
 		for (auto&& file : ResourceLoader::GetFilesOfType(ResourceFile::Type::Font))
 		{
@@ -121,22 +120,37 @@ void TextVisual2DComponent::draw()
 		static String inputPath = "Path";
 		ImGui::InputText("##Path", &inputPath);
 		ImGui::SameLine();
-		static String inputName = "Name";
-		ImGui::InputText("##Name", &inputName);
-		ImGui::SameLine();
 		if (ImGui::Button("Create Font"))
 		{
-			if (!ResourceLoader::CreateFontResourceFile(inputPath, inputName))
+			if (!ResourceLoader::CreateFontResourceFile(inputPath))
 			{
 				WARN("Could not create font");
 			}
 			else
 			{
 				inputPath = "";
-				inputName = "";
 			}
 		}
 		ImGui::EndCombo();
+	}
+	ImGui::EndGroup();
+
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Resource Drop"))
+		{
+			const char* payloadFileName = (const char*)payload->Data;
+			FilePath payloadPath(payloadFileName);
+			if (payloadPath.extension() == ".spritefont")
+			{
+				setFont(ResourceLoader::CreateFontResourceFile(payloadPath.string()));
+			}
+			else
+			{
+				WARN("Cannot assign a non-spritefont file as Font");
+			}
+		}
+		ImGui::EndDragDropTarget();
 	}
 }
 #endif // ROOTEX_EDITOR

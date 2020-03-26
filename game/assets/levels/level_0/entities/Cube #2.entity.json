@@ -1,11 +1,12 @@
 {
     "Components": {
         "HierarchyComponent": {
-            "children": [
-                2,
-                3
-            ],
-            "parent": 0
+            "children": [],
+            "parent": 1
+        },
+        "ScriptComponent": {
+            "connections": {},
+            "script": "game\\assets\\scripts\\rotator.lua"
         },
         "TransformComponent": {
             "position": {
@@ -14,11 +15,7 @@
                 "z": 0.0
             },
             "rotation": {
-<<<<<<< HEAD:game/assets/levels/level_0/entities/Root_1.entity.json
-                "w": 1.0,
-=======
                 "w": 0.0,
->>>>>>> Add change entity name feat to inspector + rework level saving:game/assets/levels/level_0/entities/Cube #2.entity.json
                 "x": 0.0,
                 "y": 0.0,
                 "z": 0.0
@@ -32,21 +29,16 @@
         "VisualComponent": {
             "color": {
                 "a": 1.0,
-                "b": 0.5,
-                "g": 0.5,
-                "r": 0.5
+                "b": 0.20000000298023224,
+                "g": 1.0,
+                "r": 0.20000000298023224
             },
             "renderPass": 1,
-            "resFile": "rootex/assets/cube.obj"
+            "resFile": "game/assets/test/cube.obj"
         }
     },
     "Entity": {
-<<<<<<< HEAD:game/assets/levels/level_0/entities/Root_1.entity.json
-        "ID": 1,
-        "name": "Root"
-=======
         "ID": 2,
         "name": "Cube"
->>>>>>> Add change entity name feat to inspector + rework level saving:game/assets/levels/level_0/entities/Cube #2.entity.json
     }
 }

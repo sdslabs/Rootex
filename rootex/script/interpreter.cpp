@@ -161,7 +161,6 @@ void LuaInterpreter::registerTypes()
 		sol::usertype<FontResourceFile> fontResourceFile = rootex.new_usertype<FontResourceFile>(
 		    "FontResourceFile",
 		    sol::base_classes, sol::bases<ResourceFile>());
-		fontResourceFile["getFontName"] = &FontResourceFile::getFontName;
 	}
 	{
 		sol::usertype<EntityFactory> entityFactory = rootex.new_usertype<EntityFactory>("EntityFactory");
