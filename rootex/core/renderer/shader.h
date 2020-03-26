@@ -14,6 +14,7 @@ protected:
 
 	Microsoft::WRL::ComPtr<ID3D11VertexShader> m_VertexShader;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> m_PixelShader;
+	Microsoft::WRL::ComPtr<ID3D11InputLayout> m_InputLayout;
 
 	Shader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat);
 

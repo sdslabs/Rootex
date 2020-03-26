@@ -10,6 +10,7 @@ class RenderSystem : public System
 	Ref<CameraVisualComponent> m_Camera;
 	Ptr<Renderer> m_Renderer;
 	Vector<Matrix> m_TransformationStack;
+	Vector<Matrix> m_UITransformationStack;
 
 	RenderSystem();
 	RenderSystem(RenderSystem&) = delete;
@@ -27,8 +28,11 @@ public:
 
 	void pushMatrix(const Matrix& transform);
 	void popMatrix();
+	void pushUIMatrix(const Matrix& transform);
+	void popUIMatrix();
 
 	CameraVisualComponent* getCamera() const { return m_Camera.get(); }
 	const Matrix& getTopMatrix() const;
+	Matrix& getTopUIMatrix();
 	const Renderer* getRenderer() const { return m_Renderer.get(); }
 };

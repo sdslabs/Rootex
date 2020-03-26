@@ -5,6 +5,7 @@
 
 #include "resource_loader.h"
 #include "audio/audio_system.h"
+#include "renderer/rendering_device.h"
 
 ResourceFile::ResourceFile(const Type& type, ResourceData* resData)
     : m_Type(type)
@@ -62,7 +63,7 @@ bool ResourceFile::isDirty()
 }
 
 AudioResourceFile::AudioResourceFile(ResourceData* resData)
-    : ResourceFile(Type::WAV, resData)
+    : ResourceFile(Type::Wav, resData)
     , m_AudioDataSize(0)
     , m_BitDepth(0)
     , m_Channels(0)
@@ -164,7 +165,7 @@ String TextResourceFile::getString() const
 }
 
 LuaTextResourceFile::LuaTextResourceFile(ResourceData* resData)
-    : TextResourceFile(Type::LUA, resData)
+    : TextResourceFile(Type::Lua, resData)
 {
 }
 
@@ -173,7 +174,7 @@ LuaTextResourceFile::~LuaTextResourceFile()
 }
 
 VisualModelResourceFile::VisualModelResourceFile(Ptr<VertexBuffer> vertexBuffer, Ptr<IndexBuffer> indexBuffer, ResourceData* resData)
-    : ResourceFile(Type::OBJ, resData)
+    : ResourceFile(Type::Obj, resData)
     , m_VertexBuffer(std::move(vertexBuffer))
     , m_IndexBuffer(std::move(indexBuffer))
 {
@@ -212,7 +213,7 @@ void VisualModelResourceFile::reload()
 }
 
 ImageResourceFile::ImageResourceFile(ResourceData* resData)
-    : ResourceFile(Type::IMAGE, resData)
+    : ResourceFile(Type::Image, resData)
 {
 }
 
@@ -221,6 +222,24 @@ ImageResourceFile::~ImageResourceFile()
 }
 
 void ImageResourceFile::reload()
+{
+	ResourceFile::reload();
+	ResourceLoader::ReloadResourceData(m_ResourceData->getPath().string());
+}
+
+FontResourceFile::FontResourceFile(const String& name, ResourceData* resData)
+    : ResourceFile(Type::Font, resData)
+    , m_Name(name)
+{
+	m_Font = RenderingDevice::GetSingleton()->createFont(resData->getRawData());
+	m_Font->SetDefaultCharacter('X');
+}
+
+FontResourceFile::~FontResourceFile()
+{
+}
+
+void FontResourceFile::reload()
 {
 	ResourceFile::reload();
 	ResourceLoader::ReloadResourceData(m_ResourceData->getPath().string());

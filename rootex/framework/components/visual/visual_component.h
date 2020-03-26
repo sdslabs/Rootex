@@ -21,6 +21,7 @@ enum class RenderPass
 	Static,
 	Dynamic,
 	Editor,
+	UI,
 	End
 };
 
@@ -28,6 +29,7 @@ class VisualComponentAttributes
 {
 	friend class VisualComponent;
 	friend class DiffuseVisualComponent;
+	friend class Visual2DComponent;
 
 protected:
 	TransformComponent* m_TransformComponent;
@@ -67,7 +69,6 @@ protected:
 	String m_ModelPathUI;
 #endif // ROOTEX_EDITOR
 
-
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::VisualComponent;
 	
@@ -77,7 +78,7 @@ public:
 
 	virtual VisualComponentAttributes* getAttributes() { return &m_Attributes; }
 
-	bool setup() override;
+	virtual bool setup() override;
 
 	virtual bool preRender(HierarchyGraph* graph);
 	virtual bool isVisible(HierarchyGraph* graph) const;
@@ -92,8 +93,9 @@ public:
 	void setPosition(const Vector3& position);
 	void setVisibility(bool enabled) { m_IsVisible = enabled; }
 
-	Vector3 getPosition() const;
+	virtual void onRemove() override;
 
+	Vector3 getPosition() const;
 	virtual String getName() const override { return "VisualComponent"; }
 	ComponentID getComponentID() const override { return s_ID; }
 	virtual JSON::json getJSON() const override;

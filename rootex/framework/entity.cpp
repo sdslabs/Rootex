@@ -63,9 +63,9 @@ void Entity::destroy()
 
 void Entity::removeComponent(Ref<Component> component)
 {
+	component->onRemove();
 	m_Components.erase(component->getComponentID());
 	System::DeregisterComponent(component.get());
-	component.reset();
 }
 
 EntityID Entity::getID() const

@@ -14,6 +14,10 @@ bool Component::setup()
 	return true;
 }
 
+void Component::onRemove()
+{
+}
+
 Ref<Entity> Component::getOwner() const
 {
 	return m_Owner;

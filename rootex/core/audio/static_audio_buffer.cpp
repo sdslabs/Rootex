@@ -5,7 +5,7 @@
 
 void StaticAudioBuffer::initializeBuffers()
 {
-	PANIC(m_AudioFile->getType() != ResourceFile::Type::WAV, "AudioSystem: Trying to load a non-WAV file in a sound buffer");
+	PANIC(m_AudioFile->getType() != ResourceFile::Type::Wav, "AudioSystem: Trying to load a non-WAV file in a sound buffer");
 
 	AL_CHECK(alGenBuffers(1, &m_BufferID));
 	AL_CHECK(alBufferData(

@@ -145,12 +145,17 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 	rsDesc.MultisampleEnable = MSAA;
 	rsDesc.AntialiasedLineEnable = FALSE;
 
-	ID3D11RasterizerState* rsState;
-	GFX_ERR_CHECK(m_Device->CreateRasterizerState(&rsDesc, &rsState));
-	m_Context->RSSetState(rsState);
-	SafeRelease(&rsState);
+	GFX_ERR_CHECK(m_Device->CreateRasterizerState(&rsDesc, &m_RSState));
+	m_Context->RSSetState(m_RSState.Get());
 
 	setTextureRenderTarget();
+
+	m_FontBatch.reset(new DirectX::SpriteBatch(m_Context.Get()));
+}
+
+Ref<DirectX::SpriteFont> RenderingDevice::createFont(FileBuffer* fontFileBuffer)
+{
+	return Ref<DirectX::SpriteFont>(new DirectX::SpriteFont(m_Device.Get(), (const uint8_t*)fontFileBuffer->data(), fontFileBuffer->size()));
 }
 
 ID3DBlob* RenderingDevice::createBlob(LPCWSTR path)
@@ -290,9 +295,9 @@ ID3D11VertexShader* RenderingDevice::initVertexShader(ID3DBlob* blob)
 	return vertexShader;
 }
 
-void RenderingDevice::initVertexLayout(ID3DBlob* vertexShaderBlob, const D3D11_INPUT_ELEMENT_DESC* ied, UINT size)
+Microsoft::WRL::ComPtr<ID3D11InputLayout> RenderingDevice::initVertexLayout(ID3DBlob* vertexShaderBlob, const D3D11_INPUT_ELEMENT_DESC* ied, UINT size)
 {
-	ID3D11InputLayout* inputLayout = nullptr;
+	Microsoft::WRL::ComPtr<ID3D11InputLayout> inputLayout;
 	GFX_ERR_CHECK(m_Device->CreateInputLayout(
 	    ied, size,
 	    vertexShaderBlob->GetBufferPointer(),
@@ -302,9 +307,9 @@ void RenderingDevice::initVertexLayout(ID3DBlob* vertexShaderBlob, const D3D11_I
 	SafeRelease(&vertexShaderBlob);
 
 	//bind vertex layout
-	m_Context->IASetInputLayout(inputLayout);
+	m_Context->IASetInputLayout(inputLayout.Get());
 
-	SafeRelease(&inputLayout);
+	return inputLayout;
 }
 
 Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::createTexture(ImageResourceFile* imageRes)
@@ -340,6 +345,11 @@ void RenderingDevice::bind(ID3D11PixelShader* pixelShader)
 	m_Context->PSSetShader(pixelShader, nullptr, 0u);
 }
 
+void RenderingDevice::bind(ID3D11InputLayout* inputLayout)
+{
+	m_Context->IASetInputLayout(inputLayout);
+}
+
 void RenderingDevice::setInPixelShader(unsigned int slot, unsigned int number, ID3D11ShaderResourceView* texture)
 {
 	m_Context->PSSetShaderResources(slot, number, &texture);
@@ -354,6 +364,11 @@ void RenderingDevice::unbindShaderResources()
 {
 	m_Context->VSSetShaderResources(0, 1, nullptr);
 	m_Context->PSSetShaderResources(0, 1, nullptr);
+}
+
+void RenderingDevice::setRasterizerState()
+{
+	m_Context->RSSetState(m_RSState.Get());
 }
 
 void RenderingDevice::setTextureRenderTarget()
@@ -373,6 +388,11 @@ void RenderingDevice::setBackBufferRenderTarget()
 ID3D11ShaderResourceView* RenderingDevice::getRenderTextureShaderResourceView()
 {
 	return m_RenderTextureShaderResourceView.Get();
+}
+
+Ref<DirectX::SpriteBatch> RenderingDevice::getUIBatch()
+{
+	return m_FontBatch;
 }
 
 void RenderingDevice::setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY pt)
@@ -414,6 +434,16 @@ Microsoft::WRL::ComPtr<ID3D11SamplerState> RenderingDevice::createSamplerState()
 void RenderingDevice::drawIndexed(UINT number)
 {
 	m_Context->DrawIndexed(number, 0u, 0u);
+}
+
+void RenderingDevice::beginDrawUI()
+{
+	m_FontBatch->Begin();
+}
+
+void RenderingDevice::endDrawUI()
+{
+	m_FontBatch->End();
 }
 
 RenderingDevice* RenderingDevice::GetSingleton()

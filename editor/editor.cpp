@@ -17,6 +17,8 @@ void Editor::initialize(HWND hWnd, const JSON::json& projectJSON)
 	BIND_EVENT_MEMBER_FUNCTION("EditorCreateNewLevel", Editor::createNewLevel);
 	BIND_EVENT_MEMBER_FUNCTION("EditorCreateNewEntity", Editor::createNewEntity);
 
+	OS::Execute("\"" + OS::GetAbsolutePath("build_fonts.bat").string() + "\"");
+
 	const JSON::json& general = projectJSON["general"];
 
 	m_Colors.m_Accent = {
@@ -177,7 +179,7 @@ void Editor::drawDefaultUI()
 			static String menuAction = "";
 			if (ImGui::BeginMenu("File"))
 			{
-				if (ImGui::BeginMenu("Create Entity"))
+				if (ImGui::BeginMenu("Create Entity", ProjectManager::GetSingleton()->isAnyLevelOpen()))
 				{
 					for (auto&& entityClassFile : OS::GetFilesInDirectory("game/assets/classes/"))
 					{
@@ -253,9 +255,16 @@ void Editor::drawDefaultUI()
 				{
 					menuAction = "About Rootex Editor";
 				}
-				if (ImGui::MenuItem("Open Source Licenses"))
+				if (ImGui::BeginMenu("Open Source Licenses"))
 				{
-					menuAction = "Open Source Licenses";
+					for (auto&& library : ProjectManager::GetSingleton()->getLibrariesPaths())
+					{
+						if (ImGui::MenuItem(library.filename().string().c_str(), ""))
+						{
+							menuAction = library.string();
+						}
+					}
+					ImGui::EndMenu();
 				}
 				ImGui::EndMenu();
 			}
@@ -280,58 +289,17 @@ void Editor::drawDefaultUI()
 				ImGui::Text("To be added");
 				ImGui::EndPopup();
 			}
-			if (ImGui::BeginPopup("Open Source Licenses"))
+			
+			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
+			for (auto&& library : ProjectManager::GetSingleton()->getLibrariesPaths())
 			{
-				ImGui::BulletText("Bullet3D");
-				ImGui::NewLine();
-				static TextResourceFile* bulletLicense = ResourceLoader::CreateLuaTextResourceFile("rootex/vendor/Bullet3D/LICENSE.txt");
-				ImGui::Text(bulletLicense->getData()->getRawData()->data());
-				ImGui::Separator();
-
-				ImGui::BulletText("DirectXTK");
-				ImGui::NewLine();
-				static TextResourceFile* directXTKLicense = ResourceLoader::CreateLuaTextResourceFile("rootex/vendor/DirectXTK/LICENSE");
-				ImGui::Text(directXTKLicense->getData()->getRawData()->data());
-				ImGui::Separator();
-
-				ImGui::BulletText("Gainput");
-				ImGui::NewLine();
-				static TextResourceFile* gainputLicense = ResourceLoader::CreateLuaTextResourceFile("rootex/vendor/Gainput/LICENSE");
-				ImGui::Text(gainputLicense->getData()->getRawData()->data());
-				ImGui::Separator();
-
-				ImGui::BulletText("Dear ImGui");
-				ImGui::NewLine();
-				static TextResourceFile* imGuiLicense = ResourceLoader::CreateLuaTextResourceFile("rootex/vendor/ImGUI/LICENSE.txt");
-				ImGui::Text(imGuiLicense->getData()->getRawData()->data());
-				ImGui::Separator();
-
-				ImGui::BulletText("Lua C API");
-				ImGui::NewLine();
-				static TextResourceFile* luaCAPILicense = ResourceLoader::CreateLuaTextResourceFile("rootex/vendor/Lua/LICENSE.txt");
-				ImGui::Text(luaCAPILicense->getData()->getRawData()->data());
-				ImGui::Separator();
-
-				ImGui::BulletText("LuaBridge");
-				ImGui::NewLine();
-				static TextResourceFile* luaBridgeLicense = ResourceLoader::CreateLuaTextResourceFile("rootex/vendor/LuaBridge/LICENSE.txt");
-				ImGui::Text(luaBridgeLicense->getData()->getRawData()->data());
-				ImGui::Separator();
-
-				ImGui::BulletText("OBJLoader");
-				ImGui::NewLine();
-				static TextResourceFile* objLoaderLicense = ResourceLoader::CreateLuaTextResourceFile("rootex/vendor/OBJLoader/License.txt");
-				ImGui::Text(objLoaderLicense->getData()->getRawData()->data());
-				ImGui::Separator();
-
-				ImGui::BulletText("ALUT");
-				ImGui::NewLine();
-				static TextResourceFile* alutLicense = ResourceLoader::CreateLuaTextResourceFile("rootex/vendor/OpenAL/COPYING.txt");
-				ImGui::Text(alutLicense->getData()->getRawData()->data());
-				ImGui::Separator();
-
-				menuAction = "";
-				ImGui::EndPopup();
+				if (ImGui::BeginPopup(library.string().c_str(), ImGuiWindowFlags_AlwaysAutoResize))
+				{
+					TextResourceFile* license = ResourceLoader::CreateLuaTextResourceFile(library.string() + "/LICENSE");
+					ImGui::Text(license->getData()->getRawData()->data());
+					menuAction = "";
+					ImGui::EndPopup();
+				}
 			}
 			ImGui::EndMenuBar();
 		}
@@ -416,7 +384,6 @@ Variant Editor::autoSave(const Event* event)
 Variant Editor::openLevel(const Event* event)
 {
 	String levelPath(Extract(String, event->getData()));
-
 	ProjectManager::GetSingleton()->openLevel(levelPath);
 
 	return true;
@@ -425,11 +392,14 @@ Variant Editor::openLevel(const Event* event)
 Variant Editor::createNewLevel(const Event* event)
 {
 	const String& newLevelName = Extract(String, event->getData());
-	PRINT("Creating new level: " + newLevelName);
 
-	OS::CreateDirectoryName("game/assets/levels/" + newLevelName);
-	
-	PRINT("Created new level: " + "game/assets/levels/" + newLevelName);
+	if (OS::IsExists("game/assets/levels/" + newLevelName))
+	{
+		WARN("Found a level with the same name: " + newLevelName);
+		return true;
+	}
+
+	ProjectManager::GetSingleton()->createLevel(newLevelName);
 
 	return true;
 }
