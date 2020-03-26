@@ -12,20 +12,24 @@ public:
 private:
 	sol::environment m_Env;
 	LuaTextResourceFile* m_ScriptFile;
+	Vector<String> m_Functions;
+	HashMap<String, String> m_Connections;
 
 	friend class EntityFactory;
 
-	ScriptComponent(LuaTextResourceFile* luaFile);
+	ScriptComponent(LuaTextResourceFile* luaFile, HashMap<String, String> connections = {});
 	ScriptComponent(ScriptComponent&) = delete;
 	virtual ~ScriptComponent();
 
-	void isSuccessful(const sol::function_result& result);
+	bool isSuccessful(const sol::function_result& result);
 
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::ScriptComponent;
 
 	virtual bool setup() override;
 
+	void connect(const String& function, const String& eventType);
+	void call(const String& function);
 	void onBegin();
 	virtual void onUpdate(float deltaMilliSeconds);
 	void onEnd();
