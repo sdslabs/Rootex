@@ -9,6 +9,9 @@
             "children": [],
             "parent": 1
         },
+        "MusicComponent": {
+            "audio": "rootex/assets/ball.wav"
+        },
         "TransformComponent": {
             "position": {
                 "x": -1.809999942779541,
