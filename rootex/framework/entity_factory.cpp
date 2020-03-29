@@ -21,6 +21,7 @@
 #include "components/visual/text_visual_2d_component.h"
 #include "components/physics/sphere_component.h"
 #include "components/music_component.h"
+#include "components/short_music_component.h"
 
 #define REGISTER_COMPONENT(ComponentClass)                                                            \
 	m_ComponentCreators.push_back({ ComponentClass::s_ID, #ComponentClass, ComponentClass::Create }); \
@@ -56,6 +57,7 @@ EntityFactory::EntityFactory()
 	REGISTER_COMPONENT(HierarchyComponent);
 	REGISTER_COMPONENT(ScriptComponent);
 	REGISTER_COMPONENT(MusicComponent);
+	REGISTER_COMPONENT(ShortMusicComponent);
 }
 
 EntityFactory::~EntityFactory()

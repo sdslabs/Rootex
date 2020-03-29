@@ -1,41 +1,40 @@
-#include "music_component.h"
+#include "short_music_component.h"
 
-#include "core/resource_loader.h"
-#include "core/event_manager.h"
-#include "core/audio/streaming_audio_buffer.h"
+#include "resource_loader.h"
+#include "event_manager.h"
 
-Component* MusicComponent::Create(const JSON::json& componentData)
+Component* ShortMusicComponent::Create(const JSON::json& componentData)
 {
-	MusicComponent* musicComponent = new MusicComponent(ResourceLoader::CreateAudioResourceFile(componentData["audio"]), (bool)componentData["playOnStart"]);
-	return musicComponent;
+	ShortMusicComponent* shortMusicComponent = new ShortMusicComponent(ResourceLoader::CreateAudioResourceFile(componentData["audio"]), (bool)componentData["playOnStart"]);
+	return shortMusicComponent;
 }
 
-Component* MusicComponent::CreateDefault()
+Component* ShortMusicComponent::CreateDefault()
 {
-	MusicComponent* musicComponent = new MusicComponent(ResourceLoader::CreateAudioResourceFile("rootex/assets/ball.wav"), false);
-	return musicComponent;
+	ShortMusicComponent* shortMusicComponent = new ShortMusicComponent(ResourceLoader::CreateAudioResourceFile("rootex/assets/ball.wav"), true);
+	return shortMusicComponent;
 }
 
-MusicComponent::MusicComponent(AudioResourceFile* audioFile, bool playOnStart)
+ShortMusicComponent::ShortMusicComponent(AudioResourceFile* audioFile, bool playOnStart)
     : AudioComponent(playOnStart)
     , m_AudioFile(audioFile)
 {
 }
 
-MusicComponent::~MusicComponent()
+ShortMusicComponent::~ShortMusicComponent()
 {
-	m_StreamingAudioSource.reset();
+    m_StaticAudioSource.reset();
 }
 
-bool MusicComponent::setup()
+bool ShortMusicComponent::setup()
 {
-	m_StreamingAudioSource.reset();
-	m_StreamingAudioBuffer.reset(new StreamingAudioBuffer(m_AudioFile));
-	m_StreamingAudioSource.reset(new StreamingAudioSource(m_StreamingAudioBuffer));
+	m_StaticAudioSource.reset();
+	m_StaticAudioBuffer.reset(new StaticAudioBuffer(m_AudioFile));
+	m_StaticAudioSource.reset(new StaticAudioSource(m_StaticAudioBuffer));
 	return true;
 }
 
-JSON::json MusicComponent::getJSON() const
+JSON::json ShortMusicComponent::getJSON() const
 {
 	JSON::json j;
 
@@ -45,7 +44,7 @@ JSON::json MusicComponent::getJSON() const
 	return j;
 }
 
-void MusicComponent::setAudioFile(AudioResourceFile* audioFile)
+void ShortMusicComponent::setAudioFile(AudioResourceFile* audioFile)
 {
 	m_AudioFile = audioFile;
 	setup();
@@ -54,7 +53,7 @@ void MusicComponent::setAudioFile(AudioResourceFile* audioFile)
 #ifdef ROOTEX_EDITOR
 #include "imgui.h"
 #include "imgui_stdlib.h"
-void MusicComponent::draw()
+void ShortMusicComponent::draw()
 {
 	ImGui::BeginGroup();
 	if (ImGui::BeginCombo("##Audio File", m_AudioFile->getPath().filename().string().c_str(), ImGuiComboFlags_HeightRegular))

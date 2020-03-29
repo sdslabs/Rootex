@@ -18,5 +18,6 @@ enum class ComponentIDs : unsigned int
 	SphereComponent,
 	ScriptComponent,
 	AudioComponent,
-	MusicComponent = AudioComponent
+	MusicComponent = AudioComponent,
+	ShortMusicComponent = AudioComponent
 };
