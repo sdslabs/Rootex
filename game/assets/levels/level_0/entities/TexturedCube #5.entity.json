@@ -9,8 +9,8 @@
             "children": [],
             "parent": 1
         },
-        "MusicComponent": {
-            "audio": "game\\assets\\jungle.wav",
+        "ShortMusicComponent": {
+            "audio": "game\\assets\\ball.wav",
             "playOnStart": true
         },
         "TransformComponent": {
