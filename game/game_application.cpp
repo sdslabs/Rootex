@@ -1,9 +1,9 @@
 #include "game_application.h"
 
 #include "app/project_manager.h"
-#include "core/audio/audio_system.h"
 #include "core/input/input_manager.h"
 #include "core/resource_loader.h"
+#include "framework/systems/audio_system.h"
 #include "framework/systems/render_system.h"
 
 Ref<Application> CreateRootexApplication()
@@ -62,7 +62,7 @@ GameApplication::GameApplication()
 	}
 
 	RenderingDevice::GetSingleton()->setBackBufferRenderTarget();
-
+	AudioSystem::GetSingleton()->begin();
 	ScriptSystem::GetSingleton()->begin();
 }
 
