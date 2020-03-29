@@ -1,19 +1,17 @@
 #include "audio_source.h"
 
-#include "audio_system.h"
+#include "framework/systems/audio_system.h"
 #include "static_audio_buffer.h"
 #include "streaming_audio_buffer.h"
 
 AudioSource::AudioSource(bool isStreaming)
     : m_IsStreaming(isStreaming)
 {
-	AudioSystem::GetSingleton()->registerInstance(this);
 	AL_CHECK(alGenSources(1, &m_SourceID));
 }
 
 AudioSource::~AudioSource()
 {
-	AudioSystem::GetSingleton()->deregisterInstance(this);
 	AL_CHECK(alDeleteSources(1, &m_SourceID));
 }
 
@@ -118,7 +116,11 @@ StreamingAudioSource::StreamingAudioSource(Ref<StreamingAudioBuffer> audio)
 
 StreamingAudioSource::~StreamingAudioSource()
 {
-	unqueueBuffers();
+	if (isPlaying())
+	{
+		stop();
+		unqueueBuffers();
+	}
 }
 
 void StreamingAudioSource::setLooping(bool enabled)

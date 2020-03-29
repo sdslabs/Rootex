@@ -10,7 +10,8 @@
             "parent": 1
         },
         "MusicComponent": {
-            "audio": "rootex/assets/ball.wav"
+            "audio": "game\\assets\\jungle.wav",
+            "playOnStart": true
         },
         "TransformComponent": {
             "position": {

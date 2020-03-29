@@ -4,7 +4,7 @@
 #include <sstream>
 
 #include "resource_loader.h"
-#include "audio/audio_system.h"
+#include "framework/systems/audio_system.h"
 #include "renderer/rendering_device.h"
 #include "interpreter.h"
 

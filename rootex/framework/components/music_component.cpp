@@ -6,27 +6,30 @@
 
 Component* MusicComponent::Create(const JSON::json& componentData)
 {
-	MusicComponent* musicComponent = new MusicComponent(ResourceLoader::CreateAudioResourceFile(componentData["audio"]));
+	MusicComponent* musicComponent = new MusicComponent(ResourceLoader::CreateAudioResourceFile(componentData["audio"]), (bool)componentData["playOnStart"]);
 	return musicComponent;
 }
 
 Component* MusicComponent::CreateDefault()
 {
-	MusicComponent* musicComponent = new MusicComponent(ResourceLoader::CreateAudioResourceFile("rootex/assets/ball.wav"));
+	MusicComponent* musicComponent = new MusicComponent(ResourceLoader::CreateAudioResourceFile("rootex/assets/ball.wav"), false);
 	return musicComponent;
 }
 
-MusicComponent::MusicComponent(AudioResourceFile* audioFile)
-    : m_AudioFile(audioFile)
+MusicComponent::MusicComponent(AudioResourceFile* audioFile, bool playOnStart)
+    : AudioComponent(playOnStart)
+    , m_AudioFile(audioFile)
 {
 }
 
 MusicComponent::~MusicComponent()
 {
+	m_StreamingAudioSource->stop();
 }
 
 bool MusicComponent::setup()
 {
+	m_StreamingAudioSource.reset();
 	m_StreamingAudioBuffer.reset(new StreamingAudioBuffer(m_AudioFile));
 	m_StreamingAudioSource.reset(new StreamingAudioSource(m_StreamingAudioBuffer));
 	return true;
@@ -37,6 +40,7 @@ JSON::json MusicComponent::getJSON() const
 	JSON::json j;
 
 	j["audio"] = m_AudioFile->getPath().string();
+	j["playOnStart"] = m_IsPlayOnStart;
 
 	return j;
 }
