@@ -36,11 +36,12 @@ void DiffuseMaterial::bind() const
     Material::bind();
 }
 
-CPUParticlesMaterial::CPUParticlesMaterial(Ref<Texture> diffuseTexture)
+CPUParticlesMaterial::CPUParticlesMaterial()
     : Material(ShaderLibrary::GetCPUParticlesShader())
 {
 }
 
 void CPUParticlesMaterial::bind() const
 {
+	Material::bind();
 }

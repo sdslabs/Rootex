@@ -39,7 +39,7 @@ void ShaderLibrary::MakeShaders()
 	{
 		BufferFormat cpuParticlesBufferFormat;
 		cpuParticlesBufferFormat.push(VertexBufferElement::Type::POSITION, "POSITION");
-		MakeShader(ShaderType::Diffuse, L"rootex/core/renderer/shaders/cpu_particles_vertex_shader.cso", L"rootex/core/renderer/shaders/cpu_particles_pixel_shader.cso", cpuParticlesBufferFormat);
+		MakeShader(ShaderType::CPUParticles, L"rootex/core/renderer/shaders/cpu_particles_vertex_shader.cso", L"rootex/core/renderer/shaders/cpu_particles_pixel_shader.cso", cpuParticlesBufferFormat);
 	}
 }
 

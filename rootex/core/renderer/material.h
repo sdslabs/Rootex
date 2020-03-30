@@ -39,7 +39,7 @@ public:
 class CPUParticlesMaterial : public Material
 {
 public:
-	CPUParticlesMaterial(Ref<Texture> diffuseTexture);
+	CPUParticlesMaterial();
 	~CPUParticlesMaterial() = default;
 	
 	void bind() const override;
