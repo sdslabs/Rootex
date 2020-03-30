@@ -8,7 +8,8 @@ class ShaderLibrary
 	enum class ShaderType
 	{
 		Default,
-		Diffuse
+		Diffuse,
+		CPUParticles
 	};
 
 private:
@@ -21,4 +22,5 @@ public:
 
 	static Shader* GetDefaultShader();
 	static DiffuseShader* GetDiffuseShader();
+	static CPUParticlesShader* GetCPUParticlesShader();
 };

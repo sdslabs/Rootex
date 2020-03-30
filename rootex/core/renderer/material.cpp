@@ -35,3 +35,12 @@ void DiffuseMaterial::bind() const
 	setShaderConstantBuffer(Cb);
     Material::bind();
 }
+
+CPUParticlesMaterial::CPUParticlesMaterial(Ref<Texture> diffuseTexture)
+    : Material(ShaderLibrary::GetCPUParticlesShader())
+{
+}
+
+void CPUParticlesMaterial::bind() const
+{
+}

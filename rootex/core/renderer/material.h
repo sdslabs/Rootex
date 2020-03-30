@@ -35,3 +35,12 @@ public:
 
 	void bind() const override;
 };
+
+class CPUParticlesMaterial : public Material
+{
+public:
+	CPUParticlesMaterial(Ref<Texture> diffuseTexture);
+	~CPUParticlesMaterial() = default;
+	
+	void bind() const override;
+};
