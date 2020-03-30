@@ -137,3 +137,13 @@ void DiffuseShader::bind() const
 	Shader::bind();
 	RenderingDevice::GetSingleton()->setInPixelShader(m_SamplerState.Get());
 }
+
+CPUParticlesShader::CPUParticlesShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat)
+    : Shader(vertexPath, pixelPath, vertexBufferFormat)
+{
+}
+
+void CPUParticlesShader::bind() const
+{
+	Shader::bind();
+}

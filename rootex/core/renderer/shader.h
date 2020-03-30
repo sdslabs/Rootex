@@ -50,7 +50,8 @@ class DiffuseShader : public Shader
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_SamplerState;
 
 	DiffuseShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat);
-	DiffuseShader();
+	DiffuseShader(DiffuseShader&) = delete;
+	~DiffuseShader() = default;
 
 	friend class ShaderLibrary;
 
@@ -58,4 +59,16 @@ public:
 	virtual void bind() const override;
 	
 	void set(const Texture* texture);
+};
+
+class CPUParticlesShader : public Shader
+{
+	CPUParticlesShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat);
+	CPUParticlesShader(CPUParticlesShader&) = delete;
+	~CPUParticlesShader() = default;
+
+	friend class ShaderLibrary;
+
+public:
+	virtual void bind() const override;
 };
