@@ -2,34 +2,34 @@
     "Components": {
         "CPUParticlesVisualComponent": {
             "angularVelocity": {
-                "w": 1.0,
+                "w": 0.0,
                 "x": 0.0,
                 "y": 0.0,
                 "z": 0.0
             },
             "colorBegin": {
                 "a": 1.0,
-                "b": 0.0,
+                "b": 0.9999902844429016,
                 "g": 1.0,
-                "r": 0.970588207244873
+                "r": 0.9999899864196777
             },
             "colorEnd": {
                 "a": 1.0,
-                "b": 0.0,
-                "g": 0.0,
-                "r": 1.0
+                "b": 0.3382319211959839,
+                "g": 0.3382319211959839,
+                "r": 0.3382353186607361
             },
-            "lifeTime": 1.0,
+            "lifeTime": 0.30000001192092896,
             "poolSize": 1000,
-            "sizeBegin": 0.3799999952316284,
+            "sizeBegin": 0.009999999776482582,
             "sizeEnd": 0.0,
             "sizeVariation": 0.17000000178813934,
             "velocity": {
                 "x": 0.0,
-                "y": 1.0,
+                "y": 0.0,
                 "z": 0.0
             },
-            "velocityVariation": 0.10000000149011612
+            "velocityVariation": 3.0999999046325684
         },
         "HierarchyComponent": {
             "children": [],
@@ -42,7 +42,7 @@
                 "z": 0.0
             },
             "rotation": {
-                "w": 0.0,
+                "w": 1.0,
                 "x": 0.0,
                 "y": 0.0,
                 "z": 0.0
