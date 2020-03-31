@@ -26,7 +26,7 @@ void ViewportDock::draw()
 			m_ViewportDockSettings.m_ImageSize = region;
 
 			ImGui::Image(
-			    RenderingDevice::GetSingleton()->getRenderTextureShaderResourceView(),
+			    RenderingDevice::GetSingleton()->getRenderTextureShaderResourceView().Get(),
 			    m_ViewportDockSettings.m_ImageSize,
 			    { 0, 0 },
 			    { 1, 1 },

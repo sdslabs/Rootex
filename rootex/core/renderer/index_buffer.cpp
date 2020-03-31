@@ -49,12 +49,11 @@ IndexBuffer::IndexBuffer(const Vector<unsigned short>& indices)
 
 IndexBuffer::~IndexBuffer()
 {
-	SafeRelease(&m_IndexBuffer);
 }
 
 void IndexBuffer::bind() const
 {
-	RenderingDevice::GetSingleton()->bind(m_IndexBuffer, DXGI_FORMAT_R16_UINT);
+	RenderingDevice::GetSingleton()->bind(m_IndexBuffer.Get(), DXGI_FORMAT_R16_UINT);
 }
 
 unsigned int IndexBuffer::getCount() const
