@@ -6,6 +6,7 @@
 #include "resource_loader.h"
 #include "audio/audio_system.h"
 #include "renderer/rendering_device.h"
+#include "interpreter.h"
 
 ResourceFile::ResourceFile(const Type& type, ResourceData* resData)
     : m_Type(type)
@@ -173,6 +174,11 @@ LuaTextResourceFile::~LuaTextResourceFile()
 {
 }
 
+void LuaTextResourceFile::reload()
+{
+	TextResourceFile::reload();
+}
+
 VisualModelResourceFile::VisualModelResourceFile(Ptr<VertexBuffer> vertexBuffer, Ptr<IndexBuffer> indexBuffer, ResourceData* resData)
     : ResourceFile(Type::Obj, resData)
     , m_VertexBuffer(std::move(vertexBuffer))
@@ -227,9 +233,8 @@ void ImageResourceFile::reload()
 	ResourceLoader::ReloadResourceData(m_ResourceData->getPath().string());
 }
 
-FontResourceFile::FontResourceFile(const String& name, ResourceData* resData)
+FontResourceFile::FontResourceFile(ResourceData* resData)
     : ResourceFile(Type::Font, resData)
-    , m_Name(name)
 {
 	m_Font = RenderingDevice::GetSingleton()->createFont(resData->getRawData());
 	m_Font->SetDefaultCharacter('X');

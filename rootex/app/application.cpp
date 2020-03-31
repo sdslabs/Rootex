@@ -17,6 +17,7 @@ Application::Application()
 
 Application::~Application()
 {
+	EntityFactory::GetSingleton()->destroyEntities(false);
 	AudioSystem::GetSingleton()->shutDown();
 }
 
@@ -41,11 +42,11 @@ bool Application::initialize(const JSON::json& projectJSON)
 	InputManager::GetSingleton()->initialize(windowJSON["width"], windowJSON["height"]);
 
 	ShaderLibrary::MakeShaders();
-	
+
 	auto&& postInitialize = projectJSON.find("postInitialize");
 	if (postInitialize != projectJSON.end())
 	{
-		LuaInterpreter::GetSingleton()->loadExecuteScript(ResourceLoader::CreateLuaTextResourceFile(*postInitialize));
+		LuaInterpreter::GetSingleton()->getLuaState().script(ResourceLoader::CreateLuaTextResourceFile(*postInitialize)->getString());
 	}
 
 	m_Window->show();

@@ -30,6 +30,7 @@ class TransformComponent : public Component
 	friend class VisualComponent;
 	friend class DiffuseVisualComponent;
 	friend class VisualComponentAttributes;
+	friend class RenderSystem;
 	friend class EntityFactory;
 
 #ifdef ROOTEX_EDITOR
@@ -40,7 +41,7 @@ class TransformComponent : public Component
 
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::TransformComponent;
-	
+
 	virtual ~TransformComponent() = default;
 
 	void setPosition(const Vector3& position);

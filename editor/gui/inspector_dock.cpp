@@ -6,12 +6,15 @@
 #include "editor/editor.h"
 
 #include "vendor/ImGUI/imgui.h"
+#include "vendor/ImGUI/imgui_stdlib.h"
 #include "vendor/ImGUI/imgui_impl_dx11.h"
 #include "vendor/ImGUI/imgui_impl_win32.h"
 
 Variant InspectorDock::openEntity(const Event* event)
 {
 	m_OpenedEntity = Extract(Ref<Entity>, event->getData());
+	m_OpenedEntityName = m_OpenedEntity->getName();
+	m_IsNameBeingEdited = false;
 	refreshAddNewComponentSelectionCache();
 	return true;
 }
@@ -50,7 +53,26 @@ void InspectorDock::draw()
 		{
 			if (m_OpenedEntity)
 			{
-				ImGui::Text("Entity: %s #%d", m_OpenedEntity->getName().c_str(), m_OpenedEntity->getID());
+				if (m_IsNameBeingEdited)
+				{
+					if (ImGui::InputText("Entity Name", &m_OpenedEntityName, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
+					{
+						m_OpenedEntity->setName(m_OpenedEntityName);
+						m_IsNameBeingEdited = false;
+					}
+					if (!ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+					{
+						m_IsNameBeingEdited = false;
+					}
+				}
+				else
+				{
+					ImGui::TreeNodeEx(m_OpenedEntity->getFullName().c_str(), ImGuiTreeNodeFlags_CollapsingHeader | ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_Selected);
+					if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
+					{
+						m_IsNameBeingEdited = true;
+					}
+				}
 				ImGui::PushStyleColor(ImGuiCol_Button, Editor::GetSingleton()->getColors().m_Success);
 				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, Editor::GetSingleton()->getColors().m_Accent);
 				ImGui::PushStyleColor(ImGuiCol_ButtonActive, Editor::GetSingleton()->getColors().m_Success);
@@ -69,11 +91,25 @@ void InspectorDock::draw()
 				}
 				ImGui::PopStyleColor(3);
 				ImGui::SameLine();
-				if (ImGui::Button("Reset"))
+				ImGui::PushStyleColor(ImGuiCol_Button, Editor::GetSingleton()->getColors().m_Failure);
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, Editor::GetSingleton()->getColors().m_FailAccent);
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, Editor::GetSingleton()->getColors().m_Failure);
+				ImGui::SameLine();
+				if (ImGui::Button("Delete Entity"))
 				{
-					m_OpenedEntity->setupComponents();
+					if (m_OpenedEntity->getID() != ROOT_ENTITY_ID)
+					{
+						EventManager::GetSingleton()->deferredCall("EditorDeleteEntity", "DeleteEntity", m_OpenedEntity);
+					}
+					else
+					{
+						WARN("Cannot delete Root Entity");
+					}
 				}
+				ImGui::PopStyleColor(3);
+
 				ImGui::Separator();
+				
 				ImGui::Text("Components");
 				for (auto& component : m_OpenedEntity->getAllComponents())
 				{

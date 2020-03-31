@@ -2,7 +2,7 @@
 
 #include "rootex/app/application.h"
 #include "rootex/framework/systems/hierarchy_system.h"
-#include "rootex/script/interpreter.h"
+#include "framework/systems/script_system.h"
 
 class HierarchyGraph;
 

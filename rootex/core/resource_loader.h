@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common/types.h"
+#include "common/common.h"
 #include "core/resource_data.h"
 #include "core/resource_file.h"
 #include "os/os.h"
@@ -20,11 +20,12 @@ public:
 	static AudioResourceFile* CreateAudioResourceFile(const String& path);
 	static VisualModelResourceFile* CreateVisualModelResourceFile(const String& path);
 	static ImageResourceFile* CreateImageResourceFile(const String& path);
-	static FontResourceFile* CreateFontResourceFile(const String& path, const String& name);
+	static FontResourceFile* CreateFontResourceFile(const String& path);
 
-	static void SaveResourceFile(TextResourceFile*& resourceFile);
+	static void SaveResourceFile(ResourceFile* resourceFile);
 	static void ReloadResourceData(const String& path);
 
 	static objl::Loader& GetModelLoader() { return s_ModelLoader; }
 	static Vector<ResourceFile*>& GetFilesOfType(ResourceFile::Type type);
+	static HashMap<ResourceFile::Type, Vector<ResourceFile*>>& GetAllFiles();
 };
