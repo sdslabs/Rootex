@@ -3,20 +3,24 @@
 #include "common/common.h"
 
 #include "core/resource_loader.h"
-
+#include "event_manager.h"
 #include "framework/entity.h"
-#include "framework/systems/render_system.h"
 #include "framework/systems/light_system.h"
+#include "framework/systems/render_system.h"
 
 Component* VisualComponent::Create(const JSON::json& componentData)
 {
 	VisualComponent* visualComponent = new VisualComponent(
-	    RenderPass::Global,
+	    componentData["renderPass"],
 	    Ref<Material>(new Material()),
-	    ResourceLoader::CreateVisualModelResourceFile(componentData["resFile"])
-	);
-	visualComponent->setColor(Color((float)componentData["color"]["r"], (float)componentData["color"]["g"],
-	    (float)componentData["color"]["b"], (float)componentData["color"]["a"]));
+	    ResourceLoader::CreateVisualModelResourceFile(componentData["resFile"]));
+	
+	visualComponent->setColor(
+	    Color(
+	        (float)componentData["color"]["r"], 
+			(float)componentData["color"]["g"],
+	        (float)componentData["color"]["b"], 
+			(float)componentData["color"]["a"]));
 
 	return visualComponent;
 }
@@ -24,7 +28,7 @@ Component* VisualComponent::Create(const JSON::json& componentData)
 Component* VisualComponent::CreateDefault()
 {
 	VisualComponent* visualComponent = new VisualComponent(
-	    RenderPass::Global,
+	    RenderPassMain,
 	    Ref<Material>(new Material()),
 	    ResourceLoader::CreateVisualModelResourceFile("rootex/assets/cube.obj"));
 	visualComponent->setColor(Color(0.5f, 0.5f, 0.5f));
@@ -32,22 +36,14 @@ Component* VisualComponent::CreateDefault()
 	return visualComponent;
 }
 
-VisualComponent::VisualComponent(const RenderPass& renderPassSetting, Ref<Material> material,
-	VisualModelResourceFile* resFile)
+VisualComponent::VisualComponent(const unsigned int& renderPassSetting, Ref<Material> material,
+    VisualModelResourceFile* resFile)
     : m_IsVisible(true)
 {
 	m_Attributes.m_TransformComponent = nullptr;
 	m_Attributes.m_RenderPassSetting = renderPassSetting;
 	m_Attributes.m_Material = material;
 	m_Attributes.m_VisualModelResourceFile = resFile;
-
-#ifdef ROOTEX_EDITOR
-	// TODO: Remove this if statement when camera gets a resource file
-	if (resFile)
-	{
-		m_ModelPathUI = resFile->getPath().string();
-	}
-#endif // ROOTEX_EDITOR
 }
 
 VisualComponent::~VisualComponent()
@@ -71,14 +67,12 @@ bool VisualComponent::setup()
 			WARN("Entity without hierarchy component found");
 			status = false;
 		}
-
-		HierarchySystem::GetSingleton()->getRootHierarchyComponent()->addVCToRenderPass(m_Owner->getComponent<VisualComponent>(), m_Owner);
 	}
 
 	return status;
 }
 
-bool VisualComponent::preRender(HierarchyGraph* graph)
+bool VisualComponent::preRender()
 {
 	if (m_Attributes.m_TransformComponent)
 	{
@@ -93,24 +87,24 @@ bool VisualComponent::preRender(HierarchyGraph* graph)
 	}
 	PSSolidConstantBuffer Cb = { m_Color };
 	m_Attributes.m_Material->setShaderConstantBuffer(Cb);
-	
+
 	return true;
 }
 
-bool VisualComponent::isVisible(HierarchyGraph* graph) const
+bool VisualComponent::isVisible() const
 {
 	// TODO: Add culling
 	return m_IsVisible;
 }
 
-void VisualComponent::render(HierarchyGraph* graph)
+void VisualComponent::render()
 {
 	RenderSystem::GetSingleton()->getRenderer()->draw(m_Attributes.getVertexBuffer(), m_Attributes.getIndexBuffer(), m_Attributes.getMaterial());
 }
 
-void VisualComponent::renderChildren(HierarchyGraph* graph)
+void VisualComponent::renderChildren(const unsigned int& renderPass)
 {
-	if (isVisible(graph))
+	if (isVisible() && !(renderPass & RenderPassUI))
 	{
 		m_Attributes.m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::View, RenderSystem::GetSingleton()->getCamera()->getView());
 		m_Attributes.m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::Projection, RenderSystem::GetSingleton()->getCamera()->getProjection());
@@ -118,25 +112,25 @@ void VisualComponent::renderChildren(HierarchyGraph* graph)
 
 	for (auto& child : m_Owner->getComponent<HierarchyComponent>()->getChildren())
 	{
-		VisualComponent* childVisualComponent = child->getComponent<VisualComponent>().get();
+		VisualComponent* childVisualComponent = child->getOwner()->getComponent<VisualComponent>().get();
 
-		if (childVisualComponent)
+		if (childVisualComponent && (childVisualComponent->getAttributes()->getRenderPass() & renderPass))
 		{
-			childVisualComponent->preRender(graph);
+			childVisualComponent->preRender();
 
-			if (childVisualComponent->isVisible(graph))
+			if (childVisualComponent->isVisible())
 			{
 				// Assumed to be opaque
-				childVisualComponent->render(graph);
+				childVisualComponent->render();
 			}
-			childVisualComponent->renderChildren(graph);
+			childVisualComponent->renderChildren(renderPass);
 
-			childVisualComponent->postRender(graph);
+			childVisualComponent->postRender();
 		}
 	}
 }
 
-void VisualComponent::postRender(HierarchyGraph* graph)
+void VisualComponent::postRender()
 {
 	RenderSystem::GetSingleton()->popMatrix();
 }
@@ -151,6 +145,11 @@ void VisualComponent::setTransform(const Matrix& newTransform)
 	m_Attributes.m_TransformComponent->setTransform(newTransform);
 }
 
+void VisualComponent::setVisualModel(VisualModelResourceFile* newModel)
+{
+	m_Attributes.m_VisualModelResourceFile = newModel;
+}
+
 void VisualComponent::setMaterial(Ref<Material> material)
 {
 	m_Attributes.m_Material = material;
@@ -159,19 +158,6 @@ void VisualComponent::setMaterial(Ref<Material> material)
 void VisualComponent::setPosition(const Vector3& position)
 {
 	m_Attributes.m_TransformComponent->setPosition(position);
-}
-
-void VisualComponent::onRemove()
-{
-	if (m_Owner)
-	{
-		Ref<Entity> parent = m_Owner->getComponent<HierarchyComponent>()->getParent();
-		if (parent->getID() == ROOT_ENTITY_ID)
-		{
-			Ref<RootHierarchyComponent> rootHC = std::dynamic_pointer_cast<RootHierarchyComponent>(parent->getComponent<HierarchyComponent>());
-			rootHC->removeVCFromRenderPass(m_Owner->getComponent<VisualComponent>(), m_Owner);
-		}
-	}
 }
 
 Vector3 VisualComponent::getPosition() const
@@ -184,6 +170,7 @@ JSON::json VisualComponent::getJSON() const
 	JSON::json j;
 
 	j["resFile"] = m_Attributes.m_VisualModelResourceFile->getPath().string();
+	j["renderPass"] = m_Attributes.m_RenderPassSetting;
 
 	j["color"]["r"] = m_Color.x;
 	j["color"]["g"] = m_Color.y;
@@ -194,7 +181,7 @@ JSON::json VisualComponent::getJSON() const
 }
 
 VisualComponentAttributes::VisualComponentAttributes()
-    : m_RenderPassSetting(RenderPass::Global)
+    : m_RenderPassSetting(RenderPassMain)
     , m_Material(Ref<Material>(new Material()))
     , m_VisualModelResourceFile(nullptr)
     , m_TransformComponent(nullptr)
@@ -207,19 +194,91 @@ VisualComponentAttributes::VisualComponentAttributes()
 #include "imgui_stdlib.h"
 void VisualComponent::draw()
 {
-	if (ImGui::InputText("Visual Model", &m_ModelPathUI, ImGuiInputTextFlags_EnterReturnsTrue))
+	ImGui::BeginGroup();
+	if (ImGui::BeginCombo("##Visual Model", m_Attributes.m_VisualModelResourceFile->getPath().filename().string().c_str(), ImGuiComboFlags_HeightRegular))
 	{
-		VisualModelResourceFile* model = ResourceLoader::CreateVisualModelResourceFile(m_ModelPathUI);
-		if (model)
+		for (auto&& file : ResourceLoader::GetFilesOfType(ResourceFile::Type::Obj))
 		{
-			m_Attributes.m_VisualModelResourceFile = model;
+			if (ImGui::MenuItem(file->getPath().string().c_str(), ""))
+			{
+				setVisualModel((VisualModelResourceFile*)file);
+			}
 		}
-		else
+
+		ImGui::Separator();
+
+		static String inputPath = "Path";
+		ImGui::InputText("##Path", &inputPath);
+		ImGui::SameLine();
+		if (ImGui::Button("Create Visual Model"))
 		{
-			m_ModelPathUI = m_Attributes.m_VisualModelResourceFile->getPath().string();
+			if (!ResourceLoader::CreateVisualModelResourceFile(inputPath))
+			{
+				WARN("Could not create Visual Model");
+			}
+			else
+			{
+				inputPath = "";
+			}
 		}
+		ImGui::EndCombo();
 	}
 
+	ImGui::SameLine();
+
+	if (ImGui::Button("Visual Model"))
+	{
+		EventManager::GetSingleton()->call("OpenScript", "EditorOpenFile", m_Attributes.m_VisualModelResourceFile->getPath());
+	}
+	ImGui::EndGroup();
+
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Resource Drop"))
+		{
+			const char* payloadFileName = (const char*)payload->Data;
+			FilePath payloadPath(payloadFileName);
+			if (payloadPath.extension() == ".obj")
+			{
+				setVisualModel(ResourceLoader::CreateVisualModelResourceFile(payloadPath.string()));
+			}
+			else
+			{
+				WARN("Cannot assign a non-obj file to Visual Model");
+			}
+		}
+		ImGui::EndDragDropTarget();
+	}
+	
 	ImGui::ColorEdit4("Color", &m_Color.x);
+
+	ImGui::Separator();
+
+	ImGui::Checkbox("Visible", &m_IsVisible);
+
+	if (ImGui::BeginCombo("Render pass", m_RenderPassName.c_str()))
+	{
+		if (ImGui::Selectable("Main"))
+		{
+			m_Attributes.m_RenderPassSetting = RenderPassMain;
+			m_RenderPassName = "Main";
+		}
+		if (ImGui::Selectable("Sky"))
+		{
+			m_Attributes.m_RenderPassSetting = RenderPassSky;
+			m_RenderPassName = "Sky";
+		}
+		if (ImGui::Selectable("UI"))
+		{
+			m_Attributes.m_RenderPassSetting = RenderPassUI;
+			m_RenderPassName = "UI";
+		}
+		if (ImGui::Selectable("Editor"))
+		{
+			m_Attributes.m_RenderPassSetting = RenderPassEditor;
+			m_RenderPassName = "Editor";
+		}
+		ImGui::EndCombo();
+	}
 }
 #endif // ROOTEX_EDITOR

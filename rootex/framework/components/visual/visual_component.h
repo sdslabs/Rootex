@@ -14,15 +14,13 @@
 
 class HierarchyGraph;
 
-enum class RenderPass
+enum RenderPass
 {
-	Global,
-	Background,
-	Static,
-	Dynamic,
-	Editor,
-	UI,
-	End
+	RenderPassMain = 1 << 0,
+	RenderPassSky = 1 << 1,
+	RenderPassEditor = 1 << 2,
+	RenderPassUI = 1 << 3,
+	RenderPassEnd
 };
 
 class VisualComponentAttributes
@@ -33,7 +31,7 @@ class VisualComponentAttributes
 
 protected:
 	TransformComponent* m_TransformComponent;
-	RenderPass m_RenderPassSetting;
+	unsigned int m_RenderPassSetting;
 	VisualModelResourceFile* m_VisualModelResourceFile;
 	Ref<Material> m_Material;
 	HierarchyComponent* m_HierarchyComponent;
@@ -46,7 +44,7 @@ public:
 	const IndexBuffer* getIndexBuffer() const { return m_VisualModelResourceFile->getIndexBuffer(); }
 	const Matrix& getTransform() const { return m_TransformComponent->getLocalTransform(); }
 	const Matrix& getInverseTransform() const { return m_TransformComponent->getLocalTransform().Invert(); }
-	const RenderPass& getRenderPass() const { return m_RenderPassSetting; }
+	const unsigned int& getRenderPass() const { return m_RenderPassSetting; }
 	Material* getMaterial() { return m_Material.get(); }
 	VisualModelResourceFile* getModelResourceFile() const { return m_VisualModelResourceFile; }
 };
@@ -66,13 +64,13 @@ protected:
 	friend class EntityFactory;
 
 #ifdef ROOTEX_EDITOR
-	String m_ModelPathUI;
+	String m_RenderPassName;
 #endif // ROOTEX_EDITOR
 
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::VisualComponent;
 	
-	VisualComponent(const RenderPass& renderPassSetting, Ref<Material> material, VisualModelResourceFile* resFile);
+	VisualComponent(const unsigned int& renderPassSetting, Ref<Material> material, VisualModelResourceFile* resFile);
 	VisualComponent(VisualComponent&) = delete;
 	virtual ~VisualComponent();
 
@@ -80,20 +78,19 @@ public:
 
 	virtual bool setup() override;
 
-	virtual bool preRender(HierarchyGraph* graph);
-	virtual bool isVisible(HierarchyGraph* graph) const;
-	virtual void render(HierarchyGraph* graph);
-	virtual void renderChildren(HierarchyGraph* graph);
-	virtual void postRender(HierarchyGraph* graph);
+	virtual bool preRender();
+	virtual bool isVisible() const;
+	virtual void render();
+	virtual void renderChildren(const unsigned int& renderPass);
+	virtual void postRender();
 
 	void addTransform(const Matrix& applyTransform);
 
 	void setTransform(const Matrix& newTransform);
+	void setVisualModel(VisualModelResourceFile* newModel);
 	void setMaterial(Ref<Material> material);
 	void setPosition(const Vector3& position);
 	void setVisibility(bool enabled) { m_IsVisible = enabled; }
-
-	virtual void onRemove() override;
 
 	Vector3 getPosition() const;
 	virtual String getName() const override { return "VisualComponent"; }

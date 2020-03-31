@@ -15,16 +15,16 @@ void Entity::addComponent(const Ref<Component>& component)
 	m_Components.insert(std::make_pair(component->getComponentID(), component));
 }
 
-void Entity::addChild(Ref<Entity> child)
-{
-	getComponent<HierarchyComponent>()->addChild(child);
-}
-
 Entity::Entity(EntityID id, const String& name, const HashMap<ComponentID, Ref<Component>>& components)
     : m_ID(id)
     , m_Name(name)
     , m_Components(components)
 {
+}
+
+Component* Entity::getComponentPointer(ComponentID ID)
+{
+	return getComponent<Component>(ID).get();
 }
 
 JSON::json Entity::getJSON() const
@@ -55,6 +55,7 @@ void Entity::destroy()
 {
 	for (auto& component : m_Components)
 	{
+		component.second->onRemove();
 		System::DeregisterComponent(component.second.get());
 		component.second.reset();
 	}
@@ -76,6 +77,11 @@ EntityID Entity::getID() const
 const String& Entity::getName() const
 {
 	return m_Name;
+}
+
+String Entity::getFullName() const
+{
+	return m_Name + " #" + std::to_string(getID());
 }
 
 bool Entity::hasComponent(ComponentID componentID)

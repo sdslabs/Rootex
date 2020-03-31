@@ -15,15 +15,10 @@ protected:
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::Visual2DComponent;
 
-	virtual bool preRender(HierarchyGraph* graph) override;
-	virtual void render(HierarchyGraph* graph) override {}
-	virtual void renderChildren(HierarchyGraph* graph) override;
-	virtual void postRender(HierarchyGraph* graph) override;
+	virtual bool preRender() override;
+	virtual void render() override {}
+	virtual void postRender() override;
 
 	virtual ComponentID getComponentID() const override { return s_ID; }
 	virtual String getName() const override { return "Visual2DComponent"; };
-
-#ifdef ROOTEX_EDITOR
-	virtual void draw() override {}
-#endif // ROOTEX_EDITOR
 };

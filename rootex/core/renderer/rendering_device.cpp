@@ -96,10 +96,9 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 	dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
 	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 
-	ID3D11DepthStencilState* DSState;
-	GFX_ERR_CHECK(m_Device->CreateDepthStencilState(&dsDesc, &DSState));
-	m_Context->OMSetDepthStencilState(DSState, 1u);
-	SafeRelease(&DSState);
+	GFX_ERR_CHECK(m_Device->CreateDepthStencilState(&dsDesc, &m_DepthStencilState));
+	m_Context->OMSetDepthStencilState(m_DepthStencilState.Get(), 1u);
+	m_StencilRef = 1u;
 
 	ID3D11Texture2D* depthStencil = nullptr;
 	D3D11_TEXTURE2D_DESC descDepth = { 0 };
@@ -180,7 +179,7 @@ void RenderingDevice::createRenderTextureTarget(int width, int height)
 	textureDesc.MipLevels = 1;
 	textureDesc.ArraySize = 1;
 	textureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	textureDesc.SampleDesc.Count = 1;
+	textureDesc.SampleDesc.Count = m_MSAA ? 4 : 1;
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;
 	textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 	textureDesc.CPUAccessFlags = 0;
@@ -196,7 +195,7 @@ void RenderingDevice::createRenderTextureTarget(int width, int height)
 	GFX_ERR_CHECK(m_Device->CreateRenderTargetView(m_RenderTargetTexture.Get(), &renderTargetViewDesc, &m_RenderTargetTextureView));
 
 	shaderResourceViewDesc.Format = textureDesc.Format;
-	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	shaderResourceViewDesc.ViewDimension = m_MSAA ? D3D11_SRV_DIMENSION_TEXTURE2DMS : D3D11_SRV_DIMENSION_TEXTURE2D;
 	shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
 	shaderResourceViewDesc.Texture2D.MipLevels = 1;
 
@@ -369,6 +368,11 @@ void RenderingDevice::unbindShaderResources()
 void RenderingDevice::setRasterizerState()
 {
 	m_Context->RSSetState(m_RSState.Get());
+}
+
+void RenderingDevice::setDepthStencilState()
+{
+	m_Context->OMSetDepthStencilState(m_DepthStencilState.Get(), m_StencilRef);
 }
 
 void RenderingDevice::setTextureRenderTarget()

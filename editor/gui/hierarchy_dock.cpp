@@ -8,19 +8,17 @@
 #include "vendor/ImGUI/imgui_impl_dx11.h"
 #include "vendor/ImGUI/imgui_impl_win32.h"
 
-void HierarchyDock::showHierarchySubTree(Ref<Entity> node)
+void HierarchyDock::showHierarchySubTree(HierarchyComponent* hierarchy)
 {
-	Ref<HierarchyComponent> hierarchy = node->getComponent<HierarchyComponent>();
 	if (hierarchy)
 	{
+		Ref<Entity> node = hierarchy->getOwner();
 		if (ImGui::TreeNodeEx(("##" + std::to_string(node->getID())).c_str(), ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_AllowItemOverlap | (hierarchy->getChildren().size() ? ImGuiTreeNodeFlags_None : ImGuiTreeNodeFlags_Leaf)))
 		{
 			ImGui::SameLine();
-			if (ImGui::Selectable((node->getName() + " #" + std::to_string(node->getID())).c_str(), m_OpenedEntityID == node->getID()))
+			if (ImGui::Selectable(node->getFullName().c_str(), m_OpenedEntityID == node->getID()))
 			{
-				m_OpenedEntityID = node->getID();
-				PRINT("Viewed " + node->getName() + " through Hierarchy Dock");
-				EventManager::GetSingleton()->call("OpenEntity", "EditorOpenEntity", node);
+				openEntity(node);
 			}
 
 			for (auto& child : node->getComponent<HierarchyComponent>()->getChildren())
@@ -31,6 +29,13 @@ void HierarchyDock::showHierarchySubTree(Ref<Entity> node)
 			ImGui::TreePop();
 		}
 	}
+}
+
+void HierarchyDock::openEntity(Ref<Entity> entity)
+{
+	m_OpenedEntityID = entity->getID();
+	PRINT("Viewed " + entity->getFullName() + " through Hierarchy Dock");
+	EventManager::GetSingleton()->call("OpenEntity", "EditorOpenEntity", entity);
 }
 
 Variant HierarchyDock::selectOpenEntity(const Event* event)
@@ -50,8 +55,36 @@ void HierarchyDock::draw()
 	{
 		if (ImGui::Begin("Hierarchy"))
 		{
-			RootHierarchyComponent* rootComponent = HierarchySystem::GetSingleton()->getRootHierarchyComponent().get();
-			showHierarchySubTree(rootComponent->getOwner());
+			HierarchyComponent* rootComponent = HierarchySystem::GetSingleton()->getRootHierarchyComponent().get();
+			showHierarchySubTree(rootComponent);
+		}
+		ImGui::End();
+	}
+	if (m_HierarchySettings.m_IsEntitiesDockActive)
+	{
+		if (ImGui::Begin("Entities"))
+		{
+			ImGui::Columns(2);
+			ImGui::Text("Entity");
+			ImGui::NextColumn();
+			ImGui::Text("Components");
+			ImGui::NextColumn();
+
+			for (auto&& [entityID, entity] : EntityFactory::GetSingleton()->getEntities())
+			{
+				ImGui::Separator();
+				if (ImGui::Selectable(entity->getFullName().c_str(), m_OpenedEntityID == entity->getID()))
+				{
+					openEntity(entity);
+				}
+				ImGui::NextColumn();
+				for (auto&& [componentID, component] : entity->getAllComponents())
+				{
+					ImGui::Text(component->getName().c_str());
+				}
+				ImGui::NextColumn();
+			}
+			ImGui::Columns(1);
 		}
 		ImGui::End();
 	}

@@ -3,11 +3,11 @@
 #include "systems/render_system.h"
 
 Visual2DComponent::Visual2DComponent()
-    : VisualComponent(RenderPass::UI, nullptr, nullptr)
+    : VisualComponent(RenderPassUI, nullptr, nullptr)
 {
 }
 
-bool Visual2DComponent::preRender(HierarchyGraph* graph)
+bool Visual2DComponent::preRender()
 {
 	if (m_Attributes.m_TransformComponent)
 	{
@@ -21,29 +21,7 @@ bool Visual2DComponent::preRender(HierarchyGraph* graph)
 	return true;
 }
 
-void Visual2DComponent::renderChildren(HierarchyGraph* graph)
-{
-	for (auto& child : m_Owner->getComponent<HierarchyComponent>()->getChildren())
-	{
-		Visual2DComponent* childVisualComponent = child->getComponent<Visual2DComponent>().get();
-
-		if (childVisualComponent)
-		{
-			childVisualComponent->preRender(graph);
-
-			if (childVisualComponent->isVisible(graph))
-			{
-				// Assumed to be opaque
-				childVisualComponent->render(graph);
-			}
-			childVisualComponent->renderChildren(graph);
-
-			childVisualComponent->postRender(graph);
-		}
-	}
-}
-
-void Visual2DComponent::postRender(HierarchyGraph* graph)
+void Visual2DComponent::postRender()
 {
 	RenderSystem::GetSingleton()->popUIMatrix();
 }
