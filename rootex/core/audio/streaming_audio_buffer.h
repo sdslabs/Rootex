@@ -4,7 +4,7 @@
 #define MAX_BUFFER_QUEUE_LENGTH BUFFER_COUNT / 25
 
 #include "audio_buffer.h"
-#include "audio_system.h"
+#include "framework/systems/audio_system.h"
 
 class StreamingAudioBuffer : public AudioBuffer
 {

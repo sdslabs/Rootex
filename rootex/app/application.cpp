@@ -1,6 +1,6 @@
 #include "application.h"
 
-#include "audio/audio_system.h"
+#include "framework/systems/audio_system.h"
 #include "core/resource_loader.h"
 #include "core/input/input_manager.h"
 #include "core/renderer/shader_library.h"
@@ -17,8 +17,8 @@ Application::Application()
 
 Application::~Application()
 {
-	EntityFactory::GetSingleton()->destroyEntities(false);
 	AudioSystem::GetSingleton()->shutDown();
+	EntityFactory::GetSingleton()->destroyEntities(false);
 }
 
 bool Application::initialize(const JSON::json& projectJSON)

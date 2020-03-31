@@ -9,6 +9,10 @@
             "children": [],
             "parent": 1
         },
+        "ShortMusicComponent": {
+            "audio": "game\\assets\\ball.wav",
+            "playOnStart": true
+        },
         "TransformComponent": {
             "position": {
                 "x": -1.809999942779541,

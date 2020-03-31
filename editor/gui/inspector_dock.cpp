@@ -172,9 +172,7 @@ void InspectorDock::drawAddComponentWindow()
 					Ref<Component> component = EntityFactory::GetSingleton()->createDefaultComponent(componentName);
 					EntityFactory::GetSingleton()->addComponent(m_OpenedEntity, component);
 					PRINT("Added " + componentName + " to " + m_OpenedEntity->getName());
-					m_OpenedEntity->setupComponents();
 				}
-				m_OpenedEntity->setupComponents();
 			}
 			refreshAddNewComponentSelectionCache();
 			ImGui::CloseCurrentPopup();

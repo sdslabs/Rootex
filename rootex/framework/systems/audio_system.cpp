@@ -3,10 +3,11 @@
 #include <chrono>
 #include <thread>
 
-#include "audio_source.h"
+#include "core/audio/audio_source.h"
 #include "core/resource_data.h"
-#include "static_audio_buffer.h"
-#include "streaming_audio_buffer.h"
+#include "core/audio/static_audio_buffer.h"
+#include "core/audio/streaming_audio_buffer.h"
+#include "components/audio_component.h"
 
 String AudioSystem::GetALErrorString(int errID)
 {
@@ -86,11 +87,26 @@ bool AudioSystem::initialize()
 	return true;
 }
 
+void AudioSystem::begin()
+{
+	AudioComponent* audioComponent = nullptr;
+	for (Component* component : s_Components[AudioComponent::s_ID])
+	{
+		audioComponent = (AudioComponent*)component;
+		if (audioComponent->isPlayOnStart())
+		{
+			audioComponent->getAudioSource()->play();
+		}
+	}
+}
+
 void AudioSystem::update()
 {
-	for (auto* source : m_ActiveAudioSources)
+	AudioComponent* audioComponent = nullptr;
+	for (Component* component : s_Components[AudioComponent::s_ID])
 	{
-		source->queueNewBuffers();
+		audioComponent = (AudioComponent*)component;
+		audioComponent->getAudioSource()->queueNewBuffers();
 	}
 
 	std::this_thread::sleep_for(std::chrono::milliseconds(m_UpdateIntervalMilliseconds));
@@ -99,34 +115,18 @@ void AudioSystem::update()
 AudioSystem* AudioSystem::GetSingleton()
 {
 	static AudioSystem singleton;
-
 	return &singleton;
 }
 
 void AudioSystem::shutDown()
 {
-	for (auto& source : m_ActiveAudioSources)
+	AudioComponent* audioComponent = nullptr;
+	for (Component* component : s_Components[AudioComponent::s_ID])
 	{
-		source->stop();
+		audioComponent = (AudioComponent*)component;
+		audioComponent->getAudioSource()->stop();
 	}
 	alutExit();
-}
-
-void AudioSystem::registerInstance(AudioSource* audio)
-{
-	m_ActiveAudioSources.push_back(audio);
-}
-
-void AudioSystem::deregisterInstance(AudioSource* audio)
-{
-	auto findIt = std::find(m_ActiveAudioSources.begin(), m_ActiveAudioSources.end(), audio);
-	if (findIt != m_ActiveAudioSources.end())
-	{
-		m_ActiveAudioSources.erase(findIt);
-		return;
-	}
-
-	WARN("AudioSystem: Tried to double deregister an AudioBuffer. Delete aborted.");
 }
 
 void AudioSystem::setBufferUpdateRate(float milliseconds)
