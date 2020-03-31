@@ -203,7 +203,12 @@ void CPUParticlesVisualComponent::draw()
 	ImGui::Text("Particle", ImGuiTreeNodeFlags_CollapsingHeader);
 	ImGui::DragFloat3("Velocity", &m_ParticleTemplate.m_Velocity.x);
 	ImGui::DragFloat("Velocity Variation", &m_ParticleTemplate.m_VelocityVariation);
-	ImGui::DragFloat4("Angular Velocity", &m_ParticleTemplate.m_AngularVelocity.x);
+	ImGui::DragFloat4("##Angular Velocity", &m_ParticleTemplate.m_AngularVelocity.x);
+	ImGui::SameLine();
+	if (ImGui::Button("Angular Velocity"))
+	{
+		m_ParticleTemplate.m_AngularVelocity = { 0.0f, 0.0f, 0.0f, 0.0f };
+	}
 	ImGui::ColorEdit4("Color Begin", &m_ParticleTemplate.m_ColorBegin.x);
 	ImGui::ColorEdit4("Color End", &m_ParticleTemplate.m_ColorEnd.x);
 	ImGui::DragFloat("Size Begin", &m_ParticleTemplate.m_SizeBegin, 0.01f);
