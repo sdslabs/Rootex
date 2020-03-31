@@ -1,29 +1,62 @@
 #include "cpu_particles_visual_component.h"
 
-#include "systems/render_system.h"
 #include "random.h"
+#include "systems/render_system.h"
 #include "timer.h"
 
 Component* CPUParticlesVisualComponent::Create(const JSON::json& componentData)
 {
-	CPUParticlesVisualComponent* particles = new CPUParticlesVisualComponent(componentData["poolSize"]);
+	ParticleTemplate particalTemplate {
+		{ 
+			componentData["velocity"]["x"], 
+			componentData["velocity"]["y"], 
+			componentData["velocity"]["z"] 
+		},
+		{ 
+			componentData["angularVelocity"]["x"], 
+			componentData["angularVelocity"]["y"], 
+			componentData["angularVelocity"]["z"], 
+			componentData["angularVelocity"]["w"] 
+		},
+		{ 
+			componentData["colorBegin"]["r"], 
+			componentData["colorBegin"]["g"], 
+			componentData["colorBegin"]["b"], 
+			componentData["colorBegin"]["a"] 
+		},
+		{ 
+			componentData["colorEnd"]["r"], 
+			componentData["colorEnd"]["g"], 
+			componentData["colorEnd"]["b"], 
+			componentData["colorEnd"]["a"] 
+		},
+		componentData["velocityVariation"],
+		componentData["sizeBegin"],
+		componentData["sizeEnd"],
+		componentData["sizeVariation"],
+		componentData["lifeTime"]
+	};
+
+	CPUParticlesVisualComponent* particles = new CPUParticlesVisualComponent(componentData["poolSize"], particalTemplate);
 	return particles;
 }
 
 Component* CPUParticlesVisualComponent::CreateDefault()
 {
-	CPUParticlesVisualComponent* particles = new CPUParticlesVisualComponent(1000);
+	CPUParticlesVisualComponent* particles = new CPUParticlesVisualComponent(1000, ParticleTemplate());
 	return particles;
 }
 
-CPUParticlesVisualComponent::CPUParticlesVisualComponent(size_t poolSize)
+CPUParticlesVisualComponent::CPUParticlesVisualComponent(size_t poolSize, const ParticleTemplate& particleTemplate)
     : VisualComponent(RenderPassMain, Ref<CPUParticlesMaterial>(new CPUParticlesMaterial()), nullptr)
     , m_QuadVertices({ 
-		{ { -0.5f, -0.5f, 0.0f } },   // 0
-		{ { +0.5f, -0.5f, 0.0f } },   // 1
-		{ { +0.5f, +0.5f, 0.0f } },   // 2
-		{ { -0.5f, +0.5f, 0.0f } } }) // 3
+		{ { -0.5f, -0.5f, 0.0f } }, // 0
+          { { +0.5f, -0.5f, 0.0f } }, // 1
+          { { +0.5f, +0.5f, 0.0f } }, // 2
+          { { -0.5f, +0.5f, 0.0f } } }) // 3
     , m_QuadIndices({ 0, 1, 2, 2, 3, 0 })
+    , m_ParticleTemplate(particleTemplate)
+    , m_TransformComponent(nullptr)
 {
 	m_ParticlePool.resize(poolSize);
 	m_PoolIndex = poolSize - 1;
@@ -40,7 +73,7 @@ bool CPUParticlesVisualComponent::setup()
 	m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
 	if (!m_TransformComponent)
 	{
-		ERR("Transform Component not found on CPU Particles Component");
+		ERR("Transform Component not found on entity with CPU Particles Component: " + m_Owner->getFullName());
 		return false;
 	}
 	return true;
@@ -49,7 +82,7 @@ bool CPUParticlesVisualComponent::setup()
 bool CPUParticlesVisualComponent::preRender()
 {
 	VisualComponent::preRender();
-	
+
 	int i = m_EmitRate;
 	while (i >= 0)
 	{
@@ -137,6 +170,26 @@ JSON::json CPUParticlesVisualComponent::getJSON() const
 	JSON::json j;
 
 	j["poolSize"] = m_ParticlePool.size();
+	j["velocity"]["x"] = m_ParticleTemplate.m_Velocity.x;
+	j["velocity"]["y"] = m_ParticleTemplate.m_Velocity.y;
+	j["velocity"]["z"] = m_ParticleTemplate.m_Velocity.z;
+	j["velocityVariation"] = m_ParticleTemplate.m_VelocityVariation;
+	j["angularVelocity"]["x"] = m_ParticleTemplate.m_AngularVelocity.x;
+	j["angularVelocity"]["y"] = m_ParticleTemplate.m_AngularVelocity.y;
+	j["angularVelocity"]["z"] = m_ParticleTemplate.m_AngularVelocity.z;
+	j["angularVelocity"]["w"] = m_ParticleTemplate.m_AngularVelocity.w;
+	j["colorBegin"]["r"] = m_ParticleTemplate.m_ColorBegin.x;
+	j["colorBegin"]["g"] = m_ParticleTemplate.m_ColorBegin.y;
+	j["colorBegin"]["b"] = m_ParticleTemplate.m_ColorBegin.z;
+	j["colorBegin"]["a"] = m_ParticleTemplate.m_ColorBegin.w;
+	j["colorEnd"]["r"] = m_ParticleTemplate.m_ColorEnd.x;
+	j["colorEnd"]["g"] = m_ParticleTemplate.m_ColorEnd.y;
+	j["colorEnd"]["b"] = m_ParticleTemplate.m_ColorEnd.z;
+	j["colorEnd"]["a"] = m_ParticleTemplate.m_ColorEnd.w;
+	j["sizeBegin"] = m_ParticleTemplate.m_SizeBegin;
+	j["sizeEnd"] = m_ParticleTemplate.m_SizeEnd;
+	j["sizeVariation"] = m_ParticleTemplate.m_SizeVariation;
+	j["lifeTime"] = m_ParticleTemplate.m_LifeTime;
 
 	return j;
 }

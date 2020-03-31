@@ -5,10 +5,10 @@
 struct ParticleTemplate
 {
 	Vector3 m_Velocity = { 1.0f, 0.0f, 0.0f };
-	float m_VelocityVariation = 10.0f;
 	Quaternion m_AngularVelocity;
 	Color m_ColorBegin = ColorPresets::Red;
 	Color m_ColorEnd = ColorPresets::Blue;
+	float m_VelocityVariation = 10.0f;
 	float m_SizeBegin = 0.1f;
 	float m_SizeEnd = 0.0f;
 	float m_SizeVariation = 0.1f;
@@ -49,7 +49,7 @@ class CPUParticlesVisualComponent : public VisualComponent
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::CPUParticlesVisualComponent;
 
-	CPUParticlesVisualComponent(size_t poolSize);
+	CPUParticlesVisualComponent(size_t poolSize, const ParticleTemplate& particleTemplate);
 	CPUParticlesVisualComponent(VisualComponent&) = delete;
 	virtual ~CPUParticlesVisualComponent();
 
