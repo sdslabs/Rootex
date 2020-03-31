@@ -4,15 +4,15 @@
 
 struct ParticleTemplate
 {
-	Vector3 Position;
-	Vector3 Velocity = { 1.0f, 0.0f, 0.0f };
-	Vector3 VelocityVariation = { 0.0f, 10.0f, 1.0f };
-	Color ColorBegin = ColorPresets::Red;
-	Color ColorEnd = ColorPresets::Blue;
-	float SizeBegin = 0.1f;
-	float SizeEnd = 0.0f;
-	float SizeVariation = 0.1f;
-	float LifeTime = 1.0f;
+	Vector3 m_Velocity = { 1.0f, 0.0f, 0.0f };
+	float m_VelocityVariation = 10.0f;
+	Quaternion m_AngularVelocity;
+	Color m_ColorBegin = ColorPresets::Red;
+	Color m_ColorEnd = ColorPresets::Blue;
+	float m_SizeBegin = 0.1f;
+	float m_SizeEnd = 0.0f;
+	float m_SizeVariation = 0.1f;
+	float m_LifeTime = 1.0f;
 };
 
 class CPUParticlesVisualComponent : public VisualComponent
@@ -35,11 +35,13 @@ class CPUParticlesVisualComponent : public VisualComponent
 		bool m_IsActive = false;
 	};
 
+	ParticleTemplate m_ParticleTemplate;
 	Vector<Particle> m_ParticlePool;
 	VertexBuffer m_QuadVertices;
 	IndexBuffer m_QuadIndices;
 	size_t m_PoolIndex;
 	int m_EmitRate;
+	TransformComponent* m_TransformComponent;
 	std::chrono::time_point<std::chrono::high_resolution_clock> m_LastRenderTimePoint;
 
 	friend class EntityFactory;
@@ -51,6 +53,7 @@ public:
 	CPUParticlesVisualComponent(VisualComponent&) = delete;
 	virtual ~CPUParticlesVisualComponent();
 
+	virtual bool setup() override;
 	virtual bool preRender() override;
 	virtual void render() override;
 	virtual void postRender() override;

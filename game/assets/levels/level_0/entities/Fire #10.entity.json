@@ -1,9 +1,7 @@
 {
     "Components": {
-        "DiffuseVisualComponent": {
-            "renderPass": 5,
-            "resFile": "game/assets/test/cube.obj",
-            "texturePath": "game\\assets\\test\\sdslabs.png"
+        "CPUParticlesVisualComponent": {
+            "poolSize": 1000
         },
         "HierarchyComponent": {
             "children": [],
@@ -15,9 +13,9 @@
         },
         "TransformComponent": {
             "position": {
-                "x": -1.809999942779541,
-                "y": 0.0,
-                "z": 0.0
+                "x": 6.289999961853027,
+                "y": -6.210000038146973,
+                "z": -11.829999923706055
             },
             "rotation": {
                 "w": 1.0,
@@ -33,7 +31,7 @@
         }
     },
     "Entity": {
-        "ID": 5,
-        "name": "TexturedCube"
+        "ID": 10,
+        "name": "Fire"
     }
 }
