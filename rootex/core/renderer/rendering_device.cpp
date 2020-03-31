@@ -158,7 +158,7 @@ Ref<DirectX::SpriteFont> RenderingDevice::createFont(FileBuffer* fontFileBuffer)
 	return Ref<DirectX::SpriteFont>(new DirectX::SpriteFont(m_Device.Get(), (const uint8_t*)fontFileBuffer->data(), fontFileBuffer->size()));
 }
 
-ID3DBlob* RenderingDevice::createBlob(LPCWSTR path)
+Microsoft::WRL::ComPtr<ID3DBlob> RenderingDevice::createBlob(LPCWSTR path)
 {
 	ID3DBlob* pBlob = nullptr;
 	GFX_ERR_CHECK(D3DReadFileToBlob(path, &pBlob));
@@ -222,14 +222,14 @@ void RenderingDevice::disableSkyDepthStencilState()
 	m_Context->OMSetDepthStencilState(m_OldSkyDepthStencilState.Get(), m_StencilRef);
 }
 
-ID3D11Buffer* RenderingDevice::initVertexBuffer(D3D11_BUFFER_DESC* vbd, D3D11_SUBRESOURCE_DATA* vsd, const UINT* stride, const UINT* const offset)
+Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::initVertexBuffer(D3D11_BUFFER_DESC* vbd, D3D11_SUBRESOURCE_DATA* vsd, const UINT* stride, const UINT* const offset)
 {
 	ID3D11Buffer* vertexBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(vbd, vsd, &vertexBuffer));
 	return vertexBuffer;
 }
 
-ID3D11Buffer* RenderingDevice::initIndexBuffer(D3D11_BUFFER_DESC* ibd, D3D11_SUBRESOURCE_DATA* isd, DXGI_FORMAT format)
+Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::initIndexBuffer(D3D11_BUFFER_DESC* ibd, D3D11_SUBRESOURCE_DATA* isd, DXGI_FORMAT format)
 {
 	ID3D11Buffer* indexBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(ibd, isd, &indexBuffer));
@@ -281,14 +281,14 @@ void RenderingDevice::initPSConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESO
 	SafeRelease(&pConstantBuffer);
 }
 
-ID3D11PixelShader* RenderingDevice::initPixelShader(ID3DBlob* blob)
+Microsoft::WRL::ComPtr<ID3D11PixelShader> RenderingDevice::initPixelShader(ID3DBlob* blob)
 {
 	ID3D11PixelShader* pixelShader = nullptr;
 	GFX_ERR_CHECK(m_Device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &pixelShader));
 	return pixelShader;
 }
 
-ID3D11VertexShader* RenderingDevice::initVertexShader(ID3DBlob* blob)
+Microsoft::WRL::ComPtr<ID3D11VertexShader> RenderingDevice::initVertexShader(ID3DBlob* blob)
 {
 	ID3D11VertexShader* vertexShader = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &vertexShader));
@@ -385,9 +385,9 @@ void RenderingDevice::setBackBufferRenderTarget()
 	m_UnboundRenderTarget = m_RenderTargetTextureView.GetAddressOf();
 }
 
-ID3D11ShaderResourceView* RenderingDevice::getRenderTextureShaderResourceView()
+Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::getRenderTextureShaderResourceView()
 {
-	return m_RenderTextureShaderResourceView.Get();
+	return m_RenderTextureShaderResourceView;
 }
 
 Ref<DirectX::SpriteBatch> RenderingDevice::getUIBatch()

@@ -58,19 +58,19 @@ public:
 
 	void enableSkyDepthStencilState();
 	void disableSkyDepthStencilState();
-	ID3D11Buffer* initVertexBuffer(D3D11_BUFFER_DESC* vbd, D3D11_SUBRESOURCE_DATA* vsd, const UINT* stride, const UINT* offset);
-	ID3D11Buffer* initIndexBuffer(D3D11_BUFFER_DESC* ibd, D3D11_SUBRESOURCE_DATA* isd, DXGI_FORMAT format);
+	Microsoft::WRL::ComPtr<ID3D11Buffer> initVertexBuffer(D3D11_BUFFER_DESC* vbd, D3D11_SUBRESOURCE_DATA* vsd, const UINT* stride, const UINT* offset);
+	Microsoft::WRL::ComPtr<ID3D11Buffer> initIndexBuffer(D3D11_BUFFER_DESC* ibd, D3D11_SUBRESOURCE_DATA* isd, DXGI_FORMAT format);
 	void initVSModelConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd);
 	void initVSModelInverseConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd);
 	void initVSViewConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd);
 	void initVSProjectionConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd);
 	void initPSConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd, UINT offset);
-	ID3D11PixelShader* initPixelShader(ID3DBlob* blob);
-	ID3D11VertexShader* initVertexShader(ID3DBlob* blob);
+	Microsoft::WRL::ComPtr<ID3D11PixelShader> initPixelShader(ID3DBlob* blob);
+	Microsoft::WRL::ComPtr<ID3D11VertexShader> initVertexShader(ID3DBlob* blob);
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> initVertexLayout(ID3DBlob* vertexShaderBlob, const D3D11_INPUT_ELEMENT_DESC* ied, UINT size);
 	
 	Ref<DirectX::SpriteFont> createFont(FileBuffer* fontFileBuffer);
-	ID3DBlob* createBlob(LPCWSTR path);
+	Microsoft::WRL::ComPtr<ID3DBlob> createBlob(LPCWSTR path);
 	void createRenderTextureTarget(int width, int height);
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createTexture(ImageResourceFile* imageRes);
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> createSamplerState();
@@ -91,7 +91,7 @@ public:
 	void setTextureRenderTarget();
 	void setBackBufferRenderTarget();
 
-	ID3D11ShaderResourceView* getRenderTextureShaderResourceView();
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> getRenderTextureShaderResourceView();
 	Ref<DirectX::SpriteBatch> getUIBatch();
 
 	void setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY pt);
