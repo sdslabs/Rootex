@@ -6,6 +6,8 @@
 #include "vendor/OpenAL/include/alc.h"
 #include "vendor/OpenAL/include/alut.h"
 
+#include "system.h"
+
 #ifndef ALUT_CHECK
 #ifdef _DEBUG
 #define ALUT_CHECK(alutFunction)                                        \
@@ -41,12 +43,11 @@ class StreamingAudioSource;
 
 class ResourceFile;
 
-class AudioSystem
+class AudioSystem : public System
 {
 	unsigned int m_UpdateIntervalMilliseconds;
 	ALCdevice* m_Device;
 	ALCcontext* m_Context;
-	Vector<AudioSource*> m_ActiveAudioSources;
 
 	AudioSystem();
 	AudioSystem(AudioSystem&) = delete;
@@ -61,12 +62,10 @@ public:
 	static void CheckALCError(const char* msg, const char* fname, int line);
 	static void CheckALUTError(const char* msg, const char* fname, int line);
 
-	void registerInstance(AudioSource* audio);
-	void deregisterInstance(AudioSource* audio);
-
 	void setBufferUpdateRate(float milliseconds);
 
 	bool initialize();
+	void begin();
 	void update();
 	void shutDown();
 };

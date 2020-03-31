@@ -2,7 +2,7 @@
 
 #include "editor.h"
 
-#include "rootex/core/audio/audio_system.h"
+#include "rootex/framework/systems/audio_system.h"
 #include "rootex/core/input/input_manager.h"
 #include "rootex/core/resource_loader.h"
 #include "rootex/framework/systems/render_system.h"

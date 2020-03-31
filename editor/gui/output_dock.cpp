@@ -11,6 +11,7 @@
 Variant OutputDock::catchOutput(const Event* event)
 {
 	m_CaughtOutputs.push_back({ event->getName(), Extract(String, event->getData()) });
+	m_IsOutputJustCaught = true;
 	return true;
 }
 
@@ -62,7 +63,11 @@ void OutputDock::draw()
 			command = "";
 		}
 
-		ImGui::SetScrollHere(1.0f);
+		if (m_IsOutputJustCaught)
+		{
+			ImGui::SetScrollHere(1.0f);
+			m_IsOutputJustCaught = false;
+		}
 		ImGui::End();
 	}
 }

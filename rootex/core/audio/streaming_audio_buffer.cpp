@@ -1,6 +1,6 @@
 #include "streaming_audio_buffer.h"
 
-#include "audio_system.h"
+#include "framework/systems/audio_system.h"
 #include "resource_data.h"
 #include "resource_file.h"
 
