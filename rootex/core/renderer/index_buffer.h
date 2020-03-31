@@ -7,7 +7,7 @@
 class IndexBuffer
 {
 protected:
-	ID3D11Buffer* m_IndexBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> m_IndexBuffer;
 	Vector<unsigned short> m_Buffer;
 
 public:

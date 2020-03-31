@@ -27,10 +27,9 @@ void VertexBuffer::bind() const
 	const UINT stride = sizeof(VertexData);
 	const UINT offset = 0u;
 
-	RenderingDevice::GetSingleton()->bind(m_VertexBuffer, &stride, &offset);
+	RenderingDevice::GetSingleton()->bind(m_VertexBuffer.Get(), &stride, &offset);
 }
 
 VertexBuffer::~VertexBuffer()
 {
-	SafeRelease(&m_VertexBuffer);
 }
