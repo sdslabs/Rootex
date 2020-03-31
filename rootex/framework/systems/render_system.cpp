@@ -80,6 +80,11 @@ void RenderSystem::pushMatrix(const Matrix& transform)
 	m_TransformationStack.push_back(transform * m_TransformationStack.back());
 }
 
+void RenderSystem::pushMatrixOverride(const Matrix& transform)
+{
+	m_TransformationStack.push_back(transform);
+}
+
 void RenderSystem::popMatrix()
 {
 	m_TransformationStack.pop_back();

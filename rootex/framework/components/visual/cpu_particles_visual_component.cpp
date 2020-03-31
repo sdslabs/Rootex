@@ -90,7 +90,7 @@ void CPUParticlesVisualComponent::render()
 		float life = particle.m_LifeRemaining / particle.m_LifeTime;
 		float size = particle.m_SizeBegin * (life) + particle.m_SizeEnd * (1.0f - life);
 
-		Color color = Color::Lerp(particle.m_ColorBegin, particle.m_ColorEnd, life);
+		Color color = Color::Lerp(particle.m_ColorEnd, particle.m_ColorBegin, life);
 
 		RenderSystem::GetSingleton()->pushMatrix(Matrix::CreateScale(size) * Matrix::CreateFromQuaternion(particle.m_Rotation) * Matrix::CreateTranslation(particle.m_Position) * Matrix::Identity);
 		m_Attributes.getMaterial()->setShaderConstantBuffer(Shader::VertexConstantBufferType::Model, RenderSystem::GetSingleton()->getTopMatrix());
@@ -111,8 +111,8 @@ void CPUParticlesVisualComponent::emit(const ParticleTemplate& particleTemplate)
 	Particle& particle = m_ParticlePool[m_PoolIndex];
 
 	particle.m_IsActive = true;
-	particle.m_Position = { 0.0f, 0.0f, 0.0f };
-	particle.m_Rotation = Quaternion::CreateFromAxisAngle({ 0.0f, 0.0f, 1.0f }, 0.0f);
+	particle.m_Position = m_TransformComponent->getPosition();
+	particle.m_Rotation = m_TransformComponent->getRotation();
 
 	particle.m_Velocity = particleTemplate.m_Velocity;
 	particle.m_Velocity.x += particleTemplate.m_VelocityVariation * (Random::Float() - 0.5f);
@@ -147,17 +147,15 @@ void CPUParticlesVisualComponent::draw()
 {
 	ImGui::DragInt("Emit Rate", &m_EmitRate);
 	ImGui::Separator();
-	if (ImGui::TreeNodeEx("Particle", ImGuiTreeNodeFlags_CollapsingHeader))
-	{
-		ImGui::DragFloat3("Velocity", &m_ParticleTemplate.m_Velocity.x);
-		ImGui::DragFloat("Velocity Variation", &m_ParticleTemplate.m_VelocityVariation);
-		ImGui::DragFloat4("Angular Velocity", &m_ParticleTemplate.m_AngularVelocity.x);
-		ImGui::ColorEdit4("Color Begin", &m_ParticleTemplate.m_ColorBegin.x);
-		ImGui::ColorEdit4("Color End", &m_ParticleTemplate.m_ColorEnd.x);
-		ImGui::DragFloat("Size Begin", &m_ParticleTemplate.m_SizeBegin, 0.01f);
-		ImGui::DragFloat("Size End", &m_ParticleTemplate.m_SizeEnd, 0.01f);
-		ImGui::DragFloat("Size Variation", &m_ParticleTemplate.m_SizeVariation, 0.01f);
-		ImGui::DragFloat("Lifetime", &m_ParticleTemplate.m_LifeTime, 0.01f);
-	}
+	ImGui::Text("Particle", ImGuiTreeNodeFlags_CollapsingHeader);
+	ImGui::DragFloat3("Velocity", &m_ParticleTemplate.m_Velocity.x);
+	ImGui::DragFloat("Velocity Variation", &m_ParticleTemplate.m_VelocityVariation);
+	ImGui::DragFloat4("Angular Velocity", &m_ParticleTemplate.m_AngularVelocity.x);
+	ImGui::ColorEdit4("Color Begin", &m_ParticleTemplate.m_ColorBegin.x);
+	ImGui::ColorEdit4("Color End", &m_ParticleTemplate.m_ColorEnd.x);
+	ImGui::DragFloat("Size Begin", &m_ParticleTemplate.m_SizeBegin, 0.01f);
+	ImGui::DragFloat("Size End", &m_ParticleTemplate.m_SizeEnd, 0.01f);
+	ImGui::DragFloat("Size Variation", &m_ParticleTemplate.m_SizeVariation, 0.01f);
+	ImGui::DragFloat("Lifetime", &m_ParticleTemplate.m_LifeTime, 0.01f);
 }
 #endif // ROOTEX_EDITOR
