@@ -17,6 +17,10 @@ void PhysicsSystem::initialize()
 	m_Solver.reset(new btSequentialImpulseConstraintSolver);
 	m_DynamicsWorld.reset(new btDiscreteDynamicsWorld(m_Dispatcher.get(), m_Broadphase.get(), m_Solver.get(), m_CollisionConfiguration.get()));
 
+	LuaTextResourceFile* physicsMaterial = ResourceLoader::CreateLuaTextResourceFile("game/assets/config/physics.lua");
+	LuaInterpreter::GetSingleton()->getLuaState().script(physicsMaterial->getString());
+	physicsMaterialTable = LuaInterpreter::GetSingleton()->getLuaState()["PhysicsMaterial"];
+
 	if (!m_CollisionConfiguration || !m_Dispatcher || !m_Broadphase || !m_Solver || !m_DynamicsWorld)
 	{
 		ERR("Initialization Failed!");
@@ -43,13 +47,6 @@ PhysicsSystem::~PhysicsSystem()
 void PhysicsSystem::addRigidBody(btRigidBody* body)
 {
 	m_DynamicsWorld->addRigidBody(body);
-}
-
-sol::table PhysicsSystem::getPhysicsMaterial()
-{
-	LuaTextResourceFile* physicsMaterial = ResourceLoader::CreateLuaTextResourceFile("game/assets/config/physics.lua");
-	LuaInterpreter::GetSingleton()->getLuaState().script(physicsMaterial->getString());
-	return LuaInterpreter::GetSingleton()->getLuaState()["PhysicsMaterial"];
 }
 
 // This function is called after bullet performs its internal update.

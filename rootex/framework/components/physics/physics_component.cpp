@@ -11,7 +11,7 @@ PhysicsComponent::PhysicsComponent(const String& matName, float volume, const Re
 {
 	m_CollisionShape = collisionShape;
 	m_TransformComponent = nullptr;
-	sol::table materialLua = PhysicsSystem::GetSingleton()->getPhysicsMaterial();
+	sol::table materialLua = PhysicsSystem::GetSingleton()->physicsMaterialTable;
 	m_SpecificGravity = float(materialLua[matName]["specificgravity"]);
 	m_Material.m_Friction = float(materialLua[matName]["friction"]);
 	m_Material.m_Restitution = float(materialLua[matName]["restitution"]);
