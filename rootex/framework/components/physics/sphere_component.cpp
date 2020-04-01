@@ -6,7 +6,7 @@ SphereComponent::SphereComponent(float rad, const String& matName)
 {
 	if (m_Mass > 0.f)
 	{
-		m_CollisionShape->calculateLocalInertia(m_Mass, localInertia);
+		m_CollisionShape->calculateLocalInertia(m_Mass, m_LocalInertia);
 	}
 }
 
