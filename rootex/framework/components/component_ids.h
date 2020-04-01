@@ -7,6 +7,7 @@ enum class ComponentIDs : unsigned int
 	DebugComponent,
 	VisualComponent,
 	CPUParticlesVisualComponent = VisualComponent,
+	ModelVisualComponent = VisualComponent,
 	DiffuseVisualComponent = VisualComponent,
 	Visual2DComponent = VisualComponent,
 	TextVisual2DComponent = Visual2DComponent,
