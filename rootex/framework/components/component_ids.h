@@ -8,6 +8,7 @@ enum class ComponentIDs : unsigned int
 	VisualComponent,
 	ModelVisualComponent = VisualComponent,
 	TexturedVisualComponent = VisualComponent,
+	CPUParticlesVisualComponent = VisualComponent,
 	Visual2DComponent = VisualComponent,
 	TextVisual2DComponent = Visual2DComponent,
 	TransformComponent,

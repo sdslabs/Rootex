@@ -11,7 +11,6 @@ class VertexBuffer
 	Vector<VertexData> m_Buffer;
 
 public:
-	VertexBuffer();
 	VertexBuffer(const Vector<VertexData>& buffer);
 	~VertexBuffer();
 
