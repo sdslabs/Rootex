@@ -17,7 +17,16 @@ RenderingDevice::~RenderingDevice()
 	CoUninitialize();
 }
 
-void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
+void RenderingDevice::toggleScreenState()
+{
+	m_SwapChain->SetFullscreenState(m_FullScreen, nullptr);
+}
+bool* RenderingDevice::getScreenState()
+{
+	return &m_FullScreen;
+}
+
+void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA, bool fullScreen)
 {
 	m_MSAA = MSAA;
 	UINT createDeviceFlags = 0;
@@ -55,7 +64,10 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 	sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 	sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+#ifndef ROOTEX_EDITOR
 	sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+#endif // ROOTEX_EDITOR
+
 
 	m_Device->CheckMultisampleQualityLevels(DXGI_FORMAT_R8G8B8A8_UNORM, 4, &m_4XMSQuality);
 	PANIC(m_4XMSQuality <= 0, "MSAA is not supported on this hardware");
@@ -88,6 +100,10 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 	dxgiAdapter->GetParent(__uuidof(IDXGIFactory), (void**)&dxgiFactory);
 
 	dxgiFactory->CreateSwapChain(m_Device.Get(), &sd, &m_SwapChain);
+
+	m_FullScreen = fullScreen;
+	if (m_FullScreen)
+		toggleScreenState();
 
 	SafeRelease(&dxgiDevice);
 	SafeRelease(&dxgiAdapter);

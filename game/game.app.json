@@ -10,6 +10,7 @@
 		"height": 1080,
 		"msaa": true,
 		"title": "Rootex Game",
-		"isEditor": false
+		"isEditor": false,
+		"fullScreen": true
 	}
 }
