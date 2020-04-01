@@ -1,0 +1,70 @@
+{
+    "Components": {
+        "CPUParticlesVisualComponent": {
+            "angularVelocity": {
+                "w": -99.0,
+                "x": -77.0,
+                "y": -242.0,
+                "z": -156.0
+            },
+            "color": {
+                "a": 1.0,
+                "b": 0.0,
+                "g": 0.0,
+                "r": 0.0
+            },
+            "colorBegin": {
+                "a": 1.0,
+                "b": 0.9999899864196777,
+                "g": 0.9999899864196777,
+                "r": 1.0
+            },
+            "colorEnd": {
+                "a": 1.0,
+                "b": 0.46568626165390015,
+                "g": 1.1768995136662852e-05,
+                "r": 0.0
+            },
+            "isVisible": true,
+            "lifeTime": 4.309999942779541,
+            "poolSize": 1000,
+            "renderPass": 1,
+            "resFile": "game/assets/test/teapot.obj",
+            "sizeBegin": 0.2199999988079071,
+            "sizeEnd": 0.0,
+            "sizeVariation": 0.0,
+            "velocity": {
+                "x": 0.0,
+                "y": 1.5,
+                "z": 0.0
+            },
+            "velocityVariation": 6.0
+        },
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 1
+        },
+        "TransformComponent": {
+            "position": {
+                "x": -1.100000023841858,
+                "y": -1.3200000524520874,
+                "z": -9.359999656677246
+            },
+            "rotation": {
+                "w": 0.0,
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            }
+        }
+    },
+    "Entity": {
+        "ID": 2,
+        "name": "Cube"
+    }
+}
