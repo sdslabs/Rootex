@@ -1,6 +1,6 @@
 #pragma once
 
-#include "visual_component.h"
+#include "model_visual_component.h"
 
 struct ParticleTemplate
 {
@@ -15,7 +15,7 @@ struct ParticleTemplate
 	float m_LifeTime = 1.0f;
 };
 
-class CPUParticlesVisualComponent : public VisualComponent
+class CPUParticlesVisualComponent : public ModelVisualComponent
 {
 	static Component* Create(const JSON::json& componentData);
 	static Component* CreateDefault();
@@ -37,8 +37,6 @@ class CPUParticlesVisualComponent : public VisualComponent
 
 	ParticleTemplate m_ParticleTemplate;
 	Vector<Particle> m_ParticlePool;
-	VertexBuffer m_QuadVertices;
-	IndexBuffer m_QuadIndices;
 	size_t m_PoolIndex;
 	int m_EmitRate;
 	TransformComponent* m_TransformComponent;
@@ -49,7 +47,7 @@ class CPUParticlesVisualComponent : public VisualComponent
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::CPUParticlesVisualComponent;
 
-	CPUParticlesVisualComponent(size_t poolSize, const ParticleTemplate& particleTemplate, bool visibility);
+	CPUParticlesVisualComponent(size_t poolSize, const String& particleModelPath, const ParticleTemplate& particleTemplate, bool visibility);
 	CPUParticlesVisualComponent(VisualComponent&) = delete;
 	virtual ~CPUParticlesVisualComponent();
 
