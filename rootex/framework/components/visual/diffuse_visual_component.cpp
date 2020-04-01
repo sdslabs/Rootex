@@ -16,7 +16,7 @@ Component* DiffuseVisualComponent::Create(const JSON::json& componentData)
 	Ref<DiffuseMaterial> material(new DiffuseMaterial(texture));
 
 	VisualModelResourceFile* vmr = ResourceLoader::CreateVisualModelResourceFile(componentData["resFile"]);
-	DiffuseVisualComponent* diffuseComponent = new DiffuseVisualComponent(componentData["renderPass"], material, vmr, imageRes, texture.get());
+	DiffuseVisualComponent* diffuseComponent = new DiffuseVisualComponent(componentData["renderPass"], material, vmr, imageRes, texture.get(), componentData["isVisible"]);
 
 	return diffuseComponent;
 }
@@ -29,13 +29,13 @@ Component* DiffuseVisualComponent::CreateDefault()
 	Ref<DiffuseMaterial> material(new DiffuseMaterial(texture));
 
 	VisualModelResourceFile* vmr = ResourceLoader::CreateVisualModelResourceFile("rootex/assets/cube.obj");
-	DiffuseVisualComponent* diffuseComponent = new DiffuseVisualComponent(RenderPassMain | RenderPassEditor, material, vmr, imageRes, texture.get());
+	DiffuseVisualComponent* diffuseComponent = new DiffuseVisualComponent(RenderPassMain | RenderPassEditor, material, vmr, imageRes, texture.get(), true);
 
 	return diffuseComponent;
 }
 
-DiffuseVisualComponent::DiffuseVisualComponent(const unsigned int& renderPass, Ref<DiffuseMaterial> material, VisualModelResourceFile* resFile, ImageResourceFile* imageRes, Texture* texture)
-    : VisualComponent(renderPass, material, resFile)
+DiffuseVisualComponent::DiffuseVisualComponent(const unsigned int& renderPass, Ref<DiffuseMaterial> material, VisualModelResourceFile* resFile, ImageResourceFile* imageRes, Texture* texture, bool visibility)
+    : VisualComponent(renderPass, material, resFile, visibility)
     , m_ImageFile(imageRes)
 {
 #ifdef ROOTEX_EDITOR
@@ -72,6 +72,7 @@ JSON::json DiffuseVisualComponent::getJSON() const
 	j["texturePath"] = m_ImageFile->getPath().string();
 	j["resFile"] = m_Attributes.m_VisualModelResourceFile->getPath().string();
 	j["renderPass"] = m_Attributes.m_RenderPassSetting;
+	j["isVisible"] = m_IsVisible;
 
 	return j;
 }

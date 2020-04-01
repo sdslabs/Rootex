@@ -3,7 +3,7 @@
 #include "systems/render_system.h"
 
 Visual2DComponent::Visual2DComponent()
-    : VisualComponent(RenderPassUI, nullptr, nullptr)
+	:VisualComponent(RenderPassUI, nullptr, nullptr, true)
 {
 }
 
