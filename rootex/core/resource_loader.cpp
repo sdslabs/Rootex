@@ -272,7 +272,6 @@ void ResourceLoader::ReloadResourceData(const String& path)
 		if (resData->getPath() == path)
 		{
 			*resData->getRawData() = buffer;
-			break;
 		}
 	}
 }

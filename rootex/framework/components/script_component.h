@@ -1,6 +1,7 @@
 #pragma once
 
 #include "component.h"
+#include "event_manager.h"
 #include "script/interpreter.h"
 
 class ScriptComponent : public Component
@@ -29,7 +30,7 @@ public:
 	virtual bool setup() override;
 
 	void connect(const String& function, const String& eventType);
-	void call(const String& function);
+	void call(const String& function, const Event* event);
 	void onBegin();
 	virtual void onUpdate(float deltaMilliSeconds);
 	void onEnd();
@@ -39,7 +40,7 @@ public:
 	virtual String getName() const override { return "ScriptComponent"; }
 	virtual JSON::json getJSON() const override;
 
-	void setScript(LuaTextResourceFile* newScript) { m_ScriptFile = newScript; }
+	void setScript(LuaTextResourceFile* newScript);
 
 #ifdef ROOTEX_EDITOR
 	virtual void draw();
