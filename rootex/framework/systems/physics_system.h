@@ -29,7 +29,7 @@ public:
 	virtual ~PhysicsSystem();
 
 	void addRigidBody(btRigidBody* body);
-	sol::table getPhysicsMaterial();
+	sol::table physicsMaterialTable;
 
 	// Initialization and Maintenance of the Physics World
 	void initialize();
