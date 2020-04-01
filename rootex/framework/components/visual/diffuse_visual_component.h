@@ -10,7 +10,7 @@ class DiffuseVisualComponent : public VisualComponent
 
 	ImageResourceFile* m_ImageFile;
 	
-	DiffuseVisualComponent(const unsigned int& renderPass, Ref<DiffuseMaterial> material, VisualModelResourceFile* resFile, ImageResourceFile* imageRes, Texture* texture);
+	DiffuseVisualComponent(const unsigned int& renderPass, Ref<DiffuseMaterial> material, VisualModelResourceFile* resFile, ImageResourceFile* imageRes, Texture* texture, bool visibility);
 	virtual ~DiffuseVisualComponent();
 
 	friend class EntityFactory;

@@ -2,8 +2,8 @@
 
 #include "systems/render_system.h"
 
-Visual2DComponent::Visual2DComponent()
-    : VisualComponent(RenderPassUI, nullptr, nullptr)
+Visual2DComponent::Visual2DComponent(bool visibility)
+    : VisualComponent(RenderPassUI, nullptr, nullptr, visibility)
 {
 }
 
