@@ -228,14 +228,14 @@ Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createVertexBuffer(D3D11_B
 	return vertexBuffer;
 }
 
-Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::initIndexBuffer(D3D11_BUFFER_DESC* ibd, D3D11_SUBRESOURCE_DATA* isd, DXGI_FORMAT format)
+Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createIndexBuffer(D3D11_BUFFER_DESC* ibd, D3D11_SUBRESOURCE_DATA* isd, DXGI_FORMAT format)
 {
 	ID3D11Buffer* indexBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(ibd, isd, &indexBuffer));
 	return indexBuffer;
 }
 
-void RenderingDevice::initVSModelConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
+void RenderingDevice::createVSModelConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
 {
 	ID3D11Buffer* pConstantBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &pConstantBuffer));
@@ -244,7 +244,7 @@ void RenderingDevice::initVSModelConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SU
 	SafeRelease(&pConstantBuffer);
 }
 
-void RenderingDevice::initVSModelInverseConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
+void RenderingDevice::createVSModelInverseConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
 {
 	ID3D11Buffer* pConstantBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &pConstantBuffer));
@@ -253,7 +253,7 @@ void RenderingDevice::initVSModelInverseConstantBuffer(D3D11_BUFFER_DESC* cbd, D
 	SafeRelease(&pConstantBuffer);
 }
 
-void RenderingDevice::initVSViewConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
+void RenderingDevice::createVSViewConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
 {
 	ID3D11Buffer* pConstantBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &pConstantBuffer));
@@ -262,7 +262,7 @@ void RenderingDevice::initVSViewConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUB
 	SafeRelease(&pConstantBuffer);
 }
 
-void RenderingDevice::initVSProjectionConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
+void RenderingDevice::createVSProjectionConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
 {
 	ID3D11Buffer* pConstantBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &pConstantBuffer));
@@ -271,7 +271,7 @@ void RenderingDevice::initVSProjectionConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D
 	SafeRelease(&pConstantBuffer);
 }
 
-void RenderingDevice::initPSConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd, UINT offset)
+void RenderingDevice::createPSConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd, UINT offset)
 {
 	ID3D11Buffer* pConstantBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &pConstantBuffer));
@@ -280,21 +280,21 @@ void RenderingDevice::initPSConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESO
 	SafeRelease(&pConstantBuffer);
 }
 
-Microsoft::WRL::ComPtr<ID3D11PixelShader> RenderingDevice::initPixelShader(ID3DBlob* blob)
+Microsoft::WRL::ComPtr<ID3D11PixelShader> RenderingDevice::createPixelShader(ID3DBlob* blob)
 {
 	ID3D11PixelShader* pixelShader = nullptr;
 	GFX_ERR_CHECK(m_Device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &pixelShader));
 	return pixelShader;
 }
 
-Microsoft::WRL::ComPtr<ID3D11VertexShader> RenderingDevice::initVertexShader(ID3DBlob* blob)
+Microsoft::WRL::ComPtr<ID3D11VertexShader> RenderingDevice::createVertexShader(ID3DBlob* blob)
 {
 	ID3D11VertexShader* vertexShader = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &vertexShader));
 	return vertexShader;
 }
 
-Microsoft::WRL::ComPtr<ID3D11InputLayout> RenderingDevice::initVertexLayout(ID3DBlob* vertexShaderBlob, const D3D11_INPUT_ELEMENT_DESC* ied, UINT size)
+Microsoft::WRL::ComPtr<ID3D11InputLayout> RenderingDevice::createVertexLayout(ID3DBlob* vertexShaderBlob, const D3D11_INPUT_ELEMENT_DESC* ied, UINT size)
 {
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> inputLayout;
 	GFX_ERR_CHECK(m_Device->CreateInputLayout(
