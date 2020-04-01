@@ -3,7 +3,7 @@
 #include "entity_factory.h"
 
 CameraVisualComponent::CameraVisualComponent()
-    : VisualComponent(RenderPassMain, nullptr, nullptr)
+    : VisualComponent(RenderPassMain, nullptr, nullptr, false)
     , m_DebugCamera(false)
     , m_ViewMatrix(Matrix::CreateLookAt({ 0.0f, 0.0f, 4.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }))
     , m_ProjectionMatrix(Matrix::CreatePerspective(1.0f, 1.0f * 480.0f / 640.0f, 0.5f, 100.0f))
@@ -41,7 +41,7 @@ bool CameraVisualComponent::reset(HierarchyGraph* scene, int windowWidth, int wi
 
 bool CameraVisualComponent::isVisible() const
 {
-	return false;
+	return m_IsVisible;
 }
 
 void CameraVisualComponent::postRender()

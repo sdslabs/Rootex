@@ -70,7 +70,7 @@ protected:
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::VisualComponent;
 	
-	VisualComponent(const unsigned int& renderPassSetting, Ref<Material> material, VisualModelResourceFile* resFile);
+	VisualComponent(const unsigned int& renderPassSetting, Ref<Material> material, VisualModelResourceFile* resFile, bool visibility);
 	VisualComponent(VisualComponent&) = delete;
 	virtual ~VisualComponent();
 

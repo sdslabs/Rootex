@@ -13,7 +13,8 @@ Component* VisualComponent::Create(const JSON::json& componentData)
 	VisualComponent* visualComponent = new VisualComponent(
 	    componentData["renderPass"],
 	    Ref<Material>(new Material()),
-	    ResourceLoader::CreateVisualModelResourceFile(componentData["resFile"]));
+	    ResourceLoader::CreateVisualModelResourceFile(componentData["resFile"]),
+		componentData["isVisible"]);
 	
 	visualComponent->setColor(
 	    Color(
@@ -30,15 +31,16 @@ Component* VisualComponent::CreateDefault()
 	VisualComponent* visualComponent = new VisualComponent(
 	    RenderPassMain,
 	    Ref<Material>(new Material()),
-	    ResourceLoader::CreateVisualModelResourceFile("rootex/assets/cube.obj"));
+	    ResourceLoader::CreateVisualModelResourceFile("rootex/assets/cube.obj"),
+		true);
 	visualComponent->setColor(Color(0.5f, 0.5f, 0.5f));
 
 	return visualComponent;
 }
 
 VisualComponent::VisualComponent(const unsigned int& renderPassSetting, Ref<Material> material,
-    VisualModelResourceFile* resFile)
-    : m_IsVisible(true)
+    VisualModelResourceFile* resFile, bool visibility)
+    : m_IsVisible(visibility)
 {
 	m_Attributes.m_TransformComponent = nullptr;
 	m_Attributes.m_RenderPassSetting = renderPassSetting;
@@ -171,6 +173,7 @@ JSON::json VisualComponent::getJSON() const
 
 	j["resFile"] = m_Attributes.m_VisualModelResourceFile->getPath().string();
 	j["renderPass"] = m_Attributes.m_RenderPassSetting;
+	j["isVisible"] = m_IsVisible; 
 
 	j["color"]["r"] = m_Color.x;
 	j["color"]["g"] = m_Color.y;
