@@ -37,18 +37,18 @@ Component* CPUParticlesVisualComponent::Create(const JSON::json& componentData)
 		componentData["lifeTime"]
 	};
 
-	CPUParticlesVisualComponent* particles = new CPUParticlesVisualComponent(componentData["poolSize"], particalTemplate);
+	CPUParticlesVisualComponent* particles = new CPUParticlesVisualComponent(componentData["poolSize"], particalTemplate, componentData["visibility"]);
 	return particles;
 }
 
 Component* CPUParticlesVisualComponent::CreateDefault()
 {
-	CPUParticlesVisualComponent* particles = new CPUParticlesVisualComponent(1000, ParticleTemplate());
+	CPUParticlesVisualComponent* particles = new CPUParticlesVisualComponent(1000, ParticleTemplate(), true);
 	return particles;
 }
 
-CPUParticlesVisualComponent::CPUParticlesVisualComponent(size_t poolSize, const ParticleTemplate& particleTemplate)
-    : VisualComponent(RenderPassMain, Ref<CPUParticlesMaterial>(new CPUParticlesMaterial()), nullptr)
+CPUParticlesVisualComponent::CPUParticlesVisualComponent(size_t poolSize, const ParticleTemplate& particleTemplate, bool visibility)
+    : VisualComponent(RenderPassMain, Ref<CPUParticlesMaterial>(new CPUParticlesMaterial()), nullptr, visibility)
     , m_QuadVertices({ 
 		{ { -0.5f, -0.5f, 0.0f } }, // 0
           { { +0.5f, -0.5f, 0.0f } }, // 1
@@ -167,7 +167,7 @@ void CPUParticlesVisualComponent::emit(const ParticleTemplate& particleTemplate)
 
 JSON::json CPUParticlesVisualComponent::getJSON() const
 {
-	JSON::json j;
+	JSON::json& j = VisualComponent::getJSON();
 
 	j["poolSize"] = m_ParticlePool.size();
 	j["velocity"]["x"] = m_ParticleTemplate.m_Velocity.x;

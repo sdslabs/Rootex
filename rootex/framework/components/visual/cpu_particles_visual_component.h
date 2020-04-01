@@ -49,7 +49,7 @@ class CPUParticlesVisualComponent : public VisualComponent
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::CPUParticlesVisualComponent;
 
-	CPUParticlesVisualComponent(size_t poolSize, const ParticleTemplate& particleTemplate);
+	CPUParticlesVisualComponent(size_t poolSize, const ParticleTemplate& particleTemplate, bool visibility);
 	CPUParticlesVisualComponent(VisualComponent&) = delete;
 	virtual ~CPUParticlesVisualComponent();
 
