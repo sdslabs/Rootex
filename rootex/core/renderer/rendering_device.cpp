@@ -221,7 +221,7 @@ void RenderingDevice::disableSkyDepthStencilState()
 	m_Context->OMSetDepthStencilState(m_OldSkyDepthStencilState.Get(), m_StencilRef);
 }
 
-Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::initVertexBuffer(D3D11_BUFFER_DESC* vbd, D3D11_SUBRESOURCE_DATA* vsd, const UINT* stride, const UINT* const offset)
+Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createVertexBuffer(D3D11_BUFFER_DESC* vbd, D3D11_SUBRESOURCE_DATA* vsd, const UINT* stride, const UINT* const offset)
 {
 	ID3D11Buffer* vertexBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(vbd, vsd, &vertexBuffer));
