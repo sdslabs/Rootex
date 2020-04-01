@@ -12,14 +12,14 @@ Shader::Shader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const Buffer
 	{
 		ERR("Vertex Shader not found");
 	}
-	m_VertexShader = RenderingDevice::GetSingleton()->initVertexShader(vertexShaderBlob.Get());
+	m_VertexShader = RenderingDevice::GetSingleton()->createVertexShader(vertexShaderBlob.Get());
 
 	Microsoft::WRL::ComPtr<ID3DBlob> pixelShaderBlob = RenderingDevice::GetSingleton()->createBlob(pixelPath);
 	if (!pixelShaderBlob)
 	{
 		ERR("Pixel Shader not found");
 	}
-	m_PixelShader = RenderingDevice::GetSingleton()->initPixelShader(pixelShaderBlob.Get());
+	m_PixelShader = RenderingDevice::GetSingleton()->createPixelShader(pixelShaderBlob.Get());
 
 	const Vector<VertexBufferElement>& elements = vertexBufferFormat.getElements();
 

@@ -19,7 +19,7 @@ VertexBuffer::VertexBuffer(const Vector<VertexData>& buffer)
 	const UINT stride = sizeof(VertexData);
 	const UINT offset = 0u;
 
-	m_VertexBuffer = RenderingDevice::GetSingleton()->initVertexBuffer(&vbd, &vsd, &stride, &offset);
+	m_VertexBuffer = RenderingDevice::GetSingleton()->createVertexBuffer(&vbd, &vsd, &stride, &offset);
 }
 
 void VertexBuffer::bind() const
