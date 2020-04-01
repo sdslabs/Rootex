@@ -12,14 +12,14 @@ Shader::Shader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const Buffer
 	{
 		ERR("Vertex Shader not found");
 	}
-	m_VertexShader = RenderingDevice::GetSingleton()->initVertexShader(vertexShaderBlob.Get());
+	m_VertexShader = RenderingDevice::GetSingleton()->createVertexShader(vertexShaderBlob.Get());
 
 	Microsoft::WRL::ComPtr<ID3DBlob> pixelShaderBlob = RenderingDevice::GetSingleton()->createBlob(pixelPath);
 	if (!pixelShaderBlob)
 	{
 		ERR("Pixel Shader not found");
 	}
-	m_PixelShader = RenderingDevice::GetSingleton()->initPixelShader(pixelShaderBlob.Get());
+	m_PixelShader = RenderingDevice::GetSingleton()->createPixelShader(pixelShaderBlob.Get());
 
 	const Vector<VertexBufferElement>& elements = vertexBufferFormat.getElements();
 
@@ -34,7 +34,7 @@ Shader::Shader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const Buffer
 		vertexDescArray.push_back(desc);
 	}
 
-	m_InputLayout = RenderingDevice::GetSingleton()->initVertexLayout(
+	m_InputLayout = RenderingDevice::GetSingleton()->createVertexLayout(
 	    vertexShaderBlob.Get(),
 	    vertexDescArray.data(),
 	    vertexDescArray.size());
@@ -71,16 +71,16 @@ void Shader::set(const VertexConstantBufferType& type, const Matrix& constantBuf
 	switch (type)
 	{
 	case Shader::VertexConstantBufferType::Model:
-		RenderingDevice::GetSingleton()->initVSModelConstantBuffer(&cbd, &csd);
+		RenderingDevice::GetSingleton()->createVSModelConstantBuffer(&cbd, &csd);
 		break;
 	case Shader::VertexConstantBufferType::ModelInverse:
-		RenderingDevice::GetSingleton()->initVSModelInverseConstantBuffer(&cbd, &csd);
+		RenderingDevice::GetSingleton()->createVSModelInverseConstantBuffer(&cbd, &csd);
 		break;
 	case Shader::VertexConstantBufferType::View:
-		RenderingDevice::GetSingleton()->initVSViewConstantBuffer(&cbd, &csd);
+		RenderingDevice::GetSingleton()->createVSViewConstantBuffer(&cbd, &csd);
 		break;
 	case Shader::VertexConstantBufferType::Projection:
-		RenderingDevice::GetSingleton()->initVSProjectionConstantBuffer(&cbd, &csd);
+		RenderingDevice::GetSingleton()->createVSProjectionConstantBuffer(&cbd, &csd);
 		break;
 	default:
 		break;
@@ -99,11 +99,11 @@ void Shader::set(const PSDiffuseConstantBuffer& constantBuffer) const
 	D3D11_SUBRESOURCE_DATA csd = { 0 };
 	csd.pSysMem = &constantBuffer.lights;
 
-	RenderingDevice::GetSingleton()->initPSConstantBuffer(&cbd, &csd, 0);
+	RenderingDevice::GetSingleton()->createPSConstantBuffer(&cbd, &csd, 0);
 
 	cbd.ByteWidth = sizeof(constantBuffer.material);
 	csd.pSysMem = &constantBuffer.material;
-	RenderingDevice::GetSingleton()->initPSConstantBuffer(&cbd, &csd, 1);
+	RenderingDevice::GetSingleton()->createPSConstantBuffer(&cbd, &csd, 1);
 }
 
 void Shader::set(const PSSolidConstantBuffer& constantBuffer)
@@ -118,7 +118,7 @@ void Shader::set(const PSSolidConstantBuffer& constantBuffer)
 	D3D11_SUBRESOURCE_DATA csd = { 0 };
 	csd.pSysMem = &constantBuffer;
 
-	RenderingDevice::GetSingleton()->initPSConstantBuffer(&cbd, &csd, 0);
+	RenderingDevice::GetSingleton()->createPSConstantBuffer(&cbd, &csd, 0);
 }
 
 DiffuseShader::DiffuseShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat)

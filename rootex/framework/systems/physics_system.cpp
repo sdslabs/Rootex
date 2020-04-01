@@ -19,7 +19,7 @@ void PhysicsSystem::initialize()
 
 	LuaTextResourceFile* physicsMaterial = ResourceLoader::CreateLuaTextResourceFile("game/assets/config/physics.lua");
 	LuaInterpreter::GetSingleton()->getLuaState().script(physicsMaterial->getString());
-	physicsMaterialTable = LuaInterpreter::GetSingleton()->getLuaState()["PhysicsMaterial"];
+	m_PhysicsMaterialTable = LuaInterpreter::GetSingleton()->getLuaState()["PhysicsMaterial"];
 
 	if (!m_CollisionConfiguration || !m_Dispatcher || !m_Broadphase || !m_Solver || !m_DynamicsWorld)
 	{
@@ -51,7 +51,7 @@ void PhysicsSystem::addRigidBody(btRigidBody* body)
 
 sol::table PhysicsSystem::getPhysicsMaterial()
 {
-	return physicsMaterialTable;
+	return m_PhysicsMaterialTable;
 }
 
 // This function is called after bullet performs its internal update.

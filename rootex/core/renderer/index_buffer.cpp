@@ -28,7 +28,7 @@ IndexBuffer::IndexBuffer()
 	D3D11_SUBRESOURCE_DATA isd = { 0 };
 	isd.pSysMem = m_Buffer.data();
 
-	m_IndexBuffer = RenderingDevice::GetSingleton()->initIndexBuffer(&ibd, &isd, DXGI_FORMAT_R16_UINT);
+	m_IndexBuffer = RenderingDevice::GetSingleton()->createIndexBuffer(&ibd, &isd, DXGI_FORMAT_R16_UINT);
 }
 
 IndexBuffer::IndexBuffer(const Vector<unsigned short>& indices)
@@ -44,7 +44,7 @@ IndexBuffer::IndexBuffer(const Vector<unsigned short>& indices)
 	D3D11_SUBRESOURCE_DATA isd = { 0 };
 	isd.pSysMem = indices.data();
 
-	m_IndexBuffer = RenderingDevice::GetSingleton()->initIndexBuffer(&ibd, &isd, DXGI_FORMAT_R16_UINT);
+	m_IndexBuffer = RenderingDevice::GetSingleton()->createIndexBuffer(&ibd, &isd, DXGI_FORMAT_R16_UINT);
 }
 
 IndexBuffer::~IndexBuffer()

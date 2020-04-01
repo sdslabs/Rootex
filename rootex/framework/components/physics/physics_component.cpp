@@ -17,7 +17,7 @@ PhysicsComponent::PhysicsComponent(const String& matName, float volume, const Re
 	m_Material.m_Restitution = float(materialLua[matName]["restitution"]);
 
 	m_Mass = volume * m_SpecificGravity;
-	localInertia = btVector3(0.f, 0.f, 0.f);
+	m_LocalInertia = btVector3(0.f, 0.f, 0.f);
 }
 
 bool PhysicsComponent::setup()
@@ -32,9 +32,9 @@ bool PhysicsComponent::setup()
 		}
 		else
 		{
-			transform = m_TransformComponent->getAbsoluteTransform();
-			m_MotionState.setWorldTransform(matTobtTransform(transform));
-			btRigidBody::btRigidBodyConstructionInfo rbInfo(m_Mass, &m_MotionState, m_CollisionShape.get(), localInertia);
+			m_Transform = m_TransformComponent->getAbsoluteTransform();
+			m_MotionState.setWorldTransform(matTobtTransform(m_Transform));
+			btRigidBody::btRigidBodyConstructionInfo rbInfo(m_Mass, &m_MotionState, m_CollisionShape.get(), m_LocalInertia);
 
 			// set up the materal properties
 			rbInfo.m_restitution = m_Material.m_Restitution;

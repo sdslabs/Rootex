@@ -59,16 +59,16 @@ public:
 
 	void enableSkyDepthStencilState();
 	void disableSkyDepthStencilState();
-	Microsoft::WRL::ComPtr<ID3D11Buffer> initVertexBuffer(D3D11_BUFFER_DESC* vbd, D3D11_SUBRESOURCE_DATA* vsd, const UINT* stride, const UINT* offset);
-	Microsoft::WRL::ComPtr<ID3D11Buffer> initIndexBuffer(D3D11_BUFFER_DESC* ibd, D3D11_SUBRESOURCE_DATA* isd, DXGI_FORMAT format);
-	void initVSModelConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd);
-	void initVSModelInverseConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd);
-	void initVSViewConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd);
-	void initVSProjectionConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd);
-	void initPSConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd, UINT offset);
-	Microsoft::WRL::ComPtr<ID3D11PixelShader> initPixelShader(ID3DBlob* blob);
-	Microsoft::WRL::ComPtr<ID3D11VertexShader> initVertexShader(ID3DBlob* blob);
-	Microsoft::WRL::ComPtr<ID3D11InputLayout> initVertexLayout(ID3DBlob* vertexShaderBlob, const D3D11_INPUT_ELEMENT_DESC* ied, UINT size);
+	Microsoft::WRL::ComPtr<ID3D11Buffer> createVertexBuffer(D3D11_BUFFER_DESC* vbd, D3D11_SUBRESOURCE_DATA* vsd, const UINT* stride, const UINT* offset);
+	Microsoft::WRL::ComPtr<ID3D11Buffer> createIndexBuffer(D3D11_BUFFER_DESC* ibd, D3D11_SUBRESOURCE_DATA* isd, DXGI_FORMAT format);
+	void createVSModelConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd);
+	void createVSModelInverseConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd);
+	void createVSViewConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd);
+	void createVSProjectionConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd);
+	void createPSConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd, UINT offset);
+	Microsoft::WRL::ComPtr<ID3D11PixelShader> createPixelShader(ID3DBlob* blob);
+	Microsoft::WRL::ComPtr<ID3D11VertexShader> createVertexShader(ID3DBlob* blob);
+	Microsoft::WRL::ComPtr<ID3D11InputLayout> createVertexLayout(ID3DBlob* vertexShaderBlob, const D3D11_INPUT_ELEMENT_DESC* ied, UINT size);
 	
 	Ref<DirectX::SpriteFont> createFont(FileBuffer* fontFileBuffer);
 	Microsoft::WRL::ComPtr<ID3DBlob> createBlob(LPCWSTR path);
