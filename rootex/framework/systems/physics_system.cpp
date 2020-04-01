@@ -1,7 +1,7 @@
 #include "physics_system.h"
 #include "common/common.h"
-#include "core/resource_loader.h"
 #include "components/physics/physics_component.h"
+#include "core/resource_loader.h"
 
 PhysicsSystem* PhysicsSystem::GetSingleton()
 {
@@ -47,6 +47,11 @@ PhysicsSystem::~PhysicsSystem()
 void PhysicsSystem::addRigidBody(btRigidBody* body)
 {
 	m_DynamicsWorld->addRigidBody(body);
+}
+
+sol::table PhysicsSystem::getPhysicsMaterial()
+{
+	return physicsMaterialTable;
 }
 
 // This function is called after bullet performs its internal update.
