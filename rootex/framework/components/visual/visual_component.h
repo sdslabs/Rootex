@@ -54,14 +54,14 @@ class VisualComponent : public Component
 	static Component* Create(const JSON::json& componentData);
 	static Component* CreateDefault();
 
-	Color m_Color;
-	void setColor(const Color& color) { m_Color = color; };
-
 protected:
+	Color m_Color;
 	VisualComponentAttributes m_Attributes;
 	bool m_IsVisible;
 	
 	friend class EntityFactory;
+
+	void setColor(const Color& color) { m_Color = color; };
 
 #ifdef ROOTEX_EDITOR
 	String m_RenderPassName;
