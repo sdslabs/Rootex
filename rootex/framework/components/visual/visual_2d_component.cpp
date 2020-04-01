@@ -3,15 +3,15 @@
 #include "systems/render_system.h"
 
 Visual2DComponent::Visual2DComponent()
-	:VisualComponent(RenderPassUI, nullptr, nullptr, true)
+	:VisualComponent(RenderPassUI, true)
 {
 }
 
 bool Visual2DComponent::preRender()
 {
-	if (m_Attributes.m_TransformComponent)
+	if (m_TransformComponent)
 	{
-		RenderSystem::GetSingleton()->pushUIMatrix(m_Attributes.getTransform());
+		RenderSystem::GetSingleton()->pushUIMatrix(getTransform());
 	}
 	else
 	{

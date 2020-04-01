@@ -25,8 +25,10 @@ enum RenderPass
 
 class VisualComponent : public Component
 {
+protected:
 	bool m_IsVisible;
-	unsigned int m_RenderPass;
+	RenderPass m_RenderPass;
+	TransformComponent* m_TransformComponent;
 
 #ifdef ROOTEX_EDITOR
 	String m_RenderPassName;
@@ -35,19 +37,23 @@ class VisualComponent : public Component
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::VisualComponent;
 	
-	VisualComponent(const unsigned int& renderPassSetting, Ref<Material> material, VisualModelResourceFile* resFile, bool visibility);
+	VisualComponent(const unsigned int& renderPassSetting, bool visibility);
 	VisualComponent(VisualComponent&) = delete;
-	virtual ~VisualComponent();
+	virtual ~VisualComponent() = default;
 
-	virtual bool preRender();
-	virtual bool isVisible() const;
-	virtual void render();
-	virtual void renderChildren(const unsigned int& renderPass);
-	virtual void postRender();
+	virtual bool setup();
+
+	virtual bool preRender() { return true; }
+	virtual bool isVisible() const { return m_IsVisible; }
+	virtual void render() {}
+	virtual void renderChildren(const unsigned int& renderPass) {}
+	virtual void postRender() {}
 
 	void setVisibility(bool enabled) { m_IsVisible = enabled; }
 	
+	const Matrix& getTransform() const { return m_TransformComponent->getLocalTransform(); }
 	const unsigned int& getRenderPass() const { return m_RenderPass; }
+	const Matrix& getInverseTransform() const { return m_TransformComponent->getLocalTransform().Invert(); }
 	virtual String getName() const override { return "VisualComponent"; }
 	ComponentID getComponentID() const override { return s_ID; }
 	virtual JSON::json getJSON() const override;
