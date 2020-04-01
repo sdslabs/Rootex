@@ -13,6 +13,7 @@ RenderingDevice::RenderingDevice()
 
 RenderingDevice::~RenderingDevice()
 {
+	m_SwapChain->SetFullscreenState(FALSE, NULL);
 	CoUninitialize();
 }
 
@@ -54,6 +55,7 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 	sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 	sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+	sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
 	m_Device->CheckMultisampleQualityLevels(DXGI_FORMAT_R8G8B8A8_UNORM, 4, &m_4XMSQuality);
 	PANIC(m_4XMSQuality <= 0, "MSAA is not supported on this hardware");
