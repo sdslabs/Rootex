@@ -22,7 +22,7 @@ class PhysicsSystem : public System
 	//btCollisionConfiguration allows to configure Bullet collision detection
 	Ptr<btDefaultCollisionConfiguration> m_CollisionConfiguration;
 
-	sol::table physicsMaterialTable;
+	sol::table m_PhysicsMaterialTable;
 
 	PhysicsSystem() = default;
 
