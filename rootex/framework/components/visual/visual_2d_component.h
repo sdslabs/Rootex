@@ -6,7 +6,7 @@
 class Visual2DComponent : public VisualComponent
 {
 protected:
-	Visual2DComponent(bool visibility);
+	Visual2DComponent();
 	Visual2DComponent(Visual2DComponent&) = default;
 	virtual ~Visual2DComponent() = default;
 	
