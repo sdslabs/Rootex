@@ -10,7 +10,8 @@
 		"height": 1080,
 		"msaa": false,
 		"title": "Rootex Editor",
-		"isEditor": true
+		"isEditor": true,
+		"fullScreen":  true
 	},
 
 	"general": {

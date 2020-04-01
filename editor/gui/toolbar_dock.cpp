@@ -10,6 +10,8 @@
 #include "vendor/ImGUI/imgui_impl_dx11.h"
 #include "vendor/ImGUI/imgui_impl_win32.h"
 
+#include "core/renderer/rendering_device.h"
+
 void ToolbarDock::draw()
 {
 	if (m_ToolbarDockSettings.m_IsActive)

@@ -19,7 +19,7 @@ protected:
 	static LRESULT CALLBACK WindowsProc(HWND windowHandler, UINT msg, WPARAM wParam, LPARAM lParam);
 
 public:
-	Window(int xOffset, int yOffset, int width, int height, const String& title, bool isEditor, bool MSAA);
+	Window(int xOffset, int yOffset, int width, int height, const String& title, bool isEditor, bool MSAA, bool fullScreen);
 	Window(const Window&) = delete;
 	Window& operator=(const Window&) = delete;
 	~Window() = default;

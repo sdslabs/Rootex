@@ -118,7 +118,7 @@ LRESULT CALLBACK Window::WindowsProc(HWND windowHandler, UINT msg, WPARAM wParam
 	return DefWindowProc(windowHandler, msg, wParam, lParam);
 }
 
-Window::Window(int xOffset, int yOffset, int width, int height, const String& title, bool isEditor, bool MSAA)
+Window::Window(int xOffset, int yOffset, int width, int height, const String& title, bool isEditor, bool MSAA, bool fullScreen)
     : m_Width(width)
     , m_Height(height)
 {
@@ -154,7 +154,7 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
 			m_WindowHandle, 
 			clientRect.right - clientRect.left, 
 			clientRect.bottom - clientRect.top, 
-			MSAA);
+			MSAA, fullScreen);
 	}
 	else
 	{
@@ -172,7 +172,7 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
 		    m_WindowHandle,
 		    clientRect.right - clientRect.left,
 		    clientRect.bottom - clientRect.top,
-		    MSAA);
+		    MSAA, fullScreen);
 
 		ClipCursor(&clientRect);
 		ShowCursor(false);

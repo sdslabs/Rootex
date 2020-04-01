@@ -79,7 +79,7 @@ void Editor::initialize(HWND hWnd, const JSON::json& projectJSON)
 		(float)general["colors"]["warning"]["b"],
 		(float)general["colors"]["warning"]["a"],
 	};
-	m_Colors.m_Text = { 
+	m_Colors.m_Text = {
 		(float)general["colors"]["text"]["r"],
 		(float)general["colors"]["text"]["g"],
 		(float)general["colors"]["text"]["b"],
@@ -115,15 +115,15 @@ void Editor::render()
 	drawDefaultUI();
 	m_FileSystem->draw();
 	m_Hierarchy->draw();
-    m_Toolbar->draw();
+	m_Toolbar->draw();
 	m_Viewport->draw();
-    m_Inspector->draw();
+	m_Inspector->draw();
 	m_FileViewer->draw();
 	m_Output->draw();
 
 	ImGui::PopStyleColor(m_EditorStyleColorPushCount);
 	ImGui::PopStyleVar(m_EditorStyleVarPushCount);
-	
+
 	RenderingDevice::GetSingleton()->setTextureRenderTarget();
 	RenderSystem::GetSingleton()->render();
 	RenderingDevice::GetSingleton()->setBackBufferRenderTarget();
@@ -195,7 +195,7 @@ void Editor::drawDefaultUI()
 						if (ImGui::MenuItem(entityClassFile.string().c_str(), ""))
 						{
 							Variant callReturn = EventManager::GetSingleton()->returnCall("EditorFileCreateNewEntity", "EditorCreateNewEntity", entityClassFile.string());
-				 			Ref<Entity> newEntity = Extract(Ref<Entity>, callReturn);
+							Ref<Entity> newEntity = Extract(Ref<Entity>, callReturn);
 							EventManager::GetSingleton()->call("EditorFileOpenNewlyCreatedEntity", "EditorOpenEntity", newEntity);
 						}
 					}
@@ -278,6 +278,10 @@ void Editor::drawDefaultUI()
 			{
 				if (ImGui::BeginMenu("Settings"))
 				{
+					if (ImGui::Checkbox("Full Screen", RenderingDevice::GetSingleton()->getScreenState()))
+					{
+						RenderingDevice::GetSingleton()->toggleScreenState();
+					}
 					ImGui::EndMenu();
 				}
 				ImGui::EndMenu();
@@ -322,7 +326,7 @@ void Editor::drawDefaultUI()
 				ImGui::Text("To be added");
 				ImGui::EndPopup();
 			}
-			
+
 			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
 			for (auto&& library : ProjectManager::GetSingleton()->getLibrariesPaths())
 			{
