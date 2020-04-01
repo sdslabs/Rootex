@@ -15,7 +15,8 @@ Component* ModelVisualComponent::Create(const JSON::json& componentData)
 	ModelVisualComponent* modelVisualComponent = new ModelVisualComponent(
 	    componentData["renderPass"],
 	    Ref<Material>(new Material()),
-	    ResourceLoader::CreateVisualModelResourceFile(componentData["resFile"]));
+	    ResourceLoader::CreateVisualModelResourceFile(componentData["resFile"]),
+		componentData["isVisible"]);
 
 	modelVisualComponent->setColor(
 	    Color(
@@ -32,50 +33,32 @@ Component* ModelVisualComponent::CreateDefault()
 	ModelVisualComponent* modelVisualComponent = new ModelVisualComponent(
 	    RenderPassMain,
 	    Ref<Material>(new Material()),
-	    ResourceLoader::CreateVisualModelResourceFile("rootex/assets/cube.obj"));
+	    ResourceLoader::CreateVisualModelResourceFile("rootex/assets/cube.obj"),
+		true);
 	modelVisualComponent->setColor(Color(0.5f, 0.5f, 0.5f));
 
 	return modelVisualComponent;
 }
 
-ModelVisualComponent::ModelVisualComponent(const unsigned int& renderPassSetting, Ref<Material> material,
-    VisualModelResourceFile* resFile)
-    : VisualComponent(renderPassSetting, isVisible)
-	m_RenderPassSetting(RenderPassMain)
-    , m_Material(Ref<Material>(new Material()))
-    , m_VisualModelResourceFile(nullptr)
-    , m_TransformComponent(nullptr)
+ModelVisualComponent::ModelVisualComponent(const unsigned int& renderPassSetting, Ref<Material> material, VisualModelResourceFile* resFile, bool visibility)
+    : VisualComponent(renderPassSetting, visibility)
+    , m_Material(material)
+    , m_VisualModelResourceFile(resFile)
     , m_HierarchyComponent(nullptr)
 {
-	m_Attributes.m_TransformComponent = nullptr;
-	m_Attributes.m_RenderPassSetting = renderPassSetting;
-	m_Attributes.m_Material = material;
-	m_Attributes.m_VisualModelResourceFile = resFile;
 }
 
-VisualComponent::VisualComponent(const unsigned int& renderPassSetting, const bool& isVisible)
-: m_RenderPass(renderPassSetting)
-    , m_IsVisible(isVisible)
+ModelVisualComponent::~ModelVisualComponent()
 {
 }
 
-VisualComponent::~VisualComponent()
+bool ModelVisualComponent::setup()
 {
-}
-
-bool VisualComponent::setup()
-{
-	bool status = true;
+	bool status = VisualComponent::setup();
 	if (m_Owner)
 	{
-		m_Attributes.m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
-		if (m_Attributes.m_TransformComponent == nullptr)
-		{
-			status = false;
-		}
-
-		m_Attributes.m_HierarchyComponent = m_Owner->getComponent<HierarchyComponent>().get();
-		if (m_Attributes.m_HierarchyComponent == nullptr)
+		m_HierarchyComponent = m_Owner->getComponent<HierarchyComponent>().get();
+		if (m_HierarchyComponent == nullptr)
 		{
 			WARN("Entity without hierarchy component found");
 			status = false;
@@ -104,30 +87,30 @@ bool ModelVisualComponent::preRender()
 	return true;
 }
 
-bool VisualComponent::isVisible() const
+bool ModelVisualComponent::isVisible() const
 {
 	// TODO: Add culling
-	return m_IsVisible;
+	return VisualComponent::isVisible();
 }
 
-void VisualComponent::render()
+void ModelVisualComponent::render()
 {
-	RenderSystem::GetSingleton()->getRenderer()->draw(m_Attributes.getVertexBuffer(), m_Attributes.getIndexBuffer(), m_Attributes.getMaterial());
+	RenderSystem::GetSingleton()->getRenderer()->draw(getVertexBuffer(), getIndexBuffer(), getMaterial());
 }
 
-void VisualComponent::renderChildren(const unsigned int& renderPass)
+void ModelVisualComponent::renderChildren(const unsigned int& renderPass)
 {
 	if (isVisible() && !(renderPass & RenderPassUI))
 	{
-		m_Attributes.m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::View, RenderSystem::GetSingleton()->getCamera()->getView());
-		m_Attributes.m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::Projection, RenderSystem::GetSingleton()->getCamera()->getProjection());
+		m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::View, RenderSystem::GetSingleton()->getCamera()->getView());
+		m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::Projection, RenderSystem::GetSingleton()->getCamera()->getProjection());
 	}
 
 	for (auto& child : m_Owner->getComponent<HierarchyComponent>()->getChildren())
 	{
 		VisualComponent* childVisualComponent = child->getOwner()->getComponent<VisualComponent>().get();
 
-		if (childVisualComponent && (childVisualComponent->getAttributes()->getRenderPass() & renderPass))
+		if (childVisualComponent && (childVisualComponent->getRenderPass() & renderPass))
 		{
 			childVisualComponent->preRender();
 
@@ -143,48 +126,26 @@ void VisualComponent::renderChildren(const unsigned int& renderPass)
 	}
 }
 
-void VisualComponent::postRender()
+void ModelVisualComponent::postRender()
 {
 	RenderSystem::GetSingleton()->popMatrix();
 }
 
-void VisualComponent::addTransform(const Matrix& applyTransform)
+void ModelVisualComponent::setVisualModel(VisualModelResourceFile* newModel)
 {
-	m_Attributes.m_TransformComponent->setTransform(m_Attributes.m_TransformComponent->getLocalTransform() * applyTransform);
+	m_VisualModelResourceFile = newModel;
 }
 
-void VisualComponent::setTransform(const Matrix& newTransform)
+void ModelVisualComponent::setMaterial(Ref<Material> material)
 {
-	m_Attributes.m_TransformComponent->setTransform(newTransform);
+	m_Material = material;
 }
 
-void VisualComponent::setVisualModel(VisualModelResourceFile* newModel)
+JSON::json ModelVisualComponent::getJSON() const
 {
-	m_Attributes.m_VisualModelResourceFile = newModel;
-}
+	JSON::json& j = VisualComponent::getJSON();
 
-void VisualComponent::setMaterial(Ref<Material> material)
-{
-	m_Attributes.m_Material = material;
-}
-
-void VisualComponent::setPosition(const Vector3& position)
-{
-	m_Attributes.m_TransformComponent->setPosition(position);
-}
-
-Vector3 VisualComponent::getPosition() const
-{
-	return m_Attributes.m_TransformComponent->getPosition();
-}
-
-JSON::json VisualComponent::getJSON() const
-{
-	JSON::json j;
-
-	j["resFile"] = m_Attributes.m_VisualModelResourceFile->getPath().string();
-	j["renderPass"] = m_Attributes.m_RenderPassSetting;
-
+	j["resFile"] = m_VisualModelResourceFile->getPath().string();
 	j["color"]["r"] = m_Color.x;
 	j["color"]["g"] = m_Color.y;
 	j["color"]["b"] = m_Color.z;
@@ -198,6 +159,8 @@ JSON::json VisualComponent::getJSON() const
 #include "imgui_stdlib.h"
 void ModelVisualComponent::draw()
 {
+	VisualComponent::draw();
+
 	ImGui::BeginGroup();
 	if (ImGui::BeginCombo("##Visual Model", m_VisualModelResourceFile->getPath().filename().string().c_str(), ImGuiComboFlags_HeightRegular))
 	{
@@ -232,7 +195,7 @@ void ModelVisualComponent::draw()
 
 	if (ImGui::Button("Visual Model"))
 	{
-		EventManager::GetSingleton()->call("OpenScript", "EditorOpenFile", m_VisualModelResourceFile->getPath());
+		EventManager::GetSingleton()->call("OpenScript", "EditorOpenFile", m_VisualModelResourceFile->getPath().string());
 	}
 	ImGui::EndGroup();
 

@@ -25,7 +25,6 @@ void EditorApplication::SetSingleton(EditorApplication* app)
 }
 
 EditorApplication::EditorApplication()
-    : Application()
 {
 	if (!s_Instance)
 	{
