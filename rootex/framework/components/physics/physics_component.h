@@ -56,7 +56,6 @@ public:
 	btVector3 localInertia;
 	float m_SpecificGravity;
 	float m_Volume;
-	LuaTextResourceFile* physicsMaterial;
 	std::string m_MaterialName;
 
 	void applyForce(const Vector3 force);
