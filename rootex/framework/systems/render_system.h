@@ -28,6 +28,7 @@ public:
 	void setCamera(Ref<CameraVisualComponent> camera);
 
 	void pushMatrix(const Matrix& transform);
+	void pushMatrixOverride(const Matrix& transform);
 	void popMatrix();
 	void pushUIMatrix(const Matrix& transform);
 	void popUIMatrix();
