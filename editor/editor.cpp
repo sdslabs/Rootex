@@ -232,7 +232,7 @@ void Editor::drawDefaultUI()
 				ImGui::Separator();
 				if (ImGui::MenuItem("Quit", ""))
 				{
-					quit();
+					menuAction = "Do you want to save?";
 				}
 				ImGui::EndMenu();
 			}
@@ -306,7 +306,29 @@ void Editor::drawDefaultUI()
 			{
 				ImGui::OpenPopup(menuAction.c_str());
 			}
+			if (ImGui::BeginPopupModal("Do you want to save?", 0, ImGuiWindowFlags_AlwaysAutoResize))
+			{
+				ImGui::SetNextWindowSize({ ImGui::GetWindowWidth(), ImGui::GetWindowHeight() });
+				if (ImGui::Button("Save"))
+				{
+					saveAll(nullptr);
+					quit();
+				}
+				ImGui::SameLine();
 
+				if (ImGui::Button("Don't Save"))
+				{
+					quit();
+				}
+				ImGui::SameLine();
+
+				if (ImGui::Button("Cancel"))
+				{
+					ImGui::CloseCurrentPopup();
+					menuAction = "";
+				}
+				ImGui::EndPopup();
+			}
 			if (ImGui::BeginPopup("About Rootex Editor"))
 			{
 				ImGui::Text(String("Rootex Engine and Rootex Editor developed by SDSLabs. Built on " + OS::GetBuildDate() + " at " + OS::GetBuildTime() + "\n" + "Source available at https://www.github.com/sdslabs/rootex").c_str());
