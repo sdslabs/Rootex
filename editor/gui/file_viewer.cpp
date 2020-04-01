@@ -57,7 +57,7 @@ Variant FileViewer::openFile(const Event* event)
 	m_ImageViewer.unload();
 	m_TextViewer.unload();
 
-	m_OpenFilePath = Extract(FilePath, event->getData());
+	m_OpenFilePath = Extract(String, event->getData());
 
 	const String& ext = m_OpenFilePath.extension().string();
 	if (ext == ".wav")

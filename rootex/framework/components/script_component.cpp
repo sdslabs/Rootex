@@ -1,7 +1,6 @@
 #include "script_component.h"
 
 #include "entity.h"
-#include "event_manager.h"
 #include "resource_loader.h"
 
 Component* ScriptComponent::Create(const JSON::json& componentData)
@@ -70,18 +69,20 @@ bool ScriptComponent::isSuccessful(const sol::function_result& result)
 void ScriptComponent::connect(const String& function, const String& eventType)
 {
 	String functionName = function;
-	BIND_EVENT_FUNCTION(eventType, [=](const Event* event) {
-		this->call(functionName);
+	Function<Variant(const Event* event)> eventFunction([=](const Event* event) {
+		this->call(functionName, event);
 		return true;
 	});
+	BIND_EVENT_FUNCTION(eventType, eventFunction);
+
 	m_Connections[function] = eventType;
 }
 
-void ScriptComponent::call(const String& function)
+void ScriptComponent::call(const String& function, const Event* event)
 {
 	if (auto&& findIt = std::find(m_Functions.begin(), m_Functions.end(), function) != m_Functions.end())
 	{
-		isSuccessful(m_Env[function]());
+		isSuccessful(m_Env[function](event));
 	}
 }
 
@@ -108,6 +109,12 @@ JSON::json ScriptComponent::getJSON() const
 	j["connections"] = m_Connections;
 
 	return j;
+}
+
+void ScriptComponent::setScript(LuaTextResourceFile* newScript)
+{
+	m_ScriptFile = newScript;
+	setup();
 }
 
 #ifdef ROOTEX_EDITOR
@@ -146,7 +153,12 @@ void ScriptComponent::draw()
 	ImGui::SameLine();
 	if (ImGui::Button("Script"))
 	{
-		EventManager::GetSingleton()->call("OpenScript", "EditorOpenFile", m_ScriptFile->getPath());
+		EventManager::GetSingleton()->call("OpenScript", "EditorOpenFile", m_ScriptFile->getPath().string());
+	}
+	ImGui::SameLine();
+	if (ImGui::SmallButton("R"))
+	{
+		setup();
 	}
 	ImGui::EndGroup();
 
@@ -174,7 +186,7 @@ void ScriptComponent::draw()
 		{
 			if (ImGui::Selectable(function.c_str()))
 			{
-				EventManager::GetSingleton()->call("OpenScript", "EditorOpenFile", m_ScriptFile->getPath());
+				EventManager::GetSingleton()->call("OpenScript", "EditorOpenFile", m_ScriptFile->getPath().string());
 			}
 			if (ImGui::BeginDragDropSource())
 			{
