@@ -22,15 +22,15 @@ public:
 	void setShaderConstantBuffer(PSSolidConstantBuffer& Cb) { m_Shader->set(Cb); }
 };
 
-class DiffuseMaterial : public Material
+class TexturedMaterial : public Material
 {
 	DiffuseShader* m_DiffuseShader;
 	Ref<Texture> m_DiffuseTexture;
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_SamplerState;
 
 public:
-	DiffuseMaterial(Ref<Texture> diffuseTexture);
-	~DiffuseMaterial() = default;
+	TexturedMaterial(Ref<Texture> diffuseTexture);
+	~TexturedMaterial() = default;
 	void setShaderConstantBuffer(const PSDiffuseConstantBuffer& Cb) const { m_Shader->set(Cb); }
 
 	void bind() const override;

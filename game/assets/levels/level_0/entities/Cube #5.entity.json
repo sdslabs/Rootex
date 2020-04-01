@@ -1,26 +1,32 @@
 {
     "Components": {
-        "DiffuseVisualComponent": {
-            "renderPass": 5,
-            "resFile": "game/assets/test/cube.obj",
-            "texturePath": "game\\assets\\test\\sdslabs.png"
-        },
         "HierarchyComponent": {
             "children": [],
             "parent": 1
         },
-        "ShortMusicComponent": {
-            "audio": "game\\assets\\ball.wav",
-            "playOnStart": true
+        "TextVisual2DComponent": {
+            "color": {
+                "a": 1.0,
+                "b": 0.9999899864196777,
+                "g": 0.9999899864196777,
+                "r": 1.0
+            },
+            "fontResource": "game/assets/fonts/noto_sans_50_regular.spritefont",
+            "mode": 0,
+            "origin": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "text": "Hello World!"
         },
         "TransformComponent": {
             "position": {
-                "x": -1.809999942779541,
+                "x": 0.0,
                 "y": 0.0,
                 "z": 0.0
             },
             "rotation": {
-                "w": 1.0,
+                "w": 0.0,
                 "x": 0.0,
                 "y": 0.0,
                 "z": 0.0
@@ -34,6 +40,6 @@
     },
     "Entity": {
         "ID": 5,
-        "name": "TexturedCube"
+        "name": "Cube"
     }
 }

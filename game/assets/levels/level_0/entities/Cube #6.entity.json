@@ -4,20 +4,9 @@
             "children": [],
             "parent": 1
         },
-        "ModelVisualComponent": {
-            "color": {
-                "a": 1.0,
-                "b": 0.20000000298023224,
-                "g": 1.0,
-                "r": 0.20000000298023224
-            },
-            "isVisible": true,
-            "renderPass": 1,
-            "resFile": "game/assets/test/cube.obj"
-        },
         "TransformComponent": {
             "position": {
-                "x": 0.0,
+                "x": -1.5700000524520874,
                 "y": 0.0,
                 "z": 0.0
             },
@@ -35,7 +24,7 @@
         }
     },
     "Entity": {
-        "ID": 2,
+        "ID": 6,
         "name": "Cube"
     }
 }

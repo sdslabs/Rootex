@@ -1,5 +1,36 @@
 #include "visual_component.h"
 
+VisualComponent::VisualComponent(const unsigned int& renderPassSetting, bool visibility)
+    : m_RenderPass((RenderPass)renderPassSetting)
+    , m_IsVisible(visibility)
+    , m_TransformComponent(nullptr)
+{
+}
+
+bool VisualComponent::setup()
+{
+	bool status = true;
+	if (m_Owner)
+	{
+		m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
+		if (m_TransformComponent == nullptr)
+		{
+			status = false;
+		}
+	}
+	return status;
+}
+
+JSON::json VisualComponent::getJSON() const
+{
+	JSON::json j;
+
+	j["renderPass"] = (int)m_RenderPass;
+	j["isVisible"] = m_IsVisible;
+
+	return j;
+}
+
 #ifdef ROOTEX_EDITOR
 #include "imgui.h"
 void VisualComponent::draw()
