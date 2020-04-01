@@ -5,8 +5,10 @@
             "parent": 1
         },
         "ScriptComponent": {
-            "connections": {},
-            "script": "game\\assets\\scripts\\rotator.lua"
+            "connections": {
+                "newFunction": "NewEvent"
+            },
+            "script": "game\\assets\\scripts\\cube.lua"
         },
         "TransformComponent": {
             "position": {

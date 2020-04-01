@@ -2,13 +2,13 @@
 #include "core/resource_loader.h"
 
 #include "common/common.h"
-#include "event_manager.h"
 #include "components/hierarchy_component.h"
 #include "components/transform_component.h"
 #include "components/visual/text_visual_2d_component.h"
 #include "components/visual/visual_2d_component.h"
 #include "components/visual/visual_component.h"
 #include "entity_factory.h"
+#include "event_manager.h"
 #include "script/interpreter.h"
 
 void SolPanic(std::optional<String> maybeMsg)
@@ -102,10 +102,18 @@ void LuaInterpreter::registerTypes()
 		matrix["Identity"] = sol::var(Matrix::Identity);
 	}
 	{
+		sol::usertype<Event> event = rootex.new_usertype<Event>("Event", sol::constructors<Event(const String&, const Event::Type, const Variant)>());
+		event["getName"] = &Event::getName;
+		event["getType"] = &Event::getType;
+		event["getData"] = &Event::getData;
+	}
+	{
 		rootex["AddEvent"] = [](const String& eventType) { EventManager::GetSingleton()->addEvent(eventType); };
 		rootex["RemoveEvent"] = [](const String& eventType) { EventManager::GetSingleton()->removeEvent(eventType); };
-		rootex["CallEvent"] = [](const String& eventName, const String& eventType) { EventManager::GetSingleton()->call(eventName, eventType, true); };
-	} 
+		rootex["CallEvent"] = [](const Event& event) { EventManager::GetSingleton()->call(event); };
+		rootex["DeferredCallEvent"] = [](const Ref<Event>& event) { EventManager::GetSingleton()->deferredCall(event); };
+		rootex["ReturnCallEvent"] = [](const Event& event) { return EventManager::GetSingleton()->returnCall(event); };
+	}
 	{
 		sol::usertype<ResourceLoader> resourceLoader = rootex.new_usertype<ResourceLoader>("ResourceLoader");
 		resourceLoader["CreateAudio"] = &ResourceLoader::CreateAudioResourceFile;

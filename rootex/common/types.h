@@ -59,7 +59,7 @@ namespace ColorPresets = DirectX::Colors;
 #include <variant>
 typedef Vector<std::variant<bool, int, char, float, String, Vector2, Vector3, Vector4, Matrix>> VariantVector;
 class Entity;
-using Variant = std::variant<bool, int, char, float, String, FilePath, Vector2, Vector3, Vector4, Matrix, VariantVector, Ref<Entity>, Vector<String>>;
+using Variant = std::variant<bool, int, char, float, String, Vector2, Vector3, Vector4, Matrix, VariantVector, Ref<Entity>, Vector<String>>;
 #define Extract(TypeName, variant) std::get<TypeName>((variant))
 
 #include <functional>
@@ -70,7 +70,6 @@ using Function = std::function<T>;
 namespace JSON = nlohmann;
 
 #include "imgui.h"
-#include "sol/sol.hpp"
 
 // target Windows 7 or later
 #define _WIN32_WINNT 0x0601
