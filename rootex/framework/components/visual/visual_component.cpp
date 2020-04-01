@@ -228,7 +228,7 @@ void VisualComponent::draw()
 
 	if (ImGui::Button("Visual Model"))
 	{
-		EventManager::GetSingleton()->call("OpenScript", "EditorOpenFile", m_Attributes.m_VisualModelResourceFile->getPath());
+		EventManager::GetSingleton()->call("OpenScript", "EditorOpenFile", m_Attributes.m_VisualModelResourceFile->getPath().string());
 	}
 	ImGui::EndGroup();
 

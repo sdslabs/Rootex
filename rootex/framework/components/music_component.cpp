@@ -90,7 +90,7 @@ void MusicComponent::draw()
 
 	if (ImGui::Button("Audio File"))
 	{
-		EventManager::GetSingleton()->call("OpenScript", "EditorOpenFile", m_AudioFile->getPath());
+		EventManager::GetSingleton()->call("OpenScript", "EditorOpenFile", m_AudioFile->getPath().string());
 	}
 	ImGui::EndGroup();
 
@@ -111,5 +111,7 @@ void MusicComponent::draw()
 		}
 		ImGui::EndDragDropTarget();
 	}
+
+	ImGui::Checkbox("Play on start", &m_IsPlayOnStart);
 }
 #endif // ROOTEX_EDITOR

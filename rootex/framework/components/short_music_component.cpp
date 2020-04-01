@@ -89,7 +89,7 @@ void ShortMusicComponent::draw()
 
 	if (ImGui::Button("Audio File"))
 	{
-		EventManager::GetSingleton()->call("OpenScript", "EditorOpenFile", m_AudioFile->getPath());
+		EventManager::GetSingleton()->call("OpenScript", "EditorOpenFile", m_AudioFile->getPath().string());
 	}
 	ImGui::EndGroup();
 
