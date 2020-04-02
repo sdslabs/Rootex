@@ -148,39 +148,63 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
 		    nullptr, nullptr,
 		    hInstance, nullptr);
 
-		RECT clientRect;
-		GetClientRect(m_WindowHandle, &clientRect);
+
+		int rWidth, rHeight;
+		if (fullScreen)
+		{
+			rWidth = width;
+			rHeight = height;
+		}
+		else
+		{
+			RECT clientRect;
+			GetClientRect(m_WindowHandle, &clientRect);
+			rWidth = clientRect.right - clientRect.left;
+			rHeight = clientRect.bottom - clientRect.top;
+		}
 		RenderingDevice::GetSingleton()->initialize(
-			m_WindowHandle, 
-			clientRect.right - clientRect.left, 
-			clientRect.bottom - clientRect.top, 
-			MSAA, fullScreen);
+		    m_WindowHandle,
+		    rWidth,
+		    rHeight,
+		    MSAA, fullScreen);
 	}
 	else
 	{
 		m_WindowHandle = CreateWindowEx(
-			0, className,
-			title.c_str(),
-			WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
-			xOffset, yOffset, width, height,
-			nullptr, nullptr,
-			hInstance, nullptr);
+		    0, className,
+		    title.c_str(),
+		    WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
+		    xOffset, yOffset, width, height,
+		    nullptr, nullptr,
+		    hInstance, nullptr);
 
-		RECT clientRect;
-		GetClientRect(m_WindowHandle, &clientRect);
+		int rWidth, rHeight;
+		if (fullScreen)
+		{
+			rWidth = width;
+			rHeight = height;
+		}
+		else
+		{
+			RECT clientRect;
+			GetClientRect(m_WindowHandle, &clientRect);
+			rWidth = clientRect.right - clientRect.left;
+			rHeight = clientRect.bottom - clientRect.top;
+			ClipCursor(&clientRect);
+		}
 		RenderingDevice::GetSingleton()->initialize(
 		    m_WindowHandle,
-		    clientRect.right - clientRect.left,
-		    clientRect.bottom - clientRect.top,
+		    rWidth,
+		    rHeight,
 		    MSAA, fullScreen);
 
-		ClipCursor(&clientRect);
 		ShowCursor(false);
 
 		RenderingDevice::GetSingleton()->setBackBufferRenderTarget();
 	}
-
 	applyDefaultViewport();
+	if (fullScreen)
+		RenderingDevice::GetSingleton()->toggleScreenState();
 }
 
 HWND Window::getWindowHandle()
