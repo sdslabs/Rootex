@@ -61,6 +61,7 @@ class Editor
 	Variant saveAll(const Event* event);
 	Variant autoSave(const Event* event);
 	Variant openLevel(const Event* event);
+	Variant saveBeforeQuit(const Event* event);
 	Variant createNewLevel(const Event* event);
 	Variant createNewEntity(const Event* event);
 
