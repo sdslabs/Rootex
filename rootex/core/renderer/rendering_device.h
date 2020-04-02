@@ -34,6 +34,7 @@ class RenderingDevice
 
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_RSState;
 	Microsoft::WRL::ComPtr<IDXGISwapChain> m_SwapChain;
+	Microsoft::WRL::ComPtr<ID3D11Debug> m_Debug;
 	bool m_MSAA;
 	unsigned int m_4XMSQuality;
 

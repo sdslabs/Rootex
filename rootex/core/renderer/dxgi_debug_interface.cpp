@@ -1,11 +1,8 @@
 #include "dxgi_debug_interface.h"
 #include <dxgidebug.h>
-#include <memory>
-
 
 //TODO- Remove this pragma and see for an alternative of the library load in constructor
 #pragma comment(lib, "dxguid.lib")
-
 
 DxgiDebugInterface::DxgiDebugInterface()
 {

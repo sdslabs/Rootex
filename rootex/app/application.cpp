@@ -6,6 +6,7 @@
 #include "core/renderer/shader_library.h"
 #include "script/interpreter.h"
 #include "systems/physics_system.h"
+#include <dxgidebug.h>
 
 Application::Application()
 {
