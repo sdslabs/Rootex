@@ -66,11 +66,11 @@ public:
 	void disableSkyDepthStencilState();
 	Microsoft::WRL::ComPtr<ID3D11Buffer> createVertexBuffer(D3D11_BUFFER_DESC* vbd, D3D11_SUBRESOURCE_DATA* vsd, const UINT* stride, const UINT* offset);
 	Microsoft::WRL::ComPtr<ID3D11Buffer> createIndexBuffer(D3D11_BUFFER_DESC* ibd, D3D11_SUBRESOURCE_DATA* isd, DXGI_FORMAT format);
-	void createVSModelConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd);
-	void createVSModelInverseConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd);
-	void createVSViewConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd);
-	void createVSProjectionConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd);
-	void createPSConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd, UINT offset);
+	ID3D11Buffer* createVSModelConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd);
+	ID3D11Buffer* createVSModelInverseConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd);
+	ID3D11Buffer* createVSViewConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd);
+	ID3D11Buffer* createVSProjectionConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd);
+	ID3D11Buffer* createPSConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd, UINT offset);
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> createPixelShader(ID3DBlob* blob);
 	Microsoft::WRL::ComPtr<ID3D11VertexShader> createVertexShader(ID3DBlob* blob);
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> createVertexLayout(ID3DBlob* vertexShaderBlob, const D3D11_INPUT_ELEMENT_DESC* ied, UINT size);
@@ -88,6 +88,9 @@ public:
 	void bind(ID3D11VertexShader* vertexShader);
 	void bind(ID3D11PixelShader* pixelShader);
 	void bind(ID3D11InputLayout* inputLayout);
+
+	void getBufferMappedContext(ID3D11Buffer* buffer, D3D11_MAPPED_SUBRESOURCE& subresource);
+	void unmapBuffer(ID3D11Buffer* buffer);
 	
 	/// Binds textures used in Pixel Shader
 	void setInPixelShader(unsigned int slot, unsigned int number, ID3D11ShaderResourceView* texture);

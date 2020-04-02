@@ -17,5 +17,5 @@ public:
 
 	void setViewport(Viewport& viewport);
 
-	void draw(const VertexBuffer* vertexBuffer, const IndexBuffer* indexBuffer, const Material* material) const;
+	void draw(const VertexBuffer* vertexBuffer, const IndexBuffer* indexBuffer, Material* material) const;
 };

@@ -227,35 +227,35 @@ Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createIndexBuffer(D3D11_BU
 	return indexBuffer;
 }
 
-void RenderingDevice::createVSModelConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
+ID3D11Buffer* RenderingDevice::createVSModelConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
 {
 	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &constantBuffer));
 	m_Context->VSSetConstantBuffers(0u, 1u, &constantBuffer);
 }
 
-void RenderingDevice::createVSModelInverseConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
+ID3D11Buffer* RenderingDevice::createVSModelInverseConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
 {
 	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &constantBuffer));
 	m_Context->VSSetConstantBuffers(3u, 1u, &constantBuffer);
 }
 
-void RenderingDevice::createVSViewConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
+ID3D11Buffer* RenderingDevice::createVSViewConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
 {
 	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &constantBuffer));
 	m_Context->VSSetConstantBuffers(1u, 1u, &constantBuffer);
 }
 
-void RenderingDevice::createVSProjectionConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
+ID3D11Buffer* RenderingDevice::createVSProjectionConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
 {
 	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &constantBuffer));
 	m_Context->VSSetConstantBuffers(2u, 1u, &constantBuffer);
 }
 
-void RenderingDevice::createPSConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd, UINT offset)
+ID3D11Buffer* RenderingDevice::createPSConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd, UINT offset)
 {
 	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &constantBuffer));
@@ -326,6 +326,19 @@ void RenderingDevice::bind(ID3D11PixelShader* pixelShader)
 void RenderingDevice::bind(ID3D11InputLayout* inputLayout)
 {
 	m_Context->IASetInputLayout(inputLayout);
+}
+
+//Assuming subresource offset = 0
+void RenderingDevice::getBufferMappedContext(ID3D11Buffer* buffer, D3D11_MAPPED_SUBRESOURCE& subresource)
+{
+	m_Context->Map(buffer, 0u, D3D11_MAP_WRITE_DISCARD, 0u, &subresource);
+}
+
+//Assuming subresource offset = 0
+
+void RenderingDevice::unmapBuffer(ID3D11Buffer* buffer)
+{
+	m_Context->Unmap(buffer, 0);
 }
 
 void RenderingDevice::setInPixelShader(unsigned int slot, unsigned int number, ID3D11ShaderResourceView* texture)

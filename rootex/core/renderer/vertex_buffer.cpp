@@ -7,8 +7,8 @@ VertexBuffer::VertexBuffer(const Vector<VertexData>& buffer)
 {
 	D3D11_BUFFER_DESC vbd = { 0 };
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vbd.Usage = D3D11_USAGE_DEFAULT;
-	vbd.CPUAccessFlags = 0u;
+	vbd.Usage = D3D11_USAGE_DYNAMIC;
+	vbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	vbd.MiscFlags = 0u;
 	vbd.ByteWidth = sizeof(VertexData) * buffer.size();
 	vbd.StructureByteStride = sizeof(VertexData);

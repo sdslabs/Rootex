@@ -1,0 +1,36 @@
+{
+    "Components": {
+        "DiffuseVisualComponent": {
+            "isVisible": true,
+            "renderPass": 5,
+            "resFile": "rootex/assets/cube.obj",
+            "texturePath": "game\\assets\\test\\blue.png"
+        },
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 1
+        },
+        "TransformComponent": {
+            "position": {
+                "x": 0.30000001192092896,
+                "y": 0.0,
+                "z": -6.489999771118164
+            },
+            "rotation": {
+                "w": 0.7899922132492065,
+                "x": 0.0,
+                "y": 0.6131168603897095,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 9.40999984741211,
+                "y": 7.449999809265137,
+                "z": 1.0
+            }
+        }
+    },
+    "Entity": {
+        "ID": 2,
+        "name": "Background"
+    }
+}
