@@ -4,12 +4,11 @@
 #include <vector>
 
 #include "common.h"
-#include "utils.h"
 
 class DxgiDebugInterface
 {
 	unsigned long long next = 0u;
-	IDXGIInfoQueue* pDxgiInfoQueue;
+	Microsoft::WRL::ComPtr<IDXGIInfoQueue> m_DxgiInfoQueue;
 
 	DxgiDebugInterface();
 	DxgiDebugInterface(const DxgiDebugInterface&) = delete;
