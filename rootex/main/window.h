@@ -23,8 +23,9 @@ public:
 	Window(const Window&) = delete;
 	Window& operator=(const Window&) = delete;
 	~Window() = default;
-
+	void static quit(HWND a);
 	void show();
+	
 	std::optional<int> processMessages();
 	void applyDefaultViewport();
 	void swapBuffers();

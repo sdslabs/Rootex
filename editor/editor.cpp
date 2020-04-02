@@ -6,11 +6,14 @@
 #include "framework/components/hierarchy_component.h"
 #include "framework/systems/render_system.h"
 #include "editor_application.h"
-
+#include "rootex/main/window.h"
 #include "imgui_stdlib.h"
 
+static boolean quit = false;
+static HWND a;
 void Editor::initialize(HWND hWnd, const JSON::json& projectJSON)
 {
+	BIND_EVENT_MEMBER_FUNCTION("EditorSaveBeforeQuit", Editor::saveBeforeQuit);
 	BIND_EVENT_MEMBER_FUNCTION("EditorSaveAll", Editor::saveAll);
 	BIND_EVENT_MEMBER_FUNCTION("EditorAutoSave", Editor::autoSave);
 	BIND_EVENT_MEMBER_FUNCTION("EditorOpenLevel", Editor::openLevel);
@@ -103,6 +106,7 @@ void Editor::initialize(HWND hWnd, const JSON::json& projectJSON)
 
 	ImGui_ImplWin32_Init(hWnd);
 	ImGui_ImplDX11_Init(RenderingDevice::GetSingleton()->getDevice(), RenderingDevice::GetSingleton()->getContext());
+	a = hWnd;
 	ImGui::StyleColorsDark();
 }
 
@@ -131,10 +135,6 @@ void Editor::render()
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }
 
-void Editor::quit()
-{
-	PostQuitMessage(0);
-}
 
 Editor::~Editor()
 {
@@ -142,7 +142,7 @@ Editor::~Editor()
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
 }
-
+static String menuAction = "";
 void Editor::drawDefaultUI()
 {
 	static bool optFullscreenPersistant = true;
@@ -185,7 +185,6 @@ void Editor::drawDefaultUI()
 
 		if (ImGui::BeginMenuBar())
 		{
-			static String menuAction = "";
 			if (ImGui::BeginMenu("File"))
 			{
 				if (ImGui::BeginMenu("Create Entity", ProjectManager::GetSingleton()->isAnyLevelOpen()))
@@ -232,7 +231,7 @@ void Editor::drawDefaultUI()
 				ImGui::Separator();
 				if (ImGui::MenuItem("Quit", ""))
 				{
-					quit();
+					menuAction = "Do you want to save?";
 				}
 				ImGui::EndMenu();
 			}
@@ -306,7 +305,38 @@ void Editor::drawDefaultUI()
 			{
 				ImGui::OpenPopup(menuAction.c_str());
 			}
+			if (ImGui::BeginPopupModal("Do you want to save?", 0, ImGuiWindowFlags_AlwaysAutoResize))
+			{
+				ImGui::SetNextWindowSize({ ImGui::GetWindowWidth(), ImGui::GetWindowHeight() });
+				if (ImGui::Button("Save"))
+				{
+					saveAll(nullptr);
+					//ImGui_ImplWin32_Shutdown();
+					//ImGui::DestroyContext();
+					
+					Window::quit(a);
+					//SendMessage();
+					//PostQuitMessage(0);
+				}
+				ImGui::SameLine();
 
+				if (ImGui::Button("Don't Save"))
+				{
+					Window::quit(a);
+					//ImGui_ImplWin32_Shutdown();
+					//ImGui::DestroyContext();
+
+					//PostQuitMessage(0);
+				}
+				ImGui::SameLine();
+
+				if (ImGui::Button("Cancel"))
+				{
+					ImGui::CloseCurrentPopup();
+					menuAction = "";
+				}
+				ImGui::EndPopup();
+			}
 			if (ImGui::BeginPopup("About Rootex Editor"))
 			{
 				ImGui::Text(String("Rootex Engine and Rootex Editor developed by SDSLabs. Built on " + OS::GetBuildDate() + " at " + OS::GetBuildTime() + "\n" + "Source available at https://www.github.com/sdslabs/rootex").c_str());
@@ -420,6 +450,12 @@ Variant Editor::openLevel(const Event* event)
 	ProjectManager::GetSingleton()->openLevel(levelPath);
 	SetWindowText(GetActiveWindow(), ("Rootex Editor: " + ProjectManager::GetSingleton()->getCurrentLevelName()).c_str());
 
+	return true;
+}
+
+Variant Editor::saveBeforeQuit(const Event* event) 
+{
+	menuAction = "Do you want to save?"; 
 	return true;
 }
 
