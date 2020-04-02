@@ -56,7 +56,7 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA, bo
 		ERR("Direct3D Feature Level 11 unsupported.");
 	}
 
-	DXGI_SWAP_CHAIN_DESC sd;
+	DXGI_SWAP_CHAIN_DESC sd = {0};
 	sd.BufferDesc.Width = width;
 	sd.BufferDesc.Height = height;
 	sd.BufferDesc.RefreshRate.Numerator = 60;
@@ -64,10 +64,6 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA, bo
 	sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 	sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-#ifndef ROOTEX_EDITOR
-	sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
-#endif // ROOTEX_EDITOR
-
 
 	m_Device->CheckMultisampleQualityLevels(DXGI_FORMAT_R8G8B8A8_UNORM, 4, &m_4XMSQuality);
 	PANIC(m_4XMSQuality <= 0, "MSAA is not supported on this hardware");
@@ -88,7 +84,7 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA, bo
 	sd.OutputWindow = hWnd;
 	sd.Windowed = true;
 	sd.SwapEffect = DXGI_SWAP_EFFECT::DXGI_SWAP_EFFECT_SEQUENTIAL;
-	sd.Flags = 0;
+	sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
 	IDXGIDevice* dxgiDevice = 0;
 	m_Device->QueryInterface(__uuidof(IDXGIDevice), (void**)&dxgiDevice);
@@ -102,8 +98,6 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA, bo
 	dxgiFactory->CreateSwapChain(m_Device.Get(), &sd, &m_SwapChain);
 
 	m_FullScreen = fullScreen;
-	if (m_FullScreen)
-		toggleScreenState();
 
 	SafeRelease(&dxgiDevice);
 	SafeRelease(&dxgiAdapter);
