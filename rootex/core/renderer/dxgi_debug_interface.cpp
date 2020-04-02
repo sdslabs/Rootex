@@ -8,7 +8,7 @@ DxgiDebugInterface::DxgiDebugInterface()
 {
 	typedef HRESULT(WINAPI * DXGIGetDebugInterface)(REFIID, void**);
 
-	const auto hModDxgiDebug = LoadLibraryEx("dxgidebug.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
+	const HMODULE hModDxgiDebug = LoadLibraryEx("dxgidebug.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
 	if (hModDxgiDebug == nullptr)
 	{
 		ERR("dxgidebug.dll not loaded");
@@ -44,7 +44,7 @@ void DxgiDebugInterface::set() noexcept
 
 void DxgiDebugInterface::getMessages(String file, String func) const
 {
-	const auto end = m_DxgiInfoQueue->GetNumStoredMessages(DXGI_DEBUG_ALL);
+	const unsigned int end = m_DxgiInfoQueue->GetNumStoredMessages(DXGI_DEBUG_ALL);
 	for (auto i = next; i < end; i++)
 	{
 		SIZE_T messageLength = 0;
