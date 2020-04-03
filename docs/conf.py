@@ -41,22 +41,23 @@ extensions = [
 ]
 
 breathe_projects = {
-    "Rootex": "../build/xml"
+    "Rootex": "build/xml"
 }
 breathe_default_project = "Rootex"
 
 exhale_args = {
     # These arguments are required
     "verboseBuild":          True,
-    "containmentFolder":     "./api",
+    "containmentFolder":     "api",
     "rootFileName":          "rootex.rst",
     "rootFileTitle":         "Rootex",
-    "doxygenStripFromPath":  "../../",
+    "doxygenStripFromPath":  "../",
     # Suggested optional arguments
     "createTreeView":        True,
     # TIP: if using the sphinx-bootstrap-theme, you need
     # "treeViewIsBootstrap": True,
-    "exhaleExecutesDoxygen": False
+    "exhaleExecutesDoxygen": True,
+    "exhaleUseDoxyfile":     True
 }
 
 primary_domain = 'cpp'
