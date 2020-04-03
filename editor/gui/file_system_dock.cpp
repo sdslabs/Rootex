@@ -21,7 +21,14 @@ void FileSystemDock::drawFileSystemTree(const FilePath& path)
 			if (ImGui::Selectable(item.filename().string().c_str(), m_OpenedFileName == item.string()))
 			{
 				m_OpenedFileName = item.string();
-				EventManager::GetSingleton()->call("OpenFile", "EditorOpenFile", item);
+				EventManager::GetSingleton()->call("OpenFile", "EditorOpenFile", item.string());
+			}
+		
+			if (ImGui::BeginDragDropSource())
+			{
+				ImGui::SetDragDropPayload("Resource Drop", item.string().c_str(), item.string().size() + 1);
+				ImGui::Text(item.string().c_str());
+				ImGui::EndDragDropSource();
 			}
 		}
 		ImGui::TreePop();
@@ -34,7 +41,7 @@ void FileSystemDock::draw()
 	{
 		if (ImGui::Begin("File System"))
 		{
-			drawFileSystemTree("./");
+			drawFileSystemTree("game/assets/");
 		}
 		ImGui::End();
 	}

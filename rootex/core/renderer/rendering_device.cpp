@@ -96,10 +96,9 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 	dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
 	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 
-	ID3D11DepthStencilState* DSState;
-	GFX_ERR_CHECK(m_Device->CreateDepthStencilState(&dsDesc, &DSState));
-	m_Context->OMSetDepthStencilState(DSState, 1u);
-	SafeRelease(&DSState);
+	GFX_ERR_CHECK(m_Device->CreateDepthStencilState(&dsDesc, &m_DepthStencilState));
+	m_Context->OMSetDepthStencilState(m_DepthStencilState.Get(), 1u);
+	m_StencilRef = 1u;
 
 	ID3D11Texture2D* depthStencil = nullptr;
 	D3D11_TEXTURE2D_DESC descDepth = { 0 };
@@ -145,15 +144,20 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 	rsDesc.MultisampleEnable = MSAA;
 	rsDesc.AntialiasedLineEnable = FALSE;
 
-	ID3D11RasterizerState* rsState;
-	GFX_ERR_CHECK(m_Device->CreateRasterizerState(&rsDesc, &rsState));
-	m_Context->RSSetState(rsState);
-	SafeRelease(&rsState);
+	GFX_ERR_CHECK(m_Device->CreateRasterizerState(&rsDesc, &m_RSState));
+	m_Context->RSSetState(m_RSState.Get());
 
 	setTextureRenderTarget();
+
+	m_FontBatch.reset(new DirectX::SpriteBatch(m_Context.Get()));
 }
 
-ID3DBlob* RenderingDevice::createBlob(LPCWSTR path)
+Ref<DirectX::SpriteFont> RenderingDevice::createFont(FileBuffer* fontFileBuffer)
+{
+	return Ref<DirectX::SpriteFont>(new DirectX::SpriteFont(m_Device.Get(), (const uint8_t*)fontFileBuffer->data(), fontFileBuffer->size()));
+}
+
+Microsoft::WRL::ComPtr<ID3DBlob> RenderingDevice::createBlob(LPCWSTR path)
 {
 	ID3DBlob* pBlob = nullptr;
 	GFX_ERR_CHECK(D3DReadFileToBlob(path, &pBlob));
@@ -175,7 +179,7 @@ void RenderingDevice::createRenderTextureTarget(int width, int height)
 	textureDesc.MipLevels = 1;
 	textureDesc.ArraySize = 1;
 	textureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	textureDesc.SampleDesc.Count = 1;
+	textureDesc.SampleDesc.Count = m_MSAA ? 4 : 1;
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;
 	textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 	textureDesc.CPUAccessFlags = 0;
@@ -191,7 +195,7 @@ void RenderingDevice::createRenderTextureTarget(int width, int height)
 	GFX_ERR_CHECK(m_Device->CreateRenderTargetView(m_RenderTargetTexture.Get(), &renderTargetViewDesc, &m_RenderTargetTextureView));
 
 	shaderResourceViewDesc.Format = textureDesc.Format;
-	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	shaderResourceViewDesc.ViewDimension = m_MSAA ? D3D11_SRV_DIMENSION_TEXTURE2DMS : D3D11_SRV_DIMENSION_TEXTURE2D;
 	shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
 	shaderResourceViewDesc.Texture2D.MipLevels = 1;
 
@@ -217,21 +221,21 @@ void RenderingDevice::disableSkyDepthStencilState()
 	m_Context->OMSetDepthStencilState(m_OldSkyDepthStencilState.Get(), m_StencilRef);
 }
 
-ID3D11Buffer* RenderingDevice::initVertexBuffer(D3D11_BUFFER_DESC* vbd, D3D11_SUBRESOURCE_DATA* vsd, const UINT* stride, const UINT* const offset)
+Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createVertexBuffer(D3D11_BUFFER_DESC* vbd, D3D11_SUBRESOURCE_DATA* vsd, const UINT* stride, const UINT* const offset)
 {
 	ID3D11Buffer* vertexBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(vbd, vsd, &vertexBuffer));
 	return vertexBuffer;
 }
 
-ID3D11Buffer* RenderingDevice::initIndexBuffer(D3D11_BUFFER_DESC* ibd, D3D11_SUBRESOURCE_DATA* isd, DXGI_FORMAT format)
+Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createIndexBuffer(D3D11_BUFFER_DESC* ibd, D3D11_SUBRESOURCE_DATA* isd, DXGI_FORMAT format)
 {
 	ID3D11Buffer* indexBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(ibd, isd, &indexBuffer));
 	return indexBuffer;
 }
 
-void RenderingDevice::initVSModelConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
+void RenderingDevice::createVSModelConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
 {
 	ID3D11Buffer* pConstantBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &pConstantBuffer));
@@ -240,7 +244,7 @@ void RenderingDevice::initVSModelConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SU
 	SafeRelease(&pConstantBuffer);
 }
 
-void RenderingDevice::initVSModelInverseConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
+void RenderingDevice::createVSModelInverseConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
 {
 	ID3D11Buffer* pConstantBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &pConstantBuffer));
@@ -249,7 +253,7 @@ void RenderingDevice::initVSModelInverseConstantBuffer(D3D11_BUFFER_DESC* cbd, D
 	SafeRelease(&pConstantBuffer);
 }
 
-void RenderingDevice::initVSViewConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
+void RenderingDevice::createVSViewConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
 {
 	ID3D11Buffer* pConstantBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &pConstantBuffer));
@@ -258,7 +262,7 @@ void RenderingDevice::initVSViewConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUB
 	SafeRelease(&pConstantBuffer);
 }
 
-void RenderingDevice::initVSProjectionConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
+void RenderingDevice::createVSProjectionConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
 {
 	ID3D11Buffer* pConstantBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &pConstantBuffer));
@@ -267,7 +271,7 @@ void RenderingDevice::initVSProjectionConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D
 	SafeRelease(&pConstantBuffer);
 }
 
-void RenderingDevice::initPSConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd, UINT offset)
+void RenderingDevice::createPSConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd, UINT offset)
 {
 	ID3D11Buffer* pConstantBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &pConstantBuffer));
@@ -276,23 +280,23 @@ void RenderingDevice::initPSConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESO
 	SafeRelease(&pConstantBuffer);
 }
 
-ID3D11PixelShader* RenderingDevice::initPixelShader(ID3DBlob* blob)
+Microsoft::WRL::ComPtr<ID3D11PixelShader> RenderingDevice::createPixelShader(ID3DBlob* blob)
 {
 	ID3D11PixelShader* pixelShader = nullptr;
 	GFX_ERR_CHECK(m_Device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &pixelShader));
 	return pixelShader;
 }
 
-ID3D11VertexShader* RenderingDevice::initVertexShader(ID3DBlob* blob)
+Microsoft::WRL::ComPtr<ID3D11VertexShader> RenderingDevice::createVertexShader(ID3DBlob* blob)
 {
 	ID3D11VertexShader* vertexShader = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &vertexShader));
 	return vertexShader;
 }
 
-void RenderingDevice::initVertexLayout(ID3DBlob* vertexShaderBlob, const D3D11_INPUT_ELEMENT_DESC* ied, UINT size)
+Microsoft::WRL::ComPtr<ID3D11InputLayout> RenderingDevice::createVertexLayout(ID3DBlob* vertexShaderBlob, const D3D11_INPUT_ELEMENT_DESC* ied, UINT size)
 {
-	ID3D11InputLayout* inputLayout = nullptr;
+	Microsoft::WRL::ComPtr<ID3D11InputLayout> inputLayout;
 	GFX_ERR_CHECK(m_Device->CreateInputLayout(
 	    ied, size,
 	    vertexShaderBlob->GetBufferPointer(),
@@ -302,9 +306,9 @@ void RenderingDevice::initVertexLayout(ID3DBlob* vertexShaderBlob, const D3D11_I
 	SafeRelease(&vertexShaderBlob);
 
 	//bind vertex layout
-	m_Context->IASetInputLayout(inputLayout);
+	m_Context->IASetInputLayout(inputLayout.Get());
 
-	SafeRelease(&inputLayout);
+	return inputLayout;
 }
 
 Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::createTexture(ImageResourceFile* imageRes)
@@ -340,6 +344,11 @@ void RenderingDevice::bind(ID3D11PixelShader* pixelShader)
 	m_Context->PSSetShader(pixelShader, nullptr, 0u);
 }
 
+void RenderingDevice::bind(ID3D11InputLayout* inputLayout)
+{
+	m_Context->IASetInputLayout(inputLayout);
+}
+
 void RenderingDevice::setInPixelShader(unsigned int slot, unsigned int number, ID3D11ShaderResourceView* texture)
 {
 	m_Context->PSSetShaderResources(slot, number, &texture);
@@ -356,6 +365,16 @@ void RenderingDevice::unbindShaderResources()
 	m_Context->PSSetShaderResources(0, 1, nullptr);
 }
 
+void RenderingDevice::setRasterizerState()
+{
+	m_Context->RSSetState(m_RSState.Get());
+}
+
+void RenderingDevice::setDepthStencilState()
+{
+	m_Context->OMSetDepthStencilState(m_DepthStencilState.Get(), m_StencilRef);
+}
+
 void RenderingDevice::setTextureRenderTarget()
 {
 	m_Context->OMSetRenderTargets(1, m_RenderTargetTextureView.GetAddressOf(), m_DepthStencilView.Get());
@@ -370,9 +389,14 @@ void RenderingDevice::setBackBufferRenderTarget()
 	m_UnboundRenderTarget = m_RenderTargetTextureView.GetAddressOf();
 }
 
-ID3D11ShaderResourceView* RenderingDevice::getRenderTextureShaderResourceView()
+Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::getRenderTextureShaderResourceView()
 {
-	return m_RenderTextureShaderResourceView.Get();
+	return m_RenderTextureShaderResourceView;
+}
+
+Ref<DirectX::SpriteBatch> RenderingDevice::getUIBatch()
+{
+	return m_FontBatch;
 }
 
 void RenderingDevice::setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY pt)
@@ -414,6 +438,16 @@ Microsoft::WRL::ComPtr<ID3D11SamplerState> RenderingDevice::createSamplerState()
 void RenderingDevice::drawIndexed(UINT number)
 {
 	m_Context->DrawIndexed(number, 0u, 0u);
+}
+
+void RenderingDevice::beginDrawUI()
+{
+	m_FontBatch->Begin();
+}
+
+void RenderingDevice::endDrawUI()
+{
+	m_FontBatch->End();
 }
 
 RenderingDevice* RenderingDevice::GetSingleton()

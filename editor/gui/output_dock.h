@@ -17,7 +17,7 @@ public:
 private:
 	OutputDockSettings m_OutputDockSettings;
 	Vector<Pair<String, String>> m_CaughtOutputs;
-
+	bool m_IsOutputJustCaught = false;
 	Variant catchOutput(const Event* event);
 
 public:

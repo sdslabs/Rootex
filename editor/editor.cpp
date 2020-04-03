@@ -12,7 +12,7 @@
 void Editor::initialize(HWND hWnd, const JSON::json& projectJSON)
 {
 	BIND_EVENT_MEMBER_FUNCTION("EditorSaveAll", Editor::saveAll);
-	BIND_EVENT_MEMBER_FUNCTION("EditorAutosave", Editor::autoSave);
+	BIND_EVENT_MEMBER_FUNCTION("EditorAutoSave", Editor::autoSave);
 	BIND_EVENT_MEMBER_FUNCTION("EditorOpenLevel", Editor::openLevel);
 	BIND_EVENT_MEMBER_FUNCTION("EditorCreateNewLevel", Editor::createNewLevel);
 	BIND_EVENT_MEMBER_FUNCTION("EditorCreateNewEntity", Editor::createNewEntity);
@@ -42,6 +42,12 @@ void Editor::initialize(HWND hWnd, const JSON::json& projectJSON)
 		(float)general["colors"]["background"]["g"],
 		(float)general["colors"]["background"]["b"],
 		(float)general["colors"]["background"]["a"],
+	};
+	m_Colors.m_ItemBackground = {
+		(float)general["colors"]["itemBackground"]["r"],
+		(float)general["colors"]["itemBackground"]["g"],
+		(float)general["colors"]["itemBackground"]["b"],
+		(float)general["colors"]["itemBackground"]["a"],
 	};
 	m_Colors.m_Inactive = {
 		(float)general["colors"]["inactive"]["r"],
@@ -73,6 +79,12 @@ void Editor::initialize(HWND hWnd, const JSON::json& projectJSON)
 		(float)general["colors"]["warning"]["b"],
 		(float)general["colors"]["warning"]["a"],
 	};
+	m_Colors.m_Text = { 
+		(float)general["colors"]["text"]["r"],
+		(float)general["colors"]["text"]["g"],
+		(float)general["colors"]["text"]["b"],
+		(float)general["colors"]["text"]["a"],
+	};
 	m_Colors.m_White = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 	m_FileSystem.reset(new FileSystemDock());
@@ -101,7 +113,6 @@ void Editor::render()
 	ImGui::NewFrame();
 
 	drawDefaultUI();
-
 	m_FileSystem->draw();
 	m_Hierarchy->draw();
     m_Toolbar->draw();
@@ -177,7 +188,7 @@ void Editor::drawDefaultUI()
 			static String menuAction = "";
 			if (ImGui::BeginMenu("File"))
 			{
-				if (ImGui::BeginMenu("Create Entity"))
+				if (ImGui::BeginMenu("Create Entity", ProjectManager::GetSingleton()->isAnyLevelOpen()))
 				{
 					for (auto&& entityClassFile : OS::GetFilesInDirectory("game/assets/classes/"))
 					{
@@ -194,7 +205,7 @@ void Editor::drawDefaultUI()
 				if (ImGui::BeginMenu("Create Level"))
 				{
 					static String newLevelName;
-					ImGui::InputText("Level Name", &newLevelName);
+					ImGui::InputText("Level Name", &newLevelName, ImGuiInputTextFlags_AlwaysInsertMode);
 					ImGui::SameLine();
 					if (ImGui::Button("Create"))
 					{
@@ -225,6 +236,29 @@ void Editor::drawDefaultUI()
 				}
 				ImGui::EndMenu();
 			}
+			if (ImGui::BeginMenu("Assets"))
+			{
+				if (ImGui::MenuItem("Build Fonts"))
+				{
+					PRINT("Building fonts...");
+					OS::Execute("start \"\" \"" + OS::GetAbsolutePath("build_fonts.bat").string() + "\"");
+					PRINT("Built fonts");
+				}
+				if (ImGui::BeginMenu("Library"))
+				{
+					for (auto&& fileType : ResourceLoader::GetAllFiles())
+					{
+						for (auto&& file : fileType.second)
+						{
+							ImGui::SetNextItemWidth(file->getPath().string().size() * 8);
+							ImGui::LabelText(std::to_string((int)file->getType()).c_str(), file->getPath().string().c_str());
+						}
+					}
+
+					ImGui::EndMenu();
+				}
+				ImGui::EndMenu();
+			}
 			if (ImGui::BeginMenu("View"))
 			{
 				if (ImGui::BeginMenu("Windows"))
@@ -232,6 +266,7 @@ void Editor::drawDefaultUI()
 					ImGui::Checkbox("Toolbar", &m_Toolbar->getSettings().m_IsActive);
 					ImGui::Checkbox("Output", &m_Output->getSettings().m_IsActive);
 					ImGui::Checkbox("Hierarchy", &m_Hierarchy->getSettings().m_IsActive);
+					ImGui::Checkbox("Entities", &m_Hierarchy->getSettings().m_IsEntitiesDockActive);
 					ImGui::Checkbox("Viewport", &m_Viewport->getSettings().m_IsActive);
 					ImGui::Checkbox("File System", &m_FileSystem->getSettings().m_IsActive);
 					ImGui::Checkbox("Inspector", &m_Inspector->getSettings().m_IsActive);
@@ -253,9 +288,16 @@ void Editor::drawDefaultUI()
 				{
 					menuAction = "About Rootex Editor";
 				}
-				if (ImGui::MenuItem("Open Source Licenses"))
+				if (ImGui::BeginMenu("Open Source Licenses"))
 				{
-					menuAction = "Open Source Licenses";
+					for (auto&& library : ProjectManager::GetSingleton()->getLibrariesPaths())
+					{
+						if (ImGui::MenuItem(library.filename().string().c_str(), ""))
+						{
+							menuAction = library.string();
+						}
+					}
+					ImGui::EndMenu();
 				}
 				ImGui::EndMenu();
 			}
@@ -280,58 +322,17 @@ void Editor::drawDefaultUI()
 				ImGui::Text("To be added");
 				ImGui::EndPopup();
 			}
-			if (ImGui::BeginPopup("Open Source Licenses"))
+			
+			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
+			for (auto&& library : ProjectManager::GetSingleton()->getLibrariesPaths())
 			{
-				ImGui::BulletText("Bullet3D");
-				ImGui::NewLine();
-				static TextResourceFile* bulletLicense = ResourceLoader::CreateLuaTextResourceFile("rootex/vendor/Bullet3D/LICENSE.txt");
-				ImGui::Text(bulletLicense->getData()->getRawData()->data());
-				ImGui::Separator();
-
-				ImGui::BulletText("DirectXTK");
-				ImGui::NewLine();
-				static TextResourceFile* directXTKLicense = ResourceLoader::CreateLuaTextResourceFile("rootex/vendor/DirectXTK/LICENSE");
-				ImGui::Text(directXTKLicense->getData()->getRawData()->data());
-				ImGui::Separator();
-
-				ImGui::BulletText("Gainput");
-				ImGui::NewLine();
-				static TextResourceFile* gainputLicense = ResourceLoader::CreateLuaTextResourceFile("rootex/vendor/Gainput/LICENSE");
-				ImGui::Text(gainputLicense->getData()->getRawData()->data());
-				ImGui::Separator();
-
-				ImGui::BulletText("Dear ImGui");
-				ImGui::NewLine();
-				static TextResourceFile* imGuiLicense = ResourceLoader::CreateLuaTextResourceFile("rootex/vendor/ImGUI/LICENSE.txt");
-				ImGui::Text(imGuiLicense->getData()->getRawData()->data());
-				ImGui::Separator();
-
-				ImGui::BulletText("Lua C API");
-				ImGui::NewLine();
-				static TextResourceFile* luaCAPILicense = ResourceLoader::CreateLuaTextResourceFile("rootex/vendor/Lua/LICENSE.txt");
-				ImGui::Text(luaCAPILicense->getData()->getRawData()->data());
-				ImGui::Separator();
-
-				ImGui::BulletText("LuaBridge");
-				ImGui::NewLine();
-				static TextResourceFile* luaBridgeLicense = ResourceLoader::CreateLuaTextResourceFile("rootex/vendor/LuaBridge/LICENSE.txt");
-				ImGui::Text(luaBridgeLicense->getData()->getRawData()->data());
-				ImGui::Separator();
-
-				ImGui::BulletText("OBJLoader");
-				ImGui::NewLine();
-				static TextResourceFile* objLoaderLicense = ResourceLoader::CreateLuaTextResourceFile("rootex/vendor/OBJLoader/License.txt");
-				ImGui::Text(objLoaderLicense->getData()->getRawData()->data());
-				ImGui::Separator();
-
-				ImGui::BulletText("ALUT");
-				ImGui::NewLine();
-				static TextResourceFile* alutLicense = ResourceLoader::CreateLuaTextResourceFile("rootex/vendor/OpenAL/COPYING.txt");
-				ImGui::Text(alutLicense->getData()->getRawData()->data());
-				ImGui::Separator();
-
-				menuAction = "";
-				ImGui::EndPopup();
+				if (ImGui::BeginPopup(library.string().c_str(), ImGuiWindowFlags_AlwaysAutoResize))
+				{
+					TextResourceFile* license = ResourceLoader::CreateLuaTextResourceFile(library.string() + "/LICENSE");
+					ImGui::Text(license->getData()->getRawData()->data());
+					menuAction = "";
+					ImGui::EndPopup();
+				}
 			}
 			ImGui::EndMenuBar();
 		}
@@ -344,12 +345,11 @@ void Editor::pushEditorStyleColors()
 	// Every line in this function body should push a style color
 	static const int starting = __LINE__;
 	ImGui::PushStyleColor(ImGuiCol_DockingPreview, m_Colors.m_Accent);
-	ImGui::PushStyleColor(ImGuiCol_DockingEmptyBg, m_Colors.m_MediumAccent);
+	ImGui::PushStyleColor(ImGuiCol_DockingEmptyBg, m_Colors.m_Background);
 	ImGui::PushStyleColor(ImGuiCol_Separator, m_Colors.m_HeavyAccent);
 	ImGui::PushStyleColor(ImGuiCol_SeparatorActive, m_Colors.m_Accent);
 	ImGui::PushStyleColor(ImGuiCol_SeparatorHovered, m_Colors.m_MediumAccent);
-	ImGui::PushStyleColor(ImGuiCol_BorderShadow, m_Colors.m_HeavyAccent);
-	ImGui::PushStyleColor(ImGuiCol_FrameBg, m_Colors.m_HeavyAccent);
+	ImGui::PushStyleColor(ImGuiCol_FrameBg, m_Colors.m_ItemBackground);
 	ImGui::PushStyleColor(ImGuiCol_FrameBgActive, m_Colors.m_MediumAccent);
 	ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, m_Colors.m_HeavyAccent);
 	ImGui::PushStyleColor(ImGuiCol_TitleBg, m_Colors.m_HeavyAccent);
@@ -365,11 +365,13 @@ void Editor::pushEditorStyleColors()
 	ImGui::PushStyleColor(ImGuiCol_TabHovered, m_Colors.m_Accent);
 	ImGui::PushStyleColor(ImGuiCol_TabUnfocused, m_Colors.m_MediumAccent);
 	ImGui::PushStyleColor(ImGuiCol_TabUnfocusedActive, m_Colors.m_Accent);
-	ImGui::PushStyleColor(ImGuiCol_Border, m_Colors.m_HeavyAccent);
+	ImGui::PushStyleColor(ImGuiCol_Border, m_Colors.m_MediumAccent);
+	ImGui::PushStyleColor(ImGuiCol_BorderShadow, m_Colors.m_HeavyAccent);
 	ImGui::PushStyleColor(ImGuiCol_Button, m_Colors.m_Success);
 	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, m_Colors.m_Accent);
 	ImGui::PushStyleColor(ImGuiCol_ButtonActive, m_Colors.m_Success);
 	ImGui::PushStyleColor(ImGuiCol_CheckMark, m_Colors.m_Accent);
+	ImGui::PushStyleColor(ImGuiCol_Text, m_Colors.m_Text);
 	ImGui::PushStyleColor(ImGuiCol_TextSelectedBg, m_Colors.m_Accent);
 	ImGui::PushStyleColor(ImGuiCol_TextDisabled, m_Colors.m_Inactive);
 	ImGui::PushStyleColor(ImGuiCol_ResizeGrip, m_Colors.m_HeavyAccent);
@@ -395,9 +397,8 @@ Variant Editor::saveAll(const Event* event)
 {
 	if (ProjectManager::GetSingleton()->isAnyLevelOpen())
 	{
-		PRINT("Saving level: " + ProjectManager::GetSingleton()->getCurrentLevelName());
 		ProjectManager::GetSingleton()->saveCurrentLevel();
-		PRINT("Successfully saved " + std::to_string(EntityFactory::GetSingleton()->getEntities().size()) + " entities");
+		PRINT("Successfully saved level: " + ProjectManager::GetSingleton()->getCurrentLevelName());
 	}
 	else
 	{
@@ -408,7 +409,7 @@ Variant Editor::saveAll(const Event* event)
 
 Variant Editor::autoSave(const Event* event)
 {
-	PRINT("Autosaving entities...");
+	PRINT("Auto-saving entities...");
 	saveAll(nullptr);
 	return true;
 }
@@ -416,8 +417,8 @@ Variant Editor::autoSave(const Event* event)
 Variant Editor::openLevel(const Event* event)
 {
 	String levelPath(Extract(String, event->getData()));
-
 	ProjectManager::GetSingleton()->openLevel(levelPath);
+	SetWindowText(GetActiveWindow(), ("Rootex Editor: " + ProjectManager::GetSingleton()->getCurrentLevelName()).c_str());
 
 	return true;
 }
@@ -425,11 +426,14 @@ Variant Editor::openLevel(const Event* event)
 Variant Editor::createNewLevel(const Event* event)
 {
 	const String& newLevelName = Extract(String, event->getData());
-	PRINT("Creating new level: " + newLevelName);
 
-	OS::CreateDirectoryName("game/assets/levels/" + newLevelName);
-	
-	PRINT("Created new level: " + "game/assets/levels/" + newLevelName);
+	if (OS::IsExists("game/assets/levels/" + newLevelName))
+	{
+		WARN("Found a level with the same name: " + newLevelName);
+		return true;
+	}
+
+	ProjectManager::GetSingleton()->createLevel(newLevelName);
 
 	return true;
 }

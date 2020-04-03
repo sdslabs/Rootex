@@ -51,12 +51,11 @@ public:
 	Ref<TransformComponent> m_TransformComponent;
 	bool setup() override;
 
-	Matrix transform;
+	Matrix m_Transform;
 	btScalar m_Mass;
-	btVector3 localInertia;
+	btVector3 m_LocalInertia;
 	float m_SpecificGravity;
 	float m_Volume;
-	LuaTextResourceFile* physicsMaterial;
 	std::string m_MaterialName;
 
 	void applyForce(const Vector3 force);

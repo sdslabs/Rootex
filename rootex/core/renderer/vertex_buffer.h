@@ -7,11 +7,10 @@
 
 class VertexBuffer
 {
-	ID3D11Buffer* m_VertexBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> m_VertexBuffer;
 	Vector<VertexData> m_Buffer;
 
 public:
-	VertexBuffer();
 	VertexBuffer(const Vector<VertexData>& buffer);
 	~VertexBuffer();
 

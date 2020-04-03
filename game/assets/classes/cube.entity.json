@@ -27,12 +27,14 @@
 		},
 		"VisualComponent": {
 			"resFile": "game/assets/test/cube.obj",
+			"renderPass": 1,
 			"color": {
 				"r": 0.2,
 				"g": 1.0,
 				"b": 0.2,
 				"a": 1.0
-			}
+			},
+			"isVisible": true
 		}
 	}
 }

@@ -16,6 +16,8 @@ private:
 
 	InspectorSettings m_InspectorSettings;
 	Ref<Entity> m_OpenedEntity;
+	String m_OpenedEntityName;
+	bool m_IsNameBeingEdited;
 	Vector<Tuple<ComponentID, String, bool>> m_AddNewComponentSelectionCache;
 	
 	Variant openEntity(const Event* event);

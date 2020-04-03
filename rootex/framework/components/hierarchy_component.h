@@ -13,13 +13,12 @@ protected:
 	EntityID m_ParentID;
 	Vector<EntityID> m_ChildrenIDs;
 
-	Vector<Ref<Entity>> m_Children;
-	Ref<Entity> m_Parent;
+	Vector<HierarchyComponent*> m_Children;
+	HierarchyComponent* m_Parent;
 
 	friend class EntityFactory;
 	friend class HierarchySystem;
-	friend class RootHierarchyComponent;
-
+	
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::HierarchyComponent;
 
@@ -27,12 +26,17 @@ public:
 	HierarchyComponent(HierarchyComponent&) = delete;
 	virtual ~HierarchyComponent() = default;
 	
+	void onRemove() override;
+
 	virtual bool addChild(Ref<Entity> child);
 	virtual bool removeChild(Ref<Entity> node);
+	virtual bool snatchChild(Ref<Entity> node);
+	void clear();
 
 	virtual String getName() const override { return "HierarchyComponent"; }
 	ComponentID getComponentID() const { return s_ID; }
-	const Vector<Ref<Entity>>& getChildren() const { return m_Children; }
+	HierarchyComponent* getParent() const { return m_Parent; }
+	const Vector<HierarchyComponent*>& getChildren() const { return m_Children; }
 	virtual JSON::json getJSON() const override;
 
 #ifdef ROOTEX_EDITOR

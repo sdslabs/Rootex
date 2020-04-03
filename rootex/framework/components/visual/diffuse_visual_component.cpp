@@ -16,7 +16,7 @@ Component* DiffuseVisualComponent::Create(const JSON::json& componentData)
 	Ref<DiffuseMaterial> material(new DiffuseMaterial(texture));
 
 	VisualModelResourceFile* vmr = ResourceLoader::CreateVisualModelResourceFile(componentData["resFile"]);
-	DiffuseVisualComponent* diffuseComponent = new DiffuseVisualComponent(RenderPass::Global, material, vmr, imageRes, texture.get());
+	DiffuseVisualComponent* diffuseComponent = new DiffuseVisualComponent(componentData["renderPass"], material, vmr, imageRes, texture.get(), componentData["isVisible"]);
 
 	return diffuseComponent;
 }
@@ -29,13 +29,13 @@ Component* DiffuseVisualComponent::CreateDefault()
 	Ref<DiffuseMaterial> material(new DiffuseMaterial(texture));
 
 	VisualModelResourceFile* vmr = ResourceLoader::CreateVisualModelResourceFile("rootex/assets/cube.obj");
-	DiffuseVisualComponent* diffuseComponent = new DiffuseVisualComponent(RenderPass::Global, material, vmr, imageRes, texture.get());
+	DiffuseVisualComponent* diffuseComponent = new DiffuseVisualComponent(RenderPassMain | RenderPassEditor, material, vmr, imageRes, texture.get(), true);
 
 	return diffuseComponent;
 }
 
-DiffuseVisualComponent::DiffuseVisualComponent(RenderPass renderPass, Ref<DiffuseMaterial> material, VisualModelResourceFile* resFile, ImageResourceFile* imageRes, Texture* texture)
-    : VisualComponent(renderPass, material, resFile)
+DiffuseVisualComponent::DiffuseVisualComponent(const unsigned int& renderPass, Ref<DiffuseMaterial> material, VisualModelResourceFile* resFile, ImageResourceFile* imageRes, Texture* texture, bool visibility)
+    : VisualComponent(renderPass, material, resFile, visibility)
     , m_ImageFile(imageRes)
 {
 #ifdef ROOTEX_EDITOR
@@ -47,7 +47,7 @@ DiffuseVisualComponent::~DiffuseVisualComponent()
 {
 }
 
-bool DiffuseVisualComponent::preRender(HierarchyGraph* graph)
+bool DiffuseVisualComponent::preRender()
 {
 	if (m_Attributes.m_TransformComponent)
 	{
@@ -71,8 +71,17 @@ JSON::json DiffuseVisualComponent::getJSON() const
 
 	j["texturePath"] = m_ImageFile->getPath().string();
 	j["resFile"] = m_Attributes.m_VisualModelResourceFile->getPath().string();
+	j["renderPass"] = m_Attributes.m_RenderPassSetting;
+	j["isVisible"] = m_IsVisible;
 
 	return j;
+}
+
+void DiffuseVisualComponent::setTexture(ImageResourceFile* image)
+{
+	Ref<Texture> texture(new Texture(image));
+	m_Attributes.m_Material.reset(new DiffuseMaterial(texture));
+	m_ImageFile = image;
 }
 
 #ifdef ROOTEX_EDITOR
@@ -80,32 +89,35 @@ JSON::json DiffuseVisualComponent::getJSON() const
 #include "imgui_stdlib.h"
 void DiffuseVisualComponent::draw()
 {
-	if (ImGui::InputText("Visual Model", &m_ModelPathUI, ImGuiInputTextFlags_EnterReturnsTrue))
-	{
-		VisualModelResourceFile* model = ResourceLoader::CreateVisualModelResourceFile(m_ModelPathUI);
-		if (model)
-		{
-			m_Attributes.m_VisualModelResourceFile = model;
-		}
-		else
-		{
-			m_ModelPathUI = m_Attributes.m_VisualModelResourceFile->getPath().string();
-		}
-	}
+	VisualComponent::draw();
 	
+	m_ImagePathUI = m_ImageFile->getPath().string();
 	if (ImGui::InputText("Texture", &m_ImagePathUI, ImGuiInputTextFlags_EnterReturnsTrue))
 	{
 		ImageResourceFile* image = ResourceLoader::CreateImageResourceFile(m_ImagePathUI);
 		if (image)
 		{
-			Ref<Texture> texture(new Texture(image));
-			m_Attributes.m_Material.reset(new DiffuseMaterial(texture));
-			m_ImageFile = image;
+			setTexture(image);
 		}
-		else
+	}
+
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Resource Drop"))
 		{
-			m_ImagePathUI = m_ImageFile->getPath().string();
+			const char* payloadFileName = (const char*)payload->Data;
+			FilePath payloadPath(payloadFileName);
+			FilePath ext = payloadPath.extension();
+			if (ext == ".jpg" || ext == ".png" || ext == ".jpeg")
+			{
+				setTexture(ResourceLoader::CreateImageResourceFile(payloadPath.string()));
+			}
+			else
+			{
+				WARN("Cannot assign a non-image file to Diffuse Visual Texture");
+			}
 		}
+		ImGui::EndDragDropTarget();
 	}
 }
 #endif // ROOTEX_EDITOR

@@ -11,6 +11,8 @@
 typedef Component* (*ComponentCreator)(const JSON::json& componentDescription);
 typedef Component* (*ComponentDefaultCreator)();
 typedef unsigned int EntityID;
+typedef Vector<Tuple<ComponentID, String, ComponentCreator>> ComponentDatabase;
+typedef Vector<Tuple<ComponentID, String, ComponentDefaultCreator>> DefaultComponentDatabase;
 
 class EntityFactory
 {
@@ -21,9 +23,7 @@ class EntityFactory
 	EntityID getNextID();
 
 protected:
-	typedef Vector<Tuple<ComponentID, String, ComponentCreator>> ComponentDatabase;
 	ComponentDatabase m_ComponentCreators;
-	typedef Vector<Tuple<ComponentID, String, ComponentDefaultCreator>> DefaultComponentDatabase;
 	DefaultComponentDatabase m_DefaultComponentCreators;
 
 	EntityFactory();
@@ -32,6 +32,8 @@ protected:
 
 	Ref<Entity> createRootEntity();
 	friend class HierarchyGraph;
+
+	Variant deleteEntityEvent(const Event* event);
 
 public:
 	static EntityFactory* GetSingleton();
@@ -44,6 +46,7 @@ public:
 	void addDefaultComponent(Ref<Entity> entity, String componentName);
 	void addComponent(Ref<Entity> entity, Ref<Component> component);
 	void destroyEntities(bool saveRoot);
+	void deleteEntity(Ref<Entity> entity);
 
 	const ComponentDatabase& getComponentDatabase() const { return m_ComponentCreators; }
 	const HashMap<EntityID, Ref<Entity>>& getEntities() const { return m_Entities; }

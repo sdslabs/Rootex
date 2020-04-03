@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common/types.h"
+#include "common/common.h"
 #include "os/os.h"
 
 #define KB_TO_B (1024.0f)

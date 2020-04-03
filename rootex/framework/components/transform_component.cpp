@@ -3,6 +3,8 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
+#include "entity.h"
+
 Component* TransformComponent::Create(const JSON::json& componentData)
 {
 	TransformComponent* transformComponent = new TransformComponent(

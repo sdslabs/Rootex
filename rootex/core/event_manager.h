@@ -21,7 +21,7 @@ EventHandlingFunction CreateDelegate(Functor f)
 class EventManager
 {
 	typedef Vector<EventHandlingFunction> EventListenerList;
-	typedef Map<Event::Type, EventListenerList> EventListenerMap;
+	typedef HashMap<Event::Type, EventListenerList> EventListenerMap;
 	typedef Vector<Ref<Event>> EventQueue;
 
 	EventListenerMap m_EventListeners;
@@ -39,11 +39,18 @@ public:
 		Infinite = 0xffffffff
 	};
 
+	bool addEvent(const Event::Type& event);
+	void removeEvent(const Event::Type& event);
 	bool addListener(const Event::Type& type, EventHandlingFunction instance);
 	bool removeListener(const EventHandlingFunction handlerName, const Event::Type& type);
 
+	Variant returnCall(const Event& event);
 	Variant returnCall(const String& eventName, const Event::Type& eventType, const Variant& data);
+	void call(const Event& event);
 	void call(const String& eventName, const Event::Type& eventType, const Variant& data);
+	void deferredCall(Ref<Event> event);
 	void deferredCall(const String& eventName, const Event::Type& eventType, const Variant& data);
 	bool dispatchDeferred(unsigned long maxMillis = Infinite);
+
+	const EventListenerMap& getRegisteredEvents() const { return m_EventListeners; }
 };
