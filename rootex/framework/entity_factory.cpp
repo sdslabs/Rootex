@@ -17,7 +17,9 @@
 #include "components/visual/directional_light_component.h"
 #include "components/visual/spot_light_component.h"
 #include "components/physics/sphere_component.h"
-#include "components/physics/sphere_component.h"
+#include "components/physics/box_component.h"
+#include "components/music_component.h"
+#include "components/short_music_component.h"
 
 #define REGISTER_COMPONENT(ComponentClass) \
 m_ComponentCreators.push_back({ ComponentClass::s_ID, #ComponentClass, ComponentClass::Create }); \
@@ -47,6 +49,7 @@ EntityFactory::EntityFactory()
 	REGISTER_COMPONENT(DirectionalLightComponent);
 	REGISTER_COMPONENT(SpotLightComponent);
 	REGISTER_COMPONENT(SphereComponent);
+	REGISTER_COMPONENT(BoxComponent);
 	REGISTER_COMPONENT(HierarchyComponent);
 	REGISTER_COMPONENT(RootHierarchyComponent);
 }
