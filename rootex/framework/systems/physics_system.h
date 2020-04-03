@@ -23,6 +23,9 @@ class PhysicsSystem : public System
 	Ptr<btDefaultCollisionConfiguration> m_CollisionConfiguration;
 
 	sol::table m_PhysicsMaterialTable;
+	btVector3 m_Start;
+	btVector3 m_End;
+	btVector3 m_Normal;
 
 	PhysicsSystem() = default;
 
@@ -32,10 +35,11 @@ public:
 
 	void addRigidBody(btRigidBody* body);
 	sol::table getPhysicsMaterial();
+	bool castRays(btVector3 &start, btVector3 &end, btVector3 &normal);
 
 	// Initialization and Maintenance of the Physics World
 	void initialize();
-	
+
 	// callback from bullet for each physics time step.
 	static void internalTickCallback(btDynamicsWorld* const world, btScalar const timeStep);
 

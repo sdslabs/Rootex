@@ -3,6 +3,8 @@
 #include "components/physics/physics_component.h"
 #include "core/resource_loader.h"
 
+#include "BulletCollision/NarrowPhaseCollision/btRaycastCallback.h"
+
 PhysicsSystem* PhysicsSystem::GetSingleton()
 {
 	static PhysicsSystem singleton;
@@ -52,6 +54,22 @@ void PhysicsSystem::addRigidBody(btRigidBody* body)
 sol::table PhysicsSystem::getPhysicsMaterial()
 {
 	return m_PhysicsMaterialTable;
+}
+
+bool PhysicsSystem::castRays(btVector3 &start, btVector3 &end, btVector3 &normal)
+{
+	if (m_DynamicsWorld)
+	{
+		btCollisionWorld::AllHitsRayResultCallback allResults(start, end);
+		allResults.m_flags |= btTriangleRaycastCallback::kF_UseSubSimplexConvexCastRaytest;
+
+		m_DynamicsWorld->rayTest(start, end, allResults);
+
+		if (allResults.hasHit)
+			return true;
+		else
+			return false;
+	}
 }
 
 // This function is called after bullet performs its internal update.
