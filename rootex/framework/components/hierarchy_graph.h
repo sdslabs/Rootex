@@ -2,13 +2,13 @@
 
 #include "common/common.h"
 #include "entity_factory.h"
-#include "framework/components/root_hierarchy_component.h"
+#include "components/hierarchy_component.h"
 
 class HierarchyGraph
 {
 protected:
 	Ref<Entity> m_Root;
-	Ref<RootHierarchyComponent> m_RootHierarchyComponent;
+	Ref<HierarchyComponent> m_RootHierarchyComponent;
 
 public:
 	HierarchyGraph();
@@ -19,5 +19,5 @@ public:
 	bool removeChild(Ref<Entity> child);
 
 	Ref<Entity> getRootEntity() const { return m_Root; }
-	Ref<RootHierarchyComponent> getRootHierarchyComponent() const { return m_RootHierarchyComponent; }
+	Ref<HierarchyComponent> getRootHierarchyComponent() const { return m_RootHierarchyComponent; }
 };

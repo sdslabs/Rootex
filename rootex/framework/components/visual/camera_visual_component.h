@@ -19,11 +19,11 @@ public:
 	CameraVisualComponent(CameraVisualComponent&) = delete;
 	~CameraVisualComponent();
 
-	virtual bool preRender(HierarchyGraph* visualComponentGraph) override;
-	virtual void render(HierarchyGraph* visualComponentGraph) override;
+	virtual bool preRender() override;
+	virtual void render() override;
 	virtual bool reset(HierarchyGraph* visualComponentGraph, int windowWidth, int windowHeight);
-	virtual bool isVisible(HierarchyGraph* visualComponentGraph) const override;
-	virtual void postRender(HierarchyGraph* visualComponentGraph) override;
+	virtual bool isVisible() const override;
+	virtual void postRender() override;
 
 	virtual void setViewTransform(const Matrix& view);
 	void setPosition(Vector3 position);

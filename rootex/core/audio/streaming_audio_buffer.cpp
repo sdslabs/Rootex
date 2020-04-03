@@ -1,12 +1,12 @@
 #include "streaming_audio_buffer.h"
 
-#include "audio_system.h"
+#include "framework/systems/audio_system.h"
 #include "resource_data.h"
 #include "resource_file.h"
 
 void StreamingAudioBuffer::initializeBuffers()
 {
-	PANIC(m_AudioFile->getType() != ResourceFile::Type::WAV, "AudioSystem: Trying to load a non-WAV file in a sound buffer");
+	PANIC(m_AudioFile->getType() != ResourceFile::Type::Wav, "AudioSystem: Trying to load a non-WAV file in a sound buffer");
 
 	ResourceData* fileStream = m_AudioFile->getData();
 	FileBuffer* fileBuffer = fileStream->getRawData();

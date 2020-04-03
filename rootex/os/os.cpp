@@ -8,7 +8,7 @@
 #include "resource_data.h"
 
 #ifdef ROOTEX_EDITOR
-#include"event_manager.h"
+#include "event_manager.h"
 #endif // ROOTEX_EDITOR
 
 std::filesystem::file_time_type::clock OS::s_FileSystemClock;
@@ -51,6 +51,24 @@ Vector<FilePath> OS::GetDirectoriesInDirectory(const String& directory)
 		}
 	}
 	return result;
+}
+
+bool OS::DeleteDirectory(const String& dirPath)
+{
+	bool status = std::filesystem::remove_all(GetAbsolutePath(dirPath));
+
+	if (status)
+	{
+		PRINT("Deleted directory: " + dirPath);
+	}
+
+	return status;
+}
+
+void OS::Rename(const String& sourcePath, const String& destinationPath)
+{
+	std::filesystem::rename(GetAbsolutePath(sourcePath), GetAbsolutePath(destinationPath));
+	PRINT("Renamed " + sourcePath + " to " + destinationPath);
 }
 
 Vector<FilePath> OS::GetAllInDirectory(const String& directory)
@@ -105,6 +123,13 @@ bool OS::Initialize()
 		s_RootDirectory = path;
 		s_GameDirectory = path / GAME_DIRECTORY;
 		s_EngineDirectory = path / ENGINE_DIRECTORY;
+
+		if (!SetCurrentDirectory(s_RootDirectory.string().c_str()))
+		{
+			ERR("SetCurrentDirectory failed (%d)\n");
+			Print((unsigned int)GetLastError());
+			return false;
+		}
 	}
 	catch (std::exception e)
 	{
@@ -137,7 +162,6 @@ String OS::GetBuildType()
 #else
 	return "Release";
 #endif // DEBUG
-
 }
 
 String OS::GetGameExecutablePath()
@@ -165,14 +189,8 @@ void OS::CreateDirectoryName(const String& dirPath)
 		return;
 	}
 
-	if (std::filesystem::create_directories(path))
-	{
-		PRINT("Created directory: " + path.string());
-	}
-	else
-	{
-		WARN("Could not create directory: " + path.string());
-	}
+	std::filesystem::create_directories(path);
+	PRINT("Created directory: " + path.string());
 }
 
 InputOutputFileStream OS::CreateFileName(const String& filePath)
