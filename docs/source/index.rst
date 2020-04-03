@@ -7,8 +7,12 @@ Welcome to Rootex's documentation!
 ==================================
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+    :maxdepth: 2
+
+    about
+    api/rootex
+   
+    :caption: Contents:
 
 Rootex is a 3D multithreaded game engine written in C++ and powers an in-production game being developed at SDSLabs.
 
