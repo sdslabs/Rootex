@@ -121,8 +121,9 @@ void CPUParticlesVisualComponent::render()
 		Color color = Color::Lerp(particle.m_ColorEnd, particle.m_ColorBegin, life);
 
 		RenderSystem::GetSingleton()->pushMatrix(Matrix::CreateScale(size) * Matrix::CreateFromQuaternion(particle.m_Rotation) * Matrix::CreateTranslation(particle.m_Position) * Matrix::Identity);
-		getMaterial()->setShaderConstantBuffer(Shader::VertexConstantBufferType::Model, RenderSystem::GetSingleton()->getTopMatrix());
-		getMaterial()->setShaderConstantBuffer(PSSolidConstantBuffer({ color }));
+		CPUParticlesMaterial* material = reinterpret_cast<CPUParticlesMaterial*>(getMaterial());
+		material->setVertexShaderConstantBuffer(Material::VertexConstantBufferType::Model, RenderSystem::GetSingleton()->getTopMatrix());
+		material->setPixelShaderConstantBuffer(PSSolidConstantBuffer({ color }));
 		RenderSystem::GetSingleton()->getRenderer()->draw(m_VisualModelResourceFile->getVertexBuffer(), m_VisualModelResourceFile->getIndexBuffer(), getMaterial());
 		RenderSystem::GetSingleton()->popMatrix();
 	}

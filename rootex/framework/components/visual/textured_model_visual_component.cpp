@@ -13,7 +13,7 @@ Component* TexturedModelVisualComponent::Create(const JSON::json& componentData)
 	ImageResourceFile* imageRes = ResourceLoader::CreateImageResourceFile(componentData["texturePath"]);
 	Ref<Texture> texture(new Texture(imageRes));
 
-	Ref<TexturedMaterial> material(new TexturedMaterial(texture));
+	Ref<DiffuseMaterial> material(new DiffuseMaterial(texture));
 
 	VisualModelResourceFile* vmr = ResourceLoader::CreateVisualModelResourceFile(componentData["resFile"]);
 	TexturedModelVisualComponent* diffuseComponent = new TexturedModelVisualComponent(componentData["renderPass"], material, vmr, imageRes, texture.get(), componentData["isVisible"]);
@@ -26,7 +26,7 @@ Component* TexturedModelVisualComponent::CreateDefault()
 	ImageResourceFile* imageRes = ResourceLoader::CreateImageResourceFile("rootex/assets/rootex.png");
 	Ref<Texture> texture(new Texture(imageRes));
 
-	Ref<TexturedMaterial> material(new TexturedMaterial(texture));
+	Ref<DiffuseMaterial> material(new DiffuseMaterial(texture));
 
 	VisualModelResourceFile* vmr = ResourceLoader::CreateVisualModelResourceFile("rootex/assets/cube.obj");
 	TexturedModelVisualComponent* diffuseComponent = new TexturedModelVisualComponent(RenderPassMain | RenderPassEditor, material, vmr, imageRes, texture.get(), true);
@@ -34,7 +34,7 @@ Component* TexturedModelVisualComponent::CreateDefault()
 	return diffuseComponent;
 }
 
-TexturedModelVisualComponent::TexturedModelVisualComponent(const unsigned int& renderPass, Ref<TexturedMaterial> material, VisualModelResourceFile* resFile, ImageResourceFile* imageRes, Texture* texture, bool visibility)
+TexturedModelVisualComponent::TexturedModelVisualComponent(const unsigned int& renderPass, Ref<DiffuseMaterial> material, VisualModelResourceFile* resFile, ImageResourceFile* imageRes, Texture* texture, bool visibility)
     : ModelVisualComponent(renderPass, material, resFile, visibility)
     , m_ImageFile(imageRes)
 {
@@ -53,14 +53,14 @@ bool TexturedModelVisualComponent::preRender()
 	{
 		RenderSystem::GetSingleton()->pushMatrix(getTransform());
 		m_TransformComponent->m_TransformBuffer.m_AbsoluteTransform = RenderSystem::GetSingleton()->getTopMatrix();
-		m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::Model, RenderSystem::GetSingleton()->getTopMatrix());
-		m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::ModelInverse, RenderSystem::GetSingleton()->getTopMatrix().Invert());
+		m_Material->setVertexShaderConstantBuffer(Material::VertexConstantBufferType::Model, RenderSystem::GetSingleton()->getTopMatrix());
+		m_Material->setVertexShaderConstantBuffer(Material::VertexConstantBufferType::ModelInverse, RenderSystem::GetSingleton()->getTopMatrix().Invert());
 	}
 	else
 	{
 		RenderSystem::GetSingleton()->pushMatrix(Matrix::Identity);
-		m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::Model, RenderSystem::GetSingleton()->getTopMatrix());
-		m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::ModelInverse, RenderSystem::GetSingleton()->getTopMatrix().Invert());
+		m_Material->setVertexShaderConstantBuffer(Material::VertexConstantBufferType::Model, RenderSystem::GetSingleton()->getTopMatrix());
+		m_Material->setVertexShaderConstantBuffer(Material::VertexConstantBufferType::ModelInverse, RenderSystem::GetSingleton()->getTopMatrix().Invert());
 	}
 
 	return true;
@@ -78,7 +78,7 @@ JSON::json TexturedModelVisualComponent::getJSON() const
 void TexturedModelVisualComponent::setTexture(ImageResourceFile* image)
 {
 	Ref<Texture> texture(new Texture(image));
-	m_Material.reset(new TexturedMaterial(texture));
+	m_Material.reset(new DiffuseMaterial(texture));
 	m_ImageFile = image;
 }
 

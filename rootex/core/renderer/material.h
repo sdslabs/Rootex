@@ -22,9 +22,9 @@ protected:
 
 	Shader* m_Shader;
 	//Vector<ID3D11Buffer*> m_PSConstantBuffer;
-	ID3D11Buffer* m_PSConstantBuffer1;
-	ID3D11Buffer* m_PSConstantBuffer2;
-	Vector<ID3D11Buffer*> m_VSConstantBuffer;
+	//ID3D11Buffer* m_PSConstantBuffer1;
+	//ID3D11Buffer* m_PSConstantBuffer2;
+	//Vector<ID3D11Buffer*> m_VSConstantBuffer;
 
 	Material(Shader* shader);
 
@@ -52,24 +52,17 @@ public:
 	~ColorMaterial() = default;
 };
 
-class TexturedMaterial : public Material
+class DiffuseMaterial : public Material
 {
 	DiffuseShader* m_DiffuseShader;
 	Ref<Texture> m_DiffuseTexture;
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_SamplerState;
 
 public:
-<<<<<<< HEAD
-	TexturedMaterial(Ref<Texture> diffuseTexture);
-	~TexturedMaterial() = default;
-	void setShaderConstantBuffer(const PSDiffuseConstantBuffer& Cb) const { m_Shader->set(Cb); }
-=======
 	DiffuseMaterial(Ref<Texture> diffuseTexture);
 	~DiffuseMaterial() = default;
 	void setPixelShaderConstantBuffer(const PSDiffuseConstantBuffer& constantBuffer);
->>>>>>> wip refactor material and shader
-
-
+	
 	void bind() override;
 };
 
@@ -78,7 +71,7 @@ class CPUParticlesMaterial : public Material
 public:
 	CPUParticlesMaterial();
 	~CPUParticlesMaterial() = default;
-	void setPixelShaderConstantBuffer(const PSDiffuseConstantBuffer& constantBuffer);
+	void setPixelShaderConstantBuffer(const PSSolidConstantBuffer& constantBuffer);
 
 	void bind() override;
 };

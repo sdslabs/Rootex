@@ -14,7 +14,7 @@ Component* ModelVisualComponent::Create(const JSON::json& componentData)
 {
 	ModelVisualComponent* modelVisualComponent = new ModelVisualComponent(
 	    componentData["renderPass"],
-	    Ref<Material>(new Material()),
+	    Ref<Material>(new ColorMaterial()),//change
 	    ResourceLoader::CreateVisualModelResourceFile(componentData["resFile"]),
 		componentData["isVisible"]);
 
@@ -32,7 +32,7 @@ Component* ModelVisualComponent::CreateDefault()
 {
 	ModelVisualComponent* modelVisualComponent = new ModelVisualComponent(
 	    RenderPassMain,
-	    Ref<Material>(new Material()),
+	    Ref<Material>(new ColorMaterial()),//change
 	    ResourceLoader::CreateVisualModelResourceFile("rootex/assets/cube.obj"),
 		true);
 	modelVisualComponent->setColor(Color(0.5f, 0.5f, 0.5f));
@@ -40,7 +40,7 @@ Component* ModelVisualComponent::CreateDefault()
 	return modelVisualComponent;
 }
 
-ModelVisualComponent::ModelVisualComponent(const unsigned int& renderPassSetting, Ref<Material> material, VisualModelResourceFile* resFile, bool visibility)
+ModelVisualComponent::ModelVisualComponent(const unsigned int& renderPassSetting, Ref<Material> material, VisualModelResourceFile* resFile, bool visibility)//change
     : VisualComponent(renderPassSetting, visibility)
     , m_Material(material)
     , m_VisualModelResourceFile(resFile)
@@ -74,15 +74,15 @@ bool ModelVisualComponent::preRender()
 	{
 		RenderSystem::GetSingleton()->pushMatrix(m_TransformComponent->getLocalTransform());
 		m_TransformComponent->m_TransformBuffer.m_AbsoluteTransform = RenderSystem::GetSingleton()->getTopMatrix();
-		m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::Model, RenderSystem::GetSingleton()->getTopMatrix());
+		m_Material->setVertexShaderConstantBuffer(Material::VertexConstantBufferType::Model, RenderSystem::GetSingleton()->getTopMatrix());
 	}
 	else
 	{
 		RenderSystem::GetSingleton()->pushMatrix(Matrix::Identity);
-		m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::Model, RenderSystem::GetSingleton()->getTopMatrix());
+		m_Material->setVertexShaderConstantBuffer(Material::VertexConstantBufferType::Model, RenderSystem::GetSingleton()->getTopMatrix());
 	}
 	PSSolidConstantBuffer Cb = { m_Color };
-	m_Material->setShaderConstantBuffer(Cb);
+	reinterpret_cast<ColorMaterial*>(m_Material.get())->setPixelShaderConstantBuffer(Cb);//change
 
 	return true;
 }
@@ -102,8 +102,8 @@ void ModelVisualComponent::renderChildren(const unsigned int& renderPass)
 {
 	if (isVisible() && !(renderPass & RenderPassUI))
 	{
-		m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::View, RenderSystem::GetSingleton()->getCamera()->getView());
-		m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::Projection, RenderSystem::GetSingleton()->getCamera()->getProjection());
+		m_Material->setVertexShaderConstantBuffer(Material::VertexConstantBufferType::View, RenderSystem::GetSingleton()->getCamera()->getView());
+		m_Material->setVertexShaderConstantBuffer(Material::VertexConstantBufferType::Projection, RenderSystem::GetSingleton()->getCamera()->getProjection());
 	}
 
 	for (auto& child : m_Owner->getComponent<HierarchyComponent>()->getChildren())
@@ -136,7 +136,7 @@ void ModelVisualComponent::setVisualModel(VisualModelResourceFile* newModel)
 	m_VisualModelResourceFile = newModel;
 }
 
-void ModelVisualComponent::setMaterial(Ref<Material> material)
+void ModelVisualComponent::setMaterial(Ref<Material> material)//change
 {
 	m_Material = material;
 }
