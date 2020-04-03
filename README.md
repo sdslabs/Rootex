@@ -3,6 +3,7 @@
 <img src="/rootex/assets/rootex.png" width=400 />
 
 ![C/C++ CI](https://github.com/sdslabs/Rootex/workflows/C/C++%20CI/badge.svg)
+[![Documentation Status](https://readthedocs.org/projects/rootex/badge/?version=latest)](https://rootex.readthedocs.io/en/latest/?badge=latest)
 
 ## Contents
 
