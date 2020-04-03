@@ -60,7 +60,6 @@ void CPUParticlesMaterial::setPixelShaderConstantBuffer(const PSSolidConstantBuf
 		csd.pSysMem = &constantBuffer;
 
 		m_PSConstantBuffer[(int)PixelConstantBufferType::Color] = RenderingDevice::GetSingleton()->createPSConstantBuffer(&cbd, &csd, 0);
-		//RenderingDevice::GetSingleton()->createPSConstantBuffer(&cbd, &csd, 0);
 	}
 	else
 	{
@@ -142,7 +141,6 @@ void TextureMaterial::setPixelShaderConstantBuffer(const PSDiffuseConstantBuffer
 		csd.pSysMem = &constantBuffer.lights;
 
 		m_PSConstantBuffer[(int)PixelConstantBufferType::Lights] = RenderingDevice::GetSingleton()->createPSConstantBuffer(&cbd, &csd, 0);
-		//RenderingDevice::GetSingleton()->createPSConstantBuffer(&cbd, &csd, 0);
 	}
 	else
 	{
@@ -165,7 +163,6 @@ void TextureMaterial::setPixelShaderConstantBuffer(const PSDiffuseConstantBuffer
 		csd.pSysMem = &constantBuffer.material;
 		
 		m_PSConstantBuffer[(int)PixelConstantBufferType::Material] = RenderingDevice::GetSingleton()->createPSConstantBuffer(&cbd, &csd, 1);
-		//RenderingDevice::GetSingleton()->createPSConstantBuffer(&cbd, &csd, 1);
 	}
 	else
 	{
@@ -191,7 +188,6 @@ void ColorMaterial::setPixelShaderConstantBuffer(const PSSolidConstantBuffer& co
 		csd.pSysMem = &constantBuffer;
 
 		m_PSConstantBuffer[(int)PixelConstantBufferType::Color] = RenderingDevice::GetSingleton()->createPSConstantBuffer(&cbd, &csd, 0);
-		//RenderingDevice::GetSingleton()->createPSConstantBuffer(&cbd, &csd, 0);
 	}
 	else
 	{

@@ -22,8 +22,6 @@ protected:
 
 	Shader* m_Shader;
 	Vector<ID3D11Buffer*> m_PSConstantBuffer;
-	//ID3D11Buffer* m_PSConstantBuffer1;
-	//ID3D11Buffer* m_PSConstantBuffer2;
 	Vector<ID3D11Buffer*> m_VSConstantBuffer;
 
 	Material(Shader* shader);
@@ -35,9 +33,6 @@ public:
 	virtual void bind() = 0;
 
 	virtual void setVertexShaderConstantBuffer(const VertexConstantBufferType type, const Matrix& constantBuffer);
-
-	//void setShaderConstantBuffer(Shader::VertexConstantBufferType matrixType, const Matrix& matrix) { m_Shader->set(matrixType, matrix); }
-	//void setShaderConstantBuffer(PSSolidConstantBuffer& Cb) { m_Shader->set(Cb); }
 };
 
 class ColorMaterial : public Material
