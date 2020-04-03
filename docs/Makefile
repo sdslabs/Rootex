@@ -18,6 +18,7 @@ help:
 
 clean:
 	rm -rf build/
+	rm -rf api/
 	@$(SPHINXBUILD) -M clean "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 # Catch-all target: route all unknown targets to Sphinx using the new
