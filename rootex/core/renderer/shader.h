@@ -38,7 +38,7 @@ public:
 class ColorShader : public Shader
 {
 	ColorShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat);
-	ColorShader(DiffuseShader&) = delete;
+	ColorShader(ColorShader&) = delete;
 	~ColorShader() = default;
 
 	friend class ShaderLibrary;

@@ -10,7 +10,7 @@ class TexturedModelVisualComponent : public ModelVisualComponent
 
 	ImageResourceFile* m_ImageFile;
 	
-	TexturedModelVisualComponent(const unsigned int& renderPass, Ref<TexturedMaterial> material, VisualModelResourceFile* resFile, ImageResourceFile* imageRes, Texture* texture, bool visibility);
+	TexturedModelVisualComponent(const unsigned int& renderPass, Ref<DiffuseMaterial> material, VisualModelResourceFile* resFile, ImageResourceFile* imageRes, Texture* texture, bool visibility);
 	virtual ~TexturedModelVisualComponent();
 
 	friend class EntityFactory;
