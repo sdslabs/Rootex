@@ -8,6 +8,8 @@ class Component;
 typedef unsigned int ComponentID;
 typedef unsigned int EntityID;
 
+/// A collection of ECS style components that define an ECS style entity.
+/// Use EntityFactory to create Entity objects.
 class Entity
 {
 protected:
