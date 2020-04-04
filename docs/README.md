@@ -1,7 +1,5 @@
 # Rootex Documentation
 
-<img src="/rootex/assets/rootex.png" width=400 />
-
 [![Documentation Status](https://readthedocs.org/projects/rootex/badge/?version=latest)](https://rootex.readthedocs.io/en/latest/?badge=latest)
 
 ## Where is the documentation?
@@ -26,24 +24,24 @@ Describe the implementation alternatives/issues and decisions in the .cpp files:
 
 1. Navigate to this directory.
 
-```shell
+```powershell
 cd docs/
 ```
 
 2. Install Python3 dependencies.
 
-```shell
+```powershell
 pip3 install -r requirements.txt
 ```
 
 3. Start the documentation builder.
 
-```shell
+```powershell
 .\make.bat html
 ```
 
 4. Open the homepage in your browser.
 
-```shell
+```powershell
 start build/html/index.html
 ```
