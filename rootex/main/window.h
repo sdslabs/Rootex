@@ -25,7 +25,8 @@ public:
 	Window(const Window&) = delete;
 	Window& operator=(const Window&) = delete;
 	~Window() = default;
-	void static quit(HWND a);
+		
+	void static QuitWindow(HWND hwnd);
 	void show();
 	
 	std::optional<int> processMessages();

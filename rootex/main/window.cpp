@@ -8,13 +8,17 @@
 #include "vendor/ImGUI/imgui_impl_dx11.h"
 #include "vendor/ImGUI/imgui_impl_win32.h"
 
+void Window::QuitWindow(HWND hwnd) 
+{
+	DestroyWindow(hwnd);
+}
 
 void Window::show()
 {
 	ShowWindow(m_WindowHandle, SW_SHOW);
 }
 
-    std::optional<int> Window::processMessages()
+std::optional<int> Window::processMessages()
 {
 	MSG msg;
 	while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) //non-blocking message retrieval
@@ -114,6 +118,9 @@ LRESULT CALLBACK Window::WindowsProc(HWND windowHandler, UINT msg, WPARAM wParam
 	{
 	case WM_CLOSE:
 		EventManager::GetSingleton()->call("EditorSaveBeforeQuit", "EditorSaveBeforeQuit", 0);
+		return 0;
+	case WM_DESTROY:
+		PostQuitMessage(0);
 		return 0;
 	}
 
