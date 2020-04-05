@@ -102,6 +102,7 @@ void Editor::initialize(HWND hWnd, const JSON::json& projectJSON)
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	io.ConfigDockingWithShift = true;
 
+	m_Window = hWnd;
 	ImGui_ImplWin32_Init(hWnd);
 	ImGui_ImplDX11_Init(RenderingDevice::GetSingleton()->getDevice(), RenderingDevice::GetSingleton()->getContext());
 	ImGui::StyleColorsDark();
@@ -132,14 +133,13 @@ void Editor::render()
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }
 
-
 Editor::~Editor()
 {
 	ImGui_ImplDX11_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
 }
-static String menuAction = "";
+
 void Editor::drawDefaultUI()
 {
 	static bool optFullscreenPersistant = true;
@@ -205,6 +205,8 @@ void Editor::drawDefaultUI()
 					ImGui::SameLine();
 					if (ImGui::Button("Create"))
 					{
+						if (ProjectManager::GetSingleton()->isAnyLevelOpen())
+							saveAll(nullptr);
 						EventManager::GetSingleton()->call("EditorFileNewLevel", "EditorCreateNewLevel", newLevelName);
 						EventManager::GetSingleton()->call("EditorOpenNewLevel", "EditorOpenLevel", "game/assets/levels/" + newLevelName);
 					}
@@ -216,6 +218,8 @@ void Editor::drawDefaultUI()
 					{
 						if (ImGui::MenuItem(levelName.string().c_str()))
 						{
+							if (ProjectManager::GetSingleton()->isAnyLevelOpen())
+								saveAll(nullptr);
 							EventManager::GetSingleton()->call("EditorFileMenuOpenLevel", "EditorOpenLevel", levelName.string());
 						}
 					}
@@ -308,13 +312,13 @@ void Editor::drawDefaultUI()
 				if (ImGui::Button("Save"))
 				{
 					saveAll(nullptr);
-					PostQuitMessage(0);
+					Window::QuitWindow(m_Window);
 				}
 				ImGui::SameLine();
 
 				if (ImGui::Button("Don't Save"))
 				{
-					PostQuitMessage(0);
+					Window::QuitWindow(m_Window);
 				}
 				ImGui::SameLine();
 
@@ -449,7 +453,7 @@ Variant Editor::saveBeforeQuit(const Event* event)
 	}
 	else
 	{
-		PostQuitMessage(0);
+		Window::QuitWindow(m_Window);
 	}
 	return true;
 }

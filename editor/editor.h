@@ -21,9 +21,11 @@ class HierarchyGraph;
 class Editor
 {
 	int m_DockSpaceID;
-
+	String menuAction = "";
 	unsigned int m_EditorStyleColorPushCount;
 	unsigned int m_EditorStyleVarPushCount;
+
+	HWND m_Window;
 
 	struct Colors
 	{
@@ -70,7 +72,6 @@ public:
 
 	void initialize(HWND hWnd, const JSON::json& projectJSON);
 	void render();
-	void quit();
 
 	const Colors& getColors() const { return m_Colors; }
 };
