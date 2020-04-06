@@ -6,7 +6,7 @@ Component* CameraVisualComponent::Create(const JSON::json& componentData)
 	    { componentData["position"]["x"], componentData["position"]["y"], componentData["position"]["z"] },
 	    { componentData["direction"]["x"], componentData["direction"]["y"], componentData["direction"]["z"] });
 
-	//Ref<CameraVisualComponent> cameraPointer(cameraVisualComponent);
+	//Ref<CameraVisualComponent> camera(cameraVisualComponent);
 
 	//RenderSystem::GetSingleton()->setCamera(cameraPointer);
 
@@ -19,9 +19,9 @@ Component* CameraVisualComponent::CreateDefault()
 	    { 0.0f, 0.0f, 4.0f },
 	    { 0.0f, 0.0f, -1.0f });
 
-	Ref<CameraVisualComponent> cameraPointer(cameraVisualComponent);
+	//Ref<CameraVisualComponent> cameraPointer(cameraVisualComponent);
 
-	RenderSystem::GetSingleton()->setCamera(cameraPointer);
+	//RenderSystem::GetSingleton()->setCamera(cameraPointer);
 
 	return cameraVisualComponent;
 }
@@ -31,12 +31,13 @@ CameraVisualComponent::CameraVisualComponent(const Vector3& position,const Vecto
     , m_DebugCamera(false)
     , m_ViewMatrix(Matrix::CreateLookAt(position, position + direction, { 0.0f, 1.0f, 0.0f }))
     , m_ProjectionMatrix(Matrix::CreatePerspective(1.0f, 1.0f * 480.0f / 640.0f, 0.5f, 100.0f))
-    , m_Active(true)
+    , m_Active(false)
     , m_CameraOffset(0.0f, 1.0f, -10.0f, 0.0f)
     , m_Position(position)
     , m_Direction(direction)
 {
-	
+	Ref<CameraVisualComponent> camera(this);
+	cameraPointer = camera;
 }
 
 CameraVisualComponent::CameraVisualComponent()
@@ -44,29 +45,22 @@ CameraVisualComponent::CameraVisualComponent()
     , m_DebugCamera(false)
     , m_ViewMatrix(Matrix::CreateLookAt({ 0.0f, 0.0f, 0.4f }, {0.0f, 0.0f, 0.3f}, { 0.0f, 1.0f, 0.0f }))
     , m_ProjectionMatrix(Matrix::CreatePerspective(1.0f, 1.0f * 480.0f / 640.0f, 0.5f, 100.0f))
-    , m_Active(true)
+    , m_Active(false)
     , m_CameraOffset(0.0f, 1.0f, -10.0f, 0.0f)
     , m_Position(0.0f, 0.0f, 4.0f)
     , m_Direction(0.0f, 0.0f, -1.0f)
 {
-	
+	Ref<CameraVisualComponent> camera(this);
+	cameraPointer = camera;
 }
 
 CameraVisualComponent::~CameraVisualComponent()
 {
+	RenderSystem::GetSingleton()->restoreCamera();
 }
 
 bool CameraVisualComponent::preRender()
 {
-	//if (m_TransformComponent)
-	//{
-	//	m_Position = m_TransformComponent->getPosition();
-	//	m_ViewMatrix = Matrix::CreateLookAt(m_Position, m_Position + m_Direction, { 0.0f, 1.0f, 0.0f });
-	//}
-	//else
-	//{
-	//	std::cout << "No transform";
-	//}
 	return true;
 }
 
@@ -76,7 +70,6 @@ void CameraVisualComponent::render()
 	{
 		//render(m_Frustum);
 	}
-	//Adding next thngs.
 }
 
 bool CameraVisualComponent::reset(HierarchyGraph* scene, int windowWidth, int windowHeight)
@@ -108,10 +101,6 @@ void CameraVisualComponent::updatePosition()
 		m_TransformComponent = m_Owner->getComponent<TransformComponent>();
 		m_Position = m_TransformComponent->getPosition();
 	}
-	else
-	{
-		std::cout << "No owner";
-	}
 	m_ViewMatrix = Matrix::CreateLookAt(m_Position, m_Position + m_Direction, { 0.0f, 1.0f, 0.0f });
 }
 
@@ -120,6 +109,10 @@ void CameraVisualComponent::setViewTransform(const Matrix& view)
 	m_ViewMatrix = view;
 }
 
+void CameraVisualComponent::setNotActive()
+{
+	m_Active = false;
+}
 
 JSON::json CameraVisualComponent::getJSON() const
 {
@@ -141,6 +134,21 @@ JSON::json CameraVisualComponent::getJSON() const
 #include "imgui_stdlib.h"
 void CameraVisualComponent::draw()
 {
-	ImGui::Checkbox("Active", &m_Active);
+	if (m_Active)
+	{
+		if (ImGui::Button("Set not active"))
+		{
+			m_Active = false;
+			RenderSystem::GetSingleton()->restoreCamera();
+		}
+	}
+	else
+	{
+		if (ImGui::Button("Set Active"))
+		{
+			m_Active = true;
+			RenderSystem::GetSingleton()->setCamera(cameraPointer);
+		}
+	}
 }
 #endif // ROOTEX_EDITOR
