@@ -14,6 +14,7 @@ protected:
 	Vector4 m_CameraOffset;
 	Vector3 m_Position;
 	Vector3 m_Direction;
+	Ref<CameraVisualComponent> cameraPointer;
 
 public:
 	static Component* Create(const JSON::json& componentData);
@@ -30,6 +31,8 @@ public:
 	virtual void postRender() override;
 
 	virtual void setViewTransform(const Matrix& view);
+	void updateCamera();
+	void setNotActive();
 	void setPosition(Vector3 position);
 	void updatePosition();
 	virtual void setTarget(Ref<VisualComponent> target) { m_Target = target; }
