@@ -16,7 +16,7 @@ JSON::json BoxComponent::getJSON() const
 
 	j["dimensions"]["x"] = m_Dimensions.x;
 	j["dimensions"]["y"] = m_Dimensions.y;
-	j["dimension.z"]["z"] = m_Dimensions.z;
+	j["dimensions"]["z"] = m_Dimensions.z;
 
 	j["matName"] = m_MaterialName;
 
