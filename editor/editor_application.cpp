@@ -2,7 +2,7 @@
 
 #include "editor.h"
 
-#include "rootex/core/audio/audio_system.h"
+#include "rootex/framework/systems/audio_system.h"
 #include "rootex/core/input/input_manager.h"
 #include "rootex/core/resource_loader.h"
 #include "rootex/framework/systems/render_system.h"
@@ -51,9 +51,9 @@ void EditorApplication::run()
 	while (true)
 	{
 		m_FrameTimer.reset();
-		if (((m_ApplicationTimer.Now() - m_PointAtLast10Second).count()) * NS_TO_MS * MS_TO_S > m_AutosaveDurationS)
+		if (((m_ApplicationTimer.Now() - m_PointAtLast10Second).count()) * NS_TO_MS * MS_TO_S > m_AutoSaveDurationS)
 		{
-			EventManager::GetSingleton()->call("EditorAutosaveEvent", "EditorAutosave", 0);
+			EventManager::GetSingleton()->call("EditorAutoSaveEvent", "EditorAutoSave", 0);
 			m_PointAtLast10Second = m_ApplicationTimer.Now();
 		}
 

@@ -13,11 +13,7 @@ set(ROOTEX_SOURCES
 ""
 CACHE INTERNAL "")
 
-set(ROOTEX_SWIG_INTERFACE
-CACHE INTERNAL "")
-
-set(ROOTEX_PCH_HEADERS
-CACHE INTERNAL "")
+file(GLOB PCHHeader common/types.h)
 
 add_subdirectory(common)
 add_subdirectory(app)
@@ -27,7 +23,6 @@ add_subdirectory(main)
 add_subdirectory(os)
 add_subdirectory(script)
 add_subdirectory(vendor)
-add_subdirectory(pch)
 
 # Adding shaders for pre-build compilation
 file(GLOB ShaderFiles
@@ -72,8 +67,7 @@ if (BUILD_EDITOR)
 endif(BUILD_EDITOR)
 
 add_library(Rootex STATIC ${ROOTEX_SOURCES})
-
-target_precompile_headers(Rootex PUBLIC ${ROOTEX_PCH_HEADERS})
+target_precompile_headers(Rootex PUBLIC ${PCHHeader})
 
 source_group(TREE "../"
     PREFIX "Rootex"
@@ -86,8 +80,7 @@ target_include_directories(Rootex PUBLIC
 
 target_link_libraries(Rootex PUBLIC
     Lua
-    LuaBridge
-    SWIGBindings
+    Sol3
     OpenAL
     ALUT
     DirectXTK
