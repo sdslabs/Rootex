@@ -9,6 +9,6 @@ class Random
 	static std::uniform_real_distribution<double> s_Distribution;
 
 public:
-	/// Return a random float between 0.0f and 1.0f.
+	/// Returns a random float between 0.0f and 1.0f.
 	static float Float() { return s_Distribution(s_RandomDevice); }
 };

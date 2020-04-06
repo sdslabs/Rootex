@@ -5,20 +5,24 @@ class StaticAudioBuffer;
 
 typedef unsigned int ALuint;
 
+/// Convert minutes to seconds
 #define MIN_TO_S 60.0f
 
+/// An interface for an audio source in the game world.
 class AudioSource
 {
 protected:
 	ALuint m_SourceID;
 
-	bool m_IsStreaming;
-
+	/// RTTI for storing if the audio buffer is being streamed
+	bool m_IsStreaming; 
 	AudioSource(bool isStreaming);
 	virtual ~AudioSource();
 
 public:
 	virtual void setLooping(bool enabled);
+	
+	/// Queue new buffers to the audio card if possible.
 	virtual void queueNewBuffers();
 
 	void play();
@@ -30,10 +34,11 @@ public:
 	bool isStopped() const;
 	bool isLooping() const;
 	ALuint getSourceID() const;
+	/// Get audio duration in seconds.
 	virtual float getDuration() const = 0;
-
 };
 
+/// An audio source that uses StaticAudioBuffer.
 class StaticAudioSource : public AudioSource
 {
 	Ref<StaticAudioBuffer> m_StaticAudio;
@@ -48,6 +53,7 @@ public:
 	float getElapsedTimeS();
 };
 
+/// An audio source that uses StreamingAudioBuffer.
 class StreamingAudioSource : public AudioSource
 {
 	Ref<StreamingAudioBuffer> m_StreamingAudio;
