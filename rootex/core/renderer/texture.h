@@ -1,7 +1,6 @@
 #pragma once
 
 #include <d3d11.h>
-#include "utils.h"
 
 #include "resource_file.h"
 
