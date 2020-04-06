@@ -2,9 +2,11 @@
 
 #include "common/common.h"
 
+/// An Event that is sent out by EventManager.
 class Event
 {
 public:
+	/// String defining the type of the event.
 	typedef String Type;
 
 private:
@@ -19,5 +21,6 @@ public:
 	
 	const String& getName() const { return m_Name; };
 	const Type& getType() const { return m_Type; };
+	/// Returns the payload data sent with an event. Extract typed data after getting the data.
 	const Variant& getData() const { return m_Data; }
 };
