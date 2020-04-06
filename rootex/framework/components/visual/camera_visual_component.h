@@ -42,4 +42,10 @@ public:
 
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::CameraVisualComponent;
 	ComponentID getComponentID() const { return s_ID; }
+
+	virtual JSON::json getJSON() const override;
+
+#ifdef ROOTEX_EDITOR
+	void draw() override;
+#endif // ROOTEX_EDITOR
 };
