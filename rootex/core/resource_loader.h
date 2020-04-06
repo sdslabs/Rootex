@@ -7,9 +7,9 @@
 
 #include "vendor/OBJLoader/Source/OBJ_Loader.h"
 
-/// Factory for ResourceFile objects. Implements creating, loading and saving files.
-/// Maintains an internal cache that doesn't let the same file to be loaded twice. Cache misses force file loading.
-/// This just means you can load the same file multiple times without worrying about unnecessary copies.
+/// Factory for ResourceFile objects. Implements creating, loading and saving files.                                \n
+/// Maintains an internal cache that doesn't let the same file to be loaded twice. Cache misses force file loading. \n
+/// This just means you can load the same file multiple times without worrying about unnecessary copies.            \n
 /// All path arguments should be relative to Rootex root.
 class ResourceLoader
 {
