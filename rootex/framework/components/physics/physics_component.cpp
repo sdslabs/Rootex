@@ -1,5 +1,4 @@
 #include "physics_component.h"
-#include "core/resource_loader.h"
 #include "framework/systems/physics_system.h"
 
 #include "entity.h"
@@ -12,15 +11,13 @@ PhysicsComponent::PhysicsComponent(const String& matName, float volume, const Re
 {
 	m_CollisionShape = collisionShape;
 	m_TransformComponent = nullptr;
-	physicsMaterial = ResourceLoader::CreateLuaTextResourceFile("game/assets/config/physics.lua");
-	LuaInterpreter::GetSingleton()->loadExecuteScript(physicsMaterial);
-	LuaVariable materialLua = LuaInterpreter::GetSingleton()->getGlobal("PhysicsMaterial");
+	sol::table materialLua = PhysicsSystem::GetSingleton()->getPhysicsMaterial();
 	m_SpecificGravity = float(materialLua[matName]["specificgravity"]);
 	m_Material.m_Friction = float(materialLua[matName]["friction"]);
 	m_Material.m_Restitution = float(materialLua[matName]["restitution"]);
 
 	m_Mass = volume * m_SpecificGravity;
-	localInertia = btVector3(0.f, 0.f, 0.f);
+	m_LocalInertia = btVector3(0.f, 0.f, 0.f);
 }
 
 bool PhysicsComponent::setup()
@@ -35,9 +32,9 @@ bool PhysicsComponent::setup()
 		}
 		else
 		{
-			transform = m_TransformComponent->getAbsoluteTransform();
-			m_MotionState.setWorldTransform(matTobtTransform(transform));
-			btRigidBody::btRigidBodyConstructionInfo rbInfo(m_Mass, &m_MotionState, m_CollisionShape.get(), localInertia);
+			m_Transform = m_TransformComponent->getAbsoluteTransform();
+			m_MotionState.setWorldTransform(matTobtTransform(m_Transform));
+			btRigidBody::btRigidBodyConstructionInfo rbInfo(m_Mass, &m_MotionState, m_CollisionShape.get(), m_LocalInertia);
 
 			// set up the materal properties
 			rbInfo.m_restitution = m_Material.m_Restitution;

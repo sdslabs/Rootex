@@ -15,11 +15,24 @@ EventManager* EventManager::GetSingleton()
 	return &singleton;
 }
 
-Variant EventManager::returnCall(const String& eventName, const Event::Type& eventType, const Variant& data)
+bool EventManager::addEvent(const Event::Type& event)
 {
-	bool processed = false;
-	Event event(eventName, eventType, data);
-	auto&& findIt = m_EventListeners.find(event.getEventType());
+	if (m_EventListeners.find(event) == m_EventListeners.end())
+	{
+		m_EventListeners[event] = {};
+		return true;
+	}
+	return false;
+}
+
+void EventManager::removeEvent(const Event::Type& event)
+{
+	m_EventListeners.erase(event);
+}
+
+Variant EventManager::returnCall(const Event& event)
+{
+	auto&& findIt = m_EventListeners.find(event.getType());
 
 	if (findIt != m_EventListeners.end())
 	{
@@ -28,11 +41,16 @@ Variant EventManager::returnCall(const String& eventName, const Event::Type& eve
 	return false;
 }
 
-void EventManager::call(const String& eventName, const Event::Type& eventType, const Variant& data)
+Variant EventManager::returnCall(const String& eventName, const Event::Type& eventType, const Variant& data)
+{
+	Event event(eventName, eventType, data);
+	return returnCall(event);
+}
+
+void EventManager::call(const Event& event)
 {
 	bool processed = false;
-	Event event(eventName, eventType, data);
-	auto&& findIt = m_EventListeners.find(event.getEventType());
+	auto&& findIt = m_EventListeners.find(event.getType());
 
 	if (findIt != m_EventListeners.end())
 	{
@@ -46,16 +64,20 @@ void EventManager::call(const String& eventName, const Event::Type& eventType, c
 	}
 }
 
-void EventManager::deferredCall(const String& eventName, const Event::Type& eventType, const Variant& data)
+void EventManager::call(const String& eventName, const Event::Type& eventType, const Variant& data)
 {
-	Ref<Event> event(new Event(eventName, eventType, data));
+	Event event(eventName, eventType, data);
+	call(event);
+}
 
+void EventManager::deferredCall(Ref<Event> event)
+{
 	if (!(m_ActiveQueue >= 0 && m_ActiveQueue < EVENTMANAGER_NUM_QUEUES))
 	{
 		WARN("Event left unhandled: " + event->getName());
 	}
 
-	auto&& findIt = m_EventListeners.find(event->getEventType());
+	auto&& findIt = m_EventListeners.find(event->getType());
 	if (findIt != m_EventListeners.end())
 	{
 		m_Queues[m_ActiveQueue].push_back(event);
@@ -65,6 +87,12 @@ void EventManager::deferredCall(const String& eventName, const Event::Type& even
 	{
 		WARN("Event left unhandled: " + event->getName());
 	}
+}
+
+void EventManager::deferredCall(const String& eventName, const Event::Type& eventType, const Variant& data)
+{
+	Ref<Event> event(new Event(eventName, eventType, data));
+	deferredCall(event);
 }
 
 bool EventManager::dispatchDeferred(unsigned long maxMillis)
@@ -77,7 +105,7 @@ bool EventManager::dispatchDeferred(unsigned long maxMillis)
 	{
 		Ref<Event> event = m_Queues[queueToProcess].front();
 		m_Queues[queueToProcess].erase(m_Queues[queueToProcess].begin());
-		const Event::Type eventType = event->getEventType();
+		const Event::Type eventType = event->getType();
 
 		auto findIt = m_EventListeners.find(eventType);
 		if (findIt != m_EventListeners.end())

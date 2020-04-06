@@ -2,13 +2,15 @@
 
 #include "rootex/app/application.h"
 #include "rootex/framework/systems/hierarchy_system.h"
-#include "rootex/script/interpreter.h"
+#include "framework/systems/script_system.h"
 
 class HierarchyGraph;
 
 class GameApplication : public Application
 {
 	FrameTimer m_FrameTimer;
+
+	String getLevelNameFromCommandLine(const char* s);
 
 	Variant onExitEvent(const Event* event);
 

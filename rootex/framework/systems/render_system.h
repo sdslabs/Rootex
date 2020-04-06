@@ -10,12 +10,14 @@ class RenderSystem : public System
 	Ref<CameraVisualComponent> m_Camera;
 	Ptr<Renderer> m_Renderer;
 	Vector<Matrix> m_TransformationStack;
+	Vector<Matrix> m_UITransformationStack;
 
 	RenderSystem();
 	RenderSystem(RenderSystem&) = delete;
 	~RenderSystem();
 
-	friend class VisualComponent;
+	void calculateTransforms(HierarchyComponent* hierarchyComponent);
+	void renderPassRender(VisualComponent* vc, const RenderPass& renderPass);
 
 public:
 	static RenderSystem* GetSingleton();
@@ -26,9 +28,13 @@ public:
 	void setCamera(Ref<CameraVisualComponent> camera);
 
 	void pushMatrix(const Matrix& transform);
+	void pushMatrixOverride(const Matrix& transform);
 	void popMatrix();
+	void pushUIMatrix(const Matrix& transform);
+	void popUIMatrix();
 
 	CameraVisualComponent* getCamera() const { return m_Camera.get(); }
 	const Matrix& getTopMatrix() const;
+	Matrix& getTopUIMatrix();
 	const Renderer* getRenderer() const { return m_Renderer.get(); }
 };

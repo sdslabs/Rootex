@@ -18,6 +18,6 @@ public:
 	~Event() = default;
 	
 	const String& getName() const { return m_Name; };
-	const Type getEventType() const { return m_Type; };
+	const Type& getType() const { return m_Type; };
 	const Variant& getData() const { return m_Data; }
 };

@@ -1,21 +1,23 @@
 #pragma once
 
-#include "common/types.h"
+#include "common/common.h"
 #include "core/resource_data.h"
 #include "core/renderer/vertex_buffer.h"
 #include "core/renderer/index_buffer.h"
+#include "DirectXTK/Inc/SpriteFont.h"
 
 class ResourceFile
 {
 public:
 	enum class Type : int
 	{
-		NONE = 0,
-		LUA,
-		WAV,
-		TXT,
-		OBJ,
-		IMAGE
+		None = 0,
+		Lua,
+		Wav,
+		Text,
+		Obj,
+		Image,
+		Font
 	};
 
 protected:
@@ -75,6 +77,8 @@ class LuaTextResourceFile : public TextResourceFile
 public:
 	explicit LuaTextResourceFile(TextResourceFile&) = delete;
 	explicit LuaTextResourceFile(TextResourceFile&&) = delete;
+
+	virtual void reload() override;
 };
 
 typedef int ALsizei;
@@ -142,4 +146,22 @@ public:
 	explicit ImageResourceFile(ImageResourceFile&&) = delete;
 
 	virtual void reload() override;
+};
+
+class FontResourceFile : public ResourceFile
+{
+	explicit FontResourceFile(ResourceData* resData);
+	~FontResourceFile();
+
+	Ref<DirectX::SpriteFont> m_Font;
+
+	friend class ResourceLoader;
+
+public:
+	explicit FontResourceFile(ImageResourceFile&) = delete;
+	explicit FontResourceFile(ImageResourceFile&&) = delete;
+
+	virtual void reload() override;
+
+	Ref<DirectX::SpriteFont> getFont() const { return m_Font; }
 };

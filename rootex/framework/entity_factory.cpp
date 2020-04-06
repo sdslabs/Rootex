@@ -1,29 +1,33 @@
 #include "entity_factory.h"
 
+#include "core/event_manager.h"
+
 #include "component.h"
 #include "entity.h"
 #include "system.h"
 
 #include "systems/hierarchy_system.h"
-
 #include "components/debug_component.h"
+#include "components/hierarchy_component.h"
+#include "components/physics/sphere_component.h"
+#include "components/script_component.h"
 #include "components/test_component.h"
 #include "components/transform_component.h"
-#include "components/hierarchy_component.h"
-#include "components/root_hierarchy_component.h"
 #include "components/visual/visual_component.h"
 #include "components/visual/diffuse_visual_component.h"
-#include "components/visual/point_light_component.h"
 #include "components/visual/directional_light_component.h"
+#include "components/visual/point_light_component.h"
 #include "components/visual/spot_light_component.h"
+#include "components/visual/text_visual_2d_component.h"
+#include "components/visual/cpu_particles_visual_component.h"
 #include "components/physics/sphere_component.h"
 #include "components/physics/box_component.h"
 #include "components/music_component.h"
 #include "components/short_music_component.h"
 
-#define REGISTER_COMPONENT(ComponentClass) \
-m_ComponentCreators.push_back({ ComponentClass::s_ID, #ComponentClass, ComponentClass::Create }); \
-m_DefaultComponentCreators.push_back({ ComponentClass::s_ID, #ComponentClass, ComponentClass::CreateDefault })
+#define REGISTER_COMPONENT(ComponentClass)                                                            \
+	m_ComponentCreators.push_back({ ComponentClass::s_ID, #ComponentClass, ComponentClass::Create }); \
+	m_DefaultComponentCreators.push_back({ ComponentClass::s_ID, #ComponentClass, ComponentClass::CreateDefault })
 
 EntityID EntityFactory::s_CurrentID = ROOT_ENTITY_ID;
 
@@ -40,18 +44,24 @@ EntityID EntityFactory::getNextID()
 
 EntityFactory::EntityFactory()
 {
+	BIND_EVENT_MEMBER_FUNCTION("DeleteEntity", deleteEntityEvent);
+
 	REGISTER_COMPONENT(TestComponent);
 	REGISTER_COMPONENT(DebugComponent);
 	REGISTER_COMPONENT(VisualComponent);
-	REGISTER_COMPONENT(TransformComponent);
+	REGISTER_COMPONENT(TextVisual2DComponent);
 	REGISTER_COMPONENT(DiffuseVisualComponent);
+	REGISTER_COMPONENT(TransformComponent);
 	REGISTER_COMPONENT(PointLightComponent);
 	REGISTER_COMPONENT(DirectionalLightComponent);
 	REGISTER_COMPONENT(SpotLightComponent);
 	REGISTER_COMPONENT(SphereComponent);
 	REGISTER_COMPONENT(BoxComponent);
 	REGISTER_COMPONENT(HierarchyComponent);
-	REGISTER_COMPONENT(RootHierarchyComponent);
+	REGISTER_COMPONENT(ScriptComponent);
+	REGISTER_COMPONENT(MusicComponent);
+	REGISTER_COMPONENT(ShortMusicComponent);
+	REGISTER_COMPONENT(CPUParticlesVisualComponent);
 }
 
 EntityFactory::~EntityFactory()
@@ -80,7 +90,7 @@ Ref<Component> EntityFactory::createComponent(const String& name, const JSON::js
 	}
 	else
 	{
-		ERR("Could not find componentDescription: " + name);
+		ERR("Could not find component creator: " + name);
 		return nullptr;
 	}
 }
@@ -106,7 +116,7 @@ Ref<Component> EntityFactory::createDefaultComponent(const String& name)
 	}
 	else
 	{
-		ERR("Could not find componentDescription: " + name);
+		ERR("Could not find default component creator: " + name);
 		return nullptr;
 	}
 }
@@ -136,7 +146,9 @@ Ref<Entity> EntityFactory::createEntity(TextResourceFile* entityJSONDescription)
 	{
 		newID = *findItID;
 		while (getNextID() <= *findItID)
+		{
 			;
+		}
 	}
 	else
 	{
@@ -179,34 +191,45 @@ Ref<Entity> EntityFactory::createRootEntity()
 {
 	Ref<Entity> root;
 	root.reset(new Entity(ROOT_ENTITY_ID, "Root"));
+
+	{
+		Ref<HierarchyComponent> rootComponent(new HierarchyComponent(INVALID_ID, {}));
+		EntityFactory::addComponent(root, rootComponent);
+		System::RegisterComponent(rootComponent.get());
+	}
+	{
+		Ref<Component> rootTransformComponent = createDefaultComponent("TransformComponent");
+		EntityFactory::addComponent(root, rootTransformComponent);
+		System::RegisterComponent(rootTransformComponent.get());
+	}
+	{
+		Ref<VisualComponent> rootVisualComponent = std::dynamic_pointer_cast<VisualComponent>(createDefaultComponent("VisualComponent"));
+		rootVisualComponent->setVisibility(false);
+
+		EntityFactory::addComponent(root, rootVisualComponent);
+		System::RegisterComponent(rootVisualComponent.get());
+	}
+
 	m_Entities[root->m_ID] = root;
-	
-	Ref<RootHierarchyComponent> rootComponent(new RootHierarchyComponent(INVALID_ID, {}));
-
-	EntityFactory::addComponent(root, rootComponent);
-	EntityFactory::addComponent(root, rootComponent->m_StaticGroup);
-	EntityFactory::addComponent(root, rootComponent->m_GlobalGroup);
-	EntityFactory::addComponent(root, rootComponent->m_EntityGroup);
-	EntityFactory::addComponent(root, rootComponent->m_SkyGroup);
-	EntityFactory::addComponent(root, rootComponent->m_EditorGroup);
-
-	System::RegisterComponent(rootComponent.get());
-
 	return root;
+}
+
+Variant EntityFactory::deleteEntityEvent(const Event* event)
+{
+	deleteEntity(Extract(Ref<Entity>, event->getData()));
+	return true;
 }
 
 void EntityFactory::addDefaultComponent(Ref<Entity> entity, String componentName)
 {
-	Ref<Component> component = createDefaultComponent(componentName);
-	entity->addComponent(component);
-	component->setOwner(entity);
-	entity->setupComponents();
+	addComponent(entity, createDefaultComponent(componentName));
 }
 
 void EntityFactory::addComponent(Ref<Entity> entity, Ref<Component> component)
 {
 	entity->addComponent(component);
 	component->setOwner(entity);
+	entity->setupComponents();
 }
 
 void EntityFactory::destroyEntities(bool saveRoot)
@@ -239,8 +262,13 @@ void EntityFactory::destroyEntities(bool saveRoot)
 
 	for (auto&& entity : markedForRemoval)
 	{
-		PRINT("Destroyed entity: " + entity->getName());
-		entity->destroy();
-		m_Entities.erase(entity->getID());
+		deleteEntity(entity);
 	}
+}
+
+void EntityFactory::deleteEntity(Ref<Entity> entity)
+{
+	entity->destroy();
+	m_Entities.erase(entity->getID());
+	entity.reset();
 }

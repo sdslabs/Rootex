@@ -11,7 +11,6 @@ class Task
 public:
 	__int32 m_ID;
 	__int32 m_Dependencies;
-	__int32 m_Permisions;
 	Vector<__int32> m_Permissions;
 
 	virtual void execute() = 0;

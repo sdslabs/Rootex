@@ -8,13 +8,15 @@ public:
 	struct HierarchySettings
 	{
 		bool m_IsActive = true;
+		bool m_IsEntitiesDockActive = true;
 	};
 
 private:
 	HierarchySettings m_HierarchySettings;
 	EntityID m_OpenedEntityID;
 
-	void showHierarchySubTree(Ref<Entity> node);
+	void showHierarchySubTree(HierarchyComponent* hierarchy);
+	void openEntity(Ref<Entity> entity);
 	
 	Variant selectOpenEntity(const Event* event);
 

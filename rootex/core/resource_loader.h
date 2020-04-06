@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common/types.h"
+#include "common/common.h"
 #include "core/resource_data.h"
 #include "core/resource_file.h"
 #include "os/os.h"
@@ -11,17 +11,21 @@ class ResourceLoader
 {
 	static objl::Loader s_ModelLoader;
 	static HashMap<Ptr<ResourceData>, Ptr<ResourceFile>> s_ResourcesDataFiles;
+	static HashMap<ResourceFile::Type, Vector<ResourceFile*>> s_ResourceFileLibrary;
 
 public:
-	static TextResourceFile* CreateTextResourceFile(String path);
-	static TextResourceFile* CreateNewTextResourceFile(String path);
-	static LuaTextResourceFile* CreateLuaTextResourceFile(String path);
-	static AudioResourceFile* CreateAudioResourceFile(String path);
-	static VisualModelResourceFile* CreateVisualModelResourceFile(String path);
-	static ImageResourceFile* CreateImageResourceFile(String path);
+	static TextResourceFile* CreateTextResourceFile(const String& path);
+	static TextResourceFile* CreateNewTextResourceFile(const String& path);
+	static LuaTextResourceFile* CreateLuaTextResourceFile(const String& path);
+	static AudioResourceFile* CreateAudioResourceFile(const String& path);
+	static VisualModelResourceFile* CreateVisualModelResourceFile(const String& path);
+	static ImageResourceFile* CreateImageResourceFile(const String& path);
+	static FontResourceFile* CreateFontResourceFile(const String& path);
 
-	static void SaveResourceFile(TextResourceFile*& resourceFile);
+	static void SaveResourceFile(ResourceFile* resourceFile);
 	static void ReloadResourceData(const String& path);
 
 	static objl::Loader& GetModelLoader() { return s_ModelLoader; }
+	static Vector<ResourceFile*>& GetFilesOfType(ResourceFile::Type type);
+	static HashMap<ResourceFile::Type, Vector<ResourceFile*>>& GetAllFiles();
 };
