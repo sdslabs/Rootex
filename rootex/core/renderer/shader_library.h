@@ -19,6 +19,7 @@ private:
 
 public:
 	static void MakeShaders();
+	static void DestroyShaders();
 
 	static Shader* GetDefaultShader();
 	static DiffuseShader* GetDiffuseShader();
