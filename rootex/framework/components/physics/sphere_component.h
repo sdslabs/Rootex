@@ -4,7 +4,7 @@
 
 #include "btBulletDynamicsCommon.h"
 
-class SphereComponent : public PhysicsColliderComponent
+class SphereColliderComponent : public PhysicsColliderComponent
 {
 	static Component* Create(const JSON::json& sphereComponentData);
 	static Component* CreateDefault();
@@ -14,10 +14,10 @@ class SphereComponent : public PhysicsColliderComponent
 	friend class EntityFactory;
 
 public:
-	SphereComponent(float rad, const String& matName);
+	SphereColliderComponent(float rad, const String& matName);
 
 	float getRadius() const { return m_Radius; }
 
-	virtual String getName() const override { return "SphereComponent"; };
+	virtual String getName() const override { return "SphereColliderComponent"; };
 	virtual JSON::json getJSON() const override;
 };

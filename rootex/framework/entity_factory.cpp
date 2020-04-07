@@ -55,8 +55,8 @@ EntityFactory::EntityFactory()
 	REGISTER_COMPONENT(PointLightComponent);
 	REGISTER_COMPONENT(DirectionalLightComponent);
 	REGISTER_COMPONENT(SpotLightComponent);
-	REGISTER_COMPONENT(SphereComponent);
-	REGISTER_COMPONENT(BoxComponent);
+	REGISTER_COMPONENT(SphereColliderComponent);
+	REGISTER_COMPONENT(BoxColliderComponent);
 	REGISTER_COMPONENT(HierarchyComponent);
 	REGISTER_COMPONENT(ScriptComponent);
 	REGISTER_COMPONENT(MusicComponent);

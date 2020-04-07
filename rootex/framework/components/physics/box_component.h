@@ -4,7 +4,7 @@
 
 #include "btBulletDynamicsCommon.h"
 
-class BoxComponent : public PhysicsColliderComponent
+class BoxColliderComponent : public PhysicsColliderComponent
 {
 	static Component* Create(const JSON::json& boxComponentData);
 	static Component* CreateDefault();
@@ -14,10 +14,10 @@ class BoxComponent : public PhysicsColliderComponent
 	friend class EntityFactory;
 
 public:
-	BoxComponent(const Vector3 dimensions, const String& matName);
+	BoxColliderComponent(const Vector3 dimensions, const String& matName);
 
 	Vector3 getDimensions() const { return m_Dimensions; }
 
-	virtual String getName() const override { return "BoxComponent"; };
+	virtual String getName() const override { return "BoxColliderComponent"; };
 	virtual JSON::json getJSON() const override;
 };
