@@ -102,10 +102,8 @@ void Editor::initialize(HWND hWnd, const JSON::json& projectJSON)
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	io.ConfigDockingWithShift = true;
 
-	m_Window = hWnd;
 	ImGui_ImplWin32_Init(hWnd);
 	ImGui_ImplDX11_Init(RenderingDevice::GetSingleton()->getDevice(), RenderingDevice::GetSingleton()->getContext());
-	Window::setOpenWindow("editor");
 	ImGui::StyleColorsDark();
 }
 
@@ -313,13 +311,13 @@ void Editor::drawDefaultUI()
 				if (ImGui::Button("Save"))
 				{
 					saveAll(nullptr);
-					Window::QuitWindow(m_Window);
+					EventManager::GetSingleton()->call("quitEditorWindow", "quitEditorWindow", 0);
 				}
 				ImGui::SameLine();
 
 				if (ImGui::Button("Don't Save"))
 				{
-					Window::QuitWindow(m_Window);
+					EventManager::GetSingleton()->call("quitEditorWindow", "quitEditorWindow", 0);
 				}
 				ImGui::SameLine();
 
@@ -454,7 +452,7 @@ Variant Editor::saveBeforeQuit(const Event* event)
 	}
 	else
 	{
-		Window::QuitWindow(m_Window);
+		EventManager::GetSingleton()->call("quitEditorWindow", "quitEditorWindow", 0);
 	}
 	return true;
 }
