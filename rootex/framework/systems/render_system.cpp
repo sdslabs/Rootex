@@ -59,6 +59,7 @@ void RenderSystem::render()
 	RenderingDevice::GetSingleton()->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	RenderingDevice::GetSingleton()->setRasterizerState();
 	RenderingDevice::GetSingleton()->setDepthStencilState();
+	RenderSystem::GetSingleton()->getCamera()->updatePosition();
 
 	Ref<VisualComponent> rootVC = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<VisualComponent>();
 #ifdef ROOTEX_EDITOR
