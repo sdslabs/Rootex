@@ -1,6 +1,6 @@
 #pragma once
 
-#include "physics_component.h"
+#include "physics_collider_component.h"
 
 #include "btBulletDynamicsCommon.h"
 
