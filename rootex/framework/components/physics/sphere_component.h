@@ -4,7 +4,7 @@
 
 #include "btBulletDynamicsCommon.h"
 
-class SphereComponent : public PhysicsComponent
+class SphereComponent : public PhysicsColliderComponent
 {
 	static Component* Create(const JSON::json& sphereComponentData);
 	static Component* CreateDefault();
