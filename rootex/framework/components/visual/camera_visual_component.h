@@ -14,6 +14,7 @@ protected:
 	Vector4 m_CameraOffset;
 	Vector3 m_Position;
 	Vector3 m_Direction;
+	Vector3 m_Up;
 	Ref<CameraVisualComponent> cameraPointer;
 
 public:

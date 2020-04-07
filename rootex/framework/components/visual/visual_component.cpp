@@ -108,7 +108,7 @@ void VisualComponent::renderChildren(const unsigned int& renderPass)
 {
 	if (isVisible() && !(renderPass & RenderPassUI))
 	{
-		RenderSystem::GetSingleton()->getCamera()->updatePosition();
+		//RenderSystem::GetSingleton()->getCamera()->updatePosition();
 		m_Attributes.m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::View, RenderSystem::GetSingleton()->getCamera()->getView());
 		m_Attributes.m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::Projection, RenderSystem::GetSingleton()->getCamera()->getProjection());
 	}
