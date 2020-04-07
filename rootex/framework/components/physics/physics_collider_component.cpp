@@ -1,4 +1,4 @@
-#include "physics_component.h"
+#include "physics_collider_component.h"
 #include "framework/systems/physics_system.h"
 
 #include "entity.h"

@@ -1,6 +1,6 @@
 #include "physics_system.h"
 #include "common/common.h"
-#include "components/physics/physics_component.h"
+#include "components/physics/physics_collider_component.h"
 #include "core/resource_loader.h"
 
 PhysicsSystem* PhysicsSystem::GetSingleton()

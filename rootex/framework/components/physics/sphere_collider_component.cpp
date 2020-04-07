@@ -1,4 +1,4 @@
-#include "sphere_component.h"
+#include "sphere_collider_component.h"
 
 SphereColliderComponent::SphereColliderComponent(float rad, const String& matName)
     : PhysicsColliderComponent(matName, ((4.f / 3.f) * DirectX::XM_PI * rad * rad * rad), Ref<btSphereShape>(new btSphereShape(rad)))

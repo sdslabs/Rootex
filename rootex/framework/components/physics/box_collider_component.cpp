@@ -1,4 +1,4 @@
-#include "box_component.h"
+#include "box_collider_component.h"
 
 BoxColliderComponent::BoxColliderComponent(const Vector3 dimensions, const String& matName)
     : PhysicsColliderComponent(matName, dimensions.x * dimensions.y * dimensions.z, Ref<btBoxShape>(new btBoxShape(vecTobtVector3(dimensions))))
