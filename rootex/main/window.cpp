@@ -7,16 +7,6 @@
 #include "vendor/ImGUI/imgui.h"
 #include "vendor/ImGUI/imgui_impl_dx11.h"
 #include "vendor/ImGUI/imgui_impl_win32.h"
-static String windowOpen;
-void Window::setOpenWindow(String s)
-{
-	windowOpen = s;
-}
-
-void Window::QuitWindow(HWND hwnd) 
-{
-	DestroyWindow(hwnd);
-}
 
 void Window::show()
 {
@@ -118,28 +108,16 @@ LRESULT CALLBACK Window::WindowsProc(HWND windowHandler, UINT msg, WPARAM wParam
 		return true;
 	}
 #endif // ROOTEX_EDITOR
-	if (windowOpen == "editor")
-	{
-
 		switch (msg)
 		{
 		case WM_CLOSE:
-			EventManager::GetSingleton()->call("EditorSaveBeforeQuit", "EditorSaveBeforeQuit", 0);
+			EventManager::GetSingleton()->call("quitWindowRequest", "quitWindowRequest", 0);
 			return 0;
 		case WM_DESTROY:
 			PostQuitMessage(0);
 			return 0;
 		}
-	}
-	else
-	{
-		switch (msg)
-		{
-		case WM_CLOSE:
-			PostQuitMessage(0);
-			break;
-		}
-	}
+	
 	InputManager::GetSingleton()->forwardMessage({ windowHandler, msg, wParam, lParam });
 
 	return DefWindowProc(windowHandler, msg, wParam, lParam);
@@ -149,6 +127,8 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
     : m_Width(width)
     , m_Height(height)
 {
+	BIND_EVENT_MEMBER_FUNCTION("quitWindowRequest", Window::quitWindow);
+	BIND_EVENT_MEMBER_FUNCTION("quitEditorWindow", Window::quitEditorWindow);
 	WNDCLASSEX windowClass = { 0 };
 	LPCSTR className = title.c_str();
 	HINSTANCE hInstance = GetModuleHandle(0);
@@ -164,7 +144,8 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
 	windowClass.lpszClassName = className;
 	windowClass.hIconSm = nullptr;
 	RegisterClassEx(&windowClass);
-	
+	IsEditorWindow = isEditor;
+
 	if (isEditor)
 	{
 		m_WindowHandle = CreateWindowEx(
@@ -210,7 +191,25 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
 	applyDefaultViewport();
 }
 
+Variant Window::quitWindow(const Event* event) {
+	if (this->IsEditorWindow)
+	{	
+		EventManager::GetSingleton()->call("EditorSaveBeforeQuit", "EditorSaveBeforeQuit", 0);
+	}
+	else
+	{
+		PostQuitMessage(0);
+	}
+	return true;
+}
+Variant Window::quitEditorWindow(const Event* event)
+{
+	DestroyWindow(this->getWindowHandle());
+	return true;
+}
+
 HWND Window::getWindowHandle()
 {
 	return m_WindowHandle;
 }
+

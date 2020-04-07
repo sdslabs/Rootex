@@ -24,10 +24,8 @@ void ToolbarDock::draw()
 			{
 				EventManager::GetSingleton()->call("PreGameStartupSaveEvent", "EditorSaveAll", 0);
 				PRINT("Launched Game process");
-				Window::setOpenWindow("game");
 				OS::Execute("\"" + OS::GetGameExecutablePath() + "\" " + ProjectManager::GetSingleton()->getCurrentLevelName());
 				PRINT("Game process ended");
-				Window::setOpenWindow("editor");
 			}
 
 			ImGui::NextColumn();
@@ -38,9 +36,7 @@ void ToolbarDock::draw()
 			{
 				EventManager::GetSingleton()->call("PreGameStartupSaveEvent", "EditorSaveAll", 0);
 				PRINT("Launched Game process");
-				Window::setOpenWindow("game");
 				OS::Execute("\"" + OS::GetGameExecutablePath() + "\"");
-				Window::setOpenWindow ("editor");
 				PRINT("Game process ended");
 			}
 

@@ -25,8 +25,6 @@ class Editor
 	unsigned int m_EditorStyleColorPushCount;
 	unsigned int m_EditorStyleVarPushCount;
 
-	HWND m_Window;
-
 	struct Colors
 	{
 		ImVec4 m_Accent;
