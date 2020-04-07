@@ -1,6 +1,6 @@
 #include "sphere_component.h"
 
-SphereComponent::SphereComponent(float rad, const String& matName)
+SphereColliderComponent::SphereColliderComponent(float rad, const String& matName)
     : PhysicsColliderComponent(matName, ((4.f / 3.f) * DirectX::XM_PI * rad * rad * rad), Ref<btSphereShape>(new btSphereShape(rad)))
     , m_Radius(rad)
 {
@@ -10,7 +10,7 @@ SphereComponent::SphereComponent(float rad, const String& matName)
 	}
 }
 
-JSON::json SphereComponent::getJSON() const
+JSON::json SphereColliderComponent::getJSON() const
 {
 	JSON::json j;
 
@@ -20,14 +20,14 @@ JSON::json SphereComponent::getJSON() const
 	return j;
 }
 
-Component* SphereComponent::Create(const JSON::json& sphereComponentData)
+Component* SphereColliderComponent::Create(const JSON::json& sphereComponentData)
 {
-	SphereComponent* component = new SphereComponent(sphereComponentData["radius"], sphereComponentData["matName"]);
+	SphereColliderComponent* component = new SphereColliderComponent(sphereComponentData["radius"], sphereComponentData["matName"]);
 	return component;
 }
 
-Component* SphereComponent::CreateDefault()
+Component* SphereColliderComponent::CreateDefault()
 {
-	SphereComponent* component = new SphereComponent(1.0f, "Air");
+	SphereColliderComponent* component = new SphereColliderComponent(1.0f, "Air");
 	return component;
 }

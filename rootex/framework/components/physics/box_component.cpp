@@ -1,6 +1,6 @@
 #include "box_component.h"
 
-BoxComponent::BoxComponent(const Vector3 dimensions, const String& matName)
+BoxColliderComponent::BoxColliderComponent(const Vector3 dimensions, const String& matName)
     : PhysicsColliderComponent(matName, dimensions.x * dimensions.y * dimensions.z, Ref<btBoxShape>(new btBoxShape(vecTobtVector3(dimensions))))
     , m_Dimensions(dimensions)
 {
@@ -10,7 +10,7 @@ BoxComponent::BoxComponent(const Vector3 dimensions, const String& matName)
 	}
 }
 
-JSON::json BoxComponent::getJSON() const
+JSON::json BoxColliderComponent::getJSON() const
 {
 	JSON::json j;
 
@@ -23,17 +23,17 @@ JSON::json BoxComponent::getJSON() const
 	return j;
 }
 
-Component* BoxComponent::Create(const JSON::json& boxComponentData)
+Component* BoxColliderComponent::Create(const JSON::json& boxComponentData)
 {
-	BoxComponent* component = new BoxComponent(
+	BoxColliderComponent* component = new BoxColliderComponent(
 		{ boxComponentData["dimensions"]["x"], boxComponentData["dimensions"]["y"], boxComponentData["dimensions"]["z"] },
 		boxComponentData["matName"]);
 	return component;
 }
 
-Component* BoxComponent::CreateDefault()
+Component* BoxColliderComponent::CreateDefault()
 {
-	BoxComponent* component = new BoxComponent(
+	BoxColliderComponent* component = new BoxColliderComponent(
 		{ 1.0f, 1.0f, 1.0f },
 		"Air");
 	return component;
