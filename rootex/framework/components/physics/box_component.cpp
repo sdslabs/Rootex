@@ -1,6 +1,6 @@
 #include "box_component.h"
 
-BoxComponent::BoxComponent(Vector3 dimensions, const String& matName)
+BoxComponent::BoxComponent(const Vector3 dimensions, const String& matName)
     : PhysicsComponent(matName, dimensions.x * dimensions.y * dimensions.z, Ref<btBoxShape>(new btBoxShape(vecTobtVector3(dimensions))))
     , m_Dimensions(dimensions)
 {

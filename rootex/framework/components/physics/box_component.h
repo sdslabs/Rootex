@@ -14,7 +14,7 @@ class BoxComponent : public PhysicsComponent
 	friend class EntityFactory;
 
 public:
-	BoxComponent(Vector3 dimensions, const String& matName);
+	BoxComponent(const Vector3 dimensions, const String& matName);
 
 	Vector3 getDimensions() const { return m_Dimensions; }
 
