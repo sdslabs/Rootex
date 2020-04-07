@@ -105,6 +105,7 @@ void Editor::initialize(HWND hWnd, const JSON::json& projectJSON)
 	m_Window = hWnd;
 	ImGui_ImplWin32_Init(hWnd);
 	ImGui_ImplDX11_Init(RenderingDevice::GetSingleton()->getDevice(), RenderingDevice::GetSingleton()->getContext());
+	Window::setOpenWindow("editor");
 	ImGui::StyleColorsDark();
 }
 

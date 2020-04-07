@@ -19,13 +19,15 @@ protected:
 	
 	/// Wraps DefWindowProc function.
 	static LRESULT CALLBACK WindowsProc(HWND windowHandler, UINT msg, WPARAM wParam, LPARAM lParam);
+	
 
 public:
+
 	Window(int xOffset, int yOffset, int width, int height, const String& title, bool isEditor, bool MSAA);
 	Window(const Window&) = delete;
 	Window& operator=(const Window&) = delete;
 	~Window() = default;
-		
+	void static setOpenWindow(String s);
 	void static QuitWindow(HWND hwnd);
 	void show();
 	
@@ -42,6 +44,5 @@ public:
 	int getWidth() const;
 	int getHeight() const;
 	HWND getWindowHandle();
-
 	void setWindowTitle(String title);
 };

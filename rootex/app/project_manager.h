@@ -9,9 +9,9 @@ class ProjectManager
 	ProjectManager(ProjectManager&);
 	~ProjectManager() = default;
 
-	String m_CurrentLevelName;
 
 public:
+	String m_CurrentLevelName;
 	static ProjectManager* GetSingleton();
 
 	void openLevel(const String& levelPath);

@@ -7,6 +7,11 @@
 #include "vendor/ImGUI/imgui.h"
 #include "vendor/ImGUI/imgui_impl_dx11.h"
 #include "vendor/ImGUI/imgui_impl_win32.h"
+static String windowOpen;
+void Window::setOpenWindow(String s)
+{
+	windowOpen = s;
+}
 
 void Window::QuitWindow(HWND hwnd) 
 {
@@ -113,17 +118,28 @@ LRESULT CALLBACK Window::WindowsProc(HWND windowHandler, UINT msg, WPARAM wParam
 		return true;
 	}
 #endif // ROOTEX_EDITOR
-
-	switch (msg)
+	if (windowOpen == "editor")
 	{
-	case WM_CLOSE:
-		EventManager::GetSingleton()->call("EditorSaveBeforeQuit", "EditorSaveBeforeQuit", 0);
-		return 0;
-	case WM_DESTROY:
-		PostQuitMessage(0);
-		return 0;
-	}
 
+		switch (msg)
+		{
+		case WM_CLOSE:
+			EventManager::GetSingleton()->call("EditorSaveBeforeQuit", "EditorSaveBeforeQuit", 0);
+			return 0;
+		case WM_DESTROY:
+			PostQuitMessage(0);
+			return 0;
+		}
+	}
+	else
+	{
+		switch (msg)
+		{
+		case WM_CLOSE:
+			PostQuitMessage(0);
+			break;
+		}
+	}
 	InputManager::GetSingleton()->forwardMessage({ windowHandler, msg, wParam, lParam });
 
 	return DefWindowProc(windowHandler, msg, wParam, lParam);
@@ -148,7 +164,7 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
 	windowClass.lpszClassName = className;
 	windowClass.hIconSm = nullptr;
 	RegisterClassEx(&windowClass);
-
+	
 	if (isEditor)
 	{
 		m_WindowHandle = CreateWindowEx(
