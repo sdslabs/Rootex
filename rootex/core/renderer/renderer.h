@@ -6,6 +6,7 @@
 #include "rendering_device.h"
 #include "viewport.h"
 
+/// Makes the rendering draw call and set viewport, instrumental in seperating Game and HUD rendering
 class Renderer
 {
 public:

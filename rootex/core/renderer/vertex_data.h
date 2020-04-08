@@ -2,6 +2,7 @@
 
 #include "common/common.h"
 
+/// Data to be sent in a vertex
 struct VertexData
 {
 	Vector3 m_Position;

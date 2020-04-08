@@ -22,6 +22,7 @@ public:
 	void getMessages(String file, String func) const;
 };
 
+/// Used to get DIrectX errors/warnings from its debug interface
 #define GFX_ERR_CHECK(hr)                      \
 	DxgiDebugInterface::GetSingleton()->set(); \
 	if (FAILED(hr))                            \
