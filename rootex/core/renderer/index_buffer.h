@@ -4,6 +4,7 @@
 
 #include "common/common.h"
 
+/// Encapsulates Index Buffer data, to be supplied to the Input Assembler
 class IndexBuffer
 {
 protected:
