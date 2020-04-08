@@ -13,23 +13,23 @@ public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::SpotLightComponent;
 
 	/// attenuation = 1/(attConst + attLin * r + attQuad * r * r) 
-	float m_attConst;
+	float m_AttConst;
 	/// attenuation = 1/(attConst + attLin * r + attQuad * r * r)
-	float m_attLin;
+	float m_AttLin;
 	/// attenuation = 1/(attConst + attLin * r + attQuad * r * r)
-	float m_attQuad;
+	float m_AttQuad;
 	/// Lighting effect clipped for distance > range
-	float m_range;
+	float m_Range;
 	/// Diffuse intensity of light
-	float m_diffuseIntensity;
+	float m_DiffuseIntensity;
 	/// Diffuse color of light
-	Color m_diffuseColor;
+	Color m_DiffuseColor;
 	/// Ambient color of light
-	Color m_ambientColor;
-	/// increasing spot increases the angular attenuation wrt axis
-	float m_spot;
+	Color m_AmbientColor;
+	/// Increasing spot increases the angular attenuation wrt axis
+	float m_Spot;
 	/// Lighting effect clipped for angle > angleRange
-	float m_angleRange;
+	float m_AngleRange;
 	
 	virtual String getName() const override { return "SpotLightComponent"; }
 	ComponentID getComponentID() const override { return s_ID; }

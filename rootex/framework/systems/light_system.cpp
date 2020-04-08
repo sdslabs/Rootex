@@ -24,9 +24,9 @@ Lights LightSystem::getLights()
 		TransformComponent* transform = light->getOwner()->getComponent<TransformComponent>().get();
 		Vector3 transformedPosition = Vector3::Transform(transform->getPosition(), transform->getAbsoluteTransform());
 		lights.pointLightInfos[i] = {
-			light->m_ambientColor, light->m_diffuseColor, light->m_diffuseIntensity,
-			light->m_attConst, light->m_attLin, light->m_attQuad,
-			transformedPosition, light->m_range
+			light->m_AmbientColor, light->m_DiffuseColor, light->m_DiffuseIntensity,
+			light->m_AttConst, light->m_AttLin, light->m_AttQuad,
+			transformedPosition, light->m_Range
 		};
 	}
 	lights.pointLightCount = i;
@@ -42,8 +42,8 @@ Lights LightSystem::getLights()
 		DirectionalLightComponent* light = dynamic_cast<DirectionalLightComponent*>(directionalLightComponents[0]);
 
 		lights.directionalLightInfo = {
-			light->m_direction, light->m_diffuseIntensity, light->m_diffuseColor,
-			light->m_ambientColor
+			light->m_Direction, light->m_DiffuseIntensity, light->m_DiffuseColor,
+			light->m_AmbientColor
 		};
 		lights.directionalLightPresent = 1;
 	}
@@ -57,10 +57,10 @@ Lights LightSystem::getLights()
 		TransformComponent* transform = light->getOwner()->getComponent<TransformComponent>().get();
 		Vector3 direction = DirectX::XMVector3Rotate(Vector3(0.0f, 0.0f, 1.0f), transform->getRotation());
 		lights.spotLightInfos[i] = {
-			light->m_ambientColor, light->m_diffuseColor, light->m_diffuseIntensity,
-			light->m_attConst, light->m_attLin, light->m_attQuad,
-			transform->getPosition(), light->m_range, direction, light->m_spot,
-			light->m_angleRange
+			light->m_AmbientColor, light->m_DiffuseColor, light->m_DiffuseIntensity,
+			light->m_AttConst, light->m_AttLin, light->m_AttQuad,
+			transform->getPosition(), light->m_Range, direction, light->m_Spot,
+			light->m_AngleRange
 		};
 	}
 	lights.spotLightCount = i;

@@ -32,13 +32,13 @@ Component* PointLightComponent::CreateDefault()
 
 PointLightComponent::PointLightComponent(const float constAtt, const float linAtt, const float quadAtt,
     const float range, const float diffuseIntensity, const Color& diffuseColor, const Color& ambientColor)
-    : m_attConst(constAtt)
-    , m_attLin(linAtt)
-    , m_attQuad(quadAtt)
-    , m_range(range)
-    , m_ambientColor(ambientColor)
-    , m_diffuseColor(diffuseColor)
-    , m_diffuseIntensity(diffuseIntensity)
+    : m_AttConst(constAtt)
+    , m_AttLin(linAtt)
+    , m_AttQuad(quadAtt)
+    , m_Range(range)
+    , m_AmbientColor(ambientColor)
+    , m_DiffuseColor(diffuseColor)
+    , m_DiffuseIntensity(diffuseIntensity)
 {
 }
 
@@ -50,21 +50,21 @@ JSON::json PointLightComponent::getJSON() const
 {
 	JSON::json j;
 
-	j["attConst"] = m_attConst;
-	j["attLin"] = m_attLin;
-	j["attQuad"] = m_attQuad;
-	j["range"] = m_range;
-	j["diffuseIntensity"] = m_diffuseIntensity;
+	j["attConst"] = m_AttConst;
+	j["attLin"] = m_AttLin;
+	j["attQuad"] = m_AttQuad;
+	j["range"] = m_Range;
+	j["diffuseIntensity"] = m_DiffuseIntensity;
 
-	j["diffuseColor"]["r"] = m_diffuseColor.x;
-	j["diffuseColor"]["g"] = m_diffuseColor.y;
-	j["diffuseColor"]["b"] = m_diffuseColor.z;
-	j["diffuseColor"]["a"] = m_diffuseColor.w;
+	j["diffuseColor"]["r"] = m_DiffuseColor.x;
+	j["diffuseColor"]["g"] = m_DiffuseColor.y;
+	j["diffuseColor"]["b"] = m_DiffuseColor.z;
+	j["diffuseColor"]["a"] = m_DiffuseColor.w;
 
-	j["ambientColor"]["r"] = m_ambientColor.x;
-	j["ambientColor"]["g"] = m_ambientColor.y;
-	j["ambientColor"]["b"] = m_ambientColor.z;
-	j["ambientColor"]["a"] = m_ambientColor.w;
+	j["ambientColor"]["r"] = m_AmbientColor.x;
+	j["ambientColor"]["g"] = m_AmbientColor.y;
+	j["ambientColor"]["b"] = m_AmbientColor.z;
+	j["ambientColor"]["a"] = m_AmbientColor.w;
 
 	return j;
 }
@@ -73,12 +73,12 @@ JSON::json PointLightComponent::getJSON() const
 #include"imgui.h"
 void PointLightComponent::draw()
 {
-	ImGui::DragFloat("Diffuse Intensity##Point", &m_diffuseIntensity);
-	ImGui::ColorEdit4("Diffuse Color##Point", &m_diffuseColor.x);
-	ImGui::ColorEdit4("Ambient Color##Point", &m_ambientColor.x);
-	ImGui::DragFloat("Constant Attenuation##Point", &m_attConst);
-	ImGui::DragFloat("Linear Attenuation##Point", &m_attLin);
-	ImGui::DragFloat("Quadratic Attenuation##Point", &m_attQuad);
-	ImGui::DragFloat("Range##Point", &m_range);
+	ImGui::DragFloat("Diffuse Intensity##Point", &m_DiffuseIntensity);
+	ImGui::ColorEdit4("Diffuse Color##Point", &m_DiffuseColor.x);
+	ImGui::ColorEdit4("Ambient Color##Point", &m_AmbientColor.x);
+	ImGui::DragFloat("Constant Attenuation##Point", &m_AttConst);
+	ImGui::DragFloat("Linear Attenuation##Point", &m_AttLin);
+	ImGui::DragFloat("Quadratic Attenuation##Point", &m_AttQuad);
+	ImGui::DragFloat("Range##Point", &m_Range);
 }
 #endif // ROOTEX_EDITOR

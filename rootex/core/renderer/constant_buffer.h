@@ -22,7 +22,7 @@ struct PointLightInfo
 	float attLin = 0.045f;
 	/// attenuation = 1/(attConst + attLin * r + attQuad * r * r)
 	float attQuad = 0.0075f;
-	/// is filled with the TransformComponent while rendering
+	/// Is filled with the TransformComponent while rendering
 	Vector3 lightPos = { 0.0f, 0.0f, 0.0f };
 	/// Lighting effect clipped for distance > range
 	float range = 10;
@@ -48,9 +48,9 @@ struct SpotLightInfo
 	float attQuad = 0.0075f;
 	Vector3 lightPos = { 0.0f, 0.0f, 0.0f };
 	float range = 10;
-	/// direction of axis of light cone
+	/// Direction of axis of light cone
 	Vector3 direction;
-	/// increasing spot increases the angular attenuation wrt axis
+	/// Increasing spot increases the angular attenuation wrt axis
 	float spot;
 	/// Lighting effect clipped for angle > angleRange
 	float angleRange;
@@ -67,7 +67,7 @@ struct MaterialInfo
 	float pad1[2];
 };
 
-/// encapsulates all the types of lights offered, to bind them in the Pixel Shader
+/// Encapsulates all the types of lights offered, to bind them in the Pixel Shader
 struct Lights
 {
 	int pointLightCount = 0;

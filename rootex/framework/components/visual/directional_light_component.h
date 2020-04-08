@@ -13,13 +13,13 @@ public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::DirectionalLightComponent;
 
 	/// Direction of light
-	Vector3 m_direction;
+	Vector3 m_Direction;
 	/// Diffuse intensity of light
-	float m_diffuseIntensity;
+	float m_DiffuseIntensity;
 	/// Diffuse color of light
-	Color m_diffuseColor;
+	Color m_DiffuseColor;
 	/// Ambient color of light
-	Color m_ambientColor;
+	Color m_AmbientColor;
 	
 	virtual String getName() const override { return "DirectionalLightComponent"; }
 	ComponentID getComponentID() const override { return s_ID; }
