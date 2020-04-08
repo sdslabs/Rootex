@@ -9,7 +9,7 @@
 #include "systems/hierarchy_system.h"
 #include "components/debug_component.h"
 #include "components/hierarchy_component.h"
-#include "components/physics/sphere_component.h"
+#include "components/physics/sphere_collider_component.h"
 #include "components/script_component.h"
 #include "components/test_component.h"
 #include "components/transform_component.h"
@@ -20,7 +20,8 @@
 #include "components/visual/spot_light_component.h"
 #include "components/visual/text_visual_2d_component.h"
 #include "components/visual/cpu_particles_visual_component.h"
-#include "components/physics/sphere_component.h"
+#include "components/physics/sphere_collider_component.h"
+#include "components/physics/box_collider_component.h"
 #include "components/music_component.h"
 #include "components/short_music_component.h"
 
@@ -54,7 +55,8 @@ EntityFactory::EntityFactory()
 	REGISTER_COMPONENT(PointLightComponent);
 	REGISTER_COMPONENT(DirectionalLightComponent);
 	REGISTER_COMPONENT(SpotLightComponent);
-	REGISTER_COMPONENT(SphereComponent);
+	REGISTER_COMPONENT(SphereColliderComponent);
+	REGISTER_COMPONENT(BoxColliderComponent);
 	REGISTER_COMPONENT(HierarchyComponent);
 	REGISTER_COMPONENT(ScriptComponent);
 	REGISTER_COMPONENT(MusicComponent);

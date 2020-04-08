@@ -5,12 +5,12 @@
 
 #include "btBulletDynamicsCommon.h"
 
-class PhysicsComponent : public Component
+class PhysicsColliderComponent : public Component
 {
 	friend class EntityFactory;
 
 public:
-	static const ComponentID s_ID = (ComponentID)ComponentIDs::PhysicsComponent;
+	static const ComponentID s_ID = (ComponentID)ComponentIDs::PhysicsColliderComponent;
 
 	ComponentID getComponentID() const { return s_ID; }
 
@@ -18,8 +18,8 @@ public:
 	static Matrix btTransformToMat(btTransform const& trans);
 	static btVector3 vecTobtVector3(Vector3 const& vec3);
 	static Vector3 btVector3ToVec(btVector3 const& btvec);
-	PhysicsComponent(const String& matName, float volume, const Ref<btCollisionShape>& collisionShape);
-	~PhysicsComponent() = default;
+	PhysicsColliderComponent(const String& matName, float volume, const Ref<btCollisionShape>& collisionShape);
+	~PhysicsColliderComponent() = default;
 
 	struct MotionState : public btMotionState
 	{
@@ -73,5 +73,5 @@ public:
 	//   Returns the current transform of the phyics object
 	Matrix getTransform();
 
-	virtual String getName() const override { return "PhysicsComponent"; };
+	virtual String getName() const override { return "PhysicsColliderComponent"; };
 };

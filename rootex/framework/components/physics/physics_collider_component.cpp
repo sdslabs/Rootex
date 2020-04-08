@@ -1,9 +1,9 @@
-#include "physics_component.h"
+#include "physics_collider_component.h"
 #include "framework/systems/physics_system.h"
 
 #include "entity.h"
 
-PhysicsComponent::PhysicsComponent(const String& matName, float volume, const Ref<btCollisionShape>& collisionShape)
+PhysicsColliderComponent::PhysicsColliderComponent(const String& matName, float volume, const Ref<btCollisionShape>& collisionShape)
     : m_MaterialName(matName)
     , m_MotionState(Matrix::Identity)
 	, m_Material(0, 0)
@@ -20,7 +20,7 @@ PhysicsComponent::PhysicsComponent(const String& matName, float volume, const Re
 	m_LocalInertia = btVector3(0.f, 0.f, 0.f);
 }
 
-bool PhysicsComponent::setup()
+bool PhysicsColliderComponent::setup()
 {
 	bool status = true;
 	if (m_Owner)
@@ -49,81 +49,81 @@ bool PhysicsComponent::setup()
 	return status;
 }
 
-PhysicsComponent::MotionState::MotionState(Matrix const& startingTransform)
+PhysicsColliderComponent::MotionState::MotionState(Matrix const& startingTransform)
     : m_WorldToPositionTransform(startingTransform)
 {
 }
 
-void PhysicsComponent::MotionState::getWorldTransform(btTransform& worldTrans) const
+void PhysicsColliderComponent::MotionState::getWorldTransform(btTransform& worldTrans) const
 {
 	worldTrans = matTobtTransform(m_WorldToPositionTransform);
 }
 
-void PhysicsComponent::MotionState::setWorldTransform(const btTransform& worldTrans)
+void PhysicsColliderComponent::MotionState::setWorldTransform(const btTransform& worldTrans)
 {
 	m_WorldToPositionTransform = btTransformToMat(worldTrans);
 }
 
-/*PhysicsComponent::MaterialData::MaterialData(float restitution, float friction)
+/*PhysicsColliderComponent::MaterialData::MaterialData(float restitution, float friction)
 {
 	m_Restitution = restitution;
 	m_Friction = friction;
 }*/
 
-void PhysicsComponent::applyForce(const Vector3 force)
+void PhysicsColliderComponent::applyForce(const Vector3 force)
 {
 	m_Body->applyCentralImpulse(vecTobtVector3(force));
 }
 
-void PhysicsComponent::applyTorque(const Vector3 torque)
+void PhysicsColliderComponent::applyTorque(const Vector3 torque)
 {
 	m_Body->applyTorqueImpulse(vecTobtVector3(torque));
 }
 
-void PhysicsComponent::kinematicMove(const Matrix& matrix)
+void PhysicsColliderComponent::kinematicMove(const Matrix& matrix)
 {
 	m_Body->setActivationState(DISABLE_DEACTIVATION);
 	m_Body->setWorldTransform(matTobtTransform(matrix));
 }
 
-void PhysicsComponent::setTransform(const Matrix& mat)
+void PhysicsColliderComponent::setTransform(const Matrix& mat)
 {
 	m_Body->setActivationState(DISABLE_DEACTIVATION);
 	// warp the body to the new position
 	m_Body->setWorldTransform(matTobtTransform(mat));
 }
 
-Matrix PhysicsComponent::getTransform()
+Matrix PhysicsColliderComponent::getTransform()
 {
 	return btTransformToMat(m_Body->getCenterOfMassTransform());
 }
 
-void PhysicsComponent::setVelocity(const Vector3& velocity)
+void PhysicsColliderComponent::setVelocity(const Vector3& velocity)
 {
 	m_Body->setLinearVelocity(vecTobtVector3(velocity));
 }
 
-Vector3 PhysicsComponent::getVelocity()
+Vector3 PhysicsColliderComponent::getVelocity()
 {
 	return btVector3ToVec(m_Body->getLinearVelocity());
 }
 
-void PhysicsComponent::setAngularVelocity(const Vector3& angularVel)
+void PhysicsColliderComponent::setAngularVelocity(const Vector3& angularVel)
 {
 	m_Body->setAngularVelocity(vecTobtVector3(angularVel));
 }
 
-Vector3 PhysicsComponent::getAngularVelocity()
+Vector3 PhysicsColliderComponent::getAngularVelocity()
 {
 	return btVector3ToVec(m_Body->getAngularVelocity());
 }
 
-void PhysicsComponent::translate(const Vector3& vec)
+void PhysicsColliderComponent::translate(const Vector3& vec)
 {
 	m_Body->translate(vecTobtVector3(vec));
 }
 
-btTransform PhysicsComponent::matTobtTransform(Matrix const& mat)
+btTransform PhysicsColliderComponent::matTobtTransform(Matrix const& mat)
 {
 	// convert from Mat4x4 to btTransform
 	btMatrix3x3 bulletRotation;
@@ -152,7 +152,7 @@ btTransform PhysicsComponent::matTobtTransform(Matrix const& mat)
 	return btTransform(bulletRotation, bulletPosition);
 }
 
-Matrix PhysicsComponent::btTransformToMat(btTransform const& trans)
+Matrix PhysicsColliderComponent::btTransformToMat(btTransform const& trans)
 {
 	Matrix returnValue = Matrix::Identity;
 
@@ -183,17 +183,17 @@ Matrix PhysicsComponent::btTransformToMat(btTransform const& trans)
 	return returnValue;
 }
 
-void PhysicsComponent::disableGravity()
+void PhysicsColliderComponent::disableGravity()
 {
 	m_Body->setGravity({ 0.0f, 0.0f, 0.0f });	
 }
 
-btVector3 PhysicsComponent::vecTobtVector3(Vector3 const& vec3)
+btVector3 PhysicsColliderComponent::vecTobtVector3(Vector3 const& vec3)
 {
 	return btVector3(vec3.x, vec3.y, vec3.z);
 }
 
-Vector3 PhysicsComponent::btVector3ToVec(btVector3 const& btvec)
+Vector3 PhysicsColliderComponent::btVector3ToVec(btVector3 const& btvec)
 {
 	return Vector3(btvec.x(), btvec.y(), btvec.z());
 }
