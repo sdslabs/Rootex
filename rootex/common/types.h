@@ -36,7 +36,7 @@ template <class P, class Q>
 using Map = std::map<P, Q>;
 
 #include <unordered_map>
-///std::unordered_map
+/// std::unordered_map
 template <class P, class Q>
 using HashMap = std::unordered_map<P, Q>;
 
@@ -83,7 +83,7 @@ typedef Vector<std::variant<bool, int, char, float, String, Vector2, Vector3, Ve
 class Entity;
 /// std::variant of bool, int, char, float, String, Vector2, Vector3, Vector4, Matrix VariantVector, Ref<Entity>, Vector<String>
 using Variant = std::variant<bool, int, char, float, String, Vector2, Vector3, Vector4, Matrix, VariantVector, Ref<Entity>, Vector<String>>;
-/// extract the value of type TypeName from a Variant
+/// Extract the value of type TypeName from a Variant
 #define Extract(TypeName, variant) std::get<TypeName>((variant))
 
 #include <functional>
@@ -92,7 +92,7 @@ template <class T>
 using Function = std::function<T>;
 
 #include "JSON/json.hpp"
-/// namespace for the JSON library
+/// Namespace for the JSON library
 namespace JSON = nlohmann;
 
 #include "imgui.h"

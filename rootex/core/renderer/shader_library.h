@@ -3,7 +3,7 @@
 #include "common/common.h"
 #include "shader.h"
 
-/// does Shader caching
+/// Does Shader caching
 class ShaderLibrary
 {
 	enum class ShaderType

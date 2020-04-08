@@ -8,7 +8,7 @@
 /// Encapsulates a vector of vertices to be used as Vertex Buffer
 class VertexBuffer
 {
-	/// pointer given by DirectX API to refer the vertex buffer created on GPU
+	/// Pointer given by DirectX API to refer the vertex buffer created on GPU
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_VertexBuffer;
 	Vector<VertexData> m_Buffer;
 

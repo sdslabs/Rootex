@@ -13,19 +13,19 @@ public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::PointLightComponent;
 
 	/// attenuation = 1/(attConst + attLin * r + attQuad * r * r) 
-	float m_attConst;
+	float m_AttConst;
 	/// attenuation = 1/(attConst + attLin * r + attQuad * r * r)
-	float m_attLin;
+	float m_AttLin;
 	/// attenuation = 1/(attConst + attLin * r + attQuad * r * r)
-	float m_attQuad;
+	float m_AttQuad;
 	/// Lighting effect clipped for distance > range
-	float m_range;
+	float m_Range;
 	/// Diffuse intensity of light
-	float m_diffuseIntensity;
+	float m_DiffuseIntensity;
 	/// Diffuse color of light
-	Color m_diffuseColor;
+	Color m_DiffuseColor;
 	/// Ambient color of light
-	Color m_ambientColor;
+	Color m_AmbientColor;
 	
 	virtual String getName() const override { return "PointLightComponent"; }
 	ComponentID getComponentID() const override { return s_ID; }
