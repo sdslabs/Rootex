@@ -1,4 +1,5 @@
 #include "box_collider_component.h"
+#include "framework/systems/physics_system.h"
 
 BoxColliderComponent::BoxColliderComponent(const Vector3 dimensions, const String& matName)
     : PhysicsColliderComponent(matName, dimensions.x * dimensions.y * dimensions.z, Ref<btBoxShape>(new btBoxShape(vecTobtVector3(dimensions))))
@@ -38,3 +39,30 @@ Component* BoxColliderComponent::CreateDefault()
 		"Air");
 	return component;
 }
+
+#ifdef ROOTEX_EDITOR
+#include "imgui.h"
+void BoxColliderComponent::draw()
+{
+	ImGui::DragFloat3("##D", &m_Dimensions.x);
+	ImGui::SameLine();
+	if (ImGui::Button("Dimensions"))
+	{
+		m_Dimensions = { 1.0f, 1.0f, 1.0f };
+	}
+
+
+	ImGui::SameLine();
+	if (ImGui::BeginCombo("Material", m_MaterialName.c_str(), ImGuiComboFlags_HeightLarge))
+	{
+		for (auto&& material : PhysicsSystem::GetSingleton()->getPhysicsMaterial())
+		{
+			if (ImGui::Selectable(material.first.as<String>().c_str()))
+			{
+				m_MaterialName.assign(material.first.as<String>().c_str());
+			}
+		}
+		ImGui::EndCombo();
+	}
+}
+#endif // ROOTEX_EDITOR 
