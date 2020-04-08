@@ -334,3 +334,6 @@ ASALocalRun/
 
 # Shaders
 *.cso
+
+# please don't ignore our obj loader
+!/rootex/vendor/Assimp/assimp/code/Obj/
