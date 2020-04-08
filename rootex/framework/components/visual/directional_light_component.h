@@ -1,6 +1,7 @@
 #include "component.h"
 #include "common/common.h"
 
+/// Component to apply directional light to the scene, only the first created instance is used in case of multiple such components
 class DirectionalLightComponent : public Component
 {
 	static Component* Create(const JSON::json& componentData);
@@ -11,9 +12,13 @@ class DirectionalLightComponent : public Component
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::DirectionalLightComponent;
 
+	/// Direction of light
 	Vector3 m_direction;
+	/// Diffuse intensity of light
 	float m_diffuseIntensity;
+	/// Diffuse color of light
 	Color m_diffuseColor;
+	/// Ambient color of light
 	Color m_ambientColor;
 	
 	virtual String getName() const override { return "DirectionalLightComponent"; }
