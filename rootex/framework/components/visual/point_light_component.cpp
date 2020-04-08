@@ -32,9 +32,9 @@ Component* PointLightComponent::CreateDefault()
 
 PointLightComponent::PointLightComponent(const float constAtt, const float linAtt, const float quadAtt,
     const float range, const float diffuseIntensity, const Color& diffuseColor, const Color& ambientColor)
-    : m_constAtt(constAtt)
-    , m_linAtt(linAtt)
-    , m_quadAtt(quadAtt)
+    : m_attConst(constAtt)
+    , m_attLin(linAtt)
+    , m_attQuad(quadAtt)
     , m_range(range)
     , m_ambientColor(ambientColor)
     , m_diffuseColor(diffuseColor)
@@ -50,9 +50,9 @@ JSON::json PointLightComponent::getJSON() const
 {
 	JSON::json j;
 
-	j["attConst"] = m_constAtt;
-	j["attLin"] = m_linAtt;
-	j["attQuad"] = m_quadAtt;
+	j["attConst"] = m_attConst;
+	j["attLin"] = m_attLin;
+	j["attQuad"] = m_attQuad;
 	j["range"] = m_range;
 	j["diffuseIntensity"] = m_diffuseIntensity;
 
@@ -76,9 +76,9 @@ void PointLightComponent::draw()
 	ImGui::DragFloat("Diffuse Intensity##Point", &m_diffuseIntensity);
 	ImGui::ColorEdit4("Diffuse Color##Point", &m_diffuseColor.x);
 	ImGui::ColorEdit4("Ambient Color##Point", &m_ambientColor.x);
-	ImGui::DragFloat("Constant Attenuation##Point", &m_constAtt);
-	ImGui::DragFloat("Linear Attenuation##Point", &m_linAtt);
-	ImGui::DragFloat("Quadratic Attenuation##Point", &m_quadAtt);
+	ImGui::DragFloat("Constant Attenuation##Point", &m_attConst);
+	ImGui::DragFloat("Linear Attenuation##Point", &m_attLin);
+	ImGui::DragFloat("Quadratic Attenuation##Point", &m_attQuad);
 	ImGui::DragFloat("Range##Point", &m_range);
 }
 #endif // ROOTEX_EDITOR

@@ -25,7 +25,7 @@ Lights LightSystem::getLights()
 		Vector3 transformedPosition = Vector3::Transform(transform->getPosition(), transform->getAbsoluteTransform());
 		lights.pointLightInfos[i] = {
 			light->m_ambientColor, light->m_diffuseColor, light->m_diffuseIntensity,
-			light->m_constAtt, light->m_linAtt, light->m_quadAtt,
+			light->m_attConst, light->m_attLin, light->m_attQuad,
 			transformedPosition, light->m_range
 		};
 	}
@@ -58,7 +58,7 @@ Lights LightSystem::getLights()
 		Vector3 direction = DirectX::XMVector3Rotate(Vector3(0.0f, 0.0f, 1.0f), transform->getRotation());
 		lights.spotLightInfos[i] = {
 			light->m_ambientColor, light->m_diffuseColor, light->m_diffuseIntensity,
-			light->m_constAtt, light->m_linAtt, light->m_quadAtt,
+			light->m_attConst, light->m_attLin, light->m_attQuad,
 			transform->getPosition(), light->m_range, direction, light->m_spot,
 			light->m_angleRange
 		};
