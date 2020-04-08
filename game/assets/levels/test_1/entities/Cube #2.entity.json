@@ -1,0 +1,41 @@
+{
+    "Components": {
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 1
+        },
+        "TransformComponent": {
+            "position": {
+                "x": 0.15000000596046448,
+                "y": -4.409999847412109,
+                "z": -13.0600004196167
+            },
+            "rotation": {
+                "w": 0.8553572297096252,
+                "x": 0.011798720806837082,
+                "y": 0.506373405456543,
+                "z": 0.10867749899625778
+            },
+            "scale": {
+                "x": 0.7799999713897705,
+                "y": 0.7400000095367432,
+                "z": 0.5400000214576721
+            }
+        },
+        "VisualComponent": {
+            "color": {
+                "a": 1.0,
+                "b": 0.20000000298023224,
+                "g": 1.0,
+                "r": 0.20000000298023224
+            },
+            "isVisible": true,
+            "renderPass": 1,
+            "resFile": "game/assets/test/animal.obj"
+        }
+    },
+    "Entity": {
+        "ID": 2,
+        "name": "Cube"
+    }
+}
