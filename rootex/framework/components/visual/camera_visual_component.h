@@ -15,12 +15,11 @@ protected:
 	Vector3 m_Position;
 	Vector3 m_Direction;
 	Vector3 m_Up;
-	Ref<CameraVisualComponent> cameraPointer;
 
 public:
 	static Component* Create(const JSON::json& componentData);
 	static Component* CreateDefault();
-	CameraVisualComponent(const Vector3& position, const Vector3& direction);
+	CameraVisualComponent(const Vector3& position, const Vector3& direction, const Vector3& up);
 	CameraVisualComponent();
 	CameraVisualComponent(CameraVisualComponent&) = delete;
 	~CameraVisualComponent();
@@ -31,8 +30,8 @@ public:
 	virtual bool isVisible() const override;
 	virtual void postRender() override;
 
+	void onRemove() override;
 	virtual void setViewTransform(const Matrix& view);
-	void updateCamera();
 	void setNotActive();
 	void setPosition(Vector3 position);
 	void updatePosition();

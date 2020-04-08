@@ -4,11 +4,8 @@ Component* CameraVisualComponent::Create(const JSON::json& componentData)
 {
 	CameraVisualComponent* cameraVisualComponent = new CameraVisualComponent(
 	    { componentData["position"]["x"], componentData["position"]["y"], componentData["position"]["z"] },
-	    { componentData["direction"]["x"], componentData["direction"]["y"], componentData["direction"]["z"] });
-
-	//Ref<CameraVisualComponent> camera(cameraVisualComponent);
-
-	//RenderSystem::GetSingleton()->setCamera(cameraPointer);
+	    { componentData["direction"]["x"], componentData["direction"]["y"], componentData["direction"]["z"] },
+	    { componentData["up"]["x"], componentData["up"]["y"], componentData["up"]["z"] });
 
 	return cameraVisualComponent;
 }
@@ -17,16 +14,13 @@ Component* CameraVisualComponent::CreateDefault()
 {
 	CameraVisualComponent* cameraVisualComponent = new CameraVisualComponent(
 	    { 0.0f, 0.0f, 4.0f },
-	    { 0.0f, 0.0f, -1.0f });
-
-	//Ref<CameraVisualComponent> cameraPointer(cameraVisualComponent);
-
-	//RenderSystem::GetSingleton()->setCamera(cameraPointer);
-
+	    { 0.0f, 0.0f, -1.0f },
+	    { 0.0f, 1.0f, 0.0f });
+	
 	return cameraVisualComponent;
 }
 
-CameraVisualComponent::CameraVisualComponent(const Vector3& position,const Vector3& direction)
+CameraVisualComponent::CameraVisualComponent(const Vector3& position,const Vector3& direction, const Vector3& up)
     : VisualComponent(RenderPassMain, nullptr, nullptr, false)
     , m_DebugCamera(false)
     , m_ViewMatrix(Matrix::CreateLookAt(position, position + direction, { 0.0f, 1.0f, 0.0f }))
@@ -35,10 +29,12 @@ CameraVisualComponent::CameraVisualComponent(const Vector3& position,const Vecto
     , m_CameraOffset(0.0f, 1.0f, -10.0f, 0.0f)
     , m_Position(position)
     , m_Direction(direction)
-    , m_Up(0.0f, 1.0f, 0.0f)
+    , m_Up(up)
 {
-	Ref<CameraVisualComponent> camera(this);
-	cameraPointer = camera;
+	if (m_Owner)
+	{
+		m_TransformComponent = m_Owner->getComponent<TransformComponent>();
+	}
 }
 
 CameraVisualComponent::CameraVisualComponent()
@@ -52,15 +48,26 @@ CameraVisualComponent::CameraVisualComponent()
     , m_Direction(0.0f, 0.0f, -1.0f)
     , m_Up(0.0f, 1.0f, 0.0f)
 {
-	Ref<CameraVisualComponent> camera(this);
-	cameraPointer = camera;
+	if (m_Owner)
+	{
+		m_TransformComponent = m_Owner->getComponent<TransformComponent>();
+	}
 }
 
 CameraVisualComponent::~CameraVisualComponent()
 {
-	RenderSystem::GetSingleton()->restoreCamera();
 }
 
+void CameraVisualComponent::onRemove()
+{
+	if (m_Active)
+	{
+		if (RenderSystem::GetSingleton() != nullptr)
+		{
+			RenderSystem::GetSingleton()->restoreCamera();
+		}
+	}
+}
 bool CameraVisualComponent::preRender()
 {
 	return true;
@@ -93,14 +100,17 @@ void CameraVisualComponent::postRender()
 void CameraVisualComponent::setPosition(Vector3 position)
 {
 	m_Position = position;
-	m_ViewMatrix = Matrix::CreateLookAt(m_Position, m_Position + m_Direction, { 0.0f, 1.0f, 0.0f });
+	m_ViewMatrix = Matrix::CreateLookAt(m_Position, m_Position + m_Direction, m_Up);
 }
 
 void CameraVisualComponent::updatePosition()
 {
 	if (m_Owner)
 	{
-		m_TransformComponent = m_Owner->getComponent<TransformComponent>();
+		if (m_TransformComponent == nullptr)
+		{
+			m_TransformComponent = m_Owner->getComponent<TransformComponent>();
+		}
 		m_Position = m_TransformComponent->getPosition();
 		auto m_Rotation = m_TransformComponent->getRotation();
 		if (m_Rotation.x != 0 || m_Rotation.y != 0 || m_Rotation.z != 0)
@@ -110,8 +120,7 @@ void CameraVisualComponent::updatePosition()
 			inverse.y = -m_Rotation.y;
 			inverse.z = -m_Rotation.z;
 			inverse.w = m_Rotation.w;
-			std::cout << "Rotation = " << m_Rotation.x << m_Rotation.y << m_Rotation.z;
-			std::cout << "Inverse = " << inverse.x << inverse.y << inverse.z;
+			
 			Quaternion direction = Quaternion();
 			direction.x = 0;
 			direction.y = 0;
@@ -128,10 +137,14 @@ void CameraVisualComponent::updatePosition()
 			up.z = 0;
 			up.w = 0;
 			up = inverse * up * m_Rotation;
-			std::cout << up.x << up.y << up.z << up.w;
 			m_Up.x = up.x;
 			m_Up.y = up.y;
 			m_Up.z = up.z;
+		}
+		else
+		{
+			m_Up = { 0.0f, 1.0f, 0.0f };
+			m_Direction = { 0.0f, 0.0f, -1.0f };
 		}
 		
 	}
@@ -160,6 +173,10 @@ JSON::json CameraVisualComponent::getJSON() const
 	j["direction"]["y"] = m_Direction.y;
 	j["direction"]["z"] = m_Direction.z;
 
+	j["up"]["x"] = m_Up.x;
+	j["up"]["y"] = m_Up.y;
+	j["up"]["z"] = m_Up.z;
+
 	return j;
 }
 
@@ -181,6 +198,7 @@ void CameraVisualComponent::draw()
 		if (ImGui::Button("Set Active"))
 		{
 			m_Active = true;
+			auto cameraPointer = m_Owner->getComponent<CameraVisualComponent>();
 			RenderSystem::GetSingleton()->setCamera(cameraPointer);
 		}
 	}

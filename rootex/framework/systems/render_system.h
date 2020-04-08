@@ -8,7 +8,6 @@
 class RenderSystem : public System
 {
 	Ref<CameraVisualComponent> m_Camera;
-	Ref<CameraVisualComponent> m_CameraDefault;
 	Ptr<Renderer> m_Renderer;
 	Vector<Matrix> m_TransformationStack;
 	Vector<Matrix> m_UITransformationStack;

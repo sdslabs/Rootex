@@ -13,7 +13,6 @@ RenderSystem::RenderSystem()
     : m_Renderer(new Renderer())
     , m_Camera(new CameraVisualComponent())
 {
-	m_CameraDefault = m_Camera;
 	m_TransformationStack.push_back(Matrix::Identity);
 	m_UITransformationStack.push_back(Matrix::Identity);
 }
@@ -110,7 +109,7 @@ void RenderSystem::setCamera(Ref<CameraVisualComponent> camera)
 
 void RenderSystem::restoreCamera()
 {
-	m_Camera = m_CameraDefault;
+	m_Camera = std::make_shared<CameraVisualComponent>();
 }
 
 const Matrix& RenderSystem::getTopMatrix() const
