@@ -4,17 +4,22 @@
 
 #include "common/common.h"
 
+/// Struct encapsulating the vertex buffer formats renderer currently supports
 struct VertexBufferElement
 {
+	/// Abstracts the DXGI input format types
 	enum Type
 	{
 		POSITION = DXGI_FORMAT_R32G32B32_FLOAT,
 		TEXCOORD = DXGI_FORMAT_R32G32_FLOAT
 	};
 
-	Type m_Type; // What type of objects are present in buffer
+	/// What type of objects are present in buffer
+	Type m_Type; 
+	/// Used as the semantic of the Vertex Buffer element in shaders
 	LPCSTR m_Name;
 
+	/// Total size of the Vertex Buffer
 	static unsigned int GetSize(Type type)
 	{
 		switch (type)
@@ -30,6 +35,7 @@ struct VertexBufferElement
 	}
 };
 
+/// Stores vector of Vertex Buffer Elements to be used as the input for Vertex Shaders
 class BufferFormat
 {
 	Vector<VertexBufferElement> m_Elements;

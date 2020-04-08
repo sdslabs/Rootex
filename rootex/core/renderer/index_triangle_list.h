@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 
+/// Encapsulated Vertices and Indices
 template <typename T>
 struct IndexTriangleList
 {
