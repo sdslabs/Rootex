@@ -109,7 +109,7 @@ void RenderSystem::setCamera(Ref<CameraVisualComponent> camera)
 
 void RenderSystem::restoreCamera()
 {
-	m_Camera = std::make_shared<CameraVisualComponent>();
+	m_Camera = Ref<CameraVisualComponent>(new CameraVisualComponent());
 }
 
 const Matrix& RenderSystem::getTopMatrix() const
