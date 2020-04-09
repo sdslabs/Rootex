@@ -50,6 +50,11 @@ Lights LightSystem::getLights()
 
 	const Vector<Component*>& spotLightComponents = s_Components[SpotLightComponent::s_ID];
 
+	if (spotLightComponents.size() > 4)
+	{
+		WARN("Point Lights specified are greater than 4");
+	}
+	
 	i = 0;
 	for (; i < spotLightComponents.size() && i < 4; i++)
 	{
