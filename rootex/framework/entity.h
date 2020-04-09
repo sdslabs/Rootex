@@ -5,6 +5,7 @@
 #include "event.h"
 
 class Component;
+
 typedef unsigned int ComponentID;
 typedef unsigned int EntityID;
 
@@ -31,12 +32,14 @@ public:
 	virtual ~Entity();
 
 	void removeComponent(Ref<Component> component);
+	/// Destruct all components.
 	void destroy();
 
 	bool hasComponent(ComponentID componentID);
 	
 	EntityID getID() const;
 	const String& getName() const;
+	/// Full name consists of entity name followed by the corresponding EntityID.
 	String getFullName() const;
 	
 	template <class ComponentType = Component>

@@ -7,6 +7,7 @@
 typedef std::function<bool(int userButton, bool oldValue, bool newValue)> InputBoolListenerFunction;
 typedef std::function<bool(int userButton, float oldValue, float newValue)> InputFloatListenerFunction;
 
+/// Helper class to receive inputs from Gainput.
 class InputListener : public gainput::MappedInputListener
 {
 	InputBoolListenerFunction m_BoolListenerFunction;

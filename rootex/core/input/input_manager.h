@@ -6,24 +6,35 @@
 
 #include "vendor/Gainput/include/gainput/gainput.h"
 
-#define MAX_BUTTON_BINDINGS 10
-
+/// Alias for a keyboard device. Allows various keyboard specific operations.
 typedef gainput::Key KeyboardButton;
+/// Alias for a mouse device. Allows various mouse specific operations.
 typedef gainput::MouseButton MouseButton;
-typedef gainput::PadButton PadButton;
+/// Alias for a game controller/pad device. Allows various pad specific operations. Gainput (our input library) only supports pads that allow XInput. So non-XInput controllers are not supported.
+typedef gainput::PadButton PadButton; 
+/// ID of any key, button or analog on the device hardware.
 typedef gainput::DeviceButtonId DeviceButtonID;
 
+/// Enumeration of the devices supported. Any new device can be added here.
 enum class Device
 {
 	Mouse,
 	Keyboard,
+	/// Player 1 pad. Usually the first pad connected.
 	Pad1,
+	/// Player 2 pad. Usually the second pad connected.
 	Pad2
 };
 
+/// Allows interfacing to game controlling hardware, including mouse, keyboard and XInput controllers.
+/// Allows detecting inputs through Event dispatch. 
+/// Event data for boolean buttons consists of a Vector2 where Vector2.x and Vector2.y carry the old and new values for the input event respectively.
+/// Float buttons should be queried directly by invoking InputManager.
 class InputManager
 {
+	/// Callback from Gainput's internals. Called when a key with bool value is activated.
 	static bool BoolListen(int userButton, bool oldValue, bool newValue);
+	/// Callback from Gainput's internals. Called when a key with float value is activated.
 	static bool FloatListen(int userButton, float oldValue, float newValue);
 
 	gainput::InputManager m_GainputManager;
@@ -36,6 +47,7 @@ class InputManager
 
 	unsigned int m_Width;
 	unsigned int m_Height;
+	/// Mouse delta detected in the current frame.
 	Vector2 m_MousePositionDelta;
 
 	InputManager();
@@ -52,9 +64,19 @@ public:
 
 	void initialize(unsigned int width, unsigned int height);
 
+	/// Enables the default context of inputs.    \n
+	/// "InputForward" -> W (bool)                \n
+	/// "InputLeft" -> A (bool)                   \n
+	/// "InputBackward" -> S (bool)               \n
+	/// "InputRight" -> D (bool)                  \n
+	/// "InputExit" -> Escape (bool)              \n
+	/// "InputMouseX" -> Mouse X position (float) \n
+	/// "InputMouseY" -> Mouse Y position (float) \n
 	void enableDefaultContext();
 
+	/// Bind an event to a button on a device.
 	void mapBool(Event::Type action, Device device, DeviceButtonID button);
+	/// Bind an event to a float on a device.
 	void mapFloat(Event::Type action, Device device, DeviceButtonID button);
 
 	bool isPressed(Event::Type action);
@@ -62,6 +84,7 @@ public:
 	float getFloat(Event::Type action);
 	float getDelta(Event::Type action);
 
+	/// Returns the mouse delta in the last frame.
 	const Vector2& getMousePositionDelta() const { return m_MousePositionDelta; }
 
 	void update();
