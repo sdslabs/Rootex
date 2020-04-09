@@ -64,9 +64,9 @@ void CPUParticlesMaterial::setPixelShaderConstantBuffer(const PSSolidConstantBuf
 	else
 	{
 		D3D11_MAPPED_SUBRESOURCE subresource;
-		RenderingDevice::GetSingleton()->getBufferMappedContext(m_PSConstantBuffer[(int)PixelConstantBufferType::Color], subresource);
+		RenderingDevice::GetSingleton()->getBufferMappedContext(m_PSConstantBuffer[(int)PixelConstantBufferType::Color].Get(), subresource);
 		memcpy(subresource.pData, &constantBuffer, sizeof(constantBuffer));
-		RenderingDevice::GetSingleton()->unmapBuffer(m_PSConstantBuffer[(int)PixelConstantBufferType::Color]);
+		RenderingDevice::GetSingleton()->unmapBuffer(m_PSConstantBuffer[(int)PixelConstantBufferType::Color].Get());
 	}
 }
 
@@ -120,9 +120,9 @@ void Material::setVertexShaderConstantBuffer(const VertexConstantBufferType type
 	else
 	{
 		D3D11_MAPPED_SUBRESOURCE subresource = { 0 };
-		RenderingDevice::GetSingleton()->getBufferMappedContext(m_VSConstantBuffer[(int)type], subresource);
+		RenderingDevice::GetSingleton()->getBufferMappedContext(m_VSConstantBuffer[(int)type].Get(), subresource);
 		memcpy(subresource.pData, &constantBuffer, sizeof(constantBuffer));
-		RenderingDevice::GetSingleton()->unmapBuffer(m_VSConstantBuffer[(int)type]);
+		RenderingDevice::GetSingleton()->unmapBuffer(m_VSConstantBuffer[(int)type].Get());
 	}
 }
 
@@ -145,9 +145,9 @@ void TextureMaterial::setPixelShaderConstantBuffer(const PSDiffuseConstantBuffer
 	else
 	{
 		D3D11_MAPPED_SUBRESOURCE subresource;
-		RenderingDevice::GetSingleton()->getBufferMappedContext(m_PSConstantBuffer[(int)PixelConstantBufferType::Lights], subresource);
+		RenderingDevice::GetSingleton()->getBufferMappedContext(m_PSConstantBuffer[(int)PixelConstantBufferType::Lights].Get(), subresource);
 		memcpy(subresource.pData, &constantBuffer.lights, sizeof(constantBuffer.lights));
-		RenderingDevice::GetSingleton()->unmapBuffer(m_PSConstantBuffer[(int)PixelConstantBufferType::Lights]);
+		RenderingDevice::GetSingleton()->unmapBuffer(m_PSConstantBuffer[(int)PixelConstantBufferType::Lights].Get());
 	}
 
 	if (m_PSConstantBuffer[(int)PixelConstantBufferType::Material] == nullptr)
@@ -167,9 +167,9 @@ void TextureMaterial::setPixelShaderConstantBuffer(const PSDiffuseConstantBuffer
 	else
 	{
 		D3D11_MAPPED_SUBRESOURCE subresource;
-		RenderingDevice::GetSingleton()->getBufferMappedContext(m_PSConstantBuffer[(int)PixelConstantBufferType::Material], subresource);
+		RenderingDevice::GetSingleton()->getBufferMappedContext(m_PSConstantBuffer[(int)PixelConstantBufferType::Material].Get(), subresource);
 		memcpy(subresource.pData, &constantBuffer.material, sizeof(constantBuffer.material));
-		RenderingDevice::GetSingleton()->unmapBuffer(m_PSConstantBuffer[(int)PixelConstantBufferType::Material]);
+		RenderingDevice::GetSingleton()->unmapBuffer(m_PSConstantBuffer[(int)PixelConstantBufferType::Material].Get());
 	}
 }
 
@@ -192,8 +192,8 @@ void ColorMaterial::setPixelShaderConstantBuffer(const PSSolidConstantBuffer& co
 	else
 	{
 		D3D11_MAPPED_SUBRESOURCE subresource;
-		RenderingDevice::GetSingleton()->getBufferMappedContext(m_PSConstantBuffer[(int)PixelConstantBufferType::Color], subresource);
+		RenderingDevice::GetSingleton()->getBufferMappedContext(m_PSConstantBuffer[(int)PixelConstantBufferType::Color].Get(), subresource);
 		memcpy(subresource.pData, &constantBuffer, sizeof(constantBuffer));
-		RenderingDevice::GetSingleton()->unmapBuffer(m_PSConstantBuffer[(int)PixelConstantBufferType::Color]);
+		RenderingDevice::GetSingleton()->unmapBuffer(m_PSConstantBuffer[(int)PixelConstantBufferType::Color].Get());
 	}
 }

@@ -24,7 +24,7 @@ bool CameraVisualComponent::preRender()
 	return true;
 }
 
-void CameraVisualComponent::render()
+void CameraVisualComponent::render(RenderPass renderPass)
 {
 	if (m_DebugCamera)
 	{

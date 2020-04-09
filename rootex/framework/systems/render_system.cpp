@@ -39,7 +39,7 @@ void RenderSystem::renderPassRender(VisualComponent* vc, const RenderPass& rende
 	vc->preRender();
 	if (vc->isVisible())
 	{
-		vc->render();
+		vc->render(renderPass);
 	}
 	vc->renderChildren(renderPass);
 	vc->postRender();

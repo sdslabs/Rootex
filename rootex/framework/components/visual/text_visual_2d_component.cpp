@@ -45,25 +45,28 @@ TextVisual2DComponent::~TextVisual2DComponent()
 {
 }
 
-void TextVisual2DComponent::render()
+void TextVisual2DComponent::render(RenderPass renderPass)
 {
-	static Vector3 position;
-	static Quaternion rotation;
-	static float rotationAngle;
-	static Vector3 scale;
+	if (renderPass & m_RenderPass)
+	{
+		static Vector3 position;
+		static Quaternion rotation;
+		static float rotationAngle;
+		static Vector3 scale;
 
-	RenderSystem::GetSingleton()->getTopUIMatrix().Decompose(scale, rotation, position);
-	rotationAngle = Vector3((Vector3(0.0f, 0.0f, 1.0f) * rotation)).z;
+		RenderSystem::GetSingleton()->getTopUIMatrix().Decompose(scale, rotation, position);
+		rotationAngle = Vector3((Vector3(0.0f, 0.0f, 1.0f) * rotation)).z;
 
-	m_FontFile->getFont()->DrawString(
-	    RenderingDevice::GetSingleton()->getUIBatch().get(),
-	    m_Text.c_str(),
-	    position,
-	    m_Color,
-		rotationAngle,
-		-m_Origin,
-		scale,
-	    (DirectX::SpriteEffects)m_Mode);
+		m_FontFile->getFont()->DrawString(
+		    RenderingDevice::GetSingleton()->getUIBatch().get(),
+		    m_Text.c_str(),
+		    position,
+		    m_Color,
+		    rotationAngle,
+		    -m_Origin,
+		    scale,
+		    (DirectX::SpriteEffects)m_Mode);
+	}
 }
 
 JSON::json TextVisual2DComponent::getJSON() const

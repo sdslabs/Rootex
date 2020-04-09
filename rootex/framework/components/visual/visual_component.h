@@ -30,8 +30,6 @@ protected:
 	RenderPass m_RenderPass;
 	TransformComponent* m_TransformComponent;
 
-	void setColor(const Color& color) { m_Color = color; };
-
 #ifdef ROOTEX_EDITOR
 	String m_RenderPassName;
 #endif // ROOTEX_EDITOR
@@ -47,8 +45,8 @@ public:
 
 	virtual bool preRender() { return true; }
 	virtual bool isVisible() const { return m_IsVisible; }
-	virtual void render() {}
-	virtual void renderChildren(const unsigned int& renderPass) {}
+	virtual void render(RenderPass renderPass) {}
+	virtual void renderChildren(RenderPass renderPass) {}
 	virtual void postRender() {}
 
 	void setVisibility(bool enabled) { m_IsVisible = enabled; }

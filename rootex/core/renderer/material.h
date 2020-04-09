@@ -19,10 +19,9 @@ public:
 
 protected:
 	
-
 	Shader* m_Shader;
-	Vector<ID3D11Buffer*> m_PSConstantBuffer;
-	Vector<ID3D11Buffer*> m_VSConstantBuffer;
+	Vector<Microsoft::WRL::ComPtr<ID3D11Buffer>> m_PSConstantBuffer;
+	Vector<Microsoft::WRL::ComPtr<ID3D11Buffer>> m_VSConstantBuffer;
 
 	Material(Shader* shader);
 
