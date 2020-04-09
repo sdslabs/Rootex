@@ -43,6 +43,7 @@ class StreamingAudioSource;
 
 class ResourceFile;
 
+/// System encapsulating OpenAL error checkers and getters.
 class AudioSystem : public System
 {
 	unsigned int m_UpdateIntervalMilliseconds;
@@ -56,10 +57,15 @@ class AudioSystem : public System
 public:
 	static AudioSystem* GetSingleton();
 
+	/// Returns error string corresponding to AL error codes.
 	static String GetALErrorString(int errID);
+	/// Returns error string corresponding to ALC error codes.
 	static String GetALCErrorString(int errID);
+	/// Wrapper over alGetError function.
 	static void CheckALError(const char* msg, const char* fname, int line);
+	/// Wrapper over alcGetError function.
 	static void CheckALCError(const char* msg, const char* fname, int line);
+	/// Wrapper over alutGetError function.
 	static void CheckALUTError(const char* msg, const char* fname, int line);
 
 	void setBufferUpdateRate(float milliseconds);
