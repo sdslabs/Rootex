@@ -20,7 +20,7 @@ public:
 	~CameraVisualComponent();
 
 	virtual bool preRender() override;
-	virtual void render() override;
+	virtual void render(RenderPass renderPass) override;
 	virtual bool reset(HierarchyGraph* visualComponentGraph, int windowWidth, int windowHeight);
 	virtual bool isVisible() const override;
 	virtual void postRender() override;

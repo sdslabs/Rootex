@@ -26,8 +26,8 @@ public:
 
 	virtual bool preRender() override;
 	virtual bool isVisible() const override;
-	virtual void render() override;
-	virtual void renderChildren(const unsigned int& renderPass) override;
+	virtual void render(RenderPass renderPass) override;
+	virtual void renderChildren(RenderPass renderPass) override;
 	virtual void postRender() override;
 
 	void setVisualModel(VisualModelResourceFile* newModel);

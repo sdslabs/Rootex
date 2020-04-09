@@ -93,14 +93,17 @@ bool ModelVisualComponent::isVisible() const
 	return VisualComponent::isVisible();
 }
 
-void ModelVisualComponent::render()
+void ModelVisualComponent::render(RenderPass renderPass)
 {
-	RenderSystem::GetSingleton()->getRenderer()->draw(getVertexBuffer(), getIndexBuffer(), getMaterial());
+	if (renderPass & m_RenderPass)
+	{
+		RenderSystem::GetSingleton()->getRenderer()->draw(getVertexBuffer(), getIndexBuffer(), getMaterial());
+	}
 }
 
-void ModelVisualComponent::renderChildren(const unsigned int& renderPass)
+void ModelVisualComponent::renderChildren(RenderPass renderPass)
 {
-	if (isVisible() && !(renderPass & RenderPassUI))
+	if (isVisible())
 	{
 		m_Material->setVertexShaderConstantBuffer(Material::VertexConstantBufferType::View, RenderSystem::GetSingleton()->getCamera()->getView());
 		m_Material->setVertexShaderConstantBuffer(Material::VertexConstantBufferType::Projection, RenderSystem::GetSingleton()->getCamera()->getProjection());
@@ -110,14 +113,14 @@ void ModelVisualComponent::renderChildren(const unsigned int& renderPass)
 	{
 		VisualComponent* childVisualComponent = child->getOwner()->getComponent<VisualComponent>().get();
 
-		if (childVisualComponent && (childVisualComponent->getRenderPass() & renderPass))
+		if (childVisualComponent)
 		{
 			childVisualComponent->preRender();
 
 			if (childVisualComponent->isVisible())
 			{
 				// Assumed to be opaque
-				childVisualComponent->render();
+				childVisualComponent->render(renderPass);
 			}
 			childVisualComponent->renderChildren(renderPass);
 
