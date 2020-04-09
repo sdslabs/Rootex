@@ -4,6 +4,8 @@
 
 #include "btBulletDynamicsCommon.h"
 
+/// Creates sphere shaped collider.
+/// Takes sphere's radius and material type as arguments. 
 class SphereColliderComponent : public PhysicsColliderComponent
 {
 	static Component* Create(const JSON::json& sphereComponentData);
@@ -21,6 +23,7 @@ public:
 	virtual String getName() const override { return "SphereColliderComponent"; };
 	virtual JSON::json getJSON() const override;
 
+/// Interface to change collider properties via editor.
 #ifdef ROOTEX_EDITOR
 	void draw() override;
 #endif // ROOTEX_EDITOR 
