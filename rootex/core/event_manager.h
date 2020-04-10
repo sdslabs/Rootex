@@ -3,8 +3,6 @@
 #include "common/common.h"
 #include "event.h"
 
-#include <cstdarg>
-
 /// Bind a member function of a class to an event.
 #define BIND_EVENT_FUNCTION(stringEventType, function) EventManager::GetSingleton()->addListener(stringEventType, function)
 /// Bind a global function to an event.
