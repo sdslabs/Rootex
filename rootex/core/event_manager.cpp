@@ -36,7 +36,7 @@ Variant EventManager::returnCall(const Event& event)
 
 	if (findIt != m_EventListeners.end())
 	{
-		return (*findIt->second.front().get())(&event);
+		return findIt->second.front()(&event);
 	}
 	return false;
 }
@@ -54,11 +54,11 @@ void EventManager::call(const Event& event)
 
 	if (findIt != m_EventListeners.end())
 	{
-		const EventListenerList& eventListenerList = findIt->second;
+		const Vector<EventFunction>& eventListenerList = findIt->second;
 		for (auto it = eventListenerList.begin(); it != eventListenerList.end(); ++it)
 		{
-			EventHandlingFunction listener = *it;
- 			(*listener.get())(&event);
+			EventFunction listener = *it;
+ 			listener(&event);
 			processed = true;
 		}
 	}
@@ -110,11 +110,11 @@ bool EventManager::dispatchDeferred(unsigned long maxMillis)
 		auto findIt = m_EventListeners.find(eventType);
 		if (findIt != m_EventListeners.end())
 		{
-			const EventListenerList& eventListeners = findIt->second;
+			const Vector<EventFunction>& eventListeners = findIt->second;
 			for (auto it = eventListeners.begin(); it != eventListeners.end(); ++it)
 			{
-				EventHandlingFunction listener = *it;
-				(*listener.get())(event.get());
+				EventFunction listener = *it;
+				listener(event.get());
 			}
 		}
 
@@ -141,44 +141,8 @@ bool EventManager::dispatchDeferred(unsigned long maxMillis)
 	return queueFlushed;
 }
 
-bool EventManager::addListener(const Event::Type& type, EventHandlingFunction instance)
+bool EventManager::addListener(const Event::Type& type, EventFunction instance)
 {
-	auto&& it = m_EventListeners.find(type);
-	if (it == m_EventListeners.end())
-	{
-		m_EventListeners[type].push_back(instance);
-		return true;
-	}
-
-	if (std::find(it->second.begin(), it->second.end(), instance) != it->second.end())
-	{
-		return false;
-	}
-	else
-	{
-		it->second.push_back(instance);
-		return true;
-	}
-}
-
-bool EventManager::removeListener(const EventHandlingFunction handlerFunction, const Event::Type& type)
-{
-	bool success = false;
-	auto&& it = m_EventListeners.find(type);
-
-	if (it != m_EventListeners.end())
-	{
-		EventListenerList& listeners = it->second;
-		for (auto& registeredHandler = listeners.begin(); registeredHandler != listeners.end(); ++registeredHandler)
-		{
-			if (handlerFunction == *registeredHandler)
-			{
-				listeners.erase(registeredHandler);
-				success = true;
-				break;
-			}
-		}
-	}
-
-	return success;
+	m_EventListeners[type].push_back(instance);
+	return true;
 }
