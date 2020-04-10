@@ -5,6 +5,7 @@
 
 #include "common/common.h"
 
+/// Handles window creation.
 class Window
 {
 protected:
@@ -16,6 +17,7 @@ protected:
 	HINSTANCE m_AppInstance;
 	HWND m_WindowHandle;
 	
+	/// Wraps DefWindowProc function.
 	static LRESULT CALLBACK WindowsProc(HWND windowHandler, UINT msg, WPARAM wParam, LPARAM lParam);
 
 public:
@@ -28,8 +30,10 @@ public:
 	std::optional<int> processMessages();
 	void applyDefaultViewport();
 	void swapBuffers();
+	/// Clips or blocks the cursor beyond a specified rectangle.
 	void clipCursor();
 
+	/// Helpers for clearing render target.
 	void clearCurrentTarget();
 	void clearUnboundTarget();
 

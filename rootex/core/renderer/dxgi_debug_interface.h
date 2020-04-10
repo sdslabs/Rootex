@@ -4,12 +4,11 @@
 #include <vector>
 
 #include "common.h"
-#include "utils.h"
 
 class DxgiDebugInterface
 {
 	unsigned long long next = 0u;
-	IDXGIInfoQueue* pDxgiInfoQueue;
+	Microsoft::WRL::ComPtr<IDXGIInfoQueue> m_DxgiInfoQueue;
 
 	DxgiDebugInterface();
 	DxgiDebugInterface(const DxgiDebugInterface&) = delete;
@@ -23,6 +22,7 @@ public:
 	void getMessages(String file, String func) const;
 };
 
+/// Used to get DIrectX errors/warnings from its debug interface
 #define GFX_ERR_CHECK(hr)                      \
 	DxgiDebugInterface::GetSingleton()->set(); \
 	if (FAILED(hr))                            \

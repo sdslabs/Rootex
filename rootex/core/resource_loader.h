@@ -7,6 +7,10 @@
 
 #include "vendor/OBJLoader/Source/OBJ_Loader.h"
 
+/// Factory for ResourceFile objects. Implements creating, loading and saving files.                                \n
+/// Maintains an internal cache that doesn't let the same file to be loaded twice. Cache misses force file loading. \n
+/// This just means you can load the same file multiple times without worrying about unnecessary copies.            \n
+/// All path arguments should be relative to Rootex root.
 class ResourceLoader
 {
 	static objl::Loader s_ModelLoader;
@@ -22,10 +26,15 @@ public:
 	static ImageResourceFile* CreateImageResourceFile(const String& path);
 	static FontResourceFile* CreateFontResourceFile(const String& path);
 
+	/// Write the data buffer inside a ResourceFile to disk.
 	static void SaveResourceFile(ResourceFile* resourceFile);
+	/// Reload the data buffer inside a ResourceFile from disk.
 	static void ReloadResourceData(const String& path);
 
 	static objl::Loader& GetModelLoader() { return s_ModelLoader; }
+	
+	/// Get a list of files that have already been loaded and belong to a certain type
 	static Vector<ResourceFile*>& GetFilesOfType(ResourceFile::Type type);
+	/// Get a list of all files that have already been loaded
 	static HashMap<ResourceFile::Type, Vector<ResourceFile*>>& GetAllFiles();
 };

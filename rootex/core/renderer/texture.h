@@ -1,10 +1,10 @@
 #pragma once
 
 #include <d3d11.h>
-#include "utils.h"
 
 #include "resource_file.h"
 
+/// Encapsulates all Texture related functionalities, uses DirectXTK behind the scenes
 class Texture
 {
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_TextureView;
