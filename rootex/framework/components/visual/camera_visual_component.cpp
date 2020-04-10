@@ -5,7 +5,8 @@ Component* CameraVisualComponent::Create(const JSON::json& componentData)
 	CameraVisualComponent* cameraVisualComponent = new CameraVisualComponent(
 	    { componentData["position"]["x"], componentData["position"]["y"], componentData["position"]["z"] },
 	    { componentData["direction"]["x"], componentData["direction"]["y"], componentData["direction"]["z"] },
-	    { componentData["up"]["x"], componentData["up"]["y"], componentData["up"]["z"] });
+	    { componentData["up"]["x"], componentData["up"]["y"], componentData["up"]["z"] },
+	    { componentData["aspectRatio"]["x"], componentData["aspectRatio"]["y"]});
 
 	return cameraVisualComponent;
 }
@@ -15,21 +16,23 @@ Component* CameraVisualComponent::CreateDefault()
 	CameraVisualComponent* cameraVisualComponent = new CameraVisualComponent(
 	    { 0.0f, 0.0f, 4.0f },
 	    { 0.0f, 0.0f, -1.0f },
-	    { 0.0f, 1.0f, 0.0f });
+	    { 0.0f, 1.0f, 0.0f },
+	    { 16.0f, 9.0f });
 	
 	return cameraVisualComponent;
 }
 
-CameraVisualComponent::CameraVisualComponent(const Vector3& position,const Vector3& direction, const Vector3& up)
+CameraVisualComponent::CameraVisualComponent(const Vector3& position, const Vector3& direction, const Vector3& up, const Vector2& aspectRatio)
     : VisualComponent(RenderPassMain, nullptr, nullptr, false)
     , m_DebugCamera(false)
     , m_ViewMatrix(Matrix::CreateLookAt(position, position + direction, { 0.0f, 1.0f, 0.0f }))
-    , m_ProjectionMatrix(Matrix::CreatePerspective(1.0f, 1.0f * 480.0f / 640.0f, 0.5f, 100.0f))
+    , m_ProjectionMatrix(Matrix::CreatePerspective(1.0f, 1.0f*aspectRatio.y/aspectRatio.x, 0.5f, 100.0f))
     , m_Active(false)
     , m_CameraOffset(0.0f, 1.0f, -10.0f, 0.0f)
     , m_Position(position)
     , m_Direction(direction)
     , m_Up(up)
+    , m_AspectRatio(aspectRatio)
 {
 	if (m_Owner)
 	{
@@ -41,12 +44,13 @@ CameraVisualComponent::CameraVisualComponent()
     : VisualComponent(RenderPassMain, nullptr, nullptr, false)
     , m_DebugCamera(false)
     , m_ViewMatrix(Matrix::CreateLookAt({ 0.0f, 0.0f, 0.4f }, {0.0f, 0.0f, 0.3f}, { 0.0f, 1.0f, 0.0f }))
-    , m_ProjectionMatrix(Matrix::CreatePerspective(1.0f, 1.0f * 480.0f / 640.0f, 0.5f, 100.0f))
+    , m_ProjectionMatrix(Matrix::CreatePerspective(1.0f, 1.0f*9.0f/16.0f, 0.5f, 100.0f))
     , m_Active(false)
     , m_CameraOffset(0.0f, 1.0f, -10.0f, 0.0f)
     , m_Position(0.0f, 0.0f, 4.0f)
     , m_Direction(0.0f, 0.0f, -1.0f)
     , m_Up(0.0f, 1.0f, 0.0f)
+    , m_AspectRatio(16.0f, 9.0f)
 {
 	if (m_Owner)
 	{
@@ -177,6 +181,9 @@ JSON::json CameraVisualComponent::getJSON() const
 	j["up"]["y"] = m_Up.y;
 	j["up"]["z"] = m_Up.z;
 
+	j["aspectRatio"]["x"] = m_AspectRatio.x;
+	j["aspectRatio"]["y"] = m_AspectRatio.y;
+
 	return j;
 }
 
@@ -185,9 +192,16 @@ JSON::json CameraVisualComponent::getJSON() const
 #include "imgui_stdlib.h"
 void CameraVisualComponent::draw()
 {
+	ImGui::DragFloat2("##A", &m_AspectRatio.x, s_EditorDecimalSpeed);
+	ImGui::SameLine();
+	if (ImGui::Button("Aspect Ratio"))
+	{
+		m_AspectRatio = { 16.0f, 9.0f };
+	}
+	m_ProjectionMatrix = Matrix::CreatePerspective(1.0f, 1.0f * m_AspectRatio.y / m_AspectRatio.x, 0.5f, 100.0f);
 	if (m_Active)
 	{
-		if (ImGui::Button("Set not active"))
+		if (ImGui::Button("Set inactive"))
 		{
 			m_Active = false;
 			RenderSystem::GetSingleton()->restoreCamera();

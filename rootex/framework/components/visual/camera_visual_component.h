@@ -15,11 +15,15 @@ protected:
 	Vector3 m_Position;
 	Vector3 m_Direction;
 	Vector3 m_Up;
+	Vector2 m_AspectRatio;
+#ifdef ROOTEX_EDITOR
+	static inline const float s_EditorDecimalSpeed = 0.01f;
+#endif // ROOTEX_EDITOR
 
 public:
 	static Component* Create(const JSON::json& componentData);
 	static Component* CreateDefault();
-	CameraVisualComponent(const Vector3& position, const Vector3& direction, const Vector3& up);
+	CameraVisualComponent(const Vector3& position, const Vector3& direction, const Vector3& up, const Vector2& aspectRatio);
 	CameraVisualComponent();
 	CameraVisualComponent(CameraVisualComponent&) = delete;
 	~CameraVisualComponent();
