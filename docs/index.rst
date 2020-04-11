@@ -9,7 +9,6 @@ Welcome to Rootex's documentation!
 .. toctree::
     :maxdepth: 2
 
-    about
     api/rootex
    
     :caption: Contents:

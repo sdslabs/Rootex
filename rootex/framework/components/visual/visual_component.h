@@ -23,45 +23,12 @@ enum RenderPass
 	RenderPassEnd
 };
 
-class VisualComponentAttributes
-{
-	friend class VisualComponent;
-	friend class DiffuseVisualComponent;
-	friend class Visual2DComponent;
-
-protected:
-	TransformComponent* m_TransformComponent;
-	unsigned int m_RenderPassSetting;
-	VisualModelResourceFile* m_VisualModelResourceFile;
-	Ref<Material> m_Material;
-	HierarchyComponent* m_HierarchyComponent;
-
-public:
-	VisualComponentAttributes();
-	~VisualComponentAttributes() = default;
-
-	const VertexBuffer* getVertexBuffer() const { return m_VisualModelResourceFile->getVertexBuffer(); }
-	const IndexBuffer* getIndexBuffer() const { return m_VisualModelResourceFile->getIndexBuffer(); }
-	const Matrix& getTransform() const { return m_TransformComponent->getLocalTransform(); }
-	const Matrix& getInverseTransform() const { return m_TransformComponent->getLocalTransform().Invert(); }
-	const unsigned int& getRenderPass() const { return m_RenderPassSetting; }
-	Material* getMaterial() { return m_Material.get(); }
-	VisualModelResourceFile* getModelResourceFile() const { return m_VisualModelResourceFile; }
-};
-
 class VisualComponent : public Component
 {
-	static Component* Create(const JSON::json& componentData);
-	static Component* CreateDefault();
-
 protected:
-	Color m_Color;
-	VisualComponentAttributes m_Attributes;
 	bool m_IsVisible;
-	
-	friend class EntityFactory;
-
-	void setColor(const Color& color) { m_Color = color; };
+	RenderPass m_RenderPass;
+	TransformComponent* m_TransformComponent;
 
 #ifdef ROOTEX_EDITOR
 	String m_RenderPassName;
@@ -70,29 +37,23 @@ protected:
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::VisualComponent;
 	
-	VisualComponent(const unsigned int& renderPassSetting, Ref<Material> material, VisualModelResourceFile* resFile, bool visibility);
+	VisualComponent(const unsigned int& renderPassSetting, bool visibility);
 	VisualComponent(VisualComponent&) = delete;
-	virtual ~VisualComponent();
+	virtual ~VisualComponent() = default;
 
-	virtual VisualComponentAttributes* getAttributes() { return &m_Attributes; }
+	virtual bool setup();
 
-	virtual bool setup() override;
+	virtual bool preRender() { return true; }
+	virtual bool isVisible() const { return m_IsVisible; }
+	virtual void render() {}
+	virtual void renderChildren(const unsigned int& renderPass) {}
+	virtual void postRender() {}
 
-	virtual bool preRender();
-	virtual bool isVisible() const;
-	virtual void render();
-	virtual void renderChildren(const unsigned int& renderPass);
-	virtual void postRender();
-
-	void addTransform(const Matrix& applyTransform);
-
-	void setTransform(const Matrix& newTransform);
-	void setVisualModel(VisualModelResourceFile* newModel);
-	void setMaterial(Ref<Material> material);
-	void setPosition(const Vector3& position);
 	void setVisibility(bool enabled) { m_IsVisible = enabled; }
-
-	Vector3 getPosition() const;
+	
+	const Matrix& getTransform() const { return m_TransformComponent->getLocalTransform(); }
+	const unsigned int& getRenderPass() const { return m_RenderPass; }
+	const Matrix& getInverseTransform() const { return m_TransformComponent->getLocalTransform().Invert(); }
 	virtual String getName() const override { return "VisualComponent"; }
 	ComponentID getComponentID() const override { return s_ID; }
 	virtual JSON::json getJSON() const override;

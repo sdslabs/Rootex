@@ -27,10 +27,10 @@ Component* DirectionalLightComponent::CreateDefault()
 
 DirectionalLightComponent::DirectionalLightComponent(const Vector3& direction, const float diffuseIntensity, 
 	const Color& diffuseColor, const Color& ambientColor)
-    : m_direction(direction)
-    , m_ambientColor(ambientColor)
-    , m_diffuseColor(diffuseColor)
-    , m_diffuseIntensity(diffuseIntensity)
+    : m_Direction(direction)
+    , m_AmbientColor(ambientColor)
+    , m_DiffuseColor(diffuseColor)
+    , m_DiffuseIntensity(diffuseIntensity)
 {
 }
 
@@ -42,21 +42,21 @@ JSON::json DirectionalLightComponent::getJSON() const
 {
 	JSON::json j;
 
-	j["direction"]["x"] = m_direction.x;
-	j["direction"]["y"] = m_direction.y;
-	j["direction"]["z"] = m_direction.z;
+	j["direction"]["x"] = m_Direction.x;
+	j["direction"]["y"] = m_Direction.y;
+	j["direction"]["z"] = m_Direction.z;
 
-	j["diffuseIntensity"] = m_diffuseIntensity;
+	j["diffuseIntensity"] = m_DiffuseIntensity;
 
-	j["diffuseColor"]["r"] = m_diffuseColor.x;
-	j["diffuseColor"]["g"] = m_diffuseColor.y;
-	j["diffuseColor"]["b"] = m_diffuseColor.z;
-	j["diffuseColor"]["a"] = m_diffuseColor.w;
+	j["diffuseColor"]["r"] = m_DiffuseColor.x;
+	j["diffuseColor"]["g"] = m_DiffuseColor.y;
+	j["diffuseColor"]["b"] = m_DiffuseColor.z;
+	j["diffuseColor"]["a"] = m_DiffuseColor.w;
 
-	j["ambientColor"]["r"] = m_ambientColor.x;
-	j["ambientColor"]["g"] = m_ambientColor.y;
-	j["ambientColor"]["b"] = m_ambientColor.z;
-	j["ambientColor"]["a"] = m_ambientColor.w;
+	j["ambientColor"]["r"] = m_AmbientColor.x;
+	j["ambientColor"]["g"] = m_AmbientColor.y;
+	j["ambientColor"]["b"] = m_AmbientColor.z;
+	j["ambientColor"]["a"] = m_AmbientColor.w;
 
 	return j;
 }
@@ -65,9 +65,9 @@ JSON::json DirectionalLightComponent::getJSON() const
 #include "imgui.h"
 void DirectionalLightComponent::draw()
 {
-	ImGui::SliderFloat("Diffuse Intensity##Directional", &m_diffuseIntensity, 0.0f, 1.0f);
-	ImGui::ColorEdit4("Diffuse Color##Directional", &m_diffuseColor.x);
-	ImGui::ColorEdit4("Ambient Color##Directional", &m_ambientColor.x);
-	ImGui::DragFloat3("Direction##Directional", &m_direction.x);
+	ImGui::SliderFloat("Diffuse Intensity##Directional", &m_DiffuseIntensity, 0.0f, 1.0f);
+	ImGui::ColorEdit4("Diffuse Color##Directional", &m_DiffuseColor.x);
+	ImGui::ColorEdit4("Ambient Color##Directional", &m_AmbientColor.x);
+	ImGui::DragFloat3("Direction##Directional", &m_Direction.x);
 }
 #endif // ROOTEX_EDITOR

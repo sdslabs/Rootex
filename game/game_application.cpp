@@ -13,7 +13,7 @@ Ref<Application> CreateRootexApplication()
 
 String GameApplication::getLevelNameFromCommandLine(const char* s)
 {
-	// https://github.com/wine-mirror/wine/blob/7ec5f555b05152dda53b149d5994152115e2c623/dlls/shell32/shell32_main.c#L58
+	/// https://github.com/wine-mirror/wine/blob/7ec5f555b05152dda53b149d5994152115e2c623/dlls/shell32/shell32_main.c#L58
 	if (*s == '"')
 	{
 		++s;

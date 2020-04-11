@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.abspath('.'))
 # -- Project information -----------------------------------------------------
 
 project = 'Rootex'
-copyright = '2020, SDSLabs'
+copyright = 'MIT Licence, SDSLabs'
 author = 'SDSLabs'
 master_doc = 'index'
 
@@ -68,6 +68,23 @@ templates_path = ['_templates']
 
 html_static_path = ['_static']
 
+html_logo = '../rootex/assets/rootex.png'
+html_favicon = '../rootex/assets/rootex.ico'
+html_theme_options = {
+    'canonical_url': '',
+    'logo_only': False,
+    'display_version': True,
+    'prev_next_buttons_location': 'bottom',
+    'style_external_links': True,
+    'style_nav_header_background': '#22AA22',
+    # Toc options
+    'collapse_navigation': False,
+    'sticky_navigation': True,
+    'navigation_depth': -1,
+    'includehidden': True,
+    'titles_only': True
+}
+
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
@@ -79,6 +96,3 @@ exclude_patterns = []
 # a list of builtin themes.
 #
 html_theme = 'sphinx_rtd_theme'
-
-# def setup(app):
-#     app.add_stylesheet('css/custom.css')
