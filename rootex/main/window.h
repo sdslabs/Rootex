@@ -4,12 +4,14 @@
 #include <windows.h>
 
 #include "common/common.h"
+#include "core/event_manager.h"
 
 class Window
 {
 protected:
 	int m_Width;
 	int m_Height;
+	bool m_FullScreen;
 
 	WNDCLASSEX m_WindowClass = { 0 };
 	LPCSTR m_ClassName;
@@ -32,6 +34,9 @@ public:
 
 	void clearCurrentTarget();
 	void clearUnboundTarget();
+
+	Variant toggleFullScreen(const Event* event);
+	Variant getScreenState(const Event* event) { return m_FullScreen; };
 
 	int getWidth() const;
 	int getHeight() const;
