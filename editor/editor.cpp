@@ -205,7 +205,9 @@ void Editor::drawDefaultUI()
 					if (ImGui::Button("Create"))
 					{
 						if (ProjectManager::GetSingleton()->isAnyLevelOpen())
+						{
 							saveAll(nullptr);
+						}
 						EventManager::GetSingleton()->call("EditorFileNewLevel", "EditorCreateNewLevel", newLevelName);
 						EventManager::GetSingleton()->call("EditorOpenNewLevel", "EditorOpenLevel", "game/assets/levels/" + newLevelName);
 					}
@@ -218,7 +220,9 @@ void Editor::drawDefaultUI()
 						if (ImGui::MenuItem(levelName.string().c_str()))
 						{
 							if (ProjectManager::GetSingleton()->isAnyLevelOpen())
+							{
 								saveAll(nullptr);
+							}
 							EventManager::GetSingleton()->call("EditorFileMenuOpenLevel", "EditorOpenLevel", levelName.string());
 						}
 					}
@@ -285,7 +289,7 @@ void Editor::drawDefaultUI()
 			{
 				if (ImGui::MenuItem("About Rootex Editor"))
 				{
-					menuAction = "About Rootex Editor";
+					m_MenuAction = "About Rootex Editor";
 				}
 				if (ImGui::BeginMenu("Open Source Licenses"))
 				{
@@ -293,7 +297,7 @@ void Editor::drawDefaultUI()
 					{
 						if (ImGui::MenuItem(library.filename().string().c_str(), ""))
 						{
-							menuAction = library.string();
+							m_MenuAction = library.string();
 						}
 					}
 					ImGui::EndMenu();
@@ -301,9 +305,9 @@ void Editor::drawDefaultUI()
 				ImGui::EndMenu();
 			}
 
-			if (menuAction != "")
+			if (m_MenuAction != "")
 			{
-				ImGui::OpenPopup(menuAction.c_str());
+				ImGui::OpenPopup(m_MenuAction.c_str());
 			}
 			if (ImGui::BeginPopupModal("Do you want to save?", 0, ImGuiWindowFlags_AlwaysAutoResize))
 			{
@@ -311,20 +315,20 @@ void Editor::drawDefaultUI()
 				if (ImGui::Button("Save"))
 				{
 					saveAll(nullptr);
-					EventManager::GetSingleton()->call("quitEditorWindow", "quitEditorWindow", 0);
+					EventManager::GetSingleton()->call("QuitEditorWindow", "QuitEditorWindow", 0);
 				}
 				ImGui::SameLine();
 
 				if (ImGui::Button("Don't Save"))
 				{
-					EventManager::GetSingleton()->call("quitEditorWindow", "quitEditorWindow", 0);
+					EventManager::GetSingleton()->call("QuitEditorWindow", "QuitEditorWindow", 0);
 				}
 				ImGui::SameLine();
 
 				if (ImGui::Button("Cancel"))
 				{
 					ImGui::CloseCurrentPopup();
-					menuAction = "";
+					m_MenuAction = "";
 				}
 				ImGui::EndPopup();
 			}
@@ -335,7 +339,7 @@ void Editor::drawDefaultUI()
 				static TextResourceFile* license = ResourceLoader::CreateLuaTextResourceFile("LICENSE");
 				ImGui::Text(license->getData()->getRawData()->data());
 				ImGui::Separator();
-				menuAction = "";
+				m_MenuAction = "";
 				ImGui::EndPopup();
 			}
 			if (ImGui::BeginPopup("Proprietary Licenses"))
@@ -351,7 +355,7 @@ void Editor::drawDefaultUI()
 				{
 					TextResourceFile* license = ResourceLoader::CreateLuaTextResourceFile(library.string() + "/LICENSE");
 					ImGui::Text(license->getData()->getRawData()->data());
-					menuAction = "";
+					m_MenuAction = "";
 					ImGui::EndPopup();
 				}
 			}
@@ -448,11 +452,11 @@ Variant Editor::saveBeforeQuit(const Event* event)
 {
 	if (ProjectManager::GetSingleton()->isAnyLevelOpen())
 	{
-		menuAction = "Do you want to save?"; 
+		m_MenuAction = "Do you want to save?"; 
 	}
 	else
 	{
-		EventManager::GetSingleton()->call("quitEditorWindow", "quitEditorWindow", 0);
+		EventManager::GetSingleton()->call("QuitEditorWindow", "QuitEditorWindow", 0);
 	}
 	return true;
 }

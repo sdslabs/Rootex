@@ -108,15 +108,15 @@ LRESULT CALLBACK Window::WindowsProc(HWND windowHandler, UINT msg, WPARAM wParam
 		return true;
 	}
 #endif // ROOTEX_EDITOR
-		switch (msg)
-		{
-		case WM_CLOSE:
-			EventManager::GetSingleton()->call("quitWindowRequest", "quitWindowRequest", 0);
-			return 0;
-		case WM_DESTROY:
-			PostQuitMessage(0);
-			return 0;
-		}
+	switch (msg)
+	{
+	case WM_CLOSE:
+		EventManager::GetSingleton()->call("QuitWindowRequest", "QuitWindowRequest", 0);
+		return 0;
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		return 0;
+	}
 	
 	InputManager::GetSingleton()->forwardMessage({ windowHandler, msg, wParam, lParam });
 
@@ -127,8 +127,8 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
     : m_Width(width)
     , m_Height(height)
 {
-	BIND_EVENT_MEMBER_FUNCTION("quitWindowRequest", Window::quitWindow);
-	BIND_EVENT_MEMBER_FUNCTION("quitEditorWindow", Window::quitEditorWindow);
+	BIND_EVENT_MEMBER_FUNCTION("QuitWindowRequest", Window::quitWindow);
+	BIND_EVENT_MEMBER_FUNCTION("QuitEditorWindow", Window::quitEditorWindow);
 	WNDCLASSEX windowClass = { 0 };
 	LPCSTR className = title.c_str();
 	HINSTANCE hInstance = GetModuleHandle(0);
@@ -144,7 +144,7 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
 	windowClass.lpszClassName = className;
 	windowClass.hIconSm = nullptr;
 	RegisterClassEx(&windowClass);
-	IsEditorWindow = isEditor;
+	m_IsEditorWindow = isEditor;
 
 	if (isEditor)
 	{
@@ -191,8 +191,9 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
 	applyDefaultViewport();
 }
 
-Variant Window::quitWindow(const Event* event) {
-	if (this->IsEditorWindow)
+Variant Window::quitWindow(const Event* event) 
+{
+	if (m_IsEditorWindow)
 	{	
 		EventManager::GetSingleton()->call("EditorSaveBeforeQuit", "EditorSaveBeforeQuit", 0);
 	}
@@ -204,7 +205,7 @@ Variant Window::quitWindow(const Event* event) {
 }
 Variant Window::quitEditorWindow(const Event* event)
 {
-	DestroyWindow(this->getWindowHandle());
+	DestroyWindow(getWindowHandle());
 	return true;
 }
 
@@ -212,4 +213,3 @@ HWND Window::getWindowHandle()
 {
 	return m_WindowHandle;
 }
-
