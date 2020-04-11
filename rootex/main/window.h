@@ -12,7 +12,7 @@ class Window
 protected:
 	int m_Width;
 	int m_Height;
-	bool IsEditorWindow;
+	bool m_IsEditorWindow;
 
 	WNDCLASSEX m_WindowClass = { 0 };
 	LPCSTR m_ClassName;
@@ -21,26 +21,23 @@ protected:
 	
 	/// Wraps DefWindowProc function.
 	static LRESULT CALLBACK WindowsProc(HWND windowHandler, UINT msg, WPARAM wParam, LPARAM lParam);
+	Variant quitWindow(const Event* event);
+	Variant quitEditorWindow(const Event* event);
 
 public:
 	Window(int xOffset, int yOffset, int width, int height, const String& title, bool isEditor, bool MSAA);
-	Variant quitWindow(const Event* event);
-	Variant quitEditorWindow(const Event* event);
 	Window(const Window&) = delete;
 	Window& operator=(const Window&) = delete;
 	~Window() = default;
 	void show();
-	
 	std::optional<int> processMessages();
 	void applyDefaultViewport();
 	void swapBuffers();
 	/// Clips or blocks the cursor beyond a specified rectangle.
 	void clipCursor();
-
 	/// Helpers for clearing render target.
 	void clearCurrentTarget();
 	void clearUnboundTarget();
-
 	int getWidth() const;
 	int getHeight() const;
 	HWND getWindowHandle();

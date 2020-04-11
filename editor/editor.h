@@ -21,7 +21,7 @@ class HierarchyGraph;
 class Editor
 {
 	int m_DockSpaceID;
-	String menuAction = "";
+	String m_MenuAction;
 	unsigned int m_EditorStyleColorPushCount;
 	unsigned int m_EditorStyleVarPushCount;
 
