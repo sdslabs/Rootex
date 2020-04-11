@@ -231,35 +231,35 @@ void RenderingDevice::createVSModelConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_
 {
 	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &constantBuffer));
-	m_Context->VSSetConstantBuffers(0u, 1u, &constantBuffer);
+	m_Context->VSSetConstantBuffers(0u, 1u, constantBuffer.GetAddressOf());
 }
 
 void RenderingDevice::createVSModelInverseConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
 {
 	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &constantBuffer));
-	m_Context->VSSetConstantBuffers(3u, 1u, &constantBuffer);
+	m_Context->VSSetConstantBuffers(3u, 1u, constantBuffer.GetAddressOf());
 }
 
 void RenderingDevice::createVSViewConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
 {
 	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &constantBuffer));
-	m_Context->VSSetConstantBuffers(1u, 1u, &constantBuffer);
+	m_Context->VSSetConstantBuffers(1u, 1u, constantBuffer.GetAddressOf());
 }
 
 void RenderingDevice::createVSProjectionConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
 {
 	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &constantBuffer));
-	m_Context->VSSetConstantBuffers(2u, 1u, &constantBuffer);
+	m_Context->VSSetConstantBuffers(2u, 1u, constantBuffer.GetAddressOf());
 }
 
 void RenderingDevice::createPSConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd, UINT offset)
 {
 	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &constantBuffer));
-	m_Context->PSSetConstantBuffers(offset, 1u, &constantBuffer);
+	m_Context->PSSetConstantBuffers(offset, 1u, constantBuffer.GetAddressOf());
 }
 
 Microsoft::WRL::ComPtr<ID3D11PixelShader> RenderingDevice::createPixelShader(ID3DBlob* blob)
