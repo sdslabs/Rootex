@@ -1,6 +1,6 @@
 #include "physics_system.h"
 #include "common/common.h"
-#include "components/physics/physics_component.h"
+#include "components/physics/physics_collider_component.h"
 #include "core/resource_loader.h"
 
 PhysicsSystem* PhysicsSystem::GetSingleton()
@@ -83,14 +83,11 @@ void PhysicsSystem::update(float deltaMilliseconds)
 
 void PhysicsSystem::syncVisibleScene()
 {
-	// Keep physics & graphics in sync
-
-	// check all the existing bodies for changes.
-	const Vector<Component*>& physicsComponents = s_Components[PhysicsComponent::s_ID];
+	const Vector<Component*>& physicsComponents = s_Components[PhysicsColliderComponent::s_ID];
 
 	for (auto& physicsComponent : physicsComponents)
 	{
-		PhysicsComponent* const component = static_cast<PhysicsComponent*>(physicsComponent);
+		PhysicsColliderComponent* const component = static_cast<PhysicsColliderComponent*>(physicsComponent);
 		if (component)
 		{
 			Ref<TransformComponent> ptc = component->m_TransformComponent;

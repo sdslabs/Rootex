@@ -3,9 +3,11 @@
 #include "components/visual/visual_2d_component.h"
 #include "resource_loader.h"
 
+/// Component to render 2D UI Text
 class TextVisual2DComponent : public Visual2DComponent
 {
 public:
+	/// DirectXTK flipping modes for sprites
 	enum class Mode
 	{
 		None = DirectX::SpriteEffects_None,
@@ -17,10 +19,15 @@ public:
 	static Component* Create(const JSON::json& componentData);
 	static Component* CreateDefault();
 
+	/// Font file
 	FontResourceFile* m_FontFile;
+	/// Text to display
 	String m_Text;
+	/// Color of text
 	Color m_Color;
+	/// Flipping mode
 	Mode m_Mode;
+	/// 2D origin of the Font
 	Vector2 m_Origin;
 
 	TextVisual2DComponent(FontResourceFile* font, const String& text, const Color& color, const Mode& mode, const Vector2& origin);
