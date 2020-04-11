@@ -11,6 +11,7 @@
 /// Number of event queues used to organise events in EventManager.
 const unsigned int EVENTMANAGER_NUM_QUEUES = 2;
 
+/// Function object for storing a function that handles an event.
 typedef Function<Variant(const Event*)> EventFunction;
 
 /// An Event dispatcher and registrar that also allows looking up registered events.
