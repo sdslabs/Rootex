@@ -18,7 +18,7 @@ Component* CameraVisualComponent::CreateDefault()
 }
 
 CameraVisualComponent::CameraVisualComponent(const Vector2& aspectRatio)
-    : VisualComponent(RenderPassMain, nullptr, nullptr, false)
+    : VisualComponent(RenderPassMain, false)
     , m_DebugCamera(false)
     , m_ViewMatrix(Matrix::CreateLookAt({ 0.0f, 0.0f, 0.4f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }))
     , m_ProjectionMatrix(Matrix::CreatePerspective(1.0f, 1.0f*aspectRatio.y/aspectRatio.x, 0.5f, 100.0f))
@@ -111,8 +111,11 @@ const Matrix& CameraVisualComponent::getView()
 		Quaternion rotation = m_TransformComponent->getRotation();
 		Vector3 direction = transform.Forward();
 		Vector3 up = transform.Up();
-		direction = XMVector3Rotate(direction, rotation);
-		up = XMVector3Rotate(up, rotation);
+		if (rotation.x != 0 || rotation.y != 0 || rotation.z != 0)
+		{
+			direction = XMVector3Rotate(direction, rotation);
+			up = XMVector3Rotate(up, rotation);
+		}
 		m_ViewMatrix = Matrix::CreateLookAt(position, position + direction, up);
 	}
 	return m_ViewMatrix;

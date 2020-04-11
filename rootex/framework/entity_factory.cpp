@@ -19,13 +19,9 @@
 #include "components/visual/spot_light_component.h"
 #include "components/visual/text_visual_2d_component.h"
 #include "components/visual/cpu_particles_visual_component.h"
-<<<<<<< HEAD
 #include "components/visual/camera_visual_component.h"
-#include "components/physics/sphere_component.h"
-=======
 #include "components/physics/sphere_collider_component.h"
 #include "components/physics/box_collider_component.h"
->>>>>>> cff4a28bf1fe3c45bf0b272088bf5e2efc6aadc1
 #include "components/music_component.h"
 #include "components/short_music_component.h"
 
@@ -52,14 +48,9 @@ EntityFactory::EntityFactory()
 
 	REGISTER_COMPONENT(TestComponent);
 	REGISTER_COMPONENT(DebugComponent);
-<<<<<<< HEAD
-	REGISTER_COMPONENT(VisualComponent);
 	REGISTER_COMPONENT(CameraVisualComponent);
-=======
-
 	REGISTER_COMPONENT(ModelVisualComponent);
 	REGISTER_COMPONENT(TexturedModelVisualComponent);
->>>>>>> cff4a28bf1fe3c45bf0b272088bf5e2efc6aadc1
 	REGISTER_COMPONENT(TextVisual2DComponent);
 	
 	REGISTER_COMPONENT(TransformComponent);
