@@ -97,13 +97,13 @@
         }
     },
     "window": {
+        "fullScreen": false,
         "height": 1080,
         "isEditor": true,
         "msaa": false,
         "title": "Rootex Editor",
         "width": 1920,
         "x": 100,
-        "y": 100,
-        "fullScreen":  true
+        "y": 100
     }
 }
