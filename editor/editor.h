@@ -22,6 +22,7 @@ class Editor
 {
 	int m_DockSpaceID;
 	String m_MenuAction;
+	String m_PopupCause;
 	unsigned int m_EditorStyleColorPushCount;
 	unsigned int m_EditorStyleVarPushCount;
 
