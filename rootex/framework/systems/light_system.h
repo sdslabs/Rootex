@@ -7,6 +7,7 @@
 #include "components/visual/spot_light_component.h"
 #include "components/transform_component.h"
 
+/// Interface for setting up point, directional and spot lights.
 class LightSystem : public System
 {
 public:

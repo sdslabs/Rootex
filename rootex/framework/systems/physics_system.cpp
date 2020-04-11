@@ -83,9 +83,6 @@ void PhysicsSystem::update(float deltaMilliseconds)
 
 void PhysicsSystem::syncVisibleScene()
 {
-	// Keep physics & graphics in sync
-
-	// check all the existing bodies for changes.
 	const Vector<Component*>& physicsComponents = s_Components[PhysicsColliderComponent::s_ID];
 
 	for (auto& physicsComponent : physicsComponents)

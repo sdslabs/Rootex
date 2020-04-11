@@ -2,10 +2,10 @@
     "Components": {
         "CPUParticlesVisualComponent": {
             "angularVelocity": {
-                "w": -99.0,
-                "x": -77.0,
-                "y": -242.0,
-                "z": -156.0
+                "w": 1.0,
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
             },
             "color": {
                 "a": 1.0,
@@ -15,30 +15,30 @@
             },
             "colorBegin": {
                 "a": 1.0,
-                "b": 0.9999899864196777,
-                "g": 0.9999899864196777,
-                "r": 1.0
+                "b": 0.7401961088180542,
+                "g": 0.4355219602584839,
+                "r": 0.0
             },
             "colorEnd": {
                 "a": 1.0,
-                "b": 0.46568626165390015,
-                "g": 1.1768995136662852e-05,
-                "r": 0.0
+                "b": 1.0,
+                "g": 0.9999899864196777,
+                "r": 0.9999899864196777
             },
             "isVisible": true,
-            "lifeTime": 4.309999942779541,
+            "lifeTime": 2.680000066757202,
             "poolSize": 1000,
             "renderPass": 1,
-            "resFile": "game/assets/test/teapot.obj",
-            "sizeBegin": 0.2199999988079071,
+            "resFile": "rootex/assets/cube.obj",
+            "sizeBegin": 0.27000001072883606,
             "sizeEnd": 0.0,
-            "sizeVariation": 0.0,
+            "sizeVariation": 0.10000000149011612,
             "velocity": {
                 "x": 0.0,
-                "y": 1.5,
+                "y": 2.0,
                 "z": 0.0
             },
-            "velocityVariation": 6.0
+            "velocityVariation": 1.0
         },
         "HierarchyComponent": {
             "children": [],
@@ -46,9 +46,9 @@
         },
         "TransformComponent": {
             "position": {
-                "x": -1.100000023841858,
-                "y": -1.3200000524520874,
-                "z": -9.359999656677246
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
             },
             "rotation": {
                 "w": 0.0,
@@ -64,7 +64,7 @@
         }
     },
     "Entity": {
-        "ID": 2,
+        "ID": 3,
         "name": "Cube"
     }
 }

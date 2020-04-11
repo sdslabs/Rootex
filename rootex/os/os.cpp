@@ -157,11 +157,11 @@ String OS::GetBuildTime()
 
 String OS::GetBuildType()
 {
-#ifdef _DEBUG || DEBUG
+#ifdef _DEBUG
 	return "Debug";
 #else
 	return "Release";
-#endif // DEBUG
+#endif // _DEBUG
 }
 
 String OS::GetGameExecutablePath()
