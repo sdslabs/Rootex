@@ -11,6 +11,14 @@ typedef unsigned int ALuint;
 /// An interface for an audio source in the game world.
 class AudioSource
 {
+
+private:
+
+	// Set the position of the audio source
+	void setPosition(Vector3 position);
+
+	friend class AudioComponent;
+
 protected:
 	ALuint m_SourceID;
 
