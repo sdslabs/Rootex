@@ -12,6 +12,7 @@ RenderSystem* RenderSystem::GetSingleton()
 RenderSystem::RenderSystem()
     : m_Renderer(new Renderer())
     , m_Camera(new CameraVisualComponent())
+    , m_DefaultCamera(m_Camera)
 {
 	m_TransformationStack.push_back(Matrix::Identity);
 	m_UITransformationStack.push_back(Matrix::Identity);
@@ -58,7 +59,7 @@ void RenderSystem::render()
 	RenderingDevice::GetSingleton()->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	RenderingDevice::GetSingleton()->setRasterizerState();
 	RenderingDevice::GetSingleton()->setDepthStencilState();
-	RenderSystem::GetSingleton()->getCamera()->updatePosition();
+	getCamera()->updatePosition();
 
 	Ref<VisualComponent> rootVC = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<VisualComponent>();
 #ifdef ROOTEX_EDITOR
@@ -103,13 +104,13 @@ void RenderSystem::popUIMatrix()
 
 void RenderSystem::setCamera(Ref<CameraVisualComponent> camera)
 {
-	m_Camera->setNotActive();
+	m_Camera->setInactive();
 	m_Camera = camera;
 }
 
 void RenderSystem::restoreCamera()
 {
-	m_Camera = Ref<CameraVisualComponent>(new CameraVisualComponent());
+	m_Camera = m_DefaultCamera;
 }
 
 const Matrix& RenderSystem::getTopMatrix() const
