@@ -207,7 +207,7 @@ void Editor::drawDefaultUI()
 					{
 						if (ProjectManager::GetSingleton()->isAnyLevelOpen())
 						{
-							m_MenuAction = "Do you want to save " + ProjectManager::GetSingleton()->getCurrentLevelName() + "?";
+							m_MenuAction = "Save";
 							m_PopupCause = "create";
 						}
 						else
@@ -227,7 +227,7 @@ void Editor::drawDefaultUI()
 							if (ProjectManager::GetSingleton()->isAnyLevelOpen())
 							{
 								openLevelName = levelName.string();
-								m_MenuAction = "Do you want to save " + ProjectManager::GetSingleton()->getCurrentLevelName() + "?";
+								m_MenuAction = "Save";
 								m_PopupCause = "open";
 							}
 							else
@@ -319,10 +319,11 @@ void Editor::drawDefaultUI()
 			{
 				ImGui::OpenPopup(m_MenuAction.c_str());
 			}
-			String popupMessage = "Do you want to save " + ProjectManager::GetSingleton()->getCurrentLevelName() + "?";
-			if (ImGui::BeginPopupModal(popupMessage.c_str(), 0, ImGuiWindowFlags_AlwaysAutoResize))
+
+			if (ImGui::BeginPopupModal("Save", 0, ImGuiWindowFlags_AlwaysAutoResize))
 			{
 				ImGui::SetNextWindowSize({ ImGui::GetWindowWidth(), ImGui::GetWindowHeight() });
+				ImGui::Text(String("Do you want to save " + ProjectManager::GetSingleton()->getCurrentLevelName()+"?").c_str());
 				if (ImGui::Button("Save"))
 				{
 					if (m_PopupCause == "quit")
@@ -498,7 +499,7 @@ Variant Editor::saveBeforeQuit(const Event* event)
 {
 	if (ProjectManager::GetSingleton()->isAnyLevelOpen())
 	{
-		m_MenuAction = "Do you want to save " + ProjectManager::GetSingleton()->getCurrentLevelName() + "?";
+		m_MenuAction = "Save";
 		m_PopupCause = "quit";
 	}
 	else
