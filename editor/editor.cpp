@@ -289,9 +289,9 @@ void Editor::drawDefaultUI()
 			}
 			if (ImGui::BeginMenu("Editor"))
 			{
-				if (ImGui::BeginMenu("Settings"))
+				if (ImGui::MenuItem("Settings", ""))
 				{
-					ImGui::EndMenu();
+					EventManager::GetSingleton()->call("EditorSettingsMenu", "EditorOpenFile", ApplicationSettings::GetSingleton()->getTextFile()->getPath().string());
 				}
 				ImGui::EndMenu();
 			}
