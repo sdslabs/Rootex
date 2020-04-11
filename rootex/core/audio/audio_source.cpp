@@ -73,6 +73,15 @@ ALuint AudioSource::getSourceID() const
 	return m_SourceID;
 }
 
+
+void AudioSource::setPosition(Vector3 position) 
+{
+	float x = position.x;
+	float y = position.y;
+	float z = position.z;
+	AL_CHECK(alSource3f(m_SourceID, AL_POSITION, x, y, z));
+}
+
 StaticAudioSource::StaticAudioSource(Ref<StaticAudioBuffer> audio)
     : AudioSource(false)
     , m_StaticAudio(audio)
