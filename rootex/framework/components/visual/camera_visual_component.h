@@ -10,11 +10,8 @@ protected:
 	bool m_Active;
 	bool m_DebugCamera;
 	Ref<VisualComponent> m_Target;
-	Ref<TransformComponent> m_TransformComponent;
+	TransformComponent* m_TransformComponent;
 	Vector4 m_CameraOffset;
-	Vector3 m_Position;
-	Vector3 m_Direction;
-	Vector3 m_Up;
 	Vector2 m_AspectRatio;
 #ifdef ROOTEX_EDITOR
 	static inline const float s_EditorDecimalSpeed = 0.01f;
@@ -23,11 +20,12 @@ protected:
 public:
 	static Component* Create(const JSON::json& componentData);
 	static Component* CreateDefault();
-	CameraVisualComponent(const Vector3& position, const Vector3& direction, const Vector3& up, const Vector2& aspectRatio);
+	CameraVisualComponent(const Vector2& aspectRatio);
 	CameraVisualComponent();
 	CameraVisualComponent(CameraVisualComponent&) = delete;
 	~CameraVisualComponent();
 
+	virtual bool setup() override;
 	virtual bool preRender() override;
 	virtual void render() override;
 	virtual bool reset(HierarchyGraph* visualComponentGraph, int windowWidth, int windowHeight);
@@ -36,8 +34,7 @@ public:
 
 	void onRemove() override;
 	virtual void setViewTransform(const Matrix& view);
-	void setNotActive();
-	void setPosition(Vector3 position);
+	void setInactive();
 	void updatePosition();
 	virtual void setTarget(Ref<VisualComponent> target) { m_Target = target; }
 
