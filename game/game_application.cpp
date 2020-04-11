@@ -46,15 +46,13 @@ Variant GameApplication::onExitEvent(const Event* event)
 }
 
 GameApplication::GameApplication()
+    : Application("game/game.app.json")
 {
-	JSON::json projectJSON = JSON::json::parse(ResourceLoader::CreateNewTextResourceFile("game/game.app.json")->getString());
-	initialize(projectJSON);
-
 	String levelName = getLevelNameFromCommandLine(GetCommandLine());
 
 	if (levelName == "")
 	{
-		ProjectManager::GetSingleton()->openLevel(projectJSON["startLevel"]);
+		ProjectManager::GetSingleton()->openLevel(m_ApplicationSettings->getJSON()["startLevel"]);
 	}
 	else
 	{
