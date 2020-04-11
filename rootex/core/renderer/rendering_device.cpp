@@ -91,6 +91,13 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 	dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
 	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 
+	D3D11_FEATURE_DATA_D3D11_OPTIONS features;
+	GFX_ERR_CHECK(m_Device->CheckFeatureSupport(D3D11_FEATURE_D3D11_OPTIONS, &features, sizeof(features)));
+
+	PRINT(
+		"Supported DirectX11 Features\n"
+		"MapNoOverwriteOnDynamicConstantBuffer: " + std::to_string(features.MapNoOverwriteOnDynamicConstantBuffer));
+
 	GFX_ERR_CHECK(m_Device->CreateDepthStencilState(&dsDesc, &m_DepthStencilState));
 	m_Context->OMSetDepthStencilState(m_DepthStencilState.Get(), 1u);
 	m_StencilRef = 1u;
@@ -336,7 +343,10 @@ void RenderingDevice::bind(ID3D11InputLayout* inputLayout)
 //Assuming subresource offset = 0
 void RenderingDevice::getBufferMappedContext(ID3D11Buffer* buffer, D3D11_MAPPED_SUBRESOURCE& subresource)
 {
-	GFX_ERR_CHECK(m_Context->Map(buffer, 0u, D3D11_MAP_WRITE_DISCARD, 0u, &subresource));
+	if (FAILED(m_Context->Map(buffer, 0u, D3D11_MAP_WRITE_DISCARD, 0u, &subresource)))
+	{
+		ERR("Could not map to constant buffer");
+	}
 }
 
 //Assuming subresource offset = 0
