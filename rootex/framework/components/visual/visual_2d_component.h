@@ -3,6 +3,7 @@
 #include "components/visual/visual_component.h"
 #include "components/transform_component.h"
 
+/// Our UI base class
 class Visual2DComponent : public VisualComponent
 {
 protected:

@@ -4,8 +4,10 @@
 
 #include <Windows.h>
 
+/// Interface for spawning and maintenance of threads.
 class ThreadPool;
 
+/// Defines jobs to be run on threads.
 class Task
 {
 public:
@@ -29,12 +31,14 @@ protected:
 	void execute() override;
 };
 
+/// Worker thread parameters.
 struct WorkerParameters
 {
 	__int32 m_Thread;
 	ThreadPool* m_ThreadPool;
 };
 
+/// A queue of jobs.
 struct TaskQueue
 {
 	__int32 m_Jobs;
@@ -43,12 +47,14 @@ struct TaskQueue
 	Vector<Ref<Task>> m_QueueJobs;
 };
 
+/// Contains th information of completed jobs.
 struct TaskComplete
 {
 	__int32 m_Jobs;
 	Vector<__int32> m_IDs;
 };
 
+/// Contains information of jobs ready for execution.
 struct TaskReady
 {	
 	__int32 m_Jobs;
@@ -57,6 +63,7 @@ struct TaskReady
 	Vector<__int32> m_IDs;
 };
 
+/// Master thread to communicate with and maintain worker threads.
 struct MasterThread
 {	
 	TaskComplete m_TasksComplete;
@@ -89,5 +96,6 @@ public:
 	ThreadPool(ThreadPool&) = delete;
 	~ThreadPool();
 	
+	/// To submit a job to the jobs queue.
 	void submit(Vector<Ref<Task>>& tasks);
 };

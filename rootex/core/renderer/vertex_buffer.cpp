@@ -1,7 +1,6 @@
 #include "vertex_buffer.h"
 
 #include "rendering_device.h"
-#include "utils.h"
 
 VertexBuffer::VertexBuffer(const Vector<VertexData>& buffer)
     : m_Buffer(buffer)

@@ -1,6 +1,7 @@
 #include "thread.h"
 #include <Windows.h>
 
+/// The main function which runs on every thread.
 DWORD WINAPI MainLoop(LPVOID voidParameters);
 
 void DebugTask::execute()
