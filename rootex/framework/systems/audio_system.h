@@ -49,8 +49,10 @@ class AudioSystem : public System
 	unsigned int m_UpdateIntervalMilliseconds;
 	ALCdevice* m_Device;
 	ALCcontext* m_Context;
+	int m_ListenerID;
 
 	AudioSystem();
+	AudioSystem(Vector3 position);
 	AudioSystem(AudioSystem&) = delete;
 	~AudioSystem();
 
