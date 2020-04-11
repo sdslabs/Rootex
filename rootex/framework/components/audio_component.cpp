@@ -12,7 +12,7 @@ bool AudioComponent::setup()
 	// set the position of the audio source using the co-ordinates provided by transformComponent
 	m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
 	getAudioSource()->setPosition(m_TransformComponent->getAbsoluteTransform().Translation());
-	getAudioSource()->setModel("linear", false);
+	getAudioSource()->setModel(1, 1, 1, "linear", false);
 	return true;
 }
 
