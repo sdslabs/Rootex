@@ -43,6 +43,11 @@ void ShaderLibrary::MakeShaders()
 	}
 }
 
+void ShaderLibrary::DestroyShaders()
+{
+	s_Shaders.clear();
+}
+
 Shader* ShaderLibrary::GetDefaultShader()
 {
 	return s_Shaders[ShaderType::Default].get();

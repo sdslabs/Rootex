@@ -1,7 +1,6 @@
 #include "index_buffer.h"
 
 #include "rendering_device.h"
-#include "utils.h"
 
 IndexBuffer::IndexBuffer(const Vector<unsigned short>& indices)
     : m_Buffer(indices)

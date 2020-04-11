@@ -28,6 +28,7 @@
 
 #include "sol/sol.hpp"
 
+/// Lua interpreter that runs all Lua scripts inside the same Lua state. This means that all Lua code-snippets that are run can cross-reference each other.
 class LuaInterpreter
 {
 	sol::state m_Lua;

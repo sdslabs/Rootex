@@ -30,7 +30,7 @@ CameraVisualComponent::CameraVisualComponent(const Vector2& aspectRatio)
 }
 
 CameraVisualComponent::CameraVisualComponent()
-    : VisualComponent(RenderPassMain, nullptr, nullptr, false)
+    : VisualComponent(RenderPassMain, false)
     , m_DebugCamera(false)
     , m_ViewMatrix(Matrix::CreateLookAt({ 0.0f, 0.0f, 0.4f }, {0.0f, 0.0f, 0.0f}, { 0.0f, 1.0f, 0.0f }))
     , m_ProjectionMatrix(Matrix::CreatePerspective(1.0f, 1.0f*9.0f/16.0f, 0.5f, 100.0f))

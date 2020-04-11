@@ -1,6 +1,7 @@
 #include "component.h"
 #include "common/common.h"
 
+/// Component to apply point lights to the scene, first 4 created instances of this are used
 class PointLightComponent : public Component
 {
 	static Component* Create(const JSON::json& componentData);
@@ -11,13 +12,20 @@ class PointLightComponent : public Component
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::PointLightComponent;
 
-	float m_constAtt;
-	float m_linAtt;
-	float m_quadAtt;
-	float m_range;
-	float m_diffuseIntensity;
-	Color m_diffuseColor;
-	Color m_ambientColor;
+	/// attenuation = 1/(attConst + attLin * r + attQuad * r * r) 
+	float m_AttConst;
+	/// attenuation = 1/(attConst + attLin * r + attQuad * r * r)
+	float m_AttLin;
+	/// attenuation = 1/(attConst + attLin * r + attQuad * r * r)
+	float m_AttQuad;
+	/// Lighting effect clipped for distance > range
+	float m_Range;
+	/// Diffuse intensity of light
+	float m_DiffuseIntensity;
+	/// Diffuse color of light
+	Color m_DiffuseColor;
+	/// Ambient color of light
+	Color m_AmbientColor;
 	
 	virtual String getName() const override { return "PointLightComponent"; }
 	ComponentID getComponentID() const override { return s_ID; }
