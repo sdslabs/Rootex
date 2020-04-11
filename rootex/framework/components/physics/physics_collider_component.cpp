@@ -36,12 +36,13 @@ bool PhysicsColliderComponent::setup()
 			m_MotionState.setWorldTransform(matTobtTransform(m_Transform));
 			btRigidBody::btRigidBodyConstructionInfo rbInfo(m_Mass, &m_MotionState, m_CollisionShape.get(), m_LocalInertia);
 
-			// set up the materal properties
+			/// Set up the materal properties.
 			rbInfo.m_restitution = m_Material.m_Restitution;
 			rbInfo.m_friction = m_Material.m_Friction;
 
 			m_Body = new btRigidBody(rbInfo);
 
+			/// Adds a new rigid body to physics system.
 			PhysicsSystem::GetSingleton()->addRigidBody(m_Body);
 		}
 	}
@@ -63,12 +64,6 @@ void PhysicsColliderComponent::MotionState::setWorldTransform(const btTransform&
 {
 	m_WorldToPositionTransform = btTransformToMat(worldTrans);
 }
-
-/*PhysicsColliderComponent::MaterialData::MaterialData(float restitution, float friction)
-{
-	m_Restitution = restitution;
-	m_Friction = friction;
-}*/
 
 void PhysicsColliderComponent::applyForce(const Vector3 force)
 {

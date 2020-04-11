@@ -5,6 +5,7 @@
 #include "entity.h"
 #include "component.h"
 
+/// ECS style System interface that allows iterating over components directly.
 class System
 {
 protected:

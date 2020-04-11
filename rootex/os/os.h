@@ -6,6 +6,7 @@
 
 #include "common/types.h"
 
+/// Filename that marks the starting directory for Rootex
 #define ROOT_MARKER_FILENAME "rootex.root"
 #define ENGINE_DIRECTORY "rootex"
 #define GAME_DIRECTORY "game"
@@ -15,6 +16,7 @@ typedef std::chrono::time_point<std::filesystem::file_time_type::clock> FileTime
 
 class ResourceData;
 
+/// Provides features that are provided directly by the OS.
 class OS
 {
 	OS() = delete;
@@ -29,6 +31,7 @@ public:
 	~OS() = delete;
 
 	static bool Initialize();
+	/// Execute a command.
 	static void Execute(const String string);
 	static String GetBuildDate();
 	static String GetBuildTime();

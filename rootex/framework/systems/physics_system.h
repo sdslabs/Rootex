@@ -6,22 +6,23 @@
 
 class PhysicsSystem : public System
 {
-	//The btDynamicsWorld is the interface class for several dynamics implementation, basic, discrete, parallel, and continuous etc.
+	/// Interface for several dynamics implementations, basic, discrete, parallel, and continuous etc.
 	Ptr<btDynamicsWorld> m_DynamicsWorld;
 
-	//The btBroadphaseInterface class provides an interface to detect aabb-overlapping object pairs.
+	/// An interface to detect aabb-overlapping object pairs.
 	Ptr<btBroadphaseInterface> m_Broadphase;
 
-	//btCollisionDispatcher supports algorithms that handle ConvexConvex and ConvexConcave collision pairs.
-	//Time of Impact, Closest Points and Penetration Depth.
+	/// btCollisionDispatcher supports algorithms that handle ConvexConvex and ConvexConcave collision pairs.
+	/// Time of Impact, Closest Points and Penetration Depth.
 	Ptr<btCollisionDispatcher> m_Dispatcher;
 
-	// btConstraintSolver provides solver interface
+	/// Provides solver interface.
 	Ptr<btConstraintSolver> m_Solver;
 
-	//btCollisionConfiguration allows to configure Bullet collision detection
+	/// Allows to configure Bullet collision detection.
 	Ptr<btDefaultCollisionConfiguration> m_CollisionConfiguration;
 
+	/// Table of all the material types and their respective data.
 	sol::table m_PhysicsMaterialTable;
 
 	PhysicsSystem() = default;
@@ -33,12 +34,14 @@ public:
 	void addRigidBody(btRigidBody* body);
 	sol::table getPhysicsMaterial();
 
-	// Initialization and Maintenance of the Physics World
+	/// Initialization and Maintenance of the Physics World
 	void initialize();
 	
-	// callback from bullet for each physics time step.
+	/// Callback from bullet for each physics time step.
 	static void internalTickCallback(btDynamicsWorld* const world, btScalar const timeStep);
 
 	void update(float deltaMilliseconds);
+	// Keep physics & graphics in sync.
+	// Check all the existing bodies for changes.
 	virtual void syncVisibleScene();
 };

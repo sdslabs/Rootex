@@ -4,6 +4,7 @@
 
 typedef unsigned int ALuint;
 
+/// Interface for an audio buffer that is used inside an AudioSource.
 class AudioBuffer
 {
 protected:
