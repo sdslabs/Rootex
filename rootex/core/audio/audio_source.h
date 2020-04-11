@@ -16,7 +16,6 @@ private:
 
 	// Set the position of the audio source
 	void setPosition(Vector3 position);
-
 	friend class AudioComponent;
 
 protected:

@@ -139,6 +139,16 @@ AudioSystem::AudioSystem()
     , m_Device(nullptr)
     , m_UpdateIntervalMilliseconds(0)
 {
+
+}
+
+/// Create a default listener
+AudioSystem::AudioSystem(Vector3 position)
+{
+	float x = position.x;
+	float y = position.y;
+	float z = position.z;
+	AL_CHECK(alListener3f(AL_POSITION, x, y, z));
 }
 
 AudioSystem::~AudioSystem()
