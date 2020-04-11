@@ -4,13 +4,19 @@
 
 #include "common/common.h"
 
+/// Convert nanoseconds to milliseconds
 #define NS_TO_MS 1e-6f
+/// Convert milliseconds to nanoseconds
 #define MS_TO_NS 1e+6f
+/// Convert milliseconds to seconds
 #define MS_TO_S 1e-3f
+/// Convert seconds to milliseconds
 #define S_TO_MS 1e+3f
 
+/// A point in time of the high resolution clock
 typedef std::chrono::time_point<std::chrono::high_resolution_clock> TimePoint;
 
+/// Helper to keep track of time.
 class Timer
 {
 protected:
@@ -30,6 +36,7 @@ public:
 	float getTimeNs() const { return (s_Clock.now() - m_StartTime).count(); }
 };
 
+/// A timer that works like a stopwatch.
 class StopTimer : public Timer
 {
 public:
@@ -37,9 +44,11 @@ public:
 	StopTimer(StopTimer&) = delete;
 	virtual ~StopTimer() = default;
 
+	/// Reset start time to now.
 	void reset();
 };
 
+/// Display a message with the time taken when the scope where this is instantiated ends.
 class LoggingScopeTimer : public Timer
 {
 	String m_Message;
@@ -50,6 +59,7 @@ public:
 	virtual ~LoggingScopeTimer();
 };
 
+/// Timer that helps keep track of frame time.
 class FrameTimer : public LoggingScopeTimer
 {
 	unsigned long long int m_FrameCount;
@@ -59,9 +69,12 @@ public:
 	FrameTimer();
 	~FrameTimer() = default;
 
+	/// Reset frame time to 0. Call at the beginning of the frame for accurate results.
 	void reset();
+
 	void showTime();
 	void showFPS();
 
+	/// Call at the end of the frame for accurate results.
 	float getFrameTime() const { return (s_Clock.now() - m_FrameStartTime).count() * NS_TO_MS; }
 };

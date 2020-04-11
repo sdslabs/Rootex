@@ -6,11 +6,12 @@
 #include "framework/components/hierarchy_component.h"
 #include "framework/systems/render_system.h"
 #include "editor_application.h"
-
+#include "rootex/main/window.h"
 #include "imgui_stdlib.h"
 
 void Editor::initialize(HWND hWnd, const JSON::json& projectJSON)
 {
+	BIND_EVENT_MEMBER_FUNCTION("EditorSaveBeforeQuit", Editor::saveBeforeQuit);
 	BIND_EVENT_MEMBER_FUNCTION("EditorSaveAll", Editor::saveAll);
 	BIND_EVENT_MEMBER_FUNCTION("EditorAutoSave", Editor::autoSave);
 	BIND_EVENT_MEMBER_FUNCTION("EditorOpenLevel", Editor::openLevel);
@@ -131,11 +132,6 @@ void Editor::render()
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }
 
-void Editor::quit()
-{
-	PostQuitMessage(0);
-}
-
 Editor::~Editor()
 {
 	ImGui_ImplDX11_Shutdown();
@@ -185,7 +181,8 @@ void Editor::drawDefaultUI()
 
 		if (ImGui::BeginMenuBar())
 		{
-			static String menuAction = "";
+			static String newLevelName;
+			static String openLevelName;
 			if (ImGui::BeginMenu("File"))
 			{
 				if (ImGui::BeginMenu("Create Entity", ProjectManager::GetSingleton()->isAnyLevelOpen()))
@@ -204,13 +201,20 @@ void Editor::drawDefaultUI()
 				ImGui::Separator();
 				if (ImGui::BeginMenu("Create Level"))
 				{
-					static String newLevelName;
 					ImGui::InputText("Level Name", &newLevelName, ImGuiInputTextFlags_AlwaysInsertMode);
 					ImGui::SameLine();
 					if (ImGui::Button("Create"))
 					{
-						EventManager::GetSingleton()->call("EditorFileNewLevel", "EditorCreateNewLevel", newLevelName);
-						EventManager::GetSingleton()->call("EditorOpenNewLevel", "EditorOpenLevel", "game/assets/levels/" + newLevelName);
+						if (ProjectManager::GetSingleton()->isAnyLevelOpen())
+						{
+							m_MenuAction = "Save";
+							m_PopupCause = "create";
+						}
+						else
+						{
+							EventManager::GetSingleton()->call("EditorFileNewLevel", "EditorCreateNewLevel", newLevelName);
+							EventManager::GetSingleton()->call("EditorOpenNewLevel", "EditorOpenLevel", "game/assets/levels/" + newLevelName);
+						}
 					}
 					ImGui::EndMenu();
 				}
@@ -220,7 +224,16 @@ void Editor::drawDefaultUI()
 					{
 						if (ImGui::MenuItem(levelName.string().c_str()))
 						{
-							EventManager::GetSingleton()->call("EditorFileMenuOpenLevel", "EditorOpenLevel", levelName.string());
+							if (ProjectManager::GetSingleton()->isAnyLevelOpen())
+							{
+								openLevelName = levelName.string();
+								m_MenuAction = "Save";
+								m_PopupCause = "open";
+							}
+							else
+							{
+								EventManager::GetSingleton()->call("EditorFileMenuOpenLevel", "EditorOpenLevel", levelName.string());
+							}
 						}
 					}
 					ImGui::EndMenu();
@@ -232,7 +245,7 @@ void Editor::drawDefaultUI()
 				ImGui::Separator();
 				if (ImGui::MenuItem("Quit", ""))
 				{
-					quit();
+					EventManager::GetSingleton()->call("EditorSaveBeforeQuit", "EditorSaveBeforeQuit", 0);
 				}
 				ImGui::EndMenu();
 			}
@@ -291,7 +304,7 @@ void Editor::drawDefaultUI()
 			{
 				if (ImGui::MenuItem("About Rootex Editor"))
 				{
-					menuAction = "About Rootex Editor";
+					m_MenuAction = "About Rootex Editor";
 				}
 				if (ImGui::BeginMenu("Open Source Licenses"))
 				{
@@ -299,7 +312,7 @@ void Editor::drawDefaultUI()
 					{
 						if (ImGui::MenuItem(library.filename().string().c_str(), ""))
 						{
-							menuAction = library.string();
+							m_MenuAction = library.string();
 						}
 					}
 					ImGui::EndMenu();
@@ -307,9 +320,68 @@ void Editor::drawDefaultUI()
 				ImGui::EndMenu();
 			}
 
-			if (menuAction != "")
+			if (m_MenuAction != "")
 			{
-				ImGui::OpenPopup(menuAction.c_str());
+				ImGui::OpenPopup(m_MenuAction.c_str());
+			}
+
+			if (ImGui::BeginPopupModal("Save", 0, ImGuiWindowFlags_AlwaysAutoResize))
+			{
+				ImGui::SetNextWindowSize({ ImGui::GetWindowWidth(), ImGui::GetWindowHeight() });
+				ImGui::Text(String("Do you want to save " + ProjectManager::GetSingleton()->getCurrentLevelName()+"?").c_str());
+				if (ImGui::Button("Save"))
+				{
+					if (m_PopupCause == "quit")
+					{
+						saveAll(nullptr);
+						EventManager::GetSingleton()->call("QuitEditorWindow", "QuitEditorWindow", 0);
+					}
+					else if (m_PopupCause == "create")
+					{
+						saveAll(nullptr);
+						EventManager::GetSingleton()->call("EditorFileNewLevel", "EditorCreateNewLevel", newLevelName);
+						EventManager::GetSingleton()->call("EditorOpenNewLevel", "EditorOpenLevel", "game/assets/levels/" + newLevelName);
+						ImGui::CloseCurrentPopup();
+						m_MenuAction = "";
+					}
+					else if (m_PopupCause == "open")
+					{
+						saveAll(nullptr);
+						EventManager::GetSingleton()->call("EditorFileMenuOpenLevel", "EditorOpenLevel", openLevelName);
+						ImGui::CloseCurrentPopup();
+						m_MenuAction = "";
+					}
+				}
+				ImGui::SameLine();
+
+				if (ImGui::Button("Don't Save"))
+				{
+					if (m_PopupCause == "quit")
+					{
+						EventManager::GetSingleton()->call("QuitEditorWindow", "QuitEditorWindow", 0);
+					}
+					else if (m_PopupCause == "create")
+					{
+						EventManager::GetSingleton()->call("EditorFileNewLevel", "EditorCreateNewLevel", newLevelName);
+						EventManager::GetSingleton()->call("EditorOpenNewLevel", "EditorOpenLevel", "game/assets/levels/" + newLevelName);
+						ImGui::CloseCurrentPopup();
+						m_MenuAction = "";
+					}
+					else if (m_PopupCause == "open")
+					{
+						EventManager::GetSingleton()->call("EditorFileMenuOpenLevel", "EditorOpenLevel", openLevelName);
+						ImGui::CloseCurrentPopup();
+						m_MenuAction = "";
+					}
+				}
+				ImGui::SameLine();
+
+				if (ImGui::Button("Cancel"))
+				{
+					ImGui::CloseCurrentPopup();
+					m_MenuAction = "";
+				}
+				ImGui::EndPopup();
 			}
 
 			if (ImGui::BeginPopup("About Rootex Editor"))
@@ -319,7 +391,7 @@ void Editor::drawDefaultUI()
 				static TextResourceFile* license = ResourceLoader::CreateLuaTextResourceFile("LICENSE");
 				ImGui::Text(license->getData()->getRawData()->data());
 				ImGui::Separator();
-				menuAction = "";
+				m_MenuAction = "";
 				ImGui::EndPopup();
 			}
 			if (ImGui::BeginPopup("Proprietary Licenses"))
@@ -335,7 +407,7 @@ void Editor::drawDefaultUI()
 				{
 					TextResourceFile* license = ResourceLoader::CreateLuaTextResourceFile(library.string() + "/LICENSE");
 					ImGui::Text(license->getData()->getRawData()->data());
-					menuAction = "";
+					m_MenuAction = "";
 					ImGui::EndPopup();
 				}
 			}
@@ -425,6 +497,20 @@ Variant Editor::openLevel(const Event* event)
 	ProjectManager::GetSingleton()->openLevel(levelPath);
 	SetWindowText(GetActiveWindow(), ("Rootex Editor: " + ProjectManager::GetSingleton()->getCurrentLevelName()).c_str());
 
+	return true;
+}
+
+Variant Editor::saveBeforeQuit(const Event* event)
+{
+	if (ProjectManager::GetSingleton()->isAnyLevelOpen())
+	{
+		m_MenuAction = "Save";
+		m_PopupCause = "quit";
+	}
+	else
+	{
+		EventManager::GetSingleton()->call("QuitEditorWindow", "QuitEditorWindow", 0);
+	}
 	return true;
 }
 

@@ -9,18 +9,18 @@
 #include "systems/hierarchy_system.h"
 #include "components/debug_component.h"
 #include "components/hierarchy_component.h"
-#include "components/physics/sphere_component.h"
 #include "components/script_component.h"
 #include "components/test_component.h"
 #include "components/transform_component.h"
 #include "components/visual/visual_component.h"
-#include "components/visual/diffuse_visual_component.h"
+#include "components/visual/textured_model_visual_component.h"
 #include "components/visual/directional_light_component.h"
 #include "components/visual/point_light_component.h"
 #include "components/visual/spot_light_component.h"
 #include "components/visual/text_visual_2d_component.h"
 #include "components/visual/cpu_particles_visual_component.h"
-#include "components/physics/sphere_component.h"
+#include "components/physics/sphere_collider_component.h"
+#include "components/physics/box_collider_component.h"
 #include "components/music_component.h"
 #include "components/short_music_component.h"
 
@@ -47,16 +47,22 @@ EntityFactory::EntityFactory()
 
 	REGISTER_COMPONENT(TestComponent);
 	REGISTER_COMPONENT(DebugComponent);
-	REGISTER_COMPONENT(VisualComponent);
+
+	REGISTER_COMPONENT(ModelVisualComponent);
+	REGISTER_COMPONENT(TexturedModelVisualComponent);
 	REGISTER_COMPONENT(TextVisual2DComponent);
-	REGISTER_COMPONENT(DiffuseVisualComponent);
+	
 	REGISTER_COMPONENT(TransformComponent);
+	
 	REGISTER_COMPONENT(PointLightComponent);
 	REGISTER_COMPONENT(DirectionalLightComponent);
 	REGISTER_COMPONENT(SpotLightComponent);
-	REGISTER_COMPONENT(SphereComponent);
+	REGISTER_COMPONENT(SphereColliderComponent);
+	REGISTER_COMPONENT(BoxColliderComponent);
 	REGISTER_COMPONENT(HierarchyComponent);
+	
 	REGISTER_COMPONENT(ScriptComponent);
+	
 	REGISTER_COMPONENT(MusicComponent);
 	REGISTER_COMPONENT(ShortMusicComponent);
 	REGISTER_COMPONENT(CPUParticlesVisualComponent);
@@ -201,7 +207,7 @@ Ref<Entity> EntityFactory::createRootEntity()
 		System::RegisterComponent(rootTransformComponent.get());
 	}
 	{
-		Ref<VisualComponent> rootVisualComponent = std::dynamic_pointer_cast<VisualComponent>(createDefaultComponent("VisualComponent"));
+		Ref<ModelVisualComponent> rootVisualComponent = std::dynamic_pointer_cast<ModelVisualComponent>(createDefaultComponent("ModelVisualComponent"));
 		rootVisualComponent->setVisibility(false);
 
 		EntityFactory::addComponent(root, rootVisualComponent);

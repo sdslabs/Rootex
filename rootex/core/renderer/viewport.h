@@ -2,6 +2,7 @@
 
 #include <d3d11.h>
 
+/// Encapsulation of the viewport being rendered to
 class Viewport
 {
 	D3D11_VIEWPORT m_Viewport;

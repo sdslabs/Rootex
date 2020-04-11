@@ -19,6 +19,7 @@ Application::~Application()
 {
 	AudioSystem::GetSingleton()->shutDown();
 	EntityFactory::GetSingleton()->destroyEntities(false);
+	ShaderLibrary::DestroyShaders();
 }
 
 bool Application::initialize(const JSON::json& projectJSON)
@@ -28,6 +29,7 @@ bool Application::initialize(const JSON::json& projectJSON)
 		ERR("Audio System was not initialized");
 	}
 	
+	LuaInterpreter::GetSingleton();
 	PhysicsSystem::GetSingleton()->initialize();
 	
 	JSON::json windowJSON = projectJSON["window"];

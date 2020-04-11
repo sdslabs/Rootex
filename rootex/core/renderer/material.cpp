@@ -20,7 +20,7 @@ void Material::bind() const
 	m_Shader->bind();
 }
 
-DiffuseMaterial::DiffuseMaterial(Ref<Texture> diffuseTexture)
+TexturedMaterial::TexturedMaterial(Ref<Texture> diffuseTexture)
     : Material(ShaderLibrary::GetDiffuseShader())
     , m_DiffuseTexture(diffuseTexture)
     , m_DiffuseShader(reinterpret_cast<DiffuseShader*>(m_Shader))
@@ -28,7 +28,7 @@ DiffuseMaterial::DiffuseMaterial(Ref<Texture> diffuseTexture)
 	m_SamplerState = RenderingDevice::GetSingleton()->createSamplerState();
 }
 
-void DiffuseMaterial::bind() const
+void TexturedMaterial::bind() const
 {
 	m_DiffuseShader->set(m_DiffuseTexture.get());
 	const PSDiffuseConstantBuffer Cb = { LightSystem::GetSingleton()->getLights(), { 0.6f, 30.0f, { 0.0f, 0.0f } } };

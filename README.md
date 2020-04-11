@@ -3,6 +3,7 @@
 <img src="/rootex/assets/rootex.png" width=400 />
 
 ![C/C++ CI](https://github.com/sdslabs/Rootex/workflows/C/C++%20CI/badge.svg)
+[![Documentation Status](https://readthedocs.org/projects/rootex/badge/?version=latest)](https://rootex.readthedocs.io/en/latest/?badge=latest)
 
 ## Contents
 
@@ -30,6 +31,8 @@ Rootex runs only on Windows and there are no plans to port it to other platforms
 2. Install Visual Studio Desktop C++ development pack (or anything similar, since C++ is no longer a default language since at least Visual Studio 19)
 3. Run `generate_cache.bat`.
 4. Use `build.bat` to build Rootex.
+
+Now you can start reading the [documentation](https://rootex.readthedocs.io/) and build games on Rootex!
 
 ## <a name=how>How can I contribute?
 

@@ -6,6 +6,7 @@
 
 class HierarchyGraph;
 
+/// Application that runs when game is run without the editor
 class GameApplication : public Application
 {
 	FrameTimer m_FrameTimer;
