@@ -33,10 +33,10 @@ void ColorMaterial::bind()
 
 void TextureMaterial::bind()
 {
+	m_Shader->bind();
 	m_DiffuseShader->set(m_DiffuseTexture.get());
 	const PSDiffuseConstantBuffer Cb = { LightSystem::GetSingleton()->getLights(), { 0.6f, 30.0f, { 0.0f, 0.0f } } };
 	setPixelShaderConstantBuffer(Cb);
-	m_Shader->bind();
 }
 
 CPUParticlesMaterial::CPUParticlesMaterial()
@@ -99,19 +99,19 @@ void Material::setVertexShaderConstantBuffer(const VertexConstantBufferType type
 	{
 	case VertexConstantBufferType::Model:
 		m_VSConstantBuffer[(int)VertexConstantBufferType::Model] = RenderingDevice::GetSingleton()->createVSModelConstantBuffer(&cbd, &csd);
-		RenderingDevice::GetSingleton()->createVSModelConstantBuffer(&cbd, &csd);
+		//RenderingDevice::GetSingleton()->createVSModelConstantBuffer(&cbd, &csd);
 		break;
 	case VertexConstantBufferType::ModelInverse:
 		m_VSConstantBuffer[(int)VertexConstantBufferType::ModelInverse] = RenderingDevice::GetSingleton()->createVSModelInverseConstantBuffer(&cbd, &csd);
-		RenderingDevice::GetSingleton()->createVSModelInverseConstantBuffer(&cbd, &csd);
+		//RenderingDevice::GetSingleton()->createVSModelInverseConstantBuffer(&cbd, &csd);
 		break;
 	case VertexConstantBufferType::View:
 		m_VSConstantBuffer[(int)VertexConstantBufferType::View] = RenderingDevice::GetSingleton()->createVSViewConstantBuffer(&cbd, &csd);
-		RenderingDevice::GetSingleton()->createVSViewConstantBuffer(&cbd, &csd);
+		//RenderingDevice::GetSingleton()->createVSViewConstantBuffer(&cbd, &csd);
 		break;
 	case VertexConstantBufferType::Projection:
 		m_VSConstantBuffer[(int)VertexConstantBufferType::Projection] = RenderingDevice::GetSingleton()->createVSProjectionConstantBuffer(&cbd, &csd);
-		RenderingDevice::GetSingleton()->createVSProjectionConstantBuffer(&cbd, &csd);
+		//RenderingDevice::GetSingleton()->createVSProjectionConstantBuffer(&cbd, &csd);
 		break;
 	default:
 		break;
