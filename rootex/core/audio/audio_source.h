@@ -16,7 +16,7 @@ private:
 
 	// Set the position of the audio source
 	void setPosition(Vector3 position);
-	void setModel(String model = "linear", bool clamped = false);
+	void AudioSource::setModel(ALfloat rolloff_factor, ALfloat reference_distance, ALfloat max_distance, String model = "linear", bool clamped = false);
 	friend class AudioComponent;
 
 protected:

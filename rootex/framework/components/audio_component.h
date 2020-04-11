@@ -22,9 +22,7 @@ protected:
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::AudioComponent;
 	
-	// override the setup function of component class
 	virtual bool setup() override;
-	// create update function
 	void update();
 
 	virtual AudioSource* getAudioSource() = 0;

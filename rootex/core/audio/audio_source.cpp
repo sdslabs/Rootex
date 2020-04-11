@@ -82,7 +82,11 @@ void AudioSource::setPosition(Vector3 position)
 	AL_CHECK(alSource3f(m_SourceID, AL_POSITION, x, y, z));
 }
 
-void setModel(String model = "linear", bool clamped = false) {
+void AudioSource::setModel(ALfloat rolloff_factor, ALfloat reference_distance, ALfloat max_distance, String model = "linear", bool clamped = false)
+{
+	AL_CHECK(alSourcef(m_SourceID, AL_ROLLOFF_FACTOR, rolloff_factor));
+	AL_CHECK(alSourcef(m_SourceID, AL_REFERENCE_DISTANCE, reference_distance));
+	AL_CHECK(alSourcef(m_SourceID, AL_MAX_DISTANCE, max_distance));
 
 	if (model == "linear")
 	{
