@@ -13,7 +13,6 @@ RenderingDevice::RenderingDevice()
 RenderingDevice::~RenderingDevice()
 {
 	CoUninitialize();
-	m_Debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
 }
 
 void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
@@ -142,11 +141,6 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 	m_Context->RSSetState(m_RSState.Get());
 
 	setTextureRenderTarget();
-
-	if (FAILED(m_Device->QueryInterface(__uuidof(ID3D11Debug), (void**)&m_Debug)))
-	{
-		ERR("DX11 Debug interface was not found");
-	}
 
 	m_FontBatch.reset(new DirectX::SpriteBatch(m_Context.Get()));
 }
