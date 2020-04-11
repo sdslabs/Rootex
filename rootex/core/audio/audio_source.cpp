@@ -82,6 +82,46 @@ void AudioSource::setPosition(Vector3 position)
 	AL_CHECK(alSource3f(m_SourceID, AL_POSITION, x, y, z));
 }
 
+void setModel(String model = "linear", bool clamped = false) {
+
+	if (model == "linear")
+	{
+		if (clamped)
+		{
+			AL_CHECK(alDistanceModel(AL_LINEAR_DISTANCE_CLAMPED));
+		}
+		else
+		{
+			AL_CHECK(alDistanceModel(AL_LINEAR_DISTANCE));
+		}
+	}
+	
+	if (model == "inverse")
+	{
+		if (clamped)
+		{
+			AL_CHECK(alDistanceModel(AL_INVERSE_DISTANCE_CLAMPED));
+		}
+		else
+		{
+			AL_CHECK(alDistanceModel(AL_INVERSE_DISTANCE));
+		}
+	}
+
+	if (model == "exponential")
+	{
+		if (clamped)
+		{
+			AL_CHECK(alDistanceModel(AL_EXPONENT_DISTANCE_CLAMPED));
+		}
+		else
+		{
+			AL_CHECK(alDistanceModel(AL_EXPONENT_DISTANCE));
+		}
+	}
+}
+
+
 StaticAudioSource::StaticAudioSource(Ref<StaticAudioBuffer> audio)
     : AudioSource(false)
     , m_StaticAudio(audio)

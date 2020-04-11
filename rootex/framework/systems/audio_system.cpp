@@ -140,6 +140,7 @@ AudioSystem::AudioSystem()
     , m_UpdateIntervalMilliseconds(0)
 {
 	AL_CHECK(alListener3f(AL_POSITION, 0,0,0));
+	AL_CHECK(alListener3f(AL_VELOCITY, 0, 0, 0));
 }
 
 
