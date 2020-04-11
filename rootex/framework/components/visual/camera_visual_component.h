@@ -39,7 +39,7 @@ public:
 	virtual void setTarget(Ref<VisualComponent> target) { m_Target = target; }
 
 	virtual VisualComponent* getTarget() const { return m_Target.get(); }
-	virtual const Matrix& getView() const { return m_ViewMatrix; }
+	virtual const Matrix& getView();
 	virtual const Matrix& getProjection() const { return m_ProjectionMatrix; }
 	void setOffset(const Vector4& offset) { m_CameraOffset = offset; }
 	virtual String getName() const override { return "CameraVisualComponent"; }

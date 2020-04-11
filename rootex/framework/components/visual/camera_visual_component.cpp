@@ -1,5 +1,6 @@
 #include "camera_visual_component.h"
 #include "systems/render_system.h"
+#include "DIRECTXMath.h"
 Component* CameraVisualComponent::Create(const JSON::json& componentData)
 {
 	CameraVisualComponent* cameraVisualComponent = new CameraVisualComponent(
@@ -101,7 +102,7 @@ void CameraVisualComponent::postRender()
 {
 }
 
-void CameraVisualComponent::updatePosition()
+const Matrix& CameraVisualComponent::getView()
 {
 	if (m_TransformComponent)
 	{
@@ -110,32 +111,11 @@ void CameraVisualComponent::updatePosition()
 		Quaternion rotation = m_TransformComponent->getRotation();
 		Vector3 direction = transform.Forward();
 		Vector3 up = transform.Up();
-		if (rotation.x != 0 || rotation.y != 0 || rotation.z != 0)
-		{
-			Quaternion inverse = Quaternion();
-			inverse.x = -rotation.x;
-			inverse.y = -rotation.y;
-			inverse.z = -rotation.z;
-			inverse.w = rotation.w;
-			
-			Quaternion directionQuaternion = Quaternion();
-			directionQuaternion.x = direction.x;
-			directionQuaternion.y = direction.y;
-			directionQuaternion.z = direction.z;
-			directionQuaternion.w = 0;
-			directionQuaternion = inverse * directionQuaternion * rotation;
-			direction = { directionQuaternion.x, directionQuaternion.y, directionQuaternion.z };
-
-			Quaternion upQuaternion = Quaternion();
-			upQuaternion.x = up.x;
-			upQuaternion.y = up.y;
-			upQuaternion.z = up.z;
-			upQuaternion.w = 0;
-			upQuaternion = inverse * upQuaternion * rotation;
-			up = { upQuaternion.x, upQuaternion.y, upQuaternion.z };
-		}
+		direction = XMVector3Rotate(direction, rotation);
+		up = XMVector3Rotate(up, rotation);
 		m_ViewMatrix = Matrix::CreateLookAt(position, position + direction, up);
 	}
+	return m_ViewMatrix;
 }
 
 void CameraVisualComponent::setViewTransform(const Matrix& view)
