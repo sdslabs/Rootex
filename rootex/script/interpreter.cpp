@@ -223,13 +223,7 @@ void LuaInterpreter::registerTypes()
 			    "VisualComponent",
 			    sol::base_classes, sol::bases<Component>());
 			entity["getVisual"] = [](Entity* e) { return e->getComponent<VisualComponent>(); };
-			visualComponent["addTransform"] = &VisualComponent::addTransform;
-			visualComponent["getAttributes"] = &VisualComponent::getAttributes;
 			visualComponent["isVisible"] = &VisualComponent::isVisible;
-			visualComponent["getPosition"] = &VisualComponent::getPosition;
-			visualComponent["setTransform"] = &VisualComponent::setTransform;
-			visualComponent["setMaterial"] = &VisualComponent::setMaterial;
-			visualComponent["setPosition"] = &VisualComponent::setPosition;
 			visualComponent["setVisibility"] = &VisualComponent::setVisibility;
 		}
 		{
