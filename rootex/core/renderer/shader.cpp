@@ -1,6 +1,5 @@
 #include "shader.h"
 
-#include "utils.h"
 #include "texture.h"
 
 Shader::Shader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat)

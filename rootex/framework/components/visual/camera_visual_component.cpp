@@ -3,7 +3,7 @@
 #include "entity_factory.h"
 
 CameraVisualComponent::CameraVisualComponent()
-    : VisualComponent(RenderPassMain, nullptr, nullptr, false)
+    : VisualComponent(RenderPassMain, false)
     , m_DebugCamera(false)
     , m_ViewMatrix(Matrix::CreateLookAt({ 0.0f, 0.0f, 4.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }))
     , m_ProjectionMatrix(Matrix::CreatePerspective(1.0f, 1.0f * 480.0f / 640.0f, 0.5f, 100.0f))

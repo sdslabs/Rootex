@@ -6,6 +6,8 @@
 #include "os/timer.h"
 #include "entity_factory.h"
 
+/// Interface for a Rootex application. 
+/// Every application that uses Rootex should derive this class.
 class Application
 {
 protected:
@@ -28,4 +30,6 @@ public:
 	const Window& getWindow() const { return *m_Window.get(); };
 };
 
+/// Externally defined function that returns a Ref object of a derived class of Application. 
+/// This should be defined only once in a project. This is used by the main function to construct the Rootex application.
 extern Ref<Application> CreateRootexApplication();

@@ -2,6 +2,7 @@
 
 #include "system.h"
 
+/// Implements process of serialization for the entities.
 class SerializationSystem : public System
 {
 	SerializationSystem() = default;

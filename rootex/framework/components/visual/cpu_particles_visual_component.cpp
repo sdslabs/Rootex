@@ -1,6 +1,7 @@
 #include "cpu_particles_visual_component.h"
 
 #include "random.h"
+#include "resource_loader.h"
 #include "systems/render_system.h"
 #include "timer.h"
 
@@ -37,24 +38,18 @@ Component* CPUParticlesVisualComponent::Create(const JSON::json& componentData)
 		componentData["lifeTime"]
 	};
 
-	CPUParticlesVisualComponent* particles = new CPUParticlesVisualComponent(componentData["poolSize"], particalTemplate, componentData["visibility"]);
+	CPUParticlesVisualComponent* particles = new CPUParticlesVisualComponent(componentData["poolSize"], componentData["resFile"], particalTemplate, componentData["isVisible"]);
 	return particles;
 }
 
 Component* CPUParticlesVisualComponent::CreateDefault()
 {
-	CPUParticlesVisualComponent* particles = new CPUParticlesVisualComponent(1000, ParticleTemplate(), true);
+	CPUParticlesVisualComponent* particles = new CPUParticlesVisualComponent(1000, "rootex/assets/cube.obj", ParticleTemplate(), true);
 	return particles;
 }
 
-CPUParticlesVisualComponent::CPUParticlesVisualComponent(size_t poolSize, const ParticleTemplate& particleTemplate, bool visibility)
-    : VisualComponent(RenderPassMain, Ref<CPUParticlesMaterial>(new CPUParticlesMaterial()), nullptr, visibility)
-    , m_QuadVertices({ 
-		{ { -0.5f, -0.5f, 0.0f } }, // 0
-          { { +0.5f, -0.5f, 0.0f } }, // 1
-          { { +0.5f, +0.5f, 0.0f } }, // 2
-          { { -0.5f, +0.5f, 0.0f } } }) // 3
-    , m_QuadIndices({ 0, 1, 2, 2, 3, 0 })
+CPUParticlesVisualComponent::CPUParticlesVisualComponent(size_t poolSize, const String& particleModelPath, const ParticleTemplate& particleTemplate, bool visibility)
+    : ModelVisualComponent(RenderPassMain, Ref<CPUParticlesMaterial>(new CPUParticlesMaterial()), ResourceLoader::CreateVisualModelResourceFile(particleModelPath), visibility)
     , m_ParticleTemplate(particleTemplate)
     , m_TransformComponent(nullptr)
 {
@@ -126,9 +121,9 @@ void CPUParticlesVisualComponent::render()
 		Color color = Color::Lerp(particle.m_ColorEnd, particle.m_ColorBegin, life);
 
 		RenderSystem::GetSingleton()->pushMatrix(Matrix::CreateScale(size) * Matrix::CreateFromQuaternion(particle.m_Rotation) * Matrix::CreateTranslation(particle.m_Position) * Matrix::Identity);
-		m_Attributes.getMaterial()->setShaderConstantBuffer(Shader::VertexConstantBufferType::Model, RenderSystem::GetSingleton()->getTopMatrix());
-		m_Attributes.getMaterial()->setShaderConstantBuffer(PSSolidConstantBuffer({ color }));
-		RenderSystem::GetSingleton()->getRenderer()->draw(&m_QuadVertices, &m_QuadIndices, m_Attributes.getMaterial());
+		getMaterial()->setShaderConstantBuffer(Shader::VertexConstantBufferType::Model, RenderSystem::GetSingleton()->getTopMatrix());
+		getMaterial()->setShaderConstantBuffer(PSSolidConstantBuffer({ color }));
+		RenderSystem::GetSingleton()->getRenderer()->draw(m_VisualModelResourceFile->getVertexBuffer(), m_VisualModelResourceFile->getIndexBuffer(), getMaterial());
 		RenderSystem::GetSingleton()->popMatrix();
 	}
 }
@@ -167,7 +162,7 @@ void CPUParticlesVisualComponent::emit(const ParticleTemplate& particleTemplate)
 
 JSON::json CPUParticlesVisualComponent::getJSON() const
 {
-	JSON::json& j = VisualComponent::getJSON();
+	JSON::json& j = ModelVisualComponent::getJSON();
 
 	j["poolSize"] = m_ParticlePool.size();
 	j["velocity"]["x"] = m_ParticleTemplate.m_Velocity.x;
@@ -198,6 +193,8 @@ JSON::json CPUParticlesVisualComponent::getJSON() const
 #include "imgui.h"
 void CPUParticlesVisualComponent::draw()
 {
+	ModelVisualComponent::draw();
+
 	ImGui::DragInt("Emit Rate", &m_EmitRate);
 	ImGui::Separator();
 	ImGui::Text("Particle", ImGuiTreeNodeFlags_CollapsingHeader);
