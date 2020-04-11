@@ -8,12 +8,10 @@ class ProjectManager
 	ProjectManager() = default;
 	ProjectManager(ProjectManager&);
 	~ProjectManager() = default;
-
 	String m_CurrentLevelName;
 
 public:
 	static ProjectManager* GetSingleton();
-
 	void openLevel(const String& levelPath);
 	void saveCurrentLevel();
 	void createLevel(const String& newLevelName);
