@@ -7,23 +7,15 @@
 #include "script/interpreter.h"
 #include "systems/physics_system.h"
 
-Application::Application()
+Application::Application(const String& settingsFile)
 {
 	if (!OS::Initialize())
 	{
 		ERR("Application OS was not initialized");
 	}
-}
 
-Application::~Application()
-{
-	AudioSystem::GetSingleton()->shutDown();
-	EntityFactory::GetSingleton()->destroyEntities(false);
-	ShaderLibrary::DestroyShaders();
-}
+	m_ApplicationSettings.reset(new ApplicationSettings(ResourceLoader::CreateTextResourceFile(settingsFile)));
 
-bool Application::initialize(const JSON::json& projectJSON)
-{
 	if (!AudioSystem::GetSingleton()->initialize())
 	{
 		ERR("Audio System was not initialized");
@@ -32,7 +24,7 @@ bool Application::initialize(const JSON::json& projectJSON)
 	LuaInterpreter::GetSingleton();
 	PhysicsSystem::GetSingleton()->initialize();
 	
-	JSON::json windowJSON = projectJSON["window"];
+	JSON::json windowJSON = m_ApplicationSettings->getJSON()["window"];
 	m_Window.reset(new Window(
 	    windowJSON["x"],
 	    windowJSON["y"],
@@ -46,12 +38,18 @@ bool Application::initialize(const JSON::json& projectJSON)
 
 	ShaderLibrary::MakeShaders();
 
-	auto&& postInitialize = projectJSON.find("postInitialize");
-	if (postInitialize != projectJSON.end())
+	auto&& postInitialize = m_ApplicationSettings->find("postInitialize");
+	if (postInitialize != m_ApplicationSettings->end())
 	{
 		LuaInterpreter::GetSingleton()->getLuaState().script(ResourceLoader::CreateLuaTextResourceFile(*postInitialize)->getString());
 	}
 
 	m_Window->show();
-	return true;
+}
+
+Application::~Application()
+{
+	AudioSystem::GetSingleton()->shutDown();
+	EntityFactory::GetSingleton()->destroyEntities(false);
+	ShaderLibrary::DestroyShaders();
 }

@@ -5,6 +5,7 @@
 #include "os/thread.h"
 #include "os/timer.h"
 #include "entity_factory.h"
+#include "application_settings.h"
 
 /// Interface for a Rootex application. 
 /// Every application that uses Rootex should derive this class.
@@ -14,11 +15,10 @@ protected:
 	ThreadPool m_ThreadPool;
 	Timer m_ApplicationTimer;
 	Ptr<Window> m_Window;
+	Ptr<ApplicationSettings> m_ApplicationSettings;
 	
-	bool initialize(const JSON::json& projectJSON);
-
 public:
-	Application();
+	Application(const String& settingsFile);
 	Application(Application&) = delete;
 	virtual ~Application();
 
@@ -28,6 +28,7 @@ public:
 	virtual String getAppTitle() const { return "Rootex Application"; }
 	const Timer& getAppTimer() const { return m_ApplicationTimer; };
 	const Window& getWindow() const { return *m_Window.get(); };
+	ApplicationSettings* getSettings() { return m_ApplicationSettings.get(); }
 };
 
 /// Externally defined function that returns a Ref object of a derived class of Application. 

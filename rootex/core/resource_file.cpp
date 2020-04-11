@@ -142,6 +142,11 @@ TextResourceFile::~TextResourceFile()
 {
 }
 
+void TextResourceFile::putString(const String& newData)
+{
+	*m_ResourceData->getRawData() = FileBuffer(newData.begin(), newData.end());
+}
+
 void TextResourceFile::popBack()
 {
 	m_ResourceData->getRawData()->pop_back();
