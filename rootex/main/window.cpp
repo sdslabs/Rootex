@@ -80,6 +80,13 @@ void Window::clearUnboundTarget()
 #endif // ROOTEX_EDITOR
 }
 
+Variant Window::toggleFullScreen(const Event* event)
+{
+	m_FullScreen = !m_FullScreen;
+	RenderingDevice::GetSingleton()->setScreenState(m_FullScreen);
+	return true;
+}
+
 void Window::setWindowTitle(String title)
 {
 	SetWindowText(m_WindowHandle, title.c_str());
@@ -122,6 +129,8 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
     : m_Width(width)
     , m_Height(height)
 {
+	BIND_EVENT_MEMBER_FUNCTION("WindowToggleFullScreen", Window::toggleFullScreen);
+	BIND_EVENT_MEMBER_FUNCTION("WindowGetScreenState", Window::getScreenState);
 	WNDCLASSEX windowClass = { 0 };
 	LPCSTR className = title.c_str();
 	HINSTANCE hInstance = GetModuleHandle(0);
@@ -148,25 +157,15 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
 		    nullptr, nullptr,
 		    hInstance, nullptr);
 
-
-		int rWidth, rHeight;
-		if (fullScreen)
-		{
-			rWidth = width;
-			rHeight = height;
-		}
-		else
-		{
-			RECT clientRect;
-			GetClientRect(m_WindowHandle, &clientRect);
-			rWidth = clientRect.right - clientRect.left;
-			rHeight = clientRect.bottom - clientRect.top;
-		}
+		RECT clientRect;
+		GetClientRect(m_WindowHandle, &clientRect);
+		int rWidth = clientRect.right - clientRect.left;
+		int rHeight = clientRect.bottom - clientRect.top;
 		RenderingDevice::GetSingleton()->initialize(
 		    m_WindowHandle,
 		    rWidth,
 		    rHeight,
-		    MSAA, fullScreen);
+		    MSAA);
 	}
 	else
 	{
@@ -178,33 +177,25 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
 		    nullptr, nullptr,
 		    hInstance, nullptr);
 
-		int rWidth, rHeight;
-		if (fullScreen)
-		{
-			rWidth = width;
-			rHeight = height;
-		}
-		else
-		{
-			RECT clientRect;
-			GetClientRect(m_WindowHandle, &clientRect);
-			rWidth = clientRect.right - clientRect.left;
-			rHeight = clientRect.bottom - clientRect.top;
-			ClipCursor(&clientRect);
-		}
+		RECT clientRect;
+		GetClientRect(m_WindowHandle, &clientRect);
+		int rWidth = clientRect.right - clientRect.left;
+		int rHeight = clientRect.bottom - clientRect.top;
+		ClipCursor(&clientRect);
 		RenderingDevice::GetSingleton()->initialize(
 		    m_WindowHandle,
 		    rWidth,
 		    rHeight,
-		    MSAA, fullScreen);
+		    MSAA);
 
 		ShowCursor(false);
 
 		RenderingDevice::GetSingleton()->setBackBufferRenderTarget();
 	}
 	applyDefaultViewport();
+	m_FullScreen = false;
 	if (fullScreen)
-		RenderingDevice::GetSingleton()->toggleScreenState();
+		EventManager::GetSingleton()->deferredCall("WindowToggleFullScreen", "WindowToggleFullScreen", 0);
 }
 
 HWND Window::getWindowHandle()

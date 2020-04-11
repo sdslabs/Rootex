@@ -35,7 +35,6 @@ class RenderingDevice
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_RSState;
 	Microsoft::WRL::ComPtr<IDXGISwapChain> m_SwapChain;
 	bool m_MSAA;
-	bool m_FullScreen;
 	unsigned int m_4XMSQuality;
 
 	RenderingDevice();
@@ -56,10 +55,8 @@ class RenderingDevice
 public:
 	static RenderingDevice* GetSingleton();
 
-	void initialize(HWND hWnd, int width, int height, bool MSAA, bool fullScreen);
-	void toggleScreenState();
-	bool* getScreenState();
-
+	void initialize(HWND hWnd, int width, int height, bool MSAA);
+	void setScreenState(bool fullscreen);
 
 	void enableSkyDepthStencilState();
 	void disableSkyDepthStencilState();

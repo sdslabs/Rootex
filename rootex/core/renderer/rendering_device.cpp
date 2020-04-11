@@ -13,20 +13,16 @@ RenderingDevice::RenderingDevice()
 
 RenderingDevice::~RenderingDevice()
 {
-	m_SwapChain->SetFullscreenState(FALSE, NULL);
+	m_SwapChain->SetFullscreenState(false, nullptr);
 	CoUninitialize();
 }
 
-void RenderingDevice::toggleScreenState()
+void RenderingDevice::setScreenState(bool fullscreen)
 {
-	m_SwapChain->SetFullscreenState(m_FullScreen, nullptr);
-}
-bool* RenderingDevice::getScreenState()
-{
-	return &m_FullScreen;
+	m_SwapChain->SetFullscreenState(fullscreen, nullptr);
 }
 
-void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA, bool fullScreen)
+void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 {
 	m_MSAA = MSAA;
 	UINT createDeviceFlags = 0;
@@ -84,7 +80,6 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA, bo
 	sd.OutputWindow = hWnd;
 	sd.Windowed = true;
 	sd.SwapEffect = DXGI_SWAP_EFFECT::DXGI_SWAP_EFFECT_SEQUENTIAL;
-	sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
 	IDXGIDevice* dxgiDevice = 0;
 	m_Device->QueryInterface(__uuidof(IDXGIDevice), (void**)&dxgiDevice);
@@ -96,8 +91,6 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA, bo
 	dxgiAdapter->GetParent(__uuidof(IDXGIFactory), (void**)&dxgiFactory);
 
 	dxgiFactory->CreateSwapChain(m_Device.Get(), &sd, &m_SwapChain);
-
-	m_FullScreen = fullScreen;
 
 	SafeRelease(&dxgiDevice);
 	SafeRelease(&dxgiAdapter);
