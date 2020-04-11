@@ -226,19 +226,19 @@ void VisualModelResourceFile::reload()
 		vertices.push_back(vertex);
 	}
 
-	std::vector<unsigned short> Indices;
+	std::vector<unsigned short> indices;
 
 	for (unsigned int f = 0; f < mesh->mNumFaces; f++)
 	{
 		face = &mesh->mFaces[f];
-		Indices.push_back(face->mIndices[0]);
-		Indices.push_back(face->mIndices[1]);
-		Indices.push_back(face->mIndices[2]);
+		indices.push_back(face->mIndices[0]);
+		indices.push_back(face->mIndices[1]);
+		indices.push_back(face->mIndices[2]);
 	}
 
 	ResourceLoader::ReloadResourceData(m_ResourceData->getPath().string());
 	m_VertexBuffer.reset(new VertexBuffer(vertices));
-	m_IndexBuffer.reset(new IndexBuffer(Indices));
+	m_IndexBuffer.reset(new IndexBuffer(indices));
 }
 
 ImageResourceFile::ImageResourceFile(ResourceData* resData)
