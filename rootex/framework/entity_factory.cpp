@@ -9,7 +9,6 @@
 #include "systems/hierarchy_system.h"
 #include "components/debug_component.h"
 #include "components/hierarchy_component.h"
-#include "components/physics/sphere_collider_component.h"
 #include "components/script_component.h"
 #include "components/test_component.h"
 #include "components/transform_component.h"
