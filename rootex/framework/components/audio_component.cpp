@@ -10,11 +10,9 @@ AudioComponent::AudioComponent(bool playOnStart)
 bool AudioComponent::setup()
 {
 	
-	// get the transform component 
+	// set the position of the audio source using the co-ordinates provided by transformComponent
 	m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
-
 	getAudioSource()->setPosition(m_TransformComponent->getAbsoluteTransform().Translation());
-
 
 	return true;
 }
