@@ -106,9 +106,10 @@ void CameraVisualComponent::updatePosition()
 	if (m_TransformComponent)
 	{
 		Vector3 position = m_TransformComponent->getPosition();
+		Matrix transform = m_TransformComponent->getAbsoluteTransform();
 		Quaternion rotation = m_TransformComponent->getRotation();
-		Vector3 up = { 0.0f, 1.0f, 0.0f };
-		Vector3 direction = { 0.0f, 0.0f, -1.0f };
+		Vector3 direction = transform.Forward();
+		Vector3 up = transform.Up();
 		if (rotation.x != 0 || rotation.y != 0 || rotation.z != 0)
 		{
 			Quaternion inverse = Quaternion();
@@ -118,17 +119,17 @@ void CameraVisualComponent::updatePosition()
 			inverse.w = rotation.w;
 			
 			Quaternion directionQuaternion = Quaternion();
-			directionQuaternion.x = 0;
-			directionQuaternion.y = 0;
-			directionQuaternion.z = -1;
+			directionQuaternion.x = direction.x;
+			directionQuaternion.y = direction.y;
+			directionQuaternion.z = direction.z;
 			directionQuaternion.w = 0;
 			directionQuaternion = inverse * directionQuaternion * rotation;
 			direction = { directionQuaternion.x, directionQuaternion.y, directionQuaternion.z };
 
 			Quaternion upQuaternion = Quaternion();
-			upQuaternion.x = 0;
-			upQuaternion.y = 1;
-			upQuaternion.z = 0;
+			upQuaternion.x = up.x;
+			upQuaternion.y = up.y;
+			upQuaternion.z = up.z;
 			upQuaternion.w = 0;
 			upQuaternion = inverse * upQuaternion * rotation;
 			up = { upQuaternion.x, upQuaternion.y, upQuaternion.z };
