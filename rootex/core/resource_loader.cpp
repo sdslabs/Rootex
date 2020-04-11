@@ -201,19 +201,19 @@ VisualModelResourceFile* ResourceLoader::CreateVisualModelResourceFile(const Str
 		vertices.push_back(vertex);
 	}
 
-	std::vector<unsigned short> Indices;
+	std::vector<unsigned short> indices;
 
 	for (unsigned int f = 0; f < mesh->mNumFaces; f++)
 	{
 		face = &mesh->mFaces[f];
-		Indices.push_back(face->mIndices[0]);
-		Indices.push_back(face->mIndices[1]);
-		Indices.push_back(face->mIndices[2]);
+		indices.push_back(face->mIndices[0]);
+		indices.push_back(face->mIndices[1]);
+		indices.push_back(face->mIndices[2]);
 	}
 
 	FileBuffer& buffer = OS::LoadFileContents(path);
 	Ptr<VertexBuffer> vertexBuffer(new VertexBuffer(vertices));
-	Ptr<IndexBuffer> indexBuffer(new IndexBuffer(Indices));
+	Ptr<IndexBuffer> indexBuffer(new IndexBuffer(indices));
 
 	ResourceData* resData = new ResourceData(path, buffer);
 	VisualModelResourceFile* visualRes = new VisualModelResourceFile(std::move(vertexBuffer), std::move(indexBuffer), resData);
