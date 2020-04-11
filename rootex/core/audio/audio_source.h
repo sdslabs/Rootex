@@ -16,6 +16,7 @@ private:
 
 	// Set the position of the audio source
 	void setPosition(Vector3 position);
+	void setModel(String model = "linear", bool clamped = false);
 	friend class AudioComponent;
 
 protected:
