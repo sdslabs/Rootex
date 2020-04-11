@@ -11,6 +11,8 @@ class ApplicationSettings
 	JSON::json m_Settings;
 
 public:
+	static ApplicationSettings* GetSingleton() { return s_Instance; }
+
 	ApplicationSettings(TextResourceFile* settingsFile);
 	ApplicationSettings(ApplicationSettings&) = delete;
 	~ApplicationSettings();
@@ -18,5 +20,6 @@ public:
 	JSON::json::iterator find(const String& setting);
 	JSON::json::iterator end();
 
+	TextResourceFile* getTextFile() const { return m_TextSettingsFile; }
 	JSON::json& getJSON() { return m_Settings; };
 };
