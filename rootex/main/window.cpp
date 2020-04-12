@@ -1,8 +1,8 @@
 #include "main/window.h"
 
+#include "core/event_manager.h"
 #include "input/input_manager.h"
 #include "renderer/rendering_device.h"
-#include "core/event_manager.h"
 
 #include "vendor/ImGUI/imgui.h"
 #include "vendor/ImGUI/imgui_impl_dx11.h"
@@ -80,7 +80,13 @@ void Window::clearUnboundTarget()
 	RenderingDevice::GetSingleton()->clearUnboundRenderTarget(0.0f, 0.0f, 0.0f);
 #endif // DEBUG
 #endif // ROOTEX_EDITOR
+}
 
+Variant Window::toggleFullScreen(const Event* event)
+{
+	m_IsFullScreen = !m_IsFullScreen;
+	RenderingDevice::GetSingleton()->setScreenState(m_IsFullScreen);
+	return true;
 }
 
 void Window::setWindowTitle(String title)
@@ -117,18 +123,20 @@ LRESULT CALLBACK Window::WindowsProc(HWND windowHandler, UINT msg, WPARAM wParam
 		PostQuitMessage(0);
 		return 0;
 	}
-	
+
 	InputManager::GetSingleton()->forwardMessage({ windowHandler, msg, wParam, lParam });
 
 	return DefWindowProc(windowHandler, msg, wParam, lParam);
 }
 
-Window::Window(int xOffset, int yOffset, int width, int height, const String& title, bool isEditor, bool MSAA)
+Window::Window(int xOffset, int yOffset, int width, int height, const String& title, bool isEditor, bool MSAA, bool fullScreen)
     : m_Width(width)
     , m_Height(height)
 {
 	BIND_EVENT_MEMBER_FUNCTION("QuitWindowRequest", Window::quitWindow);
 	BIND_EVENT_MEMBER_FUNCTION("QuitEditorWindow", Window::quitEditorWindow);
+	BIND_EVENT_MEMBER_FUNCTION("WindowToggleFullScreen", Window::toggleFullScreen);
+	BIND_EVENT_MEMBER_FUNCTION("WindowGetScreenState", Window::getScreenState);
 	WNDCLASSEX windowClass = { 0 };
 	LPCSTR className = title.c_str();
 	HINSTANCE hInstance = GetModuleHandle(0);
@@ -158,43 +166,51 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
 
 		RECT clientRect;
 		GetClientRect(m_WindowHandle, &clientRect);
+		int rWidth = clientRect.right - clientRect.left;
+		int rHeight = clientRect.bottom - clientRect.top;
 		RenderingDevice::GetSingleton()->initialize(
-			m_WindowHandle, 
-			clientRect.right - clientRect.left, 
-			clientRect.bottom - clientRect.top, 
-			MSAA);
+		    m_WindowHandle,
+		    rWidth,
+		    rHeight,
+		    MSAA);
 	}
 	else
 	{
 		m_WindowHandle = CreateWindowEx(
-			0, className,
-			title.c_str(),
-			WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
-			xOffset, yOffset, width, height,
-			nullptr, nullptr,
-			hInstance, nullptr);
+		    0, className,
+		    title.c_str(),
+		    WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
+		    xOffset, yOffset, width, height,
+		    nullptr, nullptr,
+		    hInstance, nullptr);
 
 		RECT clientRect;
 		GetClientRect(m_WindowHandle, &clientRect);
+		int rWidth = clientRect.right - clientRect.left;
+		int rHeight = clientRect.bottom - clientRect.top;
+		ClipCursor(&clientRect);
 		RenderingDevice::GetSingleton()->initialize(
 		    m_WindowHandle,
-		    clientRect.right - clientRect.left,
-		    clientRect.bottom - clientRect.top,
+		    rWidth,
+		    rHeight,
 		    MSAA);
 
-		ClipCursor(&clientRect);
 		ShowCursor(false);
 
 		RenderingDevice::GetSingleton()->setBackBufferRenderTarget();
 	}
-
 	applyDefaultViewport();
+	m_IsFullScreen = false;
+	if (fullScreen)
+	{
+		EventManager::GetSingleton()->deferredCall("WindowToggleFullScreen", "WindowToggleFullScreen", 0);
+	}
 }
 
-Variant Window::quitWindow(const Event* event) 
+Variant Window::quitWindow(const Event* event)
 {
 	if (m_IsEditorWindow)
-	{	
+	{
 		EventManager::GetSingleton()->call("EditorSaveBeforeQuit", "EditorSaveBeforeQuit", 0);
 	}
 	else

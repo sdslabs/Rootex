@@ -291,6 +291,11 @@ void Editor::drawDefaultUI()
 			{
 				if (ImGui::BeginMenu("Settings"))
 				{
+					bool fullscreen = Extract(bool, EventManager::GetSingleton()->returnCall("WindowGetScreenState", "WindowGetScreenState", 0));
+					if (ImGui::Checkbox("Full Screen", &fullscreen))
+					{
+						EventManager::GetSingleton()->deferredCall("WindowToggleFullScreen", "WindowToggleFullScreen", 0);
+					}
 					ImGui::EndMenu();
 				}
 				ImGui::EndMenu();

@@ -40,7 +40,8 @@ bool Application::initialize(const JSON::json& projectJSON)
 	    windowJSON["height"],
 	    windowJSON["title"],
 	    windowJSON["isEditor"],
-	    windowJSON["msaa"]));
+	    windowJSON["msaa"],
+		windowJSON["fullScreen"]));
 	InputManager::GetSingleton()->initialize(windowJSON["width"], windowJSON["height"]);
 
 	ShaderLibrary::MakeShaders();
