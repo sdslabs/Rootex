@@ -1,6 +1,6 @@
 #include "editor.h"
 
-#include "app/project_manager.h"
+#include "app/level_manager.h"
 #include "core/renderer/rendering_device.h"
 #include "core/resource_loader.h"
 #include "framework/components/hierarchy_component.h"
@@ -185,7 +185,7 @@ void Editor::drawDefaultUI()
 			static String openLevelName;
 			if (ImGui::BeginMenu("File"))
 			{
-				if (ImGui::BeginMenu("Create Entity", ProjectManager::GetSingleton()->isAnyLevelOpen()))
+				if (ImGui::BeginMenu("Create Entity", LevelManager::GetSingleton()->isAnyLevelOpen()))
 				{
 					for (auto&& entityClassFile : OS::GetFilesInDirectory("game/assets/classes/"))
 					{
@@ -205,7 +205,7 @@ void Editor::drawDefaultUI()
 					ImGui::SameLine();
 					if (ImGui::Button("Create"))
 					{
-						if (ProjectManager::GetSingleton()->isAnyLevelOpen())
+						if (LevelManager::GetSingleton()->isAnyLevelOpen())
 						{
 							m_MenuAction = "Save";
 							m_PopupCause = "create";
@@ -224,7 +224,7 @@ void Editor::drawDefaultUI()
 					{
 						if (ImGui::MenuItem(levelName.string().c_str()))
 						{
-							if (ProjectManager::GetSingleton()->isAnyLevelOpen())
+							if (LevelManager::GetSingleton()->isAnyLevelOpen())
 							{
 								openLevelName = levelName.string();
 								m_MenuAction = "Save";
@@ -238,15 +238,20 @@ void Editor::drawDefaultUI()
 					}
 					ImGui::EndMenu();
 				}
-				if (ImGui::MenuItem("Save Level", "", false, ProjectManager::GetSingleton()->isAnyLevelOpen()))
+				if (ImGui::MenuItem("Save Level", "", false, LevelManager::GetSingleton()->isAnyLevelOpen()))
 				{
 					EventManager::GetSingleton()->call("EditorSaveEvent", "EditorSaveAll", 0);
+				}
+				if (ImGui::MenuItem("Preferences"))
+				{
+					EventManager::GetSingleton()->call("EditorSettingsMenu", "EditorOpenFile", ApplicationSettings::GetSingleton()->getTextFile()->getPath().string());
 				}
 				ImGui::Separator();
 				if (ImGui::MenuItem("Quit", ""))
 				{
 					EventManager::GetSingleton()->call("EditorSaveBeforeQuit", "EditorSaveBeforeQuit", 0);
 				}
+
 				ImGui::EndMenu();
 			}
 			if (ImGui::BeginMenu("Assets"))
@@ -292,11 +297,11 @@ void Editor::drawDefaultUI()
 				}
 				ImGui::EndMenu();
 			}
-			if (ImGui::BeginMenu("Project"))
+			if (ImGui::BeginMenu("Level"))
 			{
 				if (ImGui::MenuItem("Settings"))
 				{
-					EventManager::GetSingleton()->call("EditorSettingsMenu", "EditorOpenFile", ApplicationSettings::GetSingleton()->getTextFile()->getPath().string());
+					EventManager::GetSingleton()->call("EditorLevelMenu", "EditorOpenFile", LevelManager::GetSingleton()->getCurrentLevelSettingsFile()->getPath().string());
 				}
 				ImGui::EndMenu();
 			}
@@ -308,7 +313,7 @@ void Editor::drawDefaultUI()
 				}
 				if (ImGui::BeginMenu("Open Source Licenses"))
 				{
-					for (auto&& library : ProjectManager::GetSingleton()->getLibrariesPaths())
+					for (auto&& library : LevelManager::GetSingleton()->getLibrariesPaths())
 					{
 						if (ImGui::MenuItem(library.filename().string().c_str(), ""))
 						{
@@ -328,7 +333,7 @@ void Editor::drawDefaultUI()
 			if (ImGui::BeginPopupModal("Save", 0, ImGuiWindowFlags_AlwaysAutoResize))
 			{
 				ImGui::SetNextWindowSize({ ImGui::GetWindowWidth(), ImGui::GetWindowHeight() });
-				ImGui::Text(String("Do you want to save " + ProjectManager::GetSingleton()->getCurrentLevelName()+"?").c_str());
+				ImGui::Text(String("Do you want to save " + LevelManager::GetSingleton()->getCurrentLevelName()+"?").c_str());
 				if (ImGui::Button("Save"))
 				{
 					if (m_PopupCause == "quit")
@@ -401,7 +406,7 @@ void Editor::drawDefaultUI()
 			}
 
 			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
-			for (auto&& library : ProjectManager::GetSingleton()->getLibrariesPaths())
+			for (auto&& library : LevelManager::GetSingleton()->getLibrariesPaths())
 			{
 				if (ImGui::BeginPopup(library.string().c_str(), ImGuiWindowFlags_AlwaysAutoResize))
 				{
@@ -472,10 +477,10 @@ void Editor::pushEditorStyleVars()
 
 Variant Editor::saveAll(const Event* event)
 {
-	if (ProjectManager::GetSingleton()->isAnyLevelOpen())
+	if (LevelManager::GetSingleton()->isAnyLevelOpen())
 	{
-		ProjectManager::GetSingleton()->saveCurrentLevel();
-		PRINT("Successfully saved level: " + ProjectManager::GetSingleton()->getCurrentLevelName());
+		LevelManager::GetSingleton()->saveCurrentLevel();
+		PRINT("Successfully saved level: " + LevelManager::GetSingleton()->getCurrentLevelName());
 	}
 	else
 	{
@@ -494,15 +499,15 @@ Variant Editor::autoSave(const Event* event)
 Variant Editor::openLevel(const Event* event)
 {
 	String levelPath(Extract(String, event->getData()));
-	ProjectManager::GetSingleton()->openLevel(levelPath);
-	SetWindowText(GetActiveWindow(), ("Rootex Editor: " + ProjectManager::GetSingleton()->getCurrentLevelName()).c_str());
+	LevelManager::GetSingleton()->openLevel(levelPath);
+	SetWindowText(GetActiveWindow(), ("Rootex Editor: " + LevelManager::GetSingleton()->getCurrentLevelName()).c_str());
 
 	return true;
 }
 
 Variant Editor::saveBeforeQuit(const Event* event)
 {
-	if (ProjectManager::GetSingleton()->isAnyLevelOpen())
+	if (LevelManager::GetSingleton()->isAnyLevelOpen())
 	{
 		m_MenuAction = "Save";
 		m_PopupCause = "quit";
@@ -524,7 +529,7 @@ Variant Editor::createNewLevel(const Event* event)
 		return true;
 	}
 
-	ProjectManager::GetSingleton()->createLevel(newLevelName);
+	LevelManager::GetSingleton()->createLevel(newLevelName);
 
 	return true;
 }

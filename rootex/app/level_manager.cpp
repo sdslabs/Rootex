@@ -1,20 +1,21 @@
-#include "project_manager.h"
+#include "level_manager.h"
 
 #include "framework/entity_factory.h"
 #include "framework/systems/hierarchy_system.h"
-#include "resource_loader.h"
-
+#include "framework/systems/render_system.h"
 #include "systems/serialization_system.h"
 
-ProjectManager* ProjectManager::GetSingleton()
+LevelManager* LevelManager::GetSingleton()
 {
-	static ProjectManager singleton;
+	static LevelManager singleton;
 	return &singleton;
 }
 
-void ProjectManager::openLevel(const String& levelPath)
+void LevelManager::openLevel(const String& levelPath)
 {
 	m_CurrentLevelName = FilePath(levelPath).filename().string();
+	m_CurrentLevelSettingsFile = ResourceLoader::CreateTextResourceFile(levelPath + "/" + m_CurrentLevelName + ".level.json");
+	m_CurrentLevelSettings = JSON::json::parse(m_CurrentLevelSettingsFile->getString());
 
 	EntityFactory::GetSingleton()->destroyEntities(true);
 	HierarchySystem::GetSingleton()->getRootHierarchyComponent()->clear();
@@ -41,22 +42,31 @@ void ProjectManager::openLevel(const String& levelPath)
 
 	HierarchySystem::GetSingleton()->resetHierarchy();
 
+	if (m_CurrentLevelSettings.find("camera") != m_CurrentLevelSettings.end())
+	{
+		Ref<Entity> cameraEntity = EntityFactory::GetSingleton()->findEntity(m_CurrentLevelSettings["camera"]);
+		RenderSystem::GetSingleton()->setCamera(cameraEntity->getComponent<CameraComponent>().get());
+	}
+
 	PRINT("Loaded level: " + levelPath);
 }
 
-void ProjectManager::saveCurrentLevel()
+void LevelManager::saveCurrentLevel()
 {
 	SerializationSystem::GetSingleton()->saveAllEntities("game/assets/levels/" + getCurrentLevelName() + "/entities");
+	m_CurrentLevelSettingsFile->putString(m_CurrentLevelSettings.dump(4));
+	ResourceLoader::SaveResourceFile(m_CurrentLevelSettingsFile);
 }
 
-void ProjectManager::createLevel(const String& newLevelName)
+void LevelManager::createLevel(const String& newLevelName)
 {
 	OS::CreateDirectoryName("game/assets/levels/" + newLevelName);
 	OS::CreateDirectoryName("game/assets/levels/" + newLevelName + "/entities/");
+	OS::CreateFileName("game/assets/levels/" + newLevelName + "/" + newLevelName + ".level.json") << "{}";
 	PRINT("Created new level: " + "game/assets/levels/" + newLevelName);
 }
 
-Vector<FilePath> ProjectManager::getLibrariesPaths()
+Vector<FilePath> LevelManager::getLibrariesPaths()
 {
 	return OS::GetDirectoriesInDirectory("rootex/vendor/");
 }
