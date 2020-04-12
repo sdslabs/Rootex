@@ -103,7 +103,7 @@ void RenderSystem::popUIMatrix()
 
 void RenderSystem::setCamera(Ref<CameraVisualComponent> camera)
 {
-	m_Camera->setInactive();
+	m_Camera->setActive(false);
 	m_Camera = camera;
 }
 

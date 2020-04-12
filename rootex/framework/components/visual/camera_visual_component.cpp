@@ -125,9 +125,18 @@ void CameraVisualComponent::setViewTransform(const Matrix& view)
 	m_ViewMatrix = view;
 }
 
-void CameraVisualComponent::setInactive()
+void CameraVisualComponent::setActive(bool enabled)
 {
-	m_Active = false;
+	m_Active = enabled;
+	if (enabled)
+	{
+		Ref<CameraVisualComponent> cameraPointer = m_Owner->getComponent<CameraVisualComponent>();
+		RenderSystem::GetSingleton()->setCamera(cameraPointer);
+	}
+	else
+	{
+		RenderSystem::GetSingleton()->restoreCamera();
+	}
 }
 
 JSON::json CameraVisualComponent::getJSON() const
@@ -160,17 +169,14 @@ void CameraVisualComponent::draw()
 	{
 		if (ImGui::Button("Set Inactive"))
 		{
-			m_Active = false;
-			RenderSystem::GetSingleton()->restoreCamera();
+			setActive(false);
 		}
 	}
 	else
 	{
 		if (ImGui::Button("Set Active"))
 		{
-			m_Active = true;
-			Ref<CameraVisualComponent> cameraPointer = m_Owner->getComponent<CameraVisualComponent>();
-			RenderSystem::GetSingleton()->setCamera(cameraPointer);
+			setActive(true);
 		}
 	}
 }
