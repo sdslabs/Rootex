@@ -238,7 +238,7 @@ Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createVSModelConstantBuffe
 {
 	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &constantBuffer));
-	m_Context->VSSetConstantBuffers(0u, 1u, constantBuffer.GetAddressOf());
+	m_Context->VSSetConstantBuffers(1u, 1u, constantBuffer.GetAddressOf());
 	return constantBuffer;
 }
 
@@ -246,7 +246,7 @@ Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createVSModelInverseConsta
 {
 	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &constantBuffer));
-	m_Context->VSSetConstantBuffers(3u, 1u, constantBuffer.GetAddressOf());
+	m_Context->VSSetConstantBuffers(4u, 1u, constantBuffer.GetAddressOf());
 	return constantBuffer;
 }
 
@@ -254,7 +254,7 @@ Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createVSViewConstantBuffer
 {
 	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &constantBuffer));
-	m_Context->VSSetConstantBuffers(1u, 1u, constantBuffer.GetAddressOf());
+	m_Context->VSSetConstantBuffers(2u, 1u, constantBuffer.GetAddressOf());
 	return constantBuffer;
 }
 
@@ -262,7 +262,7 @@ Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createVSProjectionConstant
 {
 	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &constantBuffer));
-	m_Context->VSSetConstantBuffers(2u, 1u, constantBuffer.GetAddressOf());
+	m_Context->VSSetConstantBuffers(3u, 1u, constantBuffer.GetAddressOf());
 	return constantBuffer;
 }
 

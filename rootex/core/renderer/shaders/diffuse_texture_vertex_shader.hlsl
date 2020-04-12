@@ -1,19 +1,19 @@
-cbuffer CBuf : register(b0)
+cbuffer CBuf : register(b1)
 {
     matrix M;
 };
 
-cbuffer CBuf : register(b1)
+cbuffer CBuf : register(b2)
 {
     matrix V;
 };
 
-cbuffer CBuf : register(b2)
+cbuffer CBuf : register(b3)
 {
     matrix P;
 };
 
-cbuffer CBuf : register(b3)
+cbuffer CBuf : register(b4)
 {
     matrix MInverse;
 };
