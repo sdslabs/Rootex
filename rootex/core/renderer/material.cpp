@@ -83,47 +83,46 @@ ColorMaterial::ColorMaterial()
 
 void Material::setVertexShaderConstantBuffer(const VertexConstantBufferType type, const Matrix& constantBuffer)
 {
+	static int jugaad = 1;
 	if (m_VSConstantBuffer[(int)type] == nullptr)
 	{
-	D3D11_BUFFER_DESC cbd = { 0 };
-	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	cbd.Usage = D3D11_USAGE_DYNAMIC;
-	cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	cbd.MiscFlags = 0u;
-	cbd.ByteWidth = sizeof(constantBuffer);
-	cbd.StructureByteStride = 0u;
-	D3D11_SUBRESOURCE_DATA csd = { 0 };
-	csd.pSysMem = &constantBuffer.Transpose();
+		D3D11_BUFFER_DESC cbd = { 0 };
+		cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		cbd.Usage = D3D11_USAGE_DYNAMIC;
+		cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		cbd.MiscFlags = 0u;
+		cbd.ByteWidth = sizeof(constantBuffer);
+		cbd.StructureByteStride = 0u;
+		D3D11_SUBRESOURCE_DATA csd = { 0 };
+		csd.pSysMem = &constantBuffer.Transpose();
 
-	switch (type)
-	{
-	case VertexConstantBufferType::Model:
-		m_VSConstantBuffer[(int)VertexConstantBufferType::Model] = RenderingDevice::GetSingleton()->createVSModelConstantBuffer(&cbd, &csd);
-		//RenderingDevice::GetSingleton()->createVSModelConstantBuffer(&cbd, &csd);
-		break;
-	case VertexConstantBufferType::ModelInverse:
-		m_VSConstantBuffer[(int)VertexConstantBufferType::ModelInverse] = RenderingDevice::GetSingleton()->createVSModelInverseConstantBuffer(&cbd, &csd);
-		//RenderingDevice::GetSingleton()->createVSModelInverseConstantBuffer(&cbd, &csd);
-		break;
-	case VertexConstantBufferType::View:
-		m_VSConstantBuffer[(int)VertexConstantBufferType::View] = RenderingDevice::GetSingleton()->createVSViewConstantBuffer(&cbd, &csd);
-		//RenderingDevice::GetSingleton()->createVSViewConstantBuffer(&cbd, &csd);
-		break;
-	case VertexConstantBufferType::Projection:
-		m_VSConstantBuffer[(int)VertexConstantBufferType::Projection] = RenderingDevice::GetSingleton()->createVSProjectionConstantBuffer(&cbd, &csd);
-		//RenderingDevice::GetSingleton()->createVSProjectionConstantBuffer(&cbd, &csd);
-		break;
-	default:
-		break;
+		switch (type)
+		{
+		case VertexConstantBufferType::Model:
+			m_VSConstantBuffer[(int)VertexConstantBufferType::Model] = RenderingDevice::GetSingleton()->createVSModelConstantBuffer(&cbd, &csd);
+			break;
+		case VertexConstantBufferType::ModelInverse:
+			m_VSConstantBuffer[(int)VertexConstantBufferType::ModelInverse] = RenderingDevice::GetSingleton()->createVSModelInverseConstantBuffer(&cbd, &csd);
+			break;
+		case VertexConstantBufferType::View:
+			m_VSConstantBuffer[(int)VertexConstantBufferType::View] = RenderingDevice::GetSingleton()->createVSViewConstantBuffer(&cbd, &csd);
+			break;
+		case VertexConstantBufferType::Projection:
+			m_VSConstantBuffer[(int)VertexConstantBufferType::Projection] = RenderingDevice::GetSingleton()->createVSProjectionConstantBuffer(&cbd, &csd);
+			break;
+		default:
+			break;
+		}
 	}
-	}
-	else
+	else if (type == VertexConstantBufferType::Model && jugaad % 2 == 0)
 	{
 		D3D11_MAPPED_SUBRESOURCE subresource = { 0 };
 		RenderingDevice::GetSingleton()->getBufferMappedContext(m_VSConstantBuffer[(int)type].Get(), subresource);
-		memcpy(subresource.pData, &constantBuffer, sizeof(constantBuffer));
+		Matrix* temp = (Matrix*)subresource.pData;
+		memcpy(subresource.pData, &constantBuffer.Transpose(), sizeof(constantBuffer));
 		RenderingDevice::GetSingleton()->unmapBuffer(m_VSConstantBuffer[(int)type].Get());
 	}
+	jugaad++;
 }
 
 void TextureMaterial::setPixelShaderConstantBuffer(const PSDiffuseConstantBuffer& constantBuffer)
