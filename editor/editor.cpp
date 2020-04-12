@@ -242,16 +242,16 @@ void Editor::drawDefaultUI()
 				{
 					EventManager::GetSingleton()->call("EditorSaveEvent", "EditorSaveAll", 0);
 				}
+				if (ImGui::MenuItem("Preferences"))
+				{
+					EventManager::GetSingleton()->call("EditorSettingsMenu", "EditorOpenFile", ApplicationSettings::GetSingleton()->getTextFile()->getPath().string());
+				}
 				ImGui::Separator();
 				if (ImGui::MenuItem("Quit", ""))
 				{
 					EventManager::GetSingleton()->call("EditorSaveBeforeQuit", "EditorSaveBeforeQuit", 0);
 				}
 
-				if (ImGui::MenuItem("Preferences"))
-				{
-					EventManager::GetSingleton()->call("EditorSettingsMenu", "EditorOpenFile", ApplicationSettings::GetSingleton()->getTextFile()->getPath().string());
-				}
 				ImGui::EndMenu();
 			}
 			if (ImGui::BeginMenu("Assets"))
