@@ -19,6 +19,7 @@
 #include "components/visual/spot_light_component.h"
 #include "components/visual/text_visual_2d_component.h"
 #include "components/visual/cpu_particles_visual_component.h"
+#include "components/visual/camera_visual_component.h"
 #include "components/physics/sphere_collider_component.h"
 #include "components/physics/box_collider_component.h"
 #include "components/music_component.h"
@@ -47,7 +48,7 @@ EntityFactory::EntityFactory()
 
 	REGISTER_COMPONENT(TestComponent);
 	REGISTER_COMPONENT(DebugComponent);
-
+	REGISTER_COMPONENT(CameraVisualComponent);
 	REGISTER_COMPONENT(ModelVisualComponent);
 	REGISTER_COMPONENT(TexturedModelVisualComponent);
 	REGISTER_COMPONENT(TextVisual2DComponent);
