@@ -2,8 +2,10 @@
 
 #include "editor/editor_application.h"
 
-#include "app/project_manager.h"
+#include "app/level_manager.h"
 #include "framework/components/script_component.h"
+#include "framework/system.h"
+#include "framework/systems/render_system.h"
 
 #include "vendor/ImGUI/imgui.h"
 #include "vendor/ImGUI/imgui_stdlib.h"
@@ -26,7 +28,7 @@ void ToolbarDock::draw()
 			{
 				EventManager::GetSingleton()->call("PreGameStartupSaveEvent", "EditorSaveAll", 0);
 				PRINT("Launched Game process");
-				OS::Execute("\"" + OS::GetGameExecutablePath() + "\" " + ProjectManager::GetSingleton()->getCurrentLevelName());
+				OS::Execute("\"" + OS::GetGameExecutablePath() + "\" " + LevelManager::GetSingleton()->getCurrentLevelName());
 				PRINT("Game process ended");
 			}
 
@@ -98,6 +100,29 @@ void ToolbarDock::draw()
 						ImGui::EndDragDropTarget();
 					}
 				}
+			}
+
+			if (ImGui::TreeNodeEx("RenderSystem", ImGuiTreeNodeFlags_CollapsingHeader))
+			{
+				ImGui::Columns(2);
+
+				ImGui::Text("Camera");
+				ImGui::NextColumn();
+				if (ImGui::BeginCombo("##Camera", RenderSystem::GetSingleton()->getCamera()->getOwner()->getFullName().c_str()))
+				{
+					for (auto&& camera : System::GetComponents(CameraComponent::s_ID))
+					{
+						if (ImGui::MenuItem(camera->getOwner()->getFullName().c_str()))
+						{
+							RenderSystem::GetSingleton()->setCamera((CameraComponent*)camera);
+							LevelManager::GetSingleton()->getCurrentLevelSettings()["camera"] = camera->getOwner()->getID();
+						}
+					}
+
+					ImGui::EndCombo();
+				}
+
+				ImGui::Columns(1);
 			}
 		}
 		ImGui::End();

@@ -6,24 +6,24 @@
 #include "entity.h"
 #include "system.h"
 
-#include "systems/hierarchy_system.h"
 #include "components/debug_component.h"
 #include "components/hierarchy_component.h"
+#include "components/music_component.h"
+#include "components/physics/box_collider_component.h"
+#include "components/physics/sphere_collider_component.h"
 #include "components/script_component.h"
+#include "components/short_music_component.h"
 #include "components/test_component.h"
 #include "components/transform_component.h"
-#include "components/visual/visual_component.h"
-#include "components/visual/textured_model_visual_component.h"
+#include "components/visual/camera_component.h"
+#include "components/visual/cpu_particles_visual_component.h"
 #include "components/visual/directional_light_component.h"
 #include "components/visual/point_light_component.h"
 #include "components/visual/spot_light_component.h"
 #include "components/visual/text_visual_2d_component.h"
-#include "components/visual/cpu_particles_visual_component.h"
-#include "components/visual/camera_visual_component.h"
-#include "components/physics/sphere_collider_component.h"
-#include "components/physics/box_collider_component.h"
-#include "components/music_component.h"
-#include "components/short_music_component.h"
+#include "components/visual/textured_model_visual_component.h"
+#include "components/visual/visual_component.h"
+#include "systems/hierarchy_system.h"
 
 #define REGISTER_COMPONENT(ComponentClass)                                                            \
 	m_ComponentCreators.push_back({ ComponentClass::s_ID, #ComponentClass, ComponentClass::Create }); \
@@ -48,22 +48,22 @@ EntityFactory::EntityFactory()
 
 	REGISTER_COMPONENT(TestComponent);
 	REGISTER_COMPONENT(DebugComponent);
-	REGISTER_COMPONENT(CameraVisualComponent);
+	REGISTER_COMPONENT(CameraComponent);
 	REGISTER_COMPONENT(ModelVisualComponent);
 	REGISTER_COMPONENT(TexturedModelVisualComponent);
 	REGISTER_COMPONENT(TextVisual2DComponent);
-	
+
 	REGISTER_COMPONENT(TransformComponent);
-	
+
 	REGISTER_COMPONENT(PointLightComponent);
 	REGISTER_COMPONENT(DirectionalLightComponent);
 	REGISTER_COMPONENT(SpotLightComponent);
 	REGISTER_COMPONENT(SphereColliderComponent);
 	REGISTER_COMPONENT(BoxColliderComponent);
 	REGISTER_COMPONENT(HierarchyComponent);
-	
+
 	REGISTER_COMPONENT(ScriptComponent);
-	
+
 	REGISTER_COMPONENT(MusicComponent);
 	REGISTER_COMPONENT(ShortMusicComponent);
 	REGISTER_COMPONENT(CPUParticlesVisualComponent);
@@ -214,7 +214,10 @@ Ref<Entity> EntityFactory::createRootEntity()
 		EntityFactory::addComponent(root, rootVisualComponent);
 		System::RegisterComponent(rootVisualComponent.get());
 	}
-
+	{
+		Ref<CameraComponent> rootCameraComponent = std::dynamic_pointer_cast<CameraComponent>(createDefaultComponent("CameraComponent"));
+		EntityFactory::addComponent(root, rootCameraComponent);
+	}
 	m_Entities[root->m_ID] = root;
 	return root;
 }

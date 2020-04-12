@@ -102,8 +102,8 @@ void ModelVisualComponent::renderChildren(const unsigned int& renderPass)
 {
 	if (isVisible() && !(renderPass & RenderPassUI))
 	{
-		m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::View, RenderSystem::GetSingleton()->getCamera()->getView());
-		m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::Projection, RenderSystem::GetSingleton()->getCamera()->getProjection());
+		m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::View, RenderSystem::GetSingleton()->getCamera()->getViewMatrix());
+		m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::Projection, RenderSystem::GetSingleton()->getCamera()->getProjectionMatrix());
 	}
 
 	for (auto& child : m_Owner->getComponent<HierarchyComponent>()->getChildren())
