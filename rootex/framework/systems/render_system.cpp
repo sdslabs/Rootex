@@ -11,6 +11,7 @@ RenderSystem* RenderSystem::GetSingleton()
 
 RenderSystem::RenderSystem()
     : m_Renderer(new Renderer())
+    , m_DefaultCamera(m_Camera)
     , m_Camera(new CameraVisualComponent())
 {
 	m_TransformationStack.push_back(Matrix::Identity);
@@ -102,7 +103,13 @@ void RenderSystem::popUIMatrix()
 
 void RenderSystem::setCamera(Ref<CameraVisualComponent> camera)
 {
+	m_Camera->setActive(false);
 	m_Camera = camera;
+}
+
+void RenderSystem::restoreCamera()
+{
+	m_Camera = m_DefaultCamera;
 }
 
 const Matrix& RenderSystem::getTopMatrix() const

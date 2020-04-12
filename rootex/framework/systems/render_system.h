@@ -8,6 +8,7 @@
 class RenderSystem : public System
 {
 	Ref<CameraVisualComponent> m_Camera;
+	Ref<CameraVisualComponent> m_DefaultCamera;
 	Ptr<Renderer> m_Renderer;
 	Vector<Matrix> m_TransformationStack;
 	Vector<Matrix> m_UITransformationStack;
@@ -26,6 +27,7 @@ public:
 	void recoverLostDevice();
 
 	void setCamera(Ref<CameraVisualComponent> camera);
+	void restoreCamera();
 
 	void pushMatrix(const Matrix& transform);
 	void pushMatrixOverride(const Matrix& transform);
