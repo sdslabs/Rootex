@@ -1,16 +1,15 @@
 {
-	"version": 1.0,
-	"project": "Rootex Game",
-	"startLevel": "game/assets/levels/level_0",
-
-	"window": {
-		"x": 0,
-		"y": 0,
-		"width": 1920,
-		"height": 1080,
-		"msaa": true,
-		"title": "Rootex Game",
-		"isEditor": false,
-		"fullScreen": true
-	}
+    "project": "Rootex Game",
+    "startLevel": "game/assets/levels/level_0",
+    "version": 1.0,
+    "window": {
+        "height": 1080,
+        "isEditor": false,
+        "msaa": true,
+        "title": "Rootex Game",
+        "width": 1920,
+        "x": 0,
+        "y": 0,
+        "fullScreen": true
+    }
 }

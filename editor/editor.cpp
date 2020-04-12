@@ -274,6 +274,11 @@ void Editor::drawDefaultUI()
 			}
 			if (ImGui::BeginMenu("View"))
 			{
+				bool fullscreen = Extract(bool, EventManager::GetSingleton()->returnCall("WindowGetScreenState", "WindowGetScreenState", 0));
+				if (ImGui::Checkbox("Full Screen", &fullscreen))
+				{
+					EventManager::GetSingleton()->deferredCall("WindowToggleFullScreen", "WindowToggleFullScreen", 0);
+				}
 				if (ImGui::BeginMenu("Windows"))
 				{
 					ImGui::Checkbox("Toolbar", &m_Toolbar->getSettings().m_IsActive);
@@ -287,16 +292,11 @@ void Editor::drawDefaultUI()
 				}
 				ImGui::EndMenu();
 			}
-			if (ImGui::BeginMenu("Editor"))
+			if (ImGui::BeginMenu("Project"))
 			{
-				if (ImGui::BeginMenu("Settings"))
+				if (ImGui::MenuItem("Settings"))
 				{
-					bool fullscreen = Extract(bool, EventManager::GetSingleton()->returnCall("WindowGetScreenState", "WindowGetScreenState", 0));
-					if (ImGui::Checkbox("Full Screen", &fullscreen))
-					{
-						EventManager::GetSingleton()->deferredCall("WindowToggleFullScreen", "WindowToggleFullScreen", 0);
-					}
-					ImGui::EndMenu();
+					EventManager::GetSingleton()->call("EditorSettingsMenu", "EditorOpenFile", ApplicationSettings::GetSingleton()->getTextFile()->getPath().string());
 				}
 				ImGui::EndMenu();
 			}

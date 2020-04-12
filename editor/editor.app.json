@@ -1,112 +1,109 @@
 {
-	"version": 1.0,
-	"project": "Rootex Editor",
-	"game": "game/game.app.json",
-
-	"window": {
-		"x": 100,
-		"y": 100,
-		"width": 1920,
-		"height": 1080,
-		"msaa": false,
-		"title": "Rootex Editor",
-		"isEditor": true,
-		"fullScreen": true
-	},
-
-	"general": {
-		"colors": {
-			"accent": {
-				"r": 0.2,
-				"g": 0.5,
-				"b": 0.2,
-				"a": 1.0
-			},
-			"failAccent": {
-				"r": 0.6,
-				"g": 0.0,
-				"b": 0.0,
-				"a": 1.0
-			},
-			"mediumAccent": {
-				"r": 0.15,
-				"g": 0.18,
-				"b": 0.15,
-				"a": 1.0
-			},
-			"heavyAccent": {
-				"r": 0.1,
-				"g": 0.2,
-				"b": 0.1,
-				"a": 1.0
-			},
-			"noneLogColor": {
-				"r": 1.0,
-				"g": 1.0,
-				"b": 1.0,
-				"a": 1.0
-			},
-			"warnLogColor": {
-				"r": 0.5,
-				"g": 0.8,
-				"b": 0.8,
-				"a": 1.0
-			},
-			"errorLogColor": {
-				"r": 1.0,
-				"g": 0.3,
-				"b": 0.3,
-				"a": 1.0
-			},
-			"background": {
-				"r": 0.1,
-				"g": 0.1,
-				"b": 0.1,
-				"a": 1.0
-			},
-			"itemBackground": {
-				"r": 0.15,
-				"g": 0.15,
-				"b": 0.15,
-				"a": 1.0
-			},
-			"inactive": {
-				"r": 0.3,
-				"g": 0.3,
-				"b": 0.3,
-				"a": 1.0
-			},
-			"success": {
-				"r": 0.0,
-				"g": 0.5,
-				"b": 0.0,
-				"a": 1.0
-			},
-			"failure": {
-				"r": 0.5,
-				"g": 0.0,
-				"b": 0.0,
-				"a": 1.0
-			},
-			"warning": {
-				"r": 0.7,
-				"g": 0.7,
-				"b": 0.0,
-				"a": 1.0
-			},
-			"text": {
-				"r": 0.9,
-				"g": 0.9,
-				"b": 0.9,
-				"a": 1.0
-			}
-		}
-	},
-	
-	"viewport": {
-		"aspectRatio": {
-			"x": 16,
-			"y": 9
-		}
-	}
+    "game": "game/game.app.json",
+    "general": {
+        "colors": {
+            "accent": {
+                "a": 1.0,
+                "b": 0.2,
+                "g": 0.5,
+                "r": 0.2
+            },
+            "background": {
+                "a": 1.0,
+                "b": 0.1,
+                "g": 0.1,
+                "r": 0.1
+            },
+            "errorLogColor": {
+                "a": 1.0,
+                "b": 0.3,
+                "g": 0.3,
+                "r": 1.0
+            },
+            "failAccent": {
+                "a": 1.0,
+                "b": 0.0,
+                "g": 0.0,
+                "r": 0.6
+            },
+            "failure": {
+                "a": 1.0,
+                "b": 0.0,
+                "g": 0.0,
+                "r": 0.5
+            },
+            "heavyAccent": {
+                "a": 1.0,
+                "b": 0.1,
+                "g": 0.2,
+                "r": 0.1
+            },
+            "inactive": {
+                "a": 1.0,
+                "b": 0.3,
+                "g": 0.3,
+                "r": 0.3
+            },
+            "itemBackground": {
+                "a": 1.0,
+                "b": 0.15,
+                "g": 0.15,
+                "r": 0.15
+            },
+            "mediumAccent": {
+                "a": 1.0,
+                "b": 0.15,
+                "g": 0.18,
+                "r": 0.15
+            },
+            "noneLogColor": {
+                "a": 1.0,
+                "b": 1.0,
+                "g": 1.0,
+                "r": 1.0
+            },
+            "success": {
+                "a": 1.0,
+                "b": 0.0,
+                "g": 0.5,
+                "r": 0.0
+            },
+            "text": {
+                "a": 1.0,
+                "b": 0.9,
+                "g": 0.9,
+                "r": 0.9
+            },
+            "warnLogColor": {
+                "a": 1.0,
+                "b": 0.8,
+                "g": 0.8,
+                "r": 0.5
+            },
+            "warning": {
+                "a": 1.0,
+                "b": 0.0,
+                "g": 0.7,
+                "r": 0.7
+            }
+        }
+    },
+    "project": "Rootex Editor",
+    "version": 1.0,
+    "viewport": {
+        "aspectRatio": {
+            "x": 16,
+            "y": 9
+        }
+    },
+    "window": {
+        "fullScreen": false,
+        "height": 1080,
+        "isEditor": true,
+        "msaa": false,
+        "title": "Rootex Editor",
+        "width": 1920,
+        "x": 100,
+        "y": 100
+    }
 }

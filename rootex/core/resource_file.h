@@ -70,6 +70,8 @@ public:
 
 	virtual void reload() override;
 
+	/// Replace old data string with new data string.
+	void putString(const String& newData);
 	/// Remove 1 character from the end of the data buffer.
 	void popBack();
 	void append(const String& add);
