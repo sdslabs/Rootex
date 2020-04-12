@@ -51,7 +51,7 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 		ERR("Direct3D Feature Level 11 unsupported.");
 	}
 
-	DXGI_SWAP_CHAIN_DESC sd = {0};
+	DXGI_SWAP_CHAIN_DESC sd = { 0 };
 	sd.BufferDesc.Width = width;
 	sd.BufferDesc.Height = height;
 	sd.BufferDesc.RefreshRate.Numerator = 60;
