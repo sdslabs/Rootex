@@ -61,6 +61,7 @@ public:
 	static RenderingDevice* GetSingleton();
 
 	void initialize(HWND hWnd, int width, int height, bool MSAA);
+	void setScreenState(bool fullscreen);
 
 	void enableSkyDepthStencilState();
 	void disableSkyDepthStencilState();

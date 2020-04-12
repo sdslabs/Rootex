@@ -12,7 +12,13 @@ RenderingDevice::RenderingDevice()
 
 RenderingDevice::~RenderingDevice()
 {
+	m_SwapChain->SetFullscreenState(false, nullptr);
 	CoUninitialize();
+}
+
+void RenderingDevice::setScreenState(bool fullscreen)
+{
+	m_SwapChain->SetFullscreenState(fullscreen, nullptr);
 }
 
 void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
@@ -45,7 +51,7 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 		ERR("Direct3D Feature Level 11 unsupported.");
 	}
 
-	DXGI_SWAP_CHAIN_DESC sd;
+	DXGI_SWAP_CHAIN_DESC sd = { 0 };
 	sd.BufferDesc.Width = width;
 	sd.BufferDesc.Height = height;
 	sd.BufferDesc.RefreshRate.Numerator = 60;
@@ -73,7 +79,6 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 	sd.OutputWindow = hWnd;
 	sd.Windowed = true;
 	sd.SwapEffect = DXGI_SWAP_EFFECT::DXGI_SWAP_EFFECT_SEQUENTIAL;
-	sd.Flags = 0;
 
 	Microsoft::WRL::ComPtr<IDXGIDevice> dxgiDevice = 0;
 	m_Device->QueryInterface(__uuidof(IDXGIDevice), (void**)&dxgiDevice);
