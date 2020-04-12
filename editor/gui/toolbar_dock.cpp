@@ -2,7 +2,7 @@
 
 #include "editor/editor_application.h"
 
-#include "app/project_manager.h"
+#include "app/level_manager.h"
 #include "framework/components/script_component.h"
 #include "framework/system.h"
 #include "framework/systems/render_system.h"
@@ -28,7 +28,7 @@ void ToolbarDock::draw()
 			{
 				EventManager::GetSingleton()->call("PreGameStartupSaveEvent", "EditorSaveAll", 0);
 				PRINT("Launched Game process");
-				OS::Execute("\"" + OS::GetGameExecutablePath() + "\" " + ProjectManager::GetSingleton()->getCurrentLevelName());
+				OS::Execute("\"" + OS::GetGameExecutablePath() + "\" " + LevelManager::GetSingleton()->getCurrentLevelName());
 				PRINT("Game process ended");
 			}
 
@@ -115,6 +115,7 @@ void ToolbarDock::draw()
 						if (ImGui::MenuItem(camera->getOwner()->getFullName().c_str()))
 						{
 							RenderSystem::GetSingleton()->setCamera((CameraComponent*)camera);
+							LevelManager::GetSingleton()->getCurrentLevelSettings()["camera"] = camera->getOwner()->getID();
 						}
 					}
 

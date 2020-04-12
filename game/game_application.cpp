@@ -1,6 +1,6 @@
 #include "game_application.h"
 
-#include "app/project_manager.h"
+#include "app/level_manager.h"
 #include "core/input/input_manager.h"
 #include "core/resource_loader.h"
 #include "framework/systems/audio_system.h"
@@ -53,11 +53,11 @@ GameApplication::GameApplication()
 
 	if (levelName == "")
 	{
-		ProjectManager::GetSingleton()->openLevel(m_ApplicationSettings->getJSON()["startLevel"]);
+		LevelManager::GetSingleton()->openLevel(m_ApplicationSettings->getJSON()["startLevel"]);
 	}
 	else
 	{
-		ProjectManager::GetSingleton()->openLevel("game/assets/levels/" + levelName);
+		LevelManager::GetSingleton()->openLevel("game/assets/levels/" + levelName);
 	}
 
 	RenderingDevice::GetSingleton()->setBackBufferRenderTarget();
