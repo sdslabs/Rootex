@@ -11,8 +11,8 @@ RenderSystem* RenderSystem::GetSingleton()
 
 RenderSystem::RenderSystem()
     : m_Renderer(new Renderer())
-    , m_Camera(new CameraVisualComponent())
     , m_DefaultCamera(m_Camera)
+    , m_Camera(new CameraVisualComponent())
 {
 	m_TransformationStack.push_back(Matrix::Identity);
 	m_UITransformationStack.push_back(Matrix::Identity);

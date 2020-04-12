@@ -35,7 +35,6 @@ public:
 	void onRemove() override;
 	virtual void setViewTransform(const Matrix& view);
 	void setInactive();
-	void updatePosition();
 	virtual void setTarget(Ref<VisualComponent> target) { m_Target = target; }
 
 	virtual VisualComponent* getTarget() const { return m_Target.get(); }
