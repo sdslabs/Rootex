@@ -13,7 +13,7 @@ protected:
 	int m_Width;
 	int m_Height;
 	bool m_IsEditorWindow;
-	bool m_FullScreen;
+	bool m_IsFullScreen;
 
 	WNDCLASSEX m_WindowClass = { 0 };
 	LPCSTR m_ClassName;
@@ -41,7 +41,7 @@ public:
 	void clearUnboundTarget();
 
 	Variant toggleFullScreen(const Event* event);
-	Variant getScreenState(const Event* event) { return m_FullScreen; };
+	Variant getScreenState(const Event* event) { return m_IsFullScreen; };
 
 	int getWidth() const;
 	int getHeight() const;

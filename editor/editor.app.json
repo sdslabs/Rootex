@@ -11,7 +11,7 @@
 		"msaa": false,
 		"title": "Rootex Editor",
 		"isEditor": true,
-		"fullScreen":  true
+		"fullScreen": true
 	},
 
 	"general": {
