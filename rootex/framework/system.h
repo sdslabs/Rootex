@@ -20,4 +20,6 @@ public:
 	System() = default;
 	System(System&) = delete;
 	virtual ~System() = default;
+
+	static const Vector<Component*>& GetComponents(ComponentID ID) { return s_Components[ID]; }
 };
