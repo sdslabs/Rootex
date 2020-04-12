@@ -5,6 +5,7 @@
 #include "core/resource_loader.h"
 #include "framework/systems/audio_system.h"
 #include "framework/systems/render_system.h"
+#include "framework/systems/physics_system.h"
 
 Ref<Application> CreateRootexApplication()
 {
@@ -90,6 +91,7 @@ void GameApplication::run()
 		InputManager::GetSingleton()->update();
 		EventManager::GetSingleton()->dispatchDeferred();
 		ScriptSystem::GetSingleton()->update(m_FrameTimer.getFrameTime());
+		PhysicsSystem::GetSingleton()->update(m_FrameTimer.getFrameTime());
 	}
 }
 
