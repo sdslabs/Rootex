@@ -4,6 +4,7 @@ class StreamingAudioBuffer;
 class StaticAudioBuffer;
 
 typedef unsigned int ALuint;
+typedef ALfloat; // doubt(32-bit IEEE 754 floating-point)
 
 /// Convert minutes to seconds
 #define MIN_TO_S 60.0f
@@ -13,22 +14,22 @@ class AudioSource
 {
 
 private:
-
-	// Set the position of the audio source
+	// Set the position and model of the audio source
 	void setPosition(Vector3 position);
+	void AudioSource::setModel(ALfloat rolloff_factor, ALfloat reference_distance, ALfloat max_distance, String model = "linear", bool clamped = false);
 	friend class AudioComponent;
 
 protected:
 	ALuint m_SourceID;
 
 	/// RTTI for storing if the audio buffer is being streamed
-	bool m_IsStreaming; 
+	bool m_IsStreaming;
 	AudioSource(bool isStreaming);
 	virtual ~AudioSource();
 
 public:
 	virtual void setLooping(bool enabled);
-	
+
 	/// Queue new buffers to the audio card if possible.
 	virtual void queueNewBuffers();
 

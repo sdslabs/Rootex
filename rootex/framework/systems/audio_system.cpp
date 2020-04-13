@@ -3,11 +3,11 @@
 #include <chrono>
 #include <thread>
 
+#include "components/audio_component.h"
 #include "core/audio/audio_source.h"
-#include "core/resource_data.h"
 #include "core/audio/static_audio_buffer.h"
 #include "core/audio/streaming_audio_buffer.h"
-#include "components/audio_component.h"
+#include "core/resource_data.h"
 
 String AudioSystem::GetALErrorString(int errID)
 {
@@ -139,16 +139,8 @@ AudioSystem::AudioSystem()
     , m_Device(nullptr)
     , m_UpdateIntervalMilliseconds(0)
 {
-
-}
-
-/// Create a default listener
-AudioSystem::AudioSystem(Vector3 position)
-{
-	float x = position.x;
-	float y = position.y;
-	float z = position.z;
-	AL_CHECK(alListener3f(AL_POSITION, x, y, z));
+	AL_CHECK(alListener3f(AL_POSITION, 0, 0, 0));
+	AL_CHECK(alListener3f(AL_VELOCITY, 0, 0, 0));
 }
 
 AudioSystem::~AudioSystem()

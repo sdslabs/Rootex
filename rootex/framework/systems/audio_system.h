@@ -51,8 +51,8 @@ class AudioSystem : public System
 	ALCcontext* m_Context;
 	int m_ListenerID;
 
+	/// use default constructor to set position of the default listener
 	AudioSystem();
-	AudioSystem(Vector3 position);
 	AudioSystem(AudioSystem&) = delete;
 	~AudioSystem();
 

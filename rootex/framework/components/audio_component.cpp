@@ -1,3 +1,4 @@
+
 #include "audio_component.h"
 
 AudioComponent::AudioComponent(bool playOnStart)
@@ -5,25 +6,18 @@ AudioComponent::AudioComponent(bool playOnStart)
 {
 }
 
-
-
 bool AudioComponent::setup()
 {
-	
-	// get the transform component 
 	m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
-
 	getAudioSource()->setPosition(m_TransformComponent->getAbsoluteTransform().Translation());
-
+	getAudioSource()->setModel(1, 1, 1, "linear", false);
 
 	return true;
 }
 
-
-void AudioComponent::update() 
+void AudioComponent::update()
 {
-	// get the transform component
 	m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
-
 	getAudioSource()->setPosition(m_TransformComponent->getAbsoluteTransform().Translation());
+	getAudioSource()->setModel(1, 1, 1, "linear", false);
 }

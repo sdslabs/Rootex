@@ -1,15 +1,15 @@
 #pragma once
 
-#include "component.h"
 #include "audio/audio_source.h"
-#include "framework/components/transform_component.h"
+#include "component.h"
 #include "entity.h";
+#include "framework/components/transform_component.h"
 
 class AudioComponent : public Component
 {
 
 private:
-	// add a member variable(object) of TransformComponent class 
+	// add a member variable(object) of TransformComponent class
 	TransformComponent* m_TransformComponent;
 
 protected:
@@ -21,10 +21,9 @@ protected:
 
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::AudioComponent;
-	
-	// override the setup function of component class
+
+	// setup and update the position and attenuation model of the audio source
 	virtual bool setup() override;
-	// create update function
 	void update();
 
 	virtual AudioSource* getAudioSource() = 0;

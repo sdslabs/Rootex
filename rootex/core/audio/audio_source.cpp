@@ -37,7 +37,7 @@ void AudioSource::pause()
 
 void AudioSource::stop()
 {
-	AL_CHECK(alSourceStop(m_SourceID));	
+	AL_CHECK(alSourceStop(m_SourceID));
 }
 
 bool AudioSource::isPlaying() const
@@ -73,13 +73,54 @@ ALuint AudioSource::getSourceID() const
 	return m_SourceID;
 }
 
-
-void AudioSource::setPosition(Vector3 position) 
+void AudioSource::setPosition(Vector3 position)
 {
 	float x = position.x;
 	float y = position.y;
 	float z = position.z;
 	AL_CHECK(alSource3f(m_SourceID, AL_POSITION, x, y, z));
+}
+
+void AudioSource::setModel(ALfloat rolloff_factor, ALfloat reference_distance, ALfloat max_distance, String model = "linear", bool clamped = false)
+{
+	AL_CHECK(alSourcef(m_SourceID, AL_ROLLOFF_FACTOR, rolloff_factor));
+	AL_CHECK(alSourcef(m_SourceID, AL_REFERENCE_DISTANCE, reference_distance));
+	AL_CHECK(alSourcef(m_SourceID, AL_MAX_DISTANCE, max_distance));
+
+	if (model == "linear")
+	{
+		if (clamped)
+		{
+			AL_CHECK(alDistanceModel(AL_LINEAR_DISTANCE_CLAMPED));
+		}
+		else
+		{
+			AL_CHECK(alDistanceModel(AL_LINEAR_DISTANCE));
+		}
+	}
+	else if (model == "inverse")
+	{
+		if (clamped)
+		{
+			AL_CHECK(alDistanceModel(AL_INVERSE_DISTANCE_CLAMPED));
+		}
+		else
+		{
+			AL_CHECK(alDistanceModel(AL_INVERSE_DISTANCE));
+		}
+	}
+
+	else if (model == "exponential")
+	{
+		if (clamped)
+		{
+			AL_CHECK(alDistanceModel(AL_EXPONENT_DISTANCE_CLAMPED));
+		}
+		else
+		{
+			AL_CHECK(alDistanceModel(AL_EXPONENT_DISTANCE));
+		}
+	}
 }
 
 StaticAudioSource::StaticAudioSource(Ref<StaticAudioBuffer> audio)
