@@ -221,6 +221,7 @@ void VisualModelResourceFile::reload()
 		vertex.m_Normal.x = mesh->mNormals[v].x;
 		vertex.m_Normal.y = mesh->mNormals[v].y;
 		vertex.m_Normal.z = mesh->mNormals[v].z;
+		// Assuming the model has texture coordinates and taking only the first texture coordinate in case of multiple texture coordinates
 		vertex.m_TextureCoord.x = mesh->mTextureCoords[0][v].x;
 		vertex.m_TextureCoord.y = mesh->mTextureCoords[0][v].y;
 		vertices.push_back(vertex);
@@ -231,6 +232,7 @@ void VisualModelResourceFile::reload()
 	for (unsigned int f = 0; f < mesh->mNumFaces; f++)
 	{
 		face = &mesh->mFaces[f];
+		//Model already triangulated by aiProcess_Triangulate so no need to check
 		indices.push_back(face->mIndices[0]);
 		indices.push_back(face->mIndices[1]);
 		indices.push_back(face->mIndices[2]);
