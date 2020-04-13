@@ -5,7 +5,9 @@
 #include "core/resource_file.h"
 #include "os/os.h"
 
-#include "vendor/OBJLoader/Source/OBJ_Loader.h"
+#include <assimp/Importer.hpp>
+#include <assimp/postprocess.h>
+#include <assimp/scene.h>
 
 /// Factory for ResourceFile objects. Implements creating, loading and saving files.                                \n
 /// Maintains an internal cache that doesn't let the same file to be loaded twice. Cache misses force file loading. \n
@@ -13,7 +15,7 @@
 /// All path arguments should be relative to Rootex root.
 class ResourceLoader
 {
-	static objl::Loader s_ModelLoader;
+	static Assimp::Importer s_ModelLoader;
 	static HashMap<Ptr<ResourceData>, Ptr<ResourceFile>> s_ResourcesDataFiles;
 	static HashMap<ResourceFile::Type, Vector<ResourceFile*>> s_ResourceFileLibrary;
 
@@ -31,7 +33,7 @@ public:
 	/// Reload the data buffer inside a ResourceFile from disk.
 	static void ReloadResourceData(const String& path);
 
-	static objl::Loader& GetModelLoader() { return s_ModelLoader; }
+	static Assimp::Importer& GetModelLoader() { return s_ModelLoader; }
 	
 	/// Get a list of files that have already been loaded and belong to a certain type
 	static Vector<ResourceFile*>& GetFilesOfType(ResourceFile::Type type);
