@@ -37,7 +37,7 @@ void AudioSource::pause()
 
 void AudioSource::stop()
 {
-	AL_CHECK(alSourceStop(m_SourceID));	
+	AL_CHECK(alSourceStop(m_SourceID));
 }
 
 bool AudioSource::isPlaying() const
@@ -71,6 +71,53 @@ bool AudioSource::isLooping() const
 ALuint AudioSource::getSourceID() const
 {
 	return m_SourceID;
+}
+
+void AudioSource::setPosition(Vector3 position)
+{
+	float x = position.x;
+	float y = position.y;
+	float z = position.z;
+	AL_CHECK(alSource3f(m_SourceID, AL_POSITION, x, y, z));
+}
+
+void AudioSource::setRolloffFactor(ALfloat rolloffFactor)
+{
+	AL_CHECK(alSourcef(m_SourceID, AL_ROLLOFF_FACTOR, rolloffFactor));
+}
+
+void AudioSource::setReferenceDistance(ALfloat referenceDistance)
+{
+	AL_CHECK(alSourcef(m_SourceID, AL_REFERENCE_DISTANCE, referenceDistance));
+}
+
+void AudioSource::setMaxDistance(ALfloat maxDistance)
+{
+	AL_CHECK(alSourcef(m_SourceID, AL_MAX_DISTANCE, maxDistance));
+}
+
+void AudioSource::setModel(AudioSource::AttenuationModel model)
+{
+	switch (model)
+	{
+	case (AttenuationModel::linear):
+		AL_CHECK(alDistanceModel(AL_LINEAR_DISTANCE));
+
+	case (AttenuationModel::inverse):
+		AL_CHECK(alDistanceModel(AL_INVERSE_DISTANCE));
+
+	case (AttenuationModel::exponential):
+		AL_CHECK(alDistanceModel(AL_EXPONENT_DISTANCE));
+
+	case (AttenuationModel::linearClamped):
+		AL_CHECK(alDistanceModel(AL_LINEAR_DISTANCE_CLAMPED));
+
+	case (AttenuationModel::inverseClamped):
+		AL_CHECK(alDistanceModel(AL_INVERSE_DISTANCE_CLAMPED));
+
+	case (AttenuationModel::exponentialClamped):
+		AL_CHECK(alDistanceModel(AL_EXPONENT_DISTANCE_CLAMPED));
+	}
 }
 
 StaticAudioSource::StaticAudioSource(Ref<StaticAudioBuffer> audio)
