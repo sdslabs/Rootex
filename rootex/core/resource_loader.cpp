@@ -10,11 +10,14 @@
 #include "core/renderer/vertex_data.h"
 #include "script/interpreter.h"
 
-#include "vendor/OBJLoader/Source/OBJ_Loader.h"
+
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 HashMap<Ptr<ResourceData>, Ptr<ResourceFile>> ResourceLoader::s_ResourcesDataFiles;
 HashMap<ResourceFile::Type, Vector<ResourceFile*>> ResourceLoader::s_ResourceFileLibrary;
-objl::Loader ResourceLoader::s_ModelLoader;
+Assimp::Importer ResourceLoader::s_ModelLoader;
 
 TextResourceFile* ResourceLoader::CreateTextResourceFile(const String& path)
 {
@@ -169,30 +172,50 @@ VisualModelResourceFile* ResourceLoader::CreateVisualModelResourceFile(const Str
 		return nullptr;
 	}
 
+	const aiScene* scene = s_ModelLoader.ReadFile(path,
+	      aiProcess_CalcTangentSpace      |
+		  aiProcess_Triangulate           | 
+		  aiProcess_JoinIdenticalVertices | 
+		  aiProcess_SortByPType);
+    const aiMesh* mesh = scene->mMeshes[0]; //Taking single mesh
+	aiFace* face;
+
 	// File not found in cache, load it only once
-	PANIC(s_ModelLoader.LoadFile(OS::GetAbsolutePath(path).generic_string()) == false, "Model could not be loaded: " + OS::GetAbsolutePath(path).generic_string());
+	PANIC(scene == nullptr, "Model could not be loaded: " + OS::GetAbsolutePath(path).generic_string());
 
 	VertexData vertex;
 
 	Vector<VertexData> vertices;
-	vertices.reserve(s_ModelLoader.LoadedVertices.size());
+	vertices.reserve(mesh->mNumVertices);
 
-	for (auto& v : s_ModelLoader.LoadedVertices)
+	for (unsigned int v = 0; v < mesh->mNumVertices; v++)
 	{
-		vertex.m_Position.x = v.Position.X;
-		vertex.m_Position.y = v.Position.Y;
-		vertex.m_Position.z = v.Position.Z;
-		vertex.m_Normal.x = v.Normal.X;
-		vertex.m_Normal.y = v.Normal.Y;
-		vertex.m_Normal.z = v.Normal.Z;
-		vertex.m_TextureCoord.x = v.TextureCoordinate.X;
-		vertex.m_TextureCoord.y = v.TextureCoordinate.Y;
+		vertex.m_Position.x = mesh->mVertices[v].x;
+		vertex.m_Position.y = mesh->mVertices[v].y;
+		vertex.m_Position.z = mesh->mVertices[v].z;
+		vertex.m_Normal.x = mesh->mNormals[v].x;
+		vertex.m_Normal.y = mesh->mNormals[v].y;
+		vertex.m_Normal.z = mesh->mNormals[v].z;
+		// Assuming the model has texture coordinates and taking only the first texture coordinate in case of multiple texture coordinates
+		vertex.m_TextureCoord.x = mesh->mTextureCoords[0][v].x;
+		vertex.m_TextureCoord.y = mesh->mTextureCoords[0][v].y;
 		vertices.push_back(vertex);
+	}
+
+	std::vector<unsigned short> indices;
+
+	for (unsigned int f = 0; f < mesh->mNumFaces; f++)
+	{
+		face = &mesh->mFaces[f];
+		//Model already triangulated by aiProcess_Triangulate so no need to check
+		indices.push_back(face->mIndices[0]);
+		indices.push_back(face->mIndices[1]);
+		indices.push_back(face->mIndices[2]);
 	}
 
 	FileBuffer& buffer = OS::LoadFileContents(path);
 	Ptr<VertexBuffer> vertexBuffer(new VertexBuffer(vertices));
-	Ptr<IndexBuffer> indexBuffer(new IndexBuffer(s_ModelLoader.LoadedIndices));
+	Ptr<IndexBuffer> indexBuffer(new IndexBuffer(indices));
 
 	ResourceData* resData = new ResourceData(path, buffer);
 	VisualModelResourceFile* visualRes = new VisualModelResourceFile(std::move(vertexBuffer), std::move(indexBuffer), resData);
