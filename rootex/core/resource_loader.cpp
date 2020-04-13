@@ -181,7 +181,7 @@ VisualModelResourceFile* ResourceLoader::CreateVisualModelResourceFile(const Str
 	aiFace* face;
 
 	// File not found in cache, load it only once
-	PANIC(scene == false, "Model could not be loaded: " + OS::GetAbsolutePath(path).generic_string());
+	PANIC(scene == nullptr, "Model could not be loaded: " + OS::GetAbsolutePath(path).generic_string());
 
 	VertexData vertex;
 

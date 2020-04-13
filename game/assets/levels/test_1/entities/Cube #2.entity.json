@@ -1,77 +1,40 @@
 {
-    "Components": {
-        "DiffuseVisualComponent": {
-            "isVisible": true,
-            "renderPass": 5,
-            "resFile": "game/assets/test/animal.obj",
-            "texturePath": "game/assets/test/green.png"
-        },
-        "DirectionalLightComponent": {
-            "ambientColor": {
-                "a": 1.0,
-                "b": 0.17959439754486084,
-                "g": 0.17959439754486084,
-                "r": 0.36274510622024536
-            },
-            "diffuseColor": {
-                "a": 1.0,
-                "b": 0.6470588445663452,
-                "g": 0.10784315317869186,
-                "r": 0.467053085565567
-            },
-            "diffuseIntensity": 0.800000011920929,
-            "direction": {
-                "x": 0.5,
-                "y": 0.5,
-                "z": 0.5
-            }
-        },
-        "HierarchyComponent": {
-            "children": [],
-            "parent": 1
-        },
-        "SpotLightComponent": {
-            "ambientColor": {
-                "a": 1.0,
-                "b": 0.05000000074505806,
-                "g": 0.05000000074505806,
-                "r": 0.05000000074505806
-            },
-            "angleRange": 0.8660331964492798,
-            "attConst": 1.0,
-            "attLin": 0.04500000178813934,
-            "attQuad": 0.007499999832361937,
-            "diffuseColor": {
-                "a": 1.0,
-                "b": 0.1503027379512787,
-                "g": 0.1503027379512787,
-                "r": 0.6813725233078003
-            },
-            "diffuseIntensity": 1.0,
-            "range": 100.0,
-            "spot": 4.0
-        },
-        "TransformComponent": {
-            "position": {
-                "x": 0.30000001192092896,
-                "y": -4.929999828338623,
-                "z": -14.550000190734863
-            },
-            "rotation": {
-                "w": 0.8393568396568298,
-                "x": 0.04740552976727486,
-                "y": 0.5411863923072815,
-                "z": -0.018711766228079796
-            },
-            "scale": {
-                "x": 0.8100000023841858,
-                "y": 0.7300000190734863,
-                "z": 0.550000011920929
-            }
-        }
+  "Entity": {
+    "name": "Cube"
+  },
+  "Components": {
+    "HierarchyComponent": {
+      "parent": 1,
+      "children": []
     },
-    "Entity": {
-        "ID": 2,
-        "name": "Cube"
+    "TransformComponent": {
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "rotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "w": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      }
+    },
+    "ModelVisualComponent": {
+      "resFile": "game/assets/test/cube.obj",
+      "renderPass": 1,
+      "color": {
+        "r": 0.2,
+        "g": 1.0,
+        "b": 0.2,
+        "a": 1.0
+      },
+      "isVisible": true
     }
+  }
 }
