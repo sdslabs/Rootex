@@ -203,6 +203,7 @@ void VisualModelResourceFile::reload()
 		  aiProcess_Triangulate           |   
 		  aiProcess_JoinIdenticalVertices | 
 		  aiProcess_SortByPType);
+
 	PANIC(scene == nullptr, "Model could not be loaded: " + OS::GetAbsolutePath(m_ResourceData->getPath().string()).generic_string());
 
     const aiMesh* mesh = scene->mMeshes[0];
