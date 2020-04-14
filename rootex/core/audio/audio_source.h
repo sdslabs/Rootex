@@ -1,10 +1,12 @@
 #pragma once
+#include "rootex\vendor\OpenAL\include\al.h""
+
 
 class StreamingAudioBuffer;
 class StaticAudioBuffer;
 
 typedef unsigned int ALuint;
-typedef float ALfloat; // doubt(32-bit IEEE 754 floating-point)
+typedef float ALfloat; 
 
 /// Convert minutes to seconds
 #define MIN_TO_S 60.0f
@@ -23,14 +25,15 @@ protected:
 
 public:
 
+	/// Defines all attenuation models provided by OpenAL
 	enum class AttenuationModel
 	{
-		linear,
-		inverse,
-		exponential,
-		linearClamped,
-		inverseClamped,
-		exponentialClamped
+		Linear = AL_LINEAR_DISTANCE,
+		Inverse = AL_INVERSE_DISTANCE,
+		Exponential = AL_EXPONENT_DISTANCE,
+		LinearClamped = AL_LINEAR_DISTANCE_CLAMPED,
+		InverseClamped = AL_INVERSE_DISTANCE_CLAMPED,
+		ExponentialClamped = AL_EXPONENT_DISTANCE_CLAMPED
 	};
 
 	virtual void setLooping(bool enabled);
@@ -49,9 +52,11 @@ public:
 	/// Get audio duration in seconds.
 	virtual float getDuration() const = 0;
 
-	void setPosition(Vector3 position);
-	void setModel(AttenuationModel model = AttenuationModel::linear);
-	void setRolloffFactor(ALfloat rolloffFactor);
+	void setPosition(Vector3& position);
+	void setModel(AttenuationModel distanceModel);
+	/// Roll Off Factor: The rate of change of attenuation
+	void setRollOffFactor(ALfloat rolloffFactor);
+	/// Reference Distance: Distance until which clamping occurs
 	void setReferenceDistance(ALfloat referenceDistance);
 	void setMaxDistance(ALfloat maxDistance);
 };
