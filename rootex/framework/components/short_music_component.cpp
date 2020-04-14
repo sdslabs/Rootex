@@ -16,7 +16,7 @@ Component* ShortMusicComponent::CreateDefault()
 }
 
 ShortMusicComponent::ShortMusicComponent(AudioResourceFile* audioFile, bool playOnStart)
-    : AudioComponent(playOnStart)
+    : AudioComponent(playOnStart,1,1,100)
     , m_AudioFile(audioFile)
 {
 }

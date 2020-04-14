@@ -14,7 +14,7 @@ private:
 protected:
 	bool m_IsPlayOnStart;
 
-	AudioComponent(bool playOnStart);
+	AudioComponent(bool playOnStart,int rolloffFactor, int referenceDistance, int maxDistance);
 	AudioComponent(AudioComponent&) = delete;
 	~AudioComponent() = default;
 
