@@ -1,7 +1,11 @@
 #pragma once
 
 #include "audio_component.h"
+
 #include "core/audio/audio_source.h"
+#include "core/audio/streaming_audio_buffer.h"
+#include "core/event_manager.h"
+#include "core/resource_loader.h"
 
 class MusicComponent : public AudioComponent
 {
@@ -12,7 +16,7 @@ class MusicComponent : public AudioComponent
 	Ref<StreamingAudioBuffer> m_StreamingAudioBuffer;
 	AudioResourceFile* m_AudioFile;
 
-	MusicComponent(AudioResourceFile* audioFile, bool playOnStart, AudioSource::AttenuationModel model, ALfloat rolloffFactor, ALfloat referenceDistance, ALfloat maxDistance);
+	MusicComponent(AudioResourceFile* audioFile, bool playOnStart, bool attenuation, AudioSource::AttenuationModel model, ALfloat rolloffFactor, ALfloat referenceDistance, ALfloat maxDistance);
 	virtual ~MusicComponent();
 
 	friend class EntityFactory;
@@ -24,13 +28,14 @@ public:
 
 	AudioSource* getAudioSource() override { return m_StreamingAudioSource.get(); }
 	AudioResourceFile* getAudioFile() const { return m_AudioFile; }
-	virtual ComponentID getComponentID() const override { return s_ID; };
-	virtual String getName() const override { return "MusicComponent"; };
-	virtual JSON::json getJSON() const override;
 
 	void setAudioFile(AudioResourceFile* audioFile);
 
+	virtual String getName() const override { return "MusicComponent"; };
+	virtual ComponentID getComponentID() const override { return s_ID; };
+	virtual JSON::json getJSON() const override;
+
 #ifdef ROOTEX_EDITOR
-	virtual void draw();
-#endif
+	void draw() override;
+#endif // ROOTEX_EDITOR
 };
