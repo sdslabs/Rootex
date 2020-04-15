@@ -1,7 +1,6 @@
 #pragma once
 #include "rootex\vendor\OpenAL\include\al.h""
 
-
 class StreamingAudioBuffer;
 class StaticAudioBuffer;
 
@@ -14,7 +13,6 @@ typedef float ALfloat;
 /// An interface for an audio source in the game world.
 class AudioSource
 {
-
 protected:
 	ALuint m_SourceID;
 

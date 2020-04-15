@@ -1,29 +1,35 @@
 #include "short_music_component.h"
 
-#include "resource_loader.h"
 #include "event_manager.h"
+#include "resource_loader.h"
 
 Component* ShortMusicComponent::Create(const JSON::json& componentData)
 {
-	ShortMusicComponent* shortMusicComponent = new ShortMusicComponent(ResourceLoader::CreateAudioResourceFile(componentData["audio"]), (bool)componentData["playOnStart"]);
+	ShortMusicComponent* shortMusicComponent = new ShortMusicComponent(ResourceLoader::CreateAudioResourceFile(componentData["audio"]), (bool)componentData["playOnStart"], (AudioSource::AttenuationModel)componentData["attenuationModel"], (ALfloat)componentData["rolloffFactor"], (ALfloat)componentData["referenceDistance"], (ALfloat)componentData["maxDistance"]);
 	return shortMusicComponent;
 }
 
 Component* ShortMusicComponent::CreateDefault()
 {
-	ShortMusicComponent* shortMusicComponent = new ShortMusicComponent(ResourceLoader::CreateAudioResourceFile("rootex/assets/ball.wav"), true);
+	ShortMusicComponent* shortMusicComponent = new ShortMusicComponent(ResourceLoader::CreateAudioResourceFile("rootex/assets/ball.wav"), true, AudioSource::AttenuationModel::Linear, (float)1, (float)1, (float)100);
 	return shortMusicComponent;
 }
 
-ShortMusicComponent::ShortMusicComponent(AudioResourceFile* audioFile, bool playOnStart)
-    : AudioComponent(playOnStart,1,1,100)
+ShortMusicComponent::ShortMusicComponent(AudioResourceFile* audioFile, bool playOnStart, AudioSource::AttenuationModel model, ALfloat rolloffFactor, ALfloat referenceDistance, ALfloat maxDistance)
+    : AudioComponent(playOnStart, model, rolloffFactor, referenceDistance, maxDistance)
     , m_AudioFile(audioFile)
 {
+	m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
+	getAudioSource()->setPosition(m_TransformComponent->getAbsoluteTransform().Translation());
+	getAudioSource()->setModel(model);
+	getAudioSource()->setRollOffFactor(rolloffFactor);
+	getAudioSource()->setReferenceDistance(referenceDistance);
+	getAudioSource()->setMaxDistance(maxDistance);
 }
 
 ShortMusicComponent::~ShortMusicComponent()
 {
-    m_StaticAudioSource.reset();
+	m_StaticAudioSource.reset();
 }
 
 bool ShortMusicComponent::setup()
@@ -36,10 +42,13 @@ bool ShortMusicComponent::setup()
 
 JSON::json ShortMusicComponent::getJSON() const
 {
-	JSON::json j;
-
+	JSON::json& j = AudioComponent::getJSON();
 	j["audio"] = m_AudioFile->getPath().string();
 	j["playOnStart"] = m_IsPlayOnStart;
+	j["attenuationModel"] = m_AttenuationModel;
+	j["rollOffFactor"] = m_RolloffFactor;
+	j["referenceDistance"] = m_ReferenceDistance;
+	j["maxDistance"] = m_MaxDistance;
 
 	return j;
 }
