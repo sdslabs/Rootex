@@ -1,32 +1,37 @@
 #include "music_component.h"
 
-#include "core/audio/streaming_audio_buffer.h"
-#include "core/event_manager.h"
-#include "core/resource_loader.h"
-
 Component* MusicComponent::Create(const JSON::json& componentData)
 {
-	MusicComponent* musicComponent = new MusicComponent(ResourceLoader::CreateAudioResourceFile(componentData["audio"]), (bool)componentData["playOnStart"], (AudioSource::AttenuationModel)componentData["attenuationModel"], (ALfloat)componentData["rollOffFactor"], (ALfloat)componentData["referenceDistance"], (ALfloat)componentData["maxDistance"]);
+	MusicComponent* musicComponent = new MusicComponent(
+	    ResourceLoader::CreateAudioResourceFile(componentData["audio"]),
+	    (bool)componentData["playOnStart"],
+	    (bool)componentData["isAttenuated"],
+	    (AudioSource::AttenuationModel)componentData["attenuationModel"],
+	    (ALfloat)componentData["rollOffFactor"],
+	    (ALfloat)componentData["referenceDistance"],
+	    (ALfloat)componentData["maxDistance"]);
 	return musicComponent;
 }
 
 Component* MusicComponent::CreateDefault()
 {
 	MusicComponent* musicComponent
-	    = new MusicComponent(ResourceLoader::CreateAudioResourceFile("rootex/assets/ball.wav"), false, AudioSource::AttenuationModel::Linear, (float)1, (float)1, (float)100);
+	    = new MusicComponent(
+	        ResourceLoader::CreateAudioResourceFile("rootex/assets/ball.wav"),
+	        false,
+	        false,
+	        AudioSource::AttenuationModel::Linear,
+	        (ALfloat)1,
+	        (ALfloat)1,
+	        (ALfloat)100);
 	return musicComponent;
 }
 
-MusicComponent::MusicComponent(AudioResourceFile* audioFile, bool playOnStart, AudioSource::AttenuationModel model, ALfloat rolloffFactor, ALfloat referenceDistance, ALfloat maxDistance)
-    : AudioComponent(playOnStart, model, rolloffFactor, referenceDistance, maxDistance)
+MusicComponent::MusicComponent(AudioResourceFile* audioFile, bool playOnStart, bool attenuation, AudioSource::AttenuationModel model,
+    ALfloat rolloffFactor, ALfloat referenceDistance, ALfloat maxDistance)
+    : AudioComponent(playOnStart, attenuation, model, rolloffFactor, referenceDistance, maxDistance)
     , m_AudioFile(audioFile)
 {
-	m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
-	getAudioSource()->setPosition(m_TransformComponent->getAbsoluteTransform().Translation());
-	getAudioSource()->setModel(model);
-	getAudioSource()->setRollOffFactor(rolloffFactor);
-	getAudioSource()->setReferenceDistance(referenceDistance);
-	getAudioSource()->setMaxDistance(maxDistance);
 }
 
 MusicComponent::~MusicComponent()
@@ -39,7 +44,23 @@ bool MusicComponent::setup()
 	m_StreamingAudioSource.reset();
 	m_StreamingAudioBuffer.reset(new StreamingAudioBuffer(m_AudioFile));
 	m_StreamingAudioSource.reset(new StreamingAudioSource(m_StreamingAudioBuffer));
-	return true;
+
+	bool status = AudioComponent::setup();
+	if (m_Owner)
+	{
+		m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
+		if (m_TransformComponent == nullptr)
+		{
+			WARN("Entity without transform component!");
+			status = false;
+		}
+		MusicComponent::getAudioSource()->setPosition(m_TransformComponent->getAbsoluteTransform().Translation());
+		MusicComponent::getAudioSource()->setModel(m_AttenuationModel);
+		MusicComponent::getAudioSource()->setRollOffFactor(m_RolloffFactor);
+		MusicComponent::getAudioSource()->setReferenceDistance(m_ReferenceDistance);
+		MusicComponent::getAudioSource()->setMaxDistance(m_MaxDistance);
+	}
+	return status;
 }
 
 JSON::json MusicComponent::getJSON() const
@@ -48,11 +69,6 @@ JSON::json MusicComponent::getJSON() const
 
 	j["audio"] = m_AudioFile->getPath().string();
 	j["playOnStart"] = m_IsPlayOnStart;
-	j["attenuationModel"] = m_AttenuationModel;
-	j["rollOffFactor"] = m_RolloffFactor;
-	j["referenceDistance"] = m_ReferenceDistance;
-	j["maxDistance"] = m_MaxDistance;
-
 	return j;
 }
 
