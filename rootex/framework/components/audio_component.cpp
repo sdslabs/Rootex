@@ -1,13 +1,27 @@
 #include "audio_component.h"
 
-AudioComponent::AudioComponent(bool playOnStart, int rolloffFactor, int referenceDistance, int maxDistance)
+AudioComponent::AudioComponent(bool playOnStart, AudioSource::AttenuationModel model, ALfloat rolloffFactor, ALfloat referenceDistance, ALfloat maxDistance)
     : m_IsPlayOnStart(playOnStart)
+    , m_AttenuationModel(model)
+    , m_RolloffFactor(rolloffFactor)
+    , m_ReferenceDistance(referenceDistance)
+    , m_MaxDistance(maxDistance)
 {
-	getAudioSource()->setPosition(m_TransformComponent->getAbsoluteTransform().Translation());
-	getAudioSource()->setModel(AudioSource::AttenuationModel::Exponential);
-	getAudioSource()->setRollOffFactor(rolloffFactor);
-	getAudioSource()->setReferenceDistance(referenceDistance);
-	getAudioSource()->setMaxDistance(maxDistance);
+}
+
+AudioSource* getAudioSource()
+{
+	return nullptr;
+}
+
+JSON::json AudioComponent::getJSON() const
+{
+	JSON::json j;
+
+	j["attenuationModel"] = m_AttenuationModel;
+	j["rollOffFactor"] = m_RolloffFactor;
+	j["referenceDistance"] = m_ReferenceDistance;
+	j["maxDistance"] = m_MaxDistance;
 }
 
 bool AudioComponent::setup()
@@ -17,10 +31,10 @@ bool AudioComponent::setup()
 	if (m_TransformComponent)
 	{
 		getAudioSource()->setPosition(m_TransformComponent->getAbsoluteTransform().Translation());
-		getAudioSource()->setModel(AudioSource::AttenuationModel::Exponential);
-		getAudioSource()->setRollOffFactor(1);
-		getAudioSource()->setReferenceDistance(1);
-		getAudioSource()->setMaxDistance(100);
+		getAudioSource()->setModel(m_AttenuationModel);
+		getAudioSource()->setRollOffFactor(m_RolloffFactor);
+		getAudioSource()->setReferenceDistance(m_ReferenceDistance);
+		getAudioSource()->setMaxDistance(m_MaxDistance);
 		return true;
 	}
 	else
@@ -34,5 +48,4 @@ void AudioComponent::update()
 {
 	m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
 	getAudioSource()->setPosition(m_TransformComponent->getAbsoluteTransform().Translation());
-	getAudioSource()->setModel(AudioSource::AttenuationModel::Exponential);
 }
