@@ -12,8 +12,6 @@ public:
 	{
 		Model,
 		ModelInverse,
-		View,
-		Projection,
 		END
 	};
 

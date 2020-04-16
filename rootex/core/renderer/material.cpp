@@ -103,12 +103,6 @@ void Material::setVertexShaderConstantBuffer(const VertexConstantBufferType type
 		case VertexConstantBufferType::ModelInverse:
 			m_VSConstantBuffer[(int)VertexConstantBufferType::ModelInverse] = RenderingDevice::GetSingleton()->createVSModelInverseConstantBuffer(&cbd, &csd);
 			break;
-		case VertexConstantBufferType::View:
-			m_VSConstantBuffer[(int)VertexConstantBufferType::View] = RenderingDevice::GetSingleton()->createVSViewConstantBuffer(&cbd, &csd);
-			break;
-		case VertexConstantBufferType::Projection:
-			m_VSConstantBuffer[(int)VertexConstantBufferType::Projection] = RenderingDevice::GetSingleton()->createVSProjectionConstantBuffer(&cbd, &csd);
-			break;
 		default:
 			break;
 		}
