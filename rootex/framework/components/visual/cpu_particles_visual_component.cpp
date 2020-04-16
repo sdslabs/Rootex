@@ -110,8 +110,6 @@ void CPUParticlesVisualComponent::render(RenderPass renderPass)
 {
 	if (renderPass & m_RenderPass)
 	{
-		m_Material->setVertexShaderConstantBuffer(Material::VertexConstantBufferType::View, RenderSystem::GetSingleton()->getCamera()->getView());
-		m_Material->setVertexShaderConstantBuffer(Material::VertexConstantBufferType::Projection, RenderSystem::GetSingleton()->getCamera()->getProjection());
 		for (auto& particle : m_ParticlePool)
 		{
 			if (!particle.m_IsActive)

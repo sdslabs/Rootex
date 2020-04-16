@@ -12,6 +12,8 @@ RenderSystem* RenderSystem::GetSingleton()
 RenderSystem::RenderSystem()
     : m_Renderer(new Renderer())
     , m_Camera(new CameraVisualComponent())
+    , m_VSProjectionConstantBuffer(nullptr)
+    , m_VSViewConstantBuffer(nullptr)
 {
 	m_TransformationStack.push_back(Matrix::Identity);
 	m_UITransformationStack.push_back(Matrix::Identity);
@@ -59,6 +61,8 @@ void RenderSystem::render()
 	RenderingDevice::GetSingleton()->setRasterizerState();
 	RenderingDevice::GetSingleton()->setDepthStencilState();
 
+	setViewProjectionConstantBuffers();
+
 	Ref<VisualComponent> rootVC = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<VisualComponent>();
 #ifdef ROOTEX_EDITOR
 	renderPassRender(rootVC.get(), RenderPassEditor);
@@ -98,6 +102,43 @@ void RenderSystem::pushUIMatrix(const Matrix& transform)
 void RenderSystem::popUIMatrix()
 {
 	m_UITransformationStack.pop_back();
+}
+
+void RenderSystem::setViewProjectionConstantBuffers()
+{
+	const Matrix& view = getCamera()->getView();
+	const Matrix& projection = getCamera()->getProjection();
+	if (m_VSProjectionConstantBuffer == nullptr || m_VSViewConstantBuffer == nullptr)
+	{
+		D3D11_BUFFER_DESC cbd = { 0 };
+		cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		cbd.Usage = D3D11_USAGE_DYNAMIC;
+		cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		cbd.MiscFlags = 0u;
+		cbd.ByteWidth = sizeof(view);
+		cbd.StructureByteStride = 0u;
+		D3D11_SUBRESOURCE_DATA csd = { 0 };
+		csd.pSysMem = &view.Transpose();
+
+		m_VSViewConstantBuffer = RenderingDevice::GetSingleton()->createVSViewConstantBuffer(&cbd, &csd);
+
+		cbd.ByteWidth = sizeof(projection);
+		csd.pSysMem = &projection.Transpose();
+
+		m_VSProjectionConstantBuffer = RenderingDevice::GetSingleton()->createVSProjectionConstantBuffer(&cbd, &csd);
+	}
+	else
+	{
+		D3D11_MAPPED_SUBRESOURCE subresource = { 0 };
+		RenderingDevice::GetSingleton()->getBufferMappedContext(m_VSViewConstantBuffer.Get(), subresource);
+		memcpy(subresource.pData, &view.Transpose(), sizeof(view));
+		RenderingDevice::GetSingleton()->unmapBuffer(m_VSViewConstantBuffer.Get());
+
+		subresource = { 0 };
+		RenderingDevice::GetSingleton()->getBufferMappedContext(m_VSProjectionConstantBuffer.Get(), subresource);
+		memcpy(subresource.pData, &projection.Transpose(), sizeof(projection));
+		RenderingDevice::GetSingleton()->unmapBuffer(m_VSProjectionConstantBuffer.Get());
+	}
 }
 
 void RenderSystem::setCamera(Ref<CameraVisualComponent> camera)
