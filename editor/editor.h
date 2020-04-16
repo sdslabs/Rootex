@@ -21,7 +21,8 @@ class HierarchyGraph;
 class Editor
 {
 	int m_DockSpaceID;
-
+	String m_MenuAction;
+	String m_PopupCause;
 	unsigned int m_EditorStyleColorPushCount;
 	unsigned int m_EditorStyleVarPushCount;
 
@@ -61,6 +62,7 @@ class Editor
 	Variant saveAll(const Event* event);
 	Variant autoSave(const Event* event);
 	Variant openLevel(const Event* event);
+	Variant saveBeforeQuit(const Event* event);
 	Variant createNewLevel(const Event* event);
 	Variant createNewEntity(const Event* event);
 
@@ -69,7 +71,6 @@ public:
 
 	void initialize(HWND hWnd, const JSON::json& projectJSON);
 	void render();
-	void quit();
 
 	const Colors& getColors() const { return m_Colors; }
 };

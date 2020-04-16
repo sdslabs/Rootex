@@ -1,0 +1,40 @@
+{
+  "Entity": {
+    "name": "Cube"
+  },
+  "Components": {
+    "HierarchyComponent": {
+      "parent": 1,
+      "children": []
+    },
+    "TransformComponent": {
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "rotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "w": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      }
+    },
+    "ModelVisualComponent": {
+      "resFile": "game/assets/test/cube.obj",
+      "renderPass": 1,
+      "color": {
+        "r": 0.2,
+        "g": 1.0,
+        "b": 0.2,
+        "a": 1.0
+      },
+      "isVisible": true
+    }
+  }
+}

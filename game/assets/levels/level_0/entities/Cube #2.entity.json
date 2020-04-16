@@ -1,0 +1,56 @@
+{
+    "Components": {
+        "CameraComponent": {
+            "aspectRatio": {
+                "x": 16.0,
+                "y": 9.0
+            },
+            "far": 100.0,
+            "fov": 2.3038346767425537,
+            "near": 0.10000000149011612,
+            "offset": {
+                "x": 0.17000000178813934,
+                "y": 0.0,
+                "z": 4.0
+            }
+        },
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 1
+        },
+        "TexturedModelVisualComponent": {
+            "color": {
+                "a": 1.0,
+                "b": 0.0,
+                "g": 0.0,
+                "r": 0.0
+            },
+            "isVisible": true,
+            "renderPass": 5,
+            "resFile": "game\\assets\\test\\suzanne.obj",
+            "texturePath": "game\\assets\\test\\yellow.png"
+        },
+        "TransformComponent": {
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rotation": {
+                "w": 0.0,
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            }
+        }
+    },
+    "Entity": {
+        "ID": 2,
+        "name": "Cube"
+    }
+}

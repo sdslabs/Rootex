@@ -1,10 +1,11 @@
 #include "game_application.h"
 
-#include "app/project_manager.h"
+#include "app/level_manager.h"
 #include "core/input/input_manager.h"
 #include "core/resource_loader.h"
 #include "framework/systems/audio_system.h"
 #include "framework/systems/render_system.h"
+#include "framework/systems/physics_system.h"
 
 Ref<Application> CreateRootexApplication()
 {
@@ -46,19 +47,17 @@ Variant GameApplication::onExitEvent(const Event* event)
 }
 
 GameApplication::GameApplication()
+    : Application("game/game.app.json")
 {
-	JSON::json projectJSON = JSON::json::parse(ResourceLoader::CreateNewTextResourceFile("game/game.app.json")->getString());
-	initialize(projectJSON);
-
 	String levelName = getLevelNameFromCommandLine(GetCommandLine());
 
 	if (levelName == "")
 	{
-		ProjectManager::GetSingleton()->openLevel(projectJSON["startLevel"]);
+		LevelManager::GetSingleton()->openLevel(m_ApplicationSettings->getJSON()["startLevel"]);
 	}
 	else
 	{
-		ProjectManager::GetSingleton()->openLevel("game/assets/levels/" + levelName);
+		LevelManager::GetSingleton()->openLevel("game/assets/levels/" + levelName);
 	}
 
 	RenderingDevice::GetSingleton()->setBackBufferRenderTarget();
@@ -90,6 +89,7 @@ void GameApplication::run()
 		InputManager::GetSingleton()->update();
 		EventManager::GetSingleton()->dispatchDeferred();
 		ScriptSystem::GetSingleton()->update(m_FrameTimer.getFrameTime());
+		PhysicsSystem::GetSingleton()->update(m_FrameTimer.getFrameTime());
 	}
 }
 
