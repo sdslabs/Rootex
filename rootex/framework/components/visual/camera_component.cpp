@@ -120,34 +120,34 @@ void CameraComponent::draw()
 {
 	if (ImGui::DragFloat2("##Aspect", &m_AspectRatio.x, 0.01f, 0.1f, 100.0f))
 	{
-		refreshProjectionMatrix();
+		RenderSystem::GetSingleton()->setProjectionConstantBuffers();
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("Aspect Ratio"))
 	{
 		m_AspectRatio = { 16.0f, 9.0f };
-		refreshProjectionMatrix();
+		RenderSystem::GetSingleton()->setProjectionConstantBuffers();		
 	}
 
 	if (ImGui::DragFloat3("##Offset", &m_CameraOffset.x, 0.01f))
 	{
-		refreshViewMatrix();
+		RenderSystem::GetSingleton()->setViewConstantBuffers();		
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("Offset"))
 	{
 		m_CameraOffset = { 0.0f, 0.0f, 4.0f };
-		refreshViewMatrix();
+		RenderSystem::GetSingleton()->setViewConstantBuffers();
 	}
 
 	if (ImGui::SliderAngle("Field of View", &m_FoV, 1.0f, 180.0f))
 	{
-		refreshProjectionMatrix();
+		RenderSystem::GetSingleton()->setProjectionConstantBuffers();
 	}
 
 	if (ImGui::DragFloatRange2("Range", &m_Near, &m_Far, 0.01f, 0.1f, 1000.0f))
 	{
-		refreshProjectionMatrix();
+		RenderSystem::GetSingleton()->setProjectionConstantBuffers();
 	}
 }
 #endif // ROOTEX_EDITOR

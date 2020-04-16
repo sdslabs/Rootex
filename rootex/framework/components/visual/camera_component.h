@@ -23,15 +23,14 @@ class CameraComponent : public Component
 	
 	friend class EntityFactory;
 
-	void refreshProjectionMatrix();
-	void refreshViewMatrix();
-
 public:
 	virtual bool setup() override;
 	void onRemove() override;
 	
 	virtual const Matrix& getViewMatrix();
 	virtual const Matrix& getProjectionMatrix();
+	void refreshProjectionMatrix();
+	void refreshViewMatrix();
 	void setOffset(const Vector3& offset) { m_CameraOffset = offset; }
 	virtual String getName() const override { return "CameraComponent"; }
 
