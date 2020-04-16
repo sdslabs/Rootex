@@ -1,13 +1,14 @@
 #pragma once
 
-#include "framework/components/visual/camera_visual_component.h"
+#include "framework/components/visual/camera_component.h"
 #include "framework/system.h"
 #include "framework/systems/hierarchy_system.h"
 #include "main/window.h"
 
 class RenderSystem : public System
 {
-	Ref<CameraVisualComponent> m_Camera;
+	CameraComponent* m_Camera;
+
 	Ptr<Renderer> m_Renderer;
 	Vector<Matrix> m_TransformationStack;
 	Vector<Matrix> m_UITransformationStack;
@@ -27,7 +28,8 @@ public:
 	void render();
 	void recoverLostDevice();
 
-	void setCamera(Ref<CameraVisualComponent> camera);
+	void setCamera(CameraComponent* camera);
+	void restoreCamera();
 
 	void pushMatrix(const Matrix& transform);
 	void pushMatrixOverride(const Matrix& transform);
@@ -38,7 +40,7 @@ public:
 	void setProjectionConstantBuffers();
 	void setViewConstantBuffers();
 
-	CameraVisualComponent* getCamera() const { return m_Camera.get(); }
+	CameraComponent* getCamera() const { return m_Camera; }
 	const Matrix& getTopMatrix() const;
 	Matrix& getTopUIMatrix();
 	const Renderer* getRenderer() const { return m_Renderer.get(); }

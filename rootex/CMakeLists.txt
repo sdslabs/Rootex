@@ -92,4 +92,5 @@ target_link_libraries(Rootex PUBLIC
     d3d11.lib
     xinput.lib
     D3DCompiler.lib
+    assimp
 )

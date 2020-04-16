@@ -11,10 +11,10 @@ RenderSystem* RenderSystem::GetSingleton()
 
 RenderSystem::RenderSystem()
     : m_Renderer(new Renderer())
-    , m_Camera(new CameraVisualComponent())
     , m_VSProjectionConstantBuffer(nullptr)
     , m_VSViewConstantBuffer(nullptr)
 {
+	m_Camera = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<CameraComponent>().get();
 	m_TransformationStack.push_back(Matrix::Identity);
 	m_UITransformationStack.push_back(Matrix::Identity);
 	setProjectionConstantBuffers();
@@ -107,7 +107,7 @@ void RenderSystem::popUIMatrix()
 
 void RenderSystem::setProjectionConstantBuffers()
 {
-	const Matrix& projection = getCamera()->getProjection();
+	const Matrix& projection = getCamera()->getProjectionMatrix();
 	if (m_VSProjectionConstantBuffer == nullptr || m_VSViewConstantBuffer == nullptr)
 	{
 		D3D11_BUFFER_DESC cbd = { 0 };
@@ -133,7 +133,7 @@ void RenderSystem::setProjectionConstantBuffers()
 
 void RenderSystem::setViewConstantBuffers()
 {
-	const Matrix& view = getCamera()->getView();
+	const Matrix& view = getCamera()->getViewMatrix();
 	if (m_VSProjectionConstantBuffer == nullptr || m_VSViewConstantBuffer == nullptr)
 	{
 		D3D11_BUFFER_DESC cbd = { 0 };
@@ -157,9 +157,14 @@ void RenderSystem::setViewConstantBuffers()
 	}
 }
 
-void RenderSystem::setCamera(Ref<CameraVisualComponent> camera)
+void RenderSystem::setCamera(CameraComponent* camera)
 {
 	m_Camera = camera;
+}
+
+void RenderSystem::restoreCamera()
+{
+	m_Camera = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<CameraComponent>().get();
 }
 
 const Matrix& RenderSystem::getTopMatrix() const

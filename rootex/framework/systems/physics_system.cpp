@@ -79,6 +79,7 @@ void PhysicsSystem::internalTickCallback(btDynamicsWorld* const world, btScalar 
 void PhysicsSystem::update(float deltaMilliseconds)
 {
 	m_DynamicsWorld->stepSimulation(deltaMilliseconds, 10);
+	syncVisibleScene();
 }
 
 void PhysicsSystem::syncVisibleScene()

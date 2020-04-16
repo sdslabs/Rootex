@@ -25,6 +25,7 @@ void EditorApplication::SetSingleton(EditorApplication* app)
 }
 
 EditorApplication::EditorApplication()
+    : Application("editor/editor.app.json")
 {
 	if (!s_Instance)
 	{
@@ -35,9 +36,7 @@ EditorApplication::EditorApplication()
 		ERR("More than 1 instances of Editor Application detected");
 	}
 
-	JSON::json projectJSON = JSON::json::parse(ResourceLoader::CreateTextResourceFile("editor/editor.app.json")->getString());
-	initialize(projectJSON);
-	Editor::GetSingleton()->initialize(m_Window->getWindowHandle(), projectJSON);
+	Editor::GetSingleton()->initialize(m_Window->getWindowHandle(), m_ApplicationSettings->getJSON());
 	m_PointAtLast10Second = m_ApplicationTimer.Now();
 }
 
