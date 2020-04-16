@@ -35,7 +35,8 @@ public:
 	void pushUIMatrix(const Matrix& transform);
 	void popUIMatrix();
 
-	void setViewProjectionConstantBuffers();
+	void setProjectionConstantBuffers();
+	void setViewConstantBuffers();
 
 	CameraVisualComponent* getCamera() const { return m_Camera.get(); }
 	const Matrix& getTopMatrix() const;
