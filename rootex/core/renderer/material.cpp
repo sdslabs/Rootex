@@ -83,7 +83,6 @@ ColorMaterial::ColorMaterial()
 
 void Material::setVertexShaderConstantBuffer(const VertexConstantBufferType type, const Matrix& constantBuffer)
 {
-	static int jugaad = 1;
 	if (m_VSConstantBuffer[(int)type] == nullptr)
 	{
 		D3D11_BUFFER_DESC cbd = { 0 };
@@ -114,15 +113,13 @@ void Material::setVertexShaderConstantBuffer(const VertexConstantBufferType type
 			break;
 		}
 	}
-	else if (type == VertexConstantBufferType::Model && jugaad % 2 == 0)
+	else
 	{
 		D3D11_MAPPED_SUBRESOURCE subresource = { 0 };
 		RenderingDevice::GetSingleton()->getBufferMappedContext(m_VSConstantBuffer[(int)type].Get(), subresource);
-		Matrix* temp = (Matrix*)subresource.pData;
 		memcpy(subresource.pData, &constantBuffer.Transpose(), sizeof(constantBuffer));
 		RenderingDevice::GetSingleton()->unmapBuffer(m_VSConstantBuffer[(int)type].Get());
 	}
-	jugaad++;
 }
 
 void TextureMaterial::setPixelShaderConstantBuffer(const PSDiffuseConstantBuffer& constantBuffer)

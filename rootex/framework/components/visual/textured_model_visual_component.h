@@ -22,7 +22,7 @@ class TexturedModelVisualComponent : public ModelVisualComponent
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::TexturedVisualComponent;
 
-	bool preRender() override;
+	void render(RenderPass renderPass) override;
 
 	void setTexture(ImageResourceFile* image);
 
