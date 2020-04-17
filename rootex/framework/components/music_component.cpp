@@ -45,6 +45,8 @@ bool MusicComponent::setup()
 	m_StreamingAudioBuffer.reset(new StreamingAudioBuffer(m_AudioFile));
 	m_StreamingAudioSource.reset(new StreamingAudioSource(m_StreamingAudioBuffer));
 
+	setAudioSource(m_StreamingAudioSource.get());
+
 	bool status = AudioComponent::setup();
 	if (m_Owner)
 	{
@@ -54,11 +56,6 @@ bool MusicComponent::setup()
 			WARN("Entity without transform component!");
 			status = false;
 		}
-		MusicComponent::getAudioSource()->setPosition(m_TransformComponent->getAbsoluteTransform().Translation());
-		MusicComponent::getAudioSource()->setModel(m_AttenuationModel);
-		MusicComponent::getAudioSource()->setRollOffFactor(m_RolloffFactor);
-		MusicComponent::getAudioSource()->setReferenceDistance(m_ReferenceDistance);
-		MusicComponent::getAudioSource()->setMaxDistance(m_MaxDistance);
 	}
 	return status;
 }
@@ -139,21 +136,6 @@ void MusicComponent::draw()
 		ImGui::EndDragDropTarget();
 	}
 
-	ImGui::Checkbox("Play on start", &m_IsPlayOnStart);
-
-	//static const char* models[] { "Linear", "Inverse", "Exponential" };
-	//static int current_model = 0;
-	//static bool IsClamped = false;
-
-	//if (m_IsAttenuated)
-	//{
-	//ImGui::Combo("Attenuation model ", &current_model, models, IM_ARRAYSIZE(models), 1);
-	//ImGui::Checkbox("Turn on Clamping", &IsClamped);
-
-	//ImGui::SliderFloat("Reference Distance", (ALfloat)m_referenceDistance, 0, 10000);
-	//ImGui::SliderFloat("Rolloff Factor", (ALfloat)m_rolloffFactor,0,10000);
-	//ImGui::SliderFloat("Max Distance", (ALfloat)m_maxDistance, 0, 10000);
-	//}
-	//ImGui::Checkbox("Enable Volume Attenuation", &m_IsAttenuated);
+	AudioComponent::draw();
 }
 #endif // ROOTEX_EDITOR

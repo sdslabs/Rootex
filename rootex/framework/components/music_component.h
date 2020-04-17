@@ -26,7 +26,7 @@ public:
 
 	virtual bool setup() override;
 
-	AudioSource* getAudioSource() override { return m_StreamingAudioSource.get(); }
+	//AudioSource* getAudioSource() override { return m_StreamingAudioSource.get(); }
 	AudioResourceFile* getAudioFile() const { return m_AudioFile; }
 
 	void setAudioFile(AudioResourceFile* audioFile);

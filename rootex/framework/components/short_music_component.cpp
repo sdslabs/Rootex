@@ -43,6 +43,8 @@ bool ShortMusicComponent::setup()
 	m_StaticAudioBuffer.reset(new StaticAudioBuffer(m_AudioFile));
 	m_StaticAudioSource.reset(new StaticAudioSource(m_StaticAudioBuffer));
 
+	setAudioSource(m_StaticAudioSource.get());
+
 	bool status = AudioComponent::setup();
 	if (m_Owner)
 	{
@@ -52,11 +54,6 @@ bool ShortMusicComponent::setup()
 			WARN("Entity without transform component!");
 			status = false;
 		}
-		ShortMusicComponent::getAudioSource()->setPosition(m_TransformComponent->getAbsoluteTransform().Translation());
-		ShortMusicComponent::getAudioSource()->setModel(m_AttenuationModel);
-		ShortMusicComponent::getAudioSource()->setRollOffFactor(m_RolloffFactor);
-		ShortMusicComponent::getAudioSource()->setReferenceDistance(m_ReferenceDistance);
-		ShortMusicComponent::getAudioSource()->setMaxDistance(m_MaxDistance);
 	}
 	return status;
 }
@@ -136,5 +133,7 @@ void ShortMusicComponent::draw()
 		}
 		ImGui::EndDragDropTarget();
 	}
+
+	AudioComponent::draw();
 }
 #endif // ROOTEX_EDITOR
