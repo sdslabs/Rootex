@@ -17,23 +17,21 @@ bool AudioComponent::setup()
 	if (m_Owner)
 	{
 		m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
+
 		if (m_TransformComponent == nullptr)
 		{
 			status = false;
 		}
+		if (m_IsAttenuated)
+		{
+			getAudioSource()->setPosition(m_TransformComponent->getAbsoluteTransform().Translation());
+			getAudioSource()->setModel(m_AttenuationModel);
+			getAudioSource()->setRollOffFactor(m_RolloffFactor);
+			getAudioSource()->setReferenceDistance(m_ReferenceDistance);
+			getAudioSource()->setMaxDistance(m_MaxDistance);
+		}
 	}
 	return status;
-	//m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
-
-	//if (m_TransformComponent)
-	//{
-	//AudioComponent::getAudioSource()->setPosition(m_TransformComponent->getAbsoluteTransform().Translation());
-	//AudioComponent::getAudioSource()->setModel(m_AttenuationModel);
-	//AudioComponent::getAudioSource()->setRollOffFactor(m_RolloffFactor);
-	//AudioComponent::getAudioSource()->setReferenceDistance(m_ReferenceDistance);
-	//AudioComponent::getAudioSource()->setMaxDistance(m_MaxDistance);
-	//return true;
-	//	}
 }
 
 JSON::json AudioComponent::getJSON() const
@@ -49,21 +47,60 @@ JSON::json AudioComponent::getJSON() const
 	return j;
 }
 
-AudioSource* AudioComponent::getAudioSource()
-{
-	return nullptr;
-}
-
 void AudioComponent::update()
 {
-	//m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
-	//AudioComponent::getAudioSource()->setPosition(m_TransformComponent->getAbsoluteTransform().Translation());
+	m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
+	if (m_IsAttenuated)
+	{
+		getAudioSource()->setPosition(m_TransformComponent->getAbsoluteTransform().Translation());
+	}
 }
 
 #ifdef ROOTEX_EDITOR
 #include "imgui.h"
 void AudioComponent::draw()
 {
-	ImGui::Checkbox("Attenuation", &m_IsAttenuated);
+	ImGui::Checkbox("Play on Start", &m_IsPlayOnStart);
+	ImGui::Checkbox("Turn on Attenuation", &m_IsAttenuated);
+
+	if (ImGui::BeginCombo("Attenutation Model", m_AttenuationModelName.c_str()))
+	{
+		if (ImGui::Selectable("Linear"))
+		{
+			m_AttenuationModel = AudioSource::AttenuationModel::Linear;
+			m_AttenuationModelName = "Linear";
+		}
+		if (ImGui::Selectable("Linear Clamped"))
+		{
+			m_AttenuationModel = AudioSource::AttenuationModel::LinearClamped;
+			m_AttenuationModelName = "Linear Clamped";
+		}
+		if (ImGui::Selectable("Inverse"))
+		{
+			m_AttenuationModel = AudioSource::AttenuationModel::Inverse;
+			m_AttenuationModelName = "Inverse";
+		}
+		if (ImGui::Selectable(("Inverse Clamped")))
+		{
+			m_AttenuationModel = AudioSource::AttenuationModel::InverseClamped;
+			m_AttenuationModelName = "Inverse Clamped";
+		}
+		if (ImGui::Selectable("Exponential"))
+		{
+			m_AttenuationModel = AudioSource::AttenuationModel::Exponential;
+			m_AttenuationModelName = "Expoenential";
+		}
+		if (ImGui::Selectable(("Exponential Clamped")))
+		{
+			m_AttenuationModel = AudioSource::AttenuationModel::ExponentialClamped;
+			m_AttenuationModelName = "Exponential Clamped";
+		}
+		ImGui::EndCombo();
+	}
+
+	ImGui::InputFloat("Reference Distance", &m_ReferenceDistance, 0, 100.0f);
+	ImGui::InputFloat("Rolloff Ractor", &m_RolloffFactor, 0, 100.0f);
+	ImGui::InputFloat("Max Distance", &m_MaxDistance, 0, 100.0f);
 }
+
 #endif // ROOTEX_EDITOR
