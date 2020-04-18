@@ -3,11 +3,11 @@
 #include <chrono>
 #include <thread>
 
+#include "components/audio_component.h"
 #include "core/audio/audio_source.h"
-#include "core/resource_data.h"
 #include "core/audio/static_audio_buffer.h"
 #include "core/audio/streaming_audio_buffer.h"
-#include "components/audio_component.h"
+#include "core/resource_data.h"
 
 String AudioSystem::GetALErrorString(int errID)
 {
@@ -107,6 +107,7 @@ void AudioSystem::update()
 	{
 		audioComponent = (AudioComponent*)component;
 		audioComponent->getAudioSource()->queueNewBuffers();
+		audioComponent->update();
 	}
 
 	std::this_thread::sleep_for(std::chrono::milliseconds(m_UpdateIntervalMilliseconds));
@@ -139,6 +140,8 @@ AudioSystem::AudioSystem()
     , m_Device(nullptr)
     , m_UpdateIntervalMilliseconds(0)
 {
+	AL_CHECK(alListener3f(AL_POSITION, 0, 0, 0));
+	AL_CHECK(alListener3f(AL_VELOCITY, 0, 0, 0));
 }
 
 AudioSystem::~AudioSystem()

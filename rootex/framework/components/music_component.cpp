@@ -1,23 +1,35 @@
 #include "music_component.h"
 
-#include "core/resource_loader.h"
-#include "core/event_manager.h"
-#include "core/audio/streaming_audio_buffer.h"
-
 Component* MusicComponent::Create(const JSON::json& componentData)
 {
-	MusicComponent* musicComponent = new MusicComponent(ResourceLoader::CreateAudioResourceFile(componentData["audio"]), (bool)componentData["playOnStart"]);
+	MusicComponent* musicComponent = new MusicComponent(
+	    ResourceLoader::CreateAudioResourceFile(componentData["audio"]),
+	    (bool)componentData["playOnStart"],
+	    (bool)componentData["isAttenuated"],
+	    (AudioSource::AttenuationModel)componentData["attenuationModel"],
+	    (ALfloat)componentData["rollOffFactor"],
+	    (ALfloat)componentData["referenceDistance"],
+	    (ALfloat)componentData["maxDistance"]);
 	return musicComponent;
 }
 
 Component* MusicComponent::CreateDefault()
 {
-	MusicComponent* musicComponent = new MusicComponent(ResourceLoader::CreateAudioResourceFile("rootex/assets/ball.wav"), false);
+	MusicComponent* musicComponent
+	    = new MusicComponent(
+	        ResourceLoader::CreateAudioResourceFile("rootex/assets/ball.wav"),
+	        false,
+	        false,
+	        AudioSource::AttenuationModel::Linear,
+	        (ALfloat)1,
+	        (ALfloat)1,
+	        (ALfloat)100);
 	return musicComponent;
 }
 
-MusicComponent::MusicComponent(AudioResourceFile* audioFile, bool playOnStart)
-    : AudioComponent(playOnStart)
+MusicComponent::MusicComponent(AudioResourceFile* audioFile, bool playOnStart, bool attenuation, AudioSource::AttenuationModel model,
+    ALfloat rolloffFactor, ALfloat referenceDistance, ALfloat maxDistance)
+    : AudioComponent(playOnStart, attenuation, model, rolloffFactor, referenceDistance, maxDistance)
     , m_AudioFile(audioFile)
 {
 }
@@ -32,16 +44,28 @@ bool MusicComponent::setup()
 	m_StreamingAudioSource.reset();
 	m_StreamingAudioBuffer.reset(new StreamingAudioBuffer(m_AudioFile));
 	m_StreamingAudioSource.reset(new StreamingAudioSource(m_StreamingAudioBuffer));
-	return true;
+
+	setAudioSource(m_StreamingAudioSource.get());
+
+	bool status = AudioComponent::setup();
+	if (m_Owner)
+	{
+		m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
+		if (m_TransformComponent == nullptr)
+		{
+			WARN("Entity without transform component!");
+			status = false;
+		}
+	}
+	return status;
 }
 
 JSON::json MusicComponent::getJSON() const
 {
-	JSON::json j;
+	JSON::json& j = AudioComponent::getJSON();
 
 	j["audio"] = m_AudioFile->getPath().string();
 	j["playOnStart"] = m_IsPlayOnStart;
-
 	return j;
 }
 
@@ -112,6 +136,6 @@ void MusicComponent::draw()
 		ImGui::EndDragDropTarget();
 	}
 
-	ImGui::Checkbox("Play on start", &m_IsPlayOnStart);
+	AudioComponent::draw();
 }
 #endif // ROOTEX_EDITOR

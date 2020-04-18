@@ -37,7 +37,7 @@ void AudioSource::pause()
 
 void AudioSource::stop()
 {
-	AL_CHECK(alSourceStop(m_SourceID));	
+	AL_CHECK(alSourceStop(m_SourceID));
 }
 
 bool AudioSource::isPlaying() const
@@ -71,6 +71,31 @@ bool AudioSource::isLooping() const
 ALuint AudioSource::getSourceID() const
 {
 	return m_SourceID;
+}
+
+void AudioSource::setPosition(Vector3& position)
+{
+	AL_CHECK(alSource3f(m_SourceID, AL_POSITION, position.x, position.y, position.z));
+}
+
+void AudioSource::setRollOffFactor(ALfloat rolloffFactor)
+{
+	AL_CHECK(alSourcef(m_SourceID, AL_ROLLOFF_FACTOR, rolloffFactor));
+}
+
+void AudioSource::setReferenceDistance(ALfloat referenceDistance)
+{
+	AL_CHECK(alSourcef(m_SourceID, AL_REFERENCE_DISTANCE, referenceDistance));
+}
+
+void AudioSource::setMaxDistance(ALfloat maxDistance)
+{
+	AL_CHECK(alSourcef(m_SourceID, AL_MAX_DISTANCE, maxDistance));
+}
+
+void AudioSource::setModel(AudioSource::AttenuationModel distanceModel)
+{
+	AL_CHECK(alDistanceModel((ALenum)distanceModel));
 }
 
 StaticAudioSource::StaticAudioSource(Ref<StaticAudioBuffer> audio)

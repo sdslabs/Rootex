@@ -1,9 +1,11 @@
 #pragma once
+#include "rootex\vendor\OpenAL\include\al.h"
 
 class StreamingAudioBuffer;
 class StaticAudioBuffer;
 
 typedef unsigned int ALuint;
+typedef float ALfloat;
 
 /// Convert minutes to seconds
 #define MIN_TO_S 60.0f
@@ -15,13 +17,23 @@ protected:
 	ALuint m_SourceID;
 
 	/// RTTI for storing if the audio buffer is being streamed
-	bool m_IsStreaming; 
+	bool m_IsStreaming;
 	AudioSource(bool isStreaming);
 	virtual ~AudioSource();
 
 public:
+	/// Defines all attenuation models provided by OpenAL
+	enum class AttenuationModel
+	{
+		Linear = AL_LINEAR_DISTANCE,
+		Inverse = AL_INVERSE_DISTANCE,
+		Exponential = AL_EXPONENT_DISTANCE,
+		LinearClamped = AL_LINEAR_DISTANCE_CLAMPED,
+		InverseClamped = AL_INVERSE_DISTANCE_CLAMPED,
+		ExponentialClamped = AL_EXPONENT_DISTANCE_CLAMPED
+	};
+
 	virtual void setLooping(bool enabled);
-	
 	/// Queue new buffers to the audio card if possible.
 	virtual void queueNewBuffers();
 
@@ -36,6 +48,14 @@ public:
 	ALuint getSourceID() const;
 	/// Get audio duration in seconds.
 	virtual float getDuration() const = 0;
+
+	void setPosition(Vector3& position);
+	void setModel(AttenuationModel distanceModel);
+	/// Roll Off Factor: The rate of change of attenuation
+	void setRollOffFactor(ALfloat rolloffFactor);
+	/// Reference Distance: Distance until which clamping occurs
+	void setReferenceDistance(ALfloat referenceDistance);
+	void setMaxDistance(ALfloat maxDistance);
 };
 
 /// An audio source that uses StaticAudioBuffer.
