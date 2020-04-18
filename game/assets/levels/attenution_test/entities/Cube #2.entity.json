@@ -1,0 +1,66 @@
+{
+    "Components": {
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 1
+        },
+        "ModelVisualComponent": {
+            "color": {
+                "a": 1.0,
+                "b": 0.20000000298023224,
+                "g": 1.0,
+                "r": 0.20000000298023224
+            },
+            "isVisible": true,
+            "renderPass": 1,
+            "resFile": "game/assets/test/cube.obj"
+        },
+        "ScriptComponent": {
+            "connections": {},
+            "script": "game\\assets\\scripts\\sound-test.lua"
+        },
+        "SpotLightComponent": {
+            "ambientColor": {
+                "a": 1.0,
+                "b": 0.05000000074505806,
+                "g": 0.05000000074505806,
+                "r": 0.05000000074505806
+            },
+            "angleRange": 0.9998477101325989,
+            "attConst": 1.0,
+            "attLin": 0.04500000178813934,
+            "attQuad": 0.007499999832361937,
+            "diffuseColor": {
+                "a": 1.0,
+                "b": 1.0,
+                "g": 1.0,
+                "r": 1.0
+            },
+            "diffuseIntensity": 1.0,
+            "range": 100.0,
+            "spot": 4.0
+        },
+        "TransformComponent": {
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rotation": {
+                "w": 0.0,
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            }
+        }
+    },
+    "Entity": {
+        "ID": 2,
+        "name": "Cube"
+    }
+}
