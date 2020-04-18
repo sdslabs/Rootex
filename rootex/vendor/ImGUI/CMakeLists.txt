@@ -1,14 +1,14 @@
-file(GLOB_RECURSE ImGUI ./**.cpp)
-file(GLOB_RECURSE ImGUIH ./**.h)
+file(GLOB_RECURSE ImGui ./**.cpp)
+file(GLOB_RECURSE ImGuiH ./**.h)
 
 set(ROOTEX_INCLUDES
     ${ROOTEX_INCLUDES}
     ${CMAKE_CURRENT_LIST_DIR}
 CACHE INTERNAL "")
 
-add_library(ImGUI STATIC ${ImGUI} ${ImGUIH})
-set_target_properties(ImGUI PROPERTIES LINKER_LANGUAGE CXX)
+add_library(ImGui STATIC ${ImGui} ${ImGuiH})
+set_target_properties(ImGui PROPERTIES LINKER_LANGUAGE CXX)
 
-target_include_directories(ImGUI PUBLIC
+target_include_directories(ImGui PUBLIC
     ./
 )
