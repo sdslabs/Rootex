@@ -22,13 +22,16 @@ bool AudioComponent::setup()
 		{
 			status = false;
 		}
-		if (m_IsAttenuated)
+		else
 		{
-			getAudioSource()->setPosition(m_TransformComponent->getAbsoluteTransform().Translation());
-			getAudioSource()->setModel(m_AttenuationModel);
-			getAudioSource()->setRollOffFactor(m_RolloffFactor);
-			getAudioSource()->setReferenceDistance(m_ReferenceDistance);
-			getAudioSource()->setMaxDistance(m_MaxDistance);
+			if (m_IsAttenuated)
+			{
+				getAudioSource()->setPosition(m_TransformComponent->getAbsoluteTransform().Translation());
+				getAudioSource()->setModel(m_AttenuationModel);
+				getAudioSource()->setRollOffFactor(m_RolloffFactor);
+				getAudioSource()->setReferenceDistance(m_ReferenceDistance);
+				getAudioSource()->setMaxDistance(m_MaxDistance);
+			}
 		}
 	}
 	return status;
