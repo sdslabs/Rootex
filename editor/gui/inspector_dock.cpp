@@ -10,6 +10,8 @@
 #include "vendor/ImGUI/imgui_impl_dx11.h"
 #include "vendor/ImGUI/imgui_impl_win32.h"
 
+InspectorDock* InspectorDock::s_Singleton = nullptr;
+
 Variant InspectorDock::openEntity(const Event* event)
 {
 	m_OpenedEntity = Extract(Ref<Entity>, event->getData());
@@ -32,17 +34,15 @@ InspectorDock::InspectorDock()
     : m_OpenedEntity(nullptr)
 {
 	BIND_EVENT_MEMBER_FUNCTION("EditorOpenEntity", openEntity);
-}
 
-static int TextInputResizeCallback(ImGuiInputTextCallbackData* data)
-{
-	if (data->EventFlag == ImGuiInputTextFlags_CallbackResize)
+	if (!s_Singleton)
 	{
-		String* myStr = (String*)data->UserData;
-		myStr->resize(data->BufSize);
-		data->Buf = myStr->data();
+		s_Singleton = this;
 	}
-	return 0;
+	else
+	{
+		WARN("Multiple Editor Inspector docks are active");
+	}
 }
 
 void InspectorDock::draw()

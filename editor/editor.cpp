@@ -7,7 +7,9 @@
 #include "framework/systems/render_system.h"
 #include "editor_application.h"
 #include "rootex/main/window.h"
+
 #include "imgui_stdlib.h"
+#include "ImGuizmo.h"
 
 void Editor::initialize(HWND hWnd, const JSON::json& projectJSON)
 {
@@ -112,6 +114,7 @@ void Editor::render()
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
+	ImGuizmo::BeginFrame();
 
 	drawDefaultUI();
 	m_FileSystem->draw();
