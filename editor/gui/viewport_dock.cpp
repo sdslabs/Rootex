@@ -30,6 +30,21 @@ void ViewportDock::draw()
 
 			m_ViewportDockSettings.m_ImageSize = region;
 
+			static ImVec2 rect;
+			rect = ImGui::GetWindowSize();
+			static ImVec2 pos;
+			pos = ImGui::GetWindowPos();
+			ImGuizmo::SetRect(pos.x, pos.y, rect.x, rect.y);
+			Matrix view = RenderSystem::GetSingleton()->getCamera()->getViewMatrix();
+			Matrix proj = RenderSystem::GetSingleton()->getCamera()->getProjectionMatrix();
+			static Matrix gridLocation = Matrix::CreateTranslation(0.0f, 0.0f, 0.0f);
+
+			ImGuizmo::DrawGrid(
+				&view.m[0][0],
+				&proj.m[0][0],
+				&gridLocation.m[0][0],
+				2.0f);
+
 			ImGui::Image(
 			    RenderingDevice::GetSingleton()->getRenderTextureShaderResourceView().Get(),
 			    m_ViewportDockSettings.m_ImageSize,
@@ -38,20 +53,12 @@ void ViewportDock::draw()
 			    m_ViewportDockSettings.m_ImageTint,
 			    m_ViewportDockSettings.m_ImageBorderColor);
 
-			static ImVec2 rect;
-			rect = ImGui::GetWindowSize();
-			static ImVec2 pos;
-			pos = ImGui::GetWindowPos();
-			ImGuizmo::SetRect(pos.x, pos.y, rect.x, rect.y);
-
+	
 			Ref<Entity> openedEntity = InspectorDock::GetSingleton()->getOpenedEntity();
 			if (openedEntity && openedEntity->getComponent<TransformComponent>())
 			{
-				Matrix view = RenderSystem::GetSingleton()->getCamera()->getViewMatrix();
-				Matrix proj = RenderSystem::GetSingleton()->getCamera()->getProjectionMatrix();
 				Matrix matrix = openedEntity->getComponent<TransformComponent>()->getAbsoluteTransform();
 				float snap[3] = { 1.0f, 1.0f, 1.0f };
-
 				ImGuizmo::Manipulate(
 				    &view.m[0][0],
 				    &proj.m[0][0],
