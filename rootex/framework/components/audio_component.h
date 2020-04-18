@@ -36,15 +36,6 @@ public:
 
 	bool isPlayOnStart() const { return m_IsPlayOnStart; }
 	bool isAttenuated() { return m_IsAttenuated; }
-	//ALfloat getMaxDistance() { return m_MaxDistance; }
-	//ALfloat getRolloffFactor() { return m_RolloffFactor; }
-	//ALfloat getReferenceDistance() { return m_ReferenceDistance; }
-	//AudioSource::AttenuationModel getAttenuationModel() { return m_AttenuationModel; }
-
-	//void setMaxDistance(ALfloat maxDistance) { m_MaxDistance = maxDistance; }
-	//void setRolloffFactor(ALfloat rolloffFactor) { m_RolloffFactor = rolloffFactor; }
-	//void setReferenceDistance(ALfloat referenceDistance) { m_ReferenceDistance = referenceDistance; }
-	//void setAttenuationModel(AudioSource::AttenuationModel model) { m_AttenuationModel = model; }
 
 	void setAudioSource(AudioSource* audioSource) { m_AudioSource = audioSource; }
 	AudioSource* getAudioSource() { return m_AudioSource; }

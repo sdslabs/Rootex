@@ -1,11 +1,11 @@
 #pragma once
-#include "rootex\vendor\OpenAL\include\al.h""
+#include "rootex\vendor\OpenAL\include\al.h"
 
 class StreamingAudioBuffer;
 class StaticAudioBuffer;
 
 typedef unsigned int ALuint;
-typedef float ALfloat; 
+typedef float ALfloat;
 
 /// Convert minutes to seconds
 #define MIN_TO_S 60.0f
@@ -22,7 +22,6 @@ protected:
 	virtual ~AudioSource();
 
 public:
-
 	/// Defines all attenuation models provided by OpenAL
 	enum class AttenuationModel
 	{
