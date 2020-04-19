@@ -2,6 +2,7 @@
 
 #include "renderer/rendering_device.h"
 #include "framework/systems/render_system.h"
+#include "input/input_manager.h"
 
 #include "editor/editor.h"
 #include "editor/gui/inspector_dock.h"
@@ -112,6 +113,11 @@ void ViewportDock::draw()
 				    0,
 				    snap);
 				openedEntity->getComponent<TransformComponent>()->setTransform(matrix);
+			}
+
+			if (InputManager::GetSingleton()->isPressed("InputMouseRight"))
+			{
+				PRINT("1");
 			}
 		}
 		ImGui::End();
