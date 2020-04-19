@@ -47,8 +47,6 @@ class InputManager
 
 	unsigned int m_Width;
 	unsigned int m_Height;
-	/// Mouse delta detected in the current frame.
-	Vector2 m_MousePositionDelta;
 
 	InputManager();
 	InputManager(InputManager&) = delete;
@@ -83,9 +81,6 @@ public:
 	bool wasPressed(Event::Type action);
 	float getFloat(Event::Type action);
 	float getDelta(Event::Type action);
-
-	/// Returns the mouse delta in the last frame.
-	const Vector2& getMousePositionDelta() const { return m_MousePositionDelta; }
 
 	void update();
 

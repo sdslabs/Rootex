@@ -32,12 +32,14 @@ void InputManager::enableDefaultContext()
 	registerInput("InputExit");
 	registerInput("InputMouseX");
 	registerInput("InputMouseY");
+	registerInput("InputMouseRight");
 
 	m_GainputMap.MapBool((gainput::UserButtonId)m_InputEventIDs["InputForward"], DeviceIDs[Device::Keyboard], KeyboardButton::KeyW);
 	m_GainputMap.MapBool((gainput::UserButtonId)m_InputEventIDs["InputBackward"], DeviceIDs[Device::Keyboard], KeyboardButton::KeyS);
 	m_GainputMap.MapBool((gainput::UserButtonId)m_InputEventIDs["InputLeft"], DeviceIDs[Device::Keyboard], KeyboardButton::KeyA);
 	m_GainputMap.MapBool((gainput::UserButtonId)m_InputEventIDs["InputRight"], DeviceIDs[Device::Keyboard], KeyboardButton::KeyD);
 	m_GainputMap.MapBool((gainput::UserButtonId)m_InputEventIDs["InputExit"], DeviceIDs[Device::Keyboard], KeyboardButton::KeyEscape);
+	m_GainputMap.MapBool((gainput::UserButtonId)m_InputEventIDs["InputMouseRight"], DeviceIDs[Device::Mouse], MouseButton::MouseButtonRight);
 
 	m_GainputMap.MapFloat((gainput::UserButtonId)m_InputEventIDs["InputMouseX"], DeviceIDs[Device::Mouse], MouseButton::MouseAxisX);
 	m_GainputMap.MapFloat((gainput::UserButtonId)m_InputEventIDs["InputMouseY"], DeviceIDs[Device::Mouse], MouseButton::MouseAxisY);
@@ -82,8 +84,6 @@ float InputManager::getDelta(Event::Type action)
 
 void InputManager::update()
 {
-	m_MousePositionDelta.x = 0.0f;
-	m_MousePositionDelta.y = 0.0f;
 	m_GainputManager.Update();
 }
 
@@ -101,14 +101,7 @@ bool InputManager::BoolListen(int userButton, bool oldValue, bool newValue)
 
 bool InputManager::FloatListen(int userButton, float oldValue, float newValue)
 {
-	if (userButton == GetSingleton()->m_InputEventIDs["InputMouseX"])
-	{
-		InputManager::GetSingleton()->m_MousePositionDelta.x = newValue - oldValue;
-	}
-	else if (userButton == GetSingleton()->m_InputEventIDs["InputMouseY"])
-	{
-		InputManager::GetSingleton()->m_MousePositionDelta.y = newValue - oldValue;
-	}
+	EventManager::GetSingleton()->call("FloatInputEvent", GetSingleton()->m_InputEventNames[userButton], Vector2(oldValue, newValue));
 	return true;
 }
 
