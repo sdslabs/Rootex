@@ -2,9 +2,9 @@
 
 #include "resource_loader.h"
 
-#include "framework/systems/render_system.h"
-#include "framework/systems/light_system.h"
 #include "framework/entity.h"
+#include "framework/systems/light_system.h"
+#include "framework/systems/render_system.h"
 
 #include "core/renderer/material.h"
 
@@ -47,23 +47,14 @@ TexturedModelVisualComponent::~TexturedModelVisualComponent()
 {
 }
 
-bool TexturedModelVisualComponent::preRender()
+void TexturedModelVisualComponent::render(RenderPass renderPass)
 {
-	if (m_TransformComponent)
-	{
-		RenderSystem::GetSingleton()->pushMatrix(getTransform());
-		m_TransformComponent->m_TransformBuffer.m_AbsoluteTransform = RenderSystem::GetSingleton()->getTopMatrix();
-		m_Material->setVertexShaderConstantBuffer(Material::VertexConstantBufferType::Model, RenderSystem::GetSingleton()->getTopMatrix());
-		m_Material->setVertexShaderConstantBuffer(Material::VertexConstantBufferType::ModelInverse, RenderSystem::GetSingleton()->getTopMatrix().Invert());
-	}
-	else
-	{
-		RenderSystem::GetSingleton()->pushMatrix(Matrix::Identity);
-		m_Material->setVertexShaderConstantBuffer(Material::VertexConstantBufferType::Model, RenderSystem::GetSingleton()->getTopMatrix());
-		m_Material->setVertexShaderConstantBuffer(Material::VertexConstantBufferType::ModelInverse, RenderSystem::GetSingleton()->getTopMatrix().Invert());
-	}
-
-	return true;
+	m_Material->setVertexShaderConstantBuffer(Material::VertexConstantBufferType::Model, RenderSystem::GetSingleton()->getTopMatrix());
+	m_Material->setVertexShaderConstantBuffer(Material::VertexConstantBufferType::ModelInverse, RenderSystem::GetSingleton()->getTopMatrix().Invert());
+	m_Material->setVertexShaderConstantBuffer(Material::VertexConstantBufferType::View, RenderSystem::GetSingleton()->getCamera()->getView());
+	m_Material->setVertexShaderConstantBuffer(Material::VertexConstantBufferType::Projection, RenderSystem::GetSingleton()->getCamera()->getProjection());
+	
+	RenderSystem::GetSingleton()->getRenderer()->draw(getVertexBuffer(), getIndexBuffer(), getMaterial());
 }
 
 JSON::json TexturedModelVisualComponent::getJSON() const
@@ -71,7 +62,7 @@ JSON::json TexturedModelVisualComponent::getJSON() const
 	JSON::json& j = ModelVisualComponent::getJSON();
 
 	j["texturePath"] = m_ImageFile->getPath().string();
-	
+
 	return j;
 }
 
@@ -88,7 +79,7 @@ void TexturedModelVisualComponent::setTexture(ImageResourceFile* image)
 void TexturedModelVisualComponent::draw()
 {
 	ModelVisualComponent::draw();
-	
+
 	m_ImagePathUI = m_ImageFile->getPath().string();
 	if (ImGui::InputText("Texture", &m_ImagePathUI, ImGuiInputTextFlags_EnterReturnsTrue))
 	{
