@@ -3,11 +3,6 @@
 
 #include <functional>
 
-const unsigned int Hash(const String& string)
-{
-	return std::hash<const char*> {}(string.c_str());
-}
-
 void InputManager::initialize(unsigned int width, unsigned int height)
 {
 	m_GainputManager.SetDisplaySize(width, height);
@@ -20,71 +15,62 @@ void InputManager::initialize(unsigned int width, unsigned int height)
 	DeviceIDs[Device::Pad2] = m_GainputManager.CreateDevice<gainput::InputDevicePad>();
 
 	m_Listener.setID(m_GainputMap.AddListener(&m_Listener));
-	enableDefaultContext();
 }
 
-void InputManager::enableDefaultContext()
+void InputManager::mapBool(const Event::Type& action, Device device, DeviceButtonID button)
 {
-	registerInput("InputForward");
-	registerInput("InputBackward");
-	registerInput("InputLeft");
-	registerInput("InputRight");
-	registerInput("InputExit");
-	registerInput("InputMouseX");
-	registerInput("InputMouseY");
-	registerInput("InputMouseRight");
-
-	m_GainputMap.MapBool((gainput::UserButtonId)m_InputEventIDs["InputForward"], DeviceIDs[Device::Keyboard], KeyboardButton::KeyW);
-	m_GainputMap.MapBool((gainput::UserButtonId)m_InputEventIDs["InputBackward"], DeviceIDs[Device::Keyboard], KeyboardButton::KeyS);
-	m_GainputMap.MapBool((gainput::UserButtonId)m_InputEventIDs["InputLeft"], DeviceIDs[Device::Keyboard], KeyboardButton::KeyA);
-	m_GainputMap.MapBool((gainput::UserButtonId)m_InputEventIDs["InputRight"], DeviceIDs[Device::Keyboard], KeyboardButton::KeyD);
-	m_GainputMap.MapBool((gainput::UserButtonId)m_InputEventIDs["InputExit"], DeviceIDs[Device::Keyboard], KeyboardButton::KeyEscape);
-	m_GainputMap.MapBool((gainput::UserButtonId)m_InputEventIDs["InputMouseRight"], DeviceIDs[Device::Mouse], MouseButton::MouseButtonRight);
-
-	m_GainputMap.MapFloat((gainput::UserButtonId)m_InputEventIDs["InputMouseX"], DeviceIDs[Device::Mouse], MouseButton::MouseAxisX);
-	m_GainputMap.MapFloat((gainput::UserButtonId)m_InputEventIDs["InputMouseY"], DeviceIDs[Device::Mouse], MouseButton::MouseAxisY);
+	m_InputEventNameIDs[action] = getNextID();
+	m_InputEventIDNames[m_InputEventNameIDs[action]] = action;
+	if (!m_GainputMap.MapBool((gainput::UserButtonId)m_InputEventNameIDs[action], DeviceIDs[device], button))
+	{
+		WARN("Bool mapping could not done: " + action);
+	}
 }
 
-void InputManager::registerInput(const String& input)
+void InputManager::mapFloat(const Event::Type& action, Device device, DeviceButtonID button)
 {
-	unsigned int ID = Hash(input);
-	m_InputEventIDs[input] = ID;
-	m_InputEventNames[ID] = input;
+	m_InputEventNameIDs[action] = getNextID();
+	m_InputEventIDNames[m_InputEventNameIDs[action]] = action;
+	if (!m_GainputMap.MapFloat((gainput::UserButtonId)m_InputEventNameIDs[action], DeviceIDs[device], button))
+	{
+		WARN("Float mapping could not done: " + action);
+	}
 }
 
-void InputManager::mapBool(Event::Type action, Device device, DeviceButtonID button)
+void InputManager::unmap(const Event::Type& action)
 {
-	m_GainputMap.MapBool((gainput::UserButtonId)m_InputEventIDs[action], DeviceIDs[device], button);
+	m_GainputMap.Unmap(m_InputEventNameIDs[action]);
 }
 
-void InputManager::mapFloat(Event::Type action, Device device, DeviceButtonID button)
+bool InputManager::isPressed(const Event::Type& action)
 {
-	m_GainputMap.MapFloat((gainput::UserButtonId)m_InputEventIDs[action], DeviceIDs[device], button);
+	return m_GainputMap.GetBool((gainput::UserButtonId)m_InputEventNameIDs[action]);
 }
 
-bool InputManager::isPressed(Event::Type action)
+bool InputManager::wasPressed(const Event::Type& action)
 {
-	return m_GainputMap.GetBool((gainput::UserButtonId)m_InputEventIDs[action]);
+	return m_GainputMap.GetBoolWasDown((gainput::UserButtonId)m_InputEventNameIDs[action]);
 }
 
-bool InputManager::wasPressed(Event::Type action)
+float InputManager::getFloat(const Event::Type& action)
 {
-	return m_GainputMap.GetBoolWasDown((gainput::UserButtonId)m_InputEventIDs[action]);
+	return m_GainputMap.GetFloat((gainput::UserButtonId)m_InputEventNameIDs[action]);
 }
 
-float InputManager::getFloat(Event::Type action)
+float InputManager::getDelta(const Event::Type& action)
 {
-	return m_GainputMap.GetFloat((gainput::UserButtonId)m_InputEventIDs[action]);
-}
-
-float InputManager::getDelta(Event::Type action)
-{
-	return m_GainputMap.GetFloatDelta((gainput::UserButtonId)m_InputEventIDs[action]);
+	return m_GainputMap.GetFloatDelta((gainput::UserButtonId)m_InputEventNameIDs[action]);
 }
 
 void InputManager::update()
 {
 	m_GainputManager.Update();
+}
+
+unsigned int InputManager::getNextID()
+{
+	static unsigned int count = 0;
+	return count++;
 }
 
 InputManager* InputManager::GetSingleton()
@@ -95,13 +81,13 @@ InputManager* InputManager::GetSingleton()
 
 bool InputManager::BoolListen(int userButton, bool oldValue, bool newValue)
 {
-	EventManager::GetSingleton()->call("BoolInputEvent", GetSingleton()->m_InputEventNames[userButton], Vector2(oldValue, newValue));
+	EventManager::GetSingleton()->call("BoolInputEvent", GetSingleton()->m_InputEventIDNames[userButton], Vector2(oldValue, newValue));
 	return true;
 }
 
 bool InputManager::FloatListen(int userButton, float oldValue, float newValue)
 {
-	EventManager::GetSingleton()->call("FloatInputEvent", GetSingleton()->m_InputEventNames[userButton], Vector2(oldValue, newValue));
+	EventManager::GetSingleton()->call("FloatInputEvent", GetSingleton()->m_InputEventIDNames[userButton], Vector2(oldValue, newValue));
 	return true;
 }
 

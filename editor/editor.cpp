@@ -3,10 +3,11 @@
 #include "app/level_manager.h"
 #include "core/renderer/rendering_device.h"
 #include "core/resource_loader.h"
+#include "core/input/input_manager.h"
 #include "framework/components/hierarchy_component.h"
 #include "framework/systems/render_system.h"
 #include "editor_application.h"
-#include "rootex/main/window.h"
+#include "main/window.h"
 
 #include "imgui_stdlib.h"
 #include "ImGuizmo.h"
@@ -107,6 +108,8 @@ void Editor::initialize(HWND hWnd, const JSON::json& projectJSON)
 	ImGui_ImplWin32_Init(hWnd);
 	ImGui_ImplDX11_Init(RenderingDevice::GetSingleton()->getDevice(), RenderingDevice::GetSingleton()->getContext());
 	ImGui::StyleColorsDark();
+
+	registerEditorControls();
 }
 
 void Editor::render()
@@ -476,6 +479,17 @@ void Editor::pushEditorStyleVars()
 	static const int starting = __LINE__;
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, { 0 });
 	static const int ending = m_EditorStyleVarPushCount = __LINE__ - starting - 1;
+}
+
+void Editor::registerEditorControls()
+{
+	InputManager::GetSingleton()->mapBool("InputCameraActivate", Device::Mouse, MouseButton::MouseButtonRight);
+	InputManager::GetSingleton()->mapBool("InputCameraForward", Device::Keyboard, KeyboardButton::KeyW);
+	InputManager::GetSingleton()->mapBool("InputCameraLeft", Device::Keyboard, KeyboardButton::KeyA);
+	InputManager::GetSingleton()->mapBool("InputCameraBackward", Device::Keyboard, KeyboardButton::KeyS);
+	InputManager::GetSingleton()->mapBool("InputCameraRight", Device::Keyboard, KeyboardButton::KeyD);
+	InputManager::GetSingleton()->mapBool("InputCameraUp", Device::Keyboard, KeyboardButton::KeySpace);
+	InputManager::GetSingleton()->mapBool("InputCameraDown", Device::Keyboard, KeyboardButton::KeyC);
 }
 
 Variant Editor::saveAll(const Event* event)

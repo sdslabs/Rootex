@@ -19,6 +19,7 @@ Entity::Entity(EntityID id, const String& name, const HashMap<ComponentID, Ref<C
     : m_ID(id)
     , m_Name(name)
     , m_Components(components)
+    , m_IsEditorOnly(false)
 {
 }
 

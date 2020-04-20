@@ -14,6 +14,10 @@ ViewportDock::ViewportDock(const JSON::json& viewportJSON)
 	m_ViewportDockSettings.m_AspectRatio = (float)viewportJSON["aspectRatio"]["x"] / (float)viewportJSON["aspectRatio"]["y"];
 	m_ViewportDockSettings.m_ImageTint = Editor::GetSingleton()->getColors().m_White;
 	m_ViewportDockSettings.m_ImageBorderColor = Editor::GetSingleton()->getColors().m_Accent;
+
+	m_EditorCamera = EntityFactory::GetSingleton()->createEntity(ResourceLoader::CreateTextResourceFile("editor/entities/camera.entity.json"));
+	m_EditorCamera->setEditorOnly(true);
+	RenderSystem::GetSingleton()->setCamera(m_EditorCamera->getComponent<CameraComponent>().get());
 }
 
 void ViewportDock::draw()
@@ -117,7 +121,31 @@ void ViewportDock::draw()
 
 			if (InputManager::GetSingleton()->isPressed("InputMouseRight"))
 			{
-				PRINT("1");
+				if (InputManager::GetSingleton()->isPressed("InputCameraForward"))
+				{
+					m_ApplyCameraMatrix = Matrix::CreateTranslation(m_EditorCamera->getComponent<TransformComponent>()->getLocalTransform().Forward() * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
+				}
+				if (InputManager::GetSingleton()->isPressed("InputCameraBackward"))
+				{
+					m_ApplyCameraMatrix = Matrix::CreateTranslation(m_EditorCamera->getComponent<TransformComponent>()->getLocalTransform().Backward() * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
+				}
+				if (InputManager::GetSingleton()->isPressed("InputCameraLeft"))
+				{
+					m_ApplyCameraMatrix = Matrix::CreateTranslation(m_EditorCamera->getComponent<TransformComponent>()->getLocalTransform().Left() * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
+				}
+				if (InputManager::GetSingleton()->isPressed("InputCameraRight"))
+				{
+					m_ApplyCameraMatrix = Matrix::CreateTranslation(m_EditorCamera->getComponent<TransformComponent>()->getLocalTransform().Right() * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
+				}
+				if (InputManager::GetSingleton()->isPressed("InputCameraUp"))
+				{
+					m_ApplyCameraMatrix = Matrix::CreateTranslation(m_EditorCamera->getComponent<TransformComponent>()->getLocalTransform().Up() * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
+				}
+				if (InputManager::GetSingleton()->isPressed("InputCameraDown"))
+				{
+					m_ApplyCameraMatrix = Matrix::CreateTranslation(m_EditorCamera->getComponent<TransformComponent>()->getLocalTransform().Down() * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
+				}
+				m_EditorCamera->getComponent<TransformComponent>()->setTransform(m_ApplyCameraMatrix);
 			}
 		}
 		ImGui::End();
