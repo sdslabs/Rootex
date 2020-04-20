@@ -24,6 +24,7 @@ private:
 	ViewportDockSettings m_ViewportDockSettings;
 	Matrix m_ApplyCameraMatrix = Matrix::Identity;
 	Ref<Entity> m_EditorCamera;
+	bool m_IsCameraMoving;
 	float m_EditorCameraSpeed = 0.1f;
 
 public:

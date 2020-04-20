@@ -5,11 +5,13 @@
 #include "input/input_manager.h"
 
 #include "editor/editor.h"
+#include "editor/editor_application.h"
 #include "editor/gui/inspector_dock.h"
 
 #include "ImGuizmo.h"
 
 ViewportDock::ViewportDock(const JSON::json& viewportJSON)
+    : m_IsCameraMoving(false)
 {
 	m_ViewportDockSettings.m_AspectRatio = (float)viewportJSON["aspectRatio"]["x"] / (float)viewportJSON["aspectRatio"]["y"];
 	m_ViewportDockSettings.m_ImageTint = Editor::GetSingleton()->getColors().m_White;
@@ -121,6 +123,13 @@ void ViewportDock::draw()
 
 			if (InputManager::GetSingleton()->isPressed("InputMouseRight"))
 			{
+				if (!m_IsCameraMoving)
+				{
+					EditorApplication::GetSingleton()->getWindow()->showCursor(false);
+					EditorApplication::GetSingleton()->getWindow()->clipCursor();
+					m_IsCameraMoving = true;
+				}
+
 				if (InputManager::GetSingleton()->isPressed("InputCameraForward"))
 				{
 					m_ApplyCameraMatrix = Matrix::CreateTranslation(m_EditorCamera->getComponent<TransformComponent>()->getLocalTransform().Forward() * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
@@ -145,8 +154,16 @@ void ViewportDock::draw()
 				{
 					m_ApplyCameraMatrix = Matrix::CreateTranslation(m_EditorCamera->getComponent<TransformComponent>()->getLocalTransform().Down() * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
 				}
-				m_EditorCamera->getComponent<TransformComponent>()->setTransform(m_ApplyCameraMatrix);
 			}
+			else
+			{
+				if (m_IsCameraMoving)
+				{
+					EditorApplication::GetSingleton()->getWindow()->showCursor(true);
+					m_IsCameraMoving = false;
+				}
+			}
+			m_EditorCamera->getComponent<TransformComponent>()->setTransform(m_ApplyCameraMatrix);
 		}
 		ImGui::End();
 	}

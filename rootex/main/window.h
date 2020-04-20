@@ -36,6 +36,7 @@ public:
 	void swapBuffers();
 	/// Clips or blocks the cursor beyond a specified rectangle.
 	void clipCursor();
+	void showCursor(bool enabled);
 	/// Helpers for clearing render target.
 	void clearCurrentTarget();
 	void clearUnboundTarget();
