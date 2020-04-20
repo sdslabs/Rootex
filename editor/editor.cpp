@@ -490,6 +490,9 @@ void Editor::registerEditorControls()
 	InputManager::GetSingleton()->mapBool("InputCameraRight", Device::Keyboard, KeyboardButton::KeyD);
 	InputManager::GetSingleton()->mapBool("InputCameraUp", Device::Keyboard, KeyboardButton::KeySpace);
 	InputManager::GetSingleton()->mapBool("InputCameraDown", Device::Keyboard, KeyboardButton::KeyC);
+
+	InputManager::GetSingleton()->mapFloat("InputCameraTurnUp", Device::Mouse, MouseButton::MouseAxisY);
+	InputManager::GetSingleton()->mapFloat("InputCameraTurnRight", Device::Mouse, MouseButton::MouseAxisX);
 }
 
 Variant Editor::saveAll(const Event* event)

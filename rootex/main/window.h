@@ -34,8 +34,10 @@ public:
 	std::optional<int> processMessages();
 	void applyDefaultViewport();
 	void swapBuffers();
-	/// Clips or blocks the cursor beyond a specified rectangle.
+	/// Clips or blocks the cursor beyond a the window rectangle.
 	void clipCursor();
+	/// Clips or blocks the cursor beyond the specified rectangle.
+	void clipCursor(RECT clip);
 	void showCursor(bool enabled);
 	/// Helpers for clearing render target.
 	void clearCurrentTarget();

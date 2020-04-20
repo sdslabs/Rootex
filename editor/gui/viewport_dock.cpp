@@ -20,6 +20,7 @@ ViewportDock::ViewportDock(const JSON::json& viewportJSON)
 	m_EditorCamera = EntityFactory::GetSingleton()->createEntity(ResourceLoader::CreateTextResourceFile("editor/entities/camera.entity.json"));
 	m_EditorCamera->setEditorOnly(true);
 	RenderSystem::GetSingleton()->setCamera(m_EditorCamera->getComponent<CameraComponent>().get());
+	m_ApplyCameraMatrix = m_EditorCamera->getComponent<TransformComponent>()->getAbsoluteTransform();
 }
 
 void ViewportDock::draw()
@@ -109,7 +110,7 @@ void ViewportDock::draw()
 				Matrix view = RenderSystem::GetSingleton()->getCamera()->getViewMatrix();
 				Matrix proj = RenderSystem::GetSingleton()->getCamera()->getProjectionMatrix();
 
-				Matrix matrix = openedEntity->getComponent<TransformComponent>()->getAbsoluteTransform();
+				Matrix matrix = openedEntity->getComponent<TransformComponent>()->getLocalTransform();
 				ImGuizmo::Manipulate(
 				    &view.m[0][0],
 				    &proj.m[0][0],
@@ -123,37 +124,47 @@ void ViewportDock::draw()
 
 			if (InputManager::GetSingleton()->isPressed("InputMouseRight"))
 			{
+				static POINT pos;
 				if (!m_IsCameraMoving)
 				{
 					EditorApplication::GetSingleton()->getWindow()->showCursor(false);
-					EditorApplication::GetSingleton()->getWindow()->clipCursor();
+					GetCursorPos(&pos);
 					m_IsCameraMoving = true;
 				}
 
+				float deltaUp = -InputManager::GetSingleton()->getFloatDelta("InputCameraTurnUp");
+				float deltaRight = -InputManager::GetSingleton()->getFloatDelta("InputCameraTurnRight");
+				PRINT(std::to_string(deltaRight))
+				
+				m_ApplyCameraMatrix = Matrix::CreateFromAxisAngle(m_ApplyCameraMatrix.Up(), deltaRight) * m_ApplyCameraMatrix;
+				m_ApplyCameraMatrix = Matrix::CreateFromAxisAngle(m_ApplyCameraMatrix.Right(), deltaUp) * m_ApplyCameraMatrix;
+
 				if (InputManager::GetSingleton()->isPressed("InputCameraForward"))
 				{
-					m_ApplyCameraMatrix = Matrix::CreateTranslation(m_EditorCamera->getComponent<TransformComponent>()->getLocalTransform().Forward() * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
+					m_ApplyCameraMatrix = Matrix::CreateTranslation(m_ApplyCameraMatrix.Forward() * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
 				}
 				if (InputManager::GetSingleton()->isPressed("InputCameraBackward"))
 				{
-					m_ApplyCameraMatrix = Matrix::CreateTranslation(m_EditorCamera->getComponent<TransformComponent>()->getLocalTransform().Backward() * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
+					m_ApplyCameraMatrix = Matrix::CreateTranslation(m_ApplyCameraMatrix.Backward() * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
 				}
 				if (InputManager::GetSingleton()->isPressed("InputCameraLeft"))
 				{
-					m_ApplyCameraMatrix = Matrix::CreateTranslation(m_EditorCamera->getComponent<TransformComponent>()->getLocalTransform().Left() * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
+					m_ApplyCameraMatrix = Matrix::CreateTranslation(m_ApplyCameraMatrix.Left() * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
 				}
 				if (InputManager::GetSingleton()->isPressed("InputCameraRight"))
 				{
-					m_ApplyCameraMatrix = Matrix::CreateTranslation(m_EditorCamera->getComponent<TransformComponent>()->getLocalTransform().Right() * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
+					m_ApplyCameraMatrix = Matrix::CreateTranslation(m_ApplyCameraMatrix.Right() * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
 				}
 				if (InputManager::GetSingleton()->isPressed("InputCameraUp"))
 				{
-					m_ApplyCameraMatrix = Matrix::CreateTranslation(m_EditorCamera->getComponent<TransformComponent>()->getLocalTransform().Up() * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
+					m_ApplyCameraMatrix = Matrix::CreateTranslation(m_ApplyCameraMatrix.Up() * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
 				}
 				if (InputManager::GetSingleton()->isPressed("InputCameraDown"))
 				{
-					m_ApplyCameraMatrix = Matrix::CreateTranslation(m_EditorCamera->getComponent<TransformComponent>()->getLocalTransform().Down() * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
+					m_ApplyCameraMatrix = Matrix::CreateTranslation(m_ApplyCameraMatrix.Down() * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
 				}
+
+				//SetCursorPos(pos.x, pos.y);
 			}
 			else
 			{

@@ -73,7 +73,7 @@ public:
 	bool isPressed(const Event::Type& action);
 	bool wasPressed(const Event::Type& action);
 	float getFloat(const Event::Type& action);
-	float getDelta(const Event::Type& action);
+	float getFloatDelta(const Event::Type& action);
 
 	void update();
 

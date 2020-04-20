@@ -55,6 +55,11 @@ void Window::clipCursor()
 	ClipCursor(&clip);
 }
 
+void Window::clipCursor(RECT clip)
+{
+	ClipCursor(&clip);
+}
+
 void Window::showCursor(bool enabled)
 {
 	int result = ShowCursor(enabled);
