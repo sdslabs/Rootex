@@ -57,7 +57,7 @@ float InputManager::getFloat(const Event::Type& action)
 	return m_GainputMap.GetFloat((gainput::UserButtonId)m_InputEventNameIDs[action]);
 }
 
-float InputManager::getDelta(const Event::Type& action)
+float InputManager::getFloatDelta(const Event::Type& action)
 {
 	return m_GainputMap.GetFloatDelta((gainput::UserButtonId)m_InputEventNameIDs[action]);
 }

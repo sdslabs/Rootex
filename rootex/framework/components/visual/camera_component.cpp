@@ -64,14 +64,12 @@ bool CameraComponent::setup()
 			return false;
 		}
 
-		m_ProjectionMatrix = Matrix::CreatePerspectiveFieldOfView(m_FoV, m_AspectRatio.x / m_AspectRatio.y, m_Near, m_Far);
-		m_ViewMatrix = Matrix::CreateLookAt(
-		    m_TransformComponent->getAbsoluteTransform().Translation() + m_CameraOffset,
-		    m_TransformComponent->getAbsoluteTransform().Translation(),
-		    m_TransformComponent->getAbsoluteTransform().Up());
-	}
+		refreshProjectionMatrix();
+		refreshViewMatrix();
 
-	return true;
+		return true;
+	}
+	return false;
 }
 
 const Matrix& CameraComponent::getViewMatrix()
@@ -84,9 +82,8 @@ const Matrix& CameraComponent::getViewMatrix()
 	if (rotation.x != 0 || rotation.y != 0 || rotation.z != 0)
 	{
 		direction = XMVector3Rotate(direction, rotation);
-		up = XMVector3Rotate(up, rotation);
 	}
-	m_ViewMatrix = Matrix::CreateLookAt(position + m_CameraOffset, position, up);
+	m_ViewMatrix = Matrix::CreateLookAt(position + m_CameraOffset, position + m_CameraOffset + direction, up);
 	return m_ViewMatrix;
 }
 
@@ -129,14 +126,8 @@ void CameraComponent::draw()
 		refreshProjectionMatrix();
 	}
 
-	if (ImGui::DragFloat3("##Offset", &m_CameraOffset.x, 0.01f))
+	if (ImGui::DragFloat3("Offset", &m_CameraOffset.x, 0.01f))
 	{
-		refreshViewMatrix();
-	}
-	ImGui::SameLine();
-	if (ImGui::Button("Offset"))
-	{
-		m_CameraOffset = { 0.0f, 0.0f, 4.0f };
 		refreshViewMatrix();
 	}
 
