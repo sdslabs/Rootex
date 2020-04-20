@@ -124,7 +124,6 @@ void CPUParticlesVisualComponent::render(RenderPass renderPass)
 
 			RenderSystem::GetSingleton()->pushMatrix(Matrix::CreateScale(size) * Matrix::CreateFromQuaternion(particle.m_Rotation) * Matrix::CreateTranslation(particle.m_Position) * Matrix::Identity);
 			CPUParticlesMaterial* material = reinterpret_cast<CPUParticlesMaterial*>(getMaterial());
-			material->setVertexShaderConstantBuffer(Material::VertexConstantBufferType::Model, RenderSystem::GetSingleton()->getTopMatrix());
 			material->setPixelShaderConstantBuffer(PSSolidConstantBuffer({ color }));
 			RenderSystem::GetSingleton()->getRenderer()->draw(m_VisualModelResourceFile->getVertexBuffer(), m_VisualModelResourceFile->getIndexBuffer(), getMaterial());
 			RenderSystem::GetSingleton()->popMatrix();

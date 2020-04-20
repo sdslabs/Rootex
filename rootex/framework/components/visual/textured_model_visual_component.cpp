@@ -49,9 +49,6 @@ TexturedModelVisualComponent::~TexturedModelVisualComponent()
 
 void TexturedModelVisualComponent::render(RenderPass renderPass)
 {
-	m_Material->setVertexShaderConstantBuffer(Material::VertexConstantBufferType::Model, RenderSystem::GetSingleton()->getTopMatrix());
-	m_Material->setVertexShaderConstantBuffer(Material::VertexConstantBufferType::ModelInverse, RenderSystem::GetSingleton()->getTopMatrix().Invert());
-	
 	RenderSystem::GetSingleton()->getRenderer()->draw(getVertexBuffer(), getIndexBuffer(), getMaterial());
 }
 
