@@ -12,7 +12,7 @@ public:
 	{
 		Model,
 		ModelInverse,
-		END
+		End
 	};
 
 protected:
@@ -38,10 +38,10 @@ public:
 	enum class PixelConstantBufferType
 	{
 		Color,
-		END
+		End
 	};
 	
-	void setPixelShaderConstantBuffer (const PSSolidConstantBuffer& constantBuffer);
+	void setPixelShaderConstantBuffer(const PSSolidConstantBuffer& constantBuffer);
 
 	void bind() override;
 
@@ -49,7 +49,7 @@ public:
 	~ColorMaterial() = default;
 };
 
-class TextureMaterial : public Material
+class TexturedMaterial : public Material
 {
 	DiffuseShader* m_DiffuseShader;
 	Ref<Texture> m_DiffuseTexture;
@@ -61,10 +61,10 @@ public:
 	{
 		Lights,
 		Material,
-		END
+		End
 	};
-	TextureMaterial(Ref<Texture> diffuseTexture);
-	~TextureMaterial() = default;
+	TexturedMaterial(Ref<Texture> diffuseTexture);
+	~TexturedMaterial() = default;
 	void setPixelShaderConstantBuffer(const PSDiffuseConstantBuffer& constantBuffer);
 	
 	void bind() override;
@@ -77,7 +77,7 @@ public:
 	enum class PixelConstantBufferType
 	{
 		Color,
-		END
+		End
 	};
 	CPUParticlesMaterial();
 	~CPUParticlesMaterial() = default;

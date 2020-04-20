@@ -355,7 +355,6 @@ void RenderingDevice::getBufferMappedContext(ID3D11Buffer* buffer, D3D11_MAPPED_
 }
 
 //Assuming subresource offset = 0
-
 void RenderingDevice::unmapBuffer(ID3D11Buffer* buffer)
 {
 	m_Context->Unmap(buffer, 0);
