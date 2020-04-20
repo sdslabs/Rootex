@@ -256,7 +256,7 @@ void EntityFactory::destroyEntities(bool saveRoot)
 				}
 			}
 
-			if ((entity.second->getID() == INVALID_ID))
+			if (entity.second->getID() == INVALID_ID || entity.second->isEditorOnly())
 			{
 				continue;
 			}

@@ -1,0 +1,43 @@
+{
+	"Entity": {
+		"name": "EditorCamera"
+	},
+	"Components": {
+		"HierarchyComponent": {
+			"parent": 1,
+			"children": []
+		},
+		"TransformComponent": {
+			"position": {
+				"x": 0,
+				"y": 0,
+				"z": 0
+			},
+			"rotation": {
+				"x": 0,
+				"y": 0,
+				"z": 0,
+				"w": 0
+			},
+			"scale": {
+				"x": 1,
+				"y": 1,
+				"z": 1
+			}
+		},
+		"CameraComponent": {
+			"aspectRatio": {
+                "x": 16.0,
+                "y": 9.0
+            },
+            "far": 100.0,
+            "fov": 0.7853981852531433,
+            "near": 0.10000000149011612,
+            "offset": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 4.0
+            }
+		}
+	}
+}

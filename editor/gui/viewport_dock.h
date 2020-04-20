@@ -22,6 +22,9 @@ public:
 
 private:
 	ViewportDockSettings m_ViewportDockSettings;
+	Matrix m_ApplyCameraMatrix = Matrix::Identity;
+	Ref<Entity> m_EditorCamera;
+	float m_EditorCameraSpeed = 0.1f;
 
 public:
 	ViewportDock(const JSON::json& viewportJSON);

@@ -42,8 +42,8 @@ class InputManager
 	InputListener m_Listener;
 	HashMap<Device, unsigned int> DeviceIDs;
 
-	HashMap<unsigned int, Event::Type> m_InputEventNames;
-	HashMap<Event::Type, unsigned int> m_InputEventIDs;
+	HashMap<unsigned int, Event::Type> m_InputEventIDNames;
+	HashMap<Event::Type, unsigned int> m_InputEventNameIDs;
 
 	unsigned int m_Width;
 	unsigned int m_Height;
@@ -52,38 +52,32 @@ class InputManager
 	InputManager(InputManager&) = delete;
 	~InputManager();
 
-	void registerInput(const String& input);
 	void forwardMessage(const MSG& msg);
 
 	friend class Window;
+
+	unsigned int getNextID();
 
 public:
 	static InputManager* GetSingleton();
 
 	void initialize(unsigned int width, unsigned int height);
 
-	/// Enables the default context of inputs.    \n
-	/// "InputForward" -> W (bool)                \n
-	/// "InputLeft" -> A (bool)                   \n
-	/// "InputBackward" -> S (bool)               \n
-	/// "InputRight" -> D (bool)                  \n
-	/// "InputExit" -> Escape (bool)              \n
-	/// "InputMouseX" -> Mouse X position (float) \n
-	/// "InputMouseY" -> Mouse Y position (float) \n
-	void enableDefaultContext();
-
 	/// Bind an event to a button on a device.
-	void mapBool(Event::Type action, Device device, DeviceButtonID button);
+	void mapBool(const Event::Type& action, Device device, DeviceButtonID button);
 	/// Bind an event to a float on a device.
-	void mapFloat(Event::Type action, Device device, DeviceButtonID button);
+	void mapFloat(const Event::Type& action, Device device, DeviceButtonID button);
 
-	bool isPressed(Event::Type action);
-	bool wasPressed(Event::Type action);
-	float getFloat(Event::Type action);
-	float getDelta(Event::Type action);
+	void unmap(const Event::Type& action);
+
+	bool isPressed(const Event::Type& action);
+	bool wasPressed(const Event::Type& action);
+	float getFloat(const Event::Type& action);
+	float getDelta(const Event::Type& action);
 
 	void update();
 
+	const gainput::InputMap& getMap() const { return m_GainputMap; }
 	gainput::InputDeviceMouse* getMouse() { return static_cast<gainput::InputDeviceMouse*>(m_GainputManager.GetDevice(DeviceIDs[Device::Mouse])); }
 	gainput::InputDeviceKeyboard* getKeyboard() { return static_cast<gainput::InputDeviceKeyboard*>(m_GainputManager.GetDevice(DeviceIDs[Device::Keyboard])); }
 	gainput::InputDevicePad* getPad1() { return static_cast<gainput::InputDevicePad*>(m_GainputManager.GetDevice(DeviceIDs[Device::Pad1])); }
