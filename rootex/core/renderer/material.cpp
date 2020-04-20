@@ -4,6 +4,7 @@
 #include "texture.h"
 
 #include "framework/systems/light_system.h"
+#include "framework/systems/render_system.h"
 
 Material::Material()
     : m_Shader(ShaderLibrary::GetDefaultShader())
@@ -28,11 +29,14 @@ TexturedMaterial::TexturedMaterial(Ref<Texture> diffuseTexture)
 
 void ColorMaterial::bind()
 {
+	setVertexShaderConstantBuffer(Material::VertexConstantBufferType::Model, RenderSystem::GetSingleton()->getTopMatrix());
 	m_Shader->bind();
 }
 
 void TexturedMaterial::bind()
 {
+	setVertexShaderConstantBuffer(Material::VertexConstantBufferType::Model, RenderSystem::GetSingleton()->getTopMatrix());
+	setVertexShaderConstantBuffer(Material::VertexConstantBufferType::ModelInverse, RenderSystem::GetSingleton()->getTopMatrix().Invert());
 	m_Shader->bind();
 	m_DiffuseShader->set(m_DiffuseTexture.get());
 	const PSDiffuseConstantBuffer Cb = { LightSystem::GetSingleton()->getLights(), { 0.6f, 30.0f, { 0.0f, 0.0f } } };
@@ -72,6 +76,7 @@ void CPUParticlesMaterial::setPixelShaderConstantBuffer(const PSSolidConstantBuf
 
 void CPUParticlesMaterial::bind()
 {
+	setVertexShaderConstantBuffer(Material::VertexConstantBufferType::Model, RenderSystem::GetSingleton()->getTopMatrix());
 	m_Shader->bind();
 }
 
