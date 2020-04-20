@@ -8,22 +8,22 @@
 Material::Material()
     : m_Shader(ShaderLibrary::GetDefaultShader())
 {
-	m_VSConstantBuffer.resize((int)VertexConstantBufferType::END, nullptr);
+	m_VSConstantBuffer.resize((int)VertexConstantBufferType::End, nullptr);
 }
 
 Material::Material(Shader* shader)
     : m_Shader(shader)
 {
-	m_VSConstantBuffer.resize((int)VertexConstantBufferType::END, nullptr);
+	m_VSConstantBuffer.resize((int)VertexConstantBufferType::End, nullptr);
 }
 
-TextureMaterial::TextureMaterial(Ref<Texture> diffuseTexture)
+TexturedMaterial::TexturedMaterial(Ref<Texture> diffuseTexture)
     : Material(ShaderLibrary::GetDiffuseShader())
     , m_DiffuseTexture(diffuseTexture)
     , m_DiffuseShader(reinterpret_cast<DiffuseShader*>(m_Shader))
 {
 	m_SamplerState = RenderingDevice::GetSingleton()->createSamplerState();
-	m_PSConstantBuffer.resize((int)PixelConstantBufferType::END, nullptr);
+	m_PSConstantBuffer.resize((int)PixelConstantBufferType::End, nullptr);
 }
 
 void ColorMaterial::bind()
@@ -31,7 +31,7 @@ void ColorMaterial::bind()
 	m_Shader->bind();
 }
 
-void TextureMaterial::bind()
+void TexturedMaterial::bind()
 {
 	m_Shader->bind();
 	m_DiffuseShader->set(m_DiffuseTexture.get());
@@ -42,7 +42,7 @@ void TextureMaterial::bind()
 CPUParticlesMaterial::CPUParticlesMaterial()
     : Material(ShaderLibrary::GetCPUParticlesShader())
 {
-	m_PSConstantBuffer.resize((int)PixelConstantBufferType::END, nullptr);
+	m_PSConstantBuffer.resize((int)PixelConstantBufferType::End, nullptr);
 }
 
 void CPUParticlesMaterial::setPixelShaderConstantBuffer(const PSSolidConstantBuffer& constantBuffer)
@@ -78,7 +78,7 @@ void CPUParticlesMaterial::bind()
 ColorMaterial::ColorMaterial()
     : Material()
 {
-	m_PSConstantBuffer.resize((int)PixelConstantBufferType::END, nullptr);
+	m_PSConstantBuffer.resize((int)PixelConstantBufferType::End, nullptr);
 }
 
 void Material::setVertexShaderConstantBuffer(const VertexConstantBufferType type, const Matrix& constantBuffer)
@@ -116,7 +116,7 @@ void Material::setVertexShaderConstantBuffer(const VertexConstantBufferType type
 	}
 }
 
-void TextureMaterial::setPixelShaderConstantBuffer(const PSDiffuseConstantBuffer& constantBuffer)
+void TexturedMaterial::setPixelShaderConstantBuffer(const PSDiffuseConstantBuffer& constantBuffer)
 {
 	if (m_PSConstantBuffer[(int)PixelConstantBufferType::Lights] == nullptr)
 	{

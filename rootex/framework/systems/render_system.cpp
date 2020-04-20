@@ -107,7 +107,6 @@ void RenderSystem::popUIMatrix()
 
 void RenderSystem::setProjectionConstantBuffers()
 {
-	getCamera()->refreshProjectionMatrix();
 	const Matrix& projection = getCamera()->getProjectionMatrix();
 	if (m_VSProjectionConstantBuffer == nullptr || m_VSViewConstantBuffer == nullptr)
 	{
@@ -134,7 +133,6 @@ void RenderSystem::setProjectionConstantBuffers()
 
 void RenderSystem::setViewConstantBuffers()
 {
-	getCamera()->refreshViewMatrix();
 	const Matrix& view = getCamera()->getViewMatrix();
 	if (m_VSProjectionConstantBuffer == nullptr || m_VSViewConstantBuffer == nullptr)
 	{

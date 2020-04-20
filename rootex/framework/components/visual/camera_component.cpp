@@ -5,8 +5,7 @@ Component* CameraComponent::Create(const JSON::json& componentData)
 {
 	CameraComponent* cameraVisualComponent = new CameraComponent(
 	    { componentData["aspectRatio"]["x"], componentData["aspectRatio"]["y"] },
-	    { componentData["offset"]["x"], componentData["offset"]["y"], componentData["offset"]["z"] },
-		componentData["fov"],
+	    componentData["fov"],
 		componentData["near"],
 		componentData["far"]);
 	return cameraVisualComponent;
@@ -16,34 +15,19 @@ Component* CameraComponent::CreateDefault()
 {
 	CameraComponent* cameraVisualComponent = new CameraComponent(
 	    { 16.0f, 9.0f }, 
-		{ 0.0f, 0.0f, 4.0f },
 		DirectX::XM_PI / 4.0f,
 		0.1f, 100.0f);
 	return cameraVisualComponent;
 }
 
-CameraComponent::CameraComponent(const Vector2& aspectRatio, const Vector3& offset, float fov, float nearPlane, float farPlane)
+CameraComponent::CameraComponent(const Vector2& aspectRatio, float fov, float nearPlane, float farPlane)
     : m_Active(false)
     , m_FoV(fov)
-    , m_CameraOffset(offset)
     , m_AspectRatio(aspectRatio)
     , m_Near(nearPlane)
     , m_Far(farPlane)
     , m_TransformComponent(nullptr)
 {
-}
-
-void CameraComponent::refreshProjectionMatrix()
-{
-	m_ProjectionMatrix = Matrix::CreatePerspectiveFieldOfView(m_FoV, m_AspectRatio.x / m_AspectRatio.y, m_Near, m_Far);
-}
-
-void CameraComponent::refreshViewMatrix()
-{
-	m_ViewMatrix = Matrix::CreateLookAt(
-	    m_TransformComponent->getAbsoluteTransform().Translation() + m_CameraOffset,
-	    m_TransformComponent->getAbsoluteTransform().Translation(),
-	    m_TransformComponent->getAbsoluteTransform().Up());
 }
 
 void CameraComponent::onRemove()
@@ -63,12 +47,6 @@ bool CameraComponent::setup()
 		{
 			return false;
 		}
-
-		m_ProjectionMatrix = Matrix::CreatePerspectiveFieldOfView(m_FoV, m_AspectRatio.x / m_AspectRatio.y, m_Near, m_Far);
-		m_ViewMatrix = Matrix::CreateLookAt(
-		    m_TransformComponent->getAbsoluteTransform().Translation() + m_CameraOffset,
-		    m_TransformComponent->getAbsoluteTransform().Translation(),
-		    m_TransformComponent->getAbsoluteTransform().Up());
 	}
 
 	return true;
@@ -86,12 +64,13 @@ const Matrix& CameraComponent::getViewMatrix()
 		direction = XMVector3Rotate(direction, rotation);
 		up = XMVector3Rotate(up, rotation);
 	}
-	m_ViewMatrix = Matrix::CreateLookAt(position + m_CameraOffset, position, up);
+	m_ViewMatrix = Matrix::CreateLookAt(position, position + direction, up);
 	return m_ViewMatrix;
 }
 
 const Matrix& CameraComponent::getProjectionMatrix()
 {
+	m_ProjectionMatrix = Matrix::CreatePerspectiveFieldOfView(m_FoV, m_AspectRatio.x / m_AspectRatio.y, m_Near, m_Far);
 	return m_ProjectionMatrix;
 }
 
@@ -101,10 +80,6 @@ JSON::json CameraComponent::getJSON() const
 
 	j["aspectRatio"]["x"] = m_AspectRatio.x;
 	j["aspectRatio"]["y"] = m_AspectRatio.y;
-
-	j["offset"]["x"] = m_CameraOffset.x;
-	j["offset"]["y"] = m_CameraOffset.y;
-	j["offset"]["z"] = m_CameraOffset.z;
 
 	j["fov"] = m_FoV;
 	j["near"] = m_Near;
@@ -127,17 +102,6 @@ void CameraComponent::draw()
 	{
 		m_AspectRatio = { 16.0f, 9.0f };
 		RenderSystem::GetSingleton()->setProjectionConstantBuffers();		
-	}
-
-	if (ImGui::DragFloat3("##Offset", &m_CameraOffset.x, 0.01f))
-	{
-		RenderSystem::GetSingleton()->setViewConstantBuffers();		
-	}
-	ImGui::SameLine();
-	if (ImGui::Button("Offset"))
-	{
-		m_CameraOffset = { 0.0f, 0.0f, 4.0f };
-		RenderSystem::GetSingleton()->setViewConstantBuffers();
 	}
 
 	if (ImGui::SliderAngle("Field of View", &m_FoV, 1.0f, 180.0f))
