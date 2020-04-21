@@ -28,8 +28,7 @@ class PhysicsSystem : public System
 	btVector3 m_From;
 	btVector3 m_To;
 
-	PhysicsSystem()
-	    = default;
+	PhysicsSystem() = default;
 
 public:
 	static PhysicsSystem* GetSingleton();
@@ -41,7 +40,7 @@ public:
 
 	/// Initialization and Maintenance of the Physics World
 	void initialize();
-
+	
 	/// Callback from bullet for each physics time step.
 	static void internalTickCallback(btDynamicsWorld* const world, btScalar const timeStep);
 
