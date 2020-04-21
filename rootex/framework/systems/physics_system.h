@@ -25,7 +25,11 @@ class PhysicsSystem : public System
 	/// Table of all the material types and their respective data.
 	sol::table m_PhysicsMaterialTable;
 
-	PhysicsSystem() = default;
+	btVector3 m_From;
+	btVector3 m_To;
+
+	PhysicsSystem()
+	    = default;
 
 public:
 	static PhysicsSystem* GetSingleton();
@@ -33,10 +37,11 @@ public:
 
 	void addRigidBody(btRigidBody* body);
 	sol::table getPhysicsMaterial();
+	void castRays();
 
 	/// Initialization and Maintenance of the Physics World
 	void initialize();
-	
+
 	/// Callback from bullet for each physics time step.
 	static void internalTickCallback(btDynamicsWorld* const world, btScalar const timeStep);
 
