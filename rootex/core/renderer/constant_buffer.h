@@ -2,14 +2,6 @@
 
 #include "common/common.h"
 
-/// Model, View, Projection matrices to be bound as the constant buffers in Vertex Shaders
-struct VSConstantBuffer
-{
-	Matrix m_M;
-	Matrix m_V;
-	Matrix m_P;
-};
-
 /// Used to bind a point light to the Pixel shader
 struct PointLightInfo
 {
@@ -58,7 +50,7 @@ struct SpotLightInfo
 };
 
 /// Lighting properties of a material
-struct MaterialInfo
+struct PSDiffuseConstantBufferMaterial
 {
 	/// Describes brightness of specular spot, high for metallic material
 	float specularIntensity = 2.0f;
@@ -68,7 +60,7 @@ struct MaterialInfo
 };
 
 /// Encapsulates all the types of lights offered, to bind them in the Pixel Shader
-struct Lights
+struct PSDiffuseConstantBufferLights
 {
 	int pointLightCount = 0;
 	float pad[3];
@@ -81,15 +73,32 @@ struct Lights
 	SpotLightInfo spotLightInfos[4];
 };
 
-/// Pixel Shader constant buffer for material affected by lighting
-struct PSDiffuseConstantBuffer
-{
-	Lights lights;
-	MaterialInfo material;
-};
-
 /// Pixel Shader constant buffer for material not affected by lighting and single color
 struct PSSolidConstantBuffer
 {
 	Color color;
+};
+
+/// Vertex Shader constant buffer for material not affected by lighting
+struct VSSolidConstantBuffer
+{
+	Matrix Model;
+	explicit VSSolidConstantBuffer() = delete;
+	VSSolidConstantBuffer(const Matrix& model)
+	{
+		Model = model.Transpose();
+	}
+};
+
+/// Vertex Shader constant buffer for material affected by lighting
+struct VSDiffuseConstantBuffer
+{
+	Matrix Model;
+	Matrix ModelInverse;
+	explicit VSDiffuseConstantBuffer() = delete; // https://stackoverflow.com/a/43694276
+	VSDiffuseConstantBuffer(const Matrix& model)
+	{
+		Model = model.Transpose();
+		ModelInverse = Model.Invert();
+	}
 };

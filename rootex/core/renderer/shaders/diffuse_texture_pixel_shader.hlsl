@@ -41,7 +41,7 @@ struct SpotLightInfo
     float angleRange;
 };
 
-cbuffer Lights : register(b0)
+cbuffer Lights : register(b2)
 {
     int pointLightCount;
     PointLightInfo pointLightInfos[4];
@@ -51,7 +51,7 @@ cbuffer Lights : register(b0)
     SpotLightInfo spotLightInfos[4];
 };
 
-cbuffer Material: register(b1)
+cbuffer Material: register(b3)
 {
     float specularIntensity;
     float specPow;

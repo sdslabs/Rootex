@@ -1,21 +1,19 @@
-cbuffer CBuf : register(b1)
+#include "register_locations_vertex_shader.h"
+
+cbuffer CBuf : register(PER_OBJECT)
 {
     matrix M;
+    matrix MInverse;
 };
 
-cbuffer CBuf : register(b2)
+cbuffer CBuf : register(PER_FRAME)
 {
     matrix V;
 };
 
-cbuffer CBuf : register(b3)
+cbuffer CBuf : register(PER_CAMERA_CHANGE)
 {
     matrix P;
-};
-
-cbuffer CBuf : register(b4)
-{
-    matrix MInverse;
 };
 
 struct VertexInputType

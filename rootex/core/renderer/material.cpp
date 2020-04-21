@@ -9,13 +9,63 @@
 Material::Material()
     : m_Shader(ShaderLibrary::GetDefaultShader())
 {
-	m_VSConstantBuffer.resize((int)VertexConstantBufferType::End, nullptr);
 }
 
 Material::Material(Shader* shader)
     : m_Shader(shader)
 {
-	m_VSConstantBuffer.resize((int)VertexConstantBufferType::End, nullptr);
+}
+
+template <typename T>
+void Material::setPixelShaderConstantBuffer(const T& constantBuffer, Microsoft::WRL::ComPtr<ID3D11Buffer>& pointer, UINT slot)
+{
+	if (pointer == nullptr)
+	{
+		D3D11_BUFFER_DESC cbd = { 0 };
+		cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		cbd.Usage = D3D11_USAGE_DYNAMIC;
+		cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		cbd.MiscFlags = 0u;
+		cbd.ByteWidth = sizeof(T);
+		cbd.StructureByteStride = 0u;
+		D3D11_SUBRESOURCE_DATA csd = { 0 };
+		csd.pSysMem = &constantBuffer;
+
+		pointer = RenderingDevice::GetSingleton()->createPSConstantBuffer(&cbd, &csd, slot);
+	}
+	else
+	{
+		D3D11_MAPPED_SUBRESOURCE subresource;
+		RenderingDevice::GetSingleton()->getBufferMappedContext(pointer.Get(), subresource);
+		memcpy(subresource.pData, &constantBuffer, sizeof(constantBuffer));
+		RenderingDevice::GetSingleton()->unmapBuffer(pointer.Get());
+	}
+}
+
+template <typename T>
+void Material::setVertexShaderConstantBuffer(const T& constantBuffer, Microsoft::WRL::ComPtr<ID3D11Buffer>& pointer, UINT slot)
+{
+	if (pointer == nullptr)
+	{
+		D3D11_BUFFER_DESC cbd = { 0 };
+		cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		cbd.Usage = D3D11_USAGE_DYNAMIC;
+		cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		cbd.MiscFlags = 0u;
+		cbd.ByteWidth = sizeof(T);
+		cbd.StructureByteStride = 0u;
+		D3D11_SUBRESOURCE_DATA csd = { 0 };
+		csd.pSysMem = &constantBuffer;
+
+		pointer = RenderingDevice::GetSingleton()->createVSConstantBuffer(&cbd, &csd, slot);
+	}
+	else
+	{
+		D3D11_MAPPED_SUBRESOURCE subresource;
+		RenderingDevice::GetSingleton()->getBufferMappedContext(pointer.Get(), subresource);
+		memcpy(subresource.pData, &constantBuffer, sizeof(constantBuffer));
+		RenderingDevice::GetSingleton()->unmapBuffer(pointer.Get());
+	}
 }
 
 TexturedMaterial::TexturedMaterial(Ref<Texture> diffuseTexture)
@@ -25,58 +75,69 @@ TexturedMaterial::TexturedMaterial(Ref<Texture> diffuseTexture)
 {
 	m_SamplerState = RenderingDevice::GetSingleton()->createSamplerState();
 	m_PSConstantBuffer.resize((int)PixelConstantBufferType::End, nullptr);
+	m_VSConstantBuffer.resize((int)VertexConstantBufferType::End, nullptr);
+}
+
+void ColorMaterial::setPixelShaderConstantBuffer(const PSSolidConstantBuffer& constantBuffer)
+{
+	Material::setPixelShaderConstantBuffer<PSSolidConstantBuffer>(constantBuffer, m_PSConstantBuffer[(int)PixelConstantBufferType::Color], 3u);
+}
+
+void ColorMaterial::setVertexShaderConstantBuffer(const VSSolidConstantBuffer& constantBuffer)
+{
+	Material::setVertexShaderConstantBuffer<VSSolidConstantBuffer>(constantBuffer, m_VSConstantBuffer[(int)VertexConstantBufferType::Model], 1u);
+}
+
+void TexturedMaterial::setPixelShaderConstantBuffer(const PSDiffuseConstantBufferLights& constantBuffer)
+{
+	Material::setPixelShaderConstantBuffer<PSDiffuseConstantBufferLights>(constantBuffer, m_PSConstantBuffer[(int)PixelConstantBufferType::Lights], 2u);
+}
+
+void TexturedMaterial::setPixelShaderConstantBuffer(const PSDiffuseConstantBufferMaterial& constantBuffer)
+{
+	Material::setPixelShaderConstantBuffer<PSDiffuseConstantBufferMaterial>(constantBuffer, m_PSConstantBuffer[(int)PixelConstantBufferType::Material], 3u);
+}
+
+void TexturedMaterial::setVertexShaderConstantBuffer(const VSDiffuseConstantBuffer& constantBuffer)
+{
+	Material::setVertexShaderConstantBuffer<VSDiffuseConstantBuffer>(constantBuffer, m_VSConstantBuffer[(int)VertexConstantBufferType::Model], 1u);
+}
+
+void CPUParticlesMaterial::setPixelShaderConstantBuffer(const PSSolidConstantBuffer& constantBuffer)
+{
+	Material::setPixelShaderConstantBuffer<PSSolidConstantBuffer>(constantBuffer, m_PSConstantBuffer[(int)PixelConstantBufferType::Color], 3u);
+}
+
+void CPUParticlesMaterial::setVertexShaderConstantBuffer(const VSSolidConstantBuffer& constantBuffer)
+{
+	Material::setVertexShaderConstantBuffer<VSSolidConstantBuffer>(constantBuffer, m_VSConstantBuffer[(int)VertexConstantBufferType::Model], 1u);
 }
 
 void ColorMaterial::bind()
 {
-	setVertexShaderConstantBuffer(Material::VertexConstantBufferType::Model, RenderSystem::GetSingleton()->getTopMatrix());
+	setVertexShaderConstantBuffer(VSSolidConstantBuffer(RenderSystem::GetSingleton()->getTopMatrix()));
 	m_Shader->bind();
 }
 
 void TexturedMaterial::bind()
 {
-	setVertexShaderConstantBuffer(Material::VertexConstantBufferType::Model, RenderSystem::GetSingleton()->getTopMatrix());
-	setVertexShaderConstantBuffer(Material::VertexConstantBufferType::ModelInverse, RenderSystem::GetSingleton()->getTopMatrix().Invert());
+	setVertexShaderConstantBuffer(VSDiffuseConstantBuffer(RenderSystem::GetSingleton()->getTopMatrix()));
 	m_Shader->bind();
 	m_DiffuseShader->set(m_DiffuseTexture.get());
-	const PSDiffuseConstantBuffer Cb = { LightSystem::GetSingleton()->getLights(), { 0.6f, 30.0f, { 0.0f, 0.0f } } };
-	setPixelShaderConstantBuffer(Cb);
+	setPixelShaderConstantBuffer({ LightSystem::GetSingleton()->getLights() });
+	setPixelShaderConstantBuffer(PSDiffuseConstantBufferMaterial ({ 0.6f, 30.0f, { 0.0f, 0.0f } }));
 }
 
 CPUParticlesMaterial::CPUParticlesMaterial()
     : Material(ShaderLibrary::GetCPUParticlesShader())
 {
 	m_PSConstantBuffer.resize((int)PixelConstantBufferType::End, nullptr);
-}
-
-void CPUParticlesMaterial::setPixelShaderConstantBuffer(const PSSolidConstantBuffer& constantBuffer)
-{
-	if (m_PSConstantBuffer[(int)PixelConstantBufferType::Color] == nullptr)
-	{
-		D3D11_BUFFER_DESC cbd = { 0 };
-		cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		cbd.Usage = D3D11_USAGE_DYNAMIC;
-		cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		cbd.MiscFlags = 0u;
-		cbd.ByteWidth = sizeof(constantBuffer);
-		cbd.StructureByteStride = 0u;
-		D3D11_SUBRESOURCE_DATA csd = { 0 };
-		csd.pSysMem = &constantBuffer;
-
-		m_PSConstantBuffer[(int)PixelConstantBufferType::Color] = RenderingDevice::GetSingleton()->createPSConstantBuffer(&cbd, &csd, 0);
-	}
-	else
-	{
-		D3D11_MAPPED_SUBRESOURCE subresource;
-		RenderingDevice::GetSingleton()->getBufferMappedContext(m_PSConstantBuffer[(int)PixelConstantBufferType::Color].Get(), subresource);
-		memcpy(subresource.pData, &constantBuffer, sizeof(constantBuffer));
-		RenderingDevice::GetSingleton()->unmapBuffer(m_PSConstantBuffer[(int)PixelConstantBufferType::Color].Get());
-	}
+	m_VSConstantBuffer.resize((int)VertexConstantBufferType::End, nullptr);
 }
 
 void CPUParticlesMaterial::bind()
 {
-	setVertexShaderConstantBuffer(Material::VertexConstantBufferType::Model, RenderSystem::GetSingleton()->getTopMatrix());
+	setVertexShaderConstantBuffer(VSSolidConstantBuffer ({ RenderSystem::GetSingleton()->getTopMatrix() }));
 	m_Shader->bind();
 }
 
@@ -84,111 +145,5 @@ ColorMaterial::ColorMaterial()
     : Material()
 {
 	m_PSConstantBuffer.resize((int)PixelConstantBufferType::End, nullptr);
-}
-
-void Material::setVertexShaderConstantBuffer(const VertexConstantBufferType type, const Matrix& constantBuffer)
-{
-	if (m_VSConstantBuffer[(int)type] == nullptr)
-	{
-		D3D11_BUFFER_DESC cbd = { 0 };
-		cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		cbd.Usage = D3D11_USAGE_DYNAMIC;
-		cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		cbd.MiscFlags = 0u;
-		cbd.ByteWidth = sizeof(constantBuffer);
-		cbd.StructureByteStride = 0u;
-		D3D11_SUBRESOURCE_DATA csd = { 0 };
-		csd.pSysMem = &constantBuffer.Transpose();
-
-		switch (type)
-		{
-		case VertexConstantBufferType::Model:
-			m_VSConstantBuffer[(int)VertexConstantBufferType::Model] = RenderingDevice::GetSingleton()->createVSModelConstantBuffer(&cbd, &csd);
-			break;
-		case VertexConstantBufferType::ModelInverse:
-			m_VSConstantBuffer[(int)VertexConstantBufferType::ModelInverse] = RenderingDevice::GetSingleton()->createVSModelInverseConstantBuffer(&cbd, &csd);
-			break;
-		default:
-			break;
-		}
-	}
-	else
-	{
-		D3D11_MAPPED_SUBRESOURCE subresource = { 0 };
-		RenderingDevice::GetSingleton()->getBufferMappedContext(m_VSConstantBuffer[(int)type].Get(), subresource);
-		memcpy(subresource.pData, &constantBuffer.Transpose(), sizeof(constantBuffer));
-		RenderingDevice::GetSingleton()->unmapBuffer(m_VSConstantBuffer[(int)type].Get());
-	}
-}
-
-void TexturedMaterial::setPixelShaderConstantBuffer(const PSDiffuseConstantBuffer& constantBuffer)
-{
-	if (m_PSConstantBuffer[(int)PixelConstantBufferType::Lights] == nullptr)
-	{
-		D3D11_BUFFER_DESC cbd = { 0 };
-		cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		cbd.Usage = D3D11_USAGE_DYNAMIC;
-		cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		cbd.MiscFlags = 0u;
-		cbd.ByteWidth = sizeof(constantBuffer.lights);
-		cbd.StructureByteStride = 0u;
-		D3D11_SUBRESOURCE_DATA csd = { 0 };
-		csd.pSysMem = &constantBuffer.lights;
-
-		m_PSConstantBuffer[(int)PixelConstantBufferType::Lights] = RenderingDevice::GetSingleton()->createPSConstantBuffer(&cbd, &csd, 0);
-	}
-	else
-	{
-		D3D11_MAPPED_SUBRESOURCE subresource;
-		RenderingDevice::GetSingleton()->getBufferMappedContext(m_PSConstantBuffer[(int)PixelConstantBufferType::Lights].Get(), subresource);
-		memcpy(subresource.pData, &constantBuffer.lights, sizeof(constantBuffer.lights));
-		RenderingDevice::GetSingleton()->unmapBuffer(m_PSConstantBuffer[(int)PixelConstantBufferType::Lights].Get());
-	}
-
-	if (m_PSConstantBuffer[(int)PixelConstantBufferType::Material] == nullptr)
-	{
-		D3D11_BUFFER_DESC cbd = { 0 };
-		cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		cbd.Usage = D3D11_USAGE_DYNAMIC;
-		cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		cbd.MiscFlags = 0u;
-		cbd.ByteWidth = sizeof(constantBuffer.material);
-		cbd.StructureByteStride = 0u;
-		D3D11_SUBRESOURCE_DATA csd = { 0 };
-		csd.pSysMem = &constantBuffer.material;
-		
-		m_PSConstantBuffer[(int)PixelConstantBufferType::Material] = RenderingDevice::GetSingleton()->createPSConstantBuffer(&cbd, &csd, 1);
-	}
-	else
-	{
-		D3D11_MAPPED_SUBRESOURCE subresource;
-		RenderingDevice::GetSingleton()->getBufferMappedContext(m_PSConstantBuffer[(int)PixelConstantBufferType::Material].Get(), subresource);
-		memcpy(subresource.pData, &constantBuffer.material, sizeof(constantBuffer.material));
-		RenderingDevice::GetSingleton()->unmapBuffer(m_PSConstantBuffer[(int)PixelConstantBufferType::Material].Get());
-	}
-}
-
-void ColorMaterial::setPixelShaderConstantBuffer(const PSSolidConstantBuffer& constantBuffer)
-{
-	if (m_PSConstantBuffer[(int)PixelConstantBufferType::Color] == nullptr)
-	{
-		D3D11_BUFFER_DESC cbd = { 0 };
-		cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		cbd.Usage = D3D11_USAGE_DYNAMIC;
-		cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		cbd.MiscFlags = 0u;
-		cbd.ByteWidth = sizeof(constantBuffer);
-		cbd.StructureByteStride = 0u;
-		D3D11_SUBRESOURCE_DATA csd = { 0 };
-		csd.pSysMem = &constantBuffer;
-
-		m_PSConstantBuffer[(int)PixelConstantBufferType::Color] = RenderingDevice::GetSingleton()->createPSConstantBuffer(&cbd, &csd, 0);
-	}
-	else
-	{
-		D3D11_MAPPED_SUBRESOURCE subresource;
-		RenderingDevice::GetSingleton()->getBufferMappedContext(m_PSConstantBuffer[(int)PixelConstantBufferType::Color].Get(), subresource);
-		memcpy(subresource.pData, &constantBuffer, sizeof(constantBuffer));
-		RenderingDevice::GetSingleton()->unmapBuffer(m_PSConstantBuffer[(int)PixelConstantBufferType::Color].Get());
-	}
+	m_VSConstantBuffer.resize((int)VertexConstantBufferType::End, nullptr);
 }
