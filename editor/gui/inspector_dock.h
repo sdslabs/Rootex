@@ -12,6 +12,7 @@ public:
 	};
 
 private:
+	static InspectorDock* s_Singleton;
 	constexpr static unsigned int s_InputTextBufferSize = 256;
 
 	InspectorSettings m_InspectorSettings;
@@ -27,12 +28,15 @@ private:
 	void refreshAddNewComponentSelectionCache();
 
 public:
+	static InspectorDock* GetSingleton() { return s_Singleton; };
+
 	InspectorDock();
 	InspectorDock(InspectorDock&) = delete;
 	~InspectorDock() = default;
 
 	void draw();
 
+	Ref<Entity> getOpenedEntity() { return m_OpenedEntity; }
 	InspectorSettings& getSettings() { return m_InspectorSettings; }
 	void setActive(bool enabled) { m_InspectorSettings.m_IsActive = enabled; }
 };
