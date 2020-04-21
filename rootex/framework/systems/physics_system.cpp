@@ -63,8 +63,29 @@ void PhysicsSystem::castRays()
 		m_DynamicsWorld->updateAabbs();
 		m_DynamicsWorld->computeOverlappingPairs();
 
-		btCollisionWorld::AllHitsRayResultCallback allResults(m_From, m_To);
-		allResults.m_flags |= btTriangleCallback::
+		{
+			btCollisionWorld::AllHitsRayResultCallback allResults(m_From, m_To);
+			allResults.m_flags |= btTriangleRaycastCallback::kF_KeepUnflippedNormal;
+			allResults.m_flags |= btTriangleRaycastCallback::kF_UseSubSimplexConvexCastRaytest;
+
+			m_DynamicsWorld->rayTest(m_From, m_To, allResults);
+			for (int i = 0; i < allResults.m_hitFractions.size(); i++)
+			{
+				WARN("Hit Reported")
+			}
+		}
+
+		{
+			btCollisionWorld::ClosestRayResultCallback closestResults(m_From, m_To);
+			closestResults.m_flags |= btTriangleRaycastCallback::kF_FilterBackfaces;
+
+			m_DynamicsWorld->rayTest(m_From, m_To, closestResults);
+
+			if (closestResults.hasHit())
+			{
+				WARN("Hit Reported")
+			}
+		}
 	}
 }
 
@@ -92,6 +113,7 @@ void PhysicsSystem::internalTickCallback(btDynamicsWorld* const world, btScalar 
 
 void PhysicsSystem::update(float deltaMilliseconds)
 {
+	castRays();
 	m_DynamicsWorld->stepSimulation(deltaMilliseconds, 10);
 	syncVisibleScene();
 }
