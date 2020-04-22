@@ -346,7 +346,7 @@ void RenderingDevice::bind(ID3D11InputLayout* inputLayout)
 }
 
 //Assuming subresource offset = 0
-void RenderingDevice::getBufferMappedContext(ID3D11Buffer* buffer, D3D11_MAPPED_SUBRESOURCE& subresource)
+void RenderingDevice::mapBuffer(ID3D11Buffer* buffer, D3D11_MAPPED_SUBRESOURCE& subresource)
 {
 	if (FAILED(m_Context->Map(buffer, 0u, D3D11_MAP_WRITE_DISCARD, 0u, &subresource)))
 	{

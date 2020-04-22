@@ -127,7 +127,7 @@ void RenderSystem::setProjectionConstantBuffers()
 	else
 	{
 		D3D11_MAPPED_SUBRESOURCE subresource = { 0 };
-		RenderingDevice::GetSingleton()->getBufferMappedContext(m_VSProjectionConstantBuffer.Get(), subresource);
+		RenderingDevice::GetSingleton()->mapBuffer(m_VSProjectionConstantBuffer.Get(), subresource);
 		memcpy(subresource.pData, &projection.Transpose(), sizeof(projection));
 		RenderingDevice::GetSingleton()->unmapBuffer(m_VSProjectionConstantBuffer.Get());
 	}
@@ -153,7 +153,7 @@ void RenderSystem::perFrameVSCBBinds()
 	else
 	{
 		D3D11_MAPPED_SUBRESOURCE subresource = { 0 };
-		RenderingDevice::GetSingleton()->getBufferMappedContext(m_VSPerFrameConstantBuffer.Get(), subresource);
+		RenderingDevice::GetSingleton()->mapBuffer(m_VSPerFrameConstantBuffer.Get(), subresource);
 		memcpy(subresource.pData, &view.Transpose(), sizeof(view));
 		RenderingDevice::GetSingleton()->unmapBuffer(m_VSPerFrameConstantBuffer.Get());
 	}
@@ -179,7 +179,7 @@ void RenderSystem::perFramePSCBBinds()
 	else
 	{
 		D3D11_MAPPED_SUBRESOURCE subresource = { 0 };
-		RenderingDevice::GetSingleton()->getBufferMappedContext(m_PSPerFrameConstantBuffer.Get(), subresource);
+		RenderingDevice::GetSingleton()->mapBuffer(m_PSPerFrameConstantBuffer.Get(), subresource);
 		memcpy(subresource.pData, &view, sizeof(view));
 		RenderingDevice::GetSingleton()->unmapBuffer(m_PSPerFrameConstantBuffer.Get());
 	}
@@ -193,7 +193,7 @@ void RenderSystem::setCamera(CameraComponent* camera)
 
 void RenderSystem::restoreCamera()
 {
-	m_Camera = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<CameraComponent>().get();
+	setCamera(HierarchySystem::GetSingleton()->getRootEntity()->getComponent<CameraComponent>().get());
 }
 
 const Matrix& RenderSystem::getTopMatrix() const
