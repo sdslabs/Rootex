@@ -70,7 +70,6 @@ float4 main(PixelInputType input) : SV_TARGET
     float4 materialColor = ShaderTexture.Sample(SampleType, input.tex);
 
     float4 finalColor = { 0.0f, 0.0f, 0.0f, 1.0f };
-    //TODO- FIX THIS HARDCODE
     float3 toEye = normalize(cameraPos - (float3) input.worldPosition);
     
     for (int i = 0; i < pointLightCount; i++)

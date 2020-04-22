@@ -90,7 +90,7 @@ public:
 	void bind(ID3D11PixelShader* pixelShader);
 	void bind(ID3D11InputLayout* inputLayout);
 
-	void getBufferMappedContext(ID3D11Buffer* buffer, D3D11_MAPPED_SUBRESOURCE& subresource);
+	void mapBuffer(ID3D11Buffer* buffer, D3D11_MAPPED_SUBRESOURCE& subresource);
 	void unmapBuffer(ID3D11Buffer* buffer);
 	
 	/// Binds textures used in Pixel Shader

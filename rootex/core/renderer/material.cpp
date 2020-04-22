@@ -17,9 +17,9 @@ Material::Material(Shader* shader)
 }
 
 template <typename T>
-void Material::setPixelShaderConstantBuffer(const T& constantBuffer, Microsoft::WRL::ComPtr<ID3D11Buffer>& pointer, UINT slot)
+void Material::setPixelShaderConstantBuffer(const T& constantBuffer, Microsoft::WRL::ComPtr<ID3D11Buffer>& bufferPointer, UINT slot)
 {
-	if (pointer == nullptr)
+	if (bufferPointer == nullptr)
 	{
 		D3D11_BUFFER_DESC cbd = { 0 };
 		cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -31,21 +31,21 @@ void Material::setPixelShaderConstantBuffer(const T& constantBuffer, Microsoft::
 		D3D11_SUBRESOURCE_DATA csd = { 0 };
 		csd.pSysMem = &constantBuffer;
 
-		pointer = RenderingDevice::GetSingleton()->createPSConstantBuffer(&cbd, &csd, slot);
+		bufferPointer = RenderingDevice::GetSingleton()->createPSConstantBuffer(&cbd, &csd, slot);
 	}
 	else
 	{
 		D3D11_MAPPED_SUBRESOURCE subresource;
-		RenderingDevice::GetSingleton()->getBufferMappedContext(pointer.Get(), subresource);
+		RenderingDevice::GetSingleton()->mapBuffer(bufferPointer.Get(), subresource);
 		memcpy(subresource.pData, &constantBuffer, sizeof(constantBuffer));
-		RenderingDevice::GetSingleton()->unmapBuffer(pointer.Get());
+		RenderingDevice::GetSingleton()->unmapBuffer(bufferPointer.Get());
 	}
 }
 
 template <typename T>
-void Material::setVertexShaderConstantBuffer(const T& constantBuffer, Microsoft::WRL::ComPtr<ID3D11Buffer>& pointer, UINT slot)
+void Material::setVertexShaderConstantBuffer(const T& constantBuffer, Microsoft::WRL::ComPtr<ID3D11Buffer>& bufferPointer, UINT slot)
 {
-	if (pointer == nullptr)
+	if (bufferPointer == nullptr)
 	{
 		D3D11_BUFFER_DESC cbd = { 0 };
 		cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -57,14 +57,14 @@ void Material::setVertexShaderConstantBuffer(const T& constantBuffer, Microsoft:
 		D3D11_SUBRESOURCE_DATA csd = { 0 };
 		csd.pSysMem = &constantBuffer;
 
-		pointer = RenderingDevice::GetSingleton()->createVSConstantBuffer(&cbd, &csd, slot);
+		bufferPointer = RenderingDevice::GetSingleton()->createVSConstantBuffer(&cbd, &csd, slot);
 	}
 	else
 	{
 		D3D11_MAPPED_SUBRESOURCE subresource;
-		RenderingDevice::GetSingleton()->getBufferMappedContext(pointer.Get(), subresource);
+		RenderingDevice::GetSingleton()->mapBuffer(bufferPointer.Get(), subresource);
 		memcpy(subresource.pData, &constantBuffer, sizeof(constantBuffer));
-		RenderingDevice::GetSingleton()->unmapBuffer(pointer.Get());
+		RenderingDevice::GetSingleton()->unmapBuffer(bufferPointer.Get());
 	}
 }
 
@@ -137,12 +137,11 @@ CPUParticlesMaterial::CPUParticlesMaterial()
 
 void CPUParticlesMaterial::bind()
 {
-	setVertexShaderConstantBuffer(VSSolidConstantBuffer ({ RenderSystem::GetSingleton()->getTopMatrix() }));
+	setVertexShaderConstantBuffer(VSSolidConstantBuffer({ RenderSystem::GetSingleton()->getTopMatrix() }));
 	m_Shader->bind();
 }
 
 ColorMaterial::ColorMaterial()
-    : Material()
 {
 	m_PSConstantBuffer.resize((int)PixelConstantBufferType::End, nullptr);
 	m_VSConstantBuffer.resize((int)VertexConstantBufferType::End, nullptr);
