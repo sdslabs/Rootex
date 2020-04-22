@@ -198,7 +198,7 @@ void ViewportDock::draw()
 					m_IsCameraMoving = false;
 				}
 			}
-			m_EditorCamera->getComponent<TransformComponent>()->setTransform(m_ApplyCameraMatrix);
+			m_EditorCamera->getComponent<TransformComponent>()->setPosition(m_ApplyCameraMatrix.Translation());
 		}
 		ImGui::End();
 	}

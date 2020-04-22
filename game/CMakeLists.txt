@@ -11,7 +11,6 @@ add_executable(Game ${GameSource} ${GameHeaders} ${GameLuaScripts} ${GameJSONs})
 
 target_include_directories(Game PUBLIC ../)
 target_link_libraries(Game PUBLIC Rootex)
-target_precompile_headers(Game REUSE_FROM Rootex)
 add_dependencies(Game Rootex)
 
 source_group(TREE "../game/"
