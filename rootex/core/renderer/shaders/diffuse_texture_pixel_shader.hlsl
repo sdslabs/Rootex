@@ -87,7 +87,7 @@ float4 main(PixelInputType input) : SV_TARGET
             float specFactor = pow(max(dot(normalize(reflected), toEye), 0.0f), specPow);
             float3 specular = specularIntensity * specFactor * diffuse;
         
-            finalColor += float4(saturate((diffuse + (float3) pointLightInfos[i].ambientColor + specular) * (float3) materialColor * att), 0.0f);
+            finalColor += float4(saturate(((diffuse + (float3) pointLightInfos[i].ambientColor) * (float3) materialColor + specular) * att), 0.0f);
         }
     }
     
@@ -99,7 +99,7 @@ float4 main(PixelInputType input) : SV_TARGET
         float3 reflected = reflect(-direction, input.normal);
         float specFactor = pow(max(dot(normalize(reflected), toEye), 0.0f), specPow);
         float3 specular = specularIntensity * specFactor * diffuse;
-        finalColor += float4(saturate((diffuse + (float3) directionalLightInfo.ambientColor + specular) * (float3) materialColor), 0.0f);
+        finalColor += float4(saturate((diffuse + (float3) directionalLightInfo.ambientColor) * (float3) materialColor + specular), 0.0f);
     }
     
     for (i = 0; i < spotLightCount; i++)
@@ -122,7 +122,7 @@ float4 main(PixelInputType input) : SV_TARGET
             
                 float spotFactor = pow(rangeAngle, spotLightInfos[i].spot);
         
-                finalColor += float4(saturate((diffuse + (float3) spotLightInfos[i].ambientColor + specular) * (float3) materialColor * att * spotFactor), 0.0f);
+                finalColor += float4(saturate(((diffuse + (float3) spotLightInfos[i].ambientColor) * (float3) materialColor + specular) * att * spotFactor), 0.0f);
             }
         }
     }
