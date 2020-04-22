@@ -6,7 +6,7 @@ LightSystem* LightSystem::GetSingleton()
 	return &singleton;
 }
 
-Lights LightSystem::getLights()
+PSDiffuseConstantBufferLights LightSystem::getLights()
 {
 	const Vector<Component*>& pointLightComponents = s_Components[PointLightComponent::s_ID];
 
@@ -15,7 +15,7 @@ Lights LightSystem::getLights()
 		WARN("Point Lights specified are greater than 4");
 	}
 
-	Lights lights;
+	PSDiffuseConstantBufferLights lights;
 	
 	int i = 0;
 	for (; i < pointLightComponents.size() && i < 4; i++)

@@ -53,7 +53,7 @@ public:
 
 	virtual bool setup() override;
 	virtual bool preRender() override;
-	virtual void render() override;
+	virtual void render(RenderPass renderPass) override;
 	virtual void postRender() override;
 
 	void emit(const ParticleTemplate& particleTemplate);

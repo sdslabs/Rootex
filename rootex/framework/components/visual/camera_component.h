@@ -5,7 +5,7 @@
 class CameraComponent : public Component
 {
 	static Component* Create(const JSON::json& componentData);
-	static Component* CreateDefault();	
+	static Component* CreateDefault();
 
 	bool m_Active;
 	Vector3 m_CameraOffset;
@@ -20,7 +20,7 @@ class CameraComponent : public Component
 	CameraComponent(const Vector2& aspectRatio, const Vector3& offset, float fov, float nearPlane, float farPlane);
 	CameraComponent(CameraComponent&) = delete;
 	~CameraComponent() = default;
-	
+
 	friend class EntityFactory;
 
 	void refreshProjectionMatrix();
@@ -29,7 +29,7 @@ class CameraComponent : public Component
 public:
 	virtual bool setup() override;
 	void onRemove() override;
-	
+
 	virtual const Matrix& getViewMatrix();
 	virtual const Matrix& getProjectionMatrix();
 	void setOffset(const Vector3& offset) { m_CameraOffset = offset; }

@@ -60,6 +60,7 @@ EntityFactory::EntityFactory()
 	REGISTER_COMPONENT(SpotLightComponent);
 	REGISTER_COMPONENT(SphereColliderComponent);
 	REGISTER_COMPONENT(BoxColliderComponent);
+
 	REGISTER_COMPONENT(HierarchyComponent);
 
 	REGISTER_COMPONENT(ScriptComponent);

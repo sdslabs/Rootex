@@ -14,9 +14,9 @@ Component* ModelVisualComponent::Create(const JSON::json& componentData)
 {
 	ModelVisualComponent* modelVisualComponent = new ModelVisualComponent(
 	    componentData["renderPass"],
-	    Ref<Material>(new Material()),
+	    Ref<Material>(new ColorMaterial()), //change
 	    ResourceLoader::CreateVisualModelResourceFile(componentData["resFile"]),
-		componentData["isVisible"]);
+	    componentData["isVisible"]);
 
 	modelVisualComponent->setColor(
 	    Color(
@@ -32,15 +32,15 @@ Component* ModelVisualComponent::CreateDefault()
 {
 	ModelVisualComponent* modelVisualComponent = new ModelVisualComponent(
 	    RenderPassMain,
-	    Ref<Material>(new Material()),
+	    Ref<Material>(new ColorMaterial()), //change
 	    ResourceLoader::CreateVisualModelResourceFile("rootex/assets/cube.obj"),
-		true);
+	    true);
 	modelVisualComponent->setColor(Color(0.5f, 0.5f, 0.5f));
 
 	return modelVisualComponent;
 }
 
-ModelVisualComponent::ModelVisualComponent(const unsigned int& renderPassSetting, Ref<Material> material, VisualModelResourceFile* resFile, bool visibility)
+ModelVisualComponent::ModelVisualComponent(const unsigned int& renderPassSetting, Ref<Material> material, VisualModelResourceFile* resFile, bool visibility) //change
     : VisualComponent(renderPassSetting, visibility)
     , m_Material(material)
     , m_VisualModelResourceFile(resFile)
@@ -72,18 +72,13 @@ bool ModelVisualComponent::preRender()
 {
 	if (m_TransformComponent)
 	{
-		RenderSystem::GetSingleton()->pushMatrix(m_TransformComponent->getLocalTransform());
+		RenderSystem::GetSingleton()->pushMatrix(getTransform());
 		m_TransformComponent->m_TransformBuffer.m_AbsoluteTransform = RenderSystem::GetSingleton()->getTopMatrix();
-		m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::Model, RenderSystem::GetSingleton()->getTopMatrix());
 	}
 	else
 	{
-		RenderSystem::GetSingleton()->pushMatrix(Matrix::Identity);
-		m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::Model, RenderSystem::GetSingleton()->getTopMatrix());
+		RenderSystem::GetSingleton()->pushMatrix(Matrix::Identity);	
 	}
-	PSSolidConstantBuffer Cb = { m_Color };
-	m_Material->setShaderConstantBuffer(Cb);
-
 	return true;
 }
 
@@ -93,31 +88,31 @@ bool ModelVisualComponent::isVisible() const
 	return VisualComponent::isVisible();
 }
 
-void ModelVisualComponent::render()
+void ModelVisualComponent::render(RenderPass renderPass)
 {
-	RenderSystem::GetSingleton()->getRenderer()->draw(getVertexBuffer(), getIndexBuffer(), getMaterial());
+	if (renderPass & m_RenderPass)
+	{
+		PSSolidConstantBuffer Cb = { m_Color };
+		reinterpret_cast<ColorMaterial*>(m_Material.get())->setPixelShaderConstantBuffer(Cb); //change
+
+		RenderSystem::GetSingleton()->getRenderer()->draw(getVertexBuffer(), getIndexBuffer(), getMaterial());
+	}
 }
 
-void ModelVisualComponent::renderChildren(const unsigned int& renderPass)
+void ModelVisualComponent::renderChildren(RenderPass renderPass)
 {
-	if (isVisible() && !(renderPass & RenderPassUI))
-	{
-		m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::View, RenderSystem::GetSingleton()->getCamera()->getViewMatrix());
-		m_Material->setShaderConstantBuffer(Shader::VertexConstantBufferType::Projection, RenderSystem::GetSingleton()->getCamera()->getProjectionMatrix());
-	}
-
 	for (auto& child : m_Owner->getComponent<HierarchyComponent>()->getChildren())
 	{
 		VisualComponent* childVisualComponent = child->getOwner()->getComponent<VisualComponent>().get();
 
-		if (childVisualComponent && (childVisualComponent->getRenderPass() & renderPass))
+		if (childVisualComponent)
 		{
 			childVisualComponent->preRender();
 
 			if (childVisualComponent->isVisible())
 			{
 				// Assumed to be opaque
-				childVisualComponent->render();
+				childVisualComponent->render(renderPass);
 			}
 			childVisualComponent->renderChildren(renderPass);
 
@@ -136,7 +131,7 @@ void ModelVisualComponent::setVisualModel(VisualModelResourceFile* newModel)
 	m_VisualModelResourceFile = newModel;
 }
 
-void ModelVisualComponent::setMaterial(Ref<Material> material)
+void ModelVisualComponent::setMaterial(Ref<Material> material) //change
 {
 	m_Material = material;
 }
