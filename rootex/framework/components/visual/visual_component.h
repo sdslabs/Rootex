@@ -45,8 +45,8 @@ public:
 
 	virtual bool preRender() { return true; }
 	virtual bool isVisible() const { return m_IsVisible; }
-	virtual void render() {}
-	virtual void renderChildren(const unsigned int& renderPass) {}
+	virtual void render(RenderPass renderPass) {}
+	virtual void renderChildren(RenderPass renderPass) {}
 	virtual void postRender() {}
 
 	void setVisibility(bool enabled) { m_IsVisible = enabled; }

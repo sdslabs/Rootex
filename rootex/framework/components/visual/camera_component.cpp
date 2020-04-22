@@ -6,19 +6,19 @@ Component* CameraComponent::Create(const JSON::json& componentData)
 	CameraComponent* cameraVisualComponent = new CameraComponent(
 	    { componentData["aspectRatio"]["x"], componentData["aspectRatio"]["y"] },
 	    { componentData["offset"]["x"], componentData["offset"]["y"], componentData["offset"]["z"] },
-		componentData["fov"],
-		componentData["near"],
-		componentData["far"]);
+	    componentData["fov"],
+	    componentData["near"],
+	    componentData["far"]);
 	return cameraVisualComponent;
 }
 
 Component* CameraComponent::CreateDefault()
 {
 	CameraComponent* cameraVisualComponent = new CameraComponent(
-	    { 16.0f, 9.0f }, 
-		{ 0.0f, 0.0f, 4.0f },
-		DirectX::XM_PI / 4.0f,
-		0.1f, 100.0f);
+	    { 16.0f, 9.0f },
+	    { 0.0f, 0.0f, 4.0f },
+	    DirectX::XM_PI / 4.0f,
+	    0.1f, 100.0f);
 	return cameraVisualComponent;
 }
 

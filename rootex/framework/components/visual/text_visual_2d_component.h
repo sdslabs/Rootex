@@ -38,7 +38,7 @@ public:
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::TextVisual2DComponent;
 
-	virtual void render() override;
+	virtual void render(RenderPass renderPass) override;
 
 	virtual ComponentID getComponentID() const override { return s_ID; }
 	virtual String getName() const override { return "TextVisual2DComponent"; };

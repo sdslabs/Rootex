@@ -1,14 +1,16 @@
-cbuffer CBuf : register(b0)
+#include "register_locations_vertex_shader.h"
+
+cbuffer CBuf : register(PER_OBJECT)
 {
     matrix M;
 };
 
-cbuffer CBuf : register(b1)
+cbuffer CBuf : register(PER_FRAME)
 {
     matrix V;
 };
 
-cbuffer CBuf : register(b2)
+cbuffer CBuf : register(PER_CAMERA_CHANGE)
 {
     matrix P;
 };

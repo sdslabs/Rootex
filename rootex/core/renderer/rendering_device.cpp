@@ -96,6 +96,13 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 	dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
 	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 
+	D3D11_FEATURE_DATA_D3D11_OPTIONS features;
+	GFX_ERR_CHECK(m_Device->CheckFeatureSupport(D3D11_FEATURE_D3D11_OPTIONS, &features, sizeof(features)));
+
+	PRINT(
+		"Supported DirectX11 Features\n"
+		"MapNoOverwriteOnDynamicConstantBuffer: " + std::to_string(features.MapNoOverwriteOnDynamicConstantBuffer));
+
 	GFX_ERR_CHECK(m_Device->CreateDepthStencilState(&dsDesc, &m_DepthStencilState));
 	m_Context->OMSetDepthStencilState(m_DepthStencilState.Get(), 1u);
 	m_StencilRef = 1u;
@@ -232,39 +239,44 @@ Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createIndexBuffer(D3D11_BU
 	return indexBuffer;
 }
 
-void RenderingDevice::createVSModelConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
-{
-	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer = nullptr;
-	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &constantBuffer));
-	m_Context->VSSetConstantBuffers(0u, 1u, constantBuffer.GetAddressOf());
-}
-
-void RenderingDevice::createVSModelInverseConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
+Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createVSProjectionConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
 {
 	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &constantBuffer));
 	m_Context->VSSetConstantBuffers(3u, 1u, constantBuffer.GetAddressOf());
+	return constantBuffer;
 }
 
-void RenderingDevice::createVSViewConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
-{
-	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer = nullptr;
-	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &constantBuffer));
-	m_Context->VSSetConstantBuffers(1u, 1u, constantBuffer.GetAddressOf());
-}
-
-void RenderingDevice::createVSProjectionConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
+Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createVSPerFrameConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
 {
 	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &constantBuffer));
 	m_Context->VSSetConstantBuffers(2u, 1u, constantBuffer.GetAddressOf());
+	return constantBuffer;
 }
 
-void RenderingDevice::createPSConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd, UINT offset)
+Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createPSPerFrameConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
 {
 	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &constantBuffer));
-	m_Context->PSSetConstantBuffers(offset, 1u, constantBuffer.GetAddressOf());
+	m_Context->PSSetConstantBuffers(2u, 1u, constantBuffer.GetAddressOf());
+	return constantBuffer;
+}
+
+Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createVSConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd, UINT slot)
+{
+	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer = nullptr;
+	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &constantBuffer));
+	m_Context->VSSetConstantBuffers(slot, 1u, constantBuffer.GetAddressOf());
+	return constantBuffer;
+}
+
+Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createPSConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd, UINT slot)
+{
+	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer = nullptr;
+	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &constantBuffer));
+	m_Context->PSSetConstantBuffers(slot, 1u, constantBuffer.GetAddressOf());
+	return constantBuffer;
 }
 
 Microsoft::WRL::ComPtr<ID3D11PixelShader> RenderingDevice::createPixelShader(ID3DBlob* blob)
@@ -331,6 +343,21 @@ void RenderingDevice::bind(ID3D11PixelShader* pixelShader)
 void RenderingDevice::bind(ID3D11InputLayout* inputLayout)
 {
 	m_Context->IASetInputLayout(inputLayout);
+}
+
+//Assuming subresource offset = 0
+void RenderingDevice::mapBuffer(ID3D11Buffer* buffer, D3D11_MAPPED_SUBRESOURCE& subresource)
+{
+	if (FAILED(m_Context->Map(buffer, 0u, D3D11_MAP_WRITE_DISCARD, 0u, &subresource)))
+	{
+		ERR("Could not map to constant buffer");
+	}
+}
+
+//Assuming subresource offset = 0
+void RenderingDevice::unmapBuffer(ID3D11Buffer* buffer)
+{
+	m_Context->Unmap(buffer, 0);
 }
 
 void RenderingDevice::setInPixelShader(unsigned int slot, unsigned int number, ID3D11ShaderResourceView* texture)

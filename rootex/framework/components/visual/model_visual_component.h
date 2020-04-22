@@ -11,7 +11,7 @@ class ModelVisualComponent : public VisualComponent
 
 protected:
 	VisualModelResourceFile* m_VisualModelResourceFile;
-	Ref<Material> m_Material;
+	Ref<Material> m_Material; //change
 	HierarchyComponent* m_HierarchyComponent;
 	Color m_Color;
 
@@ -26,17 +26,17 @@ public:
 
 	virtual bool preRender() override;
 	virtual bool isVisible() const override;
-	virtual void render() override;
-	virtual void renderChildren(const unsigned int& renderPass) override;
+	virtual void render(RenderPass renderPass) override;
+	virtual void renderChildren(RenderPass renderPass) override;
 	virtual void postRender() override;
 
 	void setVisualModel(VisualModelResourceFile* newModel);
-	void setMaterial(Ref<Material> material);
+	void setMaterial(Ref<Material> material);//change
 	void setColor(const Color& color) { m_Color = color; };
 	
 	const VertexBuffer* getVertexBuffer() const { return m_VisualModelResourceFile->getVertexBuffer(); }
 	const IndexBuffer* getIndexBuffer() const { return m_VisualModelResourceFile->getIndexBuffer(); }
-	Material* getMaterial() { return m_Material.get(); }
+	Material* getMaterial() { return m_Material.get(); }//change
 	VisualModelResourceFile* getModelResourceFile() const { return m_VisualModelResourceFile; }
 
 	virtual String getName() const override { return "ModelVisualComponent"; }
