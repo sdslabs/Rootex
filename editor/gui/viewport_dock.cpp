@@ -151,7 +151,6 @@ void ViewportDock::draw()
 
 				float deltaUp = cursorWhenActivated.y - currentCursor.y;
 				float deltaRight = cursorWhenActivated.x - currentCursor.x;
-				PRINT(std::to_string(deltaRight));
 				
 				m_EditorCameraPitch += deltaUp;
 				m_EditorCameraYaw += deltaRight;
@@ -159,34 +158,38 @@ void ViewportDock::draw()
 				SetCursorPos(cursorWhenActivated.x, cursorWhenActivated.y);
 
 				m_EditorCamera->getComponent<TransformComponent>()->setRotation(
-					m_EditorCameraYaw * m_EditorCameraSensitivity / m_EditorCameraRotationNormalizer, 
+					m_EditorCameraYaw * m_EditorCameraSensitivity / m_EditorCameraRotationNormalizer,
 					m_EditorCameraPitch * m_EditorCameraSensitivity / m_EditorCameraRotationNormalizer, 
 					0.0f);
-
+				
 				m_ApplyCameraMatrix = m_EditorCamera->getComponent<TransformComponent>()->getLocalTransform();
+
+				static const Vector3& forward = { 0.0f, 0.0f, -1.0f };
+				static const Vector3& right = { 1.0f, 0.0f, 0.0f };
+
 				if (InputManager::GetSingleton()->isPressed("InputCameraForward"))
 				{
-					m_ApplyCameraMatrix = Matrix::CreateTranslation(m_ApplyCameraMatrix.Forward() * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
+					m_ApplyCameraMatrix = Matrix::CreateTranslation(forward * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
 				}
 				if (InputManager::GetSingleton()->isPressed("InputCameraBackward"))
 				{
-					m_ApplyCameraMatrix = Matrix::CreateTranslation(m_ApplyCameraMatrix.Backward() * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
+					m_ApplyCameraMatrix = Matrix::CreateTranslation(-forward * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
 				}
 				if (InputManager::GetSingleton()->isPressed("InputCameraLeft"))
 				{
-					m_ApplyCameraMatrix = Matrix::CreateTranslation(m_ApplyCameraMatrix.Left() * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
+					m_ApplyCameraMatrix = Matrix::CreateTranslation(-right * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
 				}
 				if (InputManager::GetSingleton()->isPressed("InputCameraRight"))
 				{
-					m_ApplyCameraMatrix = Matrix::CreateTranslation(m_ApplyCameraMatrix.Right() * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
+					m_ApplyCameraMatrix = Matrix::CreateTranslation(right * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
 				}
 				if (InputManager::GetSingleton()->isPressed("InputCameraUp"))
 				{
-					m_ApplyCameraMatrix = Matrix::CreateTranslation(m_ApplyCameraMatrix.Up() * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
+					m_ApplyCameraMatrix = Matrix::CreateTranslation(Vector3(0.0f, 1.0f, 0.0f) * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
 				}
 				if (InputManager::GetSingleton()->isPressed("InputCameraDown"))
 				{
-					m_ApplyCameraMatrix = Matrix::CreateTranslation(m_ApplyCameraMatrix.Down() * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
+					m_ApplyCameraMatrix = Matrix::CreateTranslation(Vector3(0.0f, -1.0f, 0.0f) * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
 				}	
 			}
 			else
