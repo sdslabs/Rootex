@@ -31,7 +31,7 @@ void RenderSystem::calculateTransforms(HierarchyComponent* hierarchyComponent)
 
 	for (auto&& child : hierarchyComponent->getChildren())
 	{
-		child->getOwner()->getComponent<TransformComponent>()->m_TransformBuffer.m_AbsoluteTransform = getTopMatrix();
+		child->getOwner()->getComponent<TransformComponent>()->m_TransformBuffer.m_ParentAbsoluteTransform = getTopMatrix();
 		calculateTransforms(child);
 	}
 

@@ -20,7 +20,6 @@ ViewportDock::ViewportDock(const JSON::json& viewportJSON)
 	m_EditorCamera = EntityFactory::GetSingleton()->createEntity(ResourceLoader::CreateTextResourceFile("editor/entities/camera.entity.json"));
 	m_EditorCamera->setEditorOnly(true);
 	RenderSystem::GetSingleton()->setCamera(m_EditorCamera->getComponent<CameraComponent>().get());
-	m_ApplyCameraMatrix = m_EditorCamera->getComponent<TransformComponent>()->getAbsoluteTransform();
 }
 
 void ViewportDock::draw()
@@ -71,7 +70,8 @@ void ViewportDock::draw()
 			ImGui::EndGroup();
 
 			static float snap[3] = { 0.1f, 0.1f, 0.1f };
-			ImGui::SetNextItemWidth(ImGui::GetItemRectSize().x);
+			static ImVec2 shortItemSize = ImGui::GetItemRectSize();
+			ImGui::SetNextItemWidth(shortItemSize.x);
 			if (gizmoOperation == ImGuizmo::OPERATION::TRANSLATE)
 			{
 				ImGui::DragFloat3("Axis Snap", snap, 0.1f);
@@ -96,6 +96,11 @@ void ViewportDock::draw()
 				gizmoMode = ImGuizmo::MODE::WORLD;
 			}
 			
+			ImGui::SetNextItemWidth(shortItemSize.x);
+			ImGui::DragFloat("Camera Sensitivity", &m_EditorCameraSensitivity, 0.1f);
+			ImGui::SetNextItemWidth(shortItemSize.x);
+			ImGui::DragFloat("Camera Speed", &m_EditorCameraSpeed, 0.1f);
+
 			ImGui::Unindent(2.0f);
 			
 			ImGui::SetCursorPos(viewportEnd);
@@ -122,23 +127,43 @@ void ViewportDock::draw()
 				openedEntity->getComponent<TransformComponent>()->setTransform(matrix);
 			}
 
-			if (InputManager::GetSingleton()->isPressed("InputMouseRight"))
+			if (ImGui::IsWindowHovered() && InputManager::GetSingleton()->isPressed("InputMouseRight"))
 			{
-				static POINT pos;
+				static POINT cursorWhenActivated;
 				if (!m_IsCameraMoving)
 				{
 					EditorApplication::GetSingleton()->getWindow()->showCursor(false);
-					GetCursorPos(&pos);
+
+					static RECT clip;
+					clip.left = ImGui::GetWindowPos().x;
+					clip.top = ImGui::GetWindowPos().y;
+					clip.right = clip.left + ImGui::GetWindowSize().x;
+					clip.bottom = clip.top + ImGui::GetWindowSize().y;
+
+					EditorApplication::GetSingleton()->getWindow()->clipCursor(clip);
+
+					GetCursorPos(&cursorWhenActivated);
 					m_IsCameraMoving = true;
 				}
 
-				float deltaUp = -InputManager::GetSingleton()->getFloatDelta("InputCameraTurnUp");
-				float deltaRight = -InputManager::GetSingleton()->getFloatDelta("InputCameraTurnRight");
-				PRINT(std::to_string(deltaRight))
-				
-				m_ApplyCameraMatrix = Matrix::CreateFromAxisAngle(m_ApplyCameraMatrix.Up(), deltaRight) * m_ApplyCameraMatrix;
-				m_ApplyCameraMatrix = Matrix::CreateFromAxisAngle(m_ApplyCameraMatrix.Right(), deltaUp) * m_ApplyCameraMatrix;
+				static POINT currentCursor;
+				GetCursorPos(&currentCursor);
 
+				float deltaUp = cursorWhenActivated.y - currentCursor.y;
+				float deltaRight = cursorWhenActivated.x - currentCursor.x;
+				PRINT(std::to_string(deltaRight));
+				
+				m_EditorCameraUp += deltaUp;
+				m_EditorCameraRight += deltaRight;
+
+				SetCursorPos(cursorWhenActivated.x, cursorWhenActivated.y);
+
+				m_EditorCamera->getComponent<TransformComponent>()->setRotation(
+					m_EditorCameraRight * m_EditorCameraSensitivity / m_EditorCameraRotationNormalizer, 
+					m_EditorCameraUp * m_EditorCameraSensitivity / m_EditorCameraRotationNormalizer, 
+					0.0f);
+
+				m_ApplyCameraMatrix = m_EditorCamera->getComponent<TransformComponent>()->getLocalTransform();
 				if (InputManager::GetSingleton()->isPressed("InputCameraForward"))
 				{
 					m_ApplyCameraMatrix = Matrix::CreateTranslation(m_ApplyCameraMatrix.Forward() * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
@@ -162,15 +187,14 @@ void ViewportDock::draw()
 				if (InputManager::GetSingleton()->isPressed("InputCameraDown"))
 				{
 					m_ApplyCameraMatrix = Matrix::CreateTranslation(m_ApplyCameraMatrix.Down() * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
-				}
-
-				//SetCursorPos(pos.x, pos.y);
+				}	
 			}
 			else
 			{
 				if (m_IsCameraMoving)
 				{
 					EditorApplication::GetSingleton()->getWindow()->showCursor(true);
+					EditorApplication::GetSingleton()->getWindow()->clipCursor();
 					m_IsCameraMoving = false;
 				}
 			}

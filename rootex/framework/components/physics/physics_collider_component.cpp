@@ -32,7 +32,7 @@ bool PhysicsColliderComponent::setup()
 		}
 		else
 		{
-			m_Transform = m_TransformComponent->getAbsoluteTransform();
+			m_Transform = m_TransformComponent->getParentAbsoluteTransform();
 			m_MotionState.setWorldTransform(matTobtTransform(m_Transform));
 			btRigidBody::btRigidBodyConstructionInfo rbInfo(m_Mass, &m_MotionState, m_CollisionShape.get(), m_LocalInertia);
 
