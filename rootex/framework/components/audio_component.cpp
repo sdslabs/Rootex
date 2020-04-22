@@ -26,7 +26,7 @@ bool AudioComponent::setup()
 		{
 			if (m_IsAttenuated)
 			{
-				getAudioSource()->setPosition(m_TransformComponent->getAbsoluteTransform().Translation());
+				getAudioSource()->setPosition(m_TransformComponent->getParentAbsoluteTransform().Translation());
 				getAudioSource()->setModel(m_AttenuationModel);
 				getAudioSource()->setRollOffFactor(m_RolloffFactor);
 				getAudioSource()->setReferenceDistance(m_ReferenceDistance);
@@ -55,7 +55,7 @@ void AudioComponent::update()
 	m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
 	if (m_IsAttenuated)
 	{
-		getAudioSource()->setPosition(m_TransformComponent->getAbsoluteTransform().Translation());
+		getAudioSource()->setPosition(m_TransformComponent->getParentAbsoluteTransform().Translation());
 	}
 }
 

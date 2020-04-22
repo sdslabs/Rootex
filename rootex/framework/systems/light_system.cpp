@@ -22,7 +22,7 @@ PSDiffuseConstantBufferLights LightSystem::getLights()
 	{
 		PointLightComponent* light = dynamic_cast<PointLightComponent*>(pointLightComponents[i]);
 		TransformComponent* transform = light->getOwner()->getComponent<TransformComponent>().get();
-		Vector3 transformedPosition = Vector3::Transform(transform->getPosition(), transform->getAbsoluteTransform());
+		Vector3 transformedPosition = Vector3::Transform(transform->getPosition(), transform->getParentAbsoluteTransform());
 		lights.pointLightInfos[i] = {
 			light->m_AmbientColor, light->m_DiffuseColor, light->m_DiffuseIntensity,
 			light->m_AttConst, light->m_AttLin, light->m_AttQuad,
