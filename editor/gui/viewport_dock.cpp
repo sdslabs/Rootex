@@ -153,14 +153,14 @@ void ViewportDock::draw()
 				float deltaRight = cursorWhenActivated.x - currentCursor.x;
 				PRINT(std::to_string(deltaRight));
 				
-				m_EditorCameraUp += deltaUp;
-				m_EditorCameraRight += deltaRight;
+				m_EditorCameraPitch += deltaUp;
+				m_EditorCameraYaw += deltaRight;
 
 				SetCursorPos(cursorWhenActivated.x, cursorWhenActivated.y);
 
 				m_EditorCamera->getComponent<TransformComponent>()->setRotation(
-					m_EditorCameraRight * m_EditorCameraSensitivity / m_EditorCameraRotationNormalizer, 
-					m_EditorCameraUp * m_EditorCameraSensitivity / m_EditorCameraRotationNormalizer, 
+					m_EditorCameraYaw * m_EditorCameraSensitivity / m_EditorCameraRotationNormalizer, 
+					m_EditorCameraPitch * m_EditorCameraSensitivity / m_EditorCameraRotationNormalizer, 
 					0.0f);
 
 				m_ApplyCameraMatrix = m_EditorCamera->getComponent<TransformComponent>()->getLocalTransform();

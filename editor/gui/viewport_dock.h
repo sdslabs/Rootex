@@ -23,13 +23,12 @@ public:
 private:
 	Ref<Entity> m_EditorCamera;
 	ViewportDockSettings m_ViewportDockSettings;
-	Quaternion m_ApplyCameraRotation = Quaternion::Identity;
 	Matrix m_ApplyCameraMatrix = Matrix::Identity;
 	
 	bool m_IsCameraMoving;
 
-	float m_EditorCameraUp = 0.0f;
-	float m_EditorCameraRight = 0.0f;
+	float m_EditorCameraPitch = 0.0f;
+	float m_EditorCameraYaw = 0.0f;
 	float m_EditorCameraSpeed = 0.1f;
 	float m_EditorCameraSensitivity = 1.0f;
 	float m_EditorCameraRotationNormalizer = 1000.0f;

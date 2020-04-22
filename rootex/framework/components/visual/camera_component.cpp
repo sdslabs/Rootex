@@ -37,12 +37,10 @@ void CameraComponent::refreshProjectionMatrix()
 
 void CameraComponent::refreshViewMatrix()
 {
-	const Matrix& absoluteTransform = m_TransformComponent->getLocalTransform() * m_TransformComponent->getParentAbsoluteTransform();
-	Vector3 target;
-	Vector3::Transform(absoluteTransform.Forward(), absoluteTransform, target);
+	const Matrix& absoluteTransform = m_TransformComponent->getAbsoluteTransform();
 	m_ViewMatrix = Matrix::CreateLookAt(
 	    absoluteTransform.Translation(),
-	    target,
+	    absoluteTransform.Translation() + absoluteTransform.Forward(),
 	    absoluteTransform.Up());
 }
 
