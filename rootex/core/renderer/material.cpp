@@ -90,12 +90,12 @@ void ColorMaterial::setVertexShaderConstantBuffer(const VSSolidConstantBuffer& c
 
 void TexturedMaterial::setPixelShaderConstantBuffer(const PSDiffuseConstantBufferLights& constantBuffer)
 {
-	Material::setPixelShaderConstantBuffer<PSDiffuseConstantBufferLights>(constantBuffer, m_PSConstantBuffer[(int)PixelConstantBufferType::Lights], 2u);
+	Material::setPixelShaderConstantBuffer<PSDiffuseConstantBufferLights>(constantBuffer, m_PSConstantBuffer[(int)PixelConstantBufferType::Lights], 3u);
 }
 
 void TexturedMaterial::setPixelShaderConstantBuffer(const PSDiffuseConstantBufferMaterial& constantBuffer)
 {
-	Material::setPixelShaderConstantBuffer<PSDiffuseConstantBufferMaterial>(constantBuffer, m_PSConstantBuffer[(int)PixelConstantBufferType::Material], 3u);
+	Material::setPixelShaderConstantBuffer<PSDiffuseConstantBufferMaterial>(constantBuffer, m_PSConstantBuffer[(int)PixelConstantBufferType::Material], 4u);
 }
 
 void TexturedMaterial::setVertexShaderConstantBuffer(const VSDiffuseConstantBuffer& constantBuffer)

@@ -247,11 +247,19 @@ Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createVSProjectionConstant
 	return constantBuffer;
 }
 
-Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createVSViewConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
+Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createVSPerFrameConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
 {
 	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &constantBuffer));
 	m_Context->VSSetConstantBuffers(2u, 1u, constantBuffer.GetAddressOf());
+	return constantBuffer;
+}
+
+Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createPSPerFrameConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
+{
+	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer = nullptr;
+	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &constantBuffer));
+	m_Context->PSSetConstantBuffers(2u, 1u, constantBuffer.GetAddressOf());
 	return constantBuffer;
 }
 
