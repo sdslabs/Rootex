@@ -1,3 +1,5 @@
+#include "register_locations_pixel_shader.h"
+
 Texture2D ShaderTexture;
 SamplerState SampleType;
 
@@ -41,7 +43,12 @@ struct SpotLightInfo
     float angleRange;
 };
 
-cbuffer Lights : register(b2)
+cbuffer CameraPos : register(PER_FRAME)
+{
+    float3 cameraPos;
+}
+
+cbuffer Lights : register(b3)
 {
     int pointLightCount;
     PointLightInfo pointLightInfos[4];
@@ -51,7 +58,7 @@ cbuffer Lights : register(b2)
     SpotLightInfo spotLightInfos[4];
 };
 
-cbuffer Material: register(b3)
+cbuffer Material: register(b4)
 {
     float specularIntensity;
     float specPow;
@@ -64,7 +71,7 @@ float4 main(PixelInputType input) : SV_TARGET
 
     float4 finalColor = { 0.0f, 0.0f, 0.0f, 1.0f };
     //TODO- FIX THIS HARDCODE
-    float3 toEye = normalize(float3(0.0f, 0.0f, 4.0f) - (float3) input.worldPosition);
+    float3 toEye = normalize(cameraPos - (float3) input.worldPosition);
     
     for (int i = 0; i < pointLightCount; i++)
     {

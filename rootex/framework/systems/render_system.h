@@ -13,7 +13,7 @@ class RenderSystem : public System
 	Vector<Matrix> m_TransformationStack;
 	Vector<Matrix> m_UITransformationStack;
 
-	Microsoft::WRL::ComPtr<ID3D11Buffer> m_VSViewConstantBuffer, m_VSProjectionConstantBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> m_VSPerFrameConstantBuffer, m_VSProjectionConstantBuffer, m_PSPerFrameConstantBuffer;
 
 	RenderSystem();
 	RenderSystem(RenderSystem&) = delete;
@@ -38,7 +38,8 @@ public:
 	void popUIMatrix();
 
 	void setProjectionConstantBuffers();
-	void setViewConstantBuffers();
+	void perFrameVSCBBinds();
+	void perFramePSCBBinds();
 
 	CameraComponent* getCamera() const { return m_Camera; }
 	const Matrix& getTopMatrix() const;

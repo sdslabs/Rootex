@@ -94,11 +94,11 @@ struct VSSolidConstantBuffer
 struct VSDiffuseConstantBuffer
 {
 	Matrix Model;
-	Matrix ModelInverse;
+	Matrix ModelInverseTranspose;
 	explicit VSDiffuseConstantBuffer() = delete; // https://stackoverflow.com/a/43694276
 	VSDiffuseConstantBuffer(const Matrix& model)
 	{
 		Model = model.Transpose();
-		ModelInverse = Model.Invert();
+		ModelInverseTranspose = model.Invert();
 	}
 };

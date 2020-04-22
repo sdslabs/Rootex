@@ -3,7 +3,7 @@
 cbuffer CBuf : register(PER_OBJECT)
 {
     matrix M;
-    matrix MInverse;
+    matrix MInverseTranspose;
 };
 
 cbuffer CBuf : register(PER_FRAME)
@@ -38,7 +38,7 @@ PixelInputType main(VertexInputType input)
     //inverse transpose is needed for normals, how is this even working...
     //output.normal = mul((float3x3) M, (float3) input.normal);
     //hold my beer...
-    output.normal = mul((float3x3) transpose(MInverse), (float3) input.normal);
+    output.normal = mul((float3) input.normal, (float3x3) MInverseTranspose);
     output.worldPosition = mul(input.position, M);
     output.tex.x = input.tex.x;
     output.tex.y = 1 - input.tex.y;

@@ -12,7 +12,8 @@ RenderSystem* RenderSystem::GetSingleton()
 RenderSystem::RenderSystem()
     : m_Renderer(new Renderer())
     , m_VSProjectionConstantBuffer(nullptr)
-    , m_VSViewConstantBuffer(nullptr)
+    , m_VSPerFrameConstantBuffer(nullptr)
+    , m_PSPerFrameConstantBuffer(nullptr)
 {
 	m_Camera = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<CameraComponent>().get();
 	m_TransformationStack.push_back(Matrix::Identity);
@@ -62,7 +63,8 @@ void RenderSystem::render()
 	RenderingDevice::GetSingleton()->setRasterizerState();
 	RenderingDevice::GetSingleton()->setDepthStencilState();
 
-	setViewConstantBuffers();
+	perFrameVSCBBinds();
+	perFramePSCBBinds();
 
 	Ref<VisualComponent> rootVC = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<VisualComponent>();
 #ifdef ROOTEX_EDITOR
@@ -108,7 +110,7 @@ void RenderSystem::popUIMatrix()
 void RenderSystem::setProjectionConstantBuffers()
 {
 	const Matrix& projection = getCamera()->getProjectionMatrix();
-	if (m_VSProjectionConstantBuffer == nullptr || m_VSViewConstantBuffer == nullptr)
+	if (m_VSProjectionConstantBuffer == nullptr)
 	{
 		D3D11_BUFFER_DESC cbd = { 0 };
 		cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -131,10 +133,10 @@ void RenderSystem::setProjectionConstantBuffers()
 	}
 }
 
-void RenderSystem::setViewConstantBuffers()
+void RenderSystem::perFrameVSCBBinds()
 {
 	const Matrix& view = getCamera()->getViewMatrix();
-	if (m_VSProjectionConstantBuffer == nullptr || m_VSViewConstantBuffer == nullptr)
+	if (m_VSPerFrameConstantBuffer == nullptr)
 	{
 		D3D11_BUFFER_DESC cbd = { 0 };
 		cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -146,14 +148,40 @@ void RenderSystem::setViewConstantBuffers()
 		D3D11_SUBRESOURCE_DATA csd = { 0 };
 		csd.pSysMem = &view.Transpose();
 
-		m_VSViewConstantBuffer = RenderingDevice::GetSingleton()->createVSViewConstantBuffer(&cbd, &csd);
+		m_VSPerFrameConstantBuffer = RenderingDevice::GetSingleton()->createVSPerFrameConstantBuffer(&cbd, &csd);
 	}
 	else
 	{
 		D3D11_MAPPED_SUBRESOURCE subresource = { 0 };
-		RenderingDevice::GetSingleton()->getBufferMappedContext(m_VSViewConstantBuffer.Get(), subresource);
+		RenderingDevice::GetSingleton()->getBufferMappedContext(m_VSPerFrameConstantBuffer.Get(), subresource);
 		memcpy(subresource.pData, &view.Transpose(), sizeof(view));
-		RenderingDevice::GetSingleton()->unmapBuffer(m_VSViewConstantBuffer.Get());
+		RenderingDevice::GetSingleton()->unmapBuffer(m_VSPerFrameConstantBuffer.Get());
+	}
+}
+
+void RenderSystem::perFramePSCBBinds()
+{
+	const Vector4& view = Vector4(getCamera()->getViewMatrix().Translation());
+	if (m_PSPerFrameConstantBuffer == nullptr)
+	{
+		D3D11_BUFFER_DESC cbd = { 0 };
+		cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		cbd.Usage = D3D11_USAGE_DYNAMIC;
+		cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		cbd.MiscFlags = 0u;
+		cbd.ByteWidth = sizeof(view);
+		cbd.StructureByteStride = 0u;
+		D3D11_SUBRESOURCE_DATA csd = { 0 };
+		csd.pSysMem = &view;
+
+		m_PSPerFrameConstantBuffer = RenderingDevice::GetSingleton()->createPSPerFrameConstantBuffer(&cbd, &csd);
+	}
+	else
+	{
+		D3D11_MAPPED_SUBRESOURCE subresource = { 0 };
+		RenderingDevice::GetSingleton()->getBufferMappedContext(m_PSPerFrameConstantBuffer.Get(), subresource);
+		memcpy(subresource.pData, &view, sizeof(view));
+		RenderingDevice::GetSingleton()->unmapBuffer(m_PSPerFrameConstantBuffer.Get());
 	}
 }
 
