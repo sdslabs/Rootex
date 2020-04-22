@@ -4,23 +4,22 @@
             "children": [],
             "parent": 1
         },
-        "TexturedModelVisualComponent": {
+        "ModelVisualComponent": {
             "color": {
                 "a": 1.0,
-                "b": 0.0,
-                "g": 0.0,
-                "r": 0.0
+                "b": 0.20000000298023224,
+                "g": 1.0,
+                "r": 0.20000000298023224
             },
             "isVisible": true,
-            "renderPass": 5,
-            "resFile": "game\\assets\\test\\animal.obj",
-            "texturePath": "game\\assets\\test\\blue.png"
+            "renderPass": 1,
+            "resFile": "game/assets/test/cube.obj"
         },
         "TransformComponent": {
             "position": {
                 "x": 0.0,
                 "y": 0.0,
-                "z": 0.0
+                "z": -2.9000000953674316
             },
             "rotation": {
                 "w": 1.0,
@@ -29,9 +28,9 @@
                 "z": -0.0
             },
             "scale": {
-                "x": 0.43119996786117554,
-                "y": 0.43119996786117554,
-                "z": 0.43119996786117554
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
             }
         }
     },

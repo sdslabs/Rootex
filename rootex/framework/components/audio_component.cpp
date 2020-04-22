@@ -102,7 +102,7 @@ void AudioComponent::draw()
 	}
 
 	ImGui::InputFloat("Reference Distance", &m_ReferenceDistance, 0, 100.0f);
-	ImGui::InputFloat("Rolloff Ractor", &m_RolloffFactor, 0, 100.0f);
+	ImGui::InputFloat("Rolloff Factor", &m_RolloffFactor, 0, 100.0f);
 	ImGui::InputFloat("Max Distance", &m_MaxDistance, 0, 100.0f);
 }
 
