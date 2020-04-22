@@ -48,6 +48,7 @@ public:
 	void setScale(const Vector3& scale);
 	void setTransform(const Matrix& transform);
 	void addTransform(const Matrix& applyTransform);
+	void addRotation(const Quaternion& applyTransform);
 
 	Vector3 getPosition() const { return m_TransformBuffer.m_Position; }
 	const Quaternion& getRotation() const { return m_TransformBuffer.m_Rotation; }

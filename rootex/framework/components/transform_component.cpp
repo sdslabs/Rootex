@@ -78,6 +78,12 @@ void TransformComponent::addTransform(const Matrix& applyTransform)
 	setTransform(getLocalTransform() * applyTransform);
 }
 
+void TransformComponent::addRotation(const Quaternion& applyTransform)
+{
+	m_TransformBuffer.m_Rotation = Quaternion::Concatenate(applyTransform, m_TransformBuffer.m_Rotation);
+	updateTransformFromPositionRotationScale();
+}
+
 JSON::json TransformComponent::getJSON() const
 {
 	JSON::json j;

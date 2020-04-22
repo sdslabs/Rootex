@@ -1,0 +1,64 @@
+{
+    "Components": {
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 1
+        },
+        "ModelVisualComponent": {
+            "color": {
+                "a": 1.0,
+                "b": 0.8480392098426819,
+                "g": 0.33747148513793945,
+                "r": 0.12471166998147964
+            },
+            "isVisible": false,
+            "renderPass": 1,
+            "resFile": "game/assets/test/cube.obj"
+        },
+        "PointLightComponent": {
+            "ambientColor": {
+                "a": 1.0,
+                "b": 0.5,
+                "g": 0.5,
+                "r": 0.5
+            },
+            "attConst": 0.04500000178813934,
+            "attLin": 1.0,
+            "attQuad": 0.007499999832361937,
+            "diffuseColor": {
+                "a": 1.0,
+                "b": 1.0,
+                "g": 1.0,
+                "r": 1.0
+            },
+            "diffuseIntensity": 1.0,
+            "range": 280.0
+        },
+        "ScriptComponent": {
+            "connections": {},
+            "script": "game\\assets\\scripts\\sound-test.lua"
+        },
+        "TransformComponent": {
+            "position": {
+                "x": 0.05999999865889549,
+                "y": 3.369999885559082,
+                "z": 7.920000076293945
+            },
+            "rotation": {
+                "w": 1.0,
+                "x": -0.0,
+                "y": 0.0,
+                "z": -0.0
+            },
+            "scale": {
+                "x": 0.20000000298023224,
+                "y": 0.20000000298023224,
+                "z": 0.20000000298023224
+            }
+        }
+    },
+    "Entity": {
+        "ID": 5,
+        "name": "Light"
+    }
+}
