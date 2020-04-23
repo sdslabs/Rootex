@@ -151,23 +151,18 @@ void TransformComponent::draw()
 		}
 
 		m_TransformBuffer.m_Scale = { lockedScale.x, lockedScale.y, lockedScale.z };
-
 		ImGui::DragFloat3("##S", &lockedScale.x, s_EditorDecimalSpeed, 0.0f, 0.0f);
-		ImGui::SameLine();
-		if (ImGui::Button("Scale"))
-		{
-			m_TransformBuffer.m_Scale = { 1.0f, 1.0f, 1.0f };
-		}
 	}
 	else
 	{
 		locked = false;
 		ImGui::DragFloat3("##S", &m_TransformBuffer.m_Scale.x, s_EditorDecimalSpeed, 0.0f, 0.0f);
-		ImGui::SameLine();
-		if (ImGui::Button("Scale"))
-		{
-			m_TransformBuffer.m_Scale = { 1.0f, 1.0f, 1.0f };
-		}
+	}
+	
+	ImGui::SameLine();
+	if (ImGui::Button("Scale"))
+	{
+		m_TransformBuffer.m_Scale = { 1.0f, 1.0f, 1.0f };
 	}
 
 	ImGui::Checkbox("Lock Scale", &m_LockScale);
