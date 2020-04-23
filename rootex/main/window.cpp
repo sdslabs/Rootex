@@ -53,7 +53,24 @@ void Window::clipCursor()
 	GetClientRect(m_WindowHandle, &clip);
 
 	ClipCursor(&clip);
-	ShowCursor(false);
+}
+
+void Window::clipCursor(RECT clip)
+{
+	ClipCursor(&clip);
+}
+
+void Window::showCursor(bool enabled)
+{
+	int result = ShowCursor(enabled);
+	if (result >= 0)
+	{
+		PRINT("Cursor is shown");
+	}
+	else
+	{
+		PRINT("Cursor is hidden")	
+	}
 }
 
 void Window::clearCurrentTarget()
@@ -195,7 +212,7 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
 		    rHeight,
 		    MSAA);
 
-		ShowCursor(false);
+		showCursor(false);
 
 		RenderingDevice::GetSingleton()->setBackBufferRenderTarget();
 	}

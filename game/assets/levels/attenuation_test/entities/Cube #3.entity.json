@@ -15,9 +15,18 @@
             "renderPass": 1,
             "resFile": "game/assets/test/cube.obj"
         },
+        "MusicComponent": {
+            "attenuationModel": 53251,
+            "audio": "game\\assets\\forever.wav",
+            "isAttenuated": true,
+            "maxDistance": 100.0,
+            "playOnStart": true,
+            "referenceDistance": 1.0,
+            "rollOffFactor": 1.0
+        },
         "ScriptComponent": {
             "connections": {},
-            "script": "game\\assets\\scripts\\sound-test.lua"
+            "script": "game\\assets\\scripts\\sound_test.lua"
         },
         "SpotLightComponent": {
             "ambientColor": {
@@ -26,7 +35,7 @@
                 "g": 0.05000000074505806,
                 "r": 0.05000000074505806
             },
-            "angleRange": 0.9998477101325989,
+            "angleRange": 0.9998477697372437,
             "attConst": 1.0,
             "attLin": 0.04500000178813934,
             "attQuad": 0.007499999832361937,
@@ -47,10 +56,10 @@
                 "z": 0.0
             },
             "rotation": {
-                "w": 0.0,
-                "x": 0.0,
+                "w": 1.0,
+                "x": -0.0,
                 "y": 0.0,
-                "z": 0.0
+                "z": -0.0
             },
             "scale": {
                 "x": 1.0,
@@ -60,7 +69,7 @@
         }
     },
     "Entity": {
-        "ID": 2,
+        "ID": 3,
         "name": "Cube"
     }
 }

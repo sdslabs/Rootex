@@ -13,7 +13,6 @@ add_dependencies(Editor Rootex Game)
 
 target_include_directories(Editor PUBLIC ../)
 target_link_libraries(Editor PUBLIC Rootex)
-target_precompile_headers(Editor REUSE_FROM Rootex)
 
 source_group(TREE "../editor/"
     PREFIX "Editor"

@@ -58,6 +58,7 @@ class Editor
 
 	void pushEditorStyleColors();
 	void pushEditorStyleVars();
+	void registerEditorControls();
 
 	Variant saveAll(const Event* event);
 	Variant autoSave(const Event* event);

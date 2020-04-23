@@ -15,7 +15,7 @@ class TransformComponent : public Component
 		Vector3 m_Scale;
 
 		Matrix m_Transform;
-		Matrix m_AbsoluteTransform;
+		Matrix m_ParentAbsoluteTransform;
 	};
 	TransformBuffer m_TransformBuffer;
 
@@ -48,12 +48,14 @@ public:
 	void setScale(const Vector3& scale);
 	void setTransform(const Matrix& transform);
 	void addTransform(const Matrix& applyTransform);
+	void addRotation(const Quaternion& applyTransform);
 
 	Vector3 getPosition() const { return m_TransformBuffer.m_Position; }
 	const Quaternion& getRotation() const { return m_TransformBuffer.m_Rotation; }
 	const Vector3& getScale() const { return m_TransformBuffer.m_Scale; }
 	const Matrix& getLocalTransform() const { return m_TransformBuffer.m_Transform; }
-	Matrix getAbsoluteTransform() const { return m_TransformBuffer.m_AbsoluteTransform; }
+	Matrix getAbsoluteTransform() const { return m_TransformBuffer.m_Transform * m_TransformBuffer.m_ParentAbsoluteTransform; }
+	Matrix getParentAbsoluteTransform() const { return m_TransformBuffer.m_ParentAbsoluteTransform; }
 	ComponentID getComponentID() const override { return s_ID; }
 	virtual String getName() const override { return "TransformComponent"; }
 	virtual JSON::json getJSON() const override;

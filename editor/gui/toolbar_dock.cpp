@@ -115,7 +115,6 @@ void ToolbarDock::draw()
 						if (ImGui::MenuItem(camera->getOwner()->getFullName().c_str()))
 						{
 							RenderSystem::GetSingleton()->setCamera((CameraComponent*)camera);
-							LevelManager::GetSingleton()->getCurrentLevelSettings()["camera"] = camera->getOwner()->getID();
 						}
 					}
 
