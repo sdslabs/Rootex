@@ -73,7 +73,7 @@ bool ModelVisualComponent::preRender()
 	if (m_TransformComponent)
 	{
 		RenderSystem::GetSingleton()->pushMatrix(getTransform());
-		m_TransformComponent->m_TransformBuffer.m_AbsoluteTransform = RenderSystem::GetSingleton()->getTopMatrix();
+		m_TransformComponent->m_TransformBuffer.m_ParentAbsoluteTransform = RenderSystem::GetSingleton()->getTopMatrix();
 	}
 	else
 	{

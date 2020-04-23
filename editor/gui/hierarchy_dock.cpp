@@ -16,10 +16,22 @@ void HierarchyDock::showHierarchySubTree(HierarchyComponent* hierarchy)
 		if (ImGui::TreeNodeEx(("##" + std::to_string(node->getID())).c_str(), ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_AllowItemOverlap | (hierarchy->getChildren().size() ? ImGuiTreeNodeFlags_None : ImGuiTreeNodeFlags_Leaf)))
 		{
 			ImGui::SameLine();
+
+			if (hierarchy->getOwner()->isEditorOnly())
+			{
+				ImGui::PushStyleColor(ImGuiCol_Text, Editor::GetSingleton()->getColors().m_FailAccent);
+			}
+			else
+			{
+				ImGui::PushStyleColor(ImGuiCol_Text, Editor::GetSingleton()->getColors().m_Text);
+			}
+
 			if (ImGui::Selectable(node->getFullName().c_str(), m_OpenedEntityID == node->getID()))
 			{
 				openEntity(node);
 			}
+
+			ImGui::PopStyleColor(1);
 
 			for (auto& child : node->getComponent<HierarchyComponent>()->getChildren())
 			{

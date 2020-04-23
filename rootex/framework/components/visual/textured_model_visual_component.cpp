@@ -49,7 +49,10 @@ TexturedModelVisualComponent::~TexturedModelVisualComponent()
 
 void TexturedModelVisualComponent::render(RenderPass renderPass)
 {
-	RenderSystem::GetSingleton()->getRenderer()->draw(getVertexBuffer(), getIndexBuffer(), getMaterial());
+	if (renderPass & m_RenderPass)
+	{
+		RenderSystem::GetSingleton()->getRenderer()->draw(getVertexBuffer(), getIndexBuffer(), getMaterial());
+	}
 }
 
 JSON::json TexturedModelVisualComponent::getJSON() const

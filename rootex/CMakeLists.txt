@@ -67,6 +67,7 @@ if (BUILD_EDITOR)
 endif(BUILD_EDITOR)
 
 add_library(Rootex STATIC ${ROOTEX_SOURCES})
+
 target_precompile_headers(Rootex PUBLIC ${PCHHeader})
 
 source_group(TREE "../"

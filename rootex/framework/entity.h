@@ -17,6 +17,7 @@ protected:
 	EntityID m_ID;
 	String m_Name;
 	HashMap<ComponentID, Ref<Component>> m_Components;
+	bool m_IsEditorOnly;
 	
 	Entity(EntityID id, const String& name, const HashMap<ComponentID, Ref<Component>>& components = {});
 
@@ -48,8 +49,10 @@ public:
 	Component* getComponentPointer(ComponentID ID);
 	JSON::json getJSON() const;
 	const HashMap<ComponentID, Ref<Component>>& getAllComponents() const;
+	bool isEditorOnly() const { return m_IsEditorOnly; }
 	
 	void setName(const String& name);
+	void setEditorOnly(bool editorOnly) { m_IsEditorOnly = editorOnly; }
 };
 
 template <class ComponentType>

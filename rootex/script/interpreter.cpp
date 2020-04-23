@@ -203,7 +203,7 @@ void LuaInterpreter::registerTypes()
 			transformComponent["getRotation"] = &TransformComponent::getRotation;
 			transformComponent["getScale"] = &TransformComponent::getScale;
 			transformComponent["getLocalTransform"] = &TransformComponent::getLocalTransform;
-			transformComponent["getAbsoluteTransform"] = &TransformComponent::getAbsoluteTransform;
+			transformComponent["getParentAbsoluteTransform"] = &TransformComponent::getParentAbsoluteTransform;
 			transformComponent["getComponentID"] = &TransformComponent::getComponentID;
 			transformComponent["getName"] = &TransformComponent::getName;
 		}

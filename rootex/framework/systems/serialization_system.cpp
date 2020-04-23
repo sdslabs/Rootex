@@ -25,7 +25,7 @@ void SerializationSystem::saveAllEntities(const String& dirPath)
 
 	for (auto&& entity : EntityFactory::GetSingleton()->getEntities())
 	{
-		if (entity.second->getID() != ROOT_ENTITY_ID)
+		if (entity.second->getID() != ROOT_ENTITY_ID && !entity.second->isEditorOnly())
 		{
 			InputOutputFileStream file = OS::CreateFileName(cachePath + "/" + entity.second->getFullName() + ".entity.json");
 			file << std::setw(4) << entity.second->getJSON() << std::endl;
