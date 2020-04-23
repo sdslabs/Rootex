@@ -126,12 +126,52 @@ void TransformComponent::draw()
 		m_TransformBuffer.m_Rotation = Quaternion::CreateFromYawPitchRoll(m_EditorRotation.x, m_EditorRotation.y, m_EditorRotation.z);
 	}
 
-	ImGui::DragFloat3("##Scale", &m_TransformBuffer.m_Scale.x, s_EditorDecimalSpeed, 0.0f, 0.0f);
+	static bool lockedFirstFrame = false;
+	if (m_LockScale)
+	{
+		static Vector3 lockedScale;
+		static float scaleRatioYX;
+		static float scaleRatioZX;
+		if (!lockedFirstFrame)
+		{
+			lockedScale = m_TransformBuffer.m_Scale;
+			scaleRatioYX = lockedScale.y / lockedScale.x;
+			scaleRatioZX = lockedScale.z / lockedScale.x;
+			lockedFirstFrame = true;
+		}
+
+		if (lockedScale.x - m_TransformBuffer.m_Scale.x)
+		{
+			lockedScale.y = lockedScale.x * scaleRatioYX;
+			lockedScale.z = lockedScale.x * scaleRatioZX;
+		}
+		else if (lockedScale.y - m_TransformBuffer.m_Scale.y)
+		{
+			lockedScale.x = lockedScale.y / scaleRatioYX;
+			lockedScale.z = lockedScale.y * scaleRatioZX / scaleRatioYX;
+		}
+		else if (lockedScale.z - m_TransformBuffer.m_Scale.z)
+		{
+			lockedScale.x = lockedScale.z / scaleRatioZX;
+			lockedScale.y = lockedScale.z * scaleRatioYX / scaleRatioZX;
+		}
+
+		m_TransformBuffer.m_Scale = { lockedScale.x, lockedScale.y, lockedScale.z };
+		ImGui::DragFloat3("##Scale", &lockedScale.x, s_EditorDecimalSpeed, 0.0f, 0.0f);
+	}
+	else
+	{
+		lockedFirstFrame = false;
+		ImGui::DragFloat3("##Scale", &m_TransformBuffer.m_Scale.x, s_EditorDecimalSpeed, 0.0f, 0.0f);
+	}
+	
 	ImGui::SameLine();
 	if (ImGui::Button("Scale"))
 	{
 		m_TransformBuffer.m_Scale = { 1.0f, 1.0f, 1.0f };
 	}
+
+	ImGui::Checkbox("Lock Scale", &m_LockScale);
 
 	updateTransformFromPositionRotationScale();
 }
