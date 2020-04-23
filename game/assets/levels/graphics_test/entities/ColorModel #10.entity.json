@@ -1,28 +1,25 @@
 {
     "Components": {
         "HierarchyComponent": {
-            "children": [
-                10,
-                9
-            ],
+            "children": [],
             "parent": 1
         },
         "ModelVisualComponent": {
             "color": {
                 "a": 1.0,
-                "b": 0.5,
-                "g": 0.5,
-                "r": 0.5
+                "b": 0.20000000298023224,
+                "g": 1.0,
+                "r": 0.20000000298023224
             },
-            "isVisible": false,
+            "isVisible": true,
             "renderPass": 1,
-            "resFile": "rootex/assets/cube.obj"
+            "resFile": "game\\assets\\test\\teapot.obj"
         },
         "TransformComponent": {
             "position": {
-                "x": 0.0,
+                "x": 1.0,
                 "y": 0.0,
-                "z": 0.0
+                "z": -7.0
             },
             "rotation": {
                 "w": 1.0,
@@ -31,14 +28,14 @@
                 "z": -0.0
             },
             "scale": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
+                "x": 0.06599999964237213,
+                "y": 0.06599999964237213,
+                "z": 0.06599999964237213
             }
         }
     },
     "Entity": {
-        "ID": 11,
-        "name": "ColorGroup"
+        "ID": 10,
+        "name": "ColorModel"
     }
 }

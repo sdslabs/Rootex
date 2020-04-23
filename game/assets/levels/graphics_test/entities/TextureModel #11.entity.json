@@ -1,0 +1,42 @@
+{
+    "Components": {
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 1
+        },
+        "TexturedModelVisualComponent": {
+            "color": {
+                "a": 1.0,
+                "b": 0.0,
+                "g": 0.0,
+                "r": 0.0
+            },
+            "isVisible": true,
+            "renderPass": 5,
+            "resFile": "game\\assets\\test\\teapot.obj",
+            "texturePath": "game\\assets\\test\\blue.png"
+        },
+        "TransformComponent": {
+            "position": {
+                "x": 3.077517509460449,
+                "y": 0.0003160536289215088,
+                "z": -7.0
+            },
+            "rotation": {
+                "w": 0.9997807145118713,
+                "x": -0.0002182061580242589,
+                "y": -0.015524957329034805,
+                "z": -0.014051457867026329
+            },
+            "scale": {
+                "x": 0.0659978985786438,
+                "y": 0.06599994748830795,
+                "z": 0.06599396467208862
+            }
+        }
+    },
+    "Entity": {
+        "ID": 11,
+        "name": "TextureModel"
+    }
+}

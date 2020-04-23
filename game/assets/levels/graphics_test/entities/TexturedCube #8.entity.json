@@ -4,22 +4,23 @@
             "children": [],
             "parent": 1
         },
-        "ModelVisualComponent": {
+        "TexturedModelVisualComponent": {
             "color": {
                 "a": 1.0,
                 "b": 0.0,
                 "g": 0.0,
-                "r": 1.0
+                "r": 0.0
             },
             "isVisible": true,
-            "renderPass": 1,
-            "resFile": "game/assets/test/cube.obj"
+            "renderPass": 5,
+            "resFile": "rootex/assets/cube.obj",
+            "texturePath": "rootex/assets/rootex.png"
         },
         "TransformComponent": {
             "position": {
-                "x": 1.0,
+                "x": -1.0,
                 "y": 0.0,
-                "z": 0.0
+                "z": -7.0
             },
             "rotation": {
                 "w": 1.0,
@@ -35,7 +36,7 @@
         }
     },
     "Entity": {
-        "ID": 3,
-        "name": "Cube"
+        "ID": 8,
+        "name": "TexturedCube"
     }
 }

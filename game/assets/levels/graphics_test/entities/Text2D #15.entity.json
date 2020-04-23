@@ -2,22 +2,26 @@
     "Components": {
         "HierarchyComponent": {
             "children": [],
-            "parent": 11
+            "parent": 1
         },
-        "ModelVisualComponent": {
+        "TextVisual2DComponent": {
             "color": {
                 "a": 1.0,
-                "b": 0.20000000298023224,
+                "b": 1.0,
                 "g": 1.0,
-                "r": 0.20000000298023224
+                "r": 1.0
             },
-            "isVisible": true,
-            "renderPass": 1,
-            "resFile": "game/assets/test/cube.obj"
+            "fontResource": "game\\assets\\fonts\\lato_30_bold.spritefont",
+            "mode": 0,
+            "origin": {
+                "x": 0.0,
+                "y": 966.0
+            },
+            "text": "Hello Rootex!"
         },
         "TransformComponent": {
             "position": {
-                "x": -1.0,
+                "x": 0.0,
                 "y": 0.0,
                 "z": 0.0
             },
@@ -35,7 +39,7 @@
         }
     },
     "Entity": {
-        "ID": 10,
-        "name": "SimpleColor"
+        "ID": 15,
+        "name": "Text2D"
     }
 }
