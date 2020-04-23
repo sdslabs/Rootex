@@ -15,9 +15,9 @@ protected:
 	Material(Shader* shader);
 
 	template <typename T>
-	void setPixelShaderConstantBuffer(const T& constantBuffer, Microsoft::WRL::ComPtr<ID3D11Buffer>& pointer, UINT slot);
+	void setPSConstantBuffer(const T& constantBuffer, Microsoft::WRL::ComPtr<ID3D11Buffer>& pointer, UINT slot);
 	template <typename T>
-	void setVertexShaderConstantBuffer(const T& constantBuffer, Microsoft::WRL::ComPtr<ID3D11Buffer>& pointer, UINT slot);
+	void setVSConstantBuffer(const T& constantBuffer, Microsoft::WRL::ComPtr<ID3D11Buffer>& pointer, UINT slot);
 
 public:
 	Material();
@@ -38,14 +38,14 @@ public:
 		Color,
 		End
 	};
-
-	void setPixelShaderConstantBuffer(const PSSolidConstantBuffer& constantBuffer);
-	void setVertexShaderConstantBuffer(const VSSolidConstantBuffer& constantBuffer);
-
-	void bind() override;
-
+	
 	ColorMaterial();
 	~ColorMaterial() = default;
+
+	void setPSConstantBuffer(const PSSolidConstantBuffer& constantBuffer);
+	void setVSConstantBuffer(const VSSolidConstantBuffer& constantBuffer);
+
+	void bind() override;
 };
 
 class TexturedMaterial : public Material
@@ -69,9 +69,9 @@ public:
 	TexturedMaterial(Ref<Texture> diffuseTexture);
 	~TexturedMaterial() = default;
 
-	void setPixelShaderConstantBuffer(const PSDiffuseConstantBufferLights& constantBuffer);
-	void setPixelShaderConstantBuffer(const PSDiffuseConstantBufferMaterial& constantBuffer);
-	void setVertexShaderConstantBuffer(const VSDiffuseConstantBuffer& constantBuffer);
+	void setPSConstantBuffer(const PSDiffuseConstantBufferLights& constantBuffer);
+	void setPSConstantBuffer(const PSDiffuseConstantBufferMaterial& constantBuffer);
+	void setVSConstantBuffer(const VSDiffuseConstantBuffer& constantBuffer);
 
 	void bind() override;
 };
@@ -91,8 +91,9 @@ public:
 	};
 	CPUParticlesMaterial();
 	~CPUParticlesMaterial() = default;
-	void setPixelShaderConstantBuffer(const PSSolidConstantBuffer& constantBuffer);
-	void setVertexShaderConstantBuffer(const VSSolidConstantBuffer& constantBuffer);
+	
+	void setPSConstantBuffer(const PSSolidConstantBuffer& constantBuffer);
+	void setVSConstantBuffer(const VSSolidConstantBuffer& constantBuffer);
 
 	void bind() override;
 };

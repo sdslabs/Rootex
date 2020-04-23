@@ -97,6 +97,9 @@ public:
 	void setInPixelShader(unsigned int slot, unsigned int number, ID3D11ShaderResourceView* texture);
 	/// Binds sampler used in sampling textures in Pixel Shader
 	void setInPixelShader(ID3D11SamplerState* samplerState);
+	
+	void setVSConstantBuffer(ID3D11Buffer* constantBuffer, UINT slot);
+	void setPSConstantBuffer(ID3D11Buffer* constantBuffer, UINT slot);
 
 	void unbindShaderResources();
 
