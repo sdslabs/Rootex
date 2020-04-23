@@ -51,9 +51,7 @@ void BoxColliderComponent::draw()
 		m_Dimensions = { 1.0f, 1.0f, 1.0f };
 	}
 
-
-	ImGui::SameLine();
-	if (ImGui::BeginCombo("Material", m_MaterialName.c_str(), ImGuiComboFlags_HeightLarge))
+	if (ImGui::BeginCombo("Material", m_MaterialName.c_str()))
 	{
 		for (auto&& material : PhysicsSystem::GetSingleton()->getPhysicsMaterial())
 		{

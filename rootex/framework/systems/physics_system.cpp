@@ -3,6 +3,8 @@
 #include "components/physics/physics_collider_component.h"
 #include "core/resource_loader.h"
 
+#include "BulletCollision/NarrowPhaseCollision/btRaycastCallback.h"
+
 PhysicsSystem* PhysicsSystem::GetSingleton()
 {
 	static PhysicsSystem singleton;
@@ -52,6 +54,32 @@ void PhysicsSystem::addRigidBody(btRigidBody* body)
 sol::table PhysicsSystem::getPhysicsMaterial()
 {
 	return m_PhysicsMaterialTable;
+}
+
+btCollisionWorld::AllHitsRayResultCallback PhysicsSystem::reportAllRayHits(const btVector3& m_From, const btVector3& m_To)
+{
+	if (m_DynamicsWorld)
+	{
+		m_DynamicsWorld->updateAabbs();
+		m_DynamicsWorld->computeOverlappingPairs();
+
+		btCollisionWorld::AllHitsRayResultCallback allResults(m_From, m_To);
+		allResults.m_flags |= btTriangleRaycastCallback::kF_KeepUnflippedNormal;
+		allResults.m_flags |= btTriangleRaycastCallback::kF_UseSubSimplexConvexCastRaytest;
+
+		m_DynamicsWorld->rayTest(m_From, m_To, allResults);
+		return allResults;
+	}
+}
+
+btCollisionWorld::ClosestRayResultCallback PhysicsSystem::reportClosestRayHits(const btVector3& m_From, const btVector3& m_To)
+{
+	btCollisionWorld::ClosestRayResultCallback closestResults(m_From, m_To);
+	closestResults.m_flags |= btTriangleRaycastCallback::kF_FilterBackfaces;
+
+	m_DynamicsWorld->rayTest(m_From, m_To, closestResults);
+
+	return closestResults;
 }
 
 // This function is called after bullet performs its internal update.
