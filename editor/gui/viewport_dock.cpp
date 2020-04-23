@@ -115,16 +115,17 @@ void ViewportDock::draw()
 				Matrix view = RenderSystem::GetSingleton()->getCamera()->getViewMatrix();
 				Matrix proj = RenderSystem::GetSingleton()->getCamera()->getProjectionMatrix();
 
-				Matrix matrix = openedEntity->getComponent<TransformComponent>()->getLocalTransform();
+				Matrix matrix = openedEntity->getComponent<TransformComponent>()->getParentAbsoluteTransform();
+				static Matrix deltaMatrix = Matrix::Identity;
 				ImGuizmo::Manipulate(
 				    &view.m[0][0],
 				    &proj.m[0][0],
 				    gizmoOperation,
 				    gizmoMode,
 				    &matrix.m[0][0],
-				    0,
+				    &deltaMatrix.m[0][0],
 				    snap);
-				openedEntity->getComponent<TransformComponent>()->setTransform(matrix);
+				openedEntity->getComponent<TransformComponent>()->addTransform(deltaMatrix);
 			}
 
 			if (ImGui::IsWindowHovered() && InputManager::GetSingleton()->isPressed("InputMouseRight"))
