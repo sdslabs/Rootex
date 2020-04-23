@@ -18,6 +18,7 @@ class TransformComponent : public Component
 		Matrix m_ParentAbsoluteTransform;
 	};
 	TransformBuffer m_TransformBuffer;
+	bool m_LockScale = false;
 
 	const TransformBuffer* getTransformBuffer() const { return &m_TransformBuffer; };
 
