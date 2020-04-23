@@ -133,8 +133,6 @@ void TransformComponent::draw()
 			zByx = lockedScale.z / lockedScale.x;
 			locked = true;
 		}
-		std::cout << "LockedScale(" << lockedScale.x << ", " << lockedScale.y << ", " << lockedScale.z << ")\n";
-		std::cout << "yByx = " << yByx << ", zByx = " << zByx << "\n";
 
 		if (lockedScale.x - m_TransformBuffer.m_Scale.x)
 		{
