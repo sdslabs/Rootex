@@ -56,37 +56,30 @@ sol::table PhysicsSystem::getPhysicsMaterial()
 	return m_PhysicsMaterialTable;
 }
 
-void PhysicsSystem::castRays()
+btCollisionWorld::AllHitsRayResultCallback PhysicsSystem::reportAllRayHits(const btVector3& m_From, const btVector3& m_To)
 {
 	if (m_DynamicsWorld)
 	{
 		m_DynamicsWorld->updateAabbs();
 		m_DynamicsWorld->computeOverlappingPairs();
 
-		{
-			btCollisionWorld::AllHitsRayResultCallback allResults(m_From, m_To);
-			allResults.m_flags |= btTriangleRaycastCallback::kF_KeepUnflippedNormal;
-			allResults.m_flags |= btTriangleRaycastCallback::kF_UseSubSimplexConvexCastRaytest;
+		btCollisionWorld::AllHitsRayResultCallback allResults(m_From, m_To);
+		allResults.m_flags |= btTriangleRaycastCallback::kF_KeepUnflippedNormal;
+		allResults.m_flags |= btTriangleRaycastCallback::kF_UseSubSimplexConvexCastRaytest;
 
-			m_DynamicsWorld->rayTest(m_From, m_To, allResults);
-			for (int i = 0; i < allResults.m_hitFractions.size(); i++)
-			{
-				WARN("Hit Reported")
-			}
-		}
-
-		{
-			btCollisionWorld::ClosestRayResultCallback closestResults(m_From, m_To);
-			closestResults.m_flags |= btTriangleRaycastCallback::kF_FilterBackfaces;
-
-			m_DynamicsWorld->rayTest(m_From, m_To, closestResults);
-
-			if (closestResults.hasHit())
-			{
-				WARN("Hit Reported")
-			}
-		}
+		m_DynamicsWorld->rayTest(m_From, m_To, allResults);
+		return allResults;
 	}
+}
+
+btCollisionWorld::ClosestRayResultCallback PhysicsSystem::reportClosestRayHits(const btVector3& m_From, const btVector3& m_To)
+{
+	btCollisionWorld::ClosestRayResultCallback closestResults(m_From, m_To);
+	closestResults.m_flags |= btTriangleRaycastCallback::kF_FilterBackfaces;
+
+	m_DynamicsWorld->rayTest(m_From, m_To, closestResults);
+
+	return closestResults;
 }
 
 // This function is called after bullet performs its internal update.
@@ -113,7 +106,6 @@ void PhysicsSystem::internalTickCallback(btDynamicsWorld* const world, btScalar 
 
 void PhysicsSystem::update(float deltaMilliseconds)
 {
-	castRays();
 	m_DynamicsWorld->stepSimulation(deltaMilliseconds, 10);
 	syncVisibleScene();
 }
