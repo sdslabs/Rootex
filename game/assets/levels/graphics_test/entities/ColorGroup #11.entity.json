@@ -1,23 +1,26 @@
 {
     "Components": {
         "HierarchyComponent": {
-            "children": [],
-            "parent": 11
+            "children": [
+                10,
+                9
+            ],
+            "parent": 1
         },
         "ModelVisualComponent": {
             "color": {
                 "a": 1.0,
-                "b": 0.20000000298023224,
-                "g": 1.0,
-                "r": 0.20000000298023224
+                "b": 0.5,
+                "g": 0.5,
+                "r": 0.5
             },
-            "isVisible": true,
+            "isVisible": false,
             "renderPass": 1,
-            "resFile": "game/assets/test/cube.obj"
+            "resFile": "rootex/assets/cube.obj"
         },
         "TransformComponent": {
             "position": {
-                "x": 1.0,
+                "x": 0.0,
                 "y": 0.0,
                 "z": 0.0
             },
@@ -35,7 +38,7 @@
         }
     },
     "Entity": {
-        "ID": 3,
-        "name": "Cube"
+        "ID": 11,
+        "name": "ColorGroup"
     }
 }

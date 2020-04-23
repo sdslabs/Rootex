@@ -93,7 +93,7 @@ void ModelVisualComponent::render(RenderPass renderPass)
 	if (renderPass & m_RenderPass)
 	{
 		PSSolidConstantBuffer Cb = { m_Color };
-		reinterpret_cast<ColorMaterial*>(m_Material.get())->setPixelShaderConstantBuffer(Cb); //change
+		reinterpret_cast<ColorMaterial*>(m_Material.get())->setPSConstantBuffer(Cb); //change
 
 		RenderSystem::GetSingleton()->getRenderer()->draw(getVertexBuffer(), getIndexBuffer(), getMaterial());
 	}

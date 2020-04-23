@@ -17,9 +17,15 @@
         },
         "TransformComponent": {
             "position": {
+<<<<<<< HEAD:game/assets/levels/level_0/entities/Cube #3.entity.json
+                "x": 0.0,
+                "y": 0.0,
+                "z": -2.9000000953674316
+=======
                 "x": 1.0,
                 "y": 0.0,
                 "z": 0.0
+>>>>>>> f19c601... Fix unset constant buffers during binding materials:game/assets/levels/graphics_test/entities/ModifiedColor #9.entity.json
             },
             "rotation": {
                 "w": 1.0,
@@ -35,7 +41,12 @@
         }
     },
     "Entity": {
+<<<<<<< HEAD:game/assets/levels/level_0/entities/Cube #3.entity.json
         "ID": 3,
         "name": "Cube"
+=======
+        "ID": 9,
+        "name": "ModifiedColor"
+>>>>>>> f19c601... Fix unset constant buffers during binding materials:game/assets/levels/graphics_test/entities/ModifiedColor #9.entity.json
     }
 }

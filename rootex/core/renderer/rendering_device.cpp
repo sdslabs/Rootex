@@ -267,7 +267,6 @@ Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createVSConstantBuffer(D3D
 {
 	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &constantBuffer));
-	m_Context->VSSetConstantBuffers(slot, 1u, constantBuffer.GetAddressOf());
 	return constantBuffer;
 }
 
@@ -275,7 +274,6 @@ Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createPSConstantBuffer(D3D
 {
 	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &constantBuffer));
-	m_Context->PSSetConstantBuffers(slot, 1u, constantBuffer.GetAddressOf());
 	return constantBuffer;
 }
 
@@ -368,6 +366,16 @@ void RenderingDevice::setInPixelShader(unsigned int slot, unsigned int number, I
 void RenderingDevice::setInPixelShader(ID3D11SamplerState* samplerState)
 {
 	m_Context->PSSetSamplers(0, 1, &samplerState);
+}
+
+void RenderingDevice::setVSConstantBuffer(ID3D11Buffer* constantBuffer, UINT slot)
+{
+	m_Context->VSSetConstantBuffers(slot, 1u, &constantBuffer);
+}
+
+void RenderingDevice::setPSConstantBuffer(ID3D11Buffer* constantBuffer, UINT slot)
+{
+	m_Context->PSSetConstantBuffers(slot, 1u, &constantBuffer);
 }
 
 void RenderingDevice::unbindShaderResources()

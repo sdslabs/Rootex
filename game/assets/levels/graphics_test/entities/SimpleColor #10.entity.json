@@ -17,7 +17,7 @@
         },
         "TransformComponent": {
             "position": {
-                "x": 1.0,
+                "x": -1.0,
                 "y": 0.0,
                 "z": 0.0
             },
@@ -35,7 +35,7 @@
         }
     },
     "Entity": {
-        "ID": 3,
-        "name": "Cube"
+        "ID": 10,
+        "name": "SimpleColor"
     }
 }
