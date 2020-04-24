@@ -17,7 +17,7 @@ Material::Material(Shader* shader)
 }
 
 template <typename T>
-void Material::setPixelShaderConstantBuffer(const T& constantBuffer, Microsoft::WRL::ComPtr<ID3D11Buffer>& bufferPointer, UINT slot)
+void Material::setPSConstantBuffer(const T& constantBuffer, Microsoft::WRL::ComPtr<ID3D11Buffer>& bufferPointer, UINT slot)
 {
 	if (bufferPointer == nullptr)
 	{
@@ -32,6 +32,7 @@ void Material::setPixelShaderConstantBuffer(const T& constantBuffer, Microsoft::
 		csd.pSysMem = &constantBuffer;
 
 		bufferPointer = RenderingDevice::GetSingleton()->createPSConstantBuffer(&cbd, &csd, slot);
+		RenderingDevice::GetSingleton()->setPSConstantBuffer(bufferPointer.Get(), slot);
 	}
 	else
 	{
@@ -39,11 +40,13 @@ void Material::setPixelShaderConstantBuffer(const T& constantBuffer, Microsoft::
 		RenderingDevice::GetSingleton()->mapBuffer(bufferPointer.Get(), subresource);
 		memcpy(subresource.pData, &constantBuffer, sizeof(constantBuffer));
 		RenderingDevice::GetSingleton()->unmapBuffer(bufferPointer.Get());
+
+		RenderingDevice::GetSingleton()->setPSConstantBuffer(bufferPointer.Get(), slot);
 	}
 }
 
 template <typename T>
-void Material::setVertexShaderConstantBuffer(const T& constantBuffer, Microsoft::WRL::ComPtr<ID3D11Buffer>& bufferPointer, UINT slot)
+void Material::setVSConstantBuffer(const T& constantBuffer, Microsoft::WRL::ComPtr<ID3D11Buffer>& bufferPointer, UINT slot)
 {
 	if (bufferPointer == nullptr)
 	{
@@ -58,6 +61,7 @@ void Material::setVertexShaderConstantBuffer(const T& constantBuffer, Microsoft:
 		csd.pSysMem = &constantBuffer;
 
 		bufferPointer = RenderingDevice::GetSingleton()->createVSConstantBuffer(&cbd, &csd, slot);
+		RenderingDevice::GetSingleton()->setVSConstantBuffer(bufferPointer.Get(), slot);
 	}
 	else
 	{
@@ -65,7 +69,31 @@ void Material::setVertexShaderConstantBuffer(const T& constantBuffer, Microsoft:
 		RenderingDevice::GetSingleton()->mapBuffer(bufferPointer.Get(), subresource);
 		memcpy(subresource.pData, &constantBuffer, sizeof(constantBuffer));
 		RenderingDevice::GetSingleton()->unmapBuffer(bufferPointer.Get());
+
+		RenderingDevice::GetSingleton()->setVSConstantBuffer(bufferPointer.Get(), slot);
 	}
+}
+
+ColorMaterial::ColorMaterial()
+{
+	m_PSConstantBuffer.resize((int)PixelConstantBufferType::End, nullptr);
+	m_VSConstantBuffer.resize((int)VertexConstantBufferType::End, nullptr);
+}
+
+void ColorMaterial::setPSConstantBuffer(const PSSolidConstantBuffer& constantBuffer)
+{
+	Material::setPSConstantBuffer<PSSolidConstantBuffer>(constantBuffer, m_PSConstantBuffer[(int)PixelConstantBufferType::Color], 3u);
+}
+
+void ColorMaterial::setVSConstantBuffer(const VSSolidConstantBuffer& constantBuffer)
+{
+	Material::setVSConstantBuffer<VSSolidConstantBuffer>(constantBuffer, m_VSConstantBuffer[(int)VertexConstantBufferType::Model], 1u);
+}
+
+void ColorMaterial::bind()
+{
+	m_Shader->bind();
+	setVSConstantBuffer(VSSolidConstantBuffer(RenderSystem::GetSingleton()->getTopMatrix()));
 }
 
 TexturedMaterial::TexturedMaterial(Ref<Texture> diffuseTexture)
@@ -78,54 +106,28 @@ TexturedMaterial::TexturedMaterial(Ref<Texture> diffuseTexture)
 	m_VSConstantBuffer.resize((int)VertexConstantBufferType::End, nullptr);
 }
 
-void ColorMaterial::setPixelShaderConstantBuffer(const PSSolidConstantBuffer& constantBuffer)
+void TexturedMaterial::setPSConstantBuffer(const PSDiffuseConstantBufferLights& constantBuffer)
 {
-	Material::setPixelShaderConstantBuffer<PSSolidConstantBuffer>(constantBuffer, m_PSConstantBuffer[(int)PixelConstantBufferType::Color], 3u);
+	Material::setPSConstantBuffer<PSDiffuseConstantBufferLights>(constantBuffer, m_PSConstantBuffer[(int)PixelConstantBufferType::Lights], 3u);
 }
 
-void ColorMaterial::setVertexShaderConstantBuffer(const VSSolidConstantBuffer& constantBuffer)
+void TexturedMaterial::setPSConstantBuffer(const PSDiffuseConstantBufferMaterial& constantBuffer)
 {
-	Material::setVertexShaderConstantBuffer<VSSolidConstantBuffer>(constantBuffer, m_VSConstantBuffer[(int)VertexConstantBufferType::Model], 1u);
+	Material::setPSConstantBuffer<PSDiffuseConstantBufferMaterial>(constantBuffer, m_PSConstantBuffer[(int)PixelConstantBufferType::Material], 4u);
 }
 
-void TexturedMaterial::setPixelShaderConstantBuffer(const PSDiffuseConstantBufferLights& constantBuffer)
+void TexturedMaterial::setVSConstantBuffer(const VSDiffuseConstantBuffer& constantBuffer)
 {
-	Material::setPixelShaderConstantBuffer<PSDiffuseConstantBufferLights>(constantBuffer, m_PSConstantBuffer[(int)PixelConstantBufferType::Lights], 3u);
-}
-
-void TexturedMaterial::setPixelShaderConstantBuffer(const PSDiffuseConstantBufferMaterial& constantBuffer)
-{
-	Material::setPixelShaderConstantBuffer<PSDiffuseConstantBufferMaterial>(constantBuffer, m_PSConstantBuffer[(int)PixelConstantBufferType::Material], 4u);
-}
-
-void TexturedMaterial::setVertexShaderConstantBuffer(const VSDiffuseConstantBuffer& constantBuffer)
-{
-	Material::setVertexShaderConstantBuffer<VSDiffuseConstantBuffer>(constantBuffer, m_VSConstantBuffer[(int)VertexConstantBufferType::Model], 1u);
-}
-
-void CPUParticlesMaterial::setPixelShaderConstantBuffer(const PSSolidConstantBuffer& constantBuffer)
-{
-	Material::setPixelShaderConstantBuffer<PSSolidConstantBuffer>(constantBuffer, m_PSConstantBuffer[(int)PixelConstantBufferType::Color], 3u);
-}
-
-void CPUParticlesMaterial::setVertexShaderConstantBuffer(const VSSolidConstantBuffer& constantBuffer)
-{
-	Material::setVertexShaderConstantBuffer<VSSolidConstantBuffer>(constantBuffer, m_VSConstantBuffer[(int)VertexConstantBufferType::Model], 1u);
-}
-
-void ColorMaterial::bind()
-{
-	setVertexShaderConstantBuffer(VSSolidConstantBuffer(RenderSystem::GetSingleton()->getTopMatrix()));
-	m_Shader->bind();
+	Material::setVSConstantBuffer<VSDiffuseConstantBuffer>(constantBuffer, m_VSConstantBuffer[(int)VertexConstantBufferType::Model], 1u);
 }
 
 void TexturedMaterial::bind()
 {
-	setVertexShaderConstantBuffer(VSDiffuseConstantBuffer(RenderSystem::GetSingleton()->getTopMatrix()));
 	m_Shader->bind();
+	setVSConstantBuffer(VSDiffuseConstantBuffer(RenderSystem::GetSingleton()->getTopMatrix()));
 	m_DiffuseShader->set(m_DiffuseTexture.get());
-	setPixelShaderConstantBuffer({ LightSystem::GetSingleton()->getLights() });
-	setPixelShaderConstantBuffer(PSDiffuseConstantBufferMaterial ({ 0.6f, 30.0f, { 0.0f, 0.0f } }));
+	setPSConstantBuffer({ LightSystem::GetSingleton()->getLights() });
+	setPSConstantBuffer(PSDiffuseConstantBufferMaterial({ 0.6f, 30.0f, { 0.0f, 0.0f } }));
 }
 
 CPUParticlesMaterial::CPUParticlesMaterial()
@@ -135,14 +137,18 @@ CPUParticlesMaterial::CPUParticlesMaterial()
 	m_VSConstantBuffer.resize((int)VertexConstantBufferType::End, nullptr);
 }
 
-void CPUParticlesMaterial::bind()
+void CPUParticlesMaterial::setPSConstantBuffer(const PSSolidConstantBuffer& constantBuffer)
 {
-	setVertexShaderConstantBuffer(VSSolidConstantBuffer({ RenderSystem::GetSingleton()->getTopMatrix() }));
-	m_Shader->bind();
+	Material::setPSConstantBuffer<PSSolidConstantBuffer>(constantBuffer, m_PSConstantBuffer[(int)PixelConstantBufferType::Color], 3u);
 }
 
-ColorMaterial::ColorMaterial()
+void CPUParticlesMaterial::setVSConstantBuffer(const VSSolidConstantBuffer& constantBuffer)
 {
-	m_PSConstantBuffer.resize((int)PixelConstantBufferType::End, nullptr);
-	m_VSConstantBuffer.resize((int)VertexConstantBufferType::End, nullptr);
+	Material::setVSConstantBuffer<VSSolidConstantBuffer>(constantBuffer, m_VSConstantBuffer[(int)VertexConstantBufferType::Model], 1u);
+}
+
+void CPUParticlesMaterial::bind()
+{
+	m_Shader->bind();
+	setVSConstantBuffer(VSSolidConstantBuffer({ RenderSystem::GetSingleton()->getTopMatrix() }));
 }

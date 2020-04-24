@@ -108,14 +108,14 @@ JSON::json TransformComponent::getJSON() const
 #include "imgui.h"
 void TransformComponent::draw()
 {
-	ImGui::DragFloat3("##P", &m_TransformBuffer.m_Position.x, s_EditorDecimalSpeed);
+	ImGui::DragFloat3("##Position", &m_TransformBuffer.m_Position.x, s_EditorDecimalSpeed);
 	ImGui::SameLine();
 	if (ImGui::Button("Position"))
 	{
 		m_TransformBuffer.m_Position = { 0.0f, 0.0f, 0.0f };
 	}
 
-	if (ImGui::DragFloat3("##R", &m_EditorRotation.x, s_EditorDecimalSpeed))
+	if (ImGui::DragFloat3("##Rotation", &m_EditorRotation.x, s_EditorDecimalSpeed))
 	{
 		m_TransformBuffer.m_Rotation = Quaternion::CreateFromYawPitchRoll(m_EditorRotation.x, m_EditorRotation.y, m_EditorRotation.z);
 	}
@@ -157,12 +157,12 @@ void TransformComponent::draw()
 		}
 
 		m_TransformBuffer.m_Scale = { lockedScale.x, lockedScale.y, lockedScale.z };
-		ImGui::DragFloat3("##S", &lockedScale.x, s_EditorDecimalSpeed, 0.0f, 0.0f);
+		ImGui::DragFloat3("##Scale", &lockedScale.x, s_EditorDecimalSpeed, 0.0f, 0.0f);
 	}
 	else
 	{
 		lockedFirstFrame = false;
-		ImGui::DragFloat3("##S", &m_TransformBuffer.m_Scale.x, s_EditorDecimalSpeed, 0.0f, 0.0f);
+		ImGui::DragFloat3("##Scale", &m_TransformBuffer.m_Scale.x, s_EditorDecimalSpeed, 0.0f, 0.0f);
 	}
 	
 	ImGui::SameLine();
