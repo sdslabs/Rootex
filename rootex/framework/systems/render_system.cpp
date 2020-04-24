@@ -60,7 +60,7 @@ void RenderSystem::render()
 	calculateTransforms(rootHC.get());
 
 	RenderingDevice::GetSingleton()->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	RenderingDevice::GetSingleton()->setRasterizerState();
+	RenderingDevice::GetSingleton()->setCurrentRasterizerState();
 	RenderingDevice::GetSingleton()->setDepthStencilState();
 
 	perFrameVSCBBinds();
@@ -105,6 +105,16 @@ void RenderSystem::pushUIMatrix(const Matrix& transform)
 void RenderSystem::popUIMatrix()
 {
 	m_UITransformationStack.pop_back();
+}
+
+void RenderSystem::enableWireframeRasterizer()
+{
+	RenderingDevice::GetSingleton()->setRasterizerState(RenderingDevice::RasterizerState::Wireframe);
+}
+
+void RenderSystem::enableDefaultRasterizer()
+{
+	RenderingDevice::GetSingleton()->setRasterizerState(RenderingDevice::RasterizerState::Default);
 }
 
 void RenderSystem::setProjectionConstantBuffers()
