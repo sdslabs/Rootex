@@ -25,6 +25,7 @@ class Editor
 	String m_PopupCause;
 	unsigned int m_EditorStyleColorPushCount;
 	unsigned int m_EditorStyleVarPushCount;
+	bool m_WireframeMode = false;
 
 	struct Colors
 	{

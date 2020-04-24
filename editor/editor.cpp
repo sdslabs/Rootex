@@ -285,6 +285,17 @@ void Editor::drawDefaultUI()
 			}
 			if (ImGui::BeginMenu("View"))
 			{
+				if (ImGui::Checkbox("Wireframe Mode", &m_WireframeMode))
+				{
+					if (m_WireframeMode)
+					{
+						RenderSystem::GetSingleton()->enableWireframeRasterizer();
+					}
+					else
+					{
+						RenderSystem::GetSingleton()->enableDefaultRasterizer();
+					}
+				}
 				bool fullscreen = Extract(bool, EventManager::GetSingleton()->returnCall("WindowGetScreenState", "WindowGetScreenState", 0));
 				if (ImGui::Checkbox("Full Screen", &fullscreen))
 				{

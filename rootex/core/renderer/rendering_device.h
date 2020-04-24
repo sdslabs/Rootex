@@ -37,7 +37,10 @@ class RenderingDevice
 	/// DirectXTK batch font renderer data structure
 	Ref<DirectX::SpriteBatch> m_FontBatch;
 
-	Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_RSState;
+	Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_DefaultRasterizerState;
+	Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_WireframeRasterizerState;
+	ID3D11RasterizerState** m_CurrentRasterizerState;
+
 	Microsoft::WRL::ComPtr<IDXGISwapChain> m_SwapChain;
 	bool m_MSAA;
 	unsigned int m_4XMSQuality;
@@ -58,6 +61,12 @@ class RenderingDevice
 #endif // ROOTEX_EDITOR
 
 public:
+	enum class RasterizerState
+	{
+		Default,
+		Wireframe
+	};
+
 	static RenderingDevice* GetSingleton();
 
 	void initialize(HWND hWnd, int width, int height, bool MSAA);
@@ -103,7 +112,8 @@ public:
 
 	void unbindShaderResources();
 
-	void setRasterizerState();
+	void setCurrentRasterizerState();
+	void setRasterizerState(RasterizerState rs);
 	void setDepthStencilState();
 
 	void setTextureRenderTarget();
