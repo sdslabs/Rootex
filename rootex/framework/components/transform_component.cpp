@@ -120,34 +120,34 @@ void TransformComponent::draw()
 		m_TransformBuffer.m_Rotation = Quaternion::CreateFromYawPitchRoll(m_EditorRotation.x, m_EditorRotation.y, m_EditorRotation.z);
 	}
 
-	static bool locked = false;
+	static bool lockedFirstFrame = false;
 	if (m_LockScale)
 	{
 		static Vector3 lockedScale;
-		static float yByx;
-		static float zByx;
-		if (!locked)
+		static float scaleRatioYX;
+		static float scaleRatioZX;
+		if (!lockedFirstFrame)
 		{
 			lockedScale = m_TransformBuffer.m_Scale;
-			yByx = lockedScale.y / lockedScale.x;
-			zByx = lockedScale.z / lockedScale.x;
-			locked = true;
+			scaleRatioYX = lockedScale.y / lockedScale.x;
+			scaleRatioZX = lockedScale.z / lockedScale.x;
+			lockedFirstFrame = true;
 		}
 
 		if (lockedScale.x - m_TransformBuffer.m_Scale.x)
 		{
-			lockedScale.y = lockedScale.x * yByx;
-			lockedScale.z = lockedScale.x * zByx;
+			lockedScale.y = lockedScale.x * scaleRatioYX;
+			lockedScale.z = lockedScale.x * scaleRatioZX;
 		}
 		else if (lockedScale.y - m_TransformBuffer.m_Scale.y)
 		{
-			lockedScale.x = lockedScale.y / yByx;
-			lockedScale.z = lockedScale.y * zByx / yByx;
+			lockedScale.x = lockedScale.y / scaleRatioYX;
+			lockedScale.z = lockedScale.y * scaleRatioZX / scaleRatioYX;
 		}
 		else if (lockedScale.z - m_TransformBuffer.m_Scale.z)
 		{
-			lockedScale.x = lockedScale.z / zByx;
-			lockedScale.y = lockedScale.z * yByx / zByx;
+			lockedScale.x = lockedScale.z / scaleRatioZX;
+			lockedScale.y = lockedScale.z * scaleRatioYX / scaleRatioZX;
 		}
 
 		m_TransformBuffer.m_Scale = { lockedScale.x, lockedScale.y, lockedScale.z };
@@ -155,7 +155,7 @@ void TransformComponent::draw()
 	}
 	else
 	{
-		locked = false;
+		lockedFirstFrame = false;
 		ImGui::DragFloat3("##S", &m_TransformBuffer.m_Scale.x, s_EditorDecimalSpeed, 0.0f, 0.0f);
 	}
 	
