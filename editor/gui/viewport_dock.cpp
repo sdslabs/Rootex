@@ -115,8 +115,8 @@ void ViewportDock::draw()
 				Matrix view = RenderSystem::GetSingleton()->getCamera()->getViewMatrix();
 				Matrix proj = RenderSystem::GetSingleton()->getCamera()->getProjectionMatrix();
 
-				Matrix matrix = openedEntity->getComponent<TransformComponent>()->getParentAbsoluteTransform();
-				static Matrix deltaMatrix = Matrix::Identity;
+				Matrix matrix = openedEntity->getComponent<TransformComponent>()->getAbsoluteTransform();
+				Matrix deltaMatrix = Matrix::CreateTranslation(0.0f, 0.0f, 0.0f);
 				ImGuizmo::Manipulate(
 				    &view.m[0][0],
 				    &proj.m[0][0],
