@@ -14,7 +14,7 @@
 typedef Component* (*ComponentCreator)(const JSON::json& componentDescription);
 /// Function pointer to a function that default constructs a component.
 typedef Component* (*ComponentDefaultCreator)();
-typedef unsigned int EntityID;
+typedef int EntityID;
 /// Collection of a component, its name, and a function that constructs that component.
 typedef Vector<Tuple<ComponentID, String, ComponentCreator>> ComponentDatabase;
 /// Collection of a component, its name, and a function that constructs a default component.
@@ -23,10 +23,12 @@ typedef Vector<Tuple<ComponentID, String, ComponentDefaultCreator>> DefaultCompo
 class EntityFactory
 {
 	static EntityID s_CurrentID;
+	static EntityID s_CurrentEditorID;
 
 	HashMap<EntityID, Ref<Entity>> m_Entities;
-
+	
 	EntityID getNextID();
+	EntityID getNextEditorID();
 
 protected:
 	ComponentDatabase m_ComponentCreators;
@@ -46,7 +48,7 @@ public:
 
 	Ref<Component> createComponent(const String& name, const JSON::json& componentData);
 	Ref<Component> createDefaultComponent(const String& name);
-	Ref<Entity> createEntity(TextResourceFile* entityJSONDescription);
+	Ref<Entity> createEntity(TextResourceFile* entityJSONDescription, bool isEditorOnly = false);
 	/// Get entity by ID.
 	Ref<Entity> findEntity(EntityID entityID);
 
