@@ -25,7 +25,7 @@ Component* GridVisualComponent::CreateDefault()
 	return new GridVisualComponent(
 	    { 1.0f, 1.0f },
 		100,
-		Color(ColorPresets::Gray),
+		Color(ColorPresets::DarkGray),
 		RenderPass::RenderPassEditor,
 	    true);
 }
