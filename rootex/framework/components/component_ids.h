@@ -6,6 +6,7 @@ enum class ComponentIDs : unsigned int
 	TestComponent,
 	DebugComponent,
 	VisualComponent,
+	GridVisualComponent = VisualComponent,
 	ModelVisualComponent = VisualComponent,
 	TexturedVisualComponent = VisualComponent,
 	CPUParticlesVisualComponent = VisualComponent,

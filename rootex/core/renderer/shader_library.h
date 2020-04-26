@@ -10,7 +10,8 @@ class ShaderLibrary
 	{
 		Default,
 		Diffuse,
-		CPUParticles
+		CPUParticles,
+		Grid
 	};
 
 private:
@@ -29,4 +30,5 @@ public:
 	static Shader* GetDefaultShader();
 	static DiffuseShader* GetDiffuseShader();
 	static CPUParticlesShader* GetCPUParticlesShader();
+	static GridShader* GetGridShader();
 };

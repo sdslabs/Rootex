@@ -42,13 +42,16 @@ public:
 	void popUIMatrix();
 
 	void enableWireframeRasterizer();
-	void enableDefaultRasterizer();
+	void resetDefaultRasterizer();
 
 	void setProjectionConstantBuffers();
 	void perFrameVSCBBinds();
 	void perFramePSCBBinds();
 
 	void setIsEditorRenderPass(bool enabled) { m_IsEditorRenderPassEnabled = enabled; }
+	
+	void enableLineRenderMode();
+	void resetRenderMode();
 
 	CameraComponent* getCamera() const { return m_Camera; }
 	const Matrix& getTopMatrix() const;

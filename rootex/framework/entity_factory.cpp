@@ -22,6 +22,7 @@
 #include "components/visual/spot_light_component.h"
 #include "components/visual/text_visual_2d_component.h"
 #include "components/visual/textured_model_visual_component.h"
+#include "components/visual/grid_visual_component.h"
 #include "components/visual/visual_component.h"
 #include "systems/hierarchy_system.h"
 
@@ -49,22 +50,18 @@ EntityFactory::EntityFactory()
 	REGISTER_COMPONENT(TestComponent);
 	REGISTER_COMPONENT(DebugComponent);
 	REGISTER_COMPONENT(CameraComponent);
+	REGISTER_COMPONENT(GridVisualComponent);
 	REGISTER_COMPONENT(ModelVisualComponent);
 	REGISTER_COMPONENT(TexturedModelVisualComponent);
 	REGISTER_COMPONENT(TextVisual2DComponent);
-
 	REGISTER_COMPONENT(TransformComponent);
-
 	REGISTER_COMPONENT(PointLightComponent);
 	REGISTER_COMPONENT(DirectionalLightComponent);
 	REGISTER_COMPONENT(SpotLightComponent);
 	REGISTER_COMPONENT(SphereColliderComponent);
 	REGISTER_COMPONENT(BoxColliderComponent);
-
 	REGISTER_COMPONENT(HierarchyComponent);
-
 	REGISTER_COMPONENT(ScriptComponent);
-
 	REGISTER_COMPONENT(MusicComponent);
 	REGISTER_COMPONENT(ShortMusicComponent);
 	REGISTER_COMPONENT(CPUParticlesVisualComponent);
@@ -200,25 +197,23 @@ Ref<Entity> EntityFactory::createRootEntity()
 
 	{
 		Ref<HierarchyComponent> rootComponent(new HierarchyComponent(INVALID_ID, {}));
-		EntityFactory::addComponent(root, rootComponent);
 		System::RegisterComponent(rootComponent.get());
+		addComponent(root, rootComponent);
 	}
 	{
 		Ref<Component> rootTransformComponent = createDefaultComponent("TransformComponent");
-		EntityFactory::addComponent(root, rootTransformComponent);
-		System::RegisterComponent(rootTransformComponent.get());
+		addComponent(root, rootTransformComponent);
 	}
 	{
 		Ref<ModelVisualComponent> rootVisualComponent = std::dynamic_pointer_cast<ModelVisualComponent>(createDefaultComponent("ModelVisualComponent"));
 		rootVisualComponent->setVisibility(false);
-
-		EntityFactory::addComponent(root, rootVisualComponent);
-		System::RegisterComponent(rootVisualComponent.get());
+		addComponent(root, rootVisualComponent);
 	}
 	{
 		Ref<CameraComponent> rootCameraComponent = std::dynamic_pointer_cast<CameraComponent>(createDefaultComponent("CameraComponent"));
-		EntityFactory::addComponent(root, rootCameraComponent);
+		addComponent(root, rootCameraComponent);
 	}
+
 	m_Entities[root->m_ID] = root;
 	return root;
 }
