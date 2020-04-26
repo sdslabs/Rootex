@@ -10,6 +10,12 @@ Component* GridVisualComponent::Create(const JSON::json& componentData)
 	        componentData["cellSize"]["y"]
 		}, 
 		componentData["cellCount"],
+	    { 
+			componentData["color"]["r"],
+	        componentData["color"]["g"],
+	        componentData["color"]["b"],
+	        componentData["color"]["a"],
+		},
 		componentData["renderPass"],
 	    componentData["isVisible"]);
 }
@@ -18,16 +24,18 @@ Component* GridVisualComponent::CreateDefault()
 {
 	return new GridVisualComponent(
 	    { 1.0f, 1.0f },
-		100l,
+		100,
+		Color(ColorPresets::LightGray),
 		RenderPass::RenderPassEditor,
 	    true);
 }
 
-GridVisualComponent::GridVisualComponent(const Vector2& cellSize, const long& cellCount, const unsigned int& renderPass, bool isVisible)
+GridVisualComponent::GridVisualComponent(const Vector2& cellSize, const int& cellCount, const Color& gridColor, const unsigned int& renderPass, bool isVisible)
     : VisualComponent(renderPass, isVisible)
     , m_CellCount(cellCount)
     , m_CellSize(cellSize)
-    , m_GridMaterial(new GridMaterial())
+    , m_ColorMaterial(new ColorMaterial())
+    , m_GridColor(gridColor)
 {
 }
 
@@ -41,51 +49,52 @@ void GridVisualComponent::refreshVertexBuffers()
 	// Push x = k && y = k lines
 	for (int i = 0; i < m_CellCount; i++)
 	{
-		float x = origin.x + i * m_CellSize.x;
+		float x = origin.x + (i * m_CellSize.x);
 		float y = origin.y;
-		float zDeep = origin.z + m_CellCount * m_CellSize.y;
-		float zShallow = origin.z - m_CellCount * m_CellSize.y;
+		float zDeep = origin.z + (m_CellCount * m_CellSize.y);
+		float zShallow = origin.z - (m_CellCount * m_CellSize.y);
 
 		{
 			// Push line's deep end
 			vertices.push_back(x);
 			vertices.push_back(y);
 			vertices.push_back(zDeep);
-			indices.push_back(i);
 		}
 		{
 			// Push line's shallow end
 			vertices.push_back(x);
 			vertices.push_back(y);
 			vertices.push_back(zShallow);
-			indices.push_back(i + 1);
 		}
+		
+		indices.push_back(i);
 	}
 
+	int totalXIndices = indices.size();
+	
 	// Push z = k && y = k lines
 	for (int i = 0; i < m_CellCount; i++)
 	{
-		float xRight = origin.x + m_CellCount * m_CellSize.x;
-		float xLeft = origin.x - m_CellCount * m_CellSize.x;
+		float xRight = origin.x + (m_CellCount * m_CellSize.x);
+		float xLeft = origin.x - (m_CellCount * m_CellSize.x);
 		float y = origin.y;
-		float z = origin.z + i * m_CellSize.y;
+		float z = origin.z + (i * m_CellSize.y);
 
-		int lastVertexIndex = vertices.size() - 1;
 		{
 			// Push line's left end
 			vertices.push_back(xLeft);
 			vertices.push_back(y);
 			vertices.push_back(z);
-			indices.push_back(lastVertexIndex + 1);
 		}
-		lastVertexIndex++;
+		totalXIndices++;
 		{
 			// Push line's right end
 			vertices.push_back(xRight);
 			vertices.push_back(y);
 			vertices.push_back(z);
-			indices.push_back(lastVertexIndex + 1);
 		}
+			
+		indices.push_back(totalXIndices + i);
 	}
 
 	m_VertexBuffer.reset(new VertexBuffer(vertices));
@@ -109,7 +118,8 @@ void GridVisualComponent::render(RenderPass renderPass)
 	if (renderPass & m_RenderPass)
 	{
 		RenderSystem::GetSingleton()->enableLineRenderMode();
-		RenderSystem::GetSingleton()->getRenderer()->draw(m_VertexBuffer.get(), m_IndexBuffer.get(), m_GridMaterial.get());
+		m_ColorMaterial->setPSConstantBuffer({ m_GridColor });
+		RenderSystem::GetSingleton()->getRenderer()->draw(m_VertexBuffer.get(), m_IndexBuffer.get(), m_ColorMaterial.get());
 		RenderSystem::GetSingleton()->resetRenderMode();
 	}
 }
@@ -121,6 +131,10 @@ JSON::json GridVisualComponent::getJSON() const
 	j["cellSize"]["x"] = m_CellSize.x;
 	j["cellSize"]["y"] = m_CellSize.y;
 	j["cellCount"] = m_CellCount;
+	j["color"]["r"] = m_GridColor.x;
+	j["color"]["g"] = m_GridColor.y;
+	j["color"]["b"] = m_GridColor.z;
+	j["color"]["a"] = m_GridColor.w;
 
 	return j;
 }
@@ -131,7 +145,15 @@ void GridVisualComponent::draw()
 {
 	VisualComponent::draw();
 
-	ImGui::InputInt("Cell Count", &m_CellCount);
-	ImGui::InputFloat2("Cell Size", &m_CellSize.x);
+	if (ImGui::InputInt("Cell Count", &m_CellCount))
+	{
+		refreshVertexBuffers();
+	}
+	if (ImGui::InputFloat2("Cell Size", &m_CellSize.x))
+	{
+		refreshVertexBuffers();
+	}
+
+	ImGui::ColorEdit4("Grid Color", &m_GridColor.x);
 }
 #endif // ROOTEX_EDITOR
