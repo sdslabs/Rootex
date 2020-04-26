@@ -16,7 +16,7 @@
             "resFile": "game/assets/test/cube.obj"
         },
         "MusicComponent": {
-            "attenuationModel": 53251,
+            "attenuationModel": 53254,
             "audio": "game\\assets\\forever.wav",
             "isAttenuated": true,
             "maxDistance": 100.0,
