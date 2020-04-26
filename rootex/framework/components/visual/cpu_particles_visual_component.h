@@ -22,12 +22,11 @@ class CPUParticlesVisualComponent : public ModelVisualComponent
 	
 	struct Particle
 	{
-		Vector3 m_Position;
+		Matrix m_Transform;
 		Vector3 m_Velocity;
 		Quaternion m_AngularVelocity;
 		Color m_ColorBegin;
 		Color m_ColorEnd;
-		Quaternion m_Rotation;
 		float m_SizeBegin;
 		float m_SizeEnd;
 		float m_LifeTime;
