@@ -37,6 +37,9 @@ public:
 	void pushUIMatrix(const Matrix& transform);
 	void popUIMatrix();
 
+	void enableWireframeRasterizer();
+	void enableDefaultRasterizer();
+
 	void setProjectionConstantBuffers();
 	void perFrameVSCBBinds();
 	void perFramePSCBBinds();
