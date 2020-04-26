@@ -14,6 +14,7 @@ RenderSystem::RenderSystem()
     , m_VSProjectionConstantBuffer(nullptr)
     , m_VSPerFrameConstantBuffer(nullptr)
     , m_PSPerFrameConstantBuffer(nullptr)
+    , m_IsEditorRenderPassEnabled(false)
 {
 	m_Camera = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<CameraComponent>().get();
 	m_TransformationStack.push_back(Matrix::Identity);
@@ -67,8 +68,12 @@ void RenderSystem::render()
 	perFramePSCBBinds();
 
 	Ref<VisualComponent> rootVC = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<VisualComponent>();
+
 #ifdef ROOTEX_EDITOR
-	renderPassRender(rootVC.get(), RenderPassEditor);
+	if (m_IsEditorRenderPassEnabled)
+	{
+		renderPassRender(rootVC.get(), RenderPassEditor);
+	}
 #endif // ROOTEX_EDITOR
 	renderPassRender(rootVC.get(), RenderPassMain);
 	{
