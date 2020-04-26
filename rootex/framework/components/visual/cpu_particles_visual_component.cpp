@@ -76,7 +76,7 @@ bool CPUParticlesVisualComponent::setup()
 
 bool CPUParticlesVisualComponent::preRender()
 {
-	VisualComponent::preRender();
+	ModelVisualComponent::preRender();
 
 	int i = m_EmitRate;
 	while (i >= 0)
@@ -99,8 +99,8 @@ bool CPUParticlesVisualComponent::preRender()
 
 		float delta = (std::chrono::high_resolution_clock::now() - m_LastRenderTimePoint).count() * (NS_TO_MS * MS_TO_S);
 		particle.m_LifeRemaining -= delta;
-		particle.m_Position += particle.m_Velocity * delta;
-		particle.m_Rotation += 0.5f * particle.m_AngularVelocity * delta * particle.m_Rotation; // https://gamedev.stackexchange.com/a/157018/106158
+		// https://gamedev.stackexchange.com/a/157018/106158
+		particle.m_Transform = Matrix::Transform(Matrix::CreateTranslation(particle.m_Velocity * delta) * particle.m_Transform, 0.5f * particle.m_AngularVelocity * delta);
 	}
 
 	return true;
@@ -122,7 +122,7 @@ void CPUParticlesVisualComponent::render(RenderPass renderPass)
 
 			Color color = Color::Lerp(particle.m_ColorEnd, particle.m_ColorBegin, life);
 
-			RenderSystem::GetSingleton()->pushMatrix(Matrix::CreateScale(size) * Matrix::CreateFromQuaternion(particle.m_Rotation) * Matrix::CreateTranslation(particle.m_Position) * Matrix::Identity);
+			RenderSystem::GetSingleton()->pushMatrix(Matrix::CreateScale(size) * particle.m_Transform);
 			CPUParticlesMaterial* material = reinterpret_cast<CPUParticlesMaterial*>(getMaterial());
 			material->setPSConstantBuffer(PSSolidConstantBuffer({ color }));
 			RenderSystem::GetSingleton()->getRenderer()->draw(m_VisualModelResourceFile->getVertexBuffer(), m_VisualModelResourceFile->getIndexBuffer(), getMaterial());
@@ -142,9 +142,8 @@ void CPUParticlesVisualComponent::emit(const ParticleTemplate& particleTemplate)
 	Particle& particle = m_ParticlePool[m_PoolIndex];
 
 	particle.m_IsActive = true;
-	particle.m_Position = m_TransformComponent->getPosition();
-	particle.m_Rotation = m_TransformComponent->getRotation();
-
+	particle.m_Transform = m_TransformComponent->getAbsoluteTransform();
+	
 	particle.m_Velocity = particleTemplate.m_Velocity;
 	particle.m_Velocity.x += particleTemplate.m_VelocityVariation * (Random::Float() - 0.5f);
 	particle.m_Velocity.y += particleTemplate.m_VelocityVariation * (Random::Float() - 0.5f);
