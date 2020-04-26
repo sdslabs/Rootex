@@ -1,21 +1,22 @@
 #pragma once
 
 #include "visual_component.h"
-#include "renderer/materials/grid_material.h"
+#include "renderer/materials/color_material.h"
 
 class GridVisualComponent : public VisualComponent
 {
 	static Component* Create(const JSON::json& componentData);
 	static Component* CreateDefault();
 
-	Ref<GridMaterial> m_GridMaterial;
+	Ref<ColorMaterial> m_ColorMaterial;
 	Ptr<VertexBuffer> m_VertexBuffer;
 	Ptr<IndexBuffer> m_IndexBuffer;
 
 	Vector2 m_CellSize;
 	int m_CellCount;
+	Color m_GridColor;
 
-	GridVisualComponent(const Vector2& cellSize, const long& cellCount, const unsigned int& renderPass, bool isVisible);
+	GridVisualComponent(const Vector2& cellSize, const int& cellCount, const Color& gridColor, const unsigned int& renderPass, bool isVisible);
 	GridVisualComponent(GridVisualComponent&) = delete;
 	virtual ~GridVisualComponent() = default;
 
