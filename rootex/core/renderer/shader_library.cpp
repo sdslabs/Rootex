@@ -27,19 +27,24 @@ void ShaderLibrary::MakeShaders()
 	{
 		BufferFormat defaultBufferFormat;
 		defaultBufferFormat.push(VertexBufferElement::Type::POSITION, "POSITION");
-		MakeShader(ShaderType::Default, L"rootex/core/renderer/shaders/vertex_shader.cso", L"rootex/core/renderer/shaders/pixel_shader.cso", defaultBufferFormat);
+		MakeShader(ShaderType::Default, L"rootex/assets/shaders/vertex_shader.cso", L"rootex/assets/shaders/pixel_shader.cso", defaultBufferFormat);
 	}
 	{
 		BufferFormat diffuseTextureBufferFormat;
 		diffuseTextureBufferFormat.push(VertexBufferElement::Type::POSITION, "POSITION");
 		diffuseTextureBufferFormat.push(VertexBufferElement::Type::POSITION, "NORMAL");
 		diffuseTextureBufferFormat.push(VertexBufferElement::Type::TEXCOORD, "TEXCOORD");
-		MakeShader(ShaderType::Diffuse, L"rootex/core/renderer/shaders/diffuse_texture_vertex_shader.cso", L"rootex/core/renderer/shaders/diffuse_texture_pixel_shader.cso", diffuseTextureBufferFormat);
+		MakeShader(ShaderType::Diffuse, L"rootex/assets/shaders/diffuse_texture_vertex_shader.cso", L"rootex/assets/shaders/diffuse_texture_pixel_shader.cso", diffuseTextureBufferFormat);
 	}
 	{
 		BufferFormat cpuParticlesBufferFormat;
 		cpuParticlesBufferFormat.push(VertexBufferElement::Type::POSITION, "POSITION");
-		MakeShader(ShaderType::CPUParticles, L"rootex/core/renderer/shaders/cpu_particles_vertex_shader.cso", L"rootex/core/renderer/shaders/cpu_particles_pixel_shader.cso", cpuParticlesBufferFormat);
+		MakeShader(ShaderType::CPUParticles, L"rootex/assets/shaders/cpu_particles_vertex_shader.cso", L"rootex/assets/shaders/cpu_particles_pixel_shader.cso", cpuParticlesBufferFormat);
+	}
+	{
+		BufferFormat gridBufferFormat;
+		gridBufferFormat.push(VertexBufferElement::Type::POSITION, "POSITION");
+		MakeShader(ShaderType::Grid, L"rootex/assets/shaders/grid_vertex_shader.cso", L"rootex/assets/shaders/grid_pixel_shader.cso", gridBufferFormat);
 	}
 }
 
@@ -61,4 +66,9 @@ DiffuseShader* ShaderLibrary::GetDiffuseShader()
 CPUParticlesShader* ShaderLibrary::GetCPUParticlesShader()
 {
 	return reinterpret_cast<CPUParticlesShader*>(s_Shaders[ShaderType::CPUParticles].get());
+}
+
+GridShader* ShaderLibrary::GetGridShader()
+{
+	return reinterpret_cast<GridShader*>(s_Shaders[ShaderType::Grid].get());
 }

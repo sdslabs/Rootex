@@ -1,5 +1,6 @@
 #pragma once
 
+#include "core/renderer/materials/color_material.h"
 #include "visual_component.h"
 
 class ModelVisualComponent : public VisualComponent

@@ -1,5 +1,7 @@
 #include "cpu_particles_visual_component.h"
 
+#include "core/renderer/materials/cpu_particles_material.h"
+
 #include "random.h"
 #include "resource_loader.h"
 #include "systems/render_system.h"

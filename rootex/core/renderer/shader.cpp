@@ -50,11 +50,6 @@ void Shader::bind() const
 	RenderingDevice::GetSingleton()->bind(m_InputLayout.Get());
 }
 
-void Shader::unbind() const
-{
-	RenderingDevice::GetSingleton()->unbindShaderResources();
-}
-
 DiffuseShader::DiffuseShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat)
     : Shader(vertexPath, pixelPath, vertexBufferFormat)
 {
@@ -77,7 +72,7 @@ CPUParticlesShader::CPUParticlesShader(const LPCWSTR& vertexPath, const LPCWSTR&
 {
 }
 
-void CPUParticlesShader::bind() const
+GridShader::GridShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat)
+    : Shader(vertexPath, pixelPath, vertexBufferFormat)
 {
-	Shader::bind();
 }

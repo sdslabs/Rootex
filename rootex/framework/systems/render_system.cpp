@@ -117,7 +117,7 @@ void RenderSystem::enableWireframeRasterizer()
 	RenderingDevice::GetSingleton()->setRasterizerState(RenderingDevice::RasterizerState::Wireframe);
 }
 
-void RenderSystem::enableDefaultRasterizer()
+void RenderSystem::resetDefaultRasterizer()
 {
 	RenderingDevice::GetSingleton()->setRasterizerState(RenderingDevice::RasterizerState::Default);
 }
@@ -198,6 +198,16 @@ void RenderSystem::perFramePSCBBinds()
 		memcpy(subresource.pData, &view, sizeof(view));
 		RenderingDevice::GetSingleton()->unmapBuffer(m_PSPerFrameConstantBuffer.Get());
 	}
+}
+
+void RenderSystem::enableLineRenderMode()
+{
+	RenderingDevice::GetSingleton()->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+}
+
+void RenderSystem::resetRenderMode()
+{
+	RenderingDevice::GetSingleton()->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
 void RenderSystem::setCamera(CameraComponent* camera)
