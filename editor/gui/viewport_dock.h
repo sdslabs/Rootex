@@ -22,6 +22,7 @@ public:
 
 private:
 	Ref<Entity> m_EditorCamera;
+	Ref<Entity> m_EditorGrid;
 	ViewportDockSettings m_ViewportDockSettings;
 	Matrix m_ApplyCameraMatrix = Matrix::Identity;
 	

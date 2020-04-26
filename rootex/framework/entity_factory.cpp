@@ -31,6 +31,7 @@
 	m_DefaultComponentCreators.push_back({ ComponentClass::s_ID, #ComponentClass, ComponentClass::CreateDefault })
 
 EntityID EntityFactory::s_CurrentID = ROOT_ENTITY_ID;
+EntityID EntityFactory::s_CurrentEditorID = -ROOT_ENTITY_ID;
 
 EntityFactory* EntityFactory::GetSingleton()
 {
@@ -41,6 +42,11 @@ EntityFactory* EntityFactory::GetSingleton()
 EntityID EntityFactory::getNextID()
 {
 	return ++s_CurrentID;
+}
+
+EntityID EntityFactory::getNextEditorID()
+{
+	return --s_CurrentEditorID;
 }
 
 EntityFactory::EntityFactory()
@@ -124,7 +130,7 @@ Ref<Component> EntityFactory::createDefaultComponent(const String& name)
 	}
 }
 
-Ref<Entity> EntityFactory::createEntity(TextResourceFile* entityJSONDescription)
+Ref<Entity> EntityFactory::createEntity(TextResourceFile* entityJSONDescription, bool isEditorOnly)
 {
 	const JSON::json entityJSON = JSON::json::parse(entityJSONDescription->getString());
 	if (entityJSON.is_null())
@@ -144,18 +150,25 @@ Ref<Entity> EntityFactory::createEntity(TextResourceFile* entityJSONDescription)
 	JSON::json name = entityJSON["Entity"]["name"];
 
 	EntityID newID = 0;
-	auto&& findItID = entityJSON["Entity"].find("ID");
-	if (findItID != entityJSON["Entity"].end())
+	if (isEditorOnly)
 	{
-		newID = *findItID;
-		while (getNextID() <= *findItID)
-		{
-			;
-		}
+		newID = getNextEditorID();
 	}
 	else
 	{
-		newID = getNextID();
+		auto&& findItID = entityJSON["Entity"].find("ID");
+		if (findItID != entityJSON["Entity"].end())
+		{
+			newID = *findItID;
+			while (getNextID() <= *findItID)
+			{
+				;
+			}
+		}
+		else
+		{
+			newID = getNextID();
+		}
 	}
 
 	entity.reset(new Entity(newID, name.is_null() ? "Entity" : name));
@@ -174,6 +187,8 @@ Ref<Entity> EntityFactory::createEntity(TextResourceFile* entityJSONDescription)
 	{
 		ERR("Entity was not setup properly: " + std::to_string(entity->m_ID));
 	}
+
+	entity->setEditorOnly(isEditorOnly);
 
 	m_Entities[entity->m_ID] = entity;
 	return entity;

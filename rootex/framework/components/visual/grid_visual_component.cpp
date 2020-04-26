@@ -47,54 +47,63 @@ void GridVisualComponent::refreshVertexBuffers()
 	Vector<unsigned short> indices;
 
 	// Push x = k && y = k lines
-	for (int i = 0; i < m_CellCount; i++)
+	for (int i = -m_CellCount / 2.0f; i < m_CellCount / 2.0f; i++)
 	{
 		float x = origin.x + (i * m_CellSize.x);
 		float y = origin.y;
-		float zDeep = origin.z + (m_CellCount * m_CellSize.y);
-		float zShallow = origin.z - (m_CellCount * m_CellSize.y);
 
 		{
+			float zDeep = origin.z + (m_CellCount * m_CellSize.y);
 			// Push line's deep end
 			vertices.push_back(x);
 			vertices.push_back(y);
 			vertices.push_back(zDeep);
 		}
 		{
+			float zShallow = origin.z - (m_CellCount * m_CellSize.y);
 			// Push line's shallow end
 			vertices.push_back(x);
 			vertices.push_back(y);
 			vertices.push_back(zShallow);
 		}
-		
-		indices.push_back(i);
 	}
 
-	int totalXIndices = indices.size();
-	
 	// Push z = k && y = k lines
-	for (int i = 0; i < m_CellCount; i++)
+	for (int i = -m_CellCount / 2.0f; i < m_CellCount / 2.0f; i++)
 	{
-		float xRight = origin.x + (m_CellCount * m_CellSize.x);
-		float xLeft = origin.x - (m_CellCount * m_CellSize.x);
 		float y = origin.y;
 		float z = origin.z + (i * m_CellSize.y);
 
 		{
+			float xLeft = origin.x - (m_CellCount * m_CellSize.x);
 			// Push line's left end
 			vertices.push_back(xLeft);
 			vertices.push_back(y);
 			vertices.push_back(z);
 		}
-		totalXIndices++;
 		{
+			float xRight = origin.x + (m_CellCount * m_CellSize.x);
 			// Push line's right end
 			vertices.push_back(xRight);
 			vertices.push_back(y);
 			vertices.push_back(z);
-		}
-			
-		indices.push_back(totalXIndices + i);
+		}			
+	}
+
+	{
+		vertices.push_back(0.0f);
+		vertices.push_back(10000.0f);
+		vertices.push_back(0.0f);
+	}
+	{
+		vertices.push_back(0.0f);
+		vertices.push_back(-10000.0f);
+		vertices.push_back(0.0f);
+	}
+
+	for (int i = 0; i < 4 * m_CellCount + 2; i++)
+	{
+		indices.push_back(i);
 	}
 
 	m_VertexBuffer.reset(new VertexBuffer(vertices));
