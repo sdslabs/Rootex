@@ -25,14 +25,14 @@ Component* ModelVisualComponent::CreateDefault()
 {
 	ModelVisualComponent* modelVisualComponent = new ModelVisualComponent(
 	    RenderPassMain,
-	    MaterialLibrary::GetDefaultMaterial(),
+	    MaterialLibrary::GetDefaultMaterial(), //change
 	    ResourceLoader::CreateVisualModelResourceFile("rootex/assets/cube.obj"),
 	    true);
 
 	return modelVisualComponent;
 }
 
-ModelVisualComponent::ModelVisualComponent(const unsigned int& renderPassSetting, Ref<Material> material, VisualModelResourceFile* resFile, bool visibility)
+ModelVisualComponent::ModelVisualComponent(const unsigned int& renderPassSetting, Ref<Material> material, VisualModelResourceFile* resFile, bool visibility) //change
     : VisualComponent(renderPassSetting, visibility)
     , m_Material(material)
     , m_VisualModelResourceFile(resFile)
@@ -68,7 +68,7 @@ bool ModelVisualComponent::preRender()
 	}
 	else
 	{
-		RenderSystem::GetSingleton()->pushMatrix(Matrix::Identity);
+		RenderSystem::GetSingleton()->pushMatrix(Matrix::Identity);	
 	}
 	return true;
 }
@@ -119,7 +119,7 @@ void ModelVisualComponent::setVisualModel(VisualModelResourceFile* newModel)
 	m_VisualModelResourceFile = newModel;
 }
 
-void ModelVisualComponent::setMaterial(Ref<Material>& material)
+void ModelVisualComponent::setMaterial(Ref<Material>& material) //change
 {
 	m_Material = material;
 }
@@ -185,13 +185,13 @@ void ModelVisualComponent::draw()
 		{
 			const char* payloadFileName = (const char*)payload->Data;
 			FilePath payloadPath(payloadFileName);
-			if (payloadPath.extension() == ".obj")
+			if (IsSupported(payloadPath.extension().string(), SupportedModelExtensions))
 			{
 				setVisualModel(ResourceLoader::CreateVisualModelResourceFile(payloadPath.string()));
 			}
 			else
 			{
-				WARN("Cannot assign a non-obj file to Visual Model");
+				WARN("Cannot assign an unsupported model file to Visual Model");
 			}
 		}
 		ImGui::EndDragDropTarget();
@@ -201,12 +201,9 @@ void ModelVisualComponent::draw()
 	{
 		for (auto& [materialName, materialInfo] : MaterialLibrary::GetAllMaterials())
 		{
-			if (m_AllowedMaterials.empty() || std::find(m_AllowedMaterials.begin(), m_AllowedMaterials.end(), materialInfo.first) != m_AllowedMaterials.end())
+			if (ImGui::Selectable((materialInfo.first + " - " + materialName).c_str()))
 			{
-				if (ImGui::Selectable((materialName + " - " + materialInfo.first).c_str()))
-				{
-					setMaterial(MaterialLibrary::GetMaterial(String(materialName)));
-				}
+				setMaterial(MaterialLibrary::GetMaterial(String(materialName)));
 			}
 		}
 		ImGui::EndCombo();

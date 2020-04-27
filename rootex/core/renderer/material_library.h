@@ -14,17 +14,16 @@ private:
 
 	typedef Material* (*MaterialDefaultCreator)();
 	typedef Material* (*MaterialCreator)(const JSON::json& materialDescription);
-	typedef HashMap<String, Pair<MaterialDefaultCreator, MaterialCreator>> MaterialDatabase;
+	typedef HashMap<String, std::pair<MaterialDefaultCreator, MaterialCreator>> MaterialDatabase;
 	static MaterialDatabase s_MaterialDatabase;
 public:
 	static void LoadMaterials();
 	static Ref<Material> GetMaterial(const String& materialName);
 	static Ref<Material> GetDefaultMaterial();
-	static void SaveAll();
-
 #ifdef ROOTEX_EDITOR
-	static MaterialMap& GetAllMaterials() { return s_Materials; };
-	static MaterialDatabase& GetMaterialDatabase() { return s_MaterialDatabase; };
-	static void CreateNewMaterialFile(const String& materialName, const String& materialType);
+	static MaterialMap& GetAllMaterials();
+	void SaveAll();
+	static Ref<Material> CreateNewMaterialFile(String& materialName, String& materialType);
+	//static Vector<String> m_MaterialList;
 #endif // ROOTEX_EDITOR
 };

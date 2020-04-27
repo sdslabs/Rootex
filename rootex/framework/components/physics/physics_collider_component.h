@@ -19,22 +19,22 @@ public:
 	static btVector3 vecTobtVector3(Vector3 const& vec3);
 	static Vector3 btVector3ToVec(btVector3 const& btvec);
 
-	TransformComponent* m_TransformComponent;
-	ScriptComponent* m_ScriptComponent;
+	Ref<TransformComponent> m_TransformComponent;
 	
 	Ref<btCollisionShape> m_CollisionShape;
 	btRigidBody* m_Body;
+	Color m_RenderColor;
+	Matrix m_Transform;
 	btScalar m_Mass;
 	btVector3 m_LocalInertia;
 	float m_SpecificGravity;
 	float m_Volume;
-	bool m_IsMoveable;
-	bool m_IsGeneratesHitEvents;
-	
-#ifdef ROOTEX_EDITOR
 	std::string m_MaterialName;
-	Vector3 m_Gravity;
-#endif // ROOTEX_EDITOR
+	
+	/// Interface that Bullet uses to communicate position and orientation changes.
+	struct MotionState : public btMotionState
+	{
+		Matrix m_WorldToPositionTransform;
 
 	Color m_RenderColor;
 	
