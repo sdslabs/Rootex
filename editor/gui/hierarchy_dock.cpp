@@ -31,6 +31,13 @@ void HierarchyDock::showHierarchySubTree(HierarchyComponent* hierarchy)
 				openEntity(node);
 			}
 
+			if (ImGui::BeginDragDropSource())
+			{
+				ImGui::SetDragDropPayload("RearrangeEntity", &node, sizeof(Ref<Entity>));
+				ImGui::Text(node->getFullName().c_str());
+				ImGui::EndDragDropSource();
+			}
+
 			if (ImGui::BeginDragDropTarget())
 			{
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("EntityClass"))
@@ -39,6 +46,13 @@ void HierarchyDock::showHierarchySubTree(HierarchyComponent* hierarchy)
 					Ref<Entity> entity = EntityFactory::GetSingleton()->createEntity(ResourceLoader::CreateTextResourceFile(newEntityFile));
 					node->getComponent<HierarchyComponent>()->snatchChild(entity);
 					openEntity(entity);
+				}
+
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("RearrangeEntity"))
+				{
+					Ref<Entity> rearrangeEntity = *(Ref<Entity>*)(payload->Data);
+					node->getComponent<HierarchyComponent>()->snatchChild(rearrangeEntity);
+					openEntity(rearrangeEntity);
 				}
 				ImGui::EndDragDropTarget();
 			}
