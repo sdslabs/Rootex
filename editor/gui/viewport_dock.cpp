@@ -46,6 +46,20 @@ void ViewportDock::draw()
 			    m_ViewportDockSettings.m_ImageTint,
 			    m_ViewportDockSettings.m_ImageBorderColor);
 
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("EntityClass"))
+				{
+					const char* newEntityFile = (const char*)payload->Data;
+					Ref<Entity> entity = EntityFactory::GetSingleton()->createEntity(ResourceLoader::CreateTextResourceFile(newEntityFile));
+					if (Ref<TransformComponent> transform = entity->getComponent<TransformComponent>())
+					{
+						transform->setPosition(RenderSystem::GetSingleton()->getCamera()->getOwner()->getComponent<TransformComponent>()->getPosition());
+					}
+				}
+				ImGui::EndDragDropTarget();
+			}
+
 			static const ImVec2 viewportEnd = ImGui::GetCursorPos();
 
 			ImGui::SetCursorPos(viewportStart);
