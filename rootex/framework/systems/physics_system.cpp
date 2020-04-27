@@ -3,6 +3,8 @@
 #include "components/physics/physics_collider_component.h"
 #include "core/resource_loader.h"
 
+#include "os/timer.h"
+
 #include "BulletCollision/NarrowPhaseCollision/btRaycastCallback.h"
 
 PhysicsSystem* PhysicsSystem::GetSingleton()
@@ -122,7 +124,7 @@ void PhysicsSystem::debugDrawComponent(const btTransform& worldTransform, const 
 
 void PhysicsSystem::update(float deltaMilliseconds)
 {
-	m_DynamicsWorld->stepSimulation(deltaMilliseconds, 10);
+	m_DynamicsWorld->stepSimulation(deltaMilliseconds * MS_TO_S, 10);
 }
 
 void PhysicsSystem::syncVisibleScene()

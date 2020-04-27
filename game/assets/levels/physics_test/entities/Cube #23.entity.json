@@ -1,0 +1,57 @@
+{
+    "Components": {
+        "BoxColliderComponent": {
+            "dimensions": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0.5
+            },
+            "gravity": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "isMoveable": false,
+            "matName": "Air"
+        },
+        "HierarchyComponent": {
+            "children": [
+                21
+            ],
+            "parent": 1
+        },
+        "ModelVisualComponent": {
+            "color": {
+                "a": 1.0,
+                "b": 0.04152249917387962,
+                "g": 0.1677175611257553,
+                "r": 0.47058820724487305
+            },
+            "isVisible": true,
+            "renderPass": 1,
+            "resFile": "game/assets/test/cube.obj"
+        },
+        "TransformComponent": {
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": -6.0
+            },
+            "rotation": {
+                "w": 1.0,
+                "x": -0.0,
+                "y": 0.0,
+                "z": -0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            }
+        }
+    },
+    "Entity": {
+        "ID": 23,
+        "name": "Cube"
+    }
+}

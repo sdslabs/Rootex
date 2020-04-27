@@ -1,6 +1,6 @@
 {
     "project": "Rootex Game",
-    "startLevel": "game/assets/levels/level_0",
+    "startLevel": "game/assets/levels/physics_test",
     "version": 1.0,
     "window": {
         "fullScreen": true,
