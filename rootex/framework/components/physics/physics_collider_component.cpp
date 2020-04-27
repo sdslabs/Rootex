@@ -5,7 +5,6 @@
 
 PhysicsColliderComponent::PhysicsColliderComponent(const String& matName, float volume, const Vector3& gravity, bool isMoveable, const Ref<btCollisionShape>& collisionShape)
     : m_MaterialName(matName)
-    , m_MotionState(Matrix::Identity)
 	, m_Material(0, 0)
     , m_Volume(volume)
     , m_Gravity(gravity)
@@ -44,9 +43,7 @@ bool PhysicsColliderComponent::setup()
 		}
 		else
 		{
-			m_Transform = m_TransformComponent->getAbsoluteTransform();
-			m_MotionState.setWorldTransform(matTobtTransform(m_Transform));
-			btRigidBody::btRigidBodyConstructionInfo rbInfo(m_Mass, &m_MotionState, m_CollisionShape.get(), m_LocalInertia);
+			btRigidBody::btRigidBodyConstructionInfo rbInfo(m_Mass, this, m_CollisionShape.get(), m_LocalInertia);
 
 			/// Set up the materal properties.
 			rbInfo.m_restitution = m_Material.m_Restitution;
@@ -64,19 +61,14 @@ bool PhysicsColliderComponent::setup()
 	return status;
 }
 
-PhysicsColliderComponent::MotionState::MotionState(Matrix const& startingTransform)
-    : m_WorldToPositionTransform(startingTransform)
+void PhysicsColliderComponent::getWorldTransform(btTransform& worldTrans) const
 {
+	worldTrans = matTobtTransform(m_TransformComponent->getRotationPosition());
 }
 
-void PhysicsColliderComponent::MotionState::getWorldTransform(btTransform& worldTrans) const
+void PhysicsColliderComponent::setWorldTransform(const btTransform& worldTrans)
 {
-	worldTrans = matTobtTransform(m_WorldToPositionTransform);
-}
-
-void PhysicsColliderComponent::MotionState::setWorldTransform(const btTransform& worldTrans)
-{
-	m_WorldToPositionTransform = btTransformToMat(worldTrans);
+	m_TransformComponent->setRotationPosition(btTransformToMat(worldTrans));
 }
 
 void PhysicsColliderComponent::applyForce(const Vector3& force)
@@ -122,7 +114,7 @@ void PhysicsColliderComponent::setMoveable(bool enabled)
 
 void PhysicsColliderComponent::render()
 {
-	PhysicsSystem::GetSingleton()->debugDrawComponent(matTobtTransform(m_TransformComponent->getAbsoluteTransform()), m_CollisionShape.get(), { m_RenderColor.x, m_RenderColor.y, m_RenderColor.z });
+	PhysicsSystem::GetSingleton()->debugDrawComponent(matTobtTransform(m_TransformComponent->getRotationPosition()), m_CollisionShape.get(), { m_RenderColor.x, m_RenderColor.y, m_RenderColor.z });
 }
 
 JSON::json PhysicsColliderComponent::getJSON() const

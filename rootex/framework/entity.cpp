@@ -52,6 +52,16 @@ bool Entity::setupComponents()
 	return status;
 }
 
+bool Entity::setupEntities()
+{
+	bool status = true;
+	for (auto& component : m_Components)
+	{
+		status = status & component.second->setupEntities();
+	}
+	return status;
+}
+
 void Entity::destroy()
 {
 	for (auto& component : m_Components)

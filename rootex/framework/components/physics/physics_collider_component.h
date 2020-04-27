@@ -5,7 +5,7 @@
 
 #include "btBulletDynamicsCommon.h"
 
-class PhysicsColliderComponent : public Component
+class PhysicsColliderComponent : public Component, public btMotionState
 {
 	friend class EntityFactory;
 
@@ -18,10 +18,10 @@ public:
 	static Vector3 btVector3ToVec(btVector3 const& btvec);
 
 	Ref<TransformComponent> m_TransformComponent;
-	
+	Vector3 m_Offset;
+
 	Ref<btCollisionShape> m_CollisionShape;
 	btRigidBody* m_Body;
-	Matrix m_Transform;
 	btScalar m_Mass;
 	btVector3 m_LocalInertia;
 	float m_SpecificGravity;
@@ -35,19 +35,11 @@ public:
 
 	Color m_RenderColor;
 	
-	/// Interface that Bullet uses to communicate position and orientation changes.
-	struct MotionState : public btMotionState
-	{
-		Matrix m_WorldToPositionTransform;
-
-		MotionState(Matrix const& startingTransform);
-
-		/// btMotionState interface:  Bullet calls these.
-		virtual void getWorldTransform(btTransform& worldTrans) const;
-
-		virtual void setWorldTransform(const btTransform& worldTrans);
-	} m_MotionState;
-
+	/// btMotionState interface:  Bullet calls this to get the transform of the object from game.
+	virtual void getWorldTransform(btTransform& worldTrans) const;
+	/// btMotionState interface:  Bullet calls this to set the transform of the object from the Bullet world.
+	virtual void setWorldTransform(const btTransform& worldTrans);
+	
 	/// Stores material specific details.
 	struct MaterialData
 	{

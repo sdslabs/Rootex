@@ -2,9 +2,9 @@
     "Components": {
         "BoxColliderComponent": {
             "dimensions": {
-                "x": 0.5,
-                "y": 0.5,
-                "z": 0.5
+                "x": 4.96999979019165,
+                "y": 0.46000000834465027,
+                "z": 4.949999809265137
             },
             "gravity": {
                 "x": 0.0,
@@ -15,43 +15,42 @@
             "matName": "Air"
         },
         "HierarchyComponent": {
-            "children": [
-                21
-            ],
+            "children": [],
             "parent": 1
         },
-        "ModelVisualComponent": {
+        "TexturedModelVisualComponent": {
             "color": {
                 "a": 1.0,
-                "b": 0.04152249917387962,
-                "g": 0.1677175611257553,
-                "r": 0.47058820724487305
+                "b": 0.0,
+                "g": 0.0,
+                "r": 0.0
             },
             "isVisible": true,
-            "renderPass": 1,
-            "resFile": "game/assets/test/cube.obj"
+            "renderPass": 5,
+            "resFile": "rootex/assets/cube.obj",
+            "texturePath": "game\\assets\\test\\blue.png"
         },
         "TransformComponent": {
             "position": {
                 "x": 0.0,
-                "y": 0.0,
-                "z": -6.0
+                "y": -2.0,
+                "z": -9.199999809265137
             },
             "rotation": {
-                "w": 1.0,
-                "x": -0.0,
+                "w": -0.0,
+                "x": 0.0,
                 "y": 0.0,
-                "z": -0.0
+                "z": 1.0
             },
             "scale": {
-                "x": 1.0,
+                "x": 10.0,
                 "y": 1.0,
-                "z": 1.0
+                "z": 10.0
             }
         }
     },
     "Entity": {
-        "ID": 23,
-        "name": "Cube"
+        "ID": 5,
+        "name": "Floor"
     }
 }

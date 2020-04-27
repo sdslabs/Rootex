@@ -8,36 +8,33 @@
             },
             "gravity": {
                 "x": 0.0,
-                "y": -1.0,
+                "y": 0.0,
                 "z": 0.0
             },
-            "isMoveable": true,
+            "isMoveable": false,
             "matName": "Air"
         },
         "HierarchyComponent": {
             "children": [],
-            "parent": 23
+            "parent": 1
         },
-        "ModelVisualComponent": {
+        "TexturedModelVisualComponent": {
             "color": {
                 "a": 1.0,
-                "b": 0.20000000298023224,
-                "g": 1.0,
-                "r": 0.20000000298023224
+                "b": 0.0,
+                "g": 0.0,
+                "r": 0.0
             },
             "isVisible": true,
-            "renderPass": 1,
-            "resFile": "game/assets/test/cube.obj"
-        },
-        "ScriptComponent": {
-            "connections": {},
-            "script": "rootex/assets/scripts/empty.lua"
+            "renderPass": 5,
+            "resFile": "rootex/assets/cube.obj",
+            "texturePath": "rootex/assets/rootex.png"
         },
         "TransformComponent": {
             "position": {
-                "x": 0.6000000238418579,
-                "y": 2.299999952316284,
-                "z": 0.0
+                "x": -2.5999999046325684,
+                "y": 0.0,
+                "z": -13.0
             },
             "rotation": {
                 "w": 1.0,
@@ -53,7 +50,7 @@
         }
     },
     "Entity": {
-        "ID": 21,
-        "name": "Cube"
+        "ID": 6,
+        "name": "FlyingCube"
     }
 }

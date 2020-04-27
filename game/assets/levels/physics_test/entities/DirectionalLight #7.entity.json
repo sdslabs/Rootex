@@ -1,0 +1,50 @@
+{
+    "Components": {
+        "DirectionalLightComponent": {
+            "ambientColor": {
+                "a": 1.0,
+                "b": 0.05000000074505806,
+                "g": 0.05000000074505806,
+                "r": 0.05000000074505806
+            },
+            "diffuseColor": {
+                "a": 1.0,
+                "b": 0.4000000059604645,
+                "g": 0.10000000149011612,
+                "r": 0.30000001192092896
+            },
+            "diffuseIntensity": 0.800000011920929,
+            "direction": {
+                "x": -27.5,
+                "y": -33.5,
+                "z": -16.5
+            }
+        },
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 1
+        },
+        "TransformComponent": {
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rotation": {
+                "w": 1.0,
+                "x": -0.0,
+                "y": 0.0,
+                "z": -0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            }
+        }
+    },
+    "Entity": {
+        "ID": 7,
+        "name": "DirectionalLight"
+    }
+}

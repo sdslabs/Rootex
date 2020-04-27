@@ -133,8 +133,14 @@ void Editor::render()
 	ImGui::PopStyleVar(m_EditorStyleVarPushCount);
 
 	RenderingDevice::GetSingleton()->setTextureRenderTarget();
-	RenderSystem::GetSingleton()->render();
-	PhysicsSystem::GetSingleton()->debugDraw();
+	if (m_WorldMode)
+	{
+		RenderSystem::GetSingleton()->render();
+	}
+	if (m_CollisionMode)
+	{
+		PhysicsSystem::GetSingleton()->debugDraw();
+	}
 	RenderingDevice::GetSingleton()->setBackBufferRenderTarget();
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
@@ -298,6 +304,10 @@ void Editor::drawDefaultUI()
 						RenderSystem::GetSingleton()->resetDefaultRasterizer();
 					}
 				}
+				
+				ImGui::Checkbox("Collision Mode", &m_CollisionMode);
+				ImGui::Checkbox("World Mode", &m_WorldMode);
+
 				bool fullscreen = Extract(bool, EventManager::GetSingleton()->returnCall("WindowGetScreenState", "WindowGetScreenState", 0));
 				if (ImGui::Checkbox("Full Screen", &fullscreen))
 				{
