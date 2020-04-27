@@ -147,8 +147,8 @@ void CPUParticlesVisualComponent::emit(const ParticleTemplate& particleTemplate)
 	Particle& particle = m_ParticlePool[m_PoolIndex];
 
 	particle.m_IsActive = true;
-	particle.m_Transform = m_TransformComponent->getAbsoluteTransform();
-
+	particle.m_Transform = m_TransformComponent->getLocalTransform();
+	
 	particle.m_Velocity = particleTemplate.m_Velocity;
 	particle.m_Velocity.x += particleTemplate.m_VelocityVariation * (Random::Float() - 0.5f);
 	particle.m_Velocity.y += particleTemplate.m_VelocityVariation * (Random::Float() - 0.5f);

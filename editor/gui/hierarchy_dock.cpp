@@ -35,7 +35,6 @@ void HierarchyDock::showHierarchySubTree(HierarchyComponent* hierarchy)
 				}
 			}
 
-<<<<<<< HEAD
 			if (ImGui::BeginDragDropSource())
 			{
 				ImGui::SetDragDropPayload("RearrangeEntity", &node, sizeof(Ref<Entity>));
@@ -43,8 +42,6 @@ void HierarchyDock::showHierarchySubTree(HierarchyComponent* hierarchy)
 				ImGui::EndDragDropSource();
 			}
 
-=======
->>>>>>> ae795b9f... Add Classes dock to editor and allow dragging objects into entity tree
 			if (ImGui::BeginDragDropTarget())
 			{
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("EntityClass"))
@@ -62,9 +59,6 @@ void HierarchyDock::showHierarchySubTree(HierarchyComponent* hierarchy)
 					Ref<Entity> rearrangeEntity = *(Ref<Entity>*)(payload->Data);
 					node->getComponent<HierarchyComponent>()->snatchChild(rearrangeEntity);
 					openEntity(rearrangeEntity);
-=======
-					node->getComponent<HierarchyComponent>()->addChild(entity);
->>>>>>> ae795b9f... Add Classes dock to editor and allow dragging objects into entity tree
 				}
 				ImGui::EndDragDropTarget();
 			}
