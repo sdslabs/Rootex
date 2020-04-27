@@ -3,11 +3,13 @@
 
 #include "entity.h"
 
-PhysicsColliderComponent::PhysicsColliderComponent(const String& matName, float volume, const Ref<btCollisionShape>& collisionShape)
+PhysicsColliderComponent::PhysicsColliderComponent(const String& matName, float volume, const Vector3& gravity, bool isMoveable, const Ref<btCollisionShape>& collisionShape)
     : m_MaterialName(matName)
     , m_MotionState(Matrix::Identity)
 	, m_Material(0, 0)
     , m_Volume(volume)
+    , m_Gravity(gravity)
+    , m_IsMoveable(isMoveable)
 {
 	m_CollisionShape = collisionShape;
 	m_TransformComponent = nullptr;
@@ -16,8 +18,18 @@ PhysicsColliderComponent::PhysicsColliderComponent(const String& matName, float 
 	m_Material.m_Friction = float(materialLua[matName]["friction"]);
 	m_Material.m_Restitution = float(materialLua[matName]["restitution"]);
 
-	m_Mass = volume * m_SpecificGravity;
-	m_LocalInertia = btVector3(0.f, 0.f, 0.f);
+	if (m_IsMoveable)
+	{
+		m_Mass = volume * m_SpecificGravity;
+	}
+	else
+	{
+		m_Mass = 0;
+	}
+
+	m_RenderColor = ColorPresets::LightCoral;
+
+	m_LocalInertia = btVector3(0.0f, 0.0f, 0.0f);
 }
 
 bool PhysicsColliderComponent::setup()
@@ -32,7 +44,7 @@ bool PhysicsColliderComponent::setup()
 		}
 		else
 		{
-			m_Transform = m_TransformComponent->getParentAbsoluteTransform();
+			m_Transform = m_TransformComponent->getAbsoluteTransform();
 			m_MotionState.setWorldTransform(matTobtTransform(m_Transform));
 			btRigidBody::btRigidBodyConstructionInfo rbInfo(m_Mass, &m_MotionState, m_CollisionShape.get(), m_LocalInertia);
 
@@ -44,6 +56,8 @@ bool PhysicsColliderComponent::setup()
 
 			/// Adds a new rigid body to physics system.
 			PhysicsSystem::GetSingleton()->addRigidBody(m_Body);
+			setGravity(m_Gravity);
+			setMoveable(m_IsMoveable);
 		}
 	}
 
@@ -65,12 +79,12 @@ void PhysicsColliderComponent::MotionState::setWorldTransform(const btTransform&
 	m_WorldToPositionTransform = btTransformToMat(worldTrans);
 }
 
-void PhysicsColliderComponent::applyForce(const Vector3 force)
+void PhysicsColliderComponent::applyForce(const Vector3& force)
 {
 	m_Body->applyCentralImpulse(vecTobtVector3(force));
 }
 
-void PhysicsColliderComponent::applyTorque(const Vector3 torque)
+void PhysicsColliderComponent::applyTorque(const Vector3& torque)
 {
 	m_Body->applyTorqueImpulse(vecTobtVector3(torque));
 }
@@ -93,9 +107,35 @@ Matrix PhysicsColliderComponent::getTransform()
 	return btTransformToMat(m_Body->getCenterOfMassTransform());
 }
 
+void PhysicsColliderComponent::setMoveable(bool enabled)
+{
+	if (enabled)
+	{
+		m_Mass = m_Volume * m_SpecificGravity;
+	}
+	else
+	{
+		m_Mass = 0.0f;
+	}
+	m_Body->setMassProps(m_Mass, m_LocalInertia);
+}
+
 void PhysicsColliderComponent::render()
 {
 	PhysicsSystem::GetSingleton()->debugDrawComponent(matTobtTransform(m_TransformComponent->getAbsoluteTransform()), m_CollisionShape.get(), { m_RenderColor.x, m_RenderColor.y, m_RenderColor.z });
+}
+
+JSON::json PhysicsColliderComponent::getJSON() const
+{
+	JSON::json j;
+
+	j["gravity"]["x"] = m_Gravity.x;
+	j["gravity"]["y"] = m_Gravity.y;
+	j["gravity"]["z"] = m_Gravity.z;
+	
+	j["isMoveable"] = m_IsMoveable;
+
+	return j;
 }
 
 void PhysicsColliderComponent::setVelocity(const Vector3& velocity)
@@ -136,10 +176,10 @@ btTransform PhysicsColliderComponent::matTobtTransform(Matrix const& mat)
 		{
 			bulletRotation[row][column] = mat.m[column][row];
 			// note the reversed indexing (row/column vs. column/row)
-			//  this is because Mat4x4s are row-major matrices and
-			//  btMatrix3x3 are column-major.  This reversed indexing
-			//  implicitly transposes (flips along the diagonal)
-			//  the matrix when it is copied.
+			// this is because Mat4x4s are row-major matrices and
+			// btMatrix3x3 are column-major.  This reversed indexing
+			// implicitly transposes (flips along the diagonal)
+			// the matrix when it is copied.
 		}
 	}
 
@@ -167,10 +207,10 @@ Matrix PhysicsColliderComponent::btTransformToMat(btTransform const& trans)
 		{
 			returnValue.m[row][column] = bulletRotation[column][row];
 			// note the reversed indexing (row/column vs. column/row)
-			//  this is because Mat4x4s are row-major matrices and
-			//  btMatrix3x3 are column-major.  This reversed indexing
-			//  implicitly transposes (flips along the diagonal)
-			//  the matrix when it is copied.
+			// this is because Mat4x4s are row-major matrices and
+			// btMatrix3x3 are column-major.  This reversed indexing
+			// implicitly transposes (flips along the diagonal)
+			// the matrix when it is copied.
 		}
 	}
 
@@ -183,9 +223,9 @@ Matrix PhysicsColliderComponent::btTransformToMat(btTransform const& trans)
 	return returnValue;
 }
 
-void PhysicsColliderComponent::disableGravity()
+void PhysicsColliderComponent::setGravity(const Vector3& gravity)
 {
-	m_Body->setGravity({ 0.0f, 0.0f, 0.0f });	
+	m_Body->setGravity(vecTobtVector3(gravity));
 }
 
 btVector3 PhysicsColliderComponent::vecTobtVector3(Vector3 const& vec3)
@@ -213,7 +253,17 @@ void PhysicsColliderComponent::draw()
 		}
 		ImGui::EndCombo();
 	}
+	
+	if (ImGui::Checkbox("Moveable", &m_IsMoveable))
+	{
+		setMoveable(m_IsMoveable);
+	}
 
+	if (ImGui::DragFloat3("Gravity", &m_Gravity.x))
+	{
+		setGravity(m_Gravity);
+	}
+	
 	ImGui::ColorEdit3("Render Color", &m_RenderColor.x);
 }
 #endif // ROOTEX_EDITOR

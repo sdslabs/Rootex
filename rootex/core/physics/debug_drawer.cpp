@@ -8,6 +8,7 @@ void DebugDrawer::drawLine(const btVector3& from, const btVector3& to, const btV
 		from.x(), from.y(), from.z(),
 	    to.x(), to.y(), to.z() });
 	IndexBuffer ib({ 0, 1 });
+	m_ColorMaterial.setPSConstantBuffer({ { color.x(), color.y(), color.z(), 1.0f } });
 
 	RenderSystem::GetSingleton()->enableLineRenderMode();
 	RenderSystem::GetSingleton()->getRenderer()->draw(&vb, &ib, &m_ColorMaterial);
