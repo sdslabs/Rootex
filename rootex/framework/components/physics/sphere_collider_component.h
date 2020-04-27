@@ -16,12 +16,15 @@ class SphereColliderComponent : public PhysicsColliderComponent
 	friend class EntityFactory;
 
 public:
+	static const ComponentID s_ID = (ComponentID)ComponentIDs::SphereColliderComponent;
+
 	SphereColliderComponent(float rad, const String& matName);
 
 	float getRadius() const { return m_Radius; }
 
 	virtual String getName() const override { return "SphereColliderComponent"; };
 	virtual JSON::json getJSON() const override;
+	virtual ComponentID getComponentID() const override { return s_ID; }
 
 /// Interface to change collider properties via editor.
 #ifdef ROOTEX_EDITOR

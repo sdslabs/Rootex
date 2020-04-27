@@ -37,23 +37,13 @@ Component* SphereColliderComponent::CreateDefault()
 #include "imgui.h"
 void SphereColliderComponent::draw()
 {
+	PhysicsColliderComponent::draw();
+
 	ImGui::DragFloat("##R", &m_Radius);
 	ImGui::SameLine();
 	if (ImGui::Button("Radius"))
 	{
 		m_Radius = 1.0f;
-	}
-
-	if (ImGui::BeginCombo("Material", m_MaterialName.c_str()))
-	{
-		for (auto&& material : PhysicsSystem::GetSingleton()->getPhysicsMaterial())
-		{
-			if (ImGui::Selectable(material.first.as<String>().c_str()))
-			{
-				m_MaterialName.assign(material.first.as<String>().c_str());
-			}
-		}
-		ImGui::EndCombo();
 	}
 }
 #endif // ROOTEX_EDITOR
