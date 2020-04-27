@@ -58,7 +58,7 @@ void SphereColliderComponent::draw()
 {
 	PhysicsColliderComponent::draw();
 
-	if (ImGui::DragFloat("##Radius", &m_Radius))
+	if (ImGui::DragFloat("##Radius", &m_Radius, 0.01f))
 	{
 		setRadius(m_Radius);
 	}

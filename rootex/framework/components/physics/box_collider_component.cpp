@@ -65,7 +65,7 @@ void BoxColliderComponent::draw()
 {
 	PhysicsColliderComponent::draw();
 
-	if (ImGui::DragFloat3("##Dimensions", &m_Dimensions.x))
+	if (ImGui::DragFloat3("##Dimensions", &m_Dimensions.x, 0.01f))
 	{
 		setDimensions(m_Dimensions);
 	}

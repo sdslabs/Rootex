@@ -31,7 +31,7 @@ void PhysicsSystem::initialize()
 		return;
 	}
 
-	m_DynamicsWorld->setInternalTickCallback(internalTickCallback);
+	m_DynamicsWorld->setInternalTickCallback(InternalTickCallback);
 	m_DynamicsWorld->setWorldUserInfo(this);
 	m_DynamicsWorld->setDebugDrawer(&m_DebugDrawer);
 	m_DynamicsWorld->getDebugDrawer()->setDebugMode(btIDebugDraw::DBG_DrawWireframe);
@@ -88,7 +88,7 @@ btCollisionWorld::ClosestRayResultCallback PhysicsSystem::reportClosestRayHits(c
 
 // This function is called after bullet performs its internal update.
 // To detect collisions between objects.
-void PhysicsSystem::internalTickCallback(btDynamicsWorld* const world, btScalar const timeStep)
+void PhysicsSystem::InternalTickCallback(btDynamicsWorld* const world, btScalar const timeStep)
 {
 	PhysicsSystem* const physicsSystem = static_cast<PhysicsSystem*>(world->getWorldUserInfo());
 
@@ -125,25 +125,4 @@ void PhysicsSystem::debugDrawComponent(const btTransform& worldTransform, const 
 void PhysicsSystem::update(float deltaMilliseconds)
 {
 	m_DynamicsWorld->stepSimulation(deltaMilliseconds * MS_TO_S, 10);
-}
-
-void PhysicsSystem::syncVisibleScene()
-{
-	const Vector<Component*>& physicsComponents = s_Components[PhysicsColliderComponent::s_ID];
-
-	for (auto& physicsComponent : physicsComponents)
-	{
-		PhysicsColliderComponent* const component = static_cast<PhysicsColliderComponent*>(physicsComponent);
-		if (component)
-		{
-			Ref<TransformComponent> ptc = component->m_TransformComponent;
-			if (ptc)
-			{
-				if (ptc->getAbsoluteTransform() != component->m_MotionState.m_WorldToPositionTransform)
-				{
-					ptc->setTransform(component->m_MotionState.m_WorldToPositionTransform);
-				}
-			}
-		}
-	}
 }
