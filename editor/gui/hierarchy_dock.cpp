@@ -31,6 +31,17 @@ void HierarchyDock::showHierarchySubTree(HierarchyComponent* hierarchy)
 				openEntity(node);
 			}
 
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("EntityClass"))
+				{
+					const char* newEntityFile = (const char*)payload->Data;
+					Ref<Entity> entity = EntityFactory::GetSingleton()->createEntity(ResourceLoader::CreateTextResourceFile(newEntityFile));
+					node->getComponent<HierarchyComponent>()->addChild(entity);
+				}
+				ImGui::EndDragDropTarget();
+			}
+
 			ImGui::PopStyleColor(1);
 
 			for (auto& child : node->getComponent<HierarchyComponent>()->getChildren())
