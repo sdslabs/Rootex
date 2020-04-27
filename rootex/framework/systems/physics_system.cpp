@@ -31,6 +31,8 @@ void PhysicsSystem::initialize()
 
 	m_DynamicsWorld->setInternalTickCallback(internalTickCallback);
 	m_DynamicsWorld->setWorldUserInfo(this);
+	m_DynamicsWorld->setDebugDrawer(&m_DebugDrawer);
+	m_DynamicsWorld->getDebugDrawer()->setDebugMode(btIDebugDraw::DBG_DrawWireframe);
 }
 
 PhysicsSystem::~PhysicsSystem()
@@ -104,10 +106,23 @@ void PhysicsSystem::internalTickCallback(btDynamicsWorld* const world, btScalar 
 	}
 }
 
+void PhysicsSystem::debugDraw()
+{
+	for (auto& component : s_Components[PhysicsColliderComponent::s_ID])
+	{
+		PhysicsColliderComponent* p = (PhysicsColliderComponent*)component;
+		p->render();
+	}
+}
+
+void PhysicsSystem::debugDrawComponent(const btTransform& worldTransform, const btCollisionShape* shape, const btVector3& color)
+{
+	m_DynamicsWorld->debugDrawObject(worldTransform, shape, color);
+}
+
 void PhysicsSystem::update(float deltaMilliseconds)
 {
 	m_DynamicsWorld->stepSimulation(deltaMilliseconds, 10);
-	syncVisibleScene();
 }
 
 void PhysicsSystem::syncVisibleScene()
@@ -122,7 +137,7 @@ void PhysicsSystem::syncVisibleScene()
 			Ref<TransformComponent> ptc = component->m_TransformComponent;
 			if (ptc)
 			{
-				if (ptc->getParentAbsoluteTransform() != component->m_MotionState.m_WorldToPositionTransform)
+				if (ptc->getAbsoluteTransform() != component->m_MotionState.m_WorldToPositionTransform)
 				{
 					ptc->setTransform(component->m_MotionState.m_WorldToPositionTransform);
 				}

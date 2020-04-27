@@ -6,6 +6,7 @@
 #include "rootex/core/input/input_manager.h"
 #include "rootex/core/resource_loader.h"
 #include "rootex/framework/systems/render_system.h"
+#include "rootex/framework/systems/physics_system.h"
 
 EditorApplication* EditorApplication::s_Instance = nullptr;
 
@@ -62,7 +63,6 @@ void EditorApplication::run()
 		}
 
 		Editor::GetSingleton()->render();
-
 		AudioSystem::GetSingleton()->update();
 		InputManager::GetSingleton()->update();
 		EventManager::GetSingleton()->dispatchDeferred();

@@ -87,9 +87,10 @@ void GameApplication::run()
 		RenderSystem::GetSingleton()->render();
 		AudioSystem::GetSingleton()->update();
 		InputManager::GetSingleton()->update();
-		EventManager::GetSingleton()->dispatchDeferred();
-		ScriptSystem::GetSingleton()->update(m_FrameTimer.getFrameTime());
 		PhysicsSystem::GetSingleton()->update(m_FrameTimer.getFrameTime());
+		PhysicsSystem::GetSingleton()->syncVisibleScene();
+		ScriptSystem::GetSingleton()->update(m_FrameTimer.getFrameTime());
+		EventManager::GetSingleton()->dispatchDeferred();
 	}
 }
 

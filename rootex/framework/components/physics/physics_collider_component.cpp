@@ -93,6 +93,11 @@ Matrix PhysicsColliderComponent::getTransform()
 	return btTransformToMat(m_Body->getCenterOfMassTransform());
 }
 
+void PhysicsColliderComponent::render()
+{
+	PhysicsSystem::GetSingleton()->debugDrawComponent(matTobtTransform(m_TransformComponent->getAbsoluteTransform()), m_CollisionShape.get(), { m_RenderColor.x, m_RenderColor.y, m_RenderColor.z });
+}
+
 void PhysicsColliderComponent::setVelocity(const Vector3& velocity)
 {
 	m_Body->setLinearVelocity(vecTobtVector3(velocity));
@@ -192,3 +197,23 @@ Vector3 PhysicsColliderComponent::btVector3ToVec(btVector3 const& btvec)
 {
 	return Vector3(btvec.x(), btvec.y(), btvec.z());
 }
+
+#ifdef ROOTEX_EDITOR
+#include "imgui.h"
+void PhysicsColliderComponent::draw()
+{
+	if (ImGui::BeginCombo("Material", m_MaterialName.c_str()))
+	{
+		for (auto&& material : PhysicsSystem::GetSingleton()->getPhysicsMaterial())
+		{
+			if (ImGui::Selectable(material.first.as<String>().c_str()))
+			{
+				m_MaterialName.assign(material.first.as<String>().c_str());
+			}
+		}
+		ImGui::EndCombo();
+	}
+
+	ImGui::ColorEdit3("Render Color", &m_RenderColor.x);
+}
+#endif // ROOTEX_EDITOR

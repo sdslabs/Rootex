@@ -16,14 +16,16 @@ class BoxColliderComponent : public PhysicsColliderComponent
 	friend class EntityFactory;
 
 public:
+	static const ComponentID s_ID = (ComponentID)ComponentIDs::BoxColliderComponent;
+
 	BoxColliderComponent(const Vector3 dimensions, const String& matName);
 
 	Vector3 getDimensions() const { return m_Dimensions; }
 
 	virtual String getName() const override { return "BoxColliderComponent"; };
 	virtual JSON::json getJSON() const override;
+	virtual ComponentID getComponentID() const override { return s_ID; }
 
-/// Interface to change collider properties via editor.
 #ifdef ROOTEX_EDITOR
 	void draw() override;
 #endif // ROOTEX_EDITOR 
