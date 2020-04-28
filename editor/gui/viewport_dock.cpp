@@ -16,7 +16,7 @@ ViewportDock::ViewportDock(const JSON::json& viewportJSON)
 	m_ViewportDockSettings.m_AspectRatio = (float)viewportJSON["aspectRatio"]["x"] / (float)viewportJSON["aspectRatio"]["y"];
 	m_ViewportDockSettings.m_ImageTint = Editor::GetSingleton()->getColors().m_White;
 	m_ViewportDockSettings.m_ImageBorderColor = Editor::GetSingleton()->getColors().m_Accent;
-
+	
 	m_EditorCamera = EntityFactory::GetSingleton()->createEntity(ResourceLoader::CreateTextResourceFile("editor/entities/camera.entity.json"), true);
 	RenderSystem::GetSingleton()->setCamera(m_EditorCamera->getComponent<CameraComponent>().get());
 
@@ -39,6 +39,7 @@ void ViewportDock::draw()
 			m_ViewportDockSettings.m_ImageSize = region;
 
 			static const ImVec2 viewportStart = ImGui::GetCursorPos();
+
 			ImGui::Image(
 			    RenderingDevice::GetSingleton()->getRenderTextureShaderResourceView().Get(),
 			    m_ViewportDockSettings.m_ImageSize,
@@ -47,6 +48,9 @@ void ViewportDock::draw()
 			    m_ViewportDockSettings.m_ImageTint,
 			    m_ViewportDockSettings.m_ImageBorderColor);
 
+			ImVec2 imageSize = ImGui::GetItemRectSize();
+			ImVec2 imagePos = ImGui::GetItemRectMin();
+			
 			if (ImGui::BeginDragDropTarget())
 			{
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("EntityClass"))
@@ -122,11 +126,8 @@ void ViewportDock::draw()
 			Ref<Entity> openedEntity = InspectorDock::GetSingleton()->getOpenedEntity();
 			if (openedEntity && openedEntity->getComponent<TransformComponent>())
 			{
-				static ImVec2 rect;
-				rect = ImGui::GetWindowSize();
-				static ImVec2 pos;
-				pos = ImGui::GetWindowPos();
-				ImGuizmo::SetRect(pos.x, pos.y, rect.x, rect.y);
+				// +8 for 8 pixels of gap, and it fixes the unwanted offset on the gizmo
+				ImGuizmo::SetRect(imagePos.x, imagePos.y + 8, m_ViewportDockSettings.m_ImageSize.x, m_ViewportDockSettings.m_ImageSize.y);
 				Matrix view = RenderSystem::GetSingleton()->getCamera()->getViewMatrix();
 				Matrix proj = RenderSystem::GetSingleton()->getCamera()->getProjectionMatrix();
 
