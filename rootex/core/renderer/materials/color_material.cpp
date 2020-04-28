@@ -1,9 +1,9 @@
 #include "color_material.h"
 
-#include "renderer/shader_library.h"
 #include "framework/systems/render_system.h"
+#include "renderer/shader_library.h"
 
-ColorMaterial::ColorMaterial()
+ColorMaterial::ColorMaterial(): m_Color(1.0f, 0.0f, 0.0f)
 {
 	m_PSConstantBuffer.resize((int)PixelConstantBufferType::End, nullptr);
 	m_VSConstantBuffer.resize((int)VertexConstantBufferType::End, nullptr);
@@ -23,4 +23,15 @@ void ColorMaterial::bind()
 {
 	Material::bind();
 	setVSConstantBuffer(VSSolidConstantBuffer(RenderSystem::GetSingleton()->getTopMatrix()));
+	setPSConstantBuffer(PSSolidConstantBuffer({ m_Color }));
 }
+
+#ifdef ROOTEX_EDITOR
+#include "imgui.h"
+#include "imgui_stdlib.h"
+void ColorMaterial::draw()
+{
+	ImGui::Text("Color Material");
+	ImGui::ColorEdit4("Color", &m_Color.x);
+}
+#endif // ROOTEX_EDITOR

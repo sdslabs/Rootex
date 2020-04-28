@@ -14,7 +14,6 @@ protected:
 	VisualModelResourceFile* m_VisualModelResourceFile;
 	Ref<Material> m_Material; //change
 	HierarchyComponent* m_HierarchyComponent;
-	Color m_Color;
 
 	ModelVisualComponent(const unsigned int& renderPassSetting, Ref<Material> material, VisualModelResourceFile* resFile, bool isVisible);
 	ModelVisualComponent(ModelVisualComponent&) = delete;
@@ -33,7 +32,6 @@ public:
 
 	void setVisualModel(VisualModelResourceFile* newModel);
 	void setMaterial(Ref<Material> material);//change
-	void setColor(const Color& color) { m_Color = color; };
 	
 	const VertexBuffer* getVertexBuffer() const { return m_VisualModelResourceFile->getVertexBuffer(); }
 	const IndexBuffer* getIndexBuffer() const { return m_VisualModelResourceFile->getIndexBuffer(); }

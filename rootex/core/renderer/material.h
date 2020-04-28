@@ -21,6 +21,7 @@ public:
 	Material();
 	virtual ~Material() = default;
 	virtual void bind();
+	virtual void draw() {};
 };
 
 template <typename T>
