@@ -42,7 +42,7 @@ set(ROOTEX_SOURCES
     ${ShaderFiles}
 CACHE INTERNAL "")
 
-string(CONCAT ShaderCompileDestination ${CMAKE_CURRENT_LIST_DIR} "/core/renderer/shaders/%\(Filename\).cso")
+string(CONCAT ShaderCompileDestination ${CMAKE_CURRENT_LIST_DIR} "/assets/shaders/%\(Filename\).cso")
 
 set_source_files_properties(${ShaderFiles} 
     PROPERTIES

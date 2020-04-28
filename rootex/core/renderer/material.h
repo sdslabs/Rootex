@@ -3,8 +3,6 @@
 #include "constant_buffer.h"
 #include "shader.h"
 
-class Texture;
-
 class Material
 {
 protected:
@@ -22,78 +20,63 @@ protected:
 public:
 	Material();
 	virtual ~Material() = default;
-	virtual void bind() = 0;
+	virtual void bind();
 };
 
-class ColorMaterial : public Material
+template <typename T>
+void Material::setPSConstantBuffer(const T& constantBuffer, Microsoft::WRL::ComPtr<ID3D11Buffer>& bufferPointer, UINT slot)
 {
-public:
-	enum class VertexConstantBufferType
+	if (bufferPointer == nullptr)
 	{
-		Model,
-		End
-	};
-	enum class PixelConstantBufferType
+		D3D11_BUFFER_DESC cbd = { 0 };
+		cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		cbd.Usage = D3D11_USAGE_DYNAMIC;
+		cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		cbd.MiscFlags = 0u;
+		cbd.ByteWidth = sizeof(T);
+		cbd.StructureByteStride = 0u;
+		D3D11_SUBRESOURCE_DATA csd = { 0 };
+		csd.pSysMem = &constantBuffer;
+
+		bufferPointer = RenderingDevice::GetSingleton()->createPSConstantBuffer(&cbd, &csd, slot);
+		RenderingDevice::GetSingleton()->setPSConstantBuffer(bufferPointer.Get(), slot);
+	}
+	else
 	{
-		Color,
-		End
-	};
-	
-	ColorMaterial();
-	~ColorMaterial() = default;
+		D3D11_MAPPED_SUBRESOURCE subresource;
+		RenderingDevice::GetSingleton()->mapBuffer(bufferPointer.Get(), subresource);
+		memcpy(subresource.pData, &constantBuffer, sizeof(constantBuffer));
+		RenderingDevice::GetSingleton()->unmapBuffer(bufferPointer.Get());
 
-	void setPSConstantBuffer(const PSSolidConstantBuffer& constantBuffer);
-	void setVSConstantBuffer(const VSSolidConstantBuffer& constantBuffer);
+		RenderingDevice::GetSingleton()->setPSConstantBuffer(bufferPointer.Get(), slot);
+	}
+}
 
-	void bind() override;
-};
-
-class TexturedMaterial : public Material
+template <typename T>
+void Material::setVSConstantBuffer(const T& constantBuffer, Microsoft::WRL::ComPtr<ID3D11Buffer>& bufferPointer, UINT slot)
 {
-	DiffuseShader* m_DiffuseShader;
-	Ref<Texture> m_DiffuseTexture;
-	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_SamplerState;
-
-public:
-	enum class VertexConstantBufferType
+	if (bufferPointer == nullptr)
 	{
-		Model,
-		End
-	};
-	enum class PixelConstantBufferType
+		D3D11_BUFFER_DESC cbd = { 0 };
+		cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		cbd.Usage = D3D11_USAGE_DYNAMIC;
+		cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		cbd.MiscFlags = 0u;
+		cbd.ByteWidth = sizeof(T);
+		cbd.StructureByteStride = 0u;
+		D3D11_SUBRESOURCE_DATA csd = { 0 };
+		csd.pSysMem = &constantBuffer;
+
+		bufferPointer = RenderingDevice::GetSingleton()->createVSConstantBuffer(&cbd, &csd, slot);
+		RenderingDevice::GetSingleton()->setVSConstantBuffer(bufferPointer.Get(), slot);
+	}
+	else
 	{
-		Lights,
-		Material,
-		End
-	};
-	TexturedMaterial(Ref<Texture> diffuseTexture);
-	~TexturedMaterial() = default;
+		D3D11_MAPPED_SUBRESOURCE subresource;
+		RenderingDevice::GetSingleton()->mapBuffer(bufferPointer.Get(), subresource);
+		memcpy(subresource.pData, &constantBuffer, sizeof(constantBuffer));
+		RenderingDevice::GetSingleton()->unmapBuffer(bufferPointer.Get());
 
-	void setPSConstantBuffer(const PSDiffuseConstantBufferLights& constantBuffer);
-	void setPSConstantBuffer(const PSDiffuseConstantBufferMaterial& constantBuffer);
-	void setVSConstantBuffer(const VSDiffuseConstantBuffer& constantBuffer);
-
-	void bind() override;
-};
-
-class CPUParticlesMaterial : public Material
-{
-public:
-	enum class VertexConstantBufferType
-	{
-		Model,
-		End
-	};
-	enum class PixelConstantBufferType
-	{
-		Color,
-		End
-	};
-	CPUParticlesMaterial();
-	~CPUParticlesMaterial() = default;
-	
-	void setPSConstantBuffer(const PSSolidConstantBuffer& constantBuffer);
-	void setVSConstantBuffer(const VSSolidConstantBuffer& constantBuffer);
-
-	void bind() override;
-};
+		RenderingDevice::GetSingleton()->setVSConstantBuffer(bufferPointer.Get(), slot);
+	}
+}

@@ -10,11 +10,12 @@ class VertexBuffer
 {
 	/// Pointer given by DirectX API to refer the vertex buffer created on GPU
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_VertexBuffer;
-	Vector<VertexData> m_Buffer;
+	unsigned int m_Stride;
 
 public:
 	VertexBuffer(const Vector<VertexData>& buffer);
-	~VertexBuffer();
+	VertexBuffer(const Vector<float>& buffer);
+	~VertexBuffer() = default;
 
 	void bind() const;
 };

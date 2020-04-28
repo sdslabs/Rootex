@@ -22,6 +22,7 @@
 #include "components/visual/spot_light_component.h"
 #include "components/visual/text_visual_2d_component.h"
 #include "components/visual/textured_model_visual_component.h"
+#include "components/visual/grid_visual_component.h"
 #include "components/visual/visual_component.h"
 #include "systems/hierarchy_system.h"
 
@@ -30,6 +31,7 @@
 	m_DefaultComponentCreators.push_back({ ComponentClass::s_ID, #ComponentClass, ComponentClass::CreateDefault })
 
 EntityID EntityFactory::s_CurrentID = ROOT_ENTITY_ID;
+EntityID EntityFactory::s_CurrentEditorID = -ROOT_ENTITY_ID;
 
 EntityFactory* EntityFactory::GetSingleton()
 {
@@ -42,6 +44,11 @@ EntityID EntityFactory::getNextID()
 	return ++s_CurrentID;
 }
 
+EntityID EntityFactory::getNextEditorID()
+{
+	return --s_CurrentEditorID;
+}
+
 EntityFactory::EntityFactory()
 {
 	BIND_EVENT_MEMBER_FUNCTION("DeleteEntity", deleteEntityEvent);
@@ -49,22 +56,18 @@ EntityFactory::EntityFactory()
 	REGISTER_COMPONENT(TestComponent);
 	REGISTER_COMPONENT(DebugComponent);
 	REGISTER_COMPONENT(CameraComponent);
+	REGISTER_COMPONENT(GridVisualComponent);
 	REGISTER_COMPONENT(ModelVisualComponent);
 	REGISTER_COMPONENT(TexturedModelVisualComponent);
 	REGISTER_COMPONENT(TextVisual2DComponent);
-
 	REGISTER_COMPONENT(TransformComponent);
-
 	REGISTER_COMPONENT(PointLightComponent);
 	REGISTER_COMPONENT(DirectionalLightComponent);
 	REGISTER_COMPONENT(SpotLightComponent);
 	REGISTER_COMPONENT(SphereColliderComponent);
 	REGISTER_COMPONENT(BoxColliderComponent);
-
 	REGISTER_COMPONENT(HierarchyComponent);
-
 	REGISTER_COMPONENT(ScriptComponent);
-
 	REGISTER_COMPONENT(MusicComponent);
 	REGISTER_COMPONENT(ShortMusicComponent);
 	REGISTER_COMPONENT(CPUParticlesVisualComponent);
@@ -127,7 +130,7 @@ Ref<Component> EntityFactory::createDefaultComponent(const String& name)
 	}
 }
 
-Ref<Entity> EntityFactory::createEntity(TextResourceFile* entityJSONDescription)
+Ref<Entity> EntityFactory::createEntity(TextResourceFile* entityJSONDescription, bool isEditorOnly)
 {
 	const JSON::json entityJSON = JSON::json::parse(entityJSONDescription->getString());
 	if (entityJSON.is_null())
@@ -147,18 +150,25 @@ Ref<Entity> EntityFactory::createEntity(TextResourceFile* entityJSONDescription)
 	JSON::json name = entityJSON["Entity"]["name"];
 
 	EntityID newID = 0;
-	auto&& findItID = entityJSON["Entity"].find("ID");
-	if (findItID != entityJSON["Entity"].end())
+	if (isEditorOnly)
 	{
-		newID = *findItID;
-		while (getNextID() <= *findItID)
-		{
-			;
-		}
+		newID = getNextEditorID();
 	}
 	else
 	{
-		newID = getNextID();
+		auto&& findItID = entityJSON["Entity"].find("ID");
+		if (findItID != entityJSON["Entity"].end())
+		{
+			newID = *findItID;
+			while (getNextID() <= *findItID)
+			{
+				;
+			}
+		}
+		else
+		{
+			newID = getNextID();
+		}
 	}
 
 	entity.reset(new Entity(newID, name.is_null() ? "Entity" : name));
@@ -177,6 +187,8 @@ Ref<Entity> EntityFactory::createEntity(TextResourceFile* entityJSONDescription)
 	{
 		ERR("Entity was not setup properly: " + std::to_string(entity->m_ID));
 	}
+
+	entity->setEditorOnly(isEditorOnly);
 
 	m_Entities[entity->m_ID] = entity;
 	return entity;
@@ -200,25 +212,23 @@ Ref<Entity> EntityFactory::createRootEntity()
 
 	{
 		Ref<HierarchyComponent> rootComponent(new HierarchyComponent(INVALID_ID, {}));
-		EntityFactory::addComponent(root, rootComponent);
 		System::RegisterComponent(rootComponent.get());
+		addComponent(root, rootComponent);
 	}
 	{
 		Ref<Component> rootTransformComponent = createDefaultComponent("TransformComponent");
-		EntityFactory::addComponent(root, rootTransformComponent);
-		System::RegisterComponent(rootTransformComponent.get());
+		addComponent(root, rootTransformComponent);
 	}
 	{
 		Ref<ModelVisualComponent> rootVisualComponent = std::dynamic_pointer_cast<ModelVisualComponent>(createDefaultComponent("ModelVisualComponent"));
 		rootVisualComponent->setVisibility(false);
-
-		EntityFactory::addComponent(root, rootVisualComponent);
-		System::RegisterComponent(rootVisualComponent.get());
+		addComponent(root, rootVisualComponent);
 	}
 	{
 		Ref<CameraComponent> rootCameraComponent = std::dynamic_pointer_cast<CameraComponent>(createDefaultComponent("CameraComponent"));
-		EntityFactory::addComponent(root, rootCameraComponent);
+		addComponent(root, rootCameraComponent);
 	}
+
 	m_Entities[root->m_ID] = root;
 	return root;
 }

@@ -1,5 +1,7 @@
 #include "cpu_particles_visual_component.h"
 
+#include "core/renderer/materials/cpu_particles_material.h"
+
 #include "random.h"
 #include "resource_loader.h"
 #include "systems/render_system.h"
@@ -133,7 +135,7 @@ void CPUParticlesVisualComponent::render(RenderPass renderPass)
 
 void CPUParticlesVisualComponent::postRender()
 {
-	VisualComponent::postRender();
+	ModelVisualComponent::postRender();
 	m_LastRenderTimePoint = std::chrono::high_resolution_clock::now();
 }
 
@@ -142,7 +144,7 @@ void CPUParticlesVisualComponent::emit(const ParticleTemplate& particleTemplate)
 	Particle& particle = m_ParticlePool[m_PoolIndex];
 
 	particle.m_IsActive = true;
-	particle.m_Transform = m_TransformComponent->getAbsoluteTransform();
+	particle.m_Transform = m_TransformComponent->getLocalTransform();
 	
 	particle.m_Velocity = particleTemplate.m_Velocity;
 	particle.m_Velocity.x += particleTemplate.m_VelocityVariation * (Random::Float() - 0.5f);

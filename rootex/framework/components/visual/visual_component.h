@@ -4,7 +4,6 @@
 #include "core/renderer/renderer.h"
 
 #include "renderer/index_buffer.h"
-#include "renderer/material.h"
 #include "renderer/shader.h"
 #include "renderer/texture.h"
 #include "renderer/vertex_buffer.h"
@@ -37,11 +36,11 @@ protected:
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::VisualComponent;
 	
-	VisualComponent(const unsigned int& renderPassSetting, bool visibility);
+	VisualComponent(const unsigned int& renderPassSetting, bool isVisible);
 	VisualComponent(VisualComponent&) = delete;
 	virtual ~VisualComponent() = default;
 
-	virtual bool setup();
+	virtual bool setup() override;
 
 	virtual bool preRender() { return true; }
 	virtual bool isVisible() const { return m_IsVisible; }

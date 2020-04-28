@@ -14,6 +14,7 @@ RenderSystem::RenderSystem()
     , m_VSProjectionConstantBuffer(nullptr)
     , m_VSPerFrameConstantBuffer(nullptr)
     , m_PSPerFrameConstantBuffer(nullptr)
+    , m_IsEditorRenderPassEnabled(false)
 {
 	m_Camera = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<CameraComponent>().get();
 	m_TransformationStack.push_back(Matrix::Identity);
@@ -67,8 +68,12 @@ void RenderSystem::render()
 	perFramePSCBBinds();
 
 	Ref<VisualComponent> rootVC = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<VisualComponent>();
+
 #ifdef ROOTEX_EDITOR
-	renderPassRender(rootVC.get(), RenderPassEditor);
+	if (m_IsEditorRenderPassEnabled)
+	{
+		renderPassRender(rootVC.get(), RenderPassEditor);
+	}
 #endif // ROOTEX_EDITOR
 	renderPassRender(rootVC.get(), RenderPassMain);
 	{
@@ -112,7 +117,7 @@ void RenderSystem::enableWireframeRasterizer()
 	RenderingDevice::GetSingleton()->setRasterizerState(RenderingDevice::RasterizerState::Wireframe);
 }
 
-void RenderSystem::enableDefaultRasterizer()
+void RenderSystem::resetDefaultRasterizer()
 {
 	RenderingDevice::GetSingleton()->setRasterizerState(RenderingDevice::RasterizerState::Default);
 }
@@ -193,6 +198,16 @@ void RenderSystem::perFramePSCBBinds()
 		memcpy(subresource.pData, &view, sizeof(view));
 		RenderingDevice::GetSingleton()->unmapBuffer(m_PSPerFrameConstantBuffer.Get());
 	}
+}
+
+void RenderSystem::enableLineRenderMode()
+{
+	RenderingDevice::GetSingleton()->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+}
+
+void RenderSystem::resetRenderMode()
+{
+	RenderingDevice::GetSingleton()->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
 void RenderSystem::setCamera(CameraComponent* camera)
