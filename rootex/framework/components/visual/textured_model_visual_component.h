@@ -1,7 +1,7 @@
 #pragma once
 
 #include "model_visual_component.h"
-#include "renderer/material.h"
+#include "renderer/materials/textured_material.h"
 
 class TexturedModelVisualComponent : public ModelVisualComponent
 {

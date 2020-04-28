@@ -27,12 +27,10 @@ protected:
 
 	friend class ShaderLibrary;
 
-
 public:
 	virtual ~Shader();
 
 	virtual void bind() const;
-	void unbind() const;
 };
 
 class ColorShader : public Shader
@@ -42,8 +40,8 @@ class ColorShader : public Shader
 	~ColorShader() = default;
 
 	friend class ShaderLibrary;
-
 };
+
 class DiffuseShader : public Shader
 {
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_SamplerState;
@@ -67,7 +65,13 @@ class CPUParticlesShader : public Shader
 	~CPUParticlesShader() = default;
 
 	friend class ShaderLibrary;
+};
 
-public:
-	virtual void bind() const override;
+class GridShader : public Shader
+{
+	GridShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat);
+	GridShader(ColorShader&) = delete;
+	~GridShader() = default;
+
+	friend class ShaderLibrary;
 };

@@ -60,6 +60,23 @@ void HierarchyComponent::onRemove()
 	}
 }
 
+bool HierarchyComponent::setup()
+{
+	if (m_Parent)
+	{
+		m_Parent->snatchChild(m_Owner);
+	}
+	else
+	{
+		if (m_Owner->getID() != ROOT_ENTITY_ID)
+		{
+			ERR("Parent not found for: " + m_Owner->getFullName());
+			return false;
+		}
+	}
+	return true;
+}
+
 bool HierarchyComponent::addChild(Ref<Entity> child)
 {
 	if (auto&& findIt = std::find(m_ChildrenIDs.begin(), m_ChildrenIDs.end(), child->getID()) == m_ChildrenIDs.end())
@@ -94,8 +111,8 @@ bool HierarchyComponent::removeChild(Ref<Entity> node)
 
 bool HierarchyComponent::snatchChild(Ref<Entity> node)
 {
-	bool status = node->getComponent<HierarchyComponent>()->getParent()->removeChild(node);
-	status &= addChild(node);
+	node->getComponent<HierarchyComponent>()->getParent()->removeChild(node);
+	bool status = addChild(node);
 
 	return status;
 }

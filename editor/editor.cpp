@@ -98,6 +98,7 @@ void Editor::initialize(HWND hWnd, const JSON::json& projectJSON)
 	m_Viewport.reset(new ViewportDock(projectJSON["viewport"]));
 	m_Inspector.reset(new InspectorDock());
 	m_FileViewer.reset(new FileViewer());
+	m_Classes.reset(new ClassesDock());
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -121,6 +122,7 @@ void Editor::render()
 
 	drawDefaultUI();
 	m_FileSystem->draw();
+	m_Classes->draw();
 	m_Hierarchy->draw();
 	m_Toolbar->draw();
 	m_Viewport->draw();
@@ -293,7 +295,7 @@ void Editor::drawDefaultUI()
 					}
 					else
 					{
-						RenderSystem::GetSingleton()->enableDefaultRasterizer();
+						RenderSystem::GetSingleton()->resetDefaultRasterizer();
 					}
 				}
 				bool fullscreen = Extract(bool, EventManager::GetSingleton()->returnCall("WindowGetScreenState", "WindowGetScreenState", 0));

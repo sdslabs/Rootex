@@ -1,8 +1,8 @@
 #include "visual_component.h"
 
-VisualComponent::VisualComponent(const unsigned int& renderPassSetting, bool visibility)
+VisualComponent::VisualComponent(const unsigned int& renderPassSetting, bool isVisible)
     : m_RenderPass((RenderPass)renderPassSetting)
-    , m_IsVisible(visibility)
+    , m_IsVisible(isVisible)
     , m_TransformComponent(nullptr)
 {
 }

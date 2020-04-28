@@ -108,6 +108,11 @@ void InspectorDock::draw()
 				}
 				ImGui::PopStyleColor(3);
 
+				if (ImGui::Button("Reset"))
+				{
+					PANIC(m_OpenedEntity->setupComponents() == false, "Could not setup entity: " + m_OpenedEntity->getFullName());
+				}
+
 				ImGui::Separator();
 				
 				ImGui::Text("Components");
