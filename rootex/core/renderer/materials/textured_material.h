@@ -10,6 +10,13 @@ class TexturedMaterial : public Material
 	Ref<Texture> m_DiffuseTexture;
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_SamplerState;
 
+	ImageResourceFile* m_ImageFile;
+
+	void setTexture(ImageResourceFile* image);
+
+#ifdef ROOTEX_EDITOR
+	String m_ImagePathUI;
+#endif // ROOTEX_EDITOR
 public:
 	enum class VertexConstantBufferType
 	{
@@ -22,7 +29,7 @@ public:
 		Material,
 		End
 	};
-	TexturedMaterial(Ref<Texture> diffuseTexture);
+	TexturedMaterial();
 	~TexturedMaterial() = default;
 
 	void setPSConstantBuffer(const PSDiffuseConstantBufferLights& constantBuffer);
@@ -30,4 +37,7 @@ public:
 	void setVSConstantBuffer(const VSDiffuseConstantBuffer& constantBuffer);
 
 	void bind() override;
+#ifdef ROOTEX_EDITOR
+	void draw() override;
+#endif // ROOTEX_EDITOR
 };

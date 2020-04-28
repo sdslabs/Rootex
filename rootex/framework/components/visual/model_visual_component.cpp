@@ -18,13 +18,6 @@ Component* ModelVisualComponent::Create(const JSON::json& componentData)
 	    ResourceLoader::CreateVisualModelResourceFile(componentData["resFile"]),
 	    componentData["isVisible"]);
 
-	modelVisualComponent->setColor(
-	    Color(
-	        (float)componentData["color"]["r"],
-	        (float)componentData["color"]["g"],
-	        (float)componentData["color"]["b"],
-	        (float)componentData["color"]["a"]));
-
 	return modelVisualComponent;
 }
 
@@ -35,7 +28,6 @@ Component* ModelVisualComponent::CreateDefault()
 	    Ref<Material>(new ColorMaterial()), //change
 	    ResourceLoader::CreateVisualModelResourceFile("rootex/assets/cube.obj"),
 	    true);
-	modelVisualComponent->setColor(Color(0.5f, 0.5f, 0.5f));
 
 	return modelVisualComponent;
 }
@@ -91,9 +83,6 @@ void ModelVisualComponent::render(RenderPass renderPass)
 {
 	if (renderPass & m_RenderPass)
 	{
-		PSSolidConstantBuffer Cb = { m_Color };
-		reinterpret_cast<ColorMaterial*>(m_Material.get())->setPSConstantBuffer(Cb); //change
-
 		RenderSystem::GetSingleton()->getRenderer()->draw(getVertexBuffer(), getIndexBuffer(), getMaterial());
 	}
 }
@@ -140,10 +129,6 @@ JSON::json ModelVisualComponent::getJSON() const
 	JSON::json& j = VisualComponent::getJSON();
 
 	j["resFile"] = m_VisualModelResourceFile->getPath().string();
-	j["color"]["r"] = m_Color.x;
-	j["color"]["g"] = m_Color.y;
-	j["color"]["b"] = m_Color.z;
-	j["color"]["a"] = m_Color.w;
 
 	return j;
 }
@@ -210,7 +195,6 @@ void ModelVisualComponent::draw()
 		}
 		ImGui::EndDragDropTarget();
 	}
-
-	ImGui::ColorEdit4("Color", &m_Color.x);
+	m_Material->draw();
 }
 #endif // ROOTEX_EDITOR
