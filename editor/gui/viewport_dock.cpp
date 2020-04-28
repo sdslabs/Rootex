@@ -17,9 +17,10 @@ ViewportDock::ViewportDock(const JSON::json& viewportJSON)
 	m_ViewportDockSettings.m_ImageTint = Editor::GetSingleton()->getColors().m_White;
 	m_ViewportDockSettings.m_ImageBorderColor = Editor::GetSingleton()->getColors().m_Accent;
 
-	m_EditorCamera = EntityFactory::GetSingleton()->createEntity(ResourceLoader::CreateTextResourceFile("editor/entities/camera.entity.json"));
-	m_EditorCamera->setEditorOnly(true);
+	m_EditorCamera = EntityFactory::GetSingleton()->createEntity(ResourceLoader::CreateTextResourceFile("editor/entities/camera.entity.json"), true);
 	RenderSystem::GetSingleton()->setCamera(m_EditorCamera->getComponent<CameraComponent>().get());
+
+	m_EditorGrid = EntityFactory::GetSingleton()->createEntity(ResourceLoader::CreateTextResourceFile("editor/entities/grid.entity.json"), true);
 }
 
 void ViewportDock::draw()
@@ -45,6 +46,20 @@ void ViewportDock::draw()
 			    { 1, 1 },
 			    m_ViewportDockSettings.m_ImageTint,
 			    m_ViewportDockSettings.m_ImageBorderColor);
+
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("EntityClass"))
+				{
+					const char* newEntityFile = (const char*)payload->Data;
+					Ref<Entity> entity = EntityFactory::GetSingleton()->createEntity(ResourceLoader::CreateTextResourceFile(newEntityFile));
+					if (Ref<TransformComponent> transform = entity->getComponent<TransformComponent>())
+					{
+						transform->setPosition(RenderSystem::GetSingleton()->getCamera()->getOwner()->getComponent<TransformComponent>()->getPosition());
+					}
+				}
+				ImGui::EndDragDropTarget();
+			}
 
 			static const ImVec2 viewportEnd = ImGui::GetCursorPos();
 
@@ -115,8 +130,8 @@ void ViewportDock::draw()
 				Matrix view = RenderSystem::GetSingleton()->getCamera()->getViewMatrix();
 				Matrix proj = RenderSystem::GetSingleton()->getCamera()->getProjectionMatrix();
 
-				Matrix matrix = openedEntity->getComponent<TransformComponent>()->getParentAbsoluteTransform();
-				static Matrix deltaMatrix = Matrix::Identity;
+				Matrix matrix = openedEntity->getComponent<TransformComponent>()->getAbsoluteTransform();
+				Matrix deltaMatrix = Matrix::CreateTranslation(0.0f, 0.0f, 0.0f);
 				ImGuizmo::Manipulate(
 				    &view.m[0][0],
 				    &proj.m[0][0],

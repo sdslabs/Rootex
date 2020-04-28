@@ -149,8 +149,25 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 	rsDesc.MultisampleEnable = MSAA;
 	rsDesc.AntialiasedLineEnable = FALSE;
 
-	GFX_ERR_CHECK(m_Device->CreateRasterizerState(&rsDesc, &m_RSState));
-	m_Context->RSSetState(m_RSState.Get());
+	GFX_ERR_CHECK(m_Device->CreateRasterizerState(&rsDesc, &m_DefaultRasterizerState));
+
+	D3D11_RASTERIZER_DESC wireframeDesc;
+	wireframeDesc.FillMode = D3D11_FILL_WIREFRAME;
+	wireframeDesc.CullMode = D3D11_CULL_NONE;
+	wireframeDesc.FrontCounterClockwise = FALSE;
+	wireframeDesc.DepthBias = 0;
+	wireframeDesc.SlopeScaledDepthBias = 0.0f;
+	wireframeDesc.DepthBiasClamp = 0.0f;
+	wireframeDesc.DepthClipEnable = TRUE;
+	wireframeDesc.ScissorEnable = FALSE;
+	wireframeDesc.MultisampleEnable = MSAA;
+	wireframeDesc.AntialiasedLineEnable = FALSE;
+
+	GFX_ERR_CHECK(m_Device->CreateRasterizerState(&wireframeDesc, &m_WireframeRasterizerState));
+
+	m_CurrentRasterizerState = m_DefaultRasterizerState.GetAddressOf();
+
+	m_Context->RSSetState(*m_CurrentRasterizerState);
 
 	setTextureRenderTarget();
 
@@ -384,9 +401,25 @@ void RenderingDevice::unbindShaderResources()
 	m_Context->PSSetShaderResources(0, 1, nullptr);
 }
 
-void RenderingDevice::setRasterizerState()
+void RenderingDevice::setCurrentRasterizerState()
 {
-	m_Context->RSSetState(m_RSState.Get());
+	m_Context->RSSetState(*m_CurrentRasterizerState);
+}
+
+void RenderingDevice::setRasterizerState(RasterizerState rs)
+{
+	switch (rs)
+	{
+	case RenderingDevice::RasterizerState::Default:
+		m_CurrentRasterizerState = m_DefaultRasterizerState.GetAddressOf();
+		break;
+	case RenderingDevice::RasterizerState::Wireframe:
+		m_CurrentRasterizerState = m_WireframeRasterizerState.GetAddressOf();
+		break;
+	default:
+		ERR("Invalid rasterizer state found to be set");
+		break;
+	}
 }
 
 void RenderingDevice::setDepthStencilState()
