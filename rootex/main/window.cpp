@@ -209,8 +209,6 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
 		    rHeight,
 		    MSAA);
 
-		showCursor(false);
-
 		RenderingDevice::GetSingleton()->setBackBufferRenderTarget();
 	}
 	applyDefaultViewport();
