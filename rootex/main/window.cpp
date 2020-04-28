@@ -63,14 +63,14 @@ void Window::clipCursor(RECT clip)
 void Window::showCursor(bool enabled)
 {
 	int result = ShowCursor(enabled);
-	if (result >= 0)
+	 if (result >= 0)
 	{
-		PRINT("Cursor is shown");
+		//PRINT("Cursor is shown");
 	}
 	else
 	{
-		PRINT("Cursor is hidden")	
-	}
+		//PRINT("Cursor is hidden")	
+	} 
 }
 
 void Window::clearCurrentTarget()
