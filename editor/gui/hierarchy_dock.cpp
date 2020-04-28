@@ -19,16 +19,19 @@ void HierarchyDock::showHierarchySubTree(HierarchyComponent* hierarchy)
 
 			if (hierarchy->getOwner()->isEditorOnly())
 			{
-				ImGui::PushStyleColor(ImGuiCol_Text, Editor::GetSingleton()->getColors().m_FailAccent);
+				ImGui::PushStyleColor(ImGuiCol_Text, Editor::GetSingleton()->getColors().m_Warning);
 			}
 			else
 			{
 				ImGui::PushStyleColor(ImGuiCol_Text, Editor::GetSingleton()->getColors().m_Text);
 			}
 
-			if (ImGui::Selectable(node->getFullName().c_str(), m_OpenedEntityID == node->getID()))
+			if (!node->isEditorOnly() || m_IsShowEditorEntities)
 			{
-				openEntity(node);
+				if (ImGui::Selectable(node->getFullName().c_str(), m_OpenedEntityID == node->getID()))
+				{
+					openEntity(node);
+				}
 			}
 
 			if (ImGui::BeginDragDropSource())
@@ -93,6 +96,8 @@ void HierarchyDock::draw()
 	{
 		if (ImGui::Begin("Hierarchy"))
 		{
+			ImGui::Checkbox("Show Editor Entities", &m_IsShowEditorEntities);
+			
 			HierarchyComponent* rootComponent = HierarchySystem::GetSingleton()->getRootHierarchyComponent().get();
 			showHierarchySubTree(rootComponent);
 		}
@@ -102,28 +107,39 @@ void HierarchyDock::draw()
 	{
 		if (ImGui::Begin("Entities"))
 		{
+			ImGui::Checkbox("List Editor Entities", &m_IsShowEditorEntities);
+
 			ImGui::Columns(2);
 			ImGui::Text("Entity");
 			ImGui::NextColumn();
 			ImGui::Text("Components");
 			ImGui::NextColumn();
 
-			for (auto&& [entityID, entity] : EntityFactory::GetSingleton()->getEntities())
-			{
-				ImGui::Separator();
-				if (ImGui::Selectable(entity->getFullName().c_str(), m_OpenedEntityID == entity->getID()))
-				{
-					openEntity(entity);
-				}
-				ImGui::NextColumn();
-				for (auto&& [componentID, component] : entity->getAllComponents())
-				{
-					ImGui::Text(component->getName().c_str());
-				}
-				ImGui::NextColumn();
-			}
+			showEntities(EntityFactory::GetSingleton()->getEntities());
+
 			ImGui::Columns(1);
 		}
 		ImGui::End();
+	}
+}
+
+void HierarchyDock::showEntities(const HashMap<EntityID, Ref<Entity>>& entities)
+{
+	for (auto&& [entityID, entity] : entities)
+	{
+		if (entity->isEditorOnly() == m_IsShowEditorEntities)
+		{
+			ImGui::Separator();
+			if (ImGui::Selectable(entity->getFullName().c_str(), m_OpenedEntityID == entity->getID()))
+			{
+				openEntity(entity);
+			}
+			ImGui::NextColumn();
+			for (auto&& [componentID, component] : entity->getAllComponents())
+			{
+				ImGui::Text(component->getName().c_str());
+			}
+			ImGui::NextColumn();
+		}
 	}
 }
