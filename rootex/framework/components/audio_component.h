@@ -30,7 +30,7 @@ public:
 	AudioComponent(AudioComponent&) = delete;
 	~AudioComponent() = default;
 
-	virtual bool setup();
+	virtual bool setup() override;
 
 	void update();
 
