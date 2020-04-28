@@ -1,9 +1,9 @@
 {
     "project": "Rootex Game",
-    "startLevel": "game/assets/levels/physics_test",
+    "startLevel": "game/assets/levels/attenuation_test",
     "version": 1.0,
     "window": {
-        "fullScreen": true,
+        "fullScreen": false,
         "height": 1080,
         "isEditor": false,
         "msaa": true,
