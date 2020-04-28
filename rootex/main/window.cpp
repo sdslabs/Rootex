@@ -57,7 +57,7 @@ void Window::resetClipCursor()
 	ClipCursor(nullptr);
 }
 
-void Window::showCursor(bool enabled)
+ void Window::showCursor(bool enabled)
 {
 	ShowCursor(enabled);
 }
