@@ -295,7 +295,7 @@ void Editor::drawDefaultUI()
 					}
 					else
 					{
-						RenderSystem::GetSingleton()->enableDefaultRasterizer();
+						RenderSystem::GetSingleton()->resetDefaultRasterizer();
 					}
 				}
 				bool fullscreen = Extract(bool, EventManager::GetSingleton()->returnCall("WindowGetScreenState", "WindowGetScreenState", 0));
