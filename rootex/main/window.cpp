@@ -60,9 +60,9 @@ void Window::clipCursor(RECT clip)
 	ClipCursor(&clip);
 }
 
-void Window::showCursor(bool enabled)
+ void Window::showCursor(bool enabled)
 {
-	int result = ShowCursor(enabled);
+	ShowCursor(enabled);
 }
 
 void Window::clearCurrentTarget()
