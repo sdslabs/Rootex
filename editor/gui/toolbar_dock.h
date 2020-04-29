@@ -12,9 +12,11 @@ public:
 
 private:
 	ToolbarDockSettings m_ToolbarDockSettings;
+	Vector<float> m_FPSRecords;
+	unsigned int m_FPSRecordsPoolSize = 100;
 
 public:
-	ToolbarDock() = default;
+	ToolbarDock();
 	ToolbarDock(ToolbarDock&) = delete;
 	~ToolbarDock() = default;
 
