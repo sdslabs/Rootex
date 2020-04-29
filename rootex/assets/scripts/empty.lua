@@ -1,10 +1,10 @@
-function onBegin()
+function onBegin(entity)
     print("Nothing is true")
 end
 
-function onUpdate(delta)
+function onUpdate(delta, entity)
 end
 
-function onEnd()
+function onEnd(entity)
     print("Everything is permitted")
 end

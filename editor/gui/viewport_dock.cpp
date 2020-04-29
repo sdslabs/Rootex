@@ -213,7 +213,7 @@ void ViewportDock::draw()
 				if (m_IsCameraMoving)
 				{
 					EditorApplication::GetSingleton()->getWindow()->showCursor(true);
-					EditorApplication::GetSingleton()->getWindow()->clipCursor();
+					EditorApplication::GetSingleton()->getWindow()->resetClipCursor();
 					m_IsCameraMoving = false;
 				}
 			}
