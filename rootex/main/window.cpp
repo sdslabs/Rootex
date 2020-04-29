@@ -59,15 +59,7 @@ void Window::resetClipCursor()
 
 void Window::showCursor(bool enabled)
 {
-	int result = ShowCursor(enabled);
-	if (result >= 0)
-	{
-		PRINT("Cursor is shown");
-	}
-	else
-	{
-		PRINT("Cursor is hidden")	
-	}
+	ShowCursor(enabled);
 }
 
 void Window::clearCurrentTarget()

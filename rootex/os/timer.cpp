@@ -35,6 +35,7 @@ FrameTimer::FrameTimer()
 
 void FrameTimer::reset()
 {
+	m_LastFrameTime = getFrameTime();
 	m_FrameStartTime = s_Clock.now();
 }
 
