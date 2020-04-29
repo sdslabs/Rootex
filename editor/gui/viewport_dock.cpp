@@ -112,9 +112,9 @@ void ViewportDock::draw()
 			}
 			
 			ImGui::SetNextItemWidth(shortItemSize.x);
-			ImGui::DragFloat("Camera Sensitivity", &m_EditorCameraSensitivity, 0.1f);
+			ImGui::SliderFloat("Camera Sensitivity", &m_EditorCameraSensitivity, 0.1f, 1.5f);
 			ImGui::SetNextItemWidth(shortItemSize.x);
-			ImGui::DragFloat("Camera Speed", &m_EditorCameraSpeed, 0.1f);
+			ImGui::SliderFloat("Camera Speed", &m_EditorCameraSpeed, 0.1f, 1.0f);
 
 			ImGui::Unindent(2.0f);
 			
