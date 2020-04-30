@@ -63,7 +63,9 @@ GameApplication::GameApplication()
 	RenderingDevice::GetSingleton()->setBackBufferRenderTarget();
 	AudioSystem::GetSingleton()->begin();
 	ScriptSystem::GetSingleton()->begin();
-	InputManager::GetSingleton()->mapBool("Jump", Device::Keyboard, KeyboardButton::KeyUp);
+	
+	InputManager::GetSingleton()->loadSchemes(LevelManager::GetSingleton()->getCurrentLevelSettings()["inputSchemes"]);
+	InputManager::GetSingleton()->setScheme(LevelManager::GetSingleton()->getCurrentLevelSettings()["startScheme"]);
 }
 
 GameApplication::~GameApplication()

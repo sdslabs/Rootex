@@ -17,6 +17,7 @@ public:
 	static LevelManager* GetSingleton();
 	void openLevel(const String& levelPath);
 	void saveCurrentLevel();
+	void saveCurrentLevelSettings();
 	void createLevel(const String& newLevelName);
 
 	/// Returns paths of all third-party libraries provided by rootex/vendor/.
