@@ -7,9 +7,11 @@
 #include "components/visual/text_visual_2d_component.h"
 #include "components/visual/visual_2d_component.h"
 #include "components/visual/visual_component.h"
+#include "components/physics/box_collider_component.h"
 #include "entity_factory.h"
 #include "event_manager.h"
 #include "script/interpreter.h"
+#include "core/input/input_manager.h"
 
 void SolPanic(std::optional<String> maybeMsg)
 {
@@ -239,6 +241,15 @@ void LuaInterpreter::registerTypes()
 			entity["getTextVisual2D"] = [](Entity* e) { return e->getComponent<TextVisual2DComponent>(); };
 			textVisual2DComponent["setFont"] = &TextVisual2DComponent::setFont;
 			textVisual2DComponent["setText"] = &TextVisual2DComponent::setText;
+		}
+		{
+			sol::usertype<PhysicsColliderComponent> physicsColliderComponent = rootex.new_usertype<PhysicsColliderComponent>(
+			    "PhysicsColliderComponent",
+			    sol::base_classes, sol::bases<Component>());
+			entity["getPhysicsCollider"] = [](Entity* e) { return e->getComponent<PhysicsColliderComponent>(); };
+			physicsColliderComponent["getVelocity"] = &PhysicsColliderComponent::getVelocity;
+			physicsColliderComponent["setVelocity"] = &PhysicsColliderComponent::setVelocity;
+			physicsColliderComponent["applyForce"] = &PhysicsColliderComponent::applyForce;
 		}
 	}
 }

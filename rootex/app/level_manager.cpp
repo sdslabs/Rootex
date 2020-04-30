@@ -54,8 +54,6 @@ void LevelManager::openLevel(const String& levelPath)
 void LevelManager::saveCurrentLevel()
 {
 	SerializationSystem::GetSingleton()->saveAllEntities("game/assets/levels/" + getCurrentLevelName() + "/entities");
-	m_CurrentLevelSettingsFile->putString(m_CurrentLevelSettings.dump(4));
-	ResourceLoader::SaveResourceFile(m_CurrentLevelSettingsFile);
 }
 
 void LevelManager::createLevel(const String& newLevelName)
