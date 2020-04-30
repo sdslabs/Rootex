@@ -23,7 +23,6 @@ class RenderSystem : public System
 	RenderSystem(RenderSystem&) = delete;
 	~RenderSystem();
 
-	void calculateTransforms(HierarchyComponent* hierarchyComponent);
 	void renderPassRender(VisualComponent* vc, const RenderPass& renderPass);
 
 public:
@@ -35,6 +34,7 @@ public:
 	void setCamera(CameraComponent* camera);
 	void restoreCamera();
 
+	void calculateTransforms(HierarchyComponent* hierarchyComponent);
 	void pushMatrix(const Matrix& transform);
 	void pushMatrixOverride(const Matrix& transform);
 	void popMatrix();
