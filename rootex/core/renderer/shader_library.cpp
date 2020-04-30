@@ -19,7 +19,7 @@ Shader* ShaderLibrary::MakeShader(ShaderType shaderType, const LPCWSTR& vertexPa
 
 void ShaderLibrary::MakeShaders()
 {
-	if (!s_Shaders.empty())
+	if (s_Shaders.size() > 1)
 	{
 		WARN("Tried constructing already constructed shader objects. Operation ignored");
 		return;
