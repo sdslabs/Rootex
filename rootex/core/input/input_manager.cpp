@@ -17,6 +17,58 @@ void InputManager::initialize(unsigned int width, unsigned int height)
 	m_Listener.setID(m_GainputMap.AddListener(&m_Listener));
 }
 
+void InputManager::loadSchemes(const JSON::json& inputSchemes)
+{
+	m_InputSchemes.clear();
+
+	for (auto& inputScheme : inputSchemes)
+	{
+		Vector<InputButtonBindingData> scheme;
+		InputButtonBindingData button;
+
+		for (auto& keys : inputScheme["bools"])
+		{
+			button.m_Type = InputButtonBindingData::Type::Bool;
+			button.m_InputEvent = keys["inputEvent"];
+			button.m_Device = keys["device"];
+			button.m_ButtonID = keys["button"];
+			scheme.emplace_back(button);
+		}
+
+		for (auto& axis : inputScheme["floats"])
+		{
+			button.m_Type = InputButtonBindingData::Type::Float;
+			button.m_InputEvent = axis["inputEvent"];
+			button.m_Device = axis["device"];
+			button.m_ButtonID = axis["button"];
+			scheme.emplace_back(button);
+		}
+
+		m_InputSchemes[inputScheme["name"]] = scheme;
+	}
+}
+
+void InputManager::setScheme(const String& schemeName)
+{
+	m_GainputMap.Clear();
+
+	const Vector<InputButtonBindingData>& scheme = m_InputSchemes[schemeName];
+	for (auto& binding : scheme)
+	{
+		switch (binding.m_Type)
+		{
+		case InputButtonBindingData::Type::Bool:
+			mapBool(binding.m_InputEvent, binding.m_Device, binding.m_ButtonID);
+			break;
+		case InputButtonBindingData::Type::Float:
+			mapFloat(binding.m_InputEvent, binding.m_Device, binding.m_ButtonID);
+			break;
+		default:
+			break;
+		}
+	}
+}
+
 void InputManager::mapBool(const Event::Type& action, Device device, DeviceButtonID button)
 {
 	m_InputEventNameIDs[action] = getNextID();

@@ -4,6 +4,7 @@
 #include "framework/systems/hierarchy_system.h"
 #include "framework/systems/render_system.h"
 #include "systems/serialization_system.h"
+#include "core/input/input_manager.h"
 
 LevelManager* LevelManager::GetSingleton()
 {
@@ -54,6 +55,11 @@ void LevelManager::openLevel(const String& levelPath)
 void LevelManager::saveCurrentLevel()
 {
 	SerializationSystem::GetSingleton()->saveAllEntities("game/assets/levels/" + getCurrentLevelName() + "/entities");
+}
+
+void LevelManager::saveCurrentLevelSettings()
+{
+	m_CurrentLevelSettingsFile->putString(m_CurrentLevelSettings.dump(4, '\t'));
 }
 
 void LevelManager::createLevel(const String& newLevelName)

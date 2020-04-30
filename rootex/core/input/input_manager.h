@@ -26,6 +26,19 @@ enum class Device
 	Pad2
 };
 
+struct InputButtonBindingData
+{
+	enum class Type
+	{
+		Float,
+		Bool
+	};
+	Type m_Type;
+	String m_InputEvent;
+	Device m_Device;
+	DeviceButtonID m_ButtonID;
+};
+
 /// Allows interfacing to game controlling hardware, including mouse, keyboard and XInput controllers.
 /// Allows detecting inputs through Event dispatch. 
 /// Event data for boolean buttons consists of a Vector2 where Vector2.x and Vector2.y carry the old and new values for the input event respectively.
@@ -41,6 +54,7 @@ class InputManager
 	gainput::InputMap m_GainputMap;
 	InputListener m_Listener;
 	HashMap<Device, unsigned int> DeviceIDs;
+	HashMap<String, Vector<InputButtonBindingData>> m_InputSchemes;
 
 	HashMap<unsigned int, Event::Type> m_InputEventIDNames;
 	HashMap<Event::Type, unsigned int> m_InputEventNameIDs;
@@ -62,6 +76,9 @@ public:
 	static InputManager* GetSingleton();
 
 	void initialize(unsigned int width, unsigned int height);
+
+	void loadSchemes(const JSON::json& inputSchemes);
+	void setScheme(const String& schemeName);
 
 	/// Bind an event to a button on a device.
 	void mapBool(const Event::Type& action, Device device, DeviceButtonID button);
