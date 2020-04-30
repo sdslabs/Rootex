@@ -22,6 +22,7 @@ protected:
 	Entity(EntityID id, const String& name, const HashMap<ComponentID, Ref<Component>>& components = {});
 
 	bool setupComponents();
+	bool setupEntities();
 
 	void addComponent(const Ref<Component>& component);
 	friend class EntityFactory;

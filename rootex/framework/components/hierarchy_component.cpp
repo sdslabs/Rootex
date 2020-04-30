@@ -17,35 +17,8 @@ Component* HierarchyComponent::CreateDefault()
 HierarchyComponent::HierarchyComponent(EntityID parentID, const Vector<EntityID>& childrenIDs)
     : m_ParentID(parentID)
     , m_ChildrenIDs(childrenIDs)
+    , m_Parent(nullptr)
 {
-	if (parentID == INVALID_ID)
-	{
-		m_Parent = nullptr;
-		return;
-	}
-
-	Ref<Entity> parent = EntityFactory::GetSingleton()->findEntity(parentID);
-	if (parent)
-	{
-		m_Parent = parent->getComponent<HierarchyComponent>().get();
-	}
-	else
-	{
-		WARN("Tried searching for a parent that is not yet constructed. Reset hierarchies to identify correct parent");
-	}
-
-	for (auto&& childID : childrenIDs)
-	{
-		Ref<Entity> child = EntityFactory::GetSingleton()->findEntity(parentID);
-		if (child)
-		{
-			m_Children.push_back(child->getComponent<HierarchyComponent>().get());
-		}
-		else
-		{
-			WARN("Tried searching for a child that is not yet constructed. Reset hierarchies to identify correct child");
-		}
-	}
 }
 
 void HierarchyComponent::onRemove()
@@ -58,23 +31,6 @@ void HierarchyComponent::onRemove()
 		}
 		m_Parent->removeChild(getOwner());
 	}
-}
-
-bool HierarchyComponent::setup()
-{
-	if (m_Parent)
-	{
-		m_Parent->snatchChild(m_Owner);
-	}
-	else
-	{
-		if (m_Owner->getID() != ROOT_ENTITY_ID)
-		{
-			ERR("Parent not found for: " + m_Owner->getFullName());
-			return false;
-		}
-	}
-	return true;
 }
 
 bool HierarchyComponent::addChild(Ref<Entity> child)

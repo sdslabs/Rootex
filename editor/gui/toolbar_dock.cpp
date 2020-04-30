@@ -14,6 +14,11 @@
 
 #include "core/renderer/rendering_device.h"
 
+ToolbarDock::ToolbarDock()
+{
+	m_FPSRecords.resize(m_FPSRecordsPoolSize, 0.0f);
+}
+
 void ToolbarDock::draw()
 {
 	if (m_ToolbarDockSettings.m_IsActive)
@@ -48,10 +53,9 @@ void ToolbarDock::draw()
 
 			if (ImGui::TreeNodeEx("Editor", ImGuiTreeNodeFlags_CollapsingHeader))
 			{
-				float currentTime = EditorApplication::GetSingleton()->getAppFrameTimer().getTimeMs();
-				ImGui::LabelText(std::to_string(currentTime - m_LastUpdateTime).c_str(), "Frame Time");
-				ImGui::LabelText(std::to_string((unsigned int)(1.0f / ((currentTime - m_LastUpdateTime) * MS_TO_S))).c_str(), "Frames Per Second");
-				m_LastUpdateTime = currentTime;
+				m_FPSRecords.erase(m_FPSRecords.begin());
+				m_FPSRecords.push_back(EditorApplication::GetSingleton()->getAppFrameTimer().getLastFPS());
+				ImGui::PlotHistogram("FPS", m_FPSRecords.data(), m_FPSRecords.size(), 0, 0, 0.0f, 60.0f);
 			}
 
 			if (ImGui::TreeNodeEx("Events", ImGuiTreeNodeFlags_CollapsingHeader))
