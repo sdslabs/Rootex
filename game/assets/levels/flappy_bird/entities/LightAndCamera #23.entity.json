@@ -1,0 +1,70 @@
+{
+    "Components": {
+        "CameraComponent": {
+            "aspectRatio": {
+                "x": 16.0,
+                "y": 9.0
+            },
+            "far": 100.0,
+            "fov": 0.7853981852531433,
+            "near": 0.10000000149011612
+        },
+        "DirectionalLightComponent": {
+            "ambientColor": {
+                "a": 1.0,
+                "b": 0.9999899864196777,
+                "g": 0.9999899864196777,
+                "r": 1.0
+            },
+            "diffuseColor": {
+                "a": 1.0,
+                "b": 0.5784313678741455,
+                "g": 0.5784255862236023,
+                "r": 0.5784293413162231
+            },
+            "diffuseIntensity": 0.871999979019165,
+            "direction": {
+                "x": -1.0,
+                "y": -1.0,
+                "z": -0.5
+            }
+        },
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 22
+        },
+        "ModelVisualComponent": {
+            "color": {
+                "a": 1.0,
+                "b": 0.20000000298023224,
+                "g": 1.0,
+                "r": 0.20000000298023224
+            },
+            "isVisible": true,
+            "renderPass": 1,
+            "resFile": "game/assets/test/cube.obj"
+        },
+        "TransformComponent": {
+            "position": {
+                "x": -0.5600000023841858,
+                "y": 1.0,
+                "z": 6.619999885559082
+            },
+            "rotation": {
+                "w": 0.9749029278755188,
+                "x": -0.07815901935100555,
+                "y": -0.2077932506799698,
+                "z": -0.016658995300531387
+            },
+            "scale": {
+                "x": 0.9999866485595703,
+                "y": 0.9999836683273315,
+                "z": 0.999993085861206
+            }
+        }
+    },
+    "Entity": {
+        "ID": 23,
+        "name": "LightAndCamera"
+    }
+}

@@ -1,0 +1,70 @@
+{
+    "Components": {
+        "CPUParticlesVisualComponent": {
+            "angularVelocity": {
+                "w": 1.0,
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "color": {
+                "a": 1.0,
+                "b": 0.0,
+                "g": 0.0,
+                "r": 0.0
+            },
+            "colorBegin": {
+                "a": 1.0,
+                "b": 0.9999899864196777,
+                "g": 0.9999899864196777,
+                "r": 1.0
+            },
+            "colorEnd": {
+                "a": 1.0,
+                "b": 1.0,
+                "g": 0.0,
+                "r": 0.0
+            },
+            "isVisible": true,
+            "lifeTime": 1.4299999475479126,
+            "poolSize": 1000,
+            "renderPass": 1,
+            "resFile": "rootex/assets/cube.obj",
+            "sizeBegin": 0.03999999910593033,
+            "sizeEnd": 0.009999999776482582,
+            "sizeVariation": 0.10000000149011612,
+            "velocity": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "velocityVariation": 1.0
+        },
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 22
+        },
+        "TransformComponent": {
+            "position": {
+                "x": -0.4300000071525574,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rotation": {
+                "w": 1.0,
+                "x": -0.0,
+                "y": 0.0,
+                "z": -0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            }
+        }
+    },
+    "Entity": {
+        "ID": 47,
+        "name": "Particles"
+    }
+}

@@ -1,7 +1,11 @@
 #include "physics_system.h"
-#include "common/common.h"
-#include "components/physics/physics_collider_component.h"
+
 #include "core/resource_loader.h"
+
+#include "common/common.h"
+
+#include "components/physics/physics_collider_component.h"
+#include "components/script_component.h"
 
 #include "os/timer.h"
 
@@ -96,15 +100,31 @@ void PhysicsSystem::InternalTickCallback(btDynamicsWorld* const world, btScalar 
 	btDispatcher* const dispatcher = world->getDispatcher();
 	for (int manifoldIdx = 0; manifoldIdx < dispatcher->getNumManifolds(); ++manifoldIdx)
 	{
-		// get the "manifold",the set of data corresponding to a contact point
-		//  between two physics objects
-		btPersistentManifold const* const manifold = dispatcher->getManifoldByIndexInternal(manifoldIdx);
+		// get the "manifold", the set of data corresponding to a contact point
+		// between two physics objects
+		btPersistentManifold* manifold = dispatcher->getManifoldByIndexInternal(manifoldIdx);
 
 		// get the two bodies used in the manifold.
 		btRigidBody const* const body0 = static_cast<btRigidBody const*>(manifold->getBody0());
 		btRigidBody const* const body1 = static_cast<btRigidBody const*>(manifold->getBody1());
 
-		WARN("Body collided");
+		PhysicsColliderComponent* collider0 = (PhysicsColliderComponent*)body0->getUserPointer();
+		PhysicsColliderComponent* collider1 = (PhysicsColliderComponent*)body1->getUserPointer();
+
+		if (collider0->getIsGeneratesHitEvents())
+		{
+			if (collider0->getScriptComponent())
+			{
+				collider0->getScriptComponent()->onHit(manifold, collider1);
+			}
+		}
+		if (collider1->getIsGeneratesHitEvents())
+		{
+			if (collider1->getScriptComponent())
+			{
+				collider1->getScriptComponent()->onHit(manifold, collider0);
+			}
+		}
 	}
 }
 

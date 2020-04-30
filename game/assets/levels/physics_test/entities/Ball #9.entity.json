@@ -10,6 +10,7 @@
                 "y": -9.800000190734863,
                 "z": 0.0
             },
+            "isGeneratesHitEvents": false,
             "isMoveable": true,
             "matName": "Air",
             "radius": 1.0
