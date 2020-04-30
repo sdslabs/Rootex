@@ -5,36 +5,41 @@
 
 #include "btBulletDynamicsCommon.h"
 
-class PhysicsColliderComponent : public Component
+class PhysicsColliderComponent : public Component, public btMotionState
 {
 	friend class EntityFactory;
 
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::PhysicsColliderComponent;
-
-	ComponentID getComponentID() const { return s_ID; }
-
-	/// Helpers for conversion to and from Bullet's data types.
+	
 	static btTransform matTobtTransform(Matrix const& mat);
 	static Matrix btTransformToMat(btTransform const& trans);
 	static btVector3 vecTobtVector3(Vector3 const& vec3);
 	static Vector3 btVector3ToVec(btVector3 const& btvec);
-	PhysicsColliderComponent(const String& matName, float volume, const Ref<btCollisionShape>& collisionShape);
-	~PhysicsColliderComponent() = default;
 
-	/// Interface that Bullet uses to communicate position and orientation changes.
-	struct MotionState : public btMotionState
-	{
-		Matrix m_WorldToPositionTransform;
+	Ref<TransformComponent> m_TransformComponent;
+	Vector3 m_Offset;
 
-		MotionState(Matrix const& startingTransform);
+	Ref<btCollisionShape> m_CollisionShape;
+	btRigidBody* m_Body;
+	btScalar m_Mass;
+	btVector3 m_LocalInertia;
+	float m_SpecificGravity;
+	float m_Volume;
+	bool m_IsMoveable;
+	
+#ifdef ROOTEX_EDITOR
+	std::string m_MaterialName;
+	Vector3 m_Gravity;
+#endif // ROOTEX_EDITOR
 
-		/// btMotionState interface:  Bullet calls these.
-		virtual void getWorldTransform(btTransform& worldTrans) const;
-
-		virtual void setWorldTransform(const btTransform& worldTrans);
-	} m_MotionState;
-
+	Color m_RenderColor;
+	
+	/// btMotionState interface:  Bullet calls this to get the transform of the object from game.
+	virtual void getWorldTransform(btTransform& worldTrans) const;
+	/// btMotionState interface:  Bullet calls this to set the transform of the object from the Bullet world.
+	virtual void setWorldTransform(const btTransform& worldTrans);
+	
 	/// Stores material specific details.
 	struct MaterialData
 	{
@@ -48,22 +53,17 @@ public:
 		}
 	} m_Material;
 
-	Ref<btCollisionShape> m_CollisionShape;
-	btRigidBody* m_Body;
+	/// Helpers for conversion to and from Bullet's data types.
+	PhysicsColliderComponent(const String& matName, float volume, const Vector3& gravity, bool isMoveable, const Ref<btCollisionShape>& collisionShape);
+	~PhysicsColliderComponent() = default;
 
-	Ref<TransformComponent> m_TransformComponent;
+	ComponentID getComponentID() const { return s_ID; }
+
 	bool setup() override;
 
-	Matrix m_Transform;
-	btScalar m_Mass;
-	btVector3 m_LocalInertia;
-	float m_SpecificGravity;
-	float m_Volume;
-	std::string m_MaterialName;
-
-	void applyForce(const Vector3 force);
-	void applyTorque(const Vector3 torque);
-	void disableGravity();
+	void applyForce(const Vector3& force);
+	void applyTorque(const Vector3& torque);
+	void setGravity(const Vector3& gravity);
 	/// Forces a physics object to a new location/ orientation.
 	void kinematicMove(const Matrix& matrix);
 	void setVelocity(const Vector3& velocity);
@@ -75,6 +75,14 @@ public:
 	void setTransform(const Matrix& mat);
 	/// Returns the current transform of the phyics object.
 	Matrix getTransform();
+	void setMoveable(bool enabled);
+
+	virtual void render();
 
 	virtual String getName() const override { return "PhysicsColliderComponent"; };
+	virtual JSON::json getJSON() const override;
+
+#ifdef ROOTEX_EDITOR
+	virtual void draw() override;
+#endif // ROOTEX_EDITOR
 };

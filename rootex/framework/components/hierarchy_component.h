@@ -28,7 +28,6 @@ public:
 	
 	void onRemove() override;
 
-	virtual bool setup() override;
 	virtual bool addChild(Ref<Entity> child);
 	virtual bool removeChild(Ref<Entity> node);
 	virtual bool snatchChild(Ref<Entity> node);
