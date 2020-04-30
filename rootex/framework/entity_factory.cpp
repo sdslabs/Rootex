@@ -191,9 +191,6 @@ Ref<Entity> EntityFactory::createEntity(TextResourceFile* entityJSONDescription,
 	entity->setEditorOnly(isEditorOnly);
 
 	m_Entities[entity->m_ID] = entity;
-
-	PRINT("Created entity: " + entity->getFullName());
-
 	return entity;
 }
 

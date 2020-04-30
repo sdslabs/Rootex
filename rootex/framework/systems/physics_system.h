@@ -1,7 +1,5 @@
 #pragma once
 
-#include "core/physics/debug_drawer.h"
-
 #include "btBulletDynamicsCommon.h"
 #include "entity.h"
 #include "framework/system.h"
@@ -26,9 +24,7 @@ class PhysicsSystem : public System
 
 	/// Table of all the material types and their respective data.
 	sol::table m_PhysicsMaterialTable;
-
-	DebugDrawer m_DebugDrawer;
-
+	
 	PhysicsSystem() = default;
 
 public:
@@ -44,9 +40,10 @@ public:
 	void initialize();
 
 	/// Callback from bullet for each physics time step.
-	static void InternalTickCallback(btDynamicsWorld* const world, btScalar const timeStep);
+	static void internalTickCallback(btDynamicsWorld* const world, btScalar const timeStep);
 
-	void debugDraw();
-	void debugDrawComponent(const btTransform& worldTransform, const btCollisionShape* shape, const btVector3& color);
 	void update(float deltaMilliseconds);
+	// Keep physics & graphics in sync.
+	// Check all the existing bodies for changes.
+	virtual void syncVisibleScene();
 };

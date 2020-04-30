@@ -27,8 +27,6 @@ class Editor
 	unsigned int m_EditorStyleColorPushCount;
 	unsigned int m_EditorStyleVarPushCount;
 	bool m_WireframeMode = false;
-	bool m_CollisionMode = false;
-	bool m_WorldMode = true;
 
 	struct Colors
 	{

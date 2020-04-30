@@ -55,7 +55,7 @@ void AudioComponent::update()
 	m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
 	if (m_IsAttenuated)
 	{
-		getAudioSource()->setPosition(m_TransformComponent->getAbsoluteTransform().Translation());
+		getAudioSource()->setPosition(m_TransformComponent->getParentAbsoluteTransform().Translation());
 	}
 }
 

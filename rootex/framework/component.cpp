@@ -14,11 +14,6 @@ bool Component::setup()
 	return true;
 }
 
-bool Component::setupEntities()
-{
-	return true;
-}
-
 void Component::onRemove()
 {
 }

@@ -23,8 +23,6 @@ public:
 	
 	/// Perform setting up operations which are possible only after all planned components are added to the owning entity.
 	virtual bool setup();
-	/// Perform setting up operations which are possible only after all entities have been set up.
-	virtual bool setupEntities();
 	virtual void onRemove();
 
 	Ref<Entity> getOwner() const;

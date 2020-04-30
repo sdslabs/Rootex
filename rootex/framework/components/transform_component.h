@@ -48,7 +48,6 @@ public:
 	void setRotation(const float& yaw, const float& pitch, const float& roll);
 	void setScale(const Vector3& scale);
 	void setTransform(const Matrix& transform);
-	void setRotationPosition(const Matrix& transform);
 	void addTransform(const Matrix& applyTransform);
 	void addRotation(const Quaternion& applyTransform);
 
@@ -56,7 +55,6 @@ public:
 	const Quaternion& getRotation() const { return m_TransformBuffer.m_Rotation; }
 	const Vector3& getScale() const { return m_TransformBuffer.m_Scale; }
 	const Matrix& getLocalTransform() const { return m_TransformBuffer.m_Transform; }
-	Matrix getRotationPosition() const { return Matrix::CreateFromQuaternion(m_TransformBuffer.m_Rotation) * Matrix::CreateTranslation(m_TransformBuffer.m_Position) * m_TransformBuffer.m_ParentAbsoluteTransform; }
 	Matrix getAbsoluteTransform() const { return m_TransformBuffer.m_Transform * m_TransformBuffer.m_ParentAbsoluteTransform; }
 	Matrix getParentAbsoluteTransform() const { return m_TransformBuffer.m_ParentAbsoluteTransform; }
 	ComponentID getComponentID() const override { return s_ID; }

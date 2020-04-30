@@ -47,14 +47,17 @@ void Window::swapBuffers()
 	RenderingDevice::GetSingleton()->swapBuffers();
 }
 
-void Window::clipCursor(RECT clip)
+void Window::clipCursor()
 {
+	static RECT clip;
+	GetClientRect(m_WindowHandle, &clip);
+
 	ClipCursor(&clip);
 }
 
-void Window::resetClipCursor()
+void Window::clipCursor(RECT clip)
 {
-	ClipCursor(nullptr);
+	ClipCursor(&clip);
 }
 
 void Window::showCursor(bool enabled)
@@ -200,6 +203,8 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
 		    rWidth,
 		    rHeight,
 		    MSAA);
+
+		showCursor(false);
 
 		RenderingDevice::GetSingleton()->setBackBufferRenderTarget();
 	}

@@ -1,44 +1,19 @@
 #include "sphere_collider_component.h"
 #include "framework/systems/physics_system.h"
 
-Component* SphereColliderComponent::Create(const JSON::json& sphereComponentData)
-{
-	SphereColliderComponent* component = new SphereColliderComponent(
-		sphereComponentData["radius"], 
-		sphereComponentData["matName"],
-	    { 
-			sphereComponentData["gravity"]["x"],
-	        sphereComponentData["gravity"]["y"],
-	        sphereComponentData["gravity"]["z"]
-		},
-		sphereComponentData["isMoveable"]);
-	return component;
-}
-
-Component* SphereColliderComponent::CreateDefault()
-{
-	SphereColliderComponent* component = new SphereColliderComponent(
-		1.0f, 
-		"Air", 
-		{ 0.0f, 0.0f, 0.0f }, 
-		false);
-	return component;
-}
-
-SphereColliderComponent::SphereColliderComponent(float rad, const String& matName, const Vector3& gravity, bool isMoveable)
-    : PhysicsColliderComponent(matName, ((4.0f / 3.0f) * DirectX::XM_PI * rad * rad * rad), gravity, isMoveable, Ref<btSphereShape>(new btSphereShape(rad)))
+SphereColliderComponent::SphereColliderComponent(float rad, const String& matName)
+    : PhysicsColliderComponent(matName, ((4.f / 3.f) * DirectX::XM_PI * rad * rad * rad), Ref<btSphereShape>(new btSphereShape(rad)))
     , m_Radius(rad)
 {
-	if (m_Mass > 0.0f)
+	if (m_Mass > 0.f)
 	{
 		m_CollisionShape->calculateLocalInertia(m_Mass, m_LocalInertia);
 	}
-	m_SphereShape = std::dynamic_pointer_cast<btSphereShape>(m_CollisionShape);
 }
 
 JSON::json SphereColliderComponent::getJSON() const
 {
-	JSON::json& j = PhysicsColliderComponent::getJSON();
+	JSON::json j;
 
 	j["radius"] = m_Radius;
 	j["matName"] = m_MaterialName;
@@ -46,26 +21,39 @@ JSON::json SphereColliderComponent::getJSON() const
 	return j;
 }
 
-void SphereColliderComponent::setRadius(float r)
+Component* SphereColliderComponent::Create(const JSON::json& sphereComponentData)
 {
-	m_Radius = r;
-	m_SphereShape->setUnscaledRadius(r);
+	SphereColliderComponent* component = new SphereColliderComponent(sphereComponentData["radius"], sphereComponentData["matName"]);
+	return component;
+}
+
+Component* SphereColliderComponent::CreateDefault()
+{
+	SphereColliderComponent* component = new SphereColliderComponent(1.0f, "Air");
+	return component;
 }
 
 #ifdef ROOTEX_EDITOR
 #include "imgui.h"
 void SphereColliderComponent::draw()
 {
-	PhysicsColliderComponent::draw();
-
-	if (ImGui::DragFloat("##Radius", &m_Radius, 0.01f))
-	{
-		setRadius(m_Radius);
-	}
+	ImGui::DragFloat("##R", &m_Radius);
 	ImGui::SameLine();
 	if (ImGui::Button("Radius"))
 	{
 		m_Radius = 1.0f;
+	}
+
+	if (ImGui::BeginCombo("Material", m_MaterialName.c_str()))
+	{
+		for (auto&& material : PhysicsSystem::GetSingleton()->getPhysicsMaterial())
+		{
+			if (ImGui::Selectable(material.first.as<String>().c_str()))
+			{
+				m_MaterialName.assign(material.first.as<String>().c_str());
+			}
+		}
+		ImGui::EndCombo();
 	}
 }
 #endif // ROOTEX_EDITOR

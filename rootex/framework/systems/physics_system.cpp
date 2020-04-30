@@ -3,8 +3,6 @@
 #include "components/physics/physics_collider_component.h"
 #include "core/resource_loader.h"
 
-#include "os/timer.h"
-
 #include "BulletCollision/NarrowPhaseCollision/btRaycastCallback.h"
 
 PhysicsSystem* PhysicsSystem::GetSingleton()
@@ -31,10 +29,8 @@ void PhysicsSystem::initialize()
 		return;
 	}
 
-	m_DynamicsWorld->setInternalTickCallback(InternalTickCallback);
+	m_DynamicsWorld->setInternalTickCallback(internalTickCallback);
 	m_DynamicsWorld->setWorldUserInfo(this);
-	m_DynamicsWorld->setDebugDrawer(&m_DebugDrawer);
-	m_DynamicsWorld->getDebugDrawer()->setDebugMode(btIDebugDraw::DBG_DrawWireframe);
 }
 
 PhysicsSystem::~PhysicsSystem()
@@ -88,7 +84,7 @@ btCollisionWorld::ClosestRayResultCallback PhysicsSystem::reportClosestRayHits(c
 
 // This function is called after bullet performs its internal update.
 // To detect collisions between objects.
-void PhysicsSystem::InternalTickCallback(btDynamicsWorld* const world, btScalar const timeStep)
+void PhysicsSystem::internalTickCallback(btDynamicsWorld* const world, btScalar const timeStep)
 {
 	PhysicsSystem* const physicsSystem = static_cast<PhysicsSystem*>(world->getWorldUserInfo());
 
@@ -108,21 +104,29 @@ void PhysicsSystem::InternalTickCallback(btDynamicsWorld* const world, btScalar 
 	}
 }
 
-void PhysicsSystem::debugDraw()
-{
-	for (auto& component : s_Components[PhysicsColliderComponent::s_ID])
-	{
-		PhysicsColliderComponent* p = (PhysicsColliderComponent*)component;
-		p->render();
-	}
-}
-
-void PhysicsSystem::debugDrawComponent(const btTransform& worldTransform, const btCollisionShape* shape, const btVector3& color)
-{
-	m_DynamicsWorld->debugDrawObject(worldTransform, shape, color);
-}
-
 void PhysicsSystem::update(float deltaMilliseconds)
 {
-	m_DynamicsWorld->stepSimulation(deltaMilliseconds * MS_TO_S, 10);
+	m_DynamicsWorld->stepSimulation(deltaMilliseconds, 10);
+	syncVisibleScene();
+}
+
+void PhysicsSystem::syncVisibleScene()
+{
+	const Vector<Component*>& physicsComponents = s_Components[PhysicsColliderComponent::s_ID];
+
+	for (auto& physicsComponent : physicsComponents)
+	{
+		PhysicsColliderComponent* const component = static_cast<PhysicsColliderComponent*>(physicsComponent);
+		if (component)
+		{
+			Ref<TransformComponent> ptc = component->m_TransformComponent;
+			if (ptc)
+			{
+				if (ptc->getParentAbsoluteTransform() != component->m_MotionState.m_WorldToPositionTransform)
+				{
+					ptc->setTransform(component->m_MotionState.m_WorldToPositionTransform);
+				}
+			}
+		}
+	}
 }
