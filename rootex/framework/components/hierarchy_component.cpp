@@ -17,6 +17,7 @@ Component* HierarchyComponent::CreateDefault()
 HierarchyComponent::HierarchyComponent(EntityID parentID, const Vector<EntityID>& childrenIDs)
     : m_ParentID(parentID)
     , m_ChildrenIDs(childrenIDs)
+    , m_Parent(nullptr)
 {
 }
 
@@ -30,23 +31,6 @@ void HierarchyComponent::onRemove()
 		}
 		m_Parent->removeChild(getOwner());
 	}
-}
-
-bool HierarchyComponent::setup()
-{
-	if (m_Parent)
-	{
-		m_Parent->snatchChild(m_Owner);
-	}
-	else
-	{
-		if (m_Owner->getID() != ROOT_ENTITY_ID)
-		{
-			ERR("Parent not found for: " + m_Owner->getFullName());
-			return false;
-		}
-	}
-	return true;
 }
 
 bool HierarchyComponent::addChild(Ref<Entity> child)
