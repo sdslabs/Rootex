@@ -144,7 +144,7 @@ void ViewportDock::draw()
 				openedEntity->getComponent<TransformComponent>()->addTransform(deltaMatrix);
 			}
 
-			if (ImGui::IsWindowHovered() && InputManager::GetSingleton()->isPressed("InputMouseRight"))
+			if (ImGui::IsWindowHovered() && InputManager::GetSingleton()->isPressed("InputCameraActivate"))
 			{
 				static POINT cursorWhenActivated;
 				if (!m_IsCameraMoving)
