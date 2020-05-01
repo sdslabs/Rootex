@@ -88,7 +88,51 @@
             }
         }
     },
+    "inputSchemes": [
+        {
+            "bools": [
+                {
+                    "button": 2,
+                    "device": 0,
+                    "inputEvent": "InputCameraActivate"
+                },
+                {
+                    "button": 87,
+                    "device": 1,
+                    "inputEvent": "InputCameraForward"
+                },
+                {
+                    "button": 83,
+                    "device": 1,
+                    "inputEvent": "InputCameraBackward"
+                },
+                {
+                    "button": 65,
+                    "device": 1,
+                    "inputEvent": "InputCameraLeft"
+                },
+                {
+                    "button": 68,
+                    "device": 1,
+                    "inputEvent": "InputCameraRight"
+                },
+                {
+                    "button": 32,
+                    "device": 1,
+                    "inputEvent": "InputCameraUp"
+                },
+                {
+                    "button": 67,
+                    "device": 1,
+                    "inputEvent": "InputCameraDown"
+                }
+            ],
+            "floats": {},
+            "name": "Editor"
+        }
+    ],
     "project": "Rootex Editor",
+    "startScheme": "Editor",
     "version": 1.0,
     "viewport": {
         "aspectRatio": {

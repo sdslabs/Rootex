@@ -37,6 +37,9 @@ EditorApplication::EditorApplication()
 		ERR("More than 1 instances of Editor Application detected");
 	}
 
+	InputManager::GetSingleton()->loadSchemes(getSettings()->getJSON()["inputSchemes"]);
+	InputManager::GetSingleton()->setScheme(getSettings()->getJSON()["startScheme"]);
+
 	RenderSystem::GetSingleton()->setIsEditorRenderPass(true);
 	Editor::GetSingleton()->initialize(m_Window->getWindowHandle(), m_ApplicationSettings->getJSON());
 	m_PointAtLast10Second = m_ApplicationTimer.Now();

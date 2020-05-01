@@ -12,7 +12,7 @@ LevelManager* LevelManager::GetSingleton()
 	return &singleton;
 }
 
-void LevelManager::openLevel(const String& levelPath)
+void LevelManager::openLevel(const String& levelPath, bool openInEditor)
 {
 	m_CurrentLevelName = FilePath(levelPath).filename().string();
 	m_CurrentLevelSettingsFile = ResourceLoader::CreateTextResourceFile(levelPath + "/" + m_CurrentLevelName + ".level.json");
@@ -49,6 +49,17 @@ void LevelManager::openLevel(const String& levelPath)
 		RenderSystem::GetSingleton()->setCamera(cameraEntity->getComponent<CameraComponent>().get());
 	}
 
+	if (!openInEditor)
+	{
+		JSON::json& levelJSON = getCurrentLevelSettings();
+		InputManager::GetSingleton()->loadSchemes(levelJSON["inputSchemes"]);
+
+		if (levelJSON.find("startScheme") != levelJSON.end())
+		{
+			InputManager::GetSingleton()->setScheme(levelJSON["startScheme"]);
+		}
+	}
+
 	PRINT("Loaded level: " + levelPath);
 }
 
@@ -59,14 +70,20 @@ void LevelManager::saveCurrentLevel()
 
 void LevelManager::saveCurrentLevelSettings()
 {
-	m_CurrentLevelSettingsFile->putString(m_CurrentLevelSettings.dump(4, '\t'));
+	m_CurrentLevelSettingsFile->putString(m_CurrentLevelSettings.dump(1, '\t'));
 }
 
 void LevelManager::createLevel(const String& newLevelName)
 {
 	OS::CreateDirectoryName("game/assets/levels/" + newLevelName);
 	OS::CreateDirectoryName("game/assets/levels/" + newLevelName + "/entities/");
-	OS::CreateFileName("game/assets/levels/" + newLevelName + "/" + newLevelName + ".level.json") << "{}";
+
+	JSON::json newLevelJSON;
+	newLevelJSON["camera"] = ROOT_ENTITY_ID;
+	newLevelJSON["inputSchemes"] = JSON::json::array();
+	newLevelJSON["startScheme"] = "";
+	OS::CreateFileName("game/assets/levels/" + newLevelName + "/" + newLevelName + ".level.json") << newLevelJSON.dump(1, '\t');
+	
 	PRINT("Created new level: " + "game/assets/levels/" + newLevelName);
 }
 

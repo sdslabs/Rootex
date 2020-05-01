@@ -15,7 +15,7 @@ class LevelManager
 
 public:
 	static LevelManager* GetSingleton();
-	void openLevel(const String& levelPath);
+	void openLevel(const String& levelPath, bool openInEditor = false);
 	void saveCurrentLevel();
 	void saveCurrentLevelSettings();
 	void createLevel(const String& newLevelName);

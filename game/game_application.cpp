@@ -60,9 +60,6 @@ GameApplication::GameApplication()
 		LevelManager::GetSingleton()->openLevel("game/assets/levels/" + levelName);
 	}
 
-	InputManager::GetSingleton()->loadSchemes(LevelManager::GetSingleton()->getCurrentLevelSettings()["inputSchemes"]);
-	InputManager::GetSingleton()->setScheme(LevelManager::GetSingleton()->getCurrentLevelSettings()["startScheme"]);
-
 	RenderingDevice::GetSingleton()->setBackBufferRenderTarget();
 	AudioSystem::GetSingleton()->begin();
 	ScriptSystem::GetSingleton()->begin();
