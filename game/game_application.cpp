@@ -82,14 +82,13 @@ void GameApplication::run()
 
 		m_Window->swapBuffers();
 		m_Window->clearCurrentTarget();
-		m_Window->clipCursor();
 
 		RenderSystem::GetSingleton()->render();
 		AudioSystem::GetSingleton()->update();
 		InputManager::GetSingleton()->update();
-		EventManager::GetSingleton()->dispatchDeferred();
-		ScriptSystem::GetSingleton()->update(m_FrameTimer.getFrameTime());
 		PhysicsSystem::GetSingleton()->update(m_FrameTimer.getFrameTime());
+		ScriptSystem::GetSingleton()->update(m_FrameTimer.getFrameTime());
+		EventManager::GetSingleton()->dispatchDeferred();
 	}
 }
 

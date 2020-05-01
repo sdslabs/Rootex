@@ -1,0 +1,42 @@
+{
+    "Components": {
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 22
+        },
+        "TexturedModelVisualComponent": {
+            "color": {
+                "a": 1.0,
+                "b": 0.0,
+                "g": 0.0,
+                "r": 0.0
+            },
+            "isVisible": true,
+            "renderPass": 5,
+            "resFile": "rootex/assets/cube.obj",
+            "texturePath": "game\\assets\\test\\yellow.png"
+        },
+        "TransformComponent": {
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.5714273452758789
+            },
+            "rotation": {
+                "w": 0.9167476892471313,
+                "x": -0.0,
+                "y": -0.39946675300598145,
+                "z": -0.0
+            },
+            "scale": {
+                "x": 0.17000000178813934,
+                "y": 0.1699998825788498,
+                "z": 0.9179993867874146
+            }
+        }
+    },
+    "Entity": {
+        "ID": 24,
+        "name": "Wing"
+    }
+}

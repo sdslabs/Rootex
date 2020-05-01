@@ -53,6 +53,7 @@ void ViewportDock::draw()
 				{
 					const char* newEntityFile = (const char*)payload->Data;
 					Ref<Entity> entity = EntityFactory::GetSingleton()->createEntity(ResourceLoader::CreateTextResourceFile(newEntityFile));
+					HierarchySystem::GetSingleton()->getRootHierarchyComponent()->addChild(entity);
 					if (Ref<TransformComponent> transform = entity->getComponent<TransformComponent>())
 					{
 						transform->setPosition(RenderSystem::GetSingleton()->getCamera()->getOwner()->getComponent<TransformComponent>()->getPosition());
@@ -143,7 +144,7 @@ void ViewportDock::draw()
 				openedEntity->getComponent<TransformComponent>()->addTransform(deltaMatrix);
 			}
 
-			if (ImGui::IsWindowHovered() && InputManager::GetSingleton()->isPressed("InputMouseRight"))
+			if (ImGui::IsWindowHovered() && InputManager::GetSingleton()->isPressed("InputCameraActivate"))
 			{
 				static POINT cursorWhenActivated;
 				if (!m_IsCameraMoving)
@@ -213,7 +214,7 @@ void ViewportDock::draw()
 				if (m_IsCameraMoving)
 				{
 					EditorApplication::GetSingleton()->getWindow()->showCursor(true);
-					EditorApplication::GetSingleton()->getWindow()->clipCursor();
+					EditorApplication::GetSingleton()->getWindow()->resetClipCursor();
 					m_IsCameraMoving = false;
 				}
 			}

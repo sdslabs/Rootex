@@ -13,6 +13,7 @@ void HierarchyDock::showHierarchySubTree(HierarchyComponent* hierarchy)
 	if (hierarchy)
 	{
 		Ref<Entity> node = hierarchy->getOwner();
+
 		if (ImGui::TreeNodeEx(("##" + std::to_string(node->getID())).c_str(), ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_AllowItemOverlap | (hierarchy->getChildren().size() ? ImGuiTreeNodeFlags_None : ImGuiTreeNodeFlags_Leaf)))
 		{
 			ImGui::SameLine();
@@ -47,6 +48,7 @@ void HierarchyDock::showHierarchySubTree(HierarchyComponent* hierarchy)
 				{
 					const char* newEntityFile = (const char*)payload->Data;
 					Ref<Entity> entity = EntityFactory::GetSingleton()->createEntity(ResourceLoader::CreateTextResourceFile(newEntityFile));
+					HierarchySystem::GetSingleton()->getRootHierarchyComponent()->addChild(entity);
 					node->getComponent<HierarchyComponent>()->snatchChild(entity);
 					openEntity(entity);
 				}

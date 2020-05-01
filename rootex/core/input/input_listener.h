@@ -22,5 +22,6 @@ public:
 	virtual bool OnUserButtonBool(gainput::UserButtonId userButton, bool oldValue, bool newValue) override;
 	virtual bool OnUserButtonFloat(gainput::UserButtonId userButton, float oldValue, float newValue) override;
 
+	int getID() const { return m_ID; }
 	void setID(int id) { m_ID = id; }
 };

@@ -1,0 +1,53 @@
+{
+    "Components": {
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 1
+        },
+        "SphereColliderComponent": {
+            "gravity": {
+                "x": 0.0,
+                "y": -9.800000190734863,
+                "z": 0.0
+            },
+            "isGeneratesHitEvents": false,
+            "isMoveable": true,
+            "matName": "Air",
+            "radius": 1.0
+        },
+        "TexturedModelVisualComponent": {
+            "color": {
+                "a": 1.0,
+                "b": 0.0,
+                "g": 0.0,
+                "r": 0.0
+            },
+            "isVisible": true,
+            "renderPass": 5,
+            "resFile": "game\\assets\\test\\sphere.obj",
+            "texturePath": "game\\assets\\test\\green.png"
+        },
+        "TransformComponent": {
+            "position": {
+                "x": 3.5,
+                "y": 1.5,
+                "z": -8.600000381469727
+            },
+            "rotation": {
+                "w": -0.0,
+                "x": 1.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 0.05000000074505806,
+                "y": 0.05000000074505806,
+                "z": 0.05000000074505806
+            }
+        }
+    },
+    "Entity": {
+        "ID": 9,
+        "name": "Ball"
+    }
+}
