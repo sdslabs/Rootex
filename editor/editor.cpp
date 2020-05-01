@@ -544,7 +544,7 @@ Variant Editor::autoSave(const Event* event)
 Variant Editor::openLevel(const Event* event)
 {
 	String levelPath(Extract(String, event->getData()));
-	LevelManager::GetSingleton()->openLevel(levelPath);
+	LevelManager::GetSingleton()->openLevel(levelPath, true);
 	SetWindowText(GetActiveWindow(), ("Rootex Editor: " + LevelManager::GetSingleton()->getCurrentLevelName()).c_str());
 
 	return true;

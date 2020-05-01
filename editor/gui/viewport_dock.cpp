@@ -21,14 +21,6 @@ ViewportDock::ViewportDock(const JSON::json& viewportJSON)
 	RenderSystem::GetSingleton()->setCamera(m_EditorCamera->getComponent<CameraComponent>().get());
 
 	m_EditorGrid = EntityFactory::GetSingleton()->createEntity(ResourceLoader::CreateTextResourceFile("editor/entities/grid.entity.json"), true);
-
-	InputManager::GetSingleton()->mapBool("InputCameraActivate", Device::Mouse, MouseButton::MouseButtonRight);
-	InputManager::GetSingleton()->mapBool("InputCameraForward", Device::Keyboard, KeyboardButton::KeyW);
-	InputManager::GetSingleton()->mapBool("InputCameraBackward", Device::Keyboard, KeyboardButton::KeyS);
-	InputManager::GetSingleton()->mapBool("InputCameraLeft", Device::Keyboard, KeyboardButton::KeyA);
-	InputManager::GetSingleton()->mapBool("InputCameraRight", Device::Keyboard, KeyboardButton::KeyD);
-	InputManager::GetSingleton()->mapBool("InputCameraUp", Device::Keyboard, KeyboardButton::KeySpace);
-	InputManager::GetSingleton()->mapBool("InputCameraDown", Device::Keyboard, KeyboardButton::KeyC);
 }
 
 void ViewportDock::draw()
