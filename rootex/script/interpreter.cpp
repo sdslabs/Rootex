@@ -117,6 +117,18 @@ void LuaInterpreter::registerTypes()
 		rootex["ReturnCallEvent"] = [](const Event& event) { return EventManager::GetSingleton()->returnCall(event); };
 	}
 	{
+		sol::usertype<InputManager> inputManager = rootex.new_usertype<InputManager>("InputManager");
+		inputManager["Get"] = &InputManager::GetSingleton;
+		inputManager["setEnabled"] = &InputManager::setEnabled;
+		inputManager["mapBool"] = &InputManager::mapBool;
+		inputManager["mapFloat"] = &InputManager::mapFloat;
+		inputManager["isPressed"] = &InputManager::isPressed;
+		inputManager["wasPressed"] = &InputManager::wasPressed;
+		inputManager["getFloat"] = &InputManager::getFloat;
+		inputManager["getFloatDelta"] = &InputManager::getFloatDelta;
+		inputManager["unmap"] = &InputManager::unmap;
+	}
+	{
 		sol::usertype<ResourceLoader> resourceLoader = rootex.new_usertype<ResourceLoader>("ResourceLoader");
 		resourceLoader["CreateAudio"] = &ResourceLoader::CreateAudioResourceFile;
 		resourceLoader["CreateFont"] = &ResourceLoader::CreateFontResourceFile;

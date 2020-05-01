@@ -14,7 +14,78 @@ void InputManager::initialize(unsigned int width, unsigned int height)
 	DeviceIDs[Device::Pad1] = m_GainputManager.CreateDevice<gainput::InputDevicePad>();
 	DeviceIDs[Device::Pad2] = m_GainputManager.CreateDevice<gainput::InputDevicePad>();
 
-	m_Listener.setID(m_GainputMap.AddListener(&m_Listener));
+	m_Listener.setID(1);
+	setEnabled(true);
+}
+
+void InputManager::setEnabled(bool enabled)
+{
+	if (enabled)
+	{
+		PRINT("Input enabled");
+		setScheme(m_CurrentInputScheme);
+		m_GainputMap.AddListener(&m_Listener);
+	}
+	else
+	{
+		PRINT("Input disabled");
+		m_GainputMap.Clear();
+		m_GainputManager.RemoveListener(m_Listener.getID());
+	}
+	m_IsEnabled = enabled;
+}
+
+void InputManager::loadSchemes(const JSON::json& inputSchemes)
+{
+	m_InputSchemes.clear();
+
+	for (auto& inputScheme : inputSchemes)
+	{
+		Vector<InputButtonBindingData> scheme;
+		InputButtonBindingData button;
+
+		for (auto& keys : inputScheme["bools"])
+		{
+			button.m_Type = InputButtonBindingData::Type::Bool;
+			button.m_InputEvent = keys["inputEvent"];
+			button.m_Device = keys["device"];
+			button.m_ButtonID = keys["button"];
+			scheme.emplace_back(button);
+		}
+
+		for (auto& axis : inputScheme["floats"])
+		{
+			button.m_Type = InputButtonBindingData::Type::Float;
+			button.m_InputEvent = axis["inputEvent"];
+			button.m_Device = axis["device"];
+			button.m_ButtonID = axis["button"];
+			scheme.emplace_back(button);
+		}
+
+		m_InputSchemes[inputScheme["name"]] = scheme;
+	}
+}
+
+void InputManager::setScheme(const String& schemeName)
+{
+	m_GainputMap.Clear();
+
+	const Vector<InputButtonBindingData>& scheme = m_InputSchemes[schemeName];
+	for (auto& binding : scheme)
+	{
+		switch (binding.m_Type)
+		{
+		case InputButtonBindingData::Type::Bool:
+			mapBool(binding.m_InputEvent, binding.m_Device, binding.m_ButtonID);
+			break;
+		case InputButtonBindingData::Type::Float:
+			mapFloat(binding.m_InputEvent, binding.m_Device, binding.m_ButtonID);
+			break;
+		default:
+			break;
+		}
+	}
+	m_CurrentInputScheme = schemeName;
 }
 
 void InputManager::mapBool(const Event::Type& action, Device device, DeviceButtonID button)
@@ -44,22 +115,38 @@ void InputManager::unmap(const Event::Type& action)
 
 bool InputManager::isPressed(const Event::Type& action)
 {
-	return m_GainputMap.GetBool((gainput::UserButtonId)m_InputEventNameIDs[action]);
+	if (m_IsEnabled)
+	{
+		return m_GainputMap.GetBool((gainput::UserButtonId)m_InputEventNameIDs[action]);
+	}
+	return false;
 }
 
 bool InputManager::wasPressed(const Event::Type& action)
 {
-	return m_GainputMap.GetBoolWasDown((gainput::UserButtonId)m_InputEventNameIDs[action]);
+	if (m_IsEnabled)
+	{
+		return m_GainputMap.GetBoolWasDown((gainput::UserButtonId)m_InputEventNameIDs[action]);
+	}
+	return false;
 }
 
 float InputManager::getFloat(const Event::Type& action)
 {
-	return m_GainputMap.GetFloat((gainput::UserButtonId)m_InputEventNameIDs[action]);
+	if (m_IsEnabled)
+	{
+		return m_GainputMap.GetFloat((gainput::UserButtonId)m_InputEventNameIDs[action]);
+	}
+	return 0;
 }
 
 float InputManager::getFloatDelta(const Event::Type& action)
 {
-	return m_GainputMap.GetFloatDelta((gainput::UserButtonId)m_InputEventNameIDs[action]);
+	if (m_IsEnabled)
+	{
+		return m_GainputMap.GetFloatDelta((gainput::UserButtonId)m_InputEventNameIDs[action]);
+	}
+	return 0;
 }
 
 void InputManager::update()
@@ -96,10 +183,6 @@ InputManager::InputManager()
     , m_Listener(BoolListen, FloatListen)
     , m_Width(0)
     , m_Height(0)
-{
-}
-
-InputManager::~InputManager()
 {
 }
 

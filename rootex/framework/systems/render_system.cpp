@@ -213,7 +213,10 @@ void RenderSystem::resetRenderMode()
 void RenderSystem::setCamera(CameraComponent* camera)
 {
 	m_Camera = camera;
-	setProjectionConstantBuffers();
+	if (m_Camera)
+	{
+		setProjectionConstantBuffers();
+	}
 }
 
 void RenderSystem::restoreCamera()
