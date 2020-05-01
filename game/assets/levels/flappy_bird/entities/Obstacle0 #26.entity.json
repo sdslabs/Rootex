@@ -2,9 +2,9 @@
     "Components": {
         "BoxColliderComponent": {
             "dimensions": {
-                "x": 3.299999952316284,
-                "y": 1.440000057220459,
-                "z": 0.46000000834465027
+                "x": 0.5,
+                "y": 4.090000152587891,
+                "z": 0.5
             },
             "gravity": {
                 "x": 0.0,
@@ -29,29 +29,29 @@
             "isVisible": true,
             "renderPass": 5,
             "resFile": "rootex/assets/cube.obj",
-            "texturePath": "game\\assets\\test\\yellow.png"
+            "texturePath": "game\\assets\\test\\blue.png"
         },
         "TransformComponent": {
             "position": {
-                "x": 1.5999972820281982,
-                "y": -2.5000009536743164,
-                "z": -8.599996566772461
+                "x": 12.199999809265137,
+                "y": -2.75,
+                "z": -2.5
             },
             "rotation": {
-                "w": 0.961236834526062,
+                "w": 1.0,
                 "x": -0.0,
                 "y": 0.0,
-                "z": 0.2757241725921631
+                "z": -0.0
             },
             "scale": {
-                "x": 6.690000057220459,
-                "y": 2.950000286102295,
+                "x": 1.0,
+                "y": 8.619999885559082,
                 "z": 1.0
             }
         }
     },
     "Entity": {
-        "ID": 10,
-        "name": "TriangleFloor"
+        "ID": 26,
+        "name": "Obstacle0"
     }
 }

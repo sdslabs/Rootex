@@ -19,7 +19,7 @@ class BoxColliderComponent : public PhysicsColliderComponent
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::BoxColliderComponent;
 
-	BoxColliderComponent(const Vector3& dimensions, const String& matName, const Vector3& gravity, bool isMoveable);
+	BoxColliderComponent(const Vector3& dimensions, const String& matName, const Vector3& gravity, bool isMoveable, bool generatesHitEvents);
 
 	Vector3 getDimensions() const { return m_Dimensions; }
 	virtual String getName() const override { return "BoxColliderComponent"; };

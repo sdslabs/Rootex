@@ -2,9 +2,9 @@
     "Components": {
         "BoxColliderComponent": {
             "dimensions": {
-                "x": 3.299999952316284,
-                "y": 1.440000057220459,
-                "z": 0.46000000834465027
+                "x": 25.0,
+                "y": 0.5,
+                "z": 0.5
             },
             "gravity": {
                 "x": 0.0,
@@ -19,39 +19,38 @@
             "children": [],
             "parent": 1
         },
-        "TexturedModelVisualComponent": {
+        "ModelVisualComponent": {
             "color": {
                 "a": 1.0,
-                "b": 0.0,
-                "g": 0.0,
-                "r": 0.0
+                "b": 0.6519607901573181,
+                "g": 0.6385193467140198,
+                "r": 0.19494907557964325
             },
             "isVisible": true,
-            "renderPass": 5,
-            "resFile": "rootex/assets/cube.obj",
-            "texturePath": "game\\assets\\test\\yellow.png"
+            "renderPass": 1,
+            "resFile": "game/assets/test/cube.obj"
         },
         "TransformComponent": {
             "position": {
-                "x": 1.5999972820281982,
-                "y": -2.5000009536743164,
-                "z": -8.599996566772461
+                "x": 23.200000762939453,
+                "y": 5.5,
+                "z": -2.5
             },
             "rotation": {
-                "w": 0.961236834526062,
+                "w": 1.0,
                 "x": -0.0,
                 "y": 0.0,
-                "z": 0.2757241725921631
+                "z": -0.0
             },
             "scale": {
-                "x": 6.690000057220459,
-                "y": 2.950000286102295,
+                "x": 50.0,
+                "y": 1.0,
                 "z": 1.0
             }
         }
     },
     "Entity": {
-        "ID": 10,
-        "name": "TriangleFloor"
+        "ID": 45,
+        "name": "WallUp"
     }
 }

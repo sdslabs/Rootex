@@ -11,12 +11,17 @@
                 "y": -9.800000190734863,
                 "z": 0.0
             },
+            "isGeneratesHitEvents": true,
             "isMoveable": true,
             "matName": "Air"
         },
         "HierarchyComponent": {
             "children": [],
             "parent": 1
+        },
+        "ScriptComponent": {
+            "connections": {},
+            "script": "rootex/assets/scripts/empty.lua"
         },
         "TexturedModelVisualComponent": {
             "color": {

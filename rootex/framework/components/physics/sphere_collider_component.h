@@ -19,7 +19,7 @@ class SphereColliderComponent : public PhysicsColliderComponent
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::SphereColliderComponent;
 
-	SphereColliderComponent(float rad, const String& matName, const Vector3& gravity, bool isMoveable);
+	SphereColliderComponent(float rad, const String& matName, const Vector3& gravity, bool isMoveable, bool generatesHitEvents);
 
 	float getRadius() const { return m_Radius; }
 	virtual String getName() const override { return "SphereColliderComponent"; };
