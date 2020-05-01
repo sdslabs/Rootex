@@ -53,8 +53,10 @@ class InputManager
 	gainput::InputManager m_GainputManager;
 	gainput::InputMap m_GainputMap;
 	InputListener m_Listener;
+	bool m_IsEnabled;
 	HashMap<Device, unsigned int> DeviceIDs;
 	HashMap<String, Vector<InputButtonBindingData>> m_InputSchemes;
+	String m_CurrentInputScheme;
 
 	HashMap<unsigned int, Event::Type> m_InputEventIDNames;
 	HashMap<Event::Type, unsigned int> m_InputEventNameIDs;
@@ -64,7 +66,7 @@ class InputManager
 
 	InputManager();
 	InputManager(InputManager&) = delete;
-	~InputManager();
+	~InputManager() = default;
 
 	void forwardMessage(const MSG& msg);
 
@@ -76,6 +78,8 @@ public:
 	static InputManager* GetSingleton();
 
 	void initialize(unsigned int width, unsigned int height);
+
+	void setEnabled(bool enabled);
 
 	void loadSchemes(const JSON::json& inputSchemes);
 	void setScheme(const String& schemeName);

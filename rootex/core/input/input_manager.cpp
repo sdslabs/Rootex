@@ -14,7 +14,25 @@ void InputManager::initialize(unsigned int width, unsigned int height)
 	DeviceIDs[Device::Pad1] = m_GainputManager.CreateDevice<gainput::InputDevicePad>();
 	DeviceIDs[Device::Pad2] = m_GainputManager.CreateDevice<gainput::InputDevicePad>();
 
-	m_Listener.setID(m_GainputMap.AddListener(&m_Listener));
+	m_Listener.setID(1);
+	setEnabled(true);
+}
+
+void InputManager::setEnabled(bool enabled)
+{
+	if (enabled)
+	{
+		PRINT("Input enabled");
+		setScheme(m_CurrentInputScheme);
+		m_GainputMap.AddListener(&m_Listener);
+	}
+	else
+	{
+		PRINT("Input disabled");
+		m_GainputMap.Clear();
+		m_GainputManager.RemoveListener(m_Listener.getID());
+	}
+	m_IsEnabled = enabled;
 }
 
 void InputManager::loadSchemes(const JSON::json& inputSchemes)
@@ -67,6 +85,7 @@ void InputManager::setScheme(const String& schemeName)
 			break;
 		}
 	}
+	m_CurrentInputScheme = schemeName;
 }
 
 void InputManager::mapBool(const Event::Type& action, Device device, DeviceButtonID button)
@@ -96,22 +115,38 @@ void InputManager::unmap(const Event::Type& action)
 
 bool InputManager::isPressed(const Event::Type& action)
 {
-	return m_GainputMap.GetBool((gainput::UserButtonId)m_InputEventNameIDs[action]);
+	if (m_IsEnabled)
+	{
+		return m_GainputMap.GetBool((gainput::UserButtonId)m_InputEventNameIDs[action]);
+	}
+	return false;
 }
 
 bool InputManager::wasPressed(const Event::Type& action)
 {
-	return m_GainputMap.GetBoolWasDown((gainput::UserButtonId)m_InputEventNameIDs[action]);
+	if (m_IsEnabled)
+	{
+		return m_GainputMap.GetBoolWasDown((gainput::UserButtonId)m_InputEventNameIDs[action]);
+	}
+	return false;
 }
 
 float InputManager::getFloat(const Event::Type& action)
 {
-	return m_GainputMap.GetFloat((gainput::UserButtonId)m_InputEventNameIDs[action]);
+	if (m_IsEnabled)
+	{
+		return m_GainputMap.GetFloat((gainput::UserButtonId)m_InputEventNameIDs[action]);
+	}
+	return 0;
 }
 
 float InputManager::getFloatDelta(const Event::Type& action)
 {
-	return m_GainputMap.GetFloatDelta((gainput::UserButtonId)m_InputEventNameIDs[action]);
+	if (m_IsEnabled)
+	{
+		return m_GainputMap.GetFloatDelta((gainput::UserButtonId)m_InputEventNameIDs[action]);
+	}
+	return 0;
 }
 
 void InputManager::update()
@@ -148,10 +183,6 @@ InputManager::InputManager()
     , m_Listener(BoolListen, FloatListen)
     , m_Width(0)
     , m_Height(0)
-{
-}
-
-InputManager::~InputManager()
 {
 }
 
