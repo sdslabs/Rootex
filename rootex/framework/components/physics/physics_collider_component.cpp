@@ -1,17 +1,21 @@
 #include "physics_collider_component.h"
+
 #include "framework/systems/physics_system.h"
+#include "framework/components/script_component.h"
 
 #include "entity.h"
 
-PhysicsColliderComponent::PhysicsColliderComponent(const String& matName, float volume, const Vector3& gravity, bool isMoveable, const Ref<btCollisionShape>& collisionShape)
+PhysicsColliderComponent::PhysicsColliderComponent(const String& matName, float volume, const Vector3& gravity, bool isMoveable, const Ref<btCollisionShape>& collisionShape, bool generatesHitEvents)
     : m_MaterialName(matName)
 	, m_Material(0, 0)
     , m_Volume(volume)
     , m_Gravity(gravity)
     , m_IsMoveable(isMoveable)
+    , m_IsGeneratesHitEvents(generatesHitEvents)
 {
 	m_CollisionShape = collisionShape;
 	m_TransformComponent = nullptr;
+	m_ScriptComponent = nullptr;
 	sol::table materialLua = PhysicsSystem::GetSingleton()->getPhysicsMaterial();
 	m_SpecificGravity = float(materialLua[matName]["specificgravity"]);
 	m_Material.m_Friction = float(materialLua[matName]["friction"]);
@@ -36,9 +40,10 @@ bool PhysicsColliderComponent::setup()
 	bool status = true;
 	if (m_Owner)
 	{
-		m_TransformComponent = m_Owner->getComponent<TransformComponent>();
+		m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
 		if (!m_TransformComponent)
 		{
+			ERR("TransformComponent not found on entity with PhysicsComponent: " + m_Owner->getFullName());
 			status = false;
 		}
 		else
@@ -55,6 +60,14 @@ bool PhysicsColliderComponent::setup()
 			PhysicsSystem::GetSingleton()->addRigidBody(m_Body);
 			setGravity(m_Gravity);
 			setMoveable(m_IsMoveable);
+			
+			m_Body->setUserPointer(this);
+			
+			m_ScriptComponent = getOwner()->getComponent<ScriptComponent>().get();
+			if (m_IsGeneratesHitEvents && !m_ScriptComponent)
+			{
+				WARN("ScriptComponent not found on entity with a PhysicsComponent that generates hit events: " + m_Owner->getFullName());
+			}
 		}
 	}
 
@@ -126,6 +139,7 @@ JSON::json PhysicsColliderComponent::getJSON() const
 	j["gravity"]["z"] = m_Gravity.z;
 	
 	j["isMoveable"] = m_IsMoveable;
+	j["isGeneratesHitEvents"] = m_IsGeneratesHitEvents;
 
 	return j;
 }
@@ -249,6 +263,14 @@ void PhysicsColliderComponent::draw()
 	if (ImGui::Checkbox("Moveable", &m_IsMoveable))
 	{
 		setMoveable(m_IsMoveable);
+	}
+
+	if (ImGui::Checkbox("Generates Hit Events", &m_IsGeneratesHitEvents))
+	{
+		if (m_IsGeneratesHitEvents)
+		{
+			setup();
+		}
 	}
 
 	if (ImGui::DragFloat3("Gravity", &m_Gravity.x))

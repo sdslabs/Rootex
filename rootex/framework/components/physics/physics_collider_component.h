@@ -5,6 +5,8 @@
 
 #include "btBulletDynamicsCommon.h"
 
+class ScriptComponent;
+
 class PhysicsColliderComponent : public Component, public btMotionState
 {
 	friend class EntityFactory;
@@ -17,9 +19,9 @@ public:
 	static btVector3 vecTobtVector3(Vector3 const& vec3);
 	static Vector3 btVector3ToVec(btVector3 const& btvec);
 
-	Ref<TransformComponent> m_TransformComponent;
-	Vector3 m_Offset;
-
+	TransformComponent* m_TransformComponent;
+	ScriptComponent* m_ScriptComponent;
+	
 	Ref<btCollisionShape> m_CollisionShape;
 	btRigidBody* m_Body;
 	btScalar m_Mass;
@@ -27,6 +29,7 @@ public:
 	float m_SpecificGravity;
 	float m_Volume;
 	bool m_IsMoveable;
+	bool m_IsGeneratesHitEvents;
 	
 #ifdef ROOTEX_EDITOR
 	std::string m_MaterialName;
@@ -54,7 +57,7 @@ public:
 	} m_Material;
 
 	/// Helpers for conversion to and from Bullet's data types.
-	PhysicsColliderComponent(const String& matName, float volume, const Vector3& gravity, bool isMoveable, const Ref<btCollisionShape>& collisionShape);
+	PhysicsColliderComponent(const String& matName, float volume, const Vector3& gravity, bool isMoveable, const Ref<btCollisionShape>& collisionShape, bool generatesHitEvents);
 	~PhysicsColliderComponent() = default;
 
 	ComponentID getComponentID() const { return s_ID; }
@@ -63,23 +66,35 @@ public:
 
 	void applyForce(const Vector3& force);
 	void applyTorque(const Vector3& torque);
+	
 	void setGravity(const Vector3& gravity);
+	
 	/// Forces a physics object to a new location/ orientation.
 	void kinematicMove(const Matrix& matrix);
-	void setVelocity(const Vector3& velocity);
+	
 	Vector3 getVelocity();
-	void setAngularVelocity(const Vector3& angularVel);
+	void setVelocity(const Vector3& velocity);
+	
 	Vector3 getAngularVelocity();
+	void setAngularVelocity(const Vector3& angularVel);
+	
 	void translate(const Vector3& vec);
+	
 	/// Sets the current transform of the physics object.
 	void setTransform(const Matrix& mat);
 	/// Returns the current transform of the phyics object.
 	Matrix getTransform();
+	
+	bool getIsMoveable() { return m_IsMoveable; }
 	void setMoveable(bool enabled);
+
+	bool getIsGeneratesHitEvents() { return m_IsGeneratesHitEvents; }
+	void setGeneratedHitEvents(bool enabled) { m_IsGeneratesHitEvents = enabled; }
 
 	virtual void render();
 
 	virtual String getName() const override { return "PhysicsColliderComponent"; };
+	ScriptComponent* getScriptComponent() const { return m_ScriptComponent; }
 	virtual JSON::json getJSON() const override;
 
 #ifdef ROOTEX_EDITOR
