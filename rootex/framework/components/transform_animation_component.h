@@ -14,7 +14,6 @@ class TransformAnimationComponent : public Component
 
 	BasicAnimation m_BasicAnimation;
 	float m_CurrentTimePosition;
-	float m_Duration;
 	bool m_IsPlayOnStart;
 	bool m_IsPlaying;
 	bool m_IsLooping;
