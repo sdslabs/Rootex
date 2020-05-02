@@ -6,6 +6,7 @@
 #include "framework/systems/audio_system.h"
 #include "framework/systems/render_system.h"
 #include "framework/systems/physics_system.h"
+#include "framework/systems/animation_system.h"
 
 Ref<Application> CreateRootexApplication()
 {
@@ -88,6 +89,7 @@ void GameApplication::run()
 		AudioSystem::GetSingleton()->update();
 		InputManager::GetSingleton()->update();
 		PhysicsSystem::GetSingleton()->update(m_FrameTimer.getFrameTime());
+		AnimationSystem::GetSingleton()->update(m_FrameTimer.getFrameTime());
 		ScriptSystem::GetSingleton()->update(m_FrameTimer.getFrameTime());
 		EventManager::GetSingleton()->dispatchDeferred();
 	}

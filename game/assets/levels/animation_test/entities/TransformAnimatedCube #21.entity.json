@@ -1,0 +1,85 @@
+{
+    "Components": {
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 1
+        },
+        "ModelVisualComponent": {
+            "color": {
+                "a": 1.0,
+                "b": 0.20000000298023224,
+                "g": 1.0,
+                "r": 0.20000000298023224
+            },
+            "isVisible": true,
+            "renderPass": 1,
+            "resFile": "game/assets/test/cube.obj"
+        },
+        "TransformAnimationComponent": {
+            "isLooping": true,
+            "isPlayOnStart": true,
+            "keyframes": [
+                {
+                    "rotation": {
+                        "w": 1.0,
+                        "x": -0.0,
+                        "y": 0.0,
+                        "z": -0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "timePosition": 0.0,
+                    "translation": {
+                        "x": 0.49815747141838074,
+                        "y": 0.0,
+                        "z": -5.0
+                    }
+                },
+                {
+                    "rotation": {
+                        "w": 1.0,
+                        "x": -0.0,
+                        "y": 0.0,
+                        "z": -0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "timePosition": 1.0,
+                    "translation": {
+                        "x": 3.0,
+                        "y": 0.0,
+                        "z": -5.0
+                    }
+                }
+            ]
+        },
+        "TransformComponent": {
+            "position": {
+                "x": 0.49815747141838074,
+                "y": 0.0,
+                "z": -5.0
+            },
+            "rotation": {
+                "w": 1.0,
+                "x": -0.0,
+                "y": 0.0,
+                "z": -0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            }
+        }
+    },
+    "Entity": {
+        "ID": 21,
+        "name": "TransformAnimatedCube"
+    }
+}
