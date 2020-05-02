@@ -30,6 +30,8 @@ class TransformComponent : public Component
 
 	friend class TexturedModelVisualComponent;
 	friend class ModelVisualComponent;
+	
+	friend class AnimationSystem;
 	friend class RenderSystem;
 	friend class EntityFactory;
 

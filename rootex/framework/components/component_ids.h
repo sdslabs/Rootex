@@ -12,6 +12,7 @@ enum class ComponentIDs : unsigned int
 	CPUParticlesVisualComponent = VisualComponent,
 	Visual2DComponent = VisualComponent,
 	TextVisual2DComponent = Visual2DComponent,
+	AnimatedCharacterVisualComponent,
 	CameraComponent,
 	TransformComponent,
 	HierarchyComponent,
