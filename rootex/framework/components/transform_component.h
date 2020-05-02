@@ -48,6 +48,7 @@ public:
 
 	void setPosition(const Vector3& position);
 	void setRotation(const float& yaw, const float& pitch, const float& roll);
+	void setRotationQuaternion(const Quaternion& quat);
 	void setScale(const Vector3& scale);
 	void setTransform(const Matrix& transform);
 	void setRotationPosition(const Matrix& transform);

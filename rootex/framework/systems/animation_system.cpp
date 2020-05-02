@@ -1,6 +1,7 @@
 #include "animation_system.h"
 
-#include "framework/components/visual/animated_character_component.h"
+#include "components/transform_animation_component.h"
+#include "components/transform_component.h"
 
 AnimationSystem* AnimationSystem::GetSingleton()
 {
@@ -10,21 +11,27 @@ AnimationSystem* AnimationSystem::GetSingleton()
 
 void AnimationSystem::update(float deltaMilliseconds)
 {
-	AnimatedCharacterComponent* animated = nullptr;
+	TransformAnimationComponent* animated = nullptr;
 	TransformComponent* transform = nullptr;
 
-	for (auto& component : s_Components[AnimatedCharacterComponent::s_ID])
+	for (auto& component : s_Components[TransformAnimationComponent::s_ID])
 	{
-		animated = (AnimatedCharacterComponent*)component;
-		transform = animated->getOwner()->getComponent<TransformComponent>().get();
-
-		animated->m_CurrentTimePosition += deltaMilliseconds * MS_TO_S;
-
-		if (animated->m_CurrentTimePosition >= animated->m_BoneAnimation.getEndTime())
+		animated = (TransformAnimationComponent*)component;
+		if (animated->isPlaying())
 		{
-			animated->m_CurrentTimePosition = 0.0f;
-		}
+			transform = animated->getOwner()->getComponent<TransformComponent>().get();
 
-		animated->m_BoneAnimation.interpolate(transform->m_TransformBuffer.m_Transform, animated->m_CurrentTimePosition);
+			animated->m_CurrentTimePosition += deltaMilliseconds * MS_TO_S;
+
+			if (animated->m_CurrentTimePosition >= animated->m_BasicAnimation.getEndTime())
+			{
+				if (animated->isLooping())
+				{
+					animated->m_CurrentTimePosition = 0.0f;
+				}
+			}
+
+			animated->m_BasicAnimation.interpolate(transform->m_TransformBuffer.m_Transform, animated->m_CurrentTimePosition);
+		}
 	}
 }

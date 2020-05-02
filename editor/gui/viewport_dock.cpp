@@ -135,6 +135,15 @@ void ViewportDock::draw()
 				    &deltaMatrix.m[0][0],
 				    snap);
 				openedEntity->getComponent<TransformComponent>()->addTransform(deltaMatrix);
+
+				static float cameraDistance = 10.0f;
+				ImGui::SliderFloat("Camera Distance", &cameraDistance, 0.1f, 100.0f);
+				ImGuizmo::ViewManipulate(
+				    &view.m[0][0],
+				    cameraDistance,
+				    { 10.0f, 10.0f },
+				    { 100.0f, 100.0f },
+				    0x10101010);
 			}
 
 			if (ImGui::IsWindowHovered() && InputManager::GetSingleton()->isPressed("InputCameraActivate"))

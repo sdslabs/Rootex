@@ -124,13 +124,13 @@ void MusicComponent::draw()
 		{
 			const char* payloadFileName = (const char*)payload->Data;
 			FilePath payloadPath(payloadFileName);
-			if (payloadPath.extension() == ".wav")
+			if (IsSupported(payloadPath.extension().string(), SupportedAudioExtensions))
 			{
 				setAudioFile(ResourceLoader::CreateAudioResourceFile(payloadPath.string()));
 			}
 			else
 			{
-				WARN("Cannot assign a non-wav file to Audio File");
+				WARN("Cannot assign an unsupported audio file to Audio File");
 			}
 		}
 		ImGui::EndDragDropTarget();

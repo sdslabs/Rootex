@@ -15,6 +15,7 @@
 #include "components/short_music_component.h"
 #include "components/test_component.h"
 #include "components/transform_component.h"
+#include "components/transform_animation_component.h"
 #include "components/visual/camera_component.h"
 #include "components/visual/cpu_particles_visual_component.h"
 #include "components/visual/directional_light_component.h"
@@ -22,7 +23,6 @@
 #include "components/visual/spot_light_component.h"
 #include "components/visual/text_visual_2d_component.h"
 #include "components/visual/grid_visual_component.h"
-#include "components/visual/animated_character_component.h"
 #include "components/visual/visual_component.h"
 #include "systems/hierarchy_system.h"
 
@@ -58,7 +58,7 @@ EntityFactory::EntityFactory()
 	REGISTER_COMPONENT(CameraComponent);
 	REGISTER_COMPONENT(GridVisualComponent);
 	REGISTER_COMPONENT(ModelVisualComponent);
-	REGISTER_COMPONENT(AnimatedCharacterComponent);
+	REGISTER_COMPONENT(TransformAnimationComponent);
 	REGISTER_COMPONENT(TexturedModelVisualComponent);
 	REGISTER_COMPONENT(TextVisual2DComponent);
 	REGISTER_COMPONENT(TransformComponent);

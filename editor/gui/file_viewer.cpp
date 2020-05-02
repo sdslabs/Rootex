@@ -60,11 +60,11 @@ Variant FileViewer::openFile(const Event* event)
 	m_OpenFilePath = Extract(String, event->getData());
 
 	const String& ext = m_OpenFilePath.extension().string();
-	if (ext == ".wav")
+	if (IsSupported(ext, SupportedAudioExtensions))
 	{
 		m_OpenFile = m_AudioPlayer.load(m_OpenFilePath);
 	}
-	else if (ext == ".jpg" || ext == ".png" || ext == ".jpeg")
+	else if (IsSupported(ext, SupportedImageExtensions))
 	{
 		m_OpenFile = m_ImageViewer.load(m_OpenFilePath);
 	}
@@ -116,11 +116,11 @@ void FileViewer::draw()
 
 			drawFileInfo();
 			
-			if (m_OpenFilePath.extension() == ".wav")
+			if (IsSupported(m_OpenFilePath.extension().string(), SupportedAudioExtensions))
 			{
 				m_AudioPlayer.draw();
 			}
-			else if (m_OpenFilePath.extension() == ".png" || m_OpenFilePath.extension() == ".jpg" || m_OpenFilePath.extension() == ".jpeg")
+			else if (IsSupported(m_OpenFilePath.extension().string(), SupportedImageExtensions))
 			{
 				m_ImageViewer.draw();
 			}

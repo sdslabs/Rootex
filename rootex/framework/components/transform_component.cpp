@@ -61,6 +61,12 @@ void TransformComponent::setRotation(const float& yaw, const float& pitch, const
 	updateTransformFromPositionRotationScale();
 }
 
+void TransformComponent::setRotationQuaternion(const Quaternion& quat)
+{
+	m_TransformBuffer.m_Rotation = quat;
+	updateTransformFromPositionRotationScale();
+}
+
 void TransformComponent::setScale(const Vector3& scale)
 {
 	m_TransformBuffer.m_Scale = scale;

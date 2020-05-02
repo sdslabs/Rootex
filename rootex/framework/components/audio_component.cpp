@@ -66,7 +66,7 @@ void AudioComponent::draw()
 	ImGui::Checkbox("Play on Start", &m_IsPlayOnStart);
 	ImGui::Checkbox("Turn on Attenuation", &m_IsAttenuated);
 
-	if (ImGui::BeginCombo("Attenutation Model", m_AttenuationModelName.c_str()))
+	if (ImGui::BeginCombo("Attenuation Model", m_AttenuationModelName.c_str()))
 	{
 		if (ImGui::Selectable("Linear"))
 		{

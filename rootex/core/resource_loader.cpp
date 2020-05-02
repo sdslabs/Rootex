@@ -308,3 +308,8 @@ HashMap<ResourceFile::Type, Vector<ResourceFile*>>& ResourceLoader::GetAllFiles(
 {
 	return s_ResourceFileLibrary;
 }
+
+bool IsSupported(const String& extension, const Vector<String> supportedExtensions)
+{
+	return std::find(supportedExtensions.begin(), supportedExtensions.end(), extension) != supportedExtensions.end();
+}

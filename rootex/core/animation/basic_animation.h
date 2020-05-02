@@ -10,12 +10,12 @@ struct Keyframe
 	Vector3 m_Scale;
 };
 
-class BoneAnimation
+struct BasicAnimation
 {
-public:
 	Vector<Keyframe> m_Keyframes;
+
 	void interpolate(Matrix& matrix, float t);
 	
-	float getStartTime();
-	float getEndTime();
+	float getStartTime() const;
+	float getEndTime() const;
 };

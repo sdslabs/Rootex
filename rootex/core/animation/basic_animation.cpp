@@ -1,6 +1,6 @@
-#include "bone_animation.h"
+#include "basic_animation.h"
 
-void BoneAnimation::interpolate(Matrix& matrix, float t)
+void BasicAnimation::interpolate(Matrix& matrix, float t)
 {
 	if (t <= getStartTime())
 	{
@@ -56,12 +56,12 @@ void BoneAnimation::interpolate(Matrix& matrix, float t)
 	}
 }
 
-float BoneAnimation::getEndTime()
+float BasicAnimation::getEndTime() const
 {
 	return m_Keyframes.back().m_TimePosition;
 }
 
-float BoneAnimation::getStartTime()
+float BasicAnimation::getStartTime() const
 {
 	return m_Keyframes.front().m_TimePosition;
 }
