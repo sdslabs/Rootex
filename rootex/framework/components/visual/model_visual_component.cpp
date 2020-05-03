@@ -14,7 +14,7 @@ Component* ModelVisualComponent::Create(const JSON::json& componentData)
 {
 	ModelVisualComponent* modelVisualComponent = new ModelVisualComponent(
 	    componentData["renderPass"],
-	    Ref<Material>(new ColorMaterial()), //change
+	    MaterialLibrary::GetMaterial((String)componentData["material"]),
 	    ResourceLoader::CreateVisualModelResourceFile(componentData["resFile"]),
 	    componentData["isVisible"]);
 
@@ -25,7 +25,7 @@ Component* ModelVisualComponent::CreateDefault()
 {
 	ModelVisualComponent* modelVisualComponent = new ModelVisualComponent(
 	    RenderPassMain,
-	    Ref<Material>(new ColorMaterial()), //change
+	    MaterialLibrary::GetDefaultMaterial(), //change
 	    ResourceLoader::CreateVisualModelResourceFile("rootex/assets/cube.obj"),
 	    true);
 
@@ -119,7 +119,7 @@ void ModelVisualComponent::setVisualModel(VisualModelResourceFile* newModel)
 	m_VisualModelResourceFile = newModel;
 }
 
-void ModelVisualComponent::setMaterial(Ref<Material> material) //change
+void ModelVisualComponent::setMaterial(Ref<Material>& material) //change
 {
 	m_Material = material;
 }
@@ -129,6 +129,7 @@ JSON::json ModelVisualComponent::getJSON() const
 	JSON::json& j = VisualComponent::getJSON();
 
 	j["resFile"] = m_VisualModelResourceFile->getPath().string();
+	j["material"] = m_Material->getFileName();
 
 	return j;
 }
@@ -195,6 +196,19 @@ void ModelVisualComponent::draw()
 		}
 		ImGui::EndDragDropTarget();
 	}
+
+	if (ImGui::BeginCombo("Material", m_Material->getFullName().c_str()))
+	{
+		for (auto& [materialName, materialInfo] : MaterialLibrary::GetAllMaterials())
+		{
+			if (ImGui::Selectable((materialInfo.first + " - " + materialName).c_str()))
+			{
+				setMaterial(MaterialLibrary::GetMaterial(String(materialName)));
+			}
+		}
+		ImGui::EndCombo();
+	}
+
 	m_Material->draw();
 }
 #endif // ROOTEX_EDITOR

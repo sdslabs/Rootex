@@ -9,6 +9,8 @@ protected:
 	Shader* m_Shader;
 	Vector<Microsoft::WRL::ComPtr<ID3D11Buffer>> m_PSConstantBuffer;
 	Vector<Microsoft::WRL::ComPtr<ID3D11Buffer>> m_VSConstantBuffer;
+	String m_FileName;
+	String m_TypeName;
 
 	Material(Shader* shader);
 
@@ -21,7 +23,13 @@ public:
 	Material();
 	virtual ~Material() = default;
 	virtual void bind();
-	virtual void draw() {};
+	// TODO- Make this purely virtual
+	virtual void draw() = 0;
+	String getFileName() { return m_FileName; };
+	String getTypeName() { return m_TypeName; };
+	String getFullName() { return m_FileName + " - " + m_TypeName; };
+	void setFileName(String& fileName) { m_FileName = fileName; };
+	virtual JSON::json getJSON() const = 0;
 };
 
 template <typename T>

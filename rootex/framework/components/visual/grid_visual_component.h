@@ -1,14 +1,14 @@
 #pragma once
 
 #include "visual_component.h"
-#include "renderer/materials/color_material.h"
+#include "renderer/material_library.h"
 
 class GridVisualComponent : public VisualComponent
 {
 	static Component* Create(const JSON::json& componentData);
 	static Component* CreateDefault();
 
-	Ref<ColorMaterial> m_ColorMaterial;
+	Ref<Material> m_ColorMaterial;
 	Ptr<VertexBuffer> m_VertexBuffer;
 	Ptr<IndexBuffer> m_IndexBuffer;
 

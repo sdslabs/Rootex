@@ -1,7 +1,5 @@
 #include "cpu_particles_visual_component.h"
 
-#include "core/renderer/materials/cpu_particles_material.h"
-
 #include "random.h"
 #include "resource_loader.h"
 #include "systems/render_system.h"
@@ -10,29 +8,21 @@
 Component* CPUParticlesVisualComponent::Create(const JSON::json& componentData)
 {
 	ParticleTemplate particalTemplate {
-		{ 
-			componentData["velocity"]["x"], 
-			componentData["velocity"]["y"], 
-			componentData["velocity"]["z"] 
-		},
-		{ 
-			componentData["angularVelocity"]["x"], 
-			componentData["angularVelocity"]["y"], 
-			componentData["angularVelocity"]["z"], 
-			componentData["angularVelocity"]["w"] 
-		},
-		{ 
-			componentData["colorBegin"]["r"], 
-			componentData["colorBegin"]["g"], 
-			componentData["colorBegin"]["b"], 
-			componentData["colorBegin"]["a"] 
-		},
-		{ 
-			componentData["colorEnd"]["r"], 
-			componentData["colorEnd"]["g"], 
-			componentData["colorEnd"]["b"], 
-			componentData["colorEnd"]["a"] 
-		},
+		{ componentData["velocity"]["x"],
+		    componentData["velocity"]["y"],
+		    componentData["velocity"]["z"] },
+		{ componentData["angularVelocity"]["x"],
+		    componentData["angularVelocity"]["y"],
+		    componentData["angularVelocity"]["z"],
+		    componentData["angularVelocity"]["w"] },
+		{ componentData["colorBegin"]["r"],
+		    componentData["colorBegin"]["g"],
+		    componentData["colorBegin"]["b"],
+		    componentData["colorBegin"]["a"] },
+		{ componentData["colorEnd"]["r"],
+		    componentData["colorEnd"]["g"],
+		    componentData["colorEnd"]["b"],
+		    componentData["colorEnd"]["a"] },
 		componentData["velocityVariation"],
 		componentData["sizeBegin"],
 		componentData["sizeEnd"],
@@ -40,18 +30,18 @@ Component* CPUParticlesVisualComponent::Create(const JSON::json& componentData)
 		componentData["lifeTime"]
 	};
 
-	CPUParticlesVisualComponent* particles = new CPUParticlesVisualComponent(componentData["poolSize"], componentData["resFile"], particalTemplate, componentData["isVisible"]);
+	CPUParticlesVisualComponent* particles = new CPUParticlesVisualComponent(componentData["poolSize"], componentData["resFile"], particalTemplate, MaterialLibrary::GetMaterial((String)componentData["material"]), componentData["isVisible"]);
 	return particles;
 }
 
 Component* CPUParticlesVisualComponent::CreateDefault()
 {
-	CPUParticlesVisualComponent* particles = new CPUParticlesVisualComponent(1000, "rootex/assets/cube.obj", ParticleTemplate(), true);
+	CPUParticlesVisualComponent* particles = new CPUParticlesVisualComponent(1000, "rootex/assets/cube.obj", ParticleTemplate(), MaterialLibrary::GetDefaultMaterial(), true);
 	return particles;
 }
 
-CPUParticlesVisualComponent::CPUParticlesVisualComponent(size_t poolSize, const String& particleModelPath, const ParticleTemplate& particleTemplate, bool visibility)
-    : ModelVisualComponent(RenderPassMain, Ref<CPUParticlesMaterial>(new CPUParticlesMaterial()), ResourceLoader::CreateVisualModelResourceFile(particleModelPath), visibility)
+CPUParticlesVisualComponent::CPUParticlesVisualComponent(size_t poolSize, const String& particleModelPath, const ParticleTemplate& particleTemplate, Ref<Material> material, bool visibility)
+    : ModelVisualComponent(RenderPassMain, Ref<Material>(material), ResourceLoader::CreateVisualModelResourceFile(particleModelPath), visibility)
     , m_ParticleTemplate(particleTemplate)
     , m_TransformComponent(nullptr)
 {
@@ -110,6 +100,11 @@ bool CPUParticlesVisualComponent::preRender()
 
 void CPUParticlesVisualComponent::render(RenderPass renderPass)
 {
+	ColorMaterial* material = dynamic_cast<ColorMaterial*>(getMaterial());
+	if (material == nullptr)
+	{
+		return;
+	}
 	if (renderPass & m_RenderPass)
 	{
 		for (auto& particle : m_ParticlePool)
@@ -125,7 +120,6 @@ void CPUParticlesVisualComponent::render(RenderPass renderPass)
 			Color color = Color::Lerp(particle.m_ColorEnd, particle.m_ColorBegin, life);
 
 			RenderSystem::GetSingleton()->pushMatrix(Matrix::CreateScale(size) * particle.m_Transform);
-			CPUParticlesMaterial* material = reinterpret_cast<CPUParticlesMaterial*>(getMaterial());
 			material->setPSConstantBuffer(PSSolidConstantBuffer({ color }));
 			RenderSystem::GetSingleton()->getRenderer()->draw(m_VisualModelResourceFile->getVertexBuffer(), m_VisualModelResourceFile->getIndexBuffer(), getMaterial());
 			RenderSystem::GetSingleton()->popMatrix();
@@ -145,7 +139,7 @@ void CPUParticlesVisualComponent::emit(const ParticleTemplate& particleTemplate)
 
 	particle.m_IsActive = true;
 	particle.m_Transform = m_TransformComponent->getAbsoluteTransform();
-	
+
 	particle.m_Velocity = particleTemplate.m_Velocity;
 	particle.m_Velocity.x += particleTemplate.m_VelocityVariation * (Random::Float() - 0.5f);
 	particle.m_Velocity.y += particleTemplate.m_VelocityVariation * (Random::Float() - 0.5f);
@@ -216,5 +210,22 @@ void CPUParticlesVisualComponent::draw()
 	ImGui::DragFloat("Size End", &m_ParticleTemplate.m_SizeEnd, 0.01f);
 	ImGui::DragFloat("Size Variation", &m_ParticleTemplate.m_SizeVariation, 0.01f);
 	ImGui::DragFloat("Lifetime", &m_ParticleTemplate.m_LifeTime, 0.01f);
+
+	if (ImGui::BeginCombo("Material", m_Material->getFullName().c_str()))
+	{
+		for (auto& [materialName, materialInfo] : MaterialLibrary::GetAllMaterials())
+		{
+			if (materialInfo.first == "Color Material")
+			{
+				if (ImGui::Selectable((materialName + " - " + materialInfo.first).c_str()))
+				{
+					setMaterial(MaterialLibrary::GetMaterial(String(materialName)));
+				}
+			}
+		}
+		ImGui::EndCombo();
+	}
+
+	m_Material->draw();
 }
 #endif // ROOTEX_EDITOR

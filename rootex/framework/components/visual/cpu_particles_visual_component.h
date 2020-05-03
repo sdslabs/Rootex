@@ -46,7 +46,7 @@ class CPUParticlesVisualComponent : public ModelVisualComponent
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::CPUParticlesVisualComponent;
 
-	CPUParticlesVisualComponent(size_t poolSize, const String& particleModelPath, const ParticleTemplate& particleTemplate, bool visibility);
+	CPUParticlesVisualComponent(size_t poolSize, const String& particleModelPath, const ParticleTemplate& particleTemplate, Ref<Material> material, bool visibility);
 	CPUParticlesVisualComponent(VisualComponent&) = delete;
 	virtual ~CPUParticlesVisualComponent();
 
