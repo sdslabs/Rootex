@@ -18,14 +18,14 @@ void MaterialLibrary::LoadMaterials()
 			String materialName = material.filename().string();
 			TextResourceFile* materialFile = ResourceLoader::CreateNewTextResourceFile("game/assets/materials/" + materialName);
 			const JSON::json materialJSON = JSON::json::parse(materialFile->getString());
-			s_Materials[materialName] = { (String)materialJSON["type"] , nullptr};
+			s_Materials[materialName] = { (String)materialJSON["type"], {} };
 
-//#ifdef ROOTEX_EDITOR
-//			m_MaterialList.push_back(material.stem().string());
-//#endif // ROOTEX_EDITOR
+			//#ifdef ROOTEX_EDITOR
+			//			m_MaterialList.push_back(material.stem().string());
+			//#endif // ROOTEX_EDITOR
 		}
 	}
-	s_Materials["DEFAULT"] = { "Color Material", nullptr };
+	s_Materials["DEFAULT"] = { "Color Material", {} };
 }
 
 Ref<Material> MaterialLibrary::GetMaterial(String& materialName)
@@ -37,9 +37,9 @@ Ref<Material> MaterialLibrary::GetMaterial(String& materialName)
 	}
 	else
 	{
-		if (s_Materials[materialName].second != nullptr)
+		if (Ref<Material> lockedMaterial = s_Materials[materialName].second.lock())
 		{
-			return s_Materials[materialName].second;
+			return lockedMaterial;
 		}
 		else
 		{
@@ -48,20 +48,24 @@ Ref<Material> MaterialLibrary::GetMaterial(String& materialName)
 			Ref<Material> material(s_MaterialDatabase[materialJSON["type"]].second(materialJSON));
 			material->setFileName(materialName);
 			s_Materials[materialName].second = material;
-			return Ref<Material>(material);
+			return material;
 		}
 	}
 }
 
 Ref<Material> MaterialLibrary::GetDefaultMaterial()
 {
-	if (s_Materials["DEFAULT"].second == nullptr)
+	if (Ref<Material> lockedMaterial = s_Materials["DEFAULT"].second.lock())
+	{
+		return lockedMaterial;
+	}
+	else
 	{
 		Ref<Material> material(ColorMaterial::CreateDefault());
 		material->setFileName(String("DEFAULT"));
 		s_Materials["DEFAULT"].second = material;
+		return material;
 	}
-	return s_Materials["DEFAULT"].second;
 }
 
 #ifdef ROOTEX_EDITOR
@@ -73,8 +77,11 @@ void MaterialLibrary::SaveAll()
 {
 	for (auto& [materialName, materialInfo] : s_Materials)
 	{
-		TextResourceFile* materialFile = ResourceLoader::CreateNewTextResourceFile("game/assets/materials/" + materialName);
-		materialFile->putString(materialInfo.second->getJSON());
+		if (Ref<Material> lockedMaterial = s_Materials["DEFAULT"].second.lock())
+		{
+			TextResourceFile* materialFile = ResourceLoader::CreateNewTextResourceFile("game/assets/materials/" + materialName);
+			materialFile->putString(lockedMaterial->getJSON());
+		}
 	}
 }
 

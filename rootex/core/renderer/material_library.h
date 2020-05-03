@@ -8,7 +8,7 @@
 class MaterialLibrary
 {
 public:
-	typedef HashMap<String, Pair<String, Ref<Material>>> MaterialMap;
+	typedef HashMap<String, Pair<String, Weak<Material>>> MaterialMap;
 private:
 	static MaterialMap s_Materials;
 
