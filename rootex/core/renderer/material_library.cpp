@@ -39,13 +39,13 @@ Ref<Material> MaterialLibrary::GetMaterial(String& materialName)
 	{
 		if (s_Materials[materialName].second != nullptr)
 		{
-			return Ref<Material>(s_Materials[materialName].second);
+			return s_Materials[materialName].second;
 		}
 		else
 		{
 			TextResourceFile* materialFile = ResourceLoader::CreateNewTextResourceFile("game/assets/materials/" + materialName);
 			const JSON::json materialJSON = JSON::json::parse(materialFile->getString());
-			Material* material(s_MaterialDatabase[materialJSON["type"]].second(materialJSON));
+			Ref<Material> material(s_MaterialDatabase[materialJSON["type"]].second(materialJSON));
 			material->setFileName(materialName);
 			s_Materials[materialName].second = material;
 			return Ref<Material>(material);
@@ -57,11 +57,11 @@ Ref<Material> MaterialLibrary::GetDefaultMaterial()
 {
 	if (s_Materials["DEFAULT"].second == nullptr)
 	{
-		Material* material = ColorMaterial::CreateDefault();
+		Ref<Material> material(ColorMaterial::CreateDefault());
 		material->setFileName(String("DEFAULT"));
 		s_Materials["DEFAULT"].second = material;
 	}
-	return Ref<Material>(s_Materials["DEFAULT"].second);
+	return s_Materials["DEFAULT"].second;
 }
 
 #ifdef ROOTEX_EDITOR
@@ -88,7 +88,7 @@ Ref<Material> MaterialLibrary::CreateNewMaterialFile(String& materialName, Strin
 	if (s_Materials.find(materialName) == s_Materials.end())
 	{
 		TextResourceFile* materialFile = ResourceLoader::CreateNewTextResourceFile("game/assets/materials/" + materialName);
-		Material* material(s_MaterialDatabase[materialType].first());
+		Ref<Material> material(s_MaterialDatabase[materialType].first());
 		materialFile->putString(material->getJSON());
 		s_Materials[materialName] = { materialType, material };
 		//m_MaterialList.push_back(materialName);
