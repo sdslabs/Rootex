@@ -29,14 +29,19 @@ public:
 		Material,
 		End
 	};
-	TexturedMaterial();
+	TexturedMaterial(String& imagePath);
 	~TexturedMaterial() = default;
 
 	void setPSConstantBuffer(const PSDiffuseConstantBufferLights& constantBuffer);
 	void setPSConstantBuffer(const PSDiffuseConstantBufferMaterial& constantBuffer);
 	void setVSConstantBuffer(const VSDiffuseConstantBuffer& constantBuffer);
 
+	static Material* CreateDefault();
+	static Material* Create(const JSON::json& materialData);
+
 	void bind() override;
+	JSON::json getJSON() const override;
+
 #ifdef ROOTEX_EDITOR
 	void draw() override;
 #endif // ROOTEX_EDITOR

@@ -34,7 +34,7 @@ GridVisualComponent::GridVisualComponent(const Vector2& cellSize, const int& cel
     : VisualComponent(renderPass, isVisible)
     , m_CellCount(cellCount)
     , m_CellSize(cellSize)
-    , m_ColorMaterial(new ColorMaterial())
+    , m_ColorMaterial(MaterialLibrary::GetDefaultMaterial())
     , m_GridColor(gridColor)
 {
 }
@@ -129,7 +129,6 @@ void GridVisualComponent::render(RenderPass renderPass)
 	if (renderPass & m_RenderPass)
 	{
 		RenderSystem::GetSingleton()->enableLineRenderMode();
-		m_ColorMaterial->setPSConstantBuffer({ m_GridColor });
 		RenderSystem::GetSingleton()->getRenderer()->draw(m_VertexBuffer.get(), m_IndexBuffer.get(), m_ColorMaterial.get());
 		RenderSystem::GetSingleton()->resetRenderMode();
 	}

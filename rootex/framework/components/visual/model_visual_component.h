@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/renderer/materials/color_material.h"
+#include "core/renderer/material_library.h"
 #include "visual_component.h"
 
 class ModelVisualComponent : public VisualComponent
@@ -31,7 +31,7 @@ public:
 	virtual void postRender() override;
 
 	void setVisualModel(VisualModelResourceFile* newModel);
-	void setMaterial(Ref<Material> material);//change
+	void setMaterial(Ref<Material>& material);//change
 	
 	const VertexBuffer* getVertexBuffer() const { return m_VisualModelResourceFile->getVertexBuffer(); }
 	const IndexBuffer* getIndexBuffer() const { return m_VisualModelResourceFile->getIndexBuffer(); }
