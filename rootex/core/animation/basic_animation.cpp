@@ -1,67 +1,92 @@
 #include "basic_animation.h"
 
-void BasicAnimation::interpolate(Matrix& matrix, float t)
+void BasicAnimation::interpolate(Matrix& matrix, float t) const
 {
 	if (t <= getStartTime())
 	{
 		matrix = DirectX::XMMatrixAffineTransformation(
-		    m_Keyframes.front().m_Scale,
+		    m_ScaleKeyframes.front().m_Scale,
 		    Vector3::Zero,
-		    m_Keyframes.front().m_Rotation,
-		    m_Keyframes.front().m_Translation);
+		    m_RotationKeyframes.front().m_Rotation,
+		    m_TranslationKeyframes.front().m_Translation);
 	}
 	else if (t >= getEndTime())
 	{
 		matrix = DirectX::XMMatrixAffineTransformation(
-		    m_Keyframes.back().m_Scale,
+		    m_ScaleKeyframes.back().m_Scale,
 		    Vector4::Zero,
-		    m_Keyframes.back().m_Rotation,
-		    m_Keyframes.back().m_Translation);
+		    m_RotationKeyframes.back().m_Rotation,
+		    m_TranslationKeyframes.back().m_Translation);
 	}
 	else
 	{
-		for (unsigned int i = 0; i < m_Keyframes.size() - 1; i++)
+		Vector3 translation;
+		for (unsigned int i = 0; i < m_TranslationKeyframes.size() - 1; i++)
 		{
-			if (t > m_Keyframes[i].m_TimePosition && t < m_Keyframes[i + 1].m_TimePosition)
+			if (t > m_TranslationKeyframes[i].m_TimePosition && t < m_TranslationKeyframes[i + 1].m_TimePosition)
 			{
-				float timeSinceMostRecentKeyframe = t - m_Keyframes[i].m_TimePosition;
-				float timeBetween = m_Keyframes[i + 1].m_TimePosition - m_Keyframes[i].m_TimePosition;
+				float timeSinceMostRecentKeyframe = t - m_TranslationKeyframes[i].m_TimePosition;
+				float timeBetween = m_TranslationKeyframes[i + 1].m_TimePosition - m_TranslationKeyframes[i].m_TimePosition;
 				float lerpFactor = timeSinceMostRecentKeyframe / timeBetween;
 
-				const Vector3& translation = Vector3::Lerp(
-					m_Keyframes[i].m_Translation, 
-					m_Keyframes[i + 1].m_Translation, 
+				translation = Vector3::Lerp(
+				    m_TranslationKeyframes[i].m_Translation, 
+					m_TranslationKeyframes[i + 1].m_Translation, 
 					lerpFactor);
-				
-				const Quaternion& rotation = Quaternion::Slerp(
-				    m_Keyframes[i].m_Rotation,
-				    m_Keyframes[i + 1].m_Rotation,
-				    lerpFactor);
-				
-				const Vector3& scale = Vector3::Lerp(
-				    m_Keyframes[i].m_Scale,
-				    m_Keyframes[i + 1].m_Scale,
-				    lerpFactor);
+				// No need to check futher. This will be the only one needed.
+				break;
+			}
+		}
+		Quaternion rotation;
+		for (unsigned int i = 0; i < m_RotationKeyframes.size() - 1; i++)
+		{
+			if (t > m_RotationKeyframes[i].m_TimePosition && t < m_RotationKeyframes[i + 1].m_TimePosition)
+			{
+				float timeSinceMostRecentKeyframe = t - m_RotationKeyframes[i].m_TimePosition;
+				float timeBetween = m_RotationKeyframes[i + 1].m_TimePosition - m_RotationKeyframes[i].m_TimePosition;
+				float lerpFactor = timeSinceMostRecentKeyframe / timeBetween;
 
-				matrix = DirectX::XMMatrixAffineTransformation(
-					scale,
-					Vector4::Zero,
-					rotation,
-				    translation);
+				rotation = Quaternion::Slerp(
+				    m_RotationKeyframes[i].m_Rotation,
+				    m_RotationKeyframes[i + 1].m_Rotation,
+				    lerpFactor);
+				// No need to check futher. This will be the only one needed.
+				break;
+			}
+		}
+		Vector3 scale;
+		for (unsigned int i = 0; i < m_ScaleKeyframes.size() - 1; i++)
+		{
+			if (t > m_ScaleKeyframes[i].m_TimePosition && t < m_ScaleKeyframes[i + 1].m_TimePosition)
+			{
+				float timeSinceMostRecentKeyframe = t - m_ScaleKeyframes[i].m_TimePosition;
+				float timeBetween = m_ScaleKeyframes[i + 1].m_TimePosition - m_ScaleKeyframes[i].m_TimePosition;
+				float lerpFactor = timeSinceMostRecentKeyframe / timeBetween;
+
+				scale = Vector3::Lerp(
+				    m_ScaleKeyframes[i].m_Scale,
+				    m_ScaleKeyframes[i + 1].m_Scale,
+				    lerpFactor);
 
 				// No need to check futher. This will be the only one needed.
 				break;
 			}
 		}
+
+		matrix = DirectX::XMMatrixAffineTransformation(
+			scale,
+			Vector4::Zero,
+			rotation,
+			translation);
 	}
 }
 
 float BasicAnimation::getEndTime() const
 {
-	return m_Keyframes.back().m_TimePosition;
+	return max(m_TranslationKeyframes.back().m_TimePosition, m_RotationKeyframes.back().m_TimePosition, m_ScaleKeyframes.back().m_TimePosition);
 }
 
 float BasicAnimation::getStartTime() const
 {
-	return m_Keyframes.front().m_TimePosition;
+	return min(m_TranslationKeyframes.front().m_TimePosition, m_RotationKeyframes.front().m_TimePosition, m_ScaleKeyframes.front().m_TimePosition);
 }

@@ -27,7 +27,7 @@ static inline const Vector<String> SupportedAudioExtensions = {
 	".wav"
 };
 
-bool IsSupported(const String& extension, const Vector<String> supportedExtensions);
+bool IsSupported(const String& extension, const Vector<String>& supportedExtensions);
 
 /// Factory for ResourceFile objects. Implements creating, loading and saving files.                                \n
 /// Maintains an internal cache that doesn't let the same file to be loaded twice. Cache misses force file loading. \n

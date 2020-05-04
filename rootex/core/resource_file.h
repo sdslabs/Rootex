@@ -146,7 +146,12 @@ public:
 /// Representation of a 3D skeletal animation included model file.
 class SkeletalAnimationResourceFile : public ResourceFile
 {
-	SkeletalAnimation m_SkeletalAnimation;
+	Vector<int> m_BoneHierarchy;
+	Vector<Matrix> m_BoneOffsets;
+	Map<String, SkeletalAnimation> m_BoneAnimations;
+
+	Ptr<VertexBuffer> m_VertexBuffer;
+	Ptr<IndexBuffer> m_IndexBuffer;
 
 	explicit SkeletalAnimationResourceFile(
 	    const Vector<int>& boneHierarchy,

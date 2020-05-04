@@ -23,7 +23,7 @@ class TransformAnimationComponent : public Component
 	Quaternion m_InitialRotation;
 	Vector3 m_InitialScale;
 
-	TransformAnimationComponent(bool isPlayOnStart, bool isLooping, const Vector<Keyframe>& keyframes);
+	TransformAnimationComponent(bool isPlayOnStart, bool isLooping, const Vector<TranslationKeyframe>& translationKeyframes, const Vector<RotationKeyframe>& rotationKeyframes, const Vector<ScaleKeyframe>& scaleKeyframes);
 	TransformAnimationComponent(TransformAnimationComponent&) = delete;
 	~TransformAnimationComponent() = default;
 

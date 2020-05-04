@@ -2,37 +2,62 @@
 
 Component* TransformAnimationComponent::Create(const JSON::json& componentData)
 {
-	Vector<Keyframe> keyframes;
-
-	for (auto& keyframeJSON : componentData["keyframes"])
+	Vector<TranslationKeyframe> tKeyframes;
 	{
-		Keyframe keyframe;
+		for (auto& keyframeJSON : componentData["keyframes"]["translation"])
+		{
+			TranslationKeyframe keyframe;
 
-		keyframe.m_TimePosition = keyframeJSON["timePosition"];
-		keyframe.m_Translation = { 
-			keyframeJSON["translation"]["x"], 
-			keyframeJSON["translation"]["y"], 
-			keyframeJSON["translation"]["z"] 
-		};
-		keyframe.m_Rotation = { 
-			keyframeJSON["rotation"]["x"], 
-			keyframeJSON["rotation"]["y"], 
-			keyframeJSON["rotation"]["z"], 
-			keyframeJSON["rotation"]["w"] 
-		};
-		keyframe.m_Scale = { 
-			keyframeJSON["scale"]["x"], 
-			keyframeJSON["scale"]["y"], 
-			keyframeJSON["scale"]["z"] 
-		};
+			keyframe.m_TimePosition = keyframeJSON["timePosition"];
+			keyframe.m_Translation = {
+				keyframeJSON["x"],
+				keyframeJSON["y"],
+				keyframeJSON["z"]
+			};
 
-		keyframes.push_back(keyframe);
+			tKeyframes.push_back(keyframe);
+		}
+	}
+	Vector<RotationKeyframe> rKeyframes;
+	{
+		for (auto& keyframeJSON : componentData["keyframes"]["rotation"])
+		{
+			RotationKeyframe keyframe;
+
+			keyframe.m_TimePosition = keyframeJSON["timePosition"];
+			keyframe.m_Rotation = {
+				keyframeJSON["x"],
+				keyframeJSON["y"],
+				keyframeJSON["z"],
+				keyframeJSON["w"]
+			};
+
+			rKeyframes.push_back(keyframe);
+		}
+	}
+	Vector<ScaleKeyframe> sKeyframes;
+	{
+		for (auto& keyframeJSON : componentData["keyframes"]["scale"])
+		{
+			ScaleKeyframe keyframe;
+
+			keyframe.m_TimePosition = keyframeJSON["timePosition"];
+			keyframe.m_Scale = {
+				keyframeJSON["x"],
+				keyframeJSON["y"],
+				keyframeJSON["z"]
+			};
+
+			sKeyframes.push_back(keyframe);
+		}
 	}
 
 	return new TransformAnimationComponent(
 	    componentData["isPlayOnStart"],
 	    componentData["isLooping"],
-		keyframes
+		tKeyframes,
+		rKeyframes,
+		sKeyframes
 	);
 }
 
@@ -41,14 +66,16 @@ Component* TransformAnimationComponent::CreateDefault()
 	return new TransformAnimationComponent(
 		false,
 		false, 
-		{ Keyframe({ 0.0f, Vector3::Zero, Quaternion::Identity, Vector3(1.0f, 1.0f, 1.0f) }) });
+		{ TranslationKeyframe({ 0.0f, Vector3::Zero }) }, 
+		{ RotationKeyframe({ 0.0f, Quaternion::Identity }) }, 
+		{ ScaleKeyframe({ 0.0f, { 1.0f, 1.0f, 1.0f } }) });
 }
 
-TransformAnimationComponent::TransformAnimationComponent(bool isPlayOnStart, bool isLooping, const Vector<Keyframe>& keyframes)
+TransformAnimationComponent::TransformAnimationComponent(bool isPlayOnStart, bool isLooping, const Vector<TranslationKeyframe>& translationKeyframes, const Vector<RotationKeyframe>& rotationKeyframes, const Vector<ScaleKeyframe>& scaleKeyframes)
     : m_CurrentTimePosition(0.0f)
     , m_IsPlaying(isPlayOnStart)
     , m_IsPlayOnStart(isPlayOnStart)
-    , m_BasicAnimation({ keyframes })
+    , m_BasicAnimation({ translationKeyframes, rotationKeyframes, scaleKeyframes })
     , m_IsLooping(isLooping)
 {
 }
@@ -84,9 +111,9 @@ bool TransformAnimationComponent::setup()
 	m_InitialRotation = m_TransformComponent->getRotation();
 	m_InitialScale = m_TransformComponent->getScale();
 
-	m_BasicAnimation.m_Keyframes[0].m_Translation = m_InitialPosition;
-	m_BasicAnimation.m_Keyframes[0].m_Rotation = m_InitialRotation;
-	m_BasicAnimation.m_Keyframes[0].m_Scale = m_InitialScale;
+	m_BasicAnimation.m_TranslationKeyframes[0].m_Translation = m_InitialPosition;
+	m_BasicAnimation.m_RotationKeyframes[0].m_Rotation = m_InitialRotation;
+	m_BasicAnimation.m_ScaleKeyframes[0].m_Scale = m_InitialScale;
 	
 	return true;
 }
@@ -95,19 +122,27 @@ JSON::json TransformAnimationComponent::getJSON() const
 {
 	JSON::json j;
 
-	for (int i = 0; i < m_BasicAnimation.m_Keyframes.size(); i++)
+	for (int i = 0; i < m_BasicAnimation.m_TranslationKeyframes.size(); i++)
 	{
-		j["keyframes"][i]["timePosition"] = m_BasicAnimation.m_Keyframes[i].m_TimePosition;
-		j["keyframes"][i]["translation"]["x"] = m_BasicAnimation.m_Keyframes[i].m_Translation.x;
-		j["keyframes"][i]["translation"]["y"] = m_BasicAnimation.m_Keyframes[i].m_Translation.y;
-		j["keyframes"][i]["translation"]["z"] = m_BasicAnimation.m_Keyframes[i].m_Translation.z;
-		j["keyframes"][i]["rotation"]["x"] = m_BasicAnimation.m_Keyframes[i].m_Rotation.x;
-		j["keyframes"][i]["rotation"]["y"] = m_BasicAnimation.m_Keyframes[i].m_Rotation.y;
-		j["keyframes"][i]["rotation"]["z"] = m_BasicAnimation.m_Keyframes[i].m_Rotation.z;
-		j["keyframes"][i]["rotation"]["w"] = m_BasicAnimation.m_Keyframes[i].m_Rotation.w;
-		j["keyframes"][i]["scale"]["x"] = m_BasicAnimation.m_Keyframes[i].m_Scale.x;
-		j["keyframes"][i]["scale"]["y"] = m_BasicAnimation.m_Keyframes[i].m_Scale.y;
-		j["keyframes"][i]["scale"]["z"] = m_BasicAnimation.m_Keyframes[i].m_Scale.z;
+		j["keyframes"]["translation"][i]["timePosition"] = m_BasicAnimation.m_TranslationKeyframes[i].m_TimePosition;
+		j["keyframes"]["translation"][i]["x"] = m_BasicAnimation.m_TranslationKeyframes[i].m_Translation.x;
+		j["keyframes"]["translation"][i]["y"] = m_BasicAnimation.m_TranslationKeyframes[i].m_Translation.y;
+		j["keyframes"]["translation"][i]["z"] = m_BasicAnimation.m_TranslationKeyframes[i].m_Translation.z;
+	}
+	for (int i = 0; i < m_BasicAnimation.m_RotationKeyframes.size(); i++)
+	{
+		j["keyframes"]["rotation"][i]["timePosition"] = m_BasicAnimation.m_RotationKeyframes[i].m_TimePosition;
+		j["keyframes"]["rotation"][i]["x"] = m_BasicAnimation.m_RotationKeyframes[i].m_Rotation.x;
+		j["keyframes"]["rotation"][i]["y"] = m_BasicAnimation.m_RotationKeyframes[i].m_Rotation.y;
+		j["keyframes"]["rotation"][i]["z"] = m_BasicAnimation.m_RotationKeyframes[i].m_Rotation.z;
+		j["keyframes"]["rotation"][i]["w"] = m_BasicAnimation.m_RotationKeyframes[i].m_Rotation.w;
+	}
+	for (int i = 0; i < m_BasicAnimation.m_ScaleKeyframes.size(); i++)
+	{
+		j["keyframes"]["scale"][i]["timePosition"] = m_BasicAnimation.m_ScaleKeyframes[i].m_TimePosition;
+		j["keyframes"]["scale"][i]["x"] = m_BasicAnimation.m_ScaleKeyframes[i].m_Scale.x;
+		j["keyframes"]["scale"][i]["y"] = m_BasicAnimation.m_ScaleKeyframes[i].m_Scale.y;
+		j["keyframes"]["scale"][i]["z"] = m_BasicAnimation.m_ScaleKeyframes[i].m_Scale.z;
 	}
 
 	j["isPlayOnStart"] = m_IsPlayOnStart;
@@ -135,26 +170,22 @@ void TransformAnimationComponent::draw()
 
 	if (ImGui::TreeNodeEx("Keyframes"))
 	{
-		for (int i = 0; i < m_BasicAnimation.m_Keyframes.size(); i++)
+		for (int i = 0; i < m_BasicAnimation.m_TranslationKeyframes.size(); i++)
 		{
-			Keyframe* keyframe = &m_BasicAnimation.m_Keyframes[i];
+			TranslationKeyframe* keyframe = &m_BasicAnimation.m_TranslationKeyframes[i];
 
 			ImGui::InputFloat(("Time##" + std::to_string(i)).c_str(), &keyframe->m_TimePosition);
 			ImGui::InputFloat3(("Translation##" + std::to_string(i)).c_str(), &keyframe->m_Translation.x);
-			ImGui::InputFloat3(("Rotation##" + std::to_string(i)).c_str(), &keyframe->m_Rotation.x);
-			ImGui::InputFloat3(("Scale##" + std::to_string(i)).c_str(), &keyframe->m_Scale.x);
-			if (!m_IsPlaying && m_BasicAnimation.m_Keyframes.size() > 1 && ImGui::Button(("Delete##" + std::to_string(i)).c_str()))
+			if (!m_IsPlaying && m_BasicAnimation.m_TranslationKeyframes.size() > 1 && ImGui::Button(("Delete##" + std::to_string(i)).c_str()))
 			{
-				m_BasicAnimation.m_Keyframes.erase(m_BasicAnimation.m_Keyframes.begin() + i);
+				m_BasicAnimation.m_TranslationKeyframes.erase(m_BasicAnimation.m_TranslationKeyframes.begin() + i);
 			}
 		}
 		if (!m_IsPlaying && ImGui::Button("Add"))
 		{
-			m_BasicAnimation.m_Keyframes.push_back({ 
+			m_BasicAnimation.m_TranslationKeyframes.push_back({ 
 				m_BasicAnimation.getEndTime() + 1,
-				m_Owner->getComponent<TransformComponent>()->getPosition(),
-				m_Owner->getComponent<TransformComponent>()->getRotation(),
-				m_Owner->getComponent<TransformComponent>()->getScale()
+				m_Owner->getComponent<TransformComponent>()->getPosition()
 			});
 		}
 		ImGui::TreePop();

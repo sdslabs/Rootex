@@ -17,7 +17,7 @@
 HashMap<Ptr<ResourceData>, Ptr<ResourceFile>> ResourceLoader::s_ResourcesDataFiles;
 HashMap<ResourceFile::Type, Vector<ResourceFile*>> ResourceLoader::s_ResourceFileLibrary;
 
-bool IsSupported(const String& extension, const Vector<String> supportedExtensions)
+bool IsSupported(const String& extension, const Vector<String>& supportedExtensions)
 {
 	return std::find(supportedExtensions.begin(), supportedExtensions.end(), extension) != supportedExtensions.end();
 }
@@ -165,6 +165,18 @@ AudioResourceFile* ResourceLoader::CreateAudioResourceFile(const String& path)
 	return audioRes;
 }
 
+void FillBoneHierarchy(Vector<int>* boneHierarchy, Map<String, int>* boneNameID, aiNode* currentNode)
+{
+	int newID = boneHierarchy->back() + 1;
+	boneHierarchy->push_back(newID);
+	boneNameID->insert({ currentNode->mName.C_Str(), newID });
+
+	for (int i = 0; i < currentNode->mNumChildren; i++)
+	{
+		FillBoneHierarchy(boneHierarchy, boneNameID, currentNode->mChildren[i]);
+	}
+}
+
 SkeletalAnimationResourceFile* ResourceLoader::CreateSkeletalAnimationResourceFile(const String& path)
 {
 	for (auto& item : s_ResourcesDataFiles)
@@ -187,8 +199,6 @@ SkeletalAnimationResourceFile* ResourceLoader::CreateSkeletalAnimationResourceFi
 
 	const aiScene* scene = importer.ReadFile(path,
 	    aiProcess_CalcTangentSpace | aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
-	const aiMesh* mesh = scene->mMeshes[0]; // Taking single mesh
-	aiFace* face;
 
 	PANIC(scene == nullptr, "Model could not be loaded: " + OS::GetAbsolutePath(path).generic_string());
 
@@ -198,6 +208,7 @@ SkeletalAnimationResourceFile* ResourceLoader::CreateSkeletalAnimationResourceFi
 	}
 
 	Vector<VertexData> vertices;
+	const aiMesh* mesh = scene->mMeshes[0]; // Taking single mesh
 	vertices.reserve(mesh->mNumVertices);
 
 	VertexData vertex;
@@ -216,6 +227,7 @@ SkeletalAnimationResourceFile* ResourceLoader::CreateSkeletalAnimationResourceFi
 	}
 
 	std::vector<unsigned short> indices;
+	aiFace* face;
 	for (unsigned int f = 0; f < mesh->mNumFaces; f++)
 	{
 		face = &mesh->mFaces[f];
@@ -226,10 +238,104 @@ SkeletalAnimationResourceFile* ResourceLoader::CreateSkeletalAnimationResourceFi
 	}
 
 	Vector<int> boneHierarchy;
-	Vector<Matrix> boneOffsets;
-	Map<String, SkeletalAnimation> animations;
+	boneHierarchy.push_back(0);
+	Map<String, int> boneNameID;
+	boneNameID[scene->mRootNode->mName.C_Str()] = 0;
+	FillBoneHierarchy(&boneHierarchy, &boneNameID, scene->mRootNode);
 
-	aiBone* bone = mesh->
+	Vector<Matrix> boneOffsets;
+	boneOffsets.resize(boneHierarchy.size());
+	
+	for (int boneIndex = 0; boneIndex < mesh->mNumBones; boneIndex++)
+	{
+		const String& boneName = mesh->mBones[boneIndex]->mName.C_Str();
+
+		aiMatrix4x4& offset = mesh->mBones[boneIndex]->mOffsetMatrix;
+		Matrix offsetMatrix = Matrix({ 
+			offset.a1,
+		    offset.a2,
+		    offset.a3,
+		    offset.a4,
+
+		    offset.b1,
+		    offset.b2,
+		    offset.b3,
+		    offset.b4,
+		    
+			offset.c1,
+		    offset.c2,
+		    offset.c3,
+		    offset.c4,
+		    
+			offset.d1,
+		    offset.d2,
+		    offset.d3,
+		    offset.d4 });
+
+		boneOffsets[boneNameID[boneName]] = offsetMatrix;
+	}
+
+	Map<String, SkeletalAnimation> animations;
+	
+	for (int animationIndex = 0; animationIndex < scene->mNumAnimations; animationIndex++)
+	{
+		aiAnimation* currentAnimation = scene->mAnimations[animationIndex];
+
+		SkeletalAnimation animation;
+		for (auto& bone : boneHierarchy)
+		{
+			BasicAnimation boneAnimation;
+
+			boneAnimation.m_TranslationKeyframes.resize(currentAnimation->mNumChannels);
+			boneAnimation.m_RotationKeyframes.resize(currentAnimation->mNumChannels);
+			boneAnimation.m_ScaleKeyframes.resize(currentAnimation->mNumChannels);
+
+			for (int channelIndex = 0; channelIndex < currentAnimation->mNumChannels; channelIndex++)
+			{
+				aiNodeAnim* currentChannel = currentAnimation->mChannels[channelIndex];
+				int animationBoneID = boneNameID[currentChannel->mNodeName.C_Str()];
+				
+				for (int p = 0; p < currentChannel->mNumPositionKeys; p++)
+				{
+					boneAnimation.m_TranslationKeyframes[p] = { 
+						currentChannel->mPositionKeys[p].mTime, 
+						{ 
+							currentChannel->mPositionKeys[p].mValue.x, 
+							currentChannel->mPositionKeys[p].mValue.y, 
+							currentChannel->mPositionKeys[p].mValue.z 
+						} 
+					};
+				}
+				for (int p = 0; p < currentChannel->mNumRotationKeys; p++)
+				{
+					boneAnimation.m_RotationKeyframes[p] = { 
+						currentChannel->mRotationKeys[p].mTime,
+					    { 
+							currentChannel->mRotationKeys[p].mValue.x,
+					        currentChannel->mRotationKeys[p].mValue.y,
+					        currentChannel->mRotationKeys[p].mValue.z,
+					        currentChannel->mRotationKeys[p].mValue.w 
+						} 
+					};
+				}
+				for (int p = 0; p < currentChannel->mNumScalingKeys; p++)
+				{
+					boneAnimation.m_ScaleKeyframes[p] = { 
+						currentChannel->mScalingKeys[p].mTime,
+					    { 
+							currentChannel->mScalingKeys[p].mValue.x,
+					        currentChannel->mScalingKeys[p].mValue.y,
+					        currentChannel->mScalingKeys[p].mValue.z 
+						} 
+					};
+				}
+			}
+
+			animation.m_BoneAnimations.push_back(boneAnimation);
+		}
+
+		animations[currentAnimation->mName.C_Str()] = animation;
+	}
 
 	FileBuffer& buffer = OS::LoadFileContents(path);
 	ResourceData* resData = new ResourceData(path, buffer);
