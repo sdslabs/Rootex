@@ -4,6 +4,7 @@
 #include "core/resource_data.h"
 #include "core/renderer/vertex_buffer.h"
 #include "core/renderer/index_buffer.h"
+#include "core/animation/skeletal_animation.h"
 #include "DirectXTK/Inc/SpriteFont.h"
 
 /// Interface of a file loaded from disk. Use ResourceLoader to load, create or save files.
@@ -19,6 +20,7 @@ public:
 		Wav,
 		Text,
 		Obj,
+		Animation,
 		Image,
 		Font
 	};
@@ -34,9 +36,9 @@ protected:
 	friend class ResourceLoader;
 
 public:
-	virtual ~ResourceFile();
 	explicit ResourceFile(ResourceFile&) = delete;
 	explicit ResourceFile(ResourceFile&&) = delete;
+	~ResourceFile() = default;
 
 	/// If the file was correctly loaded and set up. Should not return false without ResourceLoader showing an error.
 	bool isValid();
@@ -44,9 +46,6 @@ public:
 	bool isDirty();
 	/// If the file data has been loaded properly.
 	bool isOpen();
-
-	/// Reload file from disk. Overwrites the data buffer after reloading file data from disk.
-	virtual void reload();
 
 	FilePath getPath() const;
 	Type getType() const;
@@ -60,15 +59,13 @@ class TextResourceFile : public ResourceFile
 {
 protected:
 	explicit TextResourceFile(const Type& type, ResourceData* resData);
-	virtual ~TextResourceFile();
+	~TextResourceFile() = default;
 
 	friend class ResourceLoader;
 
 public:
 	explicit TextResourceFile(TextResourceFile&) = delete;
 	explicit TextResourceFile(TextResourceFile&&) = delete;
-
-	virtual void reload() override;
 
 	/// Replace old data string with new data string.
 	void putString(const String& newData);
@@ -83,15 +80,13 @@ public:
 class LuaTextResourceFile : public TextResourceFile
 {
 	explicit LuaTextResourceFile(ResourceData* resData);
-	~LuaTextResourceFile();
+	~LuaTextResourceFile() = default;
 
 	friend class ResourceLoader;
 
 public:
 	explicit LuaTextResourceFile(TextResourceFile&) = delete;
 	explicit LuaTextResourceFile(TextResourceFile&&) = delete;
-
-	virtual void reload() override;
 };
 
 typedef int ALsizei;
@@ -110,15 +105,13 @@ class AudioResourceFile : public ResourceFile
 	ALsizei m_AudioDataSize;
 
 	explicit AudioResourceFile(ResourceData* resData);
-	~AudioResourceFile();
+	~AudioResourceFile() = default;
 
 	friend class ResourceLoader;
 
 public:
 	explicit AudioResourceFile(AudioResourceFile&) = delete;
 	explicit AudioResourceFile(AudioResourceFile&&) = delete;
-
-	virtual void reload() override;
 
 	/// Get size of decompressed audio data.
 	ALsizei getAudioDataSize() const { return m_AudioDataSize; }
@@ -131,11 +124,11 @@ public:
 	float getDuration() const { return m_Duration; }
 };
 
-/// Representation of a 3D model file. Only .obj with .mtl files are supported.
+/// Representation of a 3D model file.
 class VisualModelResourceFile : public ResourceFile
 {
 	explicit VisualModelResourceFile(Ptr<VertexBuffer> vertexBuffer, Ptr<IndexBuffer> indexBuffer, ResourceData* resData);
-	~VisualModelResourceFile();
+	~VisualModelResourceFile() = default;
 
 	Ptr<VertexBuffer> m_VertexBuffer;
 	Ptr<IndexBuffer> m_IndexBuffer;
@@ -146,32 +139,55 @@ public:
 	explicit VisualModelResourceFile(VisualModelResourceFile&) = delete;
 	explicit VisualModelResourceFile(VisualModelResourceFile&&) = delete;
 
-	virtual void reload() override;
-
 	const VertexBuffer* getVertexBuffer() const { return m_VertexBuffer.get(); }
 	const IndexBuffer* getIndexBuffer() const { return m_IndexBuffer.get(); }
+};
+
+/// Representation of a 3D skeletal animation included model file.
+class SkeletalAnimationResourceFile : public ResourceFile
+{
+	SkeletalAnimation m_SkeletalAnimation;
+
+	explicit SkeletalAnimationResourceFile(
+	    const Vector<int>& boneHierarchy,
+		const Vector<Matrix>& boneOffsets,
+		const Map<String, SkeletalAnimation>& animations,
+		Ptr<VertexBuffer> vertexBuffer,
+		Ptr<IndexBuffer> indexBuffer,
+		ResourceData* resData);
+	~SkeletalAnimationResourceFile() = default;
+
+	friend class ResourceLoader;
+
+public:
+	explicit SkeletalAnimationResourceFile(VisualModelResourceFile&) = delete;
+	explicit SkeletalAnimationResourceFile(VisualModelResourceFile&&) = delete;
+	
+	void getFinalTransforms(const String& animationName, float timePos, Vector<Matrix>& finalTransforms) const;
+
+	unsigned int getBoneCount() const;
+	float getAnimationStartTime(const String& animationName);
+	float getAnimationEndTime(const String& animationName);
 };
 
 /// Representation of an image file. Supports BMP, JPEG, PNG, TIFF, GIF, HD Photo, or other WIC supported file containers
 class ImageResourceFile : public ResourceFile
 {
 	explicit ImageResourceFile(ResourceData* resData);
-	~ImageResourceFile();
+	~ImageResourceFile() = default;
 
 	friend class ResourceLoader;
 
 public:
 	explicit ImageResourceFile(ImageResourceFile&) = delete;
 	explicit ImageResourceFile(ImageResourceFile&&) = delete;
-
-	virtual void reload() override;
 };
 
 /// Representation of a font file. Supports .spritefont files.
 class FontResourceFile : public ResourceFile
 {
 	explicit FontResourceFile(ResourceData* resData);
-	~FontResourceFile();
+	~FontResourceFile() = default;
 
 	Ref<DirectX::SpriteFont> m_Font;
 
@@ -180,8 +196,6 @@ class FontResourceFile : public ResourceFile
 public:
 	explicit FontResourceFile(ImageResourceFile&) = delete;
 	explicit FontResourceFile(ImageResourceFile&&) = delete;
-
-	virtual void reload() override;
 
 	Ref<DirectX::SpriteFont> getFont() const { return m_Font; }
 };

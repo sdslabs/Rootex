@@ -10,14 +10,23 @@
 #include "core/renderer/vertex_data.h"
 #include "script/interpreter.h"
 
-
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
 HashMap<Ptr<ResourceData>, Ptr<ResourceFile>> ResourceLoader::s_ResourcesDataFiles;
 HashMap<ResourceFile::Type, Vector<ResourceFile*>> ResourceLoader::s_ResourceFileLibrary;
-Assimp::Importer ResourceLoader::s_ModelLoader;
+
+bool IsSupported(const String& extension, const Vector<String> supportedExtensions)
+{
+	return std::find(supportedExtensions.begin(), supportedExtensions.end(), extension) != supportedExtensions.end();
+}
+
+void ResourceLoader::UpdateFileTimes(ResourceFile* resourceFile)
+{
+	resourceFile->m_LastReadTime = OS::s_FileSystemClock.now();
+	resourceFile->m_LastChangedTime = OS::GetFileLastChangedTime(resourceFile->getPath().string());
+}
 
 TextResourceFile* ResourceLoader::CreateTextResourceFile(const String& path)
 {
@@ -156,6 +165,84 @@ AudioResourceFile* ResourceLoader::CreateAudioResourceFile(const String& path)
 	return audioRes;
 }
 
+SkeletalAnimationResourceFile* ResourceLoader::CreateSkeletalAnimationResourceFile(const String& path)
+{
+	for (auto& item : s_ResourcesDataFiles)
+	{
+		if (item.first->getPath() == path && item.second->getType() == ResourceFile::Type::Animation)
+		{
+			return reinterpret_cast<SkeletalAnimationResourceFile*>(item.second.get());
+		}
+	}
+
+	if (OS::IsExists(path) == false)
+	{
+		ERR("File not found: " + path);
+		return nullptr;
+	}
+
+	// File not found in cache, load it only once
+
+	Assimp::Importer importer;
+
+	const aiScene* scene = importer.ReadFile(path,
+	    aiProcess_CalcTangentSpace | aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
+	const aiMesh* mesh = scene->mMeshes[0]; // Taking single mesh
+	aiFace* face;
+
+	PANIC(scene == nullptr, "Model could not be loaded: " + OS::GetAbsolutePath(path).generic_string());
+
+	if (!scene->HasAnimations())
+	{
+		return nullptr;
+	}
+
+	Vector<VertexData> vertices;
+	vertices.reserve(mesh->mNumVertices);
+
+	VertexData vertex;
+	for (unsigned int v = 0; v < mesh->mNumVertices; v++)
+	{
+		vertex.m_Position.x = mesh->mVertices[v].x;
+		vertex.m_Position.y = mesh->mVertices[v].y;
+		vertex.m_Position.z = mesh->mVertices[v].z;
+		vertex.m_Normal.x = mesh->mNormals[v].x;
+		vertex.m_Normal.y = mesh->mNormals[v].y;
+		vertex.m_Normal.z = mesh->mNormals[v].z;
+		// Assuming the model has texture coordinates and taking only the first texture coordinate in case of multiple texture coordinates
+		vertex.m_TextureCoord.x = mesh->mTextureCoords[0][v].x;
+		vertex.m_TextureCoord.y = mesh->mTextureCoords[0][v].y;
+		vertices.push_back(vertex);
+	}
+
+	std::vector<unsigned short> indices;
+	for (unsigned int f = 0; f < mesh->mNumFaces; f++)
+	{
+		face = &mesh->mFaces[f];
+		//Model already triangulated by aiProcess_Triangulate so no need to check
+		indices.push_back(face->mIndices[0]);
+		indices.push_back(face->mIndices[1]);
+		indices.push_back(face->mIndices[2]);
+	}
+
+	Vector<int> boneHierarchy;
+	Vector<Matrix> boneOffsets;
+	Map<String, SkeletalAnimation> animations;
+
+	aiBone* bone = mesh->
+
+	FileBuffer& buffer = OS::LoadFileContents(path);
+	ResourceData* resData = new ResourceData(path, buffer);
+	Ptr<VertexBuffer> vertexBuffer(new VertexBuffer(vertices));
+	Ptr<IndexBuffer> indexBuffer(new IndexBuffer(indices));
+	SkeletalAnimationResourceFile* animRes = new SkeletalAnimationResourceFile(boneHierarchy, boneOffsets, animations, std::move(vertexBuffer), std::move(indexBuffer), resData);
+
+	s_ResourcesDataFiles[Ptr<ResourceData>(resData)] = Ptr<ResourceFile>(animRes);
+	s_ResourceFileLibrary[ResourceFile::Type::Animation].push_back(animRes);
+
+	return animRes;
+}
+
 VisualModelResourceFile* ResourceLoader::CreateVisualModelResourceFile(const String& path)
 {
 	for (auto& item : s_ResourcesDataFiles)
@@ -172,17 +259,19 @@ VisualModelResourceFile* ResourceLoader::CreateVisualModelResourceFile(const Str
 		return nullptr;
 	}
 
-	const aiScene* scene = s_ModelLoader.ReadFile(path,
-	      aiProcess_CalcTangentSpace      |
-		  aiProcess_Triangulate           | 
-		  aiProcess_JoinIdenticalVertices | 
-		  aiProcess_SortByPType);
+	Assimp::Importer importer;
+
+	// File not found in cache, load it only once
+	const aiScene* scene = importer.ReadFile(path,
+	    aiProcess_CalcTangentSpace | 
+		aiProcess_Triangulate | 
+		aiProcess_JoinIdenticalVertices | 
+		aiProcess_SortByPType);
     const aiMesh* mesh = scene->mMeshes[0]; //Taking single mesh
 	aiFace* face;
 
-	// File not found in cache, load it only once
 	PANIC(scene == nullptr, "Model could not be loaded: " + OS::GetAbsolutePath(path).generic_string());
-
+	
 	VertexData vertex;
 
 	Vector<VertexData> vertices;
@@ -299,6 +388,132 @@ void ResourceLoader::ReloadResourceData(const String& path)
 	}
 }
 
+void ResourceLoader::Reload(TextResourceFile* textFile)
+{
+	UpdateFileTimes(textFile);
+	ResourceLoader::ReloadResourceData(textFile->m_ResourceData->getPath().string());
+}
+
+void ResourceLoader::Reload(AudioResourceFile* audioRes)
+{
+	UpdateFileTimes(audioRes);
+	const char* audioBuffer;
+	int format;
+	int size;
+	float frequency;
+	ALUT_CHECK(audioBuffer = (const char*)alutLoadMemoryFromFile(
+	               OS::GetAbsolutePath(audioRes->m_ResourceData->getPath().string()).string().c_str(),
+	               &format,
+	               &size,
+	               &frequency));
+
+	audioRes->m_ResourceData->getRawData()->clear();
+	audioRes->m_ResourceData->getRawData()->insert(
+	    audioRes->m_ResourceData->getRawData()->begin(),
+	    audioBuffer,
+	    audioBuffer + size);
+
+	audioRes->m_DecompressedAudioBuffer = audioBuffer;
+	audioRes->m_Format = format;
+	audioRes->m_AudioDataSize = size;
+	audioRes->m_Frequency = frequency;
+
+	switch (audioRes->getFormat())
+	{
+	case AL_FORMAT_MONO8:
+		audioRes->m_Channels = 1;
+		audioRes->m_BitDepth = 8;
+		break;
+
+	case AL_FORMAT_MONO16:
+		audioRes->m_Channels = 1;
+		audioRes->m_BitDepth = 16;
+		break;
+
+	case AL_FORMAT_STEREO8:
+		audioRes->m_Channels = 2;
+		audioRes->m_BitDepth = 8;
+		break;
+
+	case AL_FORMAT_STEREO16:
+		audioRes->m_Channels = 2;
+		audioRes->m_BitDepth = 16;
+		break;
+
+	default:
+		ERR("Unknown channels and bit depth in WAV data");
+	}
+
+	audioRes->m_Duration = size * 8 / (audioRes->m_Channels * audioRes->m_BitDepth);
+	audioRes->m_Duration /= frequency;
+}
+
+void ResourceLoader::Reload(SkeletalAnimationResourceFile* animFile)
+{
+	UpdateFileTimes(animFile);
+}
+
+void ResourceLoader::Reload(VisualModelResourceFile* modelFile)
+{
+	UpdateFileTimes(modelFile);
+
+	Assimp::Importer importer;
+
+	const aiScene* scene = importer.ReadFile((OS::GetAbsolutePath(modelFile->m_ResourceData->getPath().string()).generic_string()),
+	    aiProcess_CalcTangentSpace | aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
+
+	PANIC(scene == nullptr, "Model could not be loaded: " + OS::GetAbsolutePath(modelFile->m_ResourceData->getPath().string()).generic_string());
+
+	const aiMesh* mesh = scene->mMeshes[0];
+	aiFace* face;
+
+	VertexData vertex;
+
+	Vector<VertexData> vertices;
+	vertices.reserve(mesh->mNumVertices);
+
+	for (unsigned int v = 0; v < mesh->mNumVertices; v++)
+	{
+		vertex.m_Position.x = mesh->mVertices[v].x;
+		vertex.m_Position.y = mesh->mVertices[v].y;
+		vertex.m_Position.z = mesh->mVertices[v].z;
+		vertex.m_Normal.x = mesh->mNormals[v].x;
+		vertex.m_Normal.y = mesh->mNormals[v].y;
+		vertex.m_Normal.z = mesh->mNormals[v].z;
+		// Assuming the model has texture coordinates and taking only the first texture coordinate in case of multiple texture coordinates
+		vertex.m_TextureCoord.x = mesh->mTextureCoords[0][v].x;
+		vertex.m_TextureCoord.y = mesh->mTextureCoords[0][v].y;
+		vertices.push_back(vertex);
+	}
+
+	std::vector<unsigned short> indices;
+
+	for (unsigned int f = 0; f < mesh->mNumFaces; f++)
+	{
+		face = &mesh->mFaces[f];
+		//Model already triangulated by aiProcess_Triangulate so no need to check
+		indices.push_back(face->mIndices[0]);
+		indices.push_back(face->mIndices[1]);
+		indices.push_back(face->mIndices[2]);
+	}
+
+	ResourceLoader::ReloadResourceData(modelFile->m_ResourceData->getPath().string());
+	modelFile->m_VertexBuffer.reset(new VertexBuffer(vertices));
+	modelFile->m_IndexBuffer.reset(new IndexBuffer(indices));
+}
+
+void ResourceLoader::Reload(ImageResourceFile* imageFile)
+{
+	UpdateFileTimes(imageFile);
+	ResourceLoader::ReloadResourceData(imageFile->m_ResourceData->getPath().string());
+}
+
+void ResourceLoader::Reload(FontResourceFile* fontFile)
+{
+	UpdateFileTimes(fontFile);
+	ResourceLoader::ReloadResourceData(fontFile->m_ResourceData->getPath().string());
+}
+
 Vector<ResourceFile*>& ResourceLoader::GetFilesOfType(ResourceFile::Type type)
 {
 	return s_ResourceFileLibrary[type];
@@ -307,9 +522,4 @@ Vector<ResourceFile*>& ResourceLoader::GetFilesOfType(ResourceFile::Type type)
 HashMap<ResourceFile::Type, Vector<ResourceFile*>>& ResourceLoader::GetAllFiles()
 {
 	return s_ResourceFileLibrary;
-}
-
-bool IsSupported(const String& extension, const Vector<String> supportedExtensions)
-{
-	return std::find(supportedExtensions.begin(), supportedExtensions.end(), extension) != supportedExtensions.end();
 }

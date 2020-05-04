@@ -143,7 +143,6 @@ void LuaInterpreter::registerTypes()
 		resourceFile["isValid"] = &ResourceFile::isValid;
 		resourceFile["isDirty"] = &ResourceFile::isDirty;
 		resourceFile["isOpen"] = &ResourceFile::isOpen;
-		resourceFile["reload"] = &ResourceFile::reload;
 		resourceFile["getPath"] = [](ResourceFile& f) { return f.getPath().string(); };
 		resourceFile["getType"] = &ResourceFile::getType;
 	}

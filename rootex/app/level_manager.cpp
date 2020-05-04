@@ -35,7 +35,7 @@ void LevelManager::openLevel(const String& levelPath, bool openInEditor)
 		TextResourceFile* textResource = ResourceLoader::CreateTextResourceFile(entityFile.string());
 		if (textResource->isDirty())
 		{
-			textResource->reload();
+			ResourceLoader::Reload(textResource);
 		}
 
 		EntityFactory::GetSingleton()->createEntity(textResource);

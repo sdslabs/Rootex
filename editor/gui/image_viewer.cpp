@@ -13,7 +13,7 @@ void ImageViewer::draw()
 		ImGui::SameLine();
 		if (ImGui::Button("Reload"))
 		{
-			m_Texture->reload();
+			ResourceLoader::Reload(m_ImageResourceFile);
 		}
 	}
 	ImGui::Separator();

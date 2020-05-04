@@ -19,6 +19,10 @@ static inline const Vector<String> SupportedModelExtensions = {
 	".obj"
 };
 
+static inline const Vector<String> SupportedAnimatedModelExtensions = {
+	".dae"
+};
+
 static inline const Vector<String> SupportedAudioExtensions = {
 	".wav"
 };
@@ -31,15 +35,17 @@ bool IsSupported(const String& extension, const Vector<String> supportedExtensio
 /// All path arguments should be relative to Rootex root.
 class ResourceLoader
 {
-	static Assimp::Importer s_ModelLoader;
 	static HashMap<Ptr<ResourceData>, Ptr<ResourceFile>> s_ResourcesDataFiles;
 	static HashMap<ResourceFile::Type, Vector<ResourceFile*>> s_ResourceFileLibrary;
+
+	static void UpdateFileTimes(ResourceFile* resourceFile);
 
 public:
 	static TextResourceFile* CreateTextResourceFile(const String& path);
 	static TextResourceFile* CreateNewTextResourceFile(const String& path);
 	static LuaTextResourceFile* CreateLuaTextResourceFile(const String& path);
 	static AudioResourceFile* CreateAudioResourceFile(const String& path);
+	static SkeletalAnimationResourceFile* CreateSkeletalAnimationResourceFile(const String& path);
 	static VisualModelResourceFile* CreateVisualModelResourceFile(const String& path);
 	static ImageResourceFile* CreateImageResourceFile(const String& path);
 	static FontResourceFile* CreateFontResourceFile(const String& path);
@@ -49,8 +55,14 @@ public:
 	/// Reload the data buffer inside a ResourceFile from disk.
 	static void ReloadResourceData(const String& path);
 
-	static Assimp::Importer& GetModelLoader() { return s_ModelLoader; }
-	
+	/// Reload file from disk. Overwrites the data buffer after reloading file data from disk.
+	static void Reload(TextResourceFile* textFile);
+	static void Reload(AudioResourceFile* audioRes);
+	static void Reload(SkeletalAnimationResourceFile* animFile);
+	static void Reload(VisualModelResourceFile* modelFile);
+	static void Reload(ImageResourceFile* imageFile);
+	static void Reload(FontResourceFile* fontFile);
+
 	/// Get a list of files that have already been loaded and belong to a certain type
 	static Vector<ResourceFile*>& GetFilesOfType(ResourceFile::Type type);
 	/// Get a list of all files that have already been loaded

@@ -16,6 +16,8 @@ struct BasicAnimation
 
 	void interpolate(Matrix& matrix, float t);
 	
+	void addKeyframe(const Keyframe& key);
+
 	float getStartTime() const;
 	float getEndTime() const;
 };
