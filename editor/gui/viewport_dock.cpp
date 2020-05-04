@@ -111,7 +111,7 @@ void ViewportDock::draw()
 			ImGui::SetNextItemWidth(shortItemSize.x);
 			ImGui::SliderFloat("Camera Sensitivity", &m_EditorCameraSensitivity, 0.1f, 1.5f);
 			ImGui::SetNextItemWidth(shortItemSize.x);
-			ImGui::SliderFloat("Camera Speed", &m_EditorCameraSpeed, 0.1f, 1.0f);
+			ImGui::SliderFloat("Camera Speed", &m_EditorCameraSpeed, 0.1f, 50.0f);
 
 			ImGui::Unindent(2.0f);
 			
@@ -135,15 +135,6 @@ void ViewportDock::draw()
 				    &deltaMatrix.m[0][0],
 				    snap);
 				openedEntity->getComponent<TransformComponent>()->addTransform(deltaMatrix);
-
-				static float cameraDistance = 10.0f;
-				ImGui::SliderFloat("Camera Distance", &cameraDistance, 0.1f, 100.0f);
-				ImGuizmo::ViewManipulate(
-				    &view.m[0][0],
-				    cameraDistance,
-				    { 10.0f, 10.0f },
-				    { 100.0f, 100.0f },
-				    0x10101010);
 			}
 
 			if (ImGui::IsWindowHovered() && InputManager::GetSingleton()->isPressed("InputCameraActivate"))
@@ -188,27 +179,27 @@ void ViewportDock::draw()
 
 				if (InputManager::GetSingleton()->isPressed("InputCameraForward"))
 				{
-					m_ApplyCameraMatrix = Matrix::CreateTranslation(forward * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
+					m_ApplyCameraMatrix = Matrix::CreateTranslation(forward * m_EditorCameraSpeed * EditorApplication::GetSingleton()->getAppFrameTimer().getLastFrameTime() * MS_TO_S) * m_ApplyCameraMatrix;
 				}
 				if (InputManager::GetSingleton()->isPressed("InputCameraBackward"))
 				{
-					m_ApplyCameraMatrix = Matrix::CreateTranslation(-forward * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
+					m_ApplyCameraMatrix = Matrix::CreateTranslation(-forward * m_EditorCameraSpeed * EditorApplication::GetSingleton()->getAppFrameTimer().getLastFrameTime() * MS_TO_S) * m_ApplyCameraMatrix;
 				}
 				if (InputManager::GetSingleton()->isPressed("InputCameraLeft"))
 				{
-					m_ApplyCameraMatrix = Matrix::CreateTranslation(-right * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
+					m_ApplyCameraMatrix = Matrix::CreateTranslation(-right * m_EditorCameraSpeed * EditorApplication::GetSingleton()->getAppFrameTimer().getLastFrameTime() * MS_TO_S) * m_ApplyCameraMatrix;
 				}
 				if (InputManager::GetSingleton()->isPressed("InputCameraRight"))
 				{
-					m_ApplyCameraMatrix = Matrix::CreateTranslation(right * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
+					m_ApplyCameraMatrix = Matrix::CreateTranslation(right * m_EditorCameraSpeed * EditorApplication::GetSingleton()->getAppFrameTimer().getLastFrameTime() * MS_TO_S) * m_ApplyCameraMatrix;
 				}
 				if (InputManager::GetSingleton()->isPressed("InputCameraUp"))
 				{
-					m_ApplyCameraMatrix = Matrix::CreateTranslation(Vector3(0.0f, 1.0f, 0.0f) * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
+					m_ApplyCameraMatrix = Matrix::CreateTranslation(Vector3(0.0f, 1.0f, 0.0f) * m_EditorCameraSpeed * EditorApplication::GetSingleton()->getAppFrameTimer().getLastFrameTime() * MS_TO_S) * m_ApplyCameraMatrix;
 				}
 				if (InputManager::GetSingleton()->isPressed("InputCameraDown"))
 				{
-					m_ApplyCameraMatrix = Matrix::CreateTranslation(Vector3(0.0f, -1.0f, 0.0f) * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
+					m_ApplyCameraMatrix = Matrix::CreateTranslation(Vector3(0.0f, -1.0f, 0.0f) * m_EditorCameraSpeed * EditorApplication::GetSingleton()->getAppFrameTimer().getLastFrameTime() * MS_TO_S) * m_ApplyCameraMatrix;
 				}	
 			}
 			else

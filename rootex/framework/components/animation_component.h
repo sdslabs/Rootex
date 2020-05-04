@@ -27,11 +27,7 @@ class AnimationComponent : public VisualComponent
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::AnimationComponent;
 
-	virtual bool preRender() { return true; }
-	virtual bool isVisible() const { return m_IsVisible; }
-	virtual void render(RenderPass renderPass) {}
-	virtual void renderChildren(RenderPass renderPass) {}
-	virtual void postRender() {}
+	virtual void render(RenderPass renderPass);
 
 	void setAnimationFile(SkeletalAnimationResourceFile* file) { m_AnimationFile = file; }
 

@@ -119,6 +119,10 @@ void CameraComponent::draw()
 
 	if (ImGui::DragFloatRange2("Range", &m_Near, &m_Far, 0.01f, 0.1f, 1000.0f))
 	{
+		if (abs(m_Near - m_Far) < 0.00001)
+		{
+			m_Near += 0.1f;
+		}
 		refreshProjectionMatrix();
 	}
 }

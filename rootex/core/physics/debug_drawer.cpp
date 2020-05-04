@@ -1,5 +1,7 @@
 #include "debug_drawer.h"
 
+#include "core/renderer/material_library.h"
+
 #include "framework/systems/render_system.h"
 
 DebugDrawer::DebugDrawer()

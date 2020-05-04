@@ -165,11 +165,30 @@ AudioResourceFile* ResourceLoader::CreateAudioResourceFile(const String& path)
 	return audioRes;
 }
 
-void FillBoneHierarchy(Vector<int>* boneHierarchy, Map<String, int>* boneNameID, aiNode* currentNode)
+void FillBoneNames(Map<String, int>* boneNameID, const aiNode* currentNode)
 {
-	int newID = boneHierarchy->back() + 1;
-	boneHierarchy->push_back(newID);
-	boneNameID->insert({ currentNode->mName.C_Str(), newID });
+	boneNameID->insert({ currentNode->mName.C_Str(), boneNameID->size() });
+
+	for (int i = 0; i < currentNode->mNumChildren; i++)
+	{
+		FillBoneNames(boneNameID, currentNode->mChildren[i]);
+	}
+}
+
+void FillBoneHierarchy(Vector<int>& boneHierarchy, const Map<String, int>& boneNameID, const aiNode* currentNode)
+{
+	String currentName = currentNode->mName.C_Str();
+	String parentName;
+	if (currentNode->mParent)
+	{
+		parentName = currentNode->mParent->mName.C_Str();
+	}
+	else
+	{
+		parentName = currentNode->mName.C_Str();
+	}
+
+	boneHierarchy[boneNameID.at(currentName)] = boneNameID.at(parentName);
 
 	for (int i = 0; i < currentNode->mNumChildren; i++)
 	{
@@ -237,11 +256,12 @@ SkeletalAnimationResourceFile* ResourceLoader::CreateSkeletalAnimationResourceFi
 		indices.push_back(face->mIndices[2]);
 	}
 
-	Vector<int> boneHierarchy;
-	boneHierarchy.push_back(0);
 	Map<String, int> boneNameID;
-	boneNameID[scene->mRootNode->mName.C_Str()] = 0;
-	FillBoneHierarchy(&boneHierarchy, &boneNameID, scene->mRootNode);
+	FillBoneNames(&boneNameID, scene->mRootNode);
+	
+	Vector<int> boneHierarchy;
+	boneHierarchy.resize(boneNameID.size());
+	FillBoneHierarchy(boneHierarchy, boneNameID, scene->mRootNode);
 
 	Vector<Matrix> boneOffsets;
 	boneOffsets.resize(boneHierarchy.size());
@@ -286,7 +306,6 @@ SkeletalAnimationResourceFile* ResourceLoader::CreateSkeletalAnimationResourceFi
 		{
 			BasicAnimation boneAnimation;
 
-			boneAnimation.m_TranslationKeyframes.resize(currentAnimation->mNumChannels);
 			boneAnimation.m_RotationKeyframes.resize(currentAnimation->mNumChannels);
 			boneAnimation.m_ScaleKeyframes.resize(currentAnimation->mNumChannels);
 
@@ -294,11 +313,15 @@ SkeletalAnimationResourceFile* ResourceLoader::CreateSkeletalAnimationResourceFi
 			{
 				aiNodeAnim* currentChannel = currentAnimation->mChannels[channelIndex];
 				int animationBoneID = boneNameID[currentChannel->mNodeName.C_Str()];
-				
+			
+				boneAnimation.m_TranslationKeyframes.resize(currentChannel->mNumPositionKeys);
+				boneAnimation.m_RotationKeyframes.resize(currentChannel->mNumRotationKeys);
+				boneAnimation.m_ScaleKeyframes.resize(currentChannel->mNumScalingKeys);
+
 				for (int p = 0; p < currentChannel->mNumPositionKeys; p++)
 				{
 					boneAnimation.m_TranslationKeyframes[p] = { 
-						currentChannel->mPositionKeys[p].mTime, 
+						(float)currentChannel->mPositionKeys[p].mTime, 
 						{ 
 							currentChannel->mPositionKeys[p].mValue.x, 
 							currentChannel->mPositionKeys[p].mValue.y, 
@@ -309,7 +332,7 @@ SkeletalAnimationResourceFile* ResourceLoader::CreateSkeletalAnimationResourceFi
 				for (int p = 0; p < currentChannel->mNumRotationKeys; p++)
 				{
 					boneAnimation.m_RotationKeyframes[p] = { 
-						currentChannel->mRotationKeys[p].mTime,
+						(float)currentChannel->mRotationKeys[p].mTime,
 					    { 
 							currentChannel->mRotationKeys[p].mValue.x,
 					        currentChannel->mRotationKeys[p].mValue.y,
@@ -321,7 +344,7 @@ SkeletalAnimationResourceFile* ResourceLoader::CreateSkeletalAnimationResourceFi
 				for (int p = 0; p < currentChannel->mNumScalingKeys; p++)
 				{
 					boneAnimation.m_ScaleKeyframes[p] = { 
-						currentChannel->mScalingKeys[p].mTime,
+						(float)currentChannel->mScalingKeys[p].mTime,
 					    { 
 							currentChannel->mScalingKeys[p].mValue.x,
 					        currentChannel->mScalingKeys[p].mValue.y,

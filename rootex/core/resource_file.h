@@ -173,6 +173,8 @@ public:
 	unsigned int getBoneCount() const;
 	float getAnimationStartTime(const String& animationName);
 	float getAnimationEndTime(const String& animationName);
+	VertexBuffer* getVertexBuffer() { return m_VertexBuffer.get(); }
+	IndexBuffer* getIndexBuffer() { return m_IndexBuffer.get(); }
 };
 
 /// Representation of an image file. Supports BMP, JPEG, PNG, TIFF, GIF, HD Photo, or other WIC supported file containers
