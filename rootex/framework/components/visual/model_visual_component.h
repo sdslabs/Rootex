@@ -19,6 +19,10 @@ protected:
 	ModelVisualComponent(ModelVisualComponent&) = delete;
 	virtual ~ModelVisualComponent();
 
+#ifdef ROOTEX_EDITOR
+	/// Empty Vector means all materials are allowed
+	Vector<String> m_AllowedMaterials;
+#endif // ROOTEX_EDITOR
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::ModelVisualComponent;
 

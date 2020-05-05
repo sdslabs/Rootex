@@ -68,7 +68,7 @@ bool ModelVisualComponent::preRender()
 	}
 	else
 	{
-		RenderSystem::GetSingleton()->pushMatrix(Matrix::Identity);	
+		RenderSystem::GetSingleton()->pushMatrix(Matrix::Identity);
 	}
 	return true;
 }
@@ -201,9 +201,12 @@ void ModelVisualComponent::draw()
 	{
 		for (auto& [materialName, materialInfo] : MaterialLibrary::GetAllMaterials())
 		{
-			if (ImGui::Selectable((materialInfo.first + " - " + materialName).c_str()))
+			if (m_AllowedMaterials.empty() || std::find(m_AllowedMaterials.begin(), m_AllowedMaterials.end(), materialInfo.first) != m_AllowedMaterials.end())
 			{
-				setMaterial(MaterialLibrary::GetMaterial(String(materialName)));
+				if (ImGui::Selectable((materialName + " - " + materialInfo.first).c_str()))
+				{
+					setMaterial(MaterialLibrary::GetMaterial(String(materialName)));
+				}
 			}
 		}
 		ImGui::EndCombo();

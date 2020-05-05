@@ -4,9 +4,12 @@
 
 MaterialLibrary::MaterialMap MaterialLibrary::s_Materials;
 
+const String ColorMaterial::s_MaterialName = "ColoredMaterial";
+const String TexturedMaterial::s_MaterialName = "TexturedMaterial";
+
 MaterialLibrary::MaterialDatabase MaterialLibrary::s_MaterialDatabase = {
-	{ "Color Material", { ColorMaterial::CreateDefault, ColorMaterial::Create } },
-	{ "Textured Material", { TexturedMaterial::CreateDefault, TexturedMaterial::Create } }
+	{ ColorMaterial::s_MaterialName, { ColorMaterial::CreateDefault, ColorMaterial::Create } },
+	{ TexturedMaterial::s_MaterialName, { TexturedMaterial::CreateDefault, TexturedMaterial::Create } }
 };
 
 void MaterialLibrary::LoadMaterials()
@@ -21,7 +24,7 @@ void MaterialLibrary::LoadMaterials()
 			s_Materials[materialName] = { (String)materialJSON["type"], {} };
 		}
 	}
-	s_Materials["DEFAULT"] = { "Color Material", {} };
+	s_Materials["Default"] = { ColorMaterial::s_MaterialName, {} };
 }
 
 Ref<Material> MaterialLibrary::GetMaterial(const String& materialName)
@@ -66,11 +69,6 @@ Ref<Material> MaterialLibrary::GetDefaultMaterial()
 
 #ifdef ROOTEX_EDITOR
 
-MaterialLibrary::MaterialMap& MaterialLibrary::GetAllMaterials()
-{
-	return s_Materials;
-}
-
 void MaterialLibrary::SaveAll()
 {
 	for (auto& [materialName, materialInfo] : s_Materials)
@@ -84,25 +82,26 @@ void MaterialLibrary::SaveAll()
 	}
 }
 
-Ref<Material> MaterialLibrary::CreateNewMaterialFile(const String& materialName, const String& materialType)
+void MaterialLibrary::CreateNewMaterialFile(const String& materialName, const String& materialType)
 {
 	if (materialName == "Default")
 	{
-		return nullptr;
+		WARN("Cannot create another Default material");
+		return;
 	}
-	materialName += ".rmat";
+	String materialFileName = materialName + ".rmat";
 	if (s_Materials.find(materialName) == s_Materials.end())
 	{
-		TextResourceFile* materialFile = ResourceLoader::CreateTextResourceFile("game/assets/materials/" + materialName);
+		TextResourceFile* materialFile = ResourceLoader::CreateNewTextResourceFile("game/assets/materials/" + materialFileName);
 		Ref<Material> material(s_MaterialDatabase[materialType].first());
-		materialFile->putString(material->getJSON());
-		s_Materials[materialName] = { materialType, material };
-		return Ref<Material>(material);
+		materialFile->putString(material->getJSON().dump(4));
+		materialFile->putString(material->getJSON().dump(4));
+		ResourceLoader::SaveResourceFile(materialFile);
+		s_Materials[materialFileName] = { materialType, {} };
+		PRINT("Created Material- " + materialFileName + " - " + materialType);
+		return;
 	}
-	else
-	{
-		return nullptr;
-	}
+	WARN("Material already exists- " + materialName);
 }
 
 #endif // ROOTEX_EDITOR

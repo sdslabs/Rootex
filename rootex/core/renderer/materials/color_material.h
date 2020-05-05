@@ -5,6 +5,7 @@
 class ColorMaterial : public Material
 {
 public:
+	const static String s_MaterialName;
 	enum class VertexConstantBufferType
 	{
 		Model,
