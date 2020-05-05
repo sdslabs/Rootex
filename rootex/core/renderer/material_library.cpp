@@ -19,16 +19,12 @@ void MaterialLibrary::LoadMaterials()
 			TextResourceFile* materialFile = ResourceLoader::CreateNewTextResourceFile("game/assets/materials/" + materialName);
 			const JSON::json materialJSON = JSON::json::parse(materialFile->getString());
 			s_Materials[materialName] = { (String)materialJSON["type"], {} };
-
-			//#ifdef ROOTEX_EDITOR
-			//			m_MaterialList.push_back(material.stem().string());
-			//#endif // ROOTEX_EDITOR
 		}
 	}
 	s_Materials["DEFAULT"] = { "Color Material", {} };
 }
 
-Ref<Material> MaterialLibrary::GetMaterial(String& materialName)
+Ref<Material> MaterialLibrary::GetMaterial(const String& materialName)
 {
 	if (s_Materials.find(materialName) == s_Materials.end())
 	{
@@ -55,50 +51,52 @@ Ref<Material> MaterialLibrary::GetMaterial(String& materialName)
 
 Ref<Material> MaterialLibrary::GetDefaultMaterial()
 {
-	if (Ref<Material> lockedMaterial = s_Materials["DEFAULT"].second.lock())
+	if (Ref<Material> lockedMaterial = s_Materials["Default"].second.lock())
 	{
 		return lockedMaterial;
 	}
 	else
 	{
 		Ref<Material> material(ColorMaterial::CreateDefault());
-		material->setFileName(String("DEFAULT"));
-		s_Materials["DEFAULT"].second = material;
+		material->setFileName("Default");
+		s_Materials["Default"].second = material;
 		return material;
 	}
 }
 
 #ifdef ROOTEX_EDITOR
+
 MaterialLibrary::MaterialMap& MaterialLibrary::GetAllMaterials()
 {
 	return s_Materials;
 }
+
 void MaterialLibrary::SaveAll()
 {
 	for (auto& [materialName, materialInfo] : s_Materials)
 	{
-		if (Ref<Material> lockedMaterial = s_Materials["DEFAULT"].second.lock())
+		if (Ref<Material> lockedMaterial = materialInfo.second.lock())
 		{
 			TextResourceFile* materialFile = ResourceLoader::CreateNewTextResourceFile("game/assets/materials/" + materialName);
 			materialFile->putString(lockedMaterial->getJSON());
+			ResourceLoader::SaveResourceFile(materialFile);
 		}
 	}
 }
 
-Ref<Material> MaterialLibrary::CreateNewMaterialFile(String& materialName, String& materialType)
+Ref<Material> MaterialLibrary::CreateNewMaterialFile(const String& materialName, const String& materialType)
 {
-	if (materialName == "DEFAULT")
+	if (materialName == "Default")
 	{
 		return nullptr;
 	}
 	materialName += ".rmat";
 	if (s_Materials.find(materialName) == s_Materials.end())
 	{
-		TextResourceFile* materialFile = ResourceLoader::CreateNewTextResourceFile("game/assets/materials/" + materialName);
+		TextResourceFile* materialFile = ResourceLoader::CreateTextResourceFile("game/assets/materials/" + materialName);
 		Ref<Material> material(s_MaterialDatabase[materialType].first());
 		materialFile->putString(material->getJSON());
 		s_Materials[materialName] = { materialType, material };
-		//m_MaterialList.push_back(materialName);
 		return Ref<Material>(material);
 	}
 	else

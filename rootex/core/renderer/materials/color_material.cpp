@@ -3,9 +3,10 @@
 #include "framework/systems/render_system.h"
 #include "renderer/shader_library.h"
 
-ColorMaterial::ColorMaterial(Color color): m_Color(color)
+ColorMaterial::ColorMaterial(const Color& color)
+	: m_Color(color)
+    , Material(ShaderLibrary::GetDefaultShader(), "Color Material")
 {
-	m_TypeName = "Color Material";
 	m_PSConstantBuffer.resize((int)PixelConstantBufferType::End, nullptr);
 	m_VSConstantBuffer.resize((int)VertexConstantBufferType::End, nullptr);
 }
@@ -42,8 +43,7 @@ void ColorMaterial::bind()
 
 JSON::json ColorMaterial::getJSON() const
 {
-	JSON::json j;
-	j["type"] = "ColorMaterial";
+	JSON::json& j = Material::getJSON();
 	j["color"]["r"] = m_Color.x;
 	j["color"]["g"] = m_Color.y;
 	j["color"]["b"] = m_Color.z;
@@ -52,8 +52,6 @@ JSON::json ColorMaterial::getJSON() const
 }
 
 #ifdef ROOTEX_EDITOR
-#include "imgui.h"
-#include "imgui_stdlib.h"
 void ColorMaterial::draw()
 {
 	ImGui::Text("Color Material");

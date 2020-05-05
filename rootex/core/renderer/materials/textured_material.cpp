@@ -7,18 +7,16 @@
 #include "framework/systems/render_system.h"
 #include "renderer/texture.h"
 
-TexturedMaterial::TexturedMaterial(String& imagePath)
-    : Material(ShaderLibrary::GetDiffuseShader())
-    //, m_DiffuseTexture(diffuseTexture)
+TexturedMaterial::TexturedMaterial(const String& imagePath)
+    : Material(ShaderLibrary::GetDiffuseShader(), "Textured Material")
     , m_DiffuseShader(reinterpret_cast<DiffuseShader*>(m_Shader))
-    //, m_ImageFile(imageRes)
 {
-	m_TypeName = "Textured Material";
 	m_ImageFile = ResourceLoader::CreateImageResourceFile(imagePath);
 	setTexture(m_ImageFile);
 	m_SamplerState = RenderingDevice::GetSingleton()->createSamplerState();
 	m_PSConstantBuffer.resize((int)PixelConstantBufferType::End, nullptr);
 	m_VSConstantBuffer.resize((int)VertexConstantBufferType::End, nullptr);
+
 #ifdef ROOTEX_EDITOR
 	m_ImagePathUI = imagePath;
 #endif // ROOTEX_EDITOR
@@ -41,7 +39,7 @@ void TexturedMaterial::setVSConstantBuffer(const VSDiffuseConstantBuffer& consta
 
 Material* TexturedMaterial::CreateDefault()
 {
-	return new TexturedMaterial(String("rootex/assets/rootex.png"));
+	return new TexturedMaterial("rootex/assets/rootex.png");
 }
 
 Material* TexturedMaterial::Create(const JSON::json& materialData)
@@ -60,9 +58,8 @@ void TexturedMaterial::bind()
 
 JSON::json TexturedMaterial::getJSON() const
 {
-	JSON::json j;
+	JSON::json& j = Material::getJSON();
 
-	j["type"] = "Textured Material";
 	j["imageFile"] = m_ImageFile->getPath();
 
 	return j;
@@ -76,8 +73,6 @@ void TexturedMaterial::setTexture(ImageResourceFile* image)
 }
 
 #ifdef ROOTEX_EDITOR
-#include "imgui.h"
-#include "imgui_stdlib.h"
 void TexturedMaterial::draw()
 {
 	ImGui::Text("Textured Material");

@@ -16,7 +16,8 @@ public:
 		End
 	};
 
-	ColorMaterial(Color color);
+	ColorMaterial() = delete;
+	ColorMaterial(const Color& color);
 	~ColorMaterial() = default;
 
 	Color m_Color;
@@ -30,8 +31,7 @@ public:
 	void bind() override;
 	JSON::json getJSON() const override;
 
-
 #ifdef ROOTEX_EDITOR
-	void draw() override;
+	virtual void draw() override;
 #endif // ROOTEX_EDITOR
 };
