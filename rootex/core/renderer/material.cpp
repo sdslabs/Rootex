@@ -2,17 +2,20 @@
 
 #include "shader_library.h"
 
-Material::Material()
-    : m_Shader(ShaderLibrary::GetDefaultShader())
-{
-}
-
 void Material::bind()
 {
 	m_Shader->bind();
 }
 
-Material::Material(Shader* shader)
+JSON::json Material::getJSON() const
+{
+	JSON::json j;
+	j["type"] = m_TypeName;
+	return j;
+}
+
+Material::Material(Shader* shader, const String& typeName)
     : m_Shader(shader)
+    , m_TypeName(typeName)
 {
 }

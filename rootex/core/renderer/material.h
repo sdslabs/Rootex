@@ -12,7 +12,7 @@ protected:
 	String m_FileName;
 	String m_TypeName;
 
-	Material(Shader* shader);
+	Material(Shader* shader, const String& typeName);
 
 	template <typename T>
 	void setPSConstantBuffer(const T& constantBuffer, Microsoft::WRL::ComPtr<ID3D11Buffer>& pointer, UINT slot);
@@ -20,16 +20,15 @@ protected:
 	void setVSConstantBuffer(const T& constantBuffer, Microsoft::WRL::ComPtr<ID3D11Buffer>& pointer, UINT slot);
 
 public:
-	Material();
+	Material() = delete;
 	virtual ~Material() = default;
 	virtual void bind();
-	// TODO- Make this purely virtual
 	virtual void draw() = 0;
 	String getFileName() { return m_FileName; };
 	String getTypeName() { return m_TypeName; };
 	String getFullName() { return m_FileName + " - " + m_TypeName; };
-	void setFileName(String& fileName) { m_FileName = fileName; };
-	virtual JSON::json getJSON() const = 0;
+	void setFileName(const String& fileName) { m_FileName = fileName; };
+	virtual JSON::json getJSON() const;
 };
 
 template <typename T>

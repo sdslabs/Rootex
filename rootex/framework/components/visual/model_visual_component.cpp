@@ -25,14 +25,14 @@ Component* ModelVisualComponent::CreateDefault()
 {
 	ModelVisualComponent* modelVisualComponent = new ModelVisualComponent(
 	    RenderPassMain,
-	    MaterialLibrary::GetDefaultMaterial(), //change
+	    MaterialLibrary::GetDefaultMaterial(),
 	    ResourceLoader::CreateVisualModelResourceFile("rootex/assets/cube.obj"),
 	    true);
 
 	return modelVisualComponent;
 }
 
-ModelVisualComponent::ModelVisualComponent(const unsigned int& renderPassSetting, Ref<Material> material, VisualModelResourceFile* resFile, bool visibility) //change
+ModelVisualComponent::ModelVisualComponent(const unsigned int& renderPassSetting, Ref<Material> material, VisualModelResourceFile* resFile, bool visibility)
     : VisualComponent(renderPassSetting, visibility)
     , m_Material(material)
     , m_VisualModelResourceFile(resFile)
@@ -119,7 +119,7 @@ void ModelVisualComponent::setVisualModel(VisualModelResourceFile* newModel)
 	m_VisualModelResourceFile = newModel;
 }
 
-void ModelVisualComponent::setMaterial(Ref<Material>& material) //change
+void ModelVisualComponent::setMaterial(Ref<Material>& material)
 {
 	m_Material = material;
 }

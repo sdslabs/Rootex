@@ -29,7 +29,9 @@ public:
 		Material,
 		End
 	};
-	TexturedMaterial(String& imagePath);
+
+	TexturedMaterial() = delete;
+	TexturedMaterial(const String& imagePath);
 	~TexturedMaterial() = default;
 
 	void setPSConstantBuffer(const PSDiffuseConstantBufferLights& constantBuffer);
