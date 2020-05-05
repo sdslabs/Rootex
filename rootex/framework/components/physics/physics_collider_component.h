@@ -37,8 +37,6 @@ public:
 	std::string m_MaterialName;
 	Vector3 m_Gravity;
 #endif // ROOTEX_EDITOR
-
-	Color m_RenderColor;
 	
 	/// btMotionState interface:  Bullet calls this to get the transform of the object from game.
 	virtual void getWorldTransform(btTransform& worldTrans) const;
