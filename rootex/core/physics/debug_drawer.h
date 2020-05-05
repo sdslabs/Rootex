@@ -1,14 +1,17 @@
 #pragma once
 
 #include "common/common.h"
-#include "core/renderer/materials/color_material.h"
+#include "core/renderer/material_library.h"
 #include "Bullet3D/src/LinearMath/btIDebugDraw.h"
 
 class DebugDrawer : public btIDebugDraw
 {
-	ColorMaterial m_ColorMaterial;
+	Ref<Material> m_ColorMaterial;
 
 public:
+	DebugDrawer();
+	DebugDrawer(DebugDrawer&) = delete;
+	~DebugDrawer() = default;
 	virtual void drawLine(const btVector3& from, const btVector3& to, const btVector3& color) override;
 	virtual void drawContactPoint(const btVector3& PointOnB, const btVector3& normalOnB, btScalar distance, int lifeTime, const btVector3& color) override;
 	virtual void reportErrorWarning(const char* warningString) override;

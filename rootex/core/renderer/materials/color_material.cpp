@@ -23,7 +23,7 @@ void ColorMaterial::setVSConstantBuffer(const VSSolidConstantBuffer& constantBuf
 
 Material* ColorMaterial::CreateDefault()
 {
-	return new ColorMaterial({0.5f, 0.5f, 0.5f, 1.0f});
+	return new ColorMaterial({ 0.5f, 0.5f, 0.5f, 1.0f });
 }
 
 Material* ColorMaterial::Create(const JSON::json& materialData)

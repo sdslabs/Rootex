@@ -2,16 +2,21 @@
 
 #include "framework/systems/render_system.h"
 
+DebugDrawer::DebugDrawer()
+{
+	m_ColorMaterial = MaterialLibrary::GetDefaultMaterial();
+}
+
 void DebugDrawer::drawLine(const btVector3& from, const btVector3& to, const btVector3& color)
 {
 	VertexBuffer vb({ 
 		from.x(), from.y(), from.z(),
 	    to.x(), to.y(), to.z() });
 	IndexBuffer ib({ 0, 1 });
-	m_ColorMaterial.setPSConstantBuffer({ { color.x(), color.y(), color.z(), 1.0f } });
+	dynamic_cast<ColorMaterial*>(m_ColorMaterial.get())->setPSConstantBuffer({ { color.x(), color.y(), color.z(), 1.0f } });
 
 	RenderSystem::GetSingleton()->enableLineRenderMode();
-	RenderSystem::GetSingleton()->getRenderer()->draw(&vb, &ib, &m_ColorMaterial);
+	RenderSystem::GetSingleton()->getRenderer()->draw(&vb, &ib, m_ColorMaterial.get());
 	RenderSystem::GetSingleton()->resetRenderMode();
 }
 
