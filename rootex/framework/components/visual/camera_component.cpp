@@ -46,7 +46,7 @@ void CameraComponent::refreshViewMatrix()
 
 void CameraComponent::onRemove()
 {
-	if (m_Active)
+	if (RenderSystem::GetSingleton()->getCamera() == this)
 	{
 		RenderSystem::GetSingleton()->restoreCamera();
 	}

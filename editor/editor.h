@@ -11,6 +11,7 @@
 #include "gui/viewport_dock.h"
 #include "gui/inspector_dock.h"
 #include "gui/file_viewer.h"
+#include "gui/classes_dock.h"
 
 #include "vendor/ImGUI/imgui.h"
 #include "vendor/ImGUI/imgui_impl_dx11.h"
@@ -26,6 +27,8 @@ class Editor
 	unsigned int m_EditorStyleColorPushCount;
 	unsigned int m_EditorStyleVarPushCount;
 	bool m_WireframeMode = false;
+	bool m_CollisionMode = false;
+	bool m_WorldMode = true;
 
 	struct Colors
 	{
@@ -50,6 +53,7 @@ class Editor
 	Ptr<ViewportDock> m_Viewport;
 	Ptr<InspectorDock> m_Inspector;
 	Ptr<FileViewer> m_FileViewer;
+	Ptr<ClassesDock> m_Classes;
 
 	Editor() = default;
 	Editor(Editor&) = delete;

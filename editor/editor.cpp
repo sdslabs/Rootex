@@ -7,6 +7,7 @@
 #include "core/input/input_manager.h"
 #include "framework/components/hierarchy_component.h"
 #include "framework/systems/render_system.h"
+#include "framework/systems/physics_system.h"
 #include "editor_application.h"
 #include "main/window.h"
 
@@ -100,6 +101,7 @@ void Editor::initialize(HWND hWnd, const JSON::json& projectJSON)
 	m_Viewport.reset(new ViewportDock(projectJSON["viewport"]));
 	m_Inspector.reset(new InspectorDock());
 	m_FileViewer.reset(new FileViewer());
+	m_Classes.reset(new ClassesDock());
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -123,6 +125,7 @@ void Editor::render()
 
 	drawDefaultUI();
 	m_FileSystem->draw();
+	m_Classes->draw();
 	m_Hierarchy->draw();
 	m_Toolbar->draw();
 	m_Viewport->draw();
@@ -134,7 +137,14 @@ void Editor::render()
 	ImGui::PopStyleVar(m_EditorStyleVarPushCount);
 
 	RenderingDevice::GetSingleton()->setTextureRenderTarget();
-	RenderSystem::GetSingleton()->render();
+	if (m_WorldMode)
+	{
+		RenderSystem::GetSingleton()->render();
+	}
+	if (m_CollisionMode)
+	{
+		PhysicsSystem::GetSingleton()->debugDraw();
+	}
 	RenderingDevice::GetSingleton()->setBackBufferRenderTarget();
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
@@ -329,6 +339,10 @@ void Editor::drawDefaultUI()
 						RenderSystem::GetSingleton()->resetDefaultRasterizer();
 					}
 				}
+				
+				ImGui::Checkbox("Collision Mode", &m_CollisionMode);
+				ImGui::Checkbox("World Mode", &m_WorldMode);
+
 				bool fullscreen = Extract(bool, EventManager::GetSingleton()->returnCall("WindowGetScreenState", "WindowGetScreenState", 0));
 				if (ImGui::Checkbox("Full Screen", &fullscreen))
 				{
@@ -564,7 +578,7 @@ Variant Editor::autoSave(const Event* event)
 Variant Editor::openLevel(const Event* event)
 {
 	String levelPath(Extract(String, event->getData()));
-	LevelManager::GetSingleton()->openLevel(levelPath);
+	LevelManager::GetSingleton()->openLevel(levelPath, true);
 	SetWindowText(GetActiveWindow(), ("Rootex Editor: " + LevelManager::GetSingleton()->getCurrentLevelName()).c_str());
 
 	return true;

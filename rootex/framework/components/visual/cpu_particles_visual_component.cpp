@@ -13,23 +13,23 @@ Component* CPUParticlesVisualComponent::Create(const JSON::json& componentData)
 		    componentData["velocity"]["y"],
 		    componentData["velocity"]["z"] 
 		},
-		{ 
-			componentData["angularVelocity"]["x"],
-		    componentData["angularVelocity"]["y"],
-		    componentData["angularVelocity"]["z"],
-		    componentData["angularVelocity"]["w"] 
+		{
+			componentData["angularVelocity"]["x"], 
+			componentData["angularVelocity"]["y"], 
+			componentData["angularVelocity"]["z"], 
+			componentData["angularVelocity"]["w"] 
 		},
-		{ 
-			componentData["colorBegin"]["r"],
-		    componentData["colorBegin"]["g"],
-		    componentData["colorBegin"]["b"],
-		    componentData["colorBegin"]["a"] 
+		{
+			componentData["colorBegin"]["r"], 
+			componentData["colorBegin"]["g"], 
+			componentData["colorBegin"]["b"], 
+			componentData["colorBegin"]["a"] 
 		},
-		{ 
-			componentData["colorEnd"]["r"],
-		    componentData["colorEnd"]["g"],
-		    componentData["colorEnd"]["b"],
-		    componentData["colorEnd"]["a"] 
+		{
+			componentData["colorEnd"]["r"], 
+			componentData["colorEnd"]["g"], 
+			componentData["colorEnd"]["b"], 
+			componentData["colorEnd"]["a"] 
 		},
 		componentData["velocityVariation"],
 		componentData["sizeBegin"],
@@ -138,7 +138,7 @@ void CPUParticlesVisualComponent::render(RenderPass renderPass)
 
 void CPUParticlesVisualComponent::postRender()
 {
-	VisualComponent::postRender();
+	ModelVisualComponent::postRender();
 	m_LastRenderTimePoint = std::chrono::high_resolution_clock::now();
 }
 

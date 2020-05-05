@@ -23,7 +23,6 @@ Application::Application(const String& settingsFile)
 	}
 	
 	LuaInterpreter::GetSingleton();
-	PhysicsSystem::GetSingleton()->initialize();
 	
 	JSON::json windowJSON = m_ApplicationSettings->getJSON()["window"];
 	m_Window.reset(new Window(
@@ -39,6 +38,7 @@ Application::Application(const String& settingsFile)
 
 	ShaderLibrary::MakeShaders();
 	MaterialLibrary::LoadMaterials();
+	PhysicsSystem::GetSingleton()->initialize();
 
 	auto&& postInitialize = m_ApplicationSettings->find("postInitialize");
 	if (postInitialize != m_ApplicationSettings->end())

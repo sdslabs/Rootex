@@ -13,6 +13,7 @@ void HierarchyDock::showHierarchySubTree(HierarchyComponent* hierarchy)
 	if (hierarchy)
 	{
 		Ref<Entity> node = hierarchy->getOwner();
+
 		if (ImGui::TreeNodeEx(("##" + std::to_string(node->getID())).c_str(), ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_AllowItemOverlap | (hierarchy->getChildren().size() ? ImGuiTreeNodeFlags_None : ImGuiTreeNodeFlags_Leaf)))
 		{
 			ImGui::SameLine();
@@ -32,6 +33,33 @@ void HierarchyDock::showHierarchySubTree(HierarchyComponent* hierarchy)
 				{
 					openEntity(node);
 				}
+			}
+
+			if (ImGui::BeginDragDropSource())
+			{
+				ImGui::SetDragDropPayload("RearrangeEntity", &node, sizeof(Ref<Entity>));
+				ImGui::Text(node->getFullName().c_str());
+				ImGui::EndDragDropSource();
+			}
+
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("EntityClass"))
+				{
+					const char* newEntityFile = (const char*)payload->Data;
+					Ref<Entity> entity = EntityFactory::GetSingleton()->createEntity(ResourceLoader::CreateTextResourceFile(newEntityFile));
+					HierarchySystem::GetSingleton()->getRootHierarchyComponent()->addChild(entity);
+					node->getComponent<HierarchyComponent>()->snatchChild(entity);
+					openEntity(entity);
+				}
+
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("RearrangeEntity"))
+				{
+					Ref<Entity> rearrangeEntity = *(Ref<Entity>*)(payload->Data);
+					node->getComponent<HierarchyComponent>()->snatchChild(rearrangeEntity);
+					openEntity(rearrangeEntity);
+				}
+				ImGui::EndDragDropTarget();
 			}
 
 			ImGui::PopStyleColor(1);

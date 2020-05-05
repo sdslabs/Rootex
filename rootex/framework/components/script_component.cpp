@@ -101,6 +101,11 @@ void ScriptComponent::onEnd()
 	isSuccessful(m_Env["onEnd"](m_Owner));
 }
 
+void ScriptComponent::onHit(btPersistentManifold* manifold, PhysicsColliderComponent* other)
+{
+	isSuccessful(m_Env["onHit"](m_Owner, manifold, other));
+}
+
 JSON::json ScriptComponent::getJSON() const
 {
 	JSON::json j;
@@ -219,6 +224,23 @@ void ScriptComponent::draw()
 		}
 		ImGui::Columns(1);
 		ImGui::ListBoxFooter();
+	}
+
+	static String functionName;
+	ImGui::InputText("##ConnectionFunction", &functionName);
+	ImGui::SameLine();
+	static String eventName;
+	ImGui::InputText("##ConnectionEvent", &eventName);
+	if (ImGui::Button("Connect"))
+	{
+		if (!functionName.empty() && !eventName.empty())
+		{
+			connect(functionName, eventName);
+		}
+		else
+		{
+			WARN("Provide function name to connect from and an event name to connect to");
+		}
 	}
 }
 #endif // ROOTEX_EDITOR

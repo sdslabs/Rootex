@@ -1,7 +1,13 @@
 #include "physics_system.h"
-#include "common/common.h"
-#include "components/physics/physics_collider_component.h"
+
 #include "core/resource_loader.h"
+
+#include "common/common.h"
+
+#include "components/physics/physics_collider_component.h"
+#include "components/script_component.h"
+
+#include "os/timer.h"
 
 #include "BulletCollision/NarrowPhaseCollision/btRaycastCallback.h"
 
@@ -29,8 +35,10 @@ void PhysicsSystem::initialize()
 		return;
 	}
 
-	m_DynamicsWorld->setInternalTickCallback(internalTickCallback);
+	m_DynamicsWorld->setInternalTickCallback(InternalTickCallback);
 	m_DynamicsWorld->setWorldUserInfo(this);
+	m_DynamicsWorld->setDebugDrawer(&m_DebugDrawer);
+	m_DynamicsWorld->getDebugDrawer()->setDebugMode(btIDebugDraw::DBG_DrawWireframe);
 }
 
 PhysicsSystem::~PhysicsSystem()
@@ -84,7 +92,7 @@ btCollisionWorld::ClosestRayResultCallback PhysicsSystem::reportClosestRayHits(c
 
 // This function is called after bullet performs its internal update.
 // To detect collisions between objects.
-void PhysicsSystem::internalTickCallback(btDynamicsWorld* const world, btScalar const timeStep)
+void PhysicsSystem::InternalTickCallback(btDynamicsWorld* const world, btScalar const timeStep)
 {
 	PhysicsSystem* const physicsSystem = static_cast<PhysicsSystem*>(world->getWorldUserInfo());
 
@@ -92,41 +100,49 @@ void PhysicsSystem::internalTickCallback(btDynamicsWorld* const world, btScalar 
 	btDispatcher* const dispatcher = world->getDispatcher();
 	for (int manifoldIdx = 0; manifoldIdx < dispatcher->getNumManifolds(); ++manifoldIdx)
 	{
-		// get the "manifold",the set of data corresponding to a contact point
-		//  between two physics objects
-		btPersistentManifold const* const manifold = dispatcher->getManifoldByIndexInternal(manifoldIdx);
+		// get the "manifold", the set of data corresponding to a contact point
+		// between two physics objects
+		btPersistentManifold* manifold = dispatcher->getManifoldByIndexInternal(manifoldIdx);
 
 		// get the two bodies used in the manifold.
 		btRigidBody const* const body0 = static_cast<btRigidBody const*>(manifold->getBody0());
 		btRigidBody const* const body1 = static_cast<btRigidBody const*>(manifold->getBody1());
 
-		WARN("Body collided");
+		PhysicsColliderComponent* collider0 = (PhysicsColliderComponent*)body0->getUserPointer();
+		PhysicsColliderComponent* collider1 = (PhysicsColliderComponent*)body1->getUserPointer();
+
+		if (collider0->getIsGeneratesHitEvents())
+		{
+			if (collider0->getScriptComponent())
+			{
+				collider0->getScriptComponent()->onHit(manifold, collider1);
+			}
+		}
+		if (collider1->getIsGeneratesHitEvents())
+		{
+			if (collider1->getScriptComponent())
+			{
+				collider1->getScriptComponent()->onHit(manifold, collider0);
+			}
+		}
 	}
+}
+
+void PhysicsSystem::debugDraw()
+{
+	for (auto& component : s_Components[PhysicsColliderComponent::s_ID])
+	{
+		PhysicsColliderComponent* p = (PhysicsColliderComponent*)component;
+		p->render();
+	}
+}
+
+void PhysicsSystem::debugDrawComponent(const btTransform& worldTransform, const btCollisionShape* shape, const btVector3& color)
+{
+	m_DynamicsWorld->debugDrawObject(worldTransform, shape, color);
 }
 
 void PhysicsSystem::update(float deltaMilliseconds)
 {
-	m_DynamicsWorld->stepSimulation(deltaMilliseconds, 10);
-	syncVisibleScene();
-}
-
-void PhysicsSystem::syncVisibleScene()
-{
-	const Vector<Component*>& physicsComponents = s_Components[PhysicsColliderComponent::s_ID];
-
-	for (auto& physicsComponent : physicsComponents)
-	{
-		PhysicsColliderComponent* const component = static_cast<PhysicsColliderComponent*>(physicsComponent);
-		if (component)
-		{
-			Ref<TransformComponent> ptc = component->m_TransformComponent;
-			if (ptc)
-			{
-				if (ptc->getParentAbsoluteTransform() != component->m_MotionState.m_WorldToPositionTransform)
-				{
-					ptc->setTransform(component->m_MotionState.m_WorldToPositionTransform);
-				}
-			}
-		}
-	}
+	m_DynamicsWorld->stepSimulation(deltaMilliseconds * MS_TO_S, 10);
 }

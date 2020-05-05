@@ -47,30 +47,19 @@ void Window::swapBuffers()
 	RenderingDevice::GetSingleton()->swapBuffers();
 }
 
-void Window::clipCursor()
-{
-	static RECT clip;
-	GetClientRect(m_WindowHandle, &clip);
-
-	ClipCursor(&clip);
-}
-
 void Window::clipCursor(RECT clip)
 {
 	ClipCursor(&clip);
 }
 
+void Window::resetClipCursor()
+{
+	ClipCursor(nullptr);
+}
+
 void Window::showCursor(bool enabled)
 {
-	int result = ShowCursor(enabled);
-	if (result >= 0)
-	{
-		PRINT("Cursor is shown");
-	}
-	else
-	{
-		PRINT("Cursor is hidden")	
-	}
+	ShowCursor(enabled);
 }
 
 void Window::clearCurrentTarget()
@@ -211,8 +200,6 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
 		    rWidth,
 		    rHeight,
 		    MSAA);
-
-		showCursor(false);
 
 		RenderingDevice::GetSingleton()->setBackBufferRenderTarget();
 	}
