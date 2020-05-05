@@ -20,11 +20,11 @@ public:
 	static void LoadMaterials();
 	static Ref<Material> GetMaterial(const String& materialName);
 	static Ref<Material> GetDefaultMaterial();
+	static void SaveAll();
+
 #ifdef ROOTEX_EDITOR
 	static MaterialMap& GetAllMaterials() { return s_Materials; };
 	static MaterialDatabase& GetMaterialDatabase() { return s_MaterialDatabase; };
-	static void SaveAll();
 	static void CreateNewMaterialFile(const String& materialName, const String& materialType);
-
 #endif // ROOTEX_EDITOR
 };
