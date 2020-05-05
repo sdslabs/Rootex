@@ -17,3 +17,5 @@ function onUpdate(delta, entity)
     end
 end
 
+function onEnd()
+end

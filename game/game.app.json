@@ -1,9 +1,9 @@
 {
     "project": "Rootex Game",
-    "startLevel": "game/assets/levels/level_0",
+    "startLevel": "game/assets/levels/flappy_bird",
     "version": 1.0,
     "window": {
-        "fullScreen": true,
+        "fullScreen": false,
         "height": 1080,
         "isEditor": false,
         "msaa": true,

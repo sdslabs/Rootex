@@ -18,7 +18,7 @@ void HierarchySystem::setParentAndChildren(HashMap<EntityID, Ref<Entity>>& entit
 	{
 		if (entity.second->getID() != ROOT_ENTITY_ID)
 		{
-			HierarchyComponent* hierarchyComponent = entity.second->getComponent<HierarchyComponent>().get();
+			Ref<HierarchyComponent> hierarchyComponent = entity.second->getComponent<HierarchyComponent>();
 			if (hierarchyComponent)
 			{
 				hierarchyComponent->m_Parent = entities.find(hierarchyComponent->m_ParentID)->second->getComponent<HierarchyComponent>().get();

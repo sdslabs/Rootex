@@ -3,6 +3,9 @@
 #include "component.h"
 #include "event_manager.h"
 #include "script/interpreter.h"
+#include "physics/physics_collider_component.h"
+
+#include "btBulletDynamicsCommon.h"
 
 class ScriptComponent : public Component
 {
@@ -34,6 +37,7 @@ public:
 	void onBegin();
 	virtual void onUpdate(float deltaMilliSeconds);
 	void onEnd();
+	void onHit(btPersistentManifold* manifold, PhysicsColliderComponent* other);
 
 	LuaTextResourceFile* getScript() const { return m_ScriptFile; }
 	ComponentID getComponentID() const override { return s_ID; }

@@ -64,6 +64,7 @@ class FrameTimer : public LoggingScopeTimer
 {
 	unsigned long long int m_FrameCount;
 	std::chrono::time_point<std::chrono::high_resolution_clock> m_FrameStartTime;
+	float m_LastFrameTime;
 
 public:
 	FrameTimer();
@@ -77,4 +78,6 @@ public:
 
 	/// Call at the end of the frame for accurate results.
 	float getFrameTime() const { return (s_Clock.now() - m_FrameStartTime).count() * NS_TO_MS; }
+	float getLastFrameTime() const { return m_LastFrameTime; }
+	float getLastFPS() const { return 1.0f / (m_LastFrameTime * MS_TO_S); }
 };
