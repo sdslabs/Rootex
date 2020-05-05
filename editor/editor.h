@@ -67,6 +67,7 @@ class Editor
 	Variant saveBeforeQuit(const Event* event);
 	Variant createNewLevel(const Event* event);
 	Variant createNewEntity(const Event* event);
+	Variant createNewMaterial(const Event* event);
 
 public:
 	static Editor* GetSingleton();

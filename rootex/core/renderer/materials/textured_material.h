@@ -18,6 +18,7 @@ class TexturedMaterial : public Material
 	String m_ImagePathUI;
 #endif // ROOTEX_EDITOR
 public:
+	const static String s_MaterialName;
 	enum class VertexConstantBufferType
 	{
 		Model,

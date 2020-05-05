@@ -5,7 +5,7 @@
 
 ColorMaterial::ColorMaterial(const Color& color)
 	: m_Color(color)
-    , Material(ShaderLibrary::GetDefaultShader(), "Color Material")
+    , Material(ShaderLibrary::GetDefaultShader(), ColorMaterial::s_MaterialName)
 {
 	m_PSConstantBuffer.resize((int)PixelConstantBufferType::End, nullptr);
 	m_VSConstantBuffer.resize((int)VertexConstantBufferType::End, nullptr);
@@ -54,7 +54,7 @@ JSON::json ColorMaterial::getJSON() const
 #ifdef ROOTEX_EDITOR
 void ColorMaterial::draw()
 {
-	ImGui::Text("Color Material");
+	ImGui::Text(ColorMaterial::s_MaterialName.c_str());
 	ImGui::ColorEdit4("Color", &m_Color.x);
 }
 #endif // ROOTEX_EDITOR

@@ -8,7 +8,7 @@
 #include "renderer/texture.h"
 
 TexturedMaterial::TexturedMaterial(const String& imagePath)
-    : Material(ShaderLibrary::GetDiffuseShader(), "Textured Material")
+    : Material(ShaderLibrary::GetDiffuseShader(), TexturedMaterial::s_MaterialName)
     , m_DiffuseShader(reinterpret_cast<DiffuseShader*>(m_Shader))
 {
 	m_ImageFile = ResourceLoader::CreateImageResourceFile(imagePath);
@@ -73,9 +73,10 @@ void TexturedMaterial::setTexture(ImageResourceFile* image)
 }
 
 #ifdef ROOTEX_EDITOR
+#include "imgui_stdlib.h"
 void TexturedMaterial::draw()
 {
-	ImGui::Text("Textured Material");
+	ImGui::Text(TexturedMaterial::s_MaterialName.c_str());
 	m_ImagePathUI = m_ImageFile->getPath().string();
 	if (ImGui::InputText("Texture", &m_ImagePathUI, ImGuiInputTextFlags_EnterReturnsTrue))
 	{

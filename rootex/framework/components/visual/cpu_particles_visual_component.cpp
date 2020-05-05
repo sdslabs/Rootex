@@ -53,6 +53,7 @@ CPUParticlesVisualComponent::CPUParticlesVisualComponent(size_t poolSize, const 
     , m_ParticleTemplate(particleTemplate)
     , m_TransformComponent(nullptr)
 {
+	m_AllowedMaterials = { ColorMaterial::s_MaterialName };
 	m_ParticlePool.resize(poolSize);
 	m_PoolIndex = poolSize - 1;
 	m_LastRenderTimePoint = std::chrono::high_resolution_clock::now();
@@ -218,22 +219,5 @@ void CPUParticlesVisualComponent::draw()
 	ImGui::DragFloat("Size End", &m_ParticleTemplate.m_SizeEnd, 0.01f);
 	ImGui::DragFloat("Size Variation", &m_ParticleTemplate.m_SizeVariation, 0.01f);
 	ImGui::DragFloat("Lifetime", &m_ParticleTemplate.m_LifeTime, 0.01f);
-
-	if (ImGui::BeginCombo("Material", m_Material->getFullName().c_str()))
-	{
-		for (auto& [materialName, materialInfo] : MaterialLibrary::GetAllMaterials())
-		{
-			if (materialInfo.first == "Color Material")
-			{
-				if (ImGui::Selectable((materialName + " - " + materialInfo.first).c_str()))
-				{
-					setMaterial(MaterialLibrary::GetMaterial(materialName));
-				}
-			}
-		}
-		ImGui::EndCombo();
-	}
-
-	m_Material->draw();
 }
 #endif // ROOTEX_EDITOR
