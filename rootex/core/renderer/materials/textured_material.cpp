@@ -60,7 +60,7 @@ JSON::json TexturedMaterial::getJSON() const
 {
 	JSON::json& j = Material::getJSON();
 
-	j["imageFile"] = m_ImageFile->getPath();
+	j["imageFile"] = m_ImageFile->getPath().string();
 
 	return j;
 }

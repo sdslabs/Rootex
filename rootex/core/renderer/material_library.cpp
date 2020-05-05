@@ -67,20 +67,24 @@ Ref<Material> MaterialLibrary::GetDefaultMaterial()
 	}
 }
 
-#ifdef ROOTEX_EDITOR
-
 void MaterialLibrary::SaveAll()
 {
 	for (auto& [materialName, materialInfo] : s_Materials)
 	{
+		if (materialName == "Default")
+		{
+			continue;
+		}
 		if (Ref<Material> lockedMaterial = materialInfo.second.lock())
 		{
-			TextResourceFile* materialFile = ResourceLoader::CreateNewTextResourceFile("game/assets/materials/" + materialName);
-			materialFile->putString(lockedMaterial->getJSON());
+			TextResourceFile* materialFile = ResourceLoader::CreateTextResourceFile("game/assets/materials/" + materialName);
+			materialFile->putString(lockedMaterial->getJSON().dump(4));
 			ResourceLoader::SaveResourceFile(materialFile);
 		}
 	}
 }
+
+#ifdef ROOTEX_EDITOR
 
 void MaterialLibrary::CreateNewMaterialFile(const String& materialName, const String& materialType)
 {
@@ -94,7 +98,6 @@ void MaterialLibrary::CreateNewMaterialFile(const String& materialName, const St
 	{
 		TextResourceFile* materialFile = ResourceLoader::CreateNewTextResourceFile("game/assets/materials/" + materialFileName);
 		Ref<Material> material(s_MaterialDatabase[materialType].first());
-		materialFile->putString(material->getJSON().dump(4));
 		materialFile->putString(material->getJSON().dump(4));
 		ResourceLoader::SaveResourceFile(materialFile);
 		s_Materials[materialFileName] = { materialType, {} };

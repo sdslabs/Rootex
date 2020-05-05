@@ -543,6 +543,7 @@ Variant Editor::saveAll(const Event* event)
 {
 	if (LevelManager::GetSingleton()->isAnyLevelOpen())
 	{
+		MaterialLibrary::SaveAll();
 		LevelManager::GetSingleton()->saveCurrentLevel();
 		PRINT("Successfully saved level: " + LevelManager::GetSingleton()->getCurrentLevelName());
 	}
