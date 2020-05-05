@@ -49,7 +49,7 @@ Component* CPUParticlesVisualComponent::CreateDefault()
 }
 
 CPUParticlesVisualComponent::CPUParticlesVisualComponent(size_t poolSize, const String& particleModelPath, const ParticleTemplate& particleTemplate, Ref<Material> material, bool visibility)
-    : ModelVisualComponent(RenderPassMain, Ref<Material>(material), ResourceLoader::CreateVisualModelResourceFile(particleModelPath), visibility)
+    : ModelVisualComponent(RenderPassMain, material, ResourceLoader::CreateVisualModelResourceFile(particleModelPath), visibility)
     , m_ParticleTemplate(particleTemplate)
     , m_TransformComponent(nullptr)
 {
