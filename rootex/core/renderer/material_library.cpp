@@ -85,6 +85,10 @@ void MaterialLibrary::SaveAll()
 }
 
 #ifdef ROOTEX_EDITOR
+MaterialLibrary::MaterialMap& MaterialLibrary::GetAllMaterials()
+{
+	return s_Materials;
+}
 
 void MaterialLibrary::CreateNewMaterialFile(const String& materialName, const String& materialType)
 {
