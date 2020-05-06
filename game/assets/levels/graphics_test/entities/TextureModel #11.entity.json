@@ -4,17 +4,11 @@
             "children": [],
             "parent": 1
         },
-        "TexturedModelVisualComponent": {
-            "color": {
-                "a": 1.0,
-                "b": 0.0,
-                "g": 0.0,
-                "r": 0.0
-            },
+        "ModelVisualComponent": {
             "isVisible": true,
+            "material": "blue_textured.rmat",
             "renderPass": 5,
-            "resFile": "game\\assets\\test\\teapot.obj",
-            "texturePath": "game\\assets\\test\\blue.png"
+            "resFile": "game\\assets\\test\\teapot.obj"
         },
         "TransformComponent": {
             "position": {
