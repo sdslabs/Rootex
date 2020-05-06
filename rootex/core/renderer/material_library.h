@@ -4,6 +4,7 @@
 
 #include "materials/color_material.h"
 #include "materials/textured_material.h"
+#include "materials/animated_material.h"
 
 class MaterialLibrary
 {

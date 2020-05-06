@@ -70,8 +70,17 @@ class CPUParticlesShader : public Shader
 class GridShader : public Shader
 {
 	GridShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat);
-	GridShader(ColorShader&) = delete;
+	GridShader(GridShader&) = delete;
 	~GridShader() = default;
+
+	friend class ShaderLibrary;
+};
+
+class AnimationShader : public Shader
+{
+	AnimationShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat);
+	AnimationShader(AnimationShader&) = delete;
+	~AnimationShader() = default;
 
 	friend class ShaderLibrary;
 };

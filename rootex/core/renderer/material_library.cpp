@@ -5,6 +5,7 @@
 MaterialLibrary::MaterialMap MaterialLibrary::s_Materials;
 
 const String ColorMaterial::s_MaterialName = "ColoredMaterial";
+const String AnimationMaterial::s_MaterialName = "AnimationMaterial";
 const String TexturedMaterial::s_MaterialName = "TexturedMaterial";
 
 MaterialLibrary::MaterialDatabase MaterialLibrary::s_MaterialDatabase = {
@@ -31,7 +32,7 @@ Ref<Material> MaterialLibrary::GetMaterial(const String& materialName)
 {
 	if (s_Materials.find(materialName) == s_Materials.end())
 	{
-		WARN("Material file not found, returning stand-in Material");
+		WARN("Material file not found, returning stand-in Material for: " + materialName);
 		return GetDefaultMaterial();
 	}
 	else

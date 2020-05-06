@@ -4,6 +4,7 @@
 
 #include "core/resource_file.h"
 #include "core/animation/skeletal_animation.h"
+#include "core/renderer/materials/animated_material.h"
 
 #include "framework/components/visual/visual_component.h"
 
@@ -18,16 +19,20 @@ class AnimationComponent : public VisualComponent
 	float m_CurrentTimePosition;
 	String m_CurrentClipName;
 	Vector<Matrix> m_FinalTransforms;
-	Ref<Material> m_Material;
+	Ref<AnimationMaterial> m_Material;
 
 	AnimationComponent(RenderPass renderPass, bool isVisible, SkeletalAnimationResourceFile* animationFile);
 	AnimationComponent(AnimationComponent&) = delete;
 	~AnimationComponent() = default;
 
+	friend class AnimationSystem;
+
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::AnimationComponent;
 
+	virtual bool preRender() override;
 	virtual void render(RenderPass renderPass);
+	virtual void postRender() override;
 
 	void setAnimationFile(SkeletalAnimationResourceFile* file) { m_AnimationFile = file; }
 

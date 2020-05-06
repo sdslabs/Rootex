@@ -23,16 +23,36 @@ Component* AnimationComponent::CreateDefault()
 AnimationComponent::AnimationComponent(RenderPass renderPass, bool isVisible, SkeletalAnimationResourceFile* animationFile)
     : VisualComponent(renderPass, isVisible)
 	, m_AnimationFile(animationFile)
-    , m_Material(MaterialLibrary::GetDefaultMaterial())
+    , m_Material(std::dynamic_pointer_cast<AnimationMaterial>(MaterialLibrary::GetMaterial("AnimationMaterial")))
 {
+	m_FinalTransforms.resize(m_AnimationFile->getBoneCount());
+}
+
+bool AnimationComponent::preRender()
+{
+	if (m_TransformComponent)
+	{
+		RenderSystem::GetSingleton()->pushMatrix(getTransform());
+	}
+	else
+	{
+		RenderSystem::GetSingleton()->pushMatrix(Matrix::Identity);
+	}
+	return true;
 }
 
 void AnimationComponent::render(RenderPass renderPass)
 {
 	if (renderPass & m_RenderPass)
 	{
+		m_Material->setVSConstantBuffer(m_FinalTransforms);
 		RenderSystem::GetSingleton()->getRenderer()->draw(m_AnimationFile->getVertexBuffer(), m_AnimationFile->getIndexBuffer(), m_Material.get());
 	}
+}
+
+void AnimationComponent::postRender()
+{
+	RenderSystem::GetSingleton()->popMatrix();
 }
 
 JSON::json AnimationComponent::getJSON() const
@@ -48,6 +68,8 @@ JSON::json AnimationComponent::getJSON() const
 #include "imgui.h"
 void AnimationComponent::draw()
 {
+	VisualComponent::draw();
+
 	if (ImGui::BeginDragDropTarget())
 	{
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Resource Drop"))

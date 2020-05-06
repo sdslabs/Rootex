@@ -14,6 +14,7 @@ class VertexBuffer
 
 public:
 	VertexBuffer(const Vector<VertexData>& buffer);
+	VertexBuffer(const Vector<AnimationVertexData>& buffer);
 	VertexBuffer(const Vector<float>& buffer);
 	~VertexBuffer() = default;
 

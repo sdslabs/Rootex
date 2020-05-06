@@ -1,5 +1,6 @@
 #include "animation_system.h"
 
+#include "components/animation_component.h"
 #include "components/transform_animation_component.h"
 #include "components/transform_component.h"
 
@@ -33,5 +34,14 @@ void AnimationSystem::update(float deltaMilliseconds)
 
 			animated->m_BasicAnimation.interpolate(transform->m_TransformBuffer.m_Transform, animated->m_CurrentTimePosition);
 		}
+	}
+
+	AnimationComponent* skeletalAnimation;
+	for (auto& component : s_Components[AnimationComponent::s_ID])
+	{
+		skeletalAnimation = (AnimationComponent*)component;
+		skeletalAnimation->m_CurrentTimePosition += deltaMilliseconds * MS_TO_S;
+
+		skeletalAnimation->m_AnimationFile->getFinalTransforms("Root|Walk_loop", deltaMilliseconds * MS_TO_S, skeletalAnimation->m_FinalTransforms);
 	}
 }

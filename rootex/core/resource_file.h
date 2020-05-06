@@ -171,6 +171,7 @@ public:
 	void getFinalTransforms(const String& animationName, float timePos, Vector<Matrix>& finalTransforms) const;
 
 	unsigned int getBoneCount() const;
+	Map<String, SkeletalAnimation>& getAnimations() { return m_BoneAnimations; }
 	float getAnimationStartTime(const String& animationName);
 	float getAnimationEndTime(const String& animationName);
 	VertexBuffer* getVertexBuffer() { return m_VertexBuffer.get(); }

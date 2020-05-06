@@ -102,3 +102,18 @@ struct VSDiffuseConstantBuffer
 		ModelInverseTranspose = model.Invert();
 	}
 };
+
+/// Vertex Shader constant buffer for animated models
+struct VSAnimationConstantBuffer
+{
+	Vector<Matrix> m_BoneTransforms;
+
+	explicit VSAnimationConstantBuffer() = delete; // https://stackoverflow.com/a/43694276
+	VSAnimationConstantBuffer(const Vector<Matrix>& boneTransforms)
+	{
+		for (auto& matrix : boneTransforms)
+		{
+			m_BoneTransforms.push_back(matrix.Transpose());
+		}
+	}
+};
