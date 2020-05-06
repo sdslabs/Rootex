@@ -19,21 +19,15 @@
             "children": [],
             "parent": 1
         },
+        "ModelVisualComponent": {
+            "isVisible": true,
+            "material": "rootex_logo_textured.rmat",
+            "renderPass": 5,
+            "resFile": "rootex/assets/cube.obj"
+        },
         "ScriptComponent": {
             "connections": {},
             "script": "rootex/assets/scripts/empty.lua"
-        },
-        "TexturedModelVisualComponent": {
-            "color": {
-                "a": 1.0,
-                "b": 0.0,
-                "g": 0.0,
-                "r": 0.0
-            },
-            "isVisible": true,
-            "renderPass": 5,
-            "resFile": "rootex/assets/cube.obj",
-            "texturePath": "rootex/assets/rootex.png"
         },
         "TransformComponent": {
             "position": {

@@ -4,6 +4,12 @@
             "children": [],
             "parent": 1
         },
+        "ModelVisualComponent": {
+            "isVisible": true,
+            "material": "green_textured.rmat",
+            "renderPass": 5,
+            "resFile": "game\\assets\\test\\sphere.obj"
+        },
         "SphereColliderComponent": {
             "gravity": {
                 "x": 0.0,
@@ -14,18 +20,6 @@
             "isMoveable": true,
             "matName": "Air",
             "radius": 1.0
-        },
-        "TexturedModelVisualComponent": {
-            "color": {
-                "a": 1.0,
-                "b": 0.0,
-                "g": 0.0,
-                "r": 0.0
-            },
-            "isVisible": true,
-            "renderPass": 5,
-            "resFile": "game\\assets\\test\\sphere.obj",
-            "texturePath": "game\\assets\\test\\green.png"
         },
         "TransformComponent": {
             "position": {
