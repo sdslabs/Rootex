@@ -19,17 +19,11 @@
             "children": [],
             "parent": 1
         },
-        "TexturedModelVisualComponent": {
-            "color": {
-                "a": 1.0,
-                "b": 0.0,
-                "g": 0.0,
-                "r": 0.0
-            },
+        "ModelVisualComponent": {
             "isVisible": true,
+            "material": "green_textured.rmat",
             "renderPass": 5,
-            "resFile": "rootex/assets/cube.obj",
-            "texturePath": "game\\assets\\test\\green.png"
+            "resFile": "rootex/assets/cube.obj"
         },
         "TransformComponent": {
             "position": {

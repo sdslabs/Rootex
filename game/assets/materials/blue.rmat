@@ -1,0 +1,9 @@
+{
+    "color": {
+        "a": 1.0,
+        "b": 1.0,
+        "g": 0.0,
+        "r": 0.0
+    },
+    "type": "ColoredMaterial"
+}

@@ -1,7 +1,5 @@
 #include "cpu_particles_visual_component.h"
 
-#include "core/renderer/materials/cpu_particles_material.h"
-
 #include "random.h"
 #include "resource_loader.h"
 #include "systems/render_system.h"
@@ -11,9 +9,9 @@ Component* CPUParticlesVisualComponent::Create(const JSON::json& componentData)
 {
 	ParticleTemplate particalTemplate {
 		{ 
-			componentData["velocity"]["x"], 
-			componentData["velocity"]["y"], 
-			componentData["velocity"]["z"] 
+			componentData["velocity"]["x"],
+		    componentData["velocity"]["y"],
+		    componentData["velocity"]["z"] 
 		},
 		{
 			componentData["angularVelocity"]["x"], 
@@ -40,21 +38,22 @@ Component* CPUParticlesVisualComponent::Create(const JSON::json& componentData)
 		componentData["lifeTime"]
 	};
 
-	CPUParticlesVisualComponent* particles = new CPUParticlesVisualComponent(componentData["poolSize"], componentData["resFile"], particalTemplate, componentData["isVisible"]);
+	CPUParticlesVisualComponent* particles = new CPUParticlesVisualComponent(componentData["poolSize"], componentData["resFile"], particalTemplate, MaterialLibrary::GetMaterial((String)componentData["material"]), componentData["isVisible"]);
 	return particles;
 }
 
 Component* CPUParticlesVisualComponent::CreateDefault()
 {
-	CPUParticlesVisualComponent* particles = new CPUParticlesVisualComponent(1000, "rootex/assets/cube.obj", ParticleTemplate(), true);
+	CPUParticlesVisualComponent* particles = new CPUParticlesVisualComponent(1000, "rootex/assets/cube.obj", ParticleTemplate(), MaterialLibrary::GetDefaultMaterial(), true);
 	return particles;
 }
 
-CPUParticlesVisualComponent::CPUParticlesVisualComponent(size_t poolSize, const String& particleModelPath, const ParticleTemplate& particleTemplate, bool visibility)
-    : ModelVisualComponent(RenderPassMain, Ref<CPUParticlesMaterial>(new CPUParticlesMaterial()), ResourceLoader::CreateVisualModelResourceFile(particleModelPath), visibility)
+CPUParticlesVisualComponent::CPUParticlesVisualComponent(size_t poolSize, const String& particleModelPath, const ParticleTemplate& particleTemplate, Ref<Material> material, bool visibility)
+    : ModelVisualComponent(RenderPassMain, material, ResourceLoader::CreateVisualModelResourceFile(particleModelPath), visibility)
     , m_ParticleTemplate(particleTemplate)
     , m_TransformComponent(nullptr)
 {
+	m_AllowedMaterials = { ColorMaterial::s_MaterialName };
 	m_ParticlePool.resize(poolSize);
 	m_PoolIndex = poolSize - 1;
 	m_LastRenderTimePoint = std::chrono::high_resolution_clock::now();
@@ -110,6 +109,11 @@ bool CPUParticlesVisualComponent::preRender()
 
 void CPUParticlesVisualComponent::render(RenderPass renderPass)
 {
+	ColorMaterial* material = dynamic_cast<ColorMaterial*>(getMaterial());
+	if (material == nullptr)
+	{
+		return;
+	}
 	if (renderPass & m_RenderPass)
 	{
 		for (auto& particle : m_ParticlePool)
@@ -124,9 +128,8 @@ void CPUParticlesVisualComponent::render(RenderPass renderPass)
 
 			Color color = Color::Lerp(particle.m_ColorEnd, particle.m_ColorBegin, life);
 
-			RenderSystem::GetSingleton()->pushMatrixOverride(Matrix::CreateScale(size) * particle.m_Transform);
-			CPUParticlesMaterial* material = reinterpret_cast<CPUParticlesMaterial*>(getMaterial());
-			material->setPSConstantBuffer(PSSolidConstantBuffer({ color }));
+			RenderSystem::GetSingleton()->pushMatrix(Matrix::CreateScale(size) * particle.m_Transform);
+			material->setColor({ color });
 			RenderSystem::GetSingleton()->getRenderer()->draw(m_VisualModelResourceFile->getVertexBuffer(), m_VisualModelResourceFile->getIndexBuffer(), getMaterial());
 			RenderSystem::GetSingleton()->popMatrix();
 		}
@@ -145,7 +148,7 @@ void CPUParticlesVisualComponent::emit(const ParticleTemplate& particleTemplate)
 
 	particle.m_IsActive = true;
 	particle.m_Transform = m_TransformComponent->getAbsoluteTransform();
-	
+
 	particle.m_Velocity = particleTemplate.m_Velocity;
 	particle.m_Velocity.x += particleTemplate.m_VelocityVariation * (Random::Float() - 0.5f);
 	particle.m_Velocity.y += particleTemplate.m_VelocityVariation * (Random::Float() - 0.5f);

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/renderer/materials/color_material.h"
+#include "core/renderer/material_library.h"
 #include "visual_component.h"
 
 class ModelVisualComponent : public VisualComponent
@@ -14,12 +14,15 @@ protected:
 	VisualModelResourceFile* m_VisualModelResourceFile;
 	Ref<Material> m_Material; //change
 	HierarchyComponent* m_HierarchyComponent;
-	Color m_Color;
 
 	ModelVisualComponent(const unsigned int& renderPassSetting, Ref<Material> material, VisualModelResourceFile* resFile, bool isVisible);
 	ModelVisualComponent(ModelVisualComponent&) = delete;
 	virtual ~ModelVisualComponent();
 
+#ifdef ROOTEX_EDITOR
+	/// Empty Vector means all materials are allowed
+	Vector<String> m_AllowedMaterials;
+#endif // ROOTEX_EDITOR
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::ModelVisualComponent;
 
@@ -32,8 +35,7 @@ public:
 	virtual void postRender() override;
 
 	void setVisualModel(VisualModelResourceFile* newModel);
-	void setMaterial(Ref<Material> material);//change
-	void setColor(const Color& color) { m_Color = color; };
+	void setMaterial(Ref<Material>& material);//change
 	
 	const VertexBuffer* getVertexBuffer() const { return m_VisualModelResourceFile->getVertexBuffer(); }
 	const IndexBuffer* getIndexBuffer() const { return m_VisualModelResourceFile->getIndexBuffer(); }

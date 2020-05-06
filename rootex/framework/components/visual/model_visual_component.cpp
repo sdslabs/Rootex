@@ -14,16 +14,9 @@ Component* ModelVisualComponent::Create(const JSON::json& componentData)
 {
 	ModelVisualComponent* modelVisualComponent = new ModelVisualComponent(
 	    componentData["renderPass"],
-	    Ref<Material>(new ColorMaterial()), //change
+	    MaterialLibrary::GetMaterial((String)componentData["material"]),
 	    ResourceLoader::CreateVisualModelResourceFile(componentData["resFile"]),
 	    componentData["isVisible"]);
-
-	modelVisualComponent->setColor(
-	    Color(
-	        (float)componentData["color"]["r"],
-	        (float)componentData["color"]["g"],
-	        (float)componentData["color"]["b"],
-	        (float)componentData["color"]["a"]));
 
 	return modelVisualComponent;
 }
@@ -32,15 +25,14 @@ Component* ModelVisualComponent::CreateDefault()
 {
 	ModelVisualComponent* modelVisualComponent = new ModelVisualComponent(
 	    RenderPassMain,
-	    Ref<Material>(new ColorMaterial()), //change
+	    MaterialLibrary::GetDefaultMaterial(),
 	    ResourceLoader::CreateVisualModelResourceFile("rootex/assets/cube.obj"),
 	    true);
-	modelVisualComponent->setColor(Color(0.5f, 0.5f, 0.5f));
 
 	return modelVisualComponent;
 }
 
-ModelVisualComponent::ModelVisualComponent(const unsigned int& renderPassSetting, Ref<Material> material, VisualModelResourceFile* resFile, bool visibility) //change
+ModelVisualComponent::ModelVisualComponent(const unsigned int& renderPassSetting, Ref<Material> material, VisualModelResourceFile* resFile, bool visibility)
     : VisualComponent(renderPassSetting, visibility)
     , m_Material(material)
     , m_VisualModelResourceFile(resFile)
@@ -76,7 +68,7 @@ bool ModelVisualComponent::preRender()
 	}
 	else
 	{
-		RenderSystem::GetSingleton()->pushMatrix(Matrix::Identity);	
+		RenderSystem::GetSingleton()->pushMatrix(Matrix::Identity);
 	}
 	return true;
 }
@@ -91,9 +83,6 @@ void ModelVisualComponent::render(RenderPass renderPass)
 {
 	if (renderPass & m_RenderPass)
 	{
-		PSSolidConstantBuffer Cb = { m_Color };
-		reinterpret_cast<ColorMaterial*>(m_Material.get())->setPSConstantBuffer(Cb); //change
-
 		RenderSystem::GetSingleton()->getRenderer()->draw(getVertexBuffer(), getIndexBuffer(), getMaterial());
 	}
 }
@@ -130,7 +119,7 @@ void ModelVisualComponent::setVisualModel(VisualModelResourceFile* newModel)
 	m_VisualModelResourceFile = newModel;
 }
 
-void ModelVisualComponent::setMaterial(Ref<Material> material) //change
+void ModelVisualComponent::setMaterial(Ref<Material>& material)
 {
 	m_Material = material;
 }
@@ -140,10 +129,7 @@ JSON::json ModelVisualComponent::getJSON() const
 	JSON::json& j = VisualComponent::getJSON();
 
 	j["resFile"] = m_VisualModelResourceFile->getPath().string();
-	j["color"]["r"] = m_Color.x;
-	j["color"]["g"] = m_Color.y;
-	j["color"]["b"] = m_Color.z;
-	j["color"]["a"] = m_Color.w;
+	j["material"] = m_Material->getFileName();
 
 	return j;
 }
@@ -211,6 +197,21 @@ void ModelVisualComponent::draw()
 		ImGui::EndDragDropTarget();
 	}
 
-	ImGui::ColorEdit4("Color", &m_Color.x);
+	if (ImGui::BeginCombo("Material", m_Material->getFullName().c_str()))
+	{
+		for (auto& [materialName, materialInfo] : MaterialLibrary::GetAllMaterials())
+		{
+			if (m_AllowedMaterials.empty() || std::find(m_AllowedMaterials.begin(), m_AllowedMaterials.end(), materialInfo.first) != m_AllowedMaterials.end())
+			{
+				if (ImGui::Selectable((materialName + " - " + materialInfo.first).c_str()))
+				{
+					setMaterial(MaterialLibrary::GetMaterial(String(materialName)));
+				}
+			}
+		}
+		ImGui::EndCombo();
+	}
+
+	m_Material->draw();
 }
 #endif // ROOTEX_EDITOR

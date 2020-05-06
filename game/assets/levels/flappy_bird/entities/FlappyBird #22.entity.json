@@ -23,23 +23,17 @@
             ],
             "parent": 1
         },
+        "ModelVisualComponent": {
+            "isVisible": true,
+            "material": "yellow_textured.rmat",
+            "renderPass": 5,
+            "resFile": "rootex/assets/cube.obj"
+        },
         "ScriptComponent": {
             "connections": {
                 "onJump": "Jump"
             },
             "script": "game\\assets\\scripts\\flappy_bird.lua"
-        },
-        "TexturedModelVisualComponent": {
-            "color": {
-                "a": 1.0,
-                "b": 0.0,
-                "g": 0.0,
-                "r": 0.0
-            },
-            "isVisible": true,
-            "renderPass": 5,
-            "resFile": "rootex/assets/cube.obj",
-            "texturePath": "game\\assets\\test\\yellow.png"
         },
         "TransformComponent": {
             "position": {
