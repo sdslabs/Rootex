@@ -56,7 +56,7 @@ void ViewportDock::draw()
 					HierarchySystem::GetSingleton()->getRootHierarchyComponent()->addChild(entity);
 					if (Ref<TransformComponent> transform = entity->getComponent<TransformComponent>())
 					{
-						transform->setPosition(RenderSystem::GetSingleton()->getCamera()->getOwner()->getComponent<TransformComponent>()->getPosition());
+						transform->setTransform(RenderSystem::GetSingleton()->getCamera()->getOwner()->getComponent<TransformComponent>()->getAbsoluteTransform());
 					}
 				}
 				ImGui::EndDragDropTarget();
@@ -79,10 +79,6 @@ void ViewportDock::draw()
 				gizmoOperation = ImGuizmo::OPERATION::ROTATE;
 			}
 			ImGui::SameLine();
-			if (ImGui::RadioButton("Scale", gizmoOperation == ImGuizmo::OPERATION::SCALE))
-			{
-				gizmoOperation = ImGuizmo::OPERATION::SCALE;
-			}
 			ImGui::EndGroup();
 
 			static float snap[3] = { 0.1f, 0.1f, 0.1f };
@@ -95,10 +91,6 @@ void ViewportDock::draw()
 			else if (gizmoOperation == ImGuizmo::OPERATION::ROTATE)
 			{
 				ImGui::DragFloat("Angle Snap", snap, 0.1f);
-			}
-			else if (gizmoOperation == ImGuizmo::OPERATION::SCALE)
-			{
-				ImGui::DragFloat("Scale Snap", snap, 0.1f);
 			}
 
 			static ImGuizmo::MODE gizmoMode = ImGuizmo::MODE::LOCAL;
