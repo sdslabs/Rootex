@@ -129,7 +129,7 @@ void CPUParticlesVisualComponent::render(RenderPass renderPass)
 			Color color = Color::Lerp(particle.m_ColorEnd, particle.m_ColorBegin, life);
 
 			RenderSystem::GetSingleton()->pushMatrix(Matrix::CreateScale(size) * particle.m_Transform);
-			material->setPSConstantBuffer(PSSolidConstantBuffer({ color }));
+			material->setColor({ color });
 			RenderSystem::GetSingleton()->getRenderer()->draw(m_VisualModelResourceFile->getVertexBuffer(), m_VisualModelResourceFile->getIndexBuffer(), getMaterial());
 			RenderSystem::GetSingleton()->popMatrix();
 		}

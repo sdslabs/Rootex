@@ -4,6 +4,10 @@
 
 class ColorMaterial : public Material
 {
+	void setPSConstantBuffer(const PSSolidConstantBuffer& constantBuffer);
+	void setVSConstantBuffer(const VSSolidConstantBuffer& constantBuffer);
+	Color m_Color;
+
 public:
 	const static String s_MaterialName;
 	enum class VertexConstantBufferType
@@ -21,10 +25,8 @@ public:
 	ColorMaterial(const Color& color);
 	~ColorMaterial() = default;
 
-	Color m_Color;
-
-	void setPSConstantBuffer(const PSSolidConstantBuffer& constantBuffer);
-	void setVSConstantBuffer(const VSSolidConstantBuffer& constantBuffer);
+	Color getColor() { return m_Color; };
+	void setColor(const Color& color) { m_Color = color; };
 
 	static Material* CreateDefault();
 	static Material* Create(const JSON::json& materialData);

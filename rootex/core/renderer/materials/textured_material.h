@@ -14,6 +14,10 @@ class TexturedMaterial : public Material
 
 	void setTexture(ImageResourceFile* image);
 
+	void setPSConstantBuffer(const PSDiffuseConstantBufferLights& constantBuffer);
+	void setPSConstantBuffer(const PSDiffuseConstantBufferMaterial& constantBuffer);
+	void setVSConstantBuffer(const VSDiffuseConstantBuffer& constantBuffer);
+
 #ifdef ROOTEX_EDITOR
 	String m_ImagePathUI;
 #endif // ROOTEX_EDITOR
@@ -34,10 +38,6 @@ public:
 	TexturedMaterial() = delete;
 	TexturedMaterial(const String& imagePath);
 	~TexturedMaterial() = default;
-
-	void setPSConstantBuffer(const PSDiffuseConstantBufferLights& constantBuffer);
-	void setPSConstantBuffer(const PSDiffuseConstantBufferMaterial& constantBuffer);
-	void setVSConstantBuffer(const VSDiffuseConstantBuffer& constantBuffer);
 
 	static Material* CreateDefault();
 	static Material* Create(const JSON::json& materialData);
