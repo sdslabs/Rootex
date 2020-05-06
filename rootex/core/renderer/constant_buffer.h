@@ -106,14 +106,14 @@ struct VSDiffuseConstantBuffer
 /// Vertex Shader constant buffer for animated models
 struct VSAnimationConstantBuffer
 {
-	Vector<Matrix> m_BoneTransforms;
+	Matrix m_BoneTransforms[256];
 
-	explicit VSAnimationConstantBuffer() = delete; // https://stackoverflow.com/a/43694276
+	explicit VSAnimationConstantBuffer() = delete;
 	VSAnimationConstantBuffer(const Vector<Matrix>& boneTransforms)
 	{
-		for (auto& matrix : boneTransforms)
+		for (int i = 0; i < boneTransforms.size(); i++)
 		{
-			m_BoneTransforms.push_back(matrix.Transpose());
+			m_BoneTransforms[i] = boneTransforms[i].Transpose();
 		}
 	}
 };

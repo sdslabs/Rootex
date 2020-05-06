@@ -17,7 +17,7 @@ cbuffer CBuf : register(PER_CAMERA_CHANGE)
 
 cbuffer CBuf : register(BONES)
 {
-    matrix BoneTransforms[96];
+    matrix BoneTransforms[256];
 }
 
 struct VertexInputType
@@ -26,7 +26,7 @@ struct VertexInputType
     float2 tex : TEXCOORD0;
     float4 normal : NORMAL;
     float4 boneWeights : BONEWEIGHTS;
-    uint boneIndices[4] : BONEINDICES;
+    uint4 boneIndices : BONEINDICES;
 };
 
 float4 main(VertexInputType input) : SV_POSITION
@@ -38,11 +38,10 @@ float4 main(VertexInputType input) : SV_POSITION
     weights[3] = input.boneWeights.w;
     
     float3 posL = float3(0.0f, 0.0f, 0.0f);
+    posL += weights[0] * mul(input.position, BoneTransforms[input.boneIndices.x]).xyz;
+    posL += weights[1] * mul(input.position, BoneTransforms[input.boneIndices.y]).xyz;
+    posL += weights[2] * mul(input.position, BoneTransforms[input.boneIndices.z]).xyz;
+    posL += weights[3] * mul(input.position, BoneTransforms[input.boneIndices.w]).xyz;
     
-    for (int i = 0; i < 4; ++i)
-    {
-        posL += weights[i] * mul(input.position, BoneTransforms[input.boneIndices[i]]).xyz;
-    }
-        
     return mul(float4(posL, 1.0f), mul(M, mul(V, P)));
 }

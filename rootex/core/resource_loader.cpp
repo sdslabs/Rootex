@@ -226,11 +226,11 @@ SkeletalAnimationResourceFile* ResourceLoader::CreateSkeletalAnimationResourceFi
 		return nullptr;
 	}
 
-	Vector<VertexData> vertices;
+	Vector<AnimationVertexData> vertices;
 	const aiMesh* mesh = scene->mMeshes[0]; // Taking single mesh
 	vertices.reserve(mesh->mNumVertices);
 
-	VertexData vertex;
+	AnimationVertexData vertex;
 	for (unsigned int v = 0; v < mesh->mNumVertices; v++)
 	{
 		vertex.m_Position.x = mesh->mVertices[v].x;
@@ -266,11 +266,13 @@ SkeletalAnimationResourceFile* ResourceLoader::CreateSkeletalAnimationResourceFi
 	Vector<Matrix> boneOffsets;
 	boneOffsets.resize(boneHierarchy.size());
 	
+	Map<int, Vector<float>> verticesWeights;
+	Map<int, Vector<int>> verticesIndices;
 	for (int boneIndex = 0; boneIndex < mesh->mNumBones; boneIndex++)
 	{
-		const String& boneName = mesh->mBones[boneIndex]->mName.C_Str();
-
-		aiMatrix4x4& offset = mesh->mBones[boneIndex]->mOffsetMatrix;
+		aiBone* currentBone = mesh->mBones[boneIndex];
+		const String& boneName = currentBone->mName.C_Str();
+		aiMatrix4x4& offset = currentBone->mOffsetMatrix;
 		Matrix offsetMatrix = Matrix({ 
 			offset.a1,
 		    offset.a2,
@@ -293,6 +295,31 @@ SkeletalAnimationResourceFile* ResourceLoader::CreateSkeletalAnimationResourceFi
 		    offset.d4 });
 
 		boneOffsets[boneNameID[boneName]] = offsetMatrix;
+
+		for (int weightIndex = 0; weightIndex < currentBone->mNumWeights; weightIndex++)
+		{
+			int vertexID = currentBone->mWeights[weightIndex].mVertexId;
+			verticesWeights[vertexID].push_back(currentBone->mWeights[weightIndex].mWeight);
+			verticesIndices[vertexID].push_back(boneNameID[boneName]);
+		}
+	}
+
+	for (auto& [vertexID, vertexWeights] : verticesWeights)
+	{
+		vertexWeights.resize(4);
+		vertices[vertexID].m_BoneWeights.x = vertexWeights[0];
+		vertices[vertexID].m_BoneWeights.y = vertexWeights[1];
+		vertices[vertexID].m_BoneWeights.z = vertexWeights[2];
+		vertices[vertexID].m_BoneWeights.w = vertexWeights[3];
+	}
+
+	for (auto& [vertexID, vertexIndices] : verticesIndices)
+	{
+		vertexIndices.resize(4);
+		vertices[vertexID].m_BoneIndices[0] = vertexIndices[0];
+		vertices[vertexID].m_BoneIndices[1] = vertexIndices[1];
+		vertices[vertexID].m_BoneIndices[2] = vertexIndices[2];
+		vertices[vertexID].m_BoneIndices[3] = vertexIndices[3];
 	}
 
 	Map<String, SkeletalAnimation> animations;

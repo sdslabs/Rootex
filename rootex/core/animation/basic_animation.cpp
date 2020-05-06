@@ -20,7 +20,7 @@ void BasicAnimation::interpolate(Matrix& matrix, float t) const
 	}
 	else
 	{
-		Vector3 translation;
+		Vector3 translation = Vector3::Zero;
 		for (unsigned int i = 0; i < m_TranslationKeyframes.size() - 1; i++)
 		{
 			if (t > m_TranslationKeyframes[i].m_TimePosition && t < m_TranslationKeyframes[i + 1].m_TimePosition)
@@ -37,7 +37,7 @@ void BasicAnimation::interpolate(Matrix& matrix, float t) const
 				break;
 			}
 		}
-		Quaternion rotation;
+		Quaternion rotation = Quaternion::Identity;
 		for (unsigned int i = 0; i < m_RotationKeyframes.size() - 1; i++)
 		{
 			if (t > m_RotationKeyframes[i].m_TimePosition && t < m_RotationKeyframes[i + 1].m_TimePosition)
@@ -54,7 +54,9 @@ void BasicAnimation::interpolate(Matrix& matrix, float t) const
 				break;
 			}
 		}
-		Vector3 scale;
+		rotation.Normalize();
+		
+		Vector3 scale = { 1.0f, 1.0f, 1.0f };
 		for (unsigned int i = 0; i < m_ScaleKeyframes.size() - 1; i++)
 		{
 			if (t > m_ScaleKeyframes[i].m_TimePosition && t < m_ScaleKeyframes[i + 1].m_TimePosition)
@@ -83,10 +85,10 @@ void BasicAnimation::interpolate(Matrix& matrix, float t) const
 
 float BasicAnimation::getEndTime() const
 {
-	return max(m_TranslationKeyframes.back().m_TimePosition, m_RotationKeyframes.back().m_TimePosition, m_ScaleKeyframes.back().m_TimePosition);
+	return max(m_TranslationKeyframes.back().m_TimePosition, max(m_RotationKeyframes.back().m_TimePosition, m_ScaleKeyframes.back().m_TimePosition));
 }
 
 float BasicAnimation::getStartTime() const
 {
-	return min(m_TranslationKeyframes.front().m_TimePosition, m_RotationKeyframes.front().m_TimePosition, m_ScaleKeyframes.front().m_TimePosition);
+	return min(m_TranslationKeyframes.front().m_TimePosition, min(m_RotationKeyframes.front().m_TimePosition, m_ScaleKeyframes.front().m_TimePosition));
 }

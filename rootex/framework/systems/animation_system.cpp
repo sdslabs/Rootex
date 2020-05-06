@@ -39,9 +39,17 @@ void AnimationSystem::update(float deltaMilliseconds)
 	AnimationComponent* skeletalAnimation;
 	for (auto& component : s_Components[AnimationComponent::s_ID])
 	{
-		skeletalAnimation = (AnimationComponent*)component;
-		skeletalAnimation->m_CurrentTimePosition += deltaMilliseconds * MS_TO_S;
-
-		skeletalAnimation->m_AnimationFile->getFinalTransforms("Root|Walk_loop", deltaMilliseconds * MS_TO_S, skeletalAnimation->m_FinalTransforms);
+		skeletalAnimation = dynamic_cast<AnimationComponent*>(component);
+		if (skeletalAnimation)
+		{
+			skeletalAnimation->m_CurrentTimePosition += deltaMilliseconds * MS_TO_S;
+		
+			if (skeletalAnimation->m_CurrentTimePosition >= skeletalAnimation->m_AnimationFile->getAnimationEndTime(skeletalAnimation->m_AnimationFile->getAnimations().begin()->first))
+			{
+					skeletalAnimation->m_CurrentTimePosition = 0.0f;
+			}
+			
+			skeletalAnimation->m_AnimationFile->getFinalTransforms(skeletalAnimation->m_AnimationFile->getAnimations().begin()->first, deltaMilliseconds * MS_TO_S, skeletalAnimation->m_FinalTransforms);
+		}
 	}
 }

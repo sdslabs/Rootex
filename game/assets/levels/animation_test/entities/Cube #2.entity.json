@@ -1,7 +1,7 @@
 {
     "Components": {
         "AnimationComponent": {
-            "animationFile": "rootex/assets/models/character.fbx",
+            "animationFile": "rootex/assets/models/alien.dae",
             "isVisible": true,
             "renderPass": 1
         },

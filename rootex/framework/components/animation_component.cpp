@@ -17,15 +17,16 @@ Component* AnimationComponent::CreateDefault()
 	return new AnimationComponent(
 		RenderPassMain,
 		true,
-		ResourceLoader::CreateSkeletalAnimationResourceFile("rootex/assets/models/character.fbx"));
+		ResourceLoader::CreateSkeletalAnimationResourceFile("rootex/assets/models/character.dae"));
 }
 
 AnimationComponent::AnimationComponent(RenderPass renderPass, bool isVisible, SkeletalAnimationResourceFile* animationFile)
     : VisualComponent(renderPass, isVisible)
 	, m_AnimationFile(animationFile)
-    , m_Material(std::dynamic_pointer_cast<AnimationMaterial>(MaterialLibrary::GetMaterial("AnimationMaterial")))
+    , m_Material(std::dynamic_pointer_cast<AnimationMaterial>(MaterialLibrary::GetMaterial("animation_material.rmat")))
+    , m_CurrentTimePosition(0)
 {
-	m_FinalTransforms.resize(m_AnimationFile->getBoneCount());
+	m_FinalTransforms.resize(m_AnimationFile->getBoneCount(), Matrix::Identity);
 }
 
 bool AnimationComponent::preRender()
@@ -66,9 +67,26 @@ JSON::json AnimationComponent::getJSON() const
 
 #ifdef ROOTEX_EDITOR
 #include "imgui.h"
+#include "imgui_stdlib.h"
 void AnimationComponent::draw()
 {
 	VisualComponent::draw();
+
+	ImGui::InputFloat("Time", &m_CurrentTimePosition);
+
+	String m_AnimationFileUI = m_AnimationFile->getPath().string();
+	if(ImGui::InputText("Animation", &m_AnimationFileUI, ImGuiInputTextFlags_EnterReturnsTrue))
+	{
+		SkeletalAnimationResourceFile* anim = ResourceLoader::CreateSkeletalAnimationResourceFile(m_AnimationFileUI);
+		if (anim)
+		{
+			setAnimationFile(anim);
+		}
+		else
+		{
+			WARN("Could not assign animation file");
+		}
+	}
 
 	if (ImGui::BeginDragDropTarget())
 	{

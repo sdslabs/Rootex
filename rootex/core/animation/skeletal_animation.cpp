@@ -15,5 +15,5 @@ float SkeletalAnimation::getStartTime() const
 
 float SkeletalAnimation::getEndTime() const
 {
-	return m_BoneAnimations.back().getStartTime();
+	return m_BoneAnimations.back().getEndTime();
 }

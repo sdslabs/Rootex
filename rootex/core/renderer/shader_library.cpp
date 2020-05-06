@@ -53,7 +53,7 @@ void ShaderLibrary::MakeShaders()
 		animationBufferFormat.push(VertexBufferElement::Type::TEXCOORD, "TEXCOORD");
 		animationBufferFormat.push(VertexBufferElement::Type::BONEWEIGHTS, "BONEWEIGHTS");
 		animationBufferFormat.push(VertexBufferElement::Type::BONEINDICES, "BONEINDICES");
-		MakeShader(ShaderType::Animation, L"rootex/assets/shaders/animation_vertex_shader.cso", L"rootex/assets/shaders/pixel_shader.cso", animationBufferFormat);
+		MakeShader(ShaderType::Animation, L"rootex/assets/shaders/animation_vertex_shader.cso", L"rootex/assets/shaders/animation_pixel_shader.cso", animationBufferFormat);
 	}
 }
 

@@ -8,6 +8,7 @@ public:
 	const static String s_MaterialName;
 	enum class VertexConstantBufferType
 	{
+		Model,
 		Animation,
 		End
 	};
@@ -17,8 +18,7 @@ public:
 		End
 	};
 
-	Vector<Matrix> m_BoneTransforms;
-
+	void setVSConstantBuffer(const VSSolidConstantBuffer& constantBuffer);
 	void setVSConstantBuffer(const VSAnimationConstantBuffer& constantBuffer);
 
 	AnimationMaterial();
@@ -28,7 +28,6 @@ public:
 	static Material* CreateDefault();
 
 	void bind() override;
-	JSON::json getJSON() const override;
 
 #ifdef ROOTEX_EDITOR
 	virtual void draw() override;

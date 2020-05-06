@@ -145,7 +145,7 @@ void SkeletalAnimationResourceFile::getFinalTransforms(const String& animationNa
 
 	for (size_t i = 0; i < boneCount; i++)
 	{
-		finalTransforms[i] = m_BoneOffsets[i] * toRootTransforms[i];
+		finalTransforms[i] = toRootTransforms[i] * m_BoneOffsets[i];
 	}
 }
 

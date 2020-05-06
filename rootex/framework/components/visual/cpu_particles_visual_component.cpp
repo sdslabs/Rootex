@@ -128,7 +128,7 @@ void CPUParticlesVisualComponent::render(RenderPass renderPass)
 
 			Color color = Color::Lerp(particle.m_ColorEnd, particle.m_ColorBegin, life);
 
-			RenderSystem::GetSingleton()->pushMatrix(Matrix::CreateScale(size) * particle.m_Transform);
+			RenderSystem::GetSingleton()->pushMatrixOverride(Matrix::CreateScale(size) * particle.m_Transform);
 			material->setColor({ color });
 			RenderSystem::GetSingleton()->getRenderer()->draw(m_VisualModelResourceFile->getVertexBuffer(), m_VisualModelResourceFile->getIndexBuffer(), getMaterial());
 			RenderSystem::GetSingleton()->popMatrix();
@@ -147,7 +147,7 @@ void CPUParticlesVisualComponent::emit(const ParticleTemplate& particleTemplate)
 	Particle& particle = m_ParticlePool[m_PoolIndex];
 
 	particle.m_IsActive = true;
-	particle.m_Transform = m_TransformComponent->getLocalTransform();
+	particle.m_Transform = m_TransformComponent->getAbsoluteTransform();
 	
 	particle.m_Velocity = particleTemplate.m_Velocity;
 	particle.m_Velocity.x += particleTemplate.m_VelocityVariation * (Random::Float() - 0.5f);

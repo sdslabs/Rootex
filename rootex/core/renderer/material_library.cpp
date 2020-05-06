@@ -10,7 +10,8 @@ const String TexturedMaterial::s_MaterialName = "TexturedMaterial";
 
 MaterialLibrary::MaterialDatabase MaterialLibrary::s_MaterialDatabase = {
 	{ ColorMaterial::s_MaterialName, { ColorMaterial::CreateDefault, ColorMaterial::Create } },
-	{ TexturedMaterial::s_MaterialName, { TexturedMaterial::CreateDefault, TexturedMaterial::Create } }
+	{ TexturedMaterial::s_MaterialName, { TexturedMaterial::CreateDefault, TexturedMaterial::Create } },
+	{ AnimationMaterial::s_MaterialName, { AnimationMaterial::CreateDefault, AnimationMaterial::Create } }
 };
 
 void MaterialLibrary::LoadMaterials()
