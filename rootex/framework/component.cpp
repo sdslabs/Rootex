@@ -34,7 +34,6 @@ JSON::json Component::getJSON() const
 }
 
 #ifdef ROOTEX_EDITOR
-#include "imgui.h"
 void Component::draw()
 {
 	ImGui::Text("Component data not available");

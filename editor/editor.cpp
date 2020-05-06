@@ -2,6 +2,7 @@
 
 #include "app/level_manager.h"
 #include "core/renderer/rendering_device.h"
+#include "core/renderer/material_library.h"
 #include "core/resource_loader.h"
 #include "core/input/input_manager.h"
 #include "framework/components/hierarchy_component.h"
@@ -21,6 +22,7 @@ void Editor::initialize(HWND hWnd, const JSON::json& projectJSON)
 	BIND_EVENT_MEMBER_FUNCTION("EditorOpenLevel", Editor::openLevel);
 	BIND_EVENT_MEMBER_FUNCTION("EditorCreateNewLevel", Editor::createNewLevel);
 	BIND_EVENT_MEMBER_FUNCTION("EditorCreateNewEntity", Editor::createNewEntity);
+	BIND_EVENT_MEMBER_FUNCTION("EditorCreateNewMaterial", Editor::createNewMaterial);
 
 	const JSON::json& general = projectJSON["general"];
 
@@ -199,6 +201,8 @@ void Editor::drawDefaultUI()
 		{
 			static String newLevelName;
 			static String openLevelName;
+			static String newMaterialName;
+			static String newMaterialType = "Select Material Type";
 			if (ImGui::BeginMenu("File"))
 			{
 				if (ImGui::BeginMenu("Create Entity", LevelManager::GetSingleton()->isAnyLevelOpen()))
@@ -212,6 +216,35 @@ void Editor::drawDefaultUI()
 							EventManager::GetSingleton()->call("EditorFileOpenNewlyCreatedEntity", "EditorOpenEntity", newEntity);
 						}
 					}
+					ImGui::EndMenu();
+				}
+				if (ImGui::BeginMenu("Create Material"))
+				{
+					if (ImGui::BeginCombo("", newMaterialType.c_str()))
+					{
+						for (auto& [materialType, materialCreators] : MaterialLibrary::GetMaterialDatabase())
+						{
+							if (ImGui::Selectable(materialType.c_str(), ""))
+							{
+								newMaterialType = materialType;
+							}
+						}
+						ImGui::EndCombo();
+					}
+					ImGui::SameLine();
+					ImGui::InputText("Material Name", &newMaterialName, ImGuiInputTextFlags_AlwaysInsertMode);
+					ImGui::SameLine();
+					if (ImGui::Button("Create"))
+					{
+						if (newMaterialName != "" && newMaterialType != "Select Material Type")
+						{
+							Vector<String> newMaterialInfo = { newMaterialName, newMaterialType };
+							EventManager::GetSingleton()->call("EditorFileCreateNewMaterial", "EditorCreateNewMaterial", newMaterialInfo);
+							newMaterialType = "Select Material Type";
+							newMaterialName = "";
+						}
+					}
+
 					ImGui::EndMenu();
 				}
 				ImGui::Separator();
@@ -364,7 +397,7 @@ void Editor::drawDefaultUI()
 			if (ImGui::BeginPopupModal("Save", 0, ImGuiWindowFlags_AlwaysAutoResize))
 			{
 				ImGui::SetNextWindowSize({ ImGui::GetWindowWidth(), ImGui::GetWindowHeight() });
-				ImGui::Text(String("Do you want to save " + LevelManager::GetSingleton()->getCurrentLevelName()+"?").c_str());
+				ImGui::Text(String("Do you want to save " + LevelManager::GetSingleton()->getCurrentLevelName() + "?").c_str());
 				if (ImGui::Button("Save"))
 				{
 					if (m_PopupCause == "quit")
@@ -524,6 +557,7 @@ Variant Editor::saveAll(const Event* event)
 {
 	if (LevelManager::GetSingleton()->isAnyLevelOpen())
 	{
+		MaterialLibrary::SaveAll();
 		LevelManager::GetSingleton()->saveCurrentLevel();
 		PRINT("Successfully saved level: " + LevelManager::GetSingleton()->getCurrentLevelName());
 	}
@@ -588,6 +622,13 @@ Variant Editor::createNewEntity(const Event* event)
 
 	HierarchySystem::GetSingleton()->addChild(newEntity);
 	return newEntity;
+}
+
+Variant Editor::createNewMaterial(const Event* event)
+{
+	const Vector<String>& materialInfo = Extract(Vector<String>, event->getData());
+	MaterialLibrary::CreateNewMaterialFile(materialInfo[0], materialInfo[1]);
+	return true;
 }
 
 Editor* Editor::GetSingleton()
