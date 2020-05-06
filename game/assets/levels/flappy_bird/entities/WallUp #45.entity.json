@@ -20,13 +20,8 @@
             "parent": 1
         },
         "ModelVisualComponent": {
-            "color": {
-                "a": 1.0,
-                "b": 0.6519607901573181,
-                "g": 0.6385193467140198,
-                "r": 0.19494907557964325
-            },
             "isVisible": true,
+            "material": "teal.rmat",
             "renderPass": 1,
             "resFile": "game/assets/test/cube.obj"
         },
