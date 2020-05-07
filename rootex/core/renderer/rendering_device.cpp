@@ -54,7 +54,7 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 	DXGI_SWAP_CHAIN_DESC sd = { 0 };
 	sd.BufferDesc.Width = width;
 	sd.BufferDesc.Height = height;
-	sd.BufferDesc.RefreshRate.Numerator = 60;
+	sd.BufferDesc.RefreshRate.Numerator = 0;
 	sd.BufferDesc.RefreshRate.Denominator = 1;
 	sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
@@ -510,7 +510,7 @@ RenderingDevice* RenderingDevice::GetSingleton()
 
 void RenderingDevice::swapBuffers()
 {
-	GFX_ERR_CHECK(m_SwapChain->Present(1u, 0));
+	GFX_ERR_CHECK(m_SwapChain->Present(0, 0));
 }
 
 void RenderingDevice::clearCurrentRenderTarget(float r, float g, float b)

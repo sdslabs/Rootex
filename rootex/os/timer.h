@@ -4,15 +4,6 @@
 
 #include "common/common.h"
 
-/// Convert nanoseconds to milliseconds
-#define NS_TO_MS 1e-6f
-/// Convert milliseconds to nanoseconds
-#define MS_TO_NS 1e+6f
-/// Convert milliseconds to seconds
-#define MS_TO_S 1e-3f
-/// Convert seconds to milliseconds
-#define S_TO_MS 1e+3f
-
 /// A point in time of the high resolution clock
 typedef std::chrono::time_point<std::chrono::high_resolution_clock> TimePoint;
 

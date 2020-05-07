@@ -1,0 +1,99 @@
+{
+    "Components": {
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 1
+        },
+        "ModelVisualComponent": {
+            "isVisible": true,
+            "material": "green.rmat",
+            "renderPass": 1,
+            "resFile": "game/assets/test/cube.obj"
+        },
+        "TransformAnimationComponent": {
+            "isLooping": true,
+            "isPlayOnStart": true,
+            "keyframes": [
+                {
+                    "rotation": {
+                        "w": 1.0,
+                        "x": -0.0,
+                        "y": 0.0,
+                        "z": -0.0
+                    },
+                    "scale": {
+                        "x": 0.9999961256980896,
+                        "y": 0.9999961256980896,
+                        "z": 1.0
+                    },
+                    "timePosition": 0.0,
+                    "translation": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
+                },
+                {
+                    "rotation": {
+                        "w": 0.0023891483433544636,
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.9999971389770508
+                    },
+                    "scale": {
+                        "x": 0.999934732913971,
+                        "y": 0.999934732913971,
+                        "z": 1.0
+                    },
+                    "timePosition": 1.0,
+                    "translation": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": -7.0
+                    }
+                },
+                {
+                    "rotation": {
+                        "w": 1.0,
+                        "x": -0.0,
+                        "y": 0.0,
+                        "z": -0.0
+                    },
+                    "scale": {
+                        "x": 0.9998775720596313,
+                        "y": 0.9998775720596313,
+                        "z": 1.0
+                    },
+                    "timePosition": 2.0,
+                    "translation": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
+                }
+            ]
+        },
+        "TransformComponent": {
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": -0.8213229179382324
+            },
+            "rotation": {
+                "w": 0.9831153154373169,
+                "x": -0.0,
+                "y": 0.0,
+                "z": 0.1829872578382492
+            },
+            "scale": {
+                "x": 0.999884307384491,
+                "y": 0.999884307384491,
+                "z": 1.0
+            }
+        }
+    },
+    "Entity": {
+        "ID": 2,
+        "name": "Cube"
+    }
+}
