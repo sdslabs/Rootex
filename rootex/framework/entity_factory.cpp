@@ -15,6 +15,7 @@
 #include "components/short_music_component.h"
 #include "components/test_component.h"
 #include "components/transform_component.h"
+#include "components/transform_animation_component.h"
 #include "components/visual/camera_component.h"
 #include "components/visual/cpu_particles_visual_component.h"
 #include "components/visual/directional_light_component.h"
@@ -59,6 +60,7 @@ EntityFactory::EntityFactory()
 	REGISTER_COMPONENT(ModelVisualComponent);
 	REGISTER_COMPONENT(TextVisual2DComponent);
 	REGISTER_COMPONENT(TransformComponent);
+	REGISTER_COMPONENT(TransformAnimationComponent);
 	REGISTER_COMPONENT(PointLightComponent);
 	REGISTER_COMPONENT(DirectionalLightComponent);
 	REGISTER_COMPONENT(SpotLightComponent);

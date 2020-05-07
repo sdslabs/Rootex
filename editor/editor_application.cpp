@@ -7,6 +7,7 @@
 #include "rootex/core/resource_loader.h"
 #include "rootex/framework/systems/render_system.h"
 #include "rootex/framework/systems/physics_system.h"
+#include "rootex/framework/systems/transform_animation_system.h"
 
 EditorApplication* EditorApplication::s_Instance = nullptr;
 
@@ -68,6 +69,7 @@ void EditorApplication::run()
 		Editor::GetSingleton()->render();
 		AudioSystem::GetSingleton()->update();
 		InputManager::GetSingleton()->update();
+		TransformAnimationSystem::GetSingleton()->update(m_FrameTimer.getFrameTime());
 		EventManager::GetSingleton()->dispatchDeferred();
 
 		m_Window->clearUnboundTarget();
