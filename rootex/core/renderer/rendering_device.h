@@ -41,6 +41,8 @@ class RenderingDevice
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_WireframeRasterizerState;
 	ID3D11RasterizerState** m_CurrentRasterizerState;
 
+	Microsoft::WRL::ComPtr<ID3D11BlendState> m_DefaultBlendState;
+
 	Microsoft::WRL::ComPtr<IDXGISwapChain> m_SwapChain;
 	bool m_MSAA;
 	unsigned int m_4XMSQuality;
@@ -112,6 +114,7 @@ public:
 
 	void unbindShaderResources();
 
+	void setDefaultBlendState();
 	void setCurrentRasterizerState();
 	void setRasterizerState(RasterizerState rs);
 	void setDepthStencilState();
