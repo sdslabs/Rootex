@@ -171,6 +171,21 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 
 	setTextureRenderTarget();
 
+	D3D11_BLEND_DESC blendDesc;
+	blendDesc.AlphaToCoverageEnable = MSAA;
+	blendDesc.IndependentBlendEnable = false;
+	D3D11_RENDER_TARGET_BLEND_DESC renderBlendDesc;
+	renderBlendDesc.BlendEnable = true;
+	renderBlendDesc.SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	renderBlendDesc.DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	renderBlendDesc.BlendOp = D3D11_BLEND_OP_ADD;
+	renderBlendDesc.SrcBlendAlpha = D3D11_BLEND_ONE;
+	renderBlendDesc.DestBlendAlpha = D3D11_BLEND_ZERO;
+	renderBlendDesc.BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	renderBlendDesc.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	blendDesc.RenderTarget[0] = renderBlendDesc;
+	GFX_ERR_CHECK(m_Device->CreateBlendState(&blendDesc, &m_DefaultBlendState));
+
 	m_FontBatch.reset(new DirectX::SpriteBatch(m_Context.Get()));
 }
 
@@ -399,6 +414,12 @@ void RenderingDevice::unbindShaderResources()
 {
 	m_Context->VSSetShaderResources(0, 1, nullptr);
 	m_Context->PSSetShaderResources(0, 1, nullptr);
+}
+
+void RenderingDevice::setDefaultBlendState()
+{
+	static float blendFactors[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	m_Context->OMSetBlendState(m_DefaultBlendState.Get(), blendFactors, 0xffffffff);
 }
 
 void RenderingDevice::setCurrentRasterizerState()
