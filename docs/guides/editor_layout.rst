@@ -14,7 +14,7 @@ Toolbar Dock
 
 The toolbar dock displays different settings that affect the editor's view of the game world and modify the Rootex Engine's overall state.
 
-You can find data related to the Editor FPS, registered Events in the EventManager, the current camera being used to view the world, etc. You can try fiddling with the settings here to know what each thing does.
+You can find data related to the Editor FPS, registered Events in the EventManager, the current camera being used to view the world, etc. You can try fiddling with the settings here to know what each thing does. The toolbar dock also allows playing the currently open level in game or play the game from the original starting level as defined in the game settings.
 
 File System Dock
 ================

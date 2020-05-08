@@ -15,3 +15,4 @@ Any user coming from ECS based game engines like Unreal Engine should be able to
 
 	running_the_editor
 	editor_layout
+	getting_help
