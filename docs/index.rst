@@ -3,15 +3,6 @@ Welcome to Rootex's documentation!
 
 Rootex is a Windows based 3D multithreaded game engine written in C++ and powers an in-production game being developed at `SDSLabs <https://sdslabs.co>`_ .
 
-.. toctree::
-	:maxdepth: 2
-
-	guides/getting_started
-	engine/architecture
-	api/rootex
-
-	:caption: Contents:
-
 - Issue Tracker: http://github.com/sdslabs/rootex/issues
 - Source Code: http://github.com/sdslabs/rootex
 - Discord : https://discord.gg/RKkaKyk
@@ -25,3 +16,12 @@ License
 -------
 
 The project is licensed under the MIT license.
+
+.. toctree::
+	:maxdepth: 2
+
+	guides/getting_started
+	engine/architecture
+	api/rootex
+
+	:caption: Contents:
