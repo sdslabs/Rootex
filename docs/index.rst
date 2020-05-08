@@ -7,6 +7,7 @@ Rootex is a Windows based 3D multithreaded game engine written in C++ and powers
 	:maxdepth: 2
 
 	guides/getting_started
+	engine/architecture
 	api/rootex
 
 	:caption: Contents:
