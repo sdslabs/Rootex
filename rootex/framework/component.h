@@ -27,6 +27,8 @@ public:
 	virtual bool setupEntities();
 	virtual void onRemove();
 
+	virtual void onTrigger();
+
 	Ref<Entity> getOwner() const;
 	virtual ComponentID getComponentID() const = 0;
 	virtual String getName() const = 0;

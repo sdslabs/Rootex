@@ -46,11 +46,11 @@ public:
 
 	void pushKeyframe(float timePosition, const Vector3& position, const Quaternion& rotation, const Vector3& scale);
 	void popKeyframe(int count);
-	bool isPlaying() const { return m_IsPlaying; }
+	bool isPlaying() const { return !hasEnded(); }
 	bool isLooping() const { return m_IsLooping; }
-	bool hasEnded();
-	float getStartTime();
-	float getEndTime();
+	bool hasEnded() const;
+	float getStartTime() const;
+	float getEndTime() const;
 
 	void interpolate(float t);
 
