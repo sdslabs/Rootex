@@ -8,6 +8,7 @@
 #include "components/visual/visual_2d_component.h"
 #include "components/visual/visual_component.h"
 #include "components/physics/box_collider_component.h"
+#include "components/trigger_component.h"
 #include "entity_factory.h"
 #include "event_manager.h"
 #include "script/interpreter.h"
@@ -197,6 +198,7 @@ void LuaInterpreter::registerTypes()
 		entity["getID"] = &Entity::getID;
 		entity["getName"] = &Entity::getName;
 		entity["setName"] = &Entity::setName;
+		entity["trigger"] = [](const Entity* entity) { entity->getComponent<TriggerComponent>()->trigger(); };
 
 		sol::usertype<Component> component = rootex.new_usertype<Component>("Component");
 		component["getOwner"] = &Component::getOwner;

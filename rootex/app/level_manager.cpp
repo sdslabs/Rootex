@@ -60,6 +60,8 @@ void LevelManager::openLevel(const String& levelPath, bool openInEditor)
 		}
 	}
 
+	EntityFactory::GetSingleton()->setupLiveEntities();
+
 	PRINT("Loaded level: " + levelPath);
 }
 

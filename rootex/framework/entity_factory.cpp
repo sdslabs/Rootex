@@ -210,6 +210,14 @@ Ref<Entity> EntityFactory::findEntity(EntityID entityID)
 	return nullptr;
 }
 
+void EntityFactory::setupLiveEntities()
+{
+	for (auto& entity : m_Entities)
+	{
+		entity.second->setupEntities();
+	}
+}
+
 Ref<Entity> EntityFactory::createRootEntity()
 {
 	Ref<Entity> root;

@@ -20,7 +20,7 @@ class TriggerComponent : public Component
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::TriggerComponent;
 
-	virtual bool setupEntities();
+	virtual bool setupEntities() override;
 
 	void trigger();
 	void setTarget(Ref<Entity> entity);
