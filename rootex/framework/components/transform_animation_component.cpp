@@ -87,17 +87,17 @@ void TransformAnimationComponent::popKeyframe(int count)
 	}
 }
 
-bool TransformAnimationComponent::hasEnded()
+bool TransformAnimationComponent::hasEnded() const
 {
 	return m_CurrentTimePosition > getEndTime();
 }
 
-float TransformAnimationComponent::getStartTime()
+float TransformAnimationComponent::getStartTime() const
 {
 	return m_Keyframes.front().m_TimePosition;
 }
 
-float TransformAnimationComponent::getEndTime()
+float TransformAnimationComponent::getEndTime() const
 {
 	return m_Keyframes.back().m_TimePosition;
 }
