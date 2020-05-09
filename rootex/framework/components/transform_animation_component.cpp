@@ -106,10 +106,6 @@ void TransformAnimationComponent::reset()
 {
 	m_CurrentTimePosition = 0.0f;
 	interpolate(0.0f);
-
-	m_TransformComponent->setPosition(m_InitialPosition);
-	m_TransformComponent->setRotationQuaternion(m_InitialRotation);
-	m_TransformComponent->setScale(m_InitialScale);
 }
 
 void TransformAnimationComponent::interpolate(float t)
@@ -211,7 +207,7 @@ JSON::json TransformAnimationComponent::getJSON() const
 void TransformAnimationComponent::draw()
 {
 	ImGui::SliderFloat("Time", &m_CurrentTimePosition, 0.0f, getEndTime());
-	if (ImGui::Button("Reset"))
+	if (ImGui::Button("Reset##Component"))
 	{
 		reset();
 	}
