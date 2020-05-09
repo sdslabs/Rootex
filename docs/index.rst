@@ -1,19 +1,7 @@
-.. Rootex documentation master file, created by
-   sphinx-quickstart on Thu Jan 23 20:51:57 2020.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 Welcome to Rootex's documentation!
 ==================================
 
-.. toctree::
-    :maxdepth: 2
-
-    api/rootex
-   
-    :caption: Contents:
-
-Rootex is a 3D multithreaded game engine written in C++ and powers an in-production game being developed at SDSLabs.
+Rootex is a Windows based 3D multithreaded game engine written in C++ and powers an in-production game being developed at `SDSLabs <https://sdslabs.co>`_ .
 
 - Issue Tracker: http://github.com/sdslabs/rootex/issues
 - Source Code: http://github.com/sdslabs/rootex
@@ -22,10 +10,18 @@ Rootex is a 3D multithreaded game engine written in C++ and powers an in-product
 Support
 -------
 
-If you are having issues, please let us know.
-We have a public chat channel at http://chat.sdslabs.co
+If you are having issues, please let us know. SDSLabs has a public chat channel at http://chat.sdslabs.co
 
 License
 -------
 
 The project is licensed under the MIT license.
+
+.. toctree::
+	:maxdepth: 2
+
+	guides/getting_started
+	engine/architecture
+	api/rootex
+
+	:caption: Contents:
