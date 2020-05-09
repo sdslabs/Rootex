@@ -19,6 +19,8 @@ Rootex is an advanced C++ multithreaded 3D game engine powering an in-production
 
 This game will be a product of a join effort of SDSLabs and [Design Studio](https://designstudio.cc/).
 
+<img src="/rootex/assets/editor.png"/>
+
 ## <a name=why>Why is Rootex?
 
 Rootex is the direct successor of [Rubeus, our 2D Game Engine](https://github.com/sdslabs/Rubeus). Rubeus Engine is now being preserved and any newer features will be planned for Rootex and be implemented in Rootex instead of Rubeus. The game being developed will be announced soon. 
