@@ -23,7 +23,7 @@ public:
 	ScriptComponent* m_ScriptComponent;
 	
 	Ref<btCollisionShape> m_CollisionShape;
-	btRigidBody* m_Body;
+	Ref<btRigidBody> m_Body;
 	btScalar m_Mass;
 	btVector3 m_LocalInertia;
 	float m_SpecificGravity;
@@ -58,7 +58,7 @@ public:
 
 	/// Helpers for conversion to and from Bullet's data types.
 	PhysicsColliderComponent(const String& matName, float volume, const Vector3& gravity, bool isMoveable, const Ref<btCollisionShape>& collisionShape, bool generatesHitEvents);
-	~PhysicsColliderComponent() = default;
+	~PhysicsColliderComponent();
 
 	ComponentID getComponentID() const { return s_ID; }
 

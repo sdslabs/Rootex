@@ -35,6 +35,11 @@ PhysicsColliderComponent::PhysicsColliderComponent(const String& matName, float 
 	m_LocalInertia = btVector3(0.0f, 0.0f, 0.0f);
 }
 
+PhysicsColliderComponent::~PhysicsColliderComponent()
+{
+	PhysicsSystem::GetSingleton()->removeRigidBody(m_Body.get());
+}
+
 bool PhysicsColliderComponent::setup()
 {
 	bool status = true;
@@ -54,10 +59,10 @@ bool PhysicsColliderComponent::setup()
 			rbInfo.m_restitution = m_Material.m_Restitution;
 			rbInfo.m_friction = m_Material.m_Friction;
 
-			m_Body = new btRigidBody(rbInfo);
+			m_Body.reset(new btRigidBody(rbInfo));
 
 			/// Adds a new rigid body to physics system.
-			PhysicsSystem::GetSingleton()->addRigidBody(m_Body);
+			PhysicsSystem::GetSingleton()->addRigidBody(m_Body.get());
 			setGravity(m_Gravity);
 			setMoveable(m_IsMoveable);
 			
