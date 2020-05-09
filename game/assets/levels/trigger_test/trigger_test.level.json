@@ -1,5 +1,17 @@
 {
 	"camera": 1,
-	"inputSchemes": [],
-	"startScheme": ""
+	"inputSchemes": [
+		{
+			"name": "FlappyBird",
+			"bools": [
+				{
+					"inputEvent": "Jump",
+					"device": 1,
+					"button": 99
+				}
+			],
+			"floats": {}
+		}
+	],
+	"startScheme": "FlappyBird"
 }
