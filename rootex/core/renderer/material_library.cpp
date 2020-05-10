@@ -1,15 +1,17 @@
 #include "material_library.h"
 
 #include "core/resource_loader.h"
+#include "materials/color_material.h"
+#include "materials/texture_material.h"
 
 MaterialLibrary::MaterialMap MaterialLibrary::s_Materials;
 
-const String ColorMaterial::s_MaterialName = "ColoredMaterial";
-const String TexturedMaterial::s_MaterialName = "TexturedMaterial";
+const String ColorMaterial::s_MaterialName = "ColorMaterial";
+const String TextureMaterial::s_MaterialName = "TextureMaterial";
 
 MaterialLibrary::MaterialDatabase MaterialLibrary::s_MaterialDatabase = {
 	{ ColorMaterial::s_MaterialName, { ColorMaterial::CreateDefault, ColorMaterial::Create } },
-	{ TexturedMaterial::s_MaterialName, { TexturedMaterial::CreateDefault, TexturedMaterial::Create } }
+	{ TextureMaterial::s_MaterialName, { TextureMaterial::CreateDefault, TextureMaterial::Create } }
 };
 
 void MaterialLibrary::LoadMaterials()

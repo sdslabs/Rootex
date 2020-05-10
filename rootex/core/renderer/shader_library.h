@@ -8,10 +8,8 @@ class ShaderLibrary
 {
 	enum class ShaderType
 	{
-		Default,
-		Diffuse,
-		CPUParticles,
-		Grid
+		Color,
+		Texture,
 	};
 
 private:
@@ -27,8 +25,6 @@ public:
 	/// Unload all shaders
 	static void DestroyShaders();
 
-	static Shader* GetDefaultShader();
-	static DiffuseShader* GetDiffuseShader();
-	static CPUParticlesShader* GetCPUParticlesShader();
-	static GridShader* GetGridShader();
+	static Shader* GetColorShader();
+	static TextureShader* GetTextureShader();
 };

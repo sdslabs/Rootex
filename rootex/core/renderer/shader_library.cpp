@@ -27,24 +27,14 @@ void ShaderLibrary::MakeShaders()
 	{
 		BufferFormat defaultBufferFormat;
 		defaultBufferFormat.push(VertexBufferElement::Type::POSITION, "POSITION");
-		MakeShader(ShaderType::Default, L"rootex/assets/shaders/vertex_shader.cso", L"rootex/assets/shaders/pixel_shader.cso", defaultBufferFormat);
+		MakeShader(ShaderType::Color, L"rootex/assets/shaders/vertex_shader.cso", L"rootex/assets/shaders/pixel_shader.cso", defaultBufferFormat);
 	}
 	{
 		BufferFormat diffuseTextureBufferFormat;
 		diffuseTextureBufferFormat.push(VertexBufferElement::Type::POSITION, "POSITION");
 		diffuseTextureBufferFormat.push(VertexBufferElement::Type::POSITION, "NORMAL");
 		diffuseTextureBufferFormat.push(VertexBufferElement::Type::TEXCOORD, "TEXCOORD");
-		MakeShader(ShaderType::Diffuse, L"rootex/assets/shaders/diffuse_texture_vertex_shader.cso", L"rootex/assets/shaders/diffuse_texture_pixel_shader.cso", diffuseTextureBufferFormat);
-	}
-	{
-		BufferFormat cpuParticlesBufferFormat;
-		cpuParticlesBufferFormat.push(VertexBufferElement::Type::POSITION, "POSITION");
-		MakeShader(ShaderType::CPUParticles, L"rootex/assets/shaders/cpu_particles_vertex_shader.cso", L"rootex/assets/shaders/cpu_particles_pixel_shader.cso", cpuParticlesBufferFormat);
-	}
-	{
-		BufferFormat gridBufferFormat;
-		gridBufferFormat.push(VertexBufferElement::Type::POSITION, "POSITION");
-		MakeShader(ShaderType::Grid, L"rootex/assets/shaders/grid_vertex_shader.cso", L"rootex/assets/shaders/grid_pixel_shader.cso", gridBufferFormat);
+		MakeShader(ShaderType::Texture, L"rootex/assets/shaders/texture_vertex_shader.cso", L"rootex/assets/shaders/texture_pixel_shader.cso", diffuseTextureBufferFormat);
 	}
 }
 
@@ -53,22 +43,12 @@ void ShaderLibrary::DestroyShaders()
 	s_Shaders.clear();
 }
 
-Shader* ShaderLibrary::GetDefaultShader()
+Shader* ShaderLibrary::GetColorShader()
 {
-	return s_Shaders[ShaderType::Default].get();
+	return s_Shaders[ShaderType::Color].get();
 }
 
-DiffuseShader* ShaderLibrary::GetDiffuseShader()
+TextureShader* ShaderLibrary::GetTextureShader()
 {
-	return reinterpret_cast<DiffuseShader*>(s_Shaders[ShaderType::Diffuse].get());
-}
-
-CPUParticlesShader* ShaderLibrary::GetCPUParticlesShader()
-{
-	return reinterpret_cast<CPUParticlesShader*>(s_Shaders[ShaderType::CPUParticles].get());
-}
-
-GridShader* ShaderLibrary::GetGridShader()
-{
-	return reinterpret_cast<GridShader*>(s_Shaders[ShaderType::Grid].get());
+	return reinterpret_cast<TextureShader*>(s_Shaders[ShaderType::Texture].get());
 }

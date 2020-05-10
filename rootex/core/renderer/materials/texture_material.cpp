@@ -1,4 +1,4 @@
-#include "textured_material.h"
+#include "texture_material.h"
 
 #include "resource_loader.h"
 
@@ -7,11 +7,9 @@
 #include "framework/systems/render_system.h"
 #include "renderer/texture.h"
 
-TexturedMaterial::TexturedMaterial(const String& imagePath, float specularIntensity, float specularPower)
-    : Material(ShaderLibrary::GetDiffuseShader(), TexturedMaterial::s_MaterialName)
-    , m_DiffuseShader(reinterpret_cast<DiffuseShader*>(m_Shader))
-    , m_SpecularIntensity(specularIntensity)
-    , m_SpecularPower(specularPower)
+TextureMaterial::TextureMaterial(const String& imagePath)
+    : Material(ShaderLibrary::GetTextureShader(), TextureMaterial::s_MaterialName)
+    , m_DiffuseShader(reinterpret_cast<TextureShader*>(m_Shader))
 {
 	m_ImageFile = ResourceLoader::CreateImageResourceFile(imagePath);
 	setTexture(m_ImageFile);
@@ -24,32 +22,32 @@ TexturedMaterial::TexturedMaterial(const String& imagePath, float specularIntens
 #endif // ROOTEX_EDITOR
 }
 
-void TexturedMaterial::setPSConstantBuffer(const PSDiffuseConstantBufferLights& constantBuffer)
+void TextureMaterial::setPSConstantBuffer(const PSDiffuseConstantBufferLights& constantBuffer)
 {
 	Material::setPSConstantBuffer<PSDiffuseConstantBufferLights>(constantBuffer, m_PSConstantBuffer[(int)PixelConstantBufferType::Lights], 3u);
 }
 
-void TexturedMaterial::setPSConstantBuffer(const PSDiffuseConstantBufferMaterial& constantBuffer)
+void TextureMaterial::setPSConstantBuffer(const PSDiffuseConstantBufferMaterial& constantBuffer)
 {
 	Material::setPSConstantBuffer<PSDiffuseConstantBufferMaterial>(constantBuffer, m_PSConstantBuffer[(int)PixelConstantBufferType::Material], 4u);
 }
 
-void TexturedMaterial::setVSConstantBuffer(const VSDiffuseConstantBuffer& constantBuffer)
+void TextureMaterial::setVSConstantBuffer(const VSDiffuseConstantBuffer& constantBuffer)
 {
 	Material::setVSConstantBuffer<VSDiffuseConstantBuffer>(constantBuffer, m_VSConstantBuffer[(int)VertexConstantBufferType::Model], 1u);
 }
 
-Material* TexturedMaterial::CreateDefault()
+Material* TextureMaterial::CreateDefault()
 {
-	return new TexturedMaterial("rootex/assets/rootex.png", 2.0f, 30.0f);
+	return new TextureMaterial("rootex/assets/rootex.png");
 }
 
-Material* TexturedMaterial::Create(const JSON::json& materialData)
+Material* TextureMaterial::Create(const JSON::json& materialData)
 {
-	return new TexturedMaterial((String)materialData["imageFile"], (float)materialData["specularIntensity"], (float)materialData["specularPower"]);
+	return new TextureMaterial((String)materialData["imageFile"]);
 }
 
-void TexturedMaterial::bind()
+void TextureMaterial::bind()
 {
 	Material::bind();
 	setVSConstantBuffer(VSDiffuseConstantBuffer(RenderSystem::GetSingleton()->getTopMatrix()));
@@ -58,7 +56,7 @@ void TexturedMaterial::bind()
 	setPSConstantBuffer(PSDiffuseConstantBufferMaterial({ m_SpecularIntensity, m_SpecularPower }));
 }
 
-JSON::json TexturedMaterial::getJSON() const
+JSON::json TextureMaterial::getJSON() const
 {
 	JSON::json& j = Material::getJSON();
 
@@ -69,7 +67,7 @@ JSON::json TexturedMaterial::getJSON() const
 	return j;
 }
 
-void TexturedMaterial::setTexture(ImageResourceFile* image)
+void TextureMaterial::setTexture(ImageResourceFile* image)
 {
 	Ref<Texture> texture(new Texture(image));
 	m_ImageFile = image;
@@ -78,9 +76,9 @@ void TexturedMaterial::setTexture(ImageResourceFile* image)
 
 #ifdef ROOTEX_EDITOR
 #include "imgui_stdlib.h"
-void TexturedMaterial::draw()
+void TextureMaterial::draw()
 {
-	ImGui::Text(TexturedMaterial::s_MaterialName.c_str());
+	ImGui::Text(TextureMaterial::s_MaterialName.c_str());
 	m_ImagePathUI = m_ImageFile->getPath().string();
 	if (ImGui::InputText("Texture", &m_ImagePathUI, ImGuiInputTextFlags_EnterReturnsTrue))
 	{

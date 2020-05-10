@@ -4,9 +4,9 @@
 
 class Texture;
 
-class TexturedMaterial : public Material
+class TextureMaterial : public Material
 {
-	DiffuseShader* m_DiffuseShader;
+	TextureShader* m_DiffuseShader;
 	Ref<Texture> m_DiffuseTexture;
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_SamplerState;
 
@@ -38,9 +38,9 @@ public:
 		End
 	};
 
-	TexturedMaterial() = delete;
-	TexturedMaterial(const String& imagePath, float specularIntensity, float specularPower);
-	~TexturedMaterial() = default;
+	TextureMaterial() = delete;
+	TextureMaterial(const String& imagePath);
+	~TextureMaterial() = default;
 
 	static Material* CreateDefault();
 	static Material* Create(const JSON::json& materialData);

@@ -5,5 +5,5 @@
         "g": 0.0,
         "r": 1.0
     },
-    "type": "ColoredMaterial"
+    "type": "ColorMaterial"
 }

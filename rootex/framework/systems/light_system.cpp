@@ -22,7 +22,7 @@ PSDiffuseConstantBufferLights LightSystem::getLights()
 	{
 		PointLightComponent* light = dynamic_cast<PointLightComponent*>(pointLightComponents[i]);
 		TransformComponent* transform = light->getOwner()->getComponent<TransformComponent>().get();
-		Vector3 transformedPosition = Vector3::Transform(transform->getPosition(), transform->getParentAbsoluteTransform());
+		Vector3 transformedPosition = transform->getAbsoluteTransform().Translation();
 		lights.pointLightInfos[i] = {
 			light->m_AmbientColor, light->m_DiffuseColor, light->m_DiffuseIntensity,
 			light->m_AttConst, light->m_AttLin, light->m_AttQuad,
@@ -59,12 +59,11 @@ PSDiffuseConstantBufferLights LightSystem::getLights()
 	for (; i < spotLightComponents.size() && i < 4; i++)
 	{
 		SpotLightComponent* light = dynamic_cast<SpotLightComponent*>(spotLightComponents[i]);
-		TransformComponent* transform = light->getOwner()->getComponent<TransformComponent>().get();
-		Vector3 direction = DirectX::XMVector3Rotate(Vector3(0.0f, 0.0f, 1.0f), transform->getRotation());
+		Matrix transform = light->getOwner()->getComponent<TransformComponent>()->getAbsoluteTransform();
 		lights.spotLightInfos[i] = {
 			light->m_AmbientColor, light->m_DiffuseColor, light->m_DiffuseIntensity,
 			light->m_AttConst, light->m_AttLin, light->m_AttQuad,
-			transform->getPosition(), light->m_Range, direction, light->m_Spot,
+			transform.Translation(), light->m_Range, transform.Forward(), light->m_Spot,
 			light->m_AngleRange
 		};
 	}

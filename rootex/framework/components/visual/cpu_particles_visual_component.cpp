@@ -5,6 +5,8 @@
 #include "systems/render_system.h"
 #include "timer.h"
 
+#include "core/renderer/materials/color_material.h"
+
 Component* CPUParticlesVisualComponent::Create(const JSON::json& componentData)
 {
 	ParticleTemplate particalTemplate {

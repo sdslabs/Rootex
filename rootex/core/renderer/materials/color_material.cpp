@@ -5,7 +5,7 @@
 
 ColorMaterial::ColorMaterial(const Color& color)
 	: m_Color(color)
-    , Material(ShaderLibrary::GetDefaultShader(), ColorMaterial::s_MaterialName)
+    , Material(ShaderLibrary::GetColorShader(), ColorMaterial::s_MaterialName)
 {
 	m_PSConstantBuffer.resize((int)PixelConstantBufferType::End, nullptr);
 	m_VSConstantBuffer.resize((int)VertexConstantBufferType::End, nullptr);
