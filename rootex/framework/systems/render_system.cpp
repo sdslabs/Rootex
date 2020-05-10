@@ -63,6 +63,7 @@ void RenderSystem::render()
 	RenderingDevice::GetSingleton()->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	RenderingDevice::GetSingleton()->setCurrentRasterizerState();
 	RenderingDevice::GetSingleton()->setDepthStencilState();
+	RenderingDevice::GetSingleton()->setDefaultBlendState();
 
 	perFrameVSCBBinds();
 	perFramePSCBBinds();
