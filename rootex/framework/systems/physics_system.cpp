@@ -66,18 +66,15 @@ sol::table PhysicsSystem::getPhysicsMaterial()
 
 btCollisionWorld::AllHitsRayResultCallback PhysicsSystem::reportAllRayHits(const btVector3& m_From, const btVector3& m_To)
 {
-	if (m_DynamicsWorld)
-	{
-		m_DynamicsWorld->updateAabbs();
-		m_DynamicsWorld->computeOverlappingPairs();
+	m_DynamicsWorld->updateAabbs();
+	m_DynamicsWorld->computeOverlappingPairs();
 
-		btCollisionWorld::AllHitsRayResultCallback allResults(m_From, m_To);
-		allResults.m_flags |= btTriangleRaycastCallback::kF_KeepUnflippedNormal;
-		allResults.m_flags |= btTriangleRaycastCallback::kF_UseSubSimplexConvexCastRaytest;
+	btCollisionWorld::AllHitsRayResultCallback allResults(m_From, m_To);
+	allResults.m_flags |= btTriangleRaycastCallback::kF_KeepUnflippedNormal;
+	allResults.m_flags |= btTriangleRaycastCallback::kF_UseSubSimplexConvexCastRaytest;
 
-		m_DynamicsWorld->rayTest(m_From, m_To, allResults);
-		return allResults;
-	}
+	m_DynamicsWorld->rayTest(m_From, m_To, allResults);
+	return allResults;
 }
 
 btCollisionWorld::ClosestRayResultCallback PhysicsSystem::reportClosestRayHits(const btVector3& m_From, const btVector3& m_To)
