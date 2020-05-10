@@ -69,6 +69,21 @@ void HierarchyComponent::clear()
 	m_ChildrenIDs.clear();
 }
 
+void HierarchyComponent::onRemove()
+{
+	for (auto& child : m_Children)
+	{
+		if (m_Parent)
+		{
+			m_Parent->snatchChild(child->getOwner());
+		}
+	}
+	if (m_Parent)
+	{
+		m_Parent->removeChild(m_Owner);
+	}
+}
+
 JSON::json HierarchyComponent::getJSON() const
 {
 	JSON::json j;

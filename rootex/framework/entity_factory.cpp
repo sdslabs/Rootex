@@ -24,6 +24,7 @@
 #include "components/visual/text_visual_2d_component.h"
 #include "components/visual/grid_visual_component.h"
 #include "components/visual/visual_component.h"
+#include "components/trigger_component.h"
 #include "systems/hierarchy_system.h"
 
 #define REGISTER_COMPONENT(ComponentClass)                                                            \
@@ -71,6 +72,7 @@ EntityFactory::EntityFactory()
 	REGISTER_COMPONENT(MusicComponent);
 	REGISTER_COMPONENT(ShortMusicComponent);
 	REGISTER_COMPONENT(CPUParticlesVisualComponent);
+	REGISTER_COMPONENT(TriggerComponent);
 }
 
 EntityFactory::~EntityFactory()
@@ -206,6 +208,14 @@ Ref<Entity> EntityFactory::findEntity(EntityID entityID)
 		return findIt->second;
 	}
 	return nullptr;
+}
+
+void EntityFactory::setupLiveEntities()
+{
+	for (auto& entity : m_Entities)
+	{
+		entity.second->setupEntities();
+	}
 }
 
 Ref<Entity> EntityFactory::createRootEntity()

@@ -1,0 +1,45 @@
+{
+    "Components": {
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 1
+        },
+        "ModelVisualComponent": {
+            "isVisible": true,
+            "material": "up_arrow.rmat",
+            "renderPass": 1,
+            "resFile": "game/assets/test/cube.obj"
+        },
+        "ScriptComponent": {
+            "connections": {
+                "onJump": "Jump"
+            },
+            "script": "game\\assets\\scripts\\trigger_test.lua"
+        },
+        "TransformComponent": {
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": -4.0
+            },
+            "rotation": {
+                "w": 1.0,
+                "x": -0.0,
+                "y": 0.0,
+                "z": -0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            }
+        },
+        "TriggerComponent": {
+            "targetEntityID": 6
+        }
+    },
+    "Entity": {
+        "ID": 4,
+        "name": "Cube"
+    }
+}

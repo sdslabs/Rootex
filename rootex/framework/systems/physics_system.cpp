@@ -146,3 +146,8 @@ void PhysicsSystem::update(float deltaMilliseconds)
 {
 	m_DynamicsWorld->stepSimulation(deltaMilliseconds * MS_TO_S, 10);
 }
+
+void PhysicsSystem::removeRigidBody(btRigidBody* rigidBody)
+{
+	m_DynamicsWorld->removeRigidBody(rigidBody);
+}

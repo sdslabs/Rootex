@@ -23,6 +23,10 @@ void Component::onRemove()
 {
 }
 
+void Component::onTrigger()
+{
+}
+
 Ref<Entity> Component::getOwner() const
 {
 	return m_Owner;
