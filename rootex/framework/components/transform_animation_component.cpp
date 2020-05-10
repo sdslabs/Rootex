@@ -47,11 +47,11 @@ Component* TransformAnimationComponent::CreateDefault()
 TransformAnimationComponent::TransformAnimationComponent(const Vector<Keyframe> keyframes, bool isPlayOnStart, bool isLooping)
     : m_Keyframes(keyframes)
     , m_CurrentTimePosition(0.0f)
-    , m_TransformComponent(nullptr)
     , m_IsPlayOnStart(isPlayOnStart)
     , m_IsLooping(isLooping)
+    , m_TransformComponent(nullptr)
+    , m_IsPlaying(false)
 {
-	m_IsPlaying = m_IsPlayOnStart;
 }
 
 bool TransformAnimationComponent::setup()
@@ -87,19 +87,25 @@ void TransformAnimationComponent::popKeyframe(int count)
 	}
 }
 
-bool TransformAnimationComponent::hasEnded()
+bool TransformAnimationComponent::hasEnded() const
 {
 	return m_CurrentTimePosition > getEndTime();
 }
 
-float TransformAnimationComponent::getStartTime()
+float TransformAnimationComponent::getStartTime() const
 {
 	return m_Keyframes.front().m_TimePosition;
 }
 
-float TransformAnimationComponent::getEndTime()
+float TransformAnimationComponent::getEndTime() const
 {
 	return m_Keyframes.back().m_TimePosition;
+}
+
+void TransformAnimationComponent::reset()
+{
+	m_CurrentTimePosition = 0.0f;
+	interpolate(0.0f);
 }
 
 void TransformAnimationComponent::interpolate(float t)
@@ -161,6 +167,16 @@ void TransformAnimationComponent::interpolate(float t)
 	}
 }
 
+void TransformAnimationComponent::setPlaying(bool enabled)
+{
+	m_IsPlaying = enabled;
+}
+
+void TransformAnimationComponent::onTrigger()
+{
+	setPlaying(true);
+}
+
 JSON::json TransformAnimationComponent::getJSON() const
 {
 	JSON::json j;
@@ -191,14 +207,11 @@ JSON::json TransformAnimationComponent::getJSON() const
 void TransformAnimationComponent::draw()
 {
 	ImGui::SliderFloat("Time", &m_CurrentTimePosition, 0.0f, getEndTime());
-	if (ImGui::Checkbox("Play In Editor", &m_IsPlaying))
+	if (ImGui::Button("Reset##Component"))
 	{
-		if (!m_IsPlaying)
-		{
-			interpolate(0.0f);
-			setup();
-		}
+		reset();
 	}
+	ImGui::Checkbox("Play In Editor", &m_IsPlaying);
 	ImGui::Checkbox("Loop", &m_IsLooping);
 	ImGui::Checkbox("Play On Start", &m_IsPlayOnStart);
 

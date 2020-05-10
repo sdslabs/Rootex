@@ -35,6 +35,11 @@ PhysicsColliderComponent::PhysicsColliderComponent(const String& matName, float 
 	m_LocalInertia = btVector3(0.0f, 0.0f, 0.0f);
 }
 
+PhysicsColliderComponent::~PhysicsColliderComponent()
+{
+	PhysicsSystem::GetSingleton()->removeRigidBody(m_Body.get());
+}
+
 bool PhysicsColliderComponent::setup()
 {
 	bool status = true;
@@ -48,20 +53,23 @@ bool PhysicsColliderComponent::setup()
 		}
 		else
 		{
-			btRigidBody::btRigidBodyConstructionInfo rbInfo(m_Mass, this, m_CollisionShape.get(), m_LocalInertia);
+			if (!m_Body)
+			{
+				btRigidBody::btRigidBodyConstructionInfo rbInfo(m_Mass, this, m_CollisionShape.get(), m_LocalInertia);
 
-			/// Set up the materal properties.
-			rbInfo.m_restitution = m_Material.m_Restitution;
-			rbInfo.m_friction = m_Material.m_Friction;
+				/// Set up the materal properties.
+				rbInfo.m_restitution = m_Material.m_Restitution;
+				rbInfo.m_friction = m_Material.m_Friction;
 
-			m_Body = new btRigidBody(rbInfo);
+				m_Body.reset(new btRigidBody(rbInfo));
 
-			/// Adds a new rigid body to physics system.
-			PhysicsSystem::GetSingleton()->addRigidBody(m_Body);
-			setGravity(m_Gravity);
-			setMoveable(m_IsMoveable);
-			
-			m_Body->setUserPointer(this);
+				/// Adds a new rigid body to physics system.
+				PhysicsSystem::GetSingleton()->addRigidBody(m_Body.get());
+				setGravity(m_Gravity);
+				setMoveable(m_IsMoveable);
+
+				m_Body->setUserPointer(this);
+			}
 			
 			m_ScriptComponent = getOwner()->getComponent<ScriptComponent>().get();
 			if (m_IsGeneratesHitEvents && !m_ScriptComponent)

@@ -8,6 +8,20 @@ TransformAnimationSystem* TransformAnimationSystem::GetSingleton()
 	return &singleton;
 }
 
+void TransformAnimationSystem::begin()
+{
+	TransformAnimationComponent* animation = nullptr;
+	for (auto& component : s_Components[TransformAnimationComponent::s_ID])
+	{
+		animation = (TransformAnimationComponent*)component;
+		
+		if (animation->isPlayOnStart())
+		{
+			animation->setPlaying(true);
+		}
+	}
+}
+
 void TransformAnimationSystem::update(float deltaMilliseconds)
 {
 	TransformAnimationComponent* animation = nullptr;
@@ -15,16 +29,17 @@ void TransformAnimationSystem::update(float deltaMilliseconds)
 	{
 		animation = (TransformAnimationComponent*)component;
 
-		if (animation->isPlaying())
+		if (animation->isPlaying() && !animation->hasEnded())
 		{
 			animation->m_CurrentTimePosition += deltaMilliseconds * MS_TO_S;
 
-			if (animation->hasEnded() && animation->isLooping())
-			{
-				animation->m_CurrentTimePosition = 0.0f;
-			}
 
 			animation->interpolate(animation->m_CurrentTimePosition);
+		}
+		
+		if (animation->isLooping() && animation->hasEnded())
+		{
+			animation->reset();
 		}
 	}
 }

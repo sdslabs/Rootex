@@ -47,13 +47,18 @@ public:
 	void pushKeyframe(float timePosition, const Vector3& position, const Quaternion& rotation, const Vector3& scale);
 	void popKeyframe(int count);
 	bool isPlaying() const { return m_IsPlaying; }
+	bool isPlayOnStart() const { return m_IsPlayOnStart; }
 	bool isLooping() const { return m_IsLooping; }
-	bool hasEnded();
-	float getStartTime();
-	float getEndTime();
+	bool hasEnded() const;
+	float getStartTime() const;
+	float getEndTime() const;
+	void reset();
 
 	void interpolate(float t);
 
+	void setPlaying(bool enabled);
+
+	virtual void onTrigger() override;
 	virtual String getName() const override { return "TransformAnimationComponent"; }
 	ComponentID getComponentID() const { return s_ID; }
 	virtual JSON::json getJSON() const override;
