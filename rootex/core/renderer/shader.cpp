@@ -50,18 +50,18 @@ void Shader::bind() const
 	RenderingDevice::GetSingleton()->bind(m_InputLayout.Get());
 }
 
-DiffuseShader::DiffuseShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat)
+TextureShader::TextureShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat)
     : Shader(vertexPath, pixelPath, vertexBufferFormat)
 {
 	m_SamplerState = RenderingDevice::GetSingleton()->createSamplerState();
 }
 
-void DiffuseShader::set(const Texture* texture)
+void TextureShader::set(const Texture* texture)
 {
 	RenderingDevice::GetSingleton()->setInPixelShader(0, 1, texture->getTextureResourceView());
 }
 
-void DiffuseShader::bind() const
+void TextureShader::bind() const
 {
 	Shader::bind();
 	RenderingDevice::GetSingleton()->setInPixelShader(m_SamplerState.Get());

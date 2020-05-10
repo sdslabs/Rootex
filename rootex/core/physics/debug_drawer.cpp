@@ -1,10 +1,11 @@
 #include "debug_drawer.h"
 
 #include "framework/systems/render_system.h"
+#include "core/renderer/materials/color_material.h"
 
 DebugDrawer::DebugDrawer()
 {
-	m_ColorMaterial = MaterialLibrary::GetDefaultMaterial();
+	m_ColorMaterial = std::dynamic_pointer_cast<ColorMaterial>(MaterialLibrary::GetDefaultMaterial());
 }
 
 void DebugDrawer::drawLine(const btVector3& from, const btVector3& to, const btVector3& color)
@@ -13,7 +14,7 @@ void DebugDrawer::drawLine(const btVector3& from, const btVector3& to, const btV
 		from.x(), from.y(), from.z(),
 	    to.x(), to.y(), to.z() });
 	IndexBuffer ib({ 0, 1 });
-	dynamic_cast<ColorMaterial*>(m_ColorMaterial.get())->setColor({ color.x(), color.y(), color.z(), 1.0f });
+	m_ColorMaterial->setColor({ color.x(), color.y(), color.z(), 1.0f });
 
 	RenderSystem::GetSingleton()->enableLineRenderMode();
 	RenderSystem::GetSingleton()->getRenderer()->draw(&vb, &ib, m_ColorMaterial.get());

@@ -4,9 +4,11 @@
 #include "core/renderer/material_library.h"
 #include "Bullet3D/src/LinearMath/btIDebugDraw.h"
 
+class ColorMaterial;
+
 class DebugDrawer : public btIDebugDraw
 {
-	Ref<Material> m_ColorMaterial;
+	Ref<ColorMaterial> m_ColorMaterial;
 
 public:
 	DebugDrawer();

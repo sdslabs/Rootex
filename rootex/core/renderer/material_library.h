@@ -1,9 +1,7 @@
 #pragma once
 
 #include "common/common.h"
-
-#include "materials/color_material.h"
-#include "materials/textured_material.h"
+#include "material.h"
 
 class MaterialLibrary
 {
