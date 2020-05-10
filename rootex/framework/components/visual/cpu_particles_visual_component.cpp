@@ -126,10 +126,8 @@ void CPUParticlesVisualComponent::render(RenderPass renderPass)
 			float life = particle.m_LifeRemaining / particle.m_LifeTime;
 			float size = particle.m_SizeBegin * (life) + particle.m_SizeEnd * (1.0f - life);
 
-			Color color = Color::Lerp(particle.m_ColorEnd, particle.m_ColorBegin, life);
-
 			RenderSystem::GetSingleton()->pushMatrixOverride(Matrix::CreateScale(size) * particle.m_Transform);
-			material->setColor({ color });
+			material->setColor(Color::Lerp(particle.m_ColorEnd, particle.m_ColorBegin, life));
 			RenderSystem::GetSingleton()->getRenderer()->draw(m_VisualModelResourceFile->getVertexBuffer(), m_VisualModelResourceFile->getIndexBuffer(), getMaterial());
 			RenderSystem::GetSingleton()->popMatrix();
 		}

@@ -570,7 +570,7 @@ Variant Editor::saveAll(const Event* event)
 
 Variant Editor::autoSave(const Event* event)
 {
-	PRINT("Auto-saving entities...");
+	PRINT("Auto-saving levels...");
 	saveAll(nullptr);
 	return true;
 }
