@@ -2,6 +2,8 @@
 
 #include "framework/systems/render_system.h"
 #include "renderer/shader_library.h"
+#include "renderer/shaders/register_locations_pixel_shader.h"
+#include "renderer/shaders/register_locations_vertex_shader.h"
 
 ColorMaterial::ColorMaterial(const Color& color)
 	: m_Color(color)
@@ -13,12 +15,12 @@ ColorMaterial::ColorMaterial(const Color& color)
 
 void ColorMaterial::setPSConstantBuffer(const PSSolidConstantBuffer& constantBuffer)
 {
-	Material::setPSConstantBuffer<PSSolidConstantBuffer>(constantBuffer, m_PSConstantBuffer[(int)PixelConstantBufferType::Color], 3u);
+	Material::setPSConstantBuffer<PSSolidConstantBuffer>(constantBuffer, m_PSConstantBuffer[(int)PixelConstantBufferType::Color], PER_OBJECT_PS_CPP);
 }
 
 void ColorMaterial::setVSConstantBuffer(const VSSolidConstantBuffer& constantBuffer)
 {
-	Material::setVSConstantBuffer<VSSolidConstantBuffer>(constantBuffer, m_VSConstantBuffer[(int)VertexConstantBufferType::Model], 1u);
+	Material::setVSConstantBuffer<VSSolidConstantBuffer>(constantBuffer, m_VSConstantBuffer[(int)VertexConstantBufferType::Model], PER_OBJECT_VS_CPP);
 }
 
 Material* ColorMaterial::CreateDefault()

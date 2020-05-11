@@ -7,6 +7,9 @@
 #include "framework/systems/render_system.h"
 #include "renderer/texture.h"
 
+#include "renderer/shaders/register_locations_pixel_shader.h"
+#include "renderer/shaders/register_locations_vertex_shader.h"
+
 TexturedMaterial::TexturedMaterial(const String& imagePath, float specularIntensity, float specularPower)
     : Material(ShaderLibrary::GetDiffuseShader(), TexturedMaterial::s_MaterialName)
     , m_DiffuseShader(reinterpret_cast<DiffuseShader*>(m_Shader))
@@ -26,12 +29,12 @@ TexturedMaterial::TexturedMaterial(const String& imagePath, float specularIntens
 
 void TexturedMaterial::setPSConstantBuffer(const PSDiffuseConstantBufferMaterial& constantBuffer)
 {
-	Material::setPSConstantBuffer<PSDiffuseConstantBufferMaterial>(constantBuffer, m_PSConstantBuffer[(int)PixelConstantBufferType::Material], 4u);
+	Material::setPSConstantBuffer<PSDiffuseConstantBufferMaterial>(constantBuffer, m_PSConstantBuffer[(int)PixelConstantBufferType::Material], PER_OBJECT_PS_CPP);
 }
 
 void TexturedMaterial::setVSConstantBuffer(const VSDiffuseConstantBuffer& constantBuffer)
 {
-	Material::setVSConstantBuffer<VSDiffuseConstantBuffer>(constantBuffer, m_VSConstantBuffer[(int)VertexConstantBufferType::Model], 1u);
+	Material::setVSConstantBuffer<VSDiffuseConstantBuffer>(constantBuffer, m_VSConstantBuffer[(int)VertexConstantBufferType::Model], PER_OBJECT_VS_CPP);
 }
 
 Material* TexturedMaterial::CreateDefault()

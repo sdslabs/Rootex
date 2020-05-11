@@ -1,2 +1,7 @@
-#define PER_OBJECT b1
-#define PER_FRAME b2
+#define CONCAT(a, b) a##b
+
+#define PER_FRAME_PS_CPP 1
+#define PER_OBJECT_PS_CPP 2
+
+#define PER_OBJECT_PS_HLSL CONCAT(b, PER_OBJECT_PS_CPP)
+#define PER_FRAME_PS_HLSL CONCAT(b, PER_FRAME_PS_CPP)
