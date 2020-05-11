@@ -48,7 +48,7 @@ void Material::setPSConstantBuffer(const T& constantBuffer, Microsoft::WRL::ComP
 		D3D11_SUBRESOURCE_DATA csd = { 0 };
 		csd.pSysMem = &constantBuffer;
 
-		bufferPointer = RenderingDevice::GetSingleton()->createPSConstantBuffer(&cbd, &csd, slot);
+		bufferPointer = RenderingDevice::GetSingleton()->createPSConstantBuffer(&cbd, &csd);
 		RenderingDevice::GetSingleton()->setPSConstantBuffer(bufferPointer.Get(), slot);
 	}
 	else
@@ -77,7 +77,7 @@ void Material::setVSConstantBuffer(const T& constantBuffer, Microsoft::WRL::ComP
 		D3D11_SUBRESOURCE_DATA csd = { 0 };
 		csd.pSysMem = &constantBuffer;
 
-		bufferPointer = RenderingDevice::GetSingleton()->createVSConstantBuffer(&cbd, &csd, slot);
+		bufferPointer = RenderingDevice::GetSingleton()->createVSConstantBuffer(&cbd, &csd);
 		RenderingDevice::GetSingleton()->setVSConstantBuffer(bufferPointer.Get(), slot);
 	}
 	else

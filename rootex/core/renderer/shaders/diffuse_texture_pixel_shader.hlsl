@@ -43,7 +43,7 @@ struct SpotLightInfo
     float angleRange;
 };
 
-cbuffer Lights : register(PER_FRAME)
+cbuffer Lights : register(PER_FRAME_PS_HLSL)
 {
     float3 cameraPos;
     int pointLightCount;
@@ -54,7 +54,7 @@ cbuffer Lights : register(PER_FRAME)
     SpotLightInfo spotLightInfos[4];
 }
 
-cbuffer Material: register(b4)
+cbuffer Material : register(PER_OBJECT_PS_HLSL)
 {
     float specularIntensity;
     float specPow;

@@ -1,17 +1,17 @@
 #include "register_locations_vertex_shader.h"
 
-cbuffer CBuf : register(PER_OBJECT)
+cbuffer CBuf : register(PER_OBJECT_VS_HLSL)
 {
     matrix M;
     matrix MInverseTranspose;
 };
 
-cbuffer CBuf : register(PER_FRAME)
+cbuffer CBuf : register(PER_FRAME_VS_HLSL)
 {
     matrix V;
 };
 
-cbuffer CBuf : register(PER_CAMERA_CHANGE)
+cbuffer CBuf : register(PER_CAMERA_CHANGE_VS_HLSL)
 {
     matrix P;
 };

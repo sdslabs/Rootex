@@ -271,38 +271,14 @@ Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createIndexBuffer(D3D11_BU
 	return indexBuffer;
 }
 
-Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createVSProjectionConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
-{
-	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer = nullptr;
-	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &constantBuffer));
-	m_Context->VSSetConstantBuffers(3u, 1u, constantBuffer.GetAddressOf());
-	return constantBuffer;
-}
-
-Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createVSPerFrameConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
-{
-	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer = nullptr;
-	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &constantBuffer));
-	m_Context->VSSetConstantBuffers(2u, 1u, constantBuffer.GetAddressOf());
-	return constantBuffer;
-}
-
-Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createPSPerFrameConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
-{
-	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer = nullptr;
-	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &constantBuffer));
-	m_Context->PSSetConstantBuffers(2u, 1u, constantBuffer.GetAddressOf());
-	return constantBuffer;
-}
-
-Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createVSConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd, UINT slot)
+Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createVSConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
 {
 	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &constantBuffer));
 	return constantBuffer;
 }
 
-Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createPSConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd, UINT slot)
+Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createPSConstantBuffer(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
 {
 	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer = nullptr;
 	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &constantBuffer));
