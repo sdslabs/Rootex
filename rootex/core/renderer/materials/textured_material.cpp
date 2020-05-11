@@ -7,12 +7,11 @@
 #include "framework/systems/render_system.h"
 #include "renderer/texture.h"
 
-//TexturedMaterial::TexturedMaterial(const String& imagePath, float specularIntensity, float specularPower)
-TexturedMaterial::TexturedMaterial(const String& imagePath)
+TexturedMaterial::TexturedMaterial(const String& imagePath, float specularIntensity, float specularPower)
     : Material(ShaderLibrary::GetDiffuseShader(), TexturedMaterial::s_MaterialName)
     , m_DiffuseShader(reinterpret_cast<DiffuseShader*>(m_Shader))
-    //, m_SpecularIntensity(specularIntensity)
-    //, m_SpecularPower(specularPower)
+    , m_SpecularIntensity(specularIntensity)
+    , m_SpecularPower(specularPower)
 {
 	m_ImageFile = ResourceLoader::CreateImageResourceFile(imagePath);
 	setTexture(m_ImageFile);
@@ -42,12 +41,12 @@ void TexturedMaterial::setVSConstantBuffer(const VSDiffuseConstantBuffer& consta
 
 Material* TexturedMaterial::CreateDefault()
 {
-	return new TexturedMaterial("rootex/assets/rootex.png");
+	return new TexturedMaterial("rootex/assets/rootex.png", 2.0f, 30.0f);
 }
 
 Material* TexturedMaterial::Create(const JSON::json& materialData)
 {
-	return new TexturedMaterial((String)materialData["imageFile"]);
+	return new TexturedMaterial((String)materialData["imageFile"], (float)materialData["specularIntensity"], (float)materialData["specularPower"]);
 }
 
 void TexturedMaterial::bind()
@@ -109,6 +108,18 @@ void TexturedMaterial::draw()
 			}
 		}
 		ImGui::EndDragDropTarget();
+	}
+	ImGui::DragFloat("##Specular Intensity", &m_SpecularIntensity);
+	ImGui::SameLine();
+	if (ImGui::Button("Specular Intensity"))
+	{
+		m_SpecularIntensity = 2.0f;
+	}
+	ImGui::DragFloat("##Specular Power", &m_SpecularPower);
+	ImGui::SameLine();
+	if (ImGui::Button("Specular Power"))
+	{
+		m_SpecularPower = 30.0f;
 	}
 }
 #endif // ROOTEX_EDITOR
