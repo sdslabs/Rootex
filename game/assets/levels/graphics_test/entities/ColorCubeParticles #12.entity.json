@@ -1,6 +1,6 @@
 {
     "Components": {
-        "CPUParticlesVisualComponent": {
+        "CPUParticlesComponent": {
             "angularVelocity": {
                 "w": 1.0,
                 "x": 0.0,

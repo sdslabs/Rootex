@@ -17,13 +17,13 @@
 #include "components/transform_component.h"
 #include "components/transform_animation_component.h"
 #include "components/visual/camera_component.h"
-#include "components/visual/cpu_particles_visual_component.h"
+#include "components/visual/cpu_particles_component.h"
 #include "components/visual/directional_light_component.h"
 #include "components/visual/point_light_component.h"
 #include "components/visual/spot_light_component.h"
-#include "components/visual/text_visual_2d_component.h"
-#include "components/visual/grid_visual_component.h"
-#include "components/visual/visual_component.h"
+#include "components/visual/text_ui_component.h"
+#include "components/visual/grid_model_component.h"
+#include "components/visual/model_component.h"
 #include "components/trigger_component.h"
 #include "systems/hierarchy_system.h"
 
@@ -57,9 +57,9 @@ EntityFactory::EntityFactory()
 	REGISTER_COMPONENT(TestComponent);
 	REGISTER_COMPONENT(DebugComponent);
 	REGISTER_COMPONENT(CameraComponent);
-	REGISTER_COMPONENT(GridVisualComponent);
+	REGISTER_COMPONENT(GridModelComponent);
 	REGISTER_COMPONENT(ModelComponent);
-	REGISTER_COMPONENT(TextVisual2DComponent);
+	REGISTER_COMPONENT(TextUIComponent);
 	REGISTER_COMPONENT(TransformComponent);
 	REGISTER_COMPONENT(TransformAnimationComponent);
 	REGISTER_COMPONENT(PointLightComponent);
@@ -71,7 +71,7 @@ EntityFactory::EntityFactory()
 	REGISTER_COMPONENT(ScriptComponent);
 	REGISTER_COMPONENT(MusicComponent);
 	REGISTER_COMPONENT(ShortMusicComponent);
-	REGISTER_COMPONENT(CPUParticlesVisualComponent);
+	REGISTER_COMPONENT(CPUParticlesComponent);
 	REGISTER_COMPONENT(TriggerComponent);
 }
 
@@ -233,9 +233,9 @@ Ref<Entity> EntityFactory::createRootEntity()
 		addComponent(root, rootTransformComponent);
 	}
 	{
-		Ref<ModelComponent> rootVisualComponent = std::dynamic_pointer_cast<ModelComponent>(createDefaultComponent("ModelComponent"));
-		rootVisualComponent->setVisibility(false);
-		addComponent(root, rootVisualComponent);
+		Ref<ModelComponent> rootModelComponent = std::dynamic_pointer_cast<ModelComponent>(createDefaultComponent("ModelComponent"));
+		rootModelComponent->setIsVisible(false);
+		addComponent(root, rootModelComponent);
 	}
 	{
 		Ref<CameraComponent> rootCameraComponent = std::dynamic_pointer_cast<CameraComponent>(createDefaultComponent("CameraComponent"));

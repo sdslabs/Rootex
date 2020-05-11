@@ -6,6 +6,7 @@
 #include "rootex/core/input/input_manager.h"
 #include "rootex/core/resource_loader.h"
 #include "rootex/framework/systems/render_system.h"
+#include "rootex/framework/systems/render_ui_system.h"
 #include "rootex/framework/systems/physics_system.h"
 #include "rootex/framework/systems/transform_animation_system.h"
 
@@ -42,6 +43,7 @@ EditorApplication::EditorApplication()
 	InputManager::GetSingleton()->setScheme(getSettings()->getJSON()["startScheme"]);
 
 	RenderSystem::GetSingleton()->setIsEditorRenderPass(true);
+	RenderUISystem::GetSingleton();
 	Editor::GetSingleton()->initialize(m_Window->getWindowHandle(), m_ApplicationSettings->getJSON());
 	m_PointAtLast10Second = m_ApplicationTimer.Now();
 }

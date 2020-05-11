@@ -7,7 +7,7 @@
         "ModelComponent": {
             "isVisible": true,
             "material": "blue_textured.rmat",
-            "renderPass": 5,
+            "renderPass": 1,
             "resFile": "game\\assets\\test\\teapot.obj"
         },
         "TransformComponent": {

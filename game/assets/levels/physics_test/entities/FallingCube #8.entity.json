@@ -22,7 +22,7 @@
         "ModelComponent": {
             "isVisible": true,
             "material": "rootex_logo_textured.rmat",
-            "renderPass": 5,
+            "renderPass": 1,
             "resFile": "rootex/assets/cube.obj"
         },
         "ScriptComponent": {

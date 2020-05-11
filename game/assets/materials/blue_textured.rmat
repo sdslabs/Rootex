@@ -2,5 +2,5 @@
     "imageFile": "game/assets/test/blue.png",
     "specularIntensity": 2.0,
     "specularPower": 4.0,
-    "type": "TexturedMaterial"
+    "type": "TextureMaterial"
 }

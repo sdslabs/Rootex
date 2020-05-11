@@ -1,10 +1,10 @@
-#include "grid_visual_component.h"
+#include "grid_model_component.h"
 
 #include "framework/systems/render_system.h"
 
-Component* GridVisualComponent::Create(const JSON::json& componentData)
+Component* GridModelComponent::Create(const JSON::json& componentData)
 {
-	return new GridVisualComponent(
+	return new GridModelComponent(
 	    { 
 			componentData["cellSize"]["x"],
 	        componentData["cellSize"]["y"]
@@ -20,18 +20,18 @@ Component* GridVisualComponent::Create(const JSON::json& componentData)
 	    componentData["isVisible"]);
 }
 
-Component* GridVisualComponent::CreateDefault()
+Component* GridModelComponent::CreateDefault()
 {
-	return new GridVisualComponent(
+	return new GridModelComponent(
 	    { 1.0f, 1.0f },
 		100,
 		Color(ColorPresets::DarkGray),
-		RenderPass::RenderPassEditor,
+		(unsigned int)RenderPass::Editor,
 	    true);
 }
 
-GridVisualComponent::GridVisualComponent(const Vector2& cellSize, const int& cellCount, const Color& gridColor, const unsigned int& renderPass, bool isVisible)
-    : VisualComponent(renderPass, isVisible)
+GridModelComponent::GridModelComponent(const Vector2& cellSize, const int& cellCount, const Color& gridColor, const unsigned int& renderPass, bool isVisible)
+    : ModelComponent(renderPass, MaterialLibrary::GetDefaultMaterial(), nullptr, isVisible)
     , m_CellCount(cellCount)
     , m_CellSize(cellSize)
     , m_ColorMaterial(MaterialLibrary::GetDefaultMaterial())
@@ -39,7 +39,7 @@ GridVisualComponent::GridVisualComponent(const Vector2& cellSize, const int& cel
 {
 }
 
-void GridVisualComponent::refreshVertexBuffers()
+void GridModelComponent::refreshVertexBuffers()
 {
 	const Vector3& origin = m_TransformComponent->getAbsoluteTransform().Translation();
 
@@ -112,9 +112,9 @@ void GridVisualComponent::refreshVertexBuffers()
 	m_IndexBuffer.reset(new IndexBuffer(indices));
 }
 
-bool GridVisualComponent::setup()
+bool GridModelComponent::setup()
 {
-	bool status = VisualComponent::setup();
+	bool status = ModelComponent::setup();
 
 	if (status)
 	{
@@ -124,19 +124,16 @@ bool GridVisualComponent::setup()
 	return status;
 }
 
-void GridVisualComponent::render(RenderPass renderPass)
+void GridModelComponent::render()
 {
-	if (renderPass & m_RenderPass)
-	{
-		RenderSystem::GetSingleton()->enableLineRenderMode();
-		RenderSystem::GetSingleton()->getRenderer()->draw(m_VertexBuffer.get(), m_IndexBuffer.get(), m_ColorMaterial.get());
-		RenderSystem::GetSingleton()->resetRenderMode();
-	}
+	RenderSystem::GetSingleton()->enableLineRenderMode();
+	RenderSystem::GetSingleton()->getRenderer()->draw(m_VertexBuffer.get(), m_IndexBuffer.get(), m_ColorMaterial.get());
+	RenderSystem::GetSingleton()->resetRenderMode();
 }
 
-JSON::json GridVisualComponent::getJSON() const
+JSON::json GridModelComponent::getJSON() const
 {
-	JSON::json& j = VisualComponent::getJSON();
+	JSON::json& j = ModelComponent::getJSON();
 
 	j["cellSize"]["x"] = m_CellSize.x;
 	j["cellSize"]["y"] = m_CellSize.y;
@@ -151,9 +148,9 @@ JSON::json GridVisualComponent::getJSON() const
 
 #ifdef ROOTEX_EDITOR
 #include "imgui.h"
-void GridVisualComponent::draw()
+void GridModelComponent::draw()
 {
-	VisualComponent::draw();
+	ModelComponent::draw();
 
 	if (ImGui::InputInt("Cell Count", &m_CellCount))
 	{

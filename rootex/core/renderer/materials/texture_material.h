@@ -39,7 +39,7 @@ public:
 	};
 
 	TextureMaterial() = delete;
-	TextureMaterial(const String& imagePath);
+	TextureMaterial(const String& imagePath, float specIntensity, float specPower);
 	~TextureMaterial() = default;
 
 	static Material* CreateDefault();

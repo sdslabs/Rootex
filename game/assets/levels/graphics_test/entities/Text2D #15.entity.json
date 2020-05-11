@@ -4,7 +4,7 @@
             "children": [],
             "parent": 1
         },
-        "TextVisual2DComponent": {
+        "TextUIComponent": {
             "color": {
                 "a": 1.0,
                 "b": 1.0,
@@ -17,7 +17,8 @@
                 "x": 0.0,
                 "y": 966.0
             },
-            "text": "Hello Rootex!"
+            "text": "Hello Rootex!",
+            "isVisible": true
         },
         "TransformComponent": {
             "position": {
