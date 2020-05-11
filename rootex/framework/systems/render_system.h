@@ -4,6 +4,7 @@
 #include "framework/system.h"
 #include "framework/systems/hierarchy_system.h"
 #include "main/window.h"
+#include "core/renderer/renderer.h"
 
 class RenderSystem : public System
 {

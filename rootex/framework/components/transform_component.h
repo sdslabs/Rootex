@@ -28,8 +28,8 @@ class TransformComponent : public Component
 	TransformComponent(const Vector3& position, const Vector4& rotation, const Vector3& scale);
 	TransformComponent(TransformComponent&) = delete;
 
-	friend class TexturedModelVisualComponent;
-	friend class ModelVisualComponent;
+	friend class TexturedModelComponent;
+	friend class ModelComponent;
 	friend class RenderSystem;
 	friend class EntityFactory;
 

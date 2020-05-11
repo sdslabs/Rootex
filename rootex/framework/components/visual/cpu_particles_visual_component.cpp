@@ -51,7 +51,7 @@ Component* CPUParticlesVisualComponent::CreateDefault()
 }
 
 CPUParticlesVisualComponent::CPUParticlesVisualComponent(size_t poolSize, const String& particleModelPath, const ParticleTemplate& particleTemplate, Ref<Material> material, bool visibility)
-    : ModelVisualComponent(RenderPassMain, material, ResourceLoader::CreateVisualModelResourceFile(particleModelPath), visibility)
+    : ModelComponent(RenderPassMain, material, ResourceLoader::CreateVisualModelResourceFile(particleModelPath), visibility)
     , m_ParticleTemplate(particleTemplate)
     , m_TransformComponent(nullptr)
 {
@@ -68,7 +68,7 @@ CPUParticlesVisualComponent::~CPUParticlesVisualComponent()
 
 bool CPUParticlesVisualComponent::setup()
 {
-	m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
+	m_TransformComModelComponenttComponent<TransformComponent>().get();
 	if (!m_TransformComponent)
 	{
 		ERR("Transform Component not found on entity with CPU Particles Component: " + m_Owner->getFullName());
@@ -79,7 +79,7 @@ bool CPUParticlesVisualComponent::setup()
 
 bool CPUParticlesVisualComponent::preRender()
 {
-	ModelVisualComponent::preRender();
+	ModelComponent::preRender();
 
 	int i = m_EmitRate;
 	while (i >= 0)
@@ -138,7 +138,7 @@ void CPUParticlesVisualComponent::render(RenderPass renderPass)
 
 void CPUParticlesVisualComponent::postRender()
 {
-	ModelVisualComponent::postRender();
+	ModelComponent::postRender();
 	m_LastRenderTimePoint = std::chrono::high_resolution_clock::now();
 }
 
@@ -169,7 +169,7 @@ void CPUParticlesVisualComponent::emit(const ParticleTemplate& particleTemplate)
 
 JSON::json CPUParticlesVisualComponent::getJSON() const
 {
-	JSON::json& j = ModelVisualComponent::getJSON();
+	JSON::json& j = ModelComponent::getJSON();
 
 	j["poolSize"] = m_ParticlePool.size();
 	j["velocity"]["x"] = m_ParticleTemplate.m_Velocity.x;
@@ -200,7 +200,7 @@ JSON::json CPUParticlesVisualComponent::getJSON() const
 #include "imgui.h"
 void CPUParticlesVisualComponent::draw()
 {
-	ModelVisualComponent::draw();
+	ModelComponent::draw();
 
 	ImGui::DragInt("Emit Rate", &m_EmitRate);
 	ImGui::Separator();

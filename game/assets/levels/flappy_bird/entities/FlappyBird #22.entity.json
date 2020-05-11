@@ -23,7 +23,7 @@
             ],
             "parent": 1
         },
-        "ModelVisualComponent": {
+        "ModelComponent": {
             "isVisible": true,
             "material": "yellow_textured.rmat",
             "renderPass": 5,

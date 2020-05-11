@@ -132,10 +132,10 @@ public:
 };
 
 /// Representation of a 3D model file. Only .obj with .mtl files are supported.
-class VisualModelResourceFile : public ResourceFile
+class ModelResourceFile : public ResourceFile
 {
-	explicit VisualModelResourceFile(Ptr<VertexBuffer> vertexBuffer, Ptr<IndexBuffer> indexBuffer, ResourceData* resData);
-	~VisualModelResourceFile();
+	explicit ModelResourceFile(Ptr<VertexBuffer> vertexBuffer, Ptr<IndexBuffer> indexBuffer, ResourceData* resData);
+	~ModelResourceFile();
 
 	Ptr<VertexBuffer> m_VertexBuffer;
 	Ptr<IndexBuffer> m_IndexBuffer;
@@ -143,8 +143,8 @@ class VisualModelResourceFile : public ResourceFile
 	friend class ResourceLoader;
 
 public:
-	explicit VisualModelResourceFile(VisualModelResourceFile&) = delete;
-	explicit VisualModelResourceFile(VisualModelResourceFile&&) = delete;
+	explicit ModelResourceFile(ModelResourceFile&) = delete;
+	explicit ModelResourceFile(ModelResourceFile&&) = delete;
 
 	virtual void reload() override;
 

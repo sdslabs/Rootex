@@ -4,7 +4,7 @@
             "children": [],
             "parent": 22
         },
-        "ModelVisualComponent": {
+        "ModelComponent": {
             "isVisible": true,
             "material": "Default",
             "renderPass": 5,

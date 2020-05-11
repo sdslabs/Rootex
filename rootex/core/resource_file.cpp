@@ -184,18 +184,18 @@ void LuaTextResourceFile::reload()
 	TextResourceFile::reload();
 }
 
-VisualModelResourceFile::VisualModelResourceFile(Ptr<VertexBuffer> vertexBuffer, Ptr<IndexBuffer> indexBuffer, ResourceData* resData)
+ModelResourceFile::ModelResourceFile(Ptr<VertexBuffer> vertexBuffer, Ptr<IndexBuffer> indexBuffer, ResourceData* resData)
     : ResourceFile(Type::Obj, resData)
     , m_VertexBuffer(std::move(vertexBuffer))
     , m_IndexBuffer(std::move(indexBuffer))
 {
 }
 
-VisualModelResourceFile::~VisualModelResourceFile()
+ModelResourceFile::~ModelResourceFile()
 {
 }
 
-void VisualModelResourceFile::reload()
+void ModelResourceFile::reload()
 {
 	ResourceFile::reload();
 	const aiScene* scene = ResourceLoader::GetModelLoader().ReadFile((OS::GetAbsolutePath(m_ResourceData->getPath().string()).generic_string()),

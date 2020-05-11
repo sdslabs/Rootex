@@ -25,7 +25,7 @@
 				"z": 1
 			}
 		},
-		"ModelVisualComponent": {
+		"ModelComponent": {
 			"resFile": "game/assets/test/cube.obj",
 			"renderPass": 1,
 			"material": "green.rmat",

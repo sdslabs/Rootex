@@ -1,6 +1,4 @@
-#include "model_visual_component.h"
-
-#include "visual_component.h"
+#include "model_component.h"
 
 #include "common/common.h"
 
@@ -9,46 +7,52 @@
 #include "framework/entity.h"
 #include "framework/systems/light_system.h"
 #include "framework/systems/render_system.h"
+#include "renderer/material_library.h"
 
-Component* ModelVisualComponent::Create(const JSON::json& componentData)
+Component* ModelComponent::Create(const JSON::json& componentData)
 {
-	ModelVisualComponent* modelVisualComponent = new ModelVisualComponent(
-	    componentData["renderPass"],
-	    MaterialLibrary::GetMaterial((String)componentData["material"]),
+	ModelComponent* modelComponent = new ModelComponent(
+	    MaterialLibrary::GetMaterial(componentData["material"]),
 	    ResourceLoader::CreateVisualModelResourceFile(componentData["resFile"]),
 	    componentData["isVisible"]);
 
-	return modelVisualComponent;
+	return modelComponent;
 }
 
-Component* ModelVisualComponent::CreateDefault()
+Component* ModelComponent::CreateDefault()
 {
-	ModelVisualComponent* modelVisualComponent = new ModelVisualComponent(
-	    RenderPassMain,
+	ModelComponent* modelComponent = new ModelComponent(
 	    MaterialLibrary::GetDefaultMaterial(),
 	    ResourceLoader::CreateVisualModelResourceFile("rootex/assets/cube.obj"),
 	    true);
 
-	return modelVisualComponent;
+	return modelComponent;
 }
 
-ModelVisualComponent::ModelVisualComponent(const unsigned int& renderPassSetting, Ref<Material> material, VisualModelResourceFile* resFile, bool visibility)
-    : VisualComponent(renderPassSetting, visibility)
+ModelComponent::ModelComponent(Ref<Material> material, ModelResourceFile* resFile, bool visibility)
+    : m_IsVisible(visibility)
     , m_Material(material)
     , m_VisualModelResourceFile(resFile)
     , m_HierarchyComponent(nullptr)
 {
 }
 
-ModelVisualComponent::~ModelVisualComponent()
+ModelComponent::~ModelComponent()
 {
 }
 
-bool ModelVisualComponent::setup()
+bool ModelComponent::setup()
 {
-	bool status = VisualComponent::setup();
+	bool status = true;
 	if (m_Owner)
 	{
+		m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
+		if (m_TransformComponent == nullptr)
+		{
+			WARN("Entity without transform component found");
+			status = false;
+		}
+
 		m_HierarchyComponent = m_Owner->getComponent<HierarchyComponent>().get();
 		if (m_HierarchyComponent == nullptr)
 		{
@@ -60,11 +64,11 @@ bool ModelVisualComponent::setup()
 	return status;
 }
 
-bool ModelVisualComponent::preRender()
+bool ModelComponent::preRender()
 {
 	if (m_TransformComponent)
 	{
-		RenderSystem::GetSingleton()->pushMatrix(getTransform());
+		RenderSystem::GetSingleton()->pushMatrix(m_TransformComponent->getLocalTransform());
 	}
 	else
 	{
@@ -73,63 +77,39 @@ bool ModelVisualComponent::preRender()
 	return true;
 }
 
-bool ModelVisualComponent::isVisible() const
+bool ModelComponent::isVisible() const
 {
 	// TODO: Add culling
-	return VisualComponent::isVisible();
+	return m_IsVisible;
 }
 
-void ModelVisualComponent::render(RenderPass renderPass)
+void ModelComponent::render()
 {
-	if (renderPass & m_RenderPass)
-	{
-		RenderSystem::GetSingleton()->getRenderer()->draw(getVertexBuffer(), getIndexBuffer(), getMaterial());
-	}
+	RenderSystem::GetSingleton()->getRenderer()->draw(getVertexBuffer(), getIndexBuffer(), getMaterial());
 }
 
-void ModelVisualComponent::renderChildren(RenderPass renderPass)
-{
-	for (auto& child : m_Owner->getComponent<HierarchyComponent>()->getChildren())
-	{
-		VisualComponent* childVisualComponent = child->getOwner()->getComponent<VisualComponent>().get();
-
-		if (childVisualComponent)
-		{
-			childVisualComponent->preRender();
-
-			if (childVisualComponent->isVisible())
-			{
-				// Assumed to be opaque
-				childVisualComponent->render(renderPass);
-			}
-			childVisualComponent->renderChildren(renderPass);
-
-			childVisualComponent->postRender();
-		}
-	}
-}
-
-void ModelVisualComponent::postRender()
+void ModelComponent::postRender()
 {
 	RenderSystem::GetSingleton()->popMatrix();
 }
 
-void ModelVisualComponent::setVisualModel(VisualModelResourceFile* newModel)
+void ModelComponent::setVisualModel(ModelResourceFile* newModel)
 {
 	m_VisualModelResourceFile = newModel;
 }
 
-void ModelVisualComponent::setMaterial(Ref<Material>& material)
+void ModelComponent::setMaterial(Ref<Material>& material)
 {
 	m_Material = material;
 }
 
-JSON::json ModelVisualComponent::getJSON() const
+JSON::json ModelComponent::getJSON() const
 {
-	JSON::json& j = VisualComponent::getJSON();
+	JSON::json j;
 
 	j["resFile"] = m_VisualModelResourceFile->getPath().string();
 	j["material"] = m_Material->getFileName();
+	j["isVisible"] = m_IsVisible;
 
 	return j;
 }
@@ -137,10 +117,8 @@ JSON::json ModelVisualComponent::getJSON() const
 #ifdef ROOTEX_EDITOR
 #include "imgui.h"
 #include "imgui_stdlib.h"
-void ModelVisualComponent::draw()
+void ModelComponent::draw()
 {
-	VisualComponent::draw();
-
 	ImGui::BeginGroup();
 	if (ImGui::BeginCombo("##Visual Model", m_VisualModelResourceFile->getPath().filename().string().c_str(), ImGuiComboFlags_HeightRegular))
 	{
@@ -148,7 +126,7 @@ void ModelVisualComponent::draw()
 		{
 			if (ImGui::MenuItem(file->getPath().string().c_str(), ""))
 			{
-				setVisualModel((VisualModelResourceFile*)file);
+				setVisualModel((ModelResourceFile*)file);
 			}
 		}
 

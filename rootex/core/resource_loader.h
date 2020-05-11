@@ -24,7 +24,7 @@ public:
 	static TextResourceFile* CreateNewTextResourceFile(const String& path);
 	static LuaTextResourceFile* CreateLuaTextResourceFile(const String& path);
 	static AudioResourceFile* CreateAudioResourceFile(const String& path);
-	static VisualModelResourceFile* CreateVisualModelResourceFile(const String& path);
+	static ModelResourceFile* CreateVisualModelResourceFile(const String& path);
 	static ImageResourceFile* CreateImageResourceFile(const String& path);
 	static FontResourceFile* CreateFontResourceFile(const String& path);
 

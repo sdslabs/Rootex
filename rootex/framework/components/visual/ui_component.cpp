@@ -2,12 +2,12 @@
 
 #include "systems/render_system.h"
 
-Visual2DComponent::Visual2DComponent()
+UIComponent::UIComponent()
 	:VisualComponent(RenderPassUI, true)
 {
 }
 
-bool Visual2DComponent::preRender()
+bool UIComponent::preRender()
 {
 	if (m_TransformComponent)
 	{
@@ -21,7 +21,7 @@ bool Visual2DComponent::preRender()
 	return true;
 }
 
-void Visual2DComponent::postRender()
+void UIComponent::postRender()
 {
 	RenderSystem::GetSingleton()->popUIMatrix();
 }

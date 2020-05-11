@@ -4,7 +4,7 @@
             "children": [],
             "parent": 1
         },
-        "ModelVisualComponent": {
+        "ModelComponent": {
             "isVisible": true,
             "material": "rootex_logo_textured.rmat",
             "renderPass": 5,

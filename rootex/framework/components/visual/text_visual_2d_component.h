@@ -4,7 +4,7 @@
 #include "resource_loader.h"
 
 /// Component to render 2D UI Text
-class TextVisual2DComponent : public Visual2DComponent
+class TextVisual2DComponent : public UIComponent
 {
 public:
 	/// DirectXTK flipping modes for sprites
