@@ -15,9 +15,11 @@ protected:
 	Material(Shader* shader, const String& typeName);
 
 	template <typename T>
-	void setPSConstantBuffer(const T& constantBuffer, Microsoft::WRL::ComPtr<ID3D11Buffer>& pointer, UINT slot);
+	static void setPSConstantBuffer(const T& constantBuffer, Microsoft::WRL::ComPtr<ID3D11Buffer>& pointer, UINT slot);
 	template <typename T>
-	void setVSConstantBuffer(const T& constantBuffer, Microsoft::WRL::ComPtr<ID3D11Buffer>& pointer, UINT slot);
+	static void setVSConstantBuffer(const T& constantBuffer, Microsoft::WRL::ComPtr<ID3D11Buffer>& pointer, UINT slot);
+
+	friend class RenderSystem;
 
 public:
 	Material() = delete;

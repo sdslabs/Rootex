@@ -17,7 +17,7 @@ class TexturedMaterial : public Material
 
 	void setTexture(ImageResourceFile* image);
 
-	void setPSConstantBuffer(const PSDiffuseConstantBufferLights& constantBuffer);
+	//void setPSConstantBuffer(const PSDiffuseConstantBufferLights& constantBuffer);
 	void setPSConstantBuffer(const PSDiffuseConstantBufferMaterial& constantBuffer);
 	void setVSConstantBuffer(const VSDiffuseConstantBuffer& constantBuffer);
 

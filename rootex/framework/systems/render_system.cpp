@@ -2,6 +2,8 @@
 
 #include "framework/components/visual/sky_box_helper.h"
 #include "framework/components/visual/visual_component.h"
+#include "framework/systems/light_system.h"
+#include "core/renderer/constant_buffer.h"
 
 RenderSystem* RenderSystem::GetSingleton()
 {
@@ -177,7 +179,7 @@ void RenderSystem::perFrameVSCBBinds()
 
 void RenderSystem::perFramePSCBBinds()
 {
-	const Vector4& view = Vector4(getCamera()->getViewMatrix().Translation());
+	const PSDiffuseConstantBufferLights& view = LightSystem::GetSingleton()->getLights();
 	if (m_PSPerFrameConstantBuffer == nullptr)
 	{
 		D3D11_BUFFER_DESC cbd = { 0 };

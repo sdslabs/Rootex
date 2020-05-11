@@ -43,20 +43,16 @@ struct SpotLightInfo
     float angleRange;
 };
 
-cbuffer CameraPos : register(PER_FRAME)
+cbuffer Lights : register(PER_FRAME)
 {
     float3 cameraPos;
-}
-
-cbuffer Lights : register(b3)
-{
     int pointLightCount;
     PointLightInfo pointLightInfos[4];
     int directionLightPresent;
     DirectionalLightInfo directionalLightInfo;
     int spotLightCount;
     SpotLightInfo spotLightInfos[4];
-};
+}
 
 cbuffer Material: register(b4)
 {
