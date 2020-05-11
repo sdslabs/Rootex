@@ -156,13 +156,13 @@ AudioResourceFile* ResourceLoader::CreateAudioResourceFile(const String& path)
 	return audioRes;
 }
 
-VisualModelResourceFile* ResourceLoader::CreateVisualModelResourceFile(const String& path)
+ModelResourceFile* ResourceLoader::CreateVisualModelResourceFile(const String& path)
 {
 	for (auto& item : s_ResourcesDataFiles)
 	{
 		if (item.first->getPath() == path && item.second->getType() == ResourceFile::Type::Obj)
 		{
-			return reinterpret_cast<VisualModelResourceFile*>(item.second.get());
+			return reinterpret_cast<ModelResourceFile*>(item.second.get());
 		}
 	}
 
@@ -218,7 +218,7 @@ VisualModelResourceFile* ResourceLoader::CreateVisualModelResourceFile(const Str
 	Ptr<IndexBuffer> indexBuffer(new IndexBuffer(indices));
 
 	ResourceData* resData = new ResourceData(path, buffer);
-	VisualModelResourceFile* visualRes = new VisualModelResourceFile(std::move(vertexBuffer), std::move(indexBuffer), resData);
+	ModelResourceFile* visualRes = new ModelResourceFile(std::move(vertexBuffer), std::move(indexBuffer), resData);
 
 	s_ResourcesDataFiles[Ptr<ResourceData>(resData)] = Ptr<ResourceFile>(visualRes);
 	s_ResourceFileLibrary[ResourceFile::Type::Obj].push_back(visualRes);

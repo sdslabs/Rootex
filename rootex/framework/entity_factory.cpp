@@ -58,7 +58,7 @@ EntityFactory::EntityFactory()
 	REGISTER_COMPONENT(DebugComponent);
 	REGISTER_COMPONENT(CameraComponent);
 	REGISTER_COMPONENT(GridVisualComponent);
-	REGISTER_COMPONENT(ModelVisualComponent);
+	REGISTER_COMPONENT(ModelComponent);
 	REGISTER_COMPONENT(TextVisual2DComponent);
 	REGISTER_COMPONENT(TransformComponent);
 	REGISTER_COMPONENT(TransformAnimationComponent);
@@ -233,7 +233,7 @@ Ref<Entity> EntityFactory::createRootEntity()
 		addComponent(root, rootTransformComponent);
 	}
 	{
-		Ref<ModelVisualComponent> rootVisualComponent = std::dynamic_pointer_cast<ModelVisualComponent>(createDefaultComponent("ModelVisualComponent"));
+		Ref<ModelComponent> rootVisualComponent = std::dynamic_pointer_cast<ModelComponent>(createDefaultComponent("ModelComponent"));
 		rootVisualComponent->setVisibility(false);
 		addComponent(root, rootVisualComponent);
 	}
