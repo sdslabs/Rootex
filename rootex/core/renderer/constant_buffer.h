@@ -55,7 +55,7 @@ struct PSDiffuseConstantBufferMaterial
 	/// Describes brightness of specular spot, high for metallic material
 	float specularIntensity = 2.0f;
 	/// Describes angular fall-off of specular spot, high for metallic material
-	float specPow = 30.0f;
+	float specularPower = 30.0f;
 	float pad1[2];
 };
 

@@ -71,7 +71,8 @@ void HierarchyComponent::clear()
 
 void HierarchyComponent::onRemove()
 {
-	for (auto& child : m_Children)
+	Vector<HierarchyComponent*> backup = m_Children;
+	for (auto& child : backup)
 	{
 		if (m_Parent)
 		{

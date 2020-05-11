@@ -1,4 +1,6 @@
 {
     "imageFile": "game\\assets\\test\\up_arrow.png",
+    "specularIntensity": 2.0,
+    "specularPower": 30.0,
     "type": "TexturedMaterial"
 }

@@ -7,9 +7,12 @@
 #include "framework/systems/render_system.h"
 #include "renderer/texture.h"
 
+//TexturedMaterial::TexturedMaterial(const String& imagePath, float specularIntensity, float specularPower)
 TexturedMaterial::TexturedMaterial(const String& imagePath)
     : Material(ShaderLibrary::GetDiffuseShader(), TexturedMaterial::s_MaterialName)
     , m_DiffuseShader(reinterpret_cast<DiffuseShader*>(m_Shader))
+    //, m_SpecularIntensity(specularIntensity)
+    //, m_SpecularPower(specularPower)
 {
 	m_ImageFile = ResourceLoader::CreateImageResourceFile(imagePath);
 	setTexture(m_ImageFile);
@@ -53,7 +56,7 @@ void TexturedMaterial::bind()
 	setVSConstantBuffer(VSDiffuseConstantBuffer(RenderSystem::GetSingleton()->getTopMatrix()));
 	m_DiffuseShader->set(m_DiffuseTexture.get());
 	setPSConstantBuffer({ LightSystem::GetSingleton()->getLights() });
-	setPSConstantBuffer(PSDiffuseConstantBufferMaterial({ 0.6f, 30.0f, { 0.0f, 0.0f } }));
+	setPSConstantBuffer(PSDiffuseConstantBufferMaterial({ m_SpecularIntensity, m_SpecularPower }));
 }
 
 JSON::json TexturedMaterial::getJSON() const
@@ -61,6 +64,8 @@ JSON::json TexturedMaterial::getJSON() const
 	JSON::json& j = Material::getJSON();
 
 	j["imageFile"] = m_ImageFile->getPath().string();
+	j["specularIntensity"] = m_SpecularIntensity;
+	j["specularPower"] = m_SpecularPower;
 
 	return j;
 }

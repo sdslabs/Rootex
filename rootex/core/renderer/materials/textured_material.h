@@ -12,6 +12,9 @@ class TexturedMaterial : public Material
 
 	ImageResourceFile* m_ImageFile;
 
+	float m_SpecularIntensity = 2.0f;
+	float m_SpecularPower = 30.0f;
+
 	void setTexture(ImageResourceFile* image);
 
 	void setPSConstantBuffer(const PSDiffuseConstantBufferLights& constantBuffer);
@@ -36,6 +39,7 @@ public:
 	};
 
 	TexturedMaterial() = delete;
+	//TexturedMaterial(const String& imagePath, float specularIntensity, float specularPower);
 	TexturedMaterial(const String& imagePath);
 	~TexturedMaterial() = default;
 
