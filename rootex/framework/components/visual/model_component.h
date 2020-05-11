@@ -4,6 +4,7 @@
 #include "components/hierarchy_component.h"
 #include "components/transform_component.h"
 #include "renderer/material.h"
+#include "core/resource_file.h"
 
 class ModelComponent : public Component
 {
@@ -16,13 +17,14 @@ protected:
 	ModelResourceFile* m_VisualModelResourceFile;
 	Ref<Material> m_Material;
 	bool m_IsVisible;
+	unsigned int m_RenderPass;
 
 	HierarchyComponent* m_HierarchyComponent;
 	TransformComponent* m_TransformComponent;
 
-	ModelComponent(Ref<Material> material, ModelResourceFile* resFile, bool isVisible);
+	ModelComponent(unsigned int renderPass, Ref<Material> material, ModelResourceFile* resFile, bool isVisible);
 	ModelComponent(ModelComponent&) = delete;
-	virtual ~ModelComponent();
+	virtual ~ModelComponent() = default;
 
 #ifdef ROOTEX_EDITOR
 	/// Empty Vector means all materials are allowed
@@ -40,7 +42,9 @@ public:
 
 	void setVisualModel(ModelResourceFile* newModel);
 	void setMaterial(Ref<Material>& material);
+	void setIsVisible(bool enabled);
 	
+	unsigned int getRenderPass() const { return m_RenderPass; }
 	const VertexBuffer* getVertexBuffer() const { return m_VisualModelResourceFile->getVertexBuffer(); }
 	const IndexBuffer* getIndexBuffer() const { return m_VisualModelResourceFile->getIndexBuffer(); }
 	Material* getMaterial() { return m_Material.get(); }

@@ -1,10 +1,10 @@
 #pragma once
 
-#include "components/visual/visual_2d_component.h"
+#include "components/visual/ui_component.h"
 #include "resource_loader.h"
 
 /// Component to render 2D UI Text
-class TextVisual2DComponent : public UIComponent
+class TextUIComponent : public UIComponent
 {
 public:
 	/// DirectXTK flipping modes for sprites
@@ -30,18 +30,19 @@ public:
 	/// 2D origin of the Font
 	Vector2 m_Origin;
 
-	TextVisual2DComponent(FontResourceFile* font, const String& text, const Color& color, const Mode& mode, const Vector2& origin);
-	virtual ~TextVisual2DComponent();
+	TextUIComponent(FontResourceFile* font, const String& text, const Color& color, const Mode& mode, const Vector2& origin, const bool& isVisible);
+	TextUIComponent(TextUIComponent&) = delete;
+	virtual ~TextUIComponent() = default;
 
 	friend class EntityFactory;
 
 public:
-	static const ComponentID s_ID = (ComponentID)ComponentIDs::TextVisual2DComponent;
+	static const ComponentID s_ID = (ComponentID)ComponentIDs::TextUIComponent;
 
-	virtual void render(RenderPass renderPass) override;
+	virtual void render() override;
 
 	virtual ComponentID getComponentID() const override { return s_ID; }
-	virtual String getName() const override { return "TextVisual2DComponent"; };
+	virtual String getName() const override { return "TextUIComponent"; };
 	virtual JSON::json getJSON() const override;
 
 	void setFont(FontResourceFile* fontFile) { m_FontFile = fontFile; }

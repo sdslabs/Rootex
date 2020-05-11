@@ -7,9 +7,11 @@
 #include "framework/systems/render_system.h"
 #include "renderer/texture.h"
 
-TextureMaterial::TextureMaterial(const String& imagePath)
+TextureMaterial::TextureMaterial(const String& imagePath, float specIntensity, float specPower)
     : Material(ShaderLibrary::GetTextureShader(), TextureMaterial::s_MaterialName)
     , m_DiffuseShader(reinterpret_cast<TextureShader*>(m_Shader))
+    , m_SpecularIntensity(specIntensity)
+    , m_SpecularPower(specPower)
 {
 	m_ImageFile = ResourceLoader::CreateImageResourceFile(imagePath);
 	setTexture(m_ImageFile);
@@ -39,18 +41,18 @@ void TextureMaterial::setVSConstantBuffer(const VSDiffuseConstantBuffer& constan
 
 Material* TextureMaterial::CreateDefault()
 {
-	return new TextureMaterial("rootex/assets/rootex.png");
+	return new TextureMaterial("rootex/assets/rootex.png", 2.0f, 30.0f);
 }
 
 Material* TextureMaterial::Create(const JSON::json& materialData)
 {
-	return new TextureMaterial((String)materialData["imageFile"]);
+	return new TextureMaterial((String)materialData["imageFile"], materialData["specularIntensity"], materialData["specularPower"]);
 }
 
 void TextureMaterial::bind()
 {
 	Material::bind();
-	setVSConstantBuffer(VSDiffuseConstantBuffer(RenderSystem::GetSingleton()->getTopMatrix()));
+	setVSConstantBuffer(VSDiffuseConstantBuffer(RenderSystem::GetSingleton()->getCurrentMatrix()));
 	m_DiffuseShader->set(m_DiffuseTexture.get());
 	setPSConstantBuffer({ LightSystem::GetSingleton()->getLights() });
 	setPSConstantBuffer(PSDiffuseConstantBufferMaterial({ m_SpecularIntensity, m_SpecularPower }));

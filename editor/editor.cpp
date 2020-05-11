@@ -7,6 +7,7 @@
 #include "core/input/input_manager.h"
 #include "framework/components/hierarchy_component.h"
 #include "framework/systems/render_system.h"
+#include "framework/systems/render_ui_system.h"
 #include "framework/systems/physics_system.h"
 #include "editor_application.h"
 #include "main/window.h"
@@ -140,6 +141,7 @@ void Editor::render()
 	if (m_WorldMode)
 	{
 		RenderSystem::GetSingleton()->render();
+		RenderUISystem::GetSingleton()->render();
 	}
 	if (m_CollisionMode)
 	{

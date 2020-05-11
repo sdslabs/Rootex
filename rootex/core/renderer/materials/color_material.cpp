@@ -37,7 +37,7 @@ Material* ColorMaterial::Create(const JSON::json& materialData)
 void ColorMaterial::bind()
 {
 	Material::bind();
-	setVSConstantBuffer(VSSolidConstantBuffer(RenderSystem::GetSingleton()->getTopMatrix()));
+	setVSConstantBuffer(VSSolidConstantBuffer(RenderSystem::GetSingleton()->getCurrentMatrix()));
 	setPSConstantBuffer(PSSolidConstantBuffer({ m_Color }));
 }
 

@@ -1,9 +1,10 @@
 #pragma once
 
-#include "visual_component.h"
+#include "model_component.h"
+#include "renderer/render_pass.h"
 #include "renderer/material_library.h"
 
-class GridVisualComponent : public VisualComponent
+class GridModelComponent : public ModelComponent
 {
 	static Component* Create(const JSON::json& componentData);
 	static Component* CreateDefault();
@@ -16,21 +17,21 @@ class GridVisualComponent : public VisualComponent
 	int m_CellCount;
 	Color m_GridColor;
 
-	GridVisualComponent(const Vector2& cellSize, const int& cellCount, const Color& gridColor, const unsigned int& renderPass, bool isVisible);
-	GridVisualComponent(GridVisualComponent&) = delete;
-	virtual ~GridVisualComponent() = default;
+	GridModelComponent(const Vector2& cellSize, const int& cellCount, const Color& gridColor, const unsigned int& renderPass, bool isVisible);
+	GridModelComponent(GridModelComponent&) = delete;
+	virtual ~GridModelComponent() = default;
 
 	friend class EntityFactory;
 
 	void refreshVertexBuffers();
 	
 public:
-	static const ComponentID s_ID = (ComponentID)ComponentIDs::GridVisualComponent;
+	static const ComponentID s_ID = (ComponentID)ComponentIDs::GridModelComponent;
 
 	virtual bool setup() override;
-	void render(RenderPass renderPass) override;
+	void render() override;
 
-	virtual String getName() const override { return "GridVisualComponent"; }
+	virtual String getName() const override { return "GridModelComponent"; }
 	ComponentID getComponentID() const override { return s_ID; }
 	virtual JSON::json getJSON() const override;
 

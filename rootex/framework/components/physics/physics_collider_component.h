@@ -63,6 +63,7 @@ public:
 	ComponentID getComponentID() const { return s_ID; }
 
 	bool setup() override;
+	void onRemove() override;
 
 	void applyForce(const Vector3& force);
 	void applyTorque(const Vector3& torque);

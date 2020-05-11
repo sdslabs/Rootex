@@ -8,10 +8,12 @@
 #include "framework/systems/light_system.h"
 #include "framework/systems/render_system.h"
 #include "renderer/material_library.h"
+#include "renderer/render_pass.h"
 
 Component* ModelComponent::Create(const JSON::json& componentData)
 {
 	ModelComponent* modelComponent = new ModelComponent(
+	    componentData["renderPass"],
 	    MaterialLibrary::GetMaterial(componentData["material"]),
 	    ResourceLoader::CreateVisualModelResourceFile(componentData["resFile"]),
 	    componentData["isVisible"]);
@@ -22,22 +24,21 @@ Component* ModelComponent::Create(const JSON::json& componentData)
 Component* ModelComponent::CreateDefault()
 {
 	ModelComponent* modelComponent = new ModelComponent(
-	    MaterialLibrary::GetDefaultMaterial(),
+	    (unsigned int)RenderPass::Basic,
+		MaterialLibrary::GetDefaultMaterial(),
 	    ResourceLoader::CreateVisualModelResourceFile("rootex/assets/cube.obj"),
 	    true);
 
 	return modelComponent;
 }
 
-ModelComponent::ModelComponent(Ref<Material> material, ModelResourceFile* resFile, bool visibility)
+ModelComponent::ModelComponent(unsigned int renderPass, Ref<Material> material, ModelResourceFile* resFile, bool visibility)
     : m_IsVisible(visibility)
     , m_Material(material)
+    , m_RenderPass(renderPass)
     , m_VisualModelResourceFile(resFile)
+    , m_TransformComponent(nullptr)
     , m_HierarchyComponent(nullptr)
-{
-}
-
-ModelComponent::~ModelComponent()
 {
 }
 
@@ -68,11 +69,11 @@ bool ModelComponent::preRender()
 {
 	if (m_TransformComponent)
 	{
-		RenderSystem::GetSingleton()->pushMatrix(m_TransformComponent->getLocalTransform());
+		RenderSystem::GetSingleton()->pushMatrixOverride(m_TransformComponent->getAbsoluteTransform());
 	}
 	else
 	{
-		RenderSystem::GetSingleton()->pushMatrix(Matrix::Identity);
+		RenderSystem::GetSingleton()->pushMatrixOverride(Matrix::Identity);
 	}
 	return true;
 }
@@ -103,6 +104,11 @@ void ModelComponent::setMaterial(Ref<Material>& material)
 	m_Material = material;
 }
 
+void ModelComponent::setIsVisible(bool enabled)
+{
+	m_IsVisible = enabled;
+}
+
 JSON::json ModelComponent::getJSON() const
 {
 	JSON::json j;
@@ -110,6 +116,7 @@ JSON::json ModelComponent::getJSON() const
 	j["resFile"] = m_VisualModelResourceFile->getPath().string();
 	j["material"] = m_Material->getFileName();
 	j["isVisible"] = m_IsVisible;
+	j["renderPass"] = m_RenderPass;
 
 	return j;
 }
@@ -120,7 +127,8 @@ JSON::json ModelComponent::getJSON() const
 void ModelComponent::draw()
 {
 	ImGui::BeginGroup();
-	if (ImGui::BeginCombo("##Visual Model", m_VisualModelResourceFile->getPath().filename().string().c_str(), ImGuiComboFlags_HeightRegular))
+	String modelFileName = m_VisualModelResourceFile ? m_VisualModelResourceFile->getPath().filename().string() : "None";
+	if (ImGui::BeginCombo("##Visual Model", modelFileName.c_str(), ImGuiComboFlags_HeightRegular))
 	{
 		for (auto&& file : ResourceLoader::GetFilesOfType(ResourceFile::Type::Obj))
 		{

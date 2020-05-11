@@ -1,8 +1,5 @@
 #include "render_system.h"
 
-#include "framework/components/visual/sky_box_helper.h"
-#include "framework/components/visual/visual_component.h"
-
 RenderSystem* RenderSystem::GetSingleton()
 {
 	static RenderSystem singleton;
@@ -18,36 +15,36 @@ RenderSystem::RenderSystem()
 {
 	m_Camera = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<CameraComponent>().get();
 	m_TransformationStack.push_back(Matrix::Identity);
-	m_UITransformationStack.push_back(Matrix::Identity);
 	setProjectionConstantBuffers();
-}
-
-RenderSystem::~RenderSystem()
-{
 }
 
 void RenderSystem::calculateTransforms(HierarchyComponent* hierarchyComponent)
 {
 	pushMatrix(hierarchyComponent->getOwner()->getComponent<TransformComponent>()->getLocalTransform());
-
 	for (auto&& child : hierarchyComponent->getChildren())
 	{
-		child->getOwner()->getComponent<TransformComponent>()->m_TransformBuffer.m_ParentAbsoluteTransform = getTopMatrix();
+		child->getOwner()->getComponent<TransformComponent>()->m_TransformBuffer.m_ParentAbsoluteTransform = getCurrentMatrix();
 		calculateTransforms(child);
 	}
-
 	popMatrix();
 }
 
-void RenderSystem::renderPassRender(VisualComponent* vc, const RenderPass& renderPass)
+void RenderSystem::renderPassRender(RenderPass renderPass)
 {
-	vc->preRender();
-	if (vc->isVisible())
+	ModelComponent* mc = nullptr;
+	for (auto& component : s_Components[ModelComponent::s_ID])
 	{
-		vc->render(renderPass);
+		mc = (ModelComponent*)component;
+		if (mc->getRenderPass() & (unsigned int)renderPass)
+		{
+			mc->preRender();
+			if (mc->isVisible())
+			{
+				mc->render();
+			}
+			mc->postRender();
+		}
 	}
-	vc->renderChildren(renderPass);
-	vc->postRender();
 }
 
 void RenderSystem::recoverLostDevice()
@@ -68,24 +65,13 @@ void RenderSystem::render()
 	perFrameVSCBBinds();
 	perFramePSCBBinds();
 
-	Ref<VisualComponent> rootVC = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<VisualComponent>();
-
 #ifdef ROOTEX_EDITOR
 	if (m_IsEditorRenderPassEnabled)
 	{
-		renderPassRender(rootVC.get(), RenderPassEditor);
+		renderPassRender(RenderPass::Editor);
 	}
 #endif // ROOTEX_EDITOR
-	renderPassRender(rootVC.get(), RenderPassMain);
-	{
-		SkyBoxHelper skyHelper;
-		renderPassRender(rootVC.get(), RenderPassSky);
-	}
-	{
-		RenderingDevice::GetSingleton()->beginDrawUI();
-		renderPassRender(rootVC.get(), RenderPassUI);
-		RenderingDevice::GetSingleton()->endDrawUI();
-	}
+	renderPassRender(RenderPass::Basic);
 }
 
 void RenderSystem::pushMatrix(const Matrix& transform)
@@ -101,16 +87,6 @@ void RenderSystem::pushMatrixOverride(const Matrix& transform)
 void RenderSystem::popMatrix()
 {
 	m_TransformationStack.pop_back();
-}
-
-void RenderSystem::pushUIMatrix(const Matrix& transform)
-{
-	m_UITransformationStack.push_back(transform * m_TransformationStack.back());
-}
-
-void RenderSystem::popUIMatrix()
-{
-	m_UITransformationStack.pop_back();
 }
 
 void RenderSystem::enableWireframeRasterizer()
@@ -225,12 +201,7 @@ void RenderSystem::restoreCamera()
 	setCamera(HierarchySystem::GetSingleton()->getRootEntity()->getComponent<CameraComponent>().get());
 }
 
-const Matrix& RenderSystem::getTopMatrix() const
+const Matrix& RenderSystem::getCurrentMatrix() const
 {
 	return m_TransformationStack.back();
-}
-
-Matrix& RenderSystem::getTopUIMatrix()
-{
-	return m_UITransformationStack.back();
 }
