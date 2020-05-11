@@ -17,6 +17,8 @@ PSDiffuseConstantBufferLights LightSystem::getLights()
 
 	PSDiffuseConstantBufferLights lights;
 	
+	lights.cameraPos = RenderSystem::GetSingleton()->getCamera()->getViewMatrix().Translation();
+
 	int i = 0;
 	for (; i < pointLightComponents.size() && i < 4; i++)
 	{

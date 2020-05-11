@@ -62,8 +62,8 @@ struct PSDiffuseConstantBufferMaterial
 /// Encapsulates all the types of lights offered, to bind them in the Pixel Shader
 struct PSDiffuseConstantBufferLights
 {
+	Vector3 cameraPos;
 	int pointLightCount = 0;
-	float pad[3];
 	PointLightInfo pointLightInfos[4];
 	int directionalLightPresent = 0;
 	float pad2[3];

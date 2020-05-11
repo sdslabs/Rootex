@@ -24,11 +24,6 @@ TexturedMaterial::TexturedMaterial(const String& imagePath, float specularIntens
 #endif // ROOTEX_EDITOR
 }
 
-void TexturedMaterial::setPSConstantBuffer(const PSDiffuseConstantBufferLights& constantBuffer)
-{
-	Material::setPSConstantBuffer<PSDiffuseConstantBufferLights>(constantBuffer, m_PSConstantBuffer[(int)PixelConstantBufferType::Lights], 3u);
-}
-
 void TexturedMaterial::setPSConstantBuffer(const PSDiffuseConstantBufferMaterial& constantBuffer)
 {
 	Material::setPSConstantBuffer<PSDiffuseConstantBufferMaterial>(constantBuffer, m_PSConstantBuffer[(int)PixelConstantBufferType::Material], 4u);
@@ -54,7 +49,7 @@ void TexturedMaterial::bind()
 	Material::bind();
 	setVSConstantBuffer(VSDiffuseConstantBuffer(RenderSystem::GetSingleton()->getTopMatrix()));
 	m_DiffuseShader->set(m_DiffuseTexture.get());
-	setPSConstantBuffer({ LightSystem::GetSingleton()->getLights() });
+	//setPSConstantBuffer({ LightSystem::GetSingleton()->getLights() });
 	setPSConstantBuffer(PSDiffuseConstantBufferMaterial({ m_SpecularIntensity, m_SpecularPower }));
 }
 
