@@ -12,12 +12,13 @@ class TexturedMaterial : public Material
 
 	ImageResourceFile* m_ImageFile;
 
+	bool m_IsLit = true;
+	Color m_Color;
 	float m_SpecularIntensity;
 	float m_SpecularPower;
 
 	void setTexture(ImageResourceFile* image);
 
-	//void setPSConstantBuffer(const PSDiffuseConstantBufferLights& constantBuffer);
 	void setPSConstantBuffer(const PSDiffuseConstantBufferMaterial& constantBuffer);
 	void setVSConstantBuffer(const VSDiffuseConstantBuffer& constantBuffer);
 
@@ -33,13 +34,12 @@ public:
 	};
 	enum class PixelConstantBufferType
 	{
-		Lights,
 		Material,
 		End
 	};
 
 	TexturedMaterial() = delete;
-	TexturedMaterial(const String& imagePath, float specularIntensity, float specularPower);
+	TexturedMaterial(const String& imagePath, Color color, bool isLit, float specularIntensity, float specularPower);
 	~TexturedMaterial() = default;
 
 	static Material* CreateDefault();
