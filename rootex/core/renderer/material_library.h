@@ -2,8 +2,7 @@
 
 #include "common/common.h"
 
-#include "materials/color_material.h"
-#include "materials/textured_material.h"
+#include "materials/basic_material.h"
 
 class MaterialLibrary
 {

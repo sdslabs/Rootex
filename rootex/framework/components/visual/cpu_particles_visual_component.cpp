@@ -53,7 +53,7 @@ CPUParticlesVisualComponent::CPUParticlesVisualComponent(size_t poolSize, const 
     , m_ParticleTemplate(particleTemplate)
     , m_TransformComponent(nullptr)
 {
-	m_AllowedMaterials = { TexturedMaterial::s_MaterialName };
+	m_AllowedMaterials = { BasicMaterial::s_MaterialName };
 	m_ParticlePool.resize(poolSize);
 	m_PoolIndex = poolSize - 1;
 	m_LastRenderTimePoint = std::chrono::high_resolution_clock::now();
@@ -109,7 +109,7 @@ bool CPUParticlesVisualComponent::preRender()
 
 void CPUParticlesVisualComponent::render(RenderPass renderPass)
 {
-	TexturedMaterial* material = dynamic_cast<TexturedMaterial*>(getMaterial());
+	BasicMaterial* material = dynamic_cast<BasicMaterial*>(getMaterial());
 	if (material == nullptr)
 	{
 		return;

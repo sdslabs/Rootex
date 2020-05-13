@@ -1,4 +1,4 @@
-#include "textured_material.h"
+#include "basic_material.h"
 
 #include "resource_loader.h"
 
@@ -10,8 +10,8 @@
 #include "renderer/shaders/register_locations_pixel_shader.h"
 #include "renderer/shaders/register_locations_vertex_shader.h"
 
-TexturedMaterial::TexturedMaterial(const String& imagePath, Color color, bool isLit, float specularIntensity, float specularPower)
-    : Material(ShaderLibrary::GetDiffuseShader(), TexturedMaterial::s_MaterialName)
+BasicMaterial::BasicMaterial(const String& imagePath, Color color, bool isLit, float specularIntensity, float specularPower)
+    : Material(ShaderLibrary::GetDiffuseShader(), BasicMaterial::s_MaterialName)
     , m_DiffuseShader(reinterpret_cast<DiffuseShader*>(m_Shader))
     , m_Color(color)
     , m_IsLit(isLit)
@@ -29,22 +29,22 @@ TexturedMaterial::TexturedMaterial(const String& imagePath, Color color, bool is
 #endif // ROOTEX_EDITOR
 }
 
-void TexturedMaterial::setPSConstantBuffer(const PSDiffuseConstantBufferMaterial& constantBuffer)
+void BasicMaterial::setPSConstantBuffer(const PSDiffuseConstantBufferMaterial& constantBuffer)
 {
 	Material::setPSConstantBuffer<PSDiffuseConstantBufferMaterial>(constantBuffer, m_PSConstantBuffer[(int)PixelConstantBufferType::Material], PER_OBJECT_PS_CPP);
 }
 
-void TexturedMaterial::setVSConstantBuffer(const VSDiffuseConstantBuffer& constantBuffer)
+void BasicMaterial::setVSConstantBuffer(const VSDiffuseConstantBuffer& constantBuffer)
 {
 	Material::setVSConstantBuffer<VSDiffuseConstantBuffer>(constantBuffer, m_VSConstantBuffer[(int)VertexConstantBufferType::Model], PER_OBJECT_VS_CPP);
 }
 
-Material* TexturedMaterial::CreateDefault()
+Material* BasicMaterial::CreateDefault()
 {
-	return new TexturedMaterial("rootex/assets/white.png", Color(1.0f, 1.0f, 1.0f, 1.0f), true, 2.0f, 30.0f);
+	return new BasicMaterial("rootex/assets/white.png", Color(0.5f, 0.5f, 0.5f, 1.0f), true, 2.0f, 30.0f);
 }
 
-Material* TexturedMaterial::Create(const JSON::json& materialData)
+Material* BasicMaterial::Create(const JSON::json& materialData)
 {
 	bool isLit = materialData["isLit"];
 	float specularIntensity = 2.0f;
@@ -54,17 +54,17 @@ Material* TexturedMaterial::Create(const JSON::json& materialData)
 		specularIntensity = (float)materialData["specularIntensity"];
 		specularPower = (float)materialData["specularPower"];
 	}
-	TexturedMaterial* material = dynamic_cast<TexturedMaterial*>(CreateDefault());
+	BasicMaterial* material = dynamic_cast<BasicMaterial*>(CreateDefault());
 	material->m_IsLit = materialData["isLit"];
 	if (material->m_IsLit)
 	{
 		material->m_SpecularIntensity = (float)materialData["specularIntensity"];
 		material->m_SpecularPower = (float)materialData["specularPower"];
 	}
-	return new TexturedMaterial((String)materialData["imageFile"], Color((float)materialData["color"]["r"], (float)materialData["color"]["g"], (float)materialData["color"]["b"], (float)materialData["color"]["a"]), isLit, specularIntensity, specularPower);
+	return new BasicMaterial((String)materialData["imageFile"], Color((float)materialData["color"]["r"], (float)materialData["color"]["g"], (float)materialData["color"]["b"], (float)materialData["color"]["a"]), isLit, specularIntensity, specularPower);
 }
 
-void TexturedMaterial::bind()
+void BasicMaterial::bind()
 {
 	Material::bind();
 	setVSConstantBuffer(VSDiffuseConstantBuffer(RenderSystem::GetSingleton()->getTopMatrix()));
@@ -72,7 +72,7 @@ void TexturedMaterial::bind()
 	setPSConstantBuffer(PSDiffuseConstantBufferMaterial({ m_Color, m_IsLit, m_SpecularIntensity, m_SpecularPower }));
 }
 
-JSON::json TexturedMaterial::getJSON() const
+JSON::json BasicMaterial::getJSON() const
 {
 	JSON::json& j = Material::getJSON();
 
@@ -92,7 +92,7 @@ JSON::json TexturedMaterial::getJSON() const
 	return j;
 }
 
-void TexturedMaterial::setTexture(ImageResourceFile* image)
+void BasicMaterial::setTexture(ImageResourceFile* image)
 {
 	Ref<Texture> texture(new Texture(image));
 	m_ImageFile = image;
@@ -101,9 +101,9 @@ void TexturedMaterial::setTexture(ImageResourceFile* image)
 
 #ifdef ROOTEX_EDITOR
 #include "imgui_stdlib.h"
-void TexturedMaterial::draw()
+void BasicMaterial::draw()
 {
-	ImGui::Text(TexturedMaterial::s_MaterialName.c_str());
+	ImGui::Text(BasicMaterial::s_MaterialName.c_str());
 
 	m_ImagePathUI = m_ImageFile->getPath().string();
 	if (ImGui::InputText("Texture", &m_ImagePathUI, ImGuiInputTextFlags_EnterReturnsTrue))
