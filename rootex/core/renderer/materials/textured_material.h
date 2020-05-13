@@ -42,6 +42,8 @@ public:
 	TexturedMaterial(const String& imagePath, Color color, bool isLit, float specularIntensity, float specularPower);
 	~TexturedMaterial() = default;
 
+	void setColor(const Color& color) { m_Color = color; };
+
 	static Material* CreateDefault();
 	static Material* Create(const JSON::json& materialData);
 

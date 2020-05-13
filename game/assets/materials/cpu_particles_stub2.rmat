@@ -1,9 +1,13 @@
 {
     "color": {
         "a": 1.0,
-        "b": 0.9854868054389954,
+        "b": 0.994844377040863,
         "g": 0.0,
-        "r": 0.014513208530843258
+        "r": 0.0051556359976530075
     },
-    "type": "ColoredMaterial"
+    "imageFile": "rootex/assets/white.png",
+    "isLit": false,
+    "specularIntensity": 2.0,
+    "specularPower": 4.0,
+    "type": "TexturedMaterial"
 }

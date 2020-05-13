@@ -5,7 +5,9 @@
         "g": 1.0,
         "r": 0.0
     },
-    "isLit": false,
     "imageFile": "rootex/assets/white.png",
+    "isLit": false,
+    "specularIntensity": 2.0,
+    "specularPower": 4.0,
     "type": "TexturedMaterial"
 }
