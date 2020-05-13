@@ -4,7 +4,7 @@
 
 class Texture;
 
-class TexturedMaterial : public Material
+class BasicMaterial : public Material
 {
 	DiffuseShader* m_DiffuseShader;
 	Ref<Texture> m_DiffuseTexture;
@@ -38,9 +38,9 @@ public:
 		End
 	};
 
-	TexturedMaterial() = delete;
-	TexturedMaterial(const String& imagePath, Color color, bool isLit, float specularIntensity, float specularPower);
-	~TexturedMaterial() = default;
+	BasicMaterial() = delete;
+	BasicMaterial(const String& imagePath, Color color, bool isLit, float specularIntensity, float specularPower);
+	~BasicMaterial() = default;
 
 	void setColor(const Color& color) { m_Color = color; };
 

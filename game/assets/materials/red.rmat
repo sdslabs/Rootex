@@ -7,7 +7,5 @@
     },
     "imageFile": "rootex/assets/white.png",
     "isLit": false,
-    "specularIntensity": 2.0,
-    "specularPower": 4.0,
-    "type": "TexturedMaterial"
+    "type": "BasicMaterial"
 }

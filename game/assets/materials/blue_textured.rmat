@@ -1,13 +1,13 @@
 {
-    "imageFile": "rootex/assets/white.png",
     "color": {
         "a": 1.0,
         "b": 1.0,
         "g": 0.0,
         "r": 0.0
     },
+    "imageFile": "rootex/assets/white.png",
     "isLit": true,
     "specularIntensity": 2.0,
     "specularPower": 4.0,
-    "type": "TexturedMaterial"
+    "type": "BasicMaterial"
 }
