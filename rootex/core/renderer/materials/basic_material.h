@@ -17,8 +17,6 @@ class BasicMaterial : public Material
 	float m_SpecularIntensity;
 	float m_SpecularPower;
 
-	void setTexture(ImageResourceFile* image);
-
 	void setPSConstantBuffer(const PSDiffuseConstantBufferMaterial& constantBuffer);
 	void setVSConstantBuffer(const VSDiffuseConstantBuffer& constantBuffer);
 
@@ -43,6 +41,9 @@ public:
 	~BasicMaterial() = default;
 
 	void setColor(const Color& color) { m_Color = color; };
+	void setTexture(ImageResourceFile* image);
+	void setSpecularIntensity(float specIntensity) { m_SpecularIntensity = specIntensity; }
+	void setSpecularPower(float specPower) { m_SpecularPower = specPower; }
 
 	static Material* CreateDefault();
 	static Material* Create(const JSON::json& materialData);
@@ -51,6 +52,6 @@ public:
 	JSON::json getJSON() const override;
 
 #ifdef ROOTEX_EDITOR
-	void draw() override;
+	void draw(const String& id) override;
 #endif // ROOTEX_EDITOR
 };

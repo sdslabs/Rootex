@@ -25,7 +25,7 @@ public:
 	Material() = delete;
 	virtual ~Material() = default;
 	virtual void bind();
-	virtual void draw() = 0;
+	virtual void draw(const String& id) = 0;
 	String getFileName() { return m_FileName; };
 	String getTypeName() { return m_TypeName; };
 	String getFullName() { return m_FileName + " - " + m_TypeName; };

@@ -14,8 +14,7 @@ Component* ModelComponent::Create(const JSON::json& componentData)
 {
 	ModelComponent* modelComponent = new ModelComponent(
 	    componentData["renderPass"],
-	    MaterialLibrary::GetMaterial(componentData["material"]),
-	    ResourceLoader::CreateVisualModelResourceFile(componentData["resFile"]),
+	    ResourceLoader::CreateModelResourceFile(componentData["resFile"]),
 	    componentData["isVisible"]);
 
 	return modelComponent;
@@ -25,18 +24,16 @@ Component* ModelComponent::CreateDefault()
 {
 	ModelComponent* modelComponent = new ModelComponent(
 	    (unsigned int)RenderPass::Basic,
-		MaterialLibrary::GetDefaultMaterial(),
-	    ResourceLoader::CreateVisualModelResourceFile("rootex/assets/cube.obj"),
+	    ResourceLoader::CreateModelResourceFile("rootex/assets/cube.obj"),
 	    true);
 
 	return modelComponent;
 }
 
-ModelComponent::ModelComponent(unsigned int renderPass, Ref<Material> material, ModelResourceFile* resFile, bool visibility)
+ModelComponent::ModelComponent(unsigned int renderPass, ModelResourceFile* resFile, bool visibility)
     : m_IsVisible(visibility)
-    , m_Material(material)
     , m_RenderPass(renderPass)
-    , m_VisualModelResourceFile(resFile)
+    , m_ModelResourceFile(resFile)
     , m_TransformComponent(nullptr)
     , m_HierarchyComponent(nullptr)
 {
@@ -86,7 +83,10 @@ bool ModelComponent::isVisible() const
 
 void ModelComponent::render()
 {
-	RenderSystem::GetSingleton()->getRenderer()->draw(getVertexBuffer(), getIndexBuffer(), getMaterial());
+	for (auto& mesh : m_ModelResourceFile->getMeshes())
+	{
+		RenderSystem::GetSingleton()->getRenderer()->draw(mesh.m_VertexBuffer.get(), mesh.m_IndexBuffer.get(), mesh.m_Material.get());
+	}
 }
 
 void ModelComponent::postRender()
@@ -96,12 +96,7 @@ void ModelComponent::postRender()
 
 void ModelComponent::setVisualModel(ModelResourceFile* newModel)
 {
-	m_VisualModelResourceFile = newModel;
-}
-
-void ModelComponent::setMaterial(Ref<Material>& material)
-{
-	m_Material = material;
+	m_ModelResourceFile = newModel;
 }
 
 void ModelComponent::setIsVisible(bool enabled)
@@ -113,8 +108,7 @@ JSON::json ModelComponent::getJSON() const
 {
 	JSON::json j;
 
-	j["resFile"] = m_VisualModelResourceFile->getPath().string();
-	j["material"] = m_Material->getFileName();
+	j["resFile"] = m_ModelResourceFile->getPath().string();
 	j["isVisible"] = m_IsVisible;
 	j["renderPass"] = m_RenderPass;
 
@@ -127,10 +121,10 @@ JSON::json ModelComponent::getJSON() const
 void ModelComponent::draw()
 {
 	ImGui::BeginGroup();
-	String modelFileName = m_VisualModelResourceFile ? m_VisualModelResourceFile->getPath().filename().string() : "None";
+	String modelFileName = m_ModelResourceFile ? m_ModelResourceFile->getPath().filename().string() : "None";
 	if (ImGui::BeginCombo("##Visual Model", modelFileName.c_str(), ImGuiComboFlags_HeightRegular))
 	{
-		for (auto&& file : ResourceLoader::GetFilesOfType(ResourceFile::Type::Obj))
+		for (auto&& file : ResourceLoader::GetFilesOfType(ResourceFile::Type::Model))
 		{
 			if (ImGui::MenuItem(file->getPath().string().c_str(), ""))
 			{
@@ -145,7 +139,7 @@ void ModelComponent::draw()
 		ImGui::SameLine();
 		if (ImGui::Button("Create Visual Model"))
 		{
-			if (!ResourceLoader::CreateVisualModelResourceFile(inputPath))
+			if (!ResourceLoader::CreateModelResourceFile(inputPath))
 			{
 				WARN("Could not create Visual Model");
 			}
@@ -159,9 +153,9 @@ void ModelComponent::draw()
 
 	ImGui::SameLine();
 
-	if (ImGui::Button("Visual Model"))
+	if (ImGui::Button("Model"))
 	{
-		EventManager::GetSingleton()->call("OpenScript", "EditorOpenFile", m_VisualModelResourceFile->getPath().string());
+		EventManager::GetSingleton()->call("OpenScript", "EditorOpenFile", m_ModelResourceFile->getPath().string());
 	}
 	ImGui::EndGroup();
 
@@ -171,33 +165,47 @@ void ModelComponent::draw()
 		{
 			const char* payloadFileName = (const char*)payload->Data;
 			FilePath payloadPath(payloadFileName);
-			if (payloadPath.extension() == ".obj")
+			if (IsFileSupported(payloadPath.extension().string(), ResourceFile::Type::Model))
 			{
-				setVisualModel(ResourceLoader::CreateVisualModelResourceFile(payloadPath.string()));
+				setVisualModel(ResourceLoader::CreateModelResourceFile(payloadPath.string()));
 			}
 			else
 			{
-				WARN("Cannot assign a non-obj file to Visual Model");
+				WARN("Unsupported file format for Model");
 			}
 		}
 		ImGui::EndDragDropTarget();
 	}
 
-	if (ImGui::BeginCombo("Material", m_Material->getFullName().c_str()))
+	int i = 0;
+	for (auto& mesh : m_ModelResourceFile->getMeshes())
 	{
-		for (auto& [materialName, materialInfo] : MaterialLibrary::GetAllMaterials())
+		if (ImGui::BeginCombo(("Material " + std::to_string(i)).c_str(), mesh.m_Material->getFullName().c_str()))
 		{
-			if (m_AllowedMaterials.empty() || std::find(m_AllowedMaterials.begin(), m_AllowedMaterials.end(), materialInfo.first) != m_AllowedMaterials.end())
+			for (auto& [materialName, materialInfo] : MaterialLibrary::GetAllMaterials())
 			{
-				if (ImGui::Selectable((materialName + " - " + materialInfo.first).c_str()))
+				if (m_AllowedMaterials.empty() || std::find(m_AllowedMaterials.begin(), m_AllowedMaterials.end(), materialInfo.first) != m_AllowedMaterials.end())
 				{
-					setMaterial(MaterialLibrary::GetMaterial(String(materialName)));
+					if (ImGui::Selectable((materialName + " - " + materialInfo.first).c_str()))
+					{
+						Ref<BasicMaterial> material = std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetMaterial(materialName));
+
+						if (material)
+						{
+							mesh.m_Material = material;
+						}
+						else
+						{
+							WARN("Invalid material type");
+						}
+					}
 				}
 			}
+			ImGui::EndCombo();
 		}
-		ImGui::EndCombo();
-	}
 
-	m_Material->draw();
+		mesh.m_Material->draw(std::to_string(i));
+		i++;
+	}
 }
 #endif // ROOTEX_EDITOR

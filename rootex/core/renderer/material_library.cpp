@@ -31,7 +31,7 @@ Ref<Material> MaterialLibrary::GetMaterial(const String& materialName)
 {
 	if (s_Materials.find(materialName) == s_Materials.end())
 	{
-		WARN("Material file not found, returning stand-in Material");
+		WARN("Material file not found, returning stand-in Material instead of: " + materialName);
 		return GetDefaultMaterial();
 	}
 	else
@@ -54,15 +54,15 @@ Ref<Material> MaterialLibrary::GetMaterial(const String& materialName)
 
 Ref<Material> MaterialLibrary::GetDefaultMaterial()
 {
-	if (Ref<Material> lockedMaterial = s_Materials["Default"].second.lock())
+	if (Ref<Material> lockedMaterial = s_Materials["DefaultMaterial"].second.lock())
 	{
 		return lockedMaterial;
 	}
 	else
 	{
 		Ref<Material> material(BasicMaterial::CreateDefault());
-		material->setFileName("Default");
-		s_Materials["Default"].second = material;
+		material->setFileName("DefaultMaterial");
+		s_Materials["DefaultMaterial"].second = material;
 		return material;
 	}
 }
@@ -71,7 +71,7 @@ void MaterialLibrary::SaveAll()
 {
 	for (auto& [materialName, materialInfo] : s_Materials)
 	{
-		if (materialName == "Default")
+		if (materialName == "DefaultMaterial")
 		{
 			continue;
 		}
@@ -88,9 +88,9 @@ void MaterialLibrary::SaveAll()
 
 void MaterialLibrary::CreateNewMaterialFile(const String& materialName, const String& materialType)
 {
-	if (materialName == "Default")
+	if (materialName == "DefaultMaterial")
 	{
-		WARN("Cannot create another Default material");
+		WARN("Cannot create another DefaultMaterial");
 		return;
 	}
 	String materialFileName = materialName + ".rmat";

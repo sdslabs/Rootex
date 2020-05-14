@@ -101,12 +101,12 @@ void BasicMaterial::setTexture(ImageResourceFile* image)
 
 #ifdef ROOTEX_EDITOR
 #include "imgui_stdlib.h"
-void BasicMaterial::draw()
+void BasicMaterial::draw(const String& id)
 {
 	ImGui::Text(BasicMaterial::s_MaterialName.c_str());
 
 	m_ImagePathUI = m_ImageFile->getPath().string();
-	if (ImGui::InputText("Texture", &m_ImagePathUI, ImGuiInputTextFlags_EnterReturnsTrue))
+	if (ImGui::InputText((String("Texture##") + id).c_str(), &m_ImagePathUI, ImGuiInputTextFlags_EnterReturnsTrue))
 	{
 		ImageResourceFile* image = ResourceLoader::CreateImageResourceFile(m_ImagePathUI);
 		if (image)
@@ -135,20 +135,20 @@ void BasicMaterial::draw()
 	}
 	else
 	{
-		ImGui::ColorEdit4("Color", &m_Color.x);
+		ImGui::ColorEdit4((String("Color##") + id).c_str(), &m_Color.x);
 	}
 	ImGui::Checkbox("Is lit?", &m_IsLit);
 	if (m_IsLit)
 	{
-		ImGui::DragFloat("##Specular Intensity", &m_SpecularIntensity);
+		ImGui::DragFloat((String("##SpecularIntensity") + id).c_str(), &m_SpecularIntensity);
 		ImGui::SameLine();
-		if (ImGui::Button("Specular Intensity"))
+		if (ImGui::Button((String("Specular Intensity##") + id).c_str()))
 		{
 			m_SpecularIntensity = 2.0f;
 		}
-		ImGui::DragFloat("##Specular Power", &m_SpecularPower);
+		ImGui::DragFloat((String("Specular Power##") + id).c_str(), &m_SpecularPower);
 		ImGui::SameLine();
-		if (ImGui::Button("Specular Power"))
+		if (ImGui::Button((String("Specular Power##") + id).c_str()))
 		{
 			m_SpecularPower = 30.0f;
 		}

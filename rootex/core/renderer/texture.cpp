@@ -1,6 +1,7 @@
 #include "texture.h"
 
 #include "rendering_device.h"
+#include "resource_loader.h"
 
 Texture::Texture(ImageResourceFile* imageFile)
     : m_ImageFile(imageFile)
@@ -19,14 +20,10 @@ Texture::Texture(ImageResourceFile* imageFile)
 	m_MipLevels = textureDesc.MipLevels;
 }
 
-Texture::~Texture()
-{
-}
-
 void Texture::reload()
 {
 	m_TextureView.Reset();
-	m_ImageFile->reload();
+	ResourceLoader::Reload(m_ImageFile);
 	m_TextureView = RenderingDevice::GetSingleton()->createTexture(m_ImageFile);
 
 	Microsoft::WRL::ComPtr<ID3D11Resource> res;
