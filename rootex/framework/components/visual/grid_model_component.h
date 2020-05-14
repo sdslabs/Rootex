@@ -15,9 +15,8 @@ class GridModelComponent : public ModelComponent
 
 	Vector2 m_CellSize;
 	int m_CellCount;
-	Color m_GridColor;
 
-	GridModelComponent(const Vector2& cellSize, const int& cellCount, const Color& gridColor, const unsigned int& renderPass, bool isVisible);
+	GridModelComponent(const Vector2& cellSize, const int& cellCount, const unsigned int& renderPass, bool isVisible);
 	GridModelComponent(GridModelComponent&) = delete;
 	virtual ~GridModelComponent() = default;
 

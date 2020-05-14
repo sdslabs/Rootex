@@ -10,12 +10,6 @@ Component* GridModelComponent::Create(const JSON::json& componentData)
 	        componentData["cellSize"]["y"]
 		}, 
 		componentData["cellCount"],
-	    { 
-			componentData["color"]["r"],
-	        componentData["color"]["g"],
-	        componentData["color"]["b"],
-	        componentData["color"]["a"],
-		},
 		componentData["renderPass"],
 	    componentData["isVisible"]);
 }
@@ -25,17 +19,15 @@ Component* GridModelComponent::CreateDefault()
 	return new GridModelComponent(
 	    { 1.0f, 1.0f },
 		100,
-		Color(ColorPresets::DarkGray),
 		(unsigned int)RenderPass::Editor,
 	    true);
 }
 
-GridModelComponent::GridModelComponent(const Vector2& cellSize, const int& cellCount, const Color& gridColor, const unsigned int& renderPass, bool isVisible)
-    : ModelComponent(renderPass, MaterialLibrary::GetDefaultMaterial(), nullptr, isVisible)
+GridModelComponent::GridModelComponent(const Vector2& cellSize, const int& cellCount, const unsigned int& renderPass, bool isVisible)
+    : ModelComponent(renderPass, MaterialLibrary::GetMaterial("grid.rmat"), nullptr, isVisible)
     , m_CellCount(cellCount)
     , m_CellSize(cellSize)
-    , m_ColorMaterial(MaterialLibrary::GetDefaultMaterial())
-    , m_GridColor(gridColor)
+    , m_ColorMaterial(MaterialLibrary::GetMaterial("grid.rmat"))
 {
 }
 
@@ -138,10 +130,6 @@ JSON::json GridModelComponent::getJSON() const
 	j["cellSize"]["x"] = m_CellSize.x;
 	j["cellSize"]["y"] = m_CellSize.y;
 	j["cellCount"] = m_CellCount;
-	j["color"]["r"] = m_GridColor.x;
-	j["color"]["g"] = m_GridColor.y;
-	j["color"]["b"] = m_GridColor.z;
-	j["color"]["a"] = m_GridColor.w;
 
 	return j;
 }
@@ -160,7 +148,5 @@ void GridModelComponent::draw()
 	{
 		refreshVertexBuffers();
 	}
-
-	ImGui::ColorEdit4("Grid Color", &m_GridColor.x);
 }
 #endif // ROOTEX_EDITOR

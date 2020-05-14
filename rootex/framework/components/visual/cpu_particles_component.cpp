@@ -5,7 +5,6 @@
 #include "systems/render_system.h"
 #include "timer.h"
 
-#include "core/renderer/materials/color_material.h"
 #include "renderer/material_library.h"
 
 Component* CPUParticlesComponent::Create(const JSON::json& componentData)
@@ -68,7 +67,7 @@ CPUParticlesComponent::CPUParticlesComponent(size_t poolSize, const String& part
     , m_ParticleTemplate(particleTemplate)
     , m_TransformComponent(nullptr)
 {
-	m_AllowedMaterials = { ColorMaterial::s_MaterialName };
+	m_AllowedMaterials = { BasicMaterial::s_MaterialName };
 	m_ParticlePool.resize(poolSize);
 	m_PoolIndex = poolSize - 1;
 	m_LastRenderTimePoint = std::chrono::high_resolution_clock::now();
@@ -124,7 +123,7 @@ bool CPUParticlesComponent::preRender()
 
 void CPUParticlesComponent::render()
 {
-	ColorMaterial* material = dynamic_cast<ColorMaterial*>(getMaterial());
+	BasicMaterial* material = dynamic_cast<BasicMaterial*>(getMaterial());
 	if (material == nullptr)
 	{
 		return;

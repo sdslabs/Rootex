@@ -1,17 +1,15 @@
 #include "material_library.h"
 
 #include "core/resource_loader.h"
-#include "materials/color_material.h"
-#include "materials/texture_material.h"
 
 MaterialLibrary::MaterialMap MaterialLibrary::s_Materials;
 
-const String ColorMaterial::s_MaterialName = "ColorMaterial";
-const String TextureMaterial::s_MaterialName = "TextureMaterial";
+//const String ColorMaterial::s_MaterialName = "ColoredMaterial";
+const String BasicMaterial::s_MaterialName = "BasicMaterial";
 
 MaterialLibrary::MaterialDatabase MaterialLibrary::s_MaterialDatabase = {
-	{ ColorMaterial::s_MaterialName, { ColorMaterial::CreateDefault, ColorMaterial::Create } },
-	{ TextureMaterial::s_MaterialName, { TextureMaterial::CreateDefault, TextureMaterial::Create } }
+	//{ ColorMaterial::s_MaterialName, { ColorMaterial::CreateDefault, ColorMaterial::Create } },
+	{ BasicMaterial::s_MaterialName, { BasicMaterial::CreateDefault, BasicMaterial::Create } }
 };
 
 void MaterialLibrary::LoadMaterials()
@@ -26,7 +24,7 @@ void MaterialLibrary::LoadMaterials()
 			s_Materials[materialName] = { (String)materialJSON["type"], {} };
 		}
 	}
-	s_Materials["Default"] = { ColorMaterial::s_MaterialName, {} };
+	s_Materials["Default"] = { BasicMaterial::s_MaterialName, {} };
 }
 
 Ref<Material> MaterialLibrary::GetMaterial(const String& materialName)
@@ -62,7 +60,7 @@ Ref<Material> MaterialLibrary::GetDefaultMaterial()
 	}
 	else
 	{
-		Ref<Material> material(ColorMaterial::CreateDefault());
+		Ref<Material> material(BasicMaterial::CreateDefault());
 		material->setFileName("Default");
 		s_Materials["Default"].second = material;
 		return material;

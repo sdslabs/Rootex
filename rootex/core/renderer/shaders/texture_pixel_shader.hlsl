@@ -43,31 +43,34 @@ struct SpotLightInfo
     float angleRange;
 };
 
-cbuffer CameraPos : register(PER_FRAME)
+cbuffer Lights : register(PER_FRAME_PS_HLSL)
 {
     float3 cameraPos;
-}
-
-cbuffer Lights : register(b3)
-{
     int pointLightCount;
     PointLightInfo pointLightInfos[4];
     int directionLightPresent;
     DirectionalLightInfo directionalLightInfo;
     int spotLightCount;
     SpotLightInfo spotLightInfos[4];
-};
+}
 
-cbuffer Material: register(b4)
+cbuffer Material : register(PER_OBJECT_PS_HLSL)
 {
+    float4 color;
+    int isLit;
     float specularIntensity;
     float specPow;
 };
 
 float4 main(PixelInputType input) : SV_TARGET
 {    
+    float4 materialColor = ShaderTexture.Sample(SampleType, input.tex) * color;
+    if (isLit == 0)
+    {
+        return materialColor;
+    }
+    
     input.normal = normalize(input.normal);
-    float4 materialColor = ShaderTexture.Sample(SampleType, input.tex);
 
     float4 finalColor = { 0.0f, 0.0f, 0.0f, 1.0f };
     float3 toEye = normalize(cameraPos - (float3) input.worldPosition);

@@ -1,7 +1,8 @@
 #pragma once
 
 #include "common/common.h"
-#include "material.h"
+
+#include "materials/basic_material.h"
 
 class MaterialLibrary
 {
