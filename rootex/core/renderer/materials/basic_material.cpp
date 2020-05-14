@@ -137,7 +137,7 @@ void BasicMaterial::draw(const String& id)
 	{
 		ImGui::ColorEdit4((String("Color##") + id).c_str(), &m_Color.x);
 	}
-	ImGui::Checkbox("Is lit?", &m_IsLit);
+	ImGui::Checkbox((String("Is Lit?##") + id).c_str(), &m_IsLit);
 	if (m_IsLit)
 	{
 		ImGui::DragFloat((String("##SpecularIntensity") + id).c_str(), &m_SpecularIntensity);

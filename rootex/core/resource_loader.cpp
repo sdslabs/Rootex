@@ -43,6 +43,7 @@ void ResourceLoader::LoadAssimp(ModelResourceFile* file)
 	{
 		ERR("Model could not be loaded: " + OS::GetAbsolutePath(file->m_ResourceData->getPath().string()).generic_string());
 		ERR("Assimp: " + s_ModelLoader.GetErrorString());
+		return;
 	}
 
 	file->m_Meshes.clear();
@@ -106,6 +107,22 @@ void ResourceLoader::LoadAssimp(ModelResourceFile* file)
 		Ref<BasicMaterial> extractedMaterial = std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetMaterial(material->GetName().C_Str() + String(".rmat")));
 		extractedMaterial->setColor({ color.r, color.g, color.b, 1.0f });
 		
+		aiString texturePath;
+		if (material->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath))
+		{
+			String path = texturePath.C_Str();
+			if (path[0] == '*')
+			{
+				WARN("Embedded textures are not supported");
+			}
+			else if (path != "")
+			{
+				// Texture is in a file
+				ImageResourceFile* image = ResourceLoader::CreateImageResourceFile(path);
+				extractedMaterial->setTexture(image);
+			}
+		}
+
 		Mesh extractedMesh;
 		extractedMesh.m_VertexBuffer.reset(new VertexBuffer(vertices));
 		extractedMesh.m_IndexBuffer.reset(new IndexBuffer(indices));

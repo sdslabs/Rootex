@@ -21,7 +21,6 @@
         },
         "ModelComponent": {
             "isVisible": true,
-            "material": "blue.rmat",
             "renderPass": 1,
             "resFile": "rootex/assets/cube.obj"
         },

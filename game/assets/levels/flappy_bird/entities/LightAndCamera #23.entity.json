@@ -35,7 +35,6 @@
         },
         "ModelComponent": {
             "isVisible": true,
-            "material": "green.rmat",
             "renderPass": 1,
             "resFile": "game/assets/test/cube.obj"
         },

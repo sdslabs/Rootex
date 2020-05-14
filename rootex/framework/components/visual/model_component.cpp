@@ -177,35 +177,39 @@ void ModelComponent::draw()
 		ImGui::EndDragDropTarget();
 	}
 
-	int i = 0;
-	for (auto& mesh : m_ModelResourceFile->getMeshes())
+	if (ImGui::TreeNodeEx("Materials"))
 	{
-		if (ImGui::BeginCombo(("Material " + std::to_string(i)).c_str(), mesh.m_Material->getFullName().c_str()))
+		int i = 0;
+		for (auto& mesh : m_ModelResourceFile->getMeshes())
 		{
-			for (auto& [materialName, materialInfo] : MaterialLibrary::GetAllMaterials())
+			if (ImGui::BeginCombo(("Material " + std::to_string(i)).c_str(), mesh.m_Material->getFullName().c_str()))
 			{
-				if (m_AllowedMaterials.empty() || std::find(m_AllowedMaterials.begin(), m_AllowedMaterials.end(), materialInfo.first) != m_AllowedMaterials.end())
+				for (auto& [materialName, materialInfo] : MaterialLibrary::GetAllMaterials())
 				{
-					if (ImGui::Selectable((materialName + " - " + materialInfo.first).c_str()))
+					if (m_AllowedMaterials.empty() || std::find(m_AllowedMaterials.begin(), m_AllowedMaterials.end(), materialInfo.first) != m_AllowedMaterials.end())
 					{
-						Ref<BasicMaterial> material = std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetMaterial(materialName));
+						if (ImGui::Selectable((materialName + " - " + materialInfo.first).c_str()))
+						{
+							Ref<BasicMaterial> material = std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetMaterial(materialName));
 
-						if (material)
-						{
-							mesh.m_Material = material;
-						}
-						else
-						{
-							WARN("Invalid material type");
+							if (material)
+							{
+								mesh.m_Material = material;
+							}
+							else
+							{
+								WARN("Invalid material type");
+							}
 						}
 					}
 				}
+				ImGui::EndCombo();
 			}
-			ImGui::EndCombo();
-		}
 
-		mesh.m_Material->draw(std::to_string(i));
-		i++;
+			mesh.m_Material->draw(std::to_string(i));
+			i++;
+		}
+		ImGui::TreePop();
 	}
 }
 #endif // ROOTEX_EDITOR

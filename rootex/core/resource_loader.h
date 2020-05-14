@@ -16,7 +16,7 @@ static const inline HashMap<ResourceFile::Type, Vector<String>> SupportedFiles =
 	},
 	{
 	    ResourceFile::Type::Model,
-	    { ".obj", ".blend", ".3ds" },
+	    { ".obj", ".blend", ".3ds", ".fbx" },
 	},
 	{
 	    ResourceFile::Type::Audio,

@@ -6,7 +6,6 @@
         },
         "ModelComponent": {
             "isVisible": true,
-            "material": "Default",
             "renderPass": 1,
             "resFile": "rootex/assets/cube.obj"
         },
