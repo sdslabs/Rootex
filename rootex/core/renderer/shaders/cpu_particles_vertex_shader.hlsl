@@ -17,5 +17,5 @@ cbuffer CBuf : register(PER_CAMERA_CHANGE_VS_HLSL)
 
 float4 main(float3 pos : POSITION) : SV_POSITION
 {
-    return mul(float4(pos, 1.0f), mul(M, mul(V, P)));
+	return mul(float4(pos, 1.0f), mul(M, mul(V, P)));
 }

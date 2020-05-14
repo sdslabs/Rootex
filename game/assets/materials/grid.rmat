@@ -1,12 +1,12 @@
 {
     "color": {
         "a": 1.0,
-        "b": 1.0,
-        "g": 1.0,
-        "r": 1.0
+        "b": 0.5,
+        "g": 0.5,
+        "r": 0.5
     },
-    "imageFile": "game\\assets\\test\\yellow.png",
-    "isLit": true,
+    "imageFile": "rootex/assets/white.png",
+    "isLit": false,
     "specularIntensity": 2.0,
     "specularPower": 30.0,
     "type": "BasicMaterial"

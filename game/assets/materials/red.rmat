@@ -5,5 +5,7 @@
         "g": 0.0,
         "r": 1.0
     },
-    "type": "ColorMaterial"
+    "imageFile": "rootex/assets/white.png",
+    "isLit": false,
+    "type": "BasicMaterial"
 }

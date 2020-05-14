@@ -4,20 +4,21 @@
 
 class Texture;
 
-class TextureMaterial : public Material
+class BasicMaterial : public Material
 {
-	TextureShader* m_DiffuseShader;
+	TextureShader* m_Shader;
 	Ref<Texture> m_DiffuseTexture;
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_SamplerState;
 
 	ImageResourceFile* m_ImageFile;
 
+	bool m_IsLit = true;
+	Color m_Color;
 	float m_SpecularIntensity;
 	float m_SpecularPower;
 
 	void setTexture(ImageResourceFile* image);
 
-	void setPSConstantBuffer(const PSDiffuseConstantBufferLights& constantBuffer);
 	void setPSConstantBuffer(const PSDiffuseConstantBufferMaterial& constantBuffer);
 	void setVSConstantBuffer(const VSDiffuseConstantBuffer& constantBuffer);
 
@@ -33,14 +34,15 @@ public:
 	};
 	enum class PixelConstantBufferType
 	{
-		Lights,
 		Material,
 		End
 	};
 
-	TextureMaterial() = delete;
-	TextureMaterial(const String& imagePath, float specIntensity, float specPower);
-	~TextureMaterial() = default;
+	BasicMaterial() = delete;
+	BasicMaterial(const String& imagePath, Color color, bool isLit, float specularIntensity, float specularPower);
+	~BasicMaterial() = default;
+
+	void setColor(const Color& color) { m_Color = color; };
 
 	static Material* CreateDefault();
 	static Material* Create(const JSON::json& materialData);

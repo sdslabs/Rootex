@@ -1,11 +1,11 @@
 #include "debug_drawer.h"
 
 #include "framework/systems/render_system.h"
-#include "core/renderer/materials/color_material.h"
+#include "renderer/materials/basic_material.h"
 
 DebugDrawer::DebugDrawer()
 {
-	m_ColorMaterial = std::dynamic_pointer_cast<ColorMaterial>(MaterialLibrary::GetDefaultMaterial());
+	m_ColorMaterial = std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetDefaultMaterial());
 }
 
 void DebugDrawer::drawLine(const btVector3& from, const btVector3& to, const btVector3& color)

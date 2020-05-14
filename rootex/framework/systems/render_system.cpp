@@ -1,5 +1,9 @@
 #include "render_system.h"
 
+#include "renderer/shaders/register_locations_vertex_shader.h"
+#include "renderer/shaders/register_locations_pixel_shader.h"
+#include "light_system.h"
+
 RenderSystem* RenderSystem::GetSingleton()
 {
 	static RenderSystem singleton;
@@ -102,79 +106,19 @@ void RenderSystem::resetDefaultRasterizer()
 void RenderSystem::setProjectionConstantBuffers()
 {
 	const Matrix& projection = getCamera()->getProjectionMatrix();
-	if (m_VSProjectionConstantBuffer == nullptr)
-	{
-		D3D11_BUFFER_DESC cbd = { 0 };
-		cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		cbd.Usage = D3D11_USAGE_DYNAMIC;
-		cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		cbd.MiscFlags = 0u;
-		cbd.ByteWidth = sizeof(projection);
-		cbd.StructureByteStride = 0u;
-		D3D11_SUBRESOURCE_DATA csd = { 0 };
-		csd.pSysMem = &projection.Transpose();
-
-		m_VSProjectionConstantBuffer = RenderingDevice::GetSingleton()->createVSProjectionConstantBuffer(&cbd, &csd);
-	}
-	else
-	{
-		D3D11_MAPPED_SUBRESOURCE subresource = { 0 };
-		RenderingDevice::GetSingleton()->mapBuffer(m_VSProjectionConstantBuffer.Get(), subresource);
-		memcpy(subresource.pData, &projection.Transpose(), sizeof(projection));
-		RenderingDevice::GetSingleton()->unmapBuffer(m_VSProjectionConstantBuffer.Get());
-	}
+	Material::setVSConstantBuffer(projection.Transpose(), m_VSProjectionConstantBuffer, PER_CAMERA_CHANGE_VS_CPP);
 }
 
 void RenderSystem::perFrameVSCBBinds()
 {
 	const Matrix& view = getCamera()->getViewMatrix();
-	if (m_VSPerFrameConstantBuffer == nullptr)
-	{
-		D3D11_BUFFER_DESC cbd = { 0 };
-		cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		cbd.Usage = D3D11_USAGE_DYNAMIC;
-		cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		cbd.MiscFlags = 0u;
-		cbd.ByteWidth = sizeof(view);
-		cbd.StructureByteStride = 0u;
-		D3D11_SUBRESOURCE_DATA csd = { 0 };
-		csd.pSysMem = &view.Transpose();
-
-		m_VSPerFrameConstantBuffer = RenderingDevice::GetSingleton()->createVSPerFrameConstantBuffer(&cbd, &csd);
-	}
-	else
-	{
-		D3D11_MAPPED_SUBRESOURCE subresource = { 0 };
-		RenderingDevice::GetSingleton()->mapBuffer(m_VSPerFrameConstantBuffer.Get(), subresource);
-		memcpy(subresource.pData, &view.Transpose(), sizeof(view));
-		RenderingDevice::GetSingleton()->unmapBuffer(m_VSPerFrameConstantBuffer.Get());
-	}
+	Material::setVSConstantBuffer(view.Transpose(), m_VSPerFrameConstantBuffer, PER_FRAME_VS_CPP);
 }
 
 void RenderSystem::perFramePSCBBinds()
 {
-	const Vector4& view = Vector4(getCamera()->getViewMatrix().Translation());
-	if (m_PSPerFrameConstantBuffer == nullptr)
-	{
-		D3D11_BUFFER_DESC cbd = { 0 };
-		cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		cbd.Usage = D3D11_USAGE_DYNAMIC;
-		cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		cbd.MiscFlags = 0u;
-		cbd.ByteWidth = sizeof(view);
-		cbd.StructureByteStride = 0u;
-		D3D11_SUBRESOURCE_DATA csd = { 0 };
-		csd.pSysMem = &view;
-
-		m_PSPerFrameConstantBuffer = RenderingDevice::GetSingleton()->createPSPerFrameConstantBuffer(&cbd, &csd);
-	}
-	else
-	{
-		D3D11_MAPPED_SUBRESOURCE subresource = { 0 };
-		RenderingDevice::GetSingleton()->mapBuffer(m_PSPerFrameConstantBuffer.Get(), subresource);
-		memcpy(subresource.pData, &view, sizeof(view));
-		RenderingDevice::GetSingleton()->unmapBuffer(m_PSPerFrameConstantBuffer.Get());
-	}
+	const PSDiffuseConstantBufferLights& lights = LightSystem::GetSingleton()->getLights();
+	Material::setPSConstantBuffer(lights, m_PSPerFrameConstantBuffer, PER_FRAME_PS_CPP);
 }
 
 void RenderSystem::enableLineRenderMode()

@@ -52,18 +52,20 @@ struct SpotLightInfo
 /// Lighting properties of a material
 struct PSDiffuseConstantBufferMaterial
 {
+	Color color;
+	int isLit;
 	/// Describes brightness of specular spot, high for metallic material
 	float specularIntensity = 2.0f;
 	/// Describes angular fall-off of specular spot, high for metallic material
 	float specularPower = 30.0f;
-	float pad1[2];
+	float pad;
 };
 
 /// Encapsulates all the types of lights offered, to bind them in the Pixel Shader
 struct PSDiffuseConstantBufferLights
 {
+	Vector3 cameraPos;
 	int pointLightCount = 0;
-	float pad[3];
 	PointLightInfo pointLightInfos[4];
 	int directionalLightPresent = 0;
 	float pad2[3];
