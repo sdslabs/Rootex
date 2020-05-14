@@ -44,7 +44,6 @@ Component* CPUParticlesComponent::Create(const JSON::json& componentData)
 		componentData["poolSize"], 
 		componentData["resFile"], 
 		particalTemplate, 
-		MaterialLibrary::GetMaterial((String)componentData["material"]), 
 		componentData["isVisible"],
 	    componentData["renderPass"]);
 	return particles;
@@ -55,15 +54,14 @@ Component* CPUParticlesComponent::CreateDefault()
 	CPUParticlesComponent* particles = new CPUParticlesComponent(
 		1000,
 		"rootex/assets/cube.obj", 
-		ParticleTemplate(), 
-		MaterialLibrary::GetDefaultMaterial(), 
+		ParticleTemplate(),
 		true,
 		(unsigned int)RenderPass::Basic);
 	return particles;
 }
 
-CPUParticlesComponent::CPUParticlesComponent(size_t poolSize, const String& particleModelPath, const ParticleTemplate& particleTemplate, Ref<Material> material, bool visibility, unsigned int renderPass)
-    : ModelComponent(renderPass, material, ResourceLoader::CreateVisualModelResourceFile(particleModelPath), visibility)
+CPUParticlesComponent::CPUParticlesComponent(size_t poolSize, const String& particleModelPath, const ParticleTemplate& particleTemplate, bool visibility, unsigned int renderPass)
+    : ModelComponent(renderPass, ResourceLoader::CreateModelResourceFile(particleModelPath), visibility)
     , m_ParticleTemplate(particleTemplate)
     , m_TransformComponent(nullptr)
 {
@@ -123,12 +121,6 @@ bool CPUParticlesComponent::preRender()
 
 void CPUParticlesComponent::render()
 {
-	BasicMaterial* material = dynamic_cast<BasicMaterial*>(getMaterial());
-	if (material == nullptr)
-	{
-		return;
-	}
-
 	for (auto& particle : m_ParticlePool)
 	{
 		if (!particle.m_IsActive)
@@ -138,10 +130,13 @@ void CPUParticlesComponent::render()
 
 		float life = particle.m_LifeRemaining / particle.m_LifeTime;
 		float size = particle.m_SizeBegin * (life) + particle.m_SizeEnd * (1.0f - life);
-
+		
 		RenderSystem::GetSingleton()->pushMatrixOverride(Matrix::CreateScale(size) * particle.m_Transform);
-		material->setColor(Color::Lerp(particle.m_ColorEnd, particle.m_ColorBegin, life));
-		RenderSystem::GetSingleton()->getRenderer()->draw(m_VisualModelResourceFile->getVertexBuffer(), m_VisualModelResourceFile->getIndexBuffer(), getMaterial());
+		for (auto& mesh : m_ModelResourceFile->getMeshes())
+		{
+			mesh.m_Material->setColor(Color::Lerp(particle.m_ColorEnd, particle.m_ColorBegin, life));
+			RenderSystem::GetSingleton()->getRenderer()->draw(mesh.m_VertexBuffer.get(), mesh.m_IndexBuffer.get(), mesh.m_Material.get());
+		}
 		RenderSystem::GetSingleton()->popMatrix();
 	}
 }

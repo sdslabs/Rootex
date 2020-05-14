@@ -2,8 +2,7 @@
 
 #include "common/common.h"
 #include "core/resource_data.h"
-#include "core/renderer/vertex_buffer.h"
-#include "core/renderer/index_buffer.h"
+#include "core/renderer/mesh.h"
 #include "DirectXTK/Inc/SpriteFont.h"
 
 /// Interface of a file loaded from disk. Use ResourceLoader to load, create or save files.
@@ -16,9 +15,9 @@ public:
 		/// Signifies an error in loading. Every ResourceFile will have a non-None type.
 		None = 0,
 		Lua,
-		Wav,
+		Audio,
 		Text,
-		Obj,
+		Model,
 		Image,
 		Font
 	};
@@ -45,9 +44,6 @@ public:
 	/// If the file data has been loaded properly.
 	bool isOpen();
 
-	/// Reload file from disk. Overwrites the data buffer after reloading file data from disk.
-	virtual void reload();
-
 	FilePath getPath() const;
 	Type getType() const;
 	ResourceData* getData();
@@ -67,8 +63,6 @@ protected:
 public:
 	explicit TextResourceFile(TextResourceFile&) = delete;
 	explicit TextResourceFile(TextResourceFile&&) = delete;
-
-	virtual void reload() override;
 
 	/// Replace old data string with new data string.
 	void putString(const String& newData);
@@ -90,8 +84,6 @@ class LuaTextResourceFile : public TextResourceFile
 public:
 	explicit LuaTextResourceFile(TextResourceFile&) = delete;
 	explicit LuaTextResourceFile(TextResourceFile&&) = delete;
-
-	virtual void reload() override;
 };
 
 typedef int ALsizei;
@@ -118,8 +110,6 @@ public:
 	explicit AudioResourceFile(AudioResourceFile&) = delete;
 	explicit AudioResourceFile(AudioResourceFile&&) = delete;
 
-	virtual void reload() override;
-
 	/// Get size of decompressed audio data.
 	ALsizei getAudioDataSize() const { return m_AudioDataSize; }
 	/// Returns the same enum value that OpenAL uses.
@@ -134,11 +124,10 @@ public:
 /// Representation of a 3D model file. Only .obj with .mtl files are supported.
 class ModelResourceFile : public ResourceFile
 {
-	explicit ModelResourceFile(Ptr<VertexBuffer> vertexBuffer, Ptr<IndexBuffer> indexBuffer, ResourceData* resData);
+	explicit ModelResourceFile(ResourceData* resData);
 	~ModelResourceFile();
 
-	Ptr<VertexBuffer> m_VertexBuffer;
-	Ptr<IndexBuffer> m_IndexBuffer;
+	Vector<Mesh> m_Meshes;
 
 	friend class ResourceLoader;
 
@@ -146,10 +135,7 @@ public:
 	explicit ModelResourceFile(ModelResourceFile&) = delete;
 	explicit ModelResourceFile(ModelResourceFile&&) = delete;
 
-	virtual void reload() override;
-
-	const VertexBuffer* getVertexBuffer() const { return m_VertexBuffer.get(); }
-	const IndexBuffer* getIndexBuffer() const { return m_IndexBuffer.get(); }
+	Vector<Mesh>& getMeshes() { return m_Meshes; }
 };
 
 /// Representation of an image file. Supports BMP, JPEG, PNG, TIFF, GIF, HD Photo, or other WIC supported file containers
@@ -163,8 +149,6 @@ class ImageResourceFile : public ResourceFile
 public:
 	explicit ImageResourceFile(ImageResourceFile&) = delete;
 	explicit ImageResourceFile(ImageResourceFile&&) = delete;
-
-	virtual void reload() override;
 };
 
 /// Representation of a font file. Supports .spritefont files.
@@ -177,11 +161,11 @@ class FontResourceFile : public ResourceFile
 
 	friend class ResourceLoader;
 
+	void regenerateFont();
+
 public:
 	explicit FontResourceFile(ImageResourceFile&) = delete;
 	explicit FontResourceFile(ImageResourceFile&&) = delete;
-
-	virtual void reload() override;
 
 	Ref<DirectX::SpriteFont> getFont() const { return m_Font; }
 };

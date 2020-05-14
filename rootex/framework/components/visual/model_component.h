@@ -14,15 +14,14 @@ class ModelComponent : public Component
 	friend class EntityFactory;
 
 protected:
-	ModelResourceFile* m_VisualModelResourceFile;
-	Ref<Material> m_Material;
+	ModelResourceFile* m_ModelResourceFile;
 	bool m_IsVisible;
 	unsigned int m_RenderPass;
 
 	HierarchyComponent* m_HierarchyComponent;
 	TransformComponent* m_TransformComponent;
 
-	ModelComponent(unsigned int renderPass, Ref<Material> material, ModelResourceFile* resFile, bool isVisible);
+	ModelComponent(unsigned int renderPass, ModelResourceFile* resFile, bool isVisible);
 	ModelComponent(ModelComponent&) = delete;
 	virtual ~ModelComponent() = default;
 
@@ -41,14 +40,11 @@ public:
 	virtual void postRender();
 
 	void setVisualModel(ModelResourceFile* newModel);
-	void setMaterial(Ref<Material>& material);
 	void setIsVisible(bool enabled);
 	
 	unsigned int getRenderPass() const { return m_RenderPass; }
-	const VertexBuffer* getVertexBuffer() const { return m_VisualModelResourceFile->getVertexBuffer(); }
-	const IndexBuffer* getIndexBuffer() const { return m_VisualModelResourceFile->getIndexBuffer(); }
-	Material* getMaterial() { return m_Material.get(); }
-	ModelResourceFile* getModelResourceFile() const { return m_VisualModelResourceFile; }
+	const Vector<Mesh>& getMeshes() const { return m_ModelResourceFile->getMeshes(); }
+	ModelResourceFile* getModelResourceFile() const { return m_ModelResourceFile; }
 
 	virtual String getName() const override { return "ModelComponent"; }
 	ComponentID getComponentID() const override { return s_ID; }

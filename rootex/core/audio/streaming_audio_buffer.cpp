@@ -6,7 +6,7 @@
 
 void StreamingAudioBuffer::initializeBuffers()
 {
-	PANIC(m_AudioFile->getType() != ResourceFile::Type::Wav, "AudioSystem: Trying to load a non-WAV file in a sound buffer");
+	PANIC(m_AudioFile->getType() != ResourceFile::Type::Audio, "AudioSystem: Trying to load a non-WAV file in a sound buffer");
 
 	ResourceData* fileStream = m_AudioFile->getData();
 	FileBuffer* fileBuffer = fileStream->getRawData();

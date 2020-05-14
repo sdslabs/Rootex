@@ -83,7 +83,7 @@ void MusicComponent::draw()
 	ImGui::BeginGroup();
 	if (ImGui::BeginCombo("##Audio File", m_AudioFile->getPath().filename().string().c_str(), ImGuiComboFlags_HeightRegular))
 	{
-		for (auto&& file : ResourceLoader::GetFilesOfType(ResourceFile::Type::Wav))
+		for (auto&& file : ResourceLoader::GetFilesOfType(ResourceFile::Type::Audio))
 		{
 			if (ImGui::MenuItem(file->getPath().string().c_str(), ""))
 			{
@@ -124,7 +124,7 @@ void MusicComponent::draw()
 		{
 			const char* payloadFileName = (const char*)payload->Data;
 			FilePath payloadPath(payloadFileName);
-			if (payloadPath.extension() == ".wav")
+			if (IsFileSupported(payloadPath.extension().string(), ResourceFile::Type::Audio))
 			{
 				setAudioFile(ResourceLoader::CreateAudioResourceFile(payloadPath.string()));
 			}

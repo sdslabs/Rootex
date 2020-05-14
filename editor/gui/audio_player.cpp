@@ -82,7 +82,7 @@ void AudioPlayer::draw()
 		ImGui::SameLine();
 		if (ImGui::Button("Reload"))
 		{
-			m_OpenFile->reload();
+			ResourceLoader::Reload(m_OpenFile);
 		}
 	}
 	ImGui::NewLine();

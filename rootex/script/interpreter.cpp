@@ -137,14 +137,13 @@ void LuaInterpreter::registerTypes()
 		resourceLoader["CreateLua"] = &ResourceLoader::CreateLuaTextResourceFile;
 		resourceLoader["CreateText"] = &ResourceLoader::CreateTextResourceFile;
 		resourceLoader["CreateNewText"] = &ResourceLoader::CreateNewTextResourceFile;
-		resourceLoader["CreateVisualModel"] = &ResourceLoader::CreateVisualModelResourceFile;
+		resourceLoader["CreateVisualModel"] = &ResourceLoader::CreateModelResourceFile;
 	}
 	{
 		sol::usertype<ResourceFile> resourceFile = rootex.new_usertype<ResourceFile>("ResourceFile");
 		resourceFile["isValid"] = &ResourceFile::isValid;
 		resourceFile["isDirty"] = &ResourceFile::isDirty;
 		resourceFile["isOpen"] = &ResourceFile::isOpen;
-		resourceFile["reload"] = &ResourceFile::reload;
 		resourceFile["getPath"] = [](ResourceFile& f) { return f.getPath().string(); };
 		resourceFile["getType"] = &ResourceFile::getType;
 	}
