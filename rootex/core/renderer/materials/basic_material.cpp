@@ -137,7 +137,7 @@ void BasicMaterial::draw()
 	{
 		ImGui::ColorEdit4("Color", &m_Color.x);
 	}
-	ImGui::Checkbox("Is lit?", &m_IsLit);
+	ImGui::Checkbox("Affected by light?", &m_IsLit);
 	if (m_IsLit)
 	{
 		ImGui::DragFloat("##Specular Intensity", &m_SpecularIntensity);
