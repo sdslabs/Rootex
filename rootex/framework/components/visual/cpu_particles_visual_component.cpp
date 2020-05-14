@@ -109,11 +109,6 @@ bool CPUParticlesVisualComponent::preRender()
 
 void CPUParticlesVisualComponent::render(RenderPass renderPass)
 {
-	BasicMaterial* material = dynamic_cast<BasicMaterial*>(getMaterial());
-	if (material == nullptr)
-	{
-		return;
-	}
 	if (renderPass & m_RenderPass)
 	{
 		for (auto& particle : m_ParticlePool)
@@ -129,8 +124,8 @@ void CPUParticlesVisualComponent::render(RenderPass renderPass)
 			Color color = Color::Lerp(particle.m_ColorEnd, particle.m_ColorBegin, life);
 
 			RenderSystem::GetSingleton()->pushMatrixOverride(Matrix::CreateScale(size) * particle.m_Transform);
-			material->setColor({ color });
-			RenderSystem::GetSingleton()->getRenderer()->draw(m_VisualModelResourceFile->getVertexBuffer(), m_VisualModelResourceFile->getIndexBuffer(), getMaterial());
+			m_Material->setColor(color);
+			RenderSystem::GetSingleton()->getRenderer()->draw(m_VisualModelResourceFile->getVertexBuffer(), m_VisualModelResourceFile->getIndexBuffer(), m_Material.get());
 			RenderSystem::GetSingleton()->popMatrix();
 		}
 	}
