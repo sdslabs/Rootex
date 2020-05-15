@@ -71,6 +71,8 @@ public:
 
 	void setBufferUpdateRate(float milliseconds);
 
+	// set listener in openAL
+	static void setListener(int listenerID);
 	bool initialize();
 	void begin();
 	void update();
