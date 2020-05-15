@@ -12,7 +12,7 @@ class ModelVisualComponent : public VisualComponent
 
 protected:
 	VisualModelResourceFile* m_VisualModelResourceFile;
-	Ref<Material> m_Material; //change
+	Ref<BasicMaterial> m_Material;
 	HierarchyComponent* m_HierarchyComponent;
 
 	ModelVisualComponent(const unsigned int& renderPassSetting, Ref<Material> material, VisualModelResourceFile* resFile, bool isVisible);
@@ -35,11 +35,10 @@ public:
 	virtual void postRender() override;
 
 	void setVisualModel(VisualModelResourceFile* newModel);
-	void setMaterial(Ref<Material>& material);//change
+	void setMaterial(const Ref<Material>& material);
 	
 	const VertexBuffer* getVertexBuffer() const { return m_VisualModelResourceFile->getVertexBuffer(); }
 	const IndexBuffer* getIndexBuffer() const { return m_VisualModelResourceFile->getIndexBuffer(); }
-	Material* getMaterial() { return m_Material.get(); }//change
 	VisualModelResourceFile* getModelResourceFile() const { return m_VisualModelResourceFile; }
 
 	virtual String getName() const override { return "ModelVisualComponent"; }

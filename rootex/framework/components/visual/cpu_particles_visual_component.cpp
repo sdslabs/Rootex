@@ -53,7 +53,7 @@ CPUParticlesVisualComponent::CPUParticlesVisualComponent(size_t poolSize, const 
     , m_ParticleTemplate(particleTemplate)
     , m_TransformComponent(nullptr)
 {
-	m_AllowedMaterials = { ColorMaterial::s_MaterialName };
+	m_AllowedMaterials = { BasicMaterial::s_MaterialName };
 	m_ParticlePool.resize(poolSize);
 	m_PoolIndex = poolSize - 1;
 	m_LastRenderTimePoint = std::chrono::high_resolution_clock::now();
@@ -109,11 +109,6 @@ bool CPUParticlesVisualComponent::preRender()
 
 void CPUParticlesVisualComponent::render(RenderPass renderPass)
 {
-	ColorMaterial* material = dynamic_cast<ColorMaterial*>(getMaterial());
-	if (material == nullptr)
-	{
-		return;
-	}
 	if (renderPass & m_RenderPass)
 	{
 		for (auto& particle : m_ParticlePool)
@@ -128,9 +123,9 @@ void CPUParticlesVisualComponent::render(RenderPass renderPass)
 
 			Color color = Color::Lerp(particle.m_ColorEnd, particle.m_ColorBegin, life);
 
-			RenderSystem::GetSingleton()->pushMatrix(Matrix::CreateScale(size) * particle.m_Transform);
-			material->setColor({ color });
-			RenderSystem::GetSingleton()->getRenderer()->draw(m_VisualModelResourceFile->getVertexBuffer(), m_VisualModelResourceFile->getIndexBuffer(), getMaterial());
+			RenderSystem::GetSingleton()->pushMatrixOverride(Matrix::CreateScale(size) * particle.m_Transform);
+			m_Material->setColor(color);
+			RenderSystem::GetSingleton()->getRenderer()->draw(m_VisualModelResourceFile->getVertexBuffer(), m_VisualModelResourceFile->getIndexBuffer(), m_Material.get());
 			RenderSystem::GetSingleton()->popMatrix();
 		}
 	}
