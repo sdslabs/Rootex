@@ -8,6 +8,7 @@
 #include "core/audio/static_audio_buffer.h"
 #include "core/audio/streaming_audio_buffer.h"
 #include "core/resource_data.h"
+#include "framework/entity_factory.h"
 
 String AudioSystem::GetALErrorString(int errID)
 {
@@ -135,13 +136,25 @@ void AudioSystem::setBufferUpdateRate(float milliseconds)
 	m_UpdateIntervalMilliseconds = milliseconds;
 }
 
+void AudioSystem::setListener(int listenerID)
+{
+	// get entity from entity ID
+	Ref<Entity> listenerEntity = EntityFactory::GetSingleton()->findEntity(listenerID);
+	// get the entity's transformComponent
+	TransformComponent* listenerComponent = listenerEntity->getComponent<TransformComponent>().get();
+	// get the position of entity
+	Vector3& listenerPosition = listenerComponent->getParentAbsoluteTransform().Translation();
+	// pass the position to openAL
+	AL_CHECK(alListener3f(AL_POSITION, listenerPosition.x, listenerPosition.y, listenerPosition.z));
+}
+
 AudioSystem::AudioSystem()
     : m_Context(nullptr)
     , m_Device(nullptr)
     , m_UpdateIntervalMilliseconds(0)
 {
-	AL_CHECK(alListener3f(AL_POSITION, 0, 0, 0));
-	AL_CHECK(alListener3f(AL_VELOCITY, 0, 0, 0));
+	// attach the listener to ROOT ENTITY
+	this->setListener(ROOT_ENTITY_ID);
 }
 
 AudioSystem::~AudioSystem()
