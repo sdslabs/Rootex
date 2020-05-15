@@ -36,7 +36,7 @@ void ResourceLoader::LoadAssimp(ModelResourceFile* file)
 {
 	const aiScene* scene = s_ModelLoader.ReadFile(
 	    file->getPath().generic_string(),
-	    aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_GenUVCoords | aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph);
+	    aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_GenUVCoords | aiProcess_OptimizeMeshes);
 
 	if (!scene)
 	{
