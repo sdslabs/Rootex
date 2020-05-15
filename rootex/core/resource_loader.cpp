@@ -34,10 +34,9 @@ bool IsFileSupported(const String& extension, ResourceFile::Type supportedFileTy
 
 void ResourceLoader::LoadAssimp(ModelResourceFile* file)
 {
-	const aiScene* scene = s_ModelLoader.ReadFileFromMemory(
-	    file->m_ResourceData->getRawData()->data(),
-	    file->m_ResourceData->getRawDataByteSize(),
-	    aiProcess_CalcTangentSpace | aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
+	const aiScene* scene = s_ModelLoader.ReadFile(
+	    file->getPath().generic_string(),
+	    aiProcess_Triangulate);
 
 	if (!scene)
 	{
@@ -46,7 +45,10 @@ void ResourceLoader::LoadAssimp(ModelResourceFile* file)
 		return;
 	}
 
+	file->m_Textures.clear();
+	file->m_Textures.resize(scene->mNumTextures, nullptr);
 	file->m_Meshes.clear();
+	file->m_Meshes.reserve(scene->mNumMeshes);
 	for (int i = 0; i < scene->mNumMeshes; i++)
 	{
 		const aiMesh* mesh = scene->mMeshes[i];
@@ -97,7 +99,6 @@ void ResourceLoader::LoadAssimp(ModelResourceFile* file)
 		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
 		aiColor3D color(0.0f, 0.0f, 0.0f);
-		
 		if (AI_SUCCESS != material->Get(AI_MATKEY_COLOR_DIFFUSE, color))
 		{
 			WARN("Material does not have color: " + String(material->GetName().C_Str()));
@@ -106,20 +107,43 @@ void ResourceLoader::LoadAssimp(ModelResourceFile* file)
 		MaterialLibrary::CreateNewMaterialFile(material->GetName().C_Str(), "BasicMaterial");
 		Ref<BasicMaterial> extractedMaterial = std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetMaterial(material->GetName().C_Str() + String(".rmat")));
 		extractedMaterial->setColor({ color.r, color.g, color.b, 1.0f });
-		
-		aiString texturePath;
-		if (material->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath))
+
+		for (int i = 0; i < material->GetTextureCount(aiTextureType_DIFFUSE); i++)
 		{
-			String path = texturePath.C_Str();
-			if (path[0] == '*')
+			aiString str;
+			material->GetTexture(aiTextureType_DIFFUSE, i, &str);
+			char embeddedAsterisk = *str.C_Str();
+
+			if (embeddedAsterisk == '*')
 			{
-				WARN("Embedded textures are not supported");
+				// Texture is embedded
+				int textureID = atoi(str.C_Str() + 1);
+
+				if (!file->m_Textures[textureID])
+				{
+					aiTexture* texture = scene->mTextures[textureID];
+					size_t size = scene->mTextures[textureID]->mWidth;
+					PANIC(texture->mHeight == 0, "Compressed texture found but expected embedded texture");
+
+					file->m_Textures[textureID].reset(new Texture(reinterpret_cast<uint8_t*>(texture->pcData), size));
+				}
+
+				extractedMaterial->setTextureInternal(file->m_Textures[textureID]);
 			}
-			else if (path != "")
+			else
 			{
-				// Texture is in a file
-				ImageResourceFile* image = ResourceLoader::CreateImageResourceFile(path);
-				extractedMaterial->setTexture(image);
+				// Texture is given as a path
+				String texturePath = str.C_Str();
+				ImageResourceFile* image = ResourceLoader::CreateImageResourceFile(file->getPath().parent_path().generic_string() + "/" + texturePath);
+
+				if (image)
+				{
+					extractedMaterial->setTexture(image);
+				}
+				else
+				{
+					WARN("Could not set material diffuse texture: " + texturePath);
+				}
 			}
 		}
 

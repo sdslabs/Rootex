@@ -6,8 +6,14 @@
 Texture::Texture(ImageResourceFile* imageFile)
     : m_ImageFile(imageFile)
 {
-	m_TextureView = RenderingDevice::GetSingleton()->createTexture(imageFile);
-	
+	loadTexture();
+}
+
+Texture::Texture(uint8_t* imageData, size_t size)
+    : m_ImageFile(nullptr)
+{
+	m_TextureView = RenderingDevice::GetSingleton()->createTexture(imageData, size);
+
 	Microsoft::WRL::ComPtr<ID3D11Resource> res;
 	m_TextureView->GetResource(&res);
 	res->QueryInterface<ID3D11Texture2D>(&m_Texture);
@@ -23,7 +29,19 @@ Texture::Texture(ImageResourceFile* imageFile)
 void Texture::reload()
 {
 	m_TextureView.Reset();
-	ResourceLoader::Reload(m_ImageFile);
+	if (m_ImageFile)
+	{
+		ResourceLoader::Reload(m_ImageFile);
+		loadTexture();
+	}
+	else
+	{
+		WARN("Cannot reload texture made from raw data");
+	}
+}
+
+void Texture::loadTexture()
+{
 	m_TextureView = RenderingDevice::GetSingleton()->createTexture(m_ImageFile);
 
 	Microsoft::WRL::ComPtr<ID3D11Resource> res;

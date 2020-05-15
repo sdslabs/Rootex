@@ -14,8 +14,11 @@ class Texture
 	unsigned int m_Height;
 	unsigned int m_MipLevels;
 
+	void loadTexture();
+
 public:
 	Texture(ImageResourceFile* imageFile);
+	Texture(uint8_t* imageData, size_t size);
 	Texture(Texture&) = delete;
 	Texture& operator=(Texture&) = delete;
 	~Texture() = default;

@@ -99,6 +99,11 @@ void BasicMaterial::setTexture(ImageResourceFile* image)
 	m_DiffuseTexture = texture;
 }
 
+void BasicMaterial::setTextureInternal(Ref<Texture> texture)
+{
+	m_DiffuseTexture = texture;
+}
+
 #ifdef ROOTEX_EDITOR
 #include "imgui_stdlib.h"
 void BasicMaterial::draw(const String& id)

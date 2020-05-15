@@ -179,8 +179,8 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 	renderBlendDesc.SrcBlend = D3D11_BLEND_SRC_ALPHA;
 	renderBlendDesc.DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
 	renderBlendDesc.BlendOp = D3D11_BLEND_OP_ADD;
-	renderBlendDesc.SrcBlendAlpha = D3D11_BLEND_ONE;
-	renderBlendDesc.DestBlendAlpha = D3D11_BLEND_ZERO;
+	renderBlendDesc.SrcBlendAlpha = D3D11_BLEND_INV_DEST_ALPHA;
+	renderBlendDesc.DestBlendAlpha = D3D11_BLEND_ONE;
 	renderBlendDesc.BlendOpAlpha = D3D11_BLEND_OP_ADD;
 	renderBlendDesc.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 	blendDesc.RenderTarget[0] = renderBlendDesc;
@@ -326,6 +326,19 @@ Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::createTexture(
 	return textureView;
 }
 
+Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::createTexture(const uint8_t* imageData, size_t size)
+{
+	Microsoft::WRL::ComPtr<ID3D11Resource> textureResource;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> textureView;
+
+	if (FAILED(DirectX::CreateWICTextureFromMemory(m_Device.Get(), imageData, size, textureResource.GetAddressOf(), textureView.GetAddressOf())))
+	{
+		ERR("Could not create texture from data of size: " + std::to_string(size));
+	}
+
+	return textureView;
+}
+
 void RenderingDevice::bind(ID3D11Buffer* vertexBuffer, const unsigned int* stride, const unsigned int* offset)
 {
 	m_Context->IASetVertexBuffers(0u, 1u, &vertexBuffer, stride, offset);
@@ -462,9 +475,9 @@ Microsoft::WRL::ComPtr<ID3D11SamplerState> RenderingDevice::createSamplerState()
 {
 	D3D11_SAMPLER_DESC samplerDesc;
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
 	samplerDesc.MipLODBias = 0.0f;
 	samplerDesc.MaxAnisotropy = 1;
 	samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
