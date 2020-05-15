@@ -12,7 +12,7 @@
 
 BasicMaterial::BasicMaterial(const String& imagePath, Color color, bool isLit, float specularIntensity, float specularPower)
     : Material(ShaderLibrary::GetTextureShader(), BasicMaterial::s_MaterialName)
-    , m_Shader(ShaderLibrary::GetTextureShader())
+    , m_TextureShader(ShaderLibrary::GetTextureShader())
     , m_Color(color)
     , m_IsLit(isLit)
     , m_SpecularIntensity(specularIntensity)
@@ -67,8 +67,8 @@ Material* BasicMaterial::Create(const JSON::json& materialData)
 void BasicMaterial::bind()
 {
 	Material::bind();
+	m_TextureShader->set(m_DiffuseTexture.get());
 	setVSConstantBuffer(VSDiffuseConstantBuffer(RenderSystem::GetSingleton()->getCurrentMatrix()));
-	m_Shader->set(m_DiffuseTexture.get());
 	setPSConstantBuffer(PSDiffuseConstantBufferMaterial({ m_Color, m_IsLit, m_SpecularIntensity, m_SpecularPower }));
 }
 
@@ -108,40 +108,13 @@ void BasicMaterial::setTextureInternal(Ref<Texture> texture)
 #include "imgui_stdlib.h"
 void BasicMaterial::draw(const String& id)
 {
-	ImGui::Text(BasicMaterial::s_MaterialName.c_str());
+	ImGui::Image(m_DiffuseTexture->getTextureResourceView(), { 50, 50 });
+	ImGui::SameLine();
+	ImGui::Text(m_ImageFile->getPath().string().c_str());
+	ImGui::ColorButton((String("Color##") + id).c_str(), { m_Color.x, m_Color.y, m_Color.z, m_Color.w });
+	ImGui::SameLine();
+	ImGui::Text("Color");
 
-	m_ImagePathUI = m_ImageFile->getPath().string();
-	if (ImGui::InputText((String("Texture##") + id).c_str(), &m_ImagePathUI, ImGuiInputTextFlags_EnterReturnsTrue))
-	{
-		ImageResourceFile* image = ResourceLoader::CreateImageResourceFile(m_ImagePathUI);
-		if (image)
-		{
-			setTexture(image);
-		}
-	}
-
-	if (ImGui::BeginDragDropTarget())
-	{
-		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Resource Drop"))
-		{
-			const char* payloadFileName = (const char*)payload->Data;
-			FilePath payloadPath(payloadFileName);
-			FilePath ext = payloadPath.extension();
-			if (ext == ".jpg" || ext == ".png" || ext == ".jpeg")
-			{
-				setTexture(ResourceLoader::CreateImageResourceFile(payloadPath.string()));
-			}
-			else
-			{
-				WARN("Cannot assign a non-image file to a texture");
-			}
-		}
-		ImGui::EndDragDropTarget();
-	}
-	else
-	{
-		ImGui::ColorEdit4((String("Color##") + id).c_str(), &m_Color.x);
-	}
 	ImGui::Checkbox((String("Affected by light##") + id).c_str(), &m_IsLit);
 	if (m_IsLit)
 	{

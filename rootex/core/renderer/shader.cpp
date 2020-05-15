@@ -50,6 +50,11 @@ void Shader::bind() const
 	RenderingDevice::GetSingleton()->bind(m_InputLayout.Get());
 }
 
+ColorShader::ColorShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat)
+    : Shader(vertexPath, pixelPath, vertexBufferFormat)
+{
+}
+
 TextureShader::TextureShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat)
     : Shader(vertexPath, pixelPath, vertexBufferFormat)
 {

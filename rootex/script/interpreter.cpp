@@ -248,12 +248,12 @@ void LuaInterpreter::registerTypes()
 			entity["getVisual2D"] = [](Entity* e) { return e->getComponent<UIComponent>(); };
 		}
 		{
-			sol::usertype<TextUIComponent> textVisual2DComponent = rootex.new_usertype<TextUIComponent>(
+			sol::usertype<TextUIComponent> textUIComponent = rootex.new_usertype<TextUIComponent>(
 			    "TextUIComponent",
 			    sol::base_classes, sol::bases<Component, UIComponent>());
-			entity["getTextVisual2D"] = [](Entity* e) { return e->getComponent<TextUIComponent>(); };
-			textVisual2DComponent["setFont"] = &TextUIComponent::setFont;
-			textVisual2DComponent["setText"] = &TextUIComponent::setText;
+			entity["getTextUI"] = [](Entity* e) { return e->getComponent<TextUIComponent>(); };
+			textUIComponent["setFont"] = &TextUIComponent::setFont;
+			textUIComponent["setText"] = &TextUIComponent::setText;
 		}
 		{
 			sol::usertype<PhysicsColliderComponent> physicsColliderComponent = rootex.new_usertype<PhysicsColliderComponent>(

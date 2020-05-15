@@ -207,6 +207,7 @@ void ModelComponent::draw()
 			}
 
 			mesh.m_Material->draw(std::to_string(i));
+			ImGui::Separator();
 			i++;
 		}
 		ImGui::TreePop();

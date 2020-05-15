@@ -11,7 +11,20 @@ Shader* ShaderLibrary::MakeShader(ShaderType shaderType, const LPCWSTR& vertexPa
 		return s_Shaders[shaderType].get();
 	}
 
-	Shader* newShader = new Shader(vertexPath, pixelPath, vertexBufferFormat);
+	Shader* newShader = nullptr;
+	switch (shaderType)
+	{
+	case ShaderLibrary::ShaderType::Color:
+		newShader = new ColorShader(vertexPath, pixelPath, vertexBufferFormat);
+		break;
+	case ShaderLibrary::ShaderType::Texture:
+		newShader = new TextureShader(vertexPath, pixelPath, vertexBufferFormat);
+		break;
+	default:
+		WARN("Unknown shader type found");
+		break;
+	}
+
 	s_Shaders[shaderType].reset(newShader);
 
 	return newShader;
