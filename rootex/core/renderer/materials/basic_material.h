@@ -12,7 +12,7 @@ class BasicMaterial : public Material
 
 	ImageResourceFile* m_ImageFile;
 
-	bool m_IsLit = true;
+	bool m_IsLit;
 	Color m_Color;
 	float m_SpecularIntensity;
 	float m_SpecularPower;
