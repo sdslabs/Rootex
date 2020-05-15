@@ -5,7 +5,7 @@
 
 DebugDrawer::DebugDrawer()
 {
-	m_ColorMaterial = std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetDefaultMaterial());
+	m_BasicDefaultMaterial = std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetDefaultMaterial());
 }
 
 void DebugDrawer::drawLine(const btVector3& from, const btVector3& to, const btVector3& color)
@@ -14,10 +14,10 @@ void DebugDrawer::drawLine(const btVector3& from, const btVector3& to, const btV
 		from.x(), from.y(), from.z(),
 	    to.x(), to.y(), to.z() });
 	IndexBuffer ib({ 0, 1 });
-	m_ColorMaterial->setColor({ color.x(), color.y(), color.z(), 1.0f });
+	m_BasicDefaultMaterial->setColor({ color.x(), color.y(), color.z(), 1.0f });
 
 	RenderSystem::GetSingleton()->enableLineRenderMode();
-	RenderSystem::GetSingleton()->getRenderer()->draw(&vb, &ib, m_ColorMaterial.get());
+	RenderSystem::GetSingleton()->getRenderer()->draw(&vb, &ib, m_BasicDefaultMaterial.get());
 	RenderSystem::GetSingleton()->resetRenderMode();
 }
 

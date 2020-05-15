@@ -8,7 +8,7 @@ class BasicMaterial;
 
 class DebugDrawer : public btIDebugDraw
 {
-	Ref<BasicMaterial> m_ColorMaterial;
+	Ref<BasicMaterial> m_BasicDefaultMaterial;
 
 public:
 	DebugDrawer();

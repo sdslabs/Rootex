@@ -4,11 +4,9 @@
 
 MaterialLibrary::MaterialMap MaterialLibrary::s_Materials;
 
-//const String ColorMaterial::s_MaterialName = "ColoredMaterial";
 const String BasicMaterial::s_MaterialName = "BasicMaterial";
 
 MaterialLibrary::MaterialDatabase MaterialLibrary::s_MaterialDatabase = {
-	//{ ColorMaterial::s_MaterialName, { ColorMaterial::CreateDefault, ColorMaterial::Create } },
 	{ BasicMaterial::s_MaterialName, { BasicMaterial::CreateDefault, BasicMaterial::Create } }
 };
 
