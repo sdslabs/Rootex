@@ -3,6 +3,7 @@
 #include "common/common.h"
 #include "core/resource_data.h"
 #include "core/renderer/mesh.h"
+#include "core/renderer/texture.h"
 #include "DirectXTK/Inc/SpriteFont.h"
 
 /// Interface of a file loaded from disk. Use ResourceLoader to load, create or save files.
@@ -128,6 +129,7 @@ class ModelResourceFile : public ResourceFile
 	~ModelResourceFile();
 
 	Vector<Mesh> m_Meshes;
+	Vector<Ref<Texture>> m_Textures;
 
 	friend class ResourceLoader;
 
