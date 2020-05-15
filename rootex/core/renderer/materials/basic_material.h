@@ -6,7 +6,7 @@ class Texture;
 
 class BasicMaterial : public Material
 {
-	TextureShader* m_Shader;
+	TextureShader* m_TextureShader;
 	Ref<Texture> m_DiffuseTexture;
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_SamplerState;
 

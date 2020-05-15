@@ -22,7 +22,7 @@ void MaterialLibrary::LoadMaterials()
 			s_Materials[materialName] = { (String)materialJSON["type"], {} };
 		}
 	}
-	s_Materials["Default"] = { BasicMaterial::s_MaterialName, {} };
+	s_Materials["DefaultMaterial"] = { BasicMaterial::s_MaterialName, {} };
 }
 
 Ref<Material> MaterialLibrary::GetMaterial(const String& materialName)
@@ -88,7 +88,6 @@ void MaterialLibrary::CreateNewMaterialFile(const String& materialName, const St
 {
 	if (materialName == "DefaultMaterial")
 	{
-		WARN("Cannot create another DefaultMaterial");
 		return;
 	}
 	String materialFileName = materialName + ".rmat";
@@ -101,11 +100,10 @@ void MaterialLibrary::CreateNewMaterialFile(const String& materialName, const St
 			materialFile->putString(material->getJSON().dump(4));
 			ResourceLoader::SaveResourceFile(materialFile);
 			s_Materials[materialFileName] = { materialType, {} };
-			PRINT("Created Material- " + materialFileName + " - " + materialType);
+			PRINT("Created Material: " + materialFileName + " - " + materialType);
 			return;
 		}
 	}
-	WARN("Material already exists- " + materialName);
 }
 
 #endif // ROOTEX_EDITOR

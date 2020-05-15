@@ -177,11 +177,11 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 	D3D11_RENDER_TARGET_BLEND_DESC renderBlendDesc;
 	renderBlendDesc.BlendEnable = true;
 	renderBlendDesc.SrcBlend = D3D11_BLEND_SRC_ALPHA;
-	renderBlendDesc.DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
 	renderBlendDesc.BlendOp = D3D11_BLEND_OP_ADD;
+	renderBlendDesc.DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
 	renderBlendDesc.SrcBlendAlpha = D3D11_BLEND_INV_DEST_ALPHA;
-	renderBlendDesc.DestBlendAlpha = D3D11_BLEND_ONE;
-	renderBlendDesc.BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	renderBlendDesc.BlendOpAlpha = D3D11_BLEND_OP_MAX;
+	renderBlendDesc.DestBlendAlpha = D3D11_BLEND_DEST_ALPHA;
 	renderBlendDesc.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 	blendDesc.RenderTarget[0] = renderBlendDesc;
 	GFX_ERR_CHECK(m_Device->CreateBlendState(&blendDesc, &m_DefaultBlendState));
@@ -330,7 +330,6 @@ Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::createTexture(
 {
 	Microsoft::WRL::ComPtr<ID3D11Resource> textureResource;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> textureView;
-
 	if (FAILED(DirectX::CreateWICTextureFromMemory(m_Device.Get(), imageData, size, textureResource.GetAddressOf(), textureView.GetAddressOf())))
 	{
 		ERR("Could not create texture from data of size: " + std::to_string(size));
@@ -475,9 +474,9 @@ Microsoft::WRL::ComPtr<ID3D11SamplerState> RenderingDevice::createSamplerState()
 {
 	D3D11_SAMPLER_DESC samplerDesc;
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
-	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
-	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.MipLODBias = 0.0f;
 	samplerDesc.MaxAnisotropy = 1;
 	samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
@@ -532,7 +531,7 @@ void RenderingDevice::clearCurrentRenderTarget(float r, float g, float b)
 
 void RenderingDevice::clearUnboundRenderTarget(float r, float g, float b)
 {
-	const float color[] = { r, g, b, 1.0f };
+	const float color[] = { r, g, b, 0.0f };
 	m_Context->ClearRenderTargetView(*m_UnboundRenderTarget, color);
 	m_Context->ClearDepthStencilView(m_DepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
 }
