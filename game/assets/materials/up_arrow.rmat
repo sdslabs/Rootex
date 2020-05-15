@@ -1,4 +1,13 @@
 {
+    "color": {
+        "a": 1.0,
+        "b": 1.0,
+        "g": 1.0,
+        "r": 1.0
+    },
     "imageFile": "game\\assets\\test\\up_arrow.png",
-    "type": "TexturedMaterial"
+    "isLit": true,
+    "specularIntensity": 2.0,
+    "specularPower": 30.0,
+    "type": "BasicMaterial"
 }

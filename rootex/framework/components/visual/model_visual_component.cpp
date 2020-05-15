@@ -34,10 +34,11 @@ Component* ModelVisualComponent::CreateDefault()
 
 ModelVisualComponent::ModelVisualComponent(const unsigned int& renderPassSetting, Ref<Material> material, VisualModelResourceFile* resFile, bool visibility)
     : VisualComponent(renderPassSetting, visibility)
-    , m_Material(material)
     , m_VisualModelResourceFile(resFile)
     , m_HierarchyComponent(nullptr)
 {
+	m_AllowedMaterials = { BasicMaterial::s_MaterialName };
+	m_Material = std::dynamic_pointer_cast<BasicMaterial>(material);
 }
 
 ModelVisualComponent::~ModelVisualComponent()
@@ -83,7 +84,7 @@ void ModelVisualComponent::render(RenderPass renderPass)
 {
 	if (renderPass & m_RenderPass)
 	{
-		RenderSystem::GetSingleton()->getRenderer()->draw(getVertexBuffer(), getIndexBuffer(), getMaterial());
+		RenderSystem::GetSingleton()->getRenderer()->draw(getVertexBuffer(), getIndexBuffer(), m_Material.get());
 	}
 }
 
@@ -119,9 +120,9 @@ void ModelVisualComponent::setVisualModel(VisualModelResourceFile* newModel)
 	m_VisualModelResourceFile = newModel;
 }
 
-void ModelVisualComponent::setMaterial(Ref<Material>& material)
+void ModelVisualComponent::setMaterial(const Ref<Material>& material)
 {
-	m_Material = material;
+	m_Material = std::dynamic_pointer_cast<BasicMaterial>(material);
 }
 
 JSON::json ModelVisualComponent::getJSON() const

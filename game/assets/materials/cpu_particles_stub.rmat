@@ -1,9 +1,11 @@
 {
     "color": {
         "a": 1.0,
-        "b": 0.9999999403953552,
-        "g": 0.007289929315447807,
-        "r": 0.007290002424269915
+        "b": 0.9999901652336121,
+        "g": 0.9813030958175659,
+        "r": 0.9813129305839539
     },
-    "type": "ColoredMaterial"
+    "imageFile": "rootex/assets/white.png",
+    "isLit": false,
+    "type": "BasicMaterial"
 }
