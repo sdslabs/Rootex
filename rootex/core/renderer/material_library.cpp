@@ -82,8 +82,6 @@ void MaterialLibrary::SaveAll()
 	}
 }
 
-#ifdef ROOTEX_EDITOR
-
 void MaterialLibrary::CreateNewMaterialFile(const String& materialName, const String& materialType)
 {
 	if (materialName == "DefaultMaterial")
@@ -106,4 +104,7 @@ void MaterialLibrary::CreateNewMaterialFile(const String& materialName, const St
 	}
 }
 
-#endif // ROOTEX_EDITOR
+bool MaterialLibrary::IsExists(const String& materialName)
+{
+	return OS::IsExists("game/assets/materials/" + materialName);
+}
