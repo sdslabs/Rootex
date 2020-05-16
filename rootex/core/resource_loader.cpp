@@ -150,9 +150,8 @@ void ResourceLoader::LoadAssimp(ModelResourceFile* file)
 		Mesh extractedMesh;
 		extractedMesh.m_VertexBuffer.reset(new VertexBuffer(vertices));
 		extractedMesh.m_IndexBuffer.reset(new IndexBuffer(indices));
-		extractedMesh.m_Material = extractedMaterial;
-
-		file->m_Meshes.push_back(extractedMesh);
+		
+		file->m_Meshes[extractedMaterial].push_back(extractedMesh);
 	}
 }
 

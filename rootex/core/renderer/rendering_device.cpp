@@ -531,7 +531,7 @@ void RenderingDevice::clearCurrentRenderTarget(float r, float g, float b)
 
 void RenderingDevice::clearUnboundRenderTarget(float r, float g, float b)
 {
-	const float color[] = { r, g, b, 0.0f };
+	const float color[] = { r, g, b, 1.0f };
 	m_Context->ClearRenderTargetView(*m_UnboundRenderTarget, color);
 	m_Context->ClearDepthStencilView(m_DepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
 }

@@ -83,9 +83,14 @@ bool ModelComponent::isVisible() const
 
 void ModelComponent::render()
 {
-	for (auto& mesh : m_ModelResourceFile->getMeshes())
+	for (auto& [material, meshes] : m_ModelResourceFile->getMeshes())
 	{
-		RenderSystem::GetSingleton()->getRenderer()->draw(mesh.m_VertexBuffer.get(), mesh.m_IndexBuffer.get(), mesh.m_Material.get());
+		RenderSystem::GetSingleton()->getRenderer()->bind(material.get());
+
+		for (auto& mesh : meshes)
+		{
+			RenderSystem::GetSingleton()->getRenderer()->draw(mesh.m_VertexBuffer.get(), mesh.m_IndexBuffer.get());
+		}
 	}
 }
 
@@ -120,6 +125,8 @@ JSON::json ModelComponent::getJSON() const
 #include "imgui_stdlib.h"
 void ModelComponent::draw()
 {
+	ImGui::Checkbox("Visible", &m_IsVisible);
+
 	ImGui::BeginGroup();
 	String modelFileName = m_ModelResourceFile ? m_ModelResourceFile->getPath().filename().string() : "None";
 	if (ImGui::BeginCombo("##Visual Model", modelFileName.c_str(), ImGuiComboFlags_HeightRegular))
@@ -180,33 +187,36 @@ void ModelComponent::draw()
 	if (ImGui::TreeNodeEx("Materials"))
 	{
 		int i = 0;
-		for (auto& mesh : m_ModelResourceFile->getMeshes())
+		for (auto& [material, meshes] : m_ModelResourceFile->getMeshes())
 		{
-			if (ImGui::BeginCombo(("Material " + std::to_string(i)).c_str(), mesh.m_Material->getFullName().c_str()))
+			material->draw(std::to_string(i));
+
+			if (ImGui::TreeNodeEx(("Meshes##" + std::to_string(i)).c_str()))
 			{
-				for (auto& [materialName, materialInfo] : MaterialLibrary::GetAllMaterials())
+				ImGui::Columns(3);
+
+				ImGui::Text("Serial");
+				ImGui::NextColumn();
+				ImGui::Text("Vertices");
+				ImGui::NextColumn();
+				ImGui::Text("Indices");
+				ImGui::NextColumn();
+
+				int p = 0;
+				for (auto& mesh : meshes)
 				{
-					if (m_AllowedMaterials.empty() || std::find(m_AllowedMaterials.begin(), m_AllowedMaterials.end(), materialInfo.first) != m_AllowedMaterials.end())
-					{
-						if (ImGui::Selectable((materialName + " - " + materialInfo.first).c_str()))
-						{
-							Ref<BasicMaterial> material = std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetMaterial(materialName));
-
-							if (material)
-							{
-								mesh.m_Material = material;
-							}
-							else
-							{
-								WARN("Invalid material type");
-							}
-						}
-					}
+					p++;
+					ImGui::Text("%d", p);
+					ImGui::NextColumn();
+					ImGui::Text("%d", mesh.m_VertexBuffer->getCount());
+					ImGui::NextColumn();
+					ImGui::Text("%d", mesh.m_IndexBuffer->getCount());
+					ImGui::NextColumn();
 				}
-				ImGui::EndCombo();
-			}
 
-			mesh.m_Material->draw(std::to_string(i));
+				ImGui::Columns(1);
+				ImGui::TreePop();
+			}
 			ImGui::Separator();
 			i++;
 		}

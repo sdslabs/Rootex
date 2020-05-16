@@ -76,6 +76,7 @@ void GameApplication::run()
 {
 	while (true)
 	{
+		m_FrameTimer.showFPS();
 		m_FrameTimer.reset();
 
 		if (m_Window->processMessages())

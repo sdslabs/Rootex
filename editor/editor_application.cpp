@@ -56,6 +56,7 @@ void EditorApplication::run()
 {
 	while (true)
 	{
+		m_FrameTimer.showFPS();
 		m_FrameTimer.reset();
 		if (((m_ApplicationTimer.Now() - m_PointAtLast10Second).count()) * NS_TO_MS * MS_TO_S > m_AutoSaveDurationS)
 		{

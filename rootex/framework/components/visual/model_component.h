@@ -43,7 +43,7 @@ public:
 	void setIsVisible(bool enabled);
 	
 	unsigned int getRenderPass() const { return m_RenderPass; }
-	const Vector<Mesh>& getMeshes() const { return m_ModelResourceFile->getMeshes(); }
+	const HashMap<Ref<Material>, Vector<Mesh>>& getMeshes() const { return m_ModelResourceFile->getMeshes(); }
 	ModelResourceFile* getModelResourceFile() const { return m_ModelResourceFile; }
 
 	virtual String getName() const override { return "ModelComponent"; }
