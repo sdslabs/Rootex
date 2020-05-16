@@ -108,6 +108,8 @@ void BasicMaterial::setTextureInternal(Ref<Texture> texture)
 #include "imgui.h"
 void BasicMaterial::draw(const String& id)
 {
+	Material::draw(id);
+
 	ImGui::BeginGroup();
 	ImGui::Image(m_DiffuseTexture->getTextureResourceView(), { 50, 50 });
 	ImGui::SameLine();
@@ -148,7 +150,7 @@ void BasicMaterial::draw(const String& id)
 		{
 			m_SpecularIntensity = 2.0f;
 		}
-		ImGui::DragFloat((String("Specular Power##") + id).c_str(), &m_SpecularPower);
+		ImGui::DragFloat((String("##Specular Power") + id).c_str(), &m_SpecularPower);
 		ImGui::SameLine();
 		if (ImGui::Button((String("Specular Power##") + id).c_str()))
 		{

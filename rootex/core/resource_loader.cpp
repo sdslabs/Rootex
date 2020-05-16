@@ -104,45 +104,53 @@ void ResourceLoader::LoadAssimp(ModelResourceFile* file)
 			WARN("Material does not have color: " + String(material->GetName().C_Str()));
 		}
 
-		MaterialLibrary::CreateNewMaterialFile(material->GetName().C_Str(), "BasicMaterial");
-		Ref<BasicMaterial> extractedMaterial = std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetMaterial(material->GetName().C_Str() + String(".rmat")));
-		extractedMaterial->setColor({ color.r, color.g, color.b, 1.0f });
-
-		for (int i = 0; i < material->GetTextureCount(aiTextureType_DIFFUSE); i++)
+		Ref<BasicMaterial> extractedMaterial;
+		if (MaterialLibrary::IsExists(material->GetName().C_Str()))
 		{
-			aiString str;
-			material->GetTexture(aiTextureType_DIFFUSE, i, &str);
-			char embeddedAsterisk = *str.C_Str();
+			extractedMaterial = std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetMaterial(material->GetName().C_Str() + String(".rmat")));
+		}
+		else
+		{
+			MaterialLibrary::CreateNewMaterialFile(material->GetName().C_Str(), "BasicMaterial");
+			extractedMaterial = std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetMaterial(material->GetName().C_Str() + String(".rmat")));
+			extractedMaterial->setColor({ color.r, color.g, color.b, 1.0f });
 
-			if (embeddedAsterisk == '*')
+			for (int i = 0; i < material->GetTextureCount(aiTextureType_DIFFUSE); i++)
 			{
-				// Texture is embedded
-				int textureID = atoi(str.C_Str() + 1);
+				aiString str;
+				material->GetTexture(aiTextureType_DIFFUSE, i, &str);
+				char embeddedAsterisk = *str.C_Str();
 
-				if (!file->m_Textures[textureID])
+				if (embeddedAsterisk == '*')
 				{
-					aiTexture* texture = scene->mTextures[textureID];
-					size_t size = scene->mTextures[textureID]->mWidth;
-					PANIC(texture->mHeight == 0, "Compressed texture found but expected embedded texture");
+					// Texture is embedded
+					int textureID = atoi(str.C_Str() + 1);
 
-					file->m_Textures[textureID].reset(new Texture(reinterpret_cast<uint8_t*>(texture->pcData), size));
-				}
+					if (!file->m_Textures[textureID])
+					{
+						aiTexture* texture = scene->mTextures[textureID];
+						size_t size = scene->mTextures[textureID]->mWidth;
+						PANIC(texture->mHeight == 0, "Compressed texture found but expected embedded texture");
 
-				extractedMaterial->setTextureInternal(file->m_Textures[textureID]);
-			}
-			else
-			{
-				// Texture is given as a path
-				String texturePath = str.C_Str();
-				ImageResourceFile* image = ResourceLoader::CreateImageResourceFile(file->getPath().parent_path().generic_string() + "/" + texturePath);
+						file->m_Textures[textureID].reset(new Texture(reinterpret_cast<uint8_t*>(texture->pcData), size));
+					}
 
-				if (image)
-				{
-					extractedMaterial->setTexture(image);
+					extractedMaterial->setTextureInternal(file->m_Textures[textureID]);
 				}
 				else
 				{
-					WARN("Could not set material diffuse texture: " + texturePath);
+					// Texture is given as a path
+					String texturePath = str.C_Str();
+					ImageResourceFile* image = ResourceLoader::CreateImageResourceFile(file->getPath().parent_path().generic_string() + "/" + texturePath);
+
+					if (image)
+					{
+						extractedMaterial->setTexture(image);
+					}
+					else
+					{
+						WARN("Could not set material diffuse texture: " + texturePath);
+					}
 				}
 			}
 		}

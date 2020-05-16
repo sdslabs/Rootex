@@ -19,3 +19,22 @@ Material::Material(Shader* shader, const String& typeName)
     , m_TypeName(typeName)
 {
 }
+
+#ifdef ROOTEX_EDITOR
+#include "imgui.h"
+void Material::draw(const String& id)
+{
+	ImGui::Columns(2);
+
+	ImGui::Text("Name");
+	ImGui::NextColumn();
+	ImGui::Text("%s", m_FileName.c_str());
+	ImGui::NextColumn();
+
+	ImGui::Text("Type");
+	ImGui::NextColumn();
+	ImGui::Text("%s", m_TypeName.c_str());
+
+	ImGui::Columns(1);
+}
+#endif // ROOTEX_EDITOR

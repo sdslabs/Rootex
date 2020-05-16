@@ -12,13 +12,13 @@
                 "r": 1.0
             },
             "fontResource": "game\\assets\\fonts\\lato_30_bold.spritefont",
+            "isVisible": true,
             "mode": 0,
             "origin": {
                 "x": 0.0,
                 "y": 966.0
             },
-            "text": "Hello Rootex!",
-            "isVisible": true
+            "text": "Hello Rootex!"
         },
         "TransformComponent": {
             "position": {
