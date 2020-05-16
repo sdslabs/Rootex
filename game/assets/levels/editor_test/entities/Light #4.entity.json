@@ -1,0 +1,55 @@
+{
+    "Components": {
+        "DirectionalLightComponent": {
+            "ambientColor": {
+                "a": 1.0,
+                "b": 0.05000000074505806,
+                "g": 0.05000000074505806,
+                "r": 0.05000000074505806
+            },
+            "diffuseColor": {
+                "a": 1.0,
+                "b": 1.0,
+                "g": 0.9999899864196777,
+                "r": 0.9999966621398926
+            },
+            "diffuseIntensity": 1.0,
+            "direction": {
+                "x": -1.0,
+                "y": -1.0,
+                "z": -1.0
+            }
+        },
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 1
+        },
+        "ModelComponent": {
+            "isVisible": true,
+            "renderPass": 1,
+            "resFile": "game/assets/test/cube.obj"
+        },
+        "TransformComponent": {
+            "position": {
+                "x": -4.070000171661377,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rotation": {
+                "w": 1.0,
+                "x": -0.0,
+                "y": 0.0,
+                "z": -0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            }
+        }
+    },
+    "Entity": {
+        "ID": 4,
+        "name": "Light"
+    }
+}

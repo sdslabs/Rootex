@@ -8,12 +8,23 @@
 #include "components/visual/model_component.h"
 #include "renderer/render_pass.h"
 
+#define LINE_INTIAL_RENDER_CACHE 1000
+
 class RenderSystem : public System
 {
+	struct LineRequests
+	{
+		Vector<float> m_Endpoints;
+		Vector<unsigned short> m_Indices;
+	};
+
 	CameraComponent* m_Camera;
 
 	Ptr<Renderer> m_Renderer;
 	Vector<Matrix> m_TransformationStack;
+
+	Ref<BasicMaterial> m_LineMaterial;
+	LineRequests m_CurrentFrameLines;
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_VSPerFrameConstantBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_VSProjectionConstantBuffer;
@@ -31,6 +42,8 @@ public:
 	static RenderSystem* GetSingleton();
 	
 	void render();
+	void renderLines();
+	void submitLine(const Vector3& from, const Vector3& to);
 	void recoverLostDevice();
 
 	void setCamera(CameraComponent* camera);

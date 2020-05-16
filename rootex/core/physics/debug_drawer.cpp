@@ -10,13 +10,7 @@ DebugDrawer::DebugDrawer()
 
 void DebugDrawer::drawLine(const btVector3& from, const btVector3& to, const btVector3& color)
 {
-	VertexBuffer vb({ 
-		from.x(), from.y(), from.z(),
-	    to.x(), to.y(), to.z() });
-	IndexBuffer ib({ 0, 1 });
-	m_BasicMaterial->setColor({ color.x(), color.y(), color.z(), 1.0f });
-
-	RenderSystem::GetSingleton()->getRenderer()->draw(&vb, &ib);
+	RenderSystem::GetSingleton()->submitLine({ from.x(), from.y(), from.z() }, { to.x(), to.y(), to.z() });
 }
 
 void DebugDrawer::drawContactPoint(const btVector3& PointOnB, const btVector3& normalOnB, btScalar distance, int lifeTime, const btVector3& color)

@@ -3,6 +3,7 @@
 #include "renderer/shaders/register_locations_vertex_shader.h"
 #include "renderer/shaders/register_locations_pixel_shader.h"
 #include "light_system.h"
+#include "renderer/material_library.h"
 
 RenderSystem* RenderSystem::GetSingleton()
 {
@@ -20,6 +21,10 @@ RenderSystem::RenderSystem()
 	m_Camera = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<CameraComponent>().get();
 	m_TransformationStack.push_back(Matrix::Identity);
 	setProjectionConstantBuffers();
+	
+	m_LineMaterial = std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetMaterial("line.rmat"));
+	m_CurrentFrameLines.m_Endpoints.reserve(LINE_INTIAL_RENDER_CACHE * 2 * 3);
+	m_CurrentFrameLines.m_Indices.reserve(LINE_INTIAL_RENDER_CACHE * 2);
 }
 
 void RenderSystem::calculateTransforms(HierarchyComponent* hierarchyComponent)
@@ -73,9 +78,44 @@ void RenderSystem::render()
 	if (m_IsEditorRenderPassEnabled)
 	{
 		renderPassRender(RenderPass::Editor);
+		renderLines();
 	}
 #endif // ROOTEX_EDITOR
 	renderPassRender(RenderPass::Basic);
+}
+
+void RenderSystem::renderLines()
+{
+	if (m_CurrentFrameLines.m_Endpoints.size())
+	{
+		m_Renderer->bind(m_LineMaterial.get());
+
+		enableLineRenderMode();
+
+		VertexBuffer vb(m_CurrentFrameLines.m_Endpoints);
+		IndexBuffer ib(m_CurrentFrameLines.m_Indices);
+
+		m_Renderer->draw(&vb, &ib);
+
+		m_CurrentFrameLines.m_Endpoints.clear();
+		m_CurrentFrameLines.m_Indices.clear();
+
+		resetRenderMode();
+	}
+}
+
+void RenderSystem::submitLine(const Vector3& from, const Vector3& to)
+{
+	m_CurrentFrameLines.m_Endpoints.push_back(from.x);
+	m_CurrentFrameLines.m_Endpoints.push_back(from.y);
+	m_CurrentFrameLines.m_Endpoints.push_back(from.z);
+
+	m_CurrentFrameLines.m_Endpoints.push_back(to.x);
+	m_CurrentFrameLines.m_Endpoints.push_back(to.y);
+	m_CurrentFrameLines.m_Endpoints.push_back(to.z);
+
+	m_CurrentFrameLines.m_Indices.push_back(m_CurrentFrameLines.m_Indices.size());
+	m_CurrentFrameLines.m_Indices.push_back(m_CurrentFrameLines.m_Indices.size());
 }
 
 void RenderSystem::pushMatrix(const Matrix& transform)
