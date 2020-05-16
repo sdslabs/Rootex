@@ -119,7 +119,8 @@ bool GridModelComponent::setup()
 void GridModelComponent::render()
 {
 	RenderSystem::GetSingleton()->enableLineRenderMode();
-	RenderSystem::GetSingleton()->getRenderer()->draw(m_VertexBuffer.get(), m_IndexBuffer.get(), m_ColorMaterial.get());
+	RenderSystem::GetSingleton()->getRenderer()->bind(m_ColorMaterial.get());
+	RenderSystem::GetSingleton()->getRenderer()->draw(m_VertexBuffer.get(), m_IndexBuffer.get());
 	RenderSystem::GetSingleton()->resetRenderMode();
 }
 

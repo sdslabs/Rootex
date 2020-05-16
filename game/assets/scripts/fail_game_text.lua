@@ -1,7 +1,7 @@
 function onBegin(entity)
     number = 0
     isFailed = false
-    text = entity:getTextVisual2D()
+    text = entity:getTextUI()
 end
 
 function onUpdate(delta, entity)

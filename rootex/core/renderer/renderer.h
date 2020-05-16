@@ -16,6 +16,7 @@ public:
 	virtual ~Renderer() = default;
 
 	void setViewport(Viewport& viewport);
-
-	void draw(const VertexBuffer* vertexBuffer, const IndexBuffer* indexBuffer, Material* material) const;
+	
+	void bind(Material* material) const;
+	void draw(const VertexBuffer* vertexBuffer, const IndexBuffer* indexBuffer) const;
 };

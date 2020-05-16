@@ -105,15 +105,39 @@ void BasicMaterial::setTextureInternal(Ref<Texture> texture)
 }
 
 #ifdef ROOTEX_EDITOR
-#include "imgui_stdlib.h"
+#include "imgui.h"
 void BasicMaterial::draw(const String& id)
 {
+	ImGui::BeginGroup();
 	ImGui::Image(m_DiffuseTexture->getTextureResourceView(), { 50, 50 });
 	ImGui::SameLine();
 	ImGui::Text(m_ImageFile->getPath().string().c_str());
-	ImGui::ColorButton((String("Color##") + id).c_str(), { m_Color.x, m_Color.y, m_Color.z, m_Color.w });
-	ImGui::SameLine();
-	ImGui::Text("Color");
+	ImGui::EndGroup();
+	
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Resource Drop"))
+		{
+			const char* payloadFileName = (const char*)payload->Data;
+			FilePath payloadPath(payloadFileName);
+			if (IsFileSupported(payloadPath.extension().string(), ResourceFile::Type::Image))
+			{
+				ImageResourceFile* image = ResourceLoader::CreateImageResourceFile(payloadPath.generic_string());
+
+				if (image)
+				{
+					setTexture(image);
+				}
+			}
+			else
+			{
+				WARN("Cannot assign a non-image file to texture");
+			}
+		}
+		ImGui::EndDragDropTarget();
+	}
+	
+	ImGui::ColorEdit4((String("Color##") + id).c_str(), &m_Color.x);
 
 	ImGui::Checkbox((String("Affected by light##") + id).c_str(), &m_IsLit);
 	if (m_IsLit)

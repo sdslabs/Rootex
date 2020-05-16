@@ -6,7 +6,6 @@
         },
         "ModelComponent": {
             "isVisible": true,
-            "material": "green_textured.rmat",
             "renderPass": 1,
             "resFile": "game\\assets\\test\\sphere.obj"
         },

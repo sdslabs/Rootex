@@ -132,10 +132,20 @@ void CPUParticlesComponent::render()
 		float size = particle.m_SizeBegin * (life) + particle.m_SizeEnd * (1.0f - life);
 		
 		RenderSystem::GetSingleton()->pushMatrixOverride(Matrix::CreateScale(size) * particle.m_Transform);
-		for (auto& mesh : m_ModelResourceFile->getMeshes())
+		for (auto& [material, meshes] : m_ModelResourceFile->getMeshes())
 		{
-			mesh.m_Material->setColor(Color::Lerp(particle.m_ColorEnd, particle.m_ColorBegin, life));
-			RenderSystem::GetSingleton()->getRenderer()->draw(mesh.m_VertexBuffer.get(), mesh.m_IndexBuffer.get(), mesh.m_Material.get());
+			BasicMaterial* basic = dynamic_cast<BasicMaterial*>(material.get());
+
+			if (basic)
+			{
+				basic->setColor(Color::Lerp(particle.m_ColorEnd, particle.m_ColorBegin, life));
+			}
+
+			for (auto& mesh : meshes)
+			{
+				RenderSystem::GetSingleton()->getRenderer()->bind(material.get());
+				RenderSystem::GetSingleton()->getRenderer()->draw(mesh.m_VertexBuffer.get(), mesh.m_IndexBuffer.get());
+			}
 		}
 		RenderSystem::GetSingleton()->popMatrix();
 	}

@@ -2,7 +2,6 @@
 
 #include "main/window.h"
 #include "core/event_manager.h"
-#include "os/thread.h"
 #include "os/timer.h"
 #include "entity_factory.h"
 #include "application_settings.h"
@@ -12,7 +11,6 @@
 class Application
 {
 protected:
-	ThreadPool m_ThreadPool;
 	Timer m_ApplicationTimer;
 	Ptr<Window> m_Window;
 	Ptr<ApplicationSettings> m_ApplicationSettings;

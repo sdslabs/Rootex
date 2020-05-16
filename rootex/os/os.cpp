@@ -55,14 +55,19 @@ Vector<FilePath> OS::GetDirectoriesInDirectory(const String& directory)
 
 bool OS::DeleteDirectory(const String& dirPath)
 {
-	bool status = std::filesystem::remove_all(GetAbsolutePath(dirPath));
-
-	if (status)
+	try
 	{
+		std::filesystem::remove_all(GetAbsolutePath(dirPath));
+
 		PRINT("Deleted directory: " + dirPath);
+		return true;
+	}
+	catch (const std::exception& e)
+	{
+		ERR("Exception while deleting directory: " + dirPath + ": " + e.what());
 	}
 
-	return status;
+	return false;
 }
 
 void OS::Rename(const String& sourcePath, const String& destinationPath)

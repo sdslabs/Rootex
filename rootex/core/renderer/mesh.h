@@ -9,7 +9,6 @@ struct Mesh
 {
 	Ref<VertexBuffer> m_VertexBuffer;
 	Ref<IndexBuffer> m_IndexBuffer;
-	Ref<BasicMaterial> m_Material;
 
 	Mesh() = default;
 	Mesh(const Mesh&) = default;

@@ -122,13 +122,15 @@ public:
 	float getDuration() const { return m_Duration; }
 };
 
+class Material;
+
 /// Representation of a 3D model file. Only .obj with .mtl files are supported.
 class ModelResourceFile : public ResourceFile
 {
 	explicit ModelResourceFile(ResourceData* resData);
 	~ModelResourceFile();
 
-	Vector<Mesh> m_Meshes;
+	HashMap<Ref<Material>, Vector<Mesh>> m_Meshes;
 	Vector<Ref<Texture>> m_Textures;
 
 	friend class ResourceLoader;
@@ -137,7 +139,7 @@ public:
 	explicit ModelResourceFile(ModelResourceFile&) = delete;
 	explicit ModelResourceFile(ModelResourceFile&&) = delete;
 
-	Vector<Mesh>& getMeshes() { return m_Meshes; }
+	HashMap<Ref<Material>, Vector<Mesh>>& getMeshes() { return m_Meshes; }
 };
 
 /// Representation of an image file. Supports BMP, JPEG, PNG, TIFF, GIF, HD Photo, or other WIC supported file containers
