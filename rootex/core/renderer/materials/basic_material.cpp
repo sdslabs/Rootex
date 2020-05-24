@@ -11,8 +11,8 @@
 #include "renderer/shaders/register_locations_vertex_shader.h"
 
 BasicMaterial::BasicMaterial(const String& imagePath, Color color, bool isLit, float specularIntensity, float specularPower)
-    : Material(ShaderLibrary::GetTextureShader(), BasicMaterial::s_MaterialName)
-    , m_TextureShader(ShaderLibrary::GetTextureShader())
+    : Material(ShaderLibrary::GetBasicShader(), BasicMaterial::s_MaterialName)
+    , m_BasicShader(ShaderLibrary::GetBasicShader())
     , m_Color(color)
     , m_IsLit(isLit)
     , m_SpecularIntensity(specularIntensity)
@@ -67,7 +67,7 @@ Material* BasicMaterial::Create(const JSON::json& materialData)
 void BasicMaterial::bind()
 {
 	Material::bind();
-	m_TextureShader->set(m_DiffuseTexture.get());
+	m_BasicShader->set(m_DiffuseTexture.get());
 	setVSConstantBuffer(VSDiffuseConstantBuffer(RenderSystem::GetSingleton()->getCurrentMatrix()));
 	setPSConstantBuffer(PSDiffuseConstantBufferMaterial({ m_Color, m_IsLit, m_SpecularIntensity, m_SpecularPower }));
 }

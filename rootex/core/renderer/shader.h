@@ -42,13 +42,13 @@ class ColorShader : public Shader
 	friend class ShaderLibrary;
 };
 
-class TextureShader : public Shader
+class BasicShader : public Shader
 {
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_SamplerState;
 
-	TextureShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat);
-	TextureShader(TextureShader&) = delete;
-	~TextureShader() = default;
+	BasicShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat);
+	BasicShader(BasicShader&) = delete;
+	~BasicShader() = default;
 
 	friend class ShaderLibrary;
 

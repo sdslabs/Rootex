@@ -8,8 +8,7 @@ class ShaderLibrary
 {
 	enum class ShaderType
 	{
-		Color,
-		Texture,
+		Basic
 	};
 
 private:
@@ -25,6 +24,5 @@ public:
 	/// Unload all shaders
 	static void DestroyShaders();
 
-	static Shader* GetColorShader();
-	static TextureShader* GetTextureShader();
+	static BasicShader* GetBasicShader();
 };

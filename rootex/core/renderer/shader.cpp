@@ -55,18 +55,18 @@ ColorShader::ColorShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, co
 {
 }
 
-TextureShader::TextureShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat)
+BasicShader::BasicShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat)
     : Shader(vertexPath, pixelPath, vertexBufferFormat)
 {
 	m_SamplerState = RenderingDevice::GetSingleton()->createSamplerState();
 }
 
-void TextureShader::set(const Texture* texture)
+void BasicShader::set(const Texture* texture)
 {
 	RenderingDevice::GetSingleton()->setInPixelShader(0, 1, texture->getTextureResourceView());
 }
 
-void TextureShader::bind() const
+void BasicShader::bind() const
 {
 	Shader::bind();
 	RenderingDevice::GetSingleton()->setInPixelShader(m_SamplerState.Get());
