@@ -1,5 +1,4 @@
-#include "locale.h"
-#include "common.h"
+#include "core/language-locale.h"
 
 Locale* Locale::GetSingleton()
 {
