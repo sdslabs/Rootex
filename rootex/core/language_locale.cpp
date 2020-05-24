@@ -1,4 +1,4 @@
-#include "core/language-locale.h"
+#include "core/language_locale.h"
 
 Locale* Locale::GetSingleton()
 {
@@ -6,7 +6,7 @@ Locale* Locale::GetSingleton()
 	return &singleton;
 }
 
-void Locale::LoadLanguage(String location)
+void Locale::LoadLanguage(const String location)
 {
 	if (OS::IsFile(location))
 	{
@@ -17,15 +17,7 @@ void Locale::LoadLanguage(String location)
 	}
 }
 
-String Locale::GetString(String key)
+String Locale::GetString(const String key)
 {
 	return m_GameStrings.at(key);
-}
-
-Locale::Locale()
-{
-}
-
-Locale ::~Locale()
-{
 }
