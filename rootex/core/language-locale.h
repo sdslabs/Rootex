@@ -14,4 +14,3 @@ public:
 	void LoadLanguage(String location);
 	static Locale* GetSingleton();
 };
-
