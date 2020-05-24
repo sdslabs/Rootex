@@ -51,7 +51,6 @@ class AudioSystem : public System
 	ALCdevice* m_Device;
 	ALCcontext* m_Context;
 	TransformComponent* m_listenerComponent;
-
 	AudioSystem();
 	AudioSystem(AudioSystem&) = delete;
 	~AudioSystem();
@@ -72,8 +71,12 @@ public:
 
 	void setBufferUpdateRate(float milliseconds);
 
-	// set listener in openAL
-    void setListener(TransformComponent* listenerComponent);
+	// OpenAL Listener
+    void setListenerComponent(TransformComponent* listenerComponent);
+
+	void setListenerPosition(TransformComponent* listenerComponent);
+
+
 	bool initialize();
 	void begin();
 	void update();
