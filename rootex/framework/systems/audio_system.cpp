@@ -10,7 +10,6 @@
 #include "core/resource_data.h"
 #include "framework/entity_factory.h"
 
-
 String AudioSystem::GetALErrorString(int errID)
 {
 	switch (errID)
@@ -111,7 +110,11 @@ void AudioSystem::update()
 		audioComponent->getAudioSource()->queueNewBuffers();
 		audioComponent->update();
 	}
-
+	// update the listener position
+	if (m_listenerComponent)
+	{
+		setListenerPosition(m_listenerComponent);
+	}
 	std::this_thread::sleep_for(std::chrono::milliseconds(m_UpdateIntervalMilliseconds));
 }
 
@@ -137,15 +140,21 @@ void AudioSystem::setBufferUpdateRate(float milliseconds)
 	m_UpdateIntervalMilliseconds = milliseconds;
 }
 
-void AudioSystem::setListener(TransformComponent *listenerComponent)
+void AudioSystem::setListenerPosition(TransformComponent* listenerComponent)
+{
+	// get the position of the listener
+	Vector3& listenerPosition = listenerComponent->getParentAbsoluteTransform().Translation();
+	// print position on console (Development only)
+	std::cout << "\nlistener position: (" << listenerPosition.x << ", " << listenerPosition.y << ", " << listenerPosition.z << ")\n";
+	// pass the position to openAL
+	AL_CHECK(alListener3f(AL_POSITION, listenerPosition.x, listenerPosition.y, listenerPosition.z));
+}
+
+void AudioSystem::setListenerComponent(TransformComponent* listenerComponent)
 {
 	// set the m_listenerComponent
 	m_listenerComponent = listenerComponent;
-	// get the position of entity
-	Vector3& listenerPosition = listenerComponent->getParentAbsoluteTransform().Translation();
-	std::cout << "\nlistener position(" << listenerPosition.x << ", " << listenerPosition.y << ", " << listenerPosition.z << ")\n";
-	// pass the position to openAL
-	AL_CHECK(alListener3f(AL_POSITION, listenerPosition.x, listenerPosition.y, listenerPosition.z));
+	setListenerPosition(m_listenerComponent);
 }
 
 AudioSystem::AudioSystem()
@@ -153,8 +162,6 @@ AudioSystem::AudioSystem()
     , m_Device(nullptr)
     , m_UpdateIntervalMilliseconds(0)
 {
-	// attach the listener to ROOT ENTITY
-	//m_listenerComponent = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<TransformComponent>().get();
 }
 
 AudioSystem::~AudioSystem()

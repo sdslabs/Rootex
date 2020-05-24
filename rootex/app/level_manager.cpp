@@ -48,17 +48,14 @@ void LevelManager::openLevel(const String& levelPath, bool openInEditor)
 		RenderSystem::GetSingleton()->setCamera(cameraEntity->getComponent<CameraComponent>().get());
 	}
 
-	if (m_CurrentLevelSettings.find("listener") != m_CurrentLevelSettings.end())
-	{
-	}
-	else
+	if (!(m_CurrentLevelSettings.find("listener") != m_CurrentLevelSettings.end()))
 	{
 		m_CurrentLevelSettings["listener"] = ROOT_ENTITY_ID;
 		saveCurrentLevelSettings();
 	}
 	{
 		Ref<Entity> listenerEntity = EntityFactory::GetSingleton()->findEntity(m_CurrentLevelSettings["listener"]);
-		AudioSystem::GetSingleton()->setListener(listenerEntity->getComponent<TransformComponent>().get());
+		AudioSystem::GetSingleton()->setListenerComponent(listenerEntity->getComponent<TransformComponent>().get());
 	}
 
 	if (!openInEditor)
@@ -96,7 +93,6 @@ void LevelManager::createLevel(const String& newLevelName)
 	newLevelJSON["camera"] = ROOT_ENTITY_ID;
 	newLevelJSON["inputSchemes"] = JSON::json::array();
 	newLevelJSON["startScheme"] = "";
-	// attach listener to ROOT ENTITY
 	newLevelJSON["listener"] = ROOT_ENTITY_ID;
 	OS::CreateFileName("game/assets/levels/" + newLevelName + "/" + newLevelName + ".level.json") << newLevelJSON.dump(1, '\t');
 
