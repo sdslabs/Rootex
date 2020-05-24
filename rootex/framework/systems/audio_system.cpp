@@ -10,6 +10,7 @@
 #include "core/resource_data.h"
 #include "framework/entity_factory.h"
 
+
 String AudioSystem::GetALErrorString(int errID)
 {
 	switch (errID)
@@ -136,14 +137,13 @@ void AudioSystem::setBufferUpdateRate(float milliseconds)
 	m_UpdateIntervalMilliseconds = milliseconds;
 }
 
-void AudioSystem::setListener(int listenerID)
+void AudioSystem::setListener(TransformComponent *listenerComponent)
 {
-	// get entity from entity ID
-	Ref<Entity> listenerEntity = EntityFactory::GetSingleton()->findEntity(listenerID);
-	// get the entity's transformComponent
-	TransformComponent* listenerComponent = listenerEntity->getComponent<TransformComponent>().get();
+	// set the m_listenerComponent
+	m_listenerComponent = listenerComponent;
 	// get the position of entity
 	Vector3& listenerPosition = listenerComponent->getParentAbsoluteTransform().Translation();
+	std::cout << "\nlistener position(" << listenerPosition.x << ", " << listenerPosition.y << ", " << listenerPosition.z << ")\n";
 	// pass the position to openAL
 	AL_CHECK(alListener3f(AL_POSITION, listenerPosition.x, listenerPosition.y, listenerPosition.z));
 }
@@ -154,7 +154,7 @@ AudioSystem::AudioSystem()
     , m_UpdateIntervalMilliseconds(0)
 {
 	// attach the listener to ROOT ENTITY
-	this->setListener(ROOT_ENTITY_ID);
+	//m_listenerComponent = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<TransformComponent>().get();
 }
 
 AudioSystem::~AudioSystem()
