@@ -14,11 +14,8 @@ Shader* ShaderLibrary::MakeShader(ShaderType shaderType, const LPCWSTR& vertexPa
 	Shader* newShader = nullptr;
 	switch (shaderType)
 	{
-	case ShaderLibrary::ShaderType::Color:
-		newShader = new ColorShader(vertexPath, pixelPath, vertexBufferFormat);
-		break;
-	case ShaderLibrary::ShaderType::Texture:
-		newShader = new TextureShader(vertexPath, pixelPath, vertexBufferFormat);
+	case ShaderLibrary::ShaderType::Basic:
+		newShader = new BasicShader(vertexPath, pixelPath, vertexBufferFormat);
 		break;
 	default:
 		WARN("Unknown shader type found");
@@ -38,16 +35,11 @@ void ShaderLibrary::MakeShaders()
 		return;
 	}
 	{
-		BufferFormat defaultBufferFormat;
-		defaultBufferFormat.push(VertexBufferElement::Type::POSITION, "POSITION");
-		MakeShader(ShaderType::Color, L"rootex/assets/shaders/vertex_shader.cso", L"rootex/assets/shaders/pixel_shader.cso", defaultBufferFormat);
-	}
-	{
-		BufferFormat diffuseTextureBufferFormat;
-		diffuseTextureBufferFormat.push(VertexBufferElement::Type::POSITION, "POSITION");
-		diffuseTextureBufferFormat.push(VertexBufferElement::Type::POSITION, "NORMAL");
-		diffuseTextureBufferFormat.push(VertexBufferElement::Type::TEXCOORD, "TEXCOORD");
-		MakeShader(ShaderType::Texture, L"rootex/assets/shaders/texture_vertex_shader.cso", L"rootex/assets/shaders/texture_pixel_shader.cso", diffuseTextureBufferFormat);
+		BufferFormat basicBufferFormat;
+		basicBufferFormat.push(VertexBufferElement::Type::POSITION, "POSITION");
+		basicBufferFormat.push(VertexBufferElement::Type::POSITION, "NORMAL");
+		basicBufferFormat.push(VertexBufferElement::Type::TEXCOORD, "TEXCOORD");
+		MakeShader(ShaderType::Basic, L"rootex/assets/shaders/basic_vertex_shader.cso", L"rootex/assets/shaders/basic_pixel_shader.cso", basicBufferFormat);
 	}
 }
 
@@ -56,12 +48,7 @@ void ShaderLibrary::DestroyShaders()
 	s_Shaders.clear();
 }
 
-Shader* ShaderLibrary::GetColorShader()
+BasicShader* ShaderLibrary::GetBasicShader()
 {
-	return s_Shaders[ShaderType::Color].get();
-}
-
-TextureShader* ShaderLibrary::GetTextureShader()
-{
-	return reinterpret_cast<TextureShader*>(s_Shaders[ShaderType::Texture].get());
+	return reinterpret_cast<BasicShader*>(s_Shaders[ShaderType::Basic].get());
 }

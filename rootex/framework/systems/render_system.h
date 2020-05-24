@@ -8,7 +8,7 @@
 #include "components/visual/model_component.h"
 #include "renderer/render_pass.h"
 
-#define LINE_INTIAL_RENDER_CACHE 1000
+#define LINE_INITIAL_RENDER_CACHE 1000
 
 class RenderSystem : public System
 {
