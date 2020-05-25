@@ -2,8 +2,13 @@
 
 #include "app/application.h"
 
+#undef interface
+#include "RmlUi/Core.h"
+
 int main()
 {
+	Rml::Core::Box();
+
 	Ref<Application> app = CreateRootexApplication();
 	OS::Print(app->getAppTitle() + " is now starting. " + OS::GetBuildType() + " build (" + OS::GetBuildDate() + " | " + OS::GetBuildTime() + ")");
 	app->run();
