@@ -19,9 +19,8 @@
             "children": [],
             "parent": 1
         },
-        "ModelVisualComponent": {
+        "ModelComponent": {
             "isVisible": true,
-            "material": "teal.rmat",
             "renderPass": 1,
             "resFile": "game/assets/test/cube.obj"
         },

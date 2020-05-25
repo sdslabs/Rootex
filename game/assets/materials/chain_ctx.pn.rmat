@@ -1,0 +1,13 @@
+{
+    "color": {
+        "a": 1.0,
+        "b": 0.46666669845581055,
+        "g": 0.46666669845581055,
+        "r": 0.46666669845581055
+    },
+    "imageFile": "game/assets/sponza/ctx.png",
+    "isLit": true,
+    "specularIntensity": 2.0,
+    "specularPower": 30.0,
+    "type": "BasicMaterial"
+}

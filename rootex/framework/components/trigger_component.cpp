@@ -78,8 +78,25 @@ JSON::json TriggerComponent::getJSON() const
 
 #ifdef ROOTEX_EDITOR
 #include "imgui.h"
+#include "systems/render_system.h"
 void TriggerComponent::draw()
 {
+	static bool showTarget = false;
+	ImGui::Checkbox("Show Target", &showTarget);
+
+	if (m_TargetEntityTrigger && showTarget)
+	{
+		TransformComponent* targetTransform = m_TargetEntityTrigger->getOwner()->getComponent<TransformComponent>().get();
+		TransformComponent* triggerTransform = getOwner()->getComponent<TransformComponent>().get();
+
+		if (targetTransform && triggerTransform)
+		{
+			RenderSystem::GetSingleton()->submitLine(
+				triggerTransform->getAbsoluteTransform().Translation(), 
+				targetTransform->getAbsoluteTransform().Translation());
+		}
+	}
+
 	String preview = m_TargetEntityTrigger ? m_TargetEntityTrigger->getOwner()->getFullName(): "None";
 	if (ImGui::BeginCombo("Target", preview.c_str()))
 	{

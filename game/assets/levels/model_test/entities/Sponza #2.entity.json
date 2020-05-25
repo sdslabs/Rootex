@@ -1,0 +1,35 @@
+{
+    "Components": {
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 1
+        },
+        "ModelComponent": {
+            "isVisible": true,
+            "renderPass": 1,
+            "resFile": "game\\assets\\sponza\\sponza.3ds"
+        },
+        "TransformComponent": {
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rotation": {
+                "w": 0.7085948586463928,
+                "x": -0.7056155800819397,
+                "y": 0.0,
+                "z": -0.0
+            },
+            "scale": {
+                "x": 0.029999999329447746,
+                "y": 0.029999999329447746,
+                "z": 0.029999999329447746
+            }
+        }
+    },
+    "Entity": {
+        "ID": 2,
+        "name": "Sponza"
+    }
+}

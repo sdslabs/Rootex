@@ -4,7 +4,7 @@
             "children": [],
             "parent": 1
         },
-        "ModelVisualComponent": {
+        "ModelComponent": {
             "isVisible": true,
             "material": "green.rmat",
             "renderPass": 1,

@@ -10,7 +10,7 @@
             },
             "script": "game\\assets\\scripts\\fail_game_text.lua"
         },
-        "TextVisual2DComponent": {
+        "TextUIComponent": {
             "color": {
                 "a": 1.0,
                 "b": 1.0,
@@ -18,6 +18,7 @@
                 "r": 1.0
             },
             "fontResource": "game/assets/fonts/noto_sans_50_regular.spritefont",
+            "isVisible": true,
             "mode": 0,
             "origin": {
                 "x": 768.0,

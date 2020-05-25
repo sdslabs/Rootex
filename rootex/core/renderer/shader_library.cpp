@@ -11,7 +11,17 @@ Shader* ShaderLibrary::MakeShader(ShaderType shaderType, const LPCWSTR& vertexPa
 		return s_Shaders[shaderType].get();
 	}
 
-	Shader* newShader = new Shader(vertexPath, pixelPath, vertexBufferFormat);
+	Shader* newShader = nullptr;
+	switch (shaderType)
+	{
+	case ShaderLibrary::ShaderType::Basic:
+		newShader = new BasicShader(vertexPath, pixelPath, vertexBufferFormat);
+		break;
+	default:
+		WARN("Unknown shader type found");
+		break;
+	}
+
 	s_Shaders[shaderType].reset(newShader);
 
 	return newShader;
@@ -25,26 +35,11 @@ void ShaderLibrary::MakeShaders()
 		return;
 	}
 	{
-		BufferFormat defaultBufferFormat;
-		defaultBufferFormat.push(VertexBufferElement::Type::POSITION, "POSITION");
-		MakeShader(ShaderType::Default, L"rootex/assets/shaders/vertex_shader.cso", L"rootex/assets/shaders/pixel_shader.cso", defaultBufferFormat);
-	}
-	{
-		BufferFormat diffuseTextureBufferFormat;
-		diffuseTextureBufferFormat.push(VertexBufferElement::Type::POSITION, "POSITION");
-		diffuseTextureBufferFormat.push(VertexBufferElement::Type::POSITION, "NORMAL");
-		diffuseTextureBufferFormat.push(VertexBufferElement::Type::TEXCOORD, "TEXCOORD");
-		MakeShader(ShaderType::Diffuse, L"rootex/assets/shaders/diffuse_texture_vertex_shader.cso", L"rootex/assets/shaders/diffuse_texture_pixel_shader.cso", diffuseTextureBufferFormat);
-	}
-	{
-		BufferFormat cpuParticlesBufferFormat;
-		cpuParticlesBufferFormat.push(VertexBufferElement::Type::POSITION, "POSITION");
-		MakeShader(ShaderType::CPUParticles, L"rootex/assets/shaders/cpu_particles_vertex_shader.cso", L"rootex/assets/shaders/cpu_particles_pixel_shader.cso", cpuParticlesBufferFormat);
-	}
-	{
-		BufferFormat gridBufferFormat;
-		gridBufferFormat.push(VertexBufferElement::Type::POSITION, "POSITION");
-		MakeShader(ShaderType::Grid, L"rootex/assets/shaders/grid_vertex_shader.cso", L"rootex/assets/shaders/grid_pixel_shader.cso", gridBufferFormat);
+		BufferFormat basicBufferFormat;
+		basicBufferFormat.push(VertexBufferElement::Type::POSITION, "POSITION");
+		basicBufferFormat.push(VertexBufferElement::Type::POSITION, "NORMAL");
+		basicBufferFormat.push(VertexBufferElement::Type::TEXCOORD, "TEXCOORD");
+		MakeShader(ShaderType::Basic, L"rootex/assets/shaders/basic_vertex_shader.cso", L"rootex/assets/shaders/basic_pixel_shader.cso", basicBufferFormat);
 	}
 }
 
@@ -53,22 +48,7 @@ void ShaderLibrary::DestroyShaders()
 	s_Shaders.clear();
 }
 
-Shader* ShaderLibrary::GetDefaultShader()
+BasicShader* ShaderLibrary::GetBasicShader()
 {
-	return s_Shaders[ShaderType::Default].get();
-}
-
-DiffuseShader* ShaderLibrary::GetDiffuseShader()
-{
-	return reinterpret_cast<DiffuseShader*>(s_Shaders[ShaderType::Diffuse].get());
-}
-
-CPUParticlesShader* ShaderLibrary::GetCPUParticlesShader()
-{
-	return reinterpret_cast<CPUParticlesShader*>(s_Shaders[ShaderType::CPUParticles].get());
-}
-
-GridShader* ShaderLibrary::GetGridShader()
-{
-	return reinterpret_cast<GridShader*>(s_Shaders[ShaderType::Grid].get());
+	return reinterpret_cast<BasicShader*>(s_Shaders[ShaderType::Basic].get());
 }

@@ -1,6 +1,6 @@
 {
     "Components": {
-        "CPUParticlesVisualComponent": {
+        "CPUParticlesComponent": {
             "angularVelocity": {
                 "w": 1.0,
                 "x": 0.0,
@@ -21,7 +21,6 @@
             },
             "isVisible": true,
             "lifeTime": 1.0,
-            "material": "cpu_particles_stub.rmat",
             "poolSize": 1000,
             "renderPass": 1,
             "resFile": "rootex/assets/cube.obj",

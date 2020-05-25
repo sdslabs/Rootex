@@ -4,10 +4,9 @@
             "children": [],
             "parent": 22
         },
-        "ModelVisualComponent": {
+        "ModelComponent": {
             "isVisible": true,
-            "material": "Default",
-            "renderPass": 5,
+            "renderPass": 1,
             "resFile": "rootex/assets/cube.obj"
         },
         "TransformComponent": {

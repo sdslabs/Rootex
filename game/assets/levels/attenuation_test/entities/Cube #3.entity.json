@@ -1,12 +1,31 @@
 {
     "Components": {
+        "DirectionalLightComponent": {
+            "ambientColor": {
+                "a": 1.0,
+                "b": 0.05000000074505806,
+                "g": 0.05000000074505806,
+                "r": 0.05000000074505806
+            },
+            "diffuseColor": {
+                "a": 1.0,
+                "b": 1.0,
+                "g": 0.9999899864196777,
+                "r": 0.9999969601631165
+            },
+            "diffuseIntensity": 0.800000011920929,
+            "direction": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0.5
+            }
+        },
         "HierarchyComponent": {
             "children": [],
             "parent": 1
         },
-        "ModelVisualComponent": {
+        "ModelComponent": {
             "isVisible": true,
-            "material": "green.rmat",
             "renderPass": 1,
             "resFile": "game/assets/test/cube.obj"
         },

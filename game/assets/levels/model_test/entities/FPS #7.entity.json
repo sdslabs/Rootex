@@ -1,0 +1,50 @@
+{
+    "Components": {
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 1
+        },
+        "ScriptComponent": {
+            "connections": {},
+            "script": "game\\assets\\scripts\\fps_display.lua"
+        },
+        "TextUIComponent": {
+            "color": {
+                "a": 1.0,
+                "b": 1.0,
+                "g": 1.0,
+                "r": 1.0
+            },
+            "fontResource": "game/assets/fonts/noto_sans_50_regular.spritefont",
+            "isVisible": true,
+            "mode": 0,
+            "origin": {
+                "x": 30.0,
+                "y": 966.0
+            },
+            "text": "60.0"
+        },
+        "TransformComponent": {
+            "position": {
+                "x": -16.295663833618164,
+                "y": 3.2042620182037354,
+                "z": 6.590097904205322
+            },
+            "rotation": {
+                "w": 0.7628201842308044,
+                "x": -0.01144316140562296,
+                "y": 0.6464366316795349,
+                "z": 0.00969723891466856
+            },
+            "scale": {
+                "x": 0.9997910261154175,
+                "y": 1.0,
+                "z": 1.0
+            }
+        }
+    },
+    "Entity": {
+        "ID": 7,
+        "name": "FPS"
+    }
+}

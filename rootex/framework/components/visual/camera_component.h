@@ -1,6 +1,7 @@
 #pragma once
 
-#include "visual_component.h"
+#include "component.h"
+#include "components/transform_component.h"
 
 class CameraComponent : public Component
 {

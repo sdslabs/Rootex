@@ -4,6 +4,7 @@
 
 VertexBuffer::VertexBuffer(const Vector<VertexData>& buffer)
     : m_Stride(sizeof(VertexData))
+    , m_Count(buffer.size())
 {
 	D3D11_BUFFER_DESC vbd = { 0 };
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
@@ -21,6 +22,7 @@ VertexBuffer::VertexBuffer(const Vector<VertexData>& buffer)
 
 VertexBuffer::VertexBuffer(const Vector<float>& buffer)
     : m_Stride(3 * sizeof(float))
+    , m_Count(buffer.size() / 3)
 {
 	D3D11_BUFFER_DESC vbd = { 0 };
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;

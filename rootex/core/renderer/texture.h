@@ -2,7 +2,7 @@
 
 #include <d3d11.h>
 
-#include "resource_file.h"
+class ImageResourceFile;
 
 /// Encapsulates all Texture related functionalities, uses DirectXTK behind the scenes
 class Texture
@@ -14,11 +14,14 @@ class Texture
 	unsigned int m_Height;
 	unsigned int m_MipLevels;
 
+	void loadTexture();
+
 public:
 	Texture(ImageResourceFile* imageFile);
+	Texture(uint8_t* imageData, size_t size);
 	Texture(Texture&) = delete;
 	Texture& operator=(Texture&) = delete;
-	~Texture();
+	~Texture() = default;
 
 	void reload();
 

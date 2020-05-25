@@ -22,14 +22,14 @@ void MaterialLibrary::LoadMaterials()
 			s_Materials[materialName] = { (String)materialJSON["type"], {} };
 		}
 	}
-	s_Materials["Default"] = { BasicMaterial::s_MaterialName, {} };
+	s_Materials["DefaultMaterial"] = { BasicMaterial::s_MaterialName, {} };
 }
 
 Ref<Material> MaterialLibrary::GetMaterial(const String& materialName)
 {
 	if (s_Materials.find(materialName) == s_Materials.end())
 	{
-		WARN("Material file not found, returning stand-in Material");
+		WARN("Material file not found, returning stand-in Material instead of: " + materialName);
 		return GetDefaultMaterial();
 	}
 	else
@@ -40,7 +40,7 @@ Ref<Material> MaterialLibrary::GetMaterial(const String& materialName)
 		}
 		else
 		{
-			TextResourceFile* materialFile = ResourceLoader::CreateNewTextResourceFile("game/assets/materials/" + materialName);
+			TextResourceFile* materialFile = ResourceLoader::CreateTextResourceFile("game/assets/materials/" + materialName);
 			const JSON::json materialJSON = JSON::json::parse(materialFile->getString());
 			Ref<Material> material(s_MaterialDatabase[materialJSON["type"]].second(materialJSON));
 			material->setFileName(materialName);
@@ -52,15 +52,15 @@ Ref<Material> MaterialLibrary::GetMaterial(const String& materialName)
 
 Ref<Material> MaterialLibrary::GetDefaultMaterial()
 {
-	if (Ref<Material> lockedMaterial = s_Materials["Default"].second.lock())
+	if (Ref<Material> lockedMaterial = s_Materials["DefaultMaterial"].second.lock())
 	{
 		return lockedMaterial;
 	}
 	else
 	{
 		Ref<Material> material(BasicMaterial::CreateDefault());
-		material->setFileName("Default");
-		s_Materials["Default"].second = material;
+		material->setFileName("DefaultMaterial");
+		s_Materials["DefaultMaterial"].second = material;
 		return material;
 	}
 }
@@ -69,7 +69,7 @@ void MaterialLibrary::SaveAll()
 {
 	for (auto& [materialName, materialInfo] : s_Materials)
 	{
-		if (materialName == "Default")
+		if (materialName == "DefaultMaterial")
 		{
 			continue;
 		}
@@ -82,27 +82,29 @@ void MaterialLibrary::SaveAll()
 	}
 }
 
-#ifdef ROOTEX_EDITOR
-
 void MaterialLibrary::CreateNewMaterialFile(const String& materialName, const String& materialType)
 {
-	if (materialName == "Default")
+	if (materialName == "DefaultMaterial")
 	{
-		WARN("Cannot create another Default material");
 		return;
 	}
 	String materialFileName = materialName + ".rmat";
 	if (s_Materials.find(materialName) == s_Materials.end())
 	{
-		TextResourceFile* materialFile = ResourceLoader::CreateNewTextResourceFile("game/assets/materials/" + materialFileName);
-		Ref<Material> material(s_MaterialDatabase[materialType].first());
-		materialFile->putString(material->getJSON().dump(4));
-		ResourceLoader::SaveResourceFile(materialFile);
-		s_Materials[materialFileName] = { materialType, {} };
-		PRINT("Created Material- " + materialFileName + " - " + materialType);
-		return;
+		if (!OS::IsExists("game/assets/materials/" + materialFileName))
+		{
+			TextResourceFile* materialFile = ResourceLoader::CreateNewTextResourceFile("game/assets/materials/" + materialFileName);
+			Ref<Material> material(s_MaterialDatabase[materialType].first());
+			materialFile->putString(material->getJSON().dump(4));
+			ResourceLoader::SaveResourceFile(materialFile);
+			s_Materials[materialFileName] = { materialType, {} };
+			PRINT("Created Material: " + materialFileName + " - " + materialType);
+			return;
+		}
 	}
-	WARN("Material already exists- " + materialName);
 }
 
-#endif // ROOTEX_EDITOR
+bool MaterialLibrary::IsExists(const String& materialName)
+{
+	return OS::IsExists("game/assets/materials/" + materialName);
+}

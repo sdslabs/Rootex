@@ -1,0 +1,11 @@
+{
+    "color": {
+        "a": 1.0,
+        "b": 0.46666669845581055,
+        "g": 0.46666669845581055,
+        "r": 0.46666669845581055
+    },
+    "imageFile": "game/assets/sponza/szthdi.png",
+    "isLit": false,
+    "type": "BasicMaterial"
+}

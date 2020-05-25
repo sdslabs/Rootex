@@ -23,10 +23,9 @@
             ],
             "parent": 1
         },
-        "ModelVisualComponent": {
+        "ModelComponent": {
             "isVisible": true,
-            "material": "yellow_textured.rmat",
-            "renderPass": 5,
+            "renderPass": 1,
             "resFile": "rootex/assets/cube.obj"
         },
         "ScriptComponent": {

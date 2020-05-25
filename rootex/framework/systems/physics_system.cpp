@@ -8,6 +8,7 @@
 #include "components/script_component.h"
 
 #include "os/timer.h"
+#include "render_system.h"
 
 #include "BulletCollision/NarrowPhaseCollision/btRaycastCallback.h"
 
@@ -127,11 +128,15 @@ void PhysicsSystem::InternalTickCallback(btDynamicsWorld* const world, btScalar 
 
 void PhysicsSystem::debugDraw()
 {
+	RenderSystem::GetSingleton()->getRenderer()->bind(m_DebugDrawer.getMaterial());
+
+	RenderSystem::GetSingleton()->enableLineRenderMode();
 	for (auto& component : s_Components[PhysicsColliderComponent::s_ID])
 	{
 		PhysicsColliderComponent* p = (PhysicsColliderComponent*)component;
 		p->render();
 	}
+	RenderSystem::GetSingleton()->resetRenderMode();
 }
 
 void PhysicsSystem::debugDrawComponent(const btTransform& worldTransform, const btCollisionShape* shape, const btVector3& color)

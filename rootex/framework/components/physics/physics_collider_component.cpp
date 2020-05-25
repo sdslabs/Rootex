@@ -37,7 +37,6 @@ PhysicsColliderComponent::PhysicsColliderComponent(const String& matName, float 
 
 PhysicsColliderComponent::~PhysicsColliderComponent()
 {
-	PhysicsSystem::GetSingleton()->removeRigidBody(m_Body.get());
 }
 
 bool PhysicsColliderComponent::setup()
@@ -80,6 +79,11 @@ bool PhysicsColliderComponent::setup()
 	}
 
 	return status;
+}
+
+void PhysicsColliderComponent::onRemove()
+{
+	PhysicsSystem::GetSingleton()->removeRigidBody(m_Body.get());
 }
 
 void PhysicsColliderComponent::getWorldTransform(btTransform& worldTrans) const

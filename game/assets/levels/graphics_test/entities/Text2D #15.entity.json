@@ -4,7 +4,7 @@
             "children": [],
             "parent": 1
         },
-        "TextVisual2DComponent": {
+        "TextUIComponent": {
             "color": {
                 "a": 1.0,
                 "b": 1.0,
@@ -12,6 +12,7 @@
                 "r": 1.0
             },
             "fontResource": "game\\assets\\fonts\\lato_30_bold.spritefont",
+            "isVisible": true,
             "mode": 0,
             "origin": {
                 "x": 0.0,
