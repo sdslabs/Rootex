@@ -22,6 +22,8 @@ add_subdirectory(framework)
 add_subdirectory(main)
 add_subdirectory(os)
 add_subdirectory(script)
+
+add_definitions(-DRMLUI_STATIC_LIB)
 add_subdirectory(vendor)
 
 # Adding shaders for pre-build compilation
@@ -90,9 +92,10 @@ target_link_libraries(Rootex PUBLIC
     ImGuizmo
     Gainput
     Bullet3D
+    assimp
+    RMLUI
     Shell32.lib
     d3d11.lib
     xinput.lib
     D3DCompiler.lib
-    assimp
 )
