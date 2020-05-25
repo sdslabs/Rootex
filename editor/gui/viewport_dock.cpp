@@ -62,6 +62,7 @@ void ViewportDock::draw()
 					{
 						transform->setTransform(RenderSystem::GetSingleton()->getCamera()->getOwner()->getComponent<TransformComponent>()->getAbsoluteTransform());
 					}
+					EventManager::GetSingleton()->call("OpenEntity", "EditorOpenEntity", entity);		
 				}
 				ImGui::EndDragDropTarget();
 			}

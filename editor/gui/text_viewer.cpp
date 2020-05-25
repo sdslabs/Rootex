@@ -29,7 +29,7 @@ void TextViewer::draw()
 		ImGui::SameLine();
 		if (ImGui::Button("Reload"))
 		{
-			m_TextResourceFile->reload();
+			ResourceLoader::Reload(m_TextResourceFile);
 		}
 	}
 	ImGui::Separator();

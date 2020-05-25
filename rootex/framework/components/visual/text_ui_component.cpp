@@ -1,39 +1,43 @@
-#include "text_visual_2d_component.h"
+#include "text_ui_component.h"
 
-#include "systems/render_system.h"
+#include "systems/render_ui_system.h"
+#include "renderer/rendering_device.h"
 
-Component* TextVisual2DComponent::Create(const JSON::json& componentData)
+Component* TextUIComponent::Create(const JSON::json& componentData)
 {
-	TextVisual2DComponent* tV2DC = new TextVisual2DComponent(
-		ResourceLoader::CreateFontResourceFile(
-			componentData["fontResource"]), 
-		componentData["text"], 
-		{ 
-			componentData["color"]["r"], 
-			componentData["color"]["g"], 
-			componentData["color"]["b"], 
-			componentData["color"]["a"] 
-		}, 
-		(Mode)(int)componentData["mode"],
+	TextUIComponent* tV2DC = new TextUIComponent(
+	    ResourceLoader::CreateFontResourceFile(
+	        componentData["fontResource"]),
+	    componentData["text"],
 	    { 
+			componentData["color"]["r"],
+	        componentData["color"]["g"],
+	        componentData["color"]["b"],
+	        componentData["color"]["a"] 
+		},
+	    (Mode)(int)componentData["mode"],
+	    {
 			componentData["origin"]["x"],
 	        componentData["origin"]["y"] 
-		});
+		},
+	    componentData["isVisible"]);
 	return tV2DC;
 }
 
-Component* TextVisual2DComponent::CreateDefault()
+Component* TextUIComponent::CreateDefault()
 {
-	return new TextVisual2DComponent(
-		ResourceLoader::CreateFontResourceFile("game/assets/fonts/noto_sans_50_regular.spritefont"), 
-		"Hello World!", 
-		{ 1.0f, 1.0f, 1.0f, 1.0f }, 
-		Mode::None, 
-		{ 0.0f, 0.0f });
+	return new TextUIComponent(
+	    ResourceLoader::CreateFontResourceFile("game/assets/fonts/noto_sans_50_regular.spritefont"),
+	    "Hello World!",
+	    { 1.0f, 1.0f, 1.0f, 1.0f },
+	    Mode::None,
+	    { 0.0f, 0.0f },
+	    true);
 }
 
-TextVisual2DComponent::TextVisual2DComponent(FontResourceFile* font, const String& text, const Color& color, const Mode& mode, const Vector2& origin)
-    : m_FontFile(font)
+TextUIComponent::TextUIComponent(FontResourceFile* font, const String& text, const Color& color, const Mode& mode, const Vector2& origin, const bool& isVisible)
+    : UIComponent(isVisible)
+	, m_FontFile(font)
     , m_Text(text)
     , m_Color(color)
     , m_Mode(mode)
@@ -41,37 +45,30 @@ TextVisual2DComponent::TextVisual2DComponent(FontResourceFile* font, const Strin
 {
 }
 
-TextVisual2DComponent::~TextVisual2DComponent()
+void TextUIComponent::render()
 {
+	static Vector3 position;
+	static Quaternion rotation;
+	static float rotationAngle;
+	static Vector3 scale;
+
+	RenderUISystem::GetSingleton()->getTopUIMatrix().Decompose(scale, rotation, position);
+	rotationAngle = Vector3((Vector3(0.0f, 0.0f, 1.0f) * rotation)).z;
+
+	m_FontFile->getFont()->DrawString(
+	    RenderingDevice::GetSingleton()->getUIBatch().get(),
+	    m_Text.c_str(),
+	    position,
+	    m_Color,
+	    rotationAngle,
+	    -m_Origin,
+	    scale,
+	    (DirectX::SpriteEffects)m_Mode);
 }
 
-void TextVisual2DComponent::render(RenderPass renderPass)
+JSON::json TextUIComponent::getJSON() const
 {
-	if (renderPass & m_RenderPass)
-	{
-		static Vector3 position;
-		static Quaternion rotation;
-		static float rotationAngle;
-		static Vector3 scale;
-
-		RenderSystem::GetSingleton()->getTopUIMatrix().Decompose(scale, rotation, position);
-		rotationAngle = Vector3((Vector3(0.0f, 0.0f, 1.0f) * rotation)).z;
-
-		m_FontFile->getFont()->DrawString(
-		    RenderingDevice::GetSingleton()->getUIBatch().get(),
-		    m_Text.c_str(),
-		    position,
-		    m_Color,
-		    rotationAngle,
-		    -m_Origin,
-		    scale,
-		    (DirectX::SpriteEffects)m_Mode);
-	}
-}
-
-JSON::json TextVisual2DComponent::getJSON() const
-{
-	JSON::json j;
+	JSON::json j = UIComponent::getJSON();
 
 	j["fontResource"] = m_FontFile->getPath().string();
 	j["text"] = m_Text;
@@ -92,7 +89,7 @@ JSON::json TextVisual2DComponent::getJSON() const
 #ifdef ROOTEX_EDITOR
 #include "imgui.h"
 #include "imgui_stdlib.h"
-void TextVisual2DComponent::draw()
+void TextUIComponent::draw()
 {
 	ImGui::InputText("Text", &m_Text);
 	ImGui::ColorEdit4("Color", &m_Color.x);

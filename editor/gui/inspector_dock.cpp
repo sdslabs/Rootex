@@ -73,44 +73,42 @@ void InspectorDock::draw()
 						m_IsNameBeingEdited = true;
 					}
 				}
-				ImGui::PushStyleColor(ImGuiCol_Button, Editor::GetSingleton()->getColors().m_Success);
-				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, Editor::GetSingleton()->getColors().m_Accent);
-				ImGui::PushStyleColor(ImGuiCol_ButtonActive, Editor::GetSingleton()->getColors().m_Success);
-				if (ImGui::Button("Add Components"))
-				{
-					ImGui::OpenPopup(("Add Components: " + m_OpenedEntity->getName()).c_str());
-				}
-				ImGui::PopStyleColor(3);
-				ImGui::PushStyleColor(ImGuiCol_Button, Editor::GetSingleton()->getColors().m_Failure);
-				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, Editor::GetSingleton()->getColors().m_FailAccent);
-				ImGui::PushStyleColor(ImGuiCol_ButtonActive, Editor::GetSingleton()->getColors().m_Failure);
-				ImGui::SameLine();
-				if (ImGui::Button("Remove Components"))
-				{
-					ImGui::OpenPopup(("Remove Components: " + m_OpenedEntity->getName()).c_str());
-				}
-				ImGui::PopStyleColor(3);
-				ImGui::SameLine();
-				ImGui::PushStyleColor(ImGuiCol_Button, Editor::GetSingleton()->getColors().m_Failure);
-				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, Editor::GetSingleton()->getColors().m_FailAccent);
-				ImGui::PushStyleColor(ImGuiCol_ButtonActive, Editor::GetSingleton()->getColors().m_Failure);
-				ImGui::SameLine();
-				if (ImGui::Button("Delete Entity"))
-				{
-					if (m_OpenedEntity->getID() != ROOT_ENTITY_ID)
-					{
-						EventManager::GetSingleton()->deferredCall("EditorDeleteEntity", "DeleteEntity", m_OpenedEntity);
-					}
-					else
-					{
-						WARN("Cannot delete Root Entity");
-					}
-				}
-				ImGui::PopStyleColor(3);
 
-				if (ImGui::Button("Reset"))
+				String menuAction;
+
+				ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
+				if (ImGui::BeginCombo("##Entity Actions", "Select an action"))
 				{
-					PANIC(m_OpenedEntity->setupComponents() == false, "Could not setup entity: " + m_OpenedEntity->getFullName());
+					if (ImGui::Selectable("Add Components"))
+					{
+						menuAction = "Add Components";
+					}
+					if (ImGui::Selectable("Remove Components"))
+					{
+						menuAction = "Remove Components";
+					}
+					if (ImGui::Selectable("Reset"))
+					{
+						PANIC(m_OpenedEntity->setupComponents() == false, "Could not setup entity: " + m_OpenedEntity->getFullName());
+					}
+					ImGui::Separator();
+					if (ImGui::Selectable("Delete Entity"))
+					{
+						if (m_OpenedEntity->getID() != ROOT_ENTITY_ID)
+						{
+							EventManager::GetSingleton()->deferredCall("EditorDeleteEntity", "DeleteEntity", m_OpenedEntity);
+						}
+						else
+						{
+							WARN("Cannot delete Root Entity");
+						}
+					}
+					ImGui::EndCombo();
+				}
+
+				if (!menuAction.empty())
+				{
+					ImGui::OpenPopup((menuAction + ": " + m_OpenedEntity->getName()).c_str());
 				}
 
 				ImGui::Separator();

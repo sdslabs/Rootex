@@ -11,8 +11,8 @@
 #include "renderer/shaders/register_locations_vertex_shader.h"
 
 BasicMaterial::BasicMaterial(const String& imagePath, Color color, bool isLit, float specularIntensity, float specularPower)
-    : Material(ShaderLibrary::GetDiffuseShader(), BasicMaterial::s_MaterialName)
-    , m_DiffuseShader(reinterpret_cast<DiffuseShader*>(m_Shader))
+    : Material(ShaderLibrary::GetBasicShader(), BasicMaterial::s_MaterialName)
+    , m_BasicShader(ShaderLibrary::GetBasicShader())
     , m_Color(color)
     , m_IsLit(isLit)
     , m_SpecularIntensity(specularIntensity)
@@ -67,8 +67,8 @@ Material* BasicMaterial::Create(const JSON::json& materialData)
 void BasicMaterial::bind()
 {
 	Material::bind();
-	setVSConstantBuffer(VSDiffuseConstantBuffer(RenderSystem::GetSingleton()->getTopMatrix()));
-	m_DiffuseShader->set(m_DiffuseTexture.get());
+	m_BasicShader->set(m_DiffuseTexture.get());
+	setVSConstantBuffer(VSDiffuseConstantBuffer(RenderSystem::GetSingleton()->getCurrentMatrix()));
 	setPSConstantBuffer(PSDiffuseConstantBufferMaterial({ m_Color, m_IsLit, m_SpecularIntensity, m_SpecularPower }));
 }
 
@@ -99,56 +99,60 @@ void BasicMaterial::setTexture(ImageResourceFile* image)
 	m_DiffuseTexture = texture;
 }
 
-#ifdef ROOTEX_EDITOR
-#include "imgui_stdlib.h"
-void BasicMaterial::draw()
+void BasicMaterial::setTextureInternal(Ref<Texture> texture)
 {
-	ImGui::Text(BasicMaterial::s_MaterialName.c_str());
+	m_DiffuseTexture = texture;
+}
 
-	m_ImagePathUI = m_ImageFile->getPath().string();
-	if (ImGui::InputText("Texture", &m_ImagePathUI, ImGuiInputTextFlags_EnterReturnsTrue))
-	{
-		ImageResourceFile* image = ResourceLoader::CreateImageResourceFile(m_ImagePathUI);
-		if (image)
-		{
-			setTexture(image);
-		}
-	}
+#ifdef ROOTEX_EDITOR
+#include "imgui.h"
+void BasicMaterial::draw(const String& id)
+{
+	Material::draw(id);
 
+	ImGui::BeginGroup();
+	ImGui::Image(m_DiffuseTexture->getTextureResourceView(), { 50, 50 });
+	ImGui::SameLine();
+	ImGui::Text(m_ImageFile->getPath().string().c_str());
+	ImGui::EndGroup();
+	
 	if (ImGui::BeginDragDropTarget())
 	{
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Resource Drop"))
 		{
 			const char* payloadFileName = (const char*)payload->Data;
 			FilePath payloadPath(payloadFileName);
-			FilePath ext = payloadPath.extension();
-			if (ext == ".jpg" || ext == ".png" || ext == ".jpeg")
+			if (IsFileSupported(payloadPath.extension().string(), ResourceFile::Type::Image))
 			{
-				setTexture(ResourceLoader::CreateImageResourceFile(payloadPath.string()));
+				ImageResourceFile* image = ResourceLoader::CreateImageResourceFile(payloadPath.generic_string());
+
+				if (image)
+				{
+					setTexture(image);
+				}
 			}
 			else
 			{
-				WARN("Cannot assign a non-image file to a texture");
+				WARN("Cannot assign a non-image file to texture");
 			}
 		}
 		ImGui::EndDragDropTarget();
 	}
-	else
-	{
-		ImGui::ColorEdit4("Color", &m_Color.x);
-	}
-	ImGui::Checkbox("Affected by light?", &m_IsLit);
+	
+	ImGui::ColorEdit4((String("Color##") + id).c_str(), &m_Color.x);
+
+	ImGui::Checkbox((String("Affected by light##") + id).c_str(), &m_IsLit);
 	if (m_IsLit)
 	{
-		ImGui::DragFloat("##Specular Intensity", &m_SpecularIntensity);
+		ImGui::DragFloat((String("##SpecularIntensity") + id).c_str(), &m_SpecularIntensity);
 		ImGui::SameLine();
-		if (ImGui::Button("Specular Intensity"))
+		if (ImGui::Button((String("Specular Intensity##") + id).c_str()))
 		{
 			m_SpecularIntensity = 2.0f;
 		}
-		ImGui::DragFloat("##Specular Power", &m_SpecularPower);
+		ImGui::DragFloat((String("##Specular Power") + id).c_str(), &m_SpecularPower);
 		ImGui::SameLine();
-		if (ImGui::Button("Specular Power"))
+		if (ImGui::Button((String("Specular Power##") + id).c_str()))
 		{
 			m_SpecularPower = 30.0f;
 		}

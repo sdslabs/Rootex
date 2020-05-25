@@ -25,12 +25,15 @@ public:
 	Material() = delete;
 	virtual ~Material() = default;
 	virtual void bind();
-	virtual void draw() = 0;
 	String getFileName() { return m_FileName; };
 	String getTypeName() { return m_TypeName; };
 	String getFullName() { return m_FileName + " - " + m_TypeName; };
 	void setFileName(const String& fileName) { m_FileName = fileName; };
 	virtual JSON::json getJSON() const;
+	
+#ifdef ROOTEX_EDITOR
+	virtual void draw(const String& id);
+#endif // ROOTEX_EDITOR
 };
 
 template <typename T>

@@ -19,11 +19,15 @@ void Renderer::setViewport(Viewport& viewport)
 	RenderingDevice::GetSingleton()->setViewport(viewport.getViewport());
 }
 
-void Renderer::draw(const VertexBuffer* vertexBuffer, const IndexBuffer* indexBuffer, Material* material) const
+void Renderer::bind(Material* material) const
+{
+	material->bind();
+}
+
+void Renderer::draw(const VertexBuffer* vertexBuffer, const IndexBuffer* indexBuffer) const
 {
 	vertexBuffer->bind();
 	indexBuffer->bind();
-	material->bind();
 
 	RenderingDevice::GetSingleton()->drawIndexed(indexBuffer->getCount());
 }

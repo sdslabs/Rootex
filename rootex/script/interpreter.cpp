@@ -4,9 +4,9 @@
 #include "common/common.h"
 #include "components/hierarchy_component.h"
 #include "components/transform_component.h"
-#include "components/visual/text_visual_2d_component.h"
-#include "components/visual/visual_2d_component.h"
-#include "components/visual/visual_component.h"
+#include "components/visual/text_ui_component.h"
+#include "components/visual/ui_component.h"
+#include "components/visual/model_component.h"
 #include "components/physics/box_collider_component.h"
 #include "components/trigger_component.h"
 #include "entity_factory.h"
@@ -137,14 +137,13 @@ void LuaInterpreter::registerTypes()
 		resourceLoader["CreateLua"] = &ResourceLoader::CreateLuaTextResourceFile;
 		resourceLoader["CreateText"] = &ResourceLoader::CreateTextResourceFile;
 		resourceLoader["CreateNewText"] = &ResourceLoader::CreateNewTextResourceFile;
-		resourceLoader["CreateVisualModel"] = &ResourceLoader::CreateVisualModelResourceFile;
+		resourceLoader["CreateVisualModel"] = &ResourceLoader::CreateModelResourceFile;
 	}
 	{
 		sol::usertype<ResourceFile> resourceFile = rootex.new_usertype<ResourceFile>("ResourceFile");
 		resourceFile["isValid"] = &ResourceFile::isValid;
 		resourceFile["isDirty"] = &ResourceFile::isDirty;
 		resourceFile["isOpen"] = &ResourceFile::isOpen;
-		resourceFile["reload"] = &ResourceFile::reload;
 		resourceFile["getPath"] = [](ResourceFile& f) { return f.getPath().string(); };
 		resourceFile["getType"] = &ResourceFile::getType;
 	}
@@ -171,8 +170,8 @@ void LuaInterpreter::registerTypes()
 		audioResourceFile["getDuration"] = &AudioResourceFile::getDuration;
 	}
 	{
-		sol::usertype<VisualModelResourceFile> visualModelResourceFile = rootex.new_usertype<VisualModelResourceFile>(
-		    "VisualModelResourceFile",
+		sol::usertype<ModelResourceFile> visualModelResourceFile = rootex.new_usertype<ModelResourceFile>(
+		    "ModelResourceFile",
 		    sol::base_classes, sol::bases<ResourceFile>());
 	}
 	{
@@ -235,26 +234,26 @@ void LuaInterpreter::registerTypes()
 			hierarchyComponent["getChildren"] = &HierarchyComponent::getChildren;
 		}
 		{
-			sol::usertype<VisualComponent> visualComponent = rootex.new_usertype<VisualComponent>(
-			    "VisualComponent",
+			sol::usertype<ModelComponent> modelComponent = rootex.new_usertype<ModelComponent>(
+			    "ModelComponent",
 			    sol::base_classes, sol::bases<Component>());
-			entity["getVisual"] = [](Entity* e) { return e->getComponent<VisualComponent>(); };
-			visualComponent["isVisible"] = &VisualComponent::isVisible;
-			visualComponent["setVisibility"] = &VisualComponent::setVisibility;
+			entity["getModel"] = [](Entity* e) { return e->getComponent<ModelComponent>(); };
+			modelComponent["isVisible"] = &ModelComponent::isVisible;
+			modelComponent["setIsVisible"] = &ModelComponent::setIsVisible;
 		}
 		{
-			sol::usertype<Visual2DComponent> visual2DComponent = rootex.new_usertype<Visual2DComponent>(
-			    "Visual2DComponent",
-			    sol::base_classes, sol::bases<Component, VisualComponent>());
-			entity["getVisual2D"] = [](Entity* e) { return e->getComponent<Visual2DComponent>(); };
+			sol::usertype<UIComponent> uiComponent = rootex.new_usertype<UIComponent>(
+			    "UIComponent",
+			    sol::base_classes, sol::bases<Component>());
+			entity["getVisual2D"] = [](Entity* e) { return e->getComponent<UIComponent>(); };
 		}
 		{
-			sol::usertype<TextVisual2DComponent> textVisual2DComponent = rootex.new_usertype<TextVisual2DComponent>(
-			    "TextVisual2DComponent",
-			    sol::base_classes, sol::bases<Component, VisualComponent, Visual2DComponent>());
-			entity["getTextVisual2D"] = [](Entity* e) { return e->getComponent<TextVisual2DComponent>(); };
-			textVisual2DComponent["setFont"] = &TextVisual2DComponent::setFont;
-			textVisual2DComponent["setText"] = &TextVisual2DComponent::setText;
+			sol::usertype<TextUIComponent> textUIComponent = rootex.new_usertype<TextUIComponent>(
+			    "TextUIComponent",
+			    sol::base_classes, sol::bases<Component, UIComponent>());
+			entity["getTextUI"] = [](Entity* e) { return e->getComponent<TextUIComponent>(); };
+			textUIComponent["setFont"] = &TextUIComponent::setFont;
+			textUIComponent["setText"] = &TextUIComponent::setText;
 		}
 		{
 			sol::usertype<PhysicsColliderComponent> physicsColliderComponent = rootex.new_usertype<PhysicsColliderComponent>(
