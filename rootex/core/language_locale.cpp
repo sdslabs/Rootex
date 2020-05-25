@@ -6,7 +6,7 @@ Locale* Locale::GetSingleton()
 	return &singleton;
 }
 
-void Locale::LoadLanguage(const String location)
+void Locale::loadLanguage(const String location)
 {
 	if (OS::IsFile(location))
 	{
@@ -17,7 +17,7 @@ void Locale::LoadLanguage(const String location)
 	}
 }
 
-String Locale::GetString(const String key)
+String Locale::getString(const String key)
 {
 	return m_GameStrings.at(key);
 }
