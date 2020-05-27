@@ -15,6 +15,7 @@ class VertexBuffer
 
 public:
 	VertexBuffer(const Vector<VertexData>& buffer);
+	VertexBuffer(const Vector<UIVertexData>& buffer);
 	VertexBuffer(const Vector<float>& buffer);
 	~VertexBuffer() = default;
 

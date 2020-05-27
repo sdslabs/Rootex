@@ -242,15 +242,15 @@ void LuaInterpreter::registerTypes()
 			modelComponent["setIsVisible"] = &ModelComponent::setIsVisible;
 		}
 		{
-			sol::usertype<UIComponent> uiComponent = rootex.new_usertype<UIComponent>(
-			    "UIComponent",
+			sol::usertype<RenderUIComponent> uiComponent = rootex.new_usertype<RenderUIComponent>(
+			    "RenderUIComponent",
 			    sol::base_classes, sol::bases<Component>());
-			entity["getVisual2D"] = [](Entity* e) { return e->getComponent<UIComponent>(); };
+			entity["getVisual2D"] = [](Entity* e) { return e->getComponent<RenderUIComponent>(); };
 		}
 		{
 			sol::usertype<TextUIComponent> textUIComponent = rootex.new_usertype<TextUIComponent>(
 			    "TextUIComponent",
-			    sol::base_classes, sol::bases<Component, UIComponent>());
+			    sol::base_classes, sol::bases<Component, RenderUIComponent>());
 			entity["getTextUI"] = [](Entity* e) { return e->getComponent<TextUIComponent>(); };
 			textUIComponent["setFont"] = &TextUIComponent::setFont;
 			textUIComponent["setText"] = &TextUIComponent::setText;

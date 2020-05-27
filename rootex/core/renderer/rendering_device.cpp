@@ -137,34 +137,52 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 	createRenderTextureTarget(width, height);
 
 	//REMARK- reversed winding order to allow ccw .obj files to be rendered properly, can trouble later
-	D3D11_RASTERIZER_DESC rsDesc;
-	rsDesc.FillMode = D3D11_FILL_SOLID;
-	rsDesc.CullMode = D3D11_CULL_FRONT;
-	rsDesc.FrontCounterClockwise = FALSE;
-	rsDesc.DepthBias = 0;
-	rsDesc.SlopeScaledDepthBias = 0.0f;
-	rsDesc.DepthBiasClamp = 0.0f;
-	rsDesc.DepthClipEnable = TRUE;
-	rsDesc.ScissorEnable = FALSE;
-	rsDesc.MultisampleEnable = MSAA;
-	rsDesc.AntialiasedLineEnable = FALSE;
+	{
+		D3D11_RASTERIZER_DESC rsDesc;
+		rsDesc.FillMode = D3D11_FILL_SOLID;
+		rsDesc.CullMode = D3D11_CULL_FRONT;
+		rsDesc.FrontCounterClockwise = FALSE;
+		rsDesc.DepthBias = 0;
+		rsDesc.SlopeScaledDepthBias = 0.0f;
+		rsDesc.DepthBiasClamp = 0.0f;
+		rsDesc.DepthClipEnable = TRUE;
+		rsDesc.ScissorEnable = FALSE;
+		rsDesc.MultisampleEnable = MSAA;
+		rsDesc.AntialiasedLineEnable = FALSE;
 
-	GFX_ERR_CHECK(m_Device->CreateRasterizerState(&rsDesc, &m_DefaultRasterizerState));
+		GFX_ERR_CHECK(m_Device->CreateRasterizerState(&rsDesc, &m_DefaultRasterizerState));
+	}
+	{
+		D3D11_RASTERIZER_DESC rsDesc;
+		rsDesc.FillMode = D3D11_FILL_SOLID;
+		rsDesc.CullMode = D3D11_CULL_FRONT;
+		rsDesc.FrontCounterClockwise = FALSE;
+		rsDesc.DepthBias = 0;
+		rsDesc.SlopeScaledDepthBias = 0.0f;
+		rsDesc.DepthBiasClamp = 0.0f;
+		rsDesc.DepthClipEnable = TRUE;
+		rsDesc.ScissorEnable = TRUE;
+		rsDesc.MultisampleEnable = MSAA;
+		rsDesc.AntialiasedLineEnable = FALSE;
 
-	D3D11_RASTERIZER_DESC wireframeDesc;
-	wireframeDesc.FillMode = D3D11_FILL_WIREFRAME;
-	wireframeDesc.CullMode = D3D11_CULL_NONE;
-	wireframeDesc.FrontCounterClockwise = FALSE;
-	wireframeDesc.DepthBias = 0;
-	wireframeDesc.SlopeScaledDepthBias = 0.0f;
-	wireframeDesc.DepthBiasClamp = 0.0f;
-	wireframeDesc.DepthClipEnable = TRUE;
-	wireframeDesc.ScissorEnable = FALSE;
-	wireframeDesc.MultisampleEnable = MSAA;
-	wireframeDesc.AntialiasedLineEnable = FALSE;
+		GFX_ERR_CHECK(m_Device->CreateRasterizerState(&rsDesc, &m_DefaultScissoredRasterizerState));
+	}
+	{
 
-	GFX_ERR_CHECK(m_Device->CreateRasterizerState(&wireframeDesc, &m_WireframeRasterizerState));
+		D3D11_RASTERIZER_DESC wireframeDesc;
+		wireframeDesc.FillMode = D3D11_FILL_WIREFRAME;
+		wireframeDesc.CullMode = D3D11_CULL_NONE;
+		wireframeDesc.FrontCounterClockwise = FALSE;
+		wireframeDesc.DepthBias = 0;
+		wireframeDesc.SlopeScaledDepthBias = 0.0f;
+		wireframeDesc.DepthBiasClamp = 0.0f;
+		wireframeDesc.DepthClipEnable = TRUE;
+		wireframeDesc.ScissorEnable = FALSE;
+		wireframeDesc.MultisampleEnable = MSAA;
+		wireframeDesc.AntialiasedLineEnable = FALSE;
 
+		GFX_ERR_CHECK(m_Device->CreateRasterizerState(&wireframeDesc, &m_WireframeRasterizerState));
+	}
 	m_CurrentRasterizerState = m_DefaultRasterizerState.GetAddressOf();
 
 	m_Context->RSSetState(*m_CurrentRasterizerState);
@@ -422,6 +440,9 @@ void RenderingDevice::setRasterizerState(RasterizerState rs)
 	case RenderingDevice::RasterizerState::Default:
 		m_CurrentRasterizerState = m_DefaultRasterizerState.GetAddressOf();
 		break;
+	case RenderingDevice::RasterizerState::DefaultScissor:
+		m_CurrentRasterizerState = m_DefaultScissoredRasterizerState.GetAddressOf();
+		break;
 	case RenderingDevice::RasterizerState::Wireframe:
 		m_CurrentRasterizerState = m_WireframeRasterizerState.GetAddressOf();
 		break;
@@ -429,6 +450,17 @@ void RenderingDevice::setRasterizerState(RasterizerState rs)
 		ERR("Invalid rasterizer state found to be set");
 		break;
 	}
+}
+
+void RenderingDevice::setScissorRectangle(int x, int y, int width, int height)
+{
+	D3D11_RECT rect;
+	rect.left = x;
+	rect.right = x + width;
+	rect.top = y;
+	rect.bottom = y + height;
+
+	m_Context->RSSetScissorRects(1, &rect);
 }
 
 void RenderingDevice::setDepthStencilState()

@@ -1,35 +1,35 @@
 #pragma once
 
 #include "component.h"
-#include "components/transform_component.h"
 
-/// Our UI base class
+#undef interface
+#include "RmlUi/Core.h"
+#define interface __STRUCT__
+
 class UIComponent : public Component
 {
-protected:
-	bool m_IsVisible;
+	static Component* Create(const JSON::json& componentData);
+	static Component* CreateDefault();
 
-	TransformComponent* m_TransformComponent;
-
-	UIComponent(bool isVisible);
-	UIComponent(UIComponent&) = delete;
-	virtual ~UIComponent() = default;
-	
 	friend class EntityFactory;
+
+	String m_FilePath;
+	Rml::Core::ElementDocument* m_Document;
+
+	UIComponent(const String& path);
+	UIComponent(const UIComponent&) = delete;
+	~UIComponent();
 
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::UIComponent;
 
-	virtual bool setup() override;
+	void setDocument(const String& path);
 
-	bool preRender();
-	virtual void render() = 0;
-	void postRender();
-
-	void setIsVisible(bool enabled) { m_IsVisible = enabled; }
-	bool isVisible() const { return m_IsVisible; }
-
-	virtual ComponentID getComponentID() const override { return s_ID; }
-	virtual String getName() const override { return "UIComponent"; };
+	virtual String getName() const override { return "UIComponent"; }
+	ComponentID getComponentID() const { return s_ID; }
 	virtual JSON::json getJSON() const override;
+
+#ifdef ROOTEX_EDITOR
+	virtual void draw() override;
+#endif // ROOTEX_EDITOR
 };

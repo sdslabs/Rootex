@@ -21,6 +21,7 @@ source_group(TREE "../game/"
 add_custom_command(TARGET Game POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         ${ALUT_DLL_LIBRARY}
+        ${RMLUI_FREETYPE_DLL_LIBRARY}
         $<TARGET_FILE_DIR:Game>)
        
 set_directory_properties(PROPERTIES 
