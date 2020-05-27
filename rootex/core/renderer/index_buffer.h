@@ -9,11 +9,12 @@ class IndexBuffer
 {
 protected:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_IndexBuffer;
-	Vector<unsigned short> m_Buffer;
+	unsigned int m_Count;
 
 public:
 	IndexBuffer(const Vector<unsigned short>& indices);
-	~IndexBuffer();
+	IndexBuffer(const Vector<int>& indices);
+	~IndexBuffer() = default;
 
 	void bind() const;
 	unsigned int getCount() const;

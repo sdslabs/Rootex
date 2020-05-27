@@ -24,6 +24,7 @@
 #include "components/visual/text_ui_component.h"
 #include "components/visual/grid_model_component.h"
 #include "components/visual/model_component.h"
+#include "components/visual/ui_component.h"
 #include "components/trigger_component.h"
 #include "systems/hierarchy_system.h"
 
@@ -73,6 +74,7 @@ EntityFactory::EntityFactory()
 	REGISTER_COMPONENT(ShortMusicComponent);
 	REGISTER_COMPONENT(CPUParticlesComponent);
 	REGISTER_COMPONENT(TriggerComponent);
+	REGISTER_COMPONENT(UIComponent);
 }
 
 EntityFactory::~EntityFactory()
