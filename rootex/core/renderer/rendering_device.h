@@ -92,7 +92,8 @@ public:
 	/// To render the game onto a texture in case of Editor
 	void createRenderTextureTarget(int width, int height);
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createTexture(ImageResourceFile* imageRes);
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createTexture(const uint8_t* imageData, size_t size);
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createTexture(const char* imageFileData, size_t size);
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createTextureFromPixels(const char* imageFileData, unsigned int width, unsigned int height);
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> createSamplerState();
 
 	void bind(ID3D11Buffer* vertexBuffer, const unsigned int* stride, const unsigned int* offset);

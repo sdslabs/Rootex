@@ -2,6 +2,8 @@
 
 #include "systems/ui_system.h"
 
+#include "resource_loader.h"
+
 Component* UIComponent::Create(const JSON::json& componentData)
 {
 	UIComponent* ui = new UIComponent(componentData["filePath"]);
@@ -10,11 +12,12 @@ Component* UIComponent::Create(const JSON::json& componentData)
 
 Component* UIComponent::CreateDefault()
 {
-	return new UIComponent("rootex/assets/default.demo");
+	return new UIComponent("rootex/assets/rml/demo.rml");
 }
 
 UIComponent::UIComponent(const String& path)
     : m_FilePath(path)
+    , m_Document(nullptr)
 {
 	setDocument(path);
 }
@@ -29,7 +32,11 @@ UIComponent::~UIComponent()
 
 void UIComponent::setDocument(const String& path)
 {
-	UISystem::GetSingleton()->unloadDocument(m_Document);
+	if (m_Document)
+	{
+		UISystem::GetSingleton()->unloadDocument(m_Document);
+	}
+
 	m_FilePath = path;
 	m_Document = UISystem::GetSingleton()->loadDocument(m_FilePath);
 }
@@ -48,9 +55,32 @@ JSON::json UIComponent::getJSON() const
 #include "imgui_stdlib.h"
 void UIComponent::draw()
 {
-	if (ImGui::InputText("Document", &m_FilePath))
+	if (ImGui::InputText("Document", &m_FilePath, ImGuiInputTextFlags_EnterReturnsTrue))
 	{
 		setDocument(m_FilePath);
+	}
+
+	if (ImGui::Button("Refresh"))
+	{
+		setDocument(m_FilePath);
+	}
+
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Resource Drop"))
+		{
+			const char* payloadFileName = (const char*)payload->Data;
+			FilePath payloadPath(payloadFileName);
+			if (IsFileSupported(payloadPath.extension().string(), ResourceFile::Type::Model))
+			{
+				setDocument(payloadPath.string());
+			}
+			else
+			{
+				WARN("Unsupported file format for Model");
+			}
+		}
+		ImGui::EndDragDropTarget();
 	}
 }
 #endif // ROOTEX_EDITOR

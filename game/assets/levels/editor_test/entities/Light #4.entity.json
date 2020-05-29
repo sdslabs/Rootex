@@ -46,6 +46,9 @@
                 "y": 1.0,
                 "z": 1.0
             }
+        },
+        "UIComponent": {
+            "filePath": "rootex/assets/rml/demo.rml"
         }
     },
     "Entity": {

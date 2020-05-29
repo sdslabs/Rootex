@@ -69,10 +69,10 @@ void EditorApplication::run()
 			break;
 		}
 
+		UISystem::GetSingleton()->update();
 		Editor::GetSingleton()->render();
 		AudioSystem::GetSingleton()->update();
 		InputManager::GetSingleton()->update();
-		UISystem::GetSingleton()->update();
 		TransformAnimationSystem::GetSingleton()->update(m_FrameTimer.getFrameTime());
 		EventManager::GetSingleton()->dispatchDeferred();
 
