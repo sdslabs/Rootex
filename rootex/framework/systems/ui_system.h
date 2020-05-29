@@ -10,12 +10,13 @@
 class CustomSystemInterface : public Rml::Core::SystemInterface
 {
 	virtual double GetElapsedTime() override;
+	virtual bool LogMessage(Rml::Core::Log::Type type, const String& message) override;
 };
 
 class UISystem : public System
 {
-	CustomSystemInterface m_RmlSystemInterface;
-	CustomRenderInterface m_RmlRenderInterface;
+	Ptr<CustomSystemInterface> m_RmlSystemInterface;
+	Ptr<CustomRenderInterface> m_RmlRenderInterface;
 	Rml::Core::Context* m_Context;
 
 public:

@@ -8,22 +8,27 @@
 
 class CustomRenderInterface : public Rml::Core::RenderInterface
 {
+	static unsigned int s_TextureCount;
+
 	Ref<Shader> m_UIShader;
 	HashMap<unsigned int, Ref<Texture>> m_Textures;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> m_ModelMatrixBuffer;
+	int m_Width;
+	int m_Height;
 
 public:
-	CustomRenderInterface();
+	CustomRenderInterface(int width, int height);
 	CustomRenderInterface(const CustomRenderInterface&) = delete;
 	virtual ~CustomRenderInterface() = default;
 
-	virtual void RenderGeometry(Rml::Core::Vertex* vertices, int num_vertices, int* indices, int num_indices, Rml::Core::TextureHandle texture, const Rml::Core::Vector2f& translation) override;
+	virtual void RenderGeometry(Rml::Core::Vertex* vertices, int numVertices, int* indices, int numIndices, Rml::Core::TextureHandle texture, const Rml::Core::Vector2f& translation) override;
 	
-	virtual Rml::Core::CompiledGeometryHandle CompileGeometry(Rml::Core::Vertex* vertices, int num_vertices, int* indices, int num_indices, Rml::Core::TextureHandle texture) override;
+	virtual Rml::Core::CompiledGeometryHandle CompileGeometry(Rml::Core::Vertex* vertices, int numVertices, int* indices, int numIndices, Rml::Core::TextureHandle texture) override;
 	virtual void RenderCompiledGeometry(Rml::Core::CompiledGeometryHandle geometry, const Rml::Core::Vector2f& translation) override;
 	virtual void ReleaseCompiledGeometry(Rml::Core::CompiledGeometryHandle geometry) override;
 
-	virtual bool LoadTexture(Rml::Core::TextureHandle& texture_handle, Rml::Core::Vector2i& texture_dimensions, const String& source) override;
-	virtual bool GenerateTexture(Rml::Core::TextureHandle& texture_handle, const byte* source, const Rml::Core::Vector2i& source_dimensions) override;
+	virtual bool LoadTexture(Rml::Core::TextureHandle& textureHandle, Rml::Core::Vector2i& textureDimensions, const String& source) override;
+	virtual bool GenerateTexture(Rml::Core::TextureHandle& textureHandle, const byte* source, const Rml::Core::Vector2i& sourceDimensions) override;
 	virtual void ReleaseTexture(Rml::Core::TextureHandle texture);
 
 	virtual void EnableScissorRegion(bool enable) override;

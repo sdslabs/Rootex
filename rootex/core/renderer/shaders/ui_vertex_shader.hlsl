@@ -7,24 +7,25 @@ cbuffer CBuf : register(PER_OBJECT_VS_HLSL)
 
 struct UIVertexInputType
 {
-    float4 position : POSITION;
-    float2 tex : TEXCOORD0;
+    float2 position : POSITION;
     float4 color : COLOR;
+    float2 tex : TEXCOORD0;
 };
 
 struct UIPixelInput
 {
     float4 screenPosition : SV_POSITION;
-    float2 tex : TEXCOORD0;
     float4 color : COLOR;
+    float2 tex : TEXCOORD0;
 };
 
 UIPixelInput main(UIVertexInputType input)
 {
     UIPixelInput output;
-    output.screenPosition = mul(input.position, M);
-    output.tex = input.tex;
+    output.screenPosition = mul(float4(input.position, 0.0f, 1.0f), M);
     output.color = input.color;
+    output.tex.x = input.tex.x;
+    output.tex.y = 1 - input.tex.y;
     
     return output;
 }

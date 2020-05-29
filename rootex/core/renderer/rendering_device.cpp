@@ -197,10 +197,10 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 	renderBlendDesc.SrcBlend = D3D11_BLEND_SRC_ALPHA;
 	renderBlendDesc.BlendOp = D3D11_BLEND_OP_ADD;
 	renderBlendDesc.DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-	renderBlendDesc.SrcBlendAlpha = D3D11_BLEND_INV_DEST_ALPHA;
-	renderBlendDesc.BlendOpAlpha = D3D11_BLEND_OP_MAX;
+	renderBlendDesc.SrcBlendAlpha = D3D11_BLEND_SRC_ALPHA;
+	renderBlendDesc.BlendOpAlpha = D3D11_BLEND_OP_ADD;
 	renderBlendDesc.DestBlendAlpha = D3D11_BLEND_DEST_ALPHA;
-	renderBlendDesc.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	renderBlendDesc.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_RED | D3D11_COLOR_WRITE_ENABLE_GREEN | D3D11_COLOR_WRITE_ENABLE_BLUE;
 	blendDesc.RenderTarget[0] = renderBlendDesc;
 	GFX_ERR_CHECK(m_Device->CreateBlendState(&blendDesc, &m_DefaultBlendState));
 
@@ -344,16 +344,51 @@ Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::createTexture(
 	return textureView;
 }
 
-Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::createTexture(const uint8_t* imageData, size_t size)
+Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::createTexture(const char* imageFileData, size_t size)
 {
 	Microsoft::WRL::ComPtr<ID3D11Resource> textureResource;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> textureView;
-	if (FAILED(DirectX::CreateWICTextureFromMemory(m_Device.Get(), imageData, size, textureResource.GetAddressOf(), textureView.GetAddressOf())))
+
+	if (FAILED(DirectX::CreateWICTextureFromMemory(m_Device.Get(), (const uint8_t*)imageFileData, size, textureResource.GetAddressOf(), textureView.GetAddressOf())))
 	{
-		ERR("Could not create texture from data of size: " + std::to_string(size));
+		ERR("Could not create texture of size: " + std::to_string(size));
 	}
 
 	return textureView;
+}
+
+Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::createTextureFromPixels(const char* imageFileData, unsigned int width, unsigned int height)
+{
+	D3D11_TEXTURE2D_DESC textureDesc = {};
+
+	textureDesc.Width = width;
+	textureDesc.Height = height;
+	textureDesc.MipLevels = 1;
+	textureDesc.ArraySize = 1;
+	textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	textureDesc.SampleDesc.Count = 1;
+	textureDesc.Usage = D3D11_USAGE_DEFAULT;
+	textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	textureDesc.CPUAccessFlags = 0;
+	textureDesc.MiscFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA data = {};
+	data.pSysMem = imageFileData;
+	data.SysMemPitch = width * 4;
+
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> texture2D;
+	m_Device->CreateTexture2D(&textureDesc, &data, &texture2D);
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	srvDesc.Format = textureDesc.Format;
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MostDetailedMip = 0;
+	srvDesc.Texture2D.MipLevels = 1;
+
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> textureSRV;
+	m_Device->CreateShaderResourceView(texture2D.Get(), &srvDesc, &textureSRV);
+
+	return textureSRV;
 }
 
 void RenderingDevice::bind(ID3D11Buffer* vertexBuffer, const unsigned int* stride, const unsigned int* offset)

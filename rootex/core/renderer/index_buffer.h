@@ -10,6 +10,7 @@ class IndexBuffer
 protected:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_IndexBuffer;
 	unsigned int m_Count;
+	DXGI_FORMAT m_Format;
 
 public:
 	IndexBuffer(const Vector<unsigned short>& indices);

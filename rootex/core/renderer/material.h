@@ -14,22 +14,23 @@ protected:
 
 	Material(Shader* shader, const String& typeName);
 
+public:
 	template <typename T>
 	static void setPSConstantBuffer(const T& constantBuffer, Microsoft::WRL::ComPtr<ID3D11Buffer>& pointer, UINT slot);
 	template <typename T>
-	static void setVSConstantBuffer(const T& constantBuffer, Microsoft::WRL::ComPtr<ID3D11Buffer>& pointer, UINT slot);
+	static void SetVSConstantBuffer(const T& constantBuffer, Microsoft::WRL::ComPtr<ID3D11Buffer>& pointer, UINT slot);
 
-	friend class RenderSystem;
-
-public:
 	Material() = delete;
 	virtual ~Material() = default;
+
 	virtual void bind();
+	
 	String getFileName() { return m_FileName; };
 	String getTypeName() { return m_TypeName; };
 	String getFullName() { return m_FileName + " - " + m_TypeName; };
-	void setFileName(const String& fileName) { m_FileName = fileName; };
 	virtual JSON::json getJSON() const;
+	
+	void setFileName(const String& fileName) { m_FileName = fileName; };
 	
 #ifdef ROOTEX_EDITOR
 	virtual void draw(const String& id);
@@ -66,7 +67,7 @@ void Material::setPSConstantBuffer(const T& constantBuffer, Microsoft::WRL::ComP
 }
 
 template <typename T>
-void Material::setVSConstantBuffer(const T& constantBuffer, Microsoft::WRL::ComPtr<ID3D11Buffer>& bufferPointer, UINT slot)
+void Material::SetVSConstantBuffer(const T& constantBuffer, Microsoft::WRL::ComPtr<ID3D11Buffer>& bufferPointer, UINT slot)
 {
 	if (bufferPointer == nullptr)
 	{

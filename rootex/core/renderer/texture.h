@@ -18,7 +18,8 @@ class Texture
 
 public:
 	Texture(ImageResourceFile* imageFile);
-	Texture(uint8_t* imageData, size_t size);
+	Texture(const char* imageData, int width, int height);
+	Texture(const char* imageFileData, size_t size);
 	Texture(Texture&) = delete;
 	Texture& operator=(Texture&) = delete;
 	~Texture() = default;

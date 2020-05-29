@@ -13,6 +13,6 @@ struct VertexData
 struct UIVertexData
 {
 	Vector2 m_Position;
-	uint8_t m_Color;
+	char m_Color[4];
 	Vector2 m_TextureCoord;
 };

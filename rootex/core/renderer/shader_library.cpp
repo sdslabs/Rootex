@@ -36,9 +36,9 @@ void ShaderLibrary::MakeShaders()
 	}
 	{
 		BufferFormat basicBufferFormat;
-		basicBufferFormat.push(VertexBufferElement::Type::POSITION, "POSITION");
-		basicBufferFormat.push(VertexBufferElement::Type::POSITION, "NORMAL");
-		basicBufferFormat.push(VertexBufferElement::Type::TEXCOORD, "TEXCOORD");
+		basicBufferFormat.push(VertexBufferElement::Type::FloatFloatFloat, "POSITION");
+		basicBufferFormat.push(VertexBufferElement::Type::FloatFloatFloat, "NORMAL");
+		basicBufferFormat.push(VertexBufferElement::Type::FloatFloat, "TEXCOORD");
 		MakeShader(ShaderType::Basic, L"rootex/assets/shaders/basic_vertex_shader.cso", L"rootex/assets/shaders/basic_pixel_shader.cso", basicBufferFormat);
 	}
 }
