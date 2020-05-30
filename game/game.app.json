@@ -1,6 +1,6 @@
 {
     "project": "Rootex Game",
-    "startLevel": "game/assets/levels/editor_test",
+    "startLevel": "game/assets/levels/model_test",
     "version": 1.0,
     "window": {
         "fullScreen": false,
