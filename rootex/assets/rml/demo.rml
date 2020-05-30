@@ -2,11 +2,23 @@
 	<head>
 		<title>Demo</title>
 		<style>
+			#transition_test {
+				transition: padding-left background-color transform 1.6s elastic-out;
+				transform: scale(1.0);
+				background-color: #c66;
+			}
+			#transition_test:hover {
+				padding-left: 60px;
+				transform: scale(1.5);
+				background-color: #f8b600;
+			}
 			p
 			{
 				font-family: "Lato";
 				font-size: 100px;
-				color: white;
+				color: purple;
+				font-effect: glow(2px 4px 2px 3px #644);
+				border: 2px #DB6565;
 			}
 			body
 			{
@@ -28,7 +40,7 @@
 		</style>
 	</head>
 	<body>
-		<p> This is a sample </p>
+		<p id="transition_test"> This is a sample </p>
 		<br />
 		<img src="../rootex.png" width=100 height=100 />
 	</body>
