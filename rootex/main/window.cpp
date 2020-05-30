@@ -110,6 +110,14 @@ int Window::getHeight() const
 	return m_Height;
 }
 
+int Window::getTitleBarHeight() const
+{
+	RECT clientRect;
+	GetClientRect(m_WindowHandle, &clientRect);
+	int clientHeight = clientRect.bottom - clientRect.top;
+	return m_Height - clientHeight;
+}
+
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 LRESULT CALLBACK Window::WindowsProc(HWND windowHandler, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -223,6 +231,7 @@ Variant Window::quitWindow(const Event* event)
 	}
 	return true;
 }
+
 Variant Window::quitEditorWindow(const Event* event)
 {
 	DestroyWindow(getWindowHandle());
