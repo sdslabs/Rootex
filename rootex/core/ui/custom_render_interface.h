@@ -13,6 +13,7 @@ class CustomRenderInterface : public Rml::Core::RenderInterface
 	Ref<Shader> m_UIShader;
 	HashMap<unsigned int, Ref<Texture>> m_Textures;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_ModelMatrixBuffer;
+	Matrix m_UITransform;
 	int m_Width;
 	int m_Height;
 
