@@ -1,6 +1,7 @@
 #pragma once
 
 #include "system.h"
+#include "event_manager.h"
 #include "core/ui/custom_render_interface.h"
 
 #undef interface
@@ -19,6 +20,10 @@ class UISystem : public System
 	Ptr<CustomRenderInterface> m_RmlRenderInterface;
 	Rml::Core::Context* m_Context;
 
+	UISystem();
+	Variant enableDebugger(const Event* event);
+	Variant disableDebugger(const Event* event);
+
 public:
 	static UISystem* GetSingleton();
 
@@ -30,4 +35,6 @@ public:
 	void update();
 	void render();
 	void shutdown();
+
+	void setDebugger(bool enabled);
 };
