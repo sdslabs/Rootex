@@ -48,6 +48,7 @@ public:
 
 	int getWidth() const;
 	int getHeight() const;
+	int getTitleBarHeight() const;
 	HWND getWindowHandle();
 	void setWindowTitle(String title);
 };

@@ -4,7 +4,7 @@
 #include "renderer/rendering_device.h"
 #include "renderer/shaders/register_locations_vertex_shader.h"
 
-unsigned int CustomRenderInterface::s_TextureCount = 0;
+unsigned int CustomRenderInterface::s_TextureCount = 1; // 0 is reserved for white texture
 
 CustomRenderInterface::CustomRenderInterface(int width, int height)
     : m_Width(width)
@@ -43,7 +43,6 @@ void CustomRenderInterface::RenderGeometry(Rml::Core::Vertex* vertices, int numV
 		PER_OBJECT_VS_CPP);
 
 	RenderingDevice::GetSingleton()->setInPixelShader(0, 1, m_Textures[texture]->getTextureResourceView());
-
 	RenderingDevice::GetSingleton()->drawIndexed(ib.getCount());
 }
 

@@ -87,7 +87,7 @@ void UISystem::initialize(int width, int height)
 	loadFont("rootex/assets/fonts/Lato-Regular.ttf");
 	m_Context = Rml::Core::CreateContext("default", Rml::Core::Vector2i(width, height));
 	Rml::Debugger::Initialise(m_Context);
-	Rml::Debugger::SetVisible(false);
+	Rml::Debugger::SetVisible(true);
 }
 
 void UISystem::update()
