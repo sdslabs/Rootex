@@ -89,9 +89,9 @@ void GameApplication::run()
 
 		AudioSystem::GetSingleton()->update();
 		InputManager::GetSingleton()->update();
-		PhysicsSystem::GetSingleton()->update(m_FrameTimer.getFrameTime());
-		ScriptSystem::GetSingleton()->update(m_FrameTimer.getFrameTime());
-		TransformAnimationSystem::GetSingleton()->update(m_FrameTimer.getFrameTime());
+		PhysicsSystem::GetSingleton()->update(m_FrameTimer.getLastFrameTime());
+		ScriptSystem::GetSingleton()->update(m_FrameTimer.getLastFrameTime());
+		TransformAnimationSystem::GetSingleton()->update(m_FrameTimer.getLastFrameTime());
 		UISystem::GetSingleton()->update();
 		
 		RenderSystem::GetSingleton()->render();
