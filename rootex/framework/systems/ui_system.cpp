@@ -98,8 +98,8 @@ void UISystem::update()
 void UISystem::render()
 {
 	RenderingDevice::GetSingleton()->setAlphaBlendState();
+	RenderingDevice::GetSingleton()->setTemporaryUIRasterizerState();
 	m_Context->Render();
-	RenderingDevice::GetSingleton()->setDefaultBlendState();
 }
 
 void UISystem::shutdown()

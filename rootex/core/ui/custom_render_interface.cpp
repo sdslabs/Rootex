@@ -24,6 +24,10 @@ void CustomRenderInterface::RenderGeometry(Rml::Core::Vertex* vertices, int numV
 {
 	Vector<UIVertexData> vertexData;
 	vertexData.assign((UIVertexData*)vertices, (UIVertexData*)vertices + numVertices);
+	for (auto& vertex : vertexData)
+	{
+		vertex.m_Position.y *= -1;
+	}
 	VertexBuffer vb(vertexData);
 	Vector<int> indicesBuffer;
 	indicesBuffer.assign(indices, indices + numIndices);
@@ -34,7 +38,7 @@ void CustomRenderInterface::RenderGeometry(Rml::Core::Vertex* vertices, int numV
 	m_UIShader->bind();
 
 	Material::SetVSConstantBuffer(
-	    VSSolidConstantBuffer(Matrix::CreateTranslation(translation.x - m_Width / 2.0, translation.y, 0.0f) * Matrix::CreateOrthographic(m_Width, m_Height, 0.0f, 1.0f)), 
+	    VSSolidConstantBuffer(m_UITransform * Matrix::CreateTranslation(translation.x - m_Width / 2.0f, m_Height / 2.0f - translation.y, 0.0f) * Matrix::CreateOrthographic(m_Width, m_Height, 0.0f, 1.0f)), 
 		m_ModelMatrixBuffer,
 		PER_OBJECT_VS_CPP);
 
@@ -88,11 +92,11 @@ void CustomRenderInterface::EnableScissorRegion(bool enable)
 {
 	if (enable)
 	{
-		RenderingDevice::GetSingleton()->setRasterizerState(RenderingDevice::RasterizerState::DefaultScissor);
+		RenderingDevice::GetSingleton()->setTemporaryUIScissoredRasterizerState();
 	}
 	else
 	{
-		RenderingDevice::GetSingleton()->setRasterizerState(RenderingDevice::RasterizerState::Default);	
+		RenderingDevice::GetSingleton()->setTemporaryUIRasterizerState();
 	}
 }
 
@@ -110,17 +114,5 @@ void CustomRenderInterface::SetTransform(const Rml::Core::Matrix4f* transform)
 		transform = &identity;
 	}
 
-	D3D11_BUFFER_DESC cbd = { 0 };
-	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	cbd.Usage = D3D11_USAGE_DYNAMIC;
-	cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	cbd.MiscFlags = 0u;
-	cbd.ByteWidth = sizeof(Rml::Core::Matrix4f);
-	cbd.StructureByteStride = 0u;
-	D3D11_SUBRESOURCE_DATA csd = { 0 };
-	csd.pSysMem = &transform;
-
-	RenderingDevice::GetSingleton()->setVSConstantBuffer(
-	    RenderingDevice::GetSingleton()->createVSConstantBuffer(&cbd, &csd).Get(),
-	    PER_OBJECT_VS_CPP);
+	m_UITransform = Matrix(transform->data());
 }

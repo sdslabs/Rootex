@@ -140,7 +140,7 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 	{
 		D3D11_RASTERIZER_DESC rsDesc;
 		rsDesc.FillMode = D3D11_FILL_SOLID;
-		rsDesc.CullMode = D3D11_CULL_NONE;
+		rsDesc.CullMode = D3D11_CULL_FRONT;
 		rsDesc.FrontCounterClockwise = FALSE;
 		rsDesc.DepthBias = 0;
 		rsDesc.SlopeScaledDepthBias = 0.0f;
@@ -161,14 +161,28 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 		rsDesc.SlopeScaledDepthBias = 0.0f;
 		rsDesc.DepthBiasClamp = 0.0f;
 		rsDesc.DepthClipEnable = TRUE;
+		rsDesc.ScissorEnable = FALSE;
+		rsDesc.MultisampleEnable = MSAA;
+		rsDesc.AntialiasedLineEnable = FALSE;
+
+		GFX_ERR_CHECK(m_Device->CreateRasterizerState(&rsDesc, &m_UIRasterizerState));
+	}
+	{
+		D3D11_RASTERIZER_DESC rsDesc;
+		rsDesc.FillMode = D3D11_FILL_SOLID;
+		rsDesc.CullMode = D3D11_CULL_NONE;
+		rsDesc.FrontCounterClockwise = FALSE;
+		rsDesc.DepthBias = 0;
+		rsDesc.SlopeScaledDepthBias = 0.0f;
+		rsDesc.DepthBiasClamp = 0.0f;
+		rsDesc.DepthClipEnable = TRUE;
 		rsDesc.ScissorEnable = TRUE;
 		rsDesc.MultisampleEnable = MSAA;
 		rsDesc.AntialiasedLineEnable = FALSE;
 
-		GFX_ERR_CHECK(m_Device->CreateRasterizerState(&rsDesc, &m_DefaultScissoredRasterizerState));
+		GFX_ERR_CHECK(m_Device->CreateRasterizerState(&rsDesc, &m_UIScissoredRasterizerState));
 	}
 	{
-
 		D3D11_RASTERIZER_DESC wireframeDesc;
 		wireframeDesc.FillMode = D3D11_FILL_WIREFRAME;
 		wireframeDesc.CullMode = D3D11_CULL_NONE;
@@ -201,7 +215,7 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 		renderBlendDesc.SrcBlendAlpha = D3D11_BLEND_ONE;
 		renderBlendDesc.DestBlendAlpha = D3D11_BLEND_ZERO;
 		renderBlendDesc.BlendOpAlpha = D3D11_BLEND_OP_ADD;
-		renderBlendDesc.RenderTargetWriteMask = 0x0f;
+		renderBlendDesc.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 		blendDesc.RenderTarget[0] = renderBlendDesc;
 		GFX_ERR_CHECK(m_Device->CreateBlendState(&blendDesc, &m_DefaultBlendState));
 	}
@@ -217,7 +231,7 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 		renderBlendDesc.SrcBlendAlpha = D3D11_BLEND_ONE;
 		renderBlendDesc.DestBlendAlpha = D3D11_BLEND_ZERO;
 		renderBlendDesc.BlendOpAlpha = D3D11_BLEND_OP_ADD;
-		renderBlendDesc.RenderTargetWriteMask = 0x0f;
+		renderBlendDesc.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 		blendDesc.RenderTarget[0] = renderBlendDesc;
 		GFX_ERR_CHECK(m_Device->CreateBlendState(&blendDesc, &m_AlphaBlendState));
 	}
@@ -392,25 +406,6 @@ struct Texel
 
 Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::createTextureFromPixels(const char* imageRawData, unsigned int width, unsigned int height)
 {
-	Vector<Texel> flippedImageData;
-	flippedImageData.resize(height);
-
-	Texel* firstTexel = (Texel*)imageRawData;
-	Texel* lastTexel = (Texel*)(imageRawData + width * height * 4);
-
-	flippedImageData.assign(firstTexel, lastTexel);
-
-	for (unsigned int j = 0; j < width; j++)
-	{
-		for (unsigned int i = 0; i < height / 2; i++)
-		{
-			//flippedImageData[height - 1 - i][j] = flippedImageData[i][j];
-			Texel temp = flippedImageData[(height - 1 - i) * width + j];
-			flippedImageData[(height - 1 - i) * width + j] = flippedImageData[i * width + j];
-			flippedImageData[i * width + j] = temp;
-		}
-	}
-
 	D3D11_TEXTURE2D_DESC textureDesc = {};
 
 	textureDesc.Width = width;
@@ -425,7 +420,7 @@ Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::createTextureF
 	textureDesc.MiscFlags = 0;
 
 	D3D11_SUBRESOURCE_DATA data = {};
-	data.pSysMem = flippedImageData.data();
+	data.pSysMem = imageRawData;
 	data.SysMemPitch = width * 4;
 
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> texture2D;
@@ -536,8 +531,11 @@ void RenderingDevice::setRasterizerState(RasterizerState rs)
 	case RenderingDevice::RasterizerState::Default:
 		m_CurrentRasterizerState = m_DefaultRasterizerState.GetAddressOf();
 		break;
-	case RenderingDevice::RasterizerState::DefaultScissor:
-		m_CurrentRasterizerState = m_DefaultScissoredRasterizerState.GetAddressOf();
+	case RenderingDevice::RasterizerState::UI:
+		m_CurrentRasterizerState = m_UIRasterizerState.GetAddressOf();
+		break;
+	case RenderingDevice::RasterizerState::UIScissor:
+		m_CurrentRasterizerState = m_UIScissoredRasterizerState.GetAddressOf();
 		break;
 	case RenderingDevice::RasterizerState::Wireframe:
 		m_CurrentRasterizerState = m_WireframeRasterizerState.GetAddressOf();
@@ -546,6 +544,16 @@ void RenderingDevice::setRasterizerState(RasterizerState rs)
 		ERR("Invalid rasterizer state found to be set");
 		break;
 	}
+}
+
+void RenderingDevice::setTemporaryUIRasterizerState()
+{
+	m_Context->RSSetState(m_UIRasterizerState.Get());
+}
+
+void RenderingDevice::setTemporaryUIScissoredRasterizerState()
+{
+	m_Context->RSSetState(m_UIScissoredRasterizerState.Get());
 }
 
 void RenderingDevice::setScissorRectangle(int x, int y, int width, int height)

@@ -38,7 +38,8 @@ class RenderingDevice
 	Ref<DirectX::SpriteBatch> m_FontBatch;
 
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_DefaultRasterizerState;
-	Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_DefaultScissoredRasterizerState;
+	Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_UIRasterizerState;
+	Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_UIScissoredRasterizerState;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_WireframeRasterizerState;
 	ID3D11RasterizerState** m_CurrentRasterizerState;
 
@@ -68,7 +69,8 @@ public:
 	enum class RasterizerState
 	{
 		Default,
-		DefaultScissor,
+		UI,
+		UIScissor,
 		Wireframe
 	};
 
@@ -121,6 +123,8 @@ public:
 	
 	void setCurrentRasterizerState();
 	void setRasterizerState(RasterizerState rs);
+	void setTemporaryUIRasterizerState();
+	void setTemporaryUIScissoredRasterizerState();
 	
 	void setDepthStencilState();
 	
