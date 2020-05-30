@@ -1,6 +1,7 @@
 #include "ui_system.h"
 
 #include "app/application.h"
+#include "core/ui/input_interface.h"
 
 #undef interface
 #include "RmlUi/Core.h"
@@ -35,6 +36,24 @@ bool CustomSystemInterface::LogMessage(Rml::Core::Log::Type type, const String& 
 		break;
 	}
 
+	return true;
+}
+
+UISystem::UISystem()
+{
+	BIND_EVENT_MEMBER_FUNCTION("UISystemEnableDebugger", UISystem::enableDebugger);
+	BIND_EVENT_MEMBER_FUNCTION("UISystemDisableDebugger", UISystem::disableDebugger);
+}
+
+Variant UISystem::enableDebugger(const Event* event)
+{
+	setDebugger(true);
+	return true;
+}
+
+Variant UISystem::disableDebugger(const Event* event)
+{
+	setDebugger(false);
 	return true;
 }
 
@@ -87,7 +106,8 @@ void UISystem::initialize(int width, int height)
 	loadFont("rootex/assets/fonts/Lato-Regular.ttf");
 	m_Context = Rml::Core::CreateContext("default", Rml::Core::Vector2i(width, height));
 	Rml::Debugger::Initialise(m_Context);
-	Rml::Debugger::SetVisible(true);
+	InputInterface::Initialise();
+	InputInterface::SetContext(m_Context);
 }
 
 void UISystem::update()
@@ -104,6 +124,12 @@ void UISystem::render()
 
 void UISystem::shutdown()
 {
+	InputInterface::Shutdown();
 	Rml::Core::RemoveContext(m_Context->GetName());
 	Rml::Core::Shutdown();
+}
+
+void UISystem::setDebugger(bool enabled)
+{
+	Rml::Debugger::SetVisible(enabled);
 }

@@ -127,6 +127,22 @@ void ToolbarDock::draw()
 
 				ImGui::Columns(1);
 			}
+
+			if (ImGui::TreeNodeEx("UISystem", ImGuiTreeNodeFlags_CollapsingHeader))
+			{
+				static bool debuggerEnabled = false;
+				if (ImGui::Checkbox("Debugger", &debuggerEnabled))
+				{
+					if (debuggerEnabled)
+					{
+						EventManager::GetSingleton()->call("EditorToolbar", "UISystemEnableDebugger", 0);
+					}
+					else
+					{
+						EventManager::GetSingleton()->call("EditorToolbar", "UISystemDisableDebugger", 0);
+					}
+				}
+			}
 		}
 		ImGui::End();
 	}

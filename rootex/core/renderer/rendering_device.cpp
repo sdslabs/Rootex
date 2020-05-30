@@ -206,7 +206,7 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 	{
 		D3D11_BLEND_DESC blendDesc;
 		ZeroMemory(&blendDesc, sizeof(D3D11_BLEND_DESC));
-		blendDesc.AlphaToCoverageEnable = MSAA;
+		blendDesc.AlphaToCoverageEnable = true;
 		blendDesc.IndependentBlendEnable = false;
 		D3D11_RENDER_TARGET_BLEND_DESC renderBlendDesc;
 		blendDesc.RenderTarget[0].BlendEnable = FALSE;
@@ -222,7 +222,7 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 	{
 		D3D11_BLEND_DESC blendDesc;
 		ZeroMemory(&blendDesc, sizeof(D3D11_BLEND_DESC));
-		blendDesc.AlphaToCoverageEnable = MSAA;
+		blendDesc.AlphaToCoverageEnable = true;
 		blendDesc.IndependentBlendEnable = false;
 		D3D11_RENDER_TARGET_BLEND_DESC renderBlendDesc;
 		blendDesc.RenderTarget[0].BlendEnable = TRUE;

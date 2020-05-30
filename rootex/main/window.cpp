@@ -1,6 +1,7 @@
 #include "main/window.h"
 
 #include "core/event_manager.h"
+#include "core/ui/input_interface.h"
 #include "input/input_manager.h"
 #include "renderer/rendering_device.h"
 
@@ -138,6 +139,7 @@ LRESULT CALLBACK Window::WindowsProc(HWND windowHandler, UINT msg, WPARAM wParam
 		return 0;
 	}
 
+	InputInterface::ProcessWindowsEvent(msg, wParam, lParam);
 	InputManager::GetSingleton()->forwardMessage({ windowHandler, msg, wParam, lParam });
 
 	return DefWindowProc(windowHandler, msg, wParam, lParam);

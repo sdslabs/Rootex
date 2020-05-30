@@ -56,7 +56,7 @@ Application::Application(const String& settingsFile)
 	ShaderLibrary::MakeShaders();
 	MaterialLibrary::LoadMaterials();
 	PhysicsSystem::GetSingleton()->initialize();
-	UISystem::GetSingleton()->initialize(windowJSON["width"], windowJSON["height"] - m_Window->getTitleBarHeight());
+	UISystem::GetSingleton()->initialize(windowJSON["width"], windowJSON["height"]);
 
 	auto&& postInitialize = m_ApplicationSettings->find("postInitialize");
 	if (postInitialize != m_ApplicationSettings->end())
