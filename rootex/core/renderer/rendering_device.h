@@ -43,6 +43,7 @@ class RenderingDevice
 	ID3D11RasterizerState** m_CurrentRasterizerState;
 
 	Microsoft::WRL::ComPtr<ID3D11BlendState> m_DefaultBlendState;
+	Microsoft::WRL::ComPtr<ID3D11BlendState> m_AlphaBlendState;
 
 	Microsoft::WRL::ComPtr<IDXGISwapChain> m_SwapChain;
 	bool m_MSAA;
@@ -93,7 +94,7 @@ public:
 	void createRenderTextureTarget(int width, int height);
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createTexture(ImageResourceFile* imageRes);
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createTexture(const char* imageFileData, size_t size);
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createTextureFromPixels(const char* imageFileData, unsigned int width, unsigned int height);
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createTextureFromPixels(const char* imageRawData, unsigned int width, unsigned int height);
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> createSamplerState();
 
 	void bind(ID3D11Buffer* vertexBuffer, const unsigned int* stride, const unsigned int* offset);
@@ -116,14 +117,19 @@ public:
 	void unbindShaderResources();
 
 	void setDefaultBlendState();
+	void setAlphaBlendState();
+	
 	void setCurrentRasterizerState();
 	void setRasterizerState(RasterizerState rs);
-	void setScissorRectangle(int x, int y, int width, int height);
+	
 	void setDepthStencilState();
+	
+	void setScissorRectangle(int x, int y, int width, int height);
 
 	void setTextureRenderTarget();
 	/// Faking Editor rendering
 	void setBackBufferRenderTarget();
+
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> getRenderTextureShaderResourceView();
 	Ref<DirectX::SpriteBatch> getUIBatch();
