@@ -4,6 +4,7 @@
 
 #undef interface
 #include "RmlUi/Core.h"
+#include "RmlUi/Debugger.h"
 #include "RmlUi/Controls/Controls.h"
 #define interface __STRUCT__
 
@@ -85,6 +86,8 @@ void UISystem::initialize(int width, int height)
 	Rml::Controls::Initialise();
 	loadFont("rootex/assets/fonts/Lato-Regular.ttf");
 	m_Context = Rml::Core::CreateContext("default", Rml::Core::Vector2i(width, height));
+	Rml::Debugger::Initialise(m_Context);
+	Rml::Debugger::SetVisible(false);
 }
 
 void UISystem::update()
@@ -94,7 +97,9 @@ void UISystem::update()
 
 void UISystem::render()
 {
+	RenderingDevice::GetSingleton()->setAlphaBlendState();
 	m_Context->Render();
+	RenderingDevice::GetSingleton()->setDefaultBlendState();
 }
 
 void UISystem::shutdown()

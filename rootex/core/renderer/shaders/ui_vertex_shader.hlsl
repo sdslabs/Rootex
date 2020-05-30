@@ -25,7 +25,7 @@ UIPixelInput main(UIVertexInputType input)
     output.screenPosition = mul(float4(input.position, 0.0f, 1.0f), M);
     output.color = input.color;
     output.tex.x = input.tex.x;
-    output.tex.y = 1 - input.tex.y;
+    output.tex.y = input.tex.y;
     
     return output;
 }

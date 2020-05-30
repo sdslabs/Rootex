@@ -140,7 +140,7 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 	{
 		D3D11_RASTERIZER_DESC rsDesc;
 		rsDesc.FillMode = D3D11_FILL_SOLID;
-		rsDesc.CullMode = D3D11_CULL_FRONT;
+		rsDesc.CullMode = D3D11_CULL_NONE;
 		rsDesc.FrontCounterClockwise = FALSE;
 		rsDesc.DepthBias = 0;
 		rsDesc.SlopeScaledDepthBias = 0.0f;
@@ -155,7 +155,7 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 	{
 		D3D11_RASTERIZER_DESC rsDesc;
 		rsDesc.FillMode = D3D11_FILL_SOLID;
-		rsDesc.CullMode = D3D11_CULL_FRONT;
+		rsDesc.CullMode = D3D11_CULL_NONE;
 		rsDesc.FrontCounterClockwise = FALSE;
 		rsDesc.DepthBias = 0;
 		rsDesc.SlopeScaledDepthBias = 0.0f;
@@ -189,21 +189,38 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 
 	setTextureRenderTarget();
 
-	D3D11_BLEND_DESC blendDesc;
-	blendDesc.AlphaToCoverageEnable = MSAA;
-	blendDesc.IndependentBlendEnable = false;
-	D3D11_RENDER_TARGET_BLEND_DESC renderBlendDesc;
-	renderBlendDesc.BlendEnable = true;
-	renderBlendDesc.SrcBlend = D3D11_BLEND_SRC_ALPHA;
-	renderBlendDesc.BlendOp = D3D11_BLEND_OP_ADD;
-	renderBlendDesc.DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-	renderBlendDesc.SrcBlendAlpha = D3D11_BLEND_SRC_ALPHA;
-	renderBlendDesc.BlendOpAlpha = D3D11_BLEND_OP_ADD;
-	renderBlendDesc.DestBlendAlpha = D3D11_BLEND_DEST_ALPHA;
-	renderBlendDesc.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_RED | D3D11_COLOR_WRITE_ENABLE_GREEN | D3D11_COLOR_WRITE_ENABLE_BLUE;
-	blendDesc.RenderTarget[0] = renderBlendDesc;
-	GFX_ERR_CHECK(m_Device->CreateBlendState(&blendDesc, &m_DefaultBlendState));
-
+	{
+		D3D11_BLEND_DESC blendDesc;
+		blendDesc.AlphaToCoverageEnable = MSAA;
+		blendDesc.IndependentBlendEnable = false;
+		D3D11_RENDER_TARGET_BLEND_DESC renderBlendDesc;
+		renderBlendDesc.BlendEnable = FALSE;
+		renderBlendDesc.SrcBlend = D3D11_BLEND_ONE;
+		renderBlendDesc.DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+		renderBlendDesc.BlendOp = D3D11_BLEND_OP_ADD;
+		renderBlendDesc.SrcBlendAlpha = D3D11_BLEND_ONE;
+		renderBlendDesc.DestBlendAlpha = D3D11_BLEND_ZERO;
+		renderBlendDesc.BlendOpAlpha = D3D11_BLEND_OP_ADD;
+		renderBlendDesc.RenderTargetWriteMask = 0x0f;
+		blendDesc.RenderTarget[0] = renderBlendDesc;
+		GFX_ERR_CHECK(m_Device->CreateBlendState(&blendDesc, &m_DefaultBlendState));
+	}
+	{
+		D3D11_BLEND_DESC blendDesc;
+		blendDesc.AlphaToCoverageEnable = MSAA;
+		blendDesc.IndependentBlendEnable = false;
+		D3D11_RENDER_TARGET_BLEND_DESC renderBlendDesc;
+		renderBlendDesc.BlendEnable = TRUE;
+		renderBlendDesc.SrcBlend = D3D11_BLEND_ONE;
+		renderBlendDesc.DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+		renderBlendDesc.BlendOp = D3D11_BLEND_OP_ADD;
+		renderBlendDesc.SrcBlendAlpha = D3D11_BLEND_ONE;
+		renderBlendDesc.DestBlendAlpha = D3D11_BLEND_ZERO;
+		renderBlendDesc.BlendOpAlpha = D3D11_BLEND_OP_ADD;
+		renderBlendDesc.RenderTargetWriteMask = 0x0f;
+		blendDesc.RenderTarget[0] = renderBlendDesc;
+		GFX_ERR_CHECK(m_Device->CreateBlendState(&blendDesc, &m_AlphaBlendState));
+	}
 	m_FontBatch.reset(new DirectX::SpriteBatch(m_Context.Get()));
 }
 
@@ -357,8 +374,43 @@ Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::createTexture(
 	return textureView;
 }
 
-Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::createTextureFromPixels(const char* imageFileData, unsigned int width, unsigned int height)
+struct Texel
 {
+	char m_Red;
+	char m_Green;
+	char m_Blue;
+	char m_Alpha;
+
+	Texel()
+	    : m_Red(0)
+	    , m_Green(0)
+	    , m_Blue(0)
+	    , m_Alpha(0)
+	{
+	}
+};
+
+Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::createTextureFromPixels(const char* imageRawData, unsigned int width, unsigned int height)
+{
+	Vector<Texel> flippedImageData;
+	flippedImageData.resize(height);
+
+	Texel* firstTexel = (Texel*)imageRawData;
+	Texel* lastTexel = (Texel*)(imageRawData + width * height * 4);
+
+	flippedImageData.assign(firstTexel, lastTexel);
+
+	for (unsigned int j = 0; j < width; j++)
+	{
+		for (unsigned int i = 0; i < height / 2; i++)
+		{
+			//flippedImageData[height - 1 - i][j] = flippedImageData[i][j];
+			Texel temp = flippedImageData[(height - 1 - i) * width + j];
+			flippedImageData[(height - 1 - i) * width + j] = flippedImageData[i * width + j];
+			flippedImageData[i * width + j] = temp;
+		}
+	}
+
 	D3D11_TEXTURE2D_DESC textureDesc = {};
 
 	textureDesc.Width = width;
@@ -373,11 +425,14 @@ Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::createTextureF
 	textureDesc.MiscFlags = 0;
 
 	D3D11_SUBRESOURCE_DATA data = {};
-	data.pSysMem = imageFileData;
+	data.pSysMem = flippedImageData.data();
 	data.SysMemPitch = width * 4;
 
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> texture2D;
-	m_Device->CreateTexture2D(&textureDesc, &data, &texture2D);
+	if (FAILED(m_Device->CreateTexture2D(&textureDesc, &data, &texture2D)))
+	{
+		ERR("Could not create texture 2D");
+	}
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 	srvDesc.Format = textureDesc.Format;
@@ -455,6 +510,12 @@ void RenderingDevice::unbindShaderResources()
 {
 	m_Context->VSSetShaderResources(0, 1, nullptr);
 	m_Context->PSSetShaderResources(0, 1, nullptr);
+}
+
+void RenderingDevice::setAlphaBlendState()
+{
+	static float blendFactors[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	m_Context->OMSetBlendState(m_AlphaBlendState.Get(), blendFactors, 0xffffffff);
 }
 
 void RenderingDevice::setDefaultBlendState()

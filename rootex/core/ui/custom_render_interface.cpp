@@ -16,6 +16,8 @@ CustomRenderInterface::CustomRenderInterface(int width, int height)
 	format.push(VertexBufferElement::Type::FloatFloat, "TEXCOORD");
 
 	m_UIShader.reset(new BasicShader(L"rootex/assets/shaders/ui_vertex_shader.cso", L"rootex/assets/shaders/ui_pixel_shader.cso", format));
+
+	m_Textures[0].reset(new Texture(ResourceLoader::CreateImageResourceFile("rootex/assets/white.png")));
 }
 
 void CustomRenderInterface::RenderGeometry(Rml::Core::Vertex* vertices, int numVertices, int* indices, int numIndices, Rml::Core::TextureHandle texture, const Rml::Core::Vector2f& translation) 
@@ -32,7 +34,7 @@ void CustomRenderInterface::RenderGeometry(Rml::Core::Vertex* vertices, int numV
 	m_UIShader->bind();
 
 	Material::SetVSConstantBuffer(
-	    VSSolidConstantBuffer(Matrix::CreateTranslation(translation.x - m_Width / 2.0f, translation.y - m_Height / 2.0f, 0.0f) * Matrix::CreateOrthographic(m_Width, m_Height, 0.0f, 1.0f)), 
+	    VSSolidConstantBuffer(Matrix::CreateTranslation(translation.x - m_Width / 2.0, translation.y, 0.0f) * Matrix::CreateOrthographic(m_Width, m_Height, 0.0f, 1.0f)), 
 		m_ModelMatrixBuffer,
 		PER_OBJECT_VS_CPP);
 
