@@ -16,5 +16,5 @@ float4 main(UIPixelInput input) : SV_TARGET
     
     float4 color = ShaderTexture.Sample(SampleType, input.tex) * input.color;
 	
-	return color;
+    return color;
 }
