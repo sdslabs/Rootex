@@ -72,22 +72,6 @@ void BasicMaterial::bind()
 	setPSConstantBuffer(PSDiffuseConstantBufferMaterial({ m_Color, m_IsLit, m_SpecularIntensity, m_SpecularPower }));
 }
 
-void BasicMaterial::bindMaterial()
-{
-	Material::bind();
-	setPSConstantBuffer(PSDiffuseConstantBufferMaterial({ m_Color, m_IsLit, m_SpecularIntensity, m_SpecularPower }));
-}
-
-void BasicMaterial::bindTexture()
-{
-	m_BasicShader->set(m_DiffuseTexture.get());
-}
-
-void BasicMaterial::bindModel(const Matrix& matrix)
-{
-	setVSConstantBuffer(VSDiffuseConstantBuffer(matrix));
-}
-
 JSON::json BasicMaterial::getJSON() const
 {
 	JSON::json& j = Material::getJSON();

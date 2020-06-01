@@ -12,10 +12,10 @@ class BasicMaterial : public Material
 
 	ImageResourceFile* m_ImageFile;
 
-	bool m_IsLit = true;
-	Color m_Color = ColorPresets::White;
-	float m_SpecularIntensity = 2.0f;
-	float m_SpecularPower = 30.0f;
+	bool m_IsLit;
+	Color m_Color;
+	float m_SpecularIntensity;
+	float m_SpecularPower;
 
 	void setPSConstantBuffer(const PSDiffuseConstantBufferMaterial& constantBuffer);
 	void setVSConstantBuffer(const VSDiffuseConstantBuffer& constantBuffer);
@@ -50,9 +50,6 @@ public:
 	static Material* Create(const JSON::json& materialData);
 
 	void bind() override;
-	void bindMaterial();
-	void bindTexture();
-	void bindModel(const Matrix& matrix);
 	JSON::json getJSON() const override;
 
 #ifdef ROOTEX_EDITOR
