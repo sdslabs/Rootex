@@ -14,8 +14,26 @@ class CustomSystemInterface : public Rml::Core::SystemInterface
 	virtual bool LogMessage(Rml::Core::Log::Type type, const String& message) override;
 };
 
+class EventListener : public Rml::Core::EventListener
+{
+	Event::Type m_EventType;
+
+public:
+	EventListener(const Event::Type& eventType);
+
+	virtual void ProcessEvent(Rml::Core::Event& event) override;
+};
+
+class EventListenerInstancer : public Rml::Core::EventListenerInstancer
+{
+public:
+	virtual Rml::Core::EventListener* InstanceEventListener(const String& value, Rml::Core::Element* element) override;
+};
+
 class UISystem : public System
 {
+	static inline EventListenerInstancer s_EventListenerInstancer;
+
 	Ptr<CustomSystemInterface> m_RmlSystemInterface;
 	Ptr<CustomRenderInterface> m_RmlRenderInterface;
 	Rml::Core::Context* m_Context;
