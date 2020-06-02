@@ -52,6 +52,7 @@ void OutputDock::draw()
 		if (ImGui::InputText("##Enter Command", &command, ImGuiInputTextFlags_AlwaysInsertMode | ImGuiInputTextFlags_EnterReturnsTrue))
 		{
 			Vector<String> tokens;
+			tokens.resize(2);
 			std::istringstream stream(command);
 			String token;
 			while (std::getline(stream, token, ' '))

@@ -131,8 +131,7 @@ void ResourceLoader::LoadAssimp(ModelResourceFile* file)
 						aiTexture* texture = scene->mTextures[textureID];
 						size_t size = scene->mTextures[textureID]->mWidth;
 						PANIC(texture->mHeight == 0, "Compressed texture found but expected embedded texture");
-
-						file->m_Textures[textureID].reset(new Texture(reinterpret_cast<uint8_t*>(texture->pcData), size));
+						file->m_Textures[textureID].reset(new Texture(reinterpret_cast<const char*>(texture->pcData), size));
 					}
 
 					extractedMaterial->setTextureInternal(file->m_Textures[textureID]);

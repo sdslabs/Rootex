@@ -10,8 +10,9 @@ struct VertexBufferElement
 	/// Abstracts the DXGI input format types
 	enum Type
 	{
-		POSITION = DXGI_FORMAT_R32G32B32_FLOAT,
-		TEXCOORD = DXGI_FORMAT_R32G32_FLOAT
+		FloatFloatFloat = DXGI_FORMAT_R32G32B32_FLOAT,
+		FloatFloat = DXGI_FORMAT_R32G32_FLOAT,
+		ByteByteByteByte = DXGI_FORMAT_R8G8B8A8_UNORM
 	};
 
 	/// What type of objects are present in buffer
@@ -24,10 +25,12 @@ struct VertexBufferElement
 	{
 		switch (type)
 		{
-		case POSITION:
-			return sizeof(float) + sizeof(float) + sizeof(float);
-		case TEXCOORD:
-			return sizeof(float) + sizeof(float);
+		case FloatFloatFloat:
+			return sizeof(float) * 3;
+		case FloatFloat:
+			return sizeof(float) * 2;
+		case ByteByteByteByte:
+			return sizeof(char) * 4;
 		default:
 			ERR("Unknown size found");
 			return 0;

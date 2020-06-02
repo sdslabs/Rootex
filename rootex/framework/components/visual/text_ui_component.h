@@ -1,10 +1,10 @@
 #pragma once
 
-#include "components/visual/ui_component.h"
+#include "components/visual/render_ui_component.h"
 #include "resource_loader.h"
 
 /// Component to render 2D UI Text
-class TextUIComponent : public UIComponent
+class TextUIComponent : public RenderUIComponent
 {
 public:
 	/// DirectXTK flipping modes for sprites

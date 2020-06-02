@@ -127,6 +127,18 @@ void ToolbarDock::draw()
 
 				ImGui::Columns(1);
 			}
+
+			if (ImGui::TreeNodeEx("UISystem", ImGuiTreeNodeFlags_CollapsingHeader))
+			{
+				ImGui::Columns(2);
+
+				ImGui::Text("Debugger");
+				ImGui::NextColumn();
+				ImGui::Text("Press F8");
+				ImGui::NextColumn();
+
+				ImGui::Columns(1);
+			}
 		}
 		ImGui::End();
 	}

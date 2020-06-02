@@ -6,6 +6,7 @@
 #include "framework/systems/audio_system.h"
 #include "framework/systems/render_system.h"
 #include "framework/systems/render_ui_system.h"
+#include "framework/systems/ui_system.h"
 #include "framework/systems/physics_system.h"
 #include "framework/systems/transform_animation_system.h"
 
@@ -86,13 +87,17 @@ void GameApplication::run()
 		m_Window->swapBuffers();
 		m_Window->clearCurrentTarget();
 
-		RenderSystem::GetSingleton()->render();
-		RenderUISystem::GetSingleton()->render();
 		AudioSystem::GetSingleton()->update();
 		InputManager::GetSingleton()->update();
-		PhysicsSystem::GetSingleton()->update(m_FrameTimer.getFrameTime());
-		ScriptSystem::GetSingleton()->update(m_FrameTimer.getFrameTime());
-		TransformAnimationSystem::GetSingleton()->update(m_FrameTimer.getFrameTime());
+		PhysicsSystem::GetSingleton()->update(m_FrameTimer.getLastFrameTime());
+		ScriptSystem::GetSingleton()->update(m_FrameTimer.getLastFrameTime());
+		TransformAnimationSystem::GetSingleton()->update(m_FrameTimer.getLastFrameTime());
+		UISystem::GetSingleton()->update();
+		
+		RenderSystem::GetSingleton()->render();
+		RenderUISystem::GetSingleton()->render();
+		UISystem::GetSingleton()->render();
+		
 		EventManager::GetSingleton()->dispatchDeferred();
 	}
 }

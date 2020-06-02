@@ -1,6 +1,7 @@
 #include "main/window.h"
 
 #include "core/event_manager.h"
+#include "core/ui/input_interface.h"
 #include "input/input_manager.h"
 #include "renderer/rendering_device.h"
 
@@ -110,6 +111,14 @@ int Window::getHeight() const
 	return m_Height;
 }
 
+int Window::getTitleBarHeight() const
+{
+	RECT clientRect;
+	GetClientRect(m_WindowHandle, &clientRect);
+	int clientHeight = clientRect.bottom - clientRect.top;
+	return m_Height - clientHeight;
+}
+
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 LRESULT CALLBACK Window::WindowsProc(HWND windowHandler, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -130,6 +139,7 @@ LRESULT CALLBACK Window::WindowsProc(HWND windowHandler, UINT msg, WPARAM wParam
 		return 0;
 	}
 
+	InputInterface::ProcessWindowsEvent(msg, wParam, lParam);
 	InputManager::GetSingleton()->forwardMessage({ windowHandler, msg, wParam, lParam });
 
 	return DefWindowProc(windowHandler, msg, wParam, lParam);
@@ -223,6 +233,7 @@ Variant Window::quitWindow(const Event* event)
 	}
 	return true;
 }
+
 Variant Window::quitEditorWindow(const Event* event)
 {
 	DestroyWindow(getWindowHandle());
