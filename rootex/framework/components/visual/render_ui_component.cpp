@@ -10,16 +10,13 @@ RenderUIComponent::RenderUIComponent(bool isVisible)
 
 bool RenderUIComponent::setup()
 {
-	bool status = true;
-
 	m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
 	if (!m_TransformComponent)
 	{
 		ERR("TransformComponent not found on RenderUIComponent");
 		return false;
 	}
-
-	return status;
+	return true;
 }
 
 bool RenderUIComponent::preRender()

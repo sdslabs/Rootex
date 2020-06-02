@@ -55,9 +55,14 @@ JSON::json UIComponent::getJSON() const
 #include "imgui_stdlib.h"
 void UIComponent::draw()
 {
-	if (ImGui::InputText("Document", &m_FilePath, ImGuiInputTextFlags_EnterReturnsTrue))
+	if (ImGui::InputText("##Document", &m_FilePath, ImGuiInputTextFlags_EnterReturnsTrue))
 	{
 		setDocument(m_FilePath);
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Document"))
+	{
+		EventManager::GetSingleton()->call("OpenDocument", "EditorOpenFile", m_FilePath);
 	}
 
 	if (ImGui::Button("Refresh"))
@@ -71,7 +76,7 @@ void UIComponent::draw()
 		{
 			const char* payloadFileName = (const char*)payload->Data;
 			FilePath payloadPath(payloadFileName);
-			if (IsFileSupported(payloadPath.extension().string(), ResourceFile::Type::Model))
+			if (IsFileSupported(payloadPath.extension().string(), ResourceFile::Type::Text))
 			{
 				setDocument(payloadPath.string());
 			}
