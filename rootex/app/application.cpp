@@ -7,9 +7,26 @@
 #include "core/renderer/material_library.h"
 #include "script/interpreter.h"
 #include "systems/physics_system.h"
+#include "systems/ui_system.h"
+
+Application* Application::s_Singleton = nullptr;
+
+Application* Application::GetSingleton()
+{
+	return s_Singleton;
+}
 
 Application::Application(const String& settingsFile)
 {
+	if (!s_Singleton)
+	{
+		s_Singleton = this;
+	}
+	else
+	{
+		ERR("More than one Rootex applications are active");
+	}
+
 	if (!OS::Initialize())
 	{
 		ERR("Application OS was not initialized");
@@ -39,6 +56,7 @@ Application::Application(const String& settingsFile)
 	ShaderLibrary::MakeShaders();
 	MaterialLibrary::LoadMaterials();
 	PhysicsSystem::GetSingleton()->initialize();
+	UISystem::GetSingleton()->initialize(windowJSON["width"], windowJSON["height"]);
 
 	auto&& postInitialize = m_ApplicationSettings->find("postInitialize");
 	if (postInitialize != m_ApplicationSettings->end())
@@ -53,5 +71,6 @@ Application::~Application()
 {
 	AudioSystem::GetSingleton()->shutDown();
 	EntityFactory::GetSingleton()->destroyEntities(false);
+	UISystem::GetSingleton()->shutdown();
 	ShaderLibrary::DestroyShaders();
 }

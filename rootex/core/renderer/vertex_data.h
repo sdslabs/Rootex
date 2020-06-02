@@ -9,3 +9,10 @@ struct VertexData
 	Vector3 m_Normal;
 	Vector2 m_TextureCoord;
 };
+
+struct UIVertexData
+{
+	Vector2 m_Position;
+	char m_Color[4];
+	Vector2 m_TextureCoord;
+};

@@ -137,55 +137,104 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 	createRenderTextureTarget(width, height);
 
 	//REMARK- reversed winding order to allow ccw .obj files to be rendered properly, can trouble later
-	D3D11_RASTERIZER_DESC rsDesc;
-	rsDesc.FillMode = D3D11_FILL_SOLID;
-	rsDesc.CullMode = D3D11_CULL_FRONT;
-	rsDesc.FrontCounterClockwise = FALSE;
-	rsDesc.DepthBias = 0;
-	rsDesc.SlopeScaledDepthBias = 0.0f;
-	rsDesc.DepthBiasClamp = 0.0f;
-	rsDesc.DepthClipEnable = TRUE;
-	rsDesc.ScissorEnable = FALSE;
-	rsDesc.MultisampleEnable = MSAA;
-	rsDesc.AntialiasedLineEnable = FALSE;
+	{
+		D3D11_RASTERIZER_DESC rsDesc;
+		rsDesc.FillMode = D3D11_FILL_SOLID;
+		rsDesc.CullMode = D3D11_CULL_FRONT;
+		rsDesc.FrontCounterClockwise = FALSE;
+		rsDesc.DepthBias = 0;
+		rsDesc.SlopeScaledDepthBias = 0.0f;
+		rsDesc.DepthBiasClamp = 0.0f;
+		rsDesc.DepthClipEnable = TRUE;
+		rsDesc.ScissorEnable = FALSE;
+		rsDesc.MultisampleEnable = MSAA;
+		rsDesc.AntialiasedLineEnable = FALSE;
 
-	GFX_ERR_CHECK(m_Device->CreateRasterizerState(&rsDesc, &m_DefaultRasterizerState));
+		GFX_ERR_CHECK(m_Device->CreateRasterizerState(&rsDesc, &m_DefaultRasterizerState));
+	}
+	{
+		D3D11_RASTERIZER_DESC rsDesc;
+		rsDesc.FillMode = D3D11_FILL_SOLID;
+		rsDesc.CullMode = D3D11_CULL_NONE;
+		rsDesc.FrontCounterClockwise = FALSE;
+		rsDesc.DepthBias = 0;
+		rsDesc.SlopeScaledDepthBias = 0.0f;
+		rsDesc.DepthBiasClamp = 0.0f;
+		rsDesc.DepthClipEnable = TRUE;
+		rsDesc.ScissorEnable = FALSE;
+		rsDesc.MultisampleEnable = MSAA;
+		rsDesc.AntialiasedLineEnable = FALSE;
 
-	D3D11_RASTERIZER_DESC wireframeDesc;
-	wireframeDesc.FillMode = D3D11_FILL_WIREFRAME;
-	wireframeDesc.CullMode = D3D11_CULL_NONE;
-	wireframeDesc.FrontCounterClockwise = FALSE;
-	wireframeDesc.DepthBias = 0;
-	wireframeDesc.SlopeScaledDepthBias = 0.0f;
-	wireframeDesc.DepthBiasClamp = 0.0f;
-	wireframeDesc.DepthClipEnable = TRUE;
-	wireframeDesc.ScissorEnable = FALSE;
-	wireframeDesc.MultisampleEnable = MSAA;
-	wireframeDesc.AntialiasedLineEnable = FALSE;
+		GFX_ERR_CHECK(m_Device->CreateRasterizerState(&rsDesc, &m_UIRasterizerState));
+	}
+	{
+		D3D11_RASTERIZER_DESC rsDesc;
+		rsDesc.FillMode = D3D11_FILL_SOLID;
+		rsDesc.CullMode = D3D11_CULL_NONE;
+		rsDesc.FrontCounterClockwise = FALSE;
+		rsDesc.DepthBias = 0;
+		rsDesc.SlopeScaledDepthBias = 0.0f;
+		rsDesc.DepthBiasClamp = 0.0f;
+		rsDesc.DepthClipEnable = TRUE;
+		rsDesc.ScissorEnable = TRUE;
+		rsDesc.MultisampleEnable = MSAA;
+		rsDesc.AntialiasedLineEnable = FALSE;
 
-	GFX_ERR_CHECK(m_Device->CreateRasterizerState(&wireframeDesc, &m_WireframeRasterizerState));
+		GFX_ERR_CHECK(m_Device->CreateRasterizerState(&rsDesc, &m_UIScissoredRasterizerState));
+	}
+	{
+		D3D11_RASTERIZER_DESC wireframeDesc;
+		wireframeDesc.FillMode = D3D11_FILL_WIREFRAME;
+		wireframeDesc.CullMode = D3D11_CULL_NONE;
+		wireframeDesc.FrontCounterClockwise = FALSE;
+		wireframeDesc.DepthBias = 0;
+		wireframeDesc.SlopeScaledDepthBias = 0.0f;
+		wireframeDesc.DepthBiasClamp = 0.0f;
+		wireframeDesc.DepthClipEnable = TRUE;
+		wireframeDesc.ScissorEnable = FALSE;
+		wireframeDesc.MultisampleEnable = MSAA;
+		wireframeDesc.AntialiasedLineEnable = FALSE;
 
+		GFX_ERR_CHECK(m_Device->CreateRasterizerState(&wireframeDesc, &m_WireframeRasterizerState));
+	}
 	m_CurrentRasterizerState = m_DefaultRasterizerState.GetAddressOf();
 
 	m_Context->RSSetState(*m_CurrentRasterizerState);
 
 	setTextureRenderTarget();
 
-	D3D11_BLEND_DESC blendDesc;
-	blendDesc.AlphaToCoverageEnable = MSAA;
-	blendDesc.IndependentBlendEnable = false;
-	D3D11_RENDER_TARGET_BLEND_DESC renderBlendDesc;
-	renderBlendDesc.BlendEnable = true;
-	renderBlendDesc.SrcBlend = D3D11_BLEND_SRC_ALPHA;
-	renderBlendDesc.BlendOp = D3D11_BLEND_OP_ADD;
-	renderBlendDesc.DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-	renderBlendDesc.SrcBlendAlpha = D3D11_BLEND_INV_DEST_ALPHA;
-	renderBlendDesc.BlendOpAlpha = D3D11_BLEND_OP_MAX;
-	renderBlendDesc.DestBlendAlpha = D3D11_BLEND_DEST_ALPHA;
-	renderBlendDesc.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-	blendDesc.RenderTarget[0] = renderBlendDesc;
-	GFX_ERR_CHECK(m_Device->CreateBlendState(&blendDesc, &m_DefaultBlendState));
-
+	{
+		D3D11_BLEND_DESC blendDesc;
+		ZeroMemory(&blendDesc, sizeof(D3D11_BLEND_DESC));
+		blendDesc.AlphaToCoverageEnable = true;
+		blendDesc.IndependentBlendEnable = false;
+		D3D11_RENDER_TARGET_BLEND_DESC renderBlendDesc;
+		blendDesc.RenderTarget[0].BlendEnable = FALSE;
+		blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+		blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+		blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+		blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+		blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+		blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+		blendDesc.RenderTarget[0].RenderTargetWriteMask = 0x0f;
+		GFX_ERR_CHECK(m_Device->CreateBlendState(&blendDesc, &m_DefaultBlendState));
+	}
+	{
+		D3D11_BLEND_DESC blendDesc;
+		ZeroMemory(&blendDesc, sizeof(D3D11_BLEND_DESC));
+		blendDesc.AlphaToCoverageEnable = true;
+		blendDesc.IndependentBlendEnable = false;
+		D3D11_RENDER_TARGET_BLEND_DESC renderBlendDesc;
+		blendDesc.RenderTarget[0].BlendEnable = TRUE;
+		blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+		blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+		blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+		blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+		blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+		blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+		blendDesc.RenderTarget[0].RenderTargetWriteMask = 0x0f;
+		GFX_ERR_CHECK(m_Device->CreateBlendState(&blendDesc, &m_AlphaBlendState));
+	}
 	m_FontBatch.reset(new DirectX::SpriteBatch(m_Context.Get()));
 }
 
@@ -326,16 +375,70 @@ Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::createTexture(
 	return textureView;
 }
 
-Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::createTexture(const uint8_t* imageData, size_t size)
+Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::createTexture(const char* imageFileData, size_t size)
 {
 	Microsoft::WRL::ComPtr<ID3D11Resource> textureResource;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> textureView;
-	if (FAILED(DirectX::CreateWICTextureFromMemory(m_Device.Get(), imageData, size, textureResource.GetAddressOf(), textureView.GetAddressOf())))
+
+	if (FAILED(DirectX::CreateWICTextureFromMemory(m_Device.Get(), (const uint8_t*)imageFileData, size, textureResource.GetAddressOf(), textureView.GetAddressOf())))
 	{
-		ERR("Could not create texture from data of size: " + std::to_string(size));
+		ERR("Could not create texture of size: " + std::to_string(size));
 	}
 
 	return textureView;
+}
+
+struct Texel
+{
+	char m_Red;
+	char m_Green;
+	char m_Blue;
+	char m_Alpha;
+
+	Texel()
+	    : m_Red(0)
+	    , m_Green(0)
+	    , m_Blue(0)
+	    , m_Alpha(0)
+	{
+	}
+};
+
+Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::createTextureFromPixels(const char* imageRawData, unsigned int width, unsigned int height)
+{
+	D3D11_TEXTURE2D_DESC textureDesc = {};
+
+	textureDesc.Width = width;
+	textureDesc.Height = height;
+	textureDesc.MipLevels = 1;
+	textureDesc.ArraySize = 1;
+	textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	textureDesc.SampleDesc.Count = 1;
+	textureDesc.Usage = D3D11_USAGE_DEFAULT;
+	textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	textureDesc.CPUAccessFlags = 0;
+	textureDesc.MiscFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA data = {};
+	data.pSysMem = imageRawData;
+	data.SysMemPitch = width * 4;
+
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> texture2D;
+	if (FAILED(m_Device->CreateTexture2D(&textureDesc, &data, &texture2D)))
+	{
+		ERR("Could not create texture 2D");
+	}
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	srvDesc.Format = textureDesc.Format;
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MostDetailedMip = 0;
+	srvDesc.Texture2D.MipLevels = 1;
+
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> textureSRV;
+	m_Device->CreateShaderResourceView(texture2D.Get(), &srvDesc, &textureSRV);
+
+	return textureSRV;
 }
 
 void RenderingDevice::bind(ID3D11Buffer* vertexBuffer, const unsigned int* stride, const unsigned int* offset)
@@ -404,6 +507,12 @@ void RenderingDevice::unbindShaderResources()
 	m_Context->PSSetShaderResources(0, 1, nullptr);
 }
 
+void RenderingDevice::setAlphaBlendState()
+{
+	static float blendFactors[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	m_Context->OMSetBlendState(m_AlphaBlendState.Get(), blendFactors, 0xffffffff);
+}
+
 void RenderingDevice::setDefaultBlendState()
 {
 	static float blendFactors[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
@@ -422,6 +531,12 @@ void RenderingDevice::setRasterizerState(RasterizerState rs)
 	case RenderingDevice::RasterizerState::Default:
 		m_CurrentRasterizerState = m_DefaultRasterizerState.GetAddressOf();
 		break;
+	case RenderingDevice::RasterizerState::UI:
+		m_CurrentRasterizerState = m_UIRasterizerState.GetAddressOf();
+		break;
+	case RenderingDevice::RasterizerState::UIScissor:
+		m_CurrentRasterizerState = m_UIScissoredRasterizerState.GetAddressOf();
+		break;
 	case RenderingDevice::RasterizerState::Wireframe:
 		m_CurrentRasterizerState = m_WireframeRasterizerState.GetAddressOf();
 		break;
@@ -429,6 +544,27 @@ void RenderingDevice::setRasterizerState(RasterizerState rs)
 		ERR("Invalid rasterizer state found to be set");
 		break;
 	}
+}
+
+void RenderingDevice::setTemporaryUIRasterizerState()
+{
+	m_Context->RSSetState(m_UIRasterizerState.Get());
+}
+
+void RenderingDevice::setTemporaryUIScissoredRasterizerState()
+{
+	m_Context->RSSetState(m_UIScissoredRasterizerState.Get());
+}
+
+void RenderingDevice::setScissorRectangle(int x, int y, int width, int height)
+{
+	D3D11_RECT rect;
+	rect.left = x;
+	rect.right = x + width;
+	rect.top = y;
+	rect.bottom = y + height;
+
+	m_Context->RSSetScissorRects(1, &rect);
 }
 
 void RenderingDevice::setDepthStencilState()

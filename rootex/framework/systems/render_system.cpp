@@ -146,13 +146,13 @@ void RenderSystem::resetDefaultRasterizer()
 void RenderSystem::setProjectionConstantBuffers()
 {
 	const Matrix& projection = getCamera()->getProjectionMatrix();
-	Material::setVSConstantBuffer(projection.Transpose(), m_VSProjectionConstantBuffer, PER_CAMERA_CHANGE_VS_CPP);
+	Material::SetVSConstantBuffer(projection.Transpose(), m_VSProjectionConstantBuffer, PER_CAMERA_CHANGE_VS_CPP);
 }
 
 void RenderSystem::perFrameVSCBBinds()
 {
 	const Matrix& view = getCamera()->getViewMatrix();
-	Material::setVSConstantBuffer(view.Transpose(), m_VSPerFrameConstantBuffer, PER_FRAME_VS_CPP);
+	Material::SetVSConstantBuffer(view.Transpose(), m_VSPerFrameConstantBuffer, PER_FRAME_VS_CPP);
 }
 
 void RenderSystem::perFramePSCBBinds()

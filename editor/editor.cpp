@@ -8,6 +8,7 @@
 #include "framework/components/hierarchy_component.h"
 #include "framework/systems/render_system.h"
 #include "framework/systems/render_ui_system.h"
+#include "framework/systems/ui_system.h"
 #include "framework/systems/physics_system.h"
 #include "editor_application.h"
 #include "main/window.h"
@@ -147,6 +148,7 @@ void Editor::render()
 	{
 		PhysicsSystem::GetSingleton()->debugDraw();
 	}
+	UISystem::GetSingleton()->render();
 	RenderingDevice::GetSingleton()->setBackBufferRenderTarget();
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());

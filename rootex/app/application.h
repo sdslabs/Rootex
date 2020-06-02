@@ -10,12 +10,16 @@
 /// Every application that uses Rootex should derive this class.
 class Application
 {
+	static Application* s_Singleton;
+
 protected:
 	Timer m_ApplicationTimer;
 	Ptr<Window> m_Window;
 	Ptr<ApplicationSettings> m_ApplicationSettings;
 	
 public:
+	static Application* GetSingleton();
+
 	Application(const String& settingsFile);
 	Application(Application&) = delete;
 	virtual ~Application();

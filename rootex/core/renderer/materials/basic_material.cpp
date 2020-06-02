@@ -36,7 +36,7 @@ void BasicMaterial::setPSConstantBuffer(const PSDiffuseConstantBufferMaterial& c
 
 void BasicMaterial::setVSConstantBuffer(const VSDiffuseConstantBuffer& constantBuffer)
 {
-	Material::setVSConstantBuffer<VSDiffuseConstantBuffer>(constantBuffer, m_VSConstantBuffer[(int)VertexConstantBufferType::Model], PER_OBJECT_VS_CPP);
+	Material::SetVSConstantBuffer<VSDiffuseConstantBuffer>(constantBuffer, m_VSConstantBuffer[(int)VertexConstantBufferType::Model], PER_OBJECT_VS_CPP);
 }
 
 Material* BasicMaterial::CreateDefault()

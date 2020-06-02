@@ -2,7 +2,7 @@
 
 #include "renderer/rendering_device.h"
 
-#include "components/visual/ui_component.h"
+#include "components/visual/render_ui_component.h"
 
 RenderUISystem::RenderUISystem()
 {
@@ -18,10 +18,10 @@ RenderUISystem* RenderUISystem::GetSingleton()
 void RenderUISystem::render()
 {
 	RenderingDevice::GetSingleton()->beginDrawUI();
-	UIComponent* ui = nullptr;
-	for (auto& component : s_Components[UIComponent::s_ID])
+	RenderUIComponent* ui = nullptr;
+	for (auto& component : s_Components[RenderUIComponent::s_ID])
 	{
-		ui = (UIComponent*)component;
+		ui = (RenderUIComponent*)component;
 		if (ui->isVisible())
 		{
 			ui->preRender();

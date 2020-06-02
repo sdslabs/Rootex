@@ -36,7 +36,7 @@ Component* TextUIComponent::CreateDefault()
 }
 
 TextUIComponent::TextUIComponent(FontResourceFile* font, const String& text, const Color& color, const Mode& mode, const Vector2& origin, const bool& isVisible)
-    : UIComponent(isVisible)
+    : RenderUIComponent(isVisible)
 	, m_FontFile(font)
     , m_Text(text)
     , m_Color(color)
@@ -68,7 +68,7 @@ void TextUIComponent::render()
 
 JSON::json TextUIComponent::getJSON() const
 {
-	JSON::json j = UIComponent::getJSON();
+	JSON::json j = RenderUIComponent::getJSON();
 
 	j["fontResource"] = m_FontFile->getPath().string();
 	j["text"] = m_Text;
