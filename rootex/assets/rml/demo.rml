@@ -42,6 +42,6 @@
 	<body>
 		<p id="transition_test"> This is a sample </p>
 		<br />
-		<img src="../rootex.png" width=100 height=100 />
+		<img onclick="UIImageClicked" src="../rootex.png" width=100 height=100 />
 	</body>
 </rml>
