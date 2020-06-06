@@ -39,7 +39,23 @@ bool CustomSystemInterface::LogMessage(Rml::Core::Log::Type type, const String& 
 	return true;
 }
 
+Rml::Core::EventListener* EventListenerInstancer::InstanceEventListener(const String& value, Rml::Core::Element* element)
+{
+	return new EventListener(value);
+}
+
+EventListener::EventListener(const Event::Type& eventType)
+    : m_EventType(eventType)
+{
+}
+
+void EventListener::ProcessEvent(Rml::Core::Event& event)
+{
+	EventManager::GetSingleton()->call("UIEventProxy", m_EventType, event.GetType());
+}
+
 UISystem::UISystem()
+    : m_Context(nullptr)
 {
 	BIND_EVENT_MEMBER_FUNCTION("UISystemEnableDebugger", UISystem::enableDebugger);
 	BIND_EVENT_MEMBER_FUNCTION("UISystemDisableDebugger", UISystem::disableDebugger);
@@ -82,7 +98,6 @@ Rml::Core::ElementDocument* UISystem::loadDocument(const String& path)
 	{
 		WARN("Could not load document: " + path);
 	}
-
 	return document;
 }
 
@@ -103,9 +118,15 @@ void UISystem::initialize(int width, int height)
 		ERR("Could not initialize RmlUi UI rendering library");
 	}
 	Rml::Controls::Initialise();
+	
 	loadFont("rootex/assets/fonts/Lato-Regular.ttf");
+	
 	m_Context = Rml::Core::CreateContext("default", Rml::Core::Vector2i(width, height));
+	
 	Rml::Debugger::Initialise(m_Context);
+	
+	Rml::Core::Factory::RegisterEventListenerInstancer(&s_EventListenerInstancer);
+
 	InputInterface::Initialise();
 	InputInterface::SetContext(m_Context);
 }
