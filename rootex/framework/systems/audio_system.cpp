@@ -145,16 +145,12 @@ void AudioSystem::setListenerPosition(TransformComponent* listenerComponent)
 
 	// get the position of the listener
 	Vector3& listenerPosition = listenerComponent->getAbsoluteTransform().Translation();
-	// print position on console (Development only)
-	std::cout << "\nlistener position: (" << listenerPosition.x << ", " << listenerPosition.y << ", " << listenerPosition.z << ")\n";
 	// pass the position to openAL
 	AL_CHECK(alListener3f(AL_POSITION, listenerPosition.x, listenerPosition.y, listenerPosition.z));
 }
 
 void AudioSystem::setListenerComponent(TransformComponent* listenerComponent)
 {
-	// (Development only)
-	std::cout << "\n\nSet listener component called\n\n";
 	// set the m_listenerComponent
 	m_listenerComponent = listenerComponent;
 	setListenerPosition(m_listenerComponent);
