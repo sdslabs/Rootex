@@ -56,6 +56,9 @@ void LevelManager::openLevel(const String& levelPath, bool openInEditor)
 	{
 		Ref<Entity> listenerEntity = EntityFactory::GetSingleton()->findEntity(m_CurrentLevelSettings["listener"]);
 		AudioSystem::GetSingleton()->setListenerComponent(listenerEntity->getComponent<TransformComponent>().get());
+
+		// (Development only) print listener position
+		std::cout << "\n\nListener position on open level(): " << listenerEntity->getComponent<TransformComponent>().get()->getPosition().x << ", " << listenerEntity->getComponent<TransformComponent>().get()->getPosition().y << ", " << listenerEntity->getComponent<TransformComponent>().get()->getPosition().z << "\n\n";
 	}
 
 	if (!openInEditor)
