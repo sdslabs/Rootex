@@ -14,6 +14,19 @@ Component* HierarchyComponent::CreateDefault()
 	return component;
 }
 
+void HierarchyComponent::RegisterAPI(sol::state& rootex)
+{
+	sol::usertype<HierarchyComponent> hierarchyComponent = rootex.new_usertype<HierarchyComponent>(
+	    "HierarchyComponent",
+	    sol::base_classes, sol::bases<Component>());
+	rootex["Entity"]["getHierarchy"] = &Entity::getComponent<HierarchyComponent>;
+	hierarchyComponent["addChild"] = &HierarchyComponent::addChild;
+	hierarchyComponent["removeChild"] = &HierarchyComponent::removeChild;
+	hierarchyComponent["clear"] = &HierarchyComponent::clear;
+	hierarchyComponent["getParent"] = &HierarchyComponent::getParent;
+	hierarchyComponent["getChildren"] = &HierarchyComponent::getChildren;
+}
+
 HierarchyComponent::HierarchyComponent(EntityID parentID, const Vector<EntityID>& childrenIDs)
     : m_ParentID(parentID)
     , m_ChildrenIDs(childrenIDs)

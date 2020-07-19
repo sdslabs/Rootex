@@ -16,11 +16,11 @@
 
 void SolPanic(std::optional<String> maybeMsg)
 {
-	ERR("Lua is in a panic state and will now abort() the application");
+	WARN("Lua is in a panic state and will now abort() the application");
 	if (maybeMsg)
 	{
 		const String& msg = maybeMsg.value();
-		ERR("\tError: " + msg);
+		ERR("Lua Error: " + msg);
 	}
 }
 
@@ -104,165 +104,26 @@ void LuaInterpreter::registerTypes()
 		    sol::meta_function::multiplication, [](Matrix& l, Matrix& r) { return l * r; });
 		matrix["Identity"] = sol::var(Matrix::Identity);
 	}
-	{
-		sol::usertype<Event> event = rootex.new_usertype<Event>("Event", sol::constructors<Event(const String&, const Event::Type, const Variant)>());
-		event["getName"] = &Event::getName;
-		event["getType"] = &Event::getType;
-		event["getData"] = &Event::getData;
-	}
-	{
-		rootex["AddEvent"] = [](const String& eventType) { EventManager::GetSingleton()->addEvent(eventType); };
-		rootex["RemoveEvent"] = [](const String& eventType) { EventManager::GetSingleton()->removeEvent(eventType); };
-		rootex["CallEvent"] = [](const Event& event) { EventManager::GetSingleton()->call(event); };
-		rootex["DeferredCallEvent"] = [](const Ref<Event>& event) { EventManager::GetSingleton()->deferredCall(event); };
-		rootex["ReturnCallEvent"] = [](const Event& event) { return EventManager::GetSingleton()->returnCall(event); };
-	}
-	{
-		sol::usertype<InputManager> inputManager = rootex.new_usertype<InputManager>("InputManager");
-		inputManager["Get"] = &InputManager::GetSingleton;
-		inputManager["setEnabled"] = &InputManager::setEnabled;
-		inputManager["mapBool"] = &InputManager::mapBool;
-		inputManager["mapFloat"] = &InputManager::mapFloat;
-		inputManager["isPressed"] = &InputManager::isPressed;
-		inputManager["wasPressed"] = &InputManager::wasPressed;
-		inputManager["getFloat"] = &InputManager::getFloat;
-		inputManager["getFloatDelta"] = &InputManager::getFloatDelta;
-		inputManager["unmap"] = &InputManager::unmap;
-	}
-	{
-		sol::usertype<ResourceLoader> resourceLoader = rootex.new_usertype<ResourceLoader>("ResourceLoader");
-		resourceLoader["CreateAudio"] = &ResourceLoader::CreateAudioResourceFile;
-		resourceLoader["CreateFont"] = &ResourceLoader::CreateFontResourceFile;
-		resourceLoader["CreateImage"] = &ResourceLoader::CreateImageResourceFile;
-		resourceLoader["CreateLua"] = &ResourceLoader::CreateLuaTextResourceFile;
-		resourceLoader["CreateText"] = &ResourceLoader::CreateTextResourceFile;
-		resourceLoader["CreateNewText"] = &ResourceLoader::CreateNewTextResourceFile;
-		resourceLoader["CreateVisualModel"] = &ResourceLoader::CreateModelResourceFile;
-	}
-	{
-		sol::usertype<ResourceFile> resourceFile = rootex.new_usertype<ResourceFile>("ResourceFile");
-		resourceFile["isValid"] = &ResourceFile::isValid;
-		resourceFile["isDirty"] = &ResourceFile::isDirty;
-		resourceFile["isOpen"] = &ResourceFile::isOpen;
-		resourceFile["getPath"] = [](ResourceFile& f) { return f.getPath().string(); };
-		resourceFile["getType"] = &ResourceFile::getType;
-	}
-	{
-		sol::usertype<TextResourceFile> textResourceFile = rootex.new_usertype<TextResourceFile>(
-		    "TextResourceFile",
-		    sol::base_classes, sol::bases<ResourceFile>());
-		textResourceFile["getString"] = &TextResourceFile::getString;
-	}
-	{
-		sol::usertype<LuaTextResourceFile> luaTextResourceFile = rootex.new_usertype<LuaTextResourceFile>(
-		    "LuaTextResourceFile",
-		    sol::base_classes, sol::bases<ResourceFile, TextResourceFile>());
-	}
-	{
-		sol::usertype<AudioResourceFile> audioResourceFile = rootex.new_usertype<AudioResourceFile>(
-		    "AudioResourceFile",
-		    sol::base_classes, sol::bases<ResourceFile>());
-		audioResourceFile["getAudioDataSize"] = &AudioResourceFile::getAudioDataSize;
-		audioResourceFile["getFormat"] = &AudioResourceFile::getFormat;
-		audioResourceFile["getFrequency"] = &AudioResourceFile::getFrequency;
-		audioResourceFile["getBitDepth"] = &AudioResourceFile::getBitDepth;
-		audioResourceFile["getChannels"] = &AudioResourceFile::getChannels;
-		audioResourceFile["getDuration"] = &AudioResourceFile::getDuration;
-	}
-	{
-		sol::usertype<ModelResourceFile> visualModelResourceFile = rootex.new_usertype<ModelResourceFile>(
-		    "ModelResourceFile",
-		    sol::base_classes, sol::bases<ResourceFile>());
-	}
-	{
-		sol::usertype<ImageResourceFile> imageResourceFile = rootex.new_usertype<ImageResourceFile>(
-		    "ImageResourceFile",
-		    sol::base_classes, sol::bases<ResourceFile>());
-	}
-	{
-		sol::usertype<FontResourceFile> fontResourceFile = rootex.new_usertype<FontResourceFile>(
-		    "FontResourceFile",
-		    sol::base_classes, sol::bases<ResourceFile>());
-	}
-	{
-		sol::usertype<EntityFactory> entityFactory = rootex.new_usertype<EntityFactory>("EntityFactory");
-		entityFactory["Create"] = [](TextResourceFile* t) { return EntityFactory::GetSingleton()->createEntity(t); };
-		entityFactory["Find"] = [](EntityID e) { return EntityFactory::GetSingleton()->findEntity(e); };
-	}
-	{
-		sol::usertype<Entity> entity = rootex.new_usertype<Entity>("Entity");
-		entity["removeComponent"] = &Entity::removeComponent;
-		entity["destroy"] = &Entity::destroy;
-		entity["hasComponent"] = &Entity::hasComponent;
-		entity["getID"] = &Entity::getID;
-		entity["getName"] = &Entity::getName;
-		entity["setName"] = &Entity::setName;
-		entity["trigger"] = [](const Entity* entity) { entity->getComponent<TriggerComponent>()->trigger(); };
+	
+	Event::RegisterAPI(m_Lua);
+	EventManager::RegisterAPI(m_Lua);
+	InputManager::RegisterAPI(m_Lua);
 
-		sol::usertype<Component> component = rootex.new_usertype<Component>("Component");
-		component["getOwner"] = &Component::getOwner;
-		component["getComponentID"] = &Component::getComponentID;
-		component["getName"] = &Component::getName;
-
-		{
-			sol::usertype<TransformComponent> transformComponent = rootex.new_usertype<TransformComponent>(
-			    "TransformComponent",
-			    sol::base_classes, sol::bases<Component>());
-			entity["getTransform"] = [](Entity* e) { return e->getComponent<TransformComponent>(); };
-			transformComponent["setPosition"] = &TransformComponent::setPosition;
-			transformComponent["setRotation"] = &TransformComponent::setRotation;
-			transformComponent["setScale"] = &TransformComponent::setScale;
-			transformComponent["setTransform"] = &TransformComponent::setTransform;
-			transformComponent["addTransform"] = &TransformComponent::addTransform;
-			transformComponent["getPosition"] = &TransformComponent::getPosition;
-			transformComponent["getRotation"] = &TransformComponent::getRotation;
-			transformComponent["getScale"] = &TransformComponent::getScale;
-			transformComponent["getLocalTransform"] = &TransformComponent::getLocalTransform;
-			transformComponent["getParentAbsoluteTransform"] = &TransformComponent::getParentAbsoluteTransform;
-			transformComponent["getComponentID"] = &TransformComponent::getComponentID;
-			transformComponent["getName"] = &TransformComponent::getName;
-		}
-		{
-			sol::usertype<HierarchyComponent> hierarchyComponent = rootex.new_usertype<HierarchyComponent>(
-			    "HierarchyComponent",
-			    sol::base_classes, sol::bases<Component>());
-			entity["getHierarchy"] = [](Entity* e) { return e->getComponent<HierarchyComponent>(); };
-			hierarchyComponent["addChild"] = &HierarchyComponent::addChild;
-			hierarchyComponent["removeChild"] = &HierarchyComponent::removeChild;
-			hierarchyComponent["clear"] = &HierarchyComponent::clear;
-			hierarchyComponent["getParent"] = &HierarchyComponent::getParent;
-			hierarchyComponent["getChildren"] = &HierarchyComponent::getChildren;
-		}
-		{
-			sol::usertype<ModelComponent> modelComponent = rootex.new_usertype<ModelComponent>(
-			    "ModelComponent",
-			    sol::base_classes, sol::bases<Component>());
-			entity["getModel"] = [](Entity* e) { return e->getComponent<ModelComponent>(); };
-			modelComponent["isVisible"] = &ModelComponent::isVisible;
-			modelComponent["setIsVisible"] = &ModelComponent::setIsVisible;
-		}
-		{
-			sol::usertype<RenderUIComponent> uiComponent = rootex.new_usertype<RenderUIComponent>(
-			    "RenderUIComponent",
-			    sol::base_classes, sol::bases<Component>());
-			entity["getVisual2D"] = [](Entity* e) { return e->getComponent<RenderUIComponent>(); };
-		}
-		{
-			sol::usertype<TextUIComponent> textUIComponent = rootex.new_usertype<TextUIComponent>(
-			    "TextUIComponent",
-			    sol::base_classes, sol::bases<Component, RenderUIComponent>());
-			entity["getTextUI"] = [](Entity* e) { return e->getComponent<TextUIComponent>(); };
-			textUIComponent["setFont"] = &TextUIComponent::setFont;
-			textUIComponent["setText"] = &TextUIComponent::setText;
-		}
-		{
-			sol::usertype<PhysicsColliderComponent> physicsColliderComponent = rootex.new_usertype<PhysicsColliderComponent>(
-			    "PhysicsColliderComponent",
-			    sol::base_classes, sol::bases<Component>());
-			entity["getPhysicsCollider"] = [](Entity* e) { return e->getComponent<PhysicsColliderComponent>(); };
-			physicsColliderComponent["getVelocity"] = &PhysicsColliderComponent::getVelocity;
-			physicsColliderComponent["setVelocity"] = &PhysicsColliderComponent::setVelocity;
-			physicsColliderComponent["applyForce"] = &PhysicsColliderComponent::applyForce;
-		}
-	}
+	ResourceLoader::RegisterAPI(m_Lua);
+	ResourceFile::RegisterAPI(m_Lua);
+	TextResourceFile::RegisterAPI(m_Lua);
+	LuaTextResourceFile::RegisterAPI(m_Lua);
+	AudioResourceFile::RegisterAPI(m_Lua);
+	ModelResourceFile::RegisterAPI(m_Lua);
+	ImageResourceFile::RegisterAPI(m_Lua);
+	FontResourceFile::RegisterAPI(m_Lua);
+	
+	EntityFactory::RegisterAPI(m_Lua);
+	Entity::RegisterAPI(m_Lua);
+	TransformComponent::RegisterAPI(m_Lua);
+	HierarchyComponent::RegisterAPI(m_Lua);
+	ModelComponent::RegisterAPI(m_Lua);
+	RenderUIComponent::RegisterAPI(m_Lua);
+	TextUIComponent::RegisterAPI(m_Lua);
+	PhysicsColliderComponent::RegisterAPI(m_Lua);
 }

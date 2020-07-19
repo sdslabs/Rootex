@@ -181,6 +181,17 @@ void PhysicsColliderComponent::translate(const Vector3& vec)
 	m_Body->translate(vecTobtVector3(vec));
 }
 
+void PhysicsColliderComponent::RegisterAPI(sol::state& rootex)
+{
+	sol::usertype<PhysicsColliderComponent> physicsColliderComponent = rootex.new_usertype<PhysicsColliderComponent>(
+	    "PhysicsColliderComponent",
+	    sol::base_classes, sol::bases<Component>());
+	rootex["Entity"]["getPhysicsCollider"] = &Entity::getComponent<PhysicsColliderComponent>;
+	physicsColliderComponent["getVelocity"] = &PhysicsColliderComponent::getVelocity;
+	physicsColliderComponent["setVelocity"] = &PhysicsColliderComponent::setVelocity;
+	physicsColliderComponent["applyForce"] = &PhysicsColliderComponent::applyForce;
+}
+
 btTransform PhysicsColliderComponent::matTobtTransform(Matrix const& mat)
 {
 	// convert from Mat4x4 to btTransform

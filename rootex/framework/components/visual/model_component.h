@@ -30,6 +30,7 @@ protected:
 	Vector<String> m_AllowedMaterials;
 #endif // ROOTEX_EDITOR
 public:
+	static void RegisterAPI(sol::state& rootex);
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::ModelComponent;
 
 	virtual bool setup() override;

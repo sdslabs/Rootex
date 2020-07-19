@@ -199,6 +199,18 @@ void ResourceLoader::LoadALUT(AudioResourceFile* audioRes, const char* audioBuff
 	audioRes->m_Duration /= frequency;
 }
 
+void ResourceLoader::RegisterAPI(sol::state& rootex)
+{
+	sol::usertype<ResourceLoader> resourceLoader = rootex.new_usertype<ResourceLoader>("ResourceLoader");
+	resourceLoader["CreateAudio"] = &ResourceLoader::CreateAudioResourceFile;
+	resourceLoader["CreateFont"] = &ResourceLoader::CreateFontResourceFile;
+	resourceLoader["CreateImage"] = &ResourceLoader::CreateImageResourceFile;
+	resourceLoader["CreateLua"] = &ResourceLoader::CreateLuaTextResourceFile;
+	resourceLoader["CreateText"] = &ResourceLoader::CreateTextResourceFile;
+	resourceLoader["CreateNewText"] = &ResourceLoader::CreateNewTextResourceFile;
+	resourceLoader["CreateVisualModel"] = &ResourceLoader::CreateModelResourceFile;
+}
+
 TextResourceFile* ResourceLoader::CreateTextResourceFile(const String& path)
 {
 	for (auto& item : s_ResourcesDataFiles)
