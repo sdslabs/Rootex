@@ -38,6 +38,9 @@ public:
 	static String GetBuildType();
 	static String GetGameExecutablePath();
 
+	static int GetDisplayWidth();
+	static int GetDisplayHeight();
+
 	static void OpenFileInSystemEditor(const String& filePath);
 	static void OpenFileInExplorer(const String& filePath);
 	static void EditFileInSystemEditor(const String& filePath);
