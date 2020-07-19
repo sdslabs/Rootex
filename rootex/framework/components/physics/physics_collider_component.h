@@ -12,6 +12,7 @@ class PhysicsColliderComponent : public Component, public btMotionState
 	friend class EntityFactory;
 
 public:
+	static void RegisterAPI(sol::state& rootex);
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::PhysicsColliderComponent;
 	
 	static btTransform matTobtTransform(Matrix const& mat);

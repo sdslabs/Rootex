@@ -17,6 +17,16 @@ ResourceFile::ResourceFile(const Type& type, ResourceData* resData)
 	m_LastChangedTime = OS::GetFileLastChangedTime(getPath().string());
 }
 
+void ResourceFile::RegisterAPI(sol::state& rootex)
+{
+	sol::usertype<ResourceFile> resourceFile = rootex.new_usertype<ResourceFile>("ResourceFile");
+	resourceFile["isValid"] = &ResourceFile::isValid;
+	resourceFile["isDirty"] = &ResourceFile::isDirty;
+	resourceFile["isOpen"] = &ResourceFile::isOpen;
+	resourceFile["getPath"] = [](ResourceFile& f) { return f.getPath().string(); };
+	resourceFile["getType"] = &ResourceFile::getType;
+}
+
 ResourceFile::~ResourceFile()
 {
 }
@@ -72,6 +82,19 @@ AudioResourceFile::~AudioResourceFile()
 {
 }
 
+void AudioResourceFile::RegisterAPI(sol::state& rootex)
+{
+	sol::usertype<AudioResourceFile> audioResourceFile = rootex.new_usertype<AudioResourceFile>(
+	    "AudioResourceFile",
+	    sol::base_classes, sol::bases<ResourceFile>());
+	audioResourceFile["getAudioDataSize"] = &AudioResourceFile::getAudioDataSize;
+	audioResourceFile["getFormat"] = &AudioResourceFile::getFormat;
+	audioResourceFile["getFrequency"] = &AudioResourceFile::getFrequency;
+	audioResourceFile["getBitDepth"] = &AudioResourceFile::getBitDepth;
+	audioResourceFile["getChannels"] = &AudioResourceFile::getChannels;
+	audioResourceFile["getDuration"] = &AudioResourceFile::getDuration;
+}
+
 TextResourceFile::TextResourceFile(const Type& type, ResourceData* resData)
     : ResourceFile(type, resData)
 {
@@ -79,6 +102,14 @@ TextResourceFile::TextResourceFile(const Type& type, ResourceData* resData)
 
 TextResourceFile::~TextResourceFile()
 {
+}
+
+void TextResourceFile::RegisterAPI(sol::state& rootex)
+{
+	sol::usertype<TextResourceFile> textResourceFile = rootex.new_usertype<TextResourceFile>(
+	    "TextResourceFile",
+	    sol::base_classes, sol::bases<ResourceFile>());
+	textResourceFile["getString"] = &TextResourceFile::getString;
 }
 
 void TextResourceFile::putString(const String& newData)
@@ -112,6 +143,13 @@ LuaTextResourceFile::~LuaTextResourceFile()
 {
 }
 
+void LuaTextResourceFile::RegisterAPI(sol::state& rootex)
+{
+	sol::usertype<LuaTextResourceFile> luaTextResourceFile = rootex.new_usertype<LuaTextResourceFile>(
+	    "LuaTextResourceFile",
+	    sol::base_classes, sol::bases<ResourceFile, TextResourceFile>());
+}
+
 ModelResourceFile::ModelResourceFile(ResourceData* resData)
     : ResourceFile(Type::Model, resData)
 {
@@ -121,6 +159,13 @@ ModelResourceFile::~ModelResourceFile()
 {
 }
 
+void ModelResourceFile::RegisterAPI(sol::state& rootex)
+{
+	sol::usertype<ModelResourceFile> modelResourceFile = rootex.new_usertype<ModelResourceFile>(
+	    "ModelResourceFile",
+	    sol::base_classes, sol::bases<ResourceFile>());
+}
+
 ImageResourceFile::ImageResourceFile(ResourceData* resData)
     : ResourceFile(Type::Image, resData)
 {
@@ -128,6 +173,13 @@ ImageResourceFile::ImageResourceFile(ResourceData* resData)
 
 ImageResourceFile::~ImageResourceFile()
 {
+}
+
+void ImageResourceFile::RegisterAPI(sol::state& rootex)
+{
+	sol::usertype<ImageResourceFile> imageResourceFile = rootex.new_usertype<ImageResourceFile>(
+	    "ImageResourceFile",
+	    sol::base_classes, sol::bases<ResourceFile>());
 }
 
 FontResourceFile::FontResourceFile(ResourceData* resData)
@@ -144,4 +196,11 @@ void FontResourceFile::regenerateFont()
 {
 	m_Font = RenderingDevice::GetSingleton()->createFont(m_ResourceData->getRawData());
 	m_Font->SetDefaultCharacter('X');
+}
+
+void FontResourceFile::RegisterAPI(sol::state& rootex)
+{
+	sol::usertype<FontResourceFile> fontResourceFile = rootex.new_usertype<FontResourceFile>(
+	    "FontResourceFile",
+	    sol::base_classes, sol::bases<ResourceFile>());
 }

@@ -8,6 +8,14 @@ RenderUIComponent::RenderUIComponent(bool isVisible)
 {
 }
 
+void RenderUIComponent::RegisterAPI(sol::state& rootex)
+{
+	sol::usertype<RenderUIComponent> renderUIComponent = rootex.new_usertype<RenderUIComponent>(
+	    "RenderUIComponent",
+	    sol::base_classes, sol::bases<Component>());
+	rootex["Entity"]["getRenderUI"] = &Entity::getComponent<RenderUIComponent>;
+}
+
 bool RenderUIComponent::setup()
 {
 	m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();

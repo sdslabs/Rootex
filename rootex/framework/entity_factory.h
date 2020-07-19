@@ -44,6 +44,7 @@ protected:
 	Variant deleteEntityEvent(const Event* event);
 
 public:
+	static void RegisterAPI(sol::state& rootex);
 	static EntityFactory* GetSingleton();
 
 	Ref<Component> createComponent(const String& name, const JSON::json& componentData);
