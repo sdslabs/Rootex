@@ -5,21 +5,29 @@
 
 Component* ScriptComponent::Create(const JSON::json& componentData)
 {
-	ScriptComponent* sc = new ScriptComponent(ResourceLoader::CreateLuaTextResourceFile(componentData["script"]), componentData["connections"]);
+	ScriptComponent* sc = new ScriptComponent(componentData["scripts"]);
 	return sc;
 }
 
 Component* ScriptComponent::CreateDefault()
 {
-	ScriptComponent* sc = new ScriptComponent(ResourceLoader::CreateLuaTextResourceFile("rootex/assets/scripts/empty.lua"));
+	ScriptComponent* sc = new ScriptComponent({});
 	return sc;
 }
 
-ScriptComponent::ScriptComponent(LuaTextResourceFile* luaFile, HashMap<String, String> connections)
-    : m_ScriptFile(luaFile)
-    , m_Env(LuaInterpreter::GetSingleton()->getLuaState(), sol::create, LuaInterpreter::GetSingleton()->getLuaState().globals())
-    , m_Connections(connections)
+ScriptComponent::ScriptComponent(Vector<String> luaFilePaths)
 {
+	for (auto& path : luaFilePaths)
+	{
+		LuaTextResourceFile* scriptFile = ResourceLoader::CreateLuaTextResourceFile(path);
+		if (!scriptFile)
+		{
+			ERR("Could not find script file: " + path);
+			continue;
+		}
+
+		addScript(scriptFile);
+	}
 }
 
 ScriptComponent::~ScriptComponent()
@@ -31,20 +39,9 @@ bool ScriptComponent::setup()
 	bool status = true;
 	try
 	{
-		LuaInterpreter::GetSingleton()->getLuaState().script(m_ScriptFile->getString(), m_Env);
-
-		m_Functions.clear();
-		for (auto&& function : m_Env)
+		for (int i = 0; i < m_ScriptFiles.size(); i++)
 		{
-			if (function.second.is<sol::function>())
-			{
-				m_Functions.push_back(function.first.as<String>());
-			}
-		}
-
-		for (auto&& [function, eventType] : m_Connections)
-		{
-			connect(function, eventType);
+			LuaInterpreter::GetSingleton()->getLuaState().script(m_ScriptFiles[i]->getString(), m_ScriptEnvironments[i]);
 		}
 	}
 	catch (std::exception e)
@@ -60,66 +57,77 @@ bool ScriptComponent::isSuccessful(const sol::function_result& result)
 	if (!result.valid())
 	{
 		sol::error e = result;
+		WARN("Script Execution failure in entity: " + m_Owner->getFullName());
 		PRINT(e.what());
 		return false;
 	}
 	return true;
 }
 
-void ScriptComponent::connect(const String& function, const String& eventType)
-{
-	String functionName = function;
-	Function<Variant(const Event* event)> eventFunction([=](const Event* event) {
-		this->call(functionName, event);
-		return true;
-	});
-	BIND_EVENT_FUNCTION(eventType, eventFunction);
-
-	m_Connections[function] = eventType;
-}
-
-void ScriptComponent::call(const String& function, const Event* event)
-{
-	if (auto&& findIt = std::find(m_Functions.begin(), m_Functions.end(), function) != m_Functions.end())
-	{
-		isSuccessful(m_Env[function](event));
-	}
-}
-
 void ScriptComponent::onBegin()
 {
-	isSuccessful(m_Env["onBegin"](m_Owner));
+	for (auto& env : m_ScriptEnvironments)
+	{
+		isSuccessful(env["onBegin"](m_Owner));
+	}
 }
 
 void ScriptComponent::onUpdate(float deltaMilliSeconds)
 {
-	isSuccessful(m_Env["onUpdate"](deltaMilliSeconds, m_Owner));
+	for (auto& env : m_ScriptEnvironments)
+	{
+		isSuccessful(env["onUpdate"](deltaMilliSeconds, m_Owner));
+	}
 }
 
 void ScriptComponent::onEnd()
 {
-	isSuccessful(m_Env["onEnd"](m_Owner));
+	for (auto& env : m_ScriptEnvironments)
+	{
+		isSuccessful(env["onEnd"](m_Owner));
+	}
 }
 
 void ScriptComponent::onHit(btPersistentManifold* manifold, PhysicsColliderComponent* other)
 {
-	isSuccessful(m_Env["onHit"](m_Owner, manifold, other));
+	for (auto& env : m_ScriptEnvironments)
+	{
+		isSuccessful(env["onHit"](m_Owner, manifold, other));
+	}
 }
 
 JSON::json ScriptComponent::getJSON() const
 {
 	JSON::json j;
 
-	j["script"] = m_ScriptFile->getPath().string();
-	j["connections"] = m_Connections;
+	j["scripts"] = JSON::json::array();
+	for (auto& scriptFile : m_ScriptFiles)
+	{
+		j["scripts"].push_back(scriptFile->getPath().generic_string());
+	}
 
 	return j;
 }
 
-void ScriptComponent::setScript(LuaTextResourceFile* newScript)
+void ScriptComponent::addScript(LuaTextResourceFile* scriptFile)
 {
-	m_ScriptFile = newScript;
-	setup();
+	m_ScriptFiles.push_back(scriptFile);
+	m_ScriptEnvironments.push_back(
+	    sol::environment(LuaInterpreter::GetSingleton()->getLuaState(),
+	        sol::create,
+	        LuaInterpreter::GetSingleton()->getLuaState().globals()));
+}
+
+void ScriptComponent::removeScript(LuaTextResourceFile* scriptFile)
+{
+	for (int i = 0; i < m_ScriptFiles.size(); i++)
+	{
+		if (scriptFile == m_ScriptFiles[i])
+		{
+			m_ScriptFiles.erase(m_ScriptFiles.begin() + i);
+			m_ScriptEnvironments.erase(m_ScriptEnvironments.begin() + i);
+		}
+	}
 }
 
 #ifdef ROOTEX_EDITOR
@@ -128,42 +136,21 @@ void ScriptComponent::setScript(LuaTextResourceFile* newScript)
 void ScriptComponent::draw()
 {
 	ImGui::BeginGroup();
-	if (ImGui::BeginCombo("##Script", m_ScriptFile->getPath().filename().string().c_str(), ImGuiComboFlags_HeightRegular))
+	if (ImGui::ListBoxHeader("Scripts", m_ScriptFiles.size()))
 	{
-		for (auto&& file : ResourceLoader::GetFilesOfType(ResourceFile::Type::Lua))
+		for (auto& scriptFile : m_ScriptFiles)
 		{
-			if (ImGui::MenuItem(file->getPath().string().c_str(), ""))
+			if (ImGui::Button("X"))
 			{
-				setScript((LuaTextResourceFile*)file);
+				removeScript(scriptFile);
+			}
+			ImGui::SameLine();
+			if (ImGui::Selectable(scriptFile->getPath().filename().generic_string().c_str()))
+			{
+				EventManager::GetSingleton()->call("OpenScriptFile", "EditorOpenFile", scriptFile->getPath().generic_string());
 			}
 		}
-
-		static String inputPath = "Path";
-		ImGui::Separator();
-		ImGui::InputText("##Path", &inputPath);
-		ImGui::SameLine();
-		if (ImGui::Button("Create Script"))
-		{
-			if (!ResourceLoader::CreateLuaTextResourceFile(inputPath))
-			{
-				WARN("Could not create script");
-			}
-			else
-			{
-				inputPath = "";
-			}
-		}
-		ImGui::EndCombo();
-	}
-	ImGui::SameLine();
-	if (ImGui::Button("Script"))
-	{
-		EventManager::GetSingleton()->call("OpenScript", "EditorOpenFile", m_ScriptFile->getPath().string());
-	}
-	ImGui::SameLine();
-	if (ImGui::SmallButton("R"))
-	{
-		setup();
+		ImGui::ListBoxFooter();
 	}
 	ImGui::EndGroup();
 
@@ -173,9 +160,9 @@ void ScriptComponent::draw()
 		{
 			const char* payloadFileName = (const char*)payload->Data;
 			FilePath payloadPath(payloadFileName);
-			if (payloadPath.extension() == ".lua")
+			if (IsFileSupported(payloadPath.extension().string(), ResourceFile::Type::Lua))
 			{
-				setScript(ResourceLoader::CreateLuaTextResourceFile(payloadPath.string()));
+				addScript(ResourceLoader::CreateLuaTextResourceFile(payloadPath.string()));
 			}
 			else
 			{
@@ -183,64 +170,6 @@ void ScriptComponent::draw()
 			}
 		}
 		ImGui::EndDragDropTarget();
-	}
-
-	if (ImGui::ListBoxHeader("Functions", { 0, ImGui::GetTextLineHeightWithSpacing() * (m_Functions.size() + 1) }))
-	{
-		for (auto&& function : m_Functions)
-		{
-			if (ImGui::Selectable(function.c_str()))
-			{
-				EventManager::GetSingleton()->call("OpenScript", "EditorOpenFile", m_ScriptFile->getPath().string());
-			}
-			if (ImGui::BeginDragDropSource())
-			{
-				ImGui::SetDragDropPayload("ConnectEvent", &Pair<ScriptComponent*, String>(this, function), sizeof(Pair<ScriptComponent*, String>));
-				ImGui::Text(function.c_str());
-				ImGui::EndDragDropSource();
-			}
-		}
-		ImGui::ListBoxFooter();
-	}
-
-	if (ImGui::ListBoxHeader("Connections", { 0, ImGui::GetTextLineHeightWithSpacing() * (m_Connections.size() + 2) }))
-	{
-		ImGui::Columns(2);
-		ImGui::Text("Function");
-		ImGui::NextColumn();
-		ImGui::Text("Event");
-		ImGui::NextColumn();
-
-		ImGui::Separator();
-		
-		for (auto&& connection : m_Connections)
-		{
-			ImGui::Text(connection.first.c_str());
-			ImGui::NextColumn();
-
-			ImGui::Text(connection.second.c_str());
-			ImGui::SameLine();
-			ImGui::NextColumn();
-		}
-		ImGui::Columns(1);
-		ImGui::ListBoxFooter();
-	}
-
-	static String functionName;
-	ImGui::InputText("##ConnectionFunction", &functionName);
-	ImGui::SameLine();
-	static String eventName;
-	ImGui::InputText("##ConnectionEvent", &eventName);
-	if (ImGui::Button("Connect"))
-	{
-		if (!functionName.empty() && !eventName.empty())
-		{
-			connect(functionName, eventName);
-		}
-		else
-		{
-			WARN("Provide function name to connect from and an event name to connect to");
-		}
 	}
 }
 #endif // ROOTEX_EDITOR

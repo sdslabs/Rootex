@@ -39,11 +39,6 @@ Entity::Entity(EntityID id, const String& name, const HashMap<ComponentID, Ref<C
 {
 }
 
-Component* Entity::getComponentPointer(ComponentID ID)
-{
-	return getComponent<Component>(ID).get();
-}
-
 JSON::json Entity::getJSON() const
 {
 	JSON::json j;

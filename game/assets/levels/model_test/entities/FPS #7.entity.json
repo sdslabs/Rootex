@@ -5,8 +5,7 @@
             "parent": 1
         },
         "ScriptComponent": {
-            "connections": {},
-            "script": "game\\assets\\scripts\\fps_display.lua"
+            "scripts": [ "game\\assets\\scripts\\fps_display.lua" ]
         },
         "TextUIComponent": {
             "color": {

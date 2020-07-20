@@ -5,10 +5,9 @@
             "parent": 1
         },
         "ScriptComponent": {
-            "connections": {
-                "onFail": "GameEnd"
-            },
-            "script": "game\\assets\\scripts\\fail_game_text.lua"
+            "scripts": [
+                "game/assets/scripts/fail_game_text.lua"
+            ]
         },
         "TextUIComponent": {
             "color": {

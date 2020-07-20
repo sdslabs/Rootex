@@ -10,10 +10,9 @@
             "resFile": "game/assets/test/cube.obj"
         },
         "ScriptComponent": {
-            "connections": {
-                "onJump": "Jump"
-            },
-            "script": "game\\assets\\scripts\\trigger_test.lua"
+            "scripts": [
+                "game/assets/scripts/trigger_test.lua"
+            ]
         },
         "TransformComponent": {
             "position": {

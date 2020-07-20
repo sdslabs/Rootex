@@ -16,14 +16,12 @@ public:
 	static Component* CreateDefault();
 
 private:
-	sol::environment m_Env;
-	LuaTextResourceFile* m_ScriptFile;
-	Vector<String> m_Functions;
-	HashMap<String, String> m_Connections;
+	Vector<sol::environment> m_ScriptEnvironments;
+	Vector<LuaTextResourceFile*> m_ScriptFiles;
 
 	friend class EntityFactory;
 
-	ScriptComponent(LuaTextResourceFile* luaFile, HashMap<String, String> connections = {});
+	ScriptComponent(Vector<String> luaFilePaths);
 	ScriptComponent(ScriptComponent&) = delete;
 	virtual ~ScriptComponent();
 
@@ -34,19 +32,17 @@ public:
 
 	virtual bool setup() override;
 
-	void connect(const String& function, const String& eventType);
-	void call(const String& function, const Event* event);
 	void onBegin();
 	virtual void onUpdate(float deltaMilliSeconds);
 	void onEnd();
 	void onHit(btPersistentManifold* manifold, PhysicsColliderComponent* other);
 
-	LuaTextResourceFile* getScript() const { return m_ScriptFile; }
 	ComponentID getComponentID() const override { return s_ID; }
 	virtual String getName() const override { return "ScriptComponent"; }
 	virtual JSON::json getJSON() const override;
 
-	void setScript(LuaTextResourceFile* newScript);
+	void addScript(LuaTextResourceFile* scriptFile);
+	void removeScript(LuaTextResourceFile* scriptFile);
 
 #ifdef ROOTEX_EDITOR
 	virtual void draw();

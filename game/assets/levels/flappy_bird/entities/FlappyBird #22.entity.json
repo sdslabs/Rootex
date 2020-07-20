@@ -29,10 +29,9 @@
             "resFile": "rootex/assets/cube.obj"
         },
         "ScriptComponent": {
-            "connections": {
-                "onJump": "Jump"
-            },
-            "script": "game\\assets\\scripts\\flappy_bird.lua"
+            "scripts": [
+                "game/assets/scripts/flappy_bird.lua"
+            ]
         },
         "TransformComponent": {
             "position": {

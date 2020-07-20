@@ -1,6 +1,6 @@
 {
     "project": "Rootex Game",
-    "startLevel": "game/assets/levels/model_test",
+    "startLevel": "game/assets/levels/flappy_bird",
     "version": 1.0,
     "window": {
         "fullScreen": false,
