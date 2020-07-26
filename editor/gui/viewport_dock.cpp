@@ -39,7 +39,6 @@ void ViewportDock::draw()
 			m_ViewportDockSettings.m_ImageSize = region;
 
 			static const ImVec2 viewportStart = ImGui::GetCursorPos();
-
 			ImGui::Image(
 			    RenderingDevice::GetSingleton()->getRenderTextureShaderResourceView().Get(),
 			    m_ViewportDockSettings.m_ImageSize,
