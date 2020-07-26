@@ -3,7 +3,7 @@
     "startLevel": "game/assets/levels/model_test",
     "version": 1.0,
     "window": {
-        "fullScreen": false,
+        "fullScreen": true,
         "height": 1080,
         "isEditor": false,
         "msaa": true,
