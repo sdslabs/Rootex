@@ -3,7 +3,7 @@
     "startLevel": "game/assets/levels/flappy_bird",
     "version": 1.0,
     "window": {
-        "fullScreen": false,
+        "fullScreen": true,
         "height": 1080,
         "isEditor": false,
         "msaa": true,
