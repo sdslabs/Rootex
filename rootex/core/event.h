@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common/common.h"
+#include "entity.h"
 
 /// An Event that is sent out by EventManager.
 class Event
@@ -15,6 +16,8 @@ private:
 	Variant m_Data;
 
 public:
+	static void RegisterAPI(sol::state& rootex);
+
 	Event(const String& name, const Type type, const Variant data);
 	Event(Event&) = delete;
 	~Event() = default;

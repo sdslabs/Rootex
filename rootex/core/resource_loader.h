@@ -57,6 +57,8 @@ class ResourceLoader
 	static void LoadALUT(AudioResourceFile* audioRes, const char* audioBuffer, int format, int size, float frequency);
 
 public:
+	static void RegisterAPI(sol::state& rootex);
+
 	static TextResourceFile* CreateTextResourceFile(const String& path);
 	static TextResourceFile* CreateNewTextResourceFile(const String& path);
 	static LuaTextResourceFile* CreateLuaTextResourceFile(const String& path);

@@ -35,6 +35,13 @@
 EntityID EntityFactory::s_CurrentID = ROOT_ENTITY_ID;
 EntityID EntityFactory::s_CurrentEditorID = -ROOT_ENTITY_ID;
 
+void EntityFactory::RegisterAPI(sol::state& rootex)
+{
+	sol::usertype<EntityFactory> entityFactory = rootex.new_usertype<EntityFactory>("EntityFactory");
+	entityFactory["Create"] = [](TextResourceFile* t) { return EntityFactory::GetSingleton()->createEntity(t); };
+	entityFactory["Find"] = [](EntityID e) { return EntityFactory::GetSingleton()->findEntity(e); };
+}
+
 EntityFactory* EntityFactory::GetSingleton()
 {
 	static EntityFactory singleton;

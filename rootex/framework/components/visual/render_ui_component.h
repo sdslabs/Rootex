@@ -18,6 +18,7 @@ protected:
 	friend class EntityFactory;
 
 public:
+	static void RegisterAPI(sol::state& rootex);
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::RenderUIComponent;
 
 	virtual bool setup() override;

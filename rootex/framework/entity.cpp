@@ -5,6 +5,22 @@
 #include "framework/components/hierarchy_component.h"
 #include "framework/system.h"
 
+void Entity::RegisterAPI(sol::state& rootex)
+{
+	sol::usertype<Entity> entity = rootex.new_usertype<Entity>("Entity");
+	entity["removeComponent"] = &Entity::removeComponent;
+	entity["destroy"] = &Entity::destroy;
+	entity["hasComponent"] = &Entity::hasComponent;
+	entity["getID"] = &Entity::getID;
+	entity["getName"] = &Entity::getName;
+	entity["setName"] = &Entity::setName;
+
+	sol::usertype<Component> component = rootex.new_usertype<Component>("Component");
+	component["getOwner"] = &Component::getOwner;
+	component["getComponentID"] = &Component::getComponentID;
+	component["getName"] = &Component::getName;
+}
+
 Entity::~Entity()
 {
 	destroy();

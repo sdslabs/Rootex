@@ -7,6 +7,8 @@
 
 #include "btBulletDynamicsCommon.h"
 
+class LuaTextResourceFile;
+
 class ScriptComponent : public Component
 {
 public:
