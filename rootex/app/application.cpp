@@ -45,18 +45,18 @@ Application::Application(const String& settingsFile)
 	m_Window.reset(new Window(
 	    windowJSON["x"],
 	    windowJSON["y"],
-	    windowJSON["width"],
-	    windowJSON["height"],
+	    OS::GetDisplayWidth(),
+	    OS::GetDisplayHeight(),
 	    windowJSON["title"],
 	    windowJSON["isEditor"],
 	    windowJSON["msaa"],
 		windowJSON["fullScreen"]));
-	InputManager::GetSingleton()->initialize(windowJSON["width"], windowJSON["height"]);
+	InputManager::GetSingleton()->initialize(m_Window->getWidth(), m_Window->getHeight());
 
 	ShaderLibrary::MakeShaders();
 	MaterialLibrary::LoadMaterials();
 	PhysicsSystem::GetSingleton()->initialize();
-	UISystem::GetSingleton()->initialize(windowJSON["width"], windowJSON["height"]);
+	UISystem::GetSingleton()->initialize(m_Window->getWidth(), m_Window->getHeight());
 
 	auto&& postInitialize = m_ApplicationSettings->find("postInitialize");
 	if (postInitialize != m_ApplicationSettings->end())
