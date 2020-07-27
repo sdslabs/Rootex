@@ -174,6 +174,16 @@ String OS::GetGameExecutablePath()
 	return GetAbsolutePath("build/game/" + GetBuildType() + "/Game.exe").string();
 }
 
+int OS::GetDisplayWidth()
+{
+	return GetSystemMetrics(SM_CXSCREEN);
+}
+
+int OS::GetDisplayHeight()
+{
+	return GetSystemMetrics(SM_CYSCREEN);
+}
+
 bool OS::IsDirectory(const String& path)
 {
 	return std::filesystem::is_directory(GetAbsolutePath(path));

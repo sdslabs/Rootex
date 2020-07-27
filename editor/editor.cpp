@@ -114,8 +114,6 @@ void Editor::initialize(HWND hWnd, const JSON::json& projectJSON)
 	ImGui_ImplWin32_Init(hWnd);
 	ImGui_ImplDX11_Init(RenderingDevice::GetSingleton()->getDevice(), RenderingDevice::GetSingleton()->getContext());
 	ImGui::StyleColorsDark();
-
-	registerEditorControls();
 }
 
 void Editor::render()
@@ -541,20 +539,6 @@ void Editor::pushEditorStyleVars()
 	static const int starting = __LINE__;
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, { 0 });
 	static const int ending = m_EditorStyleVarPushCount = __LINE__ - starting - 1;
-}
-
-void Editor::registerEditorControls()
-{
-	InputManager::GetSingleton()->mapBool("InputCameraActivate", Device::Mouse, MouseButton::MouseButtonRight);
-	InputManager::GetSingleton()->mapBool("InputCameraForward", Device::Keyboard, KeyboardButton::KeyW);
-	InputManager::GetSingleton()->mapBool("InputCameraLeft", Device::Keyboard, KeyboardButton::KeyA);
-	InputManager::GetSingleton()->mapBool("InputCameraBackward", Device::Keyboard, KeyboardButton::KeyS);
-	InputManager::GetSingleton()->mapBool("InputCameraRight", Device::Keyboard, KeyboardButton::KeyD);
-	InputManager::GetSingleton()->mapBool("InputCameraUp", Device::Keyboard, KeyboardButton::KeySpace);
-	InputManager::GetSingleton()->mapBool("InputCameraDown", Device::Keyboard, KeyboardButton::KeyC);
-
-	InputManager::GetSingleton()->mapFloat("InputCameraTurnUp", Device::Mouse, MouseButton::MouseAxisY);
-	InputManager::GetSingleton()->mapFloat("InputCameraTurnRight", Device::Mouse, MouseButton::MouseAxisX);
 }
 
 Variant Editor::saveAll(const Event* event)
