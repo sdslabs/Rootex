@@ -76,7 +76,7 @@ void ScriptComponent::onUpdate(float deltaMilliSeconds)
 {
 	for (auto& env : m_ScriptEnvironments)
 	{
-		isSuccessful(env["onUpdate"](deltaMilliSeconds, m_Owner));
+		isSuccessful(env["onUpdate"](m_Owner, deltaMilliSeconds));
 	}
 }
 
