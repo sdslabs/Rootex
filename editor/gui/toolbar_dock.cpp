@@ -88,21 +88,9 @@ void ToolbarDock::draw()
 
 				for (auto&& [eventType, eventHandler] : EventManager::GetSingleton()->getRegisteredEvents())
 				{
-					ImGui::BeginGroup();
 					ImGui::MenuItem(eventType.c_str(), "");
 					ImGui::SameLine();
 					ImGui::Text("%d", eventHandler.size());
-					ImGui::EndGroup();
-
-					if (ImGui::BeginDragDropTarget())
-					{
-						if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ConnectEvent"))
-						{
-							Pair<ScriptComponent*, String>* script = (Pair<ScriptComponent*, String>*)payload->Data;
-							script->first->connect(script->second, eventType);
-						}
-						ImGui::EndDragDropTarget();
-					}
 				}
 			}
 

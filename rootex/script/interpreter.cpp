@@ -19,8 +19,7 @@ void SolPanic(std::optional<String> maybeMsg)
 	WARN("Lua is in a panic state and will now abort() the application");
 	if (maybeMsg)
 	{
-		const String& msg = maybeMsg.value();
-		ERR("Lua Error: " + msg);
+		PRINT("Lua Error: " + maybeMsg.value());
 	}
 }
 

@@ -234,7 +234,7 @@ void InspectorDock::drawRemoveComponentWindow()
 			{
 				if (isComponentSelected)
 				{
-					Ref<Component> component = m_OpenedEntity->getComponent(componentID);
+					Ref<Component> component = m_OpenedEntity->getComponentFromID(componentID);
 					if (component)
 					{
 						m_OpenedEntity->removeComponent(component);
