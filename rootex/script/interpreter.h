@@ -1,8 +1,5 @@
 #pragma once
 
-#include "common/common.h"
-#include "core/resource_file.h"
-
 #include "vendor/Lua/src/lua.hpp"
 #define SOL_ALL_SAFETIES_ON	1
 #define SOL_USING_CXX_LUA 1

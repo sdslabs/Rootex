@@ -1,5 +1,7 @@
 #include "event_manager.h"
 
+#include "entity.h"
+
 EventManager::EventManager()
 {
 	m_ActiveQueue = 0;
@@ -7,6 +9,15 @@ EventManager::EventManager()
 
 EventManager ::~EventManager() 
 {
+}
+
+void EventManager::RegisterAPI(sol::state& rootex)
+{
+	rootex["AddEvent"] = [](const String& eventType) { EventManager::GetSingleton()->addEvent(eventType); };
+	rootex["RemoveEvent"] = [](const String& eventType) { EventManager::GetSingleton()->removeEvent(eventType); };
+	rootex["CallEvent"] = [](const Event& event) { EventManager::GetSingleton()->call(event); };
+	rootex["DeferredCallEvent"] = [](const Ref<Event>& event) { EventManager::GetSingleton()->deferredCall(event); };
+	rootex["ReturnCallEvent"] = [](const Event& event) { return EventManager::GetSingleton()->returnCall(event); };
 }
 
 EventManager* EventManager::GetSingleton()

@@ -31,6 +31,8 @@ protected:
 #endif // ROOTEX_EDITOR
 
 public:
+	static void RegisterAPI(sol::state& rootex);
+
 	virtual ~Entity();
 
 	void removeComponent(Ref<Component> component);

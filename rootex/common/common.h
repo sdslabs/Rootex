@@ -2,6 +2,7 @@
 
 #include "common/types.h"
 #include "os/os.h"
+#include "script/interpreter.h"
 
 #ifdef _DEBUG
 /// Logs function, message in white color

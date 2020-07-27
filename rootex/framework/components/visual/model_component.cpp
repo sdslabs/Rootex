@@ -39,6 +39,16 @@ ModelComponent::ModelComponent(unsigned int renderPass, ModelResourceFile* resFi
 {
 }
 
+void ModelComponent::RegisterAPI(sol::state& rootex)
+{
+	sol::usertype<ModelComponent> modelComponent = rootex.new_usertype<ModelComponent>(
+	    "ModelComponent",
+	    sol::base_classes, sol::bases<Component>());
+	rootex["Entity"]["getModel"] = &Entity::getComponent<ModelComponent>;
+	modelComponent["isVisible"] = &ModelComponent::isVisible;
+	modelComponent["setIsVisible"] = &ModelComponent::setIsVisible;
+}
+
 bool ModelComponent::setup()
 {
 	bool status = true;
