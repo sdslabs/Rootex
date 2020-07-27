@@ -25,8 +25,9 @@
             "resFile": "rootex/assets/cube.obj"
         },
         "ScriptComponent": {
-            "connections": {},
-            "script": "rootex/assets/scripts/empty.lua"
+            "scripts": [
+                "rootex/assets/scripts/empty.lua"
+            ]
         },
         "TransformComponent": {
             "position": {

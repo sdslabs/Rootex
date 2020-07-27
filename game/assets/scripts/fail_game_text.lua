@@ -2,6 +2,8 @@ function onBegin(entity)
     number = 0
     isFailed = false
     text = entity:getTextUI()
+
+    Connect(onFail, "GameEnd")
 end
 
 function onUpdate(delta, entity)
@@ -13,8 +15,9 @@ function onUpdate(delta, entity)
     text:setText(tostring(number))
 end
 
-function onFail()
+function onFail(event)
     isFailed = true
+    return true
 end
 
 function onEnd(entity)
