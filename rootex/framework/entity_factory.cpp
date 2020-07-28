@@ -313,3 +313,24 @@ void EntityFactory::deleteEntity(Ref<Entity> entity)
 	m_Entities.erase(entity->getID());
 	entity.reset();
 }
+
+String EntityFactory::saveEntityAsClass(Ref<Entity> entity,String path)
+{
+	Ref<HierarchyComponent> hierarchyComponent = entity->getComponent<HierarchyComponent>();
+	JSON::json entityJSON = entity->getJSON();
+	if (hierarchyComponent->getChildren().size() > 0) 
+	{
+		Vector<String> s = {};
+		for each(EntityID child in hierarchyComponent->m_ChildrenIDs)
+		{
+			s.push_back(saveEntityAsClass(EntityFactory::GetSingleton()->getEntities().at(child),path));
+		}
+		entityJSON["HierarchyComponent"]["children"] = s;
+	}
+	entityJSON["HierarchyComponent"]["parent"] = 1;
+	entityJSON["Entity"].erase("ID");
+	InputOutputFileStream file = OS::CreateFileName(path + entity->getName() + ".entity.json");
+	file << std::setw(4) << entityJSON << std::endl;
+	file.close();
+	return path + entity->getName() + ".entity.json";
+}
