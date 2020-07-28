@@ -23,7 +23,7 @@ jobs:
           build/editor/Debug/Editor.exe
           build/editor/Debug/*.dll
 
-          build/game/Debug/Editor.exe
+          build/game/Debug/Game.exe
           build/game/Debug/*.dll
           
           rootex.root
