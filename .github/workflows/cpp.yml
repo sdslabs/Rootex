@@ -15,4 +15,19 @@ jobs:
     - name: configure
       run: ./generate_cache.bat
     - name: build
-      run: ./build.bat      
+      run: ./build.bat
+    - uses: actions/upload-artifact@v2
+      with:
+        name: Rootex-${{ github.run_id }}
+        path: |
+          build/editor/Debug/Editor.exe
+          build/editor/Debug/*.dll
+
+          build/game/Debug/Editor.exe
+          build/game/Debug/*.dll
+          
+          editor/entities/
+          editor/editor.app.json
+          game/assets/
+          game/game.app.json
+          rootex/assets/
