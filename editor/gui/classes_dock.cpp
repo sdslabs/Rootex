@@ -19,10 +19,6 @@ void ClassesDock::showClasses(const String& directory)
 				ImGui::EndDragDropSource();
 			}
 		}
-		else
-		{
-			showClasses(file.string());
-		}
 	}
 }
 
