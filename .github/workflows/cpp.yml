@@ -26,8 +26,18 @@ jobs:
           build/game/Debug/Editor.exe
           build/game/Debug/*.dll
           
+          rootex.root
+          imgui.ini
+          build_fonts.bat
+
           editor/entities/
           editor/editor.app.json
+
           game/assets/
           game/game.app.json
+
           rootex/assets/
+          rootex/vendor/**/LICENSE
+
+          LICENSE
+          README.md
