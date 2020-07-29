@@ -38,7 +38,7 @@ EntityID EntityFactory::s_CurrentEditorID = -ROOT_ENTITY_ID;
 void EntityFactory::RegisterAPI(sol::state& rootex)
 {
 	sol::usertype<EntityFactory> entityFactory = rootex.new_usertype<EntityFactory>("EntityFactory");
-	entityFactory["Create"] = [](TextResourceFile* t) { return EntityFactory::GetSingleton()->createEntity(t); };
+	entityFactory["Create"] = [](TextResourceFile* t) { return EntityFactory::GetSingleton()->createEntity(JSON::json::parse(t->getString()), t->getPath().generic_string()); };
 	entityFactory["Find"] = [](EntityID e) { return EntityFactory::GetSingleton()->findEntity(e); };
 }
 
@@ -141,19 +141,19 @@ Ref<Component> EntityFactory::createDefaultComponent(const String& name)
 	}
 }
 
-Ref<Entity> EntityFactory::createEntity(TextResourceFile* entityJSONDescription, bool isEditorOnly)
+Ref<Entity> EntityFactory::createEntity(JSON::json entityJSON, String filePath,bool isEditorOnly)
 {
-	const JSON::json entityJSON = JSON::json::parse(entityJSONDescription->getString());
+	//const JSON::json entityJSON = JSON::json::parse(entityJSONDescription->getString());
 	if (entityJSON.is_null())
 	{
-		ERR("Entity not found:" + entityJSONDescription->getPath().generic_string());
+		ERR("Entity not found:" + filePath);
 		return nullptr;
 	}
 
 	JSON::json componentJSON = entityJSON["Components"];
 	if (componentJSON.is_null())
 	{
-		ERR("Components not found while creating Entity:" + entityJSONDescription->getPath().generic_string());
+		ERR("Components not found while creating Entity:" + filePath);
 		return nullptr;
 	}
 
@@ -314,7 +314,13 @@ void EntityFactory::deleteEntity(Ref<Entity> entity)
 	entity.reset();
 }
 
-String EntityFactory::saveEntityAsClass(Ref<Entity> entity,String path)
+String EntityFactory::saveEntityAsClass(Ref<Entity> entity)
+{
+	OS::CreateDirectoryName("game/assets/classes/" + entity->getName());
+	return saveEntityAsClassRecursively(entity, "game/assets/classes/" + entity->getName() + "/");
+}
+
+String EntityFactory::saveEntityAsClassRecursively(Ref<Entity> entity,String path)
 {
 	Ref<HierarchyComponent> hierarchyComponent = entity->getComponent<HierarchyComponent>();
 	JSON::json entityJSON = entity->getJSON();
@@ -323,14 +329,53 @@ String EntityFactory::saveEntityAsClass(Ref<Entity> entity,String path)
 		Vector<String> s = {};
 		for each(EntityID child in hierarchyComponent->m_ChildrenIDs)
 		{
-			s.push_back(saveEntityAsClass(EntityFactory::GetSingleton()->getEntities().at(child),path));
+			s.push_back(saveEntityAsClassRecursively(EntityFactory::GetSingleton()->getEntities().at(child),path));
 		}
-		entityJSON["HierarchyComponent"]["children"] = s;
+		entityJSON["Components"]["HierarchyComponent"]["children"] = s;
 	}
-	entityJSON["HierarchyComponent"]["parent"] = 1;
+	entityJSON["Components"]["HierarchyComponent"]["parent"] = 1;
 	entityJSON["Entity"].erase("ID");
 	InputOutputFileStream file = OS::CreateFileName(path + entity->getName() + ".entity.json");
 	file << std::setw(4) << entityJSON << std::endl;
 	file.close();
 	return path + entity->getName() + ".entity.json";
+}
+
+Ref<Entity> EntityFactory::createEntityFromClass(JSON::json entityJSON)
+{
+	Ref<Entity> createdEntity = createEntityFromClassRecursively(entityJSON);
+	fixParentIDRecursively(createdEntity, 1);
+	PRINT(createdEntity->getJSON().dump());
+	return createdEntity;
+}
+
+Ref<Entity> EntityFactory::createEntityFromClassRecursively(JSON::json entityJSON)
+{
+	//const JSON::json entityJSON = JSON::json::parse(entityJSONDescription->getString());
+	Vector<EntityID> ids;
+	if (entityJSON["Components"]["HierarchyComponent"]["children"].size()>0) {
+		for each(String path in entityJSON["Components"]["HierarchyComponent"]["children"])
+		{			
+			if (OS::IsFile(path))
+			{
+				JSON::json entityClass;
+				std::ifstream i(path);
+				i >> entityClass;
+				ids.push_back(createEntityFromClassRecursively(entityClass)->getID());
+			}
+		}
+	}
+	entityJSON["Components"]["HierarchyComponent"]["children"] = ids;
+	return EntityFactory::GetSingleton()->createEntity(entityJSON,"error in creating entity from class");
+}
+
+void EntityFactory::fixParentIDRecursively(Ref<Entity> entity,EntityID id) 
+{
+	Ref<HierarchyComponent> hierarchyComponent = entity->getComponent<HierarchyComponent>();
+	hierarchyComponent->m_ParentID = id;
+	hierarchyComponent->m_Parent = &*(EntityFactory::GetSingleton()->getEntities().at(id)->getComponent<HierarchyComponent>());
+	for each(EntityID var in hierarchyComponent->m_ChildrenIDs)
+	{
+		fixParentIDRecursively(getEntities().at(var), entity->getID());
+	}
 }
