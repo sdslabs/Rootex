@@ -606,7 +606,7 @@ Variant Editor::createNewEntity(const Event* event)
 	const String& entityClassFilePath = Extract(String, event->getData());
 	TextResourceFile* entityClassFile = ResourceLoader::CreateNewTextResourceFile(entityClassFilePath);
 
-	Ref<Entity> newEntity = EntityFactory::GetSingleton()->createEntity(entityClassFile);
+	Ref<Entity> newEntity = EntityFactory::GetSingleton()->createEntity(JSON::json::parse(entityClassFile->getString()), entityClassFile->getPath().generic_string());
 
 	HierarchySystem::GetSingleton()->addChild(newEntity);
 	return newEntity;

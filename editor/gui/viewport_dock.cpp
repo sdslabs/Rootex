@@ -16,11 +16,12 @@ ViewportDock::ViewportDock(const JSON::json& viewportJSON)
 	m_ViewportDockSettings.m_AspectRatio = (float)viewportJSON["aspectRatio"]["x"] / (float)viewportJSON["aspectRatio"]["y"];
 	m_ViewportDockSettings.m_ImageTint = Editor::GetSingleton()->getColors().m_White;
 	m_ViewportDockSettings.m_ImageBorderColor = Editor::GetSingleton()->getColors().m_Accent;
-	
-	m_EditorCamera = EntityFactory::GetSingleton()->createEntity(ResourceLoader::CreateTextResourceFile("editor/entities/camera.entity.json"), true);
+	TextResourceFile* t1 = ResourceLoader::CreateTextResourceFile("editor/entities/camera.entity.json");
+	TextResourceFile* t2 = ResourceLoader::CreateTextResourceFile("editor/entities/grid.entity.json");
+	m_EditorCamera = EntityFactory::GetSingleton()->createEntity(JSON::json::parse(t1->getString()), t1->getPath().generic_string(), true);
 	RenderSystem::GetSingleton()->setCamera(m_EditorCamera->getComponent<CameraComponent>().get());
 
-	m_EditorGrid = EntityFactory::GetSingleton()->createEntity(ResourceLoader::CreateTextResourceFile("editor/entities/grid.entity.json"), true);
+	m_EditorGrid = EntityFactory::GetSingleton()->createEntity(JSON::json::parse(t2->getString()), t2->getPath().generic_string(), true);
 }
 
 void ViewportDock::draw()
@@ -55,7 +56,8 @@ void ViewportDock::draw()
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("EntityClass"))
 				{
 					const char* newEntityFile = (const char*)payload->Data;
-					Ref<Entity> entity = EntityFactory::GetSingleton()->createEntity(ResourceLoader::CreateTextResourceFile(newEntityFile));
+					TextResourceFile* t = ResourceLoader::CreateTextResourceFile(newEntityFile);
+					Ref<Entity> entity = EntityFactory::GetSingleton()->createEntityFromClass(JSON::json::parse(t->getString()));
 					HierarchySystem::GetSingleton()->getRootHierarchyComponent()->addChild(entity);
 					if (Ref<TransformComponent> transform = entity->getComponent<TransformComponent>())
 					{
