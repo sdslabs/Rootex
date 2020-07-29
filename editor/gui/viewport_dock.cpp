@@ -16,12 +16,12 @@ ViewportDock::ViewportDock(const JSON::json& viewportJSON)
 	m_ViewportDockSettings.m_AspectRatio = (float)viewportJSON["aspectRatio"]["x"] / (float)viewportJSON["aspectRatio"]["y"];
 	m_ViewportDockSettings.m_ImageTint = Editor::GetSingleton()->getColors().m_White;
 	m_ViewportDockSettings.m_ImageBorderColor = Editor::GetSingleton()->getColors().m_Accent;
-	TextResourceFile* t1 = ResourceLoader::CreateTextResourceFile("editor/entities/camera.entity.json");
-	TextResourceFile* t2 = ResourceLoader::CreateTextResourceFile("editor/entities/grid.entity.json");
-	m_EditorCamera = EntityFactory::GetSingleton()->createEntity(JSON::json::parse(t1->getString()), t1->getPath().generic_string(), true);
+	TextResourceFile* cameraFile = ResourceLoader::CreateTextResourceFile("editor/entities/camera.entity.json");
+	TextResourceFile* gridFile = ResourceLoader::CreateTextResourceFile("editor/entities/grid.entity.json");
+	m_EditorCamera = EntityFactory::GetSingleton()->createEntity(JSON::json::parse(cameraFile->getString()), cameraFile->getPath().generic_string(), true);
 	RenderSystem::GetSingleton()->setCamera(m_EditorCamera->getComponent<CameraComponent>().get());
 
-	m_EditorGrid = EntityFactory::GetSingleton()->createEntity(JSON::json::parse(t2->getString()), t2->getPath().generic_string(), true);
+	m_EditorGrid = EntityFactory::GetSingleton()->createEntity(JSON::json::parse(gridFile->getString()), gridFile->getPath().generic_string(), true);
 }
 
 void ViewportDock::draw()
@@ -50,7 +50,7 @@ void ViewportDock::draw()
 
 			ImVec2 imageSize = ImGui::GetItemRectSize();
 			ImVec2 imagePos = ImGui::GetItemRectMin();
-			
+
 			if (ImGui::BeginDragDropTarget())
 			{
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("EntityClass"))
@@ -63,7 +63,7 @@ void ViewportDock::draw()
 					{
 						transform->setTransform(RenderSystem::GetSingleton()->getCamera()->getOwner()->getComponent<TransformComponent>()->getAbsoluteTransform());
 					}
-					EventManager::GetSingleton()->call("OpenEntity", "EditorOpenEntity", entity);		
+					EventManager::GetSingleton()->call("OpenEntity", "EditorOpenEntity", entity);
 				}
 				ImGui::EndDragDropTarget();
 			}
@@ -109,14 +109,14 @@ void ViewportDock::draw()
 			{
 				gizmoMode = ImGuizmo::MODE::WORLD;
 			}
-			
+
 			ImGui::SetNextItemWidth(shortItemSize.x);
 			ImGui::SliderFloat("Camera Sensitivity", &m_EditorCameraSensitivity, 0.1f, 1.5f);
 			ImGui::SetNextItemWidth(shortItemSize.x);
 			ImGui::SliderFloat("Camera Speed", &m_EditorCameraSpeed, 0.1f, 1.0f);
 
 			ImGui::Unindent(2.0f);
-			
+
 			ImGui::SetCursorPos(viewportEnd);
 			Ref<Entity> openedEntity = InspectorDock::GetSingleton()->getOpenedEntity();
 			if (openedEntity && openedEntity->getComponent<TransformComponent>())
@@ -163,17 +163,17 @@ void ViewportDock::draw()
 
 				float deltaUp = cursorWhenActivated.y - currentCursor.y;
 				float deltaRight = cursorWhenActivated.x - currentCursor.x;
-				
+
 				m_EditorCameraPitch += deltaUp;
 				m_EditorCameraYaw += deltaRight;
 
 				SetCursorPos(cursorWhenActivated.x, cursorWhenActivated.y);
 
 				m_EditorCamera->getComponent<TransformComponent>()->setRotation(
-					m_EditorCameraYaw * m_EditorCameraSensitivity / m_EditorCameraRotationNormalizer,
-					m_EditorCameraPitch * m_EditorCameraSensitivity / m_EditorCameraRotationNormalizer, 
-					0.0f);
-				
+				    m_EditorCameraYaw * m_EditorCameraSensitivity / m_EditorCameraRotationNormalizer,
+				    m_EditorCameraPitch * m_EditorCameraSensitivity / m_EditorCameraRotationNormalizer,
+				    0.0f);
+
 				m_ApplyCameraMatrix = m_EditorCamera->getComponent<TransformComponent>()->getLocalTransform();
 
 				static const Vector3& forward = { 0.0f, 0.0f, -1.0f };
@@ -202,7 +202,7 @@ void ViewportDock::draw()
 				if (InputManager::GetSingleton()->isPressed("InputCameraDown"))
 				{
 					m_ApplyCameraMatrix = Matrix::CreateTranslation(Vector3(0.0f, -1.0f, 0.0f) * m_EditorCameraSpeed) * m_ApplyCameraMatrix;
-				}	
+				}
 			}
 			else
 			{
