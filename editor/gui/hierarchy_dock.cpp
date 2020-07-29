@@ -99,7 +99,7 @@ void HierarchyDock::draw()
 		if (ImGui::Begin("Hierarchy"))
 		{
 			ImGui::Checkbox("Show Editor Entities", &m_IsShowEditorEntities);
-			
+
 			HierarchyComponent* rootComponent = HierarchySystem::GetSingleton()->getRootHierarchyComponent().get();
 			showHierarchySubTree(rootComponent);
 		}
