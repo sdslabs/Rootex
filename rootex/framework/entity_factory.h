@@ -29,7 +29,7 @@ class EntityFactory
 
 	EntityID getNextID();
 	EntityID getNextEditorID();
-	String saveEntityAsClassRecursively(Ref<Entity> entity, const String path);
+	String saveEntityAsClassRecursively(Ref<Entity> entity, const String& path);
 	Ref<Entity> createEntityFromClassRecursively(JSON::json entityJSON);
 	void fixParentIDRecursively(Ref<Entity> entity, EntityID id);
 
@@ -52,7 +52,7 @@ public:
 
 	Ref<Component> createComponent(const String& name, const JSON::json& componentData);
 	Ref<Component> createDefaultComponent(const String& name);
-	Ref<Entity> createEntity(const JSON::json entityJSON, const String filePath, bool isEditorOnly = false);
+	Ref<Entity> createEntity(const JSON::json& entityJSON, const String& filePath, bool isEditorOnly = false);
 	/// Get entity by ID.
 	Ref<Entity> findEntity(EntityID entityID);
 
@@ -64,7 +64,7 @@ public:
 	void destroyEntities(bool saveRoot);
 	void deleteEntity(Ref<Entity> entity);
 	String saveEntityAsClass(Ref<Entity> entity);
-	Ref<Entity> createEntityFromClass(const JSON::json entityJSON);
+	Ref<Entity> createEntityFromClass(const JSON::json& entityJSON);
 
 	const ComponentDatabase& getComponentDatabase() const { return m_ComponentCreators; }
 	const HashMap<EntityID, Ref<Entity>>& getEntities() const { return m_Entities; }

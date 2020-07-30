@@ -141,7 +141,7 @@ Ref<Component> EntityFactory::createDefaultComponent(const String& name)
 	}
 }
 
-Ref<Entity> EntityFactory::createEntity(const JSON::json entityJSON, const String filePath, bool isEditorOnly)
+Ref<Entity> EntityFactory::createEntity(const JSON::json& entityJSON, const String& filePath, bool isEditorOnly)
 {
 	if (entityJSON.is_null())
 	{
@@ -327,7 +327,7 @@ String EntityFactory::saveEntityAsClass(Ref<Entity> entity)
 	return saveEntityAsClassRecursively(entity, "game/assets/classes/" + entity->getName() + "/");
 }
 
-String EntityFactory::saveEntityAsClassRecursively(Ref<Entity> entity, const String path)
+String EntityFactory::saveEntityAsClassRecursively(Ref<Entity> entity, const String& path)
 {
 	Ref<HierarchyComponent> hierarchyComponent = entity->getComponent<HierarchyComponent>();
 	JSON::json entityJSON = entity->getJSON();
@@ -348,7 +348,7 @@ String EntityFactory::saveEntityAsClassRecursively(Ref<Entity> entity, const Str
 	return path + entity->getName() + ".entity.json";
 }
 
-Ref<Entity> EntityFactory::createEntityFromClass(const JSON::json entityJSON)
+Ref<Entity> EntityFactory::createEntityFromClass(const JSON::json& entityJSON)
 {
 	Ref<Entity> createdEntity = createEntityFromClassRecursively(entityJSON);
 	fixParentIDRecursively(createdEntity, 1);
