@@ -47,6 +47,7 @@ public:
 	static LuaTextResourceFile* CreateLuaTextResourceFile(const String& path);
 	static AudioResourceFile* CreateAudioResourceFile(const String& path);
 	static ModelResourceFile* CreateModelResourceFile(const String& path);
+	static AnimatedModelResourceFile* CreateAnimatedModelResourceFile(const String& path);
 	static ImageResourceFile* CreateImageResourceFile(const String& path);
 	static ImageCubeResourceFile* CreateImageCubeResourceFile(const String& path);
 	static FontResourceFile* CreateFontResourceFile(const String& path);
