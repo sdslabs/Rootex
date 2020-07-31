@@ -50,6 +50,8 @@ public:
 	Ref<Component> createComponent(const String& name, const JSON::json& componentData);
 	Ref<Component> createDefaultComponent(const String& name);
 	Ref<Entity> createEntity(TextResourceFile* entityJSONDescription, bool isEditorOnly = false);
+	Ref<Entity> copyEntity(EntityID id);
+	Ref<Entity> getEntityInfo(EntityID id);
 	/// Get entity by ID.
 	Ref<Entity> findEntity(EntityID entityID);
 
