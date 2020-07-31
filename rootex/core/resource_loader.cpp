@@ -66,6 +66,7 @@ void ResourceLoader::RegisterAPI(sol::table& rootex)
 	resourceLoader["CreateText"] = &ResourceLoader::CreateTextResourceFile;
 	resourceLoader["CreateNewText"] = &ResourceLoader::CreateNewTextResourceFile;
 	resourceLoader["CreateVisualModel"] = &ResourceLoader::CreateModelResourceFile;
+	resourceLoader["CreateAnimatedModel"] = &ResourceLoader::CreateAnimatedModelResourceFile;
 }
 
 TextResourceFile* ResourceLoader::CreateTextResourceFile(const String& path)
@@ -95,6 +96,34 @@ AudioResourceFile* ResourceLoader::CreateAudioResourceFile(const String& path)
 ModelResourceFile* ResourceLoader::CreateModelResourceFile(const String& path)
 {
 	return GetCachedResource<ModelResourceFile>(ResourceFile::Type::Model, FilePath(path));
+}
+
+AnimatedModelResourceFile* ResourceLoader::CreateAnimatedModelResourceFile(const String& path)
+{
+	for (auto& item : s_ResourcesDataFiles)
+	{
+		if (item.first->getPath() == path && item.second->getType() == ResourceFile::Type::AnimatedModel)
+		{
+			return reinterpret_cast<AnimatedModelResourceFile*>(item.second.get());
+		}
+	}
+	if (OS::IsExists(path) == false)
+	{
+		ERR("File not found: " + path);
+		return nullptr;
+	}
+
+	// File not found in cache, load it only once
+	FileBuffer& buffer = OS::LoadFileContents(path);
+	ResourceData* resData = new ResourceData(path, buffer);
+	AnimatedModelResourceFile* animationRes = new AnimatedModelResourceFile(resData);
+
+	LoadAssimp(animationRes);
+
+	s_ResourcesDataFiles[Ptr<ResourceData>(resData)] = Ptr<ResourceFile>(animationRes);
+	s_ResourceFileLibrary[ResourceFile::Type::AnimatedModel].push_back(animationRes);
+
+	return animationRes;
 }
 
 ImageResourceFile* ResourceLoader::CreateImageResourceFile(const String& path)

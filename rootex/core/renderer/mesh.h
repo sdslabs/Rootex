@@ -15,3 +15,14 @@ struct Mesh
 	Mesh(const Mesh&) = default;
 	~Mesh() = default;
 };
+
+struct AnimatedMesh
+{
+	Ref<VertexBuffer> m_VertexBuffer;
+	Ref<IndexBuffer> m_IndexBuffer;
+	UINT m_NumBones;
+
+	AnimatedMesh() = default;
+	AnimatedMesh(const AnimatedMesh&) = default;
+	~AnimatedMesh() = default;
+};
