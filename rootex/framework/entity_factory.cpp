@@ -208,6 +208,11 @@ Ref<Entity> EntityFactory::createEntity(TextResourceFile* entityJSONDescription,
 	return entity;
 }
 
+Ref<Entity> EntityFactory::copyEntity(EntityID id)
+{
+	return Ref<Entity>();
+}
+
 Ref<Entity> EntityFactory::findEntity(EntityID entityID)
 {
 	auto&& findIt = m_Entities.find(entityID);
@@ -312,4 +317,58 @@ void EntityFactory::deleteEntity(Ref<Entity> entity)
 	entity->destroy();
 	m_Entities.erase(entity->getID());
 	entity.reset();
+}
+Ref<Entity> EntityFactory::copyEntity(EntityID id)
+{
+
+	for (auto& x : EntityFactory::findEntity(id)->getComponent<HierarchyComponent>()->getChildren())
+	{
+
+		copyEntity(x);
+		return getEntityInfo(id);
+	}
+}
+
+Ref<Entity> EntityFactory::getEntityInfo(EntityID id)
+{
+	if (id == 0)
+	{
+		ERR("Entity is invalid");
+		return nullptr;
+	}
+	JSON::json name =EntityFactory::findEntity(id)->Entity::getFullName();
+	JSON::json componentJSON = EntityFactory::findEntity(id)->Entity::getAllComponents();
+
+	if (componentJSON.is_null())
+	{
+		ERR("Components not found while copying Entity")
+		return nullptr;
+	}
+	Ref<Entity> entity;
+	EntityID newID = 0;
+
+	newID = getNextID();
+
+	entity.reset(new Entity(newID, name.is_null() ? "Entity" : name));
+
+	for (auto&& [componentName, componentDescription] : componentJSON.items())
+	{
+		Ref<Component> componentObject = createComponent(componentName, componentDescription);
+		if (componentObject)
+		{
+			entity->addComponent(componentObject);
+			componentObject->setOwner(entity);
+		}
+	}
+
+	if (!entity->setupComponents())
+	{
+		ERR("Entity was not setup properly: " + std::to_string(entity->m_ID));
+	}
+
+	m_Entities[entity->m_ID] = entity;
+
+	PRINT("Copyied entity: " + entity->getFullName());
+
+	return entity;
 }
