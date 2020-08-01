@@ -15,11 +15,26 @@
 
 ## <a name=what>What is Rootex?
 
-Rootex is an advanced C++ multithreaded 3D game engine powering an in-production game yet to be announced. Rootex is planned to support a free 2.5D local multiplayer physics based sidescroller game to be shipped on Windows and using the DirectX 11 Graphics API.
+Rootex is an advanced C++ 3D game engine powering an in-production game yet to be announced. Rootex is planned to support a free 2.5D local multiplayer physics based sidescroller game to be shipped on Windows and using the DirectX 11 Graphics API.
 
 This game will be a product of a join effort of SDSLabs and [Design Studio](https://designstudio.cc/).
 
 <img src="/rootex/assets/editor.png"/>
+
+### Features
+
+* Based on the popular Entity-Component-System architecture
+  * Allows performance benefits due to better CPU cache usage. 
+* Full editor GUI implemented in ImGui
+  * Similar to Unreal Engine's editor for added familiarity and ease of use.
+* 3D DirectX 11 renderer
+  * Dynamic Phong-model lighting 
+  * CPU particle effects
+  * High resolution textures and other popular rendering effects.
+* Physics engine powered by Bullet 3D, allowing for flexible, realistic and easy-to-work-with physics in game.
+* Audio engine supporting 3D sound attenuation and stereo sound.
+* Lua scripting engine with functionality exposed for easy game curation in engine.
+* Applies the event-based programming paradigm for better maitainability for game code.
 
 ## <a name=why>Why is Rootex?
 
