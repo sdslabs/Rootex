@@ -208,10 +208,6 @@ Ref<Entity> EntityFactory::createEntity(TextResourceFile* entityJSONDescription,
 	return entity;
 }
 
-Ref<Entity> EntityFactory::copyEntity(EntityID id)
-{
-	return Ref<Entity>();
-}
 
 Ref<Entity> EntityFactory::findEntity(EntityID entityID)
 {
