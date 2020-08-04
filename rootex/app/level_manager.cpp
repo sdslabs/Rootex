@@ -38,10 +38,8 @@ void LevelManager::openLevel(const String& levelPath, bool openInEditor)
 			ResourceLoader::Reload(textResource);
 		}
 
-		EntityFactory::GetSingleton()->createEntity(JSON::json::parse(textResource->getString()), textResource->getPath().generic_string());
+		EntityFactory::GetSingleton()->createEntity(textResource);
 	}
-
-	HierarchySystem::GetSingleton()->resetHierarchy();
 
 	if (m_CurrentLevelSettings.find("camera") != m_CurrentLevelSettings.end())
 	{

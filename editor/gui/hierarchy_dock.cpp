@@ -46,8 +46,8 @@ void HierarchyDock::showHierarchySubTree(HierarchyComponent* hierarchy)
 					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("EntityClass"))
 					{
 						const char* newEntityFile = (const char*)payload->Data;
-						TextResourceFile* t = ResourceLoader::CreateTextResourceFile(newEntityFile);
-						Ref<Entity> entity = EntityFactory::GetSingleton()->createEntity(JSON::json::parse(t->getString()), t->getPath().generic_string());
+						TextResourceFile* entityClassFile = ResourceLoader::CreateTextResourceFile(newEntityFile);
+						Ref<Entity> entity = EntityFactory::GetSingleton()->createEntity(entityClassFile);
 						node->getComponent<HierarchyComponent>()->addChild(entity);
 						openEntity(entity);
 					}

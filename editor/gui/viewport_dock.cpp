@@ -18,10 +18,10 @@ ViewportDock::ViewportDock(const JSON::json& viewportJSON)
 	m_ViewportDockSettings.m_ImageBorderColor = Editor::GetSingleton()->getColors().m_Accent;
 	TextResourceFile* cameraFile = ResourceLoader::CreateTextResourceFile("editor/entities/camera.entity.json");
 	TextResourceFile* gridFile = ResourceLoader::CreateTextResourceFile("editor/entities/grid.entity.json");
-	m_EditorCamera = EntityFactory::GetSingleton()->createEntity(JSON::json::parse(cameraFile->getString()), cameraFile->getPath().generic_string(), true);
+	m_EditorCamera = EntityFactory::GetSingleton()->createEntity(cameraFile, true);
 	RenderSystem::GetSingleton()->setCamera(m_EditorCamera->getComponent<CameraComponent>().get());
 
-	m_EditorGrid = EntityFactory::GetSingleton()->createEntity(JSON::json::parse(gridFile->getString()), gridFile->getPath().generic_string(), true);
+	m_EditorGrid = EntityFactory::GetSingleton()->createEntity(gridFile, true);
 }
 
 void ViewportDock::draw()

@@ -30,8 +30,8 @@ class EntityFactory
 	EntityID getNextID();
 	EntityID getNextEditorID();
 	String saveEntityAsClassRecursively(Ref<Entity> entity, const String& path);
-	Ref<Entity> createEntityFromClassRecursively(JSON::json entityJSON);
-	void fixParentIDRecursively(Ref<Entity> entity, EntityID id);
+	Ref<Entity> createEntityHierarchyFromClass(JSON::json entityJSON);
+	void fixParentID(Ref<Entity> entity, EntityID id);
 
 protected:
 	ComponentDatabase m_ComponentCreators;
@@ -53,10 +53,12 @@ public:
 	Ref<Component> createComponent(const String& name, const JSON::json& componentData);
 	Ref<Component> createDefaultComponent(const String& name);
 	Ref<Entity> createEntity(const JSON::json& entityJSON, const String& filePath, bool isEditorOnly = false);
+	Ref<Entity> createEntity(TextResourceFile* textResourceFile, bool isEditorOnly = false);
 	/// Get entity by ID.
 	Ref<Entity> findEntity(EntityID entityID);
 
 	void setupLiveEntities();
+	void setupEntity(Ref<Entity> entity);
 
 	void addDefaultComponent(Ref<Entity> entity, String componentName);
 	void addComponent(Ref<Entity> entity, Ref<Component> component);
