@@ -38,7 +38,7 @@ EntityID EntityFactory::s_CurrentEditorID = -ROOT_ENTITY_ID;
 void EntityFactory::RegisterAPI(sol::state& rootex)
 {
 	sol::usertype<EntityFactory> entityFactory = rootex.new_usertype<EntityFactory>("EntityFactory");
-	entityFactory["Create"] = [](TextResourceFile* t) { return EntityFactory::GetSingleton()->createEntity(JSON::json::parse(t->getString()), t->getPath().generic_string()); };
+	entityFactory["Create"] = [](TextResourceFile* t) { return EntityFactory::GetSingleton()->createEntity(t); };
 	entityFactory["Find"] = [](EntityID e) { return EntityFactory::GetSingleton()->findEntity(e); };
 }
 
@@ -141,6 +141,11 @@ Ref<Component> EntityFactory::createDefaultComponent(const String& name)
 	}
 }
 
+Ref<Entity> EntityFactory::createEntity(TextResourceFile* textResourceFile, bool isEditorOnly)
+{
+	return createEntity(JSON::json::parse(textResourceFile->getString()), textResourceFile->getPath().generic_string(), isEditorOnly);
+}
+
 Ref<Entity> EntityFactory::createEntity(const JSON::json& entityJSON, const String& filePath, bool isEditorOnly)
 {
 	if (entityJSON.is_null())
@@ -222,8 +227,13 @@ void EntityFactory::setupLiveEntities()
 {
 	for (auto& entity : m_Entities)
 	{
-		entity.second->setupEntities();
+		setupEntity(entity.second);
 	}
+}
+
+void EntityFactory::setupEntity(Ref<Entity> entity)
+{
+	entity->setupEntities();
 }
 
 Ref<Entity> EntityFactory::createRootEntity()
@@ -331,16 +341,13 @@ String EntityFactory::saveEntityAsClassRecursively(Ref<Entity> entity, const Str
 {
 	Ref<HierarchyComponent> hierarchyComponent = entity->getComponent<HierarchyComponent>();
 	JSON::json entityJSON = entity->getJSON();
-	if (hierarchyComponent->getChildren().size() > 0)
+	Vector<String> children;
+	for (EntityID child : hierarchyComponent->m_ChildrenIDs)
 	{
-		Vector<String> children;
-		for (EntityID child : hierarchyComponent->m_ChildrenIDs)
-		{
-			children.push_back(saveEntityAsClassRecursively(EntityFactory::GetSingleton()->getEntities().at(child), path));
-		}
-		entityJSON["Components"]["HierarchyComponent"]["children"] = children;
+		children.push_back(saveEntityAsClassRecursively(EntityFactory::GetSingleton()->getEntities().at(child), path));
 	}
-	entityJSON["Components"]["HierarchyComponent"]["parent"] = 1;
+	entityJSON["Components"]["HierarchyComponent"]["children"] = children;
+	entityJSON["Components"]["HierarchyComponent"]["parent"] = ROOT_ENTITY_ID;
 	entityJSON["Entity"].erase("ID");
 	InputOutputFileStream file = OS::CreateFileName(path + entity->getName() + ".entity.json");
 	file << entityJSON.dump(4) << std::endl;
@@ -350,31 +357,29 @@ String EntityFactory::saveEntityAsClassRecursively(Ref<Entity> entity, const Str
 
 Ref<Entity> EntityFactory::createEntityFromClass(const JSON::json& entityJSON)
 {
-	Ref<Entity> createdEntity = createEntityFromClassRecursively(entityJSON);
-	fixParentIDRecursively(createdEntity, 1);
-	setupLiveEntities();
+	Ref<Entity> createdEntity = createEntityHierarchyFromClass(entityJSON);
+	fixParentID(createdEntity, ROOT_ENTITY_ID);
 	return createdEntity;
 }
 
-Ref<Entity> EntityFactory::createEntityFromClassRecursively(JSON::json entityJSON)
+Ref<Entity> EntityFactory::createEntityHierarchyFromClass(JSON::json entityJSON)
 {
 	Vector<EntityID> ids;
-	if (entityJSON["Components"]["HierarchyComponent"]["children"].size() > 0)
+
+	for (String path : entityJSON["Components"]["HierarchyComponent"]["children"])
 	{
-		for (String path : entityJSON["Components"]["HierarchyComponent"]["children"])
+		if (OS::IsFile(path))
 		{
-			if (OS::IsFile(path))
-			{
-				JSON::json entityClass;
-				InputFileStream classFile(path);
-				classFile >> entityClass;
-				ids.push_back(createEntityFromClassRecursively(entityClass)->getID());
-			}
+			JSON::json entityClass;
+			InputFileStream classFile(path);
+			classFile >> entityClass;
+			ids.push_back(createEntityHierarchyFromClass(entityClass)->getID());
 		}
 	}
+
 	entityJSON["Components"]["HierarchyComponent"]["children"] = ids;
 	Ref<Entity> newEntity = createEntity(entityJSON, "Error in creating" + entityJSON["Entity"]["Name"].dump());
-	if (newEntity != nullptr)
+	if (newEntity)
 	{
 		return newEntity;
 	}
@@ -385,14 +390,13 @@ Ref<Entity> EntityFactory::createEntityFromClassRecursively(JSON::json entityJSO
 	}
 }
 
-void EntityFactory::fixParentIDRecursively(Ref<Entity> entity, EntityID id)
+void EntityFactory::fixParentID(Ref<Entity> entity, EntityID id)
 {
 	Ref<HierarchyComponent> hierarchyComponent = entity->getComponent<HierarchyComponent>();
 	hierarchyComponent->m_ParentID = id;
-	hierarchyComponent->m_Parent = &*(findEntity(id)->getComponent<HierarchyComponent>());
+	setupEntity(entity);
 	for (EntityID childID : hierarchyComponent->m_ChildrenIDs)
 	{
-		hierarchyComponent->m_Children.push_back(&*(findEntity(childID)->getComponent<HierarchyComponent>()));
-		fixParentIDRecursively(findEntity(childID), entity->getID());
+		fixParentID(findEntity(childID), entity->getID());
 	}
 }

@@ -47,6 +47,25 @@ bool HierarchyComponent::addChild(Ref<Entity> child)
 	return false;
 }
 
+bool HierarchyComponent::setupEntities()
+{
+	if (m_Owner->getID() != ROOT_ENTITY_ID)
+	{
+		m_Parent = EntityFactory::GetSingleton()->findEntity(m_ParentID)->getComponent<HierarchyComponent>().get();
+		if (m_ParentID == ROOT_ENTITY_ID)
+		{
+			Ref<HierarchyComponent> rootHC = EntityFactory::GetSingleton()->findEntity(ROOT_ENTITY_ID)->getComponent<HierarchyComponent>();
+			rootHC->m_ChildrenIDs.push_back(m_Owner->getID());
+			rootHC->m_Children.push_back(m_Owner->getComponent<HierarchyComponent>().get());
+		}
+		for (EntityID childID : m_ChildrenIDs)
+		{
+			m_Children.push_back(EntityFactory::GetSingleton()->findEntity(childID)->getComponent<HierarchyComponent>().get());
+		}
+	}
+	return true;
+}
+
 bool HierarchyComponent::removeChild(Ref<Entity> node)
 {
 	auto& findIt = std::find(m_ChildrenIDs.begin(), m_ChildrenIDs.end(), node->getID());

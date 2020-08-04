@@ -18,7 +18,7 @@ private:
 
 	void showHierarchySubTree(HierarchyComponent* hierarchy);
 	void openEntity(Ref<Entity> entity);
-	
+
 	Variant selectOpenEntity(const Event* event);
 
 public:
