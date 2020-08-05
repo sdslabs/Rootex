@@ -341,7 +341,7 @@ void Editor::drawDefaultUI()
 						RenderSystem::GetSingleton()->resetDefaultRasterizer();
 					}
 				}
-				
+
 				ImGui::Checkbox("Collision Mode", &m_CollisionMode);
 				ImGui::Checkbox("World Mode", &m_WorldMode);
 
@@ -606,7 +606,7 @@ Variant Editor::createNewEntity(const Event* event)
 	const String& entityClassFilePath = Extract(String, event->getData());
 	TextResourceFile* entityClassFile = ResourceLoader::CreateNewTextResourceFile(entityClassFilePath);
 
-	Ref<Entity> newEntity = EntityFactory::GetSingleton()->createEntity(JSON::json::parse(entityClassFile->getString()), entityClassFile->getPath().generic_string());
+	Ref<Entity> newEntity = EntityFactory::GetSingleton()->createEntity(entityClassFile);
 
 	HierarchySystem::GetSingleton()->addChild(newEntity);
 	return newEntity;

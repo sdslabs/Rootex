@@ -51,16 +51,34 @@ bool HierarchyComponent::setupEntities()
 {
 	if (m_Owner->getID() != ROOT_ENTITY_ID)
 	{
-		m_Parent = EntityFactory::GetSingleton()->findEntity(m_ParentID)->getComponent<HierarchyComponent>().get();
+		Ref<Entity> parent = EntityFactory::GetSingleton()->findEntity(m_ParentID);
+		if (!parent)
+		{
+			ERR("Could not find Entity with ID " + std::to_string(m_ParentID));
+			return false;
+		}
+		m_Parent = parent->getComponent<HierarchyComponent>().get();
 		if (m_ParentID == ROOT_ENTITY_ID)
 		{
-			Ref<HierarchyComponent> rootHC = EntityFactory::GetSingleton()->findEntity(ROOT_ENTITY_ID)->getComponent<HierarchyComponent>();
+			Ref<Entity> root = EntityFactory::GetSingleton()->findEntity(ROOT_ENTITY_ID);
+			if (!root)
+			{
+				ERR("Could not find root Entity");
+				return false;
+			}
+			Ref<HierarchyComponent> rootHC = root->getComponent<HierarchyComponent>();
 			rootHC->m_ChildrenIDs.push_back(m_Owner->getID());
 			rootHC->m_Children.push_back(m_Owner->getComponent<HierarchyComponent>().get());
 		}
 		for (EntityID childID : m_ChildrenIDs)
 		{
-			m_Children.push_back(EntityFactory::GetSingleton()->findEntity(childID)->getComponent<HierarchyComponent>().get());
+			Ref<Entity> child = EntityFactory::GetSingleton()->findEntity(childID);
+			if (!child)
+			{
+				ERR("Could not find Entity with ID " + std::to_string(childID));
+				return false;
+			}
+			m_Children.push_back(child->getComponent<HierarchyComponent>().get());
 		}
 	}
 	return true;

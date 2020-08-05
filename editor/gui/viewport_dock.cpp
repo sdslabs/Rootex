@@ -17,10 +17,10 @@ ViewportDock::ViewportDock(const JSON::json& viewportJSON)
 	m_ViewportDockSettings.m_ImageTint = Editor::GetSingleton()->getColors().m_White;
 	m_ViewportDockSettings.m_ImageBorderColor = Editor::GetSingleton()->getColors().m_Accent;
 	TextResourceFile* cameraFile = ResourceLoader::CreateTextResourceFile("editor/entities/camera.entity.json");
-	TextResourceFile* gridFile = ResourceLoader::CreateTextResourceFile("editor/entities/grid.entity.json");
 	m_EditorCamera = EntityFactory::GetSingleton()->createEntity(cameraFile, true);
 	RenderSystem::GetSingleton()->setCamera(m_EditorCamera->getComponent<CameraComponent>().get());
 
+	TextResourceFile* gridFile = ResourceLoader::CreateTextResourceFile("editor/entities/grid.entity.json");
 	m_EditorGrid = EntityFactory::GetSingleton()->createEntity(gridFile, true);
 }
 
@@ -57,8 +57,7 @@ void ViewportDock::draw()
 				{
 					const char* newEntityFile = (const char*)payload->Data;
 					TextResourceFile* t = ResourceLoader::CreateTextResourceFile(newEntityFile);
-					Ref<Entity> entity = EntityFactory::GetSingleton()->createEntityFromClass(JSON::json::parse(t->getString()));
-					HierarchySystem::GetSingleton()->getRootHierarchyComponent()->addChild(entity);
+					Ref<Entity> entity = EntityFactory::GetSingleton()->createEntityFromClass(t);
 					if (Ref<TransformComponent> transform = entity->getComponent<TransformComponent>())
 					{
 						transform->setTransform(RenderSystem::GetSingleton()->getCamera()->getOwner()->getComponent<TransformComponent>()->getAbsoluteTransform());

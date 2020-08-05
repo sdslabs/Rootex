@@ -47,7 +47,7 @@ void HierarchyDock::showHierarchySubTree(HierarchyComponent* hierarchy)
 					{
 						const char* newEntityFile = (const char*)payload->Data;
 						TextResourceFile* entityClassFile = ResourceLoader::CreateTextResourceFile(newEntityFile);
-						Ref<Entity> entity = EntityFactory::GetSingleton()->createEntity(entityClassFile);
+						Ref<Entity> entity = EntityFactory::GetSingleton()->createEntityFromClass(entityClassFile);
 						node->getComponent<HierarchyComponent>()->addChild(entity);
 						openEntity(entity);
 					}

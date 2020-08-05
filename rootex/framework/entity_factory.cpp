@@ -227,13 +227,8 @@ void EntityFactory::setupLiveEntities()
 {
 	for (auto& entity : m_Entities)
 	{
-		setupEntity(entity.second);
+		entity.second->setupEntities();
 	}
-}
-
-void EntityFactory::setupEntity(Ref<Entity> entity)
-{
-	entity->setupEntities();
 }
 
 Ref<Entity> EntityFactory::createRootEntity()
@@ -323,28 +318,30 @@ void EntityFactory::deleteEntity(Ref<Entity> entity)
 	entity.reset();
 }
 
-String EntityFactory::saveEntityAsClass(Ref<Entity> entity)
+bool EntityFactory::saveEntityAsClass(Ref<Entity> entity)
 {
-	if (OS::IsDirectory("game/assets/classes/" + entity->getName()))
+	if (OS::IsExists("game/assets/classes/" + entity->getName()))
 	{
 		WARN("Class with name \"" + entity->getName() + "\" already exists. New Class not created.");
-		return nullptr;
+		return false;
 	}
 	else
 	{
 		OS::CreateDirectoryName("game/assets/classes/" + entity->getName());
+		saveEntityAsClassRecursively(entity, "game/assets/classes/" + entity->getName() + "/");
 	}
-	return saveEntityAsClassRecursively(entity, "game/assets/classes/" + entity->getName() + "/");
+
+	return true;
 }
 
 String EntityFactory::saveEntityAsClassRecursively(Ref<Entity> entity, const String& path)
 {
 	Ref<HierarchyComponent> hierarchyComponent = entity->getComponent<HierarchyComponent>();
-	JSON::json entityJSON = entity->getJSON();
+	JSON::json& entityJSON = entity->getJSON();
 	Vector<String> children;
 	for (EntityID child : hierarchyComponent->m_ChildrenIDs)
 	{
-		children.push_back(saveEntityAsClassRecursively(EntityFactory::GetSingleton()->getEntities().at(child), path));
+		children.push_back(saveEntityAsClassRecursively(EntityFactory::GetSingleton()->findEntity(child), path));
 	}
 	entityJSON["Components"]["HierarchyComponent"]["children"] = children;
 	entityJSON["Components"]["HierarchyComponent"]["parent"] = ROOT_ENTITY_ID;
@@ -353,6 +350,11 @@ String EntityFactory::saveEntityAsClassRecursively(Ref<Entity> entity, const Str
 	file << entityJSON.dump(4) << std::endl;
 	file.close();
 	return path + entity->getName() + ".entity.json";
+}
+
+Ref<Entity> EntityFactory::createEntityFromClass(TextResourceFile* entityFile)
+{
+	return createEntityFromClass(JSON::json::parse(entityFile->getString()));
 }
 
 Ref<Entity> EntityFactory::createEntityFromClass(const JSON::json& entityJSON)
@@ -379,22 +381,18 @@ Ref<Entity> EntityFactory::createEntityHierarchyFromClass(JSON::json entityJSON)
 
 	entityJSON["Components"]["HierarchyComponent"]["children"] = ids;
 	Ref<Entity> newEntity = createEntity(entityJSON, "Error in creating" + entityJSON["Entity"]["Name"].dump());
-	if (newEntity)
-	{
-		return newEntity;
-	}
-	else
+	if (!newEntity)
 	{
 		WARN("Could not create entity: " + entityJSON["Entity"]["Name"].dump());
-		return nullptr;
 	}
+	return newEntity;
 }
 
 void EntityFactory::fixParentID(Ref<Entity> entity, EntityID id)
 {
 	Ref<HierarchyComponent> hierarchyComponent = entity->getComponent<HierarchyComponent>();
 	hierarchyComponent->m_ParentID = id;
-	setupEntity(entity);
+	entity->setupEntities();
 	for (EntityID childID : hierarchyComponent->m_ChildrenIDs)
 	{
 		fixParentID(findEntity(childID), entity->getID());

@@ -91,6 +91,13 @@ void InspectorDock::draw()
 					{
 						PANIC(m_OpenedEntity->setupComponents() == false, "Could not setup entity: " + m_OpenedEntity->getFullName());
 					}
+					if (ImGui::Selectable("Save Entity as class"))
+					{
+						if (!EntityFactory::GetSingleton()->saveEntityAsClass(m_OpenedEntity))
+						{
+							WARN("Could not create class from selected entity");
+						}
+					}
 					ImGui::Separator();
 					if (ImGui::Selectable("Delete Entity"))
 					{
@@ -112,7 +119,7 @@ void InspectorDock::draw()
 				}
 
 				ImGui::Separator();
-				
+
 				ImGui::Text("Components");
 				for (auto& component : m_OpenedEntity->getAllComponents())
 				{

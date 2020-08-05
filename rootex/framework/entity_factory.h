@@ -58,15 +58,15 @@ public:
 	Ref<Entity> findEntity(EntityID entityID);
 
 	void setupLiveEntities();
-	void setupEntity(Ref<Entity> entity);
 
 	void addDefaultComponent(Ref<Entity> entity, String componentName);
 	void addComponent(Ref<Entity> entity, Ref<Component> component);
 	/// Pass in a boolean that determines whether the Root entity should be saved from destruction or not.
 	void destroyEntities(bool saveRoot);
 	void deleteEntity(Ref<Entity> entity);
-	String saveEntityAsClass(Ref<Entity> entity);
+	bool saveEntityAsClass(Ref<Entity> entity);
 	Ref<Entity> createEntityFromClass(const JSON::json& entityJSON);
+	Ref<Entity> createEntityFromClass(TextResourceFile* entityJSON);
 
 	const ComponentDatabase& getComponentDatabase() const { return m_ComponentCreators; }
 	const HashMap<EntityID, Ref<Entity>>& getEntities() const { return m_Entities; }
