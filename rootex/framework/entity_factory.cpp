@@ -373,8 +373,8 @@ Ref<Entity> EntityFactory::createEntityHierarchyFromClass(JSON::json entityJSON)
 		if (OS::IsFile(path))
 		{
 			JSON::json entityClass;
-			InputFileStream classFile(path);
-			classFile >> entityClass;
+			TextResourceFile* classFile = ResourceLoader::CreateTextResourceFile(path);
+			entityClass = JSON::json::parse(classFile->getString());
 			ids.push_back(createEntityHierarchyFromClass(entityClass)->getID());
 		}
 	}
