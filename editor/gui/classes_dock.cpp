@@ -8,13 +8,14 @@ void ClassesDock::showClasses(const String& directory)
 {
 	for (auto& file : OS::GetAllInDirectory("game/assets/classes"))
 	{
-		if (OS::IsFile(file.string()))
+		if (OS::IsDirectory(file.string()))
 		{
 			ImGui::Selectable(file.filename().generic_string().c_str());
 
 			if (ImGui::BeginDragDropSource())
 			{
-				ImGui::SetDragDropPayload("EntityClass", file.generic_string().c_str(), file.generic_string().size() + 1);
+				String filePath = file.string() + "/" + file.filename().generic_string() + ".entity.json";
+				ImGui::SetDragDropPayload("EntityClass", filePath.c_str(), filePath.size() + 1);
 				ImGui::Text(file.generic_string().c_str());
 				ImGui::EndDragDropSource();
 			}

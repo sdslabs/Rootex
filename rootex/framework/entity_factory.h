@@ -1,9 +1,9 @@
 #pragma once
 
 #include "common/common.h"
-#include "resource_file.h"
-#include "entity.h"
 #include "component.h"
+#include "entity.h"
+#include "resource_file.h"
 
 /// Invalid ID for an entity
 #define INVALID_ID 0
@@ -26,9 +26,12 @@ class EntityFactory
 	static EntityID s_CurrentEditorID;
 
 	HashMap<EntityID, Ref<Entity>> m_Entities;
-	
+
 	EntityID getNextID();
 	EntityID getNextEditorID();
+	String saveEntityAsClassRecursively(Ref<Entity> entity, const String& path);
+	Ref<Entity> createEntityHierarchyFromClass(JSON::json entityJSON);
+	void fixParentID(Ref<Entity> entity, EntityID id);
 
 protected:
 	ComponentDatabase m_ComponentCreators;
@@ -49,7 +52,8 @@ public:
 
 	Ref<Component> createComponent(const String& name, const JSON::json& componentData);
 	Ref<Component> createDefaultComponent(const String& name);
-	Ref<Entity> createEntity(TextResourceFile* entityJSONDescription, bool isEditorOnly = false);
+	Ref<Entity> createEntity(const JSON::json& entityJSON, const String& filePath, bool isEditorOnly = false);
+	Ref<Entity> createEntity(TextResourceFile* textResourceFile, bool isEditorOnly = false);
 	/// Get entity by ID.
 	Ref<Entity> findEntity(EntityID entityID);
 
@@ -60,6 +64,9 @@ public:
 	/// Pass in a boolean that determines whether the Root entity should be saved from destruction or not.
 	void destroyEntities(bool saveRoot);
 	void deleteEntity(Ref<Entity> entity);
+	bool saveEntityAsClass(Ref<Entity> entity);
+	Ref<Entity> createEntityFromClass(const JSON::json& entityJSON);
+	Ref<Entity> createEntityFromClass(TextResourceFile* entityJSON);
 
 	const ComponentDatabase& getComponentDatabase() const { return m_ComponentCreators; }
 	const HashMap<EntityID, Ref<Entity>>& getEntities() const { return m_Entities; }

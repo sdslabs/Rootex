@@ -14,18 +14,18 @@
 #include "components/script_component.h"
 #include "components/short_music_component.h"
 #include "components/test_component.h"
-#include "components/transform_component.h"
 #include "components/transform_animation_component.h"
+#include "components/transform_component.h"
+#include "components/trigger_component.h"
 #include "components/visual/camera_component.h"
 #include "components/visual/cpu_particles_component.h"
 #include "components/visual/directional_light_component.h"
+#include "components/visual/grid_model_component.h"
+#include "components/visual/model_component.h"
 #include "components/visual/point_light_component.h"
 #include "components/visual/spot_light_component.h"
 #include "components/visual/text_ui_component.h"
-#include "components/visual/grid_model_component.h"
-#include "components/visual/model_component.h"
 #include "components/visual/ui_component.h"
-#include "components/trigger_component.h"
 #include "systems/hierarchy_system.h"
 
 #define REGISTER_COMPONENT(ComponentClass)                                                            \
@@ -141,19 +141,23 @@ Ref<Component> EntityFactory::createDefaultComponent(const String& name)
 	}
 }
 
-Ref<Entity> EntityFactory::createEntity(TextResourceFile* entityJSONDescription, bool isEditorOnly)
+Ref<Entity> EntityFactory::createEntity(TextResourceFile* textResourceFile, bool isEditorOnly)
 {
-	const JSON::json entityJSON = JSON::json::parse(entityJSONDescription->getString());
+	return createEntity(JSON::json::parse(textResourceFile->getString()), textResourceFile->getPath().generic_string(), isEditorOnly);
+}
+
+Ref<Entity> EntityFactory::createEntity(const JSON::json& entityJSON, const String& filePath, bool isEditorOnly)
+{
 	if (entityJSON.is_null())
 	{
-		ERR("Entity not found:" + entityJSONDescription->getPath().generic_string());
+		ERR("Entity not found:" + filePath);
 		return nullptr;
 	}
 
 	JSON::json componentJSON = entityJSON["Components"];
 	if (componentJSON.is_null())
 	{
-		ERR("Components not found while creating Entity:" + entityJSONDescription->getPath().generic_string());
+		ERR("Components not found while creating Entity:" + filePath);
 		return nullptr;
 	}
 
@@ -312,4 +316,85 @@ void EntityFactory::deleteEntity(Ref<Entity> entity)
 	entity->destroy();
 	m_Entities.erase(entity->getID());
 	entity.reset();
+}
+
+bool EntityFactory::saveEntityAsClass(Ref<Entity> entity)
+{
+	if (OS::IsExists("game/assets/classes/" + entity->getName()))
+	{
+		WARN("Class with name \"" + entity->getName() + "\" already exists. New Class not created.");
+		return false;
+	}
+	else
+	{
+		OS::CreateDirectoryName("game/assets/classes/" + entity->getName());
+		saveEntityAsClassRecursively(entity, "game/assets/classes/" + entity->getName() + "/");
+	}
+
+	return true;
+}
+
+String EntityFactory::saveEntityAsClassRecursively(Ref<Entity> entity, const String& path)
+{
+	Ref<HierarchyComponent> hierarchyComponent = entity->getComponent<HierarchyComponent>();
+	JSON::json& entityJSON = entity->getJSON();
+	Vector<String> children;
+	for (EntityID child : hierarchyComponent->m_ChildrenIDs)
+	{
+		children.push_back(saveEntityAsClassRecursively(EntityFactory::GetSingleton()->findEntity(child), path));
+	}
+	entityJSON["Components"]["HierarchyComponent"]["children"] = children;
+	entityJSON["Components"]["HierarchyComponent"]["parent"] = ROOT_ENTITY_ID;
+	entityJSON["Entity"].erase("ID");
+	InputOutputFileStream file = OS::CreateFileName(path + entity->getName() + ".entity.json");
+	file << entityJSON.dump(4) << std::endl;
+	file.close();
+	return path + entity->getName() + ".entity.json";
+}
+
+Ref<Entity> EntityFactory::createEntityFromClass(TextResourceFile* entityFile)
+{
+	return createEntityFromClass(JSON::json::parse(entityFile->getString()));
+}
+
+Ref<Entity> EntityFactory::createEntityFromClass(const JSON::json& entityJSON)
+{
+	Ref<Entity> createdEntity = createEntityHierarchyFromClass(entityJSON);
+	fixParentID(createdEntity, ROOT_ENTITY_ID);
+	return createdEntity;
+}
+
+Ref<Entity> EntityFactory::createEntityHierarchyFromClass(JSON::json entityJSON)
+{
+	Vector<EntityID> ids;
+
+	for (String path : entityJSON["Components"]["HierarchyComponent"]["children"])
+	{
+		if (OS::IsFile(path))
+		{
+			JSON::json entityClass;
+			TextResourceFile* classFile = ResourceLoader::CreateTextResourceFile(path);
+			entityClass = JSON::json::parse(classFile->getString());
+			ids.push_back(createEntityHierarchyFromClass(entityClass)->getID());
+		}
+	}
+
+	entityJSON["Components"]["HierarchyComponent"]["children"] = ids;
+	Ref<Entity> newEntity = createEntity(entityJSON, "Error in creating" + entityJSON["Entity"]["Name"].dump());
+	if (!newEntity)
+	{
+		WARN("Could not create entity: " + entityJSON["Entity"]["Name"].dump());
+	}
+	return newEntity;
+}
+
+void EntityFactory::fixParentID(Ref<Entity> entity, EntityID id)
+{
+	Ref<HierarchyComponent> hierarchyComponent = entity->getComponent<HierarchyComponent>();
+	hierarchyComponent->m_ParentID = id;
+	entity->setupEntities();
+	for (EntityID childID : hierarchyComponent->m_ChildrenIDs)
+	{
+		fixParentID(findEntity(childID), entity->getID());
+	}
 }

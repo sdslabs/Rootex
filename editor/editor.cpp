@@ -341,7 +341,7 @@ void Editor::drawDefaultUI()
 						RenderSystem::GetSingleton()->resetDefaultRasterizer();
 					}
 				}
-				
+
 				ImGui::Checkbox("Collision Mode", &m_CollisionMode);
 				ImGui::Checkbox("World Mode", &m_WorldMode);
 

@@ -46,7 +46,8 @@ void HierarchyDock::showHierarchySubTree(HierarchyComponent* hierarchy)
 					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("EntityClass"))
 					{
 						const char* newEntityFile = (const char*)payload->Data;
-						Ref<Entity> entity = EntityFactory::GetSingleton()->createEntity(ResourceLoader::CreateTextResourceFile(newEntityFile));
+						TextResourceFile* entityClassFile = ResourceLoader::CreateTextResourceFile(newEntityFile);
+						Ref<Entity> entity = EntityFactory::GetSingleton()->createEntityFromClass(entityClassFile);
 						node->getComponent<HierarchyComponent>()->addChild(entity);
 						openEntity(entity);
 					}
@@ -98,7 +99,7 @@ void HierarchyDock::draw()
 		if (ImGui::Begin("Hierarchy"))
 		{
 			ImGui::Checkbox("Show Editor Entities", &m_IsShowEditorEntities);
-			
+
 			HierarchyComponent* rootComponent = HierarchySystem::GetSingleton()->getRootHierarchyComponent().get();
 			showHierarchySubTree(rootComponent);
 		}
