@@ -9,14 +9,11 @@ class HierarchySystem : public System
 {
 	HierarchyGraph m_HierarchyGraph;
 
-	void setParentAndChildren(HashMap<EntityID, Ref<Entity>>& entities);
-
 public:
 	static HierarchySystem* GetSingleton();
 
 	/// Adds child entity to root hierarchy component of hierarchy graph.
 	void addChild(Ref<Entity> child);
-	void resetHierarchy();
 
 	/// Points to Root Entity of hierarchy graph.
 	Ref<Entity> getRootEntity() const { return m_HierarchyGraph.getRootEntity(); }

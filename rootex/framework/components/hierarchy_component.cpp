@@ -47,6 +47,43 @@ bool HierarchyComponent::addChild(Ref<Entity> child)
 	return false;
 }
 
+bool HierarchyComponent::setupEntities()
+{
+	if (m_Owner->getID() != ROOT_ENTITY_ID)
+	{
+		Ref<Entity> parent = EntityFactory::GetSingleton()->findEntity(m_ParentID);
+		if (!parent)
+		{
+			ERR("Could not find Entity with ID " + std::to_string(m_ParentID));
+			return false;
+		}
+		m_Parent = parent->getComponent<HierarchyComponent>().get();
+		if (m_ParentID == ROOT_ENTITY_ID)
+		{
+			Ref<Entity> root = EntityFactory::GetSingleton()->findEntity(ROOT_ENTITY_ID);
+			if (!root)
+			{
+				ERR("Could not find root Entity");
+				return false;
+			}
+			Ref<HierarchyComponent> rootHC = root->getComponent<HierarchyComponent>();
+			rootHC->m_ChildrenIDs.push_back(m_Owner->getID());
+			rootHC->m_Children.push_back(m_Owner->getComponent<HierarchyComponent>().get());
+		}
+		for (EntityID childID : m_ChildrenIDs)
+		{
+			Ref<Entity> child = EntityFactory::GetSingleton()->findEntity(childID);
+			if (!child)
+			{
+				ERR("Could not find Entity with ID " + std::to_string(childID));
+				return false;
+			}
+			m_Children.push_back(child->getComponent<HierarchyComponent>().get());
+		}
+	}
+	return true;
+}
+
 bool HierarchyComponent::removeChild(Ref<Entity> node)
 {
 	auto& findIt = std::find(m_ChildrenIDs.begin(), m_ChildrenIDs.end(), node->getID());

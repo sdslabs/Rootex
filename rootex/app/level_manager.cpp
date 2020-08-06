@@ -1,10 +1,10 @@
 #include "level_manager.h"
 
+#include "core/input/input_manager.h"
 #include "framework/entity_factory.h"
 #include "framework/systems/hierarchy_system.h"
 #include "framework/systems/render_system.h"
 #include "systems/serialization_system.h"
-#include "core/input/input_manager.h"
 
 LevelManager* LevelManager::GetSingleton()
 {
@@ -39,9 +39,7 @@ void LevelManager::openLevel(const String& levelPath, bool openInEditor)
 		}
 
 		EntityFactory::GetSingleton()->createEntity(textResource);
-	}	
-
-	HierarchySystem::GetSingleton()->resetHierarchy();
+	}
 
 	if (m_CurrentLevelSettings.find("camera") != m_CurrentLevelSettings.end())
 	{
@@ -85,7 +83,7 @@ void LevelManager::createLevel(const String& newLevelName)
 	newLevelJSON["inputSchemes"] = JSON::json::array();
 	newLevelJSON["startScheme"] = "";
 	OS::CreateFileName("game/assets/levels/" + newLevelName + "/" + newLevelName + ".level.json") << newLevelJSON.dump(1, '\t');
-	
+
 	PRINT("Created new level: " + "game/assets/levels/" + newLevelName);
 }
 

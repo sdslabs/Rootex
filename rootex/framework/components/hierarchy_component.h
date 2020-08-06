@@ -18,7 +18,7 @@ protected:
 
 	friend class EntityFactory;
 	friend class HierarchySystem;
-	
+
 public:
 	static void RegisterAPI(sol::state& rootex);
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::HierarchyComponent;
@@ -26,7 +26,8 @@ public:
 	HierarchyComponent(EntityID parentID, const Vector<EntityID>& childrenIDs);
 	HierarchyComponent(HierarchyComponent&) = delete;
 	virtual ~HierarchyComponent() = default;
-	
+
+	virtual bool setupEntities() override;
 	virtual bool addChild(Ref<Entity> child);
 	virtual bool removeChild(Ref<Entity> node);
 	virtual bool snatchChild(Ref<Entity> node);
