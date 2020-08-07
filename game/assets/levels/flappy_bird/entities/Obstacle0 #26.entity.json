@@ -25,6 +25,16 @@
             "resFile": "rootex/assets/cube.obj"
         },
         "TransformComponent": {
+            "higherBounds": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0.5
+            },
+            "lowerBounds": {
+                "x": -0.5,
+                "y": -0.5,
+                "z": -0.5
+            },
             "position": {
                 "x": 12.199999809265137,
                 "y": -2.75,
