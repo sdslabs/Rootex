@@ -7,10 +7,27 @@
 
 Component* TransformComponent::Create(const JSON::json& componentData)
 {
+	Vector3 lowerBounds = { -0.5f, -0.5f, -0.5f };
+	if (componentData.contains("lowerBounds"))
+	{
+		lowerBounds.x = componentData["lowerBounds"]["x"];
+		lowerBounds.y = componentData["lowerBounds"]["y"];
+		lowerBounds.z = componentData["lowerBounds"]["z"];
+	}
+	Vector3 higherBounds = { 0.5f, 0.5f, 0.5f };
+	if (componentData.contains("higherBounds"))
+	{
+		higherBounds.x = componentData["higherBounds"]["x"];
+		higherBounds.y = componentData["higherBounds"]["y"];
+		higherBounds.z = componentData["higherBounds"]["z"];
+	}
+
 	TransformComponent* transformComponent = new TransformComponent(
 	    { componentData["position"]["x"], componentData["position"]["y"], componentData["position"]["z"] },
 	    { componentData["rotation"]["x"], componentData["rotation"]["y"], componentData["rotation"]["z"], componentData["rotation"]["w"] },
-	    { componentData["scale"]["x"], componentData["scale"]["y"], componentData["scale"]["z"] });
+	    { componentData["scale"]["x"], componentData["scale"]["y"], componentData["scale"]["z"] },
+	    lowerBounds,
+		higherBounds);
 	return transformComponent;
 }
 
@@ -19,7 +36,9 @@ Component* TransformComponent::CreateDefault()
 	TransformComponent* transformComponent = new TransformComponent(
 	    { 0.0f, 0.0f, 0.0f },
 	    Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, 0.0f),
-	    { 1.0f, 1.0f, 1.0f });
+	    { 1.0f, 1.0f, 1.0f },
+	    { -0.5f, -0.5f, -0.5f },
+	    { 0.5f, 0.5f, 0.5f });
 	return transformComponent;
 }
 
@@ -36,11 +55,13 @@ void TransformComponent::updatePositionRotationScaleFromTransform(Matrix& transf
 	transform.Decompose(m_TransformBuffer.m_Scale, m_TransformBuffer.m_Rotation, m_TransformBuffer.m_Position);
 }
 
-TransformComponent::TransformComponent(const Vector3& position, const Vector4& rotation, const Vector3& scale)
+TransformComponent::TransformComponent(const Vector3& position, const Vector4& rotation, const Vector3& scale, const Vector3& lowerBounds, const Vector3& higherBounds)
 {
 	m_TransformBuffer.m_Position = position;
 	m_TransformBuffer.m_Rotation = rotation;
 	m_TransformBuffer.m_Scale = scale;
+	m_TransformBuffer.m_Bounds.m_LowerBounds = lowerBounds;
+	m_TransformBuffer.m_Bounds.m_HigherBounds = higherBounds;
 
 	updateTransformFromPositionRotationScale();
 
@@ -100,6 +121,12 @@ void TransformComponent::setTransform(const Matrix& transform)
 	updatePositionRotationScaleFromTransform(m_TransformBuffer.m_Transform);
 }
 
+void TransformComponent::setBounds(const Bounds& bounds)
+{
+	m_TransformBuffer.m_Bounds = bounds;
+	PRINT(std::to_string(m_TransformBuffer.m_Bounds.m_LowerBounds.x));
+}
+
 void TransformComponent::setRotationPosition(const Matrix& transform)
 {
 	m_TransformBuffer.m_Transform = Matrix::CreateScale(m_TransformBuffer.m_Scale) * transform;
@@ -133,6 +160,14 @@ JSON::json TransformComponent::getJSON() const
 	j["scale"]["x"] = m_TransformBuffer.m_Scale.x;
 	j["scale"]["y"] = m_TransformBuffer.m_Scale.y;
 	j["scale"]["z"] = m_TransformBuffer.m_Scale.z;
+
+	j["lowerBounds"]["x"] = m_TransformBuffer.m_Bounds.m_LowerBounds.x;
+	j["lowerBounds"]["y"] = m_TransformBuffer.m_Bounds.m_LowerBounds.y;
+	j["lowerBounds"]["z"] = m_TransformBuffer.m_Bounds.m_LowerBounds.z;
+
+	j["higherBounds"]["x"] = m_TransformBuffer.m_Bounds.m_HigherBounds.x;
+	j["higherBounds"]["y"] = m_TransformBuffer.m_Bounds.m_HigherBounds.y;
+	j["higherBounds"]["z"] = m_TransformBuffer.m_Bounds.m_HigherBounds.z;
 
 	return j;
 }
@@ -205,6 +240,20 @@ void TransformComponent::draw()
 	}
 
 	ImGui::Checkbox("Lock Scale", &m_LockScale);
+
+	ImGui::DragFloat3("##Lower Bounds", &m_TransformBuffer.m_Bounds.m_LowerBounds.x, s_EditorDecimalSpeed);
+	ImGui::SameLine();
+	if (ImGui::Button("Lower Bounds"))
+	{
+		m_TransformBuffer.m_Bounds.m_LowerBounds = { -0.5f, -0.5f, -0.5f };
+	}
+
+	ImGui::DragFloat3("##Higher Bounds", &m_TransformBuffer.m_Bounds.m_HigherBounds.x, s_EditorDecimalSpeed);
+	ImGui::SameLine();
+	if (ImGui::Button("Higher Bounds"))
+	{
+		m_TransformBuffer.m_Bounds.m_HigherBounds = { 0.5f, 0.5f, 0.5f };
+	}
 
 	updateTransformFromPositionRotationScale();
 }

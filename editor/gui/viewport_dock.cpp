@@ -84,18 +84,32 @@ void ViewportDock::draw()
 				gizmoOperation = ImGuizmo::OPERATION::ROTATE;
 			}
 			ImGui::SameLine();
+			if (ImGui::RadioButton("Scale", gizmoOperation == ImGuizmo::OPERATION::SCALE))
+			{
+				gizmoOperation = ImGuizmo::OPERATION::SCALE;
+			}
 			ImGui::EndGroup();
 
-			static float snap[3] = { 0.1f, 0.1f, 0.1f };
+			static float axisSnap[3] = { 0.1f, 0.1f, 0.1f };
+			static float angleSnap = { 45.0f };
+			static float scaleSnap = { 0.1f };
+			static float* currentSnap = nullptr;
 			static ImVec2 shortItemSize = ImGui::GetItemRectSize();
 			ImGui::SetNextItemWidth(shortItemSize.x);
 			if (gizmoOperation == ImGuizmo::OPERATION::TRANSLATE)
 			{
-				ImGui::DragFloat3("Axis Snap", snap, 0.1f);
+				ImGui::DragFloat3("Axis Snap", axisSnap, 0.1f);
+				currentSnap = axisSnap;
 			}
 			else if (gizmoOperation == ImGuizmo::OPERATION::ROTATE)
 			{
-				ImGui::DragFloat("Angle Snap", snap, 0.1f);
+				ImGui::DragFloat("Angle Snap", &angleSnap, 0.1f);
+				currentSnap = &angleSnap;
+			}
+			else if (gizmoOperation == ImGuizmo::OPERATION::SCALE)
+			{
+				ImGui::DragFloat("Scale Snap", &scaleSnap, 0.1f);
+				currentSnap = &scaleSnap;
 			}
 
 			static ImGuizmo::MODE gizmoMode = ImGuizmo::MODE::LOCAL;
@@ -127,6 +141,9 @@ void ViewportDock::draw()
 
 				Matrix matrix = openedEntity->getComponent<TransformComponent>()->getAbsoluteTransform();
 				Matrix deltaMatrix = Matrix::CreateTranslation(0.0f, 0.0f, 0.0f);
+
+				Ref<TransformComponent> transform = openedEntity->getComponent<TransformComponent>();
+				
 				ImGuizmo::Manipulate(
 				    &view.m[0][0],
 				    &proj.m[0][0],
@@ -134,8 +151,12 @@ void ViewportDock::draw()
 				    gizmoMode,
 				    &matrix.m[0][0],
 				    &deltaMatrix.m[0][0],
-				    snap);
-				openedEntity->getComponent<TransformComponent>()->addTransform(deltaMatrix);
+				    currentSnap,
+				    &transform->getBoundsMutable().m_LowerBounds.x);
+				
+				matrix *= transform->getParentAbsoluteTransform().Invert();
+
+				transform->setTransform(matrix);
 			}
 
 			if (ImGui::IsWindowHovered() && InputManager::GetSingleton()->isPressed("InputCameraActivate"))
