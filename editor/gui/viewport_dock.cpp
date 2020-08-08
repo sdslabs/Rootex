@@ -131,32 +131,120 @@ void ViewportDock::draw()
 			ImGui::Unindent(2.0f);
 
 			ImGui::SetCursorPos(viewportEnd);
+
+			Matrix view = RenderSystem::GetSingleton()->getCamera()->getViewMatrix();
+			Matrix proj = RenderSystem::GetSingleton()->getCamera()->getProjectionMatrix();
+
 			Ref<Entity> openedEntity = InspectorDock::GetSingleton()->getOpenedEntity();
 			if (openedEntity && openedEntity->getComponent<TransformComponent>())
 			{
-				// +8 for 8 pixels of gap, and it fixes the unwanted offset on the gizmo
-				ImGuizmo::SetRect(imagePos.x, imagePos.y + 8, m_ViewportDockSettings.m_ImageSize.x, m_ViewportDockSettings.m_ImageSize.y);
-				Matrix view = RenderSystem::GetSingleton()->getCamera()->getViewMatrix();
-				Matrix proj = RenderSystem::GetSingleton()->getCamera()->getProjectionMatrix();
+				// Someone decide how this number scaled to 20 from 8 on going from 1080p to 1440p
+				ImGuizmo::SetRect(imagePos.x, imagePos.y + 20, m_ViewportDockSettings.m_ImageSize.x, m_ViewportDockSettings.m_ImageSize.y);
 
 				Matrix matrix = openedEntity->getComponent<TransformComponent>()->getAbsoluteTransform();
 				Matrix deltaMatrix = Matrix::CreateTranslation(0.0f, 0.0f, 0.0f);
 
 				Ref<TransformComponent> transform = openedEntity->getComponent<TransformComponent>();
-				
+				BoundingBox boundingBox = transform->getBoundsMutable();
+
+				struct Bounds
+				{
+					Vector3 m_Lower;
+					Vector3 m_Higher;
+				};
+				Bounds bounds;
+				bounds.m_Lower = Vector3(boundingBox.Center) - Vector3(boundingBox.Extents);
+				bounds.m_Higher = Vector3(boundingBox.Center) + Vector3(boundingBox.Extents);
+
 				ImGuizmo::Manipulate(
-				    &view.m[0][0],
-				    &proj.m[0][0],
-				    gizmoOperation,
-				    gizmoMode,
-				    &matrix.m[0][0],
-				    &deltaMatrix.m[0][0],
-				    currentSnap,
-				    &transform->getBoundsMutable().m_LowerBounds.x);
-				
+					&view.m[0][0],
+					&proj.m[0][0],
+					gizmoOperation,
+					gizmoMode,
+					&matrix.m[0][0],
+					&deltaMatrix.m[0][0],
+					currentSnap,
+					&bounds.m_Lower.x);
+
 				matrix *= transform->getParentAbsoluteTransform().Invert();
 
 				transform->setTransform(matrix);
+			}
+			
+			if (ImGui::IsWindowHovered() && InputManager::GetSingleton()->isPressed("InputSelect") && !ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+			{
+				Vector3 mouseFromWindow;
+				{
+					ImVec2 mouseFromWindowImGui;
+					mouseFromWindowImGui.x = ImGui::GetMousePos().x - imagePos.x;
+					mouseFromWindowImGui.y = ImGui::GetMousePos().y - imagePos.y;
+					mouseFromWindow = { 2.0f * mouseFromWindowImGui.x / imageSize.x - 1.0f, (2.0f * mouseFromWindowImGui.y / imageSize.y - 1.0f) * -1.0f, 0.0f };
+				}
+
+				Vector3 origin = DirectX::XMVector3Unproject(
+				    { ImGui::GetMousePos().x - imagePos.x, ImGui::GetMousePos().y - imagePos.y, 0.0f },
+				    0,
+				    0,
+				    imageSize.x,
+				    imageSize.y,
+				    0,
+				    1,
+				    proj,
+				    view,
+				    Matrix::Identity);
+
+				Vector3 dest = DirectX::XMVector3Unproject(
+				    { ImGui::GetMousePos().x - imagePos.x, ImGui::GetMousePos().y - imagePos.y, 1.0f },
+				    0,
+				    0,
+				    imageSize.x,
+				    imageSize.y,
+				    0,
+				    1,
+				    proj,
+				    view,
+				    Matrix::Identity);
+
+				Vector3 direction = dest - origin;
+				direction.Normalize();
+
+				Ray ray(origin, direction);
+
+				float minimumDistance = D3D11_FLOAT32_MAX;
+				Ref<Entity> selectEntity;
+				for (auto& [entityID, entity] : EntityFactory::GetSingleton()->getEntities())
+				{
+					if (entity->isEditorOnly())
+					{
+						continue;
+					}
+
+					if (Ref<TransformComponent> transform = entity->getComponent<TransformComponent>())
+					{
+						static float distance = 0.0f;
+
+						BoundingBox boundingBox = transform->getBounds();
+						boundingBox.Center = boundingBox.Center + transform->getAbsoluteTransform().Translation();
+						boundingBox.Extents.x *= transform->getScale().x;
+						boundingBox.Extents.y *= transform->getScale().y;
+						boundingBox.Extents.z *= transform->getScale().z;
+
+						if (ray.Intersects(boundingBox, distance))
+						{
+							if (distance < minimumDistance && distance > 0.0f)
+							{
+								minimumDistance = distance;
+								selectEntity = entity;
+							}
+						}
+					}
+				}
+
+				if (selectEntity && selectEntity != openedEntity)
+				{
+					EventManager::GetSingleton()->call("MouseSelectEntity", "EditorOpenEntity", selectEntity);
+					PRINT("Picked entity through selection: " + selectEntity->getFullName());
+				}
 			}
 
 			if (ImGui::IsWindowHovered() && InputManager::GetSingleton()->isPressed("InputCameraActivate"))

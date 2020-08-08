@@ -21,7 +21,7 @@ private:
 		Vector3 m_Position;
 		Quaternion m_Rotation;
 		Vector3 m_Scale;
-		Bounds m_Bounds;
+		BoundingBox m_BoundingBox;
 
 		Matrix m_Transform;
 	};
@@ -35,7 +35,7 @@ private:
 	void updateTransformFromPositionRotationScale();
 	void updatePositionRotationScaleFromTransform(Matrix& transform);
 
-	TransformComponent(const Vector3& position, const Vector4& rotation, const Vector3& scale, const Vector3& lowerBounds, const Vector3& higherBounds);
+	TransformComponent(const Vector3& position, const Vector4& rotation, const Vector3& scale, const BoundingBox& bounds);
 	TransformComponent(TransformComponent&) = delete;
 
 	friend class ModelComponent;
@@ -60,15 +60,15 @@ public:
 	void setRotationQuaternion(const Quaternion& rotation);
 	void setScale(const Vector3& scale);
 	void setTransform(const Matrix& transform);
-	void setBounds(const Bounds& bounds);
+	void setBounds(const BoundingBox& bounds);
 	void setRotationPosition(const Matrix& transform);
 	
 	void addTransform(const Matrix& applyTransform);
 	void addRotation(const Quaternion& applyTransform);
 
 	Vector3 getPosition() const { return m_TransformBuffer.m_Position; }
-	Bounds getBounds() const { return m_TransformBuffer.m_Bounds; }
-	Bounds& getBoundsMutable() { return m_TransformBuffer.m_Bounds; }
+	BoundingBox getBounds() const { return m_TransformBuffer.m_BoundingBox; }
+	BoundingBox& getBoundsMutable() { return m_TransformBuffer.m_BoundingBox; }
 	const Quaternion& getRotation() const { return m_TransformBuffer.m_Rotation; }
 	const Vector3& getScale() const { return m_TransformBuffer.m_Scale; }
 	const Matrix& getLocalTransform() const { return m_TransformBuffer.m_Transform; }

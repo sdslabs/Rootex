@@ -7,27 +7,19 @@
 
 Component* TransformComponent::Create(const JSON::json& componentData)
 {
-	Vector3 lowerBounds = { -0.5f, -0.5f, -0.5f };
-	if (componentData.contains("lowerBounds"))
+	BoundingBox boundingBox({ 0.0f, 0.0f, 0.0f }, { 0.5f, 0.5f, 0.5f });
+	if (componentData.contains("boundingBox"))
 	{
-		lowerBounds.x = componentData["lowerBounds"]["x"];
-		lowerBounds.y = componentData["lowerBounds"]["y"];
-		lowerBounds.z = componentData["lowerBounds"]["z"];
-	}
-	Vector3 higherBounds = { 0.5f, 0.5f, 0.5f };
-	if (componentData.contains("higherBounds"))
-	{
-		higherBounds.x = componentData["higherBounds"]["x"];
-		higherBounds.y = componentData["higherBounds"]["y"];
-		higherBounds.z = componentData["higherBounds"]["z"];
+		boundingBox = BoundingBox(
+		    { componentData["boundingBox"]["center"]["x"], componentData["boundingBox"]["center"]["y"], componentData["boundingBox"]["center"]["z"] },
+		    { componentData["boundingBox"]["extents"]["x"], componentData["boundingBox"]["extents"]["y"], componentData["boundingBox"]["extents"]["z"] });
 	}
 
 	TransformComponent* transformComponent = new TransformComponent(
 	    { componentData["position"]["x"], componentData["position"]["y"], componentData["position"]["z"] },
 	    { componentData["rotation"]["x"], componentData["rotation"]["y"], componentData["rotation"]["z"], componentData["rotation"]["w"] },
 	    { componentData["scale"]["x"], componentData["scale"]["y"], componentData["scale"]["z"] },
-	    lowerBounds,
-		higherBounds);
+	    boundingBox);
 	return transformComponent;
 }
 
@@ -37,8 +29,7 @@ Component* TransformComponent::CreateDefault()
 	    { 0.0f, 0.0f, 0.0f },
 	    Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, 0.0f),
 	    { 1.0f, 1.0f, 1.0f },
-	    { -0.5f, -0.5f, -0.5f },
-	    { 0.5f, 0.5f, 0.5f });
+	    { { 0.0f, 0.0f, 0.0f }, { 0.5f, 0.5f, 0.5f } });
 	return transformComponent;
 }
 
@@ -55,13 +46,12 @@ void TransformComponent::updatePositionRotationScaleFromTransform(Matrix& transf
 	transform.Decompose(m_TransformBuffer.m_Scale, m_TransformBuffer.m_Rotation, m_TransformBuffer.m_Position);
 }
 
-TransformComponent::TransformComponent(const Vector3& position, const Vector4& rotation, const Vector3& scale, const Vector3& lowerBounds, const Vector3& higherBounds)
+TransformComponent::TransformComponent(const Vector3& position, const Vector4& rotation, const Vector3& scale, const BoundingBox& bounds)
 {
 	m_TransformBuffer.m_Position = position;
 	m_TransformBuffer.m_Rotation = rotation;
 	m_TransformBuffer.m_Scale = scale;
-	m_TransformBuffer.m_Bounds.m_LowerBounds = lowerBounds;
-	m_TransformBuffer.m_Bounds.m_HigherBounds = higherBounds;
+	m_TransformBuffer.m_BoundingBox = bounds;
 
 	updateTransformFromPositionRotationScale();
 
@@ -121,10 +111,9 @@ void TransformComponent::setTransform(const Matrix& transform)
 	updatePositionRotationScaleFromTransform(m_TransformBuffer.m_Transform);
 }
 
-void TransformComponent::setBounds(const Bounds& bounds)
+void TransformComponent::setBounds(const BoundingBox& bounds)
 {
-	m_TransformBuffer.m_Bounds = bounds;
-	PRINT(std::to_string(m_TransformBuffer.m_Bounds.m_LowerBounds.x));
+	m_TransformBuffer.m_BoundingBox = bounds;
 }
 
 void TransformComponent::setRotationPosition(const Matrix& transform)
@@ -161,13 +150,12 @@ JSON::json TransformComponent::getJSON() const
 	j["scale"]["y"] = m_TransformBuffer.m_Scale.y;
 	j["scale"]["z"] = m_TransformBuffer.m_Scale.z;
 
-	j["lowerBounds"]["x"] = m_TransformBuffer.m_Bounds.m_LowerBounds.x;
-	j["lowerBounds"]["y"] = m_TransformBuffer.m_Bounds.m_LowerBounds.y;
-	j["lowerBounds"]["z"] = m_TransformBuffer.m_Bounds.m_LowerBounds.z;
-
-	j["higherBounds"]["x"] = m_TransformBuffer.m_Bounds.m_HigherBounds.x;
-	j["higherBounds"]["y"] = m_TransformBuffer.m_Bounds.m_HigherBounds.y;
-	j["higherBounds"]["z"] = m_TransformBuffer.m_Bounds.m_HigherBounds.z;
+	j["boundingBox"]["center"]["x"] = m_TransformBuffer.m_BoundingBox.Center.x;
+	j["boundingBox"]["center"]["y"] = m_TransformBuffer.m_BoundingBox.Center.y;
+	j["boundingBox"]["center"]["z"] = m_TransformBuffer.m_BoundingBox.Center.z;
+	j["boundingBox"]["extents"]["x"] = m_TransformBuffer.m_BoundingBox.Extents.x;
+	j["boundingBox"]["extents"]["y"] = m_TransformBuffer.m_BoundingBox.Extents.y;
+	j["boundingBox"]["extents"]["z"] = m_TransformBuffer.m_BoundingBox.Extents.z;
 
 	return j;
 }
@@ -241,18 +229,18 @@ void TransformComponent::draw()
 
 	ImGui::Checkbox("Lock Scale", &m_LockScale);
 
-	ImGui::DragFloat3("##Lower Bounds", &m_TransformBuffer.m_Bounds.m_LowerBounds.x, s_EditorDecimalSpeed);
+	ImGui::DragFloat3("##Center", &m_TransformBuffer.m_BoundingBox.Center.x, s_EditorDecimalSpeed);
 	ImGui::SameLine();
-	if (ImGui::Button("Lower Bounds"))
+	if (ImGui::Button("Center"))
 	{
-		m_TransformBuffer.m_Bounds.m_LowerBounds = { -0.5f, -0.5f, -0.5f };
+		m_TransformBuffer.m_BoundingBox.Center = { 0.0f, 0.0f, 0.0f };
 	}
 
-	ImGui::DragFloat3("##Higher Bounds", &m_TransformBuffer.m_Bounds.m_HigherBounds.x, s_EditorDecimalSpeed);
+	ImGui::DragFloat3("##Extents", &m_TransformBuffer.m_BoundingBox.Extents.x, s_EditorDecimalSpeed);
 	ImGui::SameLine();
-	if (ImGui::Button("Higher Bounds"))
+	if (ImGui::Button("Extents"))
 	{
-		m_TransformBuffer.m_Bounds.m_HigherBounds = { 0.5f, 0.5f, 0.5f };
+		m_TransformBuffer.m_BoundingBox.Extents = { 0.5f, 0.5f, 0.5f };
 	}
 
 	updateTransformFromPositionRotationScale();
