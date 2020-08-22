@@ -2,6 +2,7 @@
 
 #include "resource_file.h"
 #include "renderer/mesh.h"
+#include <Assimp/scene.h>
 
 class Material;
 class Texture;
@@ -13,6 +14,9 @@ class AnimatedModelResourceFile : public ResourceFile
 
 	HashMap<Ref<Material>, Vector<AnimatedMesh>> m_Meshes;
     Vector<Ref<Texture>> m_Textures;
+    HashMap<String, UINT> m_BoneMapping;
+	Vector<Matrix> m_BoneOffsets;
+	Vector<Matrix> m_BoneTransforms;
 
 	friend class ResourceLoader;
 
@@ -24,6 +28,8 @@ public:
     ~AnimatedModelResourceFile() = default;
 
     void reimport() override;
+    
+    void GetBoneTransforms(aiNode* currentNode, Matrix rootTransform);
 
 	HashMap<Ref<Material>, Vector<AnimatedMesh>>& getMeshes() { return m_Meshes; }
 };
