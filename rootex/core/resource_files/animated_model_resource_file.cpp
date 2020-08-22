@@ -21,6 +21,22 @@ void AnimatedModelResourceFile::RegisterAPI(sol::table& rootex)
 	    sol::base_classes, sol::bases<ResourceFile>());
 }
 
+void AnimatedModelResourceFile::GetBoneTransforms(aiNode* currentNode, Matrix parentRootTransform)
+{
+	aiMatrix4x4 transform = currentNode->mTransformation;
+	Matrix toRootTransformation = Matrix({ transform.a1, transform.a2, transform.a3, transform.a4,
+	    transform.b1, transform.b2, transform.b3, transform.b4,
+	    transform.c1, transform.c2, transform.c3, transform.c4 });
+	Matrix currentRootTransform = (toRootTransformation) * parentRootTransform;
+
+	UINT index = m_BoneMapping[currentNode->mName.C_Str()];
+	m_BoneTransforms[index] = currentRootTransform;
+
+	for (size_t i = 0; i < currentNode->mNumChildren; i++) {
+		GetBoneTransforms(currentNode->mChildren[i], currentRootTransform);
+	}
+}
+
 void AnimatedModelResourceFile::reimport()
 {
 	ResourceFile::reimport();
@@ -39,6 +55,8 @@ void AnimatedModelResourceFile::reimport()
 
 	m_Meshes.clear();
 	m_Meshes.reserve(scene->mNumMeshes);
+
+    UINT boneCount = 0;
 
 	for (int i = 0; i < scene->mNumMeshes; i++)
 	{
@@ -158,6 +176,26 @@ void AnimatedModelResourceFile::reimport()
 			}
 		}
 
+        HashMap<int, Vector<UINT>> verticesIndex;
+        HashMap<int, Vector<float>> verticesWeights;
+        for (int boneIndex = 0; boneIndex < mesh->mNumBones; boneIndex++)
+        {
+            const aiBone* bone = mesh->mBones[boneIndex];
+
+			m_BoneMapping[bone->mName.C_Str()] = boneCount + boneIndex;
+
+			const aiMatrix4x4& offset = bone->mOffsetMatrix;
+			Matrix offsetMatrix = Matrix({ offset.a1, offset.a2, offset.a3, offset.a4,
+			    offset.b1, offset.b2, offset.b3, offset.b4,
+			    offset.c1, offset.c2, offset.c3, offset.c4 });
+			m_BoneOffsets.push_back(offsetMatrix);
+
+			for (int weightIndex = 0; weightIndex < bone->mNumWeights; weightIndex++)
+            {
+                verticesIndex[bone->mWeights[weightIndex].mVertexId].push_back(boneCount + boneIndex);
+                verticesWeights[bone->mWeights[weightIndex].mVertexId].push_back(bone->mWeights[weightIndex].mWeight);
+            }
+        }
 		AnimatedMesh extractedMesh;
 		extractedMesh.m_NumBones = mesh->mNumBones;
 		extractedMesh.m_VertexBuffer.reset(new VertexBuffer(vertices));

@@ -36,5 +36,6 @@ struct UIVertexData
 
 struct AnimatedVertexData : public VertexData
 {
-	Vector<VertexBoneData> m_VertexBoneData;
+	Vector4 m_BoneWeights;
+	UINT m_BoneIndices[4];
 };
