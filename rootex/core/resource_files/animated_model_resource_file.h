@@ -3,6 +3,7 @@
 #include "resource_file.h"
 #include "renderer/mesh.h"
 #include <Assimp/scene.h>
+#include "core/animation/animation.h"
 
 class Material;
 class Texture;
@@ -17,6 +18,7 @@ class AnimatedModelResourceFile : public ResourceFile
     HashMap<String, UINT> m_BoneMapping;
 	Vector<Matrix> m_BoneOffsets;
 	Vector<Matrix> m_BoneTransforms;
+    HashMap<String, SkeletalAnimation> m_Animations;
 
 	friend class ResourceLoader;
 
