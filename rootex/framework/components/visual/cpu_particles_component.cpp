@@ -42,7 +42,8 @@ Component* CPUParticlesComponent::Create(const JSON::json& componentData)
 
 	CPUParticlesComponent* particles = new CPUParticlesComponent(
 		componentData["poolSize"], 
-		componentData["resFile"], 
+		componentData["resFile"],
+	    componentData["materialPath"],
 		particalTemplate, 
 		componentData["isVisible"],
 	    componentData["renderPass"]);
@@ -53,15 +54,17 @@ Component* CPUParticlesComponent::CreateDefault()
 {
 	CPUParticlesComponent* particles = new CPUParticlesComponent(
 		1000,
-		"rootex/assets/cube.obj", 
+		"rootex/assets/cube.obj",
+	    "rootex/assets/materials/default_particles.rmat",
 		ParticleTemplate(),
 		true,
 		(unsigned int)RenderPass::Basic);
 	return particles;
 }
 
-CPUParticlesComponent::CPUParticlesComponent(size_t poolSize, const String& particleModelPath, const ParticleTemplate& particleTemplate, bool visibility, unsigned int renderPass)
+CPUParticlesComponent::CPUParticlesComponent(size_t poolSize, const String& particleModelPath, const String& materialPath, const ParticleTemplate& particleTemplate, bool visibility, unsigned int renderPass)
     : ModelComponent(renderPass, ResourceLoader::CreateModelResourceFile(particleModelPath), visibility)
+    , m_BasicMaterial(std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetMaterial(materialPath)))
     , m_ParticleTemplate(particleTemplate)
     , m_TransformComponent(nullptr)
 {
@@ -132,18 +135,14 @@ void CPUParticlesComponent::render()
 		float size = particle.m_SizeBegin * (life) + particle.m_SizeEnd * (1.0f - life);
 		
 		RenderSystem::GetSingleton()->pushMatrixOverride(Matrix::CreateScale(size) * particle.m_Transform);
+		
+		m_BasicMaterial->setColor(Color::Lerp(particle.m_ColorEnd, particle.m_ColorBegin, life));
+		RenderSystem::GetSingleton()->getRenderer()->bind(m_BasicMaterial.get());
+		
 		for (auto& [material, meshes] : m_ModelResourceFile->getMeshes())
 		{
-			BasicMaterial* basic = dynamic_cast<BasicMaterial*>(material.get());
-
-			if (basic)
-			{
-				basic->setColor(Color::Lerp(particle.m_ColorEnd, particle.m_ColorBegin, life));
-			}
-
 			for (auto& mesh : meshes)
 			{
-				RenderSystem::GetSingleton()->getRenderer()->bind(material.get());
 				RenderSystem::GetSingleton()->getRenderer()->draw(mesh.m_VertexBuffer.get(), mesh.m_IndexBuffer.get());
 			}
 		}
@@ -185,6 +184,8 @@ void CPUParticlesComponent::emit(const ParticleTemplate& particleTemplate)
 JSON::json CPUParticlesComponent::getJSON() const
 {
 	JSON::json& j = ModelComponent::getJSON();
+
+	j["materialPath"] = m_BasicMaterial->getFileName();
 
 	j["poolSize"] = m_ParticlePool.size();
 	j["velocity"]["x"] = m_ParticleTemplate.m_Velocity.x;

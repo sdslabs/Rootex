@@ -36,6 +36,7 @@ class CPUParticlesComponent : public ModelComponent
 
 	ParticleTemplate m_ParticleTemplate;
 	Vector<Particle> m_ParticlePool;
+	Ref<BasicMaterial> m_BasicMaterial;
 	size_t m_PoolIndex;
 	int m_EmitRate;
 	TransformComponent* m_TransformComponent;
@@ -46,7 +47,7 @@ class CPUParticlesComponent : public ModelComponent
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::CPUParticlesComponent;
 
-	CPUParticlesComponent(size_t poolSize, const String& particleModelPath, const ParticleTemplate& particleTemplate, bool visibility, unsigned int renderPass);
+	CPUParticlesComponent(size_t poolSize, const String& particleModelPath, const String& materialPath, const ParticleTemplate& particleTemplate, bool visibility, unsigned int renderPass);
 	CPUParticlesComponent(CPUParticlesComponent&) = delete;
 	virtual ~CPUParticlesComponent();
 

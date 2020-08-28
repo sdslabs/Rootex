@@ -21,6 +21,7 @@
             },
             "isVisible": true,
             "lifeTime": 1.4299999475479126,
+            "materialPath": "rootex/assets/materials/default_particles.rmat",
             "poolSize": 1000,
             "renderPass": 1,
             "resFile": "rootex/assets/cube.obj",

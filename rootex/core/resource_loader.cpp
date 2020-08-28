@@ -99,21 +99,37 @@ void ResourceLoader::LoadAssimp(ModelResourceFile* file)
 		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
 		aiColor3D color(0.0f, 0.0f, 0.0f);
+		float alpha = 1.0f;
 		if (AI_SUCCESS != material->Get(AI_MATKEY_COLOR_DIFFUSE, color))
 		{
 			WARN("Material does not have color: " + String(material->GetName().C_Str()));
 		}
+		if (AI_SUCCESS != material->Get(AI_MATKEY_OPACITY, alpha))
+		{
+			WARN("Material does not have alpha: " + String(material->GetName().C_Str()));
+		}
 
 		Ref<BasicMaterial> extractedMaterial;
-		if (MaterialLibrary::IsExists(material->GetName().C_Str()))
+		
+		String materialPath;
+		if (String(material->GetName().C_Str()) == "DefaultMaterial")
 		{
-			extractedMaterial = std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetMaterial(material->GetName().C_Str() + String(".rmat")));
+			materialPath = "rootex/assets/materials/default.rmat";
 		}
 		else
 		{
-			MaterialLibrary::CreateNewMaterialFile(material->GetName().C_Str(), "BasicMaterial");
-			extractedMaterial = std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetMaterial(material->GetName().C_Str() + String(".rmat")));
-			extractedMaterial->setColor({ color.r, color.g, color.b, 1.0f });
+			materialPath = "game/assets/materials/" + String(material->GetName().C_Str()) + ".rmat";
+		}
+
+		if (MaterialLibrary::IsExists(materialPath))
+		{
+			extractedMaterial = std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetMaterial(materialPath));
+		}
+		else
+		{
+			MaterialLibrary::CreateNewMaterialFile(materialPath, "BasicMaterial");
+			extractedMaterial = std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetMaterial(materialPath));
+			extractedMaterial->setColor({ color.r, color.g, color.b, alpha });
 
 			for (int i = 0; i < material->GetTextureCount(aiTextureType_DIFFUSE); i++)
 			{
