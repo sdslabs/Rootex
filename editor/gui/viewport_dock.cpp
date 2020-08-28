@@ -171,7 +171,7 @@ void ViewportDock::draw()
 				transform->setTransform(matrix);
 			}
 			
-			if (ImGui::IsWindowHovered() && InputManager::GetSingleton()->isPressed("InputSelect") && !ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+			if (ImGui::IsWindowHovered() && InputManager::GetSingleton()->isPressed("InputSelect") && !ImGui::IsMouseDragging(ImGuiMouseButton_Left) && ImGui::IsMouseDown(ImGuiMouseButton_Left))
 			{
 				Vector3 mouseFromWindow;
 				{
