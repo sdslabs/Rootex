@@ -67,11 +67,13 @@ void InspectorDock::draw()
 				}
 				else
 				{
+					Editor::GetSingleton()->pushBoldFont();
 					ImGui::TreeNodeEx(m_OpenedEntity->getFullName().c_str(), ImGuiTreeNodeFlags_CollapsingHeader | ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_Selected);
 					if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
 					{
 						m_IsNameBeingEdited = true;
 					}
+					Editor::GetSingleton()->popFont();
 				}
 
 				String menuAction;
@@ -120,14 +122,18 @@ void InspectorDock::draw()
 
 				ImGui::Separator();
 
+				Editor::GetSingleton()->pushBoldFont();
 				ImGui::Text("Components");
 				for (auto& component : m_OpenedEntity->getAllComponents())
 				{
 					if (ImGui::TreeNodeEx(component.second->getName().c_str(), ImGuiTreeNodeFlags_CollapsingHeader | ImGuiTreeNodeFlags_DefaultOpen))
 					{
+						Editor::GetSingleton()->pushRegularFont();
 						component.second->draw();
+						Editor::GetSingleton()->popFont();
 					}
 				}
+				Editor::GetSingleton()->popFont();
 
 				drawAddComponentWindow();
 				drawRemoveComponentWindow();

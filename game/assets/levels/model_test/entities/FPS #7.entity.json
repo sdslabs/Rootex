@@ -5,7 +5,9 @@
             "parent": 1
         },
         "ScriptComponent": {
-            "scripts": [ "game\\assets\\scripts\\fps_display.lua" ]
+            "scripts": [
+                "game/assets/scripts/fps_display.lua"
+            ]
         },
         "TextUIComponent": {
             "color": {
