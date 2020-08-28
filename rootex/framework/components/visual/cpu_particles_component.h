@@ -5,7 +5,6 @@
 struct ParticleTemplate
 {
 	Vector3 m_Velocity = { 1.0f, 0.0f, 0.0f };
-	Quaternion m_AngularVelocity;
 	Color m_ColorBegin = ColorPresets::Red;
 	Color m_ColorEnd = ColorPresets::Blue;
 	float m_VelocityVariation = 10.0f;
@@ -24,7 +23,7 @@ class CPUParticlesComponent : public ModelComponent
 	{
 		Matrix m_Transform;
 		Vector3 m_Velocity;
-		Quaternion m_AngularVelocity;
+		Vector3 m_AngularVelocity;
 		Color m_ColorBegin;
 		Color m_ColorEnd;
 		float m_SizeBegin;
@@ -49,7 +48,7 @@ public:
 
 	CPUParticlesComponent(size_t poolSize, const String& particleModelPath, const String& materialPath, const ParticleTemplate& particleTemplate, bool visibility, unsigned int renderPass);
 	CPUParticlesComponent(CPUParticlesComponent&) = delete;
-	virtual ~CPUParticlesComponent();
+	virtual ~CPUParticlesComponent() = default;
 
 	virtual bool setup() override;
 	virtual bool preRender() override;
@@ -57,6 +56,7 @@ public:
 	virtual void postRender() override;
 
 	void emit(const ParticleTemplate& particleTemplate);
+	void expandPool(const size_t& poolSize);
 
 	virtual String getName() const override { return "CPUParticlesComponent"; }
 	ComponentID getComponentID() const override { return s_ID; }

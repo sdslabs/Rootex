@@ -1,65 +1,59 @@
 {
-	"Components": {
-		"CPUParticlesComponent": {
-			"angularVelocity": {
-				"w": 1.0,
-				"x": 0.0,
-				"y": 0.0,
-				"z": 0.0
-			},
-			"colorBegin": {
-				"a": 1.0,
-				"b": 0.0,
-				"g": 0.0,
-				"r": 1.0
-			},
-			"colorEnd": {
-				"a": 1.0,
-				"b": 0.0,
-				"g": 1.0,
-				"r": 0.8529411554336548
-			},
-			"isVisible": true,
-			"lifeTime": 1.0,
-			"poolSize": 1000,
-			"renderPass": 1,
-			"resFile": "rootex/assets/cube.obj",
-			"materialPath": "rootex/assets/materials/default_particles.rmat",
-			"sizeBegin": 0.10000000149011612,
-			"sizeEnd": 0.0,
-			"sizeVariation": 0.10000000149011612,
-			"velocity": {
-				"x": 0.0,
-				"y": 1.0,
-				"z": 0.0
-			},
-			"velocityVariation": 1.0
-		},
-		"HierarchyComponent": {
-			"children": [],
-			"parent": 1
-		},
-		"TransformComponent": {
-			"position": {
-				"x": -1.0,
-				"y": -2.0,
-				"z": -7.0
-			},
-			"rotation": {
-				"w": 1.0,
-				"x": -0.0,
-				"y": 0.0,
-				"z": -0.0
-			},
-			"scale": {
-				"x": 1.0,
-				"y": 1.0,
-				"z": 1.0
-			}
-		}
-	},
-	"Entity": {
-		"ID": 12,
-		"name": "ColorCubeParticles"
-	}
+    "Components": {
+        "CPUParticlesComponent": {
+            "colorBegin": {
+                "a": 1.0,
+                "b": 0.0,
+                "g": 0.0,
+                "r": 1.0
+            },
+            "colorEnd": {
+                "a": 1.0,
+                "b": 0.0,
+                "g": 1.0,
+                "r": 0.8529411554336548
+            },
+            "isVisible": true,
+            "lifeTime": 1.0,
+            "materialPath": "rootex/assets/materials/default_particles.rmat",
+            "poolSize": 1000,
+            "renderPass": 1,
+            "resFile": "rootex/assets/cube.obj",
+            "sizeBegin": 0.10000000149011612,
+            "sizeEnd": 0.0,
+            "sizeVariation": 0.10000000149011612,
+            "velocity": {
+                "x": 0.0,
+                "y": 1.0,
+                "z": 0.0
+            },
+            "velocityVariation": 1.0
+        },
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 1
+        },
+        "TransformComponent": {
+            "position": {
+                "x": -1.0,
+                "y": -2.0,
+                "z": -7.0
+            },
+            "rotation": {
+                "w": 1.0,
+                "x": -0.0,
+                "y": 0.0,
+                "z": -0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            }
+        }
+    },
+    "Entity": {
+        "ID": 12,
+        "name": "ColorCubeParticles"
+    }
 }

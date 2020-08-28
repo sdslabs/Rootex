@@ -16,12 +16,6 @@ Component* CPUParticlesComponent::Create(const JSON::json& componentData)
 		    componentData["velocity"]["z"] 
 		},
 		{
-			componentData["angularVelocity"]["x"], 
-			componentData["angularVelocity"]["y"], 
-			componentData["angularVelocity"]["z"], 
-			componentData["angularVelocity"]["w"] 
-		},
-		{
 			componentData["colorBegin"]["r"], 
 			componentData["colorBegin"]["g"], 
 			componentData["colorBegin"]["b"], 
@@ -69,14 +63,9 @@ CPUParticlesComponent::CPUParticlesComponent(size_t poolSize, const String& part
     , m_TransformComponent(nullptr)
 {
 	m_AllowedMaterials = { BasicMaterial::s_MaterialName };
-	m_ParticlePool.resize(poolSize);
-	m_PoolIndex = poolSize - 1;
+	expandPool(poolSize);
 	m_LastRenderTimePoint = std::chrono::high_resolution_clock::now();
 	m_EmitRate = 0;
-}
-
-CPUParticlesComponent::~CPUParticlesComponent()
-{
 }
 
 bool CPUParticlesComponent::setup()
@@ -115,8 +104,7 @@ bool CPUParticlesComponent::preRender()
 
 		float delta = (std::chrono::high_resolution_clock::now() - m_LastRenderTimePoint).count() * (NS_TO_MS * MS_TO_S);
 		particle.m_LifeRemaining -= delta;
-		// https://gamedev.stackexchange.com/a/157018/106158
-		particle.m_Transform = Matrix::Transform(Matrix::CreateTranslation(particle.m_Velocity * delta) * particle.m_Transform, 0.5f * particle.m_AngularVelocity * delta);
+		particle.m_Transform = Matrix::CreateTranslation(particle.m_Velocity * delta) * Matrix::CreateFromYawPitchRoll(particle.m_AngularVelocity.x * delta, particle.m_AngularVelocity.y * delta, particle.m_AngularVelocity.z * delta) * particle.m_Transform;
 	}
 
 	return true;
@@ -168,7 +156,8 @@ void CPUParticlesComponent::emit(const ParticleTemplate& particleTemplate)
 	particle.m_Velocity.y += particleTemplate.m_VelocityVariation * (Random::Float() - 0.5f);
 	particle.m_Velocity.z += particleTemplate.m_VelocityVariation * (Random::Float() - 0.5f);
 
-	particle.m_AngularVelocity = particleTemplate.m_AngularVelocity;
+	particle.m_AngularVelocity = Vector3(Random::Float() - 0.5f, Random::Float() - 0.5f, Random::Float() - 0.5f);
+	particle.m_AngularVelocity.Normalize();
 
 	particle.m_ColorBegin = particleTemplate.m_ColorBegin;
 	particle.m_ColorEnd = particleTemplate.m_ColorEnd;
@@ -179,6 +168,12 @@ void CPUParticlesComponent::emit(const ParticleTemplate& particleTemplate)
 	particle.m_SizeEnd = particleTemplate.m_SizeEnd;
 
 	m_PoolIndex = --m_PoolIndex % m_ParticlePool.size();
+}
+
+void CPUParticlesComponent::expandPool(const size_t& poolSize)
+{
+	m_ParticlePool.resize(poolSize);
+	m_PoolIndex = poolSize - 1;
 }
 
 JSON::json CPUParticlesComponent::getJSON() const
@@ -192,10 +187,6 @@ JSON::json CPUParticlesComponent::getJSON() const
 	j["velocity"]["y"] = m_ParticleTemplate.m_Velocity.y;
 	j["velocity"]["z"] = m_ParticleTemplate.m_Velocity.z;
 	j["velocityVariation"] = m_ParticleTemplate.m_VelocityVariation;
-	j["angularVelocity"]["x"] = m_ParticleTemplate.m_AngularVelocity.x;
-	j["angularVelocity"]["y"] = m_ParticleTemplate.m_AngularVelocity.y;
-	j["angularVelocity"]["z"] = m_ParticleTemplate.m_AngularVelocity.z;
-	j["angularVelocity"]["w"] = m_ParticleTemplate.m_AngularVelocity.w;
 	j["colorBegin"]["r"] = m_ParticleTemplate.m_ColorBegin.x;
 	j["colorBegin"]["g"] = m_ParticleTemplate.m_ColorBegin.y;
 	j["colorBegin"]["b"] = m_ParticleTemplate.m_ColorBegin.z;
@@ -218,17 +209,16 @@ void CPUParticlesComponent::draw()
 {
 	ModelComponent::draw();
 
+	int poolSize = m_ParticlePool.size();
+	if (ImGui::DragInt("Pool Size", &poolSize)) 
+	{
+		expandPool(poolSize);
+	}
 	ImGui::DragInt("Emit Rate", &m_EmitRate);
 	ImGui::Separator();
 	ImGui::Text("Particle", ImGuiTreeNodeFlags_CollapsingHeader);
 	ImGui::DragFloat3("Velocity", &m_ParticleTemplate.m_Velocity.x);
 	ImGui::DragFloat("Velocity Variation", &m_ParticleTemplate.m_VelocityVariation);
-	ImGui::DragFloat4("##Angular Velocity", &m_ParticleTemplate.m_AngularVelocity.x);
-	ImGui::SameLine();
-	if (ImGui::Button("Angular Velocity"))
-	{
-		m_ParticleTemplate.m_AngularVelocity = { 0.0f, 0.0f, 0.0f, 0.0f };
-	}
 	ImGui::ColorEdit4("Color Begin", &m_ParticleTemplate.m_ColorBegin.x);
 	ImGui::ColorEdit4("Color End", &m_ParticleTemplate.m_ColorEnd.x);
 	ImGui::DragFloat("Size Begin", &m_ParticleTemplate.m_SizeBegin, 0.01f);
