@@ -30,6 +30,9 @@ class Editor
 	bool m_CollisionMode = false;
 	bool m_WorldMode = true;
 
+	ImFont* m_EditorFont;
+	ImFont* m_EditorFontBold;
+
 	struct Colors
 	{
 		ImVec4 m_Accent;
@@ -77,6 +80,10 @@ public:
 
 	void initialize(HWND hWnd, const JSON::json& projectJSON);
 	void render();
+
+	void pushRegularFont();
+	void pushBoldFont();
+	void popFont();
 
 	const Colors& getColors() const { return m_Colors; }
 };
