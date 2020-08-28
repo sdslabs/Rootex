@@ -1,0 +1,68 @@
+{
+    "Components": {
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 1
+        },
+        "ModelComponent": {
+            "isVisible": true,
+            "renderPass": 1,
+            "resFile": "game/assets/test/cube.obj"
+        },
+        "SpotLightComponent": {
+            "ambientColor": {
+                "a": 1.0,
+                "b": 9.999899930335232e-07,
+                "g": 9.999899930335232e-07,
+                "r": 9.999999974752427e-07
+            },
+            "angleRange": 0.0872664675116539,
+            "attConst": 1.0,
+            "attLin": 0.0,
+            "attQuad": 0.0,
+            "diffuseColor": {
+                "a": 1.0,
+                "b": 1.0,
+                "g": 0.0,
+                "r": 0.9999427795410156
+            },
+            "diffuseIntensity": 1.0,
+            "range": 100.0,
+            "spot": 4.739999771118164
+        },
+        "TransformComponent": {
+            "boundingBox": {
+                "center": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "extents": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                }
+            },
+            "position": {
+                "x": 0.08368448913097382,
+                "y": 6.820920944213867,
+                "z": -0.0031669854652136564
+            },
+            "rotation": {
+                "w": 0.7071069478988647,
+                "x": -0.7071066498756409,
+                "y": 0.0,
+                "z": -0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 0.9999997019767761,
+                "z": 0.9999997019767761
+            }
+        }
+    },
+    "Entity": {
+        "ID": 3,
+        "name": "Light"
+    }
+}
