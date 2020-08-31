@@ -48,17 +48,14 @@ void LevelManager::openLevel(const String& levelPath, bool openInEditor)
 		RenderSystem::GetSingleton()->setCamera(cameraEntity->getComponent<CameraComponent>().get());
 	}
 
-	if (!(m_CurrentLevelSettings.find("listener") != m_CurrentLevelSettings.end()))
-	{
-		m_CurrentLevelSettings["listener"] = ROOT_ENTITY_ID;
-		saveCurrentLevelSettings();
-	}
+	if (m_CurrentLevelSettings.find("listener") != m_CurrentLevelSettings.end())
 	{
 		Ref<Entity> listenerEntity = EntityFactory::GetSingleton()->findEntity(m_CurrentLevelSettings["listener"]);
-		AudioSystem::GetSingleton()->setListenerComponent(listenerEntity->getComponent<TransformComponent>().get());
-
-		// (Development only) print listener position
-		std::cout << "\n\nListener position on open level(): " << listenerEntity->getComponent<TransformComponent>().get()->getPosition().x << ", " << listenerEntity->getComponent<TransformComponent>().get()->getPosition().y << ", " << listenerEntity->getComponent<TransformComponent>().get()->getPosition().z << "\n\n";
+		AudioSystem::GetSingleton()->setListener(listenerEntity->getComponent<AudioListenerComponent>().get());
+	}
+	else
+	{
+		AudioSystem::GetSingleton()->setListener(EntityFactory::GetSingleton()->findEntity(ROOT_ENTITY_ID)->getComponent<AudioListenerComponent>().get());
 	}
 
 	if (!openInEditor)

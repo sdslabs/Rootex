@@ -9,6 +9,7 @@
 #include "components/debug_component.h"
 #include "components/hierarchy_component.h"
 #include "components/music_component.h"
+#include "components/audio_listener_component.h"
 #include "components/physics/box_collider_component.h"
 #include "components/physics/sphere_collider_component.h"
 #include "components/script_component.h"
@@ -77,6 +78,7 @@ EntityFactory::EntityFactory()
 	REGISTER_COMPONENT(BoxColliderComponent);
 	REGISTER_COMPONENT(HierarchyComponent);
 	REGISTER_COMPONENT(ScriptComponent);
+	REGISTER_COMPONENT(AudioListenerComponent);
 	REGISTER_COMPONENT(MusicComponent);
 	REGISTER_COMPONENT(ShortMusicComponent);
 	REGISTER_COMPONENT(CPUParticlesComponent);
@@ -254,6 +256,10 @@ Ref<Entity> EntityFactory::createRootEntity()
 		Ref<CameraComponent> rootCameraComponent = std::dynamic_pointer_cast<CameraComponent>(createDefaultComponent("CameraComponent"));
 		addComponent(root, rootCameraComponent);
 	}
+	{
+		Ref<AudioListenerComponent> rootListenerComponent = std::dynamic_pointer_cast<AudioListenerComponent>(createDefaultComponent("AudioListenerComponent"));
+		addComponent(root, rootListenerComponent);
+	}
 
 	m_Entities[root->m_ID] = root;
 	return root;
@@ -284,15 +290,7 @@ void EntityFactory::destroyEntities(bool saveRoot)
 	{
 		if (entity.second)
 		{
-			if (entity.second->getID() == ROOT_ENTITY_ID)
-			{
-				if (saveRoot)
-				{
-					continue;
-				}
-			}
-
-			if (entity.second->getID() == INVALID_ID || entity.second->isEditorOnly())
+			if (entity.second->getID() == ROOT_ENTITY_ID || entity.second->getID() == INVALID_ID || entity.second->isEditorOnly())
 			{
 				continue;
 			}
@@ -308,6 +306,11 @@ void EntityFactory::destroyEntities(bool saveRoot)
 	for (auto&& entity : markedForRemoval)
 	{
 		deleteEntity(entity);
+	}
+
+	if (!saveRoot && m_Entities[ROOT_ENTITY_ID])
+	{
+		deleteEntity(m_Entities[ROOT_ENTITY_ID]);
 	}
 }
 
