@@ -6,7 +6,7 @@ LightSystem* LightSystem::GetSingleton()
 	return &singleton;
 }
 
-PSDiffuseConstantBufferLights LightSystem::getLights()
+LightsInfo LightSystem::getLights()
 {
 	const Vector<Component*>& pointLightComponents = s_Components[PointLightComponent::s_ID];
 
@@ -15,7 +15,7 @@ PSDiffuseConstantBufferLights LightSystem::getLights()
 		WARN("Point Lights specified are greater than 4");
 	}
 
-	PSDiffuseConstantBufferLights lights;
+	LightsInfo lights;
 	
 	lights.cameraPos = RenderSystem::GetSingleton()->getCamera()->getViewMatrix().Translation();
 

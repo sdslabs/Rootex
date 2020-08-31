@@ -58,8 +58,8 @@ public:
 	void resetDefaultRasterizer();
 
 	void setProjectionConstantBuffers();
-	void perFrameVSCBBinds();
-	void perFramePSCBBinds();
+	void perFrameVSCBBinds(float fogStart, float fogEnd);
+	void perFramePSCBBinds(const Color& fogColor);
 
 	void setIsEditorRenderPass(bool enabled) { m_IsEditorRenderPassEnabled = enabled; }
 	

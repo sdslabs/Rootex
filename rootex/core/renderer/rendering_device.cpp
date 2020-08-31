@@ -658,10 +658,9 @@ void RenderingDevice::swapBuffers()
 	GFX_ERR_CHECK(m_SwapChain->Present(0, 0));
 }
 
-void RenderingDevice::clearCurrentRenderTarget(float r, float g, float b)
+void RenderingDevice::clearCurrentRenderTarget(const Color& color)
 {
-	const float color[] = { r, g, b, 1.0f };
-	m_Context->ClearRenderTargetView(*m_CurrentRenderTarget, color);
+	m_Context->ClearRenderTargetView(*m_CurrentRenderTarget, &color.x);
 	m_Context->ClearDepthStencilView(m_DepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
 }
 
