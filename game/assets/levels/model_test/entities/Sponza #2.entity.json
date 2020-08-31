@@ -1,5 +1,15 @@
 {
     "Components": {
+        "FogComponent": {
+            "color": {
+                "a": 1.0,
+                "b": 0.8774510025978088,
+                "g": 0.9711649417877197,
+                "r": 1.0
+            },
+            "far": 46.0,
+            "near": 8.0
+        },
         "HierarchyComponent": {
             "children": [],
             "parent": 1

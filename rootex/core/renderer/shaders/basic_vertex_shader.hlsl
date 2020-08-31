@@ -9,6 +9,8 @@ cbuffer CBuf : register(PER_OBJECT_VS_HLSL)
 cbuffer CBuf : register(PER_FRAME_VS_HLSL)
 {
     matrix V;
+	float fogStart;
+	float fogEnd;
 };
 
 cbuffer CBuf : register(PER_CAMERA_CHANGE_VS_HLSL)
@@ -29,20 +31,21 @@ struct PixelInputType
     float3 normal : NORMAL;
     float4 worldPosition : POSITION;
     float2 tex : TEXCOORD0;
+	float fogFactor : FOG;
 };
 
 PixelInputType main(VertexInputType input)
 {
     PixelInputType output;
     output.screenPosition = mul(input.position, mul(M, mul(V, P)));
-    //inverse transpose is needed for normals, how is this even working...
-    //output.normal = mul((float3x3) M, (float3) input.normal);
-    //hold my beer...
     output.normal = mul((float3) input.normal, (float3x3) MInverseTranspose);
     output.worldPosition = mul(input.position, M);
     output.tex.x = input.tex.x;
     output.tex.y = 1 - input.tex.y;
     input.normal = normalize(input.normal);
-    
-    return output;
+	
+    float4 cameraPosition = mul(input.position, mul(M, V));
+    output.fogFactor = saturate((fogEnd - cameraPosition.z) / (fogEnd - fogStart));
+	
+	return output;
 }

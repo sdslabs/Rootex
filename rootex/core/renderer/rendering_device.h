@@ -134,7 +134,6 @@ public:
 	/// Faking Editor rendering
 	void setBackBufferRenderTarget();
 
-
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> getRenderTextureShaderResourceView();
 	Ref<DirectX::SpriteBatch> getUIBatch();
 
@@ -145,6 +144,6 @@ public:
 	void drawIndexed(UINT number);
 	void beginDrawUI();
 	void endDrawUI();
-	void clearCurrentRenderTarget(float r, float g, float b);
+	void clearCurrentRenderTarget(const Color& color);
 	void clearUnboundRenderTarget(float r, float g, float b);
 };
