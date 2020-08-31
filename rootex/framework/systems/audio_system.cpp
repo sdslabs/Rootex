@@ -110,11 +110,13 @@ void AudioSystem::update()
 		audioComponent->getAudioSource()->queueNewBuffers();
 		audioComponent->update();
 	}
-	// update the listener position
-	if (m_listenerComponent)
+	
+	if (m_Listener)
 	{
-		setListenerPosition(m_listenerComponent);
+		const Vector3& listenerPosition = m_Listener->getPosition();
+		AL_CHECK(alListener3f(AL_POSITION, listenerPosition.x, listenerPosition.y, listenerPosition.z));
 	}
+	
 	std::this_thread::sleep_for(std::chrono::milliseconds(m_UpdateIntervalMilliseconds));
 }
 
@@ -140,29 +142,20 @@ void AudioSystem::setBufferUpdateRate(float milliseconds)
 	m_UpdateIntervalMilliseconds = milliseconds;
 }
 
-void AudioSystem::setListenerPosition(TransformComponent* listenerComponent)
+void AudioSystem::setListener(AudioListenerComponent* listenerComponent)
 {
-
-	// get the position of the listener
-	Vector3& listenerPosition = listenerComponent->getAbsoluteTransform().Translation();
-	// pass the position to openAL
-	AL_CHECK(alListener3f(AL_POSITION, listenerPosition.x, listenerPosition.y, listenerPosition.z));
+	m_Listener = listenerComponent;
 }
 
-void AudioSystem::setListenerComponent(TransformComponent* listenerComponent)
+void AudioSystem::restoreListener()
 {
-	// set the m_listenerComponent
-	m_listenerComponent = listenerComponent;
-	setListenerPosition(m_listenerComponent);
+	m_Listener = EntityFactory::GetSingleton()->findEntity(ROOT_ENTITY_ID)->getComponent<AudioListenerComponent>().get();
 }
 
 AudioSystem::AudioSystem()
     : m_Context(nullptr)
     , m_Device(nullptr)
     , m_UpdateIntervalMilliseconds(0)
-{
-}
-
-AudioSystem::~AudioSystem()
+    , m_Listener(nullptr)
 {
 }

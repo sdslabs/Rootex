@@ -3,10 +3,10 @@ function onBegin(entity)
     number = 0
 end
 
-function onUpdate(delta, entity)
+function onUpdate(entity, delta)
     local pos = transform:getPosition()
-    number = number + 0.1
-    pos.x = math.sin(number)
+    number = number + 0.01 * delta
+    pos.y = 5 * math.sin(number)
     transform:setPosition(pos)
 end
 

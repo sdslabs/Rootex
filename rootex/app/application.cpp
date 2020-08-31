@@ -70,7 +70,6 @@ Application::Application(const String& settingsFile)
 Application::~Application()
 {
 	AudioSystem::GetSingleton()->shutDown();
-	EntityFactory::GetSingleton()->destroyEntities(false);
 	UISystem::GetSingleton()->shutdown();
 	ShaderLibrary::DestroyShaders();
 }

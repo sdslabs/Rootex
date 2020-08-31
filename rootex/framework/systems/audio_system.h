@@ -3,6 +3,7 @@
 #include "common/common.h"
 
 #include "framework/components/transform_component.h"
+#include "framework/components/audio_listener_component.h"
 #include "vendor/OpenAL/include/al.h"
 #include "vendor/OpenAL/include/alc.h"
 #include "vendor/OpenAL/include/alut.h"
@@ -50,10 +51,12 @@ class AudioSystem : public System
 	unsigned int m_UpdateIntervalMilliseconds;
 	ALCdevice* m_Device;
 	ALCcontext* m_Context;
-	TransformComponent* m_listenerComponent;
+
+	AudioListenerComponent* m_Listener;
+
 	AudioSystem();
 	AudioSystem(AudioSystem&) = delete;
-	~AudioSystem();
+	~AudioSystem() = default;
 
 public:
 	static AudioSystem* GetSingleton();
@@ -71,11 +74,10 @@ public:
 
 	void setBufferUpdateRate(float milliseconds);
 
-	// OpenAL Listener
-    void setListenerComponent(TransformComponent* listenerComponent);
+	AudioListenerComponent* getListener() const { return m_Listener; }
+    void setListener(AudioListenerComponent* listenerComponent);
 
-	void setListenerPosition(TransformComponent* listenerComponent);
-
+	void restoreListener();
 
 	bool initialize();
 	void begin();
