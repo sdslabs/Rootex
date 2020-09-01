@@ -4,6 +4,7 @@
 #include "framework/entity_factory.h"
 #include "framework/systems/hierarchy_system.h"
 #include "framework/systems/render_system.h"
+#include "systems/audio_system.h"
 #include "systems/serialization_system.h"
 
 LevelManager* LevelManager::GetSingleton()
@@ -47,6 +48,16 @@ void LevelManager::openLevel(const String& levelPath, bool openInEditor)
 		RenderSystem::GetSingleton()->setCamera(cameraEntity->getComponent<CameraComponent>().get());
 	}
 
+	if (m_CurrentLevelSettings.find("listener") != m_CurrentLevelSettings.end())
+	{
+		Ref<Entity> listenerEntity = EntityFactory::GetSingleton()->findEntity(m_CurrentLevelSettings["listener"]);
+		AudioSystem::GetSingleton()->setListener(listenerEntity->getComponent<AudioListenerComponent>().get());
+	}
+	else
+	{
+		AudioSystem::GetSingleton()->setListener(EntityFactory::GetSingleton()->findEntity(ROOT_ENTITY_ID)->getComponent<AudioListenerComponent>().get());
+	}
+
 	if (!openInEditor)
 	{
 		JSON::json& levelJSON = getCurrentLevelSettings();
@@ -82,6 +93,7 @@ void LevelManager::createLevel(const String& newLevelName)
 	newLevelJSON["camera"] = ROOT_ENTITY_ID;
 	newLevelJSON["inputSchemes"] = JSON::json::array();
 	newLevelJSON["startScheme"] = "";
+	newLevelJSON["listener"] = ROOT_ENTITY_ID;
 	OS::CreateFileName("game/assets/levels/" + newLevelName + "/" + newLevelName + ".level.json") << newLevelJSON.dump(1, '\t');
 
 	PRINT("Created new level: " + "game/assets/levels/" + newLevelName);
