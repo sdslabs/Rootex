@@ -558,8 +558,14 @@ void RenderingDevice::setCurrentRasterizerState()
 	m_Context->RSSetState(*m_CurrentRasterizerState);
 }
 
+RenderingDevice::RasterizerState RenderingDevice::getRasterizerState()
+{
+	return m_CurrentRasterizer;
+}
+
 void RenderingDevice::setRasterizerState(RasterizerState rs)
 {
+	m_CurrentRasterizer = rs;
 	switch (rs)
 	{
 	case RenderingDevice::RasterizerState::Default:

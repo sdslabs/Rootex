@@ -24,6 +24,7 @@ JSON::json SkyComponent::getJSON() const
 	JSON::json j;
 
 	j["skyMaterial"] = m_SkyMaterial->getFileName();
+	j["skySphere"] = m_SkySphere->getPath().generic_string();
 
 	return j;
 }

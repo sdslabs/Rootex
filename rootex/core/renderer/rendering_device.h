@@ -15,6 +15,17 @@
 /// The boss of all rendering, all DirectX API calls requiring the Device or Context go through this
 class RenderingDevice
 {
+public:
+	enum class RasterizerState
+	{
+		Default,
+		UI,
+		UIScissor,
+		Wireframe,
+		Sky
+	};
+
+private:
 	Microsoft::WRL::ComPtr<ID3D11Device> m_Device;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_Context;
 
@@ -42,6 +53,7 @@ class RenderingDevice
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_WireframeRasterizerState;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_SkyRasterizerState;
 	ID3D11RasterizerState** m_CurrentRasterizerState;
+	RasterizerState m_CurrentRasterizer;
 
 	Microsoft::WRL::ComPtr<ID3D11BlendState> m_DefaultBlendState;
 	Microsoft::WRL::ComPtr<ID3D11BlendState> m_AlphaBlendState;
@@ -66,15 +78,6 @@ class RenderingDevice
 #endif // ROOTEX_EDITOR
 
 public:
-	enum class RasterizerState
-	{
-		Default,
-		UI,
-		UIScissor,
-		Wireframe,
-		Sky
-	};
-
 	static RenderingDevice* GetSingleton();
 
 	void initialize(HWND hWnd, int width, int height, bool MSAA);
@@ -124,6 +127,7 @@ public:
 	void setAlphaBlendState();
 	
 	void setCurrentRasterizerState();
+	RasterizerState getRasterizerState();
 	void setRasterizerState(RasterizerState rs);
 	void setTemporaryUIRasterizerState();
 	void setTemporaryUIScissoredRasterizerState();

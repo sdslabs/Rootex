@@ -86,6 +86,7 @@ void RenderSystem::render()
 
 	{
 		RenderingDevice::GetSingleton()->enableSkyDepthStencilState();
+		RenderingDevice::RasterizerState currentRS = RenderingDevice::GetSingleton()->getRasterizerState();
 		RenderingDevice::GetSingleton()->setRasterizerState(RenderingDevice::RasterizerState::Sky);
 		RenderingDevice::GetSingleton()->setCurrentRasterizerState();
 		for (auto& component : s_Components[SkyComponent::s_ID])
@@ -100,7 +101,7 @@ void RenderSystem::render()
 				}
 			}
 		}
-		RenderingDevice::GetSingleton()->setRasterizerState(RenderingDevice::RasterizerState::Default);
+		RenderingDevice::GetSingleton()->setRasterizerState(currentRS);
 		RenderingDevice::GetSingleton()->disableSkyDepthStencilState();
 	}
 }

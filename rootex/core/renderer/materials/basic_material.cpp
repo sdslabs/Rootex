@@ -10,13 +10,16 @@
 #include "renderer/shaders/register_locations_pixel_shader.h"
 #include "renderer/shaders/register_locations_vertex_shader.h"
 
-BasicMaterial::BasicMaterial(const String& imagePath, Color color, bool isLit, float specularIntensity, float specularPower)
+BasicMaterial::BasicMaterial(const String& imagePath, Color color, bool isLit, float specularIntensity, float specularPower, float reflectivity, float refractionConstant, float refractivity)
     : Material(ShaderLibrary::GetBasicShader(), BasicMaterial::s_MaterialName)
     , m_BasicShader(ShaderLibrary::GetBasicShader())
     , m_Color(color)
     , m_IsLit(isLit)
     , m_SpecularIntensity(specularIntensity)
     , m_SpecularPower(specularPower)
+    , m_Reflectivity(reflectivity)
+    , m_RefractionConstant(refractionConstant)
+    , m_Refractivity(refractivity)
 {
 	m_ImageFile = ResourceLoader::CreateImageResourceFile(imagePath);
 	setTexture(m_ImageFile);
@@ -41,7 +44,7 @@ void BasicMaterial::setVSConstantBuffer(const VSDiffuseConstantBuffer& constantB
 
 Material* BasicMaterial::CreateDefault()
 {
-	return new BasicMaterial("rootex/assets/white.png", Color(0.5f, 0.5f, 0.5f, 1.0f), true, 2.0f, 30.0f);
+	return new BasicMaterial("rootex/assets/white.png", Color(0.5f, 0.5f, 0.5f, 1.0f), true, 2.0f, 30.0f, 0.5f, 0.8f, 0.5f);
 }
 
 Material* BasicMaterial::Create(const JSON::json& materialData)
@@ -61,7 +64,22 @@ Material* BasicMaterial::Create(const JSON::json& materialData)
 		material->m_SpecularIntensity = (float)materialData["specularIntensity"];
 		material->m_SpecularPower = (float)materialData["specularPower"];
 	}
-	return new BasicMaterial((String)materialData["imageFile"], Color((float)materialData["color"]["r"], (float)materialData["color"]["g"], (float)materialData["color"]["b"], (float)materialData["color"]["a"]), isLit, specularIntensity, specularPower);
+	float reflectivity = 0.5;
+	if (materialData.find("reflectivity") != materialData.end())
+	{
+		reflectivity = materialData["reflectivity"];
+	}
+	float refractionConstant = 0.8f;
+	if (materialData.find("refractionConstant") != materialData.end())
+	{
+		refractionConstant = materialData["refractionConstant"];
+	}
+	float refractivity = 0.5f;
+	if (materialData.find("refractivity") != materialData.end())
+	{
+		refractivity = materialData["refractivity"];
+	}
+	return new BasicMaterial((String)materialData["imageFile"], Color((float)materialData["color"]["r"], (float)materialData["color"]["g"], (float)materialData["color"]["b"], (float)materialData["color"]["a"]), isLit, specularIntensity, specularPower, reflectivity, refractionConstant, refractivity);
 }
 
 void BasicMaterial::bind()
@@ -69,7 +87,7 @@ void BasicMaterial::bind()
 	Material::bind();
 	m_BasicShader->set(m_DiffuseTexture.get());
 	setVSConstantBuffer(VSDiffuseConstantBuffer(RenderSystem::GetSingleton()->getCurrentMatrix()));
-	setPSConstantBuffer(PSDiffuseConstantBufferMaterial({ m_Color, m_IsLit, m_SpecularIntensity, m_SpecularPower }));
+	setPSConstantBuffer(PSDiffuseConstantBufferMaterial({ m_Color, m_IsLit, m_SpecularIntensity, m_SpecularPower, m_Reflectivity, m_RefractionConstant, m_Refractivity }));
 }
 
 JSON::json BasicMaterial::getJSON() const
@@ -88,6 +106,9 @@ JSON::json BasicMaterial::getJSON() const
 		j["specularIntensity"] = m_SpecularIntensity;
 		j["specularPower"] = m_SpecularPower;
 	}
+	j["reflectivity"] = m_Reflectivity;
+	j["refractionConstant"] = m_RefractionConstant;
+	j["refractivity"] = m_Refractivity;
 
 	return j;
 }
@@ -157,5 +178,8 @@ void BasicMaterial::draw(const String& id)
 			m_SpecularPower = 30.0f;
 		}
 	}
+	ImGui::DragFloat("Reflectivity", &m_Reflectivity, 0.01f, 0.0f, 1.0f);
+	ImGui::DragFloat("Refraction Constant", &m_RefractionConstant, 0.01f, 0.0f, 10.0f);
+	ImGui::DragFloat("Refractivity", &m_Refractivity, 0.01f, 0.0f, 1.0f);
 }
 #endif // ROOTEX_EDITOR

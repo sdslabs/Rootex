@@ -61,6 +61,9 @@ cbuffer Material : register(PER_OBJECT_PS_HLSL)
     int isLit;
     float specularIntensity;
     float specPow;
+    float reflectivity;
+    float refractionConstant;
+    float refractivity;
 };
 
 float4 main(PixelInputType input) : SV_TARGET
@@ -134,8 +137,12 @@ float4 main(PixelInputType input) : SV_TARGET
     float3 incident = -toEye;
     float3 reflectionVector = reflect(incident, input.normal);
     float4 reflectionColor = SkyTexture.Sample(SampleType, reflectionVector);
-    finalColor += 1.0f * reflectionColor;
-    //finalColor += gMaterial.Reflect * reflectionColor;
+    finalColor = lerp(finalColor, reflectionColor, reflectivity);
+    
+    float3 refractionIncident = normalize(input.worldPosition.xyz - cameraPos);
+    float3 refractionReflect = refract(refractionIncident, normalize(input.normal), refractionConstant);
+    float4 refractionColor = SkyTexture.Sample(SampleType, refractionReflect);
+    finalColor = lerp(finalColor, refractionColor, refractivity);
     
     return finalColor;
 }
