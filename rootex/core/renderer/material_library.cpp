@@ -4,10 +4,9 @@
 
 MaterialLibrary::MaterialMap MaterialLibrary::s_Materials;
 
-const String BasicMaterial::s_MaterialName = "BasicMaterial";
-
 MaterialLibrary::MaterialDatabase MaterialLibrary::s_MaterialDatabase = {
-	{ BasicMaterial::s_MaterialName, { BasicMaterial::CreateDefault, BasicMaterial::Create } }
+	{ BasicMaterial::s_MaterialName, { BasicMaterial::CreateDefault, BasicMaterial::Create } },
+	{ SkyMaterial::s_MaterialName, { SkyMaterial::CreateDefault, SkyMaterial::Create } }
 };
 
 void MaterialLibrary::PopulateMaterials(const String& path)

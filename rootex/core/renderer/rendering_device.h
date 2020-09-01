@@ -30,9 +30,8 @@ class RenderingDevice
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_DepthStencilView;
 
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_DepthStencilState;
-	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_OldSkyDepthStencilState;
 	UINT m_StencilRef;
-	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_NewSkyDepthStencilState;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_SkyDepthStencilState;
 
 	/// DirectXTK batch font renderer data structure
 	Ref<DirectX::SpriteBatch> m_FontBatch;
@@ -41,6 +40,7 @@ class RenderingDevice
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_UIRasterizerState;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_UIScissoredRasterizerState;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_WireframeRasterizerState;
+	Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_SkyRasterizerState;
 	ID3D11RasterizerState** m_CurrentRasterizerState;
 
 	Microsoft::WRL::ComPtr<ID3D11BlendState> m_DefaultBlendState;
@@ -71,7 +71,8 @@ public:
 		Default,
 		UI,
 		UIScissor,
-		Wireframe
+		Wireframe,
+		Sky
 	};
 
 	static RenderingDevice* GetSingleton();
@@ -95,6 +96,7 @@ public:
 	/// To render the game onto a texture in case of Editor
 	void createRenderTextureTarget(int width, int height);
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createTexture(ImageResourceFile* imageRes);
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createDDSTexture(ImageResourceFile* imageRes);
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createTexture(const char* imageFileData, size_t size);
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createTextureFromPixels(const char* imageRawData, unsigned int width, unsigned int height);
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> createSamplerState();

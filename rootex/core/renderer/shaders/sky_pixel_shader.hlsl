@@ -1,0 +1,15 @@
+#include "register_locations_pixel_shader.h"
+
+TextureCube SkyTexture : register(t0);
+SamplerState SampleType;
+
+struct PixelInputType
+{
+    float4 position : SV_POSITION;
+    float3 texCoord : TEXCOORD0;
+};
+
+float4 main(PixelInputType input) : SV_TARGET
+{	
+    return SkyTexture.Sample(SampleType, input.texCoord);
+}

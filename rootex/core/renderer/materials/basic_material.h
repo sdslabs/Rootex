@@ -24,7 +24,7 @@ class BasicMaterial : public Material
 	String m_ImagePathUI;
 #endif // ROOTEX_EDITOR
 public:
-	const static String s_MaterialName;
+	const static inline String s_MaterialName = "BasicMaterial";
 	enum class VertexConstantBufferType
 	{
 		Model,
