@@ -1,6 +1,6 @@
 #include "register_locations_pixel_shader.h"
 
-TextureCube SkyTexture : register(t0);
+TextureCube SkyTexture : register(SKY_PS_HLSL);
 SamplerState SampleType;
 
 struct PixelInputType
