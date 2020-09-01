@@ -1,10 +1,12 @@
 #include "render_system.h"
 
+#include "components/visual/fog_component.h"
 #include "renderer/shaders/register_locations_vertex_shader.h"
 #include "renderer/shaders/register_locations_pixel_shader.h"
 #include "light_system.h"
 #include "renderer/material_library.h"
 #include "components/visual/sky_component.h"
+#include "application.h"
 
 RenderSystem* RenderSystem::GetSingleton()
 {
@@ -64,6 +66,25 @@ void RenderSystem::recoverLostDevice()
 
 void RenderSystem::render()
 {
+	Color clearColor = { 0.15f, 0.15f, 0.15f, 1.0f };
+	float fogStart = 0.0f;
+	float fogEnd = -1000.0f;
+
+	if (!s_Components[FogComponent::s_ID].empty())
+	{
+		FogComponent* firstFog = (FogComponent*)s_Components[FogComponent::s_ID].front();
+		clearColor = firstFog->getColor();
+
+		for (auto& component : s_Components[FogComponent::s_ID])
+		{
+			FogComponent* fog = (FogComponent*)component;
+			clearColor = Color::Lerp(clearColor, fog->getColor(), 0.5f);
+			fogStart = fog->getNearDistance();
+			fogEnd = fog->getFarDistance();
+		}
+	}
+
+	Application::GetSingleton()->getWindow()->clearCurrentTarget(clearColor);
 	Ref<HierarchyComponent> rootHC = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<HierarchyComponent>();
 	calculateTransforms(rootHC.get());
 
@@ -72,8 +93,9 @@ void RenderSystem::render()
 	RenderingDevice::GetSingleton()->setDepthStencilState();
 	RenderingDevice::GetSingleton()->setDefaultBlendState();
 
-	perFrameVSCBBinds();
-	perFramePSCBBinds();
+	perFrameVSCBBinds(fogStart, fogEnd);
+	const Color& fogColor = clearColor;
+	perFramePSCBBinds(fogColor);
 
 #ifdef ROOTEX_EDITOR
 	if (m_IsEditorRenderPassEnabled)
@@ -171,16 +193,18 @@ void RenderSystem::setProjectionConstantBuffers()
 	Material::SetVSConstantBuffer(projection.Transpose(), m_VSProjectionConstantBuffer, PER_CAMERA_CHANGE_VS_CPP);
 }
 
-void RenderSystem::perFrameVSCBBinds()
+void RenderSystem::perFrameVSCBBinds(float fogStart, float fogEnd)
 {
 	const Matrix& view = getCamera()->getViewMatrix();
-	Material::SetVSConstantBuffer(view.Transpose(), m_VSPerFrameConstantBuffer, PER_FRAME_VS_CPP);
+	Material::SetVSConstantBuffer(PerFrameVSCB({ view.Transpose(), -fogStart, -fogEnd }), m_VSPerFrameConstantBuffer, PER_FRAME_VS_CPP);
 }
 
-void RenderSystem::perFramePSCBBinds()
+void RenderSystem::perFramePSCBBinds(const Color& fogColor)
 {
-	const PSDiffuseConstantBufferLights& lights = LightSystem::GetSingleton()->getLights();
-	Material::SetPSConstantBuffer(lights, m_PSPerFrameConstantBuffer, PER_FRAME_PS_CPP);
+	PerFramePSCB perFrame;
+	perFrame.lights = LightSystem::GetSingleton()->getLights();
+	perFrame.fogColor = fogColor;
+	Material::SetPSConstantBuffer(perFrame, m_PSPerFrameConstantBuffer, PER_FRAME_PS_CPP);
 }
 
 void RenderSystem::enableLineRenderMode()

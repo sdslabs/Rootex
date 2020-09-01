@@ -63,10 +63,10 @@ void Window::showCursor(bool enabled)
 	ShowCursor(enabled);
 }
 
-void Window::clearCurrentTarget()
+void Window::clearCurrentTarget(const Color& color)
 {
 #ifdef ROOTEX_EDITOR
-	RenderingDevice::GetSingleton()->clearCurrentRenderTarget(0.15f, 0.15f, 0.15f);
+	RenderingDevice::GetSingleton()->clearCurrentRenderTarget(color);
 #else
 #ifdef DEBUG
 	RenderingDevice::GetSingleton()->clearCurrentRenderTarget(0.3f, 0.7f, 0.3f);
