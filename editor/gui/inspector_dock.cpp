@@ -21,6 +21,14 @@ Variant InspectorDock::openEntity(const Event* event)
 	return true;
 }
 
+Variant InspectorDock::closeEntity(const Event* event)
+{
+	m_OpenedEntity = nullptr;
+	m_OpenedEntityName = "";
+	m_IsNameBeingEdited = false;
+	return true;
+}
+
 void InspectorDock::refreshAddNewComponentSelectionCache()
 {
 	m_AddNewComponentSelectionCache.clear();
@@ -34,6 +42,7 @@ InspectorDock::InspectorDock()
     : m_OpenedEntity(nullptr)
 {
 	BIND_EVENT_MEMBER_FUNCTION("EditorOpenEntity", openEntity);
+	BIND_EVENT_MEMBER_FUNCTION("EditorCloseEntity", closeEntity);
 
 	if (!s_Singleton)
 	{
