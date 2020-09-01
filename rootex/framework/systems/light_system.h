@@ -14,5 +14,5 @@ class LightSystem : public System
 public:
 	static LightSystem* GetSingleton();
 
-	PSDiffuseConstantBufferLights getLights();
+	LightsInfo getLights();
 };

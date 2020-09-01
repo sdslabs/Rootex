@@ -16,11 +16,11 @@ ViewportDock::ViewportDock(const JSON::json& viewportJSON)
 	m_ViewportDockSettings.m_AspectRatio = (float)viewportJSON["aspectRatio"]["x"] / (float)viewportJSON["aspectRatio"]["y"];
 	m_ViewportDockSettings.m_ImageTint = Editor::GetSingleton()->getColors().m_White;
 	m_ViewportDockSettings.m_ImageBorderColor = Editor::GetSingleton()->getColors().m_Accent;
-	TextResourceFile* cameraFile = ResourceLoader::CreateTextResourceFile("editor/entities/camera.entity.json");
+	TextResourceFile* cameraFile = ResourceLoader::CreateTextResourceFile("editor/assets/entities/camera.entity.json");
 	m_EditorCamera = EntityFactory::GetSingleton()->createEntity(cameraFile, true);
 	RenderSystem::GetSingleton()->setCamera(m_EditorCamera->getComponent<CameraComponent>().get());
 
-	TextResourceFile* gridFile = ResourceLoader::CreateTextResourceFile("editor/entities/grid.entity.json");
+	TextResourceFile* gridFile = ResourceLoader::CreateTextResourceFile("editor/assets/entities/grid.entity.json");
 	m_EditorGrid = EntityFactory::GetSingleton()->createEntity(gridFile, true);
 }
 
@@ -60,7 +60,7 @@ void ViewportDock::draw()
 					Ref<Entity> entity = EntityFactory::GetSingleton()->createEntityFromClass(t);
 					if (Ref<TransformComponent> transform = entity->getComponent<TransformComponent>())
 					{
-						transform->setTransform(RenderSystem::GetSingleton()->getCamera()->getOwner()->getComponent<TransformComponent>()->getAbsoluteTransform());
+						transform->setPosition(RenderSystem::GetSingleton()->getCamera()->getOwner()->getComponent<TransformComponent>()->getAbsoluteTransform().Translation());
 					}
 					EventManager::GetSingleton()->call("OpenEntity", "EditorOpenEntity", entity);
 				}
