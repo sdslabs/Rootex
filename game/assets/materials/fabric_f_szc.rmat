@@ -1,4 +1,5 @@
 {
+    "affectedBySky": false,
     "color": {
         "a": 1.0,
         "b": 0.46666669845581055,
@@ -7,9 +8,9 @@
     },
     "imageFile": "game/assets/sponza/szcugdi.png",
     "isLit": true,
-    "reflectivity": 0.5,
+    "reflectivity": 0.28999999165534973,
     "refractionConstant": 0.800000011920929,
-    "refractivity": 0.5,
+    "refractivity": 0.3700000047683716,
     "specularIntensity": 2.0,
     "specularPower": 30.0,
     "type": "BasicMaterial"

@@ -19,6 +19,11 @@ SkyComponent::SkyComponent(const String& skyMaterialPath, const String& skySpher
 {
 }
 
+void SkyComponent::onRemove()
+{
+	m_SkyMaterial->setTexture(nullptr);
+}
+
 JSON::json SkyComponent::getJSON() const
 {
 	JSON::json j;

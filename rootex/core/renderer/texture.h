@@ -38,7 +38,6 @@ public:
 class Texture3D
 {
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_TextureView;
-	Microsoft::WRL::ComPtr<ID3D11Texture3D> m_Texture;
 	ImageResourceFile* m_ImageFile;
 	
 	void loadTexture();
@@ -52,6 +51,5 @@ public:
 	void reload();
 
 	ID3D11ShaderResourceView* getTextureResourceView() const { return m_TextureView.Get(); }
-	ID3D11Texture3D* getD3D11Texture3D() const { return m_Texture.Get(); }
 	ImageResourceFile* getImage() const { return m_ImageFile; }
 };

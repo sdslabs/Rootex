@@ -33,6 +33,10 @@
                 "game/assets/scripts/flappy_bird.lua"
             ]
         },
+        "SkyComponent": {
+            "skyMaterial": "rootex/assets/materials/sky.rmat",
+            "skySphere": "rootex/assets/sky.obj"
+        },
         "TransformComponent": {
             "position": {
                 "x": 0.0,

@@ -21,6 +21,8 @@ class SkyComponent : public Component
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::SkyComponent;
 
+	void onRemove() override;
+
 	ModelResourceFile* getSkySphere() const { return m_SkySphere; }
 	SkyMaterial* getSkyMaterial() const { return m_SkyMaterial.get(); }
 

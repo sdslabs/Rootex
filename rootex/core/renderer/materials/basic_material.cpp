@@ -10,7 +10,7 @@
 #include "renderer/shaders/register_locations_pixel_shader.h"
 #include "renderer/shaders/register_locations_vertex_shader.h"
 
-BasicMaterial::BasicMaterial(const String& imagePath, Color color, bool isLit, float specularIntensity, float specularPower, float reflectivity, float refractionConstant, float refractivity)
+BasicMaterial::BasicMaterial(const String& imagePath, Color color, bool isLit, float specularIntensity, float specularPower, float reflectivity, float refractionConstant, float refractivity, bool affectedBySky)
     : Material(ShaderLibrary::GetBasicShader(), BasicMaterial::s_MaterialName)
     , m_BasicShader(ShaderLibrary::GetBasicShader())
     , m_Color(color)
@@ -20,6 +20,7 @@ BasicMaterial::BasicMaterial(const String& imagePath, Color color, bool isLit, f
     , m_Reflectivity(reflectivity)
     , m_RefractionConstant(refractionConstant)
     , m_Refractivity(refractivity)
+    , m_IsAffectedBySky(affectedBySky)
 {
 	m_ImageFile = ResourceLoader::CreateImageResourceFile(imagePath);
 	setTexture(m_ImageFile);
@@ -44,7 +45,7 @@ void BasicMaterial::setVSConstantBuffer(const VSDiffuseConstantBuffer& constantB
 
 Material* BasicMaterial::CreateDefault()
 {
-	return new BasicMaterial("rootex/assets/white.png", Color(0.5f, 0.5f, 0.5f, 1.0f), true, 2.0f, 30.0f, 0.5f, 0.8f, 0.5f);
+	return new BasicMaterial("rootex/assets/white.png", Color(0.5f, 0.5f, 0.5f, 1.0f), false, 2.0f, 30.0f, 0.5f, 0.8f, 0.5f, false);
 }
 
 Material* BasicMaterial::Create(const JSON::json& materialData)
@@ -64,22 +65,27 @@ Material* BasicMaterial::Create(const JSON::json& materialData)
 		material->m_SpecularIntensity = (float)materialData["specularIntensity"];
 		material->m_SpecularPower = (float)materialData["specularPower"];
 	}
-	float reflectivity = 0.5;
+	float reflectivity = 0.5f;
 	if (materialData.find("reflectivity") != materialData.end())
 	{
 		reflectivity = materialData["reflectivity"];
 	}
-	float refractionConstant = 0.8f;
+	float refractionConstant = 0.0f;
 	if (materialData.find("refractionConstant") != materialData.end())
 	{
 		refractionConstant = materialData["refractionConstant"];
 	}
-	float refractivity = 0.5f;
+	float refractivity = 0.0f;
 	if (materialData.find("refractivity") != materialData.end())
 	{
 		refractivity = materialData["refractivity"];
 	}
-	return new BasicMaterial((String)materialData["imageFile"], Color((float)materialData["color"]["r"], (float)materialData["color"]["g"], (float)materialData["color"]["b"], (float)materialData["color"]["a"]), isLit, specularIntensity, specularPower, reflectivity, refractionConstant, refractivity);
+	bool affectedBySky = false;
+	if (materialData.find("affectedBySky") != materialData.end())
+	{
+		affectedBySky = materialData["affectedBySky"];
+	}
+	return new BasicMaterial((String)materialData["imageFile"], Color((float)materialData["color"]["r"], (float)materialData["color"]["g"], (float)materialData["color"]["b"], (float)materialData["color"]["a"]), isLit, specularIntensity, specularPower, reflectivity, refractionConstant, refractivity, affectedBySky);
 }
 
 void BasicMaterial::bind()
@@ -87,7 +93,7 @@ void BasicMaterial::bind()
 	Material::bind();
 	m_BasicShader->set(m_DiffuseTexture.get());
 	setVSConstantBuffer(VSDiffuseConstantBuffer(RenderSystem::GetSingleton()->getCurrentMatrix()));
-	setPSConstantBuffer(PSDiffuseConstantBufferMaterial({ m_Color, m_IsLit, m_SpecularIntensity, m_SpecularPower, m_Reflectivity, m_RefractionConstant, m_Refractivity }));
+	setPSConstantBuffer(PSDiffuseConstantBufferMaterial({ m_Color, m_IsLit, m_SpecularIntensity, m_SpecularPower, m_Reflectivity, m_RefractionConstant, m_Refractivity, m_IsAffectedBySky }));
 }
 
 JSON::json BasicMaterial::getJSON() const
@@ -109,6 +115,7 @@ JSON::json BasicMaterial::getJSON() const
 	j["reflectivity"] = m_Reflectivity;
 	j["refractionConstant"] = m_RefractionConstant;
 	j["refractivity"] = m_Refractivity;
+	j["affectedBySky"] = m_IsAffectedBySky;
 
 	return j;
 }
@@ -178,8 +185,9 @@ void BasicMaterial::draw(const String& id)
 			m_SpecularPower = 30.0f;
 		}
 	}
-	ImGui::DragFloat("Reflectivity", &m_Reflectivity, 0.01f, 0.0f, 1.0f);
-	ImGui::DragFloat("Refraction Constant", &m_RefractionConstant, 0.01f, 0.0f, 10.0f);
-	ImGui::DragFloat("Refractivity", &m_Refractivity, 0.01f, 0.0f, 1.0f);
+	ImGui::Checkbox((String("Affected by sky##") + id).c_str(), &m_IsAffectedBySky);
+	ImGui::DragFloat((String("Reflectivity##") + id).c_str(), &m_Reflectivity, 0.01f, 0.0f, 1.0f);
+	ImGui::DragFloat((String("Refraction Constant##") + id).c_str(), &m_RefractionConstant, 0.01f, 0.0f, 10.0f);
+	ImGui::DragFloat((String("Refractivity##") + id).c_str(), &m_Refractivity, 0.01f, 0.0f, 1.0f);
 }
 #endif // ROOTEX_EDITOR
