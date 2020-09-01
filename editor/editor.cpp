@@ -226,7 +226,7 @@ void Editor::drawDefaultUI()
 		{
 			static String newLevelName;
 			static String openLevelName;
-			static String newMaterialName;
+			static String newMaterialName = "game/assets/materials/";
 			static String newMaterialType = "Select Material Type";
 			if (ImGui::BeginMenu("File"))
 			{
@@ -257,7 +257,7 @@ void Editor::drawDefaultUI()
 						ImGui::EndCombo();
 					}
 					ImGui::SameLine();
-					ImGui::InputText("Material Name", &newMaterialName, ImGuiInputTextFlags_AlwaysInsertMode);
+					ImGui::InputText("Material Path", &newMaterialName, ImGuiInputTextFlags_AlwaysInsertMode);
 					ImGui::SameLine();
 					if (ImGui::Button("Create"))
 					{

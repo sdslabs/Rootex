@@ -170,21 +170,19 @@ void BasicMaterial::draw(const String& id)
 	ImGui::ColorEdit4((String("Color##") + id).c_str(), &m_Color.x);
 
 	ImGui::Checkbox((String("Affected by light##") + id).c_str(), &m_IsLit);
-	if (m_IsLit)
+	ImGui::DragFloat((String("##SpecularIntensity") + id).c_str(), &m_SpecularIntensity);
+	ImGui::SameLine();
+	if (ImGui::Button((String("Specular Intensity##") + id).c_str()))
 	{
-		ImGui::DragFloat((String("##SpecularIntensity") + id).c_str(), &m_SpecularIntensity);
-		ImGui::SameLine();
-		if (ImGui::Button((String("Specular Intensity##") + id).c_str()))
-		{
-			m_SpecularIntensity = 2.0f;
-		}
-		ImGui::DragFloat((String("##Specular Power") + id).c_str(), &m_SpecularPower);
-		ImGui::SameLine();
-		if (ImGui::Button((String("Specular Power##") + id).c_str()))
-		{
-			m_SpecularPower = 30.0f;
-		}
+		m_SpecularIntensity = 2.0f;
 	}
+	ImGui::DragFloat((String("##Specular Power") + id).c_str(), &m_SpecularPower);
+	ImGui::SameLine();
+	if (ImGui::Button((String("Specular Power##") + id).c_str()))
+	{
+		m_SpecularPower = 30.0f;
+	}
+
 	ImGui::Checkbox((String("Affected by sky##") + id).c_str(), &m_IsAffectedBySky);
 	ImGui::DragFloat((String("Reflectivity##") + id).c_str(), &m_Reflectivity, 0.01f, 0.0f, 1.0f);
 	ImGui::DragFloat((String("Refraction Constant##") + id).c_str(), &m_RefractionConstant, 0.01f, 0.0f, 10.0f);
