@@ -53,7 +53,7 @@ cbuffer Lights : register(PER_FRAME_PS_HLSL)
     DirectionalLightInfo directionalLightInfo;
     int spotLightCount;
     SpotLightInfo spotLightInfos[4];
-	float4 fogColor;
+    float4 fogColor;
 }
 
 cbuffer Material : register(PER_OBJECT_PS_HLSL)
