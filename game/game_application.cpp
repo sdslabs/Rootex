@@ -84,9 +84,6 @@ void GameApplication::run()
 			break;
 		}
 
-		m_Window->swapBuffers();
-		m_Window->clearCurrentTarget();
-
 		AudioSystem::GetSingleton()->update();
 		InputManager::GetSingleton()->update();
 		PhysicsSystem::GetSingleton()->update(m_FrameTimer.getLastFrameTime());
@@ -99,6 +96,8 @@ void GameApplication::run()
 		UISystem::GetSingleton()->render();
 		
 		EventManager::GetSingleton()->dispatchDeferred();
+		
+		m_Window->swapBuffers();
 	}
 }
 

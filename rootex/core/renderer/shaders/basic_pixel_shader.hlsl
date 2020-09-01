@@ -8,7 +8,8 @@ struct PixelInputType
     float4 screenPosition : SV_POSITION;
     float3 normal : NORMAL;
     float4 worldPosition : POSITION;
-    float2 tex : TEXCOORD0;
+	float2 tex : TEXCOORD0;
+	float fogFactor : FOG;
 };
 struct PointLightInfo
 {
@@ -52,6 +53,7 @@ cbuffer Lights : register(PER_FRAME_PS_HLSL)
     DirectionalLightInfo directionalLightInfo;
     int spotLightCount;
     SpotLightInfo spotLightInfos[4];
+    float4 fogColor;
 }
 
 cbuffer Material : register(PER_OBJECT_PS_HLSL)
@@ -130,5 +132,7 @@ float4 main(PixelInputType input) : SV_TARGET
         }
     }
     
+	finalColor = lerp(fogColor, finalColor, input.fogFactor);
+
     return finalColor;
 }
