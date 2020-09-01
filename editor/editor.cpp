@@ -110,6 +110,10 @@ void Editor::initialize(HWND hWnd, const JSON::json& projectJSON)
 	ImGuiIO& io = ImGui::GetIO();
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	io.ConfigDockingWithShift = true;
+	io.FontAllowUserScaling = true;
+	
+	m_EditorFont = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/Lato-Regular.ttf", 19.0f);
+	m_EditorFontBold = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/Lato-Bold.ttf", 20.0f);
 
 	ImGui_ImplWin32_Init(hWnd);
 	ImGui_ImplDX11_Init(RenderingDevice::GetSingleton()->getDevice(), RenderingDevice::GetSingleton()->getContext());
@@ -123,6 +127,8 @@ void Editor::render()
 	ImGui::NewFrame();
 	ImGuizmo::BeginFrame();
 
+	ImGui::PushFont(m_EditorFont);
+
 	drawDefaultUI();
 	m_FileSystem->draw();
 	m_Classes->draw();
@@ -135,6 +141,8 @@ void Editor::render()
 
 	ImGui::PopStyleColor(m_EditorStyleColorPushCount);
 	ImGui::PopStyleVar(m_EditorStyleVarPushCount);
+
+	ImGui::PopFont();
 
 	RenderingDevice::GetSingleton()->setTextureRenderTarget();
 	if (m_WorldMode)
@@ -150,6 +158,21 @@ void Editor::render()
 	RenderingDevice::GetSingleton()->setBackBufferRenderTarget();
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+}
+
+void Editor::pushRegularFont()
+{
+	ImGui::PushFont(m_EditorFont);
+}
+
+void Editor::pushBoldFont()
+{
+	ImGui::PushFont(m_EditorFontBold);
+}
+
+void Editor::popFont()
+{
+	ImGui::PopFont();
 }
 
 Editor::~Editor()
