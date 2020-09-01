@@ -3,7 +3,7 @@ function onBegin(entity)
     number = 0
 end
 
-function onUpdate(delta, entity)
+function onUpdate(entity, delta)
     number = number + 0.01 * delta / 10.0
     if number < 4.71 then
         transform:setPosition(Vector3.new(6 * math.sin(number), 0, -10))
