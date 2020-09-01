@@ -2,6 +2,8 @@
 
 #include "texture.h"
 
+#include "shaders/register_locations_pixel_shader.h"
+
 Shader::Shader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat)
     : m_VertexPath(vertexPath)
     , m_PixelPath(pixelPath)
@@ -96,5 +98,5 @@ void SkyShader::bind() const
 
 void SkyShader::setSkyTexture(const Texture3D* texture)
 {
-	RenderingDevice::GetSingleton()->setInPixelShader(0, 1, texture->getTextureResourceView());
+	RenderingDevice::GetSingleton()->setInPixelShader(SKY_PS_CPP, 1, texture->getTextureResourceView());
 }

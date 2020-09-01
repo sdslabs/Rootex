@@ -2,6 +2,7 @@
 
 Texture2D ShaderTexture;
 SamplerState SampleType;
+TextureCube SkyTexture : register(SKY_PS_HLSL);
 
 struct PixelInputType
 {
@@ -129,6 +130,12 @@ float4 main(PixelInputType input) : SV_TARGET
             }
         }
     }
+    
+    float3 incident = -toEye;
+    float3 reflectionVector = reflect(incident, input.normal);
+    float4 reflectionColor = SkyTexture.Sample(SampleType, reflectionVector);
+    finalColor += 1.0f * reflectionColor;
+    //finalColor += gMaterial.Reflect * reflectionColor;
     
     return finalColor;
 }
