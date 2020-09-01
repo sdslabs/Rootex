@@ -48,9 +48,9 @@ public:
 
 	static bool IsExists(String relativePath);
 	static FileBuffer LoadFileContents(String stringPath);
-	static FilePath OS::GetAbsolutePath(String stringPath);
-	static FilePath OS::GetRootRelativePath(String stringPath);
-	static FilePath OS::GetRelativePath(String stringPath, String base);
+	static FilePath GetAbsolutePath(String stringPath);
+	static FilePath GetRootRelativePath(String stringPath);
+	static FilePath GetRelativePath(String stringPath, String base);
 
 	static Vector<FilePath> GetAllInDirectory(const String& directory);
 	static Vector<FilePath> GetDirectoriesInDirectory(const String& directory);

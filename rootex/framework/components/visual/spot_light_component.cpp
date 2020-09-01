@@ -45,7 +45,7 @@ SpotLightComponent::SpotLightComponent(const float constAtt, const float linAtt,
     , m_DiffuseIntensity(diffuseIntensity)
     , m_Spot(spot)
 {
-	m_AngleRange = cos(angleRange * 3.1415 / 180);
+	m_AngleRange = angleRange;
 }
 
 SpotLightComponent::~SpotLightComponent()
