@@ -25,6 +25,18 @@
             "radius": 1.0
         },
         "TransformComponent": {
+            "boundingBox": {
+                "center": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "extents": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                }
+            },
             "position": {
                 "x": 3.5,
                 "y": 1.5,

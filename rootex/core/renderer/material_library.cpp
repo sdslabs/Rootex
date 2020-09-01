@@ -3,6 +3,7 @@
 #include "core/resource_loader.h"
 
 MaterialLibrary::MaterialMap MaterialLibrary::s_Materials;
+String MaterialLibrary::s_DefaultMaterialPath = "rootex/assets/default.rmat";
 
 MaterialLibrary::MaterialDatabase MaterialLibrary::s_MaterialDatabase = {
 	{ BasicMaterial::s_MaterialName, { BasicMaterial::CreateDefault, BasicMaterial::Create } },
@@ -26,7 +27,7 @@ void MaterialLibrary::LoadMaterials()
 {
 	PopulateMaterials("game/assets/");
 	PopulateMaterials("rootex/assets/");
-	s_Materials["DefaultMaterial"] = { BasicMaterial::s_MaterialName, {} };
+	s_Materials[s_DefaultMaterialPath] = { BasicMaterial::s_MaterialName, {} };
 }
 
 Ref<Material> MaterialLibrary::GetMaterial(const String& materialPath)
@@ -56,15 +57,15 @@ Ref<Material> MaterialLibrary::GetMaterial(const String& materialPath)
 
 Ref<Material> MaterialLibrary::GetDefaultMaterial()
 {
-	if (Ref<Material> lockedMaterial = s_Materials["DefaultMaterial"].second.lock())
+	if (Ref<Material> lockedMaterial = s_Materials[s_DefaultMaterialPath].second.lock())
 	{
 		return lockedMaterial;
 	}
 	else
 	{
 		Ref<Material> material(BasicMaterial::CreateDefault());
-		material->setFileName("DefaultMaterial");
-		s_Materials["DefaultMaterial"].second = material;
+		material->setFileName(s_DefaultMaterialPath);
+		s_Materials[s_DefaultMaterialPath].second = material;
 		return material;
 	}
 }
@@ -73,7 +74,7 @@ void MaterialLibrary::SaveAll()
 {
 	for (auto& [materialPath, materialInfo] : s_Materials)
 	{
-		if (materialPath == "DefaultMaterial")
+		if (materialPath == s_DefaultMaterialPath)
 		{
 			continue;
 		}
@@ -88,7 +89,7 @@ void MaterialLibrary::SaveAll()
 
 void MaterialLibrary::CreateNewMaterialFile(const String& materialPath, const String& materialType)
 {
-	if (materialPath == "DefaultMaterial")
+	if (materialPath == s_DefaultMaterialPath)
 	{
 		return;
 	}
