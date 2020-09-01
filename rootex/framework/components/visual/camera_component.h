@@ -30,6 +30,7 @@ public:
 	virtual bool setup() override;
 	void onRemove() override;
 
+	TransformComponent* getTransformComponent() { return m_TransformComponent; }
 	virtual const Matrix& getViewMatrix();
 	virtual const Matrix& getProjectionMatrix();
 	virtual String getName() const override { return "CameraComponent"; }

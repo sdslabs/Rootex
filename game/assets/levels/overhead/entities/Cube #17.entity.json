@@ -1,0 +1,81 @@
+{
+    "Components": {
+        "BoxColliderComponent": {
+            "dimensions": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0.5
+            },
+            "gravity": {
+                "x": 0.0,
+                "y": -9.800000190734863,
+                "z": 0.0
+            },
+            "isGeneratesHitEvents": false,
+            "isMoveable": true,
+            "matName": "Air"
+        },
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 1
+        },
+        "ModelComponent": {
+            "isVisible": true,
+            "renderPass": 1,
+            "resFile": "game/assets/test/cube.obj"
+        },
+        "PointLightComponent": {
+            "ambientColor": {
+                "a": 1.0,
+                "b": 0.49999499320983887,
+                "g": 0.49999499320983887,
+                "r": 0.5
+            },
+            "attConst": -15.954999923706055,
+            "attLin": 0.0,
+            "attQuad": 6.0,
+            "diffuseColor": {
+                "a": 1.0,
+                "b": 0.0,
+                "g": 1.0,
+                "r": 0.059523582458496094
+            },
+            "diffuseIntensity": 5.0,
+            "range": 3.0
+        },
+        "TransformComponent": {
+            "boundingBox": {
+                "center": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "extents": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                }
+            },
+            "position": {
+                "x": 2.799999952316284,
+                "y": 3.200000047683716,
+                "z": 1.3000000715255737
+            },
+            "rotation": {
+                "w": 1.0,
+                "x": -0.0,
+                "y": 0.0,
+                "z": -0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            }
+        }
+    },
+    "Entity": {
+        "ID": 17,
+        "name": "Cube"
+    }
+}
