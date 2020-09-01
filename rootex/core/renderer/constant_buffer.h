@@ -61,8 +61,7 @@ struct PSDiffuseConstantBufferMaterial
 	float pad;
 };
 
-/// Encapsulates all the types of lights offered, to bind them in the Pixel Shader
-struct PSDiffuseConstantBufferLights
+struct LightsInfo
 {
 	Vector3 cameraPos;
 	int pointLightCount = 0;
@@ -73,6 +72,13 @@ struct PSDiffuseConstantBufferLights
 	int spotLightCount = 0;
 	float pad3[3];
 	SpotLightInfo spotLightInfos[4];
+};
+
+/// Encapsulates all the types of light and other data offered, to bind them in the Pixel Shader
+struct PerFramePSCB
+{
+	LightsInfo lights;
+	Color fogColor;
 };
 
 /// Pixel Shader constant buffer for material not affected by lighting and single color
@@ -103,4 +109,12 @@ struct VSDiffuseConstantBuffer
 		Model = model.Transpose();
 		ModelInverseTranspose = model.Invert();
 	}
+};
+
+struct PerFrameVSCB
+{
+	Matrix view;
+	float fogStart;
+	float fogEnd;
+	float pad[2];
 };

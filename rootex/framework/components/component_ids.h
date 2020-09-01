@@ -26,5 +26,6 @@ enum class ComponentIDs : unsigned int
 	ShortMusicComponent = AudioComponent,
 	AudioListenerComponent,
 	TransformAnimationComponent,
-	TriggerComponent
+	TriggerComponent,
+	FogComponent
 };
