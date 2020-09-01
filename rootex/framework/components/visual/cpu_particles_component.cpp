@@ -207,7 +207,17 @@ JSON::json CPUParticlesComponent::getJSON() const
 #include "imgui.h"
 void CPUParticlesComponent::draw()
 {
+	ImGui::Text("Model");
 	ModelComponent::draw();
+
+	ImGui::Separator();
+
+	ImGui::Text("Particles Material");
+	m_BasicMaterial->draw("0");
+
+	ImGui::Separator();
+
+	ImGui::Text("Emitter");
 
 	int poolSize = m_ParticlePool.size();
 	if (ImGui::DragInt("Pool Size", &poolSize)) 
