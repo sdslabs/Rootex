@@ -1,0 +1,56 @@
+{
+    "Components": {
+        "CameraComponent": {
+            "aspectRatio": {
+                "x": 16.0,
+                "y": 9.0
+            },
+            "far": 100.0,
+            "fov": 0.7853981852531433,
+            "near": 0.10000000149011612
+        },
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 1
+        },
+        "ModelComponent": {
+            "isVisible": true,
+            "renderPass": 1,
+            "resFile": "game/assets/test/cube.obj"
+        },
+        "TransformComponent": {
+            "boundingBox": {
+                "center": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "extents": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                }
+            },
+            "position": {
+                "x": -0.2362753450870514,
+                "y": 11.560999870300293,
+                "z": -12.108027458190918
+            },
+            "rotation": {
+                "w": -0.0007269987836480141,
+                "x": 0.00032465820549987257,
+                "y": 0.9130886793136597,
+                "z": 0.40776029229164124
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 0.9999962449073792,
+                "z": 0.9999931454658508
+            }
+        }
+    },
+    "Entity": {
+        "ID": 9,
+        "name": "Camera"
+    }
+}

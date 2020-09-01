@@ -34,6 +34,16 @@
             "parent": 22
         },
         "TransformComponent": {
+            "higherBounds": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0.5
+            },
+            "lowerBounds": {
+                "x": -0.5,
+                "y": -0.5,
+                "z": -0.5
+            },
             "position": {
                 "x": -0.4300000071525574,
                 "y": 0.0,

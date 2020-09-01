@@ -3,8 +3,8 @@
         "BoxColliderComponent": {
             "dimensions": {
                 "x": 0.5,
-                "y": 4.090000152587891,
-                "z": 0.5
+                "y": 0.5,
+                "z": 6.03000020980835
             },
             "gravity": {
                 "x": 0.0,
@@ -22,23 +22,25 @@
         "ModelComponent": {
             "isVisible": true,
             "renderPass": 1,
-            "resFile": "rootex/assets/cube.obj"
+            "resFile": "game/assets/test/cube.obj"
         },
         "TransformComponent": {
-            "higherBounds": {
-                "x": 0.5,
-                "y": 0.5,
-                "z": 0.5
-            },
-            "lowerBounds": {
-                "x": -0.5,
-                "y": -0.5,
-                "z": -0.5
+            "boundingBox": {
+                "center": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "extents": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                }
             },
             "position": {
-                "x": 12.199999809265137,
-                "y": -2.75,
-                "z": -2.5
+                "x": -6.099999904632568,
+                "y": 0.0,
+                "z": 0.0
             },
             "rotation": {
                 "w": 1.0,
@@ -48,13 +50,13 @@
             },
             "scale": {
                 "x": 1.0,
-                "y": 8.619999885559082,
-                "z": 1.0
+                "y": 1.0,
+                "z": 13.760001182556152
             }
         }
     },
     "Entity": {
-        "ID": 26,
-        "name": "Obstacle0"
+        "ID": 7,
+        "name": "Wall"
     }
 }

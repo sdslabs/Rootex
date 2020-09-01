@@ -97,6 +97,11 @@
                     "inputEvent": "InputCameraActivate"
                 },
                 {
+                    "button": 0,
+                    "device": 0,
+                    "inputEvent": "InputSelect"
+                },
+                {
                     "button": 87,
                     "device": 1,
                     "inputEvent": "InputCameraForward"
