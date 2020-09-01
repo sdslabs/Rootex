@@ -4,6 +4,7 @@
 #include "renderer/shaders/register_locations_pixel_shader.h"
 #include "light_system.h"
 #include "renderer/material_library.h"
+#include "components/visual/sky_component.h"
 
 RenderSystem* RenderSystem::GetSingleton()
 {
@@ -82,6 +83,26 @@ void RenderSystem::render()
 	}
 #endif // ROOTEX_EDITOR
 	renderPassRender(RenderPass::Basic);
+
+	{
+		RenderingDevice::GetSingleton()->enableSkyDepthStencilState();
+		RenderingDevice::GetSingleton()->setRasterizerState(RenderingDevice::RasterizerState::Sky);
+		RenderingDevice::GetSingleton()->setCurrentRasterizerState();
+		for (auto& component : s_Components[SkyComponent::s_ID])
+		{
+			SkyComponent* sky = (SkyComponent*)component;
+			for (auto& [material, meshes] : sky->getSkySphere()->getMeshes())
+			{
+				m_Renderer->bind(sky->getSkyMaterial());
+				for (auto& mesh : meshes)
+				{
+					m_Renderer->draw(mesh.m_VertexBuffer.get(), mesh.m_IndexBuffer.get());
+				}
+			}
+		}
+		RenderingDevice::GetSingleton()->setRasterizerState(RenderingDevice::RasterizerState::Default);
+		RenderingDevice::GetSingleton()->disableSkyDepthStencilState();
+	}
 }
 
 void RenderSystem::renderLines()
@@ -158,7 +179,7 @@ void RenderSystem::perFrameVSCBBinds()
 void RenderSystem::perFramePSCBBinds()
 {
 	const PSDiffuseConstantBufferLights& lights = LightSystem::GetSingleton()->getLights();
-	Material::setPSConstantBuffer(lights, m_PSPerFrameConstantBuffer, PER_FRAME_PS_CPP);
+	Material::SetPSConstantBuffer(lights, m_PSPerFrameConstantBuffer, PER_FRAME_PS_CPP);
 }
 
 void RenderSystem::enableLineRenderMode()

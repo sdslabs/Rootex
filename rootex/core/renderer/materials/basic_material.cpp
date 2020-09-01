@@ -31,7 +31,7 @@ BasicMaterial::BasicMaterial(const String& imagePath, Color color, bool isLit, f
 
 void BasicMaterial::setPSConstantBuffer(const PSDiffuseConstantBufferMaterial& constantBuffer)
 {
-	Material::setPSConstantBuffer<PSDiffuseConstantBufferMaterial>(constantBuffer, m_PSConstantBuffer[(int)PixelConstantBufferType::Material], PER_OBJECT_PS_CPP);
+	Material::SetPSConstantBuffer<PSDiffuseConstantBufferMaterial>(constantBuffer, m_PSConstantBuffer[(int)PixelConstantBufferType::Material], PER_OBJECT_PS_CPP);
 }
 
 void BasicMaterial::setVSConstantBuffer(const VSDiffuseConstantBuffer& constantBuffer)

@@ -81,3 +81,20 @@ GridShader::GridShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, cons
     : Shader(vertexPath, pixelPath, vertexBufferFormat)
 {
 }
+
+SkyShader::SkyShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat)
+    : Shader(vertexPath, pixelPath, vertexBufferFormat)
+{
+	m_SamplerState = RenderingDevice::GetSingleton()->createSamplerState();
+}
+
+void SkyShader::bind() const
+{
+	Shader::bind();
+	RenderingDevice::GetSingleton()->setInPixelShader(m_SamplerState.Get());
+}
+
+void SkyShader::setSkyTexture(const Texture3D* texture)
+{
+	RenderingDevice::GetSingleton()->setInPixelShader(0, 1, texture->getTextureResourceView());
+}
