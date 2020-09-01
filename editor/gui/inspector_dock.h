@@ -22,6 +22,7 @@ private:
 	Vector<Tuple<ComponentID, String, bool>> m_AddNewComponentSelectionCache;
 	
 	Variant openEntity(const Event* event);
+	Variant closeEntity(const Event* event);
 
 	void drawAddComponentWindow();
 	void drawRemoveComponentWindow();
