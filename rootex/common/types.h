@@ -79,6 +79,10 @@ typedef DirectX::SimpleMath::Vector3 Vector3;
 typedef DirectX::SimpleMath::Vector4 Vector4;
 /// DirectX::SimpleMath::Quaternion
 typedef DirectX::SimpleMath::Quaternion Quaternion;
+/// DirectX::SimpleMath::Ray
+typedef DirectX::SimpleMath::Ray Ray;
+/// DirectX::SimpleMath::BoundingBox
+typedef DirectX::BoundingBox BoundingBox;
 /// DirectX::SimpleMath::Color
 typedef DirectX::SimpleMath::Color Color;
 
