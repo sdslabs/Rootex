@@ -76,7 +76,6 @@ void EditorApplication::run()
 		TransformAnimationSystem::GetSingleton()->update(m_FrameTimer.getFrameTime());
 		EventManager::GetSingleton()->dispatchDeferred();
 
-		m_Window->clearUnboundTarget();
 		m_Window->swapBuffers();
 	}
 }

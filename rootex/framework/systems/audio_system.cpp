@@ -8,6 +8,7 @@
 #include "core/audio/static_audio_buffer.h"
 #include "core/audio/streaming_audio_buffer.h"
 #include "core/resource_data.h"
+#include "framework/entity_factory.h"
 
 String AudioSystem::GetALErrorString(int errID)
 {
@@ -109,7 +110,13 @@ void AudioSystem::update()
 		audioComponent->getAudioSource()->queueNewBuffers();
 		audioComponent->update();
 	}
-
+	
+	if (m_Listener)
+	{
+		const Vector3& listenerPosition = m_Listener->getPosition();
+		AL_CHECK(alListener3f(AL_POSITION, listenerPosition.x, listenerPosition.y, listenerPosition.z));
+	}
+	
 	std::this_thread::sleep_for(std::chrono::milliseconds(m_UpdateIntervalMilliseconds));
 }
 
@@ -135,15 +142,20 @@ void AudioSystem::setBufferUpdateRate(float milliseconds)
 	m_UpdateIntervalMilliseconds = milliseconds;
 }
 
+void AudioSystem::setListener(AudioListenerComponent* listenerComponent)
+{
+	m_Listener = listenerComponent;
+}
+
+void AudioSystem::restoreListener()
+{
+	m_Listener = EntityFactory::GetSingleton()->findEntity(ROOT_ENTITY_ID)->getComponent<AudioListenerComponent>().get();
+}
+
 AudioSystem::AudioSystem()
     : m_Context(nullptr)
     , m_Device(nullptr)
     , m_UpdateIntervalMilliseconds(0)
-{
-	AL_CHECK(alListener3f(AL_POSITION, 0, 0, 0));
-	AL_CHECK(alListener3f(AL_VELOCITY, 0, 0, 0));
-}
-
-AudioSystem::~AudioSystem()
+    , m_Listener(nullptr)
 {
 }

@@ -40,7 +40,7 @@ public:
 	void resetClipCursor();
 	void showCursor(bool enabled);
 	/// Helpers for clearing render target.
-	void clearCurrentTarget();
+	void clearCurrentTarget(const Color& color);
 	void clearUnboundTarget();
 
 	Variant toggleFullScreen(const Event* event);

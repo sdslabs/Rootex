@@ -3,7 +3,7 @@ function onBegin(entity)
     number = 0
 end
 
-function onUpdate(delta, entity)
+function onUpdate(entity, delta)
     number = number + 1
     if number == 20 then
         number = 0
