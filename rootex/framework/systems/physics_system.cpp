@@ -45,8 +45,6 @@ void PhysicsSystem::initialize()
 PhysicsSystem::~PhysicsSystem()
 {
 	//cleanup in the reverse order of creation/initialization
-
-	//remove the rigidbodies from the dynamics world and delete them
 	for (int i = m_DynamicsWorld->getNumCollisionObjects() - 1; i >= 0; i--)
 	{
 		btCollisionObject* obj = m_DynamicsWorld->getCollisionObjectArray()[i];
