@@ -74,15 +74,7 @@ void Texture::loadTexture()
 
 void Texture3D::loadTexture()
 {
-	if (m_TextureView) 
-	{
-		m_TextureView->Release();
-	}
-
-	if (m_ImageFile)
-	{
-		m_TextureView = RenderingDevice::GetSingleton()->createDDSTexture(m_ImageFile);
-	}
+	m_TextureView = RenderingDevice::GetSingleton()->createDDSTexture(m_ImageFile);
 }
 
 Texture3D::Texture3D(ImageResourceFile* imageFile)
