@@ -17,14 +17,18 @@ private:
 	static MaterialMap s_Materials;
 	static MaterialDatabase s_MaterialDatabase;
 
+	static void PopulateMaterials(const String& path);
+
 public:
 	static void SaveAll();
 	static void LoadMaterials();
-	static void CreateNewMaterialFile(const String& materialName, const String& materialType);
-	static bool IsExists(const String& materialName);
+	static void CreateNewMaterialFile(const String& materialPath, const String& materialType);
+	static bool IsExists(const String& materialPath);
 
-	static Ref<Material> GetMaterial(const String& materialName);
+	static Ref<Material> GetMaterial(const String& materialPath);
 	static Ref<Material> GetDefaultMaterial();
 	static MaterialMap& GetAllMaterials() { return s_Materials; };
 	static MaterialDatabase& GetMaterialDatabase() { return s_MaterialDatabase; };
 };
+
+void PopulateMaterials();
