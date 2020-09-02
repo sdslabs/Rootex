@@ -85,7 +85,7 @@ Vector<FilePath> OS::GetAllInDirectory(const String& directory)
 	}
 
 	Vector<FilePath> result;
-	for (auto&& file : std::filesystem::directory_iterator(GetAbsolutePath(directory)))
+	for (auto&& file : std::filesystem::recursive_directory_iterator(GetAbsolutePath(directory)))
 	{
 		result.push_back(GetRootRelativePath(((FilePath)file).generic_string()));
 	}

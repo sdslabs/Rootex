@@ -1,12 +1,6 @@
 {
     "Components": {
         "CPUParticlesComponent": {
-            "angularVelocity": {
-                "w": 1.0,
-                "x": 0.0,
-                "y": 0.0,
-                "z": 0.0
-            },
             "colorBegin": {
                 "a": 1.0,
                 "b": 0.0,
@@ -21,6 +15,7 @@
             },
             "isVisible": true,
             "lifeTime": 1.0,
+            "materialPath": "rootex/assets/materials/default_particles.rmat",
             "poolSize": 1000,
             "renderPass": 1,
             "resFile": "game\\assets\\test\\teapot.obj",

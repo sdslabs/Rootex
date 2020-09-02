@@ -5,7 +5,7 @@
 
 DebugDrawer::DebugDrawer()
 {
-	m_BasicMaterial = std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetMaterial("collision.rmat"));
+	m_BasicMaterial = std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetMaterial("rootex/assets/materials/collision.rmat"));
 }
 
 void DebugDrawer::drawLine(const btVector3& from, const btVector3& to, const btVector3& color)
