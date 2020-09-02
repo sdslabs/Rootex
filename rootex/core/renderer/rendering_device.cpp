@@ -3,6 +3,7 @@
 #include "common/common.h"
 #include "dxgi_debug_interface.h"
 
+#include "vendor/DirectXTK/Inc/DDSTextureLoader.h"
 #include "vendor/DirectXTK/Inc/WICTextureLoader.h"
 
 RenderingDevice::RenderingDevice()
@@ -91,21 +92,31 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 
 	dxgiFactory->CreateSwapChain(m_Device.Get(), &sd, &m_SwapChain);
 
-	D3D11_DEPTH_STENCIL_DESC dsDesc = { 0 };
-	dsDesc.DepthEnable = TRUE;
-	dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
-	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-
 	D3D11_FEATURE_DATA_D3D11_OPTIONS features;
 	GFX_ERR_CHECK(m_Device->CheckFeatureSupport(D3D11_FEATURE_D3D11_OPTIONS, &features, sizeof(features)));
 
 	PRINT(
-		"Supported DirectX11 Features\n"
-		"MapNoOverwriteOnDynamicConstantBuffer: " + std::to_string(features.MapNoOverwriteOnDynamicConstantBuffer));
+		"Supported DirectX11 Features\n" +
+		"MapNoOverwriteOnDynamicConstantBuffer: " + 
+		std::to_string(features.MapNoOverwriteOnDynamicConstantBuffer));
+	{
+		D3D11_DEPTH_STENCIL_DESC dsDesc = { 0 };
+		dsDesc.DepthEnable = TRUE;
+		dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
+		dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+		GFX_ERR_CHECK(m_Device->CreateDepthStencilState(&dsDesc, &m_DepthStencilState));
+		m_Context->OMSetDepthStencilState(m_DepthStencilState.Get(), 1u);
+		m_StencilRef = 1u;
+	}
+	{
+		D3D11_DEPTH_STENCIL_DESC dssDesc;
+		ZeroMemory(&dssDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
+		dssDesc.DepthEnable = true;
+		dssDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+		dssDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 
-	GFX_ERR_CHECK(m_Device->CreateDepthStencilState(&dsDesc, &m_DepthStencilState));
-	m_Context->OMSetDepthStencilState(m_DepthStencilState.Get(), 1u);
-	m_StencilRef = 1u;
+		GFX_ERR_CHECK(m_Device->CreateDepthStencilState(&dssDesc, &m_SkyDepthStencilState));
+	}
 
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> depthStencil = nullptr;
 	D3D11_TEXTURE2D_DESC descDepth = { 0 };
@@ -151,6 +162,21 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 		rsDesc.AntialiasedLineEnable = FALSE;
 
 		GFX_ERR_CHECK(m_Device->CreateRasterizerState(&rsDesc, &m_DefaultRasterizerState));
+	}
+	{
+		D3D11_RASTERIZER_DESC rsDesc;
+		rsDesc.FillMode = D3D11_FILL_SOLID;
+		rsDesc.CullMode = D3D11_CULL_NONE;
+		rsDesc.FrontCounterClockwise = FALSE;
+		rsDesc.DepthBias = 0;
+		rsDesc.SlopeScaledDepthBias = 0.0f;
+		rsDesc.DepthBiasClamp = 0.0f;
+		rsDesc.DepthClipEnable = TRUE;
+		rsDesc.ScissorEnable = FALSE;
+		rsDesc.MultisampleEnable = MSAA;
+		rsDesc.AntialiasedLineEnable = FALSE;
+
+		GFX_ERR_CHECK(m_Device->CreateRasterizerState(&rsDesc, &m_SkyRasterizerState));
 	}
 	{
 		D3D11_RASTERIZER_DESC rsDesc;
@@ -289,21 +315,12 @@ void RenderingDevice::createRenderTextureTarget(int width, int height)
 
 void RenderingDevice::enableSkyDepthStencilState()
 {
-	D3D11_DEPTH_STENCIL_DESC DSDesc;
-	ZeroMemory(&DSDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
-	DSDesc.DepthEnable = TRUE;
-	DSDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
-	DSDesc.DepthFunc = D3D11_COMPARISON_LESS;
-	DSDesc.StencilEnable = FALSE;
-	m_Device->CreateDepthStencilState(&DSDesc, &m_NewSkyDepthStencilState);
-	//DXUT_SetDebugName(m_pSkyboxDepthStencilState, “SkyboxDepthStencil” );
-	m_Context->OMGetDepthStencilState(&m_OldSkyDepthStencilState, &m_StencilRef);
-	m_Context->OMSetDepthStencilState(m_NewSkyDepthStencilState.Get(), 0);
+	m_Context->OMSetDepthStencilState(m_SkyDepthStencilState.Get(), 0);
 }
 
 void RenderingDevice::disableSkyDepthStencilState()
 {
-	m_Context->OMSetDepthStencilState(m_OldSkyDepthStencilState.Get(), m_StencilRef);
+	m_Context->OMSetDepthStencilState(m_DepthStencilState.Get(), m_StencilRef);
 }
 
 Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createVertexBuffer(D3D11_BUFFER_DESC* vbd, D3D11_SUBRESOURCE_DATA* vsd, const UINT* stride, const UINT* const offset)
@@ -370,6 +387,22 @@ Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::createTexture(
 	if (FAILED(DirectX::CreateWICTextureFromMemory(m_Device.Get(), (const uint8_t*)imageRes->getData()->getRawData()->data(), (size_t)imageRes->getData()->getRawDataByteSize(), textureResource.GetAddressOf(), textureView.GetAddressOf())))
 	{
 		ERR("Could not create texture: " + imageRes->getPath().generic_string());
+	}
+
+	return textureView;
+}
+
+Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::createDDSTexture(ImageResourceFile* imageRes)
+{
+	Microsoft::WRL::ComPtr<ID3D11Resource> textureResource;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> textureView;
+
+	if (FAILED(DirectX::CreateDDSTextureFromMemoryEx(
+		m_Device.Get(),
+		(const uint8_t*)imageRes->getData()->getRawData()->data(),
+	        imageRes->getData()->getRawDataByteSize(), imageRes->getData()->getRawDataByteSize(), D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, D3D11_RESOURCE_MISC_TEXTURECUBE, false, &textureResource, &textureView)))
+	{
+		ERR("Could not load DDS image: " + imageRes->getPath().generic_string());
 	}
 
 	return textureView;
@@ -503,8 +536,9 @@ void RenderingDevice::setPSConstantBuffer(ID3D11Buffer* constantBuffer, UINT slo
 
 void RenderingDevice::unbindShaderResources()
 {
-	m_Context->VSSetShaderResources(0, 1, nullptr);
-	m_Context->PSSetShaderResources(0, 1, nullptr);
+	ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
+	m_Context->VSSetShaderResources(0, 1, nullSRV);
+	m_Context->PSSetShaderResources(0, 1, nullSRV);
 }
 
 void RenderingDevice::setAlphaBlendState()
@@ -524,8 +558,14 @@ void RenderingDevice::setCurrentRasterizerState()
 	m_Context->RSSetState(*m_CurrentRasterizerState);
 }
 
+RenderingDevice::RasterizerState RenderingDevice::getRasterizerState()
+{
+	return m_CurrentRasterizer;
+}
+
 void RenderingDevice::setRasterizerState(RasterizerState rs)
 {
+	m_CurrentRasterizer = rs;
 	switch (rs)
 	{
 	case RenderingDevice::RasterizerState::Default:
@@ -539,6 +579,9 @@ void RenderingDevice::setRasterizerState(RasterizerState rs)
 		break;
 	case RenderingDevice::RasterizerState::Wireframe:
 		m_CurrentRasterizerState = m_WireframeRasterizerState.GetAddressOf();
+		break;
+	case RenderingDevice::RasterizerState::Sky:
+		m_CurrentRasterizerState = m_SkyRasterizerState.GetAddressOf();
 		break;
 	default:
 		ERR("Invalid rasterizer state found to be set");

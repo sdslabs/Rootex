@@ -5,6 +5,7 @@
 #include "renderer/shaders/register_locations_pixel_shader.h"
 #include "light_system.h"
 #include "renderer/material_library.h"
+#include "components/visual/sky_component.h"
 #include "application.h"
 
 RenderSystem* RenderSystem::GetSingleton()
@@ -104,6 +105,27 @@ void RenderSystem::render()
 	}
 #endif // ROOTEX_EDITOR
 	renderPassRender(RenderPass::Basic);
+
+	{
+		RenderingDevice::GetSingleton()->enableSkyDepthStencilState();
+		RenderingDevice::RasterizerState currentRS = RenderingDevice::GetSingleton()->getRasterizerState();
+		RenderingDevice::GetSingleton()->setRasterizerState(RenderingDevice::RasterizerState::Sky);
+		RenderingDevice::GetSingleton()->setCurrentRasterizerState();
+		for (auto& component : s_Components[SkyComponent::s_ID])
+		{
+			SkyComponent* sky = (SkyComponent*)component;
+			for (auto& [material, meshes] : sky->getSkySphere()->getMeshes())
+			{
+				m_Renderer->bind(sky->getSkyMaterial());
+				for (auto& mesh : meshes)
+				{
+					m_Renderer->draw(mesh.m_VertexBuffer.get(), mesh.m_IndexBuffer.get());
+				}
+			}
+		}
+		RenderingDevice::GetSingleton()->setRasterizerState(currentRS);
+		RenderingDevice::GetSingleton()->disableSkyDepthStencilState();
+	}
 }
 
 void RenderSystem::renderLines()
@@ -182,7 +204,7 @@ void RenderSystem::perFramePSCBBinds(const Color& fogColor)
 	PerFramePSCB perFrame;
 	perFrame.lights = LightSystem::GetSingleton()->getLights();
 	perFrame.fogColor = fogColor;
-	Material::setPSConstantBuffer(perFrame, m_PSPerFrameConstantBuffer, PER_FRAME_PS_CPP);
+	Material::SetPSConstantBuffer(perFrame, m_PSPerFrameConstantBuffer, PER_FRAME_PS_CPP);
 }
 
 void RenderSystem::enableLineRenderMode()

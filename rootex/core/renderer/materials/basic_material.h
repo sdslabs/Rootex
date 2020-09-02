@@ -16,6 +16,10 @@ class BasicMaterial : public Material
 	Color m_Color;
 	float m_SpecularIntensity;
 	float m_SpecularPower;
+	float m_Reflectivity;
+	float m_RefractionConstant;
+	float m_Refractivity;
+	bool m_IsAffectedBySky;
 
 	void setPSConstantBuffer(const PSDiffuseConstantBufferMaterial& constantBuffer);
 	void setVSConstantBuffer(const VSDiffuseConstantBuffer& constantBuffer);
@@ -24,7 +28,7 @@ class BasicMaterial : public Material
 	String m_ImagePathUI;
 #endif // ROOTEX_EDITOR
 public:
-	const static String s_MaterialName;
+	const static inline String s_MaterialName = "BasicMaterial";
 	enum class VertexConstantBufferType
 	{
 		Model,
@@ -37,7 +41,7 @@ public:
 	};
 
 	BasicMaterial() = delete;
-	BasicMaterial(const String& imagePath, Color color, bool isLit, float specularIntensity, float specularPower);
+	BasicMaterial(const String& imagePath, Color color, bool isLit, float specularIntensity, float specularPower, float reflectivity, float refractionConstant, float refractivity, bool affectedBySky);
 	~BasicMaterial() = default;
 
 	void setColor(const Color& color) { m_Color = color; };

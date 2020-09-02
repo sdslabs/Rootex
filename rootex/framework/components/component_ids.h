@@ -27,5 +27,6 @@ enum class ComponentIDs : unsigned int
 	AudioListenerComponent,
 	TransformAnimationComponent,
 	TriggerComponent,
+	SkyComponent,
 	FogComponent
 };

@@ -15,6 +15,17 @@
 /// The boss of all rendering, all DirectX API calls requiring the Device or Context go through this
 class RenderingDevice
 {
+public:
+	enum class RasterizerState
+	{
+		Default,
+		UI,
+		UIScissor,
+		Wireframe,
+		Sky
+	};
+
+private:
 	Microsoft::WRL::ComPtr<ID3D11Device> m_Device;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_Context;
 
@@ -30,9 +41,8 @@ class RenderingDevice
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_DepthStencilView;
 
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_DepthStencilState;
-	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_OldSkyDepthStencilState;
 	UINT m_StencilRef;
-	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_NewSkyDepthStencilState;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_SkyDepthStencilState;
 
 	/// DirectXTK batch font renderer data structure
 	Ref<DirectX::SpriteBatch> m_FontBatch;
@@ -41,7 +51,9 @@ class RenderingDevice
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_UIRasterizerState;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_UIScissoredRasterizerState;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_WireframeRasterizerState;
+	Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_SkyRasterizerState;
 	ID3D11RasterizerState** m_CurrentRasterizerState;
+	RasterizerState m_CurrentRasterizer;
 
 	Microsoft::WRL::ComPtr<ID3D11BlendState> m_DefaultBlendState;
 	Microsoft::WRL::ComPtr<ID3D11BlendState> m_AlphaBlendState;
@@ -66,14 +78,6 @@ class RenderingDevice
 #endif // ROOTEX_EDITOR
 
 public:
-	enum class RasterizerState
-	{
-		Default,
-		UI,
-		UIScissor,
-		Wireframe
-	};
-
 	static RenderingDevice* GetSingleton();
 
 	void initialize(HWND hWnd, int width, int height, bool MSAA);
@@ -95,6 +99,7 @@ public:
 	/// To render the game onto a texture in case of Editor
 	void createRenderTextureTarget(int width, int height);
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createTexture(ImageResourceFile* imageRes);
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createDDSTexture(ImageResourceFile* imageRes);
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createTexture(const char* imageFileData, size_t size);
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createTextureFromPixels(const char* imageRawData, unsigned int width, unsigned int height);
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> createSamplerState();
@@ -122,6 +127,7 @@ public:
 	void setAlphaBlendState();
 	
 	void setCurrentRasterizerState();
+	RasterizerState getRasterizerState();
 	void setRasterizerState(RasterizerState rs);
 	void setTemporaryUIRasterizerState();
 	void setTemporaryUIScissoredRasterizerState();

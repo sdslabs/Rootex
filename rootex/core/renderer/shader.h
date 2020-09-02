@@ -75,3 +75,19 @@ class GridShader : public Shader
 
 	friend class ShaderLibrary;
 };
+
+class SkyShader : public Shader
+{
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_SamplerState;
+
+public:
+	SkyShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat);
+	SkyShader(SkyShader&) = delete;
+	~SkyShader() = default;
+
+	friend class ShaderLibrary;
+
+	virtual void bind() const override;
+
+	void setSkyTexture(const Texture3D* texture);
+};
