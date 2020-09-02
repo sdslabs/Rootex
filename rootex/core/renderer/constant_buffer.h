@@ -53,12 +53,16 @@ struct SpotLightInfo
 struct PSDiffuseConstantBufferMaterial
 {
 	Color color;
-	int isLit;
+	int isLit = 0;
 	/// Describes brightness of specular spot, high for metallic material
 	float specularIntensity = 2.0f;
 	/// Describes angular fall-off of specular spot, high for metallic material
 	float specularPower = 30.0f;
-	float pad;
+	float reflectivity = 0.0f;
+	float refractionConstant = 0.5f;
+	float refractivity = 0.0f;
+	int affectedBySky = 0;
+	float pad[1];
 };
 
 struct LightsInfo

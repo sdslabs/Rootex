@@ -3,6 +3,7 @@
 #include "common/common.h"
 
 #include "materials/basic_material.h"
+#include "materials/sky_material.h"
 
 class MaterialLibrary
 {
@@ -16,7 +17,7 @@ private:
 
 	static MaterialMap s_Materials;
 	static MaterialDatabase s_MaterialDatabase;
-
+	static String s_DefaultMaterialPath;
 	static void PopulateMaterials(const String& path);
 
 public:

@@ -20,6 +20,7 @@
 #include "components/trigger_component.h"
 #include "components/visual/fog_component.h"
 #include "components/visual/camera_component.h"
+#include "components/visual/sky_component.h"
 #include "components/visual/cpu_particles_component.h"
 #include "components/visual/directional_light_component.h"
 #include "components/visual/grid_model_component.h"
@@ -71,6 +72,7 @@ EntityFactory::EntityFactory()
 	REGISTER_COMPONENT(ModelComponent);
 	REGISTER_COMPONENT(FogComponent);
 	REGISTER_COMPONENT(TextUIComponent);
+	REGISTER_COMPONENT(SkyComponent);
 	REGISTER_COMPONENT(TransformComponent);
 	REGISTER_COMPONENT(TransformAnimationComponent);
 	REGISTER_COMPONENT(PointLightComponent);

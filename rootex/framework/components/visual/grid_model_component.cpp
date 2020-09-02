@@ -139,7 +139,7 @@ JSON::json GridModelComponent::getJSON() const
 #include "imgui.h"
 void GridModelComponent::draw()
 {
-	ModelComponent::draw();
+	m_ColorMaterial->draw("0");
 
 	if (ImGui::InputInt("Cell Count", &m_CellCount))
 	{
