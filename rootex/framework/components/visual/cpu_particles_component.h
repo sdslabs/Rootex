@@ -8,6 +8,7 @@ struct ParticleTemplate
 	Color m_ColorBegin = ColorPresets::Red;
 	Color m_ColorEnd = ColorPresets::Blue;
 	float m_VelocityVariation = 10.0f;
+	float m_AngularVelocityVariation = 0.5f;
 	float m_SizeBegin = 0.1f;
 	float m_SizeEnd = 0.0f;
 	float m_SizeVariation = 0.1f;
@@ -41,12 +42,22 @@ class CPUParticlesComponent : public ModelComponent
 	TransformComponent* m_TransformComponent;
 	std::chrono::time_point<std::chrono::high_resolution_clock> m_LastRenderTimePoint;
 	
+	enum class EmitMode : int
+	{
+		Point,
+		Square,
+		Cube
+	};
+
+	EmitMode m_CurrentEmitMode;
+	Vector3 m_EmitterDimensions;
+
 	friend class EntityFactory;
 
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::CPUParticlesComponent;
 
-	CPUParticlesComponent(size_t poolSize, const String& particleModelPath, const String& materialPath, const ParticleTemplate& particleTemplate, bool visibility, unsigned int renderPass);
+	CPUParticlesComponent(size_t poolSize, const String& particleModelPath, const String& materialPath, const ParticleTemplate& particleTemplate, bool visibility, unsigned int renderPass, EmitMode emitMode, const Vector3& emitterDimensions);
 	CPUParticlesComponent(CPUParticlesComponent&) = delete;
 	virtual ~CPUParticlesComponent() = default;
 
