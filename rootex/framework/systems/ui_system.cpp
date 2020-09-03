@@ -64,8 +64,6 @@ UISystem::UISystem()
 
 UISystem::~UISystem()
 {
-	InputInterface::Shutdown();
-	Rml::Core::RemoveContext(m_Context->GetName());
 	Rml::Core::Shutdown();
 }
 

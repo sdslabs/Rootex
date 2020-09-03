@@ -18,12 +18,13 @@ class UIComponent : public Component
 
 	UIComponent(const String& path);
 	UIComponent(const UIComponent&) = delete;
-	~UIComponent();
+	virtual ~UIComponent() = default;
 
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::UIComponent;
 
 	void setDocument(const String& path);
+	void onRemove() override;
 
 	virtual String getName() const override { return "UIComponent"; }
 	ComponentID getComponentID() const { return s_ID; }

@@ -8,7 +8,7 @@
 /// ECS style System interface that allows iterating over components directly.
 class System
 {
-	void sort();
+	static void UpdateOrderSort();
 
 protected:
 	enum class UpdateOrder
@@ -24,6 +24,7 @@ protected:
 	static HashMap<ComponentID, Vector<Component*>> s_Components;
 	static void RegisterComponent(Component* component);
 	static void DeregisterComponent(Component* component);
+	static void CreationOrderSort();
 	
 	friend class Entity;
 	friend class EntityFactory;
@@ -31,8 +32,10 @@ protected:
 
 	String m_SystemName;
 	UpdateOrder m_UpdateOrder;
+	unsigned int m_CreationOrder;
 
 public:
+
 	static const Vector<Component*>& GetComponents(ComponentID ID) { return s_Components[ID]; }
 	
 	System(const String& name, const UpdateOrder& order);
@@ -45,6 +48,7 @@ public:
 	
 	String getName() const { return m_SystemName; }
 	const UpdateOrder& getUpdateOrder() const { return m_UpdateOrder; }
+	const unsigned int& getCreationOrder() const { return m_CreationOrder; }
 
 #ifdef ROOTEX_EDITOR
 	virtual void draw();

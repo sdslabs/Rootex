@@ -106,4 +106,11 @@ void Application::process(float deltaMilliseconds)
 
 void Application::end()
 {
+	System::CreationOrderSort();
+	for (auto& system = System::s_SystemStack.rbegin(); system != System::s_SystemStack.rend(); system++) 
+	{
+		(*system)->end();
+		PRINT((*system)->getName() + " was killed");
+	}
+	PRINT("All systems were killed");
 }

@@ -22,14 +22,6 @@ UIComponent::UIComponent(const String& path)
 	setDocument(path);
 }
 
-UIComponent::~UIComponent()
-{
-	if (m_Document)
-	{
-		UISystem::GetSingleton()->unloadDocument(m_Document);
-	}
-}
-
 void UIComponent::setDocument(const String& path)
 {
 	if (m_Document)
@@ -39,6 +31,11 @@ void UIComponent::setDocument(const String& path)
 
 	m_FilePath = path;
 	m_Document = UISystem::GetSingleton()->loadDocument(m_FilePath);
+}
+
+void UIComponent::onRemove()
+{
+	UISystem::GetSingleton()->unloadDocument(m_Document);
 }
 
 JSON::json UIComponent::getJSON() const

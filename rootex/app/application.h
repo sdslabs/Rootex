@@ -28,7 +28,7 @@ public:
 
 	void run();
 	virtual void process(float deltaMilliseconds);
-	virtual void end();
+	void end();
 
 	virtual String getAppTitle() const { return "Rootex Application"; }
 	const Timer& getAppTimer() const { return m_ApplicationTimer; };

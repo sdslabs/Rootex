@@ -3,9 +3,14 @@
 HashMap<ComponentID, Vector<Component*>> System::s_Components;
 Vector<System*> System::s_SystemStack;
 
-void System::sort()
+void System::UpdateOrderSort()
 {
 	std::sort(s_SystemStack.begin(), s_SystemStack.end(), [](System* a, System* b) { return (int)a->getUpdateOrder() < (int)b->getUpdateOrder(); });
+}
+
+void System::CreationOrderSort()
+{
+	std::sort(s_SystemStack.begin(), s_SystemStack.end(), [](System* a, System* b) { return a->getCreationOrder() < b->getCreationOrder(); });
 }
 
 void System::RegisterComponent(Component* component)
@@ -41,7 +46,8 @@ System::System(const String& name, const UpdateOrder& order)
     , m_UpdateOrder(order)
 {
 	s_SystemStack.push_back(this);
-	sort();
+	UpdateOrderSort();
+	m_CreationOrder = s_SystemStack.size();
 }
 
 System::~System()
@@ -51,7 +57,7 @@ System::~System()
 	{
 		s_SystemStack.erase(findIt);
 	}
-	sort();
+	UpdateOrderSort();
 }
 
 bool System::initialize(const JSON::json& systemData)
