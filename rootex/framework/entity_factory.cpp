@@ -90,11 +90,6 @@ EntityFactory::EntityFactory()
 	REGISTER_COMPONENT(UIComponent);
 }
 
-EntityFactory::~EntityFactory()
-{
-	destroyEntities(false);
-}
-
 Ref<Component> EntityFactory::createComponent(const String& name, const JSON::json& componentData)
 {
 	auto& findIt = m_ComponentCreators.end();

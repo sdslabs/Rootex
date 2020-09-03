@@ -39,6 +39,7 @@ class UISystem : public System
 	Rml::Core::Context* m_Context;
 
 	UISystem();
+	~UISystem() = default;
 	Variant enableDebugger(const Event* event);
 	Variant disableDebugger(const Event* event);
 

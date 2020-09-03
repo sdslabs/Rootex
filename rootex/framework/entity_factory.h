@@ -39,7 +39,7 @@ protected:
 
 	EntityFactory();
 	EntityFactory(EntityFactory&) = delete;
-	~EntityFactory();
+	~EntityFactory() = default;
 
 	Ref<Entity> createRootEntity();
 	friend class HierarchyGraph;
