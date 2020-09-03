@@ -55,10 +55,18 @@ void EventListener::ProcessEvent(Rml::Core::Event& event)
 }
 
 UISystem::UISystem()
-    : m_Context(nullptr)
+    : System("UISystem", UpdateOrder::RenderUI)
+	, m_Context(nullptr)
 {
 	BIND_EVENT_MEMBER_FUNCTION("UISystemEnableDebugger", UISystem::enableDebugger);
 	BIND_EVENT_MEMBER_FUNCTION("UISystemDisableDebugger", UISystem::disableDebugger);
+}
+
+UISystem::~UISystem()
+{
+	InputInterface::Shutdown();
+	Rml::Core::RemoveContext(m_Context->GetName());
+	Rml::Core::Shutdown();
 }
 
 Variant UISystem::enableDebugger(const Event* event)
@@ -106,22 +114,23 @@ void UISystem::unloadDocument(Rml::Core::ElementDocument* document)
 	m_Context->UnloadDocument(document);
 }
 
-void UISystem::initialize(int width, int height)
+bool UISystem::initialize(const JSON::json& systemData)
 {
 	m_RmlSystemInterface.reset(new CustomSystemInterface());
-	m_RmlRenderInterface.reset(new CustomRenderInterface(width, height));
+	m_RmlRenderInterface.reset(new CustomRenderInterface(systemData["width"], systemData["height"]));
 
 	Rml::Core::SetSystemInterface(m_RmlSystemInterface.get());
 	Rml::Core::SetRenderInterface(m_RmlRenderInterface.get());
 	if (!Rml::Core::Initialise())
 	{
 		ERR("Could not initialize RmlUi UI rendering library");
+		return false;
 	}
 	Rml::Controls::Initialise();
 	
 	loadFont("rootex/assets/fonts/Lato-Regular.ttf");
 	
-	m_Context = Rml::Core::CreateContext("default", Rml::Core::Vector2i(width, height));
+	m_Context = Rml::Core::CreateContext("default", Rml::Core::Vector2i(systemData["width"], systemData["height"]));
 	
 	Rml::Debugger::Initialise(m_Context);
 	
@@ -129,11 +138,14 @@ void UISystem::initialize(int width, int height)
 
 	InputInterface::Initialise();
 	InputInterface::SetContext(m_Context);
+
+	return true;
 }
 
-void UISystem::update()
+void UISystem::update(float deltaMilliseconds)
 {
 	m_Context->Update();
+	render();
 }
 
 void UISystem::render()
@@ -141,13 +153,6 @@ void UISystem::render()
 	RenderingDevice::GetSingleton()->setAlphaBlendState();
 	RenderingDevice::GetSingleton()->setTemporaryUIRasterizerState();
 	m_Context->Render();
-}
-
-void UISystem::shutdown()
-{
-	InputInterface::Shutdown();
-	Rml::Core::RemoveContext(m_Context->GetName());
-	Rml::Core::Shutdown();
 }
 
 void UISystem::setDebugger(bool enabled)

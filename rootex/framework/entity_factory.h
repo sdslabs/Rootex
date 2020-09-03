@@ -45,6 +45,7 @@ protected:
 	friend class HierarchyGraph;
 
 	Variant deleteEntityEvent(const Event* event);
+	Variant applicationExit(const Event* event);
 
 public:
 	static void RegisterAPI(sol::state& rootex);

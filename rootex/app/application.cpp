@@ -7,6 +7,7 @@
 #include "core/renderer/material_library.h"
 #include "script/interpreter.h"
 #include "systems/physics_system.h"
+#include "systems/input_system.h"
 #include "systems/ui_system.h"
 
 Application* Application::s_Singleton = nullptr;
@@ -34,7 +35,8 @@ Application::Application(const String& settingsFile)
 
 	m_ApplicationSettings.reset(new ApplicationSettings(ResourceLoader::CreateTextResourceFile(settingsFile)));
 
-	if (!AudioSystem::GetSingleton()->initialize())
+	JSON::json& systemsSettings = m_ApplicationSettings->getJSON()["systems"];
+	if (!AudioSystem::GetSingleton()->initialize(systemsSettings["AudioSystem"]))
 	{
 		ERR("Audio System was not initialized");
 	}
@@ -51,12 +53,19 @@ Application::Application(const String& settingsFile)
 	    windowJSON["isEditor"],
 	    windowJSON["msaa"],
 		windowJSON["fullScreen"]));
-	InputManager::GetSingleton()->initialize(m_Window->getWidth(), m_Window->getHeight());
+	JSON::json& inputSystemSettings = systemsSettings["InputManager"];
+	inputSystemSettings["width"] = m_Window->getWidth();
+	inputSystemSettings["height"] = m_Window->getHeight();
+	InputSystem::GetSingleton()->initialize(inputSystemSettings);
 
 	ShaderLibrary::MakeShaders();
 	MaterialLibrary::LoadMaterials();
-	PhysicsSystem::GetSingleton()->initialize();
-	UISystem::GetSingleton()->initialize(m_Window->getWidth(), m_Window->getHeight());
+	PhysicsSystem::GetSingleton()->initialize(systemsSettings["PhysicsSystem"]);
+	
+	JSON::json& uiSystemSettings = systemsSettings["UISystem"];
+	uiSystemSettings["width"] = m_Window->getWidth();
+	uiSystemSettings["height"] = m_Window->getHeight();
+	UISystem::GetSingleton()->initialize(uiSystemSettings);
 
 	auto&& postInitialize = m_ApplicationSettings->find("postInitialize");
 	if (postInitialize != m_ApplicationSettings->end())
@@ -69,8 +78,32 @@ Application::Application(const String& settingsFile)
 
 Application::~Application()
 {
-	EntityFactory::GetSingleton()->destroyEntities(false);
-	AudioSystem::GetSingleton()->shutDown();
-	UISystem::GetSingleton()->shutdown();
 	ShaderLibrary::DestroyShaders();
+}
+
+void Application::run()
+{
+	while (!m_Window->processMessages())
+	{
+		m_FrameTimer.reset();
+
+		for (auto& system : System::s_SystemStack)
+		{
+			system->update(m_FrameTimer.getLastFrameTime());
+		}
+		
+		process(m_FrameTimer.getLastFrameTime());
+
+		EventManager::GetSingleton()->dispatchDeferred();
+		m_Window->swapBuffers();
+	}
+	EventManager::GetSingleton()->call("Application", "ApplicationExit", 0);
+}
+
+void Application::process(float deltaMilliseconds)
+{
+}
+
+void Application::end()
+{
 }

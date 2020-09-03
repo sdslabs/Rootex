@@ -6,5 +6,7 @@
 class DebugSystem : public System
 {
 public:
-	void update(float deltaMilliseconds);
+	DebugSystem();
+
+	void update(float deltaMilliseconds) override;
 };

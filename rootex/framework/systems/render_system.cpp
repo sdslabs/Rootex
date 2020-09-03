@@ -15,7 +15,8 @@ RenderSystem* RenderSystem::GetSingleton()
 }
 
 RenderSystem::RenderSystem()
-    : m_Renderer(new Renderer())
+    : System("RenderSystem", UpdateOrder::Render)
+	, m_Renderer(new Renderer())
     , m_VSProjectionConstantBuffer(nullptr)
     , m_VSPerFrameConstantBuffer(nullptr)
     , m_PSPerFrameConstantBuffer(nullptr)
@@ -64,7 +65,7 @@ void RenderSystem::recoverLostDevice()
 	ERR("Fatal error: D3D Device lost");
 }
 
-void RenderSystem::render()
+void RenderSystem::update(float deltaMilliseconds)
 {
 	Color clearColor = { 0.15f, 0.15f, 0.15f, 1.0f };
 	float fogStart = 0.0f;
