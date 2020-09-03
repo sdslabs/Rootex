@@ -2,15 +2,15 @@
     "affectedBySky": true,
     "color": {
         "a": 1.0,
-        "b": 0.4321017265319824,
-        "g": 0.4320995807647705,
-        "r": 0.4321017265319824
+        "b": 0.8361161947250366,
+        "g": 0.8361084461212158,
+        "r": 0.8361091017723083
     },
     "imageFile": "rootex/assets/white.png",
     "isLit": true,
-    "reflectivity": 0.11999999731779099,
-    "refractionConstant": 0.10999999940395355,
-    "refractivity": 0.6899999976158142,
+    "reflectivity": 0.2199999988079071,
+    "refractionConstant": 0.1899999976158142,
+    "refractivity": 0.7799999713897705,
     "specularIntensity": 2.0,
     "specularPower": 30.0,
     "type": "BasicMaterial"

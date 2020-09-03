@@ -23,6 +23,11 @@ void MaterialLibrary::PopulateMaterials(const String& path)
 	}
 }
 
+bool MaterialLibrary::IsDefault(const String& materialPath)
+{
+	return materialPath.substr(0, 5) == "rootex";
+}
+
 void MaterialLibrary::LoadMaterials()
 {
 	PopulateMaterials("game/assets/");
@@ -74,7 +79,7 @@ void MaterialLibrary::SaveAll()
 {
 	for (auto& [materialPath, materialInfo] : s_Materials)
 	{
-		if (materialPath == s_DefaultMaterialPath)
+		if (IsDefault(materialPath))
 		{
 			continue;
 		}

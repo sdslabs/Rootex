@@ -19,6 +19,8 @@ private:
 	static MaterialDatabase s_MaterialDatabase;
 	static void PopulateMaterials(const String& path);
 
+	static bool IsDefault(const String& materialPath);
+
 public:
 	static const String s_DefaultMaterialPath;
 	
