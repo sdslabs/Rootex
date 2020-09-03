@@ -21,16 +21,16 @@ class CPUParticlesComponent : public ModelComponent
 	
 	struct Particle
 	{
-		Matrix m_Transform;
-		Vector3 m_Velocity;
-		Vector3 m_AngularVelocity;
-		Color m_ColorBegin;
-		Color m_ColorEnd;
+		bool m_IsActive = false;
 		float m_SizeBegin;
 		float m_SizeEnd;
 		float m_LifeTime;
 		float m_LifeRemaining;
-		bool m_IsActive = false;
+		Color m_ColorBegin;
+		Color m_ColorEnd;
+		Vector3 m_Velocity;
+		Vector3 m_AngularVelocity;
+		Matrix m_Transform;
 	};
 
 	ParticleTemplate m_ParticleTemplate;
@@ -40,7 +40,7 @@ class CPUParticlesComponent : public ModelComponent
 	int m_EmitRate;
 	TransformComponent* m_TransformComponent;
 	std::chrono::time_point<std::chrono::high_resolution_clock> m_LastRenderTimePoint;
-
+	
 	friend class EntityFactory;
 
 public:
