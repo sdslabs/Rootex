@@ -11,6 +11,6 @@ struct Mesh
 	Ref<IndexBuffer> m_IndexBuffer;
 
 	Mesh() = default;
-	Mesh(const Mesh&) = default;
+	Mesh(const Mesh&) = delete;
 	~Mesh() = default;
 };

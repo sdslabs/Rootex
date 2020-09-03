@@ -3,7 +3,7 @@
 #include "core/resource_loader.h"
 
 MaterialLibrary::MaterialMap MaterialLibrary::s_Materials;
-String MaterialLibrary::s_DefaultMaterialPath = "rootex/assets/default.rmat";
+const String MaterialLibrary::s_DefaultMaterialPath = "rootex/assets/materials/default.rmat";
 
 MaterialLibrary::MaterialDatabase MaterialLibrary::s_MaterialDatabase = {
 	{ BasicMaterial::s_MaterialName, { BasicMaterial::CreateDefault, BasicMaterial::Create } },

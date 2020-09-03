@@ -104,7 +104,10 @@ bool CPUParticlesComponent::preRender()
 
 		float delta = (std::chrono::high_resolution_clock::now() - m_LastRenderTimePoint).count() * (NS_TO_MS * MS_TO_S);
 		particle.m_LifeRemaining -= delta;
-		particle.m_Transform = Matrix::CreateTranslation(particle.m_Velocity * delta) * Matrix::CreateFromYawPitchRoll(particle.m_AngularVelocity.x * delta, particle.m_AngularVelocity.y * delta, particle.m_AngularVelocity.z * delta) * particle.m_Transform;
+		float life = particle.m_LifeRemaining / particle.m_LifeTime;
+		float size = particle.m_SizeBegin * (life) + particle.m_SizeEnd * (1.0f - life);
+		
+		particle.m_Transform = Matrix::CreateScale(size) * Matrix::CreateTranslation(particle.m_Velocity * delta) * Matrix::CreateFromYawPitchRoll(particle.m_AngularVelocity.x * delta, particle.m_AngularVelocity.y * delta, particle.m_AngularVelocity.z * delta) * particle.m_Transform;
 	}
 
 	return true;
@@ -119,12 +122,9 @@ void CPUParticlesComponent::render()
 			continue;
 		}
 
-		float life = particle.m_LifeRemaining / particle.m_LifeTime;
-		float size = particle.m_SizeBegin * (life) + particle.m_SizeEnd * (1.0f - life);
+		RenderSystem::GetSingleton()->pushMatrixOverride(particle.m_Transform);
 		
-		RenderSystem::GetSingleton()->pushMatrixOverride(Matrix::CreateScale(size) * particle.m_Transform);
-		
-		m_BasicMaterial->setColor(Color::Lerp(particle.m_ColorEnd, particle.m_ColorBegin, life));
+		m_BasicMaterial->setColor(Color::Lerp(particle.m_ColorEnd, particle.m_ColorBegin, particle.m_LifeRemaining / particle.m_LifeTime));
 		RenderSystem::GetSingleton()->getRenderer()->bind(m_BasicMaterial.get());
 		
 		for (auto& [material, meshes] : m_ModelResourceFile->getMeshes())
