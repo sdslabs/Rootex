@@ -5,6 +5,11 @@
 #include "component.h"
 #include "entity_factory.h"
 
+SerializationSystem::SerializationSystem()
+    : System("SerializationSystem", UpdateOrder::None)
+{
+}
+
 SerializationSystem* SerializationSystem::GetSingleton()
 {
 	static SerializationSystem singleton;

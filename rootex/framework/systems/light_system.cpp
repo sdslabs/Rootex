@@ -1,5 +1,10 @@
 #include "light_system.h"
 
+LightSystem::LightSystem()
+    : System("LightSystem", UpdateOrder::None)
+{
+}
+
 LightSystem* LightSystem::GetSingleton()
 {
 	static LightSystem singleton;

@@ -34,14 +34,14 @@ class RenderSystem : public System
 
 	RenderSystem();
 	RenderSystem(RenderSystem&) = delete;
-	~RenderSystem() = default;
+	virtual ~RenderSystem() = default;
 
 	void renderPassRender(RenderPass renderPass);
 
 public:
 	static RenderSystem* GetSingleton();
 	
-	void render();
+	void update(float deltaMilliseconds) override;
 	void renderLines();
 	void submitLine(const Vector3& from, const Vector3& to);
 	void recoverLostDevice();

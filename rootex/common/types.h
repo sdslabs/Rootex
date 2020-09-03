@@ -1,5 +1,11 @@
 #pragma once
 
+// target Windows 7 or later
+#ifndef _WIN32_WINNT
+#define _WIN32_WINNT 0x0601
+#endif // !_WIN32_WINNT
+#include <sdkddkver.h>
+
 /// Convert nanoseconds to milliseconds
 #define NS_TO_MS 1e-6f
 /// Convert milliseconds to nanoseconds
@@ -109,10 +115,6 @@ using Function = std::function<T>;
 namespace JSON = nlohmann;
 
 #include "imgui.h"
-
-// target Windows 7 or later
-#define _WIN32_WINNT 0x0601
-#include <sdkddkver.h>
 
 #ifndef WINDOWS_NO_DUMP
 #define WIN32_LEAN_AND_MEAN

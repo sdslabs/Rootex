@@ -9,6 +9,8 @@ class HierarchySystem : public System
 {
 	HierarchyGraph m_HierarchyGraph;
 
+	HierarchySystem();
+
 public:
 	static HierarchySystem* GetSingleton();
 

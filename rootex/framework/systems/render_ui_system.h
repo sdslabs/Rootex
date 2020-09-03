@@ -8,12 +8,12 @@ class RenderUISystem : public System
 
 	RenderUISystem();
 	RenderUISystem(RenderUISystem&) = delete;
-	~RenderUISystem() = default;
+	virtual ~RenderUISystem() = default;
 
 public:
 	static RenderUISystem* GetSingleton();
 
-	void render();
+	void update(float deltaMilliseconds);
 
 	void pushUIMatrix(const Matrix& transform);
 	void popUIMatrix();

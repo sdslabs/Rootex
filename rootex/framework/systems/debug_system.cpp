@@ -2,6 +2,11 @@
 
 #include "components/debug_component.h"
 
+DebugSystem::DebugSystem()
+    : System("DebugSystem", UpdateOrder::None)
+{
+}
+
 void DebugSystem::update(float deltaMilliseconds)
 {
 	for (auto& component : s_Components[DebugComponent::s_ID])
