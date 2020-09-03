@@ -1,17 +1,17 @@
 game:
 - game/**
 
+editor:
+- editor/**
+
+app:
+- rootex/app/**
+
 common:
 - rootex/common/**
 
 core:
-- rootex/core/*
-
-core-renderer:
-- rootex/core/renderer/**
-
-core-audio:
-- rootex/core/audio/**
+- rootex/core/**
 
 framework:
 - rootex/framework/**
