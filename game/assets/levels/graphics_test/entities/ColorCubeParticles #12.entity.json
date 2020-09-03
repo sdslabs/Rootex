@@ -1,37 +1,58 @@
 {
     "Components": {
         "CPUParticlesComponent": {
+            "angularVelocityVariation": 0.5,
             "colorBegin": {
                 "a": 1.0,
                 "b": 0.0,
-                "g": 0.0,
+                "g": 0.8235294222831726,
                 "r": 1.0
             },
             "colorEnd": {
                 "a": 1.0,
-                "b": 0.0,
+                "b": 0.9999899864196777,
                 "g": 1.0,
-                "r": 0.8529411554336548
+                "r": 0.9999991059303284
+            },
+            "emitMode": 2,
+            "emitterDimensions": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
             },
             "isVisible": true,
-            "lifeTime": 1.0,
+            "lifeTime": 16.940000534057617,
             "materialPath": "rootex/assets/materials/default_particles.rmat",
             "poolSize": 1000,
             "renderPass": 1,
             "resFile": "rootex/assets/cube.obj",
-            "sizeBegin": 0.10000000149011612,
+            "sizeBegin": 0.009999999776482582,
             "sizeEnd": 0.0,
             "sizeVariation": 0.10000000149011612,
             "velocity": {
                 "x": 0.0,
-                "y": 1.0,
+                "y": 0.0,
                 "z": 0.0
             },
-            "velocityVariation": 1.0
+            "velocityVariation": 0.5
+        },
+        "FogComponent": {
+            "color": {
+                "a": 1.0,
+                "b": 0.0,
+                "g": 0.3665843904018402,
+                "r": 0.970370352268219
+            },
+            "far": 339.0,
+            "near": 10.0
         },
         "HierarchyComponent": {
             "children": [],
             "parent": 1
+        },
+        "SkyComponent": {
+            "skyMaterial": "rootex/assets/materials/sky.rmat",
+            "skySphere": "rootex/assets/sky.obj"
         },
         "TransformComponent": {
             "boundingBox": {
@@ -47,19 +68,19 @@
                 }
             },
             "position": {
-                "x": -1.0,
-                "y": -2.0,
-                "z": -7.0
+                "x": -1.1999995708465576,
+                "y": -1.860000491142273,
+                "z": -7.300000190734863
             },
             "rotation": {
                 "w": 1.0,
                 "x": -0.0,
                 "y": 0.0,
-                "z": -0.0
+                "z": 2.2352122641677852e-07
             },
             "scale": {
-                "x": 1.0,
-                "y": 1.0,
+                "x": 0.9999829530715942,
+                "y": 0.9999829530715942,
                 "z": 1.0
             }
         }

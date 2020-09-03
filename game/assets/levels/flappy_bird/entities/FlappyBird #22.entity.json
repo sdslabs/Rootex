@@ -18,12 +18,12 @@
         "FogComponent": {
             "color": {
                 "a": 1.0,
-                "b": 1.0,
-                "g": 1.0,
+                "b": 0.2518518567085266,
+                "g": 0.2518518567085266,
                 "r": 0.0
             },
             "far": 22.0,
-            "near": -13.0
+            "near": 18.0
         },
         "HierarchyComponent": {
             "children": [
@@ -48,20 +48,22 @@
             "skySphere": "rootex/assets/sky.obj"
         },
         "TransformComponent": {
-            "higherBounds": {
-                "x": 0.5,
-                "y": 0.5,
-                "z": 0.5
-            },
-            "lowerBounds": {
-                "x": -0.5,
-                "y": -0.5,
-                "z": -0.5
+            "boundingBox": {
+                "center": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "extents": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                }
             },
             "position": {
-                "x": 0.0,
-                "y": 0.0,
-                "z": -2.5
+                "x": -0.030634373426437378,
+                "y": -0.20000198483467102,
+                "z": -2.498828887939453
             },
             "rotation": {
                 "w": 1.0,
