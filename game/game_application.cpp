@@ -64,7 +64,4 @@ GameApplication::GameApplication()
 	}
 
 	RenderingDevice::GetSingleton()->setBackBufferRenderTarget();
-	AudioSystem::GetSingleton()->begin();
-	TransformAnimationSystem::GetSingleton()->begin();
-	ScriptSystem::GetSingleton()->begin();
 }

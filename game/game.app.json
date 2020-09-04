@@ -8,7 +8,7 @@
             "width": 2560
         },
         "InputSystem": {
-            "height": 1440,
+            "height": 1417,
             "inputSchemes": [
                 {
                     "bools": [
@@ -47,7 +47,7 @@
         },
         "PhysicsSystem": {},
         "UISystem": {
-            "height": 1440,
+            "height": 1417,
             "width": 2560
         }
     },

@@ -109,10 +109,9 @@ bool EditorSystem::initialize(const JSON::json& systemData)
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable | ImGuiConfigFlags_DpiEnableScaleFonts | ImGuiConfigFlags_DpiEnableScaleViewports;
 	io.ConfigDockingWithShift = true;
 	io.FontAllowUserScaling = true;
-	
 	m_EditorFont = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/Lato-Regular.ttf", 19.0f);
 	m_EditorFontBold = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/Lato-Bold.ttf", 20.0f);
 

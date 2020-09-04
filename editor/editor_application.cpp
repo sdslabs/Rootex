@@ -38,7 +38,6 @@ EditorApplication::EditorApplication()
 	}
 
 	RenderSystem::GetSingleton()->setIsEditorRenderPass(true);
-	RenderUISystem::GetSingleton();
 	PhysicsSystem::GetSingleton()->setGameplay(false);
 	ScriptSystem::GetSingleton()->setGameplay(false);
 	EditorSystem::GetSingleton()->initialize(m_ApplicationSettings->getJSON()["systems"]["EditorSystem"]);

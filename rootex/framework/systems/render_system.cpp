@@ -60,6 +60,13 @@ void RenderSystem::renderPassRender(RenderPass renderPass)
 	}
 }
 
+Variant RenderSystem::windowResized(const Event* event)
+{
+	const Vector2& newSize = Extract(Vector2, event->getData());
+	RenderingDevice::GetSingleton()->resizeBuffers(newSize.x, newSize.y);
+	return true;
+}
+
 void RenderSystem::recoverLostDevice()
 {
 	ERR("Fatal error: D3D Device lost");

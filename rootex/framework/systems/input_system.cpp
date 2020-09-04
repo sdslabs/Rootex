@@ -5,6 +5,14 @@
 InputSystem::InputSystem()
     : System("InputSystem", UpdateOrder::Input, true)
 {
+	BIND_EVENT_MEMBER_FUNCTION("WindowResized", InputSystem::windowResized);
+}
+
+Variant InputSystem::windowResized(const Event* event)
+{
+	const Vector2& newSize = Extract(Vector2, event->getData());
+	InputManager::GetSingleton()->setDisplaySize(newSize);
+	return true;
 }
 
 InputSystem* InputSystem::GetSingleton()
