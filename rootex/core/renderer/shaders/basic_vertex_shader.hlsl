@@ -38,11 +38,10 @@ PixelInputType main(VertexInputType input)
 {
     PixelInputType output;
     output.screenPosition = mul(input.position, mul(M, mul(V, P)));
-    output.normal = mul((float3) input.normal, (float3x3) MInverseTranspose);
+	output.normal = normalize(mul((float3)input.normal, (float3x3)MInverseTranspose));
     output.worldPosition = mul(input.position, M);
     output.tex.x = input.tex.x;
     output.tex.y = 1 - input.tex.y;
-    input.normal = normalize(input.normal);
 	
     float4 cameraPosition = mul(input.position, mul(M, V));
     output.fogFactor = saturate((fogEnd - cameraPosition.z) / (fogEnd - fogStart));
