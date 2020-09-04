@@ -13,7 +13,7 @@ public:
 	static ScriptSystem* GetSingleton();
 
 	/// Calls OnBegin() function of script components.
-	void begin();
+	void begin() override;
 	/// Calls OnUpdate() function of script components.
 	void update(float deltaMilliseconds) override;
 	/// Calls OnEnd() function of script components.
