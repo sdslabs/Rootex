@@ -33,7 +33,7 @@ public:
 	TransformComponent* getTransformComponent() { return m_TransformComponent; }
 	virtual const Matrix& getViewMatrix();
 	virtual const Matrix& getProjectionMatrix();
-	const Vector3& getPosition() const { return m_TransformComponent->getPosition(); }
+	const Vector3& getAbsolutePosition() const { return m_TransformComponent->getAbsoluteTransform().Translation(); }
 	virtual String getName() const override { return "CameraComponent"; }
 
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::CameraComponent;
