@@ -54,9 +54,45 @@ InspectorDock::InspectorDock()
 	}
 }
 
+void InspectorDock::drawEntityActions(Ref<Entity> actionEntity)
+{
+	m_ActionEntity = actionEntity;
+	if (ImGui::Selectable("Add Components"))
+	{
+		m_MenuAction = "Add Components";
+	}
+	if (ImGui::Selectable("Remove Components"))
+	{
+		m_MenuAction = "Remove Components";
+	}
+	if (ImGui::Selectable("Reset"))
+	{
+		PANIC(m_ActionEntity->setupComponents() == false, "Could not setup entity: " + m_ActionEntity->getFullName());
+	}
+	if (ImGui::Selectable("Save Entity as class"))
+	{
+		if (!EntityFactory::GetSingleton()->saveEntityAsClass(m_ActionEntity))
+		{
+			WARN("Could not create class from selected entity");
+		}
+	}
+	ImGui::Separator();
+	if (ImGui::Selectable("Delete Entity"))
+	{
+		if (m_ActionEntity->getID() != ROOT_ENTITY_ID)
+		{
+			EventManager::GetSingleton()->deferredCall("EditorDeleteEntity", "DeleteEntity", m_ActionEntity);
+		}
+		else
+		{
+			WARN("Cannot delete Root Entity");
+		}
+	}
+}
+
 void InspectorDock::draw()
 {
-	if (m_InspectorSettings.m_IsActive)
+	if (m_InspectorSettings.m_IsActive)	
 	{
 		if (ImGui::Begin("Inspector"))
 		{
@@ -85,48 +121,19 @@ void InspectorDock::draw()
 					Editor::GetSingleton()->popFont();
 				}
 
-				String menuAction;
+				//String menuAction;
 
 				ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
 				if (ImGui::BeginCombo("##Entity Actions", "Select an action"))
 				{
-					if (ImGui::Selectable("Add Components"))
-					{
-						menuAction = "Add Components";
-					}
-					if (ImGui::Selectable("Remove Components"))
-					{
-						menuAction = "Remove Components";
-					}
-					if (ImGui::Selectable("Reset"))
-					{
-						PANIC(m_OpenedEntity->setupComponents() == false, "Could not setup entity: " + m_OpenedEntity->getFullName());
-					}
-					if (ImGui::Selectable("Save Entity as class"))
-					{
-						if (!EntityFactory::GetSingleton()->saveEntityAsClass(m_OpenedEntity))
-						{
-							WARN("Could not create class from selected entity");
-						}
-					}
-					ImGui::Separator();
-					if (ImGui::Selectable("Delete Entity"))
-					{
-						if (m_OpenedEntity->getID() != ROOT_ENTITY_ID)
-						{
-							EventManager::GetSingleton()->deferredCall("EditorDeleteEntity", "DeleteEntity", m_OpenedEntity);
-						}
-						else
-						{
-							WARN("Cannot delete Root Entity");
-						}
-					}
+					drawEntityActions(m_OpenedEntity);
 					ImGui::EndCombo();
 				}
 
-				if (!menuAction.empty())
+				if (!m_MenuAction.empty())
 				{
-					ImGui::OpenPopup((menuAction + ": " + m_OpenedEntity->getName()).c_str());
+					ImGui::OpenPopup((m_MenuAction + ": " + m_ActionEntity->getName()).c_str());
+					m_MenuAction.clear();
 				}
 
 				ImGui::Separator();
@@ -144,8 +151,11 @@ void InspectorDock::draw()
 				}
 				Editor::GetSingleton()->popFont();
 
-				drawAddComponentWindow();
-				drawRemoveComponentWindow();
+				if (m_ActionEntity)
+				{
+					drawAddComponentWindow();
+					drawRemoveComponentWindow();
+				}
 			}
 		}
 		ImGui::End();
@@ -155,7 +165,7 @@ void InspectorDock::draw()
 void InspectorDock::drawAddComponentWindow()
 {
 	ImGui::SetNextWindowSize({ ImGui::GetWindowWidth(), ImGui::GetWindowHeight() });
-	if (ImGui::BeginPopupModal(("Add Components: " + m_OpenedEntity->getName()).c_str(), 0, ImGuiWindowFlags_AlwaysAutoResize))
+	if (ImGui::BeginPopupModal(("Add Components: " + m_ActionEntity->getName()).c_str(), 0, ImGuiWindowFlags_AlwaysAutoResize))
 	{
 		ImGui::Text("%s", "Choose Components");
 		ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
@@ -164,7 +174,7 @@ void InspectorDock::drawAddComponentWindow()
 			for (auto&& [componentID, componentName, isComponentSelected] : m_AddNewComponentSelectionCache)
 			{
 				ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
-				if (!m_OpenedEntity->hasComponent(componentID))
+				if (!m_ActionEntity->hasComponent(componentID))
 				{
 					ImGui::Checkbox(componentName.c_str(), &isComponentSelected);
 				}
@@ -195,8 +205,8 @@ void InspectorDock::drawAddComponentWindow()
 				if (isComponentSelected)
 				{
 					Ref<Component> component = EntityFactory::GetSingleton()->createDefaultComponent(componentName);
-					EntityFactory::GetSingleton()->addComponent(m_OpenedEntity, component);
-					PRINT("Added " + componentName + " to " + m_OpenedEntity->getName());
+					EntityFactory::GetSingleton()->addComponent(m_ActionEntity, component);
+					PRINT("Added " + componentName + " to " + m_ActionEntity->getName());
 				}
 			}
 			refreshAddNewComponentSelectionCache();
@@ -217,7 +227,7 @@ void InspectorDock::drawAddComponentWindow()
 void InspectorDock::drawRemoveComponentWindow()
 {
 	ImGui::SetNextWindowSize({ ImGui::GetWindowWidth(), ImGui::GetWindowHeight() });
-	if (ImGui::BeginPopupModal(("Remove Components: " + m_OpenedEntity->getName()).c_str(), 0, ImGuiWindowFlags_AlwaysAutoResize))
+	if (ImGui::BeginPopupModal(("Remove Components: " + m_ActionEntity->getName()).c_str(), 0, ImGuiWindowFlags_AlwaysAutoResize))
 	{
 		ImGui::Text("%s", "Choose Components");
 		ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
@@ -226,7 +236,7 @@ void InspectorDock::drawRemoveComponentWindow()
 			for (auto&& [componentID, componentName, isComponentSelected] : m_AddNewComponentSelectionCache)
 			{
 				ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
-				if (m_OpenedEntity->hasComponent(componentID))
+				if (m_ActionEntity->hasComponent(componentID))
 				{
 					ImGui::Checkbox(componentName.c_str(), &isComponentSelected);
 				}
@@ -256,14 +266,14 @@ void InspectorDock::drawRemoveComponentWindow()
 			{
 				if (isComponentSelected)
 				{
-					Ref<Component> component = m_OpenedEntity->getComponentFromID(componentID);
+					Ref<Component> component = m_ActionEntity->getComponentFromID(componentID);
 					if (component)
 					{
-						m_OpenedEntity->removeComponent(component);
-						PRINT("Deleted " + componentName + " from " + m_OpenedEntity->getName());
+						m_ActionEntity->removeComponent(component);
+						PRINT("Deleted " + componentName + " from " + m_ActionEntity->getName());
 					}
 				}
-				m_OpenedEntity->setupComponents();
+				m_ActionEntity->setupComponents();
 			}
 			refreshAddNewComponentSelectionCache();
 			ImGui::CloseCurrentPopup();

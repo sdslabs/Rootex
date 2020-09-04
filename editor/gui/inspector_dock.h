@@ -19,6 +19,8 @@ private:
 	Ref<Entity> m_OpenedEntity;
 	String m_OpenedEntityName;
 	bool m_IsNameBeingEdited;
+	String m_MenuAction;
+	Ref<Entity> m_ActionEntity;
 	Vector<Tuple<ComponentID, String, bool>> m_AddNewComponentSelectionCache;
 	
 	Variant openEntity(const Event* event);
@@ -37,6 +39,7 @@ public:
 
 	void draw();
 
+	void drawEntityActions(Ref<Entity> actionEntity);
 	Ref<Entity> getOpenedEntity() { return m_OpenedEntity; }
 	InspectorSettings& getSettings() { return m_InspectorSettings; }
 	void setActive(bool enabled) { m_InspectorSettings.m_IsActive = enabled; }
