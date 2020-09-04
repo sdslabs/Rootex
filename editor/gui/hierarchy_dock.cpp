@@ -136,6 +136,11 @@ void HierarchyDock::showEntities(const HashMap<EntityID, Ref<Entity>>& entities)
 			{
 				openEntity(entity);
 			}
+			if (ImGui::BeginPopupContextItem())
+			{
+				InspectorDock::GetSingleton()->drawEntityActions(entity);
+				ImGui::EndPopup();
+			}
 			ImGui::NextColumn();
 			for (auto&& [componentID, component] : entity->getAllComponents())
 			{
