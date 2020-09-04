@@ -9,6 +9,7 @@
 #include "systems/physics_system.h"
 #include "systems/input_system.h"
 #include "systems/ui_system.h"
+#include "systems/render_ui_system.h"
 
 Application* Application::s_Singleton = nullptr;
 
@@ -66,6 +67,8 @@ Application::Application(const String& settingsFile)
 	uiSystemSettings["width"] = m_Window->getWidth();
 	uiSystemSettings["height"] = m_Window->getHeight();
 	UISystem::GetSingleton()->initialize(uiSystemSettings);
+
+	RenderUISystem::GetSingleton();
 
 	auto&& postInitialize = m_ApplicationSettings->find("postInitialize");
 	if (postInitialize != m_ApplicationSettings->end())

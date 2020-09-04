@@ -28,6 +28,7 @@ public:
 private:
 	Microsoft::WRL::ComPtr<ID3D11Device> m_Device;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_Context;
+	HWND m_WindowHandle;
 
 	/// Texture to render the game into when the Editor is launched
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> m_RenderTargetTexture;
@@ -81,6 +82,8 @@ public:
 	static RenderingDevice* GetSingleton();
 
 	void initialize(HWND hWnd, int width, int height, bool MSAA);
+	/// Create resources which depend on window height and width
+	void createSwapChainBuffersRenderTargets(int width, int height, bool MSAA, const HWND& hWnd);
 	void setScreenState(bool fullscreen);
 
 	void enableSkyDepthStencilState();
@@ -96,13 +99,13 @@ public:
 	Ref<DirectX::SpriteFont> createFont(FileBuffer* fontFileBuffer);
 	/// To hold shader blobs loaded from the compiled shader files
 	Microsoft::WRL::ComPtr<ID3DBlob> createBlob(LPCWSTR path);
-	/// To render the game onto a texture in case of Editor
-	void createRenderTextureTarget(int width, int height);
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createTexture(ImageResourceFile* imageRes);
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createDDSTexture(ImageResourceFile* imageRes);
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createTexture(const char* imageFileData, size_t size);
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createTextureFromPixels(const char* imageRawData, unsigned int width, unsigned int height);
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> createSamplerState();
+
+	void resizeBuffers(int width, int height);
 
 	void bind(ID3D11Buffer* vertexBuffer, const unsigned int* stride, const unsigned int* offset);
 	void bind(ID3D11Buffer* indexBuffer, DXGI_FORMAT format);
