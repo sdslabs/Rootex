@@ -93,7 +93,7 @@ void Application::run()
 	{
 		m_FrameTimer.reset();
 
-		for (auto& system : System::s_SystemStack)
+		for (auto& system : System::s_GameplayStack)
 		{
 			system->update(m_FrameTimer.getLastFrameTime());
 		}

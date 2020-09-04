@@ -55,7 +55,7 @@ void EventListener::ProcessEvent(Rml::Core::Event& event)
 }
 
 UISystem::UISystem()
-    : System("UISystem", UpdateOrder::UI)
+    : System("UISystem", UpdateOrder::UI, true)
 	, m_Context(nullptr)
 {
 	BIND_EVENT_MEMBER_FUNCTION("UISystemEnableDebugger", UISystem::enableDebugger);

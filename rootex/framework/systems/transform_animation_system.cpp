@@ -9,7 +9,7 @@ TransformAnimationSystem* TransformAnimationSystem::GetSingleton()
 }
 
 TransformAnimationSystem::TransformAnimationSystem()
-    : System("TransformationAnimationSystem", UpdateOrder::Update)
+    : System("TransformationAnimationSystem", UpdateOrder::Update, true)
 {
 }
 

@@ -174,7 +174,7 @@ void EditorSystem::popFont()
 }
 
 EditorSystem::EditorSystem()
-    : System("EditorSystem", UpdateOrder::Editor)
+    : System("EditorSystem", UpdateOrder::Editor, true)
 {
 }
 

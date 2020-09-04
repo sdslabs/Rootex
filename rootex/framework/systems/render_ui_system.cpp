@@ -5,7 +5,7 @@
 #include "components/visual/render_ui_component.h"
 
 RenderUISystem::RenderUISystem()
-    : System("RenderUISystem", UpdateOrder::RenderUI)
+    : System("RenderUISystem", UpdateOrder::RenderUI, true)
 {
 	m_UITransformationStack.push_back(Matrix::Identity);
 }

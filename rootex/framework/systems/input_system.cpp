@@ -3,7 +3,7 @@
 #include "core/input/input_manager.h"
 
 InputSystem::InputSystem()
-    : System("InputSystem", UpdateOrder::Input)
+    : System("InputSystem", UpdateOrder::Input, true)
 {
 }
 

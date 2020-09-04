@@ -23,6 +23,7 @@ protected:
 	};
 
 	static Vector<System*> s_SystemStack;
+	static Vector<System*> s_GameplayStack;
 	static HashMap<ComponentID, Vector<Component*>> s_Components;
 	static void RegisterComponent(Component* component);
 	static void DeregisterComponent(Component* component);
@@ -35,12 +36,12 @@ protected:
 	String m_SystemName;
 	UpdateOrder m_UpdateOrder;
 	unsigned int m_CreationOrder;
+	bool m_IsGameplaySystem;
 
 public:
-
 	static const Vector<Component*>& GetComponents(ComponentID ID) { return s_Components[ID]; }
 	
-	System(const String& name, const UpdateOrder& order);
+	System(const String& name, const UpdateOrder& order, bool isGameplay);
 	System(System&) = delete;
 	virtual ~System();
 
@@ -52,6 +53,9 @@ public:
 	String getName() const { return m_SystemName; }
 	const UpdateOrder& getUpdateOrder() const { return m_UpdateOrder; }
 	const unsigned int& getCreationOrder() const { return m_CreationOrder; }
+	bool isGameplay() const { return m_IsGameplaySystem; }
+
+	void setGameplay(bool enabled);
 
 #ifdef ROOTEX_EDITOR
 	virtual void draw();

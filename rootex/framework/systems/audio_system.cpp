@@ -153,7 +153,7 @@ void AudioSystem::restoreListener()
 }
 
 AudioSystem::AudioSystem()
-    : System("AudioSystem", UpdateOrder::None)
+    : System("AudioSystem", UpdateOrder::None, true)
 	, m_Context(nullptr)
     , m_Device(nullptr)
     , m_UpdateIntervalMilliseconds(0)

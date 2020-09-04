@@ -2,6 +2,7 @@
 
 HashMap<ComponentID, Vector<Component*>> System::s_Components;
 Vector<System*> System::s_SystemStack;
+Vector<System*> System::s_GameplayStack;
 
 void System::UpdateOrderSort()
 {
@@ -41,13 +42,14 @@ void System::DeregisterComponent(Component* component)
 	}
 }
 
-System::System(const String& name, const UpdateOrder& order)
+System::System(const String& name, const UpdateOrder& order, bool isGameplay)
     : m_SystemName(name)
     , m_UpdateOrder(order)
 {
 	s_SystemStack.push_back(this);
 	UpdateOrderSort();
 	m_CreationOrder = s_SystemStack.size();
+	setGameplay(isGameplay);
 }
 
 System::~System()
@@ -57,6 +59,7 @@ System::~System()
 	{
 		s_SystemStack.erase(findIt);
 	}
+	setGameplay(false);
 	UpdateOrderSort();
 }
 
@@ -78,10 +81,43 @@ void System::end()
 {
 }
 
+void System::setGameplay(bool enabled)
+{
+	m_IsGameplaySystem = enabled;
+
+	if (m_IsGameplaySystem)
+	{
+		if (std::find(s_GameplayStack.begin(), s_GameplayStack.end(), this) == s_GameplayStack.end())
+		{
+			s_GameplayStack.push_back(this);
+		}
+		m_IsGameplaySystem = true;
+	}
+	else
+	{
+		auto& findIt = std::find(s_GameplayStack.begin(), s_GameplayStack.end(), this);
+		if (findIt != s_GameplayStack.end())
+		{
+			s_GameplayStack.erase(findIt);
+		}
+		m_IsGameplaySystem = false;
+	}
+}
+
 #ifdef ROOTEX_EDITOR
 #include "imgui.h"
 void System::draw()
 {
-	ImGui::Text("Name: %s", m_SystemName.c_str());
+	ImGui::Columns(2);
+
+	ImGui::Text("Name");
+	ImGui::NextColumn();
+	ImGui::Text("%s", m_SystemName.c_str());
+	ImGui::NextColumn();
+
+	ImGui::Text("Gameplay");
+	ImGui::NextColumn();
+	ImGui::Text("%s", m_IsGameplaySystem ? "True" : "False");
+	ImGui::NextColumn();
 }
 #endif // ROOTEX_EDITOR
