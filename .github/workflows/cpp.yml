@@ -30,7 +30,7 @@ jobs:
           imgui.ini
           build_fonts.bat
 
-          editor/entities/
+          editor/assets/
           editor/editor.app.json
 
           game/assets/
