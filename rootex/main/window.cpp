@@ -181,49 +181,24 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
 	RegisterClassEx(&windowClass);
 	m_IsEditorWindow = isEditor;
 
-	if (isEditor)
-	{
-		m_WindowHandle = CreateWindowEx(
-		    0, className,
-		    title.c_str(),
-		    WS_CAPTION | WS_MAXIMIZE | WS_MINIMIZEBOX | WS_SYSMENU,
-		    xOffset, yOffset, width, height,
-		    nullptr, nullptr,
-		    hInstance, nullptr);
+	m_WindowHandle = CreateWindowEx(
+		0, className,
+		title.c_str(),
+		WS_CAPTION | WS_BORDER | WS_MAXIMIZE | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU,
+		xOffset, yOffset, width, height,
+		nullptr, nullptr,
+		hInstance, nullptr);
 
-		RECT clientRect;
-		GetClientRect(m_WindowHandle, &clientRect);
-		int rWidth = clientRect.right - clientRect.left;
-		int rHeight = clientRect.bottom - clientRect.top;
-		RenderingDevice::GetSingleton()->initialize(
-		    m_WindowHandle,
-		    rWidth,
-		    rHeight,
-		    MSAA);
-	}
-	else
-	{
-		m_WindowHandle = CreateWindowEx(
-		    0, className,
-		    title.c_str(),
-		    WS_CAPTION | WS_MAXIMIZE | WS_MINIMIZEBOX | WS_SYSMENU,
-		    xOffset, yOffset, width, height,
-		    nullptr, nullptr,
-		    hInstance, nullptr);
-
-		RECT clientRect;
-		GetClientRect(m_WindowHandle, &clientRect);
-		int rWidth = clientRect.right - clientRect.left;
-		int rHeight = clientRect.bottom - clientRect.top;
-		ClipCursor(&clientRect);
-		RenderingDevice::GetSingleton()->initialize(
-		    m_WindowHandle,
-		    rWidth,
-		    rHeight,
-		    MSAA);
-
-		RenderingDevice::GetSingleton()->setBackBufferRenderTarget();
-	}
+	RECT clientRect;
+	GetClientRect(m_WindowHandle, &clientRect);
+	int rWidth = clientRect.right - clientRect.left;
+	int rHeight = clientRect.bottom - clientRect.top;
+	RenderingDevice::GetSingleton()->initialize(
+		m_WindowHandle,
+		rWidth,
+		rHeight,
+		MSAA);
+	
 	applyDefaultViewport();
 	m_IsFullScreen = false;
 	if (fullScreen)
