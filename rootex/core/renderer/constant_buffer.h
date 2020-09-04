@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common/common.h"
+#include "core\renderer\shaders\register_locations_pixel_shader.h"
 
 /// Used to bind a point light to the Pixel shader
 struct PointLightInfo
@@ -69,13 +70,13 @@ struct LightsInfo
 {
 	Vector3 cameraPos;
 	int pointLightCount = 0;
-	PointLightInfo pointLightInfos[4];
+	PointLightInfo pointLightInfos[MAX_POINT_LIGHTS];
 	int directionalLightPresent = 0;
 	float pad2[3];
 	DirectionalLightInfo directionalLightInfo;
 	int spotLightCount = 0;
 	float pad3[3];
-	SpotLightInfo spotLightInfos[4];
+	SpotLightInfo spotLightInfos[MAX_SPOT_LIGHTS];
 };
 
 /// Encapsulates all the types of light and other data offered, to bind them in the Pixel Shader

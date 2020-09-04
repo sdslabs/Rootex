@@ -1,4 +1,5 @@
 #include "light_system.h"
+#include "core\renderer\shaders\register_locations_pixel_shader.h"
 
 LightSystem* LightSystem::GetSingleton()
 {
@@ -10,9 +11,9 @@ LightsInfo LightSystem::getLights()
 {
 	const Vector<Component*>& pointLightComponents = s_Components[PointLightComponent::s_ID];
 
-	if (pointLightComponents.size() > 4)
+	if (pointLightComponents.size() > MAX_POINT_LIGHTS)
 	{
-		WARN("Point Lights specified are greater than 4");
+		WARN("Point Lights in the level are greater than " + std::to_string(MAX_POINT_LIGHTS));
 	}
 
 	LightsInfo lights;
@@ -20,7 +21,7 @@ LightsInfo LightSystem::getLights()
 	lights.cameraPos = RenderSystem::GetSingleton()->getCamera()->getPosition();
 
 	int i = 0;
-	for (; i < pointLightComponents.size() && i < 4; i++)
+	for (; i < pointLightComponents.size() && i < MAX_POINT_LIGHTS; i++)
 	{
 		PointLightComponent* light = dynamic_cast<PointLightComponent*>(pointLightComponents[i]);
 		TransformComponent* transform = light->getOwner()->getComponent<TransformComponent>().get();
@@ -52,13 +53,13 @@ LightsInfo LightSystem::getLights()
 
 	const Vector<Component*>& spotLightComponents = s_Components[SpotLightComponent::s_ID];
 
-	if (spotLightComponents.size() > 4)
+	if (spotLightComponents.size() > MAX_SPOT_LIGHTS)
 	{
-		WARN("Point Lights specified are greater than 4");
+		WARN("Spot Lights in the level are greater than " + std::to_string(MAX_SPOT_LIGHTS));
 	}
 	
 	i = 0;
-	for (; i < spotLightComponents.size() && i < 4; i++)
+	for (; i < spotLightComponents.size() && i < MAX_SPOT_LIGHTS; i++)
 	{
 		SpotLightComponent* light = dynamic_cast<SpotLightComponent*>(spotLightComponents[i]);
 		Matrix transform = light->getOwner()->getComponent<TransformComponent>()->getAbsoluteTransform();
