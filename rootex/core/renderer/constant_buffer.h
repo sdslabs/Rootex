@@ -1,7 +1,7 @@
 #pragma once
 
 #include "common/common.h"
-#include "core\renderer\shaders\register_locations_pixel_shader.h"
+#include "core/renderer/shaders/register_locations_pixel_shader.h"
 
 /// Used to bind a point light to the Pixel shader
 struct PointLightInfo
