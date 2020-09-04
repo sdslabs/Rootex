@@ -17,7 +17,7 @@ LightsInfo LightSystem::getLights()
 
 	LightsInfo lights;
 	
-	lights.cameraPos = RenderSystem::GetSingleton()->getCamera()->getViewMatrix().Translation();
+	lights.cameraPos = RenderSystem::GetSingleton()->getCamera()->getPosition();
 
 	int i = 0;
 	for (; i < pointLightComponents.size() && i < 4; i++)
