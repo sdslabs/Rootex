@@ -18,6 +18,7 @@ protected:
 		Render,
 		UI,
 		RenderUI,
+		Editor,
 		None
 	};
 

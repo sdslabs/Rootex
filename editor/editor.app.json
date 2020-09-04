@@ -1,150 +1,164 @@
 {
     "game": "game/game.app.json",
-    "general": {
-        "colors": {
-            "accent": {
-                "a": 1.0,
-                "b": 0.1,
-                "g": 0.25,
-                "r": 0.1
+    "project": "Rootex Editor",
+    "systems": {
+        "AudioSystem": {},
+        "EditorSystem": {
+            "general": {
+                "colors": {
+                    "accent": {
+                        "a": 1.0,
+                        "b": 0.1,
+                        "g": 0.25,
+                        "r": 0.1
+                    },
+                    "background": {
+                        "a": 1.0,
+                        "b": 0.1,
+                        "g": 0.1,
+                        "r": 0.1
+                    },
+                    "errorLogColor": {
+                        "a": 1.0,
+                        "b": 0.3,
+                        "g": 0.3,
+                        "r": 1.0
+                    },
+                    "failAccent": {
+                        "a": 1.0,
+                        "b": 0.0,
+                        "g": 0.0,
+                        "r": 0.6
+                    },
+                    "failure": {
+                        "a": 1.0,
+                        "b": 0.0,
+                        "g": 0.0,
+                        "r": 0.5
+                    },
+                    "heavyAccent": {
+                        "a": 1.0,
+                        "b": 0.1,
+                        "g": 0.1,
+                        "r": 0.1
+                    },
+                    "inactive": {
+                        "a": 1.0,
+                        "b": 0.3,
+                        "g": 0.3,
+                        "r": 0.3
+                    },
+                    "itemBackground": {
+                        "a": 1.0,
+                        "b": 0.15,
+                        "g": 0.15,
+                        "r": 0.15
+                    },
+                    "mediumAccent": {
+                        "a": 1.0,
+                        "b": 0.15,
+                        "g": 0.3,
+                        "r": 0.15
+                    },
+                    "noneLogColor": {
+                        "a": 1.0,
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "success": {
+                        "a": 1.0,
+                        "b": 0.0,
+                        "g": 0.3,
+                        "r": 0.0
+                    },
+                    "text": {
+                        "a": 1.0,
+                        "b": 0.9,
+                        "g": 0.9,
+                        "r": 0.9
+                    },
+                    "warnLogColor": {
+                        "a": 1.0,
+                        "b": 0.8,
+                        "g": 0.8,
+                        "r": 0.5
+                    },
+                    "warning": {
+                        "a": 1.0,
+                        "b": 0.0,
+                        "g": 0.7,
+                        "r": 0.7
+                    }
+                }
             },
-            "background": {
-                "a": 1.0,
-                "b": 0.1,
-                "g": 0.1,
-                "r": 0.1
-            },
-            "errorLogColor": {
-                "a": 1.0,
-                "b": 0.3,
-                "g": 0.3,
-                "r": 1.0
-            },
-            "failAccent": {
-                "a": 1.0,
-                "b": 0.0,
-                "g": 0.0,
-                "r": 0.6
-            },
-            "failure": {
-                "a": 1.0,
-                "b": 0.0,
-                "g": 0.0,
-                "r": 0.5
-            },
-            "heavyAccent": {
-                "a": 1.0,
-                "b": 0.1,
-                "g": 0.1,
-                "r": 0.1
-            },
-            "inactive": {
-                "a": 1.0,
-                "b": 0.3,
-                "g": 0.3,
-                "r": 0.3
-            },
-            "itemBackground": {
-                "a": 1.0,
-                "b": 0.15,
-                "g": 0.15,
-                "r": 0.15
-            },
-            "mediumAccent": {
-                "a": 1.0,
-                "b": 0.15,
-                "g": 0.3,
-                "r": 0.15
-            },
-            "noneLogColor": {
-                "a": 1.0,
-                "b": 1.0,
-                "g": 1.0,
-                "r": 1.0
-            },
-            "success": {
-                "a": 1.0,
-                "b": 0.0,
-                "g": 0.3,
-                "r": 0.0
-            },
-            "text": {
-                "a": 1.0,
-                "b": 0.9,
-                "g": 0.9,
-                "r": 0.9
-            },
-            "warnLogColor": {
-                "a": 1.0,
-                "b": 0.8,
-                "g": 0.8,
-                "r": 0.5
-            },
-            "warning": {
-                "a": 1.0,
-                "b": 0.0,
-                "g": 0.7,
-                "r": 0.7
+            "viewport": {
+                "aspectRatio": {
+                    "x": 16,
+                    "y": 9
+                }
             }
-        }
-    },
-    "inputSchemes": [
-        {
-            "bools": [
+        },
+        "InputSystem": {
+            "height": 1440,
+            "inputSchemes": [
                 {
-                    "button": 2,
-                    "device": 0,
-                    "inputEvent": "InputCameraActivate"
-                },
-                {
-                    "button": 0,
-                    "device": 0,
-                    "inputEvent": "InputSelect"
-                },
-                {
-                    "button": 87,
-                    "device": 1,
-                    "inputEvent": "InputCameraForward"
-                },
-                {
-                    "button": 83,
-                    "device": 1,
-                    "inputEvent": "InputCameraBackward"
-                },
-                {
-                    "button": 65,
-                    "device": 1,
-                    "inputEvent": "InputCameraLeft"
-                },
-                {
-                    "button": 68,
-                    "device": 1,
-                    "inputEvent": "InputCameraRight"
-                },
-                {
-                    "button": 32,
-                    "device": 1,
-                    "inputEvent": "InputCameraUp"
-                },
-                {
-                    "button": 129,
-                    "device": 1,
-                    "inputEvent": "InputCameraDown"
+                    "bools": [
+                        {
+                            "button": 2,
+                            "device": 0,
+                            "inputEvent": "InputCameraActivate"
+                        },
+                        {
+                            "button": 0,
+                            "device": 0,
+                            "inputEvent": "InputSelect"
+                        },
+                        {
+                            "button": 87,
+                            "device": 1,
+                            "inputEvent": "InputCameraForward"
+                        },
+                        {
+                            "button": 83,
+                            "device": 1,
+                            "inputEvent": "InputCameraBackward"
+                        },
+                        {
+                            "button": 65,
+                            "device": 1,
+                            "inputEvent": "InputCameraLeft"
+                        },
+                        {
+                            "button": 68,
+                            "device": 1,
+                            "inputEvent": "InputCameraRight"
+                        },
+                        {
+                            "button": 32,
+                            "device": 1,
+                            "inputEvent": "InputCameraUp"
+                        },
+                        {
+                            "button": 129,
+                            "device": 1,
+                            "inputEvent": "InputCameraDown"
+                        }
+                    ],
+                    "floats": {},
+                    "name": "Editor"
                 }
             ],
-            "floats": {},
-            "name": "Editor"
-        }
-    ],
-    "project": "Rootex Editor",
-    "startScheme": "Editor",
-    "version": 1.0,
-    "viewport": {
-        "aspectRatio": {
-            "x": 16,
-            "y": 9
+            "startScheme": "Editor",
+            "width": 2560
+        },
+        "PhysicsSystem": {},
+        "UISystem": {
+            "height": 1440,
+            "width": 2560
         }
     },
+    "version": 1.0,
     "window": {
         "fullScreen": false,
         "isEditor": true,

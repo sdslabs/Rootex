@@ -1,6 +1,6 @@
 #include "text_viewer.h"
 
-#include "editor/editor.h"
+#include "editor/editor_system.h"
 
 #include "resource_loader.h"
 
@@ -25,7 +25,7 @@ void TextViewer::draw()
 	drawFileInfo();
 	if (m_TextResourceFile->isDirty())
 	{
-		ImGui::TextColored(Editor::GetSingleton()->getColors().m_Warning, "File may be changed on disk");
+		ImGui::TextColored(EditorSystem::GetSingleton()->getColors().m_Warning, "File may be changed on disk");
 		ImGui::SameLine();
 		if (ImGui::Button("Reload"))
 		{

@@ -74,7 +74,7 @@ private:
 #ifdef ROOTEX_EDITOR
 	ID3D11Device* getDevice();
 	ID3D11DeviceContext* getContext();
-	friend class Editor;
+	friend class EditorSystem;
 #endif // ROOTEX_EDITOR
 
 public:

@@ -1,4 +1,4 @@
-#include "editor.h"
+#include "editor_system.h"
 
 #include "app/level_manager.h"
 #include "core/renderer/rendering_device.h"
@@ -15,18 +15,19 @@
 
 #include "imgui_stdlib.h"
 #include "ImGuizmo.h"
+#include "editor_system.h"
 
-void Editor::initialize(HWND hWnd, const JSON::json& projectJSON)
+bool EditorSystem::initialize(const JSON::json& systemData)
 {
-	BIND_EVENT_MEMBER_FUNCTION("EditorSaveBeforeQuit", Editor::saveBeforeQuit);
-	BIND_EVENT_MEMBER_FUNCTION("EditorSaveAll", Editor::saveAll);
-	BIND_EVENT_MEMBER_FUNCTION("EditorAutoSave", Editor::autoSave);
-	BIND_EVENT_MEMBER_FUNCTION("EditorOpenLevel", Editor::openLevel);
-	BIND_EVENT_MEMBER_FUNCTION("EditorCreateNewLevel", Editor::createNewLevel);
-	BIND_EVENT_MEMBER_FUNCTION("EditorCreateNewEntity", Editor::createNewEntity);
-	BIND_EVENT_MEMBER_FUNCTION("EditorCreateNewMaterial", Editor::createNewMaterial);
+	BIND_EVENT_MEMBER_FUNCTION("EditorSaveBeforeQuit", EditorSystem::saveBeforeQuit);
+	BIND_EVENT_MEMBER_FUNCTION("EditorSaveAll", EditorSystem::saveAll);
+	BIND_EVENT_MEMBER_FUNCTION("EditorAutoSave", EditorSystem::autoSave);
+	BIND_EVENT_MEMBER_FUNCTION("EditorOpenLevel", EditorSystem::openLevel);
+	BIND_EVENT_MEMBER_FUNCTION("EditorCreateNewLevel", EditorSystem::createNewLevel);
+	BIND_EVENT_MEMBER_FUNCTION("EditorCreateNewEntity", EditorSystem::createNewEntity);
+	BIND_EVENT_MEMBER_FUNCTION("EditorCreateNewMaterial", EditorSystem::createNewMaterial);
 
-	const JSON::json& general = projectJSON["general"];
+	const JSON::json& general = systemData["general"];
 
 	m_Colors.m_Accent = {
 		(float)general["colors"]["accent"]["r"],
@@ -100,7 +101,7 @@ void Editor::initialize(HWND hWnd, const JSON::json& projectJSON)
 	m_Hierarchy.reset(new HierarchyDock());
 	m_Output.reset(new OutputDock());
 	m_Toolbar.reset(new ToolbarDock());
-	m_Viewport.reset(new ViewportDock(projectJSON["viewport"]));
+	m_Viewport.reset(new ViewportDock(systemData["viewport"]));
 	m_Inspector.reset(new InspectorDock());
 	m_FileViewer.reset(new FileViewer());
 	m_Classes.reset(new ClassesDock());
@@ -115,12 +116,14 @@ void Editor::initialize(HWND hWnd, const JSON::json& projectJSON)
 	m_EditorFont = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/Lato-Regular.ttf", 19.0f);
 	m_EditorFontBold = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/Lato-Bold.ttf", 20.0f);
 
-	ImGui_ImplWin32_Init(hWnd);
+	ImGui_ImplWin32_Init(Application::GetSingleton()->getWindow()->getWindowHandle());
 	ImGui_ImplDX11_Init(RenderingDevice::GetSingleton()->getDevice(), RenderingDevice::GetSingleton()->getContext());
 	ImGui::StyleColorsDark();
+
+	return true;
 }
 
-void Editor::render()
+void EditorSystem::update(float deltaMilliseconds)
 {
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
@@ -144,45 +147,45 @@ void Editor::render()
 
 	ImGui::PopFont();
 
-	RenderingDevice::GetSingleton()->setTextureRenderTarget();
-	if (m_WorldMode)
-	{
-		RenderSystem::GetSingleton()->render();
-		RenderUISystem::GetSingleton()->render();
-	}
 	if (m_CollisionMode)
 	{
 		PhysicsSystem::GetSingleton()->debugDraw();
 	}
-	UISystem::GetSingleton()->render();
+	
 	RenderingDevice::GetSingleton()->setBackBufferRenderTarget();
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+	RenderingDevice::GetSingleton()->setTextureRenderTarget();
 }
 
-void Editor::pushRegularFont()
+void EditorSystem::pushRegularFont()
 {
 	ImGui::PushFont(m_EditorFont);
 }
 
-void Editor::pushBoldFont()
+void EditorSystem::pushBoldFont()
 {
 	ImGui::PushFont(m_EditorFontBold);
 }
 
-void Editor::popFont()
+void EditorSystem::popFont()
 {
 	ImGui::PopFont();
 }
 
-Editor::~Editor()
+EditorSystem::EditorSystem()
+    : System("EditorSystem", UpdateOrder::Editor)
+{
+}
+
+EditorSystem::~EditorSystem()
 {
 	ImGui_ImplDX11_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
 }
 
-void Editor::drawDefaultUI()
+void EditorSystem::drawDefaultUI()
 {
 	static bool optFullscreenPersistant = true;
 	bool optFullscreen = optFullscreenPersistant;
@@ -366,8 +369,7 @@ void Editor::drawDefaultUI()
 				}
 
 				ImGui::Checkbox("Collision Mode", &m_CollisionMode);
-				ImGui::Checkbox("World Mode", &m_WorldMode);
-
+				
 				bool fullscreen = Extract(bool, EventManager::GetSingleton()->returnCall("WindowGetScreenState", "WindowGetScreenState", 0));
 				if (ImGui::Checkbox("Full Screen", &fullscreen))
 				{
@@ -511,7 +513,7 @@ void Editor::drawDefaultUI()
 	ImGui::End();
 }
 
-void Editor::pushEditorStyleColors()
+void EditorSystem::pushEditorStyleColors()
 {
 	// Every line in this function body should push a style color
 	static const int starting = __LINE__;
@@ -556,7 +558,7 @@ void Editor::pushEditorStyleColors()
 	static const int ending = m_EditorStyleColorPushCount = __LINE__ - starting - 1;
 }
 
-void Editor::pushEditorStyleVars()
+void EditorSystem::pushEditorStyleVars()
 {
 	// Every line in this function body should push a style var
 	static const int starting = __LINE__;
@@ -564,7 +566,7 @@ void Editor::pushEditorStyleVars()
 	static const int ending = m_EditorStyleVarPushCount = __LINE__ - starting - 1;
 }
 
-Variant Editor::saveAll(const Event* event)
+Variant EditorSystem::saveAll(const Event* event)
 {
 	if (LevelManager::GetSingleton()->isAnyLevelOpen())
 	{
@@ -579,14 +581,14 @@ Variant Editor::saveAll(const Event* event)
 	return true;
 }
 
-Variant Editor::autoSave(const Event* event)
+Variant EditorSystem::autoSave(const Event* event)
 {
 	PRINT("Auto-saving levels...");
 	saveAll(nullptr);
 	return true;
 }
 
-Variant Editor::openLevel(const Event* event)
+Variant EditorSystem::openLevel(const Event* event)
 {
 	String levelPath(Extract(String, event->getData()));
 	LevelManager::GetSingleton()->openLevel(levelPath, true);
@@ -595,7 +597,7 @@ Variant Editor::openLevel(const Event* event)
 	return true;
 }
 
-Variant Editor::saveBeforeQuit(const Event* event)
+Variant EditorSystem::saveBeforeQuit(const Event* event)
 {
 	if (LevelManager::GetSingleton()->isAnyLevelOpen())
 	{
@@ -609,7 +611,7 @@ Variant Editor::saveBeforeQuit(const Event* event)
 	return true;
 }
 
-Variant Editor::createNewLevel(const Event* event)
+Variant EditorSystem::createNewLevel(const Event* event)
 {
 	const String& newLevelName = Extract(String, event->getData());
 
@@ -624,7 +626,7 @@ Variant Editor::createNewLevel(const Event* event)
 	return true;
 }
 
-Variant Editor::createNewEntity(const Event* event)
+Variant EditorSystem::createNewEntity(const Event* event)
 {
 	const String& entityClassFilePath = Extract(String, event->getData());
 	TextResourceFile* entityClassFile = ResourceLoader::CreateNewTextResourceFile(entityClassFilePath);
@@ -635,15 +637,15 @@ Variant Editor::createNewEntity(const Event* event)
 	return newEntity;
 }
 
-Variant Editor::createNewMaterial(const Event* event)
+Variant EditorSystem::createNewMaterial(const Event* event)
 {
 	const Vector<String>& materialInfo = Extract(Vector<String>, event->getData());
 	MaterialLibrary::CreateNewMaterialFile(materialInfo[0], materialInfo[1]);
 	return true;
 }
 
-Editor* Editor::GetSingleton()
+EditorSystem* EditorSystem::GetSingleton()
 {
-	static Editor singleton;
+	static EditorSystem singleton;
 	return &singleton;
 }

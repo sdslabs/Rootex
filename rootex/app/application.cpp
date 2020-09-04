@@ -53,7 +53,7 @@ Application::Application(const String& settingsFile)
 	    windowJSON["isEditor"],
 	    windowJSON["msaa"],
 		windowJSON["fullScreen"]));
-	JSON::json& inputSystemSettings = systemsSettings["InputManager"];
+	JSON::json& inputSystemSettings = systemsSettings["InputSystem"];
 	inputSystemSettings["width"] = m_Window->getWidth();
 	inputSystemSettings["height"] = m_Window->getHeight();
 	InputSystem::GetSingleton()->initialize(inputSystemSettings);
@@ -108,6 +108,8 @@ void Application::run()
 
 void Application::process(float deltaMilliseconds)
 {
+	// Unused process function, meaning app doesn't need 
+	// extra logic running every frame apart from the systems running
 }
 
 void Application::end()
