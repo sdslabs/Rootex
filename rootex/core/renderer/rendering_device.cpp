@@ -679,11 +679,6 @@ Microsoft::WRL::ComPtr<ID3D11SamplerState> RenderingDevice::createSamplerState()
 	return samplerState;
 }
 
-void RenderingDevice::resizeBuffers(int width, int height)
-{
-	createSwapChainBuffersRenderTargets(width, height, m_MSAA, m_WindowHandle);
-}
-
 void RenderingDevice::drawIndexed(UINT number)
 {
 	m_Context->DrawIndexed(number, 0u, 0u);

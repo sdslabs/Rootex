@@ -38,8 +38,6 @@ class RenderSystem : public System
 
 	void renderPassRender(RenderPass renderPass);
 
-	Variant windowResized(const Event* event);
-
 public:
 	static RenderSystem* GetSingleton();
 	
