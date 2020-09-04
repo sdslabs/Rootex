@@ -142,10 +142,59 @@ void HierarchyDock::showEntities(const HashMap<EntityID, Ref<Entity>>& entities)
 				ImGui::EndPopup();
 			}
 			ImGui::NextColumn();
-			for (auto&& [componentID, component] : entity->getAllComponents())
+			HashMap<ComponentID, Ref<Component>> components = entity->getAllComponents();
+			HashMap<ComponentID, Ref<Component>>::iterator it = components.begin();
+			while (it != components.end())
 			{
-				ImGui::Text(component->getName().c_str());
+				bool increment = true;
+				Ref<Component> component = it->second;
+				ImGui::Selectable(component->getName().c_str());
+				if (ImGui::BeginPopupContextItem(("Delete" + entity->getFullName() + component->getName()).c_str()))
+				{
+					if (ImGui::Button("Delete Component"))
+					{
+						if (component)
+						{
+							String componentName = component->getName();
+							entity->removeComponent(component);
+							PRINT("Deleted " + componentName + " from " + entity->getName());
+							entity->setupComponents();
+							increment = false;
+						}
+						else
+						{
+							ERR("Component not found: Possible level files corruption");
+						}
+					}
+					ImGui::EndPopup();
+				}
+				if (increment)
+				{
+					it++;
+				}
 			}
+			//for (auto&& [componentID, component] : entity->getAllComponents())
+			//{
+			//	ImGui::Selectable(component->getName().c_str());
+			//	if (ImGui::BeginPopupContextItem())
+			//	{
+			//		if (ImGui::Button("Delete Component"))
+			//		{
+			//			if (component)
+			//			{
+			//				String componentName = component->getName();
+			//				entity->removeComponent(component);
+			//				PRINT("Deleted " + componentName + " from " + entity->getName());
+			//				entity->setupComponents();
+			//			}
+			//			else
+			//			{
+			//				ERR("Component not found: Possible level files corruption");
+			//			}
+			//		}
+			//		ImGui::EndPopup();
+			//	}
+			//}
 			ImGui::NextColumn();
 		}
 	}

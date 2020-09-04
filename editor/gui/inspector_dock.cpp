@@ -57,6 +57,10 @@ InspectorDock::InspectorDock()
 void InspectorDock::drawEntityActions(Ref<Entity> actionEntity)
 {
 	m_ActionEntity = actionEntity;
+	if (!m_OpenedEntity)
+	{
+		EventManager::GetSingleton()->call("OpenEntity", "EditorOpenEntity", m_ActionEntity);
+	}
 	if (ImGui::Selectable("Add Components"))
 	{
 		m_MenuAction = "Add Components";
@@ -271,6 +275,10 @@ void InspectorDock::drawRemoveComponentWindow()
 					{
 						m_ActionEntity->removeComponent(component);
 						PRINT("Deleted " + componentName + " from " + m_ActionEntity->getName());
+					}
+					else
+					{
+						ERR("Component not found: Possible level file corruption");
 					}
 				}
 				m_ActionEntity->setupComponents();
