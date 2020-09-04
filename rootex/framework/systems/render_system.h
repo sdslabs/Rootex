@@ -69,4 +69,8 @@ public:
 	CameraComponent* getCamera() const { return m_Camera; }
 	const Matrix& getCurrentMatrix() const;
 	const Renderer* getRenderer() const { return m_Renderer.get(); }
+
+#ifdef ROOTEX_EDITOR
+	void draw() override;
+#endif // ROOTEX_EDITOR
 };

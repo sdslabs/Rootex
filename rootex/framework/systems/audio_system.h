@@ -48,7 +48,7 @@ class ResourceFile;
 /// System encapsulating OpenAL error checkers and getters.
 class AudioSystem : public System
 {
-	unsigned int m_UpdateIntervalMilliseconds;
+	float m_UpdateIntervalMilliseconds;
 	ALCdevice* m_Device;
 	ALCcontext* m_Context;
 

@@ -55,4 +55,8 @@ public:
 	void end() override;
 
 	void setDebugger(bool enabled);
+
+#ifdef ROOTEX_EDITOR
+	void draw() override;
+#endif // ROOTEX_EDITOR
 };

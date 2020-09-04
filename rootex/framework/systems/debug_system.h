@@ -8,5 +8,9 @@ class DebugSystem : public System
 public:
 	DebugSystem();
 
-	void update(float deltaMilliseconds) override;
+	void reportComponents();
+
+#ifdef ROOTEX_EDITOR
+	void draw() override;
+#endif // ROOTEX_EDITOR
 };

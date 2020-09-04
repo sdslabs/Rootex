@@ -236,3 +236,30 @@ const Matrix& RenderSystem::getCurrentMatrix() const
 {
 	return m_TransformationStack.back();
 }
+
+#ifdef ROOTEX_EDITOR
+#include "imgui.h"
+void RenderSystem::draw()
+{
+	System::draw();
+
+	ImGui::Columns(2);
+
+	ImGui::Text("Camera");
+	ImGui::NextColumn();
+	if (ImGui::BeginCombo("##Camera", RenderSystem::GetSingleton()->getCamera()->getOwner()->getFullName().c_str()))
+	{
+		for (auto&& camera : System::GetComponents(CameraComponent::s_ID))
+		{
+			if (ImGui::MenuItem(camera->getOwner()->getFullName().c_str()))
+			{
+				RenderSystem::GetSingleton()->setCamera((CameraComponent*)camera);
+			}
+		}
+
+		ImGui::EndCombo();
+	}
+
+	ImGui::Columns(1);
+}
+#endif
