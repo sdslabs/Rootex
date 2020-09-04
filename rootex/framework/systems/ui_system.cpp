@@ -147,3 +147,19 @@ void UISystem::setDebugger(bool enabled)
 {
 	Rml::Debugger::SetVisible(enabled);
 }
+
+#ifdef ROOTEX_EDITOR
+#include "imgui.h"
+void UISystem::draw()
+{
+	System::draw();
+	
+	static bool debugger = false;
+	if (ImGui::Checkbox("Debugger", &debugger))
+	{
+		setDebugger(debugger);
+	}
+
+	ImGui::Text("Press F8 in game");
+}
+#endif

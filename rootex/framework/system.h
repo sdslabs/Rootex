@@ -22,8 +22,6 @@ protected:
 		None
 	};
 
-	static Vector<System*> s_SystemStack;
-	static Vector<System*> s_GameplayStack;
 	static HashMap<ComponentID, Vector<Component*>> s_Components;
 	static void RegisterComponent(Component* component);
 	static void DeregisterComponent(Component* component);
@@ -31,7 +29,6 @@ protected:
 	
 	friend class Entity;
 	friend class EntityFactory;
-	friend class Application;
 
 	String m_SystemName;
 	UpdateOrder m_UpdateOrder;
@@ -39,6 +36,9 @@ protected:
 	bool m_IsGameplaySystem;
 
 public:
+	static Vector<System*> s_SystemStack;
+	static Vector<System*> s_GameplayStack;
+	
 	static const Vector<Component*>& GetComponents(ComponentID ID) { return s_Components[ID]; }
 	
 	System(const String& name, const UpdateOrder& order, bool isGameplay);

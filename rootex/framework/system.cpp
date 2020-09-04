@@ -119,5 +119,21 @@ void System::draw()
 	ImGui::NextColumn();
 	ImGui::Text("%s", m_IsGameplaySystem ? "True" : "False");
 	ImGui::NextColumn();
+
+	ImGui::Text("Update order");
+	ImGui::NextColumn();
+	static const char* updateOrders[] = {
+		"Input",
+		"Update",
+		"Render",
+		"UI",
+		"RenderUI",
+		"Editor",
+		"None"
+	};
+	ImGui::Combo((String("##Update Order") + m_SystemName).c_str(), (int*)&m_UpdateOrder, updateOrders, 6);
+	ImGui::NextColumn();
+
+	ImGui::Columns(1);
 }
 #endif // ROOTEX_EDITOR

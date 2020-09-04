@@ -116,8 +116,6 @@ void AudioSystem::update(float deltaMilliseconds)
 		const Vector3& listenerPosition = m_Listener->getPosition();
 		AL_CHECK(alListener3f(AL_POSITION, listenerPosition.x, listenerPosition.y, listenerPosition.z));
 	}
-	
-	std::this_thread::sleep_for(std::chrono::milliseconds(m_UpdateIntervalMilliseconds));
 }
 
 AudioSystem* AudioSystem::GetSingleton()
