@@ -84,8 +84,8 @@ void RenderSystem::update(float deltaMilliseconds)
 			fogEnd = fog->getFarDistance();
 		}
 	}
-
 	Application::GetSingleton()->getWindow()->clearCurrentTarget(clearColor);
+
 	Ref<HierarchyComponent> rootHC = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<HierarchyComponent>();
 	calculateTransforms(rootHC.get());
 

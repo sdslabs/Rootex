@@ -6,7 +6,7 @@ Vector<System*> System::s_GameplayStack;
 
 void System::UpdateOrderSort()
 {
-	std::sort(s_SystemStack.begin(), s_SystemStack.end(), [](System* a, System* b) { return (int)a->getUpdateOrder() < (int)b->getUpdateOrder(); });
+	std::sort(s_GameplayStack.begin(), s_GameplayStack.end(), [](System* a, System* b) { return (int)a->getUpdateOrder() < (int)b->getUpdateOrder(); });
 }
 
 void System::CreationOrderSort()
@@ -47,9 +47,9 @@ System::System(const String& name, const UpdateOrder& order, bool isGameplay)
     , m_UpdateOrder(order)
 {
 	s_SystemStack.push_back(this);
-	UpdateOrderSort();
 	m_CreationOrder = s_SystemStack.size();
 	setGameplay(isGameplay);
+	UpdateOrderSort();
 }
 
 System::~System()
@@ -102,6 +102,7 @@ void System::setGameplay(bool enabled)
 		}
 		m_IsGameplaySystem = false;
 	}
+	UpdateOrderSort();
 }
 
 #ifdef ROOTEX_EDITOR
@@ -131,7 +132,10 @@ void System::draw()
 		"Editor",
 		"None"
 	};
-	ImGui::Combo((String("##Update Order") + m_SystemName).c_str(), (int*)&m_UpdateOrder, updateOrders, 6);
+	if (ImGui::Combo((String("##Update Order") + m_SystemName).c_str(), (int*)&m_UpdateOrder, updateOrders, 7))
+	{
+		UpdateOrderSort();
+	}
 	ImGui::NextColumn();
 
 	ImGui::Columns(1);
