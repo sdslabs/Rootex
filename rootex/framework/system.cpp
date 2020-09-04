@@ -66,6 +66,10 @@ bool System::initialize(const JSON::json& systemData)
 	return true;
 }
 
+void System::begin()
+{
+}
+
 void System::update(float deltaMilliseconds)
 {
 }

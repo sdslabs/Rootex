@@ -81,6 +81,6 @@ public:
 
 	bool initialize(const JSON::json& systemData) override;
 	void update(float deltaMilliseconds) override;
-	void begin();
+	void begin() override;
 	void end() override;
 };

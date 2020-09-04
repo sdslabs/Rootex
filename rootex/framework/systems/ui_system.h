@@ -39,7 +39,7 @@ class UISystem : public System
 	Rml::Core::Context* m_Context;
 
 	UISystem();
-	virtual ~UISystem();
+	virtual ~UISystem() = default;
 	
 	Variant enableDebugger(const Event* event);
 	Variant disableDebugger(const Event* event);
@@ -49,11 +49,10 @@ public:
 
 	void loadFont(const String& path);
 	Rml::Core::ElementDocument* loadDocument(const String& path);
-	void unloadDocument(Rml::Core::ElementDocument* document);
 
 	bool initialize(const JSON::json& systemData) override;
 	void update(float deltaMilliseconds) override;
-	void render();
+	void end() override;
 
 	void setDebugger(bool enabled);
 };

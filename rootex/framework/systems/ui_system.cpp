@@ -55,16 +55,11 @@ void EventListener::ProcessEvent(Rml::Core::Event& event)
 }
 
 UISystem::UISystem()
-    : System("UISystem", UpdateOrder::RenderUI)
+    : System("UISystem", UpdateOrder::UI)
 	, m_Context(nullptr)
 {
 	BIND_EVENT_MEMBER_FUNCTION("UISystemEnableDebugger", UISystem::enableDebugger);
 	BIND_EVENT_MEMBER_FUNCTION("UISystemDisableDebugger", UISystem::disableDebugger);
-}
-
-UISystem::~UISystem()
-{
-	Rml::Core::Shutdown();
 }
 
 Variant UISystem::enableDebugger(const Event* event)
@@ -107,11 +102,6 @@ Rml::Core::ElementDocument* UISystem::loadDocument(const String& path)
 	return document;
 }
 
-void UISystem::unloadDocument(Rml::Core::ElementDocument* document)
-{
-	m_Context->UnloadDocument(document);
-}
-
 bool UISystem::initialize(const JSON::json& systemData)
 {
 	m_RmlSystemInterface.reset(new CustomSystemInterface());
@@ -143,14 +133,14 @@ bool UISystem::initialize(const JSON::json& systemData)
 void UISystem::update(float deltaMilliseconds)
 {
 	m_Context->Update();
-	render();
-}
-
-void UISystem::render()
-{
 	RenderingDevice::GetSingleton()->setAlphaBlendState();
 	RenderingDevice::GetSingleton()->setTemporaryUIRasterizerState();
 	m_Context->Render();
+}
+
+void UISystem::end()
+{
+	Rml::Core::Shutdown();
 }
 
 void UISystem::setDebugger(bool enabled)

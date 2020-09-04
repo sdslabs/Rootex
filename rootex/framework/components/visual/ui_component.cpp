@@ -22,20 +22,16 @@ UIComponent::UIComponent(const String& path)
 	setDocument(path);
 }
 
-void UIComponent::setDocument(const String& path)
+UIComponent::~UIComponent()
 {
-	if (m_Document)
-	{
-		UISystem::GetSingleton()->unloadDocument(m_Document);
-	}
-
-	m_FilePath = path;
-	m_Document = UISystem::GetSingleton()->loadDocument(m_FilePath);
+	m_Document->Close();
 }
 
-void UIComponent::onRemove()
+void UIComponent::setDocument(const String& path)
 {
-	UISystem::GetSingleton()->unloadDocument(m_Document);
+	m_FilePath = path;
+	m_Document = UISystem::GetSingleton()->loadDocument(m_FilePath);
+	m_Document->GetEventDispatcher();
 }
 
 JSON::json UIComponent::getJSON() const

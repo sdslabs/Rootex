@@ -73,6 +73,12 @@ Application::Application(const String& settingsFile)
 		LuaInterpreter::GetSingleton()->getLuaState().script(ResourceLoader::CreateLuaTextResourceFile(*postInitialize)->getString());
 	}
 
+	for (auto& system : System::s_SystemStack)
+	{
+		system->begin();
+		PRINT(system->getName() + " has begun");
+	}
+
 	m_Window->show();
 }
 
@@ -107,10 +113,10 @@ void Application::process(float deltaMilliseconds)
 void Application::end()
 {
 	System::CreationOrderSort();
-	for (auto& system = System::s_SystemStack.rbegin(); system != System::s_SystemStack.rend(); system++) 
+	for (auto& system : System::s_SystemStack) 
 	{
-		(*system)->end();
-		PRINT((*system)->getName() + " was killed");
+		system->end();
+		PRINT(system->getName() + " was killed");
 	}
 	PRINT("All systems were killed");
 }
