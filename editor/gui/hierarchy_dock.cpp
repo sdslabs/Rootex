@@ -34,6 +34,12 @@ void HierarchyDock::showHierarchySubTree(HierarchyComponent* hierarchy)
 					openEntity(node);
 				}
 
+				if (ImGui::BeginPopupContextItem())
+				{
+					InspectorDock::GetSingleton()->drawEntityActions(node);
+					ImGui::EndPopup();
+				}
+
 				if (ImGui::BeginDragDropSource())
 				{
 					ImGui::SetDragDropPayload("RearrangeEntity", &node, sizeof(Ref<Entity>));
@@ -173,28 +179,6 @@ void HierarchyDock::showEntities(const HashMap<EntityID, Ref<Entity>>& entities)
 					it++;
 				}
 			}
-			//for (auto&& [componentID, component] : entity->getAllComponents())
-			//{
-			//	ImGui::Selectable(component->getName().c_str());
-			//	if (ImGui::BeginPopupContextItem())
-			//	{
-			//		if (ImGui::Button("Delete Component"))
-			//		{
-			//			if (component)
-			//			{
-			//				String componentName = component->getName();
-			//				entity->removeComponent(component);
-			//				PRINT("Deleted " + componentName + " from " + entity->getName());
-			//				entity->setupComponents();
-			//			}
-			//			else
-			//			{
-			//				ERR("Component not found: Possible level files corruption");
-			//			}
-			//		}
-			//		ImGui::EndPopup();
-			//	}
-			//}
 			ImGui::NextColumn();
 		}
 	}
