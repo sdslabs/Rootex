@@ -59,21 +59,14 @@ void ToolbarDock::draw()
 				}
 				averageFPS /= m_FPSRecords.size();
 
-				ImGui::PlotHistogram("FPS", m_FPSRecords.data(), m_FPSRecords.size(), 0, std::to_string(averageFPS).c_str(), 0, 200.0f, ImVec2(ImGui::GetContentRegionAvailWidth(), 100));
+				ImGui::PlotLines("FPS", m_FPSRecords.data(), m_FPSRecords.size(), 0, std::to_string(averageFPS).c_str(), 0, 200.0f, ImVec2(ImGui::GetContentRegionAvailWidth(), 100));
 			}
 
 			if (ImGui::TreeNodeEx("Events", ImGuiTreeNodeFlags_CollapsingHeader))
 			{
 				for (auto&& [eventType, eventHandlers] : EventManager::GetSingleton()->getRegisteredEvents())
 				{				
-					if(ImGui::TreeNodeEx((eventType + std::to_string(eventHandlers.size())).c_str()))
-					{
-						for (auto& handler : eventHandlers)
-						{
-							ImGui::Text("%s", handler.target_type().name());
-						}
-						ImGui::TreePop();
-					}
+					ImGui::Text((eventType + " (" + std::to_string(eventHandlers.size()) + ")").c_str());
 				}
 			}
 

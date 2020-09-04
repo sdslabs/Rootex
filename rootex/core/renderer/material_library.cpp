@@ -25,7 +25,8 @@ void MaterialLibrary::PopulateMaterials(const String& path)
 
 bool MaterialLibrary::IsDefault(const String& materialPath)
 {
-	return materialPath.substr(0, 5) == "rootex";
+	static String rootex = "rootex";
+	return materialPath.substr(0, rootex.size()) == rootex;
 }
 
 void MaterialLibrary::LoadMaterials()

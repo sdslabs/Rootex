@@ -16,8 +16,8 @@ protected:
 		Input,
 		Update,
 		Render,
-		UI,
 		RenderUI,
+		UI,
 		Editor,
 		None
 	};
@@ -25,7 +25,6 @@ protected:
 	static HashMap<ComponentID, Vector<Component*>> s_Components;
 	static void RegisterComponent(Component* component);
 	static void DeregisterComponent(Component* component);
-	static void CreationOrderSort();
 	
 	friend class Entity;
 	friend class EntityFactory;
@@ -39,6 +38,8 @@ public:
 	static Vector<System*> s_SystemStack;
 	static Vector<System*> s_GameplayStack;
 	
+	static void CreationOrderSort();
+
 	static const Vector<Component*>& GetComponents(ComponentID ID) { return s_Components[ID]; }
 	
 	System(const String& name, const UpdateOrder& order, bool isGameplay);
