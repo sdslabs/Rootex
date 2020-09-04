@@ -33,7 +33,6 @@ void MaterialLibrary::LoadMaterials()
 {
 	PopulateMaterials("game/assets/");
 	PopulateMaterials("rootex/assets/");
-	s_Materials[s_DefaultMaterialPath] = { BasicMaterial::s_MaterialName, {} };
 }
 
 Ref<Material> MaterialLibrary::GetMaterial(const String& materialPath)

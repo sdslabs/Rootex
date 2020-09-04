@@ -92,7 +92,7 @@ void RenderSystem::update(float deltaMilliseconds)
 	RenderingDevice::GetSingleton()->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	RenderingDevice::GetSingleton()->setCurrentRasterizerState();
 	RenderingDevice::GetSingleton()->setDepthStencilState();
-	RenderingDevice::GetSingleton()->setDefaultBlendState();
+	RenderingDevice::GetSingleton()->setAlphaBlendState();
 
 	perFrameVSCBBinds(fogStart, fogEnd);
 	const Color& fogColor = clearColor;

@@ -236,13 +236,13 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 		blendDesc.IndependentBlendEnable = false;
 		D3D11_RENDER_TARGET_BLEND_DESC renderBlendDesc;
 		blendDesc.RenderTarget[0].BlendEnable = FALSE;
-		blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+		blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
 		blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
 		blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
 		blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
 		blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
 		blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-		blendDesc.RenderTarget[0].RenderTargetWriteMask = 0x0f;
+		blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 		GFX_ERR_CHECK(m_Device->CreateBlendState(&blendDesc, &m_DefaultBlendState));
 	}
 	{
@@ -252,13 +252,13 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 		blendDesc.IndependentBlendEnable = false;
 		D3D11_RENDER_TARGET_BLEND_DESC renderBlendDesc;
 		blendDesc.RenderTarget[0].BlendEnable = TRUE;
-		blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+		blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
 		blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
 		blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
 		blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
 		blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
 		blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-		blendDesc.RenderTarget[0].RenderTargetWriteMask = 0x0f;
+		blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 		GFX_ERR_CHECK(m_Device->CreateBlendState(&blendDesc, &m_AlphaBlendState));
 	}
 	m_FontBatch.reset(new DirectX::SpriteBatch(m_Context.Get()));
