@@ -125,8 +125,6 @@ void InspectorDock::draw()
 					Editor::GetSingleton()->popFont();
 				}
 
-				//String menuAction;
-
 				ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
 				if (ImGui::BeginCombo("##Entity Actions", "Select an action"))
 				{
