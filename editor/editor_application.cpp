@@ -2,14 +2,11 @@
 
 #include "editor_system.h"
 
-#include "rootex/framework/systems/audio_system.h"
-#include "rootex/core/input/input_manager.h"
 #include "rootex/core/resource_loader.h"
 #include "rootex/framework/systems/render_system.h"
 #include "rootex/framework/systems/render_ui_system.h"
-#include "rootex/framework/systems/ui_system.h"
+#include "rootex/framework/systems/script_system.h"
 #include "rootex/framework/systems/physics_system.h"
-#include "rootex/framework/systems/transform_animation_system.h"
 
 EditorApplication* EditorApplication::s_Instance = nullptr;
 
@@ -42,6 +39,8 @@ EditorApplication::EditorApplication()
 
 	RenderSystem::GetSingleton()->setIsEditorRenderPass(true);
 	RenderUISystem::GetSingleton();
+	PhysicsSystem::GetSingleton()->setGameplay(false);
+	ScriptSystem::GetSingleton()->setGameplay(false);
 	EditorSystem::GetSingleton()->initialize(m_ApplicationSettings->getJSON()["systems"]["EditorSystem"]);
 	m_PointAtLast10Second = m_ApplicationTimer.Now();
 }

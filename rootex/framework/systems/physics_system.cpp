@@ -19,7 +19,7 @@ PhysicsSystem* PhysicsSystem::GetSingleton()
 }
 
 PhysicsSystem::PhysicsSystem()
-    : System("PhysicsSystem", UpdateOrder::Update)
+    : System("PhysicsSystem", UpdateOrder::Update, true)
 {
 }
 

@@ -1,7 +1,7 @@
 #include "light_system.h"
 
 LightSystem::LightSystem()
-    : System("LightSystem", UpdateOrder::None)
+    : System("LightSystem", UpdateOrder::None, false)
 {
 }
 

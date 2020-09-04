@@ -3,7 +3,7 @@
 #include "components/debug_component.h"
 
 DebugSystem::DebugSystem()
-    : System("DebugSystem", UpdateOrder::None)
+    : System("DebugSystem", UpdateOrder::None, false)
 {
 }
 

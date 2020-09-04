@@ -8,40 +8,42 @@
             "width": 2560
         },
         "InputSystem": {
+            "height": 1440,
             "inputSchemes": [
                 {
-                    "name": "Ball",
                     "bools": [
                         {
-                            "inputEvent": "Jump",
+                            "button": 32,
                             "device": 1,
-                            "button": 32
+                            "inputEvent": "Jump"
                         },
                         {
-                            "inputEvent": "Forward",
+                            "button": 87,
                             "device": 1,
-                            "button": 87
+                            "inputEvent": "Forward"
                         },
                         {
-                            "inputEvent": "Backward",
+                            "button": 83,
                             "device": 1,
-                            "button": 83
+                            "inputEvent": "Backward"
                         },
                         {
-                            "inputEvent": "Right",
+                            "button": 65,
                             "device": 1,
-                            "button": 65
+                            "inputEvent": "Right"
                         },
                         {
-                            "inputEvent": "Left",
+                            "button": 68,
                             "device": 1,
-                            "button": 68
+                            "inputEvent": "Left"
                         }
                     ],
-                    "floats": {}
+                    "floats": {},
+                    "name": "Ball"
                 }
             ],
-            "startScheme": "Ball"
+            "startScheme": "Ball",
+            "width": 2560
         },
         "PhysicsSystem": {},
         "UISystem": {

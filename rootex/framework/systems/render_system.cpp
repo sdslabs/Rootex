@@ -15,7 +15,7 @@ RenderSystem* RenderSystem::GetSingleton()
 }
 
 RenderSystem::RenderSystem()
-    : System("RenderSystem", UpdateOrder::Render)
+    : System("RenderSystem", UpdateOrder::Render, true)
 	, m_Renderer(new Renderer())
     , m_VSProjectionConstantBuffer(nullptr)
     , m_VSPerFrameConstantBuffer(nullptr)

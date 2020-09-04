@@ -3,7 +3,7 @@
 #include "components/script_component.h"
 
 ScriptSystem::ScriptSystem()
-    : System("ScriptSystem", UpdateOrder::Update)
+    : System("ScriptSystem", UpdateOrder::Update, true)
 {
 }
 

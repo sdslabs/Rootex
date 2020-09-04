@@ -1,7 +1,7 @@
 #include "hierarchy_system.h"
 
 HierarchySystem::HierarchySystem()
-    : System("HierarchySystem", UpdateOrder::None)
+    : System("HierarchySystem", UpdateOrder::None, false)
 {
 }
 
