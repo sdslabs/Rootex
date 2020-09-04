@@ -7,7 +7,42 @@
             "height": 1440,
             "width": 2560
         },
-        "InputSystem": {},
+        "InputSystem": {
+            "inputSchemes": [
+                {
+                    "name": "Ball",
+                    "bools": [
+                        {
+                            "inputEvent": "Jump",
+                            "device": 1,
+                            "button": 32
+                        },
+                        {
+                            "inputEvent": "Forward",
+                            "device": 1,
+                            "button": 87
+                        },
+                        {
+                            "inputEvent": "Backward",
+                            "device": 1,
+                            "button": 83
+                        },
+                        {
+                            "inputEvent": "Right",
+                            "device": 1,
+                            "button": 65
+                        },
+                        {
+                            "inputEvent": "Left",
+                            "device": 1,
+                            "button": 68
+                        }
+                    ],
+                    "floats": {}
+                }
+            ],
+            "startScheme": "Ball"
+        },
         "PhysicsSystem": {},
         "UISystem": {
             "height": 1440,

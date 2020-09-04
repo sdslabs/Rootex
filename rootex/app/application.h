@@ -32,6 +32,7 @@ public:
 
 	virtual String getAppTitle() const { return "Rootex Application"; }
 	const Timer& getAppTimer() const { return m_ApplicationTimer; };
+	const FrameTimer& getAppFrameTimer() const { return m_FrameTimer; }
 	Window* getWindow() { return m_Window.get(); };
 	ApplicationSettings* getSettings() { return m_ApplicationSettings.get(); }
 };

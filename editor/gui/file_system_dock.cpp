@@ -1,6 +1,6 @@
 #include "file_system_dock.h"
 
-#include "editor/editor.h"
+#include "editor/editor_system.h"
 
 #include "vendor/ImGUI/imgui.h"
 #include "vendor/ImGUI/imgui_impl_dx11.h"

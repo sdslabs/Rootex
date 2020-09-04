@@ -16,6 +16,8 @@ InputSystem* InputSystem::GetSingleton()
 bool InputSystem::initialize(const JSON::json& systemData)
 {
 	InputManager::GetSingleton()->initialize(systemData["width"], systemData["height"]);
+	InputManager::GetSingleton()->loadSchemes(systemData["inputSchemes"]);
+	InputManager::GetSingleton()->setScheme(systemData["startScheme"]);
 	return true;
 }
 
