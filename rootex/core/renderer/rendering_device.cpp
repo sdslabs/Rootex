@@ -96,9 +96,9 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 	GFX_ERR_CHECK(m_Device->CheckFeatureSupport(D3D11_FEATURE_D3D11_OPTIONS, &features, sizeof(features)));
 
 	PRINT(
-	    "Supported DirectX11 Features\n"
-	    "MapNoOverwriteOnDynamicConstantBuffer: "
-	    + std::to_string(features.MapNoOverwriteOnDynamicConstantBuffer));
+		"Supported DirectX11 Features\n" +
+		"MapNoOverwriteOnDynamicConstantBuffer: " + 
+		std::to_string(features.MapNoOverwriteOnDynamicConstantBuffer));
 	{
 		D3D11_DEPTH_STENCIL_DESC dsDesc = { 0 };
 		dsDesc.DepthEnable = TRUE;
@@ -115,7 +115,7 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 		dssDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 		dssDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 
-		m_Device->CreateDepthStencilState(&dssDesc, &m_SkyDepthStencilState);
+		GFX_ERR_CHECK(m_Device->CreateDepthStencilState(&dssDesc, &m_SkyDepthStencilState));
 	}
 
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> depthStencil = nullptr;
