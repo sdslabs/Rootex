@@ -49,11 +49,11 @@ cbuffer Lights : register(PER_FRAME_PS_HLSL)
 {
     float3 cameraPos;
     int pointLightCount;
-    PointLightInfo pointLightInfos[4];
+	PointLightInfo pointLightInfos[MAX_POINT_LIGHTS];
     int directionLightPresent;
     DirectionalLightInfo directionalLightInfo;
     int spotLightCount;
-    SpotLightInfo spotLightInfos[4];
+	SpotLightInfo spotLightInfos[MAX_SPOT_LIGHTS];
     float4 fogColor;
 }
 
@@ -90,7 +90,6 @@ float4 main(PixelInputType input) : SV_TARGET
                 float cosAngle = max(0.0f, dot(normalizedRelative, input.normal));
                 float3 diffuse = pointLightInfos[i].diffuseColor * pointLightInfos[i].diffuseIntensity * cosAngle;
                 float3 reflected = reflect(-normalizedRelative, input.normal);
-                //TODO- FIX THIS
                 float specFactor = pow(max(dot(normalize(reflected), toEye), 0.0f), specPow);
                 float3 specular = specularIntensity * specFactor * diffuse;
         
@@ -123,7 +122,6 @@ float4 main(PixelInputType input) : SV_TARGET
                     float att = 1.0f / (spotLightInfos[i].attConst + spotLightInfos[i].attLin * dist + spotLightInfos[i].attQuad * (dist * dist));
                     float3 diffuse = spotLightInfos[i].diffuseColor * spotLightInfos[i].diffuseIntensity * cosAngle;
                     float3 reflected = reflect(-normalizedRelative, input.normal);
-                    //TODO- FIX THIS
                     float specFactor = pow(max(dot(normalize(reflected), toEye), 0.0f), specPow);
                     float3 specular = specularIntensity * specFactor * diffuse;
             

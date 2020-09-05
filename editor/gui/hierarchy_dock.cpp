@@ -34,6 +34,12 @@ void HierarchyDock::showHierarchySubTree(HierarchyComponent* hierarchy)
 					openEntity(node);
 				}
 
+				if (ImGui::BeginPopupContextItem())
+				{
+					InspectorDock::GetSingleton()->drawEntityActions(node);
+					ImGui::EndPopup();
+				}
+
 				if (ImGui::BeginDragDropSource())
 				{
 					ImGui::SetDragDropPayload("RearrangeEntity", &node, sizeof(Ref<Entity>));
@@ -136,10 +142,42 @@ void HierarchyDock::showEntities(const HashMap<EntityID, Ref<Entity>>& entities)
 			{
 				openEntity(entity);
 			}
-			ImGui::NextColumn();
-			for (auto&& [componentID, component] : entity->getAllComponents())
+			if (ImGui::BeginPopupContextItem())
 			{
-				ImGui::Text(component->getName().c_str());
+				InspectorDock::GetSingleton()->drawEntityActions(entity);
+				ImGui::EndPopup();
+			}
+			ImGui::NextColumn();
+			HashMap<ComponentID, Ref<Component>> components = entity->getAllComponents();
+			HashMap<ComponentID, Ref<Component>>::iterator it = components.begin();
+			while (it != components.end())
+			{
+				bool increment = true;
+				Ref<Component> component = it->second;
+				ImGui::Selectable(component->getName().c_str());
+				if (ImGui::BeginPopupContextItem(("Delete" + entity->getFullName() + component->getName()).c_str()))
+				{
+					if (ImGui::Button("Delete Component"))
+					{
+						if (component)
+						{
+							String componentName = component->getName();
+							entity->removeComponent(component);
+							PRINT("Deleted " + componentName + " from " + entity->getName());
+							entity->setupComponents();
+							increment = false;
+						}
+						else
+						{
+							ERR("Component not found: Possible level files corruption");
+						}
+					}
+					ImGui::EndPopup();
+				}
+				if (increment)
+				{
+					it++;
+				}
 			}
 			ImGui::NextColumn();
 		}
