@@ -13,9 +13,9 @@ class CameraComponent : public Component
 	float m_Near;
 	float m_Far;
 	Vector2 m_AspectRatio;
-	TransformComponent* m_TransformComponent;
 	Matrix m_ViewMatrix;
 	Matrix m_ProjectionMatrix;
+	TransformComponent* m_TransformComponent;
 
 	CameraComponent(const Vector2& aspectRatio, float fov, float nearPlane, float farPlane);
 	CameraComponent(CameraComponent&) = delete;
@@ -33,6 +33,7 @@ public:
 	TransformComponent* getTransformComponent() { return m_TransformComponent; }
 	virtual const Matrix& getViewMatrix();
 	virtual const Matrix& getProjectionMatrix();
+	Vector3 getAbsolutePosition() const { return m_TransformComponent->getAbsoluteTransform().Translation(); }
 	virtual String getName() const override { return "CameraComponent"; }
 
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::CameraComponent;

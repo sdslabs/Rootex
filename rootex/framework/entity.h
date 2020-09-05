@@ -28,6 +28,7 @@ protected:
 	friend class EntityFactory;
 #ifdef ROOTEX_EDITOR
 	friend class InspectorDock;
+	friend class HierarchyDock;
 #endif // ROOTEX_EDITOR
 
 public:
