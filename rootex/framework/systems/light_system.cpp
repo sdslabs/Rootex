@@ -2,7 +2,7 @@
 #include "core/renderer/shaders/register_locations_pixel_shader.h"
 
 LightSystem::LightSystem()
-    : System("LightSystem", UpdateOrder::None, false)
+    : System("LightSystem", UpdateOrder::Async, false)
 {
 }
 

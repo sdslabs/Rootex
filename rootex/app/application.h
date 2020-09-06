@@ -3,6 +3,7 @@
 #include "main/window.h"
 #include "core/event_manager.h"
 #include "os/timer.h"
+#include "os/thread.h"
 #include "entity_factory.h"
 #include "application_settings.h"
 
@@ -15,6 +16,7 @@ class Application
 protected:
 	Timer m_ApplicationTimer;
 	FrameTimer m_FrameTimer;
+	ThreadPool m_ThreadPool;
 
 	Ptr<Window> m_Window;
 	Ptr<ApplicationSettings> m_ApplicationSettings;
@@ -32,6 +34,7 @@ public:
 
 	virtual String getAppTitle() const { return "Rootex Application"; }
 	const Timer& getAppTimer() const { return m_ApplicationTimer; };
+	const ThreadPool& getThreadPool() const { return m_ThreadPool; };
 	const FrameTimer& getAppFrameTimer() const { return m_FrameTimer; }
 	Window* getWindow() { return m_Window.get(); };
 	ApplicationSettings* getSettings() { return m_ApplicationSettings.get(); }

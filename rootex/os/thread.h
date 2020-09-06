@@ -14,21 +14,13 @@ public:
 	__int32 m_ID;
 	__int32 m_Dependencies;
 	Vector<__int32> m_Permissions;
+	Function<void()> m_ExecutionTask;
 
-	virtual void execute() = 0;
-	virtual void undo() {}
-};
+	Task(const Function<void()>& executionTask);
+	Task(const Task&) = default;
+	~Task() = default;
 
-class DebugTask : public Task
-{
-protected:
-	void execute() override;
-};
-
-class RenderTask : public Task
-{
-protected:
-	void execute() override;
+	void execute();
 };
 
 /// Worker thread parameters.
@@ -44,10 +36,10 @@ struct TaskQueue
 	__int32 m_Jobs;
 	unsigned __int32 m_Write;
 	unsigned __int32 m_Read;
-	Vector<Ref<Task>> m_QueueJobs;
+	Vector<Task*> m_QueueJobs;
 };
 
-/// Contains th information of completed jobs.
+/// Contains the information of completed jobs.
 struct TaskComplete
 {
 	__int32 m_Jobs;
@@ -88,14 +80,18 @@ class ThreadPool
 
 	friend DWORD WINAPI MainLoop(LPVOID voidParameters);
 
+
+public:
+	ThreadPool() = default;
+	ThreadPool(ThreadPool&) = delete;
+	~ThreadPool() = default;
+	
 	void initialize();
 	void shutDown();
 
-public:
-	ThreadPool();
-	ThreadPool(ThreadPool&) = delete;
-	~ThreadPool();
-	
 	/// To submit a job to the jobs queue.
-	void submit(Vector<Ref<Task>>& tasks);
+	void submit(Vector<Task*>& tasks);
+
+	/// Returns true if all tasks have been completed
+	bool isCompleted();
 };
