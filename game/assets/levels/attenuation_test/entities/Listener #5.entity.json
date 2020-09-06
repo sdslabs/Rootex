@@ -14,6 +14,18 @@
             "scripts": []
         },
         "TransformComponent": {
+            "boundingBox": {
+                "center": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "extents": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                }
+            },
             "position": {
                 "x": 6.799990653991699,
                 "y": 0.0,

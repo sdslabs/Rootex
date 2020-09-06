@@ -92,6 +92,8 @@ Application::~Application()
 
 void Application::run()
 {
+	m_ThreadPool.initialize();
+
 	while (!m_Window->processMessages())
 	{
 		m_FrameTimer.reset();
@@ -106,6 +108,8 @@ void Application::run()
 		EventManager::GetSingleton()->dispatchDeferred();
 		m_Window->swapBuffers();
 	}
+
+	m_ThreadPool.shutDown();
 	EventManager::GetSingleton()->call("Application", "ApplicationExit", 0);
 }
 
@@ -121,7 +125,6 @@ void Application::end()
 	for (auto& system : System::s_SystemStack) 
 	{
 		system->end();
-		PRINT(system->getName() + " was killed");
+		PRINT(system->getName() + " ended");
 	}
-	PRINT("All systems were killed");
 }
