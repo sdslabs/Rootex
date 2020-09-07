@@ -60,7 +60,12 @@ void ViewportDock::draw()
 					Ref<Entity> entity = EntityFactory::GetSingleton()->createEntityFromClass(t);
 					if (Ref<TransformComponent> transform = entity->getComponent<TransformComponent>())
 					{
-						transform->setPosition(RenderSystem::GetSingleton()->getCamera()->getOwner()->getComponent<TransformComponent>()->getAbsoluteTransform().Translation());
+						Quaternion rotation;
+						Vector3 scale, position;
+						RenderSystem::GetSingleton()->getCamera()->getOwner()->getComponent<TransformComponent>()->getAbsoluteTransform().Decompose(scale, rotation, position);
+						transform->setPosition(position);
+						transform->setRotationQuaternion(rotation);
+
 					}
 					EventManager::GetSingleton()->call("OpenEntity", "EditorOpenEntity", entity);
 				}
