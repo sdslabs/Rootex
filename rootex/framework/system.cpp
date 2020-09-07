@@ -5,15 +5,7 @@ Map<System::UpdateOrder, Vector<System*>> System::s_Systems;
 
 void System::RegisterComponent(Component* component)
 {
-	auto findIt = s_Components.find(component->getComponentID());
-	if (findIt != s_Components.end())
-	{
-		s_Components[component->getComponentID()].push_back(component);
-	}
-	else
-	{
-		s_Components[component->getComponentID()] = { component };
-	}
+	s_Components[component->getComponentID()].push_back(component);
 }
 
 void System::DeregisterComponent(Component* component)
@@ -80,13 +72,6 @@ void System::draw()
 	ImGui::Text("Name");
 	ImGui::NextColumn();
 	ImGui::Text("%s", m_SystemName.c_str());
-	ImGui::NextColumn();
-
-	ImGui::Text("Updated");
-	ImGui::NextColumn();
-	ImGui::Checkbox(("Updated##" + m_SystemName).c_str(), &m_IsActive);
-	ImGui::NextColumn();
-
 	ImGui::NextColumn();
 
 	ImGui::Columns(1);

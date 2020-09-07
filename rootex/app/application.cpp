@@ -11,6 +11,7 @@
 #include "systems/input_system.h"
 #include "systems/ui_system.h"
 #include "systems/render_ui_system.h"
+#include "systems/script_system.h"
 #include "systems/hierarchy_system.h"
 
 Application* Application::s_Singleton = nullptr;
@@ -72,6 +73,7 @@ Application::Application(const String& settingsFile)
 
 	HierarchySystem::GetSingleton();
 	RenderUISystem::GetSingleton();
+	ScriptSystem::GetSingleton();
 
 	auto&& postInitialize = m_ApplicationSettings->find("postInitialize");
 	if (postInitialize != m_ApplicationSettings->end())
