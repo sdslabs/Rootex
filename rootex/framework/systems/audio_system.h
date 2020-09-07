@@ -74,6 +74,7 @@ public:
 	AudioListenerComponent* getListener() const { return m_Listener; }
     void setListener(AudioListenerComponent* listenerComponent);
 
+	void setConfig(const JSON::json& configData, bool openInEditor) override;
 	void restoreListener();
 	void shutDown();
 

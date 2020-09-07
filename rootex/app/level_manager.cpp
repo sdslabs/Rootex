@@ -44,30 +44,11 @@ void LevelManager::openLevel(const String& levelPath, bool openInEditor)
 		EntityFactory::GetSingleton()->createEntity(textResource);
 	}
 
-	if (m_CurrentLevelSettings.find("camera") != m_CurrentLevelSettings.end())
+	for (auto& [order, systems] : System::GetSystems())
 	{
-		Ref<Entity> cameraEntity = EntityFactory::GetSingleton()->findEntity(m_CurrentLevelSettings["camera"]);
-		RenderSystem::GetSingleton()->setCamera(cameraEntity->getComponent<CameraComponent>().get());
-	}
-
-	if (m_CurrentLevelSettings.find("listener") != m_CurrentLevelSettings.end())
-	{
-		Ref<Entity> listenerEntity = EntityFactory::GetSingleton()->findEntity(m_CurrentLevelSettings["listener"]);
-		AudioSystem::GetSingleton()->setListener(listenerEntity->getComponent<AudioListenerComponent>().get());
-	}
-	else
-	{
-		AudioSystem::GetSingleton()->setListener(EntityFactory::GetSingleton()->findEntity(ROOT_ENTITY_ID)->getComponent<AudioListenerComponent>().get());
-	}
-
-	if (!openInEditor)
-	{
-		JSON::json& levelJSON = getCurrentLevelSettings();
-		InputManager::GetSingleton()->loadSchemes(levelJSON["inputSchemes"]);
-
-		if (levelJSON.find("startScheme") != levelJSON.end())
+		for (auto& system : systems)
 		{
-			InputManager::GetSingleton()->setScheme(levelJSON["startScheme"]);
+			system->setConfig(m_CurrentLevelSettings, openInEditor);
 		}
 	}
 

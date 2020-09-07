@@ -41,6 +41,7 @@ class RenderSystem : public System
 public:
 	static RenderSystem* GetSingleton();
 	
+	void setConfig(const JSON::json& configData, bool openInEditor) override;
 	void update(float deltaMilliseconds) override;
 	void renderLines();
 	void submitLine(const Vector3& from, const Vector3& to);

@@ -14,6 +14,10 @@ class InputSystem : public System
 public:
 	static InputSystem* GetSingleton();
 
+	void loadSchemes(const JSON::json& schemes);
+	void setScheme(const String& scheme);
+
 	bool initialize(const JSON::json& systemData) override;
+	void setConfig(const JSON::json& configData, bool openInEditor) override;
 	void update(float deltaMilliseconds) override;
 };

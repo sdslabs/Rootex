@@ -42,6 +42,7 @@ public:
 	virtual ~System();
 
 	virtual bool initialize(const JSON::json& systemData);
+	virtual void setConfig(const JSON::json& configData, bool openInEditor);
 	virtual void begin();
 	virtual void update(float deltaMilliseconds);
 	virtual void end();
