@@ -21,12 +21,37 @@ InputSystem* InputSystem::GetSingleton()
 	return &singleton;
 }
 
+void InputSystem::loadSchemes(const JSON::json& schemes)
+{
+	InputManager::GetSingleton()->loadSchemes(schemes);
+}
+
+void InputSystem::setScheme(const String& scheme)
+{
+	InputManager::GetSingleton()->setScheme(scheme);
+}
+
 bool InputSystem::initialize(const JSON::json& systemData)
 {
 	InputManager::GetSingleton()->initialize(systemData["width"], systemData["height"]);
-	InputManager::GetSingleton()->loadSchemes(systemData["inputSchemes"]);
-	InputManager::GetSingleton()->setScheme(systemData["startScheme"]);
 	return true;
+}
+
+void InputSystem::setConfig(const JSON::json& configData, bool openInEditor)
+{
+	if (openInEditor)
+	{
+		return;
+	}
+
+	if (configData.find("inputScheme") != configData.end())
+	{
+		loadSchemes(configData["inputSchemes"]);
+		if (configData.find("startScheme") != configData.end())
+		{
+			setScheme(configData["startScheme"]);
+		}
+	}
 }
 
 void InputSystem::update(float deltaMilliseconds)

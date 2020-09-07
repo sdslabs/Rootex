@@ -65,6 +65,20 @@ void RenderSystem::recoverLostDevice()
 	ERR("Fatal error: D3D Device lost");
 }
 
+void RenderSystem::setConfig(const JSON::json& configData, bool openInEditor)
+{
+	if (configData.find("camera") != configData.end())
+	{
+		Ref<Entity> cameraEntity = EntityFactory::GetSingleton()->findEntity(configData["camera"]);
+		if (cameraEntity)
+		{
+			setCamera(cameraEntity->getComponent<CameraComponent>().get());
+			return;
+		}
+	}
+	setCamera(EntityFactory::GetSingleton()->findEntity(ROOT_ENTITY_ID)->getComponent<CameraComponent>().get());
+}
+
 void RenderSystem::update(float deltaMilliseconds)
 {
 	Color clearColor = { 0.15f, 0.15f, 0.15f, 1.0f };

@@ -46,6 +46,10 @@ bool System::initialize(const JSON::json& systemData)
 	return true;
 }
 
+void System::setConfig(const JSON::json& configData, bool openInEditor)
+{
+}
+
 void System::begin()
 {
 }
