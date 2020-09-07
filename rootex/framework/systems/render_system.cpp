@@ -120,7 +120,7 @@ void RenderSystem::update(float deltaMilliseconds)
 	}
 #endif // ROOTEX_EDITOR
 	renderPassRender(RenderPass::Basic);
-
+	renderPassRender(RenderPass::Alpha);
 	{
 		RenderingDevice::GetSingleton()->enableSkyDepthStencilState();
 		RenderingDevice::RasterizerState currentRS = RenderingDevice::GetSingleton()->getRasterizerState();

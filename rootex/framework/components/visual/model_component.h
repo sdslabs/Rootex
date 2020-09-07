@@ -16,7 +16,7 @@ class ModelComponent : public Component
 protected:
 	ModelResourceFile* m_ModelResourceFile;
 	bool m_IsVisible;
-	unsigned int m_RenderPass;
+	int m_RenderPass;
 
 	HierarchyComponent* m_HierarchyComponent;
 	TransformComponent* m_TransformComponent;
