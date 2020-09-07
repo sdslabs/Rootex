@@ -127,11 +127,11 @@ void LevelManager::endLevel()
 		EntityFactory::GetSingleton()->destroyEntities();
 		HierarchySystem::GetSingleton()->getRootHierarchyComponent()->clear();
 
+		PRINT("Ended level: " + m_CurrentLevelSettingsFile->getPath().generic_string());
+
 		m_CurrentLevelName = "";
 		m_CurrentLevelSettingsFile = nullptr;
 		m_CurrentLevelSettings.clear();
-
-		PRINT("Ended level: " + m_CurrentLevelName);
 	}
 }
 
