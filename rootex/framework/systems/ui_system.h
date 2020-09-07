@@ -43,7 +43,6 @@ class UISystem : public System
 	
 	Variant enableDebugger(const Event* event);
 	Variant disableDebugger(const Event* event);
-	Variant windowResized(const Event* event);
 
 public:
 	static UISystem* GetSingleton();

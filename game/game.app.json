@@ -53,7 +53,7 @@
     },
     "version": 1.0,
     "window": {
-        "fullScreen": true,
+        "fullScreen": false,
         "height": 1080,
         "isEditor": false,
         "msaa": true,
