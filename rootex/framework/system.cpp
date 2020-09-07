@@ -1,18 +1,7 @@
 #include "system.h"
 
 HashMap<ComponentID, Vector<Component*>> System::s_Components;
-Vector<System*> System::s_SystemStack;
-Vector<System*> System::s_GameplayStack;
-
-void System::UpdateOrderSort()
-{
-	std::sort(s_GameplayStack.begin(), s_GameplayStack.end(), [](System* a, System* b) { return (int)a->getUpdateOrder() < (int)b->getUpdateOrder(); });
-}
-
-void System::CreationOrderSort()
-{
-	std::sort(s_SystemStack.begin(), s_SystemStack.end(), [](System* a, System* b) { return a->getCreationOrder() < b->getCreationOrder(); });
-}
+Map<System::UpdateOrder, Vector<System*>> System::s_Systems;
 
 void System::RegisterComponent(Component* component)
 {
@@ -46,21 +35,17 @@ System::System(const String& name, const UpdateOrder& order, bool isGameplay)
     : m_SystemName(name)
     , m_UpdateOrder(order)
 {
-	s_SystemStack.push_back(this);
-	m_CreationOrder = s_SystemStack.size();
-	setGameplay(isGameplay);
-	UpdateOrderSort();
+	s_Systems[order].push_back(this);
+	setActive(isGameplay);
 }
 
 System::~System()
 {
-	auto& findIt = std::find(s_SystemStack.begin(), s_SystemStack.end(), this);
-	if (findIt != s_SystemStack.end())
+	auto& findIt = std::find(s_Systems[m_UpdateOrder].begin(), s_Systems[m_UpdateOrder].end(), this);
+	if (findIt != s_Systems[m_UpdateOrder].end())
 	{
-		s_SystemStack.erase(findIt);
+		s_Systems[m_UpdateOrder].erase(findIt);
 	}
-	setGameplay(false);
-	UpdateOrderSort();
 }
 
 bool System::initialize(const JSON::json& systemData)
@@ -81,28 +66,9 @@ void System::end()
 {
 }
 
-void System::setGameplay(bool enabled)
+void System::setActive(bool enabled)
 {
-	m_IsGameplaySystem = enabled;
-
-	if (m_IsGameplaySystem)
-	{
-		if (std::find(s_GameplayStack.begin(), s_GameplayStack.end(), this) == s_GameplayStack.end())
-		{
-			s_GameplayStack.push_back(this);
-		}
-		m_IsGameplaySystem = true;
-	}
-	else
-	{
-		auto& findIt = std::find(s_GameplayStack.begin(), s_GameplayStack.end(), this);
-		if (findIt != s_GameplayStack.end())
-		{
-			s_GameplayStack.erase(findIt);
-		}
-		m_IsGameplaySystem = false;
-	}
-	UpdateOrderSort();
+	m_IsActive = enabled;
 }
 
 #ifdef ROOTEX_EDITOR
@@ -116,26 +82,11 @@ void System::draw()
 	ImGui::Text("%s", m_SystemName.c_str());
 	ImGui::NextColumn();
 
-	ImGui::Text("Gameplay");
+	ImGui::Text("Updated");
 	ImGui::NextColumn();
-	ImGui::Text("%s", m_IsGameplaySystem ? "True" : "False");
+	ImGui::Checkbox(("Updated##" + m_SystemName).c_str(), &m_IsActive);
 	ImGui::NextColumn();
 
-	ImGui::Text("Update order");
-	ImGui::NextColumn();
-	static const char* updateOrders[] = {
-		"Input",
-		"Update",
-		"Render",
-		"UI",
-		"RenderUI",
-		"Editor",
-		"None"
-	};
-	if (ImGui::Combo((String("##Update Order") + m_SystemName).c_str(), (int*)&m_UpdateOrder, updateOrders, 7))
-	{
-		UpdateOrderSort();
-	}
 	ImGui::NextColumn();
 
 	ImGui::Columns(1);

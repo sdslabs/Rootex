@@ -138,7 +138,7 @@ void UISystem::update(float deltaMilliseconds)
 	m_Context->Render();
 }
 
-void UISystem::end()
+void UISystem::shutDown()
 {
 	Rml::Core::Shutdown();
 }

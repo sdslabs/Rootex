@@ -132,7 +132,6 @@ void AudioSystem::end()
 		audioComponent = (AudioComponent*)component;
 		audioComponent->getAudioSource()->stop();
 	}
-	alutExit();
 }
 
 void AudioSystem::setListener(AudioListenerComponent* listenerComponent)
@@ -143,6 +142,11 @@ void AudioSystem::setListener(AudioListenerComponent* listenerComponent)
 void AudioSystem::restoreListener()
 {
 	m_Listener = EntityFactory::GetSingleton()->findEntity(ROOT_ENTITY_ID)->getComponent<AudioListenerComponent>().get();
+}
+
+void AudioSystem::shutDown()
+{
+	alutExit();
 }
 
 AudioSystem::AudioSystem()

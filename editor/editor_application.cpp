@@ -7,6 +7,7 @@
 #include "rootex/framework/systems/render_ui_system.h"
 #include "rootex/framework/systems/script_system.h"
 #include "rootex/framework/systems/physics_system.h"
+#include "rootex/framework/systems/audio_system.h"
 
 EditorApplication* EditorApplication::s_Instance = nullptr;
 
@@ -38,8 +39,9 @@ EditorApplication::EditorApplication()
 	}
 
 	RenderSystem::GetSingleton()->setIsEditorRenderPass(true);
-	PhysicsSystem::GetSingleton()->setGameplay(false);
-	ScriptSystem::GetSingleton()->setGameplay(false);
+	PhysicsSystem::GetSingleton()->setActive(false);
+	AudioSystem::GetSingleton()->setActive(false);
+	ScriptSystem::GetSingleton()->setActive(false);
 	EditorSystem::GetSingleton()->initialize(m_ApplicationSettings->getJSON()["systems"]["EditorSystem"]);
 	m_PointAtLast10Second = m_ApplicationTimer.Now();
 }

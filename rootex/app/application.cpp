@@ -1,5 +1,6 @@
 #include "application.h"
 
+#include "level_manager.h"
 #include "framework/systems/audio_system.h"
 #include "core/resource_loader.h"
 #include "core/input/input_manager.h"
@@ -10,6 +11,7 @@
 #include "systems/input_system.h"
 #include "systems/ui_system.h"
 #include "systems/render_ui_system.h"
+#include "systems/hierarchy_system.h"
 
 Application* Application::s_Singleton = nullptr;
 
@@ -68,6 +70,7 @@ Application::Application(const String& settingsFile)
 	uiSystemSettings["height"] = m_Window->getHeight();
 	UISystem::GetSingleton()->initialize(uiSystemSettings);
 
+	HierarchySystem::GetSingleton();
 	RenderUISystem::GetSingleton();
 
 	auto&& postInitialize = m_ApplicationSettings->find("postInitialize");
@@ -76,17 +79,13 @@ Application::Application(const String& settingsFile)
 		LuaInterpreter::GetSingleton()->getLuaState().script(ResourceLoader::CreateLuaTextResourceFile(*postInitialize)->getString());
 	}
 
-	for (auto& system : System::s_SystemStack)
-	{
-		system->begin();
-		PRINT(system->getName() + " has begun");
-	}
-
 	m_Window->show();
 }
 
 Application::~Application()
 {
+	AudioSystem::GetSingleton()->shutDown();
+	UISystem::GetSingleton()->shutDown();
 	ShaderLibrary::DestroyShaders();
 }
 
@@ -98,9 +97,15 @@ void Application::run()
 	{
 		m_FrameTimer.reset();
 
-		for (auto& system : System::s_GameplayStack)
+		for (auto& [order, systems] : System::GetSystems())
 		{
-			system->update(m_FrameTimer.getLastFrameTime());
+			for (auto& system : systems)
+			{
+				if (system->isActive())
+				{
+					system->update(m_FrameTimer.getLastFrameTime());
+				}
+			}
 		}
 		
 		process(m_FrameTimer.getLastFrameTime());
@@ -121,10 +126,5 @@ void Application::process(float deltaMilliseconds)
 
 void Application::end()
 {
-	System::CreationOrderSort();
-	for (auto& system : System::s_SystemStack) 
-	{
-		system->end();
-		PRINT(system->getName() + " ended");
-	}
+	LevelManager::GetSingleton()->endLevel();
 }

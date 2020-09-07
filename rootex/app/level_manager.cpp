@@ -15,12 +15,14 @@ LevelManager* LevelManager::GetSingleton()
 
 void LevelManager::openLevel(const String& levelPath, bool openInEditor)
 {
+	if (isAnyLevelOpen())
+	{
+		endLevel();
+	}
+
 	m_CurrentLevelName = FilePath(levelPath).filename().string();
 	m_CurrentLevelSettingsFile = ResourceLoader::CreateTextResourceFile(levelPath + "/" + m_CurrentLevelName + ".level.json");
 	m_CurrentLevelSettings = JSON::json::parse(m_CurrentLevelSettingsFile->getString());
-
-	EntityFactory::GetSingleton()->destroyEntities(true);
-	HierarchySystem::GetSingleton()->getRootHierarchyComponent()->clear();
 
 	if (!OS::IsExists(levelPath))
 	{
@@ -72,6 +74,17 @@ void LevelManager::openLevel(const String& levelPath, bool openInEditor)
 	EntityFactory::GetSingleton()->setupLiveEntities();
 
 	PRINT("Loaded level: " + levelPath);
+
+	for (auto& [order, systems] : System::GetSystems())
+	{
+		for (auto& system : systems)
+		{
+			if (system->isActive())
+			{
+				system->begin();
+			}
+		}
+	}
 }
 
 void LevelManager::saveCurrentLevel()
@@ -97,6 +110,29 @@ void LevelManager::createLevel(const String& newLevelName)
 	OS::CreateFileName("game/assets/levels/" + newLevelName + "/" + newLevelName + ".level.json") << newLevelJSON.dump(1, '\t');
 
 	PRINT("Created new level: " + "game/assets/levels/" + newLevelName);
+}
+
+void LevelManager::endLevel()
+{
+	if (isAnyLevelOpen())
+	{
+		for (auto& [order, systems] : System::GetSystems())
+		{
+			for (auto& system : systems)
+			{
+				system->end();
+			}
+		}
+
+		EntityFactory::GetSingleton()->destroyEntities();
+		HierarchySystem::GetSingleton()->getRootHierarchyComponent()->clear();
+
+		m_CurrentLevelName = "";
+		m_CurrentLevelSettingsFile = nullptr;
+		m_CurrentLevelSettings.clear();
+
+		PRINT("Ended level: " + m_CurrentLevelName);
+	}
 }
 
 Vector<FilePath> LevelManager::getLibrariesPaths()
