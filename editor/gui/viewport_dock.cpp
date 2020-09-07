@@ -65,7 +65,6 @@ void ViewportDock::draw()
 						RenderSystem::GetSingleton()->getCamera()->getOwner()->getComponent<TransformComponent>()->getAbsoluteTransform().Decompose(scale, rotation, position);
 						transform->setPosition(position);
 						transform->setRotationQuaternion(rotation);
-
 					}
 					EventManager::GetSingleton()->call("OpenEntity", "EditorOpenEntity", entity);
 				}

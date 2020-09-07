@@ -44,7 +44,7 @@ SpotLightComponent::SpotLightComponent(const float constAtt, const float linAtt,
     , m_DiffuseColor(diffuseColor)
     , m_DiffuseIntensity(diffuseIntensity)
     , m_Spot(spot)
-	, m_AngleRange(angleRange)
+    , m_AngleRange(angleRange)
 {
 }
 
