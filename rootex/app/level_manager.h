@@ -19,6 +19,7 @@ public:
 	void saveCurrentLevel();
 	void saveCurrentLevelSettings();
 	void createLevel(const String& newLevelName);
+	void endLevel();
 
 	/// Returns paths of all third-party libraries provided by rootex/vendor/.
 	Vector<FilePath> getLibrariesPaths();

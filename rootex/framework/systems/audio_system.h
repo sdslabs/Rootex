@@ -55,7 +55,7 @@ class AudioSystem : public System
 
 	AudioSystem();
 	AudioSystem(AudioSystem&) = delete;
-	~AudioSystem() = default;
+	virtual ~AudioSystem() = default;
 
 public:
 	static AudioSystem* GetSingleton();
@@ -75,6 +75,7 @@ public:
     void setListener(AudioListenerComponent* listenerComponent);
 
 	void restoreListener();
+	void shutDown();
 
 	bool initialize(const JSON::json& systemData) override;
 	void update(float deltaMilliseconds) override;
