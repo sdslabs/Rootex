@@ -553,6 +553,7 @@ int ResourceLoader::Preload(Vector<String> paths, Atomic<int>& progress)
 		preloadTasks.push_back(loadingTask);
 	}
 
+	// FIX: This is a workaround which saves the main thread from being blocked when 1 task is submitted
 	preloadTasks.push_back(Ref<Task>(new Task([]() {})));
 
 	preloadThreads.submit(preloadTasks);

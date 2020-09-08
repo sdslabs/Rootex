@@ -1,6 +1,6 @@
 {
     "project": "Rootex Game",
-    "startLevel": "game/assets/levels/overhead",
+    "startLevel": "game/assets/levels/graphics_test",
     "systems": {
         "AudioSystem": {},
         "InputManager": {
