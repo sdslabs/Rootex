@@ -29,6 +29,18 @@ LevelDescription::LevelDescription(const String& levelPath)
 	}
 }
 
+void LevelManager::RegisterAPI(sol::state& rootex)
+{
+	sol::usertype<Atomic<int>> atomicInt = rootex.new_usertype<Atomic<int>>("AtomicInt", sol::constructors<Atomic<int>(), Atomic<int>(int)>());
+	atomicInt["load"] = [](Atomic<int>* a) { return a->load(); };
+	
+	sol::usertype<LevelManager> levelManager = rootex.new_usertype<LevelManager>("LevelManager");
+	levelManager["Get"] = &LevelManager::GetSingleton;
+	levelManager["openLevel"] = [](LevelManager* l, String& p) { return l->openLevel(p); };
+	levelManager["preloadLevel"] = [](LevelManager* l, String& p, Atomic<int>& a) { return l->preloadLevel(p, a); };
+	levelManager["openPreloadedLevel"] = [](LevelManager* l, String& p) { return l->openPreloadedLevel(p, false); };
+}
+
 LevelManager* LevelManager::GetSingleton()
 {
 	static LevelManager singleton;
