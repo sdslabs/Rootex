@@ -38,6 +38,8 @@ public:
 	const FrameTimer& getAppFrameTimer() const { return m_FrameTimer; }
 	Window* getWindow() { return m_Window.get(); };
 	ApplicationSettings* getSettings() { return m_ApplicationSettings.get(); }
+	/// Returns paths of all third-party libraries provided by rootex/vendor/.
+	Vector<FilePath> getLibrariesPaths();
 };
 
 /// Externally defined function that returns a Ref object of a derived class of Application. 
