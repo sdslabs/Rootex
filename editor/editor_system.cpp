@@ -338,19 +338,6 @@ void EditorSystem::drawDefaultUI()
 					OS::Execute("start \"\" \"" + OS::GetAbsolutePath("build_fonts.bat").string() + "\"");
 					PRINT("Built fonts");
 				}
-				if (ImGui::BeginMenu("Library"))
-				{
-					for (auto&& fileType : ResourceLoader::GetAllFiles())
-					{
-						for (auto&& file : fileType.second)
-						{
-							ImGui::SetNextItemWidth(file->getPath().string().size() * 8);
-							ImGui::LabelText(std::to_string((int)file->getType()).c_str(), file->getPath().string().c_str());
-						}
-					}
-
-					ImGui::EndMenu();
-				}
 				ImGui::EndMenu();
 			}
 			if (ImGui::BeginMenu("View"))

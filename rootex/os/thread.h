@@ -36,7 +36,7 @@ struct TaskQueue
 	__int32 m_Jobs;
 	unsigned __int32 m_Write;
 	unsigned __int32 m_Read;
-	Vector<Task*> m_QueueJobs;
+	Vector<Ref<Task>> m_QueueJobs;
 };
 
 /// Contains the information of completed jobs.
@@ -80,18 +80,19 @@ class ThreadPool
 
 	friend DWORD WINAPI MainLoop(LPVOID voidParameters);
 
-
-public:
-	ThreadPool() = default;
-	ThreadPool(ThreadPool&) = delete;
-	~ThreadPool() = default;
-	
 	void initialize();
 	void shutDown();
 
+public:
+	ThreadPool();
+	ThreadPool(ThreadPool&) = delete;
+	~ThreadPool();	
+
 	/// To submit a job to the jobs queue.
-	void submit(Vector<Task*>& tasks);
+	void submit(Vector<Ref<Task>>& tasks);
 
 	/// Returns true if all tasks have been completed
-	bool isCompleted();
+	bool isCompleted() const;
+	/// Returns when all the tasks have been completed
+	void join() const;
 };

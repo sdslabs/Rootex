@@ -117,32 +117,22 @@ void TextUIComponent::draw()
 	m_Mode = (Mode)choice;
 
 	ImGui::BeginGroup();
-	if (ImGui::BeginCombo("Font", m_FontFile->getPath().filename().string().c_str()))
+	
+	static String inputPath = "Path";
+	ImGui::InputText("##Path", &inputPath);
+	ImGui::SameLine();
+	if (ImGui::Button("Create Font"))
 	{
-		for (auto&& file : ResourceLoader::GetFilesOfType(ResourceFile::Type::Font))
+		if (!ResourceLoader::CreateFontResourceFile(inputPath))
 		{
-			if (ImGui::MenuItem(file->getPath().string().c_str(), ""))
-			{
-				setFont((FontResourceFile*)file);
-			}
+			WARN("Could not create font");
 		}
-		
-		static String inputPath = "Path";
-		ImGui::InputText("##Path", &inputPath);
-		ImGui::SameLine();
-		if (ImGui::Button("Create Font"))
+		else
 		{
-			if (!ResourceLoader::CreateFontResourceFile(inputPath))
-			{
-				WARN("Could not create font");
-			}
-			else
-			{
-				inputPath = "";
-			}
+			inputPath = "";
 		}
-		ImGui::EndCombo();
 	}
+
 	ImGui::EndGroup();
 
 	if (ImGui::BeginDragDropTarget())

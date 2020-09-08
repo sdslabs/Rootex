@@ -15,6 +15,21 @@
 /// Convert seconds to milliseconds
 #define S_TO_MS 1e+3f
 
+/// Future data type for reading future variables
+#include <future>
+template <class T>
+using Future = std::future<T>;
+
+/// Promise data types for sharing futures
+#include <future>
+template <class T>
+using Promise = std::promise<T>;
+
+/// Promise data types for sharing futures
+#include <atomic>
+template <class T>
+using Atomic = std::atomic<T>;
+
 // Smart pointers
 #include <memory>
 /// std::unique_ptr
