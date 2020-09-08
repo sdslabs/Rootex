@@ -4,21 +4,31 @@
             "children": [],
             "parent": 1
         },
+        "ModelComponent": {
+            "isVisible": true,
+            "renderPass": 1,
+            "resFile": "game/assets/test/animal.obj"
+        },
+        "ScriptComponent": {
+            "scripts": [
+                "game/assets/scripts/level_change.lua"
+            ]
+        },
         "TextUIComponent": {
             "color": {
                 "a": 1.0,
-                "b": 1.0,
+                "b": 0.0,
                 "g": 1.0,
-                "r": 1.0
+                "r": 0.11111104488372803
             },
             "fontResource": "game/assets/fonts/lato_30_bold.spritefont",
             "isVisible": true,
             "mode": 0,
             "origin": {
                 "x": 0.0,
-                "y": 966.0
+                "y": 295.0
             },
-            "text": "Hello Rootex!"
+            "text": "Press A to load"
         },
         "TransformComponent": {
             "boundingBox": {
@@ -36,7 +46,7 @@
             "position": {
                 "x": 0.0,
                 "y": 0.0,
-                "z": 0.0
+                "z": -44.5
             },
             "rotation": {
                 "w": 1.0,
@@ -52,7 +62,7 @@
         }
     },
     "Entity": {
-        "ID": 15,
-        "name": "Text2D"
+        "ID": 33,
+        "name": "LevelChanger"
     }
 }
