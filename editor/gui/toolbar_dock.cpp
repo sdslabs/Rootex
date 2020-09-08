@@ -29,7 +29,7 @@ void ToolbarDock::draw()
 			{
 				EventManager::GetSingleton()->call("PreGameStartupSaveEvent", "EditorSaveAll", 0);
 				PRINT("Launched Game process");
-				OS::Execute("\"" + OS::GetGameExecutablePath() + "\" " + LevelManager::GetSingleton()->getCurrentLevelName());
+				OS::Execute("\"" + OS::GetGameExecutablePath() + "\" " + LevelManager::GetSingleton()->getCurrentLevel().getLevelName());
 				PRINT("Game process ended");
 			}
 
