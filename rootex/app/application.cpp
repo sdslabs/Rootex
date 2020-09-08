@@ -93,8 +93,6 @@ Application::~Application()
 
 void Application::run()
 {
-	m_ThreadPool.initialize();
-
 	while (!m_Window->processMessages())
 	{
 		m_FrameTimer.reset();
@@ -116,7 +114,6 @@ void Application::run()
 		m_Window->swapBuffers();
 	}
 
-	m_ThreadPool.shutDown();
 	EventManager::GetSingleton()->call("Application", "ApplicationExit", 0);
 }
 
