@@ -83,4 +83,5 @@ public:
 
 	/// Load all the files passed in, in a parellel manner. Return total tasks generated.
 	static int Preload(Vector<String> paths, Atomic<int>& progress);
+	static void Unload(const Vector<String>& paths);
 };

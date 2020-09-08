@@ -44,7 +44,7 @@ void InputSystem::setConfig(const JSON::json& configData, bool openInEditor)
 		return;
 	}
 
-	if (configData.find("inputScheme") != configData.end())
+	if (configData.find("inputSchemes") != configData.end())
 	{
 		loadSchemes(configData["inputSchemes"]);
 		if (configData.find("startScheme") != configData.end())

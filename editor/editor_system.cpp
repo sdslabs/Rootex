@@ -1,5 +1,6 @@
 #include "editor_system.h"
 
+#include "core/random.h"
 #include "app/level_manager.h"
 #include "core/renderer/rendering_device.h"
 #include "core/renderer/material_library.h"
@@ -22,7 +23,6 @@ bool EditorSystem::initialize(const JSON::json& systemData)
 	BIND_EVENT_MEMBER_FUNCTION("EditorSaveBeforeQuit", EditorSystem::saveBeforeQuit);
 	BIND_EVENT_MEMBER_FUNCTION("EditorSaveAll", EditorSystem::saveAll);
 	BIND_EVENT_MEMBER_FUNCTION("EditorAutoSave", EditorSystem::autoSave);
-	BIND_EVENT_MEMBER_FUNCTION("EditorOpenLevel", EditorSystem::openLevel);
 	BIND_EVENT_MEMBER_FUNCTION("EditorCreateNewLevel", EditorSystem::createNewLevel);
 	BIND_EVENT_MEMBER_FUNCTION("EditorCreateNewEntity", EditorSystem::createNewEntity);
 	BIND_EVENT_MEMBER_FUNCTION("EditorCreateNewMaterial", EditorSystem::createNewMaterial);
@@ -211,6 +211,8 @@ void EditorSystem::drawDefaultUI()
 		windowFlags |= ImGuiWindowFlags_NoBackground;
 
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+	
+	static String loadingLevel;
 
 	ImGui::Begin("Rootex Editor", nullptr, windowFlags);
 	{
@@ -258,9 +260,7 @@ void EditorSystem::drawDefaultUI()
 						}
 						ImGui::EndCombo();
 					}
-					ImGui::SameLine();
 					ImGui::InputText("Material Path", &newMaterialName, ImGuiInputTextFlags_AlwaysInsertMode);
-					ImGui::SameLine();
 					if (ImGui::Button("Create"))
 					{
 						if (newMaterialName != "" && newMaterialType != "Select Material Type")
@@ -278,7 +278,6 @@ void EditorSystem::drawDefaultUI()
 				if (ImGui::BeginMenu("Create Level"))
 				{
 					ImGui::InputText("Level Name", &newLevelName, ImGuiInputTextFlags_AlwaysInsertMode);
-					ImGui::SameLine();
 					if (ImGui::Button("Create"))
 					{
 						if (LevelManager::GetSingleton()->isAnyLevelOpen())
@@ -289,7 +288,7 @@ void EditorSystem::drawDefaultUI()
 						else
 						{
 							EventManager::GetSingleton()->call("EditorFileNewLevel", "EditorCreateNewLevel", newLevelName);
-							EventManager::GetSingleton()->call("EditorOpenNewLevel", "EditorOpenLevel", "game/assets/levels/" + newLevelName);
+							loadingLevel = newLevelName;
 						}
 					}
 					ImGui::EndMenu();
@@ -308,7 +307,7 @@ void EditorSystem::drawDefaultUI()
 							}
 							else
 							{
-								EventManager::GetSingleton()->call("EditorFileMenuOpenLevel", "EditorOpenLevel", levelName.string());
+								loadingLevel = levelName.generic_string();
 							}
 						}
 					}
@@ -376,9 +375,9 @@ void EditorSystem::drawDefaultUI()
 			}
 			if (ImGui::BeginMenu("Level"))
 			{
-				if (ImGui::MenuItem("Settings"))
+				if (LevelManager::GetSingleton()->isAnyLevelOpen() && ImGui::MenuItem("Settings"))
 				{
-					EventManager::GetSingleton()->call("EditorLevelMenu", "EditorOpenFile", LevelManager::GetSingleton()->getCurrentLevelSettingsFile()->getPath().string());
+					EventManager::GetSingleton()->call("EditorLevelMenu", "EditorOpenFile", LevelManager::GetSingleton()->getCurrentLevel().getLevelSettingsFile()->getPath().string());
 				}
 				ImGui::EndMenu();
 			}
@@ -390,7 +389,7 @@ void EditorSystem::drawDefaultUI()
 				}
 				if (ImGui::BeginMenu("Open Source Licenses"))
 				{
-					for (auto&& library : LevelManager::GetSingleton()->getLibrariesPaths())
+					for (auto&& library : Application::GetSingleton()->getLibrariesPaths())
 					{
 						if (ImGui::MenuItem(library.filename().string().c_str(), ""))
 						{
@@ -410,7 +409,7 @@ void EditorSystem::drawDefaultUI()
 			if (ImGui::BeginPopupModal("Save", 0, ImGuiWindowFlags_AlwaysAutoResize))
 			{
 				ImGui::SetNextWindowSize({ ImGui::GetWindowWidth(), ImGui::GetWindowHeight() });
-				ImGui::Text(String("Do you want to save " + LevelManager::GetSingleton()->getCurrentLevelName() + "?").c_str());
+				ImGui::Text(String("Do you want to save " + LevelManager::GetSingleton()->getCurrentLevel().getLevelName() + "?").c_str());
 				if (ImGui::Button("Save"))
 				{
 					if (m_PopupCause == "quit")
@@ -422,14 +421,14 @@ void EditorSystem::drawDefaultUI()
 					{
 						saveAll(nullptr);
 						EventManager::GetSingleton()->call("EditorFileNewLevel", "EditorCreateNewLevel", newLevelName);
-						EventManager::GetSingleton()->call("EditorOpenNewLevel", "EditorOpenLevel", "game/assets/levels/" + newLevelName);
+						loadingLevel = newLevelName;
 						ImGui::CloseCurrentPopup();
 						m_MenuAction = "";
 					}
 					else if (m_PopupCause == "open")
 					{
 						saveAll(nullptr);
-						EventManager::GetSingleton()->call("EditorFileMenuOpenLevel", "EditorOpenLevel", openLevelName);
+						loadingLevel = openLevelName;
 						ImGui::CloseCurrentPopup();
 						m_MenuAction = "";
 					}
@@ -445,13 +444,13 @@ void EditorSystem::drawDefaultUI()
 					else if (m_PopupCause == "create")
 					{
 						EventManager::GetSingleton()->call("EditorFileNewLevel", "EditorCreateNewLevel", newLevelName);
-						EventManager::GetSingleton()->call("EditorOpenNewLevel", "EditorOpenLevel", "game/assets/levels/" + newLevelName);
+						loadingLevel = newLevelName;
 						ImGui::CloseCurrentPopup();
 						m_MenuAction = "";
 					}
 					else if (m_PopupCause == "open")
 					{
-						EventManager::GetSingleton()->call("EditorFileMenuOpenLevel", "EditorOpenLevel", openLevelName);
+						loadingLevel = openLevelName;
 						ImGui::CloseCurrentPopup();
 						m_MenuAction = "";
 					}
@@ -483,7 +482,7 @@ void EditorSystem::drawDefaultUI()
 			}
 
 			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
-			for (auto&& library : LevelManager::GetSingleton()->getLibrariesPaths())
+			for (auto&& library : Application::GetSingleton()->getLibrariesPaths())
 			{
 				if (ImGui::BeginPopup(library.string().c_str(), ImGuiWindowFlags_AlwaysAutoResize))
 				{
@@ -496,6 +495,41 @@ void EditorSystem::drawDefaultUI()
 			ImGui::EndMenuBar();
 		}
 	}
+
+	static Atomic<int> progress;
+	static float currentProgress = 0.0f;
+	static int totalProgress = -1;
+
+	if (!loadingLevel.empty() && totalProgress == -1)
+	{
+		ImGui::OpenPopup("Load Level");
+		totalProgress = LevelManager::GetSingleton()->preloadLevel(loadingLevel, progress, true);
+		currentProgress = 0.0f;
+	}
+
+	if (ImGui::BeginPopupModal("Load Level", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		ImGui::Text("Loading level: %s", loadingLevel.c_str());
+
+		ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
+		float target = progress.load() / (float)totalProgress;
+		float velocity = (target - currentProgress) * Random::Float();
+		currentProgress += velocity * 0.01f;
+		ImGui::ProgressBar(currentProgress);
+
+		if (totalProgress == progress)
+		{
+			LevelManager::GetSingleton()->openPreloadedLevel(loadingLevel, true);
+			SetWindowText(GetActiveWindow(), ("Rootex Editor: " + LevelManager::GetSingleton()->getCurrentLevel().getLevelName()).c_str());
+			totalProgress = -1;
+			progress = 0;
+			loadingLevel = "";
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::EndPopup();
+	}
+
 	ImGui::End();
 }
 
@@ -558,7 +592,7 @@ Variant EditorSystem::saveAll(const Event* event)
 	{
 		MaterialLibrary::SaveAll();
 		LevelManager::GetSingleton()->saveCurrentLevel();
-		PRINT("Successfully saved level: " + LevelManager::GetSingleton()->getCurrentLevelName());
+		PRINT("Successfully saved level: " + LevelManager::GetSingleton()->getCurrentLevel().getLevelName());
 	}
 	else
 	{
@@ -571,15 +605,6 @@ Variant EditorSystem::autoSave(const Event* event)
 {
 	PRINT("Auto-saving levels...");
 	saveAll(nullptr);
-	return true;
-}
-
-Variant EditorSystem::openLevel(const Event* event)
-{
-	String levelPath(Extract(String, event->getData()));
-	LevelManager::GetSingleton()->openLevel(levelPath, true);
-	SetWindowText(GetActiveWindow(), ("Rootex Editor: " + LevelManager::GetSingleton()->getCurrentLevelName()).c_str());
-
 	return true;
 }
 

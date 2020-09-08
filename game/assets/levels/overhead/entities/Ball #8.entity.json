@@ -7,7 +7,7 @@
         "ModelComponent": {
             "isVisible": true,
             "renderPass": 1,
-            "resFile": "game\\assets\\test\\sphere.obj"
+            "resFile": "game/assets/test/sphere.obj"
         },
         "PointLightComponent": {
             "ambientColor": {
