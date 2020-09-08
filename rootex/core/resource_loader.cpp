@@ -553,8 +553,32 @@ int ResourceLoader::Preload(Vector<String> paths, Atomic<int>& progress)
 		preloadTasks.push_back(loadingTask);
 	}
 
+	preloadTasks.push_back(Ref<Task>(new Task([]() {})));
+
 	preloadThreads.submit(preloadTasks);
 
 	PRINT("Preloading " + std::to_string(paths.size()) + " resource files");
-	return preloadTasks.size();
+	return preloadTasks.size() - 1; // 1 less for the dummy task
+}
+
+void ResourceLoader::Unload(const Vector<String>& paths)
+{
+	Vector<const Ptr<ResourceData>*> unloads;
+	for (auto& [data, file] : s_ResourcesDataFiles)
+	{
+		for (auto& path : paths)
+		{
+			if (data->getPath() == path)
+			{
+				unloads.push_back(&data);
+			}
+		}
+	}
+
+	for (auto& dataPtr : unloads)
+	{
+		s_ResourcesDataFiles.erase(*dataPtr);
+	}
+
+	PRINT("Unloaded " + std::to_string(paths.size()) + " resource files");
 }
