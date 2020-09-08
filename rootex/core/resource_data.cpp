@@ -62,7 +62,7 @@ void ResourceData::resetStream()
 ResourceData::ResourceData(FilePath path, FileBuffer& data)
     : m_ID(s_Count)
     , m_FileBuffer(data)
-    , m_Path(path)
+    , m_Path(path.generic_string())
 {
 	s_Count++;
 }

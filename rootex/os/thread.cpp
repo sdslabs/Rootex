@@ -100,8 +100,10 @@ DWORD WINAPI MainLoop(LPVOID voidParameters)
 	return 0;
 }
 
-void ThreadPool::submit(Vector<Task*>& tasks)
+void ThreadPool::submit(Vector<Ref<Task>>& tasks)
 {
+	join();
+
 	MasterThread masterThread;
 	masterThread.m_TasksComplete.m_Jobs = 0;
 	masterThread.m_TasksReady.m_Jobs = 0;
@@ -201,9 +203,17 @@ void ThreadPool::submit(Vector<Task*>& tasks)
 	}
 }
 
-bool ThreadPool::isCompleted()
+bool ThreadPool::isCompleted() const
 {
-	return m_TaskQueue.m_Jobs == 0;
+	return m_TaskQueue.m_QueueJobs.size() == m_TasksComplete.m_Jobs;
+}
+
+void ThreadPool::join() const
+{
+	while (!isCompleted())
+	{
+		;
+	}
 }
 
 void ThreadPool::shutDown()
@@ -215,4 +225,14 @@ void ThreadPool::shutDown()
 	LeaveCriticalSection(&this->m_CriticalSection);
 	WakeAllConditionVariable(&this->m_ConsumerVariable);
 	WaitForMultipleObjects(m_Threads, m_Handles.data(), TRUE, INFINITE);
+}
+
+ThreadPool::ThreadPool()
+{
+	initialize();
+}
+
+ThreadPool::~ThreadPool()
+{
+	shutDown();
 }

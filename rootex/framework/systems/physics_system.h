@@ -48,7 +48,6 @@ public:
 	void debugDraw();
 	void debugDrawComponent(const btTransform& worldTransform, const btCollisionShape* shape, const btVector3& color);
 	void update(float deltaMilliseconds) override;
-	void end() override;
 
 	void removeRigidBody(btRigidBody* rigidBody);
 };
