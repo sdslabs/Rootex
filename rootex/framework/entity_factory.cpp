@@ -64,6 +64,7 @@ EntityID EntityFactory::getNextEditorID()
 EntityFactory::EntityFactory()
 {
 	BIND_EVENT_MEMBER_FUNCTION("DeleteEntity", deleteEntityEvent);
+	BIND_EVENT_MEMBER_FUNCTION("ApplicationExit", applicationExit);
 
 	REGISTER_COMPONENT(TestComponent);
 	REGISTER_COMPONENT(DebugComponent);
@@ -88,11 +89,6 @@ EntityFactory::EntityFactory()
 	REGISTER_COMPONENT(CPUParticlesComponent);
 	REGISTER_COMPONENT(TriggerComponent);
 	REGISTER_COMPONENT(UIComponent);
-}
-
-EntityFactory::~EntityFactory()
-{
-	destroyEntities(false);
 }
 
 Ref<Component> EntityFactory::createComponent(const String& name, const JSON::json& componentData)
@@ -272,6 +268,12 @@ Ref<Entity> EntityFactory::createRootEntity()
 Variant EntityFactory::deleteEntityEvent(const Event* event)
 {
 	deleteEntity(Extract(Ref<Entity>, event->getData()));
+	return true;
+}
+
+Variant EntityFactory::applicationExit(const Event* event)
+{
+	EntityFactory::GetSingleton()->destroyEntities(false);
 	return true;
 }
 

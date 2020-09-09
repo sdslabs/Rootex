@@ -2,7 +2,12 @@
 
 #include "components/debug_component.h"
 
-void DebugSystem::update(float deltaMilliseconds)
+DebugSystem::DebugSystem()
+    : System("DebugSystem", UpdateOrder::None, false)
+{
+}
+
+void DebugSystem::reportComponents()
 {
 	for (auto& component : s_Components[DebugComponent::s_ID])
 	{
@@ -11,3 +16,16 @@ void DebugSystem::update(float deltaMilliseconds)
 			". # of components: " + std::to_string(component->getOwner()->getAllComponents().size()));
 	}
 }
+
+#ifdef ROOTEX_EDITOR
+#include "imgui.h"
+void DebugSystem::draw()
+{
+	System::draw();
+
+	if (ImGui::Button("Check Components"))
+	{
+		reportComponents();
+	}
+}
+#endif // ROOTEX_EDITOR

@@ -5,6 +5,7 @@
 #include "components/visual/render_ui_component.h"
 
 RenderUISystem::RenderUISystem()
+    : System("RenderUISystem", UpdateOrder::RenderUI, true)
 {
 	m_UITransformationStack.push_back(Matrix::Identity);
 }
@@ -15,7 +16,7 @@ RenderUISystem* RenderUISystem::GetSingleton()
 	return &singleton;
 }
 
-void RenderUISystem::render()
+void RenderUISystem::update(float deltaMilliseconds)
 {
 	RenderingDevice::GetSingleton()->beginDrawUI();
 	RenderUIComponent* ui = nullptr;
@@ -46,3 +47,11 @@ Matrix RenderUISystem::getTopUIMatrix()
 {
 	return m_UITransformationStack.back();
 }
+
+#ifdef ROOTEX_EDITOR
+#include "imgui.h"
+void RenderUISystem::draw()
+{
+	System::draw();
+}
+#endif

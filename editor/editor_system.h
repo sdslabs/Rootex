@@ -19,7 +19,7 @@
 
 class HierarchyGraph;
 
-class Editor
+class EditorSystem : public System
 {
 	int m_DockSpaceID;
 	String m_MenuAction;
@@ -58,9 +58,9 @@ class Editor
 	Ptr<FileViewer> m_FileViewer;
 	Ptr<ClassesDock> m_Classes;
 
-	Editor() = default;
-	Editor(Editor&) = delete;
-	~Editor();
+	EditorSystem();
+	EditorSystem(const EditorSystem&) = delete;
+	~EditorSystem();
 
 	void drawDefaultUI();
 
@@ -76,10 +76,10 @@ class Editor
 	Variant createNewMaterial(const Event* event);
 
 public:
-	static Editor* GetSingleton();
+	static EditorSystem* GetSingleton();
 
-	void initialize(HWND hWnd, const JSON::json& projectJSON);
-	void render();
+	bool initialize(const JSON::json& systemData) override;
+	void update(float deltaMilliseconds) override;
 
 	void pushRegularFont();
 	void pushBoldFont();

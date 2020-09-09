@@ -1,7 +1,7 @@
 #include "audio_player.h"
 
 #include "framework/systems/audio_system.h"
-#include "editor/editor.h"
+#include "editor/editor_system.h"
 
 #include "imgui.h"
 
@@ -78,7 +78,7 @@ void AudioPlayer::draw()
 
 	if (m_OpenFile->isDirty())
 	{
-		ImGui::TextColored(Editor::GetSingleton()->getColors().m_Warning, "File may be changed on disk");
+		ImGui::TextColored(EditorSystem::GetSingleton()->getColors().m_Warning, "File may be changed on disk");
 		ImGui::SameLine();
 		if (ImGui::Button("Reload"))
 		{

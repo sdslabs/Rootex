@@ -48,7 +48,7 @@ class ResourceFile;
 /// System encapsulating OpenAL error checkers and getters.
 class AudioSystem : public System
 {
-	unsigned int m_UpdateIntervalMilliseconds;
+	float m_UpdateIntervalMilliseconds;
 	ALCdevice* m_Device;
 	ALCcontext* m_Context;
 
@@ -79,8 +79,8 @@ public:
 
 	void restoreListener();
 
-	bool initialize();
-	void begin();
-	void update();
-	void shutDown();
+	bool initialize(const JSON::json& systemData) override;
+	void update(float deltaMilliseconds) override;
+	void begin() override;
+	void end() override;
 };
