@@ -26,15 +26,13 @@
  *
  */
 
-#ifndef RMLUICORETEXTURE_H
-#define RMLUICORETEXTURE_H
+#ifndef RMLUI_CORE_TEXTURE_H
+#define RMLUI_CORE_TEXTURE_H
 
 #include "Header.h"
 #include "Types.h"
-#include <functional>
 
 namespace Rml {
-namespace Core {
 
 class TextureResource;
 class RenderInterface;
@@ -46,7 +44,7 @@ class RenderInterface;
 	/// @param[out] dimensions The width and height of the generated texture.
 	/// @return True on success.
 */
-using TextureCallback = std::function<bool(const String& name, UniquePtr<const byte[]>& data, Vector2i& dimensions)>;
+using TextureCallback = Function<bool(const String& name, UniquePtr<const byte[]>& data, Vector2i& dimensions)>;
 
 
 /**
@@ -80,9 +78,6 @@ public:
 	/// @return The texture's dimensions. This will be (0, 0) if the texture isn't loaded.
 	Vector2i GetDimensions(RenderInterface* render_interface) const;
 
-	/// Removes the underlying texture resource from the texture database, thereby releasing the texture once all references to it are removed.
-	void RemoveDatabaseCache() const;
-
 	/// Returns true if the texture points to the same underlying resource.
 	bool operator==(const Texture&) const;
 
@@ -93,7 +88,5 @@ private:
 	SharedPtr<TextureResource> resource;
 };
 
-}
-}
-
+} // namespace Rml
 #endif
