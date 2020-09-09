@@ -1,6 +1,6 @@
 #include "hierarchy_dock.h"
 
-#include "editor/editor.h"
+#include "editor/editor_system.h"
 
 #include "framework/systems/hierarchy_system.h"
 #include "framework/components/transform_component.h"
@@ -21,11 +21,11 @@ void HierarchyDock::showHierarchySubTree(HierarchyComponent* hierarchy)
 
 			if (hierarchy->getOwner()->isEditorOnly())
 			{
-				ImGui::PushStyleColor(ImGuiCol_Text, Editor::GetSingleton()->getColors().m_Warning);
+				ImGui::PushStyleColor(ImGuiCol_Text, EditorSystem::GetSingleton()->getColors().m_Warning);
 			}
 			else
 			{
-				ImGui::PushStyleColor(ImGuiCol_Text, Editor::GetSingleton()->getColors().m_Text);
+				ImGui::PushStyleColor(ImGuiCol_Text, EditorSystem::GetSingleton()->getColors().m_Text);
 			}
 
 			if (!node->isEditorOnly() || m_IsShowEditorEntities)

@@ -25,6 +25,7 @@ void RenderingDevice::setScreenState(bool fullscreen)
 void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 {
 	m_MSAA = MSAA;
+	m_WindowHandle = hWnd;
 	UINT createDeviceFlags = 0;
 #if defined(DEBUG) || defined(_DEBUG)
 	createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
@@ -52,45 +53,7 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 		ERR("Direct3D Feature Level 11 unsupported.");
 	}
 
-	DXGI_SWAP_CHAIN_DESC sd = { 0 };
-	sd.BufferDesc.Width = width;
-	sd.BufferDesc.Height = height;
-	sd.BufferDesc.RefreshRate.Numerator = 0;
-	sd.BufferDesc.RefreshRate.Denominator = 1;
-	sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-	sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-
-	m_Device->CheckMultisampleQualityLevels(DXGI_FORMAT_R8G8B8A8_UNORM, 4, &m_4XMSQuality);
-	PANIC(m_4XMSQuality <= 0, "MSAA is not supported on this hardware");
-
-	if (m_4XMSQuality && MSAA)
-	{
-		sd.SampleDesc.Count = 4;
-		sd.SampleDesc.Quality = m_4XMSQuality - 1;
-	}
-	else // No MSAA
-	{
-		sd.SampleDesc.Count = 1;
-		sd.SampleDesc.Quality = 0;
-	}
-
-	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	sd.BufferCount = 1;
-	sd.OutputWindow = hWnd;
-	sd.Windowed = true;
-	sd.SwapEffect = DXGI_SWAP_EFFECT::DXGI_SWAP_EFFECT_SEQUENTIAL;
-
-	Microsoft::WRL::ComPtr<IDXGIDevice> dxgiDevice = 0;
-	m_Device->QueryInterface(__uuidof(IDXGIDevice), (void**)&dxgiDevice);
-
-	Microsoft::WRL::ComPtr<IDXGIAdapter> dxgiAdapter = 0;
-	dxgiDevice->GetParent(__uuidof(IDXGIAdapter), (void**)&dxgiAdapter);
-
-	Microsoft::WRL::ComPtr<IDXGIFactory> dxgiFactory = 0;
-	dxgiAdapter->GetParent(__uuidof(IDXGIFactory), (void**)&dxgiFactory);
-
-	dxgiFactory->CreateSwapChain(m_Device.Get(), &sd, &m_SwapChain);
+	createSwapChainBuffersRenderTargets(width, height, MSAA, hWnd);
 
 	D3D11_FEATURE_DATA_D3D11_OPTIONS features;
 	GFX_ERR_CHECK(m_Device->CheckFeatureSupport(D3D11_FEATURE_D3D11_OPTIONS, &features, sizeof(features)));
@@ -117,35 +80,6 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 
 		GFX_ERR_CHECK(m_Device->CreateDepthStencilState(&dssDesc, &m_SkyDepthStencilState));
 	}
-
-	Microsoft::WRL::ComPtr<ID3D11Texture2D> depthStencil = nullptr;
-	D3D11_TEXTURE2D_DESC descDepth = { 0 };
-	descDepth.Width = width;
-	descDepth.Height = height;
-	descDepth.MipLevels = 1u;
-	descDepth.ArraySize = 1u;
-	descDepth.Format = DXGI_FORMAT_D32_FLOAT;
-	descDepth.SampleDesc.Count = sd.SampleDesc.Count;
-	descDepth.SampleDesc.Quality = sd.SampleDesc.Quality;
-	descDepth.Usage = D3D11_USAGE_DEFAULT;
-	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	GFX_ERR_CHECK(m_Device->CreateTexture2D(&descDepth, nullptr, &depthStencil));
-	D3D11_DEPTH_STENCIL_VIEW_DESC descDSView = {};
-	descDSView.Format = DXGI_FORMAT_D32_FLOAT;
-	descDSView.ViewDimension = MSAA ? D3D11_DSV_DIMENSION_TEXTURE2DMS : D3D11_DSV_DIMENSION_TEXTURE2D;
-	descDSView.Texture2D.MipSlice = 0u;
-	GFX_ERR_CHECK(m_Device->CreateDepthStencilView(depthStencil.Get(), &descDSView, &m_DepthStencilView));
-
-	m_CurrentRenderTarget = nullptr;
-
-	Microsoft::WRL::ComPtr<ID3D11Resource> backBuffer = nullptr;
-	GFX_ERR_CHECK(m_SwapChain->GetBuffer(0, __uuidof(ID3D11Resource), reinterpret_cast<void**>(backBuffer.ReleaseAndGetAddressOf())));
-	GFX_ERR_CHECK(m_Device->CreateRenderTargetView(
-	    backBuffer.Get(),
-	    nullptr,
-	    &m_RenderTargetBackBufferView));
-
-	createRenderTextureTarget(width, height);
 
 	//REMARK- reversed winding order to allow ccw .obj files to be rendered properly, can trouble later
 	{
@@ -236,13 +170,13 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 		blendDesc.IndependentBlendEnable = false;
 		D3D11_RENDER_TARGET_BLEND_DESC renderBlendDesc;
 		blendDesc.RenderTarget[0].BlendEnable = FALSE;
-		blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+		blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
 		blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
 		blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
 		blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
 		blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
 		blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-		blendDesc.RenderTarget[0].RenderTargetWriteMask = 0x0f;
+		blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 		GFX_ERR_CHECK(m_Device->CreateBlendState(&blendDesc, &m_DefaultBlendState));
 	}
 	{
@@ -252,32 +186,87 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 		blendDesc.IndependentBlendEnable = false;
 		D3D11_RENDER_TARGET_BLEND_DESC renderBlendDesc;
 		blendDesc.RenderTarget[0].BlendEnable = TRUE;
-		blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+		blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
 		blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
 		blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
 		blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
 		blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
 		blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-		blendDesc.RenderTarget[0].RenderTargetWriteMask = 0x0f;
+		blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 		GFX_ERR_CHECK(m_Device->CreateBlendState(&blendDesc, &m_AlphaBlendState));
 	}
 	m_FontBatch.reset(new DirectX::SpriteBatch(m_Context.Get()));
 }
 
-Ref<DirectX::SpriteFont> RenderingDevice::createFont(FileBuffer* fontFileBuffer)
+void RenderingDevice::createSwapChainBuffersRenderTargets(int width, int height, bool MSAA, const HWND& hWnd)
 {
-	return Ref<DirectX::SpriteFont>(new DirectX::SpriteFont(m_Device.Get(), (const uint8_t*)fontFileBuffer->data(), fontFileBuffer->size()));
-}
+	DXGI_SWAP_CHAIN_DESC sd = { 0 };
+	sd.BufferDesc.Width = width;
+	sd.BufferDesc.Height = height;
+	sd.BufferDesc.RefreshRate.Numerator = 0;
+	sd.BufferDesc.RefreshRate.Denominator = 1;
+	sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+	sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 
-Microsoft::WRL::ComPtr<ID3DBlob> RenderingDevice::createBlob(LPCWSTR path)
-{
-	Microsoft::WRL::ComPtr<ID3DBlob> pBlob = nullptr;
-	GFX_ERR_CHECK(D3DReadFileToBlob(path, &pBlob));
-	return pBlob;
-}
+	m_Device->CheckMultisampleQualityLevels(DXGI_FORMAT_R8G8B8A8_UNORM, 4, &m_4XMSQuality);
+	PANIC(m_4XMSQuality <= 0, "MSAA is not supported on this hardware");
 
-void RenderingDevice::createRenderTextureTarget(int width, int height)
-{
+	if (m_4XMSQuality && MSAA)
+	{
+		sd.SampleDesc.Count = 4;
+		sd.SampleDesc.Quality = m_4XMSQuality - 1;
+	}
+	else // No MSAA
+	{
+		sd.SampleDesc.Count = 1;
+		sd.SampleDesc.Quality = 0;
+	}
+
+	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	sd.BufferCount = 1;
+	sd.OutputWindow = hWnd;
+	sd.Windowed = true;
+	sd.SwapEffect = DXGI_SWAP_EFFECT::DXGI_SWAP_EFFECT_DISCARD;
+
+	Microsoft::WRL::ComPtr<IDXGIDevice> dxgiDevice = 0;
+	m_Device->QueryInterface(__uuidof(IDXGIDevice), (void**)&dxgiDevice);
+
+	Microsoft::WRL::ComPtr<IDXGIAdapter> dxgiAdapter = 0;
+	dxgiDevice->GetParent(__uuidof(IDXGIAdapter), (void**)&dxgiAdapter);
+
+	Microsoft::WRL::ComPtr<IDXGIFactory> dxgiFactory = 0;
+	dxgiAdapter->GetParent(__uuidof(IDXGIFactory), (void**)&dxgiFactory);
+
+	dxgiFactory->CreateSwapChain(m_Device.Get(), &sd, &m_SwapChain);
+
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> depthStencil = nullptr;
+	D3D11_TEXTURE2D_DESC descDepth = { 0 };
+	descDepth.Width = width;
+	descDepth.Height = height;
+	descDepth.MipLevels = 1u;
+	descDepth.ArraySize = 1u;
+	descDepth.Format = DXGI_FORMAT_D32_FLOAT;
+	descDepth.SampleDesc.Count = sd.SampleDesc.Count;
+	descDepth.SampleDesc.Quality = sd.SampleDesc.Quality;
+	descDepth.Usage = D3D11_USAGE_DEFAULT;
+	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	GFX_ERR_CHECK(m_Device->CreateTexture2D(&descDepth, nullptr, &depthStencil));
+	D3D11_DEPTH_STENCIL_VIEW_DESC descDSView = {};
+	descDSView.Format = DXGI_FORMAT_D32_FLOAT;
+	descDSView.ViewDimension = MSAA ? D3D11_DSV_DIMENSION_TEXTURE2DMS : D3D11_DSV_DIMENSION_TEXTURE2D;
+	descDSView.Texture2D.MipSlice = 0u;
+	GFX_ERR_CHECK(m_Device->CreateDepthStencilView(depthStencil.Get(), &descDSView, &m_DepthStencilView));
+
+	m_CurrentRenderTarget = nullptr;
+
+	Microsoft::WRL::ComPtr<ID3D11Resource> backBuffer = nullptr;
+	GFX_ERR_CHECK(m_SwapChain->GetBuffer(0, __uuidof(ID3D11Resource), reinterpret_cast<void**>(backBuffer.ReleaseAndGetAddressOf())));
+	GFX_ERR_CHECK(m_Device->CreateRenderTargetView(
+	    backBuffer.Get(),
+	    nullptr,
+	    &m_RenderTargetBackBufferView));
+
 	D3D11_TEXTURE2D_DESC textureDesc;
 	D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc;
 	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
@@ -311,6 +300,18 @@ void RenderingDevice::createRenderTextureTarget(int width, int height)
 	shaderResourceViewDesc.Texture2D.MipLevels = 1;
 
 	GFX_ERR_CHECK(m_Device->CreateShaderResourceView(m_RenderTargetTexture.Get(), &shaderResourceViewDesc, &m_RenderTextureShaderResourceView));
+}
+
+Ref<DirectX::SpriteFont> RenderingDevice::createFont(FileBuffer* fontFileBuffer)
+{
+	return Ref<DirectX::SpriteFont>(new DirectX::SpriteFont(m_Device.Get(), (const uint8_t*)fontFileBuffer->data(), fontFileBuffer->size()));
+}
+
+Microsoft::WRL::ComPtr<ID3DBlob> RenderingDevice::createBlob(LPCWSTR path)
+{
+	Microsoft::WRL::ComPtr<ID3DBlob> pBlob = nullptr;
+	GFX_ERR_CHECK(D3DReadFileToBlob(path, &pBlob));
+	return pBlob;
 }
 
 void RenderingDevice::enableSkyDepthStencilState()
@@ -646,7 +647,10 @@ void RenderingDevice::setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY pt)
 
 void RenderingDevice::setViewport(const D3D11_VIEWPORT* vp)
 {
-	m_Context->RSSetViewports(1u, vp);
+	if (m_Context)
+	{
+		m_Context->RSSetViewports(1u, vp);
+	}
 }
 
 Microsoft::WRL::ComPtr<ID3D11SamplerState> RenderingDevice::createSamplerState()

@@ -77,7 +77,7 @@ void AudioSystem::CheckALUTError(const char* msg, const char* fname, int line)
 	}
 }
 
-bool AudioSystem::initialize()
+bool AudioSystem::initialize(const JSON::json& systemData)
 {
 	if (!alutInit(NULL, NULL))
 	{
@@ -101,7 +101,7 @@ void AudioSystem::begin()
 	}
 }
 
-void AudioSystem::update()
+void AudioSystem::update(float deltaMilliseconds)
 {
 	AudioComponent* audioComponent = nullptr;
 	for (Component* component : s_Components[AudioComponent::s_ID])
@@ -116,8 +116,6 @@ void AudioSystem::update()
 		const Vector3& listenerPosition = m_Listener->getPosition();
 		AL_CHECK(alListener3f(AL_POSITION, listenerPosition.x, listenerPosition.y, listenerPosition.z));
 	}
-	
-	std::this_thread::sleep_for(std::chrono::milliseconds(m_UpdateIntervalMilliseconds));
 }
 
 AudioSystem* AudioSystem::GetSingleton()
@@ -126,7 +124,7 @@ AudioSystem* AudioSystem::GetSingleton()
 	return &singleton;
 }
 
-void AudioSystem::shutDown()
+void AudioSystem::end()
 {
 	AudioComponent* audioComponent = nullptr;
 	for (Component* component : s_Components[AudioComponent::s_ID])
@@ -153,7 +151,8 @@ void AudioSystem::restoreListener()
 }
 
 AudioSystem::AudioSystem()
-    : m_Context(nullptr)
+    : System("AudioSystem", UpdateOrder::None, true)
+	, m_Context(nullptr)
     , m_Device(nullptr)
     , m_UpdateIntervalMilliseconds(0)
     , m_Listener(nullptr)

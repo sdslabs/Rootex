@@ -39,12 +39,13 @@ protected:
 
 	EntityFactory();
 	EntityFactory(EntityFactory&) = delete;
-	~EntityFactory();
+	~EntityFactory() = default;
 
 	Ref<Entity> createRootEntity();
 	friend class HierarchyGraph;
 
 	Variant deleteEntityEvent(const Event* event);
+	Variant applicationExit(const Event* event);
 
 public:
 	static void RegisterAPI(sol::state& rootex);

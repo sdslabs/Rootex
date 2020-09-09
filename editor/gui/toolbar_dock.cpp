@@ -3,16 +3,12 @@
 #include "editor/editor_application.h"
 
 #include "app/level_manager.h"
-#include "framework/components/script_component.h"
 #include "framework/system.h"
-#include "framework/systems/render_system.h"
 
 #include "vendor/ImGUI/imgui.h"
 #include "vendor/ImGUI/imgui_stdlib.h"
 #include "vendor/ImGUI/imgui_impl_dx11.h"
 #include "vendor/ImGUI/imgui_impl_win32.h"
-
-#include "core/renderer/rendering_device.h"
 
 ToolbarDock::ToolbarDock()
 {
@@ -55,77 +51,31 @@ void ToolbarDock::draw()
 			{
 				m_FPSRecords.erase(m_FPSRecords.begin());
 				m_FPSRecords.push_back(EditorApplication::GetSingleton()->getAppFrameTimer().getLastFPS());
-				ImGui::PlotHistogram("FPS", m_FPSRecords.data(), m_FPSRecords.size(), 0, 0, 0.0f, 60.0f);
+				
+				static float averageFPS = 0.0f;
+				for (auto& fps : m_FPSRecords)
+				{
+					averageFPS += fps;
+				}
+				averageFPS /= m_FPSRecords.size();
+
+				ImGui::PlotLines("FPS", m_FPSRecords.data(), m_FPSRecords.size(), 0, std::to_string(averageFPS).c_str(), 0, 200.0f, ImVec2(ImGui::GetContentRegionAvailWidth(), 100));
 			}
 
 			if (ImGui::TreeNodeEx("Events", ImGuiTreeNodeFlags_CollapsingHeader))
 			{
-				if (ImGui::Button("Add Event"))
-				{
-					ImGui::OpenPopup("Add Event");
-				}
-
-				if (ImGui::BeginPopupModal("Add Event", 0, ImGuiWindowFlags_AlwaysAutoResize))
-				{
-					ImGui::Text("Event Name");
-					static String eventName;
-					ImGui::InputText("##Event Name", &eventName);
-					
-					if (ImGui::Button("Create"))
-					{
-						EventManager::GetSingleton()->addEvent(eventName);
-						PRINT("Added event: " + eventName);
-						eventName = "";
-					}
-					ImGui::SameLine();
-					if (ImGui::Button("Cancel"))
-					{
-						ImGui::CloseCurrentPopup();
-					}
-
-					ImGui::EndPopup();
-				}
-
-				for (auto&& [eventType, eventHandler] : EventManager::GetSingleton()->getRegisteredEvents())
-				{
-					ImGui::MenuItem(eventType.c_str(), "");
-					ImGui::SameLine();
-					ImGui::Text("%d", eventHandler.size());
+				for (auto&& [eventType, eventHandlers] : EventManager::GetSingleton()->getRegisteredEvents())
+				{				
+					ImGui::Text((eventType + " (" + std::to_string(eventHandlers.size()) + ")").c_str());
 				}
 			}
 
-			if (ImGui::TreeNodeEx("RenderSystem", ImGuiTreeNodeFlags_CollapsingHeader))
+			for (auto& system : System::s_SystemStack) 
 			{
-				ImGui::Columns(2);
-
-				ImGui::Text("Camera");
-				ImGui::NextColumn();
-				if (ImGui::BeginCombo("##Camera", RenderSystem::GetSingleton()->getCamera()->getOwner()->getFullName().c_str()))
+				if (ImGui::TreeNodeEx(system->getName().c_str(), ImGuiTreeNodeFlags_CollapsingHeader))
 				{
-					for (auto&& camera : System::GetComponents(CameraComponent::s_ID))
-					{
-						if (ImGui::MenuItem(camera->getOwner()->getFullName().c_str()))
-						{
-							RenderSystem::GetSingleton()->setCamera((CameraComponent*)camera);
-						}
-					}
-
-					ImGui::EndCombo();
+					system->draw();
 				}
-
-				ImGui::Columns(1);
-			}
-
-			if (ImGui::TreeNodeEx("UISystem", ImGuiTreeNodeFlags_CollapsingHeader))
-			{
-				ImGui::Columns(2);
-
-				ImGui::Text("Debugger");
-				ImGui::NextColumn();
-				ImGui::Text("Press F8");
-				ImGui::NextColumn();
-
-				ImGui::Columns(1);
 			}
 		}
 		ImGui::End();
