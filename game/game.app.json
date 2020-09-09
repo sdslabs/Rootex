@@ -1,6 +1,56 @@
 {
     "project": "Rootex Game",
     "startLevel": "game/assets/levels/model_test",
+    "systems": {
+        "AudioSystem": {},
+        "InputManager": {
+            "height": 1440,
+            "width": 2560
+        },
+        "InputSystem": {
+            "height": 1417,
+            "inputSchemes": [
+                {
+                    "bools": [
+                        {
+                            "button": 32,
+                            "device": 1,
+                            "inputEvent": "Jump"
+                        },
+                        {
+                            "button": 87,
+                            "device": 1,
+                            "inputEvent": "Forward"
+                        },
+                        {
+                            "button": 83,
+                            "device": 1,
+                            "inputEvent": "Backward"
+                        },
+                        {
+                            "button": 65,
+                            "device": 1,
+                            "inputEvent": "Right"
+                        },
+                        {
+                            "button": 68,
+                            "device": 1,
+                            "inputEvent": "Left"
+                        }
+                    ],
+                    "floats": {},
+                    "name": "Ball"
+                }
+            ],
+            "startScheme": "Ball",
+            "width": 2560
+        },
+        "PhysicsSystem": {},
+        "UISystem": {
+            "height": 1417,
+            "width": 2560
+        }
+    },
     "version": 1.0,
     "window": {
         "fullScreen": true,

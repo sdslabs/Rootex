@@ -2,10 +2,10 @@
 
 #include "system.h"
 
-/// Interface for initialisation, amintenance and dleetion of script components.
+/// Interface for initialisation, maintenance and deletion of script components.
 class ScriptSystem : public System
 {
-	ScriptSystem() = default;
+	ScriptSystem();
 	ScriptSystem(ScriptSystem&) = delete;
 	~ScriptSystem() = default;
 
@@ -13,9 +13,9 @@ public:
 	static ScriptSystem* GetSingleton();
 
 	/// Calls OnBegin() function of script components.
-	void begin();
+	void begin() override;
 	/// Calls OnUpdate() function of script components.
-	void update(float deltaMilliseconds);
+	void update(float deltaMilliseconds) override;
 	/// Calls OnEnd() function of script components.
 	void end();
 };

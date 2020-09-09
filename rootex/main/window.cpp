@@ -101,6 +101,12 @@ void Window::setWindowTitle(String title)
 	SetWindowText(m_WindowHandle, title.c_str());
 }
 
+void Window::setWindowSize(const Vector2& newSize)
+{
+	m_Width = newSize.x;
+	m_Height = newSize.y;
+}
+
 int Window::getWidth() const
 {
 	return m_Width;
@@ -137,6 +143,9 @@ LRESULT CALLBACK Window::WindowsProc(HWND windowHandler, UINT msg, WPARAM wParam
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		return 0;
+	case WM_SIZE:
+		EventManager::GetSingleton()->call("WindowProc", "WindowResized", Vector2(LOWORD(lParam), HIWORD(lParam)));
+		break;
 	}
 
 	InputInterface::ProcessWindowsEvent(msg, wParam, lParam);
@@ -153,6 +162,8 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
 	BIND_EVENT_MEMBER_FUNCTION("QuitEditorWindow", Window::quitEditorWindow);
 	BIND_EVENT_MEMBER_FUNCTION("WindowToggleFullScreen", Window::toggleFullScreen);
 	BIND_EVENT_MEMBER_FUNCTION("WindowGetScreenState", Window::getScreenState);
+	BIND_EVENT_MEMBER_FUNCTION("WindowResized", Window::windowResized);
+
 	WNDCLASSEX windowClass = { 0 };
 	LPCSTR className = title.c_str();
 	HINSTANCE hInstance = GetModuleHandle(0);
@@ -170,49 +181,24 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
 	RegisterClassEx(&windowClass);
 	m_IsEditorWindow = isEditor;
 
-	if (isEditor)
-	{
-		m_WindowHandle = CreateWindowEx(
-		    0, className,
-		    title.c_str(),
-		    WS_CAPTION | WS_BORDER | WS_MAXIMIZE | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SYSMENU,
-		    xOffset, yOffset, width, height,
-		    nullptr, nullptr,
-		    hInstance, nullptr);
+	m_WindowHandle = CreateWindowEx(
+		0, className,
+		title.c_str(),
+		WS_CAPTION | WS_BORDER | WS_MAXIMIZE | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU,
+		xOffset, yOffset, width, height,
+		nullptr, nullptr,
+		hInstance, nullptr);
 
-		RECT clientRect;
-		GetClientRect(m_WindowHandle, &clientRect);
-		int rWidth = clientRect.right - clientRect.left;
-		int rHeight = clientRect.bottom - clientRect.top;
-		RenderingDevice::GetSingleton()->initialize(
-		    m_WindowHandle,
-		    rWidth,
-		    rHeight,
-		    MSAA);
-	}
-	else
-	{
-		m_WindowHandle = CreateWindowEx(
-		    0, className,
-		    title.c_str(),
-		    WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
-		    xOffset, yOffset, width, height,
-		    nullptr, nullptr,
-		    hInstance, nullptr);
-
-		RECT clientRect;
-		GetClientRect(m_WindowHandle, &clientRect);
-		int rWidth = clientRect.right - clientRect.left;
-		int rHeight = clientRect.bottom - clientRect.top;
-		ClipCursor(&clientRect);
-		RenderingDevice::GetSingleton()->initialize(
-		    m_WindowHandle,
-		    rWidth,
-		    rHeight,
-		    MSAA);
-
-		RenderingDevice::GetSingleton()->setBackBufferRenderTarget();
-	}
+	RECT clientRect;
+	GetClientRect(m_WindowHandle, &clientRect);
+	int rWidth = clientRect.right - clientRect.left;
+	int rHeight = clientRect.bottom - clientRect.top;
+	RenderingDevice::GetSingleton()->initialize(
+		m_WindowHandle,
+		rWidth,
+		rHeight,
+		MSAA);
+	
 	applyDefaultViewport();
 	m_IsFullScreen = false;
 	if (fullScreen)
@@ -237,6 +223,14 @@ Variant Window::quitWindow(const Event* event)
 Variant Window::quitEditorWindow(const Event* event)
 {
 	DestroyWindow(getWindowHandle());
+	return true;
+}
+
+Variant Window::windowResized(const Event* event)
+{
+	const Vector2& newSize = Extract(Vector2, event->getData());
+	setWindowSize(newSize);
+	applyDefaultViewport();
 	return true;
 }
 

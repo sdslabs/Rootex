@@ -4,7 +4,7 @@
 #include "framework/systems/render_system.h"
 #include "input/input_manager.h"
 
-#include "editor/editor.h"
+#include "editor/editor_system.h"
 #include "editor/editor_application.h"
 #include "editor/gui/inspector_dock.h"
 
@@ -14,8 +14,8 @@ ViewportDock::ViewportDock(const JSON::json& viewportJSON)
     : m_IsCameraMoving(false)
 {
 	m_ViewportDockSettings.m_AspectRatio = (float)viewportJSON["aspectRatio"]["x"] / (float)viewportJSON["aspectRatio"]["y"];
-	m_ViewportDockSettings.m_ImageTint = Editor::GetSingleton()->getColors().m_White;
-	m_ViewportDockSettings.m_ImageBorderColor = Editor::GetSingleton()->getColors().m_Accent;
+	m_ViewportDockSettings.m_ImageTint = EditorSystem::GetSingleton()->getColors().m_White;
+	m_ViewportDockSettings.m_ImageBorderColor = EditorSystem::GetSingleton()->getColors().m_Accent;
 	TextResourceFile* cameraFile = ResourceLoader::CreateTextResourceFile("editor/assets/entities/camera.entity.json");
 	m_EditorCamera = EntityFactory::GetSingleton()->createEntity(cameraFile, true);
 	RenderSystem::GetSingleton()->setCamera(m_EditorCamera->getComponent<CameraComponent>().get());

@@ -64,44 +64,4 @@ GameApplication::GameApplication()
 	}
 
 	RenderingDevice::GetSingleton()->setBackBufferRenderTarget();
-	AudioSystem::GetSingleton()->begin();
-	TransformAnimationSystem::GetSingleton()->begin();
-	ScriptSystem::GetSingleton()->begin();
-}
-
-GameApplication::~GameApplication()
-{
-}
-
-void GameApplication::run()
-{
-	while (true)
-	{
-		m_FrameTimer.reset();
-
-		if (m_Window->processMessages())
-		{
-			break;
-		}
-
-		AudioSystem::GetSingleton()->update();
-		InputManager::GetSingleton()->update();
-		PhysicsSystem::GetSingleton()->update(m_FrameTimer.getLastFrameTime());
-		ScriptSystem::GetSingleton()->update(m_FrameTimer.getLastFrameTime());
-		TransformAnimationSystem::GetSingleton()->update(m_FrameTimer.getLastFrameTime());
-		UISystem::GetSingleton()->update();
-		
-		RenderSystem::GetSingleton()->render();
-		RenderUISystem::GetSingleton()->render();
-		UISystem::GetSingleton()->render();
-		
-		EventManager::GetSingleton()->dispatchDeferred();
-		
-		m_Window->swapBuffers();
-	}
-}
-
-void GameApplication::shutDown()
-{
-	ScriptSystem::GetSingleton()->end();
 }

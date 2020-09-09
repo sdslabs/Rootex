@@ -3,7 +3,7 @@
 #include "core/resource_loader.h"
 
 MaterialLibrary::MaterialMap MaterialLibrary::s_Materials;
-String MaterialLibrary::s_DefaultMaterialPath = "rootex/assets/default.rmat";
+const String MaterialLibrary::s_DefaultMaterialPath = "rootex/assets/materials/default.rmat";
 
 MaterialLibrary::MaterialDatabase MaterialLibrary::s_MaterialDatabase = {
 	{ BasicMaterial::s_MaterialName, { BasicMaterial::CreateDefault, BasicMaterial::Create } },
@@ -23,11 +23,16 @@ void MaterialLibrary::PopulateMaterials(const String& path)
 	}
 }
 
+bool MaterialLibrary::IsDefault(const String& materialPath)
+{
+	static String rootex = "rootex";
+	return materialPath.substr(0, rootex.size()) == rootex;
+}
+
 void MaterialLibrary::LoadMaterials()
 {
 	PopulateMaterials("game/assets/");
 	PopulateMaterials("rootex/assets/");
-	s_Materials[s_DefaultMaterialPath] = { BasicMaterial::s_MaterialName, {} };
 }
 
 Ref<Material> MaterialLibrary::GetMaterial(const String& materialPath)
@@ -74,7 +79,7 @@ void MaterialLibrary::SaveAll()
 {
 	for (auto& [materialPath, materialInfo] : s_Materials)
 	{
-		if (materialPath == s_DefaultMaterialPath)
+		if (IsDefault(materialPath))
 		{
 			continue;
 		}
