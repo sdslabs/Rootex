@@ -45,8 +45,8 @@ void ResourceLoader::LoadAssimp(ModelResourceFile* file)
 		return;
 	}
 
-	file->m_Textures.clear();
-	file->m_Textures.resize(scene->mNumTextures, nullptr);
+	Vector<Ref<Texture>> textures;
+	textures.resize(scene->mNumTextures, nullptr);
 	file->m_Meshes.clear();
 	file->m_Meshes.reserve(scene->mNumMeshes);
 	for (int i = 0; i < scene->mNumMeshes; i++)
@@ -142,15 +142,15 @@ void ResourceLoader::LoadAssimp(ModelResourceFile* file)
 					// Texture is embedded
 					int textureID = atoi(str.C_Str() + 1);
 
-					if (!file->m_Textures[textureID])
+					if (!textures[textureID])
 					{
 						aiTexture* texture = scene->mTextures[textureID];
 						size_t size = scene->mTextures[textureID]->mWidth;
 						PANIC(texture->mHeight == 0, "Compressed texture found but expected embedded texture");
-						file->m_Textures[textureID].reset(new Texture(reinterpret_cast<const char*>(texture->pcData), size));
+						textures[textureID].reset(new Texture(reinterpret_cast<const char*>(texture->pcData), size));
 					}
 
-					extractedMaterial->setTextureInternal(file->m_Textures[textureID]);
+					extractedMaterial->setTextureInternal(textures[textureID]);
 				}
 				else
 				{

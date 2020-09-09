@@ -2,6 +2,11 @@
 
 #include "components/script_component.h"
 
+ScriptSystem::ScriptSystem()
+    : System("ScriptSystem", UpdateOrder::Update, true)
+{
+}
+
 ScriptSystem* ScriptSystem::GetSingleton()
 {
 	static ScriptSystem singleton;

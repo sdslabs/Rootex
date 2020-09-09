@@ -24,21 +24,14 @@ UIComponent::UIComponent(const String& path)
 
 UIComponent::~UIComponent()
 {
-	if (m_Document)
-	{
-		UISystem::GetSingleton()->unloadDocument(m_Document);
-	}
+	m_Document->Close();
 }
 
 void UIComponent::setDocument(const String& path)
 {
-	if (m_Document)
-	{
-		UISystem::GetSingleton()->unloadDocument(m_Document);
-	}
-
 	m_FilePath = path;
 	m_Document = UISystem::GetSingleton()->loadDocument(m_FilePath);
+	m_Document->GetEventDispatcher();
 }
 
 JSON::json UIComponent::getJSON() const

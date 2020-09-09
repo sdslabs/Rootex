@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core/renderer/material_library.h"
+#include "event_manager.h"
 
 #undef interface
 #include "RmlUi/Core.h"
@@ -16,6 +17,8 @@ class CustomRenderInterface : public Rml::Core::RenderInterface
 	Matrix m_UITransform;
 	int m_Width;
 	int m_Height;
+
+	Variant windowResized(const Event* event);
 
 public:
 	CustomRenderInterface(int width, int height);

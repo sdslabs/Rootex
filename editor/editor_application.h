@@ -18,11 +18,9 @@ public:
 
 	EditorApplication();
 	EditorApplication(EditorApplication&) = delete;
-	~EditorApplication();
+	virtual ~EditorApplication() = default;
 
-	virtual void run() override;
-	virtual void shutDown() override;
+	virtual void process(float deltaMilliseconds) override;
 
 	virtual String getAppTitle() const override { return "Rootex Editor"; }
-	const FrameTimer& getAppFrameTimer() const { return m_FrameTimer; }
 };

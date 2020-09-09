@@ -1,6 +1,11 @@
 #include "light_system.h"
 #include "core/renderer/shaders/register_locations_pixel_shader.h"
 
+LightSystem::LightSystem()
+    : System("LightSystem", UpdateOrder::None, false)
+{
+}
+
 LightSystem* LightSystem::GetSingleton()
 {
 	static LightSystem singleton;

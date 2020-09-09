@@ -15,7 +15,8 @@ RenderSystem* RenderSystem::GetSingleton()
 }
 
 RenderSystem::RenderSystem()
-    : m_Renderer(new Renderer())
+    : System("RenderSystem", UpdateOrder::Render, true)
+	, m_Renderer(new Renderer())
     , m_VSProjectionConstantBuffer(nullptr)
     , m_VSPerFrameConstantBuffer(nullptr)
     , m_PSPerFrameConstantBuffer(nullptr)
@@ -64,7 +65,7 @@ void RenderSystem::recoverLostDevice()
 	ERR("Fatal error: D3D Device lost");
 }
 
-void RenderSystem::render()
+void RenderSystem::update(float deltaMilliseconds)
 {
 	Color clearColor = { 0.15f, 0.15f, 0.15f, 1.0f };
 	float fogStart = 0.0f;
@@ -83,15 +84,15 @@ void RenderSystem::render()
 			fogEnd = fog->getFarDistance();
 		}
 	}
-
 	Application::GetSingleton()->getWindow()->clearCurrentTarget(clearColor);
+
 	Ref<HierarchyComponent> rootHC = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<HierarchyComponent>();
 	calculateTransforms(rootHC.get());
 
 	RenderingDevice::GetSingleton()->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	RenderingDevice::GetSingleton()->setCurrentRasterizerState();
 	RenderingDevice::GetSingleton()->setDepthStencilState();
-	RenderingDevice::GetSingleton()->setDefaultBlendState();
+	RenderingDevice::GetSingleton()->setAlphaBlendState();
 
 	perFrameVSCBBinds(fogStart, fogEnd);
 	const Color& fogColor = clearColor;
@@ -235,3 +236,30 @@ const Matrix& RenderSystem::getCurrentMatrix() const
 {
 	return m_TransformationStack.back();
 }
+
+#ifdef ROOTEX_EDITOR
+#include "imgui.h"
+void RenderSystem::draw()
+{
+	System::draw();
+
+	ImGui::Columns(2);
+
+	ImGui::Text("Camera");
+	ImGui::NextColumn();
+	if (ImGui::BeginCombo("##Camera", RenderSystem::GetSingleton()->getCamera()->getOwner()->getFullName().c_str()))
+	{
+		for (auto&& camera : System::GetComponents(CameraComponent::s_ID))
+		{
+			if (ImGui::MenuItem(camera->getOwner()->getFullName().c_str()))
+			{
+				RenderSystem::GetSingleton()->setCamera((CameraComponent*)camera);
+			}
+		}
+
+		ImGui::EndCombo();
+	}
+
+	ImGui::Columns(1);
+}
+#endif

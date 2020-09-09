@@ -1,37 +1,58 @@
 {
     "Components": {
         "CPUParticlesComponent": {
+            "angularVelocityVariation": 0.0,
             "colorBegin": {
                 "a": 1.0,
-                "b": 0.0,
-                "g": 0.0,
+                "b": 0.9999899864196777,
+                "g": 0.9999998807907104,
                 "r": 1.0
             },
             "colorEnd": {
                 "a": 1.0,
-                "b": 0.0,
-                "g": 1.0,
-                "r": 0.8529411554336548
+                "b": 0.8592592477798462,
+                "g": 0.8388277888298035,
+                "r": 0.0
+            },
+            "emitMode": 2,
+            "emitterDimensions": {
+                "x": 30.0,
+                "y": 30.0,
+                "z": 30.0
             },
             "isVisible": true,
-            "lifeTime": 1.0,
+            "lifeTime": 22.1200008392334,
             "materialPath": "rootex/assets/materials/default_particles.rmat",
             "poolSize": 1000,
             "renderPass": 1,
-            "resFile": "rootex/assets/cube.obj",
-            "sizeBegin": 0.10000000149011612,
+            "resFile": "game\\assets\\test\\sphere.obj",
+            "sizeBegin": 9.999999747378752e-06,
             "sizeEnd": 0.0,
             "sizeVariation": 0.10000000149011612,
             "velocity": {
                 "x": 0.0,
-                "y": 1.0,
+                "y": 34.0,
                 "z": 0.0
             },
-            "velocityVariation": 1.0
+            "velocityVariation": -0.5
+        },
+        "FogComponent": {
+            "color": {
+                "a": 1.0,
+                "b": 1.0,
+                "g": 0.7962962985038757,
+                "r": 0.8143825531005859
+            },
+            "far": 339.0,
+            "near": 10.0
         },
         "HierarchyComponent": {
             "children": [],
             "parent": 1
+        },
+        "SkyComponent": {
+            "skyMaterial": "rootex/assets/materials/sky.rmat",
+            "skySphere": "rootex/assets/sky.obj"
         },
         "TransformComponent": {
             "boundingBox": {
@@ -47,15 +68,15 @@
                 }
             },
             "position": {
-                "x": -1.0,
-                "y": -2.0,
-                "z": -7.0
+                "x": -2.512510061264038,
+                "y": 37.34000015258789,
+                "z": 4.700000762939453
             },
             "rotation": {
-                "w": 1.0,
-                "x": -0.0,
+                "w": -0.00017277977894991636,
+                "x": 0.0,
                 "y": 0.0,
-                "z": -0.0
+                "z": 1.0
             },
             "scale": {
                 "x": 1.0,

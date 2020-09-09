@@ -154,6 +154,11 @@ void InputManager::update()
 	m_GainputManager.Update();
 }
 
+void InputManager::setDisplaySize(const Vector2& newSize)
+{
+	m_GainputManager.SetDisplaySize(newSize.x, newSize.y);
+}
+
 unsigned int InputManager::getNextID()
 {
 	static unsigned int count = 0;
