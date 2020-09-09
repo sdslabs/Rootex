@@ -2,7 +2,7 @@
 
 #include "system.h"
 
-/// Interface for initialisation, amintenance and dleetion of script components.
+/// Interface for initialisation, maintenance and deletion of script components.
 class ScriptSystem : public System
 {
 	ScriptSystem();
