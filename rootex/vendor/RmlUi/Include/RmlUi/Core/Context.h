@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef RMLUICORECONTEXT_H
-#define RMLUICORECONTEXT_H
+#ifndef RMLUI_CORE_CONTEXT_H
+#define RMLUI_CORE_CONTEXT_H
 
 #include "Header.h"
 #include "Types.h"
@@ -36,13 +36,15 @@
 #include "ScriptInterface.h"
 
 namespace Rml {
-namespace Core {
 
 class Stream;
 class ContextInstancer;
 class ElementDocument;
 class EventListener;
 class RenderInterface;
+class DataModel;
+class DataModelConstructor;
+class DataTypeRegister;
 enum class EventId : uint16_t;
 
 /**
@@ -54,7 +56,7 @@ enum class EventId : uint16_t;
 class RMLUICORE_API Context : public ScriptInterface
 {
 public:
-	/// Constructs a new, uninitialised context. This should not be called directly, use Core::CreateContext()
+	/// Constructs a new, uninitialised context. This should not be called directly, use CreateContext()
 	/// instead.
 	/// @param[in] name The name of the context.
 	Context(const String& name);
@@ -86,9 +88,9 @@ public:
 	bool Render();
 
 	/// Creates a new, empty document and places it into this context.
-	/// @param[in] tag The document type to create.
+	/// @param[in] instancer_name The name of the instancer used to create the document.
 	/// @return The new document, or nullptr if no document could be created.
-	ElementDocument* CreateDocument(const String& tag = "body");
+	ElementDocument* CreateDocument(const String& instancer_name = "body");
 	/// Load a document into the context.
 	/// @param[in] document_path The path to the document to load.
 	/// @return The loaded document, or nullptr if no document was loaded.
@@ -218,6 +220,33 @@ public:
 	/// @param[in] instancer The context's instancer.
 	void SetInstancer(ContextInstancer* instancer);
 
+	/// Creates a data model.
+	/// The returned constructor can be used to bind data variables. Elements can bind to the model using the attribute 'data-model="name"'.
+	/// @param[in] name The name of the data model.
+	/// @return A constructor for the data model, or empty if it could not be created.
+	DataModelConstructor CreateDataModel(const String& name);
+
+	/// Retrieves the constructor for an existing data model.
+	/// The returned constructor can be used to add additional bindings to an existing model.
+	/// @param[in] name The name of the data model.
+	/// @return A constructor for the data model, or empty if it could not be found.
+	DataModelConstructor GetDataModel(const String& name);
+
+	/// Removes the given data model.
+	/// This also removes all data views, controllers and bindings contained by the data model.
+	/// @warning Invalidates all handles and constructors pointing to the data model.
+	/// @param[in] name The name of the data model.
+	/// @return True if succesfully removed, false if no data model was found.
+	bool RemoveDataModel(const String& name);
+
+	/// This will set the documents base <tag> before creation. Default = "body"
+	/// @param[in] tag The name of the base tag. Example: "html"
+	void SetDocumentsBaseTag(const String& tag);
+
+	/// Gets the name of the documents base tag.
+	/// @return The current documents base tag name.
+	const String& GetDocumentsBaseTag();
+
 protected:
 	void Release() override;
 
@@ -225,11 +254,12 @@ private:
 	String name;
 	Vector2i dimensions;
 	float density_independent_pixel_ratio;
+	String documents_base_tag = "body";
 
 	ContextInstancer* instancer;
 
 	using ElementSet = SmallOrderedSet< Element* > ;
-	using ElementList = std::vector< Element* >;
+	using ElementList = Vector< Element* >;
 	// Set of elements that are currently in hover state.
 	ElementSet hover_chain;
 	// List of elements that are currently in active state.
@@ -286,6 +316,11 @@ private:
 	Vector2i clip_origin;
 	Vector2i clip_dimensions;
 
+	using DataModels = UnorderedMap<String, UniquePtr<DataModel>>;
+	DataModels data_models;
+
+	UniquePtr<DataTypeRegister> data_type_register;
+
 	// Internal callback for when an element is detached or removed from the hierarchy.
 	void OnElementDetach(Element* element);
 	// Internal callback for when a new element gains focus.
@@ -297,12 +332,13 @@ private:
 	// Updates the current hover elements, sending required events.
 	void UpdateHoverChain(const Dictionary& parameters, const Dictionary& drag_parameters, const Vector2i& old_mouse_position);
 
-	// Creates the drag clone from the given element. The old drag clone will be released if
-	// necessary.
-	// @param[in] element The element to clone.
+	// Creates the drag clone from the given element. The old drag clone will be released if necessary.
 	void CreateDragClone(Element* element);
 	// Releases the drag clone, if one exists.
 	void ReleaseDragClone();
+
+	// Returns the data model with the provided name, or nullptr if it does not exist.
+	DataModel* GetDataModelPtr(const String& name) const;
 
 	// Builds the parameters for a generic key event.
 	void GenerateKeyEventParameters(Dictionary& parameters, Input::KeyIdentifier key_identifier);
@@ -319,11 +355,9 @@ private:
 	// Sends the specified event to all elements in new_items that don't appear in old_items.
 	static void SendEvents(const ElementSet& old_items, const ElementSet& new_items, EventId id, const Dictionary& parameters);
 
-	friend class Element;
+	friend class Rml::Element;
 	friend RMLUICORE_API Context* CreateContext(const String&, const Vector2i&, RenderInterface*);
 };
 
-}
-}
-
+} // namespace Rml
 #endif

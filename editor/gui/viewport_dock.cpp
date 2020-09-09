@@ -3,6 +3,7 @@
 #include "renderer/rendering_device.h"
 #include "framework/systems/render_system.h"
 #include "input/input_manager.h"
+#include "ui/input_interface.h"
 
 #include "editor/editor_system.h"
 #include "editor/editor_application.h"
@@ -32,9 +33,13 @@ void ViewportDock::draw()
 		if (ImGui::Begin("Viewport"))
 		{
 			ImVec2 region = ImGui::GetContentRegionAvail();
-			if (region.x / region.y != m_ViewportDockSettings.m_AspectRatio)
+			if (region.x / region.y < m_ViewportDockSettings.m_AspectRatio)
 			{
 				region.y = region.x / m_ViewportDockSettings.m_AspectRatio;
+			}
+			else
+			{
+				region.x = region.y * m_ViewportDockSettings.m_AspectRatio;
 			}
 
 			m_ViewportDockSettings.m_ImageSize = region;
@@ -67,70 +72,76 @@ void ViewportDock::draw()
 				ImGui::EndDragDropTarget();
 			}
 
+			InputInterface::s_ScaleX = Application::GetSingleton()->getWindow()->getWidth() / imageSize.x;
+			InputInterface::s_ScaleY = Application::GetSingleton()->getWindow()->getHeight() / imageSize.y;
+			
+			InputInterface::s_Left = imagePos.x;
+			InputInterface::s_Right = InputInterface::s_Left + imageSize.x;
+			InputInterface::s_Top = imagePos.y;
+			InputInterface::s_Bottom = InputInterface::s_Top + imageSize.y;
+
 			static const ImVec2 viewportEnd = ImGui::GetCursorPos();
 
-			ImGui::SetCursorPos(viewportStart);
 			static ImGuizmo::OPERATION gizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
-			ImGui::Indent(2.0f);
-
-			ImGui::BeginGroup();
-			if (ImGui::RadioButton("Translate", gizmoOperation == ImGuizmo::OPERATION::TRANSLATE))
-			{
-				gizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
-			}
-			ImGui::SameLine();
-			if (ImGui::RadioButton("Rotate", gizmoOperation == ImGuizmo::OPERATION::ROTATE))
-			{
-				gizmoOperation = ImGuizmo::OPERATION::ROTATE;
-			}
-			ImGui::SameLine();
-			if (ImGui::RadioButton("Scale", gizmoOperation == ImGuizmo::OPERATION::SCALE))
-			{
-				gizmoOperation = ImGuizmo::OPERATION::SCALE;
-			}
-			ImGui::EndGroup();
-
 			static float axisSnap[3] = { 0.1f, 0.1f, 0.1f };
 			static float angleSnap = { 45.0f };
 			static float scaleSnap = { 0.1f };
 			static float* currentSnap = nullptr;
-			static ImVec2 shortItemSize = ImGui::GetItemRectSize();
-			ImGui::SetNextItemWidth(shortItemSize.x);
-			if (gizmoOperation == ImGuizmo::OPERATION::TRANSLATE)
-			{
-				ImGui::DragFloat3("Axis Snap", axisSnap, 0.1f);
-				currentSnap = axisSnap;
-			}
-			else if (gizmoOperation == ImGuizmo::OPERATION::ROTATE)
-			{
-				ImGui::DragFloat("Angle Snap", &angleSnap, 0.1f);
-				currentSnap = &angleSnap;
-			}
-			else if (gizmoOperation == ImGuizmo::OPERATION::SCALE)
-			{
-				ImGui::DragFloat("Scale Snap", &scaleSnap, 0.1f);
-				currentSnap = &scaleSnap;
-			}
-
 			static ImGuizmo::MODE gizmoMode = ImGuizmo::MODE::LOCAL;
-			if (ImGui::RadioButton("Local", gizmoMode == ImGuizmo::MODE::LOCAL))
+			ImGui::Begin("Viewport Tools");
 			{
-				gizmoMode = ImGuizmo::MODE::LOCAL;
+				ImGui::BeginGroup();
+				if (ImGui::RadioButton("Translate", gizmoOperation == ImGuizmo::OPERATION::TRANSLATE))
+				{
+					gizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
+				}
+				ImGui::SameLine();
+				if (ImGui::RadioButton("Rotate", gizmoOperation == ImGuizmo::OPERATION::ROTATE))
+				{
+					gizmoOperation = ImGuizmo::OPERATION::ROTATE;
+				}
+				ImGui::SameLine();
+				if (ImGui::RadioButton("Scale", gizmoOperation == ImGuizmo::OPERATION::SCALE))
+				{
+					gizmoOperation = ImGuizmo::OPERATION::SCALE;
+				}
+				ImGui::EndGroup();
+
+				if (gizmoOperation == ImGuizmo::OPERATION::TRANSLATE)
+				{
+					ImGui::DragFloat3("Axis Snap", axisSnap, 0.1f);
+					currentSnap = axisSnap;
+				}
+				else if (gizmoOperation == ImGuizmo::OPERATION::ROTATE)
+				{
+					ImGui::DragFloat("Angle Snap", &angleSnap, 0.1f);
+					currentSnap = &angleSnap;
+				}
+				else if (gizmoOperation == ImGuizmo::OPERATION::SCALE)
+				{
+					ImGui::DragFloat("Scale Snap", &scaleSnap, 0.1f);
+					currentSnap = &scaleSnap;
+				}
+
+				if (ImGui::RadioButton("Local", gizmoMode == ImGuizmo::MODE::LOCAL))
+				{
+					gizmoMode = ImGuizmo::MODE::LOCAL;
+				}
+				ImGui::SameLine();
+				if (ImGui::RadioButton("World", gizmoMode == ImGuizmo::MODE::WORLD))
+				{
+					gizmoMode = ImGuizmo::MODE::WORLD;
+				}
+
+				ImGui::SliderFloat("Camera Sensitivity", &m_EditorCameraSensitivity, 0.1f, 1.5f);
+				ImGui::SliderFloat("Camera Speed", &m_EditorCameraSpeed, 0.1f, 1.0f);
 			}
-			ImGui::SameLine();
-			if (ImGui::RadioButton("World", gizmoMode == ImGuizmo::MODE::WORLD))
+			if (ImGui::TreeNodeEx("RenderSystem"))
 			{
-				gizmoMode = ImGuizmo::MODE::WORLD;
+				RenderSystem::GetSingleton()->draw();
+				ImGui::TreePop();
 			}
-
-			ImGui::SetNextItemWidth(shortItemSize.x);
-			ImGui::SliderFloat("Camera Sensitivity", &m_EditorCameraSensitivity, 0.1f, 1.5f);
-			ImGui::SetNextItemWidth(shortItemSize.x);
-			ImGui::SliderFloat("Camera Speed", &m_EditorCameraSpeed, 0.1f, 1.0f);
-
-			ImGui::Unindent(2.0f);
-
-			ImGui::SetCursorPos(viewportEnd);
+			ImGui::End();
 
 			Matrix view = RenderSystem::GetSingleton()->getCamera()->getViewMatrix();
 			Matrix proj = RenderSystem::GetSingleton()->getCamera()->getProjectionMatrix();

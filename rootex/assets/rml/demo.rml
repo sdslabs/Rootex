@@ -38,10 +38,29 @@
 				text-align: left;
 			}
 		</style>
+		<script>
+Demo = Demo or {}
+
+function Demo.toggle(document, enabled)
+	if enabled then
+		document:GetElementById("rootex_button").style.visibility = "hidden"
+	else
+		document:GetElementById("rootex_button").style.visibility = "visible"
+	end
+end
+			
+		</script>
 	</head>
 	<body>
-		<p id="transition_test"> This is a sample </p>
+		<p id="transition_test"> This is a sample! </p>
 		<br />
-		<img onclick="UIImageClicked" src="../rootex.png" width=100 height=100 />
+		<img
+			id="rootex_button"
+			onmousedown="Demo.toggle(document, true)"
+			onmouseup="Demo.toggle(document, false)"
+			src="../rootex.png"
+			width=100 
+			height=100 
+		/>
 	</body>
 </rml>
