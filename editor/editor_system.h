@@ -67,6 +67,8 @@ class EditorSystem : public System
 	void pushEditorStyleColors();
 	void pushEditorStyleVars();
 
+	void showDocumentation(const String& name, const sol::table& table);
+
 	Variant saveAll(const Event* event);
 	Variant autoSave(const Event* event);
 	Variant saveBeforeQuit(const Event* event);
