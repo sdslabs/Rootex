@@ -3,7 +3,7 @@
 #include "components/test_component.h"
 
 TestSystem::TestSystem()
-    : System("TestSystem", UpdateOrder::None, false)
+    : System("TestSystem", UpdateOrder::Async, false)
 {
 }
 

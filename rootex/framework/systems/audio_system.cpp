@@ -135,11 +135,6 @@ void AudioSystem::end()
 	alutExit();
 }
 
-void AudioSystem::setBufferUpdateRate(float milliseconds)
-{
-	m_UpdateIntervalMilliseconds = milliseconds;
-}
-
 void AudioSystem::setListener(AudioListenerComponent* listenerComponent)
 {
 	m_Listener = listenerComponent;
@@ -151,10 +146,9 @@ void AudioSystem::restoreListener()
 }
 
 AudioSystem::AudioSystem()
-    : System("AudioSystem", UpdateOrder::None, true)
+    : System("AudioSystem", UpdateOrder::Async, true)
 	, m_Context(nullptr)
     , m_Device(nullptr)
-    , m_UpdateIntervalMilliseconds(0)
     , m_Listener(nullptr)
 {
 }

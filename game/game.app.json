@@ -1,6 +1,6 @@
 {
     "project": "Rootex Game",
-    "startLevel": "game/assets/levels/model_test",
+    "startLevel": "game/assets/levels/attenuation_test",
     "systems": {
         "AudioSystem": {},
         "InputManager": {
@@ -8,7 +8,7 @@
             "width": 2560
         },
         "InputSystem": {
-            "height": 1417,
+            "height": 1387,
             "inputSchemes": [
                 {
                     "bools": [
@@ -47,13 +47,13 @@
         },
         "PhysicsSystem": {},
         "UISystem": {
-            "height": 1417,
+            "height": 1387,
             "width": 2560
         }
     },
     "version": 1.0,
     "window": {
-        "fullScreen": true,
+        "fullScreen": false,
         "height": 1080,
         "isEditor": false,
         "msaa": true,

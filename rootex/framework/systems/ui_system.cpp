@@ -60,7 +60,6 @@ UISystem::UISystem()
 {
 	BIND_EVENT_MEMBER_FUNCTION("UISystemEnableDebugger", UISystem::enableDebugger);
 	BIND_EVENT_MEMBER_FUNCTION("UISystemDisableDebugger", UISystem::disableDebugger);
-	BIND_EVENT_MEMBER_FUNCTION("WindowResized", UISystem::windowResized);
 }
 
 Variant UISystem::enableDebugger(const Event* event)
@@ -72,13 +71,6 @@ Variant UISystem::enableDebugger(const Event* event)
 Variant UISystem::disableDebugger(const Event* event)
 {
 	setDebugger(false);
-	return true;
-}
-
-Variant UISystem::windowResized(const Event* event)
-{
-	const Vector2& newSize = Extract(Vector2, event->getData());
-	m_Context->SetDimensions({ (int)newSize.x, (int)newSize.y });
 	return true;
 }
 

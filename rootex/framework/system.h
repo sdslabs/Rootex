@@ -8,9 +8,7 @@
 /// ECS style System interface that allows iterating over components directly.
 class System
 {
-	static void UpdateOrderSort();
-
-protected:
+public:
 	enum class UpdateOrder
 	{
 		Input,
@@ -19,9 +17,13 @@ protected:
 		RenderUI,
 		UI,
 		Editor,
-		None
+		Async
 	};
 
+private:
+	static void UpdateOrderSort();
+
+protected:
 	static HashMap<ComponentID, Vector<Component*>> s_Components;
 	static void RegisterComponent(Component* component);
 	static void DeregisterComponent(Component* component);
