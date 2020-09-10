@@ -70,11 +70,14 @@ void ToolbarDock::draw()
 				}
 			}
 
-			for (auto& system : System::s_SystemStack) 
+			for (auto& [order, systems] : System::GetSystems()) 
 			{
-				if (ImGui::TreeNodeEx(system->getName().c_str(), ImGuiTreeNodeFlags_CollapsingHeader))
+				for (auto& system : systems)
 				{
-					system->draw();
+					if (ImGui::TreeNodeEx(system->getName().c_str(), ImGuiTreeNodeFlags_CollapsingHeader))
+					{
+						system->draw();
+					}
 				}
 			}
 		}

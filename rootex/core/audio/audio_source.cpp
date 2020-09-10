@@ -175,7 +175,10 @@ void StreamingAudioSource::queueNewBuffers()
 
 void StreamingAudioSource::unqueueBuffers()
 {
-	AL_CHECK(alSourceUnqueueBuffers(m_SourceID, BUFFER_COUNT, m_StreamingAudio->getBuffers()));
+	int numUsedUp;
+	AL_CHECK(alGetSourcei(m_SourceID, AL_BUFFERS_PROCESSED, &numUsedUp));
+
+	AL_CHECK(alSourceUnqueueBuffers(m_SourceID, numUsedUp, m_StreamingAudio->getBuffers()));
 }
 
 float StreamingAudioSource::getDuration() const

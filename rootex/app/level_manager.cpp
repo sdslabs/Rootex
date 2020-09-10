@@ -15,12 +15,14 @@ LevelManager* LevelManager::GetSingleton()
 
 void LevelManager::openLevel(const String& levelPath, bool openInEditor)
 {
+	if (isAnyLevelOpen())
+	{
+		endLevel();
+	}
+
 	m_CurrentLevelName = FilePath(levelPath).filename().string();
 	m_CurrentLevelSettingsFile = ResourceLoader::CreateTextResourceFile(levelPath + "/" + m_CurrentLevelName + ".level.json");
 	m_CurrentLevelSettings = JSON::json::parse(m_CurrentLevelSettingsFile->getString());
-
-	EntityFactory::GetSingleton()->destroyEntities(true);
-	HierarchySystem::GetSingleton()->getRootHierarchyComponent()->clear();
 
 	if (!OS::IsExists(levelPath))
 	{
@@ -42,36 +44,28 @@ void LevelManager::openLevel(const String& levelPath, bool openInEditor)
 		EntityFactory::GetSingleton()->createEntity(textResource);
 	}
 
-	if (m_CurrentLevelSettings.find("camera") != m_CurrentLevelSettings.end())
+	for (auto& [order, systems] : System::GetSystems())
 	{
-		Ref<Entity> cameraEntity = EntityFactory::GetSingleton()->findEntity(m_CurrentLevelSettings["camera"]);
-		RenderSystem::GetSingleton()->setCamera(cameraEntity->getComponent<CameraComponent>().get());
-	}
-
-	if (m_CurrentLevelSettings.find("listener") != m_CurrentLevelSettings.end())
-	{
-		Ref<Entity> listenerEntity = EntityFactory::GetSingleton()->findEntity(m_CurrentLevelSettings["listener"]);
-		AudioSystem::GetSingleton()->setListener(listenerEntity->getComponent<AudioListenerComponent>().get());
-	}
-	else
-	{
-		AudioSystem::GetSingleton()->setListener(EntityFactory::GetSingleton()->findEntity(ROOT_ENTITY_ID)->getComponent<AudioListenerComponent>().get());
-	}
-
-	if (!openInEditor)
-	{
-		JSON::json& levelJSON = getCurrentLevelSettings();
-		InputManager::GetSingleton()->loadSchemes(levelJSON["inputSchemes"]);
-
-		if (levelJSON.find("startScheme") != levelJSON.end())
+		for (auto& system : systems)
 		{
-			InputManager::GetSingleton()->setScheme(levelJSON["startScheme"]);
+			system->setConfig(m_CurrentLevelSettings, openInEditor);
 		}
 	}
 
 	EntityFactory::GetSingleton()->setupLiveEntities();
 
 	PRINT("Loaded level: " + levelPath);
+
+	for (auto& [order, systems] : System::GetSystems())
+	{
+		for (auto& system : systems)
+		{
+			if (system->isActive())
+			{
+				system->begin();
+			}
+		}
+	}
 }
 
 void LevelManager::saveCurrentLevel()
@@ -97,6 +91,29 @@ void LevelManager::createLevel(const String& newLevelName)
 	OS::CreateFileName("game/assets/levels/" + newLevelName + "/" + newLevelName + ".level.json") << newLevelJSON.dump(1, '\t');
 
 	PRINT("Created new level: " + "game/assets/levels/" + newLevelName);
+}
+
+void LevelManager::endLevel()
+{
+	if (isAnyLevelOpen())
+	{
+		for (auto& [order, systems] : System::GetSystems())
+		{
+			for (auto& system : systems)
+			{
+				system->end();
+			}
+		}
+
+		EntityFactory::GetSingleton()->destroyEntities();
+		HierarchySystem::GetSingleton()->getRootHierarchyComponent()->clear();
+
+		PRINT("Ended level: " + m_CurrentLevelSettingsFile->getPath().generic_string());
+
+		m_CurrentLevelName = "";
+		m_CurrentLevelSettingsFile = nullptr;
+		m_CurrentLevelSettings.clear();
+	}
 }
 
 Vector<FilePath> LevelManager::getLibrariesPaths()

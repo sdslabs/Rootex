@@ -86,4 +86,8 @@ public:
 	void popFont();
 
 	const Colors& getColors() const { return m_Colors; }
+
+#ifdef ROOTEX_EDITOR
+	void draw() override;
+#endif // ROOTEX_EDITOR
 };

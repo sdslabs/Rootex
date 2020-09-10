@@ -20,10 +20,8 @@ public:
 		Async
 	};
 
-private:
-	static void UpdateOrderSort();
-
 protected:
+	static Map<UpdateOrder, Vector<System*>> s_Systems;
 	static HashMap<ComponentID, Vector<Component*>> s_Components;
 	static void RegisterComponent(Component* component);
 	static void DeregisterComponent(Component* component);
@@ -33,15 +31,10 @@ protected:
 
 	String m_SystemName;
 	UpdateOrder m_UpdateOrder;
-	unsigned int m_CreationOrder;
-	bool m_IsGameplaySystem;
+	bool m_IsActive;
 
 public:
-	static Vector<System*> s_SystemStack;
-	static Vector<System*> s_GameplayStack;
-	
-	static void CreationOrderSort();
-
+	static const Map<UpdateOrder, Vector<System*>>& GetSystems() { return s_Systems; }
 	static const Vector<Component*>& GetComponents(ComponentID ID) { return s_Components[ID]; }
 	
 	System(const String& name, const UpdateOrder& order, bool isGameplay);
@@ -49,16 +42,16 @@ public:
 	virtual ~System();
 
 	virtual bool initialize(const JSON::json& systemData);
+	virtual void setConfig(const JSON::json& configData, bool openInEditor);
 	virtual void begin();
 	virtual void update(float deltaMilliseconds);
 	virtual void end();
 	
 	String getName() const { return m_SystemName; }
 	const UpdateOrder& getUpdateOrder() const { return m_UpdateOrder; }
-	const unsigned int& getCreationOrder() const { return m_CreationOrder; }
-	bool isGameplay() const { return m_IsGameplaySystem; }
+	bool isActive() const { return m_IsActive; }
 
-	void setGameplay(bool enabled);
+	void setActive(bool enabled);
 
 #ifdef ROOTEX_EDITOR
 	virtual void draw();
