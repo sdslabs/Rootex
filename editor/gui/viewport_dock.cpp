@@ -61,7 +61,8 @@ void ViewportDock::draw()
 					if (Ref<TransformComponent> transform = entity->getComponent<TransformComponent>())
 					{
 						Quaternion rotation;
-						Vector3 scale, position;
+						Vector3 scale;
+						Vector3 position;
 						RenderSystem::GetSingleton()->getCamera()->getOwner()->getComponent<TransformComponent>()->getAbsoluteTransform().Decompose(scale, rotation, position);
 						transform->setPosition(position);
 						transform->setRotationQuaternion(rotation);
