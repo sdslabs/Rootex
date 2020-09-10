@@ -19,6 +19,8 @@
 #include "ImGuizmo.h"
 #include "editor_system.h"
 
+#define DOCUMENTATION_LINK String("https://rootex.readthedocs.io/en/latest/api/rootex.html")
+
 bool EditorSystem::initialize(const JSON::json& systemData)
 {
 	BIND_EVENT_MEMBER_FUNCTION("EditorSaveBeforeQuit", EditorSystem::saveBeforeQuit);
@@ -113,8 +115,9 @@ bool EditorSystem::initialize(const JSON::json& systemData)
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable | ImGuiConfigFlags_DpiEnableScaleFonts | ImGuiConfigFlags_DpiEnableScaleViewports;
 	io.ConfigDockingWithShift = true;
 	io.FontAllowUserScaling = true;
-	m_EditorFont = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/Lato-Regular.ttf", 19.0f);
-	m_EditorFontBold = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/Lato-Bold.ttf", 20.0f);
+	m_EditorFont = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/Lato-Regular.ttf", 18.0f);
+	m_EditorFontItalic = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/Lato-Italic.ttf", 18.0f);
+	m_EditorFontBold = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/Lato-Bold.ttf", 18.0f);
 
 	ImGui_ImplWin32_Init(Application::GetSingleton()->getWindow()->getWindowHandle());
 	ImGui_ImplDX11_Init(RenderingDevice::GetSingleton()->getDevice(), RenderingDevice::GetSingleton()->getContext());
@@ -166,6 +169,11 @@ void EditorSystem::pushRegularFont()
 void EditorSystem::pushBoldFont()
 {
 	ImGui::PushFont(m_EditorFontBold);
+}
+
+void EditorSystem::pushItalicFont()
+{
+	ImGui::PushFont(m_EditorFontItalic);
 }
 
 void EditorSystem::popFont()
@@ -382,14 +390,26 @@ void EditorSystem::drawDefaultUI()
 				}
 				ImGui::EndMenu();
 			}
-			if (ImGui::BeginMenu("Help"))
+			if (ImGui::BeginMenu("Documentation"))
 			{
-				if (ImGui::BeginMenu("Documentation"))
+				if (ImGui::BeginMenu("C++ API"))
 				{
-					showDocumentation("Lua API", (sol::table)LuaInterpreter::GetSingleton()->getLuaState().registry());
+					if (ImGui::MenuItem("Open Online C++ Documentation"))
+					{
+						OS::Execute("start " + DOCUMENTATION_LINK);
+					}
+
 					ImGui::EndMenu();
 				}
 
+				if (ImGui::MenuItem("Lua API"))
+				{
+					m_MenuAction = "Lua API Documentation";
+				}
+				ImGui::EndMenu();
+			}
+			if (ImGui::BeginMenu("About"))
+			{				
 				if (ImGui::MenuItem("About Rootex Editor"))
 				{
 					m_MenuAction = "About Rootex Editor";
@@ -411,6 +431,74 @@ void EditorSystem::drawDefaultUI()
 			if (m_MenuAction != "")
 			{
 				ImGui::OpenPopup(m_MenuAction.c_str());
+			}
+
+			ImGui::SetNextWindowSize({ ImGui::GetContentRegionMax().x / 2, ImGui::GetContentRegionMax().y / 2 });
+			if (ImGui::BeginPopupModal("Lua API Documentation", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+			{
+				static String searchString;
+				ImGui::InputText("Search", &searchString, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AlwaysInsertMode | ImGuiInputTextFlags_CallbackHistory);
+				ImGui::SameLine();
+				if (ImGui::Button("Close"))
+				{
+					ImGui::CloseCurrentPopup();
+					m_MenuAction = "";
+				}
+
+				static String openedLuaClass;
+				if (ImGui::ListBoxHeader("##Lua Classes", { 0, ImGui::GetContentRegionAvail().y }))
+				{
+					for (auto& [key, value] : LuaInterpreter::GetSingleton()->getLuaState().registry())
+					{
+						if (key.is<String>())
+						{
+							sol::object luaClass = value;
+							String typeName = key.as<String>();
+							if (luaClass.is<sol::table>() && luaClass.as<sol::table>()["__type"] != sol::nil)
+							{
+								typeName = luaClass.as<sol::table>()["__type"]["name"];
+							}
+
+							bool shouldMatch = false;
+							for (int i = 0; i < typeName.size(); i++)
+							{
+								shouldMatch |= typeName.compare(i, searchString.size(), searchString) == 0;
+							}
+
+							if (searchString.empty() || shouldMatch)
+							{
+								if (ImGui::MenuItem(typeName.c_str()))
+								{
+									openedLuaClass = key.as<String>();
+								}
+							}
+						}
+					}
+					ImGui::ListBoxFooter();
+				}
+				ImGui::SameLine();
+				if (ImGui::ListBoxHeader("##Class Description", ImGui::GetContentRegionAvail()))
+				{
+					if (!openedLuaClass.empty())
+					{
+						sol::object luaClass = LuaInterpreter::GetSingleton()->getLuaState().registry()[openedLuaClass];
+						String typeName = openedLuaClass;
+						if (luaClass.is<sol::table>() && luaClass.as<sol::table>()["__type"] != sol::nil)
+						{
+							typeName = luaClass.as<sol::table>()["__type"]["name"];
+						}
+						
+						EditorSystem::GetSingleton()->pushBoldFont();
+						ImGui::Text("%s", typeName.c_str());
+						EditorSystem::GetSingleton()->popFont();
+
+						ImGui::SetNextItemOpen(true);
+						showDocumentation(typeName, luaClass);
+					}
+					ImGui::ListBoxFooter();
+				}
+
+				ImGui::EndPopup();
 			}
 
 			if (ImGui::BeginPopupModal("Save", 0, ImGuiWindowFlags_AlwaysAutoResize))
@@ -609,36 +697,46 @@ static HashMap<int, String> LuaTypeNames = {
 
 void EditorSystem::showDocumentation(const String& name, const sol::table& table)
 {
-	String typeName = name;
-	if (!table.empty() && table["__type"] != sol::nil)
+	if (ImGui::TreeNodeEx(name.c_str(), ImGuiTreeNodeFlags_CollapsingHeader))
 	{
-		typeName = table["__type"]["name"];
-	}
-
-	if (ImGui::BeginMenu((typeName + "##" + name).c_str()))
-	{
+		ImGui::Indent();
 		for (auto [key, value] : table)
 		{
-			if (key.is<String>() && key.as<String>() != typeName && key.as<String>() != "class_check" && key.as<String>() != "class_cast")
+			if (key.is<String>() && key.as<String>() != name && key.as<String>() != "class_check" && key.as<String>() != "class_cast")
 			{
 				if (value.is<sol::table>())
 				{
-					showDocumentation(key.as<String>(), value.as<sol::table>());
+					showDocumentation(name + "." + key.as<String>(), value.as<sol::table>());
 				}
 				else
 				{
-					ImGui::MenuItem(key.as<String>().c_str());
-					ImGui::SameLine();
 					String tag = LuaTypeNames[(int)value.get_type()];
-					if (value.is<String>())
+					String prefix = name;
+					String suffix;
+					if (value.is<sol::function>())
 					{
-						tag += "(\"" + value.as<String>() + "\")";
+						suffix = "()";
 					}
-					ImGui::Text("%s", tag.c_str());
+					else if (value.is<String>())
+					{
+						suffix = " = " + value.as<String>();
+					}
+
+					pushItalicFont();
+					ImGui::TextColored(getColors().m_Success, "%s", tag.c_str());
+					ImGui::SameLine();
+					ImGui::TextColored(getColors().m_Warning, "%s", prefix.c_str());
+					popFont();
+
+					ImGui::SameLine();
+
+					pushBoldFont();
+					ImGui::MenuItem((" . " + key.as<String>() + suffix).c_str());
+					popFont();
 				}
 			}
 		}
-		ImGui::EndMenu();
+		ImGui::Unindent();
 	}
 }
 
