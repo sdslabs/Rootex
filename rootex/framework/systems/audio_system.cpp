@@ -132,7 +132,6 @@ void AudioSystem::end()
 		audioComponent = (AudioComponent*)component;
 		audioComponent->getAudioSource()->stop();
 	}
-	alutExit();
 }
 
 void AudioSystem::setListener(AudioListenerComponent* listenerComponent)
@@ -140,9 +139,28 @@ void AudioSystem::setListener(AudioListenerComponent* listenerComponent)
 	m_Listener = listenerComponent;
 }
 
+void AudioSystem::setConfig(const JSON::json& configData, bool openInEditor)
+{
+	if (configData.find("listener") != configData.end())
+	{
+		Ref<Entity> listenerEntity = EntityFactory::GetSingleton()->findEntity(configData["listener"]);
+		if (listenerEntity)
+		{
+			AudioSystem::GetSingleton()->setListener(listenerEntity->getComponent<AudioListenerComponent>().get());
+			return;
+		}
+	}
+	AudioSystem::GetSingleton()->setListener(EntityFactory::GetSingleton()->findEntity(ROOT_ENTITY_ID)->getComponent<AudioListenerComponent>().get());
+}
+
 void AudioSystem::restoreListener()
 {
 	m_Listener = EntityFactory::GetSingleton()->findEntity(ROOT_ENTITY_ID)->getComponent<AudioListenerComponent>().get();
+}
+
+void AudioSystem::shutDown()
+{
+	alutExit();
 }
 
 AudioSystem::AudioSystem()

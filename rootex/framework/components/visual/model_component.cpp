@@ -23,7 +23,7 @@ Component* ModelComponent::Create(const JSON::json& componentData)
 Component* ModelComponent::CreateDefault()
 {
 	ModelComponent* modelComponent = new ModelComponent(
-	    (unsigned int)RenderPass::Basic,
+	    (int)RenderPass::Basic,
 	    ResourceLoader::CreateModelResourceFile("rootex/assets/cube.obj"),
 	    true);
 
@@ -192,6 +192,12 @@ void ModelComponent::draw()
 			}
 		}
 		ImGui::EndDragDropTarget();
+	}
+
+	int renderPassUI = log2(m_RenderPass);
+	if (ImGui::Combo("Renderpass", &renderPassUI, "Basic\0Editor\0Alpha"))
+	{
+		m_RenderPass = pow(2, renderPassUI);
 	}
 
 	if (ImGui::TreeNodeEx("Materials"))
