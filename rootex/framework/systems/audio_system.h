@@ -48,7 +48,6 @@ class ResourceFile;
 /// System encapsulating OpenAL error checkers and getters.
 class AudioSystem : public System
 {
-	float m_UpdateIntervalMilliseconds;
 	ALCdevice* m_Device;
 	ALCcontext* m_Context;
 
@@ -71,8 +70,6 @@ public:
 	static void CheckALCError(const char* msg, const char* fname, int line);
 	/// Wrapper over alutGetError function.
 	static void CheckALUTError(const char* msg, const char* fname, int line);
-
-	void setBufferUpdateRate(float milliseconds);
 
 	AudioListenerComponent* getListener() const { return m_Listener; }
     void setListener(AudioListenerComponent* listenerComponent);

@@ -6,7 +6,7 @@
 #include "entity_factory.h"
 
 SerializationSystem::SerializationSystem()
-    : System("SerializationSystem", UpdateOrder::None, false)
+    : System("SerializationSystem", UpdateOrder::Async, false)
 {
 }
 
