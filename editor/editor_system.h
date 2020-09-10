@@ -31,6 +31,7 @@ class EditorSystem : public System
 	bool m_WorldMode = true;
 
 	ImFont* m_EditorFont;
+	ImFont* m_EditorFontItalic;
 	ImFont* m_EditorFontBold;
 
 	struct Colors
@@ -84,6 +85,7 @@ public:
 
 	void pushRegularFont();
 	void pushBoldFont();
+	void pushItalicFont();
 	void popFont();
 
 	const Colors& getColors() const { return m_Colors; }
