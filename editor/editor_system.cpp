@@ -9,6 +9,7 @@
 #include "framework/components/hierarchy_component.h"
 #include "framework/systems/render_system.h"
 #include "framework/systems/render_ui_system.h"
+#include "framework/systems/script_system.h"
 #include "framework/systems/ui_system.h"
 #include "framework/systems/physics_system.h"
 #include "editor_application.h"
@@ -383,6 +384,12 @@ void EditorSystem::drawDefaultUI()
 			}
 			if (ImGui::BeginMenu("Help"))
 			{
+				if (ImGui::BeginMenu("Documentation"))
+				{
+					showDocumentation("Lua API", (sol::table)LuaInterpreter::GetSingleton()->getLuaState().registry());
+					ImGui::EndMenu();
+				}
+
 				if (ImGui::MenuItem("About Rootex Editor"))
 				{
 					m_MenuAction = "About Rootex Editor";
@@ -584,6 +591,55 @@ void EditorSystem::pushEditorStyleVars()
 	static const int starting = __LINE__;
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, { 0 });
 	static const int ending = m_EditorStyleVarPushCount = __LINE__ - starting - 1;
+}
+
+static HashMap<int, String> LuaTypeNames = {
+	{ LUA_TNONE, "none" }, 
+	{ LUA_TNIL, "lua_nil" }, 
+	{ LUA_TSTRING, "string" }, 
+	{ LUA_TNUMBER, "number" }, 
+	{ LUA_TTHREAD, "thread" },
+	{ LUA_TBOOLEAN, "boolean" },
+	{ LUA_TFUNCTION, "function" }, 
+	{ LUA_TUSERDATA, "userdata" }, 
+	{ LUA_TLIGHTUSERDATA, "lightuserdata" }, 
+	{ LUA_TTABLE, "table" },
+	{ -0xFFFF, "poly" }
+};
+
+void EditorSystem::showDocumentation(const String& name, const sol::table& table)
+{
+	String typeName = name;
+	if (!table.empty() && table["__type"] != sol::nil)
+	{
+		typeName = table["__type"]["name"];
+	}
+
+	if (ImGui::BeginMenu((typeName + "##" + name).c_str()))
+	{
+		for (auto [key, value] : table)
+		{
+			if (key.is<String>() && key.as<String>() != typeName && key.as<String>() != "class_check" && key.as<String>() != "class_cast")
+			{
+				if (value.is<sol::table>())
+				{
+					showDocumentation(key.as<String>(), value.as<sol::table>());
+				}
+				else
+				{
+					ImGui::MenuItem(key.as<String>().c_str());
+					ImGui::SameLine();
+					String tag = LuaTypeNames[(int)value.get_type()];
+					if (value.is<String>())
+					{
+						tag += "(\"" + value.as<String>() + "\")";
+					}
+					ImGui::Text("%s", tag.c_str());
+				}
+			}
+		}
+		ImGui::EndMenu();
+	}
 }
 
 Variant EditorSystem::saveAll(const Event* event)
