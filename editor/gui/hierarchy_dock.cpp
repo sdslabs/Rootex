@@ -3,6 +3,7 @@
 #include "editor/editor_system.h"
 
 #include "framework/systems/hierarchy_system.h"
+#include "framework/components/transform_component.h"
 
 #include "vendor/ImGUI/imgui.h"
 #include "vendor/ImGUI/imgui_impl_dx11.h"
@@ -62,6 +63,10 @@ void HierarchyDock::showHierarchySubTree(HierarchyComponent* hierarchy)
 					{
 						Ref<Entity> rearrangeEntity = *(Ref<Entity>*)(payload->Data);
 						node->getComponent<HierarchyComponent>()->snatchChild(rearrangeEntity);
+						rearrangeEntity->getComponent<TransformComponent>()->setTransform(
+						    rearrangeEntity->getComponent<TransformComponent>()->getAbsoluteTransform()
+						    * node->getComponent<TransformComponent>()->getAbsoluteTransform().Invert()
+						);
 						openEntity(rearrangeEntity);
 					}
 					ImGui::EndDragDropTarget();
