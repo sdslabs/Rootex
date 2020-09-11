@@ -11,7 +11,7 @@ EventManager ::~EventManager()
 {
 }
 
-void EventManager::RegisterAPI(sol::state& rootex)
+void EventManager::RegisterAPI(sol::table& rootex)
 {
 	rootex["AddEvent"] = [](const String& eventType) { EventManager::GetSingleton()->addEvent(eventType); };
 	rootex["RemoveEvent"] = [](const String& eventType) { EventManager::GetSingleton()->removeEvent(eventType); };

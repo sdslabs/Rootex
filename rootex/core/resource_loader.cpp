@@ -250,7 +250,7 @@ ResourceFile* ResourceLoader::CreateSomeResourceFile(const String& path)
 	return result;
 }
 
-void ResourceLoader::RegisterAPI(sol::state& rootex)
+void ResourceLoader::RegisterAPI(sol::table& rootex)
 {
 	sol::usertype<ResourceLoader> resourceLoader = rootex.new_usertype<ResourceLoader>("ResourceLoader");
 	resourceLoader["CreateAudio"] = &ResourceLoader::CreateAudioResourceFile;
