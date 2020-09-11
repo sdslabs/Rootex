@@ -33,7 +33,7 @@ class LevelManager
 	void endLevel();
 
 public:
-	static void RegisterAPI(sol::state& rootex);
+	static void RegisterAPI(sol::table& rootex);
 	static LevelManager* GetSingleton();
 	/// Load resources marked as to be preloaded in the level. Use as a loading screen helper.
 	/// Returns the number of resources loaded

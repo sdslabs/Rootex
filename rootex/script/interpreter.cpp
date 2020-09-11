@@ -45,7 +45,7 @@ LuaInterpreter* LuaInterpreter::GetSingleton()
 
 void LuaInterpreter::registerTypes()
 {
-	sol::state& rootex = m_Lua;
+	sol::table& rootex = m_Lua.create_named_table("Rootex");
 	{
 		sol::usertype<Vector2> vector2 = rootex.new_usertype<Vector2>(
 		    "Vector2",
@@ -105,26 +105,26 @@ void LuaInterpreter::registerTypes()
 		matrix["Identity"] = sol::var(Matrix::Identity);
 	}
 	
-	Event::RegisterAPI(m_Lua);
-	EventManager::RegisterAPI(m_Lua);
-	InputManager::RegisterAPI(m_Lua);
-	LevelManager::RegisterAPI(m_Lua);
+	Event::RegisterAPI(rootex);
+	EventManager::RegisterAPI(rootex);
+	InputManager::RegisterAPI(rootex);
+	LevelManager::RegisterAPI(rootex);
 
-	ResourceLoader::RegisterAPI(m_Lua);
-	ResourceFile::RegisterAPI(m_Lua);
-	TextResourceFile::RegisterAPI(m_Lua);
-	LuaTextResourceFile::RegisterAPI(m_Lua);
-	AudioResourceFile::RegisterAPI(m_Lua);
-	ModelResourceFile::RegisterAPI(m_Lua);
-	ImageResourceFile::RegisterAPI(m_Lua);
-	FontResourceFile::RegisterAPI(m_Lua);
+	ResourceLoader::RegisterAPI(rootex);
+	ResourceFile::RegisterAPI(rootex);
+	TextResourceFile::RegisterAPI(rootex);
+	LuaTextResourceFile::RegisterAPI(rootex);
+	AudioResourceFile::RegisterAPI(rootex);
+	ModelResourceFile::RegisterAPI(rootex);
+	ImageResourceFile::RegisterAPI(rootex);
+	FontResourceFile::RegisterAPI(rootex);
 	
-	EntityFactory::RegisterAPI(m_Lua);
-	Entity::RegisterAPI(m_Lua);
-	TransformComponent::RegisterAPI(m_Lua);
-	HierarchyComponent::RegisterAPI(m_Lua);
-	ModelComponent::RegisterAPI(m_Lua);
-	RenderUIComponent::RegisterAPI(m_Lua);
-	TextUIComponent::RegisterAPI(m_Lua);
-	PhysicsColliderComponent::RegisterAPI(m_Lua);
+	EntityFactory::RegisterAPI(rootex);
+	Entity::RegisterAPI(rootex);
+	TransformComponent::RegisterAPI(rootex);
+	HierarchyComponent::RegisterAPI(rootex);
+	ModelComponent::RegisterAPI(rootex);
+	RenderUIComponent::RegisterAPI(rootex);
+	TextUIComponent::RegisterAPI(rootex);
+	PhysicsColliderComponent::RegisterAPI(rootex);
 }

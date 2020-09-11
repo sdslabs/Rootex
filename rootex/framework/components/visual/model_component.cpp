@@ -39,7 +39,7 @@ ModelComponent::ModelComponent(unsigned int renderPass, ModelResourceFile* resFi
 {
 }
 
-void ModelComponent::RegisterAPI(sol::state& rootex)
+void ModelComponent::RegisterAPI(sol::table& rootex)
 {
 	sol::usertype<ModelComponent> modelComponent = rootex.new_usertype<ModelComponent>(
 	    "ModelComponent",

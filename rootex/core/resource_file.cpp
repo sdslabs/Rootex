@@ -17,7 +17,7 @@ ResourceFile::ResourceFile(const Type& type, ResourceData* resData)
 	m_LastChangedTime = OS::GetFileLastChangedTime(getPath().string());
 }
 
-void ResourceFile::RegisterAPI(sol::state& rootex)
+void ResourceFile::RegisterAPI(sol::table& rootex)
 {
 	sol::usertype<ResourceFile> resourceFile = rootex.new_usertype<ResourceFile>("ResourceFile");
 	resourceFile["isValid"] = &ResourceFile::isValid;
@@ -82,7 +82,7 @@ AudioResourceFile::~AudioResourceFile()
 {
 }
 
-void AudioResourceFile::RegisterAPI(sol::state& rootex)
+void AudioResourceFile::RegisterAPI(sol::table& rootex)
 {
 	sol::usertype<AudioResourceFile> audioResourceFile = rootex.new_usertype<AudioResourceFile>(
 	    "AudioResourceFile",
@@ -104,7 +104,7 @@ TextResourceFile::~TextResourceFile()
 {
 }
 
-void TextResourceFile::RegisterAPI(sol::state& rootex)
+void TextResourceFile::RegisterAPI(sol::table& rootex)
 {
 	sol::usertype<TextResourceFile> textResourceFile = rootex.new_usertype<TextResourceFile>(
 	    "TextResourceFile",
@@ -143,7 +143,7 @@ LuaTextResourceFile::~LuaTextResourceFile()
 {
 }
 
-void LuaTextResourceFile::RegisterAPI(sol::state& rootex)
+void LuaTextResourceFile::RegisterAPI(sol::table& rootex)
 {
 	sol::usertype<LuaTextResourceFile> luaTextResourceFile = rootex.new_usertype<LuaTextResourceFile>(
 	    "LuaTextResourceFile",
@@ -159,7 +159,7 @@ ModelResourceFile::~ModelResourceFile()
 {
 }
 
-void ModelResourceFile::RegisterAPI(sol::state& rootex)
+void ModelResourceFile::RegisterAPI(sol::table& rootex)
 {
 	sol::usertype<ModelResourceFile> modelResourceFile = rootex.new_usertype<ModelResourceFile>(
 	    "ModelResourceFile",
@@ -175,7 +175,7 @@ ImageResourceFile::~ImageResourceFile()
 {
 }
 
-void ImageResourceFile::RegisterAPI(sol::state& rootex)
+void ImageResourceFile::RegisterAPI(sol::table& rootex)
 {
 	sol::usertype<ImageResourceFile> imageResourceFile = rootex.new_usertype<ImageResourceFile>(
 	    "ImageResourceFile",
@@ -198,7 +198,7 @@ void FontResourceFile::regenerateFont()
 	m_Font->SetDefaultCharacter('X');
 }
 
-void FontResourceFile::RegisterAPI(sol::state& rootex)
+void FontResourceFile::RegisterAPI(sol::table& rootex)
 {
 	sol::usertype<FontResourceFile> fontResourceFile = rootex.new_usertype<FontResourceFile>(
 	    "FontResourceFile",

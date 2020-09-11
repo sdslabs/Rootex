@@ -29,7 +29,7 @@ LevelDescription::LevelDescription(const String& levelPath)
 	}
 }
 
-void LevelManager::RegisterAPI(sol::state& rootex)
+void LevelManager::RegisterAPI(sol::table& rootex)
 {
 	sol::usertype<Atomic<int>> atomicInt = rootex.new_usertype<Atomic<int>>("AtomicInt", sol::constructors<Atomic<int>(), Atomic<int>(int)>());
 	atomicInt["load"] = [](Atomic<int>* a) { return a->load(); };

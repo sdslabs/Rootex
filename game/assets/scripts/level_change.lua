@@ -1,4 +1,4 @@
-progress = AtomicInt.new()
+progress = Rootex.AtomicInt.new()
 totalProgress = -1
 running = false
 
@@ -9,7 +9,7 @@ function onBegin(entity)
     model:setIsVisible(false)
     number = 0
     current = 0
-    Connect(onLoadLevel, "A")
+    Rootex.Connect(onLoadLevel, "A")
     print("Connected to input A")
 end
 
@@ -24,13 +24,13 @@ function onUpdate(entity, delta)
 
     if progress:load() == totalProgress then
         text:setText("Finished")
-        LevelManager.Get():openPreloadedLevel("game/assets/levels/model_test")
+        Rootex.LevelManager.Get():openPreloadedLevel("game/assets/levels/model_test")
     end
 end
 
 function onLoadLevel(event)
     if event:getData().x == 1 then
-        totalProgress = LevelManager.Get():preloadLevel("game/assets/levels/model_test", progress)
+        totalProgress = Rootex.LevelManager.Get():preloadLevel("game/assets/levels/model_test", progress)
         model:setIsVisible(true)  
         running = true
     end

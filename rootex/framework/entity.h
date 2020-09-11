@@ -32,7 +32,7 @@ protected:
 #endif // ROOTEX_EDITOR
 
 public:
-	static void RegisterAPI(sol::state& rootex);
+	static void RegisterAPI(sol::table& rootex);
 
 	virtual ~Entity();
 
