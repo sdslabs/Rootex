@@ -45,7 +45,7 @@ LuaInterpreter* LuaInterpreter::GetSingleton()
 
 void LuaInterpreter::registerTypes()
 {
-	sol::table& rootex = m_Lua.create_named_table("Rootex");
+	sol::table& rootex = m_Lua.create_named_table("RTX");
 	{
 		sol::usertype<Vector2> vector2 = rootex.new_usertype<Vector2>(
 		    "Vector2",
