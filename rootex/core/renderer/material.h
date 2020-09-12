@@ -11,8 +11,9 @@ protected:
 	Vector<Microsoft::WRL::ComPtr<ID3D11Buffer>> m_VSConstantBuffer;
 	String m_FileName;
 	String m_TypeName;
+	bool m_IsAlpha;
 
-	Material(Shader* shader, const String& typeName);
+	Material(Shader* shader, const String& typeName, bool isAlpha);
 
 public:
 	template <typename T>
@@ -25,6 +26,7 @@ public:
 
 	virtual void bind();
 	
+	bool isAlpha() { return m_IsAlpha; }
 	String getFileName() { return m_FileName; };
 	String getTypeName() { return m_TypeName; };
 	String getFullName() { return m_FileName + " - " + m_TypeName; };

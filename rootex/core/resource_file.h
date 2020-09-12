@@ -135,7 +135,7 @@ class ModelResourceFile : public ResourceFile
 	explicit ModelResourceFile(ResourceData* resData);
 	~ModelResourceFile();
 
-	HashMap<Ref<Material>, Vector<Mesh>> m_Meshes;
+	Vector<Pair<Ref<Material>, Vector<Mesh>>> m_Meshes;
 
 	friend class ResourceLoader;
 
@@ -144,7 +144,7 @@ public:
 	explicit ModelResourceFile(ModelResourceFile&) = delete;
 	explicit ModelResourceFile(ModelResourceFile&&) = delete;
 
-	HashMap<Ref<Material>, Vector<Mesh>>& getMeshes() { return m_Meshes; }
+	Vector<Pair<Ref<Material>, Vector<Mesh>>>& getMeshes() { return m_Meshes; }
 };
 
 /// Representation of an image file. Supports BMP, JPEG, PNG, TIFF, GIF, HD Photo, or other WIC supported file containers
