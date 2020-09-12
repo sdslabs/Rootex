@@ -1,4 +1,3 @@
-require('mobdebug').start()
 progress = RTX.AtomicInt.new()
 totalProgress = -1
 running = false

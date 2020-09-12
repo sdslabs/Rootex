@@ -24,7 +24,10 @@ UIComponent::UIComponent(const String& path)
 
 UIComponent::~UIComponent()
 {
-	m_Document->Close();
+	if (m_Document)
+	{
+		m_Document->Close();
+	}
 }
 
 void UIComponent::setDocument(const String& path)
