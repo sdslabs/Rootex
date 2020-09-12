@@ -10,8 +10,8 @@
 #include "renderer/shaders/register_locations_pixel_shader.h"
 #include "renderer/shaders/register_locations_vertex_shader.h"
 
-BasicMaterial::BasicMaterial(const String& imagePath, Color color, bool isLit, float specularIntensity, float specularPower, float reflectivity, float refractionConstant, float refractivity, bool affectedBySky)
-    : Material(ShaderLibrary::GetBasicShader(), BasicMaterial::s_MaterialName)
+BasicMaterial::BasicMaterial(bool isAlpha, const String& imagePath, Color color, bool isLit, float specularIntensity, float specularPower, float reflectivity, float refractionConstant, float refractivity, bool affectedBySky)
+    : Material(ShaderLibrary::GetBasicShader(), BasicMaterial::s_MaterialName, isAlpha)
     , m_BasicShader(ShaderLibrary::GetBasicShader())
     , m_Color(color)
     , m_IsLit(isLit)
@@ -45,7 +45,7 @@ void BasicMaterial::setVSConstantBuffer(const VSDiffuseConstantBuffer& constantB
 
 Material* BasicMaterial::CreateDefault()
 {
-	return new BasicMaterial("rootex/assets/white.png", Color(0.5f, 0.5f, 0.5f, 1.0f), false, 2.0f, 30.0f, 0.5f, 0.8f, 0.5f, false);
+	return new BasicMaterial(false, "rootex/assets/white.png", Color(0.5f, 0.5f, 0.5f, 1.0f), false, 2.0f, 30.0f, 0.5f, 0.8f, 0.5f, false);
 }
 
 Material* BasicMaterial::Create(const JSON::json& materialData)
@@ -85,7 +85,12 @@ Material* BasicMaterial::Create(const JSON::json& materialData)
 	{
 		affectedBySky = materialData["affectedBySky"];
 	}
-	return new BasicMaterial((String)materialData["imageFile"], Color((float)materialData["color"]["r"], (float)materialData["color"]["g"], (float)materialData["color"]["b"], (float)materialData["color"]["a"]), isLit, specularIntensity, specularPower, reflectivity, refractionConstant, refractivity, affectedBySky);
+	bool isAlpha = false;
+	if (materialData.find("isAlpha") != materialData.end())
+	{
+		affectedBySky = materialData["isAlpha"];
+	}
+	return new BasicMaterial(isAlpha, (String)materialData["imageFile"], Color((float)materialData["color"]["r"], (float)materialData["color"]["g"], (float)materialData["color"]["b"], (float)materialData["color"]["a"]), isLit, specularIntensity, specularPower, reflectivity, refractionConstant, refractivity, affectedBySky);
 }
 
 void BasicMaterial::bind()

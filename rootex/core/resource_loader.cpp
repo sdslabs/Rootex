@@ -48,7 +48,6 @@ void ResourceLoader::LoadAssimp(ModelResourceFile* file)
 	Vector<Ref<Texture>> textures;
 	textures.resize(scene->mNumTextures, nullptr);
 	file->m_Meshes.clear();
-	file->m_Meshes.reserve(scene->mNumMeshes);
 	for (int i = 0; i < scene->mNumMeshes; i++)
 	{
 		const aiMesh* mesh = scene->mMeshes[i];
@@ -174,7 +173,21 @@ void ResourceLoader::LoadAssimp(ModelResourceFile* file)
 		extractedMesh.m_VertexBuffer.reset(new VertexBuffer(vertices));
 		extractedMesh.m_IndexBuffer.reset(new IndexBuffer(indices));
 		
-		file->m_Meshes[extractedMaterial].push_back(extractedMesh);
+		bool found = false;
+		for (auto& materialModels : file->getMeshes())
+		{
+			if (materialModels.first == extractedMaterial)
+			{
+				found = true;
+				materialModels.second.push_back(extractedMesh);
+				break;
+			}
+		}
+
+		if (!found && extractedMaterial)
+		{
+			file->getMeshes().push_back(Pair<Ref<Material>, Vector<Mesh>>(extractedMaterial, { extractedMesh }));
+		}
 	}
 }
 

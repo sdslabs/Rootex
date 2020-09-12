@@ -91,8 +91,15 @@ bool ModelComponent::isVisible() const
 	return m_IsVisible;
 }
 
+bool compareMaterials(const Pair<Ref<Material>, Vector<Mesh>>& a, const Pair<Ref<Material>, Vector<Mesh>>& b)
+{
+	// Alpha materials final last
+	return !a.first->isAlpha() && b.first->isAlpha();
+}
+
 void ModelComponent::render()
 {
+	std::sort(m_ModelResourceFile->getMeshes().begin(), m_ModelResourceFile->getMeshes().end(), compareMaterials);
 	for (auto& [material, meshes] : m_ModelResourceFile->getMeshes())
 	{
 		RenderSystem::GetSingleton()->getRenderer()->bind(material.get());
@@ -139,7 +146,7 @@ void ModelComponent::draw()
 
 	ImGui::BeginGroup();
 
-	static String inputPath = "Path";
+	String inputPath = m_ModelResourceFile->getPath().generic_string();
 	ImGui::InputText("##Path", &inputPath);
 	ImGui::SameLine();
 	if (ImGui::Button("Create Visual Model"))

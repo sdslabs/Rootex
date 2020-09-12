@@ -11,12 +11,14 @@ JSON::json Material::getJSON() const
 {
 	JSON::json j;
 	j["type"] = m_TypeName;
+	j["isAlpha"] = m_IsAlpha;
 	return j;
 }
 
-Material::Material(Shader* shader, const String& typeName)
+Material::Material(Shader* shader, const String& typeName, bool isAlpha)
     : m_Shader(shader)
     , m_TypeName(typeName)
+    , m_IsAlpha(isAlpha)
 {
 }
 
@@ -34,6 +36,11 @@ void Material::draw(const String& id)
 	ImGui::Text("Type");
 	ImGui::NextColumn();
 	ImGui::Text("%s", m_TypeName.c_str());
+	ImGui::NextColumn();
+
+	ImGui::Text("Alpha");
+	ImGui::NextColumn();
+	ImGui::Checkbox(("##Alpha" + id).c_str(), &m_IsAlpha);
 
 	ImGui::Columns(1);
 }

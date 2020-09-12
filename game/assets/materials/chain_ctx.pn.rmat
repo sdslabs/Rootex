@@ -7,10 +7,11 @@
         "r": 0.46666669845581055
     },
     "imageFile": "game/assets/sponza/ctx.png",
+    "isAlpha": true,
     "isLit": true,
-    "reflectivity": 0.5,
-    "refractionConstant": 0.800000011920929,
-    "refractivity": 0.5,
+    "reflectivity": 0.0,
+    "refractionConstant": 0.8299999833106995,
+    "refractivity": 1.0,
     "specularIntensity": 2.0,
     "specularPower": 30.0,
     "type": "BasicMaterial"
