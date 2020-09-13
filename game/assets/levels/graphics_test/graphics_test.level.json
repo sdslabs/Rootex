@@ -13,5 +13,8 @@
             "floats": {}
         }
     ],
-    "startScheme": "Load"
+    "startScheme": "Load",
+    "preload": [
+        "game/assets/classes/LoadingScreen/LoadingScreen.entity.json"
+    ]
 }

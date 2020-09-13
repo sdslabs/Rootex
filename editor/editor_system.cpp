@@ -237,7 +237,7 @@ void EditorSystem::drawDefaultUI()
 
 		if (ImGui::BeginMenuBar())
 		{
-			static String newLevelName;
+			static String newLevelName = "game/assets/levels/";
 			static String openLevelName;
 			static String newMaterialName = "game/assets/materials/";
 			static String newMaterialType = "Select Material Type";
@@ -780,7 +780,7 @@ Variant EditorSystem::createNewLevel(const Event* event)
 {
 	const String& newLevelName = Extract(String, event->getData());
 
-	if (OS::IsExists("game/assets/levels/" + newLevelName))
+	if (OS::IsExists(newLevelName))
 	{
 		WARN("Found a level with the same name: " + newLevelName);
 		return true;

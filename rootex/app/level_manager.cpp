@@ -148,8 +148,8 @@ void LevelManager::saveCurrentLevelSettings()
 
 void LevelManager::createLevel(const String& newLevelName)
 {
-	OS::CreateDirectoryName("game/assets/levels/" + newLevelName);
-	OS::CreateDirectoryName("game/assets/levels/" + newLevelName + "/entities/");
+	OS::CreateDirectoryName(newLevelName);
+	OS::CreateDirectoryName(newLevelName + "/entities/");
 
 	JSON::json newLevelJSON;
 	newLevelJSON["camera"] = ROOT_ENTITY_ID;
@@ -157,9 +157,9 @@ void LevelManager::createLevel(const String& newLevelName)
 	newLevelJSON["startScheme"] = "";
 	newLevelJSON["listener"] = ROOT_ENTITY_ID;
 	newLevelJSON["preload"] = JSON::json::array();
-	OS::CreateFileName("game/assets/levels/" + newLevelName + "/" + newLevelName + ".level.json") << newLevelJSON.dump(1, '\t');
+	OS::CreateFileName(newLevelName + "/" + FilePath(newLevelName).filename().generic_string() + ".level.json") << newLevelJSON.dump(1, '\t');
 
-	PRINT("Created new level: " + "game/assets/levels/" + newLevelName);
+	PRINT("Created new level: " + newLevelName);
 }
 
 void LevelManager::endLevel()

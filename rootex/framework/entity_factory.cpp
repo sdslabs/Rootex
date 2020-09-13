@@ -42,6 +42,7 @@ void EntityFactory::RegisterAPI(sol::table& rootex)
 {
 	sol::usertype<EntityFactory> entityFactory = rootex.new_usertype<EntityFactory>("EntityFactory");
 	entityFactory["Create"] = [](TextResourceFile* t) { return EntityFactory::GetSingleton()->createEntity(t); };
+	entityFactory["CreateFromClass"] = [](TextResourceFile* t) { return EntityFactory::GetSingleton()->createEntityFromClass(t); };
 	entityFactory["Find"] = [](EntityID e) { return EntityFactory::GetSingleton()->findEntity(e); };
 }
 

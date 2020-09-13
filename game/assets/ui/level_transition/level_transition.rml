@@ -15,7 +15,7 @@
                 background-color: black;
                 width: 100%;
                 height: 100%;
-                animation: infinite alternate 2s fade-in;
+                animation: alternate 2s fade-in;
             }
         </style>
     </head>

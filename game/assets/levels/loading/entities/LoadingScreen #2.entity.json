@@ -4,11 +4,6 @@
             "children": [],
             "parent": 1
         },
-        "ModelComponent": {
-            "isVisible": true,
-            "renderPass": 1,
-            "resFile": "game/assets/test/cube.obj"
-        },
         "TransformComponent": {
             "boundingBox": {
                 "center": {
@@ -23,9 +18,9 @@
                 }
             },
             "position": {
-                "x": -0.10000000149011612,
+                "x": 0.0,
                 "y": 0.0,
-                "z": -15.0
+                "z": 0.0
             },
             "rotation": {
                 "w": 1.0,
@@ -40,11 +35,11 @@
             }
         },
         "UIComponent": {
-            "filePath": "game/assets/ui/level_transition/level_transition.rml"
+            "filePath": "game/assets/ui/loading/loading.rml"
         }
     },
     "Entity": {
-        "ID": 39,
-        "name": "LevelTransition"
+        "ID": 2,
+        "name": "LoadingScreen"
     }
 }

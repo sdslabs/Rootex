@@ -88,7 +88,7 @@ Material* BasicMaterial::Create(const JSON::json& materialData)
 	bool isAlpha = false;
 	if (materialData.find("isAlpha") != materialData.end())
 	{
-		affectedBySky = materialData["isAlpha"];
+		isAlpha = materialData["isAlpha"];
 	}
 	return new BasicMaterial(isAlpha, (String)materialData["imageFile"], Color((float)materialData["color"]["r"], (float)materialData["color"]["g"], (float)materialData["color"]["b"], (float)materialData["color"]["a"]), isLit, specularIntensity, specularPower, reflectivity, refractionConstant, refractivity, affectedBySky);
 }
