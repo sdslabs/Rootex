@@ -26,7 +26,7 @@ UIComponent::~UIComponent()
 {
 	if (m_Document)
 	{
-		m_Document->Close();
+		UISystem::GetSingleton()->unloadDocument(m_Document);
 	}
 }
 
@@ -34,7 +34,7 @@ void UIComponent::setDocument(const String& path)
 {
 	if (m_Document)
 	{
-		m_Document->Close();
+		UISystem::GetSingleton()->unloadDocument(m_Document);
 	}
 
 	m_FilePath = path;

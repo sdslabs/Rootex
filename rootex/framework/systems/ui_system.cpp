@@ -87,6 +87,12 @@ Rml::ElementDocument* UISystem::loadDocument(const String& path)
 	return document;
 }
 
+void UISystem::unloadDocument(Rml::ElementDocument*& document)
+{
+	m_Context->UnloadDocument(document);
+	document = nullptr;
+}
+
 bool UISystem::initialize(const JSON::json& systemData)
 {
 	m_RmlSystemInterface.reset(new CustomSystemInterface());

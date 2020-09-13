@@ -18,7 +18,7 @@ void EventManager::RegisterAPI(sol::table& rootex)
 	rootex["CallEvent"] = [](const Event& event) { EventManager::GetSingleton()->call(event); };
 	rootex["DeferredCallEvent"] = [](const Ref<Event>& event) { EventManager::GetSingleton()->deferredCall(event); };
 	rootex["ReturnCallEvent"] = [](const Event& event) { return EventManager::GetSingleton()->returnCall(event); };
-	rootex["Connect"] = [](const sol::function& function, const String& eventName) { BIND_EVENT_FUNCTION(eventName, function); };
+	rootex["Connect"] = [](const Function<Variant(const Event*)>& function, const String& eventName) { BIND_EVENT_FUNCTION(eventName, function); };
 }
 
 EventManager* EventManager::GetSingleton()
