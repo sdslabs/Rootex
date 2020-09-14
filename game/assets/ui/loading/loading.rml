@@ -2,24 +2,6 @@
     <head>
         <title>Transition</title>
         <style>
-            @keyframes fade-in {
-                0% {
-                    opacity: 0;
-                }
-                to {
-                    opacity: 1;
-                }
-            }
-
-            @keyframes fade-out {
-                0% {
-                    opacity: 0;
-                }
-                to {
-                    opacity: 1;
-                }
-            }
-
             body {
                 font: "Lato";
                 font-size: 100px;
@@ -37,20 +19,39 @@
                 position: relative;
             }
 
+            @keyframes fade-in {
+                0% {
+                    opacity: 0;
+                }
+                to {
+                    opacity: 1;
+                }
+            }
+
+            @keyframes fade-out {
+                0% {
+                    opacity: 1;
+                }
+                to {
+                    opacity: 0;
+                }
+            }
+
             #loading {
                 position: absolute;
                 bottom: 0;
                 right: 0;
                 text-align: center;
+                animation: 1s linear-in-out fade-in;
             }
 
             @keyframes rotation {
                 0% {
-                    transform: rotateY(0deg);
+                    transform: rotateY(360deg);
 
                 }
                 to {
-                    transform: rotateY(360deg);
+                    transform: rotateY(0deg);
                 }
             }
 
@@ -78,10 +79,23 @@
             }
         </style>
         <script>
+Loading = Loading or {
+    document = nil
+}
+
+function Loading.onGameLevelSwitch()
+    Loading.document:GetElementById("loading").style.animation = "2s linear-in-out fade-out";
+    return true
+end
+
+function Loading.loaded(document)
+    Loading.document = document
+    RTX.Connect(Loading.onGameLevelSwitch, "GameLevelSwitch")
+end
         </script>
     </head>
 
-    <body id="body">
+    <body id="body" onload="Loading.loaded(document)">
         <div id="box">
             <div id="clubbed">
                 <div id="loading">

@@ -11,7 +11,10 @@ function onUpdate(entity, delta)
     if running == true then
         timeSinceLoad = timeSinceLoad + delta
         if timeSinceLoad > 2000 then
-            RTX.LevelManager.Get():openLevel("game/assets/levels/loading")
+            local arguments = {}
+            arguments[1] = "game/assets/levels/model_test"
+            print(arguments)
+            RTX.LevelManager.Get():openLevel("game/assets/levels/loading", arguments)
         end
     end
 end
