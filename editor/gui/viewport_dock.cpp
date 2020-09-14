@@ -230,6 +230,11 @@ void ViewportDock::draw()
 
 						BoundingBox boundingBox = transform->getBounds();
 						boundingBox.Center = boundingBox.Center + transform->getAbsoluteTransform().Translation();
+
+						boundingBox.Center.x *= transform->getScale().x;
+						boundingBox.Center.y *= transform->getScale().y;
+						boundingBox.Center.z *= transform->getScale().z;
+
 						boundingBox.Extents.x *= transform->getScale().x;
 						boundingBox.Extents.y *= transform->getScale().y;
 						boundingBox.Extents.z *= transform->getScale().z;
