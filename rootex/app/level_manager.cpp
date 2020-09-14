@@ -39,7 +39,7 @@ void LevelManager::RegisterAPI(sol::table& rootex)
 	levelManager["Get"] = &LevelManager::GetSingleton;
 	levelManager["openLevel"] = [](LevelManager* l, const String& p, const sol::table& arguments) { return l->openLevel(p, arguments.as<Vector<String>>()); };
 	levelManager["preloadLevel"] = [](LevelManager* l, const String& p, Atomic<int>& a) { return l->preloadLevel(p, a); };
-	levelManager["openPreloadedLevel"] = [](LevelManager* l, const String& p, const sol::table& arguments) { return l->openPreloadedLevel(p, arguments.as<Vector<String>>(), false); };
+	levelManager["openPreloadedLevel"] = [](LevelManager* l, const String& p, const sol::nested<Vector<String>>& arguments) { return l->openPreloadedLevel(p, arguments.value(), false); };
 	levelManager["getCurrentLevelArguments"] = [](LevelManager* l) { return l->getCurrentLevel().getArguments(); };
 }
 
