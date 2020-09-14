@@ -21,6 +21,6 @@
         </style>
     </head>
 
-    <body>
+    <body onanimationend="document:Close()">
     </body>
 </rml>
