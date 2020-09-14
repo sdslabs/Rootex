@@ -150,7 +150,7 @@ void ViewportDock::draw()
 				Matrix deltaMatrix = Matrix::CreateTranslation(0.0f, 0.0f, 0.0f);
 
 				Ref<TransformComponent> transform = openedEntity->getComponent<TransformComponent>();
-				BoundingBox boundingBox = transform->getBoundsMutable();
+				BoundingBox boundingBox = transform->getBounds();
 
 				struct Bounds
 				{
