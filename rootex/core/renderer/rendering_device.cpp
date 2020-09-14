@@ -120,7 +120,7 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 		rsDesc.DepthBias = 0;
 		rsDesc.SlopeScaledDepthBias = 0.0f;
 		rsDesc.DepthBiasClamp = 0.0f;
-		rsDesc.DepthClipEnable = TRUE;
+		rsDesc.DepthClipEnable = FALSE;
 		rsDesc.ScissorEnable = FALSE;
 		rsDesc.MultisampleEnable = MSAA;
 		rsDesc.AntialiasedLineEnable = FALSE;

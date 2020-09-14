@@ -54,9 +54,10 @@ class ResourceLoader
 	static void LoadAssimp(ModelResourceFile* file);
 	static void LoadALUT(AudioResourceFile* audioRes, const char* audioBuffer, int format, int size, float frequency);
 
-
 public:
 	static void RegisterAPI(sol::table& rootex);
+
+	static const HashMap<Ptr<ResourceData>, Ptr<ResourceFile>>& GetResources() { return s_ResourcesDataFiles; };
 
 	static TextResourceFile* CreateTextResourceFile(const String& path);
 	static TextResourceFile* CreateNewTextResourceFile(const String& path);

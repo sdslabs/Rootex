@@ -94,7 +94,7 @@ void InspectorDock::drawEntityActions(Ref<Entity> actionEntity)
 	}
 }
 
-void InspectorDock::draw()
+void InspectorDock::draw(float deltaMilliseconds)
 {
 	if (m_InspectorSettings.m_IsActive)	
 	{

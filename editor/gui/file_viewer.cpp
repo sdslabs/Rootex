@@ -87,7 +87,7 @@ FileViewer::~FileViewer()
 {
 }
 
-void FileViewer::draw()
+void FileViewer::draw(float deltaMilliseconds)
 {
 	if (m_IsFileOpened)
 	{
@@ -118,15 +118,15 @@ void FileViewer::draw()
 			
 			if (m_OpenFilePath.extension() == ".wav")
 			{
-				m_AudioPlayer.draw();
+				m_AudioPlayer.draw(deltaMilliseconds);
 			}
 			else if (m_OpenFilePath.extension() == ".png" || m_OpenFilePath.extension() == ".jpg" || m_OpenFilePath.extension() == ".jpeg")
 			{
-				m_ImageViewer.draw();
+				m_ImageViewer.draw(deltaMilliseconds);
 			}
 			else
 			{
-				m_TextViewer.draw();
+				m_TextViewer.draw(deltaMilliseconds);
 			}
 		}
 		ImGui::End();

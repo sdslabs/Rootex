@@ -135,15 +135,15 @@ void EditorSystem::update(float deltaMilliseconds)
 
 	ImGui::PushFont(m_EditorFont);
 
-	drawDefaultUI();
-	m_FileSystem->draw();
-	m_Classes->draw();
-	m_Hierarchy->draw();
-	m_Toolbar->draw();
-	m_Viewport->draw();
-	m_Inspector->draw();
-	m_FileViewer->draw();
-	m_Output->draw();
+	drawDefaultUI(deltaMilliseconds);
+	m_FileSystem->draw(deltaMilliseconds);
+	m_Classes->draw(deltaMilliseconds);
+	m_Hierarchy->draw(deltaMilliseconds);
+	m_Toolbar->draw(deltaMilliseconds);
+	m_Viewport->draw(deltaMilliseconds);
+	m_Inspector->draw(deltaMilliseconds);
+	m_FileViewer->draw(deltaMilliseconds);
+	m_Output->draw(deltaMilliseconds);
 
 	ImGui::PopStyleColor(m_EditorStyleColorPushCount);
 	ImGui::PopStyleVar(m_EditorStyleVarPushCount);
@@ -193,7 +193,7 @@ EditorSystem::~EditorSystem()
 	ImGui::DestroyContext();
 }
 
-void EditorSystem::drawDefaultUI()
+void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 {
 	static bool optFullscreenPersistant = true;
 	bool optFullscreen = optFullscreenPersistant;
@@ -345,6 +345,14 @@ void EditorSystem::drawDefaultUI()
 					PRINT("Building fonts...");
 					OS::Execute("start \"\" \"" + OS::GetAbsolutePath("build_fonts.bat").string() + "\"");
 					PRINT("Built fonts");
+				}
+				if (ImGui::BeginMenu("Resources"))
+				{
+					for (auto& [data, file] : ResourceLoader::GetResources())
+					{
+						ImGui::MenuItem(file->getPath().generic_string().c_str());
+					}
+					ImGui::EndMenu();
 				}
 				ImGui::EndMenu();
 			}

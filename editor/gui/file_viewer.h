@@ -29,5 +29,5 @@ public:
 	FileViewer(FileViewer&) = delete;
 	~FileViewer();
 
-	void draw();
+	void draw(float deltaMilliseconds);
 };

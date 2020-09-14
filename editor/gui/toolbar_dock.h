@@ -22,7 +22,7 @@ public:
 	ToolbarDock(ToolbarDock&) = delete;
 	~ToolbarDock() = default;
 
-	void draw();
+	void draw(float deltaMilliseconds);
 
 	ToolbarDockSettings& getSettings() { return m_ToolbarDockSettings; }
 	void setActive(bool enabled) { m_ToolbarDockSettings.m_IsActive = enabled; }
