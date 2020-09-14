@@ -98,7 +98,7 @@ HierarchyDock::HierarchyDock()
 	BIND_EVENT_MEMBER_FUNCTION("EditorOpenEntity", HierarchyDock::selectOpenEntity);
 }
 
-void HierarchyDock::draw()
+void HierarchyDock::draw(float deltaMilliseconds)
 {
 	if (m_HierarchySettings.m_IsActive)
 	{

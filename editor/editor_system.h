@@ -63,7 +63,7 @@ class EditorSystem : public System
 	EditorSystem(const EditorSystem&) = delete;
 	~EditorSystem();
 
-	void drawDefaultUI();
+	void drawDefaultUI(float deltaMilliseconds);
 
 	void pushEditorStyleColors();
 	void pushEditorStyleVars();

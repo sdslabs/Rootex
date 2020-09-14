@@ -35,7 +35,7 @@ void FileSystemDock::drawFileSystemTree(const FilePath& path)
 	}
 }
 
-void FileSystemDock::draw()
+void FileSystemDock::draw(float deltaMilliseconds)
 {
 	if (m_FileSystemSettings.m_IsActive)
 	{

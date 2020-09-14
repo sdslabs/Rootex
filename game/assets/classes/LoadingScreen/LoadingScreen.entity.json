@@ -35,7 +35,7 @@
             }
         },
         "UIComponent": {
-            "filePath": "game/assets/ui/loading/loading.rml"
+            "filePath": "game/assets/ui/fade_to_black/fade_to_black.rml"
         }
     },
     "Entity": {
