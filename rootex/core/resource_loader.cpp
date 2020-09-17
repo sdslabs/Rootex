@@ -3,7 +3,7 @@
 #include <d3d11.h>
 
 #include "common/common.h"
-
+#include "application.h"
 #include "framework/systems/audio_system.h"
 #include "core/renderer/mesh.h"
 #include "core/renderer/vertex_buffer.h"
@@ -12,14 +12,13 @@
 #include "core/renderer/vertex_data.h"
 #include "script/interpreter.h"
 #include "core/renderer/material_library.h"
+#include "os/thread.h"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
 HashMap<Ptr<ResourceData>, Ptr<ResourceFile>> ResourceLoader::s_ResourcesDataFiles;
-HashMap<ResourceFile::Type, Vector<ResourceFile*>> ResourceLoader::s_ResourceFileLibrary;
-Assimp::Importer ResourceLoader::s_ModelLoader;
 
 bool IsFileSupported(const String& extension, ResourceFile::Type supportedFileType)
 {
@@ -34,19 +33,20 @@ bool IsFileSupported(const String& extension, ResourceFile::Type supportedFileTy
 
 void ResourceLoader::LoadAssimp(ModelResourceFile* file)
 {
-	const aiScene* scene = s_ModelLoader.ReadFile(
+	Assimp::Importer modelLoader;
+	const aiScene* scene = modelLoader.ReadFile(
 	    file->getPath().generic_string(),
 	    aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_OptimizeMeshes);
 
 	if (!scene)
 	{
 		ERR("Model could not be loaded: " + OS::GetAbsolutePath(file->m_ResourceData->getPath().string()).generic_string());
-		ERR("Assimp: " + s_ModelLoader.GetErrorString());
+		ERR("Assimp: " + modelLoader.GetErrorString());
 		return;
 	}
 
-	file->m_Textures.clear();
-	file->m_Textures.resize(scene->mNumTextures, nullptr);
+	Vector<Ref<Texture>> textures;
+	textures.resize(scene->mNumTextures, nullptr);
 	file->m_Meshes.clear();
 	file->m_Meshes.reserve(scene->mNumMeshes);
 	for (int i = 0; i < scene->mNumMeshes; i++)
@@ -142,15 +142,15 @@ void ResourceLoader::LoadAssimp(ModelResourceFile* file)
 					// Texture is embedded
 					int textureID = atoi(str.C_Str() + 1);
 
-					if (!file->m_Textures[textureID])
+					if (!textures[textureID])
 					{
 						aiTexture* texture = scene->mTextures[textureID];
 						size_t size = scene->mTextures[textureID]->mWidth;
 						PANIC(texture->mHeight == 0, "Compressed texture found but expected embedded texture");
-						file->m_Textures[textureID].reset(new Texture(reinterpret_cast<const char*>(texture->pcData), size));
+						textures[textureID].reset(new Texture(reinterpret_cast<const char*>(texture->pcData), size));
 					}
 
-					extractedMaterial->setTextureInternal(file->m_Textures[textureID]);
+					extractedMaterial->setTextureInternal(textures[textureID]);
 				}
 				else
 				{
@@ -215,6 +215,41 @@ void ResourceLoader::LoadALUT(AudioResourceFile* audioRes, const char* audioBuff
 	audioRes->m_Duration /= frequency;
 }
 
+ResourceFile* ResourceLoader::CreateSomeResourceFile(const String& path)
+{
+	ResourceFile* result = nullptr;
+	for (auto& [resourceType, extensions] : SupportedFiles)
+	{
+		if (std::find(extensions.begin(), extensions.end(), FilePath(path).extension().generic_string()) != extensions.end())
+		{
+			switch (resourceType)
+			{
+			case ResourceFile::Type::Text:
+				result = CreateTextResourceFile(path);
+				break;
+			case ResourceFile::Type::Audio:
+				result = CreateAudioResourceFile(path);
+				break;
+			case ResourceFile::Type::Font:
+				result = CreateFontResourceFile(path);
+				break;
+			case ResourceFile::Type::Image:
+				result = CreateImageResourceFile(path);
+				break;
+			case ResourceFile::Type::Lua:
+				result = CreateLuaTextResourceFile(path);
+				break;
+			case ResourceFile::Type::Model:
+				result = CreateModelResourceFile(path);
+				break;
+			default:
+				break;
+			}
+		}
+	}
+	return result;
+}
+
 void ResourceLoader::RegisterAPI(sol::state& rootex)
 {
 	sol::usertype<ResourceLoader> resourceLoader = rootex.new_usertype<ResourceLoader>("ResourceLoader");
@@ -249,7 +284,6 @@ TextResourceFile* ResourceLoader::CreateTextResourceFile(const String& path)
 	TextResourceFile* textRes = new TextResourceFile(ResourceFile::Type::Text, resData);
 
 	s_ResourcesDataFiles[Ptr<ResourceData>(resData)] = Ptr<ResourceFile>(textRes);
-	s_ResourceFileLibrary[ResourceFile::Type::Text].push_back(textRes);
 	return textRes;
 }
 
@@ -284,7 +318,6 @@ LuaTextResourceFile* ResourceLoader::CreateLuaTextResourceFile(const String& pat
 	LuaTextResourceFile* luaRes = new LuaTextResourceFile(resData);
 
 	s_ResourcesDataFiles[Ptr<ResourceData>(resData)] = Ptr<ResourceFile>(luaRes);
-	s_ResourceFileLibrary[ResourceFile::Type::Lua].push_back(luaRes);
 
 	return luaRes;
 }
@@ -327,7 +360,6 @@ AudioResourceFile* ResourceLoader::CreateAudioResourceFile(const String& path)
 	LoadALUT(audioRes, audioBuffer, format, size, frequency);
 
 	s_ResourcesDataFiles[Ptr<ResourceData>(resData)] = Ptr<ResourceFile>(audioRes);
-	s_ResourceFileLibrary[ResourceFile::Type::Audio].push_back(audioRes);
 
 	return audioRes;
 }
@@ -355,7 +387,6 @@ ModelResourceFile* ResourceLoader::CreateModelResourceFile(const String& path)
 	LoadAssimp(visualRes);
 
 	s_ResourcesDataFiles[Ptr<ResourceData>(resData)] = Ptr<ResourceFile>(visualRes);
-	s_ResourceFileLibrary[ResourceFile::Type::Model].push_back(visualRes);
 
 	return visualRes;
 }
@@ -382,7 +413,6 @@ ImageResourceFile* ResourceLoader::CreateImageResourceFile(const String& path)
 	ImageResourceFile* imageRes = new ImageResourceFile(resData);
 
 	s_ResourcesDataFiles[Ptr<ResourceData>(resData)] = Ptr<ResourceFile>(imageRes);
-	s_ResourceFileLibrary[ResourceFile::Type::Image].push_back(imageRes);
 
 	return imageRes;
 }
@@ -409,7 +439,6 @@ FontResourceFile* ResourceLoader::CreateFontResourceFile(const String& path)
 	FontResourceFile* fontRes = new FontResourceFile(resData);
 
 	s_ResourcesDataFiles[Ptr<ResourceData>(resData)] = Ptr<ResourceFile>(fontRes);
-	s_ResourceFileLibrary[ResourceFile::Type::Font].push_back(fontRes);
 
 	return fontRes;
 }
@@ -493,12 +522,64 @@ void ResourceLoader::Reload(FontResourceFile* file)
 	file->regenerateFont();
 }
 
-Vector<ResourceFile*>& ResourceLoader::GetFilesOfType(ResourceFile::Type type)
+int ResourceLoader::Preload(Vector<String> paths, Atomic<int>& progress)
 {
-	return s_ResourceFileLibrary[type];
+	if (paths.empty())
+	{
+		PRINT("Asked to preload an empty list of files, no files preloaded");
+		return 0;
+	}
+
+	std::sort(paths.begin(), paths.end());
+	Vector<String> empericalPaths = { paths.front() };
+	for (auto& incomingPath : paths)
+	{
+		if (empericalPaths.back() != incomingPath)
+		{
+			empericalPaths.emplace_back(incomingPath);
+		}
+	}
+
+	ThreadPool& preloadThreads = Application::GetSingleton()->getThreadPool();
+	Vector<Ref<Task>> preloadTasks;
+
+	progress = 0;
+	for (auto& path : empericalPaths)
+	{
+		Ref<Task> loadingTask(new Task([=, &progress]() {
+			CreateSomeResourceFile(path);
+			progress++;
+		}));
+		preloadTasks.push_back(loadingTask);
+	}
+
+	// FIX: This is a workaround which saves the main thread from being blocked when 1 task is submitted
+	preloadTasks.push_back(Ref<Task>(new Task([]() {})));
+
+	preloadThreads.submit(preloadTasks);
+
+	PRINT("Preloading " + std::to_string(paths.size()) + " resource files");
+	return preloadTasks.size() - 1; // 1 less for the dummy task
 }
 
-HashMap<ResourceFile::Type, Vector<ResourceFile*>>& ResourceLoader::GetAllFiles()
+void ResourceLoader::Unload(const Vector<String>& paths)
 {
-	return s_ResourceFileLibrary;
+	Vector<const Ptr<ResourceData>*> unloads;
+	for (auto& [data, file] : s_ResourcesDataFiles)
+	{
+		for (auto& path : paths)
+		{
+			if (data->getPath() == path)
+			{
+				unloads.push_back(&data);
+			}
+		}
+	}
+
+	for (auto& dataPtr : unloads)
+	{
+		s_ResourcesDataFiles.erase(*dataPtr);
+	}
+
+	PRINT("Unloaded " + std::to_string(paths.size()) + " resource files");
 }

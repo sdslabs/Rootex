@@ -39,12 +39,13 @@ protected:
 
 	EntityFactory();
 	EntityFactory(EntityFactory&) = delete;
-	~EntityFactory();
+	~EntityFactory() = default;
 
 	Ref<Entity> createRootEntity();
 	friend class HierarchyGraph;
 
 	Variant deleteEntityEvent(const Event* event);
+	Variant applicationExit(const Event* event);
 
 public:
 	static void RegisterAPI(sol::state& rootex);
@@ -61,8 +62,8 @@ public:
 
 	void addDefaultComponent(Ref<Entity> entity, String componentName);
 	void addComponent(Ref<Entity> entity, Ref<Component> component);
-	/// Pass in a boolean that determines whether the Root entity should be saved from destruction or not.
-	void destroyEntities(bool saveRoot);
+	/// Delete all non-Root entities.
+	void destroyEntities();
 	void deleteEntity(Ref<Entity> entity);
 	bool saveEntityAsClass(Ref<Entity> entity);
 	Ref<Entity> createEntityFromClass(const JSON::json& entityJSON);

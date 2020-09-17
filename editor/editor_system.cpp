@@ -1,5 +1,6 @@
-#include "editor.h"
+#include "editor_system.h"
 
+#include "core/random.h"
 #include "app/level_manager.h"
 #include "core/renderer/rendering_device.h"
 #include "core/renderer/material_library.h"
@@ -15,18 +16,18 @@
 
 #include "imgui_stdlib.h"
 #include "ImGuizmo.h"
+#include "editor_system.h"
 
-void Editor::initialize(HWND hWnd, const JSON::json& projectJSON)
+bool EditorSystem::initialize(const JSON::json& systemData)
 {
-	BIND_EVENT_MEMBER_FUNCTION("EditorSaveBeforeQuit", Editor::saveBeforeQuit);
-	BIND_EVENT_MEMBER_FUNCTION("EditorSaveAll", Editor::saveAll);
-	BIND_EVENT_MEMBER_FUNCTION("EditorAutoSave", Editor::autoSave);
-	BIND_EVENT_MEMBER_FUNCTION("EditorOpenLevel", Editor::openLevel);
-	BIND_EVENT_MEMBER_FUNCTION("EditorCreateNewLevel", Editor::createNewLevel);
-	BIND_EVENT_MEMBER_FUNCTION("EditorCreateNewEntity", Editor::createNewEntity);
-	BIND_EVENT_MEMBER_FUNCTION("EditorCreateNewMaterial", Editor::createNewMaterial);
+	BIND_EVENT_MEMBER_FUNCTION("EditorSaveBeforeQuit", EditorSystem::saveBeforeQuit);
+	BIND_EVENT_MEMBER_FUNCTION("EditorSaveAll", EditorSystem::saveAll);
+	BIND_EVENT_MEMBER_FUNCTION("EditorAutoSave", EditorSystem::autoSave);
+	BIND_EVENT_MEMBER_FUNCTION("EditorCreateNewLevel", EditorSystem::createNewLevel);
+	BIND_EVENT_MEMBER_FUNCTION("EditorCreateNewEntity", EditorSystem::createNewEntity);
+	BIND_EVENT_MEMBER_FUNCTION("EditorCreateNewMaterial", EditorSystem::createNewMaterial);
 
-	const JSON::json& general = projectJSON["general"];
+	const JSON::json& general = systemData["general"];
 
 	m_Colors.m_Accent = {
 		(float)general["colors"]["accent"]["r"],
@@ -100,7 +101,7 @@ void Editor::initialize(HWND hWnd, const JSON::json& projectJSON)
 	m_Hierarchy.reset(new HierarchyDock());
 	m_Output.reset(new OutputDock());
 	m_Toolbar.reset(new ToolbarDock());
-	m_Viewport.reset(new ViewportDock(projectJSON["viewport"]));
+	m_Viewport.reset(new ViewportDock(systemData["viewport"]));
 	m_Inspector.reset(new InspectorDock());
 	m_FileViewer.reset(new FileViewer());
 	m_Classes.reset(new ClassesDock());
@@ -108,19 +109,20 @@ void Editor::initialize(HWND hWnd, const JSON::json& projectJSON)
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable | ImGuiConfigFlags_DpiEnableScaleFonts | ImGuiConfigFlags_DpiEnableScaleViewports;
 	io.ConfigDockingWithShift = true;
 	io.FontAllowUserScaling = true;
-	
 	m_EditorFont = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/Lato-Regular.ttf", 19.0f);
 	m_EditorFontBold = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/Lato-Bold.ttf", 20.0f);
 
-	ImGui_ImplWin32_Init(hWnd);
+	ImGui_ImplWin32_Init(Application::GetSingleton()->getWindow()->getWindowHandle());
 	ImGui_ImplDX11_Init(RenderingDevice::GetSingleton()->getDevice(), RenderingDevice::GetSingleton()->getContext());
 	ImGui::StyleColorsDark();
+
+	return true;
 }
 
-void Editor::render()
+void EditorSystem::update(float deltaMilliseconds)
 {
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
@@ -144,45 +146,45 @@ void Editor::render()
 
 	ImGui::PopFont();
 
-	RenderingDevice::GetSingleton()->setTextureRenderTarget();
-	if (m_WorldMode)
-	{
-		RenderSystem::GetSingleton()->render();
-		RenderUISystem::GetSingleton()->render();
-	}
 	if (m_CollisionMode)
 	{
 		PhysicsSystem::GetSingleton()->debugDraw();
 	}
-	UISystem::GetSingleton()->render();
+	
 	RenderingDevice::GetSingleton()->setBackBufferRenderTarget();
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+	RenderingDevice::GetSingleton()->setTextureRenderTarget();
 }
 
-void Editor::pushRegularFont()
+void EditorSystem::pushRegularFont()
 {
 	ImGui::PushFont(m_EditorFont);
 }
 
-void Editor::pushBoldFont()
+void EditorSystem::pushBoldFont()
 {
 	ImGui::PushFont(m_EditorFontBold);
 }
 
-void Editor::popFont()
+void EditorSystem::popFont()
 {
 	ImGui::PopFont();
 }
 
-Editor::~Editor()
+EditorSystem::EditorSystem()
+    : System("EditorSystem", UpdateOrder::Editor, true)
+{
+}
+
+EditorSystem::~EditorSystem()
 {
 	ImGui_ImplDX11_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
 }
 
-void Editor::drawDefaultUI()
+void EditorSystem::drawDefaultUI()
 {
 	static bool optFullscreenPersistant = true;
 	bool optFullscreen = optFullscreenPersistant;
@@ -209,6 +211,8 @@ void Editor::drawDefaultUI()
 		windowFlags |= ImGuiWindowFlags_NoBackground;
 
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+	
+	static String loadingLevel;
 
 	ImGui::Begin("Rootex Editor", nullptr, windowFlags);
 	{
@@ -256,9 +260,7 @@ void Editor::drawDefaultUI()
 						}
 						ImGui::EndCombo();
 					}
-					ImGui::SameLine();
 					ImGui::InputText("Material Path", &newMaterialName, ImGuiInputTextFlags_AlwaysInsertMode);
-					ImGui::SameLine();
 					if (ImGui::Button("Create"))
 					{
 						if (newMaterialName != "" && newMaterialType != "Select Material Type")
@@ -276,7 +278,6 @@ void Editor::drawDefaultUI()
 				if (ImGui::BeginMenu("Create Level"))
 				{
 					ImGui::InputText("Level Name", &newLevelName, ImGuiInputTextFlags_AlwaysInsertMode);
-					ImGui::SameLine();
 					if (ImGui::Button("Create"))
 					{
 						if (LevelManager::GetSingleton()->isAnyLevelOpen())
@@ -287,7 +288,7 @@ void Editor::drawDefaultUI()
 						else
 						{
 							EventManager::GetSingleton()->call("EditorFileNewLevel", "EditorCreateNewLevel", newLevelName);
-							EventManager::GetSingleton()->call("EditorOpenNewLevel", "EditorOpenLevel", "game/assets/levels/" + newLevelName);
+							loadingLevel = newLevelName;
 						}
 					}
 					ImGui::EndMenu();
@@ -306,7 +307,7 @@ void Editor::drawDefaultUI()
 							}
 							else
 							{
-								EventManager::GetSingleton()->call("EditorFileMenuOpenLevel", "EditorOpenLevel", levelName.string());
+								loadingLevel = levelName.generic_string();
 							}
 						}
 					}
@@ -336,19 +337,6 @@ void Editor::drawDefaultUI()
 					OS::Execute("start \"\" \"" + OS::GetAbsolutePath("build_fonts.bat").string() + "\"");
 					PRINT("Built fonts");
 				}
-				if (ImGui::BeginMenu("Library"))
-				{
-					for (auto&& fileType : ResourceLoader::GetAllFiles())
-					{
-						for (auto&& file : fileType.second)
-						{
-							ImGui::SetNextItemWidth(file->getPath().string().size() * 8);
-							ImGui::LabelText(std::to_string((int)file->getType()).c_str(), file->getPath().string().c_str());
-						}
-					}
-
-					ImGui::EndMenu();
-				}
 				ImGui::EndMenu();
 			}
 			if (ImGui::BeginMenu("View"))
@@ -366,8 +354,7 @@ void Editor::drawDefaultUI()
 				}
 
 				ImGui::Checkbox("Collision Mode", &m_CollisionMode);
-				ImGui::Checkbox("World Mode", &m_WorldMode);
-
+				
 				bool fullscreen = Extract(bool, EventManager::GetSingleton()->returnCall("WindowGetScreenState", "WindowGetScreenState", 0));
 				if (ImGui::Checkbox("Full Screen", &fullscreen))
 				{
@@ -388,9 +375,9 @@ void Editor::drawDefaultUI()
 			}
 			if (ImGui::BeginMenu("Level"))
 			{
-				if (ImGui::MenuItem("Settings"))
+				if (LevelManager::GetSingleton()->isAnyLevelOpen() && ImGui::MenuItem("Settings"))
 				{
-					EventManager::GetSingleton()->call("EditorLevelMenu", "EditorOpenFile", LevelManager::GetSingleton()->getCurrentLevelSettingsFile()->getPath().string());
+					EventManager::GetSingleton()->call("EditorLevelMenu", "EditorOpenFile", LevelManager::GetSingleton()->getCurrentLevel().getLevelSettingsFile()->getPath().string());
 				}
 				ImGui::EndMenu();
 			}
@@ -402,7 +389,7 @@ void Editor::drawDefaultUI()
 				}
 				if (ImGui::BeginMenu("Open Source Licenses"))
 				{
-					for (auto&& library : LevelManager::GetSingleton()->getLibrariesPaths())
+					for (auto&& library : Application::GetSingleton()->getLibrariesPaths())
 					{
 						if (ImGui::MenuItem(library.filename().string().c_str(), ""))
 						{
@@ -422,7 +409,7 @@ void Editor::drawDefaultUI()
 			if (ImGui::BeginPopupModal("Save", 0, ImGuiWindowFlags_AlwaysAutoResize))
 			{
 				ImGui::SetNextWindowSize({ ImGui::GetWindowWidth(), ImGui::GetWindowHeight() });
-				ImGui::Text(String("Do you want to save " + LevelManager::GetSingleton()->getCurrentLevelName() + "?").c_str());
+				ImGui::Text(String("Do you want to save " + LevelManager::GetSingleton()->getCurrentLevel().getLevelName() + "?").c_str());
 				if (ImGui::Button("Save"))
 				{
 					if (m_PopupCause == "quit")
@@ -434,14 +421,14 @@ void Editor::drawDefaultUI()
 					{
 						saveAll(nullptr);
 						EventManager::GetSingleton()->call("EditorFileNewLevel", "EditorCreateNewLevel", newLevelName);
-						EventManager::GetSingleton()->call("EditorOpenNewLevel", "EditorOpenLevel", "game/assets/levels/" + newLevelName);
+						loadingLevel = newLevelName;
 						ImGui::CloseCurrentPopup();
 						m_MenuAction = "";
 					}
 					else if (m_PopupCause == "open")
 					{
 						saveAll(nullptr);
-						EventManager::GetSingleton()->call("EditorFileMenuOpenLevel", "EditorOpenLevel", openLevelName);
+						loadingLevel = openLevelName;
 						ImGui::CloseCurrentPopup();
 						m_MenuAction = "";
 					}
@@ -457,13 +444,13 @@ void Editor::drawDefaultUI()
 					else if (m_PopupCause == "create")
 					{
 						EventManager::GetSingleton()->call("EditorFileNewLevel", "EditorCreateNewLevel", newLevelName);
-						EventManager::GetSingleton()->call("EditorOpenNewLevel", "EditorOpenLevel", "game/assets/levels/" + newLevelName);
+						loadingLevel = newLevelName;
 						ImGui::CloseCurrentPopup();
 						m_MenuAction = "";
 					}
 					else if (m_PopupCause == "open")
 					{
-						EventManager::GetSingleton()->call("EditorFileMenuOpenLevel", "EditorOpenLevel", openLevelName);
+						loadingLevel = openLevelName;
 						ImGui::CloseCurrentPopup();
 						m_MenuAction = "";
 					}
@@ -495,7 +482,7 @@ void Editor::drawDefaultUI()
 			}
 
 			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
-			for (auto&& library : LevelManager::GetSingleton()->getLibrariesPaths())
+			for (auto&& library : Application::GetSingleton()->getLibrariesPaths())
 			{
 				if (ImGui::BeginPopup(library.string().c_str(), ImGuiWindowFlags_AlwaysAutoResize))
 				{
@@ -508,10 +495,45 @@ void Editor::drawDefaultUI()
 			ImGui::EndMenuBar();
 		}
 	}
+
+	static Atomic<int> progress;
+	static float currentProgress = 0.0f;
+	static int totalProgress = -1;
+
+	if (!loadingLevel.empty() && totalProgress == -1)
+	{
+		ImGui::OpenPopup("Load Level");
+		totalProgress = LevelManager::GetSingleton()->preloadLevel(loadingLevel, progress, true);
+		currentProgress = 0.0f;
+	}
+
+	if (ImGui::BeginPopupModal("Load Level", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		ImGui::Text("Loading level: %s", loadingLevel.c_str());
+
+		ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
+		float target = progress.load() / (float)totalProgress;
+		float velocity = (target - currentProgress) * Random::Float();
+		currentProgress += velocity * 0.01f;
+		ImGui::ProgressBar(currentProgress);
+
+		if (totalProgress == progress)
+		{
+			LevelManager::GetSingleton()->openPreloadedLevel(loadingLevel, true);
+			SetWindowText(GetActiveWindow(), ("Rootex Editor: " + LevelManager::GetSingleton()->getCurrentLevel().getLevelName()).c_str());
+			totalProgress = -1;
+			progress = 0;
+			loadingLevel = "";
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::EndPopup();
+	}
+
 	ImGui::End();
 }
 
-void Editor::pushEditorStyleColors()
+void EditorSystem::pushEditorStyleColors()
 {
 	// Every line in this function body should push a style color
 	static const int starting = __LINE__;
@@ -556,7 +578,7 @@ void Editor::pushEditorStyleColors()
 	static const int ending = m_EditorStyleColorPushCount = __LINE__ - starting - 1;
 }
 
-void Editor::pushEditorStyleVars()
+void EditorSystem::pushEditorStyleVars()
 {
 	// Every line in this function body should push a style var
 	static const int starting = __LINE__;
@@ -564,13 +586,13 @@ void Editor::pushEditorStyleVars()
 	static const int ending = m_EditorStyleVarPushCount = __LINE__ - starting - 1;
 }
 
-Variant Editor::saveAll(const Event* event)
+Variant EditorSystem::saveAll(const Event* event)
 {
 	if (LevelManager::GetSingleton()->isAnyLevelOpen())
 	{
 		MaterialLibrary::SaveAll();
 		LevelManager::GetSingleton()->saveCurrentLevel();
-		PRINT("Successfully saved level: " + LevelManager::GetSingleton()->getCurrentLevelName());
+		PRINT("Successfully saved level: " + LevelManager::GetSingleton()->getCurrentLevel().getLevelName());
 	}
 	else
 	{
@@ -579,23 +601,14 @@ Variant Editor::saveAll(const Event* event)
 	return true;
 }
 
-Variant Editor::autoSave(const Event* event)
+Variant EditorSystem::autoSave(const Event* event)
 {
 	PRINT("Auto-saving levels...");
 	saveAll(nullptr);
 	return true;
 }
 
-Variant Editor::openLevel(const Event* event)
-{
-	String levelPath(Extract(String, event->getData()));
-	LevelManager::GetSingleton()->openLevel(levelPath, true);
-	SetWindowText(GetActiveWindow(), ("Rootex Editor: " + LevelManager::GetSingleton()->getCurrentLevelName()).c_str());
-
-	return true;
-}
-
-Variant Editor::saveBeforeQuit(const Event* event)
+Variant EditorSystem::saveBeforeQuit(const Event* event)
 {
 	if (LevelManager::GetSingleton()->isAnyLevelOpen())
 	{
@@ -609,7 +622,7 @@ Variant Editor::saveBeforeQuit(const Event* event)
 	return true;
 }
 
-Variant Editor::createNewLevel(const Event* event)
+Variant EditorSystem::createNewLevel(const Event* event)
 {
 	const String& newLevelName = Extract(String, event->getData());
 
@@ -624,7 +637,7 @@ Variant Editor::createNewLevel(const Event* event)
 	return true;
 }
 
-Variant Editor::createNewEntity(const Event* event)
+Variant EditorSystem::createNewEntity(const Event* event)
 {
 	const String& entityClassFilePath = Extract(String, event->getData());
 	TextResourceFile* entityClassFile = ResourceLoader::CreateNewTextResourceFile(entityClassFilePath);
@@ -635,15 +648,29 @@ Variant Editor::createNewEntity(const Event* event)
 	return newEntity;
 }
 
-Variant Editor::createNewMaterial(const Event* event)
+Variant EditorSystem::createNewMaterial(const Event* event)
 {
 	const Vector<String>& materialInfo = Extract(Vector<String>, event->getData());
 	MaterialLibrary::CreateNewMaterialFile(materialInfo[0], materialInfo[1]);
 	return true;
 }
 
-Editor* Editor::GetSingleton()
+EditorSystem* EditorSystem::GetSingleton()
 {
-	static Editor singleton;
+	static EditorSystem singleton;
 	return &singleton;
 }
+
+#ifdef ROOTEX_EDITOR
+#include "imgui.h"
+void EditorSystem::draw()
+{
+	System::draw();
+
+	if (!m_IsActive)
+	{
+		m_IsActive = true;
+		WARN("Disabling the editor will freeze everything");
+	}
+}
+#endif // ROOTEX_EDITOR

@@ -1,5 +1,11 @@
 #pragma once
 
+// target Windows 7 or later
+#ifndef _WIN32_WINNT
+#define _WIN32_WINNT 0x0601
+#endif // !_WIN32_WINNT
+#include <sdkddkver.h>
+
 /// Convert nanoseconds to milliseconds
 #define NS_TO_MS 1e-6f
 /// Convert milliseconds to nanoseconds
@@ -8,6 +14,21 @@
 #define MS_TO_S 1e-3f
 /// Convert seconds to milliseconds
 #define S_TO_MS 1e+3f
+
+/// Future data type for reading future variables
+#include <future>
+template <class T>
+using Future = std::future<T>;
+
+/// Promise data types for sharing futures
+#include <future>
+template <class T>
+using Promise = std::promise<T>;
+
+/// Promise data types for sharing futures
+#include <atomic>
+template <class T>
+using Atomic = std::atomic<T>;
 
 // Smart pointers
 #include <memory>
@@ -109,10 +130,6 @@ using Function = std::function<T>;
 namespace JSON = nlohmann;
 
 #include "imgui.h"
-
-// target Windows 7 or later
-#define _WIN32_WINNT 0x0601
-#include <sdkddkver.h>
 
 #ifndef WINDOWS_NO_DUMP
 #define WIN32_LEAN_AND_MEAN

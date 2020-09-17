@@ -24,6 +24,7 @@ protected:
 	static LRESULT CALLBACK WindowsProc(HWND windowHandler, UINT msg, WPARAM wParam, LPARAM lParam);
 	Variant quitWindow(const Event* event);
 	Variant quitEditorWindow(const Event* event);
+	Variant windowResized(const Event* event);
 
 public:
 	Window(int xOffset, int yOffset, int width, int height, const String& title, bool isEditor, bool MSAA, bool fullScreen);
@@ -51,4 +52,5 @@ public:
 	int getTitleBarHeight() const;
 	HWND getWindowHandle();
 	void setWindowTitle(String title);
+	void setWindowSize(const Vector2& newSize);
 };

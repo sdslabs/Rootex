@@ -1,5 +1,10 @@
 #include "hierarchy_system.h"
 
+HierarchySystem::HierarchySystem()
+    : System("HierarchySystem", UpdateOrder::Async, false)
+{
+}
+
 HierarchySystem* HierarchySystem::GetSingleton()
 {
 	static HierarchySystem singleton;

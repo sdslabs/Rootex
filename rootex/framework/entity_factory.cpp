@@ -64,6 +64,7 @@ EntityID EntityFactory::getNextEditorID()
 EntityFactory::EntityFactory()
 {
 	BIND_EVENT_MEMBER_FUNCTION("DeleteEntity", deleteEntityEvent);
+	BIND_EVENT_MEMBER_FUNCTION("ApplicationExit", applicationExit);
 
 	REGISTER_COMPONENT(TestComponent);
 	REGISTER_COMPONENT(DebugComponent);
@@ -88,11 +89,6 @@ EntityFactory::EntityFactory()
 	REGISTER_COMPONENT(CPUParticlesComponent);
 	REGISTER_COMPONENT(TriggerComponent);
 	REGISTER_COMPONENT(UIComponent);
-}
-
-EntityFactory::~EntityFactory()
-{
-	destroyEntities(false);
 }
 
 Ref<Component> EntityFactory::createComponent(const String& name, const JSON::json& componentData)
@@ -275,6 +271,12 @@ Variant EntityFactory::deleteEntityEvent(const Event* event)
 	return true;
 }
 
+Variant EntityFactory::applicationExit(const Event* event)
+{
+	EntityFactory::GetSingleton()->destroyEntities();
+	return true;
+}
+
 void EntityFactory::addDefaultComponent(Ref<Entity> entity, String componentName)
 {
 	addComponent(entity, createDefaultComponent(componentName));
@@ -287,7 +289,7 @@ void EntityFactory::addComponent(Ref<Entity> entity, Ref<Component> component)
 	entity->setupComponents();
 }
 
-void EntityFactory::destroyEntities(bool saveRoot)
+void EntityFactory::destroyEntities()
 {
 	Vector<Ref<Entity>> markedForRemoval;
 	for (auto& entity : m_Entities)
@@ -312,10 +314,9 @@ void EntityFactory::destroyEntities(bool saveRoot)
 		deleteEntity(entity);
 	}
 
-	if (!saveRoot && m_Entities[ROOT_ENTITY_ID])
-	{
-		deleteEntity(m_Entities[ROOT_ENTITY_ID]);
-	}
+	Ref<Entity> root = m_Entities[ROOT_ENTITY_ID];
+	m_Entities.clear();
+	m_Entities[ROOT_ENTITY_ID] = root;
 }
 
 void EntityFactory::deleteEntity(Ref<Entity> entity)

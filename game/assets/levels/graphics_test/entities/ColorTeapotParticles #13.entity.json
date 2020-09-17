@@ -1,6 +1,7 @@
 {
     "Components": {
         "CPUParticlesComponent": {
+            "angularVelocityVariation": 1.0,
             "colorBegin": {
                 "a": 1.0,
                 "b": 0.0,
@@ -13,12 +14,18 @@
                 "g": 0.0,
                 "r": 0.0
             },
+            "emitMode": 0,
+            "emitterDimensions": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
             "isVisible": true,
             "lifeTime": 1.0,
             "materialPath": "rootex/assets/materials/default_particles.rmat",
             "poolSize": 1000,
             "renderPass": 1,
-            "resFile": "game\\assets\\test\\teapot.obj",
+            "resFile": "game/assets/test/teapot.obj",
             "sizeBegin": 0.0010000000474974513,
             "sizeEnd": 0.0,
             "sizeVariation": 0.029999999329447746,

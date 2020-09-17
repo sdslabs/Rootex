@@ -5,7 +5,7 @@
 /// Implements process of serialization for the entities.
 class SerializationSystem : public System
 {
-	SerializationSystem() = default;
+	SerializationSystem();
 	SerializationSystem(SerializationSystem&) = delete;
 	~SerializationSystem() = default;
 public:

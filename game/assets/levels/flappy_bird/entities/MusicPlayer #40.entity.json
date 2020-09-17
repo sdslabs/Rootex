@@ -6,7 +6,7 @@
         },
         "MusicComponent": {
             "attenuationModel": 53251,
-            "audio": "game\\assets\\hipshop.wav",
+            "audio": "game/assets/hipshop.wav",
             "isAttenuated": false,
             "maxDistance": 100.0,
             "playOnStart": true,
@@ -14,15 +14,17 @@
             "rollOffFactor": 1.0
         },
         "TransformComponent": {
-            "higherBounds": {
-                "x": 0.5,
-                "y": 0.5,
-                "z": 0.5
-            },
-            "lowerBounds": {
-                "x": -0.5,
-                "y": -0.5,
-                "z": -0.5
+            "boundingBox": {
+                "center": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "extents": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                }
             },
             "position": {
                 "x": 0.0,

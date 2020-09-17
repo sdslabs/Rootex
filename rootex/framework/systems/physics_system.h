@@ -29,11 +29,10 @@ class PhysicsSystem : public System
 
 	DebugDrawer m_DebugDrawer;
 
-	PhysicsSystem() = default;
-
 public:
 	static PhysicsSystem* GetSingleton();
-	virtual ~PhysicsSystem();
+	PhysicsSystem();
+	virtual ~PhysicsSystem() = default;
 
 	void addRigidBody(btRigidBody* body);
 	sol::table getPhysicsMaterial();
@@ -41,14 +40,14 @@ public:
 	btCollisionWorld::ClosestRayResultCallback reportClosestRayHits(const btVector3& m_From, const btVector3& m_To);
 
 	/// Initialization and Maintenance of the Physics World
-	void initialize();
+	bool initialize(const JSON::json& systemData) override;
 
 	/// Callback from bullet for each physics time step.
 	static void InternalTickCallback(btDynamicsWorld* const world, btScalar const timeStep);
 
 	void debugDraw();
 	void debugDrawComponent(const btTransform& worldTransform, const btCollisionShape* shape, const btVector3& color);
-	void update(float deltaMilliseconds);
+	void update(float deltaMilliseconds) override;
 
 	void removeRigidBody(btRigidBody* rigidBody);
 };

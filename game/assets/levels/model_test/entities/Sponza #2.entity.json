@@ -20,6 +20,18 @@
             "resFile": "game\\assets\\sponza\\sponza.3ds"
         },
         "TransformComponent": {
+            "boundingBox": {
+                "center": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "extents": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                }
+            },
             "position": {
                 "x": 0.0,
                 "y": 0.0,

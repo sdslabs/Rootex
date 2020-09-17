@@ -1,6 +1,11 @@
 #include "light_system.h"
 #include "core/renderer/shaders/register_locations_pixel_shader.h"
 
+LightSystem::LightSystem()
+    : System("LightSystem", UpdateOrder::Async, false)
+{
+}
+
 LightSystem* LightSystem::GetSingleton()
 {
 	static LightSystem singleton;
@@ -69,7 +74,7 @@ LightsInfo LightSystem::getLights()
 			light->m_AmbientColor, light->m_DiffuseColor, light->m_DiffuseIntensity,
 			light->m_AttConst, light->m_AttLin, light->m_AttQuad,
 			transform.Translation(), light->m_Range, transform.Forward(), light->m_Spot,
-			light->m_AngleRange
+			cos(light->m_AngleRange)
 		};
 	}
 	lights.spotLightCount = i;

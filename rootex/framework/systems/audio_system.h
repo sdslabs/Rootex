@@ -48,7 +48,6 @@ class ResourceFile;
 /// System encapsulating OpenAL error checkers and getters.
 class AudioSystem : public System
 {
-	unsigned int m_UpdateIntervalMilliseconds;
 	ALCdevice* m_Device;
 	ALCcontext* m_Context;
 
@@ -56,7 +55,7 @@ class AudioSystem : public System
 
 	AudioSystem();
 	AudioSystem(AudioSystem&) = delete;
-	~AudioSystem() = default;
+	virtual ~AudioSystem() = default;
 
 public:
 	static AudioSystem* GetSingleton();
@@ -72,15 +71,15 @@ public:
 	/// Wrapper over alutGetError function.
 	static void CheckALUTError(const char* msg, const char* fname, int line);
 
-	void setBufferUpdateRate(float milliseconds);
-
 	AudioListenerComponent* getListener() const { return m_Listener; }
     void setListener(AudioListenerComponent* listenerComponent);
 
+	void setConfig(const JSON::json& configData, bool openInEditor) override;
 	void restoreListener();
-
-	bool initialize();
-	void begin();
-	void update();
 	void shutDown();
+
+	bool initialize(const JSON::json& systemData) override;
+	void update(float deltaMilliseconds) override;
+	void begin() override;
+	void end() override;
 };

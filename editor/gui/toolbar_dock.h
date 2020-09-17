@@ -1,5 +1,7 @@
 #pragma once
 
+#include "common/common.h"
+
 class ToolbarDock
 {
 	float m_LastUpdateTime = 0.0f;
