@@ -56,11 +56,11 @@ GameApplication::GameApplication()
 
 	if (levelName == "")
 	{
-		LevelManager::GetSingleton()->openLevel(m_ApplicationSettings->getJSON()["startLevel"]);
+		LevelManager::GetSingleton()->openLevel(m_ApplicationSettings->getJSON()["startLevel"], {});
 	}
 	else
 	{
-		LevelManager::GetSingleton()->openLevel("game/assets/levels/" + levelName);
+		LevelManager::GetSingleton()->openLevel("game/assets/levels/" + levelName, {});
 	}
 
 	RenderingDevice::GetSingleton()->setBackBufferRenderTarget();

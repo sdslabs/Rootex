@@ -28,7 +28,7 @@ static const inline HashMap<ResourceFile::Type, Vector<String>> SupportedFiles =
 	},
 	{
 	    ResourceFile::Type::Text,
-	    { ".txt", ".json" },
+	    { ".txt", ".json", ".rml" },
 	},
 	{
 	    ResourceFile::Type::Lua,

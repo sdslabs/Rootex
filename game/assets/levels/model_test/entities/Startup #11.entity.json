@@ -4,11 +4,6 @@
             "children": [],
             "parent": 1
         },
-        "ScriptComponent": {
-            "scripts": [
-                "game/assets/scripts/loading.lua"
-            ]
-        },
         "TransformComponent": {
             "boundingBox": {
                 "center": {
@@ -40,11 +35,11 @@
             }
         },
         "UIComponent": {
-            "filePath": "game/assets/ui/loading/loading.rml"
+            "filePath": "game/assets/ui/fade_in_from_black/fade_in_from_black.rml"
         }
     },
     "Entity": {
-        "ID": 2,
-        "name": "LoadingScreen"
+        "ID": 11,
+        "name": "Startup"
     }
 }
