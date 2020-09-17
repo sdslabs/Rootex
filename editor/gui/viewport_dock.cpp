@@ -160,7 +160,7 @@ void ViewportDock::draw(float deltaMilliseconds)
 				Matrix deltaMatrix = Matrix::CreateTranslation(0.0f, 0.0f, 0.0f);
 
 				Ref<TransformComponent> transform = openedEntity->getComponent<TransformComponent>();
-				BoundingBox boundingBox = transform->getBoundsMutable();
+				BoundingBox boundingBox = transform->getBounds();
 
 				struct Bounds
 				{
@@ -240,6 +240,11 @@ void ViewportDock::draw(float deltaMilliseconds)
 
 						BoundingBox boundingBox = transform->getBounds();
 						boundingBox.Center = boundingBox.Center + transform->getAbsoluteTransform().Translation();
+
+						boundingBox.Center.x *= transform->getScale().x;
+						boundingBox.Center.y *= transform->getScale().y;
+						boundingBox.Center.z *= transform->getScale().z;
+
 						boundingBox.Extents.x *= transform->getScale().x;
 						boundingBox.Extents.y *= transform->getScale().y;
 						boundingBox.Extents.z *= transform->getScale().z;
