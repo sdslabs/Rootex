@@ -11,7 +11,7 @@
 #include "renderer/shaders/register_locations_vertex_shader.h"
 
 SkyMaterial::SkyMaterial(const String& imagePath)
-    : Material(ShaderLibrary::GetSkyShader(), SkyMaterial::s_MaterialName)
+    : Material(ShaderLibrary::GetSkyShader(), SkyMaterial::s_MaterialName, false)
     , m_SkyShader(ShaderLibrary::GetSkyShader())
 {
 	setTexture(ResourceLoader::CreateImageResourceFile(imagePath));

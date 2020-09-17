@@ -52,6 +52,7 @@ public:
 	static FilePath GetRootRelativePath(String stringPath);
 	static FilePath GetRelativePath(String stringPath, String base);
 
+	static Vector<FilePath> GetAllFilesInDirectory(const String& directory);
 	static Vector<FilePath> GetAllInDirectory(const String& directory);
 	static Vector<FilePath> GetDirectoriesInDirectory(const String& directory);
 	static bool DeleteDirectory(const String& dirPath);

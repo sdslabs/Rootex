@@ -41,7 +41,7 @@ public:
 	};
 
 	BasicMaterial() = delete;
-	BasicMaterial(const String& imagePath, Color color, bool isLit, float specularIntensity, float specularPower, float reflectivity, float refractionConstant, float refractivity, bool affectedBySky);
+	BasicMaterial(bool isAlpha, const String& imagePath, Color color, bool isLit, float specularIntensity, float specularPower, float reflectivity, float refractionConstant, float refractivity, bool affectedBySky);
 	~BasicMaterial() = default;
 
 	void setColor(const Color& color) { m_Color = color; };

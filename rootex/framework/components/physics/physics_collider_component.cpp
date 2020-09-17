@@ -181,7 +181,7 @@ void PhysicsColliderComponent::translate(const Vector3& vec)
 	m_Body->translate(vecTobtVector3(vec));
 }
 
-void PhysicsColliderComponent::RegisterAPI(sol::state& rootex)
+void PhysicsColliderComponent::RegisterAPI(sol::table& rootex)
 {
 	sol::usertype<PhysicsColliderComponent> physicsColliderComponent = rootex.new_usertype<PhysicsColliderComponent>(
 	    "PhysicsColliderComponent",

@@ -30,7 +30,7 @@ protected:
 	Vector<String> m_AllowedMaterials;
 #endif // ROOTEX_EDITOR
 public:
-	static void RegisterAPI(sol::state& rootex);
+	static void RegisterAPI(sol::table& rootex);
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::ModelComponent;
 
 	virtual bool setup() override;
@@ -44,7 +44,7 @@ public:
 	void setIsVisible(bool enabled);
 	
 	unsigned int getRenderPass() const { return m_RenderPass; }
-	const HashMap<Ref<Material>, Vector<Mesh>>& getMeshes() const { return m_ModelResourceFile->getMeshes(); }
+	const Vector<Pair<Ref<Material>, Vector<Mesh>>>& getMeshes() const { return m_ModelResourceFile->getMeshes(); }
 	ModelResourceFile* getModelResourceFile() const { return m_ModelResourceFile; }
 
 	virtual String getName() const override { return "ModelComponent"; }

@@ -7,6 +7,7 @@
         "r": 0.6470588445663452
     },
     "imageFile": "game/assets/sponza/szdtdi.png",
+    "isAlpha": false,
     "isLit": true,
     "reflectivity": 0.5,
     "refractionConstant": 0.800000011920929,

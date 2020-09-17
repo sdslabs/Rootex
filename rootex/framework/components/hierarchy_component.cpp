@@ -14,7 +14,7 @@ Component* HierarchyComponent::CreateDefault()
 	return component;
 }
 
-void HierarchyComponent::RegisterAPI(sol::state& rootex)
+void HierarchyComponent::RegisterAPI(sol::table& rootex)
 {
 	sol::usertype<HierarchyComponent> hierarchyComponent = rootex.new_usertype<HierarchyComponent>(
 	    "HierarchyComponent",

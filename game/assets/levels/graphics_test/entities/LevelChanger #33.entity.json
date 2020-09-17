@@ -4,11 +4,6 @@
             "children": [],
             "parent": 1
         },
-        "ModelComponent": {
-            "isVisible": true,
-            "renderPass": 1,
-            "resFile": "game/assets/test/animal.obj"
-        },
         "ScriptComponent": {
             "scripts": [
                 "game/assets/scripts/level_change.lua"
@@ -17,9 +12,9 @@
         "TextUIComponent": {
             "color": {
                 "a": 1.0,
-                "b": 0.0,
-                "g": 1.0,
-                "r": 0.11111104488372803
+                "b": 0.4671814441680908,
+                "g": 0.0,
+                "r": 0.1659485548734665
             },
             "fontResource": "game/assets/fonts/lato_30_bold.spritefont",
             "isVisible": true,
@@ -28,7 +23,7 @@
                 "x": 0.0,
                 "y": 295.0
             },
-            "text": "Press A to load"
+            "text": "Press A to go to next level"
         },
         "TransformComponent": {
             "boundingBox": {

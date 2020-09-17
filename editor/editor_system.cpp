@@ -9,6 +9,7 @@
 #include "framework/components/hierarchy_component.h"
 #include "framework/systems/render_system.h"
 #include "framework/systems/render_ui_system.h"
+#include "framework/systems/script_system.h"
 #include "framework/systems/ui_system.h"
 #include "framework/systems/physics_system.h"
 #include "editor_application.h"
@@ -17,6 +18,8 @@
 #include "imgui_stdlib.h"
 #include "ImGuizmo.h"
 #include "editor_system.h"
+
+#define DOCUMENTATION_LINK String("https://rootex.readthedocs.io/en/latest/api/rootex.html")
 
 bool EditorSystem::initialize(const JSON::json& systemData)
 {
@@ -112,8 +115,9 @@ bool EditorSystem::initialize(const JSON::json& systemData)
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable | ImGuiConfigFlags_DpiEnableScaleFonts | ImGuiConfigFlags_DpiEnableScaleViewports;
 	io.ConfigDockingWithShift = true;
 	io.FontAllowUserScaling = true;
-	m_EditorFont = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/Lato-Regular.ttf", 19.0f);
-	m_EditorFontBold = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/Lato-Bold.ttf", 20.0f);
+	m_EditorFont = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/Lato-Regular.ttf", 18.0f);
+	m_EditorFontItalic = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/Lato-Italic.ttf", 18.0f);
+	m_EditorFontBold = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/Lato-Bold.ttf", 18.0f);
 
 	ImGui_ImplWin32_Init(Application::GetSingleton()->getWindow()->getWindowHandle());
 	ImGui_ImplDX11_Init(RenderingDevice::GetSingleton()->getDevice(), RenderingDevice::GetSingleton()->getContext());
@@ -131,15 +135,15 @@ void EditorSystem::update(float deltaMilliseconds)
 
 	ImGui::PushFont(m_EditorFont);
 
-	drawDefaultUI();
-	m_FileSystem->draw();
-	m_Classes->draw();
-	m_Hierarchy->draw();
-	m_Toolbar->draw();
-	m_Viewport->draw();
-	m_Inspector->draw();
-	m_FileViewer->draw();
-	m_Output->draw();
+	drawDefaultUI(deltaMilliseconds);
+	m_FileSystem->draw(deltaMilliseconds);
+	m_Classes->draw(deltaMilliseconds);
+	m_Hierarchy->draw(deltaMilliseconds);
+	m_Toolbar->draw(deltaMilliseconds);
+	m_Viewport->draw(deltaMilliseconds);
+	m_Inspector->draw(deltaMilliseconds);
+	m_FileViewer->draw(deltaMilliseconds);
+	m_Output->draw(deltaMilliseconds);
 
 	ImGui::PopStyleColor(m_EditorStyleColorPushCount);
 	ImGui::PopStyleVar(m_EditorStyleVarPushCount);
@@ -167,6 +171,11 @@ void EditorSystem::pushBoldFont()
 	ImGui::PushFont(m_EditorFontBold);
 }
 
+void EditorSystem::pushItalicFont()
+{
+	ImGui::PushFont(m_EditorFontItalic);
+}
+
 void EditorSystem::popFont()
 {
 	ImGui::PopFont();
@@ -184,7 +193,7 @@ EditorSystem::~EditorSystem()
 	ImGui::DestroyContext();
 }
 
-void EditorSystem::drawDefaultUI()
+void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 {
 	static bool optFullscreenPersistant = true;
 	bool optFullscreen = optFullscreenPersistant;
@@ -228,25 +237,12 @@ void EditorSystem::drawDefaultUI()
 
 		if (ImGui::BeginMenuBar())
 		{
-			static String newLevelName;
+			static String newLevelName = "game/assets/levels/";
 			static String openLevelName;
 			static String newMaterialName = "game/assets/materials/";
 			static String newMaterialType = "Select Material Type";
 			if (ImGui::BeginMenu("File"))
 			{
-				if (ImGui::BeginMenu("Create Entity", LevelManager::GetSingleton()->isAnyLevelOpen()))
-				{
-					for (auto&& entityClassFile : OS::GetFilesInDirectory("game/assets/classes/"))
-					{
-						if (ImGui::MenuItem(entityClassFile.string().c_str(), ""))
-						{
-							Variant callReturn = EventManager::GetSingleton()->returnCall("EditorFileCreateNewEntity", "EditorCreateNewEntity", entityClassFile.string());
-							Ref<Entity> newEntity = Extract(Ref<Entity>, callReturn);
-							EventManager::GetSingleton()->call("EditorFileOpenNewlyCreatedEntity", "EditorOpenEntity", newEntity);
-						}
-					}
-					ImGui::EndMenu();
-				}
 				if (ImGui::BeginMenu("Create Material"))
 				{
 					if (ImGui::BeginCombo("", newMaterialType.c_str()))
@@ -272,6 +268,27 @@ void EditorSystem::drawDefaultUI()
 						}
 					}
 
+					ImGui::EndMenu();
+				}
+				static String newScript = "game/assets/scripts/";
+				if (ImGui::BeginMenu("Create Script"))
+				{
+					ImGui::InputText("Script Name", &newScript, ImGuiInputTextFlags_AlwaysInsertMode);
+					if (ImGui::Button("Create"))
+					{
+						if (!OS::IsExists(newScript))
+						{
+							InputOutputFileStream file = OS::CreateFileName(newScript);
+							String defaultScript = ResourceLoader::CreateLuaTextResourceFile("rootex/assets/scripts/empty.lua")->getString();
+							file.write(defaultScript.c_str(), strlen(defaultScript.c_str()));
+							file.close();
+							PRINT("Successfully created script: " + newScript);
+						}
+						else
+						{
+							WARN("Script already exists: " + newScript);
+						}
+					}
 					ImGui::EndMenu();
 				}
 				ImGui::Separator();
@@ -313,6 +330,19 @@ void EditorSystem::drawDefaultUI()
 					}
 					ImGui::EndMenu();
 				}
+				if (ImGui::BeginMenu("Instantiate class", LevelManager::GetSingleton()->isAnyLevelOpen()))
+				{
+					for (auto&& entityClassFile : OS::GetAllFilesInDirectory("game/assets/classes/"))
+					{
+						if (ImGui::MenuItem(entityClassFile.string().c_str(), ""))
+						{
+							Variant callReturn = EventManager::GetSingleton()->returnCall("EditorFileCreateNewEntity", "EditorCreateNewEntity", entityClassFile.string());
+							Ref<Entity> newEntity = Extract(Ref<Entity>, callReturn);
+							EventManager::GetSingleton()->call("EditorFileOpenNewlyCreatedEntity", "EditorOpenEntity", newEntity);
+						}
+					}
+					ImGui::EndMenu();
+				}
 				if (ImGui::MenuItem("Save Level", "", false, LevelManager::GetSingleton()->isAnyLevelOpen()))
 				{
 					EventManager::GetSingleton()->call("EditorSaveEvent", "EditorSaveAll", 0);
@@ -336,6 +366,14 @@ void EditorSystem::drawDefaultUI()
 					PRINT("Building fonts...");
 					OS::Execute("start \"\" \"" + OS::GetAbsolutePath("build_fonts.bat").string() + "\"");
 					PRINT("Built fonts");
+				}
+				if (ImGui::BeginMenu("Resources"))
+				{
+					for (auto& [data, file] : ResourceLoader::GetResources())
+					{
+						ImGui::MenuItem(file->getPath().generic_string().c_str());
+					}
+					ImGui::EndMenu();
 				}
 				ImGui::EndMenu();
 			}
@@ -381,8 +419,26 @@ void EditorSystem::drawDefaultUI()
 				}
 				ImGui::EndMenu();
 			}
-			if (ImGui::BeginMenu("Help"))
+			if (ImGui::BeginMenu("Documentation"))
 			{
+				if (ImGui::BeginMenu("C++ API"))
+				{
+					if (ImGui::MenuItem("Open Online C++ Documentation"))
+					{
+						OS::Execute("start " + DOCUMENTATION_LINK);
+					}
+
+					ImGui::EndMenu();
+				}
+
+				if (ImGui::MenuItem("Lua API"))
+				{
+					m_MenuAction = "Lua API Documentation";
+				}
+				ImGui::EndMenu();
+			}
+			if (ImGui::BeginMenu("About"))
+			{				
 				if (ImGui::MenuItem("About Rootex Editor"))
 				{
 					m_MenuAction = "About Rootex Editor";
@@ -404,6 +460,74 @@ void EditorSystem::drawDefaultUI()
 			if (m_MenuAction != "")
 			{
 				ImGui::OpenPopup(m_MenuAction.c_str());
+			}
+
+			ImGui::SetNextWindowSize({ ImGui::GetContentRegionMax().x / 2, ImGui::GetContentRegionMax().y / 2 });
+			if (ImGui::BeginPopupModal("Lua API Documentation", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+			{
+				static String searchString;
+				ImGui::InputText("Search", &searchString, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AlwaysInsertMode | ImGuiInputTextFlags_CallbackHistory);
+				ImGui::SameLine();
+				if (ImGui::Button("Close"))
+				{
+					ImGui::CloseCurrentPopup();
+					m_MenuAction = "";
+				}
+
+				static String openedLuaClass;
+				if (ImGui::ListBoxHeader("##Lua Classes", { 0, ImGui::GetContentRegionAvail().y }))
+				{
+					for (auto& [key, value] : LuaInterpreter::GetSingleton()->getLuaState().registry())
+					{
+						if (key.is<String>())
+						{
+							sol::object luaClass = value;
+							String typeName = key.as<String>();
+							if (luaClass.is<sol::table>() && luaClass.as<sol::table>()["__type"] != sol::nil)
+							{
+								typeName = luaClass.as<sol::table>()["__type"]["name"];
+							}
+
+							bool shouldMatch = false;
+							for (int i = 0; i < typeName.size(); i++)
+							{
+								shouldMatch |= typeName.compare(i, searchString.size(), searchString) == 0;
+							}
+
+							if (searchString.empty() || shouldMatch)
+							{
+								if (ImGui::MenuItem(typeName.c_str()))
+								{
+									openedLuaClass = key.as<String>();
+								}
+							}
+						}
+					}
+					ImGui::ListBoxFooter();
+				}
+				ImGui::SameLine();
+				if (ImGui::ListBoxHeader("##Class Description", ImGui::GetContentRegionAvail()))
+				{
+					if (!openedLuaClass.empty())
+					{
+						sol::object luaClass = LuaInterpreter::GetSingleton()->getLuaState().registry()[openedLuaClass];
+						String typeName = openedLuaClass;
+						if (luaClass.is<sol::table>() && luaClass.as<sol::table>()["__type"] != sol::nil)
+						{
+							typeName = luaClass.as<sol::table>()["__type"]["name"];
+						}
+						
+						EditorSystem::GetSingleton()->pushBoldFont();
+						ImGui::Text("%s", typeName.c_str());
+						EditorSystem::GetSingleton()->popFont();
+
+						ImGui::SetNextItemOpen(true);
+						showDocumentation(typeName, luaClass);
+					}
+					ImGui::ListBoxFooter();
+				}
+
+				ImGui::EndPopup();
 			}
 
 			if (ImGui::BeginPopupModal("Save", 0, ImGuiWindowFlags_AlwaysAutoResize))
@@ -519,7 +643,7 @@ void EditorSystem::drawDefaultUI()
 
 		if (totalProgress == progress)
 		{
-			LevelManager::GetSingleton()->openPreloadedLevel(loadingLevel, true);
+			LevelManager::GetSingleton()->openPreloadedLevel(loadingLevel, {} , true);
 			SetWindowText(GetActiveWindow(), ("Rootex Editor: " + LevelManager::GetSingleton()->getCurrentLevel().getLevelName()).c_str());
 			totalProgress = -1;
 			progress = 0;
@@ -586,6 +710,65 @@ void EditorSystem::pushEditorStyleVars()
 	static const int ending = m_EditorStyleVarPushCount = __LINE__ - starting - 1;
 }
 
+static HashMap<int, String> LuaTypeNames = {
+	{ LUA_TNONE, "none" }, 
+	{ LUA_TNIL, "lua_nil" }, 
+	{ LUA_TSTRING, "string" }, 
+	{ LUA_TNUMBER, "number" }, 
+	{ LUA_TTHREAD, "thread" },
+	{ LUA_TBOOLEAN, "boolean" },
+	{ LUA_TFUNCTION, "function" }, 
+	{ LUA_TUSERDATA, "userdata" }, 
+	{ LUA_TLIGHTUSERDATA, "lightuserdata" }, 
+	{ LUA_TTABLE, "table" },
+	{ -0xFFFF, "poly" }
+};
+
+void EditorSystem::showDocumentation(const String& name, const sol::table& table)
+{
+	if (ImGui::TreeNodeEx(name.c_str(), ImGuiTreeNodeFlags_CollapsingHeader))
+	{
+		ImGui::Indent();
+		for (auto [key, value] : table)
+		{
+			if (key.is<String>() && key.as<String>() != name && key.as<String>() != "class_check" && key.as<String>() != "class_cast")
+			{
+				if (value.is<sol::table>())
+				{
+					showDocumentation(name + "." + key.as<String>(), value.as<sol::table>());
+				}
+				else
+				{
+					String tag = LuaTypeNames[(int)value.get_type()];
+					String prefix = name;
+					String suffix;
+					if (value.is<sol::function>())
+					{
+						suffix = "()";
+					}
+					else if (value.is<String>())
+					{
+						suffix = " = " + value.as<String>();
+					}
+
+					pushItalicFont();
+					ImGui::TextColored(getColors().m_Success, "%s", tag.c_str());
+					ImGui::SameLine();
+					ImGui::TextColored(getColors().m_Warning, "%s", prefix.c_str());
+					popFont();
+
+					ImGui::SameLine();
+
+					pushBoldFont();
+					ImGui::MenuItem((" . " + key.as<String>() + suffix).c_str());
+					popFont();
+				}
+			}
+		}
+		ImGui::Unindent();
+	}
+}
+
 Variant EditorSystem::saveAll(const Event* event)
 {
 	if (LevelManager::GetSingleton()->isAnyLevelOpen())
@@ -626,7 +809,7 @@ Variant EditorSystem::createNewLevel(const Event* event)
 {
 	const String& newLevelName = Extract(String, event->getData());
 
-	if (OS::IsExists("game/assets/levels/" + newLevelName))
+	if (OS::IsExists(newLevelName))
 	{
 		WARN("Found a level with the same name: " + newLevelName);
 		return true;

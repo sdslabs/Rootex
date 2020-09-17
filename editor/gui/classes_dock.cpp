@@ -23,7 +23,7 @@ void ClassesDock::showClasses(const String& directory)
 	}
 }
 
-void ClassesDock::draw()
+void ClassesDock::draw(float deltaMilliseconds)
 {
 	ImGui::Begin("Classes");
 	showClasses("game/assets/classes");

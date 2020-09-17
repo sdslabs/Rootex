@@ -34,7 +34,8 @@ void CustomRenderInterface::RenderGeometry(Rml::Vertex* vertices, int numVertice
 	vertexData.assign((UIVertexData*)vertices, (UIVertexData*)vertices + numVertices);
 	for (auto& vertex : vertexData)
 	{
-		vertex.m_Position.y *= -1;
+		vertex.m_Position.x += translation.x;
+		vertex.m_Position.y += translation.y;
 	}
 	VertexBuffer vb(vertexData);
 	Vector<int> indicesBuffer;
@@ -46,7 +47,7 @@ void CustomRenderInterface::RenderGeometry(Rml::Vertex* vertices, int numVertice
 	m_UIShader->bind();
 
 	Material::SetVSConstantBuffer(
-	    VSSolidConstantBuffer(m_UITransform * Matrix::CreateTranslation(translation.x - m_Width / 2.0f, m_Height / 2.0f - translation.y, 0.0f) * Matrix::CreateOrthographic(m_Width, m_Height, 0.0f, 1.0f)), 
+	    VSSolidConstantBuffer(m_UITransform * Matrix::CreateOrthographic(m_Width, m_Height, 0.0f, 10000.0f)), 
 		m_ModelMatrixBuffer,
 		PER_OBJECT_VS_CPP);
 
@@ -114,11 +115,10 @@ void CustomRenderInterface::SetScissorRegion(int x, int y, int width, int height
 
 void CustomRenderInterface::SetTransform(const Rml::Matrix4f* transform)
 {
-	static Rml::Matrix4f identity = Rml::Matrix4f::Identity();
-
 	if (!transform)
 	{
-		transform = &identity;
+		m_UITransform = Matrix::Identity;
+		return;
 	}
 
 	m_UITransform = Matrix(transform->data());

@@ -1,0 +1,112 @@
+<rml>
+    <head>
+        <title>Transition</title>
+        <style>
+            body {
+                font: "Lato";
+                font-size: 100px;
+                background-color: black;
+                width: 100%;
+                height: 100%;
+            }
+
+            #box {
+                background-color: rgb(0, 26, 255);
+                position: relative;
+            }
+
+            #clubbed {
+                position: relative;
+            }
+
+            @keyframes fade-in {
+                0% {
+                    opacity: 0;
+                }
+                to {
+                    opacity: 1;
+                }
+            }
+
+            @keyframes fade-out {
+                0% {
+                    opacity: 1;
+                }
+                to {
+                    opacity: 0;
+                }
+            }
+
+            #loading {
+                position: absolute;
+                bottom: 0;
+                right: 0;
+                text-align: center;
+                animation: 1s linear-in-out fade-in;
+            }
+
+            @keyframes rotation {
+                0% {
+                    transform: rotateY(360deg);
+
+                }
+                to {
+                    transform: rotateY(0deg);
+                }
+            }
+
+            #face_box {
+                display: block;
+                padding-right: 50px;
+                perspective: 7000px;
+                perspective-origin: center -100px;
+            }
+
+            #text_box {
+                display: block;
+                padding-right: 50px;
+                padding-bottom: 50px;
+                perspective: 7000px;
+                perspective-origin: 50% 50%;
+            }
+
+            #face {
+                animation: 2s quartic-in-out infinite rotation;
+            }
+
+            #text {
+                animation: 2s 0.3s quartic-in-out infinite rotation;
+            }
+        </style>
+        <script>
+Loading = Loading or {
+    document = nil
+}
+
+function Loading.onGameLevelSwitch()
+    Loading.document:GetElementById("loading").style.animation = "2s linear-in-out fade-out";
+    return true
+end
+
+function Loading.loaded(document)
+    Loading.document = document
+    RTX.Connect(Loading.onGameLevelSwitch, "GameLevelSwitch")
+end
+        </script>
+    </head>
+
+    <body id="body" onload="Loading.loaded(document)">
+        <div id="box">
+            <div id="clubbed">
+                <div id="loading">
+                    <div id="face_box">
+                        <img id="face" src="take_your_time_face.png" width=300em height=300em />
+                    </div>
+                    <div id="text_box">
+                        <img id="text" src="take_your_time_text.png" width=300em height=80em />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</rml>

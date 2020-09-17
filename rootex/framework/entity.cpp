@@ -5,7 +5,7 @@
 #include "framework/components/hierarchy_component.h"
 #include "framework/system.h"
 
-void Entity::RegisterAPI(sol::state& rootex)
+void Entity::RegisterAPI(sol::table& rootex)
 {
 	sol::usertype<Entity> entity = rootex.new_usertype<Entity>("Entity");
 	entity["removeComponent"] = &Entity::removeComponent;

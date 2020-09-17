@@ -72,7 +72,7 @@ void AudioPlayer::unload()
 	}
 }
 
-void AudioPlayer::draw()
+void AudioPlayer::draw(float deltaMilliseconds)
 {
 	drawFileInfo();
 

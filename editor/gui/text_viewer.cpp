@@ -20,7 +20,7 @@ void TextViewer::unload()
 {
 }
 
-void TextViewer::draw()
+void TextViewer::draw(float deltaMilliseconds)
 {
 	drawFileInfo();
 	if (m_TextResourceFile->isDirty())
