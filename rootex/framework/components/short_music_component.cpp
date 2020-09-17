@@ -79,33 +79,20 @@ void ShortMusicComponent::setAudioFile(AudioResourceFile* audioFile)
 void ShortMusicComponent::draw()
 {
 	ImGui::BeginGroup();
-	if (ImGui::BeginCombo("##Audio File", m_AudioFile->getPath().filename().string().c_str(), ImGuiComboFlags_HeightRegular))
+	
+	static String inputPath = "Path";
+	ImGui::InputText("##Path", &inputPath);
+	ImGui::SameLine();
+	if (ImGui::Button("Create Audio File"))
 	{
-		for (auto&& file : ResourceLoader::GetFilesOfType(ResourceFile::Type::Audio))
+		if (!ResourceLoader::CreateAudioResourceFile(inputPath))
 		{
-			if (ImGui::MenuItem(file->getPath().string().c_str(), ""))
-			{
-				setAudioFile((AudioResourceFile*)file);
-			}
+			WARN("Could not create Audio File");
 		}
-
-		ImGui::Separator();
-
-		static String inputPath = "Path";
-		ImGui::InputText("##Path", &inputPath);
-		ImGui::SameLine();
-		if (ImGui::Button("Create Audio File"))
+		else
 		{
-			if (!ResourceLoader::CreateAudioResourceFile(inputPath))
-			{
-				WARN("Could not create Audio File");
-			}
-			else
-			{
-				inputPath = "";
-			}
+			inputPath = "";
 		}
-		ImGui::EndCombo();
 	}
 
 	ImGui::SameLine();

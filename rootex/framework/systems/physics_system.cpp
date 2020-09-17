@@ -143,17 +143,6 @@ void PhysicsSystem::update(float deltaMilliseconds)
 	m_DynamicsWorld->stepSimulation(deltaMilliseconds * MS_TO_S, 10);
 }
 
-void PhysicsSystem::end()
-{
-	// Cleanup in the reverse order of creation/initialization
-	for (int i = m_DynamicsWorld->getNumCollisionObjects() - 1; i >= 0; i--)
-	{
-		btCollisionObject* obj = m_DynamicsWorld->getCollisionObjectArray()[i];
-		m_DynamicsWorld->removeCollisionObject(obj);
-		delete obj;
-	}
-}
-
 void PhysicsSystem::removeRigidBody(btRigidBody* rigidBody)
 {
 	m_DynamicsWorld->removeRigidBody(rigidBody);

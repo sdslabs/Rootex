@@ -26,63 +26,24 @@
  *
  */
 
-#ifndef RMLUICORECORE_H
-#define RMLUICORECORE_H
+#ifndef RMLUI_CORE_CORE_H
+#define RMLUI_CORE_CORE_H
 
-#include "Types.h"
-#include "Math.h"
 #include "Header.h"
-#include "Animation.h"
-#include "Box.h"
-#include "ComputedValues.h"
-#include "Context.h"
-#include "ContextInstancer.h"
-#include "Decorator.h"
-#include "DecoratorInstancer.h"
-#include "Element.h"
-#include "ElementDocument.h"
-#include "ElementInstancer.h"
-#include "ElementScroll.h"
-#include "ElementText.h"
-#include "ElementUtilities.h"
+#include "Types.h"
 #include "Event.h"
-#include "EventInstancer.h"
-#include "EventListener.h"
-#include "EventListenerInstancer.h"
-#include "Factory.h"
-#include "FileInterface.h"
-#include "FontEffect.h"
-#include "FontGlyph.h"
-#include "FontEngineInterface.h"
-#include "Geometry.h"
-#include "GeometryUtilities.h"
-#include "ID.h"
-#include "Input.h"
-#include "Log.h"
-#include "Plugin.h"
-#include "PropertiesIteratorView.h"
-#include "Property.h"
-#include "PropertyDefinition.h"
-#include "PropertyDictionary.h"
-#include "PropertyIdSet.h"
-#include "PropertyParser.h"
-#include "PropertySpecification.h"
-#include "RenderInterface.h"
-#include "Spritesheet.h"
-#include "StringUtilities.h"
-#include "StyleSheet.h"
-#include "StyleSheetSpecification.h"
-#include "SystemInterface.h"
-#include "Texture.h"
-#include "Tween.h"
-#include "Vertex.h"
-#include "XMLNodeHandler.h"
-#include "XMLParser.h"
+#include "ComputedValues.h"
 
 namespace Rml {
-namespace Core {
 
 class Plugin;
+class Context;
+class FileInterface;
+class FontEngineInterface;
+class RenderInterface;
+class SystemInterface;
+enum class DefaultActionPhase;
+
 
 /**
 	RmlUi library core API.
@@ -101,7 +62,7 @@ RMLUICORE_API String GetVersion();
 
 /// Sets the interface through which all system requests are made. This must be called before Initialise().
 /// @param[in] system_interface A non-owning pointer to the application-specified logging interface.
-/// @lifetime The interface must be kept alive until after the call to Core::Shutdown.
+/// @lifetime The interface must be kept alive until after the call to Rml::Shutdown.
 RMLUICORE_API void SetSystemInterface(SystemInterface* system_interface);
 /// Returns RmlUi's system interface.
 RMLUICORE_API SystemInterface* GetSystemInterface();
@@ -110,7 +71,7 @@ RMLUICORE_API SystemInterface* GetSystemInterface();
 /// it must be called before Initialise(). If no render interface is specified, then all contexts must have a custom
 /// render interface.
 /// @param[in] render_interface A non-owning pointer to the render interface implementation.
-/// @lifetime The interface must be kept alive until after the call to Core::Shutdown.
+/// @lifetime The interface must be kept alive until after the call to Rml::Shutdown.
 RMLUICORE_API void SetRenderInterface(RenderInterface* render_interface);
 /// Returns RmlUi's default's render interface.
 RMLUICORE_API RenderInterface* GetRenderInterface();
@@ -118,7 +79,7 @@ RMLUICORE_API RenderInterface* GetRenderInterface();
 /// Sets the interface through which all file I/O requests are made. This is not required to be called, but if it is it
 /// must be called before Initialise().
 /// @param[in] file_interface A non-owning pointer to the application-specified file interface.
-/// @lifetime The interface must be kept alive until after the call to Core::Shutdown.
+/// @lifetime The interface must be kept alive until after the call to Rml::Shutdown.
 RMLUICORE_API void SetFileInterface(FileInterface* file_interface);
 /// Returns RmlUi's file interface.
 RMLUICORE_API FileInterface* GetFileInterface();
@@ -126,7 +87,7 @@ RMLUICORE_API FileInterface* GetFileInterface();
 /// Sets the interface through which all font requests are made. This is not required to be called, but if it is
 /// it must be called before Initialise().
 /// @param[in] font_interface A non-owning pointer to the application-specified font engine interface.
-/// @lifetime The interface must be kept alive until after the call to Core::Shutdown.
+/// @lifetime The interface must be kept alive until after the call to Rml::Shutdown.
 RMLUICORE_API void SetFontEngineInterface(FontEngineInterface* font_interface);
 /// Returns RmlUi's font interface.
 RMLUICORE_API FontEngineInterface* GetFontEngineInterface();
@@ -135,7 +96,7 @@ RMLUICORE_API FontEngineInterface* GetFontEngineInterface();
 /// @param[in] name The new name of the context. This must be unique.
 /// @param[in] dimensions The initial dimensions of the new context.
 /// @param[in] render_interface The custom render interface to use, or nullptr to use the default.
-/// @lifetime If specified, the render interface must be kept alive until after the context is destroyed or the call to Core::Shutdown.
+/// @lifetime If specified, the render interface must be kept alive until after the context is destroyed or the call to Rml::Shutdown.
 /// @return A non-owning pointer to the new context, or nullptr if the context could not be created.
 RMLUICORE_API Context* CreateContext(const String& name, const Vector2i& dimensions, RenderInterface* render_interface = nullptr);
 /// Removes and destroys a context.
@@ -167,6 +128,7 @@ RMLUICORE_API bool LoadFontFace(const String& file_name, bool fallback_face = fa
 /// @param[in] weight The weight to register the font as.
 /// @param[in] fallback_face True to use this font face for unknown characters in other font faces.
 /// @return True if the face was loaded successfully, false otherwise.
+/// @lifetime The pointed to 'data' must remain available until after the call to Rml::Shutdown.
 RMLUICORE_API bool LoadFontFace(const byte* data, int data_size, const String& font_family, Style::FontStyle style, Style::FontWeight weight, bool fallback_face = false);
 
 /// Registers a generic RmlUi plugin.
@@ -182,8 +144,9 @@ RMLUICORE_API EventId RegisterEventType(const String& type, bool interruptible, 
 
 /// Forces all texture handles loaded and generated by RmlUi to be released.
 RMLUICORE_API void ReleaseTextures();
+/// Forces all compiled geometry handles generated by RmlUi to be released.
+RMLUICORE_API void ReleaseCompiledGeometry();
 
-}
-}
+} // namespace Rml
 
 #endif

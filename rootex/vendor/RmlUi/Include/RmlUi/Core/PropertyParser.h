@@ -26,17 +26,15 @@
  *
  */
 
-#ifndef RMLUICOREPROPERTYPARSER_H
-#define RMLUICOREPROPERTYPARSER_H
+#ifndef RMLUI_CORE_PROPERTYPARSER_H
+#define RMLUI_CORE_PROPERTYPARSER_H
 
 #include "Header.h"
 #include "Property.h"
-#include <map>
 
 namespace Rml {
-namespace Core {
 
-typedef UnorderedMap< String, int > ParameterMap;
+using ParameterMap = UnorderedMap< String, int >;
 
 /**
 	A property parser takes a property declaration in string form, validates it, and converts it to a Property.
@@ -57,7 +55,5 @@ public:
 	virtual bool ParseValue(Property& property, const String& value, const ParameterMap& parameters) const = 0;
 };
 
-}
-}
-
+} // namespace Rml
 #endif

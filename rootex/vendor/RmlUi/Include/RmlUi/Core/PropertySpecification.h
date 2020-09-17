@@ -26,18 +26,18 @@
  *
  */
 
-#ifndef RMLUICOREPROPERTYSPECIFICATION_H
-#define RMLUICOREPROPERTYSPECIFICATION_H
+#ifndef RMLUI_CORE_PROPERTYSPECIFICATION_H
+#define RMLUI_CORE_PROPERTYSPECIFICATION_H
 
 #include "Header.h"
-#include "Element.h"
-#include "PropertyDefinition.h"
+#include "Types.h"
 #include "PropertyIdSet.h"
+#include "ID.h"
 
 namespace Rml {
-namespace Core {
 
 class StyleSheetSpecification;
+class PropertyDefinition;
 class PropertyDictionary;
 class PropertyIdNameMap;
 class ShorthandIdNameMap;
@@ -105,9 +105,9 @@ public:
 	const ShorthandDefinition* GetShorthand(ShorthandId id) const;
 	const ShorthandDefinition* GetShorthand(const String& shorthand_name) const;
 
-	/// Parse declaration by name, whether its a property or shorthand.
+	/// Parse declaration by name, whether it's a property or shorthand.
 	bool ParsePropertyDeclaration(PropertyDictionary& dictionary, const String& property_name, const String& property_value) const;
-	/// Parse property declaration by ID
+	/// Parse property declaration by ID.
 	bool ParsePropertyDeclaration(PropertyDictionary& dictionary, PropertyId property_id, const String& property_value) const;
 	/// Parses a shorthand declaration, setting any parsed and validated properties on the given dictionary.
 	/// @return True if all properties were parsed successfully, false otherwise.
@@ -121,8 +121,8 @@ public:
 	String PropertiesToString(const PropertyDictionary& dictionary) const;
 
 private:
-	using Properties = std::vector< UniquePtr<PropertyDefinition> >;
-	using Shorthands = std::vector< UniquePtr<ShorthandDefinition> >;
+	using Properties = Vector< UniquePtr<PropertyDefinition> >;
+	using Shorthands = Vector< UniquePtr<ShorthandDefinition> >;
 
 	Properties properties;
 	Shorthands shorthands;
@@ -130,16 +130,14 @@ private:
 	UniquePtr<PropertyIdNameMap> property_map;
 	UniquePtr<ShorthandIdNameMap> shorthand_map;
 
-	PropertyIdSet property_names;
-	PropertyIdSet inherited_property_names;
-	PropertyIdSet properties_forcing_layout;
+	PropertyIdSet property_ids;
+	PropertyIdSet property_ids_inherited;
+	PropertyIdSet property_ids_forcing_layout;
 
 	bool ParsePropertyValues(StringList& values_list, const String& values, bool split_values) const;
 
-	friend class StyleSheetSpecification;
+	friend class Rml::StyleSheetSpecification;
 };
 
-}
-}
-
+} // namespace Rml
 #endif

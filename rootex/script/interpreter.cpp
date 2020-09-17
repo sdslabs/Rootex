@@ -2,6 +2,7 @@
 #include "core/resource_loader.h"
 
 #include "common/common.h"
+#include "app/level_manager.h"
 #include "components/hierarchy_component.h"
 #include "components/transform_component.h"
 #include "components/visual/text_ui_component.h"
@@ -107,6 +108,7 @@ void LuaInterpreter::registerTypes()
 	Event::RegisterAPI(m_Lua);
 	EventManager::RegisterAPI(m_Lua);
 	InputManager::RegisterAPI(m_Lua);
+	LevelManager::RegisterAPI(m_Lua);
 
 	ResourceLoader::RegisterAPI(m_Lua);
 	ResourceFile::RegisterAPI(m_Lua);
