@@ -93,7 +93,11 @@ target_link_libraries(Rootex PUBLIC
     Gainput
     Bullet3D
     assimp
-    RMLUI
+    RmlCore
+    RmlDebugger
+    RmlLua
+    FreeType
+
     Shell32.lib
     d3d11.lib
     xinput.lib

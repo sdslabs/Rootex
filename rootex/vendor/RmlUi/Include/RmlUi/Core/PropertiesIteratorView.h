@@ -25,13 +25,13 @@
  * THE SOFTWARE.
  *
  */
-#ifndef RMLUICOREPROPERTIESITERATORVIEW_H
-#define RMLUICOREPROPERTIESITERATORVIEW_H
+#ifndef RMLUI_CORE_PROPERTIESITERATORVIEW_H
+#define RMLUI_CORE_PROPERTIESITERATORVIEW_H
 
 #include "Types.h"
+#include "Property.h"
 
 namespace Rml {
-namespace Core {
 
 class PropertiesIterator;
 
@@ -72,7 +72,5 @@ private:
 	UniquePtr<PropertiesIterator> ptr;
 };
 
-}
-}
-
+} // namespace Rml
 #endif

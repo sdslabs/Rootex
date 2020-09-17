@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef RMLUICOREELEMENT_H
-#define RMLUICOREELEMENT_H
+#ifndef RMLUI_CORE_ELEMENT_H
+#define RMLUI_CORE_ELEMENT_H
 
 #include "ScriptInterface.h"
 #include "Header.h"
@@ -41,26 +41,26 @@
 #include "Tween.h"
 
 namespace Rml {
-namespace Core {
 
 class Context;
+class DataModel;
 class Decorator;
 class ElementInstancer;
 class EventDispatcher;
 class EventListener;
-class ElementBackground;
-class ElementBorder;
 class ElementDecoration;
 class ElementDefinition;
 class ElementDocument;
 class ElementScroll;
 class ElementStyle;
+class LayoutEngine;
+class LayoutInlineBox;
+class LayoutBlockBox;
 class PropertiesIteratorView;
-class FontFaceHandleDefault;
 class PropertyDictionary;
 class RenderInterface;
-class TransformState;
 class StyleSheet;
+class TransformState;
 struct ElementMeta;
 
 /**
@@ -164,9 +164,10 @@ public:
 	virtual float GetBaseline() const;
 	/// Gets the intrinsic dimensions of this element, if it is of a type that has an inherent size. This size will
 	/// only be overriden by a styled width or height.
-	/// @param[in] dimensions The dimensions to size, if appropriate.
+	/// @param[out] dimensions The dimensions to size, if appropriate.
+	/// @param[out] ratio The intrinsic ratio (width/height), if appropriate.
 	/// @return True if the element has intrinsic dimensions, false otherwise. The default element will return false.
-	virtual bool GetIntrinsicDimensions(Vector2f& dimensions);
+	virtual bool GetIntrinsicDimensions(Vector2f& dimensions, float& ratio);
 
 	/// Checks if a given point in screen coordinates lies within the bordered area of this element.
 	/// @param[in] point The point to test.
@@ -236,17 +237,15 @@ public:
 
 	/// Returns the size of the containing block. Often percentages are scaled relative to this.
 	Vector2f GetContainingBlock();
-	/// Returns 'position' property value from element's style or local cache.
+	/// Returns 'position' property value from element's computed values.
 	Style::Position GetPosition();
-	/// Returns 'float' property value from element's style or local cache.
+	/// Returns 'float' property value from element's computed values.
 	Style::Float GetFloat();
-	/// Returns 'display' property value from element's style or local cache.
+	/// Returns 'display' property value from element's computed values.
 	Style::Display GetDisplay();
-	/// Returns 'line-height' property value from element's style or local cache.
+	/// Returns 'line-height' property value from element's computed values.
 	float GetLineHeight();
 
-	/// Returns this element's TransformState
-	const TransformState *GetTransformState() const noexcept;
 	/// Project a 2D point in pixel coordinates onto the element's plane.
 	/// @param[in-out] point The point to project in, and the resulting projected point out.
 	/// @return True on success, false if transformation matrix is singular.
@@ -468,8 +467,12 @@ public:
 	/// @param[in] event Event to attach to.
 	/// @param[in] listener The listener object to be attached.
 	/// @param[in] in_capture_phase True to attach in the capture phase, false in bubble phase.
+	/// @lifetime The added listener must stay alive until after the dispatched call from EventListener::OnDetach(). This occurs
+	///     eg. when the element is destroyed or when RemoveEventListener() is called with the same parameters passed here.
 	void AddEventListener(const String& event, EventListener* listener, bool in_capture_phase = false);
 	/// Adds an event listener to this element by id.
+	/// @lifetime The added listener must stay alive until after the dispatched call from EventListener::OnDetach(). This occurs
+	///     eg. when the element is destroyed or when RemoveEventListener() is called with the same parameters passed here.
 	void AddEventListener(EventId id, EventListener* listener, bool in_capture_phase = false);
 	/// Removes an event listener from this element.
 	/// @param[in] event Event to detach from.
@@ -526,6 +529,18 @@ public:
 	/// @param[out] elements Resulting elements.
 	/// @param[in] tag Tag to search for.
 	void GetElementsByClassName(ElementList& elements, const String& class_name);
+	/// Returns the first descendent element matching the RCSS selector query.
+	/// @param[in] selectors The selector or comma-separated selectors to match against.
+	/// @return The first matching element during a depth-first traversal.
+	/// @performance Prefer GetElementById/TagName/ClassName whenever possible.
+	Element* QuerySelector(const String& selector);
+	/// Returns all descendent elements matching the RCSS selector query.
+	/// @param[out] elements The list of matching elements.
+	/// @param[in] selectors The selector or comma-separated selectors to match against.
+	/// @performance Prefer GetElementById/TagName/ClassName whenever possible.
+	void QuerySelectorAll(ElementList& elements, const String& selectors);
+
+
 	//@}
 
 	/**
@@ -533,23 +548,17 @@ public:
 	 */
 	//@{
 	/// Access the event dispatcher for this element.
-	/// @return The element's dispatcher.
 	EventDispatcher* GetEventDispatcher() const;
 	/// Returns event types with number of listeners for debugging.
-	/// @return Summary of attached listeners.
 	String GetEventDispatcherSummary() const;
-	/// Access the element background.
-	/// @return The element's background.
-	ElementBackground* GetElementBackground() const;
-	/// Access the element border.
-	/// @return The element's boder.
-	ElementBorder* GetElementBorder() const;
 	/// Access the element decorators.
-	/// @return The element decoration.
 	ElementDecoration* GetElementDecoration() const;
 	/// Returns the element's scrollbar functionality.
-	/// @return The element's scrolling functionality.
 	ElementScroll* GetElementScroll() const;
+	/// Returns the element's transform state.
+	const TransformState* GetTransformState() const noexcept;
+	/// Returns the data model of this element.
+	DataModel* GetDataModel() const;
 	//@}
 	
 	/// Returns true if this element requires clipping
@@ -622,9 +631,12 @@ protected:
 
 private:
 	void SetParent(Element* parent);
+	
+	void SetDataModel(DataModel* new_data_model);
 
 	void DirtyOffset();
 	void UpdateOffset();
+	void SetBaseline(float baseline);
 
 	void BuildLocalStackingContext();
 	void BuildStackingContext(ElementList* stacking_context);
@@ -672,18 +684,8 @@ private:
 	// The owning document
 	ElementDocument* owner_document;
 
-	// The event dispatcher for this element.
-	EventDispatcher* event_dispatcher;
-	// Style information for this element.
-	ElementStyle* style;
-	// Background functionality for this element.
-	ElementBackground* background;
-	// Border functionality for this element.
-	ElementBorder* border;
-	// Decorator information for this element.
-	ElementDecoration* decoration;
-	// Scrollbar information for this element.
-	ElementScroll* scroll;
+	// Active data model for this element.
+	DataModel* data_model;
 	// Attributes on this element.
 	ElementAttributes attributes;
 
@@ -700,7 +702,7 @@ private:
 	Vector2f scroll_offset;
 
 	// The size of the element.
-	typedef std::vector< Box > BoxList;
+	using BoxList = Vector< Box >;
 	Box main_box;
 	BoxList additional_boxes;
 
@@ -710,6 +712,8 @@ private:
 
 	// Defines what box area represents the element's client area; this is usually padding, but may be content.
 	Box::Area client_area;
+
+	float baseline;
 
 	// True if the element is visible and active.
 	bool visible;
@@ -742,18 +746,17 @@ private:
 	bool dirty_animation;
 	bool dirty_transition;
 
-	ElementMeta* element_meta;
+	ElementMeta* meta;
 
-	friend class Context;
-	friend class ElementStyle;
-	friend class LayoutEngine;
-	friend class LayoutInlineBox;
-	friend struct ElementDeleter;
-	friend class ElementScroll;
+	friend class Rml::Context;
+	friend class Rml::ElementStyle;
+	friend class Rml::LayoutEngine;
+	friend class Rml::LayoutBlockBox;
+	friend class Rml::LayoutInlineBox;
+	friend class Rml::ElementScroll;
 };
 
-}
-}
+} // namespace Rml
 
 #include "Element.inl"
 
