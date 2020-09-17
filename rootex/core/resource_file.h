@@ -34,7 +34,7 @@ protected:
 	friend class ResourceLoader;
 
 public:
-	static void RegisterAPI(sol::state& rootex);
+	static void RegisterAPI(sol::table& rootex);
 
 	virtual ~ResourceFile();
 	explicit ResourceFile(ResourceFile&) = delete;
@@ -64,7 +64,7 @@ protected:
 	friend class ResourceLoader;
 
 public:
-	static void RegisterAPI(sol::state& rootex);
+	static void RegisterAPI(sol::table& rootex);
 	explicit TextResourceFile(TextResourceFile&) = delete;
 	explicit TextResourceFile(TextResourceFile&&) = delete;
 
@@ -86,7 +86,7 @@ class LuaTextResourceFile : public TextResourceFile
 	friend class ResourceLoader;
 
 public:
-	static void RegisterAPI(sol::state& rootex);
+	static void RegisterAPI(sol::table& rootex);
 	explicit LuaTextResourceFile(TextResourceFile&) = delete;
 	explicit LuaTextResourceFile(TextResourceFile&&) = delete;
 };
@@ -112,7 +112,7 @@ class AudioResourceFile : public ResourceFile
 	friend class ResourceLoader;
 
 public:
-	static void RegisterAPI(sol::state& rootex);
+	static void RegisterAPI(sol::table& rootex);
 	explicit AudioResourceFile(AudioResourceFile&) = delete;
 	explicit AudioResourceFile(AudioResourceFile&&) = delete;
 
@@ -135,16 +135,16 @@ class ModelResourceFile : public ResourceFile
 	explicit ModelResourceFile(ResourceData* resData);
 	~ModelResourceFile();
 
-	HashMap<Ref<Material>, Vector<Mesh>> m_Meshes;
+	Vector<Pair<Ref<Material>, Vector<Mesh>>> m_Meshes;
 
 	friend class ResourceLoader;
 
 public:
-	static void RegisterAPI(sol::state& rootex);
+	static void RegisterAPI(sol::table& rootex);
 	explicit ModelResourceFile(ModelResourceFile&) = delete;
 	explicit ModelResourceFile(ModelResourceFile&&) = delete;
 
-	HashMap<Ref<Material>, Vector<Mesh>>& getMeshes() { return m_Meshes; }
+	Vector<Pair<Ref<Material>, Vector<Mesh>>>& getMeshes() { return m_Meshes; }
 };
 
 /// Representation of an image file. Supports BMP, JPEG, PNG, TIFF, GIF, HD Photo, or other WIC supported file containers
@@ -156,7 +156,7 @@ class ImageResourceFile : public ResourceFile
 	friend class ResourceLoader;
 
 public:
-	static void RegisterAPI(sol::state& rootex);
+	static void RegisterAPI(sol::table& rootex);
 	explicit ImageResourceFile(ImageResourceFile&) = delete;
 	explicit ImageResourceFile(ImageResourceFile&&) = delete;
 };
@@ -174,7 +174,7 @@ class FontResourceFile : public ResourceFile
 	void regenerateFont();
 
 public:
-	static void RegisterAPI(sol::state& rootex);
+	static void RegisterAPI(sol::table& rootex);
 	explicit FontResourceFile(ImageResourceFile&) = delete;
 	explicit FontResourceFile(ImageResourceFile&&) = delete;
 

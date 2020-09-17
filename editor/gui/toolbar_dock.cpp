@@ -15,7 +15,7 @@ ToolbarDock::ToolbarDock()
 	m_FPSRecords.resize(m_FPSRecordsPoolSize, 0.0f);
 }
 
-void ToolbarDock::draw()
+void ToolbarDock::draw(float deltaMilliseconds)
 {
 	if (m_ToolbarDockSettings.m_IsActive)
 	{

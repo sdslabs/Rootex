@@ -24,14 +24,17 @@ UIComponent::UIComponent(const String& path)
 
 UIComponent::~UIComponent()
 {
-	m_Document->Close();
+	if (m_Document)
+	{
+		UISystem::GetSingleton()->unloadDocument(m_Document);
+	}
 }
 
 void UIComponent::setDocument(const String& path)
 {
 	if (m_Document)
 	{
-		m_Document->Close();
+		UISystem::GetSingleton()->unloadDocument(m_Document);
 	}
 
 	m_FilePath = path;
@@ -52,6 +55,7 @@ JSON::json UIComponent::getJSON() const
 #include "imgui_stdlib.h"
 void UIComponent::draw()
 {
+	ImGui::BeginGroup();
 	if (ImGui::InputText("##Document", &m_FilePath, ImGuiInputTextFlags_EnterReturnsTrue))
 	{
 		setDocument(m_FilePath);
@@ -61,11 +65,7 @@ void UIComponent::draw()
 	{
 		EventManager::GetSingleton()->call("OpenDocument", "EditorOpenFile", m_FilePath);
 	}
-
-	if (ImGui::Button("Refresh"))
-	{
-		setDocument(m_FilePath);
-	}
+	ImGui::EndGroup();
 
 	if (ImGui::BeginDragDropTarget())
 	{
@@ -79,10 +79,15 @@ void UIComponent::draw()
 			}
 			else
 			{
-				WARN("Unsupported file format for Model");
+				WARN("Unsupported file format for RML");
 			}
 		}
 		ImGui::EndDragDropTarget();
+	}
+
+	if (ImGui::Button("Refresh"))
+	{
+		setDocument(m_FilePath);
 	}
 }
 #endif // ROOTEX_EDITOR

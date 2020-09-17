@@ -14,12 +14,13 @@ LevelDescription::LevelDescription()
 {
 }
 
-LevelDescription::LevelDescription(const String& levelPath)
+LevelDescription::LevelDescription(const String& levelPath, const Vector<String>& arguments)
 {
 	m_LevelName = FilePath(levelPath).filename().string();
 	m_LevelSettingsFile = ResourceLoader::CreateTextResourceFile(levelPath + "/" + m_LevelName + ".level.json");
 	m_LevelSettings = JSON::json::parse(m_LevelSettingsFile->getString());
-	
+	m_Arguments = arguments;
+
 	if (m_LevelSettings.find("preload") != m_LevelSettings.end())
 	{
 		for (auto& path : m_LevelSettings["preload"])
@@ -29,16 +30,17 @@ LevelDescription::LevelDescription(const String& levelPath)
 	}
 }
 
-void LevelManager::RegisterAPI(sol::state& rootex)
+void LevelManager::RegisterAPI(sol::table& rootex)
 {
 	sol::usertype<Atomic<int>> atomicInt = rootex.new_usertype<Atomic<int>>("AtomicInt", sol::constructors<Atomic<int>(), Atomic<int>(int)>());
 	atomicInt["load"] = [](Atomic<int>* a) { return a->load(); };
 	
 	sol::usertype<LevelManager> levelManager = rootex.new_usertype<LevelManager>("LevelManager");
 	levelManager["Get"] = &LevelManager::GetSingleton;
-	levelManager["openLevel"] = [](LevelManager* l, String& p) { return l->openLevel(p); };
-	levelManager["preloadLevel"] = [](LevelManager* l, String& p, Atomic<int>& a) { return l->preloadLevel(p, a); };
-	levelManager["openPreloadedLevel"] = [](LevelManager* l, String& p) { return l->openPreloadedLevel(p, false); };
+	levelManager["openLevel"] = [](LevelManager* l, const String& p, const sol::table& arguments) { return l->openLevel(p, arguments.as<Vector<String>>()); };
+	levelManager["preloadLevel"] = [](LevelManager* l, const String& p, Atomic<int>& a) { return l->preloadLevel(p, a); };
+	levelManager["openPreloadedLevel"] = [](LevelManager* l, const String& p, const sol::nested<Vector<String>>& arguments) { return l->openPreloadedLevel(p, arguments.value(), false); };
+	levelManager["getCurrentLevelArguments"] = [](LevelManager* l) { return l->getCurrentLevel().getArguments(); };
 }
 
 LevelManager* LevelManager::GetSingleton()
@@ -49,7 +51,7 @@ LevelManager* LevelManager::GetSingleton()
 
 int LevelManager::preloadLevel(const String& levelPath, Atomic<int>& progress, bool openInEditor)
 {
-	LevelDescription newLevel(levelPath);
+	LevelDescription newLevel(levelPath, {});
 
 	m_ToUnload.clear();
 	for (auto& preloaded : m_CurrentLevel.getPreloads())
@@ -64,7 +66,7 @@ int LevelManager::preloadLevel(const String& levelPath, Atomic<int>& progress, b
 	return ResourceLoader::Preload(newLevel.getPreloads(), progress);
 }
 
-void LevelManager::openLevel(const String& levelPath, bool openInEditor)
+void LevelManager::openLevel(const String& levelPath, const Vector<String>& arguments, bool openInEditor)
 {
 	if (isAnyLevelOpen())
 	{
@@ -81,14 +83,14 @@ void LevelManager::openLevel(const String& levelPath, bool openInEditor)
 
 	PRINT("Preloaded " + std::to_string(totalPreloads) + " new resources");
 
-	openPreloadedLevel(levelPath, openInEditor);
+	openPreloadedLevel(levelPath, arguments, openInEditor);
 }
 
-void LevelManager::openPreloadedLevel(const String& levelPath, bool openInEditor)
+void LevelManager::openPreloadedLevel(const String& levelPath, const Vector<String>& arguments, bool openInEditor)
 {
 	endLevel();
 
-	m_CurrentLevel = LevelDescription(levelPath);
+	m_CurrentLevel = LevelDescription(levelPath, arguments);
 
 	ResourceLoader::Unload(m_ToUnload);
 
@@ -148,8 +150,8 @@ void LevelManager::saveCurrentLevelSettings()
 
 void LevelManager::createLevel(const String& newLevelName)
 {
-	OS::CreateDirectoryName("game/assets/levels/" + newLevelName);
-	OS::CreateDirectoryName("game/assets/levels/" + newLevelName + "/entities/");
+	OS::CreateDirectoryName(newLevelName);
+	OS::CreateDirectoryName(newLevelName + "/entities/");
 
 	JSON::json newLevelJSON;
 	newLevelJSON["camera"] = ROOT_ENTITY_ID;
@@ -157,9 +159,9 @@ void LevelManager::createLevel(const String& newLevelName)
 	newLevelJSON["startScheme"] = "";
 	newLevelJSON["listener"] = ROOT_ENTITY_ID;
 	newLevelJSON["preload"] = JSON::json::array();
-	OS::CreateFileName("game/assets/levels/" + newLevelName + "/" + newLevelName + ".level.json") << newLevelJSON.dump(1, '\t');
+	OS::CreateFileName(newLevelName + "/" + FilePath(newLevelName).filename().generic_string() + ".level.json") << newLevelJSON.dump(1, '\t');
 
-	PRINT("Created new level: " + "game/assets/levels/" + newLevelName);
+	PRINT("Created new level: " + newLevelName);
 }
 
 void LevelManager::endLevel()

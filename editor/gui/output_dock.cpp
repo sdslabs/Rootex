@@ -20,7 +20,7 @@ OutputDock::OutputDock()
 	BIND_EVENT_MEMBER_FUNCTION("OSPrint", catchOutput);
 }
 
-void OutputDock::draw()
+void OutputDock::draw(float deltaMilliseconds)
 {
 	if (m_OutputDockSettings.m_IsActive)
 	{

@@ -47,8 +47,7 @@ function Demo.toggle(document, enabled)
 	else
 		document:GetElementById("rootex_button").style.visibility = "visible"
 	end
-end
-			
+end		
 		</script>
 	</head>
 	<body>

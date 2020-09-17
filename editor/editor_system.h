@@ -31,6 +31,7 @@ class EditorSystem : public System
 	bool m_WorldMode = true;
 
 	ImFont* m_EditorFont;
+	ImFont* m_EditorFontItalic;
 	ImFont* m_EditorFontBold;
 
 	struct Colors
@@ -62,10 +63,12 @@ class EditorSystem : public System
 	EditorSystem(const EditorSystem&) = delete;
 	~EditorSystem();
 
-	void drawDefaultUI();
+	void drawDefaultUI(float deltaMilliseconds);
 
 	void pushEditorStyleColors();
 	void pushEditorStyleVars();
+
+	void showDocumentation(const String& name, const sol::table& table);
 
 	Variant saveAll(const Event* event);
 	Variant autoSave(const Event* event);
@@ -82,6 +85,7 @@ public:
 
 	void pushRegularFont();
 	void pushBoldFont();
+	void pushItalicFont();
 	void popFont();
 
 	const Colors& getColors() const { return m_Colors; }

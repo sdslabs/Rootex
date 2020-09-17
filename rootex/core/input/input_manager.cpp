@@ -165,7 +165,7 @@ unsigned int InputManager::getNextID()
 	return count++;
 }
 
-void InputManager::RegisterAPI(sol::state& rootex)
+void InputManager::RegisterAPI(sol::table& rootex)
 {
 	sol::usertype<InputManager> inputManager = rootex.new_usertype<InputManager>("InputManager");
 	inputManager["Get"] = &InputManager::GetSingleton;

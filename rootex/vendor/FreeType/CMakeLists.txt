@@ -14,4 +14,6 @@ target_include_directories(FreeType PRIVATE
     ./include/
 )
 
-target_link_libraries(FreeType PRIVATE ${FREETYPE_LIBRARY})
+target_link_libraries(FreeType PRIVATE
+    ${FREETYPE_LIBRARY}
+)

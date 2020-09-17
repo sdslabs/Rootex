@@ -20,7 +20,7 @@ protected:
 	friend class HierarchySystem;
 
 public:
-	static void RegisterAPI(sol::state& rootex);
+	static void RegisterAPI(sol::table& rootex);
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::HierarchyComponent;
 
 	HierarchyComponent(EntityID parentID, const Vector<EntityID>& childrenIDs);
