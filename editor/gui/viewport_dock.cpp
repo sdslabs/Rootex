@@ -154,8 +154,7 @@ void ViewportDock::draw()
 			Ref<Entity> openedEntity = InspectorDock::GetSingleton()->getOpenedEntity();
 			if (openedEntity && openedEntity->getComponent<TransformComponent>())
 			{
-				// Someone decide how this number scaled to 20 from 8 on going from 1080p to 1440p
-				ImGuizmo::SetRect(imagePos.x, imagePos.y + 20, m_ViewportDockSettings.m_ImageSize.x, m_ViewportDockSettings.m_ImageSize.y);
+				ImGuizmo::SetRect(imagePos.x, imagePos.y, m_ViewportDockSettings.m_ImageSize.x, m_ViewportDockSettings.m_ImageSize.y);
 
 				Matrix matrix = openedEntity->getComponent<TransformComponent>()->getAbsoluteTransform();
 				Matrix deltaMatrix = Matrix::CreateTranslation(0.0f, 0.0f, 0.0f);
