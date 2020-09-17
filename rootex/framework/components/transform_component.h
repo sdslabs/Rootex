@@ -68,7 +68,6 @@ public:
 
 	Vector3 getPosition() const { return m_TransformBuffer.m_Position; }
 	BoundingBox getBounds() const { return m_TransformBuffer.m_BoundingBox; }
-	BoundingBox& getBoundsMutable() { return m_TransformBuffer.m_BoundingBox; }
 	const Quaternion& getRotation() const { return m_TransformBuffer.m_Rotation; }
 	const Vector3& getScale() const { return m_TransformBuffer.m_Scale; }
 	const Matrix& getLocalTransform() const { return m_TransformBuffer.m_Transform; }
