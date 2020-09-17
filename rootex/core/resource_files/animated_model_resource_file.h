@@ -31,7 +31,12 @@ public:
 
     void reimport() override;
     
-    void GetBoneTransforms(aiNode* currentNode, Matrix rootTransform);
+    HashMap<String, SkeletalAnimation>& getAnimations() { return m_Animations; }
+	UINT getBoneCount() const { return m_BoneOffsets.size(); }
 
+	Vector<String> getAnimationNames();
+	float getAnimationEndTime(const String& animationName);
+	void setBoneTransforms(aiNode* currentNode, Matrix rootTransform);
+	void getFinalTransforms(const String& animationName, float currentTime, Vector<Matrix>& transforms);
 	HashMap<Ref<Material>, Vector<AnimatedMesh>>& getMeshes() { return m_Meshes; }
 };

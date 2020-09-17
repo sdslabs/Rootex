@@ -25,10 +25,19 @@ struct BoneAnimation
 	Vector<TranslationKeyframe> m_Translation;
 	Vector<RotationKeyframe> m_Rotation;
 	Vector<ScalingKeyframe> m_Scaling;
+
+public:
+	void interpolate(float time, Matrix& bonetransform);
+	float getStartTime() const;
+	float getEndTime() const;
 };
 
 struct SkeletalAnimation
 {
 	float m_Duration;
 	Vector<BoneAnimation> m_BoneAnimations;
+
+public:
+	void interpolate(float time, Vector<Matrix>& transforms);
+	float getEndTime() const;
 };
