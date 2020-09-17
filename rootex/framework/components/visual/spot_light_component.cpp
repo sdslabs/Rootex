@@ -28,7 +28,7 @@ Component* SpotLightComponent::CreateDefault()
 	    Color(1.0f, 1.0f, 1.0f, 1.0f),
 	    Color(0.05f, 0.05f, 0.05f, 1.0f),
 	    4, 
-		30);
+		30 * 3.1415 / 180);
 
 	return spotLightComponent;
 }
@@ -44,8 +44,8 @@ SpotLightComponent::SpotLightComponent(const float constAtt, const float linAtt,
     , m_DiffuseColor(diffuseColor)
     , m_DiffuseIntensity(diffuseIntensity)
     , m_Spot(spot)
+    , m_AngleRange(angleRange)
 {
-	m_AngleRange = angleRange;
 }
 
 SpotLightComponent::~SpotLightComponent()
@@ -82,14 +82,14 @@ JSON::json SpotLightComponent::getJSON() const
 #include "imgui.h"
 void SpotLightComponent::draw()
 {
-	ImGui::DragFloat("Diffuse Intensity##Spot", &m_DiffuseIntensity, 0.001f, 0.0f, 1.0f);
+	ImGui::DragFloat("Diffuse Intensity##Spot", &m_DiffuseIntensity);
 	ImGui::ColorEdit4("Diffuse Color##Spot", &m_DiffuseColor.x);
 	ImGui::ColorEdit4("Ambient Color##Spot", &m_AmbientColor.x);
-	ImGui::DragFloat("Constant Attenuation##Spot", &m_AttConst, 0.001f, 0.0f, 1.0f);
-	ImGui::DragFloat("Linear Attenuation##Spot", &m_AttLin, 0.001f, 0.0f, 1.0f);
-	ImGui::DragFloat("Quadratic Attenuation##Spot", &m_AttQuad, 0.001f, 0.0f, 1.0f);
-	ImGui::DragFloat("Range##Spot", &m_Range, 0.001f, 0.0f, 100.0f);
-	ImGui::DragFloat("Spot##Spot", &m_Spot, 0.01f, 0.0f, 50.0f);
-	ImGui::SliderAngle("Cone Sub-Angle##Spot", &m_AngleRange, 90.0f, 0.0f);
+	ImGui::DragFloat("Constant Attenuation##Spot", &m_AttConst);
+	ImGui::DragFloat("Linear Attenuation##Spot", &m_AttLin);
+	ImGui::DragFloat("Quadratic Attenuation##Spot", &m_AttQuad);
+	ImGui::DragFloat("Range##Spot", &m_Range);
+	ImGui::DragFloat("Spot Factor##Spot", &m_Spot);
+	ImGui::SliderAngle("Cone Sub-Angle##Spot", &m_AngleRange, 0.0f, 90.0f);
 }
 #endif // ROOTEX_EDITOR
