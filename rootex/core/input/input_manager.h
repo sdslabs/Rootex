@@ -75,7 +75,7 @@ class InputManager
 	unsigned int getNextID();
 
 public:
-	static void RegisterAPI(sol::state& rootex);
+	static void RegisterAPI(sol::table& rootex);
 
 	static InputManager* GetSingleton();
 

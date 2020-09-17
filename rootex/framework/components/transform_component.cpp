@@ -60,7 +60,7 @@ TransformComponent::TransformComponent(const Vector3& position, const Vector4& r
 #endif // ROOTEX_EDITOR
 }
 
-void TransformComponent::RegisterAPI(sol::state& rootex)
+void TransformComponent::RegisterAPI(sol::table& rootex)
 {
 	sol::usertype<TransformComponent> transformComponent = rootex.new_usertype<TransformComponent>(
 	    "TransformComponent",

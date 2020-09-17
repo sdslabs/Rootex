@@ -17,11 +17,11 @@ public:
 
 private:
 	Vector<sol::environment> m_ScriptEnvironments;
-	Vector<LuaTextResourceFile*> m_ScriptFiles;
+	Vector<String> m_ScriptFiles;
 
 	friend class EntityFactory;
 
-	ScriptComponent(Vector<String> luaFilePaths);
+	ScriptComponent(const Vector<String>& luaFilePaths);
 	ScriptComponent(ScriptComponent&) = delete;
 	virtual ~ScriptComponent();
 
@@ -41,8 +41,8 @@ public:
 	virtual String getName() const override { return "ScriptComponent"; }
 	virtual JSON::json getJSON() const override;
 
-	void addScript(LuaTextResourceFile* scriptFile);
-	void removeScript(LuaTextResourceFile* scriptFile);
+	void addScript(const String& scriptFile);
+	void removeScript(const String& scriptFile);
 
 #ifdef ROOTEX_EDITOR
 	virtual void draw();

@@ -8,7 +8,7 @@ RenderUIComponent::RenderUIComponent(bool isVisible)
 {
 }
 
-void RenderUIComponent::RegisterAPI(sol::state& rootex)
+void RenderUIComponent::RegisterAPI(sol::table& rootex)
 {
 	sol::usertype<RenderUIComponent> renderUIComponent = rootex.new_usertype<RenderUIComponent>(
 	    "RenderUIComponent",

@@ -19,7 +19,7 @@ public:
 	FileSystemDock(FileSystemDock&) = delete;
 	~FileSystemDock() = default;
 
-	void draw();
+	void draw(float deltaMilliseconds);
 
 	FileSystemSettings& getSettings() { return m_FileSystemSettings; }
 	void setActive(bool enabled) { m_FileSystemSettings.m_IsActive = enabled; }

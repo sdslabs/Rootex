@@ -37,7 +37,7 @@ public:
 	InspectorDock(InspectorDock&) = delete;
 	~InspectorDock() = default;
 
-	void draw();
+	void draw(float deltaMilliseconds);
 
 	void drawEntityActions(Ref<Entity> actionEntity);
 	Ref<Entity> getOpenedEntity() { return m_OpenedEntity; }

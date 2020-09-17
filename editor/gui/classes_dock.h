@@ -7,5 +7,5 @@ class ClassesDock
 	void showClasses(const String& directory);
 
 public:
-	void draw();
+	void draw(float deltaMilliseconds);
 };

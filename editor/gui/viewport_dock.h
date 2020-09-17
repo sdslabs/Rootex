@@ -30,8 +30,8 @@ private:
 
 	float m_EditorCameraPitch = 0.0f;
 	float m_EditorCameraYaw = 0.0f;
-	float m_EditorCameraSpeed = 0.1f;
-	float m_EditorCameraSensitivity = 1.0f;
+	float m_EditorCameraSpeed = 10.0f;
+	float m_EditorCameraSensitivity = 300.0f;
 	float m_EditorCameraRotationNormalizer = 1000.0f;
 
 public:
@@ -39,7 +39,7 @@ public:
 	ViewportDock(ViewportDock&) = delete;
 	~ViewportDock() = default;
 
-	void draw();
+	void draw(float deltaMilliseconds);
 	
 	ViewportDockSettings& getSettings() { return m_ViewportDockSettings; }
 	void setActive(bool enabled) { m_ViewportDockSettings.m_IsActive = enabled; }

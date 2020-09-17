@@ -26,7 +26,7 @@ public:
 	HierarchyDock(HierarchyDock&) = delete;
 	~HierarchyDock() = default;
 
-	void draw();
+	void draw(float deltaMilliseconds);
 
 	void showEntities(const HashMap<EntityID, Ref<Entity>>& entities);
 
