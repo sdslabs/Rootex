@@ -17,7 +17,7 @@
         "ModelComponent": {
             "isVisible": true,
             "renderPass": 1,
-            "resFile": "game\\assets\\sponza\\sponza.3ds"
+            "resFile": "game/assets/sponza/sponza.3ds"
         },
         "TransformComponent": {
             "boundingBox": {

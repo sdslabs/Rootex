@@ -48,13 +48,12 @@ bool IsFileSupported(const String& extension, ResourceFile::Type supportedFileTy
 /// All path arguments should be relative to Rootex root.
 class ResourceLoader
 {
-	static Assimp::Importer s_ModelLoader;
 	static HashMap<Ptr<ResourceData>, Ptr<ResourceFile>> s_ResourcesDataFiles;
-	static HashMap<ResourceFile::Type, Vector<ResourceFile*>> s_ResourceFileLibrary;
 	
 	static void UpdateFileTimes(ResourceFile* file);
 	static void LoadAssimp(ModelResourceFile* file);
 	static void LoadALUT(AudioResourceFile* audioRes, const char* audioBuffer, int format, int size, float frequency);
+
 
 public:
 	static void RegisterAPI(sol::state& rootex);
@@ -66,6 +65,10 @@ public:
 	static ModelResourceFile* CreateModelResourceFile(const String& path);
 	static ImageResourceFile* CreateImageResourceFile(const String& path);
 	static FontResourceFile* CreateFontResourceFile(const String& path);
+	
+	/// Use when you don't know what kind of a resource file will it be
+	static ResourceFile* CreateSomeResourceFile(const String& path);
+	
 	/// Write the data buffer inside a ResourceFile to disk.
 	static void SaveResourceFile(ResourceFile* resourceFile);
 	/// Reload the data buffer inside a ResourceFile from disk.
@@ -78,8 +81,7 @@ public:
 	static void Reload(ImageResourceFile* file);
 	static void Reload(FontResourceFile* file);
 
-	/// Get a list of files that have already been loaded and belong to a certain type
-	static Vector<ResourceFile*>& GetFilesOfType(ResourceFile::Type type);
-	/// Get a list of all files that have already been loaded
-	static HashMap<ResourceFile::Type, Vector<ResourceFile*>>& GetAllFiles();
+	/// Load all the files passed in, in a parellel manner. Return total tasks generated.
+	static int Preload(Vector<String> paths, Atomic<int>& progress);
+	static void Unload(const Vector<String>& paths);
 };

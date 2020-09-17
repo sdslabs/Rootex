@@ -7,7 +7,7 @@
                 {
                     "inputEvent": "Jump",
                     "device": 1,
-                    "button": 32
+                    "button": 65
                 }
             ],
             "floats": {}

@@ -1,5 +1,12 @@
 {
 	"camera": 1,
 	"inputSchemes": [],
-	"startScheme": ""
+	"startScheme": "",
+	"preload": [
+		"game/assets/sponza/sponza.3ds",
+		"game/assets/scripts/fps_display.lua",
+		"game/assets/fonts/noto_sans_50_regular.spritefont",
+		"game/assets/test/cube.obj",
+		"rootex/assets/rml/demo.rml"
+	]
 }

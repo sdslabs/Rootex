@@ -34,7 +34,6 @@
 #include "Header.h"
 
 namespace Rml {
-namespace Core {
 
 struct RMLUICORE_API ObserverPtrBlock {
 	int num_observers;
@@ -54,7 +53,7 @@ class EnableObserverPtr;
 
 	Usage: Given a class T, derive from EnableObserverPtr<T>. Then, we can use the observer pointer as follows:
 
-		auto object = std::make_unique<T>();
+		auto object = MakeUnique<T>();
 		ObserverPtr<T> observer_ptr = object->GetObserverPtr();
 		// ...
 		if(obserer_ptr) { 
@@ -119,7 +118,7 @@ public:
 
 private:
 
-	friend class EnableObserverPtr<T>;
+	friend class Rml::EnableObserverPtr<T>;
 
 	explicit ObserverPtr(ObserverPtrBlock* block) noexcept : block(block)
 	{
@@ -185,7 +184,5 @@ private:
 
 
 
-}
-}
-
+} // namespace Rml
 #endif

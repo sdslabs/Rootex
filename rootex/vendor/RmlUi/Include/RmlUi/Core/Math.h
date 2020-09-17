@@ -26,13 +26,13 @@
  *
  */
 
-#ifndef RMLUICOREMATH_H
-#define RMLUICOREMATH_H
+#ifndef RMLUI_CORE_MATH_H
+#define RMLUI_CORE_MATH_H
 
 #include "Header.h"
 
 namespace Rml {
-namespace Core {
+
 namespace Math {
 
 // The constant PI.
@@ -66,6 +66,12 @@ template< typename Type >
 Type Clamp(Type value, Type min, Type max)
 {
 	return (value < min) ? min : (value > max) ? max : value;
+}
+
+template< typename Type >
+Type Lerp(float t, Type v0, Type v1)
+{
+	return v0 * (1.0f - t) + v1 * t;
 }
 
 /// Evaluates if a number is, or close to, zero.
@@ -138,6 +144,10 @@ RMLUICORE_API float SquareRoot(float value);
 RMLUICORE_API float RoundFloat(float value);
 /// Rounds a floating-point value to the nearest integer.
 /// @param[in] value The value to round.
+/// @return The rounded integer as double.
+RMLUICORE_API double RoundFloat(double value);
+/// Rounds a floating-point value to the nearest integer.
+/// @param[in] value The value to round.
 /// @return The rounded integer.
 RMLUICORE_API int RoundToInteger(float value);
 /// Rounds a floating-point value up to the nearest integer.
@@ -177,7 +187,5 @@ RMLUICORE_API int RandomInteger(int max_value);
 RMLUICORE_API bool RandomBool();
 
 }
-}
-}
-
+} // namespace Rml
 #endif

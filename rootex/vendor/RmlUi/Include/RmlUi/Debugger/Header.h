@@ -26,15 +26,10 @@
  *
  */
 
-#ifndef RMLUIDEBUGGERHEADER_H
-#define RMLUIDEBUGGERHEADER_H
+#ifndef RMLUI_DEBUGGER_HEADER_H
+#define RMLUI_DEBUGGER_HEADER_H
 
 #include "../Core/Platform.h"
-
-#ifdef STATIC_LIB
-	#define RMLUI_STATIC_LIB
-	#pragma message("DEPRECATED: STATIC_LIB macro has been deprecated in favor of RMLUI_STATIC_LIB and support will be removed in a future release")
-#endif
 
 #if !defined RMLUI_STATIC_LIB
 	#ifdef RMLUI_PLATFORM_WIN32

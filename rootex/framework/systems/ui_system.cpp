@@ -6,7 +6,7 @@
 #undef interface
 #include "RmlUi/Core.h"
 #include "RmlUi/Debugger.h"
-#include "RmlUi/Controls/Controls.h"
+#include "RmlUi/Lua.h"
 #define interface __STRUCT__
 
 double CustomSystemInterface::GetElapsedTime()
@@ -14,22 +14,22 @@ double CustomSystemInterface::GetElapsedTime()
 	return Application::GetSingleton()->getAppTimer().getTimeMs() * MS_TO_S;
 }
 
-bool CustomSystemInterface::LogMessage(Rml::Core::Log::Type type, const String& message)
+bool CustomSystemInterface::LogMessage(Rml::Log::Type type, const String& message)
 {
 	switch (type)
 	{
-	case Rml::Core::Log::LT_ERROR:
+	case Rml::Log::LT_ERROR:
 		ERR("RmlUi Error: " + message);
 		return false;
 		break;
-	case Rml::Core::Log::LT_ASSERT:
+	case Rml::Log::LT_ASSERT:
 		PRINT("RmlUi Assert: " + message)
 		return false;
 		break;
-	case Rml::Core::Log::LT_WARNING:
+	case Rml::Log::LT_WARNING:
 		WARN("RmlUi Warn: " + message)
 		break;
-	case Rml::Core::Log::LT_INFO:
+	case Rml::Log::LT_INFO:
 		PRINT("RmlUi Info: " + message)
 		break;
 	default:
@@ -37,21 +37,6 @@ bool CustomSystemInterface::LogMessage(Rml::Core::Log::Type type, const String& 
 	}
 
 	return true;
-}
-
-Rml::Core::EventListener* EventListenerInstancer::InstanceEventListener(const String& value, Rml::Core::Element* element)
-{
-	return new EventListener(value);
-}
-
-EventListener::EventListener(const Event::Type& eventType)
-    : m_EventType(eventType)
-{
-}
-
-void EventListener::ProcessEvent(Rml::Core::Event& event)
-{
-	EventManager::GetSingleton()->call("UIEventProxy", m_EventType, event.GetType());
 }
 
 UISystem::UISystem()
@@ -82,15 +67,15 @@ UISystem* UISystem::GetSingleton()
 
 void UISystem::loadFont(const String& path)
 {
-	if (!Rml::Core::LoadFontFace(path))
+	if (!Rml::LoadFontFace(path))
 	{
 		ERR("Could not load font through RmlUi: " + path);
 	}
 }
 
-Rml::Core::ElementDocument* UISystem::loadDocument(const String& path)
+Rml::ElementDocument* UISystem::loadDocument(const String& path)
 {
-	Rml::Core::ElementDocument* document = m_Context->LoadDocument(path);
+	Rml::ElementDocument* document = m_Context->LoadDocument(path);
 	if (document)
 	{
 		document->Show();
@@ -107,23 +92,23 @@ bool UISystem::initialize(const JSON::json& systemData)
 	m_RmlSystemInterface.reset(new CustomSystemInterface());
 	m_RmlRenderInterface.reset(new CustomRenderInterface(systemData["width"], systemData["height"]));
 
-	Rml::Core::SetSystemInterface(m_RmlSystemInterface.get());
-	Rml::Core::SetRenderInterface(m_RmlRenderInterface.get());
-	if (!Rml::Core::Initialise())
+	Rml::SetSystemInterface(m_RmlSystemInterface.get());
+	Rml::SetRenderInterface(m_RmlRenderInterface.get());
+
+	if (!Rml::Initialise())
 	{
 		ERR("Could not initialize RmlUi UI rendering library");
 		return false;
 	}
-	Rml::Controls::Initialise();
+
+	Rml::Lua::Initialise(LuaInterpreter::GetSingleton()->getLuaState().lua_state());
 	
 	loadFont("rootex/assets/fonts/Lato-Regular.ttf");
 	
-	m_Context = Rml::Core::CreateContext("default", Rml::Core::Vector2i(systemData["width"], systemData["height"]));
+	m_Context = Rml::CreateContext("default", Rml::Vector2i(systemData["width"], systemData["height"]));
 	
 	Rml::Debugger::Initialise(m_Context);
 	
-	Rml::Core::Factory::RegisterEventListenerInstancer(&s_EventListenerInstancer);
-
 	InputInterface::Initialise();
 	InputInterface::SetContext(m_Context);
 
@@ -140,7 +125,7 @@ void UISystem::update(float deltaMilliseconds)
 
 void UISystem::shutDown()
 {
-	Rml::Core::Shutdown();
+	Rml::Shutdown();
 }
 
 void UISystem::setDebugger(bool enabled)

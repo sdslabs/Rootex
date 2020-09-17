@@ -14,7 +14,7 @@ class UIComponent : public Component
 	friend class EntityFactory;
 
 	String m_FilePath;
-	Rml::Core::ElementDocument* m_Document;
+	Rml::ElementDocument* m_Document;
 
 	UIComponent(const String& path);
 	UIComponent(const UIComponent&) = delete;

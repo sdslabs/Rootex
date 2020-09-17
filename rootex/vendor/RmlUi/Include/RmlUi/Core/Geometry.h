@@ -26,19 +26,20 @@
  *
  */
 
-#ifndef RMLUICOREGEOMETRY_H
-#define RMLUICOREGEOMETRY_H
+#ifndef RMLUI_CORE_GEOMETRY_H
+#define RMLUI_CORE_GEOMETRY_H
 
 #include "Header.h"
 #include "Vertex.h"
+#include <stdint.h>
 
 namespace Rml {
-namespace Core {
 
 class Context;
 class Element;
 class RenderInterface;
 struct Texture;
+using GeometryDatabaseHandle = uint32_t;
 
 /**
 	A helper object for holding an array of vertices and indices, and compiling it as necessary when rendered.
@@ -51,6 +52,13 @@ class RMLUICORE_API Geometry
 public:
 	Geometry(Element* host_element = nullptr);
 	Geometry(Context* host_context);
+
+	Geometry(const Geometry&) = delete;
+	Geometry& operator=(const Geometry&) = delete;
+
+	Geometry(Geometry&& other);
+	Geometry& operator=(Geometry&& other);
+
 	~Geometry();
 
 	/// Set the host element for this geometry; this should be passed in the constructor if possible.
@@ -59,14 +67,14 @@ public:
 
 	/// Attempts to compile the geometry if appropriate, then renders the geometry, compiled if it can.
 	/// @param[in] translation The translation of the geometry.
-	void Render(const Vector2f& translation);
+	void Render(Vector2f translation);
 
 	/// Returns the geometry's vertices. If these are written to, Release() should be called to force a recompile.
 	/// @return The geometry's vertex array.
-	std::vector< Vertex >& GetVertices();
+	Vector< Vertex >& GetVertices();
 	/// Returns the geometry's indices. If these are written to, Release() should be called to force a recompile.
 	/// @return The geometry's index array.
-	std::vector< int >& GetIndices();
+	Vector< int >& GetIndices();
 
 	/// Gets the geometry's texture.
 	/// @return The geometry's texture.
@@ -78,24 +86,30 @@ public:
 	/// @param[in] clear_buffers True to also clear the vertex and index buffers, false to leave intact.
 	void Release(bool clear_buffers = false);
 
+	/// Returns true if there is geometry to be rendered.
+	explicit operator bool() const;
+
 private:
+	// Move members from another geometry.
+	void MoveFrom(Geometry& other);
+
 	// Returns the host context's render interface.
 	RenderInterface* GetRenderInterface();
 
-	Context* host_context;
-	Element* host_element;
+	Context* host_context = nullptr;
+	Element* host_element = nullptr;
 
-	std::vector< Vertex > vertices;
-	std::vector< int > indices;
-	const Texture* texture;
+	Vector< Vertex > vertices;
+	Vector< int > indices;
+	const Texture* texture = nullptr;
 
-	CompiledGeometryHandle compiled_geometry;
-	bool compile_attempted;
+	CompiledGeometryHandle compiled_geometry = 0;
+	bool compile_attempted = false;
+
+	GeometryDatabaseHandle database_handle;
 };
 
-typedef std::vector< Geometry > GeometryList;
+using GeometryList = Vector< Geometry >;
 
-}
-}
-
+} // namespace Rml
 #endif
