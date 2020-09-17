@@ -11,6 +11,7 @@
 #include "systems/input_system.h"
 #include "systems/ui_system.h"
 #include "systems/render_ui_system.h"
+#include "systems/render_system.h"
 #include "systems/script_system.h"
 #include "systems/hierarchy_system.h"
 
@@ -73,6 +74,7 @@ Application::Application(const String& settingsFile)
 
 	HierarchySystem::GetSingleton();
 	RenderUISystem::GetSingleton();
+	RenderSystem::GetSingleton();
 	ScriptSystem::GetSingleton();
 
 	auto&& postInitialize = m_ApplicationSettings->find("postInitialize");
@@ -93,8 +95,6 @@ Application::~Application()
 
 void Application::run()
 {
-	m_ThreadPool.initialize();
-
 	while (!m_Window->processMessages())
 	{
 		m_FrameTimer.reset();
@@ -116,7 +116,6 @@ void Application::run()
 		m_Window->swapBuffers();
 	}
 
-	m_ThreadPool.shutDown();
 	EventManager::GetSingleton()->call("Application", "ApplicationExit", 0);
 }
 
@@ -128,5 +127,9 @@ void Application::process(float deltaMilliseconds)
 
 void Application::end()
 {
-	LevelManager::GetSingleton()->endLevel();
+}
+
+Vector<FilePath> Application::getLibrariesPaths()
+{
+	return OS::GetDirectoriesInDirectory("rootex/vendor/");
 }
