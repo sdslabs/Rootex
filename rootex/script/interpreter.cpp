@@ -33,6 +33,11 @@ LuaInterpreter::LuaInterpreter()
 	m_Lua.open_libraries(sol::lib::os);
 	m_Lua.open_libraries(sol::lib::string);
 	m_Lua.open_libraries(sol::lib::table);
+	m_Lua.open_libraries(sol::lib::coroutine);
+	m_Lua.open_libraries(sol::lib::package);
+	m_Lua.open_libraries(sol::lib::debug);
+
+	luaL_dofile(m_Lua.lua_state(), "rootex/script/debugger.lua");
 
 	registerTypes();
 }
