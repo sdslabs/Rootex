@@ -29,9 +29,13 @@ UIComponent::~UIComponent()
 
 void UIComponent::setDocument(const String& path)
 {
+	if (m_Document)
+	{
+		m_Document->Close();
+	}
+
 	m_FilePath = path;
 	m_Document = UISystem::GetSingleton()->loadDocument(m_FilePath);
-	m_Document->GetEventDispatcher();
 }
 
 JSON::json UIComponent::getJSON() const

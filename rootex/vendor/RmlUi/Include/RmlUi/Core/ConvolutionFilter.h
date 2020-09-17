@@ -26,11 +26,13 @@
  *
  */
 
-#ifndef RMLUICORECONVOLUTIONFILTER_H
-#define RMLUICORECONVOLUTIONFILTER_H
+#ifndef RMLUI_CORE_CONVOLUTIONFILTER_H
+#define RMLUI_CORE_CONVOLUTIONFILTER_H
+
+#include "Header.h"
+#include "Types.h"
 
 namespace Rml {
-namespace Core {
 
 enum class FilterOperation {
 	// The result is the sum of all the filtered pixels.
@@ -92,8 +94,6 @@ private:
 	FilterOperation operation = FilterOperation::Sum;
 };
 
-}
-}
-
+} // namespace Rml
 #endif
 

@@ -27,14 +27,14 @@
  */
 
  
-#ifndef RMLUICOREID_H
-#define RMLUICOREID_H
+#ifndef RMLUI_CORE_ID_H
+#define RMLUI_CORE_ID_H
+
+#include <stdint.h>
 
 namespace Rml {
-namespace Core {
 
-
-enum class ShorthandId : uint16_t
+enum class ShorthandId : uint8_t
 {
 	Invalid,
 
@@ -52,6 +52,7 @@ enum class ShorthandId : uint16_t
 	BorderBottom,
 	BorderLeft,
 	Border,
+	BorderRadius,
 	Overflow,
 	Background,
 	Font,
@@ -59,11 +60,14 @@ enum class ShorthandId : uint16_t
 	TransformOrigin,
 
 	NumDefinedIds,
-	FirstCustomId = NumDefinedIds
+	FirstCustomId = NumDefinedIds,
+
+	// The maximum number of IDs. This limits the number of possible custom IDs to MaxNumIds - FirstCustomId.
+	MaxNumIds = 0xff
 };
 
 
-enum class PropertyId : uint16_t
+enum class PropertyId : uint8_t
 {
 	Invalid,
 
@@ -88,6 +92,10 @@ enum class PropertyId : uint16_t
 	BorderRightColor,
 	BorderBottomColor,
 	BorderLeftColor,
+	BorderTopLeftRadius,
+	BorderTopRightRadius,
+	BorderBottomRightRadius,
+	BorderBottomLeftRadius,
 	Display,
 	Position,
 	Top,
@@ -96,6 +104,7 @@ enum class PropertyId : uint16_t
 	Left,
 	Float,
 	Clear,
+	BoxSizing,
 	ZIndex,
 	Width,
 	MinWidth,
@@ -120,6 +129,7 @@ enum class PropertyId : uint16_t
 	TextDecoration,
 	TextTransform,
 	WhiteSpace,
+	WordBreak,
 	Cursor,
 	Drag,
 	TabIndex,
@@ -146,9 +156,11 @@ enum class PropertyId : uint16_t
 	FillImage,
 
 	NumDefinedIds,
-	FirstCustomId = NumDefinedIds
-};
+	FirstCustomId = NumDefinedIds,
 
+	// The maximum number of IDs. This limits the number of possible custom IDs to MaxNumIds - FirstCustomId.
+	MaxNumIds = 128
+};
 
 
 enum class EventId : uint16_t 
@@ -186,7 +198,7 @@ enum class EventId : uint16_t
 	Animationend,
 	Transitionend,
 
-	// Controls events
+	// Form control events
 	Change,
 	Submit,
 	Tabchange,
@@ -199,10 +211,11 @@ enum class EventId : uint16_t
 	NumDefinedIds,
 
 	// Custom IDs start here
-	FirstCustomId = NumDefinedIds
+	FirstCustomId = NumDefinedIds,
+
+	// The maximum number of IDs. This limits the number of possible custom IDs to MaxNumIds - FirstCustomId.
+	MaxNumIds = 0xffff
 };
 
-}
-}
-
+} // namespace Rml
 #endif

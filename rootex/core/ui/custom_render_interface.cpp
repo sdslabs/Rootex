@@ -28,7 +28,7 @@ CustomRenderInterface::CustomRenderInterface(int width, int height)
 	m_Textures[0].reset(new Texture(ResourceLoader::CreateImageResourceFile("rootex/assets/white.png")));
 }
 
-void CustomRenderInterface::RenderGeometry(Rml::Core::Vertex* vertices, int numVertices, int* indices, int numIndices, Rml::Core::TextureHandle texture, const Rml::Core::Vector2f& translation) 
+void CustomRenderInterface::RenderGeometry(Rml::Vertex* vertices, int numVertices, int* indices, int numIndices, Rml::TextureHandle texture, const Rml::Vector2f& translation) 
 {
 	Vector<UIVertexData> vertexData;
 	vertexData.assign((UIVertexData*)vertices, (UIVertexData*)vertices + numVertices);
@@ -54,20 +54,20 @@ void CustomRenderInterface::RenderGeometry(Rml::Core::Vertex* vertices, int numV
 	RenderingDevice::GetSingleton()->drawIndexed(ib.getCount());
 }
 
-Rml::Core::CompiledGeometryHandle CustomRenderInterface::CompileGeometry(Rml::Core::Vertex* vertices, int numVertices, int* indices, int numIndices, Rml::Core::TextureHandle texture)
+Rml::CompiledGeometryHandle CustomRenderInterface::CompileGeometry(Rml::Vertex* vertices, int numVertices, int* indices, int numIndices, Rml::TextureHandle texture)
 {
-	return (Rml::Core::CompiledGeometryHandle) nullptr;
+	return (Rml::CompiledGeometryHandle) nullptr;
 }
 
-void CustomRenderInterface::RenderCompiledGeometry(Rml::Core::CompiledGeometryHandle geometry, const Rml::Core::Vector2f& translation)
-{
-}
-
-void CustomRenderInterface::ReleaseCompiledGeometry(Rml::Core::CompiledGeometryHandle geometry)
+void CustomRenderInterface::RenderCompiledGeometry(Rml::CompiledGeometryHandle geometry, const Rml::Vector2f& translation)
 {
 }
 
-bool CustomRenderInterface::LoadTexture(Rml::Core::TextureHandle& textureHandle, Rml::Core::Vector2i& textureDimensions, const String& source)
+void CustomRenderInterface::ReleaseCompiledGeometry(Rml::CompiledGeometryHandle geometry)
+{
+}
+
+bool CustomRenderInterface::LoadTexture(Rml::TextureHandle& textureHandle, Rml::Vector2i& textureDimensions, const String& source)
 {
 	ImageResourceFile* image = ResourceLoader::CreateImageResourceFile(source);
 
@@ -82,7 +82,7 @@ bool CustomRenderInterface::LoadTexture(Rml::Core::TextureHandle& textureHandle,
 	return false;
 }
 
-bool CustomRenderInterface::GenerateTexture(Rml::Core::TextureHandle& textureHandle, const byte* source, const Rml::Core::Vector2i& sourceDimensions)
+bool CustomRenderInterface::GenerateTexture(Rml::TextureHandle& textureHandle, const byte* source, const Rml::Vector2i& sourceDimensions)
 {
 	textureHandle = s_TextureCount;
 	m_Textures[textureHandle].reset(new Texture((const char*)source, sourceDimensions.x, sourceDimensions.y));
@@ -90,7 +90,7 @@ bool CustomRenderInterface::GenerateTexture(Rml::Core::TextureHandle& textureHan
 	return m_Textures[textureHandle] != nullptr;
 }
 
-void CustomRenderInterface::ReleaseTexture(Rml::Core::TextureHandle texture)
+void CustomRenderInterface::ReleaseTexture(Rml::TextureHandle texture)
 {
 	m_Textures[texture].reset();
 }
@@ -112,9 +112,9 @@ void CustomRenderInterface::SetScissorRegion(int x, int y, int width, int height
 	RenderingDevice::GetSingleton()->setScissorRectangle(x, y, width, height);
 }
 
-void CustomRenderInterface::SetTransform(const Rml::Core::Matrix4f* transform)
+void CustomRenderInterface::SetTransform(const Rml::Matrix4f* transform)
 {
-	static Rml::Core::Matrix4f identity = Rml::Core::Matrix4f::Identity();
+	static Rml::Matrix4f identity = Rml::Matrix4f::Identity();
 
 	if (!transform)
 	{

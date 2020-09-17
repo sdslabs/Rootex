@@ -5,6 +5,7 @@
 #include "rootex/core/resource_loader.h"
 #include "rootex/framework/systems/render_system.h"
 #include "rootex/framework/systems/render_ui_system.h"
+#include "rootex/framework/systems/ui_system.h"
 #include "rootex/framework/systems/script_system.h"
 #include "rootex/framework/systems/physics_system.h"
 #include "rootex/framework/systems/audio_system.h"
