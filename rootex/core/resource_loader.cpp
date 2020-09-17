@@ -121,7 +121,6 @@ AnimatedModelResourceFile* ResourceLoader::CreateAnimatedModelResourceFile(const
 	LoadAssimp(animationRes);
 
 	s_ResourcesDataFiles[Ptr<ResourceData>(resData)] = Ptr<ResourceFile>(animationRes);
-	s_ResourceFileLibrary[ResourceFile::Type::AnimatedModel].push_back(animationRes);
 
 	return animationRes;
 }

@@ -21,7 +21,7 @@ void AnimatedModelResourceFile::RegisterAPI(sol::table& rootex)
 	    sol::base_classes, sol::bases<ResourceFile>());
 }
 
-void AnimatedModelResourceFile::GetBoneTransforms(aiNode* currentNode, Matrix parentRootTransform)
+void AnimatedModelResourceFile::setBoneTransforms(aiNode* currentNode, Matrix parentRootTransform)
 {
 	aiMatrix4x4 transform = currentNode->mTransformation;
 	Matrix toRootTransformation = Matrix({ transform.a1, transform.a2, transform.a3, transform.a4,
@@ -33,8 +33,33 @@ void AnimatedModelResourceFile::GetBoneTransforms(aiNode* currentNode, Matrix pa
 	m_BoneTransforms[index] = currentRootTransform;
 
 	for (size_t i = 0; i < currentNode->mNumChildren; i++) {
-		GetBoneTransforms(currentNode->mChildren[i], currentRootTransform);
+		setBoneTransforms(currentNode->mChildren[i], currentRootTransform);
 	}
+}
+
+void AnimatedModelResourceFile::getFinalTransforms(const String& animationName, float currentTime, Vector<Matrix>& transforms)
+{
+	m_Animations[animationName].interpolate(currentTime, transforms);
+
+	for (UINT i = 0; i < getBoneCount(); i++)
+	{
+		transforms[i] *= m_BoneOffsets[i] * m_BoneTransforms[i]; // see this method of calculating
+    }
+}
+
+Vector<String> AnimatedModelResourceFile::getAnimationNames()
+{
+	Vector<String> animationNames;
+	for (auto& element : m_Animations)
+	{
+		animationNames.push_back(element.first);
+	}
+	return animationNames;
+}
+
+float AnimatedModelResourceFile::getAnimationEndTime(const String& animationName)
+{
+	return m_Animations[animationName].getEndTime();
 }
 
 void AnimatedModelResourceFile::reimport()
@@ -114,15 +139,15 @@ void AnimatedModelResourceFile::reimport()
 			WARN("Material does not have color: " + String(material->GetName().C_Str()));
 		}
 
-		Ref<BasicMaterial> extractedMaterial;
+		Ref<AnimatedMaterial> extractedMaterial;
 		if (MaterialLibrary::IsExists(material->GetName().C_Str()))
 		{
-			extractedMaterial = std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetMaterial(material->GetName().C_Str() + String(".rmat")));
+			extractedMaterial = std::dynamic_pointer_cast<AnimatedMaterial>(MaterialLibrary::GetMaterial(material->GetName().C_Str() + String(".rmat")));
 		}
 		else
 		{
-			MaterialLibrary::CreateNewMaterialFile(material->GetName().C_Str(), "BasicMaterial");
-			extractedMaterial = std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetMaterial(material->GetName().C_Str() + String(".rmat")));
+			MaterialLibrary::CreateNewMaterialFile(material->GetName().C_Str(), "AnimatedMaterial");
+			extractedMaterial = std::dynamic_pointer_cast<AnimatedMaterial>(MaterialLibrary::GetMaterial(material->GetName().C_Str() + String(".rmat")));
 			extractedMaterial->setColor({ color.r, color.g, color.b, 1.0f });
 
 			for (int i = 0; i < material->GetTextureCount(aiTextureType_DIFFUSE); i++)
@@ -204,7 +229,7 @@ void AnimatedModelResourceFile::reimport()
 
 		m_Meshes[extractedMaterial].push_back(extractedMesh);
     }
-    
+
     for (int i = 0; i < scene->mNumAnimations; i++)
     {
         const aiAnimation* anim = scene->mAnimations[i];
