@@ -14,12 +14,13 @@ LevelDescription::LevelDescription()
 {
 }
 
-LevelDescription::LevelDescription(const String& levelPath)
+LevelDescription::LevelDescription(const String& levelPath, const Vector<String>& arguments)
 {
 	m_LevelName = FilePath(levelPath).filename().string();
 	m_LevelSettingsFile = ResourceLoader::CreateTextResourceFile(levelPath + "/" + m_LevelName + ".level.json");
 	m_LevelSettings = JSON::json::parse(m_LevelSettingsFile->getString());
-	
+	m_Arguments = arguments;
+
 	if (m_LevelSettings.find("preload") != m_LevelSettings.end())
 	{
 		for (auto& path : m_LevelSettings["preload"])
@@ -36,9 +37,10 @@ void LevelManager::RegisterAPI(sol::table& rootex)
 	
 	sol::usertype<LevelManager> levelManager = rootex.new_usertype<LevelManager>("LevelManager");
 	levelManager["Get"] = &LevelManager::GetSingleton;
-	levelManager["openLevel"] = [](LevelManager* l, String& p) { return l->openLevel(p); };
-	levelManager["preloadLevel"] = [](LevelManager* l, String& p, Atomic<int>& a) { return l->preloadLevel(p, a); };
-	levelManager["openPreloadedLevel"] = [](LevelManager* l, String& p) { return l->openPreloadedLevel(p, false); };
+	levelManager["openLevel"] = [](LevelManager* l, const String& p, const sol::table& arguments) { return l->openLevel(p, arguments.as<Vector<String>>()); };
+	levelManager["preloadLevel"] = [](LevelManager* l, const String& p, Atomic<int>& a) { return l->preloadLevel(p, a); };
+	levelManager["openPreloadedLevel"] = [](LevelManager* l, const String& p, const sol::nested<Vector<String>>& arguments) { return l->openPreloadedLevel(p, arguments.value(), false); };
+	levelManager["getCurrentLevelArguments"] = [](LevelManager* l) { return l->getCurrentLevel().getArguments(); };
 }
 
 LevelManager* LevelManager::GetSingleton()
@@ -49,7 +51,7 @@ LevelManager* LevelManager::GetSingleton()
 
 int LevelManager::preloadLevel(const String& levelPath, Atomic<int>& progress, bool openInEditor)
 {
-	LevelDescription newLevel(levelPath);
+	LevelDescription newLevel(levelPath, {});
 
 	m_ToUnload.clear();
 	for (auto& preloaded : m_CurrentLevel.getPreloads())
@@ -64,7 +66,7 @@ int LevelManager::preloadLevel(const String& levelPath, Atomic<int>& progress, b
 	return ResourceLoader::Preload(newLevel.getPreloads(), progress);
 }
 
-void LevelManager::openLevel(const String& levelPath, bool openInEditor)
+void LevelManager::openLevel(const String& levelPath, const Vector<String>& arguments, bool openInEditor)
 {
 	if (isAnyLevelOpen())
 	{
@@ -81,14 +83,14 @@ void LevelManager::openLevel(const String& levelPath, bool openInEditor)
 
 	PRINT("Preloaded " + std::to_string(totalPreloads) + " new resources");
 
-	openPreloadedLevel(levelPath, openInEditor);
+	openPreloadedLevel(levelPath, arguments, openInEditor);
 }
 
-void LevelManager::openPreloadedLevel(const String& levelPath, bool openInEditor)
+void LevelManager::openPreloadedLevel(const String& levelPath, const Vector<String>& arguments, bool openInEditor)
 {
 	endLevel();
 
-	m_CurrentLevel = LevelDescription(levelPath);
+	m_CurrentLevel = LevelDescription(levelPath, arguments);
 
 	ResourceLoader::Unload(m_ToUnload);
 

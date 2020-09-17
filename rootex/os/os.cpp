@@ -76,6 +76,25 @@ void OS::Rename(const String& sourcePath, const String& destinationPath)
 	PRINT("Renamed " + sourcePath + " to " + destinationPath);
 }
 
+Vector<FilePath> OS::GetAllFilesInDirectory(const String& directory)
+{
+	if (!std::filesystem::is_directory(GetAbsolutePath(directory)))
+	{
+		WARN("Not a directory: " + directory);
+		return {};
+	}
+
+	Vector<FilePath> result;
+	for (auto&& file : std::filesystem::recursive_directory_iterator(GetAbsolutePath(directory)))
+	{
+		if (!file.is_directory())
+		{
+			result.push_back(GetRootRelativePath(((FilePath)file).generic_string()));
+		}
+	}
+	return result;
+}
+
 Vector<FilePath> OS::GetAllInDirectory(const String& directory)
 {
 	if (!std::filesystem::is_directory(GetAbsolutePath(directory)))

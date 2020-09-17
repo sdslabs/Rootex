@@ -243,19 +243,6 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 			static String newMaterialType = "Select Material Type";
 			if (ImGui::BeginMenu("File"))
 			{
-				if (ImGui::BeginMenu("Create Entity", LevelManager::GetSingleton()->isAnyLevelOpen()))
-				{
-					for (auto&& entityClassFile : OS::GetFilesInDirectory("game/assets/classes/"))
-					{
-						if (ImGui::MenuItem(entityClassFile.string().c_str(), ""))
-						{
-							Variant callReturn = EventManager::GetSingleton()->returnCall("EditorFileCreateNewEntity", "EditorCreateNewEntity", entityClassFile.string());
-							Ref<Entity> newEntity = Extract(Ref<Entity>, callReturn);
-							EventManager::GetSingleton()->call("EditorFileOpenNewlyCreatedEntity", "EditorOpenEntity", newEntity);
-						}
-					}
-					ImGui::EndMenu();
-				}
 				if (ImGui::BeginMenu("Create Material"))
 				{
 					if (ImGui::BeginCombo("", newMaterialType.c_str()))
@@ -281,6 +268,27 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 						}
 					}
 
+					ImGui::EndMenu();
+				}
+				static String newScript = "game/assets/scripts/";
+				if (ImGui::BeginMenu("Create Script"))
+				{
+					ImGui::InputText("Script Name", &newScript, ImGuiInputTextFlags_AlwaysInsertMode);
+					if (ImGui::Button("Create"))
+					{
+						if (!OS::IsExists(newScript))
+						{
+							InputOutputFileStream file = OS::CreateFileName(newScript);
+							String defaultScript = ResourceLoader::CreateLuaTextResourceFile("rootex/assets/scripts/empty.lua")->getString();
+							file.write(defaultScript.c_str(), strlen(defaultScript.c_str()));
+							file.close();
+							PRINT("Successfully created script: " + newScript);
+						}
+						else
+						{
+							WARN("Script already exists: " + newScript);
+						}
+					}
 					ImGui::EndMenu();
 				}
 				ImGui::Separator();
@@ -318,6 +326,19 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 							{
 								loadingLevel = levelName.generic_string();
 							}
+						}
+					}
+					ImGui::EndMenu();
+				}
+				if (ImGui::BeginMenu("Instantiate class", LevelManager::GetSingleton()->isAnyLevelOpen()))
+				{
+					for (auto&& entityClassFile : OS::GetAllFilesInDirectory("game/assets/classes/"))
+					{
+						if (ImGui::MenuItem(entityClassFile.string().c_str(), ""))
+						{
+							Variant callReturn = EventManager::GetSingleton()->returnCall("EditorFileCreateNewEntity", "EditorCreateNewEntity", entityClassFile.string());
+							Ref<Entity> newEntity = Extract(Ref<Entity>, callReturn);
+							EventManager::GetSingleton()->call("EditorFileOpenNewlyCreatedEntity", "EditorOpenEntity", newEntity);
 						}
 					}
 					ImGui::EndMenu();
@@ -622,7 +643,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 
 		if (totalProgress == progress)
 		{
-			LevelManager::GetSingleton()->openPreloadedLevel(loadingLevel, true);
+			LevelManager::GetSingleton()->openPreloadedLevel(loadingLevel, {} , true);
 			SetWindowText(GetActiveWindow(), ("Rootex Editor: " + LevelManager::GetSingleton()->getCurrentLevel().getLevelName()).c_str());
 			totalProgress = -1;
 			progress = 0;
