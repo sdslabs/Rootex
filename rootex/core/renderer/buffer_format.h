@@ -15,6 +15,8 @@ struct VertexBufferElement
 		FloatFloat = DXGI_FORMAT_R32G32_FLOAT,
 		ByteByteByteByte = DXGI_FORMAT_R8G8B8A8_UNORM,
 		UInt = DXGI_FORMAT_R32_UINT
+		UintUintUintUint = DXGI_FORMAT_R32G32B32A32_FLOAT,
+		FloatFloatFloatFloat = DXGI_FORMAT_R32G32B32A32_UINT 
 	};
 
 	/// What type of objects are present in buffer
@@ -45,6 +47,10 @@ struct VertexBufferElement
 			return sizeof(char) * 4;
 		case UInt:
 			return sizeof(unsigned int);
+		case UintUintUintUint:
+			return sizeof(UINT) * 4;
+		case FloatFloatFloatFloat:
+			return sizeof(float) * 4;
 		default:
 			ERR("Unknown size found");
 			return 0;

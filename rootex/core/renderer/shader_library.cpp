@@ -23,6 +23,8 @@ Shader* ShaderLibrary::MakeShader(ShaderType shaderType, const LPCWSTR& vertexPa
 	case ShaderLibrary::ShaderType::Sky:
 		newShader = new SkyShader(vertexPath, pixelPath, vertexBufferFormat);
 		break;
+	case ShaderLibrary::ShaderType::Animation:
+		newShader = new AnimationShader(vertexPath, pixelPath, vertexBufferFormat);
 	default:
 		WARN("Unknown shader type found");
 		break;
@@ -70,6 +72,15 @@ void ShaderLibrary::MakeShaders()
 		skyFormat.push(VertexBufferElement::Type::FloatFloatFloat, "POSITION", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
 		MakeShader(ShaderType::Sky, L"rootex/assets/shaders/sky_vertex_shader.cso", L"rootex/assets/shaders/sky_pixel_shader.cso", skyFormat);
 	}
+	{
+		BufferFormat animationFormat;
+		animationFormat.push(VertexBufferElement::Type::FloatFloatFloat, "POSITION");
+		animationFormat.push(VertexBufferElement::Type::FloatFloatFloat, "NORMAL");
+		animationFormat.push(VertexBufferElement::Type::FloatFloat, "TEXCOORD");
+		animationFormat.push(VertexBufferElement::Type::UintUintUintUint, "BONEINDICES");
+		animationFormat.push(VertexBufferElement::Type::FloatFloatFloatFloat, "BONEWEIGHTS");
+		MakeShader(ShaderType::Animation, L"rootex/assets/shaders/animation_vertex_shader.cso", L"rootex/assets/shaders/animation_pixel_shader.cso", animationFormat);
+	}
 }
 
 void ShaderLibrary::DestroyShaders()
@@ -90,4 +101,9 @@ ParticlesShader* ShaderLibrary::GetParticlesShader()
 SkyShader* ShaderLibrary::GetSkyShader()
 {
 	return reinterpret_cast<SkyShader*>(s_Shaders[ShaderType::Sky].get());
+}
+
+AnimationShader* ShaderLibrary::GetAnimationShader()
+{
+	return reinterpret_cast<AnimationShader*>(s_Shaders[ShaderType::Animation].get());
 }

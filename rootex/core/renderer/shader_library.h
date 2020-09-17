@@ -11,6 +11,7 @@ class ShaderLibrary
 		Basic,
 		Sky,
 		Particles
+		Animation
 	};
 
 private:
@@ -29,4 +30,5 @@ public:
 	static BasicShader* GetBasicShader();
 	static ParticlesShader* GetParticlesShader();
 	static SkyShader* GetSkyShader();
+	static AnimationShader* GetAnimationShader();
 };
