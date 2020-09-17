@@ -25,7 +25,7 @@ public:
 	OutputDock(OutputDock&) = delete;
 	~OutputDock() = default;
 
-	void draw();
+	void draw(float deltaMilliseconds);
 
 	OutputDockSettings& getSettings() { return m_OutputDockSettings; }
 	void setActive(bool enabled) { m_OutputDockSettings.m_IsActive = enabled; }

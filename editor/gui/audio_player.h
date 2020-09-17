@@ -25,5 +25,5 @@ public:
 
 	ResourceFile* load(const FilePath& filePath);
 	void unload();
-	void draw();
+	void draw(float deltaMilliseconds);
 };

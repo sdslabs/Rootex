@@ -15,18 +15,17 @@ Component* ScriptComponent::CreateDefault()
 	return sc;
 }
 
-ScriptComponent::ScriptComponent(Vector<String> luaFilePaths)
+ScriptComponent::ScriptComponent(const Vector<String>& luaFilePaths)
 {
 	for (auto& path : luaFilePaths)
 	{
-		LuaTextResourceFile* scriptFile = ResourceLoader::CreateLuaTextResourceFile(path);
-		if (!scriptFile)
+		if (!OS::IsExists(path))
 		{
 			ERR("Could not find script file: " + path);
 			continue;
 		}
 
-		addScript(scriptFile);
+		addScript(path);
 	}
 }
 
@@ -41,7 +40,7 @@ bool ScriptComponent::setup()
 	{
 		for (int i = 0; i < m_ScriptFiles.size(); i++)
 		{
-			LuaInterpreter::GetSingleton()->getLuaState().script(m_ScriptFiles[i]->getString(), m_ScriptEnvironments[i]);
+			LuaInterpreter::GetSingleton()->getLuaState().script_file(m_ScriptFiles[i], m_ScriptEnvironments[i]);
 		}
 	}
 	catch (std::exception e)
@@ -103,13 +102,13 @@ JSON::json ScriptComponent::getJSON() const
 	j["scripts"] = JSON::json::array();
 	for (auto& scriptFile : m_ScriptFiles)
 	{
-		j["scripts"].push_back(scriptFile->getPath().generic_string());
+		j["scripts"].push_back(scriptFile);
 	}
 
 	return j;
 }
 
-void ScriptComponent::addScript(LuaTextResourceFile* scriptFile)
+void ScriptComponent::addScript(const String& scriptFile)
 {
 	m_ScriptFiles.push_back(scriptFile);
 	m_ScriptEnvironments.push_back(
@@ -118,7 +117,7 @@ void ScriptComponent::addScript(LuaTextResourceFile* scriptFile)
 	        LuaInterpreter::GetSingleton()->getLuaState().globals()));
 }
 
-void ScriptComponent::removeScript(LuaTextResourceFile* scriptFile)
+void ScriptComponent::removeScript(const String& scriptFile)
 {
 	for (int i = 0; i < m_ScriptFiles.size(); i++)
 	{
@@ -145,9 +144,9 @@ void ScriptComponent::draw()
 				removeScript(scriptFile);
 			}
 			ImGui::SameLine();
-			if (ImGui::Selectable(scriptFile->getPath().filename().generic_string().c_str()))
+			if (ImGui::Selectable(scriptFile.c_str()))
 			{
-				EventManager::GetSingleton()->call("OpenScriptFile", "EditorOpenFile", scriptFile->getPath().generic_string());
+				EventManager::GetSingleton()->call("OpenScriptFile", "EditorOpenFile", scriptFile);
 			}
 		}
 		ImGui::ListBoxFooter();
@@ -162,7 +161,7 @@ void ScriptComponent::draw()
 			FilePath payloadPath(payloadFileName);
 			if (IsFileSupported(payloadPath.extension().string(), ResourceFile::Type::Lua))
 			{
-				addScript(ResourceLoader::CreateLuaTextResourceFile(payloadPath.string()));
+				addScript(payloadPath.string());
 			}
 			else
 			{

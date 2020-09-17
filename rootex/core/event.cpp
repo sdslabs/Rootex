@@ -1,6 +1,6 @@
 #include "event.h"
 
-void Event::RegisterAPI(sol::state& rootex)
+void Event::RegisterAPI(sol::table& rootex)
 {
 	sol::usertype<Event> event = rootex.new_usertype<Event>("Event", sol::constructors<Event(const String&, const Event::Type, const Variant)>());
 	event["getName"] = &Event::getName;

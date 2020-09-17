@@ -45,7 +45,7 @@ TextUIComponent::TextUIComponent(FontResourceFile* font, const String& text, con
 {
 }
 
-void TextUIComponent::RegisterAPI(sol::state& rootex)
+void TextUIComponent::RegisterAPI(sol::table& rootex)
 {
 	sol::usertype<TextUIComponent> textUIComponent = rootex.new_usertype<TextUIComponent>(
 	    "TextUIComponent",

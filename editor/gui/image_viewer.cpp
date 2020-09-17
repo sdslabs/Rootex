@@ -4,7 +4,7 @@
 
 #include "imgui.h"
 
-void ImageViewer::draw()
+void ImageViewer::draw(float deltaMilliseconds)
 {
 	drawFileInfo();
 	if (m_ImageResourceFile->isDirty())

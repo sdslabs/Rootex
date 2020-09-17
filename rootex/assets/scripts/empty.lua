@@ -2,7 +2,7 @@ function onBegin(entity)
     print("Nothing is true")
 end
 
-function onUpdate(delta, entity)
+function onUpdate(entity, delta)
 end
 
 function onHit(entity, hit, other)
