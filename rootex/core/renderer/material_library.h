@@ -5,6 +5,7 @@
 #include "materials/basic_material.h"
 #include "materials/particles_material.h"
 #include "materials/sky_material.h"
+#include "materials/animated_material.h"
 
 class MaterialLibrary
 {

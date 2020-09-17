@@ -11,6 +11,7 @@ MaterialLibrary::MaterialDatabase MaterialLibrary::s_MaterialDatabase = {
 	{ BasicMaterial::s_MaterialName, { BasicMaterial::CreateDefault, BasicMaterial::Create } },
 	{ ParticlesMaterial::s_MaterialName, { ParticlesMaterial::CreateDefault, ParticlesMaterial::Create } },
 	{ SkyMaterial::s_MaterialName, { SkyMaterial::CreateDefault, SkyMaterial::Create } }
+	{ AnimatedMaterial::s_MaterialName, { AnimatedMaterial::CreateDefault, AnimatedMaterial::Create } }
 };
 
 bool MaterialLibrary::IsDefault(const String& materialPath)
