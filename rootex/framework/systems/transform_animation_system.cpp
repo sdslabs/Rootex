@@ -8,6 +8,11 @@ TransformAnimationSystem* TransformAnimationSystem::GetSingleton()
 	return &singleton;
 }
 
+TransformAnimationSystem::TransformAnimationSystem()
+    : System("TransformationAnimationSystem", UpdateOrder::Update, true)
+{
+}
+
 void TransformAnimationSystem::begin()
 {
 	TransformAnimationComponent* animation = nullptr;

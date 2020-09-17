@@ -1,9 +1,25 @@
 {
     "project": "Rootex Game",
-    "startLevel": "game/assets/levels/model_test",
+    "startLevel": "game/assets/levels/graphics_test",
+    "systems": {
+        "AudioSystem": {},
+        "InputManager": {
+            "height": 1440,
+            "width": 2560
+        },
+        "InputSystem": {
+            "height": 1387,
+            "width": 2560
+        },
+        "PhysicsSystem": {},
+        "UISystem": {
+            "height": 1387,
+            "width": 2560
+        }
+    },
     "version": 1.0,
     "window": {
-        "fullScreen": true,
+        "fullScreen": false,
         "height": 1080,
         "isEditor": false,
         "msaa": true,

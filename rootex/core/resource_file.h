@@ -129,14 +129,13 @@ public:
 
 class Material;
 
-/// Representation of a 3D model file. Only .obj with .mtl files are supported.
+/// Representation of a 3D model file.
 class ModelResourceFile : public ResourceFile
 {
 	explicit ModelResourceFile(ResourceData* resData);
 	~ModelResourceFile();
 
 	HashMap<Ref<Material>, Vector<Mesh>> m_Meshes;
-	Vector<Ref<Texture>> m_Textures;
 
 	friend class ResourceLoader;
 

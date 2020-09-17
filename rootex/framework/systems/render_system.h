@@ -34,14 +34,15 @@ class RenderSystem : public System
 
 	RenderSystem();
 	RenderSystem(RenderSystem&) = delete;
-	~RenderSystem() = default;
+	virtual ~RenderSystem() = default;
 
 	void renderPassRender(RenderPass renderPass);
 
 public:
 	static RenderSystem* GetSingleton();
 	
-	void render();
+	void setConfig(const JSON::json& configData, bool openInEditor) override;
+	void update(float deltaMilliseconds) override;
 	void renderLines();
 	void submitLine(const Vector3& from, const Vector3& to);
 	void recoverLostDevice();
@@ -69,4 +70,8 @@ public:
 	CameraComponent* getCamera() const { return m_Camera; }
 	const Matrix& getCurrentMatrix() const;
 	const Renderer* getRenderer() const { return m_Renderer.get(); }
+
+#ifdef ROOTEX_EDITOR
+	void draw() override;
+#endif // ROOTEX_EDITOR
 };

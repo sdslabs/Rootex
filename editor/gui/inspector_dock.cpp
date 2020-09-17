@@ -3,7 +3,7 @@
 #include "entity.h"
 #include "entity_factory.h"
 #include "framework/component.h"
-#include "editor/editor.h"
+#include "editor/editor_system.h"
 
 #include "vendor/ImGUI/imgui.h"
 #include "vendor/ImGUI/imgui_stdlib.h"
@@ -116,13 +116,13 @@ void InspectorDock::draw()
 				}
 				else
 				{
-					Editor::GetSingleton()->pushBoldFont();
+					EditorSystem::GetSingleton()->pushBoldFont();
 					ImGui::TreeNodeEx(m_OpenedEntity->getFullName().c_str(), ImGuiTreeNodeFlags_CollapsingHeader | ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_Selected);
 					if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
 					{
 						m_IsNameBeingEdited = true;
 					}
-					Editor::GetSingleton()->popFont();
+					EditorSystem::GetSingleton()->popFont();
 				}
 
 				ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
@@ -140,18 +140,18 @@ void InspectorDock::draw()
 
 				ImGui::Separator();
 
-				Editor::GetSingleton()->pushBoldFont();
+				EditorSystem::GetSingleton()->pushBoldFont();
 				ImGui::Text("Components");
 				for (auto& component : m_OpenedEntity->getAllComponents())
 				{
 					if (ImGui::TreeNodeEx(component.second->getName().c_str(), ImGuiTreeNodeFlags_CollapsingHeader | ImGuiTreeNodeFlags_DefaultOpen))
 					{
-						Editor::GetSingleton()->pushRegularFont();
+						EditorSystem::GetSingleton()->pushRegularFont();
 						component.second->draw();
-						Editor::GetSingleton()->popFont();
+						EditorSystem::GetSingleton()->popFont();
 					}
 				}
-				Editor::GetSingleton()->popFont();
+				EditorSystem::GetSingleton()->popFont();
 
 				if (m_ActionEntity)
 				{

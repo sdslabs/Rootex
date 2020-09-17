@@ -23,7 +23,7 @@ Component* ModelComponent::Create(const JSON::json& componentData)
 Component* ModelComponent::CreateDefault()
 {
 	ModelComponent* modelComponent = new ModelComponent(
-	    (unsigned int)RenderPass::Basic,
+	    (int)RenderPass::Basic,
 	    ResourceLoader::CreateModelResourceFile("rootex/assets/cube.obj"),
 	    true);
 
@@ -138,34 +138,20 @@ void ModelComponent::draw()
 	ImGui::Checkbox("Visible", &m_IsVisible);
 
 	ImGui::BeginGroup();
-	String modelFileName = m_ModelResourceFile ? m_ModelResourceFile->getPath().filename().string() : "None";
-	if (ImGui::BeginCombo("##Visual Model", modelFileName.c_str(), ImGuiComboFlags_HeightRegular))
+
+	static String inputPath = "Path";
+	ImGui::InputText("##Path", &inputPath);
+	ImGui::SameLine();
+	if (ImGui::Button("Create Visual Model"))
 	{
-		for (auto&& file : ResourceLoader::GetFilesOfType(ResourceFile::Type::Model))
+		if (!ResourceLoader::CreateModelResourceFile(inputPath))
 		{
-			if (ImGui::MenuItem(file->getPath().string().c_str(), ""))
-			{
-				setVisualModel((ModelResourceFile*)file);
-			}
+			WARN("Could not create Visual Model");
 		}
-
-		ImGui::Separator();
-
-		static String inputPath = "Path";
-		ImGui::InputText("##Path", &inputPath);
-		ImGui::SameLine();
-		if (ImGui::Button("Create Visual Model"))
+		else
 		{
-			if (!ResourceLoader::CreateModelResourceFile(inputPath))
-			{
-				WARN("Could not create Visual Model");
-			}
-			else
-			{
-				inputPath = "";
-			}
+			inputPath = "";
 		}
-		ImGui::EndCombo();
 	}
 
 	ImGui::SameLine();
@@ -192,6 +178,12 @@ void ModelComponent::draw()
 			}
 		}
 		ImGui::EndDragDropTarget();
+	}
+
+	int renderPassUI = log2(m_RenderPass);
+	if (ImGui::Combo("Renderpass", &renderPassUI, "Basic\0Editor\0Alpha"))
+	{
+		m_RenderPass = pow(2, renderPassUI);
 	}
 
 	if (ImGui::TreeNodeEx("Materials"))

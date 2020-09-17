@@ -9,19 +9,13 @@ class HierarchyGraph;
 /// Application that runs when game is run without the editor
 class GameApplication : public Application
 {
-	FrameTimer m_FrameTimer;
-
 	String getLevelNameFromCommandLine(const char* s);
-
 	Variant onExitEvent(const Event* event);
 
 public:
 	GameApplication();
 	GameApplication(GameApplication&) = delete;
-	~GameApplication();
+	~GameApplication() = default;
 	
-	void run() override;
-	void shutDown() override;
-
 	String getAppTitle() const override { return "Game"; }
 };

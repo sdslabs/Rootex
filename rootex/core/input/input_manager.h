@@ -99,6 +99,7 @@ public:
 	float getFloatDelta(const Event::Type& action);
 
 	void update();
+	void setDisplaySize(const Vector2& newSize);
 
 	const gainput::InputMap& getMap() const { return m_GainputMap; }
 	gainput::InputDeviceMouse* getMouse() { return static_cast<gainput::InputDeviceMouse*>(m_GainputManager.GetDevice(DeviceIDs[Device::Mouse])); }

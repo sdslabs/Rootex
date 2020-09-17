@@ -39,6 +39,8 @@ class UISystem : public System
 	Rml::Core::Context* m_Context;
 
 	UISystem();
+	virtual ~UISystem() = default;
+	
 	Variant enableDebugger(const Event* event);
 	Variant disableDebugger(const Event* event);
 
@@ -47,12 +49,14 @@ public:
 
 	void loadFont(const String& path);
 	Rml::Core::ElementDocument* loadDocument(const String& path);
-	void unloadDocument(Rml::Core::ElementDocument* document);
 
-	void initialize(int width, int height);
-	void update();
-	void render();
-	void shutdown();
+	bool initialize(const JSON::json& systemData) override;
+	void update(float deltaMilliseconds) override;
+	void shutDown();
 
 	void setDebugger(bool enabled);
+
+#ifdef ROOTEX_EDITOR
+	void draw() override;
+#endif // ROOTEX_EDITOR
 };

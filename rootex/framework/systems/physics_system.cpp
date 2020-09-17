@@ -18,7 +18,12 @@ PhysicsSystem* PhysicsSystem::GetSingleton()
 	return &singleton;
 }
 
-void PhysicsSystem::initialize()
+PhysicsSystem::PhysicsSystem()
+    : System("PhysicsSystem", UpdateOrder::Update, true)
+{
+}
+
+bool PhysicsSystem::initialize(const JSON::json& systemData)
 {
 	m_CollisionConfiguration.reset(new btDefaultCollisionConfiguration());
 	m_Dispatcher.reset(new btCollisionDispatcher(m_CollisionConfiguration.get()));
@@ -32,25 +37,16 @@ void PhysicsSystem::initialize()
 
 	if (!m_CollisionConfiguration || !m_Dispatcher || !m_Broadphase || !m_Solver || !m_DynamicsWorld)
 	{
-		ERR("Initialization Failed!");
-		return;
+		ERR("PhysicsSystem initialization failed");
+		return false;
 	}
 
 	m_DynamicsWorld->setInternalTickCallback(InternalTickCallback);
 	m_DynamicsWorld->setWorldUserInfo(this);
 	m_DynamicsWorld->setDebugDrawer(&m_DebugDrawer);
 	m_DynamicsWorld->getDebugDrawer()->setDebugMode(btIDebugDraw::DBG_DrawWireframe);
-}
 
-PhysicsSystem::~PhysicsSystem()
-{
-	//cleanup in the reverse order of creation/initialization
-	for (int i = m_DynamicsWorld->getNumCollisionObjects() - 1; i >= 0; i--)
-	{
-		btCollisionObject* obj = m_DynamicsWorld->getCollisionObjectArray()[i];
-		m_DynamicsWorld->removeCollisionObject(obj);
-		delete obj;
-	}
+	return true;
 }
 
 void PhysicsSystem::addRigidBody(btRigidBody* body)
