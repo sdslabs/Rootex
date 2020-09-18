@@ -1,8 +1,9 @@
 #include "register_locations_pixel_shader.h"
 
-Texture2D ShaderTexture;
+Texture2D ShaderTexture : register(DIFFUSE_PS_HLSL);
 SamplerState SampleType;
 TextureCube SkyTexture : register(SKY_PS_HLSL);
+Texture2D NormalTexture : register(NORMAL_PS_HLSL);
 
 struct PixelInputType
 {
@@ -11,6 +12,8 @@ struct PixelInputType
     float4 worldPosition : POSITION;
 	float2 tex : TEXCOORD0;
 	float fogFactor : FOG;
+	float3 tangent : TANGENT;
+	float3 bitangent : BITANGENT;
 };
 struct PointLightInfo
 {
@@ -67,6 +70,7 @@ cbuffer Material : register(PER_OBJECT_PS_HLSL)
     float refractionConstant;
     float refractivity;
     int affectedBySky;
+	int hasNormalMap;
 };
 
 float4 main(PixelInputType input) : SV_TARGET
@@ -74,6 +78,11 @@ float4 main(PixelInputType input) : SV_TARGET
     float4 materialColor = ShaderTexture.Sample(SampleType, input.tex) * color;
     float4 finalColor = materialColor;
     float3 toEye = normalize(cameraPos - (float3) input.worldPosition);
+
+    if (hasNormalMap)
+    {
+		return NormalTexture.Sample(SampleType, input.tex);
+    }
     
     if (isLit)
     {

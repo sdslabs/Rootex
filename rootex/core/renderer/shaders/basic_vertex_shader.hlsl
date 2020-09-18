@@ -23,6 +23,8 @@ struct VertexInputType
     float4 position : POSITION;
     float2 tex : TEXCOORD0;
     float4 normal : NORMAL;
+	float3 tangent : TANGENT;
+    float3 bitangent: BITANGENT;
 };
 
 struct PixelInputType
@@ -32,6 +34,8 @@ struct PixelInputType
     float4 worldPosition : POSITION;
     float2 tex : TEXCOORD0;
 	float fogFactor : FOG;
+	float3 tangent : TANGENT;
+	float3 bitangent : BITANGENT;
 };
 
 PixelInputType main(VertexInputType input)
@@ -42,6 +46,9 @@ PixelInputType main(VertexInputType input)
     output.worldPosition = mul(input.position, M);
     output.tex.x = input.tex.x;
     output.tex.y = 1 - input.tex.y;
+
+    output.tangent = mul(input.tangent, M);
+	output.bitangent = mul(input.bitangent, M);
 	
     float4 cameraPosition = mul(input.position, mul(M, V));
     output.fogFactor = saturate((fogEnd - cameraPosition.z) / (fogEnd - fogStart));

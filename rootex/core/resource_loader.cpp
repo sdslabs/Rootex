@@ -36,7 +36,7 @@ void ResourceLoader::LoadAssimp(ModelResourceFile* file)
 	Assimp::Importer modelLoader;
 	const aiScene* scene = modelLoader.ReadFile(
 	    file->getPath().generic_string(),
-	    aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_OptimizeMeshes);
+	    aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_OptimizeMeshes | aiProcess_CalcTangentSpace);
 
 	if (!scene)
 	{
@@ -78,6 +78,16 @@ void ResourceLoader::LoadAssimp(ModelResourceFile* file)
 					vertex.m_TextureCoord.x = mesh->mTextureCoords[0][v].x;
 					vertex.m_TextureCoord.y = mesh->mTextureCoords[0][v].y;
 				}
+			}
+
+			if (mesh->mTangents)
+			{
+				vertex.m_Tangent.x = mesh->mTangents[v].x;
+				vertex.m_Tangent.y = mesh->mTangents[v].y;
+				vertex.m_Tangent.z = mesh->mTangents[v].z;
+				vertex.m_Bitangent.x = mesh->mBitangents[v].x;
+				vertex.m_Bitangent.y = mesh->mBitangents[v].y;
+				vertex.m_Bitangent.z = mesh->mBitangents[v].z;
 			}
 
 			vertices.push_back(vertex);
@@ -134,6 +144,41 @@ void ResourceLoader::LoadAssimp(ModelResourceFile* file)
 			{
 				aiString str;
 				material->GetTexture(aiTextureType_DIFFUSE, i, &str);
+
+				aiString normalStr;
+				if (material->GetTexture(aiTextureType_NORMALS, i, &normalStr))
+				{
+					char embeddedAsterisk = *normalStr.C_Str();
+					if (embeddedAsterisk == '*')
+					{
+						int textureID = atoi(str.C_Str() + 1);
+
+						if (!textures[textureID])
+						{
+							aiTexture* texture = scene->mTextures[textureID];
+							size_t size = scene->mTextures[textureID]->mWidth;
+							PANIC(texture->mHeight == 0, "Compressed texture found but expected embedded texture");
+							textures[textureID].reset(new Texture(reinterpret_cast<const char*>(texture->pcData), size));
+						}
+
+						extractedMaterial->setNormalInternal(textures[textureID]);
+					}
+					else
+					{
+						String texturePath = str.C_Str();
+						ImageResourceFile* image = ResourceLoader::CreateImageResourceFile(file->getPath().parent_path().generic_string() + "/" + texturePath);
+
+						if (image)
+						{
+							extractedMaterial->setNormal(image);
+						}
+						else
+						{
+							WARN("Could not set material normal map texture: " + texturePath);
+						}
+					}
+				}
+					
 				char embeddedAsterisk = *str.C_Str();
 
 				if (embeddedAsterisk == '*')
@@ -168,6 +213,7 @@ void ResourceLoader::LoadAssimp(ModelResourceFile* file)
 				}
 			}
 		}
+
 
 		Mesh extractedMesh;
 		extractedMesh.m_VertexBuffer.reset(new VertexBuffer(vertices));
