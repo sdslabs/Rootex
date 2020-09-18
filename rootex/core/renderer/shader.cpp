@@ -63,9 +63,9 @@ BasicShader::BasicShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, co
 	m_SamplerState = RenderingDevice::GetSingleton()->createSamplerState();
 }
 
-void BasicShader::set(const Texture* texture)
+void BasicShader::set(const Texture* texture, int slot)
 {
-	RenderingDevice::GetSingleton()->setInPixelShader(0, 1, texture->getTextureResourceView());
+	RenderingDevice::GetSingleton()->setInPixelShader(slot, 1, texture->getTextureResourceView());
 }
 
 void BasicShader::bind() const

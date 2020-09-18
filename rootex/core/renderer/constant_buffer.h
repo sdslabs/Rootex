@@ -63,7 +63,7 @@ struct PSDiffuseConstantBufferMaterial
 	float refractionConstant = 0.5f;
 	float refractivity = 0.0f;
 	int affectedBySky = 0;
-	float pad[1];
+	int hasNormalMap = 0;
 };
 
 struct LightsInfo

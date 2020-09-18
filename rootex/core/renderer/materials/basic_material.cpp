@@ -10,7 +10,7 @@
 #include "renderer/shaders/register_locations_pixel_shader.h"
 #include "renderer/shaders/register_locations_vertex_shader.h"
 
-BasicMaterial::BasicMaterial(bool isAlpha, const String& imagePath, Color color, bool isLit, float specularIntensity, float specularPower, float reflectivity, float refractionConstant, float refractivity, bool affectedBySky)
+BasicMaterial::BasicMaterial(bool isAlpha, const String& imagePath, const String& normalImagePath, bool isNormal, Color color, bool isLit, float specularIntensity, float specularPower, float reflectivity, float refractionConstant, float refractivity, bool affectedBySky)
     : Material(ShaderLibrary::GetBasicShader(), BasicMaterial::s_MaterialName, isAlpha)
     , m_BasicShader(ShaderLibrary::GetBasicShader())
     , m_Color(color)
@@ -21,9 +21,15 @@ BasicMaterial::BasicMaterial(bool isAlpha, const String& imagePath, Color color,
     , m_RefractionConstant(refractionConstant)
     , m_Refractivity(refractivity)
     , m_IsAffectedBySky(affectedBySky)
+    , m_IsNormal(isNormal)
 {
 	m_ImageFile = ResourceLoader::CreateImageResourceFile(imagePath);
 	setTexture(m_ImageFile);
+	if (isNormal)
+	{
+		m_NormalImageFile = ResourceLoader::CreateImageResourceFile(normalImagePath);
+		setNormal(m_NormalImageFile);
+	}
 	m_SamplerState = RenderingDevice::GetSingleton()->createSamplerState();
 	m_PSConstantBuffer.resize((int)PixelConstantBufferType::End, nullptr);
 	m_VSConstantBuffer.resize((int)VertexConstantBufferType::End, nullptr);
@@ -45,7 +51,7 @@ void BasicMaterial::setVSConstantBuffer(const VSDiffuseConstantBuffer& constantB
 
 Material* BasicMaterial::CreateDefault()
 {
-	return new BasicMaterial(false, "rootex/assets/white.png", Color(0.5f, 0.5f, 0.5f, 1.0f), false, 2.0f, 30.0f, 0.5f, 0.8f, 0.5f, false);
+	return new BasicMaterial(false, "rootex/assets/white.png", "", false, Color(0.5f, 0.5f, 0.5f, 1.0f), false, 2.0f, 30.0f, 0.5f, 0.8f, 0.5f, false);
 }
 
 Material* BasicMaterial::Create(const JSON::json& materialData)
@@ -90,15 +96,29 @@ Material* BasicMaterial::Create(const JSON::json& materialData)
 	{
 		isAlpha = materialData["isAlpha"];
 	}
-	return new BasicMaterial(isAlpha, (String)materialData["imageFile"], Color((float)materialData["color"]["r"], (float)materialData["color"]["g"], (float)materialData["color"]["b"], (float)materialData["color"]["a"]), isLit, specularIntensity, specularPower, reflectivity, refractionConstant, refractivity, affectedBySky);
+	bool isNormal = false;
+	String normalImageFile = "";
+	if (materialData.find("isNormal") != materialData.end())
+	{
+		isNormal = materialData["isNormal"];
+		if (isNormal)
+		{
+			normalImageFile = materialData["normalImageFile"];
+		}
+	}
+	return new BasicMaterial(isAlpha, (String)materialData["imageFile"], normalImageFile, isNormal, Color((float)materialData["color"]["r"], (float)materialData["color"]["g"], (float)materialData["color"]["b"], (float)materialData["color"]["a"]), isLit, specularIntensity, specularPower, reflectivity, refractionConstant, refractivity, affectedBySky);
 }
 
 void BasicMaterial::bind()
 {
 	Material::bind();
-	m_BasicShader->set(m_DiffuseTexture.get());
+	m_BasicShader->set(m_DiffuseTexture.get(), DIFFUSE_PS_CPP);
+	if (m_IsNormal)
+	{
+		m_BasicShader->set(m_NormalTexture.get(), NORMAL_PS_CPP);
+	}
 	setVSConstantBuffer(VSDiffuseConstantBuffer(RenderSystem::GetSingleton()->getCurrentMatrix()));
-	setPSConstantBuffer(PSDiffuseConstantBufferMaterial({ m_Color, m_IsLit, m_SpecularIntensity, m_SpecularPower, m_Reflectivity, m_RefractionConstant, m_Refractivity, m_IsAffectedBySky }));
+	setPSConstantBuffer(PSDiffuseConstantBufferMaterial({ m_Color, m_IsLit, m_SpecularIntensity, m_SpecularPower, m_Reflectivity, m_RefractionConstant, m_Refractivity, m_IsAffectedBySky, m_IsNormal }));
 }
 
 JSON::json BasicMaterial::getJSON() const
@@ -117,6 +137,11 @@ JSON::json BasicMaterial::getJSON() const
 		j["specularIntensity"] = m_SpecularIntensity;
 		j["specularPower"] = m_SpecularPower;
 	}
+	j["isNormal"] = m_IsNormal;
+	if (m_IsNormal)
+	{
+		j["normalImageFile"] = m_NormalImageFile->getPath().string();
+	}
 	j["reflectivity"] = m_Reflectivity;
 	j["refractionConstant"] = m_RefractionConstant;
 	j["refractivity"] = m_Refractivity;
@@ -132,9 +157,23 @@ void BasicMaterial::setTexture(ImageResourceFile* image)
 	m_DiffuseTexture = texture;
 }
 
+void BasicMaterial::setNormal(ImageResourceFile* image)
+{
+	m_IsNormal = true;
+	Ref<Texture> texture(new Texture(image));
+	m_NormalImageFile = image;
+	m_NormalTexture = texture;
+}
+
 void BasicMaterial::setTextureInternal(Ref<Texture> texture)
 {
 	m_DiffuseTexture = texture;
+}
+
+void BasicMaterial::setNormalInternal(Ref<Texture> texture)
+{
+	m_IsNormal = true;
+	m_NormalTexture = texture;
 }
 
 #ifdef ROOTEX_EDITOR
