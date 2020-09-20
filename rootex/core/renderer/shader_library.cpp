@@ -43,7 +43,6 @@ void ShaderLibrary::MakeShaders()
 		basicBufferFormat.push(VertexBufferElement::Type::FloatFloatFloat, "NORMAL");
 		basicBufferFormat.push(VertexBufferElement::Type::FloatFloat, "TEXCOORD");
 		basicBufferFormat.push(VertexBufferElement::Type::FloatFloatFloat, "TANGENT");
-		basicBufferFormat.push(VertexBufferElement::Type::FloatFloatFloat, "BITANGENT");
 		MakeShader(ShaderType::Basic, L"rootex/assets/shaders/basic_vertex_shader.cso", L"rootex/assets/shaders/basic_pixel_shader.cso", basicBufferFormat);
 	}
 	{

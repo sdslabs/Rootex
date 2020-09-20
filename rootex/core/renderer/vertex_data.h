@@ -9,7 +9,6 @@ struct VertexData
 	Vector3 m_Normal;
 	Vector2 m_TextureCoord;
 	Vector3 m_Tangent = { 0.0f, 0.0f, 0.0f };
-	Vector3 m_Bitangent = { 0.0f, 0.0f, 0.0f };
 };
 
 struct UIVertexData
