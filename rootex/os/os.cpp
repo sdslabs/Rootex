@@ -70,10 +70,19 @@ bool OS::DeleteDirectory(const String& dirPath)
 	return false;
 }
 
-void OS::Rename(const String& sourcePath, const String& destinationPath)
+bool OS::Rename(const String& sourcePath, const String& destinationPath)
 {
-	std::filesystem::rename(GetAbsolutePath(sourcePath), GetAbsolutePath(destinationPath));
-	PRINT("Renamed " + sourcePath + " to " + destinationPath);
+	try
+	{
+		std::filesystem::rename(GetAbsolutePath(sourcePath), GetAbsolutePath(destinationPath));
+		PRINT("Renamed " + sourcePath + " to " + destinationPath);
+		return true;
+	}
+	catch (std::exception e)
+	{
+		PRINT("Could not rename " + sourcePath + " to " + destinationPath + ": " + e.what());
+	}
+	return false;
 }
 
 Vector<FilePath> OS::GetAllFilesInDirectory(const String& directory)
