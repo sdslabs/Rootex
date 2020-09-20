@@ -20,10 +20,15 @@ void SerializationSystem::saveAllEntities(const String& dirPath)
 {
 	String cachePath = dirPath + ".cache";
 
+	bool retry = false;
 	if (OS::IsExists(cachePath))
 	{
 		WARN("Last save was not completed. Retrying with a fresh save cache");
-		OS::DeleteDirectory(cachePath);
+		
+		if (!OS::DeleteDirectory(cachePath)) 
+		{
+			retry = true;
+		}
 	}
 
 	OS::CreateDirectoryName(cachePath);
@@ -37,6 +42,18 @@ void SerializationSystem::saveAllEntities(const String& dirPath)
 		}
 	}
 
-	OS::DeleteDirectory(dirPath);
-	OS::Rename(cachePath, dirPath);
+	if (!OS::DeleteDirectory(dirPath)) 
+	{
+		retry = true;
+	}
+	if (!OS::Rename(cachePath, dirPath)) 
+	{
+		retry = true;
+	}
+
+	if (retry)
+	{
+		WARN("Retrying save level: " + dirPath);
+		saveAllEntities(dirPath);
+	}
 }
