@@ -85,9 +85,6 @@ void ResourceLoader::LoadAssimp(ModelResourceFile* file)
 				vertex.m_Tangent.x = mesh->mTangents[v].x;
 				vertex.m_Tangent.y = mesh->mTangents[v].y;
 				vertex.m_Tangent.z = mesh->mTangents[v].z;
-				vertex.m_Bitangent.x = mesh->mBitangents[v].x;
-				vertex.m_Bitangent.y = mesh->mBitangents[v].y;
-				vertex.m_Bitangent.z = mesh->mBitangents[v].z;
 			}
 
 			vertices.push_back(vertex);

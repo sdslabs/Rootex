@@ -13,7 +13,6 @@ struct PixelInputType
 	float2 tex : TEXCOORD0;
 	float fogFactor : FOG;
 	float3 tangent : TANGENT;
-	float3 bitangent : BITANGENT;
 };
 struct PointLightInfo
 {
@@ -78,15 +77,23 @@ float4 main(PixelInputType input) : SV_TARGET
     float4 materialColor = ShaderTexture.Sample(SampleType, input.tex) * color;
     float4 finalColor = materialColor;
     float3 toEye = normalize(cameraPos - (float3) input.worldPosition);
-
-    if (hasNormalMap)
-    {
-		return NormalTexture.Sample(SampleType, input.tex);
-    }
     
     if (isLit)
     {
         input.normal = normalize(input.normal);
+
+        if (hasNormalMap)
+		{
+			float3 normalMapSample = NormalTexture.Sample(SampleType, input.tex).rgb;
+			float3 uncompressedNormal = 2.0f * normalMapSample - 1.0f;
+			float3 N = input.normal;
+			float3 T = normalize(input.tangent - dot(input.tangent, N) * N);
+			float3 B = cross(N, T);
+
+            float3x3 TBN = float3x3(T, B, N);
+
+            input.normal = mul(uncompressedNormal, TBN);
+		}
 
         for (int i = 0; i < pointLightCount; i++)
         {

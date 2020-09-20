@@ -1,0 +1,65 @@
+{
+    "Components": {
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 1
+        },
+        "PointLightComponent": {
+            "ambientColor": {
+                "a": 1.0,
+                "b": 0.5,
+                "g": 0.5,
+                "r": 0.5
+            },
+            "attConst": 0.04500000178813934,
+            "attLin": 1.0,
+            "attQuad": 0.007499999832361937,
+            "diffuseColor": {
+                "a": 1.0,
+                "b": 1.0,
+                "g": 1.0,
+                "r": 1.0
+            },
+            "diffuseIntensity": 6.0,
+            "range": 10.0
+        },
+        "SkyComponent": {
+            "skyMaterial": "rootex/assets/materials/sky.rmat",
+            "skySphere": "rootex/assets/sky.obj"
+        },
+        "TransformComponent": {
+            "boundingBox": {
+                "center": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "extents": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                }
+            },
+            "position": {
+                "x": 1.5867900848388672,
+                "y": 2.8397860527038574,
+                "z": 1.4292088747024536
+            },
+            "rotation": {
+                "w": 0.9293825626373291,
+                "x": -0.35833531618118286,
+                "y": 0.08263634890317917,
+                "z": 0.031861502677202225
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            }
+        }
+    },
+    "Entity": {
+        "ID": 4,
+        "name": "Light"
+    }
+}
