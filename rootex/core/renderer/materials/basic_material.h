@@ -8,11 +8,14 @@ class BasicMaterial : public Material
 {
 	BasicShader* m_BasicShader;
 	Ref<Texture> m_DiffuseTexture;
+	Ref<Texture> m_NormalTexture;
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_SamplerState;
 
 	ImageResourceFile* m_ImageFile;
+	ImageResourceFile* m_NormalImageFile;
 
 	bool m_IsLit;
+	bool m_IsNormal;
 	Color m_Color;
 	float m_SpecularIntensity;
 	float m_SpecularPower;
@@ -41,12 +44,15 @@ public:
 	};
 
 	BasicMaterial() = delete;
-	BasicMaterial(bool isAlpha, const String& imagePath, Color color, bool isLit, float specularIntensity, float specularPower, float reflectivity, float refractionConstant, float refractivity, bool affectedBySky);
+	BasicMaterial(bool isAlpha, const String& imagePath, const String& normalImagePath, bool isNormal, Color color, bool isLit, float specularIntensity, float specularPower, float reflectivity, float refractionConstant, float refractivity, bool affectedBySky);
 	~BasicMaterial() = default;
 
 	void setColor(const Color& color) { m_Color = color; };
 	void setTexture(ImageResourceFile* image);
+	void setNormal(ImageResourceFile* image);
+	void removeNormal();
 	void setTextureInternal(Ref<Texture> texture);
+	void setNormalInternal(Ref<Texture> texture);
 	void setSpecularIntensity(float specIntensity) { m_SpecularIntensity = specIntensity; }
 	void setSpecularPower(float specPower) { m_SpecularPower = specPower; }
 

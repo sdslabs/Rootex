@@ -55,7 +55,7 @@ public:
 
 	virtual void bind() const override;
 
-	void set(const Texture* texture);
+	void set(const Texture* texture, int slot);
 };
 
 class CPUParticlesShader : public Shader
