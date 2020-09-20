@@ -66,6 +66,8 @@ public:
 	void destroyEntities();
 	void deleteEntity(Ref<Entity> entity);
 	bool saveEntityAsClass(Ref<Entity> entity);
+	bool copyEntity(Ref<Entity> entity);
+	Ref<Entity> createEntitiesRecursively(Ref<Entity> entity);
 	Ref<Entity> createEntityFromClass(const JSON::json& entityJSON);
 	Ref<Entity> createEntityFromClass(TextResourceFile* entityJSON);
 
