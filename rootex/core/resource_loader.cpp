@@ -141,40 +141,6 @@ void ResourceLoader::LoadAssimp(ModelResourceFile* file)
 			{
 				aiString str;
 				material->GetTexture(aiTextureType_DIFFUSE, i, &str);
-
-				aiString normalStr;
-				if (material->GetTexture(aiTextureType_NORMALS, i, &normalStr))
-				{
-					char embeddedAsterisk = *normalStr.C_Str();
-					if (embeddedAsterisk == '*')
-					{
-						int textureID = atoi(str.C_Str() + 1);
-
-						if (!textures[textureID])
-						{
-							aiTexture* texture = scene->mTextures[textureID];
-							size_t size = scene->mTextures[textureID]->mWidth;
-							PANIC(texture->mHeight == 0, "Compressed texture found but expected embedded texture");
-							textures[textureID].reset(new Texture(reinterpret_cast<const char*>(texture->pcData), size));
-						}
-
-						extractedMaterial->setNormalInternal(textures[textureID]);
-					}
-					else
-					{
-						String texturePath = str.C_Str();
-						ImageResourceFile* image = ResourceLoader::CreateImageResourceFile(file->getPath().parent_path().generic_string() + "/" + texturePath);
-
-						if (image)
-						{
-							extractedMaterial->setNormal(image);
-						}
-						else
-						{
-							WARN("Could not set material normal map texture: " + texturePath);
-						}
-					}
-				}
 					
 				char embeddedAsterisk = *str.C_Str();
 
@@ -206,6 +172,41 @@ void ResourceLoader::LoadAssimp(ModelResourceFile* file)
 					else
 					{
 						WARN("Could not set material diffuse texture: " + texturePath);
+					}
+				}
+			}
+
+			for (int i = 0; i < material->GetTextureCount(aiTextureType_NORMALS); i++)
+			{
+				aiString normalStr;
+				material->GetTexture(aiTextureType_NORMALS, i, &normalStr);
+				char embeddedAsterisk = *normalStr.C_Str();
+				if (embeddedAsterisk == '*')
+				{
+					int textureID = atoi(normalStr.C_Str() + 1);
+
+					if (!textures[textureID])
+					{
+						aiTexture* texture = scene->mTextures[textureID];
+						size_t size = scene->mTextures[textureID]->mWidth;
+						PANIC(texture->mHeight == 0, "Compressed texture found but expected embedded texture");
+						textures[textureID].reset(new Texture(reinterpret_cast<const char*>(texture->pcData), size));
+					}
+
+					extractedMaterial->setNormalInternal(textures[textureID]);
+				}
+				else
+				{
+					String texturePath = normalStr.C_Str();
+					ImageResourceFile* image = ResourceLoader::CreateImageResourceFile(file->getPath().parent_path().generic_string() + "/" + texturePath);
+
+					if (image)
+					{
+						extractedMaterial->setNormal(image);
+					}
+					else
+					{
+						WARN("Could not set material normal map texture: " + texturePath);
 					}
 				}
 			}

@@ -50,6 +50,7 @@ public:
 	void setColor(const Color& color) { m_Color = color; };
 	void setTexture(ImageResourceFile* image);
 	void setNormal(ImageResourceFile* image);
+	void removeNormal();
 	void setTextureInternal(Ref<Texture> texture);
 	void setNormalInternal(Ref<Texture> texture);
 	void setSpecularIntensity(float specIntensity) { m_SpecularIntensity = specIntensity; }

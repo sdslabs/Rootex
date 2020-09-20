@@ -30,6 +30,10 @@ BasicMaterial::BasicMaterial(bool isAlpha, const String& imagePath, const String
 		m_NormalImageFile = ResourceLoader::CreateImageResourceFile(normalImagePath);
 		setNormal(m_NormalImageFile);
 	}
+	else
+	{
+		removeNormal();
+	}
 	m_SamplerState = RenderingDevice::GetSingleton()->createSamplerState();
 	m_PSConstantBuffer.resize((int)PixelConstantBufferType::End, nullptr);
 	m_VSConstantBuffer.resize((int)VertexConstantBufferType::End, nullptr);
@@ -176,6 +180,13 @@ void BasicMaterial::setNormalInternal(Ref<Texture> texture)
 	m_NormalTexture = texture;
 }
 
+void BasicMaterial::removeNormal()
+{
+	m_IsNormal = false;
+	m_NormalImageFile = nullptr;
+	m_NormalTexture.reset();
+}
+
 #ifdef ROOTEX_EDITOR
 #include "imgui.h"
 void BasicMaterial::draw(const String& id)
@@ -225,6 +236,51 @@ void BasicMaterial::draw(const String& id)
 	if (ImGui::Button((String("Specular Power##") + id).c_str()))
 	{
 		m_SpecularPower = 30.0f;
+	}
+
+	ImGui::BeginGroup();
+	ImGui::Text("Normal Map");
+	if (m_NormalTexture)
+	{
+		ImGui::Image(m_NormalTexture->getTextureResourceView(), { 50, 50 });
+		ImGui::SameLine();
+		ImGui::Text(m_NormalImageFile->getPath().string().c_str());
+	}
+	else
+	{
+		ImGui::Image(Texture::GetCrossTexture()->getTextureResourceView(), { 50, 50 });
+		ImGui::SameLine();
+		ImGui::Text("None");
+	}
+	ImGui::EndGroup();
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Resource Drop"))
+		{
+			const char* payloadFileName = (const char*)payload->Data;
+			FilePath payloadPath(payloadFileName);
+			if (IsFileSupported(payloadPath.extension().string(), ResourceFile::Type::Image))
+			{
+				ImageResourceFile* image = ResourceLoader::CreateImageResourceFile(payloadPath.generic_string());
+
+				if (image)
+				{
+					setNormal(image);
+				}
+			}
+			else
+			{
+				WARN("Cannot assign a non-image file to texture");
+			}
+		}
+		ImGui::EndDragDropTarget();
+	}
+	if (m_NormalTexture)
+	{
+		if (ImGui::Button("Remove Normal Texture"))
+		{
+			removeNormal();
+		}
 	}
 
 	ImGui::Checkbox((String("Affected by sky##") + id).c_str(), &m_IsAffectedBySky);
