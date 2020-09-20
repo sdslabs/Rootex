@@ -72,6 +72,12 @@ void Texture::loadTexture()
 	m_MipLevels = textureDesc.MipLevels;
 }
 
+Texture* Texture::GetCrossTexture()
+{
+	static Texture crossTexture(ResourceLoader::CreateImageResourceFile("rootex/assets/cross.png"));
+	return &crossTexture;
+}
+
 void Texture3D::loadTexture()
 {
 	m_TextureView = RenderingDevice::GetSingleton()->createDDSTexture(m_ImageFile);
