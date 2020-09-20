@@ -1,8 +1,9 @@
 #include "register_locations_pixel_shader.h"
 
-Texture2D ShaderTexture;
+Texture2D ShaderTexture : register(DIFFUSE_PS_HLSL);
 SamplerState SampleType;
 TextureCube SkyTexture : register(SKY_PS_HLSL);
+Texture2D NormalTexture : register(NORMAL_PS_HLSL);
 
 struct PixelInputType
 {
@@ -11,6 +12,7 @@ struct PixelInputType
     float4 worldPosition : POSITION;
 	float2 tex : TEXCOORD0;
 	float fogFactor : FOG;
+	float3 tangent : TANGENT;
 };
 struct PointLightInfo
 {
@@ -67,6 +69,7 @@ cbuffer Material : register(PER_OBJECT_PS_HLSL)
     float refractionConstant;
     float refractivity;
     int affectedBySky;
+	int hasNormalMap;
 };
 
 float4 main(PixelInputType input) : SV_TARGET
@@ -78,6 +81,19 @@ float4 main(PixelInputType input) : SV_TARGET
     if (isLit)
     {
         input.normal = normalize(input.normal);
+
+        if (hasNormalMap)
+		{
+			float3 normalMapSample = NormalTexture.Sample(SampleType, input.tex).rgb;
+			float3 uncompressedNormal = 2.0f * normalMapSample - 1.0f;
+			float3 N = input.normal;
+			float3 T = normalize(input.tangent - dot(input.tangent, N) * N);
+			float3 B = cross(N, T);
+
+            float3x3 TBN = float3x3(T, B, N);
+
+            input.normal = mul(uncompressedNormal, TBN);
+		}
 
         for (int i = 0; i < pointLightCount; i++)
         {
