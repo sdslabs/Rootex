@@ -343,6 +343,33 @@ bool EntityFactory::saveEntityAsClass(Ref<Entity> entity)
 	return true;
 }
 
+bool EntityFactory::copyEntity(Ref<Entity> entity)
+{
+	Ref<Entity> createdEntity = createEntitiesRecursively(entity);
+	fixParentID(createdEntity, ROOT_ENTITY_ID);
+	return true;
+}
+
+Ref<Entity> EntityFactory::createEntitiesRecursively(Ref<Entity> entity) {
+	Ref<HierarchyComponent> hierarchyComponent = entity->getComponent<HierarchyComponent>();
+	JSON::json& entityJSON = entity->getJSON();
+	Vector<EntityID> childrenIDs;
+	for (EntityID child : hierarchyComponent->m_ChildrenIDs)
+	{
+		createEntitiesRecursively(findEntity(child));
+		childrenIDs.push_back(child);
+	}
+	entityJSON["Components"]["HierarchyComponent"]["children"] = childrenIDs;
+	entityJSON["Components"]["HierarchyComponent"]["parent"] = ROOT_ENTITY_ID;
+	entityJSON["Entity"].erase("ID");
+	Ref<Entity> newEntity = createEntity(entityJSON, "Error in creating" + entityJSON["Entity"]["Name"].dump());
+	if (!newEntity)
+	{
+		WARN("Could not create entity: " + entityJSON["Entity"]["Name"].dump());
+	}
+	return newEntity;
+}
+
 String EntityFactory::saveEntityAsClassRecursively(Ref<Entity> entity, const String& path)
 {
 	Ref<HierarchyComponent> hierarchyComponent = entity->getComponent<HierarchyComponent>();
@@ -355,6 +382,7 @@ String EntityFactory::saveEntityAsClassRecursively(Ref<Entity> entity, const Str
 	entityJSON["Components"]["HierarchyComponent"]["children"] = children;
 	entityJSON["Components"]["HierarchyComponent"]["parent"] = ROOT_ENTITY_ID;
 	entityJSON["Entity"].erase("ID");
+
 	InputOutputFileStream file = OS::CreateFileName(path + entity->getName() + ".entity.json");
 	file << entityJSON.dump(4) << std::endl;
 	file.close();
