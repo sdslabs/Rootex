@@ -277,7 +277,7 @@ void BasicMaterial::draw(const String& id)
 	}
 	if (m_NormalTexture)
 	{
-		if (ImGui::Button("Remove Normal Texture"))
+		if (ImGui::Button((String("Remove Normal Texture##") + id).c_str()))
 		{
 			removeNormal();
 		}
