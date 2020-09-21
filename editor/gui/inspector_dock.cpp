@@ -80,6 +80,13 @@ void InspectorDock::drawEntityActions(Ref<Entity> actionEntity)
 			WARN("Could not create class from selected entity");
 		}
 	}
+	if (ImGui::Selectable("Copy Entity"))
+	{
+		if (!EntityFactory::GetSingleton()->copyEntity(m_ActionEntity))
+		{
+			WARN("Could not copy from selected entity");
+		}
+	}
 	ImGui::Separator();
 	if (ImGui::Selectable("Delete Entity"))
 	{
