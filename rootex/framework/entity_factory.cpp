@@ -6,10 +6,10 @@
 #include "entity.h"
 #include "system.h"
 
+#include "components/audio_listener_component.h"
 #include "components/debug_component.h"
 #include "components/hierarchy_component.h"
 #include "components/music_component.h"
-#include "components/audio_listener_component.h"
 #include "components/physics/box_collider_component.h"
 #include "components/physics/sphere_collider_component.h"
 #include "components/script_component.h"
@@ -18,14 +18,14 @@
 #include "components/transform_animation_component.h"
 #include "components/transform_component.h"
 #include "components/trigger_component.h"
-#include "components/visual/fog_component.h"
 #include "components/visual/camera_component.h"
-#include "components/visual/sky_component.h"
 #include "components/visual/cpu_particles_component.h"
 #include "components/visual/directional_light_component.h"
+#include "components/visual/fog_component.h"
 #include "components/visual/grid_model_component.h"
 #include "components/visual/model_component.h"
 #include "components/visual/point_light_component.h"
+#include "components/visual/sky_component.h"
 #include "components/visual/spot_light_component.h"
 #include "components/visual/text_ui_component.h"
 #include "components/visual/ui_component.h"
@@ -346,11 +346,16 @@ bool EntityFactory::saveEntityAsClass(Ref<Entity> entity)
 bool EntityFactory::copyEntity(Ref<Entity> entity)
 {
 	Ref<Entity> createdEntity = createEntitiesRecursively(entity);
-	fixParentID(createdEntity, ROOT_ENTITY_ID);
+	fixParentID(createdEntity, entity->getComponent<HierarchyComponent>()->m_ParentID);
+	if (!createdEntity)
+	{
+		WARN("Could not create entity:" + createdEntity->getName());
+	}
 	return true;
 }
 
-Ref<Entity> EntityFactory::createEntitiesRecursively(Ref<Entity> entity) {
+Ref<Entity> EntityFactory::createEntitiesRecursively(Ref<Entity> entity)
+{
 	Ref<HierarchyComponent> hierarchyComponent = entity->getComponent<HierarchyComponent>();
 	JSON::json& entityJSON = entity->getJSON();
 	Vector<EntityID> childrenIDs;
@@ -360,12 +365,12 @@ Ref<Entity> EntityFactory::createEntitiesRecursively(Ref<Entity> entity) {
 		childrenIDs.push_back(child);
 	}
 	entityJSON["Components"]["HierarchyComponent"]["children"] = childrenIDs;
-	entityJSON["Components"]["HierarchyComponent"]["parent"] = ROOT_ENTITY_ID;
+	entityJSON["Components"]["HierarchyComponent"]["parent"] = hierarchyComponent->m_ParentID;
 	entityJSON["Entity"].erase("ID");
-	Ref<Entity> newEntity = createEntity(entityJSON, "Error in creating" + entityJSON["Entity"]["Name"].dump());
+	Ref<Entity> newEntity = createEntity(entityJSON, "Error in creating" + entity->getName());
 	if (!newEntity)
 	{
-		WARN("Could not create entity: " + entityJSON["Entity"]["Name"].dump());
+		WARN("Could not create entity: " + entity->getName());
 	}
 	return newEntity;
 }
