@@ -9,6 +9,7 @@
     "imageFile": "game/assets/sponza/szadi.png",
     "isAlpha": false,
     "isLit": true,
+    "isNormal": false,
     "reflectivity": 0.5,
     "refractionConstant": 0.800000011920929,
     "refractivity": 0.5,

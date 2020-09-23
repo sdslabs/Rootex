@@ -76,10 +76,14 @@ float4 main(PixelInputType input) : SV_TARGET
 {
     float4 materialColor = ShaderTexture.Sample(SampleType, input.tex) * color;
     float4 finalColor = materialColor;
+    
+    clip(finalColor.a - 0.001f);
+    
     float3 toEye = normalize(cameraPos - (float3) input.worldPosition);
     
     if (isLit)
     {
+        finalColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
         input.normal = normalize(input.normal);
 
         if (hasNormalMap)

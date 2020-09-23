@@ -9,6 +9,8 @@
     "imageFile": "game/assets/sponza/ctx.png",
     "isAlpha": true,
     "isLit": true,
+    "isNormal": true,
+    "normalImageFile": "game/assets/sponza/ctxdd.png",
     "reflectivity": 0.0,
     "refractionConstant": 0.8299999833106995,
     "refractivity": 1.0,

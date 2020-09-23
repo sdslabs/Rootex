@@ -2,40 +2,27 @@
     "Components": {
         "BoxColliderComponent": {
             "dimensions": {
-                "x": 0.33000001311302185,
-                "y": 0.3700000047683716,
-                "z": 0.5
+                "x": 8.279999732971191,
+                "y": 0.5,
+                "z": 2.759999990463257
             },
             "gravity": {
-                "x": 1.0,
-                "y": -15.0,
+                "x": 0.0,
+                "y": 0.0,
                 "z": 0.0
             },
-            "isGeneratesHitEvents": true,
-            "isMoveable": true,
+            "isGeneratesHitEvents": false,
+            "isMoveable": false,
             "matName": "Air"
         },
         "HierarchyComponent": {
-            "children": [
-                23,
-                24,
-                47
-            ],
+            "children": [],
             "parent": 1
         },
         "ModelComponent": {
             "isVisible": true,
             "renderPass": 1,
-            "resFile": "rootex/assets/cube.obj"
-        },
-        "ScriptComponent": {
-            "scripts": [
-                "game/assets/scripts/flappy_bird.lua"
-            ]
-        },
-        "SkyComponent": {
-            "skyMaterial": "rootex/assets/materials/sky.rmat",
-            "skySphere": "rootex/assets/sky.obj"
+            "resFile": "game/assets/test/cube.obj"
         },
         "TransformComponent": {
             "boundingBox": {
@@ -51,25 +38,25 @@
                 }
             },
             "position": {
-                "x": -0.030634373426437378,
-                "y": -0.20000198483467102,
-                "z": -2.498828887939453
+                "x": 0.023620596155524254,
+                "y": -0.5314843654632568,
+                "z": 0.19676077365875244
             },
             "rotation": {
-                "w": 1.0,
+                "w": 0.9999998807907104,
                 "x": -0.0,
-                "y": 0.0,
+                "y": 0.0005294470465742052,
                 "z": -0.0
             },
             "scale": {
-                "x": 1.0,
+                "x": 16.559999465942383,
                 "y": 1.0,
-                "z": 1.0
+                "z": 5.500002384185791
             }
         }
     },
     "Entity": {
-        "ID": 22,
-        "name": "FlappyBird"
+        "ID": 3,
+        "name": "Cube"
     }
 }

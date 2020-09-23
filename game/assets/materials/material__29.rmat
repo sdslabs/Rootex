@@ -9,10 +9,12 @@
     "imageFile": "game/assets/sponza/b.png",
     "isAlpha": false,
     "isLit": true,
+    "isNormal": true,
+    "normalImageFile": "game/assets/sponza/bdd.png",
     "reflectivity": 0.5,
     "refractionConstant": 0.800000011920929,
     "refractivity": 0.5,
     "specularIntensity": 2.0,
-    "specularPower": 30.0,
+    "specularPower": 3.0,
     "type": "BasicMaterial"
 }
