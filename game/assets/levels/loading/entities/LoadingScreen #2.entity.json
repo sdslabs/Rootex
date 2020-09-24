@@ -5,9 +5,7 @@
             "parent": 1
         },
         "ScriptComponent": {
-            "scripts": [
-                "game/assets/scripts/loading.lua"
-            ]
+            "script": "game/assets/scripts/loading.lua"
         },
         "TransformComponent": {
             "boundingBox": {

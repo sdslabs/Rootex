@@ -10,9 +10,7 @@
             "resFile": "game/assets/test/cube.obj"
         },
         "ScriptComponent": {
-            "scripts": [
-                "game/assets/scripts/trigger_test.lua"
-            ]
+            "script": "game/assets/scripts/trigger_test.lua"
         },
         "TransformComponent": {
             "position": {

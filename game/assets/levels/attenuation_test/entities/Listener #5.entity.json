@@ -10,9 +10,6 @@
             "renderPass": 1,
             "resFile": "game/assets/test/cube.obj"
         },
-        "ScriptComponent": {
-            "scripts": []
-        },
         "TransformComponent": {
             "boundingBox": {
                 "center": {

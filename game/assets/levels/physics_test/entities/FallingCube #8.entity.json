@@ -25,9 +25,7 @@
             "resFile": "rootex/assets/cube.obj"
         },
         "ScriptComponent": {
-            "scripts": [
-                "rootex/assets/scripts/empty.lua"
-            ]
+            "script": "rootex/assets/scripts/empty.lua"
         },
         "TransformComponent": {
             "boundingBox": {

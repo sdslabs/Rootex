@@ -5,9 +5,7 @@
             "parent": 1
         },
         "ScriptComponent": {
-            "scripts": [
-                "game/assets/scripts/level_change.lua"
-            ]
+            "script": "game/assets/scripts/level_change.lua"
         },
         "TextUIComponent": {
             "color": {

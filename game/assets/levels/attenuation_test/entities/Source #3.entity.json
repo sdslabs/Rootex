@@ -39,9 +39,7 @@
             "rollOffFactor": 1.0
         },
         "ScriptComponent": {
-            "scripts": [
-                "game/assets/scripts/sound_test.lua"
-            ]
+            "script": "game/assets/scripts/sound_test.lua"
         },
         "SpotLightComponent": {
             "ambientColor": {

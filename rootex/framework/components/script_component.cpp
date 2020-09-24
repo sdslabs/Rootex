@@ -5,7 +5,7 @@
 
 Component* ScriptComponent::Create(const JSON::json& componentData)
 {
-	ScriptComponent* sc = new ScriptComponent(componentData["scripts"]);
+	ScriptComponent* sc = new ScriptComponent(componentData["script"]);
 	return sc;
 }
 
@@ -15,18 +15,15 @@ Component* ScriptComponent::CreateDefault()
 	return sc;
 }
 
-ScriptComponent::ScriptComponent(const Vector<String>& luaFilePaths)
+ScriptComponent::ScriptComponent(const String& luaFilePath)
 {
-	for (auto& path : luaFilePaths)
+	if (!OS::IsExists(luaFilePath))
 	{
-		if (!OS::IsExists(path))
-		{
-			ERR("Could not find script file: " + path);
-			continue;
-		}
-
-		addScript(path);
+		ERR("Could not find script file: " + luaFilePath);
+		return;
 	}
+
+	addScript(luaFilePath);
 }
 
 ScriptComponent::~ScriptComponent()
@@ -38,10 +35,7 @@ bool ScriptComponent::setup()
 	bool status = true;
 	try
 	{
-		for (int i = 0; i < m_ScriptFiles.size(); i++)
-		{
-			LuaInterpreter::GetSingleton()->getLuaState().script_file(m_ScriptFiles[i], m_ScriptEnvironments[i]);
-		}
+		LuaInterpreter::GetSingleton()->getLuaState().script_file(m_ScriptFile, m_ScriptEnvironment);
 	}
 	catch (std::exception e)
 	{
@@ -65,68 +59,70 @@ bool ScriptComponent::isSuccessful(const sol::function_result& result)
 
 void ScriptComponent::onBegin()
 {
-	for (auto& env : m_ScriptEnvironments)
+	if (m_ScriptFile != "")
 	{
-		isSuccessful(env["onBegin"](m_Owner));
+		isSuccessful(m_ScriptEnvironment["onBegin"](m_Owner));
 	}
 }
 
 void ScriptComponent::onUpdate(float deltaMilliSeconds)
 {
-	for (auto& env : m_ScriptEnvironments)
+	if (m_ScriptFile != "")
 	{
-		isSuccessful(env["onUpdate"](m_Owner, deltaMilliSeconds));
+		isSuccessful(m_ScriptEnvironment["onUpdate"](m_Owner, deltaMilliSeconds));
 	}
 }
 
 void ScriptComponent::onEnd()
 {
-	for (auto& env : m_ScriptEnvironments)
+	if (m_ScriptFile != "")
 	{
-		isSuccessful(env["onEnd"](m_Owner));
+		isSuccessful(m_ScriptEnvironment["onEnd"](m_Owner));
 	}
 }
 
 void ScriptComponent::onHit(btPersistentManifold* manifold, PhysicsColliderComponent* other)
 {
-	for (auto& env : m_ScriptEnvironments)
-	{
-		isSuccessful(env["onHit"](m_Owner, manifold, other));
-	}
+	isSuccessful(m_ScriptEnvironment["onHit"](m_Owner, manifold, other));
 }
 
 JSON::json ScriptComponent::getJSON() const
 {
 	JSON::json j;
 
-	j["scripts"] = JSON::json::array();
-	for (auto& scriptFile : m_ScriptFiles)
-	{
-		j["scripts"].push_back(scriptFile);
-	}
+	j["scripts"] = m_ScriptFile;
 
 	return j;
 }
 
-void ScriptComponent::addScript(const String& scriptFile)
+void ScriptComponent::registerExports()
 {
-	m_ScriptFiles.push_back(scriptFile);
-	m_ScriptEnvironments.push_back(
-	    sol::environment(LuaInterpreter::GetSingleton()->getLuaState(),
-	        sol::create,
-	        LuaInterpreter::GetSingleton()->getLuaState().globals()));
+	sol::table currExports = m_ScriptEnvironment["exports"];
+	std::filesystem::path file(m_ScriptFile);
+	String script = file.stem().generic_string();
+
+	currExports.for_each([&](sol::object const& key, sol::object const& value) {
+		String varName = key.as<String>();
+		m_IsOverriden[script + "." + varName] = false;
+	});
 }
 
-void ScriptComponent::removeScript(const String& scriptFile)
+bool ScriptComponent::addScript(const String& scriptFile)
 {
-	for (int i = 0; i < m_ScriptFiles.size(); i++)
-	{
-		if (scriptFile == m_ScriptFiles[i])
-		{
-			m_ScriptFiles.erase(m_ScriptFiles.begin() + i);
-			m_ScriptEnvironments.erase(m_ScriptEnvironments.begin() + i);
-		}
-	}
+	if (m_ScriptFile != "")
+		return false;
+	m_ScriptFile = scriptFile;
+	m_ScriptEnvironment = sol::environment(LuaInterpreter::GetSingleton()->getLuaState(),
+	    sol::create,
+	    LuaInterpreter::GetSingleton()->getLuaState().globals());
+	return true;
+}
+
+void ScriptComponent::removeScript()
+{
+	m_ScriptFile = "";
+	m_IsOverriden.clear();
+	m_Overrides.clear();
 }
 
 #ifdef ROOTEX_EDITOR
@@ -135,22 +131,17 @@ void ScriptComponent::removeScript(const String& scriptFile)
 void ScriptComponent::draw()
 {
 	ImGui::BeginGroup();
-	if (ImGui::ListBoxHeader("Scripts", m_ScriptFiles.size()))
+	ImGui::Text("Scripts");
+	if (ImGui::Button("X"))
 	{
-		for (auto& scriptFile : m_ScriptFiles)
-		{
-			if (ImGui::Button("X"))
-			{
-				removeScript(scriptFile);
-			}
-			ImGui::SameLine();
-			if (ImGui::Selectable(scriptFile.c_str()))
-			{
-				EventManager::GetSingleton()->call("OpenScriptFile", "EditorOpenFile", scriptFile);
-			}
-		}
-		ImGui::ListBoxFooter();
+		removeScript();
 	}
+	ImGui::SameLine();
+	if (ImGui::Selectable(m_ScriptFile.c_str()))
+	{
+		EventManager::GetSingleton()->call("OpenScriptFile", "EditorOpenFile", m_ScriptFile);
+	}
+
 	ImGui::EndGroup();
 
 	if (ImGui::BeginDragDropTarget())
@@ -161,7 +152,14 @@ void ScriptComponent::draw()
 			FilePath payloadPath(payloadFileName);
 			if (IsFileSupported(payloadPath.extension().string(), ResourceFile::Type::Lua))
 			{
-				addScript(payloadPath.string());
+				if (addScript(payloadPath.string()))
+				{
+					registerExports();
+				}
+				else
+				{
+					WARN("A script already attached");
+				}
 			}
 			else
 			{
@@ -169,6 +167,41 @@ void ScriptComponent::draw()
 			}
 		}
 		ImGui::EndDragDropTarget();
+	}
+
+	ImGui::Text("Script Exports");
+
+	std::filesystem::path file(m_ScriptFile);
+	String fileName = file.stem().generic_string();
+
+	ImGui::Text(fileName.c_str());
+	auto currExports = m_ScriptEnvironment["exports"];
+	if (currExports.valid())
+	{
+		sol::table exports = m_ScriptEnvironment["exports"];
+		exports.for_each([&](sol::object const& key, sol::object const& value) {
+			String varName = key.as<String>();
+			ImGui::Text(varName.c_str());
+			ImGui::SameLine();
+			String qualifiedName = fileName + "." + varName;
+			if (ImGui::Checkbox(String("##check" + qualifiedName).c_str(), &m_IsOverriden[qualifiedName]))
+			{
+				if (m_IsOverriden[qualifiedName])
+				{
+					m_Overrides[qualifiedName] = "";
+					m_Overrides[qualifiedName].reserve(300);
+				}
+				else
+				{
+					m_Overrides.erase(qualifiedName);
+				}
+			}
+			if (m_IsOverriden[qualifiedName])
+			{
+				ImGui::InputTextMultiline(String("##text" + qualifiedName).c_str(), &m_Overrides[qualifiedName], ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 1));
+			}
+			ImGui::Separator();
+		});
 	}
 }
 #endif // ROOTEX_EDITOR

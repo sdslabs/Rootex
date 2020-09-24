@@ -29,9 +29,7 @@
             "range": 35.0
         },
         "ScriptComponent": {
-            "scripts": [
-                "game/assets/scripts/ball.lua"
-            ]
+            "script": "game/assets/scripts/ball.lua"
         },
         "SphereColliderComponent": {
             "gravity": {

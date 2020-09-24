@@ -16,12 +16,14 @@ public:
 	static Component* CreateDefault();
 
 private:
-	Vector<sol::environment> m_ScriptEnvironments;
-	Vector<String> m_ScriptFiles;
+	sol::environment m_ScriptEnvironment;
+	String m_ScriptFile;
+	HashMap<String, bool> m_IsOverriden;
+	HashMap<String, String> m_Overrides;
 
 	friend class EntityFactory;
 
-	ScriptComponent(const Vector<String>& luaFilePaths);
+	ScriptComponent(const String& luaFilePath);
 	ScriptComponent(ScriptComponent&) = delete;
 	virtual ~ScriptComponent();
 
@@ -41,8 +43,9 @@ public:
 	virtual String getName() const override { return "ScriptComponent"; }
 	virtual JSON::json getJSON() const override;
 
-	void addScript(const String& scriptFile);
-	void removeScript(const String& scriptFile);
+	bool addScript(const String& scriptFile);
+	void registerExports();
+	void removeScript();
 
 #ifdef ROOTEX_EDITOR
 	virtual void draw();
