@@ -100,11 +100,11 @@ void CustomRenderInterface::EnableScissorRegion(bool enable)
 {
 	if (enable)
 	{
-		RenderingDevice::GetSingleton()->setTemporaryUIScissoredRasterizerState();
+		RenderingDevice::GetSingleton()->setTemporaryUIScissoredRS();
 	}
 	else
 	{
-		RenderingDevice::GetSingleton()->setTemporaryUIRasterizerState();
+		RenderingDevice::GetSingleton()->setTemporaryUIRS();
 	}
 }
 
