@@ -10,6 +10,8 @@
 #include "framework/systems/physics_system.h"
 #include "framework/systems/transform_animation_system.h"
 
+#include "systems/game_render_system.h"
+
 Ref<Application> CreateRootexApplication()
 {
 	return Ref<Application>(new GameApplication());
@@ -62,4 +64,6 @@ GameApplication::GameApplication()
 	{
 		LevelManager::GetSingleton()->openLevel("game/assets/levels/" + levelName, {});
 	}
+
+	GameRenderSystem::GetSingleton()->initialize({});
 }

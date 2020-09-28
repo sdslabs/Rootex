@@ -35,7 +35,7 @@ public:
 
 	virtual bool setup() override;
 
-	virtual bool preRender();
+	virtual bool preRender(float deltaMilliseconds);
 	virtual bool isVisible() const;
 	virtual void render();
 	virtual void postRender();

@@ -489,22 +489,6 @@ Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::createTexture(
 	return textureView;
 }
 
-struct Texel
-{
-	char m_Red;
-	char m_Green;
-	char m_Blue;
-	char m_Alpha;
-
-	Texel()
-	    : m_Red(0)
-	    , m_Green(0)
-	    , m_Blue(0)
-	    , m_Alpha(0)
-	{
-	}
-};
-
 Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::createTextureFromPixels(const char* imageRawData, unsigned int width, unsigned int height)
 {
 	D3D11_TEXTURE2D_DESC textureDesc = {};

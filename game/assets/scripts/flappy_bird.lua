@@ -9,8 +9,6 @@ end
 function onBegin(entity)
     collider = entity:getPhysicsCollider()
     collider:setVelocity(RTX.Vector3.new(0.1, 0, 0))
-    local color = Colourb.new(1,2,3,4)
-    dbg()
     RTX.Connect(onJump, "Jump")
 end
 
