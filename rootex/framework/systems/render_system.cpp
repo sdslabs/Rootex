@@ -33,6 +33,9 @@ RenderSystem::RenderSystem()
 	m_BasicPostProcess.reset(new DirectX::BasicPostProcess(RenderingDevice::GetSingleton()->getDevice()));
 	m_DualPostProcess.reset(new DirectX::DualPostProcess(RenderingDevice::GetSingleton()->getDevice()));
 
+	RenderingDevice::GetSingleton()->createRTVAndSRV(m_GaussianBlurRTV, m_GaussianBlurSRV);
+	RenderingDevice::GetSingleton()->createRTVAndSRV(m_MonochromeRTV, m_MonochromeSRV);
+	RenderingDevice::GetSingleton()->createRTVAndSRV(m_SepiaRTV, m_SepiaSRV);
 	RenderingDevice::GetSingleton()->createRTVAndSRV(m_BloomExtractRTV, m_BloomExtractSRV);
 	RenderingDevice::GetSingleton()->createRTVAndSRV(m_BloomHorizontalBlurRTV, m_BloomHorizontalBlurSRV);
 	RenderingDevice::GetSingleton()->createRTVAndSRV(m_BloomVerticalBlurRTV, m_BloomVerticalBlurSRV);
@@ -99,6 +102,31 @@ void RenderSystem::setConfig(const JSON::json& configData, bool openInEditor)
 	{
 		m_IsBloom = false;
 	}
+	if (configData.find("sepia") != configData.end())
+	{
+		m_IsSepia = configData["sepia"];
+	}
+	else
+	{
+		m_IsSepia = false;
+	}
+	if (configData.find("monochrome") != configData.end())
+	{
+		m_IsMonochrome = configData["monochrome"];
+	}
+	else
+	{
+		m_IsMonochrome = false;
+	}
+	if (configData.find("gaussianBlur") != configData.end())
+	{
+		m_IsGaussianBlur = configData["gaussianBlur"];
+		m_GaussianBlurMultiplier = configData["gaussianBlur"]["multiplier"];
+	}
+	else
+	{
+		m_IsGaussianBlur = false;
+	}
 }
 
 void RenderSystem::update(float deltaMilliseconds)
@@ -109,6 +137,7 @@ void RenderSystem::update(float deltaMilliseconds)
 	float fogStart = 0.0f;
 	float fogEnd = -1000.0f;
 
+	// Fog
 	if (!s_Components[FogComponent::s_ID].empty())
 	{
 		FogComponent* firstFog = (FogComponent*)s_Components[FogComponent::s_ID].front();
@@ -124,9 +153,11 @@ void RenderSystem::update(float deltaMilliseconds)
 	}
 	Application::GetSingleton()->getWindow()->clearOffScreen(clearColor);
 
+	// Pre-calculate absolute transforms
 	Ref<HierarchyComponent> rootHC = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<HierarchyComponent>();
 	calculateTransforms(rootHC.get());
 
+	// Render geometry
 	RenderingDevice::GetSingleton()->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	RenderingDevice::GetSingleton()->setCurrentRS();
 	RenderingDevice::GetSingleton()->setDSS();
@@ -169,6 +200,58 @@ void RenderSystem::update(float deltaMilliseconds)
 	}
 
 	// Post processes
+	if (m_IsGaussianBlur)
+	{
+		RenderingDevice::GetSingleton()->unbindRTSRVs();
+		RenderingDevice::GetSingleton()->setRTV(m_GaussianBlurRTV);
+
+		m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::GaussianBlur_5x5);
+		m_BasicPostProcess->SetSourceTexture(RenderingDevice::GetSingleton()->getOffScreenRTSRV().Get());
+		m_BasicPostProcess->SetGaussianParameter(m_GaussianBlurMultiplier);
+		m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+
+		RenderingDevice::GetSingleton()->unbindRTSRVs();
+		RenderingDevice::GetSingleton()->setOffScreenRT();
+
+		m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Copy);
+		m_BasicPostProcess->SetSourceTexture(m_GaussianBlurSRV.Get());
+		m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+	}
+	
+	if (m_IsMonochrome)
+	{
+		RenderingDevice::GetSingleton()->unbindRTSRVs();
+		RenderingDevice::GetSingleton()->setRTV(m_MonochromeRTV);
+
+		m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Monochrome);
+		m_BasicPostProcess->SetSourceTexture(RenderingDevice::GetSingleton()->getOffScreenRTSRV().Get());
+		m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+
+		RenderingDevice::GetSingleton()->unbindRTSRVs();
+		RenderingDevice::GetSingleton()->setOffScreenRT();
+
+		m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Copy);
+		m_BasicPostProcess->SetSourceTexture(m_MonochromeSRV.Get());
+		m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+	}
+	
+	if (m_IsSepia)
+	{
+		RenderingDevice::GetSingleton()->unbindRTSRVs();
+		RenderingDevice::GetSingleton()->setRTV(m_SepiaRTV);
+
+		m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Sepia);
+		m_BasicPostProcess->SetSourceTexture(RenderingDevice::GetSingleton()->getOffScreenRTSRV().Get());
+		m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+
+		RenderingDevice::GetSingleton()->unbindRTSRVs();
+		RenderingDevice::GetSingleton()->setOffScreenRT();
+
+		m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Copy);
+		m_BasicPostProcess->SetSourceTexture(m_SepiaSRV.Get());
+		m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+	}
+	
 	if (m_IsBloom)
 	{
 		RenderingDevice::GetSingleton()->unbindRTSRVs();
@@ -324,6 +407,26 @@ const Matrix& RenderSystem::getCurrentMatrix() const
 	return m_TransformationStack.back();
 }
 
+JSON::json RenderSystem::getJSON() const
+{
+	JSON::json j;
+
+	j["gaussianBlur"]["isGaussianBlur"] = m_IsGaussianBlur;
+	j["gaussianBlur"]["multiplier"] = m_GaussianBlurMultiplier;
+	j["monochrome"] = m_IsMonochrome;
+	j["sepia"] = m_IsSepia;
+	j["bloom"]["isBloom"] = m_IsBloom;
+	j["bloom"]["threshold"] = m_BloomThreshold;
+	j["bloom"]["size"] = m_BloomSize;
+	j["bloom"]["brightness"] = m_BloomBrightness;
+	j["bloom"]["value"] = m_BloomValue;
+	j["bloom"]["base"] = m_BloomBase;
+	j["bloom"]["saturation"] = m_BloomSaturation;
+	j["bloom"]["baseSaturation"] = m_BloomBaseSaturation;
+
+	return j;
+}
+
 #ifdef ROOTEX_EDITOR
 #include "imgui.h"
 void RenderSystem::draw()
@@ -348,6 +451,13 @@ void RenderSystem::draw()
 	}
 	ImGui::NextColumn();
 	ImGui::Columns(1);
+
+	ImGui::Checkbox("Gaussian Blur", &m_IsGaussianBlur);
+	ImGui::DragFloat("Gaussian Multiplier", &m_GaussianBlurMultiplier, 0.01f, 0.0f, 10.0f);
+	
+	ImGui::Checkbox("Monochrome", &m_IsMonochrome);
+	
+	ImGui::Checkbox("Sepia", &m_IsSepia);
 
 	ImGui::Checkbox("Bloom", &m_IsBloom);
 	ImGui::DragFloat("Bloom Threshold", &m_BloomThreshold, 0.01f, 0.0f, 1.0f);
