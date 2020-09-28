@@ -124,8 +124,8 @@ bool UISystem::initialize(const JSON::json& systemData)
 void UISystem::update(float deltaMilliseconds)
 {
 	m_Context->Update();
-	RenderingDevice::GetSingleton()->setAlphaBlendState();
-	RenderingDevice::GetSingleton()->setTemporaryUIRasterizerState();
+	RenderingDevice::GetSingleton()->setAlphaBS();
+	RenderingDevice::GetSingleton()->setTemporaryUIRS();
 	m_Context->Render();
 }
 

@@ -109,7 +109,7 @@ void Application::run()
 				}
 			}
 		}
-		
+
 		process(m_FrameTimer.getLastFrameTime());
 
 		EventManager::GetSingleton()->dispatchDeferred();
