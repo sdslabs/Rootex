@@ -87,46 +87,6 @@ void RenderSystem::setConfig(const JSON::json& configData, bool openInEditor)
 			return;
 		}
 	}
-	if (configData.find("bloom") != configData.end())
-	{
-		m_IsBloom = configData["bloom"]["isBloom"];
-		m_BloomThreshold = configData["bloom"]["threshold"];
-		m_BloomSize = configData["bloom"]["size"];
-		m_BloomBrightness = configData["bloom"]["brightness"];
-		m_BloomValue = configData["bloom"]["value"];
-		m_BloomBase = configData["bloom"]["base"];
-		m_BloomSaturation = configData["bloom"]["saturation"];
-		m_BloomBaseSaturation = configData["bloom"]["baseSaturation"];
-	}
-	else
-	{
-		m_IsBloom = false;
-	}
-	if (configData.find("sepia") != configData.end())
-	{
-		m_IsSepia = configData["sepia"];
-	}
-	else
-	{
-		m_IsSepia = false;
-	}
-	if (configData.find("monochrome") != configData.end())
-	{
-		m_IsMonochrome = configData["monochrome"];
-	}
-	else
-	{
-		m_IsMonochrome = false;
-	}
-	if (configData.find("gaussianBlur") != configData.end())
-	{
-		m_IsGaussianBlur = configData["gaussianBlur"];
-		m_GaussianBlurMultiplier = configData["gaussianBlur"]["multiplier"];
-	}
-	else
-	{
-		m_IsGaussianBlur = false;
-	}
 }
 
 void RenderSystem::update(float deltaMilliseconds)
@@ -200,99 +160,103 @@ void RenderSystem::update(float deltaMilliseconds)
 	}
 
 	// Post processes
-	if (m_IsGaussianBlur)
+	const PostProcessingDetails& postProcessingdetails = m_Camera->getPostProcessingDetails();
+	if (postProcessingdetails.isPostProcessing)
 	{
-		RenderingDevice::GetSingleton()->unbindRTSRVs();
-		RenderingDevice::GetSingleton()->setRTV(m_GaussianBlurRTV);
+		if (postProcessingdetails.isGaussianBlur)
+		{
+			RenderingDevice::GetSingleton()->unbindRTSRVs();
+			RenderingDevice::GetSingleton()->setRTV(m_GaussianBlurRTV);
 
-		m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::GaussianBlur_5x5);
-		m_BasicPostProcess->SetSourceTexture(RenderingDevice::GetSingleton()->getOffScreenRTSRV().Get());
-		m_BasicPostProcess->SetGaussianParameter(m_GaussianBlurMultiplier);
-		m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::GaussianBlur_5x5);
+			m_BasicPostProcess->SetSourceTexture(RenderingDevice::GetSingleton()->getOffScreenRTSRV().Get());
+			m_BasicPostProcess->SetGaussianParameter(postProcessingdetails.gaussianBlurMultiplier);
+			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
 
-		RenderingDevice::GetSingleton()->unbindRTSRVs();
-		RenderingDevice::GetSingleton()->setOffScreenRT();
+			RenderingDevice::GetSingleton()->unbindRTSRVs();
+			RenderingDevice::GetSingleton()->setOffScreenRT();
 
-		m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Copy);
-		m_BasicPostProcess->SetSourceTexture(m_GaussianBlurSRV.Get());
-		m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
-	}
-	
-	if (m_IsMonochrome)
-	{
-		RenderingDevice::GetSingleton()->unbindRTSRVs();
-		RenderingDevice::GetSingleton()->setRTV(m_MonochromeRTV);
+			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Copy);
+			m_BasicPostProcess->SetSourceTexture(m_GaussianBlurSRV.Get());
+			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+		}
 
-		m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Monochrome);
-		m_BasicPostProcess->SetSourceTexture(RenderingDevice::GetSingleton()->getOffScreenRTSRV().Get());
-		m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+		if (postProcessingdetails.isMonochrome)
+		{
+			RenderingDevice::GetSingleton()->unbindRTSRVs();
+			RenderingDevice::GetSingleton()->setRTV(m_MonochromeRTV);
 
-		RenderingDevice::GetSingleton()->unbindRTSRVs();
-		RenderingDevice::GetSingleton()->setOffScreenRT();
+			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Monochrome);
+			m_BasicPostProcess->SetSourceTexture(RenderingDevice::GetSingleton()->getOffScreenRTSRV().Get());
+			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
 
-		m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Copy);
-		m_BasicPostProcess->SetSourceTexture(m_MonochromeSRV.Get());
-		m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
-	}
-	
-	if (m_IsSepia)
-	{
-		RenderingDevice::GetSingleton()->unbindRTSRVs();
-		RenderingDevice::GetSingleton()->setRTV(m_SepiaRTV);
+			RenderingDevice::GetSingleton()->unbindRTSRVs();
+			RenderingDevice::GetSingleton()->setOffScreenRT();
 
-		m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Sepia);
-		m_BasicPostProcess->SetSourceTexture(RenderingDevice::GetSingleton()->getOffScreenRTSRV().Get());
-		m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Copy);
+			m_BasicPostProcess->SetSourceTexture(m_MonochromeSRV.Get());
+			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+		}
 
-		RenderingDevice::GetSingleton()->unbindRTSRVs();
-		RenderingDevice::GetSingleton()->setOffScreenRT();
+		if (postProcessingdetails.isSepia)
+		{
+			RenderingDevice::GetSingleton()->unbindRTSRVs();
+			RenderingDevice::GetSingleton()->setRTV(m_SepiaRTV);
 
-		m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Copy);
-		m_BasicPostProcess->SetSourceTexture(m_SepiaSRV.Get());
-		m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
-	}
-	
-	if (m_IsBloom)
-	{
-		RenderingDevice::GetSingleton()->unbindRTSRVs();
-		RenderingDevice::GetSingleton()->setRTV(m_BloomExtractRTV);
+			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Sepia);
+			m_BasicPostProcess->SetSourceTexture(RenderingDevice::GetSingleton()->getOffScreenRTSRV().Get());
+			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
 
-		m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::BloomExtract);
-		m_BasicPostProcess->SetBloomExtractParameter(m_BloomThreshold);
-		m_BasicPostProcess->SetSourceTexture(RenderingDevice::GetSingleton()->getOffScreenRTSRV().Get());
-		m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+			RenderingDevice::GetSingleton()->unbindRTSRVs();
+			RenderingDevice::GetSingleton()->setOffScreenRT();
 
-		RenderingDevice::GetSingleton()->unbindRTSRVs();
-		RenderingDevice::GetSingleton()->setRTV(m_BloomHorizontalBlurRTV);
+			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Copy);
+			m_BasicPostProcess->SetSourceTexture(m_SepiaSRV.Get());
+			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+		}
 
-		m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::BloomBlur);
-		m_BasicPostProcess->SetBloomBlurParameters(true, m_BloomSize, m_BloomBrightness);
-		m_BasicPostProcess->SetSourceTexture(m_BloomExtractSRV.Get());
-		m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+		if (postProcessingdetails.isBloom)
+		{
+			RenderingDevice::GetSingleton()->unbindRTSRVs();
+			RenderingDevice::GetSingleton()->setRTV(m_BloomExtractRTV);
 
-		RenderingDevice::GetSingleton()->unbindRTSRVs();
-		RenderingDevice::GetSingleton()->setRTV(m_BloomVerticalBlurRTV);
+			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::BloomExtract);
+			m_BasicPostProcess->SetBloomExtractParameter(postProcessingdetails.bloomThreshold);
+			m_BasicPostProcess->SetSourceTexture(RenderingDevice::GetSingleton()->getOffScreenRTSRV().Get());
+			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
 
-		m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::BloomBlur);
-		m_BasicPostProcess->SetBloomBlurParameters(false, m_BloomSize, m_BloomBrightness);
-		m_BasicPostProcess->SetSourceTexture(m_BloomHorizontalBlurSRV.Get());
-		m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+			RenderingDevice::GetSingleton()->unbindRTSRVs();
+			RenderingDevice::GetSingleton()->setRTV(m_BloomHorizontalBlurRTV);
 
-		RenderingDevice::GetSingleton()->unbindRTSRVs();
-		RenderingDevice::GetSingleton()->setRTV(m_BloomRTV.Get());
+			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::BloomBlur);
+			m_BasicPostProcess->SetBloomBlurParameters(true, postProcessingdetails.bloomSize, postProcessingdetails.bloomBrightness);
+			m_BasicPostProcess->SetSourceTexture(m_BloomExtractSRV.Get());
+			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
 
-		m_DualPostProcess->SetSourceTexture(m_BloomVerticalBlurSRV.Get());
-		m_DualPostProcess->SetSourceTexture2(RenderingDevice::GetSingleton()->getOffScreenRTSRV().Get());
-		m_DualPostProcess->SetBloomCombineParameters(m_BloomValue, m_BloomBase, m_BloomSaturation, m_BloomBaseSaturation);
-		m_DualPostProcess->SetEffect(DirectX::DualPostProcess::Effect::BloomCombine);
-		m_DualPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+			RenderingDevice::GetSingleton()->unbindRTSRVs();
+			RenderingDevice::GetSingleton()->setRTV(m_BloomVerticalBlurRTV);
 
-		RenderingDevice::GetSingleton()->unbindRTSRVs();
-		RenderingDevice::GetSingleton()->setOffScreenRT();
+			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::BloomBlur);
+			m_BasicPostProcess->SetBloomBlurParameters(false, postProcessingdetails.bloomSize, postProcessingdetails.bloomBrightness);
+			m_BasicPostProcess->SetSourceTexture(m_BloomHorizontalBlurSRV.Get());
+			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
 
-		m_BasicPostProcess->SetSourceTexture(m_BloomSRV.Get());
-		m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Copy);
-		m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+			RenderingDevice::GetSingleton()->unbindRTSRVs();
+			RenderingDevice::GetSingleton()->setRTV(m_BloomRTV.Get());
+
+			m_DualPostProcess->SetSourceTexture(m_BloomVerticalBlurSRV.Get());
+			m_DualPostProcess->SetSourceTexture2(RenderingDevice::GetSingleton()->getOffScreenRTSRV().Get());
+			m_DualPostProcess->SetBloomCombineParameters(postProcessingdetails.bloomValue, postProcessingdetails.bloomBase, postProcessingdetails.bloomSaturation, postProcessingdetails.bloomBaseSaturation);
+			m_DualPostProcess->SetEffect(DirectX::DualPostProcess::Effect::BloomCombine);
+			m_DualPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+
+			RenderingDevice::GetSingleton()->unbindRTSRVs();
+			RenderingDevice::GetSingleton()->setOffScreenRT();
+
+			m_BasicPostProcess->SetSourceTexture(m_BloomSRV.Get());
+			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Copy);
+			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+		}
 	}
 	
 	RenderingDevice::GetSingleton()->unbindRTSRVs();
@@ -407,26 +371,6 @@ const Matrix& RenderSystem::getCurrentMatrix() const
 	return m_TransformationStack.back();
 }
 
-JSON::json RenderSystem::getJSON() const
-{
-	JSON::json j;
-
-	j["gaussianBlur"]["isGaussianBlur"] = m_IsGaussianBlur;
-	j["gaussianBlur"]["multiplier"] = m_GaussianBlurMultiplier;
-	j["monochrome"] = m_IsMonochrome;
-	j["sepia"] = m_IsSepia;
-	j["bloom"]["isBloom"] = m_IsBloom;
-	j["bloom"]["threshold"] = m_BloomThreshold;
-	j["bloom"]["size"] = m_BloomSize;
-	j["bloom"]["brightness"] = m_BloomBrightness;
-	j["bloom"]["value"] = m_BloomValue;
-	j["bloom"]["base"] = m_BloomBase;
-	j["bloom"]["saturation"] = m_BloomSaturation;
-	j["bloom"]["baseSaturation"] = m_BloomBaseSaturation;
-
-	return j;
-}
-
 #ifdef ROOTEX_EDITOR
 #include "imgui.h"
 void RenderSystem::draw()
@@ -451,21 +395,5 @@ void RenderSystem::draw()
 	}
 	ImGui::NextColumn();
 	ImGui::Columns(1);
-
-	ImGui::Checkbox("Gaussian Blur", &m_IsGaussianBlur);
-	ImGui::DragFloat("Gaussian Multiplier", &m_GaussianBlurMultiplier, 0.01f, 0.0f, 10.0f);
-	
-	ImGui::Checkbox("Monochrome", &m_IsMonochrome);
-	
-	ImGui::Checkbox("Sepia", &m_IsSepia);
-
-	ImGui::Checkbox("Bloom", &m_IsBloom);
-	ImGui::DragFloat("Bloom Threshold", &m_BloomThreshold, 0.01f, 0.0f, 1.0f);
-	ImGui::DragFloat("Bloom Size", &m_BloomSize, 0.01f, 0.0f, 100.0f);
-	ImGui::DragFloat("Bloom Brightness", &m_BloomBrightness, 0.01f, 0.0f, 5.0f);
-	ImGui::DragFloat("Bloom Value", &m_BloomValue, 0.01f, 0.0f, 5.0f);
-	ImGui::DragFloat("Bloom Base", &m_BloomBase, 0.01f, 0.0f, 5.0f);
-	ImGui::DragFloat("Bloom Saturation", &m_BloomSaturation, 0.01f, 0.0f, 5.0f);
-	ImGui::DragFloat("Bloom Base Saturation", &m_BloomBaseSaturation, 0.01f, 0.0f, 5.0f);
 }
 #endif

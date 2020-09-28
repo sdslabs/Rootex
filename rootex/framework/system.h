@@ -48,7 +48,6 @@ public:
 	virtual void end();
 	
 	String getName() const { return m_SystemName; }
-	virtual JSON::json getJSON() const;
 	const UpdateOrder& getUpdateOrder() const { return m_UpdateOrder; }
 	bool isActive() const { return m_IsActive; }
 

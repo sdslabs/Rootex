@@ -7,7 +7,26 @@
             },
             "far": 100.0,
             "fov": 0.7853981852531433,
-            "near": 0.10000000149011612
+            "near": 0.10000000149011612,
+            "postProcessing": {
+                "bloom": {
+                    "base": 1.909999966621399,
+                    "baseSaturation": 1.559999942779541,
+                    "brightness": 1.4500000476837158,
+                    "isBloom": true,
+                    "saturation": 1.0,
+                    "size": 4.059999942779541,
+                    "threshold": 0.6600000262260437,
+                    "value": 1.2799999713897705
+                },
+                "gaussianBlur": {
+                    "isGaussianBlur": false,
+                    "multiplier": 1.9700000286102295
+                },
+                "isPostProcessing": true,
+                "monochrome": false,
+                "sepia": false
+            }
         },
         "HierarchyComponent": {
             "children": [],

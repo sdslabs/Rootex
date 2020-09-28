@@ -21,19 +21,7 @@ class RenderSystem : public System
 	};
 
 	CameraComponent* m_Camera;
-	bool m_IsBloom;
-	float m_BloomThreshold = 0.5f;
-	float m_BloomSize = 1.0f;
-	float m_BloomBrightness = 1.0f;
-	float m_BloomValue = 1.0f;
-	float m_BloomBase = 1.0f;
-	float m_BloomSaturation = 1.0f;
-	float m_BloomBaseSaturation = 1.0f;
-	bool m_IsSepia;
-	bool m_IsMonochrome;
-	bool m_IsGaussianBlur;
-	float m_GaussianBlurMultiplier = 0.5f;
-
+	
 	Ptr<Renderer> m_Renderer;
 	Vector<Matrix> m_TransformationStack;
 
@@ -101,8 +89,6 @@ public:
 	CameraComponent* getCamera() const { return m_Camera; }
 	const Matrix& getCurrentMatrix() const;
 	const Renderer* getRenderer() const { return m_Renderer.get(); }
-
-	JSON::json getJSON() const override;
 
 #ifdef ROOTEX_EDITOR
 	void draw() override;
