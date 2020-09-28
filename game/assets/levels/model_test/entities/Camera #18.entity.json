@@ -25,7 +25,14 @@
                 },
                 "isPostProcessing": true,
                 "monochrome": false,
-                "sepia": false
+                "sepia": false,
+                "toneMap": {
+                    "exposure": 0.17000000178813934,
+                    "isToneMap": true,
+                    "operator": 1,
+                    "transferFunction": 1,
+                    "whiteNits": 200.0
+                }
             }
         },
         "HierarchyComponent": {

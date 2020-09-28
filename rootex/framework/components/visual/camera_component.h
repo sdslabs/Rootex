@@ -10,6 +10,7 @@ struct PostProcessingDetails
 	bool isSepia = false;
 	bool isMonochrome = false;
 	bool isGaussianBlur = false;
+	bool isToneMap = false;
 	float bloomThreshold = 0.8f;
 	float bloomSize = 1.0f;
 	float bloomBrightness = 1.0f;
@@ -18,6 +19,10 @@ struct PostProcessingDetails
 	float bloomSaturation = 1.0f;
 	float bloomBaseSaturation = 1.0f;
 	float gaussianBlurMultiplier = 1.0f;
+	float toneMapExposure = 0.0f;
+	int toneMapOperator = 0;
+	int toneMapTransferFunction = 0;
+	float toneMapWhiteNits = 200.0f;
 };
 
 class CameraComponent : public Component

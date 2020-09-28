@@ -35,6 +35,14 @@ Component* CameraComponent::Create(const JSON::json& componentData)
 			details.isGaussianBlur = postProcessingData["gaussianBlur"]["isGaussianBlur"];
 			details.gaussianBlurMultiplier = postProcessingData["gaussianBlur"]["multiplier"];
 		}
+		if (postProcessingData.find("toneMap") != postProcessingData.end())
+		{
+			details.isToneMap = postProcessingData["toneMap"]["isToneMap"];
+			details.toneMapExposure = postProcessingData["toneMap"]["exposure"];
+			details.toneMapOperator = postProcessingData["toneMap"]["operator"];
+			details.toneMapTransferFunction = postProcessingData["toneMap"]["transferFunction"];
+			details.toneMapWhiteNits = postProcessingData["toneMap"]["whiteNits"];
+		}
 	}
 
 	CameraComponent* cameraVisualComponent = new CameraComponent(
@@ -133,10 +141,14 @@ JSON::json CameraComponent::getJSON() const
 	j["far"] = m_Far;
 
 	j["postProcessing"]["isPostProcessing"] = m_PostProcessingDetails.isPostProcessing;
+	
 	j["postProcessing"]["gaussianBlur"]["isGaussianBlur"] = m_PostProcessingDetails.isGaussianBlur;
 	j["postProcessing"]["gaussianBlur"]["multiplier"] = m_PostProcessingDetails.gaussianBlurMultiplier;
+	
 	j["postProcessing"]["monochrome"] = m_PostProcessingDetails.isMonochrome;
+	
 	j["postProcessing"]["sepia"] = m_PostProcessingDetails.isSepia;
+	
 	j["postProcessing"]["bloom"]["isBloom"] = m_PostProcessingDetails.isBloom;
 	j["postProcessing"]["bloom"]["threshold"] = m_PostProcessingDetails.bloomThreshold;
 	j["postProcessing"]["bloom"]["size"] = m_PostProcessingDetails.bloomSize;
@@ -145,6 +157,12 @@ JSON::json CameraComponent::getJSON() const
 	j["postProcessing"]["bloom"]["base"] = m_PostProcessingDetails.bloomBase;
 	j["postProcessing"]["bloom"]["saturation"] = m_PostProcessingDetails.bloomSaturation;
 	j["postProcessing"]["bloom"]["baseSaturation"] = m_PostProcessingDetails.bloomBaseSaturation;
+	
+	j["postProcessing"]["toneMap"]["isToneMap"] = m_PostProcessingDetails.isToneMap;
+	j["postProcessing"]["toneMap"]["exposure"] = m_PostProcessingDetails.toneMapExposure;
+	j["postProcessing"]["toneMap"]["operator"] = m_PostProcessingDetails.toneMapOperator;
+	j["postProcessing"]["toneMap"]["transferFunction"] = m_PostProcessingDetails.toneMapTransferFunction;
+	j["postProcessing"]["toneMap"]["whiteNits"] = m_PostProcessingDetails.toneMapWhiteNits;
 
 	return j;
 }
@@ -191,5 +209,11 @@ void CameraComponent::draw()
 	ImGui::DragFloat("Bloom Base", &m_PostProcessingDetails.bloomBase, 0.01f, 0.0f, 5.0f);
 	ImGui::DragFloat("Bloom Saturation", &m_PostProcessingDetails.bloomSaturation, 0.01f, 0.0f, 5.0f);
 	ImGui::DragFloat("Bloom Base Saturation", &m_PostProcessingDetails.bloomBaseSaturation, 0.01f, 0.0f, 5.0f);
+
+	ImGui::Checkbox("Tone Map", &m_PostProcessingDetails.isToneMap);
+	ImGui::DragFloat("Tone Map Exposure", &m_PostProcessingDetails.toneMapExposure, 0.01f, 0.0f, 5.0f);
+	ImGui::Combo("Tone Map Operator", &m_PostProcessingDetails.toneMapOperator, "None\0Saturate\0Reinhard\0ACES Filmic");
+	ImGui::Combo("Tone Map Transfer Function", &m_PostProcessingDetails.toneMapTransferFunction, "Linear\0sRGB\0ST2084");
+	ImGui::DragFloat("Tone Map White Nits", &m_PostProcessingDetails.toneMapWhiteNits);
 }
 #endif // ROOTEX_EDITOR
