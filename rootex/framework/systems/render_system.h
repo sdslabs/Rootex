@@ -29,6 +29,10 @@ class RenderSystem : public System
 	float m_BloomBase = 1.0f;
 	float m_BloomSaturation = 1.0f;
 	float m_BloomBaseSaturation = 1.0f;
+	bool m_IsSepia;
+	bool m_IsMonochrome;
+	bool m_IsGaussianBlur;
+	float m_GaussianBlurMultiplier = 0.5f;
 
 	Ptr<Renderer> m_Renderer;
 	Vector<Matrix> m_TransformationStack;
@@ -44,6 +48,12 @@ class RenderSystem : public System
 
 	Ptr<DirectX::BasicPostProcess> m_BasicPostProcess;
 	Ptr<DirectX::DualPostProcess> m_DualPostProcess;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_GaussianBlurRTV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_GaussianBlurSRV;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_MonochromeRTV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_MonochromeSRV;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_SepiaRTV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_SepiaSRV;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_BloomExtractRTV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_BloomExtractSRV;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_BloomHorizontalBlurRTV;
@@ -91,6 +101,8 @@ public:
 	CameraComponent* getCamera() const { return m_Camera; }
 	const Matrix& getCurrentMatrix() const;
 	const Renderer* getRenderer() const { return m_Renderer.get(); }
+
+	JSON::json getJSON() const override;
 
 #ifdef ROOTEX_EDITOR
 	void draw() override;

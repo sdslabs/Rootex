@@ -62,6 +62,11 @@ void System::end()
 {
 }
 
+JSON::json System::getJSON() const
+{
+	return JSON::json::object();
+}
+
 void System::setActive(bool enabled)
 {
 	m_IsActive = enabled;
