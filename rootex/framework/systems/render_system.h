@@ -58,7 +58,7 @@ class RenderSystem : public System
 	RenderSystem(RenderSystem&) = delete;
 	virtual ~RenderSystem() = default;
 
-	void renderPassRender(RenderPass renderPass);
+	void renderPassRender(float deltaMilliseconds, RenderPass renderPass);
 
 public:
 	static RenderSystem* GetSingleton();

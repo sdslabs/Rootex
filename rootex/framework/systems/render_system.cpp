@@ -55,7 +55,7 @@ void RenderSystem::calculateTransforms(HierarchyComponent* hierarchyComponent)
 	popMatrix();
 }
 
-void RenderSystem::renderPassRender(RenderPass renderPass)
+void RenderSystem::renderPassRender(float deltaMilliseconds, RenderPass renderPass)
 {
 	ModelComponent* mc = nullptr;
 	for (auto& component : s_Components[ModelComponent::s_ID])
@@ -63,7 +63,7 @@ void RenderSystem::renderPassRender(RenderPass renderPass)
 		mc = (ModelComponent*)component;
 		if (mc->getRenderPass() & (unsigned int)renderPass)
 		{
-			mc->preRender();
+			mc->preRender(deltaMilliseconds);
 			if (mc->isVisible())
 			{
 				mc->render();
@@ -132,12 +132,12 @@ void RenderSystem::update(float deltaMilliseconds)
 #ifdef ROOTEX_EDITOR
 	if (m_IsEditorRenderPassEnabled)
 	{
-		renderPassRender(RenderPass::Editor);
+		renderPassRender(deltaMilliseconds, RenderPass::Editor);
 		renderLines();
 	}
 #endif // ROOTEX_EDITOR
-	renderPassRender(RenderPass::Basic);
-	renderPassRender(RenderPass::Alpha);
+	renderPassRender(deltaMilliseconds, RenderPass::Basic);
+	renderPassRender(deltaMilliseconds, RenderPass::Alpha);
 
 	// Sky
 	{
