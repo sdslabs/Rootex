@@ -36,6 +36,9 @@ class RenderSystem : public System
 
 	Ptr<DirectX::BasicPostProcess> m_BasicPostProcess;
 	Ptr<DirectX::DualPostProcess> m_DualPostProcess;
+	Ptr<DirectX::ToneMapPostProcess> m_ToneMapPostProcess;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_ToneMapRTV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_ToneMapSRV;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_GaussianBlurRTV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_GaussianBlurSRV;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_MonochromeRTV;
