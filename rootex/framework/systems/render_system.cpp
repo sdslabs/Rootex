@@ -162,6 +162,8 @@ void RenderSystem::update(float deltaMilliseconds)
 	}
 
 	// Post processes
+	RenderingDevice::GetSingleton()->resolveSRV(RenderingDevice::GetSingleton()->getOffScreenRTSRV(), RenderingDevice::GetSingleton()->getOffScreenRTSRVResolved());
+
 	const PostProcessingDetails& postProcessingDetails = m_Camera->getPostProcessingDetails();
 	if (postProcessingDetails.isPostProcessing)
 	{
@@ -171,12 +173,12 @@ void RenderSystem::update(float deltaMilliseconds)
 			RenderingDevice::GetSingleton()->setRTV(m_GaussianBlurRTV);
 
 			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::GaussianBlur_5x5);
-			m_BasicPostProcess->SetSourceTexture(RenderingDevice::GetSingleton()->getOffScreenRTSRV().Get());
+			m_BasicPostProcess->SetSourceTexture(RenderingDevice::GetSingleton()->getOffScreenRTSRVResolved().Get());
 			m_BasicPostProcess->SetGaussianParameter(postProcessingDetails.gaussianBlurMultiplier);
 			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
 
 			RenderingDevice::GetSingleton()->unbindRTSRVs();
-			RenderingDevice::GetSingleton()->setOffScreenRT();
+			RenderingDevice::GetSingleton()->setOffScreenRTResolved();
 
 			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Copy);
 			m_BasicPostProcess->SetSourceTexture(m_GaussianBlurSRV.Get());
@@ -189,11 +191,11 @@ void RenderSystem::update(float deltaMilliseconds)
 			RenderingDevice::GetSingleton()->setRTV(m_MonochromeRTV);
 
 			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Monochrome);
-			m_BasicPostProcess->SetSourceTexture(RenderingDevice::GetSingleton()->getOffScreenRTSRV().Get());
+			m_BasicPostProcess->SetSourceTexture(RenderingDevice::GetSingleton()->getOffScreenRTSRVResolved().Get());
 			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
 
 			RenderingDevice::GetSingleton()->unbindRTSRVs();
-			RenderingDevice::GetSingleton()->setOffScreenRT();
+			RenderingDevice::GetSingleton()->setOffScreenRTResolved();
 
 			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Copy);
 			m_BasicPostProcess->SetSourceTexture(m_MonochromeSRV.Get());
@@ -206,11 +208,11 @@ void RenderSystem::update(float deltaMilliseconds)
 			RenderingDevice::GetSingleton()->setRTV(m_SepiaRTV);
 
 			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Sepia);
-			m_BasicPostProcess->SetSourceTexture(RenderingDevice::GetSingleton()->getOffScreenRTSRV().Get());
+			m_BasicPostProcess->SetSourceTexture(RenderingDevice::GetSingleton()->getOffScreenRTSRVResolved().Get());
 			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
 
 			RenderingDevice::GetSingleton()->unbindRTSRVs();
-			RenderingDevice::GetSingleton()->setOffScreenRT();
+			RenderingDevice::GetSingleton()->setOffScreenRTResolved();
 
 			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Copy);
 			m_BasicPostProcess->SetSourceTexture(m_SepiaSRV.Get());
@@ -224,7 +226,7 @@ void RenderSystem::update(float deltaMilliseconds)
 
 			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::BloomExtract);
 			m_BasicPostProcess->SetBloomExtractParameter(postProcessingDetails.bloomThreshold);
-			m_BasicPostProcess->SetSourceTexture(RenderingDevice::GetSingleton()->getOffScreenRTSRV().Get());
+			m_BasicPostProcess->SetSourceTexture(RenderingDevice::GetSingleton()->getOffScreenRTSRVResolved().Get());
 			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
 
 			RenderingDevice::GetSingleton()->unbindRTSRVs();
@@ -247,13 +249,13 @@ void RenderSystem::update(float deltaMilliseconds)
 			RenderingDevice::GetSingleton()->setRTV(m_BloomRTV.Get());
 
 			m_DualPostProcess->SetSourceTexture(m_BloomVerticalBlurSRV.Get());
-			m_DualPostProcess->SetSourceTexture2(RenderingDevice::GetSingleton()->getOffScreenRTSRV().Get());
+			m_DualPostProcess->SetSourceTexture2(RenderingDevice::GetSingleton()->getOffScreenRTSRVResolved().Get());
 			m_DualPostProcess->SetBloomCombineParameters(postProcessingDetails.bloomValue, postProcessingDetails.bloomBase, postProcessingDetails.bloomSaturation, postProcessingDetails.bloomBaseSaturation);
 			m_DualPostProcess->SetEffect(DirectX::DualPostProcess::Effect::BloomCombine);
 			m_DualPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
 
 			RenderingDevice::GetSingleton()->unbindRTSRVs();
-			RenderingDevice::GetSingleton()->setOffScreenRT();
+			RenderingDevice::GetSingleton()->setOffScreenRTResolved();
 
 			m_BasicPostProcess->SetSourceTexture(m_BloomSRV.Get());
 			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Copy);
@@ -266,14 +268,14 @@ void RenderSystem::update(float deltaMilliseconds)
 			RenderingDevice::GetSingleton()->setRTV(m_ToneMapRTV);
 
 			m_ToneMapPostProcess->SetOperator((DirectX::ToneMapPostProcess::Operator)postProcessingDetails.toneMapOperator);
-			m_ToneMapPostProcess->SetHDRSourceTexture(RenderingDevice::GetSingleton()->getOffScreenRTSRV().Get());
+			m_ToneMapPostProcess->SetHDRSourceTexture(RenderingDevice::GetSingleton()->getOffScreenRTSRVResolved().Get());
 			m_ToneMapPostProcess->SetExposure(postProcessingDetails.toneMapExposure);
 			m_ToneMapPostProcess->SetTransferFunction((DirectX::ToneMapPostProcess::TransferFunction)postProcessingDetails.toneMapTransferFunction);
 			m_ToneMapPostProcess->SetST2084Parameter(postProcessingDetails.toneMapWhiteNits);
 			m_ToneMapPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
 
 			RenderingDevice::GetSingleton()->unbindRTSRVs();
-			RenderingDevice::GetSingleton()->setOffScreenRT();
+			RenderingDevice::GetSingleton()->setOffScreenRTResolved();
 
 			m_BasicPostProcess->SetSourceTexture(m_ToneMapSRV.Get());
 			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Copy);
@@ -282,7 +284,7 @@ void RenderSystem::update(float deltaMilliseconds)
 	}
 	
 	RenderingDevice::GetSingleton()->unbindRTSRVs();
-	RenderingDevice::GetSingleton()->setOffScreenRT();
+	RenderingDevice::GetSingleton()->setOffScreenRTResolved();
 }
 
 void RenderSystem::renderLines()

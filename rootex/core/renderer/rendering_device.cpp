@@ -221,6 +221,9 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 
 void RenderingDevice::createSwapChainAndRTs(int width, int height, bool MSAA, const HWND& hWnd)
 {
+	m_Device->CheckMultisampleQualityLevels(DXGI_FORMAT_R8G8B8A8_UNORM, 4, &m_4XMSQuality);
+	PANIC(m_4XMSQuality <= 0, "MSAA is not supported on this hardware");
+	
 	DXGI_SWAP_CHAIN_DESC sd = { 0 };
 	sd.BufferDesc.Width = width;
 	sd.BufferDesc.Height = height;
@@ -229,21 +232,8 @@ void RenderingDevice::createSwapChainAndRTs(int width, int height, bool MSAA, co
 	sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 	sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-
-	m_Device->CheckMultisampleQualityLevels(DXGI_FORMAT_R8G8B8A8_UNORM, 4, &m_4XMSQuality);
-	PANIC(m_4XMSQuality <= 0, "MSAA is not supported on this hardware");
-
-	if (m_4XMSQuality && MSAA)
-	{
-		sd.SampleDesc.Count = 4;
-		sd.SampleDesc.Quality = m_4XMSQuality - 1;
-	}
-	else // No MSAA
-	{
-		sd.SampleDesc.Count = 1;
-		sd.SampleDesc.Quality = 0;
-	}
-
+	sd.SampleDesc.Count = 1;
+	sd.SampleDesc.Quality = 0;
 	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_SHADER_INPUT;
 	sd.BufferCount = 1;
 	sd.OutputWindow = hWnd;
@@ -279,7 +269,7 @@ void RenderingDevice::createSwapChainAndRTs(int width, int height, bool MSAA, co
 	descDepth.MipLevels = 1u;
 	descDepth.ArraySize = 1u;
 	descDepth.Format = DXGI_FORMAT_D32_FLOAT;
-	descDepth.SampleDesc.Count = sd.SampleDesc.Count;
+	descDepth.SampleDesc.Count = m_MSAA ? 4 : sd.SampleDesc.Count;
 	descDepth.SampleDesc.Quality = sd.SampleDesc.Quality;
 	descDepth.Usage = D3D11_USAGE_DEFAULT;
 	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
@@ -327,6 +317,33 @@ void RenderingDevice::createSwapChainAndRTs(int width, int height, bool MSAA, co
 	shaderResourceViewDesc.Texture2D.MipLevels = 1;
 
 	GFX_ERR_CHECK(m_Device->CreateShaderResourceView(m_OffScreenRTTexture.Get(), &shaderResourceViewDesc, &m_OffScreenRTSRV));
+
+	ZeroMemory(&textureDesc, sizeof(textureDesc));
+	textureDesc.Width = width;
+	textureDesc.Height = height;
+	textureDesc.MipLevels = 1;
+	textureDesc.ArraySize = 1;
+	textureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	textureDesc.SampleDesc.Count = 1;
+	textureDesc.Usage = D3D11_USAGE_DEFAULT;
+	textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	textureDesc.CPUAccessFlags = 0;
+	textureDesc.MiscFlags = 0;
+
+	GFX_ERR_CHECK(m_Device->CreateTexture2D(&textureDesc, NULL, &m_OffScreenRTTextureResolved));
+
+	renderTargetViewDesc.Format = textureDesc.Format;
+	renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+	renderTargetViewDesc.Texture2D.MipSlice = 0;
+
+	GFX_ERR_CHECK(m_Device->CreateRenderTargetView(m_OffScreenRTTextureResolved.Get(), &renderTargetViewDesc, &m_OffScreenRTVResolved));
+
+	shaderResourceViewDesc.Format = textureDesc.Format;
+	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
+	shaderResourceViewDesc.Texture2D.MipLevels = 1;
+
+	GFX_ERR_CHECK(m_Device->CreateShaderResourceView(m_OffScreenRTTextureResolved.Get(), &shaderResourceViewDesc, &m_OffScreenRTSRVResolved));
 }
 
 Ref<DirectX::SpriteFont> RenderingDevice::createFont(FileBuffer* fontFileBuffer)
@@ -367,7 +384,7 @@ void RenderingDevice::createRTVAndSRV(Microsoft::WRL::ComPtr<ID3D11RenderTargetV
 	textureDesc.MipLevels = 1;
 	textureDesc.ArraySize = 1;
 	textureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	textureDesc.SampleDesc.Count = m_MSAA ? 4 : 1;
+	textureDesc.SampleDesc.Count = 1;
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;
 	textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 	textureDesc.CPUAccessFlags = 0;
@@ -377,14 +394,14 @@ void RenderingDevice::createRTVAndSRV(Microsoft::WRL::ComPtr<ID3D11RenderTargetV
 
 	D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc;
 	renderTargetViewDesc.Format = textureDesc.Format;
-	renderTargetViewDesc.ViewDimension = m_MSAA ? D3D11_RTV_DIMENSION_TEXTURE2DMS : D3D11_RTV_DIMENSION_TEXTURE2D;
+	renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 	renderTargetViewDesc.Texture2D.MipSlice = 0;
 
 	GFX_ERR_CHECK(m_Device->CreateRenderTargetView(texture.Get(), &renderTargetViewDesc, &rtv));
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
 	shaderResourceViewDesc.Format = textureDesc.Format;
-	shaderResourceViewDesc.ViewDimension = m_MSAA ? D3D11_SRV_DIMENSION_TEXTURE2DMS : D3D11_SRV_DIMENSION_TEXTURE2D;
+	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
 	shaderResourceViewDesc.Texture2D.MipLevels = 1;
 
@@ -556,6 +573,23 @@ void RenderingDevice::bind(ID3D11InputLayout* inputLayout)
 	m_Context->IASetInputLayout(inputLayout);
 }
 
+void RenderingDevice::resolveSRV(Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> source, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> destination)
+{
+	ID3D11Resource* destResource;
+	destination->GetResource(&destResource);
+	ID3D11Resource* sourceResource;
+	source->GetResource(&sourceResource);
+
+	if (m_MSAA)
+	{
+		m_Context->ResolveSubresource(destResource, 0, sourceResource, 0, DXGI_FORMAT_R32G32B32A32_FLOAT);
+	}
+	else
+	{
+		m_Context->CopyResource(destResource, sourceResource);
+	}
+}
+
 //Assuming subresource offset = 0
 void RenderingDevice::mapBuffer(ID3D11Buffer* buffer, D3D11_MAPPED_SUBRESOURCE& subresource)
 {
@@ -681,9 +715,14 @@ void RenderingDevice::setOffScreenRT()
 	m_Context->OMSetRenderTargets(1, m_OffScreenRTV.GetAddressOf(), m_MainDSV.Get());
 }
 
+void RenderingDevice::setOffScreenRTResolved()
+{
+	m_Context->OMSetRenderTargets(1, m_OffScreenRTVResolved.GetAddressOf(), nullptr);
+}
+
 void RenderingDevice::setMainRT()
 {
-	m_Context->OMSetRenderTargets(1, m_MainRTV.GetAddressOf(), m_MainDSV.Get());
+	m_Context->OMSetRenderTargets(1, m_MainRTV.GetAddressOf(), nullptr);
 }
 
 void RenderingDevice::setRTV(Microsoft::WRL::ComPtr<ID3D11RenderTargetView> rtv)
@@ -699,6 +738,11 @@ Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::getMainRTSRV()
 Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::getOffScreenRTSRV()
 {
 	return m_OffScreenRTSRV;
+}
+
+Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::getOffScreenRTSRVResolved()
+{
+	return m_OffScreenRTSRVResolved;
 }
 
 Ref<DirectX::SpriteBatch> RenderingDevice::getUIBatch()
