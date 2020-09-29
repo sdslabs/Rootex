@@ -10,7 +10,7 @@
 #include "renderer/shaders/register_locations_pixel_shader.h"
 #include "renderer/shaders/register_locations_vertex_shader.h"
 
-BasicMaterial::BasicMaterial(bool isAlpha, const String& imagePath, const String& normalImagePath, bool isNormal, Color color, bool isLit, float specularIntensity, float specularPower, float reflectivity, float refractionConstant, float refractivity, bool affectedBySky)
+BasicMaterial::BasicMaterial(bool isAlpha, const String& imagePath, const String& normalImagePath, const String& specularImagePath, bool isNormal, Color color, bool isLit, float specularIntensity, float specularPower, float reflectivity, float refractionConstant, float refractivity, bool affectedBySky)
     : Material(ShaderLibrary::GetBasicShader(), BasicMaterial::s_MaterialName, isAlpha)
     , m_BasicShader(ShaderLibrary::GetBasicShader())
     , m_Color(color)
@@ -34,6 +34,8 @@ BasicMaterial::BasicMaterial(bool isAlpha, const String& imagePath, const String
 	{
 		removeNormal();
 	}
+	setSpecularTexture(ResourceLoader::CreateImageResourceFile(specularImagePath));
+
 	m_SamplerState = RenderingDevice::GetSingleton()->createSS();
 	m_PSConstantBuffer.resize((int)PixelConstantBufferType::End, nullptr);
 	m_VSConstantBuffer.resize((int)VertexConstantBufferType::End, nullptr);
@@ -55,7 +57,7 @@ void BasicMaterial::setVSConstantBuffer(const VSDiffuseConstantBuffer& constantB
 
 Material* BasicMaterial::CreateDefault()
 {
-	return new BasicMaterial(false, "rootex/assets/white.png", "", false, Color(0.5f, 0.5f, 0.5f, 1.0f), false, 2.0f, 30.0f, 0.5f, 0.8f, 0.5f, false);
+	return new BasicMaterial(false, "rootex/assets/white.png", "", "rootex/assets/white.png", false, Color(0.5f, 0.5f, 0.5f, 1.0f), true, 0.5f, 30.0f, 0.1f, 0.8f, 0.1f, true);
 }
 
 Material* BasicMaterial::Create(const JSON::json& materialData)
@@ -110,7 +112,12 @@ Material* BasicMaterial::Create(const JSON::json& materialData)
 			normalImageFile = materialData["normalImageFile"];
 		}
 	}
-	return new BasicMaterial(isAlpha, (String)materialData["imageFile"], normalImageFile, isNormal, Color((float)materialData["color"]["r"], (float)materialData["color"]["g"], (float)materialData["color"]["b"], (float)materialData["color"]["a"]), isLit, specularIntensity, specularPower, reflectivity, refractionConstant, refractivity, affectedBySky);
+	String specularImageFile = "rootex/assets/white.png";
+	if (materialData.find("specularImageFile") != materialData.end())
+	{
+		specularImageFile = materialData["specularImageFile"];
+	}
+	return new BasicMaterial(isAlpha, (String)materialData["imageFile"], normalImageFile, specularImageFile, isNormal, Color((float)materialData["color"]["r"], (float)materialData["color"]["g"], (float)materialData["color"]["b"], (float)materialData["color"]["a"]), isLit, specularIntensity, specularPower, reflectivity, refractionConstant, refractivity, affectedBySky);
 }
 
 void BasicMaterial::bind()
@@ -121,6 +128,7 @@ void BasicMaterial::bind()
 	{
 		m_BasicShader->set(m_NormalTexture.get(), NORMAL_PS_CPP);
 	}
+	m_BasicShader->set(m_SpecularTexture.get(), SPECULAR_PS_CPP);
 	setVSConstantBuffer(VSDiffuseConstantBuffer(RenderSystem::GetSingleton()->getCurrentMatrix()));
 	setPSConstantBuffer(PSDiffuseConstantBufferMaterial({ m_Color, m_IsLit, m_SpecularIntensity, m_SpecularPower, m_Reflectivity, m_RefractionConstant, m_Refractivity, m_IsAffectedBySky, m_IsNormal }));
 }
@@ -136,6 +144,7 @@ JSON::json BasicMaterial::getJSON() const
 	j["color"]["b"] = m_Color.z;
 	j["color"]["a"] = m_Color.w;
 	j["isLit"] = m_IsLit;
+	j["specularImageFile"] = m_SpecularImageFile->getPath().generic_string();
 	if (m_IsLit)
 	{
 		j["specularIntensity"] = m_SpecularIntensity;
@@ -144,8 +153,9 @@ JSON::json BasicMaterial::getJSON() const
 	j["isNormal"] = m_IsNormal;
 	if (m_IsNormal)
 	{
-		j["normalImageFile"] = m_NormalImageFile->getPath().string();
+		j["normalImageFile"] = m_NormalImageFile->getPath().generic_string();
 	}
+
 	j["reflectivity"] = m_Reflectivity;
 	j["refractionConstant"] = m_RefractionConstant;
 	j["refractivity"] = m_Refractivity;
@@ -169,6 +179,12 @@ void BasicMaterial::setNormal(ImageResourceFile* image)
 	m_NormalTexture = texture;
 }
 
+void BasicMaterial::setSpecularTexture(ImageResourceFile* image)
+{
+	m_SpecularTexture.reset(new Texture(image));
+	m_SpecularImageFile = image;
+}
+
 void BasicMaterial::setTextureInternal(Ref<Texture> texture)
 {
 	m_DiffuseTexture = texture;
@@ -178,6 +194,11 @@ void BasicMaterial::setNormalInternal(Ref<Texture> texture)
 {
 	m_IsNormal = true;
 	m_NormalTexture = texture;
+}
+
+void BasicMaterial::setSpecularInternal(Ref<Texture> texture)
+{
+	m_SpecularTexture = texture;
 }
 
 void BasicMaterial::removeNormal()
@@ -225,13 +246,13 @@ void BasicMaterial::draw(const String& id)
 	ImGui::ColorEdit4((String("Color##") + id).c_str(), &m_Color.x);
 
 	ImGui::Checkbox((String("Affected by light##") + id).c_str(), &m_IsLit);
-	ImGui::DragFloat((String("##SpecularIntensity") + id).c_str(), &m_SpecularIntensity);
+	ImGui::DragFloat((String("##SpecularIntensity") + id).c_str(), &m_SpecularIntensity, 0.01f, 0.0f, 1.0f);
 	ImGui::SameLine();
 	if (ImGui::Button((String("Specular Intensity##") + id).c_str()))
 	{
-		m_SpecularIntensity = 2.0f;
+		m_SpecularIntensity = 0.5f;
 	}
-	ImGui::DragFloat((String("##Specular Power") + id).c_str(), &m_SpecularPower);
+	ImGui::DragFloat((String("##Specular Power") + id).c_str(), &m_SpecularPower, 1.0f, -100.0f, 100.0f);
 	ImGui::SameLine();
 	if (ImGui::Button((String("Specular Power##") + id).c_str()))
 	{
@@ -281,6 +302,38 @@ void BasicMaterial::draw(const String& id)
 		{
 			removeNormal();
 		}
+	}
+
+	ImGui::BeginGroup();
+	ImGui::Text("Specular Map");
+	if (m_SpecularTexture)
+	{
+		ImGui::Image(m_SpecularTexture->getTextureResourceView(), { 50, 50 });
+		ImGui::SameLine();
+		ImGui::Text(m_SpecularImageFile->getPath().string().c_str());
+	}
+	ImGui::EndGroup();
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Resource Drop"))
+		{
+			const char* payloadFileName = (const char*)payload->Data;
+			FilePath payloadPath(payloadFileName);
+			if (IsFileSupported(payloadPath.extension().string(), ResourceFile::Type::Image))
+			{
+				ImageResourceFile* image = ResourceLoader::CreateImageResourceFile(payloadPath.generic_string());
+
+				if (image)
+				{
+					setSpecularTexture(image);
+				}
+			}
+			else
+			{
+				WARN("Cannot assign a non-image file to texture");
+			}
+		}
+		ImGui::EndDragDropTarget();
 	}
 
 	ImGui::Checkbox((String("Affected by sky##") + id).c_str(), &m_IsAffectedBySky);
