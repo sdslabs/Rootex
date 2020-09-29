@@ -1,5 +1,25 @@
 {
     "Components": {
+        "DirectionalLightComponent": {
+            "ambientColor": {
+                "a": 1.0,
+                "b": 0.04747993126511574,
+                "g": 0.5886406302452087,
+                "r": 0.9459459185600281
+            },
+            "diffuseColor": {
+                "a": 1.0,
+                "b": 0.9999899864196777,
+                "g": 1.0,
+                "r": 0.9999995827674866
+            },
+            "diffuseIntensity": 0.800000011920929,
+            "direction": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0.5
+            }
+        },
         "HierarchyComponent": {
             "children": [],
             "parent": 1
@@ -8,27 +28,6 @@
             "isVisible": true,
             "renderPass": 1,
             "resFile": "game/assets/test/cube.obj"
-        },
-        "SpotLightComponent": {
-            "ambientColor": {
-                "a": 1.0,
-                "b": 0.22007501125335693,
-                "g": 0.22007501125335693,
-                "r": 0.22007721662521362
-            },
-            "angleRange": 0.5235833525657654,
-            "attConst": 71.0,
-            "attLin": 0.0,
-            "attQuad": 0.0,
-            "diffuseColor": {
-                "a": 1.0,
-                "b": 0.992277979850769,
-                "g": 0.3371444642543793,
-                "r": 0.0
-            },
-            "diffuseIntensity": 66.0,
-            "range": 1075.0,
-            "spot": 4.0
         },
         "TransformComponent": {
             "boundingBox": {
@@ -56,8 +55,8 @@
             },
             "scale": {
                 "x": 1.0,
-                "y": 0.9880061745643616,
-                "z": 0.9880061745643616
+                "y": 0.9875614047050476,
+                "z": 0.9875614047050476
             }
         }
     },

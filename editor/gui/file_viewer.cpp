@@ -60,11 +60,11 @@ Variant FileViewer::openFile(const Event* event)
 	m_OpenFilePath = Extract(String, event->getData());
 
 	const String& ext = m_OpenFilePath.extension().string();
-	if (ext == ".wav")
+	if (IsFileSupported(ext, ResourceFile::Type::Audio))
 	{
 		m_OpenFile = m_AudioPlayer.load(m_OpenFilePath);
 	}
-	else if (ext == ".jpg" || ext == ".png" || ext == ".jpeg")
+	else if (IsFileSupported(ext, ResourceFile::Type::Image))
 	{
 		m_OpenFile = m_ImageViewer.load(m_OpenFilePath);
 	}

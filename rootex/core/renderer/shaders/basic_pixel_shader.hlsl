@@ -4,6 +4,7 @@ Texture2D ShaderTexture : register(DIFFUSE_PS_HLSL);
 SamplerState SampleType;
 TextureCube SkyTexture : register(SKY_PS_HLSL);
 Texture2D NormalTexture : register(NORMAL_PS_HLSL);
+Texture2D SpecularTexture : register(SPECULAR_PS_HLSL);
 
 struct PixelInputType
 {
@@ -111,7 +112,7 @@ float4 main(PixelInputType input) : SV_TARGET
                 float3 diffuse = pointLightInfos[i].diffuseColor * pointLightInfos[i].diffuseIntensity * cosAngle;
                 float3 reflected = reflect(-normalizedRelative, input.normal);
                 float specFactor = pow(max(dot(normalize(reflected), toEye), 0.0f), specPow);
-                float3 specular = specularIntensity * specFactor * diffuse;
+                float3 specular = SpecularTexture.Sample(SampleType, input.tex) * specFactor * specularIntensity;
         
                 finalColor += float4(saturate(((diffuse + (float3) pointLightInfos[i].ambientColor) * (float3) materialColor + specular) * att), 0.0f);
             }
@@ -124,7 +125,7 @@ float4 main(PixelInputType input) : SV_TARGET
             float3 diffuse = pointLightInfos[i].diffuseColor * directionalLightInfo.diffuseIntensity * cosAngle;
             float3 reflected = reflect(-direction, input.normal);
             float specFactor = pow(max(dot(normalize(reflected), toEye), 0.0f), specPow);
-            float3 specular = specularIntensity * specFactor * diffuse;
+            float3 specular = SpecularTexture.Sample(SampleType, input.tex).r * specFactor * specularIntensity;
             finalColor += float4(saturate((diffuse + (float3) directionalLightInfo.ambientColor) * (float3) materialColor + specular), 0.0f);
         }
     
@@ -143,7 +144,7 @@ float4 main(PixelInputType input) : SV_TARGET
                     float3 diffuse = spotLightInfos[i].diffuseColor * spotLightInfos[i].diffuseIntensity * cosAngle;
                     float3 reflected = reflect(-normalizedRelative, input.normal);
                     float specFactor = pow(max(dot(normalize(reflected), toEye), 0.0f), specPow);
-                    float3 specular = specularIntensity * specFactor * diffuse;
+                    float3 specular = SpecularTexture.Sample(SampleType, input.tex).rgb * specFactor * specularIntensity;
             
                     float spotFactor = pow(rangeAngle, spotLightInfos[i].spot);
         

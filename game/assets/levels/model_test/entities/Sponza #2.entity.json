@@ -13,7 +13,7 @@
         "ModelComponent": {
             "isVisible": true,
             "renderPass": 4,
-            "resFile": "game/assets/sponza/sponza.3ds"
+            "resFile": "game/assets/sponza/sponza.obj"
         },
         "TransformComponent": {
             "boundingBox": {
@@ -34,8 +34,8 @@
                 "z": 0.0
             },
             "rotation": {
-                "w": 0.7085948586463928,
-                "x": -0.7056155800819397,
+                "w": 1.0,
+                "x": -0.0,
                 "y": 0.0,
                 "z": -0.0
             },

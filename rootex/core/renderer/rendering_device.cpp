@@ -449,6 +449,11 @@ Microsoft::WRL::ComPtr<ID3D11InputLayout> RenderingDevice::createVL(ID3DBlob* ve
 
 Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::createTexture(ImageResourceFile* imageRes)
 {
+	if (imageRes->getPath().extension() == ".dds")
+	{
+		return createDDSTexture(imageRes);
+	}
+
 	Microsoft::WRL::ComPtr<ID3D11Resource> textureResource;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> textureView;
 
