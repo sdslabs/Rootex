@@ -122,7 +122,7 @@ float4 main(PixelInputType input) : SV_TARGET
         {
             float3 direction = normalize(directionalLightInfo.direction);
             float cosAngle = max(0.0f, dot(-direction, input.normal));
-            float3 diffuse = pointLightInfos[i].diffuseColor * directionalLightInfo.diffuseIntensity * cosAngle;
+            float3 diffuse = directionalLightInfo.diffuseColor * directionalLightInfo.diffuseIntensity * cosAngle;
             float3 reflected = reflect(-direction, input.normal);
             float specFactor = pow(max(dot(normalize(reflected), toEye), 0.0f), specPow);
             float3 specular = SpecularTexture.Sample(SampleType, input.tex).r * specFactor * specularIntensity;
