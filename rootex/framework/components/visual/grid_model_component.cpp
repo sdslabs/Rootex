@@ -24,7 +24,7 @@ Component* GridModelComponent::CreateDefault()
 }
 
 GridModelComponent::GridModelComponent(const Vector2& cellSize, const int& cellCount, const unsigned int& renderPass, bool isVisible)
-    : ModelComponent(renderPass, nullptr, isVisible)
+    : ModelComponent(renderPass, nullptr, {}, isVisible)
     , m_CellCount(cellCount)
     , m_CellSize(cellSize)
     , m_ColorMaterial(MaterialLibrary::GetMaterial("rootex/assets/materials/grid.rmat"))

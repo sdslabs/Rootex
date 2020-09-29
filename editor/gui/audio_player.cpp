@@ -86,21 +86,6 @@ void AudioPlayer::draw(float deltaMilliseconds)
 		}
 	}
 	ImGui::NewLine();
-	if (ImGui::Button("Play"))
-	{
-		if (!m_Source->isPlaying())
-		{
-			m_Source->play();
-			m_Timer.reset();
-		}
-	}
-	ImGui::SameLine();
-	if (ImGui::Checkbox("Loop", &m_Looping))
-	{
-		m_Source->setLooping(m_Looping);
-	}
-	ImGui::SameLine();
-
 	m_FractionProgress = m_Source->getElapsedTimeS() / m_Buffer->getAudioFile()->getDuration();
 	if (m_FractionProgress > 1.0f)
 	{
@@ -111,11 +96,17 @@ void AudioPlayer::draw(float deltaMilliseconds)
 	int minutesUI = timeSeconds / MIN_TO_S;
 	int secondsUI = timeSeconds - (minutesUI * MIN_TO_S);
 
-	ImGui::ProgressBar(m_FractionProgress, { 0.0f, 0.0f },
-	    (std::to_string(minutesUI) + ":" + ((secondsUI < 10) ? "0" + std::to_string(secondsUI) : std::to_string(secondsUI)) + " | " + m_OpenFile->getPath().filename().string()).c_str());
-
+	ImGui::ProgressBar(m_FractionProgress, { 0.0f, 0.0f }, (std::to_string(minutesUI) + ":" + ((secondsUI < 10) ? "0" + std::to_string(secondsUI) : std::to_string(secondsUI)) + " | " + m_OpenFile->getPath().filename().string()).c_str());
+	
+	if (ImGui::Button("Play"))
+	{
+		if (!m_Source->isPlaying())
+		{
+			m_Source->play();
+			m_Timer.reset();
+		}
+	}
 	ImGui::SameLine();
-
 	if (ImGui::Button("Stop"))
 	{
 		if (m_Source->isPlaying())
@@ -123,5 +114,10 @@ void AudioPlayer::draw(float deltaMilliseconds)
 			m_Source->stop();
 			m_FractionProgress = 0.0f;
 		}
+	}
+	ImGui::SameLine();
+	if (ImGui::Checkbox("Loop", &m_Looping))
+	{
+		m_Source->setLooping(m_Looping);
 	}
 }

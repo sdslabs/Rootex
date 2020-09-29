@@ -18,10 +18,12 @@ protected:
 	bool m_IsVisible;
 	int m_RenderPass;
 
+	HashMap<Ref<Material>, Ref<Material>> m_MaterialOverrides;
+
 	HierarchyComponent* m_HierarchyComponent;
 	TransformComponent* m_TransformComponent;
 
-	ModelComponent(unsigned int renderPass, ModelResourceFile* resFile, bool isVisible);
+	ModelComponent(unsigned int renderPass, ModelResourceFile* resFile, const HashMap<String, String>& materialOverrides, bool isVisible);
 	ModelComponent(ModelComponent&) = delete;
 	virtual ~ModelComponent() = default;
 
@@ -40,8 +42,9 @@ public:
 	virtual void render();
 	virtual void postRender();
 
-	void setVisualModel(ModelResourceFile* newModel);
+	void setVisualModel(ModelResourceFile* newModel, const HashMap<String, String>& materialOverrides);
 	void setIsVisible(bool enabled);
+	void setMaterialOverride(Ref<Material> oldMaterial, Ref<Material> newMaterial);
 	
 	unsigned int getRenderPass() const { return m_RenderPass; }
 	const Vector<Pair<Ref<Material>, Vector<Mesh>>>& getMeshes() const { return m_ModelResourceFile->getMeshes(); }
