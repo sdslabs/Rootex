@@ -7,6 +7,11 @@ void Material::bind()
 	m_Shader->bind();
 }
 
+ID3D11ShaderResourceView* Material::getPreview()
+{
+	return Texture::GetCrossTexture()->getTextureResourceView();
+}
+
 JSON::json Material::getJSON() const
 {
 	JSON::json j;
@@ -28,12 +33,12 @@ void Material::draw(const String& id)
 {
 	ImGui::Columns(2);
 
-	ImGui::Text("Name");
+	ImGui::Text("Material Name");
 	ImGui::NextColumn();
 	ImGui::Text("%s", m_FileName.c_str());
 	ImGui::NextColumn();
 
-	ImGui::Text("Type");
+	ImGui::Text("Material Type");
 	ImGui::NextColumn();
 	ImGui::Text("%s", m_TypeName.c_str());
 	ImGui::NextColumn();

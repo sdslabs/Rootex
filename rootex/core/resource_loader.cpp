@@ -247,7 +247,6 @@ void ResourceLoader::LoadAssimp(ModelResourceFile* file)
 			}
 		}
 
-
 		Mesh extractedMesh;
 		extractedMesh.m_VertexBuffer.reset(new VertexBuffer(vertices));
 		extractedMesh.m_IndexBuffer.reset(new IndexBuffer(indices));

@@ -26,6 +26,8 @@ public:
 
 	virtual void bind();
 	
+	virtual ID3D11ShaderResourceView* getPreview();
+
 	bool isAlpha() { return m_IsAlpha; }
 	String getFileName() { return m_FileName; };
 	String getTypeName() { return m_TypeName; };

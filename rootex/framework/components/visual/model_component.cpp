@@ -12,9 +12,19 @@
 
 Component* ModelComponent::Create(const JSON::json& componentData)
 {
+	HashMap<String, String> materialOverrides;
+	if (componentData.find("materialOverrides") != componentData.end())
+	{
+		for (auto& element : JSON::json::iterator_wrapper(componentData["materialOverrides"]))
+		{
+			materialOverrides[element.key()] = element.value();
+		}
+	}
+
 	ModelComponent* modelComponent = new ModelComponent(
 	    componentData["renderPass"],
 	    ResourceLoader::CreateModelResourceFile(componentData["resFile"]),
+	    materialOverrides,
 	    componentData["isVisible"]);
 
 	return modelComponent;
@@ -25,18 +35,19 @@ Component* ModelComponent::CreateDefault()
 	ModelComponent* modelComponent = new ModelComponent(
 	    (int)RenderPass::Basic,
 	    ResourceLoader::CreateModelResourceFile("rootex/assets/cube.obj"),
+	    {},
 	    true);
 
 	return modelComponent;
 }
 
-ModelComponent::ModelComponent(unsigned int renderPass, ModelResourceFile* resFile, bool visibility)
+ModelComponent::ModelComponent(unsigned int renderPass, ModelResourceFile* resFile, const HashMap<String, String>& materialOverrides, bool visibility)
     : m_IsVisible(visibility)
     , m_RenderPass(renderPass)
-    , m_ModelResourceFile(resFile)
     , m_TransformComponent(nullptr)
     , m_HierarchyComponent(nullptr)
 {
+	setVisualModel(resFile, materialOverrides);
 }
 
 void ModelComponent::RegisterAPI(sol::table& rootex)
@@ -100,9 +111,11 @@ bool compareMaterials(const Pair<Ref<Material>, Vector<Mesh>>& a, const Pair<Ref
 void ModelComponent::render()
 {
 	std::sort(m_ModelResourceFile->getMeshes().begin(), m_ModelResourceFile->getMeshes().end(), compareMaterials);
+	int i = 0;
 	for (auto& [material, meshes] : m_ModelResourceFile->getMeshes())
 	{
-		RenderSystem::GetSingleton()->getRenderer()->bind(material.get());
+		RenderSystem::GetSingleton()->getRenderer()->bind(m_MaterialOverrides[material].get());
+		i++;
 
 		for (auto& mesh : meshes)
 		{
@@ -116,14 +129,34 @@ void ModelComponent::postRender()
 	RenderSystem::GetSingleton()->popMatrix();
 }
 
-void ModelComponent::setVisualModel(ModelResourceFile* newModel)
+void ModelComponent::setVisualModel(ModelResourceFile* newModel, const HashMap<String, String>& materialOverrides)
 {
+	if (!newModel)
+	{
+		return;
+	}
+
 	m_ModelResourceFile = newModel;
+	m_MaterialOverrides.clear();
+	for (auto& [material, meshes] : m_ModelResourceFile->getMeshes())
+	{
+		setMaterialOverride(material, material);
+	}
+	for (auto& [oldMaterial, newMaterial] : materialOverrides)
+	{
+		MaterialLibrary::CreateNewMaterialFile(newMaterial, MaterialLibrary::GetMaterial(oldMaterial)->getTypeName());
+		setMaterialOverride(MaterialLibrary::GetMaterial(oldMaterial), MaterialLibrary::GetMaterial(newMaterial));
+	}
 }
 
 void ModelComponent::setIsVisible(bool enabled)
 {
 	m_IsVisible = enabled;
+}
+
+void ModelComponent::setMaterialOverride(Ref<Material> oldMaterial, Ref<Material> newMaterial)
+{
+	m_MaterialOverrides[oldMaterial] = newMaterial;
 }
 
 JSON::json ModelComponent::getJSON() const
@@ -133,6 +166,12 @@ JSON::json ModelComponent::getJSON() const
 	j["resFile"] = m_ModelResourceFile->getPath().string();
 	j["isVisible"] = m_IsVisible;
 	j["renderPass"] = m_RenderPass;
+
+	j["materialOverrides"] = {};
+	for (auto& [oldMaterial, newMaterial] : m_MaterialOverrides)
+	{
+		j["materialOverrides"][oldMaterial->getFileName()] = newMaterial->getFileName();
+	}
 
 	return j;
 }
@@ -165,7 +204,7 @@ void ModelComponent::draw()
 
 	if (ImGui::Button("Model"))
 	{
-		EventManager::GetSingleton()->call("OpenScript", "EditorOpenFile", m_ModelResourceFile->getPath().string());
+		EventManager::GetSingleton()->call("OpenModel", "EditorOpenFile", m_ModelResourceFile->getPath().string());
 	}
 	ImGui::EndGroup();
 
@@ -177,7 +216,7 @@ void ModelComponent::draw()
 			FilePath payloadPath(payloadFileName);
 			if (IsFileSupported(payloadPath.extension().string(), ResourceFile::Type::Model))
 			{
-				setVisualModel(ResourceLoader::CreateModelResourceFile(payloadPath.string()));
+				setVisualModel(ResourceLoader::CreateModelResourceFile(payloadPath.string()), {});
 			}
 			else
 			{
@@ -193,43 +232,58 @@ void ModelComponent::draw()
 		m_RenderPass = pow(2, renderPassUI);
 	}
 
-	if (ImGui::TreeNodeEx("Materials"))
+	ImGui::Columns(2);
+	ImGui::Text("%s", "Original Material");
+	ImGui::NextColumn();
+	ImGui::Text("%s", "Overriding Material");
+	ImGui::NextColumn();
+	ImGui::Separator();
+	for (auto& [oldMaterial, newMaterial] : m_MaterialOverrides)
 	{
-		int i = 0;
-		for (auto& [material, meshes] : m_ModelResourceFile->getMeshes())
+		ImGui::BeginGroup();
+		ImGui::Image(oldMaterial->getPreview(), { 50, 50 });
+		ImGui::SameLine();
+		if (ImGui::MenuItem(FilePath(oldMaterial->getFileName()).filename().generic_string().c_str()))
 		{
-			material->draw(std::to_string(i));
-
-			if (ImGui::TreeNodeEx(("Meshes##" + std::to_string(i)).c_str()))
-			{
-				ImGui::Columns(3);
-
-				ImGui::Text("Serial");
-				ImGui::NextColumn();
-				ImGui::Text("Vertices");
-				ImGui::NextColumn();
-				ImGui::Text("Indices");
-				ImGui::NextColumn();
-
-				int p = 0;
-				for (auto& mesh : meshes)
-				{
-					p++;
-					ImGui::Text("%d", p);
-					ImGui::NextColumn();
-					ImGui::Text("%d", mesh.m_VertexBuffer->getCount());
-					ImGui::NextColumn();
-					ImGui::Text("%d", mesh.m_IndexBuffer->getCount());
-					ImGui::NextColumn();
-				}
-
-				ImGui::Columns(1);
-				ImGui::TreePop();
-			}
-			ImGui::Separator();
-			i++;
+			EventManager::GetSingleton()->call("OpenModel", "EditorOpenFile", oldMaterial->getFileName());
 		}
-		ImGui::TreePop();
+		ImGui::NextColumn();
+		ImGui::Image(newMaterial->getPreview(), { 50, 50 });
+		ImGui::SameLine();
+		ImGui::BeginGroup();
+		if (ImGui::MenuItem(FilePath(newMaterial->getFileName()).filename().generic_string().c_str()))
+		{
+			EventManager::GetSingleton()->call("OpenModel", "EditorOpenFile", newMaterial->getFileName());
+		}
+		if (ImGui::SmallButton(("Reset##" + oldMaterial->getFileName()).c_str()))
+		{
+			setMaterialOverride(oldMaterial, oldMaterial);
+		}
+		ImGui::EndGroup();
+		ImGui::EndGroup();
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Resource Drop"))
+			{
+				const char* payloadFileName = (const char*)payload->Data;
+				FilePath payloadPath(payloadFileName);
+				if (payloadPath.extension() == ".rmat")
+				{
+					MaterialLibrary::CreateNewMaterialFile(payloadPath.generic_string(), oldMaterial->getTypeName());
+					setMaterialOverride(oldMaterial, MaterialLibrary::GetMaterial(payloadPath.generic_string()));
+				}
+				else
+				{
+					WARN("Unsupported file format for material. Use .rmat files");
+				}
+			}
+			ImGui::EndDragDropTarget();
+		}		
+
+		ImGui::NextColumn();
+		ImGui::Separator();
 	}
+	ImGui::Columns(1);
 }
 #endif // ROOTEX_EDITOR

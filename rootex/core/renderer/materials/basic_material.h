@@ -12,7 +12,7 @@ class BasicMaterial : public Material
 	Ref<Texture> m_SpecularTexture;
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_SamplerState;
 
-	ImageResourceFile* m_ImageFile;
+	ImageResourceFile* m_DiffuseImageFile;
 	ImageResourceFile* m_NormalImageFile;
 	ImageResourceFile* m_SpecularImageFile;
 
@@ -62,6 +62,8 @@ public:
 
 	static Material* CreateDefault();
 	static Material* Create(const JSON::json& materialData);
+
+	virtual ID3D11ShaderResourceView* getPreview() override;
 
 	void bind() override;
 	JSON::json getJSON() const override;
