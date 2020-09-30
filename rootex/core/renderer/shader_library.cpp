@@ -25,6 +25,7 @@ Shader* ShaderLibrary::MakeShader(ShaderType shaderType, const LPCWSTR& vertexPa
 		break;
 	case ShaderLibrary::ShaderType::Animation:
 		newShader = new AnimationShader(vertexPath, pixelPath, vertexBufferFormat);
+		break;
 	default:
 		WARN("Unknown shader type found");
 		break;
@@ -77,9 +78,10 @@ void ShaderLibrary::MakeShaders()
 		animationFormat.push(VertexBufferElement::Type::FloatFloatFloat, "POSITION");
 		animationFormat.push(VertexBufferElement::Type::FloatFloatFloat, "NORMAL");
 		animationFormat.push(VertexBufferElement::Type::FloatFloat, "TEXCOORD");
+		animationFormat.push(VertexBufferElement::Type::FloatFloatFloat, "TANGENT");
 		animationFormat.push(VertexBufferElement::Type::UintUintUintUint, "BONEINDICES");
 		animationFormat.push(VertexBufferElement::Type::FloatFloatFloatFloat, "BONEWEIGHTS");
-		MakeShader(ShaderType::Animation, L"rootex/assets/shaders/animation_vertex_shader.cso", L"rootex/assets/shaders/animation_pixel_shader.cso", animationFormat);
+		MakeShader(ShaderType::Animation, L"rootex/assets/shaders/animation_vertex_shader.cso", L"rootex/assets/shaders/basic_pixel_shader.cso", animationFormat);
 	}
 }
 

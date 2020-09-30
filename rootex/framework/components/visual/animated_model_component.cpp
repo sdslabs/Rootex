@@ -12,13 +12,14 @@ AnimatedModelComponent::AnimatedModelComponent(UINT renderPass, AnimatedModelRes
     , m_IsVisible(isVisible)
     , m_CurrentAnimationName(m_AnimatedModelResourceFile->getAnimations().begin()->first)
     , m_CurrentTimePosition(0.0f)
+    , m_IsPlaying(false)
     , m_TransformComponent(nullptr)
     , m_HierarchyComponent(nullptr)
 {
 	m_FinalTransforms.resize(m_AnimatedModelResourceFile->getBoneCount());
 }
 
-AnimatedModelComponent* AnimatedModelComponent::Create(const JSON::json& componentData)
+Component* AnimatedModelComponent::Create(const JSON::json& componentData)
 {
 	AnimatedModelComponent* animatedModelComponent = new AnimatedModelComponent(
 	    componentData["renderPass"],
@@ -28,11 +29,11 @@ AnimatedModelComponent* AnimatedModelComponent::Create(const JSON::json& compone
 	return animatedModelComponent;
 }
 
-AnimatedModelComponent* AnimatedModelComponent::CreateDefault()
+Component* AnimatedModelComponent::CreateDefault()
 {
 	AnimatedModelComponent* animatedModelComponent = new AnimatedModelComponent(
 	    UINT(RenderPass::Basic),
-	    ResourceLoader::CreateAnimatedModelResourceFile("rootex/assets/animation.dae"),
+	    ResourceLoader::CreateAnimatedModelResourceFile("rootex/assets/gunbot.dae"),
 	    true);
 	
 	return animatedModelComponent;
@@ -94,6 +95,11 @@ bool AnimatedModelComponent::preRender()
 	return true;
 }
 
+bool AnimatedModelComponent::isVisible() const
+{
+	return m_IsVisible;
+}
+
 void AnimatedModelComponent::render()
 {
 	for (auto& [material, meshes] : m_AnimatedModelResourceFile->getMeshes())
@@ -121,22 +127,22 @@ void AnimatedModelComponent::draw()
 	ImGui::Checkbox("Visible", &m_IsVisible);
 
 	ImGui::BeginGroup();
-	static String inputPath = "Path";
-	ImGui::InputText("##Path", &inputPath);
+	
+	String path = m_AnimatedModelResourceFile->getPath().generic_string();
+	ImGui::InputText("##Path", &path);
 	ImGui::SameLine();
 	if (ImGui::Button("Create Animated Model"))
 	{
-		if (!ResourceLoader::CreateAnimatedModelResourceFile(inputPath))
+		if (!ResourceLoader::CreateAnimatedModelResourceFile(path))
 		{
 			WARN("Could not create Animated Model");
 		}
 		else
 		{
-			inputPath = "";
+			path = "";
 		}
 	}
 
-	ImGui::SameLine();
 
 	if (ImGui::Button("Model"))
 	{
@@ -146,7 +152,7 @@ void AnimatedModelComponent::draw()
 
 	if (ImGui::BeginDragDropTarget())
 	{
-		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ResourceDrop"))
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Resource Drop"))
 		{
 			const char* payloadFileName = (const char*)payload->Data;
 			FilePath payloadPath(payloadFileName);
@@ -156,7 +162,7 @@ void AnimatedModelComponent::draw()
 			}
 			else
 			{
-				WARN("Unsupported file format for Animated Model");
+				WARN("Unsupported file format for Model");
 			}
 		}
 		ImGui::EndDragDropTarget();
@@ -167,8 +173,31 @@ void AnimatedModelComponent::draw()
 	{
 		m_RenderPass = pow(2, renderPassUI);
 	}
+	
+	if (ImGui::Button("Start"))
+	{
+		m_IsPlaying = true;
+	}
+	ImGui::SameLine();
+	ImGui::SliderFloat("", &m_CurrentTimePosition, 0.0f, m_AnimatedModelResourceFile->getAnimationEndTime(m_CurrentAnimationName));
+	ImGui::SameLine();
+	if (ImGui::Button("Stop"))
+	{
+		m_IsPlaying = false;
+	}
 
-	ImGui::InputFloat("Time", &m_CurrentTimePosition);
+	if(ImGui::BeginCombo("Animation Name", m_CurrentAnimationName.c_str()))
+	{
+		WARN(m_CurrentAnimationName.c_str());
+		for (auto& animationName : m_AnimatedModelResourceFile->getAnimationNames())
+		{
+			if (ImGui::Selectable(animationName.c_str()))
+			{
+				m_CurrentAnimationName = animationName;
+			}
+		}
+		ImGui::EndCombo();
+	}
 
 	if (ImGui::TreeNodeEx("Materials"))
 	{

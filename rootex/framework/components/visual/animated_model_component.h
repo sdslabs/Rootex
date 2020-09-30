@@ -9,8 +9,8 @@
 
 class AnimatedModelComponent : public Component
 {
-	static AnimatedModelComponent* Create(const JSON::json& componentData);
-	static AnimatedModelComponent* CreateDefault();
+	static Component* Create(const JSON::json& componentData);
+	static Component* CreateDefault();
 	
 	friend class EntityFactory;
 	friend class AnimationSystem;
@@ -21,6 +21,7 @@ protected:
 	UINT m_RenderPass;
 	String m_CurrentAnimationName;
 	float m_CurrentTimePosition;
+	bool m_IsPlaying;
 	Vector<Matrix> m_FinalTransforms;
 
 	TransformComponent* m_TransformComponent;
@@ -37,9 +38,11 @@ public:
 	virtual bool setup() override;
 
 	virtual bool preRender();
+	virtual bool isVisible() const;
 	virtual void render();
 	virtual void postRender();
 
+	unsigned int getRenderPass() const { return m_RenderPass; }
 	virtual AnimatedModelResourceFile* getAnimatedResourceFile() const { return m_AnimatedModelResourceFile; }
 	virtual String getCurrentAnimationName() const { return m_CurrentAnimationName; }
 	virtual float getCurrentTime() const { return m_CurrentTimePosition; }

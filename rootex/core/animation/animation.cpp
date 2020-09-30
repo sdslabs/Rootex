@@ -79,7 +79,7 @@ void BoneAnimation::interpolate(float time, Matrix& bonetransform)
 		rotation.Normalize();
 
 		index = m_Translation.size();
-		for (UINT i = 0; i < m_Translation.size(); i++)
+		for (UINT i = 1; i < m_Translation.size(); i++)
 		{
 			index = i;
 			break;

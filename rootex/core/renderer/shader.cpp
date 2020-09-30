@@ -136,7 +136,7 @@ void AnimationShader::bind() const
 	RenderingDevice::GetSingleton()->setInPixelShader(m_SamplerState.Get());
 }
 
-void AnimationShader::setTexture(const Texture* texture)
+void AnimationShader::set(const Texture* texture, int slot)
 {
-	RenderingDevice::GetSingleton()->setInPixelShader(ANIMATION_PS_CPP, 1, texture->getTextureResourceView());
+	RenderingDevice::GetSingleton()->setInPixelShader(slot, 1, texture->getTextureResourceView());
 }
