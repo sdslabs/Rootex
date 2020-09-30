@@ -24,7 +24,10 @@ void AnimationSystem::update(float deltaMilliseconds)
 		{
 			String animationName = animationComponent->getCurrentAnimationName();
 
-			animationComponent->m_CurrentTimePosition += deltaMilliseconds * MS_TO_S;
+			if (animationComponent->m_IsPlaying)
+			{
+				animationComponent->m_CurrentTimePosition += deltaMilliseconds * MS_TO_S;
+			}
 
 			if (animationComponent->m_CurrentTimePosition > animationComponent->m_AnimatedModelResourceFile->getAnimationEndTime(animationName))
 			{

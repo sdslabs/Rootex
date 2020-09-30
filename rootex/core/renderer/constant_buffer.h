@@ -175,8 +175,7 @@ struct VSAnimationConstantBuffer
 	{
 		for (int i = 0; i < transforms.size(); i++)
 		{
-			m_BoneTransforms[i] = transforms[i];
-			// to be seen if transpose is to be taken or not
+			m_BoneTransforms[i] = transforms[i].Transpose();
 		}
 	}
 };

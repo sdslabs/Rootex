@@ -112,5 +112,5 @@ public:
 	
 	virtual void bind() const override;
 
-	void setTexture(const Texture* texture);
+	void set(const Texture* texture, int slot);
 };

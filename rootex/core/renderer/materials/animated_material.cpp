@@ -5,8 +5,8 @@
 #include "renderer/shader_library.h"
 #include "framework/systems/render_system.h"
 
-AnimatedMaterial::AnimatedMaterial(const String& imagePath, Color color, bool isLit, float specularIntensity, float specularPower, float reflectivity, float refractionConstant, float refractivity, bool affectedBySky)
-    : Material(ShaderLibrary::GetAnimationShader(), AnimatedMaterial::s_MaterialName)
+AnimatedMaterial::AnimatedMaterial(bool isAlpha, const String& imagePath, const String& normalImagePath, bool isNormal, Color color, bool isLit, float specularIntensity, float specularPower, float reflectivity, float refractionConstant, float refractivity, bool affectedBySky)
+    : Material(ShaderLibrary::GetAnimationShader(), AnimatedMaterial::s_MaterialName, isAlpha)
     , m_AnimationShader(ShaderLibrary::GetAnimationShader())
     , m_Color(color)
     , m_IsLit(isLit)
@@ -16,9 +16,19 @@ AnimatedMaterial::AnimatedMaterial(const String& imagePath, Color color, bool is
     , m_RefractionConstant(refractionConstant)
     , m_Refractivity(refractivity)
     , m_IsAffectedBySky(affectedBySky)
+    , m_IsNormal(isNormal)
 {
 	m_ImageFile = ResourceLoader::CreateImageResourceFile(imagePath);
 	setTexture(m_ImageFile);
+	if (isNormal)
+	{
+		m_NormalImageFile = ResourceLoader::CreateImageResourceFile(normalImagePath);
+		setNormal(m_NormalImageFile);
+	}
+	else
+	{
+		removeNormal();
+	}
 	m_SamplerState = RenderingDevice::GetSingleton()->createSamplerState();
 	m_PSConstantBuffer.resize((int)PixelConstantBufferType::End, nullptr);
 	m_VSConstantBuffer.resize((int)VertexConstantBufferType::End, nullptr);
@@ -40,12 +50,12 @@ void AnimatedMaterial::setVSConstantBuffer(const VSDiffuseConstantBuffer& consta
 
 void AnimatedMaterial::setVSConstantBuffer(const VSAnimationConstantBuffer& constantBuffer)
 {
-	Material::SetVSConstantBuffer<VSAnimationConstantBuffer>(constantBuffer, m_VSConstantBuffer[(int)VertexConstantBufferType::Animation], PER_FRAME_VS_CPP);
+	Material::SetVSConstantBuffer<VSAnimationConstantBuffer>(constantBuffer, m_VSConstantBuffer[(int)VertexConstantBufferType::Animation], BONES_VS_CPP);
 }
 
 Material* AnimatedMaterial::CreateDefault()
 {
-	return new AnimatedMaterial("rootex/assets/white.png", Color(0.5f, 0.5f, 0.5f, 1.0f), false, 2.0f, 30.0f, 0.5f, 0.8f, 0.5f, false);
+	return new AnimatedMaterial(false, "rootex/assets/white.png", "", false, Color(0.5f, 0.5f, 0.5f, 1.0f), false, 2.0f, 30.0f, 0.5f, 0.8f, 0.5f, false);
 }
 
 Material* AnimatedMaterial::Create(const JSON::json& materialData)
@@ -85,15 +95,34 @@ Material* AnimatedMaterial::Create(const JSON::json& materialData)
 	{
 		affectedBySky = materialData["affectedBySky"];
 	}
-	return new AnimatedMaterial((String)materialData["imageFile"], Color((float)materialData["color"]["r"], (float)materialData["color"]["b"], (float)materialData["color"]["g"], (float)materialData["color"]["a"]), isLit, specularIntensity, specularPower, reflectivity, refractionConstant, refractivity, affectedBySky);
+	bool isAlpha = false;
+	if (materialData.find("isAlpha") != materialData.end())
+	{
+		isAlpha = materialData["isAlpha"];
+	}
+	bool isNormal = false;
+	String normalImageFile = "";
+	if (materialData.find("isNormal") != materialData.end())
+	{
+		isNormal = materialData["isNormal"];
+		if (isNormal)
+		{
+			normalImageFile = materialData["normalImageFile"];
+		}
+	}
+	return new AnimatedMaterial(isAlpha, (String)materialData["imageFile"], normalImageFile, isNormal, Color((float)materialData["color"]["r"], (float)materialData["color"]["b"], (float)materialData["color"]["g"], (float)materialData["color"]["a"]), isLit, specularIntensity, specularPower, reflectivity, refractionConstant, refractivity, affectedBySky);
 }
 
 void AnimatedMaterial::bind()
 {
 	Material::bind();
-	m_AnimationShader->setTexture(m_DiffuseTexture.get());
+	m_AnimationShader->set(m_DiffuseTexture.get(), DIFFUSE_PS_CPP);
+	if (m_IsNormal)
+	{
+		m_AnimationShader->set(m_NormalTexture.get(), NORMAL_PS_CPP); 
+	}
 	setVSConstantBuffer(VSDiffuseConstantBuffer(RenderSystem::GetSingleton()->getCurrentMatrix()));
-	setPSConstantBuffer(PSDiffuseConstantBufferMaterial({ m_Color, m_IsLit, m_SpecularIntensity, m_SpecularPower, m_Reflectivity, m_RefractionConstant, m_Refractivity, m_IsAffectedBySky }));
+	setPSConstantBuffer(PSDiffuseConstantBufferMaterial({ m_Color, m_IsLit, m_SpecularIntensity, m_SpecularPower, m_Reflectivity, m_RefractionConstant, m_Refractivity, m_IsAffectedBySky, m_IsNormal }));
 }
 
 JSON::json AnimatedMaterial::getJSON() const
@@ -112,6 +141,11 @@ JSON::json AnimatedMaterial::getJSON() const
 		j["specularIntensity"] = m_SpecularIntensity;
 		j["specularPower"] = m_SpecularPower;
 	}
+	j["isNormal"] = m_IsNormal;
+	if (m_IsNormal)
+	{
+		j["normalImageFile"] = m_NormalImageFile->getPath().string();
+	}
 	j["reflectivity"] = m_Reflectivity;
 	j["refractionConstant"] = m_RefractionConstant;
 	j["refractivity"] = m_Refractivity;
@@ -127,9 +161,30 @@ void AnimatedMaterial::setTexture(ImageResourceFile* image)
 	m_DiffuseTexture = texture;
 }
 
+void AnimatedMaterial::setNormal(ImageResourceFile* image)
+{
+	m_IsNormal = true;
+	Ref<Texture> texture(new Texture(image));
+	m_NormalImageFile = image;
+	m_NormalTexture = texture;
+}
+
+void AnimatedMaterial::removeNormal()
+{
+	m_IsNormal = false;
+	m_NormalImageFile = nullptr;
+	m_NormalTexture.reset();
+}
+
 void AnimatedMaterial::setTextureInternal(Ref<Texture> texture)
 {
 	m_DiffuseTexture = texture;
+}
+
+void AnimatedMaterial::setNormalInternal(Ref<Texture> texture)
+{
+	m_IsNormal = true;
+	m_NormalTexture = texture;
 }
 
 #ifdef ROOTEX_EDITOR
@@ -183,6 +238,43 @@ void AnimatedMaterial::draw(const String& id)
 		m_SpecularPower = 30.0f;
 	}
 
+	ImGui::BeginGroup();
+	ImGui::Text("Normal Map");
+	if (m_NormalTexture)
+	{
+		ImGui::Image(m_NormalTexture->getTextureResourceView(), { 50, 50 });
+		ImGui::SameLine();
+		ImGui::Text(m_NormalImageFile->getPath().string().c_str());
+	}
+	else
+	{
+		ImGui::Image(Texture::GetCrossTexture()->getTextureResourceView(), { 50, 50 });
+		ImGui::SameLine();
+		ImGui::Text("None");
+	}
+	ImGui::EndGroup();
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ResourceDrop"))
+		{
+			const char* payloadFileName = (const char*)payload->Data;
+			FilePath payloadPath(payloadFileName);
+			if (IsFileSupported(payloadPath.extension().string(), ResourceFile::Type::Image))
+			{
+				ImageResourceFile* image = ResourceLoader::CreateImageResourceFile(payloadPath.generic_string());
+
+				if (image)
+				{
+					setTexture(image);
+				}
+			}
+			else
+			{
+				WARN("Cannot assign a non-image file to texture");
+			}
+		}
+		ImGui::EndDragDropTarget();
+	}
 	ImGui::Checkbox((String("Affected by sky##") + id).c_str(), &m_IsAffectedBySky);
 	ImGui::DragFloat((String("Reflectivity##") + id).c_str(), &m_Reflectivity);
 	ImGui::DragFloat((String("Refraction Constant##") + id).c_str(), &m_RefractionConstant);
