@@ -13,9 +13,7 @@
         "ModelComponent": {
             "isVisible": true,
             "materialOverrides": {
-                "game/assets/materials/Material__25.rmat": "game/assets/materials/Material__25.rmat",
                 "game/assets/materials/Material__298.rmat": "game/assets/materials/Material__298.rmat",
-                "game/assets/materials/Material__47.rmat": "game/assets/materials/Material__47.rmat",
                 "game/assets/materials/VasePlant.rmat": "game/assets/materials/VasePlant.rmat",
                 "game/assets/materials/arch.rmat": "game/assets/materials/arch.rmat",
                 "game/assets/materials/bricks.rmat": "game/assets/materials/bricks.rmat",
@@ -37,7 +35,8 @@
                 "game/assets/materials/roof.rmat": "game/assets/materials/roof.rmat",
                 "game/assets/materials/vase.rmat": "game/assets/materials/vase.rmat",
                 "game/assets/materials/vase_hanging.rmat": "game/assets/materials/vase_hanging.rmat",
-                "game/assets/materials/vase_round.rmat": "game/assets/materials/vase_round.rmat"
+                "game/assets/materials/vase_round.rmat": "game/assets/materials/vase_round.rmat",
+                "rootex/assets/materials/default.rmat": "game/assets/materials/material__25.rmat"
             },
             "renderPass": 4,
             "resFile": "game/assets/sponza/sponza.obj"

@@ -14,6 +14,7 @@
     "reflectivity": 0.0,
     "refractionConstant": 0.0,
     "refractivity": 1.0,
+    "specularImageFile": "rootex/assets/white.png",
     "specularIntensity": 2.0,
     "specularPower": 30.0,
     "type": "BasicMaterial"
