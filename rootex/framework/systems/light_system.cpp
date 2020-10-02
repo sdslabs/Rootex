@@ -12,10 +12,13 @@ LightSystem* LightSystem::GetSingleton()
 	return &singleton;
 }
 
-LightsInfo LightSystem::getLights()
+LightsInfo LightSystem::getStaticLights()
 {
-	Vector<Component*> pointLightComponents = s_Components[PointLightComponent::s_ID];
+	return LightsInfo();
+}
 
+LightsInfo LightSystem::getDynamicLights()
+{
 	LightsInfo lights;
 
 	Vector3 cameraPos = RenderSystem::GetSingleton()->getCamera()->getAbsolutePosition();
@@ -27,18 +30,26 @@ LightsInfo LightSystem::getLights()
 		return Vector3::DistanceSquared(cameraPos, aa) < Vector3::DistanceSquared(cameraPos, bb);
 	};
 
+	Vector<Component*>& pointLightComponents = s_Components[PointLightComponent::s_ID];
 	sort(pointLightComponents.begin(), pointLightComponents.end(), sortingLambda);
 
 	int i = 0;
-	for (; i < pointLightComponents.size() && i < MAX_POINT_LIGHTS; i++)
+	for (; i < pointLightComponents.size() && i < MAX_DYNAMIC_POINT_LIGHTS; i++)
 	{
 		PointLightComponent* light = dynamic_cast<PointLightComponent*>(pointLightComponents[i]);
 		TransformComponent* transform = light->getOwner()->getComponent<TransformComponent>().get();
 		Vector3 transformedPosition = transform->getAbsoluteTransform().Translation();
+		const PointLight& pointLight = light->getPointLight();
+		
 		lights.pointLightInfos[i] = {
-			light->m_AmbientColor, light->m_DiffuseColor, light->m_DiffuseIntensity,
-			light->m_AttConst, light->m_AttLin, light->m_AttQuad,
-			transformedPosition, light->m_Range
+			pointLight.ambientColor, 
+			pointLight.diffuseColor, 
+			pointLight.diffuseIntensity,
+			pointLight.attConst, 
+			pointLight.attLin, 
+			pointLight.attQuad,
+			transformedPosition, 
+			pointLight.range
 		};
 	}
 	lights.pointLightCount = i;
@@ -47,34 +58,45 @@ LightsInfo LightSystem::getLights()
 
 	if (directionalLightComponents.size() > 1)
 	{
-		WARN("Directional Lights specified are greater than 1");
+		WARN("Directional lights specified are greater than 1. Using only the first directional light found.");
 	}
 
 	if (directionalLightComponents.size() > 0)
 	{
 		DirectionalLightComponent* light = dynamic_cast<DirectionalLightComponent*>(directionalLightComponents[0]);
+		const DirectionalLight& directionalLight = light->getDirectionalLight();
 
 		lights.directionalLightInfo = {
-			light->m_Direction, light->m_DiffuseIntensity, light->m_DiffuseColor,
-			light->m_AmbientColor
+			directionalLight.direction, 
+			directionalLight.diffuseIntensity, 
+			directionalLight.diffuseColor,
+			directionalLight.ambientColor
 		};
 		lights.directionalLightPresent = 1;
 	}
 
 	Vector<Component*>& spotLightComponents = s_Components[SpotLightComponent::s_ID];
-
 	sort(spotLightComponents.begin(), spotLightComponents.end(), sortingLambda);
 
 	i = 0;
-	for (; i < spotLightComponents.size() && i < MAX_SPOT_LIGHTS; i++)
+	for (; i < spotLightComponents.size() && i < MAX_DYNAMIC_SPOT_LIGHTS; i++)
 	{
 		SpotLightComponent* light = dynamic_cast<SpotLightComponent*>(spotLightComponents[i]);
 		Matrix transform = light->getOwner()->getComponent<TransformComponent>()->getAbsoluteTransform();
+		const SpotLight& spotLight = light->getSpotLight();
+
 		lights.spotLightInfos[i] = {
-			light->m_AmbientColor, light->m_DiffuseColor, light->m_DiffuseIntensity,
-			light->m_AttConst, light->m_AttLin, light->m_AttQuad,
-			transform.Translation(), light->m_Range, transform.Forward(), light->m_Spot,
-			cos(light->m_AngleRange)
+			spotLight.ambientColor,
+			spotLight.diffuseColor, 
+			spotLight.diffuseIntensity,
+			spotLight.attConst, 
+			spotLight.attLin, 
+			spotLight.attQuad,
+			transform.Translation(), 
+			spotLight.range, 
+			transform.Forward(), 
+			spotLight.spot,
+			cos(spotLight.angleRange)
 		};
 	}
 	lights.spotLightCount = i;

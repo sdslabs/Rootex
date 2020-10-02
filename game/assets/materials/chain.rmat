@@ -15,7 +15,7 @@
     "refractionConstant": 0.800000011920929,
     "refractivity": 0.10000000149011612,
     "specularImageFile": "game/assets/sponza/textures/chain_texture_mask.png",
-    "specularIntensity": 2.0,
-    "specularPower": 30.0,
+    "specularIntensity": 1.0,
+    "specularPower": 8.0,
     "type": "BasicMaterial"
 }

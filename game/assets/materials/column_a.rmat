@@ -15,7 +15,7 @@
     "refractionConstant": 0.800000011920929,
     "refractivity": 0.10000000149011612,
     "specularImageFile": "game/assets/sponza/textures/sponza_column_a_spec.png",
-    "specularIntensity": 1.0,
-    "specularPower": 30.0,
+    "specularIntensity": 0.11999999731779099,
+    "specularPower": 11.0,
     "type": "BasicMaterial"
 }

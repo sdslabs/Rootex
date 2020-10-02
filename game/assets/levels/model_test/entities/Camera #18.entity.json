@@ -15,9 +15,9 @@
                     "brightness": 1.340000033378601,
                     "isBloom": true,
                     "saturation": 1.0,
-                    "size": 7.889999866485596,
-                    "threshold": 0.44999998807907104,
-                    "value": 1.309999942779541
+                    "size": 7.849999904632568,
+                    "threshold": 0.3100000023841858,
+                    "value": 1.5199999809265137
                 },
                 "gaussianBlur": {
                     "isGaussianBlur": false,
@@ -27,11 +27,11 @@
                 "monochrome": false,
                 "sepia": false,
                 "toneMap": {
-                    "exposure": 0.0,
+                    "exposure": -6.0,
                     "isToneMap": false,
                     "operator": 1,
-                    "transferFunction": 1,
-                    "whiteNits": 200.0
+                    "transferFunction": 0,
+                    "whiteNits": 83.0
                 }
             }
         },

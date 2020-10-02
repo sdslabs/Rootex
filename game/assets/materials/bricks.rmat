@@ -15,7 +15,7 @@
     "refractionConstant": 0.800000011920929,
     "refractivity": 0.10000000149011612,
     "specularImageFile": "game/assets/sponza/textures/spnza_bricks_a_spec.png",
-    "specularIntensity": 0.5,
-    "specularPower": 30.0,
+    "specularIntensity": 0.10999999940395355,
+    "specularPower": 19.0,
     "type": "BasicMaterial"
 }

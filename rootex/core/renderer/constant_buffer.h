@@ -70,13 +70,13 @@ struct LightsInfo
 {
 	Vector3 cameraPos;
 	int pointLightCount = 0;
-	PointLightInfo pointLightInfos[MAX_POINT_LIGHTS];
+	PointLightInfo pointLightInfos[MAX_DYNAMIC_POINT_LIGHTS];
 	int directionalLightPresent = 0;
 	float pad2[3];
 	DirectionalLightInfo directionalLightInfo;
 	int spotLightCount = 0;
 	float pad3[3];
-	SpotLightInfo spotLightInfos[MAX_SPOT_LIGHTS];
+	SpotLightInfo spotLightInfos[MAX_DYNAMIC_SPOT_LIGHTS];
 };
 
 /// Encapsulates all the types of light and other data offered, to bind them in the Pixel Shader

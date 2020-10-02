@@ -15,7 +15,7 @@
     "refractionConstant": 0.800000011920929,
     "refractivity": 0.10000000149011612,
     "specularImageFile": "rootex/assets/white.png",
-    "specularIntensity": 2.0,
-    "specularPower": 30.0,
+    "specularIntensity": 0.3499999940395355,
+    "specularPower": 100.0,
     "type": "BasicMaterial"
 }

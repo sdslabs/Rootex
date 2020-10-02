@@ -361,7 +361,7 @@ void RenderSystem::perFrameVSCBBinds(float fogStart, float fogEnd)
 void RenderSystem::perFramePSCBBinds(const Color& fogColor)
 {
 	PerFramePSCB perFrame;
-	perFrame.lights = LightSystem::GetSingleton()->getLights();
+	perFrame.lights = LightSystem::GetSingleton()->getDynamicLights();
 	perFrame.fogColor = fogColor;
 	Material::SetPSConstantBuffer(perFrame, m_PSPerFrameConstantBuffer, PER_FRAME_PS_CPP);
 }

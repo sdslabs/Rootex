@@ -14,8 +14,8 @@
     "reflectivity": 0.10000000149011612,
     "refractionConstant": 0.800000011920929,
     "refractivity": 0.10000000149011612,
-    "specularImageFile": "rootex/assets/white.png",
-    "specularIntensity": 0.6000000238418579,
-    "specularPower": 20.0,
+    "specularImageFile": "game/assets/sponza/textures/lion_bump.png",
+    "specularIntensity": 0.029999999329447746,
+    "specularPower": 17.0,
     "type": "BasicMaterial"
 }
