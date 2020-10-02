@@ -1,0 +1,69 @@
+{
+    "Components": {
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 1
+        },
+        "ModelComponent": {
+            "isVisible": true,
+            "materialOverrides": {
+                "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+            },
+            "renderPass": 2,
+            "resFile": "game/assets/test/sphere.obj"
+        },
+        "StaticPointLightComponent": {
+            "ambientColor": {
+                "a": 1.0,
+                "b": 0.5,
+                "g": 0.5,
+                "r": 0.5
+            },
+            "attConst": 0.04500000178813934,
+            "attLin": 1.0,
+            "attQuad": 0.007499999832361937,
+            "diffuseColor": {
+                "a": 1.0,
+                "b": 0.7760617733001709,
+                "g": 0.18877176940441132,
+                "r": 0.6816723346710205
+            },
+            "diffuseIntensity": 13.800000190734863,
+            "range": 300.0
+        },
+        "TransformComponent": {
+            "boundingBox": {
+                "center": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "extents": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                }
+            },
+            "position": {
+                "x": -7.931012153625488,
+                "y": 2.0778205394744873,
+                "z": -3.5437240600585938
+            },
+            "rotation": {
+                "w": 0.7329111695289612,
+                "x": -0.03041899763047695,
+                "y": -0.6790593266487122,
+                "z": -0.028183843940496445
+            },
+            "scale": {
+                "x": 0.020000966265797615,
+                "y": 0.020000135526061058,
+                "z": 0.019999969750642776
+            }
+        }
+    },
+    "Entity": {
+        "ID": 90,
+        "name": "StaticPointLight"
+    }
+}

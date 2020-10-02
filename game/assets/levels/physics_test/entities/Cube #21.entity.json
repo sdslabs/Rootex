@@ -1,20 +1,5 @@
 {
     "Components": {
-        "BoxColliderComponent": {
-            "dimensions": {
-                "x": 4.96999979019165,
-                "y": 0.46000000834465027,
-                "z": 4.949999809265137
-            },
-            "gravity": {
-                "x": 0.0,
-                "y": 0.0,
-                "z": 0.0
-            },
-            "isGeneratesHitEvents": false,
-            "isMoveable": false,
-            "matName": "Air"
-        },
         "HierarchyComponent": {
             "children": [],
             "parent": 1
@@ -25,7 +10,7 @@
                 "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
             },
             "renderPass": 1,
-            "resFile": "rootex/assets/cube.obj"
+            "resFile": "game/assets/test/cube.obj"
         },
         "TransformComponent": {
             "boundingBox": {
@@ -41,25 +26,25 @@
                 }
             },
             "position": {
-                "x": 0.0,
-                "y": -2.0,
-                "z": -9.199999809265137
+                "x": -10.050668716430664,
+                "y": 8.184385299682617,
+                "z": -0.33129429817199707
             },
             "rotation": {
-                "w": -0.0,
-                "x": 0.0,
-                "y": 0.0,
-                "z": 1.0
+                "w": 0.9701582193374634,
+                "x": -0.23070955276489258,
+                "y": 0.0725824311375618,
+                "z": 0.017260512337088585
             },
             "scale": {
-                "x": 10.0,
-                "y": 1.0,
-                "z": 10.0
+                "x": 0.9999973177909851,
+                "y": 0.9999996423721313,
+                "z": 0.9999992251396179
             }
         }
     },
     "Entity": {
-        "ID": 5,
-        "name": "Floor"
+        "ID": 21,
+        "name": "Cube"
     }
 }

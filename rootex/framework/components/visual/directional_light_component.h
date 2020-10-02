@@ -1,3 +1,5 @@
+#pragma once
+
 #include "component.h"
 #include "common/common.h"
 

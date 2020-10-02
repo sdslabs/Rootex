@@ -1,0 +1,69 @@
+{
+    "Components": {
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 1
+        },
+        "ModelComponent": {
+            "isVisible": true,
+            "materialOverrides": {
+                "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+            },
+            "renderPass": 2,
+            "resFile": "game/assets/test/sphere.obj"
+        },
+        "StaticPointLightComponent": {
+            "ambientColor": {
+                "a": 1.0,
+                "b": 0.9999899864196777,
+                "g": 0.9999899864196777,
+                "r": 1.0
+            },
+            "attConst": 0.04500000178813934,
+            "attLin": 1.0,
+            "attQuad": 0.007499999832361937,
+            "diffuseColor": {
+                "a": 1.0,
+                "b": 0.0,
+                "g": 0.7374517321586609,
+                "r": 0.039506278932094574
+            },
+            "diffuseIntensity": 9.899999618530273,
+            "range": 300.0
+        },
+        "TransformComponent": {
+            "boundingBox": {
+                "center": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "extents": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                }
+            },
+            "position": {
+                "x": -16.027299880981445,
+                "y": 2.6317965984344482,
+                "z": 1.2923188209533691
+            },
+            "rotation": {
+                "w": 0.720558226108551,
+                "x": -0.00853677187114954,
+                "y": -0.6932932734489441,
+                "z": -0.0082137705758214
+            },
+            "scale": {
+                "x": 0.02000105381011963,
+                "y": 0.020000137388706207,
+                "z": 0.020000046119093895
+            }
+        }
+    },
+    "Entity": {
+        "ID": 91,
+        "name": "StaticPointLight"
+    }
+}

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "component.h"
 #include "common/common.h"
 
@@ -9,14 +11,15 @@ class PointLightComponent : public Component
 	static Component* Create(const JSON::json& componentData);
 	static Component* CreateDefault();
 
+	PointLight m_PointLight;
+
+protected:
 	PointLightComponent::PointLightComponent(const float constAtt, const float linAtt, const float quadAtt,
 	    const float range, const float diffuseIntensity, const Color& diffuseColor, const Color& ambientColor);
 	PointLightComponent(PointLightComponent&) = delete;
 	~PointLightComponent() = default;
 
 	friend class EntityFactory;
-
-	PointLight m_PointLight;
 
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::PointLightComponent;

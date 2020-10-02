@@ -1,20 +1,5 @@
 {
     "Components": {
-        "BoxColliderComponent": {
-            "dimensions": {
-                "x": 0.5,
-                "y": 0.5,
-                "z": 0.5
-            },
-            "gravity": {
-                "x": 0.0,
-                "y": -9.800000190734863,
-                "z": 0.0
-            },
-            "isGeneratesHitEvents": true,
-            "isMoveable": true,
-            "matName": "Air"
-        },
         "HierarchyComponent": {
             "children": [],
             "parent": 1
@@ -24,13 +9,27 @@
             "materialOverrides": {
                 "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
             },
-            "renderPass": 1,
-            "resFile": "rootex/assets/cube.obj"
+            "renderPass": 2,
+            "resFile": "game/assets/test/sphere.obj"
         },
-        "ScriptComponent": {
-            "scripts": [
-                "rootex/assets/scripts/empty.lua"
-            ]
+        "StaticPointLightComponent": {
+            "ambientColor": {
+                "a": 1.0,
+                "b": 0.5,
+                "g": 0.5,
+                "r": 0.5
+            },
+            "attConst": 0.04500000178813934,
+            "attLin": 1.0,
+            "attQuad": 0.007499999832361937,
+            "diffuseColor": {
+                "a": 1.0,
+                "b": 1.0,
+                "g": 0.0,
+                "r": 0.029758930206298828
+            },
+            "diffuseIntensity": 12.199999809265137,
+            "range": 300.0
         },
         "TransformComponent": {
             "boundingBox": {
@@ -46,9 +45,9 @@
                 }
             },
             "position": {
-                "x": -1.7999999523162842,
-                "y": 1.5,
-                "z": -13.0
+                "x": 18.600141525268555,
+                "y": 1.6803560256958008,
+                "z": 3.8153023719787598
             },
             "rotation": {
                 "w": 1.0,
@@ -57,14 +56,14 @@
                 "z": -0.0
             },
             "scale": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
+                "x": 0.020001014694571495,
+                "y": 0.020000137388706207,
+                "z": 0.019999992102384567
             }
         }
     },
     "Entity": {
-        "ID": 8,
-        "name": "FallingCube"
+        "ID": 70,
+        "name": "BlueStaticPointLight"
     }
 }

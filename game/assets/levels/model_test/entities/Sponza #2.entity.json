@@ -11,6 +11,18 @@
             "parent": 1
         },
         "ModelComponent": {
+            "affectingStaticLights": [
+                70,
+                35,
+                56,
+                87,
+                88,
+                89,
+                17,
+                90,
+                91,
+                92
+            ],
             "isVisible": true,
             "materialOverrides": {
                 "game/assets/materials/Material__298.rmat": "game/assets/materials/Material__298.rmat",

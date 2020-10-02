@@ -1,0 +1,69 @@
+{
+    "Components": {
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 1
+        },
+        "ModelComponent": {
+            "isVisible": true,
+            "materialOverrides": {
+                "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+            },
+            "renderPass": 2,
+            "resFile": "game/assets/test/sphere.obj"
+        },
+        "StaticPointLightComponent": {
+            "ambientColor": {
+                "a": 1.0,
+                "b": 0.19454093277454376,
+                "g": 0.19454093277454376,
+                "r": 0.8687258958816528
+            },
+            "attConst": 0.04500000178813934,
+            "attLin": 1.0,
+            "attQuad": 0.007499999832361937,
+            "diffuseColor": {
+                "a": 1.0,
+                "b": 0.0,
+                "g": 1.0,
+                "r": 0.9583330154418945
+            },
+            "diffuseIntensity": 9.699999809265137,
+            "range": 300.0
+        },
+        "TransformComponent": {
+            "boundingBox": {
+                "center": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "extents": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                }
+            },
+            "position": {
+                "x": -0.7597819566726685,
+                "y": 1.5665984153747559,
+                "z": 2.3460729122161865
+            },
+            "rotation": {
+                "w": -0.7024728655815125,
+                "x": 0.011435728520154953,
+                "y": 0.7115244269371033,
+                "z": 0.011583080515265465
+            },
+            "scale": {
+                "x": 0.020005427300930023,
+                "y": 0.020000137388706207,
+                "z": 0.020000549033284187
+            }
+        }
+    },
+    "Entity": {
+        "ID": 89,
+        "name": "StaticPointLight"
+    }
+}

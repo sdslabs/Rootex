@@ -2,30 +2,34 @@
     "Components": {
         "HierarchyComponent": {
             "children": [],
-            "parent": 1
+            "parent": 2
         },
         "ModelComponent": {
             "isVisible": true,
             "materialOverrides": {
                 "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
             },
-            "renderPass": 1,
+            "renderPass": 2,
             "resFile": "game/assets/test/sphere.obj"
         },
-        "SkyComponent": {
-            "skyMaterial": "rootex/assets/materials/sky.rmat",
-            "skySphere": "rootex/assets/sky.obj"
-        },
-        "SphereColliderComponent": {
-            "gravity": {
-                "x": 0.0,
-                "y": -9.800000190734863,
-                "z": 0.0
+        "StaticPointLightComponent": {
+            "ambientColor": {
+                "a": 1.0,
+                "b": 0.5,
+                "g": 0.5,
+                "r": 0.5
             },
-            "isGeneratesHitEvents": false,
-            "isMoveable": true,
-            "matName": "Air",
-            "radius": 1.0
+            "attConst": 0.04500000178813934,
+            "attLin": 1.6799999475479126,
+            "attQuad": 1.0870000123977661,
+            "diffuseColor": {
+                "a": 1.0,
+                "b": 0.9459459185600281,
+                "g": 0.37618696689605713,
+                "r": 0.934946596622467
+            },
+            "diffuseIntensity": 11.800000190734863,
+            "range": 10.0
         },
         "TransformComponent": {
             "boundingBox": {
@@ -41,25 +45,25 @@
                 }
             },
             "position": {
-                "x": 3.5,
-                "y": 1.5,
-                "z": -8.600000381469727
+                "x": 1186.6070556640625,
+                "y": 163.89857482910156,
+                "z": -35.47453308105469
             },
             "rotation": {
-                "w": -0.0,
+                "w": -8.094396434898954e-06,
                 "x": 1.0,
                 "y": 0.0,
                 "z": 0.0
             },
             "scale": {
-                "x": 0.05000000074505806,
-                "y": 0.05000000074505806,
-                "z": 0.05000000074505806
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
             }
         }
     },
     "Entity": {
-        "ID": 9,
-        "name": "Ball"
+        "ID": 17,
+        "name": "StaticPointLight"
     }
 }

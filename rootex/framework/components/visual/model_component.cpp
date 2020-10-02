@@ -7,6 +7,7 @@
 #include "framework/entity.h"
 #include "framework/systems/light_system.h"
 #include "framework/systems/render_system.h"
+#include "framework/components/visual/static_point_light_component.h"
 #include "renderer/material_library.h"
 #include "renderer/render_pass.h"
 
@@ -20,12 +21,20 @@ Component* ModelComponent::Create(const JSON::json& componentData)
 			materialOverrides[element.key()] = element.value();
 		}
 	}
-
+	HashMap<int, EntityID> affectingStaticLights;
+	if (componentData.find("affectingStaticLights") != componentData.end())
+	{
+		for (auto& element : JSON::json::iterator_wrapper(componentData["affectingStaticLights"]))
+		{
+			affectingStaticLights[atoi(element.key().c_str())] = element.value();
+		}
+	}
 	ModelComponent* modelComponent = new ModelComponent(
 	    componentData["renderPass"],
 	    ResourceLoader::CreateModelResourceFile(componentData["resFile"]),
 	    materialOverrides,
-	    componentData["isVisible"]);
+	    componentData["isVisible"],
+	    affectingStaticLights);
 
 	return modelComponent;
 }
@@ -36,17 +45,21 @@ Component* ModelComponent::CreateDefault()
 	    (int)RenderPass::Basic,
 	    ResourceLoader::CreateModelResourceFile("rootex/assets/cube.obj"),
 	    {},
-	    true);
+	    true,
+	    {});
 
 	return modelComponent;
 }
 
-ModelComponent::ModelComponent(unsigned int renderPass, ModelResourceFile* resFile, const HashMap<String, String>& materialOverrides, bool visibility)
+ModelComponent::ModelComponent(unsigned int renderPass, ModelResourceFile* resFile, const HashMap<String, String>& materialOverrides, bool visibility, const HashMap<int, EntityID>& affectingStaticLightIDs)
     : m_IsVisible(visibility)
     , m_RenderPass(renderPass)
     , m_TransformComponent(nullptr)
     , m_HierarchyComponent(nullptr)
+    , m_AffectingStaticLightEntityIDs(affectingStaticLightIDs)
 {
+	m_AffectingStaticLights.resize(MAX_STATIC_POINT_LIGHTS_AFFECTING_1_OBJECT, -1);
+
 	setVisualModel(resFile, materialOverrides);
 }
 
@@ -83,6 +96,45 @@ bool ModelComponent::setup()
 	return status;
 }
 
+bool ModelComponent::setupEntities()
+{
+	for (auto& [slot, ID]: m_AffectingStaticLightEntityIDs)
+	{
+		addAffectingStaticLight(slot, ID);
+	}
+	return true;
+}
+
+void ModelComponent::addAffectingStaticLight(int slot, EntityID ID)
+{
+	Ref<Entity> entity = EntityFactory::GetSingleton()->findEntity(ID);
+	if (!entity)
+	{
+		WARN("Static light entity referred to not found: " + std::to_string(ID));
+		{
+			return;
+		};
+	}
+
+	int lightID = 0;
+	for (auto& component : System::GetComponents(StaticPointLightComponent::s_ID))
+	{
+		if (entity->getComponent<StaticPointLightComponent>().get() == component)
+		{
+			m_AffectingStaticLightEntityIDs[slot] = ID;
+			m_AffectingStaticLights[slot] = lightID;
+			return;
+		}
+		lightID++;
+	}
+}
+
+void ModelComponent::removeAffectingStaticLight(int slot)
+{
+	m_AffectingStaticLightEntityIDs.erase(slot);
+	m_AffectingStaticLights[slot] = -1;
+}
+
 bool ModelComponent::preRender(float deltaMilliseconds)
 {
 	if (m_TransformComponent)
@@ -102,7 +154,7 @@ bool ModelComponent::isVisible() const
 	return m_IsVisible;
 }
 
-bool compareMaterials(const Pair<Ref<Material>, Vector<Mesh>>& a, const Pair<Ref<Material>, Vector<Mesh>>& b)
+bool CompareMaterials(const Pair<Ref<Material>, Vector<Mesh>>& a, const Pair<Ref<Material>, Vector<Mesh>>& b)
 {
 	// Alpha materials final last
 	return !a.first->isAlpha() && b.first->isAlpha();
@@ -110,10 +162,12 @@ bool compareMaterials(const Pair<Ref<Material>, Vector<Mesh>>& a, const Pair<Ref
 
 void ModelComponent::render()
 {
-	std::sort(m_ModelResourceFile->getMeshes().begin(), m_ModelResourceFile->getMeshes().end(), compareMaterials);
+	std::sort(m_ModelResourceFile->getMeshes().begin(), m_ModelResourceFile->getMeshes().end(), CompareMaterials);
 	int i = 0;
 	for (auto& [material, meshes] : m_ModelResourceFile->getMeshes())
 	{
+		Ref<BasicMaterial> basicMaterial = std::dynamic_pointer_cast<BasicMaterial>(m_MaterialOverrides[material]);
+		basicMaterial->setAffectingStaticLights(m_AffectingStaticLights.data());
 		RenderSystem::GetSingleton()->getRenderer()->bind(m_MaterialOverrides[material].get());
 		i++;
 
@@ -171,6 +225,10 @@ JSON::json ModelComponent::getJSON() const
 	for (auto& [oldMaterial, newMaterial] : m_MaterialOverrides)
 	{
 		j["materialOverrides"][oldMaterial->getFileName()] = newMaterial->getFileName();
+	}
+	for (auto& [slot, ID] : m_AffectingStaticLightEntityIDs)
+	{
+		j["affectingStaticLights"][slot] = ID;
 	}
 
 	return j;
@@ -232,58 +290,94 @@ void ModelComponent::draw()
 		m_RenderPass = pow(2, renderPassUI);
 	}
 
-	ImGui::Columns(2);
-	ImGui::Text("%s", "Original Material");
-	ImGui::NextColumn();
-	ImGui::Text("%s", "Overriding Material");
-	ImGui::NextColumn();
-	ImGui::Separator();
-	for (auto& [oldMaterial, newMaterial] : m_MaterialOverrides)
-	{
-		ImGui::BeginGroup();
-		ImGui::Image(oldMaterial->getPreview(), { 50, 50 });
-		ImGui::SameLine();
-		if (ImGui::MenuItem(FilePath(oldMaterial->getFileName()).filename().generic_string().c_str()))
-		{
-			EventManager::GetSingleton()->call("OpenModel", "EditorOpenFile", oldMaterial->getFileName());
-		}
-		ImGui::NextColumn();
-		ImGui::Image(newMaterial->getPreview(), { 50, 50 });
-		ImGui::SameLine();
-		ImGui::BeginGroup();
-		if (ImGui::MenuItem(FilePath(newMaterial->getFileName()).filename().generic_string().c_str()))
-		{
-			EventManager::GetSingleton()->call("OpenModel", "EditorOpenFile", newMaterial->getFileName());
-		}
-		if (ImGui::SmallButton(("Reset##" + oldMaterial->getFileName()).c_str()))
-		{
-			setMaterialOverride(oldMaterial, oldMaterial);
-		}
-		ImGui::EndGroup();
-		ImGui::EndGroup();
+	ImGui::Text("Affecting Lights");
 
-		if (ImGui::BeginDragDropTarget())
+	int slot = 0;
+	for (auto& lightID : m_AffectingStaticLights)
+	{
+		String displayName = "None";
+
+		if (m_AffectingStaticLightEntityIDs.find(slot) != m_AffectingStaticLightEntityIDs.end())
 		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Resource Drop"))
+			displayName = EntityFactory::GetSingleton()->findEntity(m_AffectingStaticLightEntityIDs[slot])->getFullName();
+		}
+
+		if (ImGui::BeginCombo(("Slot " + std::to_string(slot)).c_str(), displayName.c_str()))
+		{
+			for (auto& component : System::GetComponents(StaticPointLightComponent::s_ID))
 			{
-				const char* payloadFileName = (const char*)payload->Data;
-				FilePath payloadPath(payloadFileName);
-				if (payloadPath.extension() == ".rmat")
+				if (ImGui::Selectable(component->getOwner()->getFullName().c_str()))
 				{
-					MaterialLibrary::CreateNewMaterialFile(payloadPath.generic_string(), oldMaterial->getTypeName());
-					setMaterialOverride(oldMaterial, MaterialLibrary::GetMaterial(payloadPath.generic_string()));
-				}
-				else
-				{
-					WARN("Unsupported file format for material. Use .rmat files");
+					addAffectingStaticLight(slot, component->getOwner()->getID());
 				}
 			}
-			ImGui::EndDragDropTarget();
-		}		
+			ImGui::EndCombo();
+		}
+		ImGui::SameLine();
+		if (ImGui::Button(("Remove##" + std::to_string(slot)).c_str()))
+		{
+			removeAffectingStaticLight(slot);
+		}
+		slot++;
+	}
 
+	ImGui::Indent();
+	if (ImGui::TreeNodeEx("Materials", ImGuiTreeNodeFlags_CollapsingHeader))
+	{
+		ImGui::Columns(2);
+		ImGui::Text("%s", "Original Material");
+		ImGui::NextColumn();
+		ImGui::Text("%s", "Overriding Material");
 		ImGui::NextColumn();
 		ImGui::Separator();
+		for (auto& [oldMaterial, newMaterial] : m_MaterialOverrides)
+		{
+			ImGui::BeginGroup();
+			ImGui::Image(oldMaterial->getPreview(), { 50, 50 });
+			ImGui::SameLine();
+			if (ImGui::MenuItem(FilePath(oldMaterial->getFileName()).filename().generic_string().c_str()))
+			{
+				EventManager::GetSingleton()->call("OpenModel", "EditorOpenFile", oldMaterial->getFileName());
+			}
+			ImGui::NextColumn();
+			ImGui::Image(newMaterial->getPreview(), { 50, 50 });
+			ImGui::SameLine();
+			ImGui::BeginGroup();
+			if (ImGui::MenuItem(FilePath(newMaterial->getFileName()).filename().generic_string().c_str()))
+			{
+				EventManager::GetSingleton()->call("OpenModel", "EditorOpenFile", newMaterial->getFileName());
+			}
+			if (ImGui::SmallButton(("Reset##" + oldMaterial->getFileName()).c_str()))
+			{
+				setMaterialOverride(oldMaterial, oldMaterial);
+			}
+			ImGui::EndGroup();
+			ImGui::EndGroup();
+
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Resource Drop"))
+				{
+					const char* payloadFileName = (const char*)payload->Data;
+					FilePath payloadPath(payloadFileName);
+					if (payloadPath.extension() == ".rmat")
+					{
+						MaterialLibrary::CreateNewMaterialFile(payloadPath.generic_string(), oldMaterial->getTypeName());
+						setMaterialOverride(oldMaterial, MaterialLibrary::GetMaterial(payloadPath.generic_string()));
+					}
+					else
+					{
+						WARN("Unsupported file format for material. Use .rmat files");
+					}
+				}
+				ImGui::EndDragDropTarget();
+			}
+
+			ImGui::NextColumn();
+			ImGui::Separator();
+		}
+		ImGui::Columns(1);
 	}
-	ImGui::Columns(1);
+	ImGui::Unindent();
 }
 #endif // ROOTEX_EDITOR

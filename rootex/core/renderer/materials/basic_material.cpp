@@ -23,6 +23,11 @@ BasicMaterial::BasicMaterial(bool isAlpha, const String& imagePath, const String
     , m_IsAffectedBySky(affectedBySky)
     , m_IsNormal(isNormal)
 {
+	for (int i = 0; i < MAX_STATIC_POINT_LIGHTS_AFFECTING_1_OBJECT; i++) 
+	{
+		m_AffectingStaticLights[i] = -1;
+	}
+
 	m_DiffuseImageFile = ResourceLoader::CreateImageResourceFile(imagePath);
 	setTexture(m_DiffuseImageFile);
 	if (isNormal)
@@ -134,8 +139,26 @@ void BasicMaterial::bind()
 		m_BasicShader->set(m_NormalTexture.get(), NORMAL_PS_CPP);
 	}
 	m_BasicShader->set(m_SpecularTexture.get(), SPECULAR_PS_CPP);
-	setVSConstantBuffer(VSDiffuseConstantBuffer(RenderSystem::GetSingleton()->getCurrentMatrix()));
-	setPSConstantBuffer(PSDiffuseConstantBufferMaterial({ m_Color, m_IsLit, m_SpecularIntensity, m_SpecularPower, m_Reflectivity, m_RefractionConstant, m_Refractivity, m_IsAffectedBySky, m_IsNormal }));
+	Matrix currentModelMatrix = RenderSystem::GetSingleton()->getCurrentMatrix();
+	setVSConstantBuffer(VSDiffuseConstantBuffer(currentModelMatrix));
+
+	PSDiffuseConstantBufferMaterial objectPSCB;
+	objectPSCB.affectedBySky = m_IsAffectedBySky;
+	objectPSCB.color = m_Color;
+	objectPSCB.hasNormalMap = m_IsNormal;
+	objectPSCB.isLit = m_IsLit;
+	objectPSCB.reflectivity = m_Reflectivity;
+	objectPSCB.refractionConstant = m_RefractionConstant;
+	objectPSCB.refractivity = m_Refractivity;
+	objectPSCB.specularIntensity = m_SpecularIntensity;
+	objectPSCB.specularPower = m_SpecularPower;
+	
+	for (int i = 0; i < MAX_STATIC_POINT_LIGHTS_AFFECTING_1_OBJECT; i++)
+	{
+		objectPSCB.staticPointsLightsAffecting[i].id = m_AffectingStaticLights[i];
+	}
+
+	setPSConstantBuffer(objectPSCB);
 }
 
 JSON::json BasicMaterial::getJSON() const
@@ -167,6 +190,14 @@ JSON::json BasicMaterial::getJSON() const
 	j["affectedBySky"] = m_IsAffectedBySky;
 
 	return j;
+}
+
+void BasicMaterial::setAffectingStaticLights(int lights[])
+{
+	for (int i = 0; i < MAX_STATIC_POINT_LIGHTS_AFFECTING_1_OBJECT; i++)
+	{
+		m_AffectingStaticLights[i] = lights[i];
+	}
 }
 
 void BasicMaterial::setTexture(ImageResourceFile* image)
