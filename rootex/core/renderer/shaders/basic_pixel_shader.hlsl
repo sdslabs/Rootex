@@ -1,10 +1,14 @@
 #include "register_locations_pixel_shader.h"
+#include "light.hlsli"
+#include "basic_material.hlsli"
+#include "sky.hlsli"
 
 Texture2D ShaderTexture : register(DIFFUSE_PS_HLSL);
-SamplerState SampleType;
 TextureCube SkyTexture : register(SKY_PS_HLSL);
 Texture2D NormalTexture : register(NORMAL_PS_HLSL);
 Texture2D SpecularTexture : register(SPECULAR_PS_HLSL);
+
+SamplerState SampleType;
 
 struct PixelInputType
 {
@@ -15,79 +19,27 @@ struct PixelInputType
 	float fogFactor : FOG;
 	float3 tangent : TANGENT;
 };
-struct PointLightInfo
-{
-    float4 ambientColor;
-    float4 diffuseColor;
-    float diffuseIntensity;
-    float attConst;
-    float attLin;
-    float attQuad;
-    float3 lightPos;
-    float range;
-};
-struct DirectionalLightInfo
-{
-    float3 direction;
-    float diffuseIntensity;
-    float4 ambientColor;
-    float4 diffuseColor;
-};
-struct SpotLightInfo
-{
-    float4 ambientColor;
-    float4 diffuseColor;
-    float diffuseIntensity;
-    float attConst;
-    float attLin;
-    float attQuad;
-    float3 lightPos;
-    float range;
-    float3 direction;
-    float spot;
-    float angleRange;
-};
 
-cbuffer Lights : register(PER_FRAME_PS_HLSL)
+cbuffer CBuf : register(PER_OBJECT_PS_HLSL)
 {
-    float3 cameraPos;
-    int pointLightCount;
-	PointLightInfo pointLightInfos[MAX_POINT_LIGHTS];
-    int directionLightPresent;
-    DirectionalLightInfo directionalLightInfo;
-    int spotLightCount;
-	SpotLightInfo spotLightInfos[MAX_SPOT_LIGHTS];
-    float4 fogColor;
-}
-
-cbuffer Material : register(PER_OBJECT_PS_HLSL)
-{
-    float4 color;
-    int isLit;
-    float specularIntensity;
-    float specPow;
-    float reflectivity;
-    float refractionConstant;
-    float refractivity;
-    int affectedBySky;
-	int hasNormalMap;
+    BasicMaterial material;
 };
 
 float4 main(PixelInputType input) : SV_TARGET
 {
-    float4 materialColor = ShaderTexture.Sample(SampleType, input.tex) * color;
+    float4 materialColor = ShaderTexture.Sample(SampleType, input.tex) * material.color;
     float4 finalColor = materialColor;
     
-    clip(finalColor.a - 0.001f);
+    clip(finalColor.a - 0.00001f);
     
     float3 toEye = normalize(cameraPos - (float3) input.worldPosition);
     
-    if (isLit)
+    if (material.isLit)
     {
         finalColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
         input.normal = normalize(input.normal);
 
-        if (hasNormalMap)
+        if (material.hasNormalMap)
 		{
 			float3 normalMapSample = NormalTexture.Sample(SampleType, input.tex).rgb;
 			float3 uncompressedNormal = 2.0f * normalMapSample - 1.0f;
@@ -100,71 +52,27 @@ float4 main(PixelInputType input) : SV_TARGET
             input.normal = mul(uncompressedNormal, TBN);
 		}
 
+        float3 specularColor = SpecularTexture.Sample(SampleType, input.tex).rgb;
         for (int i = 0; i < pointLightCount; i++)
         {
-            float3 relative = pointLightInfos[i].lightPos - (float3) input.worldPosition;
-            float dist = length(relative);
-            if (dist <= pointLightInfos[i].range)
-            {
-                float3 normalizedRelative = relative / dist;
-                float att = 1.0f / (pointLightInfos[i].attConst + pointLightInfos[i].attLin * dist + pointLightInfos[i].attQuad * (dist * dist));
-                float cosAngle = max(0.0f, dot(normalizedRelative, input.normal));
-                float3 diffuse = pointLightInfos[i].diffuseColor * pointLightInfos[i].diffuseIntensity * cosAngle;
-                float3 reflected = reflect(-normalizedRelative, input.normal);
-                float specFactor = pow(max(dot(normalize(reflected), toEye), 0.0f), specPow);
-                float3 specular = SpecularTexture.Sample(SampleType, input.tex) * specFactor * specularIntensity;
-        
-                finalColor += float4(saturate(((diffuse + (float3) pointLightInfos[i].ambientColor) * (float3) materialColor + specular) * att), 0.0f);
-            }
+            finalColor += GetColorFromPointLight(pointLightInfos[i], toEye, input.normal, input.worldPosition, materialColor, specularColor, material);
         }
     
         if (directionLightPresent == 1)
         {
-            float3 direction = normalize(directionalLightInfo.direction);
-            float cosAngle = max(0.0f, dot(-direction, input.normal));
-            float3 diffuse = directionalLightInfo.diffuseColor * directionalLightInfo.diffuseIntensity * cosAngle;
-            float3 reflected = reflect(-direction, input.normal);
-            float specFactor = pow(max(dot(normalize(reflected), toEye), 0.0f), specPow);
-            float3 specular = SpecularTexture.Sample(SampleType, input.tex).r * specFactor * specularIntensity;
-            finalColor += float4(saturate((diffuse + (float3) directionalLightInfo.ambientColor) * (float3) materialColor + specular), 0.0f);
+            finalColor += GetColorFromDirectionalLight(directionalLightInfo, toEye, input.normal, materialColor, specularColor, material);
         }
     
         for (i = 0; i < spotLightCount; i++)
         {
-            float3 relative = spotLightInfos[i].lightPos - (float3) input.worldPosition;
-            float dist = length(relative);
-            if (dist <= spotLightInfos[i].range)
-            {
-                float3 normalizedRelative = relative / dist;
-                float cosAngle = max(0.0f, dot(normalizedRelative, input.normal));
-                float rangeAngle = max(dot(-normalizedRelative, spotLightInfos[i].direction), 0.0f);
-                if (rangeAngle > spotLightInfos[i].angleRange)
-                {
-                    float att = 1.0f / (spotLightInfos[i].attConst + spotLightInfos[i].attLin * dist + spotLightInfos[i].attQuad * (dist * dist));
-                    float3 diffuse = spotLightInfos[i].diffuseColor * spotLightInfos[i].diffuseIntensity * cosAngle;
-                    float3 reflected = reflect(-normalizedRelative, input.normal);
-                    float specFactor = pow(max(dot(normalize(reflected), toEye), 0.0f), specPow);
-                    float3 specular = SpecularTexture.Sample(SampleType, input.tex).rgb * specFactor * specularIntensity;
-            
-                    float spotFactor = pow(rangeAngle, spotLightInfos[i].spot);
-        
-                    finalColor += float4(saturate(((diffuse + (float3) spotLightInfos[i].ambientColor) * (float3) materialColor + specular) * att * spotFactor), 0.0f);
-                }
-            }
+            finalColor += GetColorFromSpotLight(spotLightInfos[i], toEye, input.normal, input.worldPosition, materialColor, specularColor, material);
         }
     }
     
-    if (affectedBySky)
+    if (material.affectedBySky)
     {
-        float3 incident = -toEye;
-        float3 reflectionVector = reflect(incident, input.normal);
-        float4 reflectionColor = SkyTexture.Sample(SampleType, reflectionVector);
-        finalColor.rgb = lerp(finalColor, reflectionColor, reflectivity);
-    
-        float3 refractionIncident = normalize(input.worldPosition.xyz - cameraPos);
-        float3 refractionReflect = refract(refractionIncident, normalize(input.normal), refractionConstant);
-        float4 refractionColor = SkyTexture.Sample(SampleType, refractionReflect);
-        finalColor.rgb = lerp(finalColor, refractionColor, refractivity);    
+        finalColor.rgb = GetReflectionFromSky(finalColor, toEye, input.normal, SkyTexture, SampleType, material);
+        finalColor.rgb = GetRefractionFromSky(finalColor, input.normal, input.worldPosition, cameraPos, SkyTexture, SampleType, material);
     }
     
 	finalColor.rgb = lerp(fogColor, finalColor, input.fogFactor);

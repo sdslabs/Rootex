@@ -16,5 +16,6 @@ class LightSystem : public System
 public:
 	static LightSystem* GetSingleton();
 
-	LightsInfo getLights();
+	LightsInfo getStaticLights();
+	LightsInfo getDynamicLights();
 };
