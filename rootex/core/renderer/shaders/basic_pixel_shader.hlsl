@@ -55,17 +55,26 @@ float4 main(PixelInputType input) : SV_TARGET
         float3 specularColor = SpecularTexture.Sample(SampleType, input.tex).rgb;
         for (int i = 0; i < pointLightCount; i++)
         {
-            finalColor += GetColorFromPointLight(pointLightInfos[i], toEye, input.normal, input.worldPosition, materialColor, specularColor, material);
+            finalColor += saturate(GetColorFromPointLight(pointLightInfos[i], toEye, input.normal, input.worldPosition, materialColor, specularColor, material));
         }
     
+        for (i = 0; i < MAX_STATIC_POINT_LIGHTS_AFFECTING_1_OBJECT; i++)
+        {
+            if (material.staticPointsLightsAffecting[i] == -1)
+            {
+                break;
+            }
+            finalColor += saturate(GetColorFromPointLight(staticPointLightInfos[material.staticPointsLightsAffecting[i]], toEye, input.normal, input.worldPosition, materialColor, specularColor, material));
+        }
+        
         if (directionLightPresent == 1)
         {
-            finalColor += GetColorFromDirectionalLight(directionalLightInfo, toEye, input.normal, materialColor, specularColor, material);
+            finalColor += saturate(GetColorFromDirectionalLight(directionalLightInfo, toEye, input.normal, materialColor, specularColor, material));
         }
     
         for (i = 0; i < spotLightCount; i++)
         {
-            finalColor += GetColorFromSpotLight(spotLightInfos[i], toEye, input.normal, input.worldPosition, materialColor, specularColor, material);
+            finalColor += saturate(GetColorFromSpotLight(spotLightInfos[i], toEye, input.normal, input.worldPosition, materialColor, specularColor, material));
         }
     }
     
@@ -75,7 +84,7 @@ float4 main(PixelInputType input) : SV_TARGET
         finalColor.rgb = GetRefractionFromSky(finalColor, input.normal, input.worldPosition, cameraPos, SkyTexture, SampleType, material);
     }
     
-	finalColor.rgb = lerp(fogColor, finalColor, input.fogFactor);
+    finalColor.rgb = (lerp(fogColor, finalColor, input.fogFactor)).rgb;
 
     return finalColor;
 }

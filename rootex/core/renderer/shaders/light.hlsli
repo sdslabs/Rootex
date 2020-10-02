@@ -39,6 +39,11 @@ struct SpotLightInfo
     float angleRange;
 };
 
+cbuffer StaticPointLights : register(PER_LEVEL_PS_HLSL)
+{
+    PointLightInfo staticPointLightInfos[MAX_STATIC_POINT_LIGHTS];
+}
+
 cbuffer Lights : register(PER_FRAME_PS_HLSL)
 {
     float3 cameraPos;
@@ -62,7 +67,7 @@ float4 GetColorFromPointLight(PointLightInfo pointLight, float3 toEye, float3 no
         float3 normalizedRelative = relative / dist;
         float att = 1.0f / (pointLight.attConst + pointLight.attLin * dist + pointLight.attQuad * (dist * dist));
         float cosAngle = max(0.0f, dot(normalizedRelative, normal));
-        float3 diffuse = pointLight.diffuseColor * pointLight.diffuseIntensity * cosAngle;
+        float3 diffuse = (pointLight.diffuseColor * pointLight.diffuseIntensity * cosAngle).rgb;
         float3 reflected = reflect(-normalizedRelative, normal);
         float specFactor = pow(max(dot(normalize(reflected), toEye), 0.0f), material.specPow);
         float3 specular = specularColor.r * specFactor * material.specularIntensity;
@@ -76,7 +81,7 @@ float4 GetColorFromDirectionalLight(DirectionalLightInfo directionalLight, float
 {
     float3 direction = normalize(directionalLight.direction);
     float cosAngle = max(0.0f, dot(-direction, normal));
-    float3 diffuse = directionalLight.diffuseColor * directionalLight.diffuseIntensity * cosAngle;
+    float3 diffuse = (directionalLight.diffuseColor * directionalLight.diffuseIntensity * cosAngle).rgb;
     float3 reflected = reflect(-direction, normal);
     float specFactor = pow(max(dot(normalize(reflected), toEye), 0.0f), material.specPow);
     float3 specular = specularColor.r * specFactor * material.specularIntensity;
@@ -97,7 +102,7 @@ float4 GetColorFromSpotLight(SpotLightInfo spotLight, float3 toEye, float3 norma
         if (rangeAngle > spotLight.angleRange)
         {
             float att = 1.0f / (spotLight.attConst + spotLight.attLin * dist + spotLight.attQuad * (dist * dist));
-            float3 diffuse = spotLight.diffuseColor * spotLight.diffuseIntensity * cosAngle;
+            float3 diffuse = (spotLight.diffuseColor * spotLight.diffuseIntensity * cosAngle).rgb;
             float3 reflected = reflect(-normalizedRelative, normal);
             float specFactor = pow(max(dot(normalize(reflected), toEye), 0.0f), material.specPow);
             float3 specular = specularColor.r * specFactor * material.specularIntensity;

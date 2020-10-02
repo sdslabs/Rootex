@@ -20,8 +20,11 @@ RenderSystem::RenderSystem()
     , m_VSProjectionConstantBuffer(nullptr)
     , m_VSPerFrameConstantBuffer(nullptr)
     , m_PSPerFrameConstantBuffer(nullptr)
+    , m_PSPerLevelConstantBuffer(nullptr)
     , m_IsEditorRenderPassEnabled(false)
 {
+	BIND_EVENT_MEMBER_FUNCTION("OpenedLevel", onOpenedLevel);
+
 	m_Camera = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<CameraComponent>().get();
 	m_TransformationStack.push_back(Matrix::Identity);
 	setProjectionConstantBuffers();
@@ -42,6 +45,24 @@ RenderSystem::RenderSystem()
 	RenderingDevice::GetSingleton()->createRTVAndSRV(m_BloomHorizontalBlurRTV, m_BloomHorizontalBlurSRV);
 	RenderingDevice::GetSingleton()->createRTVAndSRV(m_BloomVerticalBlurRTV, m_BloomVerticalBlurSRV);
 	RenderingDevice::GetSingleton()->createRTVAndSRV(m_BloomRTV, m_BloomSRV);
+}
+
+void RenderSystem::recoverLostDevice()
+{
+	ERR("Fatal error: D3D Device lost");
+}
+
+void RenderSystem::setConfig(const JSON::json& configData, bool openInEditor)
+{
+	if (configData.find("camera") != configData.end())
+	{
+		Ref<Entity> cameraEntity = EntityFactory::GetSingleton()->findEntity(configData["camera"]);
+		if (cameraEntity)
+		{
+			setCamera(cameraEntity->getComponent<CameraComponent>().get());
+			return;
+		}
+	}
 }
 
 void RenderSystem::calculateTransforms(HierarchyComponent* hierarchyComponent)
@@ -69,24 +90,6 @@ void RenderSystem::renderPassRender(float deltaMilliseconds, RenderPass renderPa
 				mc->render();
 			}
 			mc->postRender();
-		}
-	}
-}
-
-void RenderSystem::recoverLostDevice()
-{
-	ERR("Fatal error: D3D Device lost");
-}
-
-void RenderSystem::setConfig(const JSON::json& configData, bool openInEditor)
-{
-	if (configData.find("camera") != configData.end())
-	{
-		Ref<Entity> cameraEntity = EntityFactory::GetSingleton()->findEntity(configData["camera"]);
-		if (cameraEntity)
-		{
-			setCamera(cameraEntity->getComponent<CameraComponent>().get());
-			return;
 		}
 	}
 }
@@ -366,6 +369,18 @@ void RenderSystem::perFramePSCBBinds(const Color& fogColor)
 	Material::SetPSConstantBuffer(perFrame, m_PSPerFrameConstantBuffer, PER_FRAME_PS_CPP);
 }
 
+void RenderSystem::perLevelPSCBBinds()
+{
+	PerLevelPSCB perLevel;
+	perLevel.staticLights = LightSystem::GetSingleton()->getStaticPointLights();
+	Material::SetPSConstantBuffer(perLevel, m_PSPerLevelConstantBuffer, PER_LEVEL_PS_CPP);
+}
+
+void RenderSystem::updatePerLevelBinds()
+{
+	perLevelPSCBBinds();
+}
+
 void RenderSystem::enableLineRenderMode()
 {
 	RenderingDevice::GetSingleton()->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
@@ -395,6 +410,12 @@ const Matrix& RenderSystem::getCurrentMatrix() const
 	return m_TransformationStack.back();
 }
 
+Variant RenderSystem::onOpenedLevel(const Event* event)
+{
+	updatePerLevelBinds();
+	return true;
+}
+
 #ifdef ROOTEX_EDITOR
 #include "imgui.h"
 void RenderSystem::draw()
@@ -419,5 +440,10 @@ void RenderSystem::draw()
 	}
 	ImGui::NextColumn();
 	ImGui::Columns(1);
+
+	if (ImGui::Button("Update Static Lights")) 
+	{
+		updatePerLevelBinds();
+	}
 }
 #endif

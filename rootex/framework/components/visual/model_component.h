@@ -19,11 +19,13 @@ protected:
 	int m_RenderPass;
 
 	HashMap<Ref<Material>, Ref<Material>> m_MaterialOverrides;
+	HashMap<int, EntityID> m_AffectingStaticLightEntityIDs;
+	Vector<int> m_AffectingStaticLights;
 
 	HierarchyComponent* m_HierarchyComponent;
 	TransformComponent* m_TransformComponent;
 
-	ModelComponent(unsigned int renderPass, ModelResourceFile* resFile, const HashMap<String, String>& materialOverrides, bool isVisible);
+	ModelComponent(unsigned int renderPass, ModelResourceFile* resFile, const HashMap<String, String>& materialOverrides, bool isVisible, const HashMap<int, EntityID>& affectingStaticLightIDs);
 	ModelComponent(ModelComponent&) = delete;
 	virtual ~ModelComponent() = default;
 
@@ -36,12 +38,16 @@ public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::ModelComponent;
 
 	virtual bool setup() override;
+	virtual bool setupEntities() override;
 
 	virtual bool preRender(float deltaMilliseconds);
 	virtual bool isVisible() const;
 	virtual void render();
 	virtual void postRender();
 
+	void addAffectingStaticLight(int slot, EntityID ID);
+	void removeAffectingStaticLight(int slot);
+	
 	void setVisualModel(ModelResourceFile* newModel, const HashMap<String, String>& materialOverrides);
 	void setIsVisible(bool enabled);
 	void setMaterialOverride(Ref<Material> oldMaterial, Ref<Material> newMaterial);

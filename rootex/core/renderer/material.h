@@ -63,7 +63,7 @@ void Material::SetPSConstantBuffer(const T& constantBuffer, Microsoft::WRL::ComP
 	{
 		D3D11_MAPPED_SUBRESOURCE subresource;
 		RenderingDevice::GetSingleton()->mapBuffer(bufferPointer.Get(), subresource);
-		memcpy(subresource.pData, &constantBuffer, sizeof(constantBuffer));
+		memcpy(subresource.pData, &constantBuffer, sizeof(T));
 		RenderingDevice::GetSingleton()->unmapBuffer(bufferPointer.Get());
 
 		RenderingDevice::GetSingleton()->setPSCB(bufferPointer.Get(), slot);

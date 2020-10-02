@@ -25,6 +25,7 @@
 #include "components/visual/grid_model_component.h"
 #include "components/visual/model_component.h"
 #include "components/visual/point_light_component.h"
+#include "components/visual/static_point_light_component.h"
 #include "components/visual/sky_component.h"
 #include "components/visual/spot_light_component.h"
 #include "components/visual/text_ui_component.h"
@@ -78,6 +79,7 @@ EntityFactory::EntityFactory()
 	REGISTER_COMPONENT(TransformComponent);
 	REGISTER_COMPONENT(TransformAnimationComponent);
 	REGISTER_COMPONENT(PointLightComponent);
+	REGISTER_COMPONENT(StaticPointLightComponent);
 	REGISTER_COMPONENT(DirectionalLightComponent);
 	REGISTER_COMPONENT(SpotLightComponent);
 	REGISTER_COMPONENT(SphereColliderComponent);

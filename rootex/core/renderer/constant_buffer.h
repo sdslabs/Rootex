@@ -50,6 +50,12 @@ struct SpotLightInfo
 	float pad[3];
 };
 
+struct StaticLightID
+{
+	int id;
+	Vector3 pad;
+};
+
 /// Lighting properties of a material
 struct PSDiffuseConstantBufferMaterial
 {
@@ -64,6 +70,12 @@ struct PSDiffuseConstantBufferMaterial
 	float refractivity = 0.0f;
 	int affectedBySky = 0;
 	int hasNormalMap = 0;
+	StaticLightID staticPointsLightsAffecting[MAX_STATIC_POINT_LIGHTS_AFFECTING_1_OBJECT];
+};
+
+struct StaticPointLightsInfo
+{
+	PointLightInfo pointLightInfos[MAX_STATIC_POINT_LIGHTS];
 };
 
 struct LightsInfo
@@ -79,11 +91,26 @@ struct LightsInfo
 	SpotLightInfo spotLightInfos[MAX_DYNAMIC_SPOT_LIGHTS];
 };
 
-/// Encapsulates all the types of light and other data offered, to bind them in the Pixel Shader
+/// Constant buffer uploaded once per frame in the PS
 struct PerFramePSCB
 {
 	LightsInfo lights;
 	Color fogColor;
+};
+
+/// Constant buffer uploaded once per frame in the VS
+struct PerFrameVSCB
+{
+	Matrix view;
+	float fogStart;
+	float fogEnd;
+	float pad[2];
+};
+
+/// Constant buffer uploaded once per frame in the PS
+struct PerLevelPSCB
+{
+	StaticPointLightsInfo staticLights;
 };
 
 /// Pixel Shader constant buffer for material not affected by lighting and single color
@@ -114,12 +141,4 @@ struct VSDiffuseConstantBuffer
 		Model = model.Transpose();
 		ModelInverseTranspose = model.Invert();
 	}
-};
-
-struct PerFrameVSCB
-{
-	Matrix view;
-	float fogStart;
-	float fogEnd;
-	float pad[2];
 };
