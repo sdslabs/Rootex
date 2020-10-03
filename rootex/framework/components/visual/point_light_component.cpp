@@ -75,6 +75,6 @@ void PointLightComponent::draw()
 	ImGui::DragFloat("Constant Attenuation##Point", &m_PointLight.attConst, 0.01f);
 	ImGui::DragFloat("Linear Attenuation##Point", &m_PointLight.attLin, 0.01f);
 	ImGui::DragFloat("Quadratic Attenuation##Point", &m_PointLight.attQuad, 0.01f);
-	ImGui::DragFloat("Range##Point", &m_PointLight.range, 1.0f);
+	ImGui::DragFloat("Range##Point", &m_PointLight.range, 0.1f);
 }
 #endif // ROOTEX_EDITOR

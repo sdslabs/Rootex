@@ -24,7 +24,7 @@ RenderSystem::RenderSystem()
     , m_IsEditorRenderPassEnabled(false)
 {
 	BIND_EVENT_MEMBER_FUNCTION("OpenedLevel", onOpenedLevel);
-
+	
 	m_Camera = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<CameraComponent>().get();
 	m_TransformationStack.push_back(Matrix::Identity);
 	setProjectionConstantBuffers();
@@ -393,9 +393,9 @@ void RenderSystem::resetRenderMode()
 
 void RenderSystem::setCamera(CameraComponent* camera)
 {
-	m_Camera = camera;
-	if (m_Camera)
+	if (camera)
 	{
+		m_Camera = camera;
 		setProjectionConstantBuffers();
 	}
 }

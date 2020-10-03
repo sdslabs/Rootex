@@ -4,8 +4,6 @@
 
 struct DirectionalLight
 {
-	/// Direction of light
-	Vector3 direction;
 	/// Diffuse intensity of light
 	float diffuseIntensity;
 	/// Diffuse color of light

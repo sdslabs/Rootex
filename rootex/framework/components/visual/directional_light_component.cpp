@@ -3,8 +3,6 @@
 Component* DirectionalLightComponent::Create(const JSON::json& componentData)
 {
 	DirectionalLightComponent* directionalLightComponent = new DirectionalLightComponent(
-	    Vector3((float)componentData["direction"]["x"],
-	    (float)componentData["direction"]["y"], (float)componentData["direction"]["z"]),
 	    (float)componentData["diffuseIntensity"],
 	    Color((float)componentData["diffuseColor"]["r"], (float)componentData["diffuseColor"]["g"],
 	        (float)componentData["diffuseColor"]["b"], (float)componentData["diffuseColor"]["a"]),
@@ -17,7 +15,6 @@ Component* DirectionalLightComponent::Create(const JSON::json& componentData)
 Component* DirectionalLightComponent::CreateDefault()
 {
 	DirectionalLightComponent* directionalLightComponent = new DirectionalLightComponent(
-	    Vector3(0.5f, -0.5f, 0.5f),
 	    0.8f,
 	    Color(1.0f, 1.0f, 0.5f, 1.0f),
 	    Color(0.8f, 0.8f, 0.5f, 1.0f));
@@ -25,22 +22,17 @@ Component* DirectionalLightComponent::CreateDefault()
 	return directionalLightComponent;
 }
 
-DirectionalLightComponent::DirectionalLightComponent(const Vector3& direction, const float diffuseIntensity,
+DirectionalLightComponent::DirectionalLightComponent(const float diffuseIntensity,
     const Color& diffuseColor, const Color& ambientColor)
 {
 	m_DirectionalLight.ambientColor = ambientColor;
 	m_DirectionalLight.diffuseColor = diffuseColor;
 	m_DirectionalLight.diffuseIntensity = diffuseIntensity;
-	m_DirectionalLight.direction = direction;
 }
 
 JSON::json DirectionalLightComponent::getJSON() const
 {
 	JSON::json j;
-
-	j["direction"]["x"] = m_DirectionalLight.direction.x;
-	j["direction"]["y"] = m_DirectionalLight.direction.y;
-	j["direction"]["z"] = m_DirectionalLight.direction.z;
 
 	j["diffuseIntensity"] = m_DirectionalLight.diffuseIntensity;
 
@@ -64,6 +56,5 @@ void DirectionalLightComponent::draw()
 	ImGui::DragFloat("Diffuse Intensity##Directional", &m_DirectionalLight.diffuseIntensity, 0.1f);
 	ImGui::ColorEdit4("Diffuse Color##Directional", &m_DirectionalLight.diffuseColor.x);
 	ImGui::ColorEdit4("Ambient Color##Directional", &m_DirectionalLight.ambientColor.x);
-	ImGui::DragFloat3("Direction##Directional", &m_DirectionalLight.direction.x, 0.01f);
 }
 #endif // ROOTEX_EDITOR

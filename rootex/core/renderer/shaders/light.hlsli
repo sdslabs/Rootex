@@ -58,23 +58,20 @@ cbuffer Lights : register(PER_FRAME_PS_HLSL)
 
 float4 GetColorFromPointLight(PointLightInfo pointLight, float3 toEye, float3 normal, float4 worldPosition, float4 materialColor, float3 specularColor, BasicMaterial material)
 {
-    float3 relative = pointLight.lightPos - (float3) worldPosition;
-    float dist = length(relative);
-    
+    float dist = distance(pointLight.lightPos, worldPosition.xyz);
+
     float4 totalColor = { 0.0f, 0.0f, 0.0f, 0.0f };
-    if (dist <= pointLight.range)
-    {
-        float3 normalizedRelative = relative / dist;
-        float att = 1.0f / (pointLight.attConst + pointLight.attLin * dist + pointLight.attQuad * (dist * dist));
-        float cosAngle = max(0.0f, dot(normalizedRelative, normal));
-        float3 diffuse = (pointLight.diffuseColor * pointLight.diffuseIntensity * cosAngle).rgb;
-        float3 reflected = reflect(-normalizedRelative, normal);
-        float specFactor = pow(max(dot(normalize(reflected), toEye), 0.0f), material.specPow);
-        float3 specular = specularColor.r * specFactor * material.specularIntensity;
+    float3 relative = pointLight.lightPos - worldPosition.xyz;
+    float3 normalizedRelative = relative / dist;
+    float att = 1.0f / (pointLight.attConst + pointLight.attLin * dist + pointLight.attQuad * (dist * dist));
+    float cosAngle = max(0.0f, dot(normalizedRelative, normal));
+    float3 diffuse = (pointLight.diffuseColor * pointLight.diffuseIntensity * cosAngle).rgb;
+    float3 reflected = reflect(-normalizedRelative, normal);
+    float specFactor = pow(max(dot(normalize(reflected), toEye), 0.0f), material.specPow);
+    float3 specular = specularColor * specFactor * material.specularIntensity;
         
-        totalColor = float4(((diffuse + (float3) pointLight.ambientColor) * (float3) materialColor + specular) * att, 0.0f);
-    }
-    return totalColor;
+    totalColor = float4(((diffuse + (float3) pointLight.ambientColor) * (float3) materialColor + specular) * att, 0.0f);
+    return lerp(float4(0.0f, 0.0f, 0.0f, 0.0f), totalColor * material.isLit, dist < pointLight.range);
 }
 
 float4 GetColorFromDirectionalLight(DirectionalLightInfo directionalLight, float3 toEye, float3 normal, float4 materialColor, float3 specularColor, BasicMaterial material)
@@ -84,34 +81,30 @@ float4 GetColorFromDirectionalLight(DirectionalLightInfo directionalLight, float
     float3 diffuse = (directionalLight.diffuseColor * directionalLight.diffuseIntensity * cosAngle).rgb;
     float3 reflected = reflect(-direction, normal);
     float specFactor = pow(max(dot(normalize(reflected), toEye), 0.0f), material.specPow);
-    float3 specular = specularColor.r * specFactor * material.specularIntensity;
+    float3 specular = specularColor * specFactor * material.specularIntensity;
     float4 totalColor = float4((diffuse + (float3) directionalLightInfo.ambientColor) * (float3) materialColor + specular, 0.0f);
-    return totalColor;
+    return totalColor * material.isLit;
 }
 
 float4 GetColorFromSpotLight(SpotLightInfo spotLight, float3 toEye, float3 normal, float4 worldPosition, float4 materialColor, float3 specularColor, BasicMaterial material)
 {
-    float3 relative = spotLight.lightPos - (float3) worldPosition;
-    float dist = length(relative);
+    float dist = distance(spotLight.lightPos, worldPosition.xyz);
+    float isInRange = ceil(saturate(dist / spotLight.range));
+    
     float4 totalColor = { 0.0f, 0.0f, 0.0f, 0.0f };
-    if (dist <= spotLight.range)
-    {
-        float3 normalizedRelative = relative / dist;
-        float cosAngle = max(0.0f, dot(normalizedRelative, normal));
-        float rangeAngle = max(dot(-normalizedRelative, spotLight.direction), 0.0f);
-        if (rangeAngle > spotLight.angleRange)
-        {
-            float att = 1.0f / (spotLight.attConst + spotLight.attLin * dist + spotLight.attQuad * (dist * dist));
-            float3 diffuse = (spotLight.diffuseColor * spotLight.diffuseIntensity * cosAngle).rgb;
-            float3 reflected = reflect(-normalizedRelative, normal);
-            float specFactor = pow(max(dot(normalize(reflected), toEye), 0.0f), material.specPow);
-            float3 specular = specularColor.r * specFactor * material.specularIntensity;
-            float spotFactor = pow(rangeAngle, spotLight.spot);
+    float3 relative = spotLight.lightPos - worldPosition.xyz;
+    float3 normalizedRelative = relative / dist;
+    float cosAngle = max(0.0f, dot(normalizedRelative, normal));
+    float rangeAngle = max(dot(-normalizedRelative, spotLight.direction), 0.0f);
+    float att = 1.0f / (spotLight.attConst + spotLight.attLin * dist + spotLight.attQuad * (dist * dist));
+    float3 diffuse = (spotLight.diffuseColor * spotLight.diffuseIntensity * cosAngle).rgb;
+    float3 reflected = reflect(-normalizedRelative, normal);
+    float specFactor = pow(max(dot(normalize(reflected), toEye), 0.0f), material.specPow);
+    float3 specular = specularColor * specFactor * material.specularIntensity;
+    float spotFactor = pow(rangeAngle, spotLight.spot);
         
-            totalColor = float4(((diffuse + (float3) spotLight.ambientColor) * (float3) materialColor + specular) * att * spotFactor, 0.0f);
-        }
-    }
-    return totalColor;
+    totalColor = float4(((diffuse + (float3) spotLight.ambientColor) * (float3) materialColor + specular) * att * spotFactor, 0.0f);
+    return lerp(materialColor, totalColor * material.isLit, isInRange);
 }
 
 #endif

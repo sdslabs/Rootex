@@ -26,8 +26,6 @@ class BasicMaterial : public Material
 	float m_Refractivity;
 	bool m_IsAffectedBySky;
 
-	int m_AffectingStaticLights[MAX_STATIC_POINT_LIGHTS_AFFECTING_1_OBJECT];
-
 	void setPSConstantBuffer(const PSDiffuseConstantBufferMaterial& constantBuffer);
 	void setVSConstantBuffer(const VSDiffuseConstantBuffer& constantBuffer);
 
@@ -51,8 +49,6 @@ public:
 	BasicMaterial(bool isAlpha, const String& imagePath, const String& normalImagePath, const String& specularImagePath, bool isNormal, Color color, bool isLit, float specularIntensity, float specularPower, float reflectivity, float refractionConstant, float refractivity, bool affectedBySky);
 	~BasicMaterial() = default;
 
-	/// Incoming array should be MAX_STATIC_POINT_LIGHTS_AFFECTING_1_OBJECT long
-	void setAffectingStaticLights(int lights[]);
 	void setColor(const Color& color) { m_Color = color; };
 	void setTexture(ImageResourceFile* image);
 	void setNormal(ImageResourceFile* image);

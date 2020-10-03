@@ -474,7 +474,7 @@ Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::createTexture(
 	Microsoft::WRL::ComPtr<ID3D11Resource> textureResource;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> textureView;
 
-	if (FAILED(DirectX::CreateWICTextureFromMemory(m_Device.Get(), (const uint8_t*)imageRes->getData()->getRawData()->data(), (size_t)imageRes->getData()->getRawDataByteSize(), textureResource.GetAddressOf(), textureView.GetAddressOf())))
+	if (FAILED(DirectX::CreateWICTextureFromMemoryEx(m_Device.Get(), (const uint8_t*)imageRes->getData()->getRawData()->data(), (size_t)imageRes->getData()->getRawDataByteSize(), 0, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, 0, DirectX::WIC_LOADER_IGNORE_SRGB | DirectX::WIC_LOADER_FORCE_RGBA32, textureResource.GetAddressOf(), textureView.GetAddressOf())))
 	{
 		ERR("Could not create texture: " + imageRes->getPath().generic_string());
 	}
