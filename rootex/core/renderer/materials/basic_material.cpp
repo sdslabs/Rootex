@@ -23,11 +23,6 @@ BasicMaterial::BasicMaterial(bool isAlpha, const String& imagePath, const String
     , m_IsAffectedBySky(affectedBySky)
     , m_IsNormal(isNormal)
 {
-	for (int i = 0; i < MAX_STATIC_POINT_LIGHTS_AFFECTING_1_OBJECT; i++) 
-	{
-		m_AffectingStaticLights[i] = -1;
-	}
-
 	m_DiffuseImageFile = ResourceLoader::CreateImageResourceFile(imagePath);
 	setTexture(m_DiffuseImageFile);
 	if (isNormal)
@@ -152,11 +147,6 @@ void BasicMaterial::bind()
 	objectPSCB.refractivity = m_Refractivity;
 	objectPSCB.specularIntensity = m_SpecularIntensity;
 	objectPSCB.specularPower = m_SpecularPower;
-	
-	for (int i = 0; i < MAX_STATIC_POINT_LIGHTS_AFFECTING_1_OBJECT; i++)
-	{
-		objectPSCB.staticPointsLightsAffecting[i].id = m_AffectingStaticLights[i];
-	}
 
 	setPSConstantBuffer(objectPSCB);
 }
@@ -190,14 +180,6 @@ JSON::json BasicMaterial::getJSON() const
 	j["affectedBySky"] = m_IsAffectedBySky;
 
 	return j;
-}
-
-void BasicMaterial::setAffectingStaticLights(int lights[])
-{
-	for (int i = 0; i < MAX_STATIC_POINT_LIGHTS_AFFECTING_1_OBJECT; i++)
-	{
-		m_AffectingStaticLights[i] = lights[i];
-	}
 }
 
 void BasicMaterial::setTexture(ImageResourceFile* image)

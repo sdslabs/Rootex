@@ -22,11 +22,6 @@ LightSystem* LightSystem::GetSingleton()
 StaticPointLightsInfo LightSystem::getStaticPointLights()
 {
 	StaticPointLightsInfo staticLights;
-	for (int i = 0; i < MAX_STATIC_POINT_LIGHTS; i++)
-	{
-		staticLights.pointLightInfos[i] = PointLightInfo();
-	}
-
 	Vector<Component*>& staticPointLightComponents = s_Components[StaticPointLightComponent::s_ID];
 
 	int i = 0;
@@ -52,7 +47,7 @@ StaticPointLightsInfo LightSystem::getStaticPointLights()
 LightsInfo LightSystem::getDynamicLights()
 {
 	LightsInfo lights;
-
+	
 	Vector3 cameraPos = RenderSystem::GetSingleton()->getCamera()->getAbsolutePosition();
 	lights.cameraPos = cameraPos;
 
@@ -95,9 +90,10 @@ LightsInfo LightSystem::getDynamicLights()
 	{
 		DirectionalLightComponent* light = (DirectionalLightComponent*)directionalLightComponents[0];
 		const DirectionalLight& directionalLight = light->getDirectionalLight();
+		Matrix transform = light->getOwner()->getComponent<TransformComponent>()->getAbsoluteTransform();
 
 		lights.directionalLightInfo = {
-			directionalLight.direction, 
+			transform.Forward(), 
 			directionalLight.diffuseIntensity, 
 			directionalLight.diffuseColor,
 			directionalLight.ambientColor

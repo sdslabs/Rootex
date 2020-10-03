@@ -64,7 +64,7 @@ public:
 	void addComponent(Ref<Entity> entity, Ref<Component> component);
 	/// Delete all non-Root entities.
 	void destroyEntities();
-	void deleteEntity(Ref<Entity> entity);
+	void deleteEntity(Ref<Entity> entity, bool silentDelete = false);
 	bool saveEntityAsClass(Ref<Entity> entity);
 	bool copyEntity(Ref<Entity> entity);
 	Ref<Entity> createEntitiesRecursively(Ref<Entity> entity);

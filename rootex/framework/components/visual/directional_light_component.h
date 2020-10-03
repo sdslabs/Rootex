@@ -11,7 +11,7 @@ class DirectionalLightComponent : public Component
 	static Component* Create(const JSON::json& componentData);
 	static Component* CreateDefault();
 
-	DirectionalLightComponent(const Vector3& direction, const float diffuseIntensity,
+	DirectionalLightComponent(const float diffuseIntensity,
 	    const Color& diffuseColor, const Color& ambientColor);
 	DirectionalLightComponent(DirectionalLightComponent&) = delete;
 	~DirectionalLightComponent() = default;

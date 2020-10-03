@@ -8,13 +8,11 @@
     },
     "imageFile": "rootex/assets/white.png",
     "isAlpha": true,
-    "isLit": true,
+    "isLit": false,
     "isNormal": false,
-    "reflectivity": 0.0,
+    "reflectivity": 0.6600000262260437,
     "refractionConstant": 0.0,
     "refractivity": 1.0,
     "specularImageFile": "rootex/assets/white.png",
-    "specularIntensity": 2.0,
-    "specularPower": 30.0,
     "type": "BasicMaterial"
 }

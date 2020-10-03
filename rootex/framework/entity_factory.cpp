@@ -232,7 +232,10 @@ void EntityFactory::setupLiveEntities()
 {
 	for (auto& entity : m_Entities)
 	{
-		entity.second->setupEntities();
+		if (!entity.second->setupEntities())
+		{
+			ERR("Could not setup: " + entity.second->getFullName());
+		}
 	}
 }
 
@@ -314,7 +317,7 @@ void EntityFactory::destroyEntities()
 
 	for (auto&& entity : markedForRemoval)
 	{
-		deleteEntity(entity);
+		deleteEntity(entity, true);
 	}
 
 	Ref<Entity> root = m_Entities[ROOT_ENTITY_ID];
@@ -322,11 +325,16 @@ void EntityFactory::destroyEntities()
 	m_Entities[ROOT_ENTITY_ID] = root;
 }
 
-void EntityFactory::deleteEntity(Ref<Entity> entity)
+void EntityFactory::deleteEntity(Ref<Entity> entity, bool silentDelete)
 {
 	entity->destroy();
 	m_Entities.erase(entity->getID());
 	entity.reset();
+
+	if (!silentDelete)
+	{
+		setupLiveEntities();
+	}
 }
 
 bool EntityFactory::saveEntityAsClass(Ref<Entity> entity)

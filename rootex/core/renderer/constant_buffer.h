@@ -6,9 +6,9 @@
 /// Used to bind a point light to the Pixel shader
 struct PointLightInfo
 {
-	Color ambientColor = { 0.05f, 0.05f, 0.05f, 1.0f };
-	Color diffuseColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-	float diffuseIntensity = 2.0f;
+	Color ambientColor = { 0.0f, 0.0f, 0.0f, 0.0f };
+	Color diffuseColor = { 0.0f, 0.0f, 0.0f, 0.0f };
+	float diffuseIntensity = 0.0f;
 	/// attenuation = 1/(attConst + attLin * r + attQuad * r * r)
 	float attConst = 1.0f;
 	/// attenuation = 1/(attConst + attLin * r + attQuad * r * r)
@@ -18,14 +18,14 @@ struct PointLightInfo
 	/// Is filled with the TransformComponent while rendering
 	Vector3 lightPos = { 0.0f, 0.0f, 0.0f };
 	/// Lighting effect clipped for distance > range
-	float range = 10;
+	float range = 0.0f;
 };
 
 /// Used to bind a directional light to the Pixel shader
 struct DirectionalLightInfo
 {
 	Vector3 direction = { 1.0f, 0.0f, 0.0f };
-	float diffuseIntensity = 2.0f;
+	float diffuseIntensity = 0.0f;
 	Color ambientColor = { 0.05f, 0.05f, 0.05f, 1.0f };
 	Color diffuseColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 };
@@ -35,12 +35,12 @@ struct SpotLightInfo
 {
 	Color ambientColor = { 0.05f, 0.05f, 0.05f, 1.0f };
 	Color diffuseColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-	float diffuseIntensity = 2.0f;
+	float diffuseIntensity = 0.0f;
 	float attConst = 1.0f;
 	float attLin = 0.045f;
 	float attQuad = 0.0075f;
 	Vector3 lightPos = { 0.0f, 0.0f, 0.0f };
-	float range = 10;
+	float range = 0.0f;
 	/// Direction of axis of light cone
 	Vector3 direction;
 	/// Increasing spot increases the angular attenuation wrt axis
@@ -54,6 +54,14 @@ struct StaticLightID
 {
 	int id;
 	Vector3 pad;
+};
+
+// Constant buffer uploaded once per model being rendered
+struct PerModelPSCB
+{
+	int staticPointsLightsAffectingCount = 0;
+	float pad[3];
+	StaticLightID staticPointsLightsAffecting[MAX_STATIC_POINT_LIGHTS_AFFECTING_1_OBJECT];
 };
 
 /// Lighting properties of a material
@@ -70,7 +78,6 @@ struct PSDiffuseConstantBufferMaterial
 	float refractivity = 0.0f;
 	int affectedBySky = 0;
 	int hasNormalMap = 0;
-	StaticLightID staticPointsLightsAffecting[MAX_STATIC_POINT_LIGHTS_AFFECTING_1_OBJECT];
 };
 
 struct StaticPointLightsInfo

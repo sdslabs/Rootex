@@ -14,7 +14,6 @@ struct BasicMaterial
     float refractivity;
     int affectedBySky;
     int hasNormalMap;
-	int staticPointsLightsAffecting[MAX_STATIC_POINT_LIGHTS_AFFECTING_1_OBJECT];
 };
 
 #endif

@@ -14,6 +14,7 @@
 #include "systems/render_system.h"
 #include "systems/script_system.h"
 #include "systems/hierarchy_system.h"
+#include "systems/transform_animation_system.h"
 
 Application* Application::s_Singleton = nullptr;
 
@@ -76,6 +77,7 @@ Application::Application(const String& settingsFile)
 	RenderUISystem::GetSingleton();
 	RenderSystem::GetSingleton();
 	ScriptSystem::GetSingleton();
+	TransformAnimationSystem::GetSingleton();
 
 	auto&& postInitialize = m_ApplicationSettings->find("postInitialize");
 	if (postInitialize != m_ApplicationSettings->end())

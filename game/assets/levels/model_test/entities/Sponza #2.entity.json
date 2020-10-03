@@ -1,13 +1,7 @@
 {
     "Components": {
         "HierarchyComponent": {
-            "children": [
-                13,
-                14,
-                15,
-                16,
-                17
-            ],
+            "children": [],
             "parent": 1
         },
         "ModelComponent": {
@@ -15,10 +9,10 @@
                 70,
                 35,
                 56,
-                87,
                 88,
-                89,
                 17,
+                87,
+                89,
                 90,
                 91,
                 92
@@ -52,6 +46,10 @@
             },
             "renderPass": 4,
             "resFile": "game/assets/sponza/sponza.obj"
+        },
+        "SkyComponent": {
+            "skyMaterial": "rootex/assets/materials/sky.rmat",
+            "skySphere": "rootex/assets/sky.obj"
         },
         "TransformComponent": {
             "boundingBox": {

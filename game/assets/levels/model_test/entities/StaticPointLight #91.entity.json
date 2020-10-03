@@ -5,6 +5,7 @@
             "parent": 1
         },
         "ModelComponent": {
+            "affectingStaticLights": [],
             "isVisible": true,
             "materialOverrides": {
                 "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
@@ -15,21 +16,21 @@
         "StaticPointLightComponent": {
             "ambientColor": {
                 "a": 1.0,
-                "b": 0.9999899864196777,
-                "g": 0.9999899864196777,
-                "r": 1.0
+                "b": 9.999899930335232e-07,
+                "g": 9.999899930335232e-07,
+                "r": 9.999999974752427e-07
             },
-            "attConst": 0.04500000178813934,
-            "attLin": 1.0,
-            "attQuad": 0.007499999832361937,
+            "attConst": 0.2849999964237213,
+            "attLin": 0.4699999988079071,
+            "attQuad": 10.0,
             "diffuseColor": {
                 "a": 1.0,
                 "b": 0.0,
                 "g": 0.7374517321586609,
                 "r": 0.039506278932094574
             },
-            "diffuseIntensity": 9.899999618530273,
-            "range": 300.0
+            "diffuseIntensity": 54.79999923706055,
+            "range": 5.0
         },
         "TransformComponent": {
             "boundingBox": {
@@ -45,9 +46,9 @@
                 }
             },
             "position": {
-                "x": -16.027299880981445,
-                "y": 2.6317965984344482,
-                "z": 1.2923188209533691
+                "x": -13.183902740478516,
+                "y": 2.565460205078125,
+                "z": 2.3835058212280273
             },
             "rotation": {
                 "w": 0.720558226108551,
