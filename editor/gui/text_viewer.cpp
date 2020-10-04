@@ -25,7 +25,7 @@ void TextViewer::draw(float deltaMilliseconds)
 	drawFileInfo();
 	if (m_TextResourceFile->isDirty())
 	{
-		ImGui::TextColored(EditorSystem::GetSingleton()->getColors().m_Warning, "File may be changed on disk");
+		ImGui::TextColored(EditorSystem::GetSingleton()->getColors().warning, "File may be changed on disk");
 		ImGui::SameLine();
 		if (ImGui::Button("Reload"))
 		{

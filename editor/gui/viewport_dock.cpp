@@ -15,8 +15,8 @@ ViewportDock::ViewportDock(const JSON::json& viewportJSON)
     : m_IsCameraMoving(false)
 {
 	m_ViewportDockSettings.m_AspectRatio = (float)viewportJSON["aspectRatio"]["x"] / (float)viewportJSON["aspectRatio"]["y"];
-	m_ViewportDockSettings.m_ImageTint = EditorSystem::GetSingleton()->getColors().m_White;
-	m_ViewportDockSettings.m_ImageBorderColor = EditorSystem::GetSingleton()->getColors().m_Accent;
+	m_ViewportDockSettings.m_ImageTint = EditorSystem::GetSingleton()->getColors().white;
+	m_ViewportDockSettings.m_ImageBorderColor = EditorSystem::GetSingleton()->getColors().accent;
 	TextResourceFile* cameraFile = ResourceLoader::CreateTextResourceFile("editor/assets/entities/camera.entity.json");
 	m_EditorCamera = EntityFactory::GetSingleton()->createEntity(cameraFile, true);
 	RenderSystem::GetSingleton()->setCamera(m_EditorCamera->getComponent<CameraComponent>().get());

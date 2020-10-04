@@ -21,11 +21,11 @@ void HierarchyDock::showHierarchySubTree(HierarchyComponent* hierarchy)
 
 			if (hierarchy->getOwner()->isEditorOnly())
 			{
-				ImGui::PushStyleColor(ImGuiCol_Text, EditorSystem::GetSingleton()->getColors().m_Warning);
+				ImGui::PushStyleColor(ImGuiCol_Text, EditorSystem::GetSingleton()->getColors().warning);
 			}
 			else
 			{
-				ImGui::PushStyleColor(ImGuiCol_Text, EditorSystem::GetSingleton()->getColors().m_Text);
+				ImGui::PushStyleColor(ImGuiCol_Text, EditorSystem::GetSingleton()->getColors().text);
 			}
 
 			if (!node->isEditorOnly() || m_IsShowEditorEntities)

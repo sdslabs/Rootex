@@ -17,9 +17,21 @@
 
 #include "imgui_stdlib.h"
 #include "ImGuizmo.h"
-#include "editor_system.h"
+#include "ImGuiFileDialog.h"
 
 #define DOCUMENTATION_LINK String("https://rootex.readthedocs.io/en/latest/api/rootex.html")
+
+Vector<String> Split(const String& s, char delim)
+{
+	Vector<String> elems;
+	std::stringstream ss(s);
+	std::string item;
+	while (std::getline(ss, item, delim))
+	{
+		elems.push_back(item);
+	}
+	return elems;
+}
 
 bool EditorSystem::initialize(const JSON::json& systemData)
 {
@@ -32,73 +44,73 @@ bool EditorSystem::initialize(const JSON::json& systemData)
 
 	const JSON::json& general = systemData["general"];
 
-	m_Colors.m_Accent = {
+	m_Colors.accent = {
 		(float)general["colors"]["accent"]["r"],
 		(float)general["colors"]["accent"]["g"],
 		(float)general["colors"]["accent"]["b"],
 		(float)general["colors"]["accent"]["a"],
 	};
-	m_Colors.m_MediumAccent = {
+	m_Colors.mediumAccent = {
 		(float)general["colors"]["mediumAccent"]["r"],
 		(float)general["colors"]["mediumAccent"]["g"],
 		(float)general["colors"]["mediumAccent"]["b"],
 		(float)general["colors"]["mediumAccent"]["a"],
 	};
-	m_Colors.m_HeavyAccent = {
+	m_Colors.heavyAccent = {
 		(float)general["colors"]["heavyAccent"]["r"],
 		(float)general["colors"]["heavyAccent"]["g"],
 		(float)general["colors"]["heavyAccent"]["b"],
 		(float)general["colors"]["heavyAccent"]["a"],
 	};
-	m_Colors.m_Background = {
+	m_Colors.background = {
 		(float)general["colors"]["background"]["r"],
 		(float)general["colors"]["background"]["g"],
 		(float)general["colors"]["background"]["b"],
 		(float)general["colors"]["background"]["a"],
 	};
-	m_Colors.m_ItemBackground = {
+	m_Colors.itemBackground = {
 		(float)general["colors"]["itemBackground"]["r"],
 		(float)general["colors"]["itemBackground"]["g"],
 		(float)general["colors"]["itemBackground"]["b"],
 		(float)general["colors"]["itemBackground"]["a"],
 	};
-	m_Colors.m_Inactive = {
+	m_Colors.inactive = {
 		(float)general["colors"]["inactive"]["r"],
 		(float)general["colors"]["inactive"]["g"],
 		(float)general["colors"]["inactive"]["b"],
 		(float)general["colors"]["inactive"]["a"],
 	};
-	m_Colors.m_Success = {
+	m_Colors.success = {
 		(float)general["colors"]["success"]["r"],
 		(float)general["colors"]["success"]["g"],
 		(float)general["colors"]["success"]["b"],
 		(float)general["colors"]["success"]["a"],
 	};
-	m_Colors.m_Failure = {
+	m_Colors.failure = {
 		(float)general["colors"]["failure"]["r"],
 		(float)general["colors"]["failure"]["g"],
 		(float)general["colors"]["failure"]["b"],
 		(float)general["colors"]["failure"]["a"],
 	};
-	m_Colors.m_FailAccent = {
+	m_Colors.failAccent = {
 		(float)general["colors"]["failAccent"]["r"],
 		(float)general["colors"]["failAccent"]["g"],
 		(float)general["colors"]["failAccent"]["b"],
 		(float)general["colors"]["failAccent"]["a"],
 	};
-	m_Colors.m_Warning = {
+	m_Colors.warning = {
 		(float)general["colors"]["warning"]["r"],
 		(float)general["colors"]["warning"]["g"],
 		(float)general["colors"]["warning"]["b"],
 		(float)general["colors"]["warning"]["a"],
 	};
-	m_Colors.m_Text = {
+	m_Colors.text = {
 		(float)general["colors"]["text"]["r"],
 		(float)general["colors"]["text"]["g"],
 		(float)general["colors"]["text"]["b"],
 		(float)general["colors"]["text"]["a"],
 	};
-	m_Colors.m_White = { 1.0f, 1.0f, 1.0f, 1.0f };
+	m_Colors.white = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 	m_FileSystem.reset(new FileSystemDock());
 	m_Hierarchy.reset(new HierarchyDock());
@@ -107,7 +119,6 @@ bool EditorSystem::initialize(const JSON::json& systemData)
 	m_Viewport.reset(new ViewportDock(systemData["viewport"]));
 	m_Inspector.reset(new InspectorDock());
 	m_FileViewer.reset(new FileViewer());
-	m_Classes.reset(new ClassesDock());
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -115,13 +126,47 @@ bool EditorSystem::initialize(const JSON::json& systemData)
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable | ImGuiConfigFlags_DpiEnableScaleFonts | ImGuiConfigFlags_DpiEnableScaleViewports;
 	io.ConfigDockingWithShift = true;
 	io.FontAllowUserScaling = true;
+	
 	m_EditorFont = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/Lato-Regular.ttf", 18.0f);
+	
+	static const ImWchar icons_ranges[] = { ICON_MIN_ROOTEX, ICON_MAX_ROOTEX, 0 };
+	ImFontConfig icons_config;
+	icons_config.MergeMode = true;
+	icons_config.PixelSnapH = true;
+	io.Fonts->AddFontFromMemoryCompressedBase85TTF(FONT_ICON_BUFFER_NAME_ROOTEX, 16.0f, &icons_config, icons_ranges);
+
 	m_EditorFontItalic = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/Lato-Italic.ttf", 18.0f);
 	m_EditorFontBold = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/Lato-Bold.ttf", 18.0f);
-
+	
 	ImGui_ImplWin32_Init(Application::GetSingleton()->getWindow()->getWindowHandle());
 	ImGui_ImplDX11_Init(RenderingDevice::GetSingleton()->getDevice(), RenderingDevice::GetSingleton()->getContext());
 	ImGui::StyleColorsDark();
+
+	for (auto& extension : Split(SupportedFiles.at(ResourceFile::Type::Model), ','))
+	{
+		igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(
+		    extension, { general["colors"]["files"]["model"]["r"], general["colors"]["files"]["model"]["g"], general["colors"]["files"]["model"]["b"], general["colors"]["files"]["model"]["a"] }, m_Icons.model);	
+	}
+	for (auto& extension : Split(SupportedFiles.at(ResourceFile::Type::Image), ','))
+	{
+		igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(
+		    extension, { general["colors"]["files"]["image"]["r"], general["colors"]["files"]["image"]["g"], general["colors"]["files"]["image"]["b"], general["colors"]["files"]["image"]["a"] }, m_Icons.image);
+	}
+	for (auto& extension : Split(SupportedFiles.at(ResourceFile::Type::Audio), ','))
+	{
+		igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(
+		    extension, { general["colors"]["files"]["audio"]["r"], general["colors"]["files"]["audio"]["g"], general["colors"]["files"]["audio"]["b"], general["colors"]["files"]["audio"]["a"] }, m_Icons.audio);
+	}
+	for (auto& extension : Split(SupportedFiles.at(ResourceFile::Type::Text), ','))
+	{
+		igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(
+		    extension, { general["colors"]["files"]["text"]["r"], general["colors"]["files"]["text"]["g"], general["colors"]["files"]["text"]["b"], general["colors"]["files"]["text"]["a"] }, m_Icons.text);
+	}
+	for (auto& extension : Split(SupportedFiles.at(ResourceFile::Type::Lua), ','))
+	{
+		igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(
+		    extension, { general["colors"]["files"]["lua"]["r"], general["colors"]["files"]["lua"]["g"], general["colors"]["files"]["lua"]["b"], general["colors"]["files"]["lua"]["a"] }, m_Icons.lua);
+	}
 
 	return true;
 }
@@ -133,11 +178,10 @@ void EditorSystem::update(float deltaMilliseconds)
 	ImGui::NewFrame();
 	ImGuizmo::BeginFrame();
 
-	ImGui::PushFont(m_EditorFont);
+	pushRegularFont();
 
 	drawDefaultUI(deltaMilliseconds);
 	m_FileSystem->draw(deltaMilliseconds);
-	m_Classes->draw(deltaMilliseconds);
 	m_Hierarchy->draw(deltaMilliseconds);
 	m_Toolbar->draw(deltaMilliseconds);
 	m_Viewport->draw(deltaMilliseconds);
@@ -148,7 +192,7 @@ void EditorSystem::update(float deltaMilliseconds)
 	ImGui::PopStyleColor(m_EditorStyleColorPushCount);
 	ImGui::PopStyleVar(m_EditorStyleVarPushCount);
 
-	ImGui::PopFont();
+	popFont();
 
 	if (m_CollisionMode)
 	{
@@ -465,8 +509,8 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 			ImGui::SetNextWindowSize({ ImGui::GetContentRegionMax().x / 2, ImGui::GetContentRegionMax().y / 2 });
 			if (ImGui::BeginPopupModal("Lua API Documentation", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
 			{
-				static String searchString;
-				ImGui::InputText("Search", &searchString, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AlwaysInsertMode | ImGuiInputTextFlags_CallbackHistory);
+				static String searchingString;
+				ImGui::InputText("Search", &searchingString, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AlwaysInsertMode | ImGuiInputTextFlags_CallbackHistory);
 				ImGui::SameLine();
 				if (ImGui::Button("Close"))
 				{
@@ -491,10 +535,10 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 							bool shouldMatch = false;
 							for (int i = 0; i < typeName.size(); i++)
 							{
-								shouldMatch |= typeName.compare(i, searchString.size(), searchString) == 0;
+								shouldMatch |= typeName.compare(i, searchingString.size(), searchingString) == 0;
 							}
 
-							if (searchString.empty() || shouldMatch)
+							if (searchingString.empty() || shouldMatch)
 							{
 								if (ImGui::MenuItem(typeName.c_str()))
 								{
@@ -606,7 +650,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 			}
 
 			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
-			for (auto&& library : Application::GetSingleton()->getLibrariesPaths())
+			/*for (auto&& library : Application::GetSingleton()->getLibrariesPaths())
 			{
 				if (ImGui::BeginPopup(library.string().c_str(), ImGuiWindowFlags_AlwaysAutoResize))
 				{
@@ -615,7 +659,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 					m_MenuAction = "";
 					ImGui::EndPopup();
 				}
-			}
+			}*/
 			ImGui::EndMenuBar();
 		}
 	}
@@ -661,44 +705,44 @@ void EditorSystem::pushEditorStyleColors()
 {
 	// Every line in this function body should push a style color
 	static const int starting = __LINE__;
-	ImGui::PushStyleColor(ImGuiCol_DockingPreview, m_Colors.m_Accent);
-	ImGui::PushStyleColor(ImGuiCol_DockingEmptyBg, m_Colors.m_Background);
-	ImGui::PushStyleColor(ImGuiCol_Separator, m_Colors.m_HeavyAccent);
-	ImGui::PushStyleColor(ImGuiCol_SeparatorActive, m_Colors.m_Accent);
-	ImGui::PushStyleColor(ImGuiCol_SeparatorHovered, m_Colors.m_MediumAccent);
-	ImGui::PushStyleColor(ImGuiCol_FrameBg, m_Colors.m_ItemBackground);
-	ImGui::PushStyleColor(ImGuiCol_FrameBgActive, m_Colors.m_MediumAccent);
-	ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, m_Colors.m_HeavyAccent);
-	ImGui::PushStyleColor(ImGuiCol_TitleBg, m_Colors.m_HeavyAccent);
-	ImGui::PushStyleColor(ImGuiCol_TitleBgActive, m_Colors.m_Accent);
-	ImGui::PushStyleColor(ImGuiCol_TitleBgCollapsed, m_Colors.m_HeavyAccent);
-	ImGui::PushStyleColor(ImGuiCol_MenuBarBg, m_Colors.m_HeavyAccent);
-	ImGui::PushStyleColor(ImGuiCol_Header, m_Colors.m_HeavyAccent);
-	ImGui::PushStyleColor(ImGuiCol_HeaderActive, m_Colors.m_Success);
-	ImGui::PushStyleColor(ImGuiCol_HeaderHovered, m_Colors.m_Accent);
-	ImGui::PushStyleColor(ImGuiCol_PopupBg, m_Colors.m_Background);
-	ImGui::PushStyleColor(ImGuiCol_Tab, m_Colors.m_HeavyAccent);
-	ImGui::PushStyleColor(ImGuiCol_TabActive, m_Colors.m_Accent);
-	ImGui::PushStyleColor(ImGuiCol_TabHovered, m_Colors.m_Accent);
-	ImGui::PushStyleColor(ImGuiCol_TabUnfocused, m_Colors.m_MediumAccent);
-	ImGui::PushStyleColor(ImGuiCol_TabUnfocusedActive, m_Colors.m_Accent);
-	ImGui::PushStyleColor(ImGuiCol_Border, m_Colors.m_MediumAccent);
-	ImGui::PushStyleColor(ImGuiCol_BorderShadow, m_Colors.m_HeavyAccent);
-	ImGui::PushStyleColor(ImGuiCol_Button, m_Colors.m_Success);
-	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, m_Colors.m_Accent);
-	ImGui::PushStyleColor(ImGuiCol_ButtonActive, m_Colors.m_Success);
-	ImGui::PushStyleColor(ImGuiCol_CheckMark, m_Colors.m_Accent);
-	ImGui::PushStyleColor(ImGuiCol_Text, m_Colors.m_Text);
-	ImGui::PushStyleColor(ImGuiCol_TextSelectedBg, m_Colors.m_Accent);
-	ImGui::PushStyleColor(ImGuiCol_TextDisabled, m_Colors.m_Inactive);
-	ImGui::PushStyleColor(ImGuiCol_ResizeGrip, m_Colors.m_HeavyAccent);
-	ImGui::PushStyleColor(ImGuiCol_ResizeGripActive, m_Colors.m_Accent);
-	ImGui::PushStyleColor(ImGuiCol_ResizeGripHovered, m_Colors.m_MediumAccent);
-	ImGui::PushStyleColor(ImGuiCol_ScrollbarGrab, m_Colors.m_HeavyAccent);
-	ImGui::PushStyleColor(ImGuiCol_ScrollbarGrabActive, m_Colors.m_Accent);
-	ImGui::PushStyleColor(ImGuiCol_ScrollbarGrabHovered, m_Colors.m_MediumAccent);
-	ImGui::PushStyleColor(ImGuiCol_SliderGrab, m_Colors.m_Inactive);
-	ImGui::PushStyleColor(ImGuiCol_SliderGrabActive, m_Colors.m_Accent);
+	ImGui::PushStyleColor(ImGuiCol_DockingPreview, m_Colors.accent);
+	ImGui::PushStyleColor(ImGuiCol_DockingEmptyBg, m_Colors.background);
+	ImGui::PushStyleColor(ImGuiCol_Separator, m_Colors.heavyAccent);
+	ImGui::PushStyleColor(ImGuiCol_SeparatorActive, m_Colors.accent);
+	ImGui::PushStyleColor(ImGuiCol_SeparatorHovered, m_Colors.mediumAccent);
+	ImGui::PushStyleColor(ImGuiCol_FrameBg, m_Colors.itemBackground);
+	ImGui::PushStyleColor(ImGuiCol_FrameBgActive, m_Colors.mediumAccent);
+	ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, m_Colors.heavyAccent);
+	ImGui::PushStyleColor(ImGuiCol_TitleBg, m_Colors.heavyAccent);
+	ImGui::PushStyleColor(ImGuiCol_TitleBgActive, m_Colors.accent);
+	ImGui::PushStyleColor(ImGuiCol_TitleBgCollapsed, m_Colors.heavyAccent);
+	ImGui::PushStyleColor(ImGuiCol_MenuBarBg, m_Colors.heavyAccent);
+	ImGui::PushStyleColor(ImGuiCol_Header, m_Colors.heavyAccent);
+	ImGui::PushStyleColor(ImGuiCol_HeaderActive, m_Colors.success);
+	ImGui::PushStyleColor(ImGuiCol_HeaderHovered, m_Colors.accent);
+	ImGui::PushStyleColor(ImGuiCol_PopupBg, m_Colors.background);
+	ImGui::PushStyleColor(ImGuiCol_Tab, m_Colors.heavyAccent);
+	ImGui::PushStyleColor(ImGuiCol_TabActive, m_Colors.accent);
+	ImGui::PushStyleColor(ImGuiCol_TabHovered, m_Colors.accent);
+	ImGui::PushStyleColor(ImGuiCol_TabUnfocused, m_Colors.mediumAccent);
+	ImGui::PushStyleColor(ImGuiCol_TabUnfocusedActive, m_Colors.accent);
+	ImGui::PushStyleColor(ImGuiCol_Border, m_Colors.mediumAccent);
+	ImGui::PushStyleColor(ImGuiCol_BorderShadow, m_Colors.heavyAccent);
+	ImGui::PushStyleColor(ImGuiCol_Button, m_Colors.success);
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, m_Colors.accent);
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, m_Colors.success);
+	ImGui::PushStyleColor(ImGuiCol_CheckMark, m_Colors.accent);
+	ImGui::PushStyleColor(ImGuiCol_Text, m_Colors.text);
+	ImGui::PushStyleColor(ImGuiCol_TextSelectedBg, m_Colors.accent);
+	ImGui::PushStyleColor(ImGuiCol_TextDisabled, m_Colors.inactive);
+	ImGui::PushStyleColor(ImGuiCol_ResizeGrip, m_Colors.heavyAccent);
+	ImGui::PushStyleColor(ImGuiCol_ResizeGripActive, m_Colors.accent);
+	ImGui::PushStyleColor(ImGuiCol_ResizeGripHovered, m_Colors.mediumAccent);
+	ImGui::PushStyleColor(ImGuiCol_ScrollbarGrab, m_Colors.heavyAccent);
+	ImGui::PushStyleColor(ImGuiCol_ScrollbarGrabActive, m_Colors.accent);
+	ImGui::PushStyleColor(ImGuiCol_ScrollbarGrabHovered, m_Colors.mediumAccent);
+	ImGui::PushStyleColor(ImGuiCol_SliderGrab, m_Colors.inactive);
+	ImGui::PushStyleColor(ImGuiCol_SliderGrabActive, m_Colors.accent);
 	static const int ending = m_EditorStyleColorPushCount = __LINE__ - starting - 1;
 }
 
@@ -752,9 +796,9 @@ void EditorSystem::showDocumentation(const String& name, const sol::table& table
 					}
 
 					pushItalicFont();
-					ImGui::TextColored(getColors().m_Success, "%s", tag.c_str());
+					ImGui::TextColored(getColors().success, "%s", tag.c_str());
 					ImGui::SameLine();
-					ImGui::TextColored(getColors().m_Warning, "%s", prefix.c_str());
+					ImGui::TextColored(getColors().warning, "%s", prefix.c_str());
 					popFont();
 
 					ImGui::SameLine();

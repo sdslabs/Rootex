@@ -11,11 +11,11 @@
 #include "gui/viewport_dock.h"
 #include "gui/inspector_dock.h"
 #include "gui/file_viewer.h"
-#include "gui/classes_dock.h"
 
 #include "vendor/ImGUI/imgui.h"
 #include "vendor/ImGUI/imgui_impl_dx11.h"
 #include "vendor/ImGUI/imgui_impl_win32.h"
+#include "ImGuiFileDialogConfig.h"
 
 class HierarchyGraph;
 
@@ -33,22 +33,32 @@ class EditorSystem : public System
 	ImFont* m_EditorFont;
 	ImFont* m_EditorFontItalic;
 	ImFont* m_EditorFontBold;
-
+	
 	struct Colors
 	{
-		ImVec4 m_Accent;
-		ImVec4 m_FailAccent;
-		ImVec4 m_MediumAccent;
-		ImVec4 m_HeavyAccent;
-		ImVec4 m_Background;
-		ImVec4 m_Inactive;
-		ImVec4 m_Success;
-		ImVec4 m_Failure;
-		ImVec4 m_Warning;
-		ImVec4 m_White;
-		ImVec4 m_ItemBackground;
-		ImVec4 m_Text;
+		ImVec4 accent;
+		ImVec4 failAccent;
+		ImVec4 mediumAccent;
+		ImVec4 heavyAccent;
+		ImVec4 background;
+		ImVec4 inactive;
+		ImVec4 success;
+		ImVec4 failure;
+		ImVec4 warning;
+		ImVec4 white;
+		ImVec4 itemBackground;
+		ImVec4 text;
 	} m_Colors;
+
+	struct Icons
+	{
+		const char* lua = ICON_ROOTEX_FILE_CODE_O;
+		const char* font = ICON_ROOTEX_FONT;
+		const char* text = ICON_ROOTEX_FILE_TEXT;
+		const char* audio = ICON_ROOTEX_FILE_AUDIO_O;
+		const char* model = ICON_ROOTEX_FORT_AWESOME;
+		const char* image = ICON_ROOTEX_FILE_IMAGE_O;
+	} m_Icons;
 
 	Ptr<FileSystemDock> m_FileSystem;
 	Ptr<HierarchyDock> m_Hierarchy;
@@ -57,7 +67,6 @@ class EditorSystem : public System
 	Ptr<ViewportDock> m_Viewport;
 	Ptr<InspectorDock> m_Inspector;
 	Ptr<FileViewer> m_FileViewer;
-	Ptr<ClassesDock> m_Classes;
 
 	EditorSystem();
 	EditorSystem(const EditorSystem&) = delete;

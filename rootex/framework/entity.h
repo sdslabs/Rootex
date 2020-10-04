@@ -19,6 +19,8 @@ protected:
 	HashMap<ComponentID, Ref<Component>> m_Components;
 	bool m_IsEditorOnly;
 	
+	String m_FullName;
+
 	Entity(EntityID id, const String& name, const HashMap<ComponentID, Ref<Component>>& components = {});
 
 	bool setupComponents();
@@ -45,7 +47,7 @@ public:
 	EntityID getID() const;
 	const String& getName() const;
 	/// Full name consists of entity name followed by the corresponding EntityID.
-	String getFullName() const;
+	const String& getFullName() const;
 	
 	template <class ComponentType = Component>
 	Ref<ComponentType> getComponent() const;

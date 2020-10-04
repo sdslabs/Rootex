@@ -255,51 +255,33 @@ JSON::json ModelComponent::getJSON() const
 #ifdef ROOTEX_EDITOR
 #include "imgui.h"
 #include "imgui_stdlib.h"
+#include "ImGuiFileDialog.h"
 void ModelComponent::draw()
 {
 	ImGui::Checkbox("Visible", &m_IsVisible);
 
-	ImGui::BeginGroup();
-
-	String inputPath = m_ModelResourceFile->getPath().generic_string();
-	ImGui::InputText("##Path", &inputPath);
-	ImGui::SameLine();
-	if (ImGui::Button("Create Visual Model"))
+	String filePath = m_ModelResourceFile->getPath().generic_string();
+	if (ImGui::InputTextWithHint("Model", "Model Path", &filePath, ImGuiInputTextFlags_EnterReturnsTrue))
 	{
-		if (!ResourceLoader::CreateModelResourceFile(inputPath))
+		if (ModelResourceFile* file = ResourceLoader::CreateModelResourceFile(filePath))
 		{
-			WARN("Could not create Visual Model");
-		}
-		else
-		{
-			inputPath = "";
+			setVisualModel(file, {});
 		}
 	}
-
 	ImGui::SameLine();
-
-	if (ImGui::Button("Model"))
+	if (ImGui::Button("Select##Model File"))
 	{
-		EventManager::GetSingleton()->call("OpenModel", "EditorOpenFile", m_ModelResourceFile->getPath().string());
+		igfd::ImGuiFileDialog::Instance()->OpenDialog("ChooseModelComponentModel", "Choose Model File", SupportedFiles.at(ResourceFile::Type::Model), "game/assets/");
 	}
-	ImGui::EndGroup();
 
-	if (ImGui::BeginDragDropTarget())
+	if (igfd::ImGuiFileDialog::Instance()->FileDialog("ChooseModelComponentModel"))
 	{
-		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Resource Drop"))
+		if (igfd::ImGuiFileDialog::Instance()->IsOk)
 		{
-			const char* payloadFileName = (const char*)payload->Data;
-			FilePath payloadPath(payloadFileName);
-			if (IsFileSupported(payloadPath.extension().string(), ResourceFile::Type::Model))
-			{
-				setVisualModel(ResourceLoader::CreateModelResourceFile(payloadPath.string()), {});
-			}
-			else
-			{
-				WARN("Unsupported file format for Model");
-			}
+			FilePath filePath = OS::GetRootRelativePath(igfd::ImGuiFileDialog::Instance()->GetFilePathName());
+			setVisualModel(ResourceLoader::CreateModelResourceFile(filePath.generic_string()), {});
 		}
-		ImGui::EndDragDropTarget();
+		igfd::ImGuiFileDialog::Instance()->CloseDialog("ChooseModelComponentModel");
 	}
 
 	int renderPassUI = log2(m_RenderPass);

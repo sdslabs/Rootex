@@ -134,6 +134,7 @@ void TransformAnimationComponent::interpolate(float deltaSeconds)
 		if (m_CurrentTimePosition < getStartTime() || getEndTime() < m_CurrentTimePosition)
 		{
 			m_TimeDirection *= -1.0f;
+			m_CurrentTimePosition = std::clamp(m_CurrentTimePosition, getStartTime(), getEndTime());
 		}
 		deltaSeconds *= m_TimeDirection;
 		break;

@@ -22,13 +22,8 @@ HashMap<Ptr<ResourceData>, Ptr<ResourceFile>> ResourceLoader::s_ResourcesDataFil
 
 bool IsFileSupported(const String& extension, ResourceFile::Type supportedFileType)
 {
-	auto& findIt = SupportedFiles.find(supportedFileType);
-	if (findIt != SupportedFiles.end())
-	{
-		auto& findExtensionIt = std::find(findIt->second.begin(), findIt->second.end(), extension);
-		return findExtensionIt != findIt->second.end();
-	}
-	return false;
+	String extensions(SupportedFiles.at(supportedFileType));
+	return extensions.find(extension) != String::npos;
 }
 
 void ResourceLoader::LoadAssimp(ModelResourceFile* file)
@@ -311,7 +306,8 @@ ResourceFile* ResourceLoader::CreateSomeResourceFile(const String& path)
 	ResourceFile* result = nullptr;
 	for (auto& [resourceType, extensions] : SupportedFiles)
 	{
-		if (std::find(extensions.begin(), extensions.end(), FilePath(path).extension().generic_string()) != extensions.end())
+		String extensionsString(extensions);
+		if (extensionsString.find(FilePath(path).extension().generic_string()) != String::npos)
 		{
 			switch (resourceType)
 			{

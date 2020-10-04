@@ -9,35 +9,14 @@
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 
-static const inline HashMap<ResourceFile::Type, Vector<String>> SupportedFiles = {
-	{
-	    ResourceFile::Type::Font,
-	    { ".spritefont" },
-	},
-	{
-	    ResourceFile::Type::Model,
-	    { ".obj", ".blend", ".3ds", ".fbx" },
-	},
-	{
-	    ResourceFile::Type::Audio,
-	    { ".wav" },
-	},
-	{
-	    ResourceFile::Type::Image,
-	    { ".png", ".jpeg", ".jpg", ".dds" },
-	},
-	{
-	    ResourceFile::Type::Text,
-	    { ".txt", ".json", ".rml" },
-	},
-	{
-	    ResourceFile::Type::Lua,
-	    { ".lua" },
-	},
-	{
-	    ResourceFile::Type::None,
-	    {},
-	}
+static const inline HashMap<ResourceFile::Type, const char*> SupportedFiles = {
+	{ ResourceFile::Type::Font, ".spritefont" },
+	{ ResourceFile::Type::Model, ".obj,.blend,.3ds,.fbx" },
+	{ ResourceFile::Type::Audio, ".wav" },
+	{ ResourceFile::Type::Image, ".png,.jpeg,.jpg,.dds" },
+	{ ResourceFile::Type::Text, ".txt,.json,.rml" },
+	{ ResourceFile::Type::Lua, ".lua" },
+	{ ResourceFile::Type::None, "" }
 };
 
 bool IsFileSupported(const String& extension, ResourceFile::Type supportedFileType);
