@@ -33,10 +33,10 @@ void Entity::addComponent(const Ref<Component>& component)
 
 Entity::Entity(EntityID id, const String& name, const HashMap<ComponentID, Ref<Component>>& components)
     : m_ID(id)
-    , m_Name(name)
     , m_Components(components)
     , m_IsEditorOnly(false)
 {
+	setName(name);
 }
 
 JSON::json Entity::getJSON() const
@@ -101,9 +101,9 @@ const String& Entity::getName() const
 	return m_Name;
 }
 
-String Entity::getFullName() const
+const String& Entity::getFullName() const
 {
-	return m_Name + " #" + std::to_string(getID());
+	return m_FullName;
 }
 
 bool Entity::hasComponent(ComponentID componentID)
@@ -114,6 +114,7 @@ bool Entity::hasComponent(ComponentID componentID)
 void Entity::setName(const String& name)
 {
 	m_Name = name;
+	m_FullName = m_Name + " #" + std::to_string(getID());
 }
 
 const HashMap<ComponentID, Ref<Component>>& Entity::getAllComponents() const

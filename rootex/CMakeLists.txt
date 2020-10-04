@@ -88,7 +88,9 @@ target_link_libraries(Rootex PUBLIC
     ALUT
     DirectXTK
     JSON
+    Dirent
     ImGui
+    ImGuiFileDialog
     ImGuizmo
     Gainput
     Bullet3D

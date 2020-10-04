@@ -1,5 +1,7 @@
 #pragma once
 
+#include "common/common.h"
+
 class FileSystemDock
 {
 public:
