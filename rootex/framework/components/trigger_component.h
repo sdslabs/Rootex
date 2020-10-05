@@ -25,7 +25,7 @@ public:
 	void trigger();
 	void setTarget(Ref<Entity> entity);
 
-	virtual String getName() const override { return "TriggerComponent"; }
+	virtual const char* getName() const override { return "TriggerComponent"; }
 	ComponentID getComponentID() const { return s_ID; }
 	virtual JSON::json getJSON() const override;
 

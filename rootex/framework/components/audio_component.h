@@ -40,7 +40,7 @@ public:
 	void setAudioSource(AudioSource* audioSource) { m_AudioSource = audioSource; }
 	AudioSource* getAudioSource() { return m_AudioSource; }
 
-	virtual String getName() const override { return "AudioComponent"; }
+	virtual const char* getName() const override { return "AudioComponent"; }
 	ComponentID getComponentID() const { return s_ID; }
 	virtual JSON::json getJSON() const;
 

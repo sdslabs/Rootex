@@ -22,7 +22,7 @@ public:
 	BoxColliderComponent(const Vector3& dimensions, const String& matName, const Vector3& gravity, bool isMoveable, bool generatesHitEvents);
 
 	Vector3 getDimensions() const { return m_Dimensions; }
-	virtual String getName() const override { return "BoxColliderComponent"; };
+	virtual const char* getName() const override { return "BoxColliderComponent"; };
 	virtual JSON::json getJSON() const override;
 	virtual ComponentID getComponentID() const override { return s_ID; }
 

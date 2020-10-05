@@ -30,7 +30,7 @@ public:
 	void setAudioFile(AudioResourceFile* audioFile);
 
 	virtual ComponentID getComponentID() const override { return s_ID; };
-	virtual String getName() const override { return "ShortMusicComponent"; };
+	virtual const char* getName() const override { return "ShortMusicComponent"; };
 	virtual JSON::json getJSON() const override;
 
 #ifdef ROOTEX_EDITOR

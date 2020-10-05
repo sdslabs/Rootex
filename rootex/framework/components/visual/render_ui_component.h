@@ -31,6 +31,6 @@ public:
 	bool isVisible() const { return m_IsVisible; }
 
 	virtual ComponentID getComponentID() const override { return s_ID; }
-	virtual String getName() const override { return "RenderUIComponent"; };
+	virtual const char* getName() const override { return "RenderUIComponent"; };
 	virtual JSON::json getJSON() const override;
 };

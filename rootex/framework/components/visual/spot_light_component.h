@@ -26,7 +26,7 @@ public:
 	
 	const SpotLight& getSpotLight() const { return m_SpotLight; }
 
-	virtual String getName() const override { return "SpotLightComponent"; }
+	virtual const char* getName() const override { return "SpotLightComponent"; }
 	ComponentID getComponentID() const override { return s_ID; }
 
 	virtual JSON::json getJSON() const override;

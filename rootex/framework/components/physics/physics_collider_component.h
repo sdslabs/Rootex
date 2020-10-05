@@ -95,7 +95,7 @@ public:
 
 	virtual void render();
 
-	virtual String getName() const override { return "PhysicsColliderComponent"; };
+	virtual const char* getName() const override { return "PhysicsColliderComponent"; };
 	ScriptComponent* getScriptComponent() const { return m_ScriptComponent; }
 	virtual JSON::json getJSON() const override;
 

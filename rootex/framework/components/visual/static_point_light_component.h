@@ -23,7 +23,7 @@ class StaticPointLightComponent : public PointLightComponent
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::StaticPointLightComponent;
 
-	virtual String getName() const override { return "StaticPointLightComponent"; }
+	virtual const char* getName() const override { return "StaticPointLightComponent"; }
 	ComponentID getComponentID() const override { return s_ID; }
 	virtual JSON::json getJSON() const override;
 

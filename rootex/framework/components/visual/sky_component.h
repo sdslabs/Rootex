@@ -24,7 +24,7 @@ public:
 	ModelResourceFile* getSkySphere() const { return m_SkySphere; }
 	SkyMaterial* getSkyMaterial() const { return m_SkyMaterial.get(); }
 
-	virtual String getName() const override { return "SkyComponent"; }
+	virtual const char* getName() const override { return "SkyComponent"; }
 	ComponentID getComponentID() const { return s_ID; }
 	virtual JSON::json getJSON() const override;
 

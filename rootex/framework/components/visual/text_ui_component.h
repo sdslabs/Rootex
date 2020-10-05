@@ -43,7 +43,7 @@ public:
 	virtual void render() override;
 
 	virtual ComponentID getComponentID() const override { return s_ID; }
-	virtual String getName() const override { return "TextUIComponent"; };
+	virtual const char* getName() const override { return "TextUIComponent"; };
 	virtual JSON::json getJSON() const override;
 
 	void setFont(FontResourceFile* fontFile) { m_FontFile = fontFile; }

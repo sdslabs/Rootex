@@ -25,7 +25,7 @@ public:
 
 	void setDocument(const String& path);
 
-	virtual String getName() const override { return "UIComponent"; }
+	virtual const char* getName() const override { return "UIComponent"; }
 	ComponentID getComponentID() const { return s_ID; }
 	virtual JSON::json getJSON() const override;
 

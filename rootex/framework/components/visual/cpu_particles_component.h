@@ -67,7 +67,7 @@ public:
 	void emit(const ParticleTemplate& particleTemplate);
 	void expandPool(const size_t& poolSize);
 
-	virtual String getName() const override { return "CPUParticlesComponent"; }
+	virtual const char* getName() const override { return "CPUParticlesComponent"; }
 	ComponentID getComponentID() const override { return s_ID; }
 	virtual JSON::json getJSON() const override;
 

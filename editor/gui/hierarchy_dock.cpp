@@ -159,7 +159,7 @@ void HierarchyDock::showEntities(const HashMap<EntityID, Ref<Entity>>& entities)
 			{
 				bool increment = true;
 				Ref<Component> component = it->second;
-				ImGui::Selectable(component->getName().c_str());
+				ImGui::Selectable(component->getName());
 				if (ImGui::BeginPopupContextItem(("Delete" + entity->getFullName() + component->getName()).c_str()))
 				{
 					if (ImGui::Button("Delete Component"))

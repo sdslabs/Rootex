@@ -34,7 +34,7 @@ public:
 	void clear();
 
 	virtual void onRemove() override;
-	virtual String getName() const override { return "HierarchyComponent"; }
+	virtual const char* getName() const override { return "HierarchyComponent"; }
 	ComponentID getComponentID() const { return s_ID; }
 	HierarchyComponent* getParent() const { return m_Parent; }
 	const Vector<HierarchyComponent*>& getChildren() const { return m_Children; }

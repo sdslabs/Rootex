@@ -127,16 +127,19 @@ bool EditorSystem::initialize(const JSON::json& systemData)
 	io.ConfigDockingWithShift = true;
 	io.FontAllowUserScaling = true;
 	
-	m_EditorFont = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/Lato-Regular.ttf", 18.0f);
+	ImFontConfig fontConfig;
+	fontConfig.PixelSnapH = true;
+	fontConfig.OversampleH = 1;
+	m_EditorFont = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/Lato-Regular.ttf", 18.0f, &fontConfig);
 	
-	static const ImWchar icons_ranges[] = { ICON_MIN_ROOTEX, ICON_MAX_ROOTEX, 0 };
-	ImFontConfig icons_config;
-	icons_config.MergeMode = true;
-	icons_config.PixelSnapH = true;
-	io.Fonts->AddFontFromMemoryCompressedBase85TTF(FONT_ICON_BUFFER_NAME_ROOTEX, 16.0f, &icons_config, icons_ranges);
-
-	m_EditorFontItalic = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/Lato-Italic.ttf", 18.0f);
-	m_EditorFontBold = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/Lato-Bold.ttf", 18.0f);
+	static const ImWchar iconsRanges[] = { ICON_MIN_ROOTEX, ICON_MAX_ROOTEX, 0 };
+	ImFontConfig iconsConfig;
+	iconsConfig.MergeMode = true;
+	iconsConfig.PixelSnapH = true;
+	io.Fonts->AddFontFromMemoryCompressedBase85TTF(FONT_ICON_BUFFER_NAME_ROOTEX, 18.0f, &iconsConfig, iconsRanges);
+	
+	m_EditorFontItalic = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/Lato-Italic.ttf", 18.0f, &fontConfig);
+	m_EditorFontBold = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/Lato-Bold.ttf", 18.0f, &fontConfig);
 	
 	ImGui_ImplWin32_Init(Application::GetSingleton()->getWindow()->getWindowHandle());
 	ImGui_ImplDX11_Init(RenderingDevice::GetSingleton()->getDevice(), RenderingDevice::GetSingleton()->getContext());
