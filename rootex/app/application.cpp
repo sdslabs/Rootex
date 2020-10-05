@@ -97,8 +97,6 @@ Application::~Application()
 
 void Application::run()
 {
-	static FrameTimer systemTimer;
-
 	while (!m_Window->processMessages())
 	{
 		m_FrameTimer.reset();
@@ -109,10 +107,7 @@ void Application::run()
 			{
 				if (system->isActive())
 				{
-					systemTimer.reset();
-					PRINT(system->getName());
 					system->update(m_FrameTimer.getLastFrameTime());
-					systemTimer.showTime();
 				}
 			}
 		}

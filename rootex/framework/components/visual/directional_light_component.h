@@ -25,7 +25,7 @@ public:
 	
 	const DirectionalLight& getDirectionalLight() const { return m_DirectionalLight; }
 
-	virtual String getName() const override { return "DirectionalLightComponent"; }
+	virtual const char* getName() const override { return "DirectionalLightComponent"; }
 	ComponentID getComponentID() const override { return s_ID; }
 
 	virtual JSON::json getJSON() const override;

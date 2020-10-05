@@ -30,7 +30,7 @@ public:
 	virtual bool setup() override;
 	void render() override;
 
-	virtual String getName() const override { return "GridModelComponent"; }
+	virtual const char* getName() const override { return "GridModelComponent"; }
 	ComponentID getComponentID() const override { return s_ID; }
 	virtual JSON::json getJSON() const override;
 

@@ -38,7 +38,7 @@ public:
 	void onHit(btPersistentManifold* manifold, PhysicsColliderComponent* other);
 
 	ComponentID getComponentID() const override { return s_ID; }
-	virtual String getName() const override { return "ScriptComponent"; }
+	virtual const char* getName() const override { return "ScriptComponent"; }
 	virtual JSON::json getJSON() const override;
 
 	void addScript(const String& scriptFile);

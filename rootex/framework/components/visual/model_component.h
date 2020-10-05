@@ -58,7 +58,7 @@ public:
 	const Vector<Pair<Ref<Material>, Vector<Mesh>>>& getMeshes() const { return m_ModelResourceFile->getMeshes(); }
 	ModelResourceFile* getModelResourceFile() const { return m_ModelResourceFile; }
 
-	virtual String getName() const override { return "ModelComponent"; }
+	virtual const char* getName() const override { return "ModelComponent"; }
 	ComponentID getComponentID() const override { return s_ID; }
 	virtual JSON::json getJSON() const override;
 

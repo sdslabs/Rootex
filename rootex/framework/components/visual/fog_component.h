@@ -20,7 +20,7 @@ class FogComponent : public Component
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::FogComponent;
 
-	virtual String getName() const override { return "FogComponent"; }
+	virtual const char* getName() const override { return "FogComponent"; }
 	ComponentID getComponentID() const { return s_ID; }
 	virtual JSON::json getJSON() const override;
 

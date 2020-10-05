@@ -27,6 +27,6 @@ public:
 
 	Vector3 getPosition() const;
 
-	virtual String getName() const override { return "AudioListenerComponent"; }
+	virtual const char* getName() const override { return "AudioListenerComponent"; }
 	ComponentID getComponentID() const { return s_ID; }
 };

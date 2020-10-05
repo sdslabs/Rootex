@@ -75,7 +75,7 @@ public:
 	Matrix getAbsoluteTransform() const { return m_TransformBuffer.m_Transform * m_ParentAbsoluteTransform; }
 	Matrix getParentAbsoluteTransform() const { return m_ParentAbsoluteTransform; }
 	ComponentID getComponentID() const override { return s_ID; }
-	virtual String getName() const override { return "TransformComponent"; }
+	virtual const char* getName() const override { return "TransformComponent"; }
 	virtual JSON::json getJSON() const override;
 
 #ifdef ROOTEX_EDITOR

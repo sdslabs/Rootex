@@ -10,7 +10,7 @@ class TestComponent : public Component
 	friend class EntityFactory;
 
 public:
-	virtual String getName() const override { return "TestComponent"; }
+	virtual const char* getName() const override { return "TestComponent"; }
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::TestComponent;
 
 	ComponentID getComponentID() const override { return s_ID; }

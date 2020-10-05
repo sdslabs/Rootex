@@ -26,7 +26,7 @@ public:
 
 	const PointLight& getPointLight() const { return m_PointLight; }
 
-	virtual String getName() const override { return "PointLightComponent"; }
+	virtual const char* getName() const override { return "PointLightComponent"; }
 	ComponentID getComponentID() const override { return s_ID; }
 	virtual JSON::json getJSON() const override;
 

@@ -151,7 +151,7 @@ void InspectorDock::draw(float deltaMilliseconds)
 				ImGui::Text("Components");
 				for (auto& component : m_OpenedEntity->getAllComponents())
 				{
-					if (ImGui::TreeNodeEx(component.second->getName().c_str(), ImGuiTreeNodeFlags_CollapsingHeader | ImGuiTreeNodeFlags_DefaultOpen))
+					if (ImGui::TreeNodeEx(component.second->getName(), ImGuiTreeNodeFlags_CollapsingHeader | ImGuiTreeNodeFlags_DefaultOpen))
 					{
 						EditorSystem::GetSingleton()->pushRegularFont();
 						component.second->draw();

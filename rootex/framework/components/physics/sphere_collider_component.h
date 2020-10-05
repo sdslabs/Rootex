@@ -22,7 +22,7 @@ public:
 	SphereColliderComponent(float rad, const String& matName, const Vector3& gravity, bool isMoveable, bool generatesHitEvents);
 
 	float getRadius() const { return m_Radius; }
-	virtual String getName() const override { return "SphereColliderComponent"; };
+	virtual const char* getName() const override { return "SphereColliderComponent"; };
 	virtual JSON::json getJSON() const override;
 	virtual ComponentID getComponentID() const override { return s_ID; }
 	

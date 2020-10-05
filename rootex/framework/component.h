@@ -31,7 +31,7 @@ public:
 
 	Ref<Entity> getOwner() const;
 	virtual ComponentID getComponentID() const = 0;
-	virtual String getName() const = 0;
+	virtual const char* getName() const = 0;
 	/// Get JSON representation of the component data needed to re-construct component from memory.
 	virtual JSON::json getJSON() const;
 

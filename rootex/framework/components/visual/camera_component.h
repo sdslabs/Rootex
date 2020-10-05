@@ -58,7 +58,7 @@ public:
 	virtual const Matrix& getViewMatrix();
 	virtual const Matrix& getProjectionMatrix();
 	Vector3 getAbsolutePosition() const { return m_TransformComponent->getAbsoluteTransform().Translation(); }
-	virtual String getName() const override { return "CameraComponent"; }
+	virtual const char* getName() const override { return "CameraComponent"; }
 
 	PostProcessingDetails getPostProcessingDetails() const { return m_PostProcessingDetails; }
 
