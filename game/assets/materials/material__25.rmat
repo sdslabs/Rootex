@@ -9,6 +9,8 @@
     "imageFile": "game/assets/sponza/l.png",
     "isAlpha": false,
     "isLit": true,
+    "isNormal": true,
+    "normalImageFile": "game/assets/sponza/ldd.png",
     "reflectivity": 0.5,
     "refractionConstant": 0.800000011920929,
     "refractivity": 0.5,

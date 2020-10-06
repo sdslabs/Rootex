@@ -9,6 +9,7 @@
     "imageFile": "rootex/assets/white.png",
     "isAlpha": true,
     "isLit": true,
+    "isNormal": false,
     "reflectivity": 0.0,
     "refractionConstant": 1.0,
     "refractivity": 1.0,

@@ -8,17 +8,18 @@ end
 
 function onBegin(entity)
     collider = entity:getPhysicsCollider()
-    collider:setVelocity(Vector3.new(0.1, 0, 0))
-
-    Connect(onJump, "Jump")
+    collider:setVelocity(RTX.Vector3.new(0.1, 0, 0))
+    local color = Colourb.new(1,2,3,4)
+    dbg()
+    RTX.Connect(onJump, "Jump")
 end
 
-function onUpdate(delta, entity)
+function onUpdate(entity, delta)
 end
 
 function onHit(entity, hit, other)
-    failEvent = Event.new("FlabbyBird", "GameEnd", 0)
-    CallEvent(failEvent)
+    failEvent = RTX.Event.new("FlabbyBird", "GameEnd", 0)
+    RTX.CallEvent(failEvent)
 end
 
 function onEnd(entity)

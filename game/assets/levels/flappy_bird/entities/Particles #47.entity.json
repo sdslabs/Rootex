@@ -1,7 +1,7 @@
 {
     "Components": {
         "CPUParticlesComponent": {
-            "angularVelocityVariation": 0.0,
+            "angularVelocityVariation": 10.0,
             "colorBegin": {
                 "a": 1.0,
                 "b": 0.27777501940727234,
@@ -21,12 +21,12 @@
                 "z": 1.0
             },
             "isVisible": true,
-            "lifeTime": 2.2300000190734863,
+            "lifeTime": 1.7699999809265137,
             "materialPath": "rootex/assets/materials/default_particles.rmat",
             "poolSize": 1000,
             "renderPass": 1,
             "resFile": "rootex/assets/cube.obj",
-            "sizeBegin": 0.15000000596046448,
+            "sizeBegin": 0.09000000357627869,
             "sizeEnd": 0.0,
             "sizeVariation": 0.0,
             "velocity": {
@@ -34,7 +34,7 @@
                 "y": -1.0,
                 "z": 0.0
             },
-            "velocityVariation": 0.0
+            "velocityVariation": 1.0
         },
         "HierarchyComponent": {
             "children": [],

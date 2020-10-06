@@ -1,0 +1,66 @@
+{
+    "Components": {
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 2
+        },
+        "ModelComponent": {
+            "isVisible": true,
+            "renderPass": 2,
+            "resFile": "game/assets/test/sphere.obj"
+        },
+        "PointLightComponent": {
+            "ambientColor": {
+                "a": 1.0,
+                "b": 1.0,
+                "g": 0.9999998807907104,
+                "r": 0.9999899864196777
+            },
+            "attConst": 35.04499816894531,
+            "attLin": 25.0,
+            "attQuad": 4.007999897003174,
+            "diffuseColor": {
+                "a": 1.0,
+                "b": 0.9999899864196777,
+                "g": 1.0,
+                "r": 0.9999992251396179
+            },
+            "diffuseIntensity": 125.0,
+            "range": 33.0
+        },
+        "TransformComponent": {
+            "boundingBox": {
+                "center": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "extents": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                }
+            },
+            "position": {
+                "x": 1090.1346435546875,
+                "y": 37.228118896484375,
+                "z": 147.85679626464844
+            },
+            "rotation": {
+                "w": -8.094387339951936e-06,
+                "x": 1.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 0.020000025629997253,
+                "y": 0.020147116854786873,
+                "z": 0.020146939903497696
+            }
+        }
+    },
+    "Entity": {
+        "ID": 17,
+        "name": "PointLight"
+    }
+}

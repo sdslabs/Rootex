@@ -9,6 +9,7 @@
     "imageFile": "game/assets/sponza/szcugdi.png",
     "isAlpha": false,
     "isLit": true,
+    "isNormal": false,
     "reflectivity": 0.28999999165534973,
     "refractionConstant": 0.800000011920929,
     "refractivity": 0.3700000047683716,

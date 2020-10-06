@@ -1,17 +1,22 @@
 {
     "Components": {
+        "CameraComponent": {
+            "aspectRatio": {
+                "x": 16.0,
+                "y": 9.0
+            },
+            "far": 100.0,
+            "fov": 0.7853981852531433,
+            "near": 0.10000000149011612
+        },
         "HierarchyComponent": {
             "children": [],
             "parent": 1
         },
-        "MusicComponent": {
-            "attenuationModel": 53251,
-            "audio": "game/assets/hipshop.wav",
-            "isAttenuated": false,
-            "maxDistance": 100.0,
-            "playOnStart": false,
-            "referenceDistance": 1.0,
-            "rollOffFactor": 1.0
+        "ModelComponent": {
+            "isVisible": true,
+            "renderPass": 1,
+            "resFile": "game/assets/test/cube.obj"
         },
         "TransformComponent": {
             "boundingBox": {
@@ -27,15 +32,15 @@
                 }
             },
             "position": {
-                "x": 0.0,
-                "y": 0.0,
-                "z": 0.0
+                "x": 6.191141128540039,
+                "y": 8.382179260253906,
+                "z": -6.359438419342041
             },
             "rotation": {
-                "w": 1.0,
-                "x": -0.0,
-                "y": 0.0,
-                "z": -0.0
+                "w": -0.5369424223899841,
+                "x": 0.06394461542367935,
+                "y": 0.8352895975112915,
+                "z": 0.09947486221790314
             },
             "scale": {
                 "x": 1.0,
@@ -45,7 +50,7 @@
         }
     },
     "Entity": {
-        "ID": 40,
-        "name": "MusicPlayer"
+        "ID": 18,
+        "name": "Camera"
     }
 }
