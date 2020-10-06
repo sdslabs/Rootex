@@ -8,6 +8,8 @@
 #include "components/visual/model_component.h"
 #include "renderer/render_pass.h"
 
+#include "PostProcess.h"
+
 #define LINE_INITIAL_RENDER_CACHE 1000
 
 class RenderSystem : public System
@@ -19,7 +21,7 @@ class RenderSystem : public System
 	};
 
 	CameraComponent* m_Camera;
-
+	
 	Ptr<Renderer> m_Renderer;
 	Vector<Matrix> m_TransformationStack;
 
@@ -32,11 +34,31 @@ class RenderSystem : public System
 
 	bool m_IsEditorRenderPassEnabled;
 
+	Ptr<DirectX::BasicPostProcess> m_BasicPostProcess;
+	Ptr<DirectX::DualPostProcess> m_DualPostProcess;
+	Ptr<DirectX::ToneMapPostProcess> m_ToneMapPostProcess;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_ToneMapRTV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_ToneMapSRV;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_GaussianBlurRTV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_GaussianBlurSRV;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_MonochromeRTV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_MonochromeSRV;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_SepiaRTV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_SepiaSRV;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_BloomExtractRTV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_BloomExtractSRV;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_BloomHorizontalBlurRTV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_BloomHorizontalBlurSRV;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_BloomVerticalBlurRTV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_BloomVerticalBlurSRV;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_BloomRTV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_BloomSRV;
+
 	RenderSystem();
 	RenderSystem(RenderSystem&) = delete;
 	virtual ~RenderSystem() = default;
 
-	void renderPassRender(RenderPass renderPass);
+	void renderPassRender(float deltaMilliseconds, RenderPass renderPass);
 
 public:
 	static RenderSystem* GetSingleton();

@@ -40,9 +40,8 @@ public:
 	/// Reset cursor clips and allow free cursor movement.
 	void resetClipCursor();
 	void showCursor(bool enabled);
-	/// Helpers for clearing render target.
-	void clearCurrentTarget(const Color& color);
-	void clearUnboundTarget();
+	void clearMain(const Color& color);
+	void clearOffScreen(const Color& color);
 
 	Variant toggleFullScreen(const Event* event);
 	Variant getScreenState(const Event* event) { return m_IsFullScreen; };

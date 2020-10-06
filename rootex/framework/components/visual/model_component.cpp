@@ -72,7 +72,7 @@ bool ModelComponent::setup()
 	return status;
 }
 
-bool ModelComponent::preRender()
+bool ModelComponent::preRender(float deltaMilliseconds)
 {
 	if (m_TransformComponent)
 	{

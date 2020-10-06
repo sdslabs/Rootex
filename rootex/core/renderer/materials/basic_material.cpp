@@ -34,7 +34,7 @@ BasicMaterial::BasicMaterial(bool isAlpha, const String& imagePath, const String
 	{
 		removeNormal();
 	}
-	m_SamplerState = RenderingDevice::GetSingleton()->createSamplerState();
+	m_SamplerState = RenderingDevice::GetSingleton()->createSS();
 	m_PSConstantBuffer.resize((int)PixelConstantBufferType::End, nullptr);
 	m_VSConstantBuffer.resize((int)VertexConstantBufferType::End, nullptr);
 
