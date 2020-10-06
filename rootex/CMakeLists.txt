@@ -99,6 +99,7 @@ target_link_libraries(Rootex PUBLIC
     RmlDebugger
     RmlLua
     FreeType
+    Tracy
 
     Shell32.lib
     d3d11.lib

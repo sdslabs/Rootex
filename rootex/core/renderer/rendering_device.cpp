@@ -9,6 +9,8 @@
 #include "vendor/DirectXTK/Inc/DDSTextureLoader.h"
 #include "vendor/DirectXTK/Inc/WICTextureLoader.h"
 
+#include "Tracy/Tracy.hpp"
+
 std::string ws2s(const std::wstring& wstr);
 
 #define FEATURE_STRING(features, featureName) "\n" + #featureName + ": " + std::to_string(features.featureName)
@@ -791,6 +793,7 @@ Microsoft::WRL::ComPtr<ID3D11SamplerState> RenderingDevice::createSS()
 
 void RenderingDevice::drawIndexed(UINT number)
 {
+	ZoneNamedN(drawCall, "Draw Call", true);
 	m_Context->DrawIndexed(number, 0u, 0u);
 }
 

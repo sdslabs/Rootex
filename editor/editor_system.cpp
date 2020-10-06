@@ -176,6 +176,7 @@ bool EditorSystem::initialize(const JSON::json& systemData)
 
 void EditorSystem::update(float deltaMilliseconds)
 {
+	ZoneScoped;
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
@@ -242,6 +243,7 @@ EditorSystem::~EditorSystem()
 
 void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 {
+	ZoneScoped;
 	static bool optFullscreenPersistant = true;
 	bool optFullscreen = optFullscreenPersistant;
 	static ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_None;

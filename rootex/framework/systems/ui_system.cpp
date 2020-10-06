@@ -123,6 +123,7 @@ bool UISystem::initialize(const JSON::json& systemData)
 
 void UISystem::update(float deltaMilliseconds)
 {
+	ZoneScoped;
 	m_Context->Update();
 	RenderingDevice::GetSingleton()->setAlphaBS();
 	RenderingDevice::GetSingleton()->setTemporaryUIRS();

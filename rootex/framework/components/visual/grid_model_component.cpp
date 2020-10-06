@@ -118,6 +118,8 @@ bool GridModelComponent::setup()
 
 void GridModelComponent::render()
 {
+	ZoneNamedN(componentRender, "Grid Render", true);
+
 	RenderSystem::GetSingleton()->enableLineRenderMode();
 	RenderSystem::GetSingleton()->getRenderer()->bind(m_ColorMaterial.get());
 	RenderSystem::GetSingleton()->getRenderer()->draw(m_VertexBuffer.get(), m_IndexBuffer.get());

@@ -114,7 +114,7 @@ void LevelManager::openPreloadedLevel(const String& levelPath, const Vector<Stri
 		EntityFactory::GetSingleton()->createEntity(textResource);
 	}
 
-	for (auto& [order, systems] : System::GetSystems())
+	for (auto& systems : System::GetSystems())
 	{
 		for (auto& system : systems)
 		{
@@ -126,7 +126,7 @@ void LevelManager::openPreloadedLevel(const String& levelPath, const Vector<Stri
 
 	PRINT("Loaded level: " + levelPath);
 
-	for (auto& [order, systems] : System::GetSystems())
+	for (auto& systems : System::GetSystems())
 	{
 		for (auto& system : systems)
 		{
@@ -170,7 +170,7 @@ void LevelManager::endLevel()
 {
 	if (isAnyLevelOpen())
 	{
-		for (auto& [order, systems] : System::GetSystems())
+		for (auto& systems : System::GetSystems())
 		{
 			for (auto& system : systems)
 			{

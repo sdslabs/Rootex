@@ -91,6 +91,8 @@ bool CPUParticlesComponent::setup()
 
 bool CPUParticlesComponent::preRender(float deltaMilliseconds)
 {
+	ZoneNamedN(componentPreRender, "CPU Particles Pre-Render", true);
+
 	ModelComponent::preRender(deltaMilliseconds);
 
 	int i = m_EmitRate;
@@ -100,27 +102,32 @@ bool CPUParticlesComponent::preRender(float deltaMilliseconds)
 		i--;
 	}
 
-	for (auto& particle : m_ParticlePool)
 	{
-		if (particle.m_LifeRemaining <= 0.0f)
+		ZoneNamedN(particleInterpolation, "Particle Interpolation", true);
+		for (auto& particle : m_ParticlePool)
 		{
-			particle.m_IsActive = false;
-			continue;
-		}
-		if (!particle.m_IsActive)
-		{
-			continue;
-		}
-		float delta = deltaMilliseconds * 1e-3;
-		particle.m_LifeRemaining -= delta;
-		particle.m_Transform = Matrix::CreateTranslation(particle.m_Velocity * delta) * Matrix::CreateFromYawPitchRoll(particle.m_AngularVelocity.x * delta, particle.m_AngularVelocity.y * delta, particle.m_AngularVelocity.z * delta) * particle.m_Transform;
-	}
 
+			if (particle.m_LifeRemaining <= 0.0f)
+			{
+				particle.m_IsActive = false;
+				continue;
+			}
+			if (!particle.m_IsActive)
+			{
+				continue;
+			}
+			float delta = deltaMilliseconds * 1e-3;
+			particle.m_LifeRemaining -= delta;
+			particle.m_Transform = Matrix::CreateTranslation(particle.m_Velocity * delta) * Matrix::CreateFromYawPitchRoll(particle.m_AngularVelocity.x * delta, particle.m_AngularVelocity.y * delta, particle.m_AngularVelocity.z * delta) * particle.m_Transform;
+		}
+	}
 	return true;
 }
 
 void CPUParticlesComponent::render()
 {
+	ZoneNamedN(componentRender, "CPU Particles Render", true);
+
 	for (auto& particle : m_ParticlePool)
 	{
 		if (!particle.m_IsActive)
@@ -149,6 +156,8 @@ void CPUParticlesComponent::render()
 
 void CPUParticlesComponent::emit(const ParticleTemplate& particleTemplate)
 {
+	ZoneNamedN(componentRender, "CPU Particles Emit", true);
+
 	Particle& particle = m_ParticlePool[m_PoolIndex];
 
 	particle.m_IsActive = true;

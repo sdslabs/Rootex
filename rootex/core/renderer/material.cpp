@@ -2,11 +2,6 @@
 
 #include "shader_library.h"
 
-void Material::bind()
-{
-	m_Shader->bind();
-}
-
 JSON::json Material::getJSON() const
 {
 	JSON::json j;

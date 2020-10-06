@@ -151,6 +151,7 @@ void ModelComponent::removeAffectingStaticLight(EntityID ID)
 
 bool ModelComponent::preRender(float deltaMilliseconds)
 {
+	ZoneNamedN(componentPreRender, "Model Pre-Render", true);
 	if (m_TransformComponent)
 	{
 		RenderSystem::GetSingleton()->pushMatrixOverride(m_TransformComponent->getAbsoluteTransform());
@@ -176,6 +177,8 @@ bool CompareMaterials(const Pair<Ref<Material>, Vector<Mesh>>& a, const Pair<Ref
 
 void ModelComponent::render()
 {
+	ZoneNamedN(componentRender, "Model Render", true);
+
 	std::sort(m_ModelResourceFile->getMeshes().begin(), m_ModelResourceFile->getMeshes().end(), CompareMaterials);
 	int i = 0;
 

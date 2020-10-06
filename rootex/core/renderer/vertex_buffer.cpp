@@ -2,6 +2,8 @@
 
 #include "rendering_device.h"
 
+#include "Tracy/Tracy.hpp"
+
 VertexBuffer::VertexBuffer(const Vector<VertexData>& buffer)
     : m_Stride(sizeof(VertexData))
     , m_Count(buffer.size())
@@ -58,6 +60,7 @@ VertexBuffer::VertexBuffer(const Vector<float>& buffer)
 
 void VertexBuffer::bind() const
 {
+	ZoneNamedN(bufferBind, "VB Bind", true);
 	const UINT offset = 0u;
 	RenderingDevice::GetSingleton()->bind(m_VertexBuffer.Get(), &m_Stride, &offset);
 }

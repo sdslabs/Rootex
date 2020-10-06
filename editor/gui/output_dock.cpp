@@ -22,6 +22,7 @@ OutputDock::OutputDock()
 
 void OutputDock::draw(float deltaMilliseconds)
 {
+	ZoneScoped;
 	if (m_OutputDockSettings.m_IsActive)
 	{
 		if (ImGui::Begin("Output"))

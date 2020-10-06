@@ -9,7 +9,10 @@
 
 #include "shader_library.h"
 
+#include "Tracy/Tracy.hpp"
+
 Renderer::Renderer()
+    : m_CurrentShader(nullptr)
 {
 	RenderingDevice::GetSingleton()->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
@@ -19,8 +22,20 @@ void Renderer::setViewport(Viewport& viewport)
 	RenderingDevice::GetSingleton()->setViewport(viewport.getViewport());
 }
 
-void Renderer::bind(Material* material) const
+void Renderer::resetCurrentShader()
 {
+	m_CurrentShader = nullptr;
+}
+
+void Renderer::bind(Material* material)
+{
+	ZoneNamedN(materialBind, "Render Material Bind", true);
+	if (material->getShader() != m_CurrentShader)
+	{
+		ZoneNamedN(materialBind, "Shader Bind", true);
+		m_CurrentShader = material->getShader();
+		m_CurrentShader->bind();
+	}
 	material->bind();
 }
 
@@ -28,6 +43,5 @@ void Renderer::draw(const VertexBuffer* vertexBuffer, const IndexBuffer* indexBu
 {
 	vertexBuffer->bind();
 	indexBuffer->bind();
-
 	RenderingDevice::GetSingleton()->drawIndexed(indexBuffer->getCount());
 }

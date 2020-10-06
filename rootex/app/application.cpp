@@ -16,6 +16,8 @@
 #include "systems/hierarchy_system.h"
 #include "systems/transform_animation_system.h"
 
+#include "Tracy/Tracy.hpp"
+
 Application* Application::s_Singleton = nullptr;
 
 Application* Application::GetSingleton()
@@ -38,6 +40,9 @@ Application::Application(const String& settingsFile)
 	{
 		ERR("Application OS was not initialized");
 	}
+	
+	PANIC(!OS::ElevateThreadPriority(), "Could not elevate main thread priority");
+	PRINT("Current main thread priority: " + std::to_string(OS::GetCurrentThreadPriority()));
 
 	m_ApplicationSettings.reset(new ApplicationSettings(ResourceLoader::CreateTextResourceFile(settingsFile)));
 
@@ -85,7 +90,7 @@ Application::Application(const String& settingsFile)
 		LuaInterpreter::GetSingleton()->getLuaState().script(ResourceLoader::CreateLuaTextResourceFile(*postInitialize)->getString());
 	}
 
-	m_Window->show();
+	m_Window->show();	
 }
 
 Application::~Application()
@@ -101,7 +106,7 @@ void Application::run()
 	{
 		m_FrameTimer.reset();
 
-		for (auto& [order, systems] : System::GetSystems())
+		for (auto& systems : System::GetSystems())
 		{
 			for (auto& system : systems)
 			{
@@ -111,11 +116,13 @@ void Application::run()
 				}
 			}
 		}
-
+		
 		process(m_FrameTimer.getLastFrameTime());
-
+		
 		EventManager::GetSingleton()->dispatchDeferred();
+		
 		m_Window->swapBuffers();
+		FrameMark;
 	}
 
 	EventManager::GetSingleton()->call("Application", "ApplicationExit", 0);

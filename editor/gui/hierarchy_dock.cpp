@@ -11,11 +11,16 @@
 
 void HierarchyDock::showHierarchySubTree(HierarchyComponent* hierarchy)
 {
+	ZoneScoped;
+	
+	static int uniqueID = 0;
+	uniqueID++;
 	if (hierarchy)
 	{
 		Ref<Entity> node = hierarchy->getOwner();
 
-		if (ImGui::TreeNodeEx(("##" + std::to_string(node->getID())).c_str(), ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_AllowItemOverlap | (hierarchy->getChildren().size() ? ImGuiTreeNodeFlags_None : ImGuiTreeNodeFlags_Leaf)))
+		ImGui::PushID(uniqueID);
+		if (ImGui::TreeNodeEx("", ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_AllowItemOverlap | (hierarchy->getChildren().size() ? ImGuiTreeNodeFlags_None : ImGuiTreeNodeFlags_Leaf)))
 		{
 			ImGui::SameLine();
 
@@ -37,6 +42,7 @@ void HierarchyDock::showHierarchySubTree(HierarchyComponent* hierarchy)
 
 				if (ImGui::BeginPopupContextItem())
 				{
+					openEntity(node);
 					InspectorDock::GetSingleton()->drawEntityActions(node);
 					ImGui::EndPopup();
 				}
@@ -82,7 +88,9 @@ void HierarchyDock::showHierarchySubTree(HierarchyComponent* hierarchy)
 
 			ImGui::TreePop();
 		}
+		ImGui::PopID();
 	}
+	uniqueID--;
 }
 
 void HierarchyDock::openEntity(Ref<Entity> entity)
@@ -105,6 +113,7 @@ HierarchyDock::HierarchyDock()
 
 void HierarchyDock::draw(float deltaMilliseconds)
 {
+	ZoneScoped;
 	if (m_HierarchySettings.m_IsActive)
 	{
 		if (ImGui::Begin("Hierarchy"))

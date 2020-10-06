@@ -37,6 +37,7 @@ void FileSystemDock::drawFileSystemTree(const FilePath& path)
 
 void FileSystemDock::draw(float deltaMilliseconds)
 {
+	ZoneScoped;
 	if (m_FileSystemSettings.m_IsActive)
 	{
 		if (ImGui::Begin("File System"))
