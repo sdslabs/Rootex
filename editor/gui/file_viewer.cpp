@@ -3,6 +3,7 @@
 #include "resource_loader.h"
 
 #include "imgui.h"
+#include "Tracy/Tracy.hpp"
 
 void FileViewer::drawFileInfo()
 {
@@ -90,6 +91,7 @@ FileViewer::FileViewer()
 
 void FileViewer::draw(float deltaMilliseconds)
 {
+	ZoneScoped;
 	if (m_IsFileOpened)
 	{
 		if (m_IsEventJustReceived)

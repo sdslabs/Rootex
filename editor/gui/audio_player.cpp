@@ -40,10 +40,6 @@ void AudioPlayer::drawFileInfo()
 	ImGui::Columns(1);
 }
 
-AudioPlayer::AudioPlayer()
-{
-}
-
 ResourceFile* AudioPlayer::load(const FilePath& filePath)
 {
 	m_FractionProgress = 0.0f;

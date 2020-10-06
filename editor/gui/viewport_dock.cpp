@@ -27,6 +27,7 @@ ViewportDock::ViewportDock(const JSON::json& viewportJSON)
 
 void ViewportDock::draw(float deltaMilliseconds)
 {
+	ZoneScoped;
 	if (m_ViewportDockSettings.m_IsActive)
 	{
 		ImGui::SetNextWindowBgAlpha(1.0f);

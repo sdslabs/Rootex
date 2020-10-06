@@ -2,6 +2,8 @@
 
 #include "rendering_device.h"
 
+#include "Tracy/Tracy.hpp"
+
 IndexBuffer::IndexBuffer(const Vector<unsigned short>& indices)
     : m_Count(indices.size())
 {
@@ -38,6 +40,7 @@ IndexBuffer::IndexBuffer(const Vector<int>& indices)
 
 void IndexBuffer::bind() const
 {
+	ZoneNamedN(bufferBind, "IB Bind", true);
 	RenderingDevice::GetSingleton()->bind(m_IndexBuffer.Get(), m_Format);
 }
 

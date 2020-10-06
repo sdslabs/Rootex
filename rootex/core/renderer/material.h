@@ -24,7 +24,7 @@ public:
 	Material() = delete;
 	virtual ~Material() = default;
 
-	virtual void bind();
+	virtual void bind() = 0;
 	
 	virtual ID3D11ShaderResourceView* getPreview() = 0;
 
@@ -32,6 +32,8 @@ public:
 	String getFileName() { return m_FileName; };
 	String getTypeName() { return m_TypeName; };
 	String getFullName() { return m_FileName + " - " + m_TypeName; };
+	Shader* getShader() const { return m_Shader; }
+	
 	virtual JSON::json getJSON() const;
 	
 	void setFileName(const String& fileName) { m_FileName = fileName; };

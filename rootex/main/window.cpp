@@ -8,6 +8,7 @@
 #include "vendor/ImGUI/imgui.h"
 #include "vendor/ImGUI/imgui_impl_dx11.h"
 #include "vendor/ImGUI/imgui_impl_win32.h"
+#include "Tracy/Tracy.hpp"
 
 void Window::show()
 {
@@ -16,9 +17,12 @@ void Window::show()
 
 std::optional<int> Window::processMessages()
 {
+	ZoneScoped;
+
 	MSG msg;
 	while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) //non-blocking message retrieval
 	{
+		ZoneNamedN(windowPeek, "Window Msg Peek", true);
 		switch (msg.message)
 		{
 		case WM_QUIT:
@@ -45,6 +49,7 @@ void Window::applyDefaultViewport()
 
 void Window::swapBuffers()
 {
+	ZoneScoped;
 	RenderingDevice::GetSingleton()->swapBuffers();
 }
 

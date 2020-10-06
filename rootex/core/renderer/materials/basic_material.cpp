@@ -127,7 +127,6 @@ ID3D11ShaderResourceView* BasicMaterial::getPreview()
 
 void BasicMaterial::bind()
 {
-	Material::bind();
 	m_BasicShader->set(m_DiffuseTexture.get(), DIFFUSE_PS_CPP);
 	if (m_IsNormal)
 	{

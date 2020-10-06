@@ -103,6 +103,7 @@ void AudioSystem::begin()
 
 void AudioSystem::update(float deltaMilliseconds)
 {
+	ZoneScoped;
 	AudioComponent* audioComponent = nullptr;
 	for (Component* component : s_Components[AudioComponent::s_ID])
 	{

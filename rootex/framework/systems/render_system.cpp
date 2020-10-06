@@ -96,54 +96,71 @@ void RenderSystem::renderPassRender(float deltaMilliseconds, RenderPass renderPa
 
 void RenderSystem::update(float deltaMilliseconds)
 {
+	ZoneScoped;
 	RenderingDevice::GetSingleton()->setOffScreenRT();
+	m_Renderer->resetCurrentShader();
 
 	Color clearColor = { 0.15f, 0.15f, 0.15f, 1.0f };
 	float fogStart = 0.0f;
 	float fogEnd = -1000.0f;
-
-	// Fog
-	if (!s_Components[FogComponent::s_ID].empty())
 	{
-		FogComponent* firstFog = (FogComponent*)s_Components[FogComponent::s_ID].front();
-		clearColor = firstFog->getColor();
-
-		for (auto& component : s_Components[FogComponent::s_ID])
+		ZoneNamedN(fogCalculation, "Fog", true);
+		if (!s_Components[FogComponent::s_ID].empty())
 		{
-			FogComponent* fog = (FogComponent*)component;
-			clearColor = Color::Lerp(clearColor, fog->getColor(), 0.5f);
-			fogStart = fog->getNearDistance();
-			fogEnd = fog->getFarDistance();
+			FogComponent* firstFog = (FogComponent*)s_Components[FogComponent::s_ID].front();
+			clearColor = firstFog->getColor();
+
+			for (auto& component : s_Components[FogComponent::s_ID])
+			{
+				FogComponent* fog = (FogComponent*)component;
+				clearColor = Color::Lerp(clearColor, fog->getColor(), 0.5f);
+				fogStart = fog->getNearDistance();
+				fogEnd = fog->getFarDistance();
+			}
+		}
+		Application::GetSingleton()->getWindow()->clearOffScreen(clearColor);
+	}
+	{
+		ZoneNamedN(absoluteTransform, "Absolute Transformations", true);
+		// Pre-calculate absolute transforms
+		Ref<HierarchyComponent> rootHC = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<HierarchyComponent>();
+		calculateTransforms(rootHC.get());
+	}
+	{
+		ZoneNamedN(stateSet, "Render State Reset", true);
+		// Render geometry
+		RenderingDevice::GetSingleton()->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		RenderingDevice::GetSingleton()->setCurrentRS();
+		RenderingDevice::GetSingleton()->setDSS();
+		RenderingDevice::GetSingleton()->setAlphaBS();
+
+		perFrameVSCBBinds(fogStart, fogEnd);
+		const Color& fogColor = clearColor;
+		perFramePSCBBinds(fogColor);
+	}
+	{
+		ZoneNamedN(renderPasses, "Render Passes", true);
+#ifdef ROOTEX_EDITOR
+		if (m_IsEditorRenderPassEnabled)
+		{
+			ZoneNamedN(editorRenderPass, "Editor Render Pass", true);
+			{
+				renderPassRender(deltaMilliseconds, RenderPass::Editor);
+				renderLines();
+			}
+		}
+#endif // ROOTEX_EDITOR
+		{
+			ZoneNamedN(basicRenderPass, "Basic Render Pass", true);
+			renderPassRender(deltaMilliseconds, RenderPass::Basic);
+		}
+		{
+			ZoneNamedN(alphaRenderPass, "Alpha Render Pass", true);
+			renderPassRender(deltaMilliseconds, RenderPass::Alpha);
 		}
 	}
-	Application::GetSingleton()->getWindow()->clearOffScreen(clearColor);
-
-	// Pre-calculate absolute transforms
-	Ref<HierarchyComponent> rootHC = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<HierarchyComponent>();
-	calculateTransforms(rootHC.get());
-
-	// Render geometry
-	RenderingDevice::GetSingleton()->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	RenderingDevice::GetSingleton()->setCurrentRS();
-	RenderingDevice::GetSingleton()->setDSS();
-	RenderingDevice::GetSingleton()->setAlphaBS();
-
-	perFrameVSCBBinds(fogStart, fogEnd);
-	const Color& fogColor = clearColor;
-	perFramePSCBBinds(fogColor);
-
-#ifdef ROOTEX_EDITOR
-	if (m_IsEditorRenderPassEnabled)
 	{
-		renderPassRender(deltaMilliseconds, RenderPass::Editor);
-		renderLines();
-	}
-#endif // ROOTEX_EDITOR
-	renderPassRender(deltaMilliseconds, RenderPass::Basic);
-	renderPassRender(deltaMilliseconds, RenderPass::Alpha);
-
-	// Sky
-	{
+		ZoneNamedN(skyRendering, "Sky Rendering", true);
 		RenderingDevice::GetSingleton()->enableSkyDSS();
 		RenderingDevice::RasterizerState currentRS = RenderingDevice::GetSingleton()->getRSType();
 		RenderingDevice::GetSingleton()->setRSType(RenderingDevice::RasterizerState::Sky);
@@ -163,126 +180,127 @@ void RenderSystem::update(float deltaMilliseconds)
 		RenderingDevice::GetSingleton()->setRSType(currentRS);
 		RenderingDevice::GetSingleton()->disableSkyDSS();
 	}
-
 	// Post processes
 	RenderingDevice::GetSingleton()->resolveSRV(RenderingDevice::GetSingleton()->getOffScreenRTSRV(), RenderingDevice::GetSingleton()->getOffScreenRTSRVResolved());
-
-	const PostProcessingDetails& postProcessingDetails = m_Camera->getPostProcessingDetails();
-	if (postProcessingDetails.isPostProcessing)
 	{
-		if (postProcessingDetails.isGaussianBlur)
+		ZoneNamedN(postProcessing, "Post Processing", true);
+		const PostProcessingDetails& postProcessingDetails = m_Camera->getPostProcessingDetails();
+		if (postProcessingDetails.isPostProcessing)
 		{
-			RenderingDevice::GetSingleton()->unbindRTSRVs();
-			RenderingDevice::GetSingleton()->setRTV(m_GaussianBlurRTV);
+			if (postProcessingDetails.isGaussianBlur)
+			{
+				RenderingDevice::GetSingleton()->unbindRTSRVs();
+				RenderingDevice::GetSingleton()->setRTV(m_GaussianBlurRTV);
 
-			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::GaussianBlur_5x5);
-			m_BasicPostProcess->SetSourceTexture(RenderingDevice::GetSingleton()->getOffScreenRTSRVResolved().Get());
-			m_BasicPostProcess->SetGaussianParameter(postProcessingDetails.gaussianBlurMultiplier);
-			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+				m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::GaussianBlur_5x5);
+				m_BasicPostProcess->SetSourceTexture(RenderingDevice::GetSingleton()->getOffScreenRTSRVResolved().Get());
+				m_BasicPostProcess->SetGaussianParameter(postProcessingDetails.gaussianBlurMultiplier);
+				m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
 
-			RenderingDevice::GetSingleton()->unbindRTSRVs();
-			RenderingDevice::GetSingleton()->setOffScreenRTResolved();
+				RenderingDevice::GetSingleton()->unbindRTSRVs();
+				RenderingDevice::GetSingleton()->setOffScreenRTResolved();
 
-			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Copy);
-			m_BasicPostProcess->SetSourceTexture(m_GaussianBlurSRV.Get());
-			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
-		}
+				m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Copy);
+				m_BasicPostProcess->SetSourceTexture(m_GaussianBlurSRV.Get());
+				m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+			}
 
-		if (postProcessingDetails.isMonochrome)
-		{
-			RenderingDevice::GetSingleton()->unbindRTSRVs();
-			RenderingDevice::GetSingleton()->setRTV(m_MonochromeRTV);
+			if (postProcessingDetails.isMonochrome)
+			{
+				RenderingDevice::GetSingleton()->unbindRTSRVs();
+				RenderingDevice::GetSingleton()->setRTV(m_MonochromeRTV);
 
-			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Monochrome);
-			m_BasicPostProcess->SetSourceTexture(RenderingDevice::GetSingleton()->getOffScreenRTSRVResolved().Get());
-			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+				m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Monochrome);
+				m_BasicPostProcess->SetSourceTexture(RenderingDevice::GetSingleton()->getOffScreenRTSRVResolved().Get());
+				m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
 
-			RenderingDevice::GetSingleton()->unbindRTSRVs();
-			RenderingDevice::GetSingleton()->setOffScreenRTResolved();
+				RenderingDevice::GetSingleton()->unbindRTSRVs();
+				RenderingDevice::GetSingleton()->setOffScreenRTResolved();
 
-			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Copy);
-			m_BasicPostProcess->SetSourceTexture(m_MonochromeSRV.Get());
-			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
-		}
+				m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Copy);
+				m_BasicPostProcess->SetSourceTexture(m_MonochromeSRV.Get());
+				m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+			}
 
-		if (postProcessingDetails.isSepia)
-		{
-			RenderingDevice::GetSingleton()->unbindRTSRVs();
-			RenderingDevice::GetSingleton()->setRTV(m_SepiaRTV);
+			if (postProcessingDetails.isSepia)
+			{
+				RenderingDevice::GetSingleton()->unbindRTSRVs();
+				RenderingDevice::GetSingleton()->setRTV(m_SepiaRTV);
 
-			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Sepia);
-			m_BasicPostProcess->SetSourceTexture(RenderingDevice::GetSingleton()->getOffScreenRTSRVResolved().Get());
-			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+				m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Sepia);
+				m_BasicPostProcess->SetSourceTexture(RenderingDevice::GetSingleton()->getOffScreenRTSRVResolved().Get());
+				m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
 
-			RenderingDevice::GetSingleton()->unbindRTSRVs();
-			RenderingDevice::GetSingleton()->setOffScreenRTResolved();
+				RenderingDevice::GetSingleton()->unbindRTSRVs();
+				RenderingDevice::GetSingleton()->setOffScreenRTResolved();
 
-			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Copy);
-			m_BasicPostProcess->SetSourceTexture(m_SepiaSRV.Get());
-			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
-		}
+				m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Copy);
+				m_BasicPostProcess->SetSourceTexture(m_SepiaSRV.Get());
+				m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+			}
 
-		if (postProcessingDetails.isBloom)
-		{
-			RenderingDevice::GetSingleton()->unbindRTSRVs();
-			RenderingDevice::GetSingleton()->setRTV(m_BloomExtractRTV);
+			if (postProcessingDetails.isBloom)
+			{
+				RenderingDevice::GetSingleton()->unbindRTSRVs();
+				RenderingDevice::GetSingleton()->setRTV(m_BloomExtractRTV);
 
-			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::BloomExtract);
-			m_BasicPostProcess->SetBloomExtractParameter(postProcessingDetails.bloomThreshold);
-			m_BasicPostProcess->SetSourceTexture(RenderingDevice::GetSingleton()->getOffScreenRTSRVResolved().Get());
-			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+				m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::BloomExtract);
+				m_BasicPostProcess->SetBloomExtractParameter(postProcessingDetails.bloomThreshold);
+				m_BasicPostProcess->SetSourceTexture(RenderingDevice::GetSingleton()->getOffScreenRTSRVResolved().Get());
+				m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
 
-			RenderingDevice::GetSingleton()->unbindRTSRVs();
-			RenderingDevice::GetSingleton()->setRTV(m_BloomHorizontalBlurRTV);
+				RenderingDevice::GetSingleton()->unbindRTSRVs();
+				RenderingDevice::GetSingleton()->setRTV(m_BloomHorizontalBlurRTV);
 
-			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::BloomBlur);
-			m_BasicPostProcess->SetBloomBlurParameters(true, postProcessingDetails.bloomSize, postProcessingDetails.bloomBrightness);
-			m_BasicPostProcess->SetSourceTexture(m_BloomExtractSRV.Get());
-			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+				m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::BloomBlur);
+				m_BasicPostProcess->SetBloomBlurParameters(true, postProcessingDetails.bloomSize, postProcessingDetails.bloomBrightness);
+				m_BasicPostProcess->SetSourceTexture(m_BloomExtractSRV.Get());
+				m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
 
-			RenderingDevice::GetSingleton()->unbindRTSRVs();
-			RenderingDevice::GetSingleton()->setRTV(m_BloomVerticalBlurRTV);
+				RenderingDevice::GetSingleton()->unbindRTSRVs();
+				RenderingDevice::GetSingleton()->setRTV(m_BloomVerticalBlurRTV);
 
-			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::BloomBlur);
-			m_BasicPostProcess->SetBloomBlurParameters(false, postProcessingDetails.bloomSize, postProcessingDetails.bloomBrightness);
-			m_BasicPostProcess->SetSourceTexture(m_BloomHorizontalBlurSRV.Get());
-			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+				m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::BloomBlur);
+				m_BasicPostProcess->SetBloomBlurParameters(false, postProcessingDetails.bloomSize, postProcessingDetails.bloomBrightness);
+				m_BasicPostProcess->SetSourceTexture(m_BloomHorizontalBlurSRV.Get());
+				m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
 
-			RenderingDevice::GetSingleton()->unbindRTSRVs();
-			RenderingDevice::GetSingleton()->setRTV(m_BloomRTV.Get());
+				RenderingDevice::GetSingleton()->unbindRTSRVs();
+				RenderingDevice::GetSingleton()->setRTV(m_BloomRTV.Get());
 
-			m_DualPostProcess->SetSourceTexture(m_BloomVerticalBlurSRV.Get());
-			m_DualPostProcess->SetSourceTexture2(RenderingDevice::GetSingleton()->getOffScreenRTSRVResolved().Get());
-			m_DualPostProcess->SetBloomCombineParameters(postProcessingDetails.bloomValue, postProcessingDetails.bloomBase, postProcessingDetails.bloomSaturation, postProcessingDetails.bloomBaseSaturation);
-			m_DualPostProcess->SetEffect(DirectX::DualPostProcess::Effect::BloomCombine);
-			m_DualPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+				m_DualPostProcess->SetSourceTexture(m_BloomVerticalBlurSRV.Get());
+				m_DualPostProcess->SetSourceTexture2(RenderingDevice::GetSingleton()->getOffScreenRTSRVResolved().Get());
+				m_DualPostProcess->SetBloomCombineParameters(postProcessingDetails.bloomValue, postProcessingDetails.bloomBase, postProcessingDetails.bloomSaturation, postProcessingDetails.bloomBaseSaturation);
+				m_DualPostProcess->SetEffect(DirectX::DualPostProcess::Effect::BloomCombine);
+				m_DualPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
 
-			RenderingDevice::GetSingleton()->unbindRTSRVs();
-			RenderingDevice::GetSingleton()->setOffScreenRTResolved();
+				RenderingDevice::GetSingleton()->unbindRTSRVs();
+				RenderingDevice::GetSingleton()->setOffScreenRTResolved();
 
-			m_BasicPostProcess->SetSourceTexture(m_BloomSRV.Get());
-			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Copy);
-			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
-		}
+				m_BasicPostProcess->SetSourceTexture(m_BloomSRV.Get());
+				m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Copy);
+				m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+			}
 
-		if (postProcessingDetails.isToneMap)
-		{
-			RenderingDevice::GetSingleton()->unbindRTSRVs();
-			RenderingDevice::GetSingleton()->setRTV(m_ToneMapRTV);
+			if (postProcessingDetails.isToneMap)
+			{
+				RenderingDevice::GetSingleton()->unbindRTSRVs();
+				RenderingDevice::GetSingleton()->setRTV(m_ToneMapRTV);
 
-			m_ToneMapPostProcess->SetOperator((DirectX::ToneMapPostProcess::Operator)postProcessingDetails.toneMapOperator);
-			m_ToneMapPostProcess->SetHDRSourceTexture(RenderingDevice::GetSingleton()->getOffScreenRTSRVResolved().Get());
-			m_ToneMapPostProcess->SetExposure(postProcessingDetails.toneMapExposure);
-			m_ToneMapPostProcess->SetTransferFunction((DirectX::ToneMapPostProcess::TransferFunction)postProcessingDetails.toneMapTransferFunction);
-			m_ToneMapPostProcess->SetST2084Parameter(postProcessingDetails.toneMapWhiteNits);
-			m_ToneMapPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+				m_ToneMapPostProcess->SetOperator((DirectX::ToneMapPostProcess::Operator)postProcessingDetails.toneMapOperator);
+				m_ToneMapPostProcess->SetHDRSourceTexture(RenderingDevice::GetSingleton()->getOffScreenRTSRVResolved().Get());
+				m_ToneMapPostProcess->SetExposure(postProcessingDetails.toneMapExposure);
+				m_ToneMapPostProcess->SetTransferFunction((DirectX::ToneMapPostProcess::TransferFunction)postProcessingDetails.toneMapTransferFunction);
+				m_ToneMapPostProcess->SetST2084Parameter(postProcessingDetails.toneMapWhiteNits);
+				m_ToneMapPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
 
-			RenderingDevice::GetSingleton()->unbindRTSRVs();
-			RenderingDevice::GetSingleton()->setOffScreenRTResolved();
+				RenderingDevice::GetSingleton()->unbindRTSRVs();
+				RenderingDevice::GetSingleton()->setOffScreenRTResolved();
 
-			m_BasicPostProcess->SetSourceTexture(m_ToneMapSRV.Get());
-			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Copy);
-			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+				m_BasicPostProcess->SetSourceTexture(m_ToneMapSRV.Get());
+				m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Copy);
+				m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+			}
 		}
 	}
 	

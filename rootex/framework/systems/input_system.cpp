@@ -56,5 +56,6 @@ void InputSystem::setConfig(const JSON::json& configData, bool openInEditor)
 
 void InputSystem::update(float deltaMilliseconds)
 {
+	ZoneScoped;
 	InputManager::GetSingleton()->update();
 }

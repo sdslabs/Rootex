@@ -18,6 +18,7 @@ RenderUISystem* RenderUISystem::GetSingleton()
 
 void RenderUISystem::update(float deltaMilliseconds)
 {
+	ZoneScoped;
 	RenderingDevice::GetSingleton()->beginDrawUI();
 	RenderUIComponent* ui = nullptr;
 	for (auto& component : s_Components[RenderUIComponent::s_ID])

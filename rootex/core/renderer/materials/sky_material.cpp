@@ -41,7 +41,6 @@ Material* SkyMaterial::Create(const JSON::json& materialData)
 
 void SkyMaterial::bind()
 {
-	Material::bind();
 	m_SkyShader->setSkyTexture(m_SkyTexture.get());
 	setVSConstantBuffer(VSDiffuseConstantBuffer(Matrix::CreateTranslation(RenderSystem::GetSingleton()->getCamera()->getOwner()->getComponent<TransformComponent>()->getAbsoluteTransform().Translation())));
 }

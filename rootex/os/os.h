@@ -33,6 +33,10 @@ public:
 	static bool Initialize();
 	/// Execute a command.
 	static void Execute(const String string);
+
+	static bool ElevateThreadPriority();
+	static int GetCurrentThreadPriority();
+
 	static String GetBuildDate();
 	static String GetBuildTime();
 	static String GetBuildType();

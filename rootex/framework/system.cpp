@@ -1,7 +1,7 @@
 #include "system.h"
 
 HashMap<ComponentID, Vector<Component*>> System::s_Components;
-Map<System::UpdateOrder, Vector<System*>> System::s_Systems;
+Vector<Vector<System*>> System::s_Systems;
 
 void System::RegisterComponent(Component* component)
 {
@@ -27,16 +27,22 @@ System::System(const String& name, const UpdateOrder& order, bool isGameplay)
     : m_SystemName(name)
     , m_UpdateOrder(order)
 {
-	s_Systems[order].push_back(this);
+	if ((int)order >= s_Systems.size())
+	{
+		s_Systems.resize((int)order + 1, {});
+	}
+
+	s_Systems[(int)order].push_back(this);
 	setActive(isGameplay);
 }
 
 System::~System()
 {
-	auto& findIt = std::find(s_Systems[m_UpdateOrder].begin(), s_Systems[m_UpdateOrder].end(), this);
-	if (findIt != s_Systems[m_UpdateOrder].end())
+	const int updateOrderInt = (int)m_UpdateOrder;
+	auto& findIt = std::find(s_Systems[updateOrderInt].begin(), s_Systems[updateOrderInt].end(), this);
+	if (findIt != s_Systems[updateOrderInt].end())
 	{
-		s_Systems[m_UpdateOrder].erase(findIt);
+		s_Systems[updateOrderInt].erase(findIt);
 	}
 }
 

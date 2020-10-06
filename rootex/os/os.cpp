@@ -7,6 +7,8 @@
 #include "common/common.h"
 #include "resource_data.h"
 
+#include <shellapi.h>
+
 #ifdef ROOTEX_EDITOR
 #include "event_manager.h"
 #endif // ROOTEX_EDITOR
@@ -178,23 +180,29 @@ void OS::Execute(const String string)
 	std::system(string.c_str());
 }
 
+bool OS::ElevateThreadPriority()
+{
+	return SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST) != 0;
+}
+
+int OS::GetCurrentThreadPriority()
+{
+	return GetThreadPriority(GetCurrentThread());
+}
+
 String OS::GetBuildDate()
 {
-	return String(__DATE__);
+	return __DATE__;
 }
 
 String OS::GetBuildTime()
 {
-	return String(__TIME__);
+	return __TIME__;
 }
 
 String OS::GetBuildType()
 {
-#ifdef _DEBUG
-	return "Debug";
-#else
-	return "Release";
-#endif // _DEBUG
+	return CMAKE_INTDIR;
 }
 
 String OS::GetGameExecutablePath()

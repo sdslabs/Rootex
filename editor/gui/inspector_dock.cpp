@@ -103,6 +103,7 @@ void InspectorDock::drawEntityActions(Ref<Entity> actionEntity)
 
 void InspectorDock::draw(float deltaMilliseconds)
 {
+	ZoneScoped;
 	if (m_InspectorSettings.m_IsActive)	
 	{
 		if (ImGui::Begin("Inspector"))

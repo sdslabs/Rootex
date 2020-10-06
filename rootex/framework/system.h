@@ -5,6 +5,8 @@
 #include "entity.h"
 #include "component.h"
 
+#include "Tracy/Tracy.hpp"
+
 /// ECS style System interface that allows iterating over components directly.
 class System
 {
@@ -18,11 +20,12 @@ public:
 		UI,
 		PostRender,
 		Editor,
-		Async
+		Async,
+		End
 	};
 
 protected:
-	static Map<UpdateOrder, Vector<System*>> s_Systems;
+	static Vector<Vector<System*>> s_Systems;
 	static HashMap<ComponentID, Vector<Component*>> s_Components;
 	static void RegisterComponent(Component* component);
 	static void DeregisterComponent(Component* component);
@@ -35,7 +38,7 @@ protected:
 	bool m_IsActive;
 
 public:
-	static const Map<UpdateOrder, Vector<System*>>& GetSystems() { return s_Systems; }
+	static const Vector<Vector<System*>>& GetSystems() { return s_Systems; }
 	static const Vector<Component*>& GetComponents(ComponentID ID) { return s_Components[ID]; }
 	
 	System(const String& name, const UpdateOrder& order, bool isGameplay);

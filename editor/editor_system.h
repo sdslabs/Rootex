@@ -17,6 +17,8 @@
 #include "vendor/ImGUI/imgui_impl_win32.h"
 #include "ImGuiFileDialogConfig.h"
 
+#include "Tracy/Tracy.hpp"
+
 class HierarchyGraph;
 
 class EditorSystem : public System

@@ -9,6 +9,7 @@ TestSystem::TestSystem()
 
 void TestSystem::update(float deltaMilliseconds)
 {
+	ZoneScoped;
 	const Vector<Component*>& testComponents = s_Components[TestComponent::s_ID];
 
 	for (auto& testComponent : testComponents)

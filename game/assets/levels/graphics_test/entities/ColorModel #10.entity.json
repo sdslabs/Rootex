@@ -5,6 +5,7 @@
             "parent": 1
         },
         "ModelComponent": {
+            "affectingStaticLights": [],
             "isVisible": true,
             "materialOverrides": {
                 "game/assets/materials/fire.001hand.rmat": "game/assets/materials/fire.001hand.rmat",

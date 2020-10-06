@@ -25,6 +25,7 @@ void ScriptSystem::begin()
 
 void ScriptSystem::update(float deltaMilliseconds)
 {
+	ZoneScoped;
 	ScriptComponent* scriptComponent = nullptr;
 	for (auto&& component : s_Components[ScriptComponent::s_ID])
 	{

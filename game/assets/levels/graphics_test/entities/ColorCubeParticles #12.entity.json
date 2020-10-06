@@ -1,6 +1,7 @@
 {
     "Components": {
         "CPUParticlesComponent": {
+            "affectingStaticLights": [],
             "angularVelocityVariation": 0.0,
             "colorBegin": {
                 "a": 1.0,
