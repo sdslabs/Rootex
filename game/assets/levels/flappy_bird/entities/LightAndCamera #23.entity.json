@@ -7,7 +7,33 @@
             },
             "far": 100.0,
             "fov": 0.7853981852531433,
-            "near": 0.10000000149011612
+            "near": 0.10000000149011612,
+            "postProcessing": {
+                "bloom": {
+                    "base": 1.7100000381469727,
+                    "baseSaturation": 0.8799999952316284,
+                    "brightness": 10.0,
+                    "isBloom": true,
+                    "saturation": 1.0,
+                    "size": 14.920000076293945,
+                    "threshold": 0.6700000166893005,
+                    "value": 1.2999999523162842
+                },
+                "gaussianBlur": {
+                    "isGaussianBlur": false,
+                    "multiplier": 1.0
+                },
+                "isPostProcessing": true,
+                "monochrome": false,
+                "sepia": false,
+                "toneMap": {
+                    "exposure": -0.20000000298023224,
+                    "isToneMap": false,
+                    "operator": 1,
+                    "transferFunction": 0,
+                    "whiteNits": 200.0
+                }
+            }
         },
         "DirectionalLightComponent": {
             "ambientColor": {
@@ -57,10 +83,10 @@
                 "z": 6.619999885559082
             },
             "rotation": {
-                "w": 0.9749029278755188,
+                "w": 0.974902868270874,
                 "x": -0.07815901935100555,
                 "y": -0.2077932506799698,
-                "z": -0.016658995300531387
+                "z": -0.016658993437886238
             },
             "scale": {
                 "x": 0.9999866485595703,

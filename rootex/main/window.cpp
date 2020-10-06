@@ -63,30 +63,16 @@ void Window::showCursor(bool enabled)
 	ShowCursor(enabled);
 }
 
-void Window::clearCurrentTarget(const Color& color)
+void Window::clearMain(const Color& color)
 {
-#ifdef ROOTEX_EDITOR
-	RenderingDevice::GetSingleton()->clearCurrentRenderTarget(color);
-#else
-#ifdef DEBUG
-	RenderingDevice::GetSingleton()->clearCurrentRenderTarget(0.3f, 0.7f, 0.3f);
-#else
-	RenderingDevice::GetSingleton()->clearCurrentRenderTarget(0.0f, 0.0f, 0.0f);
-#endif // DEBUG
-#endif // ROOTEX_EDITOR
+	RenderingDevice::GetSingleton()->clearMainRT(color.x, color.y, color.z, color.w);
+	RenderingDevice::GetSingleton()->clearDSV();
 }
 
-void Window::clearUnboundTarget()
+void Window::clearOffScreen(const Color& color)
 {
-#ifdef ROOTEX_EDITOR
-	RenderingDevice::GetSingleton()->clearUnboundRenderTarget(0.15f, 0.15f, 0.15f);
-#else
-#ifdef DEBUG
-	RenderingDevice::GetSingleton()->clearUnboundRenderTarget(0.3f, 0.7f, 0.3f);
-#else
-	RenderingDevice::GetSingleton()->clearUnboundRenderTarget(0.0f, 0.0f, 0.0f);
-#endif // DEBUG
-#endif // ROOTEX_EDITOR
+	RenderingDevice::GetSingleton()->clearOffScreenRT(color.x, color.y, color.z, color.w);
+	RenderingDevice::GetSingleton()->clearDSV();
 }
 
 Variant Window::toggleFullScreen(const Event* event)

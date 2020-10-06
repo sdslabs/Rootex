@@ -40,7 +40,6 @@ class CPUParticlesComponent : public ModelComponent
 	size_t m_PoolIndex;
 	int m_EmitRate;
 	TransformComponent* m_TransformComponent;
-	std::chrono::time_point<std::chrono::high_resolution_clock> m_LastRenderTimePoint;
 	
 	enum class EmitMode : int
 	{
@@ -62,9 +61,8 @@ public:
 	virtual ~CPUParticlesComponent() = default;
 
 	virtual bool setup() override;
-	virtual bool preRender() override;
+	virtual bool preRender(float deltaMilliseconds) override;
 	virtual void render() override;
-	virtual void postRender() override;
 
 	void emit(const ParticleTemplate& particleTemplate);
 	void expandPool(const size_t& poolSize);

@@ -13,14 +13,14 @@ Shader::Shader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const Buffer
 	{
 		ERR("Vertex Shader not found");
 	}
-	m_VertexShader = RenderingDevice::GetSingleton()->createVertexShader(vertexShaderBlob.Get());
+	m_VertexShader = RenderingDevice::GetSingleton()->createVS(vertexShaderBlob.Get());
 
 	Microsoft::WRL::ComPtr<ID3DBlob> pixelShaderBlob = RenderingDevice::GetSingleton()->createBlob(pixelPath);
 	if (!pixelShaderBlob)
 	{
 		ERR("Pixel Shader not found");
 	}
-	m_PixelShader = RenderingDevice::GetSingleton()->createPixelShader(pixelShaderBlob.Get());
+	m_PixelShader = RenderingDevice::GetSingleton()->createPS(pixelShaderBlob.Get());
 
 	const Vector<VertexBufferElement>& elements = vertexBufferFormat.getElements();
 
@@ -35,7 +35,7 @@ Shader::Shader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const Buffer
 		vertexDescArray.push_back(desc);
 	}
 
-	m_InputLayout = RenderingDevice::GetSingleton()->createVertexLayout(
+	m_InputLayout = RenderingDevice::GetSingleton()->createVL(
 	    vertexShaderBlob.Get(),
 	    vertexDescArray.data(),
 	    vertexDescArray.size());
@@ -60,7 +60,7 @@ ColorShader::ColorShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, co
 BasicShader::BasicShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat)
     : Shader(vertexPath, pixelPath, vertexBufferFormat)
 {
-	m_SamplerState = RenderingDevice::GetSingleton()->createSamplerState();
+	m_SamplerState = RenderingDevice::GetSingleton()->createSS();
 }
 
 void BasicShader::set(const Texture* texture, int slot)
@@ -87,7 +87,7 @@ GridShader::GridShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, cons
 SkyShader::SkyShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat)
     : Shader(vertexPath, pixelPath, vertexBufferFormat)
 {
-	m_SamplerState = RenderingDevice::GetSingleton()->createSamplerState();
+	m_SamplerState = RenderingDevice::GetSingleton()->createSS();
 }
 
 void SkyShader::bind() const
