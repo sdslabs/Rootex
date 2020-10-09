@@ -134,8 +134,21 @@ void BasicMaterial::bind()
 		m_BasicShader->set(m_NormalTexture.get(), NORMAL_PS_CPP);
 	}
 	m_BasicShader->set(m_SpecularTexture.get(), SPECULAR_PS_CPP);
-	setVSConstantBuffer(VSDiffuseConstantBuffer(RenderSystem::GetSingleton()->getCurrentMatrix()));
-	setPSConstantBuffer(PSDiffuseConstantBufferMaterial({ m_Color, m_IsLit, m_SpecularIntensity, m_SpecularPower, m_Reflectivity, m_RefractionConstant, m_Refractivity, m_IsAffectedBySky, m_IsNormal }));
+	Matrix currentModelMatrix = RenderSystem::GetSingleton()->getCurrentMatrix();
+	setVSConstantBuffer(VSDiffuseConstantBuffer(currentModelMatrix));
+
+	PSDiffuseConstantBufferMaterial objectPSCB;
+	objectPSCB.affectedBySky = m_IsAffectedBySky;
+	objectPSCB.color = m_Color;
+	objectPSCB.hasNormalMap = m_IsNormal;
+	objectPSCB.isLit = m_IsLit;
+	objectPSCB.reflectivity = m_Reflectivity;
+	objectPSCB.refractionConstant = m_RefractionConstant;
+	objectPSCB.refractivity = m_Refractivity;
+	objectPSCB.specularIntensity = m_SpecularIntensity;
+	objectPSCB.specularPower = m_SpecularPower;
+
+	setPSConstantBuffer(objectPSCB);
 }
 
 JSON::json BasicMaterial::getJSON() const

@@ -28,5 +28,6 @@ enum class ComponentIDs : unsigned int
 	TransformAnimationComponent,
 	TriggerComponent,
 	SkyComponent,
-	FogComponent
+	FogComponent,
+	StaticPointLightComponent,
 };
