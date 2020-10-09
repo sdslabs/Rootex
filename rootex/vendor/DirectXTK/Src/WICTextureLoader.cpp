@@ -198,11 +198,14 @@ namespace DirectX
         static INIT_ONCE s_initOnce = INIT_ONCE_STATIC_INIT;
 
         IWICImagingFactory* factory = nullptr;
-        (void)InitOnceExecuteOnce(
+        if (!InitOnceExecuteOnce(
             &s_initOnce,
             InitializeWICFactory,
             nullptr,
-            reinterpret_cast<LPVOID*>(&factory));
+            reinterpret_cast<LPVOID*>(&factory)))
+        {
+            return nullptr;
+        }
 
         return factory;
     }
@@ -299,28 +302,33 @@ namespace
             {
             case D3D_FEATURE_LEVEL_9_1:
             case D3D_FEATURE_LEVEL_9_2:
-                maxsize = 2048 /*D3D_FL9_1_REQ_TEXTURE2D_U_OR_V_DIMENSION*/;
+                maxsize = 2048u /*D3D_FL9_1_REQ_TEXTURE2D_U_OR_V_DIMENSION*/;
                 break;
 
             case D3D_FEATURE_LEVEL_9_3:
-                maxsize = 4096 /*D3D_FL9_3_REQ_TEXTURE2D_U_OR_V_DIMENSION*/;
+                maxsize = 4096u /*D3D_FL9_3_REQ_TEXTURE2D_U_OR_V_DIMENSION*/;
                 break;
 
             case D3D_FEATURE_LEVEL_10_0:
             case D3D_FEATURE_LEVEL_10_1:
-                maxsize = 8192 /*D3D10_REQ_TEXTURE2D_U_OR_V_DIMENSION*/;
+                maxsize = 8192u /*D3D10_REQ_TEXTURE2D_U_OR_V_DIMENSION*/;
                 break;
 
             default:
-                maxsize = D3D11_REQ_TEXTURE2D_U_OR_V_DIMENSION;
+                maxsize = size_t(D3D11_REQ_TEXTURE2D_U_OR_V_DIMENSION);
                 break;
             }
         }
 
         assert(maxsize > 0);
 
-        UINT twidth, theight;
-        if (width > maxsize || height > maxsize)
+        UINT twidth = width;
+        UINT theight = height;
+        if (loadFlags & WIC_LOADER_FIT_POW2)
+        {
+            LoaderHelpers::FitPowerOf2(width, height, twidth, theight, maxsize);
+        }
+        else if (width > maxsize || height > maxsize)
         {
             float ar = static_cast<float>(height) / static_cast<float>(width);
             if (width > height)
@@ -335,10 +343,11 @@ namespace
             }
             assert(twidth <= maxsize && theight <= maxsize);
         }
-        else
+
+        if (loadFlags & WIC_LOADER_MAKE_SQUARE)
         {
-            twidth = width;
-            theight = height;
+            twidth = std::max<UINT>(twidth, theight);
+            theight = twidth;
         }
 
         // Determine format
@@ -418,6 +427,13 @@ namespace
         }
 #endif
 
+        if (loadFlags & WIC_LOADER_FORCE_RGBA32)
+        {
+            memcpy_s(&convertGUID, sizeof(WICPixelFormatGUID), &GUID_WICPixelFormat32bppRGBA, sizeof(GUID));
+            format = DXGI_FORMAT_R8G8B8A8_UNORM;
+            bpp = 32;
+        }
+
         if (!bpp)
             return E_FAIL;
 
@@ -434,12 +450,12 @@ namespace
                 GUID containerFormat;
                 if (SUCCEEDED(metareader->GetContainerFormat(&containerFormat)))
                 {
-                    // Check for sRGB colorspace metadata
                     bool sRGB = false;
 
                     PROPVARIANT value;
                     PropVariantInit(&value);
 
+                    // Check for colorspace chunks
                     if (memcmp(&containerFormat, &GUID_ContainerFormatPng, sizeof(GUID)) == 0)
                     {
                         // Check for sRGB chunk
@@ -447,26 +463,46 @@ namespace
                         {
                             sRGB = true;
                         }
+                        else if (SUCCEEDED(metareader->GetMetadataByName(L"/gAMA/ImageGamma", &value)) && value.vt == VT_UI4)
+                        {
+                            sRGB = (value.uintVal == 45455);
+                        }
+                        else
+                        {
+                            sRGB = (loadFlags & WIC_LOADER_SRGB_DEFAULT) != 0;
+                        }
                     }
 #if defined(_XBOX_ONE) && defined(_TITLE)
                     else if (memcmp(&containerFormat, &GUID_ContainerFormatJpeg, sizeof(GUID)) == 0)
                     {
-                        if (SUCCEEDED(metareader->GetMetadataByName(L"/app1/ifd/exif/{ushort=40961}", &value)) && value.vt == VT_UI2 && value.uiVal == 1)
+                        if (SUCCEEDED(metareader->GetMetadataByName(L"/app1/ifd/exif/{ushort=40961}", &value)) && value.vt == VT_UI2)
                         {
-                            sRGB = true;
+                            sRGB = (value.uiVal == 1);
+                        }
+                        else
+                        {
+                            sRGB = (loadFlags & WIC_LOADER_SRGB_DEFAULT) != 0;
                         }
                     }
                     else if (memcmp(&containerFormat, &GUID_ContainerFormatTiff, sizeof(GUID)) == 0)
                     {
-                        if (SUCCEEDED(metareader->GetMetadataByName(L"/ifd/exif/{ushort=40961}", &value)) && value.vt == VT_UI2 && value.uiVal == 1)
+                        if (SUCCEEDED(metareader->GetMetadataByName(L"/ifd/exif/{ushort=40961}", &value)) && value.vt == VT_UI2)
                         {
-                            sRGB = true;
+                            sRGB = (value.uiVal == 1);
+                        }
+                        else
+                        {
+                            sRGB = (loadFlags & WIC_LOADER_SRGB_DEFAULT) != 0;
                         }
                     }
 #else
-                    else if (SUCCEEDED(metareader->GetMetadataByName(L"System.Image.ColorSpace", &value)) && value.vt == VT_UI2 && value.uiVal == 1)
+                    else if (SUCCEEDED(metareader->GetMetadataByName(L"System.Image.ColorSpace", &value)) && value.vt == VT_UI2)
                     {
-                        sRGB = true;
+                        sRGB = (value.uiVal == 1);
+                    }
+                    else
+                    {
+                        sRGB = (loadFlags & WIC_LOADER_SRGB_DEFAULT) != 0;
                     }
 #endif
 
@@ -623,7 +659,7 @@ namespace
 
         if (autogen)
         {
-            desc.BindFlags = bindFlags | D3D11_BIND_RENDER_TARGET;
+            desc.BindFlags = bindFlags | D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
             desc.MiscFlags = miscFlags | D3D11_RESOURCE_MISC_GENERATE_MIPS;
         }
         else
@@ -632,10 +668,7 @@ namespace
             desc.MiscFlags = miscFlags;
         }
 
-        D3D11_SUBRESOURCE_DATA initData;
-        initData.pSysMem = temp.get();
-        initData.SysMemPitch = static_cast<UINT>(rowPitch);
-        initData.SysMemSlicePitch = static_cast<UINT>(imageSize);
+        D3D11_SUBRESOURCE_DATA initData = { temp.get(), static_cast<UINT>(rowPitch), static_cast<UINT>(imageSize) };
 
         ID3D11Texture2D* tex = nullptr;
         hr = d3dDevice->CreateTexture2D(&desc, (autogen) ? nullptr : &initData, &tex);
@@ -825,7 +858,7 @@ HRESULT DirectX::CreateWICTextureFromMemoryEx(
     unsigned int bindFlags,
     unsigned int cpuAccessFlags,
     unsigned int miscFlags,
-    unsigned int loadFlags,
+    WIC_LOADER_FLAGS loadFlags,
     ID3D11Resource** texture,
     ID3D11ShaderResourceView** textureView) noexcept
 {
@@ -920,7 +953,7 @@ _Use_decl_annotations_
         unsigned int bindFlags,
         unsigned int cpuAccessFlags,
         unsigned int miscFlags,
-        unsigned int loadFlags,
+        WIC_LOADER_FLAGS loadFlags,
         ID3D11Resource** texture,
         ID3D11ShaderResourceView** textureView) noexcept
 {
@@ -1048,7 +1081,7 @@ HRESULT DirectX::CreateWICTextureFromFileEx(
     unsigned int bindFlags,
     unsigned int cpuAccessFlags,
     unsigned int miscFlags,
-    unsigned int loadFlags,
+    WIC_LOADER_FLAGS loadFlags,
     ID3D11Resource** texture,
     ID3D11ShaderResourceView** textureView) noexcept
 {
@@ -1124,7 +1157,7 @@ _Use_decl_annotations_
         unsigned int bindFlags,
         unsigned int cpuAccessFlags,
         unsigned int miscFlags,
-        unsigned int loadFlags,
+        WIC_LOADER_FLAGS loadFlags,
         ID3D11Resource** texture,
         ID3D11ShaderResourceView** textureView) noexcept
 {

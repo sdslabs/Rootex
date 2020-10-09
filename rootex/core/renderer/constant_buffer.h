@@ -6,9 +6,9 @@
 /// Used to bind a point light to the Pixel shader
 struct PointLightInfo
 {
-	Color ambientColor = { 0.05f, 0.05f, 0.05f, 1.0f };
-	Color diffuseColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-	float diffuseIntensity = 2.0f;
+	Color ambientColor = { 0.0f, 0.0f, 0.0f, 0.0f };
+	Color diffuseColor = { 0.0f, 0.0f, 0.0f, 0.0f };
+	float diffuseIntensity = 0.0f;
 	/// attenuation = 1/(attConst + attLin * r + attQuad * r * r)
 	float attConst = 1.0f;
 	/// attenuation = 1/(attConst + attLin * r + attQuad * r * r)
@@ -18,14 +18,14 @@ struct PointLightInfo
 	/// Is filled with the TransformComponent while rendering
 	Vector3 lightPos = { 0.0f, 0.0f, 0.0f };
 	/// Lighting effect clipped for distance > range
-	float range = 10;
+	float range = 0.0f;
 };
 
 /// Used to bind a directional light to the Pixel shader
 struct DirectionalLightInfo
 {
 	Vector3 direction = { 1.0f, 0.0f, 0.0f };
-	float diffuseIntensity = 2.0f;
+	float diffuseIntensity = 0.0f;
 	Color ambientColor = { 0.05f, 0.05f, 0.05f, 1.0f };
 	Color diffuseColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 };
@@ -35,12 +35,12 @@ struct SpotLightInfo
 {
 	Color ambientColor = { 0.05f, 0.05f, 0.05f, 1.0f };
 	Color diffuseColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-	float diffuseIntensity = 2.0f;
+	float diffuseIntensity = 0.0f;
 	float attConst = 1.0f;
 	float attLin = 0.045f;
 	float attQuad = 0.0075f;
 	Vector3 lightPos = { 0.0f, 0.0f, 0.0f };
-	float range = 10;
+	float range = 0.0f;
 	/// Direction of axis of light cone
 	Vector3 direction;
 	/// Increasing spot increases the angular attenuation wrt axis
@@ -48,6 +48,20 @@ struct SpotLightInfo
 	/// Lighting effect clipped for angle > angleRange
 	float angleRange;
 	float pad[3];
+};
+
+struct StaticLightID
+{
+	int id;
+	Vector3 pad;
+};
+
+// Constant buffer uploaded once per model being rendered
+struct PerModelPSCB
+{
+	int staticPointsLightsAffectingCount = 0;
+	float pad[3];
+	StaticLightID staticPointsLightsAffecting[MAX_STATIC_POINT_LIGHTS_AFFECTING_1_OBJECT];
 };
 
 /// Lighting properties of a material
@@ -66,24 +80,44 @@ struct PSDiffuseConstantBufferMaterial
 	int hasNormalMap = 0;
 };
 
+struct StaticPointLightsInfo
+{
+	PointLightInfo pointLightInfos[MAX_STATIC_POINT_LIGHTS];
+};
+
 struct LightsInfo
 {
 	Vector3 cameraPos;
 	int pointLightCount = 0;
-	PointLightInfo pointLightInfos[MAX_POINT_LIGHTS];
+	PointLightInfo pointLightInfos[MAX_DYNAMIC_POINT_LIGHTS];
 	int directionalLightPresent = 0;
 	float pad2[3];
 	DirectionalLightInfo directionalLightInfo;
 	int spotLightCount = 0;
 	float pad3[3];
-	SpotLightInfo spotLightInfos[MAX_SPOT_LIGHTS];
+	SpotLightInfo spotLightInfos[MAX_DYNAMIC_SPOT_LIGHTS];
 };
 
-/// Encapsulates all the types of light and other data offered, to bind them in the Pixel Shader
+/// Constant buffer uploaded once per frame in the PS
 struct PerFramePSCB
 {
 	LightsInfo lights;
 	Color fogColor;
+};
+
+/// Constant buffer uploaded once per frame in the VS
+struct PerFrameVSCB
+{
+	Matrix view;
+	float fogStart;
+	float fogEnd;
+	float pad[2];
+};
+
+/// Constant buffer uploaded once per frame in the PS
+struct PerLevelPSCB
+{
+	StaticPointLightsInfo staticLights;
 };
 
 /// Pixel Shader constant buffer for material not affected by lighting and single color
@@ -114,12 +148,4 @@ struct VSDiffuseConstantBuffer
 		Model = model.Transpose();
 		ModelInverseTranspose = model.Invert();
 	}
-};
-
-struct PerFrameVSCB
-{
-	Matrix view;
-	float fogStart;
-	float fogEnd;
-	float pad[2];
 };
