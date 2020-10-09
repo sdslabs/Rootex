@@ -2,9 +2,10 @@
     "Components": {
         "HierarchyComponent": {
             "children": [],
-            "parent": 2
+            "parent": 1
         },
         "ModelComponent": {
+            "affectingStaticLights": [],
             "isVisible": true,
             "materialOverrides": {
                 "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
@@ -12,24 +13,24 @@
             "renderPass": 2,
             "resFile": "game/assets/test/sphere.obj"
         },
-        "PointLightComponent": {
+        "StaticPointLightComponent": {
             "ambientColor": {
                 "a": 1.0,
-                "b": 0.0,
-                "g": 0.0,
-                "r": 0.7915058135986328
+                "b": 0.5,
+                "g": 0.5,
+                "r": 0.5
             },
-            "attConst": 23.045000076293945,
-            "attLin": 25.0,
-            "attQuad": 4.007999897003174,
+            "attConst": 0.04500000178813934,
+            "attLin": 1.6799999475479126,
+            "attQuad": 5.927000045776367,
             "diffuseColor": {
                 "a": 1.0,
-                "b": 0.40154439210891724,
-                "g": 1.0,
-                "r": 0.9468548893928528
+                "b": 0.9459459185600281,
+                "g": 0.37618696689605713,
+                "r": 0.934946596622467
             },
-            "diffuseIntensity": 140.0,
-            "range": 9.0
+            "diffuseIntensity": 14.800000190734863,
+            "range": 16.700000762939453
         },
         "TransformComponent": {
             "boundingBox": {
@@ -45,25 +46,25 @@
                 }
             },
             "position": {
-                "x": -619.1212768554688,
-                "y": 149.7377471923828,
-                "z": 144.59622192382813
+                "x": -27.101757049560547,
+                "y": 1.7169989347457886,
+                "z": -1.1642298698425293
             },
             "rotation": {
-                "w": -0.7056155800819397,
-                "x": 0.7085948586463928,
+                "w": -0.0,
+                "x": 1.0,
                 "y": 0.0,
                 "z": 0.0
             },
             "scale": {
-                "x": 0.7600001096725464,
-                "y": 0.7600067853927612,
-                "z": 0.7600067853927612
+                "x": 0.03999999910593033,
+                "y": 0.03999999910593033,
+                "z": 0.03999999910593033
             }
         }
     },
     "Entity": {
-        "ID": 13,
-        "name": "PointLight"
+        "ID": 17,
+        "name": "StaticPointLight"
     }
 }

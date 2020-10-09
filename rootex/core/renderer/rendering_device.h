@@ -38,6 +38,9 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> m_OffScreenRTTexture;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_OffScreenRTV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_OffScreenRTSRV;
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> m_OffScreenRTTextureResolved;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_OffScreenRTVResolved;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_OffScreenRTSRVResolved;
 
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_DSState;
 	UINT m_StencilRef;
@@ -107,6 +110,8 @@ public:
 	void bind(ID3D11PixelShader* pixelShader);
 	void bind(ID3D11InputLayout* inputLayout);
 
+	void resolveSRV(Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> source, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> destination);
+
 	void mapBuffer(ID3D11Buffer* buffer, D3D11_MAPPED_SUBRESOURCE& subresource);
 	void unmapBuffer(ID3D11Buffer* buffer);
 	
@@ -135,6 +140,7 @@ public:
 	void setScissorRectangle(int x, int y, int width, int height);
 
 	void setOffScreenRT();
+	void setOffScreenRTResolved();
 	void setMainRT();
 	void setRTV(Microsoft::WRL::ComPtr<ID3D11RenderTargetView> rtv);
 	
@@ -143,6 +149,7 @@ public:
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> getMainRTSRV();
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> getOffScreenRTSRV();
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> getOffScreenRTSRVResolved();
 
 	Ref<DirectX::SpriteBatch> getUIBatch();
 

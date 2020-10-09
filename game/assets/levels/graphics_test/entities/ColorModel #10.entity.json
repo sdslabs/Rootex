@@ -6,6 +6,13 @@
         },
         "ModelComponent": {
             "isVisible": true,
+            "materialOverrides": {
+                "game/assets/materials/fire.001hand.rmat": "game/assets/materials/fire.001hand.rmat",
+                "game/assets/materials/handgunhandg.000.rmat": "game/assets/materials/handgunhandg.000.rmat",
+                "game/assets/materials/handgunhandg.rmat": "game/assets/materials/handgunhandg.rmat",
+                "game/assets/materials/material.001.rmat": "game/assets/materials/material.001.rmat",
+                "game/assets/materials/material.004.rmat": "game/assets/materials/material.004.rmat"
+            },
             "renderPass": 1,
             "resFile": "game/assets/3ds/Handgun_3ds.3ds"
         },

@@ -31,6 +31,7 @@ class RenderSystem : public System
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_VSPerFrameConstantBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_VSProjectionConstantBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_PSPerFrameConstantBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> m_PSPerLevelConstantBuffer;
 
 	bool m_IsEditorRenderPassEnabled;
 
@@ -60,6 +61,8 @@ class RenderSystem : public System
 
 	void renderPassRender(float deltaMilliseconds, RenderPass renderPass);
 
+	Variant onOpenedLevel(const Event* event);
+
 public:
 	static RenderSystem* GetSingleton();
 	
@@ -83,6 +86,8 @@ public:
 	void setProjectionConstantBuffers();
 	void perFrameVSCBBinds(float fogStart, float fogEnd);
 	void perFramePSCBBinds(const Color& fogColor);
+	void perLevelPSCBBinds();
+	void updatePerLevelBinds();
 
 	void setIsEditorRenderPass(bool enabled) { m_IsEditorRenderPassEnabled = enabled; }
 	

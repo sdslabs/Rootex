@@ -1,21 +1,19 @@
 {
-    "affectedBySky": true,
+    "affectedBySky": false,
     "color": {
         "a": 1.0,
-        "b": 0.5879999995231628,
-        "g": 0.5879999995231628,
-        "r": 0.5879999995231628
+        "b": 0.0,
+        "g": 7.843137264251709,
+        "r": 1.9607843160629272
     },
     "imageFile": "game/assets/sponza/textures/vase_plant.png",
     "isAlpha": true,
-    "isLit": true,
+    "isLit": false,
     "isNormal": true,
     "normalImageFile": "game/assets/sponza/textures/vase_plant_NRM.png",
     "reflectivity": 0.10000000149011612,
     "refractionConstant": 0.800000011920929,
     "refractivity": 0.10000000149011612,
     "specularImageFile": "game/assets/sponza/textures/vase_plant_mask.png",
-    "specularIntensity": 0.20000000298023224,
-    "specularPower": 30.0,
     "type": "BasicMaterial"
 }

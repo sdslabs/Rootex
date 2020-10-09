@@ -7,11 +7,6 @@ void Material::bind()
 	m_Shader->bind();
 }
 
-ID3D11ShaderResourceView* Material::getPreview()
-{
-	return Texture::GetCrossTexture()->getTextureResourceView();
-}
-
 JSON::json Material::getJSON() const
 {
 	JSON::json j;
