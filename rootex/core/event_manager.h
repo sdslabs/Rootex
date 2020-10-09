@@ -22,7 +22,7 @@ class EventManager
 	unsigned int m_ActiveQueue;
 
 	EventManager();
-	~EventManager();
+	~EventManager() = default;
 
 public:
 	static void RegisterAPI(sol::table& rootex);
@@ -48,6 +48,8 @@ public:
 	void deferredCall(const String& eventName, const Event::Type& eventType, const Variant& data);
 	/// Dispatch deferred events collected so far.
 	bool dispatchDeferred(unsigned long maxMillis = Infinite);
+
+	void releaseAllEventListeners();
 
 	const HashMap<Event::Type, Vector<EventFunction>>& getRegisteredEvents() const { return m_EventListeners; }
 };

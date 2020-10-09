@@ -7,10 +7,6 @@ EventManager::EventManager()
 	m_ActiveQueue = 0;
 }
 
-EventManager ::~EventManager() 
-{
-}
-
 void EventManager::RegisterAPI(sol::table& rootex)
 {
 	rootex["AddEvent"] = [](const String& eventType) { EventManager::GetSingleton()->addEvent(eventType); };
@@ -151,6 +147,11 @@ bool EventManager::dispatchDeferred(unsigned long maxMillis)
 		}
 	}
 	return queueFlushed;
+}
+
+void EventManager::releaseAllEventListeners()
+{
+	m_EventListeners.clear();
 }
 
 bool EventManager::addListener(const Event::Type& type, EventFunction instance)
