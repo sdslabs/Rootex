@@ -15,6 +15,7 @@ void Entity::RegisterAPI(sol::table& rootex)
 	entity["getID"] = &Entity::getID;
 	entity["getName"] = &Entity::getName;
 	entity["setName"] = &Entity::setName;
+	entity["script"] = sol::property(&Entity::getScriptEnvt, &Entity::setScriptEnvt);
 
 	sol::usertype<Component> component = rootex.new_usertype<Component>("Component");
 	component["getOwner"] = &Component::getOwner;
@@ -93,6 +94,16 @@ bool Entity::setupEntities()
 	return status;
 }
 
+sol::table Entity::getScriptEnvt()
+{
+	return (sol::table)m_Script->m_ScriptEnvironment;
+}
+
+void Entity::setScriptEnvt(sol::table changed)
+{
+	m_Script->m_ScriptEnvironment.set(changed);
+}
+
 void Entity::destroy()
 {
 	for (auto& component : m_Components)
@@ -125,6 +136,12 @@ String Entity::getFullName() const
 {
 	return m_Name + " #" + std::to_string(getID());
 }
+//
+//sol::object Entity::get(sol::stack_object key, sol::this_state state)
+//{
+//	auto string_key = key.as<sol::optional<std::string>>();
+//	return sol::object(state, sol::in_place, m_Script->m_ScriptEnvironment[string_key]);
+//}
 
 bool Entity::call(String function, Vector<Variant> args)
 {

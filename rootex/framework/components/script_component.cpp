@@ -43,26 +43,6 @@ bool Script::isSuccessful(const sol::function_result& result)
 	return true;
 }
 
-//void Script::onBegin()
-//{
-//	isSuccessful(m_ScriptEnvironment["onBegin"](m_Entity));
-//}
-
-//void Script::onUpdate(float deltaMilliSeconds)
-//{
-//	isSuccessful(m_ScriptEnvironment["onUpdate"](m_Entity, deltaMilliSeconds));
-//}
-//
-//void Script::onEnd()
-//{
-//	isSuccessful(m_ScriptEnvironment["onEnd"](m_Entity));
-//}
-//
-//void Script::onHit(btPersistentManifold* manifold, PhysicsColliderComponent* other)
-//{
-//	isSuccessful(m_ScriptEnvironment["onHit"](m_Entity, manifold, other));
-//}
-
 bool Script::call(String function, Vector<Variant> args) 
 {
 	return isSuccessful(m_ScriptEnvironment[function](sol::as_args(args)));
