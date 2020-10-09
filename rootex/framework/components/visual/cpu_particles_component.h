@@ -43,9 +43,9 @@ class CPUParticlesComponent : public ModelComponent
 	
 	enum class EmitMode : int
 	{
-		Point,
-		Square,
-		Cube
+		Point = 0,
+		Square = 1,
+		Cube = 2
 	};
 
 	EmitMode m_CurrentEmitMode;
@@ -64,6 +64,7 @@ public:
 	virtual bool preRender(float deltaMilliseconds) override;
 	virtual void render() override;
 
+	void setMaterial(Ref<BasicMaterial> particlesMaterial);
 	void emit(const ParticleTemplate& particleTemplate);
 	void expandPool(const size_t& poolSize);
 

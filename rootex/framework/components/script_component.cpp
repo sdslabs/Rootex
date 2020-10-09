@@ -132,6 +132,7 @@ void ScriptComponent::removeScript(const String& scriptFile)
 #ifdef ROOTEX_EDITOR
 #include "imgui.h"
 #include "imgui_stdlib.h"
+#include "utility/imgui_helpers.h"
 void ScriptComponent::draw()
 {
 	ImGui::BeginGroup();
@@ -153,22 +154,20 @@ void ScriptComponent::draw()
 	}
 	ImGui::EndGroup();
 
-	if (ImGui::BeginDragDropTarget())
+	if (ImGui::Button(ICON_ROOTEX_EXTERNAL_LINK "##Script"))
 	{
-		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Resource Drop"))
+		igfd::ImGuiFileDialog::Instance()->OpenDialog("Script", "Choose Script", SupportedFiles.at(ResourceFile::Type::Lua), "game/assets/");
+	}
+
+	if (igfd::ImGuiFileDialog::Instance()->FileDialog("Script"))
+	{
+		if (igfd::ImGuiFileDialog::Instance()->IsOk)
 		{
-			const char* payloadFileName = (const char*)payload->Data;
-			FilePath payloadPath(payloadFileName);
-			if (IsFileSupported(payloadPath.extension().string(), ResourceFile::Type::Lua))
-			{
-				addScript(payloadPath.string());
-			}
-			else
-			{
-				WARN("Cannot assign a non-lua file as Script");
-			}
+			String filePathName = OS::GetRootRelativePath(igfd::ImGuiFileDialog::Instance()->GetFilePathName()).generic_string();
+			addScript(filePathName);
 		}
-		ImGui::EndDragDropTarget();
+
+		igfd::ImGuiFileDialog::Instance()->CloseDialog("Script");
 	}
 }
 #endif // ROOTEX_EDITOR

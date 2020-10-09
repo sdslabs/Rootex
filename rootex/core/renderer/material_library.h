@@ -17,7 +17,6 @@ private:
 
 	static MaterialMap s_Materials;
 	static MaterialDatabase s_MaterialDatabase;
-	static void PopulateMaterials(const String& path);
 
 	static bool IsDefault(const String& materialPath);
 
@@ -25,7 +24,6 @@ public:
 	static const String s_DefaultMaterialPath;
 	
 	static void SaveAll();
-	static void LoadMaterials();
 	static void CreateNewMaterialFile(const String& materialPath, const String& materialType);
 	static bool IsExists(const String& materialPath);
 
@@ -34,5 +32,3 @@ public:
 	static MaterialMap& GetAllMaterials() { return s_Materials; };
 	static MaterialDatabase& GetMaterialDatabase() { return s_MaterialDatabase; };
 };
-
-void PopulateMaterials();

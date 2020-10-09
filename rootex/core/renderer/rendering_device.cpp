@@ -11,15 +11,22 @@
 
 #include "Tracy/Tracy.hpp"
 
-std::string ws2s(const std::wstring& wstr);
+std::wstring StringToWideString(const std::string& str);
+std::string WideStringToString(const std::wstring& wstr);
 
 #define FEATURE_STRING(features, featureName) "\n" + #featureName + ": " + std::to_string(features.featureName)
-#define ADAPTER_DESCRIPTION_WSTRING(desc, info) "\n" + #info + ": " + ws2s(desc.info)
+#define ADAPTER_DESCRIPTION_WSTRING(desc, info) "\n" + #info + ": " + WideStringToString(desc.info)
 #define ADAPTER_DESCRIPTION_STRING(desc, info) "\n" + #info + ": " + std::to_string(desc.info)
 
-std::string ws2s(const std::wstring& wstr)
+std::wstring StringToWideString(const std::string& str)
 {
-	std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converterX;
+	static std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converterX;
+	return converterX.from_bytes(str);
+}
+
+std::string WideStringToString(const std::wstring& wstr)
+{
+	static std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converterX;
 	return converterX.to_bytes(wstr);
 }
 
@@ -348,9 +355,9 @@ void RenderingDevice::createSwapChainAndRTs(int width, int height, bool MSAA, co
 	GFX_ERR_CHECK(m_Device->CreateShaderResourceView(m_OffScreenRTTextureResolved.Get(), &shaderResourceViewDesc, &m_OffScreenRTSRVResolved));
 }
 
-Ref<DirectX::SpriteFont> RenderingDevice::createFont(FileBuffer* fontFileBuffer)
+Ref<DirectX::SpriteFont> RenderingDevice::createFont(const String& fontFilePath)
 {
-	return Ref<DirectX::SpriteFont>(new DirectX::SpriteFont(m_Device.Get(), (const uint8_t*)fontFileBuffer->data(), fontFileBuffer->size()));
+	return Ref<DirectX::SpriteFont>(new DirectX::SpriteFont(m_Device.Get(), StringToWideString(fontFilePath.c_str()).c_str()));
 }
 
 Microsoft::WRL::ComPtr<ID3DBlob> RenderingDevice::createBlob(LPCWSTR path)
@@ -466,35 +473,14 @@ Microsoft::WRL::ComPtr<ID3D11InputLayout> RenderingDevice::createVL(ID3DBlob* ve
 	return inputLayout;
 }
 
-Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::createTexture(ImageResourceFile* imageRes)
-{
-	if (imageRes->getPath().extension() == ".dds")
-	{
-		return createDDSTexture(imageRes);
-	}
-
-	Microsoft::WRL::ComPtr<ID3D11Resource> textureResource;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> textureView;
-
-	if (FAILED(DirectX::CreateWICTextureFromMemoryEx(m_Device.Get(), (const uint8_t*)imageRes->getData()->getRawData()->data(), (size_t)imageRes->getData()->getRawDataByteSize(), 0, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, 0, DirectX::WIC_LOADER_IGNORE_SRGB | DirectX::WIC_LOADER_FORCE_RGBA32, textureResource.GetAddressOf(), textureView.GetAddressOf())))
-	{
-		ERR("Could not create texture: " + imageRes->getPath().generic_string());
-	}
-
-	return textureView;
-}
-
-Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::createDDSTexture(ImageResourceFile* imageRes)
+Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::createDDSTexture(const char* imageDDSFileData, size_t size)
 {
 	Microsoft::WRL::ComPtr<ID3D11Resource> textureResource;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> textureView;
 
-	if (FAILED(DirectX::CreateDDSTextureFromMemoryEx(
-		m_Device.Get(),
-		(const uint8_t*)imageRes->getData()->getRawData()->data(),
-	        imageRes->getData()->getRawDataByteSize(), imageRes->getData()->getRawDataByteSize(), D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, D3D11_RESOURCE_MISC_TEXTURECUBE, false, &textureResource, &textureView)))
+	if (FAILED(DirectX::CreateDDSTextureFromMemoryEx(m_Device.Get(), (const uint8_t*)imageDDSFileData, size, 0, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, D3D11_RESOURCE_MISC_TEXTURECUBE, false, &textureResource, &textureView)))
 	{
-		ERR("Could not load DDS image: " + imageRes->getPath().generic_string());
+		ERR("Could not load DDS texture from file data");
 	}
 
 	return textureView;
@@ -505,9 +491,9 @@ Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::createTexture(
 	Microsoft::WRL::ComPtr<ID3D11Resource> textureResource;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> textureView;
 
-	if (FAILED(DirectX::CreateWICTextureFromMemory(m_Device.Get(), (const uint8_t*)imageFileData, size, textureResource.GetAddressOf(), textureView.GetAddressOf())))
+	if (FAILED(DirectX::CreateWICTextureFromMemoryEx(m_Device.Get(), (const uint8_t*)imageFileData, size, 0, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, 0, DirectX::WIC_LOADER_IGNORE_SRGB | DirectX::WIC_LOADER_FORCE_RGBA32, textureResource.GetAddressOf(), textureView.GetAddressOf())))
 	{
-		ERR("Could not create texture of size: " + std::to_string(size));
+		ERR("Could not create texture from file data");
 	}
 
 	return textureView;
@@ -535,7 +521,7 @@ Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::createTextureF
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> texture2D;
 	if (FAILED(m_Device->CreateTexture2D(&textureDesc, &data, &texture2D)))
 	{
-		ERR("Could not create texture 2D");
+		ERR("Could not create texture 2D from pixel data");
 	}
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};

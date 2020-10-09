@@ -1,7 +1,8 @@
 #pragma once
 
 #include "common/common.h"
-#include "resource_loader.h"
+#include "core/resource_loader.h"
+#include "core/resource_files/text_resource_file.h"
 
 class LevelDescription
 {

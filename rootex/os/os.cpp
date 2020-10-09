@@ -5,7 +5,6 @@
 #include <iostream>
 
 #include "common/common.h"
-#include "resource_data.h"
 
 #include <shellapi.h>
 
@@ -464,14 +463,14 @@ void OS::PostError(String message, LPSTR caption)
 	MessageBoxA(GetActiveWindow(), message.c_str(), caption, MB_OK);
 }
 
-bool OS::SaveFile(const FilePath& filePath, ResourceData* fileData)
+bool OS::SaveFile(const FilePath& filePath, const char* fileBuffer, size_t fileSize)
 {
 	std::ofstream outFile;
 
 	try
 	{
 		outFile.open(GetAbsolutePath(filePath.generic_string()), std::ios::out | std::ios::binary);
-		outFile.write(fileData->getRawData()->data(), fileData->getRawDataByteSize());
+		outFile.write(fileBuffer, fileSize);
 	}
 	catch (std::exception e)
 	{

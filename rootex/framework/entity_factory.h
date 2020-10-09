@@ -3,7 +3,7 @@
 #include "common/common.h"
 #include "component.h"
 #include "entity.h"
-#include "resource_file.h"
+#include "resource_files/text_resource_file.h"
 
 /// Invalid ID for an entity
 #define INVALID_ID 0

@@ -1,6 +1,7 @@
 #include "material_library.h"
 
 #include "core/resource_loader.h"
+#include "core/resource_files/text_resource_file.h"
 
 MaterialLibrary::MaterialMap MaterialLibrary::s_Materials;
 const String MaterialLibrary::s_DefaultMaterialPath = "rootex/assets/materials/default.rmat";
@@ -10,35 +11,26 @@ MaterialLibrary::MaterialDatabase MaterialLibrary::s_MaterialDatabase = {
 	{ SkyMaterial::s_MaterialName, { SkyMaterial::CreateDefault, SkyMaterial::Create } }
 };
 
-void MaterialLibrary::PopulateMaterials(const String& path)
-{
-	for (auto& materialFile : OS::GetAllInDirectory(path))
-	{
-		if (OS::IsFile(materialFile.generic_string()) && materialFile.extension() == ".rmat")
-		{
-			TextResourceFile* materialResourceFile = ResourceLoader::CreateTextResourceFile(materialFile.generic_string());
-			const JSON::json& materialJSON = JSON::json::parse(materialResourceFile->getString());
-			s_Materials[materialFile.generic_string()] = { (String)materialJSON["type"], {} };
-		}
-	}
-}
-
 bool MaterialLibrary::IsDefault(const String& materialPath)
 {
 	static String rootex = "rootex";
 	return materialPath.substr(0, rootex.size()) == rootex;
 }
 
-void MaterialLibrary::LoadMaterials()
-{
-	PopulateMaterials("game/assets/");
-	PopulateMaterials("rootex/assets/");
-}
-
 Ref<Material> MaterialLibrary::GetMaterial(const String& materialPath)
 {
 	if (s_Materials.find(materialPath) == s_Materials.end())
 	{
+		TextResourceFile* materialResourceFile = ResourceLoader::CreateTextResourceFile(materialPath);
+		if (materialResourceFile)
+		{
+			const JSON::json& materialJSON = JSON::json::parse(materialResourceFile->getString());
+			Ref<Material> material(s_MaterialDatabase[materialJSON["type"]].second(materialJSON));
+			material->setFileName(materialPath);
+			s_Materials[materialPath] = { (String)materialJSON["type"], material };
+			return material;
+		}
+
 		WARN("Material file not found, returning default material instead of: " + materialPath);
 		return GetDefaultMaterial();
 	}
@@ -87,7 +79,7 @@ void MaterialLibrary::SaveAll()
 		{
 			TextResourceFile* materialFile = ResourceLoader::CreateNewTextResourceFile(materialPath);
 			materialFile->putString(lockedMaterial->getJSON().dump(4));
-			ResourceLoader::SaveResourceFile(materialFile);
+			materialFile->save();
 		}
 	}
 }
@@ -106,7 +98,7 @@ void MaterialLibrary::CreateNewMaterialFile(const String& materialPath, const St
 			TextResourceFile* materialFile = ResourceLoader::CreateNewTextResourceFile(materialPath);
 			Ref<Material> material(s_MaterialDatabase[materialType].first());
 			materialFile->putString(material->getJSON().dump(4));
-			ResourceLoader::SaveResourceFile(materialFile);
+			materialFile->save();
 			s_Materials[materialPath] = { materialType, {} };
 			PRINT("Created material: " + materialPath + " of type " + materialType);
 			

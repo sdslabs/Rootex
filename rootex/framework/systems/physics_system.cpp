@@ -1,8 +1,8 @@
 #include "physics_system.h"
 
-#include "core/resource_loader.h"
-
 #include "common/common.h"
+#include "core/resource_loader.h"
+#include "core/resource_files/lua_text_resource_file.h"
 
 #include "components/physics/physics_collider_component.h"
 #include "components/script_component.h"

@@ -4,7 +4,6 @@
 #include "script/interpreter.h"
 #include "systems/serialization_system.h"
 
-#include "gui/file_system_dock.h"
 #include "gui/hierarchy_dock.h"
 #include "gui/output_dock.h"
 #include "gui/toolbar_dock.h"
@@ -62,7 +61,6 @@ class EditorSystem : public System
 		const char* image = ICON_ROOTEX_FILE_IMAGE_O;
 	} m_Icons;
 
-	Ptr<FileSystemDock> m_FileSystem;
 	Ptr<HierarchyDock> m_Hierarchy;
 	Ptr<OutputDock> m_Output;
 	Ptr<ToolbarDock> m_Toolbar;

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "component.h"
-
+#include "core/resource_files/model_resource_file.h"
 #include "renderer/materials/sky_material.h"
 
 class SkyComponent : public Component

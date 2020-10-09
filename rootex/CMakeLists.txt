@@ -22,6 +22,7 @@ add_subdirectory(framework)
 add_subdirectory(main)
 add_subdirectory(os)
 add_subdirectory(script)
+add_subdirectory(utility)
 
 add_definitions(-DRMLUI_STATIC_LIB)
 add_subdirectory(vendor)

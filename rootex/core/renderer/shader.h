@@ -89,5 +89,5 @@ public:
 
 	virtual void bind() const override;
 
-	void setSkyTexture(const Texture3D* texture);
+	void setSkyTexture(const TextureCube* texture);
 };

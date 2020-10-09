@@ -14,8 +14,6 @@
 typedef Vector<char> FileBuffer;
 typedef std::chrono::time_point<std::filesystem::file_time_type::clock> FileTimePoint; 
 
-class ResourceData;
-
 /// Provides features that are provided directly by the OS.
 class OS
 {
@@ -69,7 +67,7 @@ public:
 	static void CreateDirectoryName(const String& dirPath);
 	static InputOutputFileStream CreateFileName(const String& filePath);
 
-	static bool SaveFile(const FilePath& filePath, ResourceData* fileData);
+	static bool SaveFile(const FilePath& filePath, const char* fileBuffer, size_t fileSize);
 
 	static void Print(const String& msg, const String& type = "Print");
 	static void Print(const float& real);

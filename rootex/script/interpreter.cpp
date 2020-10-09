@@ -2,6 +2,7 @@
 #include "core/resource_loader.h"
 
 #include "common/common.h"
+
 #include "app/level_manager.h"
 #include "components/hierarchy_component.h"
 #include "components/transform_component.h"
@@ -10,10 +11,17 @@
 #include "components/visual/model_component.h"
 #include "components/physics/box_collider_component.h"
 #include "components/trigger_component.h"
+#include "core/input/input_manager.h"
+#include "core/resource_files/audio_resource_file.h"
+#include "core/resource_files/font_resource_file.h"
+#include "core/resource_files/image_resource_file.h"
+#include "core/resource_files/image_cube_resource_file.h"
+#include "core/resource_files/lua_text_resource_file.h"
+#include "core/resource_files/model_resource_file.h"
+#include "core/resource_files/text_resource_file.h"
 #include "entity_factory.h"
 #include "event_manager.h"
 #include "script/interpreter.h"
-#include "core/input/input_manager.h"
 
 void SolPanic(std::optional<String> maybeMsg)
 {
@@ -123,6 +131,7 @@ void LuaInterpreter::registerTypes()
 	AudioResourceFile::RegisterAPI(rootex);
 	ModelResourceFile::RegisterAPI(rootex);
 	ImageResourceFile::RegisterAPI(rootex);
+	ImageCubeResourceFile::RegisterAPI(rootex);
 	FontResourceFile::RegisterAPI(rootex);
 	
 	EntityFactory::RegisterAPI(rootex);

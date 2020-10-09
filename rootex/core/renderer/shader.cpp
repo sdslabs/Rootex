@@ -96,7 +96,7 @@ void SkyShader::bind() const
 	RenderingDevice::GetSingleton()->setInPixelShader(m_SamplerState.Get());
 }
 
-void SkyShader::setSkyTexture(const Texture3D* texture)
+void SkyShader::setSkyTexture(const TextureCube* texture)
 {
 	RenderingDevice::GetSingleton()->setInPixelShader(SKY_PS_CPP, 1, texture->getTextureResourceView());
 }
