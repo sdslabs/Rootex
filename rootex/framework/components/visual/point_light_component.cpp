@@ -1,5 +1,7 @@
 #include "point_light_component.h"
 
+#include "entity.h"
+
 Component* PointLightComponent::Create(const JSON::json& componentData)
 {
 	PointLightComponent* pointLightComponent = new PointLightComponent(
@@ -42,6 +44,17 @@ PointLightComponent::PointLightComponent(const float constAtt, const float linAt
 	m_PointLight.range = range;
 }
 
+bool PointLightComponent::setup()
+{
+	m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
+	if (!m_TransformComponent)
+	{
+		ERR("TransformComponent not found on point light");
+		return false;
+	}
+	return true;
+}
+
 JSON::json PointLightComponent::getJSON() const
 {
 	JSON::json j;
@@ -67,8 +80,11 @@ JSON::json PointLightComponent::getJSON() const
 
 #ifdef ROOTEX_EDITOR
 #include"imgui.h"
+#include "systems/render_system.h"
 void PointLightComponent::draw()
 {
+	RenderSystem::GetSingleton()->submitSphere(m_TransformComponent->getAbsoluteTransform().Translation(), m_PointLight.range);
+
 	ImGui::DragFloat("Diffuse Intensity##Point", &m_PointLight.diffuseIntensity, 0.1f);
 	ImGui::ColorEdit4("Diffuse Color##Point", &m_PointLight.diffuseColor.x);
 	ImGui::ColorEdit4("Ambient Color##Point", &m_PointLight.ambientColor.x);

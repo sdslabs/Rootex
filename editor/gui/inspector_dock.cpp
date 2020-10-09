@@ -152,11 +152,17 @@ void InspectorDock::draw(float deltaMilliseconds)
 				ImGui::Text("Components");
 				for (auto& component : m_OpenedEntity->getAllComponents())
 				{
+					ImGui::PushStyleColor(ImGuiCol_Text, EditorSystem::GetSingleton()->getColors().white);
 					if (ImGui::TreeNodeEx(component.second->getName(), ImGuiTreeNodeFlags_CollapsingHeader | ImGuiTreeNodeFlags_DefaultOpen))
 					{
+						ImGui::PopStyleColor();
 						EditorSystem::GetSingleton()->pushRegularFont();
 						component.second->draw();
 						EditorSystem::GetSingleton()->popFont();
+					}
+					else
+					{
+						ImGui::PopStyleColor();
 					}
 				}
 				EditorSystem::GetSingleton()->popFont();

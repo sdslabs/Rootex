@@ -5,13 +5,6 @@
 
 class TransformComponent : public Component
 {
-public:
-	struct Bounds
-	{
-		Vector3 m_LowerBounds;
-		Vector3 m_HigherBounds;
-	};
-
 private:
 	static Component* Create(const JSON::json& componentData);
 	static Component* CreateDefault();
@@ -67,7 +60,7 @@ public:
 	void addRotation(const Quaternion& applyTransform);
 
 	Vector3 getPosition() const { return m_TransformBuffer.m_Position; }
-	BoundingBox getBounds() const { return m_TransformBuffer.m_BoundingBox; }
+	BoundingBox getWorldSpaceBounds() const;
 	const Quaternion& getRotation() const { return m_TransformBuffer.m_Rotation; }
 	const Vector3& getScale() const { return m_TransformBuffer.m_Scale; }
 	const Matrix& getLocalTransform() const { return m_TransformBuffer.m_Transform; }
@@ -80,5 +73,6 @@ public:
 
 #ifdef ROOTEX_EDITOR
 	void draw() override;
+	void highlight();
 #endif // ROOTEX_EDITOR
 };

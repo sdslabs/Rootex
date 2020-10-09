@@ -58,7 +58,7 @@ ModelComponent::ModelComponent(unsigned int renderPass, ModelResourceFile* resFi
     , m_HierarchyComponent(nullptr)
     , m_AffectingStaticLightEntityIDs(affectingStaticLightIDs)
 {
-	setVisualModel(resFile, materialOverrides);
+	assignOverrides(resFile, materialOverrides);
 }
 
 void ModelComponent::RegisterAPI(sol::table& rootex)
@@ -73,25 +73,25 @@ void ModelComponent::RegisterAPI(sol::table& rootex)
 
 bool ModelComponent::setup()
 {
-	bool status = true;
 	if (m_Owner)
 	{
 		m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
-		if (m_TransformComponent == nullptr)
+		if (!m_TransformComponent)
 		{
 			WARN("Entity without transform component found");
-			status = false;
+			return false;
 		}
+		assignBoundingBox();
 
 		m_HierarchyComponent = m_Owner->getComponent<HierarchyComponent>().get();
-		if (m_HierarchyComponent == nullptr)
+		if (!m_HierarchyComponent)
 		{
 			WARN("Entity without hierarchy component found");
-			status = false;
+			return false;
 		}
 	}
 
-	return status;
+	return true;
 }
 
 bool ModelComponent::setupEntities()
@@ -209,12 +209,44 @@ void ModelComponent::postRender()
 
 void ModelComponent::setVisualModel(ModelResourceFile* newModel, const HashMap<String, String>& materialOverrides)
 {
+	assignOverrides(newModel, materialOverrides);
+	assignBoundingBox();
+}
+
+void ModelComponent::assignBoundingBox()
+{
+	if (m_ModelResourceFile)
+	{
+		BoundingBox bigBox;
+		bool first = true;
+		for (auto& [material, meshes] : getMeshes())
+		{
+			for (auto& mesh : meshes)
+			{
+				if (first)
+				{
+					bigBox = mesh.m_BoundingBox;
+					first = false;
+				}
+				else
+				{
+					BoundingBox::CreateMerged(bigBox, bigBox, mesh.m_BoundingBox);
+				}
+			}
+		}
+		m_TransformComponent->setBounds(bigBox);
+	}
+}
+
+void ModelComponent::assignOverrides(ModelResourceFile* newModel, const HashMap<String, String>& materialOverrides)
+{
+	m_ModelResourceFile = newModel;
+	
 	if (!newModel)
 	{
 		return;
 	}
 
-	m_ModelResourceFile = newModel;
 	m_MaterialOverrides.clear();
 	for (auto& [material, meshes] : m_ModelResourceFile->getMeshes())
 	{

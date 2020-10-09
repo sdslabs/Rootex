@@ -133,6 +133,14 @@ void TransformComponent::addRotation(const Quaternion& applyTransform)
 	updateTransformFromPositionRotationScale();
 }
 
+BoundingBox TransformComponent::getWorldSpaceBounds() const
+{
+	BoundingBox transformedBox;
+	transformedBox.Center = Vector3::Transform(m_TransformBuffer.m_BoundingBox.Center, m_ParentAbsoluteTransform * m_TransformBuffer.m_Transform);
+	transformedBox.Extents = m_TransformBuffer.m_BoundingBox.Extents * m_TransformBuffer.m_Scale;
+	return transformedBox;
+}
+
 JSON::json TransformComponent::getJSON() const
 {
 	JSON::json j;
@@ -162,8 +170,11 @@ JSON::json TransformComponent::getJSON() const
 
 #ifdef ROOTEX_EDITOR
 #include "imgui.h"
+#include "systems/render_system.h"
 void TransformComponent::draw()
 {
+	highlight();
+
 	ImGui::DragFloat3("##Position", &m_TransformBuffer.m_Position.x, s_EditorDecimalSpeed);
 	ImGui::SameLine();
 	if (ImGui::Button("Position"))
@@ -236,13 +247,24 @@ void TransformComponent::draw()
 		m_TransformBuffer.m_BoundingBox.Center = { 0.0f, 0.0f, 0.0f };
 	}
 
-	ImGui::DragFloat3("##Extents", &m_TransformBuffer.m_BoundingBox.Extents.x, s_EditorDecimalSpeed);
+	ImGui::DragFloat3("##Bounds", &m_TransformBuffer.m_BoundingBox.Extents.x, s_EditorDecimalSpeed);
 	ImGui::SameLine();
 	if (ImGui::Button("Extents"))
 	{
-		m_TransformBuffer.m_BoundingBox.Extents = { 0.5f, 0.5f, 0.5f };
+		m_Owner->setupComponents();
 	}
 
 	updateTransformFromPositionRotationScale();
+}
+
+void TransformComponent::highlight()
+{
+	BoundingBox transformedBox = getWorldSpaceBounds();
+	Vector3 min = Vector3(transformedBox.Center) - transformedBox.Extents;
+	Vector3 max = Vector3(transformedBox.Center) + transformedBox.Extents;
+	RenderSystem::GetSingleton()->submitBox(min, max);
+	Vector3 forward;
+	getAbsoluteTransform().Forward().Normalize(forward);
+	RenderSystem::GetSingleton()->submitLine(transformedBox.Center, transformedBox.Center + (transformedBox.Extents.z * 2.0f) * forward);
 }
 #endif // ROOTEX_EDITOR
