@@ -38,9 +38,6 @@
             "referenceDistance": 1.0,
             "rollOffFactor": 1.0
         },
-        "ScriptComponent": {
-            "script": "game/assets/scripts/sound_test.lua"
-        },
         "SpotLightComponent": {
             "ambientColor": {
                 "a": 1.0,
@@ -95,6 +92,12 @@
     },
     "Entity": {
         "ID": 3,
-        "name": "Source"
+        "name": "Source",
+        "script": {
+            "path": "game/assets/scripts/sound_test.lua",
+            "overrides": {
+                
+            }
+        }
     }
 }

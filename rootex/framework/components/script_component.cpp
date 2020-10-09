@@ -1,38 +1,24 @@
 #include "script_component.h"
 
-#include "entity.h"
 #include "resource_loader.h"
 
-Component* ScriptComponent::Create(const JSON::json& componentData)
+Script::Script(const JSON::json& script)
+	: m_Entity(nullptr)
 {
-	ScriptComponent* sc = new ScriptComponent(componentData["script"]);
-	return sc;
-}
+	String luaFilePath = script["path"];
 
-Component* ScriptComponent::CreateDefault()
-{
-	ScriptComponent* sc = new ScriptComponent({});
-	return sc;
-}
-
-ScriptComponent::ScriptComponent(const String& luaFilePath)
-{
-	if (!OS::IsExists(luaFilePath))
+	for (auto& element : JSON::json::iterator_wrapper(script["overrides"]))
 	{
-		ERR("Could not find script file: " + luaFilePath);
-		return;
+		m_Overrides[element.key()] = element.value();
 	}
 
 	addScript(luaFilePath);
 }
 
-ScriptComponent::~ScriptComponent()
-{
-}
-
-bool ScriptComponent::setup()
+bool Script::setup(Entity* entity)
 {
 	bool status = true;
+	m_Entity = entity;
 	try
 	{
 		LuaInterpreter::GetSingleton()->getLuaState().script_file(m_ScriptFile, m_ScriptEnvironment);
@@ -45,57 +31,60 @@ bool ScriptComponent::setup()
 	return status;
 }
 
-bool ScriptComponent::isSuccessful(const sol::function_result& result)
+bool Script::isSuccessful(const sol::function_result& result)
 {
 	if (!result.valid())
 	{
 		sol::error e = result;
-		WARN("Script Execution failure in entity: " + m_Owner->getFullName());
+		WARN("Script Execution failure in entity: " + m_Entity->getFullName());
 		PRINT(e.what());
 		return false;
 	}
 	return true;
 }
 
-void ScriptComponent::onBegin()
+//void Script::onBegin()
+//{
+//	isSuccessful(m_ScriptEnvironment["onBegin"](m_Entity));
+//}
+
+//void Script::onUpdate(float deltaMilliSeconds)
+//{
+//	isSuccessful(m_ScriptEnvironment["onUpdate"](m_Entity, deltaMilliSeconds));
+//}
+//
+//void Script::onEnd()
+//{
+//	isSuccessful(m_ScriptEnvironment["onEnd"](m_Entity));
+//}
+//
+//void Script::onHit(btPersistentManifold* manifold, PhysicsColliderComponent* other)
+//{
+//	isSuccessful(m_ScriptEnvironment["onHit"](m_Entity, manifold, other));
+//}
+
+bool Script::call(String function, Vector<Variant> args) 
 {
-	if (m_ScriptFile != "")
-	{
-		isSuccessful(m_ScriptEnvironment["onBegin"](m_Owner));
-	}
+	return isSuccessful(m_ScriptEnvironment[function](sol::as_args(args)));
 }
 
-void ScriptComponent::onUpdate(float deltaMilliSeconds)
-{
-	if (m_ScriptFile != "")
-	{
-		isSuccessful(m_ScriptEnvironment["onUpdate"](m_Owner, deltaMilliSeconds));
-	}
-}
-
-void ScriptComponent::onEnd()
-{
-	if (m_ScriptFile != "")
-	{
-		isSuccessful(m_ScriptEnvironment["onEnd"](m_Owner));
-	}
-}
-
-void ScriptComponent::onHit(btPersistentManifold* manifold, PhysicsColliderComponent* other)
-{
-	isSuccessful(m_ScriptEnvironment["onHit"](m_Owner, manifold, other));
-}
-
-JSON::json ScriptComponent::getJSON() const
+JSON::json Script::getJSON() const
 {
 	JSON::json j;
 
 	j["scripts"] = m_ScriptFile;
 
+	j["overrides"] = {};
+
+	for (auto&& [key, value] : m_Overrides)
+	{
+		j["overrides"][key] = value;
+	}
+
 	return j;
 }
 
-void ScriptComponent::registerExports()
+void Script::registerExports()
 {
 	sol::table currExports = m_ScriptEnvironment["exports"];
 	std::filesystem::path file(m_ScriptFile);
@@ -107,9 +96,9 @@ void ScriptComponent::registerExports()
 	});
 }
 
-bool ScriptComponent::addScript(const String& scriptFile)
+bool Script::addScript(const String& scriptFile)
 {
-	if (m_ScriptFile != "")
+	if (!m_ScriptFile.empty())
 		return false;
 	m_ScriptFile = scriptFile;
 	m_ScriptEnvironment = sol::environment(LuaInterpreter::GetSingleton()->getLuaState(),
@@ -118,7 +107,7 @@ bool ScriptComponent::addScript(const String& scriptFile)
 	return true;
 }
 
-void ScriptComponent::removeScript()
+void Script::removeScript()
 {
 	m_ScriptFile = "";
 	m_IsOverriden.clear();
@@ -128,7 +117,7 @@ void ScriptComponent::removeScript()
 #ifdef ROOTEX_EDITOR
 #include "imgui.h"
 #include "imgui_stdlib.h"
-void ScriptComponent::draw()
+void Script::draw()
 {
 	ImGui::BeginGroup();
 	ImGui::Text("Scripts");

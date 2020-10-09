@@ -4,50 +4,46 @@
 #include "event_manager.h"
 #include "script/interpreter.h"
 #include "physics/physics_collider_component.h"
+#include "entity.h"
 
 #include "btBulletDynamicsCommon.h"
 
 class LuaTextResourceFile;
 
-class ScriptComponent : public Component
+class Script
 {
-public:
-	static Component* Create(const JSON::json& componentData);
-	static Component* CreateDefault();
-
 private:
 	sol::environment m_ScriptEnvironment;
 	String m_ScriptFile;
 	HashMap<String, bool> m_IsOverriden;
 	HashMap<String, String> m_Overrides;
+	Entity* m_Entity;
 
-	friend class EntityFactory;
-
-	ScriptComponent(const String& luaFilePath);
-	ScriptComponent(ScriptComponent&) = delete;
-	virtual ~ScriptComponent();
+	friend class Entity;
 
 	bool isSuccessful(const sol::function_result& result);
 
 public:
-	static const ComponentID s_ID = (ComponentID)ComponentIDs::ScriptComponent;
 
-	virtual bool setup() override;
+	bool setup(Entity* entity);
 
-	void onBegin();
-	virtual void onUpdate(float deltaMilliSeconds);
-	void onEnd();
+	//void onBegin();
+	//void onUpdate(float deltaMilliSeconds);
+	//void onEnd();
 	void onHit(btPersistentManifold* manifold, PhysicsColliderComponent* other);
 
-	ComponentID getComponentID() const override { return s_ID; }
-	virtual String getName() const override { return "ScriptComponent"; }
-	virtual JSON::json getJSON() const override;
+	JSON::json getJSON() const;
 
 	bool addScript(const String& scriptFile);
 	void registerExports();
 	void removeScript();
+	bool call(String function, Vector<Variant> args);
+	
+	Script(const JSON::json& script);
+	Script(const Script&) = delete;
+	~Script() = default;
 
 #ifdef ROOTEX_EDITOR
-	virtual void draw();
+	void draw();
 #endif
 };

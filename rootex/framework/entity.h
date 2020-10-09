@@ -5,6 +5,7 @@
 #include "event.h"
 
 class Component;
+class Script;
 
 typedef unsigned int ComponentID;
 typedef int EntityID;
@@ -18,8 +19,9 @@ protected:
 	String m_Name;
 	HashMap<ComponentID, Ref<Component>> m_Components;
 	bool m_IsEditorOnly;
+	Ref<Script> m_Script;
 	
-	Entity(EntityID id, const String& name, const HashMap<ComponentID, Ref<Component>>& components = {});
+	Entity(EntityID id, const String& name, const JSON::json& script = {});
 
 	bool setupComponents();
 	bool setupEntities();
@@ -53,9 +55,13 @@ public:
 	template <class ComponentType = Component>
 	Ref<ComponentType> getComponentFromID(ComponentID ID) const;
 
+	Ref<Script> getScript() { return m_Script; }
+
 	JSON::json getJSON() const;
 	const HashMap<ComponentID, Ref<Component>>& getAllComponents() const;
 	bool isEditorOnly() const { return m_IsEditorOnly; }
+
+	bool call(String function, Vector<Variant> args);
 	
 	void setName(const String& name);
 	void setEditorOnly(bool editorOnly) { m_IsEditorOnly = editorOnly; }

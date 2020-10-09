@@ -15,30 +15,24 @@ ScriptSystem* ScriptSystem::GetSingleton()
 
 void ScriptSystem::begin()
 {
-	ScriptComponent* scriptComponent = nullptr;
-	for (auto&& component : s_Components[ScriptComponent::s_ID])
+	for (auto&& [id, entity] : EntityFactory::GetSingleton()->getEntities())
 	{
-		scriptComponent = (ScriptComponent*)component;
-		scriptComponent->onBegin();
+		entity->call("onBegin", { entity });
 	}
 }
 
 void ScriptSystem::update(float deltaMilliseconds)
 {
-	ScriptComponent* scriptComponent = nullptr;
-	for (auto&& component : s_Components[ScriptComponent::s_ID])
+	for (auto&& [id, entity] : EntityFactory::GetSingleton()->getEntities())
 	{
-		scriptComponent = (ScriptComponent*)component;
-		scriptComponent->onUpdate(deltaMilliseconds);
+		entity->call("onUpdate", { entity, deltaMilliseconds });
 	}
 }
 
 void ScriptSystem::end()
 {
-	ScriptComponent* scriptComponent = nullptr;
-	for (auto&& component : s_Components[ScriptComponent::s_ID])
+	for (auto&& [id, entity] : EntityFactory::GetSingleton()->getEntities())
 	{
-		scriptComponent = (ScriptComponent*)component;
-		scriptComponent->onEnd();
+		entity->call("onEnd", { entity });
 	}
 }

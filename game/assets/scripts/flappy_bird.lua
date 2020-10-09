@@ -16,7 +16,7 @@ end
 function onUpdate(delta, entity)
 end
 
-function onHit(entity, hit, other)
+function onHit(entity, other)
     failEvent = Event.new("FlabbyBird", "GameEnd", 0)
     CallEvent(failEvent)
 end
