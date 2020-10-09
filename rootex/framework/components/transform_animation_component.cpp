@@ -1,57 +1,69 @@
 #include "transform_animation_component.h"
 #include "transform_component.h"
 #include "entity.h"
+#include "systems/render_system.h"
 
 Component* TransformAnimationComponent::Create(const JSON::json& componentData)
 {
 	Vector<Keyframe> keyframes;
-
 	for (auto& keyframeInfo : componentData["keyframes"])
 	{
-		keyframes.push_back({ 
-			keyframeInfo["timePosition"], 
-			{ 
-				keyframeInfo["translation"]["x"],
-		        keyframeInfo["translation"]["y"],
-		        keyframeInfo["translation"]["z"],
-			},
-		    {
-		        keyframeInfo["rotation"]["x"],
-		        keyframeInfo["rotation"]["y"],
-		        keyframeInfo["rotation"]["z"],
-		        keyframeInfo["rotation"]["w"],
-			},
-		    {
-		        keyframeInfo["scale"]["x"],
-		        keyframeInfo["scale"]["y"],
-		        keyframeInfo["scale"]["z"],
-		    } 
-		});
+		Matrix transform;
+		for (int i = 0; i < 4; i++)
+		{
+			for (int j = 0; j < 4; j++)
+			{
+				transform.m[i][j] = keyframeInfo["transform"][i * 4 + j];
+			}
+		}
+		keyframes.push_back({ keyframeInfo["timePosition"], transform });
 	}
-
-	TransformAnimationComponent* animation = new TransformAnimationComponent(keyframes, componentData["isPlayOnStart"], componentData["isLooping"]);
+	TransitionType transition = TransitionType::SmashSmash;
+	if (componentData.find("transitionType") != componentData.end())
+	{
+		transition = (TransitionType)(int)componentData["transitionType"];
+	}
+	AnimationMode animationMode = AnimationMode::None;
+	if (componentData.find("animationMode") != componentData.end())
+	{
+		animationMode = componentData["animationMode"];
+	}
+	TransformAnimationComponent* animation = new TransformAnimationComponent(keyframes, componentData["isPlayOnStart"], animationMode, transition);
 	return animation;
 }
 
 Component* TransformAnimationComponent::CreateDefault()
 {
-	return new TransformAnimationComponent(
-	    { 
-			{ 0.0f, Vector3::Zero, Quaternion::Identity, { 1.0f, 1.0f, 1.0f } } 
-		}, 
-		true,
-		false
-	);
+	return new TransformAnimationComponent({ TransformAnimationComponent::Keyframe({ 0.0f, Matrix::Identity }) }, false, AnimationMode::None, TransitionType::SmashSmash);
 }
 
-TransformAnimationComponent::TransformAnimationComponent(const Vector<Keyframe> keyframes, bool isPlayOnStart, bool isLooping)
+TransformAnimationComponent::TransformAnimationComponent(const Vector<Keyframe> keyframes, bool isPlayOnStart, AnimationMode animationMode, TransitionType transition)
     : m_Keyframes(keyframes)
     , m_CurrentTimePosition(0.0f)
     , m_IsPlayOnStart(isPlayOnStart)
-    , m_IsLooping(isLooping)
+    , m_AnimationMode(animationMode)
     , m_TransformComponent(nullptr)
     , m_IsPlaying(false)
+    , m_TransitionType(transition)
+    , m_TimeDirection(1.0f)
 {
+}
+
+Matrix TransformAnimationComponent::interpolateMatrix(const Matrix& left, const Matrix& right, float lerpFactor)
+{
+	Quaternion leftRotation = Quaternion::CreateFromRotationMatrix(left);
+	Quaternion rightRotation = Quaternion::CreateFromRotationMatrix(right);
+
+	Quaternion finalRotation = Quaternion::Slerp(leftRotation, rightRotation, lerpFactor);
+
+	Matrix finalMat = Matrix::CreateFromQuaternion(finalRotation);
+
+	for (int i : { 0, 1, 2 })
+	{
+		finalMat.m[3][i] = left.m[3][i] * (1.0f - lerpFactor) + right.m[3][i] * lerpFactor;
+	}
+
+	return finalMat;
 }
 
 bool TransformAnimationComponent::setup()
@@ -62,21 +74,19 @@ bool TransformAnimationComponent::setup()
 		WARN("TransformComponent not found on entity with TransformAnimationComponent: " + m_Owner->getFullName());
 		return false;
 	}
-
-	m_InitialPosition = m_TransformComponent->getPosition();
-	m_InitialRotation = m_TransformComponent->getRotation();
-	m_InitialScale = m_TransformComponent->getScale();
-
-	m_Keyframes.front().m_Translation = m_InitialPosition;
-	m_Keyframes.front().m_Rotation = m_InitialRotation;
-	m_Keyframes.front().m_Scale = m_InitialScale;
-
+	if (m_Keyframes.empty())
+	{
+		Keyframe initialKeyframe;
+		initialKeyframe.timePosition = 0.0f;
+		initialKeyframe.transform = m_TransformComponent->getLocalTransform();
+		m_Keyframes.push_back(initialKeyframe);
+	}
 	return true;
 }
 
-void TransformAnimationComponent::pushKeyframe(float timePosition, const Vector3& position, const Quaternion& rotation, const Vector3& scale)
+void TransformAnimationComponent::pushKeyframe(const Keyframe& keyFrame)
 {
-	m_Keyframes.push_back({ timePosition, position, rotation, scale });
+	m_Keyframes.push_back(keyFrame);
 }
 
 void TransformAnimationComponent::popKeyframe(int count)
@@ -89,17 +99,17 @@ void TransformAnimationComponent::popKeyframe(int count)
 
 bool TransformAnimationComponent::hasEnded() const
 {
-	return m_CurrentTimePosition > getEndTime();
+	return m_AnimationMode == AnimationMode::None && m_CurrentTimePosition > getEndTime();
 }
 
 float TransformAnimationComponent::getStartTime() const
 {
-	return m_Keyframes.front().m_TimePosition;
+	return m_Keyframes.front().timePosition;
 }
 
 float TransformAnimationComponent::getEndTime() const
 {
-	return m_Keyframes.back().m_TimePosition;
+	return m_Keyframes.back().timePosition;
 }
 
 void TransformAnimationComponent::reset()
@@ -108,62 +118,72 @@ void TransformAnimationComponent::reset()
 	interpolate(0.0f);
 }
 
-void TransformAnimationComponent::interpolate(float t)
+void TransformAnimationComponent::interpolate(float deltaSeconds)
 {
-	if (t <= getStartTime())
+	switch (m_AnimationMode)
 	{
-		m_TransformComponent->setTransform(DirectX::XMMatrixAffineTransformation(
-		    m_Keyframes.front().m_Scale,
-		    Vector3::Zero,
-		    m_Keyframes.front().m_Rotation,
-		    m_Keyframes.front().m_Translation));
+	case AnimationMode::None:
+		break;
+	case AnimationMode::Looping:
+		if (m_CurrentTimePosition > getEndTime())
+		{
+			m_CurrentTimePosition = 0.0f;
+		}
+		break;
+	case AnimationMode::Alternating:
+		if (m_CurrentTimePosition < getStartTime() || getEndTime() < m_CurrentTimePosition)
+		{
+			m_TimeDirection *= -1.0f;
+		}
+		deltaSeconds *= m_TimeDirection;
+		break;
 	}
-	else if (t >= getEndTime())
+	m_CurrentTimePosition += deltaSeconds;
+
+	if (m_CurrentTimePosition <= getStartTime())
 	{
-		m_TransformComponent->setTransform(DirectX::XMMatrixAffineTransformation(
-		    m_Keyframes.back().m_Scale,
-		    Vector4::Zero,
-		    m_Keyframes.back().m_Rotation,
-		    m_Keyframes.back().m_Translation));
+		m_TransformComponent->setTransform(m_Keyframes.front().transform);
+	}
+	else if (m_CurrentTimePosition >= getEndTime())
+	{
+		m_TransformComponent->setTransform(m_Keyframes.back().transform);
 	}
 	else
 	{
-		Vector3 translation = Vector3::Zero;
-		Quaternion rotation = Quaternion::Identity;
-		Vector3 scale = { 1.0f, 1.0f, 1.0f };
-
 		for (unsigned int i = 0; i < m_Keyframes.size() - 1; i++)
 		{
-			if (t > m_Keyframes[i].m_TimePosition && t < m_Keyframes[i + 1].m_TimePosition)
+			if (m_CurrentTimePosition > m_Keyframes[i].timePosition && m_CurrentTimePosition < m_Keyframes[i + 1u].timePosition)
 			{
-				float timeSinceMostRecentKeyframe = t - m_Keyframes[i].m_TimePosition;
-				float timeBetween = m_Keyframes[i + 1].m_TimePosition - m_Keyframes[i].m_TimePosition;
+				float timeSinceMostRecentKeyframe = m_CurrentTimePosition - m_Keyframes[i].timePosition;
+				float timeBetween = m_Keyframes[i + 1u].timePosition - m_Keyframes[i].timePosition;
 				float lerpFactor = timeSinceMostRecentKeyframe / timeBetween;
+				
+				switch (m_TransitionType)
+				{
+				case TransitionType::SmashSmash:
+					lerpFactor = lerpFactor;
+					break;
+				case TransitionType::EaseEase:
+					lerpFactor = 0.5f * (sin(DirectX::g_XMPi[0] * (lerpFactor - 0.5f)) + 1);
+					break;
+				case TransitionType::SmashEase:
+					lerpFactor = sin(DirectX::g_XMPi[0] * lerpFactor / 2.0f);
+					break;
+				case TransitionType::EaseSmash:
+					lerpFactor = 1.0f - sin(DirectX::g_XMPi[0] * (1.0f - lerpFactor) / 2.0f);
+					break;
+				}
 
-				translation = Vector3::Lerp(
-				    m_Keyframes[i].m_Translation,
-				    m_Keyframes[i + 1].m_Translation,
-				    lerpFactor);
-				rotation = Quaternion::Slerp(
-				    m_Keyframes[i].m_Rotation,
-				    m_Keyframes[i + 1].m_Rotation,
-				    lerpFactor);
-				scale = Vector3::Lerp(
-				    m_Keyframes[i].m_Scale,
-				    m_Keyframes[i + 1].m_Scale,
-				    lerpFactor);
-		
-				m_TransformComponent->setTransform(DirectX::XMMatrixAffineTransformation(
-					scale,
-					Vector4::Zero,
-					rotation,
-					translation));
+				const Matrix& leftMat = m_Keyframes[i].transform;
+				const Matrix& rightMat = m_Keyframes[i + 1u].transform;
+
+				Matrix finalMat = interpolateMatrix(leftMat, rightMat, lerpFactor);
+				m_TransformComponent->setTransform(finalMat);
 				
 				// No need to check futher. This will be the only one needed.
 				break;
 			}
 		}
-
 	}
 }
 
@@ -183,21 +203,19 @@ JSON::json TransformAnimationComponent::getJSON() const
 
 	for (int i = 0; i < m_Keyframes.size(); i++)
 	{
-		j["keyframes"][i]["timePosition"] = m_Keyframes[i].m_TimePosition;
-		j["keyframes"][i]["translation"]["x"] = m_Keyframes[i].m_Translation.x;
-		j["keyframes"][i]["translation"]["y"] = m_Keyframes[i].m_Translation.y;
-		j["keyframes"][i]["translation"]["z"] = m_Keyframes[i].m_Translation.z;
-		j["keyframes"][i]["rotation"]["x"] = m_Keyframes[i].m_Rotation.x;
-		j["keyframes"][i]["rotation"]["y"] = m_Keyframes[i].m_Rotation.y;
-		j["keyframes"][i]["rotation"]["z"] = m_Keyframes[i].m_Rotation.z;
-		j["keyframes"][i]["rotation"]["w"] = m_Keyframes[i].m_Rotation.w;
-		j["keyframes"][i]["scale"]["x"] = m_Keyframes[i].m_Scale.x;
-		j["keyframes"][i]["scale"]["y"] = m_Keyframes[i].m_Scale.y;
-		j["keyframes"][i]["scale"]["z"] = m_Keyframes[i].m_Scale.z;
+		j["keyframes"][i]["timePosition"] = m_Keyframes[i].timePosition;
+		for (int x = 0; x < 4; x++)
+		{
+			for (int y = 0; y < 4; y++)
+			{
+				j["keyframes"][i]["transform"][x * 4u + y] = m_Keyframes[i].transform.m[x][y];
+			}
+		}
 	}
 
 	j["isPlayOnStart"] = m_IsPlayOnStart;
-	j["isLooping"] = m_IsLooping;
+	j["animationMode"] = m_AnimationMode;
+	j["transitionType"] = (int)m_TransitionType;
 
 	return j;
 }
@@ -206,40 +224,80 @@ JSON::json TransformAnimationComponent::getJSON() const
 #include "imgui.h"
 void TransformAnimationComponent::draw()
 {
+	ImGui::Combo("Transition Type", (int*)&m_TransitionType, "SmashSmash\0EaseEase\0SmashEase\0EaseSmash\0");
+	ImGui::Combo("Animation Mode", (int*)&m_AnimationMode, "None\0Looping\0Alternating\0");
+
 	ImGui::SliderFloat("Time", &m_CurrentTimePosition, 0.0f, getEndTime());
 	if (ImGui::Button("Reset##Component"))
 	{
 		reset();
 	}
 	ImGui::Checkbox("Play In Editor", &m_IsPlaying);
-	ImGui::Checkbox("Loop", &m_IsLooping);
 	ImGui::Checkbox("Play On Start", &m_IsPlayOnStart);
+
+	static bool isJumping = false;
+	static Keyframe* jumpingOn = nullptr;
 
 	if (ImGui::TreeNodeEx("Keyframes"))
 	{
+		for (int i = 0; i < m_Keyframes.size() - 1; i++)
+		{
+			RenderSystem::GetSingleton()->submitLine(
+			    (m_TransformComponent->getParentAbsoluteTransform() * m_Keyframes[i].transform).Translation(),
+			    (m_TransformComponent->getParentAbsoluteTransform() * m_Keyframes[i + 1u].transform).Translation());
+		}
+		
+		unsigned int keyFrameNumber = 1;
 		for (auto& keyframe : m_Keyframes)
 		{
-			ImGui::InputFloat(("Time##" + std::to_string(keyframe.m_TimePosition)).c_str(), &keyframe.m_TimePosition);
-			ImGui::InputFloat3(("Translation##" + std::to_string(keyframe.m_TimePosition)).c_str(), &keyframe.m_Translation.x);
-			ImGui::InputFloat4(("Rotation##" + std::to_string(keyframe.m_TimePosition)).c_str(), &keyframe.m_Rotation.x);
-			ImGui::InputFloat3(("Scale##" + std::to_string(keyframe.m_TimePosition)).c_str(), &keyframe.m_Scale.x);
+			ImGui::DragFloat(("Time##" + std::to_string(keyFrameNumber)).c_str(), &keyframe.timePosition);
+			ImGui::SameLine();
+			if (isJumping && jumpingOn == &keyframe)
+			{
+				if (ImGui::Button(("Exit Jump##" + std::to_string(keyFrameNumber)).c_str()))
+				{
+					isJumping = false;
+					jumpingOn = nullptr;
+				}
+			}
+			else
+			{
+				if (ImGui::Button(("Jump##" + std::to_string(keyFrameNumber)).c_str()))
+				{
+					isJumping = true;
+					jumpingOn = &keyframe;
+					m_TransformComponent->setTransform(keyframe.transform);
+				}
+			}
 			ImGui::Separator();
+			keyFrameNumber++;
 		}
 
-		if (ImGui::Button("+"))
+		if (!isJumping)
 		{
-			pushKeyframe(m_Keyframes.back().m_TimePosition + 1.0f, m_TransformComponent->getPosition(), m_TransformComponent->getRotation(), m_TransformComponent->getScale());
-		}
-		if (m_Keyframes.size() > 1)
-		{
-			ImGui::SameLine();
-			if (ImGui::Button("-"))
+			if (ImGui::Button("Set Keyframe"))
 			{
-				popKeyframe(1);
+				Keyframe newKeyframe;
+				newKeyframe.timePosition = m_Keyframes.back().timePosition + 1.0f;
+				newKeyframe.transform = m_TransformComponent->getLocalTransform();
+				pushKeyframe(newKeyframe);
+			}
+			if (m_Keyframes.size() > 1)
+			{
+				ImGui::SameLine();
+				if (ImGui::Button("Pop keyframe"))
+				{
+					popKeyframe(1);
+				}
 			}
 		}
 
 		ImGui::TreePop();
+	}
+
+	if (isJumping)
+	{
+		jumpingOn->transform = m_TransformComponent->getLocalTransform();
 	}
 }
 #endif // ROOTEX_EDITOR

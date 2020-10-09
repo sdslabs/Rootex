@@ -10,11 +10,11 @@
 #include "pch.h"
 #include "PostProcess.h"
 
-#include "AlignedNew.h"
+#include "BufferHelpers.h"
 #include "CommonStates.h"
-#include "ConstantBuffer.h"
-#include "DemandCreate.h"
 #include "DirectXHelpers.h"
+#include "AlignedNew.h"
+#include "DemandCreate.h"
 #include "SharedResourcePool.h"
 
 using namespace DirectX;
@@ -23,10 +23,10 @@ using Microsoft::WRL::ComPtr;
 
 namespace
 {
-    const int c_MaxSamples = 16;
+    constexpr int c_MaxSamples = 16;
 
-    const int Dirty_ConstantBuffer  = 0x01;
-    const int Dirty_Parameters      = 0x02;
+    constexpr int Dirty_ConstantBuffer  = 0x01;
+    constexpr int Dirty_Parameters      = 0x02;
 
     // Constant buffer layout. Must match the shader!
     __declspec(align(16)) struct PostProcessConstants
@@ -121,10 +121,10 @@ namespace
         }
 
         // Gets or lazily creates the specified pixel shader.
-        ID3D11PixelShader* GetPixelShader(int shaderIndex)
+        ID3D11PixelShader* GetPixelShader(unsigned int shaderIndex)
         {
-            assert(shaderIndex >= 0 && shaderIndex < BasicPostProcess::Effect_Max);
-            _Analysis_assume_(shaderIndex >= 0 && shaderIndex < BasicPostProcess::Effect_Max);
+            assert(shaderIndex < BasicPostProcess::Effect_Max);
+            _Analysis_assume_(shaderIndex < BasicPostProcess::Effect_Max);
 
             return DemandCreate(mPixelShaders[shaderIndex], mMutex, [&](ID3D11PixelShader** pResult) -> HRESULT
             {
@@ -211,11 +211,15 @@ BasicPostProcess::Impl::Impl(_In_ ID3D11Device* device)
     {
         throw std::exception("BasicPostProcess requires Feature Level 10.0 or later");
     }
+
+    SetDebugObjectName(mConstantBuffer.GetBuffer(), "BasicPostProcess");
 }
 
 
 // Sets our state onto the D3D device.
-void BasicPostProcess::Impl::Process(_In_ ID3D11DeviceContext* deviceContext, std::function<void __cdecl()>& setCustomState)
+void BasicPostProcess::Impl::Process(
+    _In_ ID3D11DeviceContext* deviceContext,
+    std::function<void __cdecl()>& setCustomState)
 {
     // Set the texture.
     ID3D11ShaderResourceView* textures[1] = { texture.Get() };
@@ -387,7 +391,7 @@ void BasicPostProcess::Impl::GaussianBlur5x5(float multiplier)
             // create a kernel which approximates a 5x5 kernel using only 13
             // sample points instead of 25; this is necessary since 2.0 shaders
             // only support 16 texture grabs.
-            if (fabs(float(x)) + fabs(float(y)) > 2.0f)
+            if (fabsf(float(x)) + fabsf(float(y)) > 2.0f)
                 continue;
 
             // Get the unscaled Gaussian intensity for this offset
@@ -494,7 +498,9 @@ BasicPostProcess::~BasicPostProcess()
 
 
 // IPostProcess methods.
-void BasicPostProcess::Process(_In_ ID3D11DeviceContext* deviceContext, _In_opt_ std::function<void __cdecl()> setCustomState)
+void BasicPostProcess::Process(
+    _In_ ID3D11DeviceContext* deviceContext,
+    _In_opt_ std::function<void __cdecl()> setCustomState)
 {
     pImpl->Process(deviceContext, setCustomState);
 }
