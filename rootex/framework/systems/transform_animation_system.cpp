@@ -36,15 +36,7 @@ void TransformAnimationSystem::update(float deltaMilliseconds)
 
 		if (animation->isPlaying() && !animation->hasEnded())
 		{
-			animation->m_CurrentTimePosition += deltaMilliseconds * MS_TO_S;
-
-
-			animation->interpolate(animation->m_CurrentTimePosition);
-		}
-		
-		if (animation->isLooping() && animation->hasEnded())
-		{
-			animation->reset();
+			animation->interpolate(deltaMilliseconds * MS_TO_S);
 		}
 	}
 }

@@ -25,30 +25,29 @@
 #define XAUDIO2_HELPER_FUNCTIONS
 #endif
 
-#if (_WIN32_WINNT >= 0x0602 /*_WIN32_WINNT_WIN8*/)
+#if defined(USING_XAUDIO2_REDIST) || (_WIN32_WINNT >= 0x0A00 /*_WIN32_WINNT_WIN10*/) || defined(_XBOX_ONE)
+#define USING_XAUDIO2_9
+#elif (_WIN32_WINNT >= 0x0602 /*_WIN32_WINNT_WIN8*/)
+#define USING_XAUDIO2_8
+#elif (_WIN32_WINNT >= 0x0601 /*_WIN32_WINNT_WIN7*/)
+#error Windows 7 SP1 requires the XAudio2Redist NuGet package https://aka.ms/xaudio2redist
+#else
+#error DirectX Tool Kit for Audio not supported on this platform
+#endif
+
 #include <xaudio2.h>
 #include <xaudio2fx.h>
 #include <x3daudio.h>
 #include <xapofx.h>
+
+#ifndef USING_XAUDIO2_REDIST
 #pragma comment(lib,"xaudio2.lib")
-#else
-// Using XAudio 2.7 requires the DirectX SDK
-#include <C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include\comdecl.h>
-#include <C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include\xaudio2.h>
-#include <C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include\xaudio2fx.h>
-#include <C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include\xapofx.h>
-#pragma warning(push)
-#pragma warning( disable : 4005 )
-#include <C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include\x3daudio.h>
-#pragma warning(pop)
-#pragma comment(lib,"x3daudio.lib")
-#pragma comment(lib,"xapofx.lib")
 #endif
 
 #include <DirectXMath.h>
 
-#include <stdint.h>
 
+#include <cstdint>
 #include <functional>
 #include <memory>
 #include <string>
@@ -58,6 +57,7 @@
 namespace DirectX
 {
     class SoundEffectInstance;
+    class SoundStreamInstance;
 
     //----------------------------------------------------------------------------------
     struct AudioStatistics
@@ -73,6 +73,7 @@ namespace DirectX
 #if defined(_XBOX_ONE) && defined(_TITLE)
         size_t  xmaAudioBytes;          // Total wave data (in bytes) in SoundEffects and in-memory WaveBanks allocated with ApuAlloc
 #endif
+        size_t  streamingBytes;         // Total size of streaming buffers (in bytes) in streaming WaveBanks
     };
 
 
@@ -85,8 +86,8 @@ namespace DirectX
         IVoiceNotify(const IVoiceNotify&) = delete;
         IVoiceNotify& operator=(const IVoiceNotify&) = delete;
 
-        IVoiceNotify(IVoiceNotify&&) = delete;
-        IVoiceNotify& operator=(IVoiceNotify&&) = delete;
+        IVoiceNotify(IVoiceNotify&&) = default;
+        IVoiceNotify& operator=(IVoiceNotify&&) = default;
 
         virtual void __cdecl OnBufferEnd() = 0;
             // Notfication that a voice buffer has finished
@@ -110,6 +111,9 @@ namespace DirectX
         virtual void __cdecl GatherStatistics(AudioStatistics& stats) const = 0;
             // Contribute to statistics request
 
+        virtual void __cdecl OnDestroyParent() noexcept = 0;
+            // Optional notification used by some objects
+
     protected:
         IVoiceNotify() = default;
     };
@@ -128,8 +132,6 @@ namespace DirectX
         AudioEngine_DisableVoiceReuse   = 0x40000,
     };
 
-    inline AUDIO_ENGINE_FLAGS operator|(AUDIO_ENGINE_FLAGS a, AUDIO_ENGINE_FLAGS b) noexcept { return static_cast<AUDIO_ENGINE_FLAGS>( static_cast<int>(a) | static_cast<int>(b) ); }
-
     enum SOUND_EFFECT_INSTANCE_FLAGS : uint32_t
     {
         SoundEffectInstance_Default             = 0x0,
@@ -141,9 +143,7 @@ namespace DirectX
         SoundEffectInstance_UseRedirectLFE      = 0x10000,
     };
 
-    inline SOUND_EFFECT_INSTANCE_FLAGS operator|(SOUND_EFFECT_INSTANCE_FLAGS a, SOUND_EFFECT_INSTANCE_FLAGS b) noexcept { return static_cast<SOUND_EFFECT_INSTANCE_FLAGS>(static_cast<int>(a) | static_cast<int>(b)); }
-
-    enum AUDIO_ENGINE_REVERB
+    enum AUDIO_ENGINE_REVERB : unsigned int
     {
         Reverb_Off,
         Reverb_Default,
@@ -192,7 +192,9 @@ namespace DirectX
     {
     public:
         explicit AudioEngine(
-            AUDIO_ENGINE_FLAGS flags = AudioEngine_Default, _In_opt_ const WAVEFORMATEX* wfx = nullptr, _In_opt_z_ const wchar_t* deviceId = nullptr,
+            AUDIO_ENGINE_FLAGS flags = AudioEngine_Default,
+            _In_opt_ const WAVEFORMATEX* wfx = nullptr,
+            _In_opt_z_ const wchar_t* deviceId = nullptr,
             AUDIO_STREAM_CATEGORY category = AudioCategory_GameEffects) noexcept(false);
 
         AudioEngine(AudioEngine&& moveFrom) noexcept;
@@ -256,9 +258,10 @@ namespace DirectX
             // Releases any currently unused voices
 
         // Internal-use functions
-        void __cdecl AllocateVoice(_In_ const WAVEFORMATEX* wfx, SOUND_EFFECT_INSTANCE_FLAGS flags, bool oneshot, _Outptr_result_maybenull_ IXAudio2SourceVoice** voice);
+        void __cdecl AllocateVoice(_In_ const WAVEFORMATEX* wfx,
+            SOUND_EFFECT_INSTANCE_FLAGS flags, bool oneshot, _Outptr_result_maybenull_ IXAudio2SourceVoice** voice);
 
-        void __cdecl DestroyVoice(_In_ IXAudio2SourceVoice* voice);
+        void __cdecl DestroyVoice(_In_ IXAudio2SourceVoice* voice) noexcept;
             // Should only be called for instance voices, not one-shots
 
         void __cdecl RegisterNotify(_In_ IVoiceNotify* notify, bool usesUpdate);
@@ -307,8 +310,15 @@ namespace DirectX
         void __cdecl Play(_In_z_ const char* name);
         void __cdecl Play(_In_z_ const char* name, float volume, float pitch, float pan);
 
-        std::unique_ptr<SoundEffectInstance> __cdecl CreateInstance(unsigned int index, SOUND_EFFECT_INSTANCE_FLAGS flags = SoundEffectInstance_Default);
-        std::unique_ptr<SoundEffectInstance> __cdecl CreateInstance(_In_z_ const char* name, SOUND_EFFECT_INSTANCE_FLAGS flags = SoundEffectInstance_Default);
+        std::unique_ptr<SoundEffectInstance> __cdecl CreateInstance(unsigned int index,
+            SOUND_EFFECT_INSTANCE_FLAGS flags = SoundEffectInstance_Default);
+        std::unique_ptr<SoundEffectInstance> __cdecl CreateInstance(_In_z_ const char* name,
+            SOUND_EFFECT_INSTANCE_FLAGS flags = SoundEffectInstance_Default);
+
+        std::unique_ptr<SoundStreamInstance> __cdecl CreateStreamInstance(unsigned int index,
+            SOUND_EFFECT_INSTANCE_FLAGS flags = SoundEffectInstance_Default);
+        std::unique_ptr<SoundStreamInstance> __cdecl CreateStreamInstance(_In_z_ const char* name,
+            SOUND_EFFECT_INSTANCE_FLAGS flags = SoundEffectInstance_Default);
 
         bool __cdecl IsPrepared() const noexcept;
         bool __cdecl IsInUse() const noexcept;
@@ -327,22 +337,23 @@ namespace DirectX
 
         int __cdecl Find(_In_z_ const char* name) const;
 
-#if defined(_XBOX_ONE) || (_WIN32_WINNT < _WIN32_WINNT_WIN8) || (_WIN32_WINNT >= 0x0A00 /*_WIN32_WINNT_WIN10*/ )
+#ifdef USING_XAUDIO2_9
         bool __cdecl FillSubmitBuffer(unsigned int index, _Out_ XAUDIO2_BUFFER& buffer, _Out_ XAUDIO2_BUFFER_WMA& wmaBuffer) const;
 #else
         void __cdecl FillSubmitBuffer(unsigned int index, _Out_ XAUDIO2_BUFFER& buffer) const;
 #endif
+
+        void __cdecl UnregisterInstance(_In_ IVoiceNotify* instance);
+
+        HANDLE __cdecl GetAsyncHandle() const noexcept;
+
+        bool __cdecl GetPrivateData(unsigned int index, _Out_writes_bytes_(datasize) void* data, size_t datasize);
 
     private:
         // Private implementation.
         class Impl;
 
         std::unique_ptr<Impl> pImpl;
-
-        // Private interface
-        void __cdecl UnregisterInstance(_In_ SoundEffectInstance* instance);
-
-        friend class SoundEffectInstance;
     };
 
 
@@ -359,7 +370,7 @@ namespace DirectX
             _In_ const WAVEFORMATEX* wfx, _In_reads_bytes_(audioBytes) const uint8_t* startAudio, size_t audioBytes,
             uint32_t loopStart, uint32_t loopLength);
 
-#if defined(_XBOX_ONE) || (_WIN32_WINNT < _WIN32_WINNT_WIN8) || (_WIN32_WINNT >= 0x0A00 /*_WIN32_WINNT_WIN10*/)
+#ifdef USING_XAUDIO2_9
 
         SoundEffect(_In_ AudioEngine* engine, _Inout_ std::unique_ptr<uint8_t[]>& wavData,
             _In_ const WAVEFORMATEX* wfx, _In_reads_bytes_(audioBytes) const uint8_t* startAudio, size_t audioBytes,
@@ -393,22 +404,19 @@ namespace DirectX
 
         const WAVEFORMATEX* __cdecl GetFormat() const noexcept;
 
-#if defined(_XBOX_ONE) || (_WIN32_WINNT < _WIN32_WINNT_WIN8) || (_WIN32_WINNT >= 0x0A00 /*_WIN32_WINNT_WIN10*/)
+#ifdef USING_XAUDIO2_9
         bool __cdecl FillSubmitBuffer(_Out_ XAUDIO2_BUFFER& buffer, _Out_ XAUDIO2_BUFFER_WMA& wmaBuffer) const;
 #else
         void __cdecl FillSubmitBuffer(_Out_ XAUDIO2_BUFFER& buffer) const;
 #endif
+
+        void __cdecl UnregisterInstance(_In_ IVoiceNotify* instance);
 
     private:
         // Private implementation.
         class Impl;
 
         std::unique_ptr<Impl> pImpl;
-
-        // Private interface
-        void __cdecl UnregisterInstance(_In_ SoundEffectInstance* instance);
-
-        friend class SoundEffectInstance;
     };
 
 
@@ -616,8 +624,7 @@ namespace DirectX
 
         SoundState __cdecl GetState() noexcept;
 
-        // Notifications.
-        void __cdecl OnDestroyParent() noexcept;
+        IVoiceNotify* __cdecl GetVoiceNotify() const noexcept;
 
     private:
         // Private implementation.
@@ -631,6 +638,48 @@ namespace DirectX
 
         friend std::unique_ptr<SoundEffectInstance> __cdecl SoundEffect::CreateInstance(SOUND_EFFECT_INSTANCE_FLAGS);
         friend std::unique_ptr<SoundEffectInstance> __cdecl WaveBank::CreateInstance(unsigned int, SOUND_EFFECT_INSTANCE_FLAGS);
+    };
+
+
+    //----------------------------------------------------------------------------------
+    class SoundStreamInstance
+    {
+    public:
+        SoundStreamInstance(SoundStreamInstance&& moveFrom) noexcept;
+        SoundStreamInstance& operator= (SoundStreamInstance&& moveFrom) noexcept;
+
+        SoundStreamInstance(SoundStreamInstance const&) = delete;
+        SoundStreamInstance& operator= (SoundStreamInstance const&) = delete;
+
+        virtual ~SoundStreamInstance();
+
+        void __cdecl Play(bool loop = false);
+        void __cdecl Stop(bool immediate = true) noexcept;
+        void __cdecl Pause() noexcept;
+        void __cdecl Resume();
+
+        void __cdecl SetVolume(float volume);
+        void __cdecl SetPitch(float pitch);
+        void __cdecl SetPan(float pan);
+
+        void __cdecl Apply3D(const AudioListener& listener, const AudioEmitter& emitter, bool rhcoords = true);
+
+        bool __cdecl IsLooped() const noexcept;
+
+        SoundState __cdecl GetState() noexcept;
+
+        IVoiceNotify* __cdecl GetVoiceNotify() const noexcept;
+
+    private:
+        // Private implementation.
+        class Impl;
+
+        std::unique_ptr<Impl> pImpl;
+
+        // Private constructors
+        SoundStreamInstance(_In_ AudioEngine* engine, _In_ WaveBank* effect, unsigned int index, SOUND_EFFECT_INSTANCE_FLAGS flags);
+
+        friend std::unique_ptr<SoundStreamInstance> __cdecl WaveBank::CreateStreamInstance(unsigned int, SOUND_EFFECT_INSTANCE_FLAGS);
     };
 
 
@@ -685,4 +734,16 @@ namespace DirectX
 
         std::unique_ptr<Impl> pImpl;
     };
+
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-dynamic-exception-spec"
+#endif
+
+    DEFINE_ENUM_FLAG_OPERATORS(AUDIO_ENGINE_FLAGS);
+    DEFINE_ENUM_FLAG_OPERATORS(SOUND_EFFECT_INSTANCE_FLAGS);
+
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 }
