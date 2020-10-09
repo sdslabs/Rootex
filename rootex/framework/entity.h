@@ -56,6 +56,8 @@ public:
 	Ref<ComponentType> getComponentFromID(ComponentID ID) const;
 
 	Ref<Script> getScript() { return m_Script; }
+	sol::table getScriptEnvt();
+	void setScriptEnvt(sol::table changed);
 
 	JSON::json getJSON() const;
 	const HashMap<ComponentID, Ref<Component>>& getAllComponents() const;
