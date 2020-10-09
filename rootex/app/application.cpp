@@ -98,6 +98,7 @@ Application::~Application()
 	AudioSystem::GetSingleton()->shutDown();
 	UISystem::GetSingleton()->shutDown();
 	ShaderLibrary::DestroyShaders();
+	EventManager::GetSingleton()->releaseAllEventListeners();
 }
 
 void Application::run()

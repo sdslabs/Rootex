@@ -48,19 +48,18 @@
                 "g": 0.5784255862236023,
                 "r": 0.5784293413162231
             },
-            "diffuseIntensity": 0.871999979019165,
-            "direction": {
-                "x": -1.0,
-                "y": -1.0,
-                "z": -0.5
-            }
+            "diffuseIntensity": 0.871999979019165
         },
         "HierarchyComponent": {
             "children": [],
             "parent": 22
         },
         "ModelComponent": {
+            "affectingStaticLights": [],
             "isVisible": true,
+            "materialOverrides": {
+                "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+            },
             "renderPass": 1,
             "resFile": "game/assets/test/cube.obj"
         },

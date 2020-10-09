@@ -1,6 +1,7 @@
 {
     "Components": {
         "CPUParticlesComponent": {
+            "affectingStaticLights": [],
             "angularVelocityVariation": 10.0,
             "colorBegin": {
                 "a": 1.0,
@@ -22,6 +23,9 @@
             },
             "isVisible": true,
             "lifeTime": 1.7699999809265137,
+            "materialOverrides": {
+                "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+            },
             "materialPath": "rootex/assets/materials/default_particles.rmat",
             "poolSize": 1000,
             "renderPass": 1,
