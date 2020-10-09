@@ -45,7 +45,7 @@ PixelInputType main(VertexInputType input)
     output.tex.x = input.tex.x;
     output.tex.y = 1 - input.tex.y;
 
-    output.tangent = mul(input.tangent, M);
+    output.tangent = mul(input.tangent, (float3x3)M);
 	
     float4 cameraPosition = mul(input.position, mul(M, V));
     output.fogFactor = saturate((fogEnd - cameraPosition.z) / (fogEnd - fogStart));

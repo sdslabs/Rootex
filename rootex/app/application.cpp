@@ -3,6 +3,7 @@
 #include "level_manager.h"
 #include "framework/systems/audio_system.h"
 #include "core/resource_loader.h"
+#include "core/resource_files/lua_text_resource_file.h"
 #include "core/input/input_manager.h"
 #include "core/renderer/shader_library.h"
 #include "core/renderer/material_library.h"
@@ -70,7 +71,6 @@ Application::Application(const String& settingsFile)
 	InputSystem::GetSingleton()->initialize(inputSystemSettings);
 
 	ShaderLibrary::MakeShaders();
-	MaterialLibrary::LoadMaterials();
 	PhysicsSystem::GetSingleton()->initialize(systemsSettings["PhysicsSystem"]);
 	
 	JSON::json& uiSystemSettings = systemsSettings["UISystem"];

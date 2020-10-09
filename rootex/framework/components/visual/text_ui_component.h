@@ -2,6 +2,7 @@
 
 #include "components/visual/render_ui_component.h"
 #include "resource_loader.h"
+#include "core/resource_files/font_resource_file.h"
 
 /// Component to render 2D UI Text
 class TextUIComponent : public RenderUIComponent

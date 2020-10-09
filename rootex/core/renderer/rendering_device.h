@@ -3,11 +3,7 @@
 #include "common/common.h"
 
 #include <d3d11.h>
-
 #include <d3dcompiler.h>
-#include <string>
-
-#include "resource_file.h"
 
 #include "vendor/DirectXTK/Inc/SpriteBatch.h"
 #include "vendor/DirectXTK/Inc/SpriteFont.h"
@@ -95,11 +91,10 @@ public:
 	Microsoft::WRL::ComPtr<ID3D11VertexShader> createVS(ID3DBlob* blob);
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> createVL(ID3DBlob* vertexShaderBlob, const D3D11_INPUT_ELEMENT_DESC* ied, UINT size);
 
-	Ref<DirectX::SpriteFont> createFont(FileBuffer* fontFileBuffer);
+	Ref<DirectX::SpriteFont> createFont(const String& fontFilePath);
 	/// To hold shader blobs loaded from the compiled shader files
 	Microsoft::WRL::ComPtr<ID3DBlob> createBlob(LPCWSTR path);
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createTexture(ImageResourceFile* imageRes);
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createDDSTexture(ImageResourceFile* imageRes);
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createDDSTexture(const char* imageDDSFileData, size_t size);
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createTexture(const char* imageFileData, size_t size);
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createTextureFromPixels(const char* imageRawData, unsigned int width, unsigned int height);
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> createSS();

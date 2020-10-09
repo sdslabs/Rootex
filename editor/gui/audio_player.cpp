@@ -78,7 +78,7 @@ void AudioPlayer::draw(float deltaMilliseconds)
 		ImGui::SameLine();
 		if (ImGui::Button("Reload"))
 		{
-			ResourceLoader::Reload(m_OpenFile);
+			m_OpenFile->reimport();
 		}
 	}
 	ImGui::NewLine();

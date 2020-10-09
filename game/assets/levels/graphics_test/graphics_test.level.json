@@ -15,6 +15,7 @@
     ],
     "startScheme": "Load",
     "preload": [
-        "game/assets/classes/LoadingScreen/LoadingScreen.entity.json"
+        "game/assets/classes/LoadingScreen/LoadingScreen.entity.json",
+        "game/assets/3ds/Handgun_3ds.3ds"
     ]
 }

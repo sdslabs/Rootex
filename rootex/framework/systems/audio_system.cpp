@@ -7,7 +7,6 @@
 #include "core/audio/audio_source.h"
 #include "core/audio/static_audio_buffer.h"
 #include "core/audio/streaming_audio_buffer.h"
-#include "core/resource_data.h"
 #include "framework/entity_factory.h"
 
 String AudioSystem::GetALErrorString(int errID)

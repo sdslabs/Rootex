@@ -1,6 +1,7 @@
 #include "basic_material.h"
 
 #include "resource_loader.h"
+#include "resource_files/image_resource_file.h"
 
 #include "framework/systems/light_system.h"
 #include "framework/systems/render_system.h"
@@ -24,11 +25,11 @@ BasicMaterial::BasicMaterial(bool isAlpha, const String& imagePath, const String
     , m_IsNormal(isNormal)
 {
 	m_DiffuseImageFile = ResourceLoader::CreateImageResourceFile(imagePath);
-	setTexture(m_DiffuseImageFile);
+	setDiffuseTexture(m_DiffuseImageFile);
 	if (isNormal)
 	{
 		m_NormalImageFile = ResourceLoader::CreateImageResourceFile(normalImagePath);
-		setNormal(m_NormalImageFile);
+		setNormalTexture(m_NormalImageFile);
 	}
 	else
 	{
@@ -39,10 +40,6 @@ BasicMaterial::BasicMaterial(bool isAlpha, const String& imagePath, const String
 	m_SamplerState = RenderingDevice::GetSingleton()->createSS();
 	m_PSConstantBuffer.resize((int)PixelConstantBufferType::End, nullptr);
 	m_VSConstantBuffer.resize((int)VertexConstantBufferType::End, nullptr);
-
-#ifdef ROOTEX_EDITOR
-	m_ImagePathUI = imagePath;
-#endif // ROOTEX_EDITOR
 }
 
 void BasicMaterial::setPSConstantBuffer(const PSDiffuseConstantBufferMaterial& constantBuffer)
@@ -122,17 +119,17 @@ Material* BasicMaterial::Create(const JSON::json& materialData)
 
 ID3D11ShaderResourceView* BasicMaterial::getPreview()
 {
-	return m_DiffuseTexture->getTextureResourceView();
+	return m_DiffuseImageFile->getTexture()->getTextureResourceView();
 }
 
 void BasicMaterial::bind()
 {
-	m_BasicShader->set(m_DiffuseTexture.get(), DIFFUSE_PS_CPP);
+	m_BasicShader->set(m_DiffuseImageFile->getTexture().get(), DIFFUSE_PS_CPP);
 	if (m_IsNormal)
 	{
-		m_BasicShader->set(m_NormalTexture.get(), NORMAL_PS_CPP);
+		m_BasicShader->set(m_NormalImageFile->getTexture().get(), NORMAL_PS_CPP);
 	}
-	m_BasicShader->set(m_SpecularTexture.get(), SPECULAR_PS_CPP);
+	m_BasicShader->set(m_SpecularImageFile->getTexture().get(), SPECULAR_PS_CPP);
 	Matrix currentModelMatrix = RenderSystem::GetSingleton()->getCurrentMatrix();
 	setVSConstantBuffer(VSDiffuseConstantBuffer(currentModelMatrix));
 
@@ -147,7 +144,7 @@ void BasicMaterial::bind()
 	objectPSCB.specularIntensity = m_SpecularIntensity;
 	objectPSCB.specularPower = m_SpecularPower;
 
-	setPSConstantBuffer(objectPSCB);
+setPSConstantBuffer(objectPSCB);
 }
 
 JSON::json BasicMaterial::getJSON() const
@@ -181,168 +178,71 @@ JSON::json BasicMaterial::getJSON() const
 	return j;
 }
 
-void BasicMaterial::setTexture(ImageResourceFile* image)
+void BasicMaterial::setDiffuseTexture(ImageResourceFile* image)
 {
-	Ref<Texture> texture(new Texture(image));
 	m_DiffuseImageFile = image;
-	m_DiffuseTexture = texture;
 }
 
-void BasicMaterial::setNormal(ImageResourceFile* image)
+void BasicMaterial::setNormalTexture(ImageResourceFile* image)
 {
 	m_IsNormal = true;
-	Ref<Texture> texture(new Texture(image));
 	m_NormalImageFile = image;
-	m_NormalTexture = texture;
 }
 
 void BasicMaterial::setSpecularTexture(ImageResourceFile* image)
 {
-	m_SpecularTexture.reset(new Texture(image));
 	m_SpecularImageFile = image;
-}
-
-void BasicMaterial::setTextureInternal(Ref<Texture> texture)
-{
-	m_DiffuseTexture = texture;
-}
-
-void BasicMaterial::setNormalInternal(Ref<Texture> texture)
-{
-	m_IsNormal = true;
-	m_NormalTexture = texture;
-}
-
-void BasicMaterial::setSpecularInternal(Ref<Texture> texture)
-{
-	m_SpecularTexture = texture;
 }
 
 void BasicMaterial::removeNormal()
 {
 	m_IsNormal = false;
 	m_NormalImageFile = nullptr;
-	m_NormalTexture.reset();
 }
 
 #ifdef ROOTEX_EDITOR
 #include "imgui.h"
-void BasicMaterial::draw(const String& id)
+#include "utility/imgui_helpers.h"
+void BasicMaterial::draw()
 {
-	Material::draw(id);
+	Material::draw();
 
-	ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
-	if (ImGui::Button(("Diffuse Texture##" + id).c_str()))
-	{
-		EventManager::GetSingleton()->deferredCall("OpenTexture", "EditorOpenFile", m_DiffuseImageFile->getPath().string());
-	}
-	if (ImGui::BeginDragDropTarget())
-	{
-		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Resource Drop"))
-		{
-			const char* payloadFileName = (const char*)payload->Data;
-			FilePath payloadPath(payloadFileName);
-			if (IsFileSupported(payloadPath.extension().string(), ResourceFile::Type::Image))
-			{
-				ImageResourceFile* image = ResourceLoader::CreateImageResourceFile(payloadPath.generic_string());
-
-				if (image)
-				{
-					setTexture(image);
-				}
-			}
-			else
-			{
-				WARN("Cannot assign a non-image file to texture");
-			}
-		}
-		ImGui::EndDragDropTarget();
-	}
-	
-	ImGui::Image(m_DiffuseTexture->getTextureResourceView(), { 50, 50 });
+	RootexSelectableImage("Diffuse Texture " ICON_ROOTEX_PENCIL_SQUARE_O, m_DiffuseImageFile, [this](const String& selectedFile) { setDiffuseTexture(ResourceLoader::CreateImageResourceFile(selectedFile)); });
 	ImGui::SameLine();
-	ImGui::Text(m_DiffuseImageFile->getPath().string().c_str());
-
-	ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
-	if (ImGui::Button(("Normal Texture##" + id).c_str()))
+	if (ImGui::Button(ICON_ROOTEX_REFRESH "##Diffuse Texture"))
 	{
-		EventManager::GetSingleton()->deferredCall("OpenTexture", "EditorOpenFile", m_NormalImageFile->getPath().string());
+		setDiffuseTexture(ResourceLoader::CreateImageResourceFile("rootex/assets/white.png"));
 	}
-	if (ImGui::BeginDragDropTarget())
-	{
-		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Resource Drop"))
-		{
-			const char* payloadFileName = (const char*)payload->Data;
-			FilePath payloadPath(payloadFileName);
-			if (IsFileSupported(payloadPath.extension().string(), ResourceFile::Type::Image))
-			{
-				ImageResourceFile* image = ResourceLoader::CreateImageResourceFile(payloadPath.generic_string());
-
-				if (image)
-				{
-					setNormal(image);
-				}
-			}
-			else
-			{
-				WARN("Cannot assign a non-image file to texture");
-			}
-		}
-		ImGui::EndDragDropTarget();
-	}
-
-	ImGui::Image(m_IsNormal ? m_NormalTexture->getTextureResourceView() : Texture::GetCrossTexture()->getTextureResourceView(), { 50, 50 });
+	RootexSelectableImage("Normal Texture " ICON_ROOTEX_PENCIL_SQUARE_O, m_NormalImageFile, [this](const String& selectedFile) { setNormalTexture(ResourceLoader::CreateImageResourceFile(selectedFile)); });
 	ImGui::SameLine();
-	ImGui::Text(m_IsNormal ? m_NormalImageFile->getPath().string().c_str() : "");
-
-	if (ImGui::Button(("Specular Texture##" + id).c_str()))
+	if (ImGui::Button(ICON_ROOTEX_REFRESH "##Normal Texture"))
 	{
-		EventManager::GetSingleton()->deferredCall("OpenTexture", "EditorOpenFile", m_SpecularImageFile->getPath().string());
+		removeNormal();
 	}
-	if (ImGui::BeginDragDropTarget())
+	RootexSelectableImage("Specular Texture " ICON_ROOTEX_PENCIL_SQUARE_O, m_SpecularImageFile, [this](const String& selectedFile) { setSpecularTexture(ResourceLoader::CreateImageResourceFile(selectedFile)); });
+	ImGui::SameLine();
+	if (ImGui::Button(ICON_ROOTEX_REFRESH "##Specular Texture"))
 	{
-		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Resource Drop"))
-		{
-			const char* payloadFileName = (const char*)payload->Data;
-			FilePath payloadPath(payloadFileName);
-			if (IsFileSupported(payloadPath.extension().string(), ResourceFile::Type::Image))
-			{
-				ImageResourceFile* image = ResourceLoader::CreateImageResourceFile(payloadPath.generic_string());
-
-				if (image)
-				{
-					setSpecularTexture(image);
-				}
-			}
-			else
-			{
-				WARN("Cannot assign a non-image file to texture");
-			}
-		}
-		ImGui::EndDragDropTarget();
+		setSpecularTexture(ResourceLoader::CreateImageResourceFile("rootex/assets/white.png"));
 	}
 
-	ImGui::Image(m_SpecularTexture->getTextureResourceView(), { 50, 50 });
+	ImGui::ColorEdit4("Color", &m_Color.x);
+	ImGui::Checkbox("Affected by light", &m_IsLit);
+	ImGui::DragFloat("##Specular Intensity", &m_SpecularIntensity, 0.01f, 0.0f, 1.0f);
 	ImGui::SameLine();
-	ImGui::Text(m_SpecularImageFile->getPath().string().c_str());
-
-	ImGui::ColorEdit4((String("Color##") + id).c_str(), &m_Color.x);
-	ImGui::Checkbox((String("Affected by light##") + id).c_str(), &m_IsLit);
-	ImGui::DragFloat((String("##Specular Intensity") + id).c_str(), &m_SpecularIntensity, 0.01f, 0.0f, 1.0f);
-	ImGui::SameLine();
-	if (ImGui::Button((String("Specular Intensity##") + id).c_str()))
+	if (ImGui::Button("Specular Intensity"))
 	{
 		m_SpecularIntensity = 0.5f;
 	}
-	ImGui::DragFloat((String("##Specular Power") + id).c_str(), &m_SpecularPower, 1.0f, -100.0f, 100.0f);
+	ImGui::DragFloat("##Specular Power", &m_SpecularPower, 1.0f, -100.0f, 100.0f);
 	ImGui::SameLine();
-	if (ImGui::Button((String("Specular Power##") + id).c_str()))
+	if (ImGui::Button("Specular Power"))
 	{
 		m_SpecularPower = 30.0f;
 	}
-	ImGui::Checkbox((String("Affected by sky##") + id).c_str(), &m_IsAffectedBySky);
-	ImGui::DragFloat((String("Reflectivity##") + id).c_str(), &m_Reflectivity, 0.01f, 0.0f, 1.0f);
-	ImGui::DragFloat((String("Refraction Constant##") + id).c_str(), &m_RefractionConstant, 0.01f, 0.0f, 10.0f);
-	ImGui::DragFloat((String("Refractivity##") + id).c_str(), &m_Refractivity, 0.01f, 0.0f, 1.0f);
+	ImGui::Checkbox("Affected by sky", &m_IsAffectedBySky);
+	ImGui::DragFloat("Reflectivity", &m_Reflectivity, 0.01f, 0.0f, 1.0f);
+	ImGui::DragFloat("Refraction Constant", &m_RefractionConstant, 0.01f, 0.0f, 10.0f);
+	ImGui::DragFloat("Refractivity", &m_Refractivity, 0.01f, 0.0f, 1.0f);
 }
 #endif // ROOTEX_EDITOR

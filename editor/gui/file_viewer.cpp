@@ -19,24 +19,6 @@ void FileViewer::drawFileInfo()
 	ImGui::Text(m_OpenFilePath.extension().string().c_str());
 	ImGui::NextColumn();
 
-	ImGui::Text("Size");
-	ImGui::NextColumn();
-	float size = m_OpenFile->getData()->getRawDataByteSize();
-	float sizeUI = size;
-	String sizeUnitUI = " B";
-	if (sizeUI > 1.0f / B_TO_KB)
-	{
-		sizeUI = size * B_TO_KB;
-		sizeUnitUI = " KB";
-		if (sizeUI > 1.0f / KB_TO_MB)
-		{
-			sizeUI = size * B_TO_KB * KB_TO_MB;
-			sizeUnitUI = " MB";
-		}
-	}
-	ImGui::Text((std::to_string(sizeUI) + sizeUnitUI).c_str());
-	ImGui::NextColumn();
-
 	ImGui::Text("Last Modified");
 	ImGui::NextColumn();
 	SYSTEMTIME systemTime;

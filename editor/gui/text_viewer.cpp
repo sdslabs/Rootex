@@ -3,6 +3,7 @@
 #include "editor/editor_system.h"
 
 #include "resource_loader.h"
+#include "resource_files/text_resource_file.h"
 
 #include "imgui.h"
 
@@ -29,7 +30,7 @@ void TextViewer::draw(float deltaMilliseconds)
 		ImGui::SameLine();
 		if (ImGui::Button("Reload"))
 		{
-			ResourceLoader::Reload(m_TextResourceFile);
+			m_TextResourceFile->reimport();
 		}
 	}
 	ImGui::Separator();

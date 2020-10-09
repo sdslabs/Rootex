@@ -1,6 +1,7 @@
 #include "sky_component.h"
 
 #include "resource_loader.h"
+#include "resource_files/model_resource_file.h"
 #include "renderer/material_library.h"
 
 Component* SkyComponent::Create(const JSON::json& componentData)
@@ -33,6 +34,6 @@ JSON::json SkyComponent::getJSON() const
 #include "imgui.h"
 void SkyComponent::draw()
 {
-	m_SkyMaterial->draw("0");
+	m_SkyMaterial->draw();
 }
 #endif // ROOTEX_EDITOR

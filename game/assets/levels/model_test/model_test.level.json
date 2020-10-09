@@ -6,7 +6,6 @@
 		"game/assets/sponza/sponza.obj",
 		"game/assets/scripts/fps_display.lua",
 		"game/assets/fonts/noto_sans_50_regular.spritefont",
-		"game/assets/test/cube.obj",
-		"rootex/assets/rml/demo.rml"
+		"game/assets/test/cube.obj"
 	]
 }

@@ -4,7 +4,8 @@
 #include "components/hierarchy_component.h"
 #include "components/transform_component.h"
 #include "renderer/material.h"
-#include "core/resource_file.h"
+#include "renderer/mesh.h"
+#include "core/resource_files/model_resource_file.h"
 
 class ModelComponent : public Component
 {

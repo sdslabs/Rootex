@@ -14,14 +14,10 @@ SkyMaterial::SkyMaterial(const String& imagePath)
     : Material(ShaderLibrary::GetSkyShader(), SkyMaterial::s_MaterialName, false)
     , m_SkyShader(ShaderLibrary::GetSkyShader())
 {
-	setTexture(ResourceLoader::CreateImageResourceFile(imagePath));
+	setSkyTexture(ResourceLoader::CreateImageCubeResourceFile(imagePath));
 	m_SamplerState = RenderingDevice::GetSingleton()->createSS();
 	m_PSConstantBuffer.resize((int)PixelConstantBufferType::End, nullptr);
 	m_VSConstantBuffer.resize((int)VertexConstantBufferType::End, nullptr);
-
-#ifdef ROOTEX_EDITOR
-	m_ImagePathUI = imagePath;
-#endif // ROOTEX_EDITOR
 }
 
 void SkyMaterial::setVSConstantBuffer(const VSDiffuseConstantBuffer& constantBuffer)
@@ -41,7 +37,7 @@ Material* SkyMaterial::Create(const JSON::json& materialData)
 
 void SkyMaterial::bind()
 {
-	m_SkyShader->setSkyTexture(m_SkyTexture.get());
+	m_SkyShader->setSkyTexture(m_SkyImage->getTexture());
 	setVSConstantBuffer(VSDiffuseConstantBuffer(Matrix::CreateTranslation(RenderSystem::GetSingleton()->getCamera()->getOwner()->getComponent<TransformComponent>()->getAbsoluteTransform().Translation())));
 }
 
@@ -49,53 +45,32 @@ JSON::json SkyMaterial::getJSON() const
 {
 	JSON::json& j = Material::getJSON();
 
-	j["imageFile"] = m_SkyTexture->getImage()->getPath().string();
+	j["imageFile"] = m_SkyImage->getPath().generic_string();
 
 	return j;
 }
 
-void SkyMaterial::setTexture(ImageResourceFile* image)
+void SkyMaterial::setSkyTexture(ImageCubeResourceFile* skyImageFile)
 {
-	Ref<Texture3D> texture(new Texture3D(image));
-	m_SkyTexture = texture;
+	m_SkyImage = skyImageFile;
 }
 
 ID3D11ShaderResourceView* SkyMaterial::getPreview()
 {
-	return m_SkyTexture->getTextureResourceView();
+	return m_SkyImage->getTexture()->getTextureResourceView();
 }
 
 #ifdef ROOTEX_EDITOR
 #include "imgui.h"
-void SkyMaterial::draw(const String& id)
+#include "utility/imgui_helpers.h"
+void SkyMaterial::draw()
 {
-	Material::draw(id);
-
-	ImGui::BeginGroup();
-	ImGui::Text(m_SkyTexture->getImage()->getPath().string().c_str());
-	ImGui::EndGroup();
-	
-	if (ImGui::BeginDragDropTarget())
+	Material::draw();
+	RootexSelectableImageCube("Sky Texture" ICON_ROOTEX_EXTERNAL_LINK, m_SkyImage, [this](const String& selectedFile) { setSkyTexture(ResourceLoader::CreateImageCubeResourceFile(selectedFile)); });
+	ImGui::SameLine();
+	if (ImGui::Button(ICON_ROOTEX_REFRESH "##Sky Texture"))
 	{
-		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Resource Drop"))
-		{
-			const char* payloadFileName = (const char*)payload->Data;
-			FilePath payloadPath(payloadFileName);
-			if (IsFileSupported(payloadPath.extension().string(), ResourceFile::Type::Image))
-			{
-				ImageResourceFile* image = ResourceLoader::CreateImageResourceFile(payloadPath.generic_string());
-
-				if (image)
-				{
-					setTexture(image);
-				}
-			}
-			else
-			{
-				WARN("Cannot assign a non-image file to texture");
-			}
-		}
-		ImGui::EndDragDropTarget();
+		setSkyTexture(ResourceLoader::CreateImageCubeResourceFile("rootex/assets/sky.dds"));
 	}
 }
 #endif // ROOTEX_EDITOR

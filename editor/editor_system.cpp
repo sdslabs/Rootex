@@ -5,6 +5,7 @@
 #include "core/renderer/rendering_device.h"
 #include "core/renderer/material_library.h"
 #include "core/resource_loader.h"
+#include "core/resource_files/lua_text_resource_file.h"
 #include "core/input/input_manager.h"
 #include "framework/components/hierarchy_component.h"
 #include "framework/systems/render_system.h"
@@ -112,7 +113,6 @@ bool EditorSystem::initialize(const JSON::json& systemData)
 	};
 	m_Colors.white = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-	m_FileSystem.reset(new FileSystemDock());
 	m_Hierarchy.reset(new HierarchyDock());
 	m_Output.reset(new OutputDock());
 	m_Toolbar.reset(new ToolbarDock());
@@ -185,7 +185,6 @@ void EditorSystem::update(float deltaMilliseconds)
 	pushRegularFont();
 
 	drawDefaultUI(deltaMilliseconds);
-	m_FileSystem->draw(deltaMilliseconds);
 	m_Hierarchy->draw(deltaMilliseconds);
 	m_Toolbar->draw(deltaMilliseconds);
 	m_Viewport->draw(deltaMilliseconds);
@@ -418,9 +417,12 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 				}
 				if (ImGui::BeginMenu("Resources"))
 				{
-					for (auto& [data, file] : ResourceLoader::GetResources())
+					for (auto& [type, files] : ResourceLoader::GetResources())
 					{
-						ImGui::MenuItem(file->getPath().generic_string().c_str());
+						for (auto& file : files)
+						{
+							ImGui::MenuItem(file->getPath().generic_string().c_str());
+						}
 					}
 					ImGui::EndMenu();
 				}
@@ -454,7 +456,6 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 					ImGui::Checkbox("Hierarchy", &m_Hierarchy->getSettings().m_IsActive);
 					ImGui::Checkbox("Entities", &m_Hierarchy->getSettings().m_IsEntitiesDockActive);
 					ImGui::Checkbox("Viewport", &m_Viewport->getSettings().m_IsActive);
-					ImGui::Checkbox("File System", &m_FileSystem->getSettings().m_IsActive);
 					ImGui::Checkbox("Inspector", &m_Inspector->getSettings().m_IsActive);
 					ImGui::EndMenu();
 				}
@@ -642,8 +643,8 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 			{
 				ImGui::Text(String("Rootex Engine and Rootex Editor developed by SDSLabs. Built on " + OS::GetBuildDate() + " at " + OS::GetBuildTime() + "\n" + "Source available at https://www.github.com/sdslabs/rootex").c_str());
 
-				static TextResourceFile* license = ResourceLoader::CreateLuaTextResourceFile("LICENSE");
-				ImGui::Text(license->getData()->getRawData()->data());
+				static TextResourceFile* license = ResourceLoader::CreateTextResourceFile("LICENSE");
+				ImGui::Text("%s", license->getString().c_str());
 				ImGui::Separator();
 				m_MenuAction = "";
 				ImGui::EndPopup();
@@ -655,16 +656,16 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 			}
 
 			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
-			/*for (auto&& library : Application::GetSingleton()->getLibrariesPaths())
+			for (auto&& library : Application::GetSingleton()->getLibrariesPaths())
 			{
 				if (ImGui::BeginPopup(library.string().c_str(), ImGuiWindowFlags_AlwaysAutoResize))
 				{
-					TextResourceFile* license = ResourceLoader::CreateLuaTextResourceFile(library.string() + "/LICENSE");
-					ImGui::Text(license->getData()->getRawData()->data());
+					TextResourceFile* license = ResourceLoader::CreateTextResourceFile(library.string() + "/LICENSE");
+					ImGui::Text("%s", license->getString().c_str());
 					m_MenuAction = "";
 					ImGui::EndPopup();
 				}
-			}*/
+			}
 			ImGui::EndMenuBar();
 		}
 	}

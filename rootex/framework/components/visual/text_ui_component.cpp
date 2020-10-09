@@ -99,6 +99,7 @@ JSON::json TextUIComponent::getJSON() const
 #ifdef ROOTEX_EDITOR
 #include "imgui.h"
 #include "imgui_stdlib.h"
+#include "utility/imgui_helpers.h"
 void TextUIComponent::draw()
 {
 	ImGui::InputText("Text", &m_Text);
@@ -135,22 +136,20 @@ void TextUIComponent::draw()
 
 	ImGui::EndGroup();
 
-	if (ImGui::BeginDragDropTarget())
+	if (ImGui::Button(ICON_ROOTEX_EXTERNAL_LINK "##Font"))
 	{
-		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Resource Drop"))
+		igfd::ImGuiFileDialog::Instance()->OpenDialog("Font", "Choose Font", SupportedFiles.at(ResourceFile::Type::Font), "game/assets/");
+	}
+
+	if (igfd::ImGuiFileDialog::Instance()->FileDialog("Font"))
+	{
+		if (igfd::ImGuiFileDialog::Instance()->IsOk)
 		{
-			const char* payloadFileName = (const char*)payload->Data;
-			FilePath payloadPath(payloadFileName);
-			if (payloadPath.extension() == ".spritefont")
-			{
-				setFont(ResourceLoader::CreateFontResourceFile(payloadPath.string()));
-			}
-			else
-			{
-				WARN("Cannot assign a non-spritefont file as Font");
-			}
+			String filePathName = OS::GetRootRelativePath(igfd::ImGuiFileDialog::Instance()->GetFilePathName()).generic_string();
+			setFont(ResourceLoader::CreateFontResourceFile(filePathName));
 		}
-		ImGui::EndDragDropTarget();
+
+		igfd::ImGuiFileDialog::Instance()->CloseDialog("Font");
 	}
 }
 #endif // ROOTEX_EDITOR

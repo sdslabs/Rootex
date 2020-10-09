@@ -1,8 +1,12 @@
 #include "custom_render_interface.h"
 
 #include "core/resource_loader.h"
+#include "core/resource_files/image_resource_file.h"
 #include "renderer/rendering_device.h"
 #include "renderer/shaders/register_locations_vertex_shader.h"
+#include "renderer/vertex_data.h"
+#include "renderer/vertex_buffer.h"
+#include "renderer/index_buffer.h"
 
 unsigned int CustomRenderInterface::s_TextureCount = 1; // 0 is reserved for white texture
 
@@ -25,7 +29,7 @@ CustomRenderInterface::CustomRenderInterface(int width, int height)
 
 	m_UIShader.reset(new BasicShader(L"rootex/assets/shaders/ui_vertex_shader.cso", L"rootex/assets/shaders/ui_pixel_shader.cso", format));
 
-	m_Textures[0].reset(new Texture(ResourceLoader::CreateImageResourceFile("rootex/assets/white.png")));
+	m_Textures[0] = ResourceLoader::CreateImageResourceFile("rootex/assets/white.png")->getTexture();
 }
 
 void CustomRenderInterface::RenderGeometry(Rml::Vertex* vertices, int numVertices, int* indices, int numIndices, Rml::TextureHandle texture, const Rml::Vector2f& translation) 
@@ -75,7 +79,7 @@ bool CustomRenderInterface::LoadTexture(Rml::TextureHandle& textureHandle, Rml::
 	if (image)
 	{
 		textureHandle = s_TextureCount;
-		m_Textures[textureHandle].reset(new Texture(image));
+		m_Textures[textureHandle] = image->getTexture();
 		s_TextureCount++;
 
 		return true;
@@ -120,6 +124,5 @@ void CustomRenderInterface::SetTransform(const Rml::Matrix4f* transform)
 		m_UITransform = Matrix::Identity;
 		return;
 	}
-
 	m_UITransform = Matrix(transform->data());
 }

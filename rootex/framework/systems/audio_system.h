@@ -45,7 +45,7 @@ class StreamingAudioSource;
 
 class ResourceFile;
 
-/// System encapsulating OpenAL error checkers and getters.
+/// Audio System responsible for streaming and static audio
 class AudioSystem : public System
 {
 	ALCdevice* m_Device;

@@ -1,7 +1,5 @@
 #include "application_settings.h"
 
-#include "resource_loader.h"
-
 ApplicationSettings* ApplicationSettings::s_Instance = nullptr;
 
 ApplicationSettings::ApplicationSettings(TextResourceFile* settingsFile)
@@ -21,7 +19,7 @@ ApplicationSettings::ApplicationSettings(TextResourceFile* settingsFile)
 ApplicationSettings::~ApplicationSettings()
 {
 	m_TextSettingsFile->putString(m_Settings.dump(4));
-	ResourceLoader::SaveResourceFile(m_TextSettingsFile);
+	PANIC(!m_TextSettingsFile->save(), "Could not save application settings file");
 }
 
 JSON::json::iterator ApplicationSettings::find(const String& setting)

@@ -2,7 +2,7 @@
 
 #include "common/common.h"
 
-#include "resource_file.h"
+#include "core/resource_files/text_resource_file.h"
 
 class ApplicationSettings
 {

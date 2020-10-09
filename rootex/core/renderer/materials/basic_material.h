@@ -7,9 +7,6 @@ class Texture;
 class BasicMaterial : public Material
 {
 	BasicShader* m_BasicShader;
-	Ref<Texture> m_DiffuseTexture;
-	Ref<Texture> m_NormalTexture;
-	Ref<Texture> m_SpecularTexture;
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_SamplerState;
 
 	ImageResourceFile* m_DiffuseImageFile;
@@ -29,9 +26,6 @@ class BasicMaterial : public Material
 	void setPSConstantBuffer(const PSDiffuseConstantBufferMaterial& constantBuffer);
 	void setVSConstantBuffer(const VSDiffuseConstantBuffer& constantBuffer);
 
-#ifdef ROOTEX_EDITOR
-	String m_ImagePathUI;
-#endif // ROOTEX_EDITOR
 public:
 	const static inline String s_MaterialName = "BasicMaterial";
 	enum class VertexConstantBufferType
@@ -50,13 +44,10 @@ public:
 	~BasicMaterial() = default;
 
 	void setColor(const Color& color) { m_Color = color; };
-	void setTexture(ImageResourceFile* image);
-	void setNormal(ImageResourceFile* image);
+	void setDiffuseTexture(ImageResourceFile* image);
+	void setNormalTexture(ImageResourceFile* image);
 	void setSpecularTexture(ImageResourceFile* image);
 	void removeNormal();
-	void setTextureInternal(Ref<Texture> texture);
-	void setNormalInternal(Ref<Texture> texture);
-	void setSpecularInternal(Ref<Texture> texture);
 	void setSpecularIntensity(float specIntensity) { m_SpecularIntensity = specIntensity; }
 	void setSpecularPower(float specPower) { m_SpecularPower = specPower; }
 
@@ -69,6 +60,6 @@ public:
 	JSON::json getJSON() const override;
 
 #ifdef ROOTEX_EDITOR
-	void draw(const String& id) override;
+	void draw() override;
 #endif // ROOTEX_EDITOR
 };

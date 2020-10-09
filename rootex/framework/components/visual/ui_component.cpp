@@ -53,6 +53,7 @@ JSON::json UIComponent::getJSON() const
 #ifdef ROOTEX_EDITOR
 #include "imgui.h"
 #include "imgui_stdlib.h"
+#include "utility/imgui_helpers.h"
 void UIComponent::draw()
 {
 	ImGui::BeginGroup();
@@ -67,22 +68,20 @@ void UIComponent::draw()
 	}
 	ImGui::EndGroup();
 
-	if (ImGui::BeginDragDropTarget())
+	if (ImGui::Button(ICON_ROOTEX_EXTERNAL_LINK "##Document"))
 	{
-		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Resource Drop"))
+		igfd::ImGuiFileDialog::Instance()->OpenDialog("Document", "Choose RML Document", ".rml", "game/assets/");
+	}
+
+	if (igfd::ImGuiFileDialog::Instance()->FileDialog("Document"))
+	{
+		if (igfd::ImGuiFileDialog::Instance()->IsOk)
 		{
-			const char* payloadFileName = (const char*)payload->Data;
-			FilePath payloadPath(payloadFileName);
-			if (IsFileSupported(payloadPath.extension().string(), ResourceFile::Type::Text))
-			{
-				setDocument(payloadPath.string());
-			}
-			else
-			{
-				WARN("Unsupported file format for RML");
-			}
+			String filePathName = OS::GetRootRelativePath(igfd::ImGuiFileDialog::Instance()->GetFilePathName()).generic_string();
+			setDocument(filePathName);
 		}
-		ImGui::EndDragDropTarget();
+
+		igfd::ImGuiFileDialog::Instance()->CloseDialog("Document");
 	}
 
 	if (ImGui::Button("Refresh"))

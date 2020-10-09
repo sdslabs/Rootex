@@ -272,9 +272,9 @@ void ModelComponent::draw()
 		}
 	}
 	ImGui::SameLine();
-	if (ImGui::Button("Select##Model File"))
+	if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Model File"))
 	{
-		igfd::ImGuiFileDialog::Instance()->OpenDialog("ChooseModelComponentModel", "Choose Model File", SupportedFiles.at(ResourceFile::Type::Model), "game/assets/");
+		igfd::ImGuiFileDialog::Instance()->OpenModal("ChooseModelComponentModel", "Choose Model File", SupportedFiles.at(ResourceFile::Type::Model), "game/assets/");
 	}
 
 	if (igfd::ImGuiFileDialog::Instance()->FileDialog("ChooseModelComponentModel"))
@@ -347,46 +347,41 @@ void ModelComponent::draw()
 		ImGui::Separator();
 		for (auto& [oldMaterial, newMaterial] : m_MaterialOverrides)
 		{
-			ImGui::BeginGroup();
 			ImGui::Image(oldMaterial->getPreview(), { 50, 50 });
 			ImGui::SameLine();
-			if (ImGui::MenuItem(FilePath(oldMaterial->getFileName()).filename().generic_string().c_str()))
-			{
-				EventManager::GetSingleton()->call("OpenModel", "EditorOpenFile", oldMaterial->getFileName());
-			}
+			ImGui::Text("%s", FilePath(oldMaterial->getFileName()).filename().generic_string().c_str());
 			ImGui::NextColumn();
 			ImGui::Image(newMaterial->getPreview(), { 50, 50 });
 			ImGui::SameLine();
+
 			ImGui::BeginGroup();
-			if (ImGui::MenuItem(FilePath(newMaterial->getFileName()).filename().generic_string().c_str()))
+			ImGui::Text("%s", FilePath(newMaterial->getFileName()).filename().generic_string().c_str());
+			if (ImGui::Button((ICON_ROOTEX_EXTERNAL_LINK "##" + newMaterial->getFileName()).c_str()))
 			{
 				EventManager::GetSingleton()->call("OpenModel", "EditorOpenFile", newMaterial->getFileName());
 			}
-			if (ImGui::SmallButton(("Reset##" + oldMaterial->getFileName()).c_str()))
+			ImGui::SameLine();
+			if (ImGui::Button((ICON_ROOTEX_PENCIL_SQUARE_O "##" + newMaterial->getFileName()).c_str()))
+			{
+				igfd::ImGuiFileDialog::Instance()->OpenModal(oldMaterial->getFileName(), "Choose Material", ".rmat", "game/assets/materials/");
+			}
+			ImGui::SameLine();
+			if (igfd::ImGuiFileDialog::Instance()->FileDialog(oldMaterial->getFileName()))
+			{
+				if (igfd::ImGuiFileDialog::Instance()->IsOk)
+				{
+					String filePathName = OS::GetRootRelativePath(igfd::ImGuiFileDialog::Instance()->GetFilePathName()).generic_string();
+					newMaterial = MaterialLibrary::GetMaterial(filePathName);
+				}
+
+				igfd::ImGuiFileDialog::Instance()->CloseDialog(oldMaterial->getFileName());
+			}
+			ImGui::SameLine();
+			if (ImGui::Button((ICON_ROOTEX_REFRESH "##" + oldMaterial->getFileName()).c_str()))
 			{
 				setMaterialOverride(oldMaterial, oldMaterial);
 			}
 			ImGui::EndGroup();
-			ImGui::EndGroup();
-
-			if (ImGui::BeginDragDropTarget())
-			{
-				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Resource Drop"))
-				{
-					const char* payloadFileName = (const char*)payload->Data;
-					FilePath payloadPath(payloadFileName);
-					if (payloadPath.extension() == ".rmat")
-					{
-						MaterialLibrary::CreateNewMaterialFile(payloadPath.generic_string(), oldMaterial->getTypeName());
-						setMaterialOverride(oldMaterial, MaterialLibrary::GetMaterial(payloadPath.generic_string()));
-					}
-					else
-					{
-						WARN("Unsupported file format for material. Use .rmat files");
-					}
-				}
-				ImGui::EndDragDropTarget();
-			}
 
 			ImGui::NextColumn();
 			ImGui::Separator();

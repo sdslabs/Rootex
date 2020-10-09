@@ -108,7 +108,7 @@ void LevelManager::openPreloadedLevel(const String& levelPath, const Vector<Stri
 		TextResourceFile* textResource = ResourceLoader::CreateTextResourceFile(entityFile.string());
 		if (textResource->isDirty())
 		{
-			ResourceLoader::Reload(textResource);
+			textResource->reimport();
 		}
 
 		EntityFactory::GetSingleton()->createEntity(textResource);

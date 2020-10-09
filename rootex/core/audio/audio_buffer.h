@@ -1,8 +1,6 @@
 #pragma once
 
-#include "core/resource_file.h"
-
-typedef unsigned int ALuint;
+#include "core/resource_files/audio_resource_file.h"
 
 /// Interface for an audio buffer that is used inside an AudioSource.
 class AudioBuffer

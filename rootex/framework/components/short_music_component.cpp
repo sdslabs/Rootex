@@ -76,6 +76,7 @@ void ShortMusicComponent::setAudioFile(AudioResourceFile* audioFile)
 #ifdef ROOTEX_EDITOR
 #include "imgui.h"
 #include "imgui_stdlib.h"
+#include "utility/imgui_helpers.h"
 void ShortMusicComponent::draw()
 {
 	ImGui::BeginGroup();
@@ -103,22 +104,20 @@ void ShortMusicComponent::draw()
 	}
 	ImGui::EndGroup();
 
-	if (ImGui::BeginDragDropTarget())
+	if (ImGui::Button(ICON_ROOTEX_EXTERNAL_LINK "##Short Music"))
 	{
-		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Resource Drop"))
+		igfd::ImGuiFileDialog::Instance()->OpenDialog("Short Music", "Choose Short Music", SupportedFiles.at(ResourceFile::Type::Audio), "game/assets/");
+	}
+
+	if (igfd::ImGuiFileDialog::Instance()->FileDialog("Short Music"))
+	{
+		if (igfd::ImGuiFileDialog::Instance()->IsOk)
 		{
-			const char* payloadFileName = (const char*)payload->Data;
-			FilePath payloadPath(payloadFileName);
-			if (IsFileSupported(payloadPath.extension().string(), ResourceFile::Type::Audio))
-			{
-				setAudioFile(ResourceLoader::CreateAudioResourceFile(payloadPath.string()));
-			}
-			else
-			{
-				WARN("Cannot assign a non-wav file to Audio File");
-			}
+			String filePathName = OS::GetRootRelativePath(igfd::ImGuiFileDialog::Instance()->GetFilePathName()).generic_string();
+			setAudioFile(ResourceLoader::CreateAudioResourceFile(filePathName));
 		}
-		ImGui::EndDragDropTarget();
+
+		igfd::ImGuiFileDialog::Instance()->CloseDialog("Short Music");
 	}
 
 	AudioComponent::draw();

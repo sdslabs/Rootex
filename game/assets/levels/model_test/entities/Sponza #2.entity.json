@@ -19,7 +19,9 @@
             ],
             "isVisible": true,
             "materialOverrides": {
+                "game/assets/materials/Material__25.rmat": "game/assets/materials/Material__25.rmat",
                 "game/assets/materials/Material__298.rmat": "game/assets/materials/Material__298.rmat",
+                "game/assets/materials/Material__47.rmat": "game/assets/materials/Material__47.rmat",
                 "game/assets/materials/VasePlant.rmat": "game/assets/materials/VasePlant.rmat",
                 "game/assets/materials/arch.rmat": "game/assets/materials/arch.rmat",
                 "game/assets/materials/bricks.rmat": "game/assets/materials/bricks.rmat",

@@ -39,7 +39,7 @@ public:
 	void setFileName(const String& fileName) { m_FileName = fileName; };
 	
 #ifdef ROOTEX_EDITOR
-	virtual void draw(const String& id);
+	virtual void draw();
 #endif // ROOTEX_EDITOR
 };
 

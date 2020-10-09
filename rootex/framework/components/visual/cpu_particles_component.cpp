@@ -91,7 +91,7 @@ bool CPUParticlesComponent::setup()
 
 bool CPUParticlesComponent::preRender(float deltaMilliseconds)
 {
-	ZoneNamedN(componentPreRender, "CPU Particles Pre-Render", true);
+	ZoneScoped;
 
 	ModelComponent::preRender(deltaMilliseconds);
 
@@ -104,6 +104,8 @@ bool CPUParticlesComponent::preRender(float deltaMilliseconds)
 
 	{
 		ZoneNamedN(particleInterpolation, "Particle Interpolation", true);
+		
+		float delta = deltaMilliseconds * 1e-3;
 		for (auto& particle : m_ParticlePool)
 		{
 
@@ -116,7 +118,6 @@ bool CPUParticlesComponent::preRender(float deltaMilliseconds)
 			{
 				continue;
 			}
-			float delta = deltaMilliseconds * 1e-3;
 			particle.m_LifeRemaining -= delta;
 			particle.m_Transform = Matrix::CreateTranslation(particle.m_Velocity * delta) * Matrix::CreateFromYawPitchRoll(particle.m_AngularVelocity.x * delta, particle.m_AngularVelocity.y * delta, particle.m_AngularVelocity.z * delta) * particle.m_Transform;
 		}
@@ -126,7 +127,7 @@ bool CPUParticlesComponent::preRender(float deltaMilliseconds)
 
 void CPUParticlesComponent::render()
 {
-	ZoneNamedN(componentRender, "CPU Particles Render", true);
+	ZoneScoped;
 
 	for (auto& particle : m_ParticlePool)
 	{
@@ -154,9 +155,20 @@ void CPUParticlesComponent::render()
 	}
 }
 
+void CPUParticlesComponent::setMaterial(Ref<BasicMaterial> particlesMaterial)
+{
+	if (!particlesMaterial)
+	{
+		WARN("Particles was tried to set to nullptr. Reverted to previously set material");
+		return;
+	}
+
+	m_BasicMaterial = particlesMaterial;
+}
+
 void CPUParticlesComponent::emit(const ParticleTemplate& particleTemplate)
 {
-	ZoneNamedN(componentRender, "CPU Particles Emit", true);
+	ZoneScoped;
 
 	Particle& particle = m_ParticlePool[m_PoolIndex];
 
@@ -244,6 +256,7 @@ JSON::json CPUParticlesComponent::getJSON() const
 
 #ifdef ROOTEX_EDITOR
 #include "imgui.h"
+#include "utility/imgui_helpers.h"
 void CPUParticlesComponent::draw()
 {
 	ImGui::Text("Model");
@@ -251,8 +264,36 @@ void CPUParticlesComponent::draw()
 
 	ImGui::Separator();
 
-	ImGui::Text("Particles Material");
-	m_BasicMaterial->draw("0");
+	ImGui::Text("%s", "Particles Material");
+	ImGui::Image(m_BasicMaterial->getPreview(), { 50, 50 });
+	ImGui::SameLine();
+	ImGui::BeginGroup();
+	ImGui::Text("%s", m_BasicMaterial->getFileName().c_str());
+	if (ImGui::Button(ICON_ROOTEX_EXTERNAL_LINK "##Particles Material"))
+	{
+		EventManager::GetSingleton()->call("OpenModel", "EditorOpenFile", m_BasicMaterial->getFileName());
+	}
+	ImGui::SameLine();
+	if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Particles Material"))
+	{
+		igfd::ImGuiFileDialog::Instance()->OpenModal("Particles Material", "Choose Material", ".rmat", "game/assets/materials/");
+	}
+	ImGui::SameLine();
+	if (igfd::ImGuiFileDialog::Instance()->FileDialog("Particles Material"))
+	{
+		if (igfd::ImGuiFileDialog::Instance()->IsOk)
+		{
+			String filePathName = OS::GetRootRelativePath(igfd::ImGuiFileDialog::Instance()->GetFilePathName()).generic_string();
+			setMaterial(std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetMaterial(filePathName)));
+		}
+		igfd::ImGuiFileDialog::Instance()->CloseDialog("Particles Material");
+	}
+	ImGui::SameLine();
+	if (ImGui::Button((ICON_ROOTEX_REFRESH "##Particles Material")))
+	{
+		setMaterial(std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetDefaultMaterial()));
+	}
+	ImGui::EndGroup();
 
 	ImGui::Separator();
 
