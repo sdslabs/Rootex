@@ -32,6 +32,9 @@ protected:
 	ModelComponent(ModelComponent&) = delete;
 	virtual ~ModelComponent() = default;
 
+	void assignBoundingBox();
+	void assignOverrides(ModelResourceFile* newModel, const HashMap<String, String>& materialOverrides);
+
 #ifdef ROOTEX_EDITOR
 	/// Empty Vector means all materials are allowed
 	Vector<String> m_AllowedMaterials;

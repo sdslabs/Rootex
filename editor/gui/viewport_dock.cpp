@@ -161,17 +161,7 @@ void ViewportDock::draw(float deltaMilliseconds)
 				Matrix deltaMatrix = Matrix::CreateTranslation(0.0f, 0.0f, 0.0f);
 
 				Ref<TransformComponent> transform = openedEntity->getComponent<TransformComponent>();
-				BoundingBox boundingBox = transform->getBounds();
-
-				struct Bounds
-				{
-					Vector3 m_Lower;
-					Vector3 m_Higher;
-				};
-				Bounds bounds;
-				bounds.m_Lower = Vector3(boundingBox.Center) - Vector3(boundingBox.Extents);
-				bounds.m_Higher = Vector3(boundingBox.Center) + Vector3(boundingBox.Extents);
-
+				
 				ImGuizmo::Manipulate(
 					&view.m[0][0],
 					&proj.m[0][0],
@@ -179,15 +169,14 @@ void ViewportDock::draw(float deltaMilliseconds)
 					gizmoMode,
 					&matrix.m[0][0],
 					&deltaMatrix.m[0][0],
-					currentSnap,
-					&bounds.m_Lower.x);
+					currentSnap);
 
 				matrix *= transform->getParentAbsoluteTransform().Invert();
 
 				transform->setTransform(matrix);
 			}
 			
-			if (ImGui::IsWindowHovered() && InputManager::GetSingleton()->isPressed("InputSelect") && !ImGui::IsMouseDragging(ImGuiMouseButton_Left) && ImGui::IsMouseDown(ImGuiMouseButton_Left))
+			if (ImGui::IsWindowHovered())
 			{
 				Vector3 mouseFromWindow;
 				{
@@ -230,7 +219,7 @@ void ViewportDock::draw(float deltaMilliseconds)
 				Ref<Entity> selectEntity;
 				for (auto& [entityID, entity] : EntityFactory::GetSingleton()->getEntities())
 				{
-					if (entity->isEditorOnly())
+					if (entity->isEditorOnly() || entity->getID() == ROOT_ENTITY_ID)
 					{
 						continue;
 					}
@@ -238,21 +227,10 @@ void ViewportDock::draw(float deltaMilliseconds)
 					if (Ref<TransformComponent> transform = entity->getComponent<TransformComponent>())
 					{
 						static float distance = 0.0f;
-
-						BoundingBox boundingBox = transform->getBounds();
-						boundingBox.Center = boundingBox.Center + transform->getAbsoluteTransform().Translation();
-
-						boundingBox.Center.x *= transform->getScale().x;
-						boundingBox.Center.y *= transform->getScale().y;
-						boundingBox.Center.z *= transform->getScale().z;
-
-						boundingBox.Extents.x *= transform->getScale().x;
-						boundingBox.Extents.y *= transform->getScale().y;
-						boundingBox.Extents.z *= transform->getScale().z;
-
+						BoundingBox boundingBox = transform->getWorldSpaceBounds();
 						if (ray.Intersects(boundingBox, distance))
 						{
-							if (distance < minimumDistance && distance > 0.0f)
+							if (0.0f < distance && distance < minimumDistance)
 							{
 								minimumDistance = distance;
 								selectEntity = entity;
@@ -260,11 +238,22 @@ void ViewportDock::draw(float deltaMilliseconds)
 						}
 					}
 				}
-
-				if (selectEntity && selectEntity != openedEntity)
+				
+				if (selectEntity)
 				{
-					EventManager::GetSingleton()->call("MouseSelectEntity", "EditorOpenEntity", selectEntity);
-					PRINT("Picked entity through selection: " + selectEntity->getFullName());
+					if (Ref<TransformComponent> transform = selectEntity->getComponent<TransformComponent>())
+					{
+						transform->highlight();
+						ImGui::SetCursorPos({ ImGui::GetMousePos().x - ImGui::GetWindowPos().x + 10.0f, ImGui::GetMousePos().y - ImGui::GetWindowPos().y - 20.0f });
+						EditorSystem::GetSingleton()->pushBoldFont();
+						ImGui::TextColored(EditorSystem::GetSingleton()->getColors().white, "%s", transform->getOwner()->getFullName().c_str());
+						EditorSystem::GetSingleton()->popFont();
+					}
+					if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+					{
+						EventManager::GetSingleton()->call("MouseSelectEntity", "EditorOpenEntity", selectEntity);
+						PRINT("Picked entity through selection: " + selectEntity->getFullName());
+					}
 				}
 			}
 

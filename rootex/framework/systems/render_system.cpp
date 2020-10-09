@@ -342,6 +342,65 @@ void RenderSystem::submitLine(const Vector3& from, const Vector3& to)
 	m_CurrentFrameLines.m_Indices.push_back(m_CurrentFrameLines.m_Indices.size());
 }
 
+void RenderSystem::submitBox(const Vector3& min, const Vector3& max)
+{
+	Vector3 d = max - min;
+	Vector3 x = Vector3(d.x, 0.0f, 0.0f);
+	Vector3 y = Vector3(0.0f, d.y, 0.0f);
+	Vector3 z = Vector3(0.0f, 0.0f, d.z);
+
+	/// Representation of bottom/top verticies
+	///   [3/7]-------[2/6]
+	///    /           /
+	/// [0/4]-------[1/5]
+	Vector3 corners[8];
+	corners[0] = min;
+	corners[1] = min + x;
+	corners[2] = min + x + z;
+	corners[3] = min + z;
+
+	corners[4] = min + y;
+	corners[5] = min + y + x;
+	corners[6] = max;
+	corners[7] = min + y + z;
+	
+	submitLine(corners[0], corners[1]);
+	submitLine(corners[1], corners[2]);
+	submitLine(corners[2], corners[3]);
+	submitLine(corners[3], corners[0]);
+	submitLine(corners[4], corners[5]);
+	submitLine(corners[5], corners[6]);
+	submitLine(corners[6], corners[7]);
+	submitLine(corners[7], corners[4]);
+	submitLine(corners[0], corners[4]);
+	submitLine(corners[1], corners[5]);
+	submitLine(corners[2], corners[6]);
+	submitLine(corners[3], corners[7]);
+}
+
+void RenderSystem::submitSphere(const Vector3& center, const float& radius)
+{
+	Vector3 points[6];
+	Vector3 x = { radius, 0.0f, 0.0f };
+	Vector3 y = { 0.0f, radius, 0.0f };
+	Vector3 z = { 0.0f, 0.0f, radius };
+
+	points[0] = center + x;
+	points[1] = center - x;
+	points[2] = center + y;
+	points[3] = center - y;
+	points[4] = center + z;
+	points[5] = center - z;
+
+	for (int i = 0; i < 6; i++)
+	{
+		for (int j = i; j < 6; j++)
+		{
+			submitLine(points[i], points[j]);
+		}
+	}
+}
+
 void RenderSystem::pushMatrix(const Matrix& transform)
 {
 	m_TransformationStack.push_back(transform * m_TransformationStack.back());
