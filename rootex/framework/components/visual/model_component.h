@@ -18,10 +18,16 @@ protected:
 	bool m_IsVisible;
 	int m_RenderPass;
 
+	HashMap<Ref<Material>, Ref<Material>> m_MaterialOverrides;
+	Vector<EntityID> m_AffectingStaticLightEntityIDs;
+	Vector<int> m_AffectingStaticLights;
+
+	Microsoft::WRL::ComPtr<ID3D11Buffer> m_PerModelCB;
+
 	HierarchyComponent* m_HierarchyComponent;
 	TransformComponent* m_TransformComponent;
 
-	ModelComponent(unsigned int renderPass, ModelResourceFile* resFile, bool isVisible);
+	ModelComponent(unsigned int renderPass, ModelResourceFile* resFile, const HashMap<String, String>& materialOverrides, bool isVisible, const Vector<EntityID>& affectingStaticLightIDs);
 	ModelComponent(ModelComponent&) = delete;
 	virtual ~ModelComponent() = default;
 
@@ -34,14 +40,19 @@ public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::ModelComponent;
 
 	virtual bool setup() override;
+	virtual bool setupEntities() override;
 
 	virtual bool preRender(float deltaMilliseconds);
 	virtual bool isVisible() const;
 	virtual void render();
 	virtual void postRender();
 
-	void setVisualModel(ModelResourceFile* newModel);
+	bool addAffectingStaticLight(EntityID ID);
+	void removeAffectingStaticLight(EntityID ID);
+	
+	void setVisualModel(ModelResourceFile* newModel, const HashMap<String, String>& materialOverrides);
 	void setIsVisible(bool enabled);
+	void setMaterialOverride(Ref<Material> oldMaterial, Ref<Material> newMaterial);
 	
 	unsigned int getRenderPass() const { return m_RenderPass; }
 	const Vector<Pair<Ref<Material>, Vector<Mesh>>>& getMeshes() const { return m_ModelResourceFile->getMeshes(); }

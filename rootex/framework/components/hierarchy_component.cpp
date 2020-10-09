@@ -81,6 +81,11 @@ bool HierarchyComponent::setupEntities()
 			m_Children.push_back(child->getComponent<HierarchyComponent>().get());
 		}
 	}
+	else
+	{
+		m_Children.clear();
+		m_ChildrenIDs.clear();
+	}
 	return true;
 }
 

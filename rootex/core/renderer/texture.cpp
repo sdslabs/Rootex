@@ -10,6 +10,7 @@ Texture::Texture(ImageResourceFile* imageFile)
 }
 
 Texture::Texture(const char* imageData, int width, int height)
+    : m_ImageFile(nullptr)
 {
 	m_TextureView = RenderingDevice::GetSingleton()->createTextureFromPixels(imageData, width, height);
 

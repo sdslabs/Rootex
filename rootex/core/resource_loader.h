@@ -24,7 +24,7 @@ static const inline HashMap<ResourceFile::Type, Vector<String>> SupportedFiles =
 	},
 	{
 	    ResourceFile::Type::Image,
-	    { ".png", ".jpeg", "jpg", ".dds" },
+	    { ".png", ".jpeg", ".jpg", ".dds" },
 	},
 	{
 	    ResourceFile::Type::Text,
