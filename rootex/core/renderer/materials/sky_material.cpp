@@ -61,6 +61,11 @@ void SkyMaterial::setTexture(ImageResourceFile* image)
 	m_SkyTexture = texture;
 }
 
+ID3D11ShaderResourceView* SkyMaterial::getPreview()
+{
+	return m_SkyTexture->getTextureResourceView();
+}
+
 #ifdef ROOTEX_EDITOR
 #include "imgui.h"
 void SkyMaterial::draw(const String& id)

@@ -1,0 +1,50 @@
+{
+    "Components": {
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 1
+        },
+        "ModelComponent": {
+            "isVisible": true,
+            "materialOverrides": {
+                "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+            },
+            "renderPass": 1,
+            "resFile": "game/assets/test/cube.obj"
+        },
+        "TransformComponent": {
+            "boundingBox": {
+                "center": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "extents": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                }
+            },
+            "position": {
+                "x": -10.050668716430664,
+                "y": 8.184385299682617,
+                "z": -0.33129429817199707
+            },
+            "rotation": {
+                "w": 0.9701582193374634,
+                "x": -0.23070955276489258,
+                "y": 0.0725824311375618,
+                "z": 0.017260512337088585
+            },
+            "scale": {
+                "x": 0.9999973177909851,
+                "y": 0.9999996423721313,
+                "z": 0.9999992251396179
+            }
+        }
+    },
+    "Entity": {
+        "ID": 21,
+        "name": "Cube"
+    }
+}

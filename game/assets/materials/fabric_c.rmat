@@ -1,5 +1,5 @@
 {
-    "affectedBySky": true,
+    "affectedBySky": false,
     "color": {
         "a": 1.0,
         "b": 0.5879999995231628,
@@ -15,7 +15,7 @@
     "refractionConstant": 0.800000011920929,
     "refractivity": 0.10000000149011612,
     "specularImageFile": "game/assets/sponza/textures/sponza_fabric_spec.png",
-    "specularIntensity": 2.0,
-    "specularPower": 30.0,
+    "specularIntensity": 0.0,
+    "specularPower": 100.0,
     "type": "BasicMaterial"
 }
