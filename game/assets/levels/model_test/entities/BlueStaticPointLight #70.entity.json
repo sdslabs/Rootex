@@ -1,0 +1,70 @@
+{
+    "Components": {
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 1
+        },
+        "ModelComponent": {
+            "affectingStaticLights": [],
+            "isVisible": true,
+            "materialOverrides": {
+                "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+            },
+            "renderPass": 2,
+            "resFile": "game/assets/test/sphere.obj"
+        },
+        "StaticPointLightComponent": {
+            "ambientColor": {
+                "a": 1.0,
+                "b": 0.9845559597015381,
+                "g": 0.9845535755157471,
+                "r": 0.9845461249351501
+            },
+            "attConst": 0.0,
+            "attLin": 0.10999999940395355,
+            "attQuad": 0.3970000147819519,
+            "diffuseColor": {
+                "a": 1.0,
+                "b": 1.0,
+                "g": 0.9999899864196777,
+                "r": 0.9999902844429016
+            },
+            "diffuseIntensity": 0.5,
+            "range": 11.600000381469727
+        },
+        "TransformComponent": {
+            "boundingBox": {
+                "center": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "extents": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                }
+            },
+            "position": {
+                "x": 35.800140380859375,
+                "y": 4.980356216430664,
+                "z": -1.0846974849700928
+            },
+            "rotation": {
+                "w": 1.0,
+                "x": -0.0,
+                "y": 0.0,
+                "z": -0.0
+            },
+            "scale": {
+                "x": 0.020001014694571495,
+                "y": 0.020000137388706207,
+                "z": 0.019999992102384567
+            }
+        }
+    },
+    "Entity": {
+        "ID": 70,
+        "name": "BlueStaticPointLight"
+    }
+}

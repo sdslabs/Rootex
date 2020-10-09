@@ -3,34 +3,30 @@
         "DirectionalLightComponent": {
             "ambientColor": {
                 "a": 1.0,
-                "b": 0.08989132940769196,
-                "g": 0.5985580086708069,
-                "r": 0.7760617733001709
+                "b": 0.32438400387763977,
+                "g": 0.3281853199005127,
+                "r": 0.0
             },
             "diffuseColor": {
                 "a": 1.0,
-                "b": 0.7915058135986328,
-                "g": 1.0,
-                "r": 0.9957457184791565
+                "b": 0.22779923677444458,
+                "g": 0.0253255944699049,
+                "r": 0.0
             },
-            "diffuseIntensity": 0.5429999828338623,
-            "direction": {
-                "x": -24.0,
-                "y": -6.0,
-                "z": 10.0
-            }
+            "diffuseIntensity": -0.30000001192092896
         },
         "HierarchyComponent": {
             "children": [],
             "parent": 1
         },
         "ModelComponent": {
+            "affectingStaticLights": [],
             "isVisible": true,
             "materialOverrides": {
                 "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
             },
-            "renderPass": 1,
-            "resFile": "game/assets/test/cube.obj"
+            "renderPass": 2,
+            "resFile": "game/assets/test/sphere.obj"
         },
         "TransformComponent": {
             "boundingBox": {
@@ -46,25 +42,25 @@
                 }
             },
             "position": {
-                "x": -1.1077077388763428,
-                "y": 67.32872772216797,
-                "z": -1.7220566272735596
+                "x": 1.2436408996582031,
+                "y": 47.56406021118164,
+                "z": -1.9509906768798828
             },
             "rotation": {
-                "w": -0.7071067094802856,
-                "x": 0.7071068286895752,
-                "y": 0.0,
-                "z": 0.0
+                "w": -0.2324390858411789,
+                "x": 0.28074854612350464,
+                "y": 0.8950771689414978,
+                "z": 0.2568834722042084
             },
             "scale": {
-                "x": 1.0,
-                "y": 0.98542720079422,
-                "z": 0.98542720079422
+                "x": 0.019999824464321136,
+                "y": 0.020000286400318146,
+                "z": 0.019999921321868896
             }
         }
     },
     "Entity": {
-        "ID": 4,
-        "name": "Light"
+        "ID": 98,
+        "name": "Sun"
     }
 }

@@ -1,0 +1,70 @@
+{
+    "Components": {
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 1
+        },
+        "ModelComponent": {
+            "affectingStaticLights": [],
+            "isVisible": true,
+            "materialOverrides": {
+                "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+            },
+            "renderPass": 2,
+            "resFile": "game/assets/test/sphere.obj"
+        },
+        "StaticPointLightComponent": {
+            "ambientColor": {
+                "a": 1.0,
+                "b": 9.999899930335232e-07,
+                "g": 9.999899930335232e-07,
+                "r": 9.999999974752427e-07
+            },
+            "attConst": 0.04500000178813934,
+            "attLin": 1.0,
+            "attQuad": 4.769999980926514,
+            "diffuseColor": {
+                "a": 1.0,
+                "b": 1.0,
+                "g": 0.035727739334106445,
+                "r": 0.0
+            },
+            "diffuseIntensity": 47.20000076293945,
+            "range": 5.0
+        },
+        "TransformComponent": {
+            "boundingBox": {
+                "center": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "extents": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                }
+            },
+            "position": {
+                "x": -13.127429962158203,
+                "y": 1.9900974035263062,
+                "z": -4.862349987030029
+            },
+            "rotation": {
+                "w": -0.7016342878341675,
+                "x": 0.003199190367013216,
+                "y": 0.712522566318512,
+                "z": 0.0032488408032804728
+            },
+            "scale": {
+                "x": 0.020001012831926346,
+                "y": 0.020000137388706207,
+                "z": 0.019999567419290543
+            }
+        }
+    },
+    "Entity": {
+        "ID": 92,
+        "name": "StaticPointLight"
+    }
+}
