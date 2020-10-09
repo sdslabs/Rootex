@@ -32,6 +32,8 @@ public:
 	~SkyMaterial() = default;
 
 	void setTexture(ImageResourceFile* image);
+
+	virtual ID3D11ShaderResourceView* getPreview() override;
 	
 	static Material* CreateDefault();
 	static Material* Create(const JSON::json& materialData);

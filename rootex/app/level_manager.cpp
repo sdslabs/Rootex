@@ -136,6 +136,8 @@ void LevelManager::openPreloadedLevel(const String& levelPath, const Vector<Stri
 			}
 		}
 	}
+
+	EventManager::GetSingleton()->deferredCall("OpenedLevel", "OpenedLevel", 0);
 }
 
 void LevelManager::saveCurrentLevel()

@@ -1,0 +1,68 @@
+{
+    "Components": {
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 1
+        },
+        "ModelComponent": {
+            "isVisible": true,
+            "materialOverrides": {
+                "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+            },
+            "renderPass": 2,
+            "resFile": "game/assets/test/sphere.obj"
+        },
+        "StaticPointLightComponent": {
+            "ambientColor": {
+                "a": 1.0,
+                "b": 0.5,
+                "g": 0.5,
+                "r": 0.5
+            },
+            "attConst": 0.04500000178813934,
+            "attLin": 1.0,
+            "attQuad": 0.007499999832361937,
+            "diffuseColor": {
+                "a": 1.0,
+                "b": 1.0,
+                "g": 1.0,
+                "r": 1.0
+            },
+            "diffuseIntensity": 50.0,
+            "range": 300.0
+        },
+        "TransformComponent": {
+            "boundingBox": {
+                "center": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "extents": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                }
+            },
+            "position": {
+                "x": 9.190796852111816,
+                "y": 1.7607600688934326,
+                "z": -1.9503991603851318
+            },
+            "rotation": {
+                "w": 1.0,
+                "x": -0.0,
+                "y": 0.0,
+                "z": -0.0
+            },
+            "scale": {
+                "x": 0.020001009106636047,
+                "y": 0.020000137388706207,
+                "z": 0.01999998651444912
+            }
+        }
+    },
+    "Entity": {
+        "name": "StaticPointLight"
+    }
+}

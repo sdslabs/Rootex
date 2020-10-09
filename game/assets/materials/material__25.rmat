@@ -2,19 +2,20 @@
     "affectedBySky": false,
     "color": {
         "a": 1.0,
-        "b": 0.46666669845581055,
-        "g": 0.46666669845581055,
-        "r": 0.46666669845581055
+        "b": 1.0,
+        "g": 1.0,
+        "r": 1.0
     },
-    "imageFile": "game/assets/sponza/l.png",
+    "imageFile": "game/assets/sponza/textures/lion.png",
     "isAlpha": false,
     "isLit": true,
     "isNormal": true,
-    "normalImageFile": "game/assets/sponza/ldd.png",
-    "reflectivity": 0.5,
+    "normalImageFile": "game/assets/sponza/textures/lion_ddn.png",
+    "reflectivity": 0.10000000149011612,
     "refractionConstant": 0.800000011920929,
-    "refractivity": 0.5,
-    "specularIntensity": 2.0,
-    "specularPower": 30.0,
+    "refractivity": 0.10000000149011612,
+    "specularImageFile": "game/assets/sponza/textures/lion_bump.png",
+    "specularIntensity": 0.1599999964237213,
+    "specularPower": 17.0,
     "type": "BasicMaterial"
 }

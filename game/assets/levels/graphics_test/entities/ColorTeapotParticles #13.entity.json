@@ -22,6 +22,9 @@
             },
             "isVisible": true,
             "lifeTime": 1.0,
+            "materialOverrides": {
+                "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+            },
             "materialPath": "rootex/assets/materials/default_particles.rmat",
             "poolSize": 1000,
             "renderPass": 1,

@@ -2,19 +2,20 @@
     "affectedBySky": true,
     "color": {
         "a": 1.0,
-        "b": 0.6563640832901001,
-        "g": 0.6563640832901001,
-        "r": 0.6563706398010254
+        "b": 0.7065566182136536,
+        "g": 0.7065566182136536,
+        "r": 0.7065637111663818
     },
     "imageFile": "rootex/assets/white.png",
     "isAlpha": true,
     "isLit": true,
     "isNormal": true,
     "normalImageFile": "game/assets/test/WaterDropletsMixedBubbled001_NRM16_1K.png",
-    "reflectivity": 0.0,
+    "reflectivity": 1.0,
     "refractionConstant": 0.0,
-    "refractivity": 1.0,
-    "specularIntensity": 2.0,
-    "specularPower": 30.0,
+    "refractivity": 0.6499999761581421,
+    "specularImageFile": "rootex/assets/white.png",
+    "specularIntensity": 1.0,
+    "specularPower": 100.0,
     "type": "BasicMaterial"
 }
