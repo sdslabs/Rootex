@@ -26,6 +26,8 @@ public:
 
 	virtual void bind();
 	
+	virtual ID3D11ShaderResourceView* getPreview() = 0;
+
 	bool isAlpha() { return m_IsAlpha; }
 	String getFileName() { return m_FileName; };
 	String getTypeName() { return m_TypeName; };
@@ -61,7 +63,7 @@ void Material::SetPSConstantBuffer(const T& constantBuffer, Microsoft::WRL::ComP
 	{
 		D3D11_MAPPED_SUBRESOURCE subresource;
 		RenderingDevice::GetSingleton()->mapBuffer(bufferPointer.Get(), subresource);
-		memcpy(subresource.pData, &constantBuffer, sizeof(constantBuffer));
+		memcpy(subresource.pData, &constantBuffer, sizeof(T));
 		RenderingDevice::GetSingleton()->unmapBuffer(bufferPointer.Get());
 
 		RenderingDevice::GetSingleton()->setPSCB(bufferPointer.Get(), slot);
