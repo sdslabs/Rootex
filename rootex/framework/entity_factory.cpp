@@ -83,7 +83,6 @@ EntityFactory::EntityFactory()
 	REGISTER_COMPONENT(SphereColliderComponent);
 	REGISTER_COMPONENT(BoxColliderComponent);
 	REGISTER_COMPONENT(HierarchyComponent);
-	REGISTER_COMPONENT(ScriptComponent);
 	REGISTER_COMPONENT(AudioListenerComponent);
 	REGISTER_COMPONENT(MusicComponent);
 	REGISTER_COMPONENT(ShortMusicComponent);
@@ -166,6 +165,12 @@ Ref<Entity> EntityFactory::createEntity(const JSON::json& entityJSON, const Stri
 
 	Ref<Entity> entity;
 	JSON::json name = entityJSON["Entity"]["name"];
+	JSON::json script;
+	auto&& findIt = entityJSON["Entity"].find("script");
+	if (findIt != entityJSON["Entity"].end())
+	{
+		script = entityJSON["Entity"]["script"];
+	}
 
 	EntityID newID = 0;
 	if (isEditorOnly)
@@ -189,7 +194,7 @@ Ref<Entity> EntityFactory::createEntity(const JSON::json& entityJSON, const Stri
 		}
 	}
 
-	entity.reset(new Entity(newID, name.is_null() ? "Entity" : name));
+	entity.reset(new Entity(newID, name.is_null() ? "Entity" : name, script));
 
 	for (auto&& [componentName, componentDescription] : componentJSON.items())
 	{

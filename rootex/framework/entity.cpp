@@ -4,6 +4,7 @@
 #include "framework/component.h"
 #include "framework/components/hierarchy_component.h"
 #include "framework/system.h"
+#include "framework/components/script_component.h"
 
 void Entity::RegisterAPI(sol::table& rootex)
 {
@@ -31,12 +32,23 @@ void Entity::addComponent(const Ref<Component>& component)
 	m_Components.insert(std::make_pair(component->getComponentID(), component));
 }
 
-Entity::Entity(EntityID id, const String& name, const HashMap<ComponentID, Ref<Component>>& components)
+Entity::Entity(EntityID id, const String& name, const JSON::json& script)
     : m_ID(id)
     , m_Name(name)
-    , m_Components(components)
     , m_IsEditorOnly(false)
 {
+	if (!script.is_null())
+	{
+		String luaFilePath = (String)script["path"];
+		if (OS::IsExists(luaFilePath))
+		{
+			m_Script.reset(new Script(script));
+		}
+		else
+		{
+			ERR("Could not find script file: " + luaFilePath);
+		}
+	}
 }
 
 JSON::json Entity::getJSON() const
@@ -48,6 +60,10 @@ JSON::json Entity::getJSON() const
 	for (auto&& [componentID, component] : m_Components)
 	{
 		j["Components"][component->getName()] = component->getJSON();
+	}
+	if (m_Script)
+	{
+		j["script"] = m_Script->getJSON();
 	}
 
 	return j;
@@ -66,6 +82,10 @@ bool Entity::setupComponents()
 bool Entity::setupEntities()
 {
 	bool status = true;
+	if (m_Script)
+	{
+		m_Script->setup(this);
+	}
 	for (auto& component : m_Components)
 	{
 		status = status & component.second->setupEntities();
@@ -105,6 +125,16 @@ String Entity::getFullName() const
 {
 	return m_Name + " #" + std::to_string(getID());
 }
+
+bool Entity::call(String function, Vector<Variant> args)
+{
+	if (m_Script)
+	{
+		return m_Script->call(function, args);
+	}
+	return false;
+}
+
 
 bool Entity::hasComponent(ComponentID componentID)
 {

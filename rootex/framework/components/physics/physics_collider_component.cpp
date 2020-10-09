@@ -15,7 +15,7 @@ PhysicsColliderComponent::PhysicsColliderComponent(const String& matName, float 
 {
 	m_CollisionShape = collisionShape;
 	m_TransformComponent = nullptr;
-	m_ScriptComponent = nullptr;
+	m_Script = nullptr;
 	sol::table materialLua = PhysicsSystem::GetSingleton()->getPhysicsMaterial();
 	m_SpecificGravity = float(materialLua[matName]["specificgravity"]);
 	m_Material.m_Friction = float(materialLua[matName]["friction"]);
@@ -70,8 +70,8 @@ bool PhysicsColliderComponent::setup()
 				m_Body->setUserPointer(this);
 			}
 			
-			m_ScriptComponent = getOwner()->getComponent<ScriptComponent>().get();
-			if (m_IsGeneratesHitEvents && !m_ScriptComponent)
+			m_Script = getOwner()->getScript().get();
+			if (m_IsGeneratesHitEvents && !m_Script)
 			{
 				WARN("ScriptComponent not found on entity with a PhysicsComponent that generates hit events: " + m_Owner->getFullName());
 			}
