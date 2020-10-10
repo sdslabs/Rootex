@@ -73,6 +73,7 @@ public:
 	void submitLine(const Vector3& from, const Vector3& to);
 	void submitBox(const Vector3& min, const Vector3& max);
 	void submitSphere(const Vector3& center, const float& radius);
+	void submitCone(const Matrix& transform, const float& height, const float& radius);
 	
 	void recoverLostDevice();
 

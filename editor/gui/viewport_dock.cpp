@@ -250,17 +250,14 @@ void ViewportDock::draw(float deltaMilliseconds)
 						EditorSystem::GetSingleton()->popFont();
 					}
 				}
-				if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+				if (selectEntity && ImGui::IsMouseReleased(ImGuiMouseButton_Right))
 				{
-					if (selectEntity)
-					{
-						EventManager::GetSingleton()->call("MouseSelectEntity", "EditorOpenEntity", selectEntity);
-						PRINT("Picked entity through selection: " + selectEntity->getFullName());
-					}
-					else
-					{
-						EventManager::GetSingleton()->call("MouseSelectEntity", "EditorCloseEntity", 0);
-					}
+					EventManager::GetSingleton()->call("MouseSelectEntity", "EditorOpenEntity", selectEntity);
+					PRINT("Picked entity through selection: " + selectEntity->getFullName());
+				}
+				if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Escape)))
+				{
+					EventManager::GetSingleton()->call("MouseSelectEntity", "EditorCloseEntity", 0);
 				}
 			}
 

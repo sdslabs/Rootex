@@ -401,6 +401,31 @@ void RenderSystem::submitSphere(const Vector3& center, const float& radius)
 	}
 }
 
+void RenderSystem::submitCone(const Matrix& transform, const float& height, const float& radius)
+{
+	Vector3 direction;
+	transform.Forward().Normalize(direction);
+	Vector3 up;
+	transform.Up().Normalize(up);
+	up *= radius;
+	Vector3 right;
+	transform.Right().Normalize(right);
+	right *= radius;
+	Vector3 center = transform.Translation();
+	Vector3 end = center + height * direction;
+	submitLine(transform.Translation(), end);
+	submitLine(end - up, end + up);
+	submitLine(end - right, end + right);
+	submitLine(end - right, end + up);
+	submitLine(end - right, end - up);
+	submitLine(end + right, end + up);
+	submitLine(end + right, end - up);
+	submitLine(center, end + up);
+	submitLine(center, end - up);
+	submitLine(center, end + right);
+	submitLine(center, end - right);
+}
+
 void RenderSystem::pushMatrix(const Matrix& transform)
 {
 	m_TransformationStack.push_back(transform * m_TransformationStack.back());

@@ -3,6 +3,7 @@
 #include "component.h"
 #include "common/common.h"
 
+#include "components/transform_component.h"
 #include "core/renderer/spot_light.h"
 
 /// Component to apply dynamic spot lights to the scene
@@ -21,9 +22,13 @@ class SpotLightComponent : public Component
 
 	SpotLight m_SpotLight;
 
+	TransformComponent* m_TransformComponent;
+
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::SpotLightComponent;
 	
+	bool setup() override;
+
 	const SpotLight& getSpotLight() const { return m_SpotLight; }
 
 	virtual const char* getName() const override { return "SpotLightComponent"; }

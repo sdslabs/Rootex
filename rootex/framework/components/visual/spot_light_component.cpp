@@ -1,5 +1,7 @@
 #include "spot_light_component.h"
 
+#include "entity.h"
+
 Component* SpotLightComponent::Create(const JSON::json& componentData)
 {
 	SpotLightComponent* spotLightComponent = new SpotLightComponent(
@@ -48,6 +50,17 @@ SpotLightComponent::SpotLightComponent(const float constAtt, const float linAtt,
 	m_SpotLight.range = range;
 }
 
+bool SpotLightComponent::setup()
+{
+	m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
+	if (!m_TransformComponent)
+	{
+		ERR("Could not find TransformComponent on spot light");
+		return false;
+	}
+	return true;
+}
+
 JSON::json SpotLightComponent::getJSON() const
 {
 	JSON::json j;
@@ -76,8 +89,11 @@ JSON::json SpotLightComponent::getJSON() const
 
 #ifdef ROOTEX_EDITOR
 #include "imgui.h"
+#include "systems/render_system.h"
 void SpotLightComponent::draw()
 {
+	RenderSystem::GetSingleton()->submitCone(m_TransformComponent->getAbsoluteTransform(), m_SpotLight.range, m_SpotLight.angleRange * m_SpotLight.range);
+
 	ImGui::DragFloat("Diffuse Intensity##Spot", &m_SpotLight.diffuseIntensity, 0.1f);
 	ImGui::ColorEdit4("Diffuse Color##Spot", &m_SpotLight.diffuseColor.x);
 	ImGui::ColorEdit4("Ambient Color##Spot", &m_SpotLight.ambientColor.x);
