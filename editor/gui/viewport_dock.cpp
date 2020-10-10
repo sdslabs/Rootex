@@ -249,10 +249,17 @@ void ViewportDock::draw(float deltaMilliseconds)
 						ImGui::TextColored(EditorSystem::GetSingleton()->getColors().white, "%s", transform->getOwner()->getFullName().c_str());
 						EditorSystem::GetSingleton()->popFont();
 					}
-					if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+				}
+				if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+				{
+					if (selectEntity)
 					{
 						EventManager::GetSingleton()->call("MouseSelectEntity", "EditorOpenEntity", selectEntity);
 						PRINT("Picked entity through selection: " + selectEntity->getFullName());
+					}
+					else
+					{
+						EventManager::GetSingleton()->call("MouseSelectEntity", "EditorCloseEntity", 0);
 					}
 				}
 			}
