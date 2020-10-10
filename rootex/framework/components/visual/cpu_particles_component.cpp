@@ -314,7 +314,7 @@ void CPUParticlesComponent::draw()
 	
 	ImGui::Separator();
 	
-	ImGui::Text("Particle", ImGuiTreeNodeFlags_CollapsingHeader);
+	ImGui::Text("Particle");
 	ImGui::DragFloat3("Velocity", &m_ParticleTemplate.m_Velocity.x);
 	ImGui::DragFloat("Velocity Variation", &m_ParticleTemplate.m_VelocityVariation);
 	ImGui::DragFloat("Angular Velocity Variation", &m_ParticleTemplate.m_AngularVelocityVariation);
