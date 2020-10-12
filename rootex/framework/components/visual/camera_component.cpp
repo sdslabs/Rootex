@@ -72,8 +72,8 @@ CameraComponent::CameraComponent(const Vector2& aspectRatio, float fov, float ne
     , m_AspectRatio(aspectRatio)
     , m_Near(nearPlane)
     , m_Far(farPlane)
-    , m_TransformComponent(nullptr)
     , m_PostProcessingDetails(postProcesing)
+    , m_DependencyOnTransformComponent(this)
 {
 }
 
@@ -99,22 +99,11 @@ void CameraComponent::onRemove()
 	}
 }
 
-bool CameraComponent::setup()
+bool CameraComponent::setupData()
 {
-	if (m_Owner)
-	{
-		m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
-		if (m_TransformComponent == nullptr)
-		{
-			return false;
-		}
-
-		refreshProjectionMatrix();
-		refreshViewMatrix();
-
-		return true;
-	}
-	return false;
+	refreshProjectionMatrix();
+	refreshViewMatrix();
+	return true;
 }
 
 const Matrix& CameraComponent::getViewMatrix()

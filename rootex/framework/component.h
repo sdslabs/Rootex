@@ -5,12 +5,69 @@
 #include "components/component_ids.h"
 
 typedef unsigned int ComponentID;
+class Component;
+
+class Dependable
+{
+public:
+	virtual ComponentID getID() const = 0;
+	virtual bool isValid() const = 0;
+	virtual void setComponent(Component* component) = 0;
+};
+
+/// Depend on a component either softly (recoverable from dependency breakage) or harshly (cannot recover from breakage).
+template <class ComponentType, bool isSoft>
+class Dependency : public Dependable
+{
+	ComponentType* m_Component = nullptr;
+
+public:
+	Dependency(Component* dependedBy)
+	{
+		dependedBy->registerDependency(this);
+	}
+	Dependency(Dependency&&) = delete;
+	Dependency(const Dependency&) = delete;
+	~Dependency() = default;
+
+	ComponentType*& getComponent() { return m_Component; }
+	void setComponent(Component* component) override { m_Component = (ComponentType*)component; };
+
+	/// Get the ID of the component which is depended upon. This should not use the component object because it is nullptr when this is called.
+	ComponentID getID() const override { return ComponentType::s_ID; }
+	
+	/// Return if the dependency has been evaluated properly.
+	bool isValid() const override { return isSoft || m_Component; }
+};
+
+#ifndef DEPENDS_ON
+#define DEPENDS_ON(ComponentType)                                                     \
+protected:                                                                            \
+	ComponentType const* get##ComponentType() { return m_##ComponentType; }           \
+	ComponentType*& m_##ComponentType = m_DependencyOn##ComponentType.getComponent(); \
+	Dependency<ComponentType, false> m_DependencyOn##ComponentType
+#endif
+
+#ifndef SOFT_DEPENDS_ON
+#define SOFT_DEPENDS_ON(ComponentType)                                                \
+protected:                                                                            \
+	ComponentType const* get##ComponentType() { return m_##ComponentType; }           \
+	ComponentType*& m_##ComponentType = m_DependencyOn##ComponentType.getComponent(); \
+	Dependency<ComponentType, true> m_DependencyOn##ComponentType
+#endif
 
 /// An ECS style interface of a collection of data that helps implement a behaviour. Also allows operations on that data.
 class Component
 {
+	Vector<Dependable*> m_Dependencies;
+
 	void setOwner(Ref<Entity>& newOwner) { m_Owner = newOwner; }
+
+	/// Perform setting up dependencies and internal data. Return true if successful.
+	bool setup();
+
 	friend class EntityFactory;
+	friend class Entity;
 
 protected:
 	Ref<Entity> m_Owner;
@@ -21,8 +78,13 @@ public:
 	Component();
 	virtual ~Component();
 	
-	/// Perform setting up operations which are possible only after all planned components are added to the owning entity.
-	virtual bool setup();
+	/// Only use to register dependency through a Dependency object.
+	void registerDependency(Dependable* dependable) { m_Dependencies.push_back(dependable); }
+	
+	/// Establish inter-component links after all components have been added on the owner entity. Return true if successful.
+	bool resolveDependencies();
+	/// Perform setting up internal data needed from other components after they have been added to the owning entity.
+	virtual bool setupData();
 	/// Perform setting up operations which are possible only after all entities have been set up.
 	virtual bool setupEntities();
 	virtual void onRemove();

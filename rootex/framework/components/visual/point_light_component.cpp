@@ -34,6 +34,7 @@ Component* PointLightComponent::CreateDefault()
 
 PointLightComponent::PointLightComponent(const float constAtt, const float linAtt, const float quadAtt,
     const float range, const float diffuseIntensity, const Color& diffuseColor, const Color& ambientColor)
+    : m_DependencyOnTransformComponent(this)
 {
 	m_PointLight.ambientColor = ambientColor;
 	m_PointLight.attConst = constAtt;
@@ -42,17 +43,6 @@ PointLightComponent::PointLightComponent(const float constAtt, const float linAt
 	m_PointLight.diffuseColor = diffuseColor;
 	m_PointLight.diffuseIntensity = diffuseIntensity;
 	m_PointLight.range = range;
-}
-
-bool PointLightComponent::setup()
-{
-	m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
-	if (!m_TransformComponent)
-	{
-		ERR("TransformComponent not found on point light");
-		return false;
-	}
-	return true;
 }
 
 JSON::json PointLightComponent::getJSON() const

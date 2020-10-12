@@ -24,7 +24,7 @@ class MusicComponent : public AudioComponent
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::MusicComponent;
 
-	virtual bool setup() override;
+	virtual bool setupData() override;
 
 	AudioResourceFile* getAudioFile() const { return m_AudioFile; }
 	void setAudioFile(AudioResourceFile* audioFile);

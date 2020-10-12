@@ -3,11 +3,14 @@
 #include "component.h"
 #include "common/common.h"
 
+#include "components/transform_component.h"
 #include "core/renderer/directional_light.h"
 
 /// Component to apply a dynamic directional light to the scene, only the first created instance is used in case of multiple such components
 class DirectionalLightComponent : public Component
 {
+	DEPENDS_ON(TransformComponent);
+
 	static Component* Create(const JSON::json& componentData);
 	static Component* CreateDefault();
 
@@ -23,6 +26,7 @@ class DirectionalLightComponent : public Component
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::DirectionalLightComponent;
 	
+	Vector3 getDirection() const { return m_TransformComponent->getAbsoluteTransform().Forward(); }
 	const DirectionalLight& getDirectionalLight() const { return m_DirectionalLight; }
 
 	virtual const char* getName() const override { return "DirectionalLightComponent"; }
