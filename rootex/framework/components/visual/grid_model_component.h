@@ -27,7 +27,7 @@ class GridModelComponent : public ModelComponent
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::GridModelComponent;
 
-	virtual bool setup() override;
+	virtual bool setupData() override;
 	void render() override;
 
 	virtual const char* getName() const override { return "GridModelComponent"; }

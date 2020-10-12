@@ -8,12 +8,12 @@
 /// Component to apply dynamic point lights to the scene
 class PointLightComponent : public Component
 {
+	DEPENDS_ON(TransformComponent);
+
 	static Component* Create(const JSON::json& componentData);
 	static Component* CreateDefault();
 
 	PointLight m_PointLight;
-
-	TransformComponent* m_TransformComponent;
 
 protected:
 	PointLightComponent::PointLightComponent(const float constAtt, const float linAtt, const float quadAtt,
@@ -26,8 +26,7 @@ protected:
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::PointLightComponent;
 
-	bool setup() override;
-
+	Matrix getAbsoluteTransform() const { return m_TransformComponent->getAbsoluteTransform(); }
 	const PointLight& getPointLight() const { return m_PointLight; }
 
 	virtual const char* getName() const override { return "PointLightComponent"; }

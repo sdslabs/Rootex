@@ -7,6 +7,8 @@
 
 class AudioComponent : public Component
 {
+	DEPENDS_ON(TransformComponent);
+
 private:
 	bool m_IsAttenuated;
 	AudioSource::AttenuationModel m_AttenuationModel;
@@ -17,7 +19,6 @@ private:
 
 protected:
 	bool m_IsPlayOnStart;
-	TransformComponent* m_TransformComponent;
 
 #ifdef ROOTEX_EDITOR
 	String m_AttenuationModelName = "Linear";
@@ -30,7 +31,7 @@ public:
 	AudioComponent(AudioComponent&) = delete;
 	~AudioComponent() = default;
 
-	virtual bool setup() override;
+	virtual bool setupData() override;
 
 	void update();
 

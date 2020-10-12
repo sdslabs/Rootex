@@ -9,6 +9,8 @@
 /// Component to apply dynamic spot lights to the scene
 class SpotLightComponent : public Component
 {
+	DEPENDS_ON(TransformComponent);
+
 	static Component* Create(const JSON::json& componentData);
 	static Component* CreateDefault();
 
@@ -22,13 +24,10 @@ class SpotLightComponent : public Component
 
 	SpotLight m_SpotLight;
 
-	TransformComponent* m_TransformComponent;
-
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::SpotLightComponent;
 	
-	bool setup() override;
-
+	Matrix getAbsoluteTransform() const { return m_TransformComponent->getAbsoluteTransform(); }
 	const SpotLight& getSpotLight() const { return m_SpotLight; }
 
 	virtual const char* getName() const override { return "SpotLightComponent"; }

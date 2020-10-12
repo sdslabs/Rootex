@@ -40,7 +40,7 @@ String AudioSystem::GetALCErrorString(int errID)
 	case ALC_INVALID_CONTEXT:
 		return "Invalid Context";
 	case ALC_INVALID_ENUM:
-		return "Invalid Enu,";
+		return "Invalid Enum";
 	case ALC_INVALID_VALUE:
 		return "Invalid Value";
 	case ALC_OUT_OF_MEMORY:

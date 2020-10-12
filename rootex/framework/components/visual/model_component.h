@@ -9,6 +9,9 @@
 
 class ModelComponent : public Component
 {
+	DEPENDS_ON(TransformComponent);
+	DEPENDS_ON(HierarchyComponent);
+
 	static Component* Create(const JSON::json& componentData);
 	static Component* CreateDefault();
 
@@ -25,9 +28,6 @@ protected:
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_PerModelCB;
 
-	HierarchyComponent* m_HierarchyComponent;
-	TransformComponent* m_TransformComponent;
-
 	ModelComponent(unsigned int renderPass, ModelResourceFile* resFile, const HashMap<String, String>& materialOverrides, bool isVisible, const Vector<EntityID>& affectingStaticLightIDs);
 	ModelComponent(ModelComponent&) = delete;
 	virtual ~ModelComponent() = default;
@@ -43,7 +43,7 @@ public:
 	static void RegisterAPI(sol::table& rootex);
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::ModelComponent;
 
-	virtual bool setup() override;
+	virtual bool setupData() override;
 	virtual bool setupEntities() override;
 
 	virtual bool preRender(float deltaMilliseconds);

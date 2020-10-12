@@ -34,7 +34,7 @@ Component* TransformAnimationComponent::Create(const JSON::json& componentData)
 
 Component* TransformAnimationComponent::CreateDefault()
 {
-	return new TransformAnimationComponent({ TransformAnimationComponent::Keyframe({ 0.0f, Matrix::Identity }) }, false, AnimationMode::None, TransitionType::SmashSmash);
+	return new TransformAnimationComponent({ Keyframe({ 0.0f, Matrix::Identity }) }, false, AnimationMode::None, TransitionType::SmashSmash);
 }
 
 TransformAnimationComponent::TransformAnimationComponent(const Vector<Keyframe> keyframes, bool isPlayOnStart, AnimationMode animationMode, TransitionType transition)
@@ -42,10 +42,10 @@ TransformAnimationComponent::TransformAnimationComponent(const Vector<Keyframe> 
     , m_CurrentTimePosition(0.0f)
     , m_IsPlayOnStart(isPlayOnStart)
     , m_AnimationMode(animationMode)
-    , m_TransformComponent(nullptr)
     , m_IsPlaying(false)
     , m_TransitionType(transition)
     , m_TimeDirection(1.0f)
+    , m_DependencyOnTransformComponent(this)
 {
 }
 
@@ -66,14 +66,8 @@ Matrix TransformAnimationComponent::interpolateMatrix(const Matrix& left, const 
 	return finalMat;
 }
 
-bool TransformAnimationComponent::setup()
+bool TransformAnimationComponent::setupData()
 {
-	m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
-	if (!m_TransformComponent)
-	{
-		WARN("TransformComponent not found on entity with TransformAnimationComponent: " + m_Owner->getFullName());
-		return false;
-	}
 	if (m_Keyframes.empty())
 	{
 		Keyframe initialKeyframe;

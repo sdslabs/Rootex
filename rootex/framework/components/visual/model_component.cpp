@@ -54,9 +54,9 @@ Component* ModelComponent::CreateDefault()
 ModelComponent::ModelComponent(unsigned int renderPass, ModelResourceFile* resFile, const HashMap<String, String>& materialOverrides, bool visibility, const Vector<EntityID>& affectingStaticLightIDs)
     : m_IsVisible(visibility)
     , m_RenderPass(renderPass)
-    , m_TransformComponent(nullptr)
-    , m_HierarchyComponent(nullptr)
     , m_AffectingStaticLightEntityIDs(affectingStaticLightIDs)
+    , m_DependencyOnTransformComponent(this)
+    , m_DependencyOnHierarchyComponent(this)
 {
 	assignOverrides(resFile, materialOverrides);
 }
@@ -71,26 +71,9 @@ void ModelComponent::RegisterAPI(sol::table& rootex)
 	modelComponent["setIsVisible"] = &ModelComponent::setIsVisible;
 }
 
-bool ModelComponent::setup()
+bool ModelComponent::setupData()
 {
-	if (m_Owner)
-	{
-		m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
-		if (!m_TransformComponent)
-		{
-			WARN("Entity without transform component found");
-			return false;
-		}
-		assignBoundingBox();
-
-		m_HierarchyComponent = m_Owner->getComponent<HierarchyComponent>().get();
-		if (!m_HierarchyComponent)
-		{
-			WARN("Entity without hierarchy component found");
-			return false;
-		}
-	}
-
+	assignBoundingBox();
 	return true;
 }
 
@@ -296,12 +279,11 @@ void ModelComponent::draw()
 	ImGui::Checkbox("Visible", &m_IsVisible);
 
 	String filePath = m_ModelResourceFile->getPath().generic_string();
-	if (ImGui::InputTextWithHint("Model", "Model Path", &filePath, ImGuiInputTextFlags_EnterReturnsTrue))
+	ImGui::Text("%s", filePath.c_str());
+	ImGui::SameLine();
+	if (ImGui::Button("Model"))
 	{
-		if (ModelResourceFile* file = ResourceLoader::CreateModelResourceFile(filePath))
-		{
-			setVisualModel(file, {});
-		}
+		EventManager::GetSingleton()->call("OpenScript", "EditorOpenFile", m_ModelResourceFile->getPath().string());
 	}
 	ImGui::SameLine();
 	if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Model File"))

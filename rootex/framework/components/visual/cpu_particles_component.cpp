@@ -69,7 +69,6 @@ CPUParticlesComponent::CPUParticlesComponent(size_t poolSize, const String& part
     : ModelComponent(renderPass, ResourceLoader::CreateModelResourceFile(particleModelPath), {}, visibility, {})
     , m_BasicMaterial(std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetMaterial(materialPath)))
     , m_ParticleTemplate(particleTemplate)
-    , m_TransformComponent(nullptr)
     , m_CurrentEmitMode(emitMode)
     , m_EmitterDimensions(emitterDimensions)
 {
@@ -78,7 +77,7 @@ CPUParticlesComponent::CPUParticlesComponent(size_t poolSize, const String& part
 	m_EmitRate = 0;
 }
 
-bool CPUParticlesComponent::setup()
+bool CPUParticlesComponent::setupData()
 {
 	m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
 	if (!m_TransformComponent)

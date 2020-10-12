@@ -15,26 +15,8 @@ Component* AudioListenerComponent::CreateDefault()
 }
 
 AudioListenerComponent::AudioListenerComponent()
-    : m_TransformComponent(nullptr)
+    : m_DependencyOnTransformComponent(this)
 {
-}
-
-bool AudioListenerComponent::setup()
-{
-	bool status = true;
-	if (m_Owner)
-	{
-		if (Ref<TransformComponent> transform = m_Owner->getComponent<TransformComponent>())
-		{
-			m_TransformComponent = transform.get();
-		}
-		else
-		{
-			ERR("TransformComponent not found on entity with AudioListenerComponent: " + m_Owner->getFullName());
-			status = false;
-		}
-	}
-	return status;
 }
 
 void AudioListenerComponent::onRemove()

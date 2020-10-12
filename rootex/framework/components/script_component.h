@@ -3,11 +3,12 @@
 #include "component.h"
 #include "event_manager.h"
 #include "script/interpreter.h"
-#include "physics/physics_collider_component.h"
 
 #include "btBulletDynamicsCommon.h"
 
 class LuaTextResourceFile;
+class PhysicsColliderComponent;
+class btPersistentManifold;
 
 class ScriptComponent : public Component
 {
@@ -30,7 +31,7 @@ private:
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::ScriptComponent;
 
-	virtual bool setup() override;
+	virtual bool setupData() override;
 
 	void onBegin();
 	virtual void onUpdate(float deltaMilliSeconds);

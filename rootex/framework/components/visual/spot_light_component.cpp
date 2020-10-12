@@ -38,6 +38,7 @@ Component* SpotLightComponent::CreateDefault()
 SpotLightComponent::SpotLightComponent(const float constAtt, const float linAtt, const float quadAtt,
     const float range, const float diffuseIntensity, const Color& diffuseColor, const Color& ambientColor,
 	float spot, float angleRange)
+    : m_DependencyOnTransformComponent(this)
 {
 	m_SpotLight.ambientColor = ambientColor;
 	m_SpotLight.angleRange = angleRange;
@@ -48,17 +49,6 @@ SpotLightComponent::SpotLightComponent(const float constAtt, const float linAtt,
 	m_SpotLight.diffuseIntensity = diffuseIntensity;
 	m_SpotLight.spot = spot;
 	m_SpotLight.range = range;
-}
-
-bool SpotLightComponent::setup()
-{
-	m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
-	if (!m_TransformComponent)
-	{
-		ERR("Could not find TransformComponent on spot light");
-		return false;
-	}
-	return true;
 }
 
 JSON::json SpotLightComponent::getJSON() const

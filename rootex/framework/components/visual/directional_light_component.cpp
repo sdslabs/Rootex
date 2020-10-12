@@ -24,6 +24,7 @@ Component* DirectionalLightComponent::CreateDefault()
 
 DirectionalLightComponent::DirectionalLightComponent(const float diffuseIntensity,
     const Color& diffuseColor, const Color& ambientColor)
+    : m_DependencyOnTransformComponent(this)
 {
 	m_DirectionalLight.ambientColor = ambientColor;
 	m_DirectionalLight.diffuseColor = diffuseColor;

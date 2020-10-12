@@ -39,7 +39,6 @@ class CPUParticlesComponent : public ModelComponent
 	Ref<BasicMaterial> m_BasicMaterial;
 	size_t m_PoolIndex;
 	int m_EmitRate;
-	TransformComponent* m_TransformComponent;
 	
 	enum class EmitMode : int
 	{
@@ -60,7 +59,7 @@ public:
 	CPUParticlesComponent(CPUParticlesComponent&) = delete;
 	virtual ~CPUParticlesComponent() = default;
 
-	virtual bool setup() override;
+	virtual bool setupData() override;
 	virtual bool preRender(float deltaMilliseconds) override;
 	virtual void render() override;
 

@@ -37,7 +37,7 @@ ShortMusicComponent::~ShortMusicComponent()
 	m_StaticAudioSource.reset();
 }
 
-bool ShortMusicComponent::setup()
+bool ShortMusicComponent::setupData()
 {
 	m_StaticAudioSource.reset();
 	m_StaticAudioBuffer.reset(new StaticAudioBuffer(m_AudioFile));
@@ -45,7 +45,7 @@ bool ShortMusicComponent::setup()
 
 	setAudioSource(m_StaticAudioSource.get());
 
-	bool status = AudioComponent::setup();
+	bool status = AudioComponent::setupData();
 	if (m_Owner)
 	{
 		m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
@@ -70,7 +70,7 @@ JSON::json ShortMusicComponent::getJSON() const
 void ShortMusicComponent::setAudioFile(AudioResourceFile* audioFile)
 {
 	m_AudioFile = audioFile;
-	setup();
+	setupData();
 }
 
 #ifdef ROOTEX_EDITOR
@@ -79,32 +79,14 @@ void ShortMusicComponent::setAudioFile(AudioResourceFile* audioFile)
 #include "utility/imgui_helpers.h"
 void ShortMusicComponent::draw()
 {
-	ImGui::BeginGroup();
-	
-	static String inputPath = "Path";
-	ImGui::InputText("##Path", &inputPath);
+	ImGui::Text("%s", m_AudioFile->getPath().generic_string().c_str());
 	ImGui::SameLine();
-	if (ImGui::Button("Create Audio File"))
-	{
-		if (!ResourceLoader::CreateAudioResourceFile(inputPath))
-		{
-			WARN("Could not create Audio File");
-		}
-		else
-		{
-			inputPath = "";
-		}
-	}
-
-	ImGui::SameLine();
-
 	if (ImGui::Button("Audio File"))
 	{
 		EventManager::GetSingleton()->call("OpenScript", "EditorOpenFile", m_AudioFile->getPath().string());
 	}
-	ImGui::EndGroup();
-
-	if (ImGui::Button(ICON_ROOTEX_EXTERNAL_LINK "##Short Music"))
+	ImGui::SameLine();
+	if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Short Music"))
 	{
 		igfd::ImGuiFileDialog::Instance()->OpenDialog("Short Music", "Choose Short Music", SupportedFiles.at(ResourceFile::Type::Audio), "game/assets/");
 	}

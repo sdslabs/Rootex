@@ -104,9 +104,9 @@ void GridModelComponent::refreshVertexBuffers()
 	m_IndexBuffer.reset(new IndexBuffer(indices));
 }
 
-bool GridModelComponent::setup()
+bool GridModelComponent::setupData()
 {
-	bool status = ModelComponent::setup();
+	bool status = ModelComponent::setupData();
 
 	if (status)
 	{
