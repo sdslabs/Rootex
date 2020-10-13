@@ -80,7 +80,8 @@ public:
 	
 	/// Only use to register dependency through a Dependency object.
 	void registerDependency(Dependable* dependable) { m_Dependencies.push_back(dependable); }
-	
+	const Vector<Dependable*>& getDependencies() const { return m_Dependencies; }
+
 	/// Establish inter-component links after all components have been added on the owner entity. Return true if successful.
 	bool resolveDependencies();
 	/// Perform setting up internal data needed from other components after they have been added to the owning entity.

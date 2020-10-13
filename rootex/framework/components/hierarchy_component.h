@@ -2,10 +2,14 @@
 
 #include "component.h"
 
+#include "transform_component.h"
+
 #include "entity.h"
 
 class HierarchyComponent : public Component
 {
+	SOFT_DEPENDS_ON(TransformComponent);
+
 protected:
 	static Component* Create(const JSON::json& componentData);
 	static Component* CreateDefault();
@@ -32,6 +36,8 @@ public:
 	virtual bool removeChild(Ref<Entity> node);
 	virtual bool snatchChild(Ref<Entity> node);
 	void clear();
+
+	void setParentAbsoluteTransform(const Matrix& matrix);
 
 	virtual void onRemove() override;
 	virtual const char* getName() const override { return "HierarchyComponent"; }

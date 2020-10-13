@@ -122,6 +122,11 @@ void TransformComponent::setRotationPosition(const Matrix& transform)
 	updatePositionRotationScaleFromTransform(m_TransformBuffer.m_Transform);
 }
 
+void TransformComponent::setParentAbsoluteTransform(const Matrix& parentTransform)
+{
+	m_ParentAbsoluteTransform = parentTransform;
+}
+
 void TransformComponent::addTransform(const Matrix& applyTransform)
 {
 	setTransform(getLocalTransform() * applyTransform);

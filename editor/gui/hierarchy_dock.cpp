@@ -176,9 +176,10 @@ void HierarchyDock::showEntities(const HashMap<EntityID, Ref<Entity>>& entities)
 						if (component)
 						{
 							String componentName = component->getName();
-							entity->removeComponent(component);
-							PRINT("Deleted " + componentName + " from " + entity->getName());
-							entity->setupComponents();
+							if (entity->removeComponent(component->getComponentID()))
+							{
+								PRINT("Deleted " + componentName + " from " + entity->getName());
+							}
 							increment = false;
 						}
 						else

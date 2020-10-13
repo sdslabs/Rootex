@@ -31,6 +31,7 @@ HierarchyComponent::HierarchyComponent(EntityID parentID, const Vector<EntityID>
     : m_ParentID(parentID)
     , m_ChildrenIDs(childrenIDs)
     , m_Parent(nullptr)
+    , m_DependencyOnTransformComponent(this)
 {
 }
 
@@ -122,6 +123,14 @@ void HierarchyComponent::clear()
 	m_ParentID = INVALID_ID;
 	m_Children.clear();
 	m_ChildrenIDs.clear();
+}
+
+void HierarchyComponent::setParentAbsoluteTransform(const Matrix& matrix)
+{
+	if (m_TransformComponent)
+	{
+		m_TransformComponent->setParentAbsoluteTransform(matrix);
+	}
 }
 
 void HierarchyComponent::onRemove()

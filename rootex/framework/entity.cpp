@@ -84,11 +84,27 @@ void Entity::destroy()
 	m_Components.clear();
 }
 
-void Entity::removeComponent(Ref<Component> component)
+bool Entity::removeComponent(ComponentID toRemoveComponentID)
 {
-	component->onRemove();
-	m_Components.erase(component->getComponentID());
-	System::DeregisterComponent(component.get());
+	Ref<Component> toRemoveComponent = getComponentFromID(toRemoveComponentID);
+	for (auto& [componentID, component] : m_Components)
+	{
+		for (auto& dependency : component->getDependencies())
+		{
+			if (dependency->getID() == toRemoveComponentID)
+			{
+				WARN("Entity " + getFullName() + " has other components depending on the to-be-removed component " + toRemoveComponent->getName());
+				WARN("Component deletion denied");
+				return false;
+			}
+		}
+	}
+
+	toRemoveComponent->onRemove();
+	m_Components.erase(toRemoveComponent->getComponentID());
+	System::DeregisterComponent(toRemoveComponent.get());
+
+	return true;
 }
 
 EntityID Entity::getID() const

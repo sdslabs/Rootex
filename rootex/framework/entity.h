@@ -38,7 +38,7 @@ public:
 	virtual ~Entity();
 
 	bool setupComponents();
-	void removeComponent(Ref<Component> component);
+	bool removeComponent(ComponentID toRemoveComponentID);
 	/// Destruct all components.
 	void destroy();
 

@@ -285,15 +285,20 @@ void InspectorDock::drawRemoveComponentWindow()
 					Ref<Component> component = m_ActionEntity->getComponentFromID(componentID);
 					if (component)
 					{
-						m_ActionEntity->removeComponent(component);
-						PRINT("Deleted " + componentName + " from " + m_ActionEntity->getName());
+						if (m_ActionEntity->removeComponent(componentID))
+						{
+							PRINT("Deleted " + componentName + " from " + m_ActionEntity->getName());
+						}
+						else
+						{
+							PRINT("Could not delete component: " + component->getName());
+						}
 					}
 					else
 					{
 						ERR("Component not found: Possible level file corruption");
 					}
 				}
-				m_ActionEntity->setupComponents();
 			}
 			refreshAddNewComponentSelectionCache();
 			ImGui::CloseCurrentPopup();
