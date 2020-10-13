@@ -5,30 +5,32 @@
             "parent": 1
         },
         "ModelComponent": {
+            "affectingStaticLights": [],
             "isVisible": true,
+            "materialOverrides": {
+                "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+            },
             "renderPass": 1,
             "resFile": "game/assets/test/cube.obj"
         },
-        "SpotLightComponent": {
+        "StaticPointLightComponent": {
             "ambientColor": {
                 "a": 1.0,
-                "b": 9.999899930335232e-07,
-                "g": 9.999899930335232e-07,
-                "r": 9.999999974752427e-07
+                "b": 0.9999899864196777,
+                "g": 0.9999899864196777,
+                "r": 1.0
             },
-            "angleRange": 0.0872664675116539,
-            "attConst": 1.0,
-            "attLin": 0.0,
-            "attQuad": 0.0,
+            "attConst": 0.20499999821186066,
+            "attLin": 1.809999942779541,
+            "attQuad": 0.10700000077486038,
             "diffuseColor": {
                 "a": 1.0,
-                "b": 1.0,
-                "g": 0.0,
-                "r": 0.9999427795410156
+                "b": 0.07681132107973099,
+                "g": 0.7837837934494019,
+                "r": 0.04841906204819679
             },
-            "diffuseIntensity": 1.0,
-            "range": 100.0,
-            "spot": 4.739999771118164
+            "diffuseIntensity": 12.0,
+            "range": 14.199999809265137
         },
         "TransformComponent": {
             "boundingBox": {

@@ -20,7 +20,13 @@
             "parent": 1
         },
         "ModelComponent": {
+            "affectingStaticLights": [
+                3
+            ],
             "isVisible": true,
+            "materialOverrides": {
+                "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+            },
             "renderPass": 1,
             "resFile": "game/assets/test/cube.obj"
         },
@@ -28,7 +34,7 @@
             "attenuationModel": 53251,
             "audio": "game/assets/jungle.wav",
             "isAttenuated": false,
-            "maxDistance": 100.0,
+            "maxDistance": 56.0,
             "playOnStart": true,
             "referenceDistance": 1.0,
             "rollOffFactor": 1.0

@@ -41,7 +41,7 @@ Variant FileViewer::openFile(const Event* event)
 	m_TextViewer.unload();
 	m_MaterialViewer.unload();
 
-	m_OpenFilePath = Extract(String, event->getData());
+	m_OpenFilePath = Extract<String>(event->getData());
 
 	const String& ext = m_OpenFilePath.extension().string();
 	if (IsFileSupported(ext, ResourceFile::Type::Audio))

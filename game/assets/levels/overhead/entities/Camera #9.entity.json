@@ -7,14 +7,44 @@
             },
             "far": 100.0,
             "fov": 0.7853981852531433,
-            "near": 0.10000000149011612
+            "near": 0.10000000149011612,
+            "postProcessing": {
+                "bloom": {
+                    "base": 0.7099999785423279,
+                    "baseSaturation": 1.0,
+                    "brightness": 2.440000057220459,
+                    "isBloom": true,
+                    "saturation": 1.0,
+                    "size": 2.569999933242798,
+                    "threshold": 0.17000000178813934,
+                    "value": 2.3499999046325684
+                },
+                "gaussianBlur": {
+                    "isGaussianBlur": false,
+                    "multiplier": 1.0
+                },
+                "isPostProcessing": true,
+                "monochrome": false,
+                "sepia": false,
+                "toneMap": {
+                    "exposure": 0.0,
+                    "isToneMap": false,
+                    "operator": 0,
+                    "transferFunction": 0,
+                    "whiteNits": 200.0
+                }
+            }
         },
         "HierarchyComponent": {
             "children": [],
             "parent": 1
         },
         "ModelComponent": {
+            "affectingStaticLights": [],
             "isVisible": true,
+            "materialOverrides": {
+                "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+            },
             "renderPass": 1,
             "resFile": "game/assets/test/cube.obj"
         },

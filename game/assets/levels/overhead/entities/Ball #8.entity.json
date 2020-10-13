@@ -5,7 +5,13 @@
             "parent": 1
         },
         "ModelComponent": {
+            "affectingStaticLights": [
+                3
+            ],
             "isVisible": true,
+            "materialOverrides": {
+                "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+            },
             "renderPass": 1,
             "resFile": "game/assets/test/sphere.obj"
         },
@@ -52,9 +58,9 @@
                     "z": 0.0
                 },
                 "extents": {
-                    "x": 20.0,
-                    "y": 20.0,
-                    "z": 20.0
+                    "x": 19.737079620361328,
+                    "y": 19.737079620361328,
+                    "z": 19.737079620361328
                 }
             },
             "position": {

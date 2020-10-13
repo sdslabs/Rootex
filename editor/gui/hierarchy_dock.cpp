@@ -102,7 +102,7 @@ void HierarchyDock::openEntity(Ref<Entity> entity)
 
 Variant HierarchyDock::selectOpenEntity(const Event* event)
 {
-	m_OpenedEntityID = Extract(Ref<Entity>, event->getData())->getID();
+	m_OpenedEntityID = Extract<Ref<Entity>>(event->getData())->getID();
 	return true;
 }
 
