@@ -801,7 +801,7 @@ RenderingDevice* RenderingDevice::GetSingleton()
 
 void RenderingDevice::swapBuffers()
 {
-	GFX_ERR_CHECK(m_SwapChain->Present(0, 0));
+	GFX_ERR_CHECK(m_SwapChain->Present(1, 0));
 }
 
 void RenderingDevice::clearRTV(Microsoft::WRL::ComPtr<ID3D11RenderTargetView> rtv, float r, float g, float b, float a)
