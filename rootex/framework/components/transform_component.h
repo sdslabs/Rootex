@@ -55,7 +55,8 @@ public:
 	void setTransform(const Matrix& transform);
 	void setBounds(const BoundingBox& bounds);
 	void setRotationPosition(const Matrix& transform);
-	
+	void setParentAbsoluteTransform(const Matrix& parentTransform);
+
 	void addTransform(const Matrix& applyTransform);
 	void addRotation(const Quaternion& applyTransform);
 

@@ -70,7 +70,7 @@ void RenderSystem::calculateTransforms(HierarchyComponent* hierarchyComponent)
 	pushMatrix(hierarchyComponent->getOwner()->getComponent<TransformComponent>()->getLocalTransform());
 	for (auto&& child : hierarchyComponent->getChildren())
 	{
-		child->getOwner()->getComponent<TransformComponent>()->m_ParentAbsoluteTransform = getCurrentMatrix();
+		child->setParentAbsoluteTransform(getCurrentMatrix());
 		calculateTransforms(child);
 	}
 	popMatrix();
