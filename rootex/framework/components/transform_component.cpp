@@ -135,9 +135,8 @@ void TransformComponent::addRotation(const Quaternion& applyTransform)
 
 BoundingBox TransformComponent::getWorldSpaceBounds() const
 {
-	BoundingBox transformedBox;
-	transformedBox.Center = Vector3::Transform(m_TransformBuffer.m_BoundingBox.Center, m_ParentAbsoluteTransform * m_TransformBuffer.m_Transform);
-	transformedBox.Extents = m_TransformBuffer.m_BoundingBox.Extents * m_TransformBuffer.m_Scale;
+	BoundingBox transformedBox = m_TransformBuffer.m_BoundingBox;
+	transformedBox.Transform(transformedBox, getAbsoluteTransform());
 	return transformedBox;
 }
 
