@@ -1,7 +1,6 @@
 #pragma once
 
 #include "common/common.h"
-#include "bone_data.h"
 
 /// Data to be sent in a vertex
 struct VertexData
@@ -36,6 +35,6 @@ struct UIVertexData
 
 struct AnimatedVertexData : public VertexData
 {
+	int m_BoneIndices[4];
 	Vector4 m_BoneWeights;
-	UINT m_BoneIndices[4];
 };

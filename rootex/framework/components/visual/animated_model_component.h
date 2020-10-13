@@ -18,7 +18,7 @@ class AnimatedModelComponent : public Component
 protected:
 	AnimatedModelResourceFile* m_AnimatedModelResourceFile;
 	bool m_IsVisible;
-	UINT m_RenderPass;
+	unsigned int m_RenderPass;
 	String m_CurrentAnimationName;
 	float m_CurrentTimePosition;
 	bool m_IsPlaying;
@@ -27,7 +27,7 @@ protected:
 	TransformComponent* m_TransformComponent;
 	HierarchyComponent* m_HierarchyComponent;
 
-	AnimatedModelComponent(UINT renderPass, AnimatedModelResourceFile* resFile, bool isVisible);
+	AnimatedModelComponent(unsigned int renderPass, AnimatedModelResourceFile* resFile, bool isVisible);
 	AnimatedModelComponent(AnimatedModelComponent&) = delete;
 	virtual ~AnimatedModelComponent() = default;
 

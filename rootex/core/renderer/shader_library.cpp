@@ -79,7 +79,7 @@ void ShaderLibrary::MakeShaders()
 		animationFormat.push(VertexBufferElement::Type::FloatFloatFloat, "NORMAL");
 		animationFormat.push(VertexBufferElement::Type::FloatFloat, "TEXCOORD");
 		animationFormat.push(VertexBufferElement::Type::FloatFloatFloat, "TANGENT");
-		animationFormat.push(VertexBufferElement::Type::UintUintUintUint, "BONEINDICES");
+		animationFormat.push(VertexBufferElement::Type::IntIntIntInt, "BONEINDICES");
 		animationFormat.push(VertexBufferElement::Type::FloatFloatFloatFloat, "BONEWEIGHTS");
 		MakeShader(ShaderType::Animation, L"rootex/assets/shaders/animation_vertex_shader.cso", L"rootex/assets/shaders/basic_pixel_shader.cso", animationFormat);
 	}

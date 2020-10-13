@@ -20,7 +20,7 @@ cbuffer CBuf : register(PER_CAMERA_CHANGE_VS_HLSL)
 
 cbuffer CBuf : register(BONES_VS_HLSL)
 {
-	matrix BoneTransforms[256];
+	matrix FinalTransforms[256];
 }
 
 struct VertexInputType
@@ -29,7 +29,7 @@ struct VertexInputType
     float4 normal : NORMAL;
     float2 tex : TEXCOORD0;
     float3 tangent : TANGENT;
-	uint4 indices : BONEINDICES;
+	int4 indices : BONEINDICES;
 	float4 weights : BONEWEIGHTS;
 };
 
@@ -46,25 +46,24 @@ struct PixelInputType
 PixelInputType main(VertexInputType input)
 {
 	PixelInputType output;
-	
-    float4 weights = { 0.0f, 0.0f, 0.0f, 0.0f };
-	
+		
     float3 pos = float3(0.0f, 0.0f, 0.0f);
-	pos += input.weights.x * mul(input.position, BoneTransforms[input.indices.x]).xyz;
-	pos += input.weights.y * mul(input.position, BoneTransforms[input.indices.y]).xyz;
-	pos += input.weights.z * mul(input.position, BoneTransforms[input.indices.z]).xyz;
-	pos += input.weights.w * mul(input.position, BoneTransforms[input.indices.w]).xyz;
+
+    pos += input.weights.x * mul(input.position, FinalTransforms[input.indices.x]).xyz;
+    pos += input.weights.y * mul(input.position, FinalTransforms[input.indices.y]).xyz;
+    pos += input.weights.z * mul(input.position, FinalTransforms[input.indices.z]).xyz;
+    pos += input.weights.w * mul(input.position, FinalTransforms[input.indices.w]).xyz;
 	
     output.screenPosition = mul(float4(pos, 1.0f), mul(M, mul(V, P)));
     output.normal = normalize(mul((float3) input.normal, (float3x3) MInverseTranspose));
     
 	output.tex.x = input.tex.x;
-    output.tex.y = 1 - input.tex.y;
+    output.tex.y = input.tex.y;
 	
     output.tangent = mul(input.tangent, M);
 	
     output.worldPosition = mul(input.position, M);
-    float4 cameraPosition = mul(input.position, mul(V, P));
+    float4 cameraPosition = mul(input.position, mul(M, V));
     output.fogFactor = saturate((fogEnd - cameraPosition.z) / (fogEnd - fogStart));
 	return output;
 }
