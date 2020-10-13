@@ -1,0 +1,13 @@
+{
+	"color": {
+		"a": 1.0,
+		"b": 0.5,
+		"g": 0.5,
+		"r": 0.5 
+	},
+	"imageFile": "rootex/assets/white.png",
+	"isLit": true,
+	"specularIntensity": 2.0,
+	"specularPower": 30.0,
+	"type": "AnimatedMaterial" 
+}

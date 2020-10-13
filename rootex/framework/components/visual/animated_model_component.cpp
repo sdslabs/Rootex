@@ -6,7 +6,7 @@
 #include "framework/systems/render_system.h"
 #include "renderer/materials/animated_material.h"
 
-AnimatedModelComponent::AnimatedModelComponent(UINT renderPass, AnimatedModelResourceFile* resFile, bool isVisible)
+AnimatedModelComponent::AnimatedModelComponent(unsigned int renderPass, AnimatedModelResourceFile* resFile, bool isVisible)
     : m_RenderPass(renderPass)
 	, m_AnimatedModelResourceFile(resFile)
     , m_IsVisible(isVisible)
@@ -32,7 +32,7 @@ Component* AnimatedModelComponent::Create(const JSON::json& componentData)
 Component* AnimatedModelComponent::CreateDefault()
 {
 	AnimatedModelComponent* animatedModelComponent = new AnimatedModelComponent(
-	    UINT(RenderPass::Basic),
+	    unsigned int(RenderPass::Basic),
 	    ResourceLoader::CreateAnimatedModelResourceFile("rootex/assets/gunbot.dae"),
 	    true);
 	

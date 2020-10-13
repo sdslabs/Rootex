@@ -1,13 +1,13 @@
 {
     "Components": {
-        "AnimatedModelComponent": {
-            "isVisible": true,
-            "renderPass": 1,
-            "resFile": "rootex/assets/gunbot.dae"
-        },
         "HierarchyComponent": {
             "children": [],
             "parent": 1
+        },
+        "ModelComponent": {
+            "isVisible": true,
+            "renderPass": 1,
+            "resFile": "game/assets/animation.dae"
         },
         "TransformComponent": {
             "boundingBox": {
@@ -41,7 +41,7 @@
         }
     },
     "Entity": {
-        "ID": 2,
-        "name": "Cube"
+        "ID": 4,
+        "name": "Model"
     }
 }

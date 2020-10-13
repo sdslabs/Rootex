@@ -8,7 +8,7 @@ struct TranslationKeyframe
 	Vector3 m_Translation;
 };
 
-struct RotationKeyframe 
+struct RotationKeyframe
 {
 	float m_Time;
 	Quaternion m_Rotation;
@@ -27,17 +27,25 @@ struct BoneAnimation
 	Vector<ScalingKeyframe> m_Scaling;
 
 public:
-	void interpolate(float time, Matrix& bonetransform);
+	Matrix& interpolate(float time);
 	float getStartTime() const;
 	float getEndTime() const;
+};
+
+struct SkeletonNode
+{
+	Vector<SkeletonNode*> m_Children;
+	String m_Name;
+	unsigned int m_Index;
+	Matrix m_LocalBindTransform;
 };
 
 struct SkeletalAnimation
 {
 	float m_Duration;
-	Vector<BoneAnimation> m_BoneAnimations;
+	HashMap<String, BoneAnimation> m_BoneAnimations;
 
 public:
-	void interpolate(float time, Vector<Matrix>& transforms);
+	Matrix& interpolate(const String& nodeName, float currentTime);
 	float getEndTime() const;
 };

@@ -1,44 +1,50 @@
 #include "animation.h"
 
-void SkeletalAnimation::interpolate(float time, Vector<Matrix>& transforms)
+Matrix& SkeletalAnimation::interpolate(const String& nodeName, float currentTime)
 {
-	for (int i = 0; i < m_BoneAnimations.size(); i++)
+	if (m_BoneAnimations.find(nodeName) != m_BoneAnimations.end())
 	{
-		m_BoneAnimations[i].interpolate(time, transforms[i]);
+		return m_BoneAnimations[nodeName].interpolate(currentTime);
+	}
+	else
+	{
+		return Matrix(Matrix::Identity);
 	}
 }
 
 float SkeletalAnimation::getEndTime() const
 {
-	return m_BoneAnimations.back().getEndTime();
+	return m_Duration;
 }
 
-void BoneAnimation::interpolate(float time, Matrix& bonetransform)
+Matrix& BoneAnimation::interpolate(float time)
 {
 	if (time <= getStartTime())
 	{
-		bonetransform = DirectX::XMMatrixAffineTransformation(
+		Matrix transform = DirectX::XMMatrixAffineTransformation(
 			m_Scaling.front().m_Scaling,
 			Vector3::Zero,
 			m_Rotation.front().m_Rotation,
 			m_Translation.front().m_Translation
 		);
+		return transform;
 	}
 
 	else if (time >= getEndTime())
 	{
-		bonetransform = DirectX::XMMatrixAffineTransformation(
+		Matrix transform = DirectX::XMMatrixAffineTransformation(
 			m_Scaling.back().m_Scaling,
 			Vector3::Zero,
 			m_Rotation.back().m_Rotation,
 			m_Translation.back().m_Translation
 		);
+		return transform;
 	}
 
 	else
 	{
-		UINT index = m_Scaling.size();
-		for (UINT i = 1; i < m_Scaling.size(); i++)
+		unsigned int index = m_Scaling.size();
+		for (unsigned int i = 1; i < m_Scaling.size(); i++)
 		{
 			if (m_Scaling[i].m_Time >= time)
 			{
@@ -58,7 +64,7 @@ void BoneAnimation::interpolate(float time, Matrix& bonetransform)
 			lerpFactor);
 
 		index = m_Rotation.size();
-		for (UINT i = 1; i < m_Rotation.size(); i++)
+		for (unsigned int i = 1; i < m_Rotation.size(); i++)
 		{
 			if (m_Rotation[i].m_Time >= time)
 			{
@@ -79,7 +85,7 @@ void BoneAnimation::interpolate(float time, Matrix& bonetransform)
 		rotation.Normalize();
 
 		index = m_Translation.size();
-		for (UINT i = 1; i < m_Translation.size(); i++)
+		for (unsigned int i = 1; i < m_Translation.size(); i++)
 		{
 			index = i;
 			break;
@@ -95,11 +101,13 @@ void BoneAnimation::interpolate(float time, Matrix& bonetransform)
 		    m_Translation[index].m_Translation,
 		    lerpFactor);
 
-		bonetransform = DirectX::XMMatrixAffineTransformation(
+		Matrix transform = DirectX::XMMatrixAffineTransformation(
 		    scaling,
 		    Vector3::Zero,
 		    rotation,
-		    translation);
+		    translation
+		);
+		return transform;
 	}
 }
 

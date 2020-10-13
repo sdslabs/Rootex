@@ -9,7 +9,7 @@ AnimationSystem* AnimationSystem::GetSingleton()
 }
 
 AnimationSystem::AnimationSystem()
-    : System("AnimationSystem", UpdateOrder::Update, true)
+    : System("AnimationSystem", UpdateOrder::Editor, true)
 {
 }
 
@@ -23,7 +23,6 @@ void AnimationSystem::update(float deltaMilliseconds)
 		if (animationComponent)
 		{
 			String animationName = animationComponent->getCurrentAnimationName();
-
 			if (animationComponent->m_IsPlaying)
 			{
 				animationComponent->m_CurrentTimePosition += deltaMilliseconds * MS_TO_S;
@@ -33,7 +32,6 @@ void AnimationSystem::update(float deltaMilliseconds)
 			{
 				animationComponent->m_CurrentTimePosition = 0.0f;
 			}
-
 			animationComponent->m_AnimatedModelResourceFile->getFinalTransforms(animationName, animationComponent->m_CurrentTimePosition, animationComponent->m_FinalTransforms);
 		}
 	}
