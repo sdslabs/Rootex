@@ -219,7 +219,7 @@ Variant Window::quitEditorWindow(const Event* event)
 
 Variant Window::windowResized(const Event* event)
 {
-	const Vector2& newSize = Extract(Vector2, event->getData());
+	const Vector2& newSize = Extract<Vector2>(event->getData());
 	setWindowSize(newSize);
 	applyDefaultViewport();
 	return true;

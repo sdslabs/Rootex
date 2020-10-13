@@ -99,14 +99,14 @@ Ref<Component> EntityFactory::createComponent(const String& name, const JSON::js
 	auto& findIt = m_ComponentCreators.end();
 	for (auto& componentClass = m_ComponentCreators.begin(); componentClass != m_ComponentCreators.end(); componentClass++)
 	{
-		if (Extract(String, *componentClass) == name)
+		if (std::get<String>(*componentClass) == name)
 		{
 			findIt = componentClass;
 		}
 	}
 	if (findIt != m_ComponentCreators.end())
 	{
-		ComponentCreator create = Extract(ComponentCreator, *findIt);
+		ComponentCreator create = std::get<ComponentCreator>(*findIt);
 		Ref<Component> component(create(componentData));
 
 		System::RegisterComponent(component.get());
@@ -125,14 +125,14 @@ Ref<Component> EntityFactory::createDefaultComponent(const String& name)
 	auto& findIt = m_DefaultComponentCreators.end();
 	for (auto& componentClass = m_DefaultComponentCreators.begin(); componentClass != m_DefaultComponentCreators.end(); componentClass++)
 	{
-		if (Extract(String, *componentClass) == name)
+		if (std::get<String>(*componentClass) == name)
 		{
 			findIt = componentClass;
 		}
 	}
 	if (findIt != m_DefaultComponentCreators.end())
 	{
-		ComponentDefaultCreator create = Extract(ComponentDefaultCreator, *findIt);
+		ComponentDefaultCreator create = std::get<ComponentDefaultCreator>(*findIt);
 		Ref<Component> component(create());
 
 		System::RegisterComponent(component.get());
@@ -273,7 +273,7 @@ Ref<Entity> EntityFactory::createRootEntity()
 
 Variant EntityFactory::deleteEntityEvent(const Event* event)
 {
-	deleteEntity(Extract(Ref<Entity>, event->getData()));
+	deleteEntity(Extract<Ref<Entity>>(event->getData()));
 	return true;
 }
 

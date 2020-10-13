@@ -10,7 +10,7 @@
 
 Variant OutputDock::catchOutput(const Event* event)
 {
-	m_CaughtOutputs.push_back({ event->getName(), Extract(String, event->getData()) });
+	m_CaughtOutputs.push_back({ event->getName(), Extract<String>(event->getData()) });
 	m_IsOutputJustCaught = true;
 	return true;
 }

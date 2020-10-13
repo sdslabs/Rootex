@@ -12,7 +12,7 @@ unsigned int CustomRenderInterface::s_TextureCount = 1; // 0 is reserved for whi
 
 Variant CustomRenderInterface::windowResized(const Event* event)
 {
-	const Vector2& newSize = Extract(Vector2, event->getData());
+	const Vector2& newSize = Extract<Vector2>(event->getData());
 	m_Width = newSize.x;
 	m_Height = newSize.y;
 	return true;

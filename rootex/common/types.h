@@ -159,7 +159,11 @@ class Entity;
 /// A variant able to hold multiple kinds of data, one at a time.
 using Variant = std::variant<bool, int, char, float, String, Vector2, Vector3, Vector4, Matrix, VariantVector, Ref<Entity>, Vector<String>>;
 /// Extract the value of type TypeName from a Variant
-#define Extract(TypeName, variant) std::get<TypeName>((variant))
+template <typename T>
+T Extract(const Variant& v)
+{
+	return std::get<T>(v);
+}
 
 #include <functional>
 /// std::function

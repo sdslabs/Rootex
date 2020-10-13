@@ -14,7 +14,7 @@ InspectorDock* InspectorDock::s_Singleton = nullptr;
 
 Variant InspectorDock::openEntity(const Event* event)
 {
-	m_OpenedEntity = Extract(Ref<Entity>, event->getData());
+	m_OpenedEntity = Extract<Ref<Entity>>(event->getData());
 	m_OpenedEntityName = m_OpenedEntity->getName();
 	m_IsNameBeingEdited = false;
 	refreshAddNewComponentSelectionCache();
@@ -34,7 +34,7 @@ void InspectorDock::refreshAddNewComponentSelectionCache()
 	m_AddNewComponentSelectionCache.clear();
 	for (auto& componentDetail : EntityFactory::GetSingleton()->getComponentDatabase())
 	{
-		m_AddNewComponentSelectionCache.push_back({ Extract(ComponentID, componentDetail), Extract(String, componentDetail), false });
+		m_AddNewComponentSelectionCache.push_back({ std::get<ComponentID>(componentDetail), std::get<String>(componentDetail), false });
 	}
 }
 

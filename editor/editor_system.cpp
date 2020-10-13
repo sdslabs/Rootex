@@ -385,7 +385,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 						if (ImGui::MenuItem(entityClassFile.string().c_str(), ""))
 						{
 							Variant callReturn = EventManager::GetSingleton()->returnCall("EditorFileCreateNewEntity", "EditorCreateNewEntity", entityClassFile.string());
-							Ref<Entity> newEntity = Extract(Ref<Entity>, callReturn);
+							Ref<Entity> newEntity = Extract<Ref<Entity>>(callReturn);
 							EventManager::GetSingleton()->call("EditorFileOpenNewlyCreatedEntity", "EditorOpenEntity", newEntity);
 						}
 					}
@@ -444,7 +444,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 
 				ImGui::Checkbox("Collision Mode", &m_CollisionMode);
 				
-				bool fullscreen = Extract(bool, EventManager::GetSingleton()->returnCall("WindowGetScreenState", "WindowGetScreenState", 0));
+				bool fullscreen = Extract<bool>(EventManager::GetSingleton()->returnCall("WindowGetScreenState", "WindowGetScreenState", 0));
 				if (ImGui::Checkbox("Full Screen", &fullscreen))
 				{
 					EventManager::GetSingleton()->deferredCall("WindowToggleFullScreen", "WindowToggleFullScreen", 0);
@@ -857,7 +857,7 @@ Variant EditorSystem::saveBeforeQuit(const Event* event)
 
 Variant EditorSystem::createNewLevel(const Event* event)
 {
-	const String& newLevelName = Extract(String, event->getData());
+	const String& newLevelName = Extract<String>(event->getData());
 
 	if (OS::IsExists(newLevelName))
 	{
@@ -872,7 +872,7 @@ Variant EditorSystem::createNewLevel(const Event* event)
 
 Variant EditorSystem::createNewEntity(const Event* event)
 {
-	const String& entityClassFilePath = Extract(String, event->getData());
+	const String& entityClassFilePath = Extract<String>(event->getData());
 	TextResourceFile* entityClassFile = ResourceLoader::CreateNewTextResourceFile(entityClassFilePath);
 
 	Ref<Entity> newEntity = EntityFactory::GetSingleton()->createEntity(entityClassFile);
@@ -883,7 +883,7 @@ Variant EditorSystem::createNewEntity(const Event* event)
 
 Variant EditorSystem::createNewMaterial(const Event* event)
 {
-	const Vector<String>& materialInfo = Extract(Vector<String>, event->getData());
+	const Vector<String>& materialInfo = Extract<Vector<String>>(event->getData());
 	MaterialLibrary::CreateNewMaterialFile(materialInfo[0], materialInfo[1]);
 	return true;
 }
