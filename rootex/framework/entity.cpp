@@ -64,7 +64,7 @@ JSON::json Entity::getJSON() const
 	}
 	if (m_Script)
 	{
-		j["script"] = m_Script->getJSON();
+		j["Entity"]["script"] = m_Script->getJSON();
 	}
 
 	return j;
