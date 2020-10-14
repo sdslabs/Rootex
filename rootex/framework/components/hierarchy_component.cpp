@@ -4,7 +4,7 @@
 
 Component* HierarchyComponent::Create(const JSON::json& componentData)
 {
-	HierarchyComponent* component = new HierarchyComponent(componentData["parent"], componentData["children"]);
+	HierarchyComponent* component = new HierarchyComponent(componentData.value("parent", ROOT_ENTITY_ID), componentData.value("children", Vector<EntityID>()));
 	return component;
 }
 
@@ -153,16 +153,8 @@ JSON::json HierarchyComponent::getJSON() const
 {
 	JSON::json j;
 
-	if (m_Parent)
-	{
-		j["parent"] = m_Parent->getOwner()->getID();
-		j["children"] = m_ChildrenIDs;
-	}
-	else
-	{
-		j["parent"] = INVALID_ID;
-		j["children"] = m_ChildrenIDs;
-	}
+	j["parent"] = m_Parent ? m_Parent->getOwner()->getID() : INVALID_ID;
+	j["children"] = m_ChildrenIDs;
 
 	return j;
 }

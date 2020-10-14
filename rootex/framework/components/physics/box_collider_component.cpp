@@ -4,19 +4,11 @@
 Component* BoxColliderComponent::Create(const JSON::json& boxComponentData)
 {
 	BoxColliderComponent* component = new BoxColliderComponent(
-		{ 
-			boxComponentData["dimensions"]["x"], 
-			boxComponentData["dimensions"]["y"], 
-			boxComponentData["dimensions"]["z"] 
-		},
-		boxComponentData["matName"],
-	    { 
-			boxComponentData["gravity"]["x"],
-	        boxComponentData["gravity"]["y"],
-	        boxComponentData["gravity"]["z"]
-		},
-		boxComponentData["isMoveable"],
-		boxComponentData["isGeneratesHitEvents"]);
+	    boxComponentData.value("dimensions", Vector3::Zero),
+		boxComponentData.value("matName", "Air"),
+	    boxComponentData.value("gravity", Vector3::Zero),
+	    boxComponentData.value("isMoveable", false),
+		boxComponentData.value("isGeneratesHitEvents", false));
 	return component;
 }
 
@@ -46,10 +38,7 @@ JSON::json BoxColliderComponent::getJSON() const
 {
 	JSON::json& j = PhysicsColliderComponent::getJSON();
 
-	j["dimensions"]["x"] = m_Dimensions.x;
-	j["dimensions"]["y"] = m_Dimensions.y;
-	j["dimensions"]["z"] = m_Dimensions.z;
-
+	j["dimensions"] = m_Dimensions;
 	j["matName"] = m_MaterialName;
 
 	return j;

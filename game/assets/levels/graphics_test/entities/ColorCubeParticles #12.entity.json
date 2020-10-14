@@ -2,19 +2,6 @@
     "Components": {
         "CPUParticlesComponent": {
             "affectingStaticLights": [],
-            "angularVelocityVariation": 0.0,
-            "colorBegin": {
-                "a": 1.0,
-                "b": 0.9999899864196777,
-                "g": 0.9999998807907104,
-                "r": 1.0
-            },
-            "colorEnd": {
-                "a": 1.0,
-                "b": 0.8592592477798462,
-                "g": 0.8388277888298035,
-                "r": 0.0
-            },
             "emitMode": 2,
             "emitterDimensions": {
                 "x": 30.0,
@@ -22,23 +9,38 @@
                 "z": 30.0
             },
             "isVisible": true,
-            "lifeTime": 22.1200008392334,
             "materialOverrides": {
                 "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
             },
             "materialPath": "rootex/assets/materials/default_particles.rmat",
+            "particleTemplate": {
+                "angularVelocityVariation": 0.5,
+                "colorBegin": {
+                    "a": 1.0,
+                    "b": 0.0,
+                    "g": 0.0,
+                    "r": 1.0
+                },
+                "colorEnd": {
+                    "a": 1.0,
+                    "b": 1.0,
+                    "g": 0.0,
+                    "r": 0.0
+                },
+                "lifeTime": 1.0,
+                "sizeBegin": 0.10000000149011612,
+                "sizeEnd": 0.10000000149011612,
+                "sizeVariation": 0.10000000149011612,
+                "velocity": {
+                    "x": 1.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "velocityVariation": 10.0
+            },
             "poolSize": 500,
             "renderPass": 1,
-            "resFile": "game/assets/test/sphere.obj",
-            "sizeBegin": 9.999999747378752e-06,
-            "sizeEnd": 0.0,
-            "sizeVariation": 0.10000000149011612,
-            "velocity": {
-                "x": 0.0,
-                "y": 34.0,
-                "z": 0.0
-            },
-            "velocityVariation": -0.5
+            "resFile": "game/assets/test/sphere.obj"
         },
         "FogComponent": {
             "color": {

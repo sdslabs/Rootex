@@ -32,6 +32,7 @@
             "attenuationModel": 53251,
             "audio": "game/assets/forever.wav",
             "isAttenuated": true,
+            "isLooping": false,
             "maxDistance": 100.0,
             "playOnStart": true,
             "referenceDistance": 1.0,

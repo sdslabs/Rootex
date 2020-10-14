@@ -8,13 +8,13 @@
             "width": 2560
         },
         "InputSystem": {
-            "height": 1027,
-            "width": 1920
+            "height": 1387,
+            "width": 2560
         },
         "PhysicsSystem": {},
         "UISystem": {
-            "height": 1027,
-            "width": 1920
+            "height": 1387,
+            "width": 2560
         }
     },
     "version": 1.0,

@@ -4,15 +4,15 @@
 
 struct ParticleTemplate
 {
-	Vector3 m_Velocity = { 1.0f, 0.0f, 0.0f };
-	Color m_ColorBegin = ColorPresets::Red;
-	Color m_ColorEnd = ColorPresets::Blue;
-	float m_VelocityVariation = 10.0f;
-	float m_AngularVelocityVariation = 0.5f;
-	float m_SizeBegin = 0.1f;
-	float m_SizeEnd = 0.0f;
-	float m_SizeVariation = 0.1f;
-	float m_LifeTime = 1.0f;
+	Vector3 velocity = { 1.0f, 0.0f, 0.0f };
+	Color colorBegin = ColorPresets::Red;
+	Color colorEnd = ColorPresets::Blue;
+	float velocityVariation = 10.0f;
+	float angularVelocityVariation = 0.5f;
+	float sizeBegin = 0.1f;
+	float sizeEnd = 0.0f;
+	float sizeVariation = 0.1f;
+	float lifeTime = 1.0f;
 };
 
 class CPUParticlesComponent : public ModelComponent
@@ -22,16 +22,16 @@ class CPUParticlesComponent : public ModelComponent
 	
 	struct Particle
 	{
-		bool m_IsActive = false;
-		float m_SizeBegin;
-		float m_SizeEnd;
-		float m_LifeTime;
-		float m_LifeRemaining;
-		Color m_ColorBegin;
-		Color m_ColorEnd;
-		Vector3 m_Velocity;
-		Vector3 m_AngularVelocity;
-		Matrix m_Transform;
+		bool isActive = false;
+		float sizeBegin;
+		float sizeEnd;
+		float lifeTime;
+		float lifeRemaining;
+		Color colorBegin;
+		Color colorEnd;
+		Vector3 velocity;
+		Vector3 angularVelocity;
+		Matrix transform;
 	};
 
 	ParticleTemplate m_ParticleTemplate;

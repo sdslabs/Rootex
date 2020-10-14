@@ -5,16 +5,15 @@
 Component* SpotLightComponent::Create(const JSON::json& componentData)
 {
 	SpotLightComponent* spotLightComponent = new SpotLightComponent(
-	    (float)componentData["attConst"],
-	    (float)componentData["attLin"],
-	    (float)componentData["attQuad"],
-	    (float)componentData["range"],
-	    (float)componentData["diffuseIntensity"],
-	    Color((float)componentData["diffuseColor"]["r"], (float)componentData["diffuseColor"]["g"],
-	        (float)componentData["diffuseColor"]["b"], (float)componentData["diffuseColor"]["a"]),
-	    Color((float)componentData["ambientColor"]["r"], (float)componentData["ambientColor"]["g"],
-	        (float)componentData["ambientColor"]["b"], (float)componentData["ambientColor"]["a"]),
-		(float)componentData["spot"], (float)componentData["angleRange"]);
+	    componentData.value("attConst", 1.0f),
+	    componentData.value("attLin", 0.045f),
+	    componentData.value("attQuad", 0.075f),
+	    componentData.value("range", 100.0f),
+	    componentData.value("diffuseIntensity", 1.0f),
+	    componentData.value("diffuseColor", Color(1.0f, 1.0f, 1.0f, 1.0f)),
+	    componentData.value("ambientColor", Color(1.0f, 1.0f, 1.0f, 1.0f)),
+	    componentData.value("spot", 4.0f),
+		componentData.value("angleRange", DirectX::XMConvertToRadians(30.0f)));
 
 	return spotLightComponent;
 }
@@ -60,17 +59,8 @@ JSON::json SpotLightComponent::getJSON() const
 	j["attQuad"] = m_SpotLight.attQuad;
 	j["range"] = m_SpotLight.range;
 	j["diffuseIntensity"] = m_SpotLight.diffuseIntensity;
-	
-	j["diffuseColor"]["r"] = m_SpotLight.diffuseColor.x;
-	j["diffuseColor"]["g"] = m_SpotLight.diffuseColor.y;
-	j["diffuseColor"]["b"] = m_SpotLight.diffuseColor.z;
-	j["diffuseColor"]["a"] = m_SpotLight.diffuseColor.w;
-
-	j["ambientColor"]["r"] = m_SpotLight.ambientColor.x;
-	j["ambientColor"]["g"] = m_SpotLight.ambientColor.y;
-	j["ambientColor"]["b"] = m_SpotLight.ambientColor.z;
-	j["ambientColor"]["a"] = m_SpotLight.ambientColor.w;
-
+	j["diffuseColor"] = m_SpotLight.diffuseColor;
+	j["ambientColor"] = m_SpotLight.ambientColor;
 	j["spot"] = m_SpotLight.spot;
 	j["angleRange"] = m_SpotLight.range;
 

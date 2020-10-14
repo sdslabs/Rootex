@@ -4,15 +4,11 @@
 Component* SphereColliderComponent::Create(const JSON::json& sphereComponentData)
 {
 	SphereColliderComponent* component = new SphereColliderComponent(
-		sphereComponentData["radius"], 
-		sphereComponentData["matName"],
-	    { 
-			sphereComponentData["gravity"]["x"],
-	        sphereComponentData["gravity"]["y"],
-	        sphereComponentData["gravity"]["z"]
-		},
-		sphereComponentData["isMoveable"],
-		sphereComponentData["isGeneratesHitEvents"]);
+		sphereComponentData.value("radius", 1.0f), 
+		sphereComponentData.value("matName", "Air"),
+	    sphereComponentData.value("gravity", Vector3::Zero),
+		sphereComponentData.value("isMoveable", false),
+		sphereComponentData.value("isGeneratesHitEvents", false));
 	return component;
 }
 

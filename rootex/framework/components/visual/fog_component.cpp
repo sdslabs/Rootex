@@ -3,14 +3,9 @@
 Component* FogComponent::Create(const JSON::json& componentData)
 {
 	return new FogComponent(
-		componentData["near"], 
-		componentData["far"], 
-		{ 
-			componentData["color"]["r"], 
-			componentData["color"]["g"], 
-			componentData["color"]["b"], 
-			componentData["color"]["a"] 
-		});
+	    componentData.value("near", 0.0f),
+	    componentData.value("far", 100.0f),
+	    componentData.value("color", (Color)ColorPresets::Cyan));
 }
 
 Component* FogComponent::CreateDefault()
@@ -31,10 +26,7 @@ JSON::json FogComponent::getJSON() const
 
 	j["near"] = m_Near;
 	j["far"] = m_Far;
-	j["color"]["r"] = m_Color.x;
-	j["color"]["g"] = m_Color.y;
-	j["color"]["b"] = m_Color.z;
-	j["color"]["a"] = m_Color.w;
+	j["color"] = m_Color;
 
 	return j;
 }

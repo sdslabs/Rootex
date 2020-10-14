@@ -5,13 +5,10 @@
 Component* GridModelComponent::Create(const JSON::json& componentData)
 {
 	return new GridModelComponent(
-	    { 
-			componentData["cellSize"]["x"],
-	        componentData["cellSize"]["y"]
-		}, 
-		componentData["cellCount"],
-		componentData["renderPass"],
-	    componentData["isVisible"]);
+	    componentData.value("cellSize", Vector2 { 1.0f, 1.0f }),
+		componentData.value("cellCount", 100),
+	    componentData.value("renderPass", (unsigned int)RenderPass::Editor),
+	    componentData.value("isVisible", true));
 }
 
 Component* GridModelComponent::CreateDefault()
@@ -130,8 +127,7 @@ JSON::json GridModelComponent::getJSON() const
 {
 	JSON::json& j = ModelComponent::getJSON();
 
-	j["cellSize"]["x"] = m_CellSize.x;
-	j["cellSize"]["y"] = m_CellSize.y;
+	j["cellSize"] = m_CellSize;
 	j["cellCount"] = m_CellCount;
 
 	return j;

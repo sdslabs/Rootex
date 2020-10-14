@@ -7,7 +7,7 @@
 
 Component* ScriptComponent::Create(const JSON::json& componentData)
 {
-	ScriptComponent* sc = new ScriptComponent(componentData["scripts"]);
+	ScriptComponent* sc = new ScriptComponent(componentData.value("scripts", Vector<String>()));
 	return sc;
 }
 
@@ -101,11 +101,7 @@ JSON::json ScriptComponent::getJSON() const
 {
 	JSON::json j;
 
-	j["scripts"] = JSON::json::array();
-	for (auto& scriptFile : m_ScriptFiles)
-	{
-		j["scripts"].push_back(scriptFile);
-	}
+	j["scripts"] = m_ScriptFiles;
 
 	return j;
 }

@@ -8,31 +8,25 @@
             "far": 100.0,
             "fov": 0.7853981852531433,
             "near": 0.10000000149011612,
-            "postProcessing": {
-                "bloom": {
-                    "base": 1.7100000381469727,
-                    "baseSaturation": 0.8799999952316284,
-                    "brightness": 10.0,
-                    "isBloom": true,
-                    "saturation": 1.0,
-                    "size": 14.920000076293945,
-                    "threshold": 0.6700000166893005,
-                    "value": 1.2999999523162842
-                },
-                "gaussianBlur": {
-                    "isGaussianBlur": false,
-                    "multiplier": 1.0
-                },
+            "postProcessingDetails": {
+                "bloomBase": 1.7999999523162842,
+                "bloomBaseSaturation": 1.600000023841858,
+                "bloomBrightness": 2.390000104904175,
+                "bloomSaturation": 1.3200000524520874,
+                "bloomSize": 6.429999828338623,
+                "bloomThreshold": 0.7599999904632568,
+                "bloomValue": 1.0800000429153442,
+                "gaussianBlurMultiplier": 1.0,
+                "isBloom": true,
+                "isGaussianBlur": false,
+                "isMonochrome": false,
                 "isPostProcessing": true,
-                "monochrome": false,
-                "sepia": false,
-                "toneMap": {
-                    "exposure": -0.20000000298023224,
-                    "isToneMap": false,
-                    "operator": 1,
-                    "transferFunction": 0,
-                    "whiteNits": 200.0
-                }
+                "isSepia": false,
+                "isToneMap": false,
+                "toneMapExposure": 0.0,
+                "toneMapOperator": 0,
+                "toneMapTransferFunction": 0,
+                "toneMapWhiteNits": 200.0
             }
         },
         "DirectionalLightComponent": {
