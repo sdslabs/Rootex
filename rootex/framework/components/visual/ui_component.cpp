@@ -6,7 +6,7 @@
 
 Component* UIComponent::Create(const JSON::json& componentData)
 {
-	UIComponent* ui = new UIComponent(componentData["filePath"]);
+	UIComponent* ui = new UIComponent(componentData.value("filePath", "rootex/assets/rml/demo.rml"));
 	return ui;
 }
 

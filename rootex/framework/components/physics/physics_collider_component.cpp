@@ -130,10 +130,7 @@ JSON::json PhysicsColliderComponent::getJSON() const
 {
 	JSON::json j;
 
-	j["gravity"]["x"] = m_Gravity.x;
-	j["gravity"]["y"] = m_Gravity.y;
-	j["gravity"]["z"] = m_Gravity.z;
-	
+	j["gravity"] = m_Gravity;
 	j["isMoveable"] = m_IsMoveable;
 	j["isGeneratesHitEvents"] = m_IsGeneratesHitEvents;
 

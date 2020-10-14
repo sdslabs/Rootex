@@ -6,7 +6,7 @@
 
 Component* SkyComponent::Create(const JSON::json& componentData)
 {
-	return new SkyComponent(componentData["skyMaterial"], componentData["skySphere"]);
+	return new SkyComponent(componentData.value("skyMaterial", "rootex/assets/materials/sky.rmat"), componentData.value("skySphere", "rootex/assets/sky.obj"));
 }
 
 Component* SkyComponent::CreateDefault()

@@ -13,29 +13,12 @@
 
 Component* ModelComponent::Create(const JSON::json& componentData)
 {
-	HashMap<String, String> materialOverrides;
-	if (componentData.find("materialOverrides") != componentData.end())
-	{
-		for (auto& element : JSON::json::iterator_wrapper(componentData["materialOverrides"]))
-		{
-			materialOverrides[element.key()] = element.value();
-		}
-	}
-	Vector<EntityID> affectingStaticLights;
-	if (componentData.find("affectingStaticLights") != componentData.end())
-	{
-		for (int lightEntityID : componentData["affectingStaticLights"])
-		{
-			affectingStaticLights.push_back(lightEntityID);
-		}
-	}
 	ModelComponent* modelComponent = new ModelComponent(
-	    componentData["renderPass"],
-	    ResourceLoader::CreateModelResourceFile(componentData["resFile"]),
-	    materialOverrides,
-	    componentData["isVisible"],
-	    affectingStaticLights);
-
+	    componentData.value("renderPass", (int)RenderPass::Basic),
+	    ResourceLoader::CreateModelResourceFile(componentData.value("resFile", "rootex/assets/cube.obj")),
+	    componentData.value("materialOverrides", HashMap<String, String>()),
+	    componentData.value("isVisible", true),
+	    componentData.value("affectingStaticLights", Vector<EntityID>()));
 	return modelComponent;
 }
 
@@ -259,7 +242,6 @@ JSON::json ModelComponent::getJSON() const
 	j["resFile"] = m_ModelResourceFile->getPath().string();
 	j["isVisible"] = m_IsVisible;
 	j["renderPass"] = m_RenderPass;
-
 	j["materialOverrides"] = {};
 	for (auto& [oldMaterial, newMaterial] : m_MaterialOverrides)
 	{

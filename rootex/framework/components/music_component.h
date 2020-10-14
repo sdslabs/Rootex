@@ -16,7 +16,7 @@ class MusicComponent : public AudioComponent
 	Ref<StreamingAudioBuffer> m_StreamingAudioBuffer;
 	AudioResourceFile* m_AudioFile;
 
-	MusicComponent(AudioResourceFile* audioFile, bool playOnStart, bool attenuation, AudioSource::AttenuationModel model, ALfloat rolloffFactor, ALfloat referenceDistance, ALfloat maxDistance);
+	MusicComponent(AudioResourceFile* audioFile, bool playOnStart, bool isLooping, bool attenuation, AudioSource::AttenuationModel model, ALfloat rolloffFactor, ALfloat referenceDistance, ALfloat maxDistance);
 	virtual ~MusicComponent();
 
 	friend class EntityFactory;

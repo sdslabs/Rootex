@@ -7,47 +7,43 @@
 
 #include "renderer/material_library.h"
 
+void to_json(JSON::json& j, const ParticleTemplate p)
+{
+	j["velocity"] = p.velocity;
+	j["colorBegin"] = p.colorBegin;
+	j["colorEnd"] = p.colorEnd;
+	j["velocityVariation"] = p.velocityVariation;
+	j["angularVelocityVariation"] = p.angularVelocityVariation;
+	j["sizeBegin"] = p.sizeBegin;
+	j["sizeEnd"] = p.sizeBegin;
+	j["sizeVariation"] = p.sizeVariation;
+	j["lifeTime"] = p.lifeTime;
+}
+
+void from_json(const JSON::json& j, ParticleTemplate& p)
+{
+	p.velocity = j.at("velocity");
+	p.colorBegin = j.at("colorBegin");
+	p.colorEnd = j.at("colorEnd");
+	p.velocityVariation = j.at("velocityVariation");
+	p.angularVelocityVariation = j.at("angularVelocityVariation");
+	p.sizeBegin = j.at("sizeBegin");
+	p.sizeBegin = j.at("sizeEnd");
+	p.sizeVariation = j.at("sizeVariation");
+	p.lifeTime = j.at("lifeTime");
+}
+
 Component* CPUParticlesComponent::Create(const JSON::json& componentData)
 {
-	ParticleTemplate particalTemplate {
-		{ 
-			componentData["velocity"]["x"],
-		    componentData["velocity"]["y"],
-		    componentData["velocity"]["z"] 
-		},
-		{
-			componentData["colorBegin"]["r"], 
-			componentData["colorBegin"]["g"], 
-			componentData["colorBegin"]["b"], 
-			componentData["colorBegin"]["a"] 
-		},
-		{
-			componentData["colorEnd"]["r"], 
-			componentData["colorEnd"]["g"], 
-			componentData["colorEnd"]["b"], 
-			componentData["colorEnd"]["a"] 
-		},
-		componentData["velocityVariation"],
-		componentData["angularVelocityVariation"],
-		componentData["sizeBegin"],
-		componentData["sizeEnd"],
-		componentData["sizeVariation"],
-		componentData["lifeTime"]
-	};
-
 	CPUParticlesComponent* particles = new CPUParticlesComponent(
-		componentData["poolSize"], 
-		componentData["resFile"],
-	    componentData["materialPath"],
-		particalTemplate, 
-		componentData["isVisible"],
-	    componentData["renderPass"],
-		(EmitMode)(int)componentData["emitMode"],
-	    {
-	        componentData["emitterDimensions"]["x"],
-	        componentData["emitterDimensions"]["y"],
-	        componentData["emitterDimensions"]["z"]
-		});
+	    componentData.value("poolSize", 1000),
+		componentData.value("resFile", "rootex/assets/cube.obj"),
+	    componentData.value("materialPath", "rootex/assets/materials/default_particles.rmat"),
+	    componentData.value("particleTemplate", ParticleTemplate()), 
+		componentData.value("isVisible", true),
+	    componentData.value("renderPass", (unsigned int)RenderPass::Basic),
+	    (EmitMode)componentData.value("emitMode", (int)EmitMode::Point),
+	    componentData.value("emitterDimensions", Vector3 { 1.0f, 1.0f, 1.0f }));
 	return particles;
 }
 
@@ -108,17 +104,17 @@ bool CPUParticlesComponent::preRender(float deltaMilliseconds)
 		for (auto& particle : m_ParticlePool)
 		{
 
-			if (particle.m_LifeRemaining <= 0.0f)
+			if (particle.lifeRemaining <= 0.0f)
 			{
-				particle.m_IsActive = false;
+				particle.isActive = false;
 				continue;
 			}
-			if (!particle.m_IsActive)
+			if (!particle.isActive)
 			{
 				continue;
 			}
-			particle.m_LifeRemaining -= delta;
-			particle.m_Transform = Matrix::CreateTranslation(particle.m_Velocity * delta) * Matrix::CreateFromYawPitchRoll(particle.m_AngularVelocity.x * delta, particle.m_AngularVelocity.y * delta, particle.m_AngularVelocity.z * delta) * particle.m_Transform;
+			particle.lifeRemaining -= delta;
+			particle.transform = Matrix::CreateTranslation(particle.velocity * delta) * Matrix::CreateFromYawPitchRoll(particle.angularVelocity.x * delta, particle.angularVelocity.y * delta, particle.angularVelocity.z * delta) * particle.transform;
 		}
 	}
 	return true;
@@ -130,17 +126,17 @@ void CPUParticlesComponent::render()
 
 	for (auto& particle : m_ParticlePool)
 	{
-		if (!particle.m_IsActive)
+		if (!particle.isActive)
 		{
 			continue;
 		}
 
-		float life = particle.m_LifeRemaining / particle.m_LifeTime;
-		float size = particle.m_SizeBegin * (life) + particle.m_SizeEnd * (1.0f - life);
+		float life = particle.lifeRemaining / particle.lifeTime;
+		float size = particle.sizeBegin * (life) + particle.sizeEnd * (1.0f - life);
 		
-		RenderSystem::GetSingleton()->pushMatrixOverride(Matrix::CreateScale(size) * particle.m_Transform);
+		RenderSystem::GetSingleton()->pushMatrixOverride(Matrix::CreateScale(size) * particle.transform);
 		
-		m_BasicMaterial->setColor(Color::Lerp(particle.m_ColorEnd, particle.m_ColorBegin, life));
+		m_BasicMaterial->setColor(Color::Lerp(particle.colorEnd, particle.colorBegin, life));
 		RenderSystem::GetSingleton()->getRenderer()->bind(m_BasicMaterial.get());
 		
 		for (auto& [material, meshes] : m_ModelResourceFile->getMeshes())
@@ -171,7 +167,7 @@ void CPUParticlesComponent::emit(const ParticleTemplate& particleTemplate)
 
 	Particle& particle = m_ParticlePool[m_PoolIndex];
 
-	particle.m_IsActive = true;
+	particle.isActive = true;
 
 	static Matrix initialTransform;
 	initialTransform = Matrix::Identity;
@@ -189,23 +185,23 @@ void CPUParticlesComponent::emit(const ParticleTemplate& particleTemplate)
 		break;
 	}
 
-	particle.m_Transform = initialTransform * m_TransformComponent->getAbsoluteTransform();
+	particle.transform = initialTransform * m_TransformComponent->getAbsoluteTransform();
 
-	particle.m_Velocity = particleTemplate.m_Velocity;
-	particle.m_Velocity.x += particleTemplate.m_VelocityVariation * (Random::Float() - 0.5f);
-	particle.m_Velocity.y += particleTemplate.m_VelocityVariation * (Random::Float() - 0.5f);
-	particle.m_Velocity.z += particleTemplate.m_VelocityVariation * (Random::Float() - 0.5f);
+	particle.velocity = particleTemplate.velocity;
+	particle.velocity.x += particleTemplate.velocityVariation * (Random::Float() - 0.5f);
+	particle.velocity.y += particleTemplate.velocityVariation * (Random::Float() - 0.5f);
+	particle.velocity.z += particleTemplate.velocityVariation * (Random::Float() - 0.5f);
 
-	particle.m_AngularVelocity = Vector3(Random::Float() - 0.5f, Random::Float() - 0.5f, Random::Float() - 0.5f) * particleTemplate.m_AngularVelocityVariation;
-	particle.m_AngularVelocity.Normalize();
+	particle.angularVelocity = Vector3(Random::Float() - 0.5f, Random::Float() - 0.5f, Random::Float() - 0.5f) * particleTemplate.angularVelocityVariation;
+	particle.angularVelocity.Normalize();
 
-	particle.m_ColorBegin = particleTemplate.m_ColorBegin;
-	particle.m_ColorEnd = particleTemplate.m_ColorEnd;
+	particle.colorBegin = particleTemplate.colorBegin;
+	particle.colorEnd = particleTemplate.colorEnd;
 
-	particle.m_LifeTime = particleTemplate.m_LifeTime;
-	particle.m_LifeRemaining = particleTemplate.m_LifeTime;
-	particle.m_SizeBegin = particleTemplate.m_SizeBegin + particleTemplate.m_SizeVariation * (Random::Float() - 0.5f);
-	particle.m_SizeEnd = particleTemplate.m_SizeEnd;
+	particle.lifeTime = particleTemplate.lifeTime;
+	particle.lifeRemaining = particleTemplate.lifeTime;
+	particle.sizeBegin = particleTemplate.sizeBegin + particleTemplate.sizeVariation * (Random::Float() - 0.5f);
+	particle.sizeEnd = particleTemplate.sizeEnd;
 
 	m_PoolIndex = --m_PoolIndex % m_ParticlePool.size();
 }
@@ -226,25 +222,8 @@ JSON::json CPUParticlesComponent::getJSON() const
 	JSON::json& j = ModelComponent::getJSON();
 
 	j["materialPath"] = m_BasicMaterial->getFileName();
-
 	j["poolSize"] = m_ParticlePool.size();
-	j["velocity"]["x"] = m_ParticleTemplate.m_Velocity.x;
-	j["velocity"]["y"] = m_ParticleTemplate.m_Velocity.y;
-	j["velocity"]["z"] = m_ParticleTemplate.m_Velocity.z;
-	j["velocityVariation"] = m_ParticleTemplate.m_VelocityVariation;
-	j["angularVelocityVariation"] = m_ParticleTemplate.m_AngularVelocityVariation;
-	j["colorBegin"]["r"] = m_ParticleTemplate.m_ColorBegin.x;
-	j["colorBegin"]["g"] = m_ParticleTemplate.m_ColorBegin.y;
-	j["colorBegin"]["b"] = m_ParticleTemplate.m_ColorBegin.z;
-	j["colorBegin"]["a"] = m_ParticleTemplate.m_ColorBegin.w;
-	j["colorEnd"]["r"] = m_ParticleTemplate.m_ColorEnd.x;
-	j["colorEnd"]["g"] = m_ParticleTemplate.m_ColorEnd.y;
-	j["colorEnd"]["b"] = m_ParticleTemplate.m_ColorEnd.z;
-	j["colorEnd"]["a"] = m_ParticleTemplate.m_ColorEnd.w;
-	j["sizeBegin"] = m_ParticleTemplate.m_SizeBegin;
-	j["sizeEnd"] = m_ParticleTemplate.m_SizeEnd;
-	j["sizeVariation"] = m_ParticleTemplate.m_SizeVariation;
-	j["lifeTime"] = m_ParticleTemplate.m_LifeTime;
+	j["particleTemplate"] = m_ParticleTemplate;
 	j["emitMode"] = (int)m_CurrentEmitMode;
 	j["emitterDimensions"]["x"] = m_EmitterDimensions.x;
 	j["emitterDimensions"]["y"] = m_EmitterDimensions.y;
@@ -314,14 +293,14 @@ void CPUParticlesComponent::draw()
 	ImGui::Separator();
 	
 	ImGui::Text("Particle");
-	ImGui::DragFloat3("Velocity", &m_ParticleTemplate.m_Velocity.x);
-	ImGui::DragFloat("Velocity Variation", &m_ParticleTemplate.m_VelocityVariation);
-	ImGui::DragFloat("Angular Velocity Variation", &m_ParticleTemplate.m_AngularVelocityVariation);
-	ImGui::ColorEdit4("Color Begin", &m_ParticleTemplate.m_ColorBegin.x);
-	ImGui::ColorEdit4("Color End", &m_ParticleTemplate.m_ColorEnd.x);
-	ImGui::DragFloat("Size Begin", &m_ParticleTemplate.m_SizeBegin, 0.01f);
-	ImGui::DragFloat("Size End", &m_ParticleTemplate.m_SizeEnd, 0.01f);
-	ImGui::DragFloat("Size Variation", &m_ParticleTemplate.m_SizeVariation, 0.01f);
-	ImGui::DragFloat("Lifetime", &m_ParticleTemplate.m_LifeTime, 0.01f);
+	ImGui::DragFloat3("Velocity", &m_ParticleTemplate.velocity.x);
+	ImGui::DragFloat("Velocity Variation", &m_ParticleTemplate.velocityVariation);
+	ImGui::DragFloat("Angular Velocity Variation", &m_ParticleTemplate.angularVelocityVariation);
+	ImGui::ColorEdit4("Color Begin", &m_ParticleTemplate.colorBegin.x);
+	ImGui::ColorEdit4("Color End", &m_ParticleTemplate.colorEnd.x);
+	ImGui::DragFloat("Size Begin", &m_ParticleTemplate.sizeBegin, 0.01f);
+	ImGui::DragFloat("Size End", &m_ParticleTemplate.sizeEnd, 0.01f);
+	ImGui::DragFloat("Size Variation", &m_ParticleTemplate.sizeVariation, 0.01f);
+	ImGui::DragFloat("Lifetime", &m_ParticleTemplate.lifeTime, 0.01f);
 }
 #endif // ROOTEX_EDITOR

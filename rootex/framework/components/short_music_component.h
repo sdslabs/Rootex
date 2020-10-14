@@ -16,7 +16,7 @@ class ShortMusicComponent : public AudioComponent
 	Ref<StaticAudioBuffer> m_StaticAudioBuffer;
 	AudioResourceFile* m_AudioFile;
 
-	ShortMusicComponent(AudioResourceFile* audioFile, bool playOnStart, bool attenuation, AudioSource::AttenuationModel model, ALfloat rolloffFactor, ALfloat referenceDistance, ALfloat maxDistance);
+	ShortMusicComponent(AudioResourceFile* audioFile, bool playOnStart, bool isLooping, bool attenuation, AudioSource::AttenuationModel model, ALfloat rolloffFactor, ALfloat referenceDistance, ALfloat maxDistance);
 	virtual ~ShortMusicComponent();
 
 	friend class EntityFactory;
