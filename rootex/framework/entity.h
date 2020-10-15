@@ -63,7 +63,7 @@ public:
 	const HashMap<ComponentID, Ref<Component>>& getAllComponents() const;
 	bool isEditorOnly() const { return m_IsEditorOnly; }
 
-	bool call(String function, Vector<Variant> args);
+	bool call(const String& function, const Vector<Variant>& args);
 	
 	void setName(const String& name);
 	void setEditorOnly(bool editorOnly) { m_IsEditorOnly = editorOnly; }

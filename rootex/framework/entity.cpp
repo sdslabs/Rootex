@@ -55,6 +55,10 @@ JSON::json Entity::getJSON() const
 	{
 		j["Entity"]["script"] = m_Script->getJSON();
 	}
+	else
+	{
+		j["Entity"]["script"] = {};
+	}
 
 	return j;
 }
@@ -124,11 +128,10 @@ String Entity::getFullName() const
 	return m_Name + " #" + std::to_string(getID());
 }
 
-bool Entity::call(String function, Vector<Variant> args)
+bool Entity::call(const String& function, const Vector<Variant>& args)
 {
 	return m_Script->call(function, args);
 }
-
 
 bool Entity::hasComponent(ComponentID componentID)
 {

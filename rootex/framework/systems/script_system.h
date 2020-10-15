@@ -1,7 +1,6 @@
 #pragma once
 
 #include "system.h"
-#include "framework/entity_factory.h"
 
 /// Interface for initialisation, maintenance and deletion of script components.
 class ScriptSystem : public System

@@ -166,8 +166,7 @@ Ref<Entity> EntityFactory::createEntity(const JSON::json& entityJSON, const Stri
 	Ref<Entity> entity;
 	JSON::json name = entityJSON["Entity"]["name"];
 	JSON::json script;
-	auto&& findIt = entityJSON["Entity"].find("script");
-	if (findIt != entityJSON["Entity"].end())
+	if (entityJSON["Entity"].contains("script"))
 	{
 		script = entityJSON["Entity"]["script"];
 	}
