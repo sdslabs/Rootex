@@ -1,16 +1,14 @@
 exports = {
-    move_entity = ""
+    moveEntity = ""
 }
 
 function onBegin(entity)
-    -- other = RTX.EntityFactory.Find(3)
-    print(exports.move_entity:script().number)
+    print(exports.moveEntity:script().number)
     print("Nothing is true")
 end
 
 function onUpdate(entity, delta)
-    exports.move_entity.script.number = 0.01 + exports.move_entity.script.number
-    -- print(other.script.number)
+    exports.moveEntity.script.number = 0.01 + exports.moveEntity.script.number
 end
 
 function onHit(entity, hit, other)

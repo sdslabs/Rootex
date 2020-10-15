@@ -18,26 +18,26 @@ private:
 	HashMap<String, bool> m_IsOverriden;
 	HashMap<String, String> m_Overrides;
 	Entity* m_Entity;
-	bool hasScript;
+	bool m_HasScript;
 
 	friend class Entity;
 
 	bool isSuccessful(const sol::function_result& result);
 
 public:
+	Script(const JSON::json& script);
+	Script(const Script&) = delete;
+	~Script() = default;
+	
 	bool setup(Entity* entity);
 
 	JSON::json getJSON() const;
 
 	bool addScript(const String& scriptFile);
 	void removeScript();
-	bool call(String function, Vector<Variant> args);
+	bool call(const String& function, const Vector<Variant>& args);
 	sol::environment getEnvironment() { return m_ScriptEnvironment; }
 	void evaluateOverrides();
-	
-	Script(const JSON::json& script);
-	Script(const Script&) = delete;
-	~Script() = default;
 
 #ifdef ROOTEX_EDITOR
 	void registerExports();

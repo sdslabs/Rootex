@@ -25,14 +25,14 @@ Script::Script(const JSON::json& script)
 			ERR("Could not find script file: " + luaFilePath);
 		}
 	}
-	hasScript = false;
+	m_HasScript = false;
 }
 
 bool Script::setup(Entity* entity)
 {
 	bool status = true;
 	m_Entity = entity;
-	if (hasScript)
+	if (m_HasScript)
 	{
 		try
 		{
@@ -42,7 +42,7 @@ bool Script::setup(Entity* entity)
 		{
 			ERR(e.what());
 			status = false;
-			hasScript = false;
+			m_HasScript = false;
 		}
 	}
 	return status;
@@ -60,9 +60,9 @@ bool Script::isSuccessful(const sol::function_result& result)
 	return true;
 }
 
-bool Script::call(String function, Vector<Variant> args) 
+bool Script::call(const String& function, const Vector<Variant>& args) 
 {
-	if (hasScript)
+	if (m_HasScript)
 	{
 		return isSuccessful(m_ScriptEnvironment[function](sol::as_args(args)));
 	}
@@ -100,18 +100,20 @@ JSON::json Script::getJSON() const
 bool Script::addScript(const String& scriptFile)
 {
 	if (!m_ScriptFile.empty())
+	{
 		return false;
+	}
 	m_ScriptFile = scriptFile;
 	m_ScriptEnvironment = sol::environment(LuaInterpreter::GetSingleton()->getLuaState(),
 	    sol::create,
 	    LuaInterpreter::GetSingleton()->getLuaState().globals());
-	hasScript = true;
+	m_HasScript = true;
 	return true;
 }
 
 void Script::removeScript()
 {
-	hasScript = false;
+	m_HasScript = false;
 	m_ScriptFile = "";
 	m_IsOverriden.clear();
 	m_Overrides.clear();
@@ -126,7 +128,7 @@ void Script::registerExports()
 	{
 		sol::table exports = m_ScriptEnvironment["exports"];
 		sol::table currExports = m_ScriptEnvironment["exports"];
-		std::filesystem::path file(m_ScriptFile);
+		FilePath file(m_ScriptFile);
 		String script = file.stem().generic_string();
 
 		currExports.for_each([&](sol::object const& key, sol::object const& value) {
@@ -160,7 +162,7 @@ void Script::draw()
 		{
 			const char* payloadFileName = (const char*)payload->Data;
 			FilePath payloadPath(payloadFileName);
-			if (IsFileSupported(payloadPath.extension().string(), ResourceFile::Type::Lua))
+			if (IsFileSupported(payloadPath.extension().generic_string(), ResourceFile::Type::Lua))
 			{
 				if (addScript(payloadPath.string()))
 				{
@@ -194,7 +196,6 @@ void Script::draw()
 				if (m_IsOverriden[varName])
 				{
 					m_Overrides[varName] = "";
-					m_Overrides[varName].reserve(300);
 				}
 				else
 				{

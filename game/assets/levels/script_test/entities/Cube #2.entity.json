@@ -45,7 +45,7 @@
         "name": "Cube",
         "script": {
             "overrides": {
-                "move_entity": "RTX.EntityFactory.Find(3)"
+                "moveEntity": "RTX.EntityFactory.Find(3)"
             },
             "path": "game\\assets\\scripts\\script_test1.lua"
         }
