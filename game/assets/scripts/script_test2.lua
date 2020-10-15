@@ -1,6 +1,10 @@
 number = 0.1
 local transform
 
+exports = {
+    a = 1
+}
+
 function onBegin(entity)
     print("Nothing is true")
     transform = entity:getTransform()

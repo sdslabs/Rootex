@@ -5,28 +5,44 @@
 Script::Script(const JSON::json& script)
 	: m_Entity(nullptr)
 {
-	String luaFilePath = script["path"];
-
-	for (auto& element : JSON::json::iterator_wrapper(script["overrides"]))
+	if (!script.is_null() && !script["path"].is_null())
 	{
-		m_Overrides[element.key()] = element.value();
-	}
+		String luaFilePath = script["path"];
 
-	addScript(luaFilePath);
+		if (OS::IsExists(luaFilePath))
+		{
+			for (auto& element : JSON::json::iterator_wrapper(script["overrides"]))
+			{
+				m_Overrides[element.key()] = element.value();
+			}
+
+			addScript(luaFilePath);
+			return;
+		}
+		else
+		{
+			ERR("Could not find script file: " + luaFilePath);
+		}
+	}
+	hasScript = false;
 }
 
 bool Script::setup(Entity* entity)
 {
 	bool status = true;
 	m_Entity = entity;
-	try
+	if (hasScript)
 	{
-		LuaInterpreter::GetSingleton()->getLuaState().script_file(m_ScriptFile, m_ScriptEnvironment);
-	}
-	catch (std::exception e)
-	{
-		ERR(e.what());
-		status = false;
+		try
+		{
+			LuaInterpreter::GetSingleton()->getLuaState().script_file(m_ScriptFile, m_ScriptEnvironment);
+		}
+		catch (std::exception e)
+		{
+			ERR(e.what());
+			status = false;
+			hasScript = false;
+		}
 	}
 	return status;
 }
@@ -45,14 +61,18 @@ bool Script::isSuccessful(const sol::function_result& result)
 
 bool Script::call(String function, Vector<Variant> args) 
 {
-	return isSuccessful(m_ScriptEnvironment[function](sol::as_args(args)));
+	if (hasScript)
+	{
+		return isSuccessful(m_ScriptEnvironment[function](sol::as_args(args)));
+	}
+	return false;
 }
 
 JSON::json Script::getJSON() const
 {
 	JSON::json j;
 
-	j["scripts"] = m_ScriptFile;
+	j["path"] = m_ScriptFile;
 
 	j["overrides"] = {};
 
@@ -64,18 +84,6 @@ JSON::json Script::getJSON() const
 	return j;
 }
 
-void Script::registerExports()
-{
-	sol::table currExports = m_ScriptEnvironment["exports"];
-	std::filesystem::path file(m_ScriptFile);
-	String script = file.stem().generic_string();
-
-	currExports.for_each([&](sol::object const& key, sol::object const& value) {
-		String varName = key.as<String>();
-		m_IsOverriden[script + "." + varName] = false;
-	});
-}
-
 bool Script::addScript(const String& scriptFile)
 {
 	if (!m_ScriptFile.empty())
@@ -84,23 +92,43 @@ bool Script::addScript(const String& scriptFile)
 	m_ScriptEnvironment = sol::environment(LuaInterpreter::GetSingleton()->getLuaState(),
 	    sol::create,
 	    LuaInterpreter::GetSingleton()->getLuaState().globals());
+	hasScript = true;
 	return true;
 }
 
 void Script::removeScript()
 {
+	hasScript = false;
 	m_ScriptFile = "";
 	m_IsOverriden.clear();
 	m_Overrides.clear();
 }
 
 #ifdef ROOTEX_EDITOR
+
+void Script::registerExports()
+{
+	auto exportsCheck = m_ScriptEnvironment["exports"];
+	if (exportsCheck.valid())
+	{
+		sol::table exports = m_ScriptEnvironment["exports"];
+		sol::table currExports = m_ScriptEnvironment["exports"];
+		std::filesystem::path file(m_ScriptFile);
+		String script = file.stem().generic_string();
+
+		currExports.for_each([&](sol::object const& key, sol::object const& value) {
+			String varName = key.as<String>();
+			m_IsOverriden[script + "." + varName] = false;
+		});
+	}
+}
+
 #include "imgui.h"
 #include "imgui_stdlib.h"
 void Script::draw()
 {
 	ImGui::BeginGroup();
-	ImGui::Text("Scripts");
+	ImGui::Text("Script");
 	if (ImGui::Button("X"))
 	{
 		removeScript();
@@ -127,7 +155,7 @@ void Script::draw()
 				}
 				else
 				{
-					WARN("A script already attached");
+					WARN("A script is already attached");
 				}
 			}
 			else
@@ -143,7 +171,6 @@ void Script::draw()
 	std::filesystem::path file(m_ScriptFile);
 	String fileName = file.stem().generic_string();
 
-	ImGui::Text(fileName.c_str());
 	auto currExports = m_ScriptEnvironment["exports"];
 	if (currExports.valid())
 	{

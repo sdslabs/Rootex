@@ -38,18 +38,7 @@ Entity::Entity(EntityID id, const String& name, const JSON::json& script)
     , m_Name(name)
     , m_IsEditorOnly(false)
 {
-	if (!script.is_null())
-	{
-		String luaFilePath = (String)script["path"];
-		if (OS::IsExists(luaFilePath))
-		{
-			m_Script.reset(new Script(script));
-		}
-		else
-		{
-			ERR("Could not find script file: " + luaFilePath);
-		}
-	}
+	m_Script.reset(new Script(script));
 }
 
 JSON::json Entity::getJSON() const
@@ -83,10 +72,8 @@ bool Entity::setupComponents()
 bool Entity::setupEntities()
 {
 	bool status = true;
-	if (m_Script)
-	{
-		m_Script->setup(this);
-	}
+
+	m_Script->setup(this);
 	for (auto& component : m_Components)
 	{
 		status = status & component.second->setupEntities();
@@ -136,20 +123,10 @@ String Entity::getFullName() const
 {
 	return m_Name + " #" + std::to_string(getID());
 }
-//
-//sol::object Entity::get(sol::stack_object key, sol::this_state state)
-//{
-//	auto string_key = key.as<sol::optional<std::string>>();
-//	return sol::object(state, sol::in_place, m_Script->m_ScriptEnvironment[string_key]);
-//}
 
 bool Entity::call(String function, Vector<Variant> args)
 {
-	if (m_Script)
-	{
-		return m_Script->call(function, args);
-	}
-	return false;
+	return m_Script->call(function, args);
 }
 
 

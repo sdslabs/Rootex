@@ -13,25 +13,23 @@ class LuaTextResourceFile;
 class Script
 {
 private:
-	//sol::environment m_ScriptEnvironment;
+	sol::environment m_ScriptEnvironment;
 	String m_ScriptFile;
 	HashMap<String, bool> m_IsOverriden;
 	HashMap<String, String> m_Overrides;
 	Entity* m_Entity;
+	bool hasScript;
 
 	friend class Entity;
 
 	bool isSuccessful(const sol::function_result& result);
 
 public:
-	sol::environment m_ScriptEnvironment;
-
 	bool setup(Entity* entity);
 
 	JSON::json getJSON() const;
 
 	bool addScript(const String& scriptFile);
-	void registerExports();
 	void removeScript();
 	bool call(String function, Vector<Variant> args);
 	sol::environment getEnvironment() { return m_ScriptEnvironment; }
@@ -41,6 +39,7 @@ public:
 	~Script() = default;
 
 #ifdef ROOTEX_EDITOR
+	void registerExports();
 	void draw();
 #endif
 };

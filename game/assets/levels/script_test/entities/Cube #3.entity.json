@@ -53,10 +53,8 @@
         "ID": 3,
         "name": "Cube",
         "script": {
-            "path": "game\\assets\\scripts\\script_test2.lua",
-            "overrides": {
-
-            }
+            "overrides": null,
+            "path": "game\\assets\\scripts\\script_test2.lua"
         }
     }
 }
