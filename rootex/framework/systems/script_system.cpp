@@ -17,6 +17,7 @@ void ScriptSystem::begin()
 {
 	for (auto&& [id, entity] : EntityFactory::GetSingleton()->getEntities())
 	{
+		entity->getScript()->evaluateOverrides();
 		entity->call("onBegin", { entity });
 	}
 }

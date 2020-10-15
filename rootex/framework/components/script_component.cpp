@@ -13,7 +13,8 @@ Script::Script(const JSON::json& script)
 		{
 			for (auto& element : JSON::json::iterator_wrapper(script["overrides"]))
 			{
-				m_Overrides[element.key()] = element.value();
+				m_Overrides[element.key()] = (String)element.value();
+				m_IsOverriden[element.key()] = true;
 			}
 
 			addScript(luaFilePath);
@@ -68,6 +69,18 @@ bool Script::call(String function, Vector<Variant> args)
 	return false;
 }
 
+void Script::evaluateOverrides()
+{
+	for (auto&& [varName, lua] : m_Overrides)
+	{
+		auto currVar = m_ScriptEnvironment["exports"][varName];
+		if (currVar.valid())
+		{
+			m_ScriptEnvironment["exports"][varName] = LuaInterpreter::GetSingleton()->getLuaState().script("return " + lua);
+		}
+	}
+}
+
 JSON::json Script::getJSON() const
 {
 	JSON::json j;
@@ -118,7 +131,7 @@ void Script::registerExports()
 
 		currExports.for_each([&](sol::object const& key, sol::object const& value) {
 			String varName = key.as<String>();
-			m_IsOverriden[script + "." + varName] = false;
+			m_IsOverriden[varName] = false;
 		});
 	}
 }
@@ -168,9 +181,6 @@ void Script::draw()
 
 	ImGui::Text("Script Exports");
 
-	std::filesystem::path file(m_ScriptFile);
-	String fileName = file.stem().generic_string();
-
 	auto currExports = m_ScriptEnvironment["exports"];
 	if (currExports.valid())
 	{
@@ -179,22 +189,21 @@ void Script::draw()
 			String varName = key.as<String>();
 			ImGui::Text(varName.c_str());
 			ImGui::SameLine();
-			String qualifiedName = fileName + "." + varName;
-			if (ImGui::Checkbox(String("##check" + qualifiedName).c_str(), &m_IsOverriden[qualifiedName]))
+			if (ImGui::Checkbox(String("##check" + varName).c_str(), &m_IsOverriden[varName]))
 			{
-				if (m_IsOverriden[qualifiedName])
+				if (m_IsOverriden[varName])
 				{
-					m_Overrides[qualifiedName] = "";
-					m_Overrides[qualifiedName].reserve(300);
+					m_Overrides[varName] = "";
+					m_Overrides[varName].reserve(300);
 				}
 				else
 				{
-					m_Overrides.erase(qualifiedName);
+					m_Overrides.erase(varName);
 				}
 			}
-			if (m_IsOverriden[qualifiedName])
+			if (m_IsOverriden[varName])
 			{
-				ImGui::InputTextMultiline(String("##text" + qualifiedName).c_str(), &m_Overrides[qualifiedName], ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 1));
+				ImGui::InputTextMultiline(String("##text" + varName).c_str(), &m_Overrides[varName], ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 1));
 			}
 			ImGui::Separator();
 		});

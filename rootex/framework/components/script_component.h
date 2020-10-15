@@ -33,6 +33,7 @@ public:
 	void removeScript();
 	bool call(String function, Vector<Variant> args);
 	sol::environment getEnvironment() { return m_ScriptEnvironment; }
+	void evaluateOverrides();
 	
 	Script(const JSON::json& script);
 	Script(const Script&) = delete;
