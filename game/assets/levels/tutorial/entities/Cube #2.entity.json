@@ -1,0 +1,62 @@
+{
+    "Components": {
+        "BoxColliderComponent": {
+            "dimensions": {
+                "x": 3.869999885559082,
+                "y": 7.429999828338623,
+                "z": 2.7799999713897705
+            },
+            "gravity": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "isGeneratesHitEvents": false,
+            "isMoveable": false,
+            "matName": "Air"
+        },
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 1
+        },
+        "ModelComponent": {
+            "isVisible": true,
+            "renderPass": 1,
+            "resFile": "game/assets/test/cube.obj"
+        },
+        "TransformComponent": {
+            "boundingBox": {
+                "center": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "extents": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                }
+            },
+            "position": {
+                "x": -14.93587589263916,
+                "y": 2.300049304962158,
+                "z": -0.9505063891410828
+            },
+            "rotation": {
+                "w": 0.5001726746559143,
+                "x": -0.500058650970459,
+                "y": 0.4998074173927307,
+                "z": 0.4999611973762512
+            },
+            "scale": {
+                "x": 7.757614612579346,
+                "y": 14.869667053222656,
+                "z": 5.499928951263428
+            }
+        }
+    },
+    "Entity": {
+        "ID": 2,
+        "name": "Cube"
+    }
+}

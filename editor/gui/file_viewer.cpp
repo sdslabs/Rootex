@@ -56,17 +56,22 @@ Variant FileViewer::openFile(const Event* event)
 	m_AudioPlayer.unload();
 	m_ImageViewer.unload();
 	m_TextViewer.unload();
+	m_MaterialViewer.unload();
 
 	m_OpenFilePath = Extract(String, event->getData());
 
 	const String& ext = m_OpenFilePath.extension().string();
-	if (ext == ".wav")
+	if (IsFileSupported(ext, ResourceFile::Type::Audio))
 	{
 		m_OpenFile = m_AudioPlayer.load(m_OpenFilePath);
 	}
-	else if (ext == ".jpg" || ext == ".png" || ext == ".jpeg")
+	else if (IsFileSupported(ext, ResourceFile::Type::Image))
 	{
 		m_OpenFile = m_ImageViewer.load(m_OpenFilePath);
+	}
+	else if (ext == ".rmat")
+	{
+		m_OpenFile = m_MaterialViewer.load(m_OpenFilePath);
 	}
 	else
 	{
@@ -81,10 +86,6 @@ FileViewer::FileViewer()
     , m_IsEventJustReceived(false)
 {
 	BIND_EVENT_MEMBER_FUNCTION("EditorOpenFile", openFile);
-}
-
-FileViewer::~FileViewer()
-{
 }
 
 void FileViewer::draw(float deltaMilliseconds)
@@ -104,25 +105,24 @@ void FileViewer::draw(float deltaMilliseconds)
 				OS::OpenFileInSystemEditor(m_OpenFilePath.string());
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Edit"))
-			{
-				OS::EditFileInSystemEditor(m_OpenFilePath.string());
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("Open In File Explorer"))
+			if (ImGui::Button("Show In File Explorer"))
 			{
 				OS::OpenFileInExplorer(m_OpenFilePath.string());
 			}
 
 			drawFileInfo();
 			
-			if (m_OpenFilePath.extension() == ".wav")
+			if (IsFileSupported(m_OpenFilePath.extension().generic_string(), ResourceFile::Type::Audio))
 			{
 				m_AudioPlayer.draw(deltaMilliseconds);
 			}
-			else if (m_OpenFilePath.extension() == ".png" || m_OpenFilePath.extension() == ".jpg" || m_OpenFilePath.extension() == ".jpeg")
+			else if (IsFileSupported(m_OpenFilePath.extension().generic_string(), ResourceFile::Type::Image))
 			{
 				m_ImageViewer.draw(deltaMilliseconds);
+			}
+			else if (m_OpenFilePath.extension() == ".rmat")
+			{
+				m_MaterialViewer.draw(deltaMilliseconds);	
 			}
 			else
 			{

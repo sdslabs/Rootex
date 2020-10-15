@@ -6,26 +6,30 @@
         },
         "ModelComponent": {
             "isVisible": true,
+            "materialOverrides": {
+                "game/assets/materials/Condensation.rmat": "game/assets/materials/Condensation.rmat",
+                "game/assets/materials/Glass.rmat": "game/assets/materials/Glass.rmat"
+            },
             "renderPass": 1,
             "resFile": "game/assets/test/glass.obj"
         },
         "TransformComponent": {
             "boundingBox": {
                 "center": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
+                    "x": 0.15000000596046448,
+                    "y": 0.05999999865889549,
+                    "z": -0.1599999964237213
                 },
                 "extents": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
+                    "x": 0.05999999865889549,
+                    "y": 0.03999999910593033,
+                    "z": 0.05999999865889549
                 }
             },
             "position": {
                 "x": 0.0,
                 "y": 0.0,
-                "z": 0.0
+                "z": -4.300000190734863
             },
             "rotation": {
                 "w": 1.0,
@@ -34,9 +38,9 @@
                 "z": -0.0
             },
             "scale": {
-                "x": 8.899999618530273,
-                "y": 8.899999618530273,
-                "z": 8.899999618530273
+                "x": 6.909999847412109,
+                "y": 6.909999847412109,
+                "z": 6.909999847412109
             }
         }
     },

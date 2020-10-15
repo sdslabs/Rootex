@@ -9,7 +9,7 @@
             "audio": "game/assets/hipshop.wav",
             "isAttenuated": false,
             "maxDistance": 100.0,
-            "playOnStart": true,
+            "playOnStart": false,
             "referenceDistance": 1.0,
             "rollOffFactor": 1.0
         },

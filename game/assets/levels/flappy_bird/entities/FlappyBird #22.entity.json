@@ -15,16 +15,6 @@
             "isMoveable": true,
             "matName": "Air"
         },
-        "FogComponent": {
-            "color": {
-                "a": 1.0,
-                "b": 0.2518518567085266,
-                "g": 0.2518518567085266,
-                "r": 0.0
-            },
-            "far": 22.0,
-            "near": 18.0
-        },
         "HierarchyComponent": {
             "children": [
                 23,

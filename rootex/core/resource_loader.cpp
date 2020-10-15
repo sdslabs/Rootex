@@ -210,8 +210,42 @@ void ResourceLoader::LoadAssimp(ModelResourceFile* file)
 					}
 				}
 			}
-		}
 
+			for (int i = 0; i < material->GetTextureCount(aiTextureType_SPECULAR); i++)
+			{
+				aiString specularStr;
+				material->GetTexture(aiTextureType_SPECULAR, i, &specularStr);
+				char embeddedAsterisk = *specularStr.C_Str();
+				if (embeddedAsterisk == '*')
+				{
+					int textureID = atoi(specularStr.C_Str() + 1);
+
+					if (!textures[textureID])
+					{
+						aiTexture* texture = scene->mTextures[textureID];
+						size_t size = scene->mTextures[textureID]->mWidth;
+						PANIC(texture->mHeight == 0, "Compressed texture found but expected embedded texture");
+						textures[textureID].reset(new Texture(reinterpret_cast<const char*>(texture->pcData), size));
+					}
+
+					extractedMaterial->setSpecularInternal(textures[textureID]);
+				}
+				else
+				{
+					String texturePath = specularStr.C_Str();
+					ImageResourceFile* image = ResourceLoader::CreateImageResourceFile(file->getPath().parent_path().generic_string() + "/" + texturePath);
+
+					if (image)
+					{
+						extractedMaterial->setSpecularTexture(image);
+					}
+					else
+					{
+						WARN("Could not set material specular map texture: " + texturePath);
+					}
+				}
+			}
+		}
 
 		Mesh extractedMesh;
 		extractedMesh.m_VertexBuffer.reset(new VertexBuffer(vertices));

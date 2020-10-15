@@ -3,7 +3,7 @@ function onBegin(entity)
     isFailed = false
     text = entity:getTextUI()
 
-    Connect(onFail, "GameEnd")
+    RTX.Connect(onFail, "GameEnd")
 end
 
 function onUpdate(delta, entity)
