@@ -15,9 +15,9 @@
 #include <d3d11_1.h>
 #endif
 
+#include <cstdint>
 #include <memory>
 #include <utility>
-#include <stdint.h>
 
 
 namespace DirectX
@@ -76,6 +76,8 @@ namespace DirectX
             return *this;
         }
 
+        PrimitiveBatch(PrimitiveBatch const&) = delete;
+        PrimitiveBatch& operator= (PrimitiveBatch const&) = delete;
 
         // Similar to the D3D9 API DrawPrimitiveUP.
         void Draw(D3D11_PRIMITIVE_TOPOLOGY topology, _In_reads_(vertexCount) TVertex const* vertices, size_t vertexCount)

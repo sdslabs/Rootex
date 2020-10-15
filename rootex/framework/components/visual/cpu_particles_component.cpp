@@ -66,7 +66,7 @@ Component* CPUParticlesComponent::CreateDefault()
 }
 
 CPUParticlesComponent::CPUParticlesComponent(size_t poolSize, const String& particleModelPath, const String& materialPath, const ParticleTemplate& particleTemplate, bool visibility, unsigned int renderPass, EmitMode emitMode, const Vector3& emitterDimensions)
-    : ModelComponent(renderPass, ResourceLoader::CreateModelResourceFile(particleModelPath), visibility)
+    : ModelComponent(renderPass, ResourceLoader::CreateModelResourceFile(particleModelPath), {}, visibility, {})
     , m_BasicMaterial(std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetMaterial(materialPath)))
     , m_ParticleTemplate(particleTemplate)
     , m_TransformComponent(nullptr)
@@ -75,7 +75,6 @@ CPUParticlesComponent::CPUParticlesComponent(size_t poolSize, const String& part
 {
 	m_AllowedMaterials = { BasicMaterial::s_MaterialName };
 	expandPool(poolSize);
-	m_LastRenderTimePoint = std::chrono::high_resolution_clock::now();
 	m_EmitRate = 0;
 }
 
@@ -90,9 +89,9 @@ bool CPUParticlesComponent::setup()
 	return true;
 }
 
-bool CPUParticlesComponent::preRender()
+bool CPUParticlesComponent::preRender(float deltaMilliseconds)
 {
-	ModelComponent::preRender();
+	ModelComponent::preRender(deltaMilliseconds);
 
 	int i = m_EmitRate;
 	while (i >= 0)
@@ -112,8 +111,7 @@ bool CPUParticlesComponent::preRender()
 		{
 			continue;
 		}
-
-		float delta = (std::chrono::high_resolution_clock::now() - m_LastRenderTimePoint).count() * (NS_TO_MS * MS_TO_S);
+		float delta = deltaMilliseconds * 1e-3;
 		particle.m_LifeRemaining -= delta;
 		particle.m_Transform = Matrix::CreateTranslation(particle.m_Velocity * delta) * Matrix::CreateFromYawPitchRoll(particle.m_AngularVelocity.x * delta, particle.m_AngularVelocity.y * delta, particle.m_AngularVelocity.z * delta) * particle.m_Transform;
 	}
@@ -147,12 +145,6 @@ void CPUParticlesComponent::render()
 		}
 		RenderSystem::GetSingleton()->popMatrix();
 	}
-}
-
-void CPUParticlesComponent::postRender()
-{
-	ModelComponent::postRender();
-	m_LastRenderTimePoint = std::chrono::high_resolution_clock::now();
 }
 
 void CPUParticlesComponent::emit(const ParticleTemplate& particleTemplate)

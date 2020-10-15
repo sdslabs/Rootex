@@ -7,6 +7,7 @@
 #include "audio_player.h"
 #include "image_viewer.h"
 #include "text_viewer.h"
+#include "material_viewer.h"
 
 class FileViewer
 {
@@ -17,6 +18,7 @@ class FileViewer
 	AudioPlayer m_AudioPlayer;
 	ImageViewer m_ImageViewer;
 	TextViewer m_TextViewer;
+	MaterialViewer m_MaterialViewer;
 
 	ResourceFile* m_OpenFile;
 
@@ -27,7 +29,7 @@ class FileViewer
 public:
 	FileViewer();
 	FileViewer(FileViewer&) = delete;
-	~FileViewer();
+	~FileViewer() = default;
 
 	void draw(float deltaMilliseconds);
 };

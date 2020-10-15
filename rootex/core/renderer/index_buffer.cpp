@@ -16,7 +16,7 @@ IndexBuffer::IndexBuffer(const Vector<unsigned short>& indices)
 	isd.pSysMem = indices.data();
 
 	m_Format = DXGI_FORMAT_R16_UINT;
-	m_IndexBuffer = RenderingDevice::GetSingleton()->createIndexBuffer(&ibd, &isd, m_Format);
+	m_IndexBuffer = RenderingDevice::GetSingleton()->createIB(&ibd, &isd, m_Format);
 }
 
 IndexBuffer::IndexBuffer(const Vector<int>& indices)
@@ -33,7 +33,7 @@ IndexBuffer::IndexBuffer(const Vector<int>& indices)
 	isd.pSysMem = indices.data();
 
 	m_Format = DXGI_FORMAT_R32_UINT;
-	m_IndexBuffer = RenderingDevice::GetSingleton()->createIndexBuffer(&ibd, &isd, m_Format);
+	m_IndexBuffer = RenderingDevice::GetSingleton()->createIB(&ibd, &isd, m_Format);
 }
 
 void IndexBuffer::bind() const

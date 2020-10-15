@@ -16,6 +16,7 @@ public:
 		Render,
 		RenderUI,
 		UI,
+		PostRender,
 		Editor,
 		Async
 	};

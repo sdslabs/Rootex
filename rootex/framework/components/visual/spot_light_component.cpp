@@ -36,44 +36,40 @@ Component* SpotLightComponent::CreateDefault()
 SpotLightComponent::SpotLightComponent(const float constAtt, const float linAtt, const float quadAtt,
     const float range, const float diffuseIntensity, const Color& diffuseColor, const Color& ambientColor,
 	float spot, float angleRange)
-    : m_AttConst(constAtt)
-    , m_AttLin(linAtt)
-    , m_AttQuad(quadAtt)
-    , m_Range(range)
-    , m_AmbientColor(ambientColor)
-    , m_DiffuseColor(diffuseColor)
-    , m_DiffuseIntensity(diffuseIntensity)
-    , m_Spot(spot)
-    , m_AngleRange(angleRange)
 {
-}
-
-SpotLightComponent::~SpotLightComponent()
-{
+	m_SpotLight.ambientColor = ambientColor;
+	m_SpotLight.angleRange = angleRange;
+	m_SpotLight.attConst = constAtt;
+	m_SpotLight.attLin = linAtt;
+	m_SpotLight.attQuad = quadAtt;
+	m_SpotLight.diffuseColor = diffuseColor;
+	m_SpotLight.diffuseIntensity = diffuseIntensity;
+	m_SpotLight.spot = spot;
+	m_SpotLight.range = range;
 }
 
 JSON::json SpotLightComponent::getJSON() const
 {
 	JSON::json j;
 
-	j["attConst"] = m_AttConst;
-	j["attLin"] = m_AttLin;
-	j["attQuad"] = m_AttQuad;
-	j["range"] = m_Range;
-	j["diffuseIntensity"] = m_DiffuseIntensity;
+	j["attConst"] = m_SpotLight.attConst;
+	j["attLin"] = m_SpotLight.attLin;
+	j["attQuad"] = m_SpotLight.attQuad;
+	j["range"] = m_SpotLight.range;
+	j["diffuseIntensity"] = m_SpotLight.diffuseIntensity;
 	
-	j["diffuseColor"]["r"] = m_DiffuseColor.x;
-	j["diffuseColor"]["g"] = m_DiffuseColor.y;
-	j["diffuseColor"]["b"] = m_DiffuseColor.z;
-	j["diffuseColor"]["a"] = m_DiffuseColor.w;
+	j["diffuseColor"]["r"] = m_SpotLight.diffuseColor.x;
+	j["diffuseColor"]["g"] = m_SpotLight.diffuseColor.y;
+	j["diffuseColor"]["b"] = m_SpotLight.diffuseColor.z;
+	j["diffuseColor"]["a"] = m_SpotLight.diffuseColor.w;
 
-	j["ambientColor"]["r"] = m_AmbientColor.x;
-	j["ambientColor"]["g"] = m_AmbientColor.y;
-	j["ambientColor"]["b"] = m_AmbientColor.z;
-	j["ambientColor"]["a"] = m_AmbientColor.w;
+	j["ambientColor"]["r"] = m_SpotLight.ambientColor.x;
+	j["ambientColor"]["g"] = m_SpotLight.ambientColor.y;
+	j["ambientColor"]["b"] = m_SpotLight.ambientColor.z;
+	j["ambientColor"]["a"] = m_SpotLight.ambientColor.w;
 
-	j["spot"] = m_Spot;
-	j["angleRange"] = m_AngleRange;
+	j["spot"] = m_SpotLight.spot;
+	j["angleRange"] = m_SpotLight.range;
 
 	return j;
 }
@@ -82,14 +78,14 @@ JSON::json SpotLightComponent::getJSON() const
 #include "imgui.h"
 void SpotLightComponent::draw()
 {
-	ImGui::DragFloat("Diffuse Intensity##Spot", &m_DiffuseIntensity);
-	ImGui::ColorEdit4("Diffuse Color##Spot", &m_DiffuseColor.x);
-	ImGui::ColorEdit4("Ambient Color##Spot", &m_AmbientColor.x);
-	ImGui::DragFloat("Constant Attenuation##Spot", &m_AttConst);
-	ImGui::DragFloat("Linear Attenuation##Spot", &m_AttLin);
-	ImGui::DragFloat("Quadratic Attenuation##Spot", &m_AttQuad);
-	ImGui::DragFloat("Range##Spot", &m_Range);
-	ImGui::DragFloat("Spot Factor##Spot", &m_Spot);
-	ImGui::SliderAngle("Cone Sub-Angle##Spot", &m_AngleRange, 0.0f, 90.0f);
+	ImGui::DragFloat("Diffuse Intensity##Spot", &m_SpotLight.diffuseIntensity, 0.1f);
+	ImGui::ColorEdit4("Diffuse Color##Spot", &m_SpotLight.diffuseColor.x);
+	ImGui::ColorEdit4("Ambient Color##Spot", &m_SpotLight.ambientColor.x);
+	ImGui::DragFloat("Constant Attenuation##Spot", &m_SpotLight.attConst, 0.01f);
+	ImGui::DragFloat("Linear Attenuation##Spot", &m_SpotLight.attLin, 0.01f);
+	ImGui::DragFloat("Quadratic Attenuation##Spot", &m_SpotLight.attQuad, 0.01f);
+	ImGui::DragFloat("Range##Spot", &m_SpotLight.range, 1.0f);
+	ImGui::DragFloat("Spot Factor##Spot", &m_SpotLight.spot, 0.1f);
+	ImGui::SliderAngle("Cone Sub-Angle##Spot", &m_SpotLight.angleRange, 0.0f, 90.0f);
 }
 #endif // ROOTEX_EDITOR

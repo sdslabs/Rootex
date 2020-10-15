@@ -155,10 +155,10 @@ void EditorSystem::update(float deltaMilliseconds)
 		PhysicsSystem::GetSingleton()->debugDraw();
 	}
 	
-	RenderingDevice::GetSingleton()->setBackBufferRenderTarget();
+	RenderingDevice::GetSingleton()->setMainRT();
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-	RenderingDevice::GetSingleton()->setTextureRenderTarget();
+	RenderingDevice::GetSingleton()->setOffScreenRT();
 }
 
 void EditorSystem::pushRegularFont()
