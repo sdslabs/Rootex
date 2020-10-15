@@ -15,7 +15,7 @@ SkyMaterial::SkyMaterial(const String& imagePath)
     , m_SkyShader(ShaderLibrary::GetSkyShader())
 {
 	setTexture(ResourceLoader::CreateImageResourceFile(imagePath));
-	m_SamplerState = RenderingDevice::GetSingleton()->createSamplerState();
+	m_SamplerState = RenderingDevice::GetSingleton()->createSS();
 	m_PSConstantBuffer.resize((int)PixelConstantBufferType::End, nullptr);
 	m_VSConstantBuffer.resize((int)VertexConstantBufferType::End, nullptr);
 
@@ -59,6 +59,11 @@ void SkyMaterial::setTexture(ImageResourceFile* image)
 {
 	Ref<Texture3D> texture(new Texture3D(image));
 	m_SkyTexture = texture;
+}
+
+ID3D11ShaderResourceView* SkyMaterial::getPreview()
+{
+	return m_SkyTexture->getTextureResourceView();
 }
 
 #ifdef ROOTEX_EDITOR

@@ -1,1746 +1,676 @@
+--[[
+	Copyright (c) 2020 Scott Lembcke and Howling Moon Software
+	
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+	
+	The above copyright notice and this permission notice shall be included in
+	all copies or substantial portions of the Software.
+	
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
+	
+	TODO:
+	* Print short function arguments as part of stack location.
+	* Properly handle being reentrant due to coroutines.
+]]
 
---{{{  history
+local dbg
 
---15/03/06 DCN Created based on RemDebug
---28/04/06 DCN Update for Lua 5.1
---01/06/06 DCN Fix command argument parsing
---             Add step/over N facility
---             Add trace lines facility
---05/06/06 DCN Add trace call/return facility
---06/06/06 DCN Make it behave when stepping through the creation of a coroutine
---06/06/06 DCN Integrate the simple debugger into the main one
---07/06/06 DCN Provide facility to step into coroutines
---13/06/06 DCN Fix bug that caused the function environment to get corrupted with the global one
---14/06/06 DCN Allow 'sloppy' file names when setting breakpoints
---04/08/06 DCN Allow for no space after command name
---11/08/06 DCN Use io.write not print
---30/08/06 DCN Allow access to array elements in 'dump'
---10/10/06 DCN Default to breakfile for all commands that require a filename and give '-'
---06/12/06 DCN Allow for punctuation characters in DUMP variable names
---03/01/07 DCN Add pause on/off facility
---19/06/07 DCN Allow for duff commands being typed in the debugger (thanks to Michael.Bringmann@lsi.com)
---             Allow for case sensitive file systems               (thanks to Michael.Bringmann@lsi.com)
---04/08/09 DCN Add optional line count param to pause
---05/08/09 DCN Reset the debug hook in Pause() even if we think we're started
---30/09/09 DCN Re-jig to not use co-routines (makes debugging co-routines awkward)
---01/10/09 DCN Add ability to break on reaching any line in a file
---24/07/13 TWW Added code for emulating setfenv/getfenv in Lua 5.2 as per
---             http://lua-users.org/lists/lua-l/2010-06/msg00313.html
---25/07/13 TWW Copied Alex Parrill's fix for errors when tracing back across a C frame
---             (https://github.com/ColonelThirtyTwo/clidebugger, 26/01/12)
---25/07/13 DCN Allow for windows and unix file name conventions in has_breakpoint
---26/07/13 DCN Allow for \ being interpreted as an escape inside a [] pattern in 5.2
---10/02/14 CS  Readline support
+-- Use ANSI color codes in the prompt by default.
+local COLOR_GRAY = ""
+local COLOR_RED = ""
+local COLOR_BLUE = ""
+local COLOR_YELLOW = ""
+local COLOR_RESET = ""
+local GREEN_CARET = " => "
 
---}}}
---{{{  description
-
---A simple command line debug system for Lua written by Dave Nichols of
---Match-IT Limited. It's public domain software. Do with it as you wish.
-
---This debugger was inspired by:
--- RemDebug 1.0 Beta
--- Copyright Kepler Project 2005 (http://www.keplerproject.org/remdebug)
-
---Usage:
---  require('debugger')        --load the debug library
---  pause(message)             --start/resume a debug session
-
---An assert() failure will also invoke the debugger.
-
---}}}
-
-local IsWindows = string.find(string.lower(os.getenv('OS') or ''),'^windows')
-
-local coro_debugger
-local events = { BREAK = 1, WATCH = 2, STEP = 3, SET = 4 }
-local breakpoints = {}
-local watches = {}
-local step_into   = false
-local step_over   = false
-local step_lines  = 0
-local step_level  = {main=0}
-local stack_level = {main=0}
-local trace_level = {main=0}
-local trace_calls = false
-local trace_returns = false
-local trace_lines = false
-local ret_file, ret_line, ret_name
-local current_thread = 'main'
-local started = false
-local pause_off = false
-local _g      = _G
-local cocreate, cowrap = coroutine.create, coroutine.wrap
-local pausemsg = 'pause'
-
--- readline support if libclidebugger.so is available,
--- color support if running in a terminal, and
--- command shortcut support if the terminal is supported
-local libreadline, readline, saveline, rlbinds = {}
-local prompt = ">> "
-local color = {
-        ["black"] = '',
-        ["white"] = '',
-        ["green"] = '',
-        ["blue" ] = '',
-        ["red"  ] = '',
-        ["reset"] = ''
-      }
-if pcall(function() libreadline = require('libclidebugger') end) then
-  readline = libreadline.readline
-  saveline = libreadline.add_history
-  if libreadline.isatty(io.stdout) then
-    color = {
-      ["black"] = '\27[1;30m',
-      ["white"] = '\27[1;37m',
-      ["green"] = '\27[1;32m',
-      ["blue" ] = '\27[1;34m',
-      ["red"  ] = '\27[1;31m',
-      ["reset"] = '\27[0m'
-    }
-    prompt = libreadline.rlpsi .. color.blue .. libreadline.rlpei ..
-             prompt ..
-             libreadline.rlpsi .. color.reset .. libreadline.rlpei ..
-             '\0'
-    libreadline.setprompt(prompt)
-    if string.find(os.getenv("TERM"), "^[u]?rxvt") then
-      rlbinds = {
-        ["help" ] = {["key"]="F1",       ["rlbinding"]='"\\e[11~": "help\\n"'},
-        ["step" ] = {["key"]="F7",       ["rlbinding"]='"\\e[18~": "step\\n"'},
-        ["dump" ] = {["key"]="ALT+F7",   ["rlbinding"]='"\\e\\e[18~": "dump \\t"'},
-        ["over" ] = {["key"]="F8",       ["rlbinding"]='"\\e[19~": "over\\n"'},
-        ["out"  ] = {["key"]="SHIFT+F8", ["rlbinding"]='"\\e[32~": "out\\n"'},
-        ["eval" ] = {["key"]="ALT+F8",   ["rlbinding"]='"\\e\\e[19~": "eval \\t"'},
-        ["listb"] = {["key"]="CTRL+F8",  ["rlbinding"]='"\\e[19^": "listb\\n"'},
-        ["run"  ] = {["key"]="F9",       ["rlbinding"]='"\\e[20~": "run\\n"'},
-        ["show" ] = {["key"]="CTRL+RET", ["rlbinding"]='"\\eQ1;32~": "show\\n"'}
-      }
-      for _, v in pairs(rlbinds) do
-        libreadline.bindkey(v["rlbinding"])
-      end
-    end
-  end
-else
-  readline = function(prompt)
-    io.write(prompt)
-    return io.read("*line")
-  end
-  saveline = function(s) end
+local function pretty(obj, max_depth)
+	if max_depth == nil then max_depth = dbg.pretty_depth end
+	
+	-- Returns true if a table has a __tostring metamethod.
+	local function coerceable(tbl)
+		local meta = getmetatable(tbl)
+		return (meta and meta.__tostring)
+	end
+	
+	local function recurse(obj, depth)
+		if type(obj) == "string" then
+			-- Dump the string so that escape sequences are printed.
+			return string.format("%q", obj)
+		elseif type(obj) == "table" and depth < max_depth and not coerceable(obj) then
+			local str = "{"
+			
+			for k, v in pairs(obj) do
+				local pair = pretty(k, 0).." = "..recurse(v, depth + 1)
+				str = str..(str == "{" and pair or ", "..pair)
+			end
+			
+			return str.."}"
+		else
+			-- tostring() can fail if there is an error in a __tostring metamethod.
+			local success, value = pcall(function() return tostring(obj) end)
+			return (success and value or "<!!error in __tostring metamethod!!>")
+		end
+	end
+	
+	return recurse(obj, 0)
 end
 
---{{{  make Lua 5.2 compatible
+-- The stack level that cmd_* functions use to access locals or info
+-- The structure of the code very carefully ensures this.
+local CMD_STACK_LEVEL = 6
 
-if not setfenv then -- Lua 5.2
-  --[[
-  As far as I can see, the only missing detail of these functions (except
-  for occasional bugs) to achieve 100% compatibility is the case of
-  'getfenv' over a function that does not have an _ENV variable (that is,
-  it uses no globals).
+-- Location of the top of the stack outside of the debugger.
+-- Adjusted by some debugger entrypoints.
+local stack_top = 0
 
-  We could use a weak table to keep the environments of these functions
-  when set by setfenv, but that still misses the case of a function
-  without _ENV that was not subjected to setfenv.
+-- The current stack frame index.
+-- Changed using the up/down commands
+local stack_inspect_offset = 0
 
-  -- Roberto
-  ]]--
+-- LuaJIT has an off by one bug when setting local variables.
+local LUA_JIT_SETLOCAL_WORKAROUND = 0
 
-  setfenv = setfenv or function(f, t)
-    f = (type(f) == 'function' and f or debug.getinfo(f + 1, 'f').func)
-    local name
-    local up = 0
-    repeat
-      up = up + 1
-      name = debug.getupvalue(f, up)
-    until name == '_ENV' or name == nil
-    if name then
-      debug.upvaluejoin(f, up, function() return name end, 1) -- use unique upvalue
-      debug.setupvalue(f, up, t)
-    end
-  end
-
-  getfenv = getfenv or function(f)
-    f = (type(f) == 'function' and f or debug.getinfo(f + 1, 'f').func)
-    local name, val
-    local up = 0
-    repeat
-      up = up + 1
-      name, val = debug.getupvalue(f, up)
-    until name == '_ENV' or name == nil
-    return val
-  end
-
+-- Default dbg.read function
+local function dbg_read(prompt)
+	dbg.write(prompt)
+	return io.read()
 end
 
---}}}
+-- Default dbg.write function
+local function dbg_write(str)
+	io.write(str)
+end
 
---{{{  local hints -- command help
---The format in here is name=summary|description
-local hints = {
+local function dbg_writeln(str, ...)
+	if select("#", ...) == 0 then
+		dbg.write((str or "<NULL>").."\n")
+	else
+		dbg.write(string.format(str.."\n", ...))
+	end
+end
 
-pause =   [[
-pause(msg[,lines][,force]) -- start/resume a debugger session|
+local function format_loc(file, line) return COLOR_BLUE..file..COLOR_RESET..":"..COLOR_YELLOW..line..COLOR_RESET end
+local function format_stack_frame_info(info)
+	local filename = info.source:match("@(.*)")
+	local source = filename and dbg.shorten_path(filename) or info.short_src
+	local namewhat = (info.namewhat == "" and "chunk at" or info.namewhat)
+	local name = (info.name and "'"..COLOR_BLUE..info.name..COLOR_RESET.."'" or format_loc(source, info.linedefined))
+	return format_loc(source, info.currentline).." in "..namewhat.." "..name
+end
 
-This can only be used in your code or from the console as a means to
-start/resume a debug session.
-If msg is given that is shown when the session starts/resumes. Useful to
-give a context if you've instrumented your code with pause() statements.
+local repl
 
-If lines is given, the script pauses after that many lines, else it pauses
-immediately.
+-- Return false for stack frames without source,
+-- which includes C frames, Lua bytecode, and `loadstring` functions
+local function frame_has_line(info) return info.currentline >= 0 end
 
-If force is true, the pause function is honoured even if poff has been used.
-This is useful when in an interactive console session to regain debugger
-control.
-]],
+local function hook_factory(repl_threshold)
+	return function(offset)
+		return function(event, _)
+			-- Skip events that don't have line information.
+			if not frame_has_line(debug.getinfo(2)) then return end
+			
+			-- Tail calls are specifically ignored since they also will have tail returns to balance out.
+			if event == "call" then
+				offset = offset + 1
+			elseif event == "return" and offset > repl_threshold then
+				offset = offset - 1
+			elseif event == "line" and offset <= repl_threshold then
+				repl()
+			end
+		end
+	end
+end
 
-poff =    [[
-poff                -- turn off pause() command|
+local hook_step = hook_factory(1)
+local hook_next = hook_factory(0)
+local hook_finish = hook_factory(-1)
 
-This causes all pause() commands to be ignored. This is useful if you have
-instrumented your code in a busy loop and want to continue normal execution
-with no further interruption.
-]],
+-- Create a table of all the locally accessible variables.
+-- Globals are not included when running the locals command, but are when running the print command.
+local function local_bindings(offset, include_globals)
+	local level = offset + stack_inspect_offset + CMD_STACK_LEVEL
+	local func = debug.getinfo(level).func
+	local bindings = {}
+	
+	-- Retrieve the upvalues
+	do local i = 1; while true do
+		local name, value = debug.getupvalue(func, i)
+		if not name then break end
+		bindings[name] = value
+		i = i + 1
+	end end
+	
+	-- Retrieve the locals (overwriting any upvalues)
+	do local i = 1; while true do
+		local name, value = debug.getlocal(level, i)
+		if not name then break end
+		bindings[name] = value
+		i = i + 1
+	end end
+	
+	-- Retrieve the varargs (works in Lua 5.2 and LuaJIT)
+	local varargs = {}
+	do local i = 1; while true do
+		local name, value = debug.getlocal(level, -i)
+		if not name then break end
+		varargs[i] = value
+		i = i + 1
+	end end
+	if #varargs > 0 then bindings["..."] = varargs end
+	
+	if include_globals then
+		-- In Lua 5.2, you have to get the environment table from the function's locals.
+		local env = (_VERSION <= "Lua 5.1" and getfenv(func) or bindings._ENV)
+		return setmetatable(bindings, {__index = env or _G})
+	else
+		return bindings
+	end
+end
 
-pon =     [[
-pon                 -- turn on pause() command|
+-- Used as a __newindex metamethod to modify variables in cmd_eval().
+local function mutate_bindings(_, name, value)
+	local FUNC_STACK_OFFSET = 3 -- Stack depth of this function.
+	local level = stack_inspect_offset + FUNC_STACK_OFFSET + CMD_STACK_LEVEL
+	
+	-- Set a local.
+	do local i = 1; repeat
+		local var = debug.getlocal(level, i)
+		if name == var then
+			dbg_writeln(COLOR_RED.."debugger.lua: "..COLOR_RESET.."Set local "..COLOR_BLUE..name..COLOR_RESET)
+			return debug.setlocal(level + LUA_JIT_SETLOCAL_WORKAROUND, i, value)
+		end
+		i = i + 1
+	until var == nil end
+	
+	-- Set an upvalue.
+	local func = debug.getinfo(level).func
+	do local i = 1; repeat
+		local var = debug.getupvalue(func, i)
+		if name == var then
+			dbg_writeln(COLOR_RED.."debugger.lua: "..COLOR_RESET.."Set upvalue "..COLOR_BLUE..name..COLOR_RESET)
+			return debug.setupvalue(func, i, value)
+		end
+		i = i + 1
+	until var == nil end
+	
+	-- Set a global.
+	dbg_writeln(COLOR_RED.."debugger.lua: "..COLOR_RESET.."Set global "..COLOR_BLUE..name..COLOR_RESET)
+	_G[name] = value
+end
 
-This re-instates honouring the pause() commands you may have instrumented
-your code with.
-]],
+-- Compile an expression with the given variable bindings.
+local function compile_chunk(block, env)
+	local source = "debugger.lua REPL"
+	local chunk = nil
+	
+	if _VERSION <= "Lua 5.1" then
+		chunk = loadstring(block, source)
+		if chunk then setfenv(chunk, env) end
+	else
+		-- The Lua 5.2 way is a bit cleaner
+		chunk = load(block, source, "t", env)
+	end
+	
+	if not chunk then dbg_writeln(COLOR_RED.."Error: Could not compile block:\n"..COLOR_RESET..block) end
+	return chunk
+end
 
-setb =    [[
-setb [line file]    -- set a breakpoint to line/file|, line 0 means 'any'
+local SOURCE_CACHE = {}
 
-If file is omitted or is "-" the breakpoint is set at the file for the
-currently set level (see "set"). Execution pauses when this line is about
-to be executed and the debugger session is re-activated.
+function where(info, context_lines)
+	local source = SOURCE_CACHE[info.source]
+	if not source then
+		source = {}
+		local filename = info.source:match("@(.*)")
+		if filename then
+			pcall(function() for line in io.lines(filename) do table.insert(source, line) end end)
+		elseif info.source then
+			for line in info.source:gmatch("(.-)\n") do table.insert(source, line) end
+		end
+		SOURCE_CACHE[info.source] = source
+	end
+	
+	if source and source[info.currentline] then
+		for i = info.currentline - context_lines, info.currentline + context_lines do
+			local GREEN_CARET = (i == info.currentline and  GREEN_CARET or "    ")
+			local line = source[i]
+			if line then dbg_writeln(COLOR_GRAY.."% 4d"..GREEN_CARET.."%s", i, line) end
+		end
+	else
+		dbg_writeln(COLOR_RED.."Error: Source not available for "..COLOR_BLUE..info.short_src);
+	end
+	
+	return false
+end
 
-The file can be given as the fully qualified name, partially qualified or
-just the file name. E.g. if file is set as "myfile.lua", then whenever
-execution reaches any file that ends with "myfile.lua" it will pause. If
-no extension is given, any extension will do.
+-- Wee version differences
+local unpack = unpack or table.unpack
+local pack = function(...) return {n = select("#", ...), ...} end
 
-If the line is given as 0, then reaching any line in the file will do.
-]],
+function cmd_step()
+	stack_inspect_offset = stack_top
+	return true, hook_step
+end
 
-delb =    [[
-delb [line file]    -- removes a breakpoint|
+function cmd_next()
+	stack_inspect_offset = stack_top
+	return true, hook_next
+end
 
-If file is omitted or is "-" the breakpoint is removed for the file of the
-currently set level (see "set").
-]],
+function cmd_finish()
+	local offset = stack_top - stack_inspect_offset
+	stack_inspect_offset = stack_top
+	return true, offset < 0 and hook_factory(offset - 1) or hook_finish
+end
 
-delallb = [[
-delallb             -- removes all breakpoints|
-]],
+local function cmd_print(expr)
+	local env = local_bindings(1, true)
+	local chunk = compile_chunk("return "..expr, env)
+	if chunk == nil then return false end
+	
+	-- Call the chunk and collect the results.
+	local results = pack(pcall(chunk, unpack(rawget(env, "...") or {})))
+	
+	-- The first result is the pcall error.
+	if not results[1] then
+		dbg_writeln(COLOR_RED.."Error:"..COLOR_RESET.." "..results[2])
+	else
+		local output = ""
+		for i = 2, results.n do
+			output = output..(i ~= 2 and ", " or "")..pretty(results[i])
+		end
+		
+		if output == "" then output = "<no result>" end
+		dbg_writeln(COLOR_BLUE..expr.. GREEN_CARET..output)
+	end
+	
+	return false
+end
 
-setw =    [[
-setw <exp>          -- adds a new watch expression|
+local function cmd_eval(code)
+	local env = local_bindings(1, true)
+	local mutable_env = setmetatable({}, {
+		__index = env,
+		__newindex = mutate_bindings,
+	})
+	
+	local chunk = compile_chunk(code, mutable_env)
+	if chunk == nil then return false end
+	
+	-- Call the chunk and collect the results.
+	local success, err = pcall(chunk, unpack(rawget(env, "...") or {}))
+	if not success then
+		dbg_writeln(COLOR_RED.."Error:"..COLOR_RESET.." "..err)
+	end
+	
+	return false
+end
 
-The expression is evaluated before each line is executed. If the expression
-yields true then execution is paused and the debugger session re-activated.
-The expression is executed in the context of the line about to be executed.
-]],
+local function cmd_down()
+	local offset = stack_inspect_offset
+	local info
+	
+	repeat -- Find the next frame with a file.
+		offset = offset + 1
+		info = debug.getinfo(offset + CMD_STACK_LEVEL)
+	until not info or frame_has_line(info)
+	
+	if info then
+		stack_inspect_offset = offset
+		dbg_writeln("Inspecting frame: "..format_stack_frame_info(info))
+		if tonumber(dbg.auto_where) then where(info, dbg.auto_where) end
+	else
+		info = debug.getinfo(stack_inspect_offset + CMD_STACK_LEVEL)
+		dbg_writeln("Already at the bottom of the stack.")
+	end
+	
+	return false
+end
 
-delw =    [[
-delw <index>        -- removes the watch expression at index|
+local function cmd_up()
+	local offset = stack_inspect_offset
+	local info
+	
+	repeat -- Find the next frame with a file.
+		offset = offset - 1
+		if offset < stack_top then info = nil; break end
+		info = debug.getinfo(offset + CMD_STACK_LEVEL)
+	until frame_has_line(info)
+	
+	if info then
+		stack_inspect_offset = offset
+		dbg_writeln("Inspecting frame: "..format_stack_frame_info(info))
+		if tonumber(dbg.auto_where) then where(info, dbg.auto_where) end
+	else
+		info = debug.getinfo(stack_inspect_offset + CMD_STACK_LEVEL)
+		dbg_writeln("Already at the top of the stack.")
+	end
+	
+	return false
+end
 
-The index is that returned when the watch expression was set by setw.
-]],
+local function cmd_where(context_lines)
+	local info = debug.getinfo(stack_inspect_offset + CMD_STACK_LEVEL)
+	return (info and where(info, tonumber(context_lines) or 5))
+end
 
-delallw = [[
-delallw             -- removes all watch expressions|
-]],
+local function cmd_trace()
+	dbg_writeln("Inspecting frame %d", stack_inspect_offset - stack_top)
+	local i = 0; while true do
+		local info = debug.getinfo(stack_top + CMD_STACK_LEVEL + i)
+		if not info then break end
+		
+		local is_current_frame = (i + stack_top == stack_inspect_offset)
+		local GREEN_CARET = (is_current_frame and  GREEN_CARET or "    ")
+		dbg_writeln(COLOR_GRAY.."% 4d"..COLOR_RESET..GREEN_CARET.."%s", i, format_stack_frame_info(info))
+		i = i + 1
+	end
+	
+	return false
+end
 
-run     = [[
-run                 -- run until next breakpoint or watch expression|
-]],
+local function cmd_locals()
+	local bindings = local_bindings(1, false)
+	
+	-- Get all the variable binding names and sort them
+	local keys = {}
+	for k, _ in pairs(bindings) do table.insert(keys, k) end
+	table.sort(keys)
+	
+	for _, k in ipairs(keys) do
+		local v = bindings[k]
+		
+		-- Skip the debugger object itself, "(*internal)" values, and Lua 5.2's _ENV object.
+		if not rawequal(v, dbg) and k ~= "_ENV" and not k:match("%(.*%)") then
+			dbg_writeln("  "..COLOR_BLUE..k.. GREEN_CARET..pretty(v))
+		end
+	end
+	
+	return false
+end
 
-step    = [[
-step [N]            -- run next N lines, stepping into function calls|
+local function cmd_help()
+	dbg.write(""
+		.. COLOR_BLUE.."  <return>"..GREEN_CARET.."re-run last command\n"
+		.. COLOR_BLUE.."  c"..COLOR_YELLOW.."(ontinue)"..GREEN_CARET.."continue execution\n"
+		.. COLOR_BLUE.."  s"..COLOR_YELLOW.."(tep)"..GREEN_CARET.."step forward by one line (into functions)\n"
+		.. COLOR_BLUE.."  n"..COLOR_YELLOW.."(ext)"..GREEN_CARET.."step forward by one line (skipping over functions)\n"
+		.. COLOR_BLUE.."  f"..COLOR_YELLOW.."(inish)"..GREEN_CARET.."step forward until exiting the current function\n"
+		.. COLOR_BLUE.."  u"..COLOR_YELLOW.."(p)"..GREEN_CARET.."move up the stack by one frame\n"
+		.. COLOR_BLUE.."  d"..COLOR_YELLOW.."(own)"..GREEN_CARET.."move down the stack by one frame\n"
+		.. COLOR_BLUE.."  w"..COLOR_YELLOW.."(here) "..COLOR_BLUE.."[line count]"..GREEN_CARET.."print source code around the current line\n"
+		.. COLOR_BLUE.."  e"..COLOR_YELLOW.."(val) "..COLOR_BLUE.."[statement]"..GREEN_CARET.."execute the statement\n"
+		.. COLOR_BLUE.."  p"..COLOR_YELLOW.."(rint) "..COLOR_BLUE.."[expression]"..GREEN_CARET.."execute the expression and print the result\n"
+		.. COLOR_BLUE.."  t"..COLOR_YELLOW.."(race)"..GREEN_CARET.."print the stack trace\n"
+		.. COLOR_BLUE.."  l"..COLOR_YELLOW.."(ocals)"..GREEN_CARET.."print the function arguments, locals and upvalues.\n"
+		.. COLOR_BLUE.."  h"..COLOR_YELLOW.."(elp)"..GREEN_CARET.."print this message\n"
+		.. COLOR_BLUE.."  q"..COLOR_YELLOW.."(uit)"..GREEN_CARET.."halt execution\n"
+	)
+	return false
+end
 
-If N is omitted, use 1.
-]],
+local last_cmd = false
 
-over    = [[
-over [N]            -- run next N lines, stepping over function calls|
-
-If N is omitted, use 1.
-]],
-
-out     = [[
-out [N]             -- run until stepped out of N functions|
-
-If N is omitted, use 1.
-If you are inside a function, using "out 1" will run until you return
-from that function to the caller.
-]],
-
-gotoo   = [[
-gotoo [line file]   -- step to line in file|
-
-This is equivalent to 'setb line file', followed by 'run', followed
-by 'delb line file'.
-]],
-
-listb   = [[
-listb               -- lists breakpoints|
-]],
-
-listw   = [[
-listw               -- lists watch expressions|
-]],
-
-set     = [[
-set [level]         -- set context to stack level, omitted=show|
-
-If level is omitted it just prints the current level set.
-This sets the current context to the level given. This affects the
-context used for several other functions (e.g. vars). The possible
-levels are those shown by trace.
-]],
-
-vars    = [[
-vars [depth]        -- list context locals to depth, omitted=1|
-
-If depth is omitted then uses 1.
-Use a depth of 0 for the maximum.
-Lists all non-nil local variables and all non-nil upvalues in the
-currently set context. For variables that are tables, lists all fields
-to the given depth.
-]],
-
-fenv    = [[
-fenv [depth]        -- list context function env to depth, omitted=1|
-
-If depth is omitted then uses 1.
-Use a depth of 0 for the maximum.
-Lists all function environment variables in the currently set context.
-For variables that are tables, lists all fields to the given depth.
-]],
-
-glob    = [[
-glob [depth]        -- list globals to depth, omitted=1|
-
-If depth is omitted then uses 1.
-Use a depth of 0 for the maximum.
-Lists all global variables.
-For variables that are tables, lists all fields to the given depth.
-]],
-
-ups     = [[
-ups                 -- list all the upvalue names|
-
-These names will also be in the "vars" list unless their value is nil.
-This provides a means to identify which vars are upvalues and which are
-locals. If a name is both an upvalue and a local, the local value takes
-precedance.
-]],
-
-locs    = [[
-locs                -- list all the locals names|
-
-These names will also be in the "vars" list unless their value is nil.
-This provides a means to identify which vars are upvalues and which are
-locals. If a name is both an upvalue and a local, the local value takes
-precedance.
-]],
-
-dump    = [[
-dump <var> [depth]  -- dump all fields of variable to depth|
-
-If depth is omitted then uses 1.
-Use a depth of 0 for the maximum.
-Prints the value of <var> in the currently set context level. If <var>
-is a table, lists all fields to the given depth. <var> can be just a
-name, or name.field or name.# to any depth, e.g. t.1.f accesses field
-'f' in array element 1 in table 't'.
-
-Can also be called from a script as dump(var,depth). Therefore it is
-a global function and thus visible with 'glob'.
-]],
-
-tron    = [[
-tron [crl]          -- turn trace on for (c)alls, (r)eturns, (l)ines|
-
-If no parameter is given then tracing is turned off.
-When tracing is turned on a line is printed to the console for each
-debug 'event' selected. c=function calls, r=function returns, l=lines.
-]],
-
-trace   = [[
-trace               -- dumps a stack trace|
-
-Format is [level] = file,line,name
-The level is a candidate for use by the 'set' command.
-]],
-
-info    = [[
-info                -- dumps the complete debug info captured|
-
-Only useful as a diagnostic aid for the debugger itself. This information
-can be HUGE as it dumps all variables to the maximum depth, so be careful.
-]],
-
-show    = [[
-show line file X Y  -- show X lines before and Y after line in file|
-
-If line is omitted or is '-' then the current set context line is used.
-If file is omitted or is '-' then the current set context file is used.
-If file is not fully qualified and cannot be opened as specified, then
-a search for the file in the package[path] is performed using the usual
-"require" searching rules. If no file extension is given, .lua is used.
-Prints the lines from the source file around the given line.
-]],
-
-exit    = [[
-exit                -- exits debugger, re-start it using pause()|
-]],
-
-help    = [[
-help [command]      -- show this list or help for command|
-]],
-
-eval    = [[
-eval <statement>    -- execute a statement in the current context|
-
-The statement can be anything that is legal in the context, including
-assignments. Such assignments affect the context and will be in force
-immediately. Any results returned are printed. Use '=' as a short-hand
-for 'return', e.g. "=func(arg)" will call 'func' with 'arg' and print
-the results, and "=var" will just print the value of 'var'.
-]],
-
-what    = [[
-what <func>         -- show where <func> is defined (if known)|
-]],
-
+local commands = {
+	["^c$"] = function() return true end,
+	["^s$"] = cmd_step,
+	["^n$"] = cmd_next,
+	["^f$"] = cmd_finish,
+	["^p%s+(.*)$"] = cmd_print,
+	["^e%s+(.*)$"] = cmd_eval,
+	["^u$"] = cmd_up,
+	["^d$"] = cmd_down,
+	["^w%s*(%d*)$"] = cmd_where,
+	["^t$"] = cmd_trace,
+	["^l$"] = cmd_locals,
+	["^h$"] = cmd_help,
+	["^q$"] = function() dbg.exit(0); return true end,
 }
---}}}
 
--- This function is called back by libclidebugger's do_completion() which is
--- itself called back by the readline library in order to complete input.
-if package.loaded.libclidebugger then
-  libreadline._set(
-    function (word, line, startpos, endpos)
-      local matches = {}
-
-      -- Helper function registering possible completion words, verifying matches
-      local function add(value)
-        value = tostring(value)
-        if value:match("^" .. word) then matches[#matches + 1] = value end
-      end
-
-      -- Append type-indicating character to an identifier
-      local function postfix(value)
-        local t = type(value)
-        if t == 'function' or (getmetatable(value) or {}).__call then return '('
-        elseif t == 'table' and #value > 0 then return '['
-        elseif t == 'table' then return '.'
-        else return ' '
-        end
-      end
-
-      -- Add completions for debugger commands
-      local function add_command_list(str)
-        for c, _ in pairs(hints) do add(c .. ' ') end
-      end
-
-      -- Add completions for the execution environment's entries
-      local function add_eval_env(what)
-        local eval_env = __getevalenv__()
-        for k in pairs(eval_env.__LOCALS__) do
-          -- The type of locals cannot be easily inferred here, so no postfix() call.
-          -- Alike, local functions will not become completion candidates for the 'what' command.
-          -- In order to do so, __LOCALS__ must be enriched with type information.
-          -- Another option is to find and use the respective local's "stackframe", see, e.g., the 'set' command.
-          if what ~= "funconly" then
-            add(eval_env.__LOCALS__[k])
-          end
-        end
-        for k in pairs(eval_env.__UPVALUES__) do
-          if what == "funconly" then
-            if type(eval_env.__UPVALUES__[k]) == 'function' or (getmetatable(eval_env.__UPVALUES__[k]) or {}).__call then
-              add(eval_env.__UPVALUES__[k])
-            end
-          else
-            if eval_env.__UPVALUES__[k] == "_ENV" then add("_ENV.")
-            else add(eval_env.__UPVALUES__[k] .. postfix(_ENV[eval_env.__UPVALUES__[k]])) end
-          end
-        end
-        for k in pairs(eval_env.__GLOBALS__) do
-          if k ~= "__getevalenv__" and k ~= "__gettraceinfo__" then
-            if what == "funconly" then
-              if type(eval_env.__GLOBALS__[k]) == 'function' or (getmetatable(eval_env.__GLOBALS__[k]) or {}).__call then
-                add(k)
-              end
-            else
-              add(k .. postfix(eval_env.__GLOBALS__[k]))
-            end
-          end
-        end
-      end
-
-      -- Add completions for the stack level used in 'set' command
-      local function add_stack_level()
-        io.write('\n')
-        for level, ar in ipairs(__gettraceinfo__()) do
-          io.write('['..level..']\t'..(ar.name or ar.what)..' in '..ar.short_src..':'..ar.currentline..'\n')
-          add(level)
-        end
-        if #matches < 2 then libreadline.redisplay() end
-      end
-
-      -- Add completions for the list of watches
-      local function add_watch_index()
-        io.write('\n')
-        for i, v in pairs(watches) do
-          io.write("Watch exp. " .. i .. ": " .. v.exp..'\n')
-          add(i)
-        end
-        if #matches < 2 then libreadline.redisplay() end
-      end
-
-      -- Simplify the input line, by removing
-      --   literal strings,
-      --   full table constructors, and
-      --   balanced groups of parentheses.
-      -- Returns
-      --   the sub-expression preceding the word,
-      --   the separator item ( '.', ':', '[', '(' ), and
-      --   the current string in case of an unfinished string literal.
-      local function simplify_expression(expr)
-        -- Replace annoying sequences \' and \" inside literal strings
-        expr = expr:gsub("\\(['\"])", function (c)
-                                        return string.format("\\%03d", string.byte(c))
-                                      end)
-        local curstring
-        -- Remove (finished and unfinished) literal strings
-        while true do
-          local idx1, _, equals = expr:find("%[(=*)%[")
-          local idx2, _, sign = expr:find("(['\"])")
-          if idx1 == nil and idx2 == nil then
-            break
-          end
-          local idx, startpat, endpat
-          if (idx1 or math.huge) < (idx2 or math.huge) then
-            idx, startpat, endpat = idx1, "%[" .. equals .. "%[", "%]" .. equals .. "%]"
-          else
-            idx, startpat, endpat = idx2, sign, sign
-          end
-          if expr:sub(idx):find("^" .. startpat .. ".-" .. endpat) then
-            expr = expr:gsub(startpat .. "(.-)" .. endpat, " STRING ")
-          else
-            expr = expr:gsub(startpat .. "(.*)", function (str)
-                                                   curstring = str
-                                                   return "(CURSTRING "
-                                                 end)
-          end
-        end
-        expr = expr:gsub("%b()"," PAREN ") -- Remove groups of parentheses
-        expr = expr:gsub("%b{}"," TABLE ") -- Remove table constructors
-        -- Avoid two consecutive words without operator
-        expr = expr:gsub("(%w)%s+(%w)","%1|%2")
-        expr = expr:gsub("%s+", "") -- Remove now useless spaces
-        -- This main regular expression looks for table indexes and function calls.
-        return curstring, expr:match("([%.%w%[%]_]-)([:%.%[%(])" .. word .. "$")
-      end
-
-      -- Main completion dispatcher function
-      local function complete_command(linetoken, currentwordnr, dbgcommand)
-        if dbgcommand == nil then
-          add_command_list()
-        else          
-          if dbgcommand == "delb" then
-            for i, v in pairs(breakpoints) do
-              for ii, vv in pairs(v) do
-                add(i..' '..ii)
-              end
-            end
-          elseif dbgcommand == "setb" or dbgcommand == "gotoo" then
-            if currentwordnr == 2 then matches = {"0", "1", "2", "..."}
-            elseif currentwordnr > 2 then libreadline.filecompl() end
-          elseif dbgcommand == "setw" or dbgcommand == "eval" or dbgcommand == "dump" then
-            str, expr, sep = simplify_expression(line:sub(6, endpos))
-            if expr and expr ~= "" then
-              local token = loadstring("return " .. expr)
-              if token then
-                token = token()
-                local ttoken = type(token)
-                if ttoken == 'table' and (sep == '.' or sep == ':') then
-                  for k, v in pairs(token) do
-                    if type(k) == 'string' and (sep ~= ':' or type(v) == "function") then
-                      add(k..postfix(v))
-                    end
-                  end
-                elseif sep == '[' and ttoken == 'table' then
-                  for k in pairs(token) do
-                    if type(k) == 'number' then
-                      add(k .. "]")
-                    end
-                  end
-                  if word ~= "" then add_eval_env() end
-                end
-              end
-            end
-            if #matches == 0 then add_eval_env() end
-          elseif dbgcommand == "set" then
-            if currentwordnr == 2 then add_stack_level() end
-          elseif dbgcommand == "delw" then
-            if currentwordnr == 2 then add_watch_index() end
-          elseif dbgcommand == "tron" then
-            if currentwordnr == 2 then matches = {'c', 'r', 'l'} end
-          elseif dbgcommand == "show" then
-            if currentwordnr == 2 then matches = {'0', '1', '2', '3', '-'}
-            elseif currentwordnr > 2 then libreadline.filecompl() end
-          elseif dbgcommand == "help" then
-            if currentwordnr == 2 then add_command_list() end
-          elseif dbgcommand == "what" then
-            if currentwordnr == 2 then add_eval_env("funconly") end
-          end
-        end
-      end
-
-      libreadline.luacompl()
-
-      local dbgcommand = nil
-      local linetoken = {}
-      line = line:find('^%s*$') and '' or line:match('^%s*(.*%S)')
-      for token in line:gmatch('%S+') do
-        linetoken[#linetoken+1] = token
-        if dbgcommand == nil and hints[token] then dbgcommand = token end
-      end
-      complete_command(linetoken, (#word == 0 and #linetoken+1 or #linetoken), dbgcommand)
-      return matches
-    end
-  )
+local function match_command(line)
+	for pat, func in pairs(commands) do
+		-- Return the matching command and capture argument.
+		if line:find(pat) then return func, line:match(pat) end
+	end
 end
 
---{{{  local function getinfo(level,field)
-
---like debug.getinfo but copes with no activation record at the given level
---and knows how to get 'field'. 'field' can be the name of any of the
---activation record fields or any of the 'what' names or nil for everything.
---only valid when using the stack level to get info, not a function name.
-
-local function getinfo(level,field)
-  level = level + 1  --to get to the same relative level as the caller
-  if not field then return debug.getinfo(level) end
-  local what
-  if field == 'name' or field == 'namewhat' then
-    what = 'n'
-  elseif field == 'what' or field == 'source' or field == 'linedefined' or field == 'lastlinedefined' or field == 'short_src' then
-    what = 'S'
-  elseif field == 'currentline' then
-    what = 'l'
-  elseif field == 'nups' then
-    what = 'u'
-  elseif field == 'func' then
-    what = 'f'
-  else
-    return debug.getinfo(level,field)
-  end
-  local ar = debug.getinfo(level,what)
-  if ar then return ar[field] else return nil end
+-- Run a command line
+-- Returns true if the REPL should exit and the hook function factory
+local function run_command(line)
+	-- GDB/LLDB exit on ctrl-d
+	if line == nil then dbg.exit(1); return true end
+	
+	-- Re-execute the last command if you press return.
+	if line == "" then line = last_cmd or "h" end
+	
+	local command, command_arg = match_command(line)
+	if command then
+		last_cmd = line
+		-- unpack({...}) prevents tail call elimination so the stack frame indices are predictable.
+		return unpack({command(command_arg)})
+	elseif dbg.auto_eval then
+		return unpack({cmd_eval(line)})
+	else
+		dbg_writeln(COLOR_RED.."Error:"..COLOR_RESET.." command '%s' not recognized.\nType 'h' and press return for a command list.", line)
+		return false
+	end
 end
 
---}}}
---{{{  local function indented( level, ... )
-
-local function indented( level, ... )
-  io.write( string.rep('  ',level), table.concat({...}), '\n' )
+repl = function()
+	-- Skip frames without source info.
+	while not frame_has_line(debug.getinfo(stack_inspect_offset + CMD_STACK_LEVEL - 3)) do
+		stack_inspect_offset = stack_inspect_offset + 1
+	end
+	
+	local info = debug.getinfo(stack_inspect_offset + CMD_STACK_LEVEL - 3)
+	dbg_writeln(format_stack_frame_info(info))
+	
+	if tonumber(dbg.auto_where) then where(info, dbg.auto_where) end
+	
+	repeat
+		local success, done, hook = pcall(run_command, dbg.read(COLOR_RED.."debugger.lua> "..COLOR_RESET))
+		if success then
+			debug.sethook(hook and hook(0), "crl")
+		else
+			local message = COLOR_RED.."INTERNAL DEBUGGER.LUA ERROR. ABORTING\n:"..COLOR_RESET.." "..done
+			dbg_writeln(message)
+			error(message)
+		end
+	until done
 end
 
---}}}
---{{{  local function dumpval( level, name, value, limit )
+-- Make the debugger object callable like a function.
+dbg = setmetatable({}, {
+	__call = function(self, condition, top_offset)
+		if condition then return end
+		
+		top_offset = (top_offset or 0)
+		stack_inspect_offset = top_offset
+		stack_top = top_offset
+		
+		debug.sethook(hook_next(1), "crl")
+		return
+	end,
+})
 
-local dumpvisited
+-- Expose the debugger's IO functions.
+dbg.read = dbg_read
+dbg.write = dbg_write
+dbg.shorten_path = function (path) return path end
+dbg.exit = function(err) os.exit(err) end
 
-local function dumpval( level, name, value, limit )
-  local index
-  if type(name) == 'number' then
-    index = string.format('[%d] = ',name)
-  elseif type(name) == 'string'
-     and (name == '__VARSLEVEL__' or name == '__ENVIRONMENT__' or name == '__GLOBALS__' or name == '__UPVALUES__' or name == '__LOCALS__') then
-    --ignore these, they are debugger generated
-    return
-  elseif type(name) == 'string' and string.find(name,'^[_%a][_.%w]*$') then
-    index = name ..' = '
-  else
-    index = string.format('[%q] = ',tostring(name))
-  end
-  if type(value) == 'table' then
-    if dumpvisited[value] then
-      indented( level, index, string.format('ref%q;',dumpvisited[value]) )
-    else
-      dumpvisited[value] = tostring(value)
-      if (limit or 0) > 0 and level+1 >= limit then
-        indented( level, index, dumpvisited[value] )
-      else
-        indented( level, index, '{  -- ', dumpvisited[value] )
-        for n,v in pairs(value) do
-          dumpval( level+1, n, v, limit )
-        end
-        indented( level, '};' )
-      end
-    end
-  else
-    if type(value) == 'string' then
-      if string.len(value) > 40 then
-        indented( level, index, '[[', value, ']];' )
-      else
-        indented( level, index, string.format('%q',value), ';' )
-      end
-    else
-      indented( level, index, tostring(value), ';' )
-    end
-  end
+dbg.writeln = dbg_writeln
+
+dbg.pretty_depth = 3
+dbg.pretty = pretty
+dbg.pp = function(value, depth) dbg_writeln(pretty(value, depth)) end
+
+dbg.auto_where = false
+dbg.auto_eval = false
+
+local lua_error, lua_assert = error, assert
+
+-- Works like error(), but invokes the debugger.
+function dbg.error(err, level)
+	level = level or 1
+	dbg_writeln(COLOR_RED.."Debugger stopped on error(): "..COLOR_RESET..pretty(err))
+	dbg(false, level)
+	
+	lua_error(err, level)
 end
 
---}}}
---{{{  local function dumpvar( value, limit, name )
-
-local function dumpvar( value, limit, name )
-  dumpvisited = {}
-  dumpval( 0, name or tostring(value), value, limit )
+-- Works like assert(), but invokes the debugger on a failure.
+function dbg.assert(condition, message)
+	if not condition then
+		dbg_writeln(COLOR_RED.."Debugger stopped on assert:"..COLOR_RESET..message)
+		dbg(false, 1)
+	end
+	
+	lua_assert(condition, message)
 end
 
---}}}
---{{{  local function show(breakfile,breakline,file,line,before,after)
-
--- show +/-N lines of a file around line M highlighting the current breakpoint line if any
-
-local function show(breakfile,breakline,file,line,before,after)
-
-  local function basename(filename)
-    return IsWindows
-      and string.gsub(filename, '[^\\]*\\', '')
-      or  string.gsub(filename, '[^/]*/', '')
-  end
-
-  line      = tonumber(line   or 1)
-  before    = tonumber(before or 10)
-  after     = tonumber(after  or before)
-  breakfile = basename(breakfile)
-
-  if not string.find(file, '%.') then file = file..'.lua' end
-
-  local f = io.open(file, 'r')
-  if not f then
-    -- look for a matching file in the package path
-    local path = package.path or LUA_PATH or ''
-    for c in string.gmatch(path, "[^;]+") do
-      local c = string.gsub(c, "%?%.lua", file)
-      f = io.open(c, 'r')
-      if f then
-        file = c
-        break
-      end
-    end
-    if not f then
-      io.write('Cannot find '..file..'\n')
-      return
-    end
-  end
-
-  local _, _, code = f:read(0)
-  if code == 21 then
-    io.write(file..' is a directory!\n')
-    f:close()
-    return
-  end
-
-  file = basename(file)
-
-  local i = 0
-  for l in f:lines() do
-    i = i + 1
-    if i >= (line-before) then
-      if i > (line+after) then break end
-      if i == breakline and file == breakfile then
-        io.write(color.black..i..color.green..'***\t'..color.reset..l..'\n')
-      else
-        io.write(color.black..i..color.reset..'\t'..l..'\n')
-      end
-    end
-  end
-
-  f:close()
-
+-- Works like pcall(), but invokes the debugger on an error.
+function dbg.call(f, ...)
+	return xpcall(f, function(err)
+		dbg_writeln(COLOR_RED.."Debugger stopped on error in dbg.call(): "..COLOR_RESET..pretty(err))
+		dbg(false, 1)
+		
+		return err
+	end, ...)
 end
 
---}}}
---{{{  local function tracestack(l)
-
-local function gi( i )
-  return function() i=i+1 return debug.getinfo(i),i end
+-- Error message handler that can be used with lua_pcall().
+function dbg.msgh(...)
+	if debug.getinfo(2) then
+		dbg_writeln(COLOR_RED.."Debugger attached on error in dbg_call(): "..COLOR_RESET..pretty(...))
+		dbg(false, 1)
+	else
+		dbg_writeln(COLOR_RED.."debugger.lua: "..COLOR_RESET.."Error did not occur in Lua code. Execution will continue after dbg_pcall().")
+	end
+	
+	return ...
 end
 
-local function gl( level, j )
-  return function() j=j+1 return debug.getlocal( level, j ) end
+-- Assume stdin/out are TTYs unless we can use LuaJIT's FFI to properly check them.
+local stdin_isatty = true
+local stdout_isatty = true
+
+-- Conditionally enable the LuaJIT FFI.
+local ffi = (jit and require("ffi"))
+if ffi then
+	ffi.cdef[[
+		int isatty(int); // Unix
+		int _isatty(int); // Windows
+		void free(void *ptr);
+		
+		char *readline(const char *);
+		int add_history(const char *);
+	]]
+	
+	local function get_func_or_nil(sym)
+		local success, func = pcall(function() return ffi.C[sym] end)
+		return success and func or nil
+	end
+	
+	local isatty = get_func_or_nil("isatty") or get_func_or_nil("_isatty")
+	stdin_isatty = isatty(0)
+	stdout_isatty = isatty(1)
 end
 
-local function gu( func, k )
-  return function() k=k+1 return debug.getupvalue( func, k ) end
+-- Conditionally enable color support.
+local color_maybe_supported = (stdout_isatty and os.getenv("TERM") and os.getenv("TERM") ~= "dumb")
+if color_maybe_supported and not os.getenv("DBG_NOCOLOR") then
+	COLOR_GRAY = string.char(27) .. "[90m"
+	COLOR_RED = string.char(27) .. "[91m"
+	COLOR_BLUE = string.char(27) .. "[94m"
+	COLOR_YELLOW = string.char(27) .. "[33m"
+	COLOR_RESET = string.char(27) .. "[0m"
+	GREEN_CARET = string.char(27) .. "[92m => "..COLOR_RESET
 end
 
-local traceinfo
+if stdin_isatty and not os.getenv("DBG_NOREADLINE") then
+	pcall(function()
+		local linenoise = require 'linenoise'
+		
+		-- Load command history from ~/.lua_history
+		local hist_path = os.getenv('HOME') .. '/.lua_history'
+		linenoise.historyload(hist_path)
+		linenoise.historysetmaxlen(50)
+		
+		local function autocomplete(env, input, matches)
+			for name, _ in pairs(env) do
+				if name:match('^' .. input .. '.*') then
+					linenoise.addcompletion(matches, name)
+				end
+			end
+		end
+		
+		-- Auto-completion for locals and globals
+		linenoise.setcompletion(function(matches, input)
+			-- First, check the locals and upvalues.
+			local env = local_bindings(1, true)
+			autocomplete(env, input, matches)
+			
+			-- Then, check the implicit environment.
+			env = getmetatable(env).__index
+			autocomplete(env, input, matches)
+		end)
+		
+		dbg.read = function(prompt)
+			local str = linenoise.linenoise(prompt)
+			if str and not str:match "^%s*$" then
+				linenoise.historyadd(str)
+				linenoise.historysave(hist_path)
+			end
+			return str
+		end
+		dbg_writeln(COLOR_RED.."debugger.lua: Linenoise support enabled."..COLOR_RESET)
+	end)
+	
+	-- Conditionally enable LuaJIT readline support.
+	pcall(function()
+		if dbg.read == nil and ffi then
+			local readline = ffi.load("readline")
+			dbg.read = function(prompt)
+				local cstr = readline.readline(prompt)
+				if cstr ~= nil then
+					local str = ffi.string(cstr)
+					if string.match(str, "[^%s]+") then
+						readline.add_history(cstr)
+					end
 
--- return the local traceinfo to use it in readline completion
-function __gettraceinfo__()
-  return traceinfo
+					ffi.C.free(cstr)
+					return str
+				else
+					return nil
+				end
+			end
+			dbg_writeln(COLOR_RED.."debugger.lua: Readline support enabled."..COLOR_RESET)
+		end
+	end)
 end
 
-local function tracestack(l)
-  local l = l + 1                        --NB: +1 to get level relative to caller
-  traceinfo = {}
-  traceinfo.pausemsg = pausemsg
-  for ar,i in gi(l) do
-    table.insert( traceinfo, ar )
-    if ar.what ~= 'C' then
-      local names  = {}
-      local values = {}
-      for n,v in gl(i,0) do
-        if string.sub(n,1,1) ~= '(' then   --ignore internal control variables
-          table.insert( names, n )
-          table.insert( values, v )
-        end
-      end
-      if #names > 0 then
-        ar.lnames  = names
-        ar.lvalues = values
-      end
-    end
-    if ar.func then
-      local names  = {}
-      local values = {}
-      for n,v in gu(ar.func,0) do
-        if string.sub(n,1,1) ~= '(' then   --ignore internal control variables
-          table.insert( names, n )
-          table.insert( values, v )
-        end
-      end
-      if #names > 0 then
-        ar.unames  = names
-        ar.uvalues = values
-      end
-    end
-  end
+-- Detect Lua version.
+if jit then -- LuaJIT
+	LUA_JIT_SETLOCAL_WORKAROUND = -1
+	dbg_writeln(COLOR_RED.."debugger.lua: "..COLOR_RESET.."Loaded for "..jit.version)
+elseif "Lua 5.1" <= _VERSION and _VERSION <= "Lua 5.4" then
+	dbg_writeln(COLOR_RED.."debugger.lua: "..COLOR_RESET.."Loaded for ".._VERSION)
+else
+	dbg_writeln(COLOR_RED.."debugger.lua: "..COLOR_RESET.."Not tested against ".._VERSION)
+	dbg_writeln(COLOR_RED.."Please send me feedback!"..COLOR_RESET)
 end
 
---}}}
---{{{  local function trace()
-
-local function trace(set)
-  local mark
-  for level,ar in ipairs(traceinfo) do
-    if level == set then
-      mark = color.green..'***'..color.reset
-    else
-      mark = ''
-    end
-    io.write('['..level..']'..mark..'\t'..(ar.name or ar.what)..' in '..ar.short_src..':'..ar.currentline..'\n')
-  end
-end
-
---}}}
---{{{  local function info()
-
-local function info() dumpvar( traceinfo, 0, 'traceinfo' ) end
-
---}}}
-
---{{{  local function set_breakpoint(file, line, once)
-
-local function set_breakpoint(file, line, once)
-  if not breakpoints[line] then
-    breakpoints[line] = {}
-  end
-  if once then
-    breakpoints[line][file] = 1
-  else
-    breakpoints[line][file] = true
-  end
-end
-
---}}}
---{{{  local function remove_breakpoint(file, line)
-
-local function remove_breakpoint(file, line)
-  if breakpoints[line] then
-    breakpoints[line][file] = nil
-  end
-end
-
---}}}
---{{{  local function has_breakpoint(file, line)
-
---allow for 'sloppy' file names
---search for file and all variations walking up its directory hierachy
---ditto for the file with no extension
---a breakpoint can be permenant or once only, if once only its removed
---after detection here, these are used for temporary breakpoints in the
---debugger loop when executing the 'gotoo' command
---a breakpoint on line 0 of a file means any line in that file
-
-local function has_breakpoint(file, line)
-  local isLine = breakpoints[line]
-  local isZero = breakpoints[0]
-  if not isLine and not isZero then return false end
-  local noext = string.gsub(file,"(%..-)$",'',1)
-  if noext == file then noext = nil end
-  while file do
-    if isLine and isLine[file] then
-      if isLine[file] == 1 then isLine[file] = nil end
-      return true
-    end
-    if isZero and isZero[file] then
-      if isZero[file] == 1 then isZero[file] = nil end
-      return true
-    end
-    if IsWindows then
-      file = string.match(file,"[:/\\](.+)$")
-    else
-      file = string.match(file,"[:/](.+)$")
-    end
-  end
-  while noext do
-    if isLine and isLine[noext] then
-      if isLine[noext] == 1 then isLine[noext] = nil end
-      return true
-    end
-    if isZero and isZero[noext] then
-      if isZero[noext] == 1 then isZero[noext] = nil end
-      return true
-    end
-    if IsWindows then
-      noext = string.match(noext,"[:/\\](.+)$")
-    else
-      noext = string.match(noext,"[:/](.+)$")
-    end
-  end
-  return false
-end
-
---}}}
---{{{  local function capture_vars(ref,level,line)
-
-local function capture_vars(ref,level,line)
-  --get vars, file and line for the given level relative to debug_hook offset by ref
-
-  local lvl = ref + level                --NB: This includes an offset of +1 for the call to here
-
-  --{{{  capture variables
-
-  local ar = debug.getinfo(lvl, "f")
-  if not ar then return {},'?',0 end
-
-  local vars = {__UPVALUES__={}, __LOCALS__={}}
-  local i
-
-  local func = ar.func
-  if func then
-    i = 1
-    while true do
-      local name, value = debug.getupvalue(func, i)
-      if not name then break end
-      if string.sub(name,1,1) ~= '(' then  --NB: ignoring internal control variables
-        vars[name] = value
-        vars.__UPVALUES__[i] = name
-      end
-      i = i + 1
-    end
-    vars.__ENVIRONMENT__ = getfenv(func)
-  end
-
-  vars.__GLOBALS__ = getfenv(0)
-
-  i = 1
-  while true do
-    local name, value = debug.getlocal(lvl, i)
-    if not name then break end
-    if string.sub(name,1,1) ~= '(' then    --NB: ignoring internal control variables
-      vars[name] = value
-      vars.__LOCALS__[i] = name
-    end
-    i = i + 1
-  end
-
-  vars.__VARSLEVEL__ = level
-
-  if func then
-    --NB: Do not do this until finished filling the vars table
-    setmetatable(vars, { __index = getfenv(func), __newindex = getfenv(func) })
-  end
-
-  --NB: Do not read or write the vars table anymore else the metatable functions will get invoked!
-
-  --}}}
-
-  local file = getinfo(lvl, "source")
-  if string.find(file, "@") == 1 then
-    file = string.sub(file, 2)
-  end
-  if IsWindows then file = string.lower(file) end
-
-  if not line then
-    line = getinfo(lvl, "currentline")
-  end
-
-  return vars,file,line
-
-end
-
---}}}
---{{{  local function restore_vars(ref,vars)
-
-local function restore_vars(ref,vars)
-
-  if type(vars) ~= 'table' then return end
-
-  local level = vars.__VARSLEVEL__       --NB: This level is relative to debug_hook offset by ref
-  if not level then return end
-
-  level = level + ref                    --NB: This includes an offset of +1 for the call to here
-
-  local i
-  local written_vars = {}
-
-  i = 1
-  while true do
-    local name, value = debug.getlocal(level, i)
-    if not name then break end
-    if vars[name] and string.sub(name,1,1) ~= '(' then     --NB: ignoring internal control variables
-      debug.setlocal(level, i, vars[name])
-      written_vars[name] = true
-    end
-    i = i + 1
-  end
-
-  local ar = debug.getinfo(level, "f")
-  if not ar then return end
-
-  local func = ar.func
-  if func then
-
-    i = 1
-    while true do
-      local name, value = debug.getupvalue(func, i)
-      if not name then break end
-      if vars[name] and string.sub(name,1,1) ~= '(' then   --NB: ignoring internal control variables
-        if not written_vars[name] then
-          debug.setupvalue(func, i, vars[name])
-        end
-        written_vars[name] = true
-      end
-      i = i + 1
-    end
-
-  end
-
-end
-
---}}}
---{{{  local function trace_event(event, line, level)
-
-local function print_trace(level,depth,event,file,line,name)
-
-  --NB: level here is relative to the caller of trace_event, so offset by 2 to get to there
-  level = level + 2
-
-  local file = file or getinfo(level,'short_src')
-  local line = line or getinfo(level,'currentline')
-  local name = name or getinfo(level,'name')
-
-  local prefix = ''
-  if current_thread ~= 'main' then prefix = '['..tostring(current_thread)..'] ' end
-
-  io.write(prefix..
-           string.format('%08.2f:%02i.',os.clock(),depth)..
-           string.rep('.',depth%32)..
-           (file or '')..' ('..(line or '')..') '..
-           (name or '')..
-           ' ('..event..')\n')
-
-end
-
-local function trace_event(event, line, level)
-
-  if event == 'return' and trace_returns then
-    --note the line info for later
-    ret_file = getinfo(level+1,'short_src')
-    ret_line = getinfo(level+1,'currentline')
-    ret_name = getinfo(level+1,'name')
-  end
-
-  if event ~= 'line' then return end
-
-  local slevel = stack_level[current_thread]
-  local tlevel = trace_level[current_thread]
-
-  if trace_calls and slevel > tlevel then
-    --we are now in the function called, so look back 1 level further to find the calling file and line
-    print_trace(level+1,slevel-1,'c',nil,nil,getinfo(level+1,'name'))
-  end
-
-  if trace_returns and slevel < tlevel then
-    print_trace(level,slevel,'r',ret_file,ret_line,ret_name)
-  end
-
-  if trace_lines then
-    print_trace(level,slevel,'l')
-  end
-
-  trace_level[current_thread] = stack_level[current_thread]
-
-end
-
---}}}
---{{{  local function report(ev, vars, file, line, idx_watch)
-
-local function report(ev, vars, file, line, idx_watch)
-  local vars = vars or {}
-  local file = file or '?'
-  local line = line or 0
-  local prefix = ''
-  if current_thread ~= 'main' then prefix = '['..tostring(current_thread)..'] ' end
-  if ev == events.STEP then
-    io.write(prefix.."Paused at file "..file.." line "..line..' ('..stack_level[current_thread]..')\n')
-  elseif ev == events.BREAK then
-    io.write(prefix.."Paused at file "..file.." line "..line..' ('..stack_level[current_thread]..') (breakpoint)\n')
-  elseif ev == events.WATCH then
-    io.write(prefix.."Paused at file "..file.." line "..line..' ('..stack_level[current_thread]..')'.." (watch expression "..idx_watch.. ": ["..watches[idx_watch].exp.."])\n")
-  elseif ev == events.SET then
-    --do nothing
-  else
-    io.write(prefix.."Error in application: "..file.." line "..line.."\n")
-  end
-  if ev ~= events.SET then
-    if pausemsg and pausemsg ~= '' then io.write('Message: '..pausemsg..'\n') end
-    pausemsg = ''
-  end
-  return vars, file, line
-end
-
---}}}
-
---{{{  local function debugger_loop(ev, vars, file, line, idx_watch)
-
--- eval_env is local outside the local function debugger_loop() so that
--- readline completion can use its information via __getevalenv__()
-local eval_env = {}
-
--- return the local eval_env to use it in readline completion
-function __getevalenv__()
-  return eval_env
-end
-
-local function debugger_loop(ev, vars, file, line, idx_watch)
-
-  eval_env = vars or {}
-  local breakfile = file or '?'
-  local breakline = line or 0
-
-  local command, args
-
-  --{{{  local function getargs(spec)
-
-  --get command arguments according to the given spec from the args string
-  --the spec has a single character for each argument, arguments are separated
-  --by white space, the spec characters can be one of:
-  -- F for a filename    (defaults to breakfile if - given in args)
-  -- L for a line number (defaults to breakline if - given in args)
-  -- N for a number
-  -- V for a variable name
-  -- S for a string
-
-  local function getargs(spec)
-    local res={}
-    local char,arg
-    local ptr=1
-    for i=1,string.len(spec) do
-      char = string.sub(spec,i,i)
-      if     char == 'F' then
-        _,ptr,arg = string.find(args..' ',"%s*([%w%p]*)%s*",ptr)
-        if not arg or arg == '' then arg = '-' end
-        if arg == '-' then arg = breakfile end
-      elseif char == 'L' then
-        _,ptr,arg = string.find(args..' ',"%s*([%w%p]*)%s*",ptr)
-        if not arg or arg == '' then arg = '-' end
-        if arg == '-' then arg = breakline end
-        arg = tonumber(arg) or 0
-      elseif char == 'N' then
-        _,ptr,arg = string.find(args..' ',"%s*([%w%p]*)%s*",ptr)
-        if not arg or arg == '' then arg = '0' end
-        arg = tonumber(arg) or 0
-      elseif char == 'V' then
-        _,ptr,arg = string.find(args..' ',"%s*([%w%p]*)%s*",ptr)
-        if not arg or arg == '' then arg = '' end
-      elseif char == 'S' then
-        _,ptr,arg = string.find(args..' ',"%s*([%w%p]*)%s*",ptr)
-        if not arg or arg == '' then arg = '' end
-      else
-        arg = ''
-      end
-      table.insert(res,arg or '')
-    end
-    return table.unpack(res)
-  end
-
-  --}}}
-
-  while true do
-    local line = readline(prompt)
-    if line == nil then io.write('\n'); line = 'exit' end
-    saveline(line)
-
-    if string.find(line, "^[a-z]+") then
-      command = string.sub(line, string.find(line, "^[a-z]+"))
-      args    = string.gsub(line,"^[a-z]+%s*",'',1)            --strip command off line
-    else
-      command = ''
-    end
-
-    if command == "setb" then
-      --{{{  set breakpoint
-
-      local line, filename  = getargs('LF')
-      if filename ~= '' and line ~= '' then
-        set_breakpoint(filename,line)
-        io.write("Breakpoint set in file "..filename..' line '..line..'\n')
-      else
-        io.write("Bad request\n")
-      end
-
-      --}}}
-
-    elseif command == "delb" then
-      --{{{  delete breakpoint
-
-      local line, filename = getargs('LF')
-      if filename ~= '' and line ~= '' then
-        remove_breakpoint(filename, line)
-        io.write("Breakpoint deleted from file "..filename..' line '..line.."\n")
-      else
-        io.write("Bad request\n")
-      end
-
-      --}}}
-
-    elseif command == "delallb" then
-      --{{{  delete all breakpoints
-      breakpoints = {}
-      io.write('All breakpoints deleted\n')
-      --}}}
-
-    elseif command == "listb" then
-      --{{{  list breakpoints
-      for i, v in pairs(breakpoints) do
-        for ii, vv in pairs(v) do
-          io.write("Break at: "..i..' in '..ii..'\n')
-        end
-      end
-      --}}}
-
-    elseif command == "setw" then
-      --{{{  set watch expression
-
-      if args and args ~= '' then
-        local func = loadstring("return(" .. args .. ")")
-        local newidx = #watches + 1
-        watches[newidx] = {func = func, exp = args}
-        io.write("Set watch exp no. " .. newidx..'\n')
-      else
-        io.write("Bad request\n")
-      end
-
-      --}}}
-
-    elseif command == "delw" then
-      --{{{  delete watch expression
-
-      local index = tonumber(args)
-      if index then
-        watches[index] = nil
-        io.write("Watch expression deleted\n")
-      else
-        io.write("Bad request\n")
-      end
-
-      --}}}
-
-    elseif command == "delallw" then
-      --{{{  delete all watch expressions
-      watches = {}
-      io.write('All watch expressions deleted\n')
-      --}}}
-
-    elseif command == "listw" then
-      --{{{  list watch expressions
-      for i, v in pairs(watches) do
-        io.write("Watch exp. " .. i .. ": " .. v.exp..'\n')
-      end
-      --}}}
-
-    elseif command == "run" then
-      --{{{  run until breakpoint
-      step_into = false
-      step_over = false
-      return 'cont'
-      --}}}
-
-    elseif command == "step" then
-      --{{{  step N lines (into functions)
-      local N = tonumber(args) or 1
-      step_over  = false
-      step_into  = true
-      step_lines = tonumber(N or 1)
-      return 'cont'
-      --}}}
-
-    elseif command == "over" then
-      --{{{  step N lines (over functions)
-      local N = tonumber(args) or 1
-      step_into  = false
-      step_over  = true
-      step_lines = tonumber(N or 1)
-      step_level[current_thread] = stack_level[current_thread]
-      return 'cont'
-      --}}}
-
-    elseif command == "out" then
-      --{{{  step N lines (out of functions)
-      local N = tonumber(args) or 1
-      step_into  = false
-      step_over  = true
-      step_lines = 1
-      step_level[current_thread] = stack_level[current_thread] - tonumber(N or 1)
-      return 'cont'
-      --}}}
-
-    elseif command == "gotoo" then
-      --{{{  step until reach line
-      local line, filename = getargs('LF')
-      if line ~= '' then
-        step_over  = false
-        step_into  = false
-        if has_breakpoint(filename,line) then
-          return 'cont'
-        else
-          set_breakpoint(filename,line,true)
-          return 'cont'
-        end
-      else
-        io.write("Bad request\n")
-      end
-      --}}}
-
-    elseif command == "set" then
-      --{{{  set/show context level
-      local level = args
-      if level and level == '' then level = nil end
-      if level then return level end
-      --}}}
-
-    elseif command == "vars" then
-      --{{{  list context variables
-      local depth = args
-      if depth and depth == '' then depth = nil end
-      depth = tonumber(depth) or 1
-      dumpvar(eval_env, depth+1, 'variables')
-      --}}}
-
-    elseif command == "glob" then
-      --{{{  list global variables
-      local depth = args
-      if depth and depth == '' then depth = nil end
-      depth = tonumber(depth) or 1
-      dumpvar(eval_env.__GLOBALS__,depth+1,'globals')
-      --}}}
-
-    elseif command == "fenv" then
-      --{{{  list function environment variables
-      local depth = args
-      if depth and depth == '' then depth = nil end
-      depth = tonumber(depth) or 1
-      dumpvar(eval_env.__ENVIRONMENT__,depth+1,'environment')
-      --}}}
-
-    elseif command == "ups" then
-      --{{{  list upvalue names
-      dumpvar(eval_env.__UPVALUES__,2,'upvalues')
-      --}}}
-
-    elseif command == "locs" then
-      --{{{  list locals names
-      dumpvar(eval_env.__LOCALS__,2,'upvalues')
-      --}}}
-
-    elseif command == "what" then
-      --{{{  show where a function is defined
-      if args and args ~= '' then
-        local v = eval_env
-        local n = nil
-        for w in string.gmatch(args,"[%w_]+") do
-          if type(v) == 'table' then v = v[w] end
-          if n then n = n..'.'..w else n = w end
-          if not v then break end
-        end
-        if type(v) == 'function' then
-          local def = debug.getinfo(v,'S')
-          if def then
-            io.write(def.what..' in '..def.short_src..' '..def.linedefined..'..'..def.lastlinedefined..'\n')
-          else
-            io.write('Cannot get info for '..v..'\n')
-          end
-        else
-          io.write(tostring(n)..' ('..tostring(v)..') is not a function\n')
-        end
-      else
-        io.write("Bad request\n")
-      end
-      --}}}
-
-    elseif command == "dump" then
-      --{{{  dump a variable
-      local name, depth = getargs('VN')
-      if name ~= '' then
-        if depth == '' or depth == 0 then depth = nil end
-        depth = tonumber(depth or 1)
-        local v = eval_env
-        local n = nil
-        for w in string.gmatch(name,"[^%.]+") do     --get everything between dots
-          if tonumber(w) then
-            v = v[tonumber(w)]
-          else
-            if type(v) == 'table' then v = v[w] end
-          end
-          if n then n = n..'.'..w else n = w end
-          if not v then break end
-        end
-        dumpvar(v,depth+1,n)
-      else
-        io.write("Bad request\n")
-      end
-      --}}}
-
-    elseif command == "show" then
-      --{{{  show file around a line or the current breakpoint
-
-      local line, file, before, after = getargs('LFNN')
-      if before == 0 then before = 10     end
-      if after  == 0 then after  = before end
-
-      if file ~= '' and file ~= "=stdin" then
-        show(breakfile,breakline,file,line,before,after)
-      else
-        io.write('Nothing to show\n')
-      end
-
-      --}}}
-
-    elseif command == "poff" then
-      --{{{  turn pause command off
-      pause_off = true
-      --}}}
-
-    elseif command == "pon" then
-      --{{{  turn pause command on
-      pause_off = false
-      --}}}
-
-    elseif command == "tron" then
-      --{{{  turn tracing on/off
-      local option = getargs('S')
-      trace_calls   = false
-      trace_returns = false
-      trace_lines   = false
-      if string.find(option,'c') then trace_calls   = true end
-      if string.find(option,'r') then trace_returns = true end
-      if string.find(option,'l') then trace_lines   = true end
-      --}}}
-
-    elseif command == "trace" then
-      --{{{  dump a stack trace
-      trace(eval_env.__VARSLEVEL__)
-      --}}}
-
-    elseif command == "info" then
-      --{{{  dump all debug info captured
-      info()
-      --}}}
-
-    elseif command == "pause" then
-      --{{{  not allowed in here
-      io.write('pause() should only be used in the script you are debugging\n')
-      --}}}
-
-    elseif command == "help" then
-      --{{{  help
-      local command = getargs('S')
-      if command ~= '' and hints[command] then
-        local _,_,description = string.find(hints[command],"|(.+)")
-        io.write(string.match(hints[command],"(.+)|")..description..'\n')
-      else
-        for _,v in pairs(hints) do
-          local _,_,summary = string.find(v,"(.+)|")
-          local dbgcmd = tostring(string.match(tostring(summary), "^%a+"))
-          if rlbinds ~= nil and rlbinds[dbgcmd] ~= nil then
-            io.write(summary..color.black..' ['..rlbinds[dbgcmd]["key"]..']'..color.reset..'\n')
-          else
-            io.write(summary..'\n')
-          end
-        end
-      end
-      --}}}
-
-    elseif command == "exit" then
-      --{{{  exit debugger
-      return 'stop'
-      --}}}
-
-    elseif command == "eval" then
-      --{{{  execute whatever it is in the current context
-      line = string.sub(line, 6, -1)
-
-      --map line starting with "=..." to "return ..."
-      if string.sub(line,1,1) == '=' then line = string.gsub(line,'=','return ',1) end
-
-      local ok, func = pcall(loadstring,line)
-      if func == nil then                             --Michael.Bringmann@lsi.com
-        io.write("Compile error: "..line..'\n')
-      elseif not ok then
-        io.write("Compile error: "..func..'\n')
-      else
-        setfenv(func, eval_env)
-        local res = {pcall(func)}
-        if res[1] then
-          if res[2] then
-            table.remove(res,1)
-            for _,v in ipairs(res) do
-              io.write(tostring(v))
-              io.write('\t')
-            end
-            io.write('\n')
-          end
-          --update in the context
-          return 0
-        else
-          io.write("Run error: "..res[2]..'\n')
-        end
-      end
-      --}}}
-
-    else
-      if command ~= '' then
-        io.write(color.red.."not a valid debugger command '"..command.."'\n"..color.reset)
-      end
-    end
-  end
-
-end
-
---}}}
---{{{  local function debug_hook(event, line, level, thread)
-
-local function debug_hook(event, line, level, thread)
-  if not started then debug.sethook(); coro_debugger = nil; return end
-  current_thread = thread or 'main'
-  local level = level or 2
-  trace_event(event,line,level)
-  if event == "call" then
-    stack_level[current_thread] = stack_level[current_thread] + 1
-  elseif event == "return" then
-    stack_level[current_thread] = stack_level[current_thread] - 1
-    if stack_level[current_thread] < 0 then stack_level[current_thread] = 0 end
-  else
-    local vars,file,line = capture_vars(level,1,line)
-    local stop, ev, idx = false, events.STEP, 0
-    while true do
-      for index, value in pairs(watches) do
-        setfenv(value.func, vars)
-        local status, res = pcall(value.func)
-        if status and res then
-          ev, idx = events.WATCH, index
-          stop = true
-          break
-        end
-      end
-      if stop then break end
-      if (step_into)
-      or (step_over and (stack_level[current_thread] <= step_level[current_thread] or stack_level[current_thread] == 0)) then
-        step_lines = step_lines - 1
-        if step_lines < 1 then
-          ev, idx = events.STEP, 0
-          break
-        end
-      end
-      if has_breakpoint(file, line) then
-        ev, idx = events.BREAK, 0
-        break
-      end
-      return
-    end
-    if not coro_debugger then
-      io.write("Lua Debugger\n")
-      vars, file, line = report(ev, vars, file, line, idx)
-      io.write("Type 'help' for commands\n")
-      coro_debugger = true
-    else
-      vars, file, line = report(ev, vars, file, line, idx)
-    end
-    tracestack(level)
-    local last_next = 1
-    local next = 'ask'
-    local silent = false
-    while true do
-      if next == 'ask' then
-        next = debugger_loop(ev, vars, file, line, idx)
-      elseif next == 'cont' then
-        return
-      elseif next == 'stop' then
-        started = false
-        debug.sethook()
-        coro_debugger = nil
-        return
-      elseif tonumber(next) then --get vars for given level or last level
-        next = tonumber(next)
-        if next == 0 then silent = true; next = last_next else silent = false end
-        last_next = next
-        restore_vars(level,vars)
-        vars, file, line = capture_vars(level,next)
-        if not silent then
-          if vars and vars.__VARSLEVEL__ then
-            io.write('Level: '..vars.__VARSLEVEL__..'\n')
-          else
-            io.write('No level set\n')
-          end
-        end
-        ev = events.SET
-        next = 'ask'
-      else
-        io.write('Unknown command from debugger_loop: '..tostring(next)..'\n')
-        io.write('Stopping debugger\n')
-        next = 'stop'
-      end
-    end
-  end
-end
-
---}}}
-
---{{{  coroutine.create
-
---This function overrides the built-in for the purposes of propagating
---the debug hook settings from the creator into the created coroutine.
-
-_G.coroutine.create = function(f)
-  local thread
-  local hook, mask, count = debug.gethook()
-  if hook then
-    local function thread_hook(event,line)
-      hook(event,line,3,thread)
-    end
-    thread = cocreate(function(...)
-                        stack_level[thread] = 0
-                        trace_level[thread] = 0
-                        step_level [thread] = 0
-                        debug.sethook(thread_hook,mask,count)
-                        return f(...)
-                      end)
-    return thread
-  else
-    return cocreate(f)
-  end
-end
-
---}}}
---{{{  coroutine.wrap
-
---This function overrides the built-in for the purposes of propagating
---the debug hook settings from the creator into the created coroutine.
-
-_G.coroutine.wrap = function(f)
-  local thread
-  local hook, mask, count = debug.gethook()
-  if hook then
-    local function thread_hook(event,line)
-      hook(event,line,3,thread)
-    end
-    thread = cowrap(function(...)
-                      stack_level[thread] = 0
-                      trace_level[thread] = 0
-                      step_level [thread] = 0
-                      debug.sethook(thread_hook,mask,count)
-                      return f(...)
-                    end)
-    return thread
-  else
-    return cowrap(f)
-  end
-end
-
---}}}
-
---{{{  function pause(x,l,f)
-
---
--- Starts/resumes a debug session
---
-
-function pause(x,l,f)
-  if not f and pause_off then return end       --being told to ignore pauses
-  pausemsg = x or 'pause'
-  local lines
-  local src = getinfo(2,'short_src')
-  if l then
-    lines = l   --being told when to stop
-  elseif src == "stdin" then
-    lines = 1   --if in a console session, stop now
-  else
-    lines = 2   --if in a script, stop when get out of pause()
-  end
-  if started then
-    --we'll stop now 'cos the existing debug hook will grab us
-    step_lines = lines
-    step_into  = true
-    debug.sethook(debug_hook, "crl")         --reset it in case some external agent fiddled with it
-  else
-    --set to stop when get out of pause()
-    trace_level[current_thread] = 0
-    step_level [current_thread] = 0
-    stack_level[current_thread] = 1
-    step_lines = lines
-    step_into  = true
-    started    = true
-    debug.sethook(debug_hook, "crl")         --NB: this will cause an immediate entry to the debugger_loop
-  end
-end
-
---}}}
---{{{  function dump(v,depth)
-
---shows the value of the given variable, only really useful
---when the variable is a table
---see dump debug command hints for full semantics
-
-function dump(v,depth)
-  dumpvar(v,(depth or 1)+1,tostring(v))
-end
-
---}}}
---{{{  function debug.traceback(x)
-
-local _traceback = debug.traceback       --note original function
-
---override standard function
-debug.traceback = function(x)
-  local assertmsg = _traceback(x)        --do original function
-  pause(x)                               --let user have a look at stuff
-  return assertmsg                       --carry on
-end
-
-_TRACEBACK = debug.traceback             --Lua 5.0 function
-
---}}}
--- vim: ts=2 sw=2 sts=2
+return dbg

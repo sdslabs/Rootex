@@ -26,6 +26,8 @@ public:
 
 	virtual void bind();
 	
+	virtual ID3D11ShaderResourceView* getPreview() = 0;
+
 	bool isAlpha() { return m_IsAlpha; }
 	String getFileName() { return m_FileName; };
 	String getTypeName() { return m_TypeName; };
@@ -54,17 +56,17 @@ void Material::SetPSConstantBuffer(const T& constantBuffer, Microsoft::WRL::ComP
 		D3D11_SUBRESOURCE_DATA csd = { 0 };
 		csd.pSysMem = &constantBuffer;
 
-		bufferPointer = RenderingDevice::GetSingleton()->createPSConstantBuffer(&cbd, &csd);
-		RenderingDevice::GetSingleton()->setPSConstantBuffer(bufferPointer.Get(), slot);
+		bufferPointer = RenderingDevice::GetSingleton()->createPSCB(&cbd, &csd);
+		RenderingDevice::GetSingleton()->setPSCB(bufferPointer.Get(), slot);
 	}
 	else
 	{
 		D3D11_MAPPED_SUBRESOURCE subresource;
 		RenderingDevice::GetSingleton()->mapBuffer(bufferPointer.Get(), subresource);
-		memcpy(subresource.pData, &constantBuffer, sizeof(constantBuffer));
+		memcpy(subresource.pData, &constantBuffer, sizeof(T));
 		RenderingDevice::GetSingleton()->unmapBuffer(bufferPointer.Get());
 
-		RenderingDevice::GetSingleton()->setPSConstantBuffer(bufferPointer.Get(), slot);
+		RenderingDevice::GetSingleton()->setPSCB(bufferPointer.Get(), slot);
 	}
 }
 
@@ -83,8 +85,8 @@ void Material::SetVSConstantBuffer(const T& constantBuffer, Microsoft::WRL::ComP
 		D3D11_SUBRESOURCE_DATA csd = { 0 };
 		csd.pSysMem = &constantBuffer;
 
-		bufferPointer = RenderingDevice::GetSingleton()->createVSConstantBuffer(&cbd, &csd);
-		RenderingDevice::GetSingleton()->setVSConstantBuffer(bufferPointer.Get(), slot);
+		bufferPointer = RenderingDevice::GetSingleton()->createVSCB(&cbd, &csd);
+		RenderingDevice::GetSingleton()->setVSCB(bufferPointer.Get(), slot);
 	}
 	else
 	{
@@ -93,6 +95,6 @@ void Material::SetVSConstantBuffer(const T& constantBuffer, Microsoft::WRL::ComP
 		memcpy(subresource.pData, &constantBuffer, sizeof(constantBuffer));
 		RenderingDevice::GetSingleton()->unmapBuffer(bufferPointer.Get());
 
-		RenderingDevice::GetSingleton()->setVSConstantBuffer(bufferPointer.Get(), slot);
+		RenderingDevice::GetSingleton()->setVSCB(bufferPointer.Get(), slot);
 	}
 }
