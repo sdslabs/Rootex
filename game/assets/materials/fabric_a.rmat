@@ -1,0 +1,21 @@
+{
+    "affectedBySky": false,
+    "color": {
+        "a": 1.0,
+        "b": 1.0,
+        "g": 1.0,
+        "r": 1.0
+    },
+    "imageFile": "game/assets/sponza/textures/sponza_fabric_diff.png",
+    "isAlpha": false,
+    "isLit": true,
+    "isNormal": true,
+    "normalImageFile": "game/assets/sponza/textures/sponza_fabric_blue_diff_NRM.png",
+    "reflectivity": 0.10000000149011612,
+    "refractionConstant": 0.800000011920929,
+    "refractivity": 0.10000000149011612,
+    "specularImageFile": "game/assets/sponza/textures/sponza_fabric_spec.png",
+    "specularIntensity": 0.0,
+    "specularPower": 30.0,
+    "type": "BasicMaterial"
+}

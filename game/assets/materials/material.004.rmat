@@ -9,9 +9,11 @@
     "imageFile": "rootex/assets/white.png",
     "isAlpha": false,
     "isLit": true,
+    "isNormal": false,
     "reflectivity": 1.0,
     "refractionConstant": 0.7900000214576721,
     "refractivity": 0.1599999964237213,
+    "specularImageFile": "rootex/assets/white.png",
     "specularIntensity": 2.0,
     "specularPower": 30.0,
     "type": "BasicMaterial"

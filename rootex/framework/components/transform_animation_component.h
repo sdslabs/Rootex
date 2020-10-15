@@ -9,10 +9,24 @@ class TransformAnimationComponent : public Component
 public:
 	struct Keyframe
 	{
-		float m_TimePosition;
-		Vector3 m_Translation;
-		Quaternion m_Rotation;
-		Vector3 m_Scale;
+		float timePosition;
+		Matrix transform;
+	};
+
+	/// First word is for incoming, second word for outgoing
+	enum class TransitionType
+	{
+		SmashSmash = 0,
+		EaseEase = 1,
+		SmashEase = 2,
+		EaseSmash = 3
+	};
+
+	enum class AnimationMode
+	{
+		None = 0,
+		Looping = 1,
+		Alternating = 2
 	};
 
 private:
@@ -23,19 +37,20 @@ private:
 
 	Vector<Keyframe> m_Keyframes;
 	bool m_IsPlayOnStart;
-	bool m_IsLooping;
+	AnimationMode m_AnimationMode;
+	TransitionType m_TransitionType;
 
 	bool m_IsPlaying;
 	float m_CurrentTimePosition;
+	float m_TimeDirection;
 
 	TransformComponent* m_TransformComponent;
-	Vector3 m_InitialPosition;
-	Quaternion m_InitialRotation;
-	Vector3 m_InitialScale;
 
-	TransformAnimationComponent(const Vector<Keyframe> keyframes, bool isPlayOnStart, bool isLooping);
+	TransformAnimationComponent(const Vector<Keyframe> keyframes, bool isPlayOnStart, AnimationMode animationMode, TransitionType transition);
 	TransformAnimationComponent(TransformComponent&) = delete;
 	~TransformAnimationComponent() = default;
+
+	Matrix interpolateMatrix(const Matrix& left, const Matrix& right, float lerpFactor);
 
 	friend class TransformAnimationSystem;
 
@@ -44,11 +59,10 @@ public:
 
 	virtual bool setup() override;
 
-	void pushKeyframe(float timePosition, const Vector3& position, const Quaternion& rotation, const Vector3& scale);
+	void pushKeyframe(const Keyframe& keyFrame);
 	void popKeyframe(int count);
 	bool isPlaying() const { return m_IsPlaying; }
 	bool isPlayOnStart() const { return m_IsPlayOnStart; }
-	bool isLooping() const { return m_IsLooping; }
 	bool hasEnded() const;
 	float getStartTime() const;
 	float getEndTime() const;

@@ -1,0 +1,70 @@
+{
+    "Components": {
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 1
+        },
+        "ModelComponent": {
+            "affectingStaticLights": [],
+            "isVisible": true,
+            "materialOverrides": {
+                "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+            },
+            "renderPass": 2,
+            "resFile": "game/assets/test/sphere.obj"
+        },
+        "StaticPointLightComponent": {
+            "ambientColor": {
+                "a": 1.0,
+                "b": 0.5,
+                "g": 0.5,
+                "r": 0.5
+            },
+            "attConst": 0.04500000178813934,
+            "attLin": 1.6799999475479126,
+            "attQuad": 5.927000045776367,
+            "diffuseColor": {
+                "a": 1.0,
+                "b": 0.9459459185600281,
+                "g": 0.37618696689605713,
+                "r": 0.934946596622467
+            },
+            "diffuseIntensity": 14.800000190734863,
+            "range": 16.700000762939453
+        },
+        "TransformComponent": {
+            "boundingBox": {
+                "center": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "extents": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                }
+            },
+            "position": {
+                "x": -27.101757049560547,
+                "y": 1.7169989347457886,
+                "z": -1.1642298698425293
+            },
+            "rotation": {
+                "w": -0.0,
+                "x": 1.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 0.03999999910593033,
+                "y": 0.03999999910593033,
+                "z": 0.03999999910593033
+            }
+        }
+    },
+    "Entity": {
+        "ID": 17,
+        "name": "StaticPointLight"
+    }
+}

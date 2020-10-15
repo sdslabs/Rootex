@@ -20,8 +20,11 @@ RenderSystem::RenderSystem()
     , m_VSProjectionConstantBuffer(nullptr)
     , m_VSPerFrameConstantBuffer(nullptr)
     , m_PSPerFrameConstantBuffer(nullptr)
+    , m_PSPerLevelConstantBuffer(nullptr)
     , m_IsEditorRenderPassEnabled(false)
 {
+	BIND_EVENT_MEMBER_FUNCTION("OpenedLevel", onOpenedLevel);
+	
 	m_Camera = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<CameraComponent>().get();
 	m_TransformationStack.push_back(Matrix::Identity);
 	setProjectionConstantBuffers();
@@ -29,35 +32,19 @@ RenderSystem::RenderSystem()
 	m_LineMaterial = std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetMaterial("rootex/assets/materials/line.rmat"));
 	m_CurrentFrameLines.m_Endpoints.reserve(LINE_INITIAL_RENDER_CACHE * 2 * 3);
 	m_CurrentFrameLines.m_Indices.reserve(LINE_INITIAL_RENDER_CACHE * 2);
-}
 
-void RenderSystem::calculateTransforms(HierarchyComponent* hierarchyComponent)
-{
-	pushMatrix(hierarchyComponent->getOwner()->getComponent<TransformComponent>()->getLocalTransform());
-	for (auto&& child : hierarchyComponent->getChildren())
-	{
-		child->getOwner()->getComponent<TransformComponent>()->m_ParentAbsoluteTransform = getCurrentMatrix();
-		calculateTransforms(child);
-	}
-	popMatrix();
-}
-
-void RenderSystem::renderPassRender(RenderPass renderPass)
-{
-	ModelComponent* mc = nullptr;
-	for (auto& component : s_Components[ModelComponent::s_ID])
-	{
-		mc = (ModelComponent*)component;
-		if (mc->getRenderPass() & (unsigned int)renderPass)
-		{
-			mc->preRender();
-			if (mc->isVisible())
-			{
-				mc->render();
-			}
-			mc->postRender();
-		}
-	}
+	m_BasicPostProcess.reset(new DirectX::BasicPostProcess(RenderingDevice::GetSingleton()->getDevice()));
+	m_DualPostProcess.reset(new DirectX::DualPostProcess(RenderingDevice::GetSingleton()->getDevice()));
+	m_ToneMapPostProcess.reset(new DirectX::ToneMapPostProcess(RenderingDevice::GetSingleton()->getDevice()));
+	
+	RenderingDevice::GetSingleton()->createRTVAndSRV(m_ToneMapRTV, m_ToneMapSRV);
+	RenderingDevice::GetSingleton()->createRTVAndSRV(m_GaussianBlurRTV, m_GaussianBlurSRV);
+	RenderingDevice::GetSingleton()->createRTVAndSRV(m_MonochromeRTV, m_MonochromeSRV);
+	RenderingDevice::GetSingleton()->createRTVAndSRV(m_SepiaRTV, m_SepiaSRV);
+	RenderingDevice::GetSingleton()->createRTVAndSRV(m_BloomExtractRTV, m_BloomExtractSRV);
+	RenderingDevice::GetSingleton()->createRTVAndSRV(m_BloomHorizontalBlurRTV, m_BloomHorizontalBlurSRV);
+	RenderingDevice::GetSingleton()->createRTVAndSRV(m_BloomVerticalBlurRTV, m_BloomVerticalBlurSRV);
+	RenderingDevice::GetSingleton()->createRTVAndSRV(m_BloomRTV, m_BloomSRV);
 }
 
 void RenderSystem::recoverLostDevice()
@@ -76,15 +63,46 @@ void RenderSystem::setConfig(const JSON::json& configData, bool openInEditor)
 			return;
 		}
 	}
-	setCamera(EntityFactory::GetSingleton()->findEntity(ROOT_ENTITY_ID)->getComponent<CameraComponent>().get());
+}
+
+void RenderSystem::calculateTransforms(HierarchyComponent* hierarchyComponent)
+{
+	pushMatrix(hierarchyComponent->getOwner()->getComponent<TransformComponent>()->getLocalTransform());
+	for (auto&& child : hierarchyComponent->getChildren())
+	{
+		child->getOwner()->getComponent<TransformComponent>()->m_ParentAbsoluteTransform = getCurrentMatrix();
+		calculateTransforms(child);
+	}
+	popMatrix();
+}
+
+void RenderSystem::renderPassRender(float deltaMilliseconds, RenderPass renderPass)
+{
+	ModelComponent* mc = nullptr;
+	for (auto& component : s_Components[ModelComponent::s_ID])
+	{
+		mc = (ModelComponent*)component;
+		if (mc->getRenderPass() & (unsigned int)renderPass)
+		{
+			mc->preRender(deltaMilliseconds);
+			if (mc->isVisible())
+			{
+				mc->render();
+			}
+			mc->postRender();
+		}
+	}
 }
 
 void RenderSystem::update(float deltaMilliseconds)
 {
+	RenderingDevice::GetSingleton()->setOffScreenRT();
+
 	Color clearColor = { 0.15f, 0.15f, 0.15f, 1.0f };
 	float fogStart = 0.0f;
 	float fogEnd = -1000.0f;
 
+	// Fog
 	if (!s_Components[FogComponent::s_ID].empty())
 	{
 		FogComponent* firstFog = (FogComponent*)s_Components[FogComponent::s_ID].front();
@@ -98,15 +116,17 @@ void RenderSystem::update(float deltaMilliseconds)
 			fogEnd = fog->getFarDistance();
 		}
 	}
-	Application::GetSingleton()->getWindow()->clearCurrentTarget(clearColor);
+	Application::GetSingleton()->getWindow()->clearOffScreen(clearColor);
 
+	// Pre-calculate absolute transforms
 	Ref<HierarchyComponent> rootHC = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<HierarchyComponent>();
 	calculateTransforms(rootHC.get());
 
+	// Render geometry
 	RenderingDevice::GetSingleton()->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	RenderingDevice::GetSingleton()->setCurrentRasterizerState();
-	RenderingDevice::GetSingleton()->setDepthStencilState();
-	RenderingDevice::GetSingleton()->setAlphaBlendState();
+	RenderingDevice::GetSingleton()->setCurrentRS();
+	RenderingDevice::GetSingleton()->setDSS();
+	RenderingDevice::GetSingleton()->setAlphaBS();
 
 	perFrameVSCBBinds(fogStart, fogEnd);
 	const Color& fogColor = clearColor;
@@ -115,17 +135,19 @@ void RenderSystem::update(float deltaMilliseconds)
 #ifdef ROOTEX_EDITOR
 	if (m_IsEditorRenderPassEnabled)
 	{
-		renderPassRender(RenderPass::Editor);
+		renderPassRender(deltaMilliseconds, RenderPass::Editor);
 		renderLines();
 	}
 #endif // ROOTEX_EDITOR
-	renderPassRender(RenderPass::Basic);
-	renderPassRender(RenderPass::Alpha);
+	renderPassRender(deltaMilliseconds, RenderPass::Basic);
+	renderPassRender(deltaMilliseconds, RenderPass::Alpha);
+
+	// Sky
 	{
-		RenderingDevice::GetSingleton()->enableSkyDepthStencilState();
-		RenderingDevice::RasterizerState currentRS = RenderingDevice::GetSingleton()->getRasterizerState();
-		RenderingDevice::GetSingleton()->setRasterizerState(RenderingDevice::RasterizerState::Sky);
-		RenderingDevice::GetSingleton()->setCurrentRasterizerState();
+		RenderingDevice::GetSingleton()->enableSkyDSS();
+		RenderingDevice::RasterizerState currentRS = RenderingDevice::GetSingleton()->getRSType();
+		RenderingDevice::GetSingleton()->setRSType(RenderingDevice::RasterizerState::Sky);
+		RenderingDevice::GetSingleton()->setCurrentRS();
 		for (auto& component : s_Components[SkyComponent::s_ID])
 		{
 			SkyComponent* sky = (SkyComponent*)component;
@@ -138,9 +160,134 @@ void RenderSystem::update(float deltaMilliseconds)
 				}
 			}
 		}
-		RenderingDevice::GetSingleton()->setRasterizerState(currentRS);
-		RenderingDevice::GetSingleton()->disableSkyDepthStencilState();
+		RenderingDevice::GetSingleton()->setRSType(currentRS);
+		RenderingDevice::GetSingleton()->disableSkyDSS();
 	}
+
+	// Post processes
+	RenderingDevice::GetSingleton()->resolveSRV(RenderingDevice::GetSingleton()->getOffScreenRTSRV(), RenderingDevice::GetSingleton()->getOffScreenRTSRVResolved());
+
+	const PostProcessingDetails& postProcessingDetails = m_Camera->getPostProcessingDetails();
+	if (postProcessingDetails.isPostProcessing)
+	{
+		if (postProcessingDetails.isGaussianBlur)
+		{
+			RenderingDevice::GetSingleton()->unbindRTSRVs();
+			RenderingDevice::GetSingleton()->setRTV(m_GaussianBlurRTV);
+
+			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::GaussianBlur_5x5);
+			m_BasicPostProcess->SetSourceTexture(RenderingDevice::GetSingleton()->getOffScreenRTSRVResolved().Get());
+			m_BasicPostProcess->SetGaussianParameter(postProcessingDetails.gaussianBlurMultiplier);
+			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+
+			RenderingDevice::GetSingleton()->unbindRTSRVs();
+			RenderingDevice::GetSingleton()->setOffScreenRTResolved();
+
+			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Copy);
+			m_BasicPostProcess->SetSourceTexture(m_GaussianBlurSRV.Get());
+			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+		}
+
+		if (postProcessingDetails.isMonochrome)
+		{
+			RenderingDevice::GetSingleton()->unbindRTSRVs();
+			RenderingDevice::GetSingleton()->setRTV(m_MonochromeRTV);
+
+			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Monochrome);
+			m_BasicPostProcess->SetSourceTexture(RenderingDevice::GetSingleton()->getOffScreenRTSRVResolved().Get());
+			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+
+			RenderingDevice::GetSingleton()->unbindRTSRVs();
+			RenderingDevice::GetSingleton()->setOffScreenRTResolved();
+
+			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Copy);
+			m_BasicPostProcess->SetSourceTexture(m_MonochromeSRV.Get());
+			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+		}
+
+		if (postProcessingDetails.isSepia)
+		{
+			RenderingDevice::GetSingleton()->unbindRTSRVs();
+			RenderingDevice::GetSingleton()->setRTV(m_SepiaRTV);
+
+			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Sepia);
+			m_BasicPostProcess->SetSourceTexture(RenderingDevice::GetSingleton()->getOffScreenRTSRVResolved().Get());
+			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+
+			RenderingDevice::GetSingleton()->unbindRTSRVs();
+			RenderingDevice::GetSingleton()->setOffScreenRTResolved();
+
+			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Copy);
+			m_BasicPostProcess->SetSourceTexture(m_SepiaSRV.Get());
+			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+		}
+
+		if (postProcessingDetails.isBloom)
+		{
+			RenderingDevice::GetSingleton()->unbindRTSRVs();
+			RenderingDevice::GetSingleton()->setRTV(m_BloomExtractRTV);
+
+			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::BloomExtract);
+			m_BasicPostProcess->SetBloomExtractParameter(postProcessingDetails.bloomThreshold);
+			m_BasicPostProcess->SetSourceTexture(RenderingDevice::GetSingleton()->getOffScreenRTSRVResolved().Get());
+			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+
+			RenderingDevice::GetSingleton()->unbindRTSRVs();
+			RenderingDevice::GetSingleton()->setRTV(m_BloomHorizontalBlurRTV);
+
+			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::BloomBlur);
+			m_BasicPostProcess->SetBloomBlurParameters(true, postProcessingDetails.bloomSize, postProcessingDetails.bloomBrightness);
+			m_BasicPostProcess->SetSourceTexture(m_BloomExtractSRV.Get());
+			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+
+			RenderingDevice::GetSingleton()->unbindRTSRVs();
+			RenderingDevice::GetSingleton()->setRTV(m_BloomVerticalBlurRTV);
+
+			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::BloomBlur);
+			m_BasicPostProcess->SetBloomBlurParameters(false, postProcessingDetails.bloomSize, postProcessingDetails.bloomBrightness);
+			m_BasicPostProcess->SetSourceTexture(m_BloomHorizontalBlurSRV.Get());
+			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+
+			RenderingDevice::GetSingleton()->unbindRTSRVs();
+			RenderingDevice::GetSingleton()->setRTV(m_BloomRTV.Get());
+
+			m_DualPostProcess->SetSourceTexture(m_BloomVerticalBlurSRV.Get());
+			m_DualPostProcess->SetSourceTexture2(RenderingDevice::GetSingleton()->getOffScreenRTSRVResolved().Get());
+			m_DualPostProcess->SetBloomCombineParameters(postProcessingDetails.bloomValue, postProcessingDetails.bloomBase, postProcessingDetails.bloomSaturation, postProcessingDetails.bloomBaseSaturation);
+			m_DualPostProcess->SetEffect(DirectX::DualPostProcess::Effect::BloomCombine);
+			m_DualPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+
+			RenderingDevice::GetSingleton()->unbindRTSRVs();
+			RenderingDevice::GetSingleton()->setOffScreenRTResolved();
+
+			m_BasicPostProcess->SetSourceTexture(m_BloomSRV.Get());
+			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Copy);
+			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+		}
+
+		if (postProcessingDetails.isToneMap)
+		{
+			RenderingDevice::GetSingleton()->unbindRTSRVs();
+			RenderingDevice::GetSingleton()->setRTV(m_ToneMapRTV);
+
+			m_ToneMapPostProcess->SetOperator((DirectX::ToneMapPostProcess::Operator)postProcessingDetails.toneMapOperator);
+			m_ToneMapPostProcess->SetHDRSourceTexture(RenderingDevice::GetSingleton()->getOffScreenRTSRVResolved().Get());
+			m_ToneMapPostProcess->SetExposure(postProcessingDetails.toneMapExposure);
+			m_ToneMapPostProcess->SetTransferFunction((DirectX::ToneMapPostProcess::TransferFunction)postProcessingDetails.toneMapTransferFunction);
+			m_ToneMapPostProcess->SetST2084Parameter(postProcessingDetails.toneMapWhiteNits);
+			m_ToneMapPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+
+			RenderingDevice::GetSingleton()->unbindRTSRVs();
+			RenderingDevice::GetSingleton()->setOffScreenRTResolved();
+
+			m_BasicPostProcess->SetSourceTexture(m_ToneMapSRV.Get());
+			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Copy);
+			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+		}
+	}
+	
+	RenderingDevice::GetSingleton()->unbindRTSRVs();
+	RenderingDevice::GetSingleton()->setOffScreenRTResolved();
 }
 
 void RenderSystem::renderLines()
@@ -194,12 +341,12 @@ void RenderSystem::popMatrix()
 
 void RenderSystem::enableWireframeRasterizer()
 {
-	RenderingDevice::GetSingleton()->setRasterizerState(RenderingDevice::RasterizerState::Wireframe);
+	RenderingDevice::GetSingleton()->setRSType(RenderingDevice::RasterizerState::Wireframe);
 }
 
 void RenderSystem::resetDefaultRasterizer()
 {
-	RenderingDevice::GetSingleton()->setRasterizerState(RenderingDevice::RasterizerState::Default);
+	RenderingDevice::GetSingleton()->setRSType(RenderingDevice::RasterizerState::Default);
 }
 
 void RenderSystem::setProjectionConstantBuffers()
@@ -217,9 +364,21 @@ void RenderSystem::perFrameVSCBBinds(float fogStart, float fogEnd)
 void RenderSystem::perFramePSCBBinds(const Color& fogColor)
 {
 	PerFramePSCB perFrame;
-	perFrame.lights = LightSystem::GetSingleton()->getLights();
+	perFrame.lights = LightSystem::GetSingleton()->getDynamicLights();
 	perFrame.fogColor = fogColor;
 	Material::SetPSConstantBuffer(perFrame, m_PSPerFrameConstantBuffer, PER_FRAME_PS_CPP);
+}
+
+void RenderSystem::perLevelPSCBBinds()
+{
+	PerLevelPSCB perLevel;
+	perLevel.staticLights = LightSystem::GetSingleton()->getStaticPointLights();
+	Material::SetPSConstantBuffer(perLevel, m_PSPerLevelConstantBuffer, PER_LEVEL_PS_CPP);
+}
+
+void RenderSystem::updatePerLevelBinds()
+{
+	perLevelPSCBBinds();
 }
 
 void RenderSystem::enableLineRenderMode()
@@ -234,9 +393,9 @@ void RenderSystem::resetRenderMode()
 
 void RenderSystem::setCamera(CameraComponent* camera)
 {
-	m_Camera = camera;
-	if (m_Camera)
+	if (camera)
 	{
+		m_Camera = camera;
 		setProjectionConstantBuffers();
 	}
 }
@@ -249,6 +408,12 @@ void RenderSystem::restoreCamera()
 const Matrix& RenderSystem::getCurrentMatrix() const
 {
 	return m_TransformationStack.back();
+}
+
+Variant RenderSystem::onOpenedLevel(const Event* event)
+{
+	updatePerLevelBinds();
+	return true;
 }
 
 #ifdef ROOTEX_EDITOR
@@ -273,7 +438,12 @@ void RenderSystem::draw()
 
 		ImGui::EndCombo();
 	}
-
+	ImGui::NextColumn();
 	ImGui::Columns(1);
+
+	if (ImGui::Button("Update Static Lights")) 
+	{
+		updatePerLevelBinds();
+	}
 }
 #endif

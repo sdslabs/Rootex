@@ -1,0 +1,67 @@
+{
+    "Components": {
+        "BoxColliderComponent": {
+            "dimensions": {
+                "x": 0.4399999976158142,
+                "y": 0.20999999344348907,
+                "z": 0.9100000262260437
+            },
+            "gravity": {
+                "x": 0.0,
+                "y": -9.800000190734863,
+                "z": 0.0
+            },
+            "isGeneratesHitEvents": false,
+            "isMoveable": true,
+            "matName": "Air"
+        },
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 1
+        },
+        "ModelComponent": {
+            "isVisible": true,
+            "renderPass": 1,
+            "resFile": "game/assets/test/animal.obj"
+        },
+        "ScriptComponent": {
+            "scripts": [
+                "game\\assets\\scripts\\ball.lua"
+            ]
+        },
+        "TransformComponent": {
+            "boundingBox": {
+                "center": {
+                    "x": 0.0,
+                    "y": 9.960000038146973,
+                    "z": 0.0
+                },
+                "extents": {
+                    "x": 11.829999923706055,
+                    "y": 7.889999866485596,
+                    "z": 22.149999618530273
+                }
+            },
+            "position": {
+                "x": -3.055000066757202,
+                "y": 0.46851563453674316,
+                "z": 1.3915270566940308
+            },
+            "rotation": {
+                "w": 0.7213823199272156,
+                "x": -0.0,
+                "y": 0.6925370097160339,
+                "z": -0.0
+            },
+            "scale": {
+                "x": 0.05999955162405968,
+                "y": 0.0599999874830246,
+                "z": 0.05999955162405968
+            }
+        }
+    },
+    "Entity": {
+        "ID": 6,
+        "name": "Animal"
+    }
+}

@@ -28,12 +28,12 @@ void Material::draw(const String& id)
 {
 	ImGui::Columns(2);
 
-	ImGui::Text("Name");
+	ImGui::Text("Material Name");
 	ImGui::NextColumn();
 	ImGui::Text("%s", m_FileName.c_str());
 	ImGui::NextColumn();
 
-	ImGui::Text("Type");
+	ImGui::Text("Material Type");
 	ImGui::NextColumn();
 	ImGui::Text("%s", m_TypeName.c_str());
 	ImGui::NextColumn();

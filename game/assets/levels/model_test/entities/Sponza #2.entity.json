@@ -1,23 +1,55 @@
 {
     "Components": {
-        "FogComponent": {
-            "color": {
-                "a": 1.0,
-                "b": 0.8774510025978088,
-                "g": 0.9711649417877197,
-                "r": 1.0
-            },
-            "far": 46.0,
-            "near": 8.0
-        },
         "HierarchyComponent": {
             "children": [],
             "parent": 1
         },
         "ModelComponent": {
+            "affectingStaticLights": [
+                70,
+                35,
+                56,
+                88,
+                17,
+                87,
+                89,
+                90,
+                91,
+                92
+            ],
             "isVisible": true,
+            "materialOverrides": {
+                "game/assets/materials/Material__298.rmat": "game/assets/materials/Material__298.rmat",
+                "game/assets/materials/VasePlant.rmat": "game/assets/materials/VasePlant.rmat",
+                "game/assets/materials/arch.rmat": "game/assets/materials/arch.rmat",
+                "game/assets/materials/bricks.rmat": "game/assets/materials/bricks.rmat",
+                "game/assets/materials/ceiling.rmat": "game/assets/materials/ceiling.rmat",
+                "game/assets/materials/chain.rmat": "game/assets/materials/chain.rmat",
+                "game/assets/materials/column_a.rmat": "game/assets/materials/column_a.rmat",
+                "game/assets/materials/column_b.rmat": "game/assets/materials/column_b.rmat",
+                "game/assets/materials/column_c.rmat": "game/assets/materials/column_c.rmat",
+                "game/assets/materials/details.rmat": "game/assets/materials/details.rmat",
+                "game/assets/materials/fabric_a.rmat": "game/assets/materials/fabric_a.rmat",
+                "game/assets/materials/fabric_c.rmat": "game/assets/materials/fabric_c.rmat",
+                "game/assets/materials/fabric_d.rmat": "game/assets/materials/fabric_d.rmat",
+                "game/assets/materials/fabric_e.rmat": "game/assets/materials/fabric_e.rmat",
+                "game/assets/materials/fabric_f.rmat": "game/assets/materials/fabric_f.rmat",
+                "game/assets/materials/fabric_g.rmat": "game/assets/materials/fabric_g.rmat",
+                "game/assets/materials/flagpole.rmat": "game/assets/materials/flagpole.rmat",
+                "game/assets/materials/floor.rmat": "game/assets/materials/floor.rmat",
+                "game/assets/materials/leaf.rmat": "game/assets/materials/leaf.rmat",
+                "game/assets/materials/roof.rmat": "game/assets/materials/roof.rmat",
+                "game/assets/materials/vase.rmat": "game/assets/materials/vase.rmat",
+                "game/assets/materials/vase_hanging.rmat": "game/assets/materials/vase_hanging.rmat",
+                "game/assets/materials/vase_round.rmat": "game/assets/materials/vase_round.rmat",
+                "rootex/assets/materials/default.rmat": "game/assets/materials/material__25.rmat"
+            },
             "renderPass": 4,
-            "resFile": "game/assets/sponza/sponza.3ds"
+            "resFile": "game/assets/sponza/sponza.obj"
+        },
+        "SkyComponent": {
+            "skyMaterial": "rootex/assets/materials/sky.rmat",
+            "skySphere": "rootex/assets/sky.obj"
         },
         "TransformComponent": {
             "boundingBox": {
@@ -34,12 +66,12 @@
             },
             "position": {
                 "x": 0.0,
-                "y": 0.0,
+                "y": 0.10000000149011612,
                 "z": 0.0
             },
             "rotation": {
-                "w": 0.7085948586463928,
-                "x": -0.7056155800819397,
+                "w": 1.0,
+                "x": -0.0,
                 "y": 0.0,
                 "z": -0.0
             },

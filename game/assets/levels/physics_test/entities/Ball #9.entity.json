@@ -6,8 +6,11 @@
         },
         "ModelComponent": {
             "isVisible": true,
+            "materialOverrides": {
+                "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+            },
             "renderPass": 1,
-            "resFile": "game\\assets\\test\\sphere.obj"
+            "resFile": "game/assets/test/sphere.obj"
         },
         "SkyComponent": {
             "skyMaterial": "rootex/assets/materials/sky.rmat",
