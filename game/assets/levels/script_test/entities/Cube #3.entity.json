@@ -53,7 +53,9 @@
         "ID": 3,
         "name": "Cube",
         "script": {
-            "overrides": null,
+            "overrides": {
+                "a": "\"hello from override\""
+            },
             "path": "game\\assets\\scripts\\script_test2.lua"
         }
     }

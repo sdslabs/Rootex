@@ -12,6 +12,7 @@ end
 
 function onUpdate(entity, delta)
     transform:setPosition(RTX.Vector3.new(number, 0, -5))
+    print(exports.a)
 end
 
 function onHit(entity, hit, other)
