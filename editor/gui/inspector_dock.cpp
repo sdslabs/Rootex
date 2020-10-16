@@ -148,7 +148,7 @@ void InspectorDock::draw(float deltaMilliseconds)
 
 				ImGui::Separator();
 
-				m_OpenedEntity->getScript()->draw();
+				m_OpenedEntity->draw();
 
 				ImGui::Separator();
 

@@ -19,7 +19,7 @@ protected:
 	String m_Name;
 	HashMap<ComponentID, Ref<Component>> m_Components;
 	bool m_IsEditorOnly;
-	Ref<Script> m_Script;
+	Ptr<Script> m_Script;
 	
 	Entity(EntityID id, const String& name, const JSON::json& script = {});
 
@@ -55,7 +55,6 @@ public:
 	template <class ComponentType = Component>
 	Ref<ComponentType> getComponentFromID(ComponentID ID) const;
 
-	Ref<Script> getScript() { return m_Script; }
 	sol::table getScriptEnvt();
 	void setScriptEnvt(sol::table changed);
 
@@ -64,9 +63,16 @@ public:
 	bool isEditorOnly() const { return m_IsEditorOnly; }
 
 	bool call(const String& function, const Vector<Variant>& args);
+	void evaluateScriptOverrides();
+	bool setScript(const String& path);
+	void setNullScript(Script* script);
 	
 	void setName(const String& name);
 	void setEditorOnly(bool editorOnly) { m_IsEditorOnly = editorOnly; }
+
+#ifdef ROOTEX_EDITOR
+	void draw();
+#endif
 };
 
 template <class ComponentType>

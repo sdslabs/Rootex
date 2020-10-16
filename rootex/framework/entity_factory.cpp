@@ -42,8 +42,16 @@ EntityID EntityFactory::s_CurrentEditorID = -ROOT_ENTITY_ID;
 void EntityFactory::RegisterAPI(sol::table& rootex)
 {
 	sol::usertype<EntityFactory> entityFactory = rootex.new_usertype<EntityFactory>("EntityFactory");
-	entityFactory["Create"] = [](TextResourceFile* t) { return EntityFactory::GetSingleton()->createEntity(t); };
-	entityFactory["CreateFromClass"] = [](TextResourceFile* t) { return EntityFactory::GetSingleton()->createEntityFromClass(t); };
+	entityFactory["Create"] = [](TextResourceFile* t) {
+		Ref<Entity> newEntity =  EntityFactory::GetSingleton()->createEntity(t); 
+		newEntity->evaluateScriptOverrides();
+		return newEntity;
+	};
+	entityFactory["CreateFromClass"] = [](TextResourceFile* t) { 
+		Ref<Entity> newEntity = EntityFactory::GetSingleton()->createEntityFromClass(t); 
+		newEntity->evaluateScriptOverrides();
+		return newEntity;
+	};
 	entityFactory["Find"] = [](EntityID e) { return EntityFactory::GetSingleton()->findEntity(e); };
 }
 
@@ -413,14 +421,14 @@ Ref<Entity> EntityFactory::createEntityFromClass(TextResourceFile* entityFile)
 	return createEntityFromClass(JSON::json::parse(entityFile->getString()));
 }
 
-Ref<Entity> EntityFactory::createEntityFromClass(const JSON::json& entityJSON)
+Ref<Entity> EntityFactory::createEntityFromClass(JSON::json& entityJSON)
 {
 	Ref<Entity> createdEntity = createEntityHierarchyFromClass(entityJSON);
 	fixParentID(createdEntity, ROOT_ENTITY_ID);
 	return createdEntity;
 }
 
-Ref<Entity> EntityFactory::createEntityHierarchyFromClass(JSON::json entityJSON)
+Ref<Entity> EntityFactory::createEntityHierarchyFromClass(JSON::json& entityJSON)
 {
 	Vector<EntityID> ids;
 
