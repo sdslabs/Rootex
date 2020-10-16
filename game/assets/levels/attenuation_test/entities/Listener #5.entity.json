@@ -6,7 +6,11 @@
             "parent": 1
         },
         "ModelComponent": {
+            "affectingStaticLights": [],
             "isVisible": true,
+            "materialOverrides": {
+                "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+            },
             "renderPass": 1,
             "resFile": "game/assets/test/cube.obj"
         },
@@ -43,6 +47,7 @@
     },
     "Entity": {
         "ID": 5,
-        "name": "Listener"
+        "name": "Listener",
+        "script": null
     }
 }

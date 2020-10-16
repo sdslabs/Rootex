@@ -28,9 +28,6 @@
             "diffuseIntensity": 33.0,
             "range": 35.0
         },
-        "ScriptComponent": {
-            "script": "game/assets/scripts/ball.lua"
-        },
         "SphereColliderComponent": {
             "gravity": {
                 "x": 0.0,
@@ -75,6 +72,10 @@
     },
     "Entity": {
         "ID": 8,
-        "name": "Ball"
+        "name": "Ball",
+        "script": {
+            "overrides": null,
+            "path": "game/assets/scripts/ball.lua"
+        }
     }
 }

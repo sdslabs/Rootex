@@ -27,9 +27,6 @@
             "renderPass": 1,
             "resFile": "rootex/assets/cube.obj"
         },
-        "ScriptComponent": {
-            "script": "rootex/assets/scripts/empty.lua"
-        },
         "TransformComponent": {
             "boundingBox": {
                 "center": {
@@ -63,6 +60,10 @@
     },
     "Entity": {
         "ID": 8,
-        "name": "FallingCube"
+        "name": "FallingCube",
+        "script": {
+            "overrides": null,
+            "path": "rootex/assets/scripts/empty.lua"
+        }
     }
 }

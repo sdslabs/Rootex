@@ -20,7 +20,11 @@
             "parent": 1
         },
         "ModelComponent": {
+            "affectingStaticLights": [],
             "isVisible": true,
+            "materialOverrides": {
+                "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+            },
             "renderPass": 1,
             "resFile": "rootex/assets/cube.obj"
         },
@@ -57,6 +61,7 @@
     },
     "Entity": {
         "ID": 41,
-        "name": "Obstacle1"
+        "name": "Obstacle1",
+        "script": null
     }
 }

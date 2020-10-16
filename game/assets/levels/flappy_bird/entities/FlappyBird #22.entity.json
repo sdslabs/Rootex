@@ -24,12 +24,13 @@
             "parent": 1
         },
         "ModelComponent": {
+            "affectingStaticLights": [],
             "isVisible": true,
+            "materialOverrides": {
+                "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+            },
             "renderPass": 1,
             "resFile": "rootex/assets/cube.obj"
-        },
-        "ScriptComponent": {
-            "script": "game/assets/scripts/flappy_bird.lua"
         },
         "SkyComponent": {
             "skyMaterial": "rootex/assets/materials/sky.rmat",
@@ -68,6 +69,10 @@
     },
     "Entity": {
         "ID": 22,
-        "name": "FlappyBird"
+        "name": "FlappyBird",
+        "script": {
+            "overrides": null,
+            "path": "game/assets/scripts/flappy_bird.lua"
+        }
     }
 }

@@ -4,9 +4,6 @@
             "children": [],
             "parent": 1
         },
-        "ScriptComponent": {
-            "script": "game/assets/scripts/level_change.lua"
-        },
         "TextUIComponent": {
             "color": {
                 "a": 1.0,
@@ -56,6 +53,10 @@
     },
     "Entity": {
         "ID": 33,
-        "name": "LevelChanger"
+        "name": "LevelChanger",
+        "script": {
+            "overrides": null,
+            "path": "game/assets/scripts/level_change.lua"
+        }
     }
 }

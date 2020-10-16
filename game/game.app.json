@@ -1,6 +1,6 @@
 {
     "project": "Rootex Game",
-    "startLevel": "game/assets/levels/flappy_bird",
+    "startLevel": "game/assets/levels/script_test",
     "systems": {
         "AudioSystem": {},
         "InputManager": {
