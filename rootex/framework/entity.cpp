@@ -17,7 +17,7 @@ void Entity::RegisterAPI(sol::table& rootex)
 	entity["getName"] = &Entity::getName;
 	entity["setName"] = &Entity::setName;
 
-	entity["script"] = sol::property(&Entity::getScriptEnvt, &Entity::setScriptEnvt);
+	entity["script"] = sol::property(&Entity::getScriptEnv, &Entity::setScriptEnv);
 	entity["setScript"] = sol::overload(&Entity::setScript, &Entity::setNullScript);
 
 	sol::usertype<Component> component = rootex.new_usertype<Component>("Component");
@@ -105,12 +105,12 @@ bool Entity::setupEntities()
 	return status;
 }
 
-sol::table Entity::getScriptEnvt()
+sol::table Entity::getScriptEnv()
 {
 	return (sol::table)m_Script->m_ScriptEnvironment;
 }
 
-void Entity::setScriptEnvt(sol::table changed)
+void Entity::setScriptEnv(sol::table changed)
 {
 	m_Script->m_ScriptEnvironment.set(changed);
 }
