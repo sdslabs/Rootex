@@ -55,8 +55,8 @@ public:
 	template <class ComponentType = Component>
 	Ref<ComponentType> getComponentFromID(ComponentID ID) const;
 
-	sol::table getScriptEnvt();
-	void setScriptEnvt(sol::table changed);
+	sol::table getScriptEnv();
+	void setScriptEnv(sol::table changed);
 
 	JSON::json getJSON() const;
 	const HashMap<ComponentID, Ref<Component>>& getAllComponents() const;
