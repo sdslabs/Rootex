@@ -62,12 +62,25 @@ void EventManager::call(const Event& event)
 
 	if (findIt != m_EventListeners.end())
 	{
-		const Vector<EventFunction>& eventListenerList = findIt->second;
-		for (auto it = eventListenerList.begin(); it != eventListenerList.end(); ++it)
+		Vector<EventFunction>& eventListenerList = findIt->second;
+		int toDelete = -1;
+		for (int i = 0; i != eventListenerList.size(); i++)
 		{
-			EventFunction listener = *it;
- 			listener(&event);
+			EventFunction& listener = eventListenerList[i];
+			if (listener)
+			{
+				listener(&event);
+			}
+			else
+			{
+				toDelete = i;
+			}
 			processed = true;
+		}
+
+		if (toDelete != -1)
+		{
+			eventListenerList.erase(eventListenerList.begin() + toDelete);
 		}
 	}
 }

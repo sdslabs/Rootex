@@ -22,6 +22,7 @@ class UIComponent : public Component
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::UIComponent;
 
+	Rml::ElementDocument* getDocument() { return m_Document; };
 	void setDocument(const String& path);
 
 	virtual const char* getName() const override { return "UIComponent"; }

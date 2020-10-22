@@ -1,7 +1,19 @@
 {
 	"camera": 18,
-	"inputSchemes": [],
-	"startScheme": "",
+	"inputSchemes": [
+		{
+			"name": "Default",
+            "bools": [
+                {
+                    "inputEvent": "NextDialogue",
+                    "device": 1,
+                    "button": 65
+				}
+            ],
+            "floats": {}
+		}
+	],
+	"startScheme": "Default",
 	"preload": [
 		"game/assets/sponza/sponza.obj",
 		"game/assets/scripts/fps_display.lua",

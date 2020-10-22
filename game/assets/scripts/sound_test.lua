@@ -1,3 +1,5 @@
+require("game/assets/scripts/state_machine")
+
 Box = class()
 function Box:open()
     print("Box was opened")
