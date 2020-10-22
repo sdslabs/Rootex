@@ -1,3 +1,14 @@
+Box = class()
+function Box:open()
+    print("Box was opened")
+end
+
+function Box:close()
+    print("Box was closed")
+end
+
+local box = Box()
+
 function onBegin(entity)
     transform = entity:getTransform()
     number = 0
@@ -15,6 +26,8 @@ function onUpdate(entity, delta)
     else
         transform:setPosition(RTX.Vector3.new(6, 0, 124 - 10 * number))
     end
+    box:open()
+    box:close()
 end
 
 function onEnd()

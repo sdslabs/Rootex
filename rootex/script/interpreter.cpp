@@ -47,6 +47,8 @@ LuaInterpreter::LuaInterpreter()
 
 	sol::table dbg = m_Lua.require_file("dbg", "rootex/script/debugger.lua");
 	dbg["auto_where"] = 2;
+	
+	m_Lua.do_file("rootex/script/class.lua");
 
 	registerTypes();
 }
