@@ -16,9 +16,9 @@ void Entity::RegisterAPI(sol::table& rootex)
 	entity["getID"] = &Entity::getID;
 	entity["getName"] = &Entity::getName;
 	entity["setName"] = &Entity::setName;
+	entity["setScript"] = &Entity::setScript;
 
 	entity["script"] = sol::property(&Entity::getScriptEnv, &Entity::setScriptEnv);
-	entity["setScript"] = sol::overload(&Entity::setScript, &Entity::setNullScript);
 
 	sol::usertype<Component> component = rootex.new_usertype<Component>("Component");
 	component["getOwner"] = &Component::getOwner;
@@ -172,18 +172,24 @@ void Entity::evaluateScriptOverrides()
 
 bool Entity::setScript(const String& path)
 {
-
+	if (path.empty())
+	{
+		m_Script.reset();
+		return true;
+	}
 	if (OS::IsExists(path))
 	{
 		JSON::json j;
 		j["path"] = path;
 		j["overrides"] = {};
 		m_Script.reset(new Script(j));
+		m_Script->setup();
+		m_Script->call("onBegin", { Ref<Entity>(this) });
 		return true;
 	}
 	else
 	{
-		ERR("Could not find script file: " + path);
+		WARN("Could not find script file: " + path);
 		return false;
 	}
 }
@@ -245,7 +251,6 @@ void Entity::draw()
 			if (IsFileSupported(payloadPath.extension().generic_string(), ResourceFile::Type::Lua))
 			{
 				setScript(payloadPath.generic_string());
-				m_Script->registerExports();
 			}
 			else
 			{

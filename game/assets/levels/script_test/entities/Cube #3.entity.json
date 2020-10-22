@@ -84,7 +84,8 @@
         "name": "Cube",
         "script": {
             "overrides": {
-                "a": "\"hello from override\""
+                "msg": "\"hello from override\"",
+                "x": ""
             },
             "path": "game\\assets\\scripts\\script_test2.lua"
         }

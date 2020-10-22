@@ -7,7 +7,6 @@ Script::Script(const JSON::json& script)
 	for (auto& element : JSON::json::iterator_wrapper(script["overrides"]))
 	{
 		m_Overrides[element.key()] = (String)element.value();
-		m_IsOverriden[element.key()] = true;
 	}
 
 	addScriptInternal(luaFilePath);
@@ -48,10 +47,13 @@ void Script::evaluateOverrides()
 {
 	for (auto&& [varName, lua] : m_Overrides)
 	{
-		sol::optional<sol::object> currVar = m_ScriptEnvironment["exports"][varName];
-		if (currVar)
+		if (!lua.empty())
 		{
-			m_ScriptEnvironment["exports"][varName] = LuaInterpreter::GetSingleton()->getLuaState().script("return " + lua);
+			sol::optional<sol::object> currVar = m_ScriptEnvironment["exports"][varName];
+			if (currVar)
+			{
+				m_ScriptEnvironment["exports"][varName] = LuaInterpreter::GetSingleton()->getLuaState().script("return " + lua);
+			}
 		}
 	}
 }
@@ -86,24 +88,6 @@ bool Script::addScriptInternal(const String& scriptFile)
 }
 
 #ifdef ROOTEX_EDITOR
-
-void Script::registerExports()
-{
-	auto exportsCheck = m_ScriptEnvironment["exports"];
-	if (exportsCheck.valid())
-	{
-		sol::table exports = m_ScriptEnvironment["exports"];
-		sol::table currExports = m_ScriptEnvironment["exports"];
-		FilePath file(m_ScriptFile);
-		String script = file.stem().generic_string();
-
-		currExports.for_each([&](sol::object const& key, sol::object const& value) {
-			String varName = key.as<String>();
-			m_IsOverriden[varName] = false;
-		});
-	}
-}
-
 #include "imgui.h"
 #include "imgui_stdlib.h"
 void Script::draw()
@@ -115,26 +99,14 @@ void Script::draw()
 	if (currExports)
 	{
 		sol::table exports = m_ScriptEnvironment["exports"];
+		ImGui::LabelText("Variable", "Lua");
 		exports.for_each([&](sol::object const& key, sol::object const& value) {
 			String varName = key.as<String>();
-			ImGui::Text(varName.c_str());
-			ImGui::SameLine();
-			if (ImGui::Checkbox(String("##check" + varName).c_str(), &m_IsOverriden[varName]))
+			if (m_Overrides.find(varName) == m_Overrides.end())
 			{
-				if (m_IsOverriden[varName])
-				{
-					m_Overrides[varName] = "";
-				}
-				else
-				{
-					m_Overrides.erase(varName);
-				}
+				m_Overrides[varName] = "";
 			}
-			if (m_IsOverriden[varName])
-			{
-				ImGui::InputTextMultiline(String("##text" + varName).c_str(), &m_Overrides[varName], ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 1));
-			}
-			ImGui::Separator();
+			ImGui::InputText(varName.c_str(), &m_Overrides[varName]);
 		});
 	}
 }
