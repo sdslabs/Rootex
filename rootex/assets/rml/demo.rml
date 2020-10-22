@@ -39,7 +39,35 @@
 			}
 		</style>
 		<script>
-Demo = Demo or {}
+require("game/assets/scripts/state_machine")
+
+Demo = {
+	machine = StateMachine(),
+	document = nil
+}
+
+function Demo.setDocument(document)
+	Demo.document = document
+end
+
+function Demo.onNextDialog(event)
+	if event:getData().y == 0 then
+		return true
+	end
+
+	local newState = Demo.machine:change()
+	local dialogueBox = Demo.document:GetElementById("dialogue")
+	if newState == nil then
+		if dialogueBox ~= nil then
+			Demo.document:RemoveChild(dialogueBox)
+		end
+		return true
+	end
+	dialogueBox.inner_rml = newState:getDesc()
+	return true
+end
+
+RTX.Connect(Demo.onNextDialog, "NextDialogue")
 
 function Demo.toggle(document, enabled)
 	if enabled then
@@ -47,11 +75,12 @@ function Demo.toggle(document, enabled)
 	else
 		document:GetElementById("rootex_button").style.visibility = "visible"
 	end
-end		
+end
+
 		</script>
 	</head>
-	<body>
-		<p id="transition_test"> This is a sample! </p>
+	<body onload="Demo.setDocument(document)">
+		<p id="transition_test">This is a sample!</p>
 		<br />
 		<img
 			id="rootex_button"
@@ -61,5 +90,7 @@ end
 			width=100 
 			height=100 
 		/>
+		<br/>
+		<p id="dialogue">Press A for next dialog</p>
 	</body>
 </rml>
