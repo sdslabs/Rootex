@@ -15,7 +15,6 @@ class Script
 private:
 	sol::environment m_ScriptEnvironment;
 	String m_ScriptFile;
-	HashMap<String, bool> m_IsOverriden;
 	HashMap<String, String> m_Overrides;
 
 	friend class Entity;
@@ -24,7 +23,6 @@ private:
 	bool isSuccessful(const sol::function_result& result);
 public:
 	Script(const JSON::json& script);
-	Script(const String& filePath);
 	Script(const Script&) = delete;
 	~Script() = default;
 	
@@ -37,7 +35,6 @@ public:
 	void evaluateOverrides();
 
 #ifdef ROOTEX_EDITOR
-	void registerExports();
 	void draw();
 #endif
 };

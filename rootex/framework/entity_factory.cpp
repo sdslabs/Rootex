@@ -45,11 +45,13 @@ void EntityFactory::RegisterAPI(sol::table& rootex)
 	entityFactory["Create"] = [](TextResourceFile* t) {
 		Ref<Entity> newEntity =  EntityFactory::GetSingleton()->createEntity(t); 
 		newEntity->evaluateScriptOverrides();
+		newEntity->call("onBegin", { newEntity });
 		return newEntity;
 	};
 	entityFactory["CreateFromClass"] = [](TextResourceFile* t) { 
 		Ref<Entity> newEntity = EntityFactory::GetSingleton()->createEntityFromClass(t); 
 		newEntity->evaluateScriptOverrides();
+		newEntity->call("onBegin", { newEntity });
 		return newEntity;
 	};
 	entityFactory["Find"] = [](EntityID e) { return EntityFactory::GetSingleton()->findEntity(e); };
