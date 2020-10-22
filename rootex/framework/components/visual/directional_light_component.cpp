@@ -9,15 +9,6 @@ Component* DirectionalLightComponent::Create(const JSON::json& componentData)
 	return directionalLightComponent;
 }
 
-Component* DirectionalLightComponent::CreateDefault()
-{
-	DirectionalLightComponent* directionalLightComponent = new DirectionalLightComponent(
-	    0.8f,
-	    Color(1.0f, 1.0f, 0.5f, 1.0f),
-	    Color(0.8f, 0.8f, 0.5f, 1.0f));
-	return directionalLightComponent;
-}
-
 DirectionalLightComponent::DirectionalLightComponent(const float diffuseIntensity,
     const Color& diffuseColor, const Color& ambientColor)
     : m_DependencyOnTransformComponent(this)

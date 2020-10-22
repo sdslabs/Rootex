@@ -10,11 +10,6 @@ Component* UIComponent::Create(const JSON::json& componentData)
 	return ui;
 }
 
-Component* UIComponent::CreateDefault()
-{
-	return new UIComponent("rootex/assets/rml/demo.rml");
-}
-
 UIComponent::UIComponent(const String& path)
     : m_FilePath(path)
     , m_Document(nullptr)

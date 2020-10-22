@@ -7,7 +7,6 @@ class TransformComponent : public Component
 {
 private:
 	static Component* Create(const JSON::json& componentData);
-	static Component* CreateDefault();
 
 	struct TransformBuffer
 	{

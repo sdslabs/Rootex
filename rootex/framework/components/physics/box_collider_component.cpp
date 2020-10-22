@@ -12,17 +12,6 @@ Component* BoxColliderComponent::Create(const JSON::json& boxComponentData)
 	return component;
 }
 
-Component* BoxColliderComponent::CreateDefault()
-{
-	BoxColliderComponent* component = new BoxColliderComponent(
-		{ 0.5f, 0.5f, 0.5f },
-		"Air",
-	    { 0.0f, 0.0f, 0.0f },
-		false,
-		false);
-	return component;
-}
-
 BoxColliderComponent::BoxColliderComponent(const Vector3& dimensions, const String& matName, const Vector3& gravity, bool isMoveable, bool generatesHitEvents)
     : PhysicsColliderComponent(matName, dimensions.x * dimensions.y * dimensions.z, gravity, isMoveable, Ref<btBoxShape>(new btBoxShape(vecTobtVector3(dimensions))), generatesHitEvents)
     , m_Dimensions(dimensions)

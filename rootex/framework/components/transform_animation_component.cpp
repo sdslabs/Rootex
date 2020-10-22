@@ -25,11 +25,6 @@ Component* TransformAnimationComponent::Create(const JSON::json& componentData)
 	return animation;
 }
 
-Component* TransformAnimationComponent::CreateDefault()
-{
-	return new TransformAnimationComponent({}, false, AnimationMode::None, TransitionType::SmashSmash);
-}
-
 TransformAnimationComponent::TransformAnimationComponent(const Vector<Keyframe> keyframes, bool isPlayOnStart, AnimationMode animationMode, TransitionType transition)
     : m_Keyframes(keyframes)
     , m_CurrentTimePosition(0.0f)

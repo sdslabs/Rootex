@@ -14,7 +14,6 @@ class ScriptComponent : public Component
 {
 public:
 	static Component* Create(const JSON::json& componentData);
-	static Component* CreateDefault();
 
 private:
 	Vector<sol::environment> m_ScriptEnvironments;

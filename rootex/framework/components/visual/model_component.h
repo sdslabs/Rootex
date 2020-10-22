@@ -13,7 +13,6 @@ class ModelComponent : public Component
 	DEPENDS_ON(HierarchyComponent);
 
 	static Component* Create(const JSON::json& componentData);
-	static Component* CreateDefault();
 
 	friend class EntityFactory;
 

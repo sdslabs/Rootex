@@ -32,7 +32,6 @@ public:
 
 private:
 	static Component* Create(const JSON::json& componentData);
-	static Component* CreateDefault();
 
 	friend class EntityFactory;
 

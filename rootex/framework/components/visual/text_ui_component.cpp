@@ -15,17 +15,6 @@ Component* TextUIComponent::Create(const JSON::json& componentData)
 	return tV2DC;
 }
 
-Component* TextUIComponent::CreateDefault()
-{
-	return new TextUIComponent(
-	    ResourceLoader::CreateFontResourceFile("game/assets/fonts/noto_sans_50_regular.spritefont"),
-	    "Hello Rootex!",
-	    (Color)ColorPresets::White,
-	    Mode::None,
-	    { 0.0f, 0.0f },
-	    true);
-}
-
 TextUIComponent::TextUIComponent(FontResourceFile* font, const String& text, const Color& color, const Mode& mode, const Vector2& origin, const bool& isVisible)
     : RenderUIComponent(isVisible)
 	, m_FontFile(font)

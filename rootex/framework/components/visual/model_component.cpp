@@ -22,18 +22,6 @@ Component* ModelComponent::Create(const JSON::json& componentData)
 	return modelComponent;
 }
 
-Component* ModelComponent::CreateDefault()
-{
-	ModelComponent* modelComponent = new ModelComponent(
-	    (int)RenderPass::Basic,
-	    ResourceLoader::CreateModelResourceFile("rootex/assets/cube.obj"),
-	    {},
-	    true,
-	    {});
-
-	return modelComponent;
-}
-
 ModelComponent::ModelComponent(unsigned int renderPass, ModelResourceFile* resFile, const HashMap<String, String>& materialOverrides, bool visibility, const Vector<EntityID>& affectingStaticLightIDs)
     : m_IsVisible(visibility)
     , m_RenderPass(renderPass)

@@ -30,7 +30,6 @@ class CameraComponent : public Component
 	DEPENDS_ON(TransformComponent);
 
 	static Component* Create(const JSON::json& componentData);
-	static Component* CreateDefault();
 
 	bool m_Active;
 	float m_FoV;

@@ -18,7 +18,6 @@ struct ParticleTemplate
 class CPUParticlesComponent : public ModelComponent
 {
 	static Component* Create(const JSON::json& componentData);
-	static Component* CreateDefault();
 	
 	struct Particle
 	{

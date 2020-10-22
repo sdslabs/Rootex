@@ -12,7 +12,6 @@ class HierarchyComponent : public Component
 
 protected:
 	static Component* Create(const JSON::json& componentData);
-	static Component* CreateDefault();
 
 	EntityID m_ParentID;
 	Vector<EntityID> m_ChildrenIDs;

@@ -8,12 +8,6 @@ Component* HierarchyComponent::Create(const JSON::json& componentData)
 	return component;
 }
 
-Component* HierarchyComponent::CreateDefault()
-{
-	HierarchyComponent* component = new HierarchyComponent(ROOT_ENTITY_ID, {});
-	return component;
-}
-
 void HierarchyComponent::RegisterAPI(sol::table& rootex)
 {
 	sol::usertype<HierarchyComponent> hierarchyComponent = rootex.new_usertype<HierarchyComponent>(

@@ -32,9 +32,7 @@
 #include "components/visual/ui_component.h"
 #include "systems/hierarchy_system.h"
 
-#define REGISTER_COMPONENT(ComponentClass)                                                            \
-	m_ComponentCreators.push_back({ ComponentClass::s_ID, #ComponentClass, ComponentClass::Create }); \
-	m_DefaultComponentCreators.push_back({ ComponentClass::s_ID, #ComponentClass, ComponentClass::CreateDefault })
+#define REGISTER_COMPONENT(ComponentClass) m_ComponentCreators.push_back({ ComponentClass::s_ID, #ComponentClass, ComponentClass::Create })
 
 EntityID EntityFactory::s_CurrentID = ROOT_ENTITY_ID;
 EntityID EntityFactory::s_CurrentEditorID = -ROOT_ENTITY_ID;
@@ -122,28 +120,7 @@ Ref<Component> EntityFactory::createComponent(const String& name, const JSON::js
 
 Ref<Component> EntityFactory::createDefaultComponent(const String& name)
 {
-	auto& findIt = m_DefaultComponentCreators.end();
-	for (auto& componentClass = m_DefaultComponentCreators.begin(); componentClass != m_DefaultComponentCreators.end(); componentClass++)
-	{
-		if (std::get<String>(*componentClass) == name)
-		{
-			findIt = componentClass;
-		}
-	}
-	if (findIt != m_DefaultComponentCreators.end())
-	{
-		ComponentDefaultCreator create = std::get<ComponentDefaultCreator>(*findIt);
-		Ref<Component> component(create());
-
-		System::RegisterComponent(component.get());
-
-		return component;
-	}
-	else
-	{
-		ERR("Could not find default component creator: " + name);
-		return nullptr;
-	}
+	return createComponent(name, JSON::json::object());
 }
 
 Ref<Entity> EntityFactory::createEntity(TextResourceFile* textResourceFile, bool isEditorOnly)
@@ -265,6 +242,10 @@ Ref<Entity> EntityFactory::createRootEntity()
 	{
 		Ref<AudioListenerComponent> rootListenerComponent = std::dynamic_pointer_cast<AudioListenerComponent>(createDefaultComponent("AudioListenerComponent"));
 		addComponent(root, rootListenerComponent);
+	}
+	{
+		Ref<SkyComponent> rootSkyComponent = std::dynamic_pointer_cast<SkyComponent>(createDefaultComponent("SkyComponent"));
+		addComponent(root, rootSkyComponent);
 	}
 
 	m_Entities[root->m_ID] = root;

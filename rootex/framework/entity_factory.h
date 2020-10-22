@@ -12,13 +12,10 @@
 
 /// Function pointer to a function that constructs a component, taking in a set of component data.
 typedef Component* (*ComponentCreator)(const JSON::json& componentDescription);
-/// Function pointer to a function that default constructs a component.
-typedef Component* (*ComponentDefaultCreator)();
-typedef int EntityID;
 /// Collection of a component, its name, and a function that constructs that component.
 typedef Vector<Tuple<ComponentID, String, ComponentCreator>> ComponentDatabase;
-/// Collection of a component, its name, and a function that constructs a default component.
-typedef Vector<Tuple<ComponentID, String, ComponentDefaultCreator>> DefaultComponentDatabase;
+
+typedef int EntityID;
 
 class EntityFactory
 {
@@ -35,7 +32,6 @@ class EntityFactory
 
 protected:
 	ComponentDatabase m_ComponentCreators;
-	DefaultComponentDatabase m_DefaultComponentCreators;
 
 	EntityFactory();
 	EntityFactory(EntityFactory&) = delete;
