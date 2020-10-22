@@ -9,11 +9,6 @@ Component* AudioListenerComponent::Create(const JSON::json& componentData)
 	return new AudioListenerComponent();
 }
 
-Component* AudioListenerComponent::CreateDefault()
-{
-	return new AudioListenerComponent();
-}
-
 AudioListenerComponent::AudioListenerComponent()
     : m_DependencyOnTransformComponent(this)
 {

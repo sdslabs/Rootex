@@ -11,7 +11,6 @@
 class StaticPointLightComponent : public PointLightComponent
 {
 	static Component* Create(const JSON::json& componentData);
-	static Component* CreateDefault();
 
 	StaticPointLightComponent::StaticPointLightComponent(const float constAtt, const float linAtt, const float quadAtt,
 	    const float range, const float diffuseIntensity, const Color& diffuseColor, const Color& ambientColor);

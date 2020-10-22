@@ -14,20 +14,6 @@ Component* ShortMusicComponent::Create(const JSON::json& componentData)
 	return shortMusicComponent;
 }
 
-Component* ShortMusicComponent::CreateDefault()
-{
-	ShortMusicComponent* shortMusicComponent = new ShortMusicComponent(
-	    ResourceLoader::CreateAudioResourceFile("rootex/assets/ball.wav"),
-	    false,
-	    false,
-		false,
-	    AudioSource::AttenuationModel::Linear,
-	    (ALfloat)1,
-	    (ALfloat)1,
-	    (ALfloat)100);
-	return shortMusicComponent;
-}
-
 ShortMusicComponent::ShortMusicComponent(AudioResourceFile* audioFile, bool playOnStart, bool isLooping, bool attenuation, AudioSource::AttenuationModel model, ALfloat rolloffFactor, ALfloat referenceDistance, ALfloat maxDistance)
     : AudioComponent(playOnStart, isLooping, attenuation, model, rolloffFactor, referenceDistance, maxDistance)
     , m_AudioFile(audioFile)

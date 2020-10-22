@@ -7,7 +7,6 @@
 class SkyComponent : public Component
 {
 	static Component* Create(const JSON::json& componentData);
-	static Component* CreateDefault();
 
 	friend class EntityFactory;
 

@@ -11,12 +11,6 @@ Component* ScriptComponent::Create(const JSON::json& componentData)
 	return sc;
 }
 
-Component* ScriptComponent::CreateDefault()
-{
-	ScriptComponent* sc = new ScriptComponent({});
-	return sc;
-}
-
 ScriptComponent::ScriptComponent(const Vector<String>& luaFilePaths)
 {
 	for (auto& path : luaFilePaths)

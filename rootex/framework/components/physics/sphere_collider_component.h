@@ -9,7 +9,6 @@
 class SphereColliderComponent : public PhysicsColliderComponent
 {
 	static Component* Create(const JSON::json& sphereComponentData);
-	static Component* CreateDefault();
 
 	float m_Radius;
 	Ref<btSphereShape> m_SphereShape;

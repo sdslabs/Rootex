@@ -18,7 +18,6 @@ public:
 	};
 
 	static Component* Create(const JSON::json& componentData);
-	static Component* CreateDefault();
 
 	/// Font file
 	FontResourceFile* m_FontFile;

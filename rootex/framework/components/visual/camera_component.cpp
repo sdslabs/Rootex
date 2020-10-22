@@ -56,18 +56,6 @@ Component* CameraComponent::Create(const JSON::json& componentData)
 	return cameraVisualComponent;
 }
 
-Component* CameraComponent::CreateDefault()
-{
-	PostProcessingDetails details;
-
-	CameraComponent* cameraVisualComponent = new CameraComponent(
-	    { 16.0f, 9.0f },
-		DirectX::XM_PI / 4.0f,
-		0.1f, 100.0f, 
-		details);
-	return cameraVisualComponent;
-}
-
 CameraComponent::CameraComponent(const Vector2& aspectRatio, float fov, float nearPlane, float farPlane, const PostProcessingDetails& postProcesing)
     : m_Active(false)
     , m_FoV(fov)

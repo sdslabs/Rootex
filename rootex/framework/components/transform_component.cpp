@@ -15,16 +15,6 @@ Component* TransformComponent::Create(const JSON::json& componentData)
 	return transformComponent;
 }
 
-Component* TransformComponent::CreateDefault()
-{
-	TransformComponent* transformComponent = new TransformComponent(
-	    { 0.0f, 0.0f, 0.0f },
-	    Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, 0.0f),
-	    { 1.0f, 1.0f, 1.0f },
-	    { { 0.0f, 0.0f, 0.0f }, { 0.5f, 0.5f, 0.5f } });
-	return transformComponent;
-}
-
 void TransformComponent::updateTransformFromPositionRotationScale()
 {
 	m_TransformBuffer.m_Transform = Matrix::Identity;

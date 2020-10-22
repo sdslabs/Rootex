@@ -8,11 +8,6 @@ Component* FogComponent::Create(const JSON::json& componentData)
 	    componentData.value("color", (Color)ColorPresets::Cyan));
 }
 
-Component* FogComponent::CreateDefault()
-{
-	return new FogComponent(0.0f, 100.0f, (Color)ColorPresets::Cyan);
-}
-
 FogComponent::FogComponent(float nearDistance, float farDistance, const Color& color)
     : m_Near(nearDistance)
     , m_Far(farDistance)

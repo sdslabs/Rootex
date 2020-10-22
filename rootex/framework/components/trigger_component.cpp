@@ -7,11 +7,6 @@ Component* TriggerComponent::Create(const JSON::json& componentData)
 	return new TriggerComponent(componentData.value("targetEntityID", INVALID_ID));
 }
 
-Component* TriggerComponent::CreateDefault()
-{
-	return new TriggerComponent(INVALID_ID);
-}
-
 TriggerComponent::TriggerComponent(EntityID targetEntity)
     : m_TargetEntityID(targetEntity)
 {

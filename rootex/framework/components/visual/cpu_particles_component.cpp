@@ -47,20 +47,6 @@ Component* CPUParticlesComponent::Create(const JSON::json& componentData)
 	return particles;
 }
 
-Component* CPUParticlesComponent::CreateDefault()
-{
-	CPUParticlesComponent* particles = new CPUParticlesComponent(
-		1000,
-		"rootex/assets/cube.obj",
-	    "rootex/assets/materials/default_particles.rmat",
-		ParticleTemplate(),
-		true,
-		(unsigned int)RenderPass::Basic,
-		EmitMode::Point,
-	    { 1.0f, 1.0f, 1.0f });
-	return particles;
-}
-
 CPUParticlesComponent::CPUParticlesComponent(size_t poolSize, const String& particleModelPath, const String& materialPath, const ParticleTemplate& particleTemplate, bool visibility, unsigned int renderPass, EmitMode emitMode, const Vector3& emitterDimensions)
     : ModelComponent(renderPass, ResourceLoader::CreateModelResourceFile(particleModelPath), {}, visibility, {})
     , m_BasicMaterial(std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetMaterial(materialPath)))

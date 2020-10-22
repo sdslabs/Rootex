@@ -10,7 +10,6 @@
 class MusicComponent : public AudioComponent
 {
 	static Component* Create(const JSON::json& componentData);
-	static Component* CreateDefault();
 
 	Ref<StreamingAudioSource> m_StreamingAudioSource;
 	Ref<StreamingAudioBuffer> m_StreamingAudioBuffer;

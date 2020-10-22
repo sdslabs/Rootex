@@ -11,15 +11,6 @@ Component* GridModelComponent::Create(const JSON::json& componentData)
 	    componentData.value("isVisible", true));
 }
 
-Component* GridModelComponent::CreateDefault()
-{
-	return new GridModelComponent(
-	    { 1.0f, 1.0f },
-		100,
-		(unsigned int)RenderPass::Editor,
-	    true);
-}
-
 GridModelComponent::GridModelComponent(const Vector2& cellSize, const int& cellCount, const unsigned int& renderPass, bool isVisible)
     : ModelComponent(renderPass, nullptr, {}, isVisible, {})
     , m_CellCount(cellCount)

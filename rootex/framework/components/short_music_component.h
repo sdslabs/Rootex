@@ -10,7 +10,6 @@
 class ShortMusicComponent : public AudioComponent
 {
 	static Component* Create(const JSON::json& componentData);
-	static Component* CreateDefault();
 
 	Ref<StaticAudioSource> m_StaticAudioSource;
 	Ref<StaticAudioBuffer> m_StaticAudioBuffer;

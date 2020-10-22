@@ -12,7 +12,6 @@ class SpotLightComponent : public Component
 	DEPENDS_ON(TransformComponent);
 
 	static Component* Create(const JSON::json& componentData);
-	static Component* CreateDefault();
 
 	SpotLightComponent::SpotLightComponent(const float constAtt, const float linAtt, const float quadAtt,
 	    const float range, const float diffuseIntensity, const Color& diffuseColor, const Color& ambientColor,
