@@ -3,6 +3,8 @@
 #include "common/types.h"
 #include "os/os.h"
 #include "script/interpreter.h"
+#include <vector>
+#include <sstream>
 
 #ifdef _DEBUG
 /// Logs function, message in white color
@@ -47,3 +49,16 @@
 /// Logs file, function, message in red color
 #define ERR_CUSTOM(m_file, m_func, m_Msg) ::OS::PrintError(String(m_file) + ":" + String(m_func) + ": " + m_Msg);
 #endif // _DEBUG
+
+std::vector<std::string> &split(const std::string& s, char delim)
+{
+	std::vector<std::string> elems;
+	std::stringstream ss(s);
+	std::string item;
+	while (std::getline(ss, item, delim))
+	{
+		elems.push_back(item);
+	}
+	std::cout << elems.size();
+	return elems;
+}
