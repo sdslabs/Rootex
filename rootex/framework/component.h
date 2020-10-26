@@ -61,16 +61,14 @@ class Component
 {
 	Vector<Dependable*> m_Dependencies;
 
-	void setOwner(Ref<Entity>& newOwner) { m_Owner = newOwner; }
-
 	/// Perform setting up dependencies and internal data. Return true if successful.
 	bool setup();
 
-	friend class EntityFactory;
+	friend class ECSFactory;
 	friend class Entity;
 
 protected:
-	Ref<Entity> m_Owner;
+	Entity* m_Owner;
 	
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::Component;

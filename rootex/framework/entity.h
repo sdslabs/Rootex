@@ -5,49 +5,36 @@
 #include "event.h"
 
 class Component;
+class Scene;
 
 typedef unsigned int ComponentID;
 typedef int EntityID;
 
 /// A collection of ECS style components that define an ECS style entity.
-/// Use EntityFactory to create Entity objects.
 class Entity
 {
 protected:
-	EntityID m_ID;
-	String m_Name;
+	Scene* m_Scene;
 	HashMap<ComponentID, Ref<Component>> m_Components;
-	bool m_IsEditorOnly;
 	
-	String m_FullName;
-
-	Entity(EntityID id, const String& name, const HashMap<ComponentID, Ref<Component>>& components = {});
-
-	bool setupEntities();
-
-	void addComponent(const Ref<Component>& component);
-	friend class EntityFactory;
-#ifdef ROOTEX_EDITOR
-	friend class InspectorDock;
-	friend class HierarchyDock;
-#endif // ROOTEX_EDITOR
+	friend class ECSFactory;
 
 public:
 	static void RegisterAPI(sol::table& rootex);
 
-	virtual ~Entity();
+	Entity(Scene* scene);
+	Entity(const Entity&) = delete;
+	~Entity();
 
-	bool setupComponents();
+	bool onAllComponentsAdded();
+	bool onAllEntitiesAdded();
 	bool removeComponent(ComponentID toRemoveComponentID);
+	bool hasComponent(ComponentID componentID);
+
 	/// Destruct all components.
 	void destroy();
-
-	bool hasComponent(ComponentID componentID);
 	
-	EntityID getID() const;
-	const String& getName() const;
-	/// Full name consists of entity name followed by the corresponding EntityID.
-	const String& getFullName() const;
+	Scene* getScene() const { return m_Scene; }
 	
 	template <class ComponentType = Component>
 	Ref<ComponentType> getComponent() const;
@@ -57,10 +44,6 @@ public:
 
 	JSON::json getJSON() const;
 	const HashMap<ComponentID, Ref<Component>>& getAllComponents() const;
-	bool isEditorOnly() const { return m_IsEditorOnly; }
-	
-	void setName(const String& name);
-	void setEditorOnly(bool editorOnly) { m_IsEditorOnly = editorOnly; }
 };
 
 template <class ComponentType>

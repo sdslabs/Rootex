@@ -31,7 +31,7 @@ protected:
 	static void DeregisterComponent(Component* component);
 	
 	friend class Entity;
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 	String m_SystemName;
 	UpdateOrder m_UpdateOrder;

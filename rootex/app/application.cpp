@@ -47,6 +47,8 @@ Application::Application(const String& settingsFile)
 
 	m_ApplicationSettings.reset(new ApplicationSettings(ResourceLoader::CreateTextResourceFile(settingsFile)));
 
+	ECSFactory::LoadComponents();
+
 	JSON::json& systemsSettings = m_ApplicationSettings->getJSON()["systems"];
 	if (!AudioSystem::GetSingleton()->initialize(systemsSettings["AudioSystem"]))
 	{

@@ -119,6 +119,11 @@ using Tuple = std::tuple<P...>;
 template <class P, class Q>
 using Pair = std::pair<P, Q>;
 
+#include <optional>
+/// std::optional
+template <class T>
+using Optional = std::optional<T>;
+
 #include <vector>
 /// std::vector
 template <class T>
