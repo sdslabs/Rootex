@@ -71,7 +71,7 @@ void InspectorDock::drawEntityActions(Ref<Entity> actionEntity)
 	}
 	if (ImGui::Selectable("Reset"))
 	{
-		PANIC(m_ActionEntity->setupComponents() == false, "Could not setup entity: " + m_ActionEntity->getFullName());
+		PANIC(m_ActionEntity->onAllComponentsAdded() == false, "Could not setup entity: " + m_ActionEntity->getFullName());
 	}
 	if (ImGui::Selectable("Save Entity as class"))
 	{
