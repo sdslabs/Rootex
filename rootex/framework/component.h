@@ -90,7 +90,7 @@ public:
 
 	virtual void onTrigger();
 
-	Ref<Entity> getOwner() const;
+	Entity* getOwner() const;
 	virtual ComponentID getComponentID() const = 0;
 	virtual const char* getName() const = 0;
 	/// Get JSON representation of the component data needed to re-construct component from memory.

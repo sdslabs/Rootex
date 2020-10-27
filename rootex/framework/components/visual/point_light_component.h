@@ -20,7 +20,7 @@ protected:
 	PointLightComponent(PointLightComponent&) = delete;
 	~PointLightComponent() = default;
 
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::PointLightComponent;

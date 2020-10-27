@@ -1,7 +1,5 @@
 #include "trigger_component.h"
 
-#include "entity_factory.h"
-
 Component* TriggerComponent::Create(const JSON::json& componentData)
 {
 	return new TriggerComponent(componentData.value("targetEntityID", INVALID_ID));

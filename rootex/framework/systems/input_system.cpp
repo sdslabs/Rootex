@@ -37,21 +37,10 @@ bool InputSystem::initialize(const JSON::json& systemData)
 	return true;
 }
 
-void InputSystem::setConfig(const JSON::json& configData, bool openInEditor)
+void InputSystem::setConfig(const SceneSettings& sceneSettings)
 {
-	if (openInEditor)
-	{
-		return;
-	}
-
-	if (configData.find("inputSchemes") != configData.end())
-	{
-		loadSchemes(configData["inputSchemes"]);
-		if (configData.find("startScheme") != configData.end())
-		{
-			setScheme(configData["startScheme"]);
-		}
-	}
+	loadSchemes(sceneSettings.inputSchemes);
+	setScheme(sceneSettings.startScheme);
 }
 
 void InputSystem::update(float deltaMilliseconds)

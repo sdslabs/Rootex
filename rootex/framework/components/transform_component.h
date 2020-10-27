@@ -32,7 +32,7 @@ private:
 
 	friend class ModelComponent;
 	friend class RenderSystem;
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 #ifdef ROOTEX_EDITOR
 	static inline const float s_EditorDecimalSpeed = 0.01f;

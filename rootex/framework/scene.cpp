@@ -1,28 +1,84 @@
 #include "scene.h"
 
 #include "ecs_factory.h"
+#include "resource_loader.h"
 
 static int CurrentSceneCount = ROOT_SCENE_ID + 1;
 
+void to_json(JSON::json& j, const SceneSettings& s)
+{
+	j["preloads"] = s.preloads;
+	j["camera"] = s.camera;
+	j["listener"] = s.listener;
+	j["inputSchemes"] = s.inputSchemes;
+	j["startScheme"] = s.startScheme;
+}
+
+void from_json(const JSON::json& j, SceneSettings& s)
+{
+	s.preloads = (Vector<String>)j.value("preloads", Vector<String>());
+	s.camera = j.value("camera", ROOT_SCENE_ID);
+	s.listener = j.value("listener", ROOT_SCENE_ID);
+	s.inputSchemes = j.value("inputSchemes", JSON::json::object());
+	s.startScheme = j.value("startScheme", String());
+}
+
+void Scene::RegisterAPI(sol::table& rootex)
+{
+	sol::usertype<Scene> scene = rootex.new_usertype<Scene>("Scene");
+	scene["CreateEmpty"] = &CreateEmpty;
+	scene["CreateEmptyWithEntity"] = &CreateEmptyWithEntity;
+}
+
 Ref<Scene> Scene::Create(const JSON::json& sceneData)
 {
-	CurrentSceneCount = CurrentSceneCount > sceneData["ID"] ? CurrentSceneCount : sceneData["ID"];
-	Ref<Scene> thisScene(std::make_shared<Scene>(CurrentSceneCount, sceneData.value("name", String("Untitled"))));
+	CurrentSceneCount = CurrentSceneCount > sceneData.value("ID", CurrentSceneCount) ? CurrentSceneCount : sceneData.value("ID", CurrentSceneCount);
+	Ref<Scene> thisScene(std::make_shared<Scene>(CurrentSceneCount, sceneData.value("name", String("Untitled")), sceneData.value("file", String()), sceneData.value("settings", SceneSettings())));
 	CurrentSceneCount++;
 
-	if (sceneData["entity"] != nullptr)
+	if (sceneData.contains("entity"))
 	{
 		thisScene->m_Entity = ECSFactory::CreateEntity(thisScene.get(), sceneData["entity"]);
 	}
-
-	for (auto& childScene : sceneData["children"])
+	if (sceneData.contains("children"))
 	{
-		if (!thisScene->addChild(std::make_shared<Scene>(Create(childScene))))
+		for (auto& childScene : sceneData["children"])
 		{
-			WARN("Could not add new scene to " + thisScene->getName() + " scene");
+			if (!thisScene->addChild(Create(childScene)))
+			{
+				WARN("Could not add child scene to " + thisScene->getName() + " scene");
+			}
 		}
 	}
 	return thisScene;
+}
+
+Ref<Scene> Scene::CreateFromFile(const String& sceneFile)
+{
+	if (TextResourceFile* t = ResourceLoader::CreateTextResourceFile(sceneFile))
+	{
+		if (t->isDirty())
+		{
+			t->reimport();
+		}
+		return Create(JSON::json::parse(t->getString()));
+	}
+	return nullptr;
+}
+
+Ref<Scene> Scene::CreateEmpty()
+{
+	return Create({});
+}
+
+Ref<Scene> Scene::CreateEmptyAtPath(const String& sceneFile)
+{
+	return Create({ { "entity", {} }, { "file", sceneFile } });
+}
+
+Ref<Scene> Scene::CreateEmptyWithEntity()
+{
+	return Create({ { "entity", {} } });
 }
 
 Ref<Scene> Scene::CreateRootScene()
@@ -34,16 +90,16 @@ Ref<Scene> Scene::CreateRootScene()
 		return nullptr;
 	}
 
-	Ref<Scene> root = std::make_shared<Scene>(ROOT_SCENE_ID, "Root");
+	Ref<Scene> root = std::make_shared<Scene>(ROOT_SCENE_ID, "Root", "", SceneSettings());
 	root->m_Entity = ECSFactory::CreateRootEntity(root.get());
 
 	called = true;
 	return root;
 }
 
-Scene* Scene::findScene(Scene* scene)
+Scene* Scene::findScene(SceneID scene)
 {
-	if (scene == this)
+	if (scene == getID())
 	{
 		return this;
 	}
@@ -57,6 +113,60 @@ Scene* Scene::findScene(Scene* scene)
 	return nullptr;
 }
 
+void Scene::destroy()
+{
+	m_ChildrenScenes.clear();
+	if (m_ParentScene)
+	{
+		m_ParentScene->removeChild(this);
+	}
+}
+
+void Scene::reload()
+{
+	if (m_SceneFile.empty())
+	{
+		return;
+	}
+
+	TextResourceFile* t = ResourceLoader::CreateTextResourceFile(m_SceneFile);
+	t->reimport();
+
+	const JSON::json& sceneData = JSON::json::parse(t->getString());
+	if (sceneData.contains("entity"))
+	{
+		setEntity(ECSFactory::CreateEntity(this, sceneData["entity"]));
+	}
+	else
+	{
+		setEntity(nullptr);
+	}
+
+	m_ChildrenScenes.clear();
+	if (sceneData.contains("children"))
+	{
+		for (auto& childScene : sceneData["children"])
+		{
+			if (!addChild(Create(childScene)))
+			{
+				WARN("Could not add child scene to " + getName() + " scene");
+			}
+		}
+	}
+}
+
+void Scene::onLoad()
+{
+	if (m_Entity)
+	{
+		m_Entity->onAllEntitiesAdded();
+	}
+	for (auto& child : m_ChildrenScenes)
+	{
+		child->onLoad();
+	}
+}
+
 bool Scene::snatchChild(Ref<Scene>& child)
 {
 	return child->getParent()->removeChild(child.get()) && addChild(child);
@@ -64,11 +174,17 @@ bool Scene::snatchChild(Ref<Scene>& child)
 
 bool Scene::addChild(Ref<Scene>& child)
 {
+	if (!child)
+	{
+		WARN("Tried to add a null scene to: " + getFullName() + ". Denied.");
+		return false;
+	}
+
 	auto& findIt = std::find(m_ChildrenScenes.begin(), m_ChildrenScenes.end(), child);
 	if (findIt == m_ChildrenScenes.end())
 	{
 		child->m_ParentScene = this;
-		m_ChildrenScenes.emplace_back(child);
+		m_ChildrenScenes.push_back(child);
 		return true;
 	}
 	return false;
@@ -87,17 +203,25 @@ bool Scene::removeChild(Scene* toRemove)
 	return false;
 }
 
+void Scene::setName(const String& name)
+{
+	m_Name = name;
+	m_FullName = name + " # " + std::to_string(m_ID);
+}
+
 JSON::json Scene::getJSON() const
 {
 	JSON::json j;
 
 	j["name"] = m_Name;
+	j["file"] = m_SceneFile;
 	j["ID"] = m_ID;
 	j["entity"] = nullptr;
 	if (m_Entity)
 	{
 		j["entity"] = m_Entity->getJSON();
 	}
+	j["settings"] = m_Settings;
 
 	j["children"] = JSON::json::array();
 	for (auto& child : m_ChildrenScenes)
@@ -108,15 +232,21 @@ JSON::json Scene::getJSON() const
 	return j;
 }
 
-Scene::Scene(SceneID id, const String& name)
+Scene::Scene(SceneID id, const String& name, const String& sceneFile, const SceneSettings& settings)
     : m_Name(name)
     , m_ID(id)
+    , m_Settings(settings)
+    , m_SceneFile(sceneFile)
 {
+	setName(m_Name);
 }
 
-Scene::Scene(SceneID id, const String& name, Ref<Entity>& entity)
+Scene::Scene(SceneID id, const String& name, const String& sceneFile, const SceneSettings& settings, Ref<Entity>& entity)
     : m_Entity(entity)
     , m_Name(name)
     , m_ID(id)
+    , m_Settings(settings)
+    , m_SceneFile(sceneFile)
 {
+	setName(m_Name);
 }

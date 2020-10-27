@@ -50,7 +50,7 @@ void Component::onTrigger()
 {
 }
 
-Ref<Entity> Component::getOwner() const
+Entity* Component::getOwner() const
 {
 	return m_Owner;
 }

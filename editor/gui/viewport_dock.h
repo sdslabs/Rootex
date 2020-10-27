@@ -1,6 +1,7 @@
 #pragma once
 
 #include "script/interpreter.h"
+#include "scene.h"
 
 #include "vendor/ImGUI/imgui.h"
 #include "vendor/ImGUI/imgui_impl_dx11.h"
@@ -21,8 +22,8 @@ public:
 	};
 
 private:
-	Ref<Entity> m_EditorCamera;
-	Ref<Entity> m_EditorGrid;
+	Ref<Scene> m_EditorCamera;
+	Ref<Scene> m_EditorGrid;
 	ViewportDockSettings m_ViewportDockSettings;
 	Matrix m_ApplyCameraMatrix = Matrix::Identity;
 	

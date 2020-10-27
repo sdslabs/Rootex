@@ -2,7 +2,7 @@
 
 #include "editor/editor_application.h"
 
-#include "app/level_manager.h"
+#include "framework/scene_loader.h"
 #include "framework/system.h"
 #include "editor/editor_system.h"
 
@@ -31,7 +31,7 @@ void ToolbarDock::draw(float deltaMilliseconds)
 			{
 				EventManager::GetSingleton()->call("PreGameStartupSaveEvent", "EditorSaveAll", 0);
 				PRINT("Launched Game process");
-				OS::Execute("\"" + OS::GetGameExecutablePath() + "\" " + LevelManager::GetSingleton()->getCurrentLevel().getLevelName());
+				OS::Execute("\"" + OS::GetGameExecutablePath() + "\" \"" + SceneLoader::GetSingleton()->getCurrentScene()->getSceneFilePath() + "\"");
 				PRINT("Game process ended");
 			}
 			ImGui::NextColumn();

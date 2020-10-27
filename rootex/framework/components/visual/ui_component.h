@@ -10,7 +10,7 @@ class UIComponent : public Component
 {
 	static Component* Create(const JSON::json& componentData);
 
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 	String m_FilePath;
 	Rml::ElementDocument* m_Document;

@@ -3,7 +3,6 @@
 #include "common/common.h"
 #include "entity.h"
 #include "component.h"
-#include "entity_factory.h"
 
 SerializationSystem::SerializationSystem()
     : System("SerializationSystem", UpdateOrder::Async, false)

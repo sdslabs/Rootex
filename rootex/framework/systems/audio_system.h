@@ -52,6 +52,7 @@ class AudioSystem : public System
 	ALCcontext* m_Context;
 
 	AudioListenerComponent* m_Listener;
+	Ref<AudioListenerComponent> m_RootListener;
 
 	AudioSystem();
 	AudioSystem(AudioSystem&) = delete;
@@ -74,11 +75,12 @@ public:
 	AudioListenerComponent* getListener() const { return m_Listener; }
     void setListener(AudioListenerComponent* listenerComponent);
 
-	void setConfig(const JSON::json& configData, bool openInEditor) override;
 	void restoreListener();
-	void shutDown();
 
 	bool initialize(const JSON::json& systemData) override;
+	void setConfig(const SceneSettings& sceneSettings) override;
+	void shutDown();
+	
 	void update(float deltaMilliseconds) override;
 	void begin() override;
 	void end() override;
