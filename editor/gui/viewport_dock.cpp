@@ -36,7 +36,7 @@ ViewportDock::ViewportDock(const JSON::json& viewportJSON)
 	SceneLoader::GetSingleton()->getRootScene()->addChild(m_EditorGrid);
 }
 
-void FindSelectedEntity(Entity* result, Scene* scene, const Ray& ray, float minimumDistance = D3D11_FLOAT32_MAX)
+void FindSelectedEntity(Entity*& result, Scene* scene, const Ray& ray, float minimumDistance)
 {
 	if (Entity* entity = scene->getEntity())
 	{
@@ -230,7 +230,10 @@ void ViewportDock::draw(float deltaMilliseconds)
 
 				Ray ray(origin, direction);
 				Entity* selectEntity = nullptr;
-				FindSelectedEntity(selectEntity, SceneLoader::GetSingleton()->getRootScene().get(), ray);
+				if (Ref<Scene> currentScene = SceneLoader::GetSingleton()->getCurrentScene())
+				{
+					FindSelectedEntity(selectEntity, currentScene.get(), ray, D3D11_FLOAT32_MAX);
+				}
 				
 				if (selectEntity)
 				{
@@ -243,7 +246,7 @@ void ViewportDock::draw(float deltaMilliseconds)
 				}
 				if (selectEntity && ImGui::IsMouseReleased(ImGuiMouseButton_Right))
 				{
-					EventManager::GetSingleton()->call("MouseSelectEntity", "EditorOpenScene", selectEntity);
+					EventManager::GetSingleton()->call("MouseSelectEntity", "EditorOpenScene", selectEntity->getScene());
 					PRINT("Picked entity through selection: " + selectEntity->getFullName());
 				}
 				if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Escape)))
