@@ -17,7 +17,7 @@ class UIComponent : public Component
 
 	UIComponent(const String& path);
 	UIComponent(const UIComponent&) = delete;
-	virtual ~UIComponent();
+	~UIComponent();
 
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::UIComponent;

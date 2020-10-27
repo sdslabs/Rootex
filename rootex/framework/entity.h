@@ -31,8 +31,8 @@ public:
 	bool removeComponent(ComponentID toRemoveComponentID, bool hardRemove = false);
 	bool hasComponent(ComponentID componentID);
 
-	/// Destruct all components. Use force for silent deletion of components
-	void destroy(bool force = false);
+	/// Destruct all components.
+	void destroy();
 	
 	Scene* getScene() const { return m_Scene; }
 	

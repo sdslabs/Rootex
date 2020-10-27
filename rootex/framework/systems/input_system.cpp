@@ -28,7 +28,15 @@ void InputSystem::loadSchemes(const JSON::json& schemes)
 
 void InputSystem::setScheme(const String& scheme)
 {
-	InputManager::GetSingleton()->setScheme(scheme);
+	if (!m_SchemeLock)
+	{
+		InputManager::GetSingleton()->setScheme(scheme);
+	}
+}
+
+void InputSystem::setSchemeLock(bool enabled)
+{
+	m_SchemeLock = enabled;
 }
 
 bool InputSystem::initialize(const JSON::json& systemData)

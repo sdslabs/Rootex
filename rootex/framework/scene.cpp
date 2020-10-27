@@ -23,11 +23,27 @@ void from_json(const JSON::json& j, SceneSettings& s)
 	s.startScheme = j.value("startScheme", String());
 }
 
+void Scene::ResetCounter()
+{
+	CurrentSceneCount = ROOT_SCENE_ID + 1;
+}
+
 void Scene::RegisterAPI(sol::table& rootex)
 {
 	sol::usertype<Scene> scene = rootex.new_usertype<Scene>("Scene");
 	scene["CreateEmpty"] = &CreateEmpty;
 	scene["CreateEmptyWithEntity"] = &CreateEmptyWithEntity;
+	scene["CreateFromFile"] = &CreateFromFile;
+	scene["addChild"] = &addChild;
+	scene["removeChild"] = &removeChild;
+	scene["snatchChild"] = &snatchChild;
+	scene["setName"] = &setName;
+	scene["setEntity"] = &setEntity;
+	scene["getID"] = &getID;
+	scene["getParent"] = &getParent;
+	scene["getEntity"] = &getEntity;
+	scene["getName"] = &getName;
+	scene["getFullName"] = &getFullName;
 }
 
 Ref<Scene> Scene::Create(const JSON::json& sceneData)
@@ -250,3 +266,68 @@ Scene::Scene(SceneID id, const String& name, const String& sceneFile, const Scen
 {
 	setName(m_Name);
 }
+
+#ifdef ROOTEX_EDITOR
+#include "imgui.h"
+#include "imgui_stdlib.h"
+#include "scene_loader.h"
+
+void SceneSettings::drawSceneSelectables(Scene* scene, SceneID& toSet)
+{
+	if (ImGui::Selectable(scene->getFullName().c_str()))
+	{
+		toSet = scene->getID();
+	}
+	for (auto& child : scene->getChildren())
+	{
+		drawSceneSelectables(child.get(), toSet);
+	}
+}
+
+void SceneSettings::draw()
+{
+	ImGui::Text("Preloads");
+	int i = 0;
+	for (auto& preload : preloads)
+	{
+		ImGui::PushID(i);
+		ImGui::InputText("##", &preload);
+		ImGui::PopID();
+	}
+	if (ImGui::Button("+")) 
+	{
+		preloads.push_back("");
+	}
+	if (!preloads.empty())
+	{
+		ImGui::SameLine();
+		if (ImGui::Button("-"))
+		{
+			preloads.pop_back();
+		}
+	}
+	if (ImGui::BeginCombo("Camera", SceneLoader::GetSingleton()->getRootScene()->findScene(camera)->getFullName().c_str()))
+	{
+		drawSceneSelectables(SceneLoader::GetSingleton()->getRootScene().get(), camera);
+		ImGui::EndCombo();
+	}
+	if (ImGui::BeginCombo("Listener", SceneLoader::GetSingleton()->getRootScene()->findScene(listener)->getFullName().c_str()))
+	{
+		drawSceneSelectables(SceneLoader::GetSingleton()->getRootScene().get(), listener);
+		ImGui::EndCombo();
+	}
+	String schemes = inputSchemes.dump(4);
+	if (ImGui::InputTextMultiline("Input Schemes", &schemes))
+	{
+		try
+		{
+			inputSchemes = JSON::json::parse(schemes);
+		}
+		catch (std::exception e)
+		{
+			PRINT(e.what());
+		}
+	}
+	ImGui::InputText("Start Scheme", &startScheme);
+}
+#endif // ROOTEX_EDITOR
