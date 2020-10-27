@@ -30,41 +30,39 @@ class Scene
 	String m_Name;
 	String m_FullName;
 	String m_SceneFile;
-	Ref<Entity> m_Entity;
+	Ptr<Entity> m_Entity;
 	SceneSettings m_Settings;
 
 	Scene* m_ParentScene = nullptr;
-	Vector<Ref<Scene>> m_ChildrenScenes;
+	Vector<Ptr<Scene>> m_ChildrenScenes;
 
 public:
 	static void RegisterAPI(sol::table& rootex);
 	static void ResetCounter();
 
-	static Ref<Scene> Create(const JSON::json& sceneData);
-	static Ref<Scene> CreateFromFile(const String& sceneFile);
-	static Ref<Scene> CreateEmpty();
-	static Ref<Scene> CreateEmptyAtPath(const String& sceneFile);
-	static Ref<Scene> CreateEmptyWithEntity();
-	static Ref<Scene> CreateRootScene();
+	static Ptr<Scene> Create(const JSON::json& sceneData);
+	static Ptr<Scene> CreateFromFile(const String& sceneFile);
+	static Ptr<Scene> CreateEmpty();
+	static Ptr<Scene> CreateEmptyAtPath(const String& sceneFile);
+	static Ptr<Scene> CreateEmptyWithEntity();
+	static Ptr<Scene> CreateRootScene();
 
 	Scene(SceneID id, const String& name, const String& sceneFile, const SceneSettings& settings);
-	Scene(SceneID id, const String& name, const String& sceneFile, const SceneSettings& settings, Ref<Entity>& entity);
-	~Scene() = default;
+	~Scene();
 
 	Scene* findScene(SceneID scene);
-	void destroy();
 	void reload();
 
 	void onLoad();
-	bool snatchChild(Ref<Scene>& child);
-	bool addChild(Ref<Scene>& child);
+	bool snatchChild(Ptr<Scene>& child);
+	bool addChild(Ptr<Scene>& child);
 	bool removeChild(Scene* toRemove);
 
-	void setEntity(Ref<Entity> entity) { m_Entity = entity; }
+	void setEntity(Ptr<Entity>& entity) { m_Entity = std::move(entity); }
 	void setName(const String& name);
 	
 	JSON::json getJSON() const;
-	const Vector<Ref<Scene>>& getChildren() const { return m_ChildrenScenes; }
+	const Vector<Ptr<Scene>>& getChildren() const { return m_ChildrenScenes; }
 	SceneID getID() const { return m_ID; }
 	Scene* getParent() const { return m_ParentScene; }
 	Entity* getEntity() const { return m_Entity.get(); }

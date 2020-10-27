@@ -75,7 +75,7 @@ void Entity::destroy()
 
 bool Entity::removeComponent(ComponentID toRemoveComponentID, bool hardRemove)
 {
-	Ref<Component> toRemoveComponent = getComponentFromID(toRemoveComponentID);
+	Component* toRemoveComponent = getComponentFromID(toRemoveComponentID);
 	if (!hardRemove)
 	{
 		for (auto& [componentID, component] : m_Components)
@@ -93,7 +93,7 @@ bool Entity::removeComponent(ComponentID toRemoveComponentID, bool hardRemove)
 	}
 
 	toRemoveComponent->onRemove();
-	System::DeregisterComponent(toRemoveComponent.get());
+	System::DeregisterComponent(toRemoveComponent);
 	m_Components.erase(toRemoveComponent->getComponentID());
 
 	return true;
@@ -104,7 +104,7 @@ bool Entity::hasComponent(ComponentID componentID)
 	return m_Components.find(componentID) != m_Components.end();
 }
 
-const HashMap<ComponentID, Ref<Component>>& Entity::getAllComponents() const
+const HashMap<ComponentID, Ptr<Component>>& Entity::getAllComponents() const
 {
 	return m_Components;
 }

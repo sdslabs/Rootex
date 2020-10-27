@@ -32,12 +32,12 @@ void ECSFactory::RegisterAPI(sol::table& rootex)
 	sol::usertype<ECSFactory> ecsFactory = rootex.new_usertype<ECSFactory>("ECSFactory");
 }
 
-bool ECSFactory::AddComponent(Entity* entity, Ref<Component> component)
+bool ECSFactory::AddComponent(Entity* entity, Ptr<Component>& component)
 {
 	if (entity->m_Components.find(component->getComponentID()) == entity->m_Components.end())
 	{
-		entity->m_Components[component->getComponentID()] = component;
 		component->m_Owner = entity;
+		entity->m_Components[component->getComponentID()] = std::move(component);
 		if (!entity->onAllComponentsAdded())
 		{
 			entity->removeComponent(component->getComponentID(), true);
@@ -49,7 +49,7 @@ bool ECSFactory::AddComponent(Entity* entity, Ref<Component> component)
 	return false;
 }
 
-Ref<Component> ECSFactory::CreateComponent(const String& componentName, const JSON::json& componentData)
+Ptr<Component> ECSFactory::CreateComponent(const String& componentName, const JSON::json& componentData)
 {
 	auto& findIt = s_ComponentCreators.end();
 	for (auto& componentClass = s_ComponentCreators.begin(); componentClass != s_ComponentCreators.end(); componentClass++)
@@ -62,7 +62,7 @@ Ref<Component> ECSFactory::CreateComponent(const String& componentName, const JS
 	if (findIt != s_ComponentCreators.end())
 	{
 		ComponentCreator create = std::get<ComponentCreator>(*findIt);
-		Ref<Component> component(create(componentData));
+		Ptr<Component> component(create(componentData));
 
 		System::RegisterComponent(component.get());
 
@@ -72,16 +72,16 @@ Ref<Component> ECSFactory::CreateComponent(const String& componentName, const JS
 	return nullptr;
 }
 
-Ref<Component> ECSFactory::CreateDefaultComponent(const String& componentName)
+Ptr<Component> ECSFactory::CreateDefaultComponent(const String& componentName)
 {
 	return CreateComponent(componentName, JSON::json::object());
 }
 
-Ref<Entity> ECSFactory::CreateEntity(Scene* scene, const JSON::json& entityJSON)
+Ptr<Entity> ECSFactory::CreateEntity(Scene* scene, const JSON::json& entityJSON)
 {
 	if (entityJSON.empty())
 	{
-		return std::make_shared<Entity>(scene);
+		return std::make_unique<Entity>(scene);
 	}
 
 	JSON::json componentJSON;
@@ -90,15 +90,15 @@ Ref<Entity> ECSFactory::CreateEntity(Scene* scene, const JSON::json& entityJSON)
 		componentJSON = entityJSON["components"];
 	}
 
-	Ref<Entity> entity(std::make_shared<Entity>(scene));
+	Ptr<Entity> entity(std::make_unique<Entity>(scene));
 
 	for (auto&& [componentName, componentDescription] : componentJSON.items())
 	{
-		Ref<Component> componentObject = CreateComponent(componentName, componentDescription);
+		Ptr<Component>& componentObject = CreateComponent(componentName, componentDescription);
 		if (componentObject)
 		{
-			entity->m_Components[componentObject->getComponentID()] = componentObject;
 			componentObject->m_Owner = entity.get();
+			entity->m_Components[componentObject->getComponentID()] = std::move(componentObject);
 		}
 	}
 
@@ -111,17 +111,17 @@ Ref<Entity> ECSFactory::CreateEntity(Scene* scene, const JSON::json& entityJSON)
 	return entity;
 }
 
-Ref<Entity> ECSFactory::CreateEmptyEntity(Scene* scene)
+Ptr<Entity> ECSFactory::CreateEmptyEntity(Scene* scene)
 {
 	return CreateEntity(scene, {});
 }
 
-Ref<Entity> ECSFactory::CreateEntityFromFile(Scene* scene, TextResourceFile* textResourceFile)
+Ptr<Entity> ECSFactory::CreateEntityFromFile(Scene* scene, TextResourceFile* textResourceFile)
 {
 	return CreateEntity(scene, JSON::json::parse(textResourceFile->getString()));
 }
 
-Ref<Entity> ECSFactory::CopyEntity(Scene* scene, Entity& entity)
+Ptr<Entity> ECSFactory::CopyEntity(Scene* scene, Entity& entity)
 {
 	return CreateEntity(scene, entity.getJSON());
 }
@@ -152,30 +152,34 @@ void ECSFactory::Initialize()
 	REGISTER_COMPONENT(UIComponent);
 }
 
-Ref<Entity> ECSFactory::CreateRootEntity(Scene* scene)
+Ptr<Entity> ECSFactory::CreateRootEntity(Scene* scene)
 {
-	Ref<Entity> root = CreateEmptyEntity(scene);
+	Ptr<Entity>& root = CreateEmptyEntity(scene);
 	{
-		Ref<Component> rootTransformComponent = CreateDefaultComponent("TransformComponent");
+		Ptr<Component>& rootTransformComponent = CreateDefaultComponent("TransformComponent");
 		AddComponent(root.get(), rootTransformComponent);
 	}
 	{
-		Ref<ModelComponent> rootModelComponent = std::dynamic_pointer_cast<ModelComponent>(CreateDefaultComponent("ModelComponent"));
+		Ptr<Component>& model = CreateDefaultComponent("ModelComponent");
+		ModelComponent* rootModelComponent = dynamic_cast<ModelComponent*>(model.get());
 		rootModelComponent->setIsVisible(false);
-		AddComponent(root.get(), rootModelComponent);
+		AddComponent(root.get(), model);
 	}
 	{
-		Ref<CameraComponent> rootCameraComponent = std::dynamic_pointer_cast<CameraComponent>(CreateDefaultComponent("CameraComponent"));
-		AddComponent(root.get(), rootCameraComponent);
+		Ptr<Component>& camera = CreateDefaultComponent("CameraComponent");
+		CameraComponent* rootCameraComponent = dynamic_cast<CameraComponent*>(camera.get());
+		AddComponent(root.get(), camera);
 	}
 	{
-		Ref<AudioListenerComponent> rootListenerComponent = std::dynamic_pointer_cast<AudioListenerComponent>(CreateDefaultComponent("AudioListenerComponent"));
-		AddComponent(root.get(), rootListenerComponent);
+		Ptr<Component>& listener = CreateDefaultComponent("AudioListenerComponent");
+		AudioListenerComponent* rootListenerComponent = dynamic_cast<AudioListenerComponent*>(listener.get());
+		AddComponent(root.get(), listener);
 	}
 	{
-		Ref<SkyComponent> rootSkyComponent = std::dynamic_pointer_cast<SkyComponent>(CreateDefaultComponent("SkyComponent"));
-		AddComponent(root.get(), rootSkyComponent);
+		Ptr<Component>& sky = CreateDefaultComponent("SkyComponent");
+		SkyComponent* rootSkyComponent = dynamic_cast<SkyComponent*>(sky.get());
+		AddComponent(root.get(), sky);
 	}
 
-	return root;
+	return std::move(root);
 }

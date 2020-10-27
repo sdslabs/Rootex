@@ -9,6 +9,7 @@
 #include "framework/systems/ui_system.h"
 #include "framework/systems/physics_system.h"
 #include "framework/systems/transform_animation_system.h"
+#include "systems/debug_system.h"
 
 #include "systems/game_render_system.h"
 
@@ -66,4 +67,5 @@ GameApplication::GameApplication()
 	}
 
 	GameRenderSystem::GetSingleton()->initialize({});
+	DebugSystem::GetSingleton()->initialize(m_ApplicationSettings->getJSON()["systems"]["DebugSystem"]);
 }

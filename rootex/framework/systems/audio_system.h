@@ -52,8 +52,7 @@ class AudioSystem : public System
 	ALCcontext* m_Context;
 
 	AudioListenerComponent* m_Listener;
-	Ref<AudioListenerComponent> m_RootListener;
-
+	
 	AudioSystem();
 	AudioSystem(AudioSystem&) = delete;
 	virtual ~AudioSystem() = default;

@@ -22,8 +22,8 @@ public:
 	};
 
 private:
-	Ref<Scene> m_EditorCamera;
-	Ref<Scene> m_EditorGrid;
+	Scene* m_EditorCamera;
+	Scene* m_EditorGrid;
 	ViewportDockSettings m_ViewportDockSettings;
 	Matrix m_ApplyCameraMatrix = Matrix::Identity;
 	

@@ -820,7 +820,7 @@ Variant EditorSystem::saveAll(const Event* event)
 	if (SceneLoader::GetSingleton()->getCurrentScene())
 	{
 		MaterialLibrary::SaveAll();
-		SceneLoader::GetSingleton()->saveScene(SceneLoader::GetSingleton()->getCurrentScene().get());
+		SceneLoader::GetSingleton()->saveScene(SceneLoader::GetSingleton()->getCurrentScene());
 		PRINT("Successfully saved current scene: " + SceneLoader::GetSingleton()->getCurrentScene()->getFullName());
 	}
 	else

@@ -61,7 +61,7 @@ void InspectorDock::drawSceneActions(Scene* scene)
 	{
 		EventManager::GetSingleton()->call("OpenEntity", "EditorOpenScene", m_ActionScene);
 	}
-	if (m_ActionScene != SceneLoader::GetSingleton()->getRootScene().get())
+	if (m_ActionScene != SceneLoader::GetSingleton()->getRootScene())
 	{
 		if (ImGui::MenuItem("Reload"))
 		{
@@ -84,7 +84,7 @@ void InspectorDock::drawSceneActions(Scene* scene)
 			}
 			if (ImGui::MenuItem("Remove Entity"))
 			{
-				m_ActionScene->setEntity(nullptr);
+				m_ActionScene->setEntity(Ptr<Entity>());
 			}
 		}
 		else
@@ -130,7 +130,7 @@ void InspectorDock::drawSceneActions(Scene* scene)
 
 		if (ImGui::Selectable("Copy Scene"))
 		{
-			if (Ref<Scene> copiedScene = Scene::Create(m_ActionScene->getJSON()))
+			if (Ptr<Scene>& copiedScene = Scene::Create(m_ActionScene->getJSON()))
 			{
 				m_ActionScene->getParent()->addChild(copiedScene);
 			}
@@ -346,7 +346,7 @@ void InspectorDock::drawRemoveComponentWindow()
 				{
 					if (isComponentSelected)
 					{
-						Ref<Component> component = actionEntity->getComponentFromID(componentID);
+						Component* component = actionEntity->getComponentFromID(componentID);
 						if (component)
 						{
 							if (actionEntity->removeComponent(componentID))

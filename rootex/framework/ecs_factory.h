@@ -22,15 +22,15 @@ public:
 
 	static void Initialize();
 
-	static bool AddComponent(Entity* entity, Ref<Component> component);
-	static Ref<Component> CreateComponent(const String& componentName, const JSON::json& componentData);
-	static Ref<Component> CreateDefaultComponent(const String& componentName);
+	static bool AddComponent(Entity* entity, Ptr<Component>& component);
+	static Ptr<Component> CreateComponent(const String& componentName, const JSON::json& componentData);
+	static Ptr<Component> CreateDefaultComponent(const String& componentName);
 
-	static Ref<Entity> CreateEntity(Scene* scene, const JSON::json& entityJSON);
-	static Ref<Entity> CreateEntityFromFile(Scene* scene, TextResourceFile* textResourceFile);
-	static Ref<Entity> CreateEmptyEntity(Scene* scene);
-	static Ref<Entity> CreateRootEntity(Scene* scene);
-	static Ref<Entity> CopyEntity(Scene* scene, Entity& entity);
+	static Ptr<Entity> CreateEntity(Scene* scene, const JSON::json& entityJSON);
+	static Ptr<Entity> CreateEntityFromFile(Scene* scene, TextResourceFile* textResourceFile);
+	static Ptr<Entity> CreateEmptyEntity(Scene* scene);
+	static Ptr<Entity> CreateRootEntity(Scene* scene);
+	static Ptr<Entity> CopyEntity(Scene* scene, Entity& entity);
 	
 	static const ComponentDatabase& GetComponentDatabase() { return s_ComponentCreators; }
 	template <class T>

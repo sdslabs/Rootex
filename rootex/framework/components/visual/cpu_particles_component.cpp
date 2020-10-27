@@ -61,7 +61,7 @@ CPUParticlesComponent::CPUParticlesComponent(size_t poolSize, const String& part
 
 bool CPUParticlesComponent::setupData()
 {
-	m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
+	m_TransformComponent = m_Owner->getComponent<TransformComponent>();
 	if (!m_TransformComponent)
 	{
 		ERR("Transform Component not found on entity with CPU Particles Component: " + m_Owner->getFullName());

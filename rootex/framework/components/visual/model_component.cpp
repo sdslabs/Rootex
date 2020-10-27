@@ -62,8 +62,7 @@ bool ModelComponent::setupEntities()
 
 bool ModelComponent::addAffectingStaticLight(SceneID ID)
 {
-	Ref<Scene> currentScene = SceneLoader::GetSingleton()->getCurrentScene();
-	Scene* light = currentScene->findScene(ID);
+	Scene* light = SceneLoader::GetSingleton()->getCurrentScene()->findScene(ID);
 	if (!light->getEntity())
 	{
 		WARN("Static light entity referred to not found: " + std::to_string(ID));
@@ -75,7 +74,7 @@ bool ModelComponent::addAffectingStaticLight(SceneID ID)
 	int lightID = 0;
 	for (auto& component : System::GetComponents(StaticPointLightComponent::s_ID))
 	{
-		if (light->getEntity()->getComponent<StaticPointLightComponent>().get() == component)
+		if (light->getEntity()->getComponent<StaticPointLightComponent>() == component)
 		{
 			m_AffectingStaticLightIDs.push_back(ID);
 			m_AffectingStaticLights.push_back(lightID);
@@ -286,8 +285,7 @@ void ModelComponent::draw()
 		EntityID toRemove = -1;
 		for (auto& slotSceneID : m_AffectingStaticLightIDs)
 		{
-			Ref<Scene> currentScene = SceneLoader::GetSingleton()->getCurrentScene();
-			Scene* staticLight = currentScene->findScene(slotSceneID);
+			Scene* staticLight = SceneLoader::GetSingleton()->getCurrentScene()->findScene(slotSceneID);
 			RenderSystem::GetSingleton()->submitLine(m_TransformComponent->getAbsoluteTransform().Translation(), staticLight->getEntity()->getComponent<TransformComponent>()->getAbsoluteTransform().Translation());
 
 			String displayName = staticLight->getFullName();
