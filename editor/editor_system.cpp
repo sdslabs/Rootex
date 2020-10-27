@@ -267,7 +267,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 	
-	String loadingScene;
+	static String loadingScene;
 
 	ImGui::Begin("Rootex Editor", nullptr, windowFlags);
 	{
@@ -458,9 +458,9 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 			}
 			if (ImGui::BeginMenu("Scene"))
 			{
-				if (SceneLoader::GetSingleton()->getCurrentScene() && ImGui::MenuItem("Settings"))
+				if (SceneLoader::GetSingleton()->getCurrentScene())
 				{
-					EventManager::GetSingleton()->call("EditorLevelMenu", "EditorOpenFile", SceneLoader::GetSingleton()->getCurrentScene()->getSceneFilePath());
+					SceneLoader::GetSingleton()->getCurrentScene()->getSettings().draw();
 				}
 				ImGui::EndMenu();
 			}

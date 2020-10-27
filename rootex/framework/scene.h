@@ -14,6 +14,11 @@ struct SceneSettings
 	SceneID listener = ROOT_SCENE_ID;
 	JSON::json inputSchemes = {};
 	String startScheme = {};
+
+#ifdef ROOTEX_EDITOR
+	void drawSceneSelectables(Scene* scene, SceneID& toSet);
+	void draw();
+#endif // ROOTEX_EDITOR
 };
 
 void to_json(JSON::json& j, const SceneSettings& s);
@@ -33,6 +38,7 @@ class Scene
 
 public:
 	static void RegisterAPI(sol::table& rootex);
+	static void ResetCounter();
 
 	static Ref<Scene> Create(const JSON::json& sceneData);
 	static Ref<Scene> CreateFromFile(const String& sceneFile);
@@ -65,5 +71,5 @@ public:
 	const String& getSceneFilePath() const { return m_SceneFile; }
 	const String& getName() const { return m_Name; }
 	const String& getFullName() const { return m_FullName; }
-	const SceneSettings& getSettings() const { return m_Settings; }
+	SceneSettings& getSettings() { return m_Settings; }
 };

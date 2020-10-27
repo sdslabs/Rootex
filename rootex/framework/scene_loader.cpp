@@ -20,6 +20,7 @@ void SceneLoader::RegisterAPI(sol::table& rootex)
 	rootex["PreloadScene"] = [](const String& sceneFile, Atomic<int>& progress) { return SceneLoader::GetSingleton()->preloadScene(sceneFile, progress); };
 	rootex["LoadPreloadedScene"] = [](const String& sceneFile, const sol::nested<Vector<String>>& arguments) { return SceneLoader::GetSingleton()->loadPreloadedScene(sceneFile, arguments.value()); };
 	rootex["GetSceneArguments"] = []() { return SceneLoader::GetSingleton()->getArguments(); };
+	rootex["GetCurrentScene"] = []() { return SceneLoader::GetSingleton()->getCurrentScene(); };
 }
 
 SceneLoader* SceneLoader::GetSingleton()
@@ -37,7 +38,7 @@ Variant SceneLoader::deleteScene(const Event* event)
 
 int SceneLoader::preloadScene(const String& sceneFile, Atomic<int>& progress)
 {
-	const SceneSettings& sceneJSON = JSON::json::parse(ResourceLoader::CreateTextResourceFile(sceneFile)->getString());
+	const SceneSettings& sceneJSON = JSON::json::parse(ResourceLoader::CreateTextResourceFile(sceneFile)->getString())["settings"];
 	Vector<String> toPreload = sceneJSON.preloads;
 
 	m_UnloadCache.clear();
@@ -59,6 +60,9 @@ int SceneLoader::preloadScene(const String& sceneFile, Atomic<int>& progress)
 void SceneLoader::loadPreloadedScene(const String& sceneFile, const Vector<String>& arguments)
 {
 	endSystems();
+	m_RootScene->removeChild(m_CurrentScene.get());
+	m_CurrentScene.reset();
+	Scene::ResetCounter();
 
 	ResourceLoader::Unload(m_UnloadCache);
 	m_UnloadCache.clear();
@@ -69,7 +73,6 @@ void SceneLoader::loadPreloadedScene(const String& sceneFile, const Vector<Strin
 		sceneResFile->reimport();
 	}
 	Ref<Scene> scene = Scene::Create(JSON::json::parse(sceneResFile->getString()));
-	m_RootScene->removeChild(m_CurrentScene.get());
 	m_RootScene->addChild(scene);
 	m_CurrentScene = scene;
 	setArguments(arguments);

@@ -27,7 +27,7 @@ Entity::Entity(Scene* scene)
 
 Entity::~Entity()
 {
-	destroy(true);
+	destroy();
 }
 
 JSON::json Entity::getJSON() const
@@ -62,14 +62,11 @@ bool Entity::onAllEntitiesAdded()
 	return status;
 }
 
-void Entity::destroy(bool force)
+void Entity::destroy()
 {
 	for (auto& component : m_Components)
 	{
-		if (!force)
-		{ 
-			component.second->onRemove();
-		}
+		component.second->onRemove();
 		System::DeregisterComponent(component.second.get());
 		component.second.reset();
 	}
