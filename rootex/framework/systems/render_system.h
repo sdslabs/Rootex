@@ -21,7 +21,6 @@ class RenderSystem : public System
 	};
 
 	CameraComponent* m_Camera;
-	Ref<CameraComponent> m_RootCamera;
 	
 	Ptr<Renderer> m_Renderer;
 	Vector<Matrix> m_TransformationStack;
@@ -62,7 +61,7 @@ class RenderSystem : public System
 
 	void renderPassRender(float deltaMilliseconds, RenderPass renderPass);
 
-	Variant onOpenedLevel(const Event* event);
+	Variant onOpenedScene(const Event* event);
 
 public:
 	static RenderSystem* GetSingleton();
@@ -81,7 +80,7 @@ public:
 	void setCamera(CameraComponent* camera);
 	void restoreCamera();
 
-	void calculateTransforms(Ref<Scene> scene);
+	void calculateTransforms(Scene* scene);
 	void pushMatrix(const Matrix& transform);
 	void pushMatrixOverride(const Matrix& transform);
 	void popMatrix();
@@ -92,8 +91,8 @@ public:
 	void setProjectionConstantBuffers();
 	void perFrameVSCBBinds(float fogStart, float fogEnd);
 	void perFramePSCBBinds(const Color& fogColor);
-	void perLevelPSCBBinds();
-	void updatePerLevelBinds();
+	void perScenePSCBBinds();
+	void updatePerSceneBinds();
 
 	void setIsEditorRenderPass(bool enabled) { m_IsEditorRenderPassEnabled = enabled; }
 	

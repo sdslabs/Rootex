@@ -15,7 +15,7 @@ private:
 	SceneDockSettings m_SceneDockSettings;
 	SceneID m_OpenedSceneID;
 
-	void showSceneTree(Ref<Scene> scene);
+	void showSceneTree(Scene* scene);
 	void openScene(Scene* scene);
 
 	Variant selectOpenScene(const Event* event);
@@ -27,7 +27,7 @@ public:
 
 	void draw(float deltaMilliseconds);
 
-	void showEntities(Ref<Scene> scene);
+	void showEntities(Scene* scene);
 
 	SceneDockSettings& getSettings() { return m_SceneDockSettings; }
 	void setActive(bool enabled) { m_SceneDockSettings.m_IsActive = enabled; }

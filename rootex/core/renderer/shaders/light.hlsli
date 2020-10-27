@@ -39,7 +39,7 @@ struct SpotLightInfo
     float angleRange;
 };
 
-cbuffer StaticPointLights : register(PER_LEVEL_PS_HLSL)
+cbuffer StaticPointLights : register(PER_SCENE_PS_HLSL)
 {
     PointLightInfo staticPointLightInfos[MAX_STATIC_POINT_LIGHTS];
 }

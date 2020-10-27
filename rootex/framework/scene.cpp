@@ -41,15 +41,16 @@ void Scene::RegisterAPI(sol::table& rootex)
 	scene["setEntity"] = &setEntity;
 	scene["getID"] = &getID;
 	scene["getParent"] = &getParent;
+	scene["getChildren"] = &getChildren;
 	scene["getEntity"] = &getEntity;
 	scene["getName"] = &getName;
 	scene["getFullName"] = &getFullName;
 }
 
-Ref<Scene> Scene::Create(const JSON::json& sceneData)
+Ptr<Scene> Scene::Create(const JSON::json& sceneData)
 {
 	CurrentSceneCount = CurrentSceneCount > sceneData.value("ID", CurrentSceneCount) ? CurrentSceneCount : sceneData.value("ID", CurrentSceneCount);
-	Ref<Scene> thisScene(std::make_shared<Scene>(CurrentSceneCount, sceneData.value("name", String("Untitled")), sceneData.value("file", String()), sceneData.value("settings", SceneSettings())));
+	Ptr<Scene> thisScene(std::make_unique<Scene>(CurrentSceneCount, sceneData.value("name", String("Untitled")), sceneData.value("file", String()), sceneData.value("settings", SceneSettings())));
 	CurrentSceneCount++;
 
 	if (sceneData.contains("entity"))
@@ -69,7 +70,7 @@ Ref<Scene> Scene::Create(const JSON::json& sceneData)
 	return thisScene;
 }
 
-Ref<Scene> Scene::CreateFromFile(const String& sceneFile)
+Ptr<Scene> Scene::CreateFromFile(const String& sceneFile)
 {
 	if (TextResourceFile* t = ResourceLoader::CreateTextResourceFile(sceneFile))
 	{
@@ -82,22 +83,22 @@ Ref<Scene> Scene::CreateFromFile(const String& sceneFile)
 	return nullptr;
 }
 
-Ref<Scene> Scene::CreateEmpty()
+Ptr<Scene> Scene::CreateEmpty()
 {
 	return Create({});
 }
 
-Ref<Scene> Scene::CreateEmptyAtPath(const String& sceneFile)
+Ptr<Scene> Scene::CreateEmptyAtPath(const String& sceneFile)
 {
 	return Create({ { "entity", {} }, { "file", sceneFile } });
 }
 
-Ref<Scene> Scene::CreateEmptyWithEntity()
+Ptr<Scene> Scene::CreateEmptyWithEntity()
 {
 	return Create({ { "entity", {} } });
 }
 
-Ref<Scene> Scene::CreateRootScene()
+Ptr<Scene> Scene::CreateRootScene()
 {
 	static bool called = false;
 	if (called)
@@ -106,7 +107,7 @@ Ref<Scene> Scene::CreateRootScene()
 		return nullptr;
 	}
 
-	Ref<Scene> root = std::make_shared<Scene>(ROOT_SCENE_ID, "Root", "", SceneSettings());
+	Ptr<Scene> root = std::make_unique<Scene>(ROOT_SCENE_ID, "Root", "", SceneSettings());
 	root->m_Entity = ECSFactory::CreateRootEntity(root.get());
 
 	called = true;
@@ -129,15 +130,6 @@ Scene* Scene::findScene(SceneID scene)
 	return nullptr;
 }
 
-void Scene::destroy()
-{
-	m_ChildrenScenes.clear();
-	if (m_ParentScene)
-	{
-		m_ParentScene->removeChild(this);
-	}
-}
-
 void Scene::reload()
 {
 	if (m_SceneFile.empty())
@@ -155,7 +147,7 @@ void Scene::reload()
 	}
 	else
 	{
-		setEntity(nullptr);
+		setEntity(Ptr<Entity>());
 	}
 
 	m_ChildrenScenes.clear();
@@ -183,12 +175,12 @@ void Scene::onLoad()
 	}
 }
 
-bool Scene::snatchChild(Ref<Scene>& child)
+bool Scene::snatchChild(Ptr<Scene>& child)
 {
 	return child->getParent()->removeChild(child.get()) && addChild(child);
 }
 
-bool Scene::addChild(Ref<Scene>& child)
+bool Scene::addChild(Ptr<Scene>& child)
 {
 	if (!child)
 	{
@@ -200,7 +192,8 @@ bool Scene::addChild(Ref<Scene>& child)
 	if (findIt == m_ChildrenScenes.end())
 	{
 		child->m_ParentScene = this;
-		m_ChildrenScenes.push_back(child);
+		m_ChildrenScenes.emplace_back(std::move(child));
+		child.reset();
 		return true;
 	}
 	return false;
@@ -257,14 +250,9 @@ Scene::Scene(SceneID id, const String& name, const String& sceneFile, const Scen
 	setName(m_Name);
 }
 
-Scene::Scene(SceneID id, const String& name, const String& sceneFile, const SceneSettings& settings, Ref<Entity>& entity)
-    : m_Entity(entity)
-    , m_Name(name)
-    , m_ID(id)
-    , m_Settings(settings)
-    , m_SceneFile(sceneFile)
+Scene::~Scene()
 {
-	setName(m_Name);
+	PRINT("Deleted scene: " + getFullName());
 }
 
 #ifdef ROOTEX_EDITOR
@@ -308,12 +296,12 @@ void SceneSettings::draw()
 	}
 	if (ImGui::BeginCombo("Camera", SceneLoader::GetSingleton()->getRootScene()->findScene(camera)->getFullName().c_str()))
 	{
-		drawSceneSelectables(SceneLoader::GetSingleton()->getRootScene().get(), camera);
+		drawSceneSelectables(SceneLoader::GetSingleton()->getRootScene(), camera);
 		ImGui::EndCombo();
 	}
 	if (ImGui::BeginCombo("Listener", SceneLoader::GetSingleton()->getRootScene()->findScene(listener)->getFullName().c_str()))
 	{
-		drawSceneSelectables(SceneLoader::GetSingleton()->getRootScene().get(), listener);
+		drawSceneSelectables(SceneLoader::GetSingleton()->getRootScene(), listener);
 		ImGui::EndCombo();
 	}
 	String schemes = inputSchemes.dump(4);

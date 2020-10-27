@@ -21,26 +21,27 @@ ViewportDock::ViewportDock(const JSON::json& viewportJSON)
 	m_ViewportDockSettings.m_ImageTint = EditorSystem::GetSingleton()->getColors().white;
 	m_ViewportDockSettings.m_ImageBorderColor = EditorSystem::GetSingleton()->getColors().accent;
 	
-	m_EditorCamera = Scene::CreateEmptyWithEntity();
-	m_EditorCamera->setName("EditorCamera");
+	Ptr<Scene>& editorCamera = Scene::CreateEmptyWithEntity();
+	editorCamera->setName("EditorCamera");
+	m_EditorCamera = editorCamera.get();
 	ECSFactory::AddComponent(m_EditorCamera->getEntity(), ECSFactory::CreateDefaultComponent("TransformComponent"));
 	ECSFactory::AddComponent(m_EditorCamera->getEntity(), ECSFactory::CreateDefaultComponent("CameraComponent"));
-	RenderSystem::GetSingleton()->setCamera(m_EditorCamera->getEntity()->getComponent<CameraComponent>().get());
+	RenderSystem::GetSingleton()->setCamera(m_EditorCamera->getEntity()->getComponent<CameraComponent>());
+	SceneLoader::GetSingleton()->getRootScene()->addChild(editorCamera);
 
-	m_EditorGrid = Scene::CreateEmptyWithEntity();
-	m_EditorGrid->setName("EditorGrid");
+	Ptr<Scene>& editorGrid = Scene::CreateEmptyWithEntity();
+	editorGrid->setName("EditorGrid");
+	m_EditorGrid = editorGrid.get();
 	ECSFactory::AddComponent(m_EditorGrid->getEntity(), ECSFactory::CreateDefaultComponent("TransformComponent"));
 	ECSFactory::AddComponent(m_EditorGrid->getEntity(), ECSFactory::CreateDefaultComponent("GridModelComponent"));
-	
-	SceneLoader::GetSingleton()->getRootScene()->addChild(m_EditorCamera);
-	SceneLoader::GetSingleton()->getRootScene()->addChild(m_EditorGrid);
+	SceneLoader::GetSingleton()->getRootScene()->addChild(editorGrid);
 }
 
 void FindSelectedEntity(Entity*& result, Scene* scene, const Ray& ray, float minimumDistance)
 {
 	if (Entity* entity = scene->getEntity())
 	{
-		if (Ref<TransformComponent> transform = entity->getComponent<TransformComponent>())
+		if (TransformComponent* transform = entity->getComponent<TransformComponent>())
 		{
 			static float distance = 0.0f;
 			BoundingBox boundingBox = transform->getWorldSpaceBounds();
@@ -170,7 +171,7 @@ void ViewportDock::draw(float deltaMilliseconds)
 			if (openedScene && openedScene->getEntity() && openedScene->getEntity()->getComponent<TransformComponent>())
 			{
 				Entity* openedEntity = openedScene->getEntity();
-				TransformComponent* transform = openedEntity->getComponent<TransformComponent>().get();
+				TransformComponent* transform = openedEntity->getComponent<TransformComponent>();
 
 				ImGuizmo::SetRect(imagePos.x, imagePos.y, m_ViewportDockSettings.m_ImageSize.x, m_ViewportDockSettings.m_ImageSize.y);
 
@@ -230,14 +231,14 @@ void ViewportDock::draw(float deltaMilliseconds)
 
 				Ray ray(origin, direction);
 				Entity* selectEntity = nullptr;
-				if (Ref<Scene> currentScene = SceneLoader::GetSingleton()->getCurrentScene())
+				if (Scene* currentScene = SceneLoader::GetSingleton()->getCurrentScene())
 				{
-					FindSelectedEntity(selectEntity, currentScene.get(), ray, D3D11_FLOAT32_MAX);
+					FindSelectedEntity(selectEntity, currentScene, ray, D3D11_FLOAT32_MAX);
 				}
 				
 				if (selectEntity)
 				{
-					Ref<TransformComponent> transform = selectEntity->getComponent<TransformComponent>();
+					TransformComponent* transform = selectEntity->getComponent<TransformComponent>();
 					transform->highlight();
 					ImGui::SetCursorPos({ ImGui::GetMousePos().x - ImGui::GetWindowPos().x + 10.0f, ImGui::GetMousePos().y - ImGui::GetWindowPos().y - 20.0f });
 					EditorSystem::GetSingleton()->pushBoldFont();

@@ -22,8 +22,7 @@ end
 
 function onLoadLevel(event)
     if event:getData().y == 1 and running == false then
-        local scene = RTX.Scene.CreateFromFile("game/assets/scenes/fade_to_black.scene.json")
-        RTX.GetCurrentScene():addChild(scene)
+        RTX.GetCurrentScene():addChild(RTX.Scene.CreateFromFile("game/assets/scenes/fade_to_black.scene.json"))
         running = true
     end
     return true

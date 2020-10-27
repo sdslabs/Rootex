@@ -3,6 +3,9 @@
     "startLevel": "game/assets/scenes/loading.scene.json",
     "systems": {
         "AudioSystem": {},
+        "DebugSystem": {
+            "active": true
+        },
         "InputManager": {
             "height": 1440,
             "width": 2560

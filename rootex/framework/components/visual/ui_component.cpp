@@ -19,10 +19,8 @@ UIComponent::UIComponent(const String& path)
 
 UIComponent::~UIComponent()
 {
-	if (m_Document)
-	{
-		UISystem::GetSingleton()->unloadDocument(m_Document);
-	}
+	UISystem::GetSingleton()->unloadDocument(m_Document);
+	UISystem::GetSingleton()->getContext()->Update();
 }
 
 void UIComponent::setDocument(const String& path)

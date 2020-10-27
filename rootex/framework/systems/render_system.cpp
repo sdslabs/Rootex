@@ -24,9 +24,9 @@ RenderSystem::RenderSystem()
     , m_PSPerLevelConstantBuffer(nullptr)
     , m_IsEditorRenderPassEnabled(false)
 {
-	BIND_EVENT_MEMBER_FUNCTION("OpenedLevel", onOpenedLevel);
+	BIND_EVENT_MEMBER_FUNCTION("OpenedScene", onOpenedScene);
 	
-	m_Camera = SceneLoader::GetSingleton()->getRootScene()->getEntity()->getComponent<CameraComponent>().get();
+	m_Camera = SceneLoader::GetSingleton()->getRootScene()->getEntity()->getComponent<CameraComponent>();
 	m_TransformationStack.push_back(Matrix::Identity);
 	setProjectionConstantBuffers();
 	
@@ -38,8 +38,6 @@ RenderSystem::RenderSystem()
 	m_DualPostProcess.reset(new DirectX::DualPostProcess(RenderingDevice::GetSingleton()->getDevice()));
 	m_ToneMapPostProcess.reset(new DirectX::ToneMapPostProcess(RenderingDevice::GetSingleton()->getDevice()));
 	
-	m_RootCamera = SceneLoader::GetSingleton()->getRootScene()->getEntity()->getComponent<CameraComponent>();
-
 	RenderingDevice::GetSingleton()->createRTVAndSRV(m_ToneMapRTV, m_ToneMapSRV);
 	RenderingDevice::GetSingleton()->createRTVAndSRV(m_GaussianBlurRTV, m_GaussianBlurSRV);
 	RenderingDevice::GetSingleton()->createRTVAndSRV(m_MonochromeRTV, m_MonochromeSRV);
@@ -60,15 +58,15 @@ void RenderSystem::setConfig(const SceneSettings& sceneSettings)
 	Scene* cameraScene = SceneLoader::GetSingleton()->getRootScene()->findScene(sceneSettings.camera);
 	if (cameraScene)
 	{
-		setCamera(cameraScene->getEntity()->getComponent<CameraComponent>().get());
+		setCamera(cameraScene->getEntity()->getComponent<CameraComponent>());
 	}
 }
 
-void RenderSystem::calculateTransforms(Ref<Scene> scene)
+void RenderSystem::calculateTransforms(Scene* scene)
 {
 	if (Entity* entity = scene->getEntity())
 	{
-		if (Ref<TransformComponent> transform = entity->getComponent<TransformComponent>())
+		if (TransformComponent* transform = entity->getComponent<TransformComponent>())
 		{
 			pushMatrix(entity->getComponent<TransformComponent>()->getLocalTransform());
 		}
@@ -81,13 +79,13 @@ void RenderSystem::calculateTransforms(Ref<Scene> scene)
 		{
 			if (Entity* childEntity = child->getEntity())
 			{
-				if (Ref<TransformComponent> childTransform = childEntity->getComponent<TransformComponent>())
+				if (TransformComponent* childTransform = childEntity->getComponent<TransformComponent>())
 				{
 					childTransform->setParentAbsoluteTransform(getCurrentMatrix());
 				}
 			}
 
-			calculateTransforms(child);
+			calculateTransforms(child.get());
 		}
 		popMatrix();
 	}
@@ -486,16 +484,17 @@ void RenderSystem::perFramePSCBBinds(const Color& fogColor)
 	Material::SetPSConstantBuffer(perFrame, m_PSPerFrameConstantBuffer, PER_FRAME_PS_CPP);
 }
 
-void RenderSystem::perLevelPSCBBinds()
+void RenderSystem::perScenePSCBBinds()
 {
-	PerLevelPSCB perLevel;
-	perLevel.staticLights = LightSystem::GetSingleton()->getStaticPointLights();
-	Material::SetPSConstantBuffer(perLevel, m_PSPerLevelConstantBuffer, PER_LEVEL_PS_CPP);
+	calculateTransforms(SceneLoader::GetSingleton()->getRootScene());
+	PerLevelPSCB perScene;
+	perScene.staticLights = LightSystem::GetSingleton()->getStaticPointLights();
+	Material::SetPSConstantBuffer(perScene, m_PSPerLevelConstantBuffer, PER_SCENE_PS_CPP);
 }
 
-void RenderSystem::updatePerLevelBinds()
+void RenderSystem::updatePerSceneBinds()
 {
-	perLevelPSCBBinds();
+	perScenePSCBBinds();
 }
 
 void RenderSystem::enableLineRenderMode()
@@ -519,7 +518,7 @@ void RenderSystem::setCamera(CameraComponent* camera)
 
 void RenderSystem::restoreCamera()
 {
-	setCamera(m_RootCamera.get());
+	setCamera(SceneLoader::GetSingleton()->getRootScene()->getEntity()->getComponent<CameraComponent>());
 }
 
 const Matrix& RenderSystem::getCurrentMatrix() const
@@ -527,9 +526,9 @@ const Matrix& RenderSystem::getCurrentMatrix() const
 	return m_TransformationStack.back();
 }
 
-Variant RenderSystem::onOpenedLevel(const Event* event)
+Variant RenderSystem::onOpenedScene(const Event* event)
 {
-	updatePerLevelBinds();
+	updatePerSceneBinds();
 	return true;
 }
 
@@ -560,7 +559,7 @@ void RenderSystem::draw()
 
 	if (ImGui::Button("Update Static Lights")) 
 	{
-		updatePerLevelBinds();
+		updatePerSceneBinds();
 	}
 }
 #endif

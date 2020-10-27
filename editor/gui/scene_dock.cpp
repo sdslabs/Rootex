@@ -9,7 +9,7 @@
 #include "vendor/ImGUI/imgui_impl_dx11.h"
 #include "vendor/ImGUI/imgui_impl_win32.h"
 
-void SceneDock::showSceneTree(Ref<Scene> scene)
+void SceneDock::showSceneTree(Scene* scene)
 {
 	ZoneScoped;
 	
@@ -25,19 +25,19 @@ void SceneDock::showSceneTree(Ref<Scene> scene)
 			ImGui::PushStyleColor(ImGuiCol_Text, EditorSystem::GetSingleton()->getColors().text);
 			if (ImGui::Selectable(scene->getFullName().c_str(), m_OpenedSceneID == scene->getID()))
 			{
-				openScene(scene.get());
+				openScene(scene);
 			}
 
 			if (ImGui::BeginPopupContextItem())
 			{
-				openScene(scene.get());
-				InspectorDock::GetSingleton()->drawSceneActions(scene.get());
+				openScene(scene);
+				InspectorDock::GetSingleton()->drawSceneActions(scene);
 				ImGui::EndPopup();
 			}
 
 			if (ImGui::BeginDragDropSource())
 			{
-				ImGui::SetDragDropPayload("RearrangeScene", &scene, sizeof(Ref<Scene>));
+				ImGui::SetDragDropPayload("RearrangeScene", &scene, sizeof(Ptr<Scene>));
 				ImGui::Text(scene->getFullName().c_str());
 				ImGui::EndDragDropSource();
 			}
@@ -46,20 +46,20 @@ void SceneDock::showSceneTree(Ref<Scene> scene)
 			{
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("RearrangeScene"))
 				{
-					Ref<Scene> rearrangeScene = *(Ref<Scene>*)(payload->Data);
+					Ptr<Scene>& rearrangeScene = *(Ptr<Scene>*)(payload->Data);
 					scene->snatchChild(rearrangeScene);
 					Entity* victimEntity = rearrangeScene->getEntity();
 					Entity* thiefEntity = scene->getEntity();
 					if (victimEntity && thiefEntity)
 					{
-						Ref<TransformComponent> victimTransform = victimEntity->getComponent<TransformComponent>();
-						Ref<TransformComponent> thiefTransform = thiefEntity->getComponent<TransformComponent>();
+						TransformComponent* victimTransform = victimEntity->getComponent<TransformComponent>();
+						TransformComponent* thiefTransform = thiefEntity->getComponent<TransformComponent>();
 						if (victimTransform && thiefTransform)
 						{
 							victimTransform->setTransform(victimTransform->getAbsoluteTransform() * thiefTransform->getAbsoluteTransform().Invert());
 						}
 					}
-					openScene(scene.get());
+					openScene(scene);
 				}
 				ImGui::EndDragDropTarget();
 			}
@@ -68,7 +68,7 @@ void SceneDock::showSceneTree(Ref<Scene> scene)
 
 			for (auto& child : scene->getChildren())
 			{
-				showSceneTree(child);
+				showSceneTree(child.get());
 			}
 
 			ImGui::TreePop();
@@ -102,8 +102,7 @@ void SceneDock::draw(float deltaMilliseconds)
 	{
 		if (ImGui::Begin("Scene"))
 		{
-			Ref<Scene> rootScene = SceneLoader::GetSingleton()->getRootScene();
-			showSceneTree(rootScene);
+			showSceneTree(SceneLoader::GetSingleton()->getRootScene());
 		}
 		ImGui::End();
 	}
@@ -117,8 +116,7 @@ void SceneDock::draw(float deltaMilliseconds)
 			ImGui::Text("Components");
 			ImGui::NextColumn();
 
-			Ref<Scene> rootScene = SceneLoader::GetSingleton()->getRootScene();
-			showEntities(rootScene);
+			showEntities(SceneLoader::GetSingleton()->getRootScene());
 
 			ImGui::Columns(1);
 		}
@@ -126,26 +124,26 @@ void SceneDock::draw(float deltaMilliseconds)
 	}
 }
 
-void SceneDock::showEntities(Ref<Scene> scene)
+void SceneDock::showEntities(Scene* scene)
 {
 	if (Entity* entity = scene->getEntity())
 	{
 		if (ImGui::Selectable(entity->getFullName().c_str(), m_OpenedSceneID == scene->getID()))
 		{
-			openScene(scene.get());
+			openScene(scene);
 		}
 		if (ImGui::BeginPopupContextItem())
 		{
-			InspectorDock::GetSingleton()->drawSceneActions(scene.get());
+			InspectorDock::GetSingleton()->drawSceneActions(scene);
 			ImGui::EndPopup();
 		}
 		ImGui::NextColumn();
-		HashMap<ComponentID, Ref<Component>> components = entity->getAllComponents();
-		HashMap<ComponentID, Ref<Component>>::iterator it = components.begin();
+		const HashMap<ComponentID, Ptr<Component>>& components = entity->getAllComponents();
+		HashMap<ComponentID, Ptr<Component>>::const_iterator it = components.begin();
 		while (it != components.end())
 		{
 			bool increment = true;
-			Ref<Component> component = it->second;
+			Component* component = it->second.get();
 			ImGui::Selectable(component->getName());
 			if (ImGui::BeginPopupContextItem(("Delete" + entity->getFullName() + component->getName()).c_str()))
 			{
@@ -177,6 +175,6 @@ void SceneDock::showEntities(Ref<Scene> scene)
 
 	for (auto& child : scene->getChildren())
 	{
-		showEntities(child);
+		showEntities(child.get());
 	}
 }

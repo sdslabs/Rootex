@@ -143,7 +143,7 @@ void AudioSystem::setConfig(const SceneSettings& sceneSettings)
 	Scene* listenerScene = SceneLoader::GetSingleton()->getRootScene()->findScene(sceneSettings.listener);
 	if (listenerScene)
 	{
-		setListener(listenerScene->getEntity()->getComponent<AudioListenerComponent>().get());
+		setListener(listenerScene->getEntity()->getComponent<AudioListenerComponent>());
 		return;
 	}
 	restoreListener();
@@ -151,7 +151,7 @@ void AudioSystem::setConfig(const SceneSettings& sceneSettings)
 
 void AudioSystem::restoreListener()
 {
-	setListener(m_RootListener.get());
+	setListener(SceneLoader::GetSingleton()->getRootScene()->getEntity()->getComponent<AudioListenerComponent>());
 }
 
 void AudioSystem::shutDown()
@@ -165,6 +165,4 @@ AudioSystem::AudioSystem()
     , m_Device(nullptr)
     , m_Listener(nullptr)
 {
-	Ref<Scene> root = SceneLoader::GetSingleton()->getRootScene();
-	m_RootListener = root->getEntity()->getComponent<AudioListenerComponent>();
 }

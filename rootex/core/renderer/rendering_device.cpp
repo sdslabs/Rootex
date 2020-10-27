@@ -827,7 +827,6 @@ void RenderingDevice::clearDSV()
 	m_Context->ClearDepthStencilView(m_MainDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
 }
 
-#ifdef ROOTEX_EDITOR
 ID3D11Device* RenderingDevice::getDevice()
 {
 	return m_Device.Get();
@@ -837,4 +836,3 @@ ID3D11DeviceContext* RenderingDevice::getContext()
 {
 	return m_Context.Get();
 }
-#endif // ROOTEX_EDITOR

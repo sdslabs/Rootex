@@ -7,8 +7,8 @@ class Scene;
 
 class SceneLoader
 {
-	Ref<Scene> m_CurrentScene;
-	Ref<Scene> m_RootScene;
+	Scene* m_CurrentScene = nullptr;
+	Ptr<Scene> m_RootScene;
 
 	Vector<String> m_UnloadCache;
 	Vector<String> m_SceneArguments;
@@ -33,6 +33,6 @@ public:
 	bool saveScene(Scene* scene);
 	bool saveSceneAtFile(Scene* scene, const String& filePath);
 
-	Ref<Scene> getCurrentScene() const { return m_CurrentScene; }
-	Ref<Scene> getRootScene() const { return m_RootScene; }
+	Scene* getCurrentScene() const { return m_CurrentScene; }
+	Scene* getRootScene() const { return m_RootScene.get(); }
 };

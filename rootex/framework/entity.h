@@ -15,7 +15,7 @@ class Entity
 {
 protected:
 	Scene* m_Scene;
-	HashMap<ComponentID, Ref<Component>> m_Components;
+	HashMap<ComponentID, Ptr<Component>> m_Components;
 	
 	friend class ECSFactory;
 
@@ -37,38 +37,38 @@ public:
 	Scene* getScene() const { return m_Scene; }
 	
 	template <class ComponentType = Component>
-	Ref<ComponentType> getComponent() const;
+	ComponentType* getComponent();
 
 	template <class ComponentType = Component>
-	Ref<ComponentType> getComponentFromID(ComponentID ID) const;
+	ComponentType* getComponentFromID(ComponentID ID);
 
 	JSON::json getJSON() const;
 	const String& getName() const;
 	const String& getFullName() const;
-	const HashMap<ComponentID, Ref<Component>>& getAllComponents() const;
+	const HashMap<ComponentID, Ptr<Component>>& getAllComponents() const;
 };
 
 template <class ComponentType>
-inline Ref<ComponentType> Entity::getComponent() const
+inline ComponentType* Entity::getComponent()
 {
 	auto findIt = m_Components.find(ComponentType::s_ID);
 	if (findIt != m_Components.end())
 	{
-		Ref<Component> baseTypeComponent = findIt->second;
-		return std::dynamic_pointer_cast<ComponentType>(baseTypeComponent);
+		Ptr<Component>& baseTypeComponent = findIt->second;
+		return dynamic_cast<ComponentType*>(baseTypeComponent.get());
 	}
 
 	return nullptr;
 }
 
 template <class ComponentType>
-inline Ref<ComponentType> Entity::getComponentFromID(ComponentID ID) const
+inline ComponentType* Entity::getComponentFromID(ComponentID ID)
 {
 	auto findIt = m_Components.find(ID);
 	if (findIt != m_Components.end())
 	{
-		Ref<Component> baseTypeComponent = findIt->second;
-		return std::dynamic_pointer_cast<ComponentType>(baseTypeComponent);
+		Ptr<Component>& baseTypeComponent = findIt->second;
+		return dynamic_cast<ComponentType*>(baseTypeComponent.get());
 	}
 
 	return nullptr;

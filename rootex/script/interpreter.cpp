@@ -21,18 +21,24 @@
 #include "core/resource_files/text_resource_file.h"
 #include "event_manager.h"
 
-void SolPanic(std::optional<String> maybeMsg)
+int HandleLuaException(lua_State* L, sol::optional<const std::exception&> maybeException, sol::string_view description)
 {
-	WARN("Lua is in a panic state and will now abort() the application");
-	if (maybeMsg)
+	PRINT("An exception occurred in Lua function:")
+	if (maybeException)
 	{
-		PRINT("Lua Error: " + maybeMsg.value());
+		const std::exception& ex = *maybeException;
+		ERR(ex.what());
 	}
+	else
+	{
+		PRINT(description.data());
+	}
+	return sol::stack::push(L, description);
 }
 
 LuaInterpreter::LuaInterpreter()
-    : m_Lua(sol::c_call<decltype(&SolPanic), &SolPanic>)
 {
+	m_Lua.set_exception_handler(&HandleLuaException);
 	m_Lua.open_libraries(sol::lib::base);
 	m_Lua.open_libraries(sol::lib::io);
 	m_Lua.open_libraries(sol::lib::math);

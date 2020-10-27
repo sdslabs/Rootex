@@ -118,8 +118,6 @@ public:
 	void setVSCB(ID3D11Buffer* constantBuffer, UINT slot);
 	void setPSCB(ID3D11Buffer* constantBuffer, UINT slot);
 
-	void unbindShaderResources();
-
 	void setDefaultBS();
 	void setAlphaBS();
 	
