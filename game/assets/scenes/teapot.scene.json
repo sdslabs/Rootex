@@ -1,0 +1,146 @@
+{
+    "ID": 21,
+    "children": [
+        {
+            "ID": 22,
+            "children": [],
+            "entity": {
+                "components": {
+                    "CPUParticlesComponent": {
+                        "affectingStaticLights": [],
+                        "emitMode": 0,
+                        "emitterDimensions": {
+                            "x": 5.0,
+                            "y": 5.0,
+                            "z": 0.0
+                        },
+                        "isVisible": true,
+                        "materialOverrides": {
+                            "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                        },
+                        "materialPath": "game/assets/materials/kettle_steam.rmat",
+                        "particleTemplate": {
+                            "angularVelocityVariation": 10.0,
+                            "colorBegin": {
+                                "a": 0.5372549295425415,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "colorEnd": {
+                                "a": 0.0,
+                                "b": 0.972963273525238,
+                                "g": 0.972963273525238,
+                                "r": 0.9729729890823364
+                            },
+                            "lifeTime": 1.4900000095367432,
+                            "sizeBegin": 1.0199999809265137,
+                            "sizeEnd": 1.0199999809265137,
+                            "sizeVariation": 0.10000000149011612,
+                            "velocity": {
+                                "x": 5.0,
+                                "y": 5.0,
+                                "z": 0.0
+                            },
+                            "velocityVariation": 1.0
+                        },
+                        "poolSize": 1000,
+                        "renderPass": 4,
+                        "resFile": "rootex/assets/cube.obj"
+                    },
+                    "TransformComponent": {
+                        "boundingBox": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "extents": {
+                                "x": 0.5,
+                                "y": 0.5,
+                                "z": 0.5
+                            }
+                        },
+                        "position": {
+                            "x": 13.436042785644531,
+                            "y": 3.4746077060699463,
+                            "z": 0.0
+                        },
+                        "rotation": {
+                            "w": 1.0,
+                            "x": -0.0,
+                            "y": 0.0,
+                            "z": -0.0
+                        },
+                        "scale": {
+                            "x": 1.28000009059906,
+                            "y": 1.28000009059906,
+                            "z": 1.28000009059906
+                        }
+                    }
+                }
+            },
+            "file": "",
+            "name": "Particles",
+            "settings": {
+                "camera": 1,
+                "inputSchemes": null,
+                "listener": 1,
+                "preloads": [],
+                "startScheme": ""
+            }
+        }
+    ],
+    "entity": {
+        "components": {
+            "ModelComponent": {
+                "affectingStaticLights": [],
+                "isVisible": true,
+                "materialOverrides": {
+                    "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                },
+                "renderPass": 1,
+                "resFile": "game/assets/test/teapot.obj"
+            },
+            "TransformComponent": {
+                "boundingBox": {
+                    "center": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "extents": {
+                        "x": 16.0703125,
+                        "y": 7.875,
+                        "z": 10.0
+                    }
+                },
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": -0.0,
+                    "y": 0.0,
+                    "z": -0.0
+                },
+                "scale": {
+                    "x": 0.05000000074505806,
+                    "y": 0.05000000074505806,
+                    "z": 0.05000000074505806
+                }
+            }
+        }
+    },
+    "file": "game/assets/scenes/teapot.scene.json",
+    "name": "teapot",
+    "settings": {
+        "camera": 1,
+        "inputSchemes": null,
+        "listener": 1,
+        "preloads": [],
+        "startScheme": ""
+    }
+}

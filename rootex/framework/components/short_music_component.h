@@ -18,7 +18,7 @@ class ShortMusicComponent : public AudioComponent
 	ShortMusicComponent(AudioResourceFile* audioFile, bool playOnStart, bool isLooping, bool attenuation, AudioSource::AttenuationModel model, ALfloat rolloffFactor, ALfloat referenceDistance, ALfloat maxDistance);
 	virtual ~ShortMusicComponent();
 
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::ShortMusicComponent;

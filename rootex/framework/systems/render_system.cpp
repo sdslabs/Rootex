@@ -7,6 +7,7 @@
 #include "renderer/material_library.h"
 #include "components/visual/sky_component.h"
 #include "application.h"
+#include "scene_loader.h"
 
 RenderSystem* RenderSystem::GetSingleton()
 {
@@ -25,7 +26,7 @@ RenderSystem::RenderSystem()
 {
 	BIND_EVENT_MEMBER_FUNCTION("OpenedLevel", onOpenedLevel);
 	
-	m_Camera = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<CameraComponent>().get();
+	m_Camera = SceneLoader::GetSingleton()->getRootScene()->getEntity()->getComponent<CameraComponent>().get();
 	m_TransformationStack.push_back(Matrix::Identity);
 	setProjectionConstantBuffers();
 	
@@ -37,6 +38,8 @@ RenderSystem::RenderSystem()
 	m_DualPostProcess.reset(new DirectX::DualPostProcess(RenderingDevice::GetSingleton()->getDevice()));
 	m_ToneMapPostProcess.reset(new DirectX::ToneMapPostProcess(RenderingDevice::GetSingleton()->getDevice()));
 	
+	m_RootCamera = SceneLoader::GetSingleton()->getRootScene()->getEntity()->getComponent<CameraComponent>();
+
 	RenderingDevice::GetSingleton()->createRTVAndSRV(m_ToneMapRTV, m_ToneMapSRV);
 	RenderingDevice::GetSingleton()->createRTVAndSRV(m_GaussianBlurRTV, m_GaussianBlurSRV);
 	RenderingDevice::GetSingleton()->createRTVAndSRV(m_MonochromeRTV, m_MonochromeSRV);
@@ -52,28 +55,42 @@ void RenderSystem::recoverLostDevice()
 	ERR("Fatal error: D3D Device lost");
 }
 
-void RenderSystem::setConfig(const JSON::json& configData, bool openInEditor)
+void RenderSystem::setConfig(const SceneSettings& sceneSettings)
 {
-	if (configData.find("camera") != configData.end())
+	Scene* cameraScene = SceneLoader::GetSingleton()->getRootScene()->findScene(sceneSettings.camera);
+	if (cameraScene)
 	{
-		Ref<Entity> cameraEntity = EntityFactory::GetSingleton()->findEntity(configData["camera"]);
-		if (cameraEntity)
-		{
-			setCamera(cameraEntity->getComponent<CameraComponent>().get());
-			return;
-		}
+		setCamera(cameraScene->getEntity()->getComponent<CameraComponent>().get());
 	}
 }
 
-void RenderSystem::calculateTransforms(HierarchyComponent* hierarchyComponent)
+void RenderSystem::calculateTransforms(Ref<Scene> scene)
 {
-	pushMatrix(hierarchyComponent->getOwner()->getComponent<TransformComponent>()->getLocalTransform());
-	for (auto&& child : hierarchyComponent->getChildren())
+	if (Entity* entity = scene->getEntity())
 	{
-		child->setParentAbsoluteTransform(getCurrentMatrix());
-		calculateTransforms(child);
+		if (Ref<TransformComponent> transform = entity->getComponent<TransformComponent>())
+		{
+			pushMatrix(entity->getComponent<TransformComponent>()->getLocalTransform());
+		}
+		else
+		{
+			pushMatrix(Matrix::Identity);
+		}
+
+		for (auto& child : scene->getChildren())
+		{
+			if (Entity* childEntity = child->getEntity())
+			{
+				if (Ref<TransformComponent> childTransform = childEntity->getComponent<TransformComponent>())
+				{
+					childTransform->setParentAbsoluteTransform(getCurrentMatrix());
+				}
+			}
+
+			calculateTransforms(child);
+		}
+		popMatrix();
 	}
-	popMatrix();
 }
 
 void RenderSystem::renderPassRender(float deltaMilliseconds, RenderPass renderPass)
@@ -122,9 +139,7 @@ void RenderSystem::update(float deltaMilliseconds)
 	}
 	{
 		ZoneNamedN(absoluteTransform, "Absolute Transformations", true);
-		// Pre-calculate absolute transforms
-		Ref<HierarchyComponent> rootHC = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<HierarchyComponent>();
-		calculateTransforms(rootHC.get());
+		calculateTransforms(SceneLoader::GetSingleton()->getRootScene());
 	}
 	{
 		ZoneNamedN(stateSet, "Render State Reset", true);
@@ -504,7 +519,7 @@ void RenderSystem::setCamera(CameraComponent* camera)
 
 void RenderSystem::restoreCamera()
 {
-	setCamera(HierarchySystem::GetSingleton()->getRootEntity()->getComponent<CameraComponent>().get());
+	setCamera(m_RootCamera.get());
 }
 
 const Matrix& RenderSystem::getCurrentMatrix() const

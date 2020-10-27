@@ -49,7 +49,7 @@ class CPUParticlesComponent : public ModelComponent
 	EmitMode m_CurrentEmitMode;
 	Vector3 m_EmitterDimensions;
 
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::CPUParticlesComponent;

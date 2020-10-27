@@ -10,6 +10,7 @@
 #include "framework/components/visual/static_point_light_component.h"
 #include "renderer/material_library.h"
 #include "renderer/render_pass.h"
+#include "scene_loader.h"
 
 Component* ModelComponent::Create(const JSON::json& componentData)
 {
@@ -18,16 +19,15 @@ Component* ModelComponent::Create(const JSON::json& componentData)
 	    ResourceLoader::CreateModelResourceFile(componentData.value("resFile", "rootex/assets/cube.obj")),
 	    componentData.value("materialOverrides", HashMap<String, String>()),
 	    componentData.value("isVisible", true),
-	    componentData.value("affectingStaticLights", Vector<EntityID>()));
+	    componentData.value("affectingStaticLights", Vector<SceneID>()));
 	return modelComponent;
 }
 
-ModelComponent::ModelComponent(unsigned int renderPass, ModelResourceFile* resFile, const HashMap<String, String>& materialOverrides, bool visibility, const Vector<EntityID>& affectingStaticLightIDs)
+ModelComponent::ModelComponent(unsigned int renderPass, ModelResourceFile* resFile, const HashMap<String, String>& materialOverrides, bool visibility, const Vector<SceneID>& affectingStaticLightIDs)
     : m_IsVisible(visibility)
     , m_RenderPass(renderPass)
-    , m_AffectingStaticLightEntityIDs(affectingStaticLightIDs)
+    , m_AffectingStaticLightIDs(affectingStaticLightIDs)
     , m_DependencyOnTransformComponent(this)
-    , m_DependencyOnHierarchyComponent(this)
 {
 	assignOverrides(resFile, materialOverrides);
 }
@@ -50,8 +50,8 @@ bool ModelComponent::setupData()
 
 bool ModelComponent::setupEntities()
 {
-	Vector<int> affectingEntities = m_AffectingStaticLightEntityIDs;
-	m_AffectingStaticLightEntityIDs.clear();
+	Vector<SceneID> affectingEntities = m_AffectingStaticLightIDs;
+	m_AffectingStaticLightIDs.clear();
 	m_AffectingStaticLights.clear();
 	for (auto& ID : affectingEntities)
 	{
@@ -60,10 +60,11 @@ bool ModelComponent::setupEntities()
 	return true;
 }
 
-bool ModelComponent::addAffectingStaticLight(EntityID ID)
+bool ModelComponent::addAffectingStaticLight(SceneID ID)
 {
-	Ref<Entity> entity = EntityFactory::GetSingleton()->findEntity(ID);
-	if (!entity)
+	Ref<Scene> currentScene = SceneLoader::GetSingleton()->getCurrentScene();
+	Scene* light = currentScene->findScene(ID);
+	if (!light->getEntity())
 	{
 		WARN("Static light entity referred to not found: " + std::to_string(ID));
 		{
@@ -74,26 +75,27 @@ bool ModelComponent::addAffectingStaticLight(EntityID ID)
 	int lightID = 0;
 	for (auto& component : System::GetComponents(StaticPointLightComponent::s_ID))
 	{
-		if (entity->getComponent<StaticPointLightComponent>().get() == component)
+		if (light->getEntity()->getComponent<StaticPointLightComponent>().get() == component)
 		{
-			m_AffectingStaticLightEntityIDs.push_back(ID);
+			m_AffectingStaticLightIDs.push_back(ID);
 			m_AffectingStaticLights.push_back(lightID);
 			return true;
 		}
 		lightID++;
 	}
-	WARN("Provided static light entity does not have a static light: " + entity->getFullName());
+
+	WARN("Provided static light scene does not have a static light: " + light->getFullName());
 	return false;
 }
 
-void ModelComponent::removeAffectingStaticLight(EntityID ID)
+void ModelComponent::removeAffectingStaticLight(SceneID ID)
 {
-	for (int i = 0; i < m_AffectingStaticLightEntityIDs.size(); i++)
+	for (int i = 0; i < m_AffectingStaticLightIDs.size(); i++)
 	{
-		if (ID == m_AffectingStaticLightEntityIDs[i])
+		if (ID == m_AffectingStaticLightIDs[i])
 		{
-			auto& eraseIt = std::find(m_AffectingStaticLightEntityIDs.begin(), m_AffectingStaticLightEntityIDs.end(), ID);
-			m_AffectingStaticLightEntityIDs.erase(eraseIt);
+			auto& eraseIt = std::find(m_AffectingStaticLightIDs.begin(), m_AffectingStaticLightIDs.end(), ID);
+			m_AffectingStaticLightIDs.erase(eraseIt);
 
 			int removeLightID = m_AffectingStaticLights[i];
 			auto& eraseLightIt = std::find(m_AffectingStaticLights.begin(), m_AffectingStaticLights.end(), removeLightID);
@@ -235,7 +237,7 @@ JSON::json ModelComponent::getJSON() const
 	{
 		j["materialOverrides"][oldMaterial->getFileName()] = newMaterial->getFileName();
 	}
-	j["affectingStaticLights"] = m_AffectingStaticLightEntityIDs;
+	j["affectingStaticLights"] = m_AffectingStaticLightIDs;
 
 	return j;
 }
@@ -282,15 +284,16 @@ void ModelComponent::draw()
 		ImGui::Indent();
 		int slot = 0;
 		EntityID toRemove = -1;
-		for (auto& slotEntityID : m_AffectingStaticLightEntityIDs)
+		for (auto& slotSceneID : m_AffectingStaticLightIDs)
 		{
-			Ref<Entity> staticLight = EntityFactory::GetSingleton()->findEntity(slotEntityID);
-			RenderSystem::GetSingleton()->submitLine(m_TransformComponent->getAbsoluteTransform().Translation(), staticLight->getComponent<TransformComponent>()->getAbsoluteTransform().Translation());
+			Ref<Scene> currentScene = SceneLoader::GetSingleton()->getCurrentScene();
+			Scene* staticLight = currentScene->findScene(slotSceneID);
+			RenderSystem::GetSingleton()->submitLine(m_TransformComponent->getAbsoluteTransform().Translation(), staticLight->getEntity()->getComponent<TransformComponent>()->getAbsoluteTransform().Translation());
 
 			String displayName = staticLight->getFullName();
 			if (ImGui::SmallButton(("x##" + std::to_string(slot)).c_str()))
 			{
-				toRemove = slotEntityID;
+				toRemove = slotSceneID;
 			}
 			ImGui::SameLine();
 			ImGui::Text("%s", displayName.c_str());
@@ -310,7 +313,7 @@ void ModelComponent::draw()
 				{
 					if (ImGui::Selectable(component->getOwner()->getFullName().c_str()))
 					{
-						addAffectingStaticLight(component->getOwner()->getID());
+						addAffectingStaticLight(component->getOwner()->getScene()->getID());
 					}
 				}
 				ImGui::EndCombo();

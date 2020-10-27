@@ -68,9 +68,13 @@ void InputManager::loadSchemes(const JSON::json& inputSchemes)
 
 void InputManager::setScheme(const String& schemeName)
 {
-	m_GainputMap.Clear();
+	if (schemeName.empty())
+	{
+		return;
+	}
 
-	const Vector<InputButtonBindingData>& scheme = m_InputSchemes[schemeName];
+	m_GainputMap.Clear();
+	const Vector<InputButtonBindingData>& scheme = m_InputSchemes.at(schemeName);
 	for (auto& binding : scheme)
 	{
 		switch (binding.m_Type)

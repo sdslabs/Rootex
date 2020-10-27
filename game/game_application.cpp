@@ -1,8 +1,8 @@
 #include "game_application.h"
 
-#include "app/level_manager.h"
 #include "core/input/input_manager.h"
 #include "core/resource_loader.h"
+#include "framework/scene_loader.h"
 #include "framework/systems/audio_system.h"
 #include "framework/systems/render_system.h"
 #include "framework/systems/render_ui_system.h"
@@ -56,13 +56,13 @@ GameApplication::GameApplication()
 {
 	String levelName = getLevelNameFromCommandLine(GetCommandLine());
 
-	if (levelName == "")
+	if (levelName.empty())
 	{
-		LevelManager::GetSingleton()->openLevel(m_ApplicationSettings->getJSON()["startLevel"], {});
+		SceneLoader::GetSingleton()->loadScene(m_ApplicationSettings->getJSON()["startLevel"], {});
 	}
 	else
 	{
-		LevelManager::GetSingleton()->openLevel("game/assets/levels/" + levelName, {});
+		SceneLoader::GetSingleton()->loadScene(levelName, {});
 	}
 
 	GameRenderSystem::GetSingleton()->initialize({});

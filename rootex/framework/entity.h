@@ -28,11 +28,11 @@ public:
 
 	bool onAllComponentsAdded();
 	bool onAllEntitiesAdded();
-	bool removeComponent(ComponentID toRemoveComponentID);
+	bool removeComponent(ComponentID toRemoveComponentID, bool hardRemove = false);
 	bool hasComponent(ComponentID componentID);
 
-	/// Destruct all components.
-	void destroy();
+	/// Destruct all components. Use force for silent deletion of components
+	void destroy(bool force = false);
 	
 	Scene* getScene() const { return m_Scene; }
 	
@@ -43,6 +43,8 @@ public:
 	Ref<ComponentType> getComponentFromID(ComponentID ID) const;
 
 	JSON::json getJSON() const;
+	const String& getName() const;
+	const String& getFullName() const;
 	const HashMap<ComponentID, Ref<Component>>& getAllComponents() const;
 };
 

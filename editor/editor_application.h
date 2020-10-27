@@ -1,7 +1,6 @@
 #pragma once
 
 #include "rootex/app/application.h"
-#include "rootex/framework/entity_factory.h"
 
 class EditorApplication : public Application
 {

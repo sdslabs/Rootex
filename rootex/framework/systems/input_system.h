@@ -18,6 +18,6 @@ public:
 	void setScheme(const String& scheme);
 
 	bool initialize(const JSON::json& systemData) override;
-	void setConfig(const JSON::json& configData, bool openInEditor) override;
+	void setConfig(const SceneSettings& sceneSettings) override;
 	void update(float deltaMilliseconds) override;
 };

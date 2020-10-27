@@ -11,9 +11,9 @@ void DebugSystem::reportComponents()
 {
 	for (auto& component : s_Components[DebugComponent::s_ID])
 	{
-		OS::PrintLine("Found 1 DebugComponent. EntityID: " + 
-			std::to_string(component->getOwner()->getID()) + 
-			". # of components: " + std::to_string(component->getOwner()->getAllComponents().size()));
+		OS::PrintLine("Found 1 DebugComponent in " + 
+			component->getOwner()->getScene()->getFullName() + 
+			". # of components in scene's entity: " + std::to_string(component->getOwner()->getAllComponents().size()));
 	}
 }
 

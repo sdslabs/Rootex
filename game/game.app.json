@@ -1,6 +1,6 @@
 {
     "project": "Rootex Game",
-    "startLevel": "game/assets/levels/model_test",
+    "startLevel": "game/assets/scenes/test.scene.json",
     "systems": {
         "AudioSystem": {},
         "InputManager": {

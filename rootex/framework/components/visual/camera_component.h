@@ -45,7 +45,7 @@ class CameraComponent : public Component
 	CameraComponent(CameraComponent&) = delete;
 	~CameraComponent() = default;
 
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 	void refreshProjectionMatrix();
 	void refreshViewMatrix();

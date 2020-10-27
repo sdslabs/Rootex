@@ -4,6 +4,8 @@
 #include "framework/component.h"
 #include "framework/system.h"
 
+#include "scene.h"
+
 void Entity::RegisterAPI(sol::table& rootex)
 {
 	sol::usertype<Entity> entity = rootex.new_usertype<Entity>("Entity");
@@ -25,7 +27,7 @@ Entity::Entity(Scene* scene)
 
 Entity::~Entity()
 {
-	destroy();
+	destroy(true);
 }
 
 JSON::json Entity::getJSON() const
@@ -60,29 +62,35 @@ bool Entity::onAllEntitiesAdded()
 	return status;
 }
 
-void Entity::destroy()
+void Entity::destroy(bool force)
 {
 	for (auto& component : m_Components)
 	{
-		component.second->onRemove();
+		if (!force)
+		{ 
+			component.second->onRemove();
+		}
 		System::DeregisterComponent(component.second.get());
 		component.second.reset();
 	}
 	m_Components.clear();
 }
 
-bool Entity::removeComponent(ComponentID toRemoveComponentID)
+bool Entity::removeComponent(ComponentID toRemoveComponentID, bool hardRemove)
 {
 	Ref<Component> toRemoveComponent = getComponentFromID(toRemoveComponentID);
-	for (auto& [componentID, component] : m_Components)
+	if (!hardRemove)
 	{
-		for (auto& dependency : component->getDependencies())
+		for (auto& [componentID, component] : m_Components)
 		{
-			if (dependency->getID() == toRemoveComponentID)
+			for (auto& dependency : component->getDependencies())
 			{
-				WARN("Entity has other components depending on the to-be-removed component " + toRemoveComponent->getName());
-				WARN("Component deletion denied");
-				return false;
+				if (dependency->getID() == toRemoveComponentID)
+				{
+					WARN("Entity has other components depending on the to-be-removed component " + toRemoveComponent->getName());
+					WARN("Component deletion denied");
+					return false;
+				}
 			}
 		}
 	}
@@ -102,4 +110,14 @@ bool Entity::hasComponent(ComponentID componentID)
 const HashMap<ComponentID, Ref<Component>>& Entity::getAllComponents() const
 {
 	return m_Components;
+}
+
+const String& Entity::getName() const
+{
+	return m_Scene->getName();
+}
+
+const String& Entity::getFullName() const
+{
+	return m_Scene->getFullName();
 }

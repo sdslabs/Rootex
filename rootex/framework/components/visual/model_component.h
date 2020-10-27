@@ -1,20 +1,19 @@
 #pragma once
 
 #include "component.h"
-#include "components/hierarchy_component.h"
 #include "components/transform_component.h"
 #include "renderer/material.h"
 #include "renderer/mesh.h"
 #include "core/resource_files/model_resource_file.h"
+#include "scene.h"
 
 class ModelComponent : public Component
 {
 	DEPENDS_ON(TransformComponent);
-	DEPENDS_ON(HierarchyComponent);
 
 	static Component* Create(const JSON::json& componentData);
 
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 protected:
 	ModelResourceFile* m_ModelResourceFile;
@@ -22,12 +21,12 @@ protected:
 	int m_RenderPass;
 
 	HashMap<Ref<Material>, Ref<Material>> m_MaterialOverrides;
-	Vector<EntityID> m_AffectingStaticLightEntityIDs;
+	Vector<SceneID> m_AffectingStaticLightIDs;
 	Vector<int> m_AffectingStaticLights;
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_PerModelCB;
 
-	ModelComponent(unsigned int renderPass, ModelResourceFile* resFile, const HashMap<String, String>& materialOverrides, bool isVisible, const Vector<EntityID>& affectingStaticLightIDs);
+	ModelComponent(unsigned int renderPass, ModelResourceFile* resFile, const HashMap<String, String>& materialOverrides, bool isVisible, const Vector<SceneID>& affectingStaticLightIDs);
 	ModelComponent(ModelComponent&) = delete;
 	virtual ~ModelComponent() = default;
 
@@ -50,8 +49,8 @@ public:
 	virtual void render();
 	virtual void postRender();
 
-	bool addAffectingStaticLight(EntityID ID);
-	void removeAffectingStaticLight(EntityID ID);
+	bool addAffectingStaticLight(SceneID ID);
+	void removeAffectingStaticLight(SceneID ID);
 	
 	void setVisualModel(ModelResourceFile* newModel, const HashMap<String, String>& materialOverrides);
 	void setIsVisible(bool enabled);

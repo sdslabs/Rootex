@@ -4,7 +4,6 @@
 #include "core/event_manager.h"
 #include "os/timer.h"
 #include "os/thread.h"
-#include "entity_factory.h"
 #include "application_settings.h"
 
 /// Interface for a Rootex application. 

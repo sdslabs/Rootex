@@ -6,7 +6,6 @@
 
 #include "components/audio_listener_component.h"
 #include "components/debug_component.h"
-#include "components/hierarchy_component.h"
 #include "components/music_component.h"
 #include "components/physics/box_collider_component.h"
 #include "components/physics/sphere_collider_component.h"
@@ -15,7 +14,6 @@
 #include "components/test_component.h"
 #include "components/transform_animation_component.h"
 #include "components/transform_component.h"
-#include "components/trigger_component.h"
 #include "components/visual/camera_component.h"
 #include "components/visual/cpu_particles_component.h"
 #include "components/visual/directional_light_component.h"
@@ -28,15 +26,22 @@
 #include "components/visual/spot_light_component.h"
 #include "components/visual/text_ui_component.h"
 #include "components/visual/ui_component.h"
-#include "systems/hierarchy_system.h"
 
-bool ECSFactory::AddComponent(Ref<Entity>& entity, Ref<Component> component)
+void ECSFactory::RegisterAPI(sol::table& rootex)
+{
+	sol::usertype<ECSFactory> ecsFactory = rootex.new_usertype<ECSFactory>("ECSFactory");
+}
+
+bool ECSFactory::AddComponent(Entity* entity, Ref<Component> component)
 {
 	if (entity->m_Components.find(component->getComponentID()) == entity->m_Components.end())
 	{
 		entity->m_Components[component->getComponentID()] = component;
-		component->m_Owner = entity.get();
-		entity->onAllComponentsAdded();
+		component->m_Owner = entity;
+		if (!entity->onAllComponentsAdded())
+		{
+			entity->removeComponent(component->getComponentID(), true);
+		}
 		return true;
 	}
 
@@ -76,16 +81,16 @@ Ref<Entity> ECSFactory::CreateEntity(Scene* scene, const JSON::json& entityJSON)
 {
 	if (entityJSON.empty())
 	{
-		return std::make_shared<Entity>(scene, scene->getID(), "Entity");
+		return std::make_shared<Entity>(scene);
 	}
 
 	JSON::json componentJSON;
-	if (!componentJSON.empty())
+	if (entityJSON.contains("components"))
 	{
-		componentJSON = entityJSON["Components"];
+		componentJSON = entityJSON["components"];
 	}
 
-	Ref<Entity> entity(std::make_shared<Entity>(scene, scene->getID(), entityJSON["Entity"].value("name", String("Entity"))));
+	Ref<Entity> entity(std::make_shared<Entity>(scene));
 
 	for (auto&& [componentName, componentDescription] : componentJSON.items())
 	{
@@ -99,7 +104,7 @@ Ref<Entity> ECSFactory::CreateEntity(Scene* scene, const JSON::json& entityJSON)
 
 	if (!entity->onAllComponentsAdded())
 	{
-		ERR("Entity was not setup properly: " + std::to_string(entity->m_ID));
+		ERR("Entity scene was not setup properly: " + std::to_string(scene->getID()));
 	}
 
 	PRINT("Created entity: " + entity->getFullName());
@@ -111,7 +116,7 @@ Ref<Entity> ECSFactory::CreateEmptyEntity(Scene* scene)
 	return CreateEntity(scene, {});
 }
 
-Ref<Entity> ECSFactory::CreateEntity(Scene* scene, TextResourceFile* textResourceFile)
+Ref<Entity> ECSFactory::CreateEntityFromFile(Scene* scene, TextResourceFile* textResourceFile)
 {
 	return CreateEntity(scene, JSON::json::parse(textResourceFile->getString()));
 }
@@ -139,41 +144,37 @@ void ECSFactory::Initialize()
 	REGISTER_COMPONENT(SpotLightComponent);
 	REGISTER_COMPONENT(SphereColliderComponent);
 	REGISTER_COMPONENT(BoxColliderComponent);
-	REGISTER_COMPONENT(HierarchyComponent);
 	REGISTER_COMPONENT(ScriptComponent);
 	REGISTER_COMPONENT(AudioListenerComponent);
 	REGISTER_COMPONENT(MusicComponent);
 	REGISTER_COMPONENT(ShortMusicComponent);
 	REGISTER_COMPONENT(CPUParticlesComponent);
-	REGISTER_COMPONENT(TriggerComponent);
 	REGISTER_COMPONENT(UIComponent);
 }
 
 Ref<Entity> ECSFactory::CreateRootEntity(Scene* scene)
 {
 	Ref<Entity> root = CreateEmptyEntity(scene);
-	root->setName("Root");
-
 	{
 		Ref<Component> rootTransformComponent = CreateDefaultComponent("TransformComponent");
-		AddComponent(root, rootTransformComponent);
+		AddComponent(root.get(), rootTransformComponent);
 	}
 	{
 		Ref<ModelComponent> rootModelComponent = std::dynamic_pointer_cast<ModelComponent>(CreateDefaultComponent("ModelComponent"));
 		rootModelComponent->setIsVisible(false);
-		AddComponent(root, rootModelComponent);
+		AddComponent(root.get(), rootModelComponent);
 	}
 	{
 		Ref<CameraComponent> rootCameraComponent = std::dynamic_pointer_cast<CameraComponent>(CreateDefaultComponent("CameraComponent"));
-		AddComponent(root, rootCameraComponent);
+		AddComponent(root.get(), rootCameraComponent);
 	}
 	{
 		Ref<AudioListenerComponent> rootListenerComponent = std::dynamic_pointer_cast<AudioListenerComponent>(CreateDefaultComponent("AudioListenerComponent"));
-		AddComponent(root, rootListenerComponent);
+		AddComponent(root.get(), rootListenerComponent);
 	}
 	{
 		Ref<SkyComponent> rootSkyComponent = std::dynamic_pointer_cast<SkyComponent>(CreateDefaultComponent("SkyComponent"));
-		AddComponent(root, rootSkyComponent);
+		AddComponent(root.get(), rootSkyComponent);
 	}
 
 	return root;
