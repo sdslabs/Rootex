@@ -48,11 +48,16 @@ void SceneDock::showSceneTree(Ref<Scene> scene)
 				{
 					Ref<Scene> rearrangeScene = *(Ref<Scene>*)(payload->Data);
 					scene->snatchChild(rearrangeScene);
-					if (Entity* entity = rearrangeScene->getEntity())
+					Entity* victimEntity = rearrangeScene->getEntity();
+					Entity* thiefEntity = scene->getEntity();
+					if (victimEntity && thiefEntity)
 					{
-						entity->getComponent<TransformComponent>()->setTransform(
-						entity->getComponent<TransformComponent>()->getAbsoluteTransform()
-							* entity->getComponent<TransformComponent>()->getAbsoluteTransform().Invert());
+						Ref<TransformComponent> victimTransform = victimEntity->getComponent<TransformComponent>();
+						Ref<TransformComponent> thiefTransform = thiefEntity->getComponent<TransformComponent>();
+						if (victimTransform && thiefTransform)
+						{
+							victimTransform->setTransform(victimTransform->getAbsoluteTransform() * thiefTransform->getAbsoluteTransform().Invert());
+						}
 					}
 					openScene(scene.get());
 				}
