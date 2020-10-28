@@ -151,7 +151,10 @@ void AudioSystem::setConfig(const SceneSettings& sceneSettings)
 
 void AudioSystem::restoreListener()
 {
-	setListener(SceneLoader::GetSingleton()->getRootScene()->getEntity()->getComponent<AudioListenerComponent>());
+	if (SceneLoader::GetSingleton()->getRootScene())
+	{
+		setListener(SceneLoader::GetSingleton()->getRootScene()->getEntity()->getComponent<AudioListenerComponent>());
+	}
 }
 
 void AudioSystem::shutDown()
