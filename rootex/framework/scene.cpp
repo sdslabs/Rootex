@@ -28,11 +28,6 @@ void Scene::ResetCounter()
 	CurrentSceneCount = ROOT_SCENE_ID + 1;
 }
 
-void Scene::destroyChildren()
-{
-	m_ChildrenScenes.clear();
-}
-
 void Scene::RegisterAPI(sol::table& rootex)
 {
 	sol::usertype<Scene> scene = rootex.new_usertype<Scene>("Scene");
@@ -257,7 +252,7 @@ Scene::Scene(SceneID id, const String& name, const String& sceneFile, const Scen
 
 Scene::~Scene()
 {
-	destroyChildren();
+	m_ChildrenScenes.clear();
 	PRINT("Deleted scene: " + getFullName());
 }
 
