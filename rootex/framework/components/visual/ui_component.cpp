@@ -19,8 +19,11 @@ UIComponent::UIComponent(const String& path)
 
 UIComponent::~UIComponent()
 {
-	UISystem::GetSingleton()->unloadDocument(m_Document);
-	UISystem::GetSingleton()->getContext()->Update();
+	if (m_Document)
+	{
+		UISystem::GetSingleton()->unloadDocument(m_Document);
+		UISystem::GetSingleton()->getContext()->Update();
+	}
 }
 
 void UIComponent::setDocument(const String& path)
@@ -30,8 +33,15 @@ void UIComponent::setDocument(const String& path)
 		UISystem::GetSingleton()->unloadDocument(m_Document);
 	}
 
-	m_FilePath = path;
-	m_Document = UISystem::GetSingleton()->loadDocument(m_FilePath);
+	try
+	{
+		m_Document = UISystem::GetSingleton()->loadDocument(m_FilePath);
+		m_FilePath = path;
+	}
+    catch(std::exception e)
+	{
+		WARN(e.what());
+	}
 }
 
 JSON::json UIComponent::getJSON() const

@@ -518,7 +518,10 @@ void RenderSystem::setCamera(CameraComponent* camera)
 
 void RenderSystem::restoreCamera()
 {
-	setCamera(SceneLoader::GetSingleton()->getRootScene()->getEntity()->getComponent<CameraComponent>());
+	if (SceneLoader::GetSingleton()->getRootScene())
+	{
+		setCamera(SceneLoader::GetSingleton()->getRootScene()->getEntity()->getComponent<CameraComponent>());
+	}
 }
 
 const Matrix& RenderSystem::getCurrentMatrix() const

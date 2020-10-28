@@ -36,6 +36,10 @@ class Scene
 	Scene* m_ParentScene = nullptr;
 	Vector<Ptr<Scene>> m_ChildrenScenes;
 
+	void destroyChildren();
+
+	friend class SceneLoader;
+
 public:
 	static void RegisterAPI(sol::table& rootex);
 	static void ResetCounter();
