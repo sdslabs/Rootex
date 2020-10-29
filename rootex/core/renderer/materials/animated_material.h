@@ -7,10 +7,12 @@ class AnimatedMaterial : public Material
 	AnimationShader* m_AnimationShader;
 	Ref<Texture> m_DiffuseTexture;
 	Ref<Texture> m_NormalTexture;
+	Ref<Texture> m_SpecularTexture;
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_SamplerState;
 	
-	ImageResourceFile* m_ImageFile;
+	ImageResourceFile* m_DiffuseImageFile;
 	ImageResourceFile* m_NormalImageFile;
+	ImageResourceFile* m_SpecularImageFile;
 
 	bool m_IsLit;
 	bool m_IsNormal;
@@ -43,7 +45,7 @@ public:
 	};
 
 	AnimatedMaterial() = delete;
-	AnimatedMaterial(bool isAlpha, const String& imagePath, const String& normalImagePath, bool isNormal, Color color, bool isLit, float specularIntensity, float specularPower, float reflectivity, float refractionConstant, float refractivity, bool affectedBySky);
+	AnimatedMaterial(bool isAlpha, const String& imagePath, const String& normalImagePath, const String& specularImagePath, bool isNormal, Color color, bool isLit, float specularIntensity, float specularPower, float reflectivity, float refractionConstant, float refractivity, bool affectedBySky);
 	~AnimatedMaterial() = default;
 	
 	void setVSConstantBuffer(const VSAnimationConstantBuffer& constantBuffer);
@@ -51,14 +53,18 @@ public:
 	void setColor(const Color& color) { m_Color = color; };
 	void setTexture(ImageResourceFile* image);
 	void setNormal(ImageResourceFile* image);
+	void setSpecularTexture(ImageResourceFile* image);
 	void removeNormal();
 	void setTextureInternal(Ref<Texture> texture);
 	void setNormalInternal(Ref<Texture> texture);
+	void setSpecularInternal(Ref<Texture> texture);
 	void setSpecularIntensity(float specIntensity) { m_SpecularIntensity = specIntensity; }
 	void setSpecularPower(float specPower) { m_SpecularPower = specPower; }
 
 	static Material* CreateDefault();
 	static Material* Create(const JSON::json& materialData);
+
+	virtual ID3D11ShaderResourceView* getPreview() override;
 
 	void bind() override;
 	JSON::json getJSON() const override;

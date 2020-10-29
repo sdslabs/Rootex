@@ -1,31 +1,14 @@
 #include "animation.h"
 
-Matrix& SkeletalAnimation::interpolate(const String& nodeName, float currentTime)
-{
-	if (m_BoneAnimations.find(nodeName) != m_BoneAnimations.end())
-	{
-		return m_BoneAnimations[nodeName].interpolate(currentTime);
-	}
-	else
-	{
-		return Matrix(Matrix::Identity);
-	}
-}
-
-float SkeletalAnimation::getEndTime() const
-{
-	return m_Duration;
-}
-
 Matrix& BoneAnimation::interpolate(float time)
 {
 	if (time <= getStartTime())
 	{
-		Matrix transform = DirectX::XMMatrixAffineTransformation(
-			m_Scaling.front().m_Scaling,
-			Vector3::Zero,
-			m_Rotation.front().m_Rotation,
-			m_Translation.front().m_Translation
+	    Matrix transform = DirectX::XMMatrixAffineTransformation(
+			m_Scaling[0].m_Scaling,
+			Vector4::Zero,
+			m_Rotation[0].m_Rotation,
+			m_Translation[0].m_Translation
 		);
 		return transform;
 	}
@@ -34,7 +17,7 @@ Matrix& BoneAnimation::interpolate(float time)
 	{
 		Matrix transform = DirectX::XMMatrixAffineTransformation(
 			m_Scaling.back().m_Scaling,
-			Vector3::Zero,
+			Vector4::Zero,
 			m_Rotation.back().m_Rotation,
 			m_Translation.back().m_Translation
 		);
@@ -55,7 +38,7 @@ Matrix& BoneAnimation::interpolate(float time)
 
 		Vector3 scaling = Vector3::Zero;
 		float timeSinceMostRecentKeyframe = time - m_Scaling[index - 1].m_Time;
-		float timeBetween = m_Scaling[index].m_Time - m_Scaling[index].m_Time;
+		float timeBetween = m_Scaling[index].m_Time - m_Scaling[index - 1].m_Time;
 		float lerpFactor = timeSinceMostRecentKeyframe / timeBetween;
 
 		scaling = Vector3::Lerp(
@@ -75,7 +58,7 @@ Matrix& BoneAnimation::interpolate(float time)
 
 		Quaternion rotation = Quaternion::Identity;
 		timeSinceMostRecentKeyframe = time - m_Rotation[index - 1].m_Time;
-		timeBetween = m_Rotation[index].m_Time - m_Scaling[index].m_Time;
+		timeBetween = m_Rotation[index].m_Time - m_Rotation[index - 1].m_Time;
 		lerpFactor = timeSinceMostRecentKeyframe / timeBetween;
 
 		rotation = Quaternion::Slerp(
@@ -103,7 +86,7 @@ Matrix& BoneAnimation::interpolate(float time)
 
 		Matrix transform = DirectX::XMMatrixAffineTransformation(
 		    scaling,
-		    Vector3::Zero,
+		    Vector4::Zero,
 		    rotation,
 		    translation
 		);
@@ -119,4 +102,21 @@ float BoneAnimation::getStartTime() const
 float BoneAnimation::getEndTime() const
 {
 	return max(m_Translation.back().m_Time, max(m_Rotation.back().m_Time, m_Scaling.back().m_Time));
+}
+
+Matrix& SkeletalAnimation::interpolate(const String& nodeName, float currentTime)
+{
+	if (m_BoneAnimations.find(nodeName) != m_BoneAnimations.end())
+	{
+		return m_BoneAnimations[nodeName].interpolate(currentTime);
+	}
+	else
+	{
+		return Matrix(Matrix::Identity);
+	}
+}
+
+float SkeletalAnimation::getEndTime() const
+{
+	return m_Duration;
 }
