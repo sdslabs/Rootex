@@ -5,9 +5,11 @@
 
 MaterialLibrary::MaterialMap MaterialLibrary::s_Materials;
 const String MaterialLibrary::s_DefaultMaterialPath = "rootex/assets/materials/default.rmat";
+const String MaterialLibrary::s_DefaultParticlesMaterialPath = "rootex/assets/materials/default_particles.rmat";
 
 MaterialLibrary::MaterialDatabase MaterialLibrary::s_MaterialDatabase = {
 	{ BasicMaterial::s_MaterialName, { BasicMaterial::CreateDefault, BasicMaterial::Create } },
+	{ ParticlesMaterial::s_MaterialName, { ParticlesMaterial::CreateDefault, ParticlesMaterial::Create } },
 	{ SkyMaterial::s_MaterialName, { SkyMaterial::CreateDefault, SkyMaterial::Create } }
 };
 
@@ -63,6 +65,21 @@ Ref<Material> MaterialLibrary::GetDefaultMaterial()
 		Ref<Material> material(BasicMaterial::CreateDefault());
 		material->setFileName(s_DefaultMaterialPath);
 		s_Materials[s_DefaultMaterialPath].second = material;
+		return material;
+	}
+}
+
+Ref<Material> MaterialLibrary::GetDefaultParticlesMaterial()
+{
+	if (Ref<Material> lockedMaterial = s_Materials[s_DefaultParticlesMaterialPath].second.lock())
+	{
+		return lockedMaterial;
+	}
+	else
+	{
+		Ref<Material> material(ParticlesMaterial::CreateDefault());
+		material->setFileName(s_DefaultParticlesMaterialPath);
+		s_Materials[s_DefaultParticlesMaterialPath].second = material;
 		return material;
 	}
 }

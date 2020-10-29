@@ -1,6 +1,9 @@
 #pragma once
 
 #include "model_component.h"
+#include "core/renderer/materials/particles_material.h"
+
+#define MAX_PARTICLES 5000
 
 struct ParticleTemplate
 {
@@ -18,6 +21,11 @@ struct ParticleTemplate
 class CPUParticlesComponent : public ModelComponent
 {
 	static Component* Create(const JSON::json& componentData);
+
+	Vector<InstanceData> m_InstanceBufferData;
+	Vector<InstanceData> m_InstanceBufferLiveData;
+	int m_LiveParticlesCount;
+	Ptr<VertexBuffer> m_InstanceBuffer;
 	
 	struct Particle
 	{
@@ -30,15 +38,14 @@ class CPUParticlesComponent : public ModelComponent
 		Color colorEnd;
 		Vector3 velocity;
 		Vector3 angularVelocity;
-		Matrix transform;
 	};
 
 	ParticleTemplate m_ParticleTemplate;
 	Vector<Particle> m_ParticlePool;
-	Ref<BasicMaterial> m_BasicMaterial;
+	Ref<ParticlesMaterial> m_ParticlesMaterial;
 	size_t m_PoolIndex;
 	int m_EmitRate;
-	
+
 	enum class EmitMode : int
 	{
 		Point = 0,
@@ -54,7 +61,7 @@ class CPUParticlesComponent : public ModelComponent
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::CPUParticlesComponent;
 
-	CPUParticlesComponent(size_t poolSize, const String& particleModelPath, const String& materialPath, const ParticleTemplate& particleTemplate, bool visibility, unsigned int renderPass, EmitMode emitMode, const Vector3& emitterDimensions);
+	CPUParticlesComponent(size_t poolSize, const String& particleModelPath, const String& materialPath, const ParticleTemplate& particleTemplate, bool visibility, unsigned int renderPass, EmitMode emitMode, int emitRate, const Vector3& emitterDimensions);
 	CPUParticlesComponent(CPUParticlesComponent&) = delete;
 	virtual ~CPUParticlesComponent() = default;
 
@@ -62,7 +69,7 @@ public:
 	virtual bool preRender(float deltaMilliseconds) override;
 	virtual void render() override;
 
-	void setMaterial(Ref<BasicMaterial> particlesMaterial);
+	void setMaterial(Ref<ParticlesMaterial> particlesMaterial);
 	void emit(const ParticleTemplate& particleTemplate);
 	void expandPool(const size_t& poolSize);
 

@@ -3,6 +3,7 @@
 #include "common/common.h"
 
 #include "materials/basic_material.h"
+#include "materials/particles_material.h"
 #include "materials/sky_material.h"
 
 class MaterialLibrary
@@ -22,6 +23,7 @@ private:
 
 public:
 	static const String s_DefaultMaterialPath;
+	static const String s_DefaultParticlesMaterialPath;
 	
 	static void SaveAll();
 	static void CreateNewMaterialFile(const String& materialPath, const String& materialType);
@@ -29,6 +31,7 @@ public:
 
 	static Ref<Material> GetMaterial(const String& materialPath);
 	static Ref<Material> GetDefaultMaterial();
+	static Ref<Material> GetDefaultParticlesMaterial();
 	static MaterialMap& GetAllMaterials() { return s_Materials; };
 	static MaterialDatabase& GetMaterialDatabase() { return s_MaterialDatabase; };
 };
