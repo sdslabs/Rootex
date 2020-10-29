@@ -62,7 +62,7 @@ public:
 	void setName(const String& name);
 	
 	JSON::json getJSON() const;
-	const Vector<Ptr<Scene>>& getChildren() const { return m_ChildrenScenes; }
+	Vector<Ptr<Scene>>& getChildren() { return m_ChildrenScenes; }
 	SceneID getID() const { return m_ID; }
 	Scene* getParent() const { return m_ParentScene; }
 	Entity* getEntity() const { return m_Entity.get(); }

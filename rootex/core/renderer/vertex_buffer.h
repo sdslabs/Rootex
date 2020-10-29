@@ -15,10 +15,16 @@ class VertexBuffer
 
 public:
 	VertexBuffer(const Vector<VertexData>& buffer);
+	VertexBuffer(const Vector<InstanceData>& buffer);
 	VertexBuffer(const Vector<UIVertexData>& buffer);
 	VertexBuffer(const Vector<float>& buffer);
 	~VertexBuffer() = default;
 
 	void bind() const;
+	
+	void setData(const Vector<InstanceData>& buffer);
+
 	unsigned int getCount() const { return m_Count; }
+	unsigned int getStride() const { return m_Stride; }
+	ID3D11Buffer* getBuffer() const { return m_VertexBuffer.Get(); };
 };

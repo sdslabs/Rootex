@@ -56,6 +56,184 @@
                 "preloads": [],
                 "startScheme": ""
             }
+        },
+        {
+            "ID": 16,
+            "children": [],
+            "entity": {
+                "components": {
+                    "CPUParticlesComponent": {
+                        "affectingStaticLights": [],
+                        "emitMode": 0,
+                        "emitterDimensions": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "isVisible": true,
+                        "materialOverrides": {
+                            "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                        },
+                        "materialPath": "game/assets/materials/test_particles.rmat",
+                        "particleTemplate": {
+                            "angularVelocityVariation": 0.5,
+                            "colorBegin": {
+                                "a": 1.0,
+                                "b": 0.9999899864196777,
+                                "g": 0.9999899864196777,
+                                "r": 1.0
+                            },
+                            "colorEnd": {
+                                "a": 1.0,
+                                "b": 0.15444016456604004,
+                                "g": 1.0,
+                                "r": 0.0
+                            },
+                            "lifeTime": 8.420000076293945,
+                            "sizeBegin": 0.10000000149011612,
+                            "sizeEnd": 0.10000000149011612,
+                            "sizeVariation": 0.10000000149011612,
+                            "velocity": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "velocityVariation": 5.0
+                        },
+                        "poolSize": 281,
+                        "renderPass": 1,
+                        "resFile": "rootex/assets/cube.obj"
+                    },
+                    "TransformComponent": {
+                        "boundingBox": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "extents": {
+                                "x": 0.5,
+                                "y": 0.5,
+                                "z": 0.5
+                            }
+                        },
+                        "position": {
+                            "x": -4.699999809265137,
+                            "y": 1.3000000715255737,
+                            "z": -7.5
+                        },
+                        "rotation": {
+                            "w": 1.0,
+                            "x": -0.0,
+                            "y": 0.0,
+                            "z": -0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        }
+                    }
+                }
+            },
+            "file": "",
+            "name": "Particles",
+            "settings": {
+                "camera": 1,
+                "inputSchemes": null,
+                "listener": 1,
+                "preloads": [],
+                "startScheme": ""
+            }
+        },
+        {
+            "ID": 17,
+            "children": [],
+            "entity": {
+                "components": {
+                    "CPUParticlesComponent": {
+                        "affectingStaticLights": [],
+                        "emitMode": 0,
+                        "emitterDimensions": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "isVisible": true,
+                        "materialOverrides": {
+                            "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                        },
+                        "materialPath": "game/assets/materials/test_particles.rmat",
+                        "particleTemplate": {
+                            "angularVelocityVariation": 0.5,
+                            "colorBegin": {
+                                "a": 1.0,
+                                "b": 0.0,
+                                "g": 8.571415719416109e-07,
+                                "r": 9.999999974752427e-07
+                            },
+                            "colorEnd": {
+                                "a": 1.0,
+                                "b": 0.0,
+                                "g": 0.0,
+                                "r": 1.0
+                            },
+                            "lifeTime": 8.420000076293945,
+                            "sizeBegin": 0.10000000149011612,
+                            "sizeEnd": 0.10000000149011612,
+                            "sizeVariation": 0.10000000149011612,
+                            "velocity": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "velocityVariation": 5.0
+                        },
+                        "poolSize": 422,
+                        "renderPass": 1,
+                        "resFile": "rootex/assets/cube.obj"
+                    },
+                    "TransformComponent": {
+                        "boundingBox": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "extents": {
+                                "x": 0.5,
+                                "y": 0.5,
+                                "z": 0.5
+                            }
+                        },
+                        "position": {
+                            "x": 4.76837158203125e-07,
+                            "y": 1.3000000715255737,
+                            "z": -7.5
+                        },
+                        "rotation": {
+                            "w": 1.0,
+                            "x": -0.0,
+                            "y": 0.0,
+                            "z": -0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        }
+                    }
+                }
+            },
+            "file": "",
+            "name": "Particles",
+            "settings": {
+                "camera": 1,
+                "inputSchemes": null,
+                "listener": 1,
+                "preloads": [],
+                "startScheme": ""
+            }
         }
     ],
     "entity": {

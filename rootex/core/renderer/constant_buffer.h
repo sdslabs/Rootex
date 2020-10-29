@@ -2,6 +2,7 @@
 
 #include "common/common.h"
 #include "core/renderer/shaders/register_locations_pixel_shader.h"
+#include "core/renderer/shaders/register_locations_vertex_shader.h"
 
 /// Used to bind a point light to the Pixel shader
 struct PointLightInfo
@@ -68,6 +69,21 @@ struct PerModelPSCB
 struct PSDiffuseConstantBufferMaterial
 {
 	Color color;
+	int isLit = 0;
+	/// Describes brightness of specular spot, high for metallic material
+	float specularIntensity = 2.0f;
+	/// Describes angular fall-off of specular spot, high for metallic material
+	float specularPower = 30.0f;
+	float reflectivity = 0.0f;
+	float refractionConstant = 0.5f;
+	float refractivity = 0.0f;
+	int affectedBySky = 0;
+	int hasNormalMap = 0;
+};
+
+/// Lighting properties of a material
+struct PSParticlesConstantBufferMaterial
+{
 	int isLit = 0;
 	/// Describes brightness of specular spot, high for metallic material
 	float specularIntensity = 2.0f;
