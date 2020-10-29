@@ -1,6 +1,6 @@
 #include "script_system.h"
 
-#include "components/script_component.h"
+#include "script/script.h"
 #include "framework/entity_factory.h"
 
 ScriptSystem::ScriptSystem()

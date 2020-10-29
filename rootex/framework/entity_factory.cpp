@@ -4,6 +4,7 @@
 
 #include "component.h"
 #include "entity.h"
+#include "script/script.h"
 #include "system.h"
 
 #include "components/audio_listener_component.h"
@@ -12,7 +13,6 @@
 #include "components/music_component.h"
 #include "components/physics/box_collider_component.h"
 #include "components/physics/sphere_collider_component.h"
-#include "components/script_component.h"
 #include "components/short_music_component.h"
 #include "components/test_component.h"
 #include "components/transform_animation_component.h"

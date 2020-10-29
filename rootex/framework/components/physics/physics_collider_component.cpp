@@ -1,7 +1,7 @@
 #include "physics_collider_component.h"
 
 #include "framework/systems/physics_system.h"
-#include "framework/components/script_component.h"
+#include "script/script.h"
 
 #include "entity.h"
 

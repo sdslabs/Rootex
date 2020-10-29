@@ -1,15 +1,17 @@
-#include "script_component.h"
+#include "script.h"
 
 Script::Script(const JSON::json& script)
 {
 	String luaFilePath = script["path"];
 
+	m_ScriptFile = luaFilePath;
+	m_ScriptEnvironment = sol::environment(LuaInterpreter::GetSingleton()->getLuaState(),
+	    sol::create,
+	    LuaInterpreter::GetSingleton()->getLuaState().globals());
 	for (auto& element : JSON::json::iterator_wrapper(script["overrides"]))
 	{
 		m_Overrides[element.key()] = (String)element.value();
 	}
-
-	addScriptInternal(luaFilePath);
 }
 
 bool Script::setup()
@@ -80,19 +82,6 @@ JSON::json Script::getJSON() const
 	}
 
 	return j;
-}
-
-bool Script::addScriptInternal(const String& scriptFile)
-{
-	if (!m_ScriptFile.empty())
-	{
-		return false;
-	}
-	m_ScriptFile = scriptFile;
-	m_ScriptEnvironment = sol::environment(LuaInterpreter::GetSingleton()->getLuaState(),
-	    sol::create,
-	    LuaInterpreter::GetSingleton()->getLuaState().globals());
-	return true;
 }
 
 #ifdef ROOTEX_EDITOR
