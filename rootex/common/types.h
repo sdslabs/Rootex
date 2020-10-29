@@ -172,3 +172,16 @@ namespace JSON = nlohmann;
 #define STRICT
 
 #include <Windows.h>
+
+Vector<String>& split(const String& s, char delim, Vector<String>& elems)
+{
+
+	StringStream ss(s);
+	String item;
+	while (std::getline(ss, item, delim))
+	{
+		elems.push_back(item);
+	}
+
+	return elems;
+}
