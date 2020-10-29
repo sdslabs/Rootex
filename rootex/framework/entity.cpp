@@ -170,15 +170,6 @@ void Entity::evaluateScriptOverrides()
 	}
 };
 
-bool Entity::setScriptInternal(const String& path)
-{
-	JSON::json j;
-	j["path"] = path;
-	j["overrides"] = {};
-	m_Script.reset(new Script(j));
-	return m_Script->setup();
-}
-
 bool Entity::setScript(const String& path)
 {
 	if (path.empty())
@@ -188,9 +179,11 @@ bool Entity::setScript(const String& path)
 	}
 	if (OS::IsExists(path))
 	{
-		bool status = setScriptInternal(path);
-		call("onBegin", { Ref<Entity>(this) });
-		return true;
+		JSON::json j;
+		j["path"] = path;
+		j["overrides"] = {};
+		m_Script.reset(new Script(j));
+		return m_Script->setup();
 	}
 	else
 	{
@@ -251,7 +244,7 @@ void Entity::draw()
 			FilePath payloadPath(payloadFileName);
 			if (IsFileSupported(payloadPath.extension().generic_string(), ResourceFile::Type::Lua))
 			{
-				setScriptInternal(payloadPath.generic_string());
+				setScript(payloadPath.generic_string());
 			}
 			else
 			{

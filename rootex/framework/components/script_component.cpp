@@ -66,9 +66,17 @@ JSON::json Script::getJSON() const
 
 	j["overrides"] = {};
 
-	for (auto&& [key, value] : m_Overrides)
+	sol::optional<sol::table> currExports = m_ScriptEnvironment["exports"];
+	if (currExports)
 	{
-		j["overrides"][key] = value;
+		sol::table exports = m_ScriptEnvironment["exports"];
+		exports.for_each([&](sol::object const& key, sol::object const& value) {
+			String varName = key.as<String>();
+			if (m_Overrides.find(varName) != m_Overrides.end())
+			{
+				j["overrides"][varName] = m_Overrides.at(varName);
+			}
+		});
 	}
 
 	return j;
