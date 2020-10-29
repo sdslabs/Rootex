@@ -13,17 +13,18 @@ function onBegin(entity)
     leftEntity.script.exports.x = -1.2
     print("left static entity initial x: " .. leftEntity.script.exports.x)
 
-    leftEntity = RTX.EntityFactory.CreateFromClass(RTX.ResourceLoader.CreateText('game/assets/classes/Cube/Cube.entity.json'))
-    leftEntity:setScript("game/assets/scripts/script_test2.lua")
-    leftEntity.script.exports.y = 1.2
-    print("top static entity initial y: " .. leftEntity.script.exports.y .. "    " .. leftEntity:getID())
+    topEntity = RTX.EntityFactory.CreateFromClass(RTX.ResourceLoader.CreateText('game/assets/classes/Cube/Cube.entity.json'))
+    topEntity:setScript("game/assets/scripts/script_test2.lua")
+    topEntity.script.exports.y = 1.2
+    topEntity.script.onBegin(topEntity)
+    print("top static entity initial y: " .. topEntity.script.exports.y .. "    " .. topEntity:getID())
 end
 
 function onUpdate(entity, delta)
     totalTime = totalTime + delta
-    leftEntity.script.exports.y = 1.2
+    topEntity.script.exports.y = 1.2
     print(totalTime)
-    -- print(leftEntity:getName())
+    -- print(topEntity:getName())
     if totalTime < 5000.0 then
         exports.movingEntity.script.exports.x = 0.0003 * delta + exports.movingEntity.script.exports.x
     end

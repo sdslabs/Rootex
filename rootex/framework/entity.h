@@ -21,8 +21,6 @@ protected:
 	bool m_IsEditorOnly;
 	Ptr<Script> m_Script;
 
-	bool setScriptInternal(const String& path);
-	
 	Entity(EntityID id, const String& name, const JSON::json& script = {});
 
 	bool setupComponents();
