@@ -33,7 +33,7 @@ Component* AnimatedModelComponent::CreateDefault()
 {
 	AnimatedModelComponent* animatedModelComponent = new AnimatedModelComponent(
 	    unsigned int(RenderPass::Basic),
-	    ResourceLoader::CreateAnimatedModelResourceFile("rootex/assets/gunbot.dae"),
+	    ResourceLoader::CreateAnimatedModelResourceFile("rootex/assets/animation.dae"),
 	    true);
 	
 	return animatedModelComponent;
@@ -188,7 +188,6 @@ void AnimatedModelComponent::draw()
 
 	if(ImGui::BeginCombo("Animation Name", m_CurrentAnimationName.c_str()))
 	{
-		WARN(m_CurrentAnimationName.c_str());
 		for (auto& animationName : m_AnimatedModelResourceFile->getAnimationNames())
 		{
 			if (ImGui::Selectable(animationName.c_str()))

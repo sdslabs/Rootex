@@ -20,32 +20,48 @@ struct ScalingKeyframe
 	Vector3 m_Scaling;
 };
 
-struct BoneAnimation
+struct SkeletonNode
+{
+	Vector<SkeletonNode*> m_Children;
+	String m_Name;
+	Matrix m_LocalBindTransform;
+};
+
+class BoneAnimation
 {
 	Vector<TranslationKeyframe> m_Translation;
 	Vector<RotationKeyframe> m_Rotation;
 	Vector<ScalingKeyframe> m_Scaling;
 
-public:
-	Matrix& interpolate(float time);
-	float getStartTime() const;
 	float getEndTime() const;
+	float getStartTime() const;
+
+public:
+	BoneAnimation() = default;
+	BoneAnimation(const BoneAnimation&) = default;
+	~BoneAnimation() = default;
+
+	void addTranslationKeyframe(TranslationKeyframe& keyframe) { m_Translation.push_back(keyframe); }
+	void addRotationKeyframe(RotationKeyframe& keyframe) { m_Rotation.push_back(keyframe); }
+	void addScalingKeyframe(ScalingKeyframe& keyframe) { m_Scaling.push_back(keyframe); }
+	
+	Matrix& interpolate(float time);
 };
 
-struct SkeletonNode
-{
-	Vector<SkeletonNode*> m_Children;
-	String m_Name;
-	unsigned int m_Index;
-	Matrix m_LocalBindTransform;
-};
-
-struct SkeletalAnimation
+class SkeletalAnimation
 {
 	float m_Duration;
 	HashMap<String, BoneAnimation> m_BoneAnimations;
 
 public:
+	SkeletalAnimation() = default;
+	SkeletalAnimation(const SkeletalAnimation&) = default;
+	~SkeletalAnimation() = default;
+
 	Matrix& interpolate(const String& nodeName, float currentTime);
+	
 	float getEndTime() const;
+	
+	void setDuration(float time) { m_Duration = time; }
+	void addBoneAnimation(String boneName, BoneAnimation& boneAnimation) { m_BoneAnimations[boneName] = boneAnimation; }
 };

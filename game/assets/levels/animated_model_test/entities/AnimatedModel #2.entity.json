@@ -3,7 +3,7 @@
         "AnimatedModelComponent": {
             "isVisible": true,
             "renderPass": 1,
-            "resFile": "game/assets/animation.dae"
+            "resFile": "game/assets/test/animation.dae"
         },
         "HierarchyComponent": {
             "children": [],

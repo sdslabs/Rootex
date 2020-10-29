@@ -179,11 +179,3 @@ struct VSAnimationConstantBuffer
 		}
 	}
 };
-
-struct PerFrameVSCB
-{
-	Matrix view;
-	float fogStart;
-	float fogEnd;
-	float pad[2];
-};

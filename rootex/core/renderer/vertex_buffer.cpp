@@ -73,7 +73,7 @@ VertexBuffer::VertexBuffer(const Vector<AnimatedVertexData>& buffer)
 	vsd.pSysMem = buffer.data();
 
 	const UINT offset = 0u;
-	m_VertexBuffer = RenderingDevice::GetSingleton()->createVertexBuffer(&vbd, &vsd, &m_Stride, &offset);
+	m_VertexBuffer = RenderingDevice::GetSingleton()->createVB(&vbd, &vsd, &m_Stride, &offset);
 }
 
 VertexBuffer::VertexBuffer(const Vector<float>& buffer)
