@@ -5,7 +5,7 @@
 #include "common/common.h"
 
 #include "components/physics/physics_collider_component.h"
-#include "components/script_component.h"
+#include "script/script.h"
 
 #include "os/timer.h"
 #include "render_system.h"

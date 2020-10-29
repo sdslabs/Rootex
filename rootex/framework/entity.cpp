@@ -4,7 +4,7 @@
 #include "framework/component.h"
 #include "framework/components/hierarchy_component.h"
 #include "framework/system.h"
-#include "framework/components/script_component.h"
+#include "script/script.h"
 #include "resource_loader.h"
 
 void Entity::RegisterAPI(sol::table& rootex)

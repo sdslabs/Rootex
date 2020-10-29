@@ -3,10 +3,7 @@
 #include "component.h"
 #include "event_manager.h"
 #include "script/interpreter.h"
-#include "physics/physics_collider_component.h"
 #include "entity.h"
-
-#include "btBulletDynamicsCommon.h"
 
 class LuaTextResourceFile;
 
@@ -19,7 +16,6 @@ private:
 
 	friend class Entity;
 
-	bool addScriptInternal(const String& scriptFile);
 	bool isSuccessful(const sol::function_result& result);
 public:
 	Script(const JSON::json& script);

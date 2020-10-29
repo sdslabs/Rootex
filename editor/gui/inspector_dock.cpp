@@ -1,7 +1,7 @@
 #include "inspector_dock.h"
 
 #include "entity.h"
-#include "framework/components/script_component.h"
+#include "script/script.h"
 #include "entity_factory.h"
 #include "framework/component.h"
 #include "editor/editor_system.h"
