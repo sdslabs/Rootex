@@ -99,6 +99,7 @@ void Script::draw()
 	if (currExports)
 	{
 		sol::table exports = m_ScriptEnvironment["exports"];
+
 		ImGui::LabelText("Variable", "Lua");
 		exports.for_each([&](sol::object const& key, sol::object const& value) {
 			String varName = key.as<String>();

@@ -170,6 +170,15 @@ void Entity::evaluateScriptOverrides()
 	}
 };
 
+bool Entity::setScriptInternal(const String& path)
+{
+	JSON::json j;
+	j["path"] = path;
+	j["overrides"] = {};
+	m_Script.reset(new Script(j));
+	return m_Script->setup();
+}
+
 bool Entity::setScript(const String& path)
 {
 	if (path.empty())
@@ -179,12 +188,8 @@ bool Entity::setScript(const String& path)
 	}
 	if (OS::IsExists(path))
 	{
-		JSON::json j;
-		j["path"] = path;
-		j["overrides"] = {};
-		m_Script.reset(new Script(j));
-		m_Script->setup();
-		m_Script->call("onBegin", { Ref<Entity>(this) });
+		bool status = setScriptInternal(path);
+		call("onBegin", { Ref<Entity>(this) });
 		return true;
 	}
 	else
@@ -193,18 +198,6 @@ bool Entity::setScript(const String& path)
 		return false;
 	}
 }
-
-void Entity::setNullScript(Script* script) 
-{
-	if (script == nullptr)
-	{
-		m_Script.reset();
-	}
-	else
-	{
-		WARN("Non nullptr pointer sent");
-	}
-};
 
 bool Entity::hasComponent(ComponentID componentID)
 {
@@ -234,6 +227,14 @@ void Entity::draw()
 			m_Script.reset();
 		}
 		ImGui::SameLine();
+		//TODO: replace with proper icon
+		if (ImGui::Button("Reload"))
+		{
+			JSON::json& j = m_Script->getJSON();
+			m_Script.reset(new Script(j));
+			m_Script->setup();
+		}
+		ImGui::SameLine();
 		if (ImGui::Selectable(m_Script->m_ScriptFile.c_str()))
 		{
 			EventManager::GetSingleton()->call("OpenScriptFile", "EditorOpenFile", m_Script->m_ScriptFile);
@@ -250,7 +251,7 @@ void Entity::draw()
 			FilePath payloadPath(payloadFileName);
 			if (IsFileSupported(payloadPath.extension().generic_string(), ResourceFile::Type::Lua))
 			{
-				setScript(payloadPath.generic_string());
+				setScriptInternal(payloadPath.generic_string());
 			}
 			else
 			{
