@@ -4,7 +4,6 @@
 #include "os/os.h"
 #include "script/interpreter.h"
 
-
 #ifdef _DEBUG
 /// Logs function, message in white color
 #define PRINT(m_Msg)                                      \
