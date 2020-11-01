@@ -1,4 +1,5 @@
 #include "script.h"
+#include "event_manager.h"
 
 Script::Script(const JSON::json& script)
 {
@@ -89,7 +90,6 @@ JSON::json Script::getJSON() const
 #include "imgui_stdlib.h"
 void Script::draw()
 {
-
 	ImGui::Text("Script Exports");
 
 	sol::optional<sol::table> currExports = m_ScriptEnvironment["exports"];
