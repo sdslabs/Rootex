@@ -26,6 +26,9 @@ protected:
 	bool setupComponents();
 	bool setupEntities();
 
+	sol::table getScriptEnv();
+	void setScriptEnv(sol::table& changed);
+
 	void addComponent(const Ref<Component>& component);
 	friend class EntityFactory;
 #ifdef ROOTEX_EDITOR
@@ -54,9 +57,6 @@ public:
 
 	template <class ComponentType = Component>
 	Ref<ComponentType> getComponentFromID(ComponentID ID) const;
-
-	sol::table getScriptEnv();
-	void setScriptEnv(sol::table changed);
 
 	JSON::json getJSON() const;
 	const HashMap<ComponentID, Ref<Component>>& getAllComponents() const;

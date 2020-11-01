@@ -90,29 +90,31 @@ bool Entity::setupEntities()
 {
 	bool status = true;
 
+	for (auto& component : m_Components)
+	{
+		status = status & component.second->setupEntities();
+	}
+
 	if (m_Script)
 	{
 		bool result = m_Script->setup();
 		if (!result)
 		{
 			m_Script.reset();
+			result = status;
 		}
-	}
-	for (auto& component : m_Components)
-	{
-		status = status & component.second->setupEntities();
 	}
 	return status;
 }
 
 sol::table Entity::getScriptEnv()
 {
-	return (sol::table)m_Script->m_ScriptEnvironment;
+	return (sol::table)m_Script->getScriptEnv();
 }
 
-void Entity::setScriptEnv(sol::table changed)
+void Entity::setScriptEnv(sol::table& changed)
 {
-	m_Script->m_ScriptEnvironment.set(changed);
+	m_Script->setScriptEnv(changed);
 }
 
 void Entity::destroy()
@@ -228,14 +230,15 @@ void Entity::draw()
 			m_Script->setup();
 		}
 		ImGui::SameLine();
-		if (ImGui::Selectable(m_Script->m_ScriptFile.c_str()))
+		if (ImGui::Selectable(m_Script->getFilePath().c_str()))
 		{
-			EventManager::GetSingleton()->call("OpenScriptFile", "EditorOpenFile", m_Script->m_ScriptFile);
+			EventManager::GetSingleton()->call("OpenScriptFile", "EditorOpenFile", m_Script->getFilePath());
 		}
 	}
 
 	ImGui::EndGroup();
 
+	//TODO: change this when File Dialog gets merged in
 	if (ImGui::BeginDragDropTarget())
 	{
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Resource Drop"))
