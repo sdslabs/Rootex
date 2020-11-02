@@ -4,6 +4,7 @@
 
 #include "component.h"
 #include "entity.h"
+#include "script/script.h"
 #include "system.h"
 
 #include "components/audio_listener_component.h"
@@ -12,7 +13,6 @@
 #include "components/music_component.h"
 #include "components/physics/box_collider_component.h"
 #include "components/physics/sphere_collider_component.h"
-#include "components/script_component.h"
 #include "components/short_music_component.h"
 #include "components/test_component.h"
 #include "components/transform_animation_component.h"
@@ -42,8 +42,16 @@ EntityID EntityFactory::s_CurrentEditorID = -ROOT_ENTITY_ID;
 void EntityFactory::RegisterAPI(sol::table& rootex)
 {
 	sol::usertype<EntityFactory> entityFactory = rootex.new_usertype<EntityFactory>("EntityFactory");
-	entityFactory["Create"] = [](TextResourceFile* t) { return EntityFactory::GetSingleton()->createEntity(t); };
-	entityFactory["CreateFromClass"] = [](TextResourceFile* t) { return EntityFactory::GetSingleton()->createEntityFromClass(t); };
+	entityFactory["Create"] = [](TextResourceFile* t) {
+		Ref<Entity> newEntity =  EntityFactory::GetSingleton()->createEntity(t); 
+		newEntity->evaluateScriptOverrides();
+		return newEntity;
+	};
+	entityFactory["CreateFromClass"] = [](TextResourceFile* t) { 
+		Ref<Entity> newEntity = EntityFactory::GetSingleton()->createEntityFromClass(t); 
+		newEntity->evaluateScriptOverrides();
+		return newEntity;
+	};
 	entityFactory["Find"] = [](EntityID e) { return EntityFactory::GetSingleton()->findEntity(e); };
 }
 
@@ -85,7 +93,6 @@ EntityFactory::EntityFactory()
 	REGISTER_COMPONENT(SphereColliderComponent);
 	REGISTER_COMPONENT(BoxColliderComponent);
 	REGISTER_COMPONENT(HierarchyComponent);
-	REGISTER_COMPONENT(ScriptComponent);
 	REGISTER_COMPONENT(AudioListenerComponent);
 	REGISTER_COMPONENT(MusicComponent);
 	REGISTER_COMPONENT(ShortMusicComponent);
@@ -168,6 +175,11 @@ Ref<Entity> EntityFactory::createEntity(const JSON::json& entityJSON, const Stri
 
 	Ref<Entity> entity;
 	JSON::json name = entityJSON["Entity"]["name"];
+	JSON::json script;
+	if (entityJSON["Entity"].contains("script"))
+	{
+		script = entityJSON["Entity"]["script"];
+	}
 
 	EntityID newID = 0;
 	if (isEditorOnly)
@@ -191,7 +203,7 @@ Ref<Entity> EntityFactory::createEntity(const JSON::json& entityJSON, const Stri
 		}
 	}
 
-	entity.reset(new Entity(newID, name.is_null() ? "Entity" : name));
+	entity.reset(new Entity(newID, name.is_null() ? "Entity" : name, script));
 
 	for (auto&& [componentName, componentDescription] : componentJSON.items())
 	{
@@ -409,14 +421,14 @@ Ref<Entity> EntityFactory::createEntityFromClass(TextResourceFile* entityFile)
 	return createEntityFromClass(JSON::json::parse(entityFile->getString()));
 }
 
-Ref<Entity> EntityFactory::createEntityFromClass(const JSON::json& entityJSON)
+Ref<Entity> EntityFactory::createEntityFromClass(JSON::json& entityJSON)
 {
 	Ref<Entity> createdEntity = createEntityHierarchyFromClass(entityJSON);
 	fixParentID(createdEntity, ROOT_ENTITY_ID);
 	return createdEntity;
 }
 
-Ref<Entity> EntityFactory::createEntityHierarchyFromClass(JSON::json entityJSON)
+Ref<Entity> EntityFactory::createEntityHierarchyFromClass(JSON::json& entityJSON)
 {
 	Vector<EntityID> ids;
 

@@ -4,11 +4,6 @@
             "children": [],
             "parent": 1
         },
-        "ScriptComponent": {
-            "scripts": [
-                "game/assets/scripts/fail_game_text.lua"
-            ]
-        },
         "TextUIComponent": {
             "color": {
                 "a": 1.0,
@@ -58,6 +53,10 @@
     },
     "Entity": {
         "ID": 29,
-        "name": "GameText"
+        "name": "GameText",
+        "script": {
+            "overrides": null,
+            "path": "game/assets/scripts/fail_game_text.lua"
+        }
     }
 }

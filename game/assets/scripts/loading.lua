@@ -29,7 +29,7 @@ function onUpdate(entity, delta)
     end
 end
 
-function onHit(entity, hit, other)
+function onHit(entity, other)
 end
 
 function onEnd(entity)

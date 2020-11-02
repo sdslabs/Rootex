@@ -15,6 +15,7 @@ end
 function onUpdate(entity, delta)
 end
 
+
 function onHit(entity, hit, other)
     failEvent = RTX.Event.new("FlabbyBird", "GameEnd", 0)
     RTX.CallEvent(failEvent)

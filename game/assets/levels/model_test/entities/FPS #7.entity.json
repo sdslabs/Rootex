@@ -4,11 +4,6 @@
             "children": [],
             "parent": 1
         },
-        "ScriptComponent": {
-            "scripts": [
-                "game/assets/scripts/fps_display.lua"
-            ]
-        },
         "TextUIComponent": {
             "color": {
                 "a": 1.0,
@@ -58,6 +53,10 @@
     },
     "Entity": {
         "ID": 7,
-        "name": "FPS"
+        "name": "FPS",
+        "script": {
+            "overrides": null,
+            "path": "game/assets/scripts/fps_display.lua"
+        }
     }
 }

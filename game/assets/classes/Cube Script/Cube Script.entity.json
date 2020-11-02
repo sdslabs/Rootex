@@ -10,49 +10,34 @@
             "near": 0.10000000149011612,
             "postProcessing": {
                 "bloom": {
-                    "base": 1.7100000381469727,
-                    "baseSaturation": 0.8799999952316284,
-                    "brightness": 10.0,
-                    "isBloom": true,
+                    "base": 1.0,
+                    "baseSaturation": 1.0,
+                    "brightness": 1.0,
+                    "isBloom": false,
                     "saturation": 1.0,
-                    "size": 14.920000076293945,
-                    "threshold": 0.6700000166893005,
-                    "value": 1.2999999523162842
+                    "size": 1.0,
+                    "threshold": 0.800000011920929,
+                    "value": 1.0
                 },
                 "gaussianBlur": {
                     "isGaussianBlur": false,
                     "multiplier": 1.0
                 },
-                "isPostProcessing": true,
+                "isPostProcessing": false,
                 "monochrome": false,
                 "sepia": false,
                 "toneMap": {
-                    "exposure": -0.20000000298023224,
+                    "exposure": 0.0,
                     "isToneMap": false,
-                    "operator": 1,
+                    "operator": 0,
                     "transferFunction": 0,
                     "whiteNits": 200.0
                 }
             }
         },
-        "DirectionalLightComponent": {
-            "ambientColor": {
-                "a": 1.0,
-                "b": 0.9999899864196777,
-                "g": 0.9999899864196777,
-                "r": 1.0
-            },
-            "diffuseColor": {
-                "a": 1.0,
-                "b": 0.5784313678741455,
-                "g": 0.5784255862236023,
-                "r": 0.5784293413162231
-            },
-            "diffuseIntensity": 0.871999979019165
-        },
         "HierarchyComponent": {
             "children": [],
-            "parent": 22
+            "parent": 1
         },
         "ModelComponent": {
             "affectingStaticLights": [],
@@ -77,26 +62,30 @@
                 }
             },
             "position": {
-                "x": -0.559999942779541,
-                "y": 1.0,
-                "z": 6.619999885559082
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
             },
             "rotation": {
-                "w": 0.974902868270874,
-                "x": -0.07815901935100555,
-                "y": -0.2077932506799698,
-                "z": -0.016658993437886238
+                "w": 1.0,
+                "x": -0.0,
+                "y": 0.0,
+                "z": -0.0
             },
             "scale": {
-                "x": 0.9999866485595703,
-                "y": 0.9999836683273315,
-                "z": 0.999993085861206
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
             }
         }
     },
     "Entity": {
-        "ID": 23,
-        "name": "LightAndCamera",
-        "script": null
+        "name": "Cube Script",
+        "script": {
+            "overrides": {
+                "number": "-2.0"
+            },
+            "path": "game\\assets\\scripts\\script_test2.lua"
+        }
     }
 }

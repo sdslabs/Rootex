@@ -5,7 +5,7 @@
 #include "common/common.h"
 
 #include "components/physics/physics_collider_component.h"
-#include "components/script_component.h"
+#include "script/script.h"
 
 #include "os/timer.h"
 #include "render_system.h"
@@ -105,17 +105,11 @@ void PhysicsSystem::InternalTickCallback(btDynamicsWorld* const world, btScalar 
 
 		if (collider0->getIsGeneratesHitEvents())
 		{
-			if (collider0->getScriptComponent())
-			{
-				collider0->getScriptComponent()->onHit(manifold, collider1);
-			}
+			collider0->getOwner()->call("onHit", { body0, body1 });
 		}
 		if (collider1->getIsGeneratesHitEvents())
 		{
-			if (collider1->getScriptComponent())
-			{
-				collider1->getScriptComponent()->onHit(manifold, collider0);
-			}
+			collider1->getOwner()->call("onHit", { body1, body0 });
 		}
 	}
 }

@@ -1,6 +1,7 @@
 #include "inspector_dock.h"
 
 #include "entity.h"
+#include "script/script.h"
 #include "entity_factory.h"
 #include "framework/component.h"
 #include "editor/editor_system.h"
@@ -144,6 +145,10 @@ void InspectorDock::draw(float deltaMilliseconds)
 					ImGui::OpenPopup((m_MenuAction + ": " + m_ActionEntity->getName()).c_str());
 					m_MenuAction.clear();
 				}
+
+				ImGui::Separator();
+
+				m_OpenedEntity->draw();
 
 				ImGui::Separator();
 

@@ -5,6 +5,7 @@
 #include "event.h"
 
 class Component;
+class Script;
 
 typedef unsigned int ComponentID;
 typedef int EntityID;
@@ -18,11 +19,15 @@ protected:
 	String m_Name;
 	HashMap<ComponentID, Ref<Component>> m_Components;
 	bool m_IsEditorOnly;
-	
-	Entity(EntityID id, const String& name, const HashMap<ComponentID, Ref<Component>>& components = {});
+	Ptr<Script> m_Script;
+
+	Entity(EntityID id, const String& name, const JSON::json& script = {});
 
 	bool setupComponents();
 	bool setupEntities();
+
+	sol::table getScriptEnv();
+	void setScriptEnv(sol::table& changed);
 
 	void addComponent(const Ref<Component>& component);
 	friend class EntityFactory;
@@ -56,9 +61,17 @@ public:
 	JSON::json getJSON() const;
 	const HashMap<ComponentID, Ref<Component>>& getAllComponents() const;
 	bool isEditorOnly() const { return m_IsEditorOnly; }
+
+	bool call(const String& function, const Vector<Variant>& args);
+	void evaluateScriptOverrides();
+	bool setScript(const String& path);
 	
 	void setName(const String& name);
 	void setEditorOnly(bool editorOnly) { m_IsEditorOnly = editorOnly; }
+
+#ifdef ROOTEX_EDITOR
+	void draw();
+#endif
 };
 
 template <class ComponentType>
