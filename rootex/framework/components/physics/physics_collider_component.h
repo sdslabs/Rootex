@@ -5,8 +5,6 @@
 
 #include "btBulletDynamicsCommon.h"
 
-class ScriptComponent;
-
 class PhysicsColliderComponent : public Component, public btMotionState
 {
 	friend class EntityFactory;
@@ -21,7 +19,6 @@ public:
 	static Vector3 btVector3ToVec(btVector3 const& btvec);
 
 	TransformComponent* m_TransformComponent;
-	ScriptComponent* m_ScriptComponent;
 	
 	Ref<btCollisionShape> m_CollisionShape;
 	Ref<btRigidBody> m_Body;
@@ -96,7 +93,6 @@ public:
 	virtual void render();
 
 	virtual String getName() const override { return "PhysicsColliderComponent"; };
-	ScriptComponent* getScriptComponent() const { return m_ScriptComponent; }
 	virtual JSON::json getJSON() const override;
 
 #ifdef ROOTEX_EDITOR

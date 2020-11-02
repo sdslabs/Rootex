@@ -4,6 +4,8 @@
 #include "framework/component.h"
 #include "framework/components/hierarchy_component.h"
 #include "framework/system.h"
+#include "script/script.h"
+#include "resource_loader.h"
 
 void Entity::RegisterAPI(sol::table& rootex)
 {
@@ -14,6 +16,9 @@ void Entity::RegisterAPI(sol::table& rootex)
 	entity["getID"] = &Entity::getID;
 	entity["getName"] = &Entity::getName;
 	entity["setName"] = &Entity::setName;
+	entity["setScript"] = &Entity::setScript;
+
+	entity["script"] = sol::property(&Entity::getScriptEnv, &Entity::setScriptEnv);
 
 	sol::usertype<Component> component = rootex.new_usertype<Component>("Component");
 	component["getOwner"] = &Component::getOwner;
@@ -31,12 +36,22 @@ void Entity::addComponent(const Ref<Component>& component)
 	m_Components.insert(std::make_pair(component->getComponentID(), component));
 }
 
-Entity::Entity(EntityID id, const String& name, const HashMap<ComponentID, Ref<Component>>& components)
+Entity::Entity(EntityID id, const String& name, const JSON::json& script)
     : m_ID(id)
     , m_Name(name)
-    , m_Components(components)
     , m_IsEditorOnly(false)
 {
+	if (!script.is_null() && !script["path"].is_null())
+	{
+		if (OS::IsExists(script["path"]))
+		{
+			m_Script.reset(new Script(script));
+		}
+		else
+		{
+			ERR("Could not find script file: " + (String)script["path"]);
+		}
+	}
 }
 
 JSON::json Entity::getJSON() const
@@ -48,6 +63,14 @@ JSON::json Entity::getJSON() const
 	for (auto&& [componentID, component] : m_Components)
 	{
 		j["Components"][component->getName()] = component->getJSON();
+	}
+	if (m_Script)
+	{
+		j["Entity"]["script"] = m_Script->getJSON();
+	}
+	else
+	{
+		j["Entity"]["script"] = {};
 	}
 
 	return j;
@@ -66,11 +89,32 @@ bool Entity::setupComponents()
 bool Entity::setupEntities()
 {
 	bool status = true;
+
 	for (auto& component : m_Components)
 	{
 		status = status & component.second->setupEntities();
 	}
+
+	if (m_Script)
+	{
+		bool result = m_Script->setup();
+		if (!result)
+		{
+			m_Script.reset();
+			result = status;
+		}
+	}
 	return status;
+}
+
+sol::table Entity::getScriptEnv()
+{
+	return (sol::table)m_Script->getScriptEnv();
+}
+
+void Entity::setScriptEnv(sol::table& changed)
+{
+	m_Script->setScriptEnv(changed);
 }
 
 void Entity::destroy()
@@ -106,6 +150,50 @@ String Entity::getFullName() const
 	return m_Name + " #" + std::to_string(getID());
 }
 
+bool Entity::call(const String& function, const Vector<Variant>& args)
+{
+	bool status = false;
+	if (m_Script)
+	{
+		status = m_Script->call(function, args);
+		if (!status)
+		{
+			WARN("Script Execution failure in entity: " + getFullName());
+		}
+	}
+	return status;
+}
+
+void Entity::evaluateScriptOverrides() 
+{
+	if (m_Script)
+	{
+		m_Script->evaluateOverrides();
+	}
+};
+
+bool Entity::setScript(const String& path)
+{
+	if (path.empty())
+	{
+		m_Script.reset();
+		return true;
+	}
+	if (OS::IsExists(path))
+	{
+		JSON::json j;
+		j["path"] = path;
+		j["overrides"] = {};
+		m_Script.reset(new Script(j));
+		return m_Script->setup();
+	}
+	else
+	{
+		WARN("Could not find script file: " + path);
+		return false;
+	}
+}
+
 bool Entity::hasComponent(ComponentID componentID)
 {
 	return m_Components.find(componentID) != m_Components.end();
@@ -120,3 +208,58 @@ const HashMap<ComponentID, Ref<Component>>& Entity::getAllComponents() const
 {
 	return m_Components;
 }
+
+#ifdef ROOTEX_EDITOR
+void Entity::draw() 
+{
+	ImGui::BeginGroup();
+	ImGui::Text("Script");
+
+	if (m_Script)
+	{
+		if (ImGui::Button("X"))
+		{
+			m_Script.reset();
+		}
+		ImGui::SameLine();
+		//TODO: replace with proper icon
+		if (ImGui::Button("Reload"))
+		{
+			JSON::json& j = m_Script->getJSON();
+			m_Script.reset(new Script(j));
+			m_Script->setup();
+		}
+		ImGui::SameLine();
+		if (ImGui::Selectable(m_Script->getFilePath().c_str()))
+		{
+			EventManager::GetSingleton()->call("OpenScriptFile", "EditorOpenFile", m_Script->getFilePath());
+		}
+	}
+
+	ImGui::EndGroup();
+
+	//TODO: change this when File Dialog gets merged in
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Resource Drop"))
+		{
+			const char* payloadFileName = (const char*)payload->Data;
+			FilePath payloadPath(payloadFileName);
+			if (IsFileSupported(payloadPath.extension().generic_string(), ResourceFile::Type::Lua))
+			{
+				setScript(payloadPath.generic_string());
+			}
+			else
+			{
+				WARN("Cannot assign a non-lua file as Script");
+			}
+		}
+		ImGui::EndDragDropTarget();
+	}
+
+	if (m_Script)
+	{
+		m_Script->draw();
+	}
+};
+#endif
