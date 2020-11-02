@@ -47,3 +47,8 @@
 /// Logs file, function, message in red color
 #define ERR_CUSTOM(m_file, m_func, m_Msg) ::OS::PrintError(String(m_file) + ":" + String(m_func) + ": " + m_Msg);
 #endif // _DEBUG
+
+namespace RootexUils
+{
+	Vector<String>& StringSplit(const String& s, char delim, Vector<String>& elems);
+}
