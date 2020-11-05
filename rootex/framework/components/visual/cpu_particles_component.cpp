@@ -210,9 +210,29 @@ void CPUParticlesComponent::expandPool(const size_t& poolSize)
 	m_PoolIndex = poolSize - 1;
 }
 
+void CPUParticlesComponent::setVisualModel(ModelResourceFile* newModel, const HashMap<String, String>& materialOverrides)
+{
+	if (!newModel)
+	{
+		return;
+	}
+
+	m_ModelResourceFile = newModel;
+	m_MaterialOverrides.clear();
+	for (auto& [material, meshes] : m_ModelResourceFile->getMeshes())
+	{
+		setMaterialOverride(material, material);
+	}
+	for (auto& [oldMaterial, newMaterial] : materialOverrides)
+	{
+		MaterialLibrary::CreateNewMaterialFile(newMaterial, MaterialLibrary::GetMaterial(oldMaterial)->getTypeName());
+		setMaterialOverride(MaterialLibrary::GetMaterial(oldMaterial), MaterialLibrary::GetMaterial(newMaterial));
+	}
+}
+
 JSON::json CPUParticlesComponent::getJSON() const
 {
-	JSON::json& j = ModelComponent::getJSON();
+	JSON::json& j = RenderableComponent::getJSON();
 
 	j["materialPath"] = m_ParticlesMaterial->getFileName();
 	j["poolSize"] = m_ParticlePool.size();
@@ -231,7 +251,53 @@ JSON::json CPUParticlesComponent::getJSON() const
 void CPUParticlesComponent::draw()
 {
 	ImGui::Text("Model");
-	ModelComponent::draw();
+
+	ImGui::Checkbox("Visible", &m_IsVisible);
+
+	ImGui::BeginGroup();
+
+	String inputPath = m_ModelResourceFile->getPath().generic_string();
+	ImGui::InputText("##Path", &inputPath);
+	ImGui::SameLine();
+	if (ImGui::Button("Create Visual Model"))
+	{
+		if (!ResourceLoader::CreateModelResourceFile(inputPath))
+		{
+			WARN("Could not create Visual Model");
+		}
+		else
+		{
+			inputPath = "";
+		}
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::Button("Model"))
+	{
+		EventManager::GetSingleton()->call("OpenModel", "EditorOpenFile", m_ModelResourceFile->getPath().string());
+	}
+	ImGui::EndGroup();
+
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Resource Drop"))
+		{
+			const char* payloadFileName = (const char*)payload->Data;
+			FilePath payloadPath(payloadFileName);
+			if (IsFileSupported(payloadPath.extension().string(), ResourceFile::Type::Model))
+			{
+				setVisualModel(ResourceLoader::CreateModelResourceFile(payloadPath.string()), {});
+			}
+			else
+			{
+				WARN("Unsupported file format for Model");
+			}
+		}
+		ImGui::EndDragDropTarget();
+	}
+
+	RenderableComponent::draw();
 
 	ImGui::Separator();
 

@@ -7,7 +7,7 @@
 #include "core/resource_files/model_resource_file.h"
 #include "scene.h"
 
-class ModelComponent : public Component
+class ModelComponent : public RenderableComponent
 {
 	DEPENDS_ON(TransformComponent);
 
@@ -17,8 +17,6 @@ class ModelComponent : public Component
 
 protected:
 	ModelResourceFile* m_ModelResourceFile;
-	bool m_IsVisible;
-	int m_RenderPass;
 
 	HashMap<Ref<Material>, Ref<Material>> m_MaterialOverrides;
 	Vector<SceneID> m_AffectingStaticLightIDs;
@@ -44,19 +42,13 @@ public:
 	virtual bool setupData() override;
 	virtual bool setupEntities() override;
 
-	virtual bool preRender(float deltaMilliseconds);
-	virtual bool isVisible() const;
 	virtual void render();
-	virtual void postRender();
 
 	bool addAffectingStaticLight(SceneID ID);
 	void removeAffectingStaticLight(SceneID ID);
 	
 	void setVisualModel(ModelResourceFile* newModel, const HashMap<String, String>& materialOverrides);
-	void setIsVisible(bool enabled);
-	void setMaterialOverride(Ref<Material> oldMaterial, Ref<Material> newMaterial);
 	
-	unsigned int getRenderPass() const { return m_RenderPass; }
 	const Vector<Pair<Ref<Material>, Vector<Mesh>>>& getMeshes() const { return m_ModelResourceFile->getMeshes(); }
 	ModelResourceFile* getModelResourceFile() const { return m_ModelResourceFile; }
 
