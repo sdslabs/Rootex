@@ -56,7 +56,7 @@ public:
 
 	virtual ID3D11ShaderResourceView* getPreview() override;
 
-	void bind() override;
+	virtual void bind() override;
 	JSON::json getJSON() const override;
 
 #ifdef ROOTEX_EDITOR
