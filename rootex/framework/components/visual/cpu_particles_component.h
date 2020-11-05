@@ -18,7 +18,7 @@ struct ParticleTemplate
 	float lifeTime = 1.0f;
 };
 
-class CPUParticlesComponent : public ModelComponent
+class CPUParticlesComponent : public RenderableComponent
 {
 	static Component* Create(const JSON::json& componentData);
 

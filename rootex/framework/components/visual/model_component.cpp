@@ -136,15 +136,9 @@ void ModelComponent::render()
 
 	std::sort(m_ModelResourceFile->getMeshes().begin(), m_ModelResourceFile->getMeshes().end(), CompareMaterials);
 	int i = 0;
-
-	PerModelPSCB perModel;
-	for (int i = 0; i < m_AffectingStaticLights.size(); i++)
-	{
-		perModel.staticPointsLightsAffecting[i].id = m_AffectingStaticLights[i];
-	}
-	perModel.staticPointsLightsAffectingCount = m_AffectingStaticLights.size();
-	Material::SetPSConstantBuffer(perModel, m_PerModelCB, PER_MODEL_PS_CPP);
 	
+	RenderableComponent::render();
+
 	for (auto& [material, meshes] : m_ModelResourceFile->getMeshes())
 	{
 		RenderSystem::GetSingleton()->getRenderer()->bind(m_MaterialOverrides[material].get());
@@ -155,11 +149,6 @@ void ModelComponent::render()
 			RenderSystem::GetSingleton()->getRenderer()->draw(mesh.m_VertexBuffer.get(), mesh.m_IndexBuffer.get());
 		}
 	}
-}
-
-void ModelComponent::postRender()
-{
-	RenderSystem::GetSingleton()->popMatrix();
 }
 
 void ModelComponent::setVisualModel(ModelResourceFile* newModel, const HashMap<String, String>& materialOverrides)
@@ -214,19 +203,9 @@ void ModelComponent::assignOverrides(ModelResourceFile* newModel, const HashMap<
 	}
 }
 
-void ModelComponent::setIsVisible(bool enabled)
-{
-	m_IsVisible = enabled;
-}
-
-void ModelComponent::setMaterialOverride(Ref<Material> oldMaterial, Ref<Material> newMaterial)
-{
-	m_MaterialOverrides[oldMaterial] = newMaterial;
-}
-
 JSON::json ModelComponent::getJSON() const
 {
-	JSON::json j;
+	JSON::json j = RenderableComponent::getJSON();
 
 	j["resFile"] = m_ModelResourceFile->getPath().string();
 	j["isVisible"] = m_IsVisible;

@@ -3,11 +3,12 @@
 #include "framework/component.h"
 #include "core/resource_file.h"
 #include "framework/entity_factory.h"
+#include "renderable_component.h"
 #include "framework/components/transform_component.h"
 #include "framework/components/hierarchy_component.h"
 #include "framework/systems/animation_system.h"
 
-class AnimatedModelComponent : public Component
+class AnimatedModelComponent : public RenderableComponent
 {
 	static Component* Create(const JSON::json& componentData);
 	static Component* CreateDefault();
@@ -17,37 +18,27 @@ class AnimatedModelComponent : public Component
 
 protected:
 	AnimatedModelResourceFile* m_AnimatedModelResourceFile;
-	bool m_IsVisible;
-	unsigned int m_RenderPass;
+	
 	String m_CurrentAnimationName;
 	float m_CurrentTimePosition;
 	bool m_IsPlaying;
 	Vector<Matrix> m_FinalTransforms;
 
-	TransformComponent* m_TransformComponent;
-	HierarchyComponent* m_HierarchyComponent;
-
-	AnimatedModelComponent(unsigned int renderPass, AnimatedModelResourceFile* resFile, bool isVisible);
+	AnimatedModelComponent(unsigned int renderPass, const HashMap<String, String>& materialOverrides, AnimatedModelResourceFile* resFile, bool isVisible, const Vector<EntityID>& affectingStaticLightEntityIDs);
 	AnimatedModelComponent(AnimatedModelComponent&) = delete;
 	virtual ~AnimatedModelComponent() = default;
 
 public:
-	virtual void RegisterAPI(sol::state& rootex);
+	static void RegisterAPI(sol::table& rootex);
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::AnimatedModelComponent;
 
-	virtual bool setup() override;
-
-	virtual bool preRender();
-	virtual bool isVisible() const;
 	virtual void render();
-	virtual void postRender();
 
-	unsigned int getRenderPass() const { return m_RenderPass; }
 	virtual AnimatedModelResourceFile* getAnimatedResourceFile() const { return m_AnimatedModelResourceFile; }
 	virtual String getCurrentAnimationName() const { return m_CurrentAnimationName; }
 	virtual float getCurrentTime() const { return m_CurrentTimePosition; }
 
-	void setAnimatedResourceFile(AnimatedModelResourceFile* file) { m_AnimatedModelResourceFile = file; }
+	void setAnimatedResourceFile(AnimatedModelResourceFile* file, const HashMap<String, String>& materialOverrides);
 
 	virtual String getName() const override { return "AnimatedModelComponent"; }
 	ComponentID getComponentID() const override { return s_ID; }
