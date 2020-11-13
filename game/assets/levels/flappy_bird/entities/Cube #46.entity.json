@@ -61,6 +61,7 @@
     },
     "Entity": {
         "ID": 46,
-        "name": "Cube"
+        "name": "Cube",
+        "script": null
     }
 }

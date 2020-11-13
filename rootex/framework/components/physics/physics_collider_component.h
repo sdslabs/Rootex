@@ -5,8 +5,6 @@
 
 #include "btBulletDynamicsCommon.h"
 
-class ScriptComponent;
-
 class PhysicsColliderComponent : public Component, public btMotionState
 {
 	friend class EntityFactory;
@@ -21,7 +19,6 @@ public:
 	static Vector3 btVector3ToVec(btVector3 const& btvec);
 
 	TransformComponent* m_TransformComponent;
-	ScriptComponent* m_ScriptComponent;
 	
 	Ref<btCollisionShape> m_CollisionShape;
 	Ref<btRigidBody> m_Body;

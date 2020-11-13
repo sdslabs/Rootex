@@ -61,6 +61,7 @@
     },
     "Entity": {
         "ID": 41,
-        "name": "Obstacle1"
+        "name": "Obstacle1",
+        "script": null
     }
 }

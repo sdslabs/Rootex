@@ -30,7 +30,7 @@ class EntityFactory
 	EntityID getNextID();
 	EntityID getNextEditorID();
 	String saveEntityAsClassRecursively(Ref<Entity> entity, const String& path);
-	Ref<Entity> createEntityHierarchyFromClass(JSON::json entityJSON);
+	Ref<Entity> createEntityHierarchyFromClass(JSON::json& entityJSON);
 	void fixParentID(Ref<Entity> entity, EntityID id);
 
 protected:
@@ -68,7 +68,7 @@ public:
 	bool saveEntityAsClass(Ref<Entity> entity);
 	bool copyEntity(Ref<Entity> entity);
 	Ref<Entity> createEntitiesRecursively(Ref<Entity> entity);
-	Ref<Entity> createEntityFromClass(const JSON::json& entityJSON);
+	Ref<Entity> createEntityFromClass(JSON::json& entityJSON);
 	Ref<Entity> createEntityFromClass(TextResourceFile* entityJSON);
 
 	const ComponentDatabase& getComponentDatabase() const { return m_ComponentCreators; }

@@ -9,11 +9,6 @@
             "renderPass": 1,
             "resFile": "game/assets/test/cube.obj"
         },
-        "ScriptComponent": {
-            "scripts": [
-                "game/assets/scripts/trigger_test.lua"
-            ]
-        },
         "TransformComponent": {
             "position": {
                 "x": 0.0,
@@ -38,6 +33,10 @@
     },
     "Entity": {
         "ID": 4,
-        "name": "Cube"
+        "name": "Cube",
+        "script": {
+            "overrides": null,
+            "path": "game/assets/scripts/trigger_test.lua"
+        }
     }
 }

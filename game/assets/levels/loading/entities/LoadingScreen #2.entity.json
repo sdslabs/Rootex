@@ -4,11 +4,6 @@
             "children": [],
             "parent": 1
         },
-        "ScriptComponent": {
-            "scripts": [
-                "game/assets/scripts/loading.lua"
-            ]
-        },
         "TransformComponent": {
             "boundingBox": {
                 "center": {
@@ -45,6 +40,10 @@
     },
     "Entity": {
         "ID": 2,
-        "name": "LoadingScreen"
+        "name": "LoadingScreen",
+        "script": {
+            "overrides": null,
+            "path": "game/assets/scripts/loading.lua"
+        }
     }
 }

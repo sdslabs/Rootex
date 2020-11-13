@@ -1,7 +1,7 @@
 #include "physics_collider_component.h"
 
 #include "framework/systems/physics_system.h"
-#include "framework/components/script_component.h"
+#include "script/script.h"
 
 #include "entity.h"
 
@@ -15,7 +15,6 @@ PhysicsColliderComponent::PhysicsColliderComponent(const String& matName, float 
 {
 	m_CollisionShape = collisionShape;
 	m_TransformComponent = nullptr;
-	m_ScriptComponent = nullptr;
 	sol::table materialLua = PhysicsSystem::GetSingleton()->getPhysicsMaterial();
 	m_SpecificGravity = float(materialLua[matName]["specificgravity"]);
 	m_Material.m_Friction = float(materialLua[matName]["friction"]);
@@ -68,12 +67,6 @@ bool PhysicsColliderComponent::setup()
 				setMoveable(m_IsMoveable);
 
 				m_Body->setUserPointer(this);
-			}
-			
-			m_ScriptComponent = getOwner()->getComponent<ScriptComponent>().get();
-			if (m_IsGeneratesHitEvents && !m_ScriptComponent)
-			{
-				WARN("ScriptComponent not found on entity with a PhysicsComponent that generates hit events: " + m_Owner->getFullName());
 			}
 		}
 	}

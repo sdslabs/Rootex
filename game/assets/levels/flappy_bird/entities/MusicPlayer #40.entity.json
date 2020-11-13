@@ -46,6 +46,7 @@
     },
     "Entity": {
         "ID": 40,
-        "name": "MusicPlayer"
+        "name": "MusicPlayer",
+        "script": null
     }
 }

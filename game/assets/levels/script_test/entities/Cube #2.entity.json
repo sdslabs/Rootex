@@ -2,7 +2,7 @@
     "Components": {
         "HierarchyComponent": {
             "children": [],
-            "parent": 22
+            "parent": 1
         },
         "ModelComponent": {
             "affectingStaticLights": [],
@@ -11,7 +11,7 @@
                 "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
             },
             "renderPass": 1,
-            "resFile": "rootex/assets/cube.obj"
+            "resFile": "game/assets/test/cube.obj"
         },
         "TransformComponent": {
             "boundingBox": {
@@ -29,24 +29,29 @@
             "position": {
                 "x": 0.0,
                 "y": 0.0,
-                "z": 0.5714273452758789
+                "z": -5.0
             },
             "rotation": {
-                "w": 0.9167476892471313,
+                "w": 1.0,
                 "x": -0.0,
-                "y": -0.39946675300598145,
+                "y": 0.0,
                 "z": -0.0
             },
             "scale": {
-                "x": 0.17000000178813934,
-                "y": 0.1699998825788498,
-                "z": 0.9179993867874146
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
             }
         }
     },
     "Entity": {
-        "ID": 24,
-        "name": "Wing",
-        "script": null
+        "ID": 2,
+        "name": "Cube",
+        "script": {
+            "overrides": {
+                "movingEntity": "RTX.EntityFactory.Find(3)"
+            },
+            "path": "game\\assets\\scripts\\script_test1.lua"
+        }
     }
 }

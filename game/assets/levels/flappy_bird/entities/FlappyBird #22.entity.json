@@ -32,11 +32,6 @@
             "renderPass": 1,
             "resFile": "rootex/assets/cube.obj"
         },
-        "ScriptComponent": {
-            "scripts": [
-                "game/assets/scripts/flappy_bird.lua"
-            ]
-        },
         "SkyComponent": {
             "skyMaterial": "rootex/assets/materials/sky.rmat",
             "skySphere": "rootex/assets/sky.obj"
@@ -74,6 +69,10 @@
     },
     "Entity": {
         "ID": 22,
-        "name": "FlappyBird"
+        "name": "FlappyBird",
+        "script": {
+            "overrides": null,
+            "path": "game/assets/scripts/flappy_bird.lua"
+        }
     }
 }

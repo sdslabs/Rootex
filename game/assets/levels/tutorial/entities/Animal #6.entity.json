@@ -24,11 +24,6 @@
             "renderPass": 1,
             "resFile": "game/assets/test/animal.obj"
         },
-        "ScriptComponent": {
-            "scripts": [
-                "game\\assets\\scripts\\ball.lua"
-            ]
-        },
         "TransformComponent": {
             "boundingBox": {
                 "center": {
@@ -62,6 +57,10 @@
     },
     "Entity": {
         "ID": 6,
-        "name": "Animal"
+        "name": "Animal",
+        "script": {
+            "overrides": null,
+            "path": "game\\assets\\scripts\\ball.lua"
+        }
     }
 }

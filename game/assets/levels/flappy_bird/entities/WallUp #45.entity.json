@@ -61,6 +61,7 @@
     },
     "Entity": {
         "ID": 45,
-        "name": "WallUp"
+        "name": "WallUp",
+        "script": null
     }
 }
