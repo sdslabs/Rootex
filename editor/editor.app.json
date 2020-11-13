@@ -132,7 +132,7 @@
             }
         },
         "InputSystem": {
-            "height": 1057,
+            "height": 1387,
             "inputSchemes": [
                 {
                     "bools": [
@@ -182,12 +182,12 @@
                 }
             ],
             "startScheme": "Editor",
-            "width": 1920
+            "width": 2560
         },
         "PhysicsSystem": {},
         "UISystem": {
-            "height": 1057,
-            "width": 1920
+            "height": 1387,
+            "width": 2560
         }
     },
     "version": 1.0,

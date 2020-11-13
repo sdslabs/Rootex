@@ -214,35 +214,37 @@ const HashMap<ComponentID, Ref<Component>>& Entity::getAllComponents() const
 #include "utility/imgui_helpers.h"
 void Entity::draw() 
 {
-	ImGui::BeginGroup();
 	ImGui::Text("Script");
-
 	if (m_Script)
 	{
-		if (ImGui::Button("X"))
+		if (ImGui::Selectable(m_Script->getFilePath().c_str()))
 		{
-			m_Script.reset();
+			EventManager::GetSingleton()->call("OpenScriptFile", "EditorOpenFile", m_Script->getFilePath());
+		}
+		if (ImGui::Button(ICON_ROOTEX_EXTERNAL_LINK "##Open Script"))
+		{
+			EventManager::GetSingleton()->call("OpenScriptFile", "EditorOpenFile", m_Script->getFilePath());
 		}
 		ImGui::SameLine();
-		if (ImGui::Button(ICON_ROOTEX_REFRESH "Reload"))
+		if (ImGui::Button(ICON_ROOTEX_REFRESH "##Reload"))
 		{
 			JSON::json& j = m_Script->getJSON();
 			m_Script.reset(new Script(j));
 			m_Script->setup();
 		}
 		ImGui::SameLine();
-		if (ImGui::Selectable(m_Script->getFilePath().c_str()))
+		if (ImGui::Button(ICON_IGFD_CANCEL "##RemoveScript"))
 		{
-			EventManager::GetSingleton()->call("OpenScriptFile", "EditorOpenFile", m_Script->getFilePath());
+			m_Script.reset();
 		}
 	}
-	ImGui::EndGroup();
-
-	if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Script"))
+	else
 	{
-		igfd::ImGuiFileDialog::Instance()->OpenModal("Choose Script", "Choose Script", ".lua", "game/assets/");
+		if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Choose Script"))
+		{
+			igfd::ImGuiFileDialog::Instance()->OpenModal("Choose Script", "Choose Script", ".lua", "game/assets/");
+		}
 	}
-	ImGui::SameLine();
 	if (igfd::ImGuiFileDialog::Instance()->FileDialog("Choose Script"))
 	{
 		if (igfd::ImGuiFileDialog::Instance()->IsOk)
