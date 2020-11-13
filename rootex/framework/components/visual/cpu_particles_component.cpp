@@ -105,7 +105,7 @@ bool CPUParticlesComponent::preRender(float deltaMilliseconds)
 	{
 		ZoneNamedN(particleInterpolation, "Particle Interpolation", true);
 		
-		float delta = deltaMilliseconds * 1e-3;
+		float delta = deltaMilliseconds * MS_TO_S;
 		for (auto& particle : m_ParticlePool)
 		{
 
