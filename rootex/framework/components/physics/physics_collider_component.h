@@ -93,7 +93,6 @@ public:
 	virtual void render();
 
 	virtual const char* getName() const override { return "PhysicsColliderComponent"; };
-	ScriptComponent* getScriptComponent() const { return m_ScriptComponent; }
 	virtual JSON::json getJSON() const override;
 
 #ifdef ROOTEX_EDITOR
