@@ -7,6 +7,8 @@ class Texture;
 class BasicMaterial : public Material
 {
 	BasicShader* m_BasicShader;
+
+protected:
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_SamplerState;
 
 	ImageResourceFile* m_DiffuseImageFile;

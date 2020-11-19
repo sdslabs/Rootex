@@ -114,7 +114,7 @@ void RenderSystem::renderPassRender(float deltaMilliseconds, RenderPass renderPa
 		amc = (AnimatedModelComponent*)component;
 		if (amc->getRenderPass() & (unsigned int)renderPass)
 		{
-			amc->preRender();
+			amc->preRender(deltaMilliseconds);
 			if (amc->isVisible())
 			{
 				amc->render();

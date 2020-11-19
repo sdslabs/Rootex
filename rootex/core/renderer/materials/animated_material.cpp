@@ -86,13 +86,12 @@ void AnimatedMaterial::setVSConstantBuffer(const VSAnimationConstantBuffer& cons
 
 void AnimatedMaterial::bind()
 {
-	Material::bind();
-	m_AnimationShader->set(m_DiffuseTexture.get(), DIFFUSE_PS_CPP);
+	m_AnimationShader->set(m_DiffuseImageFile->getTexture().get(), DIFFUSE_PS_CPP);
 	if (m_IsNormal)
 	{
-		m_AnimationShader->set(m_NormalTexture.get(), NORMAL_PS_CPP); 
+		m_AnimationShader->set(m_NormalImageFile->getTexture().get(), NORMAL_PS_CPP); 
 	}
-	m_AnimationShader->set(m_SpecularTexture.get(), SPECULAR_PS_CPP);
+	m_AnimationShader->set(m_SpecularImageFile->getTexture().get(), SPECULAR_PS_CPP);
 	Matrix currentModelMatrix = RenderSystem::GetSingleton()->getCurrentMatrix();
 	BasicMaterial::setVSConstantBuffer(VSDiffuseConstantBuffer(currentModelMatrix));
 

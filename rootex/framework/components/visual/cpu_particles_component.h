@@ -40,6 +40,7 @@ class CPUParticlesComponent : public RenderableComponent
 		Vector3 angularVelocity;
 	};
 
+	ModelResourceFile* m_ParticleModelFile;
 	ParticleTemplate m_ParticleTemplate;
 	Vector<Particle> m_ParticlePool;
 	Ref<ParticlesMaterial> m_ParticlesMaterial;
@@ -61,7 +62,7 @@ class CPUParticlesComponent : public RenderableComponent
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::CPUParticlesComponent;
 
-	CPUParticlesComponent(size_t poolSize, const String& particleModelPath, const String& materialPath, const ParticleTemplate& particleTemplate, bool visibility, unsigned int renderPass, EmitMode emitMode, int emitRate, const Vector3& emitterDimensions);
+	CPUParticlesComponent(size_t poolSize, ModelResourceFile* particleModelFile, const String& materialPath, const ParticleTemplate& particleTemplate, bool visibility, unsigned int renderPass, EmitMode emitMode, int emitRate, const Vector3& emitterDimensions);
 	CPUParticlesComponent(CPUParticlesComponent&) = delete;
 	virtual ~CPUParticlesComponent() = default;
 
@@ -69,9 +70,11 @@ public:
 	virtual bool preRender(float deltaMilliseconds) override;
 	virtual void render() override;
 
+	void setVisualModel(ModelResourceFile* newModel, const HashMap<String, String>& materialOverrides);
 	void setMaterial(Ref<ParticlesMaterial> particlesMaterial);
 	void emit(const ParticleTemplate& particleTemplate);
 	void expandPool(const size_t& poolSize);
+
 
 	virtual const char* getName() const override { return "CPUParticlesComponent"; }
 	ComponentID getComponentID() const override { return s_ID; }

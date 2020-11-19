@@ -68,12 +68,12 @@ VertexBuffer::VertexBuffer(const Vector<AnimatedVertexData>& buffer)
 	vbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	vbd.MiscFlags = 0u;
 	vbd.ByteWidth = sizeof(AnimatedVertexData) * buffer.size();
-	vbd.StructureByteStride = sizeof(AnimatedVertexData);
+	vbd.StructureByteStride = 0;
 	D3D11_SUBRESOURCE_DATA vsd = { 0 };
 	vsd.pSysMem = buffer.data();
 
 	const UINT offset = 0u;
-	m_VertexBuffer = RenderingDevice::GetSingleton()->createVB(&vbd, &vsd, &m_Stride, &offset);
+	m_VertexBuffer = RenderingDevice::GetSingleton()->createBuffer(&vbd, &vsd);
 }
 
 VertexBuffer::VertexBuffer(const Vector<float>& buffer)

@@ -75,12 +75,12 @@ void ShaderLibrary::MakeShaders()
 	}
 	{
 		BufferFormat animationFormat;
-		animationFormat.push(VertexBufferElement::Type::FloatFloatFloat, "POSITION");
-		animationFormat.push(VertexBufferElement::Type::FloatFloatFloat, "NORMAL");
-		animationFormat.push(VertexBufferElement::Type::FloatFloat, "TEXCOORD");
-		animationFormat.push(VertexBufferElement::Type::FloatFloatFloat, "TANGENT");
-		animationFormat.push(VertexBufferElement::Type::IntIntIntInt, "BONEINDICES");
-		animationFormat.push(VertexBufferElement::Type::FloatFloatFloatFloat, "BONEWEIGHTS");
+		animationFormat.push(VertexBufferElement::Type::FloatFloatFloat, "POSITION", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
+		animationFormat.push(VertexBufferElement::Type::FloatFloatFloat, "NORMAL", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
+		animationFormat.push(VertexBufferElement::Type::FloatFloat, "TEXCOORD", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
+		animationFormat.push(VertexBufferElement::Type::FloatFloatFloat, "TANGENT", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
+		animationFormat.push(VertexBufferElement::Type::IntIntIntInt, "BONEINDICES", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
+		animationFormat.push(VertexBufferElement::Type::FloatFloatFloatFloat, "BONEWEIGHTS", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
 		MakeShader(ShaderType::Animation, L"rootex/assets/shaders/animation_vertex_shader.cso", L"rootex/assets/shaders/basic_pixel_shader.cso", animationFormat);
 	}
 }

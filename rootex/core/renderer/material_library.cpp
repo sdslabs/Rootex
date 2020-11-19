@@ -11,7 +11,7 @@ const String MaterialLibrary::s_AnimatedDefaultMaterialPath = "rootex/assets/mat
 MaterialLibrary::MaterialDatabase MaterialLibrary::s_MaterialDatabase = {
 	{ BasicMaterial::s_MaterialName, { BasicMaterial::CreateDefault, BasicMaterial::Create } },
 	{ ParticlesMaterial::s_MaterialName, { ParticlesMaterial::CreateDefault, ParticlesMaterial::Create } },
-	{ SkyMaterial::s_MaterialName, { SkyMaterial::CreateDefault, SkyMaterial::Create } }
+	{ SkyMaterial::s_MaterialName, { SkyMaterial::CreateDefault, SkyMaterial::Create } },
 	{ AnimatedMaterial::s_MaterialName, { AnimatedMaterial::CreateDefault, AnimatedMaterial::Create } }
 };
 
@@ -86,7 +86,7 @@ Ref<Material> MaterialLibrary::GetDefaultParticlesMaterial()
 	}
 }
 
-Ref<Material> MaterialLibrary::GetAnimatedDefaultMaterial()
+Ref<Material> MaterialLibrary::GetDefaultAnimatedMaterial()
 {
 	if (Ref<Material> lockedMaterial = s_Materials[s_AnimatedDefaultMaterialPath].second.lock())
 	{

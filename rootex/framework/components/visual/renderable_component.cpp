@@ -2,16 +2,15 @@
 
 #include "static_point_light_component.h"
 #include "system.h"
-#include "entity_factory.h"
 #include "systems\render_system.h"
 #include "renderer\material_library.h"
+#include "scene_loader.h"
 
-RenderableComponent::RenderableComponent(unsigned int renderPass, const HashMap<String, String>& materialOverrides, bool isVisible, const Vector<EntityID>& affectingStaticLightEntityIDs)
+RenderableComponent::RenderableComponent(unsigned int renderPass, const HashMap<String, String>& materialOverrides, bool visibility, const Vector<SceneID>& affectingStaticLightIDs)
     : m_RenderPass(renderPass)
-    , m_IsVisible(isVisible)
-    , m_TransformComponent(nullptr)
-    , m_HierarchyComponent(nullptr)
-    , m_AffectingStaticLightEntityIDs(affectingStaticLightEntityIDs)
+    , m_IsVisible(visibility)
+    , m_DependencyOnTransformComponent(this)
+    , m_AffectingStaticLightIDs(affectingStaticLightIDs)
 {
 }
 
@@ -22,33 +21,15 @@ void RenderableComponent::RegisterAPI(sol::table& rootex)
 		sol::base_classes, sol::bases<Component>());
 }
 
-bool RenderableComponent::setup()
+bool RenderableComponent::setupData()
 {
-	bool status = true;
-	if (m_Owner)
-	{
-		m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
-		if (m_TransformComponent == nullptr)
-		{
-			WARN("Entity without transform component found");
-			status = false;
-		}
-
-		m_HierarchyComponent = m_Owner->getComponent<HierarchyComponent>().get();
-		if (m_HierarchyComponent == nullptr)
-		{
-			WARN("Entity without hierarchy component found");
-			status = false;
-		}
-	}
-
-	return status;
-}
+	return true;
+} // to be seen
 
 bool RenderableComponent::setupEntities()
 {
-	Vector<int> affectingEntities = m_AffectingStaticLightEntityIDs;
-	m_AffectingStaticLightEntityIDs.clear();
+	Vector<SceneID> affectingEntities = m_AffectingStaticLightIDs;
+	m_AffectingStaticLightIDs.clear();
 	m_AffectingStaticLights.clear();
 	for (auto& ID : affectingEntities)
 	{
@@ -70,10 +51,15 @@ bool RenderableComponent::preRender(float deltaMilliseconds)
 	return true;
 }
 
-bool RenderableComponent::isVisible() const
+void RenderableComponent::render()
 {
-	// TODO: Add culling
-	return m_IsVisible;
+	PerModelPSCB perModel;
+	for (int i = 0; i < m_AffectingStaticLights.size(); i++)
+	{
+		perModel.staticPointsLightsAffecting[i].id = m_AffectingStaticLights[i];
+	}
+	perModel.staticPointsLightsAffectingCount = m_AffectingStaticLights.size();
+	Material::SetPSConstantBuffer(perModel, m_PerModelCB, PER_MODEL_PS_CPP);
 }
 
 void RenderableComponent::postRender()
@@ -81,20 +67,10 @@ void RenderableComponent::postRender()
 	RenderSystem::GetSingleton()->popMatrix();
 }
 
-void RenderableComponent::setIsVisible(bool enabled)
+bool RenderableComponent::addAffectingStaticLight(SceneID ID)
 {
-	m_IsVisible = enabled;
-}
-
-void RenderableComponent::setMaterialOverride(Ref<Material> oldMaterial, Ref<Material> newMaterial)
-{
-	m_MaterialOverrides[oldMaterial] = newMaterial;
-}
-
-bool RenderableComponent::addAffectingStaticLight(EntityID ID)
-{
-	Ref<Entity> entity = EntityFactory::GetSingleton()->findEntity(ID);
-	if (!entity)
+	Scene* light = SceneLoader::GetSingleton()->getCurrentScene()->findScene(ID);
+	if (!light->getEntity())
 	{
 		WARN("Static light entity referred to not found: " + std::to_string(ID));
 		{
@@ -105,26 +81,27 @@ bool RenderableComponent::addAffectingStaticLight(EntityID ID)
 	int lightID = 0;
 	for (auto& component : System::GetComponents(StaticPointLightComponent::s_ID))
 	{
-		if (entity->getComponent<StaticPointLightComponent>().get() == component)
+		if (light->getEntity()->getComponent<StaticPointLightComponent>() == component)
 		{
-			m_AffectingStaticLightEntityIDs.push_back(ID);
+			m_AffectingStaticLightIDs.push_back(ID);
 			m_AffectingStaticLights.push_back(lightID);
 			return true;
 		}
 		lightID++;
 	}
-	WARN("Provided static light entity does not have a static light: " + entity->getFullName());
+
+	WARN("Provided static light scene does not have a static light: " + light->getFullName());
 	return false;
 }
 
-void RenderableComponent::removeAffectingStaticLight(EntityID ID)
+void RenderableComponent::removeAffectingStaticLight(SceneID ID)
 {
-	for (int i = 0; i < m_AffectingStaticLightEntityIDs.size(); i++)
+	for (int i = 0; i < m_AffectingStaticLightIDs.size(); i++)
 	{
-		if (ID == m_AffectingStaticLightEntityIDs[i])
+		if (ID == m_AffectingStaticLightIDs[i])
 		{
-			auto& eraseIt = std::find(m_AffectingStaticLightEntityIDs.begin(), m_AffectingStaticLightEntityIDs.end(), ID);
-			m_AffectingStaticLightEntityIDs.erase(eraseIt);
+			auto& eraseIt = std::find(m_AffectingStaticLightIDs.begin(), m_AffectingStaticLightIDs.end(), ID);
+			m_AffectingStaticLightIDs.erase(eraseIt);
 
 			int removeLightID = m_AffectingStaticLights[i];
 			auto& eraseLightIt = std::find(m_AffectingStaticLights.begin(), m_AffectingStaticLights.end(), removeLightID);
@@ -134,15 +111,20 @@ void RenderableComponent::removeAffectingStaticLight(EntityID ID)
 	}
 }
 
-void RenderableComponent::render()
+bool RenderableComponent::isVisible() const
 {
-	PerModelPSCB perModel;
-	for (int i = 0; i < m_AffectingStaticLights.size(); i++)
-	{
-		perModel.staticPointsLightsAffecting[i].id = m_AffectingStaticLights[i];
-	}
-	perModel.staticPointsLightsAffectingCount = m_AffectingStaticLights.size();
-	Material::SetPSConstantBuffer(perModel, m_PerModelCB, PER_MODEL_PS_CPP);
+	// TODO: Add culling
+	return m_IsVisible;
+}
+
+void RenderableComponent::setIsVisible(bool enabled)
+{
+	m_IsVisible = enabled;
+}
+
+void RenderableComponent::setMaterialOverride(Ref<Material> oldMaterial, Ref<Material> newMaterial)
+{
+	m_MaterialOverrides[oldMaterial] = newMaterial;
 }
 
 JSON::json RenderableComponent::getJSON() const
@@ -157,12 +139,13 @@ JSON::json RenderableComponent::getJSON() const
 	{
 		j["materialOverrides"][oldMaterial->getFileName()] = newMaterial->getFileName();
 	}
-	j["affectingStaticLights"] = m_AffectingStaticLightEntityIDs;
+	j["affectingStaticLights"] = m_AffectingStaticLightIDs;
 
 	return j;
 }
 
 #ifdef ROOTEX_EDITOR
+#include "ImGuiFileDialog.h"
 void RenderableComponent::draw()
 {
 	int renderPassUI = log2(m_RenderPass);
@@ -176,15 +159,15 @@ void RenderableComponent::draw()
 		ImGui::Indent();
 		int slot = 0;
 		EntityID toRemove = -1;
-		for (auto& slotEntityID : m_AffectingStaticLightEntityIDs)
+		for (auto& slotSceneID : m_AffectingStaticLightIDs)
 		{
-			Ref<Entity> staticLight = EntityFactory::GetSingleton()->findEntity(slotEntityID);
-			RenderSystem::GetSingleton()->submitLine(m_TransformComponent->getAbsoluteTransform().Translation(), staticLight->getComponent<TransformComponent>()->getAbsoluteTransform().Translation());
+			Scene* staticLight = SceneLoader::GetSingleton()->getCurrentScene()->findScene(slotSceneID);
+			RenderSystem::GetSingleton()->submitLine(m_TransformComponent->getAbsoluteTransform().Translation(), staticLight->getEntity()->getComponent<TransformComponent>()->getAbsoluteTransform().Translation());
 
 			String displayName = staticLight->getFullName();
 			if (ImGui::SmallButton(("x##" + std::to_string(slot)).c_str()))
 			{
-				toRemove = slotEntityID;
+				toRemove = slotSceneID;
 			}
 			ImGui::SameLine();
 			ImGui::Text("%s", displayName.c_str());
@@ -204,7 +187,7 @@ void RenderableComponent::draw()
 				{
 					if (ImGui::Selectable(component->getOwner()->getFullName().c_str()))
 					{
-						addAffectingStaticLight(component->getOwner()->getID());
+						addAffectingStaticLight(component->getOwner()->getScene()->getID());
 					}
 				}
 				ImGui::EndCombo();
@@ -225,46 +208,41 @@ void RenderableComponent::draw()
 		ImGui::Separator();
 		for (auto& [oldMaterial, newMaterial] : m_MaterialOverrides)
 		{
-			ImGui::BeginGroup();
 			ImGui::Image(oldMaterial->getPreview(), { 50, 50 });
 			ImGui::SameLine();
-			if (ImGui::MenuItem(FilePath(oldMaterial->getFileName()).filename().generic_string().c_str()))
-			{
-				EventManager::GetSingleton()->call("OpenModel", "EditorOpenFile", oldMaterial->getFileName());
-			}
+			ImGui::Text("%s", FilePath(oldMaterial->getFileName()).filename().generic_string().c_str());
 			ImGui::NextColumn();
 			ImGui::Image(newMaterial->getPreview(), { 50, 50 });
 			ImGui::SameLine();
+
 			ImGui::BeginGroup();
-			if (ImGui::MenuItem(FilePath(newMaterial->getFileName()).filename().generic_string().c_str()))
+			ImGui::Text("%s", FilePath(newMaterial->getFileName()).filename().generic_string().c_str());
+			if (ImGui::Button((ICON_ROOTEX_EXTERNAL_LINK "##" + newMaterial->getFileName()).c_str()))
 			{
 				EventManager::GetSingleton()->call("OpenModel", "EditorOpenFile", newMaterial->getFileName());
 			}
-			if (ImGui::SmallButton(("Reset##" + oldMaterial->getFileName()).c_str()))
+			ImGui::SameLine();
+			if (ImGui::Button((ICON_ROOTEX_PENCIL_SQUARE_O "##" + newMaterial->getFileName()).c_str()))
+			{
+				igfd::ImGuiFileDialog::Instance()->OpenModal(oldMaterial->getFileName(), "Choose Material", ".rmat", "game/assets/materials/");
+			}
+			ImGui::SameLine();
+			if (igfd::ImGuiFileDialog::Instance()->FileDialog(oldMaterial->getFileName()))
+			{
+				if (igfd::ImGuiFileDialog::Instance()->IsOk)
+				{
+					String filePathName = OS::GetRootRelativePath(igfd::ImGuiFileDialog::Instance()->GetFilePathName()).generic_string();
+					newMaterial = MaterialLibrary::GetMaterial(filePathName);
+				}
+
+				igfd::ImGuiFileDialog::Instance()->CloseDialog(oldMaterial->getFileName());
+			}
+			ImGui::SameLine();
+			if (ImGui::Button((ICON_ROOTEX_REFRESH "##" + oldMaterial->getFileName()).c_str()))
 			{
 				setMaterialOverride(oldMaterial, oldMaterial);
 			}
 			ImGui::EndGroup();
-			ImGui::EndGroup();
-
-			if (ImGui::BeginDragDropTarget())
-			{
-				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Resource Drop"))
-				{
-					const char* payloadFileName = (const char*)payload->Data;
-					FilePath payloadPath(payloadFileName);
-					if (payloadPath.extension() == ".rmat")
-					{
-						MaterialLibrary::CreateNewMaterialFile(payloadPath.generic_string(), oldMaterial->getTypeName());
-						setMaterialOverride(oldMaterial, MaterialLibrary::GetMaterial(payloadPath.generic_string()));
-					}
-					else
-					{
-						WARN("Unsupported file format for material. Use .rmat files");
-					}
-				}
-				ImGui::EndDragDropTarget();
-			}
 
 			ImGui::NextColumn();
 			ImGui::Separator();
