@@ -10,7 +10,7 @@ class ShaderLibrary
 	{
 		Basic,
 		Sky,
-		Particles
+		Particles,
 		Animation
 	};
 

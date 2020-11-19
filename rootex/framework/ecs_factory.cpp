@@ -26,6 +26,7 @@
 #include "components/visual/spot_light_component.h"
 #include "components/visual/text_ui_component.h"
 #include "components/visual/ui_component.h"
+#include "components/visual/animated_model_component.h"
 
 void ECSFactory::RegisterAPI(sol::table& rootex)
 {
@@ -150,6 +151,7 @@ void ECSFactory::Initialize()
 	REGISTER_COMPONENT(ShortMusicComponent);
 	REGISTER_COMPONENT(CPUParticlesComponent);
 	REGISTER_COMPONENT(UIComponent);
+	REGISTER_COMPONENT(AnimatedModelComponent);
 }
 
 Ptr<Entity> ECSFactory::CreateRootEntity(Scene* scene)

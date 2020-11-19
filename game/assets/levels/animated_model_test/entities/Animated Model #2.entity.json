@@ -1,9 +1,15 @@
 {
     "Components": {
         "AnimatedModelComponent": {
+            "affectingStaticLights": [],
+            "currentAnimationName": "",
+            "isPlayOnStart": false,
             "isVisible": true,
+            "materialOverrides": {
+                "rootex/assets/materials/animated_default.rmat": "rootex/assets/materials/animated_default.rmat"
+            },
             "renderPass": 1,
-            "resFile": "game/assets/test/animation.dae"
+            "resFile": "rootex/assets/animation.dae"
         },
         "HierarchyComponent": {
             "children": [],
@@ -29,7 +35,7 @@
             "position": {
                 "x": 0.0,
                 "y": 0.0,
-                "z": -5.0
+                "z": 0.0
             },
             "rotation": {
                 "w": 1.0,
@@ -46,6 +52,6 @@
     },
     "Entity": {
         "ID": 2,
-        "name": "AnimatedModel"
+        "name": "Animated Model"
     }
 }

@@ -34,7 +34,7 @@ public:
 	static Ref<Material> GetMaterial(const String& materialPath);
 	static Ref<Material> GetDefaultMaterial();
 	static Ref<Material> GetDefaultParticlesMaterial();
-	static Ref<Material> GetAnimatedDefaultMaterial();
+	static Ref<Material> GetDefaultAnimatedMaterial();
 	static MaterialMap& GetAllMaterials() { return s_Materials; };
 	static MaterialDatabase& GetMaterialDatabase() { return s_MaterialDatabase; };
 };

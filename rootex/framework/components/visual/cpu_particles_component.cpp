@@ -37,7 +37,7 @@ Component* CPUParticlesComponent::Create(const JSON::json& componentData)
 {
 	CPUParticlesComponent* particles = new CPUParticlesComponent(
 	    componentData.value("poolSize", 1000),
-		componentData.value("resFile", "rootex/assets/cube.obj"),
+		ResourceLoader::CreateModelResourceFile(componentData.value("resFile", "rootex/assets/cube.obj")),
 	    componentData.value("materialPath", "rootex/assets/materials/default_particles.rmat"),
 	    componentData.value("particleTemplate", ParticleTemplate()), 
 		componentData.value("isVisible", true),
@@ -48,8 +48,8 @@ Component* CPUParticlesComponent::Create(const JSON::json& componentData)
 	return particles;
 }
 
-CPUParticlesComponent::CPUParticlesComponent(size_t poolSize, const String& particleModelPath, const String& materialPath, const ParticleTemplate& particleTemplate, bool visibility, unsigned int renderPass, EmitMode emitMode, int emitRate, const Vector3& emitterDimensions)
-    : ModelComponent(renderPass, ResourceLoader::CreateModelResourceFile(particleModelPath), {}, visibility, {})
+CPUParticlesComponent::CPUParticlesComponent(size_t poolSize, ModelResourceFile* particleModelFile, const String& materialPath, const ParticleTemplate& particleTemplate, bool visibility, unsigned int renderPass, EmitMode emitMode, int emitRate, const Vector3& emitterDimensions)
+    : RenderableComponent(renderPass, {}, visibility, {})
     , m_ParticlesMaterial(std::dynamic_pointer_cast<ParticlesMaterial>(MaterialLibrary::GetMaterial(materialPath)))
     , m_ParticleTemplate(particleTemplate)
     , m_CurrentEmitMode(emitMode)
@@ -59,6 +59,7 @@ CPUParticlesComponent::CPUParticlesComponent(size_t poolSize, const String& part
 	m_InstanceBufferData.resize(MAX_PARTICLES);
 	m_InstanceBuffer.reset(new VertexBuffer(m_InstanceBufferData));
 	m_AllowedMaterials = { ParticlesMaterial::s_MaterialName };
+	setVisualModel(particleModelFile, {});
 	expandPool(poolSize);
 }
 
@@ -77,7 +78,7 @@ bool CPUParticlesComponent::preRender(float deltaMilliseconds)
 {
 	ZoneScoped;
 
-	ModelComponent::preRender(deltaMilliseconds);
+	RenderableComponent::preRender(deltaMilliseconds);
 
 	int i = m_EmitRate;
 	while (i > 0)
@@ -127,7 +128,7 @@ void CPUParticlesComponent::render()
 
 	RenderSystem::GetSingleton()->getRenderer()->bind(m_ParticlesMaterial.get());
 	m_InstanceBuffer->setData(m_InstanceBufferLiveData);
-	for (auto& [material, meshes] : m_ModelResourceFile->getMeshes())
+	for (auto& [material, meshes] : m_ParticleModelFile->getMeshes())
 	{
 		for (auto& mesh : meshes)
 		{
@@ -217,9 +218,9 @@ void CPUParticlesComponent::setVisualModel(ModelResourceFile* newModel, const Ha
 		return;
 	}
 
-	m_ModelResourceFile = newModel;
+	m_ParticleModelFile = newModel;
 	m_MaterialOverrides.clear();
-	for (auto& [material, meshes] : m_ModelResourceFile->getMeshes())
+	for (auto& [material, meshes] : m_ParticleModelFile->getMeshes())
 	{
 		setMaterialOverride(material, material);
 	}
@@ -234,6 +235,7 @@ JSON::json CPUParticlesComponent::getJSON() const
 {
 	JSON::json& j = RenderableComponent::getJSON();
 
+	j["resFile"] = m_ParticleModelFile->getPath().string();
 	j["materialPath"] = m_ParticlesMaterial->getFileName();
 	j["poolSize"] = m_ParticlePool.size();
 	j["particleTemplate"] = m_ParticleTemplate;
@@ -254,47 +256,27 @@ void CPUParticlesComponent::draw()
 
 	ImGui::Checkbox("Visible", &m_IsVisible);
 
-	ImGui::BeginGroup();
-
-	String inputPath = m_ModelResourceFile->getPath().generic_string();
-	ImGui::InputText("##Path", &inputPath);
+	String filePath = m_ParticleModelFile->getPath().generic_string();
+	ImGui::Text("%s", filePath.c_str());
 	ImGui::SameLine();
-	if (ImGui::Button("Create Visual Model"))
-	{
-		if (!ResourceLoader::CreateModelResourceFile(inputPath))
-		{
-			WARN("Could not create Visual Model");
-		}
-		else
-		{
-			inputPath = "";
-		}
-	}
-
-	ImGui::SameLine();
-
 	if (ImGui::Button("Model"))
 	{
-		EventManager::GetSingleton()->call("OpenModel", "EditorOpenFile", m_ModelResourceFile->getPath().string());
+		EventManager::GetSingleton()->call("OpenScript", "EditorOpenFile", m_ParticleModelFile->getPath().string());
 	}
-	ImGui::EndGroup();
-
-	if (ImGui::BeginDragDropTarget())
+	ImGui::SameLine();
+	if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Model File"))
 	{
-		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Resource Drop"))
+		igfd::ImGuiFileDialog::Instance()->OpenModal("ChooseCPUParticleComponentModel", "Choose Model File", SupportedFiles.at(ResourceFile::Type::Model), "game/assets/");
+	}
+
+	if (igfd::ImGuiFileDialog::Instance()->FileDialog("ChoosCPUParticleComponentModel"))
+	{
+		if (igfd::ImGuiFileDialog::Instance()->IsOk)
 		{
-			const char* payloadFileName = (const char*)payload->Data;
-			FilePath payloadPath(payloadFileName);
-			if (IsFileSupported(payloadPath.extension().string(), ResourceFile::Type::Model))
-			{
-				setVisualModel(ResourceLoader::CreateModelResourceFile(payloadPath.string()), {});
-			}
-			else
-			{
-				WARN("Unsupported file format for Model");
-			}
+			FilePath filePath = OS::GetRootRelativePath(igfd::ImGuiFileDialog::Instance()->GetFilePathName());
+			setVisualModel(ResourceLoader::CreateModelResourceFile(filePath.generic_string()), {});
 		}
-		ImGui::EndDragDropTarget();
+		igfd::ImGuiFileDialog::Instance()->CloseDialog("ChooseCPUParticleComponentModel");
 	}
 
 	RenderableComponent::draw();

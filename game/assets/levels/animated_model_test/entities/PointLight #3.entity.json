@@ -10,27 +10,27 @@
             "materialOverrides": {
                 "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
             },
-            "renderPass": 1,
-            "resFile": "game/assets/test/cube.obj"
+            "renderPass": 2,
+            "resFile": "game/assets/test/sphere.obj"
         },
         "PointLightComponent": {
             "ambientColor": {
                 "a": 1.0,
-                "b": 0.5,
-                "g": 0.5,
-                "r": 0.5
+                "b": 0.0,
+                "g": 0.0,
+                "r": 0.7915058135986328
             },
-            "attConst": 162.0449981689453,
-            "attLin": 1.0,
-            "attQuad": 0.007499999832361937,
+            "attConst": 23.045000076293945,
+            "attLin": 25.0,
+            "attQuad": 4.007999897003174,
             "diffuseColor": {
                 "a": 1.0,
-                "b": 1.0,
+                "b": 0.40154439210891724,
                 "g": 1.0,
-                "r": 1.0
+                "r": 0.9468548893928528
             },
-            "diffuseIntensity": 87.0,
-            "range": 100.0
+            "diffuseIntensity": 140.0,
+            "range": 9.0
         },
         "TransformComponent": {
             "boundingBox": {
@@ -46,25 +46,25 @@
                 }
             },
             "position": {
-                "x": -27.399999618530273,
-                "y": 35.30000305175781,
-                "z": -26.900001525878906
+                "x": 0.026386260986328125,
+                "y": -0.6464090347290039,
+                "z": -7.268535137176514
             },
             "rotation": {
-                "w": 1.0,
-                "x": -0.0,
+                "w": -0.0,
+                "x": 1.0,
                 "y": 0.0,
-                "z": -0.0
+                "z": 0.0
             },
             "scale": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
+                "x": 0.019999999552965164,
+                "y": 0.020000137388706207,
+                "z": 0.01999998465180397
             }
         }
     },
     "Entity": {
-        "ID": 6,
+        "ID": 3,
         "name": "PointLight"
     }
 }

@@ -43,6 +43,9 @@ ResourceFile* ResourceLoader::CreateSomeResourceFile(const String& path)
 			case ResourceFile::Type::Model:
 				result = CreateModelResourceFile(path);
 				break;
+			case ResourceFile::Type::AnimatedModel:
+				result = CreateAnimatedModelResourceFile(path);
+				break;
 			default:
 				break;
 			}
@@ -100,29 +103,7 @@ ModelResourceFile* ResourceLoader::CreateModelResourceFile(const String& path)
 
 AnimatedModelResourceFile* ResourceLoader::CreateAnimatedModelResourceFile(const String& path)
 {
-	for (auto& item : s_ResourcesDataFiles)
-	{
-		if (item.first->getPath() == path && item.second->getType() == ResourceFile::Type::AnimatedModel)
-		{
-			return reinterpret_cast<AnimatedModelResourceFile*>(item.second.get());
-		}
-	}
-	if (OS::IsExists(path) == false)
-	{
-		ERR("File not found: " + path);
-		return nullptr;
-	}
-
-	// File not found in cache, load it only once
-	FileBuffer& buffer = OS::LoadFileContents(path);
-	ResourceData* resData = new ResourceData(path, buffer);
-	AnimatedModelResourceFile* animationRes = new AnimatedModelResourceFile(resData);
-
-	LoadAssimp(animationRes);
-
-	s_ResourcesDataFiles[Ptr<ResourceData>(resData)] = Ptr<ResourceFile>(animationRes);
-
-	return animationRes;
+	return GetCachedResource<AnimatedModelResourceFile>(ResourceFile::Type::AnimatedModel, FilePath(path));
 }
 
 ImageResourceFile* ResourceLoader::CreateImageResourceFile(const String& path)

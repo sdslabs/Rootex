@@ -6,54 +6,29 @@
 #include "framework/systems/render_system.h"
 #include "renderer/materials/animated_material.h"
 #include "renderer/material_library.h"
+#include "scene_loader.h"
 
-AnimatedModelComponent::AnimatedModelComponent(unsigned int renderPass, const HashMap<String, String>& materialOverrides, AnimatedModelResourceFile* resFile, bool isVisible, const Vector<EntityID>& affectingStaticLightEntityIDs)
-    : RenderableComponent(renderPass, materialOverrides, isVisible, affectingStaticLightEntityIDs)
+AnimatedModelComponent::AnimatedModelComponent(unsigned int renderPass, const HashMap<String, String>& materialOverrides, AnimatedModelResourceFile* resFile, bool isVisible, bool isPlayOnStart, const String& currentAnimationName, const Vector<SceneID>& affectingStaticLightIDs)
+    : RenderableComponent(renderPass, materialOverrides, isVisible, affectingStaticLightIDs)
     , m_CurrentTimePosition(0.0f)
-    , m_IsPlaying(false)
+    , m_IsPlaying(isPlayOnStart)
+    , m_IsPlayOnStart(isPlayOnStart)
+    , m_CurrentAnimationName(currentAnimationName)
 {
-	setAnimatedResourceFile(resFile, materialOverrides);
-	m_CurrentAnimationName = m_AnimatedModelResourceFile->getAnimations().begin()->first;
+	assignOverrides(resFile, materialOverrides);
 	m_FinalTransforms.resize(m_AnimatedModelResourceFile->getBoneCount());
 }
 
 Component* AnimatedModelComponent::Create(const JSON::json& componentData)
 {
-	HashMap<String, String> materialOverrides;
-	if (componentData.find("materialOverrides") != componentData.end())
-	{
-		for (auto& element : JSON::json::iterator_wrapper(componentData))
-		{
-			materialOverrides[element.key()] = element.value();
-		}
-	}
-	Vector<EntityID> affectingStaticLights;
-	if (componentData.find("affectingStaticLights") != componentData.end())
-	{
-		for (int lightEntityID : componentData["affectingStaticLights"])
-		{
-			affectingStaticLights.push_back(lightEntityID);
-		}
-	}
 	AnimatedModelComponent* animatedModelComponent = new AnimatedModelComponent(
-	    componentData["renderPass"],
-		materialOverrides,
-	    ResourceLoader::CreateAnimatedModelResourceFile(componentData["resFile"]),
-	    componentData["isVisible"],
-		affectingStaticLights);
-
-	return animatedModelComponent;
-}
-
-Component* AnimatedModelComponent::CreateDefault()
-{
-	AnimatedModelComponent* animatedModelComponent = new AnimatedModelComponent(
-	    unsigned int(RenderPass::Basic),
-	    {},
-	    ResourceLoader::CreateAnimatedModelResourceFile("rootex/assets/animation.dae"),
-	    true,
-	    {});
-	
+	    componentData.value("renderPass", (int)RenderPass::Basic),
+	    componentData.value("materialOverrides", HashMap<String, String>()),
+	    ResourceLoader::CreateAnimatedModelResourceFile(componentData.value("resFile", "rootex/assets/animation.dae")),
+	    componentData.value("isVisible", true),
+	    componentData.value("isPlayOnStart", false),
+	    componentData.value("currentAnimationName", ""),
+	    componentData.value("affectingStaticLights", Vector<SceneID>()));
 	return animatedModelComponent;
 }
 
@@ -65,12 +40,26 @@ void AnimatedModelComponent::RegisterAPI(sol::table& rootex)
 	rootex["Entity"]["getAnimatedModel"] = &Entity::getComponent<AnimatedModelComponent>;
 }
 
+bool AnimatedModelComponent::setupData()
+{
+	assignBoundingBox();
+	return true;
+}
+
+bool AnimatedModelComponent::preRender(float deltaMilliseconds)
+{
+	ZoneNamedN(componentpreRender, "Animated Model Pre-Render", true);
+	RenderableComponent::preRender(deltaMilliseconds);
+	return true;
+}
+
 void AnimatedModelComponent::render()
 {
-	std::sort(m_AnimatedModelResourceFile->getMeshes().begin(), m_AnimatedModelResourceFile->getMeshes().end(), ModelComponent::compareMaterials);
-	int i = 0;
-
+	ZoneNamedN(componentRender, "Animated Model Render", true);
 	RenderableComponent::render();
+
+	std::sort(m_AnimatedModelResourceFile->getMeshes().begin(), m_AnimatedModelResourceFile->getMeshes().end(), ModelComponent::CompareMaterials);
+	int i = 0;
 
 	for (auto& [material, meshes] : m_AnimatedModelResourceFile->getMeshes())
 	{
@@ -85,14 +74,40 @@ void AnimatedModelComponent::render()
 	}
 }
 
-void AnimatedModelComponent::setAnimatedResourceFile(AnimatedModelResourceFile* file, const HashMap<String, String>& materialOverrides)
+void AnimatedModelComponent::assignBoundingBox()
 {
+	if (m_AnimatedModelResourceFile)
+	{
+		BoundingBox bigBox;
+		bool first = true;
+		for (auto& [material, meshes] : m_AnimatedModelResourceFile->getMeshes())
+		{
+			for (auto& mesh : meshes)
+			{
+				if (first)
+				{
+					bigBox = mesh.m_BoundingBox;
+					first = false;
+				}
+				else
+				{
+					BoundingBox::CreateMerged(bigBox, bigBox, mesh.m_BoundingBox);
+				}
+			}
+		}
+		m_TransformComponent->setBounds(bigBox);
+	}
+}
+
+void AnimatedModelComponent::assignOverrides(AnimatedModelResourceFile* file, const HashMap<String, String>& materialOverrides)
+{
+	m_AnimatedModelResourceFile = file;
+
 	if (!file)
 	{
 		return;
 	}
 	
-	m_AnimatedModelResourceFile = file;
 	m_MaterialOverrides.clear();
 	for (auto& [material, meshes] : m_AnimatedModelResourceFile->getMeshes())
 	{
@@ -105,11 +120,19 @@ void AnimatedModelComponent::setAnimatedResourceFile(AnimatedModelResourceFile* 
 	}
 }
 
+void AnimatedModelComponent::setAnimatedResourceFile(AnimatedModelResourceFile* resFile, const HashMap<String, String>& materialOverrides)
+{
+	assignOverrides(resFile, materialOverrides);
+	assignBoundingBox();
+}
+
 JSON::json AnimatedModelComponent::getJSON() const
 {
 	JSON::json j = RenderableComponent::getJSON();
 
 	j["resFile"] = m_AnimatedModelResourceFile->getPath().string();
+	j["isPlayOnStart"] = m_IsPlaying;
+	j["currentAnimationName"] = m_CurrentAnimationName;
 
 	return j;
 }
@@ -117,51 +140,35 @@ JSON::json AnimatedModelComponent::getJSON() const
 #ifdef ROOTEX_EDITOR
 #include "imgui.h"
 #include "imgui_stdlib.h"
+#include "ImGuiFileDialog.h"
 void AnimatedModelComponent::draw()
 {
 	ImGui::Checkbox("Visible", &m_IsVisible);
+	ImGui::Checkbox("Play on Start", &m_IsPlayOnStart);
 
 	ImGui::BeginGroup();
 
-	String inputPath = m_AnimatedModelResourceFile->getPath().generic_string();
-	ImGui::InputText("##Path", &inputPath);
+	String filePath = m_AnimatedModelResourceFile->getPath().generic_string();
+	ImGui::Text("%s", filePath.c_str());
 	ImGui::SameLine();
-	if (ImGui::Button("Create Animated Model"))
-	{
-		if (!ResourceLoader::CreateAnimatedModelResourceFile(inputPath))
-		{
-			WARN("Could not create Animated Model");
-		}
-		else
-		{
-			inputPath = "";
-		}
-	}
-
-	ImGui::SameLine();
-
 	if (ImGui::Button("Model"))
 	{
-		EventManager::GetSingleton()->call("Open Script", "EditorOpenFile", m_AnimatedModelResourceFile->getPath().string());
+		EventManager::GetSingleton()->call("OpenScript", "EditorOpenFile", m_AnimatedModelResourceFile->getPath().string());
 	}
-	ImGui::EndGroup();
-
-	if (ImGui::BeginDragDropTarget())
+	ImGui::SameLine();
+	if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Animated Model File"))
 	{
-		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Resource Drop"))
+		igfd::ImGuiFileDialog::Instance()->OpenModal("ChooseAnimatedModelComponentModel", "Choose Animated Model File", SupportedFiles.at(ResourceFile::Type::AnimatedModel), "game/assets/");
+	}
+
+	if (igfd::ImGuiFileDialog::Instance()->FileDialog("ChooseAnimatedModelComponentModel"))
+	{
+		if (igfd::ImGuiFileDialog::Instance()->IsOk)
 		{
-			const char* payloadFileName = (const char*)payload->Data;
-			FilePath payloadPath(payloadFileName);
-			if (IsFileSupported(payloadPath.extension().string(), ResourceFile::Type::AnimatedModel))
-			{
-				setAnimatedResourceFile(ResourceLoader::CreateAnimatedModelResourceFile(payloadPath.string()), {});
-			}
-			else
-			{
-				WARN("Unsupported file format for Model");
-			}
+			FilePath filePath = OS::GetRootRelativePath(igfd::ImGuiFileDialog::Instance()->GetFilePathName());
+			setAnimatedResourceFile(ResourceLoader::CreateAnimatedModelResourceFile(filePath.generic_string()), {});
 		}
-		ImGui::EndDragDropTarget();
+		igfd::ImGuiFileDialog::Instance()->CloseDialog("ChooseModelComponentModel");
 	}
 
 	if (ImGui::Button("Start"))
@@ -223,5 +230,6 @@ void AnimatedModelComponent::draw()
 		ImGui::Separator();
 		i++;
 	}
+	ImGui::EndGroup();
 }
 #endif //ROOTEX_EDITOR

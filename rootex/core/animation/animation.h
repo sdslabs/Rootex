@@ -22,7 +22,7 @@ struct ScalingKeyframe
 
 struct SkeletonNode
 {
-	Vector<SkeletonNode*> m_Children;
+	Vector<Ptr<SkeletonNode>> m_Children;
 	String m_Name;
 	Matrix m_LocalBindTransform;
 };
@@ -45,7 +45,7 @@ public:
 	void addRotationKeyframe(RotationKeyframe& keyframe) { m_Rotation.push_back(keyframe); }
 	void addScalingKeyframe(ScalingKeyframe& keyframe) { m_Scaling.push_back(keyframe); }
 	
-	Matrix& interpolate(float time);
+	Matrix interpolate(float time);
 };
 
 class SkeletalAnimation
@@ -58,7 +58,7 @@ public:
 	SkeletalAnimation(const SkeletalAnimation&) = default;
 	~SkeletalAnimation() = default;
 
-	Matrix& interpolate(const String& nodeName, float currentTime);
+	Matrix interpolate(const String& nodeName, float currentTime);
 	
 	float getEndTime() const;
 	
