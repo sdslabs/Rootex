@@ -1,6 +1,6 @@
 {
     "project": "Rootex Game",
-    "startLevel": "game/assets/scenes/loading.scene.json",
+    "startLevel": "game/assets/scenes/physics.scene.json",
     "systems": {
         "AudioSystem": {},
         "DebugSystem": {

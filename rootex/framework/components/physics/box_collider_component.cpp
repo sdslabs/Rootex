@@ -5,21 +5,18 @@ Component* BoxColliderComponent::Create(const JSON::json& boxComponentData)
 {
 	BoxColliderComponent* component = new BoxColliderComponent(
 	    boxComponentData.value("dimensions", Vector3::Zero),
-		boxComponentData.value("matName", "Air"),
+		boxComponentData.value("material", PhysicsMaterial::Air),
 	    boxComponentData.value("gravity", Vector3::Zero),
 	    boxComponentData.value("isMoveable", false),
+	    boxComponentData.value("isKinematic", false),
 		boxComponentData.value("isGeneratesHitEvents", false));
 	return component;
 }
 
-BoxColliderComponent::BoxColliderComponent(const Vector3& dimensions, const String& matName, const Vector3& gravity, bool isMoveable, bool generatesHitEvents)
-    : PhysicsColliderComponent(matName, dimensions.x * dimensions.y * dimensions.z, gravity, isMoveable, Ref<btBoxShape>(new btBoxShape(vecTobtVector3(dimensions))), generatesHitEvents)
+BoxColliderComponent::BoxColliderComponent(const Vector3& dimensions, const PhysicsMaterial& material, const Vector3& gravity, bool isMoveable, bool isKinematic, bool generatesHitEvents)
+    : PhysicsColliderComponent(material, dimensions.x * dimensions.y * dimensions.z, gravity, isMoveable, isKinematic, generatesHitEvents, Ref<btBoxShape>(new btBoxShape(VecTobtVector3(dimensions))))
     , m_Dimensions(dimensions)
 {
-	if (m_Mass > 0.0f)
-	{
-		m_CollisionShape->calculateLocalInertia(m_Mass, m_LocalInertia);
-	}
 	m_BoxShape = std::dynamic_pointer_cast<btBoxShape>(m_CollisionShape);
 }
 
@@ -28,7 +25,6 @@ JSON::json BoxColliderComponent::getJSON() const
 	JSON::json& j = PhysicsColliderComponent::getJSON();
 
 	j["dimensions"] = m_Dimensions;
-	j["matName"] = m_MaterialName;
 
 	return j;
 }
@@ -36,7 +32,7 @@ JSON::json BoxColliderComponent::getJSON() const
 void BoxColliderComponent::setDimensions(const Vector3& dimensions)
 {
 	m_Dimensions = dimensions;
-	m_BoxShape->setImplicitShapeDimensions(vecTobtVector3(dimensions));
+	m_BoxShape->setImplicitShapeDimensions(VecTobtVector3(dimensions));
 }
 
 #ifdef ROOTEX_EDITOR

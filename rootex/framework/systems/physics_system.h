@@ -6,6 +6,21 @@
 #include "entity.h"
 #include "framework/system.h"
 
+enum PhysicsMaterial
+{
+	Air = 0,
+	Water = 1,
+	Wood = 2,
+	End
+};
+
+struct PhysicsMaterialData
+{
+	float restitution = 1.0f;
+	float friction = 1.0f;
+	float specificGravity = 1.0f;
+};
+
 class PhysicsSystem : public System
 {
 	/// Interface for several dynamics implementations, basic, discrete, parallel, and continuous etc.
@@ -24,32 +39,38 @@ class PhysicsSystem : public System
 	/// Allows to configure Bullet collision detection.
 	Ptr<btDefaultCollisionConfiguration> m_CollisionConfiguration;
 
-	/// Table of all the material types and their respective data.
-	sol::table m_PhysicsMaterialTable;
-
+	/// Draws all debug data in the physics world.
 	DebugDrawer m_DebugDrawer;
+
+	Vector<PhysicsMaterialData> m_PhysicsMaterialTable;
+	String m_PhysicsMaterialNames;
+
+	PhysicsSystem();
+
+	void assignPhysicsMaterials();
 
 public:
 	static PhysicsSystem* GetSingleton();
-	PhysicsSystem();
-	virtual ~PhysicsSystem() = default;
-
-	void addRigidBody(btRigidBody* body);
-	void removeRigidBody(btRigidBody* rigidBody);
 	
-	btCollisionWorld::AllHitsRayResultCallback reportAllRayHits(const btVector3& m_From, const btVector3& m_To);
-	btCollisionWorld::ClosestRayResultCallback reportClosestRayHits(const btVector3& m_From, const btVector3& m_To);
+	/// Callback from bullet for each physics time step.
+	static void InternalTickCallback(btDynamicsWorld* const world, btScalar const timeStep);
+	
+	virtual ~PhysicsSystem();
 
 	/// Initialization and Maintenance of the Physics World
 	bool initialize(const JSON::json& systemData) override;
 
-	/// Callback from bullet for each physics time step.
-	static void InternalTickCallback(btDynamicsWorld* const world, btScalar const timeStep);
+	void addRigidBody(btRigidBody* body);
+	void removeRigidBody(btRigidBody* rigidBody);
+
+	const PhysicsMaterialData& getMaterialData(PhysicsMaterial material);
+	const char* getMaterialNames();
+
+	btCollisionWorld::AllHitsRayResultCallback reportAllRayHits(const btVector3& m_From, const btVector3& m_To);
+	btCollisionWorld::ClosestRayResultCallback reportClosestRayHits(const btVector3& m_From, const btVector3& m_To);
 
 	void debugDraw();
 	void debugDrawComponent(const btTransform& worldTransform, const btCollisionShape* shape, const btVector3& color);
 	
 	void update(float deltaMilliseconds) override;
-
-	sol::table getPhysicsMaterial();
 };
