@@ -5,21 +5,18 @@ Component* SphereColliderComponent::Create(const JSON::json& sphereComponentData
 {
 	SphereColliderComponent* component = new SphereColliderComponent(
 		sphereComponentData.value("radius", 1.0f), 
-		sphereComponentData.value("matName", "Air"),
+		sphereComponentData.value("matName", PhysicsMaterial::Air),
 	    sphereComponentData.value("gravity", Vector3::Zero),
-		sphereComponentData.value("isMoveable", false),
+	    sphereComponentData.value("isMoveable", false),
+	    sphereComponentData.value("isKinematic", false),
 		sphereComponentData.value("isGeneratesHitEvents", false));
 	return component;
 }
 
-SphereColliderComponent::SphereColliderComponent(float rad, const String& matName, const Vector3& gravity, bool isMoveable, bool generatesHitEvents)
-    : PhysicsColliderComponent(matName, ((4.0f / 3.0f) * DirectX::XM_PI * rad * rad * rad), gravity, isMoveable, Ref<btSphereShape>(new btSphereShape(rad)), generatesHitEvents)
-    , m_Radius(rad)
+SphereColliderComponent::SphereColliderComponent(float radius, const PhysicsMaterial& material, const Vector3& gravity, bool isMoveable, bool isKinematic, bool generatesHitEvents)
+    : PhysicsColliderComponent(material, ((4.0f / 3.0f) * DirectX::XM_PI * radius * radius * radius), gravity, isMoveable, isKinematic, generatesHitEvents, Ref<btSphereShape>(new btSphereShape(radius)))
+    , m_Radius(radius)
 {
-	if (m_Mass > 0.0f)
-	{
-		m_CollisionShape->calculateLocalInertia(m_Mass, m_LocalInertia);
-	}
 	m_SphereShape = std::dynamic_pointer_cast<btSphereShape>(m_CollisionShape);
 }
 
@@ -28,7 +25,6 @@ JSON::json SphereColliderComponent::getJSON() const
 	JSON::json& j = PhysicsColliderComponent::getJSON();
 
 	j["radius"] = m_Radius;
-	j["matName"] = m_MaterialName;
 
 	return j;
 }
@@ -52,7 +48,7 @@ void SphereColliderComponent::draw()
 	ImGui::SameLine();
 	if (ImGui::Button("Radius"))
 	{
-		m_Radius = 1.0f;
+		setRadius(1.0f);
 	}
 }
 #endif // ROOTEX_EDITOR

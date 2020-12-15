@@ -1,0 +1,232 @@
+{
+    "ID": 4,
+    "children": [
+        {
+            "ID": 5,
+            "children": [],
+            "entity": {
+                "components": {
+                    "BoxColliderComponent": {
+                        "dimensions": {
+                            "x": 2.609999895095825,
+                            "y": 0.5,
+                            "z": 2.509999990463257
+                        },
+                        "gravity": {
+                            "x": 0.0,
+                            "y": -9.800000190734863,
+                            "z": 0.0
+                        },
+                        "isGeneratesHitEvents": false,
+                        "isKinematic": false,
+                        "isMoveable": false,
+                        "material": 2,
+                        "volume": 3.169583559036255
+                    },
+                    "ModelComponent": {
+                        "affectingStaticLights": [],
+                        "isVisible": true,
+                        "materialOverrides": {
+                            "rootex/assets/materials/default.rmat": "game/assets/materials/bricks.rmat"
+                        },
+                        "renderPass": 1,
+                        "resFile": "rootex/assets/cube.obj"
+                    },
+                    "TransformComponent": {
+                        "boundingBox": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "extents": {
+                                "x": 0.5,
+                                "y": 0.5,
+                                "z": 0.5
+                            }
+                        },
+                        "position": {
+                            "x": 0.0,
+                            "y": -1.7999999523162842,
+                            "z": -6.600000381469727
+                        },
+                        "rotation": {
+                            "w": 1.0,
+                            "x": -0.0,
+                            "y": 0.0,
+                            "z": -0.0
+                        },
+                        "scale": {
+                            "x": 5.300000190734863,
+                            "y": 1.0,
+                            "z": 5.099999904632568
+                        }
+                    }
+                }
+            },
+            "file": "",
+            "name": "Floor",
+            "settings": {
+                "camera": 1,
+                "inputSchemes": null,
+                "listener": 1,
+                "preloads": [],
+                "startScheme": ""
+            }
+        },
+        {
+            "ID": 6,
+            "children": [],
+            "entity": {
+                "components": {
+                    "BoxColliderComponent": {
+                        "dimensions": {
+                            "x": 0.5,
+                            "y": 0.5,
+                            "z": 0.5
+                        },
+                        "gravity": {
+                            "x": 0.0,
+                            "y": -9.800000190734863,
+                            "z": 0.0
+                        },
+                        "isGeneratesHitEvents": false,
+                        "isKinematic": false,
+                        "isMoveable": true,
+                        "material": 2,
+                        "volume": 0.125
+                    },
+                    "ModelComponent": {
+                        "affectingStaticLights": [],
+                        "isVisible": true,
+                        "materialOverrides": {
+                            "rootex/assets/materials/default.rmat": "game/assets/materials/yellow_textured.rmat"
+                        },
+                        "renderPass": 1,
+                        "resFile": "rootex/assets/cube.obj"
+                    },
+                    "TransformComponent": {
+                        "boundingBox": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "extents": {
+                                "x": 0.5,
+                                "y": 0.5,
+                                "z": 0.5
+                            }
+                        },
+                        "position": {
+                            "x": -0.658578634262085,
+                            "y": 0.7242639660835266,
+                            "z": -6.400000095367432
+                        },
+                        "rotation": {
+                            "w": 0.9238795042037964,
+                            "x": -0.0,
+                            "y": 0.0,
+                            "z": -0.3826834559440613
+                        },
+                        "scale": {
+                            "x": 0.9999998807907104,
+                            "y": 0.9999998807907104,
+                            "z": 1.0
+                        }
+                    }
+                }
+            },
+            "file": "",
+            "name": "Block",
+            "settings": {
+                "camera": 1,
+                "inputSchemes": null,
+                "listener": 1,
+                "preloads": [],
+                "startScheme": ""
+            }
+        },
+        {
+            "ID": 7,
+            "children": [],
+            "entity": {
+                "components": {
+                    "ModelComponent": {
+                        "affectingStaticLights": [],
+                        "isVisible": true,
+                        "materialOverrides": {
+                            "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                        },
+                        "renderPass": 1,
+                        "resFile": "game/assets/test/sphere.obj"
+                    },
+                    "SphereColliderComponent": {
+                        "gravity": {
+                            "x": 0.0,
+                            "y": -9.800000190734863,
+                            "z": 0.0
+                        },
+                        "isGeneratesHitEvents": false,
+                        "isKinematic": false,
+                        "isMoveable": true,
+                        "material": 0,
+                        "radius": 0.9900000095367432,
+                        "volume": 4.0643792152404785
+                    },
+                    "TransformComponent": {
+                        "boundingBox": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "extents": {
+                                "x": 19.737079620361328,
+                                "y": 19.737079620361328,
+                                "z": 19.737079620361328
+                            }
+                        },
+                        "position": {
+                            "x": 0.8999999761581421,
+                            "y": 0.0,
+                            "z": -6.300000190734863
+                        },
+                        "rotation": {
+                            "w": -0.0,
+                            "x": 1.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 0.05000000074505806,
+                            "y": 0.05000000074505806,
+                            "z": 0.05000000074505806
+                        }
+                    }
+                }
+            },
+            "file": "",
+            "name": "Sphere",
+            "settings": {
+                "camera": 1,
+                "inputSchemes": null,
+                "listener": 1,
+                "preloads": [],
+                "startScheme": ""
+            }
+        }
+    ],
+    "entity": {
+        "components": null
+    },
+    "file": "game/assets/scenes/physics.scene.json",
+    "name": "physics",
+    "settings": {
+        "camera": 1,
+        "inputSchemes": null,
+        "listener": 1,
+        "preloads": [],
+        "startScheme": ""
+    }
+}
