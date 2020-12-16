@@ -5,8 +5,8 @@ Component* SphereColliderComponent::Create(const JSON::json& sphereComponentData
 {
 	SphereColliderComponent* component = new SphereColliderComponent(
 		sphereComponentData.value("radius", 1.0f), 
-		sphereComponentData.value("matName", PhysicsMaterial::Air),
-	    sphereComponentData.value("gravity", Vector3::Zero),
+		sphereComponentData.value("material", PhysicsMaterial::Air),
+	    sphereComponentData.value("gravity", Vector3(0.0f, -9.8f, 0.0f)),
 	    sphereComponentData.value("isMoveable", false),
 	    sphereComponentData.value("isKinematic", false),
 		sphereComponentData.value("isGeneratesHitEvents", false));

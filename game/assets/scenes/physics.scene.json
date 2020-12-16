@@ -21,7 +21,7 @@
                         "isKinematic": false,
                         "isMoveable": false,
                         "material": 2,
-                        "volume": 3.169583559036255
+                        "volume": 3.27554988861084
                     },
                     "ModelComponent": {
                         "affectingStaticLights": [],
@@ -119,20 +119,20 @@
                             }
                         },
                         "position": {
-                            "x": -0.658578634262085,
-                            "y": 0.7242639660835266,
+                            "x": 1.7455847263336182,
+                            "y": 2.2798988819122314,
                             "z": -6.400000095367432
                         },
                         "rotation": {
-                            "w": 0.9238795042037964,
-                            "x": -0.0,
-                            "y": 0.0,
-                            "z": -0.3826834559440613
+                            "w": 0.9170068502426147,
+                            "x": -0.08054417371749878,
+                            "y": 0.2390405386686325,
+                            "z": -0.30898338556289673
                         },
                         "scale": {
-                            "x": 0.9999998807907104,
-                            "y": 0.9999998807907104,
-                            "z": 1.0
+                            "x": 0.9999992251396179,
+                            "y": 0.9999990463256836,
+                            "z": 0.9999992847442627
                         }
                     }
                 }
@@ -156,7 +156,7 @@
                         "affectingStaticLights": [],
                         "isVisible": true,
                         "materialOverrides": {
-                            "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                            "rootex/assets/materials/default.rmat": "game/assets/materials/column_a.rmat"
                         },
                         "renderPass": 1,
                         "resFile": "game/assets/test/sphere.obj"
@@ -170,9 +170,9 @@
                         "isGeneratesHitEvents": false,
                         "isKinematic": false,
                         "isMoveable": true,
-                        "material": 0,
-                        "radius": 0.9900000095367432,
-                        "volume": 4.0643792152404785
+                        "material": 2,
+                        "radius": 0.4000000059604645,
+                        "volume": 0.2680825889110565
                     },
                     "TransformComponent": {
                         "boundingBox": {
@@ -188,8 +188,8 @@
                             }
                         },
                         "position": {
-                            "x": 0.8999999761581421,
-                            "y": 0.0,
+                            "x": -0.9000000357627869,
+                            "y": 0.3999999761581421,
                             "z": -6.300000190734863
                         },
                         "rotation": {
@@ -199,15 +199,85 @@
                             "z": 0.0
                         },
                         "scale": {
-                            "x": 0.05000000074505806,
-                            "y": 0.05000000074505806,
-                            "z": 0.05000000074505806
+                            "x": 0.019999999552965164,
+                            "y": 0.019999999552965164,
+                            "z": 0.019999999552965164
                         }
                     }
                 }
             },
             "file": "",
             "name": "Sphere",
+            "settings": {
+                "camera": 1,
+                "inputSchemes": null,
+                "listener": 1,
+                "preloads": [],
+                "startScheme": ""
+            }
+        },
+        {
+            "ID": 8,
+            "children": [],
+            "entity": {
+                "components": {
+                    "CapsuleColliderComponent": {
+                        "gravity": {
+                            "x": 0.0,
+                            "y": -9.800000190734863,
+                            "z": 0.0
+                        },
+                        "isGeneratesHitEvents": false,
+                        "isKinematic": false,
+                        "isMoveable": true,
+                        "material": 2,
+                        "radius": 0.5,
+                        "sideHeight": 1.0,
+                        "volume": 1.3089970350265503
+                    },
+                    "ModelComponent": {
+                        "affectingStaticLights": [],
+                        "isVisible": true,
+                        "materialOverrides": {
+                            "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                        },
+                        "renderPass": 1,
+                        "resFile": "rootex/assets/capsule.obj"
+                    },
+                    "TransformComponent": {
+                        "boundingBox": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "extents": {
+                                "x": 0.5,
+                                "y": 1.0,
+                                "z": 0.5
+                            }
+                        },
+                        "position": {
+                            "x": 0.2999999523162842,
+                            "y": 0.4000000059604645,
+                            "z": -6.40000057220459
+                        },
+                        "rotation": {
+                            "w": 1.0,
+                            "x": -0.0,
+                            "y": 0.0,
+                            "z": -0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        }
+                    }
+                }
+            },
+            "file": "",
+            "name": "Capsule",
             "settings": {
                 "camera": 1,
                 "inputSchemes": null,
