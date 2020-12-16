@@ -4,8 +4,6 @@
 
 #include "btBulletDynamicsCommon.h"
 
-/// Creates sphere shaped collider.
-/// Takes box's dimensions and material type as arguments.
 class BoxColliderComponent : public PhysicsColliderComponent
 {
 	static Component* Create(const JSON::json& boxComponentData);

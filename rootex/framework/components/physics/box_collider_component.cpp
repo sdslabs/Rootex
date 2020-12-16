@@ -6,7 +6,7 @@ Component* BoxColliderComponent::Create(const JSON::json& boxComponentData)
 	BoxColliderComponent* component = new BoxColliderComponent(
 	    boxComponentData.value("dimensions", Vector3::Zero),
 		boxComponentData.value("material", PhysicsMaterial::Air),
-	    boxComponentData.value("gravity", Vector3::Zero),
+	    boxComponentData.value("gravity", Vector3(0.0f, -9.8f, 0.0f)),
 	    boxComponentData.value("isMoveable", false),
 	    boxComponentData.value("isKinematic", false),
 		boxComponentData.value("isGeneratesHitEvents", false));
