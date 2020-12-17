@@ -6,6 +6,7 @@ Component* SphereColliderComponent::Create(const JSON::json& sphereComponentData
 	SphereColliderComponent* component = new SphereColliderComponent(
 		sphereComponentData.value("radius", 1.0f), 
 		sphereComponentData.value("material", PhysicsMaterial::Air),
+	    sphereComponentData.value("angularFactor", Vector3::One),
 	    sphereComponentData.value("gravity", Vector3(0.0f, -9.8f, 0.0f)),
 	    sphereComponentData.value("isMoveable", false),
 	    sphereComponentData.value("isKinematic", false),
@@ -13,8 +14,8 @@ Component* SphereColliderComponent::Create(const JSON::json& sphereComponentData
 	return component;
 }
 
-SphereColliderComponent::SphereColliderComponent(float radius, const PhysicsMaterial& material, const Vector3& gravity, bool isMoveable, bool isKinematic, bool generatesHitEvents)
-    : PhysicsColliderComponent(material, ((4.0f / 3.0f) * DirectX::XM_PI * radius * radius * radius), gravity, isMoveable, isKinematic, generatesHitEvents, Ref<btSphereShape>(new btSphereShape(radius)))
+SphereColliderComponent::SphereColliderComponent(float radius, const PhysicsMaterial& material, const Vector3& angularFactor, const Vector3& gravity, bool isMoveable, bool isKinematic, bool generatesHitEvents)
+    : PhysicsColliderComponent(material, ((4.0f / 3.0f) * DirectX::XM_PI * radius * radius * radius), gravity, angularFactor, isMoveable, isKinematic, generatesHitEvents, Ref<btSphereShape>(new btSphereShape(radius)))
     , m_Radius(radius)
 {
 	m_SphereShape = std::dynamic_pointer_cast<btSphereShape>(m_CollisionShape);
