@@ -23,6 +23,7 @@ class PhysicsColliderComponent : public Component, public btMotionState
 	Ref<btRigidBody> m_Body;
 	btScalar m_Mass;
 	Vector3 m_Gravity;
+	Vector3 m_AngularFactor;
 	float m_Volume;
 	bool m_IsMoveable;
 	bool m_IsGeneratesHitEvents;
@@ -31,7 +32,7 @@ class PhysicsColliderComponent : public Component, public btMotionState
 	
 	btVector3 m_LocalInertia;
 
-	PhysicsColliderComponent(const PhysicsMaterial& material, float volume, const Vector3& gravity, bool isMoveable, bool isKinematic, bool generatesHitEvents, const Ref<btCollisionShape>& collisionShape);
+	PhysicsColliderComponent(const PhysicsMaterial& material, float volume, const Vector3& gravity, const Vector3& angularFactor, bool isMoveable, bool isKinematic, bool generatesHitEvents, const Ref<btCollisionShape>& collisionShape);
 	
 	friend class ECSFactory;
 
@@ -47,12 +48,16 @@ public:
 	void onRemove() override;
 
 	virtual void getWorldTransform(btTransform& worldTrans) const;
-	virtual void setWorldTransform(const btTransform& worldTrans);	
+	virtual void setWorldTransform(const btTransform& worldTrans);
 	
 	void onHit(btPersistentManifold* manifold, PhysicsColliderComponent* other);
 	void applyForce(const Vector3& force);
 	void applyTorque(const Vector3& torque);
 	
+	Vector3 getAngularFactor() const { return m_AngularFactor; }
+	void setAngularFactor(const Vector3& factors);
+	void setAxisLock(bool enabled);
+
 	Vector3 getGravity() const { return m_Gravity; };
 	void setGravity(const Vector3& gravity);
 	

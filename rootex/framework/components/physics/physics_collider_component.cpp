@@ -86,10 +86,11 @@ void PhysicsColliderComponent::RegisterAPI(sol::table& rootex)
 	physicsColliderComponent["applyForce"] = &PhysicsColliderComponent::applyForce;
 }
 
-PhysicsColliderComponent::PhysicsColliderComponent(const PhysicsMaterial& material, float volume, const Vector3& gravity, bool isMoveable, bool isKinematic, bool generatesHitEvents, const Ref<btCollisionShape>& collisionShape)
+PhysicsColliderComponent::PhysicsColliderComponent(const PhysicsMaterial& material, float volume, const Vector3& gravity, const Vector3& angularFactor, bool isMoveable, bool isKinematic, bool generatesHitEvents, const Ref<btCollisionShape>& collisionShape)
     : m_Material(material)
     , m_Volume(volume)
     , m_Gravity(gravity)
+    , m_AngularFactor(angularFactor)
     , m_IsMoveable(isMoveable)
     , m_IsGeneratesHitEvents(generatesHitEvents)
     , m_IsKinematic(isKinematic)
@@ -127,6 +128,7 @@ bool PhysicsColliderComponent::setupData()
 	setGravity(m_Gravity);
 	setMoveable(m_IsMoveable);
 	setKinematic(m_IsKinematic);
+	setAngularFactor(m_AngularFactor);
 	m_Body->setUserPointer(this);
 
 	return true;
@@ -164,6 +166,24 @@ void PhysicsColliderComponent::applyForce(const Vector3& force)
 void PhysicsColliderComponent::applyTorque(const Vector3& torque)
 {
 	m_Body->applyTorqueImpulse(VecTobtVector3(torque));
+}
+
+void PhysicsColliderComponent::setAngularFactor(const Vector3& factors)
+{
+	m_AngularFactor = factors;
+	m_Body->setAngularFactor(VecTobtVector3(factors));
+}
+
+void PhysicsColliderComponent::setAxisLock(bool enabled)
+{
+	if (enabled)
+	{
+		setAngularFactor({ 0.0f, 0.0f, 0.0f });
+	}
+	else
+	{
+		setAngularFactor({ 1.0f, 1.0f, 1.0f });
+	}
 }
 
 void PhysicsColliderComponent::setTransform(const Matrix& mat)
@@ -217,6 +237,7 @@ JSON::json PhysicsColliderComponent::getJSON() const
 {
 	JSON::json j;
 
+	j["angularFactor"] = m_AngularFactor;
 	j["gravity"] = m_Gravity;
 	j["volume"] = m_Volume;
 	j["material"] = (int)m_Material;
@@ -271,6 +292,21 @@ void PhysicsColliderComponent::draw()
 	if (ImGui::DragFloat3("Gravity", &m_Gravity.x))
 	{
 		setGravity(m_Gravity);
+	}
+
+	if (ImGui::DragFloat3("Angular Factor", &m_AngularFactor.x))
+	{
+		setAngularFactor(m_AngularFactor);
+	}
+
+	if (ImGui::Button("Apply Axis Lock"))
+	{
+		setAxisLock(true);
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Remove Axis Lock"))
+	{
+		setAxisLock(false);
 	}
 
 	if (ImGui::Checkbox("Moveable", &m_IsMoveable))

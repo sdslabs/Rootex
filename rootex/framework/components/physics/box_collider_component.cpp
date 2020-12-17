@@ -6,6 +6,7 @@ Component* BoxColliderComponent::Create(const JSON::json& boxComponentData)
 	BoxColliderComponent* component = new BoxColliderComponent(
 	    boxComponentData.value("dimensions", Vector3::Zero),
 		boxComponentData.value("material", PhysicsMaterial::Air),
+	    boxComponentData.value("angularFactor", Vector3::One),
 	    boxComponentData.value("gravity", Vector3(0.0f, -9.8f, 0.0f)),
 	    boxComponentData.value("isMoveable", false),
 	    boxComponentData.value("isKinematic", false),
@@ -13,8 +14,8 @@ Component* BoxColliderComponent::Create(const JSON::json& boxComponentData)
 	return component;
 }
 
-BoxColliderComponent::BoxColliderComponent(const Vector3& dimensions, const PhysicsMaterial& material, const Vector3& gravity, bool isMoveable, bool isKinematic, bool generatesHitEvents)
-    : PhysicsColliderComponent(material, dimensions.x * dimensions.y * dimensions.z, gravity, isMoveable, isKinematic, generatesHitEvents, Ref<btBoxShape>(new btBoxShape(VecTobtVector3(dimensions))))
+BoxColliderComponent::BoxColliderComponent(const Vector3& dimensions, const PhysicsMaterial& material, const Vector3& angularFactor, const Vector3& gravity, bool isMoveable, bool isKinematic, bool generatesHitEvents)
+    : PhysicsColliderComponent(material, dimensions.x * dimensions.y * dimensions.z, gravity, angularFactor, isMoveable, isKinematic, generatesHitEvents, Ref<btBoxShape>(new btBoxShape(VecTobtVector3(dimensions))))
     , m_Dimensions(dimensions)
 {
 	m_BoxShape = std::dynamic_pointer_cast<btBoxShape>(m_CollisionShape);

@@ -7,6 +7,11 @@
             "entity": {
                 "components": {
                     "BoxColliderComponent": {
+                        "angularFactor": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
                         "dimensions": {
                             "x": 2.609999895095825,
                             "y": 0.5,
@@ -80,6 +85,11 @@
             "entity": {
                 "components": {
                     "BoxColliderComponent": {
+                        "angularFactor": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
                         "dimensions": {
                             "x": 0.5,
                             "y": 0.5,
@@ -119,9 +129,9 @@
                             }
                         },
                         "position": {
-                            "x": 1.7455847263336182,
-                            "y": 2.2798988819122314,
-                            "z": -6.400000095367432
+                            "x": 1.529653787612915,
+                            "y": 2.3404176235198975,
+                            "z": -6.622960567474365
                         },
                         "rotation": {
                             "w": 0.9170068502426147,
@@ -162,6 +172,11 @@
                         "resFile": "game/assets/test/sphere.obj"
                     },
                     "SphereColliderComponent": {
+                        "angularFactor": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
                         "gravity": {
                             "x": 0.0,
                             "y": -9.800000190734863,
@@ -222,6 +237,11 @@
             "entity": {
                 "components": {
                     "CapsuleColliderComponent": {
+                        "angularFactor": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
                         "gravity": {
                             "x": 0.0,
                             "y": -9.800000190734863,
@@ -263,14 +283,14 @@
                             "z": -6.40000057220459
                         },
                         "rotation": {
-                            "w": 1.0,
+                            "w": 0.9238795042037964,
                             "x": -0.0,
                             "y": 0.0,
-                            "z": -0.0
+                            "z": 0.3826834559440613
                         },
                         "scale": {
-                            "x": 1.0,
-                            "y": 1.0,
+                            "x": 0.9999998807907104,
+                            "y": 0.9999998807907104,
                             "z": 1.0
                         }
                     }
