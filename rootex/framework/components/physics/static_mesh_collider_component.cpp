@@ -9,14 +9,16 @@ Component* StaticMeshColliderComponent::Create(const JSON::json& staticMeshCompo
 	    staticMeshComponentData.value("material", PhysicsMaterial::Air),
 	    staticMeshComponentData.value("angularFactor", Vector3::One),
 	    staticMeshComponentData.value("gravity", Vector3(0.0f, -9.8f, 0.0f)),
-	    staticMeshComponentData.value("isMoveable", false),
+	    staticMeshComponentData.value("collisionGroup", (int)CollisionMask::All),
+	    staticMeshComponentData.value("collisionMask", (int)CollisionMask::All), 
+		staticMeshComponentData.value("isMoveable", false),
 	    staticMeshComponentData.value("isKinematic", false),
 	    staticMeshComponentData.value("isGeneratesHitEvents", false));
 	return component;
 }
 
-StaticMeshColliderComponent::StaticMeshColliderComponent(const String& collisionModelPath, const PhysicsMaterial& material, const Vector3& angularFactor, const Vector3& gravity, bool isMoveable, bool isKinematic, bool generatesHitEvents)
-    : PhysicsColliderComponent(material, 0.0f, gravity, angularFactor, isMoveable, isKinematic, generatesHitEvents, nullptr)
+StaticMeshColliderComponent::StaticMeshColliderComponent(const String& collisionModelPath, const PhysicsMaterial& material, const Vector3& angularFactor, const Vector3& gravity, int collisionGroup, int collisionMask, bool isMoveable, bool isKinematic, bool generatesHitEvents)
+    : PhysicsColliderComponent(material, 0.0f, gravity, angularFactor, collisionGroup, collisionMask, isMoveable, isKinematic, generatesHitEvents, nullptr)
     , m_CollisionModel(ResourceLoader::CreateCollisionModelResourceFile(collisionModelPath))
 {
 }
