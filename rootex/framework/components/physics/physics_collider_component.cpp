@@ -86,11 +86,13 @@ void PhysicsColliderComponent::RegisterAPI(sol::table& rootex)
 	physicsColliderComponent["applyForce"] = &PhysicsColliderComponent::applyForce;
 }
 
-PhysicsColliderComponent::PhysicsColliderComponent(const PhysicsMaterial& material, float volume, const Vector3& gravity, const Vector3& angularFactor, bool isMoveable, bool isKinematic, bool generatesHitEvents, const Ref<btCollisionShape>& collisionShape)
+PhysicsColliderComponent::PhysicsColliderComponent(const PhysicsMaterial& material, float volume, const Vector3& gravity, const Vector3& angularFactor, int collisionGroup, int collisionMask, bool isMoveable, bool isKinematic, bool generatesHitEvents, const Ref<btCollisionShape>& collisionShape)
     : m_Material(material)
     , m_Volume(volume)
     , m_Gravity(gravity)
     , m_AngularFactor(angularFactor)
+    , m_CollisionGroup(collisionGroup)
+    , m_CollisionMask(collisionMask)
     , m_IsMoveable(isMoveable)
     , m_IsGeneratesHitEvents(generatesHitEvents)
     , m_IsKinematic(isKinematic)
@@ -129,7 +131,7 @@ bool PhysicsColliderComponent::setupData()
 	}
 	m_Body.reset(new btRigidBody(rbInfo));
 
-	PhysicsSystem::GetSingleton()->addRigidBody(m_Body.get());
+	PhysicsSystem::GetSingleton()->addRigidBody(m_Body.get(), m_CollisionGroup, m_CollisionMask);
 	setGravity(m_Gravity);
 	setMoveable(m_IsMoveable);
 	setKinematic(m_IsKinematic);
@@ -244,6 +246,8 @@ JSON::json PhysicsColliderComponent::getJSON() const
 
 	j["angularFactor"] = m_AngularFactor;
 	j["gravity"] = m_Gravity;
+	j["collisionGroup"] = m_CollisionGroup;
+	j["collisionMask"] = m_CollisionMask;
 	j["volume"] = m_Volume;
 	j["material"] = (int)m_Material;
 	j["isMoveable"] = m_IsMoveable;
@@ -331,5 +335,26 @@ void PhysicsColliderComponent::draw()
 			setupData();
 		}
 	}
+
+	if (ImGui::TreeNodeEx("Collision Group"))
+	{
+		displayCollisionLayers(m_CollisionGroup);
+		ImGui::TreePop();
+	}
+
+	if (ImGui::TreeNodeEx("Collision Mask"))
+	{
+		displayCollisionLayers(m_CollisionMask);
+		ImGui::TreePop();
+	}
+}
+
+void PhysicsColliderComponent::displayCollisionLayers(unsigned int& collision)
+{
+	ImGui::CheckboxFlags("Player", &collision, (int)CollisionMask::Player);
+	ImGui::CheckboxFlags("Enemy", &collision, (int)CollisionMask::Enemy);
+	ImGui::CheckboxFlags("Architecture", &collision, (int)CollisionMask::Architecture);
+	ImGui::CheckboxFlags("TriggerVolume", &collision, (int)CollisionMask::TriggerVolume);
+	ImGui::CheckboxFlags("All", &collision, (int)CollisionMask::All);
 }
 #endif // ROOTEX_EDITOR

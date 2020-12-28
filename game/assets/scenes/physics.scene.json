@@ -12,6 +12,8 @@
                             "y": 1.0,
                             "z": 1.0
                         },
+                        "collisionGroup": 31,
+                        "collisionMask": 31,
                         "dimensions": {
                             "x": 2.609999895095825,
                             "y": 0.5,
@@ -90,6 +92,8 @@
                             "y": 1.0,
                             "z": 1.0
                         },
+                        "collisionGroup": 31,
+                        "collisionMask": 31,
                         "dimensions": {
                             "x": 0.5,
                             "y": 0.5,
@@ -177,6 +181,8 @@
                             "y": 1.0,
                             "z": 1.0
                         },
+                        "collisionGroup": 31,
+                        "collisionMask": 31,
                         "gravity": {
                             "x": 0.0,
                             "y": -9.800000190734863,
@@ -242,6 +248,8 @@
                             "y": 1.0,
                             "z": 1.0
                         },
+                        "collisionGroup": 31,
+                        "collisionMask": 31,
                         "gravity": {
                             "x": 0.0,
                             "y": -9.800000190734863,

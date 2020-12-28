@@ -14,6 +14,17 @@ Vector3 BtVector3ToVec(btVector3 const& btvec);
 
 enum PhysicsMaterial;
 
+enum class CollisionMask : unsigned int
+{
+	None = 0,
+	Player = 1 << 0,
+	Enemy = 1 << 1,
+	Architecture = 1 << 2,
+	TriggerVolume = 1 << 3,
+	Other = 1 << 4,
+	All = Player | Enemy | Architecture | TriggerVolume | Other
+};
+
 class PhysicsColliderComponent : public Component, public btMotionState
 {
 	DEPENDS_ON(TransformComponent);
@@ -27,12 +38,14 @@ class PhysicsColliderComponent : public Component, public btMotionState
 	float m_Volume;
 	bool m_IsMoveable;
 	bool m_IsGeneratesHitEvents;
-	bool m_IsKinematic; 
+	bool m_IsKinematic;
+	unsigned int m_CollisionGroup;
+	unsigned int m_CollisionMask;
 	PhysicsMaterial m_Material;
 	
 	btVector3 m_LocalInertia;
 
-	PhysicsColliderComponent(const PhysicsMaterial& material, float volume, const Vector3& gravity, const Vector3& angularFactor, bool isMoveable, bool isKinematic, bool generatesHitEvents, const Ref<btCollisionShape>& collisionShape);
+	PhysicsColliderComponent(const PhysicsMaterial& material, float volume, const Vector3& gravity, const Vector3& angularFactor, int collisionGroup, int collisionMask, bool isMoveable, bool isKinematic, bool generatesHitEvents, const Ref<btCollisionShape>& collisionShape);
 	
 	friend class ECSFactory;
 
@@ -90,5 +103,6 @@ public:
 
 #ifdef ROOTEX_EDITOR
 	virtual void draw() override;
+	void displayCollisionLayers(unsigned int& collision);
 #endif // ROOTEX_EDITOR
 };

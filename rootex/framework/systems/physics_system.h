@@ -60,7 +60,7 @@ public:
 	/// Initialization and Maintenance of the Physics World
 	bool initialize(const JSON::json& systemData) override;
 
-	void addRigidBody(btRigidBody* body);
+	void addRigidBody(btRigidBody* body, int group, int mask);
 	void removeRigidBody(btRigidBody* rigidBody);
 	void removeCollisionObject(btCollisionObject* collisionObject);
 

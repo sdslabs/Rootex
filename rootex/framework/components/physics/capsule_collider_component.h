@@ -19,7 +19,7 @@ class CapsuleColliderComponent : public PhysicsColliderComponent
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::CapsuleColliderComponent;
 
-	CapsuleColliderComponent(float radius, float sideHeight, const PhysicsMaterial& material, const Vector3& angularFactor, const Vector3& gravity, bool isMoveable, bool isKinematic, bool generatesHitEvents);
+	CapsuleColliderComponent(float radius, float sideHeight, const PhysicsMaterial& material, const Vector3& angularFactor, const Vector3& gravity, int collisionGroup, int collisionMask, bool isMoveable, bool isKinematic, bool generatesHitEvents);
 
 	float getSideHeight() const { return m_SideHeight; }
 	void setSideHeight(float s);

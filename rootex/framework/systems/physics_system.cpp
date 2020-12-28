@@ -59,9 +59,9 @@ bool PhysicsSystem::initialize(const JSON::json& systemData)
 	return true;
 }
 
-void PhysicsSystem::addRigidBody(btRigidBody* body)
+void PhysicsSystem::addRigidBody(btRigidBody* body, int group, int mask)
 {
-	m_DynamicsWorld->addRigidBody(body);
+	m_DynamicsWorld->addRigidBody(body, group, mask);
 }
 
 btCollisionWorld::AllHitsRayResultCallback PhysicsSystem::reportAllRayHits(const btVector3& from, const btVector3& to)
