@@ -62,6 +62,7 @@ public:
 
 	void addRigidBody(btRigidBody* body);
 	void removeRigidBody(btRigidBody* rigidBody);
+	void removeCollisionObject(btCollisionObject* collisionObject);
 
 	const PhysicsMaterialData& getMaterialData(PhysicsMaterial material);
 	const char* getMaterialNames();

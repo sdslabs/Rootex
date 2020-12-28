@@ -20,6 +20,7 @@ enum class ComponentIDs : unsigned int
 	SphereColliderComponent = PhysicsColliderComponent,
 	BoxColliderComponent = PhysicsColliderComponent,
 	CapsuleColliderComponent = PhysicsColliderComponent,
+	StaticMeshColliderComponent = PhysicsColliderComponent,
 	ScriptComponent,
 	AudioComponent,
 	MusicComponent = AudioComponent,
