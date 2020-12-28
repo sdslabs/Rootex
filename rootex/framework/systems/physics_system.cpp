@@ -154,6 +154,11 @@ void PhysicsSystem::removeRigidBody(btRigidBody* rigidBody)
 	m_DynamicsWorld->removeRigidBody(rigidBody);
 }
 
+void PhysicsSystem::removeCollisionObject(btCollisionObject* collisionObject)
+{
+	m_DynamicsWorld->removeCollisionObject(collisionObject);
+}
+
 const PhysicsMaterialData& PhysicsSystem::getMaterialData(PhysicsMaterial material)
 {
 	return m_PhysicsMaterialTable[material];

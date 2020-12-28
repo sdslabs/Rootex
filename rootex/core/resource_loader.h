@@ -10,6 +10,7 @@
 #include "resource_files/image_cube_resource_file.h"
 #include "resource_files/lua_text_resource_file.h"
 #include "resource_files/model_resource_file.h"
+#include "resource_files/collision_model_resource_file.h"
 #include "resource_files/text_resource_file.h"
 #include "resource_files/animated_model_resource_file.h"
 
@@ -17,6 +18,7 @@ static const inline HashMap<ResourceFile::Type, const char*> SupportedFiles = {
 	{ ResourceFile::Type::Font, ".spritefont" },
 	{ ResourceFile::Type::Model, ".obj,.blend,.3ds,.fbx" },
 	{ ResourceFile::Type::AnimatedModel, ".dae,.fbx" },
+	{ ResourceFile::Type::CollisionModel, ".obj" },
 	{ ResourceFile::Type::Audio, ".wav" },
 	{ ResourceFile::Type::Image, ".png,.jpeg,.jpg,.dds" },
 	{ ResourceFile::Type::ImageCube, ".dds" },
@@ -49,6 +51,7 @@ public:
 	static LuaTextResourceFile* CreateLuaTextResourceFile(const String& path);
 	static AudioResourceFile* CreateAudioResourceFile(const String& path);
 	static ModelResourceFile* CreateModelResourceFile(const String& path);
+	static CollisionModelResourceFile* CreateCollisionModelResourceFile(const String& path);
 	static AnimatedModelResourceFile* CreateAnimatedModelResourceFile(const String& path);
 	static ImageResourceFile* CreateImageResourceFile(const String& path);
 	static ImageCubeResourceFile* CreateImageCubeResourceFile(const String& path);

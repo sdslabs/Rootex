@@ -116,6 +116,11 @@ PhysicsColliderComponent::PhysicsColliderComponent(const PhysicsMaterial& materi
 
 bool PhysicsColliderComponent::setupData()
 {
+	if (m_Body)
+	{
+		PhysicsSystem::GetSingleton()->removeRigidBody(m_Body.get());
+	}
+
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(m_Mass, this, m_CollisionShape.get(), m_LocalInertia);
 	{
 		const PhysicsMaterialData& materialData = PhysicsSystem::GetSingleton()->getMaterialData(m_Material);

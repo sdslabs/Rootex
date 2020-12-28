@@ -18,6 +18,7 @@
 #include "core/resource_files/image_cube_resource_file.h"
 #include "core/resource_files/lua_text_resource_file.h"
 #include "core/resource_files/model_resource_file.h"
+#include "core/resource_files/collision_model_resource_file.h"
 #include "core/resource_files/text_resource_file.h"
 #include "event_manager.h"
 
@@ -136,6 +137,7 @@ void LuaInterpreter::registerTypes()
 	LuaTextResourceFile::RegisterAPI(rootex);
 	AudioResourceFile::RegisterAPI(rootex);
 	ModelResourceFile::RegisterAPI(rootex);
+	CollisionModelResourceFile::RegisterAPI(rootex);
 	ImageResourceFile::RegisterAPI(rootex);
 	ImageCubeResourceFile::RegisterAPI(rootex);
 	FontResourceFile::RegisterAPI(rootex);
