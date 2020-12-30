@@ -46,6 +46,15 @@ RenderSystem::RenderSystem()
 	RenderingDevice::GetSingleton()->createRTVAndSRV(m_BloomHorizontalBlurRTV, m_BloomHorizontalBlurSRV);
 	RenderingDevice::GetSingleton()->createRTVAndSRV(m_BloomVerticalBlurRTV, m_BloomVerticalBlurSRV);
 	RenderingDevice::GetSingleton()->createRTVAndSRV(m_BloomRTV, m_BloomSRV);
+
+	const FileBuffer& assaoShader = OS::LoadFileContents("rootex/vendor/ASSAO/ASSAO.hlsl");
+	ASSAO_CreateDescDX11 assaoDesc(RenderingDevice::GetSingleton()->getDevice(), assaoShader.data(), assaoShader.size());
+	m_ASSAO = ASSAO_Effect::CreateInstance(&assaoDesc);
+}
+
+RenderSystem::~RenderSystem()
+{
+	ASSAO_Effect::DestroyInstance(m_ASSAO);
 }
 
 void RenderSystem::recoverLostDevice()
@@ -215,6 +224,39 @@ void RenderSystem::update(float deltaMilliseconds)
 		const PostProcessingDetails& postProcessingDetails = m_Camera->getPostProcessingDetails();
 		if (postProcessingDetails.isPostProcessing)
 		{
+			if (postProcessingDetails.isASSAO)
+			{
+				RenderingDevice::GetSingleton()->unbindRTSRVs();
+				RenderingDevice::GetSingleton()->setOffScreenRTResolved();
+
+				ASSAO_InputsDX11 assaoInputs;
+				assaoInputs.ViewportX = 0;
+				assaoInputs.ViewportY = 0;
+				assaoInputs.ViewportHeight = Application::GetSingleton()->getWindow()->getHeight();
+				assaoInputs.ViewportWidth = Application::GetSingleton()->getWindow()->getWidth();
+				assaoInputs.ProjectionMatrix = *reinterpret_cast<ASSAO_Float4x4*>(&m_Camera->getProjectionMatrix());
+				assaoInputs.MatricesRowMajorOrder = true;
+				assaoInputs.DrawOpaque = false;
+				assaoInputs.DeviceContext = RenderingDevice::GetSingleton()->getContext();
+				assaoInputs.DepthSRV = RenderingDevice::GetSingleton()->getDepthSSRV().Get();
+				assaoInputs.NormalSRV = nullptr;
+				assaoInputs.OverrideOutputRTV = nullptr;
+				ASSAO_Settings assaoSettings;
+				assaoSettings.Radius = postProcessingDetails.assaoRadius;
+				assaoSettings.DetailShadowStrength = postProcessingDetails.assaoDetailShadowStrength;
+				assaoSettings.BlurPassCount = postProcessingDetails.assaoBlurPassCount;
+				assaoSettings.FadeOutFrom = postProcessingDetails.assaoFadeOutFrom;
+				assaoSettings.FadeOutTo = postProcessingDetails.assaoFadeOutTo;
+				assaoSettings.HorizonAngleThreshold = postProcessingDetails.assaoHorizonAngleThreshold;
+				assaoSettings.QualityLevel = postProcessingDetails.assaoQualityLevel;
+				assaoSettings.ShadowClamp = postProcessingDetails.assaoShadowClamp;
+				assaoSettings.ShadowMultiplier = postProcessingDetails.assaoShadowMultiplier;
+				assaoSettings.ShadowPower = postProcessingDetails.assaoShadowPower;
+				assaoSettings.Sharpness = postProcessingDetails.assaoSharpness;
+				assaoSettings.AdaptiveQualityLimit = postProcessingDetails.assaoAdaptiveQualityLimit;
+				m_ASSAO->Draw(assaoSettings, &assaoInputs);
+			}
+
 			if (postProcessingDetails.isGaussianBlur)
 			{
 				RenderingDevice::GetSingleton()->unbindRTSRVs();
@@ -377,7 +419,7 @@ void RenderSystem::submitBox(const Vector3& min, const Vector3& max)
 	Vector3 y = Vector3(0.0f, d.y, 0.0f);
 	Vector3 z = Vector3(0.0f, 0.0f, d.z);
 
-	/// Representation of bottom/top verticies
+	/// Representation of bottom/top vertices
 	///   [3/7]-------[2/6]
 	///    /           /
 	/// [0/4]-------[1/5]

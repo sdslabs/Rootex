@@ -53,7 +53,7 @@ set_source_files_properties(${ShaderFiles}
         VS_SHADER_MODEL 4.0
         VS_SHADER_OBJECT_FILE_NAME ${ShaderCompileDestination}
         VS_SHADER_ENABLE_DEBUG true
-        VS_SHADER_DISABLE_OPTIMIZATIONS true
+        VS_SHADER_DISABLE_OPTIMIZATIONS false
 )
 
 set_source_files_properties(${VertexShaderFiles}
@@ -104,6 +104,7 @@ target_link_libraries(Rootex PUBLIC
     RmlLottie
     FreeType
     Tracy
+    ASSAO
 
     Shell32.lib
     d3d11.lib

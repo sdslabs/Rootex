@@ -30,6 +30,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_MainRTV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_MainRTSRV;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_MainDSV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_MainDSSRV;
 
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> m_OffScreenRTTexture;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_OffScreenRTV;
@@ -140,6 +141,7 @@ public:
 	void unbindRTVs();
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> getMainRTSRV();
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> getDepthSSRV();
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> getOffScreenRTSRV();
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> getOffScreenRTSRVResolved();
 

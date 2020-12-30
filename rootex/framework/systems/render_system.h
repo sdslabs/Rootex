@@ -10,6 +10,7 @@
 #include "framework/scene.h"
 
 #include "PostProcess.h"
+#include "ASSAO/ASSAO.h"
 
 #define LINE_INITIAL_RENDER_CACHE 1000
 
@@ -56,9 +57,11 @@ class RenderSystem : public System
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_BloomRTV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_BloomSRV;
 
+	ASSAO_Effect* m_ASSAO;
+
 	RenderSystem();
 	RenderSystem(RenderSystem&) = delete;
-	virtual ~RenderSystem() = default;
+	virtual ~RenderSystem();
 
 	void renderPassRender(float deltaMilliseconds, RenderPass renderPass);
 
