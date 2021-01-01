@@ -50,11 +50,6 @@ LuaInterpreter::LuaInterpreter()
 	m_Lua.open_libraries(sol::lib::package);
 	m_Lua.open_libraries(sol::lib::debug);
 
-	sol::table dbg = m_Lua.require_file("dbg", "rootex/script/debugger.lua");
-	dbg["auto_where"] = 2;
-	
-	m_Lua.do_file("rootex/script/class.lua");
-
 	registerTypes();
 }
 
@@ -62,6 +57,23 @@ LuaInterpreter* LuaInterpreter::GetSingleton()
 {
 	static LuaInterpreter singleton;
 	return &singleton;
+}
+
+void LuaInterpreter::runScripts()
+{
+	static bool called = false;
+	if (called)
+	{
+		return;
+	}
+	called = true;
+
+	sol::table dbg = m_Lua.require_file("dbg", "rootex/script/scripts/debugger.lua");
+	dbg["auto_where"] = 2;
+	
+	m_Lua.do_file("rootex/script/scripts/class.lua");
+	m_Lua.do_file("rootex/script/scripts/dialogue_node.lua");
+	m_Lua.do_file("rootex/script/scripts/one_off_dialogue.lua");
 }
 
 void LuaInterpreter::registerTypes()

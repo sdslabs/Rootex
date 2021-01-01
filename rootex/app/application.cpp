@@ -93,6 +93,8 @@ Application::Application(const String& settingsFile)
 		LuaInterpreter::GetSingleton()->getLuaState().script(ResourceLoader::CreateLuaTextResourceFile(*postInitialize)->getString());
 	}
 
+	LuaInterpreter::GetSingleton()->runScripts();
+
 	m_Window->show();	
 }
 
