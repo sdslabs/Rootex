@@ -2,15 +2,15 @@ require("rootex/script/scripts/dialogue_node")
 
 OneOffDialogue = class(DialogueNode)
 
-OneOffDialogue.displayDocument = rmlui.contexts["default"]:LoadDocument("rootex/script/scripts/one_off_dialogue.rml")
-
 function OneOffDialogue:init(text)
 	self.text = text
+	self.document = rmlui.contexts["default"]:LoadDocument("rootex/script/scripts/one_off_dialogue.rml")
+	self.document:Hide()
 end
 
 function OneOffDialogue:getDocument()
-	OneOffDialogue.displayDocument:GetElementById("dialogue_text").inner_rml = self.text
-	return OneOffDialogue.displayDocument
+	self.document:GetElementById("dialogue_text").inner_rml = self.text
+	return self.document
 end
 
 function OneOffDialogue:handleInput(input)
