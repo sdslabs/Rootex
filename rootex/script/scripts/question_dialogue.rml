@@ -8,13 +8,20 @@
         font-size: 50px;
         background-color: rgb(16, 0, 241);
     }
+    .choice {
+        color: aqua;
+    }
 </style>
 
 </head>
 
 <body>
     <span id="dialogue_question">Question Dialogue</span>
-    --<span id="dialogue_answer">Answer</span>
+    <br/>
+    (Scroll to choose)
+    <br/>
+    <div id="dialogue_answer">
+    </div>
 </body>
 
 </rml>

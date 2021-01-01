@@ -34,13 +34,10 @@ function DialogueNode.Proceed(node, document, input)
 		return nil
 	end
 
-	local ret = node:handleInput(input)
-	if ret ~= nil then
+	local next = node:handleInput(input)
+	if next ~= nil then
 		node:getDocument():Hide()
-		local next = ret
-		if next ~= nil then
-			next:getDocument():Show()
-		end
+		next:getDocument():Show()
 		return next
 	end
 
@@ -49,13 +46,12 @@ end
 
 DialogueBuilder = class()
 
-function DialogueBuilder:begin(node)
-	self.start = node
-	self.current = self.start
-	return self
-end
-
 function DialogueBuilder:add(node)
+	if self.current == nil then
+		self.start = node
+		self.current = self.start
+	end
+
 	self.current.nextNode = node
 	self.current = self.current.nextNode
 	return self

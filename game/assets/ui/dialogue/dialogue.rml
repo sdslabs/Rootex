@@ -13,21 +13,40 @@
 </style>
 
 <script>
+youHaveGum = DialogueBuilder()
+:add(OneOffDialogue("Yes I have"))
+:add(OneOffDialogue("Give me half of it"))
+:add(OneOffDialogue("What? you don't want the entire thing?"))
+:add(OneOffDialogue("Don't ask why"))
+:add(OneOffDialogue("Okay then"))
+:finish()
+
+youDoNotHaveGum = DialogueBuilder()
+:add(OneOffDialogue("No I don't"))
+:add(OneOffDialogue("Huh? Didn't you just buy some"))
+:add(OneOffDialogue("Why do you need it?"))
+:add(OneOffDialogue("Forget it"))
+:finish()
 
 t = DialogueBuilder()
-:begin(OneOffDialogue("> Now click to begin"))
+:add(OneOffDialogue("> Now click to begin"))
 :add(OneOffDialogue("When was that thing built?"))
 :add(OneOffDialogue("From here, I walked down that street with you, right?"))
 :add(OneOffDialogue("I think so"))
 :add(OneOffDialogue("I don’t have any confidence, either"))
-:add(OneOffDialogue("> The End"))
+:add(QuestionDialogue("Do you have any gum left?", { "Yes", "No" }, { youHaveGum, youDoNotHaveGum }))
 :finish()
 
 </script>
 
 </head>
 
-<body onmousedown="t = DialogueNode.Proceed(t, document, DialogueInput.Next)">
+<body 
+    onmousedown="t = DialogueNode.Proceed(t, document, DialogueInput.Next)"
+    onmousescroll="
+        if event.parameters.wheel_delta > 0 then t = DialogueNode.Proceed(t, document, DialogueInput.ChoiceUp) 
+        elseif event.parameters.wheel_delta < 0 then t = DialogueNode.Proceed(t, document, DialogueInput.ChoiceDown) end"
+>
     Click here
 </body>
 
