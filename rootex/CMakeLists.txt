@@ -70,17 +70,23 @@ if (BUILD_EDITOR)
     add_definitions(-DROOTEX_EDITOR)
 endif(BUILD_EDITOR)
 
-add_library(Rootex STATIC ${ROOTEX_SOURCES})
+file(GLOB_RECURSE EngineLuaScripts script/**.lua)
+
+set_source_files_properties(${EngineLuaScripts} PROPERTIES
+    HEADER_FILE_ONLY TRUE
+)
+
+add_library(Rootex STATIC ${ROOTEX_SOURCES} ${EngineLuaScripts})
 
 target_precompile_headers(Rootex PUBLIC ${PCHHeader})
 
 source_group(TREE "../"
     PREFIX "Rootex"
-    FILES ${ROOTEX_SOURCES}
+    FILES ${ROOTEX_SOURCES} ${EngineLuaScripts}
 )
 
 target_include_directories(Rootex PUBLIC
-    ${ROOTEX_INCLUDES}
+    ${ROOTEX_INCLUDES} 
 )
 
 target_link_libraries(Rootex PUBLIC

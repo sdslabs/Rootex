@@ -1,0 +1,37 @@
+{
+    "ID": 4,
+    "children": [
+        {
+            "ID": 5,
+            "children": [],
+            "entity": {
+                "components": {
+                    "UIComponent": {
+                        "filePath": "game/assets/ui/dialogue/dialogue.rml"
+                    }
+                }
+            },
+            "file": "",
+            "name": "Dialogue",
+            "settings": {
+                "camera": 1,
+                "inputSchemes": null,
+                "listener": 1,
+                "preloads": [],
+                "startScheme": ""
+            }
+        }
+    ],
+    "entity": {
+        "components": null
+    },
+    "file": "game/assets/scenes/dialogue.scene.json",
+    "name": "dialogue",
+    "settings": {
+        "camera": 1,
+        "inputSchemes": null,
+        "listener": 1,
+        "preloads": [],
+        "startScheme": ""
+    }
+}

@@ -86,6 +86,7 @@ public:
 	virtual bool setupData();
 	/// Perform setting up operations which are possible only after all entities have been set up.
 	virtual bool setupEntities();
+	/// Perform operations prior to detachment from owning entity and destruction.
 	virtual void onRemove();
 
 	virtual void onTrigger();

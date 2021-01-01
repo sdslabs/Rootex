@@ -1,0 +1,34 @@
+<rml>
+
+<head>
+
+<style>
+    body {
+        font: "Lato";
+        font-size: 50px;
+        height: 100%;
+        width: 100%;
+        background-color: green
+    }
+</style>
+
+<script>
+
+t = DialogueBuilder()
+:begin(OneOffDialogue("> Now click to begin"))
+:add(OneOffDialogue("When was that thing built?"))
+:add(OneOffDialogue("From here, I walked down that street with you, right?"))
+:add(OneOffDialogue("I think so"))
+:add(OneOffDialogue("I don’t have any confidence, either"))
+:add(OneOffDialogue("> The End"))
+:finish()
+
+</script>
+
+</head>
+
+<body onmousedown="t = DialogueNode.Proceed(t, document, DialogueInput.Next)">
+    Click here
+</body>
+
+</rml>
