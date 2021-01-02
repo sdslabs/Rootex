@@ -11,6 +11,7 @@ static void InitialiseKeymap();
 static Rml::Input::KeyIdentifier KeyIdentifierMap[KEYMAP_SIZE];
 
 bool InputInterface::s_IsMouseOver = false;
+bool InputInterface::s_IsEnabled = true;
 float InputInterface::s_ScaleX = 1;
 float InputInterface::s_ScaleY = 1;
 int InputInterface::s_Left = 0;
@@ -359,7 +360,7 @@ void InputInterface::ProcessWindowsEvent(UINT message, WPARAM wParam, LPARAM lPa
 		}
 	}
 
-	if (!s_IsMouseOver)
+	if (!s_IsMouseOver || !s_IsEnabled)
 	{
 		return;
 	}

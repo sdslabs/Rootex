@@ -14,33 +14,38 @@
 
 <script>
 
-youHaveGum = DialogueBuilder()
-:add(OneOffDialogue("Yes I have"))
-:add(OneOffDialogue("Give me half of it"))
-:add(OneOffDialogue("What? you don't want the entire thing?"))
-:add(OneOffDialogue("Don't ask why"))
-:add(OneOffDialogue("Okay then"))
-:finish()
-    
-youDoNotHaveGum = DialogueBuilder()
-:add(OneOffDialogue("No I don't"))
-:add(OneOffDialogue("Huh? Didn't you just buy some"))
-:add(OneOffDialogue("Why do you need it?"))
-:add(OneOffDialogue("Forget it"))
+diapers = DialogueBuilder()
+:add(OneOffDialogue("You probably don’t remember, but we’ve met."))
+:add(OneOffDialogue("I’ve changed your diapers before, you know."))
+:add(OneOffDialogue("Come one, let's head home.", function(node) RTX.LoadScene("game/assets/scenes/loading.scene.json", {}) return false end))
 :finish()
 
 t = DialogueBuilder()
-:add(OneOffDialogue("> Now click to begin"))
-:add(OneOffDialogue("When was that thing built?"))
-:add(OneOffDialogue("From here, I walked down that street with you, right?"))
-:add(OneOffDialogue("I think so"))
-:add(OneOffDialogue("I don’t have any confidence, either"))
-:add(QuestionDialogue("Do you have any gum left?", { "Yes", "No" }, { youHaveGum, youDoNotHaveGum }, 
-function(node) 
-    if node.currentChoice == 1 then
-        RTX.LoadScene("game/assets/scenes/loading.scene.json", {})
-    end 
-end))
+:add(OneOffDialogue("> You arrive at Yasoinaba."))
+:add(OneOffDialogue("Hey! Over here!"))
+:add(OneOffDialogue("Well, you’re more handsome in person than in your photo."))
+:add(OneOffDialogue("Welcome to Inaba."))
+:add(OneOffDialogue("I’m Ryotaro Dojima. I’ll be looking after you."))
+:add(QuestionDialogue("Let’s see… I’m your mother’s younger brother… and that about sums it up", { 
+    "It’s nice to meet you.",
+    "It’s been a long time.",
+    "……"
+}, { 
+    DialogueBuilder()
+    :add(OneOffDialogue("We are happy to have you."))
+    :add(diapers)
+    :finish(), 
+
+    DialogueBuilder()
+    :add(OneOffDialogue("Heh, very long indeed."))
+    :add(diapers)
+    :finish(), 
+
+    DialogueBuilder()
+    :add(OneOffDialogue("Now then,"))
+    :add(diapers)
+    :finish()
+}))
 :finish()
 
 </script>

@@ -9,13 +9,18 @@ DialogueNode = class("DialogueNode")
 
 DialogueNode.count = 0
 
-function DialogueNode:initialize()
+--[[ 
+Exit logic is an optional function which user can run logic in when the node progresses. 
+It should return false in case conversation needs to stop.
+--]]
+function DialogueNode:initialize(exitLogic)
 	self.id = DialogueNode.count
 	self.nextNode = nil
+	self.exitLogic = exitLogic
 	DialogueNode.count = DialogueNode.count + 1
 end
 
--- If nil is returned, nothing happens, else the conversation moves on to the next dialogue.
+-- Returns the node which the conversation should jump to next, based on the input.
 function DialogueNode:handleInput(input)
 	return nil
 end
@@ -28,15 +33,24 @@ function DialogueNode:setNextNode(node)
 	self.nextNode = node
 end
 
+-- Returns the next node to display if conversation is remaining, else returns the current node itself
 function DialogueNode.static:Proceed(node, document, input)
 	if node == nil then
-		document:Hide()
-		return nil
+		document.context:UnloadDocument(document)
+		return node
 	end
 
 	local next = node:handleInput(input)
-	if next ~= nil then
-		node:getDocument():Hide()
+	node:getDocument():Hide()
+
+	local continue = true
+	-- If exitLogic exists and returns false, stop the conversation
+	if node.exitLogic ~= nil then
+		continue = node.exitLogic(node)
+	end
+
+	-- Decide if we should still display the next node
+	if next ~= nil and continue ~= false then
 		next:getDocument():Show()
 		return next
 	end

@@ -11,6 +11,7 @@ class InputInterface
 {
 public:
 	static bool s_IsMouseOver;
+	static bool s_IsEnabled;
 	static float s_ScaleX;
 	static float s_ScaleY;
 	static int s_Left;

@@ -72,9 +72,9 @@ void LuaInterpreter::runScripts()
 	dbg["auto_where"] = 2;
 	
 	m_Lua.require_file("class", "rootex/script/scripts/middleclass.lua");
-	m_Lua.script_file("rootex/script/scripts/dialogue_node.lua");
-	m_Lua.script_file("rootex/script/scripts/question_dialogue.lua");
-	m_Lua.script_file("rootex/script/scripts/one_off_dialogue.lua");
+	m_Lua.do_file("rootex/script/scripts/dialogue_node.lua");
+	m_Lua.do_file("rootex/script/scripts/question_dialogue.lua");
+	m_Lua.do_file("rootex/script/scripts/one_off_dialogue.lua");
 }
 
 void LuaInterpreter::registerTypes()
