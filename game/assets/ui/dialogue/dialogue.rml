@@ -13,6 +13,7 @@
 </style>
 
 <script>
+
 youHaveGum = DialogueBuilder()
 :add(OneOffDialogue("Yes I have"))
 :add(OneOffDialogue("Give me half of it"))
@@ -20,7 +21,7 @@ youHaveGum = DialogueBuilder()
 :add(OneOffDialogue("Don't ask why"))
 :add(OneOffDialogue("Okay then"))
 :finish()
-
+    
 youDoNotHaveGum = DialogueBuilder()
 :add(OneOffDialogue("No I don't"))
 :add(OneOffDialogue("Huh? Didn't you just buy some"))
@@ -34,7 +35,12 @@ t = DialogueBuilder()
 :add(OneOffDialogue("From here, I walked down that street with you, right?"))
 :add(OneOffDialogue("I think so"))
 :add(OneOffDialogue("I don’t have any confidence, either"))
-:add(QuestionDialogue("Do you have any gum left?", { "Yes", "No" }, { youHaveGum, youDoNotHaveGum }))
+:add(QuestionDialogue("Do you have any gum left?", { "Yes", "No" }, { youHaveGum, youDoNotHaveGum }, 
+function(node) 
+    if node.currentChoice == 1 then
+        RTX.LoadScene("game/assets/scenes/loading.scene.json", {})
+    end 
+end))
 :finish()
 
 </script>
@@ -42,10 +48,16 @@ t = DialogueBuilder()
 </head>
 
 <body 
-    onmousedown="t = DialogueNode.Proceed(t, document, DialogueInput.Next)"
+    onmousedown="t = DialogueNode:Proceed(t, document, DialogueInput.Next)"
     onmousescroll="
-        if event.parameters.wheel_delta > 0 then t = DialogueNode.Proceed(t, document, DialogueInput.ChoiceUp) 
-        elseif event.parameters.wheel_delta < 0 then t = DialogueNode.Proceed(t, document, DialogueInput.ChoiceDown) end"
+        choiceInput = DialogueInput.ChoiceUp
+        if event.parameters.wheel_delta > 0 then 
+            choiceInput = DialogueInput.ChoiceUp
+        elseif event.parameters.wheel_delta < 0 then 
+            choiceInput = DialogueInput.ChoiceDown 
+        end
+        t = DialogueNode:Proceed(t, document, choiceInput)
+    "
 >
     Click here
 </body>

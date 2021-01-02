@@ -5,11 +5,11 @@ DialogueInput = {
 	ChoiceDown = 3
 }
 
-DialogueNode = class()
+DialogueNode = class("DialogueNode")
 
 DialogueNode.count = 0
 
-function DialogueNode:init()
+function DialogueNode:initialize()
 	self.id = DialogueNode.count
 	self.nextNode = nil
 	DialogueNode.count = DialogueNode.count + 1
@@ -28,7 +28,7 @@ function DialogueNode:setNextNode(node)
 	self.nextNode = node
 end
 
-function DialogueNode.Proceed(node, document, input)
+function DialogueNode.static:Proceed(node, document, input)
 	if node == nil then
 		document:Hide()
 		return nil
@@ -44,7 +44,7 @@ function DialogueNode.Proceed(node, document, input)
 	return node
 end
 
-DialogueBuilder = class()
+DialogueBuilder = class("DialogueBuilder")
 
 function DialogueBuilder:add(node)
 	if self.current == nil then

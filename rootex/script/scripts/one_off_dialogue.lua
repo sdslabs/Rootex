@@ -1,11 +1,12 @@
 require("rootex/script/scripts/dialogue_node")
 
-OneOffDialogue = class(DialogueNode)
+OneOffDialogue = class("OneOffDialogue", DialogueNode)
 
-function OneOffDialogue:init(text)
+function OneOffDialogue:initialize(text, exitLogic)
 	self.text = text
 	self.document = rmlui.contexts["default"]:LoadDocument("rootex/script/scripts/one_off_dialogue.rml")
 	self.document:Hide()
+	self.exitLogic = exitLogic
 end
 
 function OneOffDialogue:getDocument()
@@ -15,6 +16,7 @@ end
 
 function OneOffDialogue:handleInput(input)
 	if input == DialogueInput.Next then
+		if self.exitLogic ~= nil then self.exitLogic(self) end
 		return self:getNextNode()
 	end
 	return nil
