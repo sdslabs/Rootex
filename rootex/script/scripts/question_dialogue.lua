@@ -1,14 +1,15 @@
 require("rootex/script/scripts/dialogue_node")
 
-QuestionDialogue = class(DialogueNode)
+QuestionDialogue = class("QuestionDialogue", DialogueNode)
 
-function QuestionDialogue:init(question, answers, answerNodes)
+function QuestionDialogue:initialize(question, answers, answerNodes, exitLogic)
 	self.question = question
 	self.answers = answers
 	self.answerNodes = answerNodes
 	self.currentChoice = 1
 	self.document = rmlui.contexts["default"]:LoadDocument("rootex/script/scripts/question_dialogue.rml")
 	self.document:Hide()
+	self.exitLogic = exitLogic
 end
 
 function QuestionDialogue:refreshDocument()
@@ -32,6 +33,7 @@ end
 
 function QuestionDialogue:handleInput(input)
 	if input == DialogueInput.Next then
+		if self.exitLogic ~= nil then self.exitLogic(self) end
 		return self.answerNodes[self.currentChoice]
 	elseif input == DialogueInput.ChoiceDown then
 		if self.currentChoice > 1 then self.currentChoice = self.currentChoice - 1 else self.currentChoice = #self.answers end
