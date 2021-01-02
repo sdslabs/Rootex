@@ -37,7 +37,7 @@ end
 -- Returns the next node to display if conversation is remaining, else returns the current node itself
 function DialogueNode.static:Proceed(node, document, input)
 	if node == nil then
-		print("nil found")
+		document:Hide()
 		return node
 	end
 
@@ -63,7 +63,7 @@ function DialogueNode.static:Proceed(node, document, input)
 		return topDialogue
 	end
 
-	return node
+	return nil
 end
 
 DialogueBuilder = class("DialogueBuilder")

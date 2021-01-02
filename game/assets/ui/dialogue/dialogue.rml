@@ -15,6 +15,7 @@
 <script>
 
 t = DialogueBuilder()
+:add(OneOffDialogue("Start"))
 :add(OneOffDialogue("> You arrive at Yasoinaba."))
 :add(OneOffDialogue("Hey! Over here!"))
 :add(OneOffDialogue("Well, you’re more handsome in person than in your photo."))
@@ -37,7 +38,7 @@ t = DialogueBuilder()
 
 </head>
 
-<body 
+<body
     onmousedown="t = DialogueNode:Proceed(t, document, DialogueInput.Next)"
     onmousescroll="
         choiceInput = DialogueInput.ChoiceUp
@@ -49,7 +50,6 @@ t = DialogueBuilder()
         t = DialogueNode:Proceed(t, document, choiceInput)
     "
 >
-    Click here
+    Click to begin.
 </body>
-
 </rml>
