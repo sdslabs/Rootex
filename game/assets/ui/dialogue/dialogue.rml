@@ -14,12 +14,6 @@
 
 <script>
 
-diapers = DialogueBuilder()
-:add(OneOffDialogue("You probably don’t remember, but we’ve met."))
-:add(OneOffDialogue("I’ve changed your diapers before, you know."))
-:add(OneOffDialogue("Come one, let's head home.", function(node) RTX.LoadScene("game/assets/scenes/loading.scene.json", {}) return false end))
-:finish()
-
 t = DialogueBuilder()
 :add(OneOffDialogue("> You arrive at Yasoinaba."))
 :add(OneOffDialogue("Hey! Over here!"))
@@ -31,21 +25,12 @@ t = DialogueBuilder()
     "It’s been a long time.",
     "……"
 }, { 
-    DialogueBuilder()
-    :add(OneOffDialogue("We are happy to have you."))
-    :add(diapers)
-    :finish(), 
-
-    DialogueBuilder()
-    :add(OneOffDialogue("Heh, very long indeed."))
-    :add(diapers)
-    :finish(), 
-
-    DialogueBuilder()
-    :add(OneOffDialogue("Now then,"))
-    :add(diapers)
-    :finish()
-}))
+    OneOffDialogue("We are happy to have you."), 
+    OneOffDialogue("Heh, very long indeed."),
+    OneOffDialogue("Now then,") }))
+:add(OneOffDialogue("You probably don’t remember, but we’ve met."))
+:add(OneOffDialogue("I’ve changed your diapers before, you know."))
+:add(OneOffDialogue("Come one, let's head home."))
 :finish()
 
 </script>

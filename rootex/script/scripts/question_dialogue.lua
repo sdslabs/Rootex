@@ -34,6 +34,7 @@ end
 
 function QuestionDialogue:handleInput(input)
 	if input == DialogueInput.Next then
+		DialogueNode.static.stack:push(self:getNextNode())
 		return self.answerNodes[self.currentChoice]
 	elseif input == DialogueInput.ChoiceDown then
 		if self.currentChoice > 1 then self.currentChoice = self.currentChoice - 1 else self.currentChoice = #self.answers end

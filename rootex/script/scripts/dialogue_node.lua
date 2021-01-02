@@ -7,17 +7,18 @@ DialogueInput = {
 
 DialogueNode = class("DialogueNode")
 
-DialogueNode.count = 0
+DialogueNode.static.count = 0
+DialogueNode.static.stack = Stack()
 
 --[[ 
 Exit logic is an optional function which user can run logic in when the node progresses. 
 It should return false in case conversation needs to stop.
 --]]
 function DialogueNode:initialize(exitLogic)
-	self.id = DialogueNode.count
+	self.id = DialogueNode.static.count
 	self.nextNode = nil
 	self.exitLogic = exitLogic
-	DialogueNode.count = DialogueNode.count + 1
+	DialogueNode.static.count = DialogueNode.static.count + 1
 end
 
 -- Returns the node which the conversation should jump to next, based on the input.
@@ -36,11 +37,10 @@ end
 -- Returns the next node to display if conversation is remaining, else returns the current node itself
 function DialogueNode.static:Proceed(node, document, input)
 	if node == nil then
-		document.context:UnloadDocument(document)
+		print("nil found")
 		return node
 	end
 
-	local next = node:handleInput(input)
 	node:getDocument():Hide()
 
 	local continue = true
@@ -50,9 +50,17 @@ function DialogueNode.static:Proceed(node, document, input)
 	end
 
 	-- Decide if we should still display the next node
+	local next = node:handleInput(input)
 	if next ~= nil and continue ~= false then
 		next:getDocument():Show()
 		return next
+	end
+
+	-- Return to the dialogue stack if present
+	local topDialogue = DialogueNode.static.stack:pop()
+	if topDialogue ~= nil then
+		topDialogue:getDocument():Show()
+		return topDialogue
 	end
 
 	return node
