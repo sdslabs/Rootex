@@ -13,6 +13,7 @@
 </head>
 
 <body>
+    <span id="dialogue_portrait">One Off Portrait</span>
     <span id="dialogue_text">One Off Dialogue</span>
 </body>
 

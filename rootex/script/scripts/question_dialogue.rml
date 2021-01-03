@@ -16,6 +16,7 @@
 </head>
 
 <body>
+    <span id="dialogue_portrait">Question Portrait</span>
     <span id="dialogue_question">Question Dialogue</span>
     <br/>
     (Scroll to choose)
