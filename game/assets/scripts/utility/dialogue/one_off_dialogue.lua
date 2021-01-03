@@ -1,8 +1,8 @@
-require("rootex/script/scripts/dialogue_node")
+require("game/assets/scripts/utility/dialogue/dialogue_node")
 
 OneOffDialogue = class("OneOffDialogue", DialogueNode)
 
-OneOffDialogue.static.document = rmlui.contexts["default"]:LoadDocument("rootex/script/scripts/one_off_dialogue.rml")
+OneOffDialogue.static.document = rmlui.contexts["default"]:LoadDocument("game/assets/ui/dialogue/one_off_dialogue.rml")
 OneOffDialogue.static.document:Hide()
 
 function OneOffDialogue:initialize(portrait, text, exitLogic)
@@ -12,6 +12,7 @@ function OneOffDialogue:initialize(portrait, text, exitLogic)
 end
 
 function OneOffDialogue:getDocument()
+	OneOffDialogue.static.document:SetAttribute("template", self.template)
 	OneOffDialogue.static.document:GetElementById("dialogue_text").inner_rml = self.text
 	local portraitFormat = [[<img src="../../..://dummy/{src}" width={width}em height={height}em />]]
 	portraitFormat = portraitFormat

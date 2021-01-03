@@ -1,3 +1,5 @@
+local class = require("game/assets/scripts/utility/middleclass")
+
 Stack = class("Stack")
 
 function Stack:initialize(list)

@@ -1,14 +1,13 @@
 <rml>
 
 <head>
-
+<link type="text/template" href="dialogue_template.rml" />
 <style>
     body {
         font: "Lato";
         font-size: 50px;
         height: 100%;
         width: 100%;
-        background-color: green
     }
 </style>
 
@@ -21,6 +20,7 @@ t = require("game/assets/scripts/dialogue/dialogue")
 </head>
 
 <body
+    template="dialogue"
     onmousedown="t = DialogueNode:Proceed(t, document, DialogueInput.Next)"
     onmousescroll="
         choiceInput = DialogueInput.ChoiceUp

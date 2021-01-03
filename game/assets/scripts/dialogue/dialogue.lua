@@ -1,6 +1,7 @@
-require("game/assets/scripts/characters")
+require("game/assets/scripts/utility/dialogue/characters")
 
 return DialogueBuilder()
+:addTemplate("dialogue_template")
 :add(OneOffDialogue(PersonA.neutral, "Start"))
 :add(OneOffDialogue(PersonA.neutral, "> You arrive at Yasoinaba."))
 :add(OneOffDialogue(PersonA.neutral, "Hey! Over here!"))
@@ -12,7 +13,7 @@ return DialogueBuilder()
     "It’s been a long time.",
     "……"
 }, { 
-    OneOffDialogue(PersonA.neutral, "We are happy to have you."), 
+    OneOffDialogue(PersonA.neutral, "We are happy to have you."),
     OneOffDialogue(PersonA.neutral, "Heh, very long indeed."),
     OneOffDialogue(PersonA.neutral, "Now then,") }))
 :add(OneOffDialogue(PersonA.happy, "You probably don’t remember, but we’ve met."))

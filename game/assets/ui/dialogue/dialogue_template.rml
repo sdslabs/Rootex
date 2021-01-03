@@ -1,0 +1,17 @@
+<template name="dialogue" content="content">
+<head>
+<style>
+	body {
+		background-color: black;
+	}
+	#content {
+		position: absolute;
+		bottom: 10px;
+	}
+</style>
+</head>
+<body>
+	<div id="content">
+	</div>
+</body>
+</template>

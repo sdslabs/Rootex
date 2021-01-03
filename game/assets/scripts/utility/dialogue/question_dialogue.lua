@@ -1,8 +1,8 @@
-require("rootex/script/scripts/dialogue_node")
+require("game/assets/scripts/utility/dialogue/dialogue_node")
 
 QuestionDialogue = class("QuestionDialogue", DialogueNode)
 
-QuestionDialogue.static.document = rmlui.contexts["default"]:LoadDocument("rootex/script/scripts/question_dialogue.rml")
+QuestionDialogue.static.document = rmlui.contexts["default"]:LoadDocument("game/assets/ui/dialogue/question_dialogue.rml")
 QuestionDialogue.static.document:Hide()
 
 function QuestionDialogue:initialize(portrait, question, answers, answerNodes, exitLogic)

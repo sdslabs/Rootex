@@ -1,3 +1,5 @@
+require("game/assets/scripts/utility/common")
+
 DialogueInput = {
 	Idle = 0,
 	Next = 1,
@@ -26,6 +28,7 @@ function DialogueNode:initialize(exitLogic)
 	self.id = DialogueNode.static.count
 	self.nextNode = nil
 	self.exitLogic = exitLogic
+	self.template = ""
 	DialogueNode.static.count = DialogueNode.static.count + 1
 end
 
@@ -82,8 +85,14 @@ function DialogueBuilder:add(node)
 		self.current = self.start
 	end
 
+	self.current.template = self.currentTemplate
 	self.current.nextNode = node
 	self.current = self.current.nextNode
+	return self
+end
+
+function DialogueBuilder:addTemplate(template)
+	self.currentTemplate = template
 	return self
 end
 

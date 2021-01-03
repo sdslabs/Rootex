@@ -1,5 +1,6 @@
 {
     "game": "game/game.app.json",
+    "postInitialize": "game/startup.lua",
     "project": "Rootex Editor",
     "systems": {
         "AudioSystem": {},
