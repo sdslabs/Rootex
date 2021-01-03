@@ -30,5 +30,6 @@
         "width": 1920,
         "x": 0,
         "y": 0
-    }
+    },
+    "postInitialize": "game/startup.lua"
 }
