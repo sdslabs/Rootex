@@ -5,8 +5,9 @@ QuestionDialogue = class("QuestionDialogue", DialogueNode)
 QuestionDialogue.static.document = rmlui.contexts["default"]:LoadDocument("rootex/script/scripts/question_dialogue.rml")
 QuestionDialogue.static.document:Hide()
 
-function QuestionDialogue:initialize(question, answers, answerNodes, exitLogic)
+function QuestionDialogue:initialize(portrait, question, answers, answerNodes, exitLogic)
 	DialogueNode.initialize(self, exitLogic)
+	self.portrait = portrait
 	self.question = question
 	self.answers = answers
 	self.answerNodes = answerNodes
@@ -25,6 +26,13 @@ function QuestionDialogue:refreshDocument()
 		choicesRML = choicesRML .. choiceFormat:gsub("{choice}", choice) .. "<br/>"
 	end
 	QuestionDialogue.static.document:GetElementById("dialogue_answer").inner_rml = choicesRML
+	
+	local portraitFormat = [[<img src="../../..://dummy/{src}" width={width}em height={height}em />]]
+	portraitFormat = portraitFormat
+	:gsub("{src}", self.portrait.image)
+	:gsub("{width}", self.portrait.width)
+	:gsub("{height}", self.portrait.height)
+	QuestionDialogue.static.document:GetElementById("dialogue_portrait").inner_rml = portraitFormat
 end
 
 function QuestionDialogue:getDocument()

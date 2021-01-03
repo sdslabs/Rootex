@@ -5,6 +5,14 @@ DialogueInput = {
 	ChoiceDown = 3
 }
 
+Portrait = class("Portrait")
+
+function Portrait:initialize(imagePath, width, height)
+	self.image = imagePath
+	self.width = width
+	self.height = height
+end
+
 DialogueNode = class("DialogueNode")
 
 DialogueNode.static.count = 0
