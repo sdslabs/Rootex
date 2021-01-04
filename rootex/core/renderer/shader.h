@@ -58,13 +58,20 @@ public:
 	void set(const Texture* texture, int slot);
 };
 
-class CPUParticlesShader : public Shader
+class ParticlesShader : public Shader
 {
-	CPUParticlesShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat);
-	CPUParticlesShader(CPUParticlesShader&) = delete;
-	~CPUParticlesShader() = default;
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_SamplerState;
+
+public:
+	ParticlesShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat);
+	ParticlesShader(ParticlesShader&) = delete;
+	~ParticlesShader() = default;
 
 	friend class ShaderLibrary;
+
+	virtual void bind() const override;
+
+	void set(const Texture* texture, int slot);
 };
 
 class GridShader : public Shader
@@ -90,4 +97,20 @@ public:
 	virtual void bind() const override;
 
 	void setSkyTexture(const TextureCube* texture);
+};
+
+class AnimationShader : public Shader
+{
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_SamplerState;
+
+public:
+	AnimationShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat);
+	AnimationShader(AnimationShader&) = delete;
+	~AnimationShader() = default;
+	
+	friend class ShaderLibrary;
+	
+	virtual void bind() const override;
+
+	void set(const Texture* texture, int slot);
 };

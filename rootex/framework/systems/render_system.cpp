@@ -107,6 +107,21 @@ void RenderSystem::renderPassRender(float deltaMilliseconds, RenderPass renderPa
 			mc->postRender();
 		}
 	}
+
+	AnimatedModelComponent* amc = nullptr;
+	for (auto& component : s_Components[AnimatedModelComponent::s_ID])
+	{
+		amc = (AnimatedModelComponent*)component;
+		if (amc->getRenderPass() & (unsigned int)renderPass)
+		{
+			amc->preRender(deltaMilliseconds);
+			if (amc->isVisible())
+			{
+				amc->render();
+			}
+			amc->postRender();
+		}
+	}
 }
 
 void RenderSystem::update(float deltaMilliseconds)
@@ -518,7 +533,10 @@ void RenderSystem::setCamera(CameraComponent* camera)
 
 void RenderSystem::restoreCamera()
 {
-	setCamera(SceneLoader::GetSingleton()->getRootScene()->getEntity()->getComponent<CameraComponent>());
+	if (SceneLoader::GetSingleton()->getRootScene())
+	{
+		setCamera(SceneLoader::GetSingleton()->getRootScene()->getEntity()->getComponent<CameraComponent>());
+	}
 }
 
 const Matrix& RenderSystem::getCurrentMatrix() const

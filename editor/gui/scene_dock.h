@@ -15,7 +15,7 @@ private:
 	SceneDockSettings m_SceneDockSettings;
 	SceneID m_OpenedSceneID;
 
-	void showSceneTree(Scene* scene);
+	void showSceneTree(Ptr<Scene>& scene);
 	void openScene(Scene* scene);
 
 	Variant selectOpenScene(const Event* event);

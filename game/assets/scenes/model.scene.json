@@ -49,8 +49,8 @@
                             }
                         },
                         "position": {
-                            "x": 502.0124816894531,
-                            "y": 174.26040649414063,
+                            "x": 502.0191650390625,
+                            "y": 174.26275634765625,
                             "z": -17.46019172668457
                         },
                         "rotation": {
@@ -60,9 +60,9 @@
                             "z": 0.0
                         },
                         "scale": {
-                            "x": 1.000718116760254,
-                            "y": 1.0008845329284668,
-                            "z": 1.000718116760254
+                            "x": 1.000735878944397,
+                            "y": 1.0009022951126099,
+                            "z": 1.000735878944397
                         }
                     }
                 }
@@ -402,6 +402,26 @@
                 "preloads": [],
                 "startScheme": ""
             }
+        },
+        {
+            "ID": 21,
+            "children": [],
+            "entity": {
+                "components": {
+                    "UIComponent": {
+                        "filePath": "game/assets/ui/fade_in_from_black/fade_in_from_black.rml"
+                    }
+                }
+            },
+            "file": "",
+            "name": "FadeIn",
+            "settings": {
+                "camera": 1,
+                "inputSchemes": null,
+                "listener": 1,
+                "preloads": [],
+                "startScheme": ""
+            }
         }
     ],
     "entity": {
@@ -473,6 +493,9 @@
                     "y": 0.03099999949336052,
                     "z": 0.03099999949336052
                 }
+            },
+            "UIComponent": {
+                "filePath": "rootex/assets/rml/demo.rml"
             }
         }
     },
