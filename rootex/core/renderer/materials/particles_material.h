@@ -4,11 +4,9 @@
 
 class Texture;
 
-class BasicMaterial : public Material
+class ParticlesMaterial : public Material
 {
-	BasicShader* m_BasicShader;
-
-protected:
+	ParticlesShader* m_ParticlesShader;
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_SamplerState;
 
 	ImageResourceFile* m_DiffuseImageFile;
@@ -17,7 +15,6 @@ protected:
 
 	bool m_IsLit;
 	bool m_IsNormal;
-	Color m_Color;
 	float m_SpecularIntensity;
 	float m_SpecularPower;
 	float m_Reflectivity;
@@ -25,11 +22,10 @@ protected:
 	float m_Refractivity;
 	bool m_IsAffectedBySky;
 
-	void setPSConstantBuffer(const PSDiffuseConstantBufferMaterial& constantBuffer);
-	void setVSConstantBuffer(const VSDiffuseConstantBuffer& constantBuffer);
+	void setPSConstantBuffer(const PSParticlesConstantBufferMaterial& constantBuffer);
 
 public:
-	const static inline String s_MaterialName = "BasicMaterial";
+	const static inline String s_MaterialName = "ParticlesMaterial";
 	enum class VertexConstantBufferType
 	{
 		Model,
@@ -41,11 +37,10 @@ public:
 		End
 	};
 
-	BasicMaterial() = delete;
-	BasicMaterial(bool isAlpha, const String& imagePath, const String& normalImagePath, const String& specularImagePath, bool isNormal, Color color, bool isLit, float specularIntensity, float specularPower, float reflectivity, float refractionConstant, float refractivity, bool affectedBySky);
-	~BasicMaterial() = default;
+	ParticlesMaterial() = delete;
+	ParticlesMaterial(bool isAlpha, const String& imagePath, const String& normalImagePath, const String& specularImagePath, bool isNormal, bool isLit, float specularIntensity, float specularPower, float reflectivity, float refractionConstant, float refractivity, bool affectedBySky);
+	~ParticlesMaterial() = default;
 
-	void setColor(const Color& color) { m_Color = color; };
 	void setDiffuseTexture(ImageResourceFile* image);
 	void setNormalTexture(ImageResourceFile* image);
 	void setSpecularTexture(ImageResourceFile* image);
@@ -58,7 +53,7 @@ public:
 
 	virtual ID3D11ShaderResourceView* getPreview() override;
 
-	virtual void bind() override;
+	void bind() override;
 	JSON::json getJSON() const override;
 
 #ifdef ROOTEX_EDITOR

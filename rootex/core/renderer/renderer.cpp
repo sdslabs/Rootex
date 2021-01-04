@@ -45,3 +45,13 @@ void Renderer::draw(const VertexBuffer* vertexBuffer, const IndexBuffer* indexBu
 	indexBuffer->bind();
 	RenderingDevice::GetSingleton()->drawIndexed(indexBuffer->getCount());
 }
+
+void Renderer::drawInstanced(const VertexBuffer* vertexBuffer, const IndexBuffer* indexBuffer, const VertexBuffer* instanceBuffer, unsigned int instances) const
+{
+	ID3D11Buffer* buffers[2] = { vertexBuffer->getBuffer(), instanceBuffer->getBuffer() };
+	unsigned int strides[2] = { vertexBuffer->getStride(), instanceBuffer->getStride() };
+	unsigned int offsets[2] = { 0, 0 };
+	RenderingDevice::GetSingleton()->bind(buffers, 2, strides, offsets);
+	indexBuffer->bind();
+	RenderingDevice::GetSingleton()->drawIndexedInstanced(indexBuffer->getCount(), instances, 0);
+}

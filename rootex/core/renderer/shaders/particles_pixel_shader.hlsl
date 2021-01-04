@@ -1,6 +1,6 @@
 #include "register_locations_pixel_shader.h"
 #include "light.hlsli"
-#include "basic_material.hlsli"
+#include "particles_material.hlsli"
 #include "sky.hlsli"
 
 Texture2D ShaderTexture : register(DIFFUSE_PS_HLSL);
@@ -15,25 +15,26 @@ struct PixelInputType
     float4 screenPosition : SV_POSITION;
     float3 normal : NORMAL;
     float4 worldPosition : POSITION;
-	float2 tex : TEXCOORD0;
-	float fogFactor : FOG;
-	float3 tangent : TANGENT;
+    float2 tex : TEXCOORD0;
+    float fogFactor : FOG;
+    float3 tangent : TANGENT;
+    float4 color : COLOR;
 };
 
 cbuffer CBuf : register(PER_OBJECT_PS_HLSL)
 {
-    BasicMaterial material;
+    ParticlesMaterial material;
 };
 
 cbuffer CBuf : register(PER_MODEL_PS_HLSL)
 {
-	int staticPointLightAffectingCount = 0;
+    int staticPointLightAffectingCount = 0;
     int staticPointsLightsAffecting[MAX_STATIC_POINT_LIGHTS_AFFECTING_1_OBJECT];
 };
 
 float4 main(PixelInputType input) : SV_TARGET
 {
-    float4 materialColor = ShaderTexture.Sample(SampleType, input.tex) * material.color;
+    float4 materialColor = ShaderTexture.Sample(SampleType, input.tex) * input.color;
     float4 finalColor = materialColor;
     
     clip(finalColor.a - 0.001f);

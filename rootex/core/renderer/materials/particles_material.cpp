@@ -1,7 +1,7 @@
-#include "basic_material.h"
+#include "particles_material.h"
 
-#include "resource_loader.h"
 #include "resource_files/image_resource_file.h"
+#include "resource_loader.h"
 
 #include "framework/systems/light_system.h"
 #include "framework/systems/render_system.h"
@@ -11,10 +11,9 @@
 #include "renderer/shaders/register_locations_pixel_shader.h"
 #include "renderer/shaders/register_locations_vertex_shader.h"
 
-BasicMaterial::BasicMaterial(bool isAlpha, const String& imagePath, const String& normalImagePath, const String& specularImagePath, bool isNormal, Color color, bool isLit, float specularIntensity, float specularPower, float reflectivity, float refractionConstant, float refractivity, bool affectedBySky)
-    : Material(ShaderLibrary::GetBasicShader(), BasicMaterial::s_MaterialName, isAlpha)
-    , m_BasicShader(ShaderLibrary::GetBasicShader())
-    , m_Color(color)
+ParticlesMaterial::ParticlesMaterial(bool isAlpha, const String& imagePath, const String& normalImagePath, const String& specularImagePath, bool isNormal, bool isLit, float specularIntensity, float specularPower, float reflectivity, float refractionConstant, float refractivity, bool affectedBySky)
+    : Material(ShaderLibrary::GetParticlesShader(), ParticlesMaterial::s_MaterialName, isAlpha)
+    , m_ParticlesShader(ShaderLibrary::GetParticlesShader())
     , m_IsLit(isLit)
     , m_SpecularIntensity(specularIntensity)
     , m_SpecularPower(specularPower)
@@ -42,22 +41,17 @@ BasicMaterial::BasicMaterial(bool isAlpha, const String& imagePath, const String
 	m_VSConstantBuffer.resize((int)VertexConstantBufferType::End, nullptr);
 }
 
-void BasicMaterial::setPSConstantBuffer(const PSDiffuseConstantBufferMaterial& constantBuffer)
+void ParticlesMaterial::setPSConstantBuffer(const PSParticlesConstantBufferMaterial& constantBuffer)
 {
-	Material::SetPSConstantBuffer<PSDiffuseConstantBufferMaterial>(constantBuffer, m_PSConstantBuffer[(int)PixelConstantBufferType::Material], PER_OBJECT_PS_CPP);
+	Material::SetPSConstantBuffer<PSParticlesConstantBufferMaterial>(constantBuffer, m_PSConstantBuffer[(int)PixelConstantBufferType::Material], PER_OBJECT_PS_CPP);
 }
 
-void BasicMaterial::setVSConstantBuffer(const VSDiffuseConstantBuffer& constantBuffer)
+Material* ParticlesMaterial::CreateDefault()
 {
-	Material::SetVSConstantBuffer<VSDiffuseConstantBuffer>(constantBuffer, m_VSConstantBuffer[(int)VertexConstantBufferType::Model], PER_OBJECT_VS_CPP);
+	return new ParticlesMaterial(false, "rootex/assets/white.png", "", "rootex/assets/white.png", false, true, 0.5f, 30.0f, 0.1f, 0.8f, 0.1f, true);
 }
 
-Material* BasicMaterial::CreateDefault()
-{
-	return new BasicMaterial(false, "rootex/assets/white.png", "", "rootex/assets/white.png", false, Color(0.5f, 0.5f, 0.5f, 1.0f), true, 0.5f, 30.0f, 0.1f, 0.8f, 0.1f, true);
-}
-
-Material* BasicMaterial::Create(const JSON::json& materialData)
+Material* ParticlesMaterial::Create(const JSON::json& materialData)
 {
 	bool isLit = materialData["isLit"];
 	float specularIntensity = 2.0f;
@@ -67,7 +61,7 @@ Material* BasicMaterial::Create(const JSON::json& materialData)
 		specularIntensity = (float)materialData["specularIntensity"];
 		specularPower = (float)materialData["specularPower"];
 	}
-	BasicMaterial* material = dynamic_cast<BasicMaterial*>(CreateDefault());
+	ParticlesMaterial* material = dynamic_cast<ParticlesMaterial*>(CreateDefault());
 	material->m_IsLit = materialData["isLit"];
 	if (material->m_IsLit)
 	{
@@ -114,28 +108,25 @@ Material* BasicMaterial::Create(const JSON::json& materialData)
 	{
 		specularImageFile = materialData["specularImageFile"];
 	}
-	return new BasicMaterial(isAlpha, (String)materialData["imageFile"], normalImageFile, specularImageFile, isNormal, Color((float)materialData["color"]["r"], (float)materialData["color"]["g"], (float)materialData["color"]["b"], (float)materialData["color"]["a"]), isLit, specularIntensity, specularPower, reflectivity, refractionConstant, refractivity, affectedBySky);
+	return new ParticlesMaterial(isAlpha, (String)materialData["imageFile"], normalImageFile, specularImageFile, isNormal, isLit, specularIntensity, specularPower, reflectivity, refractionConstant, refractivity, affectedBySky);
 }
 
-ID3D11ShaderResourceView* BasicMaterial::getPreview()
+ID3D11ShaderResourceView* ParticlesMaterial::getPreview()
 {
 	return m_DiffuseImageFile->getTexture()->getTextureResourceView();
 }
 
-void BasicMaterial::bind()
+void ParticlesMaterial::bind()
 {
-	m_BasicShader->set(m_DiffuseImageFile->getTexture().get(), DIFFUSE_PS_CPP);
+	m_ParticlesShader->set(m_DiffuseImageFile->getTexture().get(), DIFFUSE_PS_CPP);
 	if (m_IsNormal)
 	{
-		m_BasicShader->set(m_NormalImageFile->getTexture().get(), NORMAL_PS_CPP);
+		m_ParticlesShader->set(m_NormalImageFile->getTexture().get(), NORMAL_PS_CPP);
 	}
-	m_BasicShader->set(m_SpecularImageFile->getTexture().get(), SPECULAR_PS_CPP);
-	Matrix currentModelMatrix = RenderSystem::GetSingleton()->getCurrentMatrix();
-	setVSConstantBuffer(VSDiffuseConstantBuffer(currentModelMatrix));
+	m_ParticlesShader->set(m_SpecularImageFile->getTexture().get(), SPECULAR_PS_CPP);
 
-	PSDiffuseConstantBufferMaterial objectPSCB;
+	PSParticlesConstantBufferMaterial objectPSCB;
 	objectPSCB.affectedBySky = m_IsAffectedBySky;
-	objectPSCB.color = m_Color;
 	objectPSCB.hasNormalMap = m_IsNormal;
 	objectPSCB.isLit = m_IsLit;
 	objectPSCB.reflectivity = m_Reflectivity;
@@ -147,16 +138,12 @@ void BasicMaterial::bind()
 	setPSConstantBuffer(objectPSCB);
 }
 
-JSON::json BasicMaterial::getJSON() const
+JSON::json ParticlesMaterial::getJSON() const
 {
 	JSON::json& j = Material::getJSON();
 
 	j["imageFile"] = m_DiffuseImageFile->getPath().string();
 
-	j["color"]["r"] = m_Color.x;
-	j["color"]["g"] = m_Color.y;
-	j["color"]["b"] = m_Color.z;
-	j["color"]["a"] = m_Color.w;
 	j["isLit"] = m_IsLit;
 	j["specularImageFile"] = m_SpecularImageFile->getPath().generic_string();
 	if (m_IsLit)
@@ -178,23 +165,23 @@ JSON::json BasicMaterial::getJSON() const
 	return j;
 }
 
-void BasicMaterial::setDiffuseTexture(ImageResourceFile* image)
+void ParticlesMaterial::setDiffuseTexture(ImageResourceFile* image)
 {
 	m_DiffuseImageFile = image;
 }
 
-void BasicMaterial::setNormalTexture(ImageResourceFile* image)
+void ParticlesMaterial::setNormalTexture(ImageResourceFile* image)
 {
 	m_IsNormal = true;
 	m_NormalImageFile = image;
 }
 
-void BasicMaterial::setSpecularTexture(ImageResourceFile* image)
+void ParticlesMaterial::setSpecularTexture(ImageResourceFile* image)
 {
 	m_SpecularImageFile = image;
 }
 
-void BasicMaterial::removeNormal()
+void ParticlesMaterial::removeNormal()
 {
 	m_IsNormal = false;
 	m_NormalImageFile = nullptr;
@@ -203,7 +190,7 @@ void BasicMaterial::removeNormal()
 #ifdef ROOTEX_EDITOR
 #include "imgui.h"
 #include "utility/imgui_helpers.h"
-void BasicMaterial::draw()
+void ParticlesMaterial::draw()
 {
 	Material::draw();
 
@@ -226,7 +213,6 @@ void BasicMaterial::draw()
 		setSpecularTexture(ResourceLoader::CreateImageResourceFile("rootex/assets/white.png"));
 	}
 
-	ImGui::ColorEdit4("Color", &m_Color.x);
 	ImGui::Checkbox("Affected by light", &m_IsLit);
 	ImGui::DragFloat("##Specular Intensity", &m_SpecularIntensity, 0.01f, 0.0f, 1.0f);
 	ImGui::SameLine();

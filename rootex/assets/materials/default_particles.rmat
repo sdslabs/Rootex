@@ -13,5 +13,5 @@
     "refractivity": 0.7799999713897705,
     "specularIntensity": 2.0,
     "specularPower": 30.0,
-    "type": "BasicMaterial"
+    "type": "ParticlesMaterial"
 }

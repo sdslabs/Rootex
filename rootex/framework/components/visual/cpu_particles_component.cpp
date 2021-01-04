@@ -37,26 +37,30 @@ Component* CPUParticlesComponent::Create(const JSON::json& componentData)
 {
 	CPUParticlesComponent* particles = new CPUParticlesComponent(
 	    componentData.value("poolSize", 1000),
-		componentData.value("resFile", "rootex/assets/cube.obj"),
+		ResourceLoader::CreateModelResourceFile(componentData.value("resFile", "rootex/assets/cube.obj")),
 	    componentData.value("materialPath", "rootex/assets/materials/default_particles.rmat"),
 	    componentData.value("particleTemplate", ParticleTemplate()), 
 		componentData.value("isVisible", true),
 	    componentData.value("renderPass", (unsigned int)RenderPass::Basic),
 	    (EmitMode)componentData.value("emitMode", (int)EmitMode::Point),
+	    componentData.value("emitRate", 1),
 	    componentData.value("emitterDimensions", Vector3 { 1.0f, 1.0f, 1.0f }));
 	return particles;
 }
 
-CPUParticlesComponent::CPUParticlesComponent(size_t poolSize, const String& particleModelPath, const String& materialPath, const ParticleTemplate& particleTemplate, bool visibility, unsigned int renderPass, EmitMode emitMode, const Vector3& emitterDimensions)
-    : ModelComponent(renderPass, ResourceLoader::CreateModelResourceFile(particleModelPath), {}, visibility, {})
-    , m_BasicMaterial(std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetMaterial(materialPath)))
+CPUParticlesComponent::CPUParticlesComponent(size_t poolSize, ModelResourceFile* particleModelFile, const String& materialPath, const ParticleTemplate& particleTemplate, bool visibility, unsigned int renderPass, EmitMode emitMode, int emitRate, const Vector3& emitterDimensions)
+    : RenderableComponent(renderPass, {}, visibility, {})
+    , m_ParticlesMaterial(std::dynamic_pointer_cast<ParticlesMaterial>(MaterialLibrary::GetMaterial(materialPath)))
     , m_ParticleTemplate(particleTemplate)
     , m_CurrentEmitMode(emitMode)
     , m_EmitterDimensions(emitterDimensions)
+	, m_EmitRate(emitRate)
 {
-	m_AllowedMaterials = { BasicMaterial::s_MaterialName };
+	m_InstanceBufferData.resize(MAX_PARTICLES);
+	m_InstanceBuffer.reset(new VertexBuffer(m_InstanceBufferData));
+	m_AllowedMaterials = { ParticlesMaterial::s_MaterialName };
+	setVisualModel(particleModelFile, {});
 	expandPool(poolSize);
-	m_EmitRate = 0;
 }
 
 bool CPUParticlesComponent::setupData()
@@ -74,33 +78,45 @@ bool CPUParticlesComponent::preRender(float deltaMilliseconds)
 {
 	ZoneScoped;
 
-	ModelComponent::preRender(deltaMilliseconds);
+	RenderableComponent::preRender(deltaMilliseconds);
 
 	int i = m_EmitRate;
-	while (i >= 0)
+	while (i > 0)
 	{
 		emit(m_ParticleTemplate);
 		i--;
 	}
-
 	{
 		ZoneNamedN(particleInterpolation, "Particle Interpolation", true);
-		
-		float delta = deltaMilliseconds * 1e-3;
-		for (auto& particle : m_ParticlePool)
-		{
 
-			if (particle.lifeRemaining <= 0.0f)
-			{
-				particle.isActive = false;
-				continue;
-			}
-			if (!particle.isActive)
-			{
-				continue;
-			}
+		const float delta = deltaMilliseconds * 1e-3;
+		m_LiveParticlesCount = 0;
+		for (int i = 0; i < m_ParticlePool.size(); i++)
+		{
+			Particle& particle = m_ParticlePool[i];
 			particle.lifeRemaining -= delta;
-			particle.transform = Matrix::CreateTranslation(particle.velocity * delta) * Matrix::CreateFromYawPitchRoll(particle.angularVelocity.x * delta, particle.angularVelocity.y * delta, particle.angularVelocity.z * delta) * particle.transform;
+			m_InstanceBufferData[i].transform = Matrix::CreateFromYawPitchRoll(particle.angularVelocity.x * delta, particle.angularVelocity.y * delta, particle.angularVelocity.z * delta) * Matrix::CreateTranslation(particle.velocity * delta) * m_InstanceBufferData[i].transform;
+			m_InstanceBufferData[i].inverseTransposeTransform = m_InstanceBufferData[i].transform.Invert().Transpose();
+			float life = m_ParticlePool[i].lifeRemaining / m_ParticlePool[i].lifeTime;
+			float size = m_ParticlePool[i].sizeBegin * (life) + m_ParticlePool[i].sizeEnd * (1.0f - life);
+			m_InstanceBufferData[i].color = Color::Lerp(particle.colorEnd, particle.colorBegin, life);
+			if (particle.lifeRemaining > 0.0f)
+			{
+				m_LiveParticlesCount++;
+			}
+		}
+		if (m_InstanceBufferLiveData.size() < m_LiveParticlesCount)
+		{
+			m_InstanceBufferLiveData.resize(m_LiveParticlesCount);
+		}
+		int liveCount = 0;
+		for (int i = 0; i < m_ParticlePool.size(); i++)
+		{
+			if (m_ParticlePool[i].lifeRemaining > 0.0f)
+			{
+				m_InstanceBufferLiveData[liveCount] = m_InstanceBufferData[i];
+				liveCount++;
+			}
 		}
 	}
 	return true;
@@ -110,33 +126,18 @@ void CPUParticlesComponent::render()
 {
 	ZoneScoped;
 
-	for (auto& particle : m_ParticlePool)
+	RenderSystem::GetSingleton()->getRenderer()->bind(m_ParticlesMaterial.get());
+	m_InstanceBuffer->setData(m_InstanceBufferLiveData);
+	for (auto& [material, meshes] : m_ParticleModelFile->getMeshes())
 	{
-		if (!particle.isActive)
+		for (auto& mesh : meshes)
 		{
-			continue;
+			RenderSystem::GetSingleton()->getRenderer()->drawInstanced(mesh.m_VertexBuffer.get(), mesh.m_IndexBuffer.get(), m_InstanceBuffer.get(), m_LiveParticlesCount);
 		}
-
-		float life = particle.lifeRemaining / particle.lifeTime;
-		float size = particle.sizeBegin * (life) + particle.sizeEnd * (1.0f - life);
-		
-		RenderSystem::GetSingleton()->pushMatrixOverride(Matrix::CreateScale(size) * particle.transform);
-		
-		m_BasicMaterial->setColor(Color::Lerp(particle.colorEnd, particle.colorBegin, life));
-		RenderSystem::GetSingleton()->getRenderer()->bind(m_BasicMaterial.get());
-		
-		for (auto& [material, meshes] : m_ModelResourceFile->getMeshes())
-		{
-			for (auto& mesh : meshes)
-			{
-				RenderSystem::GetSingleton()->getRenderer()->draw(mesh.m_VertexBuffer.get(), mesh.m_IndexBuffer.get());
-			}
-		}
-		RenderSystem::GetSingleton()->popMatrix();
 	}
 }
 
-void CPUParticlesComponent::setMaterial(Ref<BasicMaterial> particlesMaterial)
+void CPUParticlesComponent::setMaterial(Ref<ParticlesMaterial> particlesMaterial)
 {
 	if (!particlesMaterial)
 	{
@@ -144,7 +145,7 @@ void CPUParticlesComponent::setMaterial(Ref<BasicMaterial> particlesMaterial)
 		return;
 	}
 
-	m_BasicMaterial = particlesMaterial;
+	m_ParticlesMaterial = particlesMaterial;
 }
 
 void CPUParticlesComponent::emit(const ParticleTemplate& particleTemplate)
@@ -171,7 +172,7 @@ void CPUParticlesComponent::emit(const ParticleTemplate& particleTemplate)
 		break;
 	}
 
-	particle.transform = initialTransform * m_TransformComponent->getAbsoluteTransform();
+	m_InstanceBufferData[m_PoolIndex].transform = initialTransform * m_TransformComponent->getAbsoluteTransform();
 
 	particle.velocity = particleTemplate.velocity;
 	particle.velocity.x += particleTemplate.velocityVariation * (Random::Float() - 0.5f);
@@ -196,18 +197,46 @@ void CPUParticlesComponent::expandPool(const size_t& poolSize)
 {
 	if (poolSize < 1)
 	{
+		WARN("Cancelled attempt to add too little particles in: " + m_Owner->getFullName());
+		return;
+	}
+	if (poolSize > MAX_PARTICLES)
+	{
+		WARN("Cancelled attempt to add too many particles in: " + m_Owner->getFullName());
 		return;
 	}
 
 	m_ParticlePool.resize(poolSize);
+	m_InstanceBufferData.resize(poolSize);
 	m_PoolIndex = poolSize - 1;
+}
+
+void CPUParticlesComponent::setVisualModel(ModelResourceFile* newModel, const HashMap<String, String>& materialOverrides)
+{
+	if (!newModel)
+	{
+		return;
+	}
+
+	m_ParticleModelFile = newModel;
+	m_MaterialOverrides.clear();
+	for (auto& [material, meshes] : m_ParticleModelFile->getMeshes())
+	{
+		setMaterialOverride(material, material);
+	}
+	for (auto& [oldMaterial, newMaterial] : materialOverrides)
+	{
+		MaterialLibrary::CreateNewMaterialFile(newMaterial, MaterialLibrary::GetMaterial(oldMaterial)->getTypeName());
+		setMaterialOverride(MaterialLibrary::GetMaterial(oldMaterial), MaterialLibrary::GetMaterial(newMaterial));
+	}
 }
 
 JSON::json CPUParticlesComponent::getJSON() const
 {
-	JSON::json& j = ModelComponent::getJSON();
+	JSON::json& j = RenderableComponent::getJSON();
 
-	j["materialPath"] = m_BasicMaterial->getFileName();
+	j["resFile"] = m_ParticleModelFile->getPath().string();
+	j["materialPath"] = m_ParticlesMaterial->getFileName();
 	j["poolSize"] = m_ParticlePool.size();
 	j["particleTemplate"] = m_ParticleTemplate;
 	j["emitMode"] = (int)m_CurrentEmitMode;
@@ -224,18 +253,44 @@ JSON::json CPUParticlesComponent::getJSON() const
 void CPUParticlesComponent::draw()
 {
 	ImGui::Text("Model");
-	ModelComponent::draw();
+
+	ImGui::Checkbox("Visible", &m_IsVisible);
+
+	String filePath = m_ParticleModelFile->getPath().generic_string();
+	ImGui::Text("%s", filePath.c_str());
+	ImGui::SameLine();
+	if (ImGui::Button("Model"))
+	{
+		EventManager::GetSingleton()->call("OpenScript", "EditorOpenFile", m_ParticleModelFile->getPath().string());
+	}
+	ImGui::SameLine();
+	if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Model File"))
+	{
+		igfd::ImGuiFileDialog::Instance()->OpenModal("ChooseCPUParticlesComponentModel", "Choose Model File", SupportedFiles.at(ResourceFile::Type::Model), "game/assets/");
+	}
+
+	if (igfd::ImGuiFileDialog::Instance()->FileDialog("ChooseCPUParticlesComponentModel"))
+	{
+		if (igfd::ImGuiFileDialog::Instance()->IsOk)
+		{
+			FilePath filePath = OS::GetRootRelativePath(igfd::ImGuiFileDialog::Instance()->GetFilePathName());
+			setVisualModel(ResourceLoader::CreateModelResourceFile(filePath.generic_string()), {});
+		}
+		igfd::ImGuiFileDialog::Instance()->CloseDialog("ChooseCPUParticlesComponentModel");
+	}
+
+	RenderableComponent::draw();
 
 	ImGui::Separator();
 
 	ImGui::Text("%s", "Particles Material");
-	ImGui::Image(m_BasicMaterial->getPreview(), { 50, 50 });
+	ImGui::Image(m_ParticlesMaterial->getPreview(), { 50, 50 });
 	ImGui::SameLine();
 	ImGui::BeginGroup();
-	ImGui::Text("%s", m_BasicMaterial->getFileName().c_str());
+	ImGui::Text("%s", m_ParticlesMaterial->getFileName().c_str());
 	if (ImGui::Button(ICON_ROOTEX_EXTERNAL_LINK "##Particles Material"))
 	{
-		EventManager::GetSingleton()->call("OpenModel", "EditorOpenFile", m_BasicMaterial->getFileName());
+		EventManager::GetSingleton()->call("OpenModel", "EditorOpenFile", m_ParticlesMaterial->getFileName());
 	}
 	ImGui::SameLine();
 	if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Particles Material"))
@@ -248,14 +303,14 @@ void CPUParticlesComponent::draw()
 		if (igfd::ImGuiFileDialog::Instance()->IsOk)
 		{
 			String filePathName = OS::GetRootRelativePath(igfd::ImGuiFileDialog::Instance()->GetFilePathName()).generic_string();
-			setMaterial(std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetMaterial(filePathName)));
+			setMaterial(std::dynamic_pointer_cast<ParticlesMaterial>(MaterialLibrary::GetMaterial(filePathName)));
 		}
 		igfd::ImGuiFileDialog::Instance()->CloseDialog("Particles Material");
 	}
 	ImGui::SameLine();
 	if (ImGui::Button((ICON_ROOTEX_REFRESH "##Particles Material")))
 	{
-		setMaterial(std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetDefaultMaterial()));
+		setMaterial(std::dynamic_pointer_cast<ParticlesMaterial>(MaterialLibrary::GetDefaultParticlesMaterial()));
 	}
 	ImGui::EndGroup();
 
@@ -274,7 +329,7 @@ void CPUParticlesComponent::draw()
 	{
 		expandPool(poolSize);
 	}
-	ImGui::DragInt("Emit Rate", &m_EmitRate);
+	ImGui::DragInt("Emit Rate (per frame)", &m_EmitRate);
 	
 	ImGui::Separator();
 	
