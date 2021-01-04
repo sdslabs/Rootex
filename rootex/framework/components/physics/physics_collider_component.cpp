@@ -12,6 +12,8 @@ PhysicsColliderComponent::PhysicsColliderComponent(const String& matName, float 
     , m_Gravity(gravity)
     , m_IsMoveable(isMoveable)
     , m_IsGeneratesHitEvents(generatesHitEvents)
+    , m_DependencyOnScriptComponent(this)
+    , m_DependencyOnTransformComponent(this)
 {
 	m_CollisionShape = collisionShape;
 	m_TransformComponent = nullptr;
@@ -35,55 +37,37 @@ PhysicsColliderComponent::PhysicsColliderComponent(const String& matName, float 
 	m_LocalInertia = btVector3(0.0f, 0.0f, 0.0f);
 }
 
-PhysicsColliderComponent::~PhysicsColliderComponent()
+bool PhysicsColliderComponent::setupData()
 {
-}
+	btRigidBody::btRigidBodyConstructionInfo rbInfo(m_Mass, this, m_CollisionShape.get(), m_LocalInertia);
 
-bool PhysicsColliderComponent::setup()
-{
-	bool status = true;
-	if (m_Owner)
-	{
-		m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
-		if (!m_TransformComponent)
-		{
-			ERR("TransformComponent not found on entity with PhysicsComponent: " + m_Owner->getFullName());
-			status = false;
-		}
-		else
-		{
-			if (!m_Body)
-			{
-				btRigidBody::btRigidBodyConstructionInfo rbInfo(m_Mass, this, m_CollisionShape.get(), m_LocalInertia);
+	/// Set up the materal properties.
+	rbInfo.m_restitution = m_Material.m_Restitution;
+	rbInfo.m_friction = m_Material.m_Friction;
 
-				/// Set up the materal properties.
-				rbInfo.m_restitution = m_Material.m_Restitution;
-				rbInfo.m_friction = m_Material.m_Friction;
+	m_Body.reset(new btRigidBody(rbInfo));
 
-				m_Body.reset(new btRigidBody(rbInfo));
+	/// Adds a new rigid body to physics system.
+	PhysicsSystem::GetSingleton()->addRigidBody(m_Body.get());
+	setGravity(m_Gravity);
+	setMoveable(m_IsMoveable);
 
-				/// Adds a new rigid body to physics system.
-				PhysicsSystem::GetSingleton()->addRigidBody(m_Body.get());
-				setGravity(m_Gravity);
-				setMoveable(m_IsMoveable);
+	m_Body->setUserPointer(this);
 
-				m_Body->setUserPointer(this);
-			}
-			
-			m_ScriptComponent = getOwner()->getComponent<ScriptComponent>().get();
-			if (m_IsGeneratesHitEvents && !m_ScriptComponent)
-			{
-				WARN("ScriptComponent not found on entity with a PhysicsComponent that generates hit events: " + m_Owner->getFullName());
-			}
-		}
-	}
-
-	return status;
+	return true;
 }
 
 void PhysicsColliderComponent::onRemove()
 {
 	PhysicsSystem::GetSingleton()->removeRigidBody(m_Body.get());
+}
+
+void PhysicsColliderComponent::onHit(btPersistentManifold* manifold, PhysicsColliderComponent* other)
+{
+	if (m_ScriptComponent)
+	{
+		m_ScriptComponent->onHit(manifold, other);
+	}
 }
 
 void PhysicsColliderComponent::getWorldTransform(btTransform& worldTrans) const
@@ -146,10 +130,7 @@ JSON::json PhysicsColliderComponent::getJSON() const
 {
 	JSON::json j;
 
-	j["gravity"]["x"] = m_Gravity.x;
-	j["gravity"]["y"] = m_Gravity.y;
-	j["gravity"]["z"] = m_Gravity.z;
-	
+	j["gravity"] = m_Gravity;
 	j["isMoveable"] = m_IsMoveable;
 	j["isGeneratesHitEvents"] = m_IsGeneratesHitEvents;
 
@@ -292,7 +273,7 @@ void PhysicsColliderComponent::draw()
 	{
 		if (m_IsGeneratesHitEvents)
 		{
-			setup();
+			setupData();
 		}
 	}
 

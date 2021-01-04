@@ -7,6 +7,7 @@
 #include "renderer/material_library.h"
 #include "components/visual/sky_component.h"
 #include "application.h"
+#include "scene_loader.h"
 
 RenderSystem* RenderSystem::GetSingleton()
 {
@@ -23,9 +24,9 @@ RenderSystem::RenderSystem()
     , m_PSPerLevelConstantBuffer(nullptr)
     , m_IsEditorRenderPassEnabled(false)
 {
-	BIND_EVENT_MEMBER_FUNCTION("OpenedLevel", onOpenedLevel);
+	BIND_EVENT_MEMBER_FUNCTION("OpenedScene", onOpenedScene);
 	
-	m_Camera = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<CameraComponent>().get();
+	m_Camera = SceneLoader::GetSingleton()->getRootScene()->getEntity()->getComponent<CameraComponent>();
 	m_TransformationStack.push_back(Matrix::Identity);
 	setProjectionConstantBuffers();
 	
@@ -52,28 +53,42 @@ void RenderSystem::recoverLostDevice()
 	ERR("Fatal error: D3D Device lost");
 }
 
-void RenderSystem::setConfig(const JSON::json& configData, bool openInEditor)
+void RenderSystem::setConfig(const SceneSettings& sceneSettings)
 {
-	if (configData.find("camera") != configData.end())
+	Scene* cameraScene = SceneLoader::GetSingleton()->getRootScene()->findScene(sceneSettings.camera);
+	if (cameraScene)
 	{
-		Ref<Entity> cameraEntity = EntityFactory::GetSingleton()->findEntity(configData["camera"]);
-		if (cameraEntity)
-		{
-			setCamera(cameraEntity->getComponent<CameraComponent>().get());
-			return;
-		}
+		setCamera(cameraScene->getEntity()->getComponent<CameraComponent>());
 	}
 }
 
-void RenderSystem::calculateTransforms(HierarchyComponent* hierarchyComponent)
+void RenderSystem::calculateTransforms(Scene* scene)
 {
-	pushMatrix(hierarchyComponent->getOwner()->getComponent<TransformComponent>()->getLocalTransform());
-	for (auto&& child : hierarchyComponent->getChildren())
+	if (Entity* entity = scene->getEntity())
 	{
-		child->getOwner()->getComponent<TransformComponent>()->m_ParentAbsoluteTransform = getCurrentMatrix();
-		calculateTransforms(child);
+		if (TransformComponent* transform = entity->getComponent<TransformComponent>())
+		{
+			pushMatrix(entity->getComponent<TransformComponent>()->getLocalTransform());
+		}
+		else
+		{
+			pushMatrix(Matrix::Identity);
+		}
+
+		for (auto& child : scene->getChildren())
+		{
+			if (Entity* childEntity = child->getEntity())
+			{
+				if (TransformComponent* childTransform = childEntity->getComponent<TransformComponent>())
+				{
+					childTransform->setParentAbsoluteTransform(getCurrentMatrix());
+				}
+			}
+
+			calculateTransforms(child.get());
+		}
+		popMatrix();
 	}
-	popMatrix();
 }
 
 void RenderSystem::renderPassRender(float deltaMilliseconds, RenderPass renderPass)
@@ -90,6 +105,21 @@ void RenderSystem::renderPassRender(float deltaMilliseconds, RenderPass renderPa
 				mc->render();
 			}
 			mc->postRender();
+		}
+	}
+
+	AnimatedModelComponent* amc = nullptr;
+	for (auto& component : s_Components[AnimatedModelComponent::s_ID])
+	{
+		amc = (AnimatedModelComponent*)component;
+		if (amc->getRenderPass() & (unsigned int)renderPass)
+		{
+			amc->preRender(deltaMilliseconds);
+			if (amc->isVisible())
+			{
+				amc->render();
+			}
+			amc->postRender();
 		}
 	}
 }
@@ -122,9 +152,7 @@ void RenderSystem::update(float deltaMilliseconds)
 	}
 	{
 		ZoneNamedN(absoluteTransform, "Absolute Transformations", true);
-		// Pre-calculate absolute transforms
-		Ref<HierarchyComponent> rootHC = HierarchySystem::GetSingleton()->getRootEntity()->getComponent<HierarchyComponent>();
-		calculateTransforms(rootHC.get());
+		calculateTransforms(SceneLoader::GetSingleton()->getRootScene());
 	}
 	{
 		ZoneNamedN(stateSet, "Render State Reset", true);
@@ -471,16 +499,17 @@ void RenderSystem::perFramePSCBBinds(const Color& fogColor)
 	Material::SetPSConstantBuffer(perFrame, m_PSPerFrameConstantBuffer, PER_FRAME_PS_CPP);
 }
 
-void RenderSystem::perLevelPSCBBinds()
+void RenderSystem::perScenePSCBBinds()
 {
-	PerLevelPSCB perLevel;
-	perLevel.staticLights = LightSystem::GetSingleton()->getStaticPointLights();
-	Material::SetPSConstantBuffer(perLevel, m_PSPerLevelConstantBuffer, PER_LEVEL_PS_CPP);
+	calculateTransforms(SceneLoader::GetSingleton()->getRootScene());
+	PerLevelPSCB perScene;
+	perScene.staticLights = LightSystem::GetSingleton()->getStaticPointLights();
+	Material::SetPSConstantBuffer(perScene, m_PSPerLevelConstantBuffer, PER_SCENE_PS_CPP);
 }
 
-void RenderSystem::updatePerLevelBinds()
+void RenderSystem::updatePerSceneBinds()
 {
-	perLevelPSCBBinds();
+	perScenePSCBBinds();
 }
 
 void RenderSystem::enableLineRenderMode()
@@ -504,7 +533,10 @@ void RenderSystem::setCamera(CameraComponent* camera)
 
 void RenderSystem::restoreCamera()
 {
-	setCamera(HierarchySystem::GetSingleton()->getRootEntity()->getComponent<CameraComponent>().get());
+	if (SceneLoader::GetSingleton()->getRootScene())
+	{
+		setCamera(SceneLoader::GetSingleton()->getRootScene()->getEntity()->getComponent<CameraComponent>());
+	}
 }
 
 const Matrix& RenderSystem::getCurrentMatrix() const
@@ -512,9 +544,9 @@ const Matrix& RenderSystem::getCurrentMatrix() const
 	return m_TransformationStack.back();
 }
 
-Variant RenderSystem::onOpenedLevel(const Event* event)
+Variant RenderSystem::onOpenedScene(const Event* event)
 {
-	updatePerLevelBinds();
+	updatePerSceneBinds();
 	return true;
 }
 
@@ -545,7 +577,7 @@ void RenderSystem::draw()
 
 	if (ImGui::Button("Update Static Lights")) 
 	{
-		updatePerLevelBinds();
+		updatePerSceneBinds();
 	}
 }
 #endif

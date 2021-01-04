@@ -6,13 +6,8 @@
 
 Component* UIComponent::Create(const JSON::json& componentData)
 {
-	UIComponent* ui = new UIComponent(componentData["filePath"]);
+	UIComponent* ui = new UIComponent(componentData.value("filePath", "rootex/assets/rml/demo.rml"));
 	return ui;
-}
-
-Component* UIComponent::CreateDefault()
-{
-	return new UIComponent("rootex/assets/rml/demo.rml");
 }
 
 UIComponent::UIComponent(const String& path)
@@ -27,6 +22,7 @@ UIComponent::~UIComponent()
 	if (m_Document)
 	{
 		UISystem::GetSingleton()->unloadDocument(m_Document);
+		UISystem::GetSingleton()->getContext()->Update();
 	}
 }
 
@@ -37,8 +33,15 @@ void UIComponent::setDocument(const String& path)
 		UISystem::GetSingleton()->unloadDocument(m_Document);
 	}
 
-	m_FilePath = path;
-	m_Document = UISystem::GetSingleton()->loadDocument(m_FilePath);
+	try
+	{
+		m_Document = UISystem::GetSingleton()->loadDocument(m_FilePath);
+		m_FilePath = path;
+	}
+    catch(std::exception e)
+	{
+		WARN(e.what());
+	}
 }
 
 JSON::json UIComponent::getJSON() const

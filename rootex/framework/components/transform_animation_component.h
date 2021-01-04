@@ -1,11 +1,12 @@
 #pragma once
 
 #include "component.h"
-
-class TransformComponent;
+#include "components/transform_component.h"
 
 class TransformAnimationComponent : public Component
 {
+	DEPENDS_ON(TransformComponent);
+
 public:
 	struct Keyframe
 	{
@@ -31,9 +32,8 @@ public:
 
 private:
 	static Component* Create(const JSON::json& componentData);
-	static Component* CreateDefault();
 
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 	Vector<Keyframe> m_Keyframes;
 	bool m_IsPlayOnStart;
@@ -43,8 +43,6 @@ private:
 	bool m_IsPlaying;
 	float m_CurrentTimePosition;
 	float m_TimeDirection;
-
-	TransformComponent* m_TransformComponent;
 
 	TransformAnimationComponent(const Vector<Keyframe> keyframes, bool isPlayOnStart, AnimationMode animationMode, TransitionType transition);
 	TransformAnimationComponent(TransformComponent&) = delete;
@@ -57,7 +55,7 @@ private:
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::TransformAnimationComponent;
 
-	virtual bool setup() override;
+	virtual bool setupData() override;
 
 	void pushKeyframe(const Keyframe& keyFrame);
 	void popKeyframe(int count);

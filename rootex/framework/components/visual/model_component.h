@@ -1,64 +1,41 @@
 #pragma once
 
 #include "component.h"
-#include "components/hierarchy_component.h"
 #include "components/transform_component.h"
+#include "core/resource_files/model_resource_file.h"
 #include "renderer/material.h"
 #include "renderer/mesh.h"
-#include "core/resource_files/model_resource_file.h"
+#include "scene.h"
+#include "renderable_component.h"
 
-class ModelComponent : public Component
+class ModelComponent : public RenderableComponent
 {
 	static Component* Create(const JSON::json& componentData);
-	static Component* CreateDefault();
 
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 protected:
 	ModelResourceFile* m_ModelResourceFile;
-	bool m_IsVisible;
-	int m_RenderPass;
 
-	HashMap<Ref<Material>, Ref<Material>> m_MaterialOverrides;
-	Vector<EntityID> m_AffectingStaticLightEntityIDs;
-	Vector<int> m_AffectingStaticLights;
-
-	Microsoft::WRL::ComPtr<ID3D11Buffer> m_PerModelCB;
-
-	HierarchyComponent* m_HierarchyComponent;
-	TransformComponent* m_TransformComponent;
-
-	ModelComponent(unsigned int renderPass, ModelResourceFile* resFile, const HashMap<String, String>& materialOverrides, bool isVisible, const Vector<EntityID>& affectingStaticLightIDs);
+	ModelComponent(unsigned int renderPass, ModelResourceFile* resFile, const HashMap<String, String>& materialOverrides, bool isVisible, const Vector<SceneID>& affectingStaticLightIDs);
 	ModelComponent(ModelComponent&) = delete;
 	virtual ~ModelComponent() = default;
 
 	void assignBoundingBox();
 	void assignOverrides(ModelResourceFile* newModel, const HashMap<String, String>& materialOverrides);
 
-#ifdef ROOTEX_EDITOR
-	/// Empty Vector means all materials are allowed
-	Vector<String> m_AllowedMaterials;
-#endif // ROOTEX_EDITOR
 public:
 	static void RegisterAPI(sol::table& rootex);
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::ModelComponent;
 
-	virtual bool setup() override;
-	virtual bool setupEntities() override;
+	static bool CompareMaterials(const Pair<Ref<Material>, Vector<Mesh>>& a, const Pair<Ref<Material>, Vector<Mesh>>& b);
+	virtual bool setupData() override;
 
-	virtual bool preRender(float deltaMilliseconds);
-	virtual bool isVisible() const;
-	virtual void render();
-	virtual void postRender();
+	virtual bool preRender(float deltaMilliseconds) override;
+	virtual void render() override;
 
-	bool addAffectingStaticLight(EntityID ID);
-	void removeAffectingStaticLight(EntityID ID);
-	
 	void setVisualModel(ModelResourceFile* newModel, const HashMap<String, String>& materialOverrides);
-	void setIsVisible(bool enabled);
-	void setMaterialOverride(Ref<Material> oldMaterial, Ref<Material> newMaterial);
-	
-	unsigned int getRenderPass() const { return m_RenderPass; }
+
 	const Vector<Pair<Ref<Material>, Vector<Mesh>>>& getMeshes() const { return m_ModelResourceFile->getMeshes(); }
 	ModelResourceFile* getModelResourceFile() const { return m_ModelResourceFile; }
 

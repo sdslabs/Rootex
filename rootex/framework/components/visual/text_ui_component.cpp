@@ -6,33 +6,13 @@
 Component* TextUIComponent::Create(const JSON::json& componentData)
 {
 	TextUIComponent* tV2DC = new TextUIComponent(
-	    ResourceLoader::CreateFontResourceFile(
-	        componentData["fontResource"]),
-	    componentData["text"],
-	    { 
-			componentData["color"]["r"],
-	        componentData["color"]["g"],
-	        componentData["color"]["b"],
-	        componentData["color"]["a"] 
-		},
-	    (Mode)(int)componentData["mode"],
-	    {
-			componentData["origin"]["x"],
-	        componentData["origin"]["y"] 
-		},
-	    componentData["isVisible"]);
+	    ResourceLoader::CreateFontResourceFile(componentData.value("fontResource", "game/assets/fonts/noto_sans_50_regular.spritefont")),
+	    componentData.value("text", "Hello Rootex!"),
+	    componentData.value("color", (Color)ColorPresets::White),
+	    (Mode)(int)componentData.value("mode", (int)Mode::None),
+	    componentData.value("origin", Vector2::Zero),
+	    componentData.value("isVisible", true));
 	return tV2DC;
-}
-
-Component* TextUIComponent::CreateDefault()
-{
-	return new TextUIComponent(
-	    ResourceLoader::CreateFontResourceFile("game/assets/fonts/noto_sans_50_regular.spritefont"),
-	    "Hello World!",
-	    { 1.0f, 1.0f, 1.0f, 1.0f },
-	    Mode::None,
-	    { 0.0f, 0.0f },
-	    true);
 }
 
 TextUIComponent::TextUIComponent(FontResourceFile* font, const String& text, const Color& color, const Mode& mode, const Vector2& origin, const bool& isVisible)
@@ -80,17 +60,10 @@ JSON::json TextUIComponent::getJSON() const
 {
 	JSON::json j = RenderUIComponent::getJSON();
 
-	j["fontResource"] = m_FontFile->getPath().string();
+	j["fontResource"] = m_FontFile->getPath().generic_string();
 	j["text"] = m_Text;
-
-	j["color"]["r"] = m_Color.x;
-	j["color"]["g"] = m_Color.y;
-	j["color"]["b"] = m_Color.z;
-	j["color"]["a"] = m_Color.w;
-
-	j["origin"]["x"] = m_Origin.x;
-	j["origin"]["y"] = m_Origin.y;
-
+	j["color"] = m_Color;
+	j["origin"] = m_Origin;
 	j["mode"] = (int)m_Mode;
 
 	return j;

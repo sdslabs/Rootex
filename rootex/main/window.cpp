@@ -120,12 +120,10 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 
 LRESULT CALLBACK Window::WindowsProc(HWND windowHandler, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-#ifdef ROOTEX_EDITOR
 	if (ImGui_ImplWin32_WndProcHandler(windowHandler, msg, wParam, lParam))
 	{
 		return true;
 	}
-#endif // ROOTEX_EDITOR
 	switch (msg)
 	{
 	case WM_CLOSE:
@@ -219,7 +217,7 @@ Variant Window::quitEditorWindow(const Event* event)
 
 Variant Window::windowResized(const Event* event)
 {
-	const Vector2& newSize = Extract(Vector2, event->getData());
+	const Vector2& newSize = Extract<Vector2>(event->getData());
 	setWindowSize(newSize);
 	applyDefaultViewport();
 	return true;

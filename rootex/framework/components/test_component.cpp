@@ -6,12 +6,6 @@ Component* TestComponent::Create(const JSON::json& componentData)
 	return component;
 }
 
-Component* TestComponent::CreateDefault()
-{
-	TestComponent* component = new TestComponent();
-	return component;
-}
-
 JSON::json TestComponent::getJSON() const
 {
 	return JSON::json::object();

@@ -2,8 +2,9 @@
 
 #include "event_manager.h"
 #include "framework/component.h"
-#include "framework/components/hierarchy_component.h"
 #include "framework/system.h"
+
+#include "scene.h"
 
 void Entity::RegisterAPI(sol::table& rootex)
 {
@@ -11,9 +12,7 @@ void Entity::RegisterAPI(sol::table& rootex)
 	entity["removeComponent"] = &Entity::removeComponent;
 	entity["destroy"] = &Entity::destroy;
 	entity["hasComponent"] = &Entity::hasComponent;
-	entity["getID"] = &Entity::getID;
-	entity["getName"] = &Entity::getName;
-	entity["setName"] = &Entity::setName;
+	entity["getScene"] = &Entity::getScene;
 
 	sol::usertype<Component> component = rootex.new_usertype<Component>("Component");
 	component["getOwner"] = &Component::getOwner;
@@ -21,39 +20,29 @@ void Entity::RegisterAPI(sol::table& rootex)
 	component["getName"] = &Component::getName;
 }
 
+Entity::Entity(Scene* scene)
+    : m_Scene(scene)
+{
+}
+
 Entity::~Entity()
 {
 	destroy();
 }
 
-void Entity::addComponent(const Ref<Component>& component)
-{
-	m_Components.insert(std::make_pair(component->getComponentID(), component));
-}
-
-Entity::Entity(EntityID id, const String& name, const HashMap<ComponentID, Ref<Component>>& components)
-    : m_ID(id)
-    , m_Components(components)
-    , m_IsEditorOnly(false)
-{
-	setName(name);
-}
-
 JSON::json Entity::getJSON() const
 {
 	JSON::json j;
-	j["Entity"]["name"] = getName();
-	j["Entity"]["ID"] = getID();
-	j["Components"] = {};
+	j["components"] = {};
 	for (auto&& [componentID, component] : m_Components)
 	{
-		j["Components"][component->getName()] = component->getJSON();
+		j["components"][component->getName()] = component->getJSON();
 	}
 
 	return j;
 }
 
-bool Entity::setupComponents()
+bool Entity::onAllComponentsAdded()
 {
 	bool status = true;
 	for (auto& component : m_Components)
@@ -63,7 +52,7 @@ bool Entity::setupComponents()
 	return status;
 }
 
-bool Entity::setupEntities()
+bool Entity::onAllEntitiesAdded()
 {
 	bool status = true;
 	for (auto& component : m_Components)
@@ -84,26 +73,30 @@ void Entity::destroy()
 	m_Components.clear();
 }
 
-void Entity::removeComponent(Ref<Component> component)
+bool Entity::removeComponent(ComponentID toRemoveComponentID, bool hardRemove)
 {
-	component->onRemove();
-	m_Components.erase(component->getComponentID());
-	System::DeregisterComponent(component.get());
-}
+	Component* toRemoveComponent = getComponentFromID(toRemoveComponentID);
+	if (!hardRemove)
+	{
+		for (auto& [componentID, component] : m_Components)
+		{
+			for (auto& dependency : component->getDependencies())
+			{
+				if (dependency->getID() == toRemoveComponentID)
+				{
+					WARN("Entity has other components depending on the to-be-removed component " + toRemoveComponent->getName());
+					WARN("Component deletion denied");
+					return false;
+				}
+			}
+		}
+	}
 
-EntityID Entity::getID() const
-{
-	return m_ID;
-}
+	toRemoveComponent->onRemove();
+	System::DeregisterComponent(toRemoveComponent);
+	m_Components.erase(toRemoveComponent->getComponentID());
 
-const String& Entity::getName() const
-{
-	return m_Name;
-}
-
-const String& Entity::getFullName() const
-{
-	return m_FullName;
+	return true;
 }
 
 bool Entity::hasComponent(ComponentID componentID)
@@ -111,13 +104,17 @@ bool Entity::hasComponent(ComponentID componentID)
 	return m_Components.find(componentID) != m_Components.end();
 }
 
-void Entity::setName(const String& name)
-{
-	m_Name = name;
-	m_FullName = m_Name + " #" + std::to_string(getID());
-}
-
-const HashMap<ComponentID, Ref<Component>>& Entity::getAllComponents() const
+const HashMap<ComponentID, Ptr<Component>>& Entity::getAllComponents() const
 {
 	return m_Components;
+}
+
+const String& Entity::getName() const
+{
+	return m_Scene->getName();
+}
+
+const String& Entity::getFullName() const
+{
+	return m_Scene->getFullName();
 }
