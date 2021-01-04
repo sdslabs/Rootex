@@ -123,3 +123,20 @@ void SkyShader::setSkyTexture(const TextureCube* texture)
 {
 	RenderingDevice::GetSingleton()->setInPixelShader(SKY_PS_CPP, 1, texture->getTextureResourceView());
 }
+
+AnimationShader::AnimationShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat)
+    : Shader(vertexPath, pixelPath, vertexBufferFormat)
+{
+	m_SamplerState = RenderingDevice::GetSingleton()->createSS();
+}
+
+void AnimationShader::bind() const
+{
+	Shader::bind();
+	RenderingDevice::GetSingleton()->setInPixelShader(m_SamplerState.Get());
+}
+
+void AnimationShader::set(const Texture* texture, int slot)
+{
+	RenderingDevice::GetSingleton()->setInPixelShader(slot, 1, texture->getTextureResourceView());
+}
