@@ -1,13 +1,13 @@
 progress = RTX.AtomicInt.new()
 totalProgress = -1
-levelToLoad = ""
+sceneToLoad = ""
 isPreLoaded = false
 timeToSwitch = 0
 
 function onBegin(entity)
-    levelToLoad = RTX.LevelManager.Get():getCurrentLevelArguments()[1]
-    if levelToLoad ~= nil then
-        totalProgress = RTX.LevelManager.Get():preloadLevel(levelToLoad, progress)
+    sceneToLoad = RTX.GetSceneArguments()[1]
+    if sceneToLoad ~= nil then
+        totalProgress = RTX.PreloadScene(sceneToLoad, progress)
     else
         print("Did not load any level")
     end
@@ -24,7 +24,7 @@ function onUpdate(entity, delta)
     if isPreLoaded then
         timeToSwitch = timeToSwitch + delta
         if timeToSwitch > 2000 then
-            RTX.LevelManager.Get():openPreloadedLevel(levelToLoad, {})
+            RTX.LoadPreloadedScene(sceneToLoad, {})
         end
     end
 end

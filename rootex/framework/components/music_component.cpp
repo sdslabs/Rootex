@@ -37,7 +37,7 @@ bool MusicComponent::setupData()
 	bool status = AudioComponent::setupData();
 	if (m_Owner)
 	{
-		m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
+		m_TransformComponent = m_Owner->getComponent<TransformComponent>();
 		if (m_TransformComponent == nullptr)
 		{
 			WARN("Entity without transform component!");

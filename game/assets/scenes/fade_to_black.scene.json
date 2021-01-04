@@ -1,0 +1,20 @@
+{
+    "ID": 5,
+    "children": [],
+    "entity": {
+        "components": {
+            "UIComponent": {
+                "filePath": "game/assets/ui/fade_to_black/fade_to_black.rml"
+            }
+        }
+    },
+    "file": "game/assets/scenes/fade_to_black.scene.json",
+    "name": "fade_to_black",
+    "settings": {
+        "camera": 1,
+        "inputSchemes": null,
+        "listener": 1,
+        "preloads": [],
+        "startScheme": ""
+    }
+}

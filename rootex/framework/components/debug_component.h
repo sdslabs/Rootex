@@ -6,7 +6,7 @@ class DebugComponent : public Component
 {
 	static Component* Create(const JSON::json& componentData);
 
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::DebugComponent;

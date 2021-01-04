@@ -144,7 +144,7 @@ void BasicMaterial::bind()
 	objectPSCB.specularIntensity = m_SpecularIntensity;
 	objectPSCB.specularPower = m_SpecularPower;
 
-setPSConstantBuffer(objectPSCB);
+	setPSConstantBuffer(objectPSCB);
 }
 
 JSON::json BasicMaterial::getJSON() const

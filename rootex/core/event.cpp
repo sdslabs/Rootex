@@ -1,4 +1,5 @@
 #include "event.h"
+#include "scene.h"
 
 void Event::RegisterAPI(sol::table& rootex)
 {
