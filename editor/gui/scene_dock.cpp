@@ -49,7 +49,6 @@ void SceneDock::showSceneTree(Ptr<Scene>& scene)
 					Ptr<Scene>& rearrangeScene = *(Ptr<Scene>*)(payload->Data);
 					if (rearrangeScene->findScene(scene->getID()) == nullptr)
 					{
-						scene->snatchChild(rearrangeScene);
 						Entity* victimEntity = rearrangeScene->getEntity();
 						Entity* thiefEntity = scene->getEntity();
 						if (victimEntity && thiefEntity)
@@ -61,6 +60,7 @@ void SceneDock::showSceneTree(Ptr<Scene>& scene)
 								victimTransform->setTransform(victimTransform->getAbsoluteTransform() * thiefTransform->getAbsoluteTransform().Invert());
 							}
 						}
+						scene->snatchChild(rearrangeScene);
 						openScene(scene.get());
 					}
 				}
@@ -71,6 +71,7 @@ void SceneDock::showSceneTree(Ptr<Scene>& scene)
 
 			for (auto& child : scene->getChildren())
 			{
+				if (child && child->findScene(scene->getID())==nullptr)
 				showSceneTree(child);
 			}
 

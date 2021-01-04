@@ -177,7 +177,22 @@ void Scene::onLoad()
 
 bool Scene::snatchChild(Ptr<Scene>& child)
 {
-	return child->getParent()->removeChild(child.get()) && addChild(child);
+	if (child->findScene(this->getID()) != nullptr)
+	{
+		WARN("Tried to make an enitity its own child's child");
+		return false;
+	}
+	Vector<Ptr<Scene>>& children = child->getParent()->getChildren();
+	for (int i = 0; i < children.size(); i++)
+	{
+		if (children.at(i) == child)
+		{
+			m_ChildrenScenes.push_back(std::move(children[i]));
+			children.erase(children.begin()+i);
+		}
+	}
+	child->m_ParentScene = this;
+	return true;
 }
 
 bool Scene::addChild(Ptr<Scene>& child)
@@ -185,6 +200,12 @@ bool Scene::addChild(Ptr<Scene>& child)
 	if (!child)
 	{
 		WARN("Tried to add a null scene to: " + getFullName() + ". Denied.");
+		return false;
+	}
+
+	if (child->findScene(this->getID()) != nullptr)
+	{
+		WARN("Tried to make an enitity its own child's child");
 		return false;
 	}
 
@@ -283,7 +304,7 @@ void SceneSettings::draw()
 		ImGui::InputText("##", &preload);
 		ImGui::PopID();
 	}
-	if (ImGui::Button("+")) 
+	if (ImGui::Button("+"))
 	{
 		preloads.push_back("");
 	}
