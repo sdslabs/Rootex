@@ -80,6 +80,7 @@ Application::Application(const String& settingsFile)
 	RenderSystem::GetSingleton();
 	ScriptSystem::GetSingleton();
 	TransformAnimationSystem::GetSingleton();
+	AnimationSystem::GetSingleton();
 
 	if (!AudioSystem::GetSingleton()->initialize(systemsSettings["AudioSystem"]))
 	{

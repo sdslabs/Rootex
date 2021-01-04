@@ -9,7 +9,7 @@
 #include "vendor/ImGUI/imgui_impl_dx11.h"
 #include "vendor/ImGUI/imgui_impl_win32.h"
 
-void SceneDock::showSceneTree(Scene* scene)
+void SceneDock::showSceneTree(Ptr<Scene>& scene)
 {
 	ZoneScoped;
 	
@@ -25,13 +25,13 @@ void SceneDock::showSceneTree(Scene* scene)
 			ImGui::PushStyleColor(ImGuiCol_Text, EditorSystem::GetSingleton()->getColors().text);
 			if (ImGui::Selectable(scene->getFullName().c_str(), m_OpenedSceneID == scene->getID()))
 			{
-				openScene(scene);
+				openScene(scene.get());
 			}
 
 			if (ImGui::BeginPopupContextItem())
 			{
-				openScene(scene);
-				InspectorDock::GetSingleton()->drawSceneActions(scene);
+				openScene(scene.get());
+				InspectorDock::GetSingleton()->drawSceneActions(scene.get());
 				ImGui::EndPopup();
 			}
 
@@ -59,7 +59,7 @@ void SceneDock::showSceneTree(Scene* scene)
 							victimTransform->setTransform(victimTransform->getAbsoluteTransform() * thiefTransform->getAbsoluteTransform().Invert());
 						}
 					}
-					openScene(scene);
+					openScene(scene.get());
 				}
 				ImGui::EndDragDropTarget();
 			}
@@ -68,7 +68,7 @@ void SceneDock::showSceneTree(Scene* scene)
 
 			for (auto& child : scene->getChildren())
 			{
-				showSceneTree(child.get());
+				showSceneTree(child);
 			}
 
 			ImGui::TreePop();
@@ -102,7 +102,7 @@ void SceneDock::draw(float deltaMilliseconds)
 	{
 		if (ImGui::Begin("Scene"))
 		{
-			showSceneTree(SceneLoader::GetSingleton()->getRootScene());
+			showSceneTree(SceneLoader::GetSingleton()->getRootSceneEx());
 		}
 		ImGui::End();
 	}

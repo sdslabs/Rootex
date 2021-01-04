@@ -36,4 +36,5 @@ public:
 
 	Scene* getCurrentScene() const { return m_CurrentScene; }
 	Scene* getRootScene() const { return m_RootScene.get(); }
+	Ptr<Scene>& getRootSceneEx() { return m_RootScene; }
 };

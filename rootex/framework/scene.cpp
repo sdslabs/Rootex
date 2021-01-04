@@ -85,7 +85,7 @@ Ptr<Scene> Scene::CreateFromFile(const String& sceneFile)
 
 Ptr<Scene> Scene::CreateEmpty()
 {
-	return Create({});
+	return Create(JSON::json::object());
 }
 
 Ptr<Scene> Scene::CreateEmptyAtPath(const String& sceneFile)
