@@ -5,6 +5,8 @@
 
 class InputSystem : public System
 {
+	bool m_SchemeLock = false;
+
 	InputSystem();
 	InputSystem(InputSystem&) = delete;
 	~InputSystem() = default;
@@ -16,8 +18,9 @@ public:
 
 	void loadSchemes(const JSON::json& schemes);
 	void setScheme(const String& scheme);
+	void setSchemeLock(bool enabled);
 
 	bool initialize(const JSON::json& systemData) override;
-	void setConfig(const JSON::json& configData, bool openInEditor) override;
+	void setConfig(const SceneSettings& sceneSettings) override;
 	void update(float deltaMilliseconds) override;
 };

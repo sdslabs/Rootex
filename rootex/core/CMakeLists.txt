@@ -1,5 +1,5 @@
-file(GLOB_RECURSE CoreSources **.cpp **.h)
-file(GLOB_RECURSE CoreHeaders **.h)
+file(GLOB_RECURSE CoreSources **.cpp **.h **.hlsl **.hlsli)
+file(GLOB_RECURSE CoreHeaders **.h **.hlsl **.hlsli)
 
 set(ROOTEX_INCLUDES
     ${ROOTEX_INCLUDES}

@@ -23,9 +23,9 @@ CustomRenderInterface::CustomRenderInterface(int width, int height)
     , m_Height(height)
 {
 	BufferFormat format;
-	format.push(VertexBufferElement::Type::FloatFloat, "POSITION");
-	format.push(VertexBufferElement::Type::ByteByteByteByte, "COLOR");
-	format.push(VertexBufferElement::Type::FloatFloat, "TEXCOORD");
+	format.push(VertexBufferElement::Type::FloatFloat, "POSITION", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
+	format.push(VertexBufferElement::Type::ByteByteByteByte, "COLOR", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
+	format.push(VertexBufferElement::Type::FloatFloat, "TEXCOORD", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
 
 	m_UIShader.reset(new BasicShader(L"rootex/assets/shaders/ui_vertex_shader.cso", L"rootex/assets/shaders/ui_pixel_shader.cso", format));
 
@@ -42,10 +42,10 @@ void CustomRenderInterface::RenderGeometry(Rml::Vertex* vertices, int numVertice
 		vertex.m_Position.y += translation.y;
 	}
 	VertexBuffer vb(vertexData);
-	Vector<int> indicesBuffer;
+	Vector<unsigned int> indicesBuffer;
 	indicesBuffer.assign(indices, indices + numIndices);
 	IndexBuffer ib(indicesBuffer);
-
+	
 	vb.bind();
 	ib.bind();
 	m_UIShader->bind();

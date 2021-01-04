@@ -40,7 +40,7 @@ class PhysicsColliderComponent : public Component, public btMotionState
 
 	Color m_RenderColor;
 	
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 public:
 	static void RegisterAPI(sol::table& rootex);

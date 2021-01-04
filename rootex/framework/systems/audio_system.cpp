@@ -7,7 +7,7 @@
 #include "core/audio/audio_source.h"
 #include "core/audio/static_audio_buffer.h"
 #include "core/audio/streaming_audio_buffer.h"
-#include "framework/entity_factory.h"
+#include "scene_loader.h"
 
 String AudioSystem::GetALErrorString(int errID)
 {
@@ -83,7 +83,6 @@ bool AudioSystem::initialize(const JSON::json& systemData)
 		ERR("AudioSystem: AL, ALC, ALUT failed to initialize");
 		return false;
 	}
-
 	return true;
 }
 
@@ -139,23 +138,23 @@ void AudioSystem::setListener(AudioListenerComponent* listenerComponent)
 	m_Listener = listenerComponent;
 }
 
-void AudioSystem::setConfig(const JSON::json& configData, bool openInEditor)
+void AudioSystem::setConfig(const SceneSettings& sceneSettings)
 {
-	if (configData.find("listener") != configData.end())
+	Scene* listenerScene = SceneLoader::GetSingleton()->getRootScene()->findScene(sceneSettings.listener);
+	if (listenerScene)
 	{
-		Ref<Entity> listenerEntity = EntityFactory::GetSingleton()->findEntity(configData["listener"]);
-		if (listenerEntity)
-		{
-			AudioSystem::GetSingleton()->setListener(listenerEntity->getComponent<AudioListenerComponent>().get());
-			return;
-		}
+		setListener(listenerScene->getEntity()->getComponent<AudioListenerComponent>());
+		return;
 	}
-	AudioSystem::GetSingleton()->setListener(EntityFactory::GetSingleton()->findEntity(ROOT_ENTITY_ID)->getComponent<AudioListenerComponent>().get());
+	restoreListener();
 }
 
 void AudioSystem::restoreListener()
 {
-	m_Listener = EntityFactory::GetSingleton()->findEntity(ROOT_ENTITY_ID)->getComponent<AudioListenerComponent>().get();
+	if (SceneLoader::GetSingleton()->getRootScene())
+	{
+		setListener(SceneLoader::GetSingleton()->getRootScene()->getEntity()->getComponent<AudioListenerComponent>());
+	}
 }
 
 void AudioSystem::shutDown()

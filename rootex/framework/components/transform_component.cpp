@@ -222,7 +222,7 @@ void TransformComponent::draw()
 	ImGui::SameLine();
 	if (ImGui::Button("Extents"))
 	{
-		m_Owner->setupComponents();
+		m_Owner->onAllComponentsAdded();
 	}
 
 	updateTransformFromPositionRotationScale();

@@ -1,0 +1,18 @@
+{
+    "affectedBySky": false,
+    "color": {
+        "a": -0.0012894603423774242,
+        "b": 0.9728983640670776,
+        "g": 0.9728983640670776,
+        "r": 0.9729081392288208
+    },
+    "imageFile": "game/assets/test/smoke.png",
+    "isAlpha": true,
+    "isLit": false,
+    "isNormal": false,
+    "reflectivity": 0.0,
+    "refractionConstant": 0.800000011920929,
+    "refractivity": 0.0,
+    "specularImageFile": "rootex/assets/white.png",
+    "type": "BasicMaterial"
+}

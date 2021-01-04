@@ -18,7 +18,7 @@ class DirectionalLightComponent : public Component
 	DirectionalLightComponent(DirectionalLightComponent&) = delete;
 	~DirectionalLightComponent() = default;
 
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 	DirectionalLight m_DirectionalLight;
 
