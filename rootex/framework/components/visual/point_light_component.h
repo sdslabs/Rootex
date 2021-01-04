@@ -11,7 +11,6 @@ class PointLightComponent : public Component
 	DEPENDS_ON(TransformComponent);
 
 	static Component* Create(const JSON::json& componentData);
-	static Component* CreateDefault();
 
 	PointLight m_PointLight;
 
@@ -21,7 +20,7 @@ protected:
 	PointLightComponent(PointLightComponent&) = delete;
 	~PointLightComponent() = default;
 
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::PointLightComponent;

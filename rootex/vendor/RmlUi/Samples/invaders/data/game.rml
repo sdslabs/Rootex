@@ -1,0 +1,111 @@
+<rml>
+	<head>
+		<title>game</title>
+		<link type="text/rcss" href="../../assets/rml.rcss"/>
+		<link type="text/rcss" href="../../assets/invader.rcss"/>
+		<style>
+			body
+			{
+				padding: 0px;
+				margin: 0px;
+				width: 100%;
+				height: 100%;
+
+				z-index: -1;
+			}
+			
+			game
+			{
+				display: block;
+				width: 100%;
+				height: 100%;
+			}
+			
+			div
+			{
+				height: 47px;
+				padding: 8px 0px 0px 65px;
+				margin: 0px 20px;
+
+				font-size: 20px;
+
+				decorator: tiled-horizontal( huditem-l, huditem-c, huditem-r );
+			}
+
+			div#score_div
+			{
+				float: left;
+				width: 155px;
+			}
+
+			div#hiscore_div
+			{
+				float: left;
+				width: 205px;
+			}
+
+			div#waves_div
+			{
+				float: right;
+				width: 95px;
+			}
+
+			div#lives_div
+			{
+				float: right;
+				width: 80px;
+			}
+			
+			icon
+			{
+				display: block;
+				position: absolute;
+				left: 14px;
+				top: 3px;
+
+				width: 51px;
+				height: 39px;
+			}
+
+			div#score_div icon
+			{
+				decorator: image( icon-score );
+			}
+
+			div#hiscore_div icon
+			{
+				decorator: image( icon-hiscore );
+			}
+
+			div#waves_div icon
+			{
+				decorator: image( icon-waves );
+			}
+
+			div#lives_div icon
+			{
+				decorator: image( icon-lives );
+			}
+		</style>
+	</head>
+	<body id="game_window">
+		<game id="game">
+			<div id="score_div">
+				<icon />
+				score: <span id="score" />
+			</div>
+			<div id="hiscore_div">
+				<icon />
+				high score: <span id="hiscore" />
+			</div>
+			<div id="lives_div">
+				<icon />
+				lives: <span id="lives" />
+			</div>
+			<div id="waves_div">
+				<icon />
+				wave: <span id="waves" />
+			</div>
+		</game>
+	</body>
+</rml>

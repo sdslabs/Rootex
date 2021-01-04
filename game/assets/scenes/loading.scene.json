@@ -1,0 +1,98 @@
+{
+    "ID": 21,
+    "children": [
+        {
+            "ID": 22,
+            "children": [],
+            "entity": {
+                "components": {
+                    "ScriptComponent": {
+                        "scripts": [
+                            "game/assets/scripts/level_change.lua"
+                        ]
+                    }
+                }
+            },
+            "file": "",
+            "name": "loader",
+            "settings": {
+                "camera": 1,
+                "inputSchemes": null,
+                "listener": 1,
+                "preloads": [],
+                "startScheme": ""
+            }
+        }
+    ],
+    "entity": {
+        "components": {
+            "TextUIComponent": {
+                "color": {
+                    "a": 1.0,
+                    "b": 0.0,
+                    "g": 0.0,
+                    "r": 0.0
+                },
+                "fontResource": "game/assets/fonts/lato_30_bold.spritefont",
+                "isVisible": true,
+                "mode": 0,
+                "origin": {
+                    "x": 45.0,
+                    "y": 62.0
+                },
+                "text": "Press A to load level"
+            },
+            "TransformComponent": {
+                "boundingBox": {
+                    "center": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "extents": {
+                        "x": 0.5,
+                        "y": 0.5,
+                        "z": 0.5
+                    }
+                },
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": -0.0,
+                    "y": 0.0,
+                    "z": -0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            }
+        }
+    },
+    "file": "game/assets/scenes/loading.scene.json",
+    "name": "loading",
+    "settings": {
+        "camera": 1,
+        "inputSchemes": [
+            {
+                "bools": [
+                    {
+                        "button": 65,
+                        "device": 1,
+                        "inputEvent": "A"
+                    }
+                ],
+                "floats": {},
+                "name": "Load"
+            }
+        ],
+        "listener": 1,
+        "preloads": [],
+        "startScheme": "Load"
+    }
+}

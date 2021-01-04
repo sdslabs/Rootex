@@ -69,7 +69,9 @@ Work has started on a complete test suite for RmlUi. The tests have been separat
 - Floating elements, absolutely positioned elements, and inline-block elements (as before) will now all shrink to the width of their contents when their width is set to `auto`.
 - Replaced elements (eg. `img` and some `input` elements) now follow the normal CSS sizing rules. That is, padding and borders are no longer subtracted from the width and height of the element by default.
 - Replaced elements can now decide whether to provide an intrinsic aspect ratio, such that users can eg. set the width property on `input.text` without affecting their height.
-- Fixed some situations where overflowing content would not be hidden or scrolled when setting a non-default `overflow` property. [#116](https://github.com/mikke89/RmlUi/issues/116)
+- Replaced elements now try to preserve the aspect ratio when both width and height are auto, and min/max-width/height are set.
+- Fixed several situations where overflowing content would not be hidden or scrolled when setting a non-default `overflow` property. [#116](https://github.com/mikke89/RmlUi/issues/116)
+- Overflow is now clipped on the padding area instead of the content area.
 - Several other layouting improvements (to-be-detailed).
 
 These changes may result in a differently rendered layout when upgrading to RmlUi 4.0. In particular the first two items. 
@@ -77,11 +79,51 @@ These changes may result in a differently rendered layout when upgrading to RmlU
 - If the shrink-to-fit width is undesired, set a definite width on the related elements, eg. using the `width` property or the `left`/`right` properties.
 - Replaced elements may need adjustment of width and height, in this case it may be useful to use the new `box-sizing: border-box` property in some situations.
 
+### Table support
+
+RmlUi now supports tables like in CSS. See the [tables documentation](https://mikke89.github.io/RmlUiDoc/pages/rcss/tables.html) for details.
+
+```html
+<table>
+	<tr>
+		<td>Name</td>
+		<td colspan="2">Items</td>
+		<td>Age</td>
+	</tr>
+	<tr>
+		<td>Gimli</td>
+		<td>Helmet</td>
+		<td>Axe</td>
+		<td>139 years</td>
+	</tr>
+</table>
+```
+
+Use the RCSS `display` property to enable table formatting. See the stylesheet rules in the tables documentation to use the common HTML tags.
+
 ### New RCSS properties
 
-- The `border-radius` property is now supported in RmlUi for drawing rounded backgrounds and borders. The gradient decorator also adds support for this property.
+- The `border-radius` property is now supported in RmlUi for drawing rounded backgrounds and borders. The gradient decorator is made compatible with this property.
 - Implemented the `word-break` RCSS property.
 - Implemented the `box-sizing` RCSS property.
+
+### New RML elements
+
+- Added [Lottie plugin](https://mikke89.github.io/RmlUiDoc/pages/cpp_manual/lottie.html) for displaying vector animations using the `<lottie>` element [#134](https://github.com/mikke89/RmlUi/pull/134) (thanks @diamondhat).
+
+### Lua plugin
+
+Improved Lua plugin in several aspects.
+
+- Added detailed [documentation for the Lua plugin](https://mikke89.github.io/RmlUiDoc/pages/lua_manual.html). [RmlUiDocs#4](https://github.com/mikke89/RmlUiDoc/pull/4) (thanks @IronicallySerious)
+- Remove overriding globals, use standard pairs/ipars implementation, make array indices 1-based. [#95](https://github.com/mikke89/RmlUi/issues/95) [#137](https://github.com/mikke89/RmlUi/pull/137) (thanks @actboy168)
+- Improve compatibility with debuggers and fix compatibility with Lua 5.4. [#136](https://github.com/mikke89/RmlUi/pull/136) [#138](https://github.com/mikke89/RmlUi/pull/138) (thanks @actboy168)
+
+### Input
+
+- Added `Context::IsMouseInteracting()` to determine whether the mouse cursor hovers or otherwise interacts with documents. [#124](https://github.com/mikke89/RmlUi/issues/124)
+- Added boolean return values to `Context::ProcessMouse...()` functions to determine whether the mouse is interacting with documents.
+- Fixed some situations where the return value of `Context::Process...()` was wrong.
 
 ### Other features and improvements
 
@@ -90,14 +132,19 @@ These changes may result in a differently rendered layout when upgrading to RmlU
 - A custom configuration can now be used by RmlUi. In this way it is possible to replace several types including containers to other STL-compatible containers (such as [EASTL](https://github.com/electronicarts/EASTL)), or to STL containers with custom allocators. See the `CUSTOM_CONFIGURATION` [CMake option](https://mikke89.github.io/RmlUiDoc/pages/cpp_manual/building_with_cmake.html#cmake-options). [#110](https://github.com/mikke89/RmlUi/pull/110) (thanks @rokups).
 - Added ability to change the default base tag in documents [#112](https://github.com/mikke89/RmlUi/pull/112)  (thanks @aquawicket).
 - Improved the SFML2 sample [#106](https://github.com/mikke89/RmlUi/pull/106) and [#103](https://github.com/mikke89/RmlUi/issues/103) (thanks @hachmeister).
-- Fixed building with MinGW, and added it to the CI to avoid future breaks. [#108](https://github.com/mikke89/RmlUi/pull/108) (thanks @cloudwu).
-- Fixed several compilation issues and warnings. [#118](https://github.com/mikke89/RmlUi/issues/118) [#97](https://github.com/mikke89/RmlUi/pull/97) (thanks @SpaceCat-Chan).
 - Debugger improvements: Sort property names alphabetically. Fix a bug where the outlines would draw underneath the document.
 - Tabs and panels in tab sets will no longer set the `display` property to `inline-block`, thus it is now possible to customize the display property.
+- Add `Rml::GetTextureSourceList()` function to list all image sources loaded in all documents. [#131](https://github.com/mikke89/RmlUi/issues/131)
 
 ### Bug fixes
 
 - Fix some situations where `text-decoration` would not be rendered. [#119](https://github.com/mikke89/RmlUi/issues/119).
+- Changing the `fill-image` property of \<progressbar\> elements now actually updates the image.
+- Fix a bug where font textures were leaked on `Rml::Shutdown()`. [#133](https://github.com/mikke89/RmlUi/issues/133)
+- Fixed building with MinGW, and added it to the CI to avoid future breaks. [#108](https://github.com/mikke89/RmlUi/pull/108) (thanks @cloudwu).
+- Fixed several compilation issues and warnings. [#118](https://github.com/mikke89/RmlUi/issues/118) [#97](https://github.com/mikke89/RmlUi/pull/97) (thanks @SpaceCat-Chan).
+- Fix \<textarea\> getting an unnecessary horizontal scrollbar. [#122](https://github.com/mikke89/RmlUi/issues/122)
+- Fix text-decoration not always being regenerated. [#119](https://github.com/mikke89/RmlUi/issues/119)
 
 ### Breaking changes
 
@@ -108,7 +155,7 @@ These changes may result in a differently rendered layout when upgrading to RmlU
 - The `BaseXMLParser` class has some minor interface changes.
 - Tab set elements `tab` and `panel` should now have their `display` property set in the RCSS document, use `display: inline-block` for the same behavior as before.
 - For custom, replaced elements: `Element::GetIntrinsicDimensions()` now additionally takes an intrinsic ratio parameter.
-
+- The `fill-image` property should now be applied to the \<progressbar\> element instead of its inner \<fill\> element.
 
 
 ## RmlUi 3.3

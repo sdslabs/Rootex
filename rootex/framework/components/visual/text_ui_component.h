@@ -18,7 +18,6 @@ public:
 	};
 
 	static Component* Create(const JSON::json& componentData);
-	static Component* CreateDefault();
 
 	/// Font file
 	FontResourceFile* m_FontFile;
@@ -35,7 +34,7 @@ public:
 	TextUIComponent(TextUIComponent&) = delete;
 	virtual ~TextUIComponent() = default;
 
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 public:
 	static void RegisterAPI(sol::table& rootex);

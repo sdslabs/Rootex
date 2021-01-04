@@ -2,9 +2,9 @@
 
 #include "core/event_manager.h"
 #include "script/interpreter.h"
-#include "systems/serialization_system.h"
+#include "framework/system.h"
 
-#include "gui/hierarchy_dock.h"
+#include "gui/scene_dock.h"
 #include "gui/output_dock.h"
 #include "gui/toolbar_dock.h"
 #include "gui/viewport_dock.h"
@@ -61,7 +61,7 @@ class EditorSystem : public System
 		const char* image = ICON_ROOTEX_FILE_IMAGE_O;
 	} m_Icons;
 
-	Ptr<HierarchyDock> m_Hierarchy;
+	Ptr<SceneDock> m_Scene;
 	Ptr<OutputDock> m_Output;
 	Ptr<ToolbarDock> m_Toolbar;
 	Ptr<ViewportDock> m_Viewport;
@@ -82,8 +82,7 @@ class EditorSystem : public System
 	Variant saveAll(const Event* event);
 	Variant autoSave(const Event* event);
 	Variant saveBeforeQuit(const Event* event);
-	Variant createNewLevel(const Event* event);
-	Variant createNewEntity(const Event* event);
+	Variant createNewScene(const Event* event);
 	Variant createNewMaterial(const Event* event);
 
 public:

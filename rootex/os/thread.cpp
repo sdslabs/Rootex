@@ -1,6 +1,8 @@
 #include "thread.h"
 #include <Windows.h>
 
+#include "Tracy/Tracy.hpp"
+
 /// The main function which runs on every thread.
 DWORD WINAPI MainLoop(LPVOID voidParameters);
 
@@ -19,7 +21,6 @@ void ThreadPool::initialize()
 	SYSTEM_INFO sysInfo;
 	GetSystemInfo(&sysInfo);
 	m_Threads = sysInfo.dwNumberOfProcessors;
-
 	m_IsRunning = true;
 
 	InitializeConditionVariable(&m_ConsumerVariable);
@@ -53,6 +54,7 @@ void ThreadPool::initialize()
 
 DWORD WINAPI MainLoop(LPVOID voidParameters)
 {
+	ZoneScoped;
 	const struct WorkerParameters* parameters = (struct WorkerParameters*)voidParameters;
 
 	const __int32 iThread = parameters->m_Thread;
@@ -63,6 +65,8 @@ DWORD WINAPI MainLoop(LPVOID voidParameters)
 
 	while (true)
 	{
+		ZoneNamedN(process, "Main Threadpool loop", true);
+
 		EnterCriticalSection(&threadPool.m_CriticalSection);
 
 		/*if (m_ThreadPool.m_TasksComplete.m_Jobs > 0)

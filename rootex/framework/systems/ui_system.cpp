@@ -7,6 +7,7 @@
 #include "RmlUi/Core.h"
 #include "RmlUi/Debugger.h"
 #include "RmlUi/Lua.h"
+#include "LottiePlugin.h"
 #define interface __STRUCT__
 
 double CustomSystemInterface::GetElapsedTime()
@@ -78,6 +79,7 @@ Rml::ElementDocument* UISystem::loadDocument(const String& path)
 	Rml::ElementDocument* document = m_Context->LoadDocument(path);
 	if (document)
 	{
+		PRINT("Loaded document: " + document->GetSourceURL());
 		document->Show();
 	}
 	else
@@ -89,6 +91,7 @@ Rml::ElementDocument* UISystem::loadDocument(const String& path)
 
 void UISystem::unloadDocument(Rml::ElementDocument*& document)
 {
+	PRINT("Queued for unloading: " + document->GetSourceURL());
 	m_Context->UnloadDocument(document);
 	document = nullptr;
 }
@@ -108,7 +111,8 @@ bool UISystem::initialize(const JSON::json& systemData)
 	}
 
 	Rml::Lua::Initialise(LuaInterpreter::GetSingleton()->getLuaState().lua_state());
-	
+	Rml::Lottie::Initialise();
+
 	loadFont("rootex/assets/fonts/Lato-Regular.ttf");
 	
 	m_Context = Rml::CreateContext("default", Rml::Vector2i(systemData["width"], systemData["height"]));

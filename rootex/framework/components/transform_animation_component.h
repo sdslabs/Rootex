@@ -32,9 +32,8 @@ public:
 
 private:
 	static Component* Create(const JSON::json& componentData);
-	static Component* CreateDefault();
 
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 	Vector<Keyframe> m_Keyframes;
 	bool m_IsPlayOnStart;

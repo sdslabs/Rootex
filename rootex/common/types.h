@@ -119,6 +119,11 @@ using Tuple = std::tuple<P...>;
 template <class P, class Q>
 using Pair = std::pair<P, Q>;
 
+#include <optional>
+/// std::optional
+template <class T>
+using Optional = std::optional<T>;
+
 #include <vector>
 /// std::vector
 template <class T>
@@ -155,9 +160,9 @@ namespace ColorPresets = DirectX::Colors;
 #include <variant>
 /// Vector of std::variant of bool, int, char, float, String, Vector2, Vector3, Vector4, Matrix
 typedef Vector<std::variant<bool, int, char, float, String, Vector2, Vector3, Vector4, Matrix>> VariantVector;
-class Entity;
+class Scene;
 /// A variant able to hold multiple kinds of data, one at a time.
-using Variant = std::variant<bool, int, char, float, String, Vector2, Vector3, Vector4, Matrix, VariantVector, Ref<Entity>, Vector<String>>;
+using Variant = std::variant<bool, int, char, float, String, Vector2, Vector3, Vector4, Matrix, VariantVector, Scene*, Vector<String>>;
 /// Extract the value of type TypeName from a Variant
 template <typename T>
 T Extract(const Variant& v)
@@ -165,13 +170,146 @@ T Extract(const Variant& v)
 	return std::get<T>(v);
 }
 
+#include "JSON/json.hpp"
+/// Namespace for the JSON library
+namespace JSON = nlohmann;
+
+namespace nlohmann
+{
+template <>
+struct adl_serializer<Vector2>
+{
+	static void to_json(json& j, const Vector2& v)
+	{
+		j["x"] = v.x;
+		j["y"] = v.y;
+	}
+
+	static void from_json(const json& j, Vector2& v)
+	{
+		v.x = j.at("x");
+		v.y = j.at("y");
+	}
+};
+template <>
+struct adl_serializer<Vector3>
+{
+	static void to_json(json& j, const Vector3& v)
+	{
+		j["x"] = v.x;
+		j["y"] = v.y;
+		j["z"] = v.z;
+	}
+
+	static void from_json(const json& j, Vector3& v)
+	{
+		v.x = j.at("x");
+		v.y = j.at("y");
+		v.z = j.at("z");
+	}
+};
+template <>
+struct adl_serializer<Vector4>
+{
+	static void to_json(json& j, const Vector4& v)
+	{
+		j["x"] = v.x;
+		j["y"] = v.y;
+		j["z"] = v.z;
+		j["w"] = v.w;
+	}
+
+	static void from_json(const json& j, Vector4& v)
+	{
+		v.x = j.at("x");
+		v.y = j.at("y");
+		v.z = j.at("z");
+		v.w = j.at("w");
+	}
+};
+template <>
+struct adl_serializer<Color>
+{
+	static void to_json(json& j, const Color& v)
+	{
+		j["r"] = v.R();
+		j["g"] = v.G();
+		j["b"] = v.B();
+		j["a"] = v.A();
+	}
+
+	static void from_json(const json& j, Color& v)
+	{
+		v.x = j.at("r");
+		v.y = j.at("g");
+		v.z = j.at("b");
+		v.w = j.at("a");
+	}
+};
+template <>
+struct adl_serializer<Quaternion>
+{
+	static void to_json(json& j, const Quaternion& v)
+	{
+		j["x"] = v.x;
+		j["y"] = v.y;
+		j["z"] = v.z;
+		j["w"] = v.w;
+	}
+
+	static void from_json(const json& j, Quaternion& v)
+	{
+		v.x = j.at("x");
+		v.y = j.at("y");
+		v.z = j.at("z");
+		v.w = j.at("w");
+	}
+};
+template <>
+struct adl_serializer<Matrix>
+{
+	static void to_json(json& j, const Matrix& v)
+	{
+		for (int x = 0; x < 4; x++)
+		{
+			for (int y = 0; y < 4; y++)
+			{
+				j.push_back(v.m[x][y]);
+			}
+		}
+	}
+
+	static void from_json(const json& j, Matrix& v)
+	{
+		for (int x = 0; x < 4; x++)
+		{
+			for (int y = 0; y < 4; y++)
+			{
+				v.m[x][y] = j[x * 4 + y];
+			}
+		}
+	}
+};
+template <>
+struct adl_serializer<BoundingBox>
+{
+	static void to_json(json& j, const BoundingBox& v)
+	{
+		j["center"] = (Vector3)v.Center;
+		j["extents"] = (Vector3)v.Extents;
+	}
+
+	static void from_json(const json& j, BoundingBox& v)
+	{
+		v.Center = (Vector3)j.value("center", Vector3::Zero);
+		v.Extents = (Vector3)j.value("extents", Vector3 { 0.5f, 0.5f, 0.5f });
+	}
+};
+}
+
 #include <functional>
 /// std::function
 template <class T>
 using Function = std::function<T>;
-
-#include "JSON/json.hpp"
-/// Namespace for the JSON library
-namespace JSON = nlohmann;
 
 #include "imgui.h"

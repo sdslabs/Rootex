@@ -3,30 +3,13 @@
 Component* StaticPointLightComponent::Create(const JSON::json& componentData)
 {
 	StaticPointLightComponent* staticPointLightComponent = new StaticPointLightComponent(
-	    (float)componentData["attConst"],
-	    (float)componentData["attLin"],
-	    (float)componentData["attQuad"],
-	    (float)componentData["range"],
-	    (float)componentData["diffuseIntensity"],
-	    Color((float)componentData["diffuseColor"]["r"], (float)componentData["diffuseColor"]["g"],
-	        (float)componentData["diffuseColor"]["b"], (float)componentData["diffuseColor"]["a"]),
-	    Color((float)componentData["ambientColor"]["r"], (float)componentData["ambientColor"]["g"],
-	        (float)componentData["ambientColor"]["b"], (float)componentData["ambientColor"]["a"]));
-
-	return staticPointLightComponent;
-}
-
-Component* StaticPointLightComponent::CreateDefault()
-{
-	StaticPointLightComponent* staticPointLightComponent = new StaticPointLightComponent(
-	    0.045f,
-	    1.0f,
-	    0.0075f,
-	    10.0f,
-	    1.0f,
-	    Color(1.0f, 1.0f, 1.0f, 1.0f),
-	    Color(0.5f, 0.5f, 0.5f, 1.0f));
-
+	    componentData.value("attConst", 0.045f),
+	    componentData.value("attLin", 1.0f),
+	    componentData.value("attQuad", 0.0075f),
+	    componentData.value("range", 10.0f),
+	    componentData.value("diffuseIntensity", 1.0f),
+	    componentData.value("diffuseColor", Color(1.0f, 1.0f, 1.0f, 1.0f)),
+	    componentData.value("ambientColor", Color(0.5f, 0.5f, 0.5f, 1.0f)));
 	return staticPointLightComponent;
 }
 

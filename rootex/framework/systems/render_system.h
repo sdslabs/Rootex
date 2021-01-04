@@ -3,10 +3,11 @@
 #include "core/renderer/renderer.h"
 #include "framework/components/visual/camera_component.h"
 #include "framework/system.h"
-#include "framework/systems/hierarchy_system.h"
 #include "main/window.h"
 #include "components/visual/model_component.h"
+#include "components/visual/animated_model_component.h"
 #include "renderer/render_pass.h"
+#include "framework/scene.h"
 
 #include "PostProcess.h"
 
@@ -61,12 +62,12 @@ class RenderSystem : public System
 
 	void renderPassRender(float deltaMilliseconds, RenderPass renderPass);
 
-	Variant onOpenedLevel(const Event* event);
+	Variant onOpenedScene(const Event* event);
 
 public:
 	static RenderSystem* GetSingleton();
 	
-	void setConfig(const JSON::json& configData, bool openInEditor) override;
+	void setConfig(const SceneSettings& sceneSettings) override;
 	void update(float deltaMilliseconds) override;
 	void renderLines();
 	
@@ -80,7 +81,7 @@ public:
 	void setCamera(CameraComponent* camera);
 	void restoreCamera();
 
-	void calculateTransforms(HierarchyComponent* hierarchyComponent);
+	void calculateTransforms(Scene* scene);
 	void pushMatrix(const Matrix& transform);
 	void pushMatrixOverride(const Matrix& transform);
 	void popMatrix();
@@ -91,8 +92,8 @@ public:
 	void setProjectionConstantBuffers();
 	void perFrameVSCBBinds(float fogStart, float fogEnd);
 	void perFramePSCBBinds(const Color& fogColor);
-	void perLevelPSCBBinds();
-	void updatePerLevelBinds();
+	void perScenePSCBBinds();
+	void updatePerSceneBinds();
 
 	void setIsEditorRenderPass(bool enabled) { m_IsEditorRenderPassEnabled = enabled; }
 	

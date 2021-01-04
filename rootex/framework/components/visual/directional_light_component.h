@@ -12,14 +12,13 @@ class DirectionalLightComponent : public Component
 	DEPENDS_ON(TransformComponent);
 
 	static Component* Create(const JSON::json& componentData);
-	static Component* CreateDefault();
 
 	DirectionalLightComponent(const float diffuseIntensity,
 	    const Color& diffuseColor, const Color& ambientColor);
 	DirectionalLightComponent(DirectionalLightComponent&) = delete;
 	~DirectionalLightComponent() = default;
 
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 	DirectionalLight m_DirectionalLight;
 

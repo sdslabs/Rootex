@@ -7,29 +7,11 @@
 
 Component* TransformComponent::Create(const JSON::json& componentData)
 {
-	BoundingBox boundingBox({ 0.0f, 0.0f, 0.0f }, { 0.5f, 0.5f, 0.5f });
-	if (componentData.contains("boundingBox"))
-	{
-		boundingBox = BoundingBox(
-		    { componentData["boundingBox"]["center"]["x"], componentData["boundingBox"]["center"]["y"], componentData["boundingBox"]["center"]["z"] },
-		    { componentData["boundingBox"]["extents"]["x"], componentData["boundingBox"]["extents"]["y"], componentData["boundingBox"]["extents"]["z"] });
-	}
-
 	TransformComponent* transformComponent = new TransformComponent(
-	    { componentData["position"]["x"], componentData["position"]["y"], componentData["position"]["z"] },
-	    { componentData["rotation"]["x"], componentData["rotation"]["y"], componentData["rotation"]["z"], componentData["rotation"]["w"] },
-	    { componentData["scale"]["x"], componentData["scale"]["y"], componentData["scale"]["z"] },
-	    boundingBox);
-	return transformComponent;
-}
-
-Component* TransformComponent::CreateDefault()
-{
-	TransformComponent* transformComponent = new TransformComponent(
-	    { 0.0f, 0.0f, 0.0f },
-	    Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, 0.0f),
-	    { 1.0f, 1.0f, 1.0f },
-	    { { 0.0f, 0.0f, 0.0f }, { 0.5f, 0.5f, 0.5f } });
+	    componentData.value("position", Vector3::Zero),
+	    componentData.value("rotation", Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, 0.0f)), 
+	    componentData.value("scale", Vector3 { 1.0f, 1.0f, 1.0f }),
+	    componentData.value("boundingBox", BoundingBox { Vector3::Zero, Vector3 { 0.5f, 0.5f, 0.5f } }));
 	return transformComponent;
 }
 
@@ -149,26 +131,11 @@ JSON::json TransformComponent::getJSON() const
 {
 	JSON::json j;
 
-	j["position"]["x"] = m_TransformBuffer.m_Position.x;
-	j["position"]["y"] = m_TransformBuffer.m_Position.y;
-	j["position"]["z"] = m_TransformBuffer.m_Position.z;
-
-	j["rotation"]["x"] = m_TransformBuffer.m_Rotation.x;
-	j["rotation"]["y"] = m_TransformBuffer.m_Rotation.y;
-	j["rotation"]["z"] = m_TransformBuffer.m_Rotation.z;
-	j["rotation"]["w"] = m_TransformBuffer.m_Rotation.w;
-
-	j["scale"]["x"] = m_TransformBuffer.m_Scale.x;
-	j["scale"]["y"] = m_TransformBuffer.m_Scale.y;
-	j["scale"]["z"] = m_TransformBuffer.m_Scale.z;
-
-	j["boundingBox"]["center"]["x"] = m_TransformBuffer.m_BoundingBox.Center.x;
-	j["boundingBox"]["center"]["y"] = m_TransformBuffer.m_BoundingBox.Center.y;
-	j["boundingBox"]["center"]["z"] = m_TransformBuffer.m_BoundingBox.Center.z;
-	j["boundingBox"]["extents"]["x"] = m_TransformBuffer.m_BoundingBox.Extents.x;
-	j["boundingBox"]["extents"]["y"] = m_TransformBuffer.m_BoundingBox.Extents.y;
-	j["boundingBox"]["extents"]["z"] = m_TransformBuffer.m_BoundingBox.Extents.z;
-
+	j["position"] = m_TransformBuffer.m_Position;
+	j["rotation"] = m_TransformBuffer.m_Rotation;
+	j["scale"] = m_TransformBuffer.m_Scale;
+	j["boundingBox"] = m_TransformBuffer.m_BoundingBox;
+	
 	return j;
 }
 
@@ -255,7 +222,7 @@ void TransformComponent::draw()
 	ImGui::SameLine();
 	if (ImGui::Button("Extents"))
 	{
-		m_Owner->setupComponents();
+		m_Owner->onAllComponentsAdded();
 	}
 
 	updateTransformFromPositionRotationScale();

@@ -11,9 +11,8 @@ class AudioListenerComponent : public Component
 	DEPENDS_ON(TransformComponent);
 
 	static Component* Create(const JSON::json& componentData);
-	static Component* CreateDefault();
 
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 	AudioListenerComponent();
 	AudioListenerComponent(const AudioListenerComponent&) = delete;

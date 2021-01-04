@@ -3,22 +3,9 @@
 Component* DirectionalLightComponent::Create(const JSON::json& componentData)
 {
 	DirectionalLightComponent* directionalLightComponent = new DirectionalLightComponent(
-	    (float)componentData["diffuseIntensity"],
-	    Color((float)componentData["diffuseColor"]["r"], (float)componentData["diffuseColor"]["g"],
-	        (float)componentData["diffuseColor"]["b"], (float)componentData["diffuseColor"]["a"]),
-	    Color((float)componentData["ambientColor"]["r"], (float)componentData["ambientColor"]["g"],
-	        (float)componentData["ambientColor"]["b"], (float)componentData["ambientColor"]["a"]));
-
-	return directionalLightComponent;
-}
-
-Component* DirectionalLightComponent::CreateDefault()
-{
-	DirectionalLightComponent* directionalLightComponent = new DirectionalLightComponent(
-	    0.8f,
-	    Color(1.0f, 1.0f, 0.5f, 1.0f),
-	    Color(0.8f, 0.8f, 0.5f, 1.0f));
-
+	    componentData.value("diffuseIntensity", 0.8f),
+	    componentData.value("diffuseColor", Color(1.0f, 1.0f, 0.5f, 1.0f)),
+	    componentData.value("ambientColor", Color(1.0f, 1.0f, 0.5f, 1.0f)));
 	return directionalLightComponent;
 }
 
@@ -36,17 +23,9 @@ JSON::json DirectionalLightComponent::getJSON() const
 	JSON::json j;
 
 	j["diffuseIntensity"] = m_DirectionalLight.diffuseIntensity;
-
-	j["diffuseColor"]["r"] = m_DirectionalLight.diffuseColor.x;
-	j["diffuseColor"]["g"] = m_DirectionalLight.diffuseColor.y;
-	j["diffuseColor"]["b"] = m_DirectionalLight.diffuseColor.z;
-	j["diffuseColor"]["a"] = m_DirectionalLight.diffuseColor.w;
-
-	j["ambientColor"]["r"] = m_DirectionalLight.ambientColor.x;
-	j["ambientColor"]["g"] = m_DirectionalLight.ambientColor.y;
-	j["ambientColor"]["b"] = m_DirectionalLight.ambientColor.z;
-	j["ambientColor"]["a"] = m_DirectionalLight.ambientColor.w;
-
+	j["diffuseColor"] = m_DirectionalLight.diffuseColor;
+	j["ambientColor"] = m_DirectionalLight.ambientColor;
+	
 	return j;
 }
 
