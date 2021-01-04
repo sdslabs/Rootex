@@ -17,7 +17,7 @@ class StaticPointLightComponent : public PointLightComponent
 	StaticPointLightComponent(StaticPointLightComponent&) = delete;
 	~StaticPointLightComponent() = default;
 
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::StaticPointLightComponent;

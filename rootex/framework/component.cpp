@@ -15,7 +15,7 @@ bool Component::resolveDependencies()
 {
 	for (auto& dependency : m_Dependencies)
 	{
-		Component* dependedOnComponent = m_Owner->getComponentFromID(dependency->getID()).get();
+		Component* dependedOnComponent = m_Owner->getComponentFromID(dependency->getID());
 		dependency->setComponent(dependedOnComponent);
 
 		if (!dependency->isValid())
@@ -50,7 +50,7 @@ void Component::onTrigger()
 {
 }
 
-Ref<Entity> Component::getOwner() const
+Entity* Component::getOwner() const
 {
 	return m_Owner;
 }

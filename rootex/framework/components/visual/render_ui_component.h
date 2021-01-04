@@ -15,7 +15,7 @@ protected:
 	RenderUIComponent(RenderUIComponent&) = delete;
 	virtual ~RenderUIComponent() = default;
 	
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 public:
 	static void RegisterAPI(sol::table& rootex);

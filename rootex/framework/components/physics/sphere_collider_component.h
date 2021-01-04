@@ -13,7 +13,7 @@ class SphereColliderComponent : public PhysicsColliderComponent
 	float m_Radius;
 	Ref<btSphereShape> m_SphereShape;
 	
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::SphereColliderComponent;

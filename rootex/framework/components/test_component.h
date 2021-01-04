@@ -6,7 +6,7 @@ class TestComponent : public Component
 {
 	static Component* Create(const JSON::json& componentData);
 
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 public:
 	virtual const char* getName() const override { return "TestComponent"; }

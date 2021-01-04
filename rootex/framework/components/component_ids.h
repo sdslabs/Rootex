@@ -13,7 +13,6 @@ enum class ComponentIDs : unsigned int
 	UIComponent,
 	CameraComponent,
 	TransformComponent,
-	HierarchyComponent,
 	PointLightComponent,
 	DirectionalLightComponent,
 	SpotLightComponent,
@@ -26,8 +25,9 @@ enum class ComponentIDs : unsigned int
 	ShortMusicComponent = AudioComponent,
 	AudioListenerComponent,
 	TransformAnimationComponent,
-	TriggerComponent,
 	SkyComponent,
 	FogComponent,
 	StaticPointLightComponent,
+	AnimatedModelComponent,
+	RenderableComponent
 };
