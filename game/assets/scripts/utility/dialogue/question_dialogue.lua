@@ -15,24 +15,18 @@ function QuestionDialogue:initialize(portrait, question, answers, answerNodes, e
 end
 
 function QuestionDialogue:refreshDocument()
-	QuestionDialogue.static.document:GetElementById("dialogue_question").inner_rml = self.question
-	
 	local choicesRML = ""
-	local choiceFormat = "<div class='choice'>{choice}</div>"
 	for i, choice in ipairs(self.answers) do
+		local choiceFormat = "<div>{choice}</div>"
 		if i == self.currentChoice then
+			choiceFormat = "<div id='current_choice'>{choice}</div>"
 			choice = "> " .. choice
 		end
 		choicesRML = choicesRML .. choiceFormat:gsub("{choice}", choice) .. "<br/>"
 	end
+	QuestionDialogue.static.document:GetElementById("dialogue_portrait"):SetAttribute("src", "../../..://dummy/" .. self.portrait.image)
+	QuestionDialogue.static.document:GetElementById("dialogue_question").inner_rml = self.question
 	QuestionDialogue.static.document:GetElementById("dialogue_answer").inner_rml = choicesRML
-	
-	local portraitFormat = [[<img src="../../..://dummy/{src}" width={width}em height={height}em />]]
-	portraitFormat = portraitFormat
-	:gsub("{src}", self.portrait.image)
-	:gsub("{width}", self.portrait.width)
-	:gsub("{height}", self.portrait.height)
-	QuestionDialogue.static.document:GetElementById("dialogue_portrait").inner_rml = portraitFormat
 end
 
 function QuestionDialogue:getDocument()

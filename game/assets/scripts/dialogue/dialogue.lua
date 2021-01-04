@@ -1,7 +1,6 @@
 require("game/assets/scripts/utility/dialogue/characters")
 
 return DialogueBuilder()
-:addTemplate("dialogue_template")
 :add(OneOffDialogue(PersonA.neutral, "Start"))
 :add(OneOffDialogue(PersonA.neutral, "> You arrive at Yasoinaba."))
 :add(OneOffDialogue(PersonA.neutral, "Hey! Over here!"))

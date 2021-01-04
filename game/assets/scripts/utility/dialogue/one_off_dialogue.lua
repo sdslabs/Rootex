@@ -12,14 +12,8 @@ function OneOffDialogue:initialize(portrait, text, exitLogic)
 end
 
 function OneOffDialogue:getDocument()
-	OneOffDialogue.static.document:SetAttribute("template", self.template)
 	OneOffDialogue.static.document:GetElementById("dialogue_text").inner_rml = self.text
-	local portraitFormat = [[<img src="../../..://dummy/{src}" width={width}em height={height}em />]]
-	portraitFormat = portraitFormat
-	:gsub("{src}", self.portrait.image)
-	:gsub("{width}", self.portrait.width)
-	:gsub("{height}", self.portrait.height)
-	OneOffDialogue.static.document:GetElementById("dialogue_portrait").inner_rml = portraitFormat
+	OneOffDialogue.static.document:GetElementById("dialogue_portrait"):SetAttribute("src", "../../..://dummy/" .. self.portrait.image)
 	return OneOffDialogue.static.document
 end
 

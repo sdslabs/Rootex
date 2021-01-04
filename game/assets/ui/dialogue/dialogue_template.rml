@@ -1,17 +1,8 @@
-<template name="dialogue" content="content">
+<template name="dialogue_template" content="content">
 <head>
-<style>
-	body {
-		background-color: black;
-	}
-	#content {
-		position: absolute;
-		bottom: 10px;
-	}
-</style>
+	<link type="text/css" href="dialogue_template.rcss" />
 </head>
-<body>
-	<div id="content">
-	</div>
+
+<body id="content">
 </body>
 </template>

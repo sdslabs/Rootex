@@ -1,6 +1,7 @@
 {
+    "postInitialize": "game/startup.lua",
     "project": "Rootex Game",
-    "startLevel": "game/assets/scenes/physics.scene.json",
+    "startLevel": "game/assets/scenes/dialogue.scene.json",
     "systems": {
         "AudioSystem": {},
         "DebugSystem": {
@@ -30,6 +31,5 @@
         "width": 1920,
         "x": 0,
         "y": 0
-    },
-    "postInitialize": "game/startup.lua"
+    }
 }

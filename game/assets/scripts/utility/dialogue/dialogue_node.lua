@@ -9,10 +9,8 @@ DialogueInput = {
 
 Portrait = class("Portrait")
 
-function Portrait:initialize(imagePath, width, height)
+function Portrait:initialize(imagePath)
 	self.image = imagePath
-	self.width = width
-	self.height = height
 end
 
 DialogueNode = class("DialogueNode")
@@ -85,14 +83,8 @@ function DialogueBuilder:add(node)
 		self.current = self.start
 	end
 
-	self.current.template = self.currentTemplate
 	self.current.nextNode = node
 	self.current = self.current.nextNode
-	return self
-end
-
-function DialogueBuilder:addTemplate(template)
-	self.currentTemplate = template
 	return self
 end
 

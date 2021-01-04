@@ -1,37 +1,31 @@
 <rml>
 
 <head>
-<link type="text/template" href="dialogue_template.rml" />
 <style>
     body {
         font: "Lato";
-        font-size: 50px;
         height: 100%;
         width: 100%;
+        z-index: 1;
     }
 </style>
-
 <script>
-
 t = require("game/assets/scripts/dialogue/dialogue")
-
 </script>
 
 </head>
 
 <body
-    template="dialogue"
     onmousedown="t = DialogueNode:Proceed(t, document, DialogueInput.Next)"
     onmousescroll="
         choiceInput = DialogueInput.ChoiceUp
-        if event.parameters.wheel_delta > 0 then 
+        if event.parameters.wheel_delta > 0 then
             choiceInput = DialogueInput.ChoiceUp
-        elseif event.parameters.wheel_delta < 0 then 
-            choiceInput = DialogueInput.ChoiceDown 
+        elseif event.parameters.wheel_delta < 0 then
+            choiceInput = DialogueInput.ChoiceDown
         end
         t = DialogueNode:Proceed(t, document, choiceInput)
     "
 >
-    Click to begin.
 </body>
 </rml>
