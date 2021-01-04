@@ -7,7 +7,6 @@
 class GridModelComponent : public ModelComponent
 {
 	static Component* Create(const JSON::json& componentData);
-	static Component* CreateDefault();
 
 	Ref<Material> m_ColorMaterial;
 	Ptr<VertexBuffer> m_VertexBuffer;
@@ -20,14 +19,14 @@ class GridModelComponent : public ModelComponent
 	GridModelComponent(GridModelComponent&) = delete;
 	virtual ~GridModelComponent() = default;
 
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 	void refreshVertexBuffers();
 	
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::GridModelComponent;
 
-	virtual bool setup() override;
+	virtual bool setupData() override;
 	void render() override;
 
 	virtual const char* getName() const override { return "GridModelComponent"; }

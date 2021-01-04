@@ -27,8 +27,9 @@ struct PostProcessingDetails
 
 class CameraComponent : public Component
 {
+	DEPENDS_ON(TransformComponent);
+
 	static Component* Create(const JSON::json& componentData);
-	static Component* CreateDefault();
 
 	bool m_Active;
 	float m_FoV;
@@ -39,22 +40,22 @@ class CameraComponent : public Component
 	Vector2 m_AspectRatio;
 	Matrix m_ViewMatrix;
 	Matrix m_ProjectionMatrix;
-	TransformComponent* m_TransformComponent;
 
 	CameraComponent(const Vector2& aspectRatio, float fov, float nearPlane, float farPlane, const PostProcessingDetails& postProcesing);
 	CameraComponent(CameraComponent&) = delete;
 	~CameraComponent() = default;
 
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 	void refreshProjectionMatrix();
 	void refreshViewMatrix();
 
 public:
-	virtual bool setup() override;
+	static const ComponentID s_ID = (ComponentID)ComponentIDs::CameraComponent;
+
+	virtual bool setupData() override;
 	void onRemove() override;
 
-	TransformComponent* getTransformComponent() { return m_TransformComponent; }
 	virtual const Matrix& getViewMatrix();
 	virtual const Matrix& getProjectionMatrix();
 	Vector3 getAbsolutePosition() const { return m_TransformComponent->getAbsoluteTransform().Translation(); }
@@ -62,7 +63,6 @@ public:
 
 	PostProcessingDetails getPostProcessingDetails() const { return m_PostProcessingDetails; }
 
-	static const ComponentID s_ID = (ComponentID)ComponentIDs::CameraComponent;
 	ComponentID getComponentID() const { return s_ID; }
 
 	virtual JSON::json getJSON() const override;

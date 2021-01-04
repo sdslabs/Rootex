@@ -7,7 +7,6 @@ class TransformComponent : public Component
 {
 private:
 	static Component* Create(const JSON::json& componentData);
-	static Component* CreateDefault();
 
 	struct TransformBuffer
 	{
@@ -33,7 +32,7 @@ private:
 
 	friend class ModelComponent;
 	friend class RenderSystem;
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 #ifdef ROOTEX_EDITOR
 	static inline const float s_EditorDecimalSpeed = 0.01f;
@@ -55,7 +54,8 @@ public:
 	void setTransform(const Matrix& transform);
 	void setBounds(const BoundingBox& bounds);
 	void setRotationPosition(const Matrix& transform);
-	
+	void setParentAbsoluteTransform(const Matrix& parentTransform);
+
 	void addTransform(const Matrix& applyTransform);
 	void addRotation(const Quaternion& applyTransform);
 

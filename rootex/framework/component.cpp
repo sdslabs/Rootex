@@ -1,5 +1,7 @@
 #include "component.h"
 
+#include "entity.h"
+
 Component::Component()
     : m_Owner(nullptr)
 {
@@ -9,7 +11,28 @@ Component::~Component()
 {
 }
 
+bool Component::resolveDependencies()
+{
+	for (auto& dependency : m_Dependencies)
+	{
+		Component* dependedOnComponent = m_Owner->getComponentFromID(dependency->getID());
+		dependency->setComponent(dependedOnComponent);
+
+		if (!dependency->isValid())
+		{
+			ERR("Could not resolve dependency of " + getName() + " on entity " + m_Owner->getFullName());
+			return false;
+		}
+	}
+	return true;
+}
+
 bool Component::setup()
+{
+	return resolveDependencies() && setupData();
+}
+
+bool Component::setupData()
 {
 	return true;
 }
@@ -27,7 +50,7 @@ void Component::onTrigger()
 {
 }
 
-Ref<Entity> Component::getOwner() const
+Entity* Component::getOwner() const
 {
 	return m_Owner;
 }

@@ -1,40 +1,30 @@
 #include "audio_component.h"
 
-AudioComponent::AudioComponent(bool playOnStart, bool attenuation, AudioSource::AttenuationModel model, ALfloat rolloffFactor, ALfloat referenceDistance, ALfloat maxDistance)
+AudioComponent::AudioComponent(bool playOnStart, bool isLooping, bool attenuation, AudioSource::AttenuationModel model, ALfloat rolloffFactor, ALfloat referenceDistance, ALfloat maxDistance)
     : m_IsPlayOnStart(playOnStart)
     , m_IsAttenuated(attenuation)
+    , m_IsLooping(isLooping)
     , m_AttenuationModel(model)
     , m_RolloffFactor(rolloffFactor)
     , m_ReferenceDistance(referenceDistance)
     , m_MaxDistance(maxDistance)
-    , m_TransformComponent(nullptr)
+    , m_DependencyOnTransformComponent(this)
 {
 }
 
-bool AudioComponent::setup()
+bool AudioComponent::setupData()
 {
-	bool status = true;
-	if (m_Owner)
+	if (m_IsAttenuated)
 	{
-		m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
-
-		if (m_TransformComponent == nullptr)
-		{
-			status = false;
-		}
-		else
-		{
-			if (m_IsAttenuated)
-			{
-				getAudioSource()->setPosition(m_TransformComponent->getParentAbsoluteTransform().Translation());
-				getAudioSource()->setModel(m_AttenuationModel);
-				getAudioSource()->setRollOffFactor(m_RolloffFactor);
-				getAudioSource()->setReferenceDistance(m_ReferenceDistance);
-				getAudioSource()->setMaxDistance(m_MaxDistance);
-			}
-		}
+		getAudioSource()->setPosition(m_TransformComponent->getParentAbsoluteTransform().Translation());
+		getAudioSource()->setModel(m_AttenuationModel);
+		getAudioSource()->setRollOffFactor(m_RolloffFactor);
+		getAudioSource()->setReferenceDistance(m_ReferenceDistance);
+		getAudioSource()->setMaxDistance(m_MaxDistance);
 	}
-	return status;
+	
+	getAudioSource()->setLooping(m_IsLooping);
+	return true;
 }
 
 JSON::json AudioComponent::getJSON() const
@@ -42,6 +32,7 @@ JSON::json AudioComponent::getJSON() const
 	JSON::json j;
 
 	j["isAttenuated"] = m_IsAttenuated;
+	j["isLooping"] = m_IsLooping;
 	j["attenuationModel"] = m_AttenuationModel;
 	j["rollOffFactor"] = m_RolloffFactor;
 	j["referenceDistance"] = m_ReferenceDistance;
@@ -52,19 +43,36 @@ JSON::json AudioComponent::getJSON() const
 
 void AudioComponent::update()
 {
-	m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
 	if (m_IsAttenuated)
 	{
 		getAudioSource()->setPosition(m_TransformComponent->getAbsoluteTransform().Translation());
 	}
 }
 
+bool AudioComponent::isLooping()
+{
+	return m_IsLooping;
+}
+
+void AudioComponent::setLooping(bool enabled)
+{
+	m_IsLooping = enabled;
+	m_AudioSource->setLooping(enabled);
+}
+
 #ifdef ROOTEX_EDITOR
 #include "imgui.h"
+#include "systems/render_system.h"
 void AudioComponent::draw()
 {
-	ImGui::Checkbox("Play on Start", &m_IsPlayOnStart);
-	ImGui::Checkbox("Turn on Attenuation", &m_IsAttenuated);
+	RenderSystem::GetSingleton()->submitSphere(m_TransformComponent->getAbsoluteTransform().Translation(), m_MaxDistance);
+
+	ImGui::Checkbox("Play On Start", &m_IsPlayOnStart);
+	ImGui::Checkbox("Attenuation", &m_IsAttenuated);
+	if (ImGui::Checkbox("Looping", &m_IsLooping))
+	{
+		setLooping(m_IsLooping);
+	}
 
 	if (ImGui::BeginCombo("Attenutation Model", m_AttenuationModelName.c_str()))
 	{
@@ -101,9 +109,9 @@ void AudioComponent::draw()
 		ImGui::EndCombo();
 	}
 
-	ImGui::InputFloat("Reference Distance", &m_ReferenceDistance, 0, 100.0f);
-	ImGui::InputFloat("Rolloff Factor", &m_RolloffFactor, 0, 100.0f);
-	ImGui::InputFloat("Max Distance", &m_MaxDistance, 0, 100.0f);
+	ImGui::DragFloat("Reference Distance", &m_ReferenceDistance, 1.0f, 0.0f, 100.0f);
+	ImGui::DragFloat("Rolloff Factor", &m_RolloffFactor, 1.0f, 0, 100.0f);
+	ImGui::DragFloat("Max Distance", &m_MaxDistance, 1.0f, 0, 100.0f);
 }
 
 #endif // ROOTEX_EDITOR

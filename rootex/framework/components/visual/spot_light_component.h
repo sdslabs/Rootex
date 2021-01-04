@@ -9,8 +9,9 @@
 /// Component to apply dynamic spot lights to the scene
 class SpotLightComponent : public Component
 {
+	DEPENDS_ON(TransformComponent);
+
 	static Component* Create(const JSON::json& componentData);
-	static Component* CreateDefault();
 
 	SpotLightComponent::SpotLightComponent(const float constAtt, const float linAtt, const float quadAtt,
 	    const float range, const float diffuseIntensity, const Color& diffuseColor, const Color& ambientColor,
@@ -18,17 +19,14 @@ class SpotLightComponent : public Component
 	SpotLightComponent(SpotLightComponent&) = delete;
 	~SpotLightComponent() = default;
 
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 	SpotLight m_SpotLight;
-
-	TransformComponent* m_TransformComponent;
 
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::SpotLightComponent;
 	
-	bool setup() override;
-
+	Matrix getAbsoluteTransform() const { return m_TransformComponent->getAbsoluteTransform(); }
 	const SpotLight& getSpotLight() const { return m_SpotLight; }
 
 	virtual const char* getName() const override { return "SpotLightComponent"; }

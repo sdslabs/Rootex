@@ -4,6 +4,7 @@
 
 #include "entity.h"
 #include "component.h"
+#include "scene.h"
 
 #include "Tracy/Tracy.hpp"
 
@@ -31,7 +32,7 @@ protected:
 	static void DeregisterComponent(Component* component);
 	
 	friend class Entity;
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 	String m_SystemName;
 	UpdateOrder m_UpdateOrder;
@@ -46,7 +47,8 @@ public:
 	virtual ~System();
 
 	virtual bool initialize(const JSON::json& systemData);
-	virtual void setConfig(const JSON::json& configData, bool openInEditor);
+	virtual void setConfig(const SceneSettings& sceneSettings);
+
 	virtual void begin();
 	virtual void update(float deltaMilliseconds);
 	virtual void end();

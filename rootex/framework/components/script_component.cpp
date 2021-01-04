@@ -1,17 +1,13 @@
 #include "script_component.h"
 
+#include "physics/physics_collider_component.h"
+
 #include "entity.h"
 #include "resource_loader.h"
 
 Component* ScriptComponent::Create(const JSON::json& componentData)
 {
-	ScriptComponent* sc = new ScriptComponent(componentData["scripts"]);
-	return sc;
-}
-
-Component* ScriptComponent::CreateDefault()
-{
-	ScriptComponent* sc = new ScriptComponent({});
+	ScriptComponent* sc = new ScriptComponent(componentData.value("scripts", Vector<String>()));
 	return sc;
 }
 
@@ -33,7 +29,7 @@ ScriptComponent::~ScriptComponent()
 {
 }
 
-bool ScriptComponent::setup()
+bool ScriptComponent::setupData()
 {
 	bool status = true;
 	try
@@ -99,11 +95,7 @@ JSON::json ScriptComponent::getJSON() const
 {
 	JSON::json j;
 
-	j["scripts"] = JSON::json::array();
-	for (auto& scriptFile : m_ScriptFiles)
-	{
-		j["scripts"].push_back(scriptFile);
-	}
+	j["scripts"] = m_ScriptFiles;
 
 	return j;
 }
@@ -135,7 +127,6 @@ void ScriptComponent::removeScript(const String& scriptFile)
 #include "utility/imgui_helpers.h"
 void ScriptComponent::draw()
 {
-	ImGui::BeginGroup();
 	if (ImGui::ListBoxHeader("Scripts", m_ScriptFiles.size()))
 	{
 		for (auto& scriptFile : m_ScriptFiles)
@@ -152,11 +143,10 @@ void ScriptComponent::draw()
 		}
 		ImGui::ListBoxFooter();
 	}
-	ImGui::EndGroup();
-
-	if (ImGui::Button(ICON_ROOTEX_EXTERNAL_LINK "##Script"))
+	ImGui::SameLine();
+	if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Script"))
 	{
-		igfd::ImGuiFileDialog::Instance()->OpenDialog("Script", "Choose Script", SupportedFiles.at(ResourceFile::Type::Lua), "game/assets/");
+		igfd::ImGuiFileDialog::Instance()->OpenModal("Script", "Choose Script", SupportedFiles.at(ResourceFile::Type::Lua), "game/assets/");
 	}
 
 	if (igfd::ImGuiFileDialog::Instance()->FileDialog("Script"))
