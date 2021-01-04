@@ -5,6 +5,7 @@
 #include "framework/system.h"
 #include "main/window.h"
 #include "components/visual/model_component.h"
+#include "components/visual/animated_model_component.h"
 #include "renderer/render_pass.h"
 #include "framework/scene.h"
 

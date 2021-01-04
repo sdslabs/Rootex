@@ -1,0 +1,20 @@
+{
+	"affectedBySky": false,
+	"color": {
+		"a": 1.0,
+		"g": 0.5,
+		"b": 0.5,
+		"r": 0.5 
+	},
+	"imageFile": "rootex/assets/white.png",
+	"isAlpha": false,
+	"isLit": false,
+	"isNormal": false,
+	"normalImageFile": "",
+	"reflectivity": 0.5,
+	"refractivity": 0.5,
+	"specularIntensity": 2.0,
+	"specularPower": 30.0,
+	"refractionConstant": 0.800000011920929,
+	"type": "AnimatedMaterial" 
+}

@@ -127,6 +127,12 @@ bool SceneLoader::saveSceneAtFile(Scene* scene, const String& filePath)
 	return false;
 }
 
+void SceneLoader::destroyAllScenes()
+{
+	m_CurrentScene = nullptr;
+	m_RootScene.reset();
+}
+
 void SceneLoader::beginSystems()
 {
 	if (m_CurrentScene)

@@ -1,5 +1,6 @@
 #include "application.h"
 
+#include "framework/scene_loader.h"
 #include "framework/ecs_factory.h"
 #include "core/resource_loader.h"
 #include "core/resource_files/lua_text_resource_file.h"
@@ -79,6 +80,7 @@ Application::Application(const String& settingsFile)
 	RenderSystem::GetSingleton();
 	ScriptSystem::GetSingleton();
 	TransformAnimationSystem::GetSingleton();
+	AnimationSystem::GetSingleton();
 
 	if (!AudioSystem::GetSingleton()->initialize(systemsSettings["AudioSystem"]))
 	{
@@ -96,6 +98,7 @@ Application::Application(const String& settingsFile)
 
 Application::~Application()
 {
+	SceneLoader::GetSingleton()->destroyAllScenes();
 	AudioSystem::GetSingleton()->shutDown();
 	UISystem::GetSingleton()->shutDown();
 	ShaderLibrary::DestroyShaders();

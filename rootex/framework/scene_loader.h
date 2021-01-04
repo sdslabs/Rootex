@@ -32,7 +32,9 @@ public:
 	void loadScene(const String& sceneFile, const Vector<String>& arguments);
 	bool saveScene(Scene* scene);
 	bool saveSceneAtFile(Scene* scene, const String& filePath);
+	void destroyAllScenes();
 
 	Scene* getCurrentScene() const { return m_CurrentScene; }
 	Scene* getRootScene() const { return m_RootScene.get(); }
+	Ptr<Scene>& getRootSceneEx() { return m_RootScene; }
 };

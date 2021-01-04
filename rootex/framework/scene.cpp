@@ -85,7 +85,7 @@ Ptr<Scene> Scene::CreateFromFile(const String& sceneFile)
 
 Ptr<Scene> Scene::CreateEmpty()
 {
-	return Create({});
+	return Create(JSON::json::object());
 }
 
 Ptr<Scene> Scene::CreateEmptyAtPath(const String& sceneFile)
@@ -252,6 +252,7 @@ Scene::Scene(SceneID id, const String& name, const String& sceneFile, const Scen
 
 Scene::~Scene()
 {
+	m_ChildrenScenes.clear();
 	PRINT("Deleted scene: " + getFullName());
 }
 

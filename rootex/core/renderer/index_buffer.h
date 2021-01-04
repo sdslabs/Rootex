@@ -14,9 +14,13 @@ protected:
 
 public:
 	IndexBuffer(const Vector<unsigned short>& indices);
-	IndexBuffer(const Vector<int>& indices);
+	IndexBuffer(const Vector<unsigned int>& indices);
 	~IndexBuffer() = default;
+
+	void setData(const Vector<unsigned short>& indices);
+	void setData(const Vector<unsigned int>& indices);
 
 	void bind() const;
 	unsigned int getCount() const;
+	ID3D11Buffer* getBuffer() { return m_IndexBuffer.Get(); }
 };
