@@ -61,16 +61,14 @@ class Component
 {
 	Vector<Dependable*> m_Dependencies;
 
-	void setOwner(Ref<Entity>& newOwner) { m_Owner = newOwner; }
-
 	/// Perform setting up dependencies and internal data. Return true if successful.
 	bool setup();
 
-	friend class EntityFactory;
+	friend class ECSFactory;
 	friend class Entity;
 
 protected:
-	Ref<Entity> m_Owner;
+	Entity* m_Owner;
 	
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::Component;
@@ -92,7 +90,7 @@ public:
 
 	virtual void onTrigger();
 
-	Ref<Entity> getOwner() const;
+	Entity* getOwner() const;
 	virtual ComponentID getComponentID() const = 0;
 	virtual const char* getName() const = 0;
 	/// Get JSON representation of the component data needed to re-construct component from memory.

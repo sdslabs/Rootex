@@ -7,6 +7,8 @@ class Texture;
 class BasicMaterial : public Material
 {
 	BasicShader* m_BasicShader;
+
+protected:
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_SamplerState;
 
 	ImageResourceFile* m_DiffuseImageFile;
@@ -56,7 +58,7 @@ public:
 
 	virtual ID3D11ShaderResourceView* getPreview() override;
 
-	void bind() override;
+	virtual void bind() override;
 	JSON::json getJSON() const override;
 
 #ifdef ROOTEX_EDITOR

@@ -34,7 +34,7 @@ public:
 	TextUIComponent(TextUIComponent&) = delete;
 	virtual ~TextUIComponent() = default;
 
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 public:
 	static void RegisterAPI(sol::table& rootex);

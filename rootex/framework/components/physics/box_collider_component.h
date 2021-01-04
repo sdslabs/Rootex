@@ -13,7 +13,7 @@ class BoxColliderComponent : public PhysicsColliderComponent
 	Vector3 m_Dimensions;
 	Ref<btBoxShape> m_BoxShape;
 
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::BoxColliderComponent;

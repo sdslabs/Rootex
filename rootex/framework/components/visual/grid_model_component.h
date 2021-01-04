@@ -19,7 +19,7 @@ class GridModelComponent : public ModelComponent
 	GridModelComponent(GridModelComponent&) = delete;
 	virtual ~GridModelComponent() = default;
 
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 	void refreshVertexBuffers();
 	

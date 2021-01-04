@@ -22,4 +22,5 @@ public:
 	void resetCurrentShader();
 	void bind(Material* material);
 	void draw(const VertexBuffer* vertexBuffer, const IndexBuffer* indexBuffer) const;
+	void drawInstanced(const VertexBuffer* vertexBuffer, const IndexBuffer* indexBuffer, const VertexBuffer* instanceBuffer, unsigned int instances) const;
 };

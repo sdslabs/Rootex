@@ -417,18 +417,11 @@ void RenderingDevice::createRTVAndSRV(Microsoft::WRL::ComPtr<ID3D11RenderTargetV
 	GFX_ERR_CHECK(m_Device->CreateShaderResourceView(texture.Get(), &shaderResourceViewDesc, &srv));
 }
 
-Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createVB(D3D11_BUFFER_DESC* vbd, D3D11_SUBRESOURCE_DATA* vsd, const UINT* stride, const UINT* const offset)
+Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createBuffer(D3D11_BUFFER_DESC* bd, D3D11_SUBRESOURCE_DATA* sd)
 {
-	Microsoft::WRL::ComPtr<ID3D11Buffer> vertexBuffer = nullptr;
-	GFX_ERR_CHECK(m_Device->CreateBuffer(vbd, vsd, &vertexBuffer));
-	return vertexBuffer;
-}
-
-Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createIB(D3D11_BUFFER_DESC* ibd, D3D11_SUBRESOURCE_DATA* isd, DXGI_FORMAT format)
-{
-	Microsoft::WRL::ComPtr<ID3D11Buffer> indexBuffer = nullptr;
-	GFX_ERR_CHECK(m_Device->CreateBuffer(ibd, isd, &indexBuffer));
-	return indexBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> buffer = nullptr;
+	GFX_ERR_CHECK(m_Device->CreateBuffer(bd, sd, &buffer));
+	return buffer;
 }
 
 Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createVSCB(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
@@ -536,9 +529,9 @@ Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::createTextureF
 	return textureSRV;
 }
 
-void RenderingDevice::bind(ID3D11Buffer* vertexBuffer, const unsigned int* stride, const unsigned int* offset)
+void RenderingDevice::bind(ID3D11Buffer* const* vertexBuffer, int count, const unsigned int* stride, const unsigned int* offset)
 {
-	m_Context->IASetVertexBuffers(0u, 1u, &vertexBuffer, stride, offset);
+	m_Context->IASetVertexBuffers(0u, count, vertexBuffer, stride, offset);
 }
 
 void RenderingDevice::bind(ID3D11Buffer* indexBuffer, DXGI_FORMAT format)
@@ -583,7 +576,7 @@ void RenderingDevice::mapBuffer(ID3D11Buffer* buffer, D3D11_MAPPED_SUBRESOURCE& 
 {
 	if (FAILED(m_Context->Map(buffer, 0u, D3D11_MAP_WRITE_DISCARD, 0u, &subresource)))
 	{
-		ERR("Could not map to constant buffer");
+		ERR("Could not map to buffer");
 	}
 }
 
@@ -783,6 +776,12 @@ void RenderingDevice::drawIndexed(UINT number)
 	m_Context->DrawIndexed(number, 0u, 0u);
 }
 
+void RenderingDevice::drawIndexedInstanced(UINT indices, UINT instances, UINT startInstance)
+{
+	ZoneNamedN(drawCall, "Draw Instances Call", true);
+	m_Context->DrawIndexedInstanced(indices, instances, 0u, 0u, startInstance);
+}
+
 void RenderingDevice::beginDrawUI()
 {
 	m_FontBatch->Begin();
@@ -827,7 +826,6 @@ void RenderingDevice::clearDSV()
 	m_Context->ClearDepthStencilView(m_MainDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
 }
 
-#ifdef ROOTEX_EDITOR
 ID3D11Device* RenderingDevice::getDevice()
 {
 	return m_Device.Get();
@@ -837,4 +835,3 @@ ID3D11DeviceContext* RenderingDevice::getContext()
 {
 	return m_Context.Get();
 }
-#endif // ROOTEX_EDITOR

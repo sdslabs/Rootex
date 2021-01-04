@@ -1,6 +1,7 @@
 #include "event_manager.h"
 
 #include "entity.h"
+#include "scene.h"
 
 EventManager::EventManager()
 {

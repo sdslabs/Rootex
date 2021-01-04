@@ -19,7 +19,7 @@ class SpotLightComponent : public Component
 	SpotLightComponent(SpotLightComponent&) = delete;
 	~SpotLightComponent() = default;
 
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 	SpotLight m_SpotLight;
 

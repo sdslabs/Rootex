@@ -19,7 +19,7 @@ private:
 	Vector<sol::environment> m_ScriptEnvironments;
 	Vector<String> m_ScriptFiles;
 
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 	ScriptComponent(const Vector<String>& luaFilePaths);
 	ScriptComponent(ScriptComponent&) = delete;
