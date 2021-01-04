@@ -35,7 +35,8 @@ public:
 	virtual ~PhysicsSystem() = default;
 
 	void addRigidBody(btRigidBody* body);
-	sol::table getPhysicsMaterial();
+	void removeRigidBody(btRigidBody* rigidBody);
+	
 	btCollisionWorld::AllHitsRayResultCallback reportAllRayHits(const btVector3& m_From, const btVector3& m_To);
 	btCollisionWorld::ClosestRayResultCallback reportClosestRayHits(const btVector3& m_From, const btVector3& m_To);
 
@@ -47,7 +48,8 @@ public:
 
 	void debugDraw();
 	void debugDrawComponent(const btTransform& worldTransform, const btCollisionShape* shape, const btVector3& color);
+	
 	void update(float deltaMilliseconds) override;
 
-	void removeRigidBody(btRigidBody* rigidBody);
+	sol::table getPhysicsMaterial();
 };

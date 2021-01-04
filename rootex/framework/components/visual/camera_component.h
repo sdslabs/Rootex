@@ -30,7 +30,6 @@ class CameraComponent : public Component
 	DEPENDS_ON(TransformComponent);
 
 	static Component* Create(const JSON::json& componentData);
-	static Component* CreateDefault();
 
 	bool m_Active;
 	float m_FoV;
@@ -46,7 +45,7 @@ class CameraComponent : public Component
 	CameraComponent(CameraComponent&) = delete;
 	~CameraComponent() = default;
 
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 	void refreshProjectionMatrix();
 	void refreshViewMatrix();

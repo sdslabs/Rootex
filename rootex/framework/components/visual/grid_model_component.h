@@ -7,7 +7,6 @@
 class GridModelComponent : public ModelComponent
 {
 	static Component* Create(const JSON::json& componentData);
-	static Component* CreateDefault();
 
 	Ref<Material> m_ColorMaterial;
 	Ptr<VertexBuffer> m_VertexBuffer;
@@ -20,7 +19,7 @@ class GridModelComponent : public ModelComponent
 	GridModelComponent(GridModelComponent&) = delete;
 	virtual ~GridModelComponent() = default;
 
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 	void refreshVertexBuffers();
 	

@@ -9,12 +9,11 @@
 class BoxColliderComponent : public PhysicsColliderComponent
 {
 	static Component* Create(const JSON::json& boxComponentData);
-	static Component* CreateDefault();
-
+	
 	Vector3 m_Dimensions;
 	Ref<btBoxShape> m_BoxShape;
 
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::BoxColliderComponent;

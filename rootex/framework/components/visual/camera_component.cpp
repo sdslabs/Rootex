@@ -1,68 +1,58 @@
 #include "camera_component.h"
 #include "systems/render_system.h"
 
-Component* CameraComponent::Create(const JSON::json& componentData)
+void to_json(JSON::json& j, const PostProcessingDetails& p)
 {
-	PostProcessingDetails details;
-	if (componentData.find("postProcessing") != componentData.end())
-	{
-		const JSON::json& postProcessingData = componentData["postProcessing"];
-		if (postProcessingData.find("isPostProcessing") != postProcessingData.end())
-		{
-			details.isPostProcessing = postProcessingData["isPostProcessing"];
-		}
-		if (postProcessingData.find("bloom") != postProcessingData.end())
-		{
-			details.isBloom = postProcessingData["bloom"]["isBloom"];
-			details.bloomThreshold = postProcessingData["bloom"]["threshold"];
-			details.bloomSize = postProcessingData["bloom"]["size"];
-			details.bloomBrightness = postProcessingData["bloom"]["brightness"];
-			details.bloomValue = postProcessingData["bloom"]["value"];
-			details.bloomBase = postProcessingData["bloom"]["base"];
-			details.bloomSaturation = postProcessingData["bloom"]["saturation"];
-			details.bloomBaseSaturation = postProcessingData["bloom"]["baseSaturation"];
-		}
-		if (postProcessingData.find("sepia") != postProcessingData.end())
-		{
-			details.isSepia = postProcessingData["sepia"];
-		}
-		if (postProcessingData.find("monochrome") != postProcessingData.end())
-		{
-			details.isMonochrome = postProcessingData["monochrome"];
-		}
-		if (postProcessingData.find("gaussianBlur") != postProcessingData.end())
-		{
-			details.isGaussianBlur = postProcessingData["gaussianBlur"]["isGaussianBlur"];
-			details.gaussianBlurMultiplier = postProcessingData["gaussianBlur"]["multiplier"];
-		}
-		if (postProcessingData.find("toneMap") != postProcessingData.end())
-		{
-			details.isToneMap = postProcessingData["toneMap"]["isToneMap"];
-			details.toneMapExposure = postProcessingData["toneMap"]["exposure"];
-			details.toneMapOperator = postProcessingData["toneMap"]["operator"];
-			details.toneMapTransferFunction = postProcessingData["toneMap"]["transferFunction"];
-			details.toneMapWhiteNits = postProcessingData["toneMap"]["whiteNits"];
-		}
-	}
-
-	CameraComponent* cameraVisualComponent = new CameraComponent(
-	    { componentData["aspectRatio"]["x"], componentData["aspectRatio"]["y"] },
-	    componentData["fov"],
-		componentData["near"],
-		componentData["far"],
-		details);
-	return cameraVisualComponent;
+	j["isPostProcessing"] = p.isPostProcessing;
+	j["isBloom"] = p.isBloom;
+	j["isSepia"] = p.isSepia;
+	j["isMonochrome"] = p.isMonochrome;
+	j["isGaussianBlur"] = p.isGaussianBlur;
+	j["isToneMap"] = p.isToneMap;
+	j["bloomThreshold"] = p.bloomThreshold;
+	j["bloomSize"] = p.bloomSize;
+	j["bloomBrightness"] = p.bloomBrightness;
+	j["bloomValue"] = p.bloomValue;
+	j["bloomBase"] = p.bloomBase;
+	j["bloomSaturation"] = p.bloomSaturation;
+	j["bloomBaseSaturation"] = p.bloomBaseSaturation;
+	j["gaussianBlurMultiplier"] = p.gaussianBlurMultiplier;
+	j["toneMapExposure"] = p.toneMapExposure;
+	j["toneMapOperator"] = p.toneMapOperator;
+	j["toneMapTransferFunction"] = p.toneMapTransferFunction;
+	j["toneMapWhiteNits"] = p.toneMapWhiteNits;
 }
 
-Component* CameraComponent::CreateDefault()
+void from_json(const JSON::json& j, PostProcessingDetails& p)
 {
-	PostProcessingDetails details;
+	p.isPostProcessing = j.at("isPostProcessing");
+	p.isBloom = j.at("isBloom");
+	p.isSepia = j.at("isSepia");
+	p.isMonochrome = j.at("isMonochrome");
+	p.isGaussianBlur = j.at("isGaussianBlur");
+	p.isToneMap = j.at("isToneMap");
+	p.bloomThreshold = j.at("bloomThreshold");
+	p.bloomSize = j.at("bloomSize");
+	p.bloomBrightness = j.at("bloomBrightness");
+	p.bloomValue = j.at("bloomValue");
+	p.bloomBase = j.at("bloomBase");
+	p.bloomSaturation = j.at("bloomSaturation");
+	p.bloomBaseSaturation = j.at("bloomBaseSaturation");
+	p.gaussianBlurMultiplier = j.at("gaussianBlurMultiplier");
+	p.toneMapExposure = j.at("toneMapExposure");
+	p.toneMapOperator = j.at("toneMapOperator");
+	p.toneMapTransferFunction = j.at("toneMapTransferFunction");
+	p.toneMapWhiteNits = j.at("toneMapWhiteNits");
+}
 
+Component* CameraComponent::Create(const JSON::json& componentData)
+{
 	CameraComponent* cameraVisualComponent = new CameraComponent(
-	    { 16.0f, 9.0f },
-		DirectX::XM_PI / 4.0f,
-		0.1f, 100.0f, 
-		details);
+	    componentData.value("aspectRatio", Vector2{ 16.0f, 9.0f }),
+	    componentData.value("fov", DirectX::XM_PI / 4.0f),
+		componentData.value("near", 0.1f),
+		componentData.value("far", 100.0f),
+		componentData.value("postProcessingDetails", PostProcessingDetails()));
 	return cameraVisualComponent;
 }
 
@@ -122,36 +112,11 @@ JSON::json CameraComponent::getJSON() const
 {
 	JSON::json j;
 
-	j["aspectRatio"]["x"] = m_AspectRatio.x;
-	j["aspectRatio"]["y"] = m_AspectRatio.y;
-
+	j["aspectRatio"] = m_AspectRatio;
 	j["fov"] = m_FoV;
 	j["near"] = m_Near;
 	j["far"] = m_Far;
-
-	j["postProcessing"]["isPostProcessing"] = m_PostProcessingDetails.isPostProcessing;
-	
-	j["postProcessing"]["gaussianBlur"]["isGaussianBlur"] = m_PostProcessingDetails.isGaussianBlur;
-	j["postProcessing"]["gaussianBlur"]["multiplier"] = m_PostProcessingDetails.gaussianBlurMultiplier;
-	
-	j["postProcessing"]["monochrome"] = m_PostProcessingDetails.isMonochrome;
-	
-	j["postProcessing"]["sepia"] = m_PostProcessingDetails.isSepia;
-	
-	j["postProcessing"]["bloom"]["isBloom"] = m_PostProcessingDetails.isBloom;
-	j["postProcessing"]["bloom"]["threshold"] = m_PostProcessingDetails.bloomThreshold;
-	j["postProcessing"]["bloom"]["size"] = m_PostProcessingDetails.bloomSize;
-	j["postProcessing"]["bloom"]["brightness"] = m_PostProcessingDetails.bloomBrightness;
-	j["postProcessing"]["bloom"]["value"] = m_PostProcessingDetails.bloomValue;
-	j["postProcessing"]["bloom"]["base"] = m_PostProcessingDetails.bloomBase;
-	j["postProcessing"]["bloom"]["saturation"] = m_PostProcessingDetails.bloomSaturation;
-	j["postProcessing"]["bloom"]["baseSaturation"] = m_PostProcessingDetails.bloomBaseSaturation;
-	
-	j["postProcessing"]["toneMap"]["isToneMap"] = m_PostProcessingDetails.isToneMap;
-	j["postProcessing"]["toneMap"]["exposure"] = m_PostProcessingDetails.toneMapExposure;
-	j["postProcessing"]["toneMap"]["operator"] = m_PostProcessingDetails.toneMapOperator;
-	j["postProcessing"]["toneMap"]["transferFunction"] = m_PostProcessingDetails.toneMapTransferFunction;
-	j["postProcessing"]["toneMap"]["whiteNits"] = m_PostProcessingDetails.toneMapWhiteNits;
+	j["postProcessingDetails"] = m_PostProcessingDetails;
 
 	return j;
 }

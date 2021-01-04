@@ -10,16 +10,15 @@
 class ShortMusicComponent : public AudioComponent
 {
 	static Component* Create(const JSON::json& componentData);
-	static Component* CreateDefault();
 
 	Ref<StaticAudioSource> m_StaticAudioSource;
 	Ref<StaticAudioBuffer> m_StaticAudioBuffer;
 	AudioResourceFile* m_AudioFile;
 
-	ShortMusicComponent(AudioResourceFile* audioFile, bool playOnStart, bool attenuation, AudioSource::AttenuationModel model, ALfloat rolloffFactor, ALfloat referenceDistance, ALfloat maxDistance);
+	ShortMusicComponent(AudioResourceFile* audioFile, bool playOnStart, bool isLooping, bool attenuation, AudioSource::AttenuationModel model, ALfloat rolloffFactor, ALfloat referenceDistance, ALfloat maxDistance);
 	virtual ~ShortMusicComponent();
 
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::ShortMusicComponent;

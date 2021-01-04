@@ -148,6 +148,11 @@ StreamingAudioSource::~StreamingAudioSource()
 	}
 }
 
+bool StreamingAudioSource::isLooping() const
+{
+	return m_IsLooping;
+}
+
 void StreamingAudioSource::setLooping(bool enabled)
 {
 	m_IsLooping = enabled;

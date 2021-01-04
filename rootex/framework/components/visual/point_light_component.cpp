@@ -5,30 +5,13 @@
 Component* PointLightComponent::Create(const JSON::json& componentData)
 {
 	PointLightComponent* pointLightComponent = new PointLightComponent(
-	    (float)componentData["attConst"],
-	    (float)componentData["attLin"],
-	    (float)componentData["attQuad"],
-	    (float)componentData["range"],
-	    (float)componentData["diffuseIntensity"],
-	    Color((float)componentData["diffuseColor"]["r"], (float)componentData["diffuseColor"]["g"],
-	        (float)componentData["diffuseColor"]["b"], (float)componentData["diffuseColor"]["a"]),
-	    Color((float)componentData["ambientColor"]["r"], (float)componentData["ambientColor"]["g"],
-	        (float)componentData["ambientColor"]["b"], (float)componentData["ambientColor"]["a"]));
-
-	return pointLightComponent;
-}
-
-Component* PointLightComponent::CreateDefault()
-{
-	PointLightComponent* pointLightComponent = new PointLightComponent(
-	    0.045f,
-	    1.0f,
-	    0.0075f,
-	    10.0f,
-	    1.0f,
-	    Color(1.0f, 1.0f, 1.0f, 1.0f),
-	    Color(0.5f, 0.5f, 0.5f, 1.0f));
-	    
+	    componentData.value("attConst", 0.045f),
+	    componentData.value("attLin", 1.0f),
+	    componentData.value("attQuad", 0.0075f),
+	    componentData.value("range", 10.0f),
+	    componentData.value("diffuseIntensity", 1.0f),
+	    componentData.value("diffuseColor", Color(1.0f, 1.0f, 1.0f, 1.0f)),
+	    componentData.value("ambientColor", Color(0.5f, 0.5f, 0.5f, 1.0f)));
 	return pointLightComponent;
 }
 
@@ -54,16 +37,8 @@ JSON::json PointLightComponent::getJSON() const
 	j["attQuad"] = m_PointLight.attQuad;
 	j["range"] = m_PointLight.range;
 	j["diffuseIntensity"] = m_PointLight.diffuseIntensity;
-
-	j["diffuseColor"]["r"] = m_PointLight.diffuseColor.x;
-	j["diffuseColor"]["g"] = m_PointLight.diffuseColor.y;
-	j["diffuseColor"]["b"] = m_PointLight.diffuseColor.z;
-	j["diffuseColor"]["a"] = m_PointLight.diffuseColor.w;
-
-	j["ambientColor"]["r"] = m_PointLight.ambientColor.x;
-	j["ambientColor"]["g"] = m_PointLight.ambientColor.y;
-	j["ambientColor"]["b"] = m_PointLight.ambientColor.z;
-	j["ambientColor"]["a"] = m_PointLight.ambientColor.w;
+	j["diffuseColor"] = m_PointLight.diffuseColor;
+	j["ambientColor"] = m_PointLight.ambientColor;
 
 	return j;
 }

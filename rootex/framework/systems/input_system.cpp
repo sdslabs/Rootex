@@ -28,7 +28,15 @@ void InputSystem::loadSchemes(const JSON::json& schemes)
 
 void InputSystem::setScheme(const String& scheme)
 {
-	InputManager::GetSingleton()->setScheme(scheme);
+	if (!m_SchemeLock)
+	{
+		InputManager::GetSingleton()->setScheme(scheme);
+	}
+}
+
+void InputSystem::setSchemeLock(bool enabled)
+{
+	m_SchemeLock = enabled;
 }
 
 bool InputSystem::initialize(const JSON::json& systemData)
@@ -37,21 +45,10 @@ bool InputSystem::initialize(const JSON::json& systemData)
 	return true;
 }
 
-void InputSystem::setConfig(const JSON::json& configData, bool openInEditor)
+void InputSystem::setConfig(const SceneSettings& sceneSettings)
 {
-	if (openInEditor)
-	{
-		return;
-	}
-
-	if (configData.find("inputSchemes") != configData.end())
-	{
-		loadSchemes(configData["inputSchemes"]);
-		if (configData.find("startScheme") != configData.end())
-		{
-			setScheme(configData["startScheme"]);
-		}
-	}
+	loadSchemes(sceneSettings.inputSchemes);
+	setScheme(sceneSettings.startScheme);
 }
 
 void InputSystem::update(float deltaMilliseconds)
