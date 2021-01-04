@@ -46,7 +46,7 @@ float AnimatedModelResourceFile::getAnimationEndTime(const String& animationName
 	return m_Animations[animationName].getEndTime();
 }
 
-void AnimatedModelResourceFile::setNodeHeirarchy(aiNode* currentAiNode, Ptr<SkeletonNode>& currentNode)
+void AnimatedModelResourceFile::setNodeHierarchy(aiNode* currentAiNode, Ptr<SkeletonNode>& currentNode)
 {
 	currentNode->m_Name = String(currentAiNode->mName.C_Str());
 	currentNode->m_LocalBindTransform = AiMatrixToMatrix(currentAiNode->mTransformation);
@@ -55,7 +55,7 @@ void AnimatedModelResourceFile::setNodeHeirarchy(aiNode* currentAiNode, Ptr<Skel
 	for (int i = 0; i < currentAiNode->mNumChildren; i++)
 	{
 		currentNode->m_Children[i] = std::make_unique<SkeletonNode>(SkeletonNode());
-		setNodeHeirarchy(currentAiNode->mChildren[i], currentNode->m_Children[i]);
+		setNodeHierarchy(currentAiNode->mChildren[i], currentNode->m_Children[i]);
 	}
 }
 
@@ -104,7 +104,7 @@ void AnimatedModelResourceFile::reimport()
 	Assimp::Importer animatedModelLoader;
     const aiScene* scene = animatedModelLoader.ReadFile(
 	    getPath().generic_string(),
-	    aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_OptimizeMeshes | aiProcess_CalcTangentSpace | aiProcess_ConvertToLeftHanded);
+	    aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SplitLargeMeshes | aiProcess_GenBoundingBoxes | aiProcess_OptimizeMeshes | aiProcess_CalcTangentSpace | aiProcess_ValidateDataStructure | aiProcess_ConvertToLeftHanded);
 
 	if (!scene)
 	{
@@ -343,6 +343,11 @@ void AnimatedModelResourceFile::reimport()
 		extractedMesh.m_IndexBuffer.reset(new IndexBuffer(indices));
 		Vector3 max = { mesh->mAABB.mMax.x, mesh->mAABB.mMax.y, mesh->mAABB.mMax.z };
 		Vector3 min = { mesh->mAABB.mMin.x, mesh->mAABB.mMin.y, mesh->mAABB.mMin.z };
+
+		Matrix rotationFix = Matrix(DirectX::XMMatrixRotationNormal({ 1, 0, 0 }, 1.5708));
+		max = DirectX::XMVector3Transform(max, rotationFix);
+		min = DirectX::XMVector3Transform(min, rotationFix);
+
 		Vector3 center = (max + min) / 2.0f;
 		extractedMesh.m_BoundingBox.Center = center;
 		extractedMesh.m_BoundingBox.Extents = (max - min) / 2.0f;
@@ -365,7 +370,7 @@ void AnimatedModelResourceFile::reimport()
 	}
 
 	m_RootNode = std::make_unique<SkeletonNode>(SkeletonNode());
-	setNodeHeirarchy(scene->mRootNode, m_RootNode);
+	setNodeHierarchy(scene->mRootNode, m_RootNode);
 
 	m_AnimationTransforms.resize(boneCount);
 

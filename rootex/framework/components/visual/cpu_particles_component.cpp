@@ -266,17 +266,17 @@ void CPUParticlesComponent::draw()
 	ImGui::SameLine();
 	if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Model File"))
 	{
-		igfd::ImGuiFileDialog::Instance()->OpenModal("ChooseCPUParticleComponentModel", "Choose Model File", SupportedFiles.at(ResourceFile::Type::Model), "game/assets/");
+		igfd::ImGuiFileDialog::Instance()->OpenModal("ChooseCPUParticlesComponentModel", "Choose Model File", SupportedFiles.at(ResourceFile::Type::Model), "game/assets/");
 	}
 
-	if (igfd::ImGuiFileDialog::Instance()->FileDialog("ChoosCPUParticleComponentModel"))
+	if (igfd::ImGuiFileDialog::Instance()->FileDialog("ChooseCPUParticlesComponentModel"))
 	{
 		if (igfd::ImGuiFileDialog::Instance()->IsOk)
 		{
 			FilePath filePath = OS::GetRootRelativePath(igfd::ImGuiFileDialog::Instance()->GetFilePathName());
 			setVisualModel(ResourceLoader::CreateModelResourceFile(filePath.generic_string()), {});
 		}
-		igfd::ImGuiFileDialog::Instance()->CloseDialog("ChooseCPUParticleComponentModel");
+		igfd::ImGuiFileDialog::Instance()->CloseDialog("ChooseCPUParticlesComponentModel");
 	}
 
 	RenderableComponent::draw();

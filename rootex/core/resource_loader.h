@@ -15,7 +15,7 @@
 
 static const inline HashMap<ResourceFile::Type, const char*> SupportedFiles = {
 	{ ResourceFile::Type::Font, ".spritefont" },
-	{ ResourceFile::Type::Model, ".obj,.blend,.3ds,.fbx" },
+	{ ResourceFile::Type::Model, ".obj,.blend,.3ds,.fbx,.dae" },
 	{ ResourceFile::Type::AnimatedModel, ".dae,.fbx" },
 	{ ResourceFile::Type::Audio, ".wav" },
 	{ ResourceFile::Type::Image, ".png,.jpeg,.jpg,.dds" },

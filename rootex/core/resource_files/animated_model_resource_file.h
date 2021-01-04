@@ -39,7 +39,7 @@ public:
 	HashMap<String, SkeletalAnimation>& getAnimations() { return m_Animations; }
 	size_t getBoneCount() const { return m_BoneOffsets.size(); }
 
-	void setNodeHeirarchy(aiNode* currentAiNode, Ptr<SkeletonNode>& currentNode);
+	void setNodeHierarchy(aiNode* currentAiNode, Ptr<SkeletonNode>& currentNode);
 	void setAnimationTransforms(Ptr<SkeletonNode>& node, float currentTime, const String& animationName, const Matrix& parentModelTransform, bool isRootFound);
 
 	Vector<String> getAnimationNames();

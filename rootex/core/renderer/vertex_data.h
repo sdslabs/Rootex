@@ -33,7 +33,7 @@ struct UIVertexData
 	Vector2 m_TextureCoord;
 };
 
-struct AnimatedVertexData : VertexData
+struct AnimatedVertexData : public VertexData
 {
 	int m_BoneIndices[4];
 	Vector4 m_BoneWeights;
