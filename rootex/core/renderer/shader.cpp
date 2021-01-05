@@ -28,8 +28,19 @@ Shader::Shader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const Buffer
 	unsigned int offset = 0;
 	for (auto& element : elements)
 	{
+		if (element.m_ResetOffset)
+		{
+			offset = 0;
+		}
+
 		D3D11_INPUT_ELEMENT_DESC desc;
-		desc = { element.m_Name, 0, (DXGI_FORMAT)element.m_Type, 0, offset, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+		desc.SemanticName = element.m_Name;
+		desc.SemanticIndex = 0;
+		desc.Format = (DXGI_FORMAT)element.m_Type;
+		desc.InputSlot = element.m_Slot;
+		desc.AlignedByteOffset = offset;
+		desc.InputSlotClass = element.m_Class;
+		desc.InstanceDataStepRate = element.m_RendersPerInstance;
 		offset += VertexBufferElement::GetSize(element.m_Type);
 
 		vertexDescArray.push_back(desc);
@@ -74,9 +85,21 @@ void BasicShader::bind() const
 	RenderingDevice::GetSingleton()->setInPixelShader(m_SamplerState.Get());
 }
 
-CPUParticlesShader::CPUParticlesShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat)
+ParticlesShader::ParticlesShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat)
     : Shader(vertexPath, pixelPath, vertexBufferFormat)
 {
+	m_SamplerState = RenderingDevice::GetSingleton()->createSS();
+}
+
+void ParticlesShader::bind() const
+{
+	Shader::bind();
+	RenderingDevice::GetSingleton()->setInPixelShader(m_SamplerState.Get());
+}
+
+void ParticlesShader::set(const Texture* texture, int slot)
+{
+	RenderingDevice::GetSingleton()->setInPixelShader(slot, 1, texture->getTextureResourceView());
 }
 
 GridShader::GridShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat)
@@ -99,4 +122,21 @@ void SkyShader::bind() const
 void SkyShader::setSkyTexture(const TextureCube* texture)
 {
 	RenderingDevice::GetSingleton()->setInPixelShader(SKY_PS_CPP, 1, texture->getTextureResourceView());
+}
+
+AnimationShader::AnimationShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat)
+    : Shader(vertexPath, pixelPath, vertexBufferFormat)
+{
+	m_SamplerState = RenderingDevice::GetSingleton()->createSS();
+}
+
+void AnimationShader::bind() const
+{
+	Shader::bind();
+	RenderingDevice::GetSingleton()->setInPixelShader(m_SamplerState.Get());
+}
+
+void AnimationShader::set(const Texture* texture, int slot)
+{
+	RenderingDevice::GetSingleton()->setInPixelShader(slot, 1, texture->getTextureResourceView());
 }

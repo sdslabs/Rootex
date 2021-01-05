@@ -31,7 +31,6 @@ public:
 
 	void loadFont(const String& path);
 	Rml::ElementDocument* loadDocument(const String& path);
-	
 	void unloadDocument(Rml::ElementDocument*& document);
 
 	bool initialize(const JSON::json& systemData) override;
@@ -39,6 +38,7 @@ public:
 	void shutDown();
 
 	void setDebugger(bool enabled);
+	Rml::Context* getContext() { return m_Context; }
 
 #ifdef ROOTEX_EDITOR
 	void draw() override;

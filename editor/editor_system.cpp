@@ -1,13 +1,12 @@
 #include "editor_system.h"
 
 #include "core/random.h"
-#include "app/level_manager.h"
 #include "core/renderer/rendering_device.h"
 #include "core/renderer/material_library.h"
 #include "core/resource_loader.h"
 #include "core/resource_files/lua_text_resource_file.h"
 #include "core/input/input_manager.h"
-#include "framework/components/hierarchy_component.h"
+#include "framework/scene_loader.h"
 #include "framework/systems/render_system.h"
 #include "framework/systems/render_ui_system.h"
 #include "framework/systems/script_system.h"
@@ -39,8 +38,7 @@ bool EditorSystem::initialize(const JSON::json& systemData)
 	BIND_EVENT_MEMBER_FUNCTION("EditorSaveBeforeQuit", EditorSystem::saveBeforeQuit);
 	BIND_EVENT_MEMBER_FUNCTION("EditorSaveAll", EditorSystem::saveAll);
 	BIND_EVENT_MEMBER_FUNCTION("EditorAutoSave", EditorSystem::autoSave);
-	BIND_EVENT_MEMBER_FUNCTION("EditorCreateNewLevel", EditorSystem::createNewLevel);
-	BIND_EVENT_MEMBER_FUNCTION("EditorCreateNewEntity", EditorSystem::createNewEntity);
+	BIND_EVENT_MEMBER_FUNCTION("EditorCreateNewScene", EditorSystem::createNewScene);
 	BIND_EVENT_MEMBER_FUNCTION("EditorCreateNewMaterial", EditorSystem::createNewMaterial);
 
 	const JSON::json& general = systemData["general"];
@@ -113,7 +111,7 @@ bool EditorSystem::initialize(const JSON::json& systemData)
 	};
 	m_Colors.white = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-	m_Hierarchy.reset(new HierarchyDock());
+	m_Scene.reset(new SceneDock());
 	m_Output.reset(new OutputDock());
 	m_Toolbar.reset(new ToolbarDock());
 	m_Viewport.reset(new ViewportDock(systemData["viewport"]));
@@ -185,7 +183,7 @@ void EditorSystem::update(float deltaMilliseconds)
 	pushRegularFont();
 
 	drawDefaultUI(deltaMilliseconds);
-	m_Hierarchy->draw(deltaMilliseconds);
+	m_Scene->draw(deltaMilliseconds);
 	m_Toolbar->draw(deltaMilliseconds);
 	m_Viewport->draw(deltaMilliseconds);
 	m_Inspector->draw(deltaMilliseconds);
@@ -269,7 +267,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 	
-	static String loadingLevel;
+	static String loadingScene;
 
 	ImGui::Begin("Rootex Editor", nullptr, windowFlags);
 	{
@@ -285,15 +283,15 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 
 		if (ImGui::BeginMenuBar())
 		{
-			static String newLevelName = "game/assets/levels/";
-			static String openLevelName;
-			static String newMaterialName = "game/assets/materials/";
-			static String newMaterialType = "Select Material Type";
+			static String newSceneName;
+			static String openSceneName;
+			static String newMaterialName;
+			static String newMaterialType;
 			if (ImGui::BeginMenu("File"))
 			{
 				if (ImGui::BeginMenu("Create Material"))
 				{
-					if (ImGui::BeginCombo("", newMaterialType.c_str()))
+					if (ImGui::BeginCombo("Material Type", newMaterialType.c_str()))
 					{
 						for (auto& [materialType, materialCreators] : MaterialLibrary::GetMaterialDatabase())
 						{
@@ -304,26 +302,22 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 						}
 						ImGui::EndCombo();
 					}
-					ImGui::InputText("Material Path", &newMaterialName, ImGuiInputTextFlags_AlwaysInsertMode);
-					if (ImGui::Button("Create"))
+					ImGui::InputText("Material Name", &newMaterialName, ImGuiInputTextFlags_AlwaysInsertMode);
+					if (!newMaterialName.empty() && !newMaterialType.empty() && ImGui::Button("Create"))
 					{
-						if (newMaterialName != "" && newMaterialType != "Select Material Type")
-						{
-							Vector<String> newMaterialInfo = { newMaterialName, newMaterialType };
-							EventManager::GetSingleton()->call("EditorFileCreateNewMaterial", "EditorCreateNewMaterial", newMaterialInfo);
-							newMaterialType = "Select Material Type";
-							newMaterialName = "";
-						}
+						Vector<String> newMaterialInfo = { "game/assets/materials/" + newMaterialName + ".rmat", newMaterialType };
+						EventManager::GetSingleton()->call("EditorFileCreateNewMaterial", "EditorCreateNewMaterial", newMaterialInfo);
 					}
 
 					ImGui::EndMenu();
 				}
-				static String newScript = "game/assets/scripts/";
+				static String newScript;
 				if (ImGui::BeginMenu("Create Script"))
 				{
 					ImGui::InputText("Script Name", &newScript, ImGuiInputTextFlags_AlwaysInsertMode);
-					if (ImGui::Button("Create"))
+					if (!newScript.empty() && ImGui::Button("Create"))
 					{
+						newScript = "game/assets/scripts/" + newScript + ".lua";
 						if (!OS::IsExists(newScript))
 						{
 							InputOutputFileStream file = OS::CreateFileName(newScript);
@@ -331,6 +325,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 							file.write(defaultScript.c_str(), strlen(defaultScript.c_str()));
 							file.close();
 							PRINT("Successfully created script: " + newScript);
+							newScript = "";
 						}
 						else
 						{
@@ -340,58 +335,49 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 					ImGui::EndMenu();
 				}
 				ImGui::Separator();
-				if (ImGui::BeginMenu("Create Level"))
+				if (ImGui::BeginMenu("Create Scene"))
 				{
-					ImGui::InputText("Level Name", &newLevelName, ImGuiInputTextFlags_AlwaysInsertMode);
-					if (ImGui::Button("Create"))
+					ImGui::InputText("Scene Name", &newSceneName, ImGuiInputTextFlags_AlwaysInsertMode);
+					if (!newSceneName.empty() && ImGui::Button("Create"))
 					{
-						if (LevelManager::GetSingleton()->isAnyLevelOpen())
+						if (SceneLoader::GetSingleton()->getCurrentScene())
 						{
 							m_MenuAction = "Save";
 							m_PopupCause = "create";
 						}
 						else
 						{
-							EventManager::GetSingleton()->call("EditorFileNewLevel", "EditorCreateNewLevel", newLevelName);
-							loadingLevel = newLevelName;
+							EventManager::GetSingleton()->call("EditorFileNewLevel", "EditorCreateNewScene", newSceneName);
+							loadingScene = "game/assets/scenes/" + newSceneName + ".scene.json";
 						}
 					}
 					ImGui::EndMenu();
 				}
-				if (ImGui::BeginMenu("Open Level"))
+				if (ImGui::BeginMenu("Open Scene"))
 				{
-					for (auto&& levelName : OS::GetDirectoriesInDirectory("game/assets/levels"))
+					for (auto&& levelName : OS::GetFilesInDirectory("game/assets/scenes/"))
 					{
-						if (ImGui::MenuItem(levelName.string().c_str()))
+						if (ImGui::MenuItem(levelName.generic_string().c_str()))
 						{
-							if (LevelManager::GetSingleton()->isAnyLevelOpen())
+							if (SceneLoader::GetSingleton()->getCurrentScene())
 							{
-								openLevelName = levelName.string();
+								openSceneName = levelName.generic_string();
 								m_MenuAction = "Save";
 								m_PopupCause = "open";
 							}
 							else
 							{
-								loadingLevel = levelName.generic_string();
+								loadingScene = levelName.generic_string();
 							}
 						}
 					}
 					ImGui::EndMenu();
 				}
-				if (ImGui::BeginMenu("Instantiate class", LevelManager::GetSingleton()->isAnyLevelOpen()))
+				if (ImGui::MenuItem("Instantiate Scene", 0, false, (bool)SceneLoader::GetSingleton()->getCurrentScene()))
 				{
-					for (auto&& entityClassFile : OS::GetAllFilesInDirectory("game/assets/classes/"))
-					{
-						if (ImGui::MenuItem(entityClassFile.string().c_str(), ""))
-						{
-							Variant callReturn = EventManager::GetSingleton()->returnCall("EditorFileCreateNewEntity", "EditorCreateNewEntity", entityClassFile.string());
-							Ref<Entity> newEntity = Extract(Ref<Entity>, callReturn);
-							EventManager::GetSingleton()->call("EditorFileOpenNewlyCreatedEntity", "EditorOpenEntity", newEntity);
-						}
-					}
-					ImGui::EndMenu();
+					igfd::ImGuiFileDialog::Instance()->OpenModal("ChooseSceneFile", "Choose Scene File", ".json", "game/assets/");
 				}
-				if (ImGui::MenuItem("Save Level", "", false, LevelManager::GetSingleton()->isAnyLevelOpen()))
+				if (ImGui::MenuItem("Save Scene", "", false, (bool)SceneLoader::GetSingleton()->getCurrentScene()))
 				{
 					EventManager::GetSingleton()->call("EditorSaveEvent", "EditorSaveAll", 0);
 				}
@@ -406,6 +392,15 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 				}
 
 				ImGui::EndMenu();
+			}
+			if (igfd::ImGuiFileDialog::Instance()->FileDialog("ChooseSceneFile"))
+			{
+				if (igfd::ImGuiFileDialog::Instance()->IsOk)
+				{
+					FilePath filePath = OS::GetRootRelativePath(igfd::ImGuiFileDialog::Instance()->GetFilePathName());
+					SceneLoader::GetSingleton()->getCurrentScene()->addChild(Scene::CreateFromFile(filePath.generic_string()));
+				}
+				igfd::ImGuiFileDialog::Instance()->CloseDialog("ChooseSceneFile");
 			}
 			if (ImGui::BeginMenu("Assets"))
 			{
@@ -444,7 +439,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 
 				ImGui::Checkbox("Collision Mode", &m_CollisionMode);
 				
-				bool fullscreen = Extract(bool, EventManager::GetSingleton()->returnCall("WindowGetScreenState", "WindowGetScreenState", 0));
+				bool fullscreen = Extract<bool>(EventManager::GetSingleton()->returnCall("WindowGetScreenState", "WindowGetScreenState", 0));
 				if (ImGui::Checkbox("Full Screen", &fullscreen))
 				{
 					EventManager::GetSingleton()->deferredCall("WindowToggleFullScreen", "WindowToggleFullScreen", 0);
@@ -453,19 +448,19 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 				{
 					ImGui::Checkbox("Toolbar", &m_Toolbar->getSettings().m_IsActive);
 					ImGui::Checkbox("Output", &m_Output->getSettings().m_IsActive);
-					ImGui::Checkbox("Hierarchy", &m_Hierarchy->getSettings().m_IsActive);
-					ImGui::Checkbox("Entities", &m_Hierarchy->getSettings().m_IsEntitiesDockActive);
+					ImGui::Checkbox("Hierarchy", &m_Scene->getSettings().m_IsActive);
+					ImGui::Checkbox("Entities", &m_Scene->getSettings().m_IsEntitiesDockActive);
 					ImGui::Checkbox("Viewport", &m_Viewport->getSettings().m_IsActive);
 					ImGui::Checkbox("Inspector", &m_Inspector->getSettings().m_IsActive);
 					ImGui::EndMenu();
 				}
 				ImGui::EndMenu();
 			}
-			if (ImGui::BeginMenu("Level"))
+			if (ImGui::BeginMenu("Scene"))
 			{
-				if (LevelManager::GetSingleton()->isAnyLevelOpen() && ImGui::MenuItem("Settings"))
+				if (SceneLoader::GetSingleton()->getCurrentScene())
 				{
-					EventManager::GetSingleton()->call("EditorLevelMenu", "EditorOpenFile", LevelManager::GetSingleton()->getCurrentLevel().getLevelSettingsFile()->getPath().string());
+					SceneLoader::GetSingleton()->getCurrentScene()->getSettings().draw();
 				}
 				ImGui::EndMenu();
 			}
@@ -583,7 +578,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 			if (ImGui::BeginPopupModal("Save", 0, ImGuiWindowFlags_AlwaysAutoResize))
 			{
 				ImGui::SetNextWindowSize({ ImGui::GetWindowWidth(), ImGui::GetWindowHeight() });
-				ImGui::Text(String("Do you want to save " + LevelManager::GetSingleton()->getCurrentLevel().getLevelName() + "?").c_str());
+				ImGui::Text(String("Do you want to save " + SceneLoader::GetSingleton()->getCurrentScene()->getFullName() + "?").c_str());
 				if (ImGui::Button("Save"))
 				{
 					if (m_PopupCause == "quit")
@@ -594,15 +589,15 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 					else if (m_PopupCause == "create")
 					{
 						saveAll(nullptr);
-						EventManager::GetSingleton()->call("EditorFileNewLevel", "EditorCreateNewLevel", newLevelName);
-						loadingLevel = newLevelName;
+						EventManager::GetSingleton()->call("EditorFileNewScene", "EditorCreateNewScene", newSceneName);
+						loadingScene = "game/assets/scenes/" + newSceneName + ".scene.json";
 						ImGui::CloseCurrentPopup();
 						m_MenuAction = "";
 					}
 					else if (m_PopupCause == "open")
 					{
 						saveAll(nullptr);
-						loadingLevel = openLevelName;
+						loadingScene = openSceneName;
 						ImGui::CloseCurrentPopup();
 						m_MenuAction = "";
 					}
@@ -617,14 +612,14 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 					}
 					else if (m_PopupCause == "create")
 					{
-						EventManager::GetSingleton()->call("EditorFileNewLevel", "EditorCreateNewLevel", newLevelName);
-						loadingLevel = newLevelName;
+						EventManager::GetSingleton()->call("EditorFileNewLevel", "EditorCreateNewScene", newSceneName);
+						loadingScene = "game/assets/scenes/" + newSceneName + ".scene.json";
 						ImGui::CloseCurrentPopup();
 						m_MenuAction = "";
 					}
 					else if (m_PopupCause == "open")
 					{
-						loadingLevel = openLevelName;
+						loadingScene = openSceneName;
 						ImGui::CloseCurrentPopup();
 						m_MenuAction = "";
 					}
@@ -674,16 +669,16 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 	static float currentProgress = 0.0f;
 	static int totalProgress = -1;
 
-	if (!loadingLevel.empty() && totalProgress == -1)
+	if (!loadingScene.empty() && totalProgress == -1)
 	{
-		ImGui::OpenPopup("Load Level");
-		totalProgress = LevelManager::GetSingleton()->preloadLevel(loadingLevel, progress, true);
+		ImGui::OpenPopup("Load Scene");
+		totalProgress = SceneLoader::GetSingleton()->preloadScene(loadingScene, progress);
 		currentProgress = 0.0f;
 	}
 
-	if (ImGui::BeginPopupModal("Load Level", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+	if (ImGui::BeginPopupModal("Load Scene", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
 	{
-		ImGui::Text("Loading level: %s", loadingLevel.c_str());
+		ImGui::Text("Loading scene: %s", loadingScene.c_str());
 
 		ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
 		float target = progress.load() / (float)totalProgress;
@@ -693,11 +688,12 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 
 		if (totalProgress == progress)
 		{
-			LevelManager::GetSingleton()->openPreloadedLevel(loadingLevel, {} , true);
-			SetWindowText(GetActiveWindow(), ("Rootex Editor: " + LevelManager::GetSingleton()->getCurrentLevel().getLevelName()).c_str());
+			EventManager::GetSingleton()->call("EditorLoadScene", "EditorCloseScene", 0);
+			SceneLoader::GetSingleton()->loadPreloadedScene(loadingScene, {});
+			SetWindowText(GetActiveWindow(), ("Rootex Editor: " + loadingScene).c_str());
 			totalProgress = -1;
 			progress = 0;
-			loadingLevel = "";
+			loadingScene = "";
 			ImGui::CloseCurrentPopup();
 		}
 
@@ -821,29 +817,29 @@ void EditorSystem::showDocumentation(const String& name, const sol::table& table
 
 Variant EditorSystem::saveAll(const Event* event)
 {
-	if (LevelManager::GetSingleton()->isAnyLevelOpen())
+	if (SceneLoader::GetSingleton()->getCurrentScene())
 	{
 		MaterialLibrary::SaveAll();
-		LevelManager::GetSingleton()->saveCurrentLevel();
-		PRINT("Successfully saved level: " + LevelManager::GetSingleton()->getCurrentLevel().getLevelName());
+		SceneLoader::GetSingleton()->saveScene(SceneLoader::GetSingleton()->getCurrentScene());
+		PRINT("Successfully saved current scene: " + SceneLoader::GetSingleton()->getCurrentScene()->getFullName());
 	}
 	else
 	{
-		PRINT("No level is open. Did not save current level");
+		PRINT("No level is open. Did not save current scene");
 	}
 	return true;
 }
 
 Variant EditorSystem::autoSave(const Event* event)
 {
-	PRINT("Auto-saving levels...");
+	PRINT("Auto-saving current scene...");
 	saveAll(nullptr);
 	return true;
 }
 
 Variant EditorSystem::saveBeforeQuit(const Event* event)
 {
-	if (LevelManager::GetSingleton()->isAnyLevelOpen())
+	if (SceneLoader::GetSingleton()->getCurrentScene())
 	{
 		m_MenuAction = "Save";
 		m_PopupCause = "quit";
@@ -855,35 +851,25 @@ Variant EditorSystem::saveBeforeQuit(const Event* event)
 	return true;
 }
 
-Variant EditorSystem::createNewLevel(const Event* event)
+Variant EditorSystem::createNewScene(const Event* event)
 {
-	const String& newLevelName = Extract(String, event->getData());
-
-	if (OS::IsExists(newLevelName))
+	const String& sceneName = Extract<String>(event->getData());
+	const String& newScenePath = "game/assets/scenes/" + sceneName + ".scene.json";
+	if (OS::IsExists(newScenePath))
 	{
-		WARN("Found a level with the same name: " + newLevelName);
+		WARN("Found a level with the same name: " + newScenePath);
 		return true;
 	}
 
-	LevelManager::GetSingleton()->createLevel(newLevelName);
-
+	Ref<Scene> newScene = Scene::CreateEmptyAtPath(newScenePath);
+	newScene->setName(sceneName);
+	SceneLoader::GetSingleton()->saveScene(newScene.get());
 	return true;
-}
-
-Variant EditorSystem::createNewEntity(const Event* event)
-{
-	const String& entityClassFilePath = Extract(String, event->getData());
-	TextResourceFile* entityClassFile = ResourceLoader::CreateNewTextResourceFile(entityClassFilePath);
-
-	Ref<Entity> newEntity = EntityFactory::GetSingleton()->createEntity(entityClassFile);
-
-	HierarchySystem::GetSingleton()->addChild(newEntity);
-	return newEntity;
 }
 
 Variant EditorSystem::createNewMaterial(const Event* event)
 {
-	const Vector<String>& materialInfo = Extract(Vector<String>, event->getData());
+	const Vector<String>& materialInfo = Extract<Vector<String>>(event->getData());
 	MaterialLibrary::CreateNewMaterialFile(materialInfo[0], materialInfo[1]);
 	return true;
 }

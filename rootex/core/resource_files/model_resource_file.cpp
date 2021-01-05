@@ -28,7 +28,7 @@ void ModelResourceFile::reimport()
 	Assimp::Importer modelLoader;
 	const aiScene* scene = modelLoader.ReadFile(
 	    getPath().generic_string(),
-	    aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_OptimizeMeshes | aiProcess_CalcTangentSpace);
+	    aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SplitLargeMeshes | aiProcess_GenBoundingBoxes | aiProcess_OptimizeMeshes | aiProcess_CalcTangentSpace | aiProcess_RemoveComponent | aiProcess_PreTransformVertices);
 
 	if (!scene)
 	{
@@ -36,12 +36,12 @@ void ModelResourceFile::reimport()
 		ERR("Assimp: " + modelLoader.GetErrorString());
 		return;
 	}
-
+	
 	m_Meshes.clear();
 	for (int i = 0; i < scene->mNumMeshes; i++)
 	{
 		const aiMesh* mesh = scene->mMeshes[i];
-
+		
 		Vector<VertexData> vertices;
 		vertices.reserve(mesh->mNumVertices);
 
@@ -110,7 +110,7 @@ void ModelResourceFile::reimport()
 		String materialPath;
 		if (String(material->GetName().C_Str()) == "DefaultMaterial")
 		{
-			materialPath = "rootex/assets/materials/default.rmat";
+			materialPath = MaterialLibrary::s_DefaultMaterialPath;
 		}
 		else
 		{
@@ -208,6 +208,11 @@ void ModelResourceFile::reimport()
 		Mesh extractedMesh;
 		extractedMesh.m_VertexBuffer.reset(new VertexBuffer(vertices));
 		extractedMesh.m_IndexBuffer.reset(new IndexBuffer(indices));
+		Vector3 max = { mesh->mAABB.mMax.x, mesh->mAABB.mMax.y, mesh->mAABB.mMax.z };
+		Vector3 min = { mesh->mAABB.mMin.x, mesh->mAABB.mMin.y, mesh->mAABB.mMin.z };
+		Vector3 center = (max + min) / 2.0f;
+		extractedMesh.m_BoundingBox.Center = center;
+		extractedMesh.m_BoundingBox.Extents = (max - min) / 2.0f;
 
 		bool found = false;
 		for (auto& materialModels : getMeshes())

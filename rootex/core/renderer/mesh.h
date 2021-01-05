@@ -9,6 +9,7 @@ struct Mesh
 {
 	Ref<VertexBuffer> m_VertexBuffer;
 	Ref<IndexBuffer> m_IndexBuffer;
+	BoundingBox m_BoundingBox;
 
 	Mesh() = default;
 	Mesh(const Mesh&) = default;

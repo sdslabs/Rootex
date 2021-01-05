@@ -1,6 +1,7 @@
 #include "event_manager.h"
 
 #include "entity.h"
+#include "scene.h"
 
 EventManager::EventManager()
 {
@@ -21,6 +22,11 @@ EventManager* EventManager::GetSingleton()
 {
 	static EventManager singleton;
 	return &singleton;
+}
+
+void EventManager::defer(Function<void()> function)
+{
+	m_DeferList.push_back(function);
 }
 
 bool EventManager::addEvent(const Event::Type& event)
@@ -62,12 +68,25 @@ void EventManager::call(const Event& event)
 
 	if (findIt != m_EventListeners.end())
 	{
-		const Vector<EventFunction>& eventListenerList = findIt->second;
-		for (auto it = eventListenerList.begin(); it != eventListenerList.end(); ++it)
+		Vector<EventFunction>& eventListenerList = findIt->second;
+		int toDelete = -1;
+		for (int i = 0; i != eventListenerList.size(); i++)
 		{
-			EventFunction listener = *it;
- 			listener(&event);
+			EventFunction& listener = eventListenerList[i];
+			if (listener)
+			{
+				listener(&event);
+			}
+			else
+			{
+				toDelete = i;
+			}
 			processed = true;
+		}
+
+		if (toDelete != -1)
+		{
+			eventListenerList.erase(eventListenerList.begin() + toDelete);
 		}
 	}
 }
@@ -105,6 +124,12 @@ void EventManager::deferredCall(const String& eventName, const Event::Type& even
 
 bool EventManager::dispatchDeferred(unsigned long maxMillis)
 {
+	for (auto& function : m_DeferList)
+	{
+		function();
+	}
+	m_DeferList.clear();
+
 	int queueToProcess = m_ActiveQueue;
 	m_ActiveQueue = (m_ActiveQueue + 1) % EVENTMANAGER_NUM_QUEUES;
 	m_Queues[m_ActiveQueue].clear();

@@ -103,11 +103,11 @@ void PhysicsSystem::InternalTickCallback(btDynamicsWorld* const world, btScalar 
 		PhysicsColliderComponent* collider0 = (PhysicsColliderComponent*)body0->getUserPointer();
 		PhysicsColliderComponent* collider1 = (PhysicsColliderComponent*)body1->getUserPointer();
 
-		if (collider0->getIsGeneratesHitEvents())
+		if (collider0->isGeneratesHitEvents())
 		{
 			collider0->getOwner()->call("onHit", { body0, body1 });
 		}
-		if (collider1->getIsGeneratesHitEvents())
+		if (collider1->isGeneratesHitEvents())
 		{
 			collider1->getOwner()->call("onHit", { body1, body0 });
 		}

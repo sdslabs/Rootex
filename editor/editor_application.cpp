@@ -47,6 +47,7 @@ EditorApplication::EditorApplication()
 
 	InputSystem::GetSingleton()->loadSchemes(m_ApplicationSettings->getJSON()["systems"]["InputSystem"]["inputSchemes"]);
 	InputSystem::GetSingleton()->setScheme(m_ApplicationSettings->getJSON()["systems"]["InputSystem"]["startScheme"]);
+	InputSystem::GetSingleton()->setSchemeLock(true);
 	EditorSystem::GetSingleton()->initialize(m_ApplicationSettings->getJSON()["systems"]["EditorSystem"]);
 	
 	m_PointAtLast10Second = m_ApplicationTimer.Now();

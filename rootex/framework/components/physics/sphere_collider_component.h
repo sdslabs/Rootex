@@ -9,12 +9,11 @@
 class SphereColliderComponent : public PhysicsColliderComponent
 {
 	static Component* Create(const JSON::json& sphereComponentData);
-	static Component* CreateDefault();
 
 	float m_Radius;
 	Ref<btSphereShape> m_SphereShape;
 	
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::SphereColliderComponent;

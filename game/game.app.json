@@ -1,20 +1,23 @@
 {
     "project": "Rootex Game",
-    "startLevel": "game/assets/levels/script_test",
+    "startLevel": "game/assets/scenes/loading.scene.json",
     "systems": {
         "AudioSystem": {},
+        "DebugSystem": {
+            "active": true
+        },
         "InputManager": {
             "height": 1440,
             "width": 2560
         },
         "InputSystem": {
-            "height": 1057,
-            "width": 1920
+            "height": 1387,
+            "width": 2560
         },
         "PhysicsSystem": {},
         "UISystem": {
-            "height": 1057,
-            "width": 1920
+            "height": 1387,
+            "width": 2560
         }
     },
     "version": 1.0,

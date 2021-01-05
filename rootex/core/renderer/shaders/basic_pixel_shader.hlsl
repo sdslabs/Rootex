@@ -56,23 +56,23 @@ float4 main(PixelInputType input) : SV_TARGET
     float3 specularColor = SpecularTexture.Sample(SampleType, input.tex).rgb;
     for (int i = 0; i < pointLightCount; i++)
     {
-        finalColor += saturate(GetColorFromPointLight(pointLightInfos[i], toEye, input.normal, input.worldPosition, materialColor, specularColor, material));
+        finalColor += saturate(GetColorFromPointLight(pointLightInfos[i], toEye, input.normal, input.worldPosition, materialColor, specularColor, material.specPow, material.specularIntensity, material.isLit));
     }
     
     for (i = 0; i < staticPointLightAffectingCount; i++)
     {
-        finalColor += saturate(GetColorFromPointLight(staticPointLightInfos[staticPointsLightsAffecting[i]], toEye, input.normal, input.worldPosition, materialColor, specularColor, material));
+        finalColor += saturate(GetColorFromPointLight(staticPointLightInfos[staticPointsLightsAffecting[i]], toEye, input.normal, input.worldPosition, materialColor, specularColor, material.specPow, material.specularIntensity, material.isLit));
     }
 
-    finalColor += saturate(GetColorFromDirectionalLight(directionalLightInfo, toEye, input.normal, materialColor, specularColor, material));
+    finalColor += saturate(GetColorFromDirectionalLight(directionalLightInfo, toEye, input.normal, materialColor, specularColor, material.specPow, material.specularIntensity, material.isLit));
     
     for (i = 0; i < spotLightCount; i++)
     {
-        finalColor += saturate(GetColorFromSpotLight(spotLightInfos[i], toEye, input.normal, input.worldPosition, materialColor, specularColor, material));
+        finalColor += saturate(GetColorFromSpotLight(spotLightInfos[i], toEye, input.normal, input.worldPosition, materialColor, specularColor, material.specPow, material.specularIntensity, material.isLit));
     }
     
-    finalColor.rgb = GetReflectionFromSky(finalColor, toEye, input.normal, SkyTexture, SampleType, material);
-    finalColor.rgb = GetRefractionFromSky(finalColor, input.normal, input.worldPosition, cameraPos, SkyTexture, SampleType, material);
+    finalColor.rgb = GetReflectionFromSky(finalColor, toEye, input.normal, SkyTexture, SampleType, material.reflectivity, material.affectedBySky);
+    finalColor.rgb = GetRefractionFromSky(finalColor, input.normal, input.worldPosition, cameraPos, SkyTexture, SampleType, material.refractionConstant, material.refractivity, material.affectedBySky);
     
     finalColor.rgb = (lerp(fogColor, finalColor, input.fogFactor)).rgb;
 
