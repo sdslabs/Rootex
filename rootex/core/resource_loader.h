@@ -1,43 +1,28 @@
 #pragma once
 
 #include "common/common.h"
-#include "core/resource_data.h"
-#include "core/resource_file.h"
-#include "os/os.h"
 
-#include <assimp/Importer.hpp>
-#include <assimp/postprocess.h>
-#include <assimp/scene.h>
+#include "resource_file.h"
 
-static const inline HashMap<ResourceFile::Type, Vector<String>> SupportedFiles = {
-	{
-	    ResourceFile::Type::Font,
-	    { ".spritefont" },
-	},
-	{
-	    ResourceFile::Type::Model,
-	    { ".obj", ".blend", ".3ds", ".fbx" },
-	},
-	{
-	    ResourceFile::Type::Audio,
-	    { ".wav" },
-	},
-	{
-	    ResourceFile::Type::Image,
-	    { ".png", ".jpeg", ".jpg", ".dds" },
-	},
-	{
-	    ResourceFile::Type::Text,
-	    { ".txt", ".json", ".rml" },
-	},
-	{
-	    ResourceFile::Type::Lua,
-	    { ".lua" },
-	},
-	{
-	    ResourceFile::Type::None,
-	    {},
-	}
+#include "resource_files/audio_resource_file.h"
+#include "resource_files/font_resource_file.h"
+#include "resource_files/image_resource_file.h"
+#include "resource_files/image_cube_resource_file.h"
+#include "resource_files/lua_text_resource_file.h"
+#include "resource_files/model_resource_file.h"
+#include "resource_files/text_resource_file.h"
+#include "resource_files/animated_model_resource_file.h"
+
+static const inline HashMap<ResourceFile::Type, const char*> SupportedFiles = {
+	{ ResourceFile::Type::Font, ".spritefont" },
+	{ ResourceFile::Type::Model, ".obj,.blend,.3ds,.fbx,.dae" },
+	{ ResourceFile::Type::AnimatedModel, ".dae,.fbx" },
+	{ ResourceFile::Type::Audio, ".wav" },
+	{ ResourceFile::Type::Image, ".png,.jpeg,.jpg,.dds" },
+	{ ResourceFile::Type::ImageCube, ".dds" },
+	{ ResourceFile::Type::Text, ".txt,.json,.rml" },
+	{ ResourceFile::Type::Lua, ".lua" },
+	{ ResourceFile::Type::None, "" }
 };
 
 bool IsFileSupported(const String& extension, ResourceFile::Type supportedFileType);
@@ -48,41 +33,55 @@ bool IsFileSupported(const String& extension, ResourceFile::Type supportedFileTy
 /// All path arguments should be relative to Rootex root.
 class ResourceLoader
 {
-	static HashMap<Ptr<ResourceData>, Ptr<ResourceFile>> s_ResourcesDataFiles;
+	static HashMap<ResourceFile::Type, Vector<Ref<ResourceFile>>> s_ResourcesDataFiles;
 	
-	static void UpdateFileTimes(ResourceFile* file);
-	static void LoadAssimp(ModelResourceFile* file);
-	static void LoadALUT(AudioResourceFile* audioRes, const char* audioBuffer, int format, int size, float frequency);
+	template<class T>
+	static T* GetCachedResource(ResourceFile::Type type, const FilePath& path);
+	static void RegisterResource(Ref<ResourceFile> file);
 
 public:
 	static void RegisterAPI(sol::table& rootex);
 
-	static const HashMap<Ptr<ResourceData>, Ptr<ResourceFile>>& GetResources() { return s_ResourcesDataFiles; };
+	static const HashMap<ResourceFile::Type, Vector<Ref<ResourceFile>>>& GetResources() { return s_ResourcesDataFiles; };
 
 	static TextResourceFile* CreateTextResourceFile(const String& path);
 	static TextResourceFile* CreateNewTextResourceFile(const String& path);
 	static LuaTextResourceFile* CreateLuaTextResourceFile(const String& path);
 	static AudioResourceFile* CreateAudioResourceFile(const String& path);
 	static ModelResourceFile* CreateModelResourceFile(const String& path);
+	static AnimatedModelResourceFile* CreateAnimatedModelResourceFile(const String& path);
 	static ImageResourceFile* CreateImageResourceFile(const String& path);
+	static ImageCubeResourceFile* CreateImageCubeResourceFile(const String& path);
 	static FontResourceFile* CreateFontResourceFile(const String& path);
 	
 	/// Use when you don't know what kind of a resource file will it be
 	static ResourceFile* CreateSomeResourceFile(const String& path);
 	
-	/// Write the data buffer inside a ResourceFile to disk.
-	static void SaveResourceFile(ResourceFile* resourceFile);
-	/// Reload the data buffer inside a ResourceFile from disk.
-	static void ReloadResourceData(const String& path);
-
-	static void Reload(TextResourceFile* file);
-	static void Reload(LuaTextResourceFile* file);
-	static void Reload(AudioResourceFile* file);
-	static void Reload(ModelResourceFile* file);
-	static void Reload(ImageResourceFile* file);
-	static void Reload(FontResourceFile* file);
-
 	/// Load all the files passed in, in a parellel manner. Return total tasks generated.
 	static int Preload(Vector<String> paths, Atomic<int>& progress);
 	static void Unload(const Vector<String>& paths);
 };
+
+template<class T>
+inline T* ResourceLoader::GetCachedResource(ResourceFile::Type type, const FilePath& path)
+{
+	String searchPath = path.generic_string();
+	for (auto& item : s_ResourcesDataFiles[type])
+	{
+		if (item->getPath() == searchPath)
+		{
+			return (T*)(item.get());
+		}
+	}
+
+	if (!OS::IsExists(searchPath))
+	{
+		ERR("File not found: " + searchPath);
+		return nullptr;
+	}
+
+	// File not found in cache, load it only once
+	Ref<T> file(new T(searchPath));
+	RegisterResource(file);
+	return file.get();
+}

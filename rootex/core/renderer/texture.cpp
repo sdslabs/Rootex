@@ -3,16 +3,9 @@
 #include "rendering_device.h"
 #include "resource_loader.h"
 
-Texture::Texture(ImageResourceFile* imageFile)
-    : m_ImageFile(imageFile)
+Texture::Texture(const char* pixelData, int width, int height)
 {
-	loadTexture();
-}
-
-Texture::Texture(const char* imageData, int width, int height)
-    : m_ImageFile(nullptr)
-{
-	m_TextureView = RenderingDevice::GetSingleton()->createTextureFromPixels(imageData, width, height);
+	m_TextureView = RenderingDevice::GetSingleton()->createTextureFromPixels(pixelData, width, height);
 
 	Microsoft::WRL::ComPtr<ID3D11Resource> res;
 	m_TextureView->GetResource(&res);
@@ -27,7 +20,6 @@ Texture::Texture(const char* imageData, int width, int height)
 }
 
 Texture::Texture(const char* imageFileData, size_t size)
-    : m_ImageFile(nullptr)
 {
 	m_TextureView = RenderingDevice::GetSingleton()->createTexture(imageFileData, size);
 
@@ -43,63 +35,7 @@ Texture::Texture(const char* imageFileData, size_t size)
 	m_MipLevels = textureDesc.MipLevels;
 }
 
-void Texture::reload()
+TextureCube::TextureCube(const char* imageDDSFileData, size_t size)
 {
-	m_TextureView.Reset();
-	if (m_ImageFile)
-	{
-		ResourceLoader::Reload(m_ImageFile);
-		loadTexture();
-	}
-	else
-	{
-		WARN("Cannot reload texture made from raw data");
-	}
-}
-
-void Texture::loadTexture()
-{
-	m_TextureView = RenderingDevice::GetSingleton()->createTexture(m_ImageFile);
-	
-	Microsoft::WRL::ComPtr<ID3D11Resource> res;
-	m_TextureView->GetResource(&res);
-	res->QueryInterface<ID3D11Texture2D>(&m_Texture);
-
-	CD3D11_TEXTURE2D_DESC textureDesc;
-	m_Texture->GetDesc(&textureDesc);
-
-	m_Width = textureDesc.Width;
-	m_Height = textureDesc.Height;
-	m_MipLevels = textureDesc.MipLevels;
-}
-
-Texture* Texture::GetCrossTexture()
-{
-	static Texture crossTexture(ResourceLoader::CreateImageResourceFile("rootex/assets/cross.png"));
-	return &crossTexture;
-}
-
-void Texture3D::loadTexture()
-{
-	m_TextureView = RenderingDevice::GetSingleton()->createDDSTexture(m_ImageFile);
-}
-
-Texture3D::Texture3D(ImageResourceFile* imageFile)
-    : m_ImageFile(imageFile)
-{
-	loadTexture();
-}
-
-void Texture3D::reload()
-{
-	m_TextureView.Reset();
-	if (m_ImageFile)
-	{
-		ResourceLoader::Reload(m_ImageFile);
-		loadTexture();
-	}
-	else
-	{
-		WARN("Cannot reload texture made from raw data");
-	}
+	m_TextureView = RenderingDevice::GetSingleton()->createDDSTexture(imageDDSFileData, size);
 }

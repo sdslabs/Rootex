@@ -8,12 +8,6 @@ Component* DebugComponent::Create(const JSON::json& componentData)
 	return component;
 }
 
-Component* DebugComponent::CreateDefault()
-{
-	DebugComponent* component = new DebugComponent();
-	return component;
-}
-
 JSON::json DebugComponent::getJSON() const
 {
 	return JSON::json::object();

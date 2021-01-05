@@ -5,6 +5,7 @@
 
 RenderUIComponent::RenderUIComponent(bool isVisible)
     : m_IsVisible(isVisible)
+    , m_DependencyOnTransformComponent(this)
 {
 }
 
@@ -16,28 +17,9 @@ void RenderUIComponent::RegisterAPI(sol::table& rootex)
 	rootex["Entity"]["getRenderUI"] = &Entity::getComponent<RenderUIComponent>;
 }
 
-bool RenderUIComponent::setup()
-{
-	m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
-	if (!m_TransformComponent)
-	{
-		ERR("TransformComponent not found on RenderUIComponent");
-		return false;
-	}
-	return true;
-}
-
 bool RenderUIComponent::preRender()
 {
-	if (m_TransformComponent)
-	{
-		RenderUISystem::GetSingleton()->pushUIMatrix(m_TransformComponent->getLocalTransform());
-	}
-	else
-	{
-		RenderUISystem::GetSingleton()->pushUIMatrix(Matrix::Identity);
-	}
-
+	RenderUISystem::GetSingleton()->pushUIMatrix(m_TransformComponent->getLocalTransform());
 	return true;
 }
 

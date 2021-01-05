@@ -10,7 +10,7 @@
 
 Variant OutputDock::catchOutput(const Event* event)
 {
-	m_CaughtOutputs.push_back({ event->getName(), Extract(String, event->getData()) });
+	m_CaughtOutputs.push_back({ event->getName(), Extract<String>(event->getData()) });
 	m_IsOutputJustCaught = true;
 	return true;
 }
@@ -22,6 +22,7 @@ OutputDock::OutputDock()
 
 void OutputDock::draw(float deltaMilliseconds)
 {
+	ZoneScoped;
 	if (m_OutputDockSettings.m_IsActive)
 	{
 		if (ImGui::Begin("Output"))
@@ -30,15 +31,15 @@ void OutputDock::draw(float deltaMilliseconds)
 			{
 				if (outputString.first == "Error")
 				{
-					ImGui::PushStyleColor(ImGuiCol_Text, EditorSystem::GetSingleton()->getColors().m_Failure);
+					ImGui::PushStyleColor(ImGuiCol_Text, EditorSystem::GetSingleton()->getColors().failure);
 				}
 				else if (outputString.first == "Warning")
 				{
-					ImGui::PushStyleColor(ImGuiCol_Text, EditorSystem::GetSingleton()->getColors().m_Warning);
+					ImGui::PushStyleColor(ImGuiCol_Text, EditorSystem::GetSingleton()->getColors().warning);
 				}
 				else
 				{
-					ImGui::PushStyleColor(ImGuiCol_Text, EditorSystem::GetSingleton()->getColors().m_Text);
+					ImGui::PushStyleColor(ImGuiCol_Text, EditorSystem::GetSingleton()->getColors().text);
 				}
 
 				ImGui::TextUnformatted(outputString.second.c_str());

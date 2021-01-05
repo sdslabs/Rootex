@@ -8,7 +8,7 @@
 
 class AudioPlayer
 {
-	float m_FractionProgress;
+	float m_FractionProgress = 0.0f;
 	AudioResourceFile* m_OpenFile = nullptr;
 	Ref<StaticAudioBuffer> m_Buffer;
 	Ref<StaticAudioSource> m_Source;
@@ -19,7 +19,7 @@ class AudioPlayer
 	void drawFileInfo();
 
 public:
-	AudioPlayer();
+	AudioPlayer() = default;
 	AudioPlayer(AudioPlayer&) = delete;
 	~AudioPlayer() = default;
 

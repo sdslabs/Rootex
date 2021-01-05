@@ -28,8 +28,7 @@ StaticPointLightsInfo LightSystem::getStaticPointLights()
 	for (; i < staticPointLightComponents.size() && i < MAX_STATIC_POINT_LIGHTS; i++)
 	{
 		StaticPointLightComponent* staticLight = (StaticPointLightComponent*)staticPointLightComponents[i];
-		TransformComponent* transform = staticLight->getOwner()->getComponent<TransformComponent>().get();
-		Vector3 transformedPosition = transform->getAbsoluteTransform().Translation();
+		Vector3 transformedPosition = staticLight->getAbsoluteTransform().Translation();
 		const PointLight& pointLight = staticLight->getPointLight();
 
 		staticLights.pointLightInfos[i].ambientColor = pointLight.ambientColor;
@@ -64,8 +63,7 @@ LightsInfo LightSystem::getDynamicLights()
 	for (; i < pointLightComponents.size() && i < MAX_DYNAMIC_POINT_LIGHTS; i++)
 	{
 		PointLightComponent* light = (PointLightComponent*)pointLightComponents[i];
-		TransformComponent* transform = light->getOwner()->getComponent<TransformComponent>().get();
-		Vector3 transformedPosition = transform->getAbsoluteTransform().Translation();
+		Vector3 transformedPosition = light->getAbsoluteTransform().Translation();
 		const PointLight& pointLight = light->getPointLight();
 		
 		lights.pointLightInfos[i].ambientColor = pointLight.ambientColor;
@@ -90,10 +88,10 @@ LightsInfo LightSystem::getDynamicLights()
 	{
 		DirectionalLightComponent* light = (DirectionalLightComponent*)directionalLightComponents[0];
 		const DirectionalLight& directionalLight = light->getDirectionalLight();
-		Matrix transform = light->getOwner()->getComponent<TransformComponent>()->getAbsoluteTransform();
+		const Vector3& forward = light->getDirection();
 
 		lights.directionalLightInfo = {
-			transform.Forward(), 
+			forward, 
 			directionalLight.diffuseIntensity, 
 			directionalLight.diffuseColor,
 			directionalLight.ambientColor
@@ -108,7 +106,7 @@ LightsInfo LightSystem::getDynamicLights()
 	for (; i < spotLightComponents.size() && i < MAX_DYNAMIC_SPOT_LIGHTS; i++)
 	{
 		SpotLightComponent* light = (SpotLightComponent*)spotLightComponents[i];
-		Matrix transform = light->getOwner()->getComponent<TransformComponent>()->getAbsoluteTransform();
+		Matrix transform = light->getAbsoluteTransform();
 		const SpotLight& spotLight = light->getSpotLight();
 
 		lights.spotLightInfos[i] = {

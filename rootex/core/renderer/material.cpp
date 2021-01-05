@@ -2,11 +2,6 @@
 
 #include "shader_library.h"
 
-void Material::bind()
-{
-	m_Shader->bind();
-}
-
 JSON::json Material::getJSON() const
 {
 	JSON::json j;
@@ -24,7 +19,7 @@ Material::Material(Shader* shader, const String& typeName, bool isAlpha)
 
 #ifdef ROOTEX_EDITOR
 #include "imgui.h"
-void Material::draw(const String& id)
+void Material::draw()
 {
 	ImGui::Columns(2);
 
@@ -40,7 +35,7 @@ void Material::draw(const String& id)
 
 	ImGui::Text("Alpha");
 	ImGui::NextColumn();
-	ImGui::Checkbox(("##Alpha" + id).c_str(), &m_IsAlpha);
+	ImGui::Checkbox("##Alpha", &m_IsAlpha);
 
 	ImGui::Columns(1);
 }

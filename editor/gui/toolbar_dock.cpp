@@ -2,8 +2,9 @@
 
 #include "editor/editor_application.h"
 
-#include "app/level_manager.h"
+#include "framework/scene_loader.h"
 #include "framework/system.h"
+#include "editor/editor_system.h"
 
 #include "vendor/ImGUI/imgui.h"
 #include "vendor/ImGUI/imgui_stdlib.h"
@@ -17,22 +18,25 @@ ToolbarDock::ToolbarDock()
 
 void ToolbarDock::draw(float deltaMilliseconds)
 {
+	ZoneScoped;
 	if (m_ToolbarDockSettings.m_IsActive)
 	{
 		if (ImGui::Begin("Toolbar"))
 		{
 			ImGui::Columns(2);
 
-			ImGui::Text("Play Level");
-			ImGui::SameLine();
-			if (ImGui::ArrowButton("Play Level", ImGuiDir_Right))
+			if (SceneLoader::GetSingleton()->getCurrentScene())
 			{
-				EventManager::GetSingleton()->call("PreGameStartupSaveEvent", "EditorSaveAll", 0);
-				PRINT("Launched Game process");
-				OS::Execute("\"" + OS::GetGameExecutablePath() + "\" " + LevelManager::GetSingleton()->getCurrentLevel().getLevelName());
-				PRINT("Game process ended");
+				ImGui::Text("Play Level");
+				ImGui::SameLine();
+				if (ImGui::ArrowButton("Play Level", ImGuiDir_Right))
+				{
+					EventManager::GetSingleton()->call("PreGameStartupSaveEvent", "EditorSaveAll", 0);
+					PRINT("Launched Game process");
+					OS::Execute("\"" + OS::GetGameExecutablePath() + "\" " + SceneLoader::GetSingleton()->getCurrentScene()->getSceneFilePath());
+					PRINT("Game process ended");
+				}
 			}
-
 			ImGui::NextColumn();
 
 			ImGui::Text("Play Game");
@@ -44,6 +48,17 @@ void ToolbarDock::draw(float deltaMilliseconds)
 				OS::Execute("\"" + OS::GetGameExecutablePath() + "\"");
 				PRINT("Game process ended");
 			}
+			ImGui::NextColumn();
+
+#ifdef TRACY_ENABLE
+			ImGui::Text("Profiler");
+			ImGui::NextColumn();
+			if (ImGui::Button("Start Tracy " ICON_ROOTEX_EXTERNAL_LINK " "))
+			{
+				OS::OpenFileInSystemEditor("rootex/vendor/Tracy/Tracy.exe");
+			}
+			ImGui::NextColumn();
+#endif // TRACY_ENABLE
 
 			ImGui::Columns(1);
 
@@ -70,7 +85,7 @@ void ToolbarDock::draw(float deltaMilliseconds)
 				}
 			}
 
-			for (auto& [order, systems] : System::GetSystems()) 
+			for (auto& systems : System::GetSystems()) 
 			{
 				for (auto& system : systems)
 				{

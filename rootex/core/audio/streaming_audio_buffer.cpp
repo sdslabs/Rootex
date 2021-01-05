@@ -1,15 +1,11 @@
 #include "streaming_audio_buffer.h"
 
 #include "framework/systems/audio_system.h"
-#include "resource_data.h"
-#include "resource_file.h"
+#include "resource_files/audio_resource_file.h"
 
 void StreamingAudioBuffer::initializeBuffers()
 {
 	PANIC(m_AudioFile->getType() != ResourceFile::Type::Audio, "AudioSystem: Trying to load a non-WAV file in a sound buffer");
-
-	ResourceData* fileStream = m_AudioFile->getData();
-	FileBuffer* fileBuffer = fileStream->getRawData();
 
 	AL_CHECK(alGenBuffers(BUFFER_COUNT, m_Buffers));
 
@@ -17,13 +13,13 @@ void StreamingAudioBuffer::initializeBuffers()
 
 	m_BufferSize = m_AudioFile->getAudioDataSize() / BUFFER_COUNT;
 	m_BufferSize -= (m_BufferSize % blockAlign);
-	m_BufferCursor = m_AudioFile->getData()->getRawData()->data();
+	m_BufferCursor = m_AudioFile->getAudioData();
 	m_BufferEnd = m_BufferCursor + m_AudioFile->getAudioDataSize();
 
 	int i = 0;
 	while (i < MAX_BUFFER_QUEUE_LENGTH)
 	{
-		if (m_BufferCursor > m_AudioFile->getData()->getRawData()->data() + m_AudioFile->getAudioDataSize())
+		if (m_BufferCursor > m_AudioFile->getAudioData() + m_AudioFile->getAudioDataSize())
 		{
 			break;
 		}
@@ -52,11 +48,11 @@ void StreamingAudioBuffer::loadNewBuffers(int count, bool isLooping)
 	{
 		m_BufferEnd = m_BufferCursor + m_BufferSize;
 
-		if (m_BufferCursor == m_AudioFile->getData()->getRawData()->data() + m_AudioFile->getAudioDataSize()) // Data has exhausted
+		if (m_BufferCursor == m_AudioFile->getAudioData() + m_AudioFile->getAudioDataSize()) // Data has exhausted
 		{
 			if (isLooping) // Re-queue if looping
 			{
-				m_BufferCursor = m_AudioFile->getData()->getRawData()->data();
+				m_BufferCursor = m_AudioFile->getAudioData();
 			}
 			else
 			{
@@ -64,9 +60,9 @@ void StreamingAudioBuffer::loadNewBuffers(int count, bool isLooping)
 			}
 		}
 
-		if (m_BufferEnd >= m_AudioFile->getData()->getRawData()->data() + m_AudioFile->getAudioDataSize()) // Data not left enough to entirely fill the next buffer
+		if (m_BufferEnd >= m_AudioFile->getAudioData() + m_AudioFile->getAudioDataSize()) // Data not left enough to entirely fill the next buffer
 		{
-			m_BufferEnd = m_AudioFile->getData()->getRawData()->data() + m_AudioFile->getAudioDataSize(); // Only take what you can
+			m_BufferEnd = m_AudioFile->getAudioData() + m_AudioFile->getAudioDataSize(); // Only take what you can
 		}
 
 		AL_CHECK(alBufferData(

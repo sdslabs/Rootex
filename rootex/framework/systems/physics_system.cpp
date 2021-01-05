@@ -1,8 +1,8 @@
 #include "physics_system.h"
 
-#include "core/resource_loader.h"
-
 #include "common/common.h"
+#include "core/resource_loader.h"
+#include "core/resource_files/lua_text_resource_file.h"
 
 #include "components/physics/physics_collider_component.h"
 #include "script/script.h"
@@ -103,11 +103,11 @@ void PhysicsSystem::InternalTickCallback(btDynamicsWorld* const world, btScalar 
 		PhysicsColliderComponent* collider0 = (PhysicsColliderComponent*)body0->getUserPointer();
 		PhysicsColliderComponent* collider1 = (PhysicsColliderComponent*)body1->getUserPointer();
 
-		if (collider0->getIsGeneratesHitEvents())
+		if (collider0->isGeneratesHitEvents())
 		{
 			collider0->getOwner()->call("onHit", { body0, body1 });
 		}
-		if (collider1->getIsGeneratesHitEvents())
+		if (collider1->isGeneratesHitEvents())
 		{
 			collider1->getOwner()->call("onHit", { body1, body0 });
 		}
@@ -134,6 +134,7 @@ void PhysicsSystem::debugDrawComponent(const btTransform& worldTransform, const 
 
 void PhysicsSystem::update(float deltaMilliseconds)
 {
+	ZoneScoped;
 	m_DynamicsWorld->stepSimulation(deltaMilliseconds * MS_TO_S, 10);
 }
 

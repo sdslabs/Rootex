@@ -9,7 +9,9 @@ class ShaderLibrary
 	enum class ShaderType
 	{
 		Basic,
-		Sky
+		Sky,
+		Particles,
+		Animation
 	};
 
 private:
@@ -26,5 +28,7 @@ public:
 	static void DestroyShaders();
 
 	static BasicShader* GetBasicShader();
+	static ParticlesShader* GetParticlesShader();
 	static SkyShader* GetSkyShader();
+	static AnimationShader* GetAnimationShader();
 };

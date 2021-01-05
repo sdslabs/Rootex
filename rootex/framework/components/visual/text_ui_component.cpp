@@ -6,33 +6,13 @@
 Component* TextUIComponent::Create(const JSON::json& componentData)
 {
 	TextUIComponent* tV2DC = new TextUIComponent(
-	    ResourceLoader::CreateFontResourceFile(
-	        componentData["fontResource"]),
-	    componentData["text"],
-	    { 
-			componentData["color"]["r"],
-	        componentData["color"]["g"],
-	        componentData["color"]["b"],
-	        componentData["color"]["a"] 
-		},
-	    (Mode)(int)componentData["mode"],
-	    {
-			componentData["origin"]["x"],
-	        componentData["origin"]["y"] 
-		},
-	    componentData["isVisible"]);
+	    ResourceLoader::CreateFontResourceFile(componentData.value("fontResource", "game/assets/fonts/noto_sans_50_regular.spritefont")),
+	    componentData.value("text", "Hello Rootex!"),
+	    componentData.value("color", (Color)ColorPresets::White),
+	    (Mode)(int)componentData.value("mode", (int)Mode::None),
+	    componentData.value("origin", Vector2::Zero),
+	    componentData.value("isVisible", true));
 	return tV2DC;
-}
-
-Component* TextUIComponent::CreateDefault()
-{
-	return new TextUIComponent(
-	    ResourceLoader::CreateFontResourceFile("game/assets/fonts/noto_sans_50_regular.spritefont"),
-	    "Hello World!",
-	    { 1.0f, 1.0f, 1.0f, 1.0f },
-	    Mode::None,
-	    { 0.0f, 0.0f },
-	    true);
 }
 
 TextUIComponent::TextUIComponent(FontResourceFile* font, const String& text, const Color& color, const Mode& mode, const Vector2& origin, const bool& isVisible)
@@ -80,17 +60,10 @@ JSON::json TextUIComponent::getJSON() const
 {
 	JSON::json j = RenderUIComponent::getJSON();
 
-	j["fontResource"] = m_FontFile->getPath().string();
+	j["fontResource"] = m_FontFile->getPath().generic_string();
 	j["text"] = m_Text;
-
-	j["color"]["r"] = m_Color.x;
-	j["color"]["g"] = m_Color.y;
-	j["color"]["b"] = m_Color.z;
-	j["color"]["a"] = m_Color.w;
-
-	j["origin"]["x"] = m_Origin.x;
-	j["origin"]["y"] = m_Origin.y;
-
+	j["color"] = m_Color;
+	j["origin"] = m_Origin;
 	j["mode"] = (int)m_Mode;
 
 	return j;
@@ -99,6 +72,7 @@ JSON::json TextUIComponent::getJSON() const
 #ifdef ROOTEX_EDITOR
 #include "imgui.h"
 #include "imgui_stdlib.h"
+#include "utility/imgui_helpers.h"
 void TextUIComponent::draw()
 {
 	ImGui::InputText("Text", &m_Text);
@@ -135,22 +109,20 @@ void TextUIComponent::draw()
 
 	ImGui::EndGroup();
 
-	if (ImGui::BeginDragDropTarget())
+	if (ImGui::Button(ICON_ROOTEX_EXTERNAL_LINK "##Font"))
 	{
-		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Resource Drop"))
+		igfd::ImGuiFileDialog::Instance()->OpenDialog("Font", "Choose Font", SupportedFiles.at(ResourceFile::Type::Font), "game/assets/");
+	}
+
+	if (igfd::ImGuiFileDialog::Instance()->FileDialog("Font"))
+	{
+		if (igfd::ImGuiFileDialog::Instance()->IsOk)
 		{
-			const char* payloadFileName = (const char*)payload->Data;
-			FilePath payloadPath(payloadFileName);
-			if (payloadPath.extension() == ".spritefont")
-			{
-				setFont(ResourceLoader::CreateFontResourceFile(payloadPath.string()));
-			}
-			else
-			{
-				WARN("Cannot assign a non-spritefont file as Font");
-			}
+			String filePathName = OS::GetRootRelativePath(igfd::ImGuiFileDialog::Instance()->GetFilePathName()).generic_string();
+			setFont(ResourceLoader::CreateFontResourceFile(filePathName));
 		}
-		ImGui::EndDragDropTarget();
+
+		igfd::ImGuiFileDialog::Instance()->CloseDialog("Font");
 	}
 }
 #endif // ROOTEX_EDITOR

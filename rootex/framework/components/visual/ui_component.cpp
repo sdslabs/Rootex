@@ -6,13 +6,8 @@
 
 Component* UIComponent::Create(const JSON::json& componentData)
 {
-	UIComponent* ui = new UIComponent(componentData["filePath"]);
+	UIComponent* ui = new UIComponent(componentData.value("filePath", "rootex/assets/rml/demo.rml"));
 	return ui;
-}
-
-Component* UIComponent::CreateDefault()
-{
-	return new UIComponent("rootex/assets/rml/demo.rml");
 }
 
 UIComponent::UIComponent(const String& path)
@@ -27,6 +22,7 @@ UIComponent::~UIComponent()
 	if (m_Document)
 	{
 		UISystem::GetSingleton()->unloadDocument(m_Document);
+		UISystem::GetSingleton()->getContext()->Update();
 	}
 }
 
@@ -37,8 +33,15 @@ void UIComponent::setDocument(const String& path)
 		UISystem::GetSingleton()->unloadDocument(m_Document);
 	}
 
-	m_FilePath = path;
-	m_Document = UISystem::GetSingleton()->loadDocument(m_FilePath);
+	try
+	{
+		m_Document = UISystem::GetSingleton()->loadDocument(m_FilePath);
+		m_FilePath = path;
+	}
+    catch(std::exception e)
+	{
+		WARN(e.what());
+	}
 }
 
 JSON::json UIComponent::getJSON() const
@@ -53,6 +56,7 @@ JSON::json UIComponent::getJSON() const
 #ifdef ROOTEX_EDITOR
 #include "imgui.h"
 #include "imgui_stdlib.h"
+#include "utility/imgui_helpers.h"
 void UIComponent::draw()
 {
 	ImGui::BeginGroup();
@@ -67,22 +71,20 @@ void UIComponent::draw()
 	}
 	ImGui::EndGroup();
 
-	if (ImGui::BeginDragDropTarget())
+	if (ImGui::Button(ICON_ROOTEX_EXTERNAL_LINK "##Document"))
 	{
-		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Resource Drop"))
+		igfd::ImGuiFileDialog::Instance()->OpenDialog("Document", "Choose RML Document", ".rml", "game/assets/");
+	}
+
+	if (igfd::ImGuiFileDialog::Instance()->FileDialog("Document"))
+	{
+		if (igfd::ImGuiFileDialog::Instance()->IsOk)
 		{
-			const char* payloadFileName = (const char*)payload->Data;
-			FilePath payloadPath(payloadFileName);
-			if (IsFileSupported(payloadPath.extension().string(), ResourceFile::Type::Text))
-			{
-				setDocument(payloadPath.string());
-			}
-			else
-			{
-				WARN("Unsupported file format for RML");
-			}
+			String filePathName = OS::GetRootRelativePath(igfd::ImGuiFileDialog::Instance()->GetFilePathName()).generic_string();
+			setDocument(filePathName);
 		}
-		ImGui::EndDragDropTarget();
+
+		igfd::ImGuiFileDialog::Instance()->CloseDialog("Document");
 	}
 
 	if (ImGui::Button("Refresh"))

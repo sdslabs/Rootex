@@ -1,0 +1,244 @@
+{
+    "ID": 16,
+    "children": [
+        {
+            "ID": 17,
+            "children": [
+                {
+                    "ID": 20,
+                    "children": [
+                        {
+                            "ID": 21,
+                            "children": [
+                                {
+                                    "ID": 22,
+                                    "children": [],
+                                    "entity": {
+                                        "components": {
+                                            "ModelComponent": {
+                                                "affectingStaticLights": [],
+                                                "isVisible": true,
+                                                "materialOverrides": {
+                                                    "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                                                },
+                                                "renderPass": 1,
+                                                "resFile": "rootex/assets/cube.obj"
+                                            },
+                                            "TransformComponent": {
+                                                "boundingBox": {
+                                                    "center": {
+                                                        "x": 0.0,
+                                                        "y": 0.0,
+                                                        "z": 0.0
+                                                    },
+                                                    "extents": {
+                                                        "x": 0.5,
+                                                        "y": 0.5,
+                                                        "z": 0.5
+                                                    }
+                                                },
+                                                "position": {
+                                                    "x": 1.4000024795532227,
+                                                    "y": -0.10000000894069672,
+                                                    "z": 0.0
+                                                },
+                                                "rotation": {
+                                                    "w": 1.0,
+                                                    "x": -0.0,
+                                                    "y": 0.0,
+                                                    "z": -0.0
+                                                },
+                                                "scale": {
+                                                    "x": 0.5299999713897705,
+                                                    "y": 0.5299999713897705,
+                                                    "z": 0.5299999713897705
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "file": "game/assets/scenes/box.scene.json",
+                                    "name": "box",
+                                    "settings": {
+                                        "camera": 1,
+                                        "inputSchemes": null,
+                                        "listener": 1,
+                                        "preloads": [],
+                                        "startScheme": ""
+                                    }
+                                }
+                            ],
+                            "entity": {
+                                "components": {
+                                    "ModelComponent": {
+                                        "affectingStaticLights": [],
+                                        "isVisible": true,
+                                        "materialOverrides": {
+                                            "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                                        },
+                                        "renderPass": 1,
+                                        "resFile": "rootex/assets/cube.obj"
+                                    },
+                                    "TransformComponent": {
+                                        "boundingBox": {
+                                            "center": {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                                "z": 0.0
+                                            },
+                                            "extents": {
+                                                "x": 0.5,
+                                                "y": 0.5,
+                                                "z": 0.5
+                                            }
+                                        },
+                                        "position": {
+                                            "x": 0.0,
+                                            "y": 0.0,
+                                            "z": 0.0
+                                        },
+                                        "rotation": {
+                                            "w": 1.0,
+                                            "x": -0.0,
+                                            "y": 0.0,
+                                            "z": -0.0
+                                        },
+                                        "scale": {
+                                            "x": 1.0,
+                                            "y": 1.0,
+                                            "z": 1.0
+                                        }
+                                    }
+                                }
+                            },
+                            "file": "game/assets/scenes/box.scene.json",
+                            "name": "box",
+                            "settings": {
+                                "camera": 1,
+                                "inputSchemes": null,
+                                "listener": 1,
+                                "preloads": [],
+                                "startScheme": ""
+                            }
+                        }
+                    ],
+                    "entity": {
+                        "components": {
+                            "ModelComponent": {
+                                "affectingStaticLights": [],
+                                "isVisible": true,
+                                "materialOverrides": {
+                                    "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                                },
+                                "renderPass": 1,
+                                "resFile": "rootex/assets/cube.obj"
+                            },
+                            "TransformComponent": {
+                                "boundingBox": {
+                                    "center": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "extents": {
+                                        "x": 0.5,
+                                        "y": 0.5,
+                                        "z": 0.5
+                                    }
+                                },
+                                "position": {
+                                    "x": 1.4000000953674316,
+                                    "y": -0.10000002384185791,
+                                    "z": 0.0
+                                },
+                                "rotation": {
+                                    "w": 1.0,
+                                    "x": -0.0,
+                                    "y": 0.0,
+                                    "z": -0.0
+                                },
+                                "scale": {
+                                    "x": 0.5299999713897705,
+                                    "y": 0.5299999713897705,
+                                    "z": 0.5299999713897705
+                                }
+                            }
+                        }
+                    },
+                    "file": "game/assets/scenes/box.scene.json",
+                    "name": "box",
+                    "settings": {
+                        "camera": 1,
+                        "inputSchemes": null,
+                        "listener": 1,
+                        "preloads": [],
+                        "startScheme": ""
+                    }
+                }
+            ],
+            "entity": {
+                "components": {
+                    "ModelComponent": {
+                        "affectingStaticLights": [],
+                        "isVisible": true,
+                        "materialOverrides": {
+                            "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                        },
+                        "renderPass": 1,
+                        "resFile": "rootex/assets/cube.obj"
+                    },
+                    "TransformComponent": {
+                        "boundingBox": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "extents": {
+                                "x": 0.5,
+                                "y": 0.5,
+                                "z": 0.5
+                            }
+                        },
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "rotation": {
+                            "w": 1.0,
+                            "x": -0.0,
+                            "y": 0.0,
+                            "z": -0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        }
+                    }
+                }
+            },
+            "file": "game/assets/scenes/box.scene.json",
+            "name": "ParentBox",
+            "settings": {
+                "camera": 1,
+                "inputSchemes": null,
+                "listener": 1,
+                "preloads": [],
+                "startScheme": ""
+            }
+        }
+    ],
+    "entity": {
+        "components": null
+    },
+    "file": "game/assets/scenes/test.scene.json",
+    "name": "test",
+    "settings": {
+        "camera": 1,
+        "inputSchemes": null,
+        "listener": 1,
+        "preloads": [],
+        "startScheme": ""
+    }
+}

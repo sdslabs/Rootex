@@ -2,31 +2,43 @@
 #include "core/resource_loader.h"
 
 #include "common/common.h"
-#include "app/level_manager.h"
-#include "components/hierarchy_component.h"
+
+#include "scene.h"
+#include "scene_loader.h"
+#include "ecs_factory.h"
 #include "components/transform_component.h"
 #include "components/visual/text_ui_component.h"
 #include "components/visual/ui_component.h"
 #include "components/visual/model_component.h"
 #include "components/physics/box_collider_component.h"
-#include "components/trigger_component.h"
-#include "entity_factory.h"
-#include "event_manager.h"
-#include "script/interpreter.h"
 #include "core/input/input_manager.h"
+#include "core/resource_files/audio_resource_file.h"
+#include "core/resource_files/font_resource_file.h"
+#include "core/resource_files/image_resource_file.h"
+#include "core/resource_files/image_cube_resource_file.h"
+#include "core/resource_files/lua_text_resource_file.h"
+#include "core/resource_files/model_resource_file.h"
+#include "core/resource_files/text_resource_file.h"
+#include "event_manager.h"
 
-void SolPanic(std::optional<String> maybeMsg)
+int HandleLuaException(lua_State* L, sol::optional<const std::exception&> maybeException, sol::string_view description)
 {
-	WARN("Lua is in a panic state and will now abort() the application");
-	if (maybeMsg)
+	PRINT("An exception occurred in Lua function:")
+	if (maybeException)
 	{
-		PRINT("Lua Error: " + maybeMsg.value());
+		const std::exception& ex = *maybeException;
+		ERR(ex.what());
 	}
+	else
+	{
+		PRINT(description.data());
+	}
+	return sol::stack::push(L, description);
 }
 
 LuaInterpreter::LuaInterpreter()
-    : m_Lua(sol::c_call<decltype(&SolPanic), &SolPanic>)
 {
+	m_Lua.set_exception_handler(&HandleLuaException);
 	m_Lua.open_libraries(sol::lib::base);
 	m_Lua.open_libraries(sol::lib::io);
 	m_Lua.open_libraries(sol::lib::math);
@@ -39,6 +51,8 @@ LuaInterpreter::LuaInterpreter()
 
 	sol::table dbg = m_Lua.require_file("dbg", "rootex/script/debugger.lua");
 	dbg["auto_where"] = 2;
+	
+	m_Lua.do_file("rootex/script/class.lua");
 
 	registerTypes();
 }
@@ -114,7 +128,7 @@ void LuaInterpreter::registerTypes()
 	Event::RegisterAPI(rootex);
 	EventManager::RegisterAPI(rootex);
 	InputManager::RegisterAPI(rootex);
-	LevelManager::RegisterAPI(rootex);
+	SceneLoader::RegisterAPI(rootex);
 
 	ResourceLoader::RegisterAPI(rootex);
 	ResourceFile::RegisterAPI(rootex);
@@ -123,12 +137,13 @@ void LuaInterpreter::registerTypes()
 	AudioResourceFile::RegisterAPI(rootex);
 	ModelResourceFile::RegisterAPI(rootex);
 	ImageResourceFile::RegisterAPI(rootex);
+	ImageCubeResourceFile::RegisterAPI(rootex);
 	FontResourceFile::RegisterAPI(rootex);
 	
-	EntityFactory::RegisterAPI(rootex);
+	ECSFactory::RegisterAPI(rootex);
+	Scene::RegisterAPI(rootex);
 	Entity::RegisterAPI(rootex);
 	TransformComponent::RegisterAPI(rootex);
-	HierarchyComponent::RegisterAPI(rootex);
 	ModelComponent::RegisterAPI(rootex);
 	RenderUIComponent::RegisterAPI(rootex);
 	TextUIComponent::RegisterAPI(rootex);

@@ -1,7 +1,0 @@
-{
-    "camera": 1,
-    "listener": 9,
-    "preload": [
-        "rootex/assets/materials/sky.rmat"
-    ]
-}

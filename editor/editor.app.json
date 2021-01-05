@@ -36,6 +36,38 @@
                         "g": 0.0,
                         "r": 0.5
                     },
+                    "files": {
+                        "audio": {
+                            "a": 0.9,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 0.25
+                        },
+                        "image": {
+                            "a": 0.9,
+                            "b": 1.0,
+                            "g": 0.25,
+                            "r": 0.25
+                        },
+                        "lua": {
+                            "a": 0.9,
+                            "b": 0.5,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "model": {
+                            "a": 0.9,
+                            "b": 1.0,
+                            "g": 0.25,
+                            "r": 1.0
+                        },
+                        "text": {
+                            "a": 0.9,
+                            "b": 0.25,
+                            "g": 1.0,
+                            "r": 1.0
+                        }
+                    },
                     "heavyAccent": {
                         "a": 1.0,
                         "b": 0.1,
@@ -100,7 +132,7 @@
             }
         },
         "InputSystem": {
-            "height": 1057,
+            "height": 1387,
             "inputSchemes": [
                 {
                     "bools": [
@@ -150,12 +182,12 @@
                 }
             ],
             "startScheme": "Editor",
-            "width": 1920
+            "width": 2560
         },
         "PhysicsSystem": {},
         "UISystem": {
-            "height": 1057,
-            "width": 1920
+            "height": 1387,
+            "width": 2560
         }
     },
     "version": 1.0,

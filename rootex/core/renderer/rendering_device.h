@@ -3,11 +3,7 @@
 #include "common/common.h"
 
 #include <d3d11.h>
-
 #include <d3dcompiler.h>
-#include <string>
-
-#include "resource_file.h"
 
 #include "vendor/DirectXTK/Inc/SpriteBatch.h"
 #include "vendor/DirectXTK/Inc/SpriteFont.h"
@@ -87,24 +83,22 @@ public:
 	void disableSkyDSS();
 
 	void createRTVAndSRV(Microsoft::WRL::ComPtr<ID3D11RenderTargetView>& rtv, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& srv);
-	Microsoft::WRL::ComPtr<ID3D11Buffer> createVB(D3D11_BUFFER_DESC* vbd, D3D11_SUBRESOURCE_DATA* vsd, const UINT* stride, const UINT* offset);
-	Microsoft::WRL::ComPtr<ID3D11Buffer> createIB(D3D11_BUFFER_DESC* ibd, D3D11_SUBRESOURCE_DATA* isd, DXGI_FORMAT format);
+	Microsoft::WRL::ComPtr<ID3D11Buffer> createBuffer(D3D11_BUFFER_DESC* bd, D3D11_SUBRESOURCE_DATA* sd);
 	Microsoft::WRL::ComPtr<ID3D11Buffer> createVSCB(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd);
 	Microsoft::WRL::ComPtr<ID3D11Buffer> createPSCB(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd);
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> createPS(ID3DBlob* blob);
 	Microsoft::WRL::ComPtr<ID3D11VertexShader> createVS(ID3DBlob* blob);
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> createVL(ID3DBlob* vertexShaderBlob, const D3D11_INPUT_ELEMENT_DESC* ied, UINT size);
 
-	Ref<DirectX::SpriteFont> createFont(FileBuffer* fontFileBuffer);
+	Ref<DirectX::SpriteFont> createFont(const String& fontFilePath);
 	/// To hold shader blobs loaded from the compiled shader files
 	Microsoft::WRL::ComPtr<ID3DBlob> createBlob(LPCWSTR path);
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createTexture(ImageResourceFile* imageRes);
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createDDSTexture(ImageResourceFile* imageRes);
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createDDSTexture(const char* imageDDSFileData, size_t size);
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createTexture(const char* imageFileData, size_t size);
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createTextureFromPixels(const char* imageRawData, unsigned int width, unsigned int height);
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> createSS();
 
-	void bind(ID3D11Buffer* vertexBuffer, const unsigned int* stride, const unsigned int* offset);
+	void bind(ID3D11Buffer* const* vertexBuffer, int count, const unsigned int* stride, const unsigned int* offset);
 	void bind(ID3D11Buffer* indexBuffer, DXGI_FORMAT format);
 	void bind(ID3D11VertexShader* vertexShader);
 	void bind(ID3D11PixelShader* pixelShader);
@@ -122,8 +116,6 @@ public:
 	
 	void setVSCB(ID3D11Buffer* constantBuffer, UINT slot);
 	void setPSCB(ID3D11Buffer* constantBuffer, UINT slot);
-
-	void unbindShaderResources();
 
 	void setDefaultBS();
 	void setAlphaBS();
@@ -157,7 +149,8 @@ public:
 	void setViewport(const D3D11_VIEWPORT* vp);
 	
 	/// The last boss, draws Triangles
-	void drawIndexed(UINT number);
+	void drawIndexed(UINT indices);
+	void drawIndexedInstanced(UINT indices, UINT instances, UINT startInstance);
 	
 	void beginDrawUI();
 	void endDrawUI();

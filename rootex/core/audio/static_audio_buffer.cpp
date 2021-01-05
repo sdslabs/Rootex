@@ -1,7 +1,6 @@
 #include "static_audio_buffer.h"
 
 #include "framework/systems/audio_system.h"
-#include "resource_data.h"
 
 void StaticAudioBuffer::initializeBuffers()
 {
@@ -11,7 +10,7 @@ void StaticAudioBuffer::initializeBuffers()
 	AL_CHECK(alBufferData(
 	    m_BufferID,
 	    m_AudioFile->getFormat(),
-	    m_AudioFile->getData()->getRawData()->data(),
+	    m_AudioFile->getAudioData(),
 	    m_AudioFile->getAudioDataSize(),
 	    m_AudioFile->getFrequency()));
 }
