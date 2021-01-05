@@ -613,7 +613,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 					else if (m_PopupCause == "create")
 					{
 						EventManager::GetSingleton()->call("EditorFileNewLevel", "EditorCreateNewScene", newSceneName);
-						loadingScene = newSceneName;
+						loadingScene = "game/assets/scenes/" + newSceneName + ".scene.json";
 						ImGui::CloseCurrentPopup();
 						m_MenuAction = "";
 					}
