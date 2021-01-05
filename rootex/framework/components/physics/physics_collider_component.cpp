@@ -1,7 +1,7 @@
 #include "physics_collider_component.h"
 
 #include "framework/systems/physics_system.h"
-#include "framework/components/script_component.h"
+#include "script/script.h"
 
 #include "entity.h"
 
@@ -96,7 +96,6 @@ PhysicsColliderComponent::PhysicsColliderComponent(const PhysicsMaterial& materi
     , m_IsMoveable(isMoveable)
     , m_IsGeneratesHitEvents(generatesHitEvents)
     , m_IsKinematic(isKinematic)
-    , m_DependencyOnScriptComponent(this)
     , m_DependencyOnTransformComponent(this)
 {
 	m_CollisionShape = collisionShape;
@@ -144,14 +143,6 @@ bool PhysicsColliderComponent::setupData()
 void PhysicsColliderComponent::onRemove()
 {
 	PhysicsSystem::GetSingleton()->removeRigidBody(m_Body.get());
-}
-
-void PhysicsColliderComponent::onHit(btPersistentManifold* manifold, PhysicsColliderComponent* other)
-{
-	if (m_ScriptComponent)
-	{
-		m_ScriptComponent->onHit(manifold, other);
-	}
 }
 
 void PhysicsColliderComponent::getWorldTransform(btTransform& worldTrans) const

@@ -2,8 +2,8 @@
 
 #include "static_point_light_component.h"
 #include "system.h"
-#include "systems\render_system.h"
-#include "renderer\material_library.h"
+#include "systems/render_system.h"
+#include "renderer/material_library.h"
 #include "scene_loader.h"
 
 RenderableComponent::RenderableComponent(unsigned int renderPass, const HashMap<String, String>& materialOverrides, bool visibility, const Vector<SceneID>& affectingStaticLightIDs)
@@ -24,7 +24,7 @@ void RenderableComponent::RegisterAPI(sol::table& rootex)
 bool RenderableComponent::setupData()
 {
 	return true;
-} // to be seen
+}
 
 bool RenderableComponent::setupEntities()
 {

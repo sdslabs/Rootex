@@ -110,7 +110,7 @@ void ModelResourceFile::reimport()
 		String materialPath(material->GetName().C_Str());
 		if (materialPath == "DefaultMaterial" || materialPath == "None" || materialPath.empty())
 		{
-			materialPath = "rootex/assets/materials/default.rmat";
+			materialPath = MaterialLibrary::s_DefaultMaterialPath;
 		}
 		else
 		{

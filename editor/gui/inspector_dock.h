@@ -1,6 +1,7 @@
 #pragma once
 
 #include "event_manager.h"
+#include "framework/ecs_factory.h"
 #include "framework/component.h"
 
 class InspectorDock

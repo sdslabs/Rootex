@@ -66,35 +66,37 @@ int SceneLoader::preloadScene(const String& sceneFile, Atomic<int>& progress)
 
 void SceneLoader::loadPreloadedScene(const String& sceneFile, const Vector<String>& arguments)
 {
-	endSystems();
-	m_RootScene->removeChild(m_CurrentScene);
-	Scene::ResetCounter();
+	EventManager::GetSingleton()->defer([this, sceneFile, arguments]() {
+		endSystems();
+		m_RootScene->removeChild(m_CurrentScene);
+		Scene::ResetCounter();
 
-	ResourceLoader::Unload(m_UnloadCache);
-	m_UnloadCache.clear();
+		ResourceLoader::Unload(m_UnloadCache);
+		m_UnloadCache.clear();
 
-	TextResourceFile* sceneResFile = ResourceLoader::CreateTextResourceFile(sceneFile);
-	if (sceneResFile->isDirty())
-	{
-		sceneResFile->reimport();
-	}
-	Ptr<Scene>& scene = Scene::Create(JSON::json::parse(sceneResFile->getString()));
-	m_CurrentScene = scene.get();
-	m_RootScene->addChild(scene);
-	setArguments(arguments);
-
-	for (auto& systems : System::GetSystems())
-	{
-		for (auto& system : systems)
+		TextResourceFile* sceneResFile = ResourceLoader::CreateTextResourceFile(sceneFile);
+		if (sceneResFile->isDirty())
 		{
-			system->setConfig(m_CurrentScene->getSettings());
+			sceneResFile->reimport();
 		}
-	}
-	m_CurrentScene->onLoad();
-	PRINT("Loaded scene: " + m_CurrentScene->getFullName());
+		Ptr<Scene>& scene = Scene::Create(JSON::json::parse(sceneResFile->getString()));
+		m_CurrentScene = scene.get();
+		m_RootScene->addChild(scene);
+		setArguments(arguments);
 
-	beginSystems();
-	EventManager::GetSingleton()->deferredCall("OpenedScene", "OpenedScene", 0);
+		for (auto& systems : System::GetSystems())
+		{
+			for (auto& system : systems)
+			{
+				system->setConfig(m_CurrentScene->getSettings());
+			}
+		}
+		m_CurrentScene->onLoad();
+		PRINT("Loaded scene: " + m_CurrentScene->getFullName());
+
+		beginSystems();
+		EventManager::GetSingleton()->deferredCall("OpenedScene", "OpenedScene", 0);
+	});
 }
 
 void SceneLoader::loadScene(const String& sceneFile, const Vector<String>& arguments)
