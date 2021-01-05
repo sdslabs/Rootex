@@ -155,7 +155,7 @@ static void RegisterTypes()
     LuaType<ElementAttributesProxy>::Register(L);
     LuaType<ElementChildNodesProxy>::Register(L);
     LuaType<RmlUiContextsProxy>::Register(L);
-    //OverrideLuaGlobalFunctions(L);
+    OverrideLuaGlobalFunctions(L);
     //push the global variable "rmlui" to use the "RmlUi" methods
     LuaRmlUiPushrmluiGlobal(L);
 

@@ -5,22 +5,10 @@
 Component* GridModelComponent::Create(const JSON::json& componentData)
 {
 	return new GridModelComponent(
-	    { 
-			componentData["cellSize"]["x"],
-	        componentData["cellSize"]["y"]
-		}, 
-		componentData["cellCount"],
-		componentData["renderPass"],
-	    componentData["isVisible"]);
-}
-
-Component* GridModelComponent::CreateDefault()
-{
-	return new GridModelComponent(
-	    { 1.0f, 1.0f },
-		100,
-		(unsigned int)RenderPass::Editor,
-	    true);
+	    componentData.value("cellSize", Vector2 { 1.0f, 1.0f }),
+		componentData.value("cellCount", 100),
+	    componentData.value("renderPass", (unsigned int)RenderPass::Editor),
+	    componentData.value("isVisible", true));
 }
 
 GridModelComponent::GridModelComponent(const Vector2& cellSize, const int& cellCount, const unsigned int& renderPass, bool isVisible)
@@ -104,9 +92,9 @@ void GridModelComponent::refreshVertexBuffers()
 	m_IndexBuffer.reset(new IndexBuffer(indices));
 }
 
-bool GridModelComponent::setup()
+bool GridModelComponent::setupData()
 {
-	bool status = ModelComponent::setup();
+	bool status = ModelComponent::setupData();
 
 	if (status)
 	{
@@ -130,8 +118,7 @@ JSON::json GridModelComponent::getJSON() const
 {
 	JSON::json& j = ModelComponent::getJSON();
 
-	j["cellSize"]["x"] = m_CellSize.x;
-	j["cellSize"]["y"] = m_CellSize.y;
+	j["cellSize"] = m_CellSize;
 	j["cellCount"] = m_CellCount;
 
 	return j;

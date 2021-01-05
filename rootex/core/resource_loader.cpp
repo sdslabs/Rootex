@@ -43,6 +43,9 @@ ResourceFile* ResourceLoader::CreateSomeResourceFile(const String& path)
 			case ResourceFile::Type::Model:
 				result = CreateModelResourceFile(path);
 				break;
+			case ResourceFile::Type::AnimatedModel:
+				result = CreateAnimatedModelResourceFile(path);
+				break;
 			default:
 				break;
 			}
@@ -66,6 +69,7 @@ void ResourceLoader::RegisterAPI(sol::table& rootex)
 	resourceLoader["CreateText"] = &ResourceLoader::CreateTextResourceFile;
 	resourceLoader["CreateNewText"] = &ResourceLoader::CreateNewTextResourceFile;
 	resourceLoader["CreateVisualModel"] = &ResourceLoader::CreateModelResourceFile;
+	resourceLoader["CreateAnimatedModel"] = &ResourceLoader::CreateAnimatedModelResourceFile;
 }
 
 TextResourceFile* ResourceLoader::CreateTextResourceFile(const String& path)
@@ -95,6 +99,11 @@ AudioResourceFile* ResourceLoader::CreateAudioResourceFile(const String& path)
 ModelResourceFile* ResourceLoader::CreateModelResourceFile(const String& path)
 {
 	return GetCachedResource<ModelResourceFile>(ResourceFile::Type::Model, FilePath(path));
+}
+
+AnimatedModelResourceFile* ResourceLoader::CreateAnimatedModelResourceFile(const String& path)
+{
+	return GetCachedResource<AnimatedModelResourceFile>(ResourceFile::Type::AnimatedModel, FilePath(path));
 }
 
 ImageResourceFile* ResourceLoader::CreateImageResourceFile(const String& path)

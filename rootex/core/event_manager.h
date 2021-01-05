@@ -17,6 +17,7 @@ typedef Function<Variant(const Event*)> EventFunction;
 /// An Event dispatcher and registrar that also allows looking up registered events.
 class EventManager
 {
+	Vector<Function<void()>> m_DeferList;
 	HashMap<Event::Type, Vector<EventFunction>> m_EventListeners;
 	Vector<Ref<Event>> m_Queues[EVENTMANAGER_NUM_QUEUES];
 	unsigned int m_ActiveQueue;
@@ -33,6 +34,7 @@ public:
 		Infinite = 0xffffffff
 	};
 
+	void defer(Function<void()> function);
 	/// Add an event. Returns false if it already exists.
 	bool addEvent(const Event::Type& event);
 	void removeEvent(const Event::Type& event);

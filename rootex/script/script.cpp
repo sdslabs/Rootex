@@ -1,5 +1,6 @@
 #include "script.h"
 #include "event_manager.h"
+#include "scene.h"
 
 Script::Script(const JSON::json& script)
 {
@@ -41,7 +42,7 @@ bool Script::isSuccessful(const sol::function_result& result)
 	return true;
 }
 
-bool Script::call(const String& function, const Vector<Variant>& args) 
+bool Script::call(const String& function, const Vector<Variant>& args)
 {
 	return isSuccessful(m_ScriptEnvironment[function](sol::as_args(args)));
 }

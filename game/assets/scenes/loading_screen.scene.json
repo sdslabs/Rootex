@@ -1,0 +1,26 @@
+{
+    "ID": 8,
+    "children": [],
+    "entity": {
+        "Entity": {
+            "script": {
+                "overrides": null,
+                "path": "game/assets/scripts/loading.lua"
+            }
+        },
+        "components": {
+            "UIComponent": {
+                "filePath": "game/assets/ui/loading/loading.rml"
+            }
+        }
+    },
+    "file": "game/assets/scenes/loading_screen.scene.json",
+    "name": "loading_screen",
+    "settings": {
+        "camera": 1,
+        "inputSchemes": null,
+        "listener": 1,
+        "preloads": [],
+        "startScheme": ""
+    }
+}

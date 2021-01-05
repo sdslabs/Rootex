@@ -1,0 +1,516 @@
+{
+    "ID": 14,
+    "children": [
+        {
+            "ID": 15,
+            "children": [],
+            "entity": {
+                "components": {
+                    "CameraComponent": {
+                        "aspectRatio": {
+                            "x": 16.0,
+                            "y": 9.0
+                        },
+                        "far": 100.0,
+                        "fov": 0.7853981852531433,
+                        "near": 0.10000000149011612,
+                        "postProcessingDetails": {
+                            "bloomBase": 1.0,
+                            "bloomBaseSaturation": 1.0,
+                            "bloomBrightness": 1.0,
+                            "bloomSaturation": 1.0,
+                            "bloomSize": 1.0,
+                            "bloomThreshold": 0.800000011920929,
+                            "bloomValue": 1.0,
+                            "gaussianBlurMultiplier": 1.0,
+                            "isBloom": false,
+                            "isGaussianBlur": false,
+                            "isMonochrome": false,
+                            "isPostProcessing": false,
+                            "isSepia": false,
+                            "isToneMap": false,
+                            "toneMapExposure": 0.0,
+                            "toneMapOperator": 0,
+                            "toneMapTransferFunction": 0,
+                            "toneMapWhiteNits": 200.0
+                        }
+                    },
+                    "TransformComponent": {
+                        "boundingBox": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "extents": {
+                                "x": 0.5,
+                                "y": 0.5,
+                                "z": 0.5
+                            }
+                        },
+                        "position": {
+                            "x": 502.0191650390625,
+                            "y": 174.26275634765625,
+                            "z": -17.46019172668457
+                        },
+                        "rotation": {
+                            "w": 0.7069340944290161,
+                            "x": 0.0,
+                            "y": 0.7072794437408447,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.000735878944397,
+                            "y": 1.0009022951126099,
+                            "z": 1.000735878944397
+                        }
+                    }
+                }
+            },
+            "file": "",
+            "name": "Camera",
+            "settings": {
+                "camera": 1,
+                "inputSchemes": null,
+                "listener": 1,
+                "preloads": [],
+                "startScheme": ""
+            }
+        },
+        {
+            "ID": 16,
+            "children": [],
+            "entity": {
+                "components": {
+                    "DirectionalLightComponent": {
+                        "ambientColor": {
+                            "a": 1.0,
+                            "b": 0.20077192783355713,
+                            "g": 0.200772225856781,
+                            "r": 0.20077021420001984
+                        },
+                        "diffuseColor": {
+                            "a": 1.0,
+                            "b": 0.48262065649032593,
+                            "g": 0.4826246500015259,
+                            "r": 0.48262548446655273
+                        },
+                        "diffuseIntensity": 3.0999999046325684
+                    },
+                    "TransformComponent": {
+                        "boundingBox": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "extents": {
+                                "x": 0.5,
+                                "y": 0.5,
+                                "z": 0.5
+                            }
+                        },
+                        "position": {
+                            "x": 0.7700214982032776,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "rotation": {
+                            "w": 0.8800312876701355,
+                            "x": 0.3116365969181061,
+                            "y": 0.3378123641014099,
+                            "z": 0.11962580680847168
+                        },
+                        "scale": {
+                            "x": 1.000128984451294,
+                            "y": 1.0001221895217896,
+                            "z": 1.0001286268234253
+                        }
+                    }
+                }
+            },
+            "file": "",
+            "name": "Light",
+            "settings": {
+                "camera": 1,
+                "inputSchemes": null,
+                "listener": 1,
+                "preloads": [],
+                "startScheme": ""
+            }
+        },
+        {
+            "ID": 17,
+            "children": [],
+            "entity": {
+                "components": {
+                    "StaticPointLightComponent": {
+                        "ambientColor": {
+                            "a": 1.0,
+                            "b": 0.5,
+                            "g": 0.5,
+                            "r": 0.5
+                        },
+                        "attConst": 0.04500000178813934,
+                        "attLin": 1.0,
+                        "attQuad": 0.007499999832361937,
+                        "diffuseColor": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "diffuseIntensity": 1.0,
+                        "range": 10.0
+                    },
+                    "TransformComponent": {
+                        "boundingBox": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "extents": {
+                                "x": 0.5,
+                                "y": 0.5,
+                                "z": 0.5
+                            }
+                        },
+                        "position": {
+                            "x": -1251.62255859375,
+                            "y": 145.1632537841797,
+                            "z": -35.484004974365234
+                        },
+                        "rotation": {
+                            "w": 1.0,
+                            "x": -0.0,
+                            "y": 0.0,
+                            "z": -0.0
+                        },
+                        "scale": {
+                            "x": 1.0003547668457031,
+                            "y": 1.0003547668457031,
+                            "z": 1.0003547668457031
+                        }
+                    }
+                }
+            },
+            "file": "",
+            "name": "StaticLight",
+            "settings": {
+                "camera": 1,
+                "inputSchemes": null,
+                "listener": 1,
+                "preloads": [],
+                "startScheme": ""
+            }
+        },
+        {
+            "ID": 18,
+            "children": [],
+            "entity": {
+                "components": {
+                    "StaticPointLightComponent": {
+                        "ambientColor": {
+                            "a": 1.0,
+                            "b": 0.5,
+                            "g": 0.5,
+                            "r": 0.5
+                        },
+                        "attConst": 0.04500000178813934,
+                        "attLin": 1.0,
+                        "attQuad": 0.007499999832361937,
+                        "diffuseColor": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "diffuseIntensity": 1.0,
+                        "range": 10.0
+                    },
+                    "TransformComponent": {
+                        "boundingBox": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "extents": {
+                                "x": 0.5,
+                                "y": 0.5,
+                                "z": 0.5
+                            }
+                        },
+                        "position": {
+                            "x": -538.7600708007813,
+                            "y": 116.14680480957031,
+                            "z": -77.41483306884766
+                        },
+                        "rotation": {
+                            "w": 1.0,
+                            "x": -0.0,
+                            "y": 0.0,
+                            "z": -0.0
+                        },
+                        "scale": {
+                            "x": 1.00058114528656,
+                            "y": 1.00058114528656,
+                            "z": 1.00058114528656
+                        }
+                    }
+                }
+            },
+            "file": "",
+            "name": "StaticLight",
+            "settings": {
+                "camera": 1,
+                "inputSchemes": null,
+                "listener": 1,
+                "preloads": [],
+                "startScheme": ""
+            }
+        },
+        {
+            "ID": 19,
+            "children": [],
+            "entity": {
+                "components": {
+                    "StaticPointLightComponent": {
+                        "ambientColor": {
+                            "a": 1.0,
+                            "b": 0.5,
+                            "g": 0.5,
+                            "r": 0.5
+                        },
+                        "attConst": 0.04500000178813934,
+                        "attLin": 1.0,
+                        "attQuad": 0.007499999832361937,
+                        "diffuseColor": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "diffuseIntensity": 1.0,
+                        "range": 10.0
+                    },
+                    "TransformComponent": {
+                        "boundingBox": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "extents": {
+                                "x": 0.5,
+                                "y": 0.5,
+                                "z": 0.5
+                            }
+                        },
+                        "position": {
+                            "x": -158.13319396972656,
+                            "y": 116.14904022216797,
+                            "z": -64.5108871459961
+                        },
+                        "rotation": {
+                            "w": 1.0,
+                            "x": -0.0,
+                            "y": 0.0,
+                            "z": -0.0
+                        },
+                        "scale": {
+                            "x": 1.0006088018417358,
+                            "y": 1.0006088018417358,
+                            "z": 1.0006088018417358
+                        }
+                    }
+                }
+            },
+            "file": "",
+            "name": "StaticLight",
+            "settings": {
+                "camera": 1,
+                "inputSchemes": null,
+                "listener": 1,
+                "preloads": [],
+                "startScheme": ""
+            }
+        },
+        {
+            "ID": 20,
+            "children": [],
+            "entity": {
+                "components": {
+                    "StaticPointLightComponent": {
+                        "ambientColor": {
+                            "a": 1.0,
+                            "b": 0.5,
+                            "g": 0.5,
+                            "r": 0.5
+                        },
+                        "attConst": 0.04500000178813934,
+                        "attLin": 1.0,
+                        "attQuad": 0.007499999832361937,
+                        "diffuseColor": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "diffuseIntensity": 1.0,
+                        "range": 10.0
+                    },
+                    "TransformComponent": {
+                        "boundingBox": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "extents": {
+                                "x": 0.5,
+                                "y": 0.5,
+                                "z": 0.5
+                            }
+                        },
+                        "position": {
+                            "x": -725.975830078125,
+                            "y": 119.38725280761719,
+                            "z": 41.9481315612793
+                        },
+                        "rotation": {
+                            "w": 1.0,
+                            "x": -0.0,
+                            "y": 0.0,
+                            "z": -0.0
+                        },
+                        "scale": {
+                            "x": 1.000769853591919,
+                            "y": 1.000769853591919,
+                            "z": 1.000769853591919
+                        }
+                    }
+                }
+            },
+            "file": "",
+            "name": "StaticLight",
+            "settings": {
+                "camera": 1,
+                "inputSchemes": null,
+                "listener": 1,
+                "preloads": [],
+                "startScheme": ""
+            }
+        },
+        {
+            "ID": 21,
+            "children": [],
+            "entity": {
+                "components": {
+                    "UIComponent": {
+                        "filePath": "game/assets/ui/fade_in_from_black/fade_in_from_black.rml"
+                    }
+                }
+            },
+            "file": "",
+            "name": "FadeIn",
+            "settings": {
+                "camera": 1,
+                "inputSchemes": null,
+                "listener": 1,
+                "preloads": [],
+                "startScheme": ""
+            }
+        }
+    ],
+    "entity": {
+        "components": {
+            "ModelComponent": {
+                "affectingStaticLights": [
+                    17,
+                    18,
+                    19,
+                    20
+                ],
+                "isVisible": true,
+                "materialOverrides": {
+                    "game/assets/materials/Material__25.rmat": "game/assets/materials/Material__25.rmat",
+                    "game/assets/materials/Material__298.rmat": "game/assets/materials/Material__298.rmat",
+                    "game/assets/materials/Material__47.rmat": "game/assets/materials/Material__47.rmat",
+                    "game/assets/materials/VasePlant.rmat": "game/assets/materials/VasePlant.rmat",
+                    "game/assets/materials/arch.rmat": "game/assets/materials/arch.rmat",
+                    "game/assets/materials/bricks.rmat": "game/assets/materials/bricks.rmat",
+                    "game/assets/materials/ceiling.rmat": "game/assets/materials/ceiling.rmat",
+                    "game/assets/materials/chain.rmat": "game/assets/materials/chain.rmat",
+                    "game/assets/materials/column_a.rmat": "game/assets/materials/column_a.rmat",
+                    "game/assets/materials/column_b.rmat": "game/assets/materials/column_b.rmat",
+                    "game/assets/materials/column_c.rmat": "game/assets/materials/column_c.rmat",
+                    "game/assets/materials/details.rmat": "game/assets/materials/details.rmat",
+                    "game/assets/materials/fabric_a.rmat": "game/assets/materials/fabric_a.rmat",
+                    "game/assets/materials/fabric_c.rmat": "game/assets/materials/fabric_c.rmat",
+                    "game/assets/materials/fabric_d.rmat": "game/assets/materials/fabric_d.rmat",
+                    "game/assets/materials/fabric_e.rmat": "game/assets/materials/fabric_e.rmat",
+                    "game/assets/materials/fabric_f.rmat": "game/assets/materials/fabric_f.rmat",
+                    "game/assets/materials/fabric_g.rmat": "game/assets/materials/fabric_g.rmat",
+                    "game/assets/materials/flagpole.rmat": "game/assets/materials/flagpole.rmat",
+                    "game/assets/materials/floor.rmat": "game/assets/materials/floor.rmat",
+                    "game/assets/materials/leaf.rmat": "game/assets/materials/leaf.rmat",
+                    "game/assets/materials/roof.rmat": "game/assets/materials/roof.rmat",
+                    "game/assets/materials/vase.rmat": "game/assets/materials/vase.rmat",
+                    "game/assets/materials/vase_hanging.rmat": "game/assets/materials/vase_hanging.rmat",
+                    "game/assets/materials/vase_round.rmat": "game/assets/materials/vase_round.rmat"
+                },
+                "renderPass": 1,
+                "resFile": "game/assets/sponza/sponza.obj"
+            },
+            "TransformComponent": {
+                "boundingBox": {
+                    "center": {
+                        "x": -60.5189208984375,
+                        "y": 651.4954223632813,
+                        "z": -38.6905517578125
+                    },
+                    "extents": {
+                        "x": 1860.427001953125,
+                        "y": 777.9379272460938,
+                        "z": 1144.1165771484375
+                    }
+                },
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": -0.0,
+                    "y": 0.0,
+                    "z": -0.0
+                },
+                "scale": {
+                    "x": 0.03099999949336052,
+                    "y": 0.03099999949336052,
+                    "z": 0.03099999949336052
+                }
+            },
+            "UIComponent": {
+                "filePath": "rootex/assets/rml/demo.rml"
+            }
+        }
+    },
+    "file": "game/assets/scenes/model.scene.json",
+    "name": "model",
+    "settings": {
+        "camera": 15,
+        "inputSchemes": null,
+        "listener": 1,
+        "preloads": [
+            "game/assets/sponza/sponza.obj",
+            "game/assets/fonts/noto_sans_50_regular.spritefont",
+            "game/assets/test/cube.obj",
+            "rootex/assets/rml/demo.rml"
+        ],
+        "startScheme": ""
+    }
+}

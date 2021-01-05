@@ -6,22 +6,20 @@
 /// Our UI base class
 class RenderUIComponent : public Component
 {
+	DEPENDS_ON(TransformComponent);
+
 protected:
 	bool m_IsVisible;
-
-	TransformComponent* m_TransformComponent;
 
 	RenderUIComponent(bool isVisible);
 	RenderUIComponent(RenderUIComponent&) = delete;
 	virtual ~RenderUIComponent() = default;
 	
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 public:
 	static void RegisterAPI(sol::table& rootex);
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::RenderUIComponent;
-
-	virtual bool setup() override;
 
 	bool preRender();
 	virtual void render() = 0;

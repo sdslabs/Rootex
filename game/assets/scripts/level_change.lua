@@ -12,17 +12,17 @@ function onUpdate(entity, delta)
         timeSinceLoad = timeSinceLoad + delta
         if timeSinceLoad > 2000 then
             local arguments = {}
-            arguments[1] = "game/assets/levels/model_test"
+            arguments[1] = "game/assets/scenes/model.scene.json"
             print(arguments)
-            RTX.LevelManager.Get():openLevel("game/assets/levels/loading", arguments)
+            RTX.LoadScene("game/assets/scenes/loading_screen.scene.json", arguments)
+            running = false
         end
     end
 end
 
 function onLoadLevel(event)
     if event:getData().y == 1 and running == false then
-        loadingScreen = RTX.ResourceLoader.CreateText("game/assets/classes/LoadingScreen/LoadingScreen.entity.json")
-        loadingEntity = RTX.EntityFactory.CreateFromClass(loadingScreen)
+        RTX.GetCurrentScene():addChild(RTX.Scene.CreateFromFile("game/assets/scenes/fade_to_black.scene.json"))
         running = true
     end
     return true

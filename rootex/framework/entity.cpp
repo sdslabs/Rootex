@@ -2,10 +2,11 @@
 
 #include "event_manager.h"
 #include "framework/component.h"
-#include "framework/components/hierarchy_component.h"
 #include "framework/system.h"
 #include "script/script.h"
 #include "resource_loader.h"
+
+#include "scene.h"
 
 void Entity::RegisterAPI(sol::table& rootex)
 {
@@ -13,11 +14,9 @@ void Entity::RegisterAPI(sol::table& rootex)
 	entity["removeComponent"] = &Entity::removeComponent;
 	entity["destroy"] = &Entity::destroy;
 	entity["hasComponent"] = &Entity::hasComponent;
-	entity["getID"] = &Entity::getID;
+	entity["getScene"] = &Entity::getScene;
 	entity["getName"] = &Entity::getName;
-	entity["setName"] = &Entity::setName;
 	entity["setScript"] = &Entity::setScript;
-
 	entity["script"] = sol::property(&Entity::getScriptEnv, &Entity::setScriptEnv);
 
 	sol::usertype<Component> component = rootex.new_usertype<Component>("Component");
@@ -26,21 +25,9 @@ void Entity::RegisterAPI(sol::table& rootex)
 	component["getName"] = &Component::getName;
 }
 
-Entity::~Entity()
+Entity::Entity(Scene* scene, const JSON::json& script)
+    : m_Scene(scene)
 {
-	destroy();
-}
-
-void Entity::addComponent(const Ref<Component>& component)
-{
-	m_Components.insert(std::make_pair(component->getComponentID(), component));
-}
-
-Entity::Entity(EntityID id, const String& name, const JSON::json& script)
-    : m_ID(id)
-    , m_IsEditorOnly(false)
-{
-	setName(name);
 	if (!script.is_null() && !script["path"].is_null())
 	{
 		if (OS::IsExists(script["path"]))
@@ -54,15 +41,18 @@ Entity::Entity(EntityID id, const String& name, const JSON::json& script)
 	}
 }
 
+Entity::~Entity()
+{
+	destroy();
+}
+
 JSON::json Entity::getJSON() const
 {
 	JSON::json j;
-	j["Entity"]["name"] = getName();
-	j["Entity"]["ID"] = getID();
-	j["Components"] = {};
+	j["components"] = {};
 	for (auto&& [componentID, component] : m_Components)
 	{
-		j["Components"][component->getName()] = component->getJSON();
+		j["components"][component->getName()] = component->getJSON();
 	}
 	if (m_Script)
 	{
@@ -76,7 +66,7 @@ JSON::json Entity::getJSON() const
 	return j;
 }
 
-bool Entity::setupComponents()
+bool Entity::onAllComponentsAdded()
 {
 	bool status = true;
 	for (auto& component : m_Components)
@@ -86,7 +76,7 @@ bool Entity::setupComponents()
 	return status;
 }
 
-bool Entity::setupEntities()
+bool Entity::onAllEntitiesAdded()
 {
 	bool status = true;
 
@@ -128,26 +118,40 @@ void Entity::destroy()
 	m_Components.clear();
 }
 
-void Entity::removeComponent(Ref<Component> component)
+bool Entity::removeComponent(ComponentID toRemoveComponentID, bool hardRemove)
 {
-	component->onRemove();
-	m_Components.erase(component->getComponentID());
-	System::DeregisterComponent(component.get());
+	Component* toRemoveComponent = getComponentFromID(toRemoveComponentID);
+	if (!hardRemove)
+	{
+		for (auto& [componentID, component] : m_Components)
+		{
+			for (auto& dependency : component->getDependencies())
+			{
+				if (dependency->getID() == toRemoveComponentID)
+				{
+					WARN("Entity has other components depending on the to-be-removed component " + toRemoveComponent->getName());
+					WARN("Component deletion denied");
+					return false;
+				}
+			}
+		}
+	}
+
+	toRemoveComponent->onRemove();
+	System::DeregisterComponent(toRemoveComponent);
+	m_Components.erase(toRemoveComponent->getComponentID());
+
+	return true;
 }
 
-EntityID Entity::getID() const
+bool Entity::hasComponent(ComponentID componentID)
 {
-	return m_ID;
+	return m_Components.find(componentID) != m_Components.end();
 }
 
-const String& Entity::getName() const
+const HashMap<ComponentID, Ptr<Component>>& Entity::getAllComponents() const
 {
-	return m_Name;
-}
-
-const String& Entity::getFullName() const
-{
-	return m_FullName;
+	return m_Components;
 }
 
 bool Entity::call(const String& function, const Vector<Variant>& args)
@@ -194,20 +198,14 @@ bool Entity::setScript(const String& path)
 	}
 }
 
-bool Entity::hasComponent(ComponentID componentID)
+const String& Entity::getName() const
 {
-	return m_Components.find(componentID) != m_Components.end();
+	return m_Scene->getName();
 }
 
-void Entity::setName(const String& name)
+const String& Entity::getFullName() const
 {
-	m_Name = name;
-	m_FullName = m_Name + " #" + std::to_string(getID());
-}
-
-const HashMap<ComponentID, Ref<Component>>& Entity::getAllComponents() const
-{
-	return m_Components;
+	return m_Scene->getFullName();
 }
 
 #ifdef ROOTEX_EDITOR
@@ -260,5 +258,5 @@ void Entity::draw()
 	{
 		m_Script->draw();
 	}
-};
+}
 #endif

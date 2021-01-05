@@ -8,12 +8,11 @@ class TransformComponent;
 /// Useful for marking 3D sound attenuation in moving listeners
 class AudioListenerComponent : public Component
 {
+	DEPENDS_ON(TransformComponent);
+
 	static Component* Create(const JSON::json& componentData);
-	static Component* CreateDefault();
 
-	friend class EntityFactory;
-
-	TransformComponent* m_TransformComponent;
+	friend class ECSFactory;
 
 	AudioListenerComponent();
 	AudioListenerComponent(const AudioListenerComponent&) = delete;
@@ -22,7 +21,6 @@ class AudioListenerComponent : public Component
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::AudioListenerComponent;
 
-	bool setup() override;
 	void onRemove() override;
 
 	Vector3 getPosition() const;

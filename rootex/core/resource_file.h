@@ -15,6 +15,7 @@ public:
 		Audio,
 		Text,
 		Model,
+		AnimatedModel,
 		Image,
 		ImageCube,
 		Font
