@@ -2,7 +2,6 @@
 
 #include "component.h"
 #include "components/transform_component.h"
-#include "components/script_component.h"
 
 #include "btBulletDynamicsCommon.h"
 
@@ -28,7 +27,6 @@ enum class CollisionMask : unsigned int
 class PhysicsColliderComponent : public Component, public btMotionState
 {
 	DEPENDS_ON(TransformComponent);
-	SOFT_DEPENDS_ON(ScriptComponent);
 
 	Ref<btCollisionShape> m_CollisionShape;
 	Ref<btRigidBody> m_Body;
@@ -63,7 +61,6 @@ public:
 	virtual void getWorldTransform(btTransform& worldTrans) const;
 	virtual void setWorldTransform(const btTransform& worldTrans);
 	
-	void onHit(btPersistentManifold* manifold, PhysicsColliderComponent* other);
 	void applyForce(const Vector3& force);
 	void applyTorque(const Vector3& torque);
 	
