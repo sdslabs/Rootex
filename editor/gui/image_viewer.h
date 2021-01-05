@@ -7,7 +7,6 @@
 
 class ImageViewer
 {
-	Ref<Texture> m_Texture;
 	ImageResourceFile* m_ImageResourceFile;
 	const float m_ZoomSliderWidth = 40.0f;
 	const float m_ZoomSliderHeight = 500.0f;

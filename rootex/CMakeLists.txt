@@ -22,8 +22,10 @@ add_subdirectory(framework)
 add_subdirectory(main)
 add_subdirectory(os)
 add_subdirectory(script)
+add_subdirectory(utility)
 
 add_definitions(-DRMLUI_STATIC_LIB)
+add_definitions(-DRLOTTIE_BUILD=0)
 add_subdirectory(vendor)
 
 # Adding shaders for pre-build compilation
@@ -88,15 +90,20 @@ target_link_libraries(Rootex PUBLIC
     ALUT
     DirectXTK
     JSON
+    Dirent
     ImGui
+    ImGuiFileDialog
     ImGuizmo
     Gainput
     Bullet3D
     assimp
+    Rlottie
     RmlCore
     RmlDebugger
     RmlLua
+    RmlLottie
     FreeType
+    Tracy
 
     Shell32.lib
     d3d11.lib

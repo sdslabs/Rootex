@@ -42,6 +42,7 @@
 #include "GeometryDatabase.h"
 #include "PluginRegistry.h"
 #include "StyleSheetFactory.h"
+#include "StyleSheetParser.h"
 #include "TemplateCache.h"
 #include "TextureDatabase.h"
 #include "EventSpecification.h"
@@ -78,6 +79,10 @@ static ContextMap contexts;
 
 bool Initialise()
 {
+	RMLUI_ASSERTMSG(!initialised, "Rml::Initialise() called, but RmlUi is already initialised!");
+
+	Log::Initialise();
+
 	// Check for valid interfaces, or install default interfaces as appropriate.
 	if (!system_interface)
 	{	
@@ -96,8 +101,6 @@ bool Initialise()
 #endif
 	}
 
-	Log::Initialise();
-
 	EventSpecificationInterface::Initialize();
 
 	TextureDatabase::Initialise();
@@ -114,6 +117,7 @@ bool Initialise()
 	}
 
 	StyleSheetSpecification::Initialise();
+	StyleSheetParser::Initialise();
 	StyleSheetFactory::Initialise();
 
 	TemplateCache::Initialise();
@@ -130,29 +134,34 @@ bool Initialise()
 
 void Shutdown()
 {
+	RMLUI_ASSERTMSG(initialised, "Rml::Shutdown() called, but RmlUi is not initialised!");
+
 	// Clear out all contexts, which should also clean up all attached elements.
 	contexts.clear();
 
 	// Notify all plugins we're being shutdown.
 	PluginRegistry::NotifyShutdown();
 
+	Factory::Shutdown();
 	TemplateCache::Shutdown();
 	StyleSheetFactory::Shutdown();
+	StyleSheetParser::Shutdown();
 	StyleSheetSpecification::Shutdown();
-	TextureDatabase::Shutdown();
-	Factory::Shutdown();
 
-	Log::Shutdown();
+	font_interface = nullptr;
+	default_font_interface.reset();
+
+	TextureDatabase::Shutdown();
 
 	initialised = false;
 
 	render_interface = nullptr;
 	file_interface = nullptr;
 	system_interface = nullptr;
-	font_interface = nullptr;
 
 	default_file_interface.reset();
-	default_font_interface.reset();
+
+	Log::Shutdown();
 }
 
 // Returns the version of this RmlUi library.
@@ -276,9 +285,9 @@ Context* GetContext(int index)
 {
 	ContextMap::iterator i = contexts.begin();
 	int count = 0;
-
-	if (index >= GetNumContexts())
-		index = GetNumContexts() - 1;
+	
+	if (index < 0 || index >= GetNumContexts())
+		return nullptr;
 
 	while (count < index)
 	{
@@ -320,6 +329,11 @@ void RegisterPlugin(Plugin* plugin)
 EventId RegisterEventType(const String& type, bool interruptible, bool bubbles, DefaultActionPhase default_action_phase)
 {
 	return EventSpecificationInterface::InsertOrReplaceCustom(type, interruptible, bubbles, default_action_phase);
+}
+
+StringList GetTextureSourceList()
+{
+	return TextureDatabase::GetSourceList();
 }
 
 void ReleaseTextures()

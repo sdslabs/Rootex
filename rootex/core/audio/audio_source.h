@@ -44,7 +44,7 @@ public:
 	bool isPlaying() const;
 	bool isPaused() const;
 	bool isStopped() const;
-	bool isLooping() const;
+	virtual bool isLooping() const;
 	ALuint getSourceID() const;
 	/// Get audio duration in seconds.
 	virtual float getDuration() const = 0;
@@ -69,7 +69,7 @@ public:
 
 	void unqueueBuffers();
 
-	virtual float getDuration() const override;
+	float getDuration() const override;
 	float getElapsedTimeS();
 };
 
@@ -84,6 +84,7 @@ public:
 	StreamingAudioSource(Ref<StreamingAudioBuffer> audio);
 	~StreamingAudioSource();
 
+	bool isLooping() const override;
 	void setLooping(bool enabled) override;
 	void queueNewBuffers() override;
 	void unqueueBuffers();

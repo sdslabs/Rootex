@@ -29,6 +29,7 @@ void TransformAnimationSystem::begin()
 
 void TransformAnimationSystem::update(float deltaMilliseconds)
 {
+	ZoneScoped;
 	TransformAnimationComponent* animation = nullptr;
 	for (auto& component : s_Components[TransformAnimationComponent::s_ID])
 	{

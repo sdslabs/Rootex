@@ -1,6 +1,7 @@
 #include "material_viewer.h"
 
 #include "core/resource_loader.h"
+#include "core/resource_files/text_resource_file.h"
 #include "core/renderer/material_library.h"
 
 ResourceFile* MaterialViewer::load(const FilePath& filePath)
@@ -16,5 +17,5 @@ void MaterialViewer::unload()
 
 void MaterialViewer::draw(float deltaMilliseconds)
 {
-	m_OpenedMaterial->draw("Material Viewer");
+	m_OpenedMaterial->draw();
 }

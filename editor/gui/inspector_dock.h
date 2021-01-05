@@ -1,7 +1,8 @@
 #pragma once
 
 #include "event_manager.h"
-#include "rootex/framework/component.h"
+#include "framework/ecs_factory.h"
+#include "framework/component.h"
 
 class InspectorDock
 {
@@ -16,15 +17,15 @@ private:
 	constexpr static unsigned int s_InputTextBufferSize = 256;
 
 	InspectorSettings m_InspectorSettings;
-	Ref<Entity> m_OpenedEntity;
-	String m_OpenedEntityName;
+	Scene* m_OpenedScene = nullptr;
+	String m_OpenedSceneName;
 	bool m_IsNameBeingEdited;
 	String m_MenuAction;
-	Ref<Entity> m_ActionEntity;
+	Scene* m_ActionScene = nullptr;
 	Vector<Tuple<ComponentID, String, bool>> m_AddNewComponentSelectionCache;
 	
-	Variant openEntity(const Event* event);
-	Variant closeEntity(const Event* event);
+	Variant openScene(const Event* event);
+	Variant closeScene(const Event* event);
 
 	void drawAddComponentWindow();
 	void drawRemoveComponentWindow();
@@ -39,8 +40,8 @@ public:
 
 	void draw(float deltaMilliseconds);
 
-	void drawEntityActions(Ref<Entity> actionEntity);
-	Ref<Entity> getOpenedEntity() { return m_OpenedEntity; }
+	void drawSceneActions(Scene* scene);
+	Scene* getOpenedScene() { return m_OpenedScene; }
 	InspectorSettings& getSettings() { return m_InspectorSettings; }
 	void setActive(bool enabled) { m_InspectorSettings.m_IsActive = enabled; }
 };

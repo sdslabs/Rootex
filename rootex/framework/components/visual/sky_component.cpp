@@ -1,16 +1,12 @@
 #include "sky_component.h"
 
 #include "resource_loader.h"
+#include "resource_files/model_resource_file.h"
 #include "renderer/material_library.h"
 
 Component* SkyComponent::Create(const JSON::json& componentData)
 {
-	return new SkyComponent(componentData["skyMaterial"], componentData["skySphere"]);
-}
-
-Component* SkyComponent::CreateDefault()
-{
-	return new SkyComponent("rootex/assets/materials/sky.rmat", "rootex/assets/sky.obj");
+	return new SkyComponent(componentData.value("skyMaterial", "rootex/assets/materials/sky.rmat"), componentData.value("skySphere", "rootex/assets/sky.obj"));
 }
 
 SkyComponent::SkyComponent(const String& skyMaterialPath, const String& skySpherePath)
@@ -33,6 +29,6 @@ JSON::json SkyComponent::getJSON() const
 #include "imgui.h"
 void SkyComponent::draw()
 {
-	m_SkyMaterial->draw("0");
+	m_SkyMaterial->draw();
 }
 #endif // ROOTEX_EDITOR

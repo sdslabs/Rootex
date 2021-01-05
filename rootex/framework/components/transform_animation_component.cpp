@@ -3,38 +3,26 @@
 #include "entity.h"
 #include "systems/render_system.h"
 
-Component* TransformAnimationComponent::Create(const JSON::json& componentData)
+void to_json(JSON::json& j, const TransformAnimationComponent::Keyframe& k)
 {
-	Vector<Keyframe> keyframes;
-	for (auto& keyframeInfo : componentData["keyframes"])
-	{
-		Matrix transform;
-		for (int i = 0; i < 4; i++)
-		{
-			for (int j = 0; j < 4; j++)
-			{
-				transform.m[i][j] = keyframeInfo["transform"][i * 4 + j];
-			}
-		}
-		keyframes.push_back({ keyframeInfo["timePosition"], transform });
-	}
-	TransitionType transition = TransitionType::SmashSmash;
-	if (componentData.find("transitionType") != componentData.end())
-	{
-		transition = (TransitionType)(int)componentData["transitionType"];
-	}
-	AnimationMode animationMode = AnimationMode::None;
-	if (componentData.find("animationMode") != componentData.end())
-	{
-		animationMode = componentData["animationMode"];
-	}
-	TransformAnimationComponent* animation = new TransformAnimationComponent(keyframes, componentData["isPlayOnStart"], animationMode, transition);
-	return animation;
+	j["timePosition"] = k.timePosition;
+	j["transform"] = k.transform;
 }
 
-Component* TransformAnimationComponent::CreateDefault()
+void from_json(const JSON::json& j, TransformAnimationComponent::Keyframe& k)
 {
-	return new TransformAnimationComponent({ TransformAnimationComponent::Keyframe({ 0.0f, Matrix::Identity }) }, false, AnimationMode::None, TransitionType::SmashSmash);
+	k.timePosition = j.at("timePosition");
+	k.transform = j.at("transform");
+}
+
+Component* TransformAnimationComponent::Create(const JSON::json& componentData)
+{
+	TransformAnimationComponent* animation = new TransformAnimationComponent(
+	    componentData.value("keyframes", Vector<TransformAnimationComponent::Keyframe>()), 
+		componentData.value("isPlayOnStart", false), 
+		(AnimationMode)(int)componentData.value("animationMode", (int)AnimationMode::None),
+		(TransitionType)(int)componentData.value("transitionType", (int)TransitionType::SmashSmash));
+	return animation;
 }
 
 TransformAnimationComponent::TransformAnimationComponent(const Vector<Keyframe> keyframes, bool isPlayOnStart, AnimationMode animationMode, TransitionType transition)
@@ -42,10 +30,10 @@ TransformAnimationComponent::TransformAnimationComponent(const Vector<Keyframe> 
     , m_CurrentTimePosition(0.0f)
     , m_IsPlayOnStart(isPlayOnStart)
     , m_AnimationMode(animationMode)
-    , m_TransformComponent(nullptr)
     , m_IsPlaying(false)
     , m_TransitionType(transition)
     , m_TimeDirection(1.0f)
+    , m_DependencyOnTransformComponent(this)
 {
 }
 
@@ -66,14 +54,8 @@ Matrix TransformAnimationComponent::interpolateMatrix(const Matrix& left, const 
 	return finalMat;
 }
 
-bool TransformAnimationComponent::setup()
+bool TransformAnimationComponent::setupData()
 {
-	m_TransformComponent = m_Owner->getComponent<TransformComponent>().get();
-	if (!m_TransformComponent)
-	{
-		WARN("TransformComponent not found on entity with TransformAnimationComponent: " + m_Owner->getFullName());
-		return false;
-	}
 	if (m_Keyframes.empty())
 	{
 		Keyframe initialKeyframe;
@@ -134,6 +116,7 @@ void TransformAnimationComponent::interpolate(float deltaSeconds)
 		if (m_CurrentTimePosition < getStartTime() || getEndTime() < m_CurrentTimePosition)
 		{
 			m_TimeDirection *= -1.0f;
+			m_CurrentTimePosition = std::clamp(m_CurrentTimePosition, getStartTime(), getEndTime());
 		}
 		deltaSeconds *= m_TimeDirection;
 		break;
@@ -201,18 +184,7 @@ JSON::json TransformAnimationComponent::getJSON() const
 {
 	JSON::json j;
 
-	for (int i = 0; i < m_Keyframes.size(); i++)
-	{
-		j["keyframes"][i]["timePosition"] = m_Keyframes[i].timePosition;
-		for (int x = 0; x < 4; x++)
-		{
-			for (int y = 0; y < 4; y++)
-			{
-				j["keyframes"][i]["transform"][x * 4u + y] = m_Keyframes[i].transform.m[x][y];
-			}
-		}
-	}
-
+	j["keyframes"] = m_Keyframes;
 	j["isPlayOnStart"] = m_IsPlayOnStart;
 	j["animationMode"] = m_AnimationMode;
 	j["transitionType"] = (int)m_TransitionType;

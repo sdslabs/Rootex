@@ -1,15 +1,14 @@
 #pragma once
 
 #include "component.h"
-
+#include "core/resource_files/model_resource_file.h"
 #include "renderer/materials/sky_material.h"
 
 class SkyComponent : public Component
 {
 	static Component* Create(const JSON::json& componentData);
-	static Component* CreateDefault();
 
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 	ModelResourceFile* m_SkySphere;
 	Ref<SkyMaterial> m_SkyMaterial;
@@ -24,7 +23,7 @@ public:
 	ModelResourceFile* getSkySphere() const { return m_SkySphere; }
 	SkyMaterial* getSkyMaterial() const { return m_SkyMaterial.get(); }
 
-	virtual String getName() const override { return "SkyComponent"; }
+	virtual const char* getName() const override { return "SkyComponent"; }
 	ComponentID getComponentID() const { return s_ID; }
 	virtual JSON::json getJSON() const override;
 

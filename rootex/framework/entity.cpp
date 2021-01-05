@@ -2,10 +2,11 @@
 
 #include "event_manager.h"
 #include "framework/component.h"
-#include "framework/components/hierarchy_component.h"
 #include "framework/system.h"
 #include "script/script.h"
 #include "resource_loader.h"
+
+#include "scene.h"
 
 void Entity::RegisterAPI(sol::table& rootex)
 {
@@ -13,11 +14,9 @@ void Entity::RegisterAPI(sol::table& rootex)
 	entity["removeComponent"] = &Entity::removeComponent;
 	entity["destroy"] = &Entity::destroy;
 	entity["hasComponent"] = &Entity::hasComponent;
-	entity["getID"] = &Entity::getID;
+	entity["getScene"] = &Entity::getScene;
 	entity["getName"] = &Entity::getName;
-	entity["setName"] = &Entity::setName;
 	entity["setScript"] = &Entity::setScript;
-
 	entity["script"] = sol::property(&Entity::getScriptEnv, &Entity::setScriptEnv);
 
 	sol::usertype<Component> component = rootex.new_usertype<Component>("Component");
@@ -26,20 +25,8 @@ void Entity::RegisterAPI(sol::table& rootex)
 	component["getName"] = &Component::getName;
 }
 
-Entity::~Entity()
-{
-	destroy();
-}
-
-void Entity::addComponent(const Ref<Component>& component)
-{
-	m_Components.insert(std::make_pair(component->getComponentID(), component));
-}
-
-Entity::Entity(EntityID id, const String& name, const JSON::json& script)
-    : m_ID(id)
-    , m_Name(name)
-    , m_IsEditorOnly(false)
+Entity::Entity(Scene* scene, const JSON::json& script)
+    : m_Scene(scene)
 {
 	if (!script.is_null() && !script["path"].is_null())
 	{
@@ -54,15 +41,18 @@ Entity::Entity(EntityID id, const String& name, const JSON::json& script)
 	}
 }
 
+Entity::~Entity()
+{
+	destroy();
+}
+
 JSON::json Entity::getJSON() const
 {
 	JSON::json j;
-	j["Entity"]["name"] = getName();
-	j["Entity"]["ID"] = getID();
-	j["Components"] = {};
+	j["components"] = {};
 	for (auto&& [componentID, component] : m_Components)
 	{
-		j["Components"][component->getName()] = component->getJSON();
+		j["components"][component->getName()] = component->getJSON();
 	}
 	if (m_Script)
 	{
@@ -76,7 +66,7 @@ JSON::json Entity::getJSON() const
 	return j;
 }
 
-bool Entity::setupComponents()
+bool Entity::onAllComponentsAdded()
 {
 	bool status = true;
 	for (auto& component : m_Components)
@@ -86,7 +76,7 @@ bool Entity::setupComponents()
 	return status;
 }
 
-bool Entity::setupEntities()
+bool Entity::onAllEntitiesAdded()
 {
 	bool status = true;
 
@@ -128,26 +118,40 @@ void Entity::destroy()
 	m_Components.clear();
 }
 
-void Entity::removeComponent(Ref<Component> component)
+bool Entity::removeComponent(ComponentID toRemoveComponentID, bool hardRemove)
 {
-	component->onRemove();
-	m_Components.erase(component->getComponentID());
-	System::DeregisterComponent(component.get());
+	Component* toRemoveComponent = getComponentFromID(toRemoveComponentID);
+	if (!hardRemove)
+	{
+		for (auto& [componentID, component] : m_Components)
+		{
+			for (auto& dependency : component->getDependencies())
+			{
+				if (dependency->getID() == toRemoveComponentID)
+				{
+					WARN("Entity has other components depending on the to-be-removed component " + toRemoveComponent->getName());
+					WARN("Component deletion denied");
+					return false;
+				}
+			}
+		}
+	}
+
+	toRemoveComponent->onRemove();
+	System::DeregisterComponent(toRemoveComponent);
+	m_Components.erase(toRemoveComponent->getComponentID());
+
+	return true;
 }
 
-EntityID Entity::getID() const
+bool Entity::hasComponent(ComponentID componentID)
 {
-	return m_ID;
+	return m_Components.find(componentID) != m_Components.end();
 }
 
-const String& Entity::getName() const
+const HashMap<ComponentID, Ptr<Component>>& Entity::getAllComponents() const
 {
-	return m_Name;
-}
-
-String Entity::getFullName() const
-{
-	return m_Name + " #" + std::to_string(getID());
+	return m_Components;
 }
 
 bool Entity::call(const String& function, const Vector<Variant>& args)
@@ -194,72 +198,65 @@ bool Entity::setScript(const String& path)
 	}
 }
 
-bool Entity::hasComponent(ComponentID componentID)
+const String& Entity::getName() const
 {
-	return m_Components.find(componentID) != m_Components.end();
+	return m_Scene->getName();
 }
 
-void Entity::setName(const String& name)
+const String& Entity::getFullName() const
 {
-	m_Name = name;
-}
-
-const HashMap<ComponentID, Ref<Component>>& Entity::getAllComponents() const
-{
-	return m_Components;
+	return m_Scene->getFullName();
 }
 
 #ifdef ROOTEX_EDITOR
+#include "utility/imgui_helpers.h"
 void Entity::draw() 
 {
-	ImGui::BeginGroup();
 	ImGui::Text("Script");
-
 	if (m_Script)
 	{
-		if (ImGui::Button("X"))
+		if (ImGui::Selectable(m_Script->getFilePath().c_str()))
 		{
-			m_Script.reset();
+			EventManager::GetSingleton()->call("OpenScriptFile", "EditorOpenFile", m_Script->getFilePath());
+		}
+		if (ImGui::Button(ICON_ROOTEX_EXTERNAL_LINK "##Open Script"))
+		{
+			EventManager::GetSingleton()->call("OpenScriptFile", "EditorOpenFile", m_Script->getFilePath());
 		}
 		ImGui::SameLine();
-		//TODO: replace with proper icon
-		if (ImGui::Button("Reload"))
+		if (ImGui::Button(ICON_ROOTEX_REFRESH "##Reload"))
 		{
 			JSON::json& j = m_Script->getJSON();
 			m_Script.reset(new Script(j));
 			m_Script->setup();
 		}
 		ImGui::SameLine();
-		if (ImGui::Selectable(m_Script->getFilePath().c_str()))
+		if (ImGui::Button(ICON_IGFD_CANCEL "##RemoveScript"))
 		{
-			EventManager::GetSingleton()->call("OpenScriptFile", "EditorOpenFile", m_Script->getFilePath());
+			m_Script.reset();
 		}
 	}
-
-	ImGui::EndGroup();
-
-	//TODO: change this when File Dialog gets merged in
-	if (ImGui::BeginDragDropTarget())
+	else
 	{
-		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Resource Drop"))
+		if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Choose Script"))
 		{
-			const char* payloadFileName = (const char*)payload->Data;
-			FilePath payloadPath(payloadFileName);
-			if (IsFileSupported(payloadPath.extension().generic_string(), ResourceFile::Type::Lua))
-			{
-				setScript(payloadPath.generic_string());
-			}
-			else
-			{
-				WARN("Cannot assign a non-lua file as Script");
-			}
+			igfd::ImGuiFileDialog::Instance()->OpenModal("Choose Script", "Choose Script", ".lua", "game/assets/");
 		}
-		ImGui::EndDragDropTarget();
+	}
+	if (igfd::ImGuiFileDialog::Instance()->FileDialog("Choose Script"))
+	{
+		if (igfd::ImGuiFileDialog::Instance()->IsOk)
+		{
+			String filePathName = OS::GetRootRelativePath(igfd::ImGuiFileDialog::Instance()->GetFilePathName()).generic_string();
+			setScript(filePathName);
+		}
+
+		igfd::ImGuiFileDialog::Instance()->CloseDialog("Choose Script");
 	}
 
 	if (m_Script)
 	{
 		m_Script->draw();
 	}
-};
+}
 #endif

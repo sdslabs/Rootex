@@ -5,32 +5,25 @@
 #include "event.h"
 
 class Component;
+class Scene;
 class Script;
 
 typedef unsigned int ComponentID;
 typedef int EntityID;
 
 /// A collection of ECS style components that define an ECS style entity.
-/// Use EntityFactory to create Entity objects.
 class Entity
 {
 protected:
-	EntityID m_ID;
-	String m_Name;
-	HashMap<ComponentID, Ref<Component>> m_Components;
-	bool m_IsEditorOnly;
+	Scene* m_Scene;
+	HashMap<ComponentID, Ptr<Component>> m_Components;
 	Ptr<Script> m_Script;
-
-	Entity(EntityID id, const String& name, const JSON::json& script = {});
-
-	bool setupComponents();
-	bool setupEntities();
 
 	sol::table getScriptEnv();
 	void setScriptEnv(sol::table& changed);
 
-	void addComponent(const Ref<Component>& component);
-	friend class EntityFactory;
+	friend class ECSFactory;
+
 #ifdef ROOTEX_EDITOR
 	friend class InspectorDock;
 	friend class HierarchyDock;
@@ -39,62 +32,61 @@ protected:
 public:
 	static void RegisterAPI(sol::table& rootex);
 
-	virtual ~Entity();
+	Entity(Scene* scene, const JSON::json& script = {});
+	Entity(const Entity&) = delete;
+	~Entity();
 
-	void removeComponent(Ref<Component> component);
+	bool onAllComponentsAdded();
+	bool onAllEntitiesAdded();
+	bool removeComponent(ComponentID toRemoveComponentID, bool hardRemove = false);
+	bool hasComponent(ComponentID componentID);
+
 	/// Destruct all components.
 	void destroy();
-
-	bool hasComponent(ComponentID componentID);
 	
-	EntityID getID() const;
-	const String& getName() const;
-	/// Full name consists of entity name followed by the corresponding EntityID.
-	String getFullName() const;
+	Scene* getScene() const { return m_Scene; }
 	
 	template <class ComponentType = Component>
-	Ref<ComponentType> getComponent() const;
+	ComponentType* getComponent();
 
 	template <class ComponentType = Component>
-	Ref<ComponentType> getComponentFromID(ComponentID ID) const;
+	ComponentType* getComponentFromID(ComponentID ID);
 
 	JSON::json getJSON() const;
-	const HashMap<ComponentID, Ref<Component>>& getAllComponents() const;
-	bool isEditorOnly() const { return m_IsEditorOnly; }
+	const String& getName() const;
+	const String& getFullName() const;
+	const HashMap<ComponentID, Ptr<Component>>& getAllComponents() const;
 
 	bool call(const String& function, const Vector<Variant>& args);
 	void evaluateScriptOverrides();
 	bool setScript(const String& path);
 	
-	void setName(const String& name);
-	void setEditorOnly(bool editorOnly) { m_IsEditorOnly = editorOnly; }
-
 #ifdef ROOTEX_EDITOR
 	void draw();
 #endif
 };
 
 template <class ComponentType>
-inline Ref<ComponentType> Entity::getComponent() const
+inline ComponentType* Entity::getComponent()
 {
 	auto findIt = m_Components.find(ComponentType::s_ID);
 	if (findIt != m_Components.end())
 	{
-		Ref<Component> baseTypeComponent = findIt->second;
-		return std::dynamic_pointer_cast<ComponentType>(baseTypeComponent);
+		Ptr<Component>& baseTypeComponent = findIt->second;
+		return dynamic_cast<ComponentType*>(baseTypeComponent.get());
 	}
 
 	return nullptr;
 }
 
 template <class ComponentType>
-inline Ref<ComponentType> Entity::getComponentFromID(ComponentID ID) const
+inline ComponentType* Entity::getComponentFromID(ComponentID ID)
 {
 	auto findIt = m_Components.find(ID);
 	if (findIt != m_Components.end())
 	{
-		Ref<Component> baseTypeComponent = findIt->second;
-		return std::dynamic_pointer_cast<ComponentType>(baseTypeComponent);
+		Ptr<Component>& baseTypeComponent = findIt->second;
+		return dynamic_cast<ComponentType*>(baseTypeComponent.get());
 	}
 
 	return nullptr;

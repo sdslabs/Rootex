@@ -4,6 +4,9 @@
 
 #include "entity.h"
 #include "component.h"
+#include "scene.h"
+
+#include "Tracy/Tracy.hpp"
 
 /// ECS style System interface that allows iterating over components directly.
 class System
@@ -18,24 +21,25 @@ public:
 		UI,
 		PostRender,
 		Editor,
-		Async
+		Async,
+		End
 	};
 
 protected:
-	static Map<UpdateOrder, Vector<System*>> s_Systems;
+	static Vector<Vector<System*>> s_Systems;
 	static HashMap<ComponentID, Vector<Component*>> s_Components;
 	static void RegisterComponent(Component* component);
 	static void DeregisterComponent(Component* component);
 	
 	friend class Entity;
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 	String m_SystemName;
 	UpdateOrder m_UpdateOrder;
 	bool m_IsActive;
 
 public:
-	static const Map<UpdateOrder, Vector<System*>>& GetSystems() { return s_Systems; }
+	static const Vector<Vector<System*>>& GetSystems() { return s_Systems; }
 	static const Vector<Component*>& GetComponents(ComponentID ID) { return s_Components[ID]; }
 	
 	System(const String& name, const UpdateOrder& order, bool isGameplay);
@@ -43,7 +47,8 @@ public:
 	virtual ~System();
 
 	virtual bool initialize(const JSON::json& systemData);
-	virtual void setConfig(const JSON::json& configData, bool openInEditor);
+	virtual void setConfig(const SceneSettings& sceneSettings);
+
 	virtual void begin();
 	virtual void update(float deltaMilliseconds);
 	virtual void end();

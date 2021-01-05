@@ -5,14 +5,13 @@
 class DebugComponent : public Component
 {
 	static Component* Create(const JSON::json& componentData);
-	static Component* CreateDefault();
 
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::DebugComponent;
 
-	virtual String getName() const override { return "DebugComponent"; }
+	virtual const char* getName() const override { return "DebugComponent"; }
 	ComponentID getComponentID() const { return s_ID; }
 	virtual JSON::json getJSON() const override;
 };

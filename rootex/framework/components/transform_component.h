@@ -5,16 +5,8 @@
 
 class TransformComponent : public Component
 {
-public:
-	struct Bounds
-	{
-		Vector3 m_LowerBounds;
-		Vector3 m_HigherBounds;
-	};
-
 private:
 	static Component* Create(const JSON::json& componentData);
-	static Component* CreateDefault();
 
 	struct TransformBuffer
 	{
@@ -40,7 +32,7 @@ private:
 
 	friend class ModelComponent;
 	friend class RenderSystem;
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 #ifdef ROOTEX_EDITOR
 	static inline const float s_EditorDecimalSpeed = 0.01f;
@@ -62,12 +54,13 @@ public:
 	void setTransform(const Matrix& transform);
 	void setBounds(const BoundingBox& bounds);
 	void setRotationPosition(const Matrix& transform);
-	
+	void setParentAbsoluteTransform(const Matrix& parentTransform);
+
 	void addTransform(const Matrix& applyTransform);
 	void addRotation(const Quaternion& applyTransform);
 
 	Vector3 getPosition() const { return m_TransformBuffer.m_Position; }
-	BoundingBox getBounds() const { return m_TransformBuffer.m_BoundingBox; }
+	BoundingBox getWorldSpaceBounds() const;
 	const Quaternion& getRotation() const { return m_TransformBuffer.m_Rotation; }
 	const Vector3& getScale() const { return m_TransformBuffer.m_Scale; }
 	const Matrix& getLocalTransform() const { return m_TransformBuffer.m_Transform; }
@@ -75,10 +68,11 @@ public:
 	Matrix getAbsoluteTransform() const { return m_TransformBuffer.m_Transform * m_ParentAbsoluteTransform; }
 	Matrix getParentAbsoluteTransform() const { return m_ParentAbsoluteTransform; }
 	ComponentID getComponentID() const override { return s_ID; }
-	virtual String getName() const override { return "TransformComponent"; }
+	virtual const char* getName() const override { return "TransformComponent"; }
 	virtual JSON::json getJSON() const override;
 
 #ifdef ROOTEX_EDITOR
 	void draw() override;
+	void highlight();
 #endif // ROOTEX_EDITOR
 };

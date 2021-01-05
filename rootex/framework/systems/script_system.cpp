@@ -1,7 +1,7 @@
 #include "script_system.h"
 
 #include "script/script.h"
-#include "framework/entity_factory.h"
+#include "framework/scene_loader.h"
 
 ScriptSystem::ScriptSystem()
     : System("ScriptSystem", UpdateOrder::Update, true)
@@ -14,27 +14,63 @@ ScriptSystem* ScriptSystem::GetSingleton()
 	return &singleton;
 }
 
-void ScriptSystem::begin()
+void CallBeginForScene(Scene* scene)
 {
-	for (auto&& [id, entity] : EntityFactory::GetSingleton()->getEntities())
+	if (Entity* entity = scene->getEntity())
 	{
 		entity->evaluateScriptOverrides();
 		entity->call("onBegin", { entity });
+	}
+
+	for (auto& child : scene->getChildren())
+	{
+		CallBeginForScene(child.get());
+	}
+}
+
+void ScriptSystem::begin()
+{
+	Scene* root = SceneLoader::GetSingleton()->getRootScene();
+	CallBeginForScene(root);
+}
+
+void CallUpdateForScene(Scene* scene, float deltaMilliseconds)
+{
+	if (Entity* entity = scene->getEntity())
+	{
+		entity->evaluateScriptOverrides();
+		entity->call("onUpdate", { entity, deltaMilliseconds });
+	}
+
+	for (auto& child : scene->getChildren())
+	{
+		CallUpdateForScene(child.get(), deltaMilliseconds);
 	}
 }
 
 void ScriptSystem::update(float deltaMilliseconds)
 {
-	for (auto&& [id, entity] : EntityFactory::GetSingleton()->getEntities())
+	ZoneScoped;
+	Scene* root = SceneLoader::GetSingleton()->getRootScene();
+	CallUpdateForScene(root, deltaMilliseconds);
+}
+
+void CallEndForScene(Scene* scene)
+{
+	if (Entity* entity = scene->getEntity())
 	{
-		entity->call("onUpdate", { entity, deltaMilliseconds });
+		entity->evaluateScriptOverrides();
+		entity->call("onEnd", { entity });
+	}
+
+	for (auto& child : scene->getChildren())
+	{
+		CallEndForScene(child.get());
 	}
 }
 
 void ScriptSystem::end()
 {
-	for (auto&& [id, entity] : EntityFactory::GetSingleton()->getEntities())
-	{
-		entity->call("onEnd", { entity });
-	}
+	Scene* root = SceneLoader::GetSingleton()->getRootScene();
+	CallEndForScene(root);
 }

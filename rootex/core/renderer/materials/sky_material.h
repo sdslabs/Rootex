@@ -1,13 +1,14 @@
 #pragma once
 
 #include "renderer/material.h"
+#include "core/resource_files/image_cube_resource_file.h"
 
 class Texture;
 
 class SkyMaterial : public Material
 {
 	SkyShader* m_SkyShader;
-	Ref<Texture3D> m_SkyTexture;
+	ImageCubeResourceFile* m_SkyImage;
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_SamplerState;
 
 	void setVSConstantBuffer(const VSDiffuseConstantBuffer& constantBuffer);
@@ -31,7 +32,7 @@ public:
 	SkyMaterial(const String& imagePath);
 	~SkyMaterial() = default;
 
-	void setTexture(ImageResourceFile* image);
+	void setSkyTexture(ImageCubeResourceFile* skyImageFile);
 
 	virtual ID3D11ShaderResourceView* getPreview() override;
 	
@@ -42,6 +43,6 @@ public:
 	JSON::json getJSON() const override;
 
 #ifdef ROOTEX_EDITOR
-	void draw(const String& id) override;
+	void draw() override;
 #endif // ROOTEX_EDITOR
 };

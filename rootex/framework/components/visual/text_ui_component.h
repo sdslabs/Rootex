@@ -2,6 +2,7 @@
 
 #include "components/visual/render_ui_component.h"
 #include "resource_loader.h"
+#include "core/resource_files/font_resource_file.h"
 
 /// Component to render 2D UI Text
 class TextUIComponent : public RenderUIComponent
@@ -17,7 +18,6 @@ public:
 	};
 
 	static Component* Create(const JSON::json& componentData);
-	static Component* CreateDefault();
 
 	/// Font file
 	FontResourceFile* m_FontFile;
@@ -34,7 +34,7 @@ public:
 	TextUIComponent(TextUIComponent&) = delete;
 	virtual ~TextUIComponent() = default;
 
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 public:
 	static void RegisterAPI(sol::table& rootex);
@@ -43,7 +43,7 @@ public:
 	virtual void render() override;
 
 	virtual ComponentID getComponentID() const override { return s_ID; }
-	virtual String getName() const override { return "TextUIComponent"; };
+	virtual const char* getName() const override { return "TextUIComponent"; };
 	virtual JSON::json getJSON() const override;
 
 	void setFont(FontResourceFile* fontFile) { m_FontFile = fontFile; }

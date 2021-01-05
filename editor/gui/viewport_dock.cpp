@@ -1,9 +1,12 @@
 #include "viewport_dock.h"
 
 #include "renderer/rendering_device.h"
-#include "framework/systems/render_system.h"
 #include "input/input_manager.h"
 #include "ui/input_interface.h"
+#include "framework/entity.h"
+#include "framework/ecs_factory.h"
+#include "framework/scene_loader.h"
+#include "framework/systems/render_system.h"
 
 #include "editor/editor_system.h"
 #include "editor/editor_application.h"
@@ -15,18 +18,52 @@ ViewportDock::ViewportDock(const JSON::json& viewportJSON)
     : m_IsCameraMoving(false)
 {
 	m_ViewportDockSettings.m_AspectRatio = (float)viewportJSON["aspectRatio"]["x"] / (float)viewportJSON["aspectRatio"]["y"];
-	m_ViewportDockSettings.m_ImageTint = EditorSystem::GetSingleton()->getColors().m_White;
-	m_ViewportDockSettings.m_ImageBorderColor = EditorSystem::GetSingleton()->getColors().m_Accent;
-	TextResourceFile* cameraFile = ResourceLoader::CreateTextResourceFile("editor/assets/entities/camera.entity.json");
-	m_EditorCamera = EntityFactory::GetSingleton()->createEntity(cameraFile, true);
-	RenderSystem::GetSingleton()->setCamera(m_EditorCamera->getComponent<CameraComponent>().get());
+	m_ViewportDockSettings.m_ImageTint = EditorSystem::GetSingleton()->getColors().white;
+	m_ViewportDockSettings.m_ImageBorderColor = EditorSystem::GetSingleton()->getColors().accent;
+	
+	Ptr<Scene>& editorCamera = Scene::CreateEmptyWithEntity();
+	editorCamera->setName("EditorCamera");
+	m_EditorCamera = editorCamera.get();
+	ECSFactory::AddComponent(m_EditorCamera->getEntity(), ECSFactory::CreateDefaultComponent("TransformComponent"));
+	ECSFactory::AddComponent(m_EditorCamera->getEntity(), ECSFactory::CreateDefaultComponent("CameraComponent"));
+	RenderSystem::GetSingleton()->setCamera(m_EditorCamera->getEntity()->getComponent<CameraComponent>());
+	SceneLoader::GetSingleton()->getRootScene()->addChild(editorCamera);
 
-	TextResourceFile* gridFile = ResourceLoader::CreateTextResourceFile("editor/assets/entities/grid.entity.json");
-	m_EditorGrid = EntityFactory::GetSingleton()->createEntity(gridFile, true);
+	Ptr<Scene>& editorGrid = Scene::CreateEmptyWithEntity();
+	editorGrid->setName("EditorGrid");
+	m_EditorGrid = editorGrid.get();
+	ECSFactory::AddComponent(m_EditorGrid->getEntity(), ECSFactory::CreateDefaultComponent("TransformComponent"));
+	ECSFactory::AddComponent(m_EditorGrid->getEntity(), ECSFactory::CreateDefaultComponent("GridModelComponent"));
+	SceneLoader::GetSingleton()->getRootScene()->addChild(editorGrid);
+}
+
+void FindSelectedEntity(Entity*& result, Scene* scene, const Ray& ray, float minimumDistance)
+{
+	if (Entity* entity = scene->getEntity())
+	{
+		if (TransformComponent* transform = entity->getComponent<TransformComponent>())
+		{
+			static float distance = 0.0f;
+			BoundingBox boundingBox = transform->getWorldSpaceBounds();
+			if (ray.Intersects(boundingBox, distance))
+			{
+				if (0.0f < distance && distance < minimumDistance)
+				{
+					minimumDistance = distance;
+					result = entity;
+				}
+			}
+		}
+	}
+	for (auto& child : scene->getChildren())
+	{
+		FindSelectedEntity(result, child.get(), ray, minimumDistance);
+	}
 }
 
 void ViewportDock::draw(float deltaMilliseconds)
 {
+	ZoneScoped;
 	if (m_ViewportDockSettings.m_IsActive)
 	{
 		ImGui::SetNextWindowBgAlpha(1.0f);
@@ -55,27 +92,6 @@ void ViewportDock::draw(float deltaMilliseconds)
 
 			ImVec2 imageSize = ImGui::GetItemRectSize();
 			ImVec2 imagePos = ImGui::GetItemRectMin();
-
-			if (ImGui::BeginDragDropTarget())
-			{
-				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("EntityClass"))
-				{
-					const char* newEntityFile = (const char*)payload->Data;
-					TextResourceFile* t = ResourceLoader::CreateTextResourceFile(newEntityFile);
-					Ref<Entity> entity = EntityFactory::GetSingleton()->createEntityFromClass(t);
-					if (Ref<TransformComponent> transform = entity->getComponent<TransformComponent>())
-					{
-						Quaternion rotation;
-						Vector3 scale;
-						Vector3 position;
-						RenderSystem::GetSingleton()->getCamera()->getOwner()->getComponent<TransformComponent>()->getAbsoluteTransform().Decompose(scale, rotation, position);
-						transform->setPosition(position);
-						transform->setRotationQuaternion(rotation);
-					}
-					EventManager::GetSingleton()->call("OpenEntity", "EditorOpenEntity", entity);
-				}
-				ImGui::EndDragDropTarget();
-			}
 
 			InputInterface::s_ScaleX = Application::GetSingleton()->getWindow()->getWidth() / imageSize.x;
 			InputInterface::s_ScaleY = Application::GetSingleton()->getWindow()->getHeight() / imageSize.y;
@@ -151,25 +167,16 @@ void ViewportDock::draw(float deltaMilliseconds)
 			Matrix view = RenderSystem::GetSingleton()->getCamera()->getViewMatrix();
 			Matrix proj = RenderSystem::GetSingleton()->getCamera()->getProjectionMatrix();
 
-			Ref<Entity> openedEntity = InspectorDock::GetSingleton()->getOpenedEntity();
-			if (openedEntity && openedEntity->getComponent<TransformComponent>())
+			Scene* openedScene = InspectorDock::GetSingleton()->getOpenedScene();
+			if (openedScene && openedScene->getEntity() && openedScene->getEntity()->getComponent<TransformComponent>())
 			{
+				Entity* openedEntity = openedScene->getEntity();
+				TransformComponent* transform = openedEntity->getComponent<TransformComponent>();
+
 				ImGuizmo::SetRect(imagePos.x, imagePos.y, m_ViewportDockSettings.m_ImageSize.x, m_ViewportDockSettings.m_ImageSize.y);
 
-				Matrix matrix = openedEntity->getComponent<TransformComponent>()->getAbsoluteTransform();
+				Matrix matrix = transform->getAbsoluteTransform();
 				Matrix deltaMatrix = Matrix::CreateTranslation(0.0f, 0.0f, 0.0f);
-
-				Ref<TransformComponent> transform = openedEntity->getComponent<TransformComponent>();
-				BoundingBox boundingBox = transform->getBounds();
-
-				struct Bounds
-				{
-					Vector3 m_Lower;
-					Vector3 m_Higher;
-				};
-				Bounds bounds;
-				bounds.m_Lower = Vector3(boundingBox.Center) - Vector3(boundingBox.Extents);
-				bounds.m_Higher = Vector3(boundingBox.Center) + Vector3(boundingBox.Extents);
 
 				ImGuizmo::Manipulate(
 					&view.m[0][0],
@@ -178,15 +185,16 @@ void ViewportDock::draw(float deltaMilliseconds)
 					gizmoMode,
 					&matrix.m[0][0],
 					&deltaMatrix.m[0][0],
-					currentSnap,
-					&bounds.m_Lower.x);
+					currentSnap);
 
-				matrix *= transform->getParentAbsoluteTransform().Invert();
-
-				transform->setTransform(matrix);
+				if (ImGuizmo::IsUsing())
+				{
+					matrix *= transform->getParentAbsoluteTransform().Invert();
+					transform->setTransform(matrix);
+				}
 			}
 			
-			if (ImGui::IsWindowHovered() && InputManager::GetSingleton()->isPressed("InputSelect") && !ImGui::IsMouseDragging(ImGuiMouseButton_Left) && ImGui::IsMouseDown(ImGuiMouseButton_Left))
+			if (ImGui::IsWindowHovered())
 			{
 				Vector3 mouseFromWindow;
 				{
@@ -224,46 +232,31 @@ void ViewportDock::draw(float deltaMilliseconds)
 				direction.Normalize();
 
 				Ray ray(origin, direction);
-
-				float minimumDistance = D3D11_FLOAT32_MAX;
-				Ref<Entity> selectEntity;
-				for (auto& [entityID, entity] : EntityFactory::GetSingleton()->getEntities())
+				Entity* selectEntity = nullptr;
+				if (Scene* currentScene = SceneLoader::GetSingleton()->getCurrentScene())
 				{
-					if (entity->isEditorOnly())
+					FindSelectedEntity(selectEntity, currentScene, ray, D3D11_FLOAT32_MAX);
+				}
+				if (selectEntity && !ImGuizmo::IsUsing())
+				{
+					TransformComponent* transform = selectEntity->getComponent<TransformComponent>();
+					transform->highlight();
+					
+					ImGui::SetCursorPos({ ImGui::GetMousePos().x - ImGui::GetWindowPos().x + 10.0f, ImGui::GetMousePos().y - ImGui::GetWindowPos().y - 20.0f });
+					EditorSystem::GetSingleton()->pushBoldFont();
+					ImGui::TextColored(EditorSystem::GetSingleton()->getColors().white, "%s", transform->getOwner()->getFullName().c_str());
+					EditorSystem::GetSingleton()->popFont();
+					
+					if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
 					{
-						continue;
-					}
-
-					if (Ref<TransformComponent> transform = entity->getComponent<TransformComponent>())
-					{
-						static float distance = 0.0f;
-
-						BoundingBox boundingBox = transform->getBounds();
-						boundingBox.Center = boundingBox.Center + transform->getAbsoluteTransform().Translation();
-
-						boundingBox.Center.x *= transform->getScale().x;
-						boundingBox.Center.y *= transform->getScale().y;
-						boundingBox.Center.z *= transform->getScale().z;
-
-						boundingBox.Extents.x *= transform->getScale().x;
-						boundingBox.Extents.y *= transform->getScale().y;
-						boundingBox.Extents.z *= transform->getScale().z;
-
-						if (ray.Intersects(boundingBox, distance))
-						{
-							if (distance < minimumDistance && distance > 0.0f)
-							{
-								minimumDistance = distance;
-								selectEntity = entity;
-							}
-						}
+						EventManager::GetSingleton()->call("MouseSelectEntity", "EditorOpenScene", selectEntity->getScene());
+						PRINT("Picked entity through selection: " + selectEntity->getFullName());
 					}
 				}
 
-				if (selectEntity && selectEntity != openedEntity)
+				if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Escape)))
 				{
-					EventManager::GetSingleton()->call("MouseSelectEntity", "EditorOpenEntity", selectEntity);
-					PRINT("Picked entity through selection: " + selectEntity->getFullName());
+					EventManager::GetSingleton()->call("MouseSelectEntity", "EditorCloseScene", 0);
 				}
 			}
 
@@ -297,12 +290,12 @@ void ViewportDock::draw(float deltaMilliseconds)
 
 				SetCursorPos(cursorWhenActivated.x, cursorWhenActivated.y);
 
-				m_EditorCamera->getComponent<TransformComponent>()->setRotation(
+				m_EditorCamera->getEntity()->getComponent<TransformComponent>()->setRotation(
 				    m_EditorCameraYaw * m_EditorCameraSensitivity / m_EditorCameraRotationNormalizer,
 				    m_EditorCameraPitch * m_EditorCameraSensitivity / m_EditorCameraRotationNormalizer,
 				    0.0f);
 
-				m_ApplyCameraMatrix = m_EditorCamera->getComponent<TransformComponent>()->getLocalTransform();
+				m_ApplyCameraMatrix = m_EditorCamera->getEntity()->getComponent<TransformComponent>()->getLocalTransform();
 
 				static const Vector3& forward = { 0.0f, 0.0f, -1.0f };
 				static const Vector3& right = { 1.0f, 0.0f, 0.0f };
@@ -341,7 +334,7 @@ void ViewportDock::draw(float deltaMilliseconds)
 					m_IsCameraMoving = false;
 				}
 			}
-			m_EditorCamera->getComponent<TransformComponent>()->setPosition(m_ApplyCameraMatrix.Translation());
+			m_EditorCamera->getEntity()->getComponent<TransformComponent>()->setPosition(m_ApplyCameraMatrix.Translation());
 		}
 		ImGui::End();
 	}

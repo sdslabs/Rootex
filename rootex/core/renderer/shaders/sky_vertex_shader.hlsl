@@ -31,7 +31,7 @@ PixelInputType main(VertexInputType input)
 {
     PixelInputType output;
     output.position = mul(input.position, mul(M, mul(V, P))).xyww;
-    output.texCoord = input.position;
+    output.texCoord = input.position.xyz;
     
     return output;
 }

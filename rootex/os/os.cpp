@@ -5,7 +5,8 @@
 #include <iostream>
 
 #include "common/common.h"
-#include "resource_data.h"
+
+#include <shellapi.h>
 
 #ifdef ROOTEX_EDITOR
 #include "event_manager.h"
@@ -178,23 +179,29 @@ void OS::Execute(const String string)
 	std::system(string.c_str());
 }
 
+bool OS::ElevateThreadPriority()
+{
+	return SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST) != 0;
+}
+
+int OS::GetCurrentThreadPriority()
+{
+	return GetThreadPriority(GetCurrentThread());
+}
+
 String OS::GetBuildDate()
 {
-	return String(__DATE__);
+	return __DATE__;
 }
 
 String OS::GetBuildTime()
 {
-	return String(__TIME__);
+	return __TIME__;
 }
 
 String OS::GetBuildType()
 {
-#ifdef _DEBUG
-	return "Debug";
-#else
-	return "Release";
-#endif // _DEBUG
+	return CMAKE_INTDIR;
 }
 
 String OS::GetGameExecutablePath()
@@ -456,14 +463,14 @@ void OS::PostError(String message, LPSTR caption)
 	MessageBoxA(GetActiveWindow(), message.c_str(), caption, MB_OK);
 }
 
-bool OS::SaveFile(const FilePath& filePath, ResourceData* fileData)
+bool OS::SaveFile(const FilePath& filePath, const char* fileBuffer, size_t fileSize)
 {
 	std::ofstream outFile;
 
 	try
 	{
 		outFile.open(GetAbsolutePath(filePath.generic_string()), std::ios::out | std::ios::binary);
-		outFile.write(fileData->getRawData()->data(), fileData->getRawDataByteSize());
+		outFile.write(fileBuffer, fileSize);
 	}
 	catch (std::exception e)
 	{

@@ -1,20 +1,24 @@
 #include "application.h"
 
-#include "level_manager.h"
-#include "framework/systems/audio_system.h"
+#include "framework/scene_loader.h"
+#include "framework/ecs_factory.h"
 #include "core/resource_loader.h"
+#include "core/resource_files/lua_text_resource_file.h"
 #include "core/input/input_manager.h"
 #include "core/renderer/shader_library.h"
 #include "core/renderer/material_library.h"
 #include "script/interpreter.h"
+
+#include "systems/audio_system.h"
 #include "systems/physics_system.h"
 #include "systems/input_system.h"
 #include "systems/ui_system.h"
 #include "systems/render_ui_system.h"
 #include "systems/render_system.h"
 #include "systems/script_system.h"
-#include "systems/hierarchy_system.h"
 #include "systems/transform_animation_system.h"
+
+#include "Tracy/Tracy.hpp"
 
 Application* Application::s_Singleton = nullptr;
 
@@ -38,15 +42,15 @@ Application::Application(const String& settingsFile)
 	{
 		ERR("Application OS was not initialized");
 	}
+	
+	PANIC(!OS::ElevateThreadPriority(), "Could not elevate main thread priority");
+	PRINT("Current main thread priority: " + std::to_string(OS::GetCurrentThreadPriority()));
 
 	m_ApplicationSettings.reset(new ApplicationSettings(ResourceLoader::CreateTextResourceFile(settingsFile)));
 
+	ECSFactory::Initialize();
+
 	JSON::json& systemsSettings = m_ApplicationSettings->getJSON()["systems"];
-	if (!AudioSystem::GetSingleton()->initialize(systemsSettings["AudioSystem"]))
-	{
-		ERR("Audio System was not initialized");
-	}
-	
 	LuaInterpreter::GetSingleton();
 	
 	JSON::json windowJSON = m_ApplicationSettings->getJSON()["window"];
@@ -65,7 +69,6 @@ Application::Application(const String& settingsFile)
 	InputSystem::GetSingleton()->initialize(inputSystemSettings);
 
 	ShaderLibrary::MakeShaders();
-	MaterialLibrary::LoadMaterials();
 	PhysicsSystem::GetSingleton()->initialize(systemsSettings["PhysicsSystem"]);
 	
 	JSON::json& uiSystemSettings = systemsSettings["UISystem"];
@@ -73,26 +76,33 @@ Application::Application(const String& settingsFile)
 	uiSystemSettings["height"] = m_Window->getHeight();
 	UISystem::GetSingleton()->initialize(uiSystemSettings);
 
-	HierarchySystem::GetSingleton();
 	RenderUISystem::GetSingleton();
 	RenderSystem::GetSingleton();
 	ScriptSystem::GetSingleton();
 	TransformAnimationSystem::GetSingleton();
+	AnimationSystem::GetSingleton();
 
+	if (!AudioSystem::GetSingleton()->initialize(systemsSettings["AudioSystem"]))
+	{
+		ERR("Audio System was not initialized");
+	}
+	
 	auto&& postInitialize = m_ApplicationSettings->find("postInitialize");
 	if (postInitialize != m_ApplicationSettings->end())
 	{
 		LuaInterpreter::GetSingleton()->getLuaState().script(ResourceLoader::CreateLuaTextResourceFile(*postInitialize)->getString());
 	}
 
-	m_Window->show();
+	m_Window->show();	
 }
 
 Application::~Application()
 {
+	SceneLoader::GetSingleton()->destroyAllScenes();
 	AudioSystem::GetSingleton()->shutDown();
 	UISystem::GetSingleton()->shutDown();
 	ShaderLibrary::DestroyShaders();
+	EventManager::GetSingleton()->releaseAllEventListeners();
 }
 
 void Application::run()
@@ -101,7 +111,7 @@ void Application::run()
 	{
 		m_FrameTimer.reset();
 
-		for (auto& [order, systems] : System::GetSystems())
+		for (auto& systems : System::GetSystems())
 		{
 			for (auto& system : systems)
 			{
@@ -111,11 +121,13 @@ void Application::run()
 				}
 			}
 		}
-
+		
 		process(m_FrameTimer.getLastFrameTime());
-
+		
 		EventManager::GetSingleton()->dispatchDeferred();
+		
 		m_Window->swapBuffers();
+		FrameMark;
 	}
 
 	EventManager::GetSingleton()->call("Application", "ApplicationExit", 0);

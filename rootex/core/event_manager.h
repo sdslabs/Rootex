@@ -17,12 +17,13 @@ typedef Function<Variant(const Event*)> EventFunction;
 /// An Event dispatcher and registrar that also allows looking up registered events.
 class EventManager
 {
+	Vector<Function<void()>> m_DeferList;
 	HashMap<Event::Type, Vector<EventFunction>> m_EventListeners;
 	Vector<Ref<Event>> m_Queues[EVENTMANAGER_NUM_QUEUES];
 	unsigned int m_ActiveQueue;
 
 	EventManager();
-	~EventManager();
+	~EventManager() = default;
 
 public:
 	static void RegisterAPI(sol::table& rootex);
@@ -33,6 +34,7 @@ public:
 		Infinite = 0xffffffff
 	};
 
+	void defer(Function<void()> function);
 	/// Add an event. Returns false if it already exists.
 	bool addEvent(const Event::Type& event);
 	void removeEvent(const Event::Type& event);
@@ -48,6 +50,8 @@ public:
 	void deferredCall(const String& eventName, const Event::Type& eventType, const Variant& data);
 	/// Dispatch deferred events collected so far.
 	bool dispatchDeferred(unsigned long maxMillis = Infinite);
+
+	void releaseAllEventListeners();
 
 	const HashMap<Event::Type, Vector<EventFunction>>& getRegisteredEvents() const { return m_EventListeners; }
 };

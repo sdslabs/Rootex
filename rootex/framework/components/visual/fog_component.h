@@ -5,9 +5,8 @@
 class FogComponent : public Component
 {
 	static Component* Create(const JSON::json& componentData);
-	static Component* CreateDefault();
 
-	friend class EntityFactory;
+	friend class ECSFactory;
 
 	float m_Near;
 	float m_Far;
@@ -20,13 +19,13 @@ class FogComponent : public Component
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::FogComponent;
 
-	virtual String getName() const override { return "FogComponent"; }
-	ComponentID getComponentID() const { return s_ID; }
-	virtual JSON::json getJSON() const override;
-
 	Color getColor() const { return m_Color; }
 	float getNearDistance() const { return m_Near; }
 	float getFarDistance() const { return m_Far; }
+
+	virtual const char* getName() const override { return "FogComponent"; }
+	ComponentID getComponentID() const { return s_ID; }
+	virtual JSON::json getJSON() const override;
 
 #ifdef ROOTEX_EDITOR
 	void draw() override;

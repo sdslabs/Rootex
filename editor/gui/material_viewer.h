@@ -2,6 +2,7 @@
 
 #include "common/common.h"
 
+#include "resource_file.h"
 #include "rootex/core/renderer/material.h"
 
 class MaterialViewer
