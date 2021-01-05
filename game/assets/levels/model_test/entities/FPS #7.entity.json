@@ -1,0 +1,62 @@
+{
+    "Components": {
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 1
+        },
+        "TextUIComponent": {
+            "color": {
+                "a": 1.0,
+                "b": 1.0,
+                "g": 1.0,
+                "r": 1.0
+            },
+            "fontResource": "game/assets/fonts/noto_sans_50_regular.spritefont",
+            "isVisible": true,
+            "mode": 0,
+            "origin": {
+                "x": 30.0,
+                "y": 966.0
+            },
+            "text": "60.0"
+        },
+        "TransformComponent": {
+            "boundingBox": {
+                "center": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "extents": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                }
+            },
+            "position": {
+                "x": -17.21200180053711,
+                "y": 3.1495773792266846,
+                "z": 7.911337375640869
+            },
+            "rotation": {
+                "w": 0.7628201842308044,
+                "x": -0.01144316140562296,
+                "y": 0.6464366316795349,
+                "z": 0.00969723891466856
+            },
+            "scale": {
+                "x": 0.9997910261154175,
+                "y": 1.0,
+                "z": 1.0
+            }
+        }
+    },
+    "Entity": {
+        "ID": 7,
+        "name": "FPS",
+        "script": {
+            "overrides": null,
+            "path": "game/assets/scripts/fps_display.lua"
+        }
+    }
+}

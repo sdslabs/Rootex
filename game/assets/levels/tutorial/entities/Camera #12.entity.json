@@ -1,0 +1,60 @@
+{
+    "Components": {
+        "CameraComponent": {
+            "aspectRatio": {
+                "x": 16.0,
+                "y": 9.0
+            },
+            "far": 100.0,
+            "fov": 0.7853981852531433,
+            "near": 0.10000000149011612
+        },
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 1
+        },
+        "ModelComponent": {
+            "isVisible": true,
+            "renderPass": 1,
+            "resFile": "game/assets/test/cube.obj"
+        },
+        "TransformComponent": {
+            "boundingBox": {
+                "center": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "extents": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                }
+            },
+            "position": {
+                "x": -2.6440236568450928,
+                "y": 3.3894622325897217,
+                "z": 11.93620491027832
+            },
+            "rotation": {
+                "w": 0.9983189702033997,
+                "x": -0.056711409240961075,
+                "y": 0.01194304134696722,
+                "z": 0.0006784471916034818
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            }
+        }
+    },
+    "Entity": {
+        "ID": 12,
+        "name": "Camera",
+        "script": {
+            "overrides": null,
+            "path": "game\\assets\\scripts\\tutorial_camera.lua"
+        }
+    }
+}

@@ -1,7 +1,7 @@
 #include "physics_collider_component.h"
 
 #include "framework/systems/physics_system.h"
-#include "framework/components/script_component.h"
+#include "script/script.h"
 
 #include "entity.h"
 
@@ -12,12 +12,10 @@ PhysicsColliderComponent::PhysicsColliderComponent(const String& matName, float 
     , m_Gravity(gravity)
     , m_IsMoveable(isMoveable)
     , m_IsGeneratesHitEvents(generatesHitEvents)
-    , m_DependencyOnScriptComponent(this)
     , m_DependencyOnTransformComponent(this)
 {
 	m_CollisionShape = collisionShape;
 	m_TransformComponent = nullptr;
-	m_ScriptComponent = nullptr;
 	sol::table materialLua = PhysicsSystem::GetSingleton()->getPhysicsMaterial();
 	m_SpecificGravity = float(materialLua[matName]["specificgravity"]);
 	m_Material.m_Friction = float(materialLua[matName]["friction"]);
@@ -60,14 +58,6 @@ bool PhysicsColliderComponent::setupData()
 void PhysicsColliderComponent::onRemove()
 {
 	PhysicsSystem::GetSingleton()->removeRigidBody(m_Body.get());
-}
-
-void PhysicsColliderComponent::onHit(btPersistentManifold* manifold, PhysicsColliderComponent* other)
-{
-	if (m_ScriptComponent)
-	{
-		m_ScriptComponent->onHit(manifold, other);
-	}
 }
 
 void PhysicsColliderComponent::getWorldTransform(btTransform& worldTrans) const

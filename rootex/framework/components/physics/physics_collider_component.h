@@ -2,14 +2,12 @@
 
 #include "component.h"
 #include "components/transform_component.h"
-#include "components/script_component.h"
 
 #include "btBulletDynamicsCommon.h"
 
 class PhysicsColliderComponent : public Component, public btMotionState
 {
 	DEPENDS_ON(TransformComponent);
-	SOFT_DEPENDS_ON(ScriptComponent);
 
 	Ref<btCollisionShape> m_CollisionShape;
 	Ref<btRigidBody> m_Body;
@@ -63,8 +61,6 @@ public:
 	bool setupData() override;
 	void onRemove() override;
 	
-	void onHit(btPersistentManifold* manifold, PhysicsColliderComponent* other);
-
 	void applyForce(const Vector3& force);
 	void applyTorque(const Vector3& torque);
 	

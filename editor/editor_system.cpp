@@ -690,7 +690,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 		{
 			EventManager::GetSingleton()->call("EditorLoadScene", "EditorCloseScene", 0);
 			SceneLoader::GetSingleton()->loadPreloadedScene(loadingScene, {});
-			SetWindowText(GetActiveWindow(), ("Rootex Editor: " + SceneLoader::GetSingleton()->getCurrentScene()->getFullName()).c_str());
+			SetWindowText(GetActiveWindow(), ("Rootex Editor: " + loadingScene).c_str());
 			totalProgress = -1;
 			progress = 0;
 			loadingScene = "";

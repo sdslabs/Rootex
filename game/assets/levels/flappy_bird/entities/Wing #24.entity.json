@@ -1,0 +1,52 @@
+{
+    "Components": {
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 22
+        },
+        "ModelComponent": {
+            "affectingStaticLights": [],
+            "isVisible": true,
+            "materialOverrides": {
+                "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+            },
+            "renderPass": 1,
+            "resFile": "rootex/assets/cube.obj"
+        },
+        "TransformComponent": {
+            "boundingBox": {
+                "center": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "extents": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                }
+            },
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.5714273452758789
+            },
+            "rotation": {
+                "w": 0.9167476892471313,
+                "x": -0.0,
+                "y": -0.39946675300598145,
+                "z": -0.0
+            },
+            "scale": {
+                "x": 0.17000000178813934,
+                "y": 0.1699998825788498,
+                "z": 0.9179993867874146
+            }
+        }
+    },
+    "Entity": {
+        "ID": 24,
+        "name": "Wing",
+        "script": null
+    }
+}

@@ -2,7 +2,8 @@
 
 #include "entity.h"
 #include "framework/scene_loader.h"
-#include "framework/ecs_factory.h"
+#include "framework/component.h"
+#include "script/script.h"
 #include "editor/editor_system.h"
 
 #include "imgui.h"
@@ -205,6 +206,8 @@ void InspectorDock::draw(float deltaMilliseconds)
 
 				if (Entity* entity = m_OpenedScene->getEntity())
 				{
+					entity->draw();
+
 					EditorSystem::GetSingleton()->pushBoldFont();
 					ImGui::Text("Components");
 					for (auto& component : entity->getAllComponents())

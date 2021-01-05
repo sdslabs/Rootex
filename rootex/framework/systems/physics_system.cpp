@@ -5,7 +5,7 @@
 #include "core/resource_files/lua_text_resource_file.h"
 
 #include "components/physics/physics_collider_component.h"
-#include "components/script_component.h"
+#include "script/script.h"
 
 #include "os/timer.h"
 #include "render_system.h"
@@ -105,11 +105,11 @@ void PhysicsSystem::InternalTickCallback(btDynamicsWorld* const world, btScalar 
 
 		if (collider0->isGeneratesHitEvents())
 		{
-			collider0->onHit(manifold, collider1);
+			collider0->getOwner()->call("onHit", { body0, body1 });
 		}
 		if (collider1->isGeneratesHitEvents())
 		{
-			collider1->onHit(manifold, collider0);
+			collider1->getOwner()->call("onHit", { body1, body0 });
 		}
 	}
 }

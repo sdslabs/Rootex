@@ -1,0 +1,67 @@
+{
+    "Components": {
+        "BoxColliderComponent": {
+            "dimensions": {
+                "x": 0.5,
+                "y": 4.090000152587891,
+                "z": 0.5
+            },
+            "gravity": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "isGeneratesHitEvents": false,
+            "isMoveable": false,
+            "matName": "Air"
+        },
+        "HierarchyComponent": {
+            "children": [],
+            "parent": 1
+        },
+        "ModelComponent": {
+            "affectingStaticLights": [],
+            "isVisible": true,
+            "materialOverrides": {
+                "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+            },
+            "renderPass": 1,
+            "resFile": "rootex/assets/cube.obj"
+        },
+        "TransformComponent": {
+            "boundingBox": {
+                "center": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "extents": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                }
+            },
+            "position": {
+                "x": 12.199999809265137,
+                "y": -2.75,
+                "z": -2.5
+            },
+            "rotation": {
+                "w": 1.0,
+                "x": -0.0,
+                "y": 0.0,
+                "z": -0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 8.619999885559082,
+                "z": 1.0
+            }
+        }
+    },
+    "Entity": {
+        "ID": 26,
+        "name": "Obstacle0",
+        "script": null
+    }
+}
