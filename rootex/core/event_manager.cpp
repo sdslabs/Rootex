@@ -24,6 +24,11 @@ EventManager* EventManager::GetSingleton()
 	return &singleton;
 }
 
+void EventManager::defer(Function<void()> function)
+{
+	m_DeferList.push_back(function);
+}
+
 bool EventManager::addEvent(const Event::Type& event)
 {
 	if (m_EventListeners.find(event) == m_EventListeners.end())
@@ -119,6 +124,12 @@ void EventManager::deferredCall(const String& eventName, const Event::Type& even
 
 bool EventManager::dispatchDeferred(unsigned long maxMillis)
 {
+	for (auto& function : m_DeferList)
+	{
+		function();
+	}
+	m_DeferList.clear();
+
 	int queueToProcess = m_ActiveQueue;
 	m_ActiveQueue = (m_ActiveQueue + 1) % EVENTMANAGER_NUM_QUEUES;
 	m_Queues[m_ActiveQueue].clear();

@@ -2,6 +2,7 @@
 
 #include "ecs_factory.h"
 #include "resource_loader.h"
+#include "scene_loader.h"
 
 static int CurrentSceneCount = ROOT_SCENE_ID + 1;
 
