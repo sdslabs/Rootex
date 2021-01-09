@@ -187,9 +187,11 @@ void ViewportDock::draw(float deltaMilliseconds)
 					&deltaMatrix.m[0][0],
 					currentSnap);
 
-				matrix *= transform->getParentAbsoluteTransform().Invert();
-
-				transform->setTransform(matrix);
+				if (ImGuizmo::IsUsing())
+				{
+					matrix *= transform->getParentAbsoluteTransform().Invert();
+					transform->setTransform(matrix);
+				}
 			}
 			
 			if (ImGui::IsWindowHovered())
@@ -235,21 +237,23 @@ void ViewportDock::draw(float deltaMilliseconds)
 				{
 					FindSelectedEntity(selectEntity, currentScene, ray, D3D11_FLOAT32_MAX);
 				}
-				
-				if (selectEntity)
+				if (selectEntity && !ImGuizmo::IsUsing())
 				{
 					TransformComponent* transform = selectEntity->getComponent<TransformComponent>();
 					transform->highlight();
+					
 					ImGui::SetCursorPos({ ImGui::GetMousePos().x - ImGui::GetWindowPos().x + 10.0f, ImGui::GetMousePos().y - ImGui::GetWindowPos().y - 20.0f });
 					EditorSystem::GetSingleton()->pushBoldFont();
 					ImGui::TextColored(EditorSystem::GetSingleton()->getColors().white, "%s", transform->getOwner()->getFullName().c_str());
 					EditorSystem::GetSingleton()->popFont();
+					
+					if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+					{
+						EventManager::GetSingleton()->call("MouseSelectEntity", "EditorOpenScene", selectEntity->getScene());
+						PRINT("Picked entity through selection: " + selectEntity->getFullName());
+					}
 				}
-				if (selectEntity && ImGui::IsMouseReleased(ImGuiMouseButton_Right))
-				{
-					EventManager::GetSingleton()->call("MouseSelectEntity", "EditorOpenScene", selectEntity->getScene());
-					PRINT("Picked entity through selection: " + selectEntity->getFullName());
-				}
+
 				if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Escape)))
 				{
 					EventManager::GetSingleton()->call("MouseSelectEntity", "EditorCloseScene", 0);
