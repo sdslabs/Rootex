@@ -1,5 +1,6 @@
 #include "test_system.h"
 
+#include "framework/ecs_factory.h"
 #include "components/test_component.h"
 
 TestSystem::TestSystem()
@@ -10,7 +11,7 @@ TestSystem::TestSystem()
 void TestSystem::update(float deltaMilliseconds)
 {
 	ZoneScoped;
-	const Vector<Component*>& testComponents = s_Components[TestComponent::s_ID];
+	const Vector<Component*>& testComponents = ECSFactory::GetComponents<TestComponent>();
 
 	for (auto& testComponent : testComponents)
 	{
