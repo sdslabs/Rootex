@@ -22,7 +22,7 @@ LightSystem* LightSystem::GetSingleton()
 StaticPointLightsInfo LightSystem::getStaticPointLights()
 {
 	StaticPointLightsInfo staticLights;
-	Vector<Component*>& staticPointLightComponents = s_Components[StaticPointLightComponent::s_ID];
+	Vector<Component*>& staticPointLightComponents = ECSFactory::GetComponents<StaticPointLightComponent>();
 
 	int i = 0;
 	for (; i < staticPointLightComponents.size() && i < MAX_STATIC_POINT_LIGHTS; i++)
@@ -56,7 +56,7 @@ LightsInfo LightSystem::getDynamicLights()
 		return Vector3::DistanceSquared(cameraPos, aa) < Vector3::DistanceSquared(cameraPos, bb);
 	};
 
-	Vector<Component*>& pointLightComponents = s_Components[PointLightComponent::s_ID];
+	Vector<Component*>& pointLightComponents = ECSFactory::GetComponents<PointLightComponent>();
 	sort(pointLightComponents.begin(), pointLightComponents.end(), sortingLambda);
 
 	int i = 0;
@@ -77,7 +77,7 @@ LightsInfo LightSystem::getDynamicLights()
 	}
 	lights.pointLightCount = i;
 
-	const Vector<Component*>& directionalLightComponents = s_Components[DirectionalLightComponent::s_ID];
+	const Vector<Component*>& directionalLightComponents = ECSFactory::GetComponents<DirectionalLightComponent>();
 
 	if (directionalLightComponents.size() > 1)
 	{
@@ -99,7 +99,7 @@ LightsInfo LightSystem::getDynamicLights()
 		lights.directionalLightPresent = 1;
 	}
 
-	Vector<Component*>& spotLightComponents = s_Components[SpotLightComponent::s_ID];
+	Vector<Component*>& spotLightComponents = ECSFactory::GetComponents<SpotLightComponent>();
 	sort(spotLightComponents.begin(), spotLightComponents.end(), sortingLambda);
 
 	i = 0;

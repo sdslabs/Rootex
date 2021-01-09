@@ -14,7 +14,6 @@ void RenderUIComponent::RegisterAPI(sol::table& rootex)
 	sol::usertype<RenderUIComponent> renderUIComponent = rootex.new_usertype<RenderUIComponent>(
 	    "RenderUIComponent",
 	    sol::base_classes, sol::bases<Component>());
-	rootex["Entity"]["getRenderUI"] = &Entity::getComponent<RenderUIComponent>;
 }
 
 bool RenderUIComponent::preRender()
