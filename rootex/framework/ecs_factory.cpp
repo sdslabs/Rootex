@@ -11,7 +11,6 @@
 #include "components/physics/sphere_collider_component.h"
 #include "components/physics/capsule_collider_component.h"
 #include "components/physics/static_mesh_collider_component.h"
-#include "components/script_component.h"
 #include "components/short_music_component.h"
 #include "components/test_component.h"
 #include "components/transform_animation_component.h"
@@ -92,8 +91,12 @@ Ptr<Entity> ECSFactory::CreateEntity(Scene* scene, const JSON::json& entityJSON)
 	{
 		componentJSON = entityJSON["components"];
 	}
-
-	Ptr<Entity> entity(std::make_unique<Entity>(scene));
+	JSON::json scriptJSON = {};
+	if (entityJSON.contains("Entity") && entityJSON["Entity"].contains("script"))
+	{
+		scriptJSON = entityJSON["Entity"]["script"];
+	}
+	Ptr<Entity> entity(std::make_unique<Entity>(scene, scriptJSON));
 
 	for (auto&& [componentName, componentDescription] : componentJSON.items())
 	{
@@ -149,7 +152,6 @@ void ECSFactory::Initialize()
 	REGISTER_COMPONENT(BoxColliderComponent);
 	REGISTER_COMPONENT(CapsuleColliderComponent);
 	REGISTER_COMPONENT(StaticMeshColliderComponent);
-	REGISTER_COMPONENT(ScriptComponent);
 	REGISTER_COMPONENT(AudioListenerComponent);
 	REGISTER_COMPONENT(MusicComponent);
 	REGISTER_COMPONENT(ShortMusicComponent);

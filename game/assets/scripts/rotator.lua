@@ -1,3 +1,7 @@
+exports = {
+    a = 100
+}
+
 function onBegin(entity)
     transform = entity:getTransform()
     number = 0
