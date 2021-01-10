@@ -115,28 +115,6 @@ void InspectorDock::drawSceneActions(Scene* scene)
 			m_ActionScene->addChild(Scene::CreateEmptyWithEntity());
 		}
 
-		if (ImGui::MenuItem("Add Child Scene From File"))
-		{
-			igfd::ImGuiFileDialog::Instance()->OpenModal("ChooseChildSceneFile", "Choose Scene File", ".json", "game/assets/");
-		}
-
-		if (ImGui::MenuItem("Save Scene to File"))
-		{
-			igfd::ImGuiFileDialog::Instance()->OpenModal("Save Scene", "Save Scene to File", 0, ".");
-		}
-		if (igfd::ImGuiFileDialog::Instance()->FileDialog("Save Scene"))
-		{
-			if (igfd::ImGuiFileDialog::Instance()->IsOk)
-			{
-				String filePath = OS::GetRootRelativePath(igfd::ImGuiFileDialog::Instance()->GetCurrentPath()).generic_string() + scene->getFullName() + ".scene.json";
-				if (!SceneLoader::GetSingleton()->saveSceneAtFile(m_ActionScene, filePath))
-				{
-					WARN("Could not save selected scene to file: " + filePath);
-				}
-			}
-			igfd::ImGuiFileDialog::Instance()->CloseDialog("Save Scene");
-		}
-
 		if (ImGui::Selectable("Copy Scene"))
 		{
 			if (Ptr<Scene>& copiedScene = Scene::Create(m_ActionScene->getJSON()))
@@ -194,6 +172,31 @@ void InspectorDock::draw(float deltaMilliseconds)
 					drawSceneActions(m_OpenedScene);
 					ImGui::EndCombo();
 				}
+
+				if (ImGui::Button("Add Child Scene From File"))
+				{
+					igfd::ImGuiFileDialog::Instance()->OpenModal("ChooseChildSceneFile", "Choose Scene File", ".json", "game/assets/");
+				}
+				
+				ImGui::SameLine();
+
+				if (ImGui::Button("Save Scene to File"))
+				{
+					igfd::ImGuiFileDialog::Instance()->OpenModal("Save Scene", "Save Scene to File", 0, ".");
+				}
+				if (igfd::ImGuiFileDialog::Instance()->FileDialog("Save Scene"))
+				{
+					if (igfd::ImGuiFileDialog::Instance()->IsOk)
+					{
+						String filePath = OS::GetRootRelativePath(igfd::ImGuiFileDialog::Instance()->GetCurrentPath()).generic_string() + m_OpenedScene->getFullName() + ".scene.json";
+						if (!SceneLoader::GetSingleton()->saveSceneAtFile(m_ActionScene, filePath))
+						{
+							WARN("Could not save selected scene to file: " + filePath);
+						}
+					}
+					igfd::ImGuiFileDialog::Instance()->CloseDialog("Save Scene");
+				}
+
 				if (igfd::ImGuiFileDialog::Instance()->FileDialog("ChooseChildSceneFile"))
 				{
 					if (igfd::ImGuiFileDialog::Instance()->IsOk)
