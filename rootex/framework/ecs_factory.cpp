@@ -59,10 +59,15 @@ bool ECSFactory::AddComponent(Entity* entity, Ptr<Component>& component)
 	if (entity->m_Components.find(component->getComponentID()) == entity->m_Components.end())
 	{
 		component->m_Owner = entity;
-		entity->m_Components[component->getComponentID()] = std::move(component);
+		ComponentID id = component->getComponentID();
+		entity->m_Components[id] = std::move(component);
 		if (!entity->onAllComponentsAdded())
 		{
-			entity->removeComponent(component->getComponentID(), true);
+			if (entity->hasComponent(id))
+			{
+				entity->removeComponent(id, true);
+			}
+			return false;
 		}
 		return true;
 	}
