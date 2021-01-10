@@ -17,7 +17,6 @@ Variant InspectorDock::openScene(const Event* event)
 	m_OpenedScene = Extract<Scene*>(event->getData());
 	m_OpenedSceneName = m_OpenedScene->getName();
 	m_IsNameBeingEdited = false;
-	refreshAddNewComponentSelectionCache();
 	return true;
 }
 
@@ -28,15 +27,6 @@ Variant InspectorDock::closeScene(const Event* event)
 	m_ActionScene = nullptr;
 	m_IsNameBeingEdited = false;
 	return true;
-}
-
-void InspectorDock::refreshAddNewComponentSelectionCache()
-{
-	m_AddNewComponentSelectionCache.clear();
-	for (auto& componentDetail : ECSFactory::GetComponentDatabase())
-	{
-		m_AddNewComponentSelectionCache.push_back({ std::get<ComponentID>(componentDetail), std::get<String>(componentDetail), false });
-	}
 }
 
 InspectorDock::InspectorDock()
@@ -71,13 +61,31 @@ void InspectorDock::drawSceneActions(Scene* scene)
 
 		if (Entity* entity = m_ActionScene->getEntity())
 		{
-			if (ImGui::MenuItem("Add Components"))
+			if (ImGui::BeginMenu("Edit Components"))
 			{
-				m_MenuAction = "Add Components";
-			}
-			if (ImGui::MenuItem("Remove Components"))
-			{
-				m_MenuAction = "Remove Components";
+				for (const auto& [componentID, componentName, componentCreator] : ECSFactory::GetComponentDatabase())
+				{
+					bool isAddedAlready = entity->getComponentFromID(componentID) != nullptr;
+					if (ImGui::Checkbox(componentName.c_str(), &isAddedAlready))
+					{
+						if (isAddedAlready)
+						{
+							if (ECSFactory::AddComponent(entity, ECSFactory::CreateDefaultComponent(componentName)))
+							{
+								PRINT("Added " + componentName + " to " + entity->getFullName());
+							}
+						}
+						else
+						{
+							if (entity->removeComponent(componentID))
+							{
+								PRINT("Removed " + componentName + " from " + entity->getFullName());
+							}
+						}
+					}
+				}
+
+				ImGui::EndMenu();
 			}
 			if (ImGui::MenuItem("Reset"))
 			{
@@ -196,12 +204,6 @@ void InspectorDock::draw(float deltaMilliseconds)
 					igfd::ImGuiFileDialog::Instance()->CloseDialog("ChooseChildSceneFile");
 				}
 
-				if (!m_MenuAction.empty())
-				{
-					ImGui::OpenPopup((m_MenuAction + ": " + m_ActionScene->getName()).c_str());
-					m_MenuAction.clear();
-				}
-
 				ImGui::Separator();
 
 				if (Entity* entity = m_OpenedScene->getEntity())
@@ -228,156 +230,8 @@ void InspectorDock::draw(float deltaMilliseconds)
 					EditorSystem::GetSingleton()->popFont();
 
 				}
-				if (m_ActionScene)
-				{
-					drawAddComponentWindow();
-					drawRemoveComponentWindow();
-				}
 			}
 		}
 		ImGui::End();
-	}
-}
-
-void InspectorDock::drawAddComponentWindow()
-{
-	if (Entity* actionEntity = m_ActionScene->getEntity())
-	{
-		ImGui::SetNextWindowSize({ ImGui::GetWindowWidth(), ImGui::GetWindowHeight() });
-		if (ImGui::BeginPopupModal(("Add Components: " + actionEntity->getName()).c_str(), 0, ImGuiWindowFlags_AlwaysAutoResize))
-		{
-			ImGui::Text("%s", "Choose Components");
-			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
-			if (ImGui::ListBoxHeader("##Choose Components"))
-			{
-				for (auto&& [componentID, componentName, isComponentSelected] : m_AddNewComponentSelectionCache)
-				{
-					ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
-					if (!actionEntity->hasComponent(componentID))
-					{
-						ImGui::Checkbox(componentName.c_str(), &isComponentSelected);
-					}
-				}
-				ImGui::ListBoxFooter();
-			}
-
-			ImGui::Text("%s", "Components");
-			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
-			if (ImGui::ListBoxHeader("##Selected Components"))
-			{
-				for (auto&& [componentID, componentName, isComponentSelected] : m_AddNewComponentSelectionCache)
-				{
-					if (isComponentSelected)
-					{
-						ImGui::Text(componentName.c_str());
-					}
-				}
-				ImGui::ListBoxFooter();
-			}
-
-			ImGui::TextWrapped("Entities will be automatically reset to make new components function properly.");
-
-			if (ImGui::Button("Add"))
-			{
-				for (auto&& [componentID, componentName, isComponentSelected] : m_AddNewComponentSelectionCache)
-				{
-					if (isComponentSelected)
-					{
-						if (ECSFactory::AddComponent(actionEntity, ECSFactory::CreateDefaultComponent(componentName)))
-						{
-							PRINT("Added " + componentName + " to " + actionEntity->getName());
-						}
-					}
-				}
-				refreshAddNewComponentSelectionCache();
-				ImGui::CloseCurrentPopup();
-			}
-
-			ImGui::SameLine();
-
-			if (ImGui::Button("Cancel"))
-			{
-				refreshAddNewComponentSelectionCache();
-				ImGui::CloseCurrentPopup();
-			}
-			ImGui::EndPopup();
-		}
-	}
-}
-
-void InspectorDock::drawRemoveComponentWindow()
-{
-	if (Entity* actionEntity = m_ActionScene->getEntity())
-	{
-		ImGui::SetNextWindowSize({ ImGui::GetWindowWidth(), ImGui::GetWindowHeight() });
-		if (ImGui::BeginPopupModal(("Remove Components: " + actionEntity->getName()).c_str(), 0, ImGuiWindowFlags_AlwaysAutoResize))
-		{
-			ImGui::Text("%s", "Choose Components");
-			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
-			if (ImGui::ListBoxHeader("##Choose Components"))
-			{
-				for (auto&& [componentID, componentName, isComponentSelected] : m_AddNewComponentSelectionCache)
-				{
-					ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
-					if (actionEntity->hasComponent(componentID))
-					{
-						ImGui::Checkbox(componentName.c_str(), &isComponentSelected);
-					}
-				}
-				ImGui::ListBoxFooter();
-			}
-
-			ImGui::Text("%s", "Components");
-			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
-			if (ImGui::ListBoxHeader("##Selected Components"))
-			{
-				for (auto&& [componentID, componentName, isComponentSelected] : m_AddNewComponentSelectionCache)
-				{
-					if (isComponentSelected)
-					{
-						ImGui::Text(componentName.c_str());
-					}
-				}
-				ImGui::ListBoxFooter();
-			}
-
-			ImGui::TextWrapped("Entities will be automatically reset to make old components function properly.");
-
-			if (ImGui::Button("Remove"))
-			{
-				for (auto&& [componentID, componentName, isComponentSelected] : m_AddNewComponentSelectionCache)
-				{
-					if (isComponentSelected)
-					{
-						Component* component = actionEntity->getComponentFromID(componentID);
-						if (component)
-						{
-							if (actionEntity->removeComponent(componentID))
-							{
-								PRINT("Deleted " + componentName + " from " + actionEntity->getName());
-							}
-							else
-							{
-								PRINT("Could not delete component: " + component->getName());
-							}
-						}
-						else
-						{
-							ERR("Component not found: Possible level file corruption");
-						}
-					}
-				}
-				refreshAddNewComponentSelectionCache();
-				ImGui::CloseCurrentPopup();
-			}
-			ImGui::SameLine();
-
-			if (ImGui::Button("Cancel"))
-			{
-				refreshAddNewComponentSelectionCache();
-				ImGui::CloseCurrentPopup();
-			}
-			ImGui::EndPopup();
-		}
 	}
 }
