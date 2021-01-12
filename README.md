@@ -2,8 +2,10 @@
 
 <img src="/rootex/assets/rootex.png" width=400 />
 
+[![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://github.com/tterb/atomic-design-ui/blob/master/LICENSEs)
 ![C/C++ CI](https://github.com/sdslabs/Rootex/workflows/C/C++%20CI/badge.svg)
 [![Documentation Status](https://readthedocs.org/projects/rootex/badge/?version=latest)](https://rootex.readthedocs.io/en/latest/?badge=latest)
+[![Discord](https://discordapp.com/api/guilds/758961084337618944/embed.png)](https://discord.gg/dXkVEgTPu9)
 
 ## Contents
 
@@ -53,7 +55,7 @@ Now you can start reading the [documentation](https://rootex.readthedocs.io/) an
 
 ## <a name=how>How can I contribute?
 
-Read [here](CONTRIBUTING.md) to know our contribution guidelines. Join our [Discord server](https://discord.gg/HtVxfqt) for Rootex and Rubeus, or optionally ping us at chat.sdslabs.co to get guidance. You can start with setting up Rootex on your Windows machine and try solving a few bugs listed here: https://github.com/sdslabs/Rootex/issues
+Read [here](CONTRIBUTING.md) to know our contribution guidelines. Join our [Discord server](https://discord.gg/dXkVEgTPu9) or optionally ping us at chat.sdslabs.co to get guidance. You can start with setting up Rootex on your Windows machine and try solving a few bugs listed here: https://github.com/sdslabs/Rootex/issues
 
 ## <a name=license>License
 
