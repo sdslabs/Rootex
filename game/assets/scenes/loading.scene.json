@@ -5,13 +5,13 @@
             "ID": 22,
             "children": [],
             "entity": {
-                "components": {
-                    "ScriptComponent": {
-                        "scripts": [
-                            "game/assets/scripts/level_change.lua"
-                        ]
+                "Entity": {
+                    "script": {
+                        "overrides": null,
+                        "path": "game/assets/scripts/level_change.lua"
                     }
-                }
+                },
+                "components": null
             },
             "file": "",
             "name": "loader",
@@ -25,6 +25,9 @@
         }
     ],
     "entity": {
+        "Entity": {
+            "script": null
+        },
         "components": {
             "TextUIComponent": {
                 "color": {

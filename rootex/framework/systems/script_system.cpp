@@ -1,6 +1,7 @@
 #include "script_system.h"
 
-#include "components/script_component.h"
+#include "script/script.h"
+#include "framework/scene_loader.h"
 
 ScriptSystem::ScriptSystem()
     : System("ScriptSystem", UpdateOrder::Update, true)
@@ -13,33 +14,63 @@ ScriptSystem* ScriptSystem::GetSingleton()
 	return &singleton;
 }
 
+void CallBeginForScene(Scene* scene)
+{
+	if (Entity* entity = scene->getEntity())
+	{
+		entity->evaluateScriptOverrides();
+		entity->call("onBegin", { entity });
+	}
+
+	for (auto& child : scene->getChildren())
+	{
+		CallBeginForScene(child.get());
+	}
+}
+
 void ScriptSystem::begin()
 {
-	ScriptComponent* scriptComponent = nullptr;
-	for (auto&& component : s_Components[ScriptComponent::s_ID])
+	Scene* root = SceneLoader::GetSingleton()->getRootScene();
+	CallBeginForScene(root);
+}
+
+void CallUpdateForScene(Scene* scene, float deltaMilliseconds)
+{
+	if (Entity* entity = scene->getEntity())
 	{
-		scriptComponent = (ScriptComponent*)component;
-		scriptComponent->onBegin();
+		entity->evaluateScriptOverrides();
+		entity->call("onUpdate", { entity, deltaMilliseconds });
+	}
+
+	for (auto& child : scene->getChildren())
+	{
+		CallUpdateForScene(child.get(), deltaMilliseconds);
 	}
 }
 
 void ScriptSystem::update(float deltaMilliseconds)
 {
 	ZoneScoped;
-	ScriptComponent* scriptComponent = nullptr;
-	for (auto&& component : s_Components[ScriptComponent::s_ID])
+	Scene* root = SceneLoader::GetSingleton()->getRootScene();
+	CallUpdateForScene(root, deltaMilliseconds);
+}
+
+void CallEndForScene(Scene* scene)
+{
+	if (Entity* entity = scene->getEntity())
 	{
-		scriptComponent = (ScriptComponent*)component;
-		scriptComponent->onUpdate(deltaMilliseconds);
+		entity->evaluateScriptOverrides();
+		entity->call("onEnd", { entity });
+	}
+
+	for (auto& child : scene->getChildren())
+	{
+		CallEndForScene(child.get());
 	}
 }
 
 void ScriptSystem::end()
 {
-	ScriptComponent* scriptComponent = nullptr;
-	for (auto&& component : s_Components[ScriptComponent::s_ID])
-	{
-		scriptComponent = (ScriptComponent*)component;
-		scriptComponent->onEnd();
-	}
+	Scene* root = SceneLoader::GetSingleton()->getRootScene();
+	CallEndForScene(root);
 }
