@@ -193,7 +193,7 @@ void ResourceLoader::Unload(const Vector<String>& paths)
 	for (auto& [deletionType, deletionFiles] : unloads)
 	{
 		for (auto& deletionFile : deletionFiles)
-	    {
+		{
 			for (auto& [type, files] : s_ResourcesDataFiles)
 			{
 				auto& eraseIt = std::find(files.begin(), files.end(), deletionFile);

@@ -6,6 +6,7 @@
 
 class Component;
 class Scene;
+class Script;
 
 typedef unsigned int ComponentID;
 typedef int EntityID;
@@ -16,13 +17,22 @@ class Entity
 protected:
 	Scene* m_Scene;
 	HashMap<ComponentID, Ptr<Component>> m_Components;
-	
+	Ptr<Script> m_Script;
+
+	sol::table getScriptEnv();
+	void setScriptEnv(sol::table& changed);
+
 	friend class ECSFactory;
+
+#ifdef ROOTEX_EDITOR
+	friend class InspectorDock;
+	friend class HierarchyDock;
+#endif // ROOTEX_EDITOR
 
 public:
 	static void RegisterAPI(sol::table& rootex);
 
-	Entity(Scene* scene);
+	Entity(Scene* scene, const JSON::json& script = {});
 	Entity(const Entity&) = delete;
 	~Entity();
 
@@ -46,6 +56,14 @@ public:
 	const String& getName() const;
 	const String& getFullName() const;
 	const HashMap<ComponentID, Ptr<Component>>& getAllComponents() const;
+
+	bool call(const String& function, const Vector<Variant>& args);
+	void evaluateScriptOverrides();
+	bool setScript(const String& path);
+	
+#ifdef ROOTEX_EDITOR
+	void draw();
+#endif
 };
 
 template <class ComponentType>

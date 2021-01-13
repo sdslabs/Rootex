@@ -30,6 +30,12 @@ When you are on a developmental task, start by skimming through these steps:
 int GlobalVariable;
 void GlobalFunction() {}
 
+struct PascalCase
+{
+    int camelCase;
+    float camelCase(int argumentVariable);
+}
+
 class PascalCase
 {
 public:

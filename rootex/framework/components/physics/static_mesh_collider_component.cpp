@@ -1,6 +1,7 @@
 #include "static_mesh_collider_component.h"
 #include "resource_loader.h"
 #include "systems/physics_system.h"
+#include "event_manager.h"
 
 Component* StaticMeshColliderComponent::Create(const JSON::json& staticMeshComponentData)
 {

@@ -161,8 +161,9 @@ namespace ColorPresets = DirectX::Colors;
 /// Vector of std::variant of bool, int, char, float, String, Vector2, Vector3, Vector4, Matrix
 typedef Vector<std::variant<bool, int, char, float, String, Vector2, Vector3, Vector4, Matrix>> VariantVector;
 class Scene;
+class Entity;
 /// A variant able to hold multiple kinds of data, one at a time.
-using Variant = std::variant<bool, int, char, float, String, Vector2, Vector3, Vector4, Matrix, VariantVector, Scene*, Vector<String>>;
+using Variant = std::variant<bool, int, char, float, String, Vector2, Vector3, Vector4, Matrix, VariantVector, Scene*, Entity*, Vector<String>>;
 /// Extract the value of type TypeName from a Variant
 template <typename T>
 T Extract(const Variant& v)

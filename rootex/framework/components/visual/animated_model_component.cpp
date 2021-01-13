@@ -59,13 +59,11 @@ void AnimatedModelComponent::render()
 	RenderableComponent::render();
 
 	std::sort(m_AnimatedModelResourceFile->getMeshes().begin(), m_AnimatedModelResourceFile->getMeshes().end(), ModelComponent::CompareMaterials);
-	int i = 0;
 
 	for (auto& [material, meshes] : m_AnimatedModelResourceFile->getMeshes())
 	{
 		(std::dynamic_pointer_cast<AnimatedMaterial>(material))->setVSConstantBuffer(VSAnimationConstantBuffer(m_FinalTransforms));
 		RenderSystem::GetSingleton()->getRenderer()->bind(m_MaterialOverrides[material].get());
-		i++;
 
 		for (auto& mesh : meshes)
 		{
@@ -124,6 +122,8 @@ void AnimatedModelComponent::setAnimatedResourceFile(AnimatedModelResourceFile* 
 {
 	assignOverrides(resFile, materialOverrides);
 	assignBoundingBox();
+	m_FinalTransforms.resize(m_AnimatedModelResourceFile->getBoneCount());
+	m_CurrentAnimationName = m_AnimatedModelResourceFile->getAnimationNames().front();
 }
 
 JSON::json AnimatedModelComponent::getJSON() const
@@ -168,7 +168,7 @@ void AnimatedModelComponent::draw()
 			FilePath filePath = OS::GetRootRelativePath(igfd::ImGuiFileDialog::Instance()->GetFilePathName());
 			setAnimatedResourceFile(ResourceLoader::CreateAnimatedModelResourceFile(filePath.generic_string()), {});
 		}
-		igfd::ImGuiFileDialog::Instance()->CloseDialog("ChooseModelComponentModel");
+		igfd::ImGuiFileDialog::Instance()->CloseDialog("ChooseAnimatedModelComponentModel");
 	}
 
 	if (ImGui::Button("Start"))
@@ -197,25 +197,24 @@ void AnimatedModelComponent::draw()
 
 	RenderableComponent::draw();
 
-	int i = 0;
-	for (auto& [material, meshes] : m_AnimatedModelResourceFile->getMeshes())
+	int p = 0;
+	if (ImGui::TreeNodeEx(("Meshes")))
 	{
+		ImGui::Columns(3);
 
-		if (ImGui::TreeNodeEx(("Meshes##" + std::to_string(i)).c_str()))
+		ImGui::Text("Serial");
+		ImGui::NextColumn();
+		ImGui::Text("Vertices");
+		ImGui::NextColumn();
+		ImGui::Text("Indices");
+		ImGui::NextColumn();
+
+	    for (auto& [material, meshes] : m_AnimatedModelResourceFile->getMeshes())
 		{
-			ImGui::Columns(3);
-
-			ImGui::Text("Serial");
-			ImGui::NextColumn();
-			ImGui::Text("Vertices");
-			ImGui::NextColumn();
-			ImGui::Text("Indices");
-			ImGui::NextColumn();
-
-			int p = 0;
 			for (auto& mesh : meshes)
 			{
 				p++;
+				ImGui::Columns(3);
 				ImGui::Text("%d", p);
 				ImGui::NextColumn();
 				ImGui::Text("%d", mesh.m_VertexBuffer->getCount());
@@ -225,10 +224,10 @@ void AnimatedModelComponent::draw()
 			}
 
 			ImGui::Columns(1);
-			ImGui::TreePop();
 		}
+
+		ImGui::TreePop();
 		ImGui::Separator();
-		i++;
 	}
 	ImGui::EndGroup();
 }
