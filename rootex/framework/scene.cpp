@@ -35,7 +35,6 @@ void Scene::RegisterAPI(sol::table& rootex)
 	scene["CreateEmpty"] = &CreateEmpty;
 	scene["CreateEmptyWithEntity"] = &CreateEmptyWithEntity;
 	scene["CreateFromFile"] = &CreateFromFile;
-	scene["addChild"] = &addChild;
 	scene["removeChild"] = &removeChild;
 	scene["snatchChild"] = &snatchChild;
 	scene["setName"] = &setName;
@@ -176,9 +175,34 @@ void Scene::onLoad()
 	}
 }
 
-bool Scene::snatchChild(Ptr<Scene>& child)
+bool Scene::snatchChild(Scene* child)
 {
-	return child->getParent()->removeChild(child.get()) && addChild(child);
+	if (!checkCycle(child))
+	{
+		return false;
+	}
+	
+	Vector<Ptr<Scene>>& children = child->getParent()->getChildren();
+	for (int i = 0; i < children.size(); i++)
+	{
+		if (children.at(i).get() == child)
+		{
+			m_ChildrenScenes.push_back(std::move(children[i]));
+			children.erase(children.begin() + i);
+		}
+	}
+	child->m_ParentScene = this;
+	return true;
+}
+
+bool Scene::checkCycle(Scene* child)
+{
+	if (child->findScene(this->getID()) != nullptr)
+	{
+		WARN("Tried to make a scene its own child's child");
+		return false;
+	}
+	return true;
 }
 
 bool Scene::addChild(Ptr<Scene>& child)
@@ -188,13 +212,15 @@ bool Scene::addChild(Ptr<Scene>& child)
 		WARN("Tried to add a null scene to: " + getFullName() + ". Denied.");
 		return false;
 	}
-
+	if (!checkCycle(child.get()))
+	{
+		return false;
+	}
 	auto& findIt = std::find(m_ChildrenScenes.begin(), m_ChildrenScenes.end(), child);
 	if (findIt == m_ChildrenScenes.end())
 	{
 		child->m_ParentScene = this;
 		m_ChildrenScenes.emplace_back(std::move(child));
-		child.reset();
 		return true;
 	}
 	return false;
@@ -284,7 +310,7 @@ void SceneSettings::draw()
 		ImGui::InputText("##", &preload);
 		ImGui::PopID();
 	}
-	if (ImGui::Button("+")) 
+	if (ImGui::Button("+"))
 	{
 		preloads.push_back("");
 	}
