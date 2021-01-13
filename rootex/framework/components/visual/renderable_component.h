@@ -1,8 +1,8 @@
 #pragma once
 
 #include "component.h"
-#include "framework\components\transform_component.h"
-#include "renderer\material.h"
+#include "framework/components/transform_component.h"
+#include "renderer/material.h"
 #include "scene.h"
 
 class RenderableComponent : public Component
