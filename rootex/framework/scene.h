@@ -36,6 +36,8 @@ class Scene
 	Scene* m_ParentScene = nullptr;
 	Vector<Ptr<Scene>> m_ChildrenScenes;
 
+	static Vector<Scene*> m_Scenes;
+
 	bool checkCycle(Scene* child);
 
 public:
@@ -48,6 +50,7 @@ public:
 	static Ptr<Scene> CreateEmptyAtPath(const String& sceneFile);
 	static Ptr<Scene> CreateEmptyWithEntity();
 	static Ptr<Scene> CreateRootScene();
+	static Vector<Scene*> FindScenesByName(String& name);
 
 	Scene(SceneID id, const String& name, const String& sceneFile, const SceneSettings& settings);
 	~Scene();
