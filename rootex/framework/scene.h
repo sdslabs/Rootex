@@ -36,6 +36,8 @@ class Scene
 	Scene* m_ParentScene = nullptr;
 	Vector<Ptr<Scene>> m_ChildrenScenes;
 
+	bool checkCycle(Scene* child);
+
 public:
 	static void RegisterAPI(sol::table& rootex);
 	static void ResetCounter();
@@ -54,13 +56,13 @@ public:
 	void reload();
 
 	void onLoad();
-	bool snatchChild(Ptr<Scene>& child);
+	bool snatchChild(Scene* child);
 	bool addChild(Ptr<Scene>& child);
 	bool removeChild(Scene* toRemove);
 
 	void setEntity(Ptr<Entity>& entity) { m_Entity = std::move(entity); }
 	void setName(const String& name);
-	
+
 	JSON::json getJSON() const;
 	Vector<Ptr<Scene>>& getChildren() { return m_ChildrenScenes; }
 	SceneID getID() const { return m_ID; }
