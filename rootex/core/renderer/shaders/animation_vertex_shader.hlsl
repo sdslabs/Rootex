@@ -46,24 +46,26 @@ struct PixelInputType
 PixelInputType main(VertexInputType input)
 {
 	PixelInputType output;
-		
-    float3 pos = float3(0.0f, 0.0f, 0.0f);
-
-    pos += input.weights.x * mul(input.position, FinalTransforms[input.indices.x]).xyz;
-    pos += input.weights.y * mul(input.position, FinalTransforms[input.indices.y]).xyz;
-    pos += input.weights.z * mul(input.position, FinalTransforms[input.indices.z]).xyz;
-    pos += input.weights.w * mul(input.position, FinalTransforms[input.indices.w]).xyz;
-	
-    output.screenPosition = mul(float4(pos, 1.0f), mul(M, mul(V, P)));
-    output.normal = normalize(mul((float3) input.normal, (float3x3) MInverseTranspose));
     
-	output.tex.x = input.tex.x;
+    matrix transform = mul(input.weights.x, FinalTransforms[input.indices.x]);
+    transform += mul(input.weights.y, FinalTransforms[input.indices.y]);
+    transform += mul(input.weights.z, FinalTransforms[input.indices.z]);
+    transform += mul(input.weights.w, FinalTransforms[input.indices.w]);
+    
+    float3 pos = mul(input.position, transform);
+    output.screenPosition = mul(float4(pos, 1.0f), mul(M, mul(V, P)));
+    
+    float3 nor = normalize(mul(input.normal, transform).xyz);
+    
+    output.normal = normalize(mul((float3) nor, (float3x3) MInverseTranspose));
+	
+    output.tex.x = input.tex.x;
     output.tex.y = input.tex.y;
 	
     output.tangent = mul(input.tangent, (float3x3)M);
 	
-    output.worldPosition = mul(input.position, M);
-    float4 cameraPosition = mul(input.position, mul(M, V));
+    output.worldPosition = mul(float4(pos, 1.0f), M);
+    float4 cameraPosition = mul(float4(pos, 1.0f), mul(M, V));
     output.fogFactor = saturate((fogEnd - cameraPosition.z) / (fogEnd - fogStart));
 	
 	return output;

@@ -5,6 +5,9 @@
             "ID": 5,
             "children": [],
             "entity": {
+                "Entity": {
+                    "script": null
+                },
                 "components": {
                     "BoxColliderComponent": {
                         "angularFactor": {
@@ -85,6 +88,9 @@
             "ID": 6,
             "children": [],
             "entity": {
+                "Entity": {
+                    "script": null
+                },
                 "components": {
                     "BoxColliderComponent": {
                         "angularFactor": {
@@ -165,6 +171,9 @@
             "ID": 7,
             "children": [],
             "entity": {
+                "Entity": {
+                    "script": null
+                },
                 "components": {
                     "ModelComponent": {
                         "affectingStaticLights": [],
@@ -241,6 +250,9 @@
             "ID": 8,
             "children": [],
             "entity": {
+                "Entity": {
+                    "script": null
+                },
                 "components": {
                     "CapsuleColliderComponent": {
                         "angularFactor": {
@@ -316,6 +328,9 @@
         }
     ],
     "entity": {
+        "Entity": {
+            "script": null
+        },
         "components": null
     },
     "file": "game/assets/scenes/physics.scene.json",

@@ -17,5 +17,5 @@ public:
 	/// Calls OnUpdate() function of script components.
 	void update(float deltaMilliseconds) override;
 	/// Calls OnEnd() function of script components.
-	void end();
+	void end() override;
 };

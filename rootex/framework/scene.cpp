@@ -2,6 +2,7 @@
 
 #include "ecs_factory.h"
 #include "resource_loader.h"
+#include "scene_loader.h"
 
 static int CurrentSceneCount = ROOT_SCENE_ID + 1;
 
@@ -85,7 +86,7 @@ Ptr<Scene> Scene::CreateFromFile(const String& sceneFile)
 
 Ptr<Scene> Scene::CreateEmpty()
 {
-	return Create({});
+	return Create(JSON::json::object());
 }
 
 Ptr<Scene> Scene::CreateEmptyAtPath(const String& sceneFile)
