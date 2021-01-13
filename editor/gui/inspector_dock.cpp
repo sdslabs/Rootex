@@ -214,21 +214,21 @@ void InspectorDock::draw(float deltaMilliseconds)
 					entity->draw();
 
 					EditorSystem::GetSingleton()->pushBoldFont();
-					ImGui::Text("Components");
-					for (auto& component : entity->getAllComponents())
+					if (ImGui::BeginTabBar("Components", ImGuiTabBarFlags_AutoSelectNewTabs | ImGuiTabBarFlags_NoCloseWithMiddleMouseButton | ImGuiTabBarFlags_FittingPolicyMask_))
 					{
 						ImGui::PushStyleColor(ImGuiCol_Text, EditorSystem::GetSingleton()->getColors().white);
-						if (ImGui::TreeNodeEx(component.second->getName(), ImGuiTreeNodeFlags_CollapsingHeader | ImGuiTreeNodeFlags_DefaultOpen))
+						for (auto& component : entity->getAllComponents())
 						{
-							ImGui::PopStyleColor();
-							EditorSystem::GetSingleton()->pushRegularFont();
-							component.second->draw();
-							EditorSystem::GetSingleton()->popFont();
+							if (ImGui::BeginTabItem(component.second->getName(), nullptr, ImGuiTabItemFlags_NoCloseWithMiddleMouseButton))
+							{
+								EditorSystem::GetSingleton()->pushRegularFont();
+								component.second->draw();
+								EditorSystem::GetSingleton()->popFont();
+								ImGui::EndTabItem();
+							}
 						}
-						else
-						{
-							ImGui::PopStyleColor();
-						}
+						ImGui::PopStyleColor();
+						ImGui::EndTabBar();
 					}
 					EditorSystem::GetSingleton()->popFont();
 

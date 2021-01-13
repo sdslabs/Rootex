@@ -5,6 +5,9 @@
             "ID": 15,
             "children": [],
             "entity": {
+                "Entity": {
+                    "script": null
+                },
                 "components": {
                     "ModelComponent": {
                         "affectingStaticLights": [],
@@ -61,6 +64,9 @@
             "ID": 16,
             "children": [],
             "entity": {
+                "Entity": {
+                    "script": null
+                },
                 "components": {
                     "CPUParticlesComponent": {
                         "affectingStaticLights": [],
@@ -150,6 +156,9 @@
             "ID": 17,
             "children": [],
             "entity": {
+                "Entity": {
+                    "script": null
+                },
                 "components": {
                     "CPUParticlesComponent": {
                         "affectingStaticLights": [],
@@ -237,6 +246,9 @@
         }
     ],
     "entity": {
+        "Entity": {
+            "script": null
+        },
         "components": {
             "ModelComponent": {
                 "affectingStaticLights": [],

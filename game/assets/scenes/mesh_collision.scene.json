@@ -5,6 +5,9 @@
             "ID": 5,
             "children": [],
             "entity": {
+                "Entity": {
+                    "script": null
+                },
                 "components": {
                     "CameraComponent": {
                         "aspectRatio": {
@@ -15,6 +18,18 @@
                         "fov": 0.7853981852531433,
                         "near": 0.10000000149011612,
                         "postProcessingDetails": {
+                            "assaoAdaptiveQualityLimit": 0.44999998807907104,
+                            "assaoBlurPassCount": 2,
+                            "assaoDetailShadowStrength": 0.5,
+                            "assaoFadeOutFrom": 50.0,
+                            "assaoFadeOutTo": 300.0,
+                            "assaoHorizonAngleThreshold": 0.05999999865889549,
+                            "assaoQualityLevel": 2,
+                            "assaoRadius": 1.2000000476837158,
+                            "assaoShadowClamp": 0.9800000190734863,
+                            "assaoShadowMultiplier": 1.0,
+                            "assaoShadowPower": 1.5,
+                            "assaoSharpness": 0.9800000190734863,
                             "bloomBase": 1.0,
                             "bloomBaseSaturation": 1.0,
                             "bloomBrightness": 1.0,
@@ -23,6 +38,7 @@
                             "bloomThreshold": 0.800000011920929,
                             "bloomValue": 1.0,
                             "gaussianBlurMultiplier": 1.0,
+                            "isASSAO": false,
                             "isBloom": false,
                             "isGaussianBlur": false,
                             "isMonochrome": false,
@@ -90,6 +106,9 @@
             "ID": 6,
             "children": [],
             "entity": {
+                "Entity": {
+                    "script": null
+                },
                 "components": {
                     "CapsuleColliderComponent": {
                         "angularFactor": {
@@ -97,6 +116,8 @@
                             "y": 0.0,
                             "z": 0.0
                         },
+                        "collisionGroup": 31,
+                        "collisionMask": 31,
                         "gravity": {
                             "x": 0.0,
                             "y": -9.800000190734863,
@@ -168,6 +189,9 @@
                     "ID": 9,
                     "children": [],
                     "entity": {
+                        "Entity": {
+                            "script": null
+                        },
                         "components": {
                             "BoxColliderComponent": {
                                 "angularFactor": {
@@ -175,6 +199,8 @@
                                     "y": 1.0,
                                     "z": 1.0
                                 },
+                                "collisionGroup": 31,
+                                "collisionMask": 31,
                                 "dimensions": {
                                     "x": 0.5,
                                     "y": 0.5,
@@ -246,6 +272,9 @@
                     "ID": 10,
                     "children": [],
                     "entity": {
+                        "Entity": {
+                            "script": null
+                        },
                         "components": {
                             "ModelComponent": {
                                 "affectingStaticLights": [],
@@ -262,6 +291,8 @@
                                     "y": 1.0,
                                     "z": 1.0
                                 },
+                                "collisionGroup": 31,
+                                "collisionMask": 31,
                                 "gravity": {
                                     "x": 0.0,
                                     "y": -9.800000190734863,
@@ -320,6 +351,9 @@
                     "ID": 11,
                     "children": [],
                     "entity": {
+                        "Entity": {
+                            "script": null
+                        },
                         "components": {
                             "CapsuleColliderComponent": {
                                 "angularFactor": {
@@ -327,6 +361,8 @@
                                     "y": 1.0,
                                     "z": 1.0
                                 },
+                                "collisionGroup": 31,
+                                "collisionMask": 31,
                                 "gravity": {
                                     "x": 0.0,
                                     "y": -9.800000190734863,
@@ -393,6 +429,9 @@
                 }
             ],
             "entity": {
+                "Entity": {
+                    "script": null
+                },
                 "components": {
                     "TransformComponent": {
                         "boundingBox": {
@@ -438,6 +477,9 @@
         }
     ],
     "entity": {
+        "Entity": {
+            "script": null
+        },
         "components": {
             "FogComponent": {
                 "color": {
@@ -483,6 +525,8 @@
                     "y": 1.0,
                     "z": 1.0
                 },
+                "collisionGroup": 31,
+                "collisionMask": 31,
                 "collisionModel": "rootex/assets/terrain.obj",
                 "gravity": {
                     "x": 0.0,

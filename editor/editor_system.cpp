@@ -121,7 +121,10 @@ bool EditorSystem::initialize(const JSON::json& systemData)
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable | ImGuiConfigFlags_DpiEnableScaleFonts | ImGuiConfigFlags_DpiEnableScaleViewports;
+	io.ConfigFlags |= 
+		ImGuiConfigFlags_DockingEnable |
+		ImGuiConfigFlags_NavEnableGamepad |
+		ImGuiConfigFlags_NavEnableKeyboard;
 	io.ConfigDockingWithShift = true;
 	io.FontAllowUserScaling = true;
 	
