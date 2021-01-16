@@ -26,6 +26,8 @@ void from_json(const JSON::json& j, SceneSettings& s);
 
 class Scene
 {
+	static Vector<Scene*> s_Scenes;
+
 	SceneID m_ID;
 	String m_Name;
 	String m_FullName;
@@ -48,6 +50,7 @@ public:
 	static Ptr<Scene> CreateEmptyAtPath(const String& sceneFile);
 	static Ptr<Scene> CreateEmptyWithEntity();
 	static Ptr<Scene> CreateRootScene();
+	static Vector<Scene*> FindScenesByName(const String& name);
 
 	Scene(SceneID id, const String& name, const String& sceneFile, const SceneSettings& settings);
 	~Scene();
