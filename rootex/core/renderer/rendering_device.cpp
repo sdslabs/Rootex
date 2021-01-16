@@ -614,7 +614,7 @@ void RenderingDevice::setPSCB(ID3D11Buffer* constantBuffer, UINT slot)
 	m_Context->PSSetConstantBuffers(slot, 1u, &constantBuffer);
 }
 
-void RenderingDevice::unbindRTSRVs()
+void RenderingDevice::unbindSRVs()
 {
 	ID3D11ShaderResourceView* nullSRV[2] = { nullptr, nullptr };
 	m_Context->PSSetShaderResources(0, 2, nullSRV);
@@ -719,7 +719,12 @@ void RenderingDevice::setRTV(Microsoft::WRL::ComPtr<ID3D11RenderTargetView> rtv)
 	m_Context->OMSetRenderTargets(1, rtv.GetAddressOf(), nullptr);
 }
 
-Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::getMainRTSRV()
+void RenderingDevice::setRTV(ID3D11RenderTargetView* rtv)
+{
+	m_Context->OMSetRenderTargets(1, &rtv, nullptr);
+}
+
+Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::getMainSRV()
 {
 	return m_MainRTSRV;
 }
@@ -729,14 +734,19 @@ Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::getDepthSSRV()
 	return m_MainDSSRV;
 }
 
-Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::getOffScreenRTSRV()
+Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::getOffScreenSRV()
 {
 	return m_OffScreenRTSRV;
 }
 
-Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::getOffScreenRTSRVResolved()
+Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::getOffScreenSRVResolved()
 {
 	return m_OffScreenRTSRVResolved;
+}
+
+Microsoft::WRL::ComPtr<ID3D11RenderTargetView> RenderingDevice::getOffScreenRTVResolved()
+{
+	return m_OffScreenRTVResolved;
 }
 
 Ref<DirectX::SpriteBatch> RenderingDevice::getUIBatch()
