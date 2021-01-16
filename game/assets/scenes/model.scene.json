@@ -5,6 +5,9 @@
             "ID": 15,
             "children": [],
             "entity": {
+                "Entity": {
+                    "script": null
+                },
                 "components": {
                     "CameraComponent": {
                         "aspectRatio": {
@@ -15,6 +18,18 @@
                         "fov": 0.7853981852531433,
                         "near": 0.10000000149011612,
                         "postProcessingDetails": {
+                            "assaoAdaptiveQualityLimit": 0.44999998807907104,
+                            "assaoBlurPassCount": 6,
+                            "assaoDetailShadowStrength": 2.809999942779541,
+                            "assaoFadeOutFrom": 50.0,
+                            "assaoFadeOutTo": 300.0,
+                            "assaoHorizonAngleThreshold": 0.05999999865889549,
+                            "assaoQualityLevel": 3,
+                            "assaoRadius": 10.0,
+                            "assaoShadowClamp": 0.7699999809265137,
+                            "assaoShadowMultiplier": 1.6399999856948853,
+                            "assaoShadowPower": 1.4800000190734863,
+                            "assaoSharpness": 0.9800000190734863,
                             "bloomBase": 1.0,
                             "bloomBaseSaturation": 1.0,
                             "bloomBrightness": 1.0,
@@ -23,14 +38,15 @@
                             "bloomThreshold": 0.800000011920929,
                             "bloomValue": 1.0,
                             "gaussianBlurMultiplier": 1.0,
-                            "isBloom": false,
-                            "isGaussianBlur": false,
-                            "isMonochrome": false,
-                            "isPostProcessing": false,
-                            "isSepia": false,
-                            "isToneMap": false,
-                            "toneMapExposure": 0.0,
-                            "toneMapOperator": 0,
+                            "isASSAO": true,
+                            "isBloom": true,
+                            "isGaussianBlur": true,
+                            "isMonochrome": true,
+                            "isPostProcessing": true,
+                            "isSepia": true,
+                            "isToneMap": true,
+                            "toneMapExposure": 0.36000001430511475,
+                            "toneMapOperator": 1,
                             "toneMapTransferFunction": 0,
                             "toneMapWhiteNits": 200.0
                         }
@@ -81,6 +97,9 @@
             "ID": 16,
             "children": [],
             "entity": {
+                "Entity": {
+                    "script": null
+                },
                 "components": {
                     "DirectionalLightComponent": {
                         "ambientColor": {
@@ -143,6 +162,9 @@
             "ID": 17,
             "children": [],
             "entity": {
+                "Entity": {
+                    "script": null
+                },
                 "components": {
                     "StaticPointLightComponent": {
                         "ambientColor": {
@@ -209,6 +231,9 @@
             "ID": 18,
             "children": [],
             "entity": {
+                "Entity": {
+                    "script": null
+                },
                 "components": {
                     "StaticPointLightComponent": {
                         "ambientColor": {
@@ -275,6 +300,9 @@
             "ID": 19,
             "children": [],
             "entity": {
+                "Entity": {
+                    "script": null
+                },
                 "components": {
                     "StaticPointLightComponent": {
                         "ambientColor": {
@@ -341,6 +369,9 @@
             "ID": 20,
             "children": [],
             "entity": {
+                "Entity": {
+                    "script": null
+                },
                 "components": {
                     "StaticPointLightComponent": {
                         "ambientColor": {
@@ -407,6 +438,9 @@
             "ID": 21,
             "children": [],
             "entity": {
+                "Entity": {
+                    "script": null
+                },
                 "components": {
                     "UIComponent": {
                         "filePath": "game/assets/ui/fade_in_from_black/fade_in_from_black.rml"
@@ -425,6 +459,9 @@
         }
     ],
     "entity": {
+        "Entity": {
+            "script": null
+        },
         "components": {
             "ModelComponent": {
                 "affectingStaticLights": [

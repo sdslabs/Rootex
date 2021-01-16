@@ -129,6 +129,11 @@ using Optional = std::optional<T>;
 template <class T>
 using Vector = std::vector<T>;
 
+#include <stack>
+/// std::stack
+template <class T>
+using Stack = std::stack<T>;
+
 #include <filesystem>
 /// std::filesystem::path
 using FilePath = std::filesystem::path;

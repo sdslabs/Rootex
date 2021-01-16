@@ -68,7 +68,6 @@ private:
 	void swapBuffers();
 
 	friend class Window;
-	friend class PostProcess;
 
 public:
 	static RenderingDevice* GetSingleton();
@@ -136,14 +135,16 @@ public:
 	void setOffScreenRTResolved();
 	void setMainRT();
 	void setRTV(Microsoft::WRL::ComPtr<ID3D11RenderTargetView> rtv);
+	void setRTV(ID3D11RenderTargetView* rtv);
 	
-	void unbindRTSRVs();
+	void unbindSRVs();
 	void unbindRTVs();
 
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> getMainRTSRV();
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> getMainSRV();
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> getDepthSSRV();
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> getOffScreenRTSRV();
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> getOffScreenRTSRVResolved();
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> getOffScreenSRV();
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> getOffScreenSRVResolved();
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> getOffScreenRTVResolved();
 
 	Ref<DirectX::SpriteBatch> getUIBatch();
 
