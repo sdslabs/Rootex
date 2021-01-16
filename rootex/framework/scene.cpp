@@ -5,7 +5,7 @@
 #include "scene_loader.h"
 
 static int CurrentSceneCount = ROOT_SCENE_ID + 1;
-Vector<Scene*> Scene::m_Scenes;
+Vector<Scene*> Scene::s_Scenes;
 
 void to_json(JSON::json& j, const SceneSettings& s)
 {
@@ -53,7 +53,7 @@ Ptr<Scene> Scene::Create(const JSON::json& sceneData)
 {
 	CurrentSceneCount = CurrentSceneCount > sceneData.value("ID", CurrentSceneCount) ? CurrentSceneCount : sceneData.value("ID", CurrentSceneCount);
 	Ptr<Scene> thisScene(std::make_unique<Scene>(CurrentSceneCount, sceneData.value("name", String("Untitled")), sceneData.value("file", String()), sceneData.value("settings", SceneSettings())));
-	m_Scenes.push_back(thisScene.get());
+	s_Scenes.push_back(thisScene.get());
 	CurrentSceneCount++;
 
 	if (sceneData.contains("entity"))
@@ -112,16 +112,16 @@ Ptr<Scene> Scene::CreateRootScene()
 
 	Ptr<Scene> root = std::make_unique<Scene>(ROOT_SCENE_ID, "Root", "", SceneSettings());
 	root->m_Entity = ECSFactory::CreateRootEntity(root.get());
-	m_Scenes.push_back(root.get());
+	s_Scenes.push_back(root.get());
 
 	called = true;
 	return root;
 }
 
-Vector<Scene*> Scene::FindScenesByName(String& name) 
+Vector<Scene*> Scene::FindScenesByName(const String& name) 
 { 
 	Vector<Scene*> foundScenes;
-	for (auto& scene : m_Scenes)
+	for (auto& scene : s_Scenes)
 	{
 		if (scene->m_Name == name)
 		{
@@ -297,14 +297,14 @@ Scene::Scene(SceneID id, const String& name, const String& sceneFile, const Scen
 Scene::~Scene()
 {
 	int index;
-	for (int i = 0; i < m_Scenes.size(); i++)
+	for (int i = 0; i < s_Scenes.size(); i++)
 	{
-		if (m_Scenes[i] == this)
+		if (s_Scenes[i] == this)
 		{
 			index = i;
 		}
 	}
-	m_Scenes.erase(m_Scenes.begin() + index);
+	s_Scenes.erase(s_Scenes.begin() + index);
 	m_ChildrenScenes.clear();
 	PRINT("Deleted scene: " + getFullName());
 }
