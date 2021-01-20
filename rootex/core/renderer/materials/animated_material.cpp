@@ -6,7 +6,7 @@
 #include "framework/systems/render_system.h"
 
 AnimatedMaterial::AnimatedMaterial(bool isAlpha, const String& imagePath, const String& normalImagePath, const String& specularImagePath, bool isNormal, Color color, bool isLit, float specularIntensity, float specularPower, float reflectivity, float refractionConstant, float refractivity, bool affectedBySky)
-    : BasicMaterial(isAlpha, imagePath, normalImagePath, specularImagePath, isNormal, color, isLit, specularIntensity, specularPower, reflectivity, refractionConstant, refractivity, affectedBySky)
+    : BasicMaterial(isAlpha, imagePath, normalImagePath, specularImagePath, "rootex/assets/white.png", isNormal, color, isLit, specularIntensity, specularPower, reflectivity, refractionConstant, refractivity, affectedBySky)
     , m_AnimationShader(ShaderLibrary::GetAnimationShader())
 {
 	m_Shader = ShaderLibrary::GetAnimationShader();
