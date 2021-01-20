@@ -206,7 +206,7 @@ void EditorSystem::update(float deltaMilliseconds)
 	RenderingDevice::GetSingleton()->setMainRT();
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-	RenderingDevice::GetSingleton()->setOffScreenRT();
+	RenderingDevice::GetSingleton()->setOffScreenRTV();
 }
 
 void EditorSystem::pushRegularFont()

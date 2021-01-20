@@ -29,7 +29,7 @@ public:
 		if (postProcessingDetails.isASSAO)
 		{
 			RenderingDevice::GetSingleton()->unbindSRVs();
-			RenderingDevice::GetSingleton()->setOffScreenRTResolved();
+			RenderingDevice::GetSingleton()->setOffScreenRTV();
 
 			ASSAO_InputsDX11 assaoInputs;
 			assaoInputs.ViewportX = 0;
@@ -290,17 +290,17 @@ void PostProcessor::draw(CameraComponent* camera)
 
 	if (camera->getPostProcessingDetails().isPostProcessing)
 	{
-		ID3D11ShaderResourceView* source = RenderingDevice::GetSingleton()->getOffScreenSRVResolved().Get();
+		ID3D11ShaderResourceView* source = RenderingDevice::GetSingleton()->getOffScreenSRV().Get();
 		for (auto& postProcess : m_PostProcesses)
 		{
 			postProcess->draw(camera, source);
 		}
 
 		// If any post processing happened outside the current texture, copy the result of the last run post process into current texture.
-		if (source != RenderingDevice::GetSingleton()->getOffScreenSRVResolved().Get())
+		if (source != RenderingDevice::GetSingleton()->getOffScreenSRV().Get())
 		{
 			RenderingDevice::GetSingleton()->unbindSRVs();
-			RenderingDevice::GetSingleton()->setOffScreenRTResolved();
+			RenderingDevice::GetSingleton()->setOffScreenRTV();
 			m_BasicPostProcess->SetSourceTexture(source);
 			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Copy);
 			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());

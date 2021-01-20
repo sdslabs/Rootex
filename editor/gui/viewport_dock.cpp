@@ -83,7 +83,7 @@ void ViewportDock::draw(float deltaMilliseconds)
 
 			static const ImVec2 viewportStart = ImGui::GetCursorPos();
 			ImGui::Image(
-			    RenderingDevice::GetSingleton()->getOffScreenSRVResolved().Get(),
+			    RenderingDevice::GetSingleton()->getOffScreenSRV().Get(),
 			    m_ViewportDockSettings.m_ImageSize,
 			    { 0, 0 },
 			    { 1, 1 },
