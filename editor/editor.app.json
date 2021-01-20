@@ -195,7 +195,6 @@
     "window": {
         "fullScreen": false,
         "isEditor": true,
-        "msaa": false,
         "title": "Rootex Editor",
         "x": 0,
         "y": 0
