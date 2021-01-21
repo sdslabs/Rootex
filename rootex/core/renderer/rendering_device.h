@@ -92,6 +92,7 @@ public:
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createTexture(const char* imageFileData, size_t size);
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createTextureFromPixels(const char* imageRawData, unsigned int width, unsigned int height);
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> createSS();
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> createSSAnisotropic();
 
 	void bind(ID3D11Buffer* const* vertexBuffer, int count, const unsigned int* stride, const unsigned int* offset);
 	void bind(ID3D11Buffer* indexBuffer, DXGI_FORMAT format);
@@ -124,7 +125,8 @@ public:
 	
 	void setScissorRectangle(int x, int y, int width, int height);
 
-	void setOffScreenRTV();
+	void setOffScreenRTVDSV();
+	void setOffScreenRTVOnly();
 	void setMainRT();
 	void setRTV(Microsoft::WRL::ComPtr<ID3D11RenderTargetView> rtv);
 	void setRTV(ID3D11RenderTargetView* rtv);

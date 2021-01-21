@@ -15,21 +15,21 @@
                             "y": 9.0
                         },
                         "far": 100.0,
-                        "fov": 0.7853981852531433,
+                        "fov": 0.45378562808036804,
                         "near": 0.10000000149011612,
                         "postProcessingDetails": {
-                            "assaoAdaptiveQualityLimit": 0.44999998807907104,
+                            "assaoAdaptiveQualityLimit": 0.16699999570846558,
                             "assaoBlurPassCount": 6,
-                            "assaoDetailShadowStrength": 2.809999942779541,
-                            "assaoFadeOutFrom": 50.0,
-                            "assaoFadeOutTo": 300.0,
+                            "assaoDetailShadowStrength": 2.609999895095825,
+                            "assaoFadeOutFrom": 35.0,
+                            "assaoFadeOutTo": 75.0,
                             "assaoHorizonAngleThreshold": 0.05999999865889549,
                             "assaoQualityLevel": 3,
-                            "assaoRadius": 10.0,
-                            "assaoShadowClamp": 0.7699999809265137,
-                            "assaoShadowMultiplier": 1.6399999856948853,
-                            "assaoShadowPower": 1.4800000190734863,
-                            "assaoSharpness": 0.9800000190734863,
+                            "assaoRadius": 2.700000047683716,
+                            "assaoShadowClamp": 0.5899999737739563,
+                            "assaoShadowMultiplier": 0.4699999988079071,
+                            "assaoShadowPower": 4.159999847412109,
+                            "assaoSharpness": 1.0,
                             "bloomBase": 1.0,
                             "bloomBaseSaturation": 1.0,
                             "bloomBrightness": 1.0,
@@ -39,17 +39,88 @@
                             "bloomValue": 1.0,
                             "gaussianBlurMultiplier": 1.0,
                             "isASSAO": true,
-                            "isBloom": true,
-                            "isGaussianBlur": true,
-                            "isMonochrome": true,
+                            "isBloom": false,
+                            "isFXAA": true,
+                            "isGaussianBlur": false,
+                            "isMonochrome": false,
                             "isPostProcessing": true,
-                            "isSepia": true,
-                            "isToneMap": true,
+                            "isSepia": false,
+                            "isToneMap": false,
                             "toneMapExposure": 0.36000001430511475,
                             "toneMapOperator": 1,
                             "toneMapTransferFunction": 0,
                             "toneMapWhiteNits": 200.0
                         }
+                    },
+                    "TransformAnimationComponent": {
+                        "animationMode": 2,
+                        "isPlayOnStart": true,
+                        "keyframes": [
+                            {
+                                "timePosition": 0.0,
+                                "transform": [
+                                    -0.00020396709442138672,
+                                    0.0,
+                                    -1.0,
+                                    0.0,
+                                    0.0,
+                                    1.0,
+                                    0.0,
+                                    0.0,
+                                    1.0,
+                                    0.0,
+                                    -0.00020396709442138672,
+                                    0.0,
+                                    400.0,
+                                    174.26275634765625,
+                                    -17.46019172668457,
+                                    1.0
+                                ]
+                            },
+                            {
+                                "timePosition": 10.0,
+                                "transform": [
+                                    -0.0004887598915956914,
+                                    0.0,
+                                    -1.0007357597351074,
+                                    0.0,
+                                    0.0,
+                                    1.0009022951126099,
+                                    0.0,
+                                    0.0,
+                                    1.0007357597351074,
+                                    0.0,
+                                    -0.0004887598915956914,
+                                    0.0,
+                                    0.0,
+                                    174.26275634765625,
+                                    -17.46019172668457,
+                                    1.0
+                                ]
+                            },
+                            {
+                                "timePosition": 20.0,
+                                "transform": [
+                                    -0.01921660080552101,
+                                    0.0,
+                                    1.0005513429641724,
+                                    0.0,
+                                    0.0,
+                                    1.0009022951126099,
+                                    0.0,
+                                    0.0,
+                                    -1.0005513429641724,
+                                    0.0,
+                                    -0.01921660080552101,
+                                    0.0,
+                                    -1000.0,
+                                    174.26275634765625,
+                                    -17.46019172668457,
+                                    1.0
+                                ]
+                            }
+                        ],
+                        "transitionType": 1
                     },
                     "TransformComponent": {
                         "boundingBox": {
@@ -65,20 +136,20 @@
                             }
                         },
                         "position": {
-                            "x": 502.0191650390625,
+                            "x": -987.7320556640625,
                             "y": 174.26275634765625,
                             "z": -17.46019172668457
                         },
                         "rotation": {
-                            "w": 0.7069340944290161,
+                            "w": -0.6865859627723694,
                             "x": 0.0,
-                            "y": 0.7072794437408447,
+                            "y": 0.7270486354827881,
                             "z": 0.0
                         },
                         "scale": {
-                            "x": 1.000735878944397,
-                            "y": 1.0009022951126099,
-                            "z": 1.000735878944397
+                            "x": 0.9999998211860657,
+                            "y": 1.0,
+                            "z": 0.9999998211860657
                         }
                     }
                 }
