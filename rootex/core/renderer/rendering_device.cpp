@@ -188,7 +188,7 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height)
 
 	m_Context->RSSetState(*m_CurrentRS);
 
-	setOffScreenRTV();
+	setOffScreenRTVDSV();
 
 	{
 		D3D11_BLEND_DESC blendDesc;
@@ -224,7 +224,7 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height)
 	}
 	m_FontBatch.reset(new DirectX::SpriteBatch(m_Context.Get()));
 
-	setOffScreenRTV();
+	setOffScreenRTVDSV();
 }
 
 void RenderingDevice::createSwapChainAndRTVs(int width, int height, const HWND& hWnd)
@@ -651,9 +651,14 @@ void RenderingDevice::setDSS()
 	m_Context->OMSetDepthStencilState(m_DSState.Get(), m_StencilRef);
 }
 
-void RenderingDevice::setOffScreenRTV()
+void RenderingDevice::setOffScreenRTVDSV()
 {
 	m_Context->OMSetRenderTargets(1, m_OffScreenRTV.GetAddressOf(), m_MainDSV.Get());
+}
+
+void RenderingDevice::setOffScreenRTVOnly()
+{
+	m_Context->OMSetRenderTargets(1, m_OffScreenRTV.GetAddressOf(), nullptr);
 }
 
 void RenderingDevice::setMainRT()
@@ -730,6 +735,32 @@ Microsoft::WRL::ComPtr<ID3D11SamplerState> RenderingDevice::createSS()
 	return samplerState;
 }
 
+Microsoft::WRL::ComPtr<ID3D11SamplerState> RenderingDevice::createSSAnisotropic()
+{
+	D3D11_SAMPLER_DESC samplerDesc;
+	samplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.MipLODBias = 0.0f;
+	samplerDesc.MaxAnisotropy = D3D11_MAX_MAXANISOTROPY;
+	samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+	samplerDesc.BorderColor[0] = 0;
+	samplerDesc.BorderColor[1] = 0;
+	samplerDesc.BorderColor[2] = 0;
+	samplerDesc.BorderColor[3] = 0;
+	samplerDesc.MinLOD = 0;
+	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerState;
+	if (FAILED(m_Device->CreateSamplerState(&samplerDesc, &samplerState)))
+	{
+		ERR("SamplerState could not be created");
+	}
+
+	return samplerState;
+}
+
 void RenderingDevice::drawIndexed(UINT number)
 {
 	ZoneNamedN(drawCall, "Draw Call", true);
@@ -760,7 +791,7 @@ RenderingDevice* RenderingDevice::GetSingleton()
 
 void RenderingDevice::swapBuffers()
 {
-	GFX_ERR_CHECK(m_SwapChain->Present(1, 0));
+	GFX_ERR_CHECK(m_SwapChain->Present(0, 0));
 }
 
 void RenderingDevice::clearRTV(Microsoft::WRL::ComPtr<ID3D11RenderTargetView> rtv, float r, float g, float b, float a)

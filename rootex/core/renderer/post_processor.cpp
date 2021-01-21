@@ -3,6 +3,11 @@
 #include "application.h"
 #include "core/renderer/rendering_device.h"
 #include "framework/components/visual/camera_component.h"
+#include "vertex_buffer.h"
+#include "index_buffer.h"
+#include "material.h"
+#include "shader.h"
+#include "shader_library.h"
 
 #include "Tracy.hpp"
 
@@ -29,7 +34,7 @@ public:
 		if (postProcessingDetails.isASSAO)
 		{
 			RenderingDevice::GetSingleton()->unbindSRVs();
-			RenderingDevice::GetSingleton()->setOffScreenRTV();
+			RenderingDevice::GetSingleton()->setOffScreenRTVOnly();
 
 			ASSAO_InputsDX11 assaoInputs;
 			assaoInputs.ViewportX = 0;
@@ -57,6 +62,8 @@ public:
 			assaoSettings.Sharpness = postProcessingDetails.assaoSharpness;
 			assaoSettings.AdaptiveQualityLimit = postProcessingDetails.assaoAdaptiveQualityLimit;
 			m_ASSAO->Draw(assaoSettings, &assaoInputs);
+
+			RenderingDevice::GetSingleton()->setOffScreenRTVDSV();
 
 			nextSource = nextSource;
 		}
@@ -266,6 +273,88 @@ public:
 	}
 };
 
+class FXAAPostProcess : public PostProcess
+{
+	Ptr<DirectX::BasicPostProcess> m_BasicPostProcess;
+
+	FXAAShader* m_FXAAShader;
+	LumaShader* m_LumaShader;
+	
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_LumaCacheRTV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_LumaCacheSRV;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_CacheRTV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_CacheSRV;
+
+	Ptr<VertexBuffer> m_FrameVertexBuffer;
+	Ptr<IndexBuffer> m_FrameIndexBuffer;
+
+	Microsoft::WRL::ComPtr<ID3D11Buffer> m_FXAAPSCB;
+
+public:
+	FXAAPostProcess()
+	    : m_FXAAShader(ShaderLibrary::GetFXAAShader())
+	    , m_LumaShader(ShaderLibrary::GetLumaShader())
+	{
+		m_BasicPostProcess.reset(new DirectX::BasicPostProcess(RenderingDevice::GetSingleton()->getDevice()));
+		
+		m_FrameVertexBuffer.reset(new VertexBuffer(Vector<FXAAData> {
+			// Position                    // Texcoord
+		    { Vector3(-1.0f, -1.0f, 0.0f), Vector2(0.0f, 1.0f) },
+		    { Vector3( 1.0f, -1.0f, 0.0f), Vector2(1.0f, 1.0f) },
+		    { Vector3( 1.0f,  1.0f, 0.0f), Vector2(1.0f, 0.0f) },
+		    { Vector3(-1.0f,  1.0f, 0.0f), Vector2(0.0f, 0.0f) } }));
+		m_FrameIndexBuffer.reset(new IndexBuffer(Vector<unsigned int> { 
+			0, 2, 1,
+		    0, 3, 2 }));
+		RenderingDevice::GetSingleton()->createRTVAndSRV(m_CacheRTV, m_CacheSRV);
+		RenderingDevice::GetSingleton()->createRTVAndSRV(m_LumaCacheRTV, m_LumaCacheSRV);
+	}
+
+	void draw(CameraComponent* camera, ID3D11ShaderResourceView*& nextSource) override
+	{
+		const PostProcessingDetails& postProcessingDetails = camera->getPostProcessingDetails();
+		if (postProcessingDetails.isFXAA)
+		{
+			// Convert RGBA to RGBL
+			{
+				RenderingDevice::GetSingleton()->unbindSRVs();
+				RenderingDevice::GetSingleton()->setRTV(m_LumaCacheRTV.Get());
+				// Copy source to working buffer
+				{
+					m_BasicPostProcess->SetSourceTexture(nextSource);
+					m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Copy);
+					m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+				}
+				// Perform RGBA to RGBL step
+				m_FrameVertexBuffer->bind();
+				m_FrameIndexBuffer->bind();
+				m_LumaShader->bind();
+
+				m_LumaShader->set(nextSource);
+				RenderingDevice::GetSingleton()->drawIndexed(m_FrameIndexBuffer->getCount());
+			}
+			// Apply FXAA
+			{
+				RenderingDevice::GetSingleton()->unbindSRVs();
+				RenderingDevice::GetSingleton()->setRTV(m_CacheRTV.Get());
+
+				m_FrameVertexBuffer->bind();
+				m_FrameIndexBuffer->bind();
+				m_FXAAShader->bind();
+
+				PSFXAACB cb;
+				Window* window = Application::GetSingleton()->getWindow();
+				cb.rcpFrame = Vector4(1.0f / window->getWidth(), 1.0f / window->getHeight(), 0.0f, 0.0f);
+				Material::SetPSConstantBuffer(cb, m_FXAAPSCB, 0);
+				m_FXAAShader->set(m_LumaCacheSRV.Get());
+				RenderingDevice::GetSingleton()->drawIndexed(m_FrameIndexBuffer->getCount());
+			}
+
+			nextSource = m_CacheSRV.Get();
+		}
+	}
+};
+
 PostProcessor::PostProcessor()
 {
 	m_BasicPostProcess.reset(new DirectX::BasicPostProcess(RenderingDevice::GetSingleton()->getDevice()));
@@ -276,6 +365,7 @@ PostProcessor::PostProcessor()
 	m_PostProcesses.emplace_back(new SepiaPostProcess());
 	m_PostProcesses.emplace_back(new BloomPostProcess());
 	m_PostProcesses.emplace_back(new ToneMapPostProcess());
+	m_PostProcesses.emplace_back(new FXAAPostProcess());
 }
 
 PostProcessor* PostProcessor::GetSingleton()
@@ -300,7 +390,7 @@ void PostProcessor::draw(CameraComponent* camera)
 		if (source != RenderingDevice::GetSingleton()->getOffScreenSRV().Get())
 		{
 			RenderingDevice::GetSingleton()->unbindSRVs();
-			RenderingDevice::GetSingleton()->setOffScreenRTV();
+			RenderingDevice::GetSingleton()->setOffScreenRTVDSV();
 			m_BasicPostProcess->SetSourceTexture(source);
 			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Copy);
 			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
