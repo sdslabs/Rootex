@@ -125,19 +125,6 @@ PhysicsSystem::~PhysicsSystem()
 	}
 }
 
-void PhysicsSystem::debugDraw()
-{
-	RenderSystem::GetSingleton()->getRenderer()->bind(m_DebugDrawer.getMaterial());
-
-	RenderSystem::GetSingleton()->enableLineRenderMode();
-	for (auto& c : ECSFactory::GetComponents<PhysicsColliderComponent>())
-	{
-		PhysicsColliderComponent* phy = (PhysicsColliderComponent*)c;
-		phy->render();
-	}
-	RenderSystem::GetSingleton()->resetRenderMode();
-}
-
 void PhysicsSystem::debugDrawComponent(const btTransform& worldTransform, const btCollisionShape* shape, const btVector3& color)
 {
 	m_DynamicsWorld->debugDrawObject(worldTransform, shape, color);

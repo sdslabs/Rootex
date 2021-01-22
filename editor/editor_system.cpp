@@ -198,11 +198,6 @@ void EditorSystem::update(float deltaMilliseconds)
 
 	popFont();
 
-	if (m_CollisionMode)
-	{
-		PhysicsSystem::GetSingleton()->debugDraw();
-	}
-	
 	RenderingDevice::GetSingleton()->setMainRT();
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
@@ -376,10 +371,6 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 					}
 					ImGui::EndMenu();
 				}
-				if (ImGui::MenuItem("Instantiate Scene", 0, false, (bool)SceneLoader::GetSingleton()->getCurrentScene()))
-				{
-					igfd::ImGuiFileDialog::Instance()->OpenModal("ChooseSceneFile", "Choose Scene File", ".json", "game/assets/");
-				}
 				if (ImGui::MenuItem("Save Scene", "", false, (bool)SceneLoader::GetSingleton()->getCurrentScene()))
 				{
 					EventManager::GetSingleton()->call("EditorSaveEvent", "EditorSaveAll", 0);
@@ -395,15 +386,6 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 				}
 
 				ImGui::EndMenu();
-			}
-			if (igfd::ImGuiFileDialog::Instance()->FileDialog("ChooseSceneFile"))
-			{
-				if (igfd::ImGuiFileDialog::Instance()->IsOk)
-				{
-					FilePath filePath = OS::GetRootRelativePath(igfd::ImGuiFileDialog::Instance()->GetFilePathName());
-					SceneLoader::GetSingleton()->getCurrentScene()->addChild(Scene::CreateFromFile(filePath.generic_string()));
-				}
-				igfd::ImGuiFileDialog::Instance()->CloseDialog("ChooseSceneFile");
 			}
 			if (ImGui::BeginMenu("Assets"))
 			{
@@ -440,8 +422,6 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 					}
 				}
 
-				ImGui::Checkbox("Collision Mode", &m_CollisionMode);
-				
 				bool fullscreen = Extract<bool>(EventManager::GetSingleton()->returnCall("WindowGetScreenState", "WindowGetScreenState", 0));
 				if (ImGui::Checkbox("Full Screen", &fullscreen))
 				{

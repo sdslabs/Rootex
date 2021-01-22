@@ -226,7 +226,7 @@ void PhysicsColliderComponent::setKinematic(bool enabled)
 	}
 }
 
-void PhysicsColliderComponent::render()
+void PhysicsColliderComponent::highlight()
 {
 	PhysicsSystem::GetSingleton()->debugDrawComponent(MatTobtTransform(m_TransformComponent->getRotationPosition()), m_CollisionShape.get(), VecTobtVector3({ 0.0f, 1.0f, 0.0f }));
 }
@@ -287,6 +287,13 @@ PhysicsMaterial PhysicsColliderComponent::getMaterial() const
 #include "imgui.h"
 void PhysicsColliderComponent::draw()
 {
+	static bool showInEditor = true;
+	ImGui::Checkbox("Show in Editor", &showInEditor);
+	if (showInEditor)
+	{
+		highlight();
+	}
+
 	ImGui::Combo("Physics Material", (int*)&m_Material, PhysicsSystem::GetSingleton()->getMaterialNames());
 
 	if (ImGui::DragFloat3("Gravity", &m_Gravity.x))
