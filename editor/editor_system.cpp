@@ -431,7 +431,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 				{
 					ImGui::Checkbox("Toolbar", &m_Toolbar->getSettings().m_IsActive);
 					ImGui::Checkbox("Output", &m_Output->getSettings().m_IsActive);
-					ImGui::Checkbox("Hierarchy", &m_Scene->getSettings().m_IsActive);
+					ImGui::Checkbox("Scene", &m_Scene->getSettings().m_IsActive);
 					ImGui::Checkbox("Entities", &m_Scene->getSettings().m_IsEntitiesDockActive);
 					ImGui::Checkbox("Viewport", &m_Viewport->getSettings().m_IsActive);
 					ImGui::Checkbox("Inspector", &m_Inspector->getSettings().m_IsActive);
