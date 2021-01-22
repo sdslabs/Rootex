@@ -197,17 +197,20 @@ void ViewportDock::draw(float deltaMilliseconds)
 			static Entity* selectEntity = nullptr;
 			if (ImGui::IsWindowHovered())
 			{
-				if (InputManager::GetSingleton()->getKeyboard()->GetBoolPrevious(KeyboardButton::KeyQ))
+				if (!ImGui::IsAnyMouseDown())
 				{
-					gizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
-				}
-				if (InputManager::GetSingleton()->getKeyboard()->GetBoolPrevious(KeyboardButton::KeyW))
-				{
-					gizmoOperation = ImGuizmo::OPERATION::ROTATE;
-				}
-				if (InputManager::GetSingleton()->getKeyboard()->GetBoolPrevious(KeyboardButton::KeyE))
-				{
-					gizmoOperation = ImGuizmo::OPERATION::SCALE;
+					if (InputManager::GetSingleton()->getKeyboard()->GetBoolPrevious(KeyboardButton::KeyQ))
+					{
+						gizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
+					}
+					if (InputManager::GetSingleton()->getKeyboard()->GetBoolPrevious(KeyboardButton::KeyW))
+					{
+						gizmoOperation = ImGuizmo::OPERATION::ROTATE;
+					}
+					if (InputManager::GetSingleton()->getKeyboard()->GetBoolPrevious(KeyboardButton::KeyE))
+					{
+						gizmoOperation = ImGuizmo::OPERATION::SCALE;
+					}
 				}
 
 				Vector3 mouseFromWindow;
@@ -265,13 +268,6 @@ void ViewportDock::draw(float deltaMilliseconds)
 					{
 						EventManager::GetSingleton()->call("MouseSelectEntity", "EditorOpenScene", selectEntity->getScene());
 						PRINT("Picked entity through selection: " + selectEntity->getFullName());
-					}
-				}
-				else
-				{
-					if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
-					{
-						EventManager::GetSingleton()->call("MouseSelectEntity", "EditorCloseScene", 0);
 					}
 				}
 

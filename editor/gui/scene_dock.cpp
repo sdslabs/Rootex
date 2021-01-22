@@ -3,8 +3,10 @@
 #include "editor/editor_system.h"
 
 #include "framework/scene_loader.h"
+#include "framework/systems/render_system.h"
 #include "framework/components/transform_component.h"
 
+#include "ImGuiFileDialog.h"
 #include "vendor/ImGUI/imgui.h"
 #include "vendor/ImGUI/imgui_impl_dx11.h"
 #include "vendor/ImGUI/imgui_impl_win32.h"
@@ -108,6 +110,31 @@ void SceneDock::draw(float deltaMilliseconds)
 	{
 		if (ImGui::Begin("Scene"))
 		{
+			if (SceneLoader::GetSingleton()->getCurrentScene() && ImGui::Button("Instantiate Scene"))
+			{
+				igfd::ImGuiFileDialog::Instance()->OpenModal("ChooseSceneFile", "Choose Scene File", ".json", "game/assets/scenes/");
+			}
+			if (igfd::ImGuiFileDialog::Instance()->FileDialog("ChooseSceneFile"))
+			{
+				if (igfd::ImGuiFileDialog::Instance()->IsOk)
+				{
+					FilePath filePath = OS::GetRootRelativePath(igfd::ImGuiFileDialog::Instance()->GetFilePathName());
+					if (Ptr<Scene>& newScene = Scene::CreateFromFile(filePath.generic_string()))
+					{
+						if (Entity* entity = newScene->getEntity())
+						{
+							if (TransformComponent* tc = entity->getComponent<TransformComponent>())
+							{
+								TransformComponent* cameraTransform = RenderSystem::GetSingleton()->getCamera()->getOwner()->getComponent<TransformComponent>();
+								tc->setRotationPosition(cameraTransform->getRotationPosition());
+							}
+						}
+						SceneLoader::GetSingleton()->getCurrentScene()->addChild(newScene);
+					}
+				}
+				igfd::ImGuiFileDialog::Instance()->CloseDialog("ChooseSceneFile");
+			}
+
 			showSceneTree(SceneLoader::GetSingleton()->getRootSceneEx());
 		}
 		ImGui::End();
