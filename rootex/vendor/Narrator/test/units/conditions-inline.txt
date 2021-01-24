@@ -1,0 +1,5 @@
+Simple condition: Okay.
+Simple condition: Hmm... I was feeling positive enough. Okay.
+Simple condition: Hmm... Wow! I was feeling positive enough. Okay.
+Complex condition with midnight. Wow! Nice!
+Complex condition with midnight. Very nice! This is the end.
