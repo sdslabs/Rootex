@@ -111,6 +111,7 @@ target_link_libraries(Rootex PUBLIC
     FreeType
     Tracy
     ASSAO
+    LPeg
 
     Shell32.lib
     d3d11.lib

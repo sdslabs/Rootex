@@ -1,0 +1,7 @@
+Let's try an experemental feature:
+The Choice Tags!
+
+1) Are you seriously? #tag1
+>) Eat answer! #tag2
+
+Are you hungry?

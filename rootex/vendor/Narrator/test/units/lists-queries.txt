@@ -1,0 +1,19 @@
+Normal: Smith, Jones
+Inverted: Carter, Braithwaite
+Range: Carter
+...
+The new president has at least one desirable quality. A cold nepotism.
+Correction, the new president has only one desirable quality. It's the scary one.
+...
+Robin is all but forgotten. A champagne glass lies discarded on the floor.
+Alfred is here, standing quietly in a corner. Batman's presence dominates all. On one table, a headline blares out WHO IS THE BATMAN? AND *WHO* IS HIS BARELY-REMEMBERED ASSISTANT?
+...
+one, a, two, b, three, c
+3
+a
+c
+0
+a, c
+1
+0
+one, two, b

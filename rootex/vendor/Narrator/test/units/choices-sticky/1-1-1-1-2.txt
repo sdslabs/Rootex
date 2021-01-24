@@ -1,0 +1,24 @@
+
+>) Eat another donut
+2) Get off the couch
+
+You eat another donut.
+
+>) Ok, is it fine?
+2) Ok, it's fine!
+
+Ok, is it fine?
+
+>) Eat another donut
+2) Get off the couch
+
+You eat another donut.
+
+>) Ok, it's fine!
+
+Ok, it's fine!
+
+1) Eat another donut
+>) Get off the couch
+
+You struggle up off the couch to go and compose epic poetry.
