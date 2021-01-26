@@ -11,6 +11,7 @@
 #include "components/visual/ui_component.h"
 #include "components/visual/model_component.h"
 #include "components/physics/box_collider_component.h"
+#include "components/visual/ui_component.h"
 #include "core/input/input_manager.h"
 #include "core/resource_files/audio_resource_file.h"
 #include "core/resource_files/font_resource_file.h"
@@ -165,5 +166,6 @@ void LuaInterpreter::registerTypes()
 	ModelComponent::RegisterAPI(rootex);
 	RenderUIComponent::RegisterAPI(rootex);
 	TextUIComponent::RegisterAPI(rootex);
+	UIComponent::RegisterAPI(rootex);
 	PhysicsColliderComponent::RegisterAPI(rootex);
 }

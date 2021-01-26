@@ -1,31 +1,21 @@
 <rml>
-
 <head>
-<style>
-    body {
-        font: "Lato";
-        height: 100%;
-        width: 100%;
-        z-index: 1;
-    }
-</style>
-<script>
-t = require("game/assets/scripts/dialogue/dialogue")
-</script>
-
+    <link type="text/css" href="dialogue.rcss" />
+    <style>
+        body {
+            font: "Lato";
+            font-size: 18px;
+            height: 100%;
+            width: 100%;
+            z-index: 1;
+            background-color: black;
+        }
+    </style>
 </head>
 
-<body
-    onmousedown="t = DialogueNode:Proceed(t, document, DialogueInput.Next)"
-    onmousescroll="
-        choiceInput = DialogueInput.ChoiceUp
-        if event.parameters.wheel_delta > 0 then
-            choiceInput = DialogueInput.ChoiceUp
-        elseif event.parameters.wheel_delta < 0 then
-            choiceInput = DialogueInput.ChoiceDown
-        end
-        t = DialogueNode:Proceed(t, document, choiceInput)
-    "
->
+<body id="dialogue">
+    <img id="portrait" src="../../../assets/test/blue.png" />
+    <div id="paragraphs">Paragraph</div>
+    <div id="choices">Choices</div>
 </body>
 </rml>

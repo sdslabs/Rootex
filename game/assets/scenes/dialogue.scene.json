@@ -1,43 +1,50 @@
 {
     "ID": 4,
-    "children": [
-        {
-            "ID": 5,
-            "children": [],
-            "entity": {
-                "Entity": {
-                    "script": null
-                },
-                "components": {
-                    "UIComponent": {
-                        "filePath": "game/assets/ui/dialogue/dialogue.rml"
-                    }
-                }
-            },
-            "file": "",
-            "name": "Dialogue",
-            "settings": {
-                "camera": 1,
-                "inputSchemes": null,
-                "listener": 1,
-                "preloads": [],
-                "startScheme": ""
-            }
-        }
-    ],
+    "children": [],
     "entity": {
         "Entity": {
-            "script": null
+            "script": {
+                "overrides": {
+                    "story": "\"game/assets/stories/game.ink\""
+                },
+                "path": "game/assets/scripts/dialogue/dialogue_player.lua"
+            }
         },
-        "components": null
+        "components": {
+            "UIComponent": {
+                "filePath": "game/assets/ui/dialogue/dialogue.rml"
+            }
+        }
     },
     "file": "game/assets/scenes/dialogue.scene.json",
     "name": "dialogue",
     "settings": {
         "camera": 1,
-        "inputSchemes": null,
+        "inputSchemes": [
+            {
+                "bools": [
+                    {
+                        "button": 127,
+                        "device": 1,
+                        "inputEvent": "Next"
+                    },
+                    {
+                        "button": 100,
+                        "device": 1,
+                        "inputEvent": "Down"
+                    },
+                    {
+                        "button": 99,
+                        "device": 1,
+                        "inputEvent": "Up"
+                    }
+                ],
+                "floats": {},
+                "name": "Dialogue"
+            }
+        ],
         "listener": 1,
         "preloads": [],
-        "startScheme": ""
+        "startScheme": "Dialogue"
     }
 }
