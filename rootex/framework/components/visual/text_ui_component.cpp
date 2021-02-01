@@ -70,8 +70,6 @@ JSON::json TextUIComponent::getJSON() const
 }
 
 #ifdef ROOTEX_EDITOR
-#include "imgui.h"
-#include "imgui_stdlib.h"
 #include "utility/imgui_helpers.h"
 void TextUIComponent::draw()
 {
@@ -111,18 +109,10 @@ void TextUIComponent::draw()
 
 	if (ImGui::Button(ICON_ROOTEX_EXTERNAL_LINK "##Font"))
 	{
-		igfd::ImGuiFileDialog::Instance()->OpenDialog("Font", "Choose Font", SupportedFiles.at(ResourceFile::Type::Font), "game/assets/");
-	}
-
-	if (igfd::ImGuiFileDialog::Instance()->FileDialog("Font"))
-	{
-		if (igfd::ImGuiFileDialog::Instance()->IsOk)
+		if (Optional<String> result = OS::SelectFile(SupportedFiles.at(ResourceFile::Type::Font), "game/assets/"))
 		{
-			String filePathName = OS::GetRootRelativePath(igfd::ImGuiFileDialog::Instance()->GetFilePathName()).generic_string();
-			setFont(ResourceLoader::CreateFontResourceFile(filePathName));
+			setFont(ResourceLoader::CreateFontResourceFile(*result));
 		}
-
-		igfd::ImGuiFileDialog::Instance()->CloseDialog("Font");
 	}
 }
 #endif // ROOTEX_EDITOR

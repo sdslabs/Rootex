@@ -146,7 +146,7 @@ JSON::json RenderableComponent::getJSON() const
 }
 
 #ifdef ROOTEX_EDITOR
-#include "ImGuiFileDialog.h"
+#include "imgui_helpers.h"
 void RenderableComponent::draw()
 {
 	int renderPassUI = log2(m_RenderPass);
@@ -225,18 +225,10 @@ void RenderableComponent::draw()
 			ImGui::SameLine();
 			if (ImGui::Button((ICON_ROOTEX_PENCIL_SQUARE_O "##" + newMaterial->getFileName()).c_str()))
 			{
-				igfd::ImGuiFileDialog::Instance()->OpenModal(oldMaterial->getFileName(), "Choose Material", ".rmat", "game/assets/materials/");
-			}
-			ImGui::SameLine();
-			if (igfd::ImGuiFileDialog::Instance()->FileDialog(oldMaterial->getFileName()))
-			{
-				if (igfd::ImGuiFileDialog::Instance()->IsOk)
+				if (Optional<String> result = OS::SelectFile("Material(*.rmat)\0*.rmat\0", "game/assets/materials/"))
 				{
-					String filePathName = OS::GetRootRelativePath(igfd::ImGuiFileDialog::Instance()->GetFilePathName()).generic_string();
-					newMaterial = MaterialLibrary::GetMaterial(filePathName);
+					setMaterialOverride(oldMaterial, MaterialLibrary::GetMaterial(*result));
 				}
-
-				igfd::ImGuiFileDialog::Instance()->CloseDialog(oldMaterial->getFileName());
 			}
 			ImGui::SameLine();
 			if (ImGui::Button((ICON_ROOTEX_REFRESH "##" + oldMaterial->getFileName()).c_str()))

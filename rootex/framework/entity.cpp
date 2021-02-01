@@ -210,7 +210,7 @@ const String& Entity::getFullName() const
 }
 
 #ifdef ROOTEX_EDITOR
-#include "utility/imgui_helpers.h"
+#include "imgui_helpers.h"
 void Entity::draw() 
 {
 	ImGui::Text("Script");
@@ -232,7 +232,7 @@ void Entity::draw()
 			m_Script->setup();
 		}
 		ImGui::SameLine();
-		if (ImGui::Button(ICON_IGFD_CANCEL "##RemoveScript"))
+		if (ImGui::Button(ICON_ROOTEX_WINDOW_CLOSE "##RemoveScript"))
 		{
 			m_Script.reset();
 		}
@@ -241,18 +241,11 @@ void Entity::draw()
 	{
 		if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Choose Script"))
 		{
-			igfd::ImGuiFileDialog::Instance()->OpenModal("Choose Script", "Choose Script", ".lua", "game/assets/");
+			if (Optional<String> result = OS::SelectFile(SupportedFiles.at(ResourceFile::Type::Lua), "game/assets/scripts/"))
+			{
+				setScript(*result);
+			}
 		}
-	}
-	if (igfd::ImGuiFileDialog::Instance()->FileDialog("Choose Script"))
-	{
-		if (igfd::ImGuiFileDialog::Instance()->IsOk)
-		{
-			String filePathName = OS::GetRootRelativePath(igfd::ImGuiFileDialog::Instance()->GetFilePathName()).generic_string();
-			setScript(filePathName);
-		}
-
-		igfd::ImGuiFileDialog::Instance()->CloseDialog("Choose Script");
 	}
 
 	if (m_Script)
