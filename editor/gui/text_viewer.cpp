@@ -26,7 +26,7 @@ void TextViewer::draw(float deltaMilliseconds)
 	drawFileInfo();
 	if (m_TextResourceFile->isDirty())
 	{
-		ImGui::TextColored(EditorSystem::GetSingleton()->getColors().warning, "File may be changed on disk");
+		ImGui::TextColored(EditorSystem::GetSingleton()->getWarningColor(), "File may be changed on disk");
 		ImGui::SameLine();
 		if (ImGui::Button("Reload"))
 		{
@@ -34,5 +34,7 @@ void TextViewer::draw(float deltaMilliseconds)
 		}
 	}
 	ImGui::Separator();
+	EditorSystem::GetSingleton()->pushMonospaceFont();
 	ImGui::TextUnformatted(m_TextResourceFile->getString().c_str());
+	EditorSystem::GetSingleton()->popFont();
 }

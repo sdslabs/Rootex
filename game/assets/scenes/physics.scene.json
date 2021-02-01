@@ -36,11 +36,9 @@
                     "ModelComponent": {
                         "affectingStaticLights": [],
                         "isVisible": true,
-                        "materialOverrides": {
-                            "rootex/assets/materials/default.rmat": "game/assets/materials/bricks.rmat"
-                        },
+                        "materialOverrides": null,
                         "renderPass": 1,
-                        "resFile": "rootex/assets/cube.obj"
+                        "resFile": "D:/CPP Projects/Rootex/game/assets/test/rootex.png"
                     },
                     "TransformComponent": {
                         "boundingBox": {
@@ -50,9 +48,9 @@
                                 "z": 0.0
                             },
                             "extents": {
-                                "x": 0.5,
-                                "y": 0.5,
-                                "z": 0.5
+                                "x": 1.0,
+                                "y": 1.0,
+                                "z": 1.0
                             }
                         },
                         "position": {

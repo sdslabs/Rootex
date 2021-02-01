@@ -31,15 +31,15 @@ void OutputDock::draw(float deltaMilliseconds)
 			{
 				if (outputString.first == "Error")
 				{
-					ImGui::PushStyleColor(ImGuiCol_Text, EditorSystem::GetSingleton()->getColors().failure);
+					ImGui::PushStyleColor(ImGuiCol_Text, (const ImVec4&)EditorSystem::GetSingleton()->getFatalColor());
 				}
 				else if (outputString.first == "Warning")
 				{
-					ImGui::PushStyleColor(ImGuiCol_Text, EditorSystem::GetSingleton()->getColors().warning);
+					ImGui::PushStyleColor(ImGuiCol_Text, (const ImVec4&)EditorSystem::GetSingleton()->getWarningColor());
 				}
 				else
 				{
-					ImGui::PushStyleColor(ImGuiCol_Text, EditorSystem::GetSingleton()->getColors().text);
+					ImGui::PushStyleColor(ImGuiCol_Text, (const ImVec4&)EditorSystem::GetSingleton()->getNormalColor());
 				}
 
 				ImGui::TextUnformatted(outputString.second.c_str());

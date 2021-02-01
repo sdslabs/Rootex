@@ -120,6 +120,11 @@ void AnimatedModelComponent::assignOverrides(AnimatedModelResourceFile* file, co
 
 void AnimatedModelComponent::setAnimatedResourceFile(AnimatedModelResourceFile* resFile, const HashMap<String, String>& materialOverrides)
 {
+	if (!resFile)
+	{
+		WARN("Tried to set a null animated model resource file.");
+		return;
+	}
 	assignOverrides(resFile, materialOverrides);
 	assignBoundingBox();
 	m_FinalTransforms.resize(m_AnimatedModelResourceFile->getBoneCount());
@@ -138,9 +143,7 @@ JSON::json AnimatedModelComponent::getJSON() const
 }
 
 #ifdef ROOTEX_EDITOR
-#include "imgui.h"
-#include "imgui_stdlib.h"
-#include "ImGuiFileDialog.h"
+#include "imgui_helpers.h"
 void AnimatedModelComponent::draw()
 {
 	ImGui::Checkbox("Visible", &m_IsVisible);
@@ -158,17 +161,10 @@ void AnimatedModelComponent::draw()
 	ImGui::SameLine();
 	if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Animated Model File"))
 	{
-		igfd::ImGuiFileDialog::Instance()->OpenModal("ChooseAnimatedModelComponentModel", "Choose Animated Model File", SupportedFiles.at(ResourceFile::Type::AnimatedModel), "game/assets/");
-	}
-
-	if (igfd::ImGuiFileDialog::Instance()->FileDialog("ChooseAnimatedModelComponentModel"))
-	{
-		if (igfd::ImGuiFileDialog::Instance()->IsOk)
+		if (Optional<String> result = OS::SelectFile(SupportedFiles.at(ResourceFile::Type::AnimatedModel), "game/assets/"))
 		{
-			FilePath filePath = OS::GetRootRelativePath(igfd::ImGuiFileDialog::Instance()->GetFilePathName());
-			setAnimatedResourceFile(ResourceLoader::CreateAnimatedModelResourceFile(filePath.generic_string()), {});
+			setAnimatedResourceFile(ResourceLoader::CreateAnimatedModelResourceFile(*result), {});
 		}
-		igfd::ImGuiFileDialog::Instance()->CloseDialog("ChooseAnimatedModelComponentModel");
 	}
 
 	if (ImGui::Button("Start"))

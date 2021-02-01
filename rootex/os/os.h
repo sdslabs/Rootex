@@ -43,6 +43,11 @@ public:
 	static int GetDisplayWidth();
 	static int GetDisplayHeight();
 
+	/// Open a dialog box which the user can select a file from. Selected filepath is returned if successful.
+	/// Filter needs 2 '\0' characters at the end.
+	static Optional<String> SelectFile(const char* filter, const char* dir = nullptr);
+	static Optional<String> SaveSelectFile(const char* filter, const char* dir = nullptr);
+
 	static void OpenFileInSystemEditor(const String& filePath);
 	static void OpenFileInExplorer(const String& filePath);
 	static void EditFileInSystemEditor(const String& filePath);
