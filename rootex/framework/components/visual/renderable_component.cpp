@@ -218,7 +218,7 @@ void RenderableComponent::draw()
 
 			ImGui::BeginGroup();
 			ImGui::Text("%s", FilePath(newMaterial->getFileName()).filename().generic_string().c_str());
-			if (ImGui::Button((ICON_ROOTEX_EXTERNAL_LINK "##" + newMaterial->getFileName()).c_str()))
+			if (ImGui::Button((ICON_ROOTEX_SEARCH "##" + newMaterial->getFileName()).c_str()))
 			{
 				EventManager::GetSingleton()->call("OpenModel", "EditorOpenFile", newMaterial->getFileName());
 			}
