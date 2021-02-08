@@ -6,6 +6,8 @@
 
 #include "common/common.h"
 
+#include <commdlg.h>
+#include <commctrl.h>
 #include <shellapi.h>
 
 #ifdef ROOTEX_EDITOR
@@ -21,7 +23,6 @@ FilePath OS::s_GameDirectory;
 FilePath OS::GetAbsolutePath(String stringPath)
 {
 	FilePath absPath = s_RootDirectory / stringPath;
-
 	return absPath;
 }
 
@@ -217,6 +218,54 @@ int OS::GetDisplayWidth()
 int OS::GetDisplayHeight()
 {
 	return GetSystemMetrics(SM_CYSCREEN);
+}
+
+Optional<String> OS::SelectFile(const char* filter, const char* dir)
+{
+	OPENFILENAME ofn;
+	char szFile[260] = { 0 };
+
+	ZeroMemory(&ofn, sizeof(ofn));
+	ofn.lStructSize = sizeof(ofn);
+	ofn.hwndOwner = GetActiveWindow();
+	ofn.lpstrFile = szFile;
+	ofn.nMaxFile = sizeof(szFile);
+	ofn.lpstrFilter = filter;
+	ofn.nFilterIndex = 1;
+	ofn.lpstrFileTitle = nullptr;
+	ofn.nMaxFileTitle = 0;
+	ofn.lpstrInitialDir = dir ? dir : ".";
+	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
+
+	if (GetOpenFileName(&ofn) == TRUE)
+	{
+		return GetRootRelativePath((String)ofn.lpstrFile).generic_string();
+	}
+	return {};
+}
+
+Optional<String> OS::SaveSelectFile(const char* filter, const char* dir)
+{
+	OPENFILENAME ofn;
+	char szFile[260] = { 0 };
+
+	ZeroMemory(&ofn, sizeof(ofn));
+	ofn.lStructSize = sizeof(ofn);
+	ofn.hwndOwner = GetActiveWindow();
+	ofn.lpstrFile = szFile;
+	ofn.nMaxFile = sizeof(szFile);
+	ofn.lpstrFilter = filter;
+	ofn.nFilterIndex = 1;
+	ofn.lpstrFileTitle = nullptr;
+	ofn.nMaxFileTitle = 0;
+	ofn.lpstrInitialDir = !dir ? dir : ".";
+	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
+
+	if (GetSaveFileName(&ofn) == TRUE)
+	{
+		return GetRootRelativePath((String)ofn.lpstrFile).generic_string();
+	}
+	return {};
 }
 
 bool OS::IsDirectory(const String& path)

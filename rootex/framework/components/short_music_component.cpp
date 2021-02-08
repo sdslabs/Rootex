@@ -75,20 +75,9 @@ void ShortMusicComponent::draw()
 		EventManager::GetSingleton()->call("OpenScript", "EditorOpenFile", m_AudioFile->getPath().string());
 	}
 	ImGui::SameLine();
-	if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Short Music"))
+	if (Optional<String> result = OS::SelectFile(SupportedFiles.at(ResourceFile::Type::Audio), "game/assets/"))
 	{
-		igfd::ImGuiFileDialog::Instance()->OpenDialog("Short Music", "Choose Short Music", SupportedFiles.at(ResourceFile::Type::Audio), "game/assets/");
-	}
-
-	if (igfd::ImGuiFileDialog::Instance()->FileDialog("Short Music"))
-	{
-		if (igfd::ImGuiFileDialog::Instance()->IsOk)
-		{
-			String filePathName = OS::GetRootRelativePath(igfd::ImGuiFileDialog::Instance()->GetFilePathName()).generic_string();
-			setAudioFile(ResourceLoader::CreateAudioResourceFile(filePathName));
-		}
-
-		igfd::ImGuiFileDialog::Instance()->CloseDialog("Short Music");
+		setAudioFile(ResourceLoader::CreateAudioResourceFile(*result));
 	}
 
 	AudioComponent::draw();

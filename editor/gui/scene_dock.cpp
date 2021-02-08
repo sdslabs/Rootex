@@ -5,8 +5,8 @@
 #include "framework/scene_loader.h"
 #include "framework/systems/render_system.h"
 #include "framework/components/transform_component.h"
+#include "utility/imgui_helpers.h"
 
-#include "ImGuiFileDialog.h"
 #include "vendor/ImGUI/imgui.h"
 #include "vendor/ImGUI/imgui_impl_dx11.h"
 #include "vendor/ImGUI/imgui_impl_win32.h"
@@ -24,7 +24,7 @@ void SceneDock::showSceneTree(Ptr<Scene>& scene)
 		{
 			ImGui::SameLine();
 
-			ImGui::PushStyleColor(ImGuiCol_Text, EditorSystem::GetSingleton()->getColors().text);
+			ImGui::PushStyleColor(ImGuiCol_Text, (const ImVec4&)EditorSystem::GetSingleton()->getNormalColor());
 			if (ImGui::Selectable(scene->getFullName().c_str(), m_OpenedSceneID == scene->getID()))
 			{
 				openScene(scene.get());
@@ -112,14 +112,9 @@ void SceneDock::draw(float deltaMilliseconds)
 		{
 			if (SceneLoader::GetSingleton()->getCurrentScene() && ImGui::Button("Instantiate Scene"))
 			{
-				igfd::ImGuiFileDialog::Instance()->OpenModal("ChooseSceneFile", "Choose Scene File", ".json", "game/assets/scenes/");
-			}
-			if (igfd::ImGuiFileDialog::Instance()->FileDialog("ChooseSceneFile"))
-			{
-				if (igfd::ImGuiFileDialog::Instance()->IsOk)
+				if (Optional<String> result = OS::SelectFile("Scene(*.scene.json)\0*.scene.json\0", "game/assets/scenes/"))
 				{
-					FilePath filePath = OS::GetRootRelativePath(igfd::ImGuiFileDialog::Instance()->GetFilePathName());
-					if (Ptr<Scene>& newScene = Scene::CreateFromFile(filePath.generic_string()))
+					if (Ptr<Scene>& newScene = Scene::CreateFromFile(*result))
 					{
 						if (Entity* entity = newScene->getEntity())
 						{
@@ -132,82 +127,10 @@ void SceneDock::draw(float deltaMilliseconds)
 						SceneLoader::GetSingleton()->getCurrentScene()->addChild(newScene);
 					}
 				}
-				igfd::ImGuiFileDialog::Instance()->CloseDialog("ChooseSceneFile");
 			}
 
 			showSceneTree(SceneLoader::GetSingleton()->getRootSceneEx());
 		}
 		ImGui::End();
-	}
-	if (m_SceneDockSettings.m_IsEntitiesDockActive)
-	{
-		if (ImGui::Begin("Entities"))
-		{
-			ImGui::Columns(2);
-			ImGui::Text("Entity");
-			ImGui::NextColumn();
-			ImGui::Text("Components");
-			ImGui::NextColumn();
-
-			showEntities(SceneLoader::GetSingleton()->getRootScene());
-
-			ImGui::Columns(1);
-		}
-		ImGui::End();
-	}
-}
-
-void SceneDock::showEntities(Scene* scene)
-{
-	if (Entity* entity = scene->getEntity())
-	{
-		if (ImGui::Selectable(entity->getFullName().c_str(), m_OpenedSceneID == scene->getID()))
-		{
-			openScene(scene);
-		}
-		if (ImGui::BeginPopupContextItem())
-		{
-			InspectorDock::GetSingleton()->drawSceneActions(scene);
-			ImGui::EndPopup();
-		}
-		ImGui::NextColumn();
-		const HashMap<ComponentID, Ptr<Component>>& components = entity->getAllComponents();
-		HashMap<ComponentID, Ptr<Component>>::const_iterator it = components.begin();
-		while (it != components.end())
-		{
-			bool increment = true;
-			Component* component = it->second.get();
-			ImGui::Selectable(component->getName());
-			if (ImGui::BeginPopupContextItem(("Delete" + entity->getFullName() + component->getName()).c_str()))
-			{
-				if (ImGui::Button("Delete Component"))
-				{
-					if (component)
-					{
-						String componentName = component->getName();
-						if (entity->removeComponent(component->getComponentID()))
-						{
-							PRINT("Deleted " + componentName + " from " + entity->getName());
-						}
-						increment = false;
-					}
-					else
-					{
-						ERR("Component not found: Possible level files corruption");
-					}
-				}
-				ImGui::EndPopup();
-			}
-			if (increment)
-			{
-				it++;
-			}
-		}
-		ImGui::NextColumn();
-	}
-
-	for (auto& child : scene->getChildren())
-	{
-		showEntities(child.get());
 	}
 }
