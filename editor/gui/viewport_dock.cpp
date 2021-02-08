@@ -18,8 +18,6 @@ ViewportDock::ViewportDock(const JSON::json& viewportJSON)
     : m_IsCameraMoving(false)
 {
 	m_ViewportDockSettings.m_AspectRatio = (float)viewportJSON["aspectRatio"]["x"] / (float)viewportJSON["aspectRatio"]["y"];
-	m_ViewportDockSettings.m_ImageTint = EditorSystem::GetSingleton()->getColors().white;
-	m_ViewportDockSettings.m_ImageBorderColor = EditorSystem::GetSingleton()->getColors().accent;
 	
 	Ptr<Scene>& editorCamera = Scene::CreateEmptyWithEntity();
 	editorCamera->setName("EditorCamera");
@@ -69,6 +67,8 @@ void ViewportDock::draw(float deltaMilliseconds)
 		ImGui::SetNextWindowBgAlpha(1.0f);
 		if (ImGui::Begin("Viewport"))
 		{
+			const ImVec2 windowStart = ImGui::GetCursorPos();
+
 			ImVec2 region = ImGui::GetContentRegionAvail();
 			if (region.x / region.y < m_ViewportDockSettings.m_AspectRatio)
 			{
@@ -83,13 +83,12 @@ void ViewportDock::draw(float deltaMilliseconds)
 
 			static const ImVec2 viewportStart = ImGui::GetCursorPos();
 			ImGui::Image(
-			    RenderingDevice::GetSingleton()->getOffScreenRTSRVResolved().Get(),
+			    RenderingDevice::GetSingleton()->getOffScreenSRV().Get(),
 			    m_ViewportDockSettings.m_ImageSize,
 			    { 0, 0 },
-			    { 1, 1 },
-			    m_ViewportDockSettings.m_ImageTint,
-			    m_ViewportDockSettings.m_ImageBorderColor);
-
+			    { 1, 1 });
+			static const ImVec2 viewportEnd = ImGui::GetCursorPos();
+			
 			ImVec2 imageSize = ImGui::GetItemRectSize();
 			ImVec2 imagePos = ImGui::GetItemRectMin();
 
@@ -101,17 +100,20 @@ void ViewportDock::draw(float deltaMilliseconds)
 			InputInterface::s_Top = imagePos.y;
 			InputInterface::s_Bottom = InputInterface::s_Top + imageSize.y;
 
-			static const ImVec2 viewportEnd = ImGui::GetCursorPos();
-
+			ImGui::SetCursorPos({ windowStart.x + 3, windowStart.y + 3 });
 			static ImGuizmo::OPERATION gizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
 			static float axisSnap[3] = { 0.1f, 0.1f, 0.1f };
 			static float angleSnap = { 45.0f };
 			static float scaleSnap = { 0.1f };
 			static float* currentSnap = nullptr;
 			static ImGuizmo::MODE gizmoMode = ImGuizmo::MODE::LOCAL;
-			ImGui::Begin("Viewport Tools");
+
+			if (ImGui::Button(ICON_ROOTEX_PICTURE_O "##Viewport Tools Button"))
 			{
-				ImGui::BeginGroup();
+				ImGui::OpenPopup("Viewport Tools");
+			}
+			if (ImGui::BeginPopup("Viewport Tools"))
+			{
 				if (ImGui::RadioButton("Translate", gizmoOperation == ImGuizmo::OPERATION::TRANSLATE))
 				{
 					gizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
@@ -126,7 +128,16 @@ void ViewportDock::draw(float deltaMilliseconds)
 				{
 					gizmoOperation = ImGuizmo::OPERATION::SCALE;
 				}
-				ImGui::EndGroup();
+
+				if (ImGui::RadioButton("Local", gizmoMode == ImGuizmo::MODE::LOCAL))
+				{
+					gizmoMode = ImGuizmo::MODE::LOCAL;
+				}
+				ImGui::SameLine();
+				if (ImGui::RadioButton("World", gizmoMode == ImGuizmo::MODE::WORLD))
+				{
+					gizmoMode = ImGuizmo::MODE::WORLD;
+				}
 
 				if (gizmoOperation == ImGuizmo::OPERATION::TRANSLATE)
 				{
@@ -144,26 +155,24 @@ void ViewportDock::draw(float deltaMilliseconds)
 					currentSnap = &scaleSnap;
 				}
 
-				if (ImGui::RadioButton("Local", gizmoMode == ImGuizmo::MODE::LOCAL))
+				if (ImGui::BeginCombo("Camera", RenderSystem::GetSingleton()->getCamera()->getOwner()->getFullName().c_str()))
 				{
-					gizmoMode = ImGuizmo::MODE::LOCAL;
-				}
-				ImGui::SameLine();
-				if (ImGui::RadioButton("World", gizmoMode == ImGuizmo::MODE::WORLD))
-				{
-					gizmoMode = ImGuizmo::MODE::WORLD;
+					for (auto& c : ECSFactory::GetComponents<CameraComponent>())
+					{
+						CameraComponent* camera = (CameraComponent*)c;
+
+						if (ImGui::MenuItem(camera->getOwner()->getFullName().c_str()))
+						{
+							RenderSystem::GetSingleton()->setCamera(camera);
+						}
+					}
+					ImGui::EndCombo();
 				}
 
-				ImGui::DragFloat("Camera Sensitivity", &m_EditorCameraSensitivity);
-				ImGui::DragFloat("Camera Speed", &m_EditorCameraSpeed);
+				ImGui::EndPopup();
 			}
-			if (ImGui::TreeNodeEx("RenderSystem"))
-			{
-				RenderSystem::GetSingleton()->draw();
-				ImGui::TreePop();
-			}
-			ImGui::End();
-
+			ImGui::SetCursorPos(viewportStart);
+		
 			Matrix view = RenderSystem::GetSingleton()->getCamera()->getViewMatrix();
 			Matrix proj = RenderSystem::GetSingleton()->getCamera()->getProjectionMatrix();
 
@@ -197,17 +206,20 @@ void ViewportDock::draw(float deltaMilliseconds)
 			static Entity* selectEntity = nullptr;
 			if (ImGui::IsWindowHovered())
 			{
-				if (InputManager::GetSingleton()->getKeyboard()->GetBoolPrevious(KeyboardButton::KeyQ))
+				if (!ImGui::IsAnyMouseDown())
 				{
-					gizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
-				}
-				if (InputManager::GetSingleton()->getKeyboard()->GetBoolPrevious(KeyboardButton::KeyW))
-				{
-					gizmoOperation = ImGuizmo::OPERATION::ROTATE;
-				}
-				if (InputManager::GetSingleton()->getKeyboard()->GetBoolPrevious(KeyboardButton::KeyE))
-				{
-					gizmoOperation = ImGuizmo::OPERATION::SCALE;
+					if (InputManager::GetSingleton()->getKeyboard()->GetBoolPrevious(KeyboardButton::KeyQ))
+					{
+						gizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
+					}
+					if (InputManager::GetSingleton()->getKeyboard()->GetBoolPrevious(KeyboardButton::KeyW))
+					{
+						gizmoOperation = ImGuizmo::OPERATION::ROTATE;
+					}
+					if (InputManager::GetSingleton()->getKeyboard()->GetBoolPrevious(KeyboardButton::KeyE))
+					{
+						gizmoOperation = ImGuizmo::OPERATION::SCALE;
+					}
 				}
 
 				Vector3 mouseFromWindow;
@@ -258,20 +270,13 @@ void ViewportDock::draw(float deltaMilliseconds)
 					
 					ImGui::SetCursorPos({ ImGui::GetMousePos().x - ImGui::GetWindowPos().x + 10.0f, ImGui::GetMousePos().y - ImGui::GetWindowPos().y - 20.0f });
 					EditorSystem::GetSingleton()->pushBoldFont();
-					ImGui::TextColored(EditorSystem::GetSingleton()->getColors().white, "%s", transform->getOwner()->getFullName().c_str());
+					ImGui::TextColored(EditorSystem::GetSingleton()->getNormalColor(), "%s", transform->getOwner()->getFullName().c_str());
 					EditorSystem::GetSingleton()->popFont();
 					
 					if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
 					{
 						EventManager::GetSingleton()->call("MouseSelectEntity", "EditorOpenScene", selectEntity->getScene());
 						PRINT("Picked entity through selection: " + selectEntity->getFullName());
-					}
-				}
-				else
-				{
-					if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
-					{
-						EventManager::GetSingleton()->call("MouseSelectEntity", "EditorCloseScene", 0);
 					}
 				}
 

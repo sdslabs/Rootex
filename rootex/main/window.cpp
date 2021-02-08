@@ -143,7 +143,7 @@ LRESULT CALLBACK Window::WindowsProc(HWND windowHandler, UINT msg, WPARAM wParam
 	return DefWindowProc(windowHandler, msg, wParam, lParam);
 }
 
-Window::Window(int xOffset, int yOffset, int width, int height, const String& title, bool isEditor, bool MSAA, bool fullScreen)
+Window::Window(int xOffset, int yOffset, int width, int height, const String& title, bool isEditor, bool fullScreen)
     : m_Width(width)
     , m_Height(height)
 {
@@ -182,11 +182,7 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
 	GetClientRect(m_WindowHandle, &clientRect);
 	int rWidth = clientRect.right - clientRect.left;
 	int rHeight = clientRect.bottom - clientRect.top;
-	RenderingDevice::GetSingleton()->initialize(
-		m_WindowHandle,
-		rWidth,
-		rHeight,
-		MSAA);
+	RenderingDevice::GetSingleton()->initialize(m_WindowHandle, rWidth, rHeight);
 	
 	applyDefaultViewport();
 	m_IsFullScreen = false;

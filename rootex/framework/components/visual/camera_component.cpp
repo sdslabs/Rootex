@@ -10,6 +10,7 @@ void to_json(JSON::json& j, const PostProcessingDetails& p)
 	j["isMonochrome"] = p.isMonochrome;
 	j["isGaussianBlur"] = p.isGaussianBlur;
 	j["isToneMap"] = p.isToneMap;
+	j["isFXAA"] = p.isFXAA;
 	j["bloomThreshold"] = p.bloomThreshold;
 	j["bloomSize"] = p.bloomSize;
 	j["bloomBrightness"] = p.bloomBrightness;
@@ -45,6 +46,7 @@ void from_json(const JSON::json& j, PostProcessingDetails& p)
 	p.isMonochrome = j.at("isMonochrome");
 	p.isGaussianBlur = j.at("isGaussianBlur");
 	p.isToneMap = j.at("isToneMap");
+	p.isFXAA = j.value("isFXAA", false);
 	p.assaoAdaptiveQualityLimit = j.value("assaoAdaptiveQualityLimit", 0.45f);
 	p.assaoBlurPassCount = j.value("assaoBlurPassCount", 2);
 	p.assaoDetailShadowStrength = j.value("assaoDetailShadowStrength", 0.5f);
@@ -249,6 +251,8 @@ void CameraComponent::draw()
 				ImGui::TreePop();
 			}
 		}
+
+		ImGui::Checkbox("FXAA", &m_PostProcessingDetails.isFXAA);
 	}
 }
 #endif // ROOTEX_EDITOR

@@ -1,0 +1,11 @@
+{
+    "Lua.diagnostics.globals": [
+        "unpack",
+        "loadstring",
+        "describe",
+        "it"
+    ],
+    "Lua.diagnostics.disable": [
+        "trailing-space"
+    ]
+}

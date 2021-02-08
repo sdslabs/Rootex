@@ -38,3 +38,9 @@ struct AnimatedVertexData : public VertexData
 	int m_BoneIndices[4];
 	Vector4 m_BoneWeights;
 };
+
+struct FXAAData
+{
+	Vector3 m_Position;
+	Vector2 m_Texturecoord;
+};

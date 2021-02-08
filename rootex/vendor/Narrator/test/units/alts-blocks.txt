@@ -1,0 +1,31 @@
+=== 1
+At the table, I drew a card. I entered the casino.
+=== 2
+At the table, I drew a card. Okay. I entered the casino again.
+=== 3
+At the table, I drew a card. 3. Once more, I went inside.
+=== 4
+At the table, I drew a card. 4. Once more, I went inside.
+=== 5
+I held my breath.
+=== 6
+I waited impatiently.
+=== 7
+I paused.
+=== 8
+I held my breath.
+=== 9
+Would my luck hold?
+=== 10
+Could I win the hand?
+=== 11
+=== 12
+=== 13
+At the table, I drew a card. Ace of Hearts.
+=== 14
+At the table, I drew a card. 2 of Diamonds.
+'You lose this time!' crowed the croupier.
+=== 15
+At the table, I drew a card. King of Spades.
+=== 16
+Okay. Ace of Hearts again.

@@ -16,8 +16,6 @@ public:
 		bool m_IsClosed;
 
 		ImVec2 m_ImageSize;
-		ImVec4 m_ImageTint;
-		ImVec4 m_ImageBorderColor;
 		float m_AspectRatio;
 	};
 

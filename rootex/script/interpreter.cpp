@@ -11,6 +11,7 @@
 #include "components/visual/ui_component.h"
 #include "components/visual/model_component.h"
 #include "components/physics/box_collider_component.h"
+#include "components/visual/ui_component.h"
 #include "core/input/input_manager.h"
 #include "core/resource_files/audio_resource_file.h"
 #include "core/resource_files/font_resource_file.h"
@@ -21,6 +22,8 @@
 #include "core/resource_files/collision_model_resource_file.h"
 #include "core/resource_files/text_resource_file.h"
 #include "event_manager.h"
+
+extern "C" int luaopen_lpeg(lua_State* L);
 
 int HandleLuaException(lua_State* L, sol::optional<const std::exception&> maybeException, sol::string_view description)
 {
@@ -50,7 +53,11 @@ LuaInterpreter::LuaInterpreter()
 	m_Lua.open_libraries(sol::lib::package);
 	m_Lua.open_libraries(sol::lib::debug);
 
+	luaL_requiref(m_Lua.lua_state(), "lpeg", luaopen_lpeg, 1);
+	lua_pop(m_Lua.lua_state(), 1);
+
 	registerTypes();
+	runScripts();
 }
 
 LuaInterpreter* LuaInterpreter::GetSingleton()
@@ -68,8 +75,10 @@ void LuaInterpreter::runScripts()
 	}
 	called = true;
 
-	sol::table dbg = m_Lua.require_file("dbg", "rootex/script/scripts/debugger.lua");
+	sol::table dbg = m_Lua.require_file("dbg", "rootex/vendor/Debugger/debugger.lua");
 	dbg["auto_where"] = 2;
+
+	m_Lua.do_string("package.path = package.path .. ';rootex/vendor/Narrator/?.lua'");
 }
 
 void LuaInterpreter::registerTypes()
@@ -157,5 +166,6 @@ void LuaInterpreter::registerTypes()
 	ModelComponent::RegisterAPI(rootex);
 	RenderUIComponent::RegisterAPI(rootex);
 	TextUIComponent::RegisterAPI(rootex);
+	UIComponent::RegisterAPI(rootex);
 	PhysicsColliderComponent::RegisterAPI(rootex);
 }

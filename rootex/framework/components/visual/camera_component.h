@@ -2,41 +2,7 @@
 
 #include "component.h"
 #include "components/transform_component.h"
-
-struct PostProcessingDetails
-{
-	bool isPostProcessing = false;
-	bool isASSAO = false;
-	bool isBloom = false;
-	bool isSepia = false;
-	bool isMonochrome = false;
-	bool isGaussianBlur = false;
-	bool isToneMap = false;
-	float assaoRadius = 1.2f;
-	float assaoDetailShadowStrength = 0.5f;
-	int assaoBlurPassCount = 2;
-	float assaoFadeOutFrom = 50.0f;
-	float assaoFadeOutTo = 300.0f;
-	float assaoHorizonAngleThreshold = 0.06f;
-	int assaoQualityLevel = 2;
-	float assaoShadowClamp = 0.98f;
-	float assaoShadowMultiplier = 1.0f;
-	float assaoShadowPower = 1.5f;
-	float assaoSharpness = 0.98f;
-	float assaoAdaptiveQualityLimit = 0.45f;
-	float bloomThreshold = 0.8f;
-	float bloomSize = 1.0f;
-	float bloomBrightness = 1.0f;
-	float bloomValue = 1.0f;
-	float bloomBase = 1.0f;
-	float bloomSaturation = 1.0f;
-	float bloomBaseSaturation = 1.0f;
-	float gaussianBlurMultiplier = 1.0f;
-	float toneMapExposure = 0.0f;
-	int toneMapOperator = 0;
-	int toneMapTransferFunction = 0;
-	float toneMapWhiteNits = 200.0f;
-};
+#include "core/renderer/post_processor.h"
 
 class CameraComponent : public Component
 {
