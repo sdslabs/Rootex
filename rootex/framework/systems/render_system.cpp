@@ -93,7 +93,8 @@ void RenderSystem::renderPassRender(float deltaMilliseconds, RenderPass renderPa
 void RenderSystem::update(float deltaMilliseconds)
 {
 	ZoneScoped;
-	RenderingDevice::GetSingleton()->setOffScreenRT();
+	RenderingDevice::GetSingleton()->unbindSRVs();
+	RenderingDevice::GetSingleton()->setOffScreenRTVDSV();
 	m_Renderer->resetCurrentShader();
 
 	Color clearColor = { 0.15f, 0.15f, 0.15f, 1.0f };
@@ -176,11 +177,10 @@ void RenderSystem::update(float deltaMilliseconds)
 	}
 	
 	// Post processes
-	RenderingDevice::GetSingleton()->resolveSRV(RenderingDevice::GetSingleton()->getOffScreenSRV(), RenderingDevice::GetSingleton()->getOffScreenSRVResolved());
 	PostProcessor::GetSingleton()->draw(m_Camera);
 
 	RenderingDevice::GetSingleton()->unbindSRVs();
-	RenderingDevice::GetSingleton()->setOffScreenRTResolved();
+	RenderingDevice::GetSingleton()->setOffScreenRTVDSV();
 }
 
 void RenderSystem::renderLines()

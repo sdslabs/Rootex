@@ -16,6 +16,7 @@ struct PostProcessingDetails
 	bool isMonochrome = false;
 	bool isGaussianBlur = false;
 	bool isToneMap = false;
+	bool isFXAA = false;
 	float assaoRadius = 1.2f;
 	float assaoDetailShadowStrength = 0.5f;
 	int assaoBlurPassCount = 2;

@@ -52,7 +52,7 @@ set_source_files_properties(${ShaderFiles}
     PROPERTIES
         VS_SHADER_MODEL 4.0
         VS_SHADER_OBJECT_FILE_NAME ${ShaderCompileDestination}
-        VS_SHADER_ENABLE_DEBUG true
+        VS_SHADER_ENABLE_DEBUG false
         VS_SHADER_DISABLE_OPTIMIZATIONS false
 )
 
@@ -98,7 +98,6 @@ target_link_libraries(Rootex PUBLIC
     JSON
     Dirent
     ImGui
-    ImGuiFileDialog
     ImGuizmo
     Gainput
     Bullet3D
@@ -111,6 +110,7 @@ target_link_libraries(Rootex PUBLIC
     FreeType
     Tracy
     ASSAO
+    LPeg
 
     Shell32.lib
     d3d11.lib

@@ -1,0 +1,26 @@
+I looked at Monsieur Fogg
+
+>) ... and I could contain myself no longer.
+2) ... but I said nothing
+
+... and I could contain myself no longer.
+'What is the purpose of our journey, Monsieur?'
+'A wager,' he replied.
+
+>) 'A wager!'
+2) 'Ah.'
+
+'A wager!' I returned.
+He nodded.
+
+1) 'But surely that is foolishness!'
+>) 'A most serious matter then!'
+
+'A most serious matter then!'
+He nodded again.
+
+1) 'But can we win?'
+2) 'A modest wager, I trust?'
+>) I asked nothing further of him then.
+
+I asked nothing further of him then, and after a final, polite cough, he offered nothing more to me. After that, we passed the day in silence.
