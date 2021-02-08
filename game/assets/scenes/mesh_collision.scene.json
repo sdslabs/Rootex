@@ -19,17 +19,17 @@
                         "near": 0.10000000149011612,
                         "postProcessingDetails": {
                             "assaoAdaptiveQualityLimit": 0.44999998807907104,
-                            "assaoBlurPassCount": 2,
-                            "assaoDetailShadowStrength": 0.5,
-                            "assaoFadeOutFrom": 50.0,
-                            "assaoFadeOutTo": 300.0,
-                            "assaoHorizonAngleThreshold": 0.05999999865889549,
-                            "assaoQualityLevel": 2,
-                            "assaoRadius": 1.2000000476837158,
+                            "assaoBlurPassCount": 0,
+                            "assaoDetailShadowStrength": 2.0199999809265137,
+                            "assaoFadeOutFrom": 0.0,
+                            "assaoFadeOutTo": 11.0,
+                            "assaoHorizonAngleThreshold": 0.0,
+                            "assaoQualityLevel": 3,
+                            "assaoRadius": 1.600000023841858,
                             "assaoShadowClamp": 0.9800000190734863,
-                            "assaoShadowMultiplier": 1.0,
-                            "assaoShadowPower": 1.5,
-                            "assaoSharpness": 0.9800000190734863,
+                            "assaoShadowMultiplier": 1.4700000286102295,
+                            "assaoShadowPower": 1.649999976158142,
+                            "assaoSharpness": 0.8100000023841858,
                             "bloomBase": 1.0,
                             "bloomBaseSaturation": 1.0,
                             "bloomBrightness": 1.0,
@@ -38,11 +38,12 @@
                             "bloomThreshold": 0.800000011920929,
                             "bloomValue": 1.0,
                             "gaussianBlurMultiplier": 1.0,
-                            "isASSAO": false,
+                            "isASSAO": true,
                             "isBloom": false,
+                            "isFXAA": true,
                             "isGaussianBlur": false,
                             "isMonochrome": false,
-                            "isPostProcessing": false,
+                            "isPostProcessing": true,
                             "isSepia": false,
                             "isToneMap": false,
                             "toneMapExposure": 0.0,
@@ -242,7 +243,7 @@
                                 "position": {
                                     "x": 6.073350429534912,
                                     "y": 3.0247554779052734,
-                                    "z": 2.208749771118164
+                                    "z": 0.8087501525878906
                                 },
                                 "rotation": {
                                     "w": 1.0,
@@ -270,7 +271,77 @@
                 },
                 {
                     "ID": 10,
-                    "children": [],
+                    "children": [
+                        {
+                            "ID": 12,
+                            "children": [],
+                            "entity": {
+                                "Entity": {
+                                    "script": null
+                                },
+                                "components": {
+                                    "PointLightComponent": {
+                                        "ambientColor": {
+                                            "a": 1.0,
+                                            "b": 0.14293168485164642,
+                                            "g": 0.7876448035240173,
+                                            "r": 0.2398735135793686
+                                        },
+                                        "attConst": -0.8849999904632568,
+                                        "attLin": 2.0799999237060547,
+                                        "attQuad": -0.9800000190734863,
+                                        "diffuseColor": {
+                                            "a": 1.0,
+                                            "b": 0.06887196749448776,
+                                            "g": 0.06887196749448776,
+                                            "r": 0.8494208455085754
+                                        },
+                                        "diffuseIntensity": 8.399999618530273,
+                                        "range": 5.099999904632568
+                                    },
+                                    "TransformComponent": {
+                                        "boundingBox": {
+                                            "center": {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                                "z": 0.0
+                                            },
+                                            "extents": {
+                                                "x": 0.5,
+                                                "y": 0.5,
+                                                "z": 0.5
+                                            }
+                                        },
+                                        "position": {
+                                            "x": 2.288818359375e-05,
+                                            "y": -4.57763671875e-05,
+                                            "z": 1.1444091796875e-05
+                                        },
+                                        "rotation": {
+                                            "w": 1.0,
+                                            "x": -0.0,
+                                            "y": 0.0,
+                                            "z": -0.0
+                                        },
+                                        "scale": {
+                                            "x": 33.333335876464844,
+                                            "y": 33.333335876464844,
+                                            "z": 33.333335876464844
+                                        }
+                                    }
+                                }
+                            },
+                            "file": "game/assets/scenes/point_light.scene.json",
+                            "name": "Point Light",
+                            "settings": {
+                                "camera": 1,
+                                "inputSchemes": null,
+                                "listener": 1,
+                                "preloads": [],
+                                "startScheme": ""
+                            }
+                        }
+                    ],
                     "entity": {
                         "Entity": {
                             "script": null
@@ -302,8 +373,8 @@
                                 "isKinematic": false,
                                 "isMoveable": true,
                                 "material": 2,
-                                "radius": 0.4000000059604645,
-                                "volume": 0.2680825889110565
+                                "radius": 0.6000000238418579,
+                                "volume": 0.904778778553009
                             },
                             "TransformComponent": {
                                 "boundingBox": {
@@ -330,9 +401,9 @@
                                     "z": 0.0
                                 },
                                 "scale": {
-                                    "x": 0.019999999552965164,
-                                    "y": 0.019999999552965164,
-                                    "z": 0.019999999552965164
+                                    "x": 0.029999999329447746,
+                                    "y": 0.029999999329447746,
+                                    "z": 0.029999999329447746
                                 }
                             }
                         }
@@ -348,7 +419,7 @@
                     }
                 },
                 {
-                    "ID": 11,
+                    "ID": 13,
                     "children": [],
                     "entity": {
                         "Entity": {
@@ -401,7 +472,7 @@
                                 "position": {
                                     "x": 5.041420936584473,
                                     "y": 5.314213275909424,
-                                    "z": -17.200000762939453
+                                    "z": -17.100000381469727
                                 },
                                 "rotation": {
                                     "w": 0.9238795042037964,

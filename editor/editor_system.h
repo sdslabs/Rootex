@@ -3,6 +3,7 @@
 #include "core/event_manager.h"
 #include "script/interpreter.h"
 #include "framework/system.h"
+#include "utility/imgui_helpers.h"
 
 #include "gui/scene_dock.h"
 #include "gui/output_dock.h"
@@ -14,11 +15,12 @@
 #include "vendor/ImGUI/imgui.h"
 #include "vendor/ImGUI/imgui_impl_dx11.h"
 #include "vendor/ImGUI/imgui_impl_win32.h"
-#include "ImGuiFileDialogConfig.h"
 
 #include "Tracy/Tracy.hpp"
 
 class HierarchyGraph;
+
+ImColor ColorToImColor(Color& c);
 
 class EditorSystem : public System
 {
@@ -28,29 +30,13 @@ class EditorSystem : public System
 	unsigned int m_EditorStyleColorPushCount;
 	unsigned int m_EditorStyleVarPushCount;
 	bool m_WireframeMode = false;
-	bool m_CollisionMode = false;
 	bool m_WorldMode = true;
 
 	ImFont* m_EditorFont;
 	ImFont* m_EditorFontItalic;
 	ImFont* m_EditorFontBold;
+	ImFont* m_EditorFontMonospace;
 	
-	struct Colors
-	{
-		ImVec4 accent;
-		ImVec4 failAccent;
-		ImVec4 mediumAccent;
-		ImVec4 heavyAccent;
-		ImVec4 background;
-		ImVec4 inactive;
-		ImVec4 success;
-		ImVec4 failure;
-		ImVec4 warning;
-		ImVec4 white;
-		ImVec4 itemBackground;
-		ImVec4 text;
-	} m_Colors;
-
 	struct Icons
 	{
 		const char* lua = ICON_ROOTEX_FILE_CODE_O;
@@ -74,9 +60,6 @@ class EditorSystem : public System
 
 	void drawDefaultUI(float deltaMilliseconds);
 
-	void pushEditorStyleColors();
-	void pushEditorStyleVars();
-
 	void showDocumentation(const String& name, const sol::table& table);
 
 	Variant saveAll(const Event* event);
@@ -91,12 +74,17 @@ public:
 	bool initialize(const JSON::json& systemData) override;
 	void update(float deltaMilliseconds) override;
 
-	void pushRegularFont();
-	void pushBoldFont();
-	void pushItalicFont();
-	void popFont();
+	void pushRegularFont() { ImGui::PushFont(m_EditorFont); }
+	void pushBoldFont() { ImGui::PushFont(m_EditorFontBold); }
+	void pushItalicFont() { ImGui::PushFont(m_EditorFontItalic); }
+	void pushMonospaceFont() { ImGui::PushFont(m_EditorFontMonospace); }
 
-	const Colors& getColors() const { return m_Colors; }
+	void popFont() { ImGui::PopFont(); }
+
+	ImColor getWarningColor() const { return ColorToImColor((Color)ColorPresets::LightYellow); }
+	ImColor getFatalColor() const {return ColorToImColor((Color)ColorPresets::IndianRed); }
+	ImColor getSuccessColor() const { return ColorToImColor((Color)ColorPresets::LimeGreen); }
+	ImColor getNormalColor() const { return ColorToImColor((Color)ColorPresets::White); }
 
 #ifdef ROOTEX_EDITOR
 	void draw() override;

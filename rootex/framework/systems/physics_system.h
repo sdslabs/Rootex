@@ -70,7 +70,6 @@ public:
 	btCollisionWorld::AllHitsRayResultCallback reportAllRayHits(const btVector3& m_From, const btVector3& m_To);
 	btCollisionWorld::ClosestRayResultCallback reportClosestRayHits(const btVector3& m_From, const btVector3& m_To);
 
-	void debugDraw();
 	void debugDrawComponent(const btTransform& worldTransform, const btCollisionShape* shape, const btVector3& color);
 	
 	void update(float deltaMilliseconds) override;

@@ -114,3 +114,35 @@ public:
 
 	void set(const Texture* texture, int slot);
 };
+
+class FXAAShader : public Shader
+{
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_SamplerState;
+
+public:
+	FXAAShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat);
+	FXAAShader(FXAAShader&) = delete;
+	~FXAAShader() = default;
+
+	friend class ShaderLibrary;
+
+	virtual void bind() const override;
+
+	void set(ID3D11ShaderResourceView* srv);
+};
+
+class LumaShader : public Shader
+{
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_SamplerState;
+
+public:
+	LumaShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat);
+	LumaShader(LumaShader&) = delete;
+	~LumaShader() = default;
+
+	friend class ShaderLibrary;
+
+	virtual void bind() const override;
+
+	void set(ID3D11ShaderResourceView* srv);
+};

@@ -1,0 +1,69 @@
+{
+    "ID": 12,
+    "children": [],
+    "entity": {
+        "Entity": {
+            "script": null
+        },
+        "components": {
+            "PointLightComponent": {
+                "ambientColor": {
+                    "a": 1.0,
+                    "b": 0.5,
+                    "g": 0.5,
+                    "r": 0.5
+                },
+                "attConst": 0.04500000178813934,
+                "attLin": 1.0,
+                "attQuad": 0.007499999832361937,
+                "diffuseColor": {
+                    "a": 1.0,
+                    "b": 1.0,
+                    "g": 1.0,
+                    "r": 1.0
+                },
+                "diffuseIntensity": 1.0,
+                "range": 10.0
+            },
+            "TransformComponent": {
+                "boundingBox": {
+                    "center": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "extents": {
+                        "x": 0.5,
+                        "y": 0.5,
+                        "z": 0.5
+                    }
+                },
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            }
+        }
+    },
+    "file": "game/assets/scenes/point_light.scene.json",
+    "name": "Point Light",
+    "settings": {
+        "camera": 1,
+        "inputSchemes": null,
+        "listener": 1,
+        "preloads": [],
+        "startScheme": ""
+    }
+}

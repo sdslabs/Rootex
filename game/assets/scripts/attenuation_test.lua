@@ -15,4 +15,3 @@ function onUpdate(delta, entity)
         transform:setPosition(RTX.Vector3.new(6, 0, 124 - 10*number))
     end
 end
-

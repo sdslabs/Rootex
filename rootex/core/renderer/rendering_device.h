@@ -32,12 +32,9 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_MainDSV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_MainDSSRV;
 
-	Microsoft::WRL::ComPtr<ID3D11Texture2D> m_OffScreenRTTexture;
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> m_OffScreenTexture;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_OffScreenRTV;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_OffScreenRTSRV;
-	Microsoft::WRL::ComPtr<ID3D11Texture2D> m_OffScreenRTTextureResolved;
-	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_OffScreenRTVResolved;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_OffScreenRTSRVResolved;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_OffScreenSRV;
 
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_DSState;
 	UINT m_StencilRef;
@@ -57,8 +54,6 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11BlendState> m_AlphaBS;
 
 	Microsoft::WRL::ComPtr<IDXGISwapChain> m_SwapChain;
-	bool m_MSAA;
-	unsigned int m_4XMSQuality;
 
 	RenderingDevice();
 	RenderingDevice(RenderingDevice&) = delete;
@@ -71,9 +66,9 @@ private:
 
 public:
 	static RenderingDevice* GetSingleton();
-	void initialize(HWND hWnd, int width, int height, bool MSAA);
+	void initialize(HWND hWnd, int width, int height);
 	/// Create resources which depend on window height and width
-	void createSwapChainAndRTs(int width, int height, bool MSAA, const HWND& hWnd);
+	void createSwapChainAndRTVs(int width, int height, const HWND& hWnd);
 	void setScreenState(bool fullscreen);
 	
 	ID3D11Device* getDevice();
@@ -97,14 +92,13 @@ public:
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createTexture(const char* imageFileData, size_t size);
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createTextureFromPixels(const char* imageRawData, unsigned int width, unsigned int height);
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> createSS();
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> createSSAnisotropic();
 
 	void bind(ID3D11Buffer* const* vertexBuffer, int count, const unsigned int* stride, const unsigned int* offset);
 	void bind(ID3D11Buffer* indexBuffer, DXGI_FORMAT format);
 	void bind(ID3D11VertexShader* vertexShader);
 	void bind(ID3D11PixelShader* pixelShader);
 	void bind(ID3D11InputLayout* inputLayout);
-
-	void resolveSRV(Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> source, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> destination);
 
 	void mapBuffer(ID3D11Buffer* buffer, D3D11_MAPPED_SUBRESOURCE& subresource);
 	void unmapBuffer(ID3D11Buffer* buffer);
@@ -131,8 +125,8 @@ public:
 	
 	void setScissorRectangle(int x, int y, int width, int height);
 
-	void setOffScreenRT();
-	void setOffScreenRTResolved();
+	void setOffScreenRTVDSV();
+	void setOffScreenRTVOnly();
 	void setMainRT();
 	void setRTV(Microsoft::WRL::ComPtr<ID3D11RenderTargetView> rtv);
 	void setRTV(ID3D11RenderTargetView* rtv);
@@ -143,8 +137,6 @@ public:
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> getMainSRV();
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> getDepthSSRV();
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> getOffScreenSRV();
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> getOffScreenSRVResolved();
-	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> getOffScreenRTVResolved();
 
 	Ref<DirectX::SpriteBatch> getUIBatch();
 

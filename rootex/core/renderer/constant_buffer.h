@@ -179,3 +179,10 @@ struct VSAnimationConstantBuffer
 		}
 	}
 };
+
+/// PS constant buffer used during the FXAA post process.
+struct PSFXAACB
+{
+	/// { 1.0f / screenWidth, 1.0f / screenHeight, 0.0f, 0.0f }
+	Vector4 rcpFrame;
+};

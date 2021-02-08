@@ -74,7 +74,7 @@ void AudioPlayer::draw(float deltaMilliseconds)
 
 	if (m_OpenFile->isDirty())
 	{
-		ImGui::TextColored(EditorSystem::GetSingleton()->getColors().warning, "File may be changed on disk");
+		ImGui::TextColored(EditorSystem::GetSingleton()->getWarningColor(), "File may be changed on disk");
 		ImGui::SameLine();
 		if (ImGui::Button("Reload"))
 		{

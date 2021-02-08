@@ -93,7 +93,7 @@ public:
 	bool isKinematic() { return m_IsKinematic; }
 	void setKinematic(bool enabled);
 
-	virtual void render();
+	virtual void highlight();
 
 	virtual const char* getName() const override { return "PhysicsColliderComponent"; };
 	virtual JSON::json getJSON() const override;

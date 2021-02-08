@@ -1,0 +1,9 @@
+"What's that?" my master asked again.
+
+1) I don't know.
+2) Eat answer!
+3) "I am somewhat tired."
+>) "Nothing, Monsieur!"
+
+"Nothing, Monsieur!" I replied.
+"Very good, then."
