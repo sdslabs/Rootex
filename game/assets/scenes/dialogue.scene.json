@@ -5,6 +5,9 @@
             "ID": 5,
             "children": [],
             "entity": {
+                "Entity": {
+                    "script": null
+                },
                 "components": {
                     "UIComponent": {
                         "filePath": "game/assets/ui/dialogue/dialogue.rml"
@@ -23,6 +26,9 @@
         }
     ],
     "entity": {
+        "Entity": {
+            "script": null
+        },
         "components": null
     },
     "file": "game/assets/scenes/dialogue.scene.json",
