@@ -26,8 +26,6 @@ protected:
 #endif // ROOTEX_EDITOR
 
 public:
-	static const ComponentID s_ID = (ComponentID)ComponentIDs::AudioComponent;
-
 	AudioComponent(bool playOnStart, bool isLooping, bool attenuation, AudioSource::AttenuationModel model, ALfloat rolloffFactor, ALfloat referenceDistance, ALfloat maxDistance);
 	AudioComponent(AudioComponent&) = delete;
 	~AudioComponent() = default;
@@ -44,8 +42,6 @@ public:
 	void setAudioSource(AudioSource* audioSource) { m_AudioSource = audioSource; }
 	AudioSource* getAudioSource() { return m_AudioSource; }
 
-	virtual const char* getName() const override { return "AudioComponent"; }
-	ComponentID getComponentID() const { return s_ID; }
 	virtual JSON::json getJSON() const;
 
 #ifdef ROOTEX_EDITOR

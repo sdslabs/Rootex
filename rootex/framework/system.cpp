@@ -1,27 +1,6 @@
 #include "system.h"
 
-HashMap<ComponentID, Vector<Component*>> System::s_Components;
 Vector<Vector<System*>> System::s_Systems;
-
-void System::RegisterComponent(Component* component)
-{
-	s_Components[component->getComponentID()].push_back(component);
-}
-
-void System::DeregisterComponent(Component* component)
-{
-	Vector<Component*>& components = s_Components[component->getComponentID()];
-
-	auto findIt = std::find(components.begin(), components.end(), component);
-	if (findIt != components.end())
-	{
-		components.erase(findIt);
-	}
-	else
-	{
-		ERR("Found an unregistered component queued for deregisteration: " + component->getName());
-	}
-}
 
 System::System(const String& name, const UpdateOrder& order, bool isGameplay)
     : m_SystemName(name)
