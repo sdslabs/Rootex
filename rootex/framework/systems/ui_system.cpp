@@ -150,12 +150,13 @@ void UISystem::draw()
 {
 	System::draw();
 	
+	ImGui::Text("Press F8 in game for UI debugger");
 	static bool debugger = false;
 	if (ImGui::Checkbox("Debugger", &debugger))
 	{
 		setDebugger(debugger);
 	}
 
-	ImGui::Text("Press F8 in game");
+	ImGui::Checkbox("Take Inputs", &InputInterface::s_IsEnabled);
 }
 #endif
