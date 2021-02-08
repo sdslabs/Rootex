@@ -1,7 +1,7 @@
 {
     "postInitialize": "game/startup.lua",
     "project": "Rootex Game",
-    "startLevel": "game/assets/scenes/dialogue.scene.json",
+    "startLevel": "game/assets/scenes/loading.scene.json",
     "systems": {
         "AudioSystem": {},
         "DebugSystem": {
@@ -26,7 +26,6 @@
         "fullScreen": false,
         "height": 1080,
         "isEditor": false,
-        "msaa": true,
         "title": "Rootex Game",
         "width": 1920,
         "x": 0,

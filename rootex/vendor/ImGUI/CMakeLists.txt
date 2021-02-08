@@ -11,4 +11,5 @@ set_target_properties(ImGui PROPERTIES LINKER_LANGUAGE CXX)
 
 target_include_directories(ImGui PUBLIC
     ./
+    ../FreeType/include
 )

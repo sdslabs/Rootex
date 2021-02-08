@@ -10,6 +10,7 @@
     "isAlpha": false,
     "isLit": true,
     "isNormal": true,
+    "lightmapImageFile": "rootex/assets/white.png",
     "normalImageFile": "game/assets/sponza/textures/sponza_floor_a_diff_NRM.png",
     "reflectivity": 0.0,
     "refractionConstant": 1.059999942779541,

@@ -5,8 +5,8 @@
 #include "renderer/shader_library.h"
 #include "framework/systems/render_system.h"
 
-AnimatedMaterial::AnimatedMaterial(bool isAlpha, const String& imagePath, const String& normalImagePath, const String& specularImagePath, bool isNormal, Color color, bool isLit, float specularIntensity, float specularPower, float reflectivity, float refractionConstant, float refractivity, bool affectedBySky)
-    : BasicMaterial(isAlpha, imagePath, normalImagePath, specularImagePath, isNormal, color, isLit, specularIntensity, specularPower, reflectivity, refractionConstant, refractivity, affectedBySky)
+AnimatedMaterial::AnimatedMaterial(bool isAlpha, const String& imagePath, const String& normalImagePath, const String& specularImagePath, const String& lightmapPath, bool isNormal, Color color, bool isLit, float specularIntensity, float specularPower, float reflectivity, float refractionConstant, float refractivity, bool affectedBySky)
+    : BasicMaterial(isAlpha, imagePath, normalImagePath, specularImagePath, lightmapPath, isNormal, color, isLit, specularIntensity, specularPower, reflectivity, refractionConstant, refractivity, affectedBySky)
     , m_AnimationShader(ShaderLibrary::GetAnimationShader())
 {
 	m_Shader = ShaderLibrary::GetAnimationShader();
@@ -16,7 +16,7 @@ AnimatedMaterial::AnimatedMaterial(bool isAlpha, const String& imagePath, const 
 
 Material* AnimatedMaterial::CreateDefault()
 {
-	return new AnimatedMaterial(false, "rootex/assets/white.png", "", "rootex/assets/white.png", false, Color(0.5f, 0.5f, 0.5f, 1.0f), true, 0.5f, 30.0f, 0.1f, 0.8f, 0.1f, true);
+	return new AnimatedMaterial(false, "rootex/assets/white.png", "", "rootex/assets/white.png", "rootex/assets/white.png", false, Color(0.5f, 0.5f, 0.5f, 1.0f), true, 0.5f, 30.0f, 0.1f, 0.8f, 0.1f, true);
 }
 
 Material* AnimatedMaterial::Create(const JSON::json& materialData)
@@ -76,7 +76,12 @@ Material* AnimatedMaterial::Create(const JSON::json& materialData)
 	{
 		specularImageFile = materialData["specularImageFile"];
 	}
-	return new AnimatedMaterial(isAlpha, (String)materialData["imageFile"], normalImageFile, specularImageFile, isNormal, Color((float)materialData["color"]["r"], (float)materialData["color"]["g"], (float)materialData["color"]["b"], (float)materialData["color"]["a"]), isLit, specularIntensity, specularPower, reflectivity, refractionConstant, refractivity, affectedBySky);
+	String lightmapImageFile = "rootex/assets/white.png";
+	if (materialData.find("lightmapImageFile") != materialData.end())
+	{
+		lightmapImageFile = materialData["lightmapImageFile"];
+	}
+	return new AnimatedMaterial(isAlpha, (String)materialData["imageFile"], normalImageFile, specularImageFile, lightmapImageFile, isNormal, Color((float)materialData["color"]["r"], (float)materialData["color"]["g"], (float)materialData["color"]["b"], (float)materialData["color"]["a"]), isLit, specularIntensity, specularPower, reflectivity, refractionConstant, refractivity, affectedBySky);
 }
 
 void AnimatedMaterial::setVSConstantBuffer(const VSAnimationConstantBuffer& constantBuffer)
@@ -92,6 +97,7 @@ void AnimatedMaterial::bind()
 		m_AnimationShader->set(m_NormalImageFile->getTexture().get(), NORMAL_PS_CPP); 
 	}
 	m_AnimationShader->set(m_SpecularImageFile->getTexture().get(), SPECULAR_PS_CPP);
+	m_AnimationShader->set(m_LightmapImageFile->getTexture().get(), LIGHTMAP_PS_CPP);
 	Matrix currentModelMatrix = RenderSystem::GetSingleton()->getCurrentMatrix();
 	BasicMaterial::setVSConstantBuffer(VSDiffuseConstantBuffer(currentModelMatrix));
 

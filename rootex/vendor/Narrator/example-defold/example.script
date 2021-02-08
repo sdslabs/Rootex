@@ -1,0 +1,54 @@
+local narrator = require('narrator.narrator')
+
+function init(self)
+	-- Parse and save a book with io module
+	local book = narrator.parseFile('example-defold.book', { save = true })
+
+	-- Or load and parse the Ink file from the custom resources
+	-- local content = sys.load_resource('/example-defold/book.ink')
+	-- local book = narrator.parseBook(content)
+	
+	-- Or parse a book from the string with Ink content
+	-- local book = narrator.parseBook('Hello world!')
+	
+	-- Or load a book from the saved lua module
+	-- local book = require('example-defold.book')
+	
+	-- Init a story
+	local story = narrator.initStory(book)
+
+	-- Begin the story
+	story:begin()
+
+	print('--- Game started ---')
+
+	while story:canContinue() do
+		-- Get current paragraphs to output
+		local paragraphs = story:continue()
+
+		-- Output text to the player
+		for _, paragraph in ipairs(paragraphs) do
+			print(paragraph.text)
+		end
+
+		-- If there is no choice, it seems the game is over
+		if not story:canChoose() then
+			break
+		end
+		print('')
+
+		-- Get available choices and output them to the player
+		local choices = story:getChoices()
+		for i, choice in ipairs(choices) do
+			print(i .. ') ' .. choice.text)
+		end
+
+		-- Send an answer to the story to generate new paragraphs
+		local answer = 1
+		story:choose(answer)
+
+		print('')
+	end
+
+	print('--- Game over ---')
+end

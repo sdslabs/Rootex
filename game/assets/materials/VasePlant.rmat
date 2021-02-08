@@ -3,13 +3,14 @@
     "color": {
         "a": 1.0,
         "b": 0.0,
-        "g": 7.843137264251709,
-        "r": 1.9607843160629272
+        "g": 1.0,
+        "r": 1.0
     },
     "imageFile": "game/assets/sponza/textures/vase_plant.png",
     "isAlpha": true,
     "isLit": false,
     "isNormal": true,
+    "lightmapImageFile": "rootex/assets/white.png",
     "normalImageFile": "game/assets/sponza/textures/vase_plant_NRM.png",
     "reflectivity": 0.10000000149011612,
     "refractionConstant": 0.800000011920929,

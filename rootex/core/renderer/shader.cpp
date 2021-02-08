@@ -140,3 +140,37 @@ void AnimationShader::set(const Texture* texture, int slot)
 {
 	RenderingDevice::GetSingleton()->setInPixelShader(slot, 1, texture->getTextureResourceView());
 }
+
+FXAAShader::FXAAShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat)
+    : Shader(vertexPath, pixelPath, vertexBufferFormat)
+{
+	m_SamplerState = RenderingDevice::GetSingleton()->createSSAnisotropic();
+}
+
+void FXAAShader::bind() const
+{
+	Shader::bind();
+	RenderingDevice::GetSingleton()->setInPixelShader(m_SamplerState.Get());
+}
+
+void FXAAShader::set(ID3D11ShaderResourceView* srv)
+{
+	RenderingDevice::GetSingleton()->setInPixelShader(0, 1, srv);
+}
+
+LumaShader::LumaShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat)
+    : Shader(vertexPath, pixelPath, vertexBufferFormat)
+{
+	m_SamplerState = RenderingDevice::GetSingleton()->createSSAnisotropic();
+}
+
+void LumaShader::bind() const
+{
+	Shader::bind();
+	RenderingDevice::GetSingleton()->setInPixelShader(m_SamplerState.Get());
+}
+
+void LumaShader::set(ID3D11ShaderResourceView* srv)
+{
+	RenderingDevice::GetSingleton()->setInPixelShader(0, 1, srv);
+}

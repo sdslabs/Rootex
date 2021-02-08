@@ -26,6 +26,12 @@ Shader* ShaderLibrary::MakeShader(ShaderType shaderType, const LPCWSTR& vertexPa
 	case ShaderLibrary::ShaderType::Animation:
 		newShader = new AnimationShader(vertexPath, pixelPath, vertexBufferFormat);
 		break;
+	case ShaderLibrary::ShaderType::FXAA:
+		newShader = new FXAAShader(vertexPath, pixelPath, vertexBufferFormat);
+		break;
+	case ShaderLibrary::ShaderType::Luma:
+		newShader = new LumaShader(vertexPath, pixelPath, vertexBufferFormat);
+		break;
 	default:
 		WARN("Unknown shader type found");
 		break;
@@ -83,6 +89,18 @@ void ShaderLibrary::MakeShaders()
 		animationFormat.push(VertexBufferElement::Type::FloatFloatFloatFloat, "BONEWEIGHTS", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
 		MakeShader(ShaderType::Animation, L"rootex/assets/shaders/animation_vertex_shader.cso", L"rootex/assets/shaders/basic_pixel_shader.cso", animationFormat);
 	}
+	{
+		BufferFormat fxaaFormat;
+		fxaaFormat.push(VertexBufferElement::Type::FloatFloatFloat, "POSITION", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
+		fxaaFormat.push(VertexBufferElement::Type::FloatFloat, "TEXCOORD", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
+		MakeShader(ShaderType::FXAA, L"rootex/assets/shaders/fxaa_vertex_shader.cso", L"rootex/assets/shaders/fxaa_pixel_shader.cso", fxaaFormat);
+	}
+	{
+		BufferFormat lumaFormat;
+		lumaFormat.push(VertexBufferElement::Type::FloatFloatFloat, "POSITION", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
+		lumaFormat.push(VertexBufferElement::Type::FloatFloat, "TEXCOORD", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
+		MakeShader(ShaderType::Luma, L"rootex/assets/shaders/luma_vertex_shader.cso", L"rootex/assets/shaders/luma_pixel_shader.cso", lumaFormat);
+	}
 }
 
 void ShaderLibrary::DestroyShaders()
@@ -108,4 +126,14 @@ SkyShader* ShaderLibrary::GetSkyShader()
 AnimationShader* ShaderLibrary::GetAnimationShader()
 {
 	return reinterpret_cast<AnimationShader*>(s_Shaders[ShaderType::Animation].get());
+}
+
+FXAAShader* ShaderLibrary::GetFXAAShader()
+{
+	return reinterpret_cast<FXAAShader*>(s_Shaders[ShaderType::FXAA].get());
+}
+
+LumaShader* ShaderLibrary::GetLumaShader()
+{
+	return reinterpret_cast<LumaShader*>(s_Shaders[ShaderType::Luma].get());
 }

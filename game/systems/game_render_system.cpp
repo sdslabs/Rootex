@@ -21,10 +21,10 @@ bool GameRenderSystem::initialize(const JSON::json& systemData)
 
 void GameRenderSystem::update(float deltaMilliseconds)
 {
-	RenderingDevice::GetSingleton()->unbindRTSRVs();
+	RenderingDevice::GetSingleton()->unbindSRVs();
 	RenderingDevice::GetSingleton()->setMainRT();
 
-	m_BasicPostProcess->SetSourceTexture(RenderingDevice::GetSingleton()->getOffScreenRTSRVResolved().Get());
+	m_BasicPostProcess->SetSourceTexture(RenderingDevice::GetSingleton()->getOffScreenSRV().Get());
 	m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Copy);
 	m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
 }
