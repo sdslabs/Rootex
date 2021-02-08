@@ -226,7 +226,6 @@ JSON::json CPUParticlesComponent::getJSON() const
 }
 
 #ifdef ROOTEX_EDITOR
-#include "imgui.h"
 #include "utility/imgui_helpers.h"
 void CPUParticlesComponent::draw()
 {
@@ -240,24 +239,17 @@ void CPUParticlesComponent::draw()
 	ImGui::SameLine();
 	ImGui::BeginGroup();
 	ImGui::Text("%s", m_ParticlesMaterial->getFileName().c_str());
-	if (ImGui::Button(ICON_ROOTEX_EXTERNAL_LINK "##Particles Material"))
+	if (ImGui::Button(ICON_ROOTEX_SEARCH "##Particles Material"))
 	{
 		EventManager::GetSingleton()->call("OpenModel", "EditorOpenFile", m_ParticlesMaterial->getFileName());
 	}
 	ImGui::SameLine();
 	if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Particles Material"))
 	{
-		igfd::ImGuiFileDialog::Instance()->OpenModal("Particles Material", "Choose Material", ".rmat", "game/assets/materials/");
-	}
-	ImGui::SameLine();
-	if (igfd::ImGuiFileDialog::Instance()->FileDialog("Particles Material"))
-	{
-		if (igfd::ImGuiFileDialog::Instance()->IsOk)
+		if (Optional<String> result = OS::SelectFile("Material(*.rmat)\0*.rmat\0", "game/assets/materials/"))
 		{
-			String filePathName = OS::GetRootRelativePath(igfd::ImGuiFileDialog::Instance()->GetFilePathName()).generic_string();
-			setMaterial(std::dynamic_pointer_cast<ParticlesMaterial>(MaterialLibrary::GetMaterial(filePathName)));
+			setMaterial(std::dynamic_pointer_cast<ParticlesMaterial>(MaterialLibrary::GetMaterial(*result)));
 		}
-		igfd::ImGuiFileDialog::Instance()->CloseDialog("Particles Material");
 	}
 	ImGui::SameLine();
 	if (ImGui::Button((ICON_ROOTEX_REFRESH "##Particles Material")))

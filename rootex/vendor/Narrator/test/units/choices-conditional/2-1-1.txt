@@ -1,0 +1,14 @@
+
+1) Go to Paris
+>) Go to London
+
+Hello London!
+
+>) Go to Paris
+2) Go home
+
+Hello Paris!
+
+>) Go home
+
+Sweet home...

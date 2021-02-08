@@ -17,7 +17,6 @@
 
 #include "imgui_stdlib.h"
 #include "ImGuizmo.h"
-#include "ImGuiFileDialog.h"
 
 #define DOCUMENTATION_LINK String("https://rootex.readthedocs.io/en/latest/api/rootex.html")
 
@@ -41,76 +40,6 @@ bool EditorSystem::initialize(const JSON::json& systemData)
 	BIND_EVENT_MEMBER_FUNCTION("EditorCreateNewScene", EditorSystem::createNewScene);
 	BIND_EVENT_MEMBER_FUNCTION("EditorCreateNewMaterial", EditorSystem::createNewMaterial);
 
-	const JSON::json& general = systemData["general"];
-
-	m_Colors.accent = {
-		(float)general["colors"]["accent"]["r"],
-		(float)general["colors"]["accent"]["g"],
-		(float)general["colors"]["accent"]["b"],
-		(float)general["colors"]["accent"]["a"],
-	};
-	m_Colors.mediumAccent = {
-		(float)general["colors"]["mediumAccent"]["r"],
-		(float)general["colors"]["mediumAccent"]["g"],
-		(float)general["colors"]["mediumAccent"]["b"],
-		(float)general["colors"]["mediumAccent"]["a"],
-	};
-	m_Colors.heavyAccent = {
-		(float)general["colors"]["heavyAccent"]["r"],
-		(float)general["colors"]["heavyAccent"]["g"],
-		(float)general["colors"]["heavyAccent"]["b"],
-		(float)general["colors"]["heavyAccent"]["a"],
-	};
-	m_Colors.background = {
-		(float)general["colors"]["background"]["r"],
-		(float)general["colors"]["background"]["g"],
-		(float)general["colors"]["background"]["b"],
-		(float)general["colors"]["background"]["a"],
-	};
-	m_Colors.itemBackground = {
-		(float)general["colors"]["itemBackground"]["r"],
-		(float)general["colors"]["itemBackground"]["g"],
-		(float)general["colors"]["itemBackground"]["b"],
-		(float)general["colors"]["itemBackground"]["a"],
-	};
-	m_Colors.inactive = {
-		(float)general["colors"]["inactive"]["r"],
-		(float)general["colors"]["inactive"]["g"],
-		(float)general["colors"]["inactive"]["b"],
-		(float)general["colors"]["inactive"]["a"],
-	};
-	m_Colors.success = {
-		(float)general["colors"]["success"]["r"],
-		(float)general["colors"]["success"]["g"],
-		(float)general["colors"]["success"]["b"],
-		(float)general["colors"]["success"]["a"],
-	};
-	m_Colors.failure = {
-		(float)general["colors"]["failure"]["r"],
-		(float)general["colors"]["failure"]["g"],
-		(float)general["colors"]["failure"]["b"],
-		(float)general["colors"]["failure"]["a"],
-	};
-	m_Colors.failAccent = {
-		(float)general["colors"]["failAccent"]["r"],
-		(float)general["colors"]["failAccent"]["g"],
-		(float)general["colors"]["failAccent"]["b"],
-		(float)general["colors"]["failAccent"]["a"],
-	};
-	m_Colors.warning = {
-		(float)general["colors"]["warning"]["r"],
-		(float)general["colors"]["warning"]["g"],
-		(float)general["colors"]["warning"]["b"],
-		(float)general["colors"]["warning"]["a"],
-	};
-	m_Colors.text = {
-		(float)general["colors"]["text"]["r"],
-		(float)general["colors"]["text"]["g"],
-		(float)general["colors"]["text"]["b"],
-		(float)general["colors"]["text"]["a"],
-	};
-	m_Colors.white = { 1.0f, 1.0f, 1.0f, 1.0f };
-
 	m_Scene.reset(new SceneDock());
 	m_Output.reset(new OutputDock());
 	m_Toolbar.reset(new ToolbarDock());
@@ -131,7 +60,7 @@ bool EditorSystem::initialize(const JSON::json& systemData)
 	ImFontConfig fontConfig;
 	fontConfig.PixelSnapH = true;
 	fontConfig.OversampleH = 1;
-	m_EditorFont = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/Lato-Regular.ttf", 18.0f, &fontConfig);
+	m_EditorFont = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/DroidSans/DroidSans.ttf", 18.0f, &fontConfig);
 	
 	static const ImWchar iconsRanges[] = { ICON_MIN_ROOTEX, ICON_MAX_ROOTEX, 0 };
 	ImFontConfig iconsConfig;
@@ -139,37 +68,84 @@ bool EditorSystem::initialize(const JSON::json& systemData)
 	iconsConfig.PixelSnapH = true;
 	io.Fonts->AddFontFromMemoryCompressedBase85TTF(FONT_ICON_BUFFER_NAME_ROOTEX, 18.0f, &iconsConfig, iconsRanges);
 	
-	m_EditorFontItalic = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/Lato-Italic.ttf", 18.0f, &fontConfig);
-	m_EditorFontBold = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/Lato-Bold.ttf", 18.0f, &fontConfig);
+	m_EditorFontItalic = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/Cousine/Cousine-Italic.ttf", 18.0f, &fontConfig);
+	m_EditorFontBold = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/DroidSans/DroidSans-Bold.ttf", 18.0f, &fontConfig);
+	m_EditorFontMonospace = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/Cousine/Cousine-Regular.ttf", 18.0f, &fontConfig);
 	
 	ImGui_ImplWin32_Init(Application::GetSingleton()->getWindow()->getWindowHandle());
 	ImGui_ImplDX11_Init(RenderingDevice::GetSingleton()->getDevice(), RenderingDevice::GetSingleton()->getContext());
 	ImGui::StyleColorsDark();
 
-	for (auto& extension : Split(SupportedFiles.at(ResourceFile::Type::Model), ','))
 	{
-		igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(
-		    extension, { general["colors"]["files"]["model"]["r"], general["colors"]["files"]["model"]["g"], general["colors"]["files"]["model"]["b"], general["colors"]["files"]["model"]["a"] }, m_Icons.model);	
-	}
-	for (auto& extension : Split(SupportedFiles.at(ResourceFile::Type::Image), ','))
-	{
-		igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(
-		    extension, { general["colors"]["files"]["image"]["r"], general["colors"]["files"]["image"]["g"], general["colors"]["files"]["image"]["b"], general["colors"]["files"]["image"]["a"] }, m_Icons.image);
-	}
-	for (auto& extension : Split(SupportedFiles.at(ResourceFile::Type::Audio), ','))
-	{
-		igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(
-		    extension, { general["colors"]["files"]["audio"]["r"], general["colors"]["files"]["audio"]["g"], general["colors"]["files"]["audio"]["b"], general["colors"]["files"]["audio"]["a"] }, m_Icons.audio);
-	}
-	for (auto& extension : Split(SupportedFiles.at(ResourceFile::Type::Text), ','))
-	{
-		igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(
-		    extension, { general["colors"]["files"]["text"]["r"], general["colors"]["files"]["text"]["g"], general["colors"]["files"]["text"]["b"], general["colors"]["files"]["text"]["a"] }, m_Icons.text);
-	}
-	for (auto& extension : Split(SupportedFiles.at(ResourceFile::Type::Lua), ','))
-	{
-		igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(
-		    extension, { general["colors"]["files"]["lua"]["r"], general["colors"]["files"]["lua"]["g"], general["colors"]["files"]["lua"]["b"], general["colors"]["files"]["lua"]["a"] }, m_Icons.lua);
+		ImGuiStyle& style = ImGui::GetStyle();
+		style.WindowPadding = ImVec2(15, 15);
+		style.WindowRounding = 5.0f;
+		style.FramePadding = ImVec2(5, 5);
+		style.FrameRounding = 4.0f;
+		style.ItemSpacing = ImVec2(12, 6);
+		style.ItemInnerSpacing = ImVec2(8, 4);
+		style.IndentSpacing = 25.0f;
+		style.ScrollbarSize = 15.0f;
+		style.ScrollbarRounding = 9.0f;
+		style.GrabMinSize = 5.0f;
+		style.GrabRounding = 3.0f;
+	
+		ImVec4* colors = ImGui::GetStyle().Colors;
+		colors[ImGuiCol_Text] = ImVec4(0.80f, 0.80f, 0.83f, 1.00f);
+		colors[ImGuiCol_TextDisabled] = ImVec4(0.24f, 0.23f, 0.29f, 1.00f);
+		colors[ImGuiCol_WindowBg] = ImVec4(0.05f, 0.05f, 0.07f, 1.00f);
+		colors[ImGuiCol_ChildBg] = ImVec4(0.07f, 0.07f, 0.09f, 1.00f);
+		colors[ImGuiCol_PopupBg] = ImVec4(0.14f, 0.14f, 0.14f, 1.00f);
+		colors[ImGuiCol_Border] = ImVec4(0.23f, 0.23f, 0.23f, 1.00f);
+		colors[ImGuiCol_BorderShadow] = ImVec4(0.68f, 0.63f, 0.63f, 1.00f);
+		colors[ImGuiCol_FrameBg] = ImVec4(0.10f, 0.09f, 0.12f, 1.00f);
+		colors[ImGuiCol_FrameBgHovered] = ImVec4(0.24f, 0.23f, 0.29f, 1.00f);
+		colors[ImGuiCol_FrameBgActive] = ImVec4(0.56f, 0.56f, 0.58f, 1.00f);
+		colors[ImGuiCol_TitleBg] = ImVec4(0.10f, 0.09f, 0.12f, 1.00f);
+		colors[ImGuiCol_TitleBgActive] = ImVec4(0.07f, 0.07f, 0.09f, 1.00f);
+		colors[ImGuiCol_TitleBgCollapsed] = ImVec4(1.00f, 0.98f, 0.95f, 0.75f);
+		colors[ImGuiCol_MenuBarBg] = ImVec4(0.10f, 0.09f, 0.12f, 1.00f);
+		colors[ImGuiCol_ScrollbarBg] = ImVec4(0.10f, 0.09f, 0.12f, 1.00f);
+		colors[ImGuiCol_ScrollbarGrab] = ImVec4(0.80f, 0.80f, 0.83f, 0.31f);
+		colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.56f, 0.56f, 0.58f, 1.00f);
+		colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.06f, 0.05f, 0.07f, 1.00f);
+		colors[ImGuiCol_CheckMark] = ImVec4(0.20f, 0.68f, 0.42f, 0.83f);
+		colors[ImGuiCol_SliderGrab] = ImVec4(0.80f, 0.80f, 0.83f, 0.31f);
+		colors[ImGuiCol_SliderGrabActive] = ImVec4(0.06f, 0.05f, 0.07f, 1.00f);
+		colors[ImGuiCol_Button] = ImVec4(0.12f, 0.43f, 0.33f, 0.88f);
+		colors[ImGuiCol_ButtonHovered] = ImVec4(0.20f, 0.68f, 0.42f, 0.83f);
+		colors[ImGuiCol_ButtonActive] = ImVec4(0.56f, 0.56f, 0.58f, 1.00f);
+		colors[ImGuiCol_Header] = ImVec4(0.20f, 0.68f, 0.42f, 0.58f);
+		colors[ImGuiCol_HeaderHovered] = ImVec4(0.20f, 0.68f, 0.42f, 0.83f);
+		colors[ImGuiCol_HeaderActive] = ImVec4(0.06f, 0.05f, 0.07f, 1.00f);
+		colors[ImGuiCol_Separator] = ImVec4(0.43f, 0.43f, 0.50f, 0.50f);
+		colors[ImGuiCol_SeparatorHovered] = ImVec4(0.20f, 0.68f, 0.42f, 0.83f);
+		colors[ImGuiCol_SeparatorActive] = ImVec4(0.36f, 0.75f, 0.10f, 1.00f);
+		colors[ImGuiCol_ResizeGrip] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+		colors[ImGuiCol_ResizeGripHovered] = ImVec4(0.56f, 0.56f, 0.58f, 1.00f);
+		colors[ImGuiCol_ResizeGripActive] = ImVec4(0.06f, 0.05f, 0.07f, 1.00f);
+		colors[ImGuiCol_Tab] = ImVec4(0.18f, 0.57f, 0.58f, 0.86f);
+		colors[ImGuiCol_TabHovered] = ImVec4(0.20f, 0.68f, 0.42f, 0.83f);
+		colors[ImGuiCol_TabActive] = ImVec4(0.20f, 0.68f, 0.42f, 1.00f);
+		colors[ImGuiCol_TabUnfocused] = ImVec4(0.14f, 0.41f, 0.42f, 0.46f);
+		colors[ImGuiCol_TabUnfocusedActive] = ImVec4(0.14f, 0.41f, 0.42f, 1.00f);
+		colors[ImGuiCol_DockingPreview] = ImVec4(0.00f, 1.00f, 0.21f, 0.70f);
+		colors[ImGuiCol_DockingEmptyBg] = ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
+		colors[ImGuiCol_PlotLines] = ImVec4(0.40f, 0.39f, 0.38f, 0.63f);
+		colors[ImGuiCol_PlotLinesHovered] = ImVec4(0.25f, 1.00f, 0.00f, 1.00f);
+		colors[ImGuiCol_PlotHistogram] = ImVec4(0.40f, 0.39f, 0.38f, 0.63f);
+		colors[ImGuiCol_PlotHistogramHovered] = ImVec4(0.25f, 1.00f, 0.00f, 1.00f);
+		colors[ImGuiCol_TableHeaderBg] = ImVec4(0.19f, 0.19f, 0.20f, 1.00f);
+		colors[ImGuiCol_TableBorderStrong] = ImVec4(0.31f, 0.31f, 0.35f, 1.00f);
+		colors[ImGuiCol_TableBorderLight] = ImVec4(0.23f, 0.23f, 0.25f, 1.00f);
+		colors[ImGuiCol_TableRowBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+		colors[ImGuiCol_TableRowBgAlt] = ImVec4(1.00f, 1.00f, 1.00f, 0.06f);
+		colors[ImGuiCol_TextSelectedBg] = ImVec4(0.25f, 1.00f, 0.00f, 0.48f);
+		colors[ImGuiCol_DragDropTarget] = ImVec4(1.00f, 1.00f, 0.00f, 0.90f);
+		colors[ImGuiCol_NavHighlight] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
+		colors[ImGuiCol_NavWindowingHighlight] = ImVec4(1.00f, 1.00f, 1.00f, 0.70f);
+		colors[ImGuiCol_NavWindowingDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
+		colors[ImGuiCol_ModalWindowDimBg] = ImVec4(1.00f, 0.98f, 0.95f, 0.73f);
 	}
 
 	return true;
@@ -193,40 +169,12 @@ void EditorSystem::update(float deltaMilliseconds)
 	m_FileViewer->draw(deltaMilliseconds);
 	m_Output->draw(deltaMilliseconds);
 
-	ImGui::PopStyleColor(m_EditorStyleColorPushCount);
-	ImGui::PopStyleVar(m_EditorStyleVarPushCount);
-
 	popFont();
 
-	if (m_CollisionMode)
-	{
-		PhysicsSystem::GetSingleton()->debugDraw();
-	}
-	
 	RenderingDevice::GetSingleton()->setMainRT();
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 	RenderingDevice::GetSingleton()->setOffScreenRTVDSV();
-}
-
-void EditorSystem::pushRegularFont()
-{
-	ImGui::PushFont(m_EditorFont);
-}
-
-void EditorSystem::pushBoldFont()
-{
-	ImGui::PushFont(m_EditorFontBold);
-}
-
-void EditorSystem::pushItalicFont()
-{
-	ImGui::PushFont(m_EditorFontItalic);
-}
-
-void EditorSystem::popFont()
-{
-	ImGui::PopFont();
 }
 
 EditorSystem::EditorSystem()
@@ -257,9 +205,6 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 		ImGui::SetNextWindowViewport(viewport->ID);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 2.0f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-
-		pushEditorStyleColors();
-		pushEditorStyleVars();
 
 		windowFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
 		windowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
@@ -376,10 +321,6 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 					}
 					ImGui::EndMenu();
 				}
-				if (ImGui::MenuItem("Instantiate Scene", 0, false, (bool)SceneLoader::GetSingleton()->getCurrentScene()))
-				{
-					igfd::ImGuiFileDialog::Instance()->OpenModal("ChooseSceneFile", "Choose Scene File", ".json", "game/assets/");
-				}
 				if (ImGui::MenuItem("Save Scene", "", false, (bool)SceneLoader::GetSingleton()->getCurrentScene()))
 				{
 					EventManager::GetSingleton()->call("EditorSaveEvent", "EditorSaveAll", 0);
@@ -396,15 +337,6 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 
 				ImGui::EndMenu();
 			}
-			if (igfd::ImGuiFileDialog::Instance()->FileDialog("ChooseSceneFile"))
-			{
-				if (igfd::ImGuiFileDialog::Instance()->IsOk)
-				{
-					FilePath filePath = OS::GetRootRelativePath(igfd::ImGuiFileDialog::Instance()->GetFilePathName());
-					SceneLoader::GetSingleton()->getCurrentScene()->addChild(Scene::CreateFromFile(filePath.generic_string()));
-				}
-				igfd::ImGuiFileDialog::Instance()->CloseDialog("ChooseSceneFile");
-			}
 			if (ImGui::BeginMenu("Assets"))
 			{
 				if (ImGui::MenuItem("Build Fonts"))
@@ -415,17 +347,30 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 				}
 				if (ImGui::BeginMenu("Resources"))
 				{
+					int id = 0;
 					for (auto& [type, files] : ResourceLoader::GetResources())
 					{
 						for (auto& file : files)
 						{
+							ImGui::PushID(id);
+							if (file->isDirty())
+							{
+								if (ImGui::Button(ICON_ROOTEX_REFRESH "##Refresh Asset"))
+								{
+									file->reimport();
+								}
+								ImGui::SameLine();
+							}
 							ImGui::MenuItem(file->getPath().generic_string().c_str());
+							ImGui::PopID();
+							id++;
 						}
 					}
 					ImGui::EndMenu();
 				}
 				ImGui::EndMenu();
 			}
+			static bool styleEditor = false;
 			if (ImGui::BeginMenu("View"))
 			{
 				if (ImGui::Checkbox("Wireframe Mode", &m_WireframeMode))
@@ -440,8 +385,8 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 					}
 				}
 
-				ImGui::Checkbox("Collision Mode", &m_CollisionMode);
-				
+				ImGui::Checkbox("Style Editor", &styleEditor);
+
 				bool fullscreen = Extract<bool>(EventManager::GetSingleton()->returnCall("WindowGetScreenState", "WindowGetScreenState", 0));
 				if (ImGui::Checkbox("Full Screen", &fullscreen))
 				{
@@ -451,8 +396,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 				{
 					ImGui::Checkbox("Toolbar", &m_Toolbar->getSettings().m_IsActive);
 					ImGui::Checkbox("Output", &m_Output->getSettings().m_IsActive);
-					ImGui::Checkbox("Hierarchy", &m_Scene->getSettings().m_IsActive);
-					ImGui::Checkbox("Entities", &m_Scene->getSettings().m_IsEntitiesDockActive);
+					ImGui::Checkbox("Scene", &m_Scene->getSettings().m_IsActive);
 					ImGui::Checkbox("Viewport", &m_Viewport->getSettings().m_IsActive);
 					ImGui::Checkbox("Inspector", &m_Inspector->getSettings().m_IsActive);
 					ImGui::EndMenu();
@@ -503,6 +447,13 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 					ImGui::EndMenu();
 				}
 				ImGui::EndMenu();
+			}
+
+			if (styleEditor)
+			{
+				ImGui::Begin("Style Editor");
+				ImGui::ShowStyleEditor();
+				ImGui::End();
 			}
 
 			if (m_MenuAction != "")
@@ -706,59 +657,6 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 	ImGui::End();
 }
 
-void EditorSystem::pushEditorStyleColors()
-{
-	// Every line in this function body should push a style color
-	static const int starting = __LINE__;
-	ImGui::PushStyleColor(ImGuiCol_DockingPreview, m_Colors.accent);
-	ImGui::PushStyleColor(ImGuiCol_DockingEmptyBg, m_Colors.background);
-	ImGui::PushStyleColor(ImGuiCol_Separator, m_Colors.heavyAccent);
-	ImGui::PushStyleColor(ImGuiCol_SeparatorActive, m_Colors.accent);
-	ImGui::PushStyleColor(ImGuiCol_SeparatorHovered, m_Colors.mediumAccent);
-	ImGui::PushStyleColor(ImGuiCol_FrameBg, m_Colors.itemBackground);
-	ImGui::PushStyleColor(ImGuiCol_FrameBgActive, m_Colors.mediumAccent);
-	ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, m_Colors.heavyAccent);
-	ImGui::PushStyleColor(ImGuiCol_TitleBg, m_Colors.heavyAccent);
-	ImGui::PushStyleColor(ImGuiCol_TitleBgActive, m_Colors.accent);
-	ImGui::PushStyleColor(ImGuiCol_TitleBgCollapsed, m_Colors.heavyAccent);
-	ImGui::PushStyleColor(ImGuiCol_MenuBarBg, m_Colors.heavyAccent);
-	ImGui::PushStyleColor(ImGuiCol_Header, m_Colors.heavyAccent);
-	ImGui::PushStyleColor(ImGuiCol_HeaderActive, m_Colors.success);
-	ImGui::PushStyleColor(ImGuiCol_HeaderHovered, m_Colors.accent);
-	ImGui::PushStyleColor(ImGuiCol_PopupBg, m_Colors.background);
-	ImGui::PushStyleColor(ImGuiCol_Tab, m_Colors.heavyAccent);
-	ImGui::PushStyleColor(ImGuiCol_TabActive, m_Colors.accent);
-	ImGui::PushStyleColor(ImGuiCol_TabHovered, m_Colors.accent);
-	ImGui::PushStyleColor(ImGuiCol_TabUnfocused, m_Colors.mediumAccent);
-	ImGui::PushStyleColor(ImGuiCol_TabUnfocusedActive, m_Colors.accent);
-	ImGui::PushStyleColor(ImGuiCol_Border, m_Colors.mediumAccent);
-	ImGui::PushStyleColor(ImGuiCol_BorderShadow, m_Colors.heavyAccent);
-	ImGui::PushStyleColor(ImGuiCol_Button, m_Colors.success);
-	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, m_Colors.accent);
-	ImGui::PushStyleColor(ImGuiCol_ButtonActive, m_Colors.success);
-	ImGui::PushStyleColor(ImGuiCol_CheckMark, m_Colors.accent);
-	ImGui::PushStyleColor(ImGuiCol_Text, m_Colors.text);
-	ImGui::PushStyleColor(ImGuiCol_TextSelectedBg, m_Colors.accent);
-	ImGui::PushStyleColor(ImGuiCol_TextDisabled, m_Colors.inactive);
-	ImGui::PushStyleColor(ImGuiCol_ResizeGrip, m_Colors.heavyAccent);
-	ImGui::PushStyleColor(ImGuiCol_ResizeGripActive, m_Colors.accent);
-	ImGui::PushStyleColor(ImGuiCol_ResizeGripHovered, m_Colors.mediumAccent);
-	ImGui::PushStyleColor(ImGuiCol_ScrollbarGrab, m_Colors.heavyAccent);
-	ImGui::PushStyleColor(ImGuiCol_ScrollbarGrabActive, m_Colors.accent);
-	ImGui::PushStyleColor(ImGuiCol_ScrollbarGrabHovered, m_Colors.mediumAccent);
-	ImGui::PushStyleColor(ImGuiCol_SliderGrab, m_Colors.inactive);
-	ImGui::PushStyleColor(ImGuiCol_SliderGrabActive, m_Colors.accent);
-	static const int ending = m_EditorStyleColorPushCount = __LINE__ - starting - 1;
-}
-
-void EditorSystem::pushEditorStyleVars()
-{
-	// Every line in this function body should push a style var
-	static const int starting = __LINE__;
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, { 0 });
-	static const int ending = m_EditorStyleVarPushCount = __LINE__ - starting - 1;
-}
-
 static HashMap<int, String> LuaTypeNames = {
 	{ LUA_TNONE, "none" }, 
 	{ LUA_TNIL, "lua_nil" }, 
@@ -801,9 +699,9 @@ void EditorSystem::showDocumentation(const String& name, const sol::table& table
 					}
 
 					pushItalicFont();
-					ImGui::TextColored(getColors().success, "%s", tag.c_str());
+					ImGui::TextColored(getSuccessColor(), "%s", tag.c_str());
 					ImGui::SameLine();
-					ImGui::TextColored(getColors().warning, "%s", prefix.c_str());
+					ImGui::TextColored(getWarningColor(), "%s", prefix.c_str());
 					popFont();
 
 					ImGui::SameLine();
@@ -896,3 +794,8 @@ void EditorSystem::draw()
 	}
 }
 #endif // ROOTEX_EDITOR
+
+ImColor ColorToImColor(Color& c)
+{
+	return ImColor(c.x, c.y, c.z, c.w);
+}
