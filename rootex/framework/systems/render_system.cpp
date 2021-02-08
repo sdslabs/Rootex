@@ -1,11 +1,13 @@
 #include "render_system.h"
 
 #include "components/visual/fog_component.h"
+#include "components/visual/sky_component.h"
+#include "components/visual/grid_model_component.h"
+#include "components/visual/cpu_particles_component.h"
 #include "renderer/shaders/register_locations_vertex_shader.h"
 #include "renderer/shaders/register_locations_pixel_shader.h"
 #include "light_system.h"
 #include "renderer/material_library.h"
-#include "components/visual/sky_component.h"
 #include "application.h"
 #include "scene_loader.h"
 
@@ -102,35 +104,10 @@ void RenderSystem::calculateTransforms(Scene* scene)
 
 void RenderSystem::renderPassRender(float deltaMilliseconds, RenderPass renderPass)
 {
-	ModelComponent* mc = nullptr;
-	for (auto& component : s_Components[ModelComponent::s_ID])
-	{
-		mc = (ModelComponent*)component;
-		if (mc->getRenderPass() & (unsigned int)renderPass)
-		{
-			mc->preRender(deltaMilliseconds);
-			if (mc->isVisible())
-			{
-				mc->render();
-			}
-			mc->postRender();
-		}
-	}
-
-	AnimatedModelComponent* amc = nullptr;
-	for (auto& component : s_Components[AnimatedModelComponent::s_ID])
-	{
-		amc = (AnimatedModelComponent*)component;
-		if (amc->getRenderPass() & (unsigned int)renderPass)
-		{
-			amc->preRender(deltaMilliseconds);
-			if (amc->isVisible())
-			{
-				amc->render();
-			}
-			amc->postRender();
-		}
-	}
+	renderComponents<ModelComponent>(deltaMilliseconds, renderPass);
+	renderComponents<GridModelComponent>(deltaMilliseconds, renderPass);
+	renderComponents<CPUParticlesComponent>(deltaMilliseconds, renderPass);
+	renderComponents<AnimatedModelComponent>(deltaMilliseconds, renderPass);
 }
 
 void RenderSystem::update(float deltaMilliseconds)
@@ -144,14 +121,14 @@ void RenderSystem::update(float deltaMilliseconds)
 	float fogEnd = -1000.0f;
 	{
 		ZoneNamedN(fogCalculation, "Fog", true);
-		if (!s_Components[FogComponent::s_ID].empty())
+		if (!ECSFactory::GetComponents<FogComponent>().empty())
 		{
-			FogComponent* firstFog = (FogComponent*)s_Components[FogComponent::s_ID].front();
+			FogComponent* firstFog = (FogComponent*)ECSFactory::GetComponents<FogComponent>().front();
 			clearColor = firstFog->getColor();
 
-			for (auto& component : s_Components[FogComponent::s_ID])
+			for (auto& c : ECSFactory::GetComponents<FogComponent>())
 			{
-				FogComponent* fog = (FogComponent*)component;
+				FogComponent* fog = (FogComponent*)c;
 				clearColor = Color::Lerp(clearColor, fog->getColor(), 0.5f);
 				fogStart = fog->getNearDistance();
 				fogEnd = fog->getFarDistance();
@@ -202,9 +179,9 @@ void RenderSystem::update(float deltaMilliseconds)
 		RenderingDevice::RasterizerState currentRS = RenderingDevice::GetSingleton()->getRSType();
 		RenderingDevice::GetSingleton()->setRSType(RenderingDevice::RasterizerState::Sky);
 		RenderingDevice::GetSingleton()->setCurrentRS();
-		for (auto& component : s_Components[SkyComponent::s_ID])
+		for (auto& c : ECSFactory::GetComponents<SkyComponent>())
 		{
-			SkyComponent* sky = (SkyComponent*)component;
+			SkyComponent* sky = (SkyComponent*)c;
 			for (auto& [material, meshes] : sky->getSkySphere()->getMeshes())
 			{
 				m_Renderer->bind(sky->getSkyMaterial());
@@ -604,11 +581,12 @@ void RenderSystem::draw()
 	ImGui::NextColumn();
 	if (ImGui::BeginCombo("##Camera", RenderSystem::GetSingleton()->getCamera()->getOwner()->getFullName().c_str()))
 	{
-		for (auto&& camera : System::GetComponents(CameraComponent::s_ID))
+		for (auto& c : ECSFactory::GetComponents<CameraComponent>())
 		{
+			CameraComponent* camera = (CameraComponent*)c;
 			if (ImGui::MenuItem(camera->getOwner()->getFullName().c_str()))
 			{
-				RenderSystem::GetSingleton()->setCamera((CameraComponent*)camera);
+				RenderSystem::GetSingleton()->setCamera(camera);
 			}
 		}
 

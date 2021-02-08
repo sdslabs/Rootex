@@ -22,4 +22,6 @@ public:
 	void reimport() override;
 
 	const Ref<Texture> getTexture() { return m_ImageTexture; }
+	unsigned int getWidth() const { return m_ImageTexture->getWidth(); }
+	unsigned int getHeight() const { return m_ImageTexture->getHeight(); }
 };

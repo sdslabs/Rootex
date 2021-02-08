@@ -39,5 +39,7 @@ class LuaInterpreter
 public:
 	static LuaInterpreter* GetSingleton();
 
+	void runScripts();
+
 	sol::state& getLuaState() { return m_Lua; }
 };

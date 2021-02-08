@@ -130,10 +130,10 @@ void PhysicsSystem::debugDraw()
 	RenderSystem::GetSingleton()->getRenderer()->bind(m_DebugDrawer.getMaterial());
 
 	RenderSystem::GetSingleton()->enableLineRenderMode();
-	for (auto& component : s_Components[PhysicsColliderComponent::s_ID])
+	for (auto& c : ECSFactory::GetComponents<PhysicsColliderComponent>())
 	{
-		PhysicsColliderComponent* p = (PhysicsColliderComponent*)component;
-		p->render();
+		PhysicsColliderComponent* phy = (PhysicsColliderComponent*)c;
+		phy->render();
 	}
 	RenderSystem::GetSingleton()->resetRenderMode();
 }

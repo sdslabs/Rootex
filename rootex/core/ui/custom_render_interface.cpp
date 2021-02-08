@@ -80,6 +80,8 @@ bool CustomRenderInterface::LoadTexture(Rml::TextureHandle& textureHandle, Rml::
 	{
 		textureHandle = s_TextureCount;
 		m_Textures[textureHandle] = image->getTexture();
+		textureDimensions.x = image->getWidth();
+		textureDimensions.y = image->getHeight();
 		s_TextureCount++;
 
 		return true;

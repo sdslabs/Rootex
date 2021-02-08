@@ -20,7 +20,7 @@ bool Component::resolveDependencies()
 
 		if (!dependency->isValid())
 		{
-			ERR("Could not resolve dependency of " + getName() + " on entity " + m_Owner->getFullName());
+			WARN("Could not resolve dependency of " + getName() + " on entity " + m_Owner->getFullName());
 			return false;
 		}
 	}

@@ -1,0 +1,31 @@
+<rml>
+
+<head>
+<style>
+    body {
+        font: "Lato";
+        height: 100%;
+        width: 100%;
+        z-index: 1;
+    }
+</style>
+<script>
+t = require("game/assets/scripts/dialogue/dialogue")
+</script>
+
+</head>
+
+<body
+    onmousedown="t = DialogueNode:Proceed(t, document, DialogueInput.Next)"
+    onmousescroll="
+        choiceInput = DialogueInput.ChoiceUp
+        if event.parameters.wheel_delta > 0 then
+            choiceInput = DialogueInput.ChoiceUp
+        elseif event.parameters.wheel_delta < 0 then
+            choiceInput = DialogueInput.ChoiceDown
+        end
+        t = DialogueNode:Proceed(t, document, choiceInput)
+    "
+>
+</body>
+</rml>
