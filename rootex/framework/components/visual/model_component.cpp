@@ -80,8 +80,13 @@ void ModelComponent::render()
 	}
 }
 
-void ModelComponent::setVisualModel(ModelResourceFile* newModel, const HashMap<String, String>& materialOverrides)
+void ModelComponent::setModelResourceFile(ModelResourceFile* newModel, const HashMap<String, String>& materialOverrides)
 {
+	if (!newModel) 
+	{
+		WARN("Tried to set a null model resource file.");
+		return;
+	}
 	assignOverrides(newModel, materialOverrides);
 	assignBoundingBox();
 }
@@ -142,9 +147,7 @@ JSON::json ModelComponent::getJSON() const
 }
 
 #ifdef ROOTEX_EDITOR
-#include "imgui.h"
-#include "imgui_stdlib.h"
-#include "ImGuiFileDialog.h"
+#include "imgui_helpers.h"
 void ModelComponent::draw()
 {
 	ImGui::Checkbox("Visible", &m_IsVisible);
@@ -159,17 +162,10 @@ void ModelComponent::draw()
 	ImGui::SameLine();
 	if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Model File"))
 	{
-		igfd::ImGuiFileDialog::Instance()->OpenModal("ChooseModelComponentModel", "Choose Model File", SupportedFiles.at(ResourceFile::Type::Model), "game/assets/");
-	}
-
-	if (igfd::ImGuiFileDialog::Instance()->FileDialog("ChooseModelComponentModel"))
-	{
-		if (igfd::ImGuiFileDialog::Instance()->IsOk)
+		if (Optional<String> result = OS::SelectFile(SupportedFiles.at(ResourceFile::Type::Model), "game/assets/"))
 		{
-			FilePath filePath = OS::GetRootRelativePath(igfd::ImGuiFileDialog::Instance()->GetFilePathName());
-			setVisualModel(ResourceLoader::CreateModelResourceFile(filePath.generic_string()), {});
+			setModelResourceFile(ResourceLoader::CreateModelResourceFile(*result), {});
 		}
-		igfd::ImGuiFileDialog::Instance()->CloseDialog("ChooseModelComponentModel");
 	}
 
 	RenderableComponent::draw();

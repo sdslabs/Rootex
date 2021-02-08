@@ -1,0 +1,17 @@
+The guard frowns at you.
+
+1) Greet him
+>) 'Get out of my way.'
+
+'Get out of my way,' you tell the guard.
+'Hmm,' replies the guard.
+
+1) 'Hmm?'
+>) Shove him aside
+
+You shove him sharply. He stares in reply, and draws his sword!
+
+1) Throw rock at guard
+>) Throw sand at guard
+
+You hurl a handful of sand at the guard.

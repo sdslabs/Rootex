@@ -47,7 +47,7 @@ JSON::json StaticMeshColliderComponent::getJSON() const
 }
 
 #ifdef ROOTEX_EDITOR
-#include "ImGuiFileDialog.h"
+#include "imgui_helpers.h"
 void StaticMeshColliderComponent::draw()
 {
 	PhysicsColliderComponent::draw();
@@ -62,17 +62,10 @@ void StaticMeshColliderComponent::draw()
 	ImGui::SameLine();
 	if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Collision Model File"))
 	{
-		igfd::ImGuiFileDialog::Instance()->OpenModal("ChooseCollisionModelComponentModel", "Choose Collision Model File", SupportedFiles.at(ResourceFile::Type::CollisionModel), "game/assets/");
-	}
-
-	if (igfd::ImGuiFileDialog::Instance()->FileDialog("ChooseCollisionModelComponentModel"))
-	{
-		if (igfd::ImGuiFileDialog::Instance()->IsOk)
+		if (Optional<String> result = OS::SelectFile(SupportedFiles.at(ResourceFile::Type::CollisionModel), "game/assets/"))
 		{
-			FilePath filePath = OS::GetRootRelativePath(igfd::ImGuiFileDialog::Instance()->GetFilePathName());
-			setCollisionModel(ResourceLoader::CreateCollisionModelResourceFile(filePath.generic_string()));
+			setCollisionModel(ResourceLoader::CreateCollisionModelResourceFile(*result));
 		}
-		igfd::ImGuiFileDialog::Instance()->CloseDialog("ChooseCollisionModelComponentModel");
 	}
 }
 #endif // ROOTEX_EDITOR

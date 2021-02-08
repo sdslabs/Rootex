@@ -35,6 +35,7 @@ void Scene::RegisterAPI(sol::table& rootex)
 	scene["CreateEmpty"] = &CreateEmpty;
 	scene["CreateEmptyWithEntity"] = &CreateEmptyWithEntity;
 	scene["CreateFromFile"] = &CreateFromFile;
+	scene["addChild"] = &addChild;
 	scene["removeChild"] = &removeChild;
 	scene["snatchChild"] = &snatchChild;
 	scene["setName"] = &setName;

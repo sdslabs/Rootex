@@ -37,7 +37,7 @@
                         "affectingStaticLights": [],
                         "isVisible": true,
                         "materialOverrides": {
-                            "rootex/assets/materials/default.rmat": "game/assets/materials/bricks.rmat"
+                            "rootex/assets/materials/default.rmat": "game/assets/materials/yellow_textured.rmat"
                         },
                         "renderPass": 1,
                         "resFile": "rootex/assets/cube.obj"

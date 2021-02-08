@@ -62,7 +62,7 @@ void ToolbarDock::draw(float deltaMilliseconds)
 
 			ImGui::Columns(1);
 
-			if (ImGui::TreeNodeEx("Editor", ImGuiTreeNodeFlags_CollapsingHeader))
+			if (ImGui::TreeNodeEx("Editor"))
 			{
 				m_FPSRecords.erase(m_FPSRecords.begin());
 				m_FPSRecords.push_back(EditorApplication::GetSingleton()->getAppFrameTimer().getLastFPS());
@@ -75,23 +75,26 @@ void ToolbarDock::draw(float deltaMilliseconds)
 				averageFPS /= m_FPSRecords.size();
 
 				ImGui::PlotLines("FPS", m_FPSRecords.data(), m_FPSRecords.size(), 0, std::to_string(averageFPS).c_str(), 0, 200.0f, ImVec2(ImGui::GetContentRegionAvailWidth(), 100));
+				ImGui::TreePop();
 			}
 
-			if (ImGui::TreeNodeEx("Events", ImGuiTreeNodeFlags_CollapsingHeader))
+			if (ImGui::TreeNodeEx("Events"))
 			{
 				for (auto&& [eventType, eventHandlers] : EventManager::GetSingleton()->getRegisteredEvents())
 				{				
 					ImGui::Text((eventType + " (" + std::to_string(eventHandlers.size()) + ")").c_str());
 				}
+				ImGui::TreePop();
 			}
 
 			for (auto& systems : System::GetSystems()) 
 			{
 				for (auto& system : systems)
 				{
-					if (ImGui::TreeNodeEx(system->getName().c_str(), ImGuiTreeNodeFlags_CollapsingHeader))
+					if (ImGui::TreeNodeEx(system->getName().c_str()))
 					{
 						system->draw();
+						ImGui::TreePop();
 					}
 				}
 			}
