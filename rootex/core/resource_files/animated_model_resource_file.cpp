@@ -112,6 +112,11 @@ void AnimatedModelResourceFile::reimport()
 		ERR("Assimp: " + animatedModelLoader.GetErrorString());
 		return;
 	}
+	if (scene->mNumAnimations == 0)
+	{
+		ERR("No animations found in file: " + getPath().generic_string());
+		return;
+	}
 
 	unsigned int boneCount = 0;
 	m_Meshes.clear();

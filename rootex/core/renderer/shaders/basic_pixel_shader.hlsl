@@ -7,6 +7,7 @@ Texture2D ShaderTexture : register(DIFFUSE_PS_HLSL);
 TextureCube SkyTexture : register(SKY_PS_HLSL);
 Texture2D NormalTexture : register(NORMAL_PS_HLSL);
 Texture2D SpecularTexture : register(SPECULAR_PS_HLSL);
+Texture2D LightmapTexture : register(LIGHTMAP_PS_HLSL);
 
 SamplerState SampleType;
 
@@ -73,7 +74,7 @@ float4 main(PixelInputType input) : SV_TARGET
     
     finalColor.rgb = GetReflectionFromSky(finalColor, toEye, input.normal, SkyTexture, SampleType, material.reflectivity, material.affectedBySky);
     finalColor.rgb = GetRefractionFromSky(finalColor, input.normal, input.worldPosition, cameraPos, SkyTexture, SampleType, material.refractionConstant, material.refractivity, material.affectedBySky);
-    
+    finalColor = finalColor * LightmapTexture.Sample(SampleType, input.tex);
     finalColor.rgb = (lerp(fogColor, finalColor, input.fogFactor)).rgb;
 
     return finalColor;

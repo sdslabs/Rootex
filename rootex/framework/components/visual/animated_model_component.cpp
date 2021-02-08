@@ -120,6 +120,11 @@ void AnimatedModelComponent::assignOverrides(AnimatedModelResourceFile* file, co
 
 void AnimatedModelComponent::setAnimatedResourceFile(AnimatedModelResourceFile* resFile, const HashMap<String, String>& materialOverrides)
 {
+	if (resFile->getAnimationNames().size() == 0)
+	{
+		WARN("No animations found in animation resource file");
+		return;
+	}
 	assignOverrides(resFile, materialOverrides);
 	assignBoundingBox();
 	m_FinalTransforms.resize(m_AnimatedModelResourceFile->getBoneCount());
