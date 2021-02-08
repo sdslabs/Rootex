@@ -10,7 +10,7 @@ void ImageViewer::draw(float deltaMilliseconds)
 	drawFileInfo();
 	if (m_ImageResourceFile->isDirty())
 	{
-		ImGui::TextColored(EditorSystem::GetSingleton()->getColors().warning, "File may be changed on disk");
+		ImGui::TextColored(EditorSystem::GetSingleton()->getWarningColor(), "File may be changed on disk");
 		ImGui::SameLine();
 		if (ImGui::Button("Reload"))
 		{
@@ -20,7 +20,7 @@ void ImageViewer::draw(float deltaMilliseconds)
 	ImGui::Separator();
 	ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
 	ImGui::SliderFloat("##Zoom", &m_Zoom , m_MinZoom, m_MaxZoom, "Zoom %.3fx");
-	ImGui::Image(m_ImageResourceFile->getTexture()->getTextureResourceView(), { m_Zoom * (float)m_ImageResourceFile->getTexture()->getWidth(), m_Zoom * (float)m_ImageResourceFile->getTexture()->getHeight() }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, EditorSystem::GetSingleton()->getColors().accent);
+	ImGui::Image(m_ImageResourceFile->getTexture()->getTextureResourceView(), { m_Zoom * (float)m_ImageResourceFile->getTexture()->getWidth(), m_Zoom * (float)m_ImageResourceFile->getTexture()->getHeight() }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f, 1.0f });
 }
 
 void ImageViewer::drawFileInfo()

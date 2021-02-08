@@ -78,18 +78,10 @@ void MusicComponent::draw()
 	ImGui::SameLine();
 	if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Music"))
 	{
-		igfd::ImGuiFileDialog::Instance()->OpenModal("Music", "Choose Music", SupportedFiles.at(ResourceFile::Type::Audio), "game/assets/");
-	}
-
-	if (igfd::ImGuiFileDialog::Instance()->FileDialog("Music"))
-	{
-		if (igfd::ImGuiFileDialog::Instance()->IsOk)
+		if (Optional<String> result = OS::SelectFile(SupportedFiles.at(ResourceFile::Type::Audio), "game/assets/"))
 		{
-			String filePathName = OS::GetRootRelativePath(igfd::ImGuiFileDialog::Instance()->GetFilePathName()).generic_string();
-			setAudioFile(ResourceLoader::CreateAudioResourceFile(filePathName));
+			setAudioFile(ResourceLoader::CreateAudioResourceFile(*result));
 		}
-
-		igfd::ImGuiFileDialog::Instance()->CloseDialog("Music");
 	}
 
 	AudioComponent::draw();

@@ -34,7 +34,7 @@ public:
 	virtual bool preRender(float deltaMilliseconds) override;
 	virtual void render() override;
 
-	void setVisualModel(ModelResourceFile* newModel, const HashMap<String, String>& materialOverrides);
+	void setModelResourceFile(ModelResourceFile* newModel, const HashMap<String, String>& materialOverrides);
 
 	const Vector<Pair<Ref<Material>, Vector<Mesh>>>& getMeshes() const { return m_ModelResourceFile->getMeshes(); }
 	ModelResourceFile* getModelResourceFile() const { return m_ModelResourceFile; }

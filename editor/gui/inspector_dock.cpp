@@ -5,9 +5,9 @@
 #include "framework/component.h"
 #include "script/script.h"
 #include "editor/editor_system.h"
+#include "utility/imgui_helpers.h"
 
 #include "imgui.h"
-#include "ImGuiFileDialog.h"
 #include "imgui_stdlib.h"
 
 InspectorDock* InspectorDock::s_Singleton = nullptr;
@@ -175,36 +175,21 @@ void InspectorDock::draw(float deltaMilliseconds)
 
 				if (ImGui::Button("Add Child Scene From File"))
 				{
-					igfd::ImGuiFileDialog::Instance()->OpenModal("ChooseChildSceneFile", "Choose Scene File", ".json", "game/assets/");
-				}
-				
+					if (Optional<String> result = OS::SelectFile("Scene(*.scene.json)\0*.scene.json\0", "game/assets/scenes/"))
+					{
+						m_ActionScene->addChild(Scene::CreateFromFile(*result));
+					}
+				}				
 				ImGui::SameLine();
-
 				if (ImGui::Button("Save Scene to File"))
 				{
-					igfd::ImGuiFileDialog::Instance()->OpenModal("Save Scene", "Save Scene to File", 0, ".");
-				}
-				if (igfd::ImGuiFileDialog::Instance()->FileDialog("Save Scene"))
-				{
-					if (igfd::ImGuiFileDialog::Instance()->IsOk)
+					if (Optional<String> result = OS::SaveSelectFile("Scene(*.scene.json)\0*.scene.json\0", "game/assets/scenes/"))
 					{
-						String filePath = OS::GetRootRelativePath(igfd::ImGuiFileDialog::Instance()->GetCurrentPath()).generic_string() + m_OpenedScene->getFullName() + ".scene.json";
-						if (!SceneLoader::GetSingleton()->saveSceneAtFile(m_ActionScene, filePath))
+						if (!SceneLoader::GetSingleton()->saveSceneAtFile(m_ActionScene, *result))
 						{
-							WARN("Could not save selected scene to file: " + filePath);
+							WARN("Could not save selected scene to file: " + *result);
 						}
 					}
-					igfd::ImGuiFileDialog::Instance()->CloseDialog("Save Scene");
-				}
-
-				if (igfd::ImGuiFileDialog::Instance()->FileDialog("ChooseChildSceneFile"))
-				{
-					if (igfd::ImGuiFileDialog::Instance()->IsOk)
-					{
-						FilePath filePath = OS::GetRootRelativePath(igfd::ImGuiFileDialog::Instance()->GetFilePathName());
-						m_ActionScene->addChild(Scene::CreateFromFile(filePath.generic_string()));
-					}
-					igfd::ImGuiFileDialog::Instance()->CloseDialog("ChooseChildSceneFile");
 				}
 
 				ImGui::Separator();
@@ -216,7 +201,7 @@ void InspectorDock::draw(float deltaMilliseconds)
 					EditorSystem::GetSingleton()->pushBoldFont();
 					if (ImGui::BeginTabBar("Components", ImGuiTabBarFlags_AutoSelectNewTabs | ImGuiTabBarFlags_NoCloseWithMiddleMouseButton | ImGuiTabBarFlags_FittingPolicyMask_))
 					{
-						ImGui::PushStyleColor(ImGuiCol_Text, EditorSystem::GetSingleton()->getColors().white);
+						ImGui::PushStyleColor(ImGuiCol_Text, (const ImVec4&)EditorSystem::GetSingleton()->getNormalColor());
 						for (auto& component : entity->getAllComponents())
 						{
 							if (ImGui::BeginTabItem(component.second->getName(), nullptr, ImGuiTabItemFlags_NoCloseWithMiddleMouseButton))
