@@ -90,8 +90,17 @@ Application::Application(const String& settingsFile)
 	auto&& postInitialize = m_ApplicationSettings->find("postInitialize");
 	if (postInitialize != m_ApplicationSettings->end())
 	{
-		LuaInterpreter::GetSingleton()->getLuaState().script(ResourceLoader::CreateLuaTextResourceFile(*postInitialize)->getString());
+		try
+		{
+			LuaInterpreter::GetSingleton()->getLuaState().script_file(*postInitialize);
+		}
+		catch (std::exception e)
+		{
+			ERR("Error during post initialization: " + e.what());
+		}
 	}
+
+	LuaInterpreter::GetSingleton()->runScripts();
 
 	m_Window->show();	
 }
