@@ -99,8 +99,6 @@ Application::Application(const String& settingsFile)
 		}
 	}
 
-	LuaInterpreter::GetSingleton()->runScripts();
-
 	m_Window->show();	
 }
 

@@ -1,0 +1,23 @@
+Hello!
+False!
+True!
+
+>) Answer
+
+True!
+Text here.
+Badaboom!
+...again. I love you.
+And what about you?
+
+>) Choice
+
+Choice text x = 0 #success
+suc...
+success #success
+els...
+(notLabel) else
+zero
+one
+two
+lots

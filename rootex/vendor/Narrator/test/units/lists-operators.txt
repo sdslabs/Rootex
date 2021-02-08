@@ -1,0 +1,24 @@
+Cartwright == Cartwright
+Adams, Bernard == Adams, Bernard
+Empty == Empty
+Adams == Adams
+Adams, Eamonn == Adams, Eamonn
+Adams == Adams
+Adams, Eamonn, Denver == Adams, Denver, Eamonn
+Empty == Empty again!
+...
+2 doctors in surgery.
+First is Adams.
+Last is Cartwright.
+Random seed = 1
+A random doctor: Adams
+Working time! The surgery is open today.
+It's to late. Everyone has gone home.
+Dr Adams and Dr Bernard are having a loud argument in one corner.
+Dr Adams and Dr Bernard are having a hushed argument in one corner.
+At least Adams and Bernard aren't arguing.
+Dr Eamonn is polishing his glasses.
+Nope, Adams and Bernard are here.
+All the doctors (5): Adams, Bernard, Cartwright, Denver, Eamonn
+All the doctors again: Adams, Bernard, Cartwright, Denver, Eamonn
+Adams here!

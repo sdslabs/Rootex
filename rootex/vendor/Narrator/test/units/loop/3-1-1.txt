@@ -1,0 +1,23 @@
+
+1) 'Can I get a uniform from somewhere?'
+2) 'Tell me about the security system.'
+>) 'Are there dogs?'
+
+'Are there dogs?'
+'Hundreds,' the guard answers, with a toothy grin. 'Hungry devils, too.'
+
+>) 'Can I get a uniform from somewhere?'
+2) 'Tell me about the security system.'
+3) Enough talking
+
+'Can I get a uniform from somewhere?' you ask the cheerful guard.
+'Sure. In the locker.' He grins. 'Don't think it'll fit you, though.'
+
+>) 'Tell me about the security system.'
+2) Enough talking
+
+'Tell me about the security system.'
+'It's ancient,' the guard assures you. 'Old as coal.'
+He scratches his head.
+'Well, can't stand around talking all day,' he declares.
+You thank the guard, and move away.

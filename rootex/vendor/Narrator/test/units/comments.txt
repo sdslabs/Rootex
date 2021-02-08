@@ -1,0 +1,5 @@
+"What do you make of this?" she asked.
+"I couldn't possibly comment," I replied.
+Before comment ...
+... and after. Must be in one line, but right now it's known limitation.
+Text before TODO. TODO: This TODO will be printed.
