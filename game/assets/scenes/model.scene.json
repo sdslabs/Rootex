@@ -527,6 +527,70 @@
                 "preloads": [],
                 "startScheme": ""
             }
+        },
+        {
+            "ID": 22,
+            "children": [],
+            "entity": {
+                "Entity": {
+                    "script": null
+                },
+                "components": {
+                    "ModelComponent": {
+                        "affectingStaticLights": [
+                            17,
+                            18,
+                            19,
+                            20
+                        ],
+                        "isVisible": true,
+                        "materialOverrides": {
+                            "game/assets/materials/Material.001.rmat": "game/assets/materials/Material.001.rmat"
+                        },
+                        "renderPass": 1,
+                        "resFile": "game/assets/vase/Vase.dae"
+                    },
+                    "TransformComponent": {
+                        "boundingBox": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 0.12320456653833389,
+                                "z": 0.0
+                            },
+                            "extents": {
+                                "x": 0.06338757276535034,
+                                "y": 0.12247902899980545,
+                                "z": 0.06338757276535034
+                            }
+                        },
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "rotation": {
+                            "w": 1.0,
+                            "x": -0.0,
+                            "y": 0.0,
+                            "z": -0.0
+                        },
+                        "scale": {
+                            "x": 300.0000305175781,
+                            "y": 300.0000305175781,
+                            "z": 300.0000305175781
+                        }
+                    }
+                }
+            },
+            "file": "",
+            "name": "Vase",
+            "settings": {
+                "camera": 1,
+                "inputSchemes": null,
+                "listener": 1,
+                "preloads": [],
+                "startScheme": ""
+            }
         }
     ],
     "entity": {

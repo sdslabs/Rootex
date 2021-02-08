@@ -10,6 +10,7 @@
     "isAlpha": true,
     "isLit": false,
     "isNormal": true,
+    "lightmapImageFile": "rootex/assets/white.png",
     "normalImageFile": "game/assets/sponza/textures/sponza_thorn_ddn.png",
     "reflectivity": 0.10000000149011612,
     "refractionConstant": 0.800000011920929,
