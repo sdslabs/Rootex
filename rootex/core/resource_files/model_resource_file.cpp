@@ -203,6 +203,31 @@ void ModelResourceFile::reimport()
 					WARN("Embedded specular texture found in material: " + extractedMaterial->getFullName() + ". Embedded textures are unsupported.");
 				}
 			}
+
+			for (int i = 0; i < material->GetTextureCount(aiTextureType_LIGHTMAP); i++)
+			{
+				aiString lightmapStr;
+				material->GetTexture(aiTextureType_LIGHTMAP, i, &lightmapStr);
+				bool isEmbedded = *lightmapStr.C_Str() == '*';
+				if (isEmbedded)
+				{
+					String texturePath = lightmapStr.C_Str();
+					ImageResourceFile* image = ResourceLoader::CreateImageResourceFile(getPath().parent_path().generic_string() + "/" + texturePath);
+
+					if (image)
+					{
+						extractedMaterial->setLightmapTexture(image);
+					}
+					else
+					{
+						WARN("Could not set material lightmap texture: " + texturePath);
+					}
+				}
+				else
+				{
+					WARN("Embedded lightmaptexture found in material: " + extractedMaterial->getFullName() + ". Embedded textures are unsupported.");
+				}
+			}
 		}
 
 		Mesh extractedMesh;

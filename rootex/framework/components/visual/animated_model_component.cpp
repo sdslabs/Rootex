@@ -125,6 +125,11 @@ void AnimatedModelComponent::setAnimatedResourceFile(AnimatedModelResourceFile* 
 		WARN("Tried to set a null animated model resource file.");
 		return;
 	}
+	if (resFile->getAnimationNames().size() == 0)
+	{
+		WARN("No animations found in animation resource file");
+		return;
+	}
 	assignOverrides(resFile, materialOverrides);
 	assignBoundingBox();
 	m_FinalTransforms.resize(m_AnimatedModelResourceFile->getBoneCount());
