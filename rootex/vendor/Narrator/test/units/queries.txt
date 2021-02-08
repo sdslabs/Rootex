@@ -1,0 +1,13 @@
+SEED = 2
+RANDOM(1, 100) = 81
+POW(2,4) = 16
+INT(1.45) = 1
+FLOOR(2.4) = 2
+FLOAT(3) = 3
+
+>) Choice 1
+
+True!
+False!
+True!
+False!

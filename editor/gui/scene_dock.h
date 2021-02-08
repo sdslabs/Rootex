@@ -8,7 +8,6 @@ public:
 	struct SceneDockSettings
 	{
 		bool m_IsActive = true;
-		bool m_IsEntitiesDockActive = true;
 	};
 
 private:
