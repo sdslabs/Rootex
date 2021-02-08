@@ -1,5 +1,6 @@
 #include "animation_system.h"
 
+#include "framework/ecs_factory.h"
 #include "components/visual/animated_model_component.h"
 
 AnimationSystem* AnimationSystem::GetSingleton()
@@ -15,24 +16,19 @@ AnimationSystem::AnimationSystem()
 
 void AnimationSystem::update(float deltaMilliseconds)
 {
-	AnimatedModelComponent* animationComponent = nullptr;
-	for (auto& component : s_Components[AnimatedModelComponent::s_ID])
+	for (auto& component : ECSFactory::GetComponents<AnimatedModelComponent>())
 	{
-		animationComponent = dynamic_cast<AnimatedModelComponent*>(component);
-
-		if (animationComponent)
+		AnimatedModelComponent* amc = (AnimatedModelComponent*)component;
+		String animationName = amc->getCurrentAnimationName();
+		if (amc->m_IsPlaying)
 		{
-			String animationName = animationComponent->getCurrentAnimationName();
-			if (animationComponent->m_IsPlaying)
-			{
-				animationComponent->m_CurrentTimePosition += deltaMilliseconds * MS_TO_S;
-			}
-
-			if (animationComponent->m_CurrentTimePosition > animationComponent->m_AnimatedModelResourceFile->getAnimationEndTime(animationName))
-			{
-				animationComponent->m_CurrentTimePosition = 0.0f;
-			}
-			animationComponent->m_AnimatedModelResourceFile->getFinalTransforms(animationName, animationComponent->m_CurrentTimePosition, animationComponent->m_FinalTransforms);
+			amc->m_CurrentTimePosition += deltaMilliseconds * MS_TO_S;
 		}
+
+		if (amc->m_CurrentTimePosition > amc->m_AnimatedModelResourceFile->getAnimationEndTime(animationName))
+		{
+			amc->m_CurrentTimePosition = 0.0f;
+		}
+		amc->m_AnimatedModelResourceFile->getFinalTransforms(animationName, amc->m_CurrentTimePosition, amc->m_FinalTransforms);
 	}
 }

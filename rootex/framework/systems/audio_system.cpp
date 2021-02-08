@@ -3,7 +3,9 @@
 #include <chrono>
 #include <thread>
 
-#include "components/audio_component.h"
+#include "framework/ecs_factory.h"
+#include "components/music_component.h"
+#include "components/short_music_component.h"
 #include "core/audio/audio_source.h"
 #include "core/audio/static_audio_buffer.h"
 #include "core/audio/streaming_audio_buffer.h"
@@ -88,13 +90,20 @@ bool AudioSystem::initialize(const JSON::json& systemData)
 
 void AudioSystem::begin()
 {
-	AudioComponent* audioComponent = nullptr;
-	for (Component* component : s_Components[AudioComponent::s_ID])
+	for (auto& c : ECSFactory::GetComponents<MusicComponent>())
 	{
-		audioComponent = (AudioComponent*)component;
-		if (audioComponent->isPlayOnStart())
+		MusicComponent* mc = (MusicComponent*)c;
+		if (mc->isPlayOnStart())
 		{
-			audioComponent->getAudioSource()->play();
+			mc->getAudioSource()->play();
+		}
+	}
+	for (auto& c : ECSFactory::GetComponents<ShortMusicComponent>())
+	{
+		ShortMusicComponent* smc = (ShortMusicComponent*)c;
+		if (smc->isPlayOnStart())
+		{
+			smc->getAudioSource()->play();
 		}
 	}
 }
@@ -102,14 +111,19 @@ void AudioSystem::begin()
 void AudioSystem::update(float deltaMilliseconds)
 {
 	ZoneScoped;
-	AudioComponent* audioComponent = nullptr;
-	for (Component* component : s_Components[AudioComponent::s_ID])
-	{
-		audioComponent = (AudioComponent*)component;
-		audioComponent->getAudioSource()->queueNewBuffers();
-		audioComponent->update();
-	}
 	
+	for (auto& c : ECSFactory::GetComponents<MusicComponent>())
+	{
+		MusicComponent* mc = (MusicComponent*)c;
+		mc->getAudioSource()->queueNewBuffers();
+		mc->update();
+	}
+	for (auto& c : ECSFactory::GetComponents<ShortMusicComponent>())
+	{
+		ShortMusicComponent* smc = (ShortMusicComponent*)c;
+		smc->update();	
+	}
+
 	if (m_Listener)
 	{
 		const Vector3& listenerPosition = m_Listener->getPosition();
@@ -125,11 +139,15 @@ AudioSystem* AudioSystem::GetSingleton()
 
 void AudioSystem::end()
 {
-	AudioComponent* audioComponent = nullptr;
-	for (Component* component : s_Components[AudioComponent::s_ID])
+	for (auto& c : ECSFactory::GetComponents<MusicComponent>())
 	{
-		audioComponent = (AudioComponent*)component;
-		audioComponent->getAudioSource()->stop();
+		MusicComponent* mc = (MusicComponent*)c;
+		mc->getAudioSource()->stop();
+	}
+	for (auto& c : ECSFactory::GetComponents<ShortMusicComponent>())
+	{
+		ShortMusicComponent* smc = (ShortMusicComponent*)c;
+		smc->getAudioSource()->stop();
 	}
 }
 

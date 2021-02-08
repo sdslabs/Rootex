@@ -79,9 +79,10 @@ bool RenderableComponent::addAffectingStaticLight(SceneID ID)
 	}
 
 	int lightID = 0;
-	for (auto& component : System::GetComponents(StaticPointLightComponent::s_ID))
+	for (auto& component : ECSFactory::GetComponents<StaticPointLightComponent>())
 	{
-		if (light->getEntity()->getComponent<StaticPointLightComponent>() == component)
+		StaticPointLightComponent* staticLight = (StaticPointLightComponent*)component;
+		if (light->getEntity()->getComponent<StaticPointLightComponent>() == staticLight)
 		{
 			m_AffectingStaticLightIDs.push_back(ID);
 			m_AffectingStaticLights.push_back(lightID);
@@ -183,11 +184,11 @@ void RenderableComponent::draw()
 		{
 			if (ImGui::BeginCombo(("Light " + std::to_string(slot)).c_str(), "None"))
 			{
-				for (auto& component : System::GetComponents(StaticPointLightComponent::s_ID))
+				for (auto& staticLight : ECSFactory::GetComponents<StaticPointLightComponent>())
 				{
-					if (ImGui::Selectable(component->getOwner()->getFullName().c_str()))
+					if (ImGui::Selectable(staticLight->getOwner()->getFullName().c_str()))
 					{
-						addAffectingStaticLight(component->getOwner()->getScene()->getID());
+						addAffectingStaticLight(staticLight->getOwner()->getScene()->getID());
 					}
 				}
 				ImGui::EndCombo();

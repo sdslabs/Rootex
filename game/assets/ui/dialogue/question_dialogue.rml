@@ -1,0 +1,21 @@
+<rml>
+
+<head>
+<link type="text/template" href="dialogue_template.rml" />
+<style>
+    body {
+        font: "Lato";
+    }
+</style>
+</head>
+
+<body template="dialogue_template">
+    <img id="dialogue_portrait" />
+    <div id="dialogue_question_box">
+        <div id="dialogue_question">Question Dialogue</div>
+        <br />
+        <div id="dialogue_answer">Question Answer</div>
+    </div>
+</body>
+
+</rml>
