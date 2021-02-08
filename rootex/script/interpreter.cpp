@@ -18,6 +18,7 @@
 #include "core/resource_files/image_cube_resource_file.h"
 #include "core/resource_files/lua_text_resource_file.h"
 #include "core/resource_files/model_resource_file.h"
+#include "core/resource_files/collision_model_resource_file.h"
 #include "core/resource_files/text_resource_file.h"
 #include "event_manager.h"
 
@@ -49,11 +50,6 @@ LuaInterpreter::LuaInterpreter()
 	m_Lua.open_libraries(sol::lib::package);
 	m_Lua.open_libraries(sol::lib::debug);
 
-	sol::table dbg = m_Lua.require_file("dbg", "rootex/script/debugger.lua");
-	dbg["auto_where"] = 2;
-	
-	m_Lua.do_file("rootex/script/class.lua");
-
 	registerTypes();
 }
 
@@ -61,6 +57,19 @@ LuaInterpreter* LuaInterpreter::GetSingleton()
 {
 	static LuaInterpreter singleton;
 	return &singleton;
+}
+
+void LuaInterpreter::runScripts()
+{
+	static bool called = false;
+	if (called)
+	{
+		return;
+	}
+	called = true;
+
+	sol::table dbg = m_Lua.require_file("dbg", "rootex/script/scripts/debugger.lua");
+	dbg["auto_where"] = 2;
 }
 
 void LuaInterpreter::registerTypes()
@@ -136,6 +145,7 @@ void LuaInterpreter::registerTypes()
 	LuaTextResourceFile::RegisterAPI(rootex);
 	AudioResourceFile::RegisterAPI(rootex);
 	ModelResourceFile::RegisterAPI(rootex);
+	CollisionModelResourceFile::RegisterAPI(rootex);
 	ImageResourceFile::RegisterAPI(rootex);
 	ImageCubeResourceFile::RegisterAPI(rootex);
 	FontResourceFile::RegisterAPI(rootex);

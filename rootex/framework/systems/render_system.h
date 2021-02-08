@@ -1,15 +1,17 @@
 #pragma once
 
 #include "core/renderer/renderer.h"
-#include "framework/components/visual/camera_component.h"
-#include "framework/system.h"
+#include "core/renderer/render_pass.h"
 #include "main/window.h"
+#include "framework/ecs_factory.h"
+#include "framework/scene.h"
+#include "framework/system.h"
+#include "framework/components/visual/camera_component.h"
 #include "components/visual/model_component.h"
 #include "components/visual/animated_model_component.h"
-#include "renderer/render_pass.h"
-#include "framework/scene.h"
 
 #include "PostProcess.h"
+#include "ASSAO/ASSAO.h"
 
 #define LINE_INITIAL_RENDER_CACHE 1000
 
@@ -56,11 +58,16 @@ class RenderSystem : public System
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_BloomRTV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_BloomSRV;
 
+	ASSAO_Effect* m_ASSAO;
+
 	RenderSystem();
 	RenderSystem(RenderSystem&) = delete;
-	virtual ~RenderSystem() = default;
+	virtual ~RenderSystem();
 
 	void renderPassRender(float deltaMilliseconds, RenderPass renderPass);
+
+	template <class T>
+	void renderComponents(float deltaMilliseconds, RenderPass renderPass);
 
 	Variant onOpenedScene(const Event* event);
 
@@ -108,3 +115,21 @@ public:
 	void draw() override;
 #endif // ROOTEX_EDITOR
 };
+
+template <class T>
+inline void RenderSystem::renderComponents(float deltaMilliseconds, RenderPass renderPass)
+{
+	for (auto& c : ECSFactory::GetComponents<T>())
+	{
+		T* tc = (T*)c;
+		if (tc->getRenderPass() & (unsigned int)renderPass)
+		{
+			tc->preRender(deltaMilliseconds);
+			if (tc->isVisible())
+			{
+				tc->render();
+			}
+			tc->postRender();
+		}
+	}
+}

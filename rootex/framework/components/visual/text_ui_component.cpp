@@ -43,7 +43,7 @@ void TextUIComponent::render()
 	static Vector3 scale;
 
 	RenderUISystem::GetSingleton()->getTopUIMatrix().Decompose(scale, rotation, position);
-	rotationAngle = Vector3((Vector3(0.0f, 0.0f, 1.0f) * rotation)).z;
+	rotationAngle = Vector3::Transform(Vector3(0.0f, 0.0f, 1.0f), rotation).z;
 
 	m_FontFile->getFont()->DrawString(
 	    RenderingDevice::GetSingleton()->getUIBatch().get(),

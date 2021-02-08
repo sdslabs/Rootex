@@ -1,6 +1,7 @@
 #include "entity.h"
 
 #include "event_manager.h"
+#include "framework/ecs_factory.h"
 #include "framework/component.h"
 #include "framework/system.h"
 #include "script/script.h"
@@ -112,7 +113,7 @@ void Entity::destroy()
 	for (auto& component : m_Components)
 	{
 		component.second->onRemove();
-		System::DeregisterComponent(component.second.get());
+		ECSFactory::DeregisterComponentInstance(component.second.get());
 		component.second.reset();
 	}
 	m_Components.clear();
@@ -138,7 +139,7 @@ bool Entity::removeComponent(ComponentID toRemoveComponentID, bool hardRemove)
 	}
 
 	toRemoveComponent->onRemove();
-	System::DeregisterComponent(toRemoveComponent);
+	ECSFactory::DeregisterComponentInstance(toRemoveComponent);
 	m_Components.erase(toRemoveComponent->getComponentID());
 
 	return true;

@@ -19,8 +19,7 @@ protected:
 
 public:
 	static void RegisterAPI(sol::table& rootex);
-	static const ComponentID s_ID = (ComponentID)ComponentIDs::RenderUIComponent;
-
+	
 	bool preRender();
 	virtual void render() = 0;
 	void postRender();
@@ -28,7 +27,5 @@ public:
 	void setIsVisible(bool enabled) { m_IsVisible = enabled; }
 	bool isVisible() const { return m_IsVisible; }
 
-	virtual ComponentID getComponentID() const override { return s_ID; }
-	virtual const char* getName() const override { return "RenderUIComponent"; };
 	virtual JSON::json getJSON() const override;
 };

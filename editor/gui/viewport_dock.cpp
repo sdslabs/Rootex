@@ -194,8 +194,22 @@ void ViewportDock::draw(float deltaMilliseconds)
 				}
 			}
 			
+			static Entity* selectEntity = nullptr;
 			if (ImGui::IsWindowHovered())
 			{
+				if (InputManager::GetSingleton()->getKeyboard()->GetBoolPrevious(KeyboardButton::KeyQ))
+				{
+					gizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
+				}
+				if (InputManager::GetSingleton()->getKeyboard()->GetBoolPrevious(KeyboardButton::KeyW))
+				{
+					gizmoOperation = ImGuizmo::OPERATION::ROTATE;
+				}
+				if (InputManager::GetSingleton()->getKeyboard()->GetBoolPrevious(KeyboardButton::KeyE))
+				{
+					gizmoOperation = ImGuizmo::OPERATION::SCALE;
+				}
+
 				Vector3 mouseFromWindow;
 				{
 					ImVec2 mouseFromWindowImGui;
@@ -232,9 +246,9 @@ void ViewportDock::draw(float deltaMilliseconds)
 				direction.Normalize();
 
 				Ray ray(origin, direction);
-				Entity* selectEntity = nullptr;
 				if (Scene* currentScene = SceneLoader::GetSingleton()->getCurrentScene())
 				{
+					selectEntity = nullptr;
 					FindSelectedEntity(selectEntity, currentScene, ray, D3D11_FLOAT32_MAX);
 				}
 				if (selectEntity && !ImGuizmo::IsUsing())
@@ -253,11 +267,25 @@ void ViewportDock::draw(float deltaMilliseconds)
 						PRINT("Picked entity through selection: " + selectEntity->getFullName());
 					}
 				}
+				else
+				{
+					if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+					{
+						EventManager::GetSingleton()->call("MouseSelectEntity", "EditorCloseScene", 0);
+					}
+				}
 
 				if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Escape)))
 				{
 					EventManager::GetSingleton()->call("MouseSelectEntity", "EditorCloseScene", 0);
 				}
+			}
+
+			if (selectEntity && ImGui::BeginPopupContextWindow("Entity Shortcuts"))
+			{
+				EventManager::GetSingleton()->call("MouseSelectEntity", "EditorOpenScene", selectEntity->getScene());
+				InspectorDock::GetSingleton()->drawSceneActions(selectEntity->getScene());
+				ImGui::EndPopup();
 			}
 
 			if (ImGui::IsWindowHovered() && InputManager::GetSingleton()->isPressed("InputCameraActivate"))
@@ -299,7 +327,6 @@ void ViewportDock::draw(float deltaMilliseconds)
 
 				static const Vector3& forward = { 0.0f, 0.0f, -1.0f };
 				static const Vector3& right = { 1.0f, 0.0f, 0.0f };
-
 				if (InputManager::GetSingleton()->isPressed("InputCameraForward"))
 				{
 					m_ApplyCameraMatrix = Matrix::CreateTranslation(forward * m_EditorCameraSpeed * deltaMilliseconds * 1e-3) * m_ApplyCameraMatrix;

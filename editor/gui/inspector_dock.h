@@ -20,16 +20,10 @@ private:
 	Scene* m_OpenedScene = nullptr;
 	String m_OpenedSceneName;
 	bool m_IsNameBeingEdited;
-	String m_MenuAction;
 	Scene* m_ActionScene = nullptr;
-	Vector<Tuple<ComponentID, String, bool>> m_AddNewComponentSelectionCache;
 	
 	Variant openScene(const Event* event);
 	Variant closeScene(const Event* event);
-
-	void drawAddComponentWindow();
-	void drawRemoveComponentWindow();
-	void refreshAddNewComponentSelectionCache();
 
 public:
 	static InspectorDock* GetSingleton() { return s_Singleton; };

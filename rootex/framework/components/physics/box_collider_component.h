@@ -4,8 +4,6 @@
 
 #include "btBulletDynamicsCommon.h"
 
-/// Creates sphere shaped collider.
-/// Takes box's dimensions and material type as arguments.
 class BoxColliderComponent : public PhysicsColliderComponent
 {
 	static Component* Create(const JSON::json& boxComponentData);
@@ -18,7 +16,7 @@ class BoxColliderComponent : public PhysicsColliderComponent
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::BoxColliderComponent;
 
-	BoxColliderComponent(const Vector3& dimensions, const String& matName, const Vector3& gravity, bool isMoveable, bool generatesHitEvents);
+	BoxColliderComponent(const Vector3& dimensions, const PhysicsMaterial& material, const Vector3& angularFactor, const Vector3& gravity, int collisionGroup, int collisionMask, bool isMoveable, bool isKinematic, bool generatesHitEvents);
 
 	Vector3 getDimensions() const { return m_Dimensions; }
 	virtual const char* getName() const override { return "BoxColliderComponent"; };

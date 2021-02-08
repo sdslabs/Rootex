@@ -1,5 +1,5 @@
 {
-    "affectedBySky": false,
+    "affectedBySky": true,
     "color": {
         "a": 1.0,
         "b": 1.0,

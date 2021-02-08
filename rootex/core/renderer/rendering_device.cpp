@@ -277,20 +277,28 @@ void RenderingDevice::createSwapChainAndRTs(int width, int height, bool MSAA, co
 	descDepth.Height = height;
 	descDepth.MipLevels = 1u;
 	descDepth.ArraySize = 1u;
-	descDepth.Format = DXGI_FORMAT_D32_FLOAT;
+	descDepth.Format = DXGI_FORMAT_R32G8X24_TYPELESS;
 	descDepth.SampleDesc.Count = m_MSAA ? 4 : sd.SampleDesc.Count;
 	descDepth.SampleDesc.Quality = sd.SampleDesc.Quality;
 	descDepth.Usage = D3D11_USAGE_DEFAULT;
-	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
 	
 	GFX_ERR_CHECK(m_Device->CreateTexture2D(&descDepth, nullptr, &depthStencil));
 	
 	D3D11_DEPTH_STENCIL_VIEW_DESC descDSView = {};
-	descDSView.Format = DXGI_FORMAT_D32_FLOAT;
+	descDSView.Format = DXGI_FORMAT_D32_FLOAT_S8X24_UINT;
 	descDSView.ViewDimension = MSAA ? D3D11_DSV_DIMENSION_TEXTURE2DMS : D3D11_DSV_DIMENSION_TEXTURE2D;
 	descDSView.Texture2D.MipSlice = 0u;
 	
 	GFX_ERR_CHECK(m_Device->CreateDepthStencilView(depthStencil.Get(), &descDSView, &m_MainDSV));
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC depthSRVDesc;
+	depthSRVDesc.Format = DXGI_FORMAT_R32_FLOAT_X8X24_TYPELESS;
+	depthSRVDesc.ViewDimension = m_MSAA ? D3D11_SRV_DIMENSION_TEXTURE2DMS : D3D11_SRV_DIMENSION_TEXTURE2D;
+	depthSRVDesc.Texture2D.MostDetailedMip = 0;
+	depthSRVDesc.Texture2D.MipLevels = 1;
+
+	GFX_ERR_CHECK(m_Device->CreateShaderResourceView(depthStencil.Get(), &depthSRVDesc, &m_MainDSSRV));
 
 	Microsoft::WRL::ComPtr<ID3D11Resource> backBuffer = nullptr;
 	GFX_ERR_CHECK(m_SwapChain->GetBuffer(0, __uuidof(ID3D11Resource), reinterpret_cast<void**>(backBuffer.ReleaseAndGetAddressOf())));
@@ -714,6 +722,11 @@ void RenderingDevice::setRTV(Microsoft::WRL::ComPtr<ID3D11RenderTargetView> rtv)
 Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::getMainRTSRV()
 {
 	return m_MainRTSRV;
+}
+
+Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::getDepthSSRV()
+{
+	return m_MainDSSRV;
 }
 
 Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::getOffScreenRTSRV()

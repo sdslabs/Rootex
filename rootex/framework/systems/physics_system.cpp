@@ -23,6 +23,18 @@ PhysicsSystem::PhysicsSystem()
 {
 }
 
+void PhysicsSystem::assignPhysicsMaterials()
+{
+	m_PhysicsMaterialTable[PhysicsMaterial::Air] = { 0.0f, 0.0f, 1.03e-3f };
+	m_PhysicsMaterialTable[PhysicsMaterial::Water] = { 0.2f, 0.1f, 1.0f };
+	m_PhysicsMaterialTable[PhysicsMaterial::Wood] = { 0.5f, 0.65f, 1.54f };
+}
+
+const char* PhysicsSystem::getMaterialNames()
+{
+	return "Air\0Water\0Wood\0";
+}
+
 bool PhysicsSystem::initialize(const JSON::json& systemData)
 {
 	m_CollisionConfiguration.reset(new btDefaultCollisionConfiguration());
@@ -30,12 +42,10 @@ bool PhysicsSystem::initialize(const JSON::json& systemData)
 	m_Broadphase.reset(new btDbvtBroadphase());
 	m_Solver.reset(new btSequentialImpulseConstraintSolver);
 	m_DynamicsWorld.reset(new btDiscreteDynamicsWorld(m_Dispatcher.get(), m_Broadphase.get(), m_Solver.get(), m_CollisionConfiguration.get()));
+	m_PhysicsMaterialTable.resize(PhysicsMaterial::End);
+	assignPhysicsMaterials();
 
-	LuaTextResourceFile* physicsMaterial = ResourceLoader::CreateLuaTextResourceFile("game/assets/config/physics.lua");
-	LuaInterpreter::GetSingleton()->getLuaState().script(physicsMaterial->getString());
-	m_PhysicsMaterialTable = LuaInterpreter::GetSingleton()->getLuaState()["PhysicsMaterial"];
-
-	if (!m_CollisionConfiguration || !m_Dispatcher || !m_Broadphase || !m_Solver || !m_DynamicsWorld)
+	if (!m_CollisionConfiguration || !m_Dispatcher || !m_Broadphase || !m_Solver || !m_DynamicsWorld || m_PhysicsMaterialTable.empty())
 	{
 		ERR("PhysicsSystem initialization failed");
 		return false;
@@ -49,36 +59,27 @@ bool PhysicsSystem::initialize(const JSON::json& systemData)
 	return true;
 }
 
-void PhysicsSystem::addRigidBody(btRigidBody* body)
+void PhysicsSystem::addRigidBody(btRigidBody* body, int group, int mask)
 {
-	m_DynamicsWorld->addRigidBody(body);
+	m_DynamicsWorld->addRigidBody(body, group, mask);
 }
 
-sol::table PhysicsSystem::getPhysicsMaterial()
-{
-	return m_PhysicsMaterialTable;
-}
-
-btCollisionWorld::AllHitsRayResultCallback PhysicsSystem::reportAllRayHits(const btVector3& m_From, const btVector3& m_To)
+btCollisionWorld::AllHitsRayResultCallback PhysicsSystem::reportAllRayHits(const btVector3& from, const btVector3& to)
 {
 	m_DynamicsWorld->updateAabbs();
 	m_DynamicsWorld->computeOverlappingPairs();
-
-	btCollisionWorld::AllHitsRayResultCallback allResults(m_From, m_To);
+	btCollisionWorld::AllHitsRayResultCallback allResults(from, to);
 	allResults.m_flags |= btTriangleRaycastCallback::kF_KeepUnflippedNormal;
 	allResults.m_flags |= btTriangleRaycastCallback::kF_UseSubSimplexConvexCastRaytest;
-
-	m_DynamicsWorld->rayTest(m_From, m_To, allResults);
+	m_DynamicsWorld->rayTest(from, to, allResults);
 	return allResults;
 }
 
-btCollisionWorld::ClosestRayResultCallback PhysicsSystem::reportClosestRayHits(const btVector3& m_From, const btVector3& m_To)
+btCollisionWorld::ClosestRayResultCallback PhysicsSystem::reportClosestRayHits(const btVector3& from, const btVector3& to)
 {
-	btCollisionWorld::ClosestRayResultCallback closestResults(m_From, m_To);
+	btCollisionWorld::ClosestRayResultCallback closestResults(from, to);
 	closestResults.m_flags |= btTriangleRaycastCallback::kF_FilterBackfaces;
-
-	m_DynamicsWorld->rayTest(m_From, m_To, closestResults);
-
+	m_DynamicsWorld->rayTest(from, to, closestResults);
 	return closestResults;
 }
 
@@ -114,15 +115,25 @@ void PhysicsSystem::InternalTickCallback(btDynamicsWorld* const world, btScalar 
 	}
 }
 
+PhysicsSystem::~PhysicsSystem()
+{
+	int i;
+	for (i = m_DynamicsWorld->getNumCollisionObjects() - 1; i >= 0; i--)
+	{
+		btCollisionObject* obj = m_DynamicsWorld->getCollisionObjectArray()[i];
+		m_DynamicsWorld->removeCollisionObject(obj);
+	}
+}
+
 void PhysicsSystem::debugDraw()
 {
 	RenderSystem::GetSingleton()->getRenderer()->bind(m_DebugDrawer.getMaterial());
 
 	RenderSystem::GetSingleton()->enableLineRenderMode();
-	for (auto& component : s_Components[PhysicsColliderComponent::s_ID])
+	for (auto& c : ECSFactory::GetComponents<PhysicsColliderComponent>())
 	{
-		PhysicsColliderComponent* p = (PhysicsColliderComponent*)component;
-		p->render();
+		PhysicsColliderComponent* phy = (PhysicsColliderComponent*)c;
+		phy->render();
 	}
 	RenderSystem::GetSingleton()->resetRenderMode();
 }
@@ -141,4 +152,14 @@ void PhysicsSystem::update(float deltaMilliseconds)
 void PhysicsSystem::removeRigidBody(btRigidBody* rigidBody)
 {
 	m_DynamicsWorld->removeRigidBody(rigidBody);
+}
+
+void PhysicsSystem::removeCollisionObject(btCollisionObject* collisionObject)
+{
+	m_DynamicsWorld->removeCollisionObject(collisionObject);
+}
+
+const PhysicsMaterialData& PhysicsSystem::getMaterialData(PhysicsMaterial material)
+{
+	return m_PhysicsMaterialTable[material];
 }
