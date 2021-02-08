@@ -9,6 +9,8 @@
 #include "components/music_component.h"
 #include "components/physics/box_collider_component.h"
 #include "components/physics/sphere_collider_component.h"
+#include "components/physics/capsule_collider_component.h"
+#include "components/physics/static_mesh_collider_component.h"
 #include "components/short_music_component.h"
 #include "components/test_component.h"
 #include "components/transform_animation_component.h"
@@ -27,6 +29,26 @@
 #include "components/visual/ui_component.h"
 #include "components/visual/animated_model_component.h"
 
+void ECSFactory::RegisterComponentInstance(Component* component)
+{
+	s_ComponentInstances[component->getComponentID()].push_back(component);
+}
+
+void ECSFactory::DeregisterComponentInstance(Component* component)
+{
+	Vector<Component*>& components = s_ComponentInstances[component->getComponentID()];
+
+	auto findIt = std::find(components.begin(), components.end(), component);
+	if (findIt != components.end())
+	{
+		components.erase(findIt);
+	}
+	else
+	{
+		ERR("Found an unregistered component queued for deregisteration: " + component->getName());
+	}
+}
+
 void ECSFactory::RegisterAPI(sol::table& rootex)
 {
 	sol::usertype<ECSFactory> ecsFactory = rootex.new_usertype<ECSFactory>("ECSFactory");
@@ -37,10 +59,15 @@ bool ECSFactory::AddComponent(Entity* entity, Ptr<Component>& component)
 	if (entity->m_Components.find(component->getComponentID()) == entity->m_Components.end())
 	{
 		component->m_Owner = entity;
-		entity->m_Components[component->getComponentID()] = std::move(component);
+		ComponentID id = component->getComponentID();
+		entity->m_Components[id] = std::move(component);
 		if (!entity->onAllComponentsAdded())
 		{
-			entity->removeComponent(component->getComponentID(), true);
+			if (entity->hasComponent(id))
+			{
+				entity->removeComponent(id, true);
+			}
+			return false;
 		}
 		return true;
 	}
@@ -64,7 +91,7 @@ Ptr<Component> ECSFactory::CreateComponent(const String& componentName, const JS
 		ComponentCreator create = std::get<ComponentCreator>(*findIt);
 		Ptr<Component> component(create(componentData));
 
-		System::RegisterComponent(component.get());
+		RegisterComponentInstance(component.get());
 
 		return component;
 	}
@@ -148,6 +175,8 @@ void ECSFactory::Initialize()
 	REGISTER_COMPONENT(SpotLightComponent);
 	REGISTER_COMPONENT(SphereColliderComponent);
 	REGISTER_COMPONENT(BoxColliderComponent);
+	REGISTER_COMPONENT(CapsuleColliderComponent);
+	REGISTER_COMPONENT(StaticMeshColliderComponent);
 	REGISTER_COMPONENT(AudioListenerComponent);
 	REGISTER_COMPONENT(MusicComponent);
 	REGISTER_COMPONENT(ShortMusicComponent);

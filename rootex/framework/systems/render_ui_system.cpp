@@ -1,8 +1,8 @@
 #include "render_ui_system.h"
 
 #include "renderer/rendering_device.h"
-
-#include "components/visual/render_ui_component.h"
+#include "framework/ecs_factory.h"
+#include "components/visual/text_ui_component.h"
 
 RenderUISystem::RenderUISystem()
     : System("RenderUISystem", UpdateOrder::RenderUI, true)
@@ -20,15 +20,14 @@ void RenderUISystem::update(float deltaMilliseconds)
 {
 	ZoneScoped;
 	RenderingDevice::GetSingleton()->beginDrawUI();
-	RenderUIComponent* ui = nullptr;
-	for (auto& component : s_Components[RenderUIComponent::s_ID])
+	for (auto& c : ECSFactory::GetComponents<TextUIComponent>())
 	{
-		ui = (RenderUIComponent*)component;
-		if (ui->isVisible())
+		TextUIComponent* tui = (TextUIComponent*)c;
+		if (tui->isVisible())
 		{
-			ui->preRender();
-			ui->render();
-			ui->postRender();
+			tui->preRender();
+			tui->render();
+			tui->postRender();
 		}
 	}
 	RenderingDevice::GetSingleton()->endDrawUI();

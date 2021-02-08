@@ -53,7 +53,7 @@ set_source_files_properties(${ShaderFiles}
         VS_SHADER_MODEL 4.0
         VS_SHADER_OBJECT_FILE_NAME ${ShaderCompileDestination}
         VS_SHADER_ENABLE_DEBUG true
-        VS_SHADER_DISABLE_OPTIMIZATIONS true
+        VS_SHADER_DISABLE_OPTIMIZATIONS false
 )
 
 set_source_files_properties(${VertexShaderFiles}
@@ -70,17 +70,23 @@ if (BUILD_EDITOR)
     add_definitions(-DROOTEX_EDITOR)
 endif(BUILD_EDITOR)
 
-add_library(Rootex STATIC ${ROOTEX_SOURCES})
+file(GLOB_RECURSE EngineLuaScripts script/**.lua)
+
+set_source_files_properties(${EngineLuaScripts} PROPERTIES
+    HEADER_FILE_ONLY TRUE
+)
+
+add_library(Rootex STATIC ${ROOTEX_SOURCES} ${EngineLuaScripts})
 
 target_precompile_headers(Rootex PUBLIC ${PCHHeader})
 
 source_group(TREE "../"
     PREFIX "Rootex"
-    FILES ${ROOTEX_SOURCES}
+    FILES ${ROOTEX_SOURCES} ${EngineLuaScripts}
 )
 
 target_include_directories(Rootex PUBLIC
-    ${ROOTEX_INCLUDES}
+    ${ROOTEX_INCLUDES} 
 )
 
 target_link_libraries(Rootex PUBLIC
@@ -104,6 +110,7 @@ target_link_libraries(Rootex PUBLIC
     RmlLottie
     FreeType
     Tracy
+    ASSAO
 
     Shell32.lib
     d3d11.lib

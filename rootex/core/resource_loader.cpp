@@ -46,6 +46,9 @@ ResourceFile* ResourceLoader::CreateSomeResourceFile(const String& path)
 			case ResourceFile::Type::AnimatedModel:
 				result = CreateAnimatedModelResourceFile(path);
 				break;
+			case ResourceFile::Type::CollisionModel:
+				result = CreateCollisionModelResourceFile(path);
+				break;
 			default:
 				break;
 			}
@@ -70,6 +73,7 @@ void ResourceLoader::RegisterAPI(sol::table& rootex)
 	resourceLoader["CreateNewText"] = &ResourceLoader::CreateNewTextResourceFile;
 	resourceLoader["CreateVisualModel"] = &ResourceLoader::CreateModelResourceFile;
 	resourceLoader["CreateAnimatedModel"] = &ResourceLoader::CreateAnimatedModelResourceFile;
+	resourceLoader["CreateCollisionModel"] = &ResourceLoader::CreateAnimatedModelResourceFile;
 }
 
 TextResourceFile* ResourceLoader::CreateTextResourceFile(const String& path)
@@ -99,6 +103,11 @@ AudioResourceFile* ResourceLoader::CreateAudioResourceFile(const String& path)
 ModelResourceFile* ResourceLoader::CreateModelResourceFile(const String& path)
 {
 	return GetCachedResource<ModelResourceFile>(ResourceFile::Type::Model, FilePath(path));
+}
+
+CollisionModelResourceFile* ResourceLoader::CreateCollisionModelResourceFile(const String& path)
+{
+	return GetCachedResource<CollisionModelResourceFile>(ResourceFile::Type::CollisionModel, FilePath(path));
 }
 
 AnimatedModelResourceFile* ResourceLoader::CreateAnimatedModelResourceFile(const String& path)

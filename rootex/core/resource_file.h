@@ -16,6 +16,7 @@ public:
 		Text,
 		Model,
 		AnimatedModel,
+		CollisionModel,
 		Image,
 		ImageCube,
 		Font
