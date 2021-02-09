@@ -1,0 +1,25 @@
+[bootstrap]
+main_collection = /example-defold/examlpe.collectionc
+render = /builtins/render/default.renderc
+
+[script]
+shared_state = 1
+
+[display]
+width = 960
+height = 640
+
+[android]
+input_method = HiddenInputField
+
+[project]
+title = Narrator
+dependencies = https://github.com/astrochili/defold-lpeg/archive/1.0.1.zip
+custom_resources = example-defold/book.ink
+
+[library]
+include_dirs = narrator
+
+[input]
+game_binding = /builtins/input/all.input_bindingc
+

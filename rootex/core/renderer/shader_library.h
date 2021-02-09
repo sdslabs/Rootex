@@ -11,7 +11,9 @@ class ShaderLibrary
 		Basic,
 		Sky,
 		Particles,
-		Animation
+		Animation,
+		FXAA,
+		Luma
 	};
 
 private:
@@ -31,4 +33,6 @@ public:
 	static ParticlesShader* GetParticlesShader();
 	static SkyShader* GetSkyShader();
 	static AnimationShader* GetAnimationShader();
+	static FXAAShader* GetFXAAShader();
+	static LumaShader* GetLumaShader();
 };

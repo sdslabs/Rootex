@@ -17,7 +17,7 @@ public:
 	};
 
 	AnimatedMaterial() = delete;
-	AnimatedMaterial(bool isAlpha, const String& imagePath, const String& normalImagePath, const String& specularImagePath, bool isNormal, Color color, bool isLit, float specularIntensity, float specularPower, float reflectivity, float refractionConstant, float refractivity, bool affectedBySky);
+	AnimatedMaterial(bool isAlpha, const String& imagePath, const String& normalImagePath, const String& specularImagePath, const String& lightmapPath, bool isNormal, Color color, bool isLit, float specularIntensity, float specularPower, float reflectivity, float refractionConstant, float refractivity, bool affectedBySky);
 	~AnimatedMaterial() = default;
 
 	void setVSConstantBuffer(const VSAnimationConstantBuffer& constantBuffer);

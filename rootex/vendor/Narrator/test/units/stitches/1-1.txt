@@ -1,0 +1,10 @@
+We boarded the train, but where?
+
+>) First class
+2) Travel in the guard's van
+
+I settled my master.
+
+>) Move to third class
+
+I put myself in third.
