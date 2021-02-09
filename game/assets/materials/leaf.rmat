@@ -2,14 +2,15 @@
     "affectedBySky": false,
     "color": {
         "a": 1.0,
-        "b": 1.9607843160629272,
-        "g": 0.0,
-        "r": 3.9215686321258545
+        "b": 0.9999899864196777,
+        "g": 0.9999899864196777,
+        "r": 1.0
     },
     "imageFile": "game/assets/sponza/textures/sponza_thorn_diff.png",
     "isAlpha": true,
     "isLit": false,
     "isNormal": true,
+    "lightmapImageFile": "rootex/assets/white.png",
     "normalImageFile": "game/assets/sponza/textures/sponza_thorn_ddn.png",
     "reflectivity": 0.10000000149011612,
     "refractionConstant": 0.800000011920929,

@@ -26,6 +26,15 @@ UIComponent::~UIComponent()
 	}
 }
 
+void UIComponent::RegisterAPI(sol::table& rootex)
+{
+	sol::usertype<UIComponent> ui = rootex.new_usertype<UIComponent>(
+	    "UIComponent",
+	    sol::base_classes, sol::bases<Component>());
+	rootex["Entity"]["getUI"] = &Entity::getComponent<UIComponent>;
+	ui["getDocumentID"] = [](UIComponent* ui) { return ui->getDocument()->GetId(); };
+}
+
 void UIComponent::setDocument(const String& path)
 {
 	if (m_Document)
@@ -54,8 +63,6 @@ JSON::json UIComponent::getJSON() const
 }
 
 #ifdef ROOTEX_EDITOR
-#include "imgui.h"
-#include "imgui_stdlib.h"
 #include "utility/imgui_helpers.h"
 void UIComponent::draw()
 {
@@ -73,18 +80,10 @@ void UIComponent::draw()
 
 	if (ImGui::Button(ICON_ROOTEX_EXTERNAL_LINK "##Document"))
 	{
-		igfd::ImGuiFileDialog::Instance()->OpenDialog("Document", "Choose RML Document", ".rml", "game/assets/");
-	}
-
-	if (igfd::ImGuiFileDialog::Instance()->FileDialog("Document"))
-	{
-		if (igfd::ImGuiFileDialog::Instance()->IsOk)
+		if (Optional<String> result = OS::SelectFile("RML Document(*.rml)\0*.rml\0", "game/assets/"))
 		{
-			String filePathName = OS::GetRootRelativePath(igfd::ImGuiFileDialog::Instance()->GetFilePathName()).generic_string();
-			setDocument(filePathName);
+			setDocument(*result);
 		}
-
-		igfd::ImGuiFileDialog::Instance()->CloseDialog("Document");
 	}
 
 	if (ImGui::Button("Refresh"))

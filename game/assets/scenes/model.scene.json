@@ -5,6 +5,9 @@
             "ID": 15,
             "children": [],
             "entity": {
+                "Entity": {
+                    "script": null
+                },
                 "components": {
                     "CameraComponent": {
                         "aspectRatio": {
@@ -12,9 +15,21 @@
                             "y": 9.0
                         },
                         "far": 100.0,
-                        "fov": 0.7853981852531433,
+                        "fov": 0.45378562808036804,
                         "near": 0.10000000149011612,
                         "postProcessingDetails": {
+                            "assaoAdaptiveQualityLimit": 0.16699999570846558,
+                            "assaoBlurPassCount": 6,
+                            "assaoDetailShadowStrength": 2.609999895095825,
+                            "assaoFadeOutFrom": 35.0,
+                            "assaoFadeOutTo": 75.0,
+                            "assaoHorizonAngleThreshold": 0.05999999865889549,
+                            "assaoQualityLevel": 3,
+                            "assaoRadius": 2.700000047683716,
+                            "assaoShadowClamp": 0.5899999737739563,
+                            "assaoShadowMultiplier": 0.4699999988079071,
+                            "assaoShadowPower": 4.159999847412109,
+                            "assaoSharpness": 1.0,
                             "bloomBase": 1.0,
                             "bloomBaseSaturation": 1.0,
                             "bloomBrightness": 1.0,
@@ -23,17 +38,89 @@
                             "bloomThreshold": 0.800000011920929,
                             "bloomValue": 1.0,
                             "gaussianBlurMultiplier": 1.0,
+                            "isASSAO": true,
                             "isBloom": false,
+                            "isFXAA": true,
                             "isGaussianBlur": false,
                             "isMonochrome": false,
-                            "isPostProcessing": false,
+                            "isPostProcessing": true,
                             "isSepia": false,
                             "isToneMap": false,
-                            "toneMapExposure": 0.0,
-                            "toneMapOperator": 0,
+                            "toneMapExposure": 0.36000001430511475,
+                            "toneMapOperator": 1,
                             "toneMapTransferFunction": 0,
                             "toneMapWhiteNits": 200.0
                         }
+                    },
+                    "TransformAnimationComponent": {
+                        "animationMode": 2,
+                        "isPlayOnStart": true,
+                        "keyframes": [
+                            {
+                                "timePosition": 0.0,
+                                "transform": [
+                                    -0.00020396709442138672,
+                                    0.0,
+                                    -1.0,
+                                    0.0,
+                                    0.0,
+                                    1.0,
+                                    0.0,
+                                    0.0,
+                                    1.0,
+                                    0.0,
+                                    -0.00020396709442138672,
+                                    0.0,
+                                    400.0,
+                                    174.26275634765625,
+                                    -17.46019172668457,
+                                    1.0
+                                ]
+                            },
+                            {
+                                "timePosition": 10.0,
+                                "transform": [
+                                    -0.0004887598915956914,
+                                    0.0,
+                                    -1.0007357597351074,
+                                    0.0,
+                                    0.0,
+                                    1.0009022951126099,
+                                    0.0,
+                                    0.0,
+                                    1.0007357597351074,
+                                    0.0,
+                                    -0.0004887598915956914,
+                                    0.0,
+                                    0.0,
+                                    174.26275634765625,
+                                    -17.46019172668457,
+                                    1.0
+                                ]
+                            },
+                            {
+                                "timePosition": 20.0,
+                                "transform": [
+                                    -0.01921660080552101,
+                                    0.0,
+                                    1.0005513429641724,
+                                    0.0,
+                                    0.0,
+                                    1.0009022951126099,
+                                    0.0,
+                                    0.0,
+                                    -1.0005513429641724,
+                                    0.0,
+                                    -0.01921660080552101,
+                                    0.0,
+                                    -1000.0,
+                                    174.26275634765625,
+                                    -17.46019172668457,
+                                    1.0
+                                ]
+                            }
+                        ],
+                        "transitionType": 1
                     },
                     "TransformComponent": {
                         "boundingBox": {
@@ -49,20 +136,20 @@
                             }
                         },
                         "position": {
-                            "x": 502.0191650390625,
-                            "y": 174.26275634765625,
+                            "x": -1.561969518661499,
+                            "y": 174.2627410888672,
                             "z": -17.46019172668457
                         },
                         "rotation": {
-                            "w": 0.7069340944290161,
+                            "w": 0.7053080201148987,
                             "x": 0.0,
-                            "y": 0.7072794437408447,
+                            "y": 0.7089008688926697,
                             "z": 0.0
                         },
                         "scale": {
-                            "x": 1.000735878944397,
-                            "y": 1.0009022951126099,
-                            "z": 1.000735878944397
+                            "x": 0.9999998807907104,
+                            "y": 1.0,
+                            "z": 0.9999998807907104
                         }
                     }
                 }
@@ -81,6 +168,9 @@
             "ID": 16,
             "children": [],
             "entity": {
+                "Entity": {
+                    "script": null
+                },
                 "components": {
                     "DirectionalLightComponent": {
                         "ambientColor": {
@@ -143,6 +233,9 @@
             "ID": 17,
             "children": [],
             "entity": {
+                "Entity": {
+                    "script": null
+                },
                 "components": {
                     "StaticPointLightComponent": {
                         "ambientColor": {
@@ -209,6 +302,9 @@
             "ID": 18,
             "children": [],
             "entity": {
+                "Entity": {
+                    "script": null
+                },
                 "components": {
                     "StaticPointLightComponent": {
                         "ambientColor": {
@@ -275,6 +371,9 @@
             "ID": 19,
             "children": [],
             "entity": {
+                "Entity": {
+                    "script": null
+                },
                 "components": {
                     "StaticPointLightComponent": {
                         "ambientColor": {
@@ -341,6 +440,9 @@
             "ID": 20,
             "children": [],
             "entity": {
+                "Entity": {
+                    "script": null
+                },
                 "components": {
                     "StaticPointLightComponent": {
                         "ambientColor": {
@@ -407,6 +509,9 @@
             "ID": 21,
             "children": [],
             "entity": {
+                "Entity": {
+                    "script": null
+                },
                 "components": {
                     "UIComponent": {
                         "filePath": "game/assets/ui/fade_in_from_black/fade_in_from_black.rml"
@@ -422,9 +527,76 @@
                 "preloads": [],
                 "startScheme": ""
             }
+        },
+        {
+            "ID": 22,
+            "children": [],
+            "entity": {
+                "Entity": {
+                    "script": null
+                },
+                "components": {
+                    "ModelComponent": {
+                        "affectingStaticLights": [
+                            17,
+                            18,
+                            19,
+                            20
+                        ],
+                        "isVisible": true,
+                        "materialOverrides": {
+                            "game/assets/materials/Material.001.rmat": "game/assets/materials/Material.001.rmat"
+                        },
+                        "renderPass": 1,
+                        "resFile": "game/assets/vase/Vase.dae"
+                    },
+                    "TransformComponent": {
+                        "boundingBox": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 0.12320456653833389,
+                                "z": 0.0
+                            },
+                            "extents": {
+                                "x": 0.06338757276535034,
+                                "y": 0.12247902899980545,
+                                "z": 0.06338757276535034
+                            }
+                        },
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "rotation": {
+                            "w": 1.0,
+                            "x": -0.0,
+                            "y": 0.0,
+                            "z": -0.0
+                        },
+                        "scale": {
+                            "x": 300.0000305175781,
+                            "y": 300.0000305175781,
+                            "z": 300.0000305175781
+                        }
+                    }
+                }
+            },
+            "file": "",
+            "name": "Vase",
+            "settings": {
+                "camera": 1,
+                "inputSchemes": null,
+                "listener": 1,
+                "preloads": [],
+                "startScheme": ""
+            }
         }
     ],
     "entity": {
+        "Entity": {
+            "script": null
+        },
         "components": {
             "ModelComponent": {
                 "affectingStaticLights": [

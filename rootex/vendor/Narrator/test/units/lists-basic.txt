@@ -1,0 +1,17 @@
+We have two cats.
+Today is Monday. Tomorrow is Tuesday.
+...
+Hm, kettle is cold and pot is cold.
+Now kettle is boiling and pot is cold.
+...
+Binary values are 1 and 0
+...
+The lecturer's voice becomes medium.
+The lecturer has 2 notches still available to him.
+The murmuring gets louder.
+The lecturer's voice becomes loud.
+The lecturer has 1 notches still available to him.
+The murmuring gets louder.
+The lecturer's voice becomes deafening.
+The lecturer has 0 notches still available to him.
+The murmuring gets louder.

@@ -11,7 +11,7 @@
 #include "renderer/shaders/register_locations_pixel_shader.h"
 #include "renderer/shaders/register_locations_vertex_shader.h"
 
-BasicMaterial::BasicMaterial(bool isAlpha, const String& imagePath, const String& normalImagePath, const String& specularImagePath, bool isNormal, Color color, bool isLit, float specularIntensity, float specularPower, float reflectivity, float refractionConstant, float refractivity, bool affectedBySky)
+BasicMaterial::BasicMaterial(bool isAlpha, const String& imagePath, const String& normalImagePath, const String& specularImagePath, const String& lightmapImagePath, bool isNormal, Color color, bool isLit, float specularIntensity, float specularPower, float reflectivity, float refractionConstant, float refractivity, bool affectedBySky)
     : Material(ShaderLibrary::GetBasicShader(), BasicMaterial::s_MaterialName, isAlpha)
     , m_BasicShader(ShaderLibrary::GetBasicShader())
     , m_Color(color)
@@ -24,8 +24,7 @@ BasicMaterial::BasicMaterial(bool isAlpha, const String& imagePath, const String
     , m_IsAffectedBySky(affectedBySky)
     , m_IsNormal(isNormal)
 {
-	m_DiffuseImageFile = ResourceLoader::CreateImageResourceFile(imagePath);
-	setDiffuseTexture(m_DiffuseImageFile);
+	setDiffuseTexture(ResourceLoader::CreateImageResourceFile(imagePath));
 	if (isNormal)
 	{
 		m_NormalImageFile = ResourceLoader::CreateImageResourceFile(normalImagePath);
@@ -36,6 +35,7 @@ BasicMaterial::BasicMaterial(bool isAlpha, const String& imagePath, const String
 		removeNormal();
 	}
 	setSpecularTexture(ResourceLoader::CreateImageResourceFile(specularImagePath));
+	setLightmapTexture(ResourceLoader::CreateImageResourceFile(lightmapImagePath));
 
 	m_SamplerState = RenderingDevice::GetSingleton()->createSS();
 	m_PSConstantBuffer.resize((int)PixelConstantBufferType::End, nullptr);
@@ -54,7 +54,7 @@ void BasicMaterial::setVSConstantBuffer(const VSDiffuseConstantBuffer& constantB
 
 Material* BasicMaterial::CreateDefault()
 {
-	return new BasicMaterial(false, "rootex/assets/white.png", "", "rootex/assets/white.png", false, Color(0.5f, 0.5f, 0.5f, 1.0f), true, 0.5f, 30.0f, 0.1f, 0.8f, 0.1f, true);
+	return new BasicMaterial(false, "rootex/assets/white.png", "", "rootex/assets/white.png", "rootex/assets/white.png", false, Color(0.5f, 0.5f, 0.5f, 1.0f), true, 0.5f, 30.0f, 0.1f, 0.8f, 0.1f, true);
 }
 
 Material* BasicMaterial::Create(const JSON::json& materialData)
@@ -114,7 +114,12 @@ Material* BasicMaterial::Create(const JSON::json& materialData)
 	{
 		specularImageFile = materialData["specularImageFile"];
 	}
-	return new BasicMaterial(isAlpha, (String)materialData["imageFile"], normalImageFile, specularImageFile, isNormal, Color((float)materialData["color"]["r"], (float)materialData["color"]["g"], (float)materialData["color"]["b"], (float)materialData["color"]["a"]), isLit, specularIntensity, specularPower, reflectivity, refractionConstant, refractivity, affectedBySky);
+	String lightmapImageFile = "rootex/assets/white.png";
+	if (materialData.find("lightmapImageFile") != materialData.end())
+	{
+		lightmapImageFile = materialData["lightmapImageFile"];
+	}
+	return new BasicMaterial(isAlpha, (String)materialData["imageFile"], normalImageFile, specularImageFile, lightmapImageFile, isNormal, Color((float)materialData["color"]["r"], (float)materialData["color"]["g"], (float)materialData["color"]["b"], (float)materialData["color"]["a"]), isLit, specularIntensity, specularPower, reflectivity, refractionConstant, refractivity, affectedBySky);
 }
 
 ID3D11ShaderResourceView* BasicMaterial::getPreview()
@@ -130,6 +135,7 @@ void BasicMaterial::bind()
 		m_BasicShader->set(m_NormalImageFile->getTexture().get(), NORMAL_PS_CPP);
 	}
 	m_BasicShader->set(m_SpecularImageFile->getTexture().get(), SPECULAR_PS_CPP);
+	m_BasicShader->set(m_LightmapImageFile->getTexture().get(), LIGHTMAP_PS_CPP);
 	Matrix currentModelMatrix = RenderSystem::GetSingleton()->getCurrentMatrix();
 	setVSConstantBuffer(VSDiffuseConstantBuffer(currentModelMatrix));
 
@@ -159,6 +165,7 @@ JSON::json BasicMaterial::getJSON() const
 	j["color"]["a"] = m_Color.w;
 	j["isLit"] = m_IsLit;
 	j["specularImageFile"] = m_SpecularImageFile->getPath().generic_string();
+	j["lightmapImageFile"] = m_LightmapImageFile->getPath().generic_string();
 	if (m_IsLit)
 	{
 		j["specularIntensity"] = m_SpecularIntensity;
@@ -180,18 +187,43 @@ JSON::json BasicMaterial::getJSON() const
 
 void BasicMaterial::setDiffuseTexture(ImageResourceFile* image)
 {
+	if (!image)
+	{
+		WARN("Null image tried to be set as diffuse texture");
+		return;
+	}
 	m_DiffuseImageFile = image;
 }
 
 void BasicMaterial::setNormalTexture(ImageResourceFile* image)
 {
+	if (!image)
+	{
+		WARN("Null image tried to be set as normal texture");
+		return;
+	}
 	m_IsNormal = true;
 	m_NormalImageFile = image;
 }
 
 void BasicMaterial::setSpecularTexture(ImageResourceFile* image)
 {
+	if (!image)
+	{
+		WARN("Null image tried to be set as specular texture");
+		return;
+	}
 	m_SpecularImageFile = image;
+}
+
+void BasicMaterial::setLightmapTexture(ImageResourceFile* image)
+{
+	if (!image)
+	{
+		WARN("Null image tried to be set as lightmap texture");
+		return;
+	}
+	m_LightmapImageFile = image;
 }
 
 void BasicMaterial::removeNormal()
@@ -224,6 +256,12 @@ void BasicMaterial::draw()
 	if (ImGui::Button(ICON_ROOTEX_REFRESH "##Specular Texture"))
 	{
 		setSpecularTexture(ResourceLoader::CreateImageResourceFile("rootex/assets/white.png"));
+	}
+	RootexSelectableImage("Lightmap Texture " ICON_ROOTEX_PENCIL_SQUARE_O, m_LightmapImageFile, [this](const String& selectedFile) { setLightmapTexture(ResourceLoader::CreateImageResourceFile(selectedFile)); });
+	ImGui::SameLine();
+	if (ImGui::Button(ICON_ROOTEX_REFRESH "##Lightmap Texture"))
+	{
+		setLightmapTexture(ResourceLoader::CreateImageResourceFile("rootex/assets/white.png"));
 	}
 
 	ImGui::ColorEdit4("Color", &m_Color.x);

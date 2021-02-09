@@ -14,6 +14,7 @@ protected:
 	ImageResourceFile* m_DiffuseImageFile;
 	ImageResourceFile* m_NormalImageFile;
 	ImageResourceFile* m_SpecularImageFile;
+	ImageResourceFile* m_LightmapImageFile;
 
 	bool m_IsLit;
 	bool m_IsNormal;
@@ -42,13 +43,14 @@ public:
 	};
 
 	BasicMaterial() = delete;
-	BasicMaterial(bool isAlpha, const String& imagePath, const String& normalImagePath, const String& specularImagePath, bool isNormal, Color color, bool isLit, float specularIntensity, float specularPower, float reflectivity, float refractionConstant, float refractivity, bool affectedBySky);
+	BasicMaterial(bool isAlpha, const String& imagePath, const String& normalImagePath, const String& specularImagePath, const String& lightmapImagePath, bool isNormal, Color color, bool isLit, float specularIntensity, float specularPower, float reflectivity, float refractionConstant, float refractivity, bool affectedBySky);
 	~BasicMaterial() = default;
 
 	void setColor(const Color& color) { m_Color = color; };
 	void setDiffuseTexture(ImageResourceFile* image);
 	void setNormalTexture(ImageResourceFile* image);
 	void setSpecularTexture(ImageResourceFile* image);
+	void setLightmapTexture(ImageResourceFile* image);
 	void removeNormal();
 	void setSpecularIntensity(float specIntensity) { m_SpecularIntensity = specIntensity; }
 	void setSpecularPower(float specPower) { m_SpecularPower = specPower; }

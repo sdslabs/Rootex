@@ -15,16 +15,16 @@
 #include "resource_files/animated_model_resource_file.h"
 
 static const inline HashMap<ResourceFile::Type, const char*> SupportedFiles = {
-	{ ResourceFile::Type::Font, ".spritefont" },
-	{ ResourceFile::Type::Model, ".obj,.blend,.3ds,.fbx,.dae" },
-	{ ResourceFile::Type::AnimatedModel, ".dae,.fbx" },
-	{ ResourceFile::Type::CollisionModel, ".obj" },
-	{ ResourceFile::Type::Audio, ".wav" },
-	{ ResourceFile::Type::Image, ".png,.jpeg,.jpg,.dds" },
-	{ ResourceFile::Type::ImageCube, ".dds" },
-	{ ResourceFile::Type::Text, ".txt,.json,.rml" },
-	{ ResourceFile::Type::Lua, ".lua" },
-	{ ResourceFile::Type::None, "" }
+	{ ResourceFile::Type::Font, "Sprite fonts(*.spritefont)\0*.spritefont\0" },
+	{ ResourceFile::Type::Model, "Model(*.3ds;*.fbx;*.dae)\0*.obj;*.blend;*.3ds;*.fbx;*.dae\0" },
+	{ ResourceFile::Type::AnimatedModel, "Animated Model(.dae;.fbx)\0.dae;.fbx\0" },
+	{ ResourceFile::Type::CollisionModel, "Collision Model(*.obj)\0*.obj\0" },
+	{ ResourceFile::Type::Audio, "Audio(*.wav)\0*.wav\0" },
+	{ ResourceFile::Type::Image, "Image(*.png;*.jpeg;*.jpg;*.dds)\0*.png;*.jpeg;*.jpg;*.dds\0" },
+	{ ResourceFile::Type::ImageCube, "Image Cube(*.dds)\0*.dds\0" },
+	{ ResourceFile::Type::Text, "Text(*.txt;*.json;*.rml)\0*.txt;*.json;*.rml\0" },
+	{ ResourceFile::Type::Lua, "Lua(*.lua)\0*.lua\0" },
+	{ ResourceFile::Type::None, "All(*.*)\0*.*\0" }
 };
 
 bool IsFileSupported(const String& extension, ResourceFile::Type supportedFileType);

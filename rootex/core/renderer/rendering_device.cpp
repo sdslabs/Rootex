@@ -46,9 +46,8 @@ void RenderingDevice::setScreenState(bool fullscreen)
 	m_SwapChain->SetFullscreenState(fullscreen, nullptr);
 }
 
-void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
+void RenderingDevice::initialize(HWND hWnd, int width, int height)
 {
-	m_MSAA = MSAA;
 	m_WindowHandle = hWnd;
 	UINT createDeviceFlags = 0;
 #if defined(DEBUG) || defined(_DEBUG)
@@ -70,7 +69,7 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 
 	PANIC(featureLevel != D3D_FEATURE_LEVEL_11_0, "Direct3D Feature Level 11 is not supported on this hardware.");
 
-	createSwapChainAndRTs(width, height, MSAA, hWnd);
+	createSwapChainAndRTVs(width, height, hWnd);
 
 	D3D11_FEATURE_DATA_D3D11_OPTIONS features;
 	GFX_ERR_CHECK(m_Device->CheckFeatureSupport(D3D11_FEATURE_D3D11_OPTIONS, &features, sizeof(features)));
@@ -120,7 +119,7 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 		rsDesc.DepthBiasClamp = 0.0f;
 		rsDesc.DepthClipEnable = TRUE;
 		rsDesc.ScissorEnable = FALSE;
-		rsDesc.MultisampleEnable = MSAA;
+		rsDesc.MultisampleEnable = FALSE;
 		rsDesc.AntialiasedLineEnable = FALSE;
 
 		GFX_ERR_CHECK(m_Device->CreateRasterizerState(&rsDesc, &m_DefaultRS));
@@ -135,7 +134,7 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 		rsDesc.DepthBiasClamp = 0.0f;
 		rsDesc.DepthClipEnable = TRUE;
 		rsDesc.ScissorEnable = FALSE;
-		rsDesc.MultisampleEnable = MSAA;
+		rsDesc.MultisampleEnable = FALSE;
 		rsDesc.AntialiasedLineEnable = FALSE;
 
 		GFX_ERR_CHECK(m_Device->CreateRasterizerState(&rsDesc, &m_SkyRS));
@@ -150,7 +149,7 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 		rsDesc.DepthBiasClamp = 0.0f;
 		rsDesc.DepthClipEnable = FALSE;
 		rsDesc.ScissorEnable = FALSE;
-		rsDesc.MultisampleEnable = MSAA;
+		rsDesc.MultisampleEnable = FALSE;
 		rsDesc.AntialiasedLineEnable = FALSE;
 
 		GFX_ERR_CHECK(m_Device->CreateRasterizerState(&rsDesc, &m_UIRS));
@@ -165,7 +164,7 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 		rsDesc.DepthBiasClamp = 0.0f;
 		rsDesc.DepthClipEnable = TRUE;
 		rsDesc.ScissorEnable = TRUE;
-		rsDesc.MultisampleEnable = MSAA;
+		rsDesc.MultisampleEnable = FALSE;
 		rsDesc.AntialiasedLineEnable = FALSE;
 
 		GFX_ERR_CHECK(m_Device->CreateRasterizerState(&rsDesc, &m_UIScissoredRS));
@@ -180,7 +179,7 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 		wireframeDesc.DepthBiasClamp = 0.0f;
 		wireframeDesc.DepthClipEnable = TRUE;
 		wireframeDesc.ScissorEnable = FALSE;
-		wireframeDesc.MultisampleEnable = MSAA;
+		wireframeDesc.MultisampleEnable = FALSE;
 		wireframeDesc.AntialiasedLineEnable = FALSE;
 
 		GFX_ERR_CHECK(m_Device->CreateRasterizerState(&wireframeDesc, &m_WireframeRS));
@@ -189,7 +188,7 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 
 	m_Context->RSSetState(*m_CurrentRS);
 
-	setOffScreenRT();
+	setOffScreenRTVDSV();
 
 	{
 		D3D11_BLEND_DESC blendDesc;
@@ -225,14 +224,11 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height, bool MSAA)
 	}
 	m_FontBatch.reset(new DirectX::SpriteBatch(m_Context.Get()));
 
-	setOffScreenRT();
+	setOffScreenRTVDSV();
 }
 
-void RenderingDevice::createSwapChainAndRTs(int width, int height, bool MSAA, const HWND& hWnd)
+void RenderingDevice::createSwapChainAndRTVs(int width, int height, const HWND& hWnd)
 {
-	m_Device->CheckMultisampleQualityLevels(DXGI_FORMAT_R8G8B8A8_UNORM, 4, &m_4XMSQuality);
-	PANIC(m_4XMSQuality <= 0, "MSAA is not supported on this hardware");
-	
 	DXGI_SWAP_CHAIN_DESC sd = { 0 };
 	sd.BufferDesc.Width = width;
 	sd.BufferDesc.Height = height;
@@ -278,7 +274,7 @@ void RenderingDevice::createSwapChainAndRTs(int width, int height, bool MSAA, co
 	descDepth.MipLevels = 1u;
 	descDepth.ArraySize = 1u;
 	descDepth.Format = DXGI_FORMAT_R32G8X24_TYPELESS;
-	descDepth.SampleDesc.Count = m_MSAA ? 4 : sd.SampleDesc.Count;
+	descDepth.SampleDesc.Count = sd.SampleDesc.Count;
 	descDepth.SampleDesc.Quality = sd.SampleDesc.Quality;
 	descDepth.Usage = D3D11_USAGE_DEFAULT;
 	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
@@ -287,14 +283,14 @@ void RenderingDevice::createSwapChainAndRTs(int width, int height, bool MSAA, co
 	
 	D3D11_DEPTH_STENCIL_VIEW_DESC descDSView = {};
 	descDSView.Format = DXGI_FORMAT_D32_FLOAT_S8X24_UINT;
-	descDSView.ViewDimension = MSAA ? D3D11_DSV_DIMENSION_TEXTURE2DMS : D3D11_DSV_DIMENSION_TEXTURE2D;
+	descDSView.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	descDSView.Texture2D.MipSlice = 0u;
 	
 	GFX_ERR_CHECK(m_Device->CreateDepthStencilView(depthStencil.Get(), &descDSView, &m_MainDSV));
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC depthSRVDesc;
 	depthSRVDesc.Format = DXGI_FORMAT_R32_FLOAT_X8X24_TYPELESS;
-	depthSRVDesc.ViewDimension = m_MSAA ? D3D11_SRV_DIMENSION_TEXTURE2DMS : D3D11_SRV_DIMENSION_TEXTURE2D;
+	depthSRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	depthSRVDesc.Texture2D.MostDetailedMip = 0;
 	depthSRVDesc.Texture2D.MipLevels = 1;
 
@@ -312,55 +308,28 @@ void RenderingDevice::createSwapChainAndRTs(int width, int height, bool MSAA, co
 	textureDesc.MipLevels = 1;
 	textureDesc.ArraySize = 1;
 	textureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	textureDesc.SampleDesc.Count = m_MSAA ? 4 : 1;
-	textureDesc.Usage = D3D11_USAGE_DEFAULT;
-	textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-	textureDesc.CPUAccessFlags = 0;
-	textureDesc.MiscFlags = 0;
-
-	GFX_ERR_CHECK(m_Device->CreateTexture2D(&textureDesc, NULL, &m_OffScreenRTTexture));
-
-	D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc;
-	renderTargetViewDesc.Format = textureDesc.Format;
-	renderTargetViewDesc.ViewDimension = m_MSAA ? D3D11_RTV_DIMENSION_TEXTURE2DMS : D3D11_RTV_DIMENSION_TEXTURE2D;
-	renderTargetViewDesc.Texture2D.MipSlice = 0;
-
-	GFX_ERR_CHECK(m_Device->CreateRenderTargetView(m_OffScreenRTTexture.Get(), &renderTargetViewDesc, &m_OffScreenRTV));
-
-	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
-	shaderResourceViewDesc.Format = textureDesc.Format;
-	shaderResourceViewDesc.ViewDimension = m_MSAA ? D3D11_SRV_DIMENSION_TEXTURE2DMS : D3D11_SRV_DIMENSION_TEXTURE2D;
-	shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
-	shaderResourceViewDesc.Texture2D.MipLevels = 1;
-
-	GFX_ERR_CHECK(m_Device->CreateShaderResourceView(m_OffScreenRTTexture.Get(), &shaderResourceViewDesc, &m_OffScreenRTSRV));
-
-	ZeroMemory(&textureDesc, sizeof(textureDesc));
-	textureDesc.Width = width;
-	textureDesc.Height = height;
-	textureDesc.MipLevels = 1;
-	textureDesc.ArraySize = 1;
-	textureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	textureDesc.SampleDesc.Count = 1;
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;
 	textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 	textureDesc.CPUAccessFlags = 0;
 	textureDesc.MiscFlags = 0;
 
-	GFX_ERR_CHECK(m_Device->CreateTexture2D(&textureDesc, NULL, &m_OffScreenRTTextureResolved));
+	GFX_ERR_CHECK(m_Device->CreateTexture2D(&textureDesc, NULL, &m_OffScreenTexture));
 
+	D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc;
 	renderTargetViewDesc.Format = textureDesc.Format;
 	renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 	renderTargetViewDesc.Texture2D.MipSlice = 0;
 
-	GFX_ERR_CHECK(m_Device->CreateRenderTargetView(m_OffScreenRTTextureResolved.Get(), &renderTargetViewDesc, &m_OffScreenRTVResolved));
+	GFX_ERR_CHECK(m_Device->CreateRenderTargetView(m_OffScreenTexture.Get(), &renderTargetViewDesc, &m_OffScreenRTV));
 
+	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
 	shaderResourceViewDesc.Format = textureDesc.Format;
 	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
 	shaderResourceViewDesc.Texture2D.MipLevels = 1;
 
-	GFX_ERR_CHECK(m_Device->CreateShaderResourceView(m_OffScreenRTTextureResolved.Get(), &shaderResourceViewDesc, &m_OffScreenRTSRVResolved));
+	GFX_ERR_CHECK(m_Device->CreateShaderResourceView(m_OffScreenTexture.Get(), &shaderResourceViewDesc, &m_OffScreenSRV));
 }
 
 Ref<DirectX::SpriteFont> RenderingDevice::createFont(const String& fontFilePath)
@@ -562,23 +531,6 @@ void RenderingDevice::bind(ID3D11InputLayout* inputLayout)
 	m_Context->IASetInputLayout(inputLayout);
 }
 
-void RenderingDevice::resolveSRV(Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> source, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> destination)
-{
-	ID3D11Resource* destResource;
-	destination->GetResource(&destResource);
-	ID3D11Resource* sourceResource;
-	source->GetResource(&sourceResource);
-
-	if (m_MSAA)
-	{
-		m_Context->ResolveSubresource(destResource, 0, sourceResource, 0, DXGI_FORMAT_R32G32B32A32_FLOAT);
-	}
-	else
-	{
-		m_Context->CopyResource(destResource, sourceResource);
-	}
-}
-
 //Assuming subresource offset = 0
 void RenderingDevice::mapBuffer(ID3D11Buffer* buffer, D3D11_MAPPED_SUBRESOURCE& subresource)
 {
@@ -614,7 +566,7 @@ void RenderingDevice::setPSCB(ID3D11Buffer* constantBuffer, UINT slot)
 	m_Context->PSSetConstantBuffers(slot, 1u, &constantBuffer);
 }
 
-void RenderingDevice::unbindRTSRVs()
+void RenderingDevice::unbindSRVs()
 {
 	ID3D11ShaderResourceView* nullSRV[2] = { nullptr, nullptr };
 	m_Context->PSSetShaderResources(0, 2, nullSRV);
@@ -699,14 +651,14 @@ void RenderingDevice::setDSS()
 	m_Context->OMSetDepthStencilState(m_DSState.Get(), m_StencilRef);
 }
 
-void RenderingDevice::setOffScreenRT()
+void RenderingDevice::setOffScreenRTVDSV()
 {
 	m_Context->OMSetRenderTargets(1, m_OffScreenRTV.GetAddressOf(), m_MainDSV.Get());
 }
 
-void RenderingDevice::setOffScreenRTResolved()
+void RenderingDevice::setOffScreenRTVOnly()
 {
-	m_Context->OMSetRenderTargets(1, m_OffScreenRTVResolved.GetAddressOf(), nullptr);
+	m_Context->OMSetRenderTargets(1, m_OffScreenRTV.GetAddressOf(), nullptr);
 }
 
 void RenderingDevice::setMainRT()
@@ -719,7 +671,12 @@ void RenderingDevice::setRTV(Microsoft::WRL::ComPtr<ID3D11RenderTargetView> rtv)
 	m_Context->OMSetRenderTargets(1, rtv.GetAddressOf(), nullptr);
 }
 
-Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::getMainRTSRV()
+void RenderingDevice::setRTV(ID3D11RenderTargetView* rtv)
+{
+	m_Context->OMSetRenderTargets(1, &rtv, nullptr);
+}
+
+Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::getMainSRV()
 {
 	return m_MainRTSRV;
 }
@@ -729,14 +686,9 @@ Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::getDepthSSRV()
 	return m_MainDSSRV;
 }
 
-Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::getOffScreenRTSRV()
+Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::getOffScreenSRV()
 {
-	return m_OffScreenRTSRV;
-}
-
-Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::getOffScreenRTSRVResolved()
-{
-	return m_OffScreenRTSRVResolved;
+	return m_OffScreenSRV;
 }
 
 Ref<DirectX::SpriteBatch> RenderingDevice::getUIBatch()
@@ -766,6 +718,32 @@ Microsoft::WRL::ComPtr<ID3D11SamplerState> RenderingDevice::createSS()
 	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.MipLODBias = 0.0f;
 	samplerDesc.MaxAnisotropy = 1;
+	samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+	samplerDesc.BorderColor[0] = 0;
+	samplerDesc.BorderColor[1] = 0;
+	samplerDesc.BorderColor[2] = 0;
+	samplerDesc.BorderColor[3] = 0;
+	samplerDesc.MinLOD = 0;
+	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerState;
+	if (FAILED(m_Device->CreateSamplerState(&samplerDesc, &samplerState)))
+	{
+		ERR("SamplerState could not be created");
+	}
+
+	return samplerState;
+}
+
+Microsoft::WRL::ComPtr<ID3D11SamplerState> RenderingDevice::createSSAnisotropic()
+{
+	D3D11_SAMPLER_DESC samplerDesc;
+	samplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.MipLODBias = 0.0f;
+	samplerDesc.MaxAnisotropy = D3D11_MAX_MAXANISOTROPY;
 	samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
 	samplerDesc.BorderColor[0] = 0;
 	samplerDesc.BorderColor[1] = 0;
@@ -813,7 +791,7 @@ RenderingDevice* RenderingDevice::GetSingleton()
 
 void RenderingDevice::swapBuffers()
 {
-	GFX_ERR_CHECK(m_SwapChain->Present(1, 0));
+	GFX_ERR_CHECK(m_SwapChain->Present(0, 0));
 }
 
 void RenderingDevice::clearRTV(Microsoft::WRL::ComPtr<ID3D11RenderTargetView> rtv, float r, float g, float b, float a)
