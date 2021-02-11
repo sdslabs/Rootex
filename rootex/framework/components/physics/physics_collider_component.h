@@ -43,6 +43,9 @@ class PhysicsColliderComponent : public Component, public btMotionState
 	
 	btVector3 m_LocalInertia;
 
+	virtual void getWorldTransform(btTransform& worldTrans) const;
+	virtual void setWorldTransform(const btTransform& worldTrans);
+
 	PhysicsColliderComponent(const PhysicsMaterial& material, float volume, const Vector3& gravity, const Vector3& angularFactor, int collisionGroup, int collisionMask, bool isMoveable, bool isKinematic, bool generatesHitEvents, const Ref<btCollisionShape>& collisionShape);
 	
 	friend class ECSFactory;
@@ -57,9 +60,6 @@ public:
 
 	bool setupData() override;
 	void onRemove() override;
-
-	virtual void getWorldTransform(btTransform& worldTrans) const;
-	virtual void setWorldTransform(const btTransform& worldTrans);
 	
 	void applyForce(const Vector3& force);
 	void applyTorque(const Vector3& torque);

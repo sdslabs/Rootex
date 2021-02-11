@@ -147,22 +147,24 @@ void PhysicsColliderComponent::onRemove()
 
 void PhysicsColliderComponent::getWorldTransform(btTransform& worldTrans) const
 {
-	worldTrans = MatTobtTransform(m_TransformComponent->getRotationPosition());
+	worldTrans = MatTobtTransform(m_TransformComponent->getAbsoluteTransform());
 }
 
 void PhysicsColliderComponent::setWorldTransform(const btTransform& worldTrans)
 {
 	m_Body->setActivationState(DISABLE_DEACTIVATION);
-	m_TransformComponent->setRotationPosition(BtTransformToMat(worldTrans));
+	m_TransformComponent->setAbsoluteRotationPosition(BtTransformToMat(worldTrans));
 }
 
 void PhysicsColliderComponent::applyForce(const Vector3& force)
 {
+	m_Body->setActivationState(DISABLE_DEACTIVATION);
 	m_Body->applyCentralImpulse(VecTobtVector3(force));
 }
 
 void PhysicsColliderComponent::applyTorque(const Vector3& torque)
 {
+	m_Body->setActivationState(DISABLE_DEACTIVATION);
 	m_Body->applyTorqueImpulse(VecTobtVector3(torque));
 }
 
@@ -187,7 +189,6 @@ void PhysicsColliderComponent::setAxisLock(bool enabled)
 void PhysicsColliderComponent::setTransform(const Matrix& mat)
 {
 	m_Body->setActivationState(DISABLE_DEACTIVATION);
-	// warp the body to the new position
 	m_Body->setWorldTransform(MatTobtTransform(mat));
 }
 
@@ -202,6 +203,7 @@ void PhysicsColliderComponent::setMoveable(bool enabled)
 	if (enabled)
 	{
 		m_Mass = m_Volume * PhysicsSystem::GetSingleton()->getMaterialData(m_Material).specificGravity;
+		m_Body->setActivationState(DISABLE_DEACTIVATION);
 		m_Body->setCollisionFlags(m_Body->getCollisionFlags() ^ btCollisionObject::CF_STATIC_OBJECT);
 	}
 	else
@@ -270,11 +272,13 @@ Vector3 PhysicsColliderComponent::getAngularVelocity()
 
 void PhysicsColliderComponent::translate(const Vector3& vec)
 {
+	m_Body->setActivationState(DISABLE_DEACTIVATION);
 	m_Body->translate(VecTobtVector3(vec));
 }
 
 void PhysicsColliderComponent::setGravity(const Vector3& gravity)
 {
+	m_Body->setActivationState(DISABLE_DEACTIVATION);
 	m_Body->setGravity(VecTobtVector3(gravity));
 }
 
