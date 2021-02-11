@@ -282,3 +282,4 @@ template <class T>
 using Function = std::function<T>;
 
 #include "imgui.h"
+#include "utility/imgui_helpers.h"

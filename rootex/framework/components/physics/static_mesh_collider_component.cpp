@@ -46,8 +46,6 @@ JSON::json StaticMeshColliderComponent::getJSON() const
 	return j;
 }
 
-#ifdef ROOTEX_EDITOR
-#include "imgui_helpers.h"
 void StaticMeshColliderComponent::draw()
 {
 	PhysicsColliderComponent::draw();
@@ -68,4 +66,3 @@ void StaticMeshColliderComponent::draw()
 		}
 	}
 }
-#endif // ROOTEX_EDITOR

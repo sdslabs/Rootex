@@ -38,9 +38,7 @@ public:
 	
 	void setFileName(const String& fileName) { m_FileName = fileName; };
 	
-#ifdef ROOTEX_EDITOR
 	virtual void draw();
-#endif // ROOTEX_EDITOR
 };
 
 template <typename T>

@@ -17,6 +17,14 @@ Component* CapsuleColliderComponent::Create(const JSON::json& capsuleComponentDa
 	return component;
 }
 
+void CapsuleColliderComponent::RegisterAPI(sol::table& rootex)
+{
+	sol::usertype<CapsuleColliderComponent> ccc = rootex.new_usertype<CapsuleColliderComponent>(
+	    "CapsuleColliderComponent",
+	    sol::base_classes, sol::bases<PhysicsColliderComponent, Component>());
+	rootex["Entity"]["getCapsuleCollider"] = &Entity::getComponent<CapsuleColliderComponent>;
+}
+
 void CapsuleColliderComponent::refreshDimensions()
 {
 	m_CapsuleShape->setImplicitShapeDimensions(btVector3(m_Radius, m_SideHeight / 2.0f, m_Radius));

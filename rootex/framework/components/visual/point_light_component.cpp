@@ -1,6 +1,7 @@
 #include "point_light_component.h"
 
 #include "entity.h"
+#include "systems/render_system.h"
 
 Component* PointLightComponent::Create(const JSON::json& componentData)
 {
@@ -43,9 +44,6 @@ JSON::json PointLightComponent::getJSON() const
 	return j;
 }
 
-#ifdef ROOTEX_EDITOR
-#include"imgui.h"
-#include "systems/render_system.h"
 void PointLightComponent::draw()
 {
 	RenderSystem::GetSingleton()->submitSphere(m_TransformComponent->getAbsoluteTransform().Translation(), m_PointLight.range);
@@ -58,4 +56,3 @@ void PointLightComponent::draw()
 	ImGui::DragFloat("Quadratic Attenuation##Point", &m_PointLight.attQuad, 0.01f);
 	ImGui::DragFloat("Range##Point", &m_PointLight.range, 0.1f);
 }
-#endif // ROOTEX_EDITOR

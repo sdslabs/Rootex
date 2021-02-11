@@ -10,9 +10,7 @@
 #include <commctrl.h>
 #include <shellapi.h>
 
-#ifdef ROOTEX_EDITOR
 #include "event_manager.h"
-#endif // ROOTEX_EDITOR
 
 std::filesystem::file_time_type::clock OS::s_FileSystemClock;
 const std::chrono::time_point<std::chrono::system_clock> OS::s_ApplicationStartTime = std::chrono::system_clock::now();
@@ -457,9 +455,7 @@ bool OS::IsExists(String relativePath)
 
 void OS::Print(const String& msg, const String& type)
 {
-#ifdef ROOTEX_EDITOR
 	EventManager::GetSingleton()->call(type, "OSPrint", msg);
-#endif // ROOTEX_EDITOR
 	std::cout.clear();
 	std::cout << msg << std::endl;
 }

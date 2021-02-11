@@ -232,9 +232,6 @@ void BasicMaterial::removeNormal()
 	m_NormalImageFile = nullptr;
 }
 
-#ifdef ROOTEX_EDITOR
-#include "imgui.h"
-#include "utility/imgui_helpers.h"
 void BasicMaterial::draw()
 {
 	Material::draw();
@@ -283,4 +280,3 @@ void BasicMaterial::draw()
 	ImGui::DragFloat("Refraction Constant", &m_RefractionConstant, 0.01f, 0.0f, 10.0f);
 	ImGui::DragFloat("Refractivity", &m_Refractivity, 0.01f, 0.0f, 1.0f);
 }
-#endif // ROOTEX_EDITOR

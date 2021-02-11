@@ -781,20 +781,6 @@ EditorSystem* EditorSystem::GetSingleton()
 	return &singleton;
 }
 
-#ifdef ROOTEX_EDITOR
-#include "imgui.h"
-void EditorSystem::draw()
-{
-	System::draw();
-
-	if (!m_IsActive)
-	{
-		m_IsActive = true;
-		WARN("Disabling the editor will freeze everything");
-	}
-}
-#endif // ROOTEX_EDITOR
-
 ImColor ColorToImColor(Color& c)
 {
 	return ImColor(c.x, c.y, c.z, c.w);

@@ -49,7 +49,5 @@ public:
 	void setFont(FontResourceFile* fontFile) { m_FontFile = fontFile; }
 	void setText(const String& text) { m_Text = text; }
 
-#ifdef ROOTEX_EDITOR
 	virtual void draw() override;
-#endif
 };

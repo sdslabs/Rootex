@@ -40,7 +40,5 @@ public:
 	void setDebugger(bool enabled);
 	Rml::Context* getContext() { return m_Context; }
 
-#ifdef ROOTEX_EDITOR
 	void draw() override;
-#endif // ROOTEX_EDITOR
 };

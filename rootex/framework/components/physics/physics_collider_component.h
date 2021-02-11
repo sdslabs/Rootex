@@ -98,8 +98,6 @@ public:
 	virtual const char* getName() const override { return "PhysicsColliderComponent"; };
 	virtual JSON::json getJSON() const override;
 
-#ifdef ROOTEX_EDITOR
 	virtual void draw() override;
 	void displayCollisionLayers(unsigned int& collision);
-#endif // ROOTEX_EDITOR
 };

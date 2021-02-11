@@ -117,7 +117,7 @@ void ModelResourceFile::reimport()
 			materialPath = "game/assets/materials/" + String(material->GetName().C_Str()) + ".rmat";
 		}
 
-		if (MaterialLibrary::IsExists(materialPath))
+		if (OS::IsExists(materialPath))
 		{
 			extractedMaterial = std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetMaterial(materialPath));
 		}

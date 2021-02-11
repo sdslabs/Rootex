@@ -140,8 +140,3 @@ void MaterialLibrary::CreateNewMaterialFile(const String& materialPath, const St
 		}
 	}
 }
-
-bool MaterialLibrary::IsExists(const String& materialPath)
-{
-	return OS::IsExists(materialPath);
-}

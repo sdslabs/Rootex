@@ -17,8 +17,6 @@ Material::Material(Shader* shader, const String& typeName, bool isAlpha)
 {
 }
 
-#ifdef ROOTEX_EDITOR
-#include "imgui.h"
 void Material::draw()
 {
 	ImGui::Columns(2);
@@ -39,4 +37,3 @@ void Material::draw()
 
 	ImGui::Columns(1);
 }
-#endif // ROOTEX_EDITOR

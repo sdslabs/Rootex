@@ -25,11 +25,6 @@ protected:
 	RenderableComponent(RenderableComponent&) = delete;
 	virtual ~RenderableComponent() = default;
 
-#ifdef ROOTEX_EDITOR
-	/// Empty Vector means all materials are allowed
-	Vector<String> m_AllowedMaterials;
-#endif // ROOTEX_EDITOR
-
 public:
 	static void RegisterAPI(sol::table& rootex);
 	static const ComponentID s_ComponentID = (ComponentID)ComponentIDs::RenderableComponent;
@@ -54,7 +49,5 @@ public:
 	virtual ComponentID getComponentID() const override = 0;
 	virtual JSON::json getJSON() const override;
 
-#ifdef ROOTEX_EDITOR
 	virtual void draw() override;
-#endif // ROOTEX_EDITOR
 };

@@ -25,10 +25,7 @@ JSON::json SkyComponent::getJSON() const
 	return j;
 }
 
-#ifdef ROOTEX_EDITOR
-#include "imgui.h"
 void SkyComponent::draw()
 {
 	m_SkyMaterial->draw();
 }
-#endif // ROOTEX_EDITOR

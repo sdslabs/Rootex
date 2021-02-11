@@ -69,8 +69,6 @@ JSON::json TextUIComponent::getJSON() const
 	return j;
 }
 
-#ifdef ROOTEX_EDITOR
-#include "utility/imgui_helpers.h"
 void TextUIComponent::draw()
 {
 	ImGui::InputText("Text", &m_Text);
@@ -115,4 +113,3 @@ void TextUIComponent::draw()
 		}
 	}
 }
-#endif // ROOTEX_EDITOR

@@ -144,8 +144,6 @@ void UISystem::setDebugger(bool enabled)
 	Rml::Debugger::SetVisible(enabled);
 }
 
-#ifdef ROOTEX_EDITOR
-#include "imgui.h"
 void UISystem::draw()
 {
 	System::draw();
@@ -159,4 +157,3 @@ void UISystem::draw()
 
 	ImGui::Checkbox("Take Inputs", &InputInterface::s_IsEnabled);
 }
-#endif

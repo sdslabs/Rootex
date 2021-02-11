@@ -4,7 +4,7 @@
 #include "resource_loader.h"
 #include "scene_loader.h"
 
-static int CurrentSceneCount = ROOT_SCENE_ID + 1;
+static int NextSceneID = ROOT_SCENE_ID + 1;
 Vector<Scene*> Scene::s_Scenes;
 
 void to_json(JSON::json& j, const SceneSettings& s)
@@ -25,9 +25,9 @@ void from_json(const JSON::json& j, SceneSettings& s)
 	s.startScheme = j.value("startScheme", String());
 }
 
-void Scene::ResetCounter()
+void Scene::ResetNextID()
 {
-	CurrentSceneCount = ROOT_SCENE_ID + 1;
+	NextSceneID = ROOT_SCENE_ID + 1;
 }
 
 void Scene::RegisterAPI(sol::table& rootex)
@@ -52,11 +52,23 @@ void Scene::RegisterAPI(sol::table& rootex)
 
 Ptr<Scene> Scene::Create(const JSON::json& sceneData)
 {
-	CurrentSceneCount = CurrentSceneCount > sceneData.value("ID", CurrentSceneCount) ? CurrentSceneCount : sceneData.value("ID", CurrentSceneCount);
-	Ptr<Scene> thisScene(std::make_unique<Scene>(CurrentSceneCount, sceneData.value("name", String("Untitled")), sceneData.value("file", String()), sceneData.value("settings", SceneSettings())));
+	SceneID thisSceneID = NextSceneID;
+	if (sceneData.contains("ID")) 
+	{
+		thisSceneID = sceneData["ID"];
+		if (thisSceneID >= NextSceneID)
+		{
+			NextSceneID = thisSceneID + 1;
+		}
+	}
+	else
+	{
+		NextSceneID++;
+	}
+	
+	Ptr<Scene> thisScene(std::make_unique<Scene>(thisSceneID, sceneData.value("name", String("Untitled")), sceneData.value("file", String()), sceneData.value("settings", SceneSettings())));
 	s_Scenes.push_back(thisScene.get());
-	CurrentSceneCount++;
-
+	
 	if (sceneData.contains("entity"))
 	{
 		thisScene->m_Entity = ECSFactory::CreateEntity(thisScene.get(), sceneData["entity"]);
@@ -310,10 +322,6 @@ Scene::~Scene()
 	PRINT("Deleted scene: " + getFullName());
 }
 
-#ifdef ROOTEX_EDITOR
-#include "imgui.h"
-#include "imgui_stdlib.h"
-#include "scene_loader.h"
 
 void SceneSettings::drawSceneSelectables(Scene* scene, SceneID& toSet)
 {
@@ -373,4 +381,3 @@ void SceneSettings::draw()
 	}
 	ImGui::InputText("Start Scheme", &startScheme);
 }
-#endif // ROOTEX_EDITOR

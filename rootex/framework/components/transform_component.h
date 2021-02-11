@@ -34,11 +34,7 @@ private:
 	friend class RenderSystem;
 	friend class ECSFactory;
 
-#ifdef ROOTEX_EDITOR
-	static inline const float s_EditorDecimalSpeed = 0.01f;
-
 	Vector3 m_EditorRotation;
-#endif // ROOTEX_EDITOR
 
 public:
 	static void RegisterAPI(sol::table& rootex);
@@ -71,8 +67,6 @@ public:
 	virtual const char* getName() const override { return "TransformComponent"; }
 	virtual JSON::json getJSON() const override;
 
-#ifdef ROOTEX_EDITOR
 	void draw() override;
 	void highlight();
-#endif // ROOTEX_EDITOR
 };

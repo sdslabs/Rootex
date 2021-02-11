@@ -1,6 +1,7 @@
 #include "spot_light_component.h"
 
 #include "entity.h"
+#include "systems/render_system.h"
 
 Component* SpotLightComponent::Create(const JSON::json& componentData)
 {
@@ -51,9 +52,6 @@ JSON::json SpotLightComponent::getJSON() const
 	return j;
 }
 
-#ifdef ROOTEX_EDITOR
-#include "imgui.h"
-#include "systems/render_system.h"
 void SpotLightComponent::draw()
 {
 	RenderSystem::GetSingleton()->submitCone(m_TransformComponent->getAbsoluteTransform(), m_SpotLight.range, m_SpotLight.angleRange * m_SpotLight.range);
@@ -68,4 +66,3 @@ void SpotLightComponent::draw()
 	ImGui::DragFloat("Spot Factor##Spot", &m_SpotLight.spot, 0.1f);
 	ImGui::SliderAngle("Cone Sub-Angle##Spot", &m_SpotLight.angleRange, 0.0f, 90.0f);
 }
-#endif // ROOTEX_EDITOR
