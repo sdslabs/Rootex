@@ -95,8 +95,6 @@ public:
 	/// Get JSON representation of the component data needed to re-construct component from memory.
 	virtual JSON::json getJSON() const;
 
-#ifdef ROOTEX_EDITOR
-	/// Expose the component data in the InspectorDock.
+	/// Expose the component data with ImGui.
 	virtual void draw();
-#endif
 };

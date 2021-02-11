@@ -62,8 +62,6 @@ JSON::json UIComponent::getJSON() const
 	return j;
 }
 
-#ifdef ROOTEX_EDITOR
-#include "utility/imgui_helpers.h"
 void UIComponent::draw()
 {
 	ImGui::BeginGroup();
@@ -91,4 +89,3 @@ void UIComponent::draw()
 		setDocument(m_FilePath);
 	}
 }
-#endif // ROOTEX_EDITOR

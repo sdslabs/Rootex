@@ -29,7 +29,6 @@ public:
 	
 	static void SaveAll();
 	static void CreateNewMaterialFile(const String& materialPath, const String& materialType);
-	static bool IsExists(const String& materialPath);
 
 	static Ref<Material> GetMaterial(const String& materialPath);
 	static Ref<Material> GetDefaultMaterial();

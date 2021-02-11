@@ -11,6 +11,8 @@
 #include "components/visual/ui_component.h"
 #include "components/visual/model_component.h"
 #include "components/physics/box_collider_component.h"
+#include "components/physics/capsule_collider_component.h"
+#include "components/physics/sphere_collider_component.h"
 #include "components/visual/ui_component.h"
 #include "core/input/input_manager.h"
 #include "core/resource_files/audio_resource_file.h"
@@ -168,4 +170,7 @@ void LuaInterpreter::registerTypes()
 	TextUIComponent::RegisterAPI(rootex);
 	UIComponent::RegisterAPI(rootex);
 	PhysicsColliderComponent::RegisterAPI(rootex);
+	BoxColliderComponent::RegisterAPI(rootex);
+	SphereColliderComponent::RegisterAPI(rootex);
+	CapsuleColliderComponent::RegisterAPI(rootex);
 }

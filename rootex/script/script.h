@@ -27,7 +27,5 @@ public:
 
 	const String& getFilePath() { return m_ScriptFile; }
 
-#ifdef ROOTEX_EDITOR
 	void draw();
-#endif
 };

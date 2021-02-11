@@ -4,6 +4,7 @@
 #include <math.h>
 
 #include "entity.h"
+#include "systems/render_system.h"
 
 Component* TransformComponent::Create(const JSON::json& componentData)
 {
@@ -139,21 +140,18 @@ JSON::json TransformComponent::getJSON() const
 	return j;
 }
 
-#ifdef ROOTEX_EDITOR
-#include "imgui.h"
-#include "systems/render_system.h"
 void TransformComponent::draw()
 {
 	highlight();
 
-	ImGui::DragFloat3("##Position", &m_TransformBuffer.m_Position.x, s_EditorDecimalSpeed);
+	ImGui::DragFloat3("##Position", &m_TransformBuffer.m_Position.x, 0.01f);
 	ImGui::SameLine();
 	if (ImGui::Button("Position"))
 	{
 		m_TransformBuffer.m_Position = { 0.0f, 0.0f, 0.0f };
 	}
 
-	if (ImGui::DragFloat3("##Rotation", &m_EditorRotation.x, s_EditorDecimalSpeed))
+	if (ImGui::DragFloat3("##Rotation", &m_EditorRotation.x, 0.01f))
 	{
 		m_TransformBuffer.m_Rotation = Quaternion::CreateFromYawPitchRoll(m_EditorRotation.x, m_EditorRotation.y, m_EditorRotation.z);
 	}
@@ -195,12 +193,12 @@ void TransformComponent::draw()
 		}
 
 		m_TransformBuffer.m_Scale = { lockedScale.x, lockedScale.y, lockedScale.z };
-		ImGui::DragFloat3("##Scale", &lockedScale.x, s_EditorDecimalSpeed, 0.0f, 0.0f);
+		ImGui::DragFloat3("##Scale", &lockedScale.x, 0.01f, 0.0f, 0.0f);
 	}
 	else
 	{
 		lockedFirstFrame = false;
-		ImGui::DragFloat3("##Scale", &m_TransformBuffer.m_Scale.x, s_EditorDecimalSpeed, 0.0f, 0.0f);
+		ImGui::DragFloat3("##Scale", &m_TransformBuffer.m_Scale.x, 0.01f, 0.0f, 0.0f);
 	}
 	
 	ImGui::SameLine();
@@ -211,14 +209,14 @@ void TransformComponent::draw()
 
 	ImGui::Checkbox("Lock Scale", &m_LockScale);
 
-	ImGui::DragFloat3("##Center", &m_TransformBuffer.m_BoundingBox.Center.x, s_EditorDecimalSpeed);
+	ImGui::DragFloat3("##Center", &m_TransformBuffer.m_BoundingBox.Center.x, 0.01f);
 	ImGui::SameLine();
 	if (ImGui::Button("Center"))
 	{
 		m_TransformBuffer.m_BoundingBox.Center = { 0.0f, 0.0f, 0.0f };
 	}
 
-	ImGui::DragFloat3("##Bounds", &m_TransformBuffer.m_BoundingBox.Extents.x, s_EditorDecimalSpeed);
+	ImGui::DragFloat3("##Bounds", &m_TransformBuffer.m_BoundingBox.Extents.x, 0.01f);
 	ImGui::SameLine();
 	if (ImGui::Button("Extents"))
 	{
@@ -238,4 +236,3 @@ void TransformComponent::highlight()
 	getAbsoluteTransform().Forward().Normalize(forward);
 	RenderSystem::GetSingleton()->submitLine(transformedBox.Center, transformedBox.Center + (transformedBox.Extents.z * 2.0f) * forward);
 }
-#endif // ROOTEX_EDITOR

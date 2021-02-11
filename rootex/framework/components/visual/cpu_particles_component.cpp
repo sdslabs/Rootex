@@ -58,7 +58,6 @@ CPUParticlesComponent::CPUParticlesComponent(size_t poolSize, const String& part
 {
 	m_InstanceBufferData.resize(MAX_PARTICLES);
 	m_InstanceBuffer.reset(new VertexBuffer(m_InstanceBufferData));
-	m_AllowedMaterials = { ParticlesMaterial::s_MaterialName };
 	expandPool(poolSize);
 }
 
@@ -225,8 +224,6 @@ JSON::json CPUParticlesComponent::getJSON() const
 	return j;
 }
 
-#ifdef ROOTEX_EDITOR
-#include "utility/imgui_helpers.h"
 void CPUParticlesComponent::draw()
 {
 	ImGui::Text("Model");
@@ -288,4 +285,3 @@ void CPUParticlesComponent::draw()
 	ImGui::DragFloat("Size Variation", &m_ParticleTemplate.sizeVariation, 0.01f);
 	ImGui::DragFloat("Lifetime", &m_ParticleTemplate.lifeTime, 0.01f);
 }
-#endif // ROOTEX_EDITOR

@@ -24,11 +24,6 @@ protected:
 
 	friend class ECSFactory;
 
-#ifdef ROOTEX_EDITOR
-	friend class InspectorDock;
-	friend class HierarchyDock;
-#endif // ROOTEX_EDITOR
-
 public:
 	static void RegisterAPI(sol::table& rootex);
 
@@ -61,9 +56,7 @@ public:
 	void evaluateScriptOverrides();
 	bool setScript(const String& path);
 	
-#ifdef ROOTEX_EDITOR
 	void draw();
-#endif
 };
 
 template <class ComponentType>

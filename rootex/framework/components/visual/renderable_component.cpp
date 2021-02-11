@@ -145,8 +145,6 @@ JSON::json RenderableComponent::getJSON() const
 	return j;
 }
 
-#ifdef ROOTEX_EDITOR
-#include "imgui_helpers.h"
 void RenderableComponent::draw()
 {
 	int renderPassUI = log2(m_RenderPass);
@@ -245,4 +243,3 @@ void RenderableComponent::draw()
 		ImGui::TreePop();
 	}
 }
-#endif // ROOTEX_EDITOR

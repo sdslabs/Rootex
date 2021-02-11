@@ -147,8 +147,6 @@ JSON::json AnimatedModelComponent::getJSON() const
 	return j;
 }
 
-#ifdef ROOTEX_EDITOR
-#include "imgui_helpers.h"
 void AnimatedModelComponent::draw()
 {
 	ImGui::Checkbox("Visible", &m_IsVisible);
@@ -232,4 +230,3 @@ void AnimatedModelComponent::draw()
 	}
 	ImGui::EndGroup();
 }
-#endif //ROOTEX_EDITOR

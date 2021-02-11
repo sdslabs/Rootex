@@ -283,8 +283,6 @@ PhysicsMaterial PhysicsColliderComponent::getMaterial() const
 	return m_Material;
 }
 
-#ifdef ROOTEX_EDITOR
-#include "imgui.h"
 void PhysicsColliderComponent::draw()
 {
 	static bool showInEditor = true;
@@ -355,4 +353,3 @@ void PhysicsColliderComponent::displayCollisionLayers(unsigned int& collision)
 	ImGui::CheckboxFlags("TriggerVolume", &collision, (int)CollisionMask::TriggerVolume);
 	ImGui::CheckboxFlags("All", &collision, (int)CollisionMask::All);
 }
-#endif // ROOTEX_EDITOR

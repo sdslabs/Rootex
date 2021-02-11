@@ -62,10 +62,6 @@ void ShortMusicComponent::setAudioFile(AudioResourceFile* audioFile)
 	setupData();
 }
 
-#ifdef ROOTEX_EDITOR
-#include "imgui.h"
-#include "imgui_stdlib.h"
-#include "utility/imgui_helpers.h"
 void ShortMusicComponent::draw()
 {
 	ImGui::Text("%s", m_AudioFile->getPath().generic_string().c_str());
@@ -82,4 +78,3 @@ void ShortMusicComponent::draw()
 
 	AudioComponent::draw();
 }
-#endif // ROOTEX_EDITOR

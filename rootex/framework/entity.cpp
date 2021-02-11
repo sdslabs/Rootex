@@ -209,8 +209,6 @@ const String& Entity::getFullName() const
 	return m_Scene->getFullName();
 }
 
-#ifdef ROOTEX_EDITOR
-#include "imgui_helpers.h"
 void Entity::draw() 
 {
 	ImGui::Text("Script");
@@ -239,6 +237,7 @@ void Entity::draw()
 	}
 	else
 	{
+		ImGui::SameLine();
 		if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Choose Script"))
 		{
 			if (Optional<String> result = OS::SelectFile(SupportedFiles.at(ResourceFile::Type::Lua), "game/assets/scripts/"))
@@ -253,4 +252,3 @@ void Entity::draw()
 		m_Script->draw();
 	}
 }
-#endif

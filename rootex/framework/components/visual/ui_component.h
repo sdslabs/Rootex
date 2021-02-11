@@ -30,7 +30,5 @@ public:
 	ComponentID getComponentID() const { return s_ID; }
 	virtual JSON::json getJSON() const override;
 
-#ifdef ROOTEX_EDITOR
 	virtual void draw() override;
-#endif // ROOTEX_EDITOR
 };

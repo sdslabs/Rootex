@@ -135,16 +135,13 @@ void RenderSystem::update(float deltaMilliseconds)
 	}
 	{
 		ZoneNamedN(renderPasses, "Render Passes", true);
-#ifdef ROOTEX_EDITOR
 		if (m_IsEditorRenderPassEnabled)
 		{
 			ZoneNamedN(editorRenderPass, "Editor Render Pass", true);
 			{
 				renderPassRender(deltaMilliseconds, RenderPass::Editor);
-				renderLines();
 			}
 		}
-#endif // ROOTEX_EDITOR
 		{
 			ZoneNamedN(basicRenderPass, "Basic Render Pass", true);
 			renderPassRender(deltaMilliseconds, RenderPass::Basic);
@@ -153,6 +150,7 @@ void RenderSystem::update(float deltaMilliseconds)
 			ZoneNamedN(alphaRenderPass, "Alpha Render Pass", true);
 			renderPassRender(deltaMilliseconds, RenderPass::Alpha);
 		}
+		renderLines();
 	}
 	{
 		ZoneNamedN(skyRendering, "Sky Rendering", true);
@@ -397,8 +395,6 @@ Variant RenderSystem::onOpenedScene(const Event* event)
 	return true;
 }
 
-#ifdef ROOTEX_EDITOR
-#include "imgui.h"
 void RenderSystem::draw()
 {
 	System::draw();
@@ -428,4 +424,3 @@ void RenderSystem::draw()
 		updatePerSceneBinds();
 	}
 }
-#endif

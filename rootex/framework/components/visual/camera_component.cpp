@@ -149,9 +149,6 @@ JSON::json CameraComponent::getJSON() const
 	return j;
 }
 
-#ifdef ROOTEX_EDITOR
-#include "imgui.h"
-#include "imgui_stdlib.h"
 void CameraComponent::draw()
 {
 	if (ImGui::DragFloat2("##Aspect", &m_AspectRatio.x, 0.01f, 0.1f, 100.0f))
@@ -255,4 +252,3 @@ void CameraComponent::draw()
 		ImGui::Checkbox("FXAA", &m_PostProcessingDetails.isFXAA);
 	}
 }
-#endif // ROOTEX_EDITOR

@@ -16,6 +16,14 @@ Component* BoxColliderComponent::Create(const JSON::json& boxComponentData)
 	return component;
 }
 
+void BoxColliderComponent::RegisterAPI(sol::table& rootex)
+{
+	sol::usertype<BoxColliderComponent> bcc = rootex.new_usertype<BoxColliderComponent>(
+	    "BoxColliderComponent",
+	    sol::base_classes, sol::bases<PhysicsColliderComponent, Component>());
+	rootex["Entity"]["getBoxCollider"] = &Entity::getComponent<BoxColliderComponent>;
+}
+
 BoxColliderComponent::BoxColliderComponent(const Vector3& dimensions, const PhysicsMaterial& material, const Vector3& angularFactor, const Vector3& gravity, int collisionGroup, int collisionMask, bool isMoveable, bool isKinematic, bool generatesHitEvents)
     : PhysicsColliderComponent(material, dimensions.x * dimensions.y * dimensions.z, gravity, angularFactor, collisionGroup, collisionMask, isMoveable, isKinematic, generatesHitEvents, Ref<btBoxShape>(new btBoxShape(VecTobtVector3(dimensions))))
     , m_Dimensions(dimensions)
@@ -38,8 +46,6 @@ void BoxColliderComponent::setDimensions(const Vector3& dimensions)
 	m_BoxShape->setImplicitShapeDimensions(VecTobtVector3(dimensions));
 }
 
-#ifdef ROOTEX_EDITOR
-#include "imgui.h"
 void BoxColliderComponent::draw()
 {
 	PhysicsColliderComponent::draw();
@@ -55,4 +61,3 @@ void BoxColliderComponent::draw()
 		setDimensions(m_Dimensions);
 	}
 }
-#endif // ROOTEX_EDITOR 

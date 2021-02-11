@@ -69,7 +69,7 @@ void SceneLoader::loadPreloadedScene(const String& sceneFile, const Vector<Strin
 	EventManager::GetSingleton()->defer([this, sceneFile, arguments]() {
 		endSystems();
 		m_RootScene->removeChild(m_CurrentScene);
-		Scene::ResetCounter();
+		Scene::ResetNextID();
 
 		ResourceLoader::Unload(m_UnloadCache);
 		m_UnloadCache.clear();

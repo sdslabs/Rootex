@@ -86,9 +86,6 @@ JSON::json Script::getJSON() const
 	return j;
 }
 
-#ifdef ROOTEX_EDITOR
-#include "imgui.h"
-#include "imgui_stdlib.h"
 void Script::draw()
 {
 	ImGui::Text("Script Exports");
@@ -109,4 +106,3 @@ void Script::draw()
 		});
 	}
 }
-#endif // ROOTEX_EDITOR

@@ -16,6 +16,14 @@ Component* SphereColliderComponent::Create(const JSON::json& sphereComponentData
 	return component;
 }
 
+void SphereColliderComponent::RegisterAPI(sol::table& rootex)
+{
+	sol::usertype<SphereColliderComponent> scc = rootex.new_usertype<SphereColliderComponent>(
+	    "SphereColliderComponent",
+	    sol::base_classes, sol::bases<PhysicsColliderComponent, Component>());
+	rootex["Entity"]["getSphereCollider"] = &Entity::getComponent<SphereColliderComponent>;
+}
+
 SphereColliderComponent::SphereColliderComponent(float radius, const PhysicsMaterial& material, const Vector3& angularFactor, const Vector3& gravity, int collisionGroup, int collisionMask, bool isMoveable, bool isKinematic, bool generatesHitEvents)
     : PhysicsColliderComponent(material, ((4.0f / 3.0f) * DirectX::XM_PI * radius * radius * radius), gravity, angularFactor, collisionGroup, collisionMask, isMoveable, isKinematic, generatesHitEvents, Ref<btSphereShape>(new btSphereShape(radius)))
     , m_Radius(radius)
@@ -38,8 +46,6 @@ void SphereColliderComponent::setRadius(float r)
 	m_SphereShape->setUnscaledRadius(r);
 }
 
-#ifdef ROOTEX_EDITOR
-#include "imgui.h"
 void SphereColliderComponent::draw()
 {
 	PhysicsColliderComponent::draw();
@@ -54,4 +60,3 @@ void SphereColliderComponent::draw()
 		setRadius(1.0f);
 	}
 }
-#endif // ROOTEX_EDITOR
