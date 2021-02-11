@@ -48,8 +48,10 @@ public:
 	void setRotationQuaternion(const Quaternion& rotation);
 	void setScale(const Vector3& scale);
 	void setTransform(const Matrix& transform);
+	void setAbsoluteTransform(const Matrix& transform);
 	void setBounds(const BoundingBox& bounds);
 	void setRotationPosition(const Matrix& transform);
+	void setAbsoluteRotationPosition(const Matrix& transform);
 	void setParentAbsoluteTransform(const Matrix& parentTransform);
 
 	void addTransform(const Matrix& applyTransform);

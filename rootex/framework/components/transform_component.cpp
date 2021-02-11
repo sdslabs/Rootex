@@ -94,6 +94,11 @@ void TransformComponent::setTransform(const Matrix& transform)
 	updatePositionRotationScaleFromTransform(m_TransformBuffer.m_Transform);
 }
 
+void TransformComponent::setAbsoluteTransform(const Matrix& transform)
+{
+	setTransform(transform * m_ParentAbsoluteTransform.Invert());
+}
+
 void TransformComponent::setBounds(const BoundingBox& bounds)
 {
 	m_TransformBuffer.m_BoundingBox = bounds;
@@ -102,6 +107,12 @@ void TransformComponent::setBounds(const BoundingBox& bounds)
 void TransformComponent::setRotationPosition(const Matrix& transform)
 {
 	m_TransformBuffer.m_Transform = Matrix::CreateScale(m_TransformBuffer.m_Scale) * transform;
+	updatePositionRotationScaleFromTransform(m_TransformBuffer.m_Transform);
+}
+
+void TransformComponent::setAbsoluteRotationPosition(const Matrix& transform)
+{
+	setAbsoluteTransform(Matrix::CreateScale(m_TransformBuffer.m_Scale) * transform);
 	updatePositionRotationScaleFromTransform(m_TransformBuffer.m_Transform);
 }
 
