@@ -14,7 +14,7 @@
 #include "components/physics/capsule_collider_component.h"
 #include "components/physics/sphere_collider_component.h"
 #include "components/visual/ui_component.h"
-#include "core/input/input_manager.h"
+#include "systems/input_system.h"
 #include "core/resource_files/audio_resource_file.h"
 #include "core/resource_files/font_resource_file.h"
 #include "core/resource_files/image_resource_file.h"
@@ -147,8 +147,9 @@ void LuaInterpreter::registerTypes()
 	
 	Event::RegisterAPI(rootex);
 	EventManager::RegisterAPI(rootex);
-	InputManager::RegisterAPI(rootex);
 	SceneLoader::RegisterAPI(rootex);
+	
+	InputSystem::RegisterAPI(rootex);
 
 	ResourceLoader::RegisterAPI(rootex);
 	ResourceFile::RegisterAPI(rootex);
