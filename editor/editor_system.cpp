@@ -360,8 +360,12 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 									file->reimport();
 								}
 								ImGui::SameLine();
+								ImGui::TextColored(getWarningColor(), "%s", file->getPath().generic_string().c_str());
 							}
-							ImGui::MenuItem(file->getPath().generic_string().c_str());
+							else
+							{
+								ImGui::Text(file->getPath().generic_string().c_str());
+							}
 							ImGui::PopID();
 							id++;
 						}
