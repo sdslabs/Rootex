@@ -75,7 +75,7 @@
             "name": "Capsule",
             "settings": {
                 "camera": 1,
-                "inputSchemes": null,
+                "inputSchemes": {},
                 "listener": 1,
                 "preloads": [],
                 "startScheme": ""
@@ -161,7 +161,7 @@
                     "name": "Block",
                     "settings": {
                         "camera": 1,
-                        "inputSchemes": null,
+                        "inputSchemes": {},
                         "listener": 1,
                         "preloads": [],
                         "startScheme": ""
@@ -233,7 +233,7 @@
                             "name": "Point Light",
                             "settings": {
                                 "camera": 1,
-                                "inputSchemes": null,
+                                "inputSchemes": {},
                                 "listener": 1,
                                 "preloads": [],
                                 "startScheme": ""
@@ -335,7 +335,7 @@
                             "name": "Camera",
                             "settings": {
                                 "camera": 1,
-                                "inputSchemes": null,
+                                "inputSchemes": {},
                                 "listener": 1,
                                 "preloads": [],
                                 "startScheme": ""
@@ -415,7 +415,7 @@
                     "name": "Sphere",
                     "settings": {
                         "camera": 1,
-                        "inputSchemes": null,
+                        "inputSchemes": {},
                         "listener": 1,
                         "preloads": [],
                         "startScheme": ""
@@ -495,7 +495,7 @@
                     "name": "Capsule",
                     "settings": {
                         "camera": 1,
-                        "inputSchemes": null,
+                        "inputSchemes": {},
                         "listener": 1,
                         "preloads": [],
                         "startScheme": ""
@@ -543,7 +543,7 @@
             "name": "physics",
             "settings": {
                 "camera": 1,
-                "inputSchemes": null,
+                "inputSchemes": {},
                 "listener": 1,
                 "preloads": [],
                 "startScheme": ""
@@ -649,8 +649,8 @@
     "name": "mesh_collision",
     "settings": {
         "camera": 5,
-        "inputSchemes": [
-            {
+        "inputSchemes": {
+            "Controls": {
                 "bools": [
                     {
                         "button": 87,
@@ -673,10 +673,9 @@
                         "inputEvent": "Right"
                     }
                 ],
-                "floats": {},
-                "name": "Controls"
+                "floats": []
             }
-        ],
+        },
         "listener": 1,
         "preloads": [],
         "startScheme": "Controls"

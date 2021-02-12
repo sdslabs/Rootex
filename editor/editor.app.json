@@ -14,8 +14,8 @@
         },
         "InputSystem": {
             "height": 1387,
-            "inputSchemes": [
-                {
+            "inputSchemes": {
+                "Editor": {
                     "bools": [
                         {
                             "button": 2,
@@ -58,10 +58,9 @@
                             "inputEvent": "InputCameraDown"
                         }
                     ],
-                    "floats": {},
-                    "name": "Editor"
+                    "floats": {}
                 }
-            ],
+            },
             "startScheme": "Editor",
             "width": 2560
         },

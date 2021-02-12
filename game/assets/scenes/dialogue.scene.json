@@ -20,8 +20,8 @@
     "name": "dialogue",
     "settings": {
         "camera": 1,
-        "inputSchemes": [
-            {
+        "inputSchemes": {
+            "Dialogue": {
                 "bools": [
                     {
                         "button": 127,
@@ -39,10 +39,9 @@
                         "inputEvent": "Up"
                     }
                 ],
-                "floats": {},
-                "name": "Dialogue"
+                "floats": {}
             }
-        ],
+        },
         "listener": 1,
         "preloads": [],
         "startScheme": "Dialogue"

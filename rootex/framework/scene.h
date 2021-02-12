@@ -2,6 +2,7 @@
 
 #include "common/common.h"
 #include "entity.h"
+#include "core/input/input_manager.h"
 
 typedef unsigned int SceneID;
 
@@ -12,10 +13,11 @@ struct SceneSettings
 	Vector<String> preloads = {};
 	SceneID camera = ROOT_SCENE_ID;
 	SceneID listener = ROOT_SCENE_ID;
-	JSON::json inputSchemes = {};
+	HashMap<String, InputScheme> inputSchemes;
 	String startScheme = {};
 
 	void drawSceneSelectables(Scene* scene, SceneID& toSet);
+	void drawInputScheme(InputDescription& floatInput);
 	void draw();
 };
 

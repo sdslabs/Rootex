@@ -720,8 +720,8 @@
     "name": "model",
     "settings": {
         "camera": 15,
-        "inputSchemes": [
-            {
+        "inputSchemes": {
+            "Controls": {
                 "bools": [
                     {
                         "button": 87,
@@ -744,10 +744,9 @@
                         "inputEvent": "Right"
                     }
                 ],
-                "floats": {},
-                "name": "Controls"
+                "floats": {}
             }
-        ],
+        },
         "listener": 15,
         "preloads": [
             "game/assets/sponza/sponza.obj",
