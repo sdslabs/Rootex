@@ -8,16 +8,6 @@ EventManager::EventManager()
 	m_ActiveQueue = 0;
 }
 
-void EventManager::RegisterAPI(sol::table& rootex)
-{
-	rootex["AddEvent"] = [](const String& eventType) { EventManager::GetSingleton()->addEvent(eventType); };
-	rootex["RemoveEvent"] = [](const String& eventType) { EventManager::GetSingleton()->removeEvent(eventType); };
-	rootex["CallEvent"] = [](const Event& event) { EventManager::GetSingleton()->call(event); };
-	rootex["DeferredCallEvent"] = [](const Ref<Event>& event) { EventManager::GetSingleton()->deferredCall(event); };
-	rootex["ReturnCallEvent"] = [](const Event& event) { return EventManager::GetSingleton()->returnCall(event); };
-	rootex["Connect"] = [](const Function<Variant(const Event*)>& function, const String& eventName) { BIND_EVENT_FUNCTION(eventName, function); };
-}
-
 EventManager* EventManager::GetSingleton()
 {
 	static EventManager singleton;

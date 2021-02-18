@@ -6,10 +6,12 @@
 #include "scene.h"
 #include "scene_loader.h"
 #include "ecs_factory.h"
+#include "script.h"
 #include "components/transform_component.h"
 #include "components/visual/text_ui_component.h"
 #include "components/visual/ui_component.h"
 #include "components/visual/model_component.h"
+#include "components/visual/animated_model_component.h"
 #include "components/physics/box_collider_component.h"
 #include "components/physics/capsule_collider_component.h"
 #include "components/physics/sphere_collider_component.h"
@@ -77,6 +79,7 @@ void LuaInterpreter::runScripts()
 	}
 	called = true;
 
+	sol::table middleclass = m_Lua.require_file("class", "rootex/vendor/Middleclass/middleclass.lua");
 	sol::table dbg = m_Lua.require_file("dbg", "rootex/vendor/Debugger/debugger.lua");
 	dbg["auto_where"] = 2;
 
@@ -144,34 +147,240 @@ void LuaInterpreter::registerTypes()
 		    sol::meta_function::multiplication, [](Matrix& l, Matrix& r) { return l * r; });
 		matrix["Identity"] = sol::var(Matrix::Identity);
 	}
-	
-	Event::RegisterAPI(rootex);
-	EventManager::RegisterAPI(rootex);
-	SceneLoader::RegisterAPI(rootex);
-	
-	InputSystem::RegisterAPI(rootex);
+	{
+		sol::usertype<Event> event = rootex.new_usertype<Event>("Event", sol::constructors<Event(const String&, const Event::Type, const Variant)>());
+		event["getName"] = &Event::getName;
+		event["getType"] = &Event::getType;
+		event["getData"] = &Event::getData;
+	}
+	{
+		rootex["AddEvent"] = [](const String& eventType) { EventManager::GetSingleton()->addEvent(eventType); };
+		rootex["RemoveEvent"] = [](const String& eventType) { EventManager::GetSingleton()->removeEvent(eventType); };
+		rootex["CallEvent"] = [](const Event& event) { EventManager::GetSingleton()->call(event); };
+		rootex["DeferredCallEvent"] = [](const Ref<Event>& event) { EventManager::GetSingleton()->deferredCall(event); };
+		rootex["ReturnCallEvent"] = [](const Event& event) { return EventManager::GetSingleton()->returnCall(event); };
+		rootex["Connect"] = [](const Function<Variant(const Event*)>& function, const String& eventName) { BIND_EVENT_FUNCTION(eventName, function); };
+	}
+	{
+		sol::usertype<Atomic<int>> atomicInt = rootex.new_usertype<Atomic<int>>("AtomicInt", sol::constructors<Atomic<int>(), Atomic<int>(int)>());
+		atomicInt["load"] = [](Atomic<int>* a) { return a->load(); };
 
-	ResourceLoader::RegisterAPI(rootex);
-	ResourceFile::RegisterAPI(rootex);
-	TextResourceFile::RegisterAPI(rootex);
-	LuaTextResourceFile::RegisterAPI(rootex);
-	AudioResourceFile::RegisterAPI(rootex);
-	ModelResourceFile::RegisterAPI(rootex);
-	CollisionModelResourceFile::RegisterAPI(rootex);
-	ImageResourceFile::RegisterAPI(rootex);
-	ImageCubeResourceFile::RegisterAPI(rootex);
-	FontResourceFile::RegisterAPI(rootex);
-	
-	ECSFactory::RegisterAPI(rootex);
-	Scene::RegisterAPI(rootex);
-	Entity::RegisterAPI(rootex);
-	TransformComponent::RegisterAPI(rootex);
-	ModelComponent::RegisterAPI(rootex);
-	RenderUIComponent::RegisterAPI(rootex);
-	TextUIComponent::RegisterAPI(rootex);
-	UIComponent::RegisterAPI(rootex);
-	PhysicsColliderComponent::RegisterAPI(rootex);
-	BoxColliderComponent::RegisterAPI(rootex);
-	SphereColliderComponent::RegisterAPI(rootex);
-	CapsuleColliderComponent::RegisterAPI(rootex);
+		rootex["LoadScene"] = [](const String& sceneFile, const sol::table& arguments) { SceneLoader::GetSingleton()->loadScene(sceneFile, arguments.as<Vector<String>>()); };
+		rootex["PreloadScene"] = [](const String& sceneFile, Atomic<int>& progress) { return SceneLoader::GetSingleton()->preloadScene(sceneFile, progress); };
+		rootex["LoadPreloadedScene"] = [](const String& sceneFile, const sol::nested<Vector<String>>& arguments) { return SceneLoader::GetSingleton()->loadPreloadedScene(sceneFile, arguments.value()); };
+		rootex["GetSceneArguments"] = []() { return SceneLoader::GetSingleton()->getArguments(); };
+		rootex["GetCurrentScene"] = []() { return SceneLoader::GetSingleton()->getCurrentScene(); };
+	}
+	{
+		sol::usertype<InputManager> inputManager = rootex.new_usertype<InputManager>("Input");
+		inputManager["Get"] = &InputManager::GetSingleton;
+		inputManager["setEnabled"] = &InputManager::setEnabled;
+		inputManager["mapBool"] = &InputManager::mapBool;
+		inputManager["mapFloat"] = &InputManager::mapFloat;
+		inputManager["isPressed"] = &InputManager::isPressed;
+		inputManager["wasPressed"] = &InputManager::wasPressed;
+		inputManager["getFloat"] = &InputManager::getFloat;
+		inputManager["getFloatDelta"] = &InputManager::getFloatDelta;
+		inputManager["unmap"] = &InputManager::unmap;
+	}
+	{
+		sol::usertype<ResourceLoader> resourceLoader = rootex.new_usertype<ResourceLoader>("ResourceLoader");
+		resourceLoader["CreateAudio"] = &ResourceLoader::CreateAudioResourceFile;
+		resourceLoader["CreateFont"] = &ResourceLoader::CreateFontResourceFile;
+		resourceLoader["CreateImage"] = &ResourceLoader::CreateImageResourceFile;
+		resourceLoader["CreateLua"] = &ResourceLoader::CreateLuaTextResourceFile;
+		resourceLoader["CreateText"] = &ResourceLoader::CreateTextResourceFile;
+		resourceLoader["CreateNewText"] = &ResourceLoader::CreateNewTextResourceFile;
+		resourceLoader["CreateVisualModel"] = &ResourceLoader::CreateModelResourceFile;
+		resourceLoader["CreateAnimatedModel"] = &ResourceLoader::CreateAnimatedModelResourceFile;
+		resourceLoader["CreateCollisionModel"] = &ResourceLoader::CreateAnimatedModelResourceFile;
+	}
+	{
+		sol::usertype<ResourceFile> resourceFile = rootex.new_usertype<ResourceFile>("ResourceFile");
+		resourceFile["isDirty"] = &ResourceFile::isDirty;
+		resourceFile["getPath"] = [](ResourceFile& f) { return f.getPath().string(); };
+		resourceFile["getType"] = &ResourceFile::getType;
+	}
+	{
+		sol::usertype<TextResourceFile> textResourceFile = rootex.new_usertype<TextResourceFile>(
+		    "TextResourceFile",
+		    sol::base_classes, sol::bases<ResourceFile>());
+		textResourceFile["getString"] = &TextResourceFile::getString;
+	}
+	{
+		sol::usertype<LuaTextResourceFile> luaTextResourceFile = rootex.new_usertype<LuaTextResourceFile>(
+		    "LuaTextResourceFile",
+		    sol::base_classes, sol::bases<ResourceFile, TextResourceFile>());
+	}
+	{
+		sol::usertype<AudioResourceFile> audioResourceFile = rootex.new_usertype<AudioResourceFile>(
+		    "AudioResourceFile",
+		    sol::base_classes, sol::bases<ResourceFile>());
+		audioResourceFile["getAudioDataSize"] = &AudioResourceFile::getAudioDataSize;
+		audioResourceFile["getFormat"] = &AudioResourceFile::getFormat;
+		audioResourceFile["getFrequency"] = &AudioResourceFile::getFrequency;
+		audioResourceFile["getBitDepth"] = &AudioResourceFile::getBitDepth;
+		audioResourceFile["getChannels"] = &AudioResourceFile::getChannels;
+		audioResourceFile["getDuration"] = &AudioResourceFile::getDuration;
+	}
+	{
+		sol::usertype<ModelResourceFile> modelResourceFile = rootex.new_usertype<ModelResourceFile>(
+		    "ModelResourceFile",
+		    sol::base_classes, sol::bases<ResourceFile>());
+	}
+	{
+		sol::usertype<AnimatedModelResourceFile> animatedModelResourceFile = rootex.new_usertype<AnimatedModelResourceFile>(
+		    "AnimatedModelResourceFile",
+		    sol::base_classes, sol::bases<ResourceFile>());
+	}
+	{
+		sol::usertype<CollisionModelResourceFile> collisionModelResourceFile = rootex.new_usertype<CollisionModelResourceFile>(
+		    "CollisionModelResourceFile",
+		    sol::base_classes, sol::bases<ResourceFile>());
+	}
+	{
+		sol::usertype<ImageResourceFile> imageResourceFile = rootex.new_usertype<ImageResourceFile>(
+		    "ImageResourceFile",
+		    sol::base_classes, sol::bases<ResourceFile>());
+	}
+	{
+		sol::usertype<ImageCubeResourceFile> imageCubeResourceFile = rootex.new_usertype<ImageCubeResourceFile>(
+		    "ImageCubeResourceFile",
+		    sol::base_classes, sol::bases<ResourceFile>());
+	}
+	{
+		sol::usertype<FontResourceFile> fontResourceFile = rootex.new_usertype<FontResourceFile>(
+		    "FontResourceFile",
+		    sol::base_classes, sol::bases<ResourceFile>());
+	}
+	{
+		sol::usertype<ECSFactory> ecsFactory = rootex.new_usertype<ECSFactory>("ECSFactory");
+	}
+	{
+		sol::usertype<Scene> scene = rootex.new_usertype<Scene>("Scene");
+		scene["CreateEmpty"] = &Scene::CreateEmpty;
+		scene["CreateEmptyWithEntity"] = &Scene::CreateEmptyWithEntity;
+		scene["CreateFromFile"] = &Scene::CreateFromFile;
+		scene["FindScenesByName"] = &Scene::FindScenesByName;
+		scene["addChild"] = &Scene::addChild;
+		scene["removeChild"] = &Scene::removeChild;
+		scene["snatchChild"] = &Scene::snatchChild;
+		scene["setName"] = &Scene::setName;
+		scene["setEntity"] = &Scene::setEntity;
+		scene["getID"] = &Scene::getID;
+		scene["getParent"] = &Scene::getParent;
+		scene["getChildren"] = &Scene::getChildren;
+		scene["getEntity"] = &Scene::getEntity;
+		scene["getName"] = &Scene::getName;
+		scene["getFullName"] = &Scene::getFullName;
+	}
+	{
+		sol::usertype<Entity> entity = rootex.new_usertype<Entity>("Entity");
+		entity["addComponent"] = &Entity::addComponent;
+		entity["addDefaultComponent"] = &Entity::addDefaultComponent;
+		entity["removeComponent"] = &Entity::removeComponent;
+		entity["destroy"] = &Entity::destroy;
+		entity["hasComponent"] = &Entity::hasComponent;
+		entity["getScene"] = &Entity::getScene;
+		entity["getName"] = &Entity::getName;
+		entity["setScript"] = &Entity::setScript;
+		entity[sol::meta_function::new_index] = [](Entity* e, const String& newIndex) -> sol::object {
+			if (Script* s = e->getScript())
+			{
+				return s->getScriptInstance()[newIndex];
+			};
+			return sol::nil;
+		};
+	}
+	{
+		sol::usertype<Component> component = rootex.new_usertype<Component>("Component");
+		component["getOwner"] = &Component::getOwner;
+		component["getComponentID"] = &Component::getComponentID;
+		component["getName"] = &Component::getName;
+	}
+	{
+		sol::usertype<TransformComponent> transformComponent = rootex.new_usertype<TransformComponent>(
+		    "TransformComponent",
+		    sol::base_classes, sol::bases<Component>());
+
+		rootex["Entity"]["getTransform"] = &Entity::getComponent<TransformComponent>;
+		transformComponent["setPosition"] = &TransformComponent::setPosition;
+		transformComponent["setRotation"] = &TransformComponent::setRotation;
+		transformComponent["setScale"] = &TransformComponent::setScale;
+		transformComponent["setTransform"] = &TransformComponent::setTransform;
+		transformComponent["addTransform"] = &TransformComponent::addTransform;
+		transformComponent["getPosition"] = &TransformComponent::getPosition;
+		transformComponent["getRotation"] = &TransformComponent::getRotation;
+		transformComponent["getScale"] = &TransformComponent::getScale;
+		transformComponent["getLocalTransform"] = &TransformComponent::getLocalTransform;
+		transformComponent["getParentAbsoluteTransform"] = &TransformComponent::getParentAbsoluteTransform;
+		transformComponent["getComponentID"] = &TransformComponent::getComponentID;
+		transformComponent["getName"] = &TransformComponent::getName;
+	}
+	{
+		sol::usertype<RenderableComponent> renderableComponent = rootex.new_usertype<RenderableComponent>(
+		    "RenderableComponent",
+		    sol::base_classes, sol::bases<Component>());
+		renderableComponent["isVisible"] = &RenderableComponent::isVisible;
+		renderableComponent["setIsVisible"] = &RenderableComponent::setIsVisible;
+	}
+	{
+		sol::usertype<ModelComponent> modelComponent = rootex.new_usertype<ModelComponent>(
+		    "ModelComponent",
+		    sol::base_classes, sol::bases<Component, RenderableComponent>());
+		rootex["Entity"]["getModel"] = &Entity::getComponent<ModelComponent>;
+	}
+	{
+		sol::usertype<AnimatedModelComponent> animatedModelComponent = rootex.new_usertype<AnimatedModelComponent>(
+		    "AnimatedModelComponent",
+		    sol::base_classes, sol::bases<Component, RenderableComponent>());
+		rootex["Entity"]["getAnimatedModel"] = &Entity::getComponent<AnimatedModelComponent>;
+	}
+	{
+		sol::usertype<RenderUIComponent> renderUIComponent = rootex.new_usertype<RenderUIComponent>(
+		    "RenderUIComponent",
+		    sol::base_classes, sol::bases<Component>());
+	}
+	{
+		sol::usertype<TextUIComponent> textUIComponent = rootex.new_usertype<TextUIComponent>(
+		    "TextUIComponent",
+		    sol::base_classes, sol::bases<Component, RenderUIComponent>());
+		rootex["Entity"]["getTextUI"] = &Entity::getComponent<TextUIComponent>;
+		textUIComponent["setFont"] = &TextUIComponent::setFont;
+		textUIComponent["setText"] = &TextUIComponent::setText;
+	}
+	{
+		sol::usertype<UIComponent> ui = rootex.new_usertype<UIComponent>(
+		    "UIComponent",
+		    sol::base_classes, sol::bases<Component>());
+		rootex["Entity"]["getUI"] = &Entity::getComponent<UIComponent>;
+		ui["getDocumentID"] = [](UIComponent* ui) { return ui->getDocument()->GetId(); };
+	}
+	{
+		sol::usertype<PhysicsColliderComponent> physicsColliderComponent = rootex.new_usertype<PhysicsColliderComponent>(
+		    "PhysicsColliderComponent",
+		    sol::base_classes, sol::bases<Component>());
+		rootex["Entity"]["getPhysicsCollider"] = &Entity::getComponent<PhysicsColliderComponent>;
+		physicsColliderComponent["getVelocity"] = &PhysicsColliderComponent::getVelocity;
+		physicsColliderComponent["setVelocity"] = &PhysicsColliderComponent::setVelocity;
+		physicsColliderComponent["applyForce"] = &PhysicsColliderComponent::applyForce;
+	}
+	{
+		sol::usertype<BoxColliderComponent> bcc = rootex.new_usertype<BoxColliderComponent>(
+		    "BoxColliderComponent",
+		    sol::base_classes, sol::bases<PhysicsColliderComponent, Component>());
+		rootex["Entity"]["getBoxCollider"] = &Entity::getComponent<BoxColliderComponent>;
+	}
+	{
+		sol::usertype<SphereColliderComponent> scc = rootex.new_usertype<SphereColliderComponent>(
+		    "SphereColliderComponent",
+		    sol::base_classes, sol::bases<PhysicsColliderComponent, Component>());
+		rootex["Entity"]["getSphereCollider"] = &Entity::getComponent<SphereColliderComponent>;
+	}
+	{
+		sol::usertype<CapsuleColliderComponent> ccc = rootex.new_usertype<CapsuleColliderComponent>(
+		    "CapsuleColliderComponent",
+		    sol::base_classes, sol::bases<PhysicsColliderComponent, Component>());
+		rootex["Entity"]["getCapsuleCollider"] = &Entity::getComponent<CapsuleColliderComponent>;
+	}
 }

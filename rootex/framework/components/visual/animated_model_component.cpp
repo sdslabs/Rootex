@@ -32,14 +32,6 @@ Component* AnimatedModelComponent::Create(const JSON::json& componentData)
 	return animatedModelComponent;
 }
 
-void AnimatedModelComponent::RegisterAPI(sol::table& rootex)
-{
-	sol::usertype<AnimatedModelComponent> animatedModelComponent = rootex.new_usertype<AnimatedModelComponent>(
-	    "AnimatedModelComponent",
-	    sol::base_classes, sol::bases<Component>());
-	rootex["Entity"]["getAnimatedModel"] = &Entity::getComponent<AnimatedModelComponent>;
-}
-
 bool AnimatedModelComponent::setupData()
 {
 	assignBoundingBox();

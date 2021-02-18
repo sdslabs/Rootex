@@ -7,25 +7,24 @@ Script::Script(const JSON::json& script)
 	String luaFilePath = script["path"];
 
 	m_ScriptFile = luaFilePath;
-	m_ScriptEnvironment = sol::environment(LuaInterpreter::GetSingleton()->getLuaState(),
-	    sol::create,
-	    LuaInterpreter::GetSingleton()->getLuaState().globals());
 	for (auto& element : JSON::json::iterator_wrapper(script["overrides"]))
 	{
 		m_Overrides[element.key()] = (String)element.value();
 	}
 }
 
-bool Script::setup()
+bool Script::setup(Entity* entity)
 {
 	bool status = true;
 	try
 	{
-		LuaInterpreter::GetSingleton()->getLuaState().script_file(m_ScriptFile, m_ScriptEnvironment);
+		sol::table scriptClass = LuaInterpreter::GetSingleton()->getLuaState().script_file(m_ScriptFile);
+		m_ScriptInstance = scriptClass["new"](scriptClass, entity);
 	}
 	catch (std::exception e)
 	{
 		WARN(e.what());
+		m_ScriptInstance = LuaInterpreter::GetSingleton()->getLuaState().create_named_table("DefaultTable");
 		status = false;
 	}
 	return status;
@@ -36,7 +35,7 @@ bool Script::isSuccessful(const sol::function_result& result)
 	if (!result.valid())
 	{
 		sol::error e = result;
-		PRINT(e.what());
+		WARN(e.what());
 		return false;
 	}
 	return true;
@@ -44,7 +43,12 @@ bool Script::isSuccessful(const sol::function_result& result)
 
 bool Script::call(const String& function, const Vector<Variant>& args)
 {
-	return isSuccessful(m_ScriptEnvironment[function](sol::as_args(args)));
+	bool status = isSuccessful(m_ScriptInstance[function](m_ScriptInstance, sol::as_args(args)));
+	if (!status)
+	{
+		WARN("Could not call " + function);
+	}
+	return status;
 }
 
 void Script::evaluateOverrides()
@@ -53,10 +57,10 @@ void Script::evaluateOverrides()
 	{
 		if (!lua.empty())
 		{
-			sol::optional<sol::object> currVar = m_ScriptEnvironment["exports"][varName];
+			sol::optional<sol::object> currVar = m_ScriptInstance["exports"][varName];
 			if (currVar)
 			{
-				m_ScriptEnvironment["exports"][varName] = LuaInterpreter::GetSingleton()->getLuaState().script("return " + lua);
+				m_ScriptInstance["exports"][varName] = LuaInterpreter::GetSingleton()->getLuaState().script("return " + lua);
 			}
 		}
 	}
@@ -70,10 +74,10 @@ JSON::json Script::getJSON() const
 
 	j["overrides"] = {};
 
-	sol::optional<sol::table> currExports = m_ScriptEnvironment["exports"];
+	sol::optional<sol::table> currExports = m_ScriptInstance["exports"];
 	if (currExports)
 	{
-		sol::table exports = m_ScriptEnvironment["exports"];
+		sol::table exports = m_ScriptInstance["exports"];
 		exports.for_each([&](sol::object const& key, sol::object const& value) {
 			String varName = key.as<String>();
 			if (m_Overrides.find(varName) != m_Overrides.end())
@@ -90,12 +94,12 @@ void Script::draw()
 {
 	ImGui::Text("Script Exports");
 
-	sol::optional<sol::table> currExports = m_ScriptEnvironment["exports"];
+	sol::optional<sol::table> currExports = m_ScriptInstance["exports"];
 	if (currExports)
 	{
-		sol::table exports = m_ScriptEnvironment["exports"];
+		sol::table exports = *currExports;
 
-		ImGui::LabelText("Variable", "Lua");
+		ImGui::LabelText("Variable", "Overriding Lua");
 		exports.for_each([&](sol::object const& key, sol::object const& value) {
 			String varName = key.as<String>();
 			if (m_Overrides.find(varName) == m_Overrides.end())
@@ -105,4 +109,5 @@ void Script::draw()
 			ImGui::InputText(varName.c_str(), &m_Overrides[varName]);
 		});
 	}
+	ImGui::Separator();
 }

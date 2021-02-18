@@ -15,20 +15,6 @@ Variant InputSystem::windowResized(const Event* event)
 	return true;
 }
 
-void InputSystem::RegisterAPI(sol::table& rootex)
-{
-	sol::usertype<InputManager> inputManager = rootex.new_usertype<InputManager>("Input");
-	inputManager["Get"] = &InputManager::GetSingleton;
-	inputManager["setEnabled"] = &InputManager::setEnabled;
-	inputManager["mapBool"] = &InputManager::mapBool;
-	inputManager["mapFloat"] = &InputManager::mapFloat;
-	inputManager["isPressed"] = &InputManager::isPressed;
-	inputManager["wasPressed"] = &InputManager::wasPressed;
-	inputManager["getFloat"] = &InputManager::getFloat;
-	inputManager["getFloatDelta"] = &InputManager::getFloatDelta;
-	inputManager["unmap"] = &InputManager::unmap;
-}
-
 InputSystem* InputSystem::GetSingleton()
 {
 	static InputSystem singleton;

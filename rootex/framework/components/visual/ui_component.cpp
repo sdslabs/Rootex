@@ -26,15 +26,6 @@ UIComponent::~UIComponent()
 	}
 }
 
-void UIComponent::RegisterAPI(sol::table& rootex)
-{
-	sol::usertype<UIComponent> ui = rootex.new_usertype<UIComponent>(
-	    "UIComponent",
-	    sol::base_classes, sol::bases<Component>());
-	rootex["Entity"]["getUI"] = &Entity::getComponent<UIComponent>;
-	ui["getDocumentID"] = [](UIComponent* ui) { return ui->getDocument()->GetId(); };
-}
-
 void UIComponent::setDocument(const String& path)
 {
 	if (m_Document)

@@ -20,7 +20,6 @@ class UIComponent : public Component
 	~UIComponent();
 
 public:
-	static void RegisterAPI(sol::table& rootex);
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::UIComponent;
 
 	Rml::ElementDocument* getDocument() { return m_Document; };

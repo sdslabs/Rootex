@@ -6,13 +6,6 @@ ImageCubeResourceFile::ImageCubeResourceFile(const FilePath& path)
 	reimport();
 }
 
-void ImageCubeResourceFile::RegisterAPI(sol::table& rootex)
-{
-	sol::usertype<ImageCubeResourceFile> imageCubeResourceFile = rootex.new_usertype<ImageCubeResourceFile>(
-	    "ImageCubeResourceFile",
-	    sol::base_classes, sol::bases<ResourceFile>());
-}
-
 void ImageCubeResourceFile::reimport()
 {
 	ResourceFile::reimport();

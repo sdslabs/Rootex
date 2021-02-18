@@ -13,8 +13,6 @@ class ImageResourceFile : public ResourceFile
 	friend class ResourceLoader;
 
 public:
-	static void RegisterAPI(sol::table& rootex);
-	
 	explicit ImageResourceFile(const ImageResourceFile&) = delete;
 	explicit ImageResourceFile(const ImageResourceFile&&) = delete;
 	~ImageResourceFile() = default;

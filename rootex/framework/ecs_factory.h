@@ -23,8 +23,6 @@ class ECSFactory
 public:
 	template <class T>
 	static Vector<Component*>& GetComponents();
-	
-	static void RegisterAPI(sol::table& rootex);
 
 	static void Initialize();
 

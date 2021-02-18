@@ -14,13 +14,6 @@ AnimatedModelResourceFile::AnimatedModelResourceFile(const FilePath& path)
 	reimport();
 }
 
-void AnimatedModelResourceFile::RegisterAPI(sol::table& rootex)
-{
-	sol::usertype<AnimatedModelResourceFile> animatedModelResourceFile = rootex.new_usertype<AnimatedModelResourceFile>(
-	    "AnimatedModelResourceFile",
-	    sol::base_classes, sol::bases<ResourceFile>());
-}
-
 Matrix AnimatedModelResourceFile::AiMatrixToMatrix(const aiMatrix4x4& aiMatrix)
 {
 	return Matrix(

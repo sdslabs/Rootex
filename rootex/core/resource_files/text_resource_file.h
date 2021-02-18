@@ -13,8 +13,6 @@ protected:
 	friend class ResourceLoader;
 
 public:
-	static void RegisterAPI(sol::table& rootex);
-
 	explicit TextResourceFile(TextResourceFile&) = delete;
 	explicit TextResourceFile(TextResourceFile&&) = delete;
 	virtual ~TextResourceFile() = default;

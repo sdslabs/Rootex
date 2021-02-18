@@ -62,20 +62,6 @@ void ResourceLoader::RegisterResource(Ref<ResourceFile> file)
 	s_ResourcesDataFiles[file->getType()].push_back(file);
 }
 
-void ResourceLoader::RegisterAPI(sol::table& rootex)
-{
-	sol::usertype<ResourceLoader> resourceLoader = rootex.new_usertype<ResourceLoader>("ResourceLoader");
-	resourceLoader["CreateAudio"] = &ResourceLoader::CreateAudioResourceFile;
-	resourceLoader["CreateFont"] = &ResourceLoader::CreateFontResourceFile;
-	resourceLoader["CreateImage"] = &ResourceLoader::CreateImageResourceFile;
-	resourceLoader["CreateLua"] = &ResourceLoader::CreateLuaTextResourceFile;
-	resourceLoader["CreateText"] = &ResourceLoader::CreateTextResourceFile;
-	resourceLoader["CreateNewText"] = &ResourceLoader::CreateNewTextResourceFile;
-	resourceLoader["CreateVisualModel"] = &ResourceLoader::CreateModelResourceFile;
-	resourceLoader["CreateAnimatedModel"] = &ResourceLoader::CreateAnimatedModelResourceFile;
-	resourceLoader["CreateCollisionModel"] = &ResourceLoader::CreateAnimatedModelResourceFile;
-}
-
 TextResourceFile* ResourceLoader::CreateTextResourceFile(const String& path)
 {
 	return GetCachedResource<TextResourceFile>(ResourceFile::Type::Text, FilePath(path));

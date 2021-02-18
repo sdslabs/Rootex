@@ -9,23 +9,6 @@
 
 #include "scene.h"
 
-void Entity::RegisterAPI(sol::table& rootex)
-{
-	sol::usertype<Entity> entity = rootex.new_usertype<Entity>("Entity");
-	entity["removeComponent"] = &Entity::removeComponent;
-	entity["destroy"] = &Entity::destroy;
-	entity["hasComponent"] = &Entity::hasComponent;
-	entity["getScene"] = &Entity::getScene;
-	entity["getName"] = &Entity::getName;
-	entity["setScript"] = &Entity::setScript;
-	entity["script"] = sol::property(&Entity::getScriptEnv, &Entity::setScriptEnv);
-
-	sol::usertype<Component> component = rootex.new_usertype<Component>("Component");
-	component["getOwner"] = &Component::getOwner;
-	component["getComponentID"] = &Component::getComponentID;
-	component["getName"] = &Component::getName;
-}
-
 Entity::Entity(Scene* scene, const JSON::json& script)
     : m_Scene(scene)
 {
@@ -72,7 +55,7 @@ bool Entity::onAllComponentsAdded()
 	bool status = true;
 	for (auto& component : m_Components)
 	{
-		status = status & component.second->setup();
+		status = status && component.second->setup();
 	}
 	return status;
 }
@@ -83,12 +66,12 @@ bool Entity::onAllEntitiesAdded()
 
 	for (auto& component : m_Components)
 	{
-		status = status & component.second->setupEntities();
+		status = status && component.second->setupEntities();
 	}
 
 	if (m_Script)
 	{
-		bool result = m_Script->setup();
+		bool result = m_Script->setup(this);
 		if (!result)
 		{
 			m_Script.reset();
@@ -98,18 +81,10 @@ bool Entity::onAllEntitiesAdded()
 	return status;
 }
 
-sol::table Entity::getScriptEnv()
-{
-	return (sol::table)m_Script->getScriptEnv();
-}
-
-void Entity::setScriptEnv(sol::table& changed)
-{
-	m_Script->setScriptEnv(changed);
-}
-
 void Entity::destroy()
 {
+	call("destroy", { this });
+
 	for (auto& component : m_Components)
 	{
 		component.second->onRemove();
@@ -117,6 +92,16 @@ void Entity::destroy()
 		component.second.reset();
 	}
 	m_Components.clear();
+}
+
+bool Entity::addDefaultComponent(const String& componentName)
+{
+	return ECSFactory::AddComponent(this, ECSFactory::CreateDefaultComponent(componentName));
+}
+
+bool Entity::addComponent(const String& componentName, const JSON::json& componentData)
+{
+	return ECSFactory::AddComponent(this, ECSFactory::CreateComponent(componentName, componentData));
 }
 
 bool Entity::removeComponent(ComponentID toRemoveComponentID, bool hardRemove)
@@ -130,8 +115,7 @@ bool Entity::removeComponent(ComponentID toRemoveComponentID, bool hardRemove)
 			{
 				if (dependency->getID() == toRemoveComponentID)
 				{
-					WARN("Entity has other components depending on the to-be-removed component " + toRemoveComponent->getName());
-					WARN("Component deletion denied");
+					WARN("Entity has other components depending on the to-be-removed component (" + toRemoveComponent->getName() + "). Component deletion was denied");
 					return false;
 				}
 			}
@@ -163,7 +147,7 @@ bool Entity::call(const String& function, const Vector<Variant>& args)
 		status = m_Script->call(function, args);
 		if (!status)
 		{
-			WARN("Script Execution failure in entity: " + getFullName());
+			WARN("Script error (" + getFullName() + ")");
 		}
 	}
 	return status;
@@ -190,7 +174,7 @@ bool Entity::setScript(const String& path)
 		j["path"] = path;
 		j["overrides"] = {};
 		m_Script.reset(new Script(j));
-		return m_Script->setup();
+		return m_Script->setup(this);
 	}
 	else
 	{
@@ -227,7 +211,7 @@ void Entity::draw()
 		{
 			JSON::json& j = m_Script->getJSON();
 			m_Script.reset(new Script(j));
-			m_Script->setup();
+			m_Script->setup(this);
 		}
 		ImGui::SameLine();
 		if (ImGui::Button(ICON_ROOTEX_WINDOW_CLOSE "##RemoveScript"))

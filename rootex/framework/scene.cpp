@@ -37,26 +37,6 @@ void Scene::ResetNextID()
 	NextSceneID = ROOT_SCENE_ID + 1;
 }
 
-void Scene::RegisterAPI(sol::table& rootex)
-{
-	sol::usertype<Scene> scene = rootex.new_usertype<Scene>("Scene");
-	scene["CreateEmpty"] = &CreateEmpty;
-	scene["CreateEmptyWithEntity"] = &CreateEmptyWithEntity;
-	scene["CreateFromFile"] = &CreateFromFile;
-	scene["FindScenesByName"] = &FindScenesByName;
-	scene["addChild"] = &addChild;
-	scene["removeChild"] = &removeChild;
-	scene["snatchChild"] = &snatchChild;
-	scene["setName"] = &setName;
-	scene["setEntity"] = &setEntity;
-	scene["getID"] = &getID;
-	scene["getParent"] = &getParent;
-	scene["getChildren"] = &getChildren;
-	scene["getEntity"] = &getEntity;
-	scene["getName"] = &getName;
-	scene["getFullName"] = &getFullName;
-}
-
 Ptr<Scene> Scene::Create(const JSON::json& sceneData)
 {
 	SceneID thisSceneID = NextSceneID;

@@ -15,8 +15,6 @@ class ImageCubeResourceFile : public ResourceFile
 	friend class ResourceLoader;
 
 public:
-	static void RegisterAPI(sol::table& rootex);
-
 	explicit ImageCubeResourceFile(const ImageCubeResourceFile&) = delete;
 	explicit ImageCubeResourceFile(const ImageCubeResourceFile&&) = delete;
 	~ImageCubeResourceFile() = default;

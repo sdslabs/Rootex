@@ -37,8 +37,6 @@ private:
 	Vector3 m_EditorRotation;
 
 public:
-	static void RegisterAPI(sol::table& rootex);
-
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::TransformComponent;
 
 	virtual ~TransformComponent() = default;

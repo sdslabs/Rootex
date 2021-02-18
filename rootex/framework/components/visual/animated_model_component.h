@@ -29,7 +29,6 @@ protected:
 	virtual ~AnimatedModelComponent() = default;
 
 public:
-	static void RegisterAPI(sol::table& rootex);
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::AnimatedModelComponent;
 
 	virtual bool setupData() override;

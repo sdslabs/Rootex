@@ -25,8 +25,6 @@ class AnimatedModelResourceFile : public ResourceFile
 	friend class ResourceLoader;
 
 public:
-	static void RegisterAPI(sol::table& rootex);
-
 	static Matrix AiMatrixToMatrix(const aiMatrix4x4& aiMatrix);
 
 	explicit AnimatedModelResourceFile(AnimatedModelResourceFile&) = delete;

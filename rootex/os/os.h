@@ -75,12 +75,15 @@ public:
 	static bool SaveFile(const FilePath& filePath, const char* fileBuffer, size_t fileSize);
 
 	static void Print(const String& msg, const String& type = "Print");
+	static void PrintInline(const String& msg, const String& type = "Print");
 	static void Print(const float& real);
 	static void Print(const int& number);
 	static void Print(const unsigned int& number);
 	static void PrintLine(const String& msg);
 	static void PrintWarning(const String& warning);
+	static void PrintWarningInline(const String& warning);
 	static void PrintError(const String& error);
+	static void PrintErrorInline(const String& error);
 	static void PrintIf(const bool& expr, const String& error);
 
 	static void PostError(String message, LPSTR caption);
