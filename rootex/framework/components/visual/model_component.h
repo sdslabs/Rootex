@@ -25,7 +25,6 @@ protected:
 	void assignOverrides(ModelResourceFile* newModel, const HashMap<String, String>& materialOverrides);
 
 public:
-	static void RegisterAPI(sol::table& rootex);
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::ModelComponent;
 
 	static bool CompareMaterials(const Pair<Ref<Material>, Vector<Mesh>>& a, const Pair<Ref<Material>, Vector<Mesh>>& b);

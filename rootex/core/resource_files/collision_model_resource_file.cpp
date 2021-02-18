@@ -10,13 +10,6 @@ CollisionModelResourceFile::CollisionModelResourceFile(const FilePath& path)
 	reimport();
 }
 
-void CollisionModelResourceFile::RegisterAPI(sol::table& rootex)
-{
-	sol::usertype<CollisionModelResourceFile> collisionModelResourceFile = rootex.new_usertype<CollisionModelResourceFile>(
-	    "CollisionModelResourceFile",
-	    sol::base_classes, sol::bases<ResourceFile>());
-}
-
 void CollisionModelResourceFile::reimport()
 {
 	ResourceFile::reimport();

@@ -19,20 +19,18 @@ protected:
 	HashMap<ComponentID, Ptr<Component>> m_Components;
 	Ptr<Script> m_Script;
 
-	sol::table getScriptEnv();
-	void setScriptEnv(sol::table& changed);
-
 	friend class ECSFactory;
 
 public:
-	static void RegisterAPI(sol::table& rootex);
-
 	Entity(Scene* scene, const JSON::json& script = {});
 	Entity(const Entity&) = delete;
 	~Entity();
 
 	bool onAllComponentsAdded();
 	bool onAllEntitiesAdded();
+	
+	bool addDefaultComponent(const String& componentName);
+	bool addComponent(const String& componentName, const JSON::json& componentData);
 	bool removeComponent(ComponentID toRemoveComponentID, bool hardRemove = false);
 	bool hasComponent(ComponentID componentID);
 
@@ -55,6 +53,7 @@ public:
 	bool call(const String& function, const Vector<Variant>& args);
 	void evaluateScriptOverrides();
 	bool setScript(const String& path);
+	Script* getScript() const { return m_Script.get(); }
 	
 	void draw();
 };

@@ -14,13 +14,6 @@ ModelResourceFile::ModelResourceFile(const FilePath& path)
 	reimport();
 }
 
-void ModelResourceFile::RegisterAPI(sol::table& rootex)
-{
-	sol::usertype<ModelResourceFile> modelResourceFile = rootex.new_usertype<ModelResourceFile>(
-	    "ModelResourceFile",
-	    sol::base_classes, sol::bases<ResourceFile>());
-}
-
 void ModelResourceFile::reimport()
 {
 	ResourceFile::reimport();

@@ -261,7 +261,7 @@ void BasicMaterial::draw()
 		setLightmapTexture(ResourceLoader::CreateImageResourceFile("rootex/assets/white.png"));
 	}
 
-	ImGui::ColorEdit4("Color", &m_Color.x);
+	ImGui::ColorEdit4("Color", &m_Color.x, ImGuiColorEditFlags_PickerHueWheel);
 	ImGui::Checkbox("Affected by light", &m_IsLit);
 	ImGui::DragFloat("##Specular Intensity", &m_SpecularIntensity, 0.01f, 0.0f, 1.0f);
 	ImGui::SameLine();

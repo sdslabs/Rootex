@@ -455,9 +455,15 @@ bool OS::IsExists(String relativePath)
 
 void OS::Print(const String& msg, const String& type)
 {
+	PrintInline(msg, type);
+	std::cout << std::endl;
+}
+
+void OS::PrintInline(const String& msg, const String& type)
+{
 	EventManager::GetSingleton()->call(type, "OSPrint", msg);
 	std::cout.clear();
-	std::cout << msg << std::endl;
+	std::cout << msg;
 }
 
 void OS::Print(const float& real)
@@ -487,10 +493,25 @@ void OS::PrintWarning(const String& warning)
 	std::cout << "\033[0m";
 }
 
+void OS::PrintWarningInline(const String& warning)
+{
+	std::cout << "\033[93m";
+	PrintInline("WARNING: " + warning, "Warning");
+	std::cout << "\033[0m";
+}
+
 void OS::PrintError(const String& error)
 {
 	std::cout << "\033[91m";
 	Print("ERROR: " + error, "Error");
+	std::cout << "\033[0m";
+	PostError(error, "Error");
+}
+
+void OS::PrintErrorInline(const String& error)
+{
+	std::cout << "\033[91m";
+	PrintInline("ERROR: " + error, "Error");
 	std::cout << "\033[0m";
 	PostError(error, "Error");
 }

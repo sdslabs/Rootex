@@ -29,16 +29,6 @@ ModelComponent::ModelComponent(unsigned int renderPass, ModelResourceFile* resFi
 	assignOverrides(resFile, materialOverrides);
 }
 
-void ModelComponent::RegisterAPI(sol::table& rootex)
-{
-	sol::usertype<ModelComponent> modelComponent = rootex.new_usertype<ModelComponent>(
-	    "ModelComponent",
-	    sol::base_classes, sol::bases<Component>());
-	rootex["Entity"]["getModel"] = &Entity::getComponent<ModelComponent>;
-	modelComponent["isVisible"] = &ModelComponent::isVisible;
-	modelComponent["setIsVisible"] = &ModelComponent::setIsVisible;
-}
-
 bool ModelComponent::setupData()
 {
 	assignBoundingBox();

@@ -38,30 +38,7 @@ TransformComponent::TransformComponent(const Vector3& position, const Vector4& r
 
 	updateTransformFromPositionRotationScale();
 
-#ifdef ROOTEX_EDITOR
 	m_EditorRotation = { 0.0f, 0.0f, 0.0f };
-#endif // ROOTEX_EDITOR
-}
-
-void TransformComponent::RegisterAPI(sol::table& rootex)
-{
-	sol::usertype<TransformComponent> transformComponent = rootex.new_usertype<TransformComponent>(
-	    "TransformComponent",
-	    sol::base_classes, sol::bases<Component>());
-	
-	rootex["Entity"]["getTransform"] = &Entity::getComponent<TransformComponent>;
-	transformComponent["setPosition"] = &TransformComponent::setPosition;
-	transformComponent["setRotation"] = &TransformComponent::setRotation;
-	transformComponent["setScale"] = &TransformComponent::setScale;
-	transformComponent["setTransform"] = &TransformComponent::setTransform;
-	transformComponent["addTransform"] = &TransformComponent::addTransform;
-	transformComponent["getPosition"] = &TransformComponent::getPosition;
-	transformComponent["getRotation"] = &TransformComponent::getRotation;
-	transformComponent["getScale"] = &TransformComponent::getScale;
-	transformComponent["getLocalTransform"] = &TransformComponent::getLocalTransform;
-	transformComponent["getParentAbsoluteTransform"] = &TransformComponent::getParentAbsoluteTransform;
-	transformComponent["getComponentID"] = &TransformComponent::getComponentID;
-	transformComponent["getName"] = &TransformComponent::getName;
 }
 
 void TransformComponent::setPosition(const Vector3& position)

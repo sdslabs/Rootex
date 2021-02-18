@@ -75,17 +75,6 @@ Vector3 BtVector3ToVec(btVector3 const& btvec)
 	return Vector3(btvec.x(), btvec.y(), btvec.z());
 }
 
-void PhysicsColliderComponent::RegisterAPI(sol::table& rootex)
-{
-	sol::usertype<PhysicsColliderComponent> physicsColliderComponent = rootex.new_usertype<PhysicsColliderComponent>(
-	    "PhysicsColliderComponent",
-	    sol::base_classes, sol::bases<Component>());
-	rootex["Entity"]["getPhysicsCollider"] = &Entity::getComponent<PhysicsColliderComponent>;
-	physicsColliderComponent["getVelocity"] = &PhysicsColliderComponent::getVelocity;
-	physicsColliderComponent["setVelocity"] = &PhysicsColliderComponent::setVelocity;
-	physicsColliderComponent["applyForce"] = &PhysicsColliderComponent::applyForce;
-}
-
 PhysicsColliderComponent::PhysicsColliderComponent(const PhysicsMaterial& material, float volume, const Vector3& gravity, const Vector3& angularFactor, int collisionGroup, int collisionMask, bool isMoveable, bool isKinematic, bool generatesHitEvents, const Ref<btCollisionShape>& collisionShape)
     : m_Material(material)
     , m_Volume(volume)

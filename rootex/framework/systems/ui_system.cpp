@@ -20,18 +20,18 @@ bool CustomSystemInterface::LogMessage(Rml::Log::Type type, const String& messag
 	switch (type)
 	{
 	case Rml::Log::LT_ERROR:
-		ERR(message);
+		OS::PrintError(message);
 		return false;
 		break;
 	case Rml::Log::LT_ASSERT:
-		PRINT(message)
+		OS::Print(message);
 		return false;
 		break;
 	case Rml::Log::LT_WARNING:
-		WARN(message)
+		OS::PrintWarning(message);
 		break;
 	case Rml::Log::LT_INFO:
-		PRINT(message)
+		OS::Print(message);
 		break;
 	default:
 		break;

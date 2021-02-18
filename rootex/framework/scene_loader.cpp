@@ -11,18 +11,6 @@ SceneLoader::SceneLoader()
 	BIND_EVENT_MEMBER_FUNCTION("DeleteScene", deleteScene);
 }
 
-void SceneLoader::RegisterAPI(sol::table& rootex)
-{
-	sol::usertype<Atomic<int>> atomicInt = rootex.new_usertype<Atomic<int>>("AtomicInt", sol::constructors<Atomic<int>(), Atomic<int>(int)>());
-	atomicInt["load"] = [](Atomic<int>* a) { return a->load(); };
-
-	rootex["LoadScene"] = [](const String& sceneFile, const sol::table& arguments) { SceneLoader::GetSingleton()->loadScene(sceneFile, arguments.as<Vector<String>>()); };
-	rootex["PreloadScene"] = [](const String& sceneFile, Atomic<int>& progress) { return SceneLoader::GetSingleton()->preloadScene(sceneFile, progress); };
-	rootex["LoadPreloadedScene"] = [](const String& sceneFile, const sol::nested<Vector<String>>& arguments) { return SceneLoader::GetSingleton()->loadPreloadedScene(sceneFile, arguments.value()); };
-	rootex["GetSceneArguments"] = []() { return SceneLoader::GetSingleton()->getArguments(); };
-	rootex["GetCurrentScene"] = []() { return SceneLoader::GetSingleton()->getCurrentScene(); };
-}
-
 SceneLoader* SceneLoader::GetSingleton()
 {
 	static SceneLoader singleton;

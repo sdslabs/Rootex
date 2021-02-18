@@ -41,7 +41,6 @@ class Scene
 	bool checkCycle(Scene* child);
 
 public:
-	static void RegisterAPI(sol::table& rootex);
 	static void ResetNextID();
 
 	static Ptr<Scene> Create(const JSON::json& sceneData);

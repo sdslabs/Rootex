@@ -26,7 +26,6 @@ protected:
 	virtual ~RenderableComponent() = default;
 
 public:
-	static void RegisterAPI(sol::table& rootex);
 	static const ComponentID s_ComponentID = (ComponentID)ComponentIDs::RenderableComponent;
 
     virtual bool setupData() override;

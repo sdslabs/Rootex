@@ -14,13 +14,6 @@ RenderableComponent::RenderableComponent(unsigned int renderPass, const HashMap<
 {
 }
 
-void RenderableComponent::RegisterAPI(sol::table& rootex)
-{
-	sol::usertype<RenderableComponent> renderableComponent = rootex.new_usertype<RenderableComponent>(
-		"RenderableComponent",
-		sol::base_classes, sol::bases<Component>());
-}
-
 bool RenderableComponent::setupData()
 {
 	return true;

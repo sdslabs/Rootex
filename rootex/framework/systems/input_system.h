@@ -14,7 +14,6 @@ class InputSystem : public System
 	Variant windowResized(const Event* event);
 
 public:
-	static void RegisterAPI(sol::table& rootex);
 	static InputSystem* GetSingleton();
 
 	void loadSchemes(const HashMap<String, InputScheme>& schemes);

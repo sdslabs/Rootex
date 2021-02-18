@@ -51,7 +51,6 @@ class PhysicsColliderComponent : public Component, public btMotionState
 	friend class ECSFactory;
 
 public:
-	static void RegisterAPI(sol::table& rootex);
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::PhysicsColliderComponent;
 	
 	~PhysicsColliderComponent() = default;

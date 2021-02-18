@@ -33,8 +33,6 @@ protected:
 	friend class ResourceLoader;
 
 public: 
-	static void RegisterAPI(sol::table& rootex);
-
 	explicit ResourceFile(const ResourceFile&) = delete;
 	explicit ResourceFile(const ResourceFile&&) = delete;
 	virtual ~ResourceFile() = default;

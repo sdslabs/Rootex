@@ -25,16 +25,6 @@ TextUIComponent::TextUIComponent(FontResourceFile* font, const String& text, con
 {
 }
 
-void TextUIComponent::RegisterAPI(sol::table& rootex)
-{
-	sol::usertype<TextUIComponent> textUIComponent = rootex.new_usertype<TextUIComponent>(
-	    "TextUIComponent",
-	    sol::base_classes, sol::bases<Component, RenderUIComponent>());
-	rootex["Entity"]["getTextUI"] = &Entity::getComponent<TextUIComponent>;
-	textUIComponent["setFont"] = &TextUIComponent::setFont;
-	textUIComponent["setText"] = &TextUIComponent::setText;
-}
-
 void TextUIComponent::render()
 {
 	static Vector3 position;
