@@ -131,7 +131,10 @@ bool PhysicsColliderComponent::setupData()
 
 void PhysicsColliderComponent::onRemove()
 {
-	PhysicsSystem::GetSingleton()->removeRigidBody(m_Body.get());
+	if (m_Body)
+	{
+		PhysicsSystem::GetSingleton()->removeRigidBody(m_Body.get());
+	}
 }
 
 void PhysicsColliderComponent::getWorldTransform(btTransform& worldTrans) const
