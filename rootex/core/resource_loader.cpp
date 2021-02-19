@@ -132,6 +132,7 @@ FontResourceFile* ResourceLoader::CreateFontResourceFile(const String& path)
 
 int ResourceLoader::Preload(Vector<String> paths, Atomic<int>& progress)
 {
+	progress = 0;
 	if (paths.empty())
 	{
 		PRINT("Asked to preload an empty list of files, no files preloaded");
@@ -151,7 +152,6 @@ int ResourceLoader::Preload(Vector<String> paths, Atomic<int>& progress)
 	ThreadPool& preloadThreads = Application::GetSingleton()->getThreadPool();
 	Vector<Ref<Task>> preloadTasks;
 
-	progress = 0;
 	for (auto& path : empericalPaths)
 	{
 		Ref<Task> loadingTask(new Task([=, &progress]() {
