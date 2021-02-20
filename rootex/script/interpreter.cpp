@@ -173,15 +173,14 @@ void LuaInterpreter::registerTypes()
 	}
 	{
 		sol::usertype<InputManager> inputManager = rootex.new_usertype<InputManager>("Input");
-		inputManager["Get"] = &InputManager::GetSingleton;
-		inputManager["setEnabled"] = &InputManager::setEnabled;
-		inputManager["mapBool"] = &InputManager::mapBool;
-		inputManager["mapFloat"] = &InputManager::mapFloat;
-		inputManager["isPressed"] = &InputManager::isPressed;
-		inputManager["wasPressed"] = &InputManager::wasPressed;
-		inputManager["getFloat"] = &InputManager::getFloat;
-		inputManager["getFloatDelta"] = &InputManager::getFloatDelta;
-		inputManager["unmap"] = &InputManager::unmap;
+		inputManager["SetEnabled"] = &InputManager::SetEnabled;
+		inputManager["MapBool"] = &InputManager::MapBool;
+		inputManager["MapFloat"] = &InputManager::MapFloat;
+		inputManager["IsPressed"] = &InputManager::IsPressed;
+		inputManager["WasPressed"] = &InputManager::WasPressed;
+		inputManager["GetFloat"] = &InputManager::GetFloat;
+		inputManager["GetFloatDelta"] = &InputManager::GetFloatDelta;
+		inputManager["Unmap"] = &InputManager::Unmap;
 	}
 	{
 		sol::usertype<ResourceLoader> resourceLoader = rootex.new_usertype<ResourceLoader>("ResourceLoader");

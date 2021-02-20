@@ -82,6 +82,14 @@ class InputManager
 
 public:
 	static InputManager* GetSingleton();
+	static void SetEnabled(bool enabled) { GetSingleton()->setEnabled(enabled); };
+	static void MapBool(const Event::Type& action, Device device, DeviceButtonID button) { GetSingleton()->mapBool(action, device, button); };
+	static void MapFloat(const Event::Type& action, Device device, DeviceButtonID button) { GetSingleton()->mapBool(action, device, button); };
+	static bool IsPressed(const Event::Type& action) { return GetSingleton()->isPressed(action); };
+	static bool WasPressed(const Event::Type& action) { return GetSingleton()->wasPressed(action); };
+	static float GetFloat(const Event::Type& action) { return GetSingleton()->getFloat(action); };
+	static float GetFloatDelta(const Event::Type& action) { return GetSingleton()->getFloatDelta(action); };
+	static void Unmap(const Event::Type& action) { GetSingleton()->unmap(action); };
 
 	void initialize(unsigned int width, unsigned int height);
 
