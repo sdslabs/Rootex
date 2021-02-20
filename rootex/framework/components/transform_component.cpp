@@ -10,7 +10,7 @@ Component* TransformComponent::Create(const JSON::json& componentData)
 {
 	TransformComponent* transformComponent = new TransformComponent(
 	    componentData.value("position", Vector3::Zero),
-	    componentData.value("rotation", Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, 0.0f)), 
+	    componentData.value("rotation", Vector3::Zero), 
 	    componentData.value("scale", Vector3 { 1.0f, 1.0f, 1.0f }),
 	    componentData.value("boundingBox", BoundingBox { Vector3::Zero, Vector3 { 0.5f, 0.5f, 0.5f } }));
 	return transformComponent;
@@ -20,16 +20,23 @@ void TransformComponent::updateTransformFromPositionRotationScale()
 {
 	m_TransformBuffer.m_Transform = Matrix::Identity;
 	m_TransformBuffer.m_Transform = Matrix::CreateTranslation(m_TransformBuffer.m_Position) * m_TransformBuffer.m_Transform;
-	m_TransformBuffer.m_Transform = Matrix::CreateFromQuaternion(m_TransformBuffer.m_Rotation) * m_TransformBuffer.m_Transform;
+	m_TransformBuffer.m_Transform = Matrix::CreateFromQuaternion(getRotation()) * m_TransformBuffer.m_Transform;
 	m_TransformBuffer.m_Transform = Matrix::CreateScale(m_TransformBuffer.m_Scale) * m_TransformBuffer.m_Transform;
 }
 
 void TransformComponent::updatePositionRotationScaleFromTransform(Matrix& transform)
 {
-	transform.Decompose(m_TransformBuffer.m_Scale, m_TransformBuffer.m_Rotation, m_TransformBuffer.m_Position);
+	static Quaternion quat;
+	transform.Decompose(m_TransformBuffer.m_Scale, quat, m_TransformBuffer.m_Position);
+	quaternionToRotation(quat);
 }
 
-TransformComponent::TransformComponent(const Vector3& position, const Vector4& rotation, const Vector3& scale, const BoundingBox& bounds)
+void TransformComponent::quaternionToRotation(const Quaternion& q)
+{
+	m_TransformBuffer.m_Rotation = Vector3::Transform({ 0.0f, 0.0f, -1.0f }, q);
+}
+
+TransformComponent::TransformComponent(const Vector3& position, const Vector3& rotation, const Vector3& scale, const BoundingBox& bounds)
 {
 	m_TransformBuffer.m_Position = position;
 	m_TransformBuffer.m_Rotation = rotation;
@@ -37,8 +44,6 @@ TransformComponent::TransformComponent(const Vector3& position, const Vector4& r
 	m_TransformBuffer.m_BoundingBox = bounds;
 
 	updateTransformFromPositionRotationScale();
-
-	m_EditorRotation = { 0.0f, 0.0f, 0.0f };
 }
 
 void TransformComponent::setPosition(const Vector3& position)
@@ -49,13 +54,13 @@ void TransformComponent::setPosition(const Vector3& position)
 
 void TransformComponent::setRotation(const float& yaw, const float& pitch, const float& roll)
 {
-	m_TransformBuffer.m_Rotation = Quaternion::CreateFromYawPitchRoll(yaw, pitch, roll);
+	m_TransformBuffer.m_Rotation = { yaw, pitch, roll };
 	updateTransformFromPositionRotationScale();
 }
 
 void TransformComponent::setRotationQuaternion(const Quaternion& rotation)
 {
-	m_TransformBuffer.m_Rotation = rotation;
+	quaternionToRotation(rotation);
 	updateTransformFromPositionRotationScale();
 }
 
@@ -105,7 +110,7 @@ void TransformComponent::addTransform(const Matrix& applyTransform)
 
 void TransformComponent::addRotation(const Quaternion& applyTransform)
 {
-	m_TransformBuffer.m_Rotation = Quaternion::Concatenate(applyTransform, m_TransformBuffer.m_Rotation);
+	quaternionToRotation(Quaternion::Concatenate(applyTransform, getRotation()));
 	updateTransformFromPositionRotationScale();
 }
 
@@ -114,6 +119,11 @@ BoundingBox TransformComponent::getWorldSpaceBounds() const
 	BoundingBox transformedBox = m_TransformBuffer.m_BoundingBox;
 	transformedBox.Transform(transformedBox, getAbsoluteTransform());
 	return transformedBox;
+}
+
+Quaternion TransformComponent::getRotation() const
+{
+	return Quaternion::CreateFromYawPitchRoll(m_TransformBuffer.m_Rotation.y, m_TransformBuffer.m_Rotation.x, m_TransformBuffer.m_Rotation.z);
 }
 
 JSON::json TransformComponent::getJSON() const
@@ -139,15 +149,11 @@ void TransformComponent::draw()
 		m_TransformBuffer.m_Position = { 0.0f, 0.0f, 0.0f };
 	}
 
-	if (ImGui::DragFloat3("##Rotation", &m_EditorRotation.x, 0.01f))
-	{
-		m_TransformBuffer.m_Rotation = Quaternion::CreateFromYawPitchRoll(m_EditorRotation.x, m_EditorRotation.y, m_EditorRotation.z);
-	}
+	ImGui::DragFloat3("##Rotation", &m_TransformBuffer.m_Rotation.x, 0.01f);
 	ImGui::SameLine();
 	if (ImGui::Button("Rotation"))
 	{
-		m_EditorRotation = { 0.0f, 0.0f, 0.0f };
-		m_TransformBuffer.m_Rotation = Quaternion::CreateFromYawPitchRoll(m_EditorRotation.x, m_EditorRotation.y, m_EditorRotation.z);
+		setRotation(0.0f, 0.0f, 0.0f);
 	}
 
 	static bool lockedFirstFrame = false;
