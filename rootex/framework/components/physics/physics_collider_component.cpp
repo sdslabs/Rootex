@@ -75,7 +75,18 @@ Vector3 BtVector3ToVec(btVector3 const& btvec)
 	return Vector3(btvec.x(), btvec.y(), btvec.z());
 }
 
-PhysicsColliderComponent::PhysicsColliderComponent(const PhysicsMaterial& material, float volume, const Vector3& gravity, const Vector3& angularFactor, int collisionGroup, int collisionMask, bool isMoveable, bool isKinematic, bool generatesHitEvents, const Ref<btCollisionShape>& collisionShape)
+PhysicsColliderComponent::PhysicsColliderComponent(
+	const PhysicsMaterial& material, 
+	float volume, 
+	const Vector3& gravity, 
+	const Vector3& angularFactor, 
+	int collisionGroup, 
+	int collisionMask, 
+	bool isMoveable, 
+	bool isKinematic, 
+	bool generatesHitEvents, 
+	bool isSleepable, 
+	const Ref<btCollisionShape>& collisionShape)
     : m_Material(material)
     , m_Volume(volume)
     , m_Gravity(gravity)
@@ -84,6 +95,7 @@ PhysicsColliderComponent::PhysicsColliderComponent(const PhysicsMaterial& materi
     , m_CollisionMask(collisionMask)
     , m_IsMoveable(isMoveable)
     , m_IsGeneratesHitEvents(generatesHitEvents)
+    , m_IsSleepable(isSleepable)
     , m_IsKinematic(isKinematic)
     , m_DependencyOnTransformComponent(this)
 {
@@ -98,7 +110,7 @@ PhysicsColliderComponent::PhysicsColliderComponent(const PhysicsMaterial& materi
 		m_Mass = 0.0f;
 	}
 
-	if (m_Mass > 0.0f)
+	if (m_CollisionShape)
 	{
 		m_CollisionShape->calculateLocalInertia(m_Mass, m_LocalInertia);
 	}
@@ -124,6 +136,7 @@ bool PhysicsColliderComponent::setupData()
 	setMoveable(m_IsMoveable);
 	setKinematic(m_IsKinematic);
 	setAngularFactor(m_AngularFactor);
+	setSleepable(m_IsSleepable);
 	m_Body->setUserPointer(this);
 
 	return true;
@@ -144,25 +157,25 @@ void PhysicsColliderComponent::getWorldTransform(btTransform& worldTrans) const
 
 void PhysicsColliderComponent::setWorldTransform(const btTransform& worldTrans)
 {
-	m_Body->setActivationState(DISABLE_DEACTIVATION);
 	m_TransformComponent->setAbsoluteRotationPosition(BtTransformToMat(worldTrans));
 }
 
 void PhysicsColliderComponent::applyForce(const Vector3& force)
 {
-	m_Body->setActivationState(DISABLE_DEACTIVATION);
+	m_Body->activate(true);
 	m_Body->applyCentralImpulse(VecTobtVector3(force));
 }
 
 void PhysicsColliderComponent::applyTorque(const Vector3& torque)
 {
-	m_Body->setActivationState(DISABLE_DEACTIVATION);
+	m_Body->activate(true);
 	m_Body->applyTorqueImpulse(VecTobtVector3(torque));
 }
 
 void PhysicsColliderComponent::setAngularFactor(const Vector3& factors)
 {
 	m_AngularFactor = factors;
+	m_Body->activate(true);
 	m_Body->setAngularFactor(VecTobtVector3(factors));
 }
 
@@ -180,7 +193,7 @@ void PhysicsColliderComponent::setAxisLock(bool enabled)
 
 void PhysicsColliderComponent::setTransform(const Matrix& mat)
 {
-	m_Body->setActivationState(DISABLE_DEACTIVATION);
+	m_Body->activate(true);
 	m_Body->setWorldTransform(MatTobtTransform(mat));
 }
 
@@ -195,15 +208,29 @@ void PhysicsColliderComponent::setMoveable(bool enabled)
 	if (enabled)
 	{
 		m_Mass = m_Volume * PhysicsSystem::GetSingleton()->getMaterialData(m_Material).specificGravity;
-		m_Body->setActivationState(DISABLE_DEACTIVATION);
-		m_Body->setCollisionFlags(m_Body->getCollisionFlags() ^ btCollisionObject::CF_STATIC_OBJECT);
+		m_Body->activate(true);
+		m_Body->setCollisionFlags(m_Body->getCollisionFlags() & ~btCollisionObject::CF_STATIC_OBJECT);
 	}
 	else
 	{
 		m_Mass = 0.0f;
+		m_Body->activate(true);
 		m_Body->setCollisionFlags(m_Body->getCollisionFlags() | btCollisionObject::CF_STATIC_OBJECT);
 	}
 	m_Body->setMassProps(m_Mass, m_LocalInertia);
+}
+
+void PhysicsColliderComponent::setSleepable(bool enabled)
+{
+	m_IsSleepable = enabled;
+	if (enabled)
+	{
+		m_Body->forceActivationState(ACTIVE_TAG);
+	}
+	else
+	{
+		m_Body->forceActivationState(DISABLE_DEACTIVATION);
+	}
 }
 
 void PhysicsColliderComponent::setKinematic(bool enabled)
@@ -216,7 +243,8 @@ void PhysicsColliderComponent::setKinematic(bool enabled)
 	}
 	else
 	{
-		m_Body->setActivationState(ACTIVE_TAG);
+		m_Body->activate(true);
+		m_Body->setCollisionFlags(m_Body->getCollisionFlags() & ~btCollisionObject::CF_KINEMATIC_OBJECT);
 	}
 }
 
@@ -237,6 +265,7 @@ JSON::json PhysicsColliderComponent::getJSON() const
 	j["material"] = (int)m_Material;
 	j["isMoveable"] = m_IsMoveable;
 	j["isKinematic"] = m_IsKinematic;
+	j["isSleepable"] = m_IsSleepable;
 	j["isGeneratesHitEvents"] = m_IsGeneratesHitEvents;
 
 	return j;
@@ -244,6 +273,7 @@ JSON::json PhysicsColliderComponent::getJSON() const
 
 void PhysicsColliderComponent::setVelocity(const Vector3& velocity)
 {
+	m_Body->activate(true);
 	m_Body->setLinearVelocity(VecTobtVector3(velocity));
 }
 
@@ -254,6 +284,7 @@ Vector3 PhysicsColliderComponent::getVelocity()
 
 void PhysicsColliderComponent::setAngularVelocity(const Vector3& angularVel)
 {
+	m_Body->activate(true);
 	m_Body->setAngularVelocity(VecTobtVector3(angularVel));
 }
 
@@ -264,13 +295,13 @@ Vector3 PhysicsColliderComponent::getAngularVelocity()
 
 void PhysicsColliderComponent::translate(const Vector3& vec)
 {
-	m_Body->setActivationState(DISABLE_DEACTIVATION);
+	m_Body->activate(true);
 	m_Body->translate(VecTobtVector3(vec));
 }
 
 void PhysicsColliderComponent::setGravity(const Vector3& gravity)
 {
-	m_Body->setActivationState(DISABLE_DEACTIVATION);
+	m_Body->activate(true);
 	m_Body->setGravity(VecTobtVector3(gravity));
 }
 
@@ -318,6 +349,11 @@ void PhysicsColliderComponent::draw()
 	if (ImGui::Checkbox("Kinematic", &m_IsKinematic))
 	{
 		setKinematic(m_IsKinematic);
+	}
+
+	if (ImGui::Checkbox("Sleepable", &m_IsSleepable))
+	{
+		setSleepable(m_IsSleepable);
 	}
 
 	if (ImGui::Checkbox("Generates Hit Events", &m_IsGeneratesHitEvents))

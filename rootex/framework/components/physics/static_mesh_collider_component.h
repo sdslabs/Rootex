@@ -17,7 +17,12 @@ class StaticMeshColliderComponent : public PhysicsColliderComponent
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::StaticMeshColliderComponent;
 
-	StaticMeshColliderComponent(const String& collisionModelPath, const PhysicsMaterial& material, const Vector3& angularFactor, const Vector3& gravity, int collisionGroup, int collisionMask, bool isMoveable, bool isKinematic, bool generatesHitEvents);
+	StaticMeshColliderComponent(
+		const String& collisionModelPath, 
+		const PhysicsMaterial& material, 
+		int collisionGroup, 
+		int collisionMask, 
+		bool generatesHitEvents);
 
 	bool setupData() override;
 	void setCollisionModel(CollisionModelResourceFile* file);

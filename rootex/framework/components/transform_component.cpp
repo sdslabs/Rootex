@@ -33,7 +33,7 @@ void TransformComponent::updatePositionRotationScaleFromTransform(Matrix& transf
 
 void TransformComponent::quaternionToRotation(const Quaternion& q)
 {
-	m_TransformBuffer.m_Rotation = Vector3::Transform({ 0.0f, 0.0f, -1.0f }, q);
+	m_TransformBuffer.m_Rotation = Vector3::Transform({ 0.0f, 0.0f, 0.0f }, q);
 }
 
 TransformComponent::TransformComponent(const Vector3& position, const Vector3& rotation, const Vector3& scale, const BoundingBox& bounds)
@@ -54,7 +54,7 @@ void TransformComponent::setPosition(const Vector3& position)
 
 void TransformComponent::setRotation(const float& yaw, const float& pitch, const float& roll)
 {
-	m_TransformBuffer.m_Rotation = { yaw, pitch, roll };
+	m_TransformBuffer.m_Rotation = { pitch, yaw, roll };
 	updateTransformFromPositionRotationScale();
 }
 
