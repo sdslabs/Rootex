@@ -11,7 +11,7 @@ private:
 	struct TransformBuffer
 	{
 		Vector3 m_Position;
-		Quaternion m_Rotation;
+		Vector3 m_Rotation;
 		Vector3 m_Scale;
 		BoundingBox m_BoundingBox;
 
@@ -26,15 +26,14 @@ private:
 
 	void updateTransformFromPositionRotationScale();
 	void updatePositionRotationScaleFromTransform(Matrix& transform);
+	void quaternionToRotation(const Quaternion& q);
 
-	TransformComponent(const Vector3& position, const Vector4& rotation, const Vector3& scale, const BoundingBox& bounds);
+	TransformComponent(const Vector3& position, const Vector3& rotation, const Vector3& scale, const BoundingBox& bounds);
 	TransformComponent(TransformComponent&) = delete;
 
 	friend class ModelComponent;
 	friend class RenderSystem;
 	friend class ECSFactory;
-
-	Vector3 m_EditorRotation;
 
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::TransformComponent;
@@ -57,10 +56,10 @@ public:
 
 	Vector3 getPosition() const { return m_TransformBuffer.m_Position; }
 	BoundingBox getWorldSpaceBounds() const;
-	const Quaternion& getRotation() const { return m_TransformBuffer.m_Rotation; }
+	Quaternion getRotation() const;
 	const Vector3& getScale() const { return m_TransformBuffer.m_Scale; }
 	const Matrix& getLocalTransform() const { return m_TransformBuffer.m_Transform; }
-	Matrix getRotationPosition() const { return Matrix::CreateFromQuaternion(m_TransformBuffer.m_Rotation) * Matrix::CreateTranslation(m_TransformBuffer.m_Position) * m_ParentAbsoluteTransform; }
+	Matrix getRotationPosition() const { return Matrix::CreateFromQuaternion(getRotation()) * Matrix::CreateTranslation(m_TransformBuffer.m_Position) * m_ParentAbsoluteTransform; }
 	Matrix getAbsoluteTransform() const { return m_TransformBuffer.m_Transform * m_ParentAbsoluteTransform; }
 	Matrix getParentAbsoluteTransform() const { return m_ParentAbsoluteTransform; }
 	ComponentID getComponentID() const override { return s_ID; }
