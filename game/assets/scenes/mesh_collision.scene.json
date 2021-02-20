@@ -25,6 +25,7 @@
                         "isGeneratesHitEvents": false,
                         "isKinematic": false,
                         "isMoveable": true,
+                        "isSleepable": true,
                         "material": 0,
                         "radius": 0.5,
                         "sideHeight": 1.0,
@@ -112,6 +113,7 @@
                                 "isGeneratesHitEvents": false,
                                 "isKinematic": false,
                                 "isMoveable": true,
+                                "isSleepable": true,
                                 "material": 2,
                                 "volume": 0.125
                             },
@@ -464,6 +466,7 @@
                                 "isGeneratesHitEvents": false,
                                 "isKinematic": false,
                                 "isMoveable": true,
+                                "isSleepable": false,
                                 "material": 2,
                                 "radius": 0.6000000238418579,
                                 "volume": 0.904778778553009
@@ -492,9 +495,9 @@
                                     "z": 0.0
                                 },
                                 "scale": {
-                                    "x": 0.029999999329447746,
-                                    "y": 0.029999999329447746,
-                                    "z": 0.029999999329447746
+                                    "x": 0.030000140890479088,
+                                    "y": 0.02999989315867424,
+                                    "z": 0.030000023543834686
                                 }
                             }
                         }
@@ -519,9 +522,9 @@
                         "components": {
                             "CapsuleColliderComponent": {
                                 "angularFactor": {
-                                    "x": 0.0,
-                                    "y": 0.0,
-                                    "z": 0.0
+                                    "x": 1.0,
+                                    "y": 1.0,
+                                    "z": 1.0
                                 },
                                 "collisionGroup": 31,
                                 "collisionMask": 31,
@@ -533,6 +536,7 @@
                                 "isGeneratesHitEvents": false,
                                 "isKinematic": false,
                                 "isMoveable": true,
+                                "isSleepable": true,
                                 "material": 2,
                                 "radius": 0.5,
                                 "sideHeight": 1.0,
@@ -681,21 +685,22 @@
             },
             "StaticMeshColliderComponent": {
                 "angularFactor": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
                 },
                 "collisionGroup": 31,
                 "collisionMask": 31,
                 "collisionModel": "rootex/assets/terrain.obj",
                 "gravity": {
                     "x": 0.0,
-                    "y": -9.800000190734863,
+                    "y": 0.0,
                     "z": 0.0
                 },
                 "isGeneratesHitEvents": false,
                 "isKinematic": false,
                 "isMoveable": false,
+                "isSleepable": true,
                 "material": 2,
                 "volume": 0.0
             },

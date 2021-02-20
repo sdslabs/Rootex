@@ -2,7 +2,7 @@
     "ID": 4,
     "children": [
         {
-            "ID": 5,
+            "ID": 9,
             "children": [],
             "entity": {
                 "Entity": {
@@ -18,26 +18,27 @@
                         "collisionGroup": 31,
                         "collisionMask": 31,
                         "dimensions": {
-                            "x": 2.5299999713897705,
+                            "x": 3.940000057220459,
                             "y": 0.5,
-                            "z": 2.630000114440918
+                            "z": 3.7300000190734863
                         },
                         "gravity": {
                             "x": 0.0,
-                            "y": 0.0,
+                            "y": -9.800000190734863,
                             "z": 0.0
                         },
                         "isGeneratesHitEvents": false,
                         "isKinematic": false,
                         "isMoveable": false,
-                        "material": 2,
-                        "volume": 3.3269500732421875
+                        "isSleepable": true,
+                        "material": 0,
+                        "volume": 3.2208001613616943
                     },
                     "ModelComponent": {
                         "affectingStaticLights": [],
                         "isVisible": true,
                         "materialOverrides": {
-                            "rootex/assets/materials/default.rmat": "game/assets/materials/yellow_textured.rmat"
+                            "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
                         },
                         "renderPass": 1,
                         "resFile": "rootex/assets/cube.obj"
@@ -57,8 +58,8 @@
                         },
                         "position": {
                             "x": 0.0,
-                            "y": -1.7999999523162842,
-                            "z": -6.600000381469727
+                            "y": -0.8820000290870667,
+                            "z": -4.909999847412109
                         },
                         "rotation": {
                             "x": 0.0,
@@ -66,9 +67,9 @@
                             "z": 0.0
                         },
                         "scale": {
-                            "x": 5.300000190734863,
+                            "x": 6.210000038146973,
                             "y": 1.0,
-                            "z": 5.099999904632568
+                            "z": 4.619999885559082
                         }
                     }
                 }
@@ -84,7 +85,86 @@
             }
         },
         {
-            "ID": 6,
+            "ID": 10,
+            "children": [],
+            "entity": {
+                "Entity": {
+                    "script": null
+                },
+                "components": {
+                    "ModelComponent": {
+                        "affectingStaticLights": [],
+                        "isVisible": true,
+                        "materialOverrides": {
+                            "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                        },
+                        "renderPass": 1,
+                        "resFile": "game/assets/test/sphere.obj"
+                    },
+                    "SphereColliderComponent": {
+                        "angularFactor": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "collisionGroup": 31,
+                        "collisionMask": 31,
+                        "gravity": {
+                            "x": 0.0,
+                            "y": -9.800000190734863,
+                            "z": 0.0
+                        },
+                        "isGeneratesHitEvents": false,
+                        "isKinematic": false,
+                        "isMoveable": true,
+                        "isSleepable": true,
+                        "material": 0,
+                        "radius": 0.800000011920929,
+                        "volume": 4.188790321350098
+                    },
+                    "TransformComponent": {
+                        "boundingBox": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "extents": {
+                                "x": 19.737079620361328,
+                                "y": 19.737079620361328,
+                                "z": 19.737079620361328
+                            }
+                        },
+                        "position": {
+                            "x": -2.9802322387695313e-08,
+                            "y": 2.0527286529541016,
+                            "z": -4.889999866485596
+                        },
+                        "rotation": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 0.029999999329447746,
+                            "y": 0.029999999329447746,
+                            "z": 0.029999999329447746
+                        }
+                    }
+                }
+            },
+            "file": "",
+            "name": "Sphere",
+            "settings": {
+                "camera": 1,
+                "inputSchemes": {},
+                "listener": 1,
+                "preloads": [],
+                "startScheme": ""
+            }
+        },
+        {
+            "ID": 11,
             "children": [],
             "entity": {
                 "Entity": {
@@ -106,20 +186,21 @@
                         },
                         "gravity": {
                             "x": 0.0,
-                            "y": 0.0,
+                            "y": -9.800000190734863,
                             "z": 0.0
                         },
                         "isGeneratesHitEvents": false,
                         "isKinematic": false,
                         "isMoveable": true,
-                        "material": 2,
+                        "isSleepable": true,
+                        "material": 0,
                         "volume": 0.125
                     },
                     "ModelComponent": {
                         "affectingStaticLights": [],
                         "isVisible": true,
                         "materialOverrides": {
-                            "rootex/assets/materials/default.rmat": "game/assets/materials/yellow_textured.rmat"
+                            "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
                         },
                         "renderPass": 1,
                         "resFile": "rootex/assets/cube.obj"
@@ -138,182 +219,25 @@
                             }
                         },
                         "position": {
-                            "x": 1.529653787612915,
-                            "y": 2.3404176235198975,
-                            "z": -6.622960567474365
+                            "x": 1.9999998807907104,
+                            "y": 1.052728533744812,
+                            "z": -4.889999866485596
                         },
                         "rotation": {
-                            "x": -0.08054417371749878,
-                            "y": 0.2390405386686325,
-                            "z": -0.30898338556289673
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
                         },
                         "scale": {
-                            "x": 0.9999992251396179,
-                            "y": 0.9999990463256836,
-                            "z": 0.9999992847442627
-                        }
-                    }
-                }
-            },
-            "file": "",
-            "name": "Block",
-            "settings": {
-                "camera": 1,
-                "inputSchemes": {},
-                "listener": 1,
-                "preloads": [],
-                "startScheme": ""
-            }
-        },
-        {
-            "ID": 7,
-            "children": [],
-            "entity": {
-                "Entity": {
-                    "script": null
-                },
-                "components": {
-                    "ModelComponent": {
-                        "affectingStaticLights": [],
-                        "isVisible": true,
-                        "materialOverrides": {
-                            "rootex/assets/materials/default.rmat": "game/assets/materials/column_a.rmat"
-                        },
-                        "renderPass": 1,
-                        "resFile": "game/assets/test/sphere.obj"
-                    },
-                    "SphereColliderComponent": {
-                        "angularFactor": {
                             "x": 1.0,
                             "y": 1.0,
                             "z": 1.0
-                        },
-                        "collisionGroup": 31,
-                        "collisionMask": 31,
-                        "gravity": {
-                            "x": 0.0,
-                            "y": 0.0,
-                            "z": 0.0
-                        },
-                        "isGeneratesHitEvents": false,
-                        "isKinematic": false,
-                        "isMoveable": true,
-                        "material": 2,
-                        "radius": 0.4000000059604645,
-                        "volume": 0.2680825889110565
-                    },
-                    "TransformComponent": {
-                        "boundingBox": {
-                            "center": {
-                                "x": 0.0,
-                                "y": 0.0,
-                                "z": 0.0
-                            },
-                            "extents": {
-                                "x": 19.737079620361328,
-                                "y": 19.737079620361328,
-                                "z": 19.737079620361328
-                            }
-                        },
-                        "position": {
-                            "x": -0.8904544711112976,
-                            "y": 0.3999999761581421,
-                            "z": -6.300000190734863
-                        },
-                        "rotation": {
-                            "x": 0.0,
-                            "y": 0.0,
-                            "z": 0.0
-                        },
-                        "scale": {
-                            "x": 0.019999999552965164,
-                            "y": 0.019999999552965164,
-                            "z": 0.019999999552965164
                         }
                     }
                 }
             },
             "file": "",
-            "name": "Sphere",
-            "settings": {
-                "camera": 1,
-                "inputSchemes": {},
-                "listener": 1,
-                "preloads": [],
-                "startScheme": ""
-            }
-        },
-        {
-            "ID": 8,
-            "children": [],
-            "entity": {
-                "Entity": {
-                    "script": null
-                },
-                "components": {
-                    "CapsuleColliderComponent": {
-                        "angularFactor": {
-                            "x": 1.0,
-                            "y": 1.0,
-                            "z": 1.0
-                        },
-                        "collisionGroup": 31,
-                        "collisionMask": 31,
-                        "gravity": {
-                            "x": 0.0,
-                            "y": 0.0,
-                            "z": 0.0
-                        },
-                        "isGeneratesHitEvents": false,
-                        "isKinematic": false,
-                        "isMoveable": true,
-                        "material": 2,
-                        "radius": 0.5,
-                        "sideHeight": 1.0,
-                        "volume": 1.3089970350265503
-                    },
-                    "ModelComponent": {
-                        "affectingStaticLights": [],
-                        "isVisible": true,
-                        "materialOverrides": {
-                            "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
-                        },
-                        "renderPass": 1,
-                        "resFile": "rootex/assets/capsule.obj"
-                    },
-                    "TransformComponent": {
-                        "boundingBox": {
-                            "center": {
-                                "x": 0.0,
-                                "y": 0.0,
-                                "z": 0.0
-                            },
-                            "extents": {
-                                "x": 0.5,
-                                "y": 1.0,
-                                "z": 0.5
-                            }
-                        },
-                        "position": {
-                            "x": 0.2999999523162842,
-                            "y": 0.4000000059604645,
-                            "z": -6.40000057220459
-                        },
-                        "rotation": {
-                            "x": 0.5299999713897705,
-                            "y": 0.0,
-                            "z": 0.3826834559440613
-                        },
-                        "scale": {
-                            "x": 0.9999998807907104,
-                            "y": 0.9999998807907104,
-                            "z": 1.0
-                        }
-                    }
-                }
-            },
-            "file": "",
-            "name": "Capsule",
+            "name": "Box",
             "settings": {
                 "camera": 1,
                 "inputSchemes": {},

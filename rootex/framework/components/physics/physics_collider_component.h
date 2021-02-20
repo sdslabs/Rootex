@@ -37,6 +37,7 @@ class PhysicsColliderComponent : public Component, public btMotionState
 	bool m_IsMoveable;
 	bool m_IsGeneratesHitEvents;
 	bool m_IsKinematic;
+	bool m_IsSleepable;
 	unsigned int m_CollisionGroup;
 	unsigned int m_CollisionMask;
 	PhysicsMaterial m_Material;
@@ -46,7 +47,18 @@ class PhysicsColliderComponent : public Component, public btMotionState
 	virtual void getWorldTransform(btTransform& worldTrans) const;
 	virtual void setWorldTransform(const btTransform& worldTrans);
 
-	PhysicsColliderComponent(const PhysicsMaterial& material, float volume, const Vector3& gravity, const Vector3& angularFactor, int collisionGroup, int collisionMask, bool isMoveable, bool isKinematic, bool generatesHitEvents, const Ref<btCollisionShape>& collisionShape);
+	PhysicsColliderComponent(
+		const PhysicsMaterial& material, 
+		float volume, 
+		const Vector3& gravity, 
+		const Vector3& angularFactor, 
+		int collisionGroup, 
+		int collisionMask, 
+		bool isMoveable, 
+		bool isKinematic, 
+		bool generatesHitEvents, 
+		bool canSleep, 
+		const Ref<btCollisionShape>& collisionShape);
 	
 	friend class ECSFactory;
 
@@ -86,6 +98,9 @@ public:
 	bool isMoveable() { return m_IsMoveable; }
 	void setMoveable(bool enabled);
 	
+	bool canSleep() { return m_IsSleepable; }
+	void setSleepable(bool enabled);
+
 	bool isGeneratesHitEvents() { return m_IsGeneratesHitEvents; }
 	void setGeneratedHitEvents(bool enabled) { m_IsGeneratesHitEvents = enabled; }
 	

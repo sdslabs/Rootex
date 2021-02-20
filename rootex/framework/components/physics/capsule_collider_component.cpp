@@ -13,7 +13,8 @@ Component* CapsuleColliderComponent::Create(const JSON::json& capsuleComponentDa
 	    capsuleComponentData.value("collisionMask", (int)CollisionMask::All),
 	    capsuleComponentData.value("isMoveable", false),
 	    capsuleComponentData.value("isKinematic", false),
-	    capsuleComponentData.value("isGeneratesHitEvents", false));
+	    capsuleComponentData.value("isGeneratesHitEvents", false),
+	    capsuleComponentData.value("isSleepable", true));
 	return component;
 }
 
@@ -22,8 +23,30 @@ void CapsuleColliderComponent::refreshDimensions()
 	m_CapsuleShape->setImplicitShapeDimensions(btVector3(m_Radius, m_SideHeight / 2.0f, m_Radius));
 }
 
-CapsuleColliderComponent::CapsuleColliderComponent(float radius, float sideHeight, const PhysicsMaterial& material, const Vector3& angularFactor, const Vector3& gravity, int collisionGroup, int collisionMask, bool isMoveable, bool isKinematic, bool generatesHitEvents)
-    : PhysicsColliderComponent(material, DirectX::XM_PI * radius * radius * ((4.0f / 3.0f) * radius + sideHeight), gravity, angularFactor, collisionGroup, collisionMask, isMoveable, isKinematic, generatesHitEvents, Ref<btCapsuleShape>(new btCapsuleShape(radius, sideHeight)))
+CapsuleColliderComponent::CapsuleColliderComponent(
+	float radius, 
+	float sideHeight, 
+	const PhysicsMaterial& material, 
+	const Vector3& angularFactor, 
+	const Vector3& gravity, 
+	int collisionGroup, 
+	int collisionMask, 
+	bool isMoveable, 
+	bool isKinematic, 
+	bool generatesHitEvents,
+    bool isSleepable)
+    : PhysicsColliderComponent(
+		material, 
+		DirectX::XM_PI * radius * radius * ((4.0f / 3.0f) * radius + sideHeight), 
+		gravity, 
+		angularFactor, 
+		collisionGroup, 
+		collisionMask, 
+		isMoveable, 
+		isKinematic, 
+		generatesHitEvents,
+        isSleepable,
+		Ref<btCapsuleShape>(new btCapsuleShape(radius, sideHeight)))
     , m_Radius(radius)
     , m_SideHeight(sideHeight)
 {
