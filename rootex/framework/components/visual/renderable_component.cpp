@@ -111,7 +111,7 @@ bool RenderableComponent::isVisible() const
 	return m_IsVisible;
 }
 
-void RenderableComponent::setIsVisible(bool enabled)
+void RenderableComponent::setVisibility(bool enabled)
 {
 	m_IsVisible = enabled;
 }

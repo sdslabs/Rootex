@@ -322,7 +322,7 @@ void LuaInterpreter::registerTypes()
 		    "RenderableComponent",
 		    sol::base_classes, sol::bases<Component>());
 		renderableComponent["isVisible"] = &RenderableComponent::isVisible;
-		renderableComponent["setIsVisible"] = &RenderableComponent::setIsVisible;
+		renderableComponent["setVisibility"] = &RenderableComponent::setVisibility;
 	}
 	{
 		sol::usertype<ModelComponent> modelComponent = rootex.new_usertype<ModelComponent>(

@@ -7,13 +7,13 @@
 
 class RenderableComponent : public Component
 {
+	DEPENDS_ON(TransformComponent);
+
 	friend class ECSFactory;
 
 protected:
 	bool m_IsVisible;
 	unsigned int m_RenderPass;
-
-	DEPENDS_ON(TransformComponent);
 
 	HashMap<Ref<Material>, Ref<Material>> m_MaterialOverrides;
 	Vector<SceneID> m_AffectingStaticLightIDs;
@@ -39,7 +39,7 @@ public:
 	virtual bool addAffectingStaticLight(SceneID id);
 	virtual void removeAffectingStaticLight(SceneID id);
 
-	void setIsVisible(bool enabled);
+	void setVisibility(bool enabled);
 	void setMaterialOverride(Ref<Material> oldMaterial, Ref<Material> newMaterial);
 
 	unsigned int getRenderPass() const { return m_RenderPass; }

@@ -190,7 +190,7 @@ Ptr<Entity> ECSFactory::CreateRootEntity(Scene* scene)
 	{
 		Ptr<Component>& model = CreateDefaultComponent("ModelComponent");
 		ModelComponent* rootModelComponent = dynamic_cast<ModelComponent*>(model.get());
-		rootModelComponent->setIsVisible(false);
+		rootModelComponent->setVisibility(false);
 		AddComponent(root.get(), model);
 	}
 	{
