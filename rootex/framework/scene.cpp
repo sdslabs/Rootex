@@ -4,7 +4,7 @@
 #include "resource_loader.h"
 #include "scene_loader.h"
 
-static int NextSceneID = ROOT_SCENE_ID + 1;
+static SceneID NextSceneID = ROOT_SCENE_ID + 1;
 Vector<Scene*> Scene::s_Scenes;
 
 void to_json(JSON::json& j, const SceneSettings& s)
@@ -39,19 +39,12 @@ void Scene::ResetNextID()
 
 Ptr<Scene> Scene::Create(const JSON::json& sceneData)
 {
-	SceneID thisSceneID = NextSceneID;
 	if (sceneData.contains("ID")) 
 	{
-		thisSceneID = sceneData["ID"];
-		if (thisSceneID >= NextSceneID)
-		{
-			NextSceneID = thisSceneID + 1;
-		}
+		NextSceneID = std::max(NextSceneID, (SceneID)sceneData["ID"]);
 	}
-	else
-	{
-		NextSceneID++;
-	}
+	SceneID thisSceneID = NextSceneID;
+	NextSceneID++;
 	
 	Ptr<Scene> thisScene(std::make_unique<Scene>(thisSceneID, sceneData.value("name", String("Untitled")), sceneData.value("file", String()), sceneData.value("settings", SceneSettings())));
 	s_Scenes.push_back(thisScene.get());
@@ -344,12 +337,24 @@ void SceneSettings::draw()
 			preloads.pop_back();
 		}
 	}
-	if (ImGui::BeginCombo("Camera", SceneLoader::GetSingleton()->getRootScene()->findScene(camera)->getFullName().c_str()))
+
+	Scene* cameraScene = SceneLoader::GetSingleton()->getRootScene()->findScene(camera);
+	if (!cameraScene)
+	{
+		cameraScene = SceneLoader::GetSingleton()->getRootScene();
+	}
+	if (ImGui::BeginCombo("Camera", cameraScene->getFullName().c_str()))
 	{
 		drawSceneSelectables(SceneLoader::GetSingleton()->getRootScene(), camera);
 		ImGui::EndCombo();
 	}
-	if (ImGui::BeginCombo("Listener", SceneLoader::GetSingleton()->getRootScene()->findScene(listener)->getFullName().c_str()))
+
+	Scene* listenerScene = SceneLoader::GetSingleton()->getRootScene()->findScene(listener);
+	if (!listenerScene)
+	{
+		listenerScene = SceneLoader::GetSingleton()->getRootScene();
+	}
+	if (ImGui::BeginCombo("Listener", listenerScene->getFullName().c_str()))
 	{
 		drawSceneSelectables(SceneLoader::GetSingleton()->getRootScene(), listener);
 		ImGui::EndCombo();

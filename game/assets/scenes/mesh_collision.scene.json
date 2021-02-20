@@ -240,7 +240,7 @@
                             }
                         },
                         {
-                            "ID": 5,
+                            "ID": 13,
                             "children": [],
                             "entity": {
                                 "Entity": {
@@ -340,13 +340,107 @@
                                 "preloads": [],
                                 "startScheme": ""
                             }
+                        },
+                        {
+                            "ID": 16,
+                            "children": [],
+                            "entity": {
+                                "Entity": {
+                                    "script": null
+                                },
+                                "components": {
+                                    "CPUParticlesComponent": {
+                                        "affectingStaticLights": [],
+                                        "emitMode": 0,
+                                        "emitterDimensions": {
+                                            "x": 10.0,
+                                            "y": 10.0,
+                                            "z": 10.0
+                                        },
+                                        "isVisible": true,
+                                        "materialOverrides": {
+                                            "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                                        },
+                                        "materialPath": "game/assets/materials/test_particles.rmat",
+                                        "particleTemplate": {
+                                            "angularVelocityVariation": 100.0,
+                                            "colorBegin": {
+                                                "a": 1.0,
+                                                "b": 0.05882352963089943,
+                                                "g": 0.9960784316062927,
+                                                "r": 0.9921568632125854
+                                            },
+                                            "colorEnd": {
+                                                "a": 1.0,
+                                                "b": 0.0,
+                                                "g": 1.0,
+                                                "r": 0.0
+                                            },
+                                            "lifeTime": 10.0,
+                                            "sizeBegin": 1.0,
+                                            "sizeEnd": 1.0,
+                                            "sizeVariation": 4.070000171661377,
+                                            "velocity": {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                                "z": 0.0
+                                            },
+                                            "velocityVariation": 17.0
+                                        },
+                                        "poolSize": 500,
+                                        "renderPass": 1,
+                                        "resFile": "rootex/assets/cube.obj"
+                                    },
+                                    "TransformComponent": {
+                                        "boundingBox": {
+                                            "center": {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                                "z": 0.0
+                                            },
+                                            "extents": {
+                                                "x": 0.5,
+                                                "y": 0.5,
+                                                "z": 0.5
+                                            }
+                                        },
+                                        "position": {
+                                            "x": 0.0,
+                                            "y": 0.0,
+                                            "z": 0.0
+                                        },
+                                        "rotation": {
+                                            "w": 1.0,
+                                            "x": -0.0,
+                                            "y": 0.0,
+                                            "z": -0.0
+                                        },
+                                        "scale": {
+                                            "x": 4.53000020980835,
+                                            "y": 4.53000020980835,
+                                            "z": 4.53000020980835
+                                        }
+                                    }
+                                }
+                            },
+                            "file": "",
+                            "name": "Particles",
+                            "settings": {
+                                "camera": 1,
+                                "inputSchemes": {},
+                                "listener": 1,
+                                "preloads": [],
+                                "startScheme": ""
+                            }
                         }
                     ],
                     "entity": {
                         "Entity": {
                             "script": {
-                                "overrides": null,
-                                "path": "game/assets/scripts/player_control.lua"
+                                "overrides": {
+                                    "variable": ""
+                                },
+                                "path": "game/assets/scripts/new_player_control.lua"
                             }
                         },
                         "components": {
@@ -422,7 +516,7 @@
                     }
                 },
                 {
-                    "ID": 13,
+                    "ID": 17,
                     "children": [],
                     "entity": {
                         "Entity": {
@@ -648,7 +742,7 @@
     "file": "game/assets/scenes/mesh_collision.scene.json",
     "name": "mesh_collision",
     "settings": {
-        "camera": 5,
+        "camera": 13,
         "inputSchemes": {
             "Controls": {
                 "bools": [
@@ -676,7 +770,7 @@
                 "floats": []
             }
         },
-        "listener": 1,
+        "listener": 10,
         "preloads": [],
         "startScheme": "Controls"
     }
