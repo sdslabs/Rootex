@@ -18,11 +18,6 @@ Component* CapsuleColliderComponent::Create(const JSON::json& capsuleComponentDa
 	return component;
 }
 
-void CapsuleColliderComponent::refreshDimensions()
-{
-	m_CapsuleShape->setImplicitShapeDimensions(btVector3(m_Radius, m_SideHeight / 2.0f, m_Radius));
-}
-
 CapsuleColliderComponent::CapsuleColliderComponent(
 	float radius, 
 	float sideHeight, 
@@ -56,13 +51,16 @@ CapsuleColliderComponent::CapsuleColliderComponent(
 void CapsuleColliderComponent::setSideHeight(float s)
 {
 	m_SideHeight = s;
-	refreshDimensions();
+	setupData();
+	m_CapsuleShape = std::dynamic_pointer_cast<btCapsuleShape>(m_CollisionShape);
 }
 
 void CapsuleColliderComponent::setRadius(float r)
 {
 	m_Radius = r;
-	refreshDimensions();
+	m_CapsuleShape.reset(new btCapsuleShape(m_Radius, m_SideHeight));
+	m_CollisionShape = m_CapsuleShape;
+	setupData();
 }
 
 JSON::json CapsuleColliderComponent::getJSON() const
