@@ -101,7 +101,7 @@ void InspectorDock::drawSceneActions(Scene* scene)
 			if (ImGui::MenuItem("Add Entity"))
 			{
 				m_ActionScene->setEntity(ECSFactory::CreateEmptyEntity(m_ActionScene));
-			}	
+			}
 		}
 		ImGui::Separator();
 
@@ -179,7 +179,7 @@ void InspectorDock::draw(float deltaMilliseconds)
 					{
 						m_ActionScene->addChild(Scene::CreateFromFile(*result));
 					}
-				}				
+				}
 				ImGui::SameLine();
 				if (ImGui::Button("Save Scene to File"))
 				{
@@ -216,7 +216,6 @@ void InspectorDock::draw(float deltaMilliseconds)
 						ImGui::EndTabBar();
 					}
 					EditorSystem::GetSingleton()->popFont();
-
 				}
 			}
 		}

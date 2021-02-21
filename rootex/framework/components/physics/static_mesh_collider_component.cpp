@@ -11,8 +11,8 @@ Component* StaticMeshColliderComponent::Create(const JSON::json& staticMeshCompo
 	    staticMeshComponentData.value("angularFactor", Vector3::One),
 	    staticMeshComponentData.value("gravity", Vector3(0.0f, -9.8f, 0.0f)),
 	    staticMeshComponentData.value("collisionGroup", (int)CollisionMask::All),
-	    staticMeshComponentData.value("collisionMask", (int)CollisionMask::All), 
-		staticMeshComponentData.value("isMoveable", false),
+	    staticMeshComponentData.value("collisionMask", (int)CollisionMask::All),
+	    staticMeshComponentData.value("isMoveable", false),
 	    staticMeshComponentData.value("isKinematic", false),
 	    staticMeshComponentData.value("isGeneratesHitEvents", false));
 	return component;

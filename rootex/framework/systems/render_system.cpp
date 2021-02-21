@@ -19,7 +19,7 @@ RenderSystem* RenderSystem::GetSingleton()
 
 RenderSystem::RenderSystem()
     : System("RenderSystem", UpdateOrder::Render, true)
-	, m_Renderer(new Renderer())
+    , m_Renderer(new Renderer())
     , m_VSProjectionConstantBuffer(nullptr)
     , m_VSPerFrameConstantBuffer(nullptr)
     , m_PSPerFrameConstantBuffer(nullptr)
@@ -27,11 +27,11 @@ RenderSystem::RenderSystem()
     , m_IsEditorRenderPassEnabled(false)
 {
 	BIND_EVENT_MEMBER_FUNCTION("OpenedScene", onOpenedScene);
-	
+
 	m_Camera = SceneLoader::GetSingleton()->getRootScene()->getEntity()->getComponent<CameraComponent>();
 	m_TransformationStack.push_back(Matrix::Identity);
 	setProjectionConstantBuffers();
-	
+
 	m_LineMaterial = std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetMaterial("rootex/assets/materials/line.rmat"));
 	m_CurrentFrameLines.m_Endpoints.reserve(LINE_INITIAL_RENDER_CACHE * 2 * 3);
 	m_CurrentFrameLines.m_Indices.reserve(LINE_INITIAL_RENDER_CACHE * 2);
@@ -175,7 +175,7 @@ void RenderSystem::update(float deltaMilliseconds)
 		RenderingDevice::GetSingleton()->setRSType(currentRS);
 		RenderingDevice::GetSingleton()->disableSkyDSS();
 	}
-	
+
 	// Post processes
 	PostProcessor::GetSingleton()->draw(m_Camera);
 
@@ -238,7 +238,7 @@ void RenderSystem::submitBox(const Vector3& min, const Vector3& max)
 	corners[5] = min + y + x;
 	corners[6] = max;
 	corners[7] = min + y + z;
-	
+
 	submitLine(corners[0], corners[1]);
 	submitLine(corners[1], corners[2]);
 	submitLine(corners[2], corners[3]);
@@ -423,7 +423,7 @@ void RenderSystem::draw()
 	ImGui::NextColumn();
 	ImGui::Columns(1);
 
-	if (ImGui::Button("Update Static Lights")) 
+	if (ImGui::Button("Update Static Lights"))
 	{
 		updatePerSceneBinds();
 	}

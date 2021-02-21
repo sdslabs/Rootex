@@ -18,7 +18,7 @@ public:
 	virtual ~Renderer() = default;
 
 	void setViewport(Viewport& viewport);
-	
+
 	void resetCurrentShader();
 	void bind(Material* material);
 	void draw(const VertexBuffer* vertexBuffer, const IndexBuffer* indexBuffer) const;

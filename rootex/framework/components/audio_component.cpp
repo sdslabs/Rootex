@@ -22,7 +22,7 @@ bool AudioComponent::setupData()
 		getAudioSource()->setReferenceDistance(m_ReferenceDistance);
 		getAudioSource()->setMaxDistance(m_MaxDistance);
 	}
-	
+
 	getAudioSource()->setLooping(m_IsLooping);
 	return true;
 }

@@ -43,9 +43,9 @@ public:
 
 	/// Destruct all components.
 	void destroy();
-	
+
 	Scene* getScene() const { return m_Scene; }
-	
+
 	template <class ComponentType = Component>
 	ComponentType* getComponent();
 
@@ -60,7 +60,7 @@ public:
 	bool call(const String& function, const Vector<Variant>& args);
 	void evaluateScriptOverrides();
 	bool setScript(const String& path);
-	
+
 #ifdef ROOTEX_EDITOR
 	void draw();
 #endif

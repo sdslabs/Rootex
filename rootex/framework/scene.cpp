@@ -119,8 +119,8 @@ Ptr<Scene> Scene::CreateRootScene()
 	return root;
 }
 
-Vector<Scene*> Scene::FindScenesByName(const String& name) 
-{ 
+Vector<Scene*> Scene::FindScenesByName(const String& name)
+{
 	Vector<Scene*> foundScenes;
 	for (auto& scene : s_Scenes)
 	{
@@ -199,7 +199,7 @@ bool Scene::snatchChild(Scene* child)
 	{
 		return false;
 	}
-	
+
 	Vector<Ptr<Scene>>& children = child->getParent()->getChildren();
 	for (int i = 0; i < children.size(); i++)
 	{

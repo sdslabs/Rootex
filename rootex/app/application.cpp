@@ -42,7 +42,7 @@ Application::Application(const String& settingsFile)
 	{
 		ERR("Application OS was not initialized");
 	}
-	
+
 	PANIC(!OS::ElevateThreadPriority(), "Could not elevate main thread priority");
 	PRINT("Current main thread priority: " + std::to_string(OS::GetCurrentThreadPriority()));
 
@@ -52,7 +52,7 @@ Application::Application(const String& settingsFile)
 
 	JSON::json& systemsSettings = m_ApplicationSettings->getJSON()["systems"];
 	LuaInterpreter::GetSingleton();
-	
+
 	JSON::json windowJSON = m_ApplicationSettings->getJSON()["window"];
 	m_Window.reset(new Window(
 	    windowJSON["x"],
@@ -61,7 +61,7 @@ Application::Application(const String& settingsFile)
 	    OS::GetDisplayHeight(),
 	    windowJSON["title"],
 	    windowJSON["isEditor"],
-		windowJSON["fullScreen"]));
+	    windowJSON["fullScreen"]));
 	JSON::json& inputSystemSettings = systemsSettings["InputSystem"];
 	inputSystemSettings["width"] = m_Window->getWidth();
 	inputSystemSettings["height"] = m_Window->getHeight();
@@ -69,7 +69,7 @@ Application::Application(const String& settingsFile)
 
 	ShaderLibrary::MakeShaders();
 	PhysicsSystem::GetSingleton()->initialize(systemsSettings["PhysicsSystem"]);
-	
+
 	JSON::json& uiSystemSettings = systemsSettings["UISystem"];
 	uiSystemSettings["width"] = m_Window->getWidth();
 	uiSystemSettings["height"] = m_Window->getHeight();
@@ -85,7 +85,7 @@ Application::Application(const String& settingsFile)
 	{
 		ERR("Audio System was not initialized");
 	}
-	
+
 	auto&& postInitialize = m_ApplicationSettings->find("postInitialize");
 	if (postInitialize != m_ApplicationSettings->end())
 	{
@@ -99,7 +99,7 @@ Application::Application(const String& settingsFile)
 		}
 	}
 
-	m_Window->show();	
+	m_Window->show();
 }
 
 Application::~Application()
@@ -127,11 +127,11 @@ void Application::run()
 				}
 			}
 		}
-		
+
 		process(m_FrameTimer.getLastFrameTime());
-		
+
 		EventManager::GetSingleton()->dispatchDeferred();
-		
+
 		m_Window->swapBuffers();
 		FrameMark;
 	}
@@ -141,7 +141,7 @@ void Application::run()
 
 void Application::process(float deltaMilliseconds)
 {
-	// Unused process function, meaning app doesn't need 
+	// Unused process function, meaning app doesn't need
 	// extra logic running every frame apart from the systems running
 }
 

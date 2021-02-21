@@ -52,7 +52,7 @@ class AudioSystem : public System
 	ALCcontext* m_Context;
 
 	AudioListenerComponent* m_Listener;
-	
+
 	AudioSystem();
 	AudioSystem(AudioSystem&) = delete;
 	virtual ~AudioSystem() = default;
@@ -72,14 +72,14 @@ public:
 	static void CheckALUTError(const char* msg, const char* fname, int line);
 
 	AudioListenerComponent* getListener() const { return m_Listener; }
-    void setListener(AudioListenerComponent* listenerComponent);
+	void setListener(AudioListenerComponent* listenerComponent);
 
 	void restoreListener();
 
 	bool initialize(const JSON::json& systemData) override;
 	void setConfig(const SceneSettings& sceneSettings) override;
 	void shutDown();
-	
+
 	void update(float deltaMilliseconds) override;
 	void begin() override;
 	void end() override;

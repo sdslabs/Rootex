@@ -95,7 +95,7 @@ void FileViewer::draw(float deltaMilliseconds)
 			}
 
 			drawFileInfo();
-			
+
 			if (IsFileSupported(m_OpenFilePath.extension().generic_string(), ResourceFile::Type::Audio))
 			{
 				m_AudioPlayer.draw(deltaMilliseconds);
@@ -106,7 +106,7 @@ void FileViewer::draw(float deltaMilliseconds)
 			}
 			else if (m_OpenFilePath.extension() == ".rmat")
 			{
-				m_MaterialViewer.draw(deltaMilliseconds);	
+				m_MaterialViewer.draw(deltaMilliseconds);
 			}
 			else
 			{

@@ -44,7 +44,7 @@ JSON::json PointLightComponent::getJSON() const
 }
 
 #ifdef ROOTEX_EDITOR
-#include"imgui.h"
+#include "imgui.h"
 #include "systems/render_system.h"
 void PointLightComponent::draw()
 {

@@ -5,14 +5,14 @@ Component* BoxColliderComponent::Create(const JSON::json& boxComponentData)
 {
 	BoxColliderComponent* component = new BoxColliderComponent(
 	    boxComponentData.value("dimensions", Vector3::Zero),
-		boxComponentData.value("material", PhysicsMaterial::Air),
+	    boxComponentData.value("material", PhysicsMaterial::Air),
 	    boxComponentData.value("angularFactor", Vector3::One),
 	    boxComponentData.value("gravity", Vector3(0.0f, -9.8f, 0.0f)),
 	    boxComponentData.value("collisionGroup", (int)CollisionMask::All),
 	    boxComponentData.value("collisionMask", (int)CollisionMask::All),
 	    boxComponentData.value("isMoveable", false),
 	    boxComponentData.value("isKinematic", false),
-		boxComponentData.value("isGeneratesHitEvents", false));
+	    boxComponentData.value("isGeneratesHitEvents", false));
 	return component;
 }
 
@@ -55,4 +55,4 @@ void BoxColliderComponent::draw()
 		setDimensions(m_Dimensions);
 	}
 }
-#endif // ROOTEX_EDITOR 
+#endif // ROOTEX_EDITOR

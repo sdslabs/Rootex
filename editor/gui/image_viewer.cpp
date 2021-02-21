@@ -19,7 +19,7 @@ void ImageViewer::draw(float deltaMilliseconds)
 	}
 	ImGui::Separator();
 	ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
-	ImGui::SliderFloat("##Zoom", &m_Zoom , m_MinZoom, m_MaxZoom, "Zoom %.3fx");
+	ImGui::SliderFloat("##Zoom", &m_Zoom, m_MinZoom, m_MaxZoom, "Zoom %.3fx");
 	ImGui::Image(m_ImageResourceFile->getTexture()->getTextureResourceView(), { m_Zoom * (float)m_ImageResourceFile->getTexture()->getWidth(), m_Zoom * (float)m_ImageResourceFile->getTexture()->getHeight() }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f, 1.0f });
 }
 

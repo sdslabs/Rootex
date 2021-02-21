@@ -11,13 +11,13 @@
 class AnimatedModelComponent : public RenderableComponent
 {
 	static Component* Create(const JSON::json& componentData);
-	
+
 	friend class ECSFactory;
 	friend class AnimationSystem;
 
 protected:
 	AnimatedModelResourceFile* m_AnimatedModelResourceFile;
-	
+
 	String m_CurrentAnimationName;
 	float m_CurrentTimePosition;
 	bool m_IsPlaying;
@@ -39,7 +39,7 @@ public:
 	virtual AnimatedModelResourceFile* getAnimatedResourceFile() const { return m_AnimatedModelResourceFile; }
 	virtual String getCurrentAnimationName() const { return m_CurrentAnimationName; }
 	virtual float getCurrentTime() const { return m_CurrentTimePosition; }
-	
+
 	void assignBoundingBox();
 	void assignOverrides(AnimatedModelResourceFile* file, const HashMap<String, String>& materialOverrides);
 	void setAnimatedResourceFile(AnimatedModelResourceFile* file, const HashMap<String, String>& materialOverrides);

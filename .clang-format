@@ -1,7 +1,11 @@
-﻿BasedOnStyle: Webkit
+﻿---
 AccessModifierOffset: '-4'
+BasedOnStyle: WebKit
+BreakBeforeBraces: Allman
+PointerAlignment: Left
+SortIncludes: 'false'
 Standard: Auto
 TabWidth: '4'
 UseTab: ForIndentation
-BreakBeforeBraces: Allman
-SortIncludes: false
+
+...

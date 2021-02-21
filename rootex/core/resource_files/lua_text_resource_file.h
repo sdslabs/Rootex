@@ -11,7 +11,7 @@ class LuaTextResourceFile : public TextResourceFile
 
 public:
 	static void RegisterAPI(sol::table& rootex);
-	
+
 	explicit LuaTextResourceFile(TextResourceFile&) = delete;
 	explicit LuaTextResourceFile(TextResourceFile&&) = delete;
 	~LuaTextResourceFile() = default;

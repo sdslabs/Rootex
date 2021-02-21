@@ -35,7 +35,7 @@ public:
 
 	/// Get the ID of the component which is depended upon. This should not use the component object because it is nullptr when this is called.
 	ComponentID getID() const override { return ComponentType::s_ID; }
-	
+
 	/// Return if the dependency has been evaluated properly.
 	bool isValid() const override { return isSoft || m_Component; }
 };
@@ -69,11 +69,11 @@ class Component
 
 protected:
 	Entity* m_Owner;
-	
+
 public:
 	Component();
 	virtual ~Component();
-	
+
 	/// Only use to register dependency through a Dependency object.
 	void registerDependency(Dependable* dependable) { m_Dependencies.push_back(dependable); }
 	const Vector<Dependable*>& getDependencies() const { return m_Dependencies; }

@@ -23,7 +23,7 @@ class RenderSystem : public System
 	};
 
 	CameraComponent* m_Camera;
-	
+
 	Ptr<Renderer> m_Renderer;
 	Vector<Matrix> m_TransformationStack;
 
@@ -49,16 +49,16 @@ class RenderSystem : public System
 
 public:
 	static RenderSystem* GetSingleton();
-	
+
 	void setConfig(const SceneSettings& sceneSettings) override;
 	void update(float deltaMilliseconds) override;
 	void renderLines();
-	
+
 	void submitLine(const Vector3& from, const Vector3& to);
 	void submitBox(const Vector3& min, const Vector3& max);
 	void submitSphere(const Vector3& center, const float& radius);
 	void submitCone(const Matrix& transform, const float& height, const float& radius);
-	
+
 	void recoverLostDevice();
 
 	void setCamera(CameraComponent* camera);
@@ -68,7 +68,7 @@ public:
 	void pushMatrix(const Matrix& transform);
 	void pushMatrixOverride(const Matrix& transform);
 	void popMatrix();
-	
+
 	void enableWireframeRasterizer();
 	void resetDefaultRasterizer();
 
@@ -79,7 +79,7 @@ public:
 	void updatePerSceneBinds();
 
 	void setIsEditorRenderPass(bool enabled) { m_IsEditorRenderPassEnabled = enabled; }
-	
+
 	void enableLineRenderMode();
 	void resetRenderMode();
 

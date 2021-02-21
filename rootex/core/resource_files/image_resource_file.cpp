@@ -1,7 +1,7 @@
 #include "image_resource_file.h"
 
 ImageResourceFile::ImageResourceFile(const FilePath& path)
-	: ResourceFile(Type::Image, path)
+    : ResourceFile(Type::Image, path)
 {
 	reimport();
 }
@@ -9,8 +9,8 @@ ImageResourceFile::ImageResourceFile(const FilePath& path)
 void ImageResourceFile::RegisterAPI(sol::table& rootex)
 {
 	sol::usertype<ImageResourceFile> imageResourceFile = rootex.new_usertype<ImageResourceFile>(
-		"ImageResourceFile",
-		sol::base_classes, sol::bases<ResourceFile>());
+	    "ImageResourceFile",
+	    sol::base_classes, sol::bases<ResourceFile>());
 }
 
 void ImageResourceFile::reimport()

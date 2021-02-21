@@ -203,6 +203,6 @@ void ResourceLoader::Unload(const Vector<String>& paths)
 					files.erase(eraseIt);
 				}
 			}
-	    }
+		}
 	}
 }
