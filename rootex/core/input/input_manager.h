@@ -11,7 +11,7 @@ typedef gainput::Key KeyboardButton;
 /// Alias for a mouse device. Allows various mouse specific operations.
 typedef gainput::MouseButton MouseButton;
 /// Alias for a game controller/pad device. Allows various pad specific operations. Gainput (our input library) only supports pads that allow XInput. So non-XInput controllers are not supported.
-typedef gainput::PadButton PadButton; 
+typedef gainput::PadButton PadButton;
 /// ID of any key, button or analog on the device hardware.
 typedef gainput::DeviceButtonId DeviceButtonID;
 
@@ -46,7 +46,7 @@ void to_json(JSON::json& j, const InputScheme& s);
 void from_json(const JSON::json& j, InputScheme& s);
 
 /// Allows interfacing to game controlling hardware, including mouse, keyboard and XInput controllers.
-/// Allows detecting inputs through Event dispatch. 
+/// Allows detecting inputs through Event dispatch.
 /// Event data for boolean buttons consists of a Vector2 where Vector2.x and Vector2.y carry the old and new values for the input event respectively.
 /// Float buttons should be queried directly by invoking InputManager.
 class InputManager

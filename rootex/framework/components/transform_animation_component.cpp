@@ -18,10 +18,10 @@ void from_json(const JSON::json& j, TransformAnimationComponent::Keyframe& k)
 Component* TransformAnimationComponent::Create(const JSON::json& componentData)
 {
 	TransformAnimationComponent* animation = new TransformAnimationComponent(
-	    componentData.value("keyframes", Vector<TransformAnimationComponent::Keyframe>()), 
-		componentData.value("isPlayOnStart", false), 
-		(AnimationMode)(int)componentData.value("animationMode", (int)AnimationMode::None),
-		(TransitionType)(int)componentData.value("transitionType", (int)TransitionType::SmashSmash));
+	    componentData.value("keyframes", Vector<TransformAnimationComponent::Keyframe>()),
+	    componentData.value("isPlayOnStart", false),
+	    (AnimationMode)(int)componentData.value("animationMode", (int)AnimationMode::None),
+	    (TransitionType)(int)componentData.value("transitionType", (int)TransitionType::SmashSmash));
 	return animation;
 }
 
@@ -140,7 +140,7 @@ void TransformAnimationComponent::interpolate(float deltaSeconds)
 				float timeSinceMostRecentKeyframe = m_CurrentTimePosition - m_Keyframes[i].timePosition;
 				float timeBetween = m_Keyframes[i + 1u].timePosition - m_Keyframes[i].timePosition;
 				float lerpFactor = timeSinceMostRecentKeyframe / timeBetween;
-				
+
 				switch (m_TransitionType)
 				{
 				case TransitionType::SmashSmash:
@@ -162,7 +162,7 @@ void TransformAnimationComponent::interpolate(float deltaSeconds)
 
 				Matrix finalMat = interpolateMatrix(leftMat, rightMat, lerpFactor);
 				m_TransformComponent->setTransform(finalMat);
-				
+
 				// No need to check futher. This will be the only one needed.
 				break;
 			}
@@ -216,7 +216,7 @@ void TransformAnimationComponent::draw()
 			    (m_TransformComponent->getParentAbsoluteTransform() * m_Keyframes[i].transform).Translation(),
 			    (m_TransformComponent->getParentAbsoluteTransform() * m_Keyframes[i + 1u].transform).Translation());
 		}
-		
+
 		unsigned int keyFrameNumber = 1;
 		for (auto& keyframe : m_Keyframes)
 		{

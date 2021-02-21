@@ -19,7 +19,7 @@ public:
 	Event(const String& name, const Type type, const Variant data);
 	Event(Event&) = delete;
 	~Event() = default;
-	
+
 	const String& getName() const { return m_Name; };
 	const Type& getType() const { return m_Type; };
 	/// Returns the payload data sent with an event. Extract typed data after getting the data.

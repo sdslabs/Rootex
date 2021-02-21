@@ -66,7 +66,7 @@ void ToolbarDock::draw(float deltaMilliseconds)
 			{
 				m_FPSRecords.erase(m_FPSRecords.begin());
 				m_FPSRecords.push_back(EditorApplication::GetSingleton()->getAppFrameTimer().getLastFPS());
-				
+
 				static float averageFPS = 0.0f;
 				for (auto& fps : m_FPSRecords)
 				{
@@ -81,13 +81,13 @@ void ToolbarDock::draw(float deltaMilliseconds)
 			if (ImGui::TreeNodeEx("Events"))
 			{
 				for (auto&& [eventType, eventHandlers] : EventManager::GetSingleton()->getRegisteredEvents())
-				{				
+				{
 					ImGui::Text((eventType + " (" + std::to_string(eventHandlers.size()) + ")").c_str());
 				}
 				ImGui::TreePop();
 			}
 
-			for (auto& systems : System::GetSystems()) 
+			for (auto& systems : System::GetSystems())
 			{
 				for (auto& system : systems)
 				{

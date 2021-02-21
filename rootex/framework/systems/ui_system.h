@@ -22,7 +22,7 @@ class UISystem : public System
 
 	UISystem();
 	virtual ~UISystem() = default;
-	
+
 	Variant enableDebugger(const Event* event);
 	Variant disableDebugger(const Event* event);
 

@@ -9,7 +9,7 @@ class LuaTextResourceFile : public TextResourceFile
 
 	friend class ResourceLoader;
 
-public:	
+public:
 	explicit LuaTextResourceFile(TextResourceFile&) = delete;
 	explicit LuaTextResourceFile(TextResourceFile&&) = delete;
 	~LuaTextResourceFile() = default;

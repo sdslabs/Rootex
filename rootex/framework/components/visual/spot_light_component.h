@@ -15,7 +15,7 @@ class SpotLightComponent : public Component
 
 	SpotLightComponent::SpotLightComponent(const float constAtt, const float linAtt, const float quadAtt,
 	    const float range, const float diffuseIntensity, const Color& diffuseColor, const Color& ambientColor,
-		float spot, float angleRange);
+	    float spot, float angleRange);
 	SpotLightComponent(SpotLightComponent&) = delete;
 	~SpotLightComponent() = default;
 
@@ -25,7 +25,7 @@ class SpotLightComponent : public Component
 
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::SpotLightComponent;
-	
+
 	Matrix getAbsoluteTransform() const { return m_TransformComponent->getAbsoluteTransform(); }
 	const SpotLight& getSpotLight() const { return m_SpotLight; }
 

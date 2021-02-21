@@ -29,12 +29,12 @@ void ModelResourceFile::reimport()
 		ERR("Assimp: " + modelLoader.GetErrorString());
 		return;
 	}
-	
+
 	m_Meshes.clear();
 	for (int i = 0; i < scene->mNumMeshes; i++)
 	{
 		const aiMesh* mesh = scene->mMeshes[i];
-		
+
 		Vector<VertexData> vertices;
 		vertices.reserve(mesh->mNumVertices);
 

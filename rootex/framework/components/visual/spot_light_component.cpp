@@ -14,14 +14,14 @@ Component* SpotLightComponent::Create(const JSON::json& componentData)
 	    componentData.value("diffuseColor", Color(1.0f, 1.0f, 1.0f, 1.0f)),
 	    componentData.value("ambientColor", Color(1.0f, 1.0f, 1.0f, 1.0f)),
 	    componentData.value("spot", 4.0f),
-		componentData.value("angleRange", DirectX::XMConvertToRadians(30.0f)));
+	    componentData.value("angleRange", DirectX::XMConvertToRadians(30.0f)));
 
 	return spotLightComponent;
 }
 
 SpotLightComponent::SpotLightComponent(const float constAtt, const float linAtt, const float quadAtt,
     const float range, const float diffuseIntensity, const Color& diffuseColor, const Color& ambientColor,
-	float spot, float angleRange)
+    float spot, float angleRange)
     : m_DependencyOnTransformComponent(this)
 {
 	m_SpotLight.ambientColor = ambientColor;

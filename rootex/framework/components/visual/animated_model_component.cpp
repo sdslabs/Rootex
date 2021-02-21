@@ -97,7 +97,7 @@ void AnimatedModelComponent::assignOverrides(AnimatedModelResourceFile* file, co
 	{
 		return;
 	}
-	
+
 	m_MaterialOverrides.clear();
 	for (auto& [material, meshes] : m_AnimatedModelResourceFile->getMeshes())
 	{
@@ -200,7 +200,7 @@ void AnimatedModelComponent::draw()
 		ImGui::Text("Indices");
 		ImGui::NextColumn();
 
-	    for (auto& [material, meshes] : m_AnimatedModelResourceFile->getMeshes())
+		for (auto& [material, meshes] : m_AnimatedModelResourceFile->getMeshes())
 		{
 			for (auto& mesh : meshes)
 			{

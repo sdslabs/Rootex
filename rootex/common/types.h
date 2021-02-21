@@ -76,7 +76,7 @@ using HashMap = std::unordered_map<P, Q>;
 
 #include <utility>
 /// std::tuple
-template <typename...P>
+template <typename... P>
 using Tuple = std::tuple<P...>;
 /// std::pair
 template <class P, class Q>

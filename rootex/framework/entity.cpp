@@ -153,7 +153,7 @@ bool Entity::call(const String& function, const Vector<Variant>& args)
 	return status;
 }
 
-void Entity::evaluateScriptOverrides() 
+void Entity::evaluateScriptOverrides()
 {
 	if (m_Script)
 	{

@@ -135,7 +135,7 @@ void MaterialLibrary::CreateNewMaterialFile(const String& materialPath, const St
 			materialFile->save();
 			s_Materials[materialPath] = { materialType, {} };
 			PRINT("Created material: " + materialPath + " of type " + materialType);
-			
+
 			return;
 		}
 	}

@@ -22,7 +22,7 @@ class GridModelComponent : public ModelComponent
 	friend class ECSFactory;
 
 	void refreshVertexBuffers();
-	
+
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::GridModelComponent;
 

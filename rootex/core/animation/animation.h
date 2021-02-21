@@ -44,7 +44,7 @@ public:
 	void addTranslationKeyframe(TranslationKeyframe& keyframe) { m_Translation.push_back(keyframe); }
 	void addRotationKeyframe(RotationKeyframe& keyframe) { m_Rotation.push_back(keyframe); }
 	void addScalingKeyframe(ScalingKeyframe& keyframe) { m_Scaling.push_back(keyframe); }
-	
+
 	Matrix interpolate(float time);
 };
 
@@ -59,9 +59,9 @@ public:
 	~SkeletalAnimation() = default;
 
 	Matrix interpolate(const String& nodeName, float currentTime);
-	
+
 	float getEndTime() const;
-	
+
 	void setDuration(float time) { m_Duration = time; }
 	void addBoneAnimation(String boneName, BoneAnimation& boneAnimation) { m_BoneAnimations[boneName] = boneAnimation; }
 };

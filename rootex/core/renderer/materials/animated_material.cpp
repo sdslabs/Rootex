@@ -94,7 +94,7 @@ void AnimatedMaterial::bind()
 	m_AnimationShader->set(m_DiffuseImageFile->getTexture().get(), DIFFUSE_PS_CPP);
 	if (m_IsNormal)
 	{
-		m_AnimationShader->set(m_NormalImageFile->getTexture().get(), NORMAL_PS_CPP); 
+		m_AnimationShader->set(m_NormalImageFile->getTexture().get(), NORMAL_PS_CPP);
 	}
 	m_AnimationShader->set(m_SpecularImageFile->getTexture().get(), SPECULAR_PS_CPP);
 	m_AnimationShader->set(m_LightmapImageFile->getTexture().get(), LIGHTMAP_PS_CPP);

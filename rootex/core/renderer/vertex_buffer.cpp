@@ -17,7 +17,7 @@ VertexBuffer::VertexBuffer(const Vector<VertexData>& buffer)
 	vbd.StructureByteStride = 0;
 	D3D11_SUBRESOURCE_DATA vsd = { 0 };
 	vsd.pSysMem = buffer.data();
-	
+
 	const UINT offset = 0u;
 	m_VertexBuffer = RenderingDevice::GetSingleton()->createBuffer(&vbd, &vsd);
 }

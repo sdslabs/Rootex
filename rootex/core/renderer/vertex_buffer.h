@@ -23,7 +23,7 @@ public:
 	~VertexBuffer() = default;
 
 	void bind() const;
-	
+
 	void setData(const Vector<InstanceData>& buffer);
 
 	unsigned int getCount() const { return m_Count; }

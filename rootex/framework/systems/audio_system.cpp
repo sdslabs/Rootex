@@ -111,7 +111,7 @@ void AudioSystem::begin()
 void AudioSystem::update(float deltaMilliseconds)
 {
 	ZoneScoped;
-	
+
 	for (auto& c : ECSFactory::GetComponents<MusicComponent>())
 	{
 		MusicComponent* mc = (MusicComponent*)c;
@@ -121,7 +121,7 @@ void AudioSystem::update(float deltaMilliseconds)
 	for (auto& c : ECSFactory::GetComponents<ShortMusicComponent>())
 	{
 		ShortMusicComponent* smc = (ShortMusicComponent*)c;
-		smc->update();	
+		smc->update();
 	}
 
 	if (m_Listener)
@@ -199,7 +199,7 @@ void AudioSystem::shutDown()
 
 AudioSystem::AudioSystem()
     : System("AudioSystem", UpdateOrder::Async, true)
-	, m_Context(nullptr)
+    , m_Context(nullptr)
     , m_Device(nullptr)
     , m_Listener(nullptr)
 {

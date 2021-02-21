@@ -9,8 +9,8 @@ Component* StaticMeshColliderComponent::Create(const JSON::json& staticMeshCompo
 	    staticMeshComponentData.value("collisionModel", String("rootex/assets/cube.obj")),
 	    staticMeshComponentData.value("material", PhysicsMaterial::Air),
 	    staticMeshComponentData.value("collisionGroup", (int)CollisionMask::All),
-	    staticMeshComponentData.value("collisionMask", (int)CollisionMask::All), 
-		staticMeshComponentData.value("isGeneratesHitEvents", false));
+	    staticMeshComponentData.value("collisionMask", (int)CollisionMask::All),
+	    staticMeshComponentData.value("isGeneratesHitEvents", false));
 	return component;
 }
 
