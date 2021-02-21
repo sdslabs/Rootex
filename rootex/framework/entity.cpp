@@ -169,7 +169,7 @@ bool Entity::call(const String& function, const Vector<Variant>& args)
 	return status;
 }
 
-void Entity::evaluateScriptOverrides() 
+void Entity::evaluateScriptOverrides()
 {
 	if (m_Script)
 	{
@@ -211,7 +211,7 @@ const String& Entity::getFullName() const
 
 #ifdef ROOTEX_EDITOR
 #include "imgui_helpers.h"
-void Entity::draw() 
+void Entity::draw()
 {
 	ImGui::Text("Script");
 	if (m_Script)

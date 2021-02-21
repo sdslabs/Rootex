@@ -19,7 +19,7 @@ struct VertexBufferElement
 	};
 
 	/// What type of objects are present in buffer
-	Type m_Type; 
+	Type m_Type;
 	/// Used as the semantic of the Vertex Buffer element in shaders
 	LPCSTR m_Name;
 	/// Per-what kind of object? (Changes for instance buffers mainly)
@@ -59,7 +59,7 @@ struct VertexBufferElement
 class BufferFormat
 {
 	Vector<VertexBufferElement> m_Elements;
-	
+
 public:
 	BufferFormat() = default;
 

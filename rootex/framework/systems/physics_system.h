@@ -51,10 +51,10 @@ class PhysicsSystem : public System
 
 public:
 	static PhysicsSystem* GetSingleton();
-	
+
 	/// Callback from bullet for each physics time step.
 	static void InternalTickCallback(btDynamicsWorld* const world, btScalar const timeStep);
-	
+
 	virtual ~PhysicsSystem();
 
 	/// Initialization and Maintenance of the Physics World
@@ -71,6 +71,6 @@ public:
 	btCollisionWorld::ClosestRayResultCallback reportClosestRayHits(const btVector3& m_From, const btVector3& m_To);
 
 	void debugDrawComponent(const btTransform& worldTransform, const btCollisionShape* shape, const btVector3& color);
-	
+
 	void update(float deltaMilliseconds) override;
 };

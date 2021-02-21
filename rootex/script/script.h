@@ -12,11 +12,12 @@ private:
 	HashMap<String, String> m_Overrides;
 
 	bool isSuccessful(const sol::function_result& result);
+
 public:
 	Script(const JSON::json& script);
 	Script(const Script&) = delete;
 	~Script() = default;
-	
+
 	JSON::json getJSON() const;
 
 	sol::environment& getScriptEnv() { return m_ScriptEnvironment; }

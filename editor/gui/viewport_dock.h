@@ -24,7 +24,7 @@ private:
 	Scene* m_EditorGrid;
 	ViewportDockSettings m_ViewportDockSettings;
 	Matrix m_ApplyCameraMatrix = Matrix::Identity;
-	
+
 	bool m_IsCameraMoving;
 
 	float m_EditorCameraPitch = 0.0f;
@@ -39,7 +39,7 @@ public:
 	~ViewportDock() = default;
 
 	void draw(float deltaMilliseconds);
-	
+
 	ViewportDockSettings& getSettings() { return m_ViewportDockSettings; }
 	void setActive(bool enabled) { m_ViewportDockSettings.m_IsActive = enabled; }
 };

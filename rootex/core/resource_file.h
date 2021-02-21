@@ -32,7 +32,7 @@ protected:
 
 	friend class ResourceLoader;
 
-public: 
+public:
 	static void RegisterAPI(sol::table& rootex);
 
 	explicit ResourceFile(const ResourceFile&) = delete;

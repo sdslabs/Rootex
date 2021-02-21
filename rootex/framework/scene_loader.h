@@ -14,7 +14,7 @@ class SceneLoader
 	Vector<String> m_SceneArguments;
 
 	SceneLoader();
-	
+
 	void beginSystems();
 	void endSystems();
 

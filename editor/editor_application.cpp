@@ -51,7 +51,7 @@ EditorApplication::EditorApplication()
 	InputSystem::GetSingleton()->setSchemeLock(true);
 	InputInterface::s_IsEnabled = false;
 	EditorSystem::GetSingleton()->initialize(m_ApplicationSettings->getJSON()["systems"]["EditorSystem"]);
-	
+
 	m_PointAtLast10Second = m_ApplicationTimer.Now();
 }
 

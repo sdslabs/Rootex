@@ -32,7 +32,7 @@ CustomRenderInterface::CustomRenderInterface(int width, int height)
 	m_Textures[0] = ResourceLoader::CreateImageResourceFile("rootex/assets/white.png")->getTexture();
 }
 
-void CustomRenderInterface::RenderGeometry(Rml::Vertex* vertices, int numVertices, int* indices, int numIndices, Rml::TextureHandle texture, const Rml::Vector2f& translation) 
+void CustomRenderInterface::RenderGeometry(Rml::Vertex* vertices, int numVertices, int* indices, int numIndices, Rml::TextureHandle texture, const Rml::Vector2f& translation)
 {
 	Vector<UIVertexData> vertexData;
 	vertexData.assign((UIVertexData*)vertices, (UIVertexData*)vertices + numVertices);
@@ -45,15 +45,15 @@ void CustomRenderInterface::RenderGeometry(Rml::Vertex* vertices, int numVertice
 	Vector<unsigned int> indicesBuffer;
 	indicesBuffer.assign(indices, indices + numIndices);
 	IndexBuffer ib(indicesBuffer);
-	
+
 	vb.bind();
 	ib.bind();
 	m_UIShader->bind();
 
 	Material::SetVSConstantBuffer(
-	    VSSolidConstantBuffer(m_UITransform * Matrix::CreateOrthographic(m_Width, m_Height, 0.0f, 10000.0f)), 
-		m_ModelMatrixBuffer,
-		PER_OBJECT_VS_CPP);
+	    VSSolidConstantBuffer(m_UITransform * Matrix::CreateOrthographic(m_Width, m_Height, 0.0f, 10000.0f)),
+	    m_ModelMatrixBuffer,
+	    PER_OBJECT_VS_CPP);
 
 	RenderingDevice::GetSingleton()->setInPixelShader(0, 1, m_Textures[texture]->getTextureResourceView());
 	RenderingDevice::GetSingleton()->drawIndexed(ib.getCount());

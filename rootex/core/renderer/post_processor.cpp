@@ -16,19 +16,19 @@ class ASSAOPostProcess : public PostProcess
 	ASSAO_Effect* m_ASSAO = nullptr;
 
 public:
-	ASSAOPostProcess() 
+	ASSAOPostProcess()
 	{
 		const FileBuffer& assaoShader = OS::LoadFileContents("rootex/vendor/ASSAO/ASSAO.hlsl");
 		ASSAO_CreateDescDX11 assaoDesc(RenderingDevice::GetSingleton()->getDevice(), assaoShader.data(), assaoShader.size());
 		m_ASSAO = ASSAO_Effect::CreateInstance(&assaoDesc);
 	}
-	
-	~ASSAOPostProcess() 
+
+	~ASSAOPostProcess()
 	{
 		ASSAO_Effect::DestroyInstance(m_ASSAO);
 	}
 
-	void draw(CameraComponent* camera, ID3D11ShaderResourceView*& nextSource) override 
+	void draw(CameraComponent* camera, ID3D11ShaderResourceView*& nextSource) override
 	{
 		const PostProcessingDetails& postProcessingDetails = camera->getPostProcessingDetails();
 		if (postProcessingDetails.isASSAO)
@@ -125,7 +125,7 @@ public:
 		{
 			RenderingDevice::GetSingleton()->unbindSRVs();
 			RenderingDevice::GetSingleton()->setRTV(m_CacheRTV.Get());
-			
+
 			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Monochrome);
 			m_BasicPostProcess->SetSourceTexture(nextSource);
 			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
@@ -161,7 +161,7 @@ public:
 			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Sepia);
 			m_BasicPostProcess->SetSourceTexture(nextSource);
 			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
-			
+
 			nextSource = m_CacheSRV.Get();
 		}
 	}
@@ -171,7 +171,7 @@ class BloomPostProcess : public PostProcess
 {
 	Ptr<DirectX::BasicPostProcess> m_BasicPostProcess;
 	Ptr<DirectX::DualPostProcess> m_DualPostProcess;
-	
+
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_BloomExtractRTV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_BloomExtractSRV;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_BloomHorizontalBlurRTV;
@@ -189,12 +189,12 @@ public:
 
 		m_BasicPostProcess.reset(new DirectX::BasicPostProcess(RenderingDevice::GetSingleton()->getDevice()));
 		m_DualPostProcess.reset(new DirectX::DualPostProcess(RenderingDevice::GetSingleton()->getDevice()));
-	
+
 		RenderingDevice::GetSingleton()->createRTVAndSRV(m_BloomExtractRTV, m_BloomExtractSRV);
 		RenderingDevice::GetSingleton()->createRTVAndSRV(m_BloomHorizontalBlurRTV, m_BloomHorizontalBlurSRV);
 		RenderingDevice::GetSingleton()->createRTVAndSRV(m_BloomVerticalBlurRTV, m_BloomVerticalBlurSRV);
 	}
-	
+
 	void draw(CameraComponent* camera, ID3D11ShaderResourceView*& nextSource) override
 	{
 		const PostProcessingDetails& postProcessingDetails = camera->getPostProcessingDetails();
@@ -279,7 +279,7 @@ class FXAAPostProcess : public PostProcess
 
 	FXAAShader* m_FXAAShader;
 	LumaShader* m_LumaShader;
-	
+
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_LumaCacheRTV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_LumaCacheSRV;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_CacheRTV;
@@ -296,15 +296,15 @@ public:
 	    , m_LumaShader(ShaderLibrary::GetLumaShader())
 	{
 		m_BasicPostProcess.reset(new DirectX::BasicPostProcess(RenderingDevice::GetSingleton()->getDevice()));
-		
+
 		m_FrameVertexBuffer.reset(new VertexBuffer(Vector<FXAAData> {
-			// Position                    // Texcoord
+		    // Position                    // Texcoord
 		    { Vector3(-1.0f, -1.0f, 0.0f), Vector2(0.0f, 1.0f) },
-		    { Vector3( 1.0f, -1.0f, 0.0f), Vector2(1.0f, 1.0f) },
-		    { Vector3( 1.0f,  1.0f, 0.0f), Vector2(1.0f, 0.0f) },
-		    { Vector3(-1.0f,  1.0f, 0.0f), Vector2(0.0f, 0.0f) } }));
-		m_FrameIndexBuffer.reset(new IndexBuffer(Vector<unsigned int> { 
-			0, 2, 1,
+		    { Vector3(1.0f, -1.0f, 0.0f), Vector2(1.0f, 1.0f) },
+		    { Vector3(1.0f, 1.0f, 0.0f), Vector2(1.0f, 0.0f) },
+		    { Vector3(-1.0f, 1.0f, 0.0f), Vector2(0.0f, 0.0f) } }));
+		m_FrameIndexBuffer.reset(new IndexBuffer(Vector<unsigned int> {
+		    0, 2, 1,
 		    0, 3, 2 }));
 		RenderingDevice::GetSingleton()->createRTVAndSRV(m_CacheRTV, m_CacheSRV);
 		RenderingDevice::GetSingleton()->createRTVAndSRV(m_LumaCacheRTV, m_LumaCacheSRV);

@@ -48,7 +48,7 @@ struct TaskComplete
 
 /// Contains information of jobs ready for execution.
 struct TaskReady
-{	
+{
 	__int32 m_Jobs;
 	unsigned __int32 m_Write;
 	unsigned __int32 m_Read;
@@ -57,7 +57,7 @@ struct TaskReady
 
 /// Master thread to communicate with and maintain worker threads.
 struct MasterThread
-{	
+{
 	TaskComplete m_TasksComplete;
 	TaskReady m_TasksReady;
 };
@@ -86,7 +86,7 @@ class ThreadPool
 public:
 	ThreadPool();
 	ThreadPool(ThreadPool&) = delete;
-	~ThreadPool();	
+	~ThreadPool();
 
 	/// To submit a job to the jobs queue.
 	void submit(Vector<Ref<Task>>& tasks);

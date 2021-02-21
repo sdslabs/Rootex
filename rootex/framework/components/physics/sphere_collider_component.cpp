@@ -4,15 +4,15 @@
 Component* SphereColliderComponent::Create(const JSON::json& sphereComponentData)
 {
 	SphereColliderComponent* component = new SphereColliderComponent(
-		sphereComponentData.value("radius", 1.0f), 
-		sphereComponentData.value("material", PhysicsMaterial::Air),
+	    sphereComponentData.value("radius", 1.0f),
+	    sphereComponentData.value("material", PhysicsMaterial::Air),
 	    sphereComponentData.value("angularFactor", Vector3::One),
 	    sphereComponentData.value("gravity", Vector3(0.0f, -9.8f, 0.0f)),
 	    sphereComponentData.value("collisionGroup", (int)CollisionMask::All),
 	    sphereComponentData.value("collisionMask", (int)CollisionMask::All),
 	    sphereComponentData.value("isMoveable", false),
 	    sphereComponentData.value("isKinematic", false),
-		sphereComponentData.value("isGeneratesHitEvents", false));
+	    sphereComponentData.value("isGeneratesHitEvents", false));
 	return component;
 }
 

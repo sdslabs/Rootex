@@ -18,7 +18,7 @@ ViewportDock::ViewportDock(const JSON::json& viewportJSON)
     : m_IsCameraMoving(false)
 {
 	m_ViewportDockSettings.m_AspectRatio = (float)viewportJSON["aspectRatio"]["x"] / (float)viewportJSON["aspectRatio"]["y"];
-	
+
 	Ptr<Scene>& editorCamera = Scene::CreateEmptyWithEntity();
 	editorCamera->setName("EditorCamera");
 	m_EditorCamera = editorCamera.get();
@@ -88,13 +88,13 @@ void ViewportDock::draw(float deltaMilliseconds)
 			    { 0, 0 },
 			    { 1, 1 });
 			static const ImVec2 viewportEnd = ImGui::GetCursorPos();
-			
+
 			ImVec2 imageSize = ImGui::GetItemRectSize();
 			ImVec2 imagePos = ImGui::GetItemRectMin();
 
 			InputInterface::s_ScaleX = Application::GetSingleton()->getWindow()->getWidth() / imageSize.x;
 			InputInterface::s_ScaleY = Application::GetSingleton()->getWindow()->getHeight() / imageSize.y;
-			
+
 			InputInterface::s_Left = imagePos.x;
 			InputInterface::s_Right = InputInterface::s_Left + imageSize.x;
 			InputInterface::s_Top = imagePos.y;
@@ -172,7 +172,7 @@ void ViewportDock::draw(float deltaMilliseconds)
 				ImGui::EndPopup();
 			}
 			ImGui::SetCursorPos(viewportStart);
-		
+
 			Matrix view = RenderSystem::GetSingleton()->getCamera()->getViewMatrix();
 			Matrix proj = RenderSystem::GetSingleton()->getCamera()->getProjectionMatrix();
 
@@ -188,13 +188,13 @@ void ViewportDock::draw(float deltaMilliseconds)
 				Matrix deltaMatrix = Matrix::CreateTranslation(0.0f, 0.0f, 0.0f);
 
 				ImGuizmo::Manipulate(
-					&view.m[0][0],
-					&proj.m[0][0],
-					gizmoOperation,
-					gizmoMode,
-					&matrix.m[0][0],
-					&deltaMatrix.m[0][0],
-					currentSnap);
+				    &view.m[0][0],
+				    &proj.m[0][0],
+				    gizmoOperation,
+				    gizmoMode,
+				    &matrix.m[0][0],
+				    &deltaMatrix.m[0][0],
+				    currentSnap);
 
 				if (ImGuizmo::IsUsing())
 				{
@@ -202,7 +202,7 @@ void ViewportDock::draw(float deltaMilliseconds)
 					transform->setTransform(matrix);
 				}
 			}
-			
+
 			static Entity* selectEntity = nullptr;
 			if (ImGui::IsWindowHovered())
 			{
@@ -267,12 +267,12 @@ void ViewportDock::draw(float deltaMilliseconds)
 				{
 					TransformComponent* transform = selectEntity->getComponent<TransformComponent>();
 					transform->highlight();
-					
+
 					ImGui::SetCursorPos({ ImGui::GetMousePos().x - ImGui::GetWindowPos().x + 10.0f, ImGui::GetMousePos().y - ImGui::GetWindowPos().y - 20.0f });
 					EditorSystem::GetSingleton()->pushBoldFont();
 					ImGui::TextColored(EditorSystem::GetSingleton()->getNormalColor(), "%s", transform->getOwner()->getFullName().c_str());
 					EditorSystem::GetSingleton()->popFont();
-					
+
 					if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
 					{
 						EventManager::GetSingleton()->call("MouseSelectEntity", "EditorOpenScene", selectEntity->getScene());

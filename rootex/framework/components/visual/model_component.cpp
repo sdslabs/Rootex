@@ -65,7 +65,7 @@ void ModelComponent::render()
 
 	std::sort(m_ModelResourceFile->getMeshes().begin(), m_ModelResourceFile->getMeshes().end(), CompareMaterials);
 	int i = 0;
-	
+
 	RenderableComponent::render();
 
 	for (auto& [material, meshes] : m_ModelResourceFile->getMeshes())
@@ -82,7 +82,7 @@ void ModelComponent::render()
 
 void ModelComponent::setModelResourceFile(ModelResourceFile* newModel, const HashMap<String, String>& materialOverrides)
 {
-	if (!newModel) 
+	if (!newModel)
 	{
 		WARN("Tried to set a null model resource file.");
 		return;
@@ -119,7 +119,7 @@ void ModelComponent::assignBoundingBox()
 void ModelComponent::assignOverrides(ModelResourceFile* newModel, const HashMap<String, String>& materialOverrides)
 {
 	m_ModelResourceFile = newModel;
-	
+
 	if (!newModel)
 	{
 		return;

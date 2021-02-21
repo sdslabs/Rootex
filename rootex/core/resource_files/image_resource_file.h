@@ -14,7 +14,7 @@ class ImageResourceFile : public ResourceFile
 
 public:
 	static void RegisterAPI(sol::table& rootex);
-	
+
 	explicit ImageResourceFile(const ImageResourceFile&) = delete;
 	explicit ImageResourceFile(const ImageResourceFile&&) = delete;
 	~ImageResourceFile() = default;

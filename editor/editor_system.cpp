@@ -50,28 +50,25 @@ bool EditorSystem::initialize(const JSON::json& systemData)
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
-	io.ConfigFlags |= 
-		ImGuiConfigFlags_DockingEnable |
-		ImGuiConfigFlags_NavEnableGamepad |
-		ImGuiConfigFlags_NavEnableKeyboard;
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable | ImGuiConfigFlags_NavEnableGamepad | ImGuiConfigFlags_NavEnableKeyboard;
 	io.ConfigDockingWithShift = true;
 	io.FontAllowUserScaling = true;
-	
+
 	ImFontConfig fontConfig;
 	fontConfig.PixelSnapH = true;
 	fontConfig.OversampleH = 1;
 	m_EditorFont = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/DroidSans/DroidSans.ttf", 18.0f, &fontConfig);
-	
+
 	static const ImWchar iconsRanges[] = { ICON_MIN_ROOTEX, ICON_MAX_ROOTEX, 0 };
 	ImFontConfig iconsConfig;
 	iconsConfig.MergeMode = true;
 	iconsConfig.PixelSnapH = true;
 	io.Fonts->AddFontFromMemoryCompressedBase85TTF(FONT_ICON_BUFFER_NAME_ROOTEX, 18.0f, &iconsConfig, iconsRanges);
-	
+
 	m_EditorFontItalic = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/Cousine/Cousine-Italic.ttf", 18.0f, &fontConfig);
 	m_EditorFontBold = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/DroidSans/DroidSans-Bold.ttf", 18.0f, &fontConfig);
 	m_EditorFontMonospace = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/Cousine/Cousine-Regular.ttf", 18.0f, &fontConfig);
-	
+
 	ImGui_ImplWin32_Init(Application::GetSingleton()->getWindow()->getWindowHandle());
 	ImGui_ImplDX11_Init(RenderingDevice::GetSingleton()->getDevice(), RenderingDevice::GetSingleton()->getContext());
 	ImGui::StyleColorsDark();
@@ -89,7 +86,7 @@ bool EditorSystem::initialize(const JSON::json& systemData)
 		style.ScrollbarRounding = 9.0f;
 		style.GrabMinSize = 5.0f;
 		style.GrabRounding = 3.0f;
-	
+
 		ImVec4* colors = ImGui::GetStyle().Colors;
 		colors[ImGuiCol_Text] = ImVec4(0.80f, 0.80f, 0.83f, 1.00f);
 		colors[ImGuiCol_TextDisabled] = ImVec4(0.24f, 0.23f, 0.29f, 1.00f);
@@ -214,7 +211,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 		windowFlags |= ImGuiWindowFlags_NoBackground;
 
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-	
+
 	static String loadingScene;
 
 	ImGui::Begin("Rootex Editor", nullptr, windowFlags);
@@ -430,7 +427,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 				ImGui::EndMenu();
 			}
 			if (ImGui::BeginMenu("About"))
-			{				
+			{
 				if (ImGui::MenuItem("About Rootex Editor"))
 				{
 					m_MenuAction = "About Rootex Editor";
@@ -515,7 +512,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 						{
 							typeName = luaClass.as<sol::table>()["__type"]["name"];
 						}
-						
+
 						EditorSystem::GetSingleton()->pushBoldFont();
 						ImGui::Text("%s", typeName.c_str());
 						EditorSystem::GetSingleton()->popFont();
@@ -658,15 +655,15 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 }
 
 static HashMap<int, String> LuaTypeNames = {
-	{ LUA_TNONE, "none" }, 
-	{ LUA_TNIL, "lua_nil" }, 
-	{ LUA_TSTRING, "string" }, 
-	{ LUA_TNUMBER, "number" }, 
+	{ LUA_TNONE, "none" },
+	{ LUA_TNIL, "lua_nil" },
+	{ LUA_TSTRING, "string" },
+	{ LUA_TNUMBER, "number" },
 	{ LUA_TTHREAD, "thread" },
 	{ LUA_TBOOLEAN, "boolean" },
-	{ LUA_TFUNCTION, "function" }, 
-	{ LUA_TUSERDATA, "userdata" }, 
-	{ LUA_TLIGHTUSERDATA, "lightuserdata" }, 
+	{ LUA_TFUNCTION, "function" },
+	{ LUA_TUSERDATA, "userdata" },
+	{ LUA_TLIGHTUSERDATA, "lightuserdata" },
 	{ LUA_TTABLE, "table" },
 	{ -0xFFFF, "poly" }
 };
