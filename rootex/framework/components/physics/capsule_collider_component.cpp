@@ -20,31 +20,31 @@ Component* CapsuleColliderComponent::Create(const JSON::json& capsuleComponentDa
 }
 
 CapsuleColliderComponent::CapsuleColliderComponent(
-	float radius, 
-	float sideHeight, 
-	const PhysicsMaterial& material, 
-	const Vector3& angularFactor, 
-	const Vector3& gravity, 
-	int collisionGroup, 
-	int collisionMask, 
-	bool isMoveable, 
-	bool isKinematic, 
-	bool generatesHitEvents,
+    float radius,
+    float sideHeight,
+    const PhysicsMaterial& material,
+    const Vector3& angularFactor,
+    const Vector3& gravity,
+    int collisionGroup,
+    int collisionMask,
+    bool isMoveable,
+    bool isKinematic,
+    bool generatesHitEvents,
     bool isSleepable,
-	bool isCCD)
+    bool isCCD)
     : PhysicsColliderComponent(
-		material, 
-		DirectX::XM_PI * radius * radius * ((4.0f / 3.0f) * radius + sideHeight), 
-		gravity, 
-		angularFactor, 
-		collisionGroup, 
-		collisionMask, 
-		isMoveable, 
-		isKinematic, 
-		generatesHitEvents,
+        material,
+        DirectX::XM_PI * radius * radius * ((4.0f / 3.0f) * radius + sideHeight),
+        gravity,
+        angularFactor,
+        collisionGroup,
+        collisionMask,
+        isMoveable,
+        isKinematic,
+        generatesHitEvents,
         isSleepable,
-		isCCD,
-		Ref<btCapsuleShape>(new btCapsuleShape(radius, sideHeight)))
+        isCCD,
+        Ref<btCapsuleShape>(new btCapsuleShape(radius, sideHeight)))
     , m_Radius(radius)
     , m_SideHeight(sideHeight)
 {

@@ -68,7 +68,7 @@ void RenderSystem::setConfig(const SceneSettings& sceneSettings)
 		restoreCamera();
 		return;
 	}
-	
+
 	setCamera(camera);
 }
 

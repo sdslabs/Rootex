@@ -180,7 +180,7 @@ void AudioSystem::setConfig(const SceneSettings& sceneSettings)
 		restoreListener();
 		return;
 	}
-	
+
 	setListener(listen);
 }
 

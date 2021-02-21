@@ -138,7 +138,7 @@ void TransformComponent::draw()
 	}
 
 	ImGui::DragFloat4("##Rotation", &m_TransformBuffer.m_Rotation.x, 0.01f);
-	
+
 	ImGui::SameLine();
 	if (ImGui::Button("Rotation"))
 	{

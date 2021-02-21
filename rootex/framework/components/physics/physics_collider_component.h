@@ -49,19 +49,19 @@ class PhysicsColliderComponent : public Component, public btMotionState
 	void setWorldTransform(const btTransform& worldTrans) override;
 
 	PhysicsColliderComponent(
-		const PhysicsMaterial& material, 
-		float volume, 
-		const Vector3& gravity, 
-		const Vector3& angularFactor, 
-		int collisionGroup, 
-		int collisionMask, 
-		bool isMoveable, 
-		bool isKinematic, 
-		bool generatesHitEvents,
+	    const PhysicsMaterial& material,
+	    float volume,
+	    const Vector3& gravity,
+	    const Vector3& angularFactor,
+	    int collisionGroup,
+	    int collisionMask,
+	    bool isMoveable,
+	    bool isKinematic,
+	    bool generatesHitEvents,
 	    bool canSleep,
 	    bool isCCD,
-		const Ref<btCollisionShape>& collisionShape);
-	
+	    const Ref<btCollisionShape>& collisionShape);
+
 	friend class ECSFactory;
 
 public:
@@ -99,7 +99,7 @@ public:
 
 	bool isMoveable() { return m_IsMoveable; }
 	void setMoveable(bool enabled);
-	
+
 	bool canSleep() { return m_IsSleepable; }
 	void setSleepable(bool enabled);
 
