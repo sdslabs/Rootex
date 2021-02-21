@@ -47,10 +47,22 @@ void RenderSystem::recoverLostDevice()
 void RenderSystem::setConfig(const SceneSettings& sceneSettings)
 {
 	Scene* cameraScene = SceneLoader::GetSingleton()->getRootScene()->findScene(sceneSettings.camera);
-	if (cameraScene)
+	if (!cameraScene)
 	{
-		setCamera(cameraScene->getEntity()->getComponent<CameraComponent>());
+		ERR("Camera scene not found with ID " + std::to_string(sceneSettings.camera));
+		restoreCamera();
+		return;
 	}
+
+	CameraComponent* camera = cameraScene->getEntity()->getComponent<CameraComponent>();
+	if (!camera)
+	{
+		ERR("CameraComponent not found on entity " + cameraScene->getFullName());
+		restoreCamera();
+		return;
+	}
+	
+	setCamera(camera);
 }
 
 void RenderSystem::calculateTransforms(Scene* scene)

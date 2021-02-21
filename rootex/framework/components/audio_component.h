@@ -36,6 +36,8 @@ public:
 	bool isAttenuated() { return m_IsAttenuated; }
 	bool isLooping();
 
+	void setPlaying(bool enabled);
+
 	void setLooping(bool enabled);
 	void setAudioSource(AudioSource* audioSource) { m_AudioSource = audioSource; }
 	AudioSource* getAudioSource() { return m_AudioSource; }
