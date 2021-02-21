@@ -27,7 +27,8 @@ public:
 		bool isMoveable, 
 		bool isKinematic, 
 		bool generatesHitEvents,
-	    bool isSleepable);
+	    bool isSleepable,
+		bool isCCD);
 
 	float getSideHeight() const { return m_SideHeight; }
 	void setSideHeight(float s);

@@ -85,7 +85,8 @@ PhysicsColliderComponent::PhysicsColliderComponent(
 	bool isMoveable, 
 	bool isKinematic, 
 	bool generatesHitEvents, 
-	bool isSleepable, 
+	bool isSleepable,
+    bool isCCD, 
 	const Ref<btCollisionShape>& collisionShape)
     : m_Material(material)
     , m_Volume(volume)
@@ -97,6 +98,7 @@ PhysicsColliderComponent::PhysicsColliderComponent(
     , m_IsGeneratesHitEvents(generatesHitEvents)
     , m_IsSleepable(isSleepable)
     , m_IsKinematic(isKinematic)
+    , m_IsCCD(isCCD)
     , m_DependencyOnTransformComponent(this)
 {
 	m_CollisionShape = collisionShape;
@@ -137,6 +139,7 @@ bool PhysicsColliderComponent::setupData()
 	setKinematic(m_IsKinematic);
 	setAngularFactor(m_AngularFactor);
 	setSleepable(m_IsSleepable);
+	setCCD(m_IsCCD);
 	m_Body->setUserPointer(this);
 
 	return true;
@@ -233,6 +236,35 @@ void PhysicsColliderComponent::setSleepable(bool enabled)
 	}
 }
 
+void PhysicsColliderComponent::setCCD(bool enabled)
+{
+	// https://github.com/godotengine/godot/blob/46de553473b4bea49176fb4316176a5662931160/modules/bullet/rigid_body_bullet.cpp#L722
+
+	if (enabled)
+	{
+		// This threshold enable CCD if the object moves more than
+		// 1 meter in one simulation frame
+		m_Body->setCcdMotionThreshold(1e-7);
+
+		/// Calculate using the rule write below the CCD swept sphere radius
+		///     CCD works on an embedded sphere of radius, make sure this radius
+		///     is embedded inside the convex objects, preferably smaller:
+		///     for an object of dimensions 1 metre, try 0.2
+		btScalar radius(1.0f);
+		if (m_Body->getCollisionShape())
+		{
+			btVector3 center;
+			m_Body->getCollisionShape()->getBoundingSphere(center, radius);
+		}
+		m_Body->setCcdSweptSphereRadius(radius * 0.2f);
+	}
+	else
+	{
+		m_Body->setCcdMotionThreshold(0.0f);
+		m_Body->setCcdSweptSphereRadius(0.0f);
+	}
+}
+
 void PhysicsColliderComponent::setKinematic(bool enabled)
 {
 	m_IsKinematic = enabled;
@@ -266,6 +298,7 @@ JSON::json PhysicsColliderComponent::getJSON() const
 	j["isMoveable"] = m_IsMoveable;
 	j["isKinematic"] = m_IsKinematic;
 	j["isSleepable"] = m_IsSleepable;
+	j["isCCD"] = m_IsSleepable;
 	j["isGeneratesHitEvents"] = m_IsGeneratesHitEvents;
 
 	return j;
@@ -356,12 +389,11 @@ void PhysicsColliderComponent::draw()
 		setSleepable(m_IsSleepable);
 	}
 
-	if (ImGui::Checkbox("Generates Hit Events", &m_IsGeneratesHitEvents))
+	ImGui::Checkbox("Generates Hit Events", &m_IsGeneratesHitEvents);
+
+	if (ImGui::Checkbox("CCD", &m_IsCCD))
 	{
-		if (m_IsGeneratesHitEvents)
-		{
-			setupData();
-		}
+		setCCD(m_IsCCD);
 	}
 
 	if (ImGui::TreeNodeEx("Collision Group"))

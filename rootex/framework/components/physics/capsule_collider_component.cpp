@@ -14,7 +14,8 @@ Component* CapsuleColliderComponent::Create(const JSON::json& capsuleComponentDa
 	    capsuleComponentData.value("isMoveable", false),
 	    capsuleComponentData.value("isKinematic", false),
 	    capsuleComponentData.value("isGeneratesHitEvents", false),
-	    capsuleComponentData.value("isSleepable", true));
+	    capsuleComponentData.value("isSleepable", true),
+	    capsuleComponentData.value("isCCD", false));
 	return component;
 }
 
@@ -29,7 +30,8 @@ CapsuleColliderComponent::CapsuleColliderComponent(
 	bool isMoveable, 
 	bool isKinematic, 
 	bool generatesHitEvents,
-    bool isSleepable)
+    bool isSleepable,
+	bool isCCD)
     : PhysicsColliderComponent(
 		material, 
 		DirectX::XM_PI * radius * radius * ((4.0f / 3.0f) * radius + sideHeight), 
@@ -41,6 +43,7 @@ CapsuleColliderComponent::CapsuleColliderComponent(
 		isKinematic, 
 		generatesHitEvents,
         isSleepable,
+		isCCD,
 		Ref<btCapsuleShape>(new btCapsuleShape(radius, sideHeight)))
     , m_Radius(radius)
     , m_SideHeight(sideHeight)

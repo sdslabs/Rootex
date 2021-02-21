@@ -13,7 +13,8 @@ Component* BoxColliderComponent::Create(const JSON::json& boxComponentData)
 	    boxComponentData.value("isMoveable", false),
 	    boxComponentData.value("isKinematic", false),
 	    boxComponentData.value("isGeneratesHitEvents", false),
-	    boxComponentData.value("isSleepable", true));
+	    boxComponentData.value("isSleepable", true),
+	    boxComponentData.value("isCCD", false));
 	return component;
 }
 
@@ -27,7 +28,8 @@ BoxColliderComponent::BoxColliderComponent(
 	bool isMoveable, 
 	bool isKinematic, 
 	bool generatesHitEvents, 
-	bool isSleepable)
+	bool isSleepable,
+	bool isCCD)
     : PhysicsColliderComponent(
 		material, 
 		dimensions.x * dimensions.y * dimensions.z, 
@@ -39,6 +41,7 @@ BoxColliderComponent::BoxColliderComponent(
 		isKinematic, 
 		generatesHitEvents, 
 		isSleepable,
+		isCCD,
 		Ref<btBoxShape>(new btBoxShape(VecTobtVector3(dimensions))))
     , m_Dimensions(dimensions)
 {

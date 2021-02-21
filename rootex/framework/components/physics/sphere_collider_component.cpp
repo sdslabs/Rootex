@@ -13,7 +13,8 @@ Component* SphereColliderComponent::Create(const JSON::json& sphereComponentData
 	    sphereComponentData.value("isMoveable", false),
 	    sphereComponentData.value("isKinematic", false),
 	    sphereComponentData.value("isGeneratesHitEvents", false),
-	    sphereComponentData.value("isSleepable", true));
+	    sphereComponentData.value("isSleepable", true),
+	    sphereComponentData.value("isCCD", false));
 	return component;
 }
 
@@ -27,7 +28,8 @@ SphereColliderComponent::SphereColliderComponent(
 	bool isMoveable, 
 	bool isKinematic, 
 	bool generatesHitEvents,
-    bool isSleepable)
+    bool isSleepable,
+	bool isCCD)
     : PhysicsColliderComponent(
 		material, 
 		(4.0f / 3.0f) * DirectX::XM_PI * radius * radius * radius, 
@@ -39,6 +41,7 @@ SphereColliderComponent::SphereColliderComponent(
 		isKinematic, 
 		generatesHitEvents,
         isSleepable,
+        isCCD,
 		Ref<btSphereShape>(new btSphereShape(radius)))
     , m_Radius(radius)
 {

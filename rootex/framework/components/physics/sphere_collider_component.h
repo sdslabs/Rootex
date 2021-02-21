@@ -26,7 +26,8 @@ public:
 		bool isMoveable, 
 		bool isKinematic, 
 		bool generatesHitEvents,
-	    bool isSleepable);
+	    bool isSleepable,
+		bool isCCD);
 
 	float getRadius() const { return m_Radius; }
 	void setRadius(float r);
