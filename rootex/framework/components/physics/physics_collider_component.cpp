@@ -76,18 +76,18 @@ Vector3 BtVector3ToVec(btVector3 const& btvec)
 }
 
 PhysicsColliderComponent::PhysicsColliderComponent(
-	const PhysicsMaterial& material, 
-	float volume, 
-	const Vector3& gravity, 
-	const Vector3& angularFactor, 
-	int collisionGroup, 
-	int collisionMask, 
-	bool isMoveable, 
-	bool isKinematic, 
-	bool generatesHitEvents, 
-	bool isSleepable,
-    bool isCCD, 
-	const Ref<btCollisionShape>& collisionShape)
+    const PhysicsMaterial& material,
+    float volume,
+    const Vector3& gravity,
+    const Vector3& angularFactor,
+    int collisionGroup,
+    int collisionMask,
+    bool isMoveable,
+    bool isKinematic,
+    bool generatesHitEvents,
+    bool isSleepable,
+    bool isCCD,
+    const Ref<btCollisionShape>& collisionShape)
     : m_Material(material)
     , m_Volume(volume)
     , m_Gravity(gravity)

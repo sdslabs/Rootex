@@ -18,11 +18,11 @@ public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::StaticMeshColliderComponent;
 
 	StaticMeshColliderComponent(
-		const String& collisionModelPath, 
-		const PhysicsMaterial& material, 
-		int collisionGroup, 
-		int collisionMask, 
-		bool generatesHitEvents);
+	    const String& collisionModelPath,
+	    const PhysicsMaterial& material,
+	    int collisionGroup,
+	    int collisionMask,
+	    bool generatesHitEvents);
 
 	bool setupData() override;
 	void setCollisionModel(CollisionModelResourceFile* file);

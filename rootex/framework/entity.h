@@ -28,7 +28,7 @@ public:
 
 	bool onAllComponentsAdded();
 	bool onAllEntitiesAdded();
-	
+
 	bool addDefaultComponent(const String& componentName);
 	bool addComponent(const String& componentName, const JSON::json& componentData);
 	bool removeComponent(ComponentID toRemoveComponentID, bool hardRemove = false);

@@ -17,17 +17,17 @@ public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::SphereColliderComponent;
 
 	SphereColliderComponent(
-		float radius, 
-		const PhysicsMaterial& material, 
-		const Vector3& angularFactor, 
-		const Vector3& gravity, 
-		int collisionGroup, 
-		int collisionMask, 
-		bool isMoveable, 
-		bool isKinematic, 
-		bool generatesHitEvents,
+	    float radius,
+	    const PhysicsMaterial& material,
+	    const Vector3& angularFactor,
+	    const Vector3& gravity,
+	    int collisionGroup,
+	    int collisionMask,
+	    bool isMoveable,
+	    bool isKinematic,
+	    bool generatesHitEvents,
 	    bool isSleepable,
-		bool isCCD);
+	    bool isCCD);
 
 	float getRadius() const { return m_Radius; }
 	void setRadius(float r);

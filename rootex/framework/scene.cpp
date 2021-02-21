@@ -39,16 +39,16 @@ void Scene::ResetNextID()
 
 Ptr<Scene> Scene::Create(const JSON::json& sceneData)
 {
-	if (sceneData.contains("ID")) 
+	if (sceneData.contains("ID"))
 	{
 		NextSceneID = std::max(NextSceneID, (SceneID)sceneData["ID"]);
 	}
 	SceneID thisSceneID = NextSceneID;
 	NextSceneID++;
-	
+
 	Ptr<Scene> thisScene(std::make_unique<Scene>(thisSceneID, sceneData.value("name", String("Untitled")), sceneData.value("file", String()), sceneData.value("settings", SceneSettings())));
 	s_Scenes.push_back(thisScene.get());
-	
+
 	if (sceneData.contains("entity"))
 	{
 		thisScene->m_Entity = ECSFactory::CreateEntity(thisScene.get(), sceneData["entity"]);
@@ -302,7 +302,6 @@ Scene::~Scene()
 	PRINT("Deleted scene: " + getFullName());
 }
 
-
 void SceneSettings::drawSceneSelectables(Scene* scene, SceneID& toSet)
 {
 	if (ImGui::Selectable(scene->getFullName().c_str()))
@@ -384,11 +383,11 @@ void SceneSettings::draw()
 		if (ImGui::ListBoxHeader(name.c_str()))
 		{
 			int boolDeletion = -1;
-			for (int p = 0 ; p < inputScheme.bools.size(); p++)
+			for (int p = 0; p < inputScheme.bools.size(); p++)
 			{
 				InputDescription& boolInput = inputScheme.bools[p];
 				ImGui::PushID(i);
-					
+
 				if (ImGui::SmallButton("x"))
 				{
 					boolDeletion = p;
@@ -457,14 +456,14 @@ void SceneSettings::draw()
 		ImGui::PopID();
 		i++;
 	}
-	
+
 	if (inputSchemeToRemove)
 	{
 		inputSchemes.erase(*inputSchemeToRemove);
 	}
 
 	ImGui::Separator();
-	
+
 	static String newSchemeName = "New Scheme";
 	ImGui::InputText("##New Scheme", &newSchemeName);
 	ImGui::SameLine();

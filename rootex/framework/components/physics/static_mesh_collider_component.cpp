@@ -15,24 +15,24 @@ Component* StaticMeshColliderComponent::Create(const JSON::json& staticMeshCompo
 }
 
 StaticMeshColliderComponent::StaticMeshColliderComponent(
-	const String& collisionModelPath, 
-	const PhysicsMaterial& material, 
-	int collisionGroup, 
-	int collisionMask, 
-	bool generatesHitEvents)
+    const String& collisionModelPath,
+    const PhysicsMaterial& material,
+    int collisionGroup,
+    int collisionMask,
+    bool generatesHitEvents)
     : PhysicsColliderComponent(
-		material, 
-		0.0f, 
-		Vector3::Zero, 
-		Vector3::Zero, 
-		collisionGroup, 
-		collisionMask, 
-		false, 
-		false, 
-		generatesHitEvents,
+        material,
+        0.0f,
+        Vector3::Zero,
+        Vector3::Zero,
+        collisionGroup,
+        collisionMask,
+        false,
+        false,
+        generatesHitEvents,
         true,
-		false,
-		nullptr)
+        false,
+        nullptr)
     , m_CollisionModel(ResourceLoader::CreateCollisionModelResourceFile(collisionModelPath))
 {
 	// m_MeshShape will be set during setup

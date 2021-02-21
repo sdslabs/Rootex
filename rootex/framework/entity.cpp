@@ -193,7 +193,7 @@ const String& Entity::getFullName() const
 	return m_Scene->getFullName();
 }
 
-void Entity::draw() 
+void Entity::draw()
 {
 	ImGui::Text("Script");
 	if (m_Script)

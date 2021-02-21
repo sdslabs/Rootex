@@ -13,22 +13,23 @@ class CapsuleColliderComponent : public PhysicsColliderComponent
 	Ref<btCapsuleShape> m_CapsuleShape;
 
 	friend class ECSFactory;
+
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::CapsuleColliderComponent;
 
 	CapsuleColliderComponent(
-		float radius, 
-		float sideHeight, 
-		const PhysicsMaterial& material, 
-		const Vector3& angularFactor, 
-		const Vector3& gravity, 
-		int collisionGroup, 
-		int collisionMask, 
-		bool isMoveable, 
-		bool isKinematic, 
-		bool generatesHitEvents,
+	    float radius,
+	    float sideHeight,
+	    const PhysicsMaterial& material,
+	    const Vector3& angularFactor,
+	    const Vector3& gravity,
+	    int collisionGroup,
+	    int collisionMask,
+	    bool isMoveable,
+	    bool isKinematic,
+	    bool generatesHitEvents,
 	    bool isSleepable,
-		bool isCCD);
+	    bool isCCD);
 
 	float getSideHeight() const { return m_SideHeight; }
 	void setSideHeight(float s);
