@@ -24,7 +24,7 @@ class DirectionalLightComponent : public Component
 
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::DirectionalLightComponent;
-	
+
 	Vector3 getDirection() const { return m_TransformComponent->getAbsoluteTransform().Forward(); }
 	const DirectionalLight& getDirectionalLight() const { return m_DirectionalLight; }
 

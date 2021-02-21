@@ -14,12 +14,12 @@ protected:
 	RenderUIComponent(bool isVisible);
 	RenderUIComponent(RenderUIComponent&) = delete;
 	virtual ~RenderUIComponent() = default;
-	
+
 	friend class ECSFactory;
 
 public:
 	static void RegisterAPI(sol::table& rootex);
-	
+
 	bool preRender();
 	virtual void render() = 0;
 	void postRender();

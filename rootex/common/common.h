@@ -17,10 +17,10 @@
 		::OS::PrintWarning(msg);                                                                                    \
 	}
 /// Logs file, line, function, message in red color
-#define ERR(m_Msg)																								    \
-	{																										   	    \
+#define ERR(m_Msg)                                                                                                  \
+	{                                                                                                               \
 		String msg = String(__FILE__) + ":" + std::to_string(__LINE__) + ":" + String(__FUNCTION__) + ": " + m_Msg; \
-		::OS::PrintError(msg);																					    \
+		::OS::PrintError(msg);                                                                                      \
 	}
 /// Logs file, line, function, message in yellow color in condition is true
 #define PANIC(m_IfTtrue, m_Msg) \

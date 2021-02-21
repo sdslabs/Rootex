@@ -19,7 +19,7 @@ protected:
 	LPCSTR m_ClassName;
 	HINSTANCE m_AppInstance;
 	HWND m_WindowHandle;
-	
+
 	/// Wraps DefWindowProc function.
 	static LRESULT CALLBACK WindowsProc(HWND windowHandler, UINT msg, WPARAM wParam, LPARAM lParam);
 	Variant quitWindow(const Event* event);

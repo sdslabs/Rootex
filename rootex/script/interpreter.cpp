@@ -142,7 +142,7 @@ void LuaInterpreter::registerTypes()
 		    sol::meta_function::multiplication, [](Matrix& l, Matrix& r) { return l * r; });
 		matrix["Identity"] = sol::var(Matrix::Identity);
 	}
-	
+
 	Event::RegisterAPI(rootex);
 	EventManager::RegisterAPI(rootex);
 	InputManager::RegisterAPI(rootex);
@@ -158,7 +158,7 @@ void LuaInterpreter::registerTypes()
 	ImageResourceFile::RegisterAPI(rootex);
 	ImageCubeResourceFile::RegisterAPI(rootex);
 	FontResourceFile::RegisterAPI(rootex);
-	
+
 	ECSFactory::RegisterAPI(rootex);
 	Scene::RegisterAPI(rootex);
 	Entity::RegisterAPI(rootex);

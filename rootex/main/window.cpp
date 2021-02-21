@@ -171,19 +171,19 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
 	m_IsEditorWindow = isEditor;
 
 	m_WindowHandle = CreateWindowEx(
-		0, className,
-		title.c_str(),
-		WS_CAPTION | WS_BORDER | WS_MAXIMIZE | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU,
-		xOffset, yOffset, width, height,
-		nullptr, nullptr,
-		hInstance, nullptr);
+	    0, className,
+	    title.c_str(),
+	    WS_CAPTION | WS_BORDER | WS_MAXIMIZE | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU,
+	    xOffset, yOffset, width, height,
+	    nullptr, nullptr,
+	    hInstance, nullptr);
 
 	RECT clientRect;
 	GetClientRect(m_WindowHandle, &clientRect);
 	int rWidth = clientRect.right - clientRect.left;
 	int rHeight = clientRect.bottom - clientRect.top;
 	RenderingDevice::GetSingleton()->initialize(m_WindowHandle, rWidth, rHeight);
-	
+
 	applyDefaultViewport();
 	m_IsFullScreen = false;
 	if (fullScreen)

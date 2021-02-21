@@ -26,7 +26,7 @@ public:
 	virtual ~CustomRenderInterface() = default;
 
 	virtual void RenderGeometry(Rml::Vertex* vertices, int numVertices, int* indices, int numIndices, Rml::TextureHandle texture, const Rml::Vector2f& translation) override;
-	
+
 	virtual Rml::CompiledGeometryHandle CompileGeometry(Rml::Vertex* vertices, int numVertices, int* indices, int numIndices, Rml::TextureHandle texture) override;
 	virtual void RenderCompiledGeometry(Rml::CompiledGeometryHandle geometry, const Rml::Vector2f& translation) override;
 	virtual void ReleaseCompiledGeometry(Rml::CompiledGeometryHandle geometry) override;

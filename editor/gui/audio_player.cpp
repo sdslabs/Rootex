@@ -93,7 +93,7 @@ void AudioPlayer::draw(float deltaMilliseconds)
 	int secondsUI = timeSeconds - (minutesUI * MIN_TO_S);
 
 	ImGui::ProgressBar(m_FractionProgress, { 0.0f, 0.0f }, (std::to_string(minutesUI) + ":" + ((secondsUI < 10) ? "0" + std::to_string(secondsUI) : std::to_string(secondsUI)) + " | " + m_OpenFile->getPath().filename().string()).c_str());
-	
+
 	if (ImGui::Button("Play"))
 	{
 		if (!m_Source->isPlaying())

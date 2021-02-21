@@ -320,7 +320,7 @@ void PhysicsColliderComponent::draw()
 	{
 		setMoveable(m_IsMoveable);
 	}
-	
+
 	if (ImGui::Checkbox("Kinematic", &m_IsKinematic))
 	{
 		setKinematic(m_IsKinematic);

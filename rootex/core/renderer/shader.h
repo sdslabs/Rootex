@@ -107,9 +107,9 @@ public:
 	AnimationShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat);
 	AnimationShader(AnimationShader&) = delete;
 	~AnimationShader() = default;
-	
+
 	friend class ShaderLibrary;
-	
+
 	virtual void bind() const override;
 
 	void set(const Texture* texture, int slot);

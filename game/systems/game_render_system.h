@@ -10,6 +10,7 @@ class GameRenderSystem : public System
 	Ptr<DirectX::BasicPostProcess> m_BasicPostProcess;
 
 	GameRenderSystem();
+
 public:
 	static GameRenderSystem* GetSingleton();
 

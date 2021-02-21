@@ -24,7 +24,7 @@ public:
 private:
 	Microsoft::WRL::ComPtr<ID3D11Device> m_Device;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_Context;
-	
+
 	HWND m_WindowHandle;
 
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_MainRTV;
@@ -70,7 +70,7 @@ public:
 	/// Create resources which depend on window height and width
 	void createSwapChainAndRTVs(int width, int height, const HWND& hWnd);
 	void setScreenState(bool fullscreen);
-	
+
 	ID3D11Device* getDevice();
 	ID3D11DeviceContext* getContext();
 
@@ -102,27 +102,27 @@ public:
 
 	void mapBuffer(ID3D11Buffer* buffer, D3D11_MAPPED_SUBRESOURCE& subresource);
 	void unmapBuffer(ID3D11Buffer* buffer);
-	
+
 	/// Binds textures used in Pixel Shader
 	void setInPixelShader(unsigned int slot, unsigned int number, ID3D11ShaderResourceView* texture);
 	/// Binds sampler used in sampling textures in Pixel Shader
 	void setInPixelShader(ID3D11SamplerState* samplerState);
-	
+
 	void setVSCB(ID3D11Buffer* constantBuffer, UINT slot);
 	void setPSCB(ID3D11Buffer* constantBuffer, UINT slot);
 
 	void setDefaultBS();
 	void setAlphaBS();
-	
+
 	void setCurrentRS();
 	RasterizerState getRSType();
 	void setRSType(RasterizerState rs);
 
 	void setTemporaryUIRS();
 	void setTemporaryUIScissoredRS();
-	
+
 	void setDSS();
-	
+
 	void setScissorRectangle(int x, int y, int width, int height);
 
 	void setOffScreenRTVDSV();
@@ -130,7 +130,7 @@ public:
 	void setMainRT();
 	void setRTV(Microsoft::WRL::ComPtr<ID3D11RenderTargetView> rtv);
 	void setRTV(ID3D11RenderTargetView* rtv);
-	
+
 	void unbindSRVs();
 	void unbindRTVs();
 
@@ -142,11 +142,11 @@ public:
 
 	void setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY pt);
 	void setViewport(const D3D11_VIEWPORT* vp);
-	
+
 	/// The last boss, draws Triangles
 	void drawIndexed(UINT indices);
 	void drawIndexedInstanced(UINT indices, UINT instances, UINT startInstance);
-	
+
 	void beginDrawUI();
 	void endDrawUI();
 

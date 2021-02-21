@@ -42,15 +42,11 @@ void FrameTimer::reset()
 void FrameTimer::showTime()
 {
 	OS::PrintLine(
-	    "Frame " + std::to_string(++m_FrameCount) + 
-		" took " + 
-		std::to_string((s_Clock.now() - m_FrameStartTime).count() * NS_TO_MS) + "ms");
+	    "Frame " + std::to_string(++m_FrameCount) + " took " + std::to_string((s_Clock.now() - m_FrameStartTime).count() * NS_TO_MS) + "ms");
 }
 
 void FrameTimer::showFPS()
 {
 	OS::PrintLine(
-	    "Frame " + std::to_string(++m_FrameCount) + 
-		" at " + 
-		std::to_string(1.0f / ((s_Clock.now() - m_FrameStartTime).count() * NS_TO_MS * MS_TO_S)) + " fps");
+	    "Frame " + std::to_string(++m_FrameCount) + " at " + std::to_string(1.0f / ((s_Clock.now() - m_FrameStartTime).count() * NS_TO_MS * MS_TO_S)) + " fps");
 }

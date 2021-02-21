@@ -12,7 +12,7 @@
 #define GAME_DIRECTORY "game"
 
 typedef Vector<char> FileBuffer;
-typedef std::chrono::time_point<std::filesystem::file_time_type::clock> FileTimePoint; 
+typedef std::chrono::time_point<std::filesystem::file_time_type::clock> FileTimePoint;
 
 /// Provides features that are provided directly by the OS.
 class OS
