@@ -152,7 +152,7 @@ void PhysicsColliderComponent::onRemove()
 
 void PhysicsColliderComponent::getWorldTransform(btTransform& worldTrans) const
 {
-	worldTrans = MatTobtTransform(m_TransformComponent->getAbsoluteTransform());
+	worldTrans = MatTobtTransform(m_TransformComponent->getRotationPosition());
 }
 
 void PhysicsColliderComponent::setWorldTransform(const btTransform& worldTrans)

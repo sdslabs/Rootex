@@ -13,9 +13,6 @@ class CapsuleColliderComponent : public PhysicsColliderComponent
 	Ref<btCapsuleShape> m_CapsuleShape;
 
 	friend class ECSFactory;
-
-	void refreshDimensions();
-
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::CapsuleColliderComponent;
 

@@ -57,7 +57,9 @@ JSON::json BoxColliderComponent::getJSON() const
 void BoxColliderComponent::setDimensions(const Vector3& dimensions)
 {
 	m_Dimensions = dimensions;
-	m_BoxShape->setImplicitShapeDimensions(VecTobtVector3(dimensions));
+	m_BoxShape.reset(new btBoxShape(VecTobtVector3(dimensions)));
+	m_CollisionShape = m_BoxShape;
+	setupData();
 }
 
 void BoxColliderComponent::draw()
