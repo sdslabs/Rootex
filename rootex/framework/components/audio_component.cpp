@@ -56,6 +56,18 @@ bool AudioComponent::isLooping()
 	return m_IsLooping;
 }
 
+void AudioComponent::setPlaying(bool enabled)
+{
+	if (enabled)
+	{
+		getAudioSource()->play();
+	}
+	else
+	{
+		getAudioSource()->stop();
+	}
+}
+
 void AudioComponent::setLooping(bool enabled)
 {
 	m_IsLooping = enabled;
@@ -67,12 +79,12 @@ void AudioComponent::draw()
 	RenderSystem::GetSingleton()->submitSphere(m_TransformComponent->getAbsoluteTransform().Translation(), m_MaxDistance);
 
 	ImGui::Checkbox("Play On Start", &m_IsPlayOnStart);
-	ImGui::Checkbox("Attenuation", &m_IsAttenuated);
 	if (ImGui::Checkbox("Looping", &m_IsLooping))
 	{
 		setLooping(m_IsLooping);
 	}
 
+	ImGui::Checkbox("Attenuation", &m_IsAttenuated);
 	if (ImGui::BeginCombo("Attenutation Model", m_AttenuationModelName.c_str()))
 	{
 		if (ImGui::Selectable("Linear"))

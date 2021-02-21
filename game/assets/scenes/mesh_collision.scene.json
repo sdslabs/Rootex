@@ -35,7 +35,7 @@
                         "affectingStaticLights": [],
                         "isVisible": true,
                         "materialOverrides": {
-                            "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                            "rootex/assets/materials/default.rmat": "game/assets/materials/Door.rmat"
                         },
                         "renderPass": 1,
                         "resFile": "rootex/assets/capsule.obj"
@@ -45,7 +45,7 @@
                         "audio": "game/assets/forever.wav",
                         "isAttenuated": true,
                         "isLooping": true,
-                        "maxDistance": 100.0,
+                        "maxDistance": 8.0,
                         "playOnStart": true,
                         "referenceDistance": 1.0,
                         "rollOffFactor": 1.0
@@ -64,15 +64,15 @@
                             }
                         },
                         "position": {
-                            "x": 1.500000238418579,
+                            "x": 1.4999792575836182,
                             "y": 5.499999046325684,
                             "z": -12.229997634887695
                         },
                         "rotation": {
-                            "w": 0.0,
-                            "x": 0.0,
+                            "w": 1.0,
+                            "x": -0.0,
                             "y": 0.0,
-                            "z": 0.0
+                            "z": -0.0
                         },
                         "scale": {
                             "x": 1.0000001192092896,
@@ -83,7 +83,7 @@
                 }
             },
             "file": "",
-            "name": "Capsule",
+            "name": "SonicCapsule",
             "settings": {
                 "camera": 1,
                 "inputSchemes": {},
@@ -456,6 +456,7 @@
                             }
                         },
                         "components": {
+                            "AudioListenerComponent": null,
                             "ModelComponent": {
                                 "affectingStaticLights": [],
                                 "isVisible": true,
