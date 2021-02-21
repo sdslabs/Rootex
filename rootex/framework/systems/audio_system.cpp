@@ -166,6 +166,13 @@ void AudioSystem::setConfig(const SceneSettings& sceneSettings)
 		return;
 	}
 
+	if (!listenerScene->getEntity())
+	{
+		ERR("Entity not found in listener scene " + listenerScene->getFullName());
+		restoreListener();
+		return;
+	}
+
 	AudioListenerComponent* listen = listenerScene->getEntity()->getComponent<AudioListenerComponent>();
 	if (!listen)
 	{

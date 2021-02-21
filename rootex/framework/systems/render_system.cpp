@@ -54,6 +54,13 @@ void RenderSystem::setConfig(const SceneSettings& sceneSettings)
 		return;
 	}
 
+	if (!cameraScene->getEntity())
+	{
+		ERR("Entity not found in camera scene " + cameraScene->getFullName());
+		restoreCamera();
+		return;
+	}
+
 	CameraComponent* camera = cameraScene->getEntity()->getComponent<CameraComponent>();
 	if (!camera)
 	{
