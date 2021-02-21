@@ -76,11 +76,11 @@ void from_json(const JSON::json& j, PostProcessingDetails& p)
 Component* CameraComponent::Create(const JSON::json& componentData)
 {
 	CameraComponent* cameraVisualComponent = new CameraComponent(
-	    componentData.value("aspectRatio", Vector2{ 16.0f, 9.0f }),
+	    componentData.value("aspectRatio", Vector2 { 16.0f, 9.0f }),
 	    componentData.value("fov", DirectX::XM_PI / 4.0f),
-		componentData.value("near", 0.1f),
-		componentData.value("far", 100.0f),
-		componentData.value("postProcessingDetails", PostProcessingDetails()));
+	    componentData.value("near", 0.1f),
+	    componentData.value("far", 100.0f),
+	    componentData.value("postProcessingDetails", PostProcessingDetails()));
 	return cameraVisualComponent;
 }
 
@@ -212,7 +212,7 @@ void CameraComponent::draw()
 			if (ImGui::TreeNodeEx("Gaussian Blue Settings"))
 			{
 				ImGui::DragFloat("Gaussian Multiplier", &m_PostProcessingDetails.gaussianBlurMultiplier, 0.01f, 0.0f, 10.0f);
-				
+
 				ImGui::TreePop();
 			}
 		}
@@ -233,7 +233,7 @@ void CameraComponent::draw()
 				ImGui::DragFloat("Bloom Base", &m_PostProcessingDetails.bloomBase, 0.01f, 0.0f, 5.0f);
 				ImGui::DragFloat("Bloom Saturation", &m_PostProcessingDetails.bloomSaturation, 0.01f, 0.0f, 5.0f);
 				ImGui::DragFloat("Bloom Base Saturation", &m_PostProcessingDetails.bloomBaseSaturation, 0.01f, 0.0f, 5.0f);
-				
+
 				ImGui::TreePop();
 			}
 		}
@@ -247,7 +247,7 @@ void CameraComponent::draw()
 				ImGui::Combo("Tone Map Operator", &m_PostProcessingDetails.toneMapOperator, "None\0Saturate\0Reinhard\0ACES Filmic");
 				ImGui::Combo("Tone Map Transfer Function", &m_PostProcessingDetails.toneMapTransferFunction, "Linear\0sRGB\0ST2084");
 				ImGui::DragFloat("Tone Map White Nits", &m_PostProcessingDetails.toneMapWhiteNits);
-				
+
 				ImGui::TreePop();
 			}
 		}

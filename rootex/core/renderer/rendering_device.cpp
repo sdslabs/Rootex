@@ -278,14 +278,14 @@ void RenderingDevice::createSwapChainAndRTVs(int width, int height, const HWND& 
 	descDepth.SampleDesc.Quality = sd.SampleDesc.Quality;
 	descDepth.Usage = D3D11_USAGE_DEFAULT;
 	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
-	
+
 	GFX_ERR_CHECK(m_Device->CreateTexture2D(&descDepth, nullptr, &depthStencil));
-	
+
 	D3D11_DEPTH_STENCIL_VIEW_DESC descDSView = {};
 	descDSView.Format = DXGI_FORMAT_D32_FLOAT_S8X24_UINT;
 	descDSView.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	descDSView.Texture2D.MipSlice = 0u;
-	
+
 	GFX_ERR_CHECK(m_Device->CreateDepthStencilView(depthStencil.Get(), &descDSView, &m_MainDSV));
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC depthSRVDesc;

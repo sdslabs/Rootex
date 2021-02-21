@@ -46,7 +46,7 @@ StaticPointLightsInfo LightSystem::getStaticPointLights()
 LightsInfo LightSystem::getDynamicLights()
 {
 	LightsInfo lights;
-	
+
 	Vector3 cameraPos = RenderSystem::GetSingleton()->getCamera()->getAbsolutePosition();
 	lights.cameraPos = cameraPos;
 
@@ -65,7 +65,7 @@ LightsInfo LightSystem::getDynamicLights()
 		PointLightComponent* light = (PointLightComponent*)pointLightComponents[i];
 		Vector3 transformedPosition = light->getAbsoluteTransform().Translation();
 		const PointLight& pointLight = light->getPointLight();
-		
+
 		lights.pointLightInfos[i].ambientColor = pointLight.ambientColor;
 		lights.pointLightInfos[i].diffuseColor = pointLight.diffuseColor;
 		lights.pointLightInfos[i].diffuseIntensity = pointLight.diffuseIntensity;
@@ -91,8 +91,8 @@ LightsInfo LightSystem::getDynamicLights()
 		const Vector3& forward = light->getDirection();
 
 		lights.directionalLightInfo = {
-			forward, 
-			directionalLight.diffuseIntensity, 
+			forward,
+			directionalLight.diffuseIntensity,
 			directionalLight.diffuseColor,
 			directionalLight.ambientColor
 		};
@@ -111,14 +111,14 @@ LightsInfo LightSystem::getDynamicLights()
 
 		lights.spotLightInfos[i] = {
 			spotLight.ambientColor,
-			spotLight.diffuseColor, 
+			spotLight.diffuseColor,
 			spotLight.diffuseIntensity,
-			spotLight.attConst, 
-			spotLight.attLin, 
+			spotLight.attConst,
+			spotLight.attLin,
 			spotLight.attQuad,
-			transform.Translation(), 
-			spotLight.range, 
-			transform.Forward(), 
+			transform.Translation(),
+			spotLight.range,
+			transform.Forward(),
 			spotLight.spot,
 			cos(spotLight.angleRange)
 		};

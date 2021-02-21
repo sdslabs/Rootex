@@ -17,7 +17,7 @@ Component* TextUIComponent::Create(const JSON::json& componentData)
 
 TextUIComponent::TextUIComponent(FontResourceFile* font, const String& text, const Color& color, const Mode& mode, const Vector2& origin, const bool& isVisible)
     : RenderUIComponent(isVisible)
-	, m_FontFile(font)
+    , m_FontFile(font)
     , m_Text(text)
     , m_Color(color)
     , m_Mode(mode)
@@ -89,7 +89,7 @@ void TextUIComponent::draw()
 	m_Mode = (Mode)choice;
 
 	ImGui::BeginGroup();
-	
+
 	static String inputPath = "Path";
 	ImGui::InputText("##Path", &inputPath);
 	ImGui::SameLine();

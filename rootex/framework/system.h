@@ -27,7 +27,7 @@ public:
 
 protected:
 	static Vector<Vector<System*>> s_Systems;
-	
+
 	friend class Entity;
 
 	String m_SystemName;
@@ -36,7 +36,7 @@ protected:
 
 public:
 	static const Vector<Vector<System*>>& GetSystems() { return s_Systems; }
-	
+
 	System(const String& name, const UpdateOrder& order, bool isGameplay);
 	System(System&) = delete;
 	virtual ~System();
@@ -47,7 +47,7 @@ public:
 	virtual void begin();
 	virtual void update(float deltaMilliseconds);
 	virtual void end();
-	
+
 	String getName() const { return m_SystemName; }
 	const UpdateOrder& getUpdateOrder() const { return m_UpdateOrder; }
 	bool isActive() const { return m_IsActive; }

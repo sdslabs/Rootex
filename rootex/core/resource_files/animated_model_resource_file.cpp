@@ -102,7 +102,7 @@ void AnimatedModelResourceFile::reimport()
 	ResourceFile::reimport();
 
 	Assimp::Importer animatedModelLoader;
-    const aiScene* scene = animatedModelLoader.ReadFile(
+	const aiScene* scene = animatedModelLoader.ReadFile(
 	    getPath().generic_string(),
 	    aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SplitLargeMeshes | aiProcess_GenBoundingBoxes | aiProcess_OptimizeMeshes | aiProcess_CalcTangentSpace | aiProcess_ValidateDataStructure | aiProcess_ConvertToLeftHanded);
 

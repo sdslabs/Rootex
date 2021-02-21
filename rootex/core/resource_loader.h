@@ -36,8 +36,8 @@ bool IsFileSupported(const String& extension, ResourceFile::Type supportedFileTy
 class ResourceLoader
 {
 	static HashMap<ResourceFile::Type, Vector<Ref<ResourceFile>>> s_ResourcesDataFiles;
-	
-	template<class T>
+
+	template <class T>
 	static T* GetCachedResource(ResourceFile::Type type, const FilePath& path);
 	static void RegisterResource(Ref<ResourceFile> file);
 
@@ -56,16 +56,16 @@ public:
 	static ImageResourceFile* CreateImageResourceFile(const String& path);
 	static ImageCubeResourceFile* CreateImageCubeResourceFile(const String& path);
 	static FontResourceFile* CreateFontResourceFile(const String& path);
-	
+
 	/// Use when you don't know what kind of a resource file will it be
 	static ResourceFile* CreateSomeResourceFile(const String& path);
-	
+
 	/// Load all the files passed in, in a parellel manner. Return total tasks generated.
 	static int Preload(Vector<String> paths, Atomic<int>& progress);
 	static void Unload(const Vector<String>& paths);
 };
 
-template<class T>
+template <class T>
 inline T* ResourceLoader::GetCachedResource(ResourceFile::Type type, const FilePath& path)
 {
 	String searchPath = path.generic_string();

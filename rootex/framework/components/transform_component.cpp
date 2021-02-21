@@ -9,7 +9,7 @@ Component* TransformComponent::Create(const JSON::json& componentData)
 {
 	TransformComponent* transformComponent = new TransformComponent(
 	    componentData.value("position", Vector3::Zero),
-	    componentData.value("rotation", Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, 0.0f)), 
+	    componentData.value("rotation", Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, 0.0f)),
 	    componentData.value("scale", Vector3 { 1.0f, 1.0f, 1.0f }),
 	    componentData.value("boundingBox", BoundingBox { Vector3::Zero, Vector3 { 0.5f, 0.5f, 0.5f } }));
 	return transformComponent;
@@ -47,7 +47,7 @@ void TransformComponent::RegisterAPI(sol::table& rootex)
 	sol::usertype<TransformComponent> transformComponent = rootex.new_usertype<TransformComponent>(
 	    "TransformComponent",
 	    sol::base_classes, sol::bases<Component>());
-	
+
 	rootex["Entity"]["getTransform"] = &Entity::getComponent<TransformComponent>;
 	transformComponent["setPosition"] = &TransformComponent::setPosition;
 	transformComponent["setRotation"] = &TransformComponent::setRotation;
@@ -135,7 +135,7 @@ JSON::json TransformComponent::getJSON() const
 	j["rotation"] = m_TransformBuffer.m_Rotation;
 	j["scale"] = m_TransformBuffer.m_Scale;
 	j["boundingBox"] = m_TransformBuffer.m_BoundingBox;
-	
+
 	return j;
 }
 
@@ -202,7 +202,7 @@ void TransformComponent::draw()
 		lockedFirstFrame = false;
 		ImGui::DragFloat3("##Scale", &m_TransformBuffer.m_Scale.x, s_EditorDecimalSpeed, 0.0f, 0.0f);
 	}
-	
+
 	ImGui::SameLine();
 	if (ImGui::Button("Scale"))
 	{

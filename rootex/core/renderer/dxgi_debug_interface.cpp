@@ -20,7 +20,7 @@ DxgiDebugInterface::DxgiDebugInterface()
 	{
 		ERR("DXGIGetDebugInterface not loaded");
 	}
-	
+
 	if (FAILED(dxgiGetDebugInterface(__uuidof(IDXGIInfoQueue), reinterpret_cast<void**>(m_DxgiInfoQueue.ReleaseAndGetAddressOf()))))
 	{
 		ERR("DXGI Info Queue could not be loaded");

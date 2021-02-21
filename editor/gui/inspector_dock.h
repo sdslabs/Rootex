@@ -21,7 +21,7 @@ private:
 	String m_OpenedSceneName;
 	bool m_IsNameBeingEdited;
 	Scene* m_ActionScene = nullptr;
-	
+
 	Variant openScene(const Event* event);
 	Variant closeScene(const Event* event);
 

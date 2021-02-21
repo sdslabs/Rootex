@@ -23,7 +23,7 @@ class ECSFactory
 public:
 	template <class T>
 	static Vector<Component*>& GetComponents();
-	
+
 	static void RegisterAPI(sol::table& rootex);
 
 	static void Initialize();
@@ -37,7 +37,7 @@ public:
 	static Ptr<Entity> CreateEmptyEntity(Scene* scene);
 	static Ptr<Entity> CreateRootEntity(Scene* scene);
 	static Ptr<Entity> CopyEntity(Scene* scene, Entity& entity);
-	
+
 	static const ComponentDatabase& GetComponentDatabase() { return s_ComponentCreators; }
 	template <class T>
 	static void RegisterComponent(const String& name);
