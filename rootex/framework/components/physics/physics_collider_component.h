@@ -38,6 +38,7 @@ class PhysicsColliderComponent : public Component, public btMotionState
 	bool m_IsGeneratesHitEvents;
 	bool m_IsKinematic;
 	bool m_IsSleepable;
+	bool m_IsCCD;
 	unsigned int m_CollisionGroup;
 	unsigned int m_CollisionMask;
 	PhysicsMaterial m_Material;
@@ -56,8 +57,9 @@ class PhysicsColliderComponent : public Component, public btMotionState
 		int collisionMask, 
 		bool isMoveable, 
 		bool isKinematic, 
-		bool generatesHitEvents, 
-		bool canSleep, 
+		bool generatesHitEvents,
+	    bool canSleep,
+	    bool isCCD,
 		const Ref<btCollisionShape>& collisionShape);
 	
 	friend class ECSFactory;
@@ -100,6 +102,9 @@ public:
 	
 	bool canSleep() { return m_IsSleepable; }
 	void setSleepable(bool enabled);
+
+	bool isCCD() { return m_IsCCD; }
+	void setCCD(bool enabled);
 
 	bool isGeneratesHitEvents() { return m_IsGeneratesHitEvents; }
 	void setGeneratedHitEvents(bool enabled) { m_IsGeneratesHitEvents = enabled; }

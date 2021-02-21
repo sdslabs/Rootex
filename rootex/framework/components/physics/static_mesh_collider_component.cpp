@@ -31,6 +31,7 @@ StaticMeshColliderComponent::StaticMeshColliderComponent(
 		false, 
 		generatesHitEvents,
         true,
+		false,
 		nullptr)
     , m_CollisionModel(ResourceLoader::CreateCollisionModelResourceFile(collisionModelPath))
 {
