@@ -40,6 +40,16 @@
                         "renderPass": 1,
                         "resFile": "rootex/assets/capsule.obj"
                     },
+                    "MusicComponent": {
+                        "attenuationModel": 53251,
+                        "audio": "game/assets/forever.wav",
+                        "isAttenuated": true,
+                        "isLooping": true,
+                        "maxDistance": 100.0,
+                        "playOnStart": true,
+                        "referenceDistance": 1.0,
+                        "rollOffFactor": 1.0
+                    },
                     "TransformComponent": {
                         "boundingBox": {
                             "center": {
