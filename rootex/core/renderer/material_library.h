@@ -26,7 +26,7 @@ public:
 	static const String s_DefaultMaterialPath;
 	static const String s_DefaultParticlesMaterialPath;
 	static const String s_AnimatedDefaultMaterialPath;
-	
+
 	static void SaveAll();
 	static void CreateNewMaterialFile(const String& materialPath, const String& materialType);
 

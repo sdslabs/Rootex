@@ -1,7 +1,7 @@
 #include "image_resource_file.h"
 
 ImageResourceFile::ImageResourceFile(const FilePath& path)
-	: ResourceFile(Type::Image, path)
+    : ResourceFile(Type::Image, path)
 {
 	reimport();
 }

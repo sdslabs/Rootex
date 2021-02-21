@@ -6,7 +6,7 @@ Component* GridModelComponent::Create(const JSON::json& componentData)
 {
 	return new GridModelComponent(
 	    componentData.value("cellSize", Vector2 { 1.0f, 1.0f }),
-		componentData.value("cellCount", 100),
+	    componentData.value("cellCount", 100),
 	    componentData.value("renderPass", (unsigned int)RenderPass::Editor),
 	    componentData.value("isVisible", true));
 }
@@ -67,7 +67,7 @@ void GridModelComponent::refreshVertexBuffers()
 			vertices.push_back(xRight);
 			vertices.push_back(y);
 			vertices.push_back(z);
-		}			
+		}
 	}
 
 	// Y axis line

@@ -25,7 +25,7 @@ public:
 	virtual ~Material() = default;
 
 	virtual void bind() = 0;
-	
+
 	virtual ID3D11ShaderResourceView* getPreview() = 0;
 
 	bool isAlpha() { return m_IsAlpha; }
@@ -33,11 +33,11 @@ public:
 	String getTypeName() { return m_TypeName; };
 	String getFullName() { return m_FileName + " - " + m_TypeName; };
 	Shader* getShader() const { return m_Shader; }
-	
+
 	virtual JSON::json getJSON() const;
-	
+
 	void setFileName(const String& fileName) { m_FileName = fileName; };
-	
+
 	virtual void draw();
 };
 

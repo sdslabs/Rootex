@@ -36,9 +36,9 @@ public:
 
 	/// Destruct all components.
 	void destroy();
-	
+
 	Scene* getScene() const { return m_Scene; }
-	
+
 	template <class ComponentType = Component>
 	ComponentType* getComponent();
 
@@ -54,7 +54,7 @@ public:
 	void evaluateScriptOverrides();
 	bool setScript(const String& path);
 	Script* getScript() const { return m_Script.get(); }
-	
+
 	void draw();
 };
 

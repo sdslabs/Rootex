@@ -14,7 +14,7 @@ protected:
 	RenderUIComponent(bool isVisible);
 	RenderUIComponent(RenderUIComponent&) = delete;
 	virtual ~RenderUIComponent() = default;
-	
+
 	friend class ECSFactory;
 
 public:

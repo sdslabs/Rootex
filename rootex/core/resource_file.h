@@ -32,7 +32,7 @@ protected:
 
 	friend class ResourceLoader;
 
-public: 
+public:
 	explicit ResourceFile(const ResourceFile&) = delete;
 	explicit ResourceFile(const ResourceFile&&) = delete;
 	virtual ~ResourceFile() = default;

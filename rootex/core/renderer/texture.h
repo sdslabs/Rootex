@@ -31,7 +31,7 @@ public:
 class TextureCube
 {
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_TextureView;
-	
+
 public:
 	TextureCube(const char* imageDDSFileData, size_t size);
 	TextureCube(const TextureCube&) = delete;

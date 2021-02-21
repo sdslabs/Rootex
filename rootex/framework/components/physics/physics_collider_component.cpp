@@ -244,7 +244,7 @@ void PhysicsColliderComponent::setCCD(bool enabled)
 	{
 		// This threshold enable CCD if the object moves more than
 		// 1 meter in one simulation frame
-		m_Body->setCcdMotionThreshold(1e-7);
+		m_Body->setCcdMotionThreshold(1e-7f);
 
 		/// Calculate using the rule write below the CCD swept sphere radius
 		///     CCD works on an embedded sphere of radius, make sure this radius
@@ -378,7 +378,7 @@ void PhysicsColliderComponent::draw()
 	{
 		setMoveable(m_IsMoveable);
 	}
-	
+
 	if (ImGui::Checkbox("Kinematic", &m_IsKinematic))
 	{
 		setKinematic(m_IsKinematic);

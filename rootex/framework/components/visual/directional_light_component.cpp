@@ -25,7 +25,7 @@ JSON::json DirectionalLightComponent::getJSON() const
 	j["diffuseIntensity"] = m_DirectionalLight.diffuseIntensity;
 	j["diffuseColor"] = m_DirectionalLight.diffuseColor;
 	j["ambientColor"] = m_DirectionalLight.ambientColor;
-	
+
 	return j;
 }
 

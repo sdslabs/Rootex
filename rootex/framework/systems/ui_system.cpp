@@ -42,7 +42,7 @@ bool CustomSystemInterface::LogMessage(Rml::Log::Type type, const String& messag
 
 UISystem::UISystem()
     : System("UISystem", UpdateOrder::UI, true)
-	, m_Context(nullptr)
+    , m_Context(nullptr)
 {
 	BIND_EVENT_MEMBER_FUNCTION("UISystemEnableDebugger", UISystem::enableDebugger);
 	BIND_EVENT_MEMBER_FUNCTION("UISystemDisableDebugger", UISystem::disableDebugger);
@@ -114,11 +114,11 @@ bool UISystem::initialize(const JSON::json& systemData)
 	Rml::Lottie::Initialise();
 
 	loadFont("rootex/assets/fonts/Lato-Regular.ttf");
-	
+
 	m_Context = Rml::CreateContext("default", Rml::Vector2i(systemData["width"], systemData["height"]));
-	
+
 	Rml::Debugger::Initialise(m_Context);
-	
+
 	InputInterface::Initialise();
 	InputInterface::SetContext(m_Context);
 
@@ -147,7 +147,7 @@ void UISystem::setDebugger(bool enabled)
 void UISystem::draw()
 {
 	System::draw();
-	
+
 	ImGui::Text("Press F8 in game for UI debugger");
 	static bool debugger = false;
 	if (ImGui::Checkbox("Debugger", &debugger))

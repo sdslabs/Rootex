@@ -10,7 +10,7 @@ class SphereColliderComponent : public PhysicsColliderComponent
 
 	float m_Radius;
 	Ref<btSphereShape> m_SphereShape;
-	
+
 	friend class ECSFactory;
 
 public:
@@ -34,7 +34,7 @@ public:
 
 	virtual const char* getName() const override { return "SphereColliderComponent"; };
 	virtual JSON::json getJSON() const override;
-	virtual ComponentID getComponentID() const override { return s_ID; }	
+	virtual ComponentID getComponentID() const override { return s_ID; }
 
 	void draw() override;
 };

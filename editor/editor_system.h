@@ -36,7 +36,7 @@ class EditorSystem : public System
 	ImFont* m_EditorFontItalic;
 	ImFont* m_EditorFontBold;
 	ImFont* m_EditorFontMonospace;
-	
+
 	struct Icons
 	{
 		const char* lua = ICON_ROOTEX_FILE_CODE_O;
@@ -82,7 +82,7 @@ public:
 	void popFont() { ImGui::PopFont(); }
 
 	ImColor getWarningColor() const { return ColorToImColor((Color)ColorPresets::LightYellow); }
-	ImColor getFatalColor() const {return ColorToImColor((Color)ColorPresets::IndianRed); }
+	ImColor getFatalColor() const { return ColorToImColor((Color)ColorPresets::IndianRed); }
 	ImColor getSuccessColor() const { return ColorToImColor((Color)ColorPresets::LimeGreen); }
 	ImColor getNormalColor() const { return ColorToImColor((Color)ColorPresets::White); }
 };

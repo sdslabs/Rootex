@@ -18,7 +18,7 @@ protected:
 
 public:
 	static TimePoint Now();
-	
+
 	Timer();
 	Timer(Timer&) = delete;
 	virtual ~Timer() = default;

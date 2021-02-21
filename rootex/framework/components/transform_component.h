@@ -18,7 +18,7 @@ private:
 		Matrix m_Transform;
 	};
 	TransformBuffer m_TransformBuffer;
-	
+
 	Matrix m_ParentAbsoluteTransform;
 	bool m_LockScale = false;
 

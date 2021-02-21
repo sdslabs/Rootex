@@ -28,7 +28,7 @@ protected:
 public:
 	static const ComponentID s_ComponentID = (ComponentID)ComponentIDs::RenderableComponent;
 
-    virtual bool setupData() override;
+	virtual bool setupData() override;
 	virtual bool setupEntities() override;
 
 	virtual bool preRender(float deltaMilliseconds);

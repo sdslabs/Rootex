@@ -27,7 +27,7 @@
                             "y": -9.800000190734863,
                             "z": 0.0
                         },
-                        "isCCD": true,
+                        "isCCD": false,
                         "isGeneratesHitEvents": false,
                         "isKinematic": false,
                         "isMoveable": false,
@@ -116,7 +116,7 @@
                             "y": -9.800000190734863,
                             "z": 0.0
                         },
-                        "isCCD": true,
+                        "isCCD": false,
                         "isGeneratesHitEvents": false,
                         "isKinematic": false,
                         "isMoveable": true,
@@ -193,7 +193,7 @@
                             "y": -9.800000190734863,
                             "z": 0.0
                         },
-                        "isCCD": true,
+                        "isCCD": false,
                         "isGeneratesHitEvents": false,
                         "isKinematic": false,
                         "isMoveable": true,

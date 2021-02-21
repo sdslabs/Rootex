@@ -10,7 +10,7 @@ Component* TransformComponent::Create(const JSON::json& componentData)
 {
 	TransformComponent* transformComponent = new TransformComponent(
 	    componentData.value("position", Vector3::Zero),
-	    componentData.value("rotation", Quaternion::Identity), 
+	    componentData.value("rotation", Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, 0.0f)),
 	    componentData.value("scale", Vector3 { 1.0f, 1.0f, 1.0f }),
 	    componentData.value("boundingBox", BoundingBox { Vector3::Zero, Vector3 { 0.5f, 0.5f, 0.5f } }));
 	return transformComponent;
@@ -122,7 +122,7 @@ JSON::json TransformComponent::getJSON() const
 	j["rotation"] = m_TransformBuffer.m_Rotation;
 	j["scale"] = m_TransformBuffer.m_Scale;
 	j["boundingBox"] = m_TransformBuffer.m_BoundingBox;
-	
+
 	return j;
 }
 
@@ -183,7 +183,7 @@ void TransformComponent::draw()
 		lockedFirstFrame = false;
 		ImGui::DragFloat3("##Scale", &m_TransformBuffer.m_Scale.x, 0.01f, 0.0f, 0.0f);
 	}
-	
+
 	ImGui::SameLine();
 	if (ImGui::Button("Scale"))
 	{
