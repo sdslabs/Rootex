@@ -33,17 +33,7 @@ bool ShortMusicComponent::setupData()
 
 	setAudioSource(m_StaticAudioSource.get());
 
-	bool status = AudioComponent::setupData();
-	if (m_Owner)
-	{
-		m_TransformComponent = m_Owner->getComponent<TransformComponent>();
-		if (m_TransformComponent == nullptr)
-		{
-			WARN("Entity without transform component!");
-			status = false;
-		}
-	}
-	return status;
+	return AudioComponent::setupData();
 }
 
 JSON::json ShortMusicComponent::getJSON() const
