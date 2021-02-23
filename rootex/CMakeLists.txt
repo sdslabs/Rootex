@@ -93,7 +93,7 @@ target_link_libraries(Rootex PUBLIC
     Lua
     Sol3
     OpenAL
-    ALUT
+    alut
     DirectXTK
     JSON
     Dirent
@@ -111,7 +111,6 @@ target_link_libraries(Rootex PUBLIC
     Tracy
     ASSAO
     LPeg
-
     Shell32.lib
     d3d11.lib
     xinput.lib
