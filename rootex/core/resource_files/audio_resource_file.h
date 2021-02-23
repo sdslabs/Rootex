@@ -3,7 +3,7 @@
 #include "resource_file.h"
 
 #include "al.h"
-#include "alut.h"
+#include "AL/alut.h"
 
 /// Representation of an audio file. Only .wav files are supported.
 class AudioResourceFile : public ResourceFile
