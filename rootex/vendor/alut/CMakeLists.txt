@@ -71,8 +71,6 @@ add_library(alut SHARED ${ALUT} ${ALUTH})
 target_link_libraries(alut ${OPENAL_LIBRARY})
 set_target_properties(alut PROPERTIES LINKER_LANGUAGE C)
 
-set(ALUT_DLL_LIBRARY "${CMAKE_CURRENT_BINARY_DIR}/alut.dll" CACHE INTERNAL "")
-
 target_include_directories(alut PUBLIC
     include/
     src/
