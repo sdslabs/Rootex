@@ -591,11 +591,25 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 
 			if (ImGui::BeginPopup("About Rootex Editor"))
 			{
+				static ImageResourceFile* engineImage = ResourceLoader::CreateImageResourceFile("rootex/assets/rootex.png");
+				static ImageResourceFile* editorImage = ResourceLoader::CreateImageResourceFile("editor/assets/editor.png");
+
+				ImGui::BeginGroup();
+				ImGui::Image(engineImage->getTexture()->getTextureResourceView(), { 200, 200 });
+				ImGui::Text("Rootex Engine");
+				ImGui::EndGroup();
+
+				ImGui::SameLine();
+
+				ImGui::BeginGroup();
+				ImGui::Image(editorImage->getTexture()->getTextureResourceView(), { 200, 200 });
+				ImGui::Text("Rootex Editor");
+				ImGui::EndGroup();
+
 				ImGui::Text(String("Rootex Engine and Rootex Editor developed by SDSLabs. Built on " + OS::GetBuildDate() + " at " + OS::GetBuildTime() + "\n" + "Source available at https://www.github.com/sdslabs/rootex").c_str());
 
 				static TextResourceFile* license = ResourceLoader::CreateTextResourceFile("LICENSE");
 				ImGui::Text("%s", license->getString().c_str());
-				ImGui::Separator();
 				m_MenuAction = "";
 				ImGui::EndPopup();
 			}

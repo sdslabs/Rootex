@@ -73,6 +73,7 @@
     "version": 1.0,
     "window": {
         "fullScreen": false,
+        "icon": "editor/assets/editor.ico",
         "isEditor": true,
         "title": "Rootex Editor",
         "x": 0,
