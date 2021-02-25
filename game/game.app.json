@@ -25,6 +25,7 @@
     "window": {
         "fullScreen": false,
         "height": 1080,
+        "icon": "rootex/assets/rootex.ico",
         "isEditor": false,
         "title": "Rootex Game",
         "width": 1920,
