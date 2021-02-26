@@ -6,7 +6,7 @@
 #include "framework/components/audio_listener_component.h"
 #include "vendor/OpenAL/include/al.h"
 #include "vendor/OpenAL/include/alc.h"
-#include "vendor/OpenAL/include/alut.h"
+#include "AL/alut.h"
 
 #include "system.h"
 

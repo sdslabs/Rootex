@@ -20,7 +20,17 @@ source_group(TREE "../editor/"
 
 add_custom_command(TARGET Editor POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        ${ALUT_DLL_LIBRARY}
+        $<TARGET_FILE:alut>
+        $<TARGET_FILE_DIR:Editor>)
+        
+add_custom_command(TARGET Editor POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${OPENAL_DLL_LIBRARY}
+        $<TARGET_FILE_DIR:Editor>)
+
+add_custom_command(TARGET Editor POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${WRAP_OAL_LIBRARY}
         $<TARGET_FILE_DIR:Editor>)
        
 set_directory_properties(PROPERTIES 
