@@ -83,7 +83,6 @@ void FileViewer::draw(float deltaMilliseconds)
 		}
 		if (ImGui::Begin("File Viewer"))
 		{
-			ImGui::Separator();
 			if (ImGui::Button("Open"))
 			{
 				OS::OpenFileInSystemEditor(m_OpenFilePath.string());

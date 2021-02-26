@@ -47,10 +47,29 @@ void RenderSystem::recoverLostDevice()
 void RenderSystem::setConfig(const SceneSettings& sceneSettings)
 {
 	Scene* cameraScene = SceneLoader::GetSingleton()->getRootScene()->findScene(sceneSettings.camera);
-	if (cameraScene)
+	if (!cameraScene)
 	{
-		setCamera(cameraScene->getEntity()->getComponent<CameraComponent>());
+		ERR("Camera scene not found with ID " + std::to_string(sceneSettings.camera));
+		restoreCamera();
+		return;
 	}
+
+	if (!cameraScene->getEntity())
+	{
+		ERR("Entity not found in camera scene " + cameraScene->getFullName());
+		restoreCamera();
+		return;
+	}
+
+	CameraComponent* camera = cameraScene->getEntity()->getComponent<CameraComponent>();
+	if (!camera)
+	{
+		ERR("CameraComponent not found on entity " + cameraScene->getFullName());
+		restoreCamera();
+		return;
+	}
+
+	setCamera(camera);
 }
 
 void RenderSystem::calculateTransforms(Scene* scene)
@@ -135,16 +154,13 @@ void RenderSystem::update(float deltaMilliseconds)
 	}
 	{
 		ZoneNamedN(renderPasses, "Render Passes", true);
-#ifdef ROOTEX_EDITOR
 		if (m_IsEditorRenderPassEnabled)
 		{
 			ZoneNamedN(editorRenderPass, "Editor Render Pass", true);
 			{
 				renderPassRender(deltaMilliseconds, RenderPass::Editor);
-				renderLines();
 			}
 		}
-#endif // ROOTEX_EDITOR
 		{
 			ZoneNamedN(basicRenderPass, "Basic Render Pass", true);
 			renderPassRender(deltaMilliseconds, RenderPass::Basic);
@@ -153,6 +169,7 @@ void RenderSystem::update(float deltaMilliseconds)
 			ZoneNamedN(alphaRenderPass, "Alpha Render Pass", true);
 			renderPassRender(deltaMilliseconds, RenderPass::Alpha);
 		}
+		renderLines();
 	}
 	{
 		ZoneNamedN(skyRendering, "Sky Rendering", true);
@@ -397,8 +414,6 @@ Variant RenderSystem::onOpenedScene(const Event* event)
 	return true;
 }
 
-#ifdef ROOTEX_EDITOR
-#include "imgui.h"
 void RenderSystem::draw()
 {
 	System::draw();
@@ -428,4 +443,3 @@ void RenderSystem::draw()
 		updatePerSceneBinds();
 	}
 }
-#endif

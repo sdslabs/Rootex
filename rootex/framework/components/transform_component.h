@@ -27,22 +27,14 @@ private:
 	void updateTransformFromPositionRotationScale();
 	void updatePositionRotationScaleFromTransform(Matrix& transform);
 
-	TransformComponent(const Vector3& position, const Vector4& rotation, const Vector3& scale, const BoundingBox& bounds);
+	TransformComponent(const Vector3& position, const Quaternion& rotation, const Vector3& scale, const BoundingBox& bounds);
 	TransformComponent(TransformComponent&) = delete;
 
 	friend class ModelComponent;
 	friend class RenderSystem;
 	friend class ECSFactory;
 
-#ifdef ROOTEX_EDITOR
-	static inline const float s_EditorDecimalSpeed = 0.01f;
-
-	Vector3 m_EditorRotation;
-#endif // ROOTEX_EDITOR
-
 public:
-	static void RegisterAPI(sol::table& rootex);
-
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::TransformComponent;
 
 	virtual ~TransformComponent() = default;
@@ -52,8 +44,10 @@ public:
 	void setRotationQuaternion(const Quaternion& rotation);
 	void setScale(const Vector3& scale);
 	void setTransform(const Matrix& transform);
+	void setAbsoluteTransform(const Matrix& transform);
 	void setBounds(const BoundingBox& bounds);
 	void setRotationPosition(const Matrix& transform);
+	void setAbsoluteRotationPosition(const Matrix& transform);
 	void setParentAbsoluteTransform(const Matrix& parentTransform);
 
 	void addTransform(const Matrix& applyTransform);
@@ -61,7 +55,7 @@ public:
 
 	Vector3 getPosition() const { return m_TransformBuffer.m_Position; }
 	BoundingBox getWorldSpaceBounds() const;
-	const Quaternion& getRotation() const { return m_TransformBuffer.m_Rotation; }
+	Quaternion getRotation() const { return m_TransformBuffer.m_Rotation; };
 	const Vector3& getScale() const { return m_TransformBuffer.m_Scale; }
 	const Matrix& getLocalTransform() const { return m_TransformBuffer.m_Transform; }
 	Matrix getRotationPosition() const { return Matrix::CreateFromQuaternion(m_TransformBuffer.m_Rotation) * Matrix::CreateTranslation(m_TransformBuffer.m_Position) * m_ParentAbsoluteTransform; }
@@ -71,8 +65,6 @@ public:
 	virtual const char* getName() const override { return "TransformComponent"; }
 	virtual JSON::json getJSON() const override;
 
-#ifdef ROOTEX_EDITOR
 	void draw() override;
 	void highlight();
-#endif // ROOTEX_EDITOR
 };

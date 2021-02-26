@@ -232,9 +232,6 @@ void BasicMaterial::removeNormal()
 	m_NormalImageFile = nullptr;
 }
 
-#ifdef ROOTEX_EDITOR
-#include "imgui.h"
-#include "utility/imgui_helpers.h"
 void BasicMaterial::draw()
 {
 	Material::draw();
@@ -264,7 +261,7 @@ void BasicMaterial::draw()
 		setLightmapTexture(ResourceLoader::CreateImageResourceFile("rootex/assets/white.png"));
 	}
 
-	ImGui::ColorEdit4("Color", &m_Color.x);
+	ImGui::ColorEdit4("Color", &m_Color.x, ImGuiColorEditFlags_PickerHueWheel);
 	ImGui::Checkbox("Affected by light", &m_IsLit);
 	ImGui::DragFloat("##Specular Intensity", &m_SpecularIntensity, 0.01f, 0.0f, 1.0f);
 	ImGui::SameLine();
@@ -283,4 +280,3 @@ void BasicMaterial::draw()
 	ImGui::DragFloat("Refraction Constant", &m_RefractionConstant, 0.01f, 0.0f, 10.0f);
 	ImGui::DragFloat("Refractivity", &m_Refractivity, 0.01f, 0.0f, 1.0f);
 }
-#endif // ROOTEX_EDITOR

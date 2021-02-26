@@ -61,7 +61,8 @@ Application::Application(const String& settingsFile)
 	    OS::GetDisplayHeight(),
 	    windowJSON["title"],
 	    windowJSON["isEditor"],
-	    windowJSON["fullScreen"]));
+	    windowJSON["fullScreen"],
+	    windowJSON["icon"]));
 	JSON::json& inputSystemSettings = systemsSettings["InputSystem"];
 	inputSystemSettings["width"] = m_Window->getWidth();
 	inputSystemSettings["height"] = m_Window->getHeight();

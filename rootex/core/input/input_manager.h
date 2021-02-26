@@ -26,18 +26,24 @@ enum class Device
 	Pad2
 };
 
-struct InputButtonBindingData
+struct InputDescription
 {
-	enum class Type
-	{
-		Float,
-		Bool
-	};
-	Type m_Type;
-	String m_InputEvent;
-	Device m_Device;
-	DeviceButtonID m_ButtonID;
+	Device device;
+	DeviceButtonID button;
+	Event::Type inputEvent;
 };
+
+void to_json(JSON::json& j, const InputDescription& s);
+void from_json(const JSON::json& j, InputDescription& s);
+
+struct InputScheme
+{
+	Vector<InputDescription> bools;
+	Vector<InputDescription> floats;
+};
+
+void to_json(JSON::json& j, const InputScheme& s);
+void from_json(const JSON::json& j, InputScheme& s);
 
 /// Allows interfacing to game controlling hardware, including mouse, keyboard and XInput controllers.
 /// Allows detecting inputs through Event dispatch.
@@ -55,7 +61,7 @@ class InputManager
 	InputListener m_Listener;
 	bool m_IsEnabled;
 	HashMap<Device, unsigned int> DeviceIDs;
-	HashMap<String, Vector<InputButtonBindingData>> m_InputSchemes;
+	HashMap<String, InputScheme> m_InputSchemes;
 	String m_CurrentInputScheme;
 
 	HashMap<unsigned int, Event::Type> m_InputEventIDNames;
@@ -75,15 +81,21 @@ class InputManager
 	unsigned int getNextID();
 
 public:
-	static void RegisterAPI(sol::table& rootex);
-
 	static InputManager* GetSingleton();
+	static void SetEnabled(bool enabled) { GetSingleton()->setEnabled(enabled); };
+	static void MapBool(const Event::Type& action, Device device, DeviceButtonID button) { GetSingleton()->mapBool(action, device, button); };
+	static void MapFloat(const Event::Type& action, Device device, DeviceButtonID button) { GetSingleton()->mapBool(action, device, button); };
+	static bool IsPressed(const Event::Type& action) { return GetSingleton()->isPressed(action); };
+	static bool WasPressed(const Event::Type& action) { return GetSingleton()->wasPressed(action); };
+	static float GetFloat(const Event::Type& action) { return GetSingleton()->getFloat(action); };
+	static float GetFloatDelta(const Event::Type& action) { return GetSingleton()->getFloatDelta(action); };
+	static void Unmap(const Event::Type& action) { GetSingleton()->unmap(action); };
 
 	void initialize(unsigned int width, unsigned int height);
 
 	void setEnabled(bool enabled);
 
-	void loadSchemes(const JSON::json& inputSchemes);
+	void setSchemes(const HashMap<String, InputScheme>& inputSchemes);
 	void setScheme(const String& schemeName);
 
 	/// Bind an event to a button on a device.

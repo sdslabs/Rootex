@@ -14,8 +14,6 @@ class FontResourceFile : public ResourceFile
 	friend class ResourceLoader;
 
 public:
-	static void RegisterAPI(sol::table& rootex);
-
 	explicit FontResourceFile(const FontResourceFile&) = delete;
 	explicit FontResourceFile(const FontResourceFile&&) = delete;
 	~FontResourceFile() = default;

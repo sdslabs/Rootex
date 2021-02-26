@@ -9,13 +9,6 @@ RenderUIComponent::RenderUIComponent(bool isVisible)
 {
 }
 
-void RenderUIComponent::RegisterAPI(sol::table& rootex)
-{
-	sol::usertype<RenderUIComponent> renderUIComponent = rootex.new_usertype<RenderUIComponent>(
-	    "RenderUIComponent",
-	    sol::base_classes, sol::bases<Component>());
-}
-
 bool RenderUIComponent::preRender()
 {
 	RenderUISystem::GetSingleton()->pushUIMatrix(m_TransformComponent->getLocalTransform());

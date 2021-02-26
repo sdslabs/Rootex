@@ -39,25 +39,35 @@ bool DebugSystem::initialize(const JSON::json& systemData)
 	return true;
 }
 
-void DrawSceneTree(Scene* scene)
+void DebugSystem::drawSceneTree(Scene* scene)
 {
-	if (ImGui::TreeNodeEx(scene->getFullName().c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_CollapsingHeader))
+	ImGui::PushID(scene->getID());
+	if (ImGui::TreeNodeEx(scene->getFullName().c_str(), ImGuiTreeNodeFlags_CollapsingHeader))
 	{
-		if (Entity* entity = scene->getEntity())
+		if (m_IsEditing)
 		{
-			for (auto& [componentID, component] : entity->getAllComponents())
+			if (Entity* entity = scene->getEntity())
 			{
-				ImGui::Text(component->getName());
+				entity->draw();
+				for (auto& [componentID, component] : entity->getAllComponents())
+				{
+					if (ImGui::TreeNodeEx(component->getName()))
+					{
+						component->draw();
+						ImGui::TreePop();
+					}
+				}
 			}
 		}
 
 		ImGui::Indent();
 		for (auto& child : scene->getChildren())
 		{
-			DrawSceneTree(child.get());
+			drawSceneTree(child.get());
 		}
 		ImGui::Unindent();
 	}
+	ImGui::PopID();
 }
 
 void DebugSystem::update(float deltaMilliseconds)
@@ -67,7 +77,8 @@ void DebugSystem::update(float deltaMilliseconds)
 	ImGui::NewFrame();
 
 	ImGui::Begin("Debug Scene");
-	DrawSceneTree(SceneLoader::GetSingleton()->getRootScene());
+	ImGui::Checkbox("Enable Editing", &m_IsEditing);
+	drawSceneTree(SceneLoader::GetSingleton()->getRootScene());
 	ImGui::End();
 
 	ImGui::Render();

@@ -1,5 +1,7 @@
 #include "audio_component.h"
 
+#include "systems/render_system.h"
+
 AudioComponent::AudioComponent(bool playOnStart, bool isLooping, bool attenuation, AudioSource::AttenuationModel model, ALfloat rolloffFactor, ALfloat referenceDistance, ALfloat maxDistance)
     : m_IsPlayOnStart(playOnStart)
     , m_IsAttenuated(attenuation)
@@ -54,26 +56,35 @@ bool AudioComponent::isLooping()
 	return m_IsLooping;
 }
 
+void AudioComponent::setPlaying(bool enabled)
+{
+	if (enabled)
+	{
+		getAudioSource()->play();
+	}
+	else
+	{
+		getAudioSource()->stop();
+	}
+}
+
 void AudioComponent::setLooping(bool enabled)
 {
 	m_IsLooping = enabled;
 	m_AudioSource->setLooping(enabled);
 }
 
-#ifdef ROOTEX_EDITOR
-#include "imgui.h"
-#include "systems/render_system.h"
 void AudioComponent::draw()
 {
 	RenderSystem::GetSingleton()->submitSphere(m_TransformComponent->getAbsoluteTransform().Translation(), m_MaxDistance);
 
 	ImGui::Checkbox("Play On Start", &m_IsPlayOnStart);
-	ImGui::Checkbox("Attenuation", &m_IsAttenuated);
 	if (ImGui::Checkbox("Looping", &m_IsLooping))
 	{
 		setLooping(m_IsLooping);
 	}
 
+	ImGui::Checkbox("Attenuation", &m_IsAttenuated);
 	if (ImGui::BeginCombo("Attenutation Model", m_AttenuationModelName.c_str()))
 	{
 		if (ImGui::Selectable("Linear"))
@@ -113,5 +124,3 @@ void AudioComponent::draw()
 	ImGui::DragFloat("Rolloff Factor", &m_RolloffFactor, 1.0f, 0, 100.0f);
 	ImGui::DragFloat("Max Distance", &m_MaxDistance, 1.0f, 0, 100.0f);
 }
-
-#endif // ROOTEX_EDITOR

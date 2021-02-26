@@ -20,8 +20,6 @@ class CollisionModelResourceFile : public ResourceFile
 	friend class ResourceLoader;
 
 public:
-	static void RegisterAPI(sol::table& rootex);
-
 	explicit CollisionModelResourceFile(const CollisionModelResourceFile&) = delete;
 	explicit CollisionModelResourceFile(const CollisionModelResourceFile&&) = delete;
 	~CollisionModelResourceFile() = default;

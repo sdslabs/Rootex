@@ -60,9 +60,6 @@ ID3D11ShaderResourceView* SkyMaterial::getPreview()
 	return m_SkyImage->getTexture()->getTextureResourceView();
 }
 
-#ifdef ROOTEX_EDITOR
-#include "imgui.h"
-#include "utility/imgui_helpers.h"
 void SkyMaterial::draw()
 {
 	Material::draw();
@@ -73,4 +70,3 @@ void SkyMaterial::draw()
 		setSkyTexture(ResourceLoader::CreateImageCubeResourceFile("rootex/assets/sky.dds"));
 	}
 }
-#endif // ROOTEX_EDITOR

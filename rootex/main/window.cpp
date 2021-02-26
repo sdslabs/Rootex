@@ -143,7 +143,7 @@ LRESULT CALLBACK Window::WindowsProc(HWND windowHandler, UINT msg, WPARAM wParam
 	return DefWindowProc(windowHandler, msg, wParam, lParam);
 }
 
-Window::Window(int xOffset, int yOffset, int width, int height, const String& title, bool isEditor, bool fullScreen)
+Window::Window(int xOffset, int yOffset, int width, int height, const String& title, bool isEditor, bool fullScreen, const String& icon)
     : m_Width(width)
     , m_Height(height)
 {
@@ -156,17 +156,18 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
 	WNDCLASSEX windowClass = { 0 };
 	LPCSTR className = title.c_str();
 	HINSTANCE hInstance = GetModuleHandle(0);
+	HANDLE iconRes = LoadImage(0, icon.c_str(), IMAGE_ICON, 0, 0, LR_DEFAULTSIZE | LR_LOADFROMFILE);
 	windowClass.cbSize = sizeof(windowClass);
 	windowClass.style = CS_OWNDC;
 	windowClass.lpfnWndProc = WindowsProc;
 	windowClass.cbWndExtra = 0;
 	windowClass.cbClsExtra = 0;
 	windowClass.hInstance = hInstance;
-	windowClass.hIcon = nullptr;
+	windowClass.hIcon = (HICON)iconRes;
+	windowClass.hIconSm = (HICON)iconRes;
 	windowClass.hCursor = nullptr;
 	windowClass.hbrBackground = nullptr;
 	windowClass.lpszClassName = className;
-	windowClass.hIconSm = nullptr;
 	RegisterClassEx(&windowClass);
 	m_IsEditorWindow = isEditor;
 

@@ -49,11 +49,6 @@ void ECSFactory::DeregisterComponentInstance(Component* component)
 	}
 }
 
-void ECSFactory::RegisterAPI(sol::table& rootex)
-{
-	sol::usertype<ECSFactory> ecsFactory = rootex.new_usertype<ECSFactory>("ECSFactory");
-}
-
 bool ECSFactory::AddComponent(Entity* entity, Ptr<Component>& component)
 {
 	if (entity->m_Components.find(component->getComponentID()) == entity->m_Components.end())
@@ -195,7 +190,7 @@ Ptr<Entity> ECSFactory::CreateRootEntity(Scene* scene)
 	{
 		Ptr<Component>& model = CreateDefaultComponent("ModelComponent");
 		ModelComponent* rootModelComponent = dynamic_cast<ModelComponent*>(model.get());
-		rootModelComponent->setIsVisible(false);
+		rootModelComponent->setVisibility(false);
 		AddComponent(root.get(), model);
 	}
 	{

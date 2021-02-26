@@ -6,13 +6,6 @@ ImageResourceFile::ImageResourceFile(const FilePath& path)
 	reimport();
 }
 
-void ImageResourceFile::RegisterAPI(sol::table& rootex)
-{
-	sol::usertype<ImageResourceFile> imageResourceFile = rootex.new_usertype<ImageResourceFile>(
-	    "ImageResourceFile",
-	    sol::base_classes, sol::bases<ResourceFile>());
-}
-
 void ImageResourceFile::reimport()
 {
 	ResourceFile::reimport();

@@ -1,13 +1,20 @@
-function onBegin(entity)
+EmptyScript = class("EmptyScript")
+
+function EmptyScript:initialize(entity)
+    self.exports = {
+        variable = "Hello Rootex!"
+    }
+end
+
+function EmptyScript:begin(entity)
     print("Nothing is true")
 end
 
-function onUpdate(entity, delta)
+function EmptyScript:update(entity, delta)
 end
 
-function onHit(entity, hit, other)
-end
-
-function onEnd(entity)
+function EmptyScript:destroy(entity)
     print("Everything is permitted")
 end
+
+return EmptyScript

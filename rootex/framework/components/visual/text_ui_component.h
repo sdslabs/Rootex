@@ -37,7 +37,6 @@ public:
 	friend class ECSFactory;
 
 public:
-	static void RegisterAPI(sol::table& rootex);
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::TextUIComponent;
 
 	virtual void render() override;
@@ -49,7 +48,5 @@ public:
 	void setFont(FontResourceFile* fontFile) { m_FontFile = fontFile; }
 	void setText(const String& text) { m_Text = text; }
 
-#ifdef ROOTEX_EDITOR
 	virtual void draw() override;
-#endif
 };

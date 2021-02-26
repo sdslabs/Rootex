@@ -37,18 +37,34 @@ class PhysicsColliderComponent : public Component, public btMotionState
 	bool m_IsMoveable;
 	bool m_IsGeneratesHitEvents;
 	bool m_IsKinematic;
+	bool m_IsSleepable;
+	bool m_IsCCD;
 	unsigned int m_CollisionGroup;
 	unsigned int m_CollisionMask;
 	PhysicsMaterial m_Material;
 
 	btVector3 m_LocalInertia;
 
-	PhysicsColliderComponent(const PhysicsMaterial& material, float volume, const Vector3& gravity, const Vector3& angularFactor, int collisionGroup, int collisionMask, bool isMoveable, bool isKinematic, bool generatesHitEvents, const Ref<btCollisionShape>& collisionShape);
+	void getWorldTransform(btTransform& worldTrans) const override;
+	void setWorldTransform(const btTransform& worldTrans) override;
+
+	PhysicsColliderComponent(
+	    const PhysicsMaterial& material,
+	    float volume,
+	    const Vector3& gravity,
+	    const Vector3& angularFactor,
+	    int collisionGroup,
+	    int collisionMask,
+	    bool isMoveable,
+	    bool isKinematic,
+	    bool generatesHitEvents,
+	    bool canSleep,
+	    bool isCCD,
+	    const Ref<btCollisionShape>& collisionShape);
 
 	friend class ECSFactory;
 
 public:
-	static void RegisterAPI(sol::table& rootex);
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::PhysicsColliderComponent;
 
 	~PhysicsColliderComponent() = default;
@@ -57,9 +73,6 @@ public:
 
 	bool setupData() override;
 	void onRemove() override;
-
-	virtual void getWorldTransform(btTransform& worldTrans) const;
-	virtual void setWorldTransform(const btTransform& worldTrans);
 
 	void applyForce(const Vector3& force);
 	void applyTorque(const Vector3& torque);
@@ -87,6 +100,12 @@ public:
 	bool isMoveable() { return m_IsMoveable; }
 	void setMoveable(bool enabled);
 
+	bool canSleep() { return m_IsSleepable; }
+	void setSleepable(bool enabled);
+
+	bool isCCD() { return m_IsCCD; }
+	void setCCD(bool enabled);
+
 	bool isGeneratesHitEvents() { return m_IsGeneratesHitEvents; }
 	void setGeneratedHitEvents(bool enabled) { m_IsGeneratesHitEvents = enabled; }
 
@@ -98,8 +117,6 @@ public:
 	virtual const char* getName() const override { return "PhysicsColliderComponent"; };
 	virtual JSON::json getJSON() const override;
 
-#ifdef ROOTEX_EDITOR
 	virtual void draw() override;
 	void displayCollisionLayers(unsigned int& collision);
-#endif // ROOTEX_EDITOR
 };

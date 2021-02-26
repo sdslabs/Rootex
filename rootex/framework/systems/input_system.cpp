@@ -21,9 +21,9 @@ InputSystem* InputSystem::GetSingleton()
 	return &singleton;
 }
 
-void InputSystem::loadSchemes(const JSON::json& schemes)
+void InputSystem::loadSchemes(const HashMap<String, InputScheme>& schemes)
 {
-	InputManager::GetSingleton()->loadSchemes(schemes);
+	InputManager::GetSingleton()->setSchemes(schemes);
 }
 
 void InputSystem::setScheme(const String& scheme)

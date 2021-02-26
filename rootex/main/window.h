@@ -27,7 +27,7 @@ protected:
 	Variant windowResized(const Event* event);
 
 public:
-	Window(int xOffset, int yOffset, int width, int height, const String& title, bool isEditor, bool fullScreen);
+	Window(int xOffset, int yOffset, int width, int height, const String& title, bool isEditor, bool fullScreen, const String& icon);
 	Window(const Window&) = delete;
 	Window& operator=(const Window&) = delete;
 	~Window() = default;

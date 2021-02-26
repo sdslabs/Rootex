@@ -85,8 +85,4 @@ public:
 	ImColor getFatalColor() const { return ColorToImColor((Color)ColorPresets::IndianRed); }
 	ImColor getSuccessColor() const { return ColorToImColor((Color)ColorPresets::LimeGreen); }
 	ImColor getNormalColor() const { return ColorToImColor((Color)ColorPresets::White); }
-
-#ifdef ROOTEX_EDITOR
-	void draw() override;
-#endif // ROOTEX_EDITOR
 };

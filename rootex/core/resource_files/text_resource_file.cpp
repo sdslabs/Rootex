@@ -6,14 +6,6 @@ TextResourceFile::TextResourceFile(const FilePath& path)
 	reimport();
 }
 
-void TextResourceFile::RegisterAPI(sol::table& rootex)
-{
-	sol::usertype<TextResourceFile> textResourceFile = rootex.new_usertype<TextResourceFile>(
-	    "TextResourceFile",
-	    sol::base_classes, sol::bases<ResourceFile>());
-	textResourceFile["getString"] = &TextResourceFile::getString;
-}
-
 void TextResourceFile::reimport()
 {
 	ResourceFile::reimport();

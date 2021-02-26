@@ -12,12 +12,37 @@ Component* BoxColliderComponent::Create(const JSON::json& boxComponentData)
 	    boxComponentData.value("collisionMask", (int)CollisionMask::All),
 	    boxComponentData.value("isMoveable", false),
 	    boxComponentData.value("isKinematic", false),
-	    boxComponentData.value("isGeneratesHitEvents", false));
+	    boxComponentData.value("isGeneratesHitEvents", false),
+	    boxComponentData.value("isSleepable", true),
+	    boxComponentData.value("isCCD", false));
 	return component;
 }
 
-BoxColliderComponent::BoxColliderComponent(const Vector3& dimensions, const PhysicsMaterial& material, const Vector3& angularFactor, const Vector3& gravity, int collisionGroup, int collisionMask, bool isMoveable, bool isKinematic, bool generatesHitEvents)
-    : PhysicsColliderComponent(material, dimensions.x * dimensions.y * dimensions.z, gravity, angularFactor, collisionGroup, collisionMask, isMoveable, isKinematic, generatesHitEvents, Ref<btBoxShape>(new btBoxShape(VecTobtVector3(dimensions))))
+BoxColliderComponent::BoxColliderComponent(
+    const Vector3& dimensions,
+    const PhysicsMaterial& material,
+    const Vector3& angularFactor,
+    const Vector3& gravity,
+    int collisionGroup,
+    int collisionMask,
+    bool isMoveable,
+    bool isKinematic,
+    bool generatesHitEvents,
+    bool isSleepable,
+    bool isCCD)
+    : PhysicsColliderComponent(
+        material,
+        dimensions.x * dimensions.y * dimensions.z,
+        gravity,
+        angularFactor,
+        collisionGroup,
+        collisionMask,
+        isMoveable,
+        isKinematic,
+        generatesHitEvents,
+        isSleepable,
+        isCCD,
+        Ref<btBoxShape>(new btBoxShape(VecTobtVector3(dimensions))))
     , m_Dimensions(dimensions)
 {
 	m_BoxShape = std::dynamic_pointer_cast<btBoxShape>(m_CollisionShape);
@@ -35,11 +60,11 @@ JSON::json BoxColliderComponent::getJSON() const
 void BoxColliderComponent::setDimensions(const Vector3& dimensions)
 {
 	m_Dimensions = dimensions;
-	m_BoxShape->setImplicitShapeDimensions(VecTobtVector3(dimensions));
+	m_BoxShape.reset(new btBoxShape(VecTobtVector3(dimensions)));
+	m_CollisionShape = m_BoxShape;
+	setupData();
 }
 
-#ifdef ROOTEX_EDITOR
-#include "imgui.h"
 void BoxColliderComponent::draw()
 {
 	PhysicsColliderComponent::draw();
@@ -55,4 +80,3 @@ void BoxColliderComponent::draw()
 		setDimensions(m_Dimensions);
 	}
 }
-#endif // ROOTEX_EDITOR

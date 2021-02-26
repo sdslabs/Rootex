@@ -192,8 +192,6 @@ JSON::json TransformAnimationComponent::getJSON() const
 	return j;
 }
 
-#ifdef ROOTEX_EDITOR
-#include "imgui.h"
 void TransformAnimationComponent::draw()
 {
 	ImGui::Combo("Transition Type", (int*)&m_TransitionType, "SmashSmash\0EaseEase\0SmashEase\0EaseSmash\0");
@@ -272,4 +270,3 @@ void TransformAnimationComponent::draw()
 		jumpingOn->transform = m_TransformComponent->getLocalTransform();
 	}
 }
-#endif // ROOTEX_EDITOR
