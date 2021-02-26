@@ -32,7 +32,5 @@ public:
 	virtual const char* getName() const override { return "ShortMusicComponent"; };
 	virtual JSON::json getJSON() const override;
 
-#ifdef ROOTEX_EDITOR
 	void draw() override;
-#endif // ROOTEX_EDITOR
 };

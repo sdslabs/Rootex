@@ -14,13 +14,6 @@ ModelResourceFile::ModelResourceFile(const FilePath& path)
 	reimport();
 }
 
-void ModelResourceFile::RegisterAPI(sol::table& rootex)
-{
-	sol::usertype<ModelResourceFile> modelResourceFile = rootex.new_usertype<ModelResourceFile>(
-	    "ModelResourceFile",
-	    sol::base_classes, sol::bases<ResourceFile>());
-}
-
 void ModelResourceFile::reimport()
 {
 	ResourceFile::reimport();
@@ -117,7 +110,7 @@ void ModelResourceFile::reimport()
 			materialPath = "game/assets/materials/" + String(material->GetName().C_Str()) + ".rmat";
 		}
 
-		if (MaterialLibrary::IsExists(materialPath))
+		if (OS::IsExists(materialPath))
 		{
 			extractedMaterial = std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetMaterial(materialPath));
 		}

@@ -117,14 +117,17 @@ void InspectorDock::drawSceneActions(Scene* scene)
 
 		if (ImGui::Selectable("Copy Scene"))
 		{
-			if (Ptr<Scene>& copiedScene = Scene::Create(m_ActionScene->getJSON()))
-			{
-				m_ActionScene->getParent()->addChild(copiedScene);
-			}
-			else
-			{
-				WARN("Could not copy from selected scene");
-			}
+			Scene* actionScenePtr = m_ActionScene;
+			EventManager::GetSingleton()->defer([=]() {
+				if (Ptr<Scene>& copiedScene = Scene::Create(actionScenePtr->getJSON()))
+				{
+					actionScenePtr->getParent()->addChild(copiedScene);
+				}
+				else
+				{
+					WARN("Could not copy from selected scene");
+				}
+			});
 		}
 		if (ImGui::Selectable("Delete Scene"))
 		{

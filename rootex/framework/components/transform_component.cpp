@@ -4,6 +4,7 @@
 #include <math.h>
 
 #include "entity.h"
+#include "systems/render_system.h"
 
 Component* TransformComponent::Create(const JSON::json& componentData)
 {
@@ -28,7 +29,7 @@ void TransformComponent::updatePositionRotationScaleFromTransform(Matrix& transf
 	transform.Decompose(m_TransformBuffer.m_Scale, m_TransformBuffer.m_Rotation, m_TransformBuffer.m_Position);
 }
 
-TransformComponent::TransformComponent(const Vector3& position, const Vector4& rotation, const Vector3& scale, const BoundingBox& bounds)
+TransformComponent::TransformComponent(const Vector3& position, const Quaternion& rotation, const Vector3& scale, const BoundingBox& bounds)
 {
 	m_TransformBuffer.m_Position = position;
 	m_TransformBuffer.m_Rotation = rotation;
@@ -36,31 +37,6 @@ TransformComponent::TransformComponent(const Vector3& position, const Vector4& r
 	m_TransformBuffer.m_BoundingBox = bounds;
 
 	updateTransformFromPositionRotationScale();
-
-#ifdef ROOTEX_EDITOR
-	m_EditorRotation = { 0.0f, 0.0f, 0.0f };
-#endif // ROOTEX_EDITOR
-}
-
-void TransformComponent::RegisterAPI(sol::table& rootex)
-{
-	sol::usertype<TransformComponent> transformComponent = rootex.new_usertype<TransformComponent>(
-	    "TransformComponent",
-	    sol::base_classes, sol::bases<Component>());
-
-	rootex["Entity"]["getTransform"] = &Entity::getComponent<TransformComponent>;
-	transformComponent["setPosition"] = &TransformComponent::setPosition;
-	transformComponent["setRotation"] = &TransformComponent::setRotation;
-	transformComponent["setScale"] = &TransformComponent::setScale;
-	transformComponent["setTransform"] = &TransformComponent::setTransform;
-	transformComponent["addTransform"] = &TransformComponent::addTransform;
-	transformComponent["getPosition"] = &TransformComponent::getPosition;
-	transformComponent["getRotation"] = &TransformComponent::getRotation;
-	transformComponent["getScale"] = &TransformComponent::getScale;
-	transformComponent["getLocalTransform"] = &TransformComponent::getLocalTransform;
-	transformComponent["getParentAbsoluteTransform"] = &TransformComponent::getParentAbsoluteTransform;
-	transformComponent["getComponentID"] = &TransformComponent::getComponentID;
-	transformComponent["getName"] = &TransformComponent::getName;
 }
 
 void TransformComponent::setPosition(const Vector3& position)
@@ -93,6 +69,11 @@ void TransformComponent::setTransform(const Matrix& transform)
 	updatePositionRotationScaleFromTransform(m_TransformBuffer.m_Transform);
 }
 
+void TransformComponent::setAbsoluteTransform(const Matrix& transform)
+{
+	setTransform(transform * m_ParentAbsoluteTransform.Invert());
+}
+
 void TransformComponent::setBounds(const BoundingBox& bounds)
 {
 	m_TransformBuffer.m_BoundingBox = bounds;
@@ -101,6 +82,12 @@ void TransformComponent::setBounds(const BoundingBox& bounds)
 void TransformComponent::setRotationPosition(const Matrix& transform)
 {
 	m_TransformBuffer.m_Transform = Matrix::CreateScale(m_TransformBuffer.m_Scale) * transform;
+	updatePositionRotationScaleFromTransform(m_TransformBuffer.m_Transform);
+}
+
+void TransformComponent::setAbsoluteRotationPosition(const Matrix& transform)
+{
+	setAbsoluteTransform(Matrix::CreateScale(m_TransformBuffer.m_Scale) * transform);
 	updatePositionRotationScaleFromTransform(m_TransformBuffer.m_Transform);
 }
 
@@ -139,29 +126,23 @@ JSON::json TransformComponent::getJSON() const
 	return j;
 }
 
-#ifdef ROOTEX_EDITOR
-#include "imgui.h"
-#include "systems/render_system.h"
 void TransformComponent::draw()
 {
 	highlight();
 
-	ImGui::DragFloat3("##Position", &m_TransformBuffer.m_Position.x, s_EditorDecimalSpeed);
+	ImGui::DragFloat3("##Position", &m_TransformBuffer.m_Position.x, 0.01f);
 	ImGui::SameLine();
 	if (ImGui::Button("Position"))
 	{
 		m_TransformBuffer.m_Position = { 0.0f, 0.0f, 0.0f };
 	}
 
-	if (ImGui::DragFloat3("##Rotation", &m_EditorRotation.x, s_EditorDecimalSpeed))
-	{
-		m_TransformBuffer.m_Rotation = Quaternion::CreateFromYawPitchRoll(m_EditorRotation.x, m_EditorRotation.y, m_EditorRotation.z);
-	}
+	ImGui::DragFloat4("##Rotation", &m_TransformBuffer.m_Rotation.x, 0.01f);
+
 	ImGui::SameLine();
 	if (ImGui::Button("Rotation"))
 	{
-		m_EditorRotation = { 0.0f, 0.0f, 0.0f };
-		m_TransformBuffer.m_Rotation = Quaternion::CreateFromYawPitchRoll(m_EditorRotation.x, m_EditorRotation.y, m_EditorRotation.z);
+		setRotation(0.0f, 0.0f, 0.0f);
 	}
 
 	static bool lockedFirstFrame = false;
@@ -195,12 +176,12 @@ void TransformComponent::draw()
 		}
 
 		m_TransformBuffer.m_Scale = { lockedScale.x, lockedScale.y, lockedScale.z };
-		ImGui::DragFloat3("##Scale", &lockedScale.x, s_EditorDecimalSpeed, 0.0f, 0.0f);
+		ImGui::DragFloat3("##Scale", &lockedScale.x, 0.01f, 0.0f, 0.0f);
 	}
 	else
 	{
 		lockedFirstFrame = false;
-		ImGui::DragFloat3("##Scale", &m_TransformBuffer.m_Scale.x, s_EditorDecimalSpeed, 0.0f, 0.0f);
+		ImGui::DragFloat3("##Scale", &m_TransformBuffer.m_Scale.x, 0.01f, 0.0f, 0.0f);
 	}
 
 	ImGui::SameLine();
@@ -211,14 +192,14 @@ void TransformComponent::draw()
 
 	ImGui::Checkbox("Lock Scale", &m_LockScale);
 
-	ImGui::DragFloat3("##Center", &m_TransformBuffer.m_BoundingBox.Center.x, s_EditorDecimalSpeed);
+	ImGui::DragFloat3("##Center", &m_TransformBuffer.m_BoundingBox.Center.x, 0.01f);
 	ImGui::SameLine();
 	if (ImGui::Button("Center"))
 	{
 		m_TransformBuffer.m_BoundingBox.Center = { 0.0f, 0.0f, 0.0f };
 	}
 
-	ImGui::DragFloat3("##Bounds", &m_TransformBuffer.m_BoundingBox.Extents.x, s_EditorDecimalSpeed);
+	ImGui::DragFloat3("##Bounds", &m_TransformBuffer.m_BoundingBox.Extents.x, 0.01f);
 	ImGui::SameLine();
 	if (ImGui::Button("Extents"))
 	{
@@ -238,4 +219,3 @@ void TransformComponent::highlight()
 	getAbsoluteTransform().Forward().Normalize(forward);
 	RenderSystem::GetSingleton()->submitLine(transformedBox.Center, transformedBox.Center + (transformedBox.Extents.z * 2.0f) * forward);
 }
-#endif // ROOTEX_EDITOR

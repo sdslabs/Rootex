@@ -54,7 +54,5 @@ public:
 
 	void setActive(bool enabled);
 
-#ifdef ROOTEX_EDITOR
 	virtual void draw();
-#endif
 };

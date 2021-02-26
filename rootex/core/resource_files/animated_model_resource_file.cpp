@@ -14,13 +14,6 @@ AnimatedModelResourceFile::AnimatedModelResourceFile(const FilePath& path)
 	reimport();
 }
 
-void AnimatedModelResourceFile::RegisterAPI(sol::table& rootex)
-{
-	sol::usertype<AnimatedModelResourceFile> animatedModelResourceFile = rootex.new_usertype<AnimatedModelResourceFile>(
-	    "AnimatedModelResourceFile",
-	    sol::base_classes, sol::bases<ResourceFile>());
-}
-
 Matrix AnimatedModelResourceFile::AiMatrixToMatrix(const aiMatrix4x4& aiMatrix)
 {
 	return Matrix(
@@ -202,7 +195,7 @@ void AnimatedModelResourceFile::reimport()
 			materialPath = "game/assets/materials/" + String(material->GetName().C_Str()) + ".rmat";
 		}
 
-		if (MaterialLibrary::IsExists(materialPath))
+		if (OS::IsExists(materialPath))
 		{
 			extractedMaterial = std::dynamic_pointer_cast<AnimatedMaterial>(MaterialLibrary::GetMaterial(materialPath));
 			if (!extractedMaterial)

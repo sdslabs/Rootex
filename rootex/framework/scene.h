@@ -2,6 +2,7 @@
 
 #include "common/common.h"
 #include "entity.h"
+#include "core/input/input_manager.h"
 
 typedef unsigned int SceneID;
 
@@ -12,13 +13,12 @@ struct SceneSettings
 	Vector<String> preloads = {};
 	SceneID camera = ROOT_SCENE_ID;
 	SceneID listener = ROOT_SCENE_ID;
-	JSON::json inputSchemes = {};
+	HashMap<String, InputScheme> inputSchemes;
 	String startScheme = {};
 
-#ifdef ROOTEX_EDITOR
 	void drawSceneSelectables(Scene* scene, SceneID& toSet);
+	void drawInputScheme(InputDescription& floatInput);
 	void draw();
-#endif // ROOTEX_EDITOR
 };
 
 void to_json(JSON::json& j, const SceneSettings& s);
@@ -41,8 +41,7 @@ class Scene
 	bool checkCycle(Scene* child);
 
 public:
-	static void RegisterAPI(sol::table& rootex);
-	static void ResetCounter();
+	static void ResetNextID();
 
 	static Ptr<Scene> Create(const JSON::json& sceneData);
 	static Ptr<Scene> CreateFromFile(const String& sceneFile);

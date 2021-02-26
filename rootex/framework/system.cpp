@@ -52,8 +52,6 @@ void System::setActive(bool enabled)
 	m_IsActive = enabled;
 }
 
-#ifdef ROOTEX_EDITOR
-#include "imgui.h"
 void System::draw()
 {
 	ImGui::Columns(2);
@@ -65,4 +63,3 @@ void System::draw()
 
 	ImGui::Columns(1);
 }
-#endif // ROOTEX_EDITOR

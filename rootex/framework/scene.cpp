@@ -4,7 +4,7 @@
 #include "resource_loader.h"
 #include "scene_loader.h"
 
-static int CurrentSceneCount = ROOT_SCENE_ID + 1;
+static SceneID NextSceneID = ROOT_SCENE_ID + 1;
 Vector<Scene*> Scene::s_Scenes;
 
 void to_json(JSON::json& j, const SceneSettings& s)
@@ -21,41 +21,33 @@ void from_json(const JSON::json& j, SceneSettings& s)
 	s.preloads = (Vector<String>)j.value("preloads", Vector<String>());
 	s.camera = j.value("camera", ROOT_SCENE_ID);
 	s.listener = j.value("listener", ROOT_SCENE_ID);
-	s.inputSchemes = j.value("inputSchemes", JSON::json::object());
+	if (j["inputSchemes"].is_null())
+	{
+		s.inputSchemes = {};
+	}
+	else
+	{
+		s.inputSchemes = j.value("inputSchemes", HashMap<String, InputScheme>());
+	}
 	s.startScheme = j.value("startScheme", String());
 }
 
-void Scene::ResetCounter()
+void Scene::ResetNextID()
 {
-	CurrentSceneCount = ROOT_SCENE_ID + 1;
-}
-
-void Scene::RegisterAPI(sol::table& rootex)
-{
-	sol::usertype<Scene> scene = rootex.new_usertype<Scene>("Scene");
-	scene["CreateEmpty"] = &CreateEmpty;
-	scene["CreateEmptyWithEntity"] = &CreateEmptyWithEntity;
-	scene["CreateFromFile"] = &CreateFromFile;
-	scene["FindScenesByName"] = &FindScenesByName;
-	scene["addChild"] = &addChild;
-	scene["removeChild"] = &removeChild;
-	scene["snatchChild"] = &snatchChild;
-	scene["setName"] = &setName;
-	scene["setEntity"] = &setEntity;
-	scene["getID"] = &getID;
-	scene["getParent"] = &getParent;
-	scene["getChildren"] = &getChildren;
-	scene["getEntity"] = &getEntity;
-	scene["getName"] = &getName;
-	scene["getFullName"] = &getFullName;
+	NextSceneID = ROOT_SCENE_ID + 1;
 }
 
 Ptr<Scene> Scene::Create(const JSON::json& sceneData)
 {
-	CurrentSceneCount = CurrentSceneCount > sceneData.value("ID", CurrentSceneCount) ? CurrentSceneCount : sceneData.value("ID", CurrentSceneCount);
-	Ptr<Scene> thisScene(std::make_unique<Scene>(CurrentSceneCount, sceneData.value("name", String("Untitled")), sceneData.value("file", String()), sceneData.value("settings", SceneSettings())));
+	if (sceneData.contains("ID"))
+	{
+		NextSceneID = std::max(NextSceneID, (SceneID)sceneData["ID"]);
+	}
+	SceneID thisSceneID = NextSceneID;
+	NextSceneID++;
+
+	Ptr<Scene> thisScene(std::make_unique<Scene>(thisSceneID, sceneData.value("name", String("Untitled")), sceneData.value("file", String()), sceneData.value("settings", SceneSettings())));
 	s_Scenes.push_back(thisScene.get());
-	CurrentSceneCount++;
 
 	if (sceneData.contains("entity"))
 	{
@@ -310,11 +302,6 @@ Scene::~Scene()
 	PRINT("Deleted scene: " + getFullName());
 }
 
-#ifdef ROOTEX_EDITOR
-#include "imgui.h"
-#include "imgui_stdlib.h"
-#include "scene_loader.h"
-
 void SceneSettings::drawSceneSelectables(Scene* scene, SceneID& toSet)
 {
 	if (ImGui::Selectable(scene->getFullName().c_str()))
@@ -349,28 +336,159 @@ void SceneSettings::draw()
 			preloads.pop_back();
 		}
 	}
-	if (ImGui::BeginCombo("Camera", SceneLoader::GetSingleton()->getRootScene()->findScene(camera)->getFullName().c_str()))
+
+	Scene* cameraScene = SceneLoader::GetSingleton()->getRootScene()->findScene(camera);
+	if (!cameraScene)
+	{
+		cameraScene = SceneLoader::GetSingleton()->getRootScene();
+	}
+	if (ImGui::BeginCombo("Camera", cameraScene->getFullName().c_str()))
 	{
 		drawSceneSelectables(SceneLoader::GetSingleton()->getRootScene(), camera);
 		ImGui::EndCombo();
 	}
-	if (ImGui::BeginCombo("Listener", SceneLoader::GetSingleton()->getRootScene()->findScene(listener)->getFullName().c_str()))
+
+	Scene* listenerScene = SceneLoader::GetSingleton()->getRootScene()->findScene(listener);
+	if (!listenerScene)
+	{
+		listenerScene = SceneLoader::GetSingleton()->getRootScene();
+	}
+	if (ImGui::BeginCombo("Listener", listenerScene->getFullName().c_str()))
 	{
 		drawSceneSelectables(SceneLoader::GetSingleton()->getRootScene(), listener);
 		ImGui::EndCombo();
 	}
-	String schemes = inputSchemes.dump(4);
-	if (ImGui::InputTextMultiline("Input Schemes", &schemes))
+
+	if (ImGui::BeginCombo("Start Scheme", startScheme.c_str()))
 	{
-		try
+		for (auto& [name, inputScheme] : inputSchemes)
 		{
-			inputSchemes = JSON::json::parse(schemes);
+			if (ImGui::MenuItem(name.c_str()))
+			{
+				startScheme = name;
+			}
 		}
-		catch (std::exception e)
-		{
-			PRINT(e.what());
-		}
+
+		ImGui::EndCombo();
 	}
-	ImGui::InputText("Start Scheme", &startScheme);
+
+	ImGui::Text("Input Schemes");
+	i = 0;
+	const String* inputSchemeToRemove = nullptr;
+	for (auto& [name, inputScheme] : inputSchemes)
+	{
+		ImGui::PushID(i);
+
+		ImGui::SetNextItemWidth(ImGui::GetFontSize() * 100);
+		if (ImGui::ListBoxHeader(name.c_str()))
+		{
+			int boolDeletion = -1;
+			for (int p = 0; p < inputScheme.bools.size(); p++)
+			{
+				InputDescription& boolInput = inputScheme.bools[p];
+				ImGui::PushID(i);
+
+				if (ImGui::SmallButton("x"))
+				{
+					boolDeletion = p;
+				}
+				ImGui::SameLine();
+
+				drawInputScheme(boolInput);
+
+				ImGui::PopID();
+				i++;
+			}
+			int floatDeletion = -1;
+			for (int p = 0; p < inputScheme.floats.size(); p++)
+			{
+				InputDescription& floatInput = inputScheme.floats[p];
+				ImGui::PushID(i);
+
+				if (ImGui::SmallButton("x"))
+				{
+					floatDeletion = p;
+				}
+				ImGui::SameLine();
+
+				drawInputScheme(floatInput);
+
+				ImGui::PopID();
+				i++;
+			}
+
+			if (boolDeletion != -1)
+			{
+				inputScheme.bools.erase(inputScheme.bools.begin() + boolDeletion);
+			}
+			if (floatDeletion != -1)
+			{
+				inputScheme.floats.erase(inputScheme.floats.begin() + floatDeletion);
+			}
+
+			ImGui::ListBoxFooter();
+		}
+		if (ImGui::Button("Remove Scheme"))
+		{
+			inputSchemeToRemove = &name;
+		}
+
+		static int type = 0;
+		ImGui::Combo("Type", &type, "Bool\0Float\0");
+		ImGui::SameLine();
+		if (ImGui::Button("Add Input"))
+		{
+			InputDescription inputDesc;
+			inputDesc.device = Device::Mouse;
+			inputDesc.button = MouseButton::MouseButtonLeft;
+			inputDesc.inputEvent = "GameBoolEvent";
+
+			if (type == 0)
+			{
+				inputScheme.bools.push_back(inputDesc);
+			}
+			else if (type == 1)
+			{
+				inputScheme.floats.push_back(inputDesc);
+			}
+		}
+
+		ImGui::PopID();
+		i++;
+	}
+
+	if (inputSchemeToRemove)
+	{
+		inputSchemes.erase(*inputSchemeToRemove);
+	}
+
+	ImGui::Separator();
+
+	static String newSchemeName = "New Scheme";
+	ImGui::InputText("##New Scheme", &newSchemeName);
+	ImGui::SameLine();
+	if (ImGui::Button("Add Scheme"))
+	{
+		inputSchemes.insert({ newSchemeName, InputScheme() });
+	}
 }
-#endif // ROOTEX_EDITOR
+
+void SceneSettings::drawInputScheme(InputDescription& inputDesc)
+{
+	int device = (int)inputDesc.device;
+	ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth() / 3.0f);
+	if (ImGui::Combo("##device", &device, "Mouse\0Keyboard\0Pad1\0Pad2\0"))
+	{
+		inputDesc.device = (Device)device;
+	}
+	ImGui::SameLine();
+	int button = inputDesc.button;
+	ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth() / 3.0f);
+	if (ImGui::InputInt("##button", &button))
+	{
+		inputDesc.button = (DeviceButtonID)button;
+	}
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth() / 3.0f);
+	ImGui::InputTextWithHint("##event", "Event", &inputDesc.inputEvent);
+}

@@ -8,13 +8,6 @@ FontResourceFile::FontResourceFile(const FilePath& path)
 	reimport();
 }
 
-void FontResourceFile::RegisterAPI(sol::table& rootex)
-{
-	sol::usertype<FontResourceFile> fontResourceFile = rootex.new_usertype<FontResourceFile>(
-	    "FontResourceFile",
-	    sol::base_classes, sol::bases<ResourceFile>());
-}
-
 void FontResourceFile::reimport()
 {
 	ResourceFile::reimport();

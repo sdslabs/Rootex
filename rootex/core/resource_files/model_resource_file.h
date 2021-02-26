@@ -15,8 +15,6 @@ class ModelResourceFile : public ResourceFile
 	friend class ResourceLoader;
 
 public:
-	static void RegisterAPI(sol::table& rootex);
-
 	explicit ModelResourceFile(const ModelResourceFile&) = delete;
 	explicit ModelResourceFile(const ModelResourceFile&&) = delete;
 	~ModelResourceFile() = default;

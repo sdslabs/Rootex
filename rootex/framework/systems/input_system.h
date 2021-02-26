@@ -16,7 +16,7 @@ class InputSystem : public System
 public:
 	static InputSystem* GetSingleton();
 
-	void loadSchemes(const JSON::json& schemes);
+	void loadSchemes(const HashMap<String, InputScheme>& schemes);
 	void setScheme(const String& scheme);
 	void setSchemeLock(bool enabled);
 

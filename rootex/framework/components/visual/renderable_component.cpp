@@ -14,13 +14,6 @@ RenderableComponent::RenderableComponent(unsigned int renderPass, const HashMap<
 {
 }
 
-void RenderableComponent::RegisterAPI(sol::table& rootex)
-{
-	sol::usertype<RenderableComponent> renderableComponent = rootex.new_usertype<RenderableComponent>(
-	    "RenderableComponent",
-	    sol::base_classes, sol::bases<Component>());
-}
-
 bool RenderableComponent::setupData()
 {
 	return true;
@@ -118,7 +111,7 @@ bool RenderableComponent::isVisible() const
 	return m_IsVisible;
 }
 
-void RenderableComponent::setIsVisible(bool enabled)
+void RenderableComponent::setVisibility(bool enabled)
 {
 	m_IsVisible = enabled;
 }
@@ -145,8 +138,6 @@ JSON::json RenderableComponent::getJSON() const
 	return j;
 }
 
-#ifdef ROOTEX_EDITOR
-#include "imgui_helpers.h"
 void RenderableComponent::draw()
 {
 	int renderPassUI = log2(m_RenderPass);
@@ -245,4 +236,3 @@ void RenderableComponent::draw()
 		ImGui::TreePop();
 	}
 }
-#endif // ROOTEX_EDITOR

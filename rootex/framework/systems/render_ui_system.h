@@ -19,8 +19,4 @@ public:
 	void popUIMatrix();
 
 	Matrix getTopUIMatrix();
-
-#ifdef ROOTEX_EDITOR
-	void draw() override;
-#endif // ROOTEX_EDITOR
 };

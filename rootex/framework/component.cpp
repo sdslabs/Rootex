@@ -60,9 +60,7 @@ JSON::json Component::getJSON() const
 	return {};
 }
 
-#ifdef ROOTEX_EDITOR
 void Component::draw()
 {
 	ImGui::Text("Component data not available");
 }
-#endif // ROOTEX_EDITOR

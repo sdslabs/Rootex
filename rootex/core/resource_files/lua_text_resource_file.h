@@ -10,8 +10,6 @@ class LuaTextResourceFile : public TextResourceFile
 	friend class ResourceLoader;
 
 public:
-	static void RegisterAPI(sol::table& rootex);
-
 	explicit LuaTextResourceFile(TextResourceFile&) = delete;
 	explicit LuaTextResourceFile(TextResourceFile&&) = delete;
 	~LuaTextResourceFile() = default;

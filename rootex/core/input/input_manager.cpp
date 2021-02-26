@@ -35,35 +35,9 @@ void InputManager::setEnabled(bool enabled)
 	m_IsEnabled = enabled;
 }
 
-void InputManager::loadSchemes(const JSON::json& inputSchemes)
+void InputManager::setSchemes(const HashMap<String, InputScheme>& inputSchemes)
 {
-	m_InputSchemes.clear();
-
-	for (auto& inputScheme : inputSchemes)
-	{
-		Vector<InputButtonBindingData> scheme;
-		InputButtonBindingData button;
-
-		for (auto& keys : inputScheme["bools"])
-		{
-			button.m_Type = InputButtonBindingData::Type::Bool;
-			button.m_InputEvent = keys["inputEvent"];
-			button.m_Device = keys["device"];
-			button.m_ButtonID = keys["button"];
-			scheme.emplace_back(button);
-		}
-
-		for (auto& axis : inputScheme["floats"])
-		{
-			button.m_Type = InputButtonBindingData::Type::Float;
-			button.m_InputEvent = axis["inputEvent"];
-			button.m_Device = axis["device"];
-			button.m_ButtonID = axis["button"];
-			scheme.emplace_back(button);
-		}
-
-		m_InputSchemes[inputScheme["name"]] = scheme;
-	}
+	m_InputSchemes = inputSchemes;
 }
 
 void InputManager::setScheme(const String& schemeName)
@@ -74,20 +48,14 @@ void InputManager::setScheme(const String& schemeName)
 	}
 
 	m_GainputMap.Clear();
-	const Vector<InputButtonBindingData>& scheme = m_InputSchemes.at(schemeName);
-	for (auto& binding : scheme)
+	const InputScheme& scheme = m_InputSchemes.at(schemeName);
+	for (auto& boolBinding : scheme.bools)
 	{
-		switch (binding.m_Type)
-		{
-		case InputButtonBindingData::Type::Bool:
-			mapBool(binding.m_InputEvent, binding.m_Device, binding.m_ButtonID);
-			break;
-		case InputButtonBindingData::Type::Float:
-			mapFloat(binding.m_InputEvent, binding.m_Device, binding.m_ButtonID);
-			break;
-		default:
-			break;
-		}
+		mapBool(boolBinding.inputEvent, boolBinding.device, boolBinding.button);
+	}
+	for (auto& floatBinding : scheme.floats)
+	{
+		mapFloat(floatBinding.inputEvent, floatBinding.device, floatBinding.button);
 	}
 	m_CurrentInputScheme = schemeName;
 }
@@ -169,20 +137,6 @@ unsigned int InputManager::getNextID()
 	return count++;
 }
 
-void InputManager::RegisterAPI(sol::table& rootex)
-{
-	sol::usertype<InputManager> inputManager = rootex.new_usertype<InputManager>("InputManager");
-	inputManager["Get"] = &InputManager::GetSingleton;
-	inputManager["setEnabled"] = &InputManager::setEnabled;
-	inputManager["mapBool"] = &InputManager::mapBool;
-	inputManager["mapFloat"] = &InputManager::mapFloat;
-	inputManager["isPressed"] = &InputManager::isPressed;
-	inputManager["wasPressed"] = &InputManager::wasPressed;
-	inputManager["getFloat"] = &InputManager::getFloat;
-	inputManager["getFloatDelta"] = &InputManager::getFloatDelta;
-	inputManager["unmap"] = &InputManager::unmap;
-}
-
 InputManager* InputManager::GetSingleton()
 {
 	static InputManager singleton;
@@ -212,4 +166,38 @@ InputManager::InputManager()
 void InputManager::forwardMessage(const MSG& msg)
 {
 	m_GainputManager.HandleMessage(msg);
+}
+
+void to_json(JSON::json& j, const InputDescription& s)
+{
+	j["device"] = (int)s.device;
+	j["button"] = (int)s.button;
+	j["inputEvent"] = s.inputEvent;
+}
+
+void from_json(const JSON::json& j, InputDescription& s)
+{
+	s.device = (Device)(int)j["device"];
+	s.button = (int)j["button"];
+	s.inputEvent = j["inputEvent"];
+}
+
+void to_json(JSON::json& j, const InputScheme& s)
+{
+	j["bools"] = s.bools;
+	j["floats"] = s.floats;
+}
+
+void from_json(const JSON::json& j, InputScheme& s)
+{
+	for (auto& boolInput : j["bools"])
+	{
+		InputDescription id = boolInput;
+		s.bools.push_back(id);
+	}
+	for (auto& floatInput : j["floats"])
+	{
+		InputDescription id = floatInput;
+		s.floats.push_back(id);
+	}
 }

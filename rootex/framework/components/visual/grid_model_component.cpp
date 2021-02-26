@@ -124,8 +124,6 @@ JSON::json GridModelComponent::getJSON() const
 	return j;
 }
 
-#ifdef ROOTEX_EDITOR
-#include "imgui.h"
 void GridModelComponent::draw()
 {
 	m_ColorMaterial->draw();
@@ -139,4 +137,3 @@ void GridModelComponent::draw()
 		refreshVertexBuffers();
 	}
 }
-#endif // ROOTEX_EDITOR

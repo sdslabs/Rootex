@@ -16,8 +16,6 @@ private:
 	Variant m_Data;
 
 public:
-	static void RegisterAPI(sol::table& rootex);
-
 	Event(const String& name, const Type type, const Variant data);
 	Event(Event&) = delete;
 	~Event() = default;

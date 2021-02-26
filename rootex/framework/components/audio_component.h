@@ -21,9 +21,7 @@ protected:
 	bool m_IsPlayOnStart;
 	bool m_IsLooping;
 
-#ifdef ROOTEX_EDITOR
 	String m_AttenuationModelName = "Linear";
-#endif // ROOTEX_EDITOR
 
 public:
 	AudioComponent(bool playOnStart, bool isLooping, bool attenuation, AudioSource::AttenuationModel model, ALfloat rolloffFactor, ALfloat referenceDistance, ALfloat maxDistance);
@@ -38,13 +36,13 @@ public:
 	bool isAttenuated() { return m_IsAttenuated; }
 	bool isLooping();
 
+	void setPlaying(bool enabled);
+
 	void setLooping(bool enabled);
 	void setAudioSource(AudioSource* audioSource) { m_AudioSource = audioSource; }
 	AudioSource* getAudioSource() { return m_AudioSource; }
 
 	virtual JSON::json getJSON() const;
 
-#ifdef ROOTEX_EDITOR
 	void draw() override;
-#endif // ROOTEX_EDITOR
 };
