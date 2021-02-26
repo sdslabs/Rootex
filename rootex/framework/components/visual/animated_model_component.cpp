@@ -32,14 +32,6 @@ Component* AnimatedModelComponent::Create(const JSON::json& componentData)
 	return animatedModelComponent;
 }
 
-void AnimatedModelComponent::RegisterAPI(sol::table& rootex)
-{
-	sol::usertype<AnimatedModelComponent> animatedModelComponent = rootex.new_usertype<AnimatedModelComponent>(
-	    "AnimatedModelComponent",
-	    sol::base_classes, sol::bases<Component>());
-	rootex["Entity"]["getAnimatedModel"] = &Entity::getComponent<AnimatedModelComponent>;
-}
-
 bool AnimatedModelComponent::setupData()
 {
 	assignBoundingBox();
@@ -147,8 +139,6 @@ JSON::json AnimatedModelComponent::getJSON() const
 	return j;
 }
 
-#ifdef ROOTEX_EDITOR
-#include "imgui_helpers.h"
 void AnimatedModelComponent::draw()
 {
 	ImGui::Checkbox("Visible", &m_IsVisible);
@@ -232,4 +222,3 @@ void AnimatedModelComponent::draw()
 	}
 	ImGui::EndGroup();
 }
-#endif //ROOTEX_EDITOR

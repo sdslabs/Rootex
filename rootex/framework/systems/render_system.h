@@ -87,9 +87,7 @@ public:
 	const Matrix& getCurrentMatrix() const;
 	Renderer* getRenderer() const { return m_Renderer.get(); }
 
-#ifdef ROOTEX_EDITOR
 	void draw() override;
-#endif // ROOTEX_EDITOR
 };
 
 template <class T>

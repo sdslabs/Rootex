@@ -3,7 +3,7 @@
 #include "core/renderer/materials/particles_material.h"
 #include "model_component.h"
 
-#define MAX_PARTICLES 5000
+#define MAX_PARTICLES 50000
 
 struct ParticleTemplate
 {
@@ -77,7 +77,5 @@ public:
 	ComponentID getComponentID() const override { return s_ID; }
 	virtual JSON::json getJSON() const override;
 
-#ifdef ROOTEX_EDITOR
 	void draw() override;
-#endif // ROOTEX_EDITOR
 };

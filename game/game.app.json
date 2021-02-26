@@ -1,7 +1,7 @@
 {
     "postInitialize": "game/startup.lua",
     "project": "Rootex Game",
-    "startLevel": "game/assets/scenes/loading.scene.json",
+    "startLevel": "game/assets/scenes/physics.scene.json",
     "systems": {
         "AudioSystem": {},
         "DebugSystem": {
@@ -25,6 +25,7 @@
     "window": {
         "fullScreen": false,
         "height": 1080,
+        "icon": "rootex/assets/rootex.ico",
         "isEditor": false,
         "title": "Rootex Game",
         "width": 1920,

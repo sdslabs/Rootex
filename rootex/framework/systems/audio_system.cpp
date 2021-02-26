@@ -159,12 +159,29 @@ void AudioSystem::setListener(AudioListenerComponent* listenerComponent)
 void AudioSystem::setConfig(const SceneSettings& sceneSettings)
 {
 	Scene* listenerScene = SceneLoader::GetSingleton()->getRootScene()->findScene(sceneSettings.listener);
-	if (listenerScene)
+	if (!listenerScene)
 	{
-		setListener(listenerScene->getEntity()->getComponent<AudioListenerComponent>());
+		ERR("Listener scene not found with ID " + std::to_string(sceneSettings.listener));
+		restoreListener();
 		return;
 	}
-	restoreListener();
+
+	if (!listenerScene->getEntity())
+	{
+		ERR("Entity not found in listener scene " + listenerScene->getFullName());
+		restoreListener();
+		return;
+	}
+
+	AudioListenerComponent* listen = listenerScene->getEntity()->getComponent<AudioListenerComponent>();
+	if (!listen)
+	{
+		ERR("AudioListenerComponent not found on entity " + listenerScene->getFullName());
+		restoreListener();
+		return;
+	}
+
+	setListener(listen);
 }
 
 void AudioSystem::restoreListener()

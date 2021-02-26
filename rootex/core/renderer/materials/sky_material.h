@@ -13,9 +13,6 @@ class SkyMaterial : public Material
 
 	void setVSConstantBuffer(const VSDiffuseConstantBuffer& constantBuffer);
 
-#ifdef ROOTEX_EDITOR
-	String m_ImagePathUI;
-#endif // ROOTEX_EDITOR
 public:
 	const static inline String s_MaterialName = "SkyMaterial";
 	enum class VertexConstantBufferType
@@ -42,7 +39,5 @@ public:
 	void bind() override;
 	JSON::json getJSON() const override;
 
-#ifdef ROOTEX_EDITOR
 	void draw() override;
-#endif // ROOTEX_EDITOR
 };

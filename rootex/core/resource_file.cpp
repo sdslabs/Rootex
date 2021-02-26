@@ -8,14 +8,6 @@ ResourceFile::ResourceFile(const Type& type, const FilePath& path)
 	m_LastChangedTime = OS::GetFileLastChangedTime(getPath().string());
 }
 
-void ResourceFile::RegisterAPI(sol::table& rootex)
-{
-	sol::usertype<ResourceFile> resourceFile = rootex.new_usertype<ResourceFile>("ResourceFile");
-	resourceFile["isDirty"] = &ResourceFile::isDirty;
-	resourceFile["getPath"] = [](ResourceFile& f) { return f.getPath().string(); };
-	resourceFile["getType"] = &ResourceFile::getType;
-}
-
 FilePath ResourceFile::getPath() const
 {
 	return m_Path;

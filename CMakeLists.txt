@@ -7,8 +7,6 @@ project(
     VERSION 1.0
     DESCRIPTION "Rootex Engine"
 )
-    
-option(BUILD_EDITOR "Build editor executable" OFF)
 
 set(CMAKE_CONFIGURATION_TYPES "${CMAKE_CONFIGURATION_TYPES};ReleaseProfile;DebugProfile")
 set(CMAKE_CXX_FLAGS_RELEASEPROFILE "${CMAKE_CXX_FLAGS_RELEASE} -DTRACY_ENABLE")
@@ -27,7 +25,4 @@ CACHE INTERNAL "")
 
 add_subdirectory(rootex)
 add_subdirectory(game)
-
-if (BUILD_EDITOR)
-    add_subdirectory(editor)
-endif(BUILD_EDITOR)
+add_subdirectory(editor)

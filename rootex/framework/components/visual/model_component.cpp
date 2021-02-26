@@ -29,16 +29,6 @@ ModelComponent::ModelComponent(unsigned int renderPass, ModelResourceFile* resFi
 	assignOverrides(resFile, materialOverrides);
 }
 
-void ModelComponent::RegisterAPI(sol::table& rootex)
-{
-	sol::usertype<ModelComponent> modelComponent = rootex.new_usertype<ModelComponent>(
-	    "ModelComponent",
-	    sol::base_classes, sol::bases<Component>());
-	rootex["Entity"]["getModel"] = &Entity::getComponent<ModelComponent>;
-	modelComponent["isVisible"] = &ModelComponent::isVisible;
-	modelComponent["setIsVisible"] = &ModelComponent::setIsVisible;
-}
-
 bool ModelComponent::setupData()
 {
 	assignBoundingBox();
@@ -146,8 +136,6 @@ JSON::json ModelComponent::getJSON() const
 	return j;
 }
 
-#ifdef ROOTEX_EDITOR
-#include "imgui_helpers.h"
 void ModelComponent::draw()
 {
 	ImGui::Checkbox("Visible", &m_IsVisible);
@@ -170,4 +158,3 @@ void ModelComponent::draw()
 
 	RenderableComponent::draw();
 }
-#endif // ROOTEX_EDITOR

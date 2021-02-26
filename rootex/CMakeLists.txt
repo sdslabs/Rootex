@@ -66,10 +66,6 @@ set_source_files_properties(${PixelShaderFiles}
         VS_SHADER_TYPE Pixel
 )
 
-if (BUILD_EDITOR)
-    add_definitions(-DROOTEX_EDITOR)
-endif(BUILD_EDITOR)
-
 file(GLOB_RECURSE EngineLuaScripts script/**.lua)
 
 set_source_files_properties(${EngineLuaScripts} PROPERTIES

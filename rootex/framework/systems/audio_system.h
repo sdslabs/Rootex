@@ -51,7 +51,7 @@ class AudioSystem : public System
 	ALCdevice* m_Device;
 	ALCcontext* m_Context;
 
-	AudioListenerComponent* m_Listener;
+	AudioListenerComponent* m_Listener = nullptr;
 
 	AudioSystem();
 	AudioSystem(AudioSystem&) = delete;

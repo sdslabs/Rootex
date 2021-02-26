@@ -1,0 +1,25 @@
+{
+    "ID": 4,
+    "children": [],
+    "entity": {
+        "Entity": {
+            "script": {
+                "overrides": {
+                    "entityName": "",
+                    "variable": "\"New value!\""
+                },
+                "path": "game/assets/scripts/new_script_test.lua"
+            }
+        },
+        "components": null
+    },
+    "file": "game/assets/scenes/script_test.scene.json",
+    "name": "script_test",
+    "settings": {
+        "camera": 1,
+        "inputSchemes": {},
+        "listener": 1,
+        "preloads": [],
+        "startScheme": ""
+    }
+}

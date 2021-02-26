@@ -13,17 +13,38 @@ Component* CapsuleColliderComponent::Create(const JSON::json& capsuleComponentDa
 	    capsuleComponentData.value("collisionMask", (int)CollisionMask::All),
 	    capsuleComponentData.value("isMoveable", false),
 	    capsuleComponentData.value("isKinematic", false),
-	    capsuleComponentData.value("isGeneratesHitEvents", false));
+	    capsuleComponentData.value("isGeneratesHitEvents", false),
+	    capsuleComponentData.value("isSleepable", true),
+	    capsuleComponentData.value("isCCD", false));
 	return component;
 }
 
-void CapsuleColliderComponent::refreshDimensions()
-{
-	m_CapsuleShape->setImplicitShapeDimensions(btVector3(m_Radius, m_SideHeight / 2.0f, m_Radius));
-}
-
-CapsuleColliderComponent::CapsuleColliderComponent(float radius, float sideHeight, const PhysicsMaterial& material, const Vector3& angularFactor, const Vector3& gravity, int collisionGroup, int collisionMask, bool isMoveable, bool isKinematic, bool generatesHitEvents)
-    : PhysicsColliderComponent(material, DirectX::XM_PI * radius * radius * ((4.0f / 3.0f) * radius + sideHeight), gravity, angularFactor, collisionGroup, collisionMask, isMoveable, isKinematic, generatesHitEvents, Ref<btCapsuleShape>(new btCapsuleShape(radius, sideHeight)))
+CapsuleColliderComponent::CapsuleColliderComponent(
+    float radius,
+    float sideHeight,
+    const PhysicsMaterial& material,
+    const Vector3& angularFactor,
+    const Vector3& gravity,
+    int collisionGroup,
+    int collisionMask,
+    bool isMoveable,
+    bool isKinematic,
+    bool generatesHitEvents,
+    bool isSleepable,
+    bool isCCD)
+    : PhysicsColliderComponent(
+        material,
+        DirectX::XM_PI * radius * radius * ((4.0f / 3.0f) * radius + sideHeight),
+        gravity,
+        angularFactor,
+        collisionGroup,
+        collisionMask,
+        isMoveable,
+        isKinematic,
+        generatesHitEvents,
+        isSleepable,
+        isCCD,
+        Ref<btCapsuleShape>(new btCapsuleShape(radius, sideHeight)))
     , m_Radius(radius)
     , m_SideHeight(sideHeight)
 {
@@ -33,13 +54,16 @@ CapsuleColliderComponent::CapsuleColliderComponent(float radius, float sideHeigh
 void CapsuleColliderComponent::setSideHeight(float s)
 {
 	m_SideHeight = s;
-	refreshDimensions();
+	setupData();
+	m_CapsuleShape = std::dynamic_pointer_cast<btCapsuleShape>(m_CollisionShape);
 }
 
 void CapsuleColliderComponent::setRadius(float r)
 {
 	m_Radius = r;
-	refreshDimensions();
+	m_CapsuleShape.reset(new btCapsuleShape(m_Radius, m_SideHeight));
+	m_CollisionShape = m_CapsuleShape;
+	setupData();
 }
 
 JSON::json CapsuleColliderComponent::getJSON() const
