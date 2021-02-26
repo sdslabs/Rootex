@@ -19,12 +19,10 @@ class SceneLoader
 	void endSystems();
 
 	void setArguments(const Vector<String>& arguments) { m_SceneArguments = arguments; }
-	Vector<String> getArguments() { return m_SceneArguments; }
 
 	Variant deleteScene(const Event* event);
 
 public:
-	static void RegisterAPI(sol::table& rootex);
 	static SceneLoader* GetSingleton();
 
 	int preloadScene(const String& sceneFile, Atomic<int>& progress);
@@ -37,4 +35,5 @@ public:
 	Scene* getCurrentScene() const { return m_CurrentScene; }
 	Scene* getRootScene() const { return m_RootScene.get(); }
 	Ptr<Scene>& getRootSceneEx() { return m_RootScene; }
+	Vector<String> getArguments() { return m_SceneArguments; }
 };

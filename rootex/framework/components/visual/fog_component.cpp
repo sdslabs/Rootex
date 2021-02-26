@@ -26,12 +26,9 @@ JSON::json FogComponent::getJSON() const
 	return j;
 }
 
-#ifdef ROOTEX_EDITOR
-#include "imgui.h"
 void FogComponent::draw()
 {
 	ImGui::DragFloat("Near", &m_Near);
 	ImGui::DragFloat("Far", &m_Far);
 	ImGui::ColorEdit4("Color", &m_Color.x);
 }
-#endif

@@ -24,10 +24,7 @@ JSON::json StaticPointLightComponent::getJSON() const
 	return j;
 }
 
-#ifdef ROOTEX_EDITOR
-#include "imgui.h"
 void StaticPointLightComponent::draw()
 {
 	PointLightComponent::draw();
 }
-#endif // ROOTEX_EDITOR

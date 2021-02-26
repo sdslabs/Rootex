@@ -14,8 +14,8 @@
         },
         "InputSystem": {
             "height": 1387,
-            "inputSchemes": [
-                {
+            "inputSchemes": {
+                "Editor": {
                     "bools": [
                         {
                             "button": 2,
@@ -58,10 +58,9 @@
                             "inputEvent": "InputCameraDown"
                         }
                     ],
-                    "floats": {},
-                    "name": "Editor"
+                    "floats": {}
                 }
-            ],
+            },
             "startScheme": "Editor",
             "width": 2560
         },
@@ -74,6 +73,7 @@
     "version": 1.0,
     "window": {
         "fullScreen": false,
+        "icon": "editor/assets/editor.ico",
         "isEditor": true,
         "title": "Rootex Editor",
         "x": 0,

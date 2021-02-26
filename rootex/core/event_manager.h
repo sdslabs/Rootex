@@ -26,7 +26,6 @@ class EventManager
 	~EventManager() = default;
 
 public:
-	static void RegisterAPI(sol::table& rootex);
 	static EventManager* GetSingleton();
 
 	enum Constant

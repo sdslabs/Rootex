@@ -42,8 +42,6 @@ class ResourceLoader
 	static void RegisterResource(Ref<ResourceFile> file);
 
 public:
-	static void RegisterAPI(sol::table& rootex);
-
 	static const HashMap<ResourceFile::Type, Vector<Ref<ResourceFile>>>& GetResources() { return s_ResourcesDataFiles; };
 
 	static TextResourceFile* CreateTextResourceFile(const String& path);

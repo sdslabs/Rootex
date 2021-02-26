@@ -20,7 +20,6 @@ class UIComponent : public Component
 	~UIComponent();
 
 public:
-	static void RegisterAPI(sol::table& rootex);
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::UIComponent;
 
 	Rml::ElementDocument* getDocument() { return m_Document; };
@@ -30,7 +29,5 @@ public:
 	ComponentID getComponentID() const { return s_ID; }
 	virtual JSON::json getJSON() const override;
 
-#ifdef ROOTEX_EDITOR
 	virtual void draw() override;
-#endif // ROOTEX_EDITOR
 };

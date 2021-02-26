@@ -34,17 +34,7 @@ bool MusicComponent::setupData()
 
 	setAudioSource(m_StreamingAudioSource.get());
 
-	bool status = AudioComponent::setupData();
-	if (m_Owner)
-	{
-		m_TransformComponent = m_Owner->getComponent<TransformComponent>();
-		if (m_TransformComponent == nullptr)
-		{
-			WARN("Entity without transform component!");
-			status = false;
-		}
-	}
-	return status;
+	return AudioComponent::setupData();
 }
 
 JSON::json MusicComponent::getJSON() const
@@ -63,10 +53,6 @@ void MusicComponent::setAudioFile(AudioResourceFile* audioFile)
 	setupData();
 }
 
-#ifdef ROOTEX_EDITOR
-#include "imgui.h"
-#include "imgui_stdlib.h"
-#include "utility/imgui_helpers.h"
 void MusicComponent::draw()
 {
 	ImGui::Text("%s", m_AudioFile->getPath().generic_string().c_str());
@@ -86,4 +72,3 @@ void MusicComponent::draw()
 
 	AudioComponent::draw();
 }
-#endif // ROOTEX_EDITOR

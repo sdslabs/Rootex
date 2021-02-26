@@ -47,11 +47,3 @@ Matrix RenderUISystem::getTopUIMatrix()
 {
 	return m_UITransformationStack.back();
 }
-
-#ifdef ROOTEX_EDITOR
-#include "imgui.h"
-void RenderUISystem::draw()
-{
-	System::draw();
-}
-#endif

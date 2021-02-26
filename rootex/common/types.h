@@ -228,10 +228,10 @@ struct adl_serializer<Quaternion>
 
 	static void from_json(const json& j, Quaternion& v)
 	{
-		v.x = j.at("x");
-		v.y = j.at("y");
-		v.z = j.at("z");
-		v.w = j.at("w");
+		v.x = j.value("x", 0.0f);
+		v.y = j.value("y", 0.0f);
+		v.z = j.value("z", 0.0f);
+		v.w = j.value("w", 0.0f);
 	}
 };
 template <>
@@ -282,3 +282,4 @@ template <class T>
 using Function = std::function<T>;
 
 #include "imgui.h"
+#include "utility/imgui_helpers.h"

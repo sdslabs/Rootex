@@ -28,19 +28,6 @@ void AudioResourceFile::resetBuffer()
 	}
 }
 
-void AudioResourceFile::RegisterAPI(sol::table& rootex)
-{
-	sol::usertype<AudioResourceFile> audioResourceFile = rootex.new_usertype<AudioResourceFile>(
-	    "AudioResourceFile",
-	    sol::base_classes, sol::bases<ResourceFile>());
-	audioResourceFile["getAudioDataSize"] = &AudioResourceFile::getAudioDataSize;
-	audioResourceFile["getFormat"] = &AudioResourceFile::getFormat;
-	audioResourceFile["getFrequency"] = &AudioResourceFile::getFrequency;
-	audioResourceFile["getBitDepth"] = &AudioResourceFile::getBitDepth;
-	audioResourceFile["getChannels"] = &AudioResourceFile::getChannels;
-	audioResourceFile["getDuration"] = &AudioResourceFile::getDuration;
-}
-
 void AudioResourceFile::reimport()
 {
 	ResourceFile::reimport();

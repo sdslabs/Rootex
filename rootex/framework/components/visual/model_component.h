@@ -25,7 +25,6 @@ protected:
 	void assignOverrides(ModelResourceFile* newModel, const HashMap<String, String>& materialOverrides);
 
 public:
-	static void RegisterAPI(sol::table& rootex);
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::ModelComponent;
 
 	static bool CompareMaterials(const Pair<Ref<Material>, Vector<Mesh>>& a, const Pair<Ref<Material>, Vector<Mesh>>& b);
@@ -43,7 +42,5 @@ public:
 	ComponentID getComponentID() const override { return s_ID; }
 	virtual JSON::json getJSON() const override;
 
-#ifdef ROOTEX_EDITOR
 	void draw() override;
-#endif // ROOTEX_EDITOR
 };

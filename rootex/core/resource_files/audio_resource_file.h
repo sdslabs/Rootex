@@ -24,8 +24,6 @@ class AudioResourceFile : public ResourceFile
 	void resetBuffer();
 
 public:
-	static void RegisterAPI(sol::table& rootex);
-
 	explicit AudioResourceFile(AudioResourceFile&) = delete;
 	explicit AudioResourceFile(AudioResourceFile&&) = delete;
 	~AudioResourceFile();

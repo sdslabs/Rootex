@@ -6,11 +6,11 @@
         "g": 1.0,
         "r": 1.0
     },
-    "imageFile": "rootex/assets/white.png",
+    "imageFile": "game/assets/sponza/textures/sponza_fabric_green_diff.png",
     "isAlpha": false,
     "isLit": true,
     "isNormal": true,
-    "lightmapImageFile": "game/assets/sponza/textures/chain_texture_ddn.png",
+    "lightmapImageFile": "rootex/assets/white.png",
     "normalImageFile": "game/assets/sponza/textures/sponza_fabric_blue_diff_NRM.png",
     "reflectivity": 0.10000000149011612,
     "refractionConstant": 0.800000011920929,

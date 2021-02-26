@@ -19,7 +19,7 @@ void CallBeginForScene(Scene* scene)
 	if (Entity* entity = scene->getEntity())
 	{
 		entity->evaluateScriptOverrides();
-		entity->call("onBegin", { entity });
+		entity->call("begin", { entity });
 	}
 
 	for (auto& child : scene->getChildren())
@@ -39,7 +39,7 @@ void CallUpdateForScene(Scene* scene, float deltaMilliseconds)
 	if (Entity* entity = scene->getEntity())
 	{
 		entity->evaluateScriptOverrides();
-		entity->call("onUpdate", { entity, deltaMilliseconds });
+		entity->call("update", { entity, deltaMilliseconds });
 	}
 
 	for (auto& child : scene->getChildren())
@@ -55,22 +55,22 @@ void ScriptSystem::update(float deltaMilliseconds)
 	CallUpdateForScene(root, deltaMilliseconds);
 }
 
-void CallEndForScene(Scene* scene)
+void CallDestroyForScene(Scene* scene)
 {
 	if (Entity* entity = scene->getEntity())
 	{
 		entity->evaluateScriptOverrides();
-		entity->call("onEnd", { entity });
+		entity->call("destroy", { entity });
 	}
 
 	for (auto& child : scene->getChildren())
 	{
-		CallEndForScene(child.get());
+		CallDestroyForScene(child.get());
 	}
 }
 
 void ScriptSystem::end()
 {
 	Scene* root = SceneLoader::GetSingleton()->getRootScene();
-	CallEndForScene(root);
+	CallDestroyForScene(root);
 }

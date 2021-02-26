@@ -27,7 +27,7 @@ void ToolbarDock::draw(float deltaMilliseconds)
 
 			if (SceneLoader::GetSingleton()->getCurrentScene())
 			{
-				ImGui::Text("Play Level");
+				ImGui::Text("Play Scene");
 				ImGui::SameLine();
 				if (ImGui::ArrowButton("Play Level", ImGuiDir_Right))
 				{

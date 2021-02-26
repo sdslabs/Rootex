@@ -7,7 +7,7 @@ class LuaTextResourceFile;
 class Script
 {
 private:
-	sol::environment m_ScriptEnvironment;
+	sol::table m_ScriptInstance;
 	String m_ScriptFile;
 	HashMap<String, String> m_Overrides;
 
@@ -18,17 +18,14 @@ public:
 	Script(const Script&) = delete;
 	~Script() = default;
 
-	JSON::json getJSON() const;
+	bool setup(Entity* entity);
 
-	sol::environment& getScriptEnv() { return m_ScriptEnvironment; }
-	void setScriptEnv(sol::table& env) { m_ScriptEnvironment.set(env); }
-	bool call(const String& function, const Vector<Variant>& args);
 	void evaluateOverrides();
-	bool setup();
+	bool call(const String& function, const Vector<Variant>& args);
 
+	JSON::json getJSON() const;
 	const String& getFilePath() { return m_ScriptFile; }
+	sol::table& getScriptInstance() { return m_ScriptInstance; }
 
-#ifdef ROOTEX_EDITOR
 	void draw();
-#endif
 };

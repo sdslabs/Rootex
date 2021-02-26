@@ -236,7 +236,7 @@
     "name": "test",
     "settings": {
         "camera": 1,
-        "inputSchemes": null,
+        "inputSchemes": {},
         "listener": 1,
         "preloads": [],
         "startScheme": ""

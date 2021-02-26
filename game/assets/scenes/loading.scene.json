@@ -81,8 +81,8 @@
     "name": "loading",
     "settings": {
         "camera": 1,
-        "inputSchemes": [
-            {
+        "inputSchemes": {
+            "Load": {
                 "bools": [
                     {
                         "button": 65,
@@ -90,10 +90,9 @@
                         "inputEvent": "A"
                     }
                 ],
-                "floats": {},
-                "name": "Load"
+                "floats": {}
             }
-        ],
+        },
         "listener": 1,
         "preloads": [],
         "startScheme": "Load"
