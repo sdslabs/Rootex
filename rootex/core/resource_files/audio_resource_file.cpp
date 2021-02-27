@@ -23,7 +23,7 @@ void AudioResourceFile::resetBuffer()
 {
 	if (m_DecompressedAudioBuffer)
 	{
-		free((void*)m_DecompressedAudioBuffer);
+		alutUnloadWAV(m_Format, (void*)m_DecompressedAudioBuffer, m_AudioDataSize, m_Frequency);
 		m_DecompressedAudioBuffer = nullptr;
 	}
 }
