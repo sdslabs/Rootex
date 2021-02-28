@@ -24,7 +24,6 @@ void AudioResourceFile::resetBuffer()
 	if (m_DecompressedAudioBuffer)
 	{
 		ALUT_CHECK(alutUnloadWAV(m_Format, (void*)m_DecompressedAudioBuffer, m_AudioDataSize, m_Frequency));
-		;
 		m_DecompressedAudioBuffer = nullptr;
 	}
 }
