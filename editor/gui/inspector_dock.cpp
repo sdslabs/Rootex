@@ -180,7 +180,7 @@ void InspectorDock::draw(float deltaMilliseconds)
 				{
 					if (Optional<String> result = OS::SelectFile("Scene(*.scene.json)\0*.scene.json\0", "game/assets/scenes/"))
 					{
-						m_ActionScene->addChild(Scene::CreateFromFile(*result));
+						m_OpenedScene->addChild(Scene::CreateFromFile(*result));
 					}
 				}
 				ImGui::SameLine();
@@ -188,7 +188,7 @@ void InspectorDock::draw(float deltaMilliseconds)
 				{
 					if (Optional<String> result = OS::SaveSelectFile("Scene(*.scene.json)\0*.scene.json\0", "game/assets/scenes/"))
 					{
-						if (!SceneLoader::GetSingleton()->saveSceneAtFile(m_ActionScene, *result))
+						if (!SceneLoader::GetSingleton()->saveSceneAtFile(m_OpenedScene, *result))
 						{
 							WARN("Could not save selected scene to file: " + *result);
 						}
