@@ -17,11 +17,10 @@ jobs:
       id: cache
       uses: actions/cache@v2
       with:
-        path: ./build
+        path: 'build/**.obj'
         key: ${{ hashFiles('**/CMakeLists.txt') }}
 
     - name: configure
-      if: steps.cache.outputs.cache-hit != 'true'
       run: ./generate_cache.bat /17
     
     - name: build
