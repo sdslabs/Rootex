@@ -256,7 +256,7 @@ Optional<String> OS::SaveSelectFile(const char* filter, const char* dir)
 	ofn.nFilterIndex = 1;
 	ofn.lpstrFileTitle = nullptr;
 	ofn.nMaxFileTitle = 0;
-	ofn.lpstrInitialDir = !dir ? dir : ".";
+	ofn.lpstrInitialDir = dir ? dir : ".";
 	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
 
 	if (GetSaveFileName(&ofn) == TRUE)
