@@ -9,22 +9,24 @@ jobs:
     strategy:
       matrix:
         os: [windows-2016]
+        type: ['Release', 'Debug']
     
     steps:
     - uses: actions/checkout@v1
 
-    - name: cache
-      id: cache
-      uses: actions/cache@v2
+    - name: ccache
+      uses: hendrikmuhs/ccache-action@v1
       with:
-        path: 'build/**.obj'
-        key: ${{ hashFiles('**/CMakeLists.txt') }}
+        key: ${{ matrix.os }}-${{ matrix.type }}
 
-    - name: configure
-      run: ./generate_cache.bat /17
-    
-    - name: build
-      run: ./build.bat
+    - name: build with cmake
+      uses: lukka/run-cmake@v3
+      with:
+        cmakeListsOrSettingsJson: CMakeListsTxtAdvanced
+        cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
+        cmakeAppendedArgs: '-DCMAKE_BUILD_TYPE=${{ matrix.type }} -D CMAKE_C_COMPILER_LAUNCHER=ccache -D CMAKE_CXX_COMPILER_LAUNCHER=ccache'
+        buildWithCMake: true
+        buildDirectory: '${{ github.workspace }}/build'
     
     - uses: actions/upload-artifact@v2
       with:
