@@ -17,8 +17,8 @@ jobs:
       id: cache
       uses: actions/cache@v2
       with:
-        path: './build'
-        key: ${{ hashFiles('**/CMakeLists.txt') }}
+        path: ./build/rootex/vendor/
+        key: ${{ hashFiles('rootex/vendor/**') }}
 
     - name: configure
       run: |
