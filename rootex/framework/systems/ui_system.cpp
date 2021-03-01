@@ -44,8 +44,8 @@ UISystem::UISystem()
     : System("UISystem", UpdateOrder::UI, true)
     , m_Context(nullptr)
 {
-	BIND_EVENT_MEMBER_FUNCTION("UISystemEnableDebugger", UISystem::enableDebugger);
-	BIND_EVENT_MEMBER_FUNCTION("UISystemDisableDebugger", UISystem::disableDebugger);
+	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::UISystemEnableDebugger, UISystem::enableDebugger);
+	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::UISystemDisableDebugger, UISystem::disableDebugger);
 }
 
 Variant UISystem::enableDebugger(const Event* event)

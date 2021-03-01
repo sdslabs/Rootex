@@ -29,9 +29,9 @@ void ToolbarDock::draw(float deltaMilliseconds)
 			{
 				ImGui::Text("Play Scene");
 				ImGui::SameLine();
-				if (ImGui::ArrowButton("Play Level", ImGuiDir_Right))
+				if (ImGui::ArrowButton("Play Scene", ImGuiDir_Right))
 				{
-					EventManager::GetSingleton()->call("PreGameStartupSaveEvent", "EditorSaveAll", 0);
+					EventManager::GetSingleton()->call(EditorEvents::EditorSaveAll);
 					PRINT("Launched Game process");
 					OS::Execute("\"" + OS::GetGameExecutablePath() + "\" " + SceneLoader::GetSingleton()->getCurrentScene()->getSceneFilePath());
 					PRINT("Game process ended");
@@ -43,7 +43,7 @@ void ToolbarDock::draw(float deltaMilliseconds)
 			ImGui::SameLine();
 			if (ImGui::ArrowButton("Play Game", ImGuiDir_Right))
 			{
-				EventManager::GetSingleton()->call("PreGameStartupSaveEvent", "EditorSaveAll", 0);
+				EventManager::GetSingleton()->call(EditorEvents::EditorSaveAll);
 				PRINT("Launched Game process");
 				OS::Execute("\"" + OS::GetGameExecutablePath() + "\"");
 				PRINT("Game process ended");

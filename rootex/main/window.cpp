@@ -5,6 +5,8 @@
 #include "input/input_manager.h"
 #include "renderer/rendering_device.h"
 
+#include "editor/editor_events.h"
+
 #include "vendor/ImGUI/imgui.h"
 #include "vendor/ImGUI/imgui_impl_dx11.h"
 #include "vendor/ImGUI/imgui_impl_win32.h"
@@ -127,13 +129,13 @@ LRESULT CALLBACK Window::WindowsProc(HWND windowHandler, UINT msg, WPARAM wParam
 	switch (msg)
 	{
 	case WM_CLOSE:
-		EventManager::GetSingleton()->call("QuitWindowRequest", "QuitWindowRequest", 0);
+		EventManager::GetSingleton()->call(RootexEvents::QuitWindowRequest);
 		return 0;
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		return 0;
 	case WM_SIZE:
-		EventManager::GetSingleton()->call("WindowProc", "WindowResized", Vector2(LOWORD(lParam), HIWORD(lParam)));
+		EventManager::GetSingleton()->call(RootexEvents::WindowResized, Vector2(LOWORD(lParam), HIWORD(lParam)));
 		break;
 	}
 
@@ -147,11 +149,11 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
     : m_Width(width)
     , m_Height(height)
 {
-	BIND_EVENT_MEMBER_FUNCTION("QuitWindowRequest", Window::quitWindow);
-	BIND_EVENT_MEMBER_FUNCTION("QuitEditorWindow", Window::quitEditorWindow);
-	BIND_EVENT_MEMBER_FUNCTION("WindowToggleFullScreen", Window::toggleFullScreen);
-	BIND_EVENT_MEMBER_FUNCTION("WindowGetScreenState", Window::getScreenState);
-	BIND_EVENT_MEMBER_FUNCTION("WindowResized", Window::windowResized);
+	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::QuitWindowRequest, Window::quitWindow);
+	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::QuitEditorWindow, Window::quitEditorWindow);
+	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::WindowToggleFullscreen, Window::toggleFullScreen);
+	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::WindowGetScreenState, Window::getScreenState);
+	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::WindowResized, Window::windowResized);
 
 	WNDCLASSEX windowClass = { 0 };
 	LPCSTR className = title.c_str();
@@ -189,7 +191,7 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
 	m_IsFullScreen = false;
 	if (fullScreen)
 	{
-		EventManager::GetSingleton()->deferredCall("WindowToggleFullScreen", "WindowToggleFullScreen", 0);
+		EventManager::GetSingleton()->deferredCall(RootexEvents::WindowToggleFullscreen);
 	}
 }
 
@@ -197,7 +199,7 @@ Variant Window::quitWindow(const Event* event)
 {
 	if (m_IsEditorWindow)
 	{
-		EventManager::GetSingleton()->call("EditorSaveBeforeQuit", "EditorSaveBeforeQuit", 0);
+		EventManager::GetSingleton()->call(EditorEvents::EditorSaveBeforeQuit);
 	}
 	else
 	{

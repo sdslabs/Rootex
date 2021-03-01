@@ -275,20 +275,20 @@ void ViewportDock::draw(float deltaMilliseconds)
 
 					if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
 					{
-						EventManager::GetSingleton()->call("MouseSelectEntity", "EditorOpenScene", selectEntity->getScene());
+						EventManager::GetSingleton()->call(EditorEvents::EditorOpenScene, selectEntity->getScene());
 						PRINT("Picked entity through selection: " + selectEntity->getFullName());
 					}
 				}
 
 				if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Escape)))
 				{
-					EventManager::GetSingleton()->call("MouseSelectEntity", "EditorCloseScene", 0);
+					EventManager::GetSingleton()->call(EditorEvents::EditorCloseScene);
 				}
 			}
 
 			if (selectEntity && ImGui::BeginPopupContextWindow("Entity Shortcuts"))
 			{
-				EventManager::GetSingleton()->call("MouseSelectEntity", "EditorOpenScene", selectEntity->getScene());
+				EventManager::GetSingleton()->call(EditorEvents::EditorOpenScene, selectEntity->getScene());
 				InspectorDock::GetSingleton()->drawSceneActions(selectEntity->getScene());
 				ImGui::EndPopup();
 			}
