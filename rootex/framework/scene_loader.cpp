@@ -8,7 +8,7 @@
 SceneLoader::SceneLoader()
     : m_RootScene(Scene::CreateRootScene())
 {
-	BIND_EVENT_MEMBER_FUNCTION("DeleteScene", deleteScene);
+	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::DeleteScene, deleteScene);
 }
 
 SceneLoader* SceneLoader::GetSingleton()
@@ -83,7 +83,7 @@ void SceneLoader::loadPreloadedScene(const String& sceneFile, const Vector<Strin
 		PRINT("Loaded scene: " + m_CurrentScene->getFullName());
 
 		beginSystems();
-		EventManager::GetSingleton()->deferredCall("OpenedScene", "OpenedScene", 0);
+		EventManager::GetSingleton()->deferredCall(RootexEvents::OpenedScene);
 	});
 }
 

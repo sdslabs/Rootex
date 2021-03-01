@@ -3,6 +3,7 @@
 #include "systems/ui_system.h"
 
 #include "resource_loader.h"
+#include "editor/editor_events.h"
 
 Component* UIComponent::Create(const JSON::json& componentData)
 {
@@ -63,7 +64,7 @@ void UIComponent::draw()
 	ImGui::SameLine();
 	if (ImGui::Button("Document"))
 	{
-		EventManager::GetSingleton()->call("OpenDocument", "EditorOpenFile", m_FilePath);
+		EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, m_FilePath);
 	}
 	ImGui::EndGroup();
 

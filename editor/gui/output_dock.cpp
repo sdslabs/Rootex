@@ -10,14 +10,17 @@
 
 Variant OutputDock::catchOutput(const Event* event)
 {
-	m_CaughtOutputs.push_back({ event->getName(), Extract<String>(event->getData()) });
+	VariantVector data = Extract<VariantVector>(event->getData());
+	String msg = Extract<String>(data.front());
+	String type = Extract<String>(data.back());
+	m_CaughtOutputs.push_back({ type, msg });
 	m_IsOutputJustCaught = true;
 	return true;
 }
 
 OutputDock::OutputDock()
 {
-	BIND_EVENT_MEMBER_FUNCTION("OSPrint", catchOutput);
+	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::OSPrint, catchOutput);
 }
 
 void OutputDock::draw(float deltaMilliseconds)
@@ -50,19 +53,18 @@ void OutputDock::draw(float deltaMilliseconds)
 
 		static String command;
 		ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
-		if (ImGui::InputText("##Enter Command", &command, ImGuiInputTextFlags_AlwaysInsertMode | ImGuiInputTextFlags_EnterReturnsTrue))
+		if (ImGui::InputTextWithHint("##Enter Command", "Command", &command, ImGuiInputTextFlags_EnterReturnsTrue))
 		{
-			Vector<String> tokens;
-			tokens.resize(2);
-			std::istringstream stream(command);
-			String token;
-			while (std::getline(stream, token, ' '))
+			try
 			{
-				tokens.push_back(token);
+				LuaInterpreter::GetSingleton()->getLuaState().safe_script(command);
+				command = "";
+				ImGui::SetScrollHere(1.0f);
 			}
-			EventManager::GetSingleton()->call("EditorOutputDock", tokens[0], tokens[1]);
-
-			command = "";
+			catch (std::exception e)
+			{
+				WARN("Script error. Check console for details.");
+			}
 		}
 
 		if (m_IsOutputJustCaught)

@@ -133,10 +133,10 @@ class Entity;
 /// A variant able to hold multiple kinds of data, one at a time.
 using Variant = std::variant<bool, int, char, float, String, Vector2, Vector3, Vector4, Matrix, VariantVector, Scene*, Entity*, Vector<String>>;
 /// Extract the value of type TypeName from a Variant
-template <typename T>
-T Extract(const Variant& v)
+template <typename P, typename Q>
+P Extract(const Q& v)
 {
-	return std::get<T>(v);
+	return std::get<P>(v);
 }
 
 #include "JSON/json.hpp"
@@ -283,3 +283,5 @@ using Function = std::function<T>;
 
 #include "imgui.h"
 #include "utility/imgui_helpers.h"
+#include "editor/editor_events.h"
+#include "event.h"

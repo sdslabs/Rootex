@@ -58,7 +58,7 @@ void ShortMusicComponent::draw()
 	ImGui::SameLine();
 	if (ImGui::Button("Audio File"))
 	{
-		EventManager::GetSingleton()->call("OpenScript", "EditorOpenFile", m_AudioFile->getPath().string());
+		EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, m_AudioFile->getPath().string());
 	}
 	ImGui::SameLine();
 	if (Optional<String> result = OS::SelectFile(SupportedFiles.at(ResourceFile::Type::Audio), "game/assets/"))

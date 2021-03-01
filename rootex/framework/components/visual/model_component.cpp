@@ -145,7 +145,7 @@ void ModelComponent::draw()
 	ImGui::SameLine();
 	if (ImGui::Button("Model"))
 	{
-		EventManager::GetSingleton()->call("OpenModel", "EditorOpenFile", m_ModelResourceFile->getPath().string());
+		EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, m_ModelResourceFile->getPath().string());
 	}
 	ImGui::SameLine();
 	if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Model File"))

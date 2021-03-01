@@ -59,7 +59,7 @@ void EditorApplication::process(float deltaMilliseconds)
 {
 	if (((m_ApplicationTimer.Now() - m_PointAtLast10Second).count()) * NS_TO_MS * MS_TO_S > m_AutoSaveDurationS)
 	{
-		EventManager::GetSingleton()->call("EditorAutoSaveEvent", "EditorAutoSave", 0);
+		EventManager::GetSingleton()->call(EditorEvents::EditorAutoSave);
 		m_PointAtLast10Second = m_ApplicationTimer.Now();
 	}
 }
