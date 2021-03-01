@@ -9,24 +9,25 @@ jobs:
     strategy:
       matrix:
         os: [windows-2016]
-        type: ['Release', 'Debug']
     
     steps:
     - uses: actions/checkout@v1
 
-    - name: ccache
-      uses: hendrikmuhs/ccache-action@v1
+    - name: cache
+      id: cache
+      uses: actions/cache@v2
       with:
-        key: ${{ matrix.os }}-${{ matrix.type }}
+        path: './build'
+        key: ${{ hashFiles('**/CMakeLists.txt') }}
 
-    - name: build with cmake
-      uses: lukka/run-cmake@v3
-      with:
-        cmakeListsOrSettingsJson: CMakeListsTxtAdvanced
-        cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
-        cmakeAppendedArgs: '-DCMAKE_BUILD_TYPE=${{ matrix.type }} -D CMAKE_C_COMPILER_LAUNCHER=ccache -D CMAKE_CXX_COMPILER_LAUNCHER=ccache'
-        buildWithCMake: true
-        buildDirectory: '${{ github.workspace }}/build'
+    - name: configure
+      run: |
+        mkdir build
+        cd build
+        cmake .. -G "Visual Studio 15 2017" -A x64
+    
+    - name: build
+      run: ./build.bat
     
     - uses: actions/upload-artifact@v2
       with:
