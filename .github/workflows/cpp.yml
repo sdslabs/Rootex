@@ -13,15 +13,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
 
-    - name: cache
-      id: cache
-      uses: actions/cache@v2
-      with:
-        path: ./build
-        key: ${{ hashFiles('**/CMakeLists.txt') }}
-
     - name: configure
-      if: steps.cache.outputs.cache-hit != 'true'
       run: ./generate_cache.bat /17
     
     - name: build
