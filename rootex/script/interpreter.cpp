@@ -35,7 +35,7 @@ int HandleLuaException(lua_State* L, sol::optional<const std::exception&> maybeE
 	if (maybeException)
 	{
 		const std::exception& ex = *maybeException;
-		ERR(ex.what());
+		WARN(ex.what());
 	}
 	else
 	{
@@ -148,8 +148,7 @@ void LuaInterpreter::registerTypes()
 		matrix["Identity"] = sol::var(Matrix::Identity);
 	}
 	{
-		sol::usertype<Event> event = rootex.new_usertype<Event>("Event", sol::constructors<Event(const String&, const Event::Type, const Variant)>());
-		event["getName"] = &Event::getName;
+		sol::usertype<Event> event = rootex.new_usertype<Event>("Event", sol::constructors<Event(const Event::Type, const Variant)>());
 		event["getType"] = &Event::getType;
 		event["getData"] = &Event::getData;
 	}

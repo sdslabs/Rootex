@@ -89,7 +89,7 @@ void SceneDock::showSceneTree(Ptr<Scene>& scene)
 void SceneDock::openScene(Scene* scene)
 {
 	m_OpenedSceneID = scene->getID();
-	EventManager::GetSingleton()->call("OpenEntity", "EditorOpenScene", scene);
+	EventManager::GetSingleton()->call(EditorEvents::EditorOpenScene, scene);
 }
 
 Variant SceneDock::selectOpenScene(const Event* event)
@@ -100,7 +100,7 @@ Variant SceneDock::selectOpenScene(const Event* event)
 
 SceneDock::SceneDock()
 {
-	BIND_EVENT_MEMBER_FUNCTION("EditorOpenScene", SceneDock::selectOpenScene);
+	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorOpenScene, SceneDock::selectOpenScene);
 }
 
 void SceneDock::draw(float deltaMilliseconds)

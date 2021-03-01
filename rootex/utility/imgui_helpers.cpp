@@ -15,7 +15,7 @@ void RootexSelectableImage(const char* name, ImageResourceFile* image, Function<
 
 	if (image && ImGui::ImageButton(image->getTexture()->getTextureResourceView(), { 50, 50 }))
 	{
-		EventManager::GetSingleton()->deferredCall(name, "EditorOpenFile", image->getPath().string());
+		EventManager::GetSingleton()->deferredCall(EditorEvents::EditorOpenFile, image->getPath().string());
 	}
 	if (image)
 	{
@@ -36,7 +36,7 @@ void RootexSelectableImageCube(const char* name, ImageCubeResourceFile* image, F
 
 	if (image && ImGui::ImageButton(image->getTexture()->getTextureResourceView(), { 50, 50 }))
 	{
-		EventManager::GetSingleton()->deferredCall(name, "EditorOpenFile", image->getPath().string());
+		EventManager::GetSingleton()->deferredCall(EditorEvents::EditorOpenFile, image->getPath().string());
 	}
 	if (image)
 	{

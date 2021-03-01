@@ -461,7 +461,7 @@ void OS::Print(const String& msg, const String& type)
 
 void OS::PrintInline(const String& msg, const String& type)
 {
-	EventManager::GetSingleton()->call(type, "OSPrint", msg);
+	EventManager::GetSingleton()->call(RootexEvents::OSPrint, VariantVector { msg, type });
 	std::cout.clear();
 	std::cout << msg;
 }

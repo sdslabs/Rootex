@@ -137,7 +137,7 @@ void Application::run()
 		FrameMark;
 	}
 
-	EventManager::GetSingleton()->call("Application", "ApplicationExit", 0);
+	EventManager::GetSingleton()->call(RootexEvents::ApplicationExit);
 }
 
 void Application::process(float deltaMilliseconds)

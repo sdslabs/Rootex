@@ -41,12 +41,12 @@ public:
 	bool addListener(const Event::Type& type, EventFunction instance);
 	/// Publish an event. Returns the result of the first event handled.
 	Variant returnCall(const Event& event);
-	Variant returnCall(const String& eventName, const Event::Type& eventType, const Variant& data);
+	Variant returnCall(const Event::Type& eventType, const Variant& data = 0);
 	void call(const Event& event);
-	void call(const String& eventName, const Event::Type& eventType, const Variant& data);
+	void call(const Event::Type& eventType, const Variant& data = 0);
 	/// Publish an event that gets evaluated the end of the current frame.
 	void deferredCall(Ref<Event> event);
-	void deferredCall(const String& eventName, const Event::Type& eventType, const Variant& data);
+	void deferredCall(const Event::Type& eventType, const Variant& data = 0);
 	/// Dispatch deferred events collected so far.
 	bool dispatchDeferred(unsigned long maxMillis = Infinite);
 

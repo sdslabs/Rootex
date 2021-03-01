@@ -34,11 +34,11 @@ Vector<String> Split(const String& s, char delim)
 
 bool EditorSystem::initialize(const JSON::json& systemData)
 {
-	BIND_EVENT_MEMBER_FUNCTION("EditorSaveBeforeQuit", EditorSystem::saveBeforeQuit);
-	BIND_EVENT_MEMBER_FUNCTION("EditorSaveAll", EditorSystem::saveAll);
-	BIND_EVENT_MEMBER_FUNCTION("EditorAutoSave", EditorSystem::autoSave);
-	BIND_EVENT_MEMBER_FUNCTION("EditorCreateNewScene", EditorSystem::createNewScene);
-	BIND_EVENT_MEMBER_FUNCTION("EditorCreateNewMaterial", EditorSystem::createNewMaterial);
+	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorSaveBeforeQuit, EditorSystem::saveBeforeQuit);
+	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorSaveAll, EditorSystem::saveAll);
+	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorAutoSave, EditorSystem::autoSave);
+	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorCreateNewScene, EditorSystem::createNewScene);
+	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorCreateNewMaterial, EditorSystem::createNewMaterial);
 
 	m_Scene.reset(new SceneDock());
 	m_Output.reset(new OutputDock());
@@ -251,7 +251,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 					if (!newMaterialName.empty() && !newMaterialType.empty() && ImGui::Button("Create"))
 					{
 						Vector<String> newMaterialInfo = { "game/assets/materials/" + newMaterialName + ".rmat", newMaterialType };
-						EventManager::GetSingleton()->call("EditorFileCreateNewMaterial", "EditorCreateNewMaterial", newMaterialInfo);
+						EventManager::GetSingleton()->call(EditorEvents::EditorCreateNewMaterial, newMaterialInfo);
 					}
 
 					ImGui::EndMenu();
@@ -292,7 +292,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 						}
 						else
 						{
-							EventManager::GetSingleton()->call("EditorFileNewLevel", "EditorCreateNewScene", newSceneName);
+							EventManager::GetSingleton()->call(EditorEvents::EditorCreateNewScene, newSceneName);
 							loadingScene = "game/assets/scenes/" + newSceneName + ".scene.json";
 						}
 					}
@@ -320,16 +320,16 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 				}
 				if (ImGui::MenuItem("Save Scene", "", false, (bool)SceneLoader::GetSingleton()->getCurrentScene()))
 				{
-					EventManager::GetSingleton()->call("EditorSaveEvent", "EditorSaveAll", 0);
+					EventManager::GetSingleton()->call(EditorEvents::EditorSaveAll);
 				}
 				if (ImGui::MenuItem("Preferences"))
 				{
-					EventManager::GetSingleton()->call("EditorSettingsMenu", "EditorOpenFile", ApplicationSettings::GetSingleton()->getTextFile()->getPath().string());
+					EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, ApplicationSettings::GetSingleton()->getTextFile()->getPath().string());
 				}
 				ImGui::Separator();
 				if (ImGui::MenuItem("Quit", ""))
 				{
-					EventManager::GetSingleton()->call("EditorSaveBeforeQuit", "EditorSaveBeforeQuit", 0);
+					EventManager::GetSingleton()->call(EditorEvents::EditorSaveBeforeQuit, 0);
 				}
 
 				ImGui::EndMenu();
@@ -388,10 +388,10 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 
 				ImGui::Checkbox("Style Editor", &styleEditor);
 
-				bool fullscreen = Extract<bool>(EventManager::GetSingleton()->returnCall("WindowGetScreenState", "WindowGetScreenState", 0));
+				bool fullscreen = Extract<bool>(EventManager::GetSingleton()->returnCall(RootexEvents::WindowGetScreenState));
 				if (ImGui::Checkbox("Full Screen", &fullscreen))
 				{
-					EventManager::GetSingleton()->deferredCall("WindowToggleFullScreen", "WindowToggleFullScreen", 0);
+					EventManager::GetSingleton()->deferredCall(RootexEvents::WindowToggleFullscreen);
 				}
 				if (ImGui::BeginMenu("Windows"))
 				{
@@ -539,12 +539,12 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 					if (m_PopupCause == "quit")
 					{
 						saveAll(nullptr);
-						EventManager::GetSingleton()->call("QuitEditorWindow", "QuitEditorWindow", 0);
+						EventManager::GetSingleton()->call(RootexEvents::QuitEditorWindow);
 					}
 					else if (m_PopupCause == "create")
 					{
 						saveAll(nullptr);
-						EventManager::GetSingleton()->call("EditorFileNewScene", "EditorCreateNewScene", newSceneName);
+						EventManager::GetSingleton()->call(EditorEvents::EditorCreateNewScene, newSceneName);
 						loadingScene = "game/assets/scenes/" + newSceneName + ".scene.json";
 						ImGui::CloseCurrentPopup();
 						m_MenuAction = "";
@@ -563,11 +563,11 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 				{
 					if (m_PopupCause == "quit")
 					{
-						EventManager::GetSingleton()->call("QuitEditorWindow", "QuitEditorWindow", 0);
+						EventManager::GetSingleton()->call(RootexEvents::QuitEditorWindow);
 					}
 					else if (m_PopupCause == "create")
 					{
-						EventManager::GetSingleton()->call("EditorFileNewLevel", "EditorCreateNewScene", newSceneName);
+						EventManager::GetSingleton()->call(EditorEvents::EditorCreateNewScene, newSceneName);
 						loadingScene = "game/assets/scenes/" + newSceneName + ".scene.json";
 						ImGui::CloseCurrentPopup();
 						m_MenuAction = "";
@@ -657,7 +657,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 
 		if (totalProgress == progress)
 		{
-			EventManager::GetSingleton()->call("EditorLoadScene", "EditorCloseScene", 0);
+			EventManager::GetSingleton()->call(EditorEvents::EditorCloseScene);
 			SceneLoader::GetSingleton()->loadPreloadedScene(loadingScene, {});
 			SetWindowText(GetActiveWindow(), ("Rootex Editor: " + loadingScene).c_str());
 			totalProgress = -1;
@@ -762,7 +762,7 @@ Variant EditorSystem::saveBeforeQuit(const Event* event)
 	}
 	else
 	{
-		EventManager::GetSingleton()->call("QuitEditorWindow", "QuitEditorWindow", 0);
+		EventManager::GetSingleton()->call(RootexEvents::QuitEditorWindow);
 	}
 	return true;
 }
