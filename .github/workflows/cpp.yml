@@ -23,7 +23,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ./build/rootex/vendor/
-        key: ${{ hashFiles('rootex/vendor/**') }}
+        key: ${{ hashFiles('rootex/vendor/**', '.github/workflows/cpp.yml') }}
 
     - name: build
       run: ./build.bat
