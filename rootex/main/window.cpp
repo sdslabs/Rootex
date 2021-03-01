@@ -82,10 +82,10 @@ void Window::clearOffScreen(const Color& color)
 	RenderingDevice::GetSingleton()->clearDSV();
 }
 
-Variant Window::toggleFullScreen(const Event* event)
+Variant Window::toggleFullscreen(const Event* event)
 {
-	m_IsFullScreen = !m_IsFullScreen;
-	RenderingDevice::GetSingleton()->setScreenState(m_IsFullScreen);
+	m_IsFullscreen = !m_IsFullscreen;
+	RenderingDevice::GetSingleton()->setScreenState(m_IsFullscreen);
 	return true;
 }
 
@@ -151,7 +151,7 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
 {
 	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::QuitWindowRequest, Window::quitWindow);
 	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::QuitEditorWindow, Window::quitEditorWindow);
-	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::WindowToggleFullscreen, Window::toggleFullScreen);
+	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::WindowToggleFullscreen, Window::toggleFullscreen);
 	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::WindowGetScreenState, Window::getScreenState);
 	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::WindowResized, Window::windowResized);
 
@@ -188,7 +188,7 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
 	RenderingDevice::GetSingleton()->initialize(m_WindowHandle, rWidth, rHeight);
 
 	applyDefaultViewport();
-	m_IsFullScreen = false;
+	m_IsFullscreen = false;
 	if (fullScreen)
 	{
 		EventManager::GetSingleton()->deferredCall(RootexEvents::WindowToggleFullscreen);
