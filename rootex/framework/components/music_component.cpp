@@ -59,7 +59,7 @@ void MusicComponent::draw()
 	ImGui::SameLine();
 	if (ImGui::Button("Audio File"))
 	{
-		EventManager::GetSingleton()->call("OpenScript", "EditorOpenFile", m_AudioFile->getPath().string());
+		EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, m_AudioFile->getPath().string());
 	}
 	ImGui::SameLine();
 	if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Music"))

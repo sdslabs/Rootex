@@ -145,13 +145,13 @@ InputManager* InputManager::GetSingleton()
 
 bool InputManager::BoolListen(int userButton, bool oldValue, bool newValue)
 {
-	EventManager::GetSingleton()->call("BoolInputEvent", GetSingleton()->m_InputEventIDNames[userButton], Vector2(oldValue, newValue));
+	EventManager::GetSingleton()->call(GetSingleton()->m_InputEventIDNames[userButton], Vector2(oldValue, newValue));
 	return true;
 }
 
 bool InputManager::FloatListen(int userButton, float oldValue, float newValue)
 {
-	EventManager::GetSingleton()->call("FloatInputEvent", GetSingleton()->m_InputEventIDNames[userButton], Vector2(oldValue, newValue));
+	EventManager::GetSingleton()->call(GetSingleton()->m_InputEventIDNames[userButton], Vector2(oldValue, newValue));
 	return true;
 }
 

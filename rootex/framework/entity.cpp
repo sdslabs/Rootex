@@ -200,11 +200,11 @@ void Entity::draw()
 	{
 		if (ImGui::Selectable(m_Script->getFilePath().c_str()))
 		{
-			EventManager::GetSingleton()->call("OpenScriptFile", "EditorOpenFile", m_Script->getFilePath());
+			EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, m_Script->getFilePath());
 		}
 		if (ImGui::Button(ICON_ROOTEX_EXTERNAL_LINK "##Open Script"))
 		{
-			EventManager::GetSingleton()->call("OpenScriptFile", "EditorOpenFile", m_Script->getFilePath());
+			EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, m_Script->getFilePath());
 		}
 		ImGui::SameLine();
 		if (ImGui::Button(ICON_ROOTEX_REFRESH "##Reload"))

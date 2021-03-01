@@ -238,7 +238,7 @@ void CPUParticlesComponent::draw()
 	ImGui::Text("%s", m_ParticlesMaterial->getFileName().c_str());
 	if (ImGui::Button(ICON_ROOTEX_SEARCH "##Particles Material"))
 	{
-		EventManager::GetSingleton()->call("OpenModel", "EditorOpenFile", m_ParticlesMaterial->getFileName());
+		EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, m_ParticlesMaterial->getFileName());
 	}
 	ImGui::SameLine();
 	if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Particles Material"))

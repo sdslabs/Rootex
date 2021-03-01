@@ -68,7 +68,7 @@ FileViewer::FileViewer()
     : m_IsFileOpened(false)
     , m_IsEventJustReceived(false)
 {
-	BIND_EVENT_MEMBER_FUNCTION("EditorOpenFile", openFile);
+	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorOpenFile, openFile);
 }
 
 void FileViewer::draw(float deltaMilliseconds)

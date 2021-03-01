@@ -13,7 +13,7 @@ protected:
 	int m_Width;
 	int m_Height;
 	bool m_IsEditorWindow;
-	bool m_IsFullScreen;
+	bool m_IsFullscreen;
 
 	WNDCLASSEX m_WindowClass = { 0 };
 	LPCSTR m_ClassName;
@@ -43,8 +43,8 @@ public:
 	void clearMain(const Color& color);
 	void clearOffScreen(const Color& color);
 
-	Variant toggleFullScreen(const Event* event);
-	Variant getScreenState(const Event* event) { return m_IsFullScreen; };
+	Variant toggleFullscreen(const Event* event);
+	Variant getScreenState(const Event* event) { return m_IsFullscreen; };
 
 	int getWidth() const;
 	int getHeight() const;

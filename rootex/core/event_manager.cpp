@@ -45,9 +45,9 @@ Variant EventManager::returnCall(const Event& event)
 	return false;
 }
 
-Variant EventManager::returnCall(const String& eventName, const Event::Type& eventType, const Variant& data)
+Variant EventManager::returnCall(const Event::Type& eventType, const Variant& data)
 {
-	Event event(eventName, eventType, data);
+	Event event(eventType, data);
 	return returnCall(event);
 }
 
@@ -81,9 +81,9 @@ void EventManager::call(const Event& event)
 	}
 }
 
-void EventManager::call(const String& eventName, const Event::Type& eventType, const Variant& data)
+void EventManager::call(const Event::Type& eventType, const Variant& data)
 {
-	Event event(eventName, eventType, data);
+	Event event(eventType, data);
 	call(event);
 }
 
@@ -91,7 +91,7 @@ void EventManager::deferredCall(Ref<Event> event)
 {
 	if (!(m_ActiveQueue >= 0 && m_ActiveQueue < EVENTMANAGER_NUM_QUEUES))
 	{
-		WARN("Event left unhandled: " + event->getName());
+		WARN("Event left unhandled: " + event->getType());
 	}
 
 	auto&& findIt = m_EventListeners.find(event->getType());
@@ -102,13 +102,13 @@ void EventManager::deferredCall(Ref<Event> event)
 	}
 	else
 	{
-		WARN("Event left unhandled: " + event->getName());
+		WARN("Event left unhandled: " + event->getType());
 	}
 }
 
-void EventManager::deferredCall(const String& eventName, const Event::Type& eventType, const Variant& data)
+void EventManager::deferredCall(const Event::Type& eventType, const Variant& data)
 {
-	Ref<Event> event(new Event(eventName, eventType, data));
+	Ref<Event> event(new Event(eventType, data));
 	deferredCall(event);
 }
 

@@ -32,8 +32,8 @@ Variant InspectorDock::closeScene(const Event* event)
 InspectorDock::InspectorDock()
     : m_OpenedScene(nullptr)
 {
-	BIND_EVENT_MEMBER_FUNCTION("EditorOpenScene", openScene);
-	BIND_EVENT_MEMBER_FUNCTION("EditorCloseScene", closeScene);
+	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorOpenScene, openScene);
+	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorCloseScene, closeScene);
 
 	if (!s_Singleton)
 	{
@@ -50,7 +50,7 @@ void InspectorDock::drawSceneActions(Scene* scene)
 	m_ActionScene = scene;
 	if (!m_OpenedScene)
 	{
-		EventManager::GetSingleton()->call("OpenEntity", "EditorOpenScene", m_ActionScene);
+		EventManager::GetSingleton()->call(EditorEvents::EditorOpenScene, m_ActionScene);
 	}
 	if (m_ActionScene != SceneLoader::GetSingleton()->getRootScene())
 	{
@@ -131,8 +131,8 @@ void InspectorDock::drawSceneActions(Scene* scene)
 		}
 		if (ImGui::Selectable("Delete Scene"))
 		{
-			EventManager::GetSingleton()->deferredCall("InspectorUnselectScene", "DeleteScene", m_ActionScene);
-			EventManager::GetSingleton()->deferredCall("InspectorDeleteScene", "EditorCloseScene", 0);
+			EventManager::GetSingleton()->deferredCall(RootexEvents::DeleteScene, m_ActionScene);
+			EventManager::GetSingleton()->deferredCall(EditorEvents::EditorCloseScene);
 		}
 	}
 }
