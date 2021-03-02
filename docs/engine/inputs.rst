@@ -7,12 +7,11 @@ User inputs in Rootex are handled with polling and/or callback based mechanisms 
 
 .. code-block:: JSON
 
-    // flappy_bird.level.json
+    // flappy_bird.scene.json
     {
         "camera": 23,
-        "inputSchemes": [
-            {
-                "name": "FlappyBird",
+        "inputSchemes": {
+            "FlappyBird": {
                 "bools": [
                     {
                         "inputEvent": "Jump",
@@ -20,22 +19,21 @@ User inputs in Rootex are handled with polling and/or callback based mechanisms 
                         "button": 99
                     }
                 ],
-                "floats": {}
-            }
-        ],
+                "floats": []
+            },
+        },
         "startScheme": "FlappyBird"
     }
 
 The field ``inputSchemes`` is the collection of input schemes that the input manager will recognize. In this example, there is only 1 scheme called "FlappyBird", but a game can have multiple input schemes and only one of those input schemes can be active at a time. The field ``startScheme`` tells the Rootex engine which input scheme should be selected as soon as the level is loaded up.
 
-Each input scheme has fields:
+Each input scheme has a name identified by its key and the following fields:
 
-* ``name``: Name of the input scheme
-* ``bools``: Array of inputs that are represented better as boolean values. Used for buttons that are either held down or not held down.
-* "floats": Array of inputs that are not digital in nature and rather are analogous, like mouse positions and joystick movements.
+* ``bools``: Array of inputs that are represented as boolean values. Used for buttons that are either held down or not held down.
+* ``floats``: Array of inputs that are not digital in nature and rather are analogous, like mouse positions and joystick movements.
 
 Inside each input keybinding, there are fields:
 
-* ``inputEvent``: The event name that gets emitted as soon as the input changes state. This need not be unique amongst other keybindings.
+* ``inputEvent``: The event name that gets emitted as soon as the input changes state. This need not be unique across other keybindings under the same input scheme or even across input schemes.
 * ``device``: The device enum value that this input keybinding is present on.
 * ``button``: The button value that is mapped to the keybinding

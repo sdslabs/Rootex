@@ -22,6 +22,8 @@ Describe the implementation alternatives/issues and decisions in the .cpp files:
 
 ## How to build the documentation?
 
+0. Pre-requisites: Doxygen
+
 1. Navigate to this directory.
 
 ```powershell
