@@ -1,0 +1,13 @@
+.. _exhale_typedef_types_8h_1ad193c890cb266cb98b80471731fed249:
+
+Typedef Atomic
+==============
+
+- Defined in :ref:`file_rootex_common_types.h`
+
+
+Typedef Documentation
+---------------------
+
+
+.. doxygentypedef:: Atomic

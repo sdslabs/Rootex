@@ -1,0 +1,13 @@
+.. _exhale_typedef_os_8h_1a9ea848ea177ca8a918f8eb03862a7542:
+
+Typedef FileBuffer
+==================
+
+- Defined in :ref:`file_rootex_os_os.h`
+
+
+Typedef Documentation
+---------------------
+
+
+.. doxygentypedef:: FileBuffer

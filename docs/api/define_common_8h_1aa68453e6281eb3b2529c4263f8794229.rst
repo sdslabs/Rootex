@@ -1,0 +1,13 @@
+.. _exhale_define_common_8h_1aa68453e6281eb3b2529c4263f8794229:
+
+Define ERR_CUSTOM
+=================
+
+- Defined in :ref:`file_rootex_common_common.h`
+
+
+Define Documentation
+--------------------
+
+
+.. doxygendefine:: ERR_CUSTOM

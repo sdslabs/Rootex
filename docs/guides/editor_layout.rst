@@ -1,8 +1,6 @@
 Editor Layout
 =============
 
-The editor features a Window application like series of main menu sections.
-
 The main editor area is laid out in 6 major sections.
 
 Toolbar Dock
@@ -16,24 +14,6 @@ The toolbar dock displays different settings that affect the editor's view of th
 
 You can find data related to the Editor FPS, registered Events in the EventManager, the current camera being used to view the world, etc. You can try fiddling with the settings here to know what each thing does. The toolbar dock also allows playing the currently open level in game or play the game from the original starting level as defined in the game settings.
 
-File System Dock
-================
-
-.. image:: images/file_system_dock.png
-	:alt: File System Dock
-	:align: center
-
-The file system dock displays the public file system starting from the directory "game/assets/".
-
-All file paths that:
-
-* Rootex handles internally 
-* the user is required to use while using the Rootex Scripting API
-
-are calculated from the root of the engine directory a.k.a. the directory having the Rootex LICENSE file.
-
-You can also drag and drop files onto specific areas in the Inspector Dock and the Hierarchy Dock to ease assigning resources to different game objects.
-
 Output Dock
 ===========
 
@@ -41,9 +21,9 @@ Output Dock
 	:alt: Output Dock
 	:align: center
 
-The output dock is the Rootex Engine's channel to report stuff happening internally in the engine and in the editor. You can expect to see error messages, warnings and plain reports in the output dock. You will also notice a text input bar at the bottom of the output dock. This text input bar is the CLI access to the Rootex Engine.
+The output dock is the Rootex Engine's channel to report stuff happening internally in the engine and in the editor. You can expect to see error messages, warnings and plain reports in the output dock. You will also notice a text input bar at the bottom of the output dock.
 
-Currently the command line only allows emitting command events (using the engine's Event Manager) which take a single string input. Support for other commands are slowing being added in.
+Use the command input to run Lua code in Rootex's Lua VM. All of Rootex's scripting API is available through this command line.
 
 Viewport Dock
 =============
@@ -60,15 +40,15 @@ EditorCamera
 
 The EditorCamera is an editor-only entity which is setup to be the view of the editor into the game world.
 
-To view the world though EditorCamera, select EditorCamera as the current camera entity from Toolbar > Camera. The EditorCamera can be controlled from the editor by holding Right Mouse Button and using WASD/Space/C to move. You can tweak with the camera turning speed and the moving speed with the controls on the top left of the viewport.
+To view the world though EditorCamera, select EditorCamera as the current camera entity from `Viewport > Current Camera`. The EditorCamera can be controlled from the editor by holding Right Mouse Button and using WASD/Space/Shift to move. You can tweak the camera turning speed and the moving speed.
 
 *****
 Gizmo
 *****
 
-The 3D gizmo is an editor-only tool to let the user mess with the position and rotation of selected entity. Entities can be selected from the hierarchy dock.
+The 3D gizmo is an editor-only tool to let the user change the position, rotation, and scale of selected entity in either local or world space. Scenes can be selected from the scene dock.
 
-The gizmo has 2 separate modes of working.
+The gizmo has 3 separate modes of working.
 
 * Translation
 
@@ -76,7 +56,11 @@ In this mode the gizmo takes the shape of 3 axes point in orthogonal directions.
 
 * Rotation
 
-In this mode the gizmo takes the shape of 3 circles with their axes going in orthogonal directions. These circles denote the rotation of the entities in Euler angles and roation of the entities can be altered by dragging.
+In this mode the gizmo takes the shape of 3 circles with their axes going in orthogonal directions. These circles denote the rotation of the entities in Euler angles and rotation of the entities can be altered by dragging.
+
+* Scale
+
+In this mode the gizmo takes the shape of 3 axes in orthogonal directions. These axes denote the scales which can be altered by dragging.
 
 The gizmo has 2 modifiers to each of the modes. The Local modifier will apply changes in the local coordinate system. The World modifier will apply changes in the world coordinate system.
 
@@ -84,27 +68,18 @@ The gizmo has 2 modifiers to each of the modes. The Local modifier will apply ch
 EditorGrid
 **********
 
-There is one more editor-only entity that is helpful to the vierport. The EditorGrid displays the grid defined by the grid cells sizes. You can alter the grid settings by selecting EditorGrid in the hierarchy dock.
+There is one more editor-only entity that is helpful to the viewport. The EditorGrid displays the grid defined by the grid cells sizes. You can alter the grid settings by selecting EditorGrid in the scene dock.
 
-Hierarchy Dock
+Scene Dock
 ==============
 
-.. image:: images/hierarchy_dock.png
-	:alt: Hierarchy Dock
+.. image:: images/scene_dock.png
+	:alt: Scene Dock
 	:align: center
 
-The hierarchy dock displays the parent-child hierarchy of entities in the current game world.
+The scene dock displays the parent-child hierarchy of scenes in the current game world.
 
-The hierarchy between entities is defined by the HierarchyComponent. Entities can be selected by clicking on the entity name in the hierarchy dock. You can also change the hierarchy between entities by dragging and dropping the entity over your chosen parent entity.
-
-Entities Dock
-=============
-
-.. image:: images/entities_dock.png
-	:alt: Entities Dock
-	:align: center
-
-The entities dock simply lists the entities present in the current level, alongwith a list of components that are attached to a particular entity.
+The hierarchy between scenes is defined by the Scene class and its children. Scenes can be selected by clicking on their name in the scene dock. You can also change the hierarchy between scenes by dragging and dropping the scene over your chosen parent scene.
 
 Inspector Dock
 ==============
@@ -113,6 +88,6 @@ Inspector Dock
 	:alt: Inspector Dock
 	:align: center
 
-Inspector dock is the main hub of all data related to components in an entity. Data under each component is available for change using the inpector dock. Use the hierarchy dock or the entities dock to select entities. 
+Inspector dock is the main hub of all data related to components in an entity. Data under each component is available for change using the inpector dock. Use the scene dock, or click on the scene in the viewport to select them.
 
-Inspector dock also allows changing the name of the entity, adding or removing components, resetting inter-component linkages and deleting entities.
+Inspector dock also allows changing the name of the scene, attaching Lua scripts, adding or changing or removing components, resetting inter-component linkages and deleting entities, along with instantiating new scenes as children from files and saving scenes to files.

@@ -27,4 +27,5 @@ public:
 	void append(const String& add);
 	/// Get the resource data buffer as a readable String.
 	String getString() const;
+	size_t getSize() const { return m_FileString.size(); }
 };
