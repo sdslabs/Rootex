@@ -32,14 +32,16 @@ A System in Rootex is containing all the logic/algorithms that are needs to make
 
 ----
 
-***************
-Entity Curation
-***************
+*****
+Scene
+*****
 
-Rootex uses JSON style serializations to store and load entities. Entities are created from either entity class files, or simply entity files. Both the types of files are JSON files that contain the data needed to reconstruct that entity in the same exact configuration as seen earlier or in the editor.
+A scene is a hierarchical data structure which can optionally store and entity. It stores children nodes of the same type and controls their lifetime based of if the parent is alive. Once the parent has decided to kill itself, it makes sure its children have also meet the same fate.
 
-Entity files and entity class files are recognized by .entity.json file extensions.
+Rootex uses JSON style serializations to store and load scenes. Entities are also created from these files with all the necessary components.
 
-Entity construction and component assignment is handled by :ref:`Class EntityFactory`
+Scene files are recognized by `.scene.json` file extensions.
 
-Each :ref:`Class Component` needs to implement 2 static functions called: ``Create`` and ``CreateDefault`` to be registered as a component and get assigned to an entity.
+Scene construction is handled by :ref:`Class Scene` itself but it delegates the entity construction using the JSON data to :ref:`Class ECSFactory`.
+
+Each :ref:`Class Component` needs to implement a static function called: ``Create`` which takes in the JSON data and reconstructs the component. The data retention across engine restarts is guarranteed through ensuring that the component use the same data which it generates while saving the scene.

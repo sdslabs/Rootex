@@ -54,7 +54,7 @@
             "name": "box",
             "settings": {
                 "camera": 1,
-                "inputSchemes": null,
+                "inputSchemes": {},
                 "listener": 1,
                 "preloads": [],
                 "startScheme": ""
@@ -146,7 +146,7 @@
             "name": "Particles",
             "settings": {
                 "camera": 1,
-                "inputSchemes": null,
+                "inputSchemes": {},
                 "listener": 1,
                 "preloads": [],
                 "startScheme": ""
@@ -238,7 +238,7 @@
             "name": "Particles",
             "settings": {
                 "camera": 1,
-                "inputSchemes": null,
+                "inputSchemes": {},
                 "listener": 1,
                 "preloads": [],
                 "startScheme": ""
@@ -295,7 +295,7 @@
     "name": "box",
     "settings": {
         "camera": 1,
-        "inputSchemes": null,
+        "inputSchemes": {},
         "listener": 1,
         "preloads": [],
         "startScheme": ""

@@ -373,13 +373,14 @@
                     "script": null
                 },
                 "components": {
+                    "AudioListenerComponent": null,
                     "CameraComponent": {
                         "aspectRatio": {
                             "x": 16.0,
                             "y": 9.0
                         },
                         "far": 100.0,
-                        "fov": 1.2042771577835083,
+                        "fov": 0.7853981852531433,
                         "near": 0.10000000149011612,
                         "postProcessingDetails": {
                             "assaoAdaptiveQualityLimit": 0.16699999570846558,
@@ -500,20 +501,20 @@
                             }
                         },
                         "position": {
-                            "x": -809.0194702148438,
+                            "x": 364.97515869140625,
                             "y": 174.26275634765625,
                             "z": -17.46019172668457
                         },
                         "rotation": {
-                            "w": -0.4598008394241333,
+                            "w": 0.707034707069397,
                             "x": 0.0,
-                            "y": 0.8880220055580139,
+                            "y": 0.7071788907051086,
                             "z": 0.0
                         },
                         "scale": {
-                            "x": 0.9999998807907104,
+                            "x": 1.0,
                             "y": 1.0,
-                            "z": 0.9999998807907104
+                            "z": 1.0
                         }
                     }
                 }
@@ -574,21 +575,23 @@
             },
             "StaticMeshColliderComponent": {
                 "angularFactor": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
                 },
                 "collisionGroup": 31,
                 "collisionMask": 31,
                 "collisionModel": "game/assets/sponza/sponza.obj",
                 "gravity": {
                     "x": 0.0,
-                    "y": -9.800000190734863,
+                    "y": 0.0,
                     "z": 0.0
                 },
+                "isCCD": true,
                 "isGeneratesHitEvents": false,
                 "isKinematic": false,
                 "isMoveable": false,
+                "isSleepable": true,
                 "material": 0,
                 "volume": 0.0
             },
