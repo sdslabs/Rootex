@@ -1,0 +1,13 @@
+.. _exhale_define_imgui__helpers_8h_1a59093648f36982b464968bad35386455:
+
+Define ICON_MIN_ROOTEX
+======================
+
+- Defined in :ref:`file_rootex_utility_imgui_helpers.h`
+
+
+Define Documentation
+--------------------
+
+
+.. doxygendefine:: ICON_MIN_ROOTEX

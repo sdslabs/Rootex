@@ -1,0 +1,13 @@
+.. _exhale_typedef_types_8h_1a24e73d18a34576ef690245cc0ce1b692:
+
+Typedef Matrix
+==============
+
+- Defined in :ref:`file_rootex_common_types.h`
+
+
+Typedef Documentation
+---------------------
+
+
+.. doxygentypedef:: Matrix

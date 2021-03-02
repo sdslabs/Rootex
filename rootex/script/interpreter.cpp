@@ -166,7 +166,7 @@ void LuaInterpreter::registerTypes()
 
 		rootex["LoadScene"] = [](const String& sceneFile, const sol::table& arguments) { SceneLoader::GetSingleton()->loadScene(sceneFile, arguments.as<Vector<String>>()); };
 		rootex["PreloadScene"] = [](const String& sceneFile, Atomic<int>& progress) { return SceneLoader::GetSingleton()->preloadScene(sceneFile, progress); };
-		rootex["LoadPreloadedScene"] = [](const String& sceneFile, const sol::nested<Vector<String>>& arguments) { return SceneLoader::GetSingleton()->loadPreloadedScene(sceneFile, arguments.value()); };
+		rootex["LoadPreloadedScene"] = [](const String& sceneFile, const sol::nested<Vector<String>>& arguments) { SceneLoader::GetSingleton()->loadPreloadedScene(sceneFile, arguments.value()); };
 		rootex["GetSceneArguments"] = []() { return SceneLoader::GetSingleton()->getArguments(); };
 		rootex["GetCurrentScene"] = []() { return SceneLoader::GetSingleton()->getCurrentScene(); };
 	}

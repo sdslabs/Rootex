@@ -1,0 +1,13 @@
+.. _exhale_define_common_8h_1a392194594f3d768f2de3791a9a5b4049:
+
+Define PRINT
+============
+
+- Defined in :ref:`file_rootex_common_common.h`
+
+
+Define Documentation
+--------------------
+
+
+.. doxygendefine:: PRINT

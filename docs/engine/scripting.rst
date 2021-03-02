@@ -44,3 +44,8 @@ See Middleclass (https://github.com/kikito/middleclass) for details on the ``cla
 The functions are called into Lua from Rootex on the command of the :ref:`Class ScriptSystem`.
 
 The script files are run in a Lua VM and the Rootex functions available are registed by the :ref:`Class LuaInterpreter`'s implementation. The Lua scripting interface for Rootex mostly looks the same as the Rootex engine API that the engine uses internally to provide as vast a scripting environment as possible. All Rootex class names and functions are hidden under the ``RTX`` global Lua variable.
+
+Scripting API
+=============
+
+You can find the scripting API and related docs in the editor itself.
