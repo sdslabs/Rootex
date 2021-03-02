@@ -35,4 +35,5 @@ Program Listing for File text_resource_file.h
        void popBack();
        void append(const String& add);
        String getString() const;
+       size_t getSize() const { return m_FileString.size(); }
    };
