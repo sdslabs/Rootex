@@ -1,7 +1,9 @@
 Multithreading
 ==============
 
-Rootex engine is multithreading ready. Every Rootex application (:ref:`Class Application`) has a pool of threads, called simply a threadpool in common CS language.
+Rootex engine is multithreading ready, however its main focus is on single threaded operations. 
+
+Every Rootex application (:ref:`Class Application`) has a pool of threads, called simply a threadpool in common CS language. These threads can be assigned work either by the engine or game code.
 
 Rootex uses the concept of Worker threads, a.k.a. Job Based multithreading.
 

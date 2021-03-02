@@ -1,0 +1,13 @@
+.. _exhale_typedef_types_8h_1a4c46a251392ed9485da1aab2e9725361:
+
+Typedef Vector2
+===============
+
+- Defined in :ref:`file_rootex_common_types.h`
+
+
+Typedef Documentation
+---------------------
+
+
+.. doxygentypedef:: Vector2

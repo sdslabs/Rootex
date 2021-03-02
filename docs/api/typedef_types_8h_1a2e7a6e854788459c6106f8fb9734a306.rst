@@ -1,0 +1,13 @@
+.. _exhale_typedef_types_8h_1a2e7a6e854788459c6106f8fb9734a306:
+
+Typedef Weak
+============
+
+- Defined in :ref:`file_rootex_common_types.h`
+
+
+Typedef Documentation
+---------------------
+
+
+.. doxygentypedef:: Weak

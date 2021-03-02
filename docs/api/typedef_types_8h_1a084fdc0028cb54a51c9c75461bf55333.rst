@@ -1,0 +1,13 @@
+.. _exhale_typedef_types_8h_1a084fdc0028cb54a51c9c75461bf55333:
+
+Typedef BoundingBox
+===================
+
+- Defined in :ref:`file_rootex_common_types.h`
+
+
+Typedef Documentation
+---------------------
+
+
+.. doxygentypedef:: BoundingBox

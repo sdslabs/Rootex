@@ -1,0 +1,13 @@
+.. _exhale_define_types_8h_1a64496d890506bdbc5e0778140dd887db:
+
+Define NS_TO_MS
+===============
+
+- Defined in :ref:`file_rootex_common_types.h`
+
+
+Define Documentation
+--------------------
+
+
+.. doxygendefine:: NS_TO_MS
