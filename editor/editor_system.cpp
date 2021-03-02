@@ -18,7 +18,7 @@
 #include "imgui_stdlib.h"
 #include "ImGuizmo.h"
 
-#define DOCUMENTATION_LINK String("https://rootex.readthedocs.io/en/latest/api/rootex.html")
+#define DOCUMENTATION_LINK String("https://rootex.readthedocs.io/")
 
 Vector<String> Split(const String& s, char delim)
 {
@@ -414,20 +414,56 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 			}
 			if (ImGui::BeginMenu("Documentation"))
 			{
-				if (ImGui::BeginMenu("C++ API"))
+				if (ImGui::BeginMenu("Guides"))
 				{
-					if (ImGui::MenuItem("Open Online C++ Documentation"))
+					static Vector<FilePath> guidesFiles = OS::GetAllFilesInDirectory("docs/guides/");
+					for (auto& file : guidesFiles)
 					{
-						OS::Execute("start " + DOCUMENTATION_LINK);
+						if (ImGui::MenuItem(file.generic_string().c_str()))
+						{
+							EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, file.generic_string());
+						}
 					}
-
 					ImGui::EndMenu();
 				}
 
+				if (ImGui::BeginMenu("Engine"))
+				{
+					static Vector<FilePath> engineDocFiles = OS::GetAllFilesInDirectory("docs/engine/");
+					for (auto& file : engineDocFiles)
+					{
+						if (ImGui::MenuItem(file.generic_string().c_str()))
+						{
+							EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, file.generic_string());
+						}
+					}
+					ImGui::EndMenu();
+				}
+
+				if (ImGui::BeginMenu("Engine API"))
+				{
+					static Vector<FilePath> apiFiles = OS::GetAllFilesInDirectory("docs/api/");
+					for (auto& file : apiFiles)
+					{
+						if (ImGui::MenuItem(file.generic_string().c_str()))
+						{
+							EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, file.generic_string());
+						}
+					}
+					ImGui::EndMenu();
+				}
 				if (ImGui::MenuItem("Lua API"))
 				{
 					m_MenuAction = "Lua API Documentation";
 				}
+
+				ImGui::Separator();
+
+				if (ImGui::MenuItem("Online Documentation " ICON_ROOTEX_EXTERNAL_LINK))
+				{
+					OS::Execute("start " + DOCUMENTATION_LINK);
+				}
+
 				ImGui::EndMenu();
 			}
 			if (ImGui::BeginMenu("About"))

@@ -7,6 +7,8 @@
 
 #include "imgui.h"
 
+#define TEXT_THRESHOLD_SIZE 10 * 1024
+
 void TextViewer::drawFileInfo()
 {
 }
@@ -35,6 +37,13 @@ void TextViewer::draw(float deltaMilliseconds)
 	}
 	ImGui::Separator();
 	EditorSystem::GetSingleton()->pushMonospaceFont();
-	ImGui::TextUnformatted(m_TextResourceFile->getString().c_str());
+	if (m_TextResourceFile->getSize() < TEXT_THRESHOLD_SIZE)
+	{
+		ImGui::TextWrapped("%s", m_TextResourceFile->getString().c_str());
+	}
+	else
+	{
+		ImGui::TextUnformatted(m_TextResourceFile->getString().c_str());
+	}
 	EditorSystem::GetSingleton()->popFont();
 }
