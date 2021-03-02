@@ -39,11 +39,16 @@ void Scene::ResetNextID()
 
 Ptr<Scene> Scene::Create(const JSON::json& sceneData)
 {
+	SceneID thisSceneID;
 	if (sceneData.contains("ID"))
 	{
 		NextSceneID = std::max(NextSceneID, (SceneID)sceneData["ID"]);
+		thisSceneID = sceneData["ID"];
 	}
-	SceneID thisSceneID = NextSceneID;
+	else
+	{
+		thisSceneID = NextSceneID;
+	}
 	NextSceneID++;
 
 	Ptr<Scene> thisScene(std::make_unique<Scene>(thisSceneID, sceneData.value("name", String("Untitled")), sceneData.value("file", String()), sceneData.value("settings", SceneSettings())));
