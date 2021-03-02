@@ -36,7 +36,7 @@ A System in Rootex is containing all the logic/algorithms that are needs to make
 Scene
 *****
 
-A scene is a hierarchical data structure which can optionally store and entity. It stores children nodes of the same type and controls their lifetime based of if the parent is alive. Once the parent has decided to kill itself, it makes sure its children have also meet the same fate.
+A scene is a hierarchical data structure which can optionally store and entity. It stores children nodes of the same type and controls their lifetime based of if the parent is alive. Once the parent has decided to kill itself, it makes sure its children also meet the same fate.
 
 Rootex uses JSON style serializations to store and load scenes. Entities are also created from these files with all the necessary components.
 

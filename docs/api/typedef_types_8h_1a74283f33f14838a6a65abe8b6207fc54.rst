@@ -1,0 +1,13 @@
+.. _exhale_typedef_types_8h_1a74283f33f14838a6a65abe8b6207fc54:
+
+Typedef VariantVector
+=====================
+
+- Defined in :ref:`file_rootex_common_types.h`
+
+
+Typedef Documentation
+---------------------
+
+
+.. doxygentypedef:: VariantVector

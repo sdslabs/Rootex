@@ -1,0 +1,13 @@
+.. _exhale_define_os_8h_1a1c27f7476a2015e455d415ab086d62e6:
+
+Define GAME_DIRECTORY
+=====================
+
+- Defined in :ref:`file_rootex_os_os.h`
+
+
+Define Documentation
+--------------------
+
+
+.. doxygendefine:: GAME_DIRECTORY

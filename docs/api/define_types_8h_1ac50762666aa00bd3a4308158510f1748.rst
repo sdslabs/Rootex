@@ -1,0 +1,13 @@
+.. _exhale_define_types_8h_1ac50762666aa00bd3a4308158510f1748:
+
+Define _WIN32_WINNT
+===================
+
+- Defined in :ref:`file_rootex_common_types.h`
+
+
+Define Documentation
+--------------------
+
+
+.. doxygendefine:: _WIN32_WINNT

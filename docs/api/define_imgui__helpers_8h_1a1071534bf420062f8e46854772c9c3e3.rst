@@ -1,0 +1,13 @@
+.. _exhale_define_imgui__helpers_8h_1a1071534bf420062f8e46854772c9c3e3:
+
+Define ICON_ROOTEX_FILE_IMAGE_O
+===============================
+
+- Defined in :ref:`file_rootex_utility_imgui_helpers.h`
+
+
+Define Documentation
+--------------------
+
+
+.. doxygendefine:: ICON_ROOTEX_FILE_IMAGE_O

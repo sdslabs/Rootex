@@ -1,0 +1,13 @@
+.. _exhale_typedef_types_8h_1aa6864dcd9d3028d31437452d4e5541c5:
+
+Typedef Ray
+===========
+
+- Defined in :ref:`file_rootex_common_types.h`
+
+
+Typedef Documentation
+---------------------
+
+
+.. doxygentypedef:: Ray
