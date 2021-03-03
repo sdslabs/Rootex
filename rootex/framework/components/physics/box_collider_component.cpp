@@ -45,7 +45,7 @@ BoxColliderComponent::BoxColliderComponent(
         Ref<btBoxShape>(new btBoxShape(VecTobtVector3(dimensions))))
     , m_Dimensions(dimensions)
 {
-	m_BoxShape = std::dynamic_pointer_cast<btBoxShape>(m_CollisionShape);
+	m_BoxShape = (btBoxShape*)m_CollisionShape.get();
 }
 
 JSON::json BoxColliderComponent::getJSON() const
@@ -60,8 +60,8 @@ JSON::json BoxColliderComponent::getJSON() const
 void BoxColliderComponent::setDimensions(const Vector3& dimensions)
 {
 	m_Dimensions = dimensions;
-	m_BoxShape.reset(new btBoxShape(VecTobtVector3(dimensions)));
-	m_CollisionShape = m_BoxShape;
+	m_CollisionShape.reset(new btBoxShape(VecTobtVector3(dimensions)));
+	m_BoxShape = (btBoxShape*)m_CollisionShape.get();
 	setupData();
 }
 

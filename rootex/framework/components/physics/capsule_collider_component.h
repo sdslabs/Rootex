@@ -10,7 +10,7 @@ class CapsuleColliderComponent : public PhysicsColliderComponent
 
 	float m_Radius;
 	float m_SideHeight;
-	Ref<btCapsuleShape> m_CapsuleShape;
+	btCapsuleShape* m_CapsuleShape;
 
 	friend class ECSFactory;
 
