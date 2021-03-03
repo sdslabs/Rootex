@@ -40,8 +40,8 @@ StaticMeshColliderComponent::StaticMeshColliderComponent(
 
 bool StaticMeshColliderComponent::setupData()
 {
-	m_MeshShape.reset(new btBvhTriangleMeshShape(m_CollisionModel->getCollisionMesh(), true));
-	m_CollisionShape = m_MeshShape;
+	m_CollisionShape.reset(new btBvhTriangleMeshShape(m_CollisionModel->getCollisionMesh(), true));
+	m_MeshShape = (btBvhTriangleMeshShape*)m_CollisionShape.get();
 	return PhysicsColliderComponent::setupData();
 }
 

@@ -2,14 +2,9 @@
 
 #include "component.h"
 #include "components/transform_component.h"
+#include "core/physics/bullet_conversions.h"
 
 #include "btBulletDynamicsCommon.h"
-
-/// Helpers for conversion to and from Bullet's data types.
-btTransform MatTobtTransform(Matrix const& mat);
-Matrix BtTransformToMat(btTransform const& trans);
-btVector3 VecTobtVector3(Vector3 const& vec3);
-Vector3 BtVector3ToVec(btVector3 const& btvec);
 
 enum PhysicsMaterial;
 
