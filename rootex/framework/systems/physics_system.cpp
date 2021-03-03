@@ -40,7 +40,7 @@ bool PhysicsSystem::initialize(const JSON::json& systemData)
 	m_CollisionConfiguration.reset(new btDefaultCollisionConfiguration());
 	m_Dispatcher.reset(new btCollisionDispatcher(m_CollisionConfiguration.get()));
 	m_Broadphase.reset(new btDbvtBroadphase());
-	m_Solver.reset(new btSequentialImpulseConstraintSolver);
+	m_Solver.reset(new btSequentialImpulseConstraintSolver());
 	m_DynamicsWorld.reset(new btDiscreteDynamicsWorld(m_Dispatcher.get(), m_Broadphase.get(), m_Solver.get(), m_CollisionConfiguration.get()));
 	m_PhysicsMaterialTable.resize(PhysicsMaterial::End);
 	assignPhysicsMaterials();

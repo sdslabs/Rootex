@@ -59,7 +59,7 @@
                         },
                         "position": {
                             "x": 0.0,
-                            "y": -0.8820000290870667,
+                            "y": -1.4880571365356445,
                             "z": -4.909999847412109
                         },
                         "rotation": {
@@ -116,7 +116,7 @@
                             "y": -9.800000190734863,
                             "z": 0.0
                         },
-                        "isCCD": false,
+                        "isCCD": true,
                         "isGeneratesHitEvents": false,
                         "isKinematic": false,
                         "isMoveable": true,
