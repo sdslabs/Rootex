@@ -43,7 +43,7 @@ class Scene
 public:
 	static void ResetNextID();
 
-	static Ptr<Scene> Create(const JSON::json& sceneData);
+	static Ptr<Scene> Create(const JSON::json& sceneData, bool isACopy = false);
 	static Ptr<Scene> CreateFromFile(const String& sceneFile);
 	static Ptr<Scene> CreateEmpty();
 	static Ptr<Scene> CreateEmptyAtPath(const String& sceneFile);
