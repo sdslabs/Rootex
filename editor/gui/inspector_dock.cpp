@@ -119,7 +119,7 @@ void InspectorDock::drawSceneActions(Scene* scene)
 		{
 			Scene* actionScenePtr = m_ActionScene;
 			EventManager::GetSingleton()->defer([=]() {
-				if (Ptr<Scene>& copiedScene = Scene::Create(actionScenePtr->getJSON()))
+				if (Ptr<Scene>& copiedScene = Scene::Create(actionScenePtr->getJSON(), true))
 				{
 					actionScenePtr->getParent()->addChild(copiedScene);
 				}
