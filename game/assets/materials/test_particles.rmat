@@ -3,10 +3,11 @@
     "imageFile": "rootex/assets/white.png",
     "isAlpha": false,
     "isLit": false,
-    "isNormal": false,
-    "reflectivity": 0.10000000149011612,
-    "refractionConstant": 0.800000011920929,
-    "refractivity": 0.10000000149011612,
+    "isNormal": true,
+    "normalImageFile": "game/assets/test/WaterDropletsMixedBubbled001_NRM16_1K.png",
+    "reflectivity": 0.0,
+    "refractionConstant": 0.9200000166893005,
+    "refractivity": 0.0,
     "specularImageFile": "rootex/assets/white.png",
     "type": "ParticlesMaterial"
 }
