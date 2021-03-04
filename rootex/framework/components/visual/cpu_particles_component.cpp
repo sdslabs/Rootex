@@ -105,7 +105,7 @@ bool CPUParticlesComponent::preRender(float deltaMilliseconds)
 			float life = particle.lifeRemaining / particle.lifeTime;
 			float size = particle.sizeBegin * (life) + particle.sizeEnd * (1.0f - life);
 
-			particle.position = particle.position + particle.velocity * delta; 
+			particle.position = particle.position + particle.velocity * delta;
 			particle.rotation = Quaternion::Concatenate(
 			    particle.rotation,
 			    Quaternion::CreateFromYawPitchRoll(
