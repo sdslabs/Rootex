@@ -10,6 +10,7 @@
     "isAlpha": true,
     "isLit": true,
     "isNormal": true,
+    "lightmapImageFile": "rootex/assets/white.png",
     "normalImageFile": "game/assets/test/WaterDropletsMixedBubbled001_NRM16_1K.png",
     "reflectivity": 1.0,
     "refractionConstant": 0.0,
