@@ -87,22 +87,38 @@ bool CPUParticlesComponent::preRender(float deltaMilliseconds)
 	{
 		ZoneNamedN(particleInterpolation, "Particle Interpolation", true);
 
+		// Particle animation
 		const float delta = deltaMilliseconds * 1e-3;
 		m_LiveParticlesCount = 0;
 		for (int i = 0; i < m_ParticlePool.size(); i++)
 		{
 			Particle& particle = m_ParticlePool[i];
 			particle.lifeRemaining -= delta;
-			m_InstanceBufferData[i].transform = Matrix::CreateFromYawPitchRoll(particle.angularVelocity.x * delta, particle.angularVelocity.y * delta, particle.angularVelocity.z * delta) * Matrix::CreateTranslation(particle.velocity * delta) * m_InstanceBufferData[i].transform;
-			m_InstanceBufferData[i].inverseTransposeTransform = m_InstanceBufferData[i].transform.Invert().Transpose();
-			float life = m_ParticlePool[i].lifeRemaining / m_ParticlePool[i].lifeTime;
-			float size = m_ParticlePool[i].sizeBegin * (life) + m_ParticlePool[i].sizeEnd * (1.0f - life);
-			m_InstanceBufferData[i].color = Color::Lerp(particle.colorEnd, particle.colorBegin, life);
 			if (particle.lifeRemaining > 0.0f)
 			{
 				m_LiveParticlesCount++;
 			}
+			else
+			{
+				continue;
+			}
+
+			float life = m_ParticlePool[i].lifeRemaining / m_ParticlePool[i].lifeTime;
+			float size = m_ParticlePool[i].sizeBegin * (life) + m_ParticlePool[i].sizeEnd * (1.0f - life);
+
+			m_InstanceBufferData[i].transform = Matrix::CreateScale(size)
+			    * Matrix::CreateFromYawPitchRoll(
+			        particle.angularVelocity.x * delta,
+			        particle.angularVelocity.y * delta,
+			        particle.angularVelocity.z * delta)
+			    * Matrix::CreateTranslation(particle.velocity * delta)
+			    * m_InstanceBufferData[i].transform;
+			m_InstanceBufferData[i].inverseTransposeTransform = m_InstanceBufferData[i].transform.Invert().Transpose();
+
+			m_InstanceBufferData[i].color = Color::Lerp(particle.colorEnd, particle.colorBegin, life);
 		}
+
+		// Copy live particles to the buffer which will be sent to the GPU
 		if (m_InstanceBufferLiveData.size() < m_LiveParticlesCount)
 		{
 			m_InstanceBufferLiveData.resize(m_LiveParticlesCount);
