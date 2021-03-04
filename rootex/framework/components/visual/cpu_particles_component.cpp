@@ -13,9 +13,10 @@ void to_json(JSON::json& j, const ParticleTemplate p)
 	j["colorBegin"] = p.colorBegin;
 	j["colorEnd"] = p.colorEnd;
 	j["velocityVariation"] = p.velocityVariation;
+	j["rotationVariation"] = p.rotationVariation;
 	j["angularVelocityVariation"] = p.angularVelocityVariation;
 	j["sizeBegin"] = p.sizeBegin;
-	j["sizeEnd"] = p.sizeBegin;
+	j["sizeEnd"] = p.sizeEnd;
 	j["sizeVariation"] = p.sizeVariation;
 	j["lifeTime"] = p.lifeTime;
 }
@@ -26,9 +27,10 @@ void from_json(const JSON::json& j, ParticleTemplate& p)
 	p.colorBegin = j.at("colorBegin");
 	p.colorEnd = j.at("colorEnd");
 	p.velocityVariation = j.at("velocityVariation");
+	p.rotationVariation = j.at("rotationVariation");
 	p.angularVelocityVariation = j.at("angularVelocityVariation");
 	p.sizeBegin = j.at("sizeBegin");
-	p.sizeBegin = j.at("sizeEnd");
+	p.sizeEnd = j.at("sizeEnd");
 	p.sizeVariation = j.at("sizeVariation");
 	p.lifeTime = j.at("lifeTime");
 }
@@ -43,7 +45,7 @@ Component* CPUParticlesComponent::Create(const JSON::json& componentData)
 	    componentData.value("isVisible", true),
 	    componentData.value("renderPass", (unsigned int)RenderPass::Basic),
 	    (EmitMode)componentData.value("emitMode", (int)EmitMode::Point),
-	    componentData.value("emitRate", 1),
+	    componentData.value("emitRate", 1.0f),
 	    componentData.value("emitterDimensions", Vector3 { 1.0f, 1.0f, 1.0f }));
 	return particles;
 }
@@ -78,44 +80,55 @@ bool CPUParticlesComponent::preRender(float deltaMilliseconds)
 
 	ModelComponent::preRender(deltaMilliseconds);
 
-	int i = m_EmitRate;
-	while (i > 0)
+	const float delta = deltaMilliseconds * MS_TO_S;
+	m_EmitCount += m_EmitRate;
+	while (m_EmitCount > 0.0f)
 	{
 		emit(m_ParticleTemplate);
-		i--;
+		m_EmitCount--;
 	}
 	{
 		ZoneNamedN(particleInterpolation, "Particle Interpolation", true);
 
 		// Particle animation
-		const float delta = deltaMilliseconds * 1e-3;
-		m_LiveParticlesCount = 0;
 		for (int i = 0; i < m_ParticlePool.size(); i++)
 		{
 			Particle& particle = m_ParticlePool[i];
+
 			particle.lifeRemaining -= delta;
-			if (particle.lifeRemaining > 0.0f)
-			{
-				m_LiveParticlesCount++;
-			}
-			else
+
+			if (particle.lifeRemaining < 0.0f)
 			{
 				continue;
 			}
 
-			float life = m_ParticlePool[i].lifeRemaining / m_ParticlePool[i].lifeTime;
-			float size = m_ParticlePool[i].sizeBegin * (life) + m_ParticlePool[i].sizeEnd * (1.0f - life);
+			float life = particle.lifeRemaining / particle.lifeTime;
+			float size = particle.sizeBegin * (life) + particle.sizeEnd * (1.0f - life);
 
-			m_InstanceBufferData[i].transform = Matrix::CreateScale(size)
-			    * Matrix::CreateFromYawPitchRoll(
+			particle.position = particle.position + particle.velocity * delta; 
+			particle.rotation = Quaternion::Concatenate(
+			    particle.rotation,
+			    Quaternion::CreateFromYawPitchRoll(
 			        particle.angularVelocity.x * delta,
 			        particle.angularVelocity.y * delta,
-			        particle.angularVelocity.z * delta)
-			    * Matrix::CreateTranslation(particle.velocity * delta)
-			    * m_InstanceBufferData[i].transform;
-			m_InstanceBufferData[i].inverseTransposeTransform = m_InstanceBufferData[i].transform.Invert().Transpose();
+			        particle.angularVelocity.z * delta));
 
-			m_InstanceBufferData[i].color = Color::Lerp(particle.colorEnd, particle.colorBegin, life);
+			InstanceData& instance = m_InstanceBufferData[i];
+			instance.transform = Matrix::CreateScale(size)
+			    * Matrix::CreateFromQuaternion(particle.rotation)
+			    * Matrix::CreateTranslation(particle.position);
+			instance.inverseTransposeTransform = instance.transform.Invert().Transpose();
+			instance.color = Color::Lerp(particle.colorEnd, particle.colorBegin, life);
+		}
+
+		// Count the size of the final live buffer
+		m_LiveParticlesCount = 0;
+		for (auto& particle : m_ParticlePool)
+		{
+			if (particle.lifeRemaining > 0.0f)
+			{
+				m_LiveParticlesCount++;
+			}
 		}
 
 		// Copy live particles to the buffer which will be sent to the GPU
@@ -168,32 +181,8 @@ void CPUParticlesComponent::emit(const ParticleTemplate& particleTemplate)
 
 	Particle& particle = m_ParticlePool[m_PoolIndex];
 
-	particle.isActive = true;
-
-	static Matrix initialTransform;
-	initialTransform = Matrix::Identity;
-	switch (m_CurrentEmitMode)
-	{
-	case CPUParticlesComponent::EmitMode::Point:
-		break;
-	case CPUParticlesComponent::EmitMode::Square:
-		initialTransform = Matrix::CreateTranslation({ Random::Float() * m_EmitterDimensions.x, 0, Random::Float() * m_EmitterDimensions.z });
-		break;
-	case CPUParticlesComponent::EmitMode::Cube:
-		initialTransform = Matrix::CreateTranslation({ Random::Float() * m_EmitterDimensions.x, Random::Float() * m_EmitterDimensions.y, Random::Float() * m_EmitterDimensions.z });
-		break;
-	default:
-		break;
-	}
-
-	m_InstanceBufferData[m_PoolIndex].transform = initialTransform * m_TransformComponent->getAbsoluteTransform();
-
-	particle.velocity = particleTemplate.velocity;
-	particle.velocity.x += particleTemplate.velocityVariation * (Random::Float() - 0.5f);
-	particle.velocity.y += particleTemplate.velocityVariation * (Random::Float() - 0.5f);
-	particle.velocity.z += particleTemplate.velocityVariation * (Random::Float() - 0.5f);
-
-	particle.angularVelocity = Vector3(Random::Float() - 0.5f, Random::Float() - 0.5f, Random::Float() - 0.5f) * particleTemplate.angularVelocityVariation;
+	particle.velocity = particleTemplate.velocity + particleTemplate.velocityVariation * 2.0f * Vector3 { Random::Float() - 0.5f, Random::Float() - 0.5f, Random::Float() - 0.5f };
+	particle.angularVelocity = 2.0f * Vector3(Random::Float() - 0.5f, Random::Float() - 0.5f, Random::Float() - 0.5f) * particleTemplate.angularVelocityVariation;
 	particle.angularVelocity.Normalize();
 
 	particle.colorBegin = particleTemplate.colorBegin;
@@ -201,8 +190,52 @@ void CPUParticlesComponent::emit(const ParticleTemplate& particleTemplate)
 
 	particle.lifeTime = particleTemplate.lifeTime;
 	particle.lifeRemaining = particleTemplate.lifeTime;
-	particle.sizeBegin = particleTemplate.sizeBegin + particleTemplate.sizeVariation * (Random::Float() - 0.5f);
+	particle.sizeBegin = particleTemplate.sizeBegin * (1.0f + particleTemplate.sizeVariation * 2.0f * (Random::Float() - 0.5f));
 	particle.sizeEnd = particleTemplate.sizeEnd;
+
+	Matrix initialTransform = Matrix::Identity;
+	Vector3 position;
+	switch (m_CurrentEmitMode)
+	{
+	case EmitMode::Point:
+		break;
+	case EmitMode::Square:
+		position = {
+			2.0f * (Random::Float() - 0.5f) * m_EmitterDimensions.x,
+			2.0f * (Random::Float() - 0.5f) * m_EmitterDimensions.y,
+			0.0f
+		};
+		break;
+	case EmitMode::Cube:
+		position = {
+			2.0f * (Random::Float() - 0.5f) * m_EmitterDimensions.x,
+			2.0f * (Random::Float() - 0.5f) * m_EmitterDimensions.y,
+			2.0f * (Random::Float() - 0.5f) * m_EmitterDimensions.z
+		};
+		break;
+	case EmitMode::Sphere:
+		position = Vector3::Transform(
+		    Vector3 { m_EmitterDimensions.x, 0.0f, 0.0f },
+		    Quaternion::CreateFromYawPitchRoll(
+		        2.0f * (Random::Float() - 0.5f) * DirectX::XM_PI,
+		        2.0f * (Random::Float() - 0.5f) * DirectX::XM_PI,
+		        2.0f * (Random::Float() - 0.5f) * DirectX::XM_PI));
+		break;
+	default:
+		break;
+	}
+	initialTransform = Matrix::CreateTranslation(position);
+
+	Quaternion rotation = Quaternion::CreateFromYawPitchRoll(
+	    particleTemplate.rotationVariation * Random::Float(),
+	    particleTemplate.rotationVariation * Random::Float(),
+	    particleTemplate.rotationVariation * Random::Float());
+	initialTransform = Matrix::CreateFromQuaternion(rotation) * initialTransform;
+	m_InstanceBufferData[m_PoolIndex].transform = initialTransform * m_TransformComponent->getAbsoluteTransform();
+
+	particle.position = position + m_TransformComponent->getAbsolutePosition();
+	particle.rotation = Quaternion::Concatenate(rotation, m_TransformComponent->getAbsoluteRotation());
+	particle.scale = m_TransformComponent->getAbsoluteScale();
 
 	m_PoolIndex = --m_PoolIndex % m_ParticlePool.size();
 }
@@ -274,26 +307,35 @@ void CPUParticlesComponent::draw()
 	ImGui::Separator();
 
 	ImGui::Text("Emitter");
-	static const char* emitModes[] = {
-		"Point",
-		"Square",
-		"Cube"
-	};
-	ImGui::Combo("Emit Mode", (int*)&m_CurrentEmitMode, emitModes, 3);
-	ImGui::DragFloat3("Emitter Dimensions", &m_EmitterDimensions.x);
+	ImGui::Combo("Emit Mode", (int*)&m_CurrentEmitMode, "Point\0Square\0Cube\0Sphere");
+	switch (m_CurrentEmitMode)
+	{
+	case CPUParticlesComponent::EmitMode::Point:
+		break;
+	case CPUParticlesComponent::EmitMode::Square:
+		ImGui::DragFloat2("Dimensions", &m_EmitterDimensions.x, 0.01f, 0.0f);
+		break;
+	case CPUParticlesComponent::EmitMode::Cube:
+		ImGui::DragFloat3("Dimensions", &m_EmitterDimensions.x, 0.01f, 0.0f);
+		break;
+	case CPUParticlesComponent::EmitMode::Sphere:
+		ImGui::DragFloat("Dimensions", &m_EmitterDimensions.x, 0.01f, 0.0f);
+		break;
+	}
 	int poolSize = m_ParticlePool.size();
-	if (ImGui::DragInt("Pool Size", &poolSize, 1.0f, 1, 100000))
+	if (ImGui::DragInt("Pool Size", &poolSize, 1.0f, 1, MAX_PARTICLES))
 	{
 		expandPool(poolSize);
 	}
-	ImGui::DragInt("Emit Rate (per frame)", &m_EmitRate);
+	ImGui::DragFloat("Emit Rate", &m_EmitRate, 0.1f, 0.0f, FLT_MAX);
 
 	ImGui::Separator();
 
 	ImGui::Text("Particle");
-	ImGui::DragFloat3("Velocity", &m_ParticleTemplate.velocity.x);
-	ImGui::DragFloat("Velocity Variation", &m_ParticleTemplate.velocityVariation);
-	ImGui::DragFloat("Angular Velocity Variation", &m_ParticleTemplate.angularVelocityVariation);
+	ImGui::DragFloat3("Velocity", &m_ParticleTemplate.velocity.x, 0.01f);
+	ImGui::DragFloat("Velocity Variation", &m_ParticleTemplate.velocityVariation, 0.01f, 0.0f);
+	ImGui::SliderAngle("Rotation Variation", &m_ParticleTemplate.rotationVariation, 0.0f, 180.0f);
+	ImGui::DragFloat("Angular Velocity Variation", &m_ParticleTemplate.angularVelocityVariation, 0.01f, 0.0f);
 	ImGui::ColorEdit4("Color Begin", &m_ParticleTemplate.colorBegin.x);
 	ImGui::ColorEdit4("Color End", &m_ParticleTemplate.colorEnd.x);
 	ImGui::DragFloat("Size Begin", &m_ParticleTemplate.sizeBegin, 0.01f);

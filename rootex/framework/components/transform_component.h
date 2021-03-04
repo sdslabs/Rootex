@@ -20,10 +20,18 @@ private:
 	TransformBuffer m_TransformBuffer;
 
 	Matrix m_ParentAbsoluteTransform;
+
+	Matrix m_AbsoluteTransform;
+	Vector3 m_AbsolutePosition;
+	Quaternion m_AbsoluteRotation;
+	Vector3 m_AbsoluteScale;
+	bool m_IsAbsoluteTransformDirty = true;
+
 	bool m_LockScale = false;
 
 	const TransformBuffer* getTransformBuffer() const { return &m_TransformBuffer; };
 
+	void updateAbsoluteTransformValues();
 	void updateTransformFromPositionRotationScale();
 	void updatePositionRotationScaleFromTransform(Matrix& transform);
 
@@ -54,13 +62,19 @@ public:
 	void addRotation(const Quaternion& applyTransform);
 
 	Vector3 getPosition() const { return m_TransformBuffer.m_Position; }
-	BoundingBox getWorldSpaceBounds() const;
 	Quaternion getRotation() const { return m_TransformBuffer.m_Rotation; };
 	const Vector3& getScale() const { return m_TransformBuffer.m_Scale; }
 	const Matrix& getLocalTransform() const { return m_TransformBuffer.m_Transform; }
 	Matrix getRotationPosition() const { return Matrix::CreateFromQuaternion(m_TransformBuffer.m_Rotation) * Matrix::CreateTranslation(m_TransformBuffer.m_Position) * m_ParentAbsoluteTransform; }
-	Matrix getAbsoluteTransform() const { return m_TransformBuffer.m_Transform * m_ParentAbsoluteTransform; }
 	Matrix getParentAbsoluteTransform() const { return m_ParentAbsoluteTransform; }
+
+	BoundingBox getWorldSpaceBounds();
+
+	Matrix getAbsoluteTransform();
+	Vector3 getAbsolutePosition();
+	Quaternion getAbsoluteRotation();
+	Vector3 getAbsoluteScale();
+
 	ComponentID getComponentID() const override { return s_ID; }
 	virtual const char* getName() const override { return "TransformComponent"; }
 	virtual JSON::json getJSON() const override;
