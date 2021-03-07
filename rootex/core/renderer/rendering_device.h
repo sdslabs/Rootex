@@ -59,14 +59,20 @@ private:
 	RenderingDevice(RenderingDevice&) = delete;
 	~RenderingDevice();
 
+	void createSwapChainBufferViews();
+	void createDepthStencil(DXGI_SWAP_CHAIN_DESC& sd, float width, float height);
+
 	/// Should only be called by Window class
 	void swapBuffers();
+
+	Variant windowResized(const Event* event);
 
 	friend class Window;
 
 public:
 	static RenderingDevice* GetSingleton();
 	void initialize(HWND hWnd, int width, int height);
+	void createOffScreenViews(int width, int height);
 	/// Create resources which depend on window height and width
 	void createSwapChainAndRTVs(int width, int height, const HWND& hWnd);
 	void setScreenState(bool fullscreen);
@@ -124,6 +130,8 @@ public:
 	void setDSS();
 
 	void setScissorRectangle(int x, int y, int width, int height);
+
+	void setResolutionAndRefreshRate(int width, int height, int refreshRateNum, int refreshRateDeno);
 
 	void setOffScreenRTVDSV();
 	void setOffScreenRTVOnly();
