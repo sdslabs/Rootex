@@ -62,6 +62,13 @@ void ToolbarDock::draw(float deltaMilliseconds)
 
 			ImGui::Columns(1);
 
+			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
+			ImGui::SliderFloat("##Delta Gain", Application::GetSingleton()->getDeltaGainPtr(), -2.0f, 2.0f, "%.2fx");
+			if (ImGui::IsItemDeactivatedAfterEdit())
+			{
+				Application::GetSingleton()->resetDeltaGain();
+			}
+
 			if (ImGui::TreeNodeEx("Editor"))
 			{
 				m_FPSRecords.erase(m_FPSRecords.begin());
