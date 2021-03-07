@@ -44,13 +44,12 @@ bool PhysicsColliderComponent::setupData()
 	if (m_IsMoveable)
 	{
 		m_Mass = m_Volume * PhysicsSystem::GetSingleton()->getMaterialData(m_Material).specificGravity;
+		m_CollisionShape->calculateLocalInertia(m_Mass, m_LocalInertia);
 	}
 	else
 	{
 		m_Mass = 0.0f;
 	}
-
-	m_CollisionShape->calculateLocalInertia(m_Mass, m_LocalInertia);
 
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(m_Mass, this, m_CollisionShape.get(), m_LocalInertia);
 	{

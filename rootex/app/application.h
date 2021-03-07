@@ -16,6 +16,7 @@ protected:
 	Timer m_ApplicationTimer;
 	FrameTimer m_FrameTimer;
 	ThreadPool m_ThreadPool;
+	float m_DeltaMultiplier = 1.0f;
 
 	Ptr<Window> m_Window;
 	Ptr<ApplicationSettings> m_ApplicationSettings;
@@ -39,6 +40,11 @@ public:
 	ApplicationSettings* getSettings() { return m_ApplicationSettings.get(); }
 	/// Returns paths of all third-party libraries provided by rootex/vendor/.
 	Vector<FilePath> getLibrariesPaths();
+
+	float* getDeltaMultiplierPtr() { return &m_DeltaMultiplier; }
+	float getDeltaMultiplier() const { return m_DeltaMultiplier; }
+	void setDeltaMultiplier(float gain) { m_DeltaMultiplier = gain; }
+	void resetDeltaMultiplier() { setDeltaMultiplier(1.0f); }
 };
 
 /// Externally defined function that returns a Ref object of a derived class of Application.
