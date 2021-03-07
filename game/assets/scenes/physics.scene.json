@@ -20,20 +20,20 @@
                         "dimensions": {
                             "x": 4.900000095367432,
                             "y": 0.5,
-                            "z": 3.3499999046325684
+                            "z": 3.3299999237060547
                         },
                         "gravity": {
                             "x": 0.0,
                             "y": -9.800000190734863,
                             "z": 0.0
                         },
-                        "isCCD": true,
+                        "isCCD": false,
                         "isGeneratesHitEvents": false,
                         "isKinematic": false,
                         "isMoveable": false,
-                        "isSleepable": true,
+                        "isSleepable": false,
                         "material": 2,
-                        "volume": 11.73759937286377
+                        "volume": 8.158499717712402
                     },
                     "ModelComponent": {
                         "affectingStaticLights": [],
@@ -59,8 +59,8 @@
                         },
                         "position": {
                             "x": 0.0,
-                            "y": -0.8820000290870667,
-                            "z": -4.909999847412109
+                            "y": -1.4880571365356445,
+                            "z": -4.909999370574951
                         },
                         "rotation": {
                             "w": 1.0,
@@ -140,8 +140,8 @@
                         },
                         "position": {
                             "x": 0.0,
-                            "y": 1.9527286291122437,
-                            "z": -8.0
+                            "y": 1.9427821636199951,
+                            "z": -6.920000076293945
                         },
                         "rotation": {
                             "w": 1.0,

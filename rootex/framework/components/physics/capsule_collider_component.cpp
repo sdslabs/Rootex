@@ -48,21 +48,21 @@ CapsuleColliderComponent::CapsuleColliderComponent(
     , m_Radius(radius)
     , m_SideHeight(sideHeight)
 {
-	m_CapsuleShape = std::dynamic_pointer_cast<btCapsuleShape>(m_CollisionShape);
+	m_CapsuleShape = (btCapsuleShape*)m_CollisionShape.get();
 }
 
 void CapsuleColliderComponent::setSideHeight(float s)
 {
 	m_SideHeight = s;
 	setupData();
-	m_CapsuleShape = std::dynamic_pointer_cast<btCapsuleShape>(m_CollisionShape);
+	m_CapsuleShape = (btCapsuleShape*)m_CollisionShape.get();
 }
 
 void CapsuleColliderComponent::setRadius(float r)
 {
 	m_Radius = r;
-	m_CapsuleShape.reset(new btCapsuleShape(m_Radius, m_SideHeight));
-	m_CollisionShape = m_CapsuleShape;
+	m_CollisionShape.reset(new btCapsuleShape(m_Radius, m_SideHeight));
+	m_CapsuleShape = (btCapsuleShape*)m_CollisionShape.get();
 	setupData();
 }
 

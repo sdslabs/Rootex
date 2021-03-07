@@ -9,7 +9,7 @@ class SphereColliderComponent : public PhysicsColliderComponent
 	static Component* Create(const JSON::json& sphereComponentData);
 
 	float m_Radius;
-	Ref<btSphereShape> m_SphereShape;
+	btSphereShape* m_SphereShape;
 
 	friend class ECSFactory;
 
