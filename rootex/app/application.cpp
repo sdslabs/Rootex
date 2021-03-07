@@ -124,7 +124,7 @@ void Application::run()
 			{
 				if (system->isActive())
 				{
-					system->update(m_FrameTimer.getLastFrameTime());
+					system->update((1.0f + m_DeltaGain) * m_FrameTimer.getLastFrameTime());
 				}
 			}
 		}
