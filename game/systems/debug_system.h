@@ -7,6 +7,7 @@ class Scene;
 class DebugSystem : public System
 {
 	bool m_IsEditing = false;
+	Vector<float> m_FPSRecords;
 
 	DebugSystem();
 	DebugSystem(DebugSystem&) = delete;
