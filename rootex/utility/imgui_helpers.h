@@ -80,5 +80,6 @@ inline static const char FONT_ICON_BUFFER_NAME_ROOTEX[5415 + 1] = "7])#######R9c
                                                                   "%m>PEl-vLF%DHoD8LofG4'Zu'vm@uBD5O$HDq16M58('F9C4,H:%VeG_Wb'%u2J:C6sXdM<-5bFb1)7'02YVC'6kjE?r>LF-k=nE7vtB%p)fUC;=F`%+SV.GT88bF01v<-*G#W-w;q92"
                                                                   "pYV<Bh[G<B7HFHM/6w0F=^M'J=L+6B+dYhFO`=HM1wvgF_P,]5Q%fV1*SM*Hr;Zw&,-]:CEqFnB-gOVC(PUV$+oe,qa%###";
 
+void RootexFPSGraph(const char* name, Vector<float>& fpsRecords, float lastFPS);
 void RootexSelectableImage(const char* name, ImageResourceFile* image, Function<void(const String&)> onSelected);
 void RootexSelectableImageCube(const char* name, ImageCubeResourceFile* image, Function<void(const String&)> onSelected);
