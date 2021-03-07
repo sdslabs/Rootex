@@ -79,12 +79,10 @@ void ViewportDock::draw(float deltaMilliseconds)
 				region.x = region.y * m_ViewportDockSettings.m_AspectRatio;
 			}
 
-			m_ViewportDockSettings.m_ImageSize = region;
-
 			static const ImVec2 viewportStart = ImGui::GetCursorPos();
 			ImGui::Image(
 			    RenderingDevice::GetSingleton()->getOffScreenSRV().Get(),
-			    m_ViewportDockSettings.m_ImageSize,
+			    region,
 			    { 0, 0 },
 			    { 1, 1 });
 			static const ImVec2 viewportEnd = ImGui::GetCursorPos();
@@ -182,7 +180,7 @@ void ViewportDock::draw(float deltaMilliseconds)
 				Entity* openedEntity = openedScene->getEntity();
 				TransformComponent* transform = openedEntity->getComponent<TransformComponent>();
 
-				ImGuizmo::SetRect(imagePos.x, imagePos.y, m_ViewportDockSettings.m_ImageSize.x, m_ViewportDockSettings.m_ImageSize.y);
+				ImGuizmo::SetRect(imagePos.x, imagePos.y, region.x, region.y);
 
 				Matrix matrix = transform->getAbsoluteTransform();
 				Matrix deltaMatrix = Matrix::CreateTranslation(0.0f, 0.0f, 0.0f);
