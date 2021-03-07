@@ -77,10 +77,18 @@ class GaussianPostProcess : public PostProcess
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_CacheRTV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_CacheSRV;
 
+	Variant loadRTVAndSRV(const Event* event)
+	{
+		RenderingDevice::GetSingleton()->createRTVAndSRV(m_CacheRTV, m_CacheSRV);
+		return true;
+	}
+
 public:
 	GaussianPostProcess()
 	{
-		RenderingDevice::GetSingleton()->createRTVAndSRV(m_CacheRTV, m_CacheSRV);
+		BIND_EVENT_MEMBER_FUNCTION(RootexEvents::WindowResized, GaussianPostProcess::loadRTVAndSRV);
+
+		loadRTVAndSRV(nullptr);
 
 		m_BasicPostProcess.reset(new DirectX::BasicPostProcess(RenderingDevice::GetSingleton()->getDevice()));
 	}
@@ -110,10 +118,18 @@ class MonochromePostProcess : public PostProcess
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_CacheRTV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_CacheSRV;
 
+	Variant loadRTVAndSRV(const Event* event)
+	{
+		RenderingDevice::GetSingleton()->createRTVAndSRV(m_CacheRTV, m_CacheSRV);
+		return true;
+	}
+
 public:
 	MonochromePostProcess()
 	{
-		RenderingDevice::GetSingleton()->createRTVAndSRV(m_CacheRTV, m_CacheSRV);
+		BIND_EVENT_MEMBER_FUNCTION(RootexEvents::WindowResized, MonochromePostProcess::loadRTVAndSRV);
+
+		loadRTVAndSRV(nullptr);
 
 		m_BasicPostProcess.reset(new DirectX::BasicPostProcess(RenderingDevice::GetSingleton()->getDevice()));
 	}
@@ -142,10 +158,18 @@ class SepiaPostProcess : public PostProcess
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_CacheRTV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_CacheSRV;
 
+	Variant loadRTVAndSRV(const Event* event)
+	{
+		RenderingDevice::GetSingleton()->createRTVAndSRV(m_CacheRTV, m_CacheSRV);
+		return true;
+	}
+
 public:
 	SepiaPostProcess()
 	{
-		RenderingDevice::GetSingleton()->createRTVAndSRV(m_CacheRTV, m_CacheSRV);
+		BIND_EVENT_MEMBER_FUNCTION(RootexEvents::WindowResized, SepiaPostProcess::loadRTVAndSRV);
+
+		loadRTVAndSRV(nullptr);
 
 		m_BasicPostProcess.reset(new DirectX::BasicPostProcess(RenderingDevice::GetSingleton()->getDevice()));
 	}
@@ -174,25 +198,34 @@ class BloomPostProcess : public PostProcess
 
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_BloomExtractRTV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_BloomExtractSRV;
+
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_BloomHorizontalBlurRTV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_BloomHorizontalBlurSRV;
+
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_BloomVerticalBlurRTV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_BloomVerticalBlurSRV;
 
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_CacheRTV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_CacheSRV;
 
-public:
-	BloomPostProcess()
+	Variant loadRTVAndSRV(const Event* event)
 	{
 		RenderingDevice::GetSingleton()->createRTVAndSRV(m_CacheRTV, m_CacheSRV);
-
-		m_BasicPostProcess.reset(new DirectX::BasicPostProcess(RenderingDevice::GetSingleton()->getDevice()));
-		m_DualPostProcess.reset(new DirectX::DualPostProcess(RenderingDevice::GetSingleton()->getDevice()));
-
 		RenderingDevice::GetSingleton()->createRTVAndSRV(m_BloomExtractRTV, m_BloomExtractSRV);
 		RenderingDevice::GetSingleton()->createRTVAndSRV(m_BloomHorizontalBlurRTV, m_BloomHorizontalBlurSRV);
 		RenderingDevice::GetSingleton()->createRTVAndSRV(m_BloomVerticalBlurRTV, m_BloomVerticalBlurSRV);
+		return true;
+	}
+
+public:
+	BloomPostProcess()
+	{
+		BIND_EVENT_MEMBER_FUNCTION(RootexEvents::WindowResized, BloomPostProcess::loadRTVAndSRV);
+
+		loadRTVAndSRV(nullptr);
+
+		m_BasicPostProcess.reset(new DirectX::BasicPostProcess(RenderingDevice::GetSingleton()->getDevice()));
+		m_DualPostProcess.reset(new DirectX::DualPostProcess(RenderingDevice::GetSingleton()->getDevice()));
 	}
 
 	void draw(CameraComponent* camera, ID3D11ShaderResourceView*& nextSource) override
@@ -245,10 +278,18 @@ class ToneMapPostProcess : public PostProcess
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_CacheRTV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_CacheSRV;
 
+	Variant loadRTVAndSRV(const Event* event)
+	{
+		RenderingDevice::GetSingleton()->createRTVAndSRV(m_CacheRTV, m_CacheSRV);
+		return true;
+	}
+
 public:
 	ToneMapPostProcess()
 	{
-		RenderingDevice::GetSingleton()->createRTVAndSRV(m_CacheRTV, m_CacheSRV);
+		BIND_EVENT_MEMBER_FUNCTION(RootexEvents::WindowResized, ToneMapPostProcess::loadRTVAndSRV);
+
+		loadRTVAndSRV(nullptr);
 
 		m_ToneMapPostProcess.reset(new DirectX::ToneMapPostProcess(RenderingDevice::GetSingleton()->getDevice()));
 	}
@@ -290,11 +331,22 @@ class FXAAPostProcess : public PostProcess
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_FXAAPSCB;
 
+	Variant loadRTVAndSRV(const Event* event)
+	{
+		RenderingDevice::GetSingleton()->createRTVAndSRV(m_CacheRTV, m_CacheSRV);
+		RenderingDevice::GetSingleton()->createRTVAndSRV(m_LumaCacheRTV, m_LumaCacheSRV);
+		return true;
+	}
+
 public:
 	FXAAPostProcess()
 	    : m_FXAAShader(ShaderLibrary::GetFXAAShader())
 	    , m_LumaShader(ShaderLibrary::GetLumaShader())
 	{
+		BIND_EVENT_MEMBER_FUNCTION(RootexEvents::WindowResized, FXAAPostProcess::loadRTVAndSRV);
+
+		loadRTVAndSRV(nullptr);
+
 		m_BasicPostProcess.reset(new DirectX::BasicPostProcess(RenderingDevice::GetSingleton()->getDevice()));
 
 		m_FrameVertexBuffer.reset(new VertexBuffer(Vector<FXAAData> {
@@ -306,8 +358,6 @@ public:
 		m_FrameIndexBuffer.reset(new IndexBuffer(Vector<unsigned int> {
 		    0, 2, 1,
 		    0, 3, 2 }));
-		RenderingDevice::GetSingleton()->createRTVAndSRV(m_CacheRTV, m_CacheSRV);
-		RenderingDevice::GetSingleton()->createRTVAndSRV(m_LumaCacheRTV, m_LumaCacheSRV);
 	}
 
 	void draw(CameraComponent* camera, ID3D11ShaderResourceView*& nextSource) override

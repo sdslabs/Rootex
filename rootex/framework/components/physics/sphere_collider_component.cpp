@@ -45,7 +45,7 @@ SphereColliderComponent::SphereColliderComponent(
         Ref<btSphereShape>(new btSphereShape(radius)))
     , m_Radius(radius)
 {
-	m_SphereShape = std::dynamic_pointer_cast<btSphereShape>(m_CollisionShape);
+	m_SphereShape = (btSphereShape*)m_CollisionShape.get();
 }
 
 JSON::json SphereColliderComponent::getJSON() const
@@ -60,8 +60,8 @@ JSON::json SphereColliderComponent::getJSON() const
 void SphereColliderComponent::setRadius(float r)
 {
 	m_Radius = r;
-	m_SphereShape.reset(new btSphereShape(m_Radius));
-	m_CollisionShape = m_SphereShape;
+	m_CollisionShape.reset(new btSphereShape(m_Radius));
+	m_SphereShape = (btSphereShape*)m_CollisionShape.get();
 	setupData();
 }
 
