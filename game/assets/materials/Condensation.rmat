@@ -1,22 +1,20 @@
 {
-    "affectedBySky": true,
+    "affectedBySky": false,
     "color": {
         "a": 1.0,
-        "b": 0.7065566182136536,
-        "g": 0.7065566182136536,
-        "r": 0.7065637111663818
+        "b": 0.9998999834060669,
+        "g": 0.9998999834060669,
+        "r": 1.0
     },
-    "imageFile": "rootex/assets/white.png",
+    "imageFile": "game/assets/sponza/textures/spnza_bricks_a_diff.png",
     "isAlpha": true,
-    "isLit": true,
+    "isLit": false,
     "isNormal": true,
     "lightmapImageFile": "rootex/assets/white.png",
-    "normalImageFile": "game/assets/test/WaterDropletsMixedBubbled001_NRM16_1K.png",
-    "reflectivity": 1.0,
+    "normalImageFile": "game/assets/sponza/textures/spnza_bricks_a_ddn.png",
+    "reflectivity": 0.0,
     "refractionConstant": 0.0,
-    "refractivity": 0.6499999761581421,
-    "specularImageFile": "rootex/assets/white.png",
-    "specularIntensity": 1.0,
-    "specularPower": 100.0,
+    "refractivity": 0.0,
+    "specularImageFile": "game/assets/sponza/textures/spnza_bricks_a_spec.png",
     "type": "BasicMaterial"
 }
