@@ -204,7 +204,7 @@ void AnimatedModelComponent::draw()
 	int p = 0;
 	if (ImGui::TreeNodeEx(("Meshes")))
 	{
-		ImGui::Columns(3);
+		ImGui::Columns(2);
 
 		ImGui::Text("Serial");
 		ImGui::NextColumn();
@@ -216,7 +216,7 @@ void AnimatedModelComponent::draw()
 			for (auto& mesh : meshes)
 			{
 				p++;
-				ImGui::Columns(3);
+				ImGui::Columns(2);
 				ImGui::Text("%d", p);
 				ImGui::NextColumn();
 				ImGui::Text("%d", mesh.m_VertexBuffer->getCount());

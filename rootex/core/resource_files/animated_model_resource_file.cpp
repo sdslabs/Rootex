@@ -11,6 +11,8 @@
 #include "assimp/postprocess.h"
 #include "assimp/scene.h"
 
+#include "meshoptimizer.h"
+
 AnimatedModelResourceFile::AnimatedModelResourceFile(const FilePath& path)
     : ResourceFile(Type::AnimatedModel, path)
 {
@@ -160,7 +162,7 @@ void AnimatedModelResourceFile::reimport()
 			vertices.push_back(vertex);
 		}
 
-		std::vector<unsigned short> indices;
+		std::vector<unsigned int> indices;
 
 		aiFace* face = nullptr;
 		for (unsigned int f = 0; f < mesh->mNumFaces; f++)
@@ -170,6 +172,31 @@ void AnimatedModelResourceFile::reimport()
 			indices.push_back(face->mIndices[0]);
 			indices.push_back(face->mIndices[1]);
 			indices.push_back(face->mIndices[2]);
+		}
+
+		meshopt_optimizeVertexCache(indices.data(), indices.data(), indices.size(), vertices.size());
+
+		Vector<Vector<unsigned int>> lods;
+		float lodLevels[MAX_LOD_COUNT - 1] = { 0.8f, 0.50f, 0.3f, 0.10f };
+
+		for (int i = 0; i < MAX_LOD_COUNT - 1; i++)
+		{
+			float threshold = lodLevels[i];
+			size_t targetIndexCount = indices.size() * threshold;
+
+			Vector<unsigned int> lod(indices.size());
+			float lodError = 0.0f;
+			size_t finalLODIndexCount = meshopt_simplifySloppy(
+			    &lod[0],
+			    indices.data(),
+			    indices.size(),
+			    &vertices[0].m_Position.x,
+			    vertices.size(),
+			    sizeof(AnimatedVertexData),
+			    targetIndexCount);
+			lod.resize(finalLODIndexCount);
+
+			lods.push_back(lod);
 		}
 
 		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
@@ -342,6 +369,13 @@ void AnimatedModelResourceFile::reimport()
 		Mesh extractedMesh;
 		extractedMesh.m_VertexBuffer.reset(new VertexBuffer(vertices));
 		extractedMesh.addLOD(std::make_shared<IndexBuffer>(indices), 1.0f);
+		for (int i = 0; i < MAX_LOD_COUNT - 1; i++)
+		{
+			if (!lods[i].empty())
+			{
+				extractedMesh.addLOD(std::make_shared<IndexBuffer>(lods[i]), lodLevels[i]);
+			}
+		}
 		Vector3 max = { mesh->mAABB.mMax.x, mesh->mAABB.mMax.y, mesh->mAABB.mMax.z };
 		Vector3 min = { mesh->mAABB.mMin.x, mesh->mAABB.mMin.y, mesh->mAABB.mMin.z };
 

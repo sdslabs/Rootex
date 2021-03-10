@@ -33,11 +33,19 @@
                         "isMoveable": false,
                         "isSleepable": false,
                         "material": 2,
+                        "offset": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
                         "volume": 8.158499717712402
                     },
                     "ModelComponent": {
                         "affectingStaticLights": [],
                         "isVisible": true,
+                        "lodBias": 0.0,
+                        "lodDistance": 10.0,
+                        "lodEnable": true,
                         "materialOverrides": {
                             "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
                         },
@@ -97,6 +105,9 @@
                     "ModelComponent": {
                         "affectingStaticLights": [],
                         "isVisible": true,
+                        "lodBias": 1.600000023841858,
+                        "lodDistance": 2.0,
+                        "lodEnable": true,
                         "materialOverrides": {
                             "rootex/assets/materials/default.rmat": "game/assets/materials/rootex_logo_textured.rmat"
                         },
@@ -122,6 +133,11 @@
                         "isMoveable": true,
                         "isSleepable": false,
                         "material": 2,
+                        "offset": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
                         "radius": 0.6000000238418579,
                         "volume": 0.904778778553009
                     },
@@ -139,9 +155,9 @@
                             }
                         },
                         "position": {
-                            "x": 0.0,
-                            "y": 1.9427821636199951,
-                            "z": -6.920000076293945
+                            "x": 0.09157752990722656,
+                            "y": 4.529402732849121,
+                            "z": -5.059999942779541
                         },
                         "rotation": {
                             "w": 1.0,
@@ -159,6 +175,98 @@
             },
             "file": "",
             "name": "Sphere",
+            "settings": {
+                "camera": 1,
+                "inputSchemes": {},
+                "listener": 1,
+                "preloads": [],
+                "startScheme": ""
+            }
+        },
+        {
+            "ID": 11,
+            "children": [],
+            "entity": {
+                "Entity": {
+                    "script": null
+                },
+                "components": {
+                    "AnimatedModelComponent": {
+                        "affectingStaticLights": [],
+                        "currentAnimationName": "",
+                        "isPlayOnStart": true,
+                        "isVisible": true,
+                        "lodBias": -0.029999999329447746,
+                        "lodDistance": 18.0,
+                        "lodEnable": true,
+                        "materialOverrides": {
+                            "rootex/assets/materials/animated_default.rmat": "rootex/assets/materials/animated_default.rmat"
+                        },
+                        "renderPass": 1,
+                        "resFile": "rootex/assets/animation.dae"
+                    },
+                    "CapsuleColliderComponent": {
+                        "angularFactor": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "collisionGroup": 31,
+                        "collisionMask": 31,
+                        "gravity": {
+                            "x": 0.0,
+                            "y": -9.800000190734863,
+                            "z": 0.0
+                        },
+                        "isCCD": true,
+                        "isGeneratesHitEvents": false,
+                        "isKinematic": false,
+                        "isMoveable": true,
+                        "isSleepable": true,
+                        "material": 2,
+                        "offset": {
+                            "x": 0.0,
+                            "y": 0.6399999856948853,
+                            "z": 0.0
+                        },
+                        "radius": 0.8500000238418579,
+                        "sideHeight": 2.0799999237060547,
+                        "volume": 1.3089970350265503
+                    },
+                    "TransformComponent": {
+                        "boundingBox": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 1.0199999809265137,
+                                "z": 0.0
+                            },
+                            "extents": {
+                                "x": 1.774999976158142,
+                                "y": -4.359586238861084,
+                                "z": 1.7636620998382568
+                            }
+                        },
+                        "position": {
+                            "x": 0.126132994890213,
+                            "y": 0.6722005009651184,
+                            "z": -5.345313549041748
+                        },
+                        "rotation": {
+                            "w": -0.39496809244155884,
+                            "x": 0.0,
+                            "y": 0.9186948537826538,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 0.41000160574913025,
+                            "y": 0.4100000262260437,
+                            "z": 0.41000160574913025
+                        }
+                    }
+                }
+            },
+            "file": "",
+            "name": "Cowboy",
             "settings": {
                 "camera": 1,
                 "inputSchemes": {},
