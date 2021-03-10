@@ -27,7 +27,7 @@ void from_json(const JSON::json& j, ParticleTemplate& p)
 	p.colorBegin = j.at("colorBegin");
 	p.colorEnd = j.at("colorEnd");
 	p.velocityVariation = j.at("velocityVariation");
-	p.rotationVariation = j.at("rotationVariation");
+	p.rotationVariation = j.value("rotationVariation", DirectX::XM_PI);
 	p.angularVelocityVariation = j.at("angularVelocityVariation");
 	p.sizeBegin = j.at("sizeBegin");
 	p.sizeEnd = j.at("sizeEnd");
@@ -42,16 +42,33 @@ Component* CPUParticlesComponent::Create(const JSON::json& componentData)
 	    componentData.value("resFile", "rootex/assets/cube.obj"),
 	    componentData.value("materialPath", "rootex/assets/materials/default_particles.rmat"),
 	    componentData.value("particleTemplate", ParticleTemplate()),
-	    componentData.value("isVisible", true),
-	    componentData.value("renderPass", (unsigned int)RenderPass::Basic),
 	    (EmitMode)componentData.value("emitMode", (int)EmitMode::Point),
 	    componentData.value("emitRate", 1.0f),
-	    componentData.value("emitterDimensions", Vector3 { 1.0f, 1.0f, 1.0f }));
+	    componentData.value("emitterDimensions", Vector3 { 1.0f, 1.0f, 1.0f }),
+	    componentData.value("isVisible", true),
+	    componentData.value("renderPass", (unsigned int)RenderPass::Basic));
 	return particles;
 }
 
-CPUParticlesComponent::CPUParticlesComponent(size_t poolSize, const String& particleModelPath, const String& materialPath, const ParticleTemplate& particleTemplate, bool visibility, unsigned int renderPass, EmitMode emitMode, int emitRate, const Vector3& emitterDimensions)
-    : ModelComponent(renderPass, ResourceLoader::CreateModelResourceFile(particleModelPath), {}, visibility, {})
+CPUParticlesComponent::CPUParticlesComponent(
+    size_t poolSize,
+    const String& particleModelPath,
+    const String& materialPath,
+    const ParticleTemplate& particleTemplate,
+    EmitMode emitMode,
+    int emitRate,
+    const Vector3& emitterDimensions,
+    bool visibility,
+    unsigned int renderPass)
+    : ModelComponent(
+        renderPass,
+        ResourceLoader::CreateModelResourceFile(particleModelPath),
+        {},
+        visibility,
+        false,
+        0.0f,
+        0.0f,
+        {})
     , m_ParticlesMaterial(std::dynamic_pointer_cast<ParticlesMaterial>(MaterialLibrary::GetMaterial(materialPath)))
     , m_ParticleTemplate(particleTemplate)
     , m_CurrentEmitMode(emitMode)
@@ -149,7 +166,7 @@ bool CPUParticlesComponent::preRender(float deltaMilliseconds)
 	return true;
 }
 
-void CPUParticlesComponent::render()
+void CPUParticlesComponent::render(float viewDistance)
 {
 	ZoneScoped;
 
@@ -159,7 +176,7 @@ void CPUParticlesComponent::render()
 	{
 		for (auto& mesh : meshes)
 		{
-			RenderSystem::GetSingleton()->getRenderer()->drawInstanced(mesh.m_VertexBuffer.get(), mesh.m_IndexBuffer.get(), m_InstanceBuffer.get(), m_LiveParticlesCount);
+			RenderSystem::GetSingleton()->getRenderer()->drawInstanced(mesh.m_VertexBuffer.get(), mesh.getLOD(1.0f).get(), m_InstanceBuffer.get(), m_LiveParticlesCount);
 		}
 	}
 }

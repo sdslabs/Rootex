@@ -7,7 +7,9 @@
             "entity": {
                 "Entity": {
                     "script": {
-                        "overrides": null,
+                        "overrides": {
+                            "loadScene": "\"game/assets/scenes/model.scene.json\""
+                        },
                         "path": "game/assets/scripts/level_change.lua"
                     }
                 },
@@ -17,7 +19,7 @@
             "name": "loader",
             "settings": {
                 "camera": 1,
-                "inputSchemes": null,
+                "inputSchemes": {},
                 "listener": 1,
                 "preloads": [],
                 "startScheme": ""
@@ -90,7 +92,7 @@
                         "inputEvent": "A"
                     }
                 ],
-                "floats": {}
+                "floats": []
             }
         },
         "listener": 1,

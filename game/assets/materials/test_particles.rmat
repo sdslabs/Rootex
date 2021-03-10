@@ -1,6 +1,6 @@
 {
     "affectedBySky": false,
-    "imageFile": "game/assets/sponza/textures/spnza_bricks_a_diff.png",
+    "imageFile": "rootex/assets/white.png",
     "isAlpha": false,
     "isLit": false,
     "isNormal": true,

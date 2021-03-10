@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core/renderer/materials/particles_material.h"
+#include "renderer/vertex_data.h"
 #include "model_component.h"
 
 #define MAX_PARTICLES 5000
@@ -70,13 +71,22 @@ class CPUParticlesComponent : public ModelComponent
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::CPUParticlesComponent;
 
-	CPUParticlesComponent(size_t poolSize, const String& particleModelPath, const String& materialPath, const ParticleTemplate& particleTemplate, bool visibility, unsigned int renderPass, EmitMode emitMode, int emitRate, const Vector3& emitterDimensions);
+	CPUParticlesComponent(
+	    size_t poolSize,
+	    const String& particleModelPath,
+	    const String& materialPath,
+	    const ParticleTemplate& particleTemplate,
+	    EmitMode emitMode,
+	    int emitRate,
+	    const Vector3& emitterDimensions,
+	    bool visibility,
+	    unsigned int renderPass);
 	CPUParticlesComponent(CPUParticlesComponent&) = delete;
 	virtual ~CPUParticlesComponent() = default;
 
 	virtual bool setupData() override;
 	virtual bool preRender(float deltaMilliseconds) override;
-	virtual void render() override;
+	virtual void render(float viewDistance) override;
 
 	void setMaterial(Ref<ParticlesMaterial> particlesMaterial);
 	void emit(const ParticleTemplate& particleTemplate);

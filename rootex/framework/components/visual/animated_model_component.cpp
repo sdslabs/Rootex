@@ -8,8 +8,18 @@
 #include "renderer/material_library.h"
 #include "scene_loader.h"
 
-AnimatedModelComponent::AnimatedModelComponent(unsigned int renderPass, const HashMap<String, String>& materialOverrides, AnimatedModelResourceFile* resFile, bool isVisible, bool isPlayOnStart, const String& currentAnimationName, const Vector<SceneID>& affectingStaticLightIDs)
-    : RenderableComponent(renderPass, materialOverrides, isVisible, affectingStaticLightIDs)
+AnimatedModelComponent::AnimatedModelComponent(
+    bool isPlayOnStart,
+    AnimatedModelResourceFile* resFile,
+    const String& currentAnimationName,
+    unsigned int renderPass,
+    const HashMap<String, String>& materialOverrides,
+    bool isVisible,
+    bool lodEnable,
+    float lodBias,
+    float lodDistance,
+    const Vector<SceneID>& affectingStaticLightIDs)
+    : RenderableComponent(renderPass, materialOverrides, isVisible, lodEnable, lodBias, lodDistance, affectingStaticLightIDs)
     , m_CurrentTimePosition(0.0f)
     , m_IsPlaying(isPlayOnStart)
     , m_IsPlayOnStart(isPlayOnStart)
@@ -22,12 +32,15 @@ AnimatedModelComponent::AnimatedModelComponent(unsigned int renderPass, const Ha
 Component* AnimatedModelComponent::Create(const JSON::json& componentData)
 {
 	AnimatedModelComponent* animatedModelComponent = new AnimatedModelComponent(
+	    componentData.value("isPlayOnStart", false),
+	    ResourceLoader::CreateAnimatedModelResourceFile(componentData.value("resFile", "rootex/assets/animation.dae")),
+	    componentData.value("currentAnimationName", ""),
 	    componentData.value("renderPass", (int)RenderPass::Basic),
 	    componentData.value("materialOverrides", HashMap<String, String>()),
-	    ResourceLoader::CreateAnimatedModelResourceFile(componentData.value("resFile", "rootex/assets/animation.dae")),
 	    componentData.value("isVisible", true),
-	    componentData.value("isPlayOnStart", false),
-	    componentData.value("currentAnimationName", ""),
+	    componentData.value("lodEnable", true),
+	    componentData.value("lodBias", 0.0f),
+	    componentData.value("lodDistance", 10.0f),
 	    componentData.value("affectingStaticLights", Vector<SceneID>()));
 	return animatedModelComponent;
 }
@@ -45,12 +58,12 @@ bool AnimatedModelComponent::preRender(float deltaMilliseconds)
 	return true;
 }
 
-void AnimatedModelComponent::render()
+void AnimatedModelComponent::render(float viewDistance)
 {
 	ZoneNamedN(componentRender, "Animated Model Render", true);
-	RenderableComponent::render();
+	RenderableComponent::render(viewDistance);
 
-	std::sort(m_AnimatedModelResourceFile->getMeshes().begin(), m_AnimatedModelResourceFile->getMeshes().end(), ModelComponent::CompareMaterials);
+	std::sort(m_AnimatedModelResourceFile->getMeshes().begin(), m_AnimatedModelResourceFile->getMeshes().end(), CompareMaterials);
 
 	for (auto& [material, meshes] : m_AnimatedModelResourceFile->getMeshes())
 	{
@@ -59,7 +72,7 @@ void AnimatedModelComponent::render()
 
 		for (auto& mesh : meshes)
 		{
-			RenderSystem::GetSingleton()->getRenderer()->draw(mesh.m_VertexBuffer.get(), mesh.m_IndexBuffer.get());
+			RenderSystem::GetSingleton()->getRenderer()->draw(mesh.m_VertexBuffer.get(), mesh.getLOD(getLODFactor(viewDistance)).get());
 		}
 	}
 }
@@ -191,13 +204,11 @@ void AnimatedModelComponent::draw()
 	int p = 0;
 	if (ImGui::TreeNodeEx(("Meshes")))
 	{
-		ImGui::Columns(3);
+		ImGui::Columns(2);
 
 		ImGui::Text("Serial");
 		ImGui::NextColumn();
 		ImGui::Text("Vertices");
-		ImGui::NextColumn();
-		ImGui::Text("Indices");
 		ImGui::NextColumn();
 
 		for (auto& [material, meshes] : m_AnimatedModelResourceFile->getMeshes())
@@ -205,12 +216,10 @@ void AnimatedModelComponent::draw()
 			for (auto& mesh : meshes)
 			{
 				p++;
-				ImGui::Columns(3);
+				ImGui::Columns(2);
 				ImGui::Text("%d", p);
 				ImGui::NextColumn();
 				ImGui::Text("%d", mesh.m_VertexBuffer->getCount());
-				ImGui::NextColumn();
-				ImGui::Text("%d", mesh.m_IndexBuffer->getCount());
 				ImGui::NextColumn();
 			}
 

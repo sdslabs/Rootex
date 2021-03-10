@@ -23,6 +23,7 @@ class PhysicsColliderComponent : public Component, public btMotionState
 {
 	DEPENDS_ON(TransformComponent);
 
+protected:
 	Ref<btCollisionShape> m_CollisionShape;
 	Ref<btRigidBody> m_Body;
 	btScalar m_Mass;

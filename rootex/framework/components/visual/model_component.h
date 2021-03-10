@@ -8,6 +8,8 @@
 #include "scene.h"
 #include "renderable_component.h"
 
+bool CompareMaterials(const Pair<Ref<Material>, Vector<Mesh>>& a, const Pair<Ref<Material>, Vector<Mesh>>& b);
+
 class ModelComponent : public RenderableComponent
 {
 	static Component* Create(const JSON::json& componentData);
@@ -17,7 +19,15 @@ class ModelComponent : public RenderableComponent
 protected:
 	ModelResourceFile* m_ModelResourceFile;
 
-	ModelComponent(unsigned int renderPass, ModelResourceFile* resFile, const HashMap<String, String>& materialOverrides, bool isVisible, const Vector<SceneID>& affectingStaticLightIDs);
+	ModelComponent(
+	    unsigned int renderPass,
+	    ModelResourceFile* resFile,
+	    const HashMap<String, String>& materialOverrides,
+	    bool isVisible,
+	    bool lodEnable,
+	    float lodBias,
+	    float lodDistance,
+	    const Vector<SceneID>& affectingStaticLightIDs);
 	ModelComponent(ModelComponent&) = delete;
 	virtual ~ModelComponent() = default;
 
@@ -27,11 +37,10 @@ protected:
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::ModelComponent;
 
-	static bool CompareMaterials(const Pair<Ref<Material>, Vector<Mesh>>& a, const Pair<Ref<Material>, Vector<Mesh>>& b);
 	virtual bool setupData() override;
 
 	virtual bool preRender(float deltaMilliseconds) override;
-	virtual void render() override;
+	virtual void render(float viewDistance) override;
 
 	void setModelResourceFile(ModelResourceFile* newModel, const HashMap<String, String>& materialOverrides);
 
