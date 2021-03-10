@@ -8,6 +8,7 @@
 PhysicsColliderComponent::PhysicsColliderComponent(
     const PhysicsMaterial& material,
     float volume,
+    const Vector3& offset,
     const Vector3& gravity,
     const Vector3& angularFactor,
     int collisionGroup,
@@ -20,6 +21,7 @@ PhysicsColliderComponent::PhysicsColliderComponent(
     const Ref<btCollisionShape>& collisionShape)
     : m_Material(material)
     , m_Volume(volume)
+    , m_Offset(offset)
     , m_Gravity(gravity)
     , m_AngularFactor(angularFactor)
     , m_CollisionGroup(collisionGroup)
@@ -81,12 +83,12 @@ void PhysicsColliderComponent::onRemove()
 
 void PhysicsColliderComponent::getWorldTransform(btTransform& worldTrans) const
 {
-	worldTrans = MatTobtTransform(m_TransformComponent->getRotationPosition());
+	worldTrans = MatTobtTransform(m_TransformComponent->getRotationPosition() * Matrix::CreateTranslation(m_Offset));
 }
 
 void PhysicsColliderComponent::setWorldTransform(const btTransform& worldTrans)
 {
-	m_TransformComponent->setAbsoluteRotationPosition(BtTransformToMat(worldTrans));
+	m_TransformComponent->setAbsoluteRotationPosition(Matrix::CreateTranslation(-m_Offset) * BtTransformToMat(worldTrans));
 }
 
 void PhysicsColliderComponent::applyForce(const Vector3& force)
@@ -118,6 +120,13 @@ void PhysicsColliderComponent::setAxisLock(bool enabled)
 	{
 		setAngularFactor({ 1.0f, 1.0f, 1.0f });
 	}
+}
+
+void PhysicsColliderComponent::setOffset(const Vector3& offset)
+{
+	m_Offset = offset;
+	m_Body->activate(true);
+	setupData();
 }
 
 void PhysicsColliderComponent::setTransform(const Matrix& mat)
@@ -208,7 +217,10 @@ void PhysicsColliderComponent::setKinematic(bool enabled)
 
 void PhysicsColliderComponent::highlight()
 {
-	PhysicsSystem::GetSingleton()->debugDrawComponent(MatTobtTransform(m_TransformComponent->getRotationPosition()), m_CollisionShape.get(), VecTobtVector3({ 0.0f, 1.0f, 0.0f }));
+	PhysicsSystem::GetSingleton()->debugDrawComponent(
+	    MatTobtTransform(m_TransformComponent->getRotationPosition() * Matrix::CreateTranslation(m_Offset)),
+	    m_CollisionShape.get(),
+	    VecTobtVector3({ 0.8f, 0.1f, 0.1f }));
 }
 
 JSON::json PhysicsColliderComponent::getJSON() const
@@ -216,6 +228,7 @@ JSON::json PhysicsColliderComponent::getJSON() const
 	JSON::json j;
 
 	j["angularFactor"] = m_AngularFactor;
+	j["offset"] = m_Offset;
 	j["gravity"] = m_Gravity;
 	j["collisionGroup"] = m_CollisionGroup;
 	j["collisionMask"] = m_CollisionMask;
@@ -280,12 +293,22 @@ void PhysicsColliderComponent::draw()
 
 	ImGui::Combo("Physics Material", (int*)&m_Material, PhysicsSystem::GetSingleton()->getMaterialNames());
 
-	if (ImGui::DragFloat3("Gravity", &m_Gravity.x))
+	if (ImGui::DragFloat3("##Offset", &m_Offset.x, 0.01f))
+	{
+		setOffset(m_Offset);
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Offset"))
+	{
+		setOffset({ 0.0f, 0.0f, 0.0f });
+	}
+
+	if (ImGui::DragFloat3("Gravity", &m_Gravity.x, 0.01f))
 	{
 		setGravity(m_Gravity);
 	}
 
-	if (ImGui::DragFloat3("Angular Factor", &m_AngularFactor.x))
+	if (ImGui::DragFloat3("Angular Factor", &m_AngularFactor.x, 0.01f))
 	{
 		setAngularFactor(m_AngularFactor);
 	}
