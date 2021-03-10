@@ -7,6 +7,7 @@ set(ROOTEX_INCLUDES
 CACHE INTERNAL "")
 
 add_library(ImGui STATIC ${ImGui} ${ImGuiH})
+set_property(TARGET ImGui PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 set_target_properties(ImGui PROPERTIES LINKER_LANGUAGE CXX)
 
 target_include_directories(ImGui PUBLIC

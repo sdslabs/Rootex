@@ -9,7 +9,6 @@ Vector<Scene*> Scene::s_Scenes;
 
 void to_json(JSON::json& j, const SceneSettings& s)
 {
-	j["preloads"] = s.preloads;
 	j["camera"] = s.camera;
 	j["listener"] = s.listener;
 	j["inputSchemes"] = s.inputSchemes;
@@ -18,7 +17,6 @@ void to_json(JSON::json& j, const SceneSettings& s)
 
 void from_json(const JSON::json& j, SceneSettings& s)
 {
-	s.preloads = (Vector<String>)j.value("preloads", Vector<String>());
 	s.camera = j.value("camera", ROOT_SCENE_ID);
 	s.listener = j.value("listener", ROOT_SCENE_ID);
 	if (j["inputSchemes"].is_null())
@@ -329,25 +327,6 @@ void SceneSettings::drawSceneSelectables(Scene* scene, SceneID& toSet)
 void SceneSettings::draw()
 {
 	ImGui::Text("Preloads");
-	int i = 0;
-	for (auto& preload : preloads)
-	{
-		ImGui::PushID(i);
-		ImGui::InputText("##", &preload);
-		ImGui::PopID();
-	}
-	if (ImGui::Button("+"))
-	{
-		preloads.push_back("");
-	}
-	if (!preloads.empty())
-	{
-		ImGui::SameLine();
-		if (ImGui::Button("-"))
-		{
-			preloads.pop_back();
-		}
-	}
 
 	Scene* cameraScene = SceneLoader::GetSingleton()->getRootScene()->findScene(camera);
 	if (!cameraScene)
@@ -385,7 +364,7 @@ void SceneSettings::draw()
 	}
 
 	ImGui::Text("Input Schemes");
-	i = 0;
+	int i = 0;
 	const String* inputSchemeToRemove = nullptr;
 	for (auto& [name, inputScheme] : inputSchemes)
 	{

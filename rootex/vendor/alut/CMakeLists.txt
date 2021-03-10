@@ -68,6 +68,7 @@ set(ROOTEX_INCLUDES
 CACHE INTERNAL "")
 
 add_library(alut SHARED ${ALUT} ${ALUTH})
+set_property(TARGET alut PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 target_link_libraries(alut ${OPENAL_LIBRARY})
 set_target_properties(alut PROPERTIES LINKER_LANGUAGE C)
 

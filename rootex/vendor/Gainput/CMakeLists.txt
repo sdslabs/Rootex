@@ -12,6 +12,7 @@ add_definitions(-DGAINPUT_LIB_BUILD)
 add_definitions(-DGAINPUT_PLATFORM_WIN)
 
 add_library(Gainput STATIC ${Gainput} ${GainputH})
+set_property(TARGET Gainput PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 set_target_properties(Gainput PROPERTIES LINKER_LANGUAGE CXX)
 
 target_include_directories(Gainput PUBLIC

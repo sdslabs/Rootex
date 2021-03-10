@@ -12,6 +12,7 @@ set(ROOTEX_SOURCES
 CACHE INTERNAL "")
 
 add_library(JSON STATIC ${JSONSources} ${JSONHeaders})
+set_property(TARGET JSON PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 
 target_include_directories(JSON PUBLIC
     ./

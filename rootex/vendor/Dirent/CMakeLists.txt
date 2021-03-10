@@ -12,6 +12,7 @@ set(ROOTEX_SOURCES
 CACHE INTERNAL "")
 
 add_library(Dirent STATIC ${DirentSources} ${DirentHeaders})
+set_property(TARGET Dirent PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 
 target_include_directories(Dirent PUBLIC
     ./include/

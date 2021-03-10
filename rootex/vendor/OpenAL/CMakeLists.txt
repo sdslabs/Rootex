@@ -12,6 +12,7 @@ set(ROOTEX_INCLUDES
 CACHE INTERNAL "")
 
 add_library(OpenAL SHARED stub.cpp)
+set_property(TARGET OpenAL PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 
 target_include_directories(OpenAL PUBLIC
     ${OPENAL_INCLUDE_DIR}

@@ -7,6 +7,7 @@ set(ROOTEX_INCLUDES
 CACHE INTERNAL "")
 
 add_library(Meshoptimizer STATIC ${Meshoptimizer} ${MeshoptimizerH})
+set_property(TARGET Meshoptimizer PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 
 target_include_directories(Meshoptimizer PRIVATE
 	meshoptimizer/src/
