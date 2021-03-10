@@ -10,6 +10,7 @@
     "isAlpha": false,
     "isLit": true,
     "isNormal": false,
+    "lightmapImageFile": "rootex/assets/white.png",
     "reflectivity": 1.0,
     "refractionConstant": 0.7900000214576721,
     "refractivity": 0.1599999964237213,

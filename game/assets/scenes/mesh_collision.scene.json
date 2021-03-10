@@ -28,6 +28,11 @@
                         "isMoveable": true,
                         "isSleepable": true,
                         "material": 0,
+                        "offset": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
                         "radius": 0.5,
                         "sideHeight": 1.0,
                         "volume": 1.3089970350265503
@@ -128,6 +133,11 @@
                                 "isMoveable": true,
                                 "isSleepable": true,
                                 "material": 2,
+                                "offset": {
+                                    "x": 0.0,
+                                    "y": 0.0,
+                                    "z": 0.0
+                                },
                                 "volume": 0.125
                             },
                             "ModelComponent": {
@@ -195,18 +205,18 @@
                                     "PointLightComponent": {
                                         "ambientColor": {
                                             "a": 1.0,
-                                            "b": 0.14293168485164642,
-                                            "g": 0.7876448035240173,
-                                            "r": 0.2398735135793686
+                                            "b": 0.9999899864196777,
+                                            "g": 1.0,
+                                            "r": 0.9999914765357971
                                         },
-                                        "attConst": -0.8849999904632568,
+                                        "attConst": 2.365000009536743,
                                         "attLin": 2.0799999237060547,
-                                        "attQuad": -0.9800000190734863,
+                                        "attQuad": 1.5099999904632568,
                                         "diffuseColor": {
                                             "a": 1.0,
-                                            "b": 0.06887196749448776,
-                                            "g": 0.06887196749448776,
-                                            "r": 0.8494208455085754
+                                            "b": 0.9999899864196777,
+                                            "g": 0.9999899864196777,
+                                            "r": 1.0
                                         },
                                         "diffuseIntensity": 8.399999618530273,
                                         "range": 5.099999904632568
@@ -225,19 +235,19 @@
                                             }
                                         },
                                         "position": {
-                                            "x": 2.288818359375e-05,
-                                            "y": -4.57763671875e-05,
-                                            "z": 1.1444091796875e-05
+                                            "x": 0.0,
+                                            "y": 0.0,
+                                            "z": 0.0
                                         },
                                         "rotation": {
-                                            "w": 0.0,
+                                            "w": 1.0,
                                             "x": -0.0,
                                             "y": 0.0,
                                             "z": -0.0
                                         },
                                         "scale": {
-                                            "x": 33.333335876464844,
-                                            "y": 33.333335876464844,
+                                            "x": 33.33338928222656,
+                                            "y": 33.33333969116211,
                                             "z": 33.333335876464844
                                         }
                                     }
@@ -487,6 +497,11 @@
                                 "isMoveable": true,
                                 "isSleepable": false,
                                 "material": 2,
+                                "offset": {
+                                    "x": 0.0,
+                                    "y": 0.0,
+                                    "z": 0.0
+                                },
                                 "radius": 0.6000000238418579,
                                 "volume": 0.904778778553009
                             },
@@ -559,6 +574,11 @@
                                 "isMoveable": true,
                                 "isSleepable": true,
                                 "material": 2,
+                                "offset": {
+                                    "x": 0.0,
+                                    "y": 0.0,
+                                    "z": 0.009999999776482582
+                                },
                                 "radius": 0.5,
                                 "sideHeight": 1.0,
                                 "volume": 1.3089970350265503
@@ -661,6 +681,107 @@
                 "preloads": [],
                 "startScheme": ""
             }
+        },
+        {
+            "ID": 18,
+            "children": [],
+            "entity": {
+                "Entity": {
+                    "script": null
+                },
+                "components": {
+                    "BoxColliderComponent": {
+                        "angularFactor": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "collisionGroup": 31,
+                        "collisionMask": 31,
+                        "dimensions": {
+                            "x": 4.119999885559082,
+                            "y": 9.039999961853027,
+                            "z": 1.1299999952316284
+                        },
+                        "gravity": {
+                            "x": 0.0,
+                            "y": -9.800000190734863,
+                            "z": 0.0
+                        },
+                        "isCCD": true,
+                        "isGeneratesHitEvents": false,
+                        "isKinematic": false,
+                        "isMoveable": false,
+                        "isSleepable": true,
+                        "material": 0,
+                        "offset": {
+                            "x": 0.0,
+                            "y": 9.220000267028809,
+                            "z": 0.0
+                        },
+                        "volume": 44.6349983215332
+                    },
+                    "ModelComponent": {
+                        "affectingStaticLights": [],
+                        "isVisible": true,
+                        "materialOverrides": {
+                            "game/assets/materials/Alpha_Body_MAT.rmat": "game/assets/materials/Alpha_Body_MAT.rmat",
+                            "game/assets/materials/Alpha_Joints_MAT.rmat": "game/assets/materials/Alpha_Joints_MAT.rmat",
+                            "game/assets/materials/Material.001.rmat": "game/assets/materials/Material.001.rmat",
+                            "game/assets/materials/Material.002.rmat": "game/assets/materials/Material.002.rmat",
+                            "game/assets/materials/Material.003.rmat": "game/assets/materials/Material.003.rmat",
+                            "game/assets/materials/Material.004.rmat": "game/assets/materials/Material.004.rmat",
+                            "game/assets/materials/Material.006.rmat": "game/assets/materials/Material.006.rmat",
+                            "game/assets/materials/emision_1.rmat": "game/assets/materials/emision_1.rmat",
+                            "game/assets/materials/emision_2.rmat": "game/assets/materials/emision_2.rmat",
+                            "game/assets/materials/glass.rmat": "game/assets/materials/glass.rmat",
+                            "game/assets/materials/glass_1.rmat": "game/assets/materials/glass_1.rmat",
+                            "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                        },
+                        "renderPass": 1,
+                        "resFile": "game/assets/office.fbx"
+                    },
+                    "TransformComponent": {
+                        "boundingBox": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 8493.830078125,
+                                "z": 138.9842529296875
+                            },
+                            "extents": {
+                                "x": 4022.1376953125,
+                                "y": 8503.3359375,
+                                "z": 1187.4342041015625
+                            }
+                        },
+                        "position": {
+                            "x": 1.399999976158142,
+                            "y": 0.0,
+                            "z": -23.10000228881836
+                        },
+                        "rotation": {
+                            "w": 1.0,
+                            "x": -0.0,
+                            "y": 0.0,
+                            "z": -0.0
+                        },
+                        "scale": {
+                            "x": 0.0010000000474974513,
+                            "y": 0.0010000000474974513,
+                            "z": 0.0010000000474974513
+                        }
+                    }
+                }
+            },
+            "file": "",
+            "name": "Office",
+            "settings": {
+                "camera": 1,
+                "inputSchemes": {},
+                "listener": 1,
+                "preloads": [],
+                "startScheme": ""
+            }
         }
     ],
     "entity": {
@@ -671,12 +792,12 @@
             "FogComponent": {
                 "color": {
                     "a": 1.0,
-                    "b": 1.0,
-                    "g": 0.983472466468811,
-                    "r": 0.7142857313156128
+                    "b": 0.892182469367981,
+                    "g": 1.0,
+                    "r": 0.4882943034172058
                 },
-                "far": 84.0,
-                "near": 7.0
+                "far": 100.0,
+                "near": 0.0
             },
             "ModelComponent": {
                 "affectingStaticLights": [],
@@ -726,6 +847,11 @@
                 "isMoveable": false,
                 "isSleepable": true,
                 "material": 2,
+                "offset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
                 "volume": 0.0
             },
             "TransformComponent": {
@@ -747,7 +873,7 @@
                     "z": 0.0
                 },
                 "rotation": {
-                    "w": 0.0,
+                    "w": 1.0,
                     "x": -0.0,
                     "y": 0.0,
                     "z": -0.0

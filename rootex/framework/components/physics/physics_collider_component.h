@@ -28,6 +28,7 @@ class PhysicsColliderComponent : public Component, public btMotionState
 	btScalar m_Mass;
 	Vector3 m_Gravity;
 	Vector3 m_AngularFactor;
+	Vector3 m_Offset;
 	float m_Volume;
 	bool m_IsMoveable;
 	bool m_IsGeneratesHitEvents;
@@ -46,6 +47,7 @@ class PhysicsColliderComponent : public Component, public btMotionState
 	PhysicsColliderComponent(
 	    const PhysicsMaterial& material,
 	    float volume,
+	    const Vector3& offset,
 	    const Vector3& gravity,
 	    const Vector3& angularFactor,
 	    int collisionGroup,
@@ -75,6 +77,9 @@ public:
 	Vector3 getAngularFactor() const { return m_AngularFactor; }
 	void setAngularFactor(const Vector3& factors);
 	void setAxisLock(bool enabled);
+
+	Vector3 getOffset() const { return m_Offset; };
+	void setOffset(const Vector3& offset);
 
 	Vector3 getGravity() const { return m_Gravity; };
 	void setGravity(const Vector3& gravity);
