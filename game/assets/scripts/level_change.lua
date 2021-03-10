@@ -1,32 +1,41 @@
-running = false
-timeSinceLoad = 0
+LevelChange = class("LevelChange")
 
-function onBegin(entity)
-    transform = entity:getTransform()
-    text = entity:getTextUI()
-    RTX.Connect(onLoadLevel, "A")
+function LevelChange:initialize(entity)
+    self.exports = {
+        loadScene = "Enter scene to load"
+    }
+    self.running = false
+    self.timeSinceLoad = 0
+    self.transform = entity:getTransform()
+    self.text = entity:getTextUI()
+    RTX.BindMemberFunction(self, LevelChange.onLoadLevel, "A")
 end
 
-function onUpdate(entity, delta)
-    if running == true then
-        timeSinceLoad = timeSinceLoad + delta
-        if timeSinceLoad > 2000 then
+function LevelChange:begin(entity)
+end
+
+function LevelChange:update(entity, delta)
+    if self.running == true then
+        self.timeSinceLoad = self.timeSinceLoad + delta
+        if self.timeSinceLoad > 2000 then
             local arguments = {}
-            arguments[1] = "game/assets/scenes/model.scene.json"
+            arguments[1] = self.exports.loadScene
             print(arguments)
             RTX.LoadScene("game/assets/scenes/loading_screen.scene.json", arguments)
-            running = false
+            self.running = false
         end
     end
 end
 
-function onLoadLevel(event)
-    if event:getData().y == 1 and running == false then
+function LevelChange:onLoadLevel(event)
+    if event:getData().y == 1 and self.running == false then
         RTX.GetCurrentScene():addChild(RTX.Scene.CreateFromFile("game/assets/scenes/fade_to_black.scene.json"))
-        running = true
+        self.running = true
     end
     return true
 end
 
-function onEnd(entity)
+function LevelChange:destroy()
 end
+
+return LevelChange

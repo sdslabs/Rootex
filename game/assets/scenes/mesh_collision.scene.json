@@ -40,6 +40,9 @@
                     "ModelComponent": {
                         "affectingStaticLights": [],
                         "isVisible": true,
+                        "lodBias": 0.0,
+                        "lodDistance": 13.0,
+                        "lodEnable": true,
                         "materialOverrides": {
                             "rootex/assets/materials/default.rmat": "game/assets/materials/Door.rmat"
                         },
@@ -143,6 +146,9 @@
                             "ModelComponent": {
                                 "affectingStaticLights": [],
                                 "isVisible": true,
+                                "lodBias": 0.0,
+                                "lodDistance": 10.0,
+                                "lodEnable": true,
                                 "materialOverrides": {
                                     "rootex/assets/materials/default.rmat": "game/assets/materials/yellow_textured.rmat"
                                 },
@@ -194,75 +200,6 @@
                 {
                     "ID": 10,
                     "children": [
-                        {
-                            "ID": 12,
-                            "children": [],
-                            "entity": {
-                                "Entity": {
-                                    "script": null
-                                },
-                                "components": {
-                                    "PointLightComponent": {
-                                        "ambientColor": {
-                                            "a": 1.0,
-                                            "b": 0.9999899864196777,
-                                            "g": 1.0,
-                                            "r": 0.9999914765357971
-                                        },
-                                        "attConst": 2.365000009536743,
-                                        "attLin": 2.0799999237060547,
-                                        "attQuad": 1.5099999904632568,
-                                        "diffuseColor": {
-                                            "a": 1.0,
-                                            "b": 0.9999899864196777,
-                                            "g": 0.9999899864196777,
-                                            "r": 1.0
-                                        },
-                                        "diffuseIntensity": 8.399999618530273,
-                                        "range": 5.099999904632568
-                                    },
-                                    "TransformComponent": {
-                                        "boundingBox": {
-                                            "center": {
-                                                "x": 0.0,
-                                                "y": 0.0,
-                                                "z": 0.0
-                                            },
-                                            "extents": {
-                                                "x": 0.5,
-                                                "y": 0.5,
-                                                "z": 0.5
-                                            }
-                                        },
-                                        "position": {
-                                            "x": 0.0,
-                                            "y": 0.0,
-                                            "z": 0.0
-                                        },
-                                        "rotation": {
-                                            "w": 1.0,
-                                            "x": -0.0,
-                                            "y": 0.0,
-                                            "z": -0.0
-                                        },
-                                        "scale": {
-                                            "x": 33.33338928222656,
-                                            "y": 33.33333969116211,
-                                            "z": 33.333335876464844
-                                        }
-                                    }
-                                }
-                            },
-                            "file": "game/assets/scenes/point_light.scene.json",
-                            "name": "Point Light",
-                            "settings": {
-                                "camera": 1,
-                                "inputSchemes": {},
-                                "listener": 1,
-                                "preloads": [],
-                                "startScheme": ""
-                            }
-                        },
                         {
                             "ID": 13,
                             "children": [],
@@ -317,6 +254,9 @@
                                     "ModelComponent": {
                                         "affectingStaticLights": [],
                                         "isVisible": true,
+                                        "lodBias": 0.0,
+                                        "lodDistance": 10.0,
+                                        "lodEnable": true,
                                         "materialOverrides": {
                                             "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
                                         },
@@ -379,21 +319,21 @@
                                             "PointLightComponent": {
                                                 "ambientColor": {
                                                     "a": 1.0,
-                                                    "b": 0.9999899864196777,
-                                                    "g": 0.9999904036521912,
-                                                    "r": 1.0
+                                                    "b": 0.5,
+                                                    "g": 0.5,
+                                                    "r": 0.5
                                                 },
-                                                "attConst": 2.555000066757202,
-                                                "attLin": 2.009999990463257,
-                                                "attQuad": 0.11999999731779099,
+                                                "attConst": 0.04500000178813934,
+                                                "attLin": 1.0,
+                                                "attQuad": 0.007499999832361937,
                                                 "diffuseColor": {
                                                     "a": 1.0,
-                                                    "b": 0.23480723798274994,
-                                                    "g": 0.46073639392852783,
-                                                    "r": 0.5484949946403503
+                                                    "b": 1.0,
+                                                    "g": 1.0,
+                                                    "r": 1.0
                                                 },
-                                                "diffuseIntensity": 25.700000762939453,
-                                                "range": 4.199999809265137
+                                                "diffuseIntensity": 1.0,
+                                                "range": 10.0
                                             },
                                             "TransformComponent": {
                                                 "boundingBox": {
@@ -409,9 +349,9 @@
                                                     }
                                                 },
                                                 "position": {
-                                                    "x": 0.0,
-                                                    "y": 0.0,
-                                                    "z": 0.0
+                                                    "x": 57.59278106689453,
+                                                    "y": 14.568588256835938,
+                                                    "z": 0.3961982727050781
                                                 },
                                                 "rotation": {
                                                     "w": 1.0,
@@ -420,9 +360,9 @@
                                                     "z": -0.0
                                                 },
                                                 "scale": {
-                                                    "x": 4.175970554351807,
-                                                    "y": 4.176144123077393,
-                                                    "z": 4.177108287811279
+                                                    "x": 33.33336639404297,
+                                                    "y": 33.333316802978516,
+                                                    "z": 33.333309173583984
                                                 }
                                             }
                                         }
@@ -452,6 +392,9 @@
                                             "z": 1.0
                                         },
                                         "isVisible": true,
+                                        "lodBias": 0.0,
+                                        "lodDistance": 0.0,
+                                        "lodEnable": false,
                                         "materialOverrides": {
                                             "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
                                         },
@@ -470,10 +413,11 @@
                                                 "g": 0.0,
                                                 "r": 1.0
                                             },
-                                            "lifeTime": 5.0,
-                                            "sizeBegin": 1.0,
-                                            "sizeEnd": 1.0,
-                                            "sizeVariation": 4.070000171661377,
+                                            "lifeTime": 1.5700000524520874,
+                                            "rotationVariation": 3.1415927410125732,
+                                            "sizeBegin": 0.07000000029802322,
+                                            "sizeEnd": 0.3400000035762787,
+                                            "sizeVariation": 4.440000057220459,
                                             "velocity": {
                                                 "x": 0.0,
                                                 "y": 0.0,
@@ -481,7 +425,7 @@
                                             },
                                             "velocityVariation": 0.1599999964237213
                                         },
-                                        "poolSize": 1120,
+                                        "poolSize": 223,
                                         "renderPass": 1,
                                         "resFile": "rootex/assets/cube.obj"
                                     },
@@ -499,9 +443,9 @@
                                             }
                                         },
                                         "position": {
-                                            "x": 0.0,
-                                            "y": 0.0,
-                                            "z": 0.0
+                                            "x": -0.0102996826171875,
+                                            "y": -0.06951904296875,
+                                            "z": 0.010433197021484375
                                         },
                                         "rotation": {
                                             "w": 1.0,
@@ -542,6 +486,9 @@
                             "ModelComponent": {
                                 "affectingStaticLights": [],
                                 "isVisible": true,
+                                "lodBias": 0.0,
+                                "lodDistance": 10.0,
+                                "lodEnable": true,
                                 "materialOverrides": {
                                     "rootex/assets/materials/default.rmat": "game/assets/materials/Condensation.rmat"
                                 },
@@ -656,6 +603,9 @@
                             "ModelComponent": {
                                 "affectingStaticLights": [],
                                 "isVisible": true,
+                                "lodBias": 0.4300000071525574,
+                                "lodDistance": 42.0,
+                                "lodEnable": true,
                                 "materialOverrides": {
                                     "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
                                 },
@@ -789,11 +739,14 @@
                             "y": 9.220000267028809,
                             "z": 0.0
                         },
-                        "volume": 44.6349983215332
+                        "volume": 42.08662414550781
                     },
                     "ModelComponent": {
                         "affectingStaticLights": [],
                         "isVisible": true,
+                        "lodBias": 0.0,
+                        "lodDistance": 31.0,
+                        "lodEnable": true,
                         "materialOverrides": {
                             "game/assets/materials/Alpha_Body_MAT.rmat": "game/assets/materials/Alpha_Body_MAT.rmat",
                             "game/assets/materials/Alpha_Joints_MAT.rmat": "game/assets/materials/Alpha_Joints_MAT.rmat",
@@ -872,6 +825,9 @@
             "ModelComponent": {
                 "affectingStaticLights": [],
                 "isVisible": true,
+                "lodBias": 0.47999998927116394,
+                "lodDistance": 22.0,
+                "lodEnable": true,
                 "materialOverrides": {
                     "game/assets/materials/Door.rmat": "game/assets/materials/Door.rmat",
                     "game/assets/materials/Fence.rmat": "game/assets/materials/Fence.rmat",

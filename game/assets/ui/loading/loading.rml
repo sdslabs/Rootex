@@ -79,23 +79,23 @@
             }
         </style>
         <script>
-Loading = Loading or {
+LoadingRML = LoadingRML or {
     document = nil
 }
 
-function Loading.onGameLevelSwitch()
-    Loading.document:GetElementById("loading").style.animation = "2s linear-in-out fade-out";
+function LoadingRML.onGameLevelSwitch()
+    LoadingRML.document:GetElementById("loading").style.animation = "2s linear-in-out fade-out";
     return true
 end
 
-function Loading.loaded(document)
-    Loading.document = document
-    RTX.Connect(Loading.onGameLevelSwitch, "GameLevelSwitch")
+function LoadingRML.loaded(document)
+    LoadingRML.document = document
+    RTX.BindFunction(LoadingRML.onGameLevelSwitch, "GameLevelSwitch")
 end
         </script>
     </head>
 
-    <body id="body" onload="Loading.loaded(document)">
+    <body id="body" onload="LoadingRML.loaded(document)">
         <div id="box">
             <div id="clubbed">
                 <div id="loading">

@@ -7,9 +7,9 @@
 #include "scene_loader.h"
 
 RenderableComponent::RenderableComponent(
-	unsigned int renderPass,
-	const HashMap<String, String>& materialOverrides,
-	bool visibility,
+    unsigned int renderPass,
+    const HashMap<String, String>& materialOverrides,
+    bool visibility,
     bool lodEnable,
     float lodBias,
     float lodDistance,
@@ -26,7 +26,7 @@ RenderableComponent::RenderableComponent(
 
 float RenderableComponent::getLODFactor(float viewDistance)
 {
-	return m_LODEnable ? m_LODBias * viewDistance / m_LODDistance : 1.0f;
+	return m_LODEnable ? m_LODBias + m_LODDistance / viewDistance : 1.0f;
 }
 
 bool RenderableComponent::setupData()
@@ -164,12 +164,12 @@ void RenderableComponent::draw()
 	{
 		m_RenderPass = pow(2, renderPassUI);
 	}
-	
+
 	ImGui::Checkbox("LOD", &m_LODEnable);
 	if (m_LODEnable)
 	{
 		ImGui::Indent();
-		ImGui::DragFloat("LOD Bias", &m_LODBias, 0.01f, 0.0f, 1.0f);
+		ImGui::DragFloat("LOD Bias", &m_LODBias, 0.01f);
 		ImGui::DragFloat("LOD Distance", &m_LODDistance, 1.0f, 0.0f);
 		ImGui::Unindent();
 	}

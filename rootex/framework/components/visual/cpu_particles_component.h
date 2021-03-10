@@ -80,9 +80,6 @@ public:
 	    int emitRate,
 	    const Vector3& emitterDimensions,
 	    bool visibility,
-	    bool lodEnable,
-	    float lodBias,
-	    float lodDistance,
 	    unsigned int renderPass);
 	CPUParticlesComponent(CPUParticlesComponent&) = delete;
 	virtual ~CPUParticlesComponent() = default;

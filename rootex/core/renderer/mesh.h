@@ -13,7 +13,7 @@ struct Mesh
 	BoundingBox m_BoundingBox;
 
 	Vector<Pair<Ref<IndexBuffer>, float>> m_LODs;
-	
+
 	Mesh() = default;
 	Mesh(const Mesh&) = default;
 	~Mesh() = default;

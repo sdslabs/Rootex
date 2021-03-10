@@ -91,8 +91,10 @@ void ModelResourceFile::reimport()
 			indices.push_back(face->mIndices[2]);
 		}
 
+		meshopt_optimizeVertexCache(indices.data(), indices.data(), indices.size(), vertices.size());
+
 		Vector<Vector<unsigned int>> lods;
-		float lodLevels[MAX_LOD_COUNT - 1] = { 0.75f, 0.50f, 0.25f, 0.10f };
+		float lodLevels[MAX_LOD_COUNT - 1] = { 0.8f, 0.50f, 0.3f, 0.10f };
 
 		for (int i = 0; i < MAX_LOD_COUNT - 1; i++)
 		{
@@ -102,13 +104,13 @@ void ModelResourceFile::reimport()
 			Vector<unsigned int> lod(indices.size());
 			float lodError = 0.0f;
 			size_t finalLODIndexCount = meshopt_simplifySloppy(
-				&lod[0],
-				indices.data(),
-				indices.size(),
-				&vertices[0].m_Position.x,
-				vertices.size(),
-				sizeof(VertexData),
-				targetIndexCount);
+			    &lod[0],
+			    indices.data(),
+			    indices.size(),
+			    &vertices[0].m_Position.x,
+			    vertices.size(),
+			    sizeof(VertexData),
+			    targetIndexCount);
 			lod.resize(finalLODIndexCount);
 
 			lods.push_back(lod);

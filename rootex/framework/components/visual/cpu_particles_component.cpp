@@ -46,34 +46,28 @@ Component* CPUParticlesComponent::Create(const JSON::json& componentData)
 	    componentData.value("emitRate", 1.0f),
 	    componentData.value("emitterDimensions", Vector3 { 1.0f, 1.0f, 1.0f }),
 	    componentData.value("isVisible", true),
-	    componentData.value("lodEnable", true),
-	    componentData.value("lodBias", 1.0f),
-	    componentData.value("lodDistance", 10.0f),
 	    componentData.value("renderPass", (unsigned int)RenderPass::Basic));
 	return particles;
 }
 
 CPUParticlesComponent::CPUParticlesComponent(
-	size_t poolSize,
-	const String& particleModelPath,
-	const String& materialPath,
-	const ParticleTemplate& particleTemplate,
-	EmitMode emitMode,
-	int emitRate,
-	const Vector3& emitterDimensions,
-	bool visibility,
-    bool lodEnable,
-    float lodBias,
-    float lodDistance,
-	unsigned int renderPass)
+    size_t poolSize,
+    const String& particleModelPath,
+    const String& materialPath,
+    const ParticleTemplate& particleTemplate,
+    EmitMode emitMode,
+    int emitRate,
+    const Vector3& emitterDimensions,
+    bool visibility,
+    unsigned int renderPass)
     : ModelComponent(
-		renderPass,
-		ResourceLoader::CreateModelResourceFile(particleModelPath),
-		{},
-		visibility,
-		lodEnable,
-		lodBias,
-		lodDistance,
+        renderPass,
+        ResourceLoader::CreateModelResourceFile(particleModelPath),
+        {},
+        visibility,
+        false,
+        0.0f,
+        0.0f,
         {})
     , m_ParticlesMaterial(std::dynamic_pointer_cast<ParticlesMaterial>(MaterialLibrary::GetMaterial(materialPath)))
     , m_ParticleTemplate(particleTemplate)
@@ -182,7 +176,7 @@ void CPUParticlesComponent::render(float viewDistance)
 	{
 		for (auto& mesh : meshes)
 		{
-			RenderSystem::GetSingleton()->getRenderer()->drawInstanced(mesh.m_VertexBuffer.get(), mesh.getLOD(getLODFactor(viewDistance)).get(), m_InstanceBuffer.get(), m_LiveParticlesCount);
+			RenderSystem::GetSingleton()->getRenderer()->drawInstanced(mesh.m_VertexBuffer.get(), mesh.getLOD(1.0f).get(), m_InstanceBuffer.get(), m_LiveParticlesCount);
 		}
 	}
 }

@@ -12,6 +12,9 @@
                     "ModelComponent": {
                         "affectingStaticLights": [],
                         "isVisible": true,
+                        "lodBias": 0.0,
+                        "lodDistance": 10.0,
+                        "lodEnable": true,
                         "materialOverrides": {
                             "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
                         },
@@ -77,6 +80,9 @@
                             "z": 1.0
                         },
                         "isVisible": true,
+                        "lodBias": 0.0,
+                        "lodDistance": 10.0,
+                        "lodEnable": true,
                         "materialOverrides": {
                             "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
                         },
@@ -95,16 +101,17 @@
                                 "g": 0.44551774859428406,
                                 "r": 0.8862876296043396
                             },
-                            "lifeTime": 10.739999771118164,
-                            "sizeBegin": 0.10000000149011612,
+                            "lifeTime": 8.529999732971191,
+                            "rotationVariation": 3.1415927410125732,
+                            "sizeBegin": 0.3700000047683716,
                             "sizeEnd": 0.10000000149011612,
                             "sizeVariation": 0.10000000149011612,
                             "velocity": {
                                 "x": 0.0,
-                                "y": -4.0,
+                                "y": 0.0,
                                 "z": 0.0
                             },
-                            "velocityVariation": 5.0
+                            "velocityVariation": 0.8700000047683716
                         },
                         "poolSize": 340,
                         "renderPass": 1,
@@ -236,8 +243,8 @@
                             }
                         },
                         "position": {
-                            "x": -4.199999809265137,
-                            "y": -0.28159093856811523,
+                            "x": 1.4777069091796875,
+                            "y": 1.999999761581421,
                             "z": -6.579999923706055
                         },
                         "rotation": {
@@ -281,6 +288,9 @@
                             "z": 1.0
                         },
                         "isVisible": true,
+                        "lodBias": 0.0,
+                        "lodDistance": 10.0,
+                        "lodEnable": true,
                         "materialOverrides": {
                             "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
                         },
@@ -300,6 +310,7 @@
                                 "r": 0.8762542009353638
                             },
                             "lifeTime": 1.8700000047683716,
+                            "rotationVariation": 3.1415927410125732,
                             "sizeBegin": 1.0499999523162842,
                             "sizeEnd": 1.0499999523162842,
                             "sizeVariation": 0.0,
@@ -440,8 +451,8 @@
                             }
                         },
                         "position": {
-                            "x": 2.375173807144165,
-                            "y": 1.3037660121917725,
+                            "x": 1.5804628133773804,
+                            "y": -1.9871976375579834,
                             "z": -9.449999809265137
                         },
                         "rotation": {
@@ -477,6 +488,9 @@
             "ModelComponent": {
                 "affectingStaticLights": [],
                 "isVisible": true,
+                "lodBias": 0.0,
+                "lodDistance": 10.0,
+                "lodEnable": true,
                 "materialOverrides": {
                     "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
                 },

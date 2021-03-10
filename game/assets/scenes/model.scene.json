@@ -501,20 +501,20 @@
                             }
                         },
                         "position": {
-                            "x": -788.863525390625,
+                            "x": 309.2710876464844,
                             "y": 174.26275634765625,
                             "z": -17.46019172668457
                         },
                         "rotation": {
-                            "w": -0.4316333830356598,
+                            "w": 0.7070346474647522,
                             "x": 0.0,
-                            "y": 0.9020491242408752,
+                            "y": 0.7071788907051086,
                             "z": 0.0
                         },
                         "scale": {
-                            "x": 1.0000001192092896,
+                            "x": 1.000000238418579,
                             "y": 1.0,
-                            "z": 1.0000001192092896
+                            "z": 1.000000238418579
                         }
                     }
                 }
@@ -543,6 +543,9 @@
                     20
                 ],
                 "isVisible": true,
+                "lodBias": 0.0,
+                "lodDistance": 123.0,
+                "lodEnable": true,
                 "materialOverrides": {
                     "game/assets/materials/Material__25.rmat": "game/assets/materials/Material__25.rmat",
                     "game/assets/materials/Material__298.rmat": "game/assets/materials/Material__298.rmat",
@@ -593,6 +596,11 @@
                 "isMoveable": false,
                 "isSleepable": true,
                 "material": 0,
+                "offset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
                 "volume": 0.0
             },
             "TransformComponent": {

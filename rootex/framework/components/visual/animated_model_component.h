@@ -26,16 +26,16 @@ protected:
 	Vector<Matrix> m_FinalTransforms;
 
 	AnimatedModelComponent(
-		bool isPlayOnStart,
-		AnimatedModelResourceFile* resFile,
-		const String& currentAnimationName,
-		unsigned int renderPass,
-		const HashMap<String, String>& materialOverrides,
-		bool isVisible,
-		bool lodEnable,
-		float lodBias,
-		float lodDistance,
-		const Vector<SceneID>& affectingStaticLightIDs);
+	    bool isPlayOnStart,
+	    AnimatedModelResourceFile* resFile,
+	    const String& currentAnimationName,
+	    unsigned int renderPass,
+	    const HashMap<String, String>& materialOverrides,
+	    bool isVisible,
+	    bool lodEnable,
+	    float lodBias,
+	    float lodDistance,
+	    const Vector<SceneID>& affectingStaticLightIDs);
 	AnimatedModelComponent(AnimatedModelComponent&) = delete;
 	virtual ~AnimatedModelComponent() = default;
 

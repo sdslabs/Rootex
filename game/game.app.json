@@ -1,7 +1,7 @@
 {
     "postInitialize": "game/startup.lua",
     "project": "Rootex Game",
-    "startLevel": "game/assets/scenes/box.scene.json",
+    "startLevel": "game/assets/scenes/loading.scene.json",
     "systems": {
         "AudioSystem": {},
         "DebugSystem": {
