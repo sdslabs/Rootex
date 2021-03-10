@@ -42,18 +42,20 @@ public:
 
 #ifndef DEPENDS_ON
 #define DEPENDS_ON(ComponentType)                                                     \
-protected:                                                                            \
-	ComponentType const* get##ComponentType() { return m_##ComponentType; }           \
+public:                                                                               \
+	ComponentType* get##ComponentType() { return m_##ComponentType; }                 \
 	ComponentType*& m_##ComponentType = m_DependencyOn##ComponentType.getComponent(); \
-	Dependency<ComponentType, false> m_DependencyOn##ComponentType
+	Dependency<ComponentType, false> m_DependencyOn##ComponentType;                   \
+private:
 #endif
 
 #ifndef SOFT_DEPENDS_ON
 #define SOFT_DEPENDS_ON(ComponentType)                                                \
-protected:                                                                            \
-	ComponentType const* get##ComponentType() { return m_##ComponentType; }           \
+public:                                                                               \
+	ComponentType* get##ComponentType() { return m_##ComponentType; }                 \
 	ComponentType*& m_##ComponentType = m_DependencyOn##ComponentType.getComponent(); \
-	Dependency<ComponentType, true> m_DependencyOn##ComponentType
+	Dependency<ComponentType, true> m_DependencyOn##ComponentType;                    \
+private:
 #endif
 
 /// An ECS style interface of a collection of data that helps implement a behaviour. Also allows operations on that data.

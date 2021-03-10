@@ -12,6 +12,12 @@
 #include "renderer/render_pass.h"
 #include "scene_loader.h"
 
+bool CompareMaterials(const Pair<Ref<Material>, Vector<Mesh>>& a, const Pair<Ref<Material>, Vector<Mesh>>& b)
+{
+	// Alpha materials final last
+	return !a.first->isAlpha() && b.first->isAlpha();
+}
+
 Component* ModelComponent::Create(const JSON::json& componentData)
 {
 	ModelComponent* modelComponent = new ModelComponent(
@@ -19,12 +25,30 @@ Component* ModelComponent::Create(const JSON::json& componentData)
 	    ResourceLoader::CreateModelResourceFile(componentData.value("resFile", "rootex/assets/cube.obj")),
 	    componentData.value("materialOverrides", HashMap<String, String>()),
 	    componentData.value("isVisible", true),
+	    componentData.value("lodEnable", true),
+	    componentData.value("lodBias", 1.0f),
+	    componentData.value("lodDistance", 10.0f),
 	    componentData.value("affectingStaticLights", Vector<SceneID>()));
 	return modelComponent;
 }
 
-ModelComponent::ModelComponent(unsigned int renderPass, ModelResourceFile* resFile, const HashMap<String, String>& materialOverrides, bool visibility, const Vector<SceneID>& affectingStaticLightIDs)
-    : RenderableComponent(renderPass, materialOverrides, visibility, affectingStaticLightIDs)
+ModelComponent::ModelComponent(
+	unsigned int renderPass,
+	ModelResourceFile* resFile,
+	const HashMap<String, String>& materialOverrides,
+	bool visibility,
+    bool lodEnable,
+    float lodBias,
+	float lodDistance,
+	const Vector<SceneID>& affectingStaticLightIDs)
+    : RenderableComponent(
+		renderPass,
+		materialOverrides,
+		visibility,
+		lodEnable,
+		lodBias,
+		lodDistance,
+		affectingStaticLightIDs)
 {
 	assignOverrides(resFile, materialOverrides);
 }
@@ -42,21 +66,15 @@ bool ModelComponent::preRender(float deltaMilliseconds)
 	return true;
 }
 
-bool ModelComponent::CompareMaterials(const Pair<Ref<Material>, Vector<Mesh>>& a, const Pair<Ref<Material>, Vector<Mesh>>& b)
-{
-	// Alpha materials final last
-	return !a.first->isAlpha() && b.first->isAlpha();
-}
-
-void ModelComponent::render()
+void ModelComponent::render(float viewDistance)
 {
 	ZoneNamedN(componentRender, "Model Render", true);
-	RenderableComponent::render();
+	RenderableComponent::render(viewDistance);
 
 	std::sort(m_ModelResourceFile->getMeshes().begin(), m_ModelResourceFile->getMeshes().end(), CompareMaterials);
 	int i = 0;
 
-	RenderableComponent::render();
+	RenderableComponent::render(viewDistance);
 
 	for (auto& [material, meshes] : m_ModelResourceFile->getMeshes())
 	{
@@ -65,7 +83,7 @@ void ModelComponent::render()
 
 		for (auto& mesh : meshes)
 		{
-			RenderSystem::GetSingleton()->getRenderer()->draw(mesh.m_VertexBuffer.get(), mesh.m_IndexBuffer.get());
+			RenderSystem::GetSingleton()->getRenderer()->draw(mesh.m_VertexBuffer.get(), mesh.getLOD(getLODFactor(viewDistance)).get());
 		}
 	}
 }
