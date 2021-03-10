@@ -6,12 +6,27 @@
 #include "renderer/material_library.h"
 #include "scene_loader.h"
 
-RenderableComponent::RenderableComponent(unsigned int renderPass, const HashMap<String, String>& materialOverrides, bool visibility, const Vector<SceneID>& affectingStaticLightIDs)
+RenderableComponent::RenderableComponent(
+	unsigned int renderPass,
+	const HashMap<String, String>& materialOverrides,
+	bool visibility,
+    bool lodEnable,
+    float lodBias,
+    float lodDistance,
+    const Vector<SceneID>& affectingStaticLightIDs)
     : m_RenderPass(renderPass)
     , m_IsVisible(visibility)
-    , m_DependencyOnTransformComponent(this)
     , m_AffectingStaticLightIDs(affectingStaticLightIDs)
+    , m_LODDistance(lodDistance)
+    , m_LODBias(lodBias)
+    , m_LODEnable(lodEnable)
+    , m_DependencyOnTransformComponent(this)
 {
+}
+
+float RenderableComponent::getLODFactor(float viewDistance)
+{
+	return m_LODEnable ? m_LODBias * viewDistance / m_LODDistance : 1.0f;
 }
 
 bool RenderableComponent::setupData()
@@ -44,7 +59,7 @@ bool RenderableComponent::preRender(float deltaMilliseconds)
 	return true;
 }
 
-void RenderableComponent::render()
+void RenderableComponent::render(float viewDistance)
 {
 	PerModelPSCB perModel;
 	for (int i = 0; i < m_AffectingStaticLights.size(); i++)
@@ -135,6 +150,10 @@ JSON::json RenderableComponent::getJSON() const
 	}
 	j["affectingStaticLights"] = m_AffectingStaticLightIDs;
 
+	j["lodBias"] = m_LODBias;
+	j["lodDistance"] = m_LODDistance;
+	j["lodEnable"] = m_LODEnable;
+
 	return j;
 }
 
@@ -144,6 +163,15 @@ void RenderableComponent::draw()
 	if (ImGui::Combo("Renderpass", &renderPassUI, "Basic\0Editor\0Alpha"))
 	{
 		m_RenderPass = pow(2, renderPassUI);
+	}
+	
+	ImGui::Checkbox("LOD", &m_LODEnable);
+	if (m_LODEnable)
+	{
+		ImGui::Indent();
+		ImGui::DragFloat("LOD Bias", &m_LODBias, 0.01f, 0.0f, 1.0f);
+		ImGui::DragFloat("LOD Distance", &m_LODDistance, 1.0f, 0.0f);
+		ImGui::Unindent();
 	}
 
 	if (ImGui::TreeNodeEx("Static Lights"))

@@ -14,6 +14,8 @@
 
 #define LINE_INITIAL_RENDER_CACHE 1000
 
+class BasicMaterial;
+
 class RenderSystem : public System
 {
 	struct LineRequests
@@ -101,7 +103,8 @@ inline void RenderSystem::renderComponents(float deltaMilliseconds, RenderPass r
 			tc->preRender(deltaMilliseconds);
 			if (tc->isVisible())
 			{
-				tc->render();
+				Vector3 viewDistance = tc->getTransformComponent()->getAbsolutePosition() - m_Camera->getAbsolutePosition();
+				tc->render(viewDistance.Length());
 			}
 			tc->postRender();
 		}

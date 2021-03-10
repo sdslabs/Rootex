@@ -3,10 +3,13 @@
 #include "resource_loader.h"
 #include "image_resource_file.h"
 #include "renderer/material_library.h"
+#include "renderer/vertex_data.h"
+#include "renderer/vertex_buffer.h"
+#include "renderer/index_buffer.h"
 
-#include <assimp/Importer.hpp>
-#include <assimp/postprocess.h>
-#include <assimp/scene.h>
+#include "assimp/Importer.hpp"
+#include "assimp/postprocess.h"
+#include "assimp/scene.h"
 
 AnimatedModelResourceFile::AnimatedModelResourceFile(const FilePath& path)
     : ResourceFile(Type::AnimatedModel, path)
@@ -338,7 +341,7 @@ void AnimatedModelResourceFile::reimport()
 
 		Mesh extractedMesh;
 		extractedMesh.m_VertexBuffer.reset(new VertexBuffer(vertices));
-		extractedMesh.m_IndexBuffer.reset(new IndexBuffer(indices));
+		extractedMesh.addLOD(std::make_shared<IndexBuffer>(indices), 1.0f);
 		Vector3 max = { mesh->mAABB.mMax.x, mesh->mAABB.mMax.y, mesh->mAABB.mMax.z };
 		Vector3 min = { mesh->mAABB.mMin.x, mesh->mAABB.mMin.y, mesh->mAABB.mMin.z };
 

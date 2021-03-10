@@ -3,10 +3,15 @@
 #include "resource_loader.h"
 #include "image_resource_file.h"
 #include "renderer/material_library.h"
+#include "renderer/mesh.h"
+#include "renderer/vertex_buffer.h"
+#include "renderer/index_buffer.h"
 
-#include <assimp/Importer.hpp>
-#include <assimp/postprocess.h>
-#include <assimp/scene.h>
+#include "assimp/Importer.hpp"
+#include "assimp/postprocess.h"
+#include "assimp/scene.h"
+
+#include "meshoptimizer.h"
 
 ModelResourceFile::ModelResourceFile(const FilePath& path)
     : ResourceFile(Type::Model, path)
@@ -73,7 +78,8 @@ void ModelResourceFile::reimport()
 			vertices.push_back(vertex);
 		}
 
-		std::vector<unsigned short> indices;
+		Vector<unsigned int> indices;
+		indices.reserve(mesh->mNumFaces);
 
 		aiFace* face = nullptr;
 		for (unsigned int f = 0; f < mesh->mNumFaces; f++)
@@ -83,6 +89,29 @@ void ModelResourceFile::reimport()
 			indices.push_back(face->mIndices[0]);
 			indices.push_back(face->mIndices[1]);
 			indices.push_back(face->mIndices[2]);
+		}
+
+		Vector<Vector<unsigned int>> lods;
+		float lodLevels[MAX_LOD_COUNT - 1] = { 0.75f, 0.50f, 0.25f, 0.10f };
+
+		for (int i = 0; i < MAX_LOD_COUNT - 1; i++)
+		{
+			float threshold = lodLevels[i];
+			size_t targetIndexCount = indices.size() * threshold;
+
+			Vector<unsigned int> lod(indices.size());
+			float lodError = 0.0f;
+			size_t finalLODIndexCount = meshopt_simplifySloppy(
+				&lod[0],
+				indices.data(),
+				indices.size(),
+				&vertices[0].m_Position.x,
+				vertices.size(),
+				sizeof(VertexData),
+				targetIndexCount);
+			lod.resize(finalLODIndexCount);
+
+			lods.push_back(lod);
 		}
 
 		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
@@ -225,7 +254,14 @@ void ModelResourceFile::reimport()
 
 		Mesh extractedMesh;
 		extractedMesh.m_VertexBuffer.reset(new VertexBuffer(vertices));
-		extractedMesh.m_IndexBuffer.reset(new IndexBuffer(indices));
+		extractedMesh.addLOD(std::make_shared<IndexBuffer>(indices), 1.0f);
+		for (int i = 0; i < MAX_LOD_COUNT - 1; i++)
+		{
+			if (!lods[i].empty())
+			{
+				extractedMesh.addLOD(std::make_shared<IndexBuffer>(lods[i]), lodLevels[i]);
+			}
+		}
 		Vector3 max = { mesh->mAABB.mMax.x, mesh->mAABB.mMax.y, mesh->mAABB.mMax.z };
 		Vector3 min = { mesh->mAABB.mMin.x, mesh->mAABB.mMin.y, mesh->mAABB.mMin.z };
 		Vector3 center = (max + min) / 2.0f;
