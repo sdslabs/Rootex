@@ -107,6 +107,8 @@ target_link_libraries(Rootex PUBLIC
     Tracy
     ASSAO
     LPeg
+    Meshoptimizer
+    
     Shell32.lib
     d3d11.lib
     xinput.lib

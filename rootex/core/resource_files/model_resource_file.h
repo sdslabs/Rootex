@@ -1,9 +1,10 @@
 #pragma once
 
 #include "resource_file.h"
-#include "renderer/mesh.h"
 
 class Material;
+class ResourceFile;
+class Mesh;
 
 /// Representation of a 3D model file.
 class ModelResourceFile : public ResourceFile

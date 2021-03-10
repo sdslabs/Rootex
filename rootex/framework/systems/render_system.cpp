@@ -185,7 +185,7 @@ void RenderSystem::update(float deltaMilliseconds)
 				m_Renderer->bind(sky->getSkyMaterial());
 				for (auto& mesh : meshes)
 				{
-					m_Renderer->draw(mesh.m_VertexBuffer.get(), mesh.m_IndexBuffer.get());
+					m_Renderer->draw(mesh.m_VertexBuffer.get(), mesh.getLOD(1.0f).get());
 				}
 			}
 		}

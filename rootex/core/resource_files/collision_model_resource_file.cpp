@@ -1,8 +1,8 @@
 #include "collision_model_resource_file.h"
 
-#include <assimp/Importer.hpp>
-#include <assimp/postprocess.h>
-#include <assimp/scene.h>
+#include "assimp/Importer.hpp"
+#include "assimp/postprocess.h"
+#include "assimp/scene.h"
 
 CollisionModelResourceFile::CollisionModelResourceFile(const FilePath& path)
     : ResourceFile(Type::CollisionModel, path)

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "framework/component.h"
+#include "model_component.h"
 #include "core/resource_file.h"
 #include "core/resource_files/animated_model_resource_file.h"
 #include "renderable_component.h"
@@ -24,7 +25,17 @@ protected:
 	bool m_IsPlayOnStart;
 	Vector<Matrix> m_FinalTransforms;
 
-	AnimatedModelComponent(unsigned int renderPass, const HashMap<String, String>& materialOverrides, AnimatedModelResourceFile* resFile, bool isVisible, bool isPlayOnStart, const String& currentAnimationName, const Vector<SceneID>& affectingStaticLightIDs);
+	AnimatedModelComponent(
+	    bool isPlayOnStart,
+	    AnimatedModelResourceFile* resFile,
+	    const String& currentAnimationName,
+	    unsigned int renderPass,
+	    const HashMap<String, String>& materialOverrides,
+	    bool isVisible,
+	    bool lodEnable,
+	    float lodBias,
+	    float lodDistance,
+	    const Vector<SceneID>& affectingStaticLightIDs);
 	AnimatedModelComponent(AnimatedModelComponent&) = delete;
 	virtual ~AnimatedModelComponent() = default;
 
@@ -33,7 +44,7 @@ public:
 
 	virtual bool setupData() override;
 	virtual bool preRender(float deltaMilliseconds) override;
-	virtual void render() override;
+	virtual void render(float viewDistance) override;
 
 	virtual AnimatedModelResourceFile* getAnimatedResourceFile() const { return m_AnimatedModelResourceFile; }
 	virtual String getCurrentAnimationName() const { return m_CurrentAnimationName; }

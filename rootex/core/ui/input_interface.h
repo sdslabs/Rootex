@@ -28,6 +28,8 @@ public:
 	static void SetContext(Rml::Context* context);
 	static Rml::Character GetCharacterCode(Rml::Input::KeyIdentifier keyIdentifier, int keyModifier_state);
 
+	static Variant WindowResized(const Event* event);
+
 protected:
 	static Rml::Context* s_Context;
 };
