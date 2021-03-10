@@ -3,6 +3,29 @@
 #include "resource_loader.h"
 #include "event_manager.h"
 
+void RootexFPSGraph(const char* name, Vector<float>& fpsRecords, float lastFPS)
+{
+	fpsRecords.erase(fpsRecords.begin());
+	fpsRecords.push_back(lastFPS);
+
+	float averageFPS = 0.0f;
+	for (auto& fps : fpsRecords)
+	{
+		averageFPS += fps;
+	}
+	averageFPS /= fpsRecords.size();
+
+	static int targetFPSChoice = 1;
+	static float targetFPS[4] = { 30.0f, 60.0f, 120.0f, 144.0f };
+
+	const Color& fpsColor = Color::Lerp((Color)ColorPresets::Red, (Color)ColorPresets::ForestGreen, (lastFPS / targetFPS[targetFPSChoice]));
+	ImGui::PushStyleColor(ImGuiCol_PlotLines, ImVec4 { fpsColor.x, fpsColor.y, fpsColor.z, fpsColor.w });
+	ImGui::PlotLines("FPS", fpsRecords.data(), fpsRecords.size(), 0, std::to_string(averageFPS).c_str(), 0, 200.0f, ImVec2(ImGui::GetContentRegionAvailWidth(), 100));
+	ImGui::PopStyleColor();
+
+	ImGui::Combo("Target FPS", &targetFPSChoice, "30\0 60\0 120\0 144\0");
+}
+
 void RootexSelectableImage(const char* name, ImageResourceFile* image, Function<void(const String&)> onSelected)
 {
 	if (ImGui::Button((name + String("##Button")).c_str()))

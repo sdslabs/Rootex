@@ -367,7 +367,77 @@
                         },
                         {
                             "ID": 16,
-                            "children": [],
+                            "children": [
+                                {
+                                    "ID": 12,
+                                    "children": [],
+                                    "entity": {
+                                        "Entity": {
+                                            "script": null
+                                        },
+                                        "components": {
+                                            "PointLightComponent": {
+                                                "ambientColor": {
+                                                    "a": 1.0,
+                                                    "b": 0.9999899864196777,
+                                                    "g": 0.9999904036521912,
+                                                    "r": 1.0
+                                                },
+                                                "attConst": 2.555000066757202,
+                                                "attLin": 2.009999990463257,
+                                                "attQuad": 0.11999999731779099,
+                                                "diffuseColor": {
+                                                    "a": 1.0,
+                                                    "b": 0.23480723798274994,
+                                                    "g": 0.46073639392852783,
+                                                    "r": 0.5484949946403503
+                                                },
+                                                "diffuseIntensity": 25.700000762939453,
+                                                "range": 4.199999809265137
+                                            },
+                                            "TransformComponent": {
+                                                "boundingBox": {
+                                                    "center": {
+                                                        "x": 0.0,
+                                                        "y": 0.0,
+                                                        "z": 0.0
+                                                    },
+                                                    "extents": {
+                                                        "x": 0.5,
+                                                        "y": 0.5,
+                                                        "z": 0.5
+                                                    }
+                                                },
+                                                "position": {
+                                                    "x": 0.0,
+                                                    "y": 0.0,
+                                                    "z": 0.0
+                                                },
+                                                "rotation": {
+                                                    "w": 1.0,
+                                                    "x": -0.0,
+                                                    "y": 0.0,
+                                                    "z": -0.0
+                                                },
+                                                "scale": {
+                                                    "x": 4.175970554351807,
+                                                    "y": 4.176144123077393,
+                                                    "z": 4.177108287811279
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "file": "game/assets/scenes/point_light.scene.json",
+                                    "name": "Point Light",
+                                    "settings": {
+                                        "camera": 1,
+                                        "inputSchemes": {},
+                                        "listener": 1,
+                                        "preloads": [],
+                                        "startScheme": ""
+                                    }
+                                }
+                            ],
                             "entity": {
                                 "Entity": {
                                     "script": null
@@ -375,11 +445,11 @@
                                 "components": {
                                     "CPUParticlesComponent": {
                                         "affectingStaticLights": [],
-                                        "emitMode": 0,
+                                        "emitMode": 3,
                                         "emitterDimensions": {
-                                            "x": 10.0,
-                                            "y": 10.0,
-                                            "z": 10.0
+                                            "x": 0.36000001430511475,
+                                            "y": 1.0,
+                                            "z": 1.0
                                         },
                                         "isVisible": true,
                                         "materialOverrides": {
@@ -387,7 +457,7 @@
                                         },
                                         "materialPath": "game/assets/materials/test_particles.rmat",
                                         "particleTemplate": {
-                                            "angularVelocityVariation": 100.0,
+                                            "angularVelocityVariation": 0.0,
                                             "colorBegin": {
                                                 "a": 1.0,
                                                 "b": 0.05882349982857704,
@@ -409,7 +479,7 @@
                                                 "y": 0.0,
                                                 "z": 0.0
                                             },
-                                            "velocityVariation": 17.0
+                                            "velocityVariation": 0.1599999964237213
                                         },
                                         "poolSize": 1120,
                                         "renderPass": 1,
@@ -434,15 +504,15 @@
                                             "z": 0.0
                                         },
                                         "rotation": {
-                                            "w": 0.0,
+                                            "w": 1.0,
                                             "x": -0.0,
                                             "y": 0.0,
                                             "z": -0.0
                                         },
                                         "scale": {
-                                            "x": 4.53000020980835,
-                                            "y": 4.53000020980835,
-                                            "z": 4.53000020980835
+                                            "x": 1.0000008344650269,
+                                            "y": 1.0000008344650269,
+                                            "z": 1.0000008344650269
                                         }
                                     }
                                 }
@@ -473,7 +543,7 @@
                                 "affectingStaticLights": [],
                                 "isVisible": true,
                                 "materialOverrides": {
-                                    "rootex/assets/materials/default.rmat": "game/assets/materials/column_a.rmat"
+                                    "rootex/assets/materials/default.rmat": "game/assets/materials/Condensation.rmat"
                                 },
                                 "renderPass": 1,
                                 "resFile": "game/assets/test/sphere.obj"
@@ -519,15 +589,15 @@
                                     }
                                 },
                                 "position": {
-                                    "x": 2.500000476837158,
-                                    "y": 3.799999713897705,
+                                    "x": 2.1957595348358154,
+                                    "y": 5.5589518547058105,
                                     "z": -12.100000381469727
                                 },
                                 "rotation": {
-                                    "w": 0.0,
-                                    "x": 0.0,
+                                    "w": 1.0,
+                                    "x": -0.0,
                                     "y": 0.0,
-                                    "z": 0.0
+                                    "z": -0.0
                                 },
                                 "scale": {
                                     "x": 0.030000140890479088,

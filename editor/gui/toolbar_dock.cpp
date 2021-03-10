@@ -71,17 +71,7 @@ void ToolbarDock::draw(float deltaMilliseconds)
 
 			if (ImGui::TreeNodeEx("Editor"))
 			{
-				m_FPSRecords.erase(m_FPSRecords.begin());
-				m_FPSRecords.push_back(EditorApplication::GetSingleton()->getAppFrameTimer().getLastFPS());
-
-				static float averageFPS = 0.0f;
-				for (auto& fps : m_FPSRecords)
-				{
-					averageFPS += fps;
-				}
-				averageFPS /= m_FPSRecords.size();
-
-				ImGui::PlotLines("FPS", m_FPSRecords.data(), m_FPSRecords.size(), 0, std::to_string(averageFPS).c_str(), 0, 200.0f, ImVec2(ImGui::GetContentRegionAvailWidth(), 100));
+				RootexFPSGraph("FPS", m_FPSRecords, EditorApplication::GetSingleton()->getAppFrameTimer().getLastFPS());
 				ImGui::TreePop();
 			}
 
