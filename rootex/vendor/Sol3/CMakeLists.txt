@@ -12,6 +12,7 @@ set(ROOTEX_SOURCES
 CACHE INTERNAL "")
 
 add_library(Sol3 STATIC ${Sol3Sources} ${Sol3Headers})
+set_property(TARGET Sol3 PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 
 target_include_directories(Sol3 PUBLIC
     ./include

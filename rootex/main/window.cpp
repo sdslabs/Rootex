@@ -135,8 +135,14 @@ LRESULT CALLBACK Window::WindowsProc(HWND windowHandler, UINT msg, WPARAM wParam
 		PostQuitMessage(0);
 		return 0;
 	case WM_SIZE:
-		EventManager::GetSingleton()->call(RootexEvents::WindowResized, Vector2(LOWORD(lParam), HIWORD(lParam)));
-		break;
+	{
+		Vector2 size = { (float)LOWORD(lParam), (float)HIWORD(lParam) };
+		if (size.x > 0.0f && size.y > 0.0f)
+		{
+			EventManager::GetSingleton()->call(RootexEvents::WindowResized, size);
+		}
+	}
+	break;
 	}
 
 	InputInterface::ProcessWindowsEvent(msg, wParam, lParam);

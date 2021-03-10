@@ -10,6 +10,8 @@ class SceneLoader
 	Scene* m_CurrentScene = nullptr;
 	Ptr<Scene> m_RootScene;
 
+	Vector<String> m_PreloadedCache;
+	Vector<String> m_LoadCache;
 	Vector<String> m_UnloadCache;
 	Vector<String> m_SceneArguments;
 
@@ -19,6 +21,7 @@ class SceneLoader
 	void endSystems();
 
 	void setArguments(const Vector<String>& arguments) { m_SceneArguments = arguments; }
+	Vector<String> findResourcePaths(const JSON::json& sceneJSON);
 
 	Variant deleteScene(const Event* event);
 

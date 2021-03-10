@@ -17,9 +17,13 @@ set(ROOTEX_INCLUDES
 CACHE INTERNAL "")
 
 add_library(RmlCore STATIC ${RmlCore} ${RmlCoreH})
+set_property(TARGET RmlCore PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 add_library(RmlDebugger STATIC ${RmlDebugger} ${RmlDebuggerH})
+set_property(TARGET RmlDebugger PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 add_library(RmlLua STATIC ${RmlLua} ${RmlLua})
+set_property(TARGET RmlLua PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 add_library(RmlLottie STATIC ${RmlLottie} ${RmlLottieH})
+set_property(TARGET RmlLottie PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 
 target_include_directories(RmlCore PUBLIC
 	Include/

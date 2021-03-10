@@ -21,7 +21,6 @@
                 "camera": 1,
                 "inputSchemes": {},
                 "listener": 1,
-                "preloads": [],
                 "startScheme": ""
             }
         }
@@ -96,7 +95,6 @@
             }
         },
         "listener": 1,
-        "preloads": [],
         "startScheme": "Load"
     }
 }

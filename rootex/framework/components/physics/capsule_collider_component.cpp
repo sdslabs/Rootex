@@ -57,8 +57,9 @@ CapsuleColliderComponent::CapsuleColliderComponent(
 void CapsuleColliderComponent::setSideHeight(float s)
 {
 	m_SideHeight = s;
-	setupData();
+	m_CollisionShape.reset(new btCapsuleShape(m_Radius, m_SideHeight));
 	m_CapsuleShape = (btCapsuleShape*)m_CollisionShape.get();
+	setupData();
 }
 
 void CapsuleColliderComponent::setRadius(float r)

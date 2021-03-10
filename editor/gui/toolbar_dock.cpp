@@ -45,7 +45,7 @@ void ToolbarDock::draw(float deltaMilliseconds)
 			{
 				EventManager::GetSingleton()->call(EditorEvents::EditorSaveAll);
 				PRINT("Launched Game process");
-				OS::Execute("\"" + OS::GetGameExecutablePath() + "\"");
+				OS::Execute("\"" + OS::GetGameExecutablePath() + "\" &");
 				PRINT("Game process ended");
 			}
 			ImGui::NextColumn();

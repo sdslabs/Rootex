@@ -3,6 +3,7 @@ set(ENABLE_BOOST_WORKAROUND ON)
 set(BUILD_SHARED_LIBS OFF)
 
 add_subdirectory(assimp)
+set_property(TARGET assimp PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 
 set(ROOTEX_INCLUDES
     ${ROOTEX_INCLUDES}
