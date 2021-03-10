@@ -6,6 +6,7 @@ Component* CapsuleColliderComponent::Create(const JSON::json& capsuleComponentDa
 	CapsuleColliderComponent* component = new CapsuleColliderComponent(
 	    capsuleComponentData.value("radius", 0.5f),
 	    capsuleComponentData.value("sideHeight", 1.0f),
+	    capsuleComponentData.value("offset", Vector3(0.0f, 0.0f, 0.0f)),
 	    capsuleComponentData.value("material", PhysicsMaterial::Air),
 	    capsuleComponentData.value("angularFactor", Vector3::One),
 	    capsuleComponentData.value("gravity", Vector3(0.0f, -9.8f, 0.0f)),
@@ -22,6 +23,7 @@ Component* CapsuleColliderComponent::Create(const JSON::json& capsuleComponentDa
 CapsuleColliderComponent::CapsuleColliderComponent(
     float radius,
     float sideHeight,
+    const Vector3& offset,
     const PhysicsMaterial& material,
     const Vector3& angularFactor,
     const Vector3& gravity,
@@ -35,6 +37,7 @@ CapsuleColliderComponent::CapsuleColliderComponent(
     : PhysicsColliderComponent(
         material,
         DirectX::XM_PI * radius * radius * ((4.0f / 3.0f) * radius + sideHeight),
+        offset,
         gravity,
         angularFactor,
         collisionGroup,
