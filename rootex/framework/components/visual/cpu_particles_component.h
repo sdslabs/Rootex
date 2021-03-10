@@ -3,7 +3,7 @@
 #include "core/renderer/materials/particles_material.h"
 #include "model_component.h"
 
-#define MAX_PARTICLES 50000
+#define MAX_PARTICLES 5000
 
 struct ParticleTemplate
 {
@@ -11,6 +11,7 @@ struct ParticleTemplate
 	Color colorBegin = ColorPresets::Red;
 	Color colorEnd = ColorPresets::Blue;
 	float velocityVariation = 10.0f;
+	float rotationVariation = DirectX::XM_PI;
 	float angularVelocityVariation = 0.5f;
 	float sizeBegin = 0.1f;
 	float sizeEnd = 0.0f;
@@ -29,7 +30,6 @@ class CPUParticlesComponent : public ModelComponent
 
 	struct Particle
 	{
-		bool isActive = false;
 		float sizeBegin;
 		float sizeEnd;
 		float lifeTime;
@@ -38,23 +38,32 @@ class CPUParticlesComponent : public ModelComponent
 		Color colorEnd;
 		Vector3 velocity;
 		Vector3 angularVelocity;
+
+		// Not for use outside
+		Vector3 position;
+		Quaternion rotation;
+		Vector3 scale;
 	};
 
 	ParticleTemplate m_ParticleTemplate;
 	Vector<Particle> m_ParticlePool;
 	Ref<ParticlesMaterial> m_ParticlesMaterial;
 	size_t m_PoolIndex;
-	int m_EmitRate;
+	float m_EmitRate;
 
 	enum class EmitMode : int
 	{
 		Point = 0,
 		Square = 1,
-		Cube = 2
+		Cube = 2,
+		Sphere = 3,
+		End
 	};
 
 	EmitMode m_CurrentEmitMode;
 	Vector3 m_EmitterDimensions;
+
+	float m_EmitCount = 0;
 
 	friend class ECSFactory;
 

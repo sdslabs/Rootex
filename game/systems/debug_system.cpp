@@ -12,6 +12,7 @@
 DebugSystem::DebugSystem()
     : System("DebugSystem", System::UpdateOrder::PostRender, true)
 {
+	m_FPSRecords.resize(100);
 }
 
 DebugSystem* DebugSystem::GetSingleton()
@@ -77,8 +78,13 @@ void DebugSystem::update(float deltaMilliseconds)
 	ImGui::NewFrame();
 
 	ImGui::Begin("Debug Scene");
+
+	float fps = 1.0f / (deltaMilliseconds * MS_TO_S);
+	RootexFPSGraph("FPS", m_FPSRecords, fps);
+
 	ImGui::Checkbox("Enable Editing", &m_IsEditing);
 	drawSceneTree(SceneLoader::GetSingleton()->getRootScene());
+
 	ImGui::End();
 
 	ImGui::Render();
