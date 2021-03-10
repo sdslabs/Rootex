@@ -1,13 +1,13 @@
 {
     "affectedBySky": false,
-    "imageFile": "rootex/assets/white.png",
+    "imageFile": "game/assets/sponza/textures/spnza_bricks_a_diff.png",
     "isAlpha": false,
     "isLit": false,
     "isNormal": true,
-    "normalImageFile": "game/assets/test/WaterDropletsMixedBubbled001_NRM16_1K.png",
-    "reflectivity": 0.0,
+    "normalImageFile": "game/assets/sponza/textures/spnza_bricks_a_ddn.png",
+    "reflectivity": 1.0,
     "refractionConstant": 0.9200000166893005,
-    "refractivity": 0.0,
-    "specularImageFile": "rootex/assets/white.png",
+    "refractivity": 1.0,
+    "specularImageFile": "game/assets/sponza/textures/spnza_bricks_a_spec.png",
     "type": "ParticlesMaterial"
 }

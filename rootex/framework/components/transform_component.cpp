@@ -16,6 +16,12 @@ Component* TransformComponent::Create(const JSON::json& componentData)
 	return transformComponent;
 }
 
+void TransformComponent::updateAbsoluteTransformValues()
+{
+	m_AbsoluteTransform = m_TransformBuffer.m_Transform * m_ParentAbsoluteTransform;
+	m_AbsoluteTransform.Decompose(m_AbsoluteScale, m_AbsoluteRotation, m_AbsolutePosition);
+}
+
 void TransformComponent::updateTransformFromPositionRotationScale()
 {
 	m_TransformBuffer.m_Transform = Matrix::Identity;
@@ -43,35 +49,41 @@ void TransformComponent::setPosition(const Vector3& position)
 {
 	m_TransformBuffer.m_Position = position;
 	updateTransformFromPositionRotationScale();
+	m_IsAbsoluteTransformDirty = true;
 }
 
 void TransformComponent::setRotation(const float& yaw, const float& pitch, const float& roll)
 {
 	m_TransformBuffer.m_Rotation = Quaternion::CreateFromYawPitchRoll(yaw, pitch, roll);
 	updateTransformFromPositionRotationScale();
+	m_IsAbsoluteTransformDirty = true;
 }
 
 void TransformComponent::setRotationQuaternion(const Quaternion& rotation)
 {
 	m_TransformBuffer.m_Rotation = rotation;
 	updateTransformFromPositionRotationScale();
+	m_IsAbsoluteTransformDirty = true;
 }
 
 void TransformComponent::setScale(const Vector3& scale)
 {
 	m_TransformBuffer.m_Scale = scale;
 	updateTransformFromPositionRotationScale();
+	m_IsAbsoluteTransformDirty = true;
 }
 
 void TransformComponent::setTransform(const Matrix& transform)
 {
 	m_TransformBuffer.m_Transform = transform;
 	updatePositionRotationScaleFromTransform(m_TransformBuffer.m_Transform);
+	m_IsAbsoluteTransformDirty = true;
 }
 
 void TransformComponent::setAbsoluteTransform(const Matrix& transform)
 {
 	setTransform(transform * m_ParentAbsoluteTransform.Invert());
+	m_IsAbsoluteTransformDirty = true;
 }
 
 void TransformComponent::setBounds(const BoundingBox& bounds)
@@ -83,35 +95,80 @@ void TransformComponent::setRotationPosition(const Matrix& transform)
 {
 	m_TransformBuffer.m_Transform = Matrix::CreateScale(m_TransformBuffer.m_Scale) * transform;
 	updatePositionRotationScaleFromTransform(m_TransformBuffer.m_Transform);
+	m_IsAbsoluteTransformDirty = true;
 }
 
 void TransformComponent::setAbsoluteRotationPosition(const Matrix& transform)
 {
 	setAbsoluteTransform(Matrix::CreateScale(m_TransformBuffer.m_Scale) * transform);
 	updatePositionRotationScaleFromTransform(m_TransformBuffer.m_Transform);
+	m_IsAbsoluteTransformDirty = true;
 }
 
 void TransformComponent::setParentAbsoluteTransform(const Matrix& parentTransform)
 {
 	m_ParentAbsoluteTransform = parentTransform;
+	m_IsAbsoluteTransformDirty = true;
 }
 
 void TransformComponent::addTransform(const Matrix& applyTransform)
 {
 	setTransform(getLocalTransform() * applyTransform);
+	m_IsAbsoluteTransformDirty = true;
 }
 
 void TransformComponent::addRotation(const Quaternion& applyTransform)
 {
 	m_TransformBuffer.m_Rotation = Quaternion::Concatenate(applyTransform, m_TransformBuffer.m_Rotation);
 	updateTransformFromPositionRotationScale();
+	m_IsAbsoluteTransformDirty = true;
 }
 
-BoundingBox TransformComponent::getWorldSpaceBounds() const
+BoundingBox TransformComponent::getWorldSpaceBounds()
 {
 	BoundingBox transformedBox = m_TransformBuffer.m_BoundingBox;
 	transformedBox.Transform(transformedBox, getAbsoluteTransform());
 	return transformedBox;
+}
+
+Matrix TransformComponent::getAbsoluteTransform()
+{
+	if (m_IsAbsoluteTransformDirty)
+	{
+		updateAbsoluteTransformValues();
+	}
+	m_IsAbsoluteTransformDirty = false;
+	return m_AbsoluteTransform;
+}
+
+Vector3 TransformComponent::getAbsolutePosition()
+{
+	if (m_IsAbsoluteTransformDirty)
+	{
+		updateAbsoluteTransformValues();
+	}
+	m_IsAbsoluteTransformDirty = false;
+	return m_AbsolutePosition;
+}
+
+Quaternion TransformComponent::getAbsoluteRotation()
+{
+	if (m_IsAbsoluteTransformDirty)
+	{
+		updateAbsoluteTransformValues();
+	}
+	m_IsAbsoluteTransformDirty = false;
+	return m_AbsoluteRotation;
+}
+
+Vector3 TransformComponent::getAbsoluteScale()
+{
+	if (m_IsAbsoluteTransformDirty)
+	{
+		updateAbsoluteTransformValues();
+	}
+	m_IsAbsoluteTransformDirty = false;
+	return m_AbsoluteScale;
 }
 
 JSON::json TransformComponent::getJSON() const
