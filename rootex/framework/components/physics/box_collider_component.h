@@ -18,6 +18,7 @@ public:
 
 	BoxColliderComponent(
 	    const Vector3& dimensions,
+	    const Vector3& offset,
 	    const PhysicsMaterial& material,
 	    const Vector3& angularFactor,
 	    const Vector3& gravity,

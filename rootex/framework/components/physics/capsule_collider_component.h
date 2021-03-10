@@ -20,6 +20,7 @@ public:
 	CapsuleColliderComponent(
 	    float radius,
 	    float sideHeight,
+	    const Vector3& offset,
 	    const PhysicsMaterial& material,
 	    const Vector3& angularFactor,
 	    const Vector3& gravity,

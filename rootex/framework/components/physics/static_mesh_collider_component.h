@@ -19,6 +19,7 @@ public:
 
 	StaticMeshColliderComponent(
 	    const String& collisionModelPath,
+	    const Vector3& offset,
 	    const PhysicsMaterial& material,
 	    int collisionGroup,
 	    int collisionMask,

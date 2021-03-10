@@ -18,6 +18,7 @@ public:
 
 	SphereColliderComponent(
 	    float radius,
+	    const Vector3& offset,
 	    const PhysicsMaterial& material,
 	    const Vector3& angularFactor,
 	    const Vector3& gravity,
