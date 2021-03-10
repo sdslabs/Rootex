@@ -39,7 +39,7 @@ Component* AnimatedModelComponent::Create(const JSON::json& componentData)
 	    componentData.value("materialOverrides", HashMap<String, String>()),
 	    componentData.value("isVisible", true),
 	    componentData.value("lodEnable", true),
-	    componentData.value("lodBias", 1.0f),
+	    componentData.value("lodBias", 0.0f),
 	    componentData.value("lodDistance", 10.0f),
 	    componentData.value("affectingStaticLights", Vector<SceneID>()));
 	return animatedModelComponent;

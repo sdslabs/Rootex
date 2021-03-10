@@ -18,17 +18,16 @@ class ModelComponent : public RenderableComponent
 
 protected:
 	ModelResourceFile* m_ModelResourceFile;
-	HashMap<Ref<Material>, Ref<Material>> m_MaterialOverrides;
 
 	ModelComponent(
-		unsigned int renderPass,
-		ModelResourceFile* resFile,
-		const HashMap<String, String>& materialOverrides,
-		bool isVisible,
+	    unsigned int renderPass,
+	    ModelResourceFile* resFile,
+	    const HashMap<String, String>& materialOverrides,
+	    bool isVisible,
 	    bool lodEnable,
 	    float lodBias,
-		float lodDistance,
-		const Vector<SceneID>& affectingStaticLightIDs);
+	    float lodDistance,
+	    const Vector<SceneID>& affectingStaticLightIDs);
 	ModelComponent(ModelComponent&) = delete;
 	virtual ~ModelComponent() = default;
 

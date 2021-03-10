@@ -26,13 +26,13 @@ protected:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_PerModelCB;
 
 	RenderableComponent(
-		unsigned int renderPass,
-		const HashMap<String, String>& materialOverrides,
-		bool visibility,
+	    unsigned int renderPass,
+	    const HashMap<String, String>& materialOverrides,
+	    bool visibility,
 	    bool lodEnable,
 	    float lodBias,
 	    float lodDistance,
-		const Vector<SceneID>& affectingStaticLightIDs);
+	    const Vector<SceneID>& affectingStaticLightIDs);
 	RenderableComponent(RenderableComponent&) = delete;
 	virtual ~RenderableComponent() = default;
 

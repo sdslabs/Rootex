@@ -17,7 +17,7 @@ Ref<IndexBuffer> Mesh::getLOD(float lodLevel) const
 {
 	for (auto& [meshLOD, meshLODLevel] : m_LODs)
 	{
-		if (abs((lodLevel - meshLODLevel)) < DirectX::g_XMEpsilon[0])
+		if (lodLevel >= meshLODLevel)
 		{
 			return meshLOD;
 		}

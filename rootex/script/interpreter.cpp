@@ -158,7 +158,10 @@ void LuaInterpreter::registerTypes()
 		rootex["CallEvent"] = [](const Event& event) { EventManager::GetSingleton()->call(event); };
 		rootex["DeferredCallEvent"] = [](const Ref<Event>& event) { EventManager::GetSingleton()->deferredCall(event); };
 		rootex["ReturnCallEvent"] = [](const Event& event) { return EventManager::GetSingleton()->returnCall(event); };
-		rootex["Connect"] = [](const Function<Variant(const Event*)>& function, const String& eventName) { BIND_EVENT_FUNCTION(eventName, function); };
+		rootex["BindFunction"] = [](const Function<Variant(const Event*)>& function, const String& eventName) { BIND_EVENT_FUNCTION(eventName, function); };
+		rootex["BindMemberFunction"] = [](const sol::object& self, const Function<Variant(const sol::object&, const Event*)>& function, const String& eventName) {
+			BIND_EVENT_FUNCTION(eventName, [=](const Event* e) -> Variant { return function(self, e); });
+		};
 	}
 	{
 		sol::usertype<Atomic<int>> atomicInt = rootex.new_usertype<Atomic<int>>("AtomicInt", sol::constructors<Atomic<int>(), Atomic<int>(int)>());

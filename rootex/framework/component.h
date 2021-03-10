@@ -46,6 +46,7 @@ public:                                                                         
 	ComponentType* get##ComponentType() { return m_##ComponentType; }                 \
 	ComponentType*& m_##ComponentType = m_DependencyOn##ComponentType.getComponent(); \
 	Dependency<ComponentType, false> m_DependencyOn##ComponentType;                   \
+                                                                                      \
 private:
 #endif
 
@@ -55,6 +56,7 @@ public:                                                                         
 	ComponentType* get##ComponentType() { return m_##ComponentType; }                 \
 	ComponentType*& m_##ComponentType = m_DependencyOn##ComponentType.getComponent(); \
 	Dependency<ComponentType, true> m_DependencyOn##ComponentType;                    \
+                                                                                      \
 private:
 #endif
 

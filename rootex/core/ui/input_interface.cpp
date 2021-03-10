@@ -1,5 +1,7 @@
 #include "input_interface.h"
 
+#include "event_manager.h"
+
 #undef interface
 #include "RmlUi/Debugger.h"
 #define interface __STRUCT__
@@ -21,6 +23,8 @@ int InputInterface::s_Bottom = 0;
 
 bool InputInterface::Initialise()
 {
+	BIND_EVENT_FUNCTION(RootexEvents::WindowResized, InputInterface::WindowResized);
+
 	s_Left = 0;
 	s_Right = OS::GetDisplayWidth() + s_Left;
 	s_Top = 0;
@@ -339,6 +343,17 @@ Rml::Character InputInterface::GetCharacterCode(Rml::Input::KeyIdentifier keyIde
 		return (Character)'\n';
 
 	return Character::Null;
+}
+
+Variant InputInterface::WindowResized(const Event* event)
+{
+	Vector2 size = Extract<Vector2>(event->getData());
+	s_Left = 0;
+	s_Top = 0;
+	s_Right = size.x;
+	s_Bottom = size.y;
+
+	return true;
 }
 
 void InputInterface::ProcessWindowsEvent(UINT message, WPARAM wParam, LPARAM lParam)

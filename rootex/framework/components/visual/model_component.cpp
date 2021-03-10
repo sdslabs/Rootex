@@ -26,29 +26,29 @@ Component* ModelComponent::Create(const JSON::json& componentData)
 	    componentData.value("materialOverrides", HashMap<String, String>()),
 	    componentData.value("isVisible", true),
 	    componentData.value("lodEnable", true),
-	    componentData.value("lodBias", 1.0f),
+	    componentData.value("lodBias", 0.0f),
 	    componentData.value("lodDistance", 10.0f),
 	    componentData.value("affectingStaticLights", Vector<SceneID>()));
 	return modelComponent;
 }
 
 ModelComponent::ModelComponent(
-	unsigned int renderPass,
-	ModelResourceFile* resFile,
-	const HashMap<String, String>& materialOverrides,
-	bool visibility,
+    unsigned int renderPass,
+    ModelResourceFile* resFile,
+    const HashMap<String, String>& materialOverrides,
+    bool visibility,
     bool lodEnable,
     float lodBias,
-	float lodDistance,
-	const Vector<SceneID>& affectingStaticLightIDs)
+    float lodDistance,
+    const Vector<SceneID>& affectingStaticLightIDs)
     : RenderableComponent(
-		renderPass,
-		materialOverrides,
-		visibility,
-		lodEnable,
-		lodBias,
-		lodDistance,
-		affectingStaticLightIDs)
+        renderPass,
+        materialOverrides,
+        visibility,
+        lodEnable,
+        lodBias,
+        lodDistance,
+        affectingStaticLightIDs)
 {
 	assignOverrides(resFile, materialOverrides);
 }
@@ -78,7 +78,7 @@ void ModelComponent::render(float viewDistance)
 
 	for (auto& [material, meshes] : m_ModelResourceFile->getMeshes())
 	{
-		RenderSystem::GetSingleton()->getRenderer()->bind(m_MaterialOverrides[material].get());
+		RenderSystem::GetSingleton()->getRenderer()->bind(m_MaterialOverrides.at(material).get());
 		i++;
 
 		for (auto& mesh : meshes)
