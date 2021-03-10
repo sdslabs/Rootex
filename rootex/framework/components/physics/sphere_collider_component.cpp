@@ -5,6 +5,7 @@ Component* SphereColliderComponent::Create(const JSON::json& sphereComponentData
 {
 	SphereColliderComponent* component = new SphereColliderComponent(
 	    sphereComponentData.value("radius", 1.0f),
+	    sphereComponentData.value("offset", Vector3(0.0f, 0.0f, 0.0f)),
 	    sphereComponentData.value("material", PhysicsMaterial::Air),
 	    sphereComponentData.value("angularFactor", Vector3::One),
 	    sphereComponentData.value("gravity", Vector3(0.0f, -9.8f, 0.0f)),
@@ -20,6 +21,7 @@ Component* SphereColliderComponent::Create(const JSON::json& sphereComponentData
 
 SphereColliderComponent::SphereColliderComponent(
     float radius,
+    const Vector3& offset,
     const PhysicsMaterial& material,
     const Vector3& angularFactor,
     const Vector3& gravity,
@@ -33,6 +35,7 @@ SphereColliderComponent::SphereColliderComponent(
     : PhysicsColliderComponent(
         material,
         (4.0f / 3.0f) * DirectX::XM_PI * radius * radius * radius,
+        offset,
         gravity,
         angularFactor,
         collisionGroup,
@@ -45,7 +48,7 @@ SphereColliderComponent::SphereColliderComponent(
         Ref<btSphereShape>(new btSphereShape(radius)))
     , m_Radius(radius)
 {
-	m_SphereShape = std::dynamic_pointer_cast<btSphereShape>(m_CollisionShape);
+	m_SphereShape = (btSphereShape*)m_CollisionShape.get();
 }
 
 JSON::json SphereColliderComponent::getJSON() const
@@ -60,8 +63,8 @@ JSON::json SphereColliderComponent::getJSON() const
 void SphereColliderComponent::setRadius(float r)
 {
 	m_Radius = r;
-	m_SphereShape.reset(new btSphereShape(m_Radius));
-	m_CollisionShape = m_SphereShape;
+	m_CollisionShape.reset(new btSphereShape(m_Radius));
+	m_SphereShape = (btSphereShape*)m_CollisionShape.get();
 	setupData();
 }
 

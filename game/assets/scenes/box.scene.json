@@ -85,20 +85,20 @@
                             "angularVelocityVariation": 0.5,
                             "colorBegin": {
                                 "a": 1.0,
-                                "b": 1.0,
-                                "g": 0.8512189388275146,
+                                "b": 0.16666674613952637,
+                                "g": 1.0,
                                 "r": 0.0
                             },
                             "colorEnd": {
                                 "a": 1.0,
-                                "b": 0.16470588743686676,
-                                "g": 1.0,
-                                "r": 0.0
+                                "b": 0.1244952604174614,
+                                "g": 0.44551774859428406,
+                                "r": 0.8862876296043396
                             },
-                            "lifeTime": 11.569999694824219,
-                            "sizeBegin": 1.0,
-                            "sizeEnd": 1.0,
-                            "sizeVariation": 0.0,
+                            "lifeTime": 10.739999771118164,
+                            "sizeBegin": 0.10000000149011612,
+                            "sizeEnd": 0.10000000149011612,
+                            "sizeVariation": 0.10000000149011612,
                             "velocity": {
                                 "x": 0.0,
                                 "y": -4.0,
@@ -106,7 +106,7 @@
                             },
                             "velocityVariation": 5.0
                         },
-                        "poolSize": 281,
+                        "poolSize": 340,
                         "renderPass": 1,
                         "resFile": "rootex/assets/cube.obj"
                     },

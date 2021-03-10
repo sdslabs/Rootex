@@ -18,9 +18,9 @@
                         "collisionGroup": 31,
                         "collisionMask": 31,
                         "dimensions": {
-                            "x": 2.7699999809265137,
+                            "x": 4.900000095367432,
                             "y": 0.5,
-                            "z": 2.0299999713897705
+                            "z": 3.3299999237060547
                         },
                         "gravity": {
                             "x": 0.0,
@@ -31,9 +31,9 @@
                         "isGeneratesHitEvents": false,
                         "isKinematic": false,
                         "isMoveable": false,
-                        "isSleepable": true,
-                        "material": 0,
-                        "volume": 2.8115499019622803
+                        "isSleepable": false,
+                        "material": 2,
+                        "volume": 8.158499717712402
                     },
                     "ModelComponent": {
                         "affectingStaticLights": [],
@@ -59,19 +59,19 @@
                         },
                         "position": {
                             "x": 0.0,
-                            "y": -0.8820000290870667,
-                            "z": -4.909999847412109
+                            "y": -1.4880571365356445,
+                            "z": -4.909999370574951
                         },
                         "rotation": {
-                            "w": 0.0,
-                            "x": 0.0,
+                            "w": 1.0,
+                            "x": -0.0,
                             "y": 0.0,
-                            "z": 0.0
+                            "z": -0.0
                         },
                         "scale": {
-                            "x": 5.519999980926514,
+                            "x": 9.859999656677246,
                             "y": 1.0,
-                            "z": 4.079999923706055
+                            "z": 6.659999847412109
                         }
                     }
                 }
@@ -98,7 +98,7 @@
                         "affectingStaticLights": [],
                         "isVisible": true,
                         "materialOverrides": {
-                            "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                            "rootex/assets/materials/default.rmat": "game/assets/materials/rootex_logo_textured.rmat"
                         },
                         "renderPass": 1,
                         "resFile": "game/assets/test/sphere.obj"
@@ -120,8 +120,8 @@
                         "isGeneratesHitEvents": false,
                         "isKinematic": false,
                         "isMoveable": true,
-                        "isSleepable": true,
-                        "material": 0,
+                        "isSleepable": false,
+                        "material": 2,
                         "radius": 0.6000000238418579,
                         "volume": 0.904778778553009
                     },
@@ -139,15 +139,15 @@
                             }
                         },
                         "position": {
-                            "x": -2.9802322387695313e-08,
-                            "y": 2.0527286529541016,
-                            "z": -4.889999866485596
+                            "x": 0.0,
+                            "y": 1.9427821636199951,
+                            "z": -6.920000076293945
                         },
                         "rotation": {
-                            "w": 0.0,
-                            "x": 0.0,
+                            "w": 1.0,
+                            "x": -0.0,
                             "y": 0.0,
-                            "z": 0.0
+                            "z": -0.0
                         },
                         "scale": {
                             "x": 0.029999999329447746,
@@ -166,98 +166,44 @@
                 "preloads": [],
                 "startScheme": ""
             }
-        },
-        {
-            "ID": 11,
-            "children": [],
-            "entity": {
-                "Entity": {
-                    "script": null
-                },
-                "components": {
-                    "BoxColliderComponent": {
-                        "angularFactor": {
-                            "x": 1.0,
-                            "y": 1.0,
-                            "z": 1.0
-                        },
-                        "collisionGroup": 31,
-                        "collisionMask": 31,
-                        "dimensions": {
-                            "x": 0.5,
-                            "y": 0.5,
-                            "z": 0.5
-                        },
-                        "gravity": {
-                            "x": 0.0,
-                            "y": -9.800000190734863,
-                            "z": 0.0
-                        },
-                        "isCCD": false,
-                        "isGeneratesHitEvents": false,
-                        "isKinematic": false,
-                        "isMoveable": true,
-                        "isSleepable": true,
-                        "material": 0,
-                        "volume": 0.125
-                    },
-                    "ModelComponent": {
-                        "affectingStaticLights": [],
-                        "isVisible": true,
-                        "materialOverrides": {
-                            "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
-                        },
-                        "renderPass": 1,
-                        "resFile": "rootex/assets/cube.obj"
-                    },
-                    "TransformComponent": {
-                        "boundingBox": {
-                            "center": {
-                                "x": 0.0,
-                                "y": 0.0,
-                                "z": 0.0
-                            },
-                            "extents": {
-                                "x": 0.5,
-                                "y": 0.5,
-                                "z": 0.5
-                            }
-                        },
-                        "position": {
-                            "x": 1.9999998807907104,
-                            "y": 1.052728533744812,
-                            "z": -4.889999866485596
-                        },
-                        "rotation": {
-                            "w": 0.0,
-                            "x": 0.0,
-                            "y": 0.0,
-                            "z": 0.0
-                        },
-                        "scale": {
-                            "x": 1.0,
-                            "y": 1.0,
-                            "z": 1.0
-                        }
-                    }
-                }
-            },
-            "file": "",
-            "name": "Box",
-            "settings": {
-                "camera": 1,
-                "inputSchemes": {},
-                "listener": 1,
-                "preloads": [],
-                "startScheme": ""
-            }
         }
     ],
     "entity": {
         "Entity": {
             "script": null
         },
-        "components": null
+        "components": {
+            "TransformComponent": {
+                "boundingBox": {
+                    "center": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "extents": {
+                        "x": 0.5,
+                        "y": 0.5,
+                        "z": 0.5
+                    }
+                },
+                "position": {
+                    "x": 0.0,
+                    "y": -1.25,
+                    "z": -4.570000171661377
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": -0.0,
+                    "y": 0.0,
+                    "z": -0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            }
+        }
     },
     "file": "game/assets/scenes/physics.scene.json",
     "name": "physics",

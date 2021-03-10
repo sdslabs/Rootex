@@ -2,14 +2,9 @@
 
 #include "component.h"
 #include "components/transform_component.h"
+#include "core/physics/bullet_conversions.h"
 
 #include "btBulletDynamicsCommon.h"
-
-/// Helpers for conversion to and from Bullet's data types.
-btTransform MatTobtTransform(Matrix const& mat);
-Matrix BtTransformToMat(btTransform const& trans);
-btVector3 VecTobtVector3(Vector3 const& vec3);
-Vector3 BtVector3ToVec(btVector3 const& btvec);
 
 enum PhysicsMaterial;
 
@@ -33,6 +28,7 @@ class PhysicsColliderComponent : public Component, public btMotionState
 	btScalar m_Mass;
 	Vector3 m_Gravity;
 	Vector3 m_AngularFactor;
+	Vector3 m_Offset;
 	float m_Volume;
 	bool m_IsMoveable;
 	bool m_IsGeneratesHitEvents;
@@ -51,6 +47,7 @@ class PhysicsColliderComponent : public Component, public btMotionState
 	PhysicsColliderComponent(
 	    const PhysicsMaterial& material,
 	    float volume,
+	    const Vector3& offset,
 	    const Vector3& gravity,
 	    const Vector3& angularFactor,
 	    int collisionGroup,
@@ -80,6 +77,9 @@ public:
 	Vector3 getAngularFactor() const { return m_AngularFactor; }
 	void setAngularFactor(const Vector3& factors);
 	void setAxisLock(bool enabled);
+
+	Vector3 getOffset() const { return m_Offset; };
+	void setOffset(const Vector3& offset);
 
 	Vector3 getGravity() const { return m_Gravity; };
 	void setGravity(const Vector3& gravity);

@@ -5,6 +5,7 @@ Component* BoxColliderComponent::Create(const JSON::json& boxComponentData)
 {
 	BoxColliderComponent* component = new BoxColliderComponent(
 	    boxComponentData.value("dimensions", Vector3::Zero),
+	    boxComponentData.value("offset", Vector3(0.0f, 0.0f, 0.0f)),
 	    boxComponentData.value("material", PhysicsMaterial::Air),
 	    boxComponentData.value("angularFactor", Vector3::One),
 	    boxComponentData.value("gravity", Vector3(0.0f, -9.8f, 0.0f)),
@@ -20,6 +21,7 @@ Component* BoxColliderComponent::Create(const JSON::json& boxComponentData)
 
 BoxColliderComponent::BoxColliderComponent(
     const Vector3& dimensions,
+    const Vector3& offset,
     const PhysicsMaterial& material,
     const Vector3& angularFactor,
     const Vector3& gravity,
@@ -33,6 +35,7 @@ BoxColliderComponent::BoxColliderComponent(
     : PhysicsColliderComponent(
         material,
         dimensions.x * dimensions.y * dimensions.z,
+        offset,
         gravity,
         angularFactor,
         collisionGroup,
@@ -45,7 +48,7 @@ BoxColliderComponent::BoxColliderComponent(
         Ref<btBoxShape>(new btBoxShape(VecTobtVector3(dimensions))))
     , m_Dimensions(dimensions)
 {
-	m_BoxShape = std::dynamic_pointer_cast<btBoxShape>(m_CollisionShape);
+	m_BoxShape = (btBoxShape*)m_CollisionShape.get();
 }
 
 JSON::json BoxColliderComponent::getJSON() const
@@ -60,8 +63,8 @@ JSON::json BoxColliderComponent::getJSON() const
 void BoxColliderComponent::setDimensions(const Vector3& dimensions)
 {
 	m_Dimensions = dimensions;
-	m_BoxShape.reset(new btBoxShape(VecTobtVector3(dimensions)));
-	m_CollisionShape = m_BoxShape;
+	m_CollisionShape.reset(new btBoxShape(VecTobtVector3(dimensions)));
+	m_BoxShape = (btBoxShape*)m_CollisionShape.get();
 	setupData();
 }
 

@@ -7,6 +7,7 @@ Component* StaticMeshColliderComponent::Create(const JSON::json& staticMeshCompo
 {
 	StaticMeshColliderComponent* component = new StaticMeshColliderComponent(
 	    staticMeshComponentData.value("collisionModel", String("rootex/assets/cube.obj")),
+	    staticMeshComponentData.value("offset", Vector3(0.0f, 0.0f, 0.0f)),
 	    staticMeshComponentData.value("material", PhysicsMaterial::Air),
 	    staticMeshComponentData.value("collisionGroup", (int)CollisionMask::All),
 	    staticMeshComponentData.value("collisionMask", (int)CollisionMask::All),
@@ -16,6 +17,7 @@ Component* StaticMeshColliderComponent::Create(const JSON::json& staticMeshCompo
 
 StaticMeshColliderComponent::StaticMeshColliderComponent(
     const String& collisionModelPath,
+    const Vector3& offset,
     const PhysicsMaterial& material,
     int collisionGroup,
     int collisionMask,
@@ -23,6 +25,7 @@ StaticMeshColliderComponent::StaticMeshColliderComponent(
     : PhysicsColliderComponent(
         material,
         0.0f,
+        offset,
         Vector3::Zero,
         Vector3::Zero,
         collisionGroup,
@@ -40,8 +43,8 @@ StaticMeshColliderComponent::StaticMeshColliderComponent(
 
 bool StaticMeshColliderComponent::setupData()
 {
-	m_MeshShape.reset(new btBvhTriangleMeshShape(m_CollisionModel->getCollisionMesh(), true));
-	m_CollisionShape = m_MeshShape;
+	m_CollisionShape.reset(new btBvhTriangleMeshShape(m_CollisionModel->getCollisionMesh(), true));
+	m_MeshShape = (btBvhTriangleMeshShape*)m_CollisionShape.get();
 	return PhysicsColliderComponent::setupData();
 }
 
