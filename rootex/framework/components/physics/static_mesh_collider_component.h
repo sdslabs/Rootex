@@ -9,7 +9,7 @@ class StaticMeshColliderComponent : public PhysicsColliderComponent
 {
 	static Component* Create(const JSON::json& staticMeshComponentData);
 
-	Ref<btBvhTriangleMeshShape> m_MeshShape;
+	btBvhTriangleMeshShape* m_MeshShape;
 	CollisionModelResourceFile* m_CollisionModel;
 
 	friend class ECSFactory;
@@ -19,6 +19,7 @@ public:
 
 	StaticMeshColliderComponent(
 	    const String& collisionModelPath,
+	    const Vector3& offset,
 	    const PhysicsMaterial& material,
 	    int collisionGroup,
 	    int collisionMask,

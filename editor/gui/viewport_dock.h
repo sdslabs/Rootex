@@ -14,8 +14,6 @@ public:
 	{
 		bool m_IsActive = true;
 		bool m_IsClosed;
-
-		ImVec2 m_ImageSize;
 		float m_AspectRatio;
 	};
 

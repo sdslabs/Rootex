@@ -37,13 +37,20 @@ void Scene::ResetNextID()
 	NextSceneID = ROOT_SCENE_ID + 1;
 }
 
-Ptr<Scene> Scene::Create(const JSON::json& sceneData)
+Ptr<Scene> Scene::Create(const JSON::json& sceneData, bool isACopy)
 {
 	SceneID thisSceneID;
 	if (sceneData.contains("ID"))
 	{
 		NextSceneID = std::max(NextSceneID, (SceneID)sceneData["ID"]);
-		thisSceneID = sceneData["ID"];
+		if (!isACopy)
+		{
+			thisSceneID = sceneData["ID"];
+		}
+		else
+		{
+			thisSceneID = NextSceneID;
+		}
 	}
 	else
 	{

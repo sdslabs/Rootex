@@ -176,7 +176,7 @@ Window::Window(int xOffset, int yOffset, int width, int height, const String& ti
 	m_WindowHandle = CreateWindowEx(
 	    0, className,
 	    title.c_str(),
-	    WS_CAPTION | WS_BORDER | WS_MAXIMIZE | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU,
+	    WS_CAPTION | WS_BORDER | WS_MAXIMIZE | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU | WS_SIZEBOX,
 	    xOffset, yOffset, width, height,
 	    nullptr, nullptr,
 	    hInstance, nullptr);

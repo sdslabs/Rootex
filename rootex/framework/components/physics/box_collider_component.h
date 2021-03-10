@@ -9,7 +9,7 @@ class BoxColliderComponent : public PhysicsColliderComponent
 	static Component* Create(const JSON::json& boxComponentData);
 
 	Vector3 m_Dimensions;
-	Ref<btBoxShape> m_BoxShape;
+	btBoxShape* m_BoxShape;
 
 	friend class ECSFactory;
 
@@ -18,6 +18,7 @@ public:
 
 	BoxColliderComponent(
 	    const Vector3& dimensions,
+	    const Vector3& offset,
 	    const PhysicsMaterial& material,
 	    const Vector3& angularFactor,
 	    const Vector3& gravity,

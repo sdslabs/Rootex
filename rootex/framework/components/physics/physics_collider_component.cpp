@@ -5,79 +5,10 @@
 
 #include "entity.h"
 
-btTransform MatTobtTransform(Matrix const& mat)
-{
-	// convert from Mat4x4 to btTransform
-	btMatrix3x3 bulletRotation;
-	btVector3 bulletPosition;
-
-	// copy rotation matrix
-	for (int row = 0; row < 3; ++row)
-	{
-		for (int column = 0; column < 3; ++column)
-		{
-			bulletRotation[row][column] = mat.m[column][row];
-			// note the reversed indexing (row/column vs. column/row)
-			// this is because Mat4x4s are row-major matrices and
-			// btMatrix3x3 are column-major.  This reversed indexing
-			// implicitly transposes (flips along the diagonal)
-			// the matrix when it is copied.
-		}
-	}
-
-	// copy position
-	for (int column = 0; column < 3; ++column)
-	{
-		bulletPosition[column] = mat.m[3][column];
-	}
-
-	return btTransform(bulletRotation, bulletPosition);
-}
-
-Matrix BtTransformToMat(btTransform const& trans)
-{
-	Matrix returnValue = Matrix::Identity;
-
-	// convert from btTransform to Mat4x4
-	btMatrix3x3 const& bulletRotation = trans.getBasis();
-	btVector3 const& bulletPosition = trans.getOrigin();
-
-	// copy rotation matrix
-	for (int row = 0; row < 3; ++row)
-	{
-		for (int column = 0; column < 3; ++column)
-		{
-			returnValue.m[row][column] = bulletRotation[column][row];
-			// note the reversed indexing (row/column vs. column/row)
-			// this is because Mat4x4s are row-major matrices and
-			// btMatrix3x3 are column-major.  This reversed indexing
-			// implicitly transposes (flips along the diagonal)
-			// the matrix when it is copied.
-		}
-	}
-
-	// copy position
-	for (int column = 0; column < 3; ++column)
-	{
-		returnValue.m[3][column] = bulletPosition[column];
-	}
-
-	return returnValue;
-}
-
-btVector3 VecTobtVector3(Vector3 const& vec3)
-{
-	return btVector3(vec3.x, vec3.y, vec3.z);
-}
-
-Vector3 BtVector3ToVec(btVector3 const& btvec)
-{
-	return Vector3(btvec.x(), btvec.y(), btvec.z());
-}
-
 PhysicsColliderComponent::PhysicsColliderComponent(
     const PhysicsMaterial& material,
     float volume,
+    const Vector3& offset,
     const Vector3& gravity,
     const Vector3& angularFactor,
     int collisionGroup,
@@ -90,6 +21,7 @@ PhysicsColliderComponent::PhysicsColliderComponent(
     const Ref<btCollisionShape>& collisionShape)
     : m_Material(material)
     , m_Volume(volume)
+    , m_Offset(offset)
     , m_Gravity(gravity)
     , m_AngularFactor(angularFactor)
     , m_CollisionGroup(collisionGroup)
@@ -102,20 +34,6 @@ PhysicsColliderComponent::PhysicsColliderComponent(
     , m_DependencyOnTransformComponent(this)
 {
 	m_CollisionShape = collisionShape;
-
-	if (m_IsMoveable)
-	{
-		m_Mass = volume * PhysicsSystem::GetSingleton()->getMaterialData(m_Material).specificGravity;
-	}
-	else
-	{
-		m_Mass = 0.0f;
-	}
-
-	if (m_CollisionShape)
-	{
-		m_CollisionShape->calculateLocalInertia(m_Mass, m_LocalInertia);
-	}
 }
 
 bool PhysicsColliderComponent::setupData()
@@ -123,6 +41,16 @@ bool PhysicsColliderComponent::setupData()
 	if (m_Body)
 	{
 		PhysicsSystem::GetSingleton()->removeRigidBody(m_Body.get());
+	}
+
+	if (m_IsMoveable)
+	{
+		m_Mass = m_Volume * PhysicsSystem::GetSingleton()->getMaterialData(m_Material).specificGravity;
+		m_CollisionShape->calculateLocalInertia(m_Mass, m_LocalInertia);
+	}
+	else
+	{
+		m_Mass = 0.0f;
 	}
 
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(m_Mass, this, m_CollisionShape.get(), m_LocalInertia);
@@ -133,7 +61,6 @@ bool PhysicsColliderComponent::setupData()
 	}
 	m_Body.reset(new btRigidBody(rbInfo));
 
-	PhysicsSystem::GetSingleton()->addRigidBody(m_Body.get(), m_CollisionGroup, m_CollisionMask);
 	setGravity(m_Gravity);
 	setMoveable(m_IsMoveable);
 	setKinematic(m_IsKinematic);
@@ -142,6 +69,7 @@ bool PhysicsColliderComponent::setupData()
 	setCCD(m_IsCCD);
 	m_Body->setUserPointer(this);
 
+	PhysicsSystem::GetSingleton()->addRigidBody(m_Body.get(), m_CollisionGroup, m_CollisionMask);
 	return true;
 }
 
@@ -155,12 +83,12 @@ void PhysicsColliderComponent::onRemove()
 
 void PhysicsColliderComponent::getWorldTransform(btTransform& worldTrans) const
 {
-	worldTrans = MatTobtTransform(m_TransformComponent->getRotationPosition());
+	worldTrans = MatTobtTransform(m_TransformComponent->getRotationPosition() * Matrix::CreateTranslation(m_Offset));
 }
 
 void PhysicsColliderComponent::setWorldTransform(const btTransform& worldTrans)
 {
-	m_TransformComponent->setAbsoluteRotationPosition(BtTransformToMat(worldTrans));
+	m_TransformComponent->setAbsoluteRotationPosition(Matrix::CreateTranslation(-m_Offset) * BtTransformToMat(worldTrans));
 }
 
 void PhysicsColliderComponent::applyForce(const Vector3& force)
@@ -192,6 +120,13 @@ void PhysicsColliderComponent::setAxisLock(bool enabled)
 	{
 		setAngularFactor({ 1.0f, 1.0f, 1.0f });
 	}
+}
+
+void PhysicsColliderComponent::setOffset(const Vector3& offset)
+{
+	m_Offset = offset;
+	m_Body->activate(true);
+	setupData();
 }
 
 void PhysicsColliderComponent::setTransform(const Matrix& mat)
@@ -282,7 +217,10 @@ void PhysicsColliderComponent::setKinematic(bool enabled)
 
 void PhysicsColliderComponent::highlight()
 {
-	PhysicsSystem::GetSingleton()->debugDrawComponent(MatTobtTransform(m_TransformComponent->getRotationPosition()), m_CollisionShape.get(), VecTobtVector3({ 0.0f, 1.0f, 0.0f }));
+	PhysicsSystem::GetSingleton()->debugDrawComponent(
+	    MatTobtTransform(m_TransformComponent->getRotationPosition() * Matrix::CreateTranslation(m_Offset)),
+	    m_CollisionShape.get(),
+	    VecTobtVector3({ 0.8f, 0.1f, 0.1f }));
 }
 
 JSON::json PhysicsColliderComponent::getJSON() const
@@ -290,6 +228,7 @@ JSON::json PhysicsColliderComponent::getJSON() const
 	JSON::json j;
 
 	j["angularFactor"] = m_AngularFactor;
+	j["offset"] = m_Offset;
 	j["gravity"] = m_Gravity;
 	j["collisionGroup"] = m_CollisionGroup;
 	j["collisionMask"] = m_CollisionMask;
@@ -354,12 +293,22 @@ void PhysicsColliderComponent::draw()
 
 	ImGui::Combo("Physics Material", (int*)&m_Material, PhysicsSystem::GetSingleton()->getMaterialNames());
 
-	if (ImGui::DragFloat3("Gravity", &m_Gravity.x))
+	if (ImGui::DragFloat3("##Offset", &m_Offset.x, 0.01f))
+	{
+		setOffset(m_Offset);
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Offset"))
+	{
+		setOffset({ 0.0f, 0.0f, 0.0f });
+	}
+
+	if (ImGui::DragFloat3("Gravity", &m_Gravity.x, 0.01f))
 	{
 		setGravity(m_Gravity);
 	}
 
-	if (ImGui::DragFloat3("Angular Factor", &m_AngularFactor.x))
+	if (ImGui::DragFloat3("Angular Factor", &m_AngularFactor.x, 0.01f))
 	{
 		setAngularFactor(m_AngularFactor);
 	}
