@@ -15,46 +15,37 @@ bool IsFileSupported(const String& extension, ResourceFile::Type supportedFileTy
 	return extensions.find(extension) != String::npos;
 }
 
-ResourceFile* ResourceLoader::CreateSomeResourceFile(const String& path)
+ResourceFile* ResourceLoader::CreateResourceFile(const ResourceFile::Type& type, const String& path)
 {
-	ResourceFile* result = nullptr;
-	for (auto& [resourceType, extensions] : SupportedFiles)
+	if (SupportedFiles.find(type) == SupportedFiles.end())
 	{
-		String extensionsString(extensions);
-		if (extensionsString.find(FilePath(path).extension().generic_string()) != String::npos)
-		{
-			switch (resourceType)
-			{
-			case ResourceFile::Type::Text:
-				result = CreateTextResourceFile(path);
-				break;
-			case ResourceFile::Type::Audio:
-				result = CreateAudioResourceFile(path);
-				break;
-			case ResourceFile::Type::Font:
-				result = CreateFontResourceFile(path);
-				break;
-			case ResourceFile::Type::Image:
-				result = CreateImageResourceFile(path);
-				break;
-			case ResourceFile::Type::Lua:
-				result = CreateLuaTextResourceFile(path);
-				break;
-			case ResourceFile::Type::Model:
-				result = CreateModelResourceFile(path);
-				break;
-			case ResourceFile::Type::AnimatedModel:
-				result = CreateAnimatedModelResourceFile(path);
-				break;
-			case ResourceFile::Type::CollisionModel:
-				result = CreateCollisionModelResourceFile(path);
-				break;
-			default:
-				break;
-			}
-		}
+		WARN("Tried to load an unsupported file type: " + path + " of type " + ResourceFile::s_TypeNames.at(type));
+		return nullptr;
 	}
-	return result;
+
+	switch (type)
+	{
+	case ResourceFile::Type::Text:
+		return CreateTextResourceFile(path);
+	case ResourceFile::Type::Audio:
+		return CreateAudioResourceFile(path);
+	case ResourceFile::Type::Font:
+		return CreateFontResourceFile(path);
+	case ResourceFile::Type::Image:
+		return CreateImageResourceFile(path);
+	case ResourceFile::Type::Lua:
+		return CreateLuaTextResourceFile(path);
+	case ResourceFile::Type::Model:
+		return CreateModelResourceFile(path);
+	case ResourceFile::Type::AnimatedModel:
+		return CreateAnimatedModelResourceFile(path);
+	case ResourceFile::Type::CollisionModel:
+		return CreateCollisionModelResourceFile(path);
+	default:
+		break;
+	}
+
+	return nullptr;
 }
 
 void ResourceLoader::RegisterResource(Ref<ResourceFile> file)
@@ -116,7 +107,7 @@ FontResourceFile* ResourceLoader::CreateFontResourceFile(const String& path)
 	return GetCachedResource<FontResourceFile>(ResourceFile::Type::Font, FilePath(path));
 }
 
-int ResourceLoader::Preload(Vector<String> paths, Atomic<int>& progress)
+int ResourceLoader::Preload(ResourceCollection paths, Atomic<int>& progress)
 {
 	progress = 0;
 	if (paths.empty())
@@ -125,8 +116,11 @@ int ResourceLoader::Preload(Vector<String> paths, Atomic<int>& progress)
 		return 0;
 	}
 
-	std::sort(paths.begin(), paths.end());
-	Vector<String> empericalPaths = { paths.front() };
+	std::sort(paths.begin(), paths.end(), [](const Pair<ResourceFile::Type, String>& a, const Pair<ResourceFile::Type, String>& b) {
+		return a.second < a.second;
+	});
+
+	ResourceCollection empericalPaths = { paths.front() };
 	for (auto& incomingPath : paths)
 	{
 		if (empericalPaths.back() != incomingPath)
@@ -141,7 +135,7 @@ int ResourceLoader::Preload(Vector<String> paths, Atomic<int>& progress)
 	for (auto& path : empericalPaths)
 	{
 		Ref<Task> loadingTask(new Task([=, &progress]() {
-			CreateSomeResourceFile(path);
+			CreateResourceFile((ResourceFile::Type)path.first, path.second);
 			progress++;
 		}));
 		preloadTasks.push_back(loadingTask);
@@ -156,22 +150,20 @@ int ResourceLoader::Preload(Vector<String> paths, Atomic<int>& progress)
 	return preloadTasks.size() - 1; // 1 less for the dummy task
 }
 
-void ResourceLoader::Unload(const Vector<String>& paths)
+void ResourceLoader::Unload(const Vector<Pair<ResourceFile::Type, String>>& paths)
 {
 	HashMap<ResourceFile::Type, Vector<Ref<ResourceFile>>> unloads;
 
 	for (auto& path : paths)
 	{
-		FilePath searchPath(path);
+		FilePath searchPath(path.second);
 		searchPath = searchPath.generic_string();
-		for (auto& [type, files] : s_ResourcesDataFiles)
+		for (auto& file : s_ResourcesDataFiles.at(path.first))
 		{
-			for (auto& file : files)
+			String filePathString = file->getPath().generic_string();
+			if (file->getPath() == searchPath && filePathString.find("rootex/assets/") == String::npos)
 			{
-				if (file->getPath() == searchPath)
-				{
-					unloads[type].push_back(file);
-				}
+				unloads[path.first].push_back(file);
 			}
 		}
 	}

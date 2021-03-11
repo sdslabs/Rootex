@@ -10,9 +10,7 @@ class SceneLoader
 	Scene* m_CurrentScene = nullptr;
 	Ptr<Scene> m_RootScene;
 
-	Vector<String> m_PreloadedCache;
-	Vector<String> m_LoadCache;
-	Vector<String> m_UnloadCache;
+	ResourceCollection m_UnloadCache;
 	Vector<String> m_SceneArguments;
 
 	SceneLoader();

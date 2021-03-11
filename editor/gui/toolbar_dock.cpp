@@ -32,9 +32,8 @@ void ToolbarDock::draw(float deltaMilliseconds)
 				if (ImGui::ArrowButton("Play Scene", ImGuiDir_Right))
 				{
 					EventManager::GetSingleton()->call(EditorEvents::EditorSaveAll);
+					OS::RunApplication("\"" + OS::GetGameExecutablePath() + "\" " + SceneLoader::GetSingleton()->getCurrentScene()->getSceneFilePath());
 					PRINT("Launched Game process");
-					OS::Execute("\"" + OS::GetGameExecutablePath() + "\" " + SceneLoader::GetSingleton()->getCurrentScene()->getSceneFilePath());
-					PRINT("Game process ended");
 				}
 			}
 			ImGui::NextColumn();
@@ -44,9 +43,8 @@ void ToolbarDock::draw(float deltaMilliseconds)
 			if (ImGui::ArrowButton("Play Game", ImGuiDir_Right))
 			{
 				EventManager::GetSingleton()->call(EditorEvents::EditorSaveAll);
+				OS::RunApplication("\"" + OS::GetGameExecutablePath() + "\"");
 				PRINT("Launched Game process");
-				OS::Execute("\"" + OS::GetGameExecutablePath() + "\" &");
-				PRINT("Game process ended");
 			}
 			ImGui::NextColumn();
 
@@ -63,7 +61,7 @@ void ToolbarDock::draw(float deltaMilliseconds)
 			ImGui::Columns(1);
 
 			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
-			ImGui::SliderFloat("##Delta Multiplier", Application::GetSingleton()->getDeltaMultiplierPtr(), -2.0f, 2.0f, "%.2fx");
+			ImGui::SliderFloat("##Delta Multiplier", Application::GetSingleton()->getDeltaMultiplierPtr(), -2.0f, 2.0f, "");
 			if (ImGui::IsItemDeactivatedAfterEdit())
 			{
 				Application::GetSingleton()->resetDeltaMultiplier();
