@@ -944,7 +944,36 @@
             }
         },
         "listener": 10,
-        "preloads": [],
+        "preloads": [
+            [
+                2,
+                "game/assets/forever.wav"
+            ],
+            [
+                8,
+                "rootex/assets/sky.dds"
+            ],
+            [
+                4,
+                "rootex/assets/sky.obj"
+            ],
+            [
+                4,
+                "rootex/assets/terrain.obj"
+            ],
+            [
+                4,
+                "rootex/assets/capsule.obj"
+            ],
+            [
+                4,
+                "game/assets/test/sphere.obj"
+            ],
+            [
+                4,
+                "game/assets/office.fbx"
+            ]
+        ],
         "startScheme": "Controls"
     }
 }

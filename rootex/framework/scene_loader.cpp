@@ -17,6 +17,25 @@ SceneLoader* SceneLoader::GetSingleton()
 	return &singleton;
 }
 
+Vector<String> SceneLoader::findResourcePaths(const JSON::json& sceneJSON)
+{
+	Vector<String> resources;
+	JSON::json flat = sceneJSON.flatten();
+
+	for (auto& [key, value] : flat.items())
+	{
+		if (value.is_string())
+		{
+			String assetPath = (String)value;
+			if (assetPath.find("assets/") != String::npos)
+			{
+				resources.push_back(assetPath);
+			}
+		}
+	}
+	return resources;
+}
+
 Variant SceneLoader::deleteScene(const Event* event)
 {
 	Scene* scene = Extract<Scene*>(event->getData());
@@ -33,8 +52,8 @@ Variant SceneLoader::deleteScene(const Event* event)
 
 int SceneLoader::preloadScene(const String& sceneFile, Atomic<int>& progress)
 {
-	const SceneSettings& sceneJSON = JSON::json::parse(ResourceLoader::CreateTextResourceFile(sceneFile)->getString())["settings"];
-	Vector<String> toPreload = sceneJSON.preloads;
+	const SceneSettings& sceneJSON = JSON::json::parse(ResourceLoader::CreateTextResourceFile(sceneFile)->getString()).value("settings", SceneSettings());
+	ResourceCollection toPreload = sceneJSON.preloads;
 
 	m_UnloadCache.clear();
 	if (m_CurrentScene)

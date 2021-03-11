@@ -15,15 +15,15 @@
 #include "resource_files/animated_model_resource_file.h"
 
 static const inline HashMap<ResourceFile::Type, const char*> SupportedFiles = {
-	{ ResourceFile::Type::Font, "Sprite fonts(*.spritefont)\0*.spritefont\0" },
+	{ ResourceFile::Type::Image, "Image(*.png;*.jpeg;*.jpg;*.dds)\0*.png;*.jpeg;*.jpg;*.dds\0" },
+	{ ResourceFile::Type::ImageCube, "Image Cube(*.dds)\0*.dds\0" },
+	{ ResourceFile::Type::Audio, "Audio(*.wav)\0*.wav\0" },
 	{ ResourceFile::Type::Model, "Model(*.3ds;*.fbx;*.dae)\0*.obj;*.blend;*.3ds;*.fbx;*.dae\0" },
 	{ ResourceFile::Type::AnimatedModel, "Animated Model(.dae;.fbx)\0.dae;.fbx\0" },
 	{ ResourceFile::Type::CollisionModel, "Collision Model(*.obj)\0*.obj\0" },
-	{ ResourceFile::Type::Audio, "Audio(*.wav)\0*.wav\0" },
-	{ ResourceFile::Type::Image, "Image(*.png;*.jpeg;*.jpg;*.dds)\0*.png;*.jpeg;*.jpg;*.dds\0" },
-	{ ResourceFile::Type::ImageCube, "Image Cube(*.dds)\0*.dds\0" },
-	{ ResourceFile::Type::Text, "Text(*.txt;*.json;*.rml)\0*.txt;*.json;*.rml\0" },
 	{ ResourceFile::Type::Lua, "Lua(*.lua)\0*.lua\0" },
+	{ ResourceFile::Type::Text, "Text(*.txt;*.json;*.rml)\0*.txt;*.json;*.rml\0" },
+	{ ResourceFile::Type::Font, "Sprite fonts(*.spritefont)\0*.spritefont\0" },
 	{ ResourceFile::Type::None, "All(*.*)\0*.*\0" }
 };
 
@@ -55,12 +55,11 @@ public:
 	static ImageCubeResourceFile* CreateImageCubeResourceFile(const String& path);
 	static FontResourceFile* CreateFontResourceFile(const String& path);
 
-	/// Use when you don't know what kind of a resource file will it be
-	static ResourceFile* CreateSomeResourceFile(const String& path);
+	static ResourceFile* CreateResourceFile(const ResourceFile::Type& type, const String& path);
 
 	/// Load all the files passed in, in a parellel manner. Return total tasks generated.
-	static int Preload(Vector<String> paths, Atomic<int>& progress);
-	static void Unload(const Vector<String>& paths);
+	static int Preload(ResourceCollection paths, Atomic<int>& progress);
+	static void Unload(const ResourceCollection& paths);
 };
 
 template <class T>

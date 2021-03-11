@@ -9,6 +9,7 @@ set(ROOTEX_INCLUDES
 CACHE INTERNAL "")
 
 add_library(FreeType STATIC ${FreeType} ${FreeTypeH})
+set_property(TARGET FreeType PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 
 target_include_directories(FreeType PRIVATE
     ./include/

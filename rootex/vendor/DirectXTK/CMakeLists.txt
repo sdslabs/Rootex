@@ -7,6 +7,7 @@ set(ROOTEX_INCLUDES
 CACHE INTERNAL "")
 
 add_library(DirectXTK STATIC ${DirectXTK} ${DirectXTKH})
+set_property(TARGET DirectXTK PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 set_target_properties(DirectXTK PROPERTIES LINKER_LANGUAGE CXX)
 
 target_include_directories(DirectXTK PUBLIC

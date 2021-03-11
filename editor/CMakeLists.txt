@@ -8,6 +8,7 @@ set_source_files_properties(${EditorLuaScripts} ${EditorJSONs} PROPERTIES
 )
 
 add_executable(Editor ${EditorSource} ${EditorHeaders} ${EditorLuaScripts} ${EditorJSONs})
+set_property(TARGET Editor PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 add_dependencies(Editor Rootex Game)
 
 target_include_directories(Editor PUBLIC ../)

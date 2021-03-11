@@ -10,7 +10,7 @@ typedef unsigned int SceneID;
 
 struct SceneSettings
 {
-	Vector<String> preloads = {};
+	ResourceCollection preloads;
 	SceneID camera = ROOT_SCENE_ID;
 	SceneID listener = ROOT_SCENE_ID;
 	HashMap<String, InputScheme> inputSchemes;

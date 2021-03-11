@@ -12,7 +12,7 @@ struct UIPixelInput
 
 float4 main(UIPixelInput input) : SV_TARGET
 {
-    clip(input.color.a - 0.001f);
+    clip(input.color.a - 0.0001f);
     
     float4 color = ShaderTexture.Sample(SampleType, input.tex) * input.color;
 	
