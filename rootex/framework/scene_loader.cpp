@@ -52,13 +52,13 @@ Variant SceneLoader::deleteScene(const Event* event)
 
 int SceneLoader::preloadScene(const String& sceneFile, Atomic<int>& progress)
 {
-	const JSON::json& sceneJSON = JSON::json::parse(ResourceLoader::CreateTextResourceFile(sceneFile)->getString());
-	Vector<String> toPreload = findResourcePaths(sceneJSON);
+	const SceneSettings& sceneJSON = JSON::json::parse(ResourceLoader::CreateTextResourceFile(sceneFile)->getString()).value("settings", SceneSettings());
+	ResourceCollection toPreload = sceneJSON.preloads;
 
 	m_UnloadCache.clear();
 	if (m_CurrentScene)
 	{
-		for (auto& preloaded : m_PreloadedCache)
+		for (auto& preloaded : m_CurrentScene->getSettings().preloads)
 		{
 			auto& findIt = std::find(toPreload.begin(), toPreload.end(), preloaded);
 			if (findIt == toPreload.end())
@@ -68,7 +68,6 @@ int SceneLoader::preloadScene(const String& sceneFile, Atomic<int>& progress)
 		}
 	}
 
-	m_PreloadedCache = toPreload;
 	return ResourceLoader::Preload(toPreload, progress);
 }
 

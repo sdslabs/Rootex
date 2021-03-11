@@ -671,10 +671,6 @@
         },
         "listener": 15,
         "preloads": [
-            "game/assets/sponza/sponza.obj",
-            "game/assets/fonts/noto_sans_50_regular.spritefont",
-            "game/assets/test/cube.obj",
-            "rootex/assets/rml/demo.rml"
         ],
         "startScheme": "Controls"
     }

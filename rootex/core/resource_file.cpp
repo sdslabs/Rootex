@@ -39,3 +39,13 @@ bool ResourceFile::isDirty()
 {
 	return getLastReadTime() < getLastChangedTime();
 }
+
+void to_json(JSON::json& j, const ResourceFile::Type& t)
+{
+	j = (int)t;
+}
+
+void from_json(const JSON::json& j, ResourceFile::Type& t)
+{
+	t = (ResourceFile::Type)(int)j;
+}

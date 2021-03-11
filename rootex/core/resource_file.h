@@ -22,6 +22,19 @@ public:
 		Font
 	};
 
+	static const inline Map<Type, String> s_TypeNames = {
+		{ Type::None, "None" },
+		{ Type::Lua, "Lua" },
+		{ Type::Audio, "Audio" },
+		{ Type::Text, "Text" },
+		{ Type::Model, "Model" },
+		{ Type::AnimatedModel, "AnimatedModel" },
+		{ Type::CollisionModel, "CollisionModel" },
+		{ Type::Image, "Image" },
+		{ Type::ImageCube, "ImageCube" },
+		{ Type::Font, "Font" }
+	};
+
 protected:
 	Type m_Type;
 	FilePath m_Path;
@@ -49,3 +62,8 @@ public:
 	const FileTimePoint& getLastReadTime() const { return m_LastReadTime; }
 	const FileTimePoint& getLastChangedTime();
 };
+
+typedef Vector<Pair<ResourceFile::Type, String>> ResourceCollection;
+
+void to_json(JSON::json& j, const ResourceFile::Type& t);
+void from_json(const JSON::json& j, ResourceFile::Type& s);
