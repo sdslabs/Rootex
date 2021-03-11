@@ -9,6 +9,7 @@ set(ROOTEX_INCLUDES
 CACHE INTERNAL "")
 
 add_library(Lua STATIC ${LuaCAPI} ${LUACAPIH})
+set_property(TARGET Lua PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 set_target_properties(Lua PROPERTIES LINKER_LANGUAGE C)
 
 target_include_directories(Lua PUBLIC

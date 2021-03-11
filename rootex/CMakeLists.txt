@@ -73,6 +73,7 @@ set_source_files_properties(${EngineLuaScripts} PROPERTIES
 )
 
 add_library(Rootex STATIC ${ROOTEX_SOURCES} ${EngineLuaScripts})
+set_property(TARGET Rootex PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 
 target_precompile_headers(Rootex PUBLIC ${PCHHeader})
 

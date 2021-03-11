@@ -30,7 +30,8 @@ public:
 
 	static bool Initialize();
 	/// Execute a command.
-	static void Execute(const String string);
+	static void Execute(const String& string);
+	static void RunApplication(const String& commandLine);
 
 	static bool ElevateThreadPriority();
 	static int GetCurrentThreadPriority();

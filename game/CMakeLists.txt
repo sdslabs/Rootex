@@ -8,6 +8,7 @@ set_source_files_properties(${GameLuaScripts} ${GameJSONs} PROPERTIES
 )
 
 add_executable(Game ${GameSource} ${GameHeaders} ${GameLuaScripts} ${GameJSONs})
+set_property(TARGET Game PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 
 target_include_directories(Game PUBLIC ../)
 target_link_libraries(Game PUBLIC Rootex)

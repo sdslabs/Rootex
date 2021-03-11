@@ -7,6 +7,7 @@ set(ROOTEX_INCLUDES
 CACHE INTERNAL "")
 
 add_library(Rlottie STATIC ${Rlottie} ${RlottieH})
+set_property(TARGET Rlottie PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 
 target_include_directories(Rlottie PUBLIC
     rlottie/inc/

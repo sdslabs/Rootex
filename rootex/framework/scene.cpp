@@ -18,7 +18,7 @@ void to_json(JSON::json& j, const SceneSettings& s)
 
 void from_json(const JSON::json& j, SceneSettings& s)
 {
-	s.preloads = (Vector<String>)j.value("preloads", Vector<String>());
+	s.preloads = j.value("preloads", ResourceCollection());
 	s.camera = j.value("camera", ROOT_SCENE_ID);
 	s.listener = j.value("listener", ROOT_SCENE_ID);
 	if (j["inputSchemes"].is_null())
@@ -328,25 +328,70 @@ void SceneSettings::drawSceneSelectables(Scene* scene, SceneID& toSet)
 
 void SceneSettings::draw()
 {
-	ImGui::Text("Preloads");
-	int i = 0;
-	for (auto& preload : preloads)
+	ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth() * 2.0f / 3.0f);
+	if (ImGui::ListBoxHeader("Preloads"))
 	{
-		ImGui::PushID(i);
-		ImGui::InputText("##", &preload);
-		ImGui::PopID();
-	}
-	if (ImGui::Button("+"))
-	{
-		preloads.push_back("");
-	}
-	if (!preloads.empty())
-	{
-		ImGui::SameLine();
-		if (ImGui::Button("-"))
+		int toRemove = -1;
+		for (int p = 0; p < preloads.size(); p++)
 		{
-			preloads.pop_back();
+			ImGui::PushID(p);
+
+			if (ImGui::SmallButton("-"))
+			{
+				toRemove = p;
+			}
+			ImGui::SameLine();
+			ImGui::LabelText(ResourceFile::s_TypeNames.at((ResourceFile::Type)preloads[p].first).c_str(), "%s", preloads[p].second.c_str());
+
+			ImGui::PopID();
 		}
+
+		if (toRemove >= 0)
+		{
+			preloads.erase(preloads.begin() + toRemove);
+		}
+
+		ImGui::ListBoxFooter();
+	}
+	if (ImGui::Button("Add Preload"))
+	{
+		ImGui::OpenPopup("Preloads Selection");
+	}
+
+	if (ImGui::BeginPopup("Preloads Selection"))
+	{
+		int i = 0;
+		for (auto& [resType, resFiles] : ResourceLoader::GetResources())
+		{
+			for (auto& resFile : resFiles)
+			{
+				ImGui::PushID(i++);
+
+				String path = resFile->getPath().generic_string();
+
+				auto& findIt = std::find(preloads.begin(), preloads.end(), Pair<ResourceFile::Type, String>(resType, path));
+
+				bool enabled = findIt != preloads.end();
+				if (ImGui::Checkbox(path.c_str(), &enabled))
+				{
+					if (enabled)
+					{
+						preloads.push_back({ resType , path });
+					}
+					else
+					{
+						preloads.erase(findIt);
+					}
+				}
+				ImGui::SameLine();
+				ImGui::BulletText("%s", ResourceFile::s_TypeNames.at(resType).c_str());
+
+				ImGui::PopID();
+				i--;
+			}
+		}
+
+		ImGui::EndPopup();
 	}
 
 	Scene* cameraScene = SceneLoader::GetSingleton()->getRootScene()->findScene(camera);
@@ -385,7 +430,7 @@ void SceneSettings::draw()
 	}
 
 	ImGui::Text("Input Schemes");
-	i = 0;
+	int i = 0;
 	const String* inputSchemeToRemove = nullptr;
 	for (auto& [name, inputScheme] : inputSchemes)
 	{
