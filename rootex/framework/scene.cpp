@@ -376,7 +376,7 @@ void SceneSettings::draw()
 				{
 					if (enabled)
 					{
-						preloads.push_back({ resType , path });
+						preloads.push_back({ resType, path });
 					}
 					else
 					{
