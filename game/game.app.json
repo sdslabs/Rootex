@@ -1,6 +1,13 @@
 {
     "postInitialize": "game/startup.lua",
     "project": "Rootex Game",
+    "splash": {
+        "height": 400,
+        "icon": "rootex/assets/rootex.ico",
+        "image": "rootex/assets/rootex.bmp",
+        "title": "Rootex Splash",
+        "width": 400
+    },
     "startLevel": "game/assets/scenes/loading.scene.json",
     "systems": {
         "AudioSystem": {},

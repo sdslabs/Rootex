@@ -31,10 +31,13 @@ public:
 	Window(const Window&) = delete;
 	Window& operator=(const Window&) = delete;
 	~Window() = default;
+
 	void show();
 	std::optional<int> processMessages();
-	void applyDefaultViewport();
+
 	void swapBuffers();
+
+	void applyDefaultViewport();
 	/// Clips or blocks the cursor beyond the specified rectangle.
 	void clipCursor(RECT clip);
 	/// Reset cursor clips and allow free cursor movement.
@@ -50,6 +53,7 @@ public:
 	int getHeight() const;
 	int getTitleBarHeight() const;
 	HWND getWindowHandle();
+
 	void setWindowTitle(String title);
 	void setWindowSize(const Vector2& newSize);
 };

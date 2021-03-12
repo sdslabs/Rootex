@@ -2,6 +2,13 @@
     "game": "game/game.app.json",
     "postInitialize": "game/startup.lua",
     "project": "Rootex Editor",
+    "splash": {
+        "height": 400,
+        "icon": "editor/assets/editor.ico",
+        "image": "editor/assets/editor.bmp",
+        "title": "Rootex Editor Splash",
+        "width": 400
+    },
     "systems": {
         "AudioSystem": {},
         "EditorSystem": {
