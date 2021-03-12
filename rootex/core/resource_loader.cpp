@@ -4,6 +4,7 @@
 #include "os/thread.h"
 
 HashMap<ResourceFile::Type, Vector<Ref<ResourceFile>>> ResourceLoader::s_ResourcesDataFiles;
+Mutex ResourceLoader::s_ResourcesDataFiles;
 
 bool IsFileSupported(const String& extension, ResourceFile::Type supportedFileType)
 {
@@ -50,7 +51,9 @@ ResourceFile* ResourceLoader::CreateResourceFile(const ResourceFile::Type& type,
 
 void ResourceLoader::RegisterResource(Ref<ResourceFile> file)
 {
+	s_ResourceDataMutex.lock();
 	s_ResourcesDataFiles[file->getType()].push_back(file);
+	s_ResourceDataMutex.unlock();
 }
 
 TextResourceFile* ResourceLoader::CreateTextResourceFile(const String& path)
@@ -150,7 +153,7 @@ int ResourceLoader::Preload(ResourceCollection paths, Atomic<int>& progress)
 	return preloadTasks.size() - 1; // 1 less for the dummy task
 }
 
-void ResourceLoader::Unload(const Vector<Pair<ResourceFile::Type, String>>& paths)
+void ResourceLoader::Unload(const ResourceCollection& paths)
 {
 	HashMap<ResourceFile::Type, Vector<Ref<ResourceFile>>> unloads;
 
