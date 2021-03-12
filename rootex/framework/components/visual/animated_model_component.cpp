@@ -77,6 +77,27 @@ void AnimatedModelComponent::render(float viewDistance)
 	}
 }
 
+void AnimatedModelComponent::setPlaying(bool enabled)
+{
+	m_IsPlaying = enabled;
+}
+
+void AnimatedModelComponent::play()
+{
+	setPlaying(true);
+}
+
+void AnimatedModelComponent::stop()
+{
+	setPlaying(false);
+}
+
+void AnimatedModelComponent::setAnimation(const String& name)
+{
+	PANIC(m_AnimatedModelResourceFile->getAnimations().find(name) == m_AnimatedModelResourceFile->getAnimations().end(), "Animation name not found: " + name);
+	m_CurrentAnimationName = name;
+}
+
 void AnimatedModelComponent::assignBoundingBox()
 {
 	if (m_AnimatedModelResourceFile)
@@ -193,7 +214,7 @@ void AnimatedModelComponent::draw()
 		{
 			if (ImGui::Selectable(animationName.c_str()))
 			{
-				m_CurrentAnimationName = animationName;
+				setAnimation(animationName);
 			}
 		}
 		ImGui::EndCombo();

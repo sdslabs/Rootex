@@ -46,10 +46,9 @@ Matrix TransformAnimationComponent::interpolateMatrix(const Matrix& left, const 
 
 	Matrix finalMat = Matrix::CreateFromQuaternion(finalRotation);
 
-	for (int i : { 0, 1, 2 })
-	{
-		finalMat.m[3][i] = left.m[3][i] * (1.0f - lerpFactor) + right.m[3][i] * lerpFactor;
-	}
+	finalMat.m[3][1] = left.m[3][1] * (1.0f - lerpFactor) + right.m[3][1] * lerpFactor;
+	finalMat.m[3][2] = left.m[3][2] * (1.0f - lerpFactor) + right.m[3][2] * lerpFactor;
+	finalMat.m[3][3] = left.m[3][3] * (1.0f - lerpFactor) + right.m[3][3] * lerpFactor;
 
 	return finalMat;
 }

@@ -105,7 +105,8 @@ void LuaInterpreter::registerTypes()
 		    "Vector3",
 		    sol::constructors<Vector3(), Vector3(float, float, float)>(),
 		    sol::meta_function::addition, [](Vector3& l, Vector3& r) { return l + r; },
-		    sol::meta_function::subtraction, [](Vector3& l, Vector3& r) { return l - r; });
+		    sol::meta_function::subtraction, [](Vector3& l, Vector3& r) { return l - r; },
+		    sol::meta_function::multiplication, [](float l, Vector3& r) { return l * r; });
 		vector3["dot"] = &Vector3::Dot;
 		vector3["cross"] = [](const Vector3& l, const Vector3& r) { return l.Cross(r); };
 		vector3["x"] = &Vector3::x;
@@ -263,6 +264,7 @@ void LuaInterpreter::registerTypes()
 		scene["CreateEmptyWithEntity"] = &Scene::CreateEmptyWithEntity;
 		scene["CreateFromFile"] = &Scene::CreateFromFile;
 		scene["FindScenesByName"] = &Scene::FindScenesByName;
+		scene["FindSceneByID"] = &Scene::FindSceneByID;
 		scene["addChild"] = &Scene::addChild;
 		scene["removeChild"] = &Scene::removeChild;
 		scene["snatchChild"] = &Scene::snatchChild;
@@ -311,9 +313,13 @@ void LuaInterpreter::registerTypes()
 		transformComponent["setTransform"] = &TransformComponent::setTransform;
 		transformComponent["addTransform"] = &TransformComponent::addTransform;
 		transformComponent["getPosition"] = &TransformComponent::getPosition;
+		transformComponent["getAbsolutePosition"] = &TransformComponent::getAbsolutePosition;
+		transformComponent["setAbsolutePosition"] = &TransformComponent::setAbsolutePosition;
 		transformComponent["getRotation"] = &TransformComponent::getRotation;
 		transformComponent["getScale"] = &TransformComponent::getScale;
 		transformComponent["getLocalTransform"] = &TransformComponent::getLocalTransform;
+		transformComponent["getAbsoluteTransform"] = &TransformComponent::getAbsoluteTransform;
+		transformComponent["setAbsoluteTransform"] = &TransformComponent::setAbsoluteTransform;
 		transformComponent["getParentAbsoluteTransform"] = &TransformComponent::getParentAbsoluteTransform;
 		transformComponent["getComponentID"] = &TransformComponent::getComponentID;
 		transformComponent["getName"] = &TransformComponent::getName;
@@ -335,6 +341,12 @@ void LuaInterpreter::registerTypes()
 		sol::usertype<AnimatedModelComponent> animatedModelComponent = rootex.new_usertype<AnimatedModelComponent>(
 		    "AnimatedModelComponent",
 		    sol::base_classes, sol::bases<Component, RenderableComponent>());
+		animatedModelComponent["getAnimatedResourceFile"] = &AnimatedModelComponent::getAnimatedResourceFile;
+		animatedModelComponent["setAnimatedResourceFile"] = &AnimatedModelComponent::setAnimatedResourceFile;
+		animatedModelComponent["setAnimation"] = &AnimatedModelComponent::setAnimation;
+		animatedModelComponent["play"] = &AnimatedModelComponent::play;
+		animatedModelComponent["stop"] = &AnimatedModelComponent::stop;
+		animatedModelComponent["setPlaying"] = &AnimatedModelComponent::setPlaying;
 		rootex["Entity"]["getAnimatedModel"] = &Entity::getComponent<AnimatedModelComponent>;
 	}
 	{

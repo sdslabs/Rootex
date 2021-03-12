@@ -72,6 +72,7 @@ public:
 
 	Matrix getAbsoluteTransform();
 	Vector3 getAbsolutePosition();
+	void setAbsolutePosition(const Vector3& position);
 	Quaternion getAbsoluteRotation();
 	Vector3 getAbsoluteScale();
 
