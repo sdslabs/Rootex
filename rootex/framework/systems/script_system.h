@@ -9,11 +9,13 @@ class ScriptSystem : public System
 	ScriptSystem(ScriptSystem&) = delete;
 	~ScriptSystem() = default;
 
+	Vector<Entity*> m_ScriptEntitiesToInit;
+
 public:
 	static ScriptSystem* GetSingleton();
 
-	/// Calls begin() function of script components.
-	void begin() override;
+	void addInitScriptEntity(Entity* e);
+
 	/// Calls update() function of script components.
 	void update(float deltaMilliseconds) override;
 	/// Calls end() function of script components.

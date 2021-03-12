@@ -50,6 +50,7 @@ public:
 	static Ptr<Scene> CreateEmptyWithEntity();
 	static Ptr<Scene> CreateRootScene();
 	static Vector<Scene*> FindScenesByName(const String& name);
+	static Scene* FindSceneByID(const SceneID& id);
 
 	Scene(SceneID id, const String& name, const String& sceneFile, const SceneSettings& settings);
 	~Scene();

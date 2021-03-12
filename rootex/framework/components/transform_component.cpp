@@ -52,6 +52,11 @@ void TransformComponent::setPosition(const Vector3& position)
 	m_IsAbsoluteTransformDirty = true;
 }
 
+void TransformComponent::setAbsolutePosition(const Vector3& position)
+{
+	setPosition(position - getParentAbsoluteTransform().Translation());
+}
+
 void TransformComponent::setRotation(const float& yaw, const float& pitch, const float& roll)
 {
 	m_TransformBuffer.m_Rotation = Quaternion::CreateFromYawPitchRoll(yaw, pitch, roll);

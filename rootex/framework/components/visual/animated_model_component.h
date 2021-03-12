@@ -50,6 +50,11 @@ public:
 	virtual String getCurrentAnimationName() const { return m_CurrentAnimationName; }
 	virtual float getCurrentTime() const { return m_CurrentTimePosition; }
 
+	void setPlaying(bool enabled);
+	void play();
+	void stop();
+	void setAnimation(const String& name);
+
 	void assignBoundingBox();
 	void assignOverrides(AnimatedModelResourceFile* file, const HashMap<String, String>& materialOverrides);
 	void setAnimatedResourceFile(AnimatedModelResourceFile* file, const HashMap<String, String>& materialOverrides);
