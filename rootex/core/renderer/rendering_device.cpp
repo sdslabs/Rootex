@@ -142,6 +142,7 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height)
 	createSwapChainAndRTVs(width, height, hWnd);
 
 	D3D11_FEATURE_DATA_D3D11_OPTIONS features;
+	ZeroMemory(&features, sizeof(D3D11_FEATURE_DATA_D3D11_OPTIONS));
 	GFX_ERR_CHECK(m_Device->CheckFeatureSupport(D3D11_FEATURE_D3D11_OPTIONS, &features, sizeof(features)));
 
 	PRINT("**** Supported DirectX11 Features ****"
