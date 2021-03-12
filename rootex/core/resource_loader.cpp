@@ -117,7 +117,7 @@ int ResourceLoader::Preload(ResourceCollection paths, Atomic<int>& progress)
 	}
 
 	std::sort(paths.begin(), paths.end(), [](const Pair<ResourceFile::Type, String>& a, const Pair<ResourceFile::Type, String>& b) {
-		return a.second < a.second;
+		return a.second < b.second;
 	});
 
 	ResourceCollection empericalPaths = { paths.front() };
