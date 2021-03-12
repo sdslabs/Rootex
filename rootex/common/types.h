@@ -29,6 +29,10 @@ using Future = std::future<T>;
 template <class T>
 using Promise = std::promise<T>;
 
+/// Mutex for mutual exclusion
+#include <mutex>
+typedef std::mutex Mutex;
+
 /// Atomic data type
 #include <atomic>
 template <class T>

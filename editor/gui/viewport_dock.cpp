@@ -153,6 +153,9 @@ void ViewportDock::draw(float deltaMilliseconds)
 					currentSnap = &scaleSnap;
 				}
 
+				ImGui::DragFloat("Speed", &m_EditorCameraSpeed, 0.1f, 0.1f, 1000.0f);
+				ImGui::DragFloat("Sensitivity", &m_EditorCameraSensitivity, 1.0f, 0.1f, 1000.0f);
+
 				if (ImGui::BeginCombo("Camera", RenderSystem::GetSingleton()->getCamera()->getOwner()->getFullName().c_str()))
 				{
 					for (auto& c : ECSFactory::GetComponents<CameraComponent>())

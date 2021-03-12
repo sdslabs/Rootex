@@ -3,12 +3,7 @@
     "children": [],
     "entity": {
         "Entity": {
-            "script": {
-                "overrides": {
-                    "story": "\"game/assets/stories/game.ink\""
-                },
-                "path": "game/assets/scripts/dialogue/dialogue_player.lua"
-            }
+            "script": null
         },
         "components": {
             "UIComponent": {
@@ -39,7 +34,7 @@
                         "inputEvent": "Up"
                     }
                 ],
-                "floats": {}
+                "floats": []
             }
         },
         "listener": 1,
