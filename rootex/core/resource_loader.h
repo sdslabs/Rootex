@@ -36,9 +36,12 @@ bool IsFileSupported(const String& extension, ResourceFile::Type supportedFileTy
 class ResourceLoader
 {
 	static HashMap<ResourceFile::Type, Vector<Ref<ResourceFile>>> s_ResourcesDataFiles;
+	static Mutex s_ResourceDataMutex;
 
 	template <class T>
 	static T* GetCachedResource(ResourceFile::Type type, const FilePath& path);
+
+	/// Threadsafe method to add a file to the resource cache
 	static void RegisterResource(Ref<ResourceFile> file);
 
 public:
