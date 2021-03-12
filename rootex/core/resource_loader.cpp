@@ -4,7 +4,7 @@
 #include "os/thread.h"
 
 HashMap<ResourceFile::Type, Vector<Ref<ResourceFile>>> ResourceLoader::s_ResourcesDataFiles;
-Mutex ResourceLoader::s_ResourcesDataFiles;
+Mutex ResourceLoader::s_ResourceDataMutex;
 
 bool IsFileSupported(const String& extension, ResourceFile::Type supportedFileType)
 {
