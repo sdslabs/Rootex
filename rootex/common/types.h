@@ -29,7 +29,7 @@ using Future = std::future<T>;
 template <class T>
 using Promise = std::promise<T>;
 
-/// Promise data types for sharing futures
+/// Atomic data type
 #include <atomic>
 template <class T>
 using Atomic = std::atomic<T>;
