@@ -19,7 +19,8 @@ public:
 		CollisionModel,
 		Image,
 		ImageCube,
-		Font
+		Font,
+		ParticleEffect
 	};
 
 	static const inline Map<Type, String> s_TypeNames = {
@@ -32,7 +33,8 @@ public:
 		{ Type::CollisionModel, "CollisionModel" },
 		{ Type::Image, "Image" },
 		{ Type::ImageCube, "ImageCube" },
-		{ Type::Font, "Font" }
+		{ Type::Font, "Font" },
+		{ Type::ParticleEffect, "ParticleEffect" }
 	};
 
 protected:

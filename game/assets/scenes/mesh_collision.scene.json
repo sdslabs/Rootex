@@ -237,10 +237,10 @@
                                             "bloomThreshold": 0.800000011920929,
                                             "bloomValue": 1.0,
                                             "gaussianBlurMultiplier": 1.0,
-                                            "isASSAO": true,
+                                            "isASSAO": false,
                                             "isBloom": false,
                                             "isFXAA": true,
-                                            "isGaussianBlur": false,
+                                            "isGaussianBlur": true,
                                             "isMonochrome": false,
                                             "isPostProcessing": true,
                                             "isSepia": false,
@@ -307,77 +307,7 @@
                         },
                         {
                             "ID": 16,
-                            "children": [
-                                {
-                                    "ID": 12,
-                                    "children": [],
-                                    "entity": {
-                                        "Entity": {
-                                            "script": null
-                                        },
-                                        "components": {
-                                            "PointLightComponent": {
-                                                "ambientColor": {
-                                                    "a": 1.0,
-                                                    "b": 0.5,
-                                                    "g": 0.5,
-                                                    "r": 0.5
-                                                },
-                                                "attConst": 0.04500000178813934,
-                                                "attLin": 1.0,
-                                                "attQuad": 0.007499999832361937,
-                                                "diffuseColor": {
-                                                    "a": 1.0,
-                                                    "b": 1.0,
-                                                    "g": 1.0,
-                                                    "r": 1.0
-                                                },
-                                                "diffuseIntensity": 1.0,
-                                                "range": 10.0
-                                            },
-                                            "TransformComponent": {
-                                                "boundingBox": {
-                                                    "center": {
-                                                        "x": 0.0,
-                                                        "y": 0.0,
-                                                        "z": 0.0
-                                                    },
-                                                    "extents": {
-                                                        "x": 0.5,
-                                                        "y": 0.5,
-                                                        "z": 0.5
-                                                    }
-                                                },
-                                                "position": {
-                                                    "x": 57.59278106689453,
-                                                    "y": 14.568588256835938,
-                                                    "z": 0.3961982727050781
-                                                },
-                                                "rotation": {
-                                                    "w": 1.0,
-                                                    "x": -0.0,
-                                                    "y": 0.0,
-                                                    "z": -0.0
-                                                },
-                                                "scale": {
-                                                    "x": 33.33336639404297,
-                                                    "y": 33.333316802978516,
-                                                    "z": 33.333309173583984
-                                                }
-                                            }
-                                        }
-                                    },
-                                    "file": "game/assets/scenes/point_light.scene.json",
-                                    "name": "Point Light",
-                                    "settings": {
-                                        "camera": 1,
-                                        "inputSchemes": {},
-                                        "listener": 1,
-                                        "preloads": [],
-                                        "startScheme": ""
-                                    }
-                                }
-                            ],
+                            "children": [],
                             "entity": {
                                 "Entity": {
                                     "script": null
@@ -463,6 +393,62 @@
                             },
                             "file": "",
                             "name": "Particles",
+                            "settings": {
+                                "camera": 1,
+                                "inputSchemes": {},
+                                "listener": 1,
+                                "preloads": [],
+                                "startScheme": ""
+                            }
+                        },
+                        {
+                            "ID": 20,
+                            "children": [],
+                            "entity": {
+                                "Entity": {
+                                    "script": null
+                                },
+                                "components": {
+                                    "ParticleEffectComponent": {
+                                        "isMoving": true,
+                                        "playOnStart": true,
+                                        "resFile": "rootex/assets/toon.efkefc",
+                                        "startFrame": 0
+                                    },
+                                    "TransformComponent": {
+                                        "boundingBox": {
+                                            "center": {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                                "z": 0.0
+                                            },
+                                            "extents": {
+                                                "x": 0.5,
+                                                "y": 0.5,
+                                                "z": 0.5
+                                            }
+                                        },
+                                        "position": {
+                                            "x": 0.0,
+                                            "y": 0.0,
+                                            "z": 0.0
+                                        },
+                                        "rotation": {
+                                            "w": 1.0,
+                                            "x": -0.0,
+                                            "y": 0.0,
+                                            "z": -0.0
+                                        },
+                                        "scale": {
+                                            "x": 12.800000190734863,
+                                            "y": 12.800000190734863,
+                                            "z": 12.800000190734863
+                                        }
+                                    }
+                                }
+                            },
+                            "file": "",
+                            "name": "ParticleEffect",
                             "settings": {
                                 "camera": 1,
                                 "inputSchemes": {},
@@ -805,6 +791,71 @@
                 "preloads": [],
                 "startScheme": ""
             }
+        },
+        {
+            "ID": 23,
+            "children": [],
+            "entity": {
+                "Entity": {
+                    "script": null
+                },
+                "components": {
+                    "DirectionalLightComponent": {
+                        "ambientColor": {
+                            "a": 1.0,
+                            "b": 0.26274511218070984,
+                            "g": 1.0,
+                            "r": 0.7450980544090271
+                        },
+                        "diffuseColor": {
+                            "a": 1.0,
+                            "b": 0.729411780834198,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "diffuseIntensity": 2.9000000953674316
+                    },
+                    "TransformComponent": {
+                        "boundingBox": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "extents": {
+                                "x": 0.5,
+                                "y": 0.5,
+                                "z": 0.5
+                            }
+                        },
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "rotation": {
+                            "w": -0.24645598232746124,
+                            "x": 0.8678367137908936,
+                            "y": -0.11774357408285141,
+                            "z": -0.41503652930259705
+                        },
+                        "scale": {
+                            "x": 1.0000108480453491,
+                            "y": 1.0000067949295044,
+                            "z": 1.0000112056732178
+                        }
+                    }
+                }
+            },
+            "file": "",
+            "name": "Light",
+            "settings": {
+                "camera": 1,
+                "inputSchemes": {},
+                "listener": 1,
+                "preloads": [],
+                "startScheme": ""
+            }
         }
     ],
     "entity": {
@@ -815,12 +866,12 @@
             "FogComponent": {
                 "color": {
                     "a": 1.0,
-                    "b": 0.892182469367981,
-                    "g": 1.0,
-                    "r": 0.4882943034172058
+                    "b": 0.8833234906196594,
+                    "g": 0.9966555237770081,
+                    "r": 0.9688321948051453
                 },
-                "far": 100.0,
-                "near": 0.0
+                "far": 44.0,
+                "near": 7.0
             },
             "ModelComponent": {
                 "affectingStaticLights": [],
@@ -899,9 +950,9 @@
                     "z": 0.0
                 },
                 "rotation": {
-                    "w": 1.0,
+                    "w": 0.9999966025352478,
                     "x": -0.0,
-                    "y": 0.0,
+                    "y": 0.0026180592831224203,
                     "z": -0.0
                 },
                 "scale": {
