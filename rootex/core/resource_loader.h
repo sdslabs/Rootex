@@ -13,6 +13,7 @@
 #include "resource_files/collision_model_resource_file.h"
 #include "resource_files/text_resource_file.h"
 #include "resource_files/animated_model_resource_file.h"
+#include "resource_files/particle_effect_resource_file.h"
 
 static const inline HashMap<ResourceFile::Type, const char*> SupportedFiles = {
 	{ ResourceFile::Type::Image, "Image(*.png;*.jpeg;*.jpg;*.dds)\0*.png;*.jpeg;*.jpg;*.dds\0" },
@@ -24,6 +25,7 @@ static const inline HashMap<ResourceFile::Type, const char*> SupportedFiles = {
 	{ ResourceFile::Type::Lua, "Lua(*.lua)\0*.lua\0" },
 	{ ResourceFile::Type::Text, "Text(*.txt;*.json;*.rml)\0*.txt;*.json;*.rml\0" },
 	{ ResourceFile::Type::Font, "Sprite fonts(*.spritefont)\0*.spritefont\0" },
+	{ ResourceFile::Type::ParticleEffect, "Effekseer effects(*.efkefc;*.efk;*.efkproj)\0*.efkefc;*.efk;*.efkproj\0" },
 	{ ResourceFile::Type::None, "All(*.*)\0*.*\0" }
 };
 
@@ -57,6 +59,7 @@ public:
 	static ImageResourceFile* CreateImageResourceFile(const String& path);
 	static ImageCubeResourceFile* CreateImageCubeResourceFile(const String& path);
 	static FontResourceFile* CreateFontResourceFile(const String& path);
+	static ParticleEffectResourceFile* CreateParticleEffectResourceFile(const String& path);
 
 	static ResourceFile* CreateResourceFile(const ResourceFile::Type& type, const String& path);
 

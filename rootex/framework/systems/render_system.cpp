@@ -35,8 +35,6 @@ RenderSystem::RenderSystem()
 	m_LineMaterial = std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetMaterial("rootex/assets/materials/line.rmat"));
 	m_CurrentFrameLines.m_Endpoints.reserve(LINE_INITIAL_RENDER_CACHE * 2 * 3);
 	m_CurrentFrameLines.m_Indices.reserve(LINE_INITIAL_RENDER_CACHE * 2);
-
-	PostProcessor::GetSingleton();
 }
 
 void RenderSystem::recoverLostDevice()
@@ -192,12 +190,6 @@ void RenderSystem::update(float deltaMilliseconds)
 		RenderingDevice::GetSingleton()->setRSType(currentRS);
 		RenderingDevice::GetSingleton()->disableSkyDSS();
 	}
-
-	// Post processes
-	PostProcessor::GetSingleton()->draw(m_Camera);
-
-	RenderingDevice::GetSingleton()->unbindSRVs();
-	RenderingDevice::GetSingleton()->setOffScreenRTVDSV();
 }
 
 void RenderSystem::renderLines()

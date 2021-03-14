@@ -109,7 +109,8 @@ target_link_libraries(Rootex PUBLIC
     ASSAO
     LPeg
     Meshoptimizer
-    
+    Effekseer
+
     Shell32.lib
     d3d11.lib
     xinput.lib
