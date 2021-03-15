@@ -337,3 +337,7 @@ ASALocalRun/
 
 # Save static third-party builds
 !/rootex/vendor/RmlUi/Bin/
+
+# Ignore exports dir
+exports/
+
