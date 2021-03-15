@@ -1,5 +1,7 @@
 #include "particle_system.h"
 
+#include <codecvt>
+
 #include "components/visual/particle_effect_component.h"
 #include "renderer/rendering_device.h"
 #include "systems/render_system.h"
@@ -169,8 +171,10 @@ bool ParticleSystem::getPaused(Effekseer::Handle handle)
 
 Effekseer::Effect* ParticleSystem::loadEffect(const String& path)
 {
-	std::u16string uPath = s_Convert.from_bytes(path);
-	Effekseer::Effect* effect = Effekseer::Effect::Create(m_Manager, uPath.c_str());
+	static std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> convert;
+
+	std::wstring uPath = convert.from_bytes(path);
+	Effekseer::Effect* effect = Effekseer::Effect::Create(m_Manager, (const char16_t*)uPath.c_str());
 	if (!effect)
 	{
 		WARN("Could not load effect: " + path);
