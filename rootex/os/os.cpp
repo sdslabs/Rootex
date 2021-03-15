@@ -441,7 +441,7 @@ FileTimePoint OS::GetFileLastChangedTime(const String& filePath)
 	return result;
 }
 
-void OS::RelativeCopyFile(String& src, String& dest)
+void OS::RelativeCopyFile(const String& src, const String& dest)
 {
 	String destParent = FilePath(dest).parent_path().generic_string();
 	if (!IsDirectory(destParent))
@@ -451,7 +451,7 @@ void OS::RelativeCopyFile(String& src, String& dest)
 	std::filesystem::copy_file(GetAbsolutePath(src), GetAbsolutePath(dest));
 }
 
-void OS::RelativeCopyFolder(String& src, String& dest)
+void OS::RelativeCopyDirectory(const String& src, const String& dest)
 {
 	std::filesystem::copy(GetAbsolutePath(src), GetAbsolutePath(dest), std::filesystem::copy_options::recursive);
 }

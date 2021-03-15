@@ -826,44 +826,44 @@ Variant EditorSystem::exportScene(const Event* event)
 	Scene* toExportScene = SceneLoader::GetSingleton()->getCurrentScene();
 	String sceneName = toExportScene->getName();
 
-	String dirPath;
+	String currExportDir;
 	int i = 0;
 	do
 	{
-		dirPath = "exports/" + sceneName;
+		currExportDir = "exports/" + sceneName;
 		if (i != 0)
 		{
-			dirPath += std::to_string(i);
+			currExportDir += std::to_string(i);
 		}
-		dirPath += "/";
+		currExportDir += "/";
 		i++;
-	} while (OS::IsExists(dirPath));
+	} while (OS::IsExists(currExportDir));
 
-	OS::CreateDirectoryName(dirPath);
+	OS::CreateDirectoryName(currExportDir);
 
-	if (!copySceneIndependentFiles(dirPath))
+	if (!copySceneIndependentFiles(currExportDir))
 	{
-		OS::DeleteDirectory(dirPath);
+		OS::DeleteDirectory(currExportDir);
 		return false;
 	}
 
-	OS::CreateDirectoryName(dirPath + "game/assets/");
-	OS::CreateDirectoryName(dirPath + "rootex/assets/");
-	OS::RelativeCopyFolder(String("game/assets/"), dirPath + "game/assets/");
-	OS::RelativeCopyFolder(String("rootex/assets/"), dirPath + "rootex/assets/");
+	OS::CreateDirectoryName(currExportDir + "game/assets/");
+	OS::CreateDirectoryName(currExportDir + "rootex/assets/");
+	OS::RelativeCopyDirectory("game/assets/", currExportDir + "game/assets/");
+	OS::RelativeCopyDirectory("rootex/assets/", currExportDir + "rootex/assets/");
 
 	JSON::json gameConfig = JSON::json::parse(ResourceLoader::CreateTextResourceFile("game/game.app.json")->getString());
 	gameConfig["startLevel"] = toExportScene->getSceneFilePath();
-	TextResourceFile* newGameConfig = ResourceLoader::CreateNewTextResourceFile(dirPath + "game/game.app.json");
+	TextResourceFile* newGameConfig = ResourceLoader::CreateNewTextResourceFile(currExportDir + "game/game.app.json");
 	newGameConfig->putString(gameConfig.dump(4));
 	if (!newGameConfig->save())
 	{
 		WARN("Could not save application settings file");
-		OS::DeleteDirectory(dirPath);
+		OS::DeleteDirectory(currExportDir);
 		return false;
 	}
 
-	PRINT("Successfully exported to " + dirPath)
+	PRINT("Successfully exported to " + currExportDir)
 
 	return true;
 }
