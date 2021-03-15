@@ -443,7 +443,17 @@ FileTimePoint OS::GetFileLastChangedTime(const String& filePath)
 
 void OS::RelativeCopyFile(String& src, String& dest)
 {
-	std::filesystem::copy_file(GetAbsolutePath(src), GetAbsolutePath(dest), std::filesystem::copy_options::overwrite_existing);
+	String destParent = FilePath(dest).parent_path().generic_string();
+	if (!IsDirectory(destParent))
+	{
+		CreateDirectoryName(destParent);
+	}
+	std::filesystem::copy_file(GetAbsolutePath(src), GetAbsolutePath(dest));
+}
+
+void OS::RelativeCopyFolder(String& src, String& dest)
+{
+	std::filesystem::copy(GetAbsolutePath(src), GetAbsolutePath(dest), std::filesystem::copy_options::recursive);
 }
 
 FileBuffer OS::LoadFileContents(String stringPath)

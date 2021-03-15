@@ -67,6 +67,7 @@ public:
 	static bool Rename(const String& sourcePath, const String& destinationPath);
 	static Vector<FilePath> GetFilesInDirectory(const String& directory);
 	static void RelativeCopyFile(String& src, String& dest);
+	static void RelativeCopyFolder(String& src, String& dest);
 
 	static bool IsDirectory(const String& path);
 	static bool IsFile(const String& path);
