@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include <filesystem>
-#include <iostream>
 
 #include "common/common.h"
 
@@ -440,6 +439,11 @@ FileTimePoint OS::GetFileLastChangedTime(const String& filePath)
 	}
 
 	return result;
+}
+
+void OS::RelativeCopyFile(String& src, String& dest)
+{
+	std::filesystem::copy_file(GetAbsolutePath(src), GetAbsolutePath(dest), std::filesystem::copy_options::overwrite_existing);
 }
 
 FileBuffer OS::LoadFileContents(String stringPath)

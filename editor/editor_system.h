@@ -62,8 +62,10 @@ class EditorSystem : public System
 
 	void showDocumentation(const String& name, const sol::table& table);
 
+	bool copySceneIndependentFiles(String& exportBase);
 	Variant saveAll(const Event* event);
 	Variant autoSave(const Event* event);
+	Variant exportScene(const Event* event);
 	Variant saveBeforeQuit(const Event* event);
 	Variant createNewScene(const Event* event);
 	Variant createNewMaterial(const Event* event);

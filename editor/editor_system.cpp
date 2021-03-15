@@ -36,6 +36,7 @@ bool EditorSystem::initialize(const JSON::json& systemData)
 {
 	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorSaveBeforeQuit, EditorSystem::saveBeforeQuit);
 	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorSaveAll, EditorSystem::saveAll);
+	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorExportScene, EditorSystem::exportScene);
 	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorAutoSave, EditorSystem::autoSave);
 	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorCreateNewScene, EditorSystem::createNewScene);
 	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorCreateNewMaterial, EditorSystem::createNewMaterial);
@@ -321,6 +322,10 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 				if (ImGui::MenuItem("Save Scene", "", false, (bool)SceneLoader::GetSingleton()->getCurrentScene()))
 				{
 					EventManager::GetSingleton()->call(EditorEvents::EditorSaveAll);
+				}
+				if (ImGui::MenuItem("Export Scene", "", false, (bool)SceneLoader::GetSingleton()->getCurrentScene()))
+				{
+					EventManager::GetSingleton()->call(EditorEvents::EditorExportScene);
 				}
 				if (ImGui::MenuItem("Preferences"))
 				{
@@ -779,6 +784,63 @@ Variant EditorSystem::saveAll(const Event* event)
 	{
 		PRINT("No level is open. Did not save current scene");
 	}
+	return true;
+}
+
+bool EditorSystem::copySceneIndependentFiles(String& exportBase)
+{
+	Vector<Pair<String, String>> execFiles = {
+		{ "build/game/Release/Game.exe",
+		    "Game.exe" },
+		{ "build/game/Release/alut.dll",
+		    "alut.dll" },
+		{ "build/game/Release/OpenAL32.dll",
+		    "OpenAL32.dll" },
+		{ "rootex.root", "rootex.root" }
+	};
+	for (auto& file : execFiles)
+	{
+		if (OS::IsExists(file.first))
+		{
+			OS::RelativeCopyFile(file.first, exportBase + file.second);
+		}
+		else
+		{
+			WARN("Export failed, " + file.first + " not found");
+			return false;
+		}
+	}
+	return true;
+}
+
+Variant EditorSystem::exportScene(const Event* event)
+{
+	saveAll(nullptr);
+
+	Scene* toExportScene = SceneLoader::GetSingleton()->getCurrentScene();
+	String sceneName = toExportScene->getName();
+
+	String dirPath;
+	int i = 0;
+	do
+	{
+		dirPath = "exports/" + sceneName;
+		if (i != 0)
+		{
+			dirPath += std::to_string(i);
+		}
+		dirPath += "/";
+		i++;
+	} while (OS::IsExists(dirPath));
+
+	OS::CreateDirectoryName(dirPath);
+
+	if (!copySceneIndependentFiles(dirPath))
+	{
+		OS::DeleteDirectory(dirPath);
+		return false;
+	}
+
 	return true;
 }
 

@@ -27,4 +27,7 @@ struct EditorEvents
 
 	/// Set editor to save all
 	DEFINE_EVENT(EditorSaveAll);
+
+	/// Set editor to save all
+	DEFINE_EVENT(EditorExportScene);
 };
