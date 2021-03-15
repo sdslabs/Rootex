@@ -451,7 +451,7 @@ void OS::RelativeCopyFile(String& src, String& dest)
 	std::filesystem::copy_file(GetAbsolutePath(src), GetAbsolutePath(dest));
 }
 
-void OS::RelativeCopyFolder(String& src, String& dest)
+void OS::RelativeCopyDirectory(String& src, String& dest)
 {
 	std::filesystem::copy(GetAbsolutePath(src), GetAbsolutePath(dest), std::filesystem::copy_options::recursive);
 }
