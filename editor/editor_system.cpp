@@ -796,7 +796,13 @@ bool EditorSystem::copySceneIndependentFiles(String& exportBase)
 		    "alut.dll" },
 		{ "build/game/Release/OpenAL32.dll",
 		    "OpenAL32.dll" },
-		{ "rootex.root", "rootex.root" }
+		{ "build/game/Release/wrap_oal.dll",
+		    "wrap_oal.dll" },
+		{ "rootex.root", "rootex.root" },
+		{ "rootex/vendor/Debugger/Debugger.lua", "rootex/vendor/Debugger/Debugger.lua" },
+		{ "game/startup.lua", "game/startup.lua" },
+		{ "rootex/vendor/ASSAO/ASSAO.hlsl", "rootex/vendor/ASSAO/ASSAO.hlsl" },
+		{ "rootex/vendor/Middleclass/Middleclass.lua", "rootex/vendor/Middleclass/Middleclass.lua" },
 	};
 	for (auto& file : execFiles)
 	{
@@ -840,6 +846,24 @@ Variant EditorSystem::exportScene(const Event* event)
 		OS::DeleteDirectory(dirPath);
 		return false;
 	}
+
+	OS::CreateDirectoryName(dirPath + "game/assets/");
+	OS::CreateDirectoryName(dirPath + "rootex/assets/");
+	OS::RelativeCopyFolder(String("game/assets/"), dirPath + "game/assets/");
+	OS::RelativeCopyFolder(String("rootex/assets/"), dirPath + "rootex/assets/");
+
+	JSON::json gameConfig = JSON::json::parse(ResourceLoader::CreateTextResourceFile("game/game.app.json")->getString());
+	gameConfig["startLevel"] = toExportScene->getSceneFilePath();
+	TextResourceFile* newGameConfig = ResourceLoader::CreateNewTextResourceFile(dirPath + "game/game.app.json");
+	newGameConfig->putString(gameConfig.dump(4));
+	if (!newGameConfig->save())
+	{
+		WARN("Could not save application settings file");
+		OS::DeleteDirectory(dirPath);
+		return false;
+	}
+
+	PRINT("Successfully exported to " + dirPath)
 
 	return true;
 }
