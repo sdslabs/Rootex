@@ -1,7 +1,5 @@
 #pragma once
 
-#include <codecvt>
-
 #include "system.h"
 
 #include "Effekseer.h"
@@ -10,8 +8,6 @@
 
 class ParticleSystem : public System
 {
-	static inline std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> s_Convert;
-
 	EffekseerRendererDX11::Renderer* m_Renderer = nullptr;
 	Effekseer::Manager* m_Manager = nullptr;
 	EffekseerSound::Sound* m_Sound = nullptr;
