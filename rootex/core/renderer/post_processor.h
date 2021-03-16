@@ -58,12 +58,10 @@ class PostProcessor
 
 	Ptr<DirectX::BasicPostProcess> m_BasicPostProcess;
 
+public:
 	PostProcessor();
 	PostProcessor(PostProcessor&) = delete;
 	~PostProcessor() = default;
-
-public:
-	static PostProcessor* GetSingleton();
 
 	void draw(CameraComponent* camera);
 };

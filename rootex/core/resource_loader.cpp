@@ -42,6 +42,8 @@ ResourceFile* ResourceLoader::CreateResourceFile(const ResourceFile::Type& type,
 		return CreateAnimatedModelResourceFile(path);
 	case ResourceFile::Type::CollisionModel:
 		return CreateCollisionModelResourceFile(path);
+	// Not in use due to threading issues
+	case ResourceFile::Type::ParticleEffect:
 	default:
 		break;
 	}
@@ -108,6 +110,11 @@ ImageCubeResourceFile* ResourceLoader::CreateImageCubeResourceFile(const String&
 FontResourceFile* ResourceLoader::CreateFontResourceFile(const String& path)
 {
 	return GetCachedResource<FontResourceFile>(ResourceFile::Type::Font, FilePath(path));
+}
+
+ParticleEffectResourceFile* ResourceLoader::CreateParticleEffectResourceFile(const String& path)
+{
+	return GetCachedResource<ParticleEffectResourceFile>(ResourceFile::Type::ParticleEffect, FilePath(path));
 }
 
 int ResourceLoader::Preload(ResourceCollection paths, Atomic<int>& progress)
