@@ -16,6 +16,8 @@
 #include "systems/ui_system.h"
 #include "systems/render_ui_system.h"
 #include "systems/render_system.h"
+#include "systems/particle_system.h"
+#include "systems/post_process_system.h"
 #include "systems/script_system.h"
 #include "systems/transform_animation_system.h"
 
@@ -87,9 +89,13 @@ Application::Application(const String& settingsFile)
 
 	RenderUISystem::GetSingleton();
 	RenderSystem::GetSingleton();
-	ScriptSystem::GetSingleton();
+	ParticleSystem::GetSingleton()->initialize(systemsSettings["ParticleSystem"]);
+	PostProcessSystem::GetSingleton();
+
 	TransformAnimationSystem::GetSingleton();
 	AnimationSystem::GetSingleton();
+
+	ScriptSystem::GetSingleton();
 
 	if (!AudioSystem::GetSingleton()->initialize(systemsSettings["AudioSystem"]))
 	{

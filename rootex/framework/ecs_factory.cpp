@@ -28,6 +28,7 @@
 #include "components/visual/text_ui_component.h"
 #include "components/visual/ui_component.h"
 #include "components/visual/animated_model_component.h"
+#include "components/visual/particle_effect_component.h"
 
 void ECSFactory::RegisterComponentInstance(Component* component)
 {
@@ -178,6 +179,7 @@ void ECSFactory::Initialize()
 	REGISTER_COMPONENT(CPUParticlesComponent);
 	REGISTER_COMPONENT(UIComponent);
 	REGISTER_COMPONENT(AnimatedModelComponent);
+	REGISTER_COMPONENT(ParticleEffectComponent);
 }
 
 Ptr<Entity> ECSFactory::CreateRootEntity(Scene* scene)

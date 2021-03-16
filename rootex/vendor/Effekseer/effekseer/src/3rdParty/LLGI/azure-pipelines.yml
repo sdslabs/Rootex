@@ -1,0 +1,139 @@
+trigger:
+
+- master
+
+jobs:
+  - job: Windows
+    pool:
+      vmImage: 'vs2017-win2016'
+    steps:
+      - task: PowerShell@2
+        inputs:
+          targetType: 'inline'
+          script: |
+            git submodule update --init
+            git lfs install
+            git lfs pull
+
+      - task: CMake@1
+        inputs:
+          cmakeArgs: '.. -G "Visual Studio 15 2017" -A x64 -DBUILD_TEST=ON -DBUILD_EXAMPLE=ON'
+
+      - task: CMake@1
+        inputs:
+          cmakeArgs: '--build . --config Release'
+
+      - task: Bash@3
+        inputs:
+          targetType: 'inline'
+          script: |
+            mkdir test_ci
+            cp build/src_test/Release/LLGI_Test.exe test_ci/
+            cd test_ci
+            ./LLGI_Test.exe test
+
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: 'test_ci'
+          ArtifactName: 'Windows'
+          publishLocation: 'Container'
+
+  - job: MacOS
+    pool:
+      vmImage: 'macOS-10.14'
+    steps:
+      - task: PowerShell@2
+        inputs:
+          targetType: 'inline'
+          script: |
+            git submodule update --init
+            git lfs install
+            git lfs pull
+
+      - task: CMake@1
+        inputs:
+          cmakeArgs: '.. -DBUILD_TEST=ON -DBUILD_EXAMPLE=ON'
+
+      - task: CMake@1
+        inputs:
+          cmakeArgs: '--build . --config Release'
+
+    #  - task: Bash@3
+    #    inputs:
+    #      targetType: 'inline'
+    #      script: |
+    #        ./build/src_test/LLGI_Test test
+
+    #  - task: PublishBuildArtifacts@1
+    #    inputs:
+    #      PathtoPublish: 'build/src_test'
+    #      ArtifactName: 'MacOS'
+    #      publishLocation: 'Container'
+
+  - job: MacOS_iOS
+    pool:
+      vmImage: 'macOS-10.14'
+    steps:
+      - task: PowerShell@2
+        inputs:
+          targetType: 'inline'
+          script: |
+            git submodule update --init
+            git lfs install
+            git lfs pull
+
+      - task: CMake@1
+        inputs:
+          cmakeArgs: '.. -DCMAKE_SYSTEM_NAME=iOS -DIPHONEOS_DEPLOYMENT_TARGET=12.0 "-DCMAKE_OSX_ARCHITECTURES=armv7;armv7s;arm64;i386;x86_64"'
+
+      - task: CMake@1
+        inputs:
+          cmakeArgs: '--build . --config Release'
+
+  - job: Linux
+    pool:
+      vmImage: 'ubuntu-18.04'
+
+    steps:
+      - task: Bash@3
+        inputs:
+          targetType: 'inline'
+          script: |
+            wget -qO - https://packages.lunarg.com/lunarg-signing-key-pub.asc | sudo apt-key add -
+            sudo wget -qO /etc/apt/sources.list.d/lunarg-vulkan-1.1.126-bionic.list https://packages.lunarg.com/vulkan/1.1.126/lunarg-vulkan-1.1.126-bionic.list
+            sudo apt update
+            sudo apt install vulkan-sdk
+
+      - task: Bash@3
+        inputs:
+          targetType: 'inline'
+          script: |
+            curl -sL https://cmake.org/files/v3.15/cmake-3.15.3-Linux-x86_64.sh -o cmakeinstall.sh
+            chmod +x cmakeinstall.sh
+            sudo ./cmakeinstall.sh --prefix=/usr/local --exclude-subdir
+            rm cmakeinstall.sh
+            git submodule update --init
+            git lfs install
+            git lfs pull
+            sudo apt-get -y install libx11-dev libxrandr-dev libxi-dev libxinerama-dev libxcursor-dev libudev-dev libx11-xcb-dev
+            sudo apt-get -y install libglu1-mesa-dev mesa-common-dev
+            
+      - task: CMake@1
+        inputs:
+          cmakeArgs: '.. -DBUILD_TEST=ON -DBUILD_VULKAN=ON -DBUILD_VULKAN_COMPILER=ON -DBUILD_EXAMPLE=ON -DBUILD_TOOL=ON'
+
+      - task: CMake@1
+        inputs:
+          cmakeArgs: '--build . --config Release'
+
+    #  - task: Bash@3
+    #    inputs:
+    #      targetType: 'inline'
+    #      script: |
+    #        ./build/src_test/LLGI_Test test
+
+    #  - task: PublishBuildArtifacts@1
+    #    inputs:
+    #      PathtoPublish: 'build/src_test'
+    #      ArtifactName: 'Linux'
+    #      publishLocation: 'Container'

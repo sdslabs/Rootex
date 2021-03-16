@@ -11,17 +11,18 @@ function PlayerControl:begin(entity)
 end
 
 function PlayerControl:update(entity, delta)
+    delta = delta * 0.025
     if RTX.Input.IsPressed("Forward") then
-        self.collider:applyForce(RTX.Vector3.new(0, 0, -0.1))
+        self.collider:applyForce(RTX.Vector3.new(0, 0, -delta))
     end
     if RTX.Input.IsPressed("Backward") then
-        self.collider:applyForce(RTX.Vector3.new(0, 0, 0.1))
+        self.collider:applyForce(RTX.Vector3.new(0, 0, delta))
     end
     if RTX.Input.IsPressed("Left") then
-        self.collider:applyForce(RTX.Vector3.new(-0.1, 0, 0))
+        self.collider:applyForce(RTX.Vector3.new(-delta, 0, 0))
     end
     if RTX.Input.IsPressed("Right") then
-        self.collider:applyForce(RTX.Vector3.new(0.1, 0, 0))
+        self.collider:applyForce(RTX.Vector3.new(delta, 0, 0))
     end
 end
 

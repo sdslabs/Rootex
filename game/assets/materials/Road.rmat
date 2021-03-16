@@ -1,10 +1,10 @@
 {
-    "affectedBySky": true,
+    "affectedBySky": false,
     "color": {
         "a": 1.0,
-        "b": 0.5,
-        "g": 0.5,
-        "r": 0.5
+        "b": 0.245549738407135,
+        "g": 0.245549738407135,
+        "r": 0.24557429552078247
     },
     "imageFile": "rootex/assets/white.png",
     "isAlpha": false,
