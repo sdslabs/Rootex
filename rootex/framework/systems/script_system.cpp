@@ -14,31 +14,15 @@ ScriptSystem* ScriptSystem::GetSingleton()
 	return &singleton;
 }
 
-void CallBeginForScene(Scene* scene)
+void ScriptSystem::addInitScriptEntity(Entity* e)
 {
-	if (Entity* entity = scene->getEntity())
-	{
-		entity->evaluateScriptOverrides();
-		entity->call("begin", { entity });
-	}
-
-	for (auto& child : scene->getChildren())
-	{
-		CallBeginForScene(child.get());
-	}
-}
-
-void ScriptSystem::begin()
-{
-	Scene* root = SceneLoader::GetSingleton()->getRootScene();
-	CallBeginForScene(root);
+	m_ScriptEntitiesToInit.push_back(e);
 }
 
 void CallUpdateForScene(Scene* scene, float deltaMilliseconds)
 {
 	if (Entity* entity = scene->getEntity())
 	{
-		entity->evaluateScriptOverrides();
 		entity->call("update", { entity, deltaMilliseconds });
 	}
 
@@ -51,6 +35,17 @@ void CallUpdateForScene(Scene* scene, float deltaMilliseconds)
 void ScriptSystem::update(float deltaMilliseconds)
 {
 	ZoneScoped;
+
+	for (auto& entity : m_ScriptEntitiesToInit)
+	{
+		if (entity)
+		{
+			entity->evaluateScriptOverrides();
+			entity->call("begin", { entity });
+		}
+	}
+	m_ScriptEntitiesToInit.clear();
+
 	Scene* root = SceneLoader::GetSingleton()->getRootScene();
 	CallUpdateForScene(root, deltaMilliseconds);
 }
@@ -59,7 +54,6 @@ void CallDestroyForScene(Scene* scene)
 {
 	if (Entity* entity = scene->getEntity())
 	{
-		entity->evaluateScriptOverrides();
 		entity->call("destroy", { entity });
 	}
 

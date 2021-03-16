@@ -60,6 +60,7 @@ public:
 
 	Matrix interpolate(const String& nodeName, float currentTime);
 
+	float getStartTime() const;
 	float getEndTime() const;
 
 	void setDuration(float time) { m_Duration = time; }

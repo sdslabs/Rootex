@@ -1,7 +1,9 @@
 #include "transform_animation_component.h"
+
 #include "transform_component.h"
 #include "entity.h"
 #include "systems/render_system.h"
+#include "utility/maths.h"
 
 void to_json(JSON::json& j, const TransformAnimationComponent::Keyframe& k)
 {
@@ -35,23 +37,6 @@ TransformAnimationComponent::TransformAnimationComponent(const Vector<Keyframe> 
     , m_TimeDirection(1.0f)
     , m_DependencyOnTransformComponent(this)
 {
-}
-
-Matrix TransformAnimationComponent::interpolateMatrix(const Matrix& left, const Matrix& right, float lerpFactor)
-{
-	Quaternion leftRotation = Quaternion::CreateFromRotationMatrix(left);
-	Quaternion rightRotation = Quaternion::CreateFromRotationMatrix(right);
-
-	Quaternion finalRotation = Quaternion::Slerp(leftRotation, rightRotation, lerpFactor);
-
-	Matrix finalMat = Matrix::CreateFromQuaternion(finalRotation);
-
-	for (int i : { 0, 1, 2 })
-	{
-		finalMat.m[3][i] = left.m[3][i] * (1.0f - lerpFactor) + right.m[3][i] * lerpFactor;
-	}
-
-	return finalMat;
 }
 
 bool TransformAnimationComponent::setupData()
@@ -157,10 +142,10 @@ void TransformAnimationComponent::interpolate(float deltaSeconds)
 					break;
 				}
 
-				const Matrix& leftMat = m_Keyframes[i].transform;
-				const Matrix& rightMat = m_Keyframes[i + 1u].transform;
+				Matrix& leftMat = m_Keyframes[i].transform;
+				Matrix& rightMat = m_Keyframes[i + 1u].transform;
 
-				Matrix finalMat = interpolateMatrix(leftMat, rightMat, lerpFactor);
+				Matrix finalMat = Interpolate(leftMat, rightMat, lerpFactor);
 				m_TransformComponent->setTransform(finalMat);
 
 				// No need to check futher. This will be the only one needed.
