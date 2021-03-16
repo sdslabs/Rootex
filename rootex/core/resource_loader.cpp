@@ -52,9 +52,22 @@ int ResourceLoader::Preload(ResourceCollection paths, Atomic<int>& progress)
 {
 	progress = 0;
 
+	std::sort(paths.begin(), paths.end(), [](const Pair<ResourceFile::Type, String>& a, const Pair<ResourceFile::Type, String>& b) {
+		return (int)a.first < (int)b.first && a.second < b.second;
+	});
+
+	ResourceCollection empericalPaths = { paths.front() };
+	for (auto& incomingPath : paths)
+	{
+		if (empericalPaths.back() != incomingPath)
+		{
+			empericalPaths.emplace_back(incomingPath);
+		}
+	}
+
 	Vector<Ref<Task>> tasks;
 
-	for (auto& path : paths)
+	for (auto& path : empericalPaths)
 	{
 		ResourceFile::Type type = path.first;
 		String pathString = path.second;
@@ -71,7 +84,7 @@ int ResourceLoader::Preload(ResourceCollection paths, Atomic<int>& progress)
 
 	Application::GetSingleton()->getThreadPool().submit(tasks);
 
-	return tasks.size() - 1;
+	return tasks.size() - 1; // One less for the dummy task
 }
 
 void ResourceLoader::Persist(Ref<ResourceFile> res)
