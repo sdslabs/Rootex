@@ -10,7 +10,7 @@
 #include "imgui_impl_win32.h"
 
 DebugSystem::DebugSystem()
-    : System("DebugSystem", System::UpdateOrder::PostRender, true)
+    : System("DebugSystem", System::UpdateOrder::GameRender, true)
 {
 	m_FPSRecords.resize(100);
 }

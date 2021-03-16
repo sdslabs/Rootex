@@ -6,7 +6,7 @@
 Component* StaticMeshColliderComponent::Create(const JSON::json& staticMeshComponentData)
 {
 	StaticMeshColliderComponent* component = new StaticMeshColliderComponent(
-	    staticMeshComponentData.value("collisionModel", String("rootex/assets/cube.obj")),
+	    ResourceLoader::CreateCollisionModelResourceFile(staticMeshComponentData.value("collisionModel", String("rootex/assets/cube.obj"))),
 	    staticMeshComponentData.value("offset", Vector3(0.0f, 0.0f, 0.0f)),
 	    staticMeshComponentData.value("material", PhysicsMaterial::Air),
 	    staticMeshComponentData.value("collisionGroup", (int)CollisionMask::All),
@@ -16,7 +16,7 @@ Component* StaticMeshColliderComponent::Create(const JSON::json& staticMeshCompo
 }
 
 StaticMeshColliderComponent::StaticMeshColliderComponent(
-    const String& collisionModelPath,
+    Ref<CollisionModelResourceFile> file,
     const Vector3& offset,
     const PhysicsMaterial& material,
     int collisionGroup,
@@ -36,7 +36,7 @@ StaticMeshColliderComponent::StaticMeshColliderComponent(
         true,
         false,
         nullptr)
-    , m_CollisionModel(ResourceLoader::CreateCollisionModelResourceFile(collisionModelPath))
+    , m_CollisionModel(file)
 {
 	// m_MeshShape will be set during setup
 }
@@ -48,7 +48,7 @@ bool StaticMeshColliderComponent::setupData()
 	return PhysicsColliderComponent::setupData();
 }
 
-void StaticMeshColliderComponent::setCollisionModel(CollisionModelResourceFile* file)
+void StaticMeshColliderComponent::setCollisionModel(Ref<CollisionModelResourceFile> file)
 {
 	m_CollisionModel = file;
 	setupData();

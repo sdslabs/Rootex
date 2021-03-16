@@ -14,7 +14,7 @@ Component* MusicComponent::Create(const JSON::json& componentData)
 	return musicComponent;
 }
 
-MusicComponent::MusicComponent(AudioResourceFile* audioFile, bool playOnStart, bool isLooping, bool attenuation, AudioSource::AttenuationModel model,
+MusicComponent::MusicComponent(Ref<AudioResourceFile> audioFile, bool playOnStart, bool isLooping, bool attenuation, AudioSource::AttenuationModel model,
     ALfloat rolloffFactor, ALfloat referenceDistance, ALfloat maxDistance)
     : AudioComponent(playOnStart, isLooping, attenuation, model, rolloffFactor, referenceDistance, maxDistance)
     , m_AudioFile(audioFile)
@@ -47,7 +47,7 @@ JSON::json MusicComponent::getJSON() const
 	return j;
 }
 
-void MusicComponent::setAudioFile(AudioResourceFile* audioFile)
+void MusicComponent::setAudioFile(Ref<AudioResourceFile> audioFile)
 {
 	m_AudioFile = audioFile;
 	setupData();

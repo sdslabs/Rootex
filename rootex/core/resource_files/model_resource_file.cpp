@@ -161,7 +161,7 @@ void ModelResourceFile::reimport()
 				{
 					// Texture is given as a path
 					String texturePath = diffuseStr.C_Str();
-					ImageResourceFile* image = ResourceLoader::CreateImageResourceFile(getPath().parent_path().generic_string() + "/" + texturePath);
+					Ref<ImageResourceFile> image = ResourceLoader::CreateImageResourceFile(getPath().parent_path().generic_string() + "/" + texturePath);
 
 					if (image)
 					{
@@ -186,7 +186,7 @@ void ModelResourceFile::reimport()
 				if (isEmbedded)
 				{
 					String texturePath = normalStr.C_Str();
-					ImageResourceFile* image = ResourceLoader::CreateImageResourceFile(getPath().parent_path().generic_string() + "/" + texturePath);
+					Ref<ImageResourceFile> image = ResourceLoader::CreateImageResourceFile(getPath().parent_path().generic_string() + "/" + texturePath);
 
 					if (image)
 					{
@@ -211,7 +211,7 @@ void ModelResourceFile::reimport()
 				if (isEmbedded)
 				{
 					String texturePath = specularStr.C_Str();
-					ImageResourceFile* image = ResourceLoader::CreateImageResourceFile(getPath().parent_path().generic_string() + "/" + texturePath);
+					Ref<ImageResourceFile> image = ResourceLoader::CreateImageResourceFile(getPath().parent_path().generic_string() + "/" + texturePath);
 
 					if (image)
 					{
@@ -236,7 +236,7 @@ void ModelResourceFile::reimport()
 				if (isEmbedded)
 				{
 					String texturePath = lightmapStr.C_Str();
-					ImageResourceFile* image = ResourceLoader::CreateImageResourceFile(getPath().parent_path().generic_string() + "/" + texturePath);
+					Ref<ImageResourceFile> image = ResourceLoader::CreateImageResourceFile(getPath().parent_path().generic_string() + "/" + texturePath);
 
 					if (image)
 					{

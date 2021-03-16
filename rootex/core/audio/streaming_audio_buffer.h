@@ -22,7 +22,7 @@ class StreamingAudioBuffer : public AudioBuffer
 	void destroyBuffers() override;
 
 public:
-	StreamingAudioBuffer(AudioResourceFile* audioFile);
+	StreamingAudioBuffer(Ref<AudioResourceFile> audioFile);
 	~StreamingAudioBuffer();
 
 	void loadNewBuffers(int count, bool isLooping);

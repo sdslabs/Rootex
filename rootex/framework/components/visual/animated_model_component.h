@@ -30,7 +30,7 @@ protected:
 	float m_TransitionTime = 1.0f;
 	float m_RemainingTransitionTime = 0.0f;
 
-	AnimatedModelResourceFile* m_AnimatedModelResourceFile;
+	Ref<AnimatedModelResourceFile> m_AnimatedModelResourceFile;
 	String m_CurrentAnimationName;
 	float m_CurrentTimePosition;
 	bool m_IsPlaying;
@@ -40,7 +40,7 @@ protected:
 
 	AnimatedModelComponent(
 	    bool isPlayOnStart,
-	    AnimatedModelResourceFile* resFile,
+	    Ref<AnimatedModelResourceFile> resFile,
 	    const String& currentAnimationName,
 	    AnimationMode mode,
 	    unsigned int renderPass,
@@ -60,7 +60,7 @@ public:
 	virtual bool preRender(float deltaMilliseconds) override;
 	virtual void render(float viewDistance) override;
 
-	virtual AnimatedModelResourceFile* getAnimatedResourceFile() const { return m_AnimatedModelResourceFile; }
+	virtual Ref<AnimatedModelResourceFile> getAnimatedResourceFile() const { return m_AnimatedModelResourceFile; }
 	virtual String getCurrentAnimationName() const { return m_CurrentAnimationName; }
 	virtual float getCurrentTime() const { return m_CurrentTimePosition; }
 
@@ -78,8 +78,8 @@ public:
 	bool hasEnded() const;
 
 	void assignBoundingBox();
-	void assignOverrides(AnimatedModelResourceFile* file, const HashMap<String, String>& materialOverrides);
-	void setAnimatedResourceFile(AnimatedModelResourceFile* file, const HashMap<String, String>& materialOverrides);
+	void assignOverrides(Ref<AnimatedModelResourceFile> file, const HashMap<String, String>& materialOverrides);
+	void setAnimatedResourceFile(Ref<AnimatedModelResourceFile> file, const HashMap<String, String>& materialOverrides);
 
 	virtual const char* getName() const override { return "AnimatedModelComponent"; }
 	ComponentID getComponentID() const override { return s_ID; }

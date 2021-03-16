@@ -52,6 +52,8 @@ EditorApplication::EditorApplication()
 	InputInterface::s_IsEnabled = false;
 	EditorSystem::GetSingleton()->initialize(m_ApplicationSettings->getJSON()["systems"]["EditorSystem"]);
 
+	destroySplashWindow();
+
 	m_PointAtLast10Second = m_ApplicationTimer.Now();
 }
 

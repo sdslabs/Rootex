@@ -2,7 +2,7 @@
 
 ApplicationSettings* ApplicationSettings::s_Instance = nullptr;
 
-ApplicationSettings::ApplicationSettings(TextResourceFile* settingsFile)
+ApplicationSettings::ApplicationSettings(Ref<TextResourceFile> settingsFile)
     : m_Settings(JSON::json::parse(settingsFile->getString()))
     , m_TextSettingsFile(settingsFile)
 {

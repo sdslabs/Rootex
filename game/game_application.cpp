@@ -68,4 +68,6 @@ GameApplication::GameApplication()
 
 	GameRenderSystem::GetSingleton()->initialize({});
 	DebugSystem::GetSingleton()->initialize(m_ApplicationSettings->getJSON()["systems"]["DebugSystem"]);
+
+	destroySplashWindow();
 }

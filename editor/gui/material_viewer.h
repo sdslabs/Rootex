@@ -10,7 +10,7 @@ class MaterialViewer
 	Ref<Material> m_OpenedMaterial;
 
 public:
-	ResourceFile* load(const FilePath& filePath);
+	Ref<ResourceFile> load(const FilePath& filePath);
 	void unload();
 
 	void draw(float deltaMilliseconds);

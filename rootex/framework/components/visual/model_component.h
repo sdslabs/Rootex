@@ -17,11 +17,11 @@ class ModelComponent : public RenderableComponent
 	friend class ECSFactory;
 
 protected:
-	ModelResourceFile* m_ModelResourceFile;
+	Ref<ModelResourceFile> m_ModelResourceFile;
 
 	ModelComponent(
 	    unsigned int renderPass,
-	    ModelResourceFile* resFile,
+	    Ref<ModelResourceFile> resFile,
 	    const HashMap<String, String>& materialOverrides,
 	    bool isVisible,
 	    bool lodEnable,
@@ -32,7 +32,7 @@ protected:
 	virtual ~ModelComponent() = default;
 
 	void assignBoundingBox();
-	void assignOverrides(ModelResourceFile* newModel, const HashMap<String, String>& materialOverrides);
+	void assignOverrides(Ref<ModelResourceFile> newModel, const HashMap<String, String>& materialOverrides);
 
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::ModelComponent;
@@ -42,10 +42,10 @@ public:
 	virtual bool preRender(float deltaMilliseconds) override;
 	virtual void render(float viewDistance) override;
 
-	void setModelResourceFile(ModelResourceFile* newModel, const HashMap<String, String>& materialOverrides);
+	void setModelResourceFile(Ref<ModelResourceFile> newModel, const HashMap<String, String>& materialOverrides);
 
 	const Vector<Pair<Ref<Material>, Vector<Mesh>>>& getMeshes() const { return m_ModelResourceFile->getMeshes(); }
-	ModelResourceFile* getModelResourceFile() const { return m_ModelResourceFile; }
+	ModelResourceFile* getModelResourceFile() const { return m_ModelResourceFile.get(); }
 
 	virtual const char* getName() const override { return "ModelComponent"; }
 	ComponentID getComponentID() const override { return s_ID; }
