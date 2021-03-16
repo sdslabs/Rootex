@@ -59,7 +59,8 @@ public:
 	void setParentAbsoluteTransform(const Matrix& parentTransform);
 
 	void addTransform(const Matrix& applyTransform);
-	void addRotation(const Quaternion& applyTransform);
+	void addQuaternion(const Quaternion& applyQuaternion);
+	void addRotation(float yaw, float pitch, float roll);
 
 	Vector3 getPosition() const { return m_TransformBuffer.m_Position; }
 	Quaternion getRotation() const { return m_TransformBuffer.m_Rotation; };

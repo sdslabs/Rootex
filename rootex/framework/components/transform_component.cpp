@@ -122,11 +122,16 @@ void TransformComponent::addTransform(const Matrix& applyTransform)
 	m_IsAbsoluteTransformDirty = true;
 }
 
-void TransformComponent::addRotation(const Quaternion& applyTransform)
+void TransformComponent::addQuaternion(const Quaternion& applyQuaternion)
 {
-	m_TransformBuffer.m_Rotation = Quaternion::Concatenate(applyTransform, m_TransformBuffer.m_Rotation);
+	m_TransformBuffer.m_Rotation = Quaternion::Concatenate(applyQuaternion, m_TransformBuffer.m_Rotation);
 	updateTransformFromPositionRotationScale();
 	m_IsAbsoluteTransformDirty = true;
+}
+
+void TransformComponent::addRotation(float yaw, float pitch, float roll)
+{
+	addQuaternion(Quaternion::CreateFromYawPitchRoll(yaw, pitch, roll));
 }
 
 BoundingBox TransformComponent::getWorldSpaceBounds()

@@ -48,8 +48,6 @@ private:
 	TransformAnimationComponent(TransformComponent&) = delete;
 	~TransformAnimationComponent() = default;
 
-	Matrix interpolateMatrix(const Matrix& left, const Matrix& right, float lerpFactor);
-
 	friend class TransformAnimationSystem;
 
 public:

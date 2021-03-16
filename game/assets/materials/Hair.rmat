@@ -1,10 +1,10 @@
 {
-    "affectedBySky": false,
+    "affectedBySky": true,
     "color": {
         "a": 1.0,
-        "b": 0.9998999834060669,
-        "g": 0.9998999834060669,
-        "r": 1.0
+        "b": 0.028818288818001747,
+        "g": 0.027979830279946327,
+        "r": 0.04177311062812805
     },
     "imageFile": "rootex/assets/white.png",
     "isAlpha": false,
@@ -17,5 +17,5 @@
     "specularImageFile": "rootex/assets/white.png",
     "specularIntensity": 0.5,
     "specularPower": 30.0,
-    "type": "BasicMaterial"
+    "type": "AnimatedMaterial"
 }

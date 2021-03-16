@@ -59,6 +59,55 @@
                         "referenceDistance": 1.0,
                         "rollOffFactor": 1.0
                     },
+                    "TransformAnimationComponent": {
+                        "animationMode": 2,
+                        "isPlayOnStart": false,
+                        "keyframes": [
+                            {
+                                "timePosition": 0.0,
+                                "transform": [
+                                    1.0000001192092896,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0000004768371582,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0000001192092896,
+                                    0.0,
+                                    1.4999792575836182,
+                                    5.499999046325684,
+                                    -12.229997634887695,
+                                    1.0
+                                ]
+                            },
+                            {
+                                "timePosition": 1.0,
+                                "transform": [
+                                    1.0000001192092896,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0000004768371582,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0000001192092896,
+                                    0.0,
+                                    1.4999792575836182,
+                                    5.399999141693115,
+                                    -9.429997444152832,
+                                    1.0
+                                ]
+                            }
+                        ],
+                        "transitionType": 1
+                    },
                     "TransformComponent": {
                         "boundingBox": {
                             "center": {
@@ -73,9 +122,9 @@
                             }
                         },
                         "position": {
-                            "x": 1.4999792575836182,
-                            "y": 5.499999046325684,
-                            "z": -12.229997634887695
+                            "x": 0.0,
+                            "y": 5.413672924041748,
+                            "z": -9.812860488891602
                         },
                         "rotation": {
                             "w": 1.0,
@@ -84,9 +133,9 @@
                             "z": -0.0
                         },
                         "scale": {
-                            "x": 1.0000001192092896,
-                            "y": 1.0000004768371582,
-                            "z": 1.0000001192092896
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
                         }
                     }
                 }
@@ -257,6 +306,75 @@
                         "preloads": [],
                         "startScheme": ""
                     }
+                },
+                {
+                    "ID": 25,
+                    "children": [],
+                    "entity": {
+                        "Entity": {
+                            "script": null
+                        },
+                        "components": {
+                            "PointLightComponent": {
+                                "ambientColor": {
+                                    "a": 1.0,
+                                    "b": 0.9999902844429016,
+                                    "g": 1.0,
+                                    "r": 0.9999899864196777
+                                },
+                                "attConst": 0.11500000208616257,
+                                "attLin": 1.2699999809265137,
+                                "attQuad": 0.6100000143051147,
+                                "diffuseColor": {
+                                    "a": 1.0,
+                                    "b": 0.9999899864196777,
+                                    "g": 0.9999899864196777,
+                                    "r": 1.0
+                                },
+                                "diffuseIntensity": 64.5,
+                                "range": 2.299999952316284
+                            },
+                            "TransformComponent": {
+                                "boundingBox": {
+                                    "center": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "extents": {
+                                        "x": 0.5,
+                                        "y": 0.5,
+                                        "z": 0.5
+                                    }
+                                },
+                                "position": {
+                                    "x": 0.0,
+                                    "y": 2.999999523162842,
+                                    "z": 0.0
+                                },
+                                "rotation": {
+                                    "w": 1.0,
+                                    "x": -0.0,
+                                    "y": 0.0,
+                                    "z": -0.0
+                                },
+                                "scale": {
+                                    "x": 1.0,
+                                    "y": 1.0,
+                                    "z": 1.0
+                                }
+                            }
+                        }
+                    },
+                    "file": "",
+                    "name": "Torch",
+                    "settings": {
+                        "camera": 1,
+                        "inputSchemes": {},
+                        "listener": 1,
+                        "preloads": [],
+                        "startScheme": ""
+                    }
                 }
             ],
             "entity": {
@@ -271,17 +389,24 @@
                 "components": {
                     "AnimatedModelComponent": {
                         "affectingStaticLights": [],
-                        "currentAnimationName": "",
-                        "isPlayOnStart": false,
+                        "animationMode": 1,
+                        "currentAnimationName": "HumanArmature|Man_Idle",
+                        "isPlayOnStart": true,
                         "isVisible": true,
                         "lodBias": 1.0,
                         "lodDistance": 26.0,
                         "lodEnable": true,
                         "materialOverrides": {
-                            "rootex/assets/materials/animated_default.rmat": "rootex/assets/materials/animated_default.rmat"
+                            "game/assets/materials/Eyes.rmat": "game/assets/materials/Eyes.rmat",
+                            "game/assets/materials/Hair.rmat": "game/assets/materials/Hair.rmat",
+                            "game/assets/materials/Pants.rmat": "game/assets/materials/Pants.rmat",
+                            "game/assets/materials/Shirt.rmat": "game/assets/materials/Shirt.rmat",
+                            "game/assets/materials/Skin.rmat": "game/assets/materials/Skin.rmat",
+                            "game/assets/materials/Socks.rmat": "game/assets/materials/Socks.rmat"
                         },
                         "renderPass": 1,
-                        "resFile": "rootex/assets/animation.dae"
+                        "resFile": "game/assets/Male_Casual.fbx",
+                        "transitionTime": 1.0
                     },
                     "AudioListenerComponent": null,
                     "CapsuleColliderComponent": {
@@ -305,29 +430,29 @@
                         "material": 2,
                         "offset": {
                             "x": 0.0,
-                            "y": 0.38999998569488525,
+                            "y": 0.5099999904632568,
                             "z": 0.0
                         },
-                        "radius": 0.3700000047683716,
-                        "sideHeight": 0.7900000214576721,
+                        "radius": 0.17000000178813934,
+                        "sideHeight": 0.6899999976158142,
                         "volume": 0.5519411563873291
                     },
                     "TransformComponent": {
                         "boundingBox": {
                             "center": {
                                 "x": 0.0,
-                                "y": 4.339252948760986,
-                                "z": 0.013939738273620605
+                                "y": 2.423985481262207,
+                                "z": -0.07197563350200653
                             },
                             "extents": {
-                                "x": 2.7054710388183594,
-                                "y": -4.359586238861084,
-                                "z": 1.7636620998382568
+                                "x": 2.5985825061798096,
+                                "y": 2.420626640319824,
+                                "z": 0.47139012813568115
                             }
                         },
                         "position": {
-                            "x": 1.2699999809265137,
-                            "y": 1.1999999284744263,
+                            "x": 1.2569971084594727,
+                            "y": 0.36336830258369446,
                             "z": -4.309000015258789
                         },
                         "rotation": {
@@ -451,6 +576,137 @@
             },
             "file": "",
             "name": "Camera",
+            "settings": {
+                "camera": 1,
+                "inputSchemes": {},
+                "listener": 1,
+                "preloads": [],
+                "startScheme": ""
+            }
+        },
+        {
+            "ID": 24,
+            "children": [],
+            "entity": {
+                "Entity": {
+                    "script": null
+                },
+                "components": {
+                    "DirectionalLightComponent": {
+                        "ambientColor": {
+                            "a": 1.0,
+                            "b": 0.24080029129981995,
+                            "g": 0.24080270528793335,
+                            "r": 0.24080270528793335
+                        },
+                        "diffuseColor": {
+                            "a": 1.0,
+                            "b": 0.2441447377204895,
+                            "g": 0.2441471815109253,
+                            "r": 0.2441471815109253
+                        },
+                        "diffuseIntensity": 3.700000047683716
+                    },
+                    "TransformComponent": {
+                        "boundingBox": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "extents": {
+                                "x": 0.5,
+                                "y": 0.5,
+                                "z": 0.5
+                            }
+                        },
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "rotation": {
+                            "w": 0.04741458594799042,
+                            "x": -0.016627643257379532,
+                            "y": 0.9941989183425903,
+                            "z": 0.09509934484958649
+                        },
+                        "scale": {
+                            "x": 1.0000011920928955,
+                            "y": 1.0000001192092896,
+                            "z": 1.0
+                        }
+                    }
+                }
+            },
+            "file": "",
+            "name": "Light",
+            "settings": {
+                "camera": 1,
+                "inputSchemes": {},
+                "listener": 1,
+                "preloads": [],
+                "startScheme": ""
+            }
+        },
+        {
+            "ID": 26,
+            "children": [],
+            "entity": {
+                "Entity": {
+                    "script": null
+                },
+                "components": {
+                    "TextUIComponent": {
+                        "color": {
+                            "a": 1.0,
+                            "b": 0.903010368347168,
+                            "g": 0.0,
+                            "r": 1.0
+                        },
+                        "fontResource": "game/assets/fonts/noto_sans_50_regular.spritefont",
+                        "isVisible": true,
+                        "mode": 0,
+                        "origin": {
+                            "x": 9.0,
+                            "y": 0.0
+                        },
+                        "text": "WASD to move. Hold Space to punch"
+                    },
+                    "TransformComponent": {
+                        "boundingBox": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "extents": {
+                                "x": 0.5,
+                                "y": 0.5,
+                                "z": 0.5
+                            }
+                        },
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "rotation": {
+                            "w": 0.710101842880249,
+                            "x": -0.7024624943733215,
+                            "y": 0.03374163806438446,
+                            "z": -0.034108664840459824
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0000063180923462
+                        }
+                    }
+                }
+            },
+            "file": "",
+            "name": "Text",
             "settings": {
                 "camera": 1,
                 "inputSchemes": {},
@@ -591,6 +847,11 @@
                         "button": 68,
                         "device": 1,
                         "inputEvent": "Right"
+                    },
+                    {
+                        "button": 32,
+                        "device": 1,
+                        "inputEvent": "Punch"
                     }
                 ],
                 "floats": []
@@ -625,6 +886,10 @@
             [
                 4,
                 "game/assets/office.fbx"
+            ],
+            [
+                5,
+                "game/assets/Male_Casual.fbx"
             ]
         ],
         "startScheme": "Controls"

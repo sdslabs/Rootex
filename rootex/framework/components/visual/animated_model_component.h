@@ -11,24 +11,38 @@
 
 class AnimatedModelComponent : public RenderableComponent
 {
+public:
+	enum class AnimationMode : int
+	{
+		None = 0,
+		Looping = 1,
+		Alternating = 2
+	};
+
+private:
 	static Component* Create(const JSON::json& componentData);
 
 	friend class ECSFactory;
 	friend class AnimationSystem;
 
 protected:
-	AnimatedModelResourceFile* m_AnimatedModelResourceFile;
+	float m_TimeDirection = 1.0f;
+	float m_TransitionTime = 1.0f;
+	float m_RemainingTransitionTime = 0.0f;
 
+	AnimatedModelResourceFile* m_AnimatedModelResourceFile;
 	String m_CurrentAnimationName;
 	float m_CurrentTimePosition;
 	bool m_IsPlaying;
 	bool m_IsPlayOnStart;
+	AnimationMode m_AnimationMode;
 	Vector<Matrix> m_FinalTransforms;
 
 	AnimatedModelComponent(
 	    bool isPlayOnStart,
 	    AnimatedModelResourceFile* resFile,
 	    const String& currentAnimationName,
+	    AnimationMode mode,
 	    unsigned int renderPass,
 	    const HashMap<String, String>& materialOverrides,
 	    bool isVisible,
@@ -50,10 +64,18 @@ public:
 	virtual String getCurrentAnimationName() const { return m_CurrentAnimationName; }
 	virtual float getCurrentTime() const { return m_CurrentTimePosition; }
 
+	void update(float deltaMilliseconds);
 	void setPlaying(bool enabled);
 	void play();
 	void stop();
 	void setAnimation(const String& name);
+
+	void transition(const String& name, float transitionTime);
+
+	float getStartTime() const;
+	float getEndTime() const;
+	bool isPlaying() const { return m_IsPlaying; }
+	bool hasEnded() const;
 
 	void assignBoundingBox();
 	void assignOverrides(AnimatedModelResourceFile* file, const HashMap<String, String>& materialOverrides);

@@ -312,6 +312,8 @@ void LuaInterpreter::registerTypes()
 		transformComponent["setScale"] = &TransformComponent::setScale;
 		transformComponent["setTransform"] = &TransformComponent::setTransform;
 		transformComponent["addTransform"] = &TransformComponent::addTransform;
+		transformComponent["addQuaternion"] = &TransformComponent::addQuaternion;
+		transformComponent["addRotation"] = &TransformComponent::addRotation;
 		transformComponent["getPosition"] = &TransformComponent::getPosition;
 		transformComponent["getAbsolutePosition"] = &TransformComponent::getAbsolutePosition;
 		transformComponent["setAbsolutePosition"] = &TransformComponent::setAbsolutePosition;
@@ -344,6 +346,7 @@ void LuaInterpreter::registerTypes()
 		animatedModelComponent["getAnimatedResourceFile"] = &AnimatedModelComponent::getAnimatedResourceFile;
 		animatedModelComponent["setAnimatedResourceFile"] = &AnimatedModelComponent::setAnimatedResourceFile;
 		animatedModelComponent["setAnimation"] = &AnimatedModelComponent::setAnimation;
+		animatedModelComponent["transition"] = &AnimatedModelComponent::transition;
 		animatedModelComponent["play"] = &AnimatedModelComponent::play;
 		animatedModelComponent["stop"] = &AnimatedModelComponent::stop;
 		animatedModelComponent["setPlaying"] = &AnimatedModelComponent::setPlaying;
