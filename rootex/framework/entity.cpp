@@ -4,6 +4,7 @@
 #include "framework/ecs_factory.h"
 #include "framework/component.h"
 #include "framework/system.h"
+#include "framework/systems/script_system.h"
 #include "script/script.h"
 #include "resource_loader.h"
 
@@ -17,6 +18,7 @@ Entity::Entity(Scene* scene, const JSON::json& script)
 		if (OS::IsExists(script["path"]))
 		{
 			m_Script.reset(new Script(script));
+			ScriptSystem::GetSingleton()->addInitScriptEntity(this);
 		}
 		else
 		{

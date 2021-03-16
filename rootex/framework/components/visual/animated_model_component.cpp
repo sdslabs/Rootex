@@ -8,10 +8,28 @@
 #include "renderer/material_library.h"
 #include "scene_loader.h"
 
+Component* AnimatedModelComponent::Create(const JSON::json& componentData)
+{
+	AnimatedModelComponent* animatedModelComponent = new AnimatedModelComponent(
+	    componentData.value("isPlayOnStart", false),
+	    ResourceLoader::CreateAnimatedModelResourceFile(componentData.value("resFile", "rootex/assets/animation.dae")),
+	    componentData.value("currentAnimationName", ""),
+	    (AnimationMode)componentData.value("animationMode", (int)AnimationMode::None),
+	    componentData.value("renderPass", (int)RenderPass::Basic),
+	    componentData.value("materialOverrides", HashMap<String, String>()),
+	    componentData.value("isVisible", true),
+	    componentData.value("lodEnable", true),
+	    componentData.value("lodBias", 0.0f),
+	    componentData.value("lodDistance", 10.0f),
+	    componentData.value("affectingStaticLights", Vector<SceneID>()));
+	return animatedModelComponent;
+}
+
 AnimatedModelComponent::AnimatedModelComponent(
     bool isPlayOnStart,
     AnimatedModelResourceFile* resFile,
     const String& currentAnimationName,
+    AnimationMode mode,
     unsigned int renderPass,
     const HashMap<String, String>& materialOverrides,
     bool isVisible,
@@ -23,26 +41,11 @@ AnimatedModelComponent::AnimatedModelComponent(
     , m_CurrentTimePosition(0.0f)
     , m_IsPlaying(isPlayOnStart)
     , m_IsPlayOnStart(isPlayOnStart)
+    , m_AnimationMode(mode)
     , m_CurrentAnimationName(currentAnimationName)
 {
 	assignOverrides(resFile, materialOverrides);
 	m_FinalTransforms.resize(m_AnimatedModelResourceFile->getBoneCount());
-}
-
-Component* AnimatedModelComponent::Create(const JSON::json& componentData)
-{
-	AnimatedModelComponent* animatedModelComponent = new AnimatedModelComponent(
-	    componentData.value("isPlayOnStart", false),
-	    ResourceLoader::CreateAnimatedModelResourceFile(componentData.value("resFile", "rootex/assets/animation.dae")),
-	    componentData.value("currentAnimationName", ""),
-	    componentData.value("renderPass", (int)RenderPass::Basic),
-	    componentData.value("materialOverrides", HashMap<String, String>()),
-	    componentData.value("isVisible", true),
-	    componentData.value("lodEnable", true),
-	    componentData.value("lodBias", 0.0f),
-	    componentData.value("lodDistance", 10.0f),
-	    componentData.value("affectingStaticLights", Vector<SceneID>()));
-	return animatedModelComponent;
 }
 
 bool AnimatedModelComponent::setupData()
@@ -75,6 +78,77 @@ void AnimatedModelComponent::render(float viewDistance)
 			RenderSystem::GetSingleton()->getRenderer()->draw(mesh.m_VertexBuffer.get(), mesh.getLOD(getLODFactor(viewDistance)).get());
 		}
 	}
+}
+
+void AnimatedModelComponent::update(float deltaMilliseconds)
+{
+	switch (m_AnimationMode)
+	{
+	case AnimationMode::None:
+		break;
+	case AnimationMode::Looping:
+		if (m_CurrentTimePosition > getEndTime())
+		{
+			m_CurrentTimePosition = 0.0f;
+		}
+		break;
+	case AnimationMode::Alternating:
+		if (m_CurrentTimePosition < getStartTime() || getEndTime() < m_CurrentTimePosition)
+		{
+			m_TimeDirection *= -1.0f;
+			m_CurrentTimePosition = std::clamp(m_CurrentTimePosition, getStartTime(), getEndTime());
+		}
+		deltaMilliseconds *= m_TimeDirection;
+		break;
+	}
+	m_CurrentTimePosition += deltaMilliseconds * MS_TO_S;
+	m_RemainingTransitionTime -= deltaMilliseconds * MS_TO_S;
+	m_RemainingTransitionTime = std::max(m_RemainingTransitionTime, 0.0f);
+
+	m_AnimatedModelResourceFile->getFinalTransforms(m_FinalTransforms, m_CurrentAnimationName, m_CurrentTimePosition, std::max(0.2f, 1.0f - m_RemainingTransitionTime / m_TransitionTime));
+}
+
+void AnimatedModelComponent::setPlaying(bool enabled)
+{
+	m_IsPlaying = enabled;
+}
+
+void AnimatedModelComponent::play()
+{
+	setPlaying(true);
+}
+
+void AnimatedModelComponent::stop()
+{
+	setPlaying(false);
+}
+
+void AnimatedModelComponent::setAnimation(const String& name)
+{
+	PANIC(m_AnimatedModelResourceFile->getAnimations().find(name) == m_AnimatedModelResourceFile->getAnimations().end(), "Animation name not found: " + name);
+	m_CurrentAnimationName = name;
+}
+
+void AnimatedModelComponent::transition(const String& name, float transitionTime)
+{
+	setAnimation(name);
+	m_TransitionTime = transitionTime;
+	m_RemainingTransitionTime = m_TransitionTime;
+}
+
+float AnimatedModelComponent::getStartTime() const
+{
+	return m_AnimatedModelResourceFile->getAnimationStartTime(m_CurrentAnimationName);
+}
+
+float AnimatedModelComponent::getEndTime() const
+{
+	return m_AnimatedModelResourceFile->getAnimationEndTime(m_CurrentAnimationName);
+}
+
+bool AnimatedModelComponent::hasEnded() const
+{
+	return m_AnimationMode == AnimationMode::None && m_CurrentTimePosition > getEndTime();
 }
 
 void AnimatedModelComponent::assignBoundingBox()
@@ -148,6 +222,8 @@ JSON::json AnimatedModelComponent::getJSON() const
 	j["resFile"] = m_AnimatedModelResourceFile->getPath().string();
 	j["isPlayOnStart"] = m_IsPlaying;
 	j["currentAnimationName"] = m_CurrentAnimationName;
+	j["animationMode"] = (int)m_AnimationMode;
+	j["transitionTime"] = m_TransitionTime;
 
 	return j;
 }
@@ -156,8 +232,6 @@ void AnimatedModelComponent::draw()
 {
 	ImGui::Checkbox("Visible", &m_IsVisible);
 	ImGui::Checkbox("Play on Start", &m_IsPlayOnStart);
-
-	ImGui::BeginGroup();
 
 	String filePath = m_AnimatedModelResourceFile->getPath().generic_string();
 	ImGui::Text("%s", filePath.c_str());
@@ -193,41 +267,13 @@ void AnimatedModelComponent::draw()
 		{
 			if (ImGui::Selectable(animationName.c_str()))
 			{
-				m_CurrentAnimationName = animationName;
+				setAnimation(animationName);
 			}
 		}
 		ImGui::EndCombo();
 	}
 
+	ImGui::Combo("Animation Mode", (int*)&m_AnimationMode, "None\0Looping\0Alternating\0");
+
 	RenderableComponent::draw();
-
-	int p = 0;
-	if (ImGui::TreeNodeEx(("Meshes")))
-	{
-		ImGui::Columns(2);
-
-		ImGui::Text("Serial");
-		ImGui::NextColumn();
-		ImGui::Text("Vertices");
-		ImGui::NextColumn();
-
-		for (auto& [material, meshes] : m_AnimatedModelResourceFile->getMeshes())
-		{
-			for (auto& mesh : meshes)
-			{
-				p++;
-				ImGui::Columns(2);
-				ImGui::Text("%d", p);
-				ImGui::NextColumn();
-				ImGui::Text("%d", mesh.m_VertexBuffer->getCount());
-				ImGui::NextColumn();
-			}
-
-			ImGui::Columns(1);
-		}
-
-		ImGui::TreePop();
-		ImGui::Separator();
-	}
-	ImGui::EndGroup();
 }

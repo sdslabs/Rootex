@@ -136,6 +136,18 @@ Vector<Scene*> Scene::FindScenesByName(const String& name)
 	return foundScenes;
 }
 
+Scene* Scene::FindSceneByID(const SceneID& id)
+{
+	for (auto& scene : s_Scenes)
+	{
+		if (scene->m_ID == id)
+		{
+			return scene;
+		}
+	}
+	return nullptr;
+}
+
 Scene* Scene::findScene(SceneID scene)
 {
 	if (scene == getID())

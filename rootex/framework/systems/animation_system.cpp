@@ -19,16 +19,9 @@ void AnimationSystem::update(float deltaMilliseconds)
 	for (auto& component : ECSFactory::GetComponents<AnimatedModelComponent>())
 	{
 		AnimatedModelComponent* amc = (AnimatedModelComponent*)component;
-		String animationName = amc->getCurrentAnimationName();
-		if (amc->m_IsPlaying)
+		if (amc->isPlaying() && !amc->hasEnded())
 		{
-			amc->m_CurrentTimePosition += deltaMilliseconds * MS_TO_S;
+			amc->update(deltaMilliseconds);
 		}
-
-		if (amc->m_CurrentTimePosition > amc->m_AnimatedModelResourceFile->getAnimationEndTime(animationName))
-		{
-			amc->m_CurrentTimePosition = 0.0f;
-		}
-		amc->m_AnimatedModelResourceFile->getFinalTransforms(animationName, amc->m_CurrentTimePosition, amc->m_FinalTransforms);
 	}
 }
