@@ -20,6 +20,7 @@ public:
 		RenderUI,
 		UI,
 		PostRender,
+		GameRender,
 		Editor,
 		Async,
 		End
