@@ -111,6 +111,11 @@ Matrix SkeletalAnimation::interpolate(const String& nodeName, float currentTime)
 	}
 }
 
+float SkeletalAnimation::getStartTime() const
+{
+	return 0.0f;
+}
+
 float SkeletalAnimation::getEndTime() const
 {
 	return m_Duration;
