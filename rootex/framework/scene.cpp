@@ -80,7 +80,7 @@ Ptr<Scene> Scene::Create(const JSON::json& sceneData, bool isACopy)
 
 Ptr<Scene> Scene::CreateFromFile(const String& sceneFile)
 {
-	if (TextResourceFile* t = ResourceLoader::CreateTextResourceFile(sceneFile))
+	if (Ref<TextResourceFile> t = ResourceLoader::CreateTextResourceFile(sceneFile))
 	{
 		if (t->isDirty())
 		{
@@ -171,7 +171,7 @@ void Scene::reload()
 		return;
 	}
 
-	TextResourceFile* t = ResourceLoader::CreateTextResourceFile(m_SceneFile);
+	Ref<TextResourceFile> t = ResourceLoader::CreateTextResourceFile(m_SceneFile);
 	t->reimport();
 
 	const JSON::json& sceneData = JSON::json::parse(t->getString());
@@ -377,9 +377,15 @@ void SceneSettings::draw()
 		{
 			for (auto& resFile : resFiles)
 			{
+				Ref<ResourceFile> res = resFile.lock();
+				if (!res)
+				{
+					continue;
+				}
+
 				ImGui::PushID(i++);
 
-				String path = resFile->getPath().generic_string();
+				String path = res->getPath().generic_string();
 
 				auto& findIt = std::find(preloads.begin(), preloads.end(), Pair<ResourceFile::Type, String>(resType, path));
 
@@ -399,7 +405,6 @@ void SceneSettings::draw()
 				ImGui::BulletText("%s", ResourceFile::s_TypeNames.at(resType).c_str());
 
 				ImGui::PopID();
-				i--;
 			}
 		}
 

@@ -20,7 +20,7 @@ class FileViewer
 	TextViewer m_TextViewer;
 	MaterialViewer m_MaterialViewer;
 
-	ResourceFile* m_OpenFile;
+	Ref<ResourceFile> m_OpenFile;
 
 	void drawFileInfo();
 

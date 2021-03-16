@@ -14,7 +14,7 @@ class ParticleEffectComponent : public Component
 
 	Effekseer::Handle m_EffectHandle;
 
-	ParticleEffectResourceFile* m_EffectResource;
+	Ref<ParticleEffectResourceFile> m_EffectResource;
 	int m_StartFrame;
 	bool m_PlayOnStart;
 	bool m_IsMoving;
@@ -26,7 +26,7 @@ class ParticleEffectComponent : public Component
 	friend class ECSFactory;
 
 	ParticleEffectComponent(
-	    ParticleEffectResourceFile* effect,
+	    Ref<ParticleEffectResourceFile> effect,
 	    bool playOnStart,
 	    bool isMoving,
 	    int startFrame,
@@ -50,8 +50,8 @@ public:
 	void play();
 	void stop();
 
-	ParticleEffectResourceFile* getEffectResource() { return m_EffectResource; }
-	void setEffect(ParticleEffectResourceFile* effect);
+	ParticleEffectResourceFile* getEffectResource() { return m_EffectResource.get(); }
+	void setEffect(Ref<ParticleEffectResourceFile> effect);
 
 	Effekseer::Handle getHandle() const { return m_EffectHandle; }
 

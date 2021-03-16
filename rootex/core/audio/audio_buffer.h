@@ -6,9 +6,9 @@
 class AudioBuffer
 {
 protected:
-	AudioResourceFile* m_AudioFile;
+	Ref<AudioResourceFile> m_AudioFile;
 
-	AudioBuffer(AudioResourceFile* audioFile);
+	AudioBuffer(Ref<AudioResourceFile> audioFile);
 
 	virtual void initializeBuffers() = 0;
 	virtual void destroyBuffers() = 0;

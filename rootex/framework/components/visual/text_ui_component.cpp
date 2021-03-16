@@ -15,7 +15,7 @@ Component* TextUIComponent::Create(const JSON::json& componentData)
 	return tV2DC;
 }
 
-TextUIComponent::TextUIComponent(FontResourceFile* font, const String& text, const Color& color, const Mode& mode, const Vector2& origin, const bool& isVisible)
+TextUIComponent::TextUIComponent(Ref<FontResourceFile> font, const String& text, const Color& color, const Mode& mode, const Vector2& origin, const bool& isVisible)
     : RenderUIComponent(isVisible)
     , m_FontFile(font)
     , m_Text(text)

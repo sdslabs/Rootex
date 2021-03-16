@@ -53,22 +53,7 @@ Variant SceneLoader::deleteScene(const Event* event)
 int SceneLoader::preloadScene(const String& sceneFile, Atomic<int>& progress)
 {
 	const SceneSettings& sceneJSON = JSON::json::parse(ResourceLoader::CreateTextResourceFile(sceneFile)->getString()).value("settings", SceneSettings());
-	ResourceCollection toPreload = sceneJSON.preloads;
-
-	m_UnloadCache.clear();
-	if (m_CurrentScene)
-	{
-		for (auto& preloaded : m_CurrentScene->getSettings().preloads)
-		{
-			auto& findIt = std::find(toPreload.begin(), toPreload.end(), preloaded);
-			if (findIt == toPreload.end())
-			{
-				m_UnloadCache.push_back(preloaded);
-			}
-		}
-	}
-
-	return ResourceLoader::Preload(toPreload, progress);
+	return ResourceLoader::Preload(sceneJSON.preloads, progress);
 }
 
 void SceneLoader::loadPreloadedScene(const String& sceneFile, const Vector<String>& arguments)
@@ -78,10 +63,8 @@ void SceneLoader::loadPreloadedScene(const String& sceneFile, const Vector<Strin
 		m_RootScene->removeChild(m_CurrentScene);
 		Scene::ResetNextID();
 
-		ResourceLoader::Unload(m_UnloadCache);
-		m_UnloadCache.clear();
-
-		TextResourceFile* sceneResFile = ResourceLoader::CreateTextResourceFile(sceneFile);
+		ResourceLoader::ClearDeadResources();
+		Ref<TextResourceFile> sceneResFile = ResourceLoader::CreateTextResourceFile(sceneFile);
 		if (sceneResFile->isDirty())
 		{
 			sceneResFile->reimport();
@@ -100,6 +83,8 @@ void SceneLoader::loadPreloadedScene(const String& sceneFile, const Vector<Strin
 		}
 		m_CurrentScene->onLoad();
 		PRINT("Loaded scene: " + m_CurrentScene->getFullName());
+
+		ResourceLoader::ClearPersistentResources();
 
 		beginSystems();
 		EventManager::GetSingleton()->deferredCall(RootexEvents::OpenedScene);
@@ -128,7 +113,7 @@ bool SceneLoader::saveScene(Scene* scene)
 
 bool SceneLoader::saveSceneAtFile(Scene* scene, const String& filePath)
 {
-	if (TextResourceFile* file = ResourceLoader::CreateNewTextResourceFile(filePath))
+	if (Ref<TextResourceFile> file = ResourceLoader::CreateNewTextResourceFile(filePath))
 	{
 		file->putString(scene->getJSON().dump(4));
 		return file->save();

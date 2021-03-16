@@ -8,7 +8,6 @@
 #include "core/renderer/shader_library.h"
 #include "core/renderer/material_library.h"
 #include "script/interpreter.h"
-#include "main/splash_window.h"
 
 #include "systems/audio_system.h"
 #include "systems/physics_system.h"
@@ -49,12 +48,12 @@ Application::Application(const String& settingsFile)
 	m_ApplicationSettings.reset(new ApplicationSettings(ResourceLoader::CreateTextResourceFile(settingsFile)));
 
 	const JSON::json& splashSettings = m_ApplicationSettings->getJSON()["splash"];
-	SplashWindow splashWindow(
+	m_SplashWindow.reset(new SplashWindow(
 	    splashSettings["title"],
 	    splashSettings["icon"],
 	    splashSettings["image"],
 	    splashSettings["width"],
-	    splashSettings["height"]);
+	    splashSettings["height"]));
 
 	PANIC(!OS::ElevateThreadPriority(), "Could not elevate main thread priority");
 	PRINT("Current main thread priority: " + std::to_string(OS::GetCurrentThreadPriority()));
@@ -168,4 +167,9 @@ void Application::end()
 Vector<FilePath> Application::getLibrariesPaths()
 {
 	return OS::GetDirectoriesInDirectory("rootex/vendor/");
+}
+
+void Application::destroySplashWindow()
+{
+	m_SplashWindow.reset();
 }

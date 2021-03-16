@@ -890,6 +890,18 @@
             [
                 5,
                 "game/assets/Male_Casual.fbx"
+            ],
+            [
+                6,
+                "rootex/assets/terrain.obj"
+            ],
+            [
+                9,
+                "game/assets/fonts/noto_sans_50_regular.spritefont"
+            ],
+            [
+                4,
+                "rootex/assets/cube.obj"
             ]
         ],
         "startScheme": "Controls"

@@ -20,7 +20,7 @@ public:
 	static Component* Create(const JSON::json& componentData);
 
 	/// Font file
-	FontResourceFile* m_FontFile;
+	Ref<FontResourceFile> m_FontFile;
 	/// Text to display
 	String m_Text;
 	/// Color of text
@@ -30,7 +30,7 @@ public:
 	/// 2D origin of the Font
 	Vector2 m_Origin;
 
-	TextUIComponent(FontResourceFile* font, const String& text, const Color& color, const Mode& mode, const Vector2& origin, const bool& isVisible);
+	TextUIComponent(Ref<FontResourceFile> font, const String& text, const Color& color, const Mode& mode, const Vector2& origin, const bool& isVisible);
 	TextUIComponent(TextUIComponent&) = delete;
 	virtual ~TextUIComponent() = default;
 
@@ -45,7 +45,7 @@ public:
 	virtual const char* getName() const override { return "TextUIComponent"; };
 	virtual JSON::json getJSON() const override;
 
-	void setFont(FontResourceFile* fontFile) { m_FontFile = fontFile; }
+	void setFont(Ref<FontResourceFile> fontFile) { m_FontFile = fontFile; }
 	void setText(const String& text) { m_Text = text; }
 
 	virtual void draw() override;

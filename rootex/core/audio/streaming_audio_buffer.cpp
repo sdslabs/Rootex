@@ -76,7 +76,7 @@ void StreamingAudioBuffer::loadNewBuffers(int count, bool isLooping)
 	}
 }
 
-StreamingAudioBuffer::StreamingAudioBuffer(AudioResourceFile* audioFile)
+StreamingAudioBuffer::StreamingAudioBuffer(Ref<AudioResourceFile> audioFile)
     : AudioBuffer(audioFile)
 {
 	initializeBuffers();
