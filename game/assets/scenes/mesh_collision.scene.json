@@ -435,7 +435,7 @@
                         },
                         "radius": 0.17000000178813934,
                         "sideHeight": 0.6899999976158142,
-                        "volume": 0.5519411563873291
+                        "volume": 0.0832260325551033
                     },
                     "TransformComponent": {
                         "boundingBox": {
@@ -452,7 +452,7 @@
                         },
                         "position": {
                             "x": 1.2569971084594727,
-                            "y": 0.36336830258369446,
+                            "y": 0.24300000071525574,
                             "z": -4.309000015258789
                         },
                         "rotation": {
@@ -496,17 +496,17 @@
                         "fov": 0.7853981852531433,
                         "near": 0.10000000149011612,
                         "postProcessingDetails": {
-                            "assaoAdaptiveQualityLimit": 0.44999998807907104,
+                            "assaoAdaptiveQualityLimit": 0.2529999911785126,
                             "assaoBlurPassCount": 6,
                             "assaoDetailShadowStrength": 2.0199999809265137,
-                            "assaoFadeOutFrom": 0.0,
-                            "assaoFadeOutTo": 11.0,
+                            "assaoFadeOutFrom": 38.0,
+                            "assaoFadeOutTo": 43.0,
                             "assaoHorizonAngleThreshold": 0.14000000059604645,
                             "assaoQualityLevel": 3,
-                            "assaoRadius": 1.399999976158142,
-                            "assaoShadowClamp": 0.25999999046325684,
-                            "assaoShadowMultiplier": 1.4700000286102295,
-                            "assaoShadowPower": 1.649999976158142,
+                            "assaoRadius": 0.800000011920929,
+                            "assaoShadowClamp": 0.15000000596046448,
+                            "assaoShadowMultiplier": 0.75,
+                            "assaoShadowPower": 2.549999952316284,
                             "assaoSharpness": 1.0,
                             "bloomBase": 1.0,
                             "bloomBaseSaturation": 1.0,
@@ -585,71 +585,6 @@
             }
         },
         {
-            "ID": 24,
-            "children": [],
-            "entity": {
-                "Entity": {
-                    "script": null
-                },
-                "components": {
-                    "DirectionalLightComponent": {
-                        "ambientColor": {
-                            "a": 1.0,
-                            "b": 0.24080029129981995,
-                            "g": 0.24080270528793335,
-                            "r": 0.24080270528793335
-                        },
-                        "diffuseColor": {
-                            "a": 1.0,
-                            "b": 0.2441447377204895,
-                            "g": 0.2441471815109253,
-                            "r": 0.2441471815109253
-                        },
-                        "diffuseIntensity": 3.700000047683716
-                    },
-                    "TransformComponent": {
-                        "boundingBox": {
-                            "center": {
-                                "x": 0.0,
-                                "y": 0.0,
-                                "z": 0.0
-                            },
-                            "extents": {
-                                "x": 0.5,
-                                "y": 0.5,
-                                "z": 0.5
-                            }
-                        },
-                        "position": {
-                            "x": 0.0,
-                            "y": 0.0,
-                            "z": 0.0
-                        },
-                        "rotation": {
-                            "w": 0.04741458594799042,
-                            "x": -0.016627643257379532,
-                            "y": 0.9941989183425903,
-                            "z": 0.09509934484958649
-                        },
-                        "scale": {
-                            "x": 1.0000011920928955,
-                            "y": 1.0000001192092896,
-                            "z": 1.0
-                        }
-                    }
-                }
-            },
-            "file": "",
-            "name": "Light",
-            "settings": {
-                "camera": 1,
-                "inputSchemes": {},
-                "listener": 1,
-                "preloads": [],
-                "startScheme": ""
-            }
-        },
-        {
             "ID": 26,
             "children": [],
             "entity": {
@@ -714,6 +649,71 @@
                 "preloads": [],
                 "startScheme": ""
             }
+        },
+        {
+            "ID": 23,
+            "children": [],
+            "entity": {
+                "Entity": {
+                    "script": null
+                },
+                "components": {
+                    "DirectionalLightComponent": {
+                        "ambientColor": {
+                            "a": 1.0,
+                            "b": 0.21147412061691284,
+                            "g": 0.4615384340286255,
+                            "r": 0.3900911808013916
+                        },
+                        "diffuseColor": {
+                            "a": 1.0,
+                            "b": 0.21071776747703552,
+                            "g": 0.38461536169052124,
+                            "r": 0.18523281812667847
+                        },
+                        "diffuseIntensity": 3.4000000953674316
+                    },
+                    "TransformComponent": {
+                        "boundingBox": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "extents": {
+                                "x": 0.5,
+                                "y": 0.5,
+                                "z": 0.5
+                            }
+                        },
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "rotation": {
+                            "w": -0.24645598232746124,
+                            "x": 0.8678367137908936,
+                            "y": -0.11774357408285141,
+                            "z": -0.41503652930259705
+                        },
+                        "scale": {
+                            "x": 1.0000108480453491,
+                            "y": 1.0000067949295044,
+                            "z": 1.0000112056732178
+                        }
+                    }
+                }
+            },
+            "file": "",
+            "name": "Light",
+            "settings": {
+                "camera": 1,
+                "inputSchemes": {},
+                "listener": 1,
+                "preloads": [],
+                "startScheme": ""
+            }
         }
     ],
     "entity": {
@@ -724,12 +724,12 @@
             "FogComponent": {
                 "color": {
                     "a": 1.0,
-                    "b": 0.892182469367981,
-                    "g": 1.0,
-                    "r": 0.4882943034172058
+                    "b": 0.8833234906196594,
+                    "g": 0.9966555237770081,
+                    "r": 0.9688321948051453
                 },
-                "far": 100.0,
-                "near": 0.0
+                "far": 44.0,
+                "near": 7.0
             },
             "ModelComponent": {
                 "affectingStaticLights": [],
@@ -808,9 +808,9 @@
                     "z": 0.0
                 },
                 "rotation": {
-                    "w": 1.0,
+                    "w": 0.9999966025352478,
                     "x": -0.0,
-                    "y": 0.0,
+                    "y": 0.0026180592831224203,
                     "z": -0.0
                 },
                 "scale": {

@@ -16,6 +16,7 @@
 #include "components/physics/capsule_collider_component.h"
 #include "components/physics/sphere_collider_component.h"
 #include "components/visual/ui_component.h"
+#include "components/visual/particle_effect_component.h"
 #include "systems/input_system.h"
 #include "core/resource_files/audio_resource_file.h"
 #include "core/resource_files/font_resource_file.h"
@@ -25,6 +26,7 @@
 #include "core/resource_files/model_resource_file.h"
 #include "core/resource_files/collision_model_resource_file.h"
 #include "core/resource_files/text_resource_file.h"
+#include "core/resource_files/particle_effect_resource_file.h"
 #include "event_manager.h"
 
 extern "C" int luaopen_lpeg(lua_State* L);
@@ -196,6 +198,7 @@ void LuaInterpreter::registerTypes()
 		resourceLoader["CreateVisualModel"] = &ResourceLoader::CreateModelResourceFile;
 		resourceLoader["CreateAnimatedModel"] = &ResourceLoader::CreateAnimatedModelResourceFile;
 		resourceLoader["CreateCollisionModel"] = &ResourceLoader::CreateAnimatedModelResourceFile;
+		resourceLoader["CreateParticleEffectResourceFile"] = &ResourceLoader::CreateParticleEffectResourceFile;
 	}
 	{
 		sol::usertype<ResourceFile> resourceFile = rootex.new_usertype<ResourceFile>("ResourceFile");
@@ -254,6 +257,12 @@ void LuaInterpreter::registerTypes()
 		sol::usertype<FontResourceFile> fontResourceFile = rootex.new_usertype<FontResourceFile>(
 		    "FontResourceFile",
 		    sol::base_classes, sol::bases<ResourceFile>());
+	}
+	{
+		sol::usertype<ParticleEffectResourceFile> particleEffectResourceFile = rootex.new_usertype<ParticleEffectResourceFile>(
+		    "ParticleEffectResourceFile",
+		    sol::base_classes, sol::bases<ResourceFile>());
+		particleEffectResourceFile["getEffect"] = &ParticleEffectResourceFile::getEffect;
 	}
 	{
 		sol::usertype<ECSFactory> ecsFactory = rootex.new_usertype<ECSFactory>("ECSFactory");
@@ -351,6 +360,19 @@ void LuaInterpreter::registerTypes()
 		animatedModelComponent["stop"] = &AnimatedModelComponent::stop;
 		animatedModelComponent["setPlaying"] = &AnimatedModelComponent::setPlaying;
 		rootex["Entity"]["getAnimatedModel"] = &Entity::getComponent<AnimatedModelComponent>;
+	}
+	{
+		sol::usertype<ParticleEffectComponent> particleEffectComponent = rootex.new_usertype<ParticleEffectComponent>(
+		    "ParticleEffectComponent",
+		    sol::base_classes, sol::bases<Component>());
+		particleEffectComponent["setPlaying"] = &ParticleEffectComponent::setPlaying;
+		particleEffectComponent["setEffect"] = &ParticleEffectComponent::setEffect;
+		particleEffectComponent["getEffectResource"] = &ParticleEffectComponent::getEffectResource;
+		particleEffectComponent["setPlaying"] = &ParticleEffectComponent::setPlaying;
+		particleEffectComponent["isPaused"] = &ParticleEffectComponent::isPaused;
+		particleEffectComponent["isMoving"] = &ParticleEffectComponent::isMoving;
+		particleEffectComponent["setMoving"] = &ParticleEffectComponent::setMoving;
+		rootex["Entity"]["getParticleEffect"] = &Entity::getComponent<ParticleEffectComponent>;
 	}
 	{
 		sol::usertype<RenderUIComponent> renderUIComponent = rootex.new_usertype<RenderUIComponent>(

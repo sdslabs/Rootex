@@ -1,0 +1,73 @@
+{
+    "ID": 4,
+    "children": [],
+    "entity": {
+        "Entity": {
+            "script": null
+        },
+        "components": {
+            "ParticleEffectComponent": {
+                "isMoving": false,
+                "playOnStart": true,
+                "resFile": "game/assets/sandstorm.efkefc",
+                "speed": 2.0,
+                "startFrame": 0,
+                "target": {
+                    "x": 100000.0,
+                    "y": 10000.0,
+                    "z": 0.0
+                },
+                "useSpeed": false,
+                "useTarget": false
+            },
+            "TransformComponent": {
+                "boundingBox": {
+                    "center": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "extents": {
+                        "x": 0.5,
+                        "y": 0.5,
+                        "z": 0.5
+                    }
+                },
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": -27.719999313354492
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.000000238418579,
+                    "y": 1.0,
+                    "z": 1.000000238418579
+                }
+            }
+        }
+    },
+    "file": "game/assets/scenes/effekseer.scene.json",
+    "name": "effekseer",
+    "settings": {
+        "camera": 1,
+        "inputSchemes": {},
+        "listener": 1,
+        "preloads": [
+            [
+                10,
+                "game/assets/sandstorm.efkefc"
+            ],
+            [
+                8,
+                "rootex/assets/sky.dds"
+            ]
+        ],
+        "startScheme": ""
+    }
+}
