@@ -3,49 +3,34 @@
 #include "component.h"
 #include "components/space/transform_component.h"
 #include "core/physics/bullet_conversions.h"
+#include "collision_component.h"
 
 #include "btBulletDynamicsCommon.h"
 
 enum PhysicsMaterial;
 
-enum class CollisionMask : unsigned int
-{
-	None = 0,
-	Player = 1 << 0,
-	Enemy = 1 << 1,
-	Architecture = 1 << 2,
-	TriggerVolume = 1 << 3,
-	Other = 1 << 4,
-	All = Player | Enemy | Architecture | TriggerVolume | Other
-};
-
-class PhysicsColliderComponent : public Component, public btMotionState
+class RigidBodyComponent : public CollisionComponent, public btMotionState
 {
 	DEPENDS_ON(TransformComponent);
 
 protected:
 	Ref<btCollisionShape> m_CollisionShape;
 	Ref<btRigidBody> m_Body;
+	bool m_IsGeneratesHitEvents;
 	btScalar m_Mass;
 	Vector3 m_Gravity;
 	Vector3 m_AngularFactor;
 	Vector3 m_Offset;
 	float m_Volume;
 	bool m_IsMoveable;
-	bool m_IsGeneratesHitEvents;
 	bool m_IsKinematic;
 	bool m_IsSleepable;
 	bool m_IsCCD;
-	unsigned int m_CollisionGroup;
-	unsigned int m_CollisionMask;
 	PhysicsMaterial m_Material;
 
 	btVector3 m_LocalInertia;
 
-	void getWorldTransform(btTransform& worldTrans) const override;
-	void setWorldTransform(const btTransform& worldTrans) override;
-
-	PhysicsColliderComponent(
+	RigidBodyComponent(
 	    const PhysicsMaterial& material,
 	    float volume,
 	    const Vector3& offset,
@@ -60,8 +45,13 @@ protected:
 	    bool isCCD,
 	    const Ref<btCollisionShape>& collisionShape);
 
+	void getWorldTransform(btTransform& worldTrans) const override;
+	void setWorldTransform(const btTransform& worldTrans) override;
+
+	void handleHit(Hit* h) override;
+
 public:
-	virtual ~PhysicsColliderComponent() = default;
+	virtual ~RigidBodyComponent() = default;
 
 	void applyForce(const Vector3& force);
 	void applyTorque(const Vector3& torque);
@@ -110,5 +100,4 @@ public:
 	JSON::json getJSON() const override;
 	void draw() override;
 	void highlight();
-	void displayCollisionLayers(unsigned int& collision);
 };

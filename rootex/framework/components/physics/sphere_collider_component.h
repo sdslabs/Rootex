@@ -1,10 +1,10 @@
 #pragma once
 
-#include "physics_collider_component.h"
+#include "rigid_body_component.h"
 
 #include "btBulletDynamicsCommon.h"
 
-class SphereColliderComponent : public PhysicsColliderComponent
+class SphereColliderComponent : public RigidBodyComponent
 {
 	DEFINE_COMPONENT(SphereColliderComponent);
 

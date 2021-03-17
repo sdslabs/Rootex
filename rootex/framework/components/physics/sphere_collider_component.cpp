@@ -31,7 +31,7 @@ SphereColliderComponent::SphereColliderComponent(
     bool generatesHitEvents,
     bool isSleepable,
     bool isCCD)
-    : PhysicsColliderComponent(
+    : RigidBodyComponent(
         material,
         (4.0f / 3.0f) * DirectX::XM_PI * radius * radius * radius,
         offset,
@@ -52,7 +52,7 @@ SphereColliderComponent::SphereColliderComponent(
 
 JSON::json SphereColliderComponent::getJSON() const
 {
-	JSON::json& j = PhysicsColliderComponent::getJSON();
+	JSON::json& j = RigidBodyComponent::getJSON();
 
 	j["radius"] = m_Radius;
 
@@ -69,7 +69,7 @@ void SphereColliderComponent::setRadius(float r)
 
 void SphereColliderComponent::draw()
 {
-	PhysicsColliderComponent::draw();
+	RigidBodyComponent::draw();
 
 	if (ImGui::DragFloat("##Radius", &m_Radius, 0.01f))
 	{

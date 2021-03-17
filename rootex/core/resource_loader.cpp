@@ -52,6 +52,12 @@ int ResourceLoader::Preload(ResourceCollection paths, Atomic<int>& progress)
 {
 	progress = 0;
 
+	if (paths.empty())
+	{
+		PRINT("Asked to reload an empty list of files. Did nothing.");
+		return 0;
+	}
+
 	std::sort(paths.begin(), paths.end(), [](const Pair<ResourceFile::Type, String>& a, const Pair<ResourceFile::Type, String>& b) {
 		return (int)a.first < (int)b.first && a.second < b.second;
 	});
