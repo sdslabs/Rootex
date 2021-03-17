@@ -7,8 +7,8 @@
 #include "framework/scene.h"
 #include "framework/system.h"
 #include "framework/components/visual/camera_component.h"
-#include "components/visual/model_component.h"
-#include "components/visual/animated_model_component.h"
+#include "components/visual/model/model_component.h"
+#include "components/visual/model/animated_model_component.h"
 
 #include "ASSAO/ASSAO.h"
 
@@ -78,6 +78,7 @@ public:
 	void perFrameVSCBBinds(float fogStart, float fogEnd);
 	void perFramePSCBBinds(const Color& fogColor);
 	void perScenePSCBBinds();
+	void updateStaticLights();
 	void updatePerSceneBinds();
 
 	void setIsEditorRenderPass(bool enabled) { m_IsEditorRenderPassEnabled = enabled; }

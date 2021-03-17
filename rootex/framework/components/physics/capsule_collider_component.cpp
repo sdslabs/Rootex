@@ -1,9 +1,9 @@
 #include "capsule_collider_component.h"
 #include "framework/systems/physics_system.h"
 
-Component* CapsuleColliderComponent::Create(const JSON::json& capsuleComponentData)
+Ptr<Component> CapsuleColliderComponent::Create(const JSON::json& capsuleComponentData)
 {
-	CapsuleColliderComponent* component = new CapsuleColliderComponent(
+	return std::make_unique<CapsuleColliderComponent>(
 	    capsuleComponentData.value("radius", 0.5f),
 	    capsuleComponentData.value("sideHeight", 1.0f),
 	    capsuleComponentData.value("offset", Vector3(0.0f, 0.0f, 0.0f)),
@@ -17,7 +17,6 @@ Component* CapsuleColliderComponent::Create(const JSON::json& capsuleComponentDa
 	    capsuleComponentData.value("isGeneratesHitEvents", false),
 	    capsuleComponentData.value("isSleepable", true),
 	    capsuleComponentData.value("isCCD", false));
-	return component;
 }
 
 CapsuleColliderComponent::CapsuleColliderComponent(

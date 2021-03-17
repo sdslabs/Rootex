@@ -73,15 +73,14 @@ void from_json(const JSON::json& j, PostProcessingDetails& p)
 	p.toneMapWhiteNits = j.at("toneMapWhiteNits");
 }
 
-Component* CameraComponent::Create(const JSON::json& componentData)
+Ptr<Component> CameraComponent::Create(const JSON::json& componentData)
 {
-	CameraComponent* cameraVisualComponent = new CameraComponent(
+	return std::make_unique<CameraComponent>(
 	    componentData.value("aspectRatio", Vector2 { 16.0f, 9.0f }),
 	    componentData.value("fov", DirectX::XM_PI / 4.0f),
 	    componentData.value("near", 0.1f),
 	    componentData.value("far", 100.0f),
 	    componentData.value("postProcessingDetails", PostProcessingDetails()));
-	return cameraVisualComponent;
 }
 
 CameraComponent::CameraComponent(const Vector2& aspectRatio, float fov, float nearPlane, float farPlane, const PostProcessingDetails& postProcesing)

@@ -60,6 +60,17 @@ public:                                                                         
 private:
 #endif
 
+#define DEFINE_COMPONENT(componentName)                                       \
+public:                                                                       \
+	static const ComponentID s_ID = (ComponentID)ComponentIDs::componentName; \
+	const char* getName() const override { return #componentName; }           \
+	ComponentID getComponentID() const { return s_ID; }                       \
+                                                                              \
+private:                                                                      \
+	static Ptr<Component> Create(const JSON::json& componentData);            \
+	friend class ECSFactory;                                                  \
+	componentName(const componentName&) = delete
+
 /// An ECS style interface of a collection of data that helps implement a behaviour. Also allows operations on that data.
 class Component
 {
@@ -90,8 +101,6 @@ public:
 	virtual bool setupEntities();
 	/// Perform operations prior to detachment from owning entity and destruction.
 	virtual void onRemove();
-
-	virtual void onTrigger();
 
 	Entity* getOwner() const;
 	virtual ComponentID getComponentID() const = 0;

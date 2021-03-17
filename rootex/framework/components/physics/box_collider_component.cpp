@@ -1,9 +1,9 @@
 #include "box_collider_component.h"
 #include "framework/systems/physics_system.h"
 
-Component* BoxColliderComponent::Create(const JSON::json& boxComponentData)
+Ptr<Component> BoxColliderComponent::Create(const JSON::json& boxComponentData)
 {
-	BoxColliderComponent* component = new BoxColliderComponent(
+	return std::make_unique<BoxColliderComponent>(
 	    boxComponentData.value("dimensions", Vector3::Zero),
 	    boxComponentData.value("offset", Vector3(0.0f, 0.0f, 0.0f)),
 	    boxComponentData.value("material", PhysicsMaterial::Air),
@@ -16,7 +16,6 @@ Component* BoxColliderComponent::Create(const JSON::json& boxComponentData)
 	    boxComponentData.value("isGeneratesHitEvents", false),
 	    boxComponentData.value("isSleepable", true),
 	    boxComponentData.value("isCCD", false));
-	return component;
 }
 
 BoxColliderComponent::BoxColliderComponent(

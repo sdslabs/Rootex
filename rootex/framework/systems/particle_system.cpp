@@ -2,7 +2,7 @@
 
 #include <codecvt>
 
-#include "components/visual/particle_effect_component.h"
+#include "components/visual/effect/particle_effect_component.h"
 #include "renderer/rendering_device.h"
 #include "systems/render_system.h"
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "component.h"
-#include "components/transform_component.h"
+#include "components/space/transform_component.h"
 #include "core/physics/bullet_conversions.h"
 
 #include "btBulletDynamicsCommon.h"
@@ -60,17 +60,8 @@ protected:
 	    bool isCCD,
 	    const Ref<btCollisionShape>& collisionShape);
 
-	friend class ECSFactory;
-
 public:
-	static const ComponentID s_ID = (ComponentID)ComponentIDs::PhysicsColliderComponent;
-
-	~PhysicsColliderComponent() = default;
-
-	ComponentID getComponentID() const { return s_ID; }
-
-	bool setupData() override;
-	void onRemove() override;
+	virtual ~PhysicsColliderComponent() = default;
 
 	void applyForce(const Vector3& force);
 	void applyTorque(const Vector3& torque);
@@ -113,11 +104,11 @@ public:
 	bool isKinematic() { return m_IsKinematic; }
 	void setKinematic(bool enabled);
 
-	virtual void highlight();
+	bool setupData() override;
+	void onRemove() override;
 
-	virtual const char* getName() const override { return "PhysicsColliderComponent"; };
-	virtual JSON::json getJSON() const override;
-
-	virtual void draw() override;
+	JSON::json getJSON() const override;
+	void draw() override;
+	void highlight();
 	void displayCollisionLayers(unsigned int& collision);
 };
