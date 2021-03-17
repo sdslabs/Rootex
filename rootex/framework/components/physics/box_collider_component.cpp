@@ -31,7 +31,7 @@ BoxColliderComponent::BoxColliderComponent(
     bool generatesHitEvents,
     bool isSleepable,
     bool isCCD)
-    : PhysicsColliderComponent(
+    : RigidBodyComponent(
         material,
         dimensions.x * dimensions.y * dimensions.z,
         offset,
@@ -52,7 +52,7 @@ BoxColliderComponent::BoxColliderComponent(
 
 JSON::json BoxColliderComponent::getJSON() const
 {
-	JSON::json& j = PhysicsColliderComponent::getJSON();
+	JSON::json& j = RigidBodyComponent::getJSON();
 
 	j["dimensions"] = m_Dimensions;
 
@@ -69,7 +69,7 @@ void BoxColliderComponent::setDimensions(const Vector3& dimensions)
 
 void BoxColliderComponent::draw()
 {
-	PhysicsColliderComponent::draw();
+	RigidBodyComponent::draw();
 
 	if (ImGui::DragFloat3("##Dimensions", &m_Dimensions.x, 0.01f))
 	{

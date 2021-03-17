@@ -33,7 +33,7 @@ CapsuleColliderComponent::CapsuleColliderComponent(
     bool generatesHitEvents,
     bool isSleepable,
     bool isCCD)
-    : PhysicsColliderComponent(
+    : RigidBodyComponent(
         material,
         DirectX::XM_PI * radius * radius * ((4.0f / 3.0f) * radius + sideHeight),
         offset,
@@ -71,7 +71,7 @@ void CapsuleColliderComponent::setRadius(float r)
 
 JSON::json CapsuleColliderComponent::getJSON() const
 {
-	JSON::json& j = PhysicsColliderComponent::getJSON();
+	JSON::json& j = RigidBodyComponent::getJSON();
 
 	j["radius"] = m_Radius;
 	j["sideHeight"] = m_SideHeight;
@@ -81,7 +81,7 @@ JSON::json CapsuleColliderComponent::getJSON() const
 
 void CapsuleColliderComponent::draw()
 {
-	PhysicsColliderComponent::draw();
+	RigidBodyComponent::draw();
 
 	if (ImGui::DragFloat("##Radius", &m_Radius, 0.01f))
 	{

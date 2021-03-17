@@ -1,11 +1,13 @@
-#include "physics_collider_component.h"
+#include "rigid_body_component.h"
+
+#include "common/types.h"
 
 #include "framework/systems/physics_system.h"
 #include "script/script.h"
 
 #include "entity.h"
 
-PhysicsColliderComponent::PhysicsColliderComponent(
+RigidBodyComponent::RigidBodyComponent(
     const PhysicsMaterial& material,
     float volume,
     const Vector3& offset,
@@ -19,13 +21,12 @@ PhysicsColliderComponent::PhysicsColliderComponent(
     bool isSleepable,
     bool isCCD,
     const Ref<btCollisionShape>& collisionShape)
-    : m_Material(material)
+    : CollisionComponent(collisionGroup, collisionMask)
+	, m_Material(material)
     , m_Volume(volume)
     , m_Offset(offset)
     , m_Gravity(gravity)
     , m_AngularFactor(angularFactor)
-    , m_CollisionGroup(collisionGroup)
-    , m_CollisionMask(collisionMask)
     , m_IsMoveable(isMoveable)
     , m_IsGeneratesHitEvents(generatesHitEvents)
     , m_IsSleepable(isSleepable)
@@ -36,7 +37,7 @@ PhysicsColliderComponent::PhysicsColliderComponent(
 	m_CollisionShape = collisionShape;
 }
 
-bool PhysicsColliderComponent::setupData()
+bool RigidBodyComponent::setupData()
 {
 	if (m_Body)
 	{
@@ -67,13 +68,13 @@ bool PhysicsColliderComponent::setupData()
 	setAngularFactor(m_AngularFactor);
 	setSleepable(m_IsSleepable);
 	setCCD(m_IsCCD);
-	m_Body->setUserPointer(this);
+	m_Body->setUserPointer((CollisionComponent*)this);
 
 	PhysicsSystem::GetSingleton()->addRigidBody(m_Body.get(), m_CollisionGroup, m_CollisionMask);
 	return true;
 }
 
-void PhysicsColliderComponent::onRemove()
+void RigidBodyComponent::onRemove()
 {
 	if (m_Body)
 	{
@@ -81,36 +82,44 @@ void PhysicsColliderComponent::onRemove()
 	}
 }
 
-void PhysicsColliderComponent::getWorldTransform(btTransform& worldTrans) const
+void RigidBodyComponent::getWorldTransform(btTransform& worldTrans) const
 {
 	worldTrans = MatTobtTransform(m_TransformComponent->getRotationPosition() * Matrix::CreateTranslation(m_Offset));
 }
 
-void PhysicsColliderComponent::setWorldTransform(const btTransform& worldTrans)
+void RigidBodyComponent::setWorldTransform(const btTransform& worldTrans)
 {
 	m_TransformComponent->setAbsoluteRotationPosition(Matrix::CreateTranslation(-m_Offset) * BtTransformToMat(worldTrans));
 }
 
-void PhysicsColliderComponent::applyForce(const Vector3& force)
+void RigidBodyComponent::handleHit(Hit* h)
+{
+	if (m_IsGeneratesHitEvents)
+	{
+		m_Owner->call("hit", { h });
+	}
+}
+
+void RigidBodyComponent::applyForce(const Vector3& force)
 {
 	m_Body->activate(true);
 	m_Body->applyCentralImpulse(VecTobtVector3(force));
 }
 
-void PhysicsColliderComponent::applyTorque(const Vector3& torque)
+void RigidBodyComponent::applyTorque(const Vector3& torque)
 {
 	m_Body->activate(true);
 	m_Body->applyTorqueImpulse(VecTobtVector3(torque));
 }
 
-void PhysicsColliderComponent::setAngularFactor(const Vector3& factors)
+void RigidBodyComponent::setAngularFactor(const Vector3& factors)
 {
 	m_AngularFactor = factors;
 	m_Body->activate(true);
 	m_Body->setAngularFactor(VecTobtVector3(factors));
 }
 
-void PhysicsColliderComponent::setAxisLock(bool enabled)
+void RigidBodyComponent::setAxisLock(bool enabled)
 {
 	if (enabled)
 	{
@@ -122,25 +131,25 @@ void PhysicsColliderComponent::setAxisLock(bool enabled)
 	}
 }
 
-void PhysicsColliderComponent::setOffset(const Vector3& offset)
+void RigidBodyComponent::setOffset(const Vector3& offset)
 {
 	m_Offset = offset;
 	m_Body->activate(true);
 	setupData();
 }
 
-void PhysicsColliderComponent::setTransform(const Matrix& mat)
+void RigidBodyComponent::setTransform(const Matrix& mat)
 {
 	m_Body->activate(true);
 	m_Body->setWorldTransform(MatTobtTransform(mat));
 }
 
-Matrix PhysicsColliderComponent::getTransform()
+Matrix RigidBodyComponent::getTransform()
 {
 	return BtTransformToMat(m_Body->getCenterOfMassTransform());
 }
 
-void PhysicsColliderComponent::setMoveable(bool enabled)
+void RigidBodyComponent::setMoveable(bool enabled)
 {
 	m_IsMoveable = enabled;
 	if (enabled)
@@ -158,7 +167,7 @@ void PhysicsColliderComponent::setMoveable(bool enabled)
 	m_Body->setMassProps(m_Mass, m_LocalInertia);
 }
 
-void PhysicsColliderComponent::setSleepable(bool enabled)
+void RigidBodyComponent::setSleepable(bool enabled)
 {
 	m_IsSleepable = enabled;
 	if (enabled)
@@ -171,7 +180,7 @@ void PhysicsColliderComponent::setSleepable(bool enabled)
 	}
 }
 
-void PhysicsColliderComponent::setCCD(bool enabled)
+void RigidBodyComponent::setCCD(bool enabled)
 {
 	// https://github.com/godotengine/godot/blob/46de553473b4bea49176fb4316176a5662931160/modules/bullet/rigid_body_bullet.cpp#L722
 
@@ -200,7 +209,7 @@ void PhysicsColliderComponent::setCCD(bool enabled)
 	}
 }
 
-void PhysicsColliderComponent::setKinematic(bool enabled)
+void RigidBodyComponent::setKinematic(bool enabled)
 {
 	m_IsKinematic = enabled;
 	if (enabled)
@@ -215,7 +224,7 @@ void PhysicsColliderComponent::setKinematic(bool enabled)
 	}
 }
 
-void PhysicsColliderComponent::highlight()
+void RigidBodyComponent::highlight()
 {
 	PhysicsSystem::GetSingleton()->debugDrawComponent(
 	    MatTobtTransform(m_TransformComponent->getRotationPosition() * Matrix::CreateTranslation(m_Offset)),
@@ -223,15 +232,13 @@ void PhysicsColliderComponent::highlight()
 	    VecTobtVector3({ 0.8f, 0.1f, 0.1f }));
 }
 
-JSON::json PhysicsColliderComponent::getJSON() const
+JSON::json RigidBodyComponent::getJSON() const
 {
-	JSON::json j;
+	JSON::json j = CollisionComponent::getJSON();
 
 	j["angularFactor"] = m_AngularFactor;
 	j["offset"] = m_Offset;
 	j["gravity"] = m_Gravity;
-	j["collisionGroup"] = m_CollisionGroup;
-	j["collisionMask"] = m_CollisionMask;
 	j["volume"] = m_Volume;
 	j["material"] = (int)m_Material;
 	j["isMoveable"] = m_IsMoveable;
@@ -243,46 +250,46 @@ JSON::json PhysicsColliderComponent::getJSON() const
 	return j;
 }
 
-void PhysicsColliderComponent::setVelocity(const Vector3& velocity)
+void RigidBodyComponent::setVelocity(const Vector3& velocity)
 {
 	m_Body->activate(true);
 	m_Body->setLinearVelocity(VecTobtVector3(velocity));
 }
 
-Vector3 PhysicsColliderComponent::getVelocity()
+Vector3 RigidBodyComponent::getVelocity()
 {
 	return BtVector3ToVec(m_Body->getLinearVelocity());
 }
 
-void PhysicsColliderComponent::setAngularVelocity(const Vector3& angularVel)
+void RigidBodyComponent::setAngularVelocity(const Vector3& angularVel)
 {
 	m_Body->activate(true);
 	m_Body->setAngularVelocity(VecTobtVector3(angularVel));
 }
 
-Vector3 PhysicsColliderComponent::getAngularVelocity()
+Vector3 RigidBodyComponent::getAngularVelocity()
 {
 	return BtVector3ToVec(m_Body->getAngularVelocity());
 }
 
-void PhysicsColliderComponent::translate(const Vector3& vec)
+void RigidBodyComponent::translate(const Vector3& vec)
 {
 	m_Body->activate(true);
 	m_Body->translate(VecTobtVector3(vec));
 }
 
-void PhysicsColliderComponent::setGravity(const Vector3& gravity)
+void RigidBodyComponent::setGravity(const Vector3& gravity)
 {
 	m_Body->activate(true);
 	m_Body->setGravity(VecTobtVector3(gravity));
 }
 
-PhysicsMaterial PhysicsColliderComponent::getMaterial() const
+PhysicsMaterial RigidBodyComponent::getMaterial() const
 {
 	return m_Material;
 }
 
-void PhysicsColliderComponent::draw()
+void RigidBodyComponent::draw()
 {
 	static bool showInEditor = true;
 	ImGui::Checkbox("Show in Editor", &showInEditor);
@@ -345,24 +352,5 @@ void PhysicsColliderComponent::draw()
 		setCCD(m_IsCCD);
 	}
 
-	if (ImGui::TreeNodeEx("Collision Group"))
-	{
-		displayCollisionLayers(m_CollisionGroup);
-		ImGui::TreePop();
-	}
-
-	if (ImGui::TreeNodeEx("Collision Mask"))
-	{
-		displayCollisionLayers(m_CollisionMask);
-		ImGui::TreePop();
-	}
-}
-
-void PhysicsColliderComponent::displayCollisionLayers(unsigned int& collision)
-{
-	ImGui::CheckboxFlags("Player", &collision, (int)CollisionMask::Player);
-	ImGui::CheckboxFlags("Enemy", &collision, (int)CollisionMask::Enemy);
-	ImGui::CheckboxFlags("Architecture", &collision, (int)CollisionMask::Architecture);
-	ImGui::CheckboxFlags("TriggerVolume", &collision, (int)CollisionMask::TriggerVolume);
-	ImGui::CheckboxFlags("All", &collision, (int)CollisionMask::All);
+	CollisionComponent::draw();
 }

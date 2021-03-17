@@ -21,7 +21,7 @@ StaticMeshColliderComponent::StaticMeshColliderComponent(
     int collisionGroup,
     int collisionMask,
     bool generatesHitEvents)
-    : PhysicsColliderComponent(material, 0.0f, offset, Vector3::Zero, Vector3::Zero, collisionGroup, collisionMask, false, false, generatesHitEvents, true, false, nullptr)
+    : RigidBodyComponent(material, 0.0f, offset, Vector3::Zero, Vector3::Zero, collisionGroup, collisionMask, false, false, generatesHitEvents, true, false, nullptr)
     , m_CollisionModel(file)
 {
 	// m_MeshShape will be set during setup
@@ -31,7 +31,7 @@ bool StaticMeshColliderComponent::setupData()
 {
 	m_CollisionShape.reset(new btBvhTriangleMeshShape(m_CollisionModel->getCollisionMesh(), true));
 	m_MeshShape = (btBvhTriangleMeshShape*)m_CollisionShape.get();
-	return PhysicsColliderComponent::setupData();
+	return RigidBodyComponent::setupData();
 }
 
 void StaticMeshColliderComponent::setCollisionModel(Ref<CollisionModelResourceFile> file)
@@ -42,7 +42,7 @@ void StaticMeshColliderComponent::setCollisionModel(Ref<CollisionModelResourceFi
 
 JSON::json StaticMeshColliderComponent::getJSON() const
 {
-	JSON::json j = PhysicsColliderComponent::getJSON();
+	JSON::json j = RigidBodyComponent::getJSON();
 
 	j["collisionModel"] = m_CollisionModel->getPath().generic_string();
 
@@ -51,7 +51,7 @@ JSON::json StaticMeshColliderComponent::getJSON() const
 
 void StaticMeshColliderComponent::draw()
 {
-	PhysicsColliderComponent::draw();
+	RigidBodyComponent::draw();
 
 	String filePath = m_CollisionModel->getPath().generic_string();
 	ImGui::Text("%s", filePath.c_str());

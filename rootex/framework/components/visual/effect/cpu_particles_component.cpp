@@ -43,7 +43,7 @@ Ptr<Component> CPUParticlesComponent::Create(const JSON::json& componentData)
 	    componentData.value("materialPath", "rootex/assets/materials/default_particles.rmat"),
 	    componentData.value("particleTemplate", ParticleTemplate()),
 	    (EmitMode)componentData.value("emitMode", (int)EmitMode::Point),
-	    componentData.value("emitRate", 1.0f),
+	    componentData.value("emitRate", 1),
 	    componentData.value("emitterDimensions", Vector3 { 1.0f, 1.0f, 1.0f }),
 	    componentData.value("isVisible", true),
 	    componentData.value("renderPass", (unsigned int)RenderPass::Basic));
