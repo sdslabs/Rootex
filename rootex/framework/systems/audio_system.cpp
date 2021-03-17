@@ -4,8 +4,8 @@
 #include <thread>
 
 #include "framework/ecs_factory.h"
-#include "components/music_component.h"
-#include "components/short_music_component.h"
+#include "components/audio/music_component.h"
+#include "components/audio/short_music_component.h"
 #include "core/audio/audio_source.h"
 #include "core/audio/static_audio_buffer.h"
 #include "core/audio/streaming_audio_buffer.h"

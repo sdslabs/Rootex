@@ -7,16 +7,16 @@
 #include "scene_loader.h"
 #include "ecs_factory.h"
 #include "script.h"
-#include "components/transform_component.h"
-#include "components/visual/text_ui_component.h"
-#include "components/visual/ui_component.h"
-#include "components/visual/model_component.h"
-#include "components/visual/animated_model_component.h"
+#include "components/space/transform_component.h"
+#include "components/visual/ui/text_ui_component.h"
+#include "components/visual/ui/ui_component.h"
+#include "components/visual/model/model_component.h"
+#include "components/visual/model/animated_model_component.h"
 #include "components/physics/box_collider_component.h"
 #include "components/physics/capsule_collider_component.h"
 #include "components/physics/sphere_collider_component.h"
-#include "components/visual/ui_component.h"
-#include "components/visual/particle_effect_component.h"
+#include "components/visual/ui/ui_component.h"
+#include "components/visual/effect/particle_effect_component.h"
 #include "systems/input_system.h"
 #include "core/resource_files/audio_resource_file.h"
 #include "core/resource_files/font_resource_file.h"
@@ -398,7 +398,6 @@ void LuaInterpreter::registerTypes()
 		sol::usertype<PhysicsColliderComponent> physicsColliderComponent = rootex.new_usertype<PhysicsColliderComponent>(
 		    "PhysicsColliderComponent",
 		    sol::base_classes, sol::bases<Component>());
-		rootex["Entity"]["getPhysicsCollider"] = &Entity::getComponent<PhysicsColliderComponent>;
 		physicsColliderComponent["getVelocity"] = &PhysicsColliderComponent::getVelocity;
 		physicsColliderComponent["setVelocity"] = &PhysicsColliderComponent::setVelocity;
 		physicsColliderComponent["applyForce"] = &PhysicsColliderComponent::applyForce;

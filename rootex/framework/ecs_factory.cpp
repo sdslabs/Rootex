@@ -4,31 +4,29 @@
 
 #include "scene.h"
 
-#include "components/audio_listener_component.h"
-#include "components/debug_component.h"
-#include "components/music_component.h"
+#include "components/audio/audio_listener_component.h"
+#include "components/audio/music_component.h"
 #include "components/physics/box_collider_component.h"
 #include "components/physics/sphere_collider_component.h"
 #include "components/physics/capsule_collider_component.h"
 #include "components/physics/static_mesh_collider_component.h"
-#include "components/short_music_component.h"
-#include "components/test_component.h"
-#include "components/transform_animation_component.h"
-#include "components/transform_component.h"
+#include "components/audio/short_music_component.h"
+#include "components/space/transform_animation_component.h"
+#include "components/space/transform_component.h"
 #include "components/visual/camera_component.h"
-#include "components/visual/cpu_particles_component.h"
-#include "components/visual/directional_light_component.h"
-#include "components/visual/fog_component.h"
-#include "components/visual/grid_model_component.h"
-#include "components/visual/model_component.h"
-#include "components/visual/point_light_component.h"
-#include "components/visual/static_point_light_component.h"
-#include "components/visual/sky_component.h"
-#include "components/visual/spot_light_component.h"
-#include "components/visual/text_ui_component.h"
-#include "components/visual/ui_component.h"
-#include "components/visual/animated_model_component.h"
-#include "components/visual/particle_effect_component.h"
+#include "components/visual/effect/cpu_particles_component.h"
+#include "components/visual/light/directional_light_component.h"
+#include "components/visual/effect/fog_component.h"
+#include "components/visual/model/grid_model_component.h"
+#include "components/visual/model/model_component.h"
+#include "components/visual/light/point_light_component.h"
+#include "components/visual/light/static_point_light_component.h"
+#include "components/visual/effect/sky_component.h"
+#include "components/visual/light/spot_light_component.h"
+#include "components/visual/ui/text_ui_component.h"
+#include "components/visual/ui/ui_component.h"
+#include "components/visual/model/animated_model_component.h"
+#include "components/visual/effect/particle_effect_component.h"
 
 void ECSFactory::RegisterComponentInstance(Component* component)
 {
@@ -85,7 +83,7 @@ Ptr<Component> ECSFactory::CreateComponent(const String& componentName, const JS
 	if (findIt != s_ComponentCreators.end())
 	{
 		ComponentCreator create = std::get<ComponentCreator>(*findIt);
-		Ptr<Component> component(create(componentData));
+		Ptr<Component> component(std::move(create(componentData)));
 
 		RegisterComponentInstance(component.get());
 
@@ -155,8 +153,6 @@ Ptr<Entity> ECSFactory::CopyEntity(Scene* scene, Entity& entity)
 
 void ECSFactory::Initialize()
 {
-	REGISTER_COMPONENT(TestComponent);
-	REGISTER_COMPONENT(DebugComponent);
 	REGISTER_COMPONENT(CameraComponent);
 	REGISTER_COMPONENT(GridModelComponent);
 	REGISTER_COMPONENT(ModelComponent);
@@ -197,17 +193,14 @@ Ptr<Entity> ECSFactory::CreateRootEntity(Scene* scene)
 	}
 	{
 		Ptr<Component>& camera = CreateDefaultComponent("CameraComponent");
-		CameraComponent* rootCameraComponent = dynamic_cast<CameraComponent*>(camera.get());
 		AddComponent(root.get(), camera);
 	}
 	{
 		Ptr<Component>& listener = CreateDefaultComponent("AudioListenerComponent");
-		AudioListenerComponent* rootListenerComponent = dynamic_cast<AudioListenerComponent*>(listener.get());
 		AddComponent(root.get(), listener);
 	}
 	{
 		Ptr<Component>& sky = CreateDefaultComponent("SkyComponent");
-		SkyComponent* rootSkyComponent = dynamic_cast<SkyComponent*>(sky.get());
 		AddComponent(root.get(), sky);
 	}
 

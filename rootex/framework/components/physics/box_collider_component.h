@@ -6,16 +6,12 @@
 
 class BoxColliderComponent : public PhysicsColliderComponent
 {
-	static Component* Create(const JSON::json& boxComponentData);
+	DEFINE_COMPONENT(BoxColliderComponent);
 
 	Vector3 m_Dimensions;
 	btBoxShape* m_BoxShape;
 
-	friend class ECSFactory;
-
 public:
-	static const ComponentID s_ID = (ComponentID)ComponentIDs::BoxColliderComponent;
-
 	BoxColliderComponent(
 	    const Vector3& dimensions,
 	    const Vector3& offset,
@@ -29,13 +25,11 @@ public:
 	    bool generatesHitEvents,
 	    bool isSleepable,
 	    bool isCCD);
-
-	Vector3 getDimensions() const { return m_Dimensions; }
-	virtual const char* getName() const override { return "BoxColliderComponent"; };
-	virtual JSON::json getJSON() const override;
-	virtual ComponentID getComponentID() const override { return s_ID; }
+	~BoxColliderComponent() = default;
 
 	void setDimensions(const Vector3& dimensions);
+	Vector3 getDimensions() const { return m_Dimensions; }
 
+	JSON::json getJSON() const override;
 	void draw() override;
 };

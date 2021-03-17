@@ -3,16 +3,15 @@
 #include "systems/physics_system.h"
 #include "event_manager.h"
 
-Component* StaticMeshColliderComponent::Create(const JSON::json& staticMeshComponentData)
+Ptr<Component> StaticMeshColliderComponent::Create(const JSON::json& staticMeshComponentData)
 {
-	StaticMeshColliderComponent* component = new StaticMeshColliderComponent(
+	return std::make_unique<StaticMeshColliderComponent>(
 	    ResourceLoader::CreateCollisionModelResourceFile(staticMeshComponentData.value("collisionModel", String("rootex/assets/cube.obj"))),
 	    staticMeshComponentData.value("offset", Vector3(0.0f, 0.0f, 0.0f)),
 	    staticMeshComponentData.value("material", PhysicsMaterial::Air),
 	    staticMeshComponentData.value("collisionGroup", (int)CollisionMask::All),
 	    staticMeshComponentData.value("collisionMask", (int)CollisionMask::All),
 	    staticMeshComponentData.value("isGeneratesHitEvents", false));
-	return component;
 }
 
 StaticMeshColliderComponent::StaticMeshColliderComponent(
@@ -22,20 +21,7 @@ StaticMeshColliderComponent::StaticMeshColliderComponent(
     int collisionGroup,
     int collisionMask,
     bool generatesHitEvents)
-    : PhysicsColliderComponent(
-        material,
-        0.0f,
-        offset,
-        Vector3::Zero,
-        Vector3::Zero,
-        collisionGroup,
-        collisionMask,
-        false,
-        false,
-        generatesHitEvents,
-        true,
-        false,
-        nullptr)
+    : PhysicsColliderComponent(material, 0.0f, offset, Vector3::Zero, Vector3::Zero, collisionGroup, collisionMask, false, false, generatesHitEvents, true, false, nullptr)
     , m_CollisionModel(file)
 {
 	// m_MeshShape will be set during setup

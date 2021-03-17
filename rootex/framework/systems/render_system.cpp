@@ -1,9 +1,9 @@
 #include "render_system.h"
 
-#include "components/visual/fog_component.h"
-#include "components/visual/sky_component.h"
-#include "components/visual/grid_model_component.h"
-#include "components/visual/cpu_particles_component.h"
+#include "components/visual/effect/fog_component.h"
+#include "components/visual/effect/sky_component.h"
+#include "components/visual/model/grid_model_component.h"
+#include "components/visual/effect/cpu_particles_component.h"
 #include "renderer/shaders/register_locations_vertex_shader.h"
 #include "renderer/shaders/register_locations_pixel_shader.h"
 #include "light_system.h"
@@ -358,6 +358,11 @@ void RenderSystem::perFramePSCBBinds(const Color& fogColor)
 void RenderSystem::perScenePSCBBinds()
 {
 	calculateTransforms(SceneLoader::GetSingleton()->getRootScene());
+	updateStaticLights();
+}
+
+void RenderSystem::updateStaticLights()
+{
 	PerLevelPSCB perScene;
 	perScene.staticLights = LightSystem::GetSingleton()->getStaticPointLights();
 	Material::SetPSConstantBuffer(perScene, m_PSPerLevelConstantBuffer, PER_SCENE_PS_CPP);

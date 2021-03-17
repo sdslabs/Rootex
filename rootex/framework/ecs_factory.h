@@ -7,7 +7,7 @@
 #include "component.h"
 
 /// Function pointer to a function that constructs a component, taking in a set of component data.
-typedef Component* (*ComponentCreator)(const JSON::json& componentDescription);
+typedef Ptr<Component> (*ComponentCreator)(const JSON::json& componentDescription);
 /// Collection of a component, its name, and a function that constructs that component.
 typedef Vector<Tuple<ComponentID, String, ComponentCreator>> ComponentDatabase;
 /// Collection of all components active inside the scene.

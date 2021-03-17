@@ -1,9 +1,9 @@
 #include "sphere_collider_component.h"
 #include "framework/systems/physics_system.h"
 
-Component* SphereColliderComponent::Create(const JSON::json& sphereComponentData)
+Ptr<Component> SphereColliderComponent::Create(const JSON::json& sphereComponentData)
 {
-	SphereColliderComponent* component = new SphereColliderComponent(
+	return std::make_unique<SphereColliderComponent>(
 	    sphereComponentData.value("radius", 1.0f),
 	    sphereComponentData.value("offset", Vector3(0.0f, 0.0f, 0.0f)),
 	    sphereComponentData.value("material", PhysicsMaterial::Air),
@@ -16,7 +16,6 @@ Component* SphereColliderComponent::Create(const JSON::json& sphereComponentData
 	    sphereComponentData.value("isGeneratesHitEvents", false),
 	    sphereComponentData.value("isSleepable", true),
 	    sphereComponentData.value("isCCD", false));
-	return component;
 }
 
 SphereColliderComponent::SphereColliderComponent(
