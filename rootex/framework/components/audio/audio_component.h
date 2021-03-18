@@ -39,6 +39,8 @@ public:
 	bool isAttenuated() { return m_IsAttenuated; }
 
 	void setPlaying(bool enabled);
+	void play();
+	void stop();
 
 	void setLooping(bool enabled);
 	bool isLooping();

@@ -74,7 +74,7 @@ void TriggerComponent::notifyEntry()
 		{
 			if (Entity* entity = scene->getEntity())
 			{
-				entity->call("enter", { getOwner() });
+				entity->call("enter", { entity, getOwner() });
 			}
 		}
 		else
@@ -93,7 +93,7 @@ void TriggerComponent::notifyExit()
 		{
 			if (Entity* entity = scene->getEntity())
 			{
-				entity->call("exit", { getOwner() });
+				entity->call("exit", { entity, getOwner() });
 			}
 		}
 		else
@@ -127,8 +127,11 @@ bool TriggerComponent::setupData()
 
 void TriggerComponent::setDimensions(const Vector3& dimensions)
 {
+	detachCollisionObject();
 	m_Dimensions = dimensions;
-	setupData();
+	m_BoxShape.reset(new btBoxShape(VecTobtVector3(m_Dimensions)));
+	m_Body->setCollisionShape(m_BoxShape.get());
+	attachCollisionObject();
 }
 
 void TriggerComponent::addTarget(Vector<SceneID>& list, SceneID toAdd)

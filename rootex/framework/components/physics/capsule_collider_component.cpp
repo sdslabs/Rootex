@@ -55,18 +55,22 @@ CapsuleColliderComponent::CapsuleColliderComponent(
 
 void CapsuleColliderComponent::setSideHeight(float s)
 {
+	detachCollisionObject();
 	m_SideHeight = s;
 	m_CollisionShape.reset(new btCapsuleShape(m_Radius, m_SideHeight));
 	m_CapsuleShape = (btCapsuleShape*)m_CollisionShape.get();
-	setupData();
+	m_Body->setCollisionShape(m_CapsuleShape);
+	attachCollisionObject();
 }
 
 void CapsuleColliderComponent::setRadius(float r)
 {
+	detachCollisionObject();
 	m_Radius = r;
 	m_CollisionShape.reset(new btCapsuleShape(m_Radius, m_SideHeight));
 	m_CapsuleShape = (btCapsuleShape*)m_CollisionShape.get();
-	setupData();
+	m_Body->setCollisionShape(m_CapsuleShape);
+	attachCollisionObject();
 }
 
 JSON::json CapsuleColliderComponent::getJSON() const

@@ -68,7 +68,7 @@ void MusicComponent::draw()
 		EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, m_AudioFile->getPath().string());
 	}
 	ImGui::SameLine();
-	if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Music"))
+	if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Select Music"))
 	{
 		if (Optional<String> result = OS::SelectFile(SupportedFiles.at(ResourceFile::Type::Audio), "game/assets/"))
 		{

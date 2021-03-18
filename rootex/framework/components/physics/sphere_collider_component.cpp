@@ -61,10 +61,12 @@ JSON::json SphereColliderComponent::getJSON() const
 
 void SphereColliderComponent::setRadius(float r)
 {
+	detachCollisionObject();
 	m_Radius = r;
 	m_CollisionShape.reset(new btSphereShape(m_Radius));
 	m_SphereShape = (btSphereShape*)m_CollisionShape.get();
-	setupData();
+	m_Body->setCollisionShape(m_SphereShape);
+	attachCollisionObject();
 }
 
 void SphereColliderComponent::draw()

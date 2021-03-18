@@ -18,9 +18,9 @@
                         "collisionGroup": 31,
                         "collisionMask": 31,
                         "dimensions": {
-                            "x": 0.0,
-                            "y": 0.0,
-                            "z": 0.0
+                            "x": 5.360000133514404,
+                            "y": 0.5199999809265137,
+                            "z": 3.109999895095825
                         },
                         "gravity": {
                             "x": 0.0,
@@ -38,7 +38,7 @@
                             "y": 0.0,
                             "z": 0.0
                         },
-                        "volume": 0.0
+                        "volume": 8.668191909790039
                     },
                     "ModelComponent": {
                         "affectingStaticLights": [],
@@ -124,12 +124,12 @@
                         "collisionMask": 31,
                         "gravity": {
                             "x": 0.0,
-                            "y": -1.0,
+                            "y": 0.0,
                             "z": 0.0
                         },
                         "isCCD": false,
                         "isGeneratesHitEvents": false,
-                        "isKinematic": false,
+                        "isKinematic": true,
                         "isMoveable": true,
                         "isSleepable": false,
                         "material": 1,
@@ -140,6 +140,55 @@
                         },
                         "radius": 0.800000011920929,
                         "volume": 2.144660711288452
+                    },
+                    "TransformAnimationComponent": {
+                        "animationMode": 2,
+                        "isPlayOnStart": true,
+                        "keyframes": [
+                            {
+                                "timePosition": 0.0,
+                                "transform": [
+                                    0.03999999910593033,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    0.03999999910593033,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    0.03999999910593033,
+                                    0.0,
+                                    -3.9105095863342285,
+                                    0.13474920392036438,
+                                    -9.829999923706055,
+                                    1.0
+                                ]
+                            },
+                            {
+                                "timePosition": 3.0,
+                                "transform": [
+                                    0.03999999910593033,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    0.03999999910593033,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    0.03999999910593033,
+                                    0.0,
+                                    4.443079948425293,
+                                    0.13474920392036438,
+                                    -9.829999923706055,
+                                    1.0
+                                ]
+                            }
+                        ],
+                        "transitionType": 1
                     },
                     "TransformComponent": {
                         "boundingBox": {
@@ -155,8 +204,8 @@
                             }
                         },
                         "position": {
-                            "x": -0.06867629289627075,
-                            "y": 2.9635226726531982,
+                            "x": 4.435557842254639,
+                            "y": 0.13474920392036438,
                             "z": -9.829999923706055
                         },
                         "rotation": {
@@ -191,6 +240,18 @@
                     "script": null
                 },
                 "components": {
+                    "ModelComponent": {
+                        "affectingStaticLights": [],
+                        "isVisible": true,
+                        "lodBias": 0.0,
+                        "lodDistance": 10.0,
+                        "lodEnable": true,
+                        "materialOverrides": {
+                            "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                        },
+                        "renderPass": 1,
+                        "resFile": "rootex/assets/cube.obj"
+                    },
                     "TransformComponent": {
                         "boundingBox": {
                             "center": {
@@ -225,15 +286,15 @@
                         "collisionGroup": 8,
                         "collisionMask": 1,
                         "dimensions": {
-                            "x": 0.5600000023841858,
+                            "x": 0.6499999761581421,
                             "y": 0.5,
-                            "z": 3.109999895095825
+                            "z": 3.2100000381469727
                         },
-                        "entryRepeat": false,
+                        "entryRepeat": true,
                         "entryTargets": [
                             8
                         ],
-                        "exitRepeat": false,
+                        "exitRepeat": true,
                         "exitTargets": [
                             8
                         ]
@@ -263,6 +324,32 @@
                     }
                 },
                 "components": {
+                    "ShortMusicComponent": {
+                        "attenuationModel": 53251,
+                        "audio": "game/assets/droplet.wav",
+                        "isAttenuated": false,
+                        "isLooping": false,
+                        "maxDistance": 4.0,
+                        "playOnStart": false,
+                        "referenceDistance": 1.0,
+                        "rollOffFactor": 1.0
+                    },
+                    "TextUIComponent": {
+                        "color": {
+                            "a": 1.0,
+                            "b": 0.0,
+                            "g": 0.52173912525177,
+                            "r": 1.0
+                        },
+                        "fontResource": "game/assets/fonts/noto_sans_50_regular.spritefont",
+                        "isVisible": true,
+                        "mode": 0,
+                        "origin": {
+                            "x": 45.0,
+                            "y": 41.0
+                        },
+                        "text": "Hello Rootex!"
+                    },
                     "TransformComponent": {
                         "boundingBox": {
                             "center": {
@@ -282,15 +369,15 @@
                             "z": -14.111013412475586
                         },
                         "rotation": {
-                            "w": 1.0,
+                            "w": 0.7119048237800598,
                             "x": -0.0,
-                            "y": 0.0,
+                            "y": 0.7022760510444641,
                             "z": -0.0
                         },
                         "scale": {
-                            "x": 1.0,
+                            "x": 1.0000001192092896,
                             "y": 1.0,
-                            "z": 1.0
+                            "z": 1.0000001192092896
                         }
                     }
                 }

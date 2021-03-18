@@ -2,6 +2,16 @@
 
 #include "systems/physics_system.h"
 
+void CollisionComponent::detachCollisionObject()
+{
+	PhysicsSystem::GetSingleton()->removeCollisionObject(m_CollisionObject.get());
+}
+
+void CollisionComponent::attachCollisionObject()
+{
+	PhysicsSystem::GetSingleton()->addCollisionObject(m_CollisionObject.get(), m_CollisionGroup, m_CollisionMask);
+}
+
 CollisionComponent::CollisionComponent(int collisionGroup, int collisionMask)
     : m_CollisionGroup(collisionGroup)
     , m_CollisionMask(collisionMask)

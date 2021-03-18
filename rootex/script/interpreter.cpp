@@ -7,6 +7,9 @@
 #include "scene_loader.h"
 #include "ecs_factory.h"
 #include "script.h"
+#include "components/audio/audio_component.h"
+#include "components/audio/short_music_component.h"
+#include "components/audio/music_component.h"
 #include "components/space/transform_component.h"
 #include "components/visual/ui/text_ui_component.h"
 #include "components/visual/ui/ui_component.h"
@@ -395,6 +398,26 @@ void LuaInterpreter::registerTypes()
 		    sol::base_classes, sol::bases<Component>());
 		rootex["Entity"]["getUI"] = &Entity::getComponent<UIComponent>;
 		ui["getDocumentID"] = [](UIComponent* ui) { return ui->getDocument()->GetId(); };
+	}
+	{
+		sol::usertype<AudioComponent> audioComponent = rootex.new_usertype<AudioComponent>(
+		    "AudioComponent",
+		    sol::base_classes, sol::bases<Component>());
+		audioComponent["play"] = &AudioComponent::play;
+		audioComponent["stop"] = &AudioComponent::stop;
+		audioComponent["setPlaying"] = &AudioComponent::setPlaying;
+	}
+	{
+		sol::usertype<ShortMusicComponent> shortMusicComponent = rootex.new_usertype<ShortMusicComponent>(
+		    "ShortMusicComponent",
+		    sol::base_classes, sol::bases<Component, AudioComponent>());
+		rootex["Entity"]["getShortMusic"] = &Entity::getComponent<ShortMusicComponent>;
+	}
+	{
+		sol::usertype<MusicComponent> musicComponent = rootex.new_usertype<MusicComponent>(
+		    "MusicComponent",
+		    sol::base_classes, sol::bases<Component, AudioComponent>());
+		rootex["Entity"]["getMusic"] = &Entity::getComponent<MusicComponent>;
 	}
 	{
 		sol::usertype<Hit> hit = rootex.new_usertype<Hit>("Hit");

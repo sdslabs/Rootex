@@ -75,6 +75,16 @@ void AudioComponent::setPlaying(bool enabled)
 	}
 }
 
+void AudioComponent::play()
+{
+	setPlaying(true);
+}
+
+void AudioComponent::stop()
+{
+	setPlaying(false);
+}
+
 void AudioComponent::setLooping(bool enabled)
 {
 	m_IsLooping = enabled;
@@ -92,6 +102,7 @@ void AudioComponent::draw()
 	}
 
 	ImGui::Checkbox("Attenuation", &m_IsAttenuated);
+
 	if (ImGui::BeginCombo("Attenutation Model", m_AttenuationModelName.c_str()))
 	{
 		if (ImGui::Selectable("Linear"))
