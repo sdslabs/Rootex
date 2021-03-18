@@ -12,6 +12,8 @@ class StaticMeshColliderComponent : public RigidBodyComponent
 	btBvhTriangleMeshShape* m_MeshShape;
 	Ref<CollisionModelResourceFile> m_CollisionModel;
 
+	void createStaticMesh();
+
 public:
 	StaticMeshColliderComponent(
 	    Ref<CollisionModelResourceFile> file,

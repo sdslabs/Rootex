@@ -24,6 +24,9 @@ protected:
 	unsigned int m_CollisionGroup;
 	unsigned int m_CollisionMask;
 
+	void detachCollisionObject();
+	void attachCollisionObject();
+
 public:
 	CollisionComponent(int collisionGroup, int collisionMask);
 	virtual ~CollisionComponent() = default;
