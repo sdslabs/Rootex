@@ -20,6 +20,7 @@ enum class CollisionMask : unsigned int
 class CollisionComponent : public Component
 {
 protected:
+	Ref<btCollisionObject> m_CollisionObject;
 	unsigned int m_CollisionGroup;
 	unsigned int m_CollisionMask;
 
@@ -27,8 +28,9 @@ public:
 	CollisionComponent(int collisionGroup, int collisionMask);
 	virtual ~CollisionComponent() = default;
 
-	virtual void handleHit(Hit* h) = 0;
+	virtual void handleHit(Hit* h);
 
+	void onRemove() override;
 	JSON::json getJSON() const override;
 	void draw() override;
 	void displayCollisionLayers(unsigned int& collision);

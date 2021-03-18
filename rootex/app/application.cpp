@@ -19,6 +19,7 @@
 #include "systems/post_process_system.h"
 #include "systems/script_system.h"
 #include "systems/transform_animation_system.h"
+#include "systems/trigger_system.h"
 
 #include "Tracy/Tracy.hpp"
 
@@ -80,6 +81,7 @@ Application::Application(const String& settingsFile)
 
 	ShaderLibrary::MakeShaders();
 	PhysicsSystem::GetSingleton()->initialize(systemsSettings["PhysicsSystem"]);
+	TriggerSystem::GetSingleton();
 
 	JSON::json& uiSystemSettings = systemsSettings["UISystem"];
 	uiSystemSettings["width"] = m_Window->getWidth();
