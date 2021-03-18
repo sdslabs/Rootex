@@ -11,10 +11,10 @@ class BasicMaterial : public Material
 protected:
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_SamplerState;
 
-	ImageResourceFile* m_DiffuseImageFile;
-	ImageResourceFile* m_NormalImageFile;
-	ImageResourceFile* m_SpecularImageFile;
-	ImageResourceFile* m_LightmapImageFile;
+	Ref<ImageResourceFile> m_DiffuseImageFile;
+	Ref<ImageResourceFile> m_NormalImageFile;
+	Ref<ImageResourceFile> m_SpecularImageFile;
+	Ref<ImageResourceFile> m_LightmapImageFile;
 
 	bool m_IsLit;
 	bool m_IsNormal;
@@ -47,10 +47,10 @@ public:
 	~BasicMaterial() = default;
 
 	void setColor(const Color& color) { m_Color = color; };
-	void setDiffuseTexture(ImageResourceFile* image);
-	void setNormalTexture(ImageResourceFile* image);
-	void setSpecularTexture(ImageResourceFile* image);
-	void setLightmapTexture(ImageResourceFile* image);
+	void setDiffuseTexture(Ref<ImageResourceFile> image);
+	void setNormalTexture(Ref<ImageResourceFile> image);
+	void setSpecularTexture(Ref<ImageResourceFile> image);
+	void setLightmapTexture(Ref<ImageResourceFile> image);
 	void removeNormal();
 	void setSpecularIntensity(float specIntensity) { m_SpecularIntensity = specIntensity; }
 	void setSpecularPower(float specPower) { m_SpecularPower = specPower; }

@@ -6,12 +6,14 @@
 
 Component* SkyComponent::Create(const JSON::json& componentData)
 {
-	return new SkyComponent(componentData.value("skyMaterial", "rootex/assets/materials/sky.rmat"), componentData.value("skySphere", "rootex/assets/sky.obj"));
+	return new SkyComponent(
+	    ResourceLoader::CreateModelResourceFile(componentData.value("skySphere", "rootex/assets/sky.obj")),
+	    std::dynamic_pointer_cast<SkyMaterial>(MaterialLibrary::GetMaterial(componentData.value("skyMaterial", "rootex/assets/materials/sky.rmat"))));
 }
 
-SkyComponent::SkyComponent(const String& skyMaterialPath, const String& skySpherePath)
-    : m_SkyMaterial(std::dynamic_pointer_cast<SkyMaterial>(MaterialLibrary::GetMaterial(skyMaterialPath)))
-    , m_SkySphere(ResourceLoader::CreateModelResourceFile(skySpherePath))
+SkyComponent::SkyComponent(Ref<ModelResourceFile> skySphere, Ref<SkyMaterial> skyMaterial)
+    : m_SkyMaterial(skyMaterial)
+    , m_SkySphere(skySphere)
 {
 }
 

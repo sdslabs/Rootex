@@ -13,7 +13,7 @@ void TextViewer::drawFileInfo()
 {
 }
 
-ResourceFile* TextViewer::load(const FilePath& filePath)
+Ref<ResourceFile> TextViewer::load(const FilePath& filePath)
 {
 	m_TextResourceFile = ResourceLoader::CreateTextResourceFile(filePath.string());
 	return m_TextResourceFile;

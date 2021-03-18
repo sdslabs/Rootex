@@ -34,7 +34,7 @@ Component* ModelComponent::Create(const JSON::json& componentData)
 
 ModelComponent::ModelComponent(
     unsigned int renderPass,
-    ModelResourceFile* resFile,
+    Ref<ModelResourceFile> resFile,
     const HashMap<String, String>& materialOverrides,
     bool visibility,
     bool lodEnable,
@@ -88,7 +88,7 @@ void ModelComponent::render(float viewDistance)
 	}
 }
 
-void ModelComponent::setModelResourceFile(ModelResourceFile* newModel, const HashMap<String, String>& materialOverrides)
+void ModelComponent::setModelResourceFile(Ref<ModelResourceFile> newModel, const HashMap<String, String>& materialOverrides)
 {
 	if (!newModel)
 	{
@@ -124,7 +124,7 @@ void ModelComponent::assignBoundingBox()
 	}
 }
 
-void ModelComponent::assignOverrides(ModelResourceFile* newModel, const HashMap<String, String>& materialOverrides)
+void ModelComponent::assignOverrides(Ref<ModelResourceFile> newModel, const HashMap<String, String>& materialOverrides)
 {
 	m_ModelResourceFile = newModel;
 

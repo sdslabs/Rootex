@@ -20,7 +20,7 @@ void StaticAudioBuffer::destroyBuffers()
 	AL_CHECK(alDeleteBuffers(1, &m_BufferID));
 }
 
-StaticAudioBuffer::StaticAudioBuffer(AudioResourceFile* audioFile)
+StaticAudioBuffer::StaticAudioBuffer(Ref<AudioResourceFile> audioFile)
     : AudioBuffer(audioFile)
 {
 	initializeBuffers();

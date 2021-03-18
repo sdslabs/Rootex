@@ -32,6 +32,7 @@ using Promise = std::promise<T>;
 /// Mutex for mutual exclusion
 #include <mutex>
 typedef std::mutex Mutex;
+typedef std::recursive_mutex RecursiveMutex;
 
 /// Atomic data type
 #include <atomic>

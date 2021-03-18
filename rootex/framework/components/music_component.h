@@ -13,9 +13,9 @@ class MusicComponent : public AudioComponent
 
 	Ref<StreamingAudioSource> m_StreamingAudioSource;
 	Ref<StreamingAudioBuffer> m_StreamingAudioBuffer;
-	AudioResourceFile* m_AudioFile;
+	Ref<AudioResourceFile> m_AudioFile;
 
-	MusicComponent(AudioResourceFile* audioFile, bool playOnStart, bool isLooping, bool attenuation, AudioSource::AttenuationModel model, ALfloat rolloffFactor, ALfloat referenceDistance, ALfloat maxDistance);
+	MusicComponent(Ref<AudioResourceFile> audioFile, bool playOnStart, bool isLooping, bool attenuation, AudioSource::AttenuationModel model, ALfloat rolloffFactor, ALfloat referenceDistance, ALfloat maxDistance);
 	virtual ~MusicComponent();
 
 	friend class ECSFactory;
@@ -25,8 +25,8 @@ public:
 
 	virtual bool setupData() override;
 
-	AudioResourceFile* getAudioFile() const { return m_AudioFile; }
-	void setAudioFile(AudioResourceFile* audioFile);
+	AudioResourceFile* getAudioFile() const { return m_AudioFile.get(); }
+	void setAudioFile(Ref<AudioResourceFile> audioFile);
 
 	virtual const char* getName() const override { return "MusicComponent"; };
 	virtual ComponentID getComponentID() const override { return s_ID; };

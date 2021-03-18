@@ -347,8 +347,14 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 					int id = 0;
 					for (auto& [type, files] : ResourceLoader::GetResources())
 					{
-						for (auto& file : files)
+						for (auto& fileHandle : files)
 						{
+							Ref<ResourceFile> file = fileHandle.lock();
+							if (!file)
+							{
+								continue;
+							}
+
 							ImGui::PushID(id);
 							if (file->isDirty())
 							{
@@ -627,8 +633,8 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 
 			if (ImGui::BeginPopup("About Rootex Editor"))
 			{
-				static ImageResourceFile* engineImage = ResourceLoader::CreateImageResourceFile("rootex/assets/rootex.png");
-				static ImageResourceFile* editorImage = ResourceLoader::CreateImageResourceFile("editor/assets/editor.png");
+				static Ref<ImageResourceFile> engineImage = ResourceLoader::CreateImageResourceFile("rootex/assets/rootex.png");
+				static Ref<ImageResourceFile> editorImage = ResourceLoader::CreateImageResourceFile("editor/assets/editor.png");
 
 				ImGui::BeginGroup();
 				ImGui::Image(engineImage->getTexture()->getTextureResourceView(), { 200, 200 });
@@ -644,7 +650,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 
 				ImGui::Text(String("Rootex Engine and Rootex Editor developed by SDSLabs. Built on " + OS::GetBuildDate() + " at " + OS::GetBuildTime() + "\n" + "Source available at https://www.github.com/sdslabs/rootex").c_str());
 
-				static TextResourceFile* license = ResourceLoader::CreateTextResourceFile("LICENSE");
+				static Ref<TextResourceFile> license = ResourceLoader::CreateTextResourceFile("LICENSE");
 				ImGui::Text("%s", license->getString().c_str());
 				m_MenuAction = "";
 				ImGui::EndPopup();
@@ -660,7 +666,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 			{
 				if (ImGui::BeginPopup(library.string().c_str(), ImGuiWindowFlags_AlwaysAutoResize))
 				{
-					TextResourceFile* license = ResourceLoader::CreateTextResourceFile(library.string() + "/LICENSE");
+					Ref<TextResourceFile> license = ResourceLoader::CreateTextResourceFile(library.string() + "/LICENSE");
 					ImGui::Text("%s", license->getString().c_str());
 					m_MenuAction = "";
 					ImGui::EndPopup();
