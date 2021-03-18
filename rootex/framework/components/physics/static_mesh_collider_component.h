@@ -10,7 +10,7 @@ class StaticMeshColliderComponent : public PhysicsColliderComponent
 	static Component* Create(const JSON::json& staticMeshComponentData);
 
 	btBvhTriangleMeshShape* m_MeshShape;
-	CollisionModelResourceFile* m_CollisionModel;
+	Ref<CollisionModelResourceFile> m_CollisionModel;
 
 	friend class ECSFactory;
 
@@ -18,7 +18,7 @@ public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::StaticMeshColliderComponent;
 
 	StaticMeshColliderComponent(
-	    const String& collisionModelPath,
+	    Ref<CollisionModelResourceFile> file,
 	    const Vector3& offset,
 	    const PhysicsMaterial& material,
 	    int collisionGroup,
@@ -26,7 +26,7 @@ public:
 	    bool generatesHitEvents);
 
 	bool setupData() override;
-	void setCollisionModel(CollisionModelResourceFile* file);
+	void setCollisionModel(Ref<CollisionModelResourceFile> file);
 
 	virtual const char* getName() const override { return "StaticMeshColliderComponent"; };
 	virtual JSON::json getJSON() const override;

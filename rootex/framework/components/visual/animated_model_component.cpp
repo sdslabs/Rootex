@@ -27,7 +27,7 @@ Component* AnimatedModelComponent::Create(const JSON::json& componentData)
 
 AnimatedModelComponent::AnimatedModelComponent(
     bool isPlayOnStart,
-    AnimatedModelResourceFile* resFile,
+    Ref<AnimatedModelResourceFile> resFile,
     const String& currentAnimationName,
     AnimationMode mode,
     unsigned int renderPass,
@@ -176,7 +176,7 @@ void AnimatedModelComponent::assignBoundingBox()
 	}
 }
 
-void AnimatedModelComponent::assignOverrides(AnimatedModelResourceFile* file, const HashMap<String, String>& materialOverrides)
+void AnimatedModelComponent::assignOverrides(Ref<AnimatedModelResourceFile> file, const HashMap<String, String>& materialOverrides)
 {
 	m_AnimatedModelResourceFile = file;
 
@@ -197,7 +197,7 @@ void AnimatedModelComponent::assignOverrides(AnimatedModelResourceFile* file, co
 	}
 }
 
-void AnimatedModelComponent::setAnimatedResourceFile(AnimatedModelResourceFile* resFile, const HashMap<String, String>& materialOverrides)
+void AnimatedModelComponent::setAnimatedResourceFile(Ref<AnimatedModelResourceFile> resFile, const HashMap<String, String>& materialOverrides)
 {
 	if (!resFile)
 	{

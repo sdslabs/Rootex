@@ -10,17 +10,17 @@ class SkyComponent : public Component
 
 	friend class ECSFactory;
 
-	ModelResourceFile* m_SkySphere;
+	Ref<ModelResourceFile> m_SkySphere;
 	Ref<SkyMaterial> m_SkyMaterial;
 
-	SkyComponent(const String& skyMaterialPath, const String& skySpherePath);
+	SkyComponent(Ref<ModelResourceFile> skySphere, Ref<SkyMaterial> skyMaterial);
 	SkyComponent(const SkyComponent&) = delete;
 	~SkyComponent() = default;
 
 public:
 	static const ComponentID s_ID = (ComponentID)ComponentIDs::SkyComponent;
 
-	ModelResourceFile* getSkySphere() const { return m_SkySphere; }
+	ModelResourceFile* getSkySphere() const { return m_SkySphere.get(); }
 	SkyMaterial* getSkyMaterial() const { return m_SkyMaterial.get(); }
 
 	virtual const char* getName() const override { return "SkyComponent"; }

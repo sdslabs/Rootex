@@ -25,7 +25,7 @@ Ref<Material> MaterialLibrary::GetMaterial(const String& materialPath)
 {
 	if (s_Materials.find(materialPath) == s_Materials.end())
 	{
-		TextResourceFile* materialResourceFile = ResourceLoader::CreateTextResourceFile(materialPath);
+		Ref<TextResourceFile> materialResourceFile = ResourceLoader::CreateTextResourceFile(materialPath);
 		if (materialResourceFile)
 		{
 			const JSON::json& materialJSON = JSON::json::parse(materialResourceFile->getString());
@@ -46,7 +46,7 @@ Ref<Material> MaterialLibrary::GetMaterial(const String& materialPath)
 		}
 		else
 		{
-			TextResourceFile* materialFile = ResourceLoader::CreateTextResourceFile(materialPath);
+			Ref<TextResourceFile> materialFile = ResourceLoader::CreateTextResourceFile(materialPath);
 			const JSON::json materialJSON = JSON::json::parse(materialFile->getString());
 			Ref<Material> material(s_MaterialDatabase[materialJSON["type"]].second(materialJSON));
 			material->setFileName(materialPath);
@@ -111,7 +111,7 @@ void MaterialLibrary::SaveAll()
 		}
 		if (Ref<Material> lockedMaterial = materialInfo.second.lock())
 		{
-			TextResourceFile* materialFile = ResourceLoader::CreateNewTextResourceFile(materialPath);
+			Ref<TextResourceFile> materialFile = ResourceLoader::CreateNewTextResourceFile(materialPath);
 			materialFile->putString(lockedMaterial->getJSON().dump(4));
 			materialFile->save();
 		}
@@ -129,7 +129,7 @@ void MaterialLibrary::CreateNewMaterialFile(const String& materialPath, const St
 	{
 		if (!OS::IsExists(materialPath))
 		{
-			TextResourceFile* materialFile = ResourceLoader::CreateNewTextResourceFile(materialPath);
+			Ref<TextResourceFile> materialFile = ResourceLoader::CreateNewTextResourceFile(materialPath);
 			Ref<Material> material(s_MaterialDatabase[materialType].first());
 			materialFile->putString(material->getJSON().dump(4));
 			materialFile->save();

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "main/splash_window.h"
 #include "main/window.h"
 #include "core/event_manager.h"
 #include "os/timer.h"
@@ -18,6 +19,7 @@ protected:
 	ThreadPool m_ThreadPool;
 	float m_DeltaMultiplier = 1.0f;
 
+	Ptr<SplashWindow> m_SplashWindow;
 	Ptr<Window> m_Window;
 	Ptr<ApplicationSettings> m_ApplicationSettings;
 
@@ -40,6 +42,8 @@ public:
 	ApplicationSettings* getSettings() { return m_ApplicationSettings.get(); }
 	/// Returns paths of all third-party libraries provided by rootex/vendor/.
 	Vector<FilePath> getLibrariesPaths();
+
+	void destroySplashWindow();
 
 	float* getDeltaMultiplierPtr() { return &m_DeltaMultiplier; }
 	float getDeltaMultiplier() const { return m_DeltaMultiplier; }

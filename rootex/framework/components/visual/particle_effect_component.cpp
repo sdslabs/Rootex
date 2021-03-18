@@ -16,7 +16,7 @@ Component* ParticleEffectComponent::Create(const JSON::json& componentData)
 	    componentData.value("target", Vector3::Zero));
 }
 
-ParticleEffectComponent::ParticleEffectComponent(ParticleEffectResourceFile* effect, bool playOnStart, bool isMoving, int startFrame, bool useSpeed, float speed, bool useTarget, const Vector3& targetLocation)
+ParticleEffectComponent::ParticleEffectComponent(Ref<ParticleEffectResourceFile> effect, bool playOnStart, bool isMoving, int startFrame, bool useSpeed, float speed, bool useTarget, const Vector3& targetLocation)
     : m_EffectHandle(0)
     , m_EffectResource(effect)
     , m_StartFrame(startFrame)
@@ -67,7 +67,7 @@ void ParticleEffectComponent::stop()
 	setPlaying(false);
 }
 
-void ParticleEffectComponent::setEffect(ParticleEffectResourceFile* effect)
+void ParticleEffectComponent::setEffect(Ref<ParticleEffectResourceFile> effect)
 {
 	m_EffectResource = effect;
 }
