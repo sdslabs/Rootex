@@ -41,6 +41,7 @@ bool PhysicsSystem::initialize(const JSON::json& systemData)
 	m_Dispatcher.reset(new btCollisionDispatcher(m_CollisionConfiguration.get()));
 	m_Broadphase.reset(new btDbvtBroadphase());
 	m_Solver.reset(new btSequentialImpulseConstraintSolver());
+	m_GhostPairCallback.reset(new btGhostPairCallback());
 	m_DynamicsWorld.reset(new btDiscreteDynamicsWorld(m_Dispatcher.get(), m_Broadphase.get(), m_Solver.get(), m_CollisionConfiguration.get()));
 	m_PhysicsMaterialTable.resize(PhysicsMaterial::End);
 	assignPhysicsMaterials();
@@ -52,6 +53,7 @@ bool PhysicsSystem::initialize(const JSON::json& systemData)
 	}
 
 	m_DynamicsWorld->setInternalTickCallback(InternalTickCallback);
+	m_DynamicsWorld->getPairCache()->setInternalGhostPairCallback(m_GhostPairCallback.get());
 	m_DynamicsWorld->setWorldUserInfo(this);
 	m_DynamicsWorld->setDebugDrawer(&m_DebugDrawer);
 
@@ -61,6 +63,11 @@ bool PhysicsSystem::initialize(const JSON::json& systemData)
 void PhysicsSystem::addRigidBody(btRigidBody* body, int group, int mask)
 {
 	m_DynamicsWorld->addRigidBody(body, group, mask);
+}
+
+void PhysicsSystem::addCollisionObject(btCollisionObject* body, int group, int mask)
+{
+	m_DynamicsWorld->addCollisionObject(body, group, mask);
 }
 
 btCollisionWorld::AllHitsRayResultCallback PhysicsSystem::reportAllRayHits(const btVector3& from, const btVector3& to)

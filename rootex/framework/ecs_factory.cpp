@@ -10,6 +10,7 @@
 #include "components/physics/sphere_collider_component.h"
 #include "components/physics/capsule_collider_component.h"
 #include "components/physics/static_mesh_collider_component.h"
+#include "components/physics/trigger_component.h"
 #include "components/audio/short_music_component.h"
 #include "components/space/transform_animation_component.h"
 #include "components/space/transform_component.h"
@@ -176,6 +177,7 @@ void ECSFactory::Initialize()
 	REGISTER_COMPONENT(UIComponent);
 	REGISTER_COMPONENT(AnimatedModelComponent);
 	REGISTER_COMPONENT(ParticleEffectComponent);
+	REGISTER_COMPONENT(TriggerComponent);
 }
 
 Ptr<Entity> ECSFactory::CreateRootEntity(Scene* scene)

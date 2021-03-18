@@ -16,6 +16,7 @@ public:
 	{
 		Input,
 		Update,
+		PostUpdate,
 		Render,
 		PostRender,
 		RenderUI,

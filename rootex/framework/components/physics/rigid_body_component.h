@@ -15,7 +15,7 @@ class RigidBodyComponent : public CollisionComponent, public btMotionState
 
 protected:
 	Ref<btCollisionShape> m_CollisionShape;
-	Ref<btRigidBody> m_Body;
+	btRigidBody* m_Body = nullptr;
 	bool m_IsGeneratesHitEvents;
 	btScalar m_Mass;
 	Vector3 m_Gravity;
@@ -48,7 +48,9 @@ protected:
 	void getWorldTransform(btTransform& worldTrans) const override;
 	void setWorldTransform(const btTransform& worldTrans) override;
 
-	void handleHit(Hit* h) override;
+	void updateTransform();
+
+	void handleHit(Hit* hit) override;
 
 public:
 	virtual ~RigidBodyComponent() = default;
@@ -95,7 +97,6 @@ public:
 	void setKinematic(bool enabled);
 
 	bool setupData() override;
-	void onRemove() override;
 
 	JSON::json getJSON() const override;
 	void draw() override;

@@ -1,9 +1,24 @@
 #include "collision_component.h"
 
+#include "systems/physics_system.h"
+
 CollisionComponent::CollisionComponent(int collisionGroup, int collisionMask)
     : m_CollisionGroup(collisionGroup)
     , m_CollisionMask(collisionMask)
 {
+}
+
+void CollisionComponent::handleHit(Hit* h)
+{
+}
+
+void CollisionComponent::onRemove()
+{
+	if (m_CollisionObject)
+	{
+		PhysicsSystem::GetSingleton()->removeCollisionObject(m_CollisionObject.get());
+		m_CollisionObject.reset();
+	}
 }
 
 JSON::json CollisionComponent::getJSON() const

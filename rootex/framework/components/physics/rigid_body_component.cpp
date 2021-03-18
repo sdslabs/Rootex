@@ -22,7 +22,7 @@ RigidBodyComponent::RigidBodyComponent(
     bool isCCD,
     const Ref<btCollisionShape>& collisionShape)
     : CollisionComponent(collisionGroup, collisionMask)
-	, m_Material(material)
+    , m_Material(material)
     , m_Volume(volume)
     , m_Offset(offset)
     , m_Gravity(gravity)
@@ -41,7 +41,7 @@ bool RigidBodyComponent::setupData()
 {
 	if (m_Body)
 	{
-		PhysicsSystem::GetSingleton()->removeRigidBody(m_Body.get());
+		PhysicsSystem::GetSingleton()->removeRigidBody(m_Body);
 	}
 
 	if (m_IsMoveable)
@@ -60,7 +60,11 @@ bool RigidBodyComponent::setupData()
 		rbInfo.m_restitution = materialData.restitution;
 		rbInfo.m_friction = materialData.friction;
 	}
-	m_Body.reset(new btRigidBody(rbInfo));
+
+	m_CollisionObject.reset(new btRigidBody(rbInfo));
+	m_Body = (btRigidBody*)m_CollisionObject.get();
+	m_Body->setUserPointer((CollisionComponent*)this);
+	PhysicsSystem::GetSingleton()->addRigidBody(m_Body, m_CollisionGroup, m_CollisionMask);
 
 	setGravity(m_Gravity);
 	setMoveable(m_IsMoveable);
@@ -68,18 +72,8 @@ bool RigidBodyComponent::setupData()
 	setAngularFactor(m_AngularFactor);
 	setSleepable(m_IsSleepable);
 	setCCD(m_IsCCD);
-	m_Body->setUserPointer((CollisionComponent*)this);
 
-	PhysicsSystem::GetSingleton()->addRigidBody(m_Body.get(), m_CollisionGroup, m_CollisionMask);
 	return true;
-}
-
-void RigidBodyComponent::onRemove()
-{
-	if (m_Body)
-	{
-		PhysicsSystem::GetSingleton()->removeRigidBody(m_Body.get());
-	}
 }
 
 void RigidBodyComponent::getWorldTransform(btTransform& worldTrans) const
@@ -92,11 +86,19 @@ void RigidBodyComponent::setWorldTransform(const btTransform& worldTrans)
 	m_TransformComponent->setAbsoluteRotationPosition(Matrix::CreateTranslation(-m_Offset) * BtTransformToMat(worldTrans));
 }
 
-void RigidBodyComponent::handleHit(Hit* h)
+void RigidBodyComponent::updateTransform()
+{
+	btTransform transform;
+	getWorldTransform(transform);
+	m_Body->activate(true);
+	m_Body->setWorldTransform(transform);
+}
+
+void RigidBodyComponent::handleHit(Hit* hit)
 {
 	if (m_IsGeneratesHitEvents)
 	{
-		m_Owner->call("hit", { h });
+		m_Owner->call("hit", { hit });
 	}
 }
 
@@ -219,7 +221,8 @@ void RigidBodyComponent::setKinematic(bool enabled)
 	}
 	else
 	{
-		m_Body->activate(true);
+		m_Body->forceActivationState(ACTIVE_TAG);
+		m_Body->setActivationState(ACTIVE_TAG);
 		m_Body->setCollisionFlags(m_Body->getCollisionFlags() & ~btCollisionObject::CF_KINEMATIC_OBJECT);
 	}
 }
@@ -227,7 +230,7 @@ void RigidBodyComponent::setKinematic(bool enabled)
 void RigidBodyComponent::highlight()
 {
 	PhysicsSystem::GetSingleton()->debugDrawComponent(
-	    MatTobtTransform(m_TransformComponent->getRotationPosition() * Matrix::CreateTranslation(m_Offset)),
+	    m_Body->getWorldTransform(),
 	    m_CollisionShape.get(),
 	    VecTobtVector3({ 0.8f, 0.1f, 0.1f }));
 }
@@ -351,6 +354,8 @@ void RigidBodyComponent::draw()
 	{
 		setCCD(m_IsCCD);
 	}
+
+	updateTransform();
 
 	CollisionComponent::draw();
 }
