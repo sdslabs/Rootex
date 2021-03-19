@@ -2,8 +2,8 @@
 
 #include "common/common.h"
 
-#include "framework/components/transform_component.h"
-#include "framework/components/audio_listener_component.h"
+#include "components/space/transform_component.h"
+#include "components/audio/audio_listener_component.h"
 #include "vendor/OpenAL/include/al.h"
 #include "vendor/OpenAL/include/alc.h"
 #include "AL/alut.h"

@@ -2,8 +2,6 @@
 
 enum class ComponentIDs : unsigned int
 {
-	TestComponent,
-	DebugComponent,
 	ModelComponent,
 	GridModelComponent,
 	CPUParticlesComponent,
@@ -19,6 +17,7 @@ enum class ComponentIDs : unsigned int
 	BoxColliderComponent,
 	CapsuleColliderComponent,
 	StaticMeshColliderComponent,
+	TriggerComponent,
 	ScriptComponent,
 	MusicComponent,
 	ShortMusicComponent,

@@ -7,16 +7,21 @@
 #include "scene_loader.h"
 #include "ecs_factory.h"
 #include "script.h"
-#include "components/transform_component.h"
-#include "components/visual/text_ui_component.h"
-#include "components/visual/ui_component.h"
-#include "components/visual/model_component.h"
-#include "components/visual/animated_model_component.h"
+#include "components/audio/audio_component.h"
+#include "components/audio/short_music_component.h"
+#include "components/audio/music_component.h"
+#include "components/space/transform_component.h"
+#include "components/visual/ui/text_ui_component.h"
+#include "components/visual/ui/ui_component.h"
+#include "components/visual/model/model_component.h"
+#include "components/visual/model/animated_model_component.h"
+#include "components/physics/collision_component.h"
+#include "components/physics/rigid_body_component.h"
 #include "components/physics/box_collider_component.h"
 #include "components/physics/capsule_collider_component.h"
 #include "components/physics/sphere_collider_component.h"
-#include "components/visual/ui_component.h"
-#include "components/visual/particle_effect_component.h"
+#include "components/visual/ui/ui_component.h"
+#include "components/visual/effect/particle_effect_component.h"
 #include "systems/input_system.h"
 #include "core/resource_files/audio_resource_file.h"
 #include "core/resource_files/font_resource_file.h"
@@ -395,30 +400,59 @@ void LuaInterpreter::registerTypes()
 		ui["getDocumentID"] = [](UIComponent* ui) { return ui->getDocument()->GetId(); };
 	}
 	{
-		sol::usertype<PhysicsColliderComponent> physicsColliderComponent = rootex.new_usertype<PhysicsColliderComponent>(
-		    "PhysicsColliderComponent",
+		sol::usertype<AudioComponent> audioComponent = rootex.new_usertype<AudioComponent>(
+		    "AudioComponent",
 		    sol::base_classes, sol::bases<Component>());
-		rootex["Entity"]["getPhysicsCollider"] = &Entity::getComponent<PhysicsColliderComponent>;
-		physicsColliderComponent["getVelocity"] = &PhysicsColliderComponent::getVelocity;
-		physicsColliderComponent["setVelocity"] = &PhysicsColliderComponent::setVelocity;
-		physicsColliderComponent["applyForce"] = &PhysicsColliderComponent::applyForce;
+		audioComponent["play"] = &AudioComponent::play;
+		audioComponent["stop"] = &AudioComponent::stop;
+		audioComponent["setPlaying"] = &AudioComponent::setPlaying;
+	}
+	{
+		sol::usertype<ShortMusicComponent> shortMusicComponent = rootex.new_usertype<ShortMusicComponent>(
+		    "ShortMusicComponent",
+		    sol::base_classes, sol::bases<Component, AudioComponent>());
+		rootex["Entity"]["getShortMusic"] = &Entity::getComponent<ShortMusicComponent>;
+	}
+	{
+		sol::usertype<MusicComponent> musicComponent = rootex.new_usertype<MusicComponent>(
+		    "MusicComponent",
+		    sol::base_classes, sol::bases<Component, AudioComponent>());
+		rootex["Entity"]["getMusic"] = &Entity::getComponent<MusicComponent>;
+	}
+	{
+		sol::usertype<Hit> hit = rootex.new_usertype<Hit>("Hit");
+		hit["this"] = &Hit::thisOne;
+		hit["that"] = &Hit::thatOne;
+	}
+	{
+		sol::usertype<CollisionComponent> collisionComponent = rootex.new_usertype<CollisionComponent>(
+		    "CollisionComponent",
+		    sol::base_classes, sol::bases<Component>());
+	}
+	{
+		sol::usertype<RigidBodyComponent> rigidBodyComponent = rootex.new_usertype<RigidBodyComponent>(
+		    "RigidBodyComponent",
+		    sol::base_classes, sol::bases<CollisionComponent, Component>());
+		rigidBodyComponent["getVelocity"] = &RigidBodyComponent::getVelocity;
+		rigidBodyComponent["setVelocity"] = &RigidBodyComponent::setVelocity;
+		rigidBodyComponent["applyForce"] = &RigidBodyComponent::applyForce;
 	}
 	{
 		sol::usertype<BoxColliderComponent> bcc = rootex.new_usertype<BoxColliderComponent>(
 		    "BoxColliderComponent",
-		    sol::base_classes, sol::bases<PhysicsColliderComponent, Component>());
+		    sol::base_classes, sol::bases<Component, CollisionComponent, RigidBodyComponent>());
 		rootex["Entity"]["getBoxCollider"] = &Entity::getComponent<BoxColliderComponent>;
 	}
 	{
 		sol::usertype<SphereColliderComponent> scc = rootex.new_usertype<SphereColliderComponent>(
 		    "SphereColliderComponent",
-		    sol::base_classes, sol::bases<PhysicsColliderComponent, Component>());
+		    sol::base_classes, sol::bases<Component, CollisionComponent, RigidBodyComponent>());
 		rootex["Entity"]["getSphereCollider"] = &Entity::getComponent<SphereColliderComponent>;
 	}
 	{
 		sol::usertype<CapsuleColliderComponent> ccc = rootex.new_usertype<CapsuleColliderComponent>(
 		    "CapsuleColliderComponent",
-		    sol::base_classes, sol::bases<PhysicsColliderComponent, Component>());
+		    sol::base_classes, sol::bases<Component, CollisionComponent, RigidBodyComponent>());
 		rootex["Entity"]["getCapsuleCollider"] = &Entity::getComponent<CapsuleColliderComponent>;
 	}
 }

@@ -6,7 +6,7 @@
 class ScriptSystem : public System
 {
 	ScriptSystem();
-	ScriptSystem(ScriptSystem&) = delete;
+	ScriptSystem(const ScriptSystem&) = delete;
 	~ScriptSystem() = default;
 
 	Vector<Entity*> m_ScriptEntitiesToInit;

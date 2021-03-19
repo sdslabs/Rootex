@@ -1,7 +1,7 @@
 #include "animation_system.h"
 
 #include "framework/ecs_factory.h"
-#include "components/visual/animated_model_component.h"
+#include "components/visual/model/animated_model_component.h"
 
 AnimationSystem* AnimationSystem::GetSingleton()
 {

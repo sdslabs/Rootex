@@ -1,5 +1,6 @@
 #pragma once
 
+#include "common.h"
 #include "script/interpreter.h"
 
 class LuaTextResourceFile;

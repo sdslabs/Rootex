@@ -1,9 +1,9 @@
 #include "capsule_collider_component.h"
 #include "framework/systems/physics_system.h"
 
-Component* CapsuleColliderComponent::Create(const JSON::json& capsuleComponentData)
+Ptr<Component> CapsuleColliderComponent::Create(const JSON::json& capsuleComponentData)
 {
-	CapsuleColliderComponent* component = new CapsuleColliderComponent(
+	return std::make_unique<CapsuleColliderComponent>(
 	    capsuleComponentData.value("radius", 0.5f),
 	    capsuleComponentData.value("sideHeight", 1.0f),
 	    capsuleComponentData.value("offset", Vector3(0.0f, 0.0f, 0.0f)),
@@ -17,7 +17,6 @@ Component* CapsuleColliderComponent::Create(const JSON::json& capsuleComponentDa
 	    capsuleComponentData.value("isGeneratesHitEvents", false),
 	    capsuleComponentData.value("isSleepable", true),
 	    capsuleComponentData.value("isCCD", false));
-	return component;
 }
 
 CapsuleColliderComponent::CapsuleColliderComponent(
@@ -34,7 +33,7 @@ CapsuleColliderComponent::CapsuleColliderComponent(
     bool generatesHitEvents,
     bool isSleepable,
     bool isCCD)
-    : PhysicsColliderComponent(
+    : RigidBodyComponent(
         material,
         DirectX::XM_PI * radius * radius * ((4.0f / 3.0f) * radius + sideHeight),
         offset,
@@ -56,23 +55,27 @@ CapsuleColliderComponent::CapsuleColliderComponent(
 
 void CapsuleColliderComponent::setSideHeight(float s)
 {
+	detachCollisionObject();
 	m_SideHeight = s;
 	m_CollisionShape.reset(new btCapsuleShape(m_Radius, m_SideHeight));
 	m_CapsuleShape = (btCapsuleShape*)m_CollisionShape.get();
-	setupData();
+	m_Body->setCollisionShape(m_CapsuleShape);
+	attachCollisionObject();
 }
 
 void CapsuleColliderComponent::setRadius(float r)
 {
+	detachCollisionObject();
 	m_Radius = r;
 	m_CollisionShape.reset(new btCapsuleShape(m_Radius, m_SideHeight));
 	m_CapsuleShape = (btCapsuleShape*)m_CollisionShape.get();
-	setupData();
+	m_Body->setCollisionShape(m_CapsuleShape);
+	attachCollisionObject();
 }
 
 JSON::json CapsuleColliderComponent::getJSON() const
 {
-	JSON::json& j = PhysicsColliderComponent::getJSON();
+	JSON::json& j = RigidBodyComponent::getJSON();
 
 	j["radius"] = m_Radius;
 	j["sideHeight"] = m_SideHeight;
@@ -82,7 +85,7 @@ JSON::json CapsuleColliderComponent::getJSON() const
 
 void CapsuleColliderComponent::draw()
 {
-	PhysicsColliderComponent::draw();
+	RigidBodyComponent::draw();
 
 	if (ImGui::DragFloat("##Radius", &m_Radius, 0.01f))
 	{

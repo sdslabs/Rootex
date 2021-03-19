@@ -1,10 +1,10 @@
 #include "box_collider_component.h"
 #include "framework/systems/physics_system.h"
 
-Component* BoxColliderComponent::Create(const JSON::json& boxComponentData)
+Ptr<Component> BoxColliderComponent::Create(const JSON::json& boxComponentData)
 {
-	BoxColliderComponent* component = new BoxColliderComponent(
-	    boxComponentData.value("dimensions", Vector3::Zero),
+	return std::make_unique<BoxColliderComponent>(
+	    boxComponentData.value("dimensions", Vector3 { 0.5f, 0.5f, 0.5f }),
 	    boxComponentData.value("offset", Vector3(0.0f, 0.0f, 0.0f)),
 	    boxComponentData.value("material", PhysicsMaterial::Air),
 	    boxComponentData.value("angularFactor", Vector3::One),
@@ -16,7 +16,6 @@ Component* BoxColliderComponent::Create(const JSON::json& boxComponentData)
 	    boxComponentData.value("isGeneratesHitEvents", false),
 	    boxComponentData.value("isSleepable", true),
 	    boxComponentData.value("isCCD", false));
-	return component;
 }
 
 BoxColliderComponent::BoxColliderComponent(
@@ -32,7 +31,7 @@ BoxColliderComponent::BoxColliderComponent(
     bool generatesHitEvents,
     bool isSleepable,
     bool isCCD)
-    : PhysicsColliderComponent(
+    : RigidBodyComponent(
         material,
         dimensions.x * dimensions.y * dimensions.z,
         offset,
@@ -53,7 +52,7 @@ BoxColliderComponent::BoxColliderComponent(
 
 JSON::json BoxColliderComponent::getJSON() const
 {
-	JSON::json& j = PhysicsColliderComponent::getJSON();
+	JSON::json& j = RigidBodyComponent::getJSON();
 
 	j["dimensions"] = m_Dimensions;
 
@@ -62,15 +61,17 @@ JSON::json BoxColliderComponent::getJSON() const
 
 void BoxColliderComponent::setDimensions(const Vector3& dimensions)
 {
+	detachCollisionObject();
 	m_Dimensions = dimensions;
 	m_CollisionShape.reset(new btBoxShape(VecTobtVector3(dimensions)));
 	m_BoxShape = (btBoxShape*)m_CollisionShape.get();
-	setupData();
+	m_Body->setCollisionShape(m_BoxShape);
+	attachCollisionObject();
 }
 
 void BoxColliderComponent::draw()
 {
-	PhysicsColliderComponent::draw();
+	RigidBodyComponent::draw();
 
 	if (ImGui::DragFloat3("##Dimensions", &m_Dimensions.x, 0.01f))
 	{

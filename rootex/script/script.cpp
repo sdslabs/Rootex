@@ -1,6 +1,7 @@
 #include "script.h"
 #include "event_manager.h"
 #include "scene.h"
+#include "components/physics/hit.h"
 
 Script::Script(const JSON::json& script)
 {

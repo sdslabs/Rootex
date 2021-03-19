@@ -1,11 +1,11 @@
 #include "light_system.h"
 
 #include "core/renderer/shaders/register_locations_pixel_shader.h"
-#include "components/visual/point_light_component.h"
-#include "components/visual/static_point_light_component.h"
-#include "components/visual/directional_light_component.h"
-#include "components/visual/spot_light_component.h"
-#include "components/transform_component.h"
+#include "components/visual/light/point_light_component.h"
+#include "components/visual/light/static_point_light_component.h"
+#include "components/visual/light/directional_light_component.h"
+#include "components/visual/light/spot_light_component.h"
+#include "components/space/transform_component.h"
 #include "framework/systems/render_system.h"
 
 LightSystem::LightSystem()
