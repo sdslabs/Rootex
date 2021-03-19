@@ -1,21 +1,17 @@
 #pragma once
 
-#include "physics_collider_component.h"
+#include "rigid_body_component.h"
 
 #include "btBulletDynamicsCommon.h"
 
-class SphereColliderComponent : public PhysicsColliderComponent
+class SphereColliderComponent : public RigidBodyComponent
 {
-	static Component* Create(const JSON::json& sphereComponentData);
+	DEFINE_COMPONENT(SphereColliderComponent);
 
 	float m_Radius;
 	btSphereShape* m_SphereShape;
 
-	friend class ECSFactory;
-
 public:
-	static const ComponentID s_ID = (ComponentID)ComponentIDs::SphereColliderComponent;
-
 	SphereColliderComponent(
 	    float radius,
 	    const Vector3& offset,
@@ -29,13 +25,11 @@ public:
 	    bool generatesHitEvents,
 	    bool isSleepable,
 	    bool isCCD);
+	~SphereColliderComponent() = default;
 
 	float getRadius() const { return m_Radius; }
 	void setRadius(float r);
 
-	virtual const char* getName() const override { return "SphereColliderComponent"; };
-	virtual JSON::json getJSON() const override;
-	virtual ComponentID getComponentID() const override { return s_ID; }
-
+	JSON::json getJSON() const override;
 	void draw() override;
 };

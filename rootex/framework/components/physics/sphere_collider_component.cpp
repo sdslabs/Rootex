@@ -1,9 +1,9 @@
 #include "sphere_collider_component.h"
 #include "framework/systems/physics_system.h"
 
-Component* SphereColliderComponent::Create(const JSON::json& sphereComponentData)
+Ptr<Component> SphereColliderComponent::Create(const JSON::json& sphereComponentData)
 {
-	SphereColliderComponent* component = new SphereColliderComponent(
+	return std::make_unique<SphereColliderComponent>(
 	    sphereComponentData.value("radius", 1.0f),
 	    sphereComponentData.value("offset", Vector3(0.0f, 0.0f, 0.0f)),
 	    sphereComponentData.value("material", PhysicsMaterial::Air),
@@ -16,7 +16,6 @@ Component* SphereColliderComponent::Create(const JSON::json& sphereComponentData
 	    sphereComponentData.value("isGeneratesHitEvents", false),
 	    sphereComponentData.value("isSleepable", true),
 	    sphereComponentData.value("isCCD", false));
-	return component;
 }
 
 SphereColliderComponent::SphereColliderComponent(
@@ -32,7 +31,7 @@ SphereColliderComponent::SphereColliderComponent(
     bool generatesHitEvents,
     bool isSleepable,
     bool isCCD)
-    : PhysicsColliderComponent(
+    : RigidBodyComponent(
         material,
         (4.0f / 3.0f) * DirectX::XM_PI * radius * radius * radius,
         offset,
@@ -53,7 +52,7 @@ SphereColliderComponent::SphereColliderComponent(
 
 JSON::json SphereColliderComponent::getJSON() const
 {
-	JSON::json& j = PhysicsColliderComponent::getJSON();
+	JSON::json& j = RigidBodyComponent::getJSON();
 
 	j["radius"] = m_Radius;
 
@@ -62,15 +61,17 @@ JSON::json SphereColliderComponent::getJSON() const
 
 void SphereColliderComponent::setRadius(float r)
 {
+	detachCollisionObject();
 	m_Radius = r;
 	m_CollisionShape.reset(new btSphereShape(m_Radius));
 	m_SphereShape = (btSphereShape*)m_CollisionShape.get();
-	setupData();
+	m_Body->setCollisionShape(m_SphereShape);
+	attachCollisionObject();
 }
 
 void SphereColliderComponent::draw()
 {
-	PhysicsColliderComponent::draw();
+	RigidBodyComponent::draw();
 
 	if (ImGui::DragFloat("##Radius", &m_Radius, 0.01f))
 	{

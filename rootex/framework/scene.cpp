@@ -148,6 +148,11 @@ Scene* Scene::FindSceneByID(const SceneID& id)
 	return nullptr;
 }
 
+const Vector<Scene*>& Scene::FindAllScenes()
+{
+	return s_Scenes;
+}
+
 Scene* Scene::findScene(SceneID scene)
 {
 	if (scene == getID())

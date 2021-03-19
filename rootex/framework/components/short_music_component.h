@@ -15,16 +15,20 @@ class ShortMusicComponent : public AudioComponent
 	Ref<StaticAudioBuffer> m_StaticAudioBuffer;
 	Ref<AudioResourceFile> m_AudioFile;
 
-	ShortMusicComponent(Ref<AudioResourceFile> audioFile, bool playOnStart, bool isLooping, bool attenuation, AudioSource::AttenuationModel model, ALfloat rolloffFactor, ALfloat referenceDistance, ALfloat maxDistance);
+	ShortMusicComponent(
+	    Ref<AudioResourceFile> audioFile,
+	    bool playOnStart,
+	    bool isLooping,
+	    bool attenuation,
+	    AudioSource::AttenuationModel model,
+	    ALfloat rolloffFactor,
+	    ALfloat referenceDistance,
+	    ALfloat maxDistance);
 	virtual ~ShortMusicComponent();
 
 	friend class ECSFactory;
 
 public:
-	static const ComponentID s_ID = (ComponentID)ComponentIDs::ShortMusicComponent;
-
-	virtual bool setupData() override;
-
 	AudioResourceFile* getAudioFile() const { return m_AudioFile.get(); }
 	void setAudioFile(Ref<AudioResourceFile> audioFile);
 

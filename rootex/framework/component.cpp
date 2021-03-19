@@ -46,10 +46,6 @@ void Component::onRemove()
 {
 }
 
-void Component::onTrigger()
-{
-}
-
 Entity* Component::getOwner() const
 {
 	return m_Owner;

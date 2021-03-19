@@ -1,7 +1,7 @@
 #include "transform_animation_system.h"
 
 #include "framework/ecs_factory.h"
-#include "components/transform_animation_component.h"
+#include "components/space/transform_animation_component.h"
 
 TransformAnimationSystem* TransformAnimationSystem::GetSingleton()
 {

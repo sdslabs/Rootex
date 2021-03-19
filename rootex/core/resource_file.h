@@ -1,6 +1,7 @@
 #pragma once
 
-#include "common/common.h"
+#include "common/types.h"
+#include "os/os.h"
 
 /// Interface of a file loaded from disk. Use ResourceLoader to load, create or save files.
 class ResourceFile

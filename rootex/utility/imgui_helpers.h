@@ -7,6 +7,8 @@
 #include "imgui.h"
 #include "imgui_stdlib.h"
 
+class Entity;
+
 #define FONT_ICON_BUFFER_NAME_ROOTEX ROOTEX_compressed_data_base85
 #define FONT_ICON_BUFFER_SIZE_ROOTEX 0x1527
 
