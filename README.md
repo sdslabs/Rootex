@@ -19,7 +19,7 @@
 
 Rootex is an advanced C++ 3D game engine powering an in-production game yet to be announced. The game will finally ship on Windows and use DirectX 11.
 
-This game will be a product of a join effort of SDSLabs and [Design Studio](https://designstudio.cc/).
+This game will be a product of a join effort of SDSLabs and [Design Studio](https://www.instagram.com/ds_iitr/?hl=en).
 
 <img src="/rootex/assets/editor.png"/>
 
