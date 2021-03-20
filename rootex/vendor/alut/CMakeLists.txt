@@ -73,9 +73,11 @@ set_target_properties(alut PROPERTIES LINKER_LANGUAGE C)
 
 target_include_directories(alut PUBLIC
 	include/
+	include/AL/
 	src/
+	../OpenALSoft/include/AL/
 )
 
 target_link_libraries(alut PUBLIC
-	OpenAL
+	OpenALSoft
 )
