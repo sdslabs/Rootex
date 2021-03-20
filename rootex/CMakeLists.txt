@@ -89,7 +89,6 @@ target_include_directories(Rootex PUBLIC
 target_link_libraries(Rootex PUBLIC
     Lua
     Sol3
-    OpenAL
     alut
     DirectXTK
     JSON
@@ -109,7 +108,8 @@ target_link_libraries(Rootex PUBLIC
     LPeg
     Meshoptimizer
     Effekseer
-
+    
+    OpenAL32.lib
     Shell32.lib
     d3d11.lib
     xinput.lib
