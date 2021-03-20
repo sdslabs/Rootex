@@ -93,7 +93,6 @@ target_link_libraries(Rootex PUBLIC
     alut
     DirectXTK
     JSON
-    Dirent
     ImGui
     ImGuizmo
     Gainput
