@@ -1,36 +1,42 @@
-local narrator = require("narrator/narrator")
-local story
-local ui
-local currentChoice = 1
-local maxChoices = 1
+DialoguePlayer = class("DialoguePlayer")
 
-exports = {
-	story = ""
-}
-
-function onBegin(entity)
-	local book = narrator.parseFile(exports.story)
-	story = narrator.initStory(book)
-	story:begin()
-	ui = entity:getUI()
-	getDocument():Show()
+function DialoguePlayer:initialize(entity)
+    self.exports = {
+		story = ""
+	}
 end
 
-function getDocument()
-	return rmlui.contexts["default"].documents[ui:getDocumentID()]
+function DialoguePlayer:begin(entity)
+	self.narrator = require("narrator/narrator")
+	local book = self.narrator.parseFile(self.exports.story)
+	self.story = self.narrator.initStory(book)
+	self.story:begin()
+	self.ui = entity:getUI()
+	self.currentChoice = 1
+	self.maxChoices = 1
+	self:getDocument():Show()
+	print("reahed")
 end
 
-function presentParagraphs(paragraphs)
+function DialoguePlayer:update(entity, delta)
+end
+
+
+function DialoguePlayer:getDocument()
+	return rmlui.contexts["default"].documents[self.ui:getDocumentID()]
+end
+
+function DialoguePlayer:presentParagraphs(paragraphs)
 	local text = ""
 	for _, paragraph in ipairs(paragraphs) do
 		text = text .. "<br />" .. paragraph.text
 	end
-	getDocument():GetElementById("paragraphs").inner_rml = text
+	self:getDocument():GetElementById("paragraphs").inner_rml = text
 end
 
-function presentChoices(choices)
+function DialoguePlayer:presentChoices(choices)
 	local text = ""
-	maxChoices = #choices
+	self.maxChoices = #choices
 	for i, choice in ipairs(choices) do
 		local selection = ""
 		if currentChoice == i then
@@ -38,39 +44,41 @@ function presentChoices(choices)
 		end
 		text = text .. "<br />" .. selection .. choice.text
 	end
-	getDocument():GetElementById("choices").inner_rml = text
+	self:getDocument():GetElementById("choices").inner_rml = text
 end
 
-function onUpdate(entity, delta)
-	if story:canContinue() then
-		local paragraphs = story:continue()
+function DialoguePlayer:onUpdate(entity, delta)
+	if self.story:canContinue() then
+		local paragraphs = self.story:continue()
 		presentParagraphs(paragraphs)
-		if story:canChoose() then
-			presentChoices(story:getChoices())
+		if self.story:canChoose() then
+			presentChoices(self.story:getChoices())
 		end
 	end
 
-	if story:canChoose() then
+	if self.story:canChoose() then
 		if RTX.InputManager.Get():wasPressed("Up") then
 			currentChoice = currentChoice - 1
 			if currentChoice < 1 then currentChoice = maxChoices end
-			presentChoices(story:getChoices())
+			presentChoices(self.story:getChoices())
 		end
 		
 		if RTX.InputManager.Get():wasPressed("Down") then
 			currentChoice = currentChoice + 1
 			if currentChoice > maxChoices then currentChoice = 1 end
-			presentChoices(story:getChoices())
+			presentChoices(self.story:getChoices())
 		end
 		
 		if RTX.InputManager.Get():wasPressed("Next") then
-			story:choose(currentChoice)
+			self.story:choose(currentChoice)
 			currentChoice = 1
 		end
 	else
-		getDocument():Hide()
+		self:getDocument():Hide()
 	end
 end
 
-function onEnd(entity)
+function DialoguePlayer:onEnd(entity)
 end
+
+return DialoguePlayer

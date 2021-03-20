@@ -19,8 +19,8 @@
             "width": 2560
         },
         "InputSystem": {
-            "height": 1387,
-            "width": 2560
+            "height": 1001,
+            "width": 1920
         },
         "ParticleSystem": {
             "culling": {
@@ -37,8 +37,8 @@
         },
         "PhysicsSystem": {},
         "UISystem": {
-            "height": 1387,
-            "width": 2560
+            "height": 1001,
+            "width": 1920
         }
     },
     "version": 1.0,
