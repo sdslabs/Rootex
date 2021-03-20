@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.abspath('.'))
 # -- Project information -----------------------------------------------------
 
 project = 'Rootex'
-copyright = 'MIT Licence, SDSLabs'
+copyright = 'MIT License, SDSLabs'
 author = 'SDSLabs'
 master_doc = 'index'
 
