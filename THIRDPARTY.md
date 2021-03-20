@@ -10,11 +10,11 @@ For details on dependencies of dependencies, look into the library folder in `ro
 
 > Note: "Build step modified" phrase used below means that the library source's configurable build process and settings (made available by the library authors) was used by creating a separate `CMakeLists.txt` file (which belongs to the Rootex project) but resides in the corresponding library folder in `rootex/vendor/`. No library source code modifications were made in this process, unless specified.
 
-> Note: "Source weeded and restructured" phrase used below means that the library sources were not modified in any way unless specified, however the file structure was changed to suit the building process and uneccessary files which did not participate in the build process were removed e.g. unit tests, documentation, sample config files, etc.
+> Note: "Source weeded and restructured" phrase used below means that the library sources were not modified in any way unless specified, however the file structure was changed to suit the building process and unneccessary files which did not participate in the build process were removed e.g. unit tests, documentation, sample config files, etc.
 
 > Library license files were renamed to `LICENSE` (unless not already named as such) to facilitate easy display of those licenses inside the Rootex editor and any projects which base themselves over Rootex.
 
-> If you are a the author of an under-mentioned library (or a library Rootex uses but mistakenly hasn't mentioned it below), or you want your sources to not appear in this repository, then contact SDSLabs IIT Roorkee.
+> If you are an author of an under-mentioned library (or a library Rootex uses but mistakenly hasn't mentioned it below), or you want your sources to not appear in this repository, then please contact SDSLabs IIT Roorkee.
 
 ## Freealut
 
