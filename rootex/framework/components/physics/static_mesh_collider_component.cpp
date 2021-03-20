@@ -29,7 +29,8 @@ StaticMeshColliderComponent::StaticMeshColliderComponent(
 
 bool StaticMeshColliderComponent::setupData()
 {
-	createStaticMesh();
+	m_CollisionShape.reset(new btBvhTriangleMeshShape(m_CollisionModel->getCollisionMesh(), true));
+	m_MeshShape = (btBvhTriangleMeshShape*)m_CollisionShape.get();
 	return RigidBodyComponent::setupData();
 }
 
@@ -44,10 +45,8 @@ void StaticMeshColliderComponent::createStaticMesh()
 
 void StaticMeshColliderComponent::setCollisionModel(Ref<CollisionModelResourceFile> file)
 {
-	detachCollisionObject();
 	m_CollisionModel = file;
 	createStaticMesh();
-	attachCollisionObject();
 }
 
 JSON::json StaticMeshColliderComponent::getJSON() const
