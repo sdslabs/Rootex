@@ -24,6 +24,11 @@ add_custom_command(TARGET Game POST_BUILD
         $<TARGET_FILE:alut>
         $<TARGET_FILE_DIR:Game>)
 
+add_custom_command(TARGET Game POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${OPENALSOFT_DLL_LIBRARY}
+        $<TARGET_FILE_DIR:Game>)
+
 set_directory_properties(PROPERTIES 
     VS_STARTUP_PROJECT Game
 )

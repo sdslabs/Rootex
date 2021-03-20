@@ -9,10 +9,10 @@ set_source_files_properties(${EditorLuaScripts} ${EditorJSONs} PROPERTIES
 
 add_executable(Editor ${EditorSource} ${EditorHeaders} ${EditorLuaScripts} ${EditorJSONs})
 set_property(TARGET Editor PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
-add_dependencies(Editor Rootex Game)
 
 target_include_directories(Editor PUBLIC ../)
 target_link_libraries(Editor PUBLIC Rootex)
+add_dependencies(Editor Rootex Game)
 
 source_group(TREE "../editor/"
     PREFIX "Editor"
@@ -23,7 +23,12 @@ add_custom_command(TARGET Editor POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         $<TARGET_FILE:alut>
         $<TARGET_FILE_DIR:Editor>)
-               
+        
+add_custom_command(TARGET Editor POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${OPENALSOFT_DLL_LIBRARY}
+        $<TARGET_FILE_DIR:Editor>)
+
 set_directory_properties(PROPERTIES 
     VS_STARTUP_PROJECT Editor
 )

@@ -1655,7 +1655,7 @@ DAMAGES.
 
 ### Remarks
 
-Linked as is. A pre-compiled .lib import library file is linked into Rootex. A DLL is generated for compliance with LGPL. Build process modified. Source weeded and restructured.
+A pre-compiled `OpenAL32.lib` which came with OpenAL-soft to set up the router is linked into Rootex. The `soft_oal.dll` was renamed to `OpenAL32.dll` and is placed beside the Rootex final executables for compliance with LGPL. Build process modified. Source weeded and restructured.
 
 ## Rlottie
 
