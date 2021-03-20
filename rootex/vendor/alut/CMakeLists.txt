@@ -69,11 +69,13 @@ CACHE INTERNAL "")
 
 add_library(alut SHARED ${ALUT} ${ALUTH})
 set_property(TARGET alut PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
-target_link_libraries(alut ${OPENAL_LIBRARY})
 set_target_properties(alut PROPERTIES LINKER_LANGUAGE C)
 
 target_include_directories(alut PUBLIC
-    include/
-    src/
-    ${OPENAL_INCLUDE_DIR}
+	include/
+	src/
+)
+
+target_link_libraries(alut PUBLIC
+	OpenAL
 )

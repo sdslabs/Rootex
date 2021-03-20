@@ -26,7 +26,6 @@ https://github.com/vancegroup/freealut/tree/fc814e316c2bfa6e05b723b8cc9cb276da14
 
 <details>
 <summary>GNU LIBRARY GENERAL PUBLIC LICENSE Version 2</summary>
-```
 		  GNU LIBRARY GENERAL PUBLIC LICENSE
 		       Version 2, June 1991
 
@@ -464,7 +463,7 @@ SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH
 DAMAGES.
 
 		     END OF TERMS AND CONDITIONS
-```
+
 </details>
 
 ### Remarks
@@ -1229,7 +1228,7 @@ NO WARRANTY
 
 ### Remarks
 
-Installer to install OpenAL 1.1 on the system. For development, it is required to install OpenAL 1.1 through the link provided above, however during distribution, we intend to distribute this OpenAL 1.1 installer and run it during setting up Rootex on the player's system.
+Installer to install OpenAL 1.1 on the system. For development, it is required to install OpenAL 1.1 Core SDK at the website link provided above, however during distribution, we intend to distribute this OpenAL 1.1 installer and run it while setting up Rootex on the player's system.
 
 ## Rlottie
 
@@ -1305,6 +1304,8 @@ https://github.com/ThePhD/sol2
 
 ### License
 
+<details>
+<summary>MIT License</summary>
 The MIT License (MIT)
 
 Copyright (c) 2013-2019 Rapptz, ThePhD, and contributors
@@ -1325,6 +1326,7 @@ FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
 COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+</details>
 
 ### Remarks
 
