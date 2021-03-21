@@ -7,7 +7,7 @@
 
 class ImageViewer
 {
-	ImageResourceFile* m_ImageResourceFile;
+	Ref<ImageResourceFile> m_ImageResourceFile;
 	const float m_ZoomSliderWidth = 40.0f;
 	const float m_ZoomSliderHeight = 500.0f;
 	const float m_MaxZoom = 3.0f;
@@ -17,7 +17,7 @@ class ImageViewer
 	void drawFileInfo();
 
 public:
-	ResourceFile* load(const FilePath& filePath);
+	Ref<ResourceFile> load(const FilePath& filePath);
 	void unload();
 	void draw(float deltaMilliseconds);
 };

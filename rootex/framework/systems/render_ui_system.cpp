@@ -2,7 +2,7 @@
 
 #include "renderer/rendering_device.h"
 #include "framework/ecs_factory.h"
-#include "components/visual/text_ui_component.h"
+#include "components/visual/ui/text_ui_component.h"
 
 RenderUISystem::RenderUISystem()
     : System("RenderUISystem", UpdateOrder::RenderUI, true)

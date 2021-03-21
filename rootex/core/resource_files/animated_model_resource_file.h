@@ -2,8 +2,9 @@
 
 #include "resource_file.h"
 #include "renderer/mesh.h"
-#include <Assimp/scene.h>
 #include "core/animation/animation.h"
+
+#include "assimp/scene.h"
 
 class Material;
 
@@ -38,9 +39,11 @@ public:
 	size_t getBoneCount() const { return m_BoneOffsets.size(); }
 
 	void setNodeHierarchy(aiNode* currentAiNode, Ptr<SkeletonNode>& currentNode);
-	void setAnimationTransforms(Ptr<SkeletonNode>& node, float currentTime, const String& animationName, const Matrix& parentModelTransform, bool isRootFound);
+	void setAnimationTransforms(Ptr<SkeletonNode>& node, float currentTime, const String& animationName, const Matrix& parentModelTransform, float transitionTightness, bool isRootFound);
 
 	Vector<String> getAnimationNames();
-	float getAnimationEndTime(const String& animationName);
-	void getFinalTransforms(const String& animationName, float currentTime, Vector<Matrix>& transforms);
+	float getAnimationStartTime(const String& animationName) const;
+	float getAnimationEndTime(const String& animationName) const;
+
+	void getFinalTransforms(Vector<Matrix>& transforms, const String& animationName, float currentTime, float transitionTightness);
 };

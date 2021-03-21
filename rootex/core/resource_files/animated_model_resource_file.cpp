@@ -6,10 +6,10 @@
 #include "renderer/vertex_data.h"
 #include "renderer/vertex_buffer.h"
 #include "renderer/index_buffer.h"
+#include "utility/maths.h"
 
 #include "assimp/Importer.hpp"
 #include "assimp/postprocess.h"
-#include "assimp/scene.h"
 
 #include "meshoptimizer.h"
 
@@ -39,9 +39,14 @@ Vector<String> AnimatedModelResourceFile::getAnimationNames()
 	return animationNames;
 }
 
-float AnimatedModelResourceFile::getAnimationEndTime(const String& animationName)
+float AnimatedModelResourceFile::getAnimationStartTime(const String& animationName) const
 {
-	return m_Animations[animationName].getEndTime();
+	return m_Animations.at(animationName).getStartTime();
+}
+
+float AnimatedModelResourceFile::getAnimationEndTime(const String& animationName) const
+{
+	return m_Animations.at(animationName).getEndTime();
 }
 
 void AnimatedModelResourceFile::setNodeHierarchy(aiNode* currentAiNode, Ptr<SkeletonNode>& currentNode)
@@ -57,10 +62,10 @@ void AnimatedModelResourceFile::setNodeHierarchy(aiNode* currentAiNode, Ptr<Skel
 	}
 }
 
-void AnimatedModelResourceFile::getFinalTransforms(const String& animationName, float currentTime, Vector<Matrix>& transforms)
+void AnimatedModelResourceFile::getFinalTransforms(Vector<Matrix>& transforms, const String& animationName, float currentTime, float transitionTightness)
 {
 	bool rootFoundFlag = false;
-	setAnimationTransforms(m_RootNode, currentTime, animationName, Matrix::Identity, rootFoundFlag);
+	setAnimationTransforms(m_RootNode, currentTime, animationName, Matrix::Identity, transitionTightness, rootFoundFlag);
 
 	for (unsigned int i = 0; i < getBoneCount(); i++)
 	{
@@ -68,7 +73,7 @@ void AnimatedModelResourceFile::getFinalTransforms(const String& animationName, 
 	}
 }
 
-void AnimatedModelResourceFile::setAnimationTransforms(Ptr<SkeletonNode>& node, float currentTime, const String& animationName, const Matrix& parentModelTransform, bool isRootFound)
+void AnimatedModelResourceFile::setAnimationTransforms(Ptr<SkeletonNode>& node, float currentTime, const String& animationName, const Matrix& parentModelTransform, float transitionTightness, bool isRootFound)
 {
 	Matrix boneSpaceTransform = m_Animations[animationName].interpolate(node->m_Name.c_str(), currentTime);
 	if (boneSpaceTransform == Matrix::Identity)
@@ -86,12 +91,13 @@ void AnimatedModelResourceFile::setAnimationTransforms(Ptr<SkeletonNode>& node, 
 			isRootFound = true;
 		}
 
-		m_AnimationTransforms[m_BoneMapping[node->m_Name]] = currentModelTransform;
+		Matrix& animationMatrix = m_AnimationTransforms[m_BoneMapping[node->m_Name]];
+		animationMatrix = Interpolate(animationMatrix, currentModelTransform, transitionTightness);
 	}
 
 	for (auto& child : node->m_Children)
 	{
-		setAnimationTransforms(child, currentTime, animationName, currentModelTransform, isRootFound);
+		setAnimationTransforms(child, currentTime, animationName, currentModelTransform, transitionTightness, isRootFound);
 	}
 }
 
@@ -250,7 +256,7 @@ void AnimatedModelResourceFile::reimport()
 				{
 					// Texture is given as a path
 					String texturePath = diffuseStr.C_Str();
-					ImageResourceFile* image = ResourceLoader::CreateImageResourceFile(getPath().parent_path().generic_string() + "/" + texturePath);
+					Ref<ImageResourceFile> image = ResourceLoader::CreateImageResourceFile(getPath().parent_path().generic_string() + "/" + texturePath);
 
 					if (image)
 					{
@@ -275,7 +281,7 @@ void AnimatedModelResourceFile::reimport()
 				if (isEmbedded)
 				{
 					String texturePath = normalStr.C_Str();
-					ImageResourceFile* image = ResourceLoader::CreateImageResourceFile(getPath().parent_path().generic_string() + "/" + texturePath);
+					Ref<ImageResourceFile> image = ResourceLoader::CreateImageResourceFile(getPath().parent_path().generic_string() + "/" + texturePath);
 
 					if (image)
 					{
@@ -300,7 +306,7 @@ void AnimatedModelResourceFile::reimport()
 				if (isEmbedded)
 				{
 					String texturePath = specularStr.C_Str();
-					ImageResourceFile* image = ResourceLoader::CreateImageResourceFile(getPath().parent_path().generic_string() + "/" + texturePath);
+					Ref<ImageResourceFile> image = ResourceLoader::CreateImageResourceFile(getPath().parent_path().generic_string() + "/" + texturePath);
 
 					if (image)
 					{
@@ -386,6 +392,9 @@ void AnimatedModelResourceFile::reimport()
 		Vector3 center = (max + min) / 2.0f;
 		extractedMesh.m_BoundingBox.Center = center;
 		extractedMesh.m_BoundingBox.Extents = (max - min) / 2.0f;
+		extractedMesh.m_BoundingBox.Extents.x = abs(extractedMesh.m_BoundingBox.Extents.x);
+		extractedMesh.m_BoundingBox.Extents.y = abs(extractedMesh.m_BoundingBox.Extents.y);
+		extractedMesh.m_BoundingBox.Extents.z = abs(extractedMesh.m_BoundingBox.Extents.z);
 
 		bool found = false;
 		for (auto& materialModels : getMeshes())

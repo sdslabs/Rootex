@@ -76,7 +76,7 @@ void CustomRenderInterface::ReleaseCompiledGeometry(Rml::CompiledGeometryHandle 
 
 bool CustomRenderInterface::LoadTexture(Rml::TextureHandle& textureHandle, Rml::Vector2i& textureDimensions, const String& source)
 {
-	ImageResourceFile* image = ResourceLoader::CreateImageResourceFile(source);
+	Ref<ImageResourceFile> image = ResourceLoader::CreateImageResourceFile(source);
 
 	if (image)
 	{

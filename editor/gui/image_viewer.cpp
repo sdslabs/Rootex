@@ -40,7 +40,7 @@ void ImageViewer::drawFileInfo()
 	ImGui::Columns(1);
 }
 
-ResourceFile* ImageViewer::load(const FilePath& filePath)
+Ref<ResourceFile> ImageViewer::load(const FilePath& filePath)
 {
 	m_ImageResourceFile = ResourceLoader::CreateImageResourceFile(filePath.string());
 	return m_ImageResourceFile;

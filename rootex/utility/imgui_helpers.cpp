@@ -2,6 +2,8 @@
 
 #include "resource_loader.h"
 #include "event_manager.h"
+#include "scene.h"
+#include "scene_loader.h"
 
 void RootexFPSGraph(const char* name, Vector<float>& fpsRecords, float lastFPS)
 {

@@ -1,0 +1,9 @@
+[submodule "examples/thirdparty/glfw"]
+	path = examples/thirdparty/glfw
+	url = https://github.com/glfw/glfw.git
+[submodule "thirdparty/glslang"]
+	path = thirdparty/glslang
+	url = https://github.com/KhronosGroup/glslang.git
+[submodule "thirdparty/SPIRV-Cross"]
+	path = thirdparty/SPIRV-Cross
+	url = https://github.com/KhronosGroup/SPIRV-Cross.git

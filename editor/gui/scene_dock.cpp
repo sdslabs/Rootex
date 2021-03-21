@@ -4,7 +4,7 @@
 
 #include "framework/scene_loader.h"
 #include "framework/systems/render_system.h"
-#include "framework/components/transform_component.h"
+#include "framework/components/space/transform_component.h"
 #include "utility/imgui_helpers.h"
 
 #include "vendor/ImGUI/imgui.h"

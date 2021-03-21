@@ -16,10 +16,12 @@ public:
 	{
 		Input,
 		Update,
+		PostUpdate,
 		Render,
+		PostRender,
 		RenderUI,
 		UI,
-		PostRender,
+		GameRender,
 		Editor,
 		Async,
 		End

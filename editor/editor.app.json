@@ -71,6 +71,19 @@
             "startScheme": "Editor",
             "width": 1920
         },
+        "ParticleSystem": {
+            "culling": {
+                "layerCount": 6,
+                "size": {
+                    "x": 1,
+                    "y": 1,
+                    "z": 1
+                }
+            },
+            "maxSquares": 500,
+            "maxVoices": 16,
+            "targetUPS": 60
+        },
         "PhysicsSystem": {},
         "UISystem": {
             "height": 1057,

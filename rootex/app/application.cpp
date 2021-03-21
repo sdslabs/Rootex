@@ -8,7 +8,6 @@
 #include "core/renderer/shader_library.h"
 #include "core/renderer/material_library.h"
 #include "script/interpreter.h"
-#include "main/splash_window.h"
 
 #include "systems/audio_system.h"
 #include "systems/physics_system.h"
@@ -16,8 +15,11 @@
 #include "systems/ui_system.h"
 #include "systems/render_ui_system.h"
 #include "systems/render_system.h"
+#include "systems/particle_system.h"
+#include "systems/post_process_system.h"
 #include "systems/script_system.h"
 #include "systems/transform_animation_system.h"
+#include "systems/trigger_system.h"
 
 #include "Tracy/Tracy.hpp"
 
@@ -47,12 +49,12 @@ Application::Application(const String& settingsFile)
 	m_ApplicationSettings.reset(new ApplicationSettings(ResourceLoader::CreateTextResourceFile(settingsFile)));
 
 	const JSON::json& splashSettings = m_ApplicationSettings->getJSON()["splash"];
-	SplashWindow splashWindow(
+	m_SplashWindow.reset(new SplashWindow(
 	    splashSettings["title"],
 	    splashSettings["icon"],
 	    splashSettings["image"],
 	    splashSettings["width"],
-	    splashSettings["height"]);
+	    splashSettings["height"]));
 
 	PANIC(!OS::ElevateThreadPriority(), "Could not elevate main thread priority");
 	PRINT("Current main thread priority: " + std::to_string(OS::GetCurrentThreadPriority()));
@@ -79,6 +81,7 @@ Application::Application(const String& settingsFile)
 
 	ShaderLibrary::MakeShaders();
 	PhysicsSystem::GetSingleton()->initialize(systemsSettings["PhysicsSystem"]);
+	TriggerSystem::GetSingleton();
 
 	JSON::json& uiSystemSettings = systemsSettings["UISystem"];
 	uiSystemSettings["width"] = m_Window->getWidth();
@@ -87,9 +90,13 @@ Application::Application(const String& settingsFile)
 
 	RenderUISystem::GetSingleton();
 	RenderSystem::GetSingleton();
-	ScriptSystem::GetSingleton();
+	ParticleSystem::GetSingleton()->initialize(systemsSettings["ParticleSystem"]);
+	PostProcessSystem::GetSingleton();
+
 	TransformAnimationSystem::GetSingleton();
 	AnimationSystem::GetSingleton();
+
+	ScriptSystem::GetSingleton();
 
 	if (!AudioSystem::GetSingleton()->initialize(systemsSettings["AudioSystem"]))
 	{
@@ -162,4 +169,9 @@ void Application::end()
 Vector<FilePath> Application::getLibrariesPaths()
 {
 	return OS::GetDirectoriesInDirectory("rootex/vendor/");
+}
+
+void Application::destroySplashWindow()
+{
+	m_SplashWindow.reset();
 }

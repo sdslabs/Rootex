@@ -1,10 +1,11 @@
 #pragma once
 
 #include "core/physics/debug_drawer.h"
-
-#include "btBulletDynamicsCommon.h"
 #include "entity.h"
 #include "framework/system.h"
+
+#include "btBulletDynamicsCommon.h"
+#include "BulletCollision/CollisionDispatch/btGhostObject.h"
 
 enum PhysicsMaterial
 {
@@ -39,6 +40,9 @@ class PhysicsSystem : public System
 	/// Allows to configure Bullet collision detection.
 	Ptr<btDefaultCollisionConfiguration> m_CollisionConfiguration;
 
+	/// Pair callback so ghost objects can cache their collision pairs
+	Ptr<btGhostPairCallback> m_GhostPairCallback;
+
 	/// Draws all debug data in the physics world.
 	DebugDrawer m_DebugDrawer;
 
@@ -62,6 +66,8 @@ public:
 
 	void addRigidBody(btRigidBody* body, int group, int mask);
 	void removeRigidBody(btRigidBody* rigidBody);
+
+	void addCollisionObject(btCollisionObject* body, int group, int mask);
 	void removeCollisionObject(btCollisionObject* collisionObject);
 
 	const PhysicsMaterialData& getMaterialData(PhysicsMaterial material);

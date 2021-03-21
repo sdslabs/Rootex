@@ -19,34 +19,50 @@
 
 Rootex is an advanced C++ 3D game engine powering an in-production game yet to be announced. The game will finally ship on Windows and use DirectX 11.
 
-This game will be a product of a join effort of SDSLabs and [Design Studio](https://designstudio.cc/).
+Find the upcoming features and the game's [public Trello board here!](https://trello.com/b/ES4oR0Gs/rootex-game)
+
+This game will be a product of a join effort of SDSLabs and [Design Studio](https://www.instagram.com/ds_iitr/?hl=en).
 
 <img src="/rootex/assets/editor.png"/>
 
 ### Features
 
 * Based on the popular Entity-Component-System architecture
-  * Allows performance benefits due to better CPU cache usage. 
+  * Allows performance benefits due to better CPU cache usage. However over-optimizations are not the goal
+  * Uses an impure ECS where components can have functions
 * Full editor GUI implemented in ImGui
-  * Similar to Unreal Engine's editor for added familiarity and ease of use.
+  * Similar interface as other popular game engine editors for added familiarity and ease of use
+  * Readable asset files (100% JSON)
 * 3D DirectX 11 renderer
-  * Dynamic Phong-model lighting 
-  * CPU particle effects
-  * High resolution textures and other popular rendering effects.
-* Physics engine powered by Bullet 3D, allowing for flexible, realistic and easy-to-work-with physics in game.
-* Audio engine supporting 3D sound attenuation and stereo sound.
-* Lua scripting engine with functionality exposed for easy game curation in engine.
-* Applies the event-based programming paradigm for better maitainability for game code.
+  * Dynamic and static Phong-model lighting
+  * High resolution textures for Diffuse, Normal, Specular and Light mapping
+  * Post processing effects like gaussian blur, bloom, Adaptive SSAO, FXAA, including ad-hoc sepia, black-and-white, tonemapping
+  * Mildly configurable CPU based particle effects
+  * Effekseer Particle effects integration available for high quality VFX
+  * Environment effects like Sky sphere, sky reflections, refractions and depth fog
+  * Supports basic transform and skeletal animations
+  * Automatic LOD (level-of-detail) generation for 3D models and animations
+  * And few more things...
+* RmlUi integration which allows writing/debugging UI overlays in an HTML/CSS-like language and Lua
+* Physics engine powered by Bullet Physics 3, allows an easy-to-work-with interface for making physics simulations
+* OpenAL-Soft based audio engine supporting 3D attenuation and stereo sound
+* Lua scripting engine with functionality exposed for easy game curation
+  * Uses an object-oriented approach with Lua scripting for making intuitive scope declarations and reducing garbage generation
+  * Lua debugger integration
+* Applies the event-based programming paradigm for better maitainability of game code
+* Being developed for an actual game
+  * Some game-specific features are also present like the Inky [Lua runtime integration](https://github.com/astrochili/narrator/) which allows writing dialogue in the [Ink language](https://www.inklestudios.com/ink/) and running them inside Rootex.
+* Documentation
 
 ## <a name=why>Why is Rootex?
 
-Rootex is the direct successor of [Rubeus, our 2D Game Engine](https://github.com/sdslabs/Rubeus). Rubeus Engine is now being preserved and any newer features will be planned for Rootex and be implemented in Rootex instead of Rubeus. The game being developed will be announced soon. 
+Rootex is the direct successor of [Rubeus, our 2D Game Engine](https://github.com/sdslabs/Rubeus). Rubeus Engine is not being maintained and is being preserved. Newer features will only be planned for Rootex. The game being developed will be announced soon as well.
 
 ## <a name=setup>How do I use Rootex?
 
 Rootex runs only on Windows and there are no plans to port it to other platforms.
 
-1. Install [Visual Studio 2019 or Visual Studio 2017](https://visualstudio.microsoft.com/vs/), [CMake build system](https://cmake.org/download/) and [OpenAL](https://www.openal.org/).
+1. Install [Visual Studio 2019 or Visual Studio 2017](https://visualstudio.microsoft.com/vs/), [CMake build system](https://cmake.org/download/).
 2. Install Visual Studio Desktop C++ development pack (or anything similar, since C++ is no longer a default language since at least Visual Studio 19)
 3. Run `generate_cache.bat /19` for VS 2019 or `generate_cache.bat /17` for VS 2017.
 4. Use `build.bat` to build Rootex.
@@ -59,4 +75,4 @@ Read [here](CONTRIBUTING.md) to know our contribution guidelines. Join our [Disc
 
 ## <a name=license>License
 
-This project is under the MIT license
+This project is under the MIT license. See `THIRDPARTY.md` for thirdparty license notices.

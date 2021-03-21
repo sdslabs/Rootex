@@ -3,9 +3,6 @@
 #include "app/application.h"
 #include "os/thread.h"
 
-HashMap<ResourceFile::Type, Vector<Ref<ResourceFile>>> ResourceLoader::s_ResourcesDataFiles;
-Mutex ResourceLoader::s_ResourceDataMutex;
-
 bool IsFileSupported(const String& extension, ResourceFile::Type supportedFileType)
 {
 	if (extension.empty())
@@ -16,7 +13,7 @@ bool IsFileSupported(const String& extension, ResourceFile::Type supportedFileTy
 	return extensions.find(extension) != String::npos;
 }
 
-ResourceFile* ResourceLoader::CreateResourceFile(const ResourceFile::Type& type, const String& path)
+Ref<ResourceFile> ResourceLoader::CreateResourceFile(const ResourceFile::Type& type, const String& path)
 {
 	if (SupportedFiles.find(type) == SupportedFiles.end())
 	{
@@ -42,6 +39,8 @@ ResourceFile* ResourceLoader::CreateResourceFile(const ResourceFile::Type& type,
 		return CreateAnimatedModelResourceFile(path);
 	case ResourceFile::Type::CollisionModel:
 		return CreateCollisionModelResourceFile(path);
+	// Not in use due to threading issues
+	case ResourceFile::Type::ParticleEffect:
 	default:
 		break;
 	}
@@ -49,78 +48,18 @@ ResourceFile* ResourceLoader::CreateResourceFile(const ResourceFile::Type& type,
 	return nullptr;
 }
 
-void ResourceLoader::RegisterResource(Ref<ResourceFile> file)
-{
-	s_ResourceDataMutex.lock();
-	s_ResourcesDataFiles[file->getType()].push_back(file);
-	s_ResourceDataMutex.unlock();
-}
-
-TextResourceFile* ResourceLoader::CreateTextResourceFile(const String& path)
-{
-	return GetCachedResource<TextResourceFile>(ResourceFile::Type::Text, FilePath(path));
-}
-
-TextResourceFile* ResourceLoader::CreateNewTextResourceFile(const String& path)
-{
-	if (!OS::IsExists(path))
-	{
-		OS::CreateFileName(path);
-	}
-	return CreateTextResourceFile(path);
-}
-
-LuaTextResourceFile* ResourceLoader::CreateLuaTextResourceFile(const String& path)
-{
-	return GetCachedResource<LuaTextResourceFile>(ResourceFile::Type::Lua, FilePath(path));
-}
-
-AudioResourceFile* ResourceLoader::CreateAudioResourceFile(const String& path)
-{
-	return GetCachedResource<AudioResourceFile>(ResourceFile::Type::Audio, FilePath(path));
-}
-
-ModelResourceFile* ResourceLoader::CreateModelResourceFile(const String& path)
-{
-	return GetCachedResource<ModelResourceFile>(ResourceFile::Type::Model, FilePath(path));
-}
-
-CollisionModelResourceFile* ResourceLoader::CreateCollisionModelResourceFile(const String& path)
-{
-	return GetCachedResource<CollisionModelResourceFile>(ResourceFile::Type::CollisionModel, FilePath(path));
-}
-
-AnimatedModelResourceFile* ResourceLoader::CreateAnimatedModelResourceFile(const String& path)
-{
-	return GetCachedResource<AnimatedModelResourceFile>(ResourceFile::Type::AnimatedModel, FilePath(path));
-}
-
-ImageResourceFile* ResourceLoader::CreateImageResourceFile(const String& path)
-{
-	return GetCachedResource<ImageResourceFile>(ResourceFile::Type::Image, FilePath(path));
-}
-
-ImageCubeResourceFile* ResourceLoader::CreateImageCubeResourceFile(const String& path)
-{
-	return GetCachedResource<ImageCubeResourceFile>(ResourceFile::Type::ImageCube, FilePath(path));
-}
-
-FontResourceFile* ResourceLoader::CreateFontResourceFile(const String& path)
-{
-	return GetCachedResource<FontResourceFile>(ResourceFile::Type::Font, FilePath(path));
-}
-
 int ResourceLoader::Preload(ResourceCollection paths, Atomic<int>& progress)
 {
 	progress = 0;
+
 	if (paths.empty())
 	{
-		PRINT("Asked to preload an empty list of files, no files preloaded");
+		PRINT("Asked to reload an empty list of files. Did nothing.");
 		return 0;
 	}
 
 	std::sort(paths.begin(), paths.end(), [](const Pair<ResourceFile::Type, String>& a, const Pair<ResourceFile::Type, String>& b) {
-		return a.second < b.second;
+		return (int)a.first < (int)b.first && a.second < b.second;
 	});
 
 	ResourceCollection empericalPaths = { paths.front() };
@@ -132,58 +71,116 @@ int ResourceLoader::Preload(ResourceCollection paths, Atomic<int>& progress)
 		}
 	}
 
-	ThreadPool& preloadThreads = Application::GetSingleton()->getThreadPool();
-	Vector<Ref<Task>> preloadTasks;
+	Vector<Ref<Task>> tasks;
 
 	for (auto& path : empericalPaths)
 	{
-		Ref<Task> loadingTask(new Task([=, &progress]() {
-			CreateResourceFile((ResourceFile::Type)path.first, path.second);
+		ResourceFile::Type type = path.first;
+		String pathString = path.second;
+
+		tasks.push_back(std::make_shared<Task>([=, &progress]() {
+			Ref<ResourceFile> res = CreateResourceFile(type, pathString);
+			Persist(res);
 			progress++;
 		}));
-		preloadTasks.push_back(loadingTask);
 	}
 
-	// FIX: This is a workaround which saves the main thread from being blocked when 1 task is submitted
-	preloadTasks.push_back(Ref<Task>(new Task([]() {})));
+	/// TODO: Fix the need for this dummy task (blocks the main thread if no resources are preloaded)
+	tasks.push_back(std::make_shared<Task>([]() {}));
 
-	preloadThreads.submit(preloadTasks);
+	Application::GetSingleton()->getThreadPool().submit(tasks);
 
-	PRINT("Preloading " + std::to_string(paths.size()) + " resource files");
-	return preloadTasks.size() - 1; // 1 less for the dummy task
+	return tasks.size() - 1; // One less for the dummy task
 }
 
-void ResourceLoader::Unload(const ResourceCollection& paths)
+void ResourceLoader::Persist(Ref<ResourceFile> res)
 {
-	HashMap<ResourceFile::Type, Vector<Ref<ResourceFile>>> unloads;
+	s_PersistMutex.lock();
+	s_PersistentResources.push_back(res);
+	s_PersistMutex.unlock();
+}
 
-	for (auto& path : paths)
+void ResourceLoader::ClearPersistentResources()
+{
+	s_PersistentResources.clear();
+}
+
+const HashMap<ResourceFile::Type, Vector<Weak<ResourceFile>>>& ResourceLoader::GetResources()
+{
+	return s_ResourcesDataFiles;
+}
+
+void ResourceLoader::ClearDeadResources()
+{
+	for (auto& [type, resources] : s_ResourcesDataFiles)
 	{
-		FilePath searchPath(path.second);
-		searchPath = searchPath.generic_string();
-		for (auto& file : s_ResourcesDataFiles.at(path.first))
+		Vector<int> toRemove;
+		for (int i = 0; i < resources.size(); i++)
 		{
-			String filePathString = file->getPath().generic_string();
-			if (file->getPath() == searchPath && filePathString.find("rootex/assets/") == String::npos)
+			if (!resources[i].lock())
 			{
-				unloads[path.first].push_back(file);
+				resources.erase(resources.begin() + i);
+				i--;
 			}
 		}
 	}
+}
 
-	for (auto& [deletionType, deletionFiles] : unloads)
+Ref<TextResourceFile> ResourceLoader::CreateTextResourceFile(const String& path)
+{
+	return GetCachedResource<TextResourceFile>(ResourceFile::Type::Text, FilePath(path));
+}
+
+Ref<TextResourceFile> ResourceLoader::CreateNewTextResourceFile(const String& path)
+{
+	if (!OS::IsExists(path))
 	{
-		for (auto& deletionFile : deletionFiles)
-		{
-			for (auto& [type, files] : s_ResourcesDataFiles)
-			{
-				auto& eraseIt = std::find(files.begin(), files.end(), deletionFile);
-				if (eraseIt != files.end())
-				{
-					PRINT("Unloaded " + deletionFile->getPath().generic_string());
-					files.erase(eraseIt);
-				}
-			}
-		}
+		OS::CreateFileName(path);
 	}
+	return CreateTextResourceFile(path);
+}
+
+Ref<LuaTextResourceFile> ResourceLoader::CreateLuaTextResourceFile(const String& path)
+{
+	return GetCachedResource<LuaTextResourceFile>(ResourceFile::Type::Lua, FilePath(path));
+}
+
+Ref<AudioResourceFile> ResourceLoader::CreateAudioResourceFile(const String& path)
+{
+	return GetCachedResource<AudioResourceFile>(ResourceFile::Type::Audio, FilePath(path));
+}
+
+Ref<ModelResourceFile> ResourceLoader::CreateModelResourceFile(const String& path)
+{
+	return GetCachedResource<ModelResourceFile>(ResourceFile::Type::Model, FilePath(path));
+}
+
+Ref<CollisionModelResourceFile> ResourceLoader::CreateCollisionModelResourceFile(const String& path)
+{
+	return GetCachedResource<CollisionModelResourceFile>(ResourceFile::Type::CollisionModel, FilePath(path));
+}
+
+Ref<AnimatedModelResourceFile> ResourceLoader::CreateAnimatedModelResourceFile(const String& path)
+{
+	return GetCachedResource<AnimatedModelResourceFile>(ResourceFile::Type::AnimatedModel, FilePath(path));
+}
+
+Ref<ImageResourceFile> ResourceLoader::CreateImageResourceFile(const String& path)
+{
+	return GetCachedResource<ImageResourceFile>(ResourceFile::Type::Image, FilePath(path));
+}
+
+Ref<ImageCubeResourceFile> ResourceLoader::CreateImageCubeResourceFile(const String& path)
+{
+	return GetCachedResource<ImageCubeResourceFile>(ResourceFile::Type::ImageCube, FilePath(path));
+}
+
+Ref<FontResourceFile> ResourceLoader::CreateFontResourceFile(const String& path)
+{
+	return GetCachedResource<FontResourceFile>(ResourceFile::Type::Font, FilePath(path));
+}
+
+Ref<ParticleEffectResourceFile> ResourceLoader::CreateParticleEffectResourceFile(const String& path)
+{
+	return GetCachedResource<ParticleEffectResourceFile>(ResourceFile::Type::ParticleEffect, FilePath(path));
 }
