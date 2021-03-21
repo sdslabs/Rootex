@@ -809,6 +809,7 @@ bool EditorSystem::copySceneIndependentFiles(String& exportBase)
 		{ "game/startup.lua", "game/startup.lua" },
 		{ "rootex/vendor/ASSAO/ASSAO.hlsl", "rootex/vendor/ASSAO/ASSAO.hlsl" },
 		{ "rootex/vendor/Middleclass/Middleclass.lua", "rootex/vendor/Middleclass/Middleclass.lua" },
+		{ "THIRDPARTY.md", "THIRDPARTY.md" }
 	};
 	for (auto& file : execFiles)
 	{
@@ -860,9 +861,18 @@ Variant EditorSystem::exportScene(const Event* event)
 
 	JSON::json gameConfig = JSON::json::parse(ResourceLoader::CreateTextResourceFile("game/game.app.json")->getString());
 	gameConfig["startLevel"] = toExportScene->getSceneFilePath();
-	TextResourceFile* newGameConfig = ResourceLoader::CreateNewTextResourceFile(currExportDir + "game/game.app.json");
+	Ref<TextResourceFile> newGameConfig = ResourceLoader::CreateNewTextResourceFile(currExportDir + "game/game.app.json");
 	newGameConfig->putString(gameConfig.dump(4));
 	if (!newGameConfig->save())
+	{
+		WARN("Could not save application settings file");
+		OS::DeleteDirectory(currExportDir);
+		return false;
+	}
+
+	Ref<TextResourceFile> readme = ResourceLoader::CreateNewTextResourceFile(currExportDir + "readme.txt");
+	readme->putString("This Game was build using Rootex Game Engine. Find the source code here http://github.com/SDSLabs/Rootex.");
+	if (!readme->save())
 	{
 		WARN("Could not save application settings file");
 		OS::DeleteDirectory(currExportDir);
