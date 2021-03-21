@@ -66,7 +66,7 @@ public:
 	static bool DeleteDirectory(const String& dirPath);
 	static bool Rename(const String& sourcePath, const String& destinationPath);
 	static Vector<FilePath> GetFilesInDirectory(const String& directory);
-	static void RelativeCopyFile(const String& src, const String& dest);
+	static bool RelativeCopyFile(const String& src, const String& dest);
 	static void RelativeCopyDirectory(const String& src, const String& dest);
 
 	static bool IsDirectory(const String& path);
@@ -88,6 +88,18 @@ public:
 	static void PrintError(const String& error);
 	static void PrintErrorInline(const String& error);
 	static void PrintIf(const bool& expr, const String& error);
+
+	static void PrintSilent(const String& msg);
+	static void PrintInlineSilent(const String& msg);
+	static void PrintSilent(const float& real);
+	static void PrintSilent(const int& number);
+	static void PrintSilent(const unsigned int& number);
+	static void PrintLineSilent(const String& msg);
+	static void PrintWarningSilent(const String& warning);
+	static void PrintWarningInlineSilent(const String& warning);
+	static void PrintErrorSilent(const String& error);
+	static void PrintErrorInlineSilent(const String& error);
+	static void PrintIfSilent(const bool& expr, const String& error);
 
 	static void PostError(String message, LPSTR caption);
 };

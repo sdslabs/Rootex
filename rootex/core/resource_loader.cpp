@@ -93,6 +93,102 @@ int ResourceLoader::Preload(ResourceCollection paths, Atomic<int>& progress)
 	return tasks.size() - 1; // One less for the dummy task
 }
 
+int ResourceLoader::Export(const String& sceneName, const String& sceneFilePath, Atomic<int>& progress)
+{
+	Vector<Pair<String, String>> toCopy = {
+		{ "build/game/Release/Game.exe",
+		    "Game.exe" },
+		{ "build/game/Release/alut.dll",
+		    "alut.dll" },
+		{ "build/game/Release/OpenAL32.dll",
+		    "OpenAL32.dll" },
+		{ "build/game/Release/wrap_oal.dll",
+		    "wrap_oal.dll" },
+		{ "rootex.root", "rootex.root" },
+		{ "rootex/vendor/Debugger/Debugger.lua", "rootex/vendor/Debugger/Debugger.lua" },
+		{ "game/startup.lua", "game/startup.lua" },
+		{ "rootex/vendor/ASSAO/ASSAO.hlsl", "rootex/vendor/ASSAO/ASSAO.hlsl" },
+		{ "rootex/vendor/Middleclass/Middleclass.lua", "rootex/vendor/Middleclass/Middleclass.lua" },
+		{ "THIRDPARTY.md", "THIRDPARTY.md" }
+	};
+
+	String currExportDir;
+	int i = 0;
+	do
+	{
+		currExportDir = "exports/" + sceneName;
+		if (i != 0)
+		{
+			currExportDir += std::to_string(i);
+		}
+		currExportDir += "/";
+		i++;
+	} while (OS::IsExists(currExportDir));
+
+	OS::CreateDirectoryName(currExportDir);
+	OS::CreateDirectoryName(currExportDir + "game/assets/");
+	OS::CreateDirectoryName(currExportDir + "rootex/assets/");
+
+	JSON::json gameConfig = JSON::json::parse(ResourceLoader::CreateTextResourceFile("game/game.app.json")->getString());
+	gameConfig["startLevel"] = sceneFilePath;
+	Ref<TextResourceFile> newGameConfig = ResourceLoader::CreateNewTextResourceFile(currExportDir + "game/game.app.json");
+	newGameConfig->putString(gameConfig.dump(4));
+
+	if (!newGameConfig->save())
+	{
+		WARN("Could not save application settings file");
+		OS::DeleteDirectory(currExportDir);
+		return false;
+	}
+
+	Ref<TextResourceFile> readme = ResourceLoader::CreateNewTextResourceFile(currExportDir + "readme.txt");
+	readme->putString("This Game was build using Rootex Game Engine. Find the source code here http://github.com/SDSLabs/Rootex.");
+	if (!readme->save())
+	{
+		WARN("Could not save readme file");
+		OS::DeleteDirectory(currExportDir);
+		return false;
+	}
+
+	Vector<FilePath> assetFiles = OS::GetAllFilesInDirectory("game/assets/");
+	Vector<FilePath> rootexAssetFiles = OS::GetAllFilesInDirectory("rootex/assets/");
+	assetFiles.insert(assetFiles.end(), rootexAssetFiles.begin(), rootexAssetFiles.end());
+
+	for (auto& file : assetFiles)
+	{
+		toCopy.push_back({ file.generic_string(), file.generic_string() });
+	}
+
+	Atomic<bool> copyFailed = false;
+	Vector<Ref<Task>> tasks;
+
+	for (auto& filePair : toCopy)
+	{
+		tasks.push_back(std::make_shared<Task>([=, &copyFailed]() {
+			if (copyFailed)
+			{
+				return;
+			}
+			copyFailed = !OS::RelativeCopyFile(filePair.first, currExportDir + filePair.second);
+			if (copyFailed)
+			{
+				ERR_SILENT("Could not copy asset files, investigate console logs");
+				OS::DeleteDirectory(currExportDir);
+			}
+		}));
+	}
+
+	/// TODO: Fix the need for this dummy task (blocks the main thread while tasks are running)
+	tasks.push_back(std::make_shared<Task>([]() {}));
+
+	ThreadPool& threadPool = Application::GetSingleton()->getThreadPool();
+	threadPool.submit(tasks);
+
+	PRINT("Successfully exported to " + currExportDir)
+
+	return toCopy.size();
+}
+
 void ResourceLoader::Persist(Ref<ResourceFile> res)
 {
 	s_PersistMutex.lock();

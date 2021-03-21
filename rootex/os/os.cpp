@@ -156,7 +156,7 @@ bool OS::Initialize()
 		s_GameDirectory = path / GAME_DIRECTORY;
 		s_EngineDirectory = path / ENGINE_DIRECTORY;
 
-		if (!SetCurrentDirectory(s_RootDirectory.string().c_str()))
+		if (!SetCurrentDirectory(s_RootDirectory.generic_string().c_str()))
 		{
 			ERR("SetCurrentDirectory failed (%d)\n");
 			Print((unsigned int)GetLastError());
@@ -229,7 +229,7 @@ String OS::GetBuildType()
 
 String OS::GetGameExecutablePath()
 {
-	return GetAbsolutePath("build/game/" + GetBuildType() + "/Game.exe").string();
+	return GetAbsolutePath("build/game/" + GetBuildType() + "/Game.exe").generic_string();
 }
 
 int OS::GetDisplayWidth()
@@ -311,7 +311,7 @@ void OS::CreateDirectoryName(const String& dirPath)
 	}
 
 	std::filesystem::create_directories(path);
-	PRINT("Created directory: " + path.string());
+	PRINT_SILENT("Created directory: " + path.generic_string());
 }
 
 InputOutputFileStream OS::CreateFileName(const String& filePath)
@@ -324,12 +324,12 @@ InputOutputFileStream OS::CreateFileName(const String& filePath)
 	{
 		if (!IsExists(filePath))
 		{
-			PRINT("Created file: " + path.string());
+			PRINT("Created file: " + path.generic_string());
 		}
 	}
 	else
 	{
-		WARN("Could not create directory: " + path.string());
+		WARN("Could not create directory: " + path.generic_string());
 	}
 
 	return file;
@@ -337,7 +337,7 @@ InputOutputFileStream OS::CreateFileName(const String& filePath)
 
 void OS::OpenFileInSystemEditor(const String& filePath)
 {
-	const String& absolutePath = GetAbsolutePath(filePath).string();
+	const String& absolutePath = GetAbsolutePath(filePath).generic_string();
 	HINSTANCE error = 0;
 	SHELLEXECUTEINFO cmdInfo;
 	ZeroMemory(&cmdInfo, sizeof(cmdInfo));
@@ -371,7 +371,7 @@ void OS::OpenFileInExplorer(const String& filePath)
 		return;
 	}
 
-	const String& absolutePath = GetAbsolutePath(filePath).parent_path().string();
+	const String& absolutePath = GetAbsolutePath(filePath).parent_path().generic_string();
 	HINSTANCE error = 0;
 	SHELLEXECUTEINFO cmdInfo;
 	ZeroMemory(&cmdInfo, sizeof(cmdInfo));
@@ -399,7 +399,7 @@ void OS::OpenFileInExplorer(const String& filePath)
 
 void OS::EditFileInSystemEditor(const String& filePath)
 {
-	const String& absolutePath = GetAbsolutePath(filePath).string();
+	const String& absolutePath = GetAbsolutePath(filePath).generic_string();
 	HINSTANCE error = 0;
 	SHELLEXECUTEINFO cmdInfo;
 	ZeroMemory(&cmdInfo, sizeof(cmdInfo));
@@ -441,19 +441,29 @@ FileTimePoint OS::GetFileLastChangedTime(const String& filePath)
 	return result;
 }
 
-void OS::RelativeCopyFile(const String& src, const String& dest)
+bool OS::RelativeCopyFile(const String& src, const String& dest)
 {
 	String destParent = FilePath(dest).parent_path().generic_string();
 	if (!IsDirectory(destParent))
 	{
 		CreateDirectoryName(destParent);
 	}
-	std::filesystem::copy_file(GetAbsolutePath(src), GetAbsolutePath(dest));
+	bool success = std::filesystem::copy_file(GetAbsolutePath(src), GetAbsolutePath(dest));
+	if (!success)
+	{
+		WARN_SILENT("Copy Failed: " + src + " -> " + dest);
+	}
+	else
+	{
+		PRINT_SILENT("Copy Successful: " + src + " -> " + dest);
+	}
+	return success;
 }
 
 void OS::RelativeCopyDirectory(const String& src, const String& dest)
 {
 	std::filesystem::copy(GetAbsolutePath(src), GetAbsolutePath(dest), std::filesystem::copy_options::recursive);
+	PRINT_SILENT("Copy Successful: " + src + " -> " + dest);
 }
 
 FileBuffer OS::LoadFileContents(String stringPath)
@@ -560,6 +570,76 @@ void OS::PrintIf(const bool& expr, const String& error)
 	if (expr)
 	{
 		PrintError(error);
+	}
+}
+
+void OS::PrintSilent(const String& msg)
+{
+	PrintInlineSilent(msg);
+	std::cout << std::endl;
+}
+
+void OS::PrintInlineSilent(const String& msg)
+{
+	std::cout.clear();
+	std::cout << msg;
+}
+
+void OS::PrintSilent(const float& real)
+{
+	PrintSilent(std::to_string(real));
+}
+
+void OS::PrintSilent(const int& number)
+{
+	PrintSilent(std::to_string(number));
+}
+
+void OS::PrintSilent(const unsigned int& number)
+{
+	PrintSilent(std::to_string(number));
+}
+
+void OS::PrintLineSilent(const String& msg)
+{
+	PrintSilent(msg);
+}
+
+void OS::PrintWarningSilent(const String& warning)
+{
+	std::cout << "\033[93m";
+	PrintSilent("WARNING: " + warning);
+	std::cout << "\033[0m";
+}
+
+void OS::PrintWarningInlineSilent(const String& warning)
+{
+	std::cout << "\033[93m";
+	PrintInlineSilent("WARNING: " + warning);
+	std::cout << "\033[0m";
+}
+
+void OS::PrintErrorSilent(const String& error)
+{
+	std::cout << "\033[91m";
+	PrintSilent("ERROR: " + error);
+	std::cout << "\033[0m";
+	PostError(error, "Error");
+}
+
+void OS::PrintErrorInlineSilent(const String& error)
+{
+	std::cout << "\033[91m";
+	PrintInlineSilent("ERROR: " + error);
+	std::cout << "\033[0m";
+	PostError(error, "Error");
+}
+
+void OS::PrintIfSilent(const bool& expr, const String& error)
+{
+	if (expr)
+	{
+		PrintErrorSilent(error);
 	}
 }
 

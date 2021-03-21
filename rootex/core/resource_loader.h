@@ -68,6 +68,9 @@ public:
 	/// Load all the files passed in parallely. Return total tasks generated.
 	static int Preload(ResourceCollection paths, Atomic<int>& progress);
 
+	/// Copy/Generate all export files parallely. Return total tasks generated.
+	static int Export(const String& sceneName, const String& sceneFilePath, Atomic<int>& progress);
+
 	/// Add a resource to be kept alive till explicitly ordered to clear them. Internally synchronised.
 	static void Persist(Ref<ResourceFile> res);
 	static void ClearPersistentResources();

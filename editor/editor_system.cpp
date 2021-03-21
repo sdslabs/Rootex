@@ -36,7 +36,6 @@ bool EditorSystem::initialize(const JSON::json& systemData)
 {
 	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorSaveBeforeQuit, EditorSystem::saveBeforeQuit);
 	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorSaveAll, EditorSystem::saveAll);
-	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorExportScene, EditorSystem::exportScene);
 	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorAutoSave, EditorSystem::autoSave);
 	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorCreateNewScene, EditorSystem::createNewScene);
 	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorCreateNewMaterial, EditorSystem::createNewMaterial);
@@ -214,6 +213,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 
 	static String loadingScene;
+	static Scene* exportScene = nullptr;
 
 	ImGui::Begin("Rootex Editor", nullptr, windowFlags);
 	{
@@ -325,7 +325,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 				}
 				if (ImGui::MenuItem("Export Scene", "", false, (bool)SceneLoader::GetSingleton()->getCurrentScene()))
 				{
-					EventManager::GetSingleton()->call(EditorEvents::EditorExportScene);
+					exportScene = SceneLoader::GetSingleton()->getCurrentScene();
 				}
 				if (ImGui::MenuItem("Preferences"))
 				{
@@ -681,15 +681,15 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 		}
 	}
 
-	static Atomic<int> progress;
-	static float currentProgress = 0.0f;
-	static int totalProgress = -1;
+	static Atomic<int> loadingSceneProgress;
+	static float loadingSceneCurrentProgress = 0.0f;
+	static int loadingSceneTotalProgress = -1;
 
-	if (!loadingScene.empty() && totalProgress == -1)
+	if (!loadingScene.empty() && loadingSceneTotalProgress == -1)
 	{
 		ImGui::OpenPopup("Load Scene");
-		totalProgress = SceneLoader::GetSingleton()->preloadScene(loadingScene, progress);
-		currentProgress = 0.0f;
+		loadingSceneTotalProgress = SceneLoader::GetSingleton()->preloadScene(loadingScene, loadingSceneProgress);
+		loadingSceneCurrentProgress = 0.0f;
 	}
 
 	if (ImGui::BeginPopupModal("Load Scene", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
@@ -697,19 +697,47 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 		ImGui::Text("Loading scene: %s", loadingScene.c_str());
 
 		ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
-		float target = progress.load() / (float)totalProgress;
-		float velocity = (target - currentProgress) * Random::Float();
-		currentProgress += velocity * 0.01f;
-		ImGui::ProgressBar(currentProgress);
 
-		if (totalProgress == progress)
+		drawProgressBar(loadingSceneProgress, loadingSceneCurrentProgress, loadingSceneTotalProgress);
+
+		if (loadingSceneTotalProgress == loadingSceneProgress)
 		{
 			EventManager::GetSingleton()->call(EditorEvents::EditorCloseScene);
 			SceneLoader::GetSingleton()->loadPreloadedScene(loadingScene, {});
 			SetWindowText(GetActiveWindow(), ("Rootex Editor: " + loadingScene).c_str());
-			totalProgress = -1;
-			progress = 0;
+			loadingSceneTotalProgress = -1;
+			loadingSceneProgress = 0;
 			loadingScene = "";
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::EndPopup();
+	}
+
+	static Atomic<int> exportSceneProgress;
+	static float exportSceneCurrentProgress = 0.0f;
+	static int exportSceneTotalProgress = -1;
+
+	if (exportScene && exportSceneTotalProgress == -1)
+	{
+		ImGui::OpenPopup("Export Scene");
+		exportSceneTotalProgress = SceneLoader::GetSingleton()->exportScene(exportScene, exportSceneProgress);
+		exportSceneCurrentProgress = 0.0f;
+	}
+
+	if (ImGui::BeginPopupModal("Export Scene", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		ImGui::Text("Export scene: %s", exportScene->getName().c_str());
+
+		ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
+
+		drawProgressBar(exportSceneProgress, exportSceneCurrentProgress, exportSceneTotalProgress);
+
+		if (exportSceneTotalProgress == exportSceneProgress)
+		{
+			exportSceneTotalProgress = -1;
+			exportSceneProgress = 0;
+			exportScene = nullptr;
 			ImGui::CloseCurrentPopup();
 		}
 
@@ -793,97 +821,6 @@ Variant EditorSystem::saveAll(const Event* event)
 	return true;
 }
 
-bool EditorSystem::copySceneIndependentFiles(String& exportBase)
-{
-	Vector<Pair<String, String>> execFiles = {
-		{ "build/game/Release/Game.exe",
-		    "Game.exe" },
-		{ "build/game/Release/alut.dll",
-		    "alut.dll" },
-		{ "build/game/Release/OpenAL32.dll",
-		    "OpenAL32.dll" },
-		{ "build/game/Release/wrap_oal.dll",
-		    "wrap_oal.dll" },
-		{ "rootex.root", "rootex.root" },
-		{ "rootex/vendor/Debugger/Debugger.lua", "rootex/vendor/Debugger/Debugger.lua" },
-		{ "game/startup.lua", "game/startup.lua" },
-		{ "rootex/vendor/ASSAO/ASSAO.hlsl", "rootex/vendor/ASSAO/ASSAO.hlsl" },
-		{ "rootex/vendor/Middleclass/Middleclass.lua", "rootex/vendor/Middleclass/Middleclass.lua" },
-		{ "THIRDPARTY.md", "THIRDPARTY.md" }
-	};
-	for (auto& file : execFiles)
-	{
-		if (OS::IsExists(file.first))
-		{
-			OS::RelativeCopyFile(file.first, exportBase + file.second);
-		}
-		else
-		{
-			WARN("Export failed, " + file.first + " not found");
-			return false;
-		}
-	}
-	return true;
-}
-
-Variant EditorSystem::exportScene(const Event* event)
-{
-	saveAll(nullptr);
-
-	Scene* toExportScene = SceneLoader::GetSingleton()->getCurrentScene();
-	String sceneName = toExportScene->getName();
-
-	String currExportDir;
-	int i = 0;
-	do
-	{
-		currExportDir = "exports/" + sceneName;
-		if (i != 0)
-		{
-			currExportDir += std::to_string(i);
-		}
-		currExportDir += "/";
-		i++;
-	} while (OS::IsExists(currExportDir));
-
-	OS::CreateDirectoryName(currExportDir);
-
-	if (!copySceneIndependentFiles(currExportDir))
-	{
-		OS::DeleteDirectory(currExportDir);
-		return false;
-	}
-
-	OS::CreateDirectoryName(currExportDir + "game/assets/");
-	OS::CreateDirectoryName(currExportDir + "rootex/assets/");
-	OS::RelativeCopyDirectory("game/assets/", currExportDir + "game/assets/");
-	OS::RelativeCopyDirectory("rootex/assets/", currExportDir + "rootex/assets/");
-
-	JSON::json gameConfig = JSON::json::parse(ResourceLoader::CreateTextResourceFile("game/game.app.json")->getString());
-	gameConfig["startLevel"] = toExportScene->getSceneFilePath();
-	Ref<TextResourceFile> newGameConfig = ResourceLoader::CreateNewTextResourceFile(currExportDir + "game/game.app.json");
-	newGameConfig->putString(gameConfig.dump(4));
-	if (!newGameConfig->save())
-	{
-		WARN("Could not save application settings file");
-		OS::DeleteDirectory(currExportDir);
-		return false;
-	}
-
-	Ref<TextResourceFile> readme = ResourceLoader::CreateNewTextResourceFile(currExportDir + "readme.txt");
-	readme->putString("This Game was build using Rootex Game Engine. Find the source code here http://github.com/SDSLabs/Rootex.");
-	if (!readme->save())
-	{
-		WARN("Could not save application settings file");
-		OS::DeleteDirectory(currExportDir);
-		return false;
-	}
-
-	PRINT("Successfully exported to " + currExportDir)
-
-	return true;
-}
-
 Variant EditorSystem::autoSave(const Event* event)
 {
 	PRINT("Auto-saving current scene...");
@@ -927,6 +864,15 @@ Variant EditorSystem::createNewMaterial(const Event* event)
 	MaterialLibrary::CreateNewMaterialFile(materialInfo[0], materialInfo[1]);
 	return true;
 }
+
+void EditorSystem::drawProgressBar(Atomic<int>& progress, float& currentProgress, int& totalProgress)
+{
+	float target = progress.load() / (float)totalProgress;
+	float velocity = (target - currentProgress) * Random::Float();
+	currentProgress += velocity * 0.01f;
+	ImGui::ProgressBar(currentProgress);
+}
+
 
 EditorSystem* EditorSystem::GetSingleton()
 {
