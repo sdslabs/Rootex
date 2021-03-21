@@ -501,20 +501,20 @@
                             }
                         },
                         "position": {
-                            "x": 309.2710876464844,
+                            "x": 60.35546875,
                             "y": 174.26275634765625,
                             "z": -17.46019172668457
                         },
                         "rotation": {
-                            "w": 0.7070346474647522,
+                            "w": 0.7069492340087891,
                             "x": 0.0,
-                            "y": 0.7071788907051086,
+                            "y": 0.7072643041610718,
                             "z": 0.0
                         },
                         "scale": {
-                            "x": 1.000000238418579,
-                            "y": 1.0,
-                            "z": 1.000000238418579
+                            "x": 1.0006250143051147,
+                            "y": 1.0007661581039429,
+                            "z": 1.0006250143051147
                         }
                     }
                 }
@@ -575,33 +575,6 @@
                 },
                 "renderPass": 1,
                 "resFile": "game/assets/sponza/sponza.obj"
-            },
-            "StaticMeshColliderComponent": {
-                "angularFactor": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "collisionGroup": 31,
-                "collisionMask": 31,
-                "collisionModel": "game/assets/sponza/sponza.obj",
-                "gravity": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "isCCD": true,
-                "isGeneratesHitEvents": false,
-                "isKinematic": false,
-                "isMoveable": false,
-                "isSleepable": true,
-                "material": 0,
-                "offset": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "volume": 0.0
             },
             "TransformComponent": {
                 "boundingBox": {
@@ -671,6 +644,266 @@
         },
         "listener": 15,
         "preloads": [
+            [
+                4,
+                "game/assets/sponza/sponza.obj"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_roof_diff.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/lion_bump.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/lion_ddn.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/lion.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/vase_bump.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/vase_ddn.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/vase_dif.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/vase_hanging_NRM.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/vase_hanging.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/chain_texture_mask.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/chain_texture_ddn.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/chain_texture.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_curtain_green_diff.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_curtain_diff.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_curtain_blue_diff_NRM.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_curtain_blue_diff.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_fabric_spec.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_fabric_diff.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_fabric_blue_diff.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_fabric_blue_diff_NRM.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_fabric_green_diff.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_flagpole_spec.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_flagpole_diff_NRM.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_flagpole_diff.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_column_b_spec.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_column_b_ddn.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_column_b_diff.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_details_spec.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_column_c_spec.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_details_diff_NRM.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_details_diff.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_column_c_ddn.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_column_c_diff.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_floor_a_spec.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_floor_a_diff_NRM.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_floor_a_diff.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_column_a_spec.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_column_a_ddn.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_column_a_diff.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_ceiling_a_diff_NRM.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_ceiling_a_spec.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_ceiling_a_diff.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_arch_spec.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_arch_ddn.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_arch_diff.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/spnza_bricks_a_spec.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/spnza_bricks_a_ddn.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/spnza_bricks_a_diff.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/background_ddn.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/background.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/vase_plant_mask.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/vase_plant_NRM.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/vase_plant.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/vase_round_ddn.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/vase_round.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/vase_round_spec.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_thorn_spec.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_thorn_ddn.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_thorn_diff.png"
+            ],
+            [
+                4,
+                "rootex/assets/sky.obj"
+            ],
+            [
+                4,
+                "rootex/assets/cube.obj"
+            ],
+            [
+                8,
+                "rootex/assets/sky.dds"
+            ],
+            [
+                7,
+                "rootex/assets/white.png"
+            ],
+            [
+                3,
+                "editor/editor.app.json"
+            ]
         ],
         "startScheme": "Controls"
     }

@@ -1,9 +1,9 @@
 #include "render_system.h"
 
-#include "components/visual/fog_component.h"
-#include "components/visual/sky_component.h"
-#include "components/visual/grid_model_component.h"
-#include "components/visual/cpu_particles_component.h"
+#include "components/visual/effect/fog_component.h"
+#include "components/visual/effect/sky_component.h"
+#include "components/visual/model/grid_model_component.h"
+#include "components/visual/effect/cpu_particles_component.h"
 #include "renderer/shaders/register_locations_vertex_shader.h"
 #include "renderer/shaders/register_locations_pixel_shader.h"
 #include "light_system.h"
@@ -35,8 +35,6 @@ RenderSystem::RenderSystem()
 	m_LineMaterial = std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetMaterial("rootex/assets/materials/line.rmat"));
 	m_CurrentFrameLines.m_Endpoints.reserve(LINE_INITIAL_RENDER_CACHE * 2 * 3);
 	m_CurrentFrameLines.m_Indices.reserve(LINE_INITIAL_RENDER_CACHE * 2);
-
-	PostProcessor::GetSingleton();
 }
 
 void RenderSystem::recoverLostDevice()
@@ -192,12 +190,6 @@ void RenderSystem::update(float deltaMilliseconds)
 		RenderingDevice::GetSingleton()->setRSType(currentRS);
 		RenderingDevice::GetSingleton()->disableSkyDSS();
 	}
-
-	// Post processes
-	PostProcessor::GetSingleton()->draw(m_Camera);
-
-	RenderingDevice::GetSingleton()->unbindSRVs();
-	RenderingDevice::GetSingleton()->setOffScreenRTVDSV();
 }
 
 void RenderSystem::renderLines()
@@ -241,10 +233,21 @@ void RenderSystem::submitBox(const Vector3& min, const Vector3& max)
 	Vector3 y = Vector3(0.0f, d.y, 0.0f);
 	Vector3 z = Vector3(0.0f, 0.0f, d.z);
 
-	/// Representation of bottom/top vertices
-	///   [3/7]-------[2/6]
-	///    /           /
-	/// [0/4]-------[1/5]
+	/// Representation of all vertices
+	///      [7]---------[6]
+	///      /|          /|
+	///     / |         / |
+	///    /  |        /  |
+	///  [4]--+------[5]  |
+	///   |   |       |   |
+	///   |   |       |   |
+	///   |   |       |   |
+	///   |  [3]------+--[2]
+	///   |  /        |  /
+	///   | /         | /
+	///   |/          |/
+	/// [0]----------[1]
+
 	Vector3 corners[8];
 	corners[0] = min;
 	corners[1] = min + x;
@@ -256,6 +259,7 @@ void RenderSystem::submitBox(const Vector3& min, const Vector3& max)
 	corners[6] = max;
 	corners[7] = min + y + z;
 
+	// Cube
 	submitLine(corners[0], corners[1]);
 	submitLine(corners[1], corners[2]);
 	submitLine(corners[2], corners[3]);
@@ -366,6 +370,11 @@ void RenderSystem::perFramePSCBBinds(const Color& fogColor)
 void RenderSystem::perScenePSCBBinds()
 {
 	calculateTransforms(SceneLoader::GetSingleton()->getRootScene());
+	updateStaticLights();
+}
+
+void RenderSystem::updateStaticLights()
+{
 	PerLevelPSCB perScene;
 	perScene.staticLights = LightSystem::GetSingleton()->getStaticPointLights();
 	Material::SetPSConstantBuffer(perScene, m_PSPerLevelConstantBuffer, PER_SCENE_PS_CPP);

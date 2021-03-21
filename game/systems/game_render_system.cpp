@@ -3,7 +3,7 @@
 #include "renderer/rendering_device.h"
 
 GameRenderSystem::GameRenderSystem()
-    : System("GameRenderSystem", System::UpdateOrder::PostRender, true)
+    : System("GameRenderSystem", System::UpdateOrder::GameRender, true)
 {
 }
 

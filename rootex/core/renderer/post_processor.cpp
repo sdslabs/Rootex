@@ -418,12 +418,6 @@ PostProcessor::PostProcessor()
 	m_PostProcesses.emplace_back(new FXAAPostProcess());
 }
 
-PostProcessor* PostProcessor::GetSingleton()
-{
-	static PostProcessor singleton;
-	return &singleton;
-}
-
 void PostProcessor::draw(CameraComponent* camera)
 {
 	ZoneNamedN(postProcessing, "Post Processing", true);

@@ -89,11 +89,10 @@ target_include_directories(Rootex PUBLIC
 target_link_libraries(Rootex PUBLIC
     Lua
     Sol3
-    OpenAL
+    OpenALSoft
     alut
     DirectXTK
     JSON
-    Dirent
     ImGui
     ImGuizmo
     Gainput
@@ -109,6 +108,7 @@ target_link_libraries(Rootex PUBLIC
     ASSAO
     LPeg
     Meshoptimizer
+    Effekseer
     
     Shell32.lib
     d3d11.lib

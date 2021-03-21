@@ -50,7 +50,7 @@ JSON::json SkyMaterial::getJSON() const
 	return j;
 }
 
-void SkyMaterial::setSkyTexture(ImageCubeResourceFile* skyImageFile)
+void SkyMaterial::setSkyTexture(Ref<ImageCubeResourceFile> skyImageFile)
 {
 	m_SkyImage = skyImageFile;
 }
@@ -63,7 +63,7 @@ ID3D11ShaderResourceView* SkyMaterial::getPreview()
 void SkyMaterial::draw()
 {
 	Material::draw();
-	RootexSelectableImageCube("Sky Texture" ICON_ROOTEX_EXTERNAL_LINK, m_SkyImage, [this](const String& selectedFile) { setSkyTexture(ResourceLoader::CreateImageCubeResourceFile(selectedFile)); });
+	RootexSelectableImageCube("Sky Texture" ICON_ROOTEX_EXTERNAL_LINK, m_SkyImage.get(), [this](const String& selectedFile) { setSkyTexture(ResourceLoader::CreateImageCubeResourceFile(selectedFile)); });
 	ImGui::SameLine();
 	if (ImGui::Button(ICON_ROOTEX_REFRESH "##Sky Texture"))
 	{

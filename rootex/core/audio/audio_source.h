@@ -1,5 +1,6 @@
 #pragma once
-#include "rootex\vendor\OpenAL\include\al.h"
+
+#include "al.h"
 
 class StreamingAudioBuffer;
 class StaticAudioBuffer;

@@ -4,7 +4,7 @@
 #include "core/resource_loader.h"
 #include "core/resource_files/lua_text_resource_file.h"
 
-#include "components/physics/physics_collider_component.h"
+#include "components/physics/collision_component.h"
 #include "script/script.h"
 
 #include "os/timer.h"
@@ -41,6 +41,7 @@ bool PhysicsSystem::initialize(const JSON::json& systemData)
 	m_Dispatcher.reset(new btCollisionDispatcher(m_CollisionConfiguration.get()));
 	m_Broadphase.reset(new btDbvtBroadphase());
 	m_Solver.reset(new btSequentialImpulseConstraintSolver());
+	m_GhostPairCallback.reset(new btGhostPairCallback());
 	m_DynamicsWorld.reset(new btDiscreteDynamicsWorld(m_Dispatcher.get(), m_Broadphase.get(), m_Solver.get(), m_CollisionConfiguration.get()));
 	m_PhysicsMaterialTable.resize(PhysicsMaterial::End);
 	assignPhysicsMaterials();
@@ -52,6 +53,7 @@ bool PhysicsSystem::initialize(const JSON::json& systemData)
 	}
 
 	m_DynamicsWorld->setInternalTickCallback(InternalTickCallback);
+	m_DynamicsWorld->getPairCache()->setInternalGhostPairCallback(m_GhostPairCallback.get());
 	m_DynamicsWorld->setWorldUserInfo(this);
 	m_DynamicsWorld->setDebugDrawer(&m_DebugDrawer);
 
@@ -61,6 +63,11 @@ bool PhysicsSystem::initialize(const JSON::json& systemData)
 void PhysicsSystem::addRigidBody(btRigidBody* body, int group, int mask)
 {
 	m_DynamicsWorld->addRigidBody(body, group, mask);
+}
+
+void PhysicsSystem::addCollisionObject(btCollisionObject* body, int group, int mask)
+{
+	m_DynamicsWorld->addCollisionObject(body, group, mask);
 }
 
 btCollisionWorld::AllHitsRayResultCallback PhysicsSystem::reportAllRayHits(const btVector3& from, const btVector3& to)
@@ -97,20 +104,19 @@ void PhysicsSystem::InternalTickCallback(btDynamicsWorld* const world, btScalar 
 		btPersistentManifold* manifold = dispatcher->getManifoldByIndexInternal(manifoldIdx);
 
 		// get the two bodies used in the manifold.
-		btRigidBody const* const body0 = static_cast<btRigidBody const*>(manifold->getBody0());
-		btRigidBody const* const body1 = static_cast<btRigidBody const*>(manifold->getBody1());
+		btCollisionObject const* const body0 = static_cast<btCollisionObject const*>(manifold->getBody0());
+		btCollisionObject const* const body1 = static_cast<btCollisionObject const*>(manifold->getBody1());
 
-		PhysicsColliderComponent* collider0 = (PhysicsColliderComponent*)body0->getUserPointer();
-		PhysicsColliderComponent* collider1 = (PhysicsColliderComponent*)body1->getUserPointer();
+		CollisionComponent* collider0 = (CollisionComponent*)body0->getUserPointer();
+		CollisionComponent* collider1 = (CollisionComponent*)body1->getUserPointer();
 
-		if (collider0->isGeneratesHitEvents())
-		{
-			collider0->getOwner()->call("hit", { body0, body1 });
-		}
-		if (collider1->isGeneratesHitEvents())
-		{
-			collider1->getOwner()->call("hit", { body1, body0 });
-		}
+		Entity* entity0 = collider0->getOwner();
+		Entity* entity1 = collider1->getOwner();
+
+		Hit h0 = Hit(entity0, entity1);
+		collider0->handleHit(&h0);
+		Hit h1 = Hit(entity1, entity0);
+		collider1->handleHit(&h1);
 	}
 }
 

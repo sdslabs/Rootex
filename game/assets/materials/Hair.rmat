@@ -1,0 +1,21 @@
+{
+    "affectedBySky": true,
+    "color": {
+        "a": 1.0,
+        "b": 0.028818288818001747,
+        "g": 0.027979830279946327,
+        "r": 0.04177311062812805
+    },
+    "imageFile": "rootex/assets/white.png",
+    "isAlpha": false,
+    "isLit": true,
+    "isNormal": false,
+    "lightmapImageFile": "rootex/assets/white.png",
+    "reflectivity": 0.10000000149011612,
+    "refractionConstant": 0.800000011920929,
+    "refractivity": 0.10000000149011612,
+    "specularImageFile": "rootex/assets/white.png",
+    "specularIntensity": 0.5,
+    "specularPower": 30.0,
+    "type": "AnimatedMaterial"
+}

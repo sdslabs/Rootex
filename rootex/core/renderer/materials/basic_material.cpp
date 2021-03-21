@@ -185,7 +185,7 @@ JSON::json BasicMaterial::getJSON() const
 	return j;
 }
 
-void BasicMaterial::setDiffuseTexture(ImageResourceFile* image)
+void BasicMaterial::setDiffuseTexture(Ref<ImageResourceFile> image)
 {
 	if (!image)
 	{
@@ -195,7 +195,7 @@ void BasicMaterial::setDiffuseTexture(ImageResourceFile* image)
 	m_DiffuseImageFile = image;
 }
 
-void BasicMaterial::setNormalTexture(ImageResourceFile* image)
+void BasicMaterial::setNormalTexture(Ref<ImageResourceFile> image)
 {
 	if (!image)
 	{
@@ -206,7 +206,7 @@ void BasicMaterial::setNormalTexture(ImageResourceFile* image)
 	m_NormalImageFile = image;
 }
 
-void BasicMaterial::setSpecularTexture(ImageResourceFile* image)
+void BasicMaterial::setSpecularTexture(Ref<ImageResourceFile> image)
 {
 	if (!image)
 	{
@@ -216,7 +216,7 @@ void BasicMaterial::setSpecularTexture(ImageResourceFile* image)
 	m_SpecularImageFile = image;
 }
 
-void BasicMaterial::setLightmapTexture(ImageResourceFile* image)
+void BasicMaterial::setLightmapTexture(Ref<ImageResourceFile> image)
 {
 	if (!image)
 	{
@@ -236,25 +236,25 @@ void BasicMaterial::draw()
 {
 	Material::draw();
 
-	RootexSelectableImage("Diffuse Texture " ICON_ROOTEX_PENCIL_SQUARE_O, m_DiffuseImageFile, [this](const String& selectedFile) { setDiffuseTexture(ResourceLoader::CreateImageResourceFile(selectedFile)); });
+	RootexSelectableImage("Diffuse Texture " ICON_ROOTEX_PENCIL_SQUARE_O, m_DiffuseImageFile.get(), [this](const String& selectedFile) { setDiffuseTexture(ResourceLoader::CreateImageResourceFile(selectedFile)); });
 	ImGui::SameLine();
 	if (ImGui::Button(ICON_ROOTEX_REFRESH "##Diffuse Texture"))
 	{
 		setDiffuseTexture(ResourceLoader::CreateImageResourceFile("rootex/assets/white.png"));
 	}
-	RootexSelectableImage("Normal Texture " ICON_ROOTEX_PENCIL_SQUARE_O, m_NormalImageFile, [this](const String& selectedFile) { setNormalTexture(ResourceLoader::CreateImageResourceFile(selectedFile)); });
+	RootexSelectableImage("Normal Texture " ICON_ROOTEX_PENCIL_SQUARE_O, m_NormalImageFile.get(), [this](const String& selectedFile) { setNormalTexture(ResourceLoader::CreateImageResourceFile(selectedFile)); });
 	ImGui::SameLine();
 	if (ImGui::Button(ICON_ROOTEX_REFRESH "##Normal Texture"))
 	{
 		removeNormal();
 	}
-	RootexSelectableImage("Specular Texture " ICON_ROOTEX_PENCIL_SQUARE_O, m_SpecularImageFile, [this](const String& selectedFile) { setSpecularTexture(ResourceLoader::CreateImageResourceFile(selectedFile)); });
+	RootexSelectableImage("Specular Texture " ICON_ROOTEX_PENCIL_SQUARE_O, m_SpecularImageFile.get(), [this](const String& selectedFile) { setSpecularTexture(ResourceLoader::CreateImageResourceFile(selectedFile)); });
 	ImGui::SameLine();
 	if (ImGui::Button(ICON_ROOTEX_REFRESH "##Specular Texture"))
 	{
 		setSpecularTexture(ResourceLoader::CreateImageResourceFile("rootex/assets/white.png"));
 	}
-	RootexSelectableImage("Lightmap Texture " ICON_ROOTEX_PENCIL_SQUARE_O, m_LightmapImageFile, [this](const String& selectedFile) { setLightmapTexture(ResourceLoader::CreateImageResourceFile(selectedFile)); });
+	RootexSelectableImage("Lightmap Texture " ICON_ROOTEX_PENCIL_SQUARE_O, m_LightmapImageFile.get(), [this](const String& selectedFile) { setLightmapTexture(ResourceLoader::CreateImageResourceFile(selectedFile)); });
 	ImGui::SameLine();
 	if (ImGui::Button(ICON_ROOTEX_REFRESH "##Lightmap Texture"))
 	{

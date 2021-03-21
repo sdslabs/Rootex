@@ -11,7 +11,7 @@ class StaticAudioBuffer : public AudioBuffer
 	void destroyBuffers() override;
 
 public:
-	StaticAudioBuffer(AudioResourceFile* audioFile);
+	StaticAudioBuffer(Ref<AudioResourceFile> audioFile);
 	~StaticAudioBuffer();
 
 	ALuint& getBuffer();

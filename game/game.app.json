@@ -8,7 +8,7 @@
         "title": "Rootex Splash",
         "width": 400
     },
-    "startLevel": "game/assets/scenes/loading.scene.json",
+    "startLevel": "game/assets/scenes/trigger.scene.json",
     "systems": {
         "AudioSystem": {},
         "DebugSystem": {
@@ -21,6 +21,19 @@
         "InputSystem": {
             "height": 1387,
             "width": 2560
+        },
+        "ParticleSystem": {
+            "culling": {
+                "layerCount": 6,
+                "size": {
+                    "x": 1,
+                    "y": 1,
+                    "z": 1
+                }
+            },
+            "maxSquares": 500,
+            "maxVoices": 16,
+            "targetUPS": 60
         },
         "PhysicsSystem": {},
         "UISystem": {

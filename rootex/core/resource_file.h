@@ -1,6 +1,7 @@
 #pragma once
 
-#include "common/common.h"
+#include "common/types.h"
+#include "os/os.h"
 
 /// Interface of a file loaded from disk. Use ResourceLoader to load, create or save files.
 class ResourceFile
@@ -19,7 +20,8 @@ public:
 		CollisionModel,
 		Image,
 		ImageCube,
-		Font
+		Font,
+		ParticleEffect
 	};
 
 	static const inline Map<Type, String> s_TypeNames = {
@@ -32,7 +34,8 @@ public:
 		{ Type::CollisionModel, "CollisionModel" },
 		{ Type::Image, "Image" },
 		{ Type::ImageCube, "ImageCube" },
-		{ Type::Font, "Font" }
+		{ Type::Font, "Font" },
+		{ Type::ParticleEffect, "ParticleEffect" }
 	};
 
 protected:

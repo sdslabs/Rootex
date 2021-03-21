@@ -9,7 +9,7 @@
 class AudioPlayer
 {
 	float m_FractionProgress = 0.0f;
-	AudioResourceFile* m_OpenFile = nullptr;
+	Ref<AudioResourceFile> m_OpenFile = nullptr;
 	Ref<StaticAudioBuffer> m_Buffer;
 	Ref<StaticAudioSource> m_Source;
 	bool m_Looping = false;
@@ -23,7 +23,7 @@ public:
 	AudioPlayer(AudioPlayer&) = delete;
 	~AudioPlayer() = default;
 
-	ResourceFile* load(const FilePath& filePath);
+	Ref<ResourceFile> load(const FilePath& filePath);
 	void unload();
 	void draw(float deltaMilliseconds);
 };

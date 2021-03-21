@@ -8,7 +8,7 @@ class Texture;
 class SkyMaterial : public Material
 {
 	SkyShader* m_SkyShader;
-	ImageCubeResourceFile* m_SkyImage;
+	Ref<ImageCubeResourceFile> m_SkyImage;
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_SamplerState;
 
 	void setVSConstantBuffer(const VSDiffuseConstantBuffer& constantBuffer);
@@ -29,7 +29,7 @@ public:
 	SkyMaterial(const String& imagePath);
 	~SkyMaterial() = default;
 
-	void setSkyTexture(ImageCubeResourceFile* skyImageFile);
+	void setSkyTexture(Ref<ImageCubeResourceFile> skyImageFile);
 
 	virtual ID3D11ShaderResourceView* getPreview() override;
 
