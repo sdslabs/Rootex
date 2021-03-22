@@ -6,7 +6,7 @@
 Ptr<Component> TextUIComponent::Create(const JSON::json& componentData)
 {
 	return std::make_unique<TextUIComponent>(
-	    ResourceLoader::CreateFontResourceFile(componentData.value("fontResource", "game/assets/fonts/noto_sans_50_regular.spritefont")),
+	    ResourceLoader::CreateFontResourceFile(componentData.value("fontResource", "rootex/assets/fonts/lato_30_regular.spritefont")),
 	    componentData.value("text", "Hello Rootex!"),
 	    componentData.value("color", (Color)ColorPresets::White),
 	    (Mode)(int)componentData.value("mode", (int)Mode::None),

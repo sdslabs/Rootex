@@ -341,7 +341,7 @@
                             "g": 0.52173912525177,
                             "r": 1.0
                         },
-                        "fontResource": "game/assets/fonts/noto_sans_50_regular.spritefont",
+                        "fontResource": "rootex/assets/fonts/lato_30_regular.spritefont",
                         "isVisible": true,
                         "mode": 0,
                         "origin": {

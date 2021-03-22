@@ -100,10 +100,10 @@ end
             <div id="clubbed">
                 <div id="loading">
                     <div id="face_box">
-                        <img id="face" src="take_your_time_face.png" width=300em height=300em />
+                        <img id="face" src="../../test/rootex.png" width=300em height=300em />
                     </div>
                     <div id="text_box">
-                        <img id="text" src="take_your_time_text.png" width=300em height=80em />
+                        <img id="text" src="../../test/sdslabs.png" width=300em height=80em />
                     </div>
                 </div>
             </div>
