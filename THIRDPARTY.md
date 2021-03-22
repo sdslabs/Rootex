@@ -2,7 +2,9 @@
 
 Rootex license is in the `LICENSE` file, however, our thirdparty licenses are mentioned below.
 
-In summary, the third party licenses (including sub-dependencies) include:
+Rootex's assets (assets which are used for testing in Rootex development environments and may be finally distributed) are covered in `ASSETS.md`.
+
+In summary, the third party source code licenses (including sub-dependencies) include:
 
 * MIT
 * LGPL
@@ -14,7 +16,7 @@ In summary, the third party licenses (including sub-dependencies) include:
 * Boost Software License
 * Apache 2.0
 
-> Tip: There are some non-standard licenses but all these are non-viral and do not stop Rootex games from being exported and distributed. However you should share this document in any Rootex game exports. 
+> Tip: There are some non-standard licenses but all these are non-viral and do not stop Rootex games from being exported and distributed. However you should share this document in any Rootex game exports.
 
 All external/thirdparty code is fetched into the `rootex/vendor/` folder and compiled and linked with the main Rootex library. Any modifications in their source code is documented below.
 
@@ -24,9 +26,9 @@ For details on dependencies of dependencies, look into the library folder in `ro
 
 > Note: "Source weeded and restructured" phrase used below means that the library sources were not modified in any way unless specified, however the file structure was changed to suit the building process and unneccessary files which did not participate in the build process were removed e.g. unit tests, documentation, sample config files, etc.
 
-> Library license files were renamed to `LICENSE` (unless not already named as such) to facilitate easy display of those licenses inside the Rootex editor and any projects which base themselves over Rootex.
+Library license files were renamed to `LICENSE` (unless not already named as such) to facilitate easy display of those licenses inside the Rootex editor and any projects which base themselves over Rootex.
 
-> If you are an author of an under-mentioned library (or a library Rootex uses but mistakenly hasn't mentioned it below), or you want your sources to not appear in this repository, then please contact SDSLabs IIT Roorkee.
+If you are an author of an under-mentioned library (or a library Rootex uses but mistakenly hasn't mentioned it below), or you want your sources to not appear in this repository, then please contact SDSLabs IIT Roorkee.
 
 ## Freealut
 
@@ -691,7 +693,7 @@ SOFTWARE.
 </details>
 
 <details>
-<summary>Poly2Tri - MIT License</summary>
+<summary>Poly2Tri</summary>
 Poly2Tri Copyright (c) 2009-2010, Poly2Tri Contributors
 http://code.google.com/p/poly2tri/
 
@@ -719,10 +721,10 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
 LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-<details>
+</details>
 
 <details>
-<summary>rapidjson - MIT License</summary>
+<summary>rapidjson - MIT License + others</summary>
 Tencent is pleased to support the open source community by making RapidJSON available. 
  
 Copyright (C) 2015 THL A29 Limited, a Tencent company, and Milo Yip.  All rights reserved.
@@ -905,7 +907,7 @@ Copyright (C) 1995-2017 Jean-loup Gailly and Mark Adler
 
 ### Remarks
 
-Compiled and linked as is. Build step modified. Source weeded and restructured. Assimp authors are credited in `rootex/vendor/Assimp/CREDITS`.
+Compiled and linked as is. Build step modified. Source weeded and restructured. Assimp authors are credited in `rootex/vendor/Assimp/CREDITS`. The "problematic JSON" license as mentioned in the rapidjson license does not apply because that source code is not used.
 
 ## Bullet Physics 3
 
@@ -1961,7 +1963,7 @@ SOFTWARE.
  </details>
 
 <details>
-<summary>fast_obj - MIT Licnse</summary>
+<summary>fast_obj - MIT License</summary>
  * MIT License
  *
  * Copyright (c) 2018 Richard Knight
@@ -2957,7 +2959,7 @@ Exhibit B - "Incompatible With Secondary Licenses" Notice
 
 ### Remarks
 
-Build Process modified. Source weeded and restructured. Compiled and linked as is.
+Build Process modified. Source weeded and restructured. Compiled and linked as is. More sub-dependency licenses are mentioned in the rlottie license file.
 
 ## RmlUi
 

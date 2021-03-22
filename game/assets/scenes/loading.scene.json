@@ -38,7 +38,7 @@
                     "g": 0.0,
                     "r": 0.0
                 },
-                "fontResource": "game/assets/fonts/lato_30_bold.spritefont",
+                "fontResource": "rootex/assets/fonts/lato_30_bold.spritefont",
                 "isVisible": true,
                 "mode": 0,
                 "origin": {

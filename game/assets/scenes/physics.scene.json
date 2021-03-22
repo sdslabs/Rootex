@@ -193,17 +193,19 @@
                 "components": {
                     "AnimatedModelComponent": {
                         "affectingStaticLights": [],
+                        "animationMode": 1,
                         "currentAnimationName": "",
                         "isPlayOnStart": true,
                         "isVisible": true,
-                        "lodBias": -0.029999999329447746,
-                        "lodDistance": 18.0,
+                        "lodBias": -0.38999998569488525,
+                        "lodDistance": 27.0,
                         "lodEnable": true,
                         "materialOverrides": {
                             "rootex/assets/materials/animated_default.rmat": "rootex/assets/materials/animated_default.rmat"
                         },
                         "renderPass": 1,
-                        "resFile": "rootex/assets/animation.dae"
+                        "resFile": "rootex/assets/animation.dae",
+                        "transitionTime": 1.0
                     },
                     "CapsuleColliderComponent": {
                         "angularFactor": {
@@ -226,23 +228,23 @@
                         "material": 2,
                         "offset": {
                             "x": 0.0,
-                            "y": 0.6399999856948853,
+                            "y": 0.5400000214576721,
                             "z": 0.0
                         },
-                        "radius": 0.8500000238418579,
-                        "sideHeight": 2.0799999237060547,
-                        "volume": 1.3089970350265503
+                        "radius": 0.6800000071525574,
+                        "sideHeight": 2.119999885559082,
+                        "volume": 7.29362678527832
                     },
                     "TransformComponent": {
                         "boundingBox": {
                             "center": {
                                 "x": 0.0,
-                                "y": 1.0199999809265137,
-                                "z": 0.0
+                                "y": 4.339252948760986,
+                                "z": 0.013939738273620605
                             },
                             "extents": {
-                                "x": 1.774999976158142,
-                                "y": -4.359586238861084,
+                                "x": 2.7054710388183594,
+                                "y": 4.359586238861084,
                                 "z": 1.7636620998382568
                             }
                         },
