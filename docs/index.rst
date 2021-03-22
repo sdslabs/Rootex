@@ -15,7 +15,7 @@ If you are having issues, please let us know. SDSLabs has a public chat channel 
 License
 -------
 
-The project is licensed under the MIT license.
+The project is licensed under the MIT license. See `THIRDPARTY.md` for thirdparty licenses.
 
 .. toctree::
 	:maxdepth: 2
