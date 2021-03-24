@@ -32,6 +32,16 @@ void from_json(const JSON::json& j, SceneSettings& s)
 	s.startScheme = j.value("startScheme", String());
 }
 
+void to_json(JSON::json& j, const Scene::ImportStyle& s)
+{
+	j = (int)s;
+}
+
+void from_json(const JSON::json& j, Scene::ImportStyle& s)
+{
+	s = (Scene::ImportStyle)(int)j;
+}
+
 void Scene::ResetNextID()
 {
 	NextSceneID = ROOT_SCENE_ID + 1;
@@ -39,6 +49,7 @@ void Scene::ResetNextID()
 
 Ptr<Scene> Scene::Create(const JSON::json& sceneData, bool isACopy)
 {
+	// Decide ID
 	SceneID thisSceneID;
 	if (sceneData.contains("ID"))
 	{
@@ -58,9 +69,20 @@ Ptr<Scene> Scene::Create(const JSON::json& sceneData, bool isACopy)
 	}
 	NextSceneID++;
 
-	Ptr<Scene> thisScene(std::make_unique<Scene>(thisSceneID, sceneData.value("name", String("Untitled")), sceneData.value("file", String()), sceneData.value("settings", SceneSettings())));
-	s_Scenes.push_back(thisScene.get());
+	// Decide how to import
+	if (sceneData.contains("importStyle") && sceneData["importStyle"] != ImportStyle::Local && sceneData.value("sceneFile", "") == "")
+	{
+		ERR("Found empty scene file path for an externally imported scene");
+	}
 
+	Ptr<Scene> thisScene(std::make_unique<Scene>(
+	    thisSceneID,
+	    sceneData.value("name", String("Untitled")),
+	    sceneData.value("settings", SceneSettings()),
+	    sceneData.value("importStyle", ImportStyle::Local),
+	    sceneData.value("sceneFile", "")));
+
+	// Make entity and children scenes
 	if (sceneData.contains("entity"))
 	{
 		thisScene->m_Entity = ECSFactory::CreateEntity(thisScene.get(), sceneData["entity"]);
@@ -86,7 +108,10 @@ Ptr<Scene> Scene::CreateFromFile(const String& sceneFile)
 		{
 			t->reimport();
 		}
-		return Create(JSON::json::parse(t->getString()));
+		JSON::json importedScene = JSON::json::parse(t->getString());
+		importedScene["importStyle"] = ImportStyle::External;
+		importedScene["sceneFile"] = sceneFile;
+		return Create(importedScene);
 	}
 	return nullptr;
 }
@@ -98,7 +123,7 @@ Ptr<Scene> Scene::CreateEmpty()
 
 Ptr<Scene> Scene::CreateEmptyAtPath(const String& sceneFile)
 {
-	return Create({ { "entity", {} }, { "file", sceneFile } });
+	return Create({ { "entity", {} }, { "sceneFile", sceneFile } });
 }
 
 Ptr<Scene> Scene::CreateEmptyWithEntity()
@@ -115,7 +140,7 @@ Ptr<Scene> Scene::CreateRootScene()
 		return nullptr;
 	}
 
-	Ptr<Scene> root = std::make_unique<Scene>(ROOT_SCENE_ID, "Root", "", SceneSettings());
+	Ptr<Scene> root = std::make_unique<Scene>(ROOT_SCENE_ID, "Root", SceneSettings(), ImportStyle::Local, "");
 	root->m_Entity = ECSFactory::CreateRootEntity(root.get());
 	s_Scenes.push_back(root.get());
 
@@ -169,10 +194,11 @@ Scene* Scene::findScene(SceneID scene)
 	return nullptr;
 }
 
-void Scene::reload()
+void Scene::reimport()
 {
-	if (m_SceneFile.empty())
+	if (m_ImportStyle != ImportStyle::External)
 	{
+		WARN("Did not reimport local scene. Needs to be external to be reimported.");
 		return;
 	}
 
@@ -288,9 +314,10 @@ JSON::json Scene::getJSON() const
 {
 	JSON::json j;
 
-	j["name"] = m_Name;
-	j["file"] = m_SceneFile;
 	j["ID"] = m_ID;
+	j["name"] = m_Name;
+	j["importStyle"] = m_ImportStyle;
+	j["sceneFile"] = m_SceneFile;
 	j["entity"] = nullptr;
 	if (m_Entity)
 	{
@@ -307,13 +334,15 @@ JSON::json Scene::getJSON() const
 	return j;
 }
 
-Scene::Scene(SceneID id, const String& name, const String& sceneFile, const SceneSettings& settings)
+Scene::Scene(SceneID id, const String& name, const SceneSettings& settings, ImportStyle importStyle, const String& sceneFile)
     : m_Name(name)
     , m_ID(id)
     , m_Settings(settings)
+    , m_ImportStyle(importStyle)
     , m_SceneFile(sceneFile)
 {
 	setName(m_Name);
+	s_Scenes.push_back(this);
 }
 
 Scene::~Scene()

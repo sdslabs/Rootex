@@ -19,12 +19,24 @@ void SceneDock::showSceneTree(Ptr<Scene>& scene)
 	uniqueID++;
 	if (scene)
 	{
+		if (scene->getImportStyle() == Scene::ImportStyle::External)
+		{
+			ImGui::PushStyleColor(ImGuiCol_Header, (const ImVec4&)EditorSystem::GetSingleton()->getLinkColor());
+			ImGui::PushStyleColor(ImGuiCol_HeaderActive, (const ImVec4&)EditorSystem::GetSingleton()->getLinkColor());
+			ImGui::PushStyleColor(ImGuiCol_HeaderHovered, (const ImVec4&)EditorSystem::GetSingleton()->getLinkColor());
+		}
+		else
+		{
+			ImGui::PushStyleColor(ImGuiCol_Text, (const ImVec4&)EditorSystem::GetSingleton()->getNormalColor());
+			ImGui::PushStyleColor(ImGuiCol_Text, (const ImVec4&)EditorSystem::GetSingleton()->getNormalColor());
+			ImGui::PushStyleColor(ImGuiCol_Text, (const ImVec4&)EditorSystem::GetSingleton()->getNormalColor());
+		}
+
 		ImGui::PushID(uniqueID);
 		if (ImGui::TreeNodeEx("", ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_AllowItemOverlap | (scene->getChildren().size() ? ImGuiTreeNodeFlags_None : ImGuiTreeNodeFlags_Leaf)))
 		{
 			ImGui::SameLine();
 
-			ImGui::PushStyleColor(ImGuiCol_Text, (const ImVec4&)EditorSystem::GetSingleton()->getNormalColor());
 			if (ImGui::Selectable(scene->getFullName().c_str(), m_OpenedSceneID == scene->getID()))
 			{
 				openScene(scene.get());
@@ -73,7 +85,6 @@ void SceneDock::showSceneTree(Ptr<Scene>& scene)
 				ImGui::EndDragDropTarget();
 			}
 
-			ImGui::PopStyleColor(1);
 			for (auto& child : scene->getChildren())
 			{
 				showSceneTree(child);
@@ -82,6 +93,8 @@ void SceneDock::showSceneTree(Ptr<Scene>& scene)
 			ImGui::TreePop();
 		}
 		ImGui::PopID();
+
+		ImGui::PopStyleColor(3);
 	}
 	uniqueID--;
 }
@@ -110,25 +123,6 @@ void SceneDock::draw(float deltaMilliseconds)
 	{
 		if (ImGui::Begin("Scene"))
 		{
-			if (SceneLoader::GetSingleton()->getCurrentScene() && ImGui::Button("Instantiate Scene"))
-			{
-				if (Optional<String> result = OS::SelectFile("Scene(*.scene.json)\0*.scene.json\0", "game/assets/scenes/"))
-				{
-					if (Ptr<Scene>& newScene = Scene::CreateFromFile(*result))
-					{
-						if (Entity* entity = newScene->getEntity())
-						{
-							if (TransformComponent* tc = entity->getComponent<TransformComponent>())
-							{
-								TransformComponent* cameraTransform = RenderSystem::GetSingleton()->getCamera()->getOwner()->getComponent<TransformComponent>();
-								tc->setRotationPosition(cameraTransform->getRotationPosition());
-							}
-						}
-						SceneLoader::GetSingleton()->getCurrentScene()->addChild(newScene);
-					}
-				}
-			}
-
 			showSceneTree(SceneLoader::GetSingleton()->getRootSceneEx());
 		}
 		ImGui::End();

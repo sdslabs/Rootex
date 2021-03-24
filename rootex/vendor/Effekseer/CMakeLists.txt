@@ -11,6 +11,7 @@ set(ROOTEX_INCLUDES
 CACHE INTERNAL "")
 
 add_definitions(-D__EFFEKSEER_RENDERER_INTERNAL_LOADER__)
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG_EFFEKSEER")
 
 add_library(Effekseer STATIC ${Effekseer} ${EffekseerH})
 set_property(TARGET Effekseer PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
