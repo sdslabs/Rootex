@@ -140,8 +140,9 @@
                     }
                 }
             },
-            "file": "",
+            "importStyle": 0,
             "name": "SonicCapsule",
+            "sceneFile": "",
             "settings": {
                 "camera": 1,
                 "inputSchemes": {},
@@ -244,8 +245,9 @@
                     }
                 }
             },
-            "file": "",
+            "importStyle": 0,
             "name": "Office",
+            "sceneFile": "",
             "settings": {
                 "camera": 1,
                 "inputSchemes": {},
@@ -297,8 +299,9 @@
                             }
                         }
                     },
-                    "file": "",
+                    "importStyle": 0,
                     "name": "CameraAnchor",
+                    "sceneFile": "",
                     "settings": {
                         "camera": 1,
                         "inputSchemes": {},
@@ -366,8 +369,9 @@
                             }
                         }
                     },
-                    "file": "",
+                    "importStyle": 0,
                     "name": "Torch",
+                    "sceneFile": "",
                     "settings": {
                         "camera": 1,
                         "inputSchemes": {},
@@ -436,13 +440,13 @@
                         },
                         "radius": 0.20999999344348907,
                         "sideHeight": 0.7200000286102295,
-                        "volume": 0.0832260325551033
+                        "volume": 0.1385442316532135
                     },
                     "TransformComponent": {
                         "boundingBox": {
                             "center": {
                                 "x": 0.0,
-                                "y": 1.4190000295639038,
+                                "y": 4.339252948760986,
                                 "z": 0.013939738273620605
                             },
                             "extents": {
@@ -470,8 +474,9 @@
                     }
                 }
             },
-            "file": "",
+            "importStyle": 0,
             "name": "Cowboy",
+            "sceneFile": "",
             "settings": {
                 "camera": 1,
                 "inputSchemes": {},
@@ -575,8 +580,9 @@
                     }
                 }
             },
-            "file": "",
+            "importStyle": 0,
             "name": "Camera",
+            "sceneFile": "",
             "settings": {
                 "camera": 1,
                 "inputSchemes": {},
@@ -640,8 +646,9 @@
                     }
                 }
             },
-            "file": "",
+            "importStyle": 0,
             "name": "Light",
+            "sceneFile": "",
             "settings": {
                 "camera": 1,
                 "inputSchemes": {},
@@ -756,8 +763,9 @@
             }
         }
     },
-    "file": "game/assets/scenes/mesh_collision.scene.json",
+    "importStyle": 0,
     "name": "mesh_collision",
+    "sceneFile": "game/assets/scenes/mesh_collision.scene.json",
     "settings": {
         "camera": 13,
         "inputSchemes": {

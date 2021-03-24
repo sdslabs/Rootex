@@ -85,4 +85,5 @@ public:
 	ImColor getFatalColor() const { return ColorToImColor((Color)ColorPresets::IndianRed); }
 	ImColor getSuccessColor() const { return ColorToImColor((Color)ColorPresets::LimeGreen); }
 	ImColor getNormalColor() const { return ColorToImColor((Color)ColorPresets::White); }
+	ImColor getLinkColor() const { return ColorToImColor((Color)ColorPresets::SteelBlue); }
 };

@@ -15,8 +15,9 @@
                 },
                 "components": null
             },
-            "file": "",
+            "importStyle": 0,
             "name": "loader",
+            "sceneFile": "",
             "settings": {
                 "camera": 1,
                 "inputSchemes": {},
@@ -79,8 +80,9 @@
             }
         }
     },
-    "file": "game/assets/scenes/loading.scene.json",
+    "importStyle": 0,
     "name": "loading",
+    "sceneFile": "game/assets/scenes/loading.scene.json",
     "settings": {
         "camera": 1,
         "inputSchemes": {

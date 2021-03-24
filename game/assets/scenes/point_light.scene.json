@@ -57,7 +57,7 @@
             }
         }
     },
-    "file": "game/assets/scenes/point_light.scene.json",
+    "sceneFile": "game/assets/scenes/point_light.scene.json",
     "name": "Point Light",
     "settings": {
         "camera": 1,

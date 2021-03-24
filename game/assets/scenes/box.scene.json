@@ -53,8 +53,9 @@
                     }
                 }
             },
-            "file": "game/assets/scenes/box.scene.json",
+            "importStyle": 0,
             "name": "box",
+            "sceneFile": "game/assets/scenes/box.scene.json",
             "settings": {
                 "camera": 1,
                 "inputSchemes": {},
@@ -81,8 +82,8 @@
                         },
                         "isVisible": true,
                         "lodBias": 0.0,
-                        "lodDistance": 10.0,
-                        "lodEnable": true,
+                        "lodDistance": 0.0,
+                        "lodEnable": false,
                         "materialOverrides": {
                             "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
                         },
@@ -243,8 +244,8 @@
                             }
                         },
                         "position": {
-                            "x": 1.4777069091796875,
-                            "y": 1.999999761581421,
+                            "x": 3.8000001907348633,
+                            "y": -1.562490463256836,
                             "z": -6.579999923706055
                         },
                         "rotation": {
@@ -261,8 +262,9 @@
                     }
                 }
             },
-            "file": "",
+            "importStyle": 0,
             "name": "Particles",
+            "sceneFile": "",
             "settings": {
                 "camera": 1,
                 "inputSchemes": {},
@@ -289,8 +291,8 @@
                         },
                         "isVisible": true,
                         "lodBias": 0.0,
-                        "lodDistance": 10.0,
-                        "lodEnable": true,
+                        "lodDistance": 0.0,
+                        "lodEnable": false,
                         "materialOverrides": {
                             "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
                         },
@@ -451,8 +453,8 @@
                             }
                         },
                         "position": {
-                            "x": 1.5804628133773804,
-                            "y": -1.9871976375579834,
+                            "x": -4.852729797363281,
+                            "y": -0.3670799732208252,
                             "z": -9.449999809265137
                         },
                         "rotation": {
@@ -469,8 +471,9 @@
                     }
                 }
             },
-            "file": "",
+            "importStyle": 0,
             "name": "Particles",
+            "sceneFile": "",
             "settings": {
                 "camera": 1,
                 "inputSchemes": {},
@@ -529,8 +532,9 @@
             }
         }
     },
-    "file": "game/assets/scenes/box.scene.json",
+    "importStyle": 0,
     "name": "box",
+    "sceneFile": "game/assets/scenes/box.scene.json",
     "settings": {
         "camera": 1,
         "inputSchemes": {},

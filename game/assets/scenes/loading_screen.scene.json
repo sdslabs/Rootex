@@ -14,12 +14,14 @@
             }
         }
     },
-    "file": "game/assets/scenes/loading_screen.scene.json",
+    "importStyle": 0,
     "name": "loading_screen",
+    "sceneFile": "game/assets/scenes/loading_screen.scene.json",
     "settings": {
         "camera": 1,
         "inputSchemes": {},
         "listener": 1,
+        "preloads": [],
         "startScheme": ""
     }
 }
