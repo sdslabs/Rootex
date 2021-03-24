@@ -13,8 +13,9 @@
         },
         "components": null
     },
-    "file": "game/assets/scenes/script_test.scene.json",
+    "importStyle": 0,
     "name": "script_test",
+    "sceneFile": "game/assets/scenes/script_test.scene.json",
     "settings": {
         "camera": 1,
         "inputSchemes": {},

@@ -84,8 +84,9 @@
                     }
                 }
             },
-            "file": "",
+            "importStyle": 0,
             "name": "Floor",
+            "sceneFile": "",
             "settings": {
                 "camera": 1,
                 "inputSchemes": {},
@@ -204,7 +205,7 @@
                             }
                         },
                         "position": {
-                            "x": 2.1080188751220703,
+                            "x": -3.877593994140625,
                             "y": 0.13474920392036438,
                             "z": -9.829999923706055
                         },
@@ -222,8 +223,9 @@
                     }
                 }
             },
-            "file": "",
+            "importStyle": 0,
             "name": "Sphere",
+            "sceneFile": "",
             "settings": {
                 "camera": 1,
                 "inputSchemes": {},
@@ -301,8 +303,9 @@
                     }
                 }
             },
-            "file": "",
+            "importStyle": 0,
             "name": "Trigger",
+            "sceneFile": "",
             "settings": {
                 "camera": 1,
                 "inputSchemes": {},
@@ -382,8 +385,9 @@
                     }
                 }
             },
-            "file": "",
+            "importStyle": 0,
             "name": "Target",
+            "sceneFile": "",
             "settings": {
                 "camera": 1,
                 "inputSchemes": {},
@@ -399,8 +403,9 @@
         },
         "components": null
     },
-    "file": "game/assets/scenes/trigger.scene.json",
+    "importStyle": 0,
     "name": "trigger",
+    "sceneFile": "game/assets/scenes/trigger.scene.json",
     "settings": {
         "camera": 1,
         "inputSchemes": {},

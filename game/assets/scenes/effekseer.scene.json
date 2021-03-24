@@ -9,7 +9,7 @@
             "ParticleEffectComponent": {
                 "isMoving": false,
                 "playOnStart": true,
-                "resFile": "game/assets/sandstorm.efkefc",
+                "resFile": "rootex/assets/effects/rootex.efkefc",
                 "speed": 2.0,
                 "startFrame": 0,
                 "target": {
@@ -52,8 +52,9 @@
             }
         }
     },
-    "file": "game/assets/scenes/effekseer.scene.json",
+    "importStyle": 0,
     "name": "effekseer",
+    "sceneFile": "game/assets/scenes/effekseer.scene.json",
     "settings": {
         "camera": 1,
         "inputSchemes": {},

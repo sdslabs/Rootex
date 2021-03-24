@@ -11,8 +11,9 @@
             }
         }
     },
-    "file": "game/assets/scenes/dialogue.scene.json",
+    "importStyle": 0,
     "name": "dialogue",
+    "sceneFile": "game/assets/scenes/dialogue.scene.json",
     "settings": {
         "camera": 1,
         "inputSchemes": {

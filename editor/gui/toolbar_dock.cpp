@@ -32,7 +32,7 @@ void ToolbarDock::draw(float deltaMilliseconds)
 				if (ImGui::ArrowButton("Play Scene", ImGuiDir_Right))
 				{
 					EventManager::GetSingleton()->call(EditorEvents::EditorSaveAll);
-					OS::RunApplication("\"" + OS::GetGameExecutablePath() + "\" " + SceneLoader::GetSingleton()->getCurrentScene()->getSceneFilePath());
+					OS::RunApplication("\"" + OS::GetGameExecutablePath() + "\" " + SceneLoader::GetSingleton()->getCurrentScene()->getScenePath());
 					PRINT("Launched Game process");
 				}
 			}
