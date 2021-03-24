@@ -54,9 +54,9 @@ void InspectorDock::drawSceneActions(Scene* scene)
 	}
 	if (m_ActionScene != SceneLoader::GetSingleton()->getRootScene())
 	{
-		if (ImGui::MenuItem("Reload"))
+		if (ImGui::MenuItem("Reimport"))
 		{
-			m_ActionScene->reload();
+			m_ActionScene->reimport();
 		}
 
 		if (Entity* entity = m_ActionScene->getEntity())
@@ -87,7 +87,7 @@ void InspectorDock::drawSceneActions(Scene* scene)
 
 				ImGui::EndMenu();
 			}
-			if (ImGui::MenuItem("Reset"))
+			if (ImGui::MenuItem("Setup"))
 			{
 				PANIC(entity->onAllComponentsAdded() == false, "Could not setup entity: " + entity->getFullName());
 			}
@@ -107,21 +107,29 @@ void InspectorDock::drawSceneActions(Scene* scene)
 
 		if (ImGui::MenuItem("Add Empty Scene"))
 		{
-			m_ActionScene->addChild(Scene::CreateEmpty());
+			Ptr<Scene> newEmptyScene = Scene::CreateEmpty();
+			Scene* newEmptyScenePtr = newEmptyScene.get();
+			m_ActionScene->addChild(newEmptyScene);
+			EventManager::GetSingleton()->call(EditorEvents::EditorOpenScene, newEmptyScenePtr);
 		}
 
-		if (ImGui::MenuItem("Add Empty Scene Entity"))
+		if (ImGui::MenuItem("Add Empty Scene With Entity"))
 		{
-			m_ActionScene->addChild(Scene::CreateEmptyWithEntity());
+			Ptr<Scene> childScene = Scene::CreateEmptyWithEntity();
+			Scene* childScenePtr = childScene.get();
+			m_ActionScene->addChild(childScene);
+			EventManager::GetSingleton()->call(EditorEvents::EditorOpenScene, childScenePtr);
 		}
 
 		if (ImGui::Selectable("Copy Scene"))
 		{
 			Scene* actionScenePtr = m_ActionScene;
 			EventManager::GetSingleton()->defer([=]() {
-				if (Ptr<Scene>& copiedScene = Scene::Create(actionScenePtr->getJSON(), true))
+				if (Ptr<Scene> copiedScene = Scene::Create(actionScenePtr->getJSON(), true))
 				{
+					Scene* copiedScenePtr = copiedScene.get();
 					actionScenePtr->getParent()->addChild(copiedScene);
+					EventManager::GetSingleton()->call(EditorEvents::EditorOpenScene, copiedScenePtr);
 				}
 				else
 				{
@@ -146,6 +154,13 @@ void InspectorDock::draw(float deltaMilliseconds)
 		{
 			if (m_OpenedScene)
 			{
+				String addition;
+				if (m_OpenedScene->getImportStyle() == Scene::ImportStyle::External)
+				{
+					addition = ICON_ROOTEX_EXTERNAL_LINK;
+					ImGui::PushStyleColor(ImGuiCol_Header, (ImVec4)EditorSystem::GetSingleton()->getLinkColor());
+				}
+
 				if (m_IsNameBeingEdited)
 				{
 					if (ImGui::InputText("Scene Name", &m_OpenedSceneName, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
@@ -161,12 +176,17 @@ void InspectorDock::draw(float deltaMilliseconds)
 				else
 				{
 					EditorSystem::GetSingleton()->pushBoldFont();
-					ImGui::TreeNodeEx(m_OpenedScene->getFullName().c_str(), ImGuiTreeNodeFlags_CollapsingHeader | ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_Selected);
+					ImGui::TreeNodeEx((m_OpenedScene->getFullName() + " " + addition).c_str(), ImGuiTreeNodeFlags_CollapsingHeader | ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_Selected);
 					if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
 					{
 						m_IsNameBeingEdited = true;
 					}
 					EditorSystem::GetSingleton()->popFont();
+
+					if (m_OpenedScene->getImportStyle() == Scene::ImportStyle::External)
+					{
+						ImGui::TextColored(EditorSystem::GetSingleton()->getLinkColor(), "%s", ("Imported from " + m_OpenedScene->getScenePath()).c_str());
+					}
 				}
 
 				ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
@@ -219,6 +239,11 @@ void InspectorDock::draw(float deltaMilliseconds)
 						ImGui::EndTabBar();
 					}
 					EditorSystem::GetSingleton()->popFont();
+				}
+
+				if (m_OpenedScene->getImportStyle() == Scene::ImportStyle::External)
+				{
+					ImGui::PopStyleColor();
 				}
 			}
 		}

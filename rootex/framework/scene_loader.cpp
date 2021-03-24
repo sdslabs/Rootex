@@ -108,7 +108,7 @@ void SceneLoader::loadScene(const String& sceneFile, const Vector<String>& argum
 
 bool SceneLoader::saveScene(Scene* scene)
 {
-	return saveSceneAtFile(scene, scene->getSceneFilePath());
+	return saveSceneAtFile(scene, scene->getScenePath());
 }
 
 bool SceneLoader::saveSceneAtFile(Scene* scene, const String& filePath)

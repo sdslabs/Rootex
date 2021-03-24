@@ -58,17 +58,38 @@ bool EditorSystem::initialize(const JSON::json& systemData)
 	fontConfig.PixelSnapH = true;
 	fontConfig.OversampleH = 1;
 	m_EditorFont = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/DroidSans/DroidSans.ttf", 18.0f, &fontConfig);
-
-	static const ImWchar iconsRanges[] = { ICON_MIN_ROOTEX, ICON_MAX_ROOTEX, 0 };
-	ImFontConfig iconsConfig;
-	iconsConfig.MergeMode = true;
-	iconsConfig.PixelSnapH = true;
-	io.Fonts->AddFontFromMemoryCompressedBase85TTF(FONT_ICON_BUFFER_NAME_ROOTEX, 18.0f, &iconsConfig, iconsRanges);
+	{
+		static const ImWchar iconsRanges[] = { ICON_MIN_ROOTEX, ICON_MAX_ROOTEX, 0 };
+		ImFontConfig iconsConfig;
+		iconsConfig.MergeMode = true;
+		iconsConfig.PixelSnapH = true;
+		io.Fonts->AddFontFromMemoryCompressedBase85TTF(FONT_ICON_BUFFER_NAME_ROOTEX, 18.0f, &iconsConfig, iconsRanges);
+	}
 
 	m_EditorFontItalic = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/Cousine/Cousine-Italic.ttf", 18.0f, &fontConfig);
+	{
+		static const ImWchar iconsRanges[] = { ICON_MIN_ROOTEX, ICON_MAX_ROOTEX, 0 };
+		ImFontConfig iconsConfig;
+		iconsConfig.MergeMode = true;
+		iconsConfig.PixelSnapH = true;
+		io.Fonts->AddFontFromMemoryCompressedBase85TTF(FONT_ICON_BUFFER_NAME_ROOTEX, 18.0f, &iconsConfig, iconsRanges);
+	}
 	m_EditorFontBold = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/DroidSans/DroidSans-Bold.ttf", 18.0f, &fontConfig);
+	{
+		static const ImWchar iconsRanges[] = { ICON_MIN_ROOTEX, ICON_MAX_ROOTEX, 0 };
+		ImFontConfig iconsConfig;
+		iconsConfig.MergeMode = true;
+		iconsConfig.PixelSnapH = true;
+		io.Fonts->AddFontFromMemoryCompressedBase85TTF(FONT_ICON_BUFFER_NAME_ROOTEX, 18.0f, &iconsConfig, iconsRanges);
+	}
 	m_EditorFontMonospace = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/Cousine/Cousine-Regular.ttf", 18.0f, &fontConfig);
-
+	{
+		static const ImWchar iconsRanges[] = { ICON_MIN_ROOTEX, ICON_MAX_ROOTEX, 0 };
+		ImFontConfig iconsConfig;
+		iconsConfig.MergeMode = true;
+		iconsConfig.PixelSnapH = true;
+		io.Fonts->AddFontFromMemoryCompressedBase85TTF(FONT_ICON_BUFFER_NAME_ROOTEX, 18.0f, &iconsConfig, iconsRanges);
+	}
 	ImGui_ImplWin32_Init(Application::GetSingleton()->getWindow()->getWindowHandle());
 	ImGui_ImplDX11_Init(RenderingDevice::GetSingleton()->getDevice(), RenderingDevice::GetSingleton()->getContext());
 	ImGui::StyleColorsDark();
