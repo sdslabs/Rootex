@@ -3,6 +3,14 @@
 #include "common/common.h"
 #include "component.h"
 
+enum class TransformPassDown : int
+{
+	Position = 1 << 0,
+	Rotation = 1 << 1,
+	Scale = 1 << 2,
+	All = Position | Rotation | Scale
+};
+
 class TransformComponent : public Component
 {
 	DEFINE_COMPONENT(TransformComponent);
@@ -17,7 +25,7 @@ class TransformComponent : public Component
 		Matrix m_Transform;
 	};
 	TransformBuffer m_TransformBuffer;
-
+	int m_TransformPassDown;
 	Matrix m_ParentAbsoluteTransform;
 
 	Matrix m_AbsoluteTransform;
@@ -38,7 +46,7 @@ class TransformComponent : public Component
 	friend class RenderSystem;
 
 public:
-	TransformComponent(const Vector3& position, const Quaternion& rotation, const Vector3& scale, const BoundingBox& bounds);
+	TransformComponent(const Vector3& position, const Quaternion& rotation, const Vector3& scale, int transformPassDown, const BoundingBox& bounds);
 	~TransformComponent() = default;
 
 	void setPosition(const Vector3& position);
@@ -62,6 +70,7 @@ public:
 	const Matrix& getLocalTransform() const { return m_TransformBuffer.m_Transform; }
 	Matrix getRotationPosition() const { return Matrix::CreateFromQuaternion(m_TransformBuffer.m_Rotation) * Matrix::CreateTranslation(m_TransformBuffer.m_Position) * m_ParentAbsoluteTransform; }
 	Matrix getParentAbsoluteTransform() const { return m_ParentAbsoluteTransform; }
+	int getPassDowns() const { return m_TransformPassDown; }
 
 	BoundingBox getWorldSpaceBounds();
 

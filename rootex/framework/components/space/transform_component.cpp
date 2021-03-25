@@ -12,6 +12,7 @@ Ptr<Component> TransformComponent::Create(const JSON::json& componentData)
 	    componentData.value("position", Vector3::Zero),
 	    componentData.value("rotation", Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, 0.0f)),
 	    componentData.value("scale", Vector3 { 1.0f, 1.0f, 1.0f }),
+	    componentData.value("passDown", (int)TransformPassDown::All),
 	    componentData.value("boundingBox", BoundingBox { Vector3::Zero, Vector3 { 0.5f, 0.5f, 0.5f } }));
 }
 
@@ -34,7 +35,8 @@ void TransformComponent::updatePositionRotationScaleFromTransform(Matrix& transf
 	transform.Decompose(m_TransformBuffer.m_Scale, m_TransformBuffer.m_Rotation, m_TransformBuffer.m_Position);
 }
 
-TransformComponent::TransformComponent(const Vector3& position, const Quaternion& rotation, const Vector3& scale, const BoundingBox& bounds)
+TransformComponent::TransformComponent(const Vector3& position, const Quaternion& rotation, const Vector3& scale, int transformPassDown, const BoundingBox& bounds)
+    : m_TransformPassDown(transformPassDown)
 {
 	m_TransformBuffer.m_Position = position;
 	m_TransformBuffer.m_Rotation = rotation;
@@ -188,6 +190,7 @@ JSON::json TransformComponent::getJSON() const
 	j["rotation"] = m_TransformBuffer.m_Rotation;
 	j["scale"] = m_TransformBuffer.m_Scale;
 	j["boundingBox"] = m_TransformBuffer.m_BoundingBox;
+	j["passDown"] = m_TransformPassDown;
 
 	return j;
 }
@@ -270,6 +273,16 @@ void TransformComponent::draw()
 	if (ImGui::Button("Extents"))
 	{
 		m_Owner->onAllComponentsAdded();
+	}
+
+	if (ImGui::TreeNode("Pass Down"))
+	{
+		ImGui::CheckboxFlags("All", &m_TransformPassDown, (int)TransformPassDown::All);
+		ImGui::CheckboxFlags("Position", &m_TransformPassDown, (int)TransformPassDown::Position);
+		ImGui::CheckboxFlags("Rotation", &m_TransformPassDown, (int)TransformPassDown::Rotation);
+		ImGui::CheckboxFlags("Scale", &m_TransformPassDown, (int)TransformPassDown::Scale);
+
+		ImGui::TreePop();
 	}
 
 	updateTransformFromPositionRotationScale();
