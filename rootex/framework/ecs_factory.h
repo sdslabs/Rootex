@@ -8,15 +8,36 @@
 
 /// Function pointer to a function that constructs a component, taking in a set of component data.
 typedef Ptr<Component> (*ComponentCreator)(const JSON::json& componentDescription);
-/// Collection of a component, its name, and a function that constructs that component.
-typedef Vector<Tuple<ComponentID, String, ComponentCreator>> ComponentDatabase;
+
+struct ComponentTypeData
+{
+	String componentName;
+	ComponentID componentID;
+	String category;
+	ComponentCreator creator;
+};
+
+/// Collection of meta info about a component.
+typedef Vector<ComponentTypeData> ComponentDatabase;
 /// Collection of all components active inside the scene.
 typedef HashMap<ComponentID, Vector<Component*>> ComponentInstanceDatabase;
 
-#define REGISTER_COMPONENT(ComponentType) ECSFactory::RegisterComponent<ComponentType>(#ComponentType)
+#define REGISTER_COMPONENT(ComponentType, componentCategory) ECSFactory::RegisterComponent<ComponentType>(#ComponentType, componentCategory);
 
 class ECSFactory
 {
+	struct Category
+	{
+		static inline const String General = "General";
+		static inline const String Audio = "Audio";
+		static inline const String Game = "Game";
+		static inline const String Physics = "Physics";
+		static inline const String Model = "Model";
+		static inline const String Effect = "Effect";
+		static inline const String Light = "Light";
+		static inline const String UI = "UI";
+	};
+
 	static inline ComponentDatabase s_ComponentCreators;
 	static inline ComponentInstanceDatabase s_ComponentInstances;
 
@@ -37,8 +58,10 @@ public:
 	static Ptr<Entity> CopyEntity(Scene* scene, Entity& entity);
 
 	static const ComponentDatabase& GetComponentDatabase() { return s_ComponentCreators; }
+
 	template <class T>
-	static void RegisterComponent(const String& name);
+	static void RegisterComponent(const String& name, const String& category);
+
 	static void RegisterComponentInstance(Component* component);
 	static void DeregisterComponentInstance(Component* component);
 };
@@ -50,7 +73,13 @@ inline Vector<Component*>& ECSFactory::GetComponents()
 }
 
 template <class T>
-inline void ECSFactory::RegisterComponent(const String& name)
+inline void ECSFactory::RegisterComponent(const String& name, const String& category)
 {
-	s_ComponentCreators.push_back({ T::s_ID, name, T::Create });
+	ComponentTypeData data;
+	data.category = category;
+	data.componentID = T::s_ID;
+	data.componentName = name;
+	data.creator = T::Create;
+
+	s_ComponentCreators.push_back(data);
 }
