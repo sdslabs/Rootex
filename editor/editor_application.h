@@ -17,9 +17,7 @@ public:
 
 	EditorApplication();
 	EditorApplication(EditorApplication&) = delete;
-	virtual ~EditorApplication() = default;
+	~EditorApplication();
 
 	virtual void process(float deltaMilliseconds) override;
-
-	virtual String getAppTitle() const override { return "Rootex Editor"; }
 };

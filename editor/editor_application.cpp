@@ -30,7 +30,7 @@ void EditorApplication::SetSingleton(EditorApplication* app)
 }
 
 EditorApplication::EditorApplication()
-    : Application("editor/editor.app.json")
+    : Application("RootexEditor", "editor/editor.app.json")
 {
 	if (!s_Instance)
 	{
@@ -54,7 +54,15 @@ EditorApplication::EditorApplication()
 
 	destroySplashWindow();
 
+	createSaveSlot(0);
+	loadSave(0);
+
 	m_PointAtLast10Second = m_ApplicationTimer.Now();
+}
+
+EditorApplication::~EditorApplication()
+{
+	saveSlot();
 }
 
 void EditorApplication::process(float deltaMilliseconds)

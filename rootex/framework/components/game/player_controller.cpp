@@ -11,7 +11,15 @@ PlayerController::PlayerController()
 
 bool PlayerController::setupData()
 {
-	return false;
+	if (!m_Owner->addComponent("TransformComponent", {})
+	    && !m_Owner->addComponent("AnimatedModelComponent", {})
+	    && !m_Owner->addComponent("CapsuleColliderComponent", {}))
+	{
+		WARN("Could not add sub-components to entity: " + m_Owner->getName());
+		return false;
+	}
+
+	return true;
 }
 
 JSON::json PlayerController::getJSON() const
