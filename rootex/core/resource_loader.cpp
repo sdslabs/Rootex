@@ -90,7 +90,7 @@ int ResourceLoader::Preload(ResourceCollection paths, Atomic<int>& progress)
 
 	Application::GetSingleton()->getThreadPool().submit(tasks);
 
-	return tasks.size() - 1; // One less for the dummy task
+	return tasks.size() - 1;
 }
 
 void ResourceLoader::Persist(Ref<ResourceFile> res)
