@@ -5,7 +5,6 @@
 #include <iostream>
 #include <codecvt>
 
-#include "common/common.h"
 #include "event_manager.h"
 
 #include <commdlg.h>
@@ -355,7 +354,7 @@ bool OS::CreateDirectoryAbsoluteName(const String& dirPath)
 {
 	if (IsExists(dirPath))
 	{
-		WARN("Directory already exists: " + dirPath);
+		PRINT("Directory already exists: " + dirPath);
 		return true;
 	}
 

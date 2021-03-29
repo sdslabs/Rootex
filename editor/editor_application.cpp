@@ -54,7 +54,6 @@ EditorApplication::EditorApplication()
 
 	destroySplashWindow();
 
-	createSaveSlot(0);
 	loadSave(0);
 
 	m_PointAtLast10Second = m_ApplicationTimer.Now();
