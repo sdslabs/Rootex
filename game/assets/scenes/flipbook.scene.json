@@ -1,0 +1,24 @@
+{
+    "ID": 4,
+    "children": [],
+    "entity": {
+        "Entity": {
+            "script": null
+        },
+        "components": {
+            "UIComponent": {
+                "filePath": "game/assets/ui/flipbook/flipbook.rml"
+            }
+        }
+    },
+    "importStyle": 0,
+    "name": "flipbook",
+    "sceneFile": "game/assets/scenes/flipbook.scene.json",
+    "settings": {
+        "camera": 1,
+        "inputSchemes": {},
+        "listener": 1,
+        "preloads": [],
+        "startScheme": ""
+    }
+}

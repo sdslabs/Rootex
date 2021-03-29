@@ -20,18 +20,6 @@
 
 #define DOCUMENTATION_LINK String("https://rootex.readthedocs.io/")
 
-Vector<String> Split(const String& s, char delim)
-{
-	Vector<String> elems;
-	std::stringstream ss(s);
-	std::string item;
-	while (std::getline(ss, item, delim))
-	{
-		elems.push_back(item);
-	}
-	return elems;
-}
-
 bool EditorSystem::initialize(const JSON::json& systemData)
 {
 	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorSaveBeforeQuit, EditorSystem::saveBeforeQuit);
