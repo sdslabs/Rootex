@@ -20,6 +20,7 @@ public:
 	VertexBuffer(const Vector<AnimatedVertexData>& buffer);
 	VertexBuffer(const Vector<float>& buffer);
 	VertexBuffer(const Vector<FXAAData>& buffer);
+	VertexBuffer(const UIVertexData* buffer, size_t size);
 	~VertexBuffer() = default;
 
 	void bind() const;

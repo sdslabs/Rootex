@@ -4,11 +4,23 @@
 #include "core/resource_files/image_resource_file.h"
 #include "renderer/rendering_device.h"
 #include "renderer/shaders/register_locations_vertex_shader.h"
-#include "renderer/vertex_data.h"
-#include "renderer/vertex_buffer.h"
-#include "renderer/index_buffer.h"
 
 unsigned int CustomRenderInterface::s_TextureCount = 1; // 0 is reserved for white texture
+
+void CustomRenderInterface::render(GeometryData* geometry, const Rml::Vector2f& translation)
+{
+	geometry->vertexBuffer.bind();
+	geometry->indexBuffer.bind();
+	m_UIShader->bind();
+
+	Material::SetVSConstantBuffer(
+	    VSSolidConstantBuffer(Matrix::CreateTranslation(translation.x, translation.y, 0.0f) * m_UITransform * Matrix::CreateOrthographic(m_Width, m_Height, 0.0f, 10000.0f)),
+	    m_ModelMatrixBuffer,
+	    PER_OBJECT_VS_CPP);
+
+	RenderingDevice::GetSingleton()->setInPixelShader(0, 1, m_Textures[geometry->textureHandle]->getTextureResourceView());
+	RenderingDevice::GetSingleton()->drawIndexed(geometry->indexBuffer.getCount());
+}
 
 Variant CustomRenderInterface::windowResized(const Event* event)
 {
@@ -36,42 +48,23 @@ CustomRenderInterface::CustomRenderInterface(int width, int height)
 
 void CustomRenderInterface::RenderGeometry(Rml::Vertex* vertices, int numVertices, int* indices, int numIndices, Rml::TextureHandle texture, const Rml::Vector2f& translation)
 {
-	Vector<UIVertexData> vertexData;
-	vertexData.assign((UIVertexData*)vertices, (UIVertexData*)vertices + numVertices);
-	for (auto& vertex : vertexData)
-	{
-		vertex.m_Position.x += translation.x;
-		vertex.m_Position.y += translation.y;
-	}
-	VertexBuffer vb(vertexData);
-	Vector<unsigned int> indicesBuffer;
-	indicesBuffer.assign(indices, indices + numIndices);
-	IndexBuffer ib(indicesBuffer);
-
-	vb.bind();
-	ib.bind();
-	m_UIShader->bind();
-
-	Material::SetVSConstantBuffer(
-	    VSSolidConstantBuffer(m_UITransform * Matrix::CreateOrthographic(m_Width, m_Height, 0.0f, 10000.0f)),
-	    m_ModelMatrixBuffer,
-	    PER_OBJECT_VS_CPP);
-
-	RenderingDevice::GetSingleton()->setInPixelShader(0, 1, m_Textures[texture]->getTextureResourceView());
-	RenderingDevice::GetSingleton()->drawIndexed(ib.getCount());
+	GeometryData geometry((UIVertexData*)vertices, numVertices, (int*)indices, numIndices, texture);
+	render(&geometry, translation);
 }
 
 Rml::CompiledGeometryHandle CustomRenderInterface::CompileGeometry(Rml::Vertex* vertices, int numVertices, int* indices, int numIndices, Rml::TextureHandle texture)
 {
-	return (Rml::CompiledGeometryHandle) nullptr;
+	return (Rml::CompiledGeometryHandle) new GeometryData((UIVertexData*)vertices, numVertices, (int*)indices, numIndices, texture);
 }
 
 void CustomRenderInterface::RenderCompiledGeometry(Rml::CompiledGeometryHandle geometry, const Rml::Vector2f& translation)
 {
+	render((GeometryData*)geometry, translation);
 }
 
 void CustomRenderInterface::ReleaseCompiledGeometry(Rml::CompiledGeometryHandle geometry)
 {
+	delete (GeometryData*)geometry;
 }
 
 bool CustomRenderInterface::LoadTexture(Rml::TextureHandle& textureHandle, Rml::Vector2i& textureDimensions, const String& source)
@@ -129,4 +122,11 @@ void CustomRenderInterface::SetTransform(const Rml::Matrix4f* transform)
 		return;
 	}
 	m_UITransform = Matrix(transform->data());
+}
+
+CustomRenderInterface::GeometryData::GeometryData(const UIVertexData* vertices, size_t verticesSize, int* indices, size_t indicesSize, Rml::TextureHandle texture)
+    : vertexBuffer(vertices, verticesSize)
+    , indexBuffer(indices, indicesSize)
+    , textureHandle(texture)
+{
 }

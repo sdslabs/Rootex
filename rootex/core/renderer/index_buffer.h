@@ -15,6 +15,7 @@ protected:
 public:
 	IndexBuffer(const Vector<unsigned short>& indices);
 	IndexBuffer(const Vector<unsigned int>& indices);
+	IndexBuffer(const int* indices, size_t size);
 	~IndexBuffer() = default;
 
 	void setData(const Vector<unsigned short>& indices);
