@@ -1,0 +1,379 @@
+{
+    "ID": 4,
+    "children": [
+        {
+            "ID": 7,
+            "children": [
+                {
+                    "ID": 5,
+                    "children": [
+                        {
+                            "ID": 6,
+                            "children": [],
+                            "entity": {
+                                "Entity": {
+                                    "script": null
+                                },
+                                "components": {
+                                    "ModelComponent": {
+                                        "affectingStaticLights": [],
+                                        "isVisible": true,
+                                        "lodBias": 0.0,
+                                        "lodDistance": 10.0,
+                                        "lodEnable": true,
+                                        "materialOverrides": {
+                                            "game/assets/materials/Condensation.rmat": "game/assets/materials/Condensation.rmat",
+                                            "game/assets/materials/Glass.rmat": "game/assets/materials/Glass.rmat"
+                                        },
+                                        "renderPass": 1,
+                                        "resFile": "game/assets/test/glass.obj"
+                                    },
+                                    "TransformComponent": {
+                                        "boundingBox": {
+                                            "center": {
+                                                "x": 0.13583749532699585,
+                                                "y": 0.04403650015592575,
+                                                "z": -0.1255510002374649
+                                            },
+                                            "extents": {
+                                                "x": 0.06321650743484497,
+                                                "y": 0.036314502358436584,
+                                                "z": 0.0495000034570694
+                                            }
+                                        },
+                                        "passDown": 7,
+                                        "position": {
+                                            "x": 0.0,
+                                            "y": -2.0,
+                                            "z": 0.0
+                                        },
+                                        "rotation": {
+                                            "w": 1.0,
+                                            "x": -0.0,
+                                            "y": 0.0,
+                                            "z": -0.0
+                                        },
+                                        "scale": {
+                                            "x": 8.170000076293945,
+                                            "y": 8.170000076293945,
+                                            "z": 8.170000076293945
+                                        }
+                                    }
+                                }
+                            },
+                            "importStyle": 0,
+                            "name": "Child",
+                            "sceneFile": "",
+                            "settings": {
+                                "camera": 1,
+                                "inputSchemes": {},
+                                "listener": 1,
+                                "preloads": [],
+                                "startScheme": ""
+                            }
+                        }
+                    ],
+                    "entity": {
+                        "Entity": {
+                            "script": null
+                        },
+                        "components": {
+                            "ModelComponent": {
+                                "affectingStaticLights": [],
+                                "isVisible": true,
+                                "lodBias": 0.0,
+                                "lodDistance": 10.0,
+                                "lodEnable": true,
+                                "materialOverrides": {
+                                    "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                                },
+                                "renderPass": 1,
+                                "resFile": "rootex/assets/cube.obj"
+                            },
+                            "TransformAnimationComponent": {
+                                "animationMode": 1,
+                                "isPlayOnStart": true,
+                                "keyframes": [
+                                    {
+                                        "timePosition": 0.0,
+                                        "transform": [
+                                            1.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            1.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            1.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            -8.0,
+                                            1.0
+                                        ]
+                                    },
+                                    {
+                                        "timePosition": 1.0,
+                                        "transform": [
+                                            1.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            1.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            1.0,
+                                            0.0,
+                                            -3.700000047683716,
+                                            0.0,
+                                            -8.0,
+                                            1.0
+                                        ]
+                                    },
+                                    {
+                                        "timePosition": 2.0,
+                                        "transform": [
+                                            1.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            1.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            1.0,
+                                            0.0,
+                                            3.500000238418579,
+                                            0.0,
+                                            -8.0,
+                                            1.0
+                                        ]
+                                    },
+                                    {
+                                        "timePosition": 3.0,
+                                        "transform": [
+                                            1.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            1.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            1.0,
+                                            0.0,
+                                            2.384185791015625e-07,
+                                            0.0,
+                                            -8.0,
+                                            1.0
+                                        ]
+                                    },
+                                    {
+                                        "timePosition": 4.0,
+                                        "transform": [
+                                            -0.708340585231781,
+                                            -0.7058706879615784,
+                                            0.0,
+                                            0.0,
+                                            0.7058706879615784,
+                                            -0.708340585231781,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            1.0,
+                                            0.0,
+                                            2.384185791015625e-07,
+                                            0.0,
+                                            -8.0,
+                                            1.0
+                                        ]
+                                    },
+                                    {
+                                        "timePosition": 5.0,
+                                        "transform": [
+                                            0.9999998807907104,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            0.9999998807907104,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            1.0,
+                                            0.0,
+                                            2.384185791015625e-07,
+                                            0.0,
+                                            -8.0,
+                                            1.0
+                                        ]
+                                    },
+                                    {
+                                        "timePosition": 6.0,
+                                        "transform": [
+                                            3.09999942779541,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            3.09999942779541,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            3.1000001430511475,
+                                            0.0,
+                                            2.384185791015625e-07,
+                                            0.0,
+                                            -8.0,
+                                            1.0
+                                        ]
+                                    },
+                                    {
+                                        "timePosition": 7.0,
+                                        "transform": [
+                                            1.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            1.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            1.0,
+                                            0.0,
+                                            2.384185791015625e-07,
+                                            0.0,
+                                            -8.0,
+                                            1.0
+                                        ]
+                                    }
+                                ],
+                                "transitionType": 1
+                            },
+                            "TransformComponent": {
+                                "boundingBox": {
+                                    "center": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "extents": {
+                                        "x": 0.5,
+                                        "y": 0.5,
+                                        "z": 0.5
+                                    }
+                                },
+                                "passDown": 7,
+                                "position": {
+                                    "x": 3.148167133331299,
+                                    "y": 0.0,
+                                    "z": -8.0
+                                },
+                                "rotation": {
+                                    "w": 1.0,
+                                    "x": -0.0,
+                                    "y": 0.0,
+                                    "z": -0.0
+                                },
+                                "scale": {
+                                    "x": 1.0,
+                                    "y": 1.0,
+                                    "z": 1.0
+                                }
+                            }
+                        }
+                    },
+                    "importStyle": 0,
+                    "name": "Parent",
+                    "sceneFile": "",
+                    "settings": {
+                        "camera": 1,
+                        "inputSchemes": {},
+                        "listener": 1,
+                        "preloads": [],
+                        "startScheme": ""
+                    }
+                }
+            ],
+            "entity": {
+                "Entity": {
+                    "script": null
+                },
+                "components": {
+                    "TransformComponent": {
+                        "boundingBox": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "extents": {
+                                "x": 0.5,
+                                "y": 0.5,
+                                "z": 0.5
+                            }
+                        },
+                        "passDown": 7,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": -4.0
+                        },
+                        "rotation": {
+                            "w": 1.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        }
+                    }
+                }
+            },
+            "importStyle": 0,
+            "name": "Grandparent",
+            "sceneFile": "",
+            "settings": {
+                "camera": 1,
+                "inputSchemes": {},
+                "listener": 1,
+                "preloads": [],
+                "startScheme": ""
+            }
+        }
+    ],
+    "entity": {
+        "Entity": {
+            "script": null
+        },
+        "components": null
+    },
+    "importStyle": 0,
+    "name": "pass_down",
+    "sceneFile": "game/assets/scenes/pass_down.scene.json",
+    "settings": {
+        "camera": 1,
+        "inputSchemes": {},
+        "listener": 1,
+        "preloads": [],
+        "startScheme": ""
+    }
+}

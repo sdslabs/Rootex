@@ -1,0 +1,26 @@
+<rml>
+    <head>
+        <title>Flipbook</title>
+        <style>
+            @spritesheet theme 
+            {
+                src: spritesheet.png;
+                
+                sprite-1: 0px 0px 130px 130px;
+                sprite-2: 130px 0px 130px 130px;
+                sprite-3: 0px 130px 130px 130px;
+                sprite-4: 130px 130px 130px 130px;
+            }
+            body {
+                font: "Lato";
+                font-size: 100px;
+                width: 40%;
+                height: 40%;
+                decorator: flipbook(5, sprite-1 sprite-2 sprite-3 sprite-4);
+            }
+        </style>
+    </head>
+
+    <body>
+    </body>
+</rml>

@@ -97,6 +97,8 @@ using Optional = std::optional<T>;
 template <class T>
 using Vector = std::vector<T>;
 
+Vector<String> Split(const String& s, char delim);
+
 #include <stack>
 /// std::stack
 template <class T>

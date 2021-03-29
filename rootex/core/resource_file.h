@@ -12,16 +12,16 @@ public:
 	{
 		/// Signifies an error in loading. Every valid ResourceFile will have a non-None type.
 		None = 0,
-		Lua,
-		Audio,
-		Text,
-		Model,
-		AnimatedModel,
-		CollisionModel,
-		Image,
-		ImageCube,
-		Font,
-		ParticleEffect
+		Lua = 1,
+		Audio = 2,
+		Text = 3,
+		Model = 4,
+		AnimatedModel = 5,
+		CollisionModel = 6,
+		Image = 7,
+		ImageCube = 8,
+		Font = 9,
+		ParticleEffect = 10
 	};
 
 	static const inline Map<Type, String> s_TypeNames = {

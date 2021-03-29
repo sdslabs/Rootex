@@ -38,7 +38,7 @@
                             "y": 0.0,
                             "z": 0.0
                         },
-                        "volume": 8.158499717712402
+                        "volume": 8.452500343322754
                     },
                     "ModelComponent": {
                         "affectingStaticLights": [],
@@ -65,21 +65,22 @@
                                 "z": 0.5
                             }
                         },
+                        "passDown": 5,
                         "position": {
-                            "x": 0.0,
-                            "y": 0.7506520748138428,
-                            "z": -18.638999938964844
+                            "x": 1.5033964473332162e-07,
+                            "y": -0.09148872643709183,
+                            "z": -17.71396255493164
                         },
                         "rotation": {
                             "w": 0.9237861037254333,
-                            "x": 0.38290899991989136,
-                            "y": 0.0,
-                            "z": -0.0
+                            "x": 0.3829089403152466,
+                            "y": 7.121572309642943e-08,
+                            "z": 1.0394531813062713e-07
                         },
                         "scale": {
-                            "x": 9.859999656677246,
+                            "x": 9.85999584197998,
                             "y": 0.9999999403953552,
-                            "z": 6.659999370574951
+                            "z": 6.659997463226318
                         }
                     }
                 }
@@ -97,28 +98,81 @@
         },
         {
             "ID": 11,
-            "children": [],
+            "children": [
+                {
+                    "ID": 13,
+                    "children": [],
+                    "entity": {
+                        "Entity": {
+                            "script": null
+                        },
+                        "components": {
+                            "AnimatedModelComponent": {
+                                "affectingStaticLights": [],
+                                "animationMode": 1,
+                                "currentAnimationName": "",
+                                "isPlayOnStart": true,
+                                "isVisible": true,
+                                "lodBias": 0.0,
+                                "lodDistance": 10.0,
+                                "lodEnable": true,
+                                "materialOverrides": {
+                                    "rootex/assets/materials/animated_default.rmat": "rootex/assets/materials/animated_default.rmat"
+                                },
+                                "renderPass": 1,
+                                "resFile": "rootex/assets/animation.dae",
+                                "transitionTime": 1.0
+                            },
+                            "TransformComponent": {
+                                "boundingBox": {
+                                    "center": {
+                                        "x": 0.0,
+                                        "y": 4.339252948760986,
+                                        "z": 0.013939738273620605
+                                    },
+                                    "extents": {
+                                        "x": 2.7054710388183594,
+                                        "y": 4.359586238861084,
+                                        "z": 1.7636620998382568
+                                    }
+                                },
+                                "passDown": 7,
+                                "position": {
+                                    "x": 0.0,
+                                    "y": 0.0,
+                                    "z": 0.0
+                                },
+                                "rotation": {
+                                    "w": 1.0,
+                                    "x": 0.0,
+                                    "y": 0.0,
+                                    "z": 0.0
+                                },
+                                "scale": {
+                                    "x": 1.0,
+                                    "y": 1.0,
+                                    "z": 1.0
+                                }
+                            }
+                        }
+                    },
+                    "importStyle": 0,
+                    "name": "CowboyBody",
+                    "sceneFile": "",
+                    "settings": {
+                        "camera": 1,
+                        "inputSchemes": {},
+                        "listener": 1,
+                        "preloads": [],
+                        "startScheme": ""
+                    }
+                }
+            ],
             "entity": {
                 "Entity": {
                     "script": null
                 },
                 "components": {
-                    "AnimatedModelComponent": {
-                        "affectingStaticLights": [],
-                        "animationMode": 1,
-                        "currentAnimationName": "",
-                        "isPlayOnStart": true,
-                        "isVisible": true,
-                        "lodBias": -0.38999998569488525,
-                        "lodDistance": 27.0,
-                        "lodEnable": true,
-                        "materialOverrides": {
-                            "rootex/assets/materials/animated_default.rmat": "rootex/assets/materials/animated_default.rmat"
-                        },
-                        "renderPass": 1,
-                        "resFile": "rootex/assets/animation.dae",
-                        "transitionTime": 1.0
-                    },
                     "CapsuleColliderComponent": {
                         "angularFactor": {
                             "x": 1.0,
@@ -139,13 +193,13 @@
                         "isSleepable": true,
                         "material": 2,
                         "offset": {
-                            "x": 0.0,
-                            "y": 0.41999998688697815,
-                            "z": 0.0
+                            "x": -0.23000000417232513,
+                            "y": 0.25999999046325684,
+                            "z": 0.009999999776482582
                         },
-                        "radius": 0.5,
-                        "sideHeight": 1.8799999952316284,
-                        "volume": 4.396755695343018
+                        "radius": 0.2800000011920929,
+                        "sideHeight": 1.0800000429153442,
+                        "volume": 2.0001473426818848
                     },
                     "TransformComponent": {
                         "boundingBox": {
@@ -160,21 +214,22 @@
                                 "z": 1.7636620998382568
                             }
                         },
+                        "passDown": 7,
                         "position": {
                             "x": 0.0,
-                            "y": 3.611999988555908,
-                            "z": -18.54376983642578
+                            "y": 3.1072638034820557,
+                            "z": -17.610000610351563
                         },
                         "rotation": {
-                            "w": 1.0,
+                            "w": 0.9257116913795471,
                             "x": -0.0,
                             "y": 0.0,
-                            "z": -0.0
+                            "z": 0.37822988629341125
                         },
                         "scale": {
-                            "x": 0.3100000023841858,
-                            "y": 0.3100000023841858,
-                            "z": 0.3100000023841858
+                            "x": 0.2000000923871994,
+                            "y": 0.2000000923871994,
+                            "z": 0.20000004768371582
                         }
                     }
                 }
@@ -234,7 +289,7 @@
                             "y": 0.0,
                             "z": 0.0
                         },
-                        "radius": 0.6000000238418579,
+                        "radius": 2.4000000953674316,
                         "volume": 0.904778778553009
                     },
                     "TransformComponent": {
@@ -250,10 +305,11 @@
                                 "z": 19.737079620361328
                             }
                         },
+                        "passDown": 7,
                         "position": {
-                            "x": 0.0732581615447998,
-                            "y": 6.2774553298950195,
-                            "z": -18.47426986694336
+                            "x": 0.0,
+                            "y": 7.715848922729492,
+                            "z": -19.309999465942383
                         },
                         "rotation": {
                             "w": 1.0,
@@ -262,9 +318,9 @@
                             "z": -0.0
                         },
                         "scale": {
-                            "x": 0.029999999329447746,
-                            "y": 0.029999999329447746,
-                            "z": 0.029999999329447746
+                            "x": 0.11999999731779099,
+                            "y": 0.11999999731779099,
+                            "z": 0.11999999731779099
                         }
                     }
                 }
@@ -299,16 +355,17 @@
                         "z": 0.5
                     }
                 },
+                "passDown": 7,
                 "position": {
                     "x": 0.0,
-                    "y": -1.25,
-                    "z": -4.570000171661377
+                    "y": 0.0,
+                    "z": 0.0
                 },
                 "rotation": {
                     "w": 1.0,
-                    "x": -0.0,
+                    "x": 0.0,
                     "y": 0.0,
-                    "z": -0.0
+                    "z": 0.0
                 },
                 "scale": {
                     "x": 1.0,
