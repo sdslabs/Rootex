@@ -8,7 +8,7 @@
         "title": "Rootex Splash",
         "width": 400
     },
-    "startLevel": "game/assets/scenes/physics.scene.json",
+    "startLevel": "game/assets/scenes/loading.scene.json",
     "systems": {
         "AudioSystem": {},
         "DebugSystem": {
