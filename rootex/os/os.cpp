@@ -3,20 +3,33 @@
 #include <iostream>
 #include <filesystem>
 #include <iostream>
+#include <codecvt>
 
 #include "common/common.h"
+#include "event_manager.h"
 
 #include <commdlg.h>
 #include <commctrl.h>
 #include <shellapi.h>
-
-#include "event_manager.h"
+#include <shlobj_core.h>
 
 std::filesystem::file_time_type::clock OS::s_FileSystemClock;
 const std::chrono::time_point<std::chrono::system_clock> OS::s_ApplicationStartTime = std::chrono::system_clock::now();
 FilePath OS::s_RootDirectory;
 FilePath OS::s_EngineDirectory;
 FilePath OS::s_GameDirectory;
+
+std::wstring StringToWideString(const String& str)
+{
+	static std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converterX;
+	return converterX.from_bytes(str);
+}
+
+String WideStringToString(const std::wstring& wstr)
+{
+	static std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converterX;
+	return converterX.to_bytes(wstr);
+}
 
 FilePath OS::GetAbsolutePath(String stringPath)
 {
@@ -166,7 +179,7 @@ bool OS::Initialize()
 	}
 	catch (std::exception e)
 	{
-		ERR("OS: Failed to Initialize OS: " + String(e.what()));
+		ERR("Failed to initialize OS provided functionalities. " + String(e.what()));
 		return false;
 	}
 
@@ -231,6 +244,37 @@ String OS::GetBuildType()
 String OS::GetGameExecutablePath()
 {
 	return GetAbsolutePath("build/game/" + GetBuildType() + "/Game.exe").string();
+}
+
+String OS::GetOrganizationName()
+{
+	return "SDSLabs";
+}
+
+String OS::GetAppDataFolder()
+{
+	String appDataFolderString;
+
+	PWSTR appDataFolder = nullptr;
+	if (FAILED(SHGetKnownFolderPath(FOLDERID_LocalAppData, KF_FLAG_CREATE, NULL, &appDataFolder)))
+	{
+		WARN("Could not get or create AppData folder. Using save directory in game directory.");
+		CreateDirectoryName("save");
+		appDataFolderString = GetAbsolutePath("save").generic_string();
+	}
+	else
+	{
+		appDataFolderString = WideStringToString(std::wstring(appDataFolder));
+	}
+	CoTaskMemFree(appDataFolder);
+
+	return appDataFolderString;
+}
+
+String OS::GetAbsoluteSaveGameFolder(const String& appName)
+{
+	static String appDataFolder = GetAppDataFolder();
+	return appDataFolder + "/" + GetOrganizationName() + "/" + appName;
 }
 
 int OS::GetDisplayWidth()
@@ -301,36 +345,45 @@ bool OS::IsFile(const String& path)
 	return std::filesystem::is_regular_file(GetAbsolutePath(path));
 }
 
-void OS::CreateDirectoryName(const String& dirPath)
+bool OS::CreateDirectoryName(const String& dirPath)
 {
 	FilePath path = OS::GetAbsolutePath(dirPath);
+	return CreateDirectoryAbsoluteName(path.generic_string());
+}
 
+bool OS::CreateDirectoryAbsoluteName(const String& dirPath)
+{
 	if (IsExists(dirPath))
 	{
 		WARN("Directory already exists: " + dirPath);
-		return;
+		return true;
 	}
 
-	std::filesystem::create_directories(path);
-	PRINT("Created directory: " + path.string());
+	if (std::filesystem::create_directories(dirPath))
+	{
+		PRINT("Created directory: " + dirPath);
+		return true;
+	}
+	WARN("Could not create absolute directory: " + dirPath);
+	return false;
 }
 
 InputOutputFileStream OS::CreateFileName(const String& filePath)
 {
-	FilePath path = OS::GetAbsolutePath(filePath);
+	return CreateFileNameAbsolute(OS::GetAbsolutePath(filePath).generic_string());
+}
 
-	InputOutputFileStream file(OS::GetAbsolutePath(filePath), std::ios::binary | std::ios::in | std::ios::out | std::ios::trunc);
+InputOutputFileStream OS::CreateFileNameAbsolute(const String& absFilePath)
+{
+	InputOutputFileStream file(OS::GetAbsolutePath(absFilePath), std::ios::binary | std::ios::in | std::ios::out | std::ios::trunc);
 
 	if (file)
 	{
-		if (!IsExists(filePath))
-		{
-			PRINT("Created file: " + path.string());
-		}
+		PRINT("Created file: " + absFilePath);
 	}
 	else
 	{
-		WARN("Could not create directory: " + path.string());
+		WARN("Could not create file: " + absFilePath);
 	}
 
 	return file;
@@ -445,17 +498,21 @@ FileTimePoint OS::GetFileLastChangedTime(const String& filePath)
 FileBuffer OS::LoadFileContents(String stringPath)
 {
 	std::filesystem::path path = GetAbsolutePath(stringPath);
+	return LoadFileContentsAbsolute(path.generic_string());
+}
 
-	if (!IsExists(path.generic_string()))
+FileBuffer OS::LoadFileContentsAbsolute(String absPath)
+{
+	if (!IsExistsAbsolute(absPath))
 	{
-		ERR("OS: File IO error: " + path.generic_string() + " does not exist");
+		ERR("OS: File IO error: " + absPath + " does not exist");
 		return FileBuffer();
 	}
 
 	std::ifstream stream;
 	try
 	{
-		stream.open(path.generic_string(), std::ifstream::ate | std::ios::binary);
+		stream.open(absPath, std::ifstream::ate | std::ios::binary);
 	}
 	catch (std::exception e)
 	{
@@ -471,6 +528,11 @@ FileBuffer OS::LoadFileContents(String stringPath)
 
 	stream.close();
 	return FileBuffer(buffer);
+}
+
+bool OS::IsExistsAbsolute(String absPath)
+{
+	return std::filesystem::exists(absPath);
 }
 
 bool OS::IsExists(String relativePath)
@@ -556,16 +618,21 @@ void OS::PostError(String message, LPSTR caption)
 
 bool OS::SaveFile(const FilePath& filePath, const char* fileBuffer, size_t fileSize)
 {
+	return SaveFileAbsolute(GetAbsolutePath(filePath.generic_string()), fileBuffer, fileSize);
+}
+
+bool OS::SaveFileAbsolute(const FilePath& absFilePath, const char* fileBuffer, size_t fileSize)
+{
 	std::ofstream outFile;
 
 	try
 	{
-		outFile.open(GetAbsolutePath(filePath.generic_string()), std::ios::out | std::ios::binary);
+		outFile.open(absFilePath.generic_string(), std::ios::out | std::ios::binary);
 		outFile.write(fileBuffer, fileSize);
 	}
 	catch (std::exception e)
 	{
-		ERR(std::string("OS: File IO error: ") + std::string(e.what()));
+		ERR(std::string("File IO error: ") + std::string(e.what()));
 		return false;
 	}
 

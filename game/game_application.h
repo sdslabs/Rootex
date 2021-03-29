@@ -15,6 +15,4 @@ public:
 	GameApplication();
 	GameApplication(GameApplication&) = delete;
 	~GameApplication() = default;
-
-	String getAppTitle() const override { return "Game"; }
 };

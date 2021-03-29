@@ -1,7 +1,6 @@
 #include "rendering_device.h"
 
 #include <locale>
-#include <codecvt>
 
 #include "common/common.h"
 #include "core/event_manager.h"
@@ -12,24 +11,9 @@
 
 #include "Tracy/Tracy.hpp"
 
-std::wstring StringToWideString(const std::string& str);
-std::string WideStringToString(const std::wstring& wstr);
-
 #define FEATURE_STRING(features, featureName) "\n" + #featureName + ": " + std::to_string(features.featureName)
 #define ADAPTER_DESCRIPTION_WSTRING(desc, info) "\n" + #info + ": " + WideStringToString(desc.info)
 #define ADAPTER_DESCRIPTION_STRING(desc, info) "\n" + #info + ": " + std::to_string(desc.info)
-
-std::wstring StringToWideString(const std::string& str)
-{
-	static std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converterX;
-	return converterX.from_bytes(str);
-}
-
-std::string WideStringToString(const std::wstring& wstr)
-{
-	static std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converterX;
-	return converterX.to_bytes(wstr);
-}
 
 RenderingDevice::RenderingDevice()
 {
