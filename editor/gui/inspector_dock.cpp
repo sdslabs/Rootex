@@ -63,23 +63,30 @@ void InspectorDock::drawSceneActions(Scene* scene)
 		{
 			if (ImGui::BeginMenu("Edit Components"))
 			{
-				for (const auto& [componentID, componentName, componentCreator] : ECSFactory::GetComponentDatabase())
+				String currentCategory;
+				for (const auto& componentData : ECSFactory::GetComponentDatabase())
 				{
-					bool isAddedAlready = entity->getComponentFromID(componentID) != nullptr;
-					if (ImGui::Checkbox(componentName.c_str(), &isAddedAlready))
+					if (currentCategory != componentData.category)
+					{
+						ImGui::TextColored(EditorSystem::GetSingleton()->getSuccessColor(), "%s", componentData.category.c_str());
+						currentCategory = componentData.category;
+					}
+
+					bool isAddedAlready = entity->getComponentFromID(componentData.componentID) != nullptr;
+					if (ImGui::Checkbox(componentData.componentName.c_str(), &isAddedAlready))
 					{
 						if (isAddedAlready)
 						{
-							if (ECSFactory::AddComponent(entity, ECSFactory::CreateDefaultComponent(componentName)))
+							if (ECSFactory::AddComponent(entity, ECSFactory::CreateDefaultComponent(componentData.componentName)))
 							{
-								PRINT("Added " + componentName + " to " + entity->getFullName());
+								PRINT("Added " + componentData.componentName + " to " + entity->getFullName());
 							}
 						}
 						else
 						{
-							if (entity->removeComponent(componentID))
+							if (entity->removeComponent(componentData.componentID))
 							{
-								PRINT("Removed " + componentName + " from " + entity->getFullName());
+								PRINT("Removed " + componentData.componentName + " from " + entity->getFullName());
 							}
 						}
 					}

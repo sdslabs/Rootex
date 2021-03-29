@@ -28,6 +28,7 @@
 #include "components/visual/ui/ui_component.h"
 #include "components/visual/model/animated_model_component.h"
 #include "components/visual/effect/particle_effect_component.h"
+#include "components/game/player_controller.h"
 
 void ECSFactory::RegisterComponentInstance(Component* component)
 {
@@ -76,14 +77,14 @@ Ptr<Component> ECSFactory::CreateComponent(const String& componentName, const JS
 	auto& findIt = s_ComponentCreators.end();
 	for (auto& componentClass = s_ComponentCreators.begin(); componentClass != s_ComponentCreators.end(); componentClass++)
 	{
-		if (std::get<String>(*componentClass) == componentName)
+		if (componentClass->componentName == componentName)
 		{
 			findIt = componentClass;
 		}
 	}
 	if (findIt != s_ComponentCreators.end())
 	{
-		ComponentCreator create = std::get<ComponentCreator>(*findIt);
+		ComponentCreator create = findIt->creator;
 		Ptr<Component> component(std::move(create(componentData)));
 
 		RegisterComponentInstance(component.get());
@@ -154,30 +155,38 @@ Ptr<Entity> ECSFactory::CopyEntity(Scene* scene, Entity& entity)
 
 void ECSFactory::Initialize()
 {
-	REGISTER_COMPONENT(CameraComponent);
-	REGISTER_COMPONENT(GridModelComponent);
-	REGISTER_COMPONENT(ModelComponent);
-	REGISTER_COMPONENT(FogComponent);
-	REGISTER_COMPONENT(TextUIComponent);
-	REGISTER_COMPONENT(SkyComponent);
-	REGISTER_COMPONENT(TransformComponent);
-	REGISTER_COMPONENT(TransformAnimationComponent);
-	REGISTER_COMPONENT(PointLightComponent);
-	REGISTER_COMPONENT(StaticPointLightComponent);
-	REGISTER_COMPONENT(DirectionalLightComponent);
-	REGISTER_COMPONENT(SpotLightComponent);
-	REGISTER_COMPONENT(SphereColliderComponent);
-	REGISTER_COMPONENT(BoxColliderComponent);
-	REGISTER_COMPONENT(CapsuleColliderComponent);
-	REGISTER_COMPONENT(StaticMeshColliderComponent);
-	REGISTER_COMPONENT(AudioListenerComponent);
-	REGISTER_COMPONENT(MusicComponent);
-	REGISTER_COMPONENT(ShortMusicComponent);
-	REGISTER_COMPONENT(CPUParticlesComponent);
-	REGISTER_COMPONENT(UIComponent);
-	REGISTER_COMPONENT(AnimatedModelComponent);
-	REGISTER_COMPONENT(ParticleEffectComponent);
-	REGISTER_COMPONENT(TriggerComponent);
+	REGISTER_COMPONENT(PlayerController, Category::Game);
+
+	REGISTER_COMPONENT(CameraComponent, Category::General);
+	REGISTER_COMPONENT(TransformComponent, Category::General);
+	REGISTER_COMPONENT(TransformAnimationComponent, Category::General);
+
+	REGISTER_COMPONENT(AudioListenerComponent, Category::Audio);
+	REGISTER_COMPONENT(MusicComponent, Category::Audio);
+	REGISTER_COMPONENT(ShortMusicComponent, Category::Audio);
+
+	REGISTER_COMPONENT(BoxColliderComponent, Category::Physics);
+	REGISTER_COMPONENT(CapsuleColliderComponent, Category::Physics);
+	REGISTER_COMPONENT(SphereColliderComponent, Category::Physics);
+	REGISTER_COMPONENT(StaticMeshColliderComponent, Category::Physics);
+	REGISTER_COMPONENT(TriggerComponent, Category::Physics);
+
+	REGISTER_COMPONENT(ModelComponent, Category::Model);
+	REGISTER_COMPONENT(AnimatedModelComponent, Category::Model);
+	REGISTER_COMPONENT(GridModelComponent, Category::Model);
+
+	REGISTER_COMPONENT(PointLightComponent, Category::Light);
+	REGISTER_COMPONENT(SpotLightComponent, Category::Light);
+	REGISTER_COMPONENT(DirectionalLightComponent, Category::Light);
+	REGISTER_COMPONENT(StaticPointLightComponent, Category::Light);
+
+	REGISTER_COMPONENT(TextUIComponent, Category::UI);
+	REGISTER_COMPONENT(UIComponent, Category::UI);
+
+	REGISTER_COMPONENT(FogComponent, Category::Effect);
+	REGISTER_COMPONENT(SkyComponent, Category::Effect);
+	REGISTER_COMPONENT(CPUParticlesComponent, Category::Effect);
+	REGISTER_COMPONENT(ParticleEffectComponent, Category::Effect);
 }
 
 Ptr<Entity> ECSFactory::CreateRootEntity(Scene* scene)
