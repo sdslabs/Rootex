@@ -94,6 +94,24 @@ VertexBuffer::VertexBuffer(const Vector<FXAAData>& buffer)
 	m_VertexBuffer = RenderingDevice::GetSingleton()->createBuffer(&vbd, &vsd);
 }
 
+VertexBuffer::VertexBuffer(const UIVertexData* buffer, size_t size)
+    : m_Stride(sizeof(UIVertexData))
+    , m_Count(size)
+{
+	D3D11_BUFFER_DESC vbd = { 0 };
+	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vbd.Usage = D3D11_USAGE_DEFAULT;
+	vbd.CPUAccessFlags = 0;
+	vbd.MiscFlags = 0u;
+	vbd.ByteWidth = sizeof(UIVertexData) * size;
+	vbd.StructureByteStride = 0;
+	D3D11_SUBRESOURCE_DATA vsd = { 0 };
+	vsd.pSysMem = buffer;
+
+	const UINT offset = 0u;
+	m_VertexBuffer = RenderingDevice::GetSingleton()->createBuffer(&vbd, &vsd);
+}
+
 VertexBuffer::VertexBuffer(const Vector<float>& buffer)
     : m_Stride(3 * sizeof(float))
     , m_Count(buffer.size() / 3)

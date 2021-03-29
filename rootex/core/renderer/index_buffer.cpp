@@ -29,10 +29,27 @@ IndexBuffer::IndexBuffer(const Vector<unsigned int>& indices)
 	ibd.Usage = D3D11_USAGE_DYNAMIC;
 	ibd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	ibd.MiscFlags = 0u;
-	ibd.ByteWidth = indices.size() * sizeof(int);
+	ibd.ByteWidth = indices.size() * sizeof(unsigned int);
 	ibd.StructureByteStride = 0;
 	D3D11_SUBRESOURCE_DATA isd = { 0 };
 	isd.pSysMem = indices.data();
+
+	m_Format = DXGI_FORMAT_R32_UINT;
+	m_IndexBuffer = RenderingDevice::GetSingleton()->createBuffer(&ibd, &isd);
+}
+
+IndexBuffer::IndexBuffer(const int* indices, size_t size)
+    : m_Count(size)
+{
+	D3D11_BUFFER_DESC ibd = { 0 };
+	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ibd.Usage = D3D11_USAGE_DYNAMIC;
+	ibd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	ibd.MiscFlags = 0u;
+	ibd.ByteWidth = size * sizeof(int);
+	ibd.StructureByteStride = 0;
+	D3D11_SUBRESOURCE_DATA isd = { 0 };
+	isd.pSysMem = indices;
 
 	m_Format = DXGI_FORMAT_R32_UINT;
 	m_IndexBuffer = RenderingDevice::GetSingleton()->createBuffer(&ibd, &isd);

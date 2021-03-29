@@ -1,6 +1,9 @@
 #pragma once
 
 #include "core/renderer/material_library.h"
+#include "core/renderer/vertex_data.h"
+#include "core/renderer/vertex_buffer.h"
+#include "core/renderer/index_buffer.h"
 #include "event_manager.h"
 
 #undef interface
@@ -9,6 +12,15 @@
 
 class CustomRenderInterface : public Rml::RenderInterface
 {
+	struct GeometryData
+	{
+		VertexBuffer vertexBuffer;
+		IndexBuffer indexBuffer;
+		Rml::TextureHandle textureHandle;
+
+		GeometryData(const UIVertexData* vertices, size_t verticesSize, int* indices, size_t indicesSize, Rml::TextureHandle texture);
+	};
+
 	static unsigned int s_TextureCount;
 
 	Ref<Shader> m_UIShader;
@@ -17,6 +29,8 @@ class CustomRenderInterface : public Rml::RenderInterface
 	Matrix m_UITransform;
 	int m_Width;
 	int m_Height;
+
+	void render(GeometryData* geometry, const Rml::Vector2f& translation);
 
 	Variant windowResized(const Event* event);
 
