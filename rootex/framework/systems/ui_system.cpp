@@ -2,6 +2,7 @@
 
 #include "app/application.h"
 #include "core/ui/input_interface.h"
+#include "core/ui/rootex_decorator.h"
 
 #undef interface
 #include "RmlUi/Core.h"
@@ -110,6 +111,9 @@ bool UISystem::initialize(const JSON::json& systemData)
 		return false;
 	}
 
+	m_FlipbookInstancer.reset(new FlipbookDecoratorInstancer());
+	Rml::Factory::RegisterDecoratorInstancer("flipbook", m_FlipbookInstancer.get());
+
 	Rml::Lua::Initialise(LuaInterpreter::GetSingleton()->getLuaState().lua_state());
 	Rml::Lottie::Initialise();
 
@@ -129,6 +133,9 @@ void UISystem::update(float deltaMilliseconds)
 {
 	ZoneScoped;
 	m_Context->Update();
+
+	RootexDecorator::UpdateAll(deltaMilliseconds * MS_TO_S);
+
 	RenderingDevice::GetSingleton()->setAlphaBS();
 	RenderingDevice::GetSingleton()->setTemporaryUIRS();
 	m_Context->Render();

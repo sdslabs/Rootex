@@ -68,6 +68,8 @@ void RenderSystem::setConfig(const SceneSettings& sceneSettings)
 	}
 
 	setCamera(camera);
+
+	calculateTransforms(SceneLoader::GetSingleton()->getRootScene());
 }
 
 void RenderSystem::calculateTransforms(Scene* scene)
@@ -76,7 +78,29 @@ void RenderSystem::calculateTransforms(Scene* scene)
 	{
 		if (TransformComponent* transform = entity->getComponent<TransformComponent>())
 		{
-			pushMatrix(entity->getComponent<TransformComponent>()->getLocalTransform());
+			int passDown = transform->getPassDowns();
+
+			if (passDown == (int)TransformPassDown::All)
+			{
+				pushMatrix(transform->getLocalTransform());
+			}
+			else
+			{
+				Matrix matrix = Matrix::Identity;
+				if (passDown & (int)TransformPassDown::Position)
+				{
+					matrix = Matrix::CreateTranslation(transform->getPosition()) * matrix;
+				}
+				if (passDown & (int)TransformPassDown::Rotation)
+				{
+					matrix = Matrix::CreateFromQuaternion(transform->getRotation()) * matrix;
+				}
+				if (passDown & (int)TransformPassDown::Scale)
+				{
+					matrix = Matrix::CreateScale(transform->getScale()) * matrix;
+				}
+				pushMatrix(matrix);
+			}
 		}
 		else
 		{
