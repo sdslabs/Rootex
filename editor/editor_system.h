@@ -18,8 +18,6 @@
 
 #include "Tracy/Tracy.hpp"
 
-class HierarchyGraph;
-
 ImColor ColorToImColor(Color& c);
 
 class EditorSystem : public System

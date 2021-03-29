@@ -35,7 +35,7 @@ void UIComponent::setDocument(const String& path)
 
 	try
 	{
-		m_Document = UISystem::GetSingleton()->loadDocument(m_FilePath);
+		m_Document = UISystem::GetSingleton()->loadDocument(path);
 		m_FilePath = path;
 	}
 	catch (std::exception e)
