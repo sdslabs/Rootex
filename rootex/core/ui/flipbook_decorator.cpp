@@ -90,6 +90,7 @@ void FlipbookDecorator::RenderElement(Rml::Element* element, Rml::DecoratorDataH
 	indices[4] = 2;
 	indices[5] = 3;
 
+	data->geometry.Release();
 	data->geometry.Render(element->GetAbsoluteOffset(Rml::Box::PADDING));
 }
 
