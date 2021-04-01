@@ -1,13 +1,10 @@
 #include "component.h"
 
 #include "entity.h"
+#include "ecs_factory.h"
 
 Component::Component()
     : m_Owner(nullptr)
-{
-}
-
-Component::~Component()
 {
 }
 
@@ -20,7 +17,7 @@ bool Component::resolveDependencies()
 
 		if (!dependency->isValid())
 		{
-			WARN("Could not resolve dependency of " + getName() + " on entity " + m_Owner->getFullName());
+			WARN(m_Owner->getFullName() + " needs a " + ECSFactory::GetComponentNameByID(dependency->getID()) + " to use a " + getName());
 			return false;
 		}
 	}
@@ -32,28 +29,9 @@ bool Component::setup()
 	return resolveDependencies() && setupData();
 }
 
-bool Component::setupData()
-{
-	return true;
-}
-
-bool Component::setupEntities()
-{
-	return true;
-}
-
-void Component::onRemove()
-{
-}
-
-Entity* Component::getOwner() const
-{
-	return m_Owner;
-}
-
 JSON::json Component::getJSON() const
 {
-	return {};
+	return JSON::json::object();
 }
 
 void Component::draw()

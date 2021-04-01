@@ -6,11 +6,19 @@
 
 #include "assimp/scene.h"
 
+enum class RootExclusion : int
+{
+	None = 0,
+	Translation = 1,
+	All = 2
+};
+
 class Material;
 
 /// Representation of an animated 3D model file. Supports .dae files
 class AnimatedModelResourceFile : public ResourceFile
 {
+private:
 	explicit AnimatedModelResourceFile(const FilePath& resData);
 
 	Vector<Pair<Ref<Material>, Vector<Mesh>>> m_Meshes;
@@ -39,11 +47,11 @@ public:
 	size_t getBoneCount() const { return m_BoneOffsets.size(); }
 
 	void setNodeHierarchy(aiNode* currentAiNode, Ptr<SkeletonNode>& currentNode);
-	void setAnimationTransforms(Ptr<SkeletonNode>& node, float currentTime, const String& animationName, const Matrix& parentModelTransform, float transitionTightness, bool isRootFound);
+	void setAnimationTransforms(Ptr<SkeletonNode>& node, float currentTime, const String& animationName, const Matrix& parentModelTransform, float transitionTightness, RootExclusion rootExclusion, bool isRootFound);
 
 	Vector<String> getAnimationNames();
 	float getAnimationStartTime(const String& animationName) const;
 	float getAnimationEndTime(const String& animationName) const;
 
-	void getFinalTransforms(Vector<Matrix>& transforms, const String& animationName, float currentTime, float transitionTightness);
+	void getFinalTransforms(Vector<Matrix>& transforms, const String& animationName, float currentTime, float transitionTightness, RootExclusion rootExclusion);
 };

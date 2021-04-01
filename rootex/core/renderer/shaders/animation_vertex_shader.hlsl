@@ -20,7 +20,7 @@ cbuffer CBuf : register(PER_CAMERA_CHANGE_VS_HLSL)
 
 cbuffer CBuf : register(BONES_VS_HLSL)
 {
-	matrix FinalTransforms[256];
+	matrix FinalTransforms[MAX_BONES];
 }
 
 struct VertexInputType

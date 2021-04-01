@@ -57,6 +57,7 @@ public:
 	static Ptr<Entity> CreateRootEntity(Scene* scene);
 	static Ptr<Entity> CopyEntity(Scene* scene, Entity& entity);
 
+	static String GetComponentNameByID(ComponentID componentID);
 	static const ComponentDatabase& GetComponentDatabase() { return s_ComponentCreators; }
 
 	template <class T>

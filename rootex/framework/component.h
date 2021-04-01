@@ -87,7 +87,7 @@ protected:
 
 public:
 	Component();
-	virtual ~Component();
+	virtual ~Component() = default;
 
 	/// Only use to register dependency through a Dependency object.
 	void registerDependency(Dependable* dependable) { m_Dependencies.push_back(dependable); }
@@ -96,13 +96,13 @@ public:
 	/// Establish inter-component links after all components have been added on the owner entity. Return true if successful.
 	bool resolveDependencies();
 	/// Perform setting up internal data needed from other components after they have been added to the owning entity.
-	virtual bool setupData();
+	virtual bool setupData() { return true; }
 	/// Perform setting up operations which are possible only after all entities have been set up.
-	virtual bool setupEntities();
+	virtual bool setupEntities() { return true; }
 	/// Perform operations prior to detachment from owning entity and destruction.
-	virtual void onRemove();
+	virtual void onRemove() { }
 
-	Entity* getOwner() const;
+	Entity* getOwner() const { return m_Owner; }
 	virtual ComponentID getComponentID() const = 0;
 	virtual const char* getName() const = 0;
 	/// Get JSON representation of the component data needed to re-construct component from memory.

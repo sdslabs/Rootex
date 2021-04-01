@@ -69,7 +69,7 @@ void SceneLoader::loadPreloadedScene(const String& sceneFile, const Vector<Strin
 		{
 			sceneResFile->reimport();
 		}
-		Ptr<Scene>& scene = Scene::Create(JSON::json::parse(sceneResFile->getString()));
+		Ptr<Scene>& scene = Scene::Create(JSON::json::parse(sceneResFile->getString()), false);
 		m_CurrentScene = scene.get();
 		m_RootScene->addChild(scene);
 		setArguments(arguments);

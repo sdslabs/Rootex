@@ -436,6 +436,7 @@ void LuaInterpreter::registerTypes()
 		rigidBodyComponent["getVelocity"] = &RigidBodyComponent::getVelocity;
 		rigidBodyComponent["setVelocity"] = &RigidBodyComponent::setVelocity;
 		rigidBodyComponent["applyForce"] = &RigidBodyComponent::applyForce;
+		rigidBodyComponent["translate"] = &RigidBodyComponent::translate;
 	}
 	{
 		sol::usertype<BoxColliderComponent> bcc = rootex.new_usertype<BoxColliderComponent>(

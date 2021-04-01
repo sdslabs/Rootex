@@ -12,6 +12,8 @@ Ptr<Component> AnimatedModelComponent::Create(const JSON::json& componentData)
 {
 	return std::make_unique<AnimatedModelComponent>(
 	    componentData.value("isPlayOnStart", false),
+	    componentData.value("speedMultiplier", 1.0f),
+	    componentData.value("rootExclusion", RootExclusion::None),
 	    ResourceLoader::CreateAnimatedModelResourceFile(componentData.value("resFile", "rootex/assets/animation.dae")),
 	    componentData.value("currentAnimationName", ""),
 	    (AnimationMode)componentData.value("animationMode", (int)AnimationMode::None),
@@ -26,6 +28,8 @@ Ptr<Component> AnimatedModelComponent::Create(const JSON::json& componentData)
 
 AnimatedModelComponent::AnimatedModelComponent(
     bool isPlayOnStart,
+    float speedMultiplier,
+    RootExclusion rootExclusion,
     Ref<AnimatedModelResourceFile> resFile,
     const String& currentAnimationName,
     AnimationMode mode,
@@ -38,6 +42,8 @@ AnimatedModelComponent::AnimatedModelComponent(
     const Vector<SceneID>& affectingStaticLightIDs)
     : RenderableComponent(renderPass, materialOverrides, isVisible, lodEnable, lodBias, lodDistance, affectingStaticLightIDs)
     , m_CurrentTimePosition(0.0f)
+    , m_RootExclusion(rootExclusion)
+    , m_SpeedMultiplier(speedMultiplier)
     , m_IsPlaying(isPlayOnStart)
     , m_IsPlayOnStart(isPlayOnStart)
     , m_AnimationMode(mode)
@@ -79,8 +85,20 @@ void AnimatedModelComponent::render(float viewDistance)
 	}
 }
 
+void AnimatedModelComponent::checkCurrentAnimationExists()
+{
+	const HashMap<String, SkeletalAnimation>& animations = m_AnimatedModelResourceFile->getAnimations();
+	if (animations.find(m_CurrentAnimationName) == animations.end())
+	{
+		WARN("Animation " + m_CurrentAnimationName + " doesn't exist on " + m_AnimatedModelResourceFile->getPath().generic_string());
+		setAnimation(animations.begin()->first);
+	}
+}
+
 void AnimatedModelComponent::update(float deltaMilliseconds)
 {
+	checkCurrentAnimationExists();
+
 	switch (m_AnimationMode)
 	{
 	case AnimationMode::None:
@@ -100,11 +118,11 @@ void AnimatedModelComponent::update(float deltaMilliseconds)
 		deltaMilliseconds *= m_TimeDirection;
 		break;
 	}
-	m_CurrentTimePosition += deltaMilliseconds * MS_TO_S;
+	m_CurrentTimePosition += deltaMilliseconds * m_SpeedMultiplier * MS_TO_S;
 	m_RemainingTransitionTime -= deltaMilliseconds * MS_TO_S;
 	m_RemainingTransitionTime = std::max(m_RemainingTransitionTime, 0.0f);
 
-	m_AnimatedModelResourceFile->getFinalTransforms(m_FinalTransforms, m_CurrentAnimationName, m_CurrentTimePosition, std::max(0.2f, 1.0f - m_RemainingTransitionTime / m_TransitionTime));
+	m_AnimatedModelResourceFile->getFinalTransforms(m_FinalTransforms, m_CurrentAnimationName, m_CurrentTimePosition, std::max(0.2f, 1.0f - m_RemainingTransitionTime / m_TransitionTime), m_RootExclusion);
 }
 
 void AnimatedModelComponent::setPlaying(bool enabled)
@@ -126,6 +144,7 @@ void AnimatedModelComponent::setAnimation(const String& name)
 {
 	PANIC(m_AnimatedModelResourceFile->getAnimations().find(name) == m_AnimatedModelResourceFile->getAnimations().end(), "Animation name not found: " + name);
 	m_CurrentAnimationName = name;
+	//m_CurrentTimePosition = 0.0f;
 }
 
 void AnimatedModelComponent::transition(const String& name, float transitionTime)
@@ -223,6 +242,8 @@ JSON::json AnimatedModelComponent::getJSON() const
 	j["currentAnimationName"] = m_CurrentAnimationName;
 	j["animationMode"] = (int)m_AnimationMode;
 	j["transitionTime"] = m_TransitionTime;
+	j["speedMultiplier"] = m_SpeedMultiplier;
+	j["rootExclusion"] = m_RootExclusion;
 
 	return j;
 }
@@ -260,6 +281,8 @@ void AnimatedModelComponent::draw()
 		m_IsPlaying = false;
 	}
 
+	ImGui::DragFloat("Speed Multiplier", &m_SpeedMultiplier, 0.01f, 0.0f, 10.0f);
+
 	if (ImGui::BeginCombo("Animation Name", m_CurrentAnimationName.c_str()))
 	{
 		for (auto& animationName : m_AnimatedModelResourceFile->getAnimationNames())
@@ -273,6 +296,7 @@ void AnimatedModelComponent::draw()
 	}
 
 	ImGui::Combo("Animation Mode", (int*)&m_AnimationMode, "None\0Looping\0Alternating\0");
+	ImGui::Combo("Root Exclusion", (int*)&m_RootExclusion, "None\0Translation\0All\0");
 
 	RenderableComponent::draw();
 }
