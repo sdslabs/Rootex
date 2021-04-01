@@ -2,7 +2,10 @@ DialoguePlayer = class("DialoguePlayer")
 
 function DialoguePlayer:initialize(entity)
     self.exports = {
-		story = ""
+		story = "",
+		up = "Up",
+		down = "Down",
+		next = "Next"
 	}
 end
 
@@ -15,7 +18,6 @@ function DialoguePlayer:begin(entity)
 	self.currentChoice = 1
 	self.maxChoices = 1
 	self:getDocument():Show()
-	print("reahed")
 end
 
 function DialoguePlayer:update(entity, delta)
@@ -28,19 +30,19 @@ function DialoguePlayer:update(entity, delta)
 	end
 
 	if self.story:canChoose() then
-		if RTX.Input.WasPressed("Up") then
-			self.currentChoice = currentChoice - 1
+		if RTX.Input.WasPressed(self.exports.up) then
+			self.currentChoice = self.currentChoice - 1
 			if self.currentChoice < 1 then self.currentChoice = self.maxChoices end
 			self:presentChoices(self.story:getChoices())
 		end
 		
-		if RTX.Input.WasPressed("Down") then
+		if RTX.Input.WasPressed(self.exports.down) then
 			self.currentChoice = self.currentChoice + 1
 			if self.currentChoice > self.maxChoices then self.currentChoice = 1 end
 			self:presentChoices(self.story:getChoices())
 		end
 		
-		if RTX.Input.WasPressed("Next") then
+		if RTX.Input.WasPressed(self.exports.next) then
 			self.story:choose(self.currentChoice)
 			self.currentChoice = 1
 		end
@@ -76,6 +78,9 @@ function DialoguePlayer:presentChoices(choices)
 end
 
 function DialoguePlayer:onEnd(entity)
+end
+
+function DialoguePlayer:destroy(entity)
 end
 
 return DialoguePlayer

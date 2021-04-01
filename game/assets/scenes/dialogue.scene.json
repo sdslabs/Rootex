@@ -5,7 +5,10 @@
         "Entity": {
             "script": {
                 "overrides": {
-                    "story": "\"game/assets/stories/game.ink\""
+                    "down": "\"Down\"",
+                    "next": "\"Next\"",
+                    "story": "\"game/assets/stories/game.ink\"",
+                    "up": "\"Up\""
                 },
                 "path": "game/assets/scripts/dialogue/dialogue_player.lua"
             }
