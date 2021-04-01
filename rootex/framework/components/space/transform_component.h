@@ -11,6 +11,9 @@ enum class TransformPassDown : int
 	All = Position | Rotation | Scale
 };
 
+void to_json(JSON::json& j, const TransformPassDown& t);
+void from_json(const JSON::json& j, TransformPassDown& t);
+
 class TransformComponent : public Component
 {
 	DEFINE_COMPONENT(TransformComponent);

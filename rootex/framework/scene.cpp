@@ -47,14 +47,14 @@ void Scene::ResetNextID()
 	NextSceneID = ROOT_SCENE_ID + 1;
 }
 
-Ptr<Scene> Scene::Create(const JSON::json& sceneData, bool isACopy)
+Ptr<Scene> Scene::Create(const JSON::json& sceneData, const bool assignNewIDs)
 {
 	// Decide ID
 	SceneID thisSceneID;
 	if (sceneData.contains("ID"))
 	{
 		NextSceneID = std::max(NextSceneID, (SceneID)sceneData["ID"]);
-		if (!isACopy)
+		if (!assignNewIDs)
 		{
 			thisSceneID = sceneData["ID"];
 		}
@@ -91,7 +91,7 @@ Ptr<Scene> Scene::Create(const JSON::json& sceneData, bool isACopy)
 	{
 		for (auto& childScene : sceneData["children"])
 		{
-			if (!thisScene->addChild(Create(childScene)))
+			if (!thisScene->addChild(Create(childScene, assignNewIDs)))
 			{
 				WARN("Could not add child scene to " + thisScene->getName() + " scene");
 			}
@@ -111,24 +111,24 @@ Ptr<Scene> Scene::CreateFromFile(const String& sceneFile)
 		JSON::json importedScene = JSON::json::parse(t->getString());
 		importedScene["importStyle"] = ImportStyle::External;
 		importedScene["sceneFile"] = sceneFile;
-		return Create(importedScene);
+		return Create(importedScene, true);
 	}
 	return nullptr;
 }
 
 Ptr<Scene> Scene::CreateEmpty()
 {
-	return Create(JSON::json::object());
+	return Create(JSON::json::object(), false);
 }
 
 Ptr<Scene> Scene::CreateEmptyAtPath(const String& sceneFile)
 {
-	return Create({ { "entity", {} }, { "sceneFile", sceneFile } });
+	return Create({ { "entity", {} }, { "sceneFile", sceneFile } }, false);
 }
 
 Ptr<Scene> Scene::CreateEmptyWithEntity()
 {
-	return Create({ { "entity", {} } });
+	return Create({ { "entity", {} } }, false);
 }
 
 Ptr<Scene> Scene::CreateRootScene()
@@ -220,7 +220,7 @@ void Scene::reimport()
 	{
 		for (auto& childScene : sceneData["children"])
 		{
-			if (!addChild(Create(childScene)))
+			if (!addChild(Create(childScene, false)))
 			{
 				WARN("Could not add child scene to " + getName() + " scene");
 			}
@@ -262,7 +262,7 @@ bool Scene::snatchChild(Scene* child)
 
 bool Scene::checkCycle(Scene* child)
 {
-	if (child->findScene(this->getID()) != nullptr)
+	if (child->findScene(m_ID) != nullptr)
 	{
 		WARN("Tried to make a scene its own child's child");
 		return false;

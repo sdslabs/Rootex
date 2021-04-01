@@ -51,13 +51,13 @@
                     },
                     "MusicComponent": {
                         "attenuationModel": 53251,
-                        "audio": "game/assets/droplet.wav",
+                        "audio": "game/assets/music/birds_chirping.wav",
                         "isAttenuated": true,
                         "isLooping": true,
-                        "maxDistance": 8.0,
+                        "maxDistance": 4.0,
                         "playOnStart": true,
                         "referenceDistance": 1.0,
-                        "rollOffFactor": 1.0
+                        "rollOffFactor": 19.0
                     },
                     "TransformAnimationComponent": {
                         "animationMode": 2,
@@ -121,6 +121,7 @@
                                 "z": 0.5
                             }
                         },
+                        "passDown": 7,
                         "position": {
                             "x": 0.0,
                             "y": 5.413672924041748,
@@ -226,6 +227,7 @@
                                 "z": 1187.4342041015625
                             }
                         },
+                        "passDown": 7,
                         "position": {
                             "x": 1.399999976158142,
                             "y": 0.0,
@@ -247,341 +249,6 @@
             },
             "importStyle": 0,
             "name": "Office",
-            "sceneFile": "",
-            "settings": {
-                "camera": 1,
-                "inputSchemes": {},
-                "listener": 1,
-                "preloads": [],
-                "startScheme": ""
-            }
-        },
-        {
-            "ID": 20,
-            "children": [
-                {
-                    "ID": 22,
-                    "children": [],
-                    "entity": {
-                        "Entity": {
-                            "script": null
-                        },
-                        "components": {
-                            "TransformComponent": {
-                                "boundingBox": {
-                                    "center": {
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "extents": {
-                                        "x": 0.5,
-                                        "y": 0.5,
-                                        "z": 0.5
-                                    }
-                                },
-                                "position": {
-                                    "x": 0.0,
-                                    "y": 6.5989990234375,
-                                    "z": 23.353052139282227
-                                },
-                                "rotation": {
-                                    "w": 0.9972501397132874,
-                                    "x": -0.07410888373851776,
-                                    "y": 0.0,
-                                    "z": -0.0
-                                },
-                                "scale": {
-                                    "x": 1.0,
-                                    "y": 0.9999992847442627,
-                                    "z": 0.9999992847442627
-                                }
-                            }
-                        }
-                    },
-                    "importStyle": 0,
-                    "name": "CameraAnchor",
-                    "sceneFile": "",
-                    "settings": {
-                        "camera": 1,
-                        "inputSchemes": {},
-                        "listener": 1,
-                        "preloads": [],
-                        "startScheme": ""
-                    }
-                },
-                {
-                    "ID": 25,
-                    "children": [],
-                    "entity": {
-                        "Entity": {
-                            "script": null
-                        },
-                        "components": {
-                            "PointLightComponent": {
-                                "ambientColor": {
-                                    "a": 1.0,
-                                    "b": 0.9999902844429016,
-                                    "g": 1.0,
-                                    "r": 0.9999899864196777
-                                },
-                                "attConst": 0.11500000208616257,
-                                "attLin": 1.2699999809265137,
-                                "attQuad": 0.6100000143051147,
-                                "diffuseColor": {
-                                    "a": 1.0,
-                                    "b": 0.9999899864196777,
-                                    "g": 0.9999899864196777,
-                                    "r": 1.0
-                                },
-                                "diffuseIntensity": 64.5,
-                                "range": 2.299999952316284
-                            },
-                            "TransformComponent": {
-                                "boundingBox": {
-                                    "center": {
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "extents": {
-                                        "x": 0.5,
-                                        "y": 0.5,
-                                        "z": 0.5
-                                    }
-                                },
-                                "position": {
-                                    "x": 0.0,
-                                    "y": 2.999999523162842,
-                                    "z": 0.0
-                                },
-                                "rotation": {
-                                    "w": 1.0,
-                                    "x": -0.0,
-                                    "y": 0.0,
-                                    "z": -0.0
-                                },
-                                "scale": {
-                                    "x": 1.0,
-                                    "y": 1.0,
-                                    "z": 1.0
-                                }
-                            }
-                        }
-                    },
-                    "importStyle": 0,
-                    "name": "Torch",
-                    "sceneFile": "",
-                    "settings": {
-                        "camera": 1,
-                        "inputSchemes": {},
-                        "listener": 1,
-                        "preloads": [],
-                        "startScheme": ""
-                    }
-                }
-            ],
-            "entity": {
-                "Entity": {
-                    "script": {
-                        "overrides": {
-                            "variable": ""
-                        },
-                        "path": "game/assets/scripts/new_player_control.lua"
-                    }
-                },
-                "components": {
-                    "AnimatedModelComponent": {
-                        "affectingStaticLights": [],
-                        "animationMode": 1,
-                        "currentAnimationName": "",
-                        "isPlayOnStart": true,
-                        "isVisible": true,
-                        "lodBias": 1.0,
-                        "lodDistance": 26.0,
-                        "lodEnable": true,
-                        "materialOverrides": {
-                            "game/assets/materials/Eyes.rmat": "game/assets/materials/Eyes.rmat",
-                            "game/assets/materials/Hair.rmat": "game/assets/materials/Hair.rmat",
-                            "game/assets/materials/Pants.rmat": "game/assets/materials/Pants.rmat",
-                            "game/assets/materials/Shirt.rmat": "game/assets/materials/Shirt.rmat",
-                            "game/assets/materials/Skin.rmat": "game/assets/materials/Skin.rmat",
-                            "game/assets/materials/Socks.rmat": "game/assets/materials/Socks.rmat",
-                            "rootex/assets/materials/animated_default.rmat": "rootex/assets/materials/animated_default.rmat"
-                        },
-                        "renderPass": 1,
-                        "resFile": "rootex/assets/animation.dae",
-                        "transitionTime": 1.0
-                    },
-                    "AudioListenerComponent": null,
-                    "CapsuleColliderComponent": {
-                        "angularFactor": {
-                            "x": 0.0,
-                            "y": 0.0,
-                            "z": 0.0
-                        },
-                        "collisionGroup": 31,
-                        "collisionMask": 31,
-                        "gravity": {
-                            "x": 0.0,
-                            "y": -9.800000190734863,
-                            "z": 0.0
-                        },
-                        "isCCD": false,
-                        "isGeneratesHitEvents": false,
-                        "isKinematic": false,
-                        "isMoveable": true,
-                        "isSleepable": false,
-                        "material": 1,
-                        "offset": {
-                            "x": 0.0,
-                            "y": 0.17000000178813934,
-                            "z": 0.0
-                        },
-                        "radius": 0.20999999344348907,
-                        "sideHeight": 0.7200000286102295,
-                        "volume": 0.1385442316532135
-                    },
-                    "TransformComponent": {
-                        "boundingBox": {
-                            "center": {
-                                "x": 0.0,
-                                "y": 4.339252948760986,
-                                "z": 0.013939738273620605
-                            },
-                            "extents": {
-                                "x": 2.7054710388183594,
-                                "y": 4.359586238861084,
-                                "z": 1.7636620998382568
-                            }
-                        },
-                        "position": {
-                            "x": 1.2569971084594727,
-                            "y": 0.6230000257492065,
-                            "z": -4.309000015258789
-                        },
-                        "rotation": {
-                            "w": 1.0,
-                            "x": -0.0,
-                            "y": 0.0,
-                            "z": -0.0
-                        },
-                        "scale": {
-                            "x": 0.12999999523162842,
-                            "y": 0.12999999523162842,
-                            "z": 0.12999999523162842
-                        }
-                    }
-                }
-            },
-            "importStyle": 0,
-            "name": "Cowboy",
-            "sceneFile": "",
-            "settings": {
-                "camera": 1,
-                "inputSchemes": {},
-                "listener": 1,
-                "preloads": [],
-                "startScheme": ""
-            }
-        },
-        {
-            "ID": 13,
-            "children": [],
-            "entity": {
-                "Entity": {
-                    "script": null
-                },
-                "components": {
-                    "CameraComponent": {
-                        "aspectRatio": {
-                            "x": 16.0,
-                            "y": 9.0
-                        },
-                        "far": 100.0,
-                        "fov": 0.7853981852531433,
-                        "near": 0.10000000149011612,
-                        "postProcessingDetails": {
-                            "assaoAdaptiveQualityLimit": 0.2529999911785126,
-                            "assaoBlurPassCount": 6,
-                            "assaoDetailShadowStrength": 2.0199999809265137,
-                            "assaoFadeOutFrom": 38.0,
-                            "assaoFadeOutTo": 43.0,
-                            "assaoHorizonAngleThreshold": 0.14000000059604645,
-                            "assaoQualityLevel": 3,
-                            "assaoRadius": 0.800000011920929,
-                            "assaoShadowClamp": 0.15000000596046448,
-                            "assaoShadowMultiplier": 0.75,
-                            "assaoShadowPower": 2.549999952316284,
-                            "assaoSharpness": 1.0,
-                            "bloomBase": 1.0,
-                            "bloomBaseSaturation": 1.0,
-                            "bloomBrightness": 1.0,
-                            "bloomSaturation": 1.0,
-                            "bloomSize": 1.0,
-                            "bloomThreshold": 0.800000011920929,
-                            "bloomValue": 1.0,
-                            "gaussianBlurMultiplier": 1.0,
-                            "isASSAO": true,
-                            "isBloom": false,
-                            "isFXAA": true,
-                            "isGaussianBlur": false,
-                            "isMonochrome": false,
-                            "isPostProcessing": true,
-                            "isSepia": false,
-                            "isToneMap": false,
-                            "toneMapExposure": 0.0,
-                            "toneMapOperator": 0,
-                            "toneMapTransferFunction": 0,
-                            "toneMapWhiteNits": 200.0
-                        }
-                    },
-                    "ModelComponent": {
-                        "affectingStaticLights": [],
-                        "isVisible": true,
-                        "lodBias": 0.0,
-                        "lodDistance": 10.0,
-                        "lodEnable": true,
-                        "materialOverrides": {
-                            "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
-                        },
-                        "renderPass": 1,
-                        "resFile": "rootex/assets/cube.obj"
-                    },
-                    "TransformComponent": {
-                        "boundingBox": {
-                            "center": {
-                                "x": 0.0,
-                                "y": 0.0,
-                                "z": 0.0
-                            },
-                            "extents": {
-                                "x": 0.5,
-                                "y": 0.5,
-                                "z": 0.5
-                            }
-                        },
-                        "position": {
-                            "x": 1.2799999713897705,
-                            "y": 4.360000133514404,
-                            "z": 3.039999485015869
-                        },
-                        "rotation": {
-                            "w": 0.9914448857307434,
-                            "x": -0.13052605092525482,
-                            "y": 0.0,
-                            "z": -0.0
-                        },
-                        "scale": {
-                            "x": 1.0,
-                            "y": 1.0,
-                            "z": 1.0
-                        }
-                    }
-                }
-            },
-            "importStyle": 0,
-            "name": "Camera",
             "sceneFile": "",
             "settings": {
                 "camera": 1,
@@ -627,6 +294,7 @@
                                 "z": 0.5
                             }
                         },
+                        "passDown": 7,
                         "position": {
                             "x": 0.0,
                             "y": 0.0,
@@ -648,6 +316,223 @@
             },
             "importStyle": 0,
             "name": "Light",
+            "sceneFile": "",
+            "settings": {
+                "camera": 1,
+                "inputSchemes": {},
+                "listener": 1,
+                "preloads": [],
+                "startScheme": ""
+            }
+        },
+        {
+            "ID": 31,
+            "children": [
+                {
+                    "ID": 13,
+                    "children": [],
+                    "entity": {
+                        "Entity": {
+                            "script": null
+                        },
+                        "components": {
+                            "CameraComponent": {
+                                "aspectRatio": {
+                                    "x": 16.0,
+                                    "y": 9.0
+                                },
+                                "far": 100.0,
+                                "fov": 0.7853981852531433,
+                                "near": 0.10000000149011612,
+                                "postProcessingDetails": {
+                                    "assaoAdaptiveQualityLimit": 0.2529999911785126,
+                                    "assaoBlurPassCount": 6,
+                                    "assaoDetailShadowStrength": 2.0199999809265137,
+                                    "assaoFadeOutFrom": 38.0,
+                                    "assaoFadeOutTo": 43.0,
+                                    "assaoHorizonAngleThreshold": 0.14000000059604645,
+                                    "assaoQualityLevel": 3,
+                                    "assaoRadius": 0.800000011920929,
+                                    "assaoShadowClamp": 0.15000000596046448,
+                                    "assaoShadowMultiplier": 0.75,
+                                    "assaoShadowPower": 2.549999952316284,
+                                    "assaoSharpness": 1.0,
+                                    "bloomBase": 1.0,
+                                    "bloomBaseSaturation": 1.0,
+                                    "bloomBrightness": 1.0,
+                                    "bloomSaturation": 1.0,
+                                    "bloomSize": 1.0,
+                                    "bloomThreshold": 0.800000011920929,
+                                    "bloomValue": 1.0,
+                                    "gaussianBlurMultiplier": 1.0,
+                                    "isASSAO": true,
+                                    "isBloom": false,
+                                    "isFXAA": true,
+                                    "isGaussianBlur": false,
+                                    "isMonochrome": false,
+                                    "isPostProcessing": true,
+                                    "isSepia": false,
+                                    "isToneMap": false,
+                                    "toneMapExposure": 0.0,
+                                    "toneMapOperator": 0,
+                                    "toneMapTransferFunction": 0,
+                                    "toneMapWhiteNits": 200.0
+                                }
+                            },
+                            "ModelComponent": {
+                                "affectingStaticLights": [],
+                                "isVisible": true,
+                                "lodBias": 0.0,
+                                "lodDistance": 10.0,
+                                "lodEnable": true,
+                                "materialOverrides": {
+                                    "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                                },
+                                "renderPass": 1,
+                                "resFile": "rootex/assets/cube.obj"
+                            },
+                            "TransformComponent": {
+                                "boundingBox": {
+                                    "center": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "extents": {
+                                        "x": 0.5,
+                                        "y": 0.5,
+                                        "z": 0.5
+                                    }
+                                },
+                                "passDown": 7,
+                                "position": {
+                                    "x": 0.6399999856948853,
+                                    "y": 1.4600000381469727,
+                                    "z": 2.8299999237060547
+                                },
+                                "rotation": {
+                                    "w": 1.0,
+                                    "x": 0.0,
+                                    "y": 0.0,
+                                    "z": 0.0
+                                },
+                                "scale": {
+                                    "x": 1.0,
+                                    "y": 1.0,
+                                    "z": 1.0
+                                }
+                            }
+                        }
+                    },
+                    "importStyle": 0,
+                    "name": "Camera",
+                    "sceneFile": "",
+                    "settings": {
+                        "camera": 1,
+                        "inputSchemes": {},
+                        "listener": 1,
+                        "preloads": [],
+                        "startScheme": ""
+                    }
+                }
+            ],
+            "entity": {
+                "Entity": {
+                    "script": {
+                        "overrides": {
+                            "idleAnim": "\"Armature|idle\"",
+                            "jumpAnim": "\"Armature|jump\"",
+                            "runAnim": "\"Armature|run\"",
+                            "runSpeed": "0.002",
+                            "walkAnim": "\"Armature|walk\"",
+                            "walkSpeed": "0.0009"
+                        },
+                        "path": "game/assets/scripts/new_player_control.lua"
+                    }
+                },
+                "components": {
+                    "AnimatedModelComponent": {
+                        "affectingStaticLights": [],
+                        "animationMode": 1,
+                        "currentAnimationName": "Armature|idle",
+                        "isPlayOnStart": true,
+                        "isVisible": true,
+                        "lodBias": 0.0,
+                        "lodDistance": 50.0,
+                        "lodEnable": true,
+                        "materialOverrides": {
+                            "game/assets/materials/Akai_MAT.rmat": "game/assets/materials/Akai_MAT.rmat"
+                        },
+                        "renderPass": 1,
+                        "resFile": "game/assets/animations/female/female.fbx",
+                        "rootExclusion": 0,
+                        "speedMultiplier": 1.0,
+                        "transitionTime": 1.0
+                    },
+                    "AudioListenerComponent": {},
+                    "CapsuleColliderComponent": {
+                        "angularFactor": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "collisionGroup": 31,
+                        "collisionMask": 31,
+                        "gravity": {
+                            "x": 0.0,
+                            "y": -9.800000190734863,
+                            "z": 0.0
+                        },
+                        "isCCD": false,
+                        "isGeneratesHitEvents": false,
+                        "isKinematic": false,
+                        "isMoveable": true,
+                        "isSleepable": false,
+                        "material": 2,
+                        "offset": {
+                            "x": 0.0,
+                            "y": 0.550000011920929,
+                            "z": 0.0
+                        },
+                        "radius": 0.1599999964237213,
+                        "sideHeight": 0.800000011920929,
+                        "volume": 0.08149710297584534
+                    },
+                    "TransformComponent": {
+                        "boundingBox": {
+                            "center": {
+                                "x": -0.050872802734375,
+                                "y": -1.000030517578125,
+                                "z": 99.82308959960938
+                            },
+                            "extents": {
+                                "x": 94.88436889648438,
+                                "y": 23.418014526367188,
+                                "z": 100.25343322753906
+                            }
+                        },
+                        "passDown": 5,
+                        "position": {
+                            "x": 1.9000000953674316,
+                            "y": 0.5299999713897705,
+                            "z": -2.7939677238464355e-09
+                        },
+                        "rotation": {
+                            "w": 1.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 0.5,
+                            "y": 0.5,
+                            "z": 0.5
+                        }
+                    }
+                }
+            },
+            "importStyle": 0,
+            "name": "player",
             "sceneFile": "",
             "settings": {
                 "camera": 1,
@@ -744,6 +629,7 @@
                         "z": 37.3461799621582
                     }
                 },
+                "passDown": 7,
                 "position": {
                     "x": 0.0,
                     "y": 0.0,
@@ -800,7 +686,7 @@
                 "floats": []
             }
         },
-        "listener": 20,
+        "listener": 31,
         "preloads": [
             [
                 8,
@@ -837,6 +723,26 @@
             [
                 4,
                 "rootex/assets/cube.obj"
+            ],
+            [
+                7,
+                "game/assets/animations/female/textures/akai_normal.png"
+            ],
+            [
+                7,
+                "game/assets/animations/female/textures/akai_diffuse.png"
+            ],
+            [
+                2,
+                "game/assets/droplet.wav"
+            ],
+            [
+                2,
+                "game/assets/music/birds_chirping.wav"
+            ],
+            [
+                5,
+                "game/assets/animations/female/female.fbx"
             ]
         ],
         "startScheme": "Controls"

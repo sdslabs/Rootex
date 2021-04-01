@@ -13,6 +13,8 @@
 
 #include "meshoptimizer.h"
 
+#include "Tracy/Tracy.hpp"
+
 AnimatedModelResourceFile::AnimatedModelResourceFile(const FilePath& path)
     : ResourceFile(Type::AnimatedModel, path)
 {
@@ -62,18 +64,21 @@ void AnimatedModelResourceFile::setNodeHierarchy(aiNode* currentAiNode, Ptr<Skel
 	}
 }
 
-void AnimatedModelResourceFile::getFinalTransforms(Vector<Matrix>& transforms, const String& animationName, float currentTime, float transitionTightness)
+void AnimatedModelResourceFile::getFinalTransforms(Vector<Matrix>& transforms, const String& animationName, float currentTime, float transitionTightness, RootExclusion rootExclusion)
 {
+	ZoneScoped;
+
 	bool rootFoundFlag = false;
-	setAnimationTransforms(m_RootNode, currentTime, animationName, Matrix::Identity, transitionTightness, rootFoundFlag);
+	setAnimationTransforms(m_RootNode, currentTime, animationName, Matrix::Identity, transitionTightness, rootExclusion, rootFoundFlag);
 
 	for (unsigned int i = 0; i < getBoneCount(); i++)
 	{
+		ZoneNamedN(matrixMultiplications, "Matrix transformation", true);
 		transforms[i] = m_BoneOffsets[i] * m_AnimationTransforms[i] * m_RootInverseTransform;
 	}
 }
 
-void AnimatedModelResourceFile::setAnimationTransforms(Ptr<SkeletonNode>& node, float currentTime, const String& animationName, const Matrix& parentModelTransform, float transitionTightness, bool isRootFound)
+void AnimatedModelResourceFile::setAnimationTransforms(Ptr<SkeletonNode>& node, float currentTime, const String& animationName, const Matrix& parentModelTransform, float transitionTightness, RootExclusion rootExclusion, bool isRootFound)
 {
 	Matrix boneSpaceTransform = m_Animations[animationName].interpolate(node->m_Name.c_str(), currentTime);
 	if (boneSpaceTransform == Matrix::Identity)
@@ -87,7 +92,22 @@ void AnimatedModelResourceFile::setAnimationTransforms(Ptr<SkeletonNode>& node, 
 	{
 		if (!isRootFound)
 		{
-			m_RootInverseTransform = currentModelTransform.Invert();
+			switch (rootExclusion)
+			{
+			case RootExclusion::None:
+				m_RootInverseTransform = Matrix::Identity;
+				break;
+			case RootExclusion::Translation:
+				m_RootInverseTransform = Matrix::CreateTranslation(-currentModelTransform.Translation());
+				break;
+			case RootExclusion::All:
+				m_RootInverseTransform = currentModelTransform.Invert();
+				break;
+			default:
+				WARN("Unknown root exclusion setting found");
+				break;
+			}
+
 			isRootFound = true;
 		}
 
@@ -97,7 +117,7 @@ void AnimatedModelResourceFile::setAnimationTransforms(Ptr<SkeletonNode>& node, 
 
 	for (auto& child : node->m_Children)
 	{
-		setAnimationTransforms(child, currentTime, animationName, currentModelTransform, transitionTightness, isRootFound);
+		setAnimationTransforms(child, currentTime, animationName, currentModelTransform, transitionTightness, rootExclusion, isRootFound);
 	}
 }
 
@@ -124,6 +144,11 @@ void AnimatedModelResourceFile::reimport()
 
 	unsigned int boneCount = 0;
 	m_Meshes.clear();
+	m_BoneMapping.clear();
+	m_BoneOffsets.clear();
+	m_AnimationTransforms.clear();
+	m_RootInverseTransform = Matrix::Identity;
+	m_Animations.clear();
 
 	for (int i = 0; i < scene->mNumMeshes; i++)
 	{

@@ -6,19 +6,14 @@ Ptr<Component> PlayerController::Create(const JSON::json& componentData)
 }
 
 PlayerController::PlayerController()
+    : m_DependencyOnAnimatedModelComponent(this)
+    , m_DependencyOnCapsuleColliderComponent(this)
+    , m_DependencyOnTransformComponent(this)
 {
 }
 
 bool PlayerController::setupData()
 {
-	if (!m_Owner->addComponent("TransformComponent", {})
-	    && !m_Owner->addComponent("AnimatedModelComponent", {})
-	    && !m_Owner->addComponent("CapsuleColliderComponent", {}))
-	{
-		WARN("Could not add sub-components to entity: " + m_Owner->getName());
-		return false;
-	}
-
 	return true;
 }
 

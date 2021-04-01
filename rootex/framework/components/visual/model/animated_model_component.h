@@ -28,6 +28,8 @@ protected:
 	Ref<AnimatedModelResourceFile> m_AnimatedModelResourceFile;
 	String m_CurrentAnimationName;
 	float m_CurrentTimePosition;
+	float m_SpeedMultiplier;
+	RootExclusion m_RootExclusion;
 	bool m_IsPlaying;
 	bool m_IsPlayOnStart;
 	AnimationMode m_AnimationMode;
@@ -36,6 +38,8 @@ protected:
 public:
 	AnimatedModelComponent(
 	    bool isPlayOnStart,
+	    float speedMultiplier,
+	    RootExclusion rootExclusion,
 	    Ref<AnimatedModelResourceFile> resFile,
 	    const String& currentAnimationName,
 	    AnimationMode mode,
@@ -53,6 +57,8 @@ public:
 
 	String getCurrentAnimationName() const { return m_CurrentAnimationName; }
 	float getCurrentTime() const { return m_CurrentTimePosition; }
+
+	void checkCurrentAnimationExists();
 
 	void update(float deltaMilliseconds);
 

@@ -298,3 +298,13 @@ void TransformComponent::highlight()
 	getAbsoluteTransform().Forward().Normalize(forward);
 	RenderSystem::GetSingleton()->submitLine(transformedBox.Center, transformedBox.Center + (transformedBox.Extents.z * 2.0f) * forward);
 }
+
+void to_json(JSON::json& j, const TransformPassDown& t)
+{
+	j = (int)t;
+}
+
+void from_json(const JSON::json& j, TransformPassDown& t)
+{
+	t = (TransformPassDown)(int)j;
+}

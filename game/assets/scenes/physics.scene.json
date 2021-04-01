@@ -199,7 +199,7 @@
                         },
                         "radius": 0.2800000011920929,
                         "sideHeight": 1.0800000429153442,
-                        "volume": 2.0001473426818848
+                        "volume": 0.35795727372169495
                     },
                     "TransformComponent": {
                         "boundingBox": {
@@ -290,7 +290,7 @@
                             "z": 0.0
                         },
                         "radius": 2.4000000953674316,
-                        "volume": 0.904778778553009
+                        "volume": 57.90584182739258
                     },
                     "TransformComponent": {
                         "boundingBox": {

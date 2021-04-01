@@ -153,6 +153,19 @@ Ptr<Entity> ECSFactory::CopyEntity(Scene* scene, Entity& entity)
 	return CreateEntity(scene, entity.getJSON());
 }
 
+String ECSFactory::GetComponentNameByID(ComponentID componentID)
+{
+	for (auto& componentData : s_ComponentCreators)
+	{
+		if (componentData.componentID == componentID)
+		{
+			return componentData.componentName;
+		}
+	}
+	WARN("Could not find component name with ID: " + std::to_string(componentID));
+	return "";
+}
+
 void ECSFactory::Initialize()
 {
 	REGISTER_COMPONENT(PlayerController, Category::Game);
