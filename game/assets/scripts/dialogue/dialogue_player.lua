@@ -60,7 +60,20 @@ function DialoguePlayer:presentParagraphs(paragraphs)
 	local text = ""
 	for _, paragraph in ipairs(paragraphs) do
 		text = text .. "<br />" .. paragraph.text
+		if paragraph.tags then
+			for _, tag in ipairs(paragraph.tags) do
+				local args = {}
+				for str in string.gmatch(tag, "[^%s]+") do
+						table.insert(args, str)
+				end
+				if args[1] == "call" then
+					RTX.CallEvent(RTX.Event.new(args[2], args[3]))
+				end
+
+			end
+		end
 	end
+
 	self:getDocument():GetElementById("paragraphs").inner_rml = text
 end
 
