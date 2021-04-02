@@ -16,18 +16,18 @@
                             "z": 1.0
                         },
                         "collisionGroup": 31,
-                        "collisionMask": 31,
+                        "collisionMask": 0,
                         "gravity": {
                             "x": 0.0,
                             "y": -9.800000190734863,
                             "z": 1.0
                         },
-                        "isCCD": true,
+                        "isCCD": false,
                         "isGeneratesHitEvents": false,
-                        "isKinematic": false,
+                        "isKinematic": true,
                         "isMoveable": true,
-                        "isSleepable": true,
-                        "material": 1,
+                        "isSleepable": false,
+                        "material": 2,
                         "offset": {
                             "x": 0.0,
                             "y": 0.0,
@@ -50,18 +50,19 @@
                         "resFile": "rootex/assets/capsule.obj"
                     },
                     "MusicComponent": {
-                        "attenuationModel": 53251,
-                        "audio": "game/assets/music/birds_chirping.wav",
+                        "attenuationModel": 53249,
+                        "audio": "game/assets/music/birds_chirping_mono.wav",
                         "isAttenuated": true,
                         "isLooping": true,
-                        "maxDistance": 4.0,
+                        "maxDistance": 100.0,
                         "playOnStart": true,
                         "referenceDistance": 1.0,
-                        "rollOffFactor": 19.0
+                        "rollOffFactor": 1.0,
+                        "volume": 1.0
                     },
                     "TransformAnimationComponent": {
                         "animationMode": 2,
-                        "isPlayOnStart": false,
+                        "isPlayOnStart": true,
                         "keyframes": [
                             {
                                 "timePosition": 0.0,
@@ -78,14 +79,14 @@
                                     0.0,
                                     1.0000001192092896,
                                     0.0,
-                                    1.4999792575836182,
-                                    5.499999046325684,
-                                    -12.229997634887695,
+                                    -19.70262908935547,
+                                    1.3999991416931152,
+                                    -16.664287567138672,
                                     1.0
                                 ]
                             },
                             {
-                                "timePosition": 1.0,
+                                "timePosition": 2.0,
                                 "transform": [
                                     1.0000001192092896,
                                     0.0,
@@ -99,9 +100,9 @@
                                     0.0,
                                     1.0000001192092896,
                                     0.0,
-                                    1.4999792575836182,
-                                    5.399999141693115,
-                                    -9.429997444152832,
+                                    8.797370910644531,
+                                    1.3999991416931152,
+                                    -16.664287567138672,
                                     1.0
                                 ]
                             }
@@ -121,11 +122,12 @@
                                 "z": 0.5
                             }
                         },
+                        "overrideBoundingBox": false,
                         "passDown": 7,
                         "position": {
-                            "x": 0.0,
-                            "y": 5.413672924041748,
-                            "z": -9.812860488891602
+                            "x": 0.5615081787109375,
+                            "y": 1.3999991416931152,
+                            "z": -16.664287567138672
                         },
                         "rotation": {
                             "w": 1.0,
@@ -134,9 +136,9 @@
                             "z": -0.0
                         },
                         "scale": {
-                            "x": 1.0,
-                            "y": 1.0,
-                            "z": 1.0
+                            "x": 1.0000001192092896,
+                            "y": 1.0000004768371582,
+                            "z": 1.0000001192092896
                         }
                     }
                 }
@@ -227,6 +229,7 @@
                                 "z": 1187.4342041015625
                             }
                         },
+                        "overrideBoundingBox": false,
                         "passDown": 7,
                         "position": {
                             "x": 1.399999976158142,
@@ -294,6 +297,7 @@
                                 "z": 0.5
                             }
                         },
+                        "overrideBoundingBox": false,
                         "passDown": 7,
                         "position": {
                             "x": 0.0,
@@ -336,6 +340,9 @@
                             "script": null
                         },
                         "components": {
+                            "AudioListenerComponent": {
+                                "volume": 1.0
+                            },
                             "CameraComponent": {
                                 "aspectRatio": {
                                     "x": 16.0,
@@ -357,26 +364,26 @@
                                     "assaoShadowMultiplier": 0.75,
                                     "assaoShadowPower": 2.549999952316284,
                                     "assaoSharpness": 1.0,
-                                    "bloomBase": 1.0,
-                                    "bloomBaseSaturation": 1.0,
-                                    "bloomBrightness": 1.0,
-                                    "bloomSaturation": 1.0,
-                                    "bloomSize": 1.0,
-                                    "bloomThreshold": 0.800000011920929,
-                                    "bloomValue": 1.0,
-                                    "gaussianBlurMultiplier": 1.0,
+                                    "bloomBase": 1.9900000095367432,
+                                    "bloomBaseSaturation": 1.4700000286102295,
+                                    "bloomBrightness": 0.9100000262260437,
+                                    "bloomSaturation": 1.059999942779541,
+                                    "bloomSize": 4.199999809265137,
+                                    "bloomThreshold": 0.23999999463558197,
+                                    "bloomValue": 1.2400000095367432,
+                                    "gaussianBlurMultiplier": 1.8899999856948853,
                                     "isASSAO": true,
-                                    "isBloom": false,
+                                    "isBloom": true,
                                     "isFXAA": true,
                                     "isGaussianBlur": false,
                                     "isMonochrome": false,
                                     "isPostProcessing": true,
                                     "isSepia": false,
                                     "isToneMap": false,
-                                    "toneMapExposure": 0.0,
-                                    "toneMapOperator": 0,
-                                    "toneMapTransferFunction": 0,
-                                    "toneMapWhiteNits": 200.0
+                                    "toneMapExposure": 0.27000001072883606,
+                                    "toneMapOperator": 3,
+                                    "toneMapTransferFunction": 1,
+                                    "toneMapWhiteNits": 243.0
                                 }
                             },
                             "ModelComponent": {
@@ -404,6 +411,7 @@
                                         "z": 0.5
                                     }
                                 },
+                                "overrideBoundingBox": false,
                                 "passDown": 7,
                                 "position": {
                                     "x": 0.6399999856948853,
@@ -469,7 +477,6 @@
                         "speedMultiplier": 1.0,
                         "transitionTime": 1.0
                     },
-                    "AudioListenerComponent": {},
                     "CapsuleColliderComponent": {
                         "angularFactor": {
                             "x": 0.0,
@@ -501,16 +508,17 @@
                     "TransformComponent": {
                         "boundingBox": {
                             "center": {
-                                "x": -0.050872802734375,
-                                "y": -1.000030517578125,
-                                "z": 99.82308959960938
+                                "x": 0.0,
+                                "y": 0.9599999785423279,
+                                "z": 0.0
                             },
                             "extents": {
-                                "x": 94.88436889648438,
-                                "y": 23.418014526367188,
-                                "z": 100.25343322753906
+                                "x": 0.4099999964237213,
+                                "y": 1.0700000524520874,
+                                "z": 0.4399999976158142
                             }
                         },
+                        "overrideBoundingBox": true,
                         "passDown": 5,
                         "position": {
                             "x": 1.9000000953674316,
@@ -629,6 +637,7 @@
                         "z": 37.3461799621582
                     }
                 },
+                "overrideBoundingBox": false,
                 "passDown": 7,
                 "position": {
                     "x": 0.0,
@@ -686,7 +695,7 @@
                 "floats": []
             }
         },
-        "listener": 31,
+        "listener": 13,
         "preloads": [
             [
                 8,
@@ -737,12 +746,40 @@
                 "game/assets/droplet.wav"
             ],
             [
-                2,
-                "game/assets/music/birds_chirping.wav"
-            ],
-            [
                 5,
                 "game/assets/animations/female/female.fbx"
+            ],
+            [
+                2,
+                "game/assets/music/birds_chirping_mono.wav"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_thorn_spec.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_thorn_ddn.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_roof_diff.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/spnza_bricks_a_spec.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_thorn_diff.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/spnza_bricks_a_ddn.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_ceiling_a_diff.png"
             ]
         ],
         "startScheme": "Controls"

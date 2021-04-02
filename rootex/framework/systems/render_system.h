@@ -12,8 +12,6 @@
 
 #include "ASSAO/ASSAO.h"
 
-#define LINE_INITIAL_RENDER_CACHE 1000
-
 class BasicMaterial;
 
 class RenderSystem : public System

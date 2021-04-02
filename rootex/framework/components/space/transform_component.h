@@ -20,12 +20,12 @@ class TransformComponent : public Component
 
 	struct TransformBuffer
 	{
-		Vector3 m_Position;
-		Quaternion m_Rotation;
-		Vector3 m_Scale;
-		BoundingBox m_BoundingBox;
+		Vector3 position;
+		Quaternion rotation;
+		Vector3 scale;
+		BoundingBox boundingBox;
 
-		Matrix m_Transform;
+		Matrix transform;
 	};
 	TransformBuffer m_TransformBuffer;
 	int m_TransformPassDown;
@@ -36,8 +36,7 @@ class TransformComponent : public Component
 	Quaternion m_AbsoluteRotation;
 	Vector3 m_AbsoluteScale;
 	bool m_IsAbsoluteTransformDirty = true;
-
-	bool m_LockScale = false;
+	bool m_OverrideBoundingBox;
 
 	const TransformBuffer* getTransformBuffer() const { return &m_TransformBuffer; };
 
@@ -49,7 +48,7 @@ class TransformComponent : public Component
 	friend class RenderSystem;
 
 public:
-	TransformComponent(const Vector3& position, const Quaternion& rotation, const Vector3& scale, int transformPassDown, const BoundingBox& bounds);
+	TransformComponent(const Vector3& position, const Quaternion& rotation, const Vector3& scale, int transformPassDown, const BoundingBox& bounds, bool overrideBounds);
 	~TransformComponent() = default;
 
 	void setPosition(const Vector3& position);
@@ -67,11 +66,11 @@ public:
 	void addQuaternion(const Quaternion& applyQuaternion);
 	void addRotation(float yaw, float pitch, float roll);
 
-	Vector3 getPosition() const { return m_TransformBuffer.m_Position; }
-	Quaternion getRotation() const { return m_TransformBuffer.m_Rotation; };
-	const Vector3& getScale() const { return m_TransformBuffer.m_Scale; }
-	const Matrix& getLocalTransform() const { return m_TransformBuffer.m_Transform; }
-	Matrix getRotationPosition() const { return Matrix::CreateFromQuaternion(m_TransformBuffer.m_Rotation) * Matrix::CreateTranslation(m_TransformBuffer.m_Position) * m_ParentAbsoluteTransform; }
+	Vector3 getPosition() const { return m_TransformBuffer.position; }
+	Quaternion getRotation() const { return m_TransformBuffer.rotation; };
+	const Vector3& getScale() const { return m_TransformBuffer.scale; }
+	const Matrix& getLocalTransform() const { return m_TransformBuffer.transform; }
+	Matrix getRotationPosition() const { return Matrix::CreateFromQuaternion(m_TransformBuffer.rotation) * Matrix::CreateTranslation(m_TransformBuffer.position) * m_ParentAbsoluteTransform; }
 	Matrix getParentAbsoluteTransform() const { return m_ParentAbsoluteTransform; }
 	int getPassDowns() const { return m_TransformPassDown; }
 

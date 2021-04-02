@@ -73,6 +73,16 @@ ALuint AudioSource::getSourceID() const
 	return m_SourceID;
 }
 
+void AudioSource::setVelocity(const Vector3& velocity)
+{
+	AL_CHECK(alSourcefv(m_SourceID, AL_VELOCITY, &velocity.x));
+}
+
+void AudioSource::setVolume(float volume)
+{
+	AL_CHECK(alSourcef(m_SourceID, AL_GAIN, volume));
+}
+
 void AudioSource::setPosition(Vector3& position)
 {
 	AL_CHECK(alSource3f(m_SourceID, AL_POSITION, position.x, position.y, position.z));

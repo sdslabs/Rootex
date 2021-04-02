@@ -19,6 +19,7 @@ public:
 	MusicComponent(
 	    Ref<AudioResourceFile> audioFile,
 	    bool playOnStart,
+	    float volume,
 	    bool isLooping,
 	    bool attenuation,
 	    AudioSource::AttenuationModel model,

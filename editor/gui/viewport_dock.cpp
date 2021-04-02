@@ -15,7 +15,6 @@
 #include "ImGuizmo.h"
 
 ViewportDock::ViewportDock(const JSON::json& viewportJSON)
-    : m_IsCameraMoving(false)
 {
 	m_ViewportDockSettings.m_AspectRatio = (float)viewportJSON["aspectRatio"]["x"] / (float)viewportJSON["aspectRatio"]["y"];
 
@@ -287,13 +286,6 @@ void ViewportDock::draw(float deltaMilliseconds)
 				}
 			}
 
-			if (selectEntity && ImGui::BeginPopupContextWindow("Entity Shortcuts"))
-			{
-				EventManager::GetSingleton()->call(EditorEvents::EditorOpenScene, selectEntity->getScene());
-				InspectorDock::GetSingleton()->drawSceneActions(selectEntity->getScene());
-				ImGui::EndPopup();
-			}
-
 			if (ImGui::IsWindowHovered() && InputManager::GetSingleton()->isPressed("InputCameraActivate"))
 			{
 				static POINT cursorWhenActivated;
@@ -319,8 +311,8 @@ void ViewportDock::draw(float deltaMilliseconds)
 				float deltaUp = cursorWhenActivated.y - currentCursor.y;
 				float deltaRight = cursorWhenActivated.x - currentCursor.x;
 
-				m_EditorCameraPitch += deltaUp * deltaMilliseconds * 1e-3;
-				m_EditorCameraYaw += deltaRight * deltaMilliseconds * 1e-3;
+				m_EditorCameraPitch += deltaUp * deltaMilliseconds * 1e-3f;
+				m_EditorCameraYaw += deltaRight * deltaMilliseconds * 1e-3f;
 
 				SetCursorPos(cursorWhenActivated.x, cursorWhenActivated.y);
 

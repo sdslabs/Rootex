@@ -5,6 +5,7 @@ Ptr<Component> MusicComponent::Create(const JSON::json& componentData)
 	return std::make_unique<MusicComponent>(
 	    ResourceLoader::CreateAudioResourceFile(componentData.value("audio", "rootex/assets/ball.wav")),
 	    componentData.value("playOnStart", false),
+	    componentData.value("volume", 1.0f),
 	    componentData.value("isLooping", false),
 	    componentData.value("isAttenuated", false),
 	    (AudioSource::AttenuationModel)componentData.value("attenuationModel", (int)AudioSource::AttenuationModel::Linear),
@@ -16,13 +17,14 @@ Ptr<Component> MusicComponent::Create(const JSON::json& componentData)
 MusicComponent::MusicComponent(
     Ref<AudioResourceFile> audioFile,
     bool playOnStart,
+    float volume,
     bool isLooping,
     bool attenuation,
     AudioSource::AttenuationModel model,
     ALfloat rolloffFactor,
     ALfloat referenceDistance,
     ALfloat maxDistance)
-    : AudioComponent(playOnStart, isLooping, attenuation, model, rolloffFactor, referenceDistance, maxDistance)
+    : AudioComponent(playOnStart, volume, isLooping, attenuation, model, rolloffFactor, referenceDistance, maxDistance)
     , m_AudioFile(audioFile)
 {
 }

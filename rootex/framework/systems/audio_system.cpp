@@ -6,6 +6,7 @@
 #include "framework/ecs_factory.h"
 #include "components/audio/music_component.h"
 #include "components/audio/short_music_component.h"
+#include "components/physics/rigid_body_component.h"
 #include "core/audio/audio_source.h"
 #include "core/audio/static_audio_buffer.h"
 #include "core/audio/streaming_audio_buffer.h"
@@ -126,8 +127,7 @@ void AudioSystem::update(float deltaMilliseconds)
 
 	if (m_Listener)
 	{
-		const Vector3& listenerPosition = m_Listener->getPosition();
-		AL_CHECK(alListener3f(AL_POSITION, listenerPosition.x, listenerPosition.y, listenerPosition.z));
+		m_Listener->update();
 	}
 }
 
