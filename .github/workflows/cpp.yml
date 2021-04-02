@@ -8,39 +8,13 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-2016]
+        os: [windows-2019]
     
     steps:
     - uses: actions/checkout@v1
 
     - name: configure
-      run: ./generate_cache.bat /17
+      run: ./generate_cache.bat /19
     
     - name: build
       run: ./build.bat
-    
-    - uses: actions/upload-artifact@v2
-      with:
-        name: Rootex-${{ github.run_id }}
-        path: |
-          build/editor/Debug/Editor.exe
-          build/editor/Debug/*.dll
-
-          build/game/Debug/Game.exe
-          build/game/Debug/*.dll
-          
-          rootex.root
-          imgui.ini
-          build_fonts.bat
-
-          editor/assets/
-          editor/editor.app.json
-
-          game/assets/
-          game/game.app.json
-
-          rootex/assets/
-          rootex/vendor/**/LICENSE
-
-          LICENSE
-          README.md
