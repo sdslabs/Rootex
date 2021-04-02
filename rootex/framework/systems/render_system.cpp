@@ -11,6 +11,9 @@
 #include "application.h"
 #include "scene_loader.h"
 
+#define LINE_MAX_VERTEX_COUNT 1000
+#define LINE_VERTEX_COUNT 2
+
 RenderSystem* RenderSystem::GetSingleton()
 {
 	static RenderSystem singleton;
@@ -20,10 +23,6 @@ RenderSystem* RenderSystem::GetSingleton()
 RenderSystem::RenderSystem()
     : System("RenderSystem", UpdateOrder::Render, true)
     , m_Renderer(new Renderer())
-    , m_VSProjectionConstantBuffer(nullptr)
-    , m_VSPerFrameConstantBuffer(nullptr)
-    , m_PSPerFrameConstantBuffer(nullptr)
-    , m_PSPerLevelConstantBuffer(nullptr)
     , m_IsEditorRenderPassEnabled(false)
 {
 	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::OpenedScene, onOpenedScene);
@@ -33,8 +32,8 @@ RenderSystem::RenderSystem()
 	setProjectionConstantBuffers();
 
 	m_LineMaterial = std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetMaterial("rootex/assets/materials/line.rmat"));
-	m_CurrentFrameLines.m_Endpoints.reserve(LINE_INITIAL_RENDER_CACHE * 2 * 3);
-	m_CurrentFrameLines.m_Indices.reserve(LINE_INITIAL_RENDER_CACHE * 2);
+	m_CurrentFrameLines.m_Endpoints.reserve(LINE_MAX_VERTEX_COUNT * LINE_VERTEX_COUNT * 3);
+	m_CurrentFrameLines.m_Indices.reserve(LINE_MAX_VERTEX_COUNT * LINE_VERTEX_COUNT);
 }
 
 void RenderSystem::recoverLostDevice()

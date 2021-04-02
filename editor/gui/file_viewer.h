@@ -24,6 +24,7 @@ class FileViewer
 
 	void drawFileInfo();
 
+	Variant unloadAllResources(const Event* event);
 	Variant openFile(const Event* event);
 
 public:

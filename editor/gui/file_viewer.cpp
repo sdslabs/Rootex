@@ -31,15 +31,21 @@ void FileViewer::drawFileInfo()
 	ImGui::Columns(1);
 }
 
+Variant FileViewer::unloadAllResources(const Event* event)
+{
+	m_AudioPlayer.unload();
+	m_ImageViewer.unload();
+	m_TextViewer.unload();
+	m_MaterialViewer.unload();
+	return true;
+}
+
 Variant FileViewer::openFile(const Event* event)
 {
 	m_IsFileOpened = true;
 	m_IsEventJustReceived = true;
 
-	m_AudioPlayer.unload();
-	m_ImageViewer.unload();
-	m_TextViewer.unload();
-	m_MaterialViewer.unload();
+	unloadAllResources(nullptr);
 
 	m_OpenFilePath = Extract<String>(event->getData());
 
@@ -69,6 +75,7 @@ FileViewer::FileViewer()
     , m_IsEventJustReceived(false)
 {
 	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorOpenFile, openFile);
+	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::ApplicationExit, unloadAllResources);
 }
 
 void FileViewer::draw(float deltaMilliseconds)

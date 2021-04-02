@@ -173,7 +173,8 @@ struct VSAnimationConstantBuffer
 	explicit VSAnimationConstantBuffer() = delete;
 	VSAnimationConstantBuffer(const Vector<Matrix>& transforms)
 	{
-		for (int i = 0; i < MAX_BONES; i++)
+		int N = std::min(MAX_BONES, (int)transforms.size());
+		for (int i = 0; i < N; i++)
 		{
 			m_BoneTransforms[i] = transforms[i].Transpose();
 		}

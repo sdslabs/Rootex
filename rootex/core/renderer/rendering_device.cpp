@@ -175,7 +175,7 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height)
 		rsDesc.DepthClipEnable = TRUE;
 		rsDesc.ScissorEnable = FALSE;
 		rsDesc.MultisampleEnable = FALSE;
-		rsDesc.AntialiasedLineEnable = TRUE;
+		rsDesc.AntialiasedLineEnable = FALSE;
 
 		GFX_ERR_CHECK(m_Device->CreateRasterizerState(&rsDesc, &m_DefaultRS));
 	}
@@ -190,7 +190,7 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height)
 		rsDesc.DepthClipEnable = TRUE;
 		rsDesc.ScissorEnable = FALSE;
 		rsDesc.MultisampleEnable = FALSE;
-		rsDesc.AntialiasedLineEnable = TRUE;
+		rsDesc.AntialiasedLineEnable = FALSE;
 
 		GFX_ERR_CHECK(m_Device->CreateRasterizerState(&rsDesc, &m_SkyRS));
 	}
@@ -205,7 +205,7 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height)
 		rsDesc.DepthClipEnable = FALSE;
 		rsDesc.ScissorEnable = FALSE;
 		rsDesc.MultisampleEnable = FALSE;
-		rsDesc.AntialiasedLineEnable = TRUE;
+		rsDesc.AntialiasedLineEnable = FALSE;
 
 		GFX_ERR_CHECK(m_Device->CreateRasterizerState(&rsDesc, &m_UIRS));
 	}
@@ -220,7 +220,7 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height)
 		rsDesc.DepthClipEnable = TRUE;
 		rsDesc.ScissorEnable = TRUE;
 		rsDesc.MultisampleEnable = FALSE;
-		rsDesc.AntialiasedLineEnable = TRUE;
+		rsDesc.AntialiasedLineEnable = FALSE;
 
 		GFX_ERR_CHECK(m_Device->CreateRasterizerState(&rsDesc, &m_UIScissoredRS));
 	}
@@ -235,7 +235,7 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height)
 		wireframeDesc.DepthClipEnable = TRUE;
 		wireframeDesc.ScissorEnable = FALSE;
 		wireframeDesc.MultisampleEnable = FALSE;
-		wireframeDesc.AntialiasedLineEnable = TRUE;
+		wireframeDesc.AntialiasedLineEnable = FALSE;
 
 		GFX_ERR_CHECK(m_Device->CreateRasterizerState(&wireframeDesc, &m_WireframeRS));
 	}

@@ -13,42 +13,44 @@ Ptr<Component> TransformComponent::Create(const JSON::json& componentData)
 	    componentData.value("rotation", Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, 0.0f)),
 	    componentData.value("scale", Vector3 { 1.0f, 1.0f, 1.0f }),
 	    componentData.value("passDown", (int)TransformPassDown::All),
-	    componentData.value("boundingBox", BoundingBox { Vector3::Zero, Vector3 { 0.5f, 0.5f, 0.5f } }));
+	    componentData.value("boundingBox", BoundingBox { Vector3::Zero, Vector3 { 0.5f, 0.5f, 0.5f } }),
+	    componentData.value("overrideBoundingBox", false));
 }
 
 void TransformComponent::updateAbsoluteTransformValues()
 {
-	m_AbsoluteTransform = m_TransformBuffer.m_Transform * m_ParentAbsoluteTransform;
+	m_AbsoluteTransform = m_TransformBuffer.transform * m_ParentAbsoluteTransform;
 	m_AbsoluteTransform.Decompose(m_AbsoluteScale, m_AbsoluteRotation, m_AbsolutePosition);
 }
 
 void TransformComponent::updateTransformFromPositionRotationScale()
 {
-	m_TransformBuffer.m_Transform = Matrix::Identity;
-	m_TransformBuffer.m_Transform = Matrix::CreateTranslation(m_TransformBuffer.m_Position) * m_TransformBuffer.m_Transform;
-	m_TransformBuffer.m_Transform = Matrix::CreateFromQuaternion(m_TransformBuffer.m_Rotation) * m_TransformBuffer.m_Transform;
-	m_TransformBuffer.m_Transform = Matrix::CreateScale(m_TransformBuffer.m_Scale) * m_TransformBuffer.m_Transform;
+	m_TransformBuffer.transform = Matrix::Identity;
+	m_TransformBuffer.transform = Matrix::CreateTranslation(m_TransformBuffer.position) * m_TransformBuffer.transform;
+	m_TransformBuffer.transform = Matrix::CreateFromQuaternion(m_TransformBuffer.rotation) * m_TransformBuffer.transform;
+	m_TransformBuffer.transform = Matrix::CreateScale(m_TransformBuffer.scale) * m_TransformBuffer.transform;
 }
 
 void TransformComponent::updatePositionRotationScaleFromTransform(Matrix& transform)
 {
-	transform.Decompose(m_TransformBuffer.m_Scale, m_TransformBuffer.m_Rotation, m_TransformBuffer.m_Position);
+	transform.Decompose(m_TransformBuffer.scale, m_TransformBuffer.rotation, m_TransformBuffer.position);
 }
 
-TransformComponent::TransformComponent(const Vector3& position, const Quaternion& rotation, const Vector3& scale, int transformPassDown, const BoundingBox& bounds)
+TransformComponent::TransformComponent(const Vector3& position, const Quaternion& rotation, const Vector3& scale, int transformPassDown, const BoundingBox& bounds, bool overrideBounds)
     : m_TransformPassDown(transformPassDown)
+    , m_OverrideBoundingBox(overrideBounds)
 {
-	m_TransformBuffer.m_Position = position;
-	m_TransformBuffer.m_Rotation = rotation;
-	m_TransformBuffer.m_Scale = scale;
-	m_TransformBuffer.m_BoundingBox = bounds;
+	m_TransformBuffer.position = position;
+	m_TransformBuffer.rotation = rotation;
+	m_TransformBuffer.scale = scale;
+	m_TransformBuffer.boundingBox = bounds;
 
 	updateTransformFromPositionRotationScale();
 }
 
 void TransformComponent::setPosition(const Vector3& position)
 {
-	m_TransformBuffer.m_Position = position;
+	m_TransformBuffer.position = position;
 	updateTransformFromPositionRotationScale();
 	m_IsAbsoluteTransformDirty = true;
 }
@@ -60,29 +62,29 @@ void TransformComponent::setAbsolutePosition(const Vector3& position)
 
 void TransformComponent::setRotation(const float& yaw, const float& pitch, const float& roll)
 {
-	m_TransformBuffer.m_Rotation = Quaternion::CreateFromYawPitchRoll(yaw, pitch, roll);
+	m_TransformBuffer.rotation = Quaternion::CreateFromYawPitchRoll(yaw, pitch, roll);
 	updateTransformFromPositionRotationScale();
 	m_IsAbsoluteTransformDirty = true;
 }
 
 void TransformComponent::setRotationQuaternion(const Quaternion& rotation)
 {
-	m_TransformBuffer.m_Rotation = rotation;
+	m_TransformBuffer.rotation = rotation;
 	updateTransformFromPositionRotationScale();
 	m_IsAbsoluteTransformDirty = true;
 }
 
 void TransformComponent::setScale(const Vector3& scale)
 {
-	m_TransformBuffer.m_Scale = scale;
+	m_TransformBuffer.scale = scale;
 	updateTransformFromPositionRotationScale();
 	m_IsAbsoluteTransformDirty = true;
 }
 
 void TransformComponent::setTransform(const Matrix& transform)
 {
-	m_TransformBuffer.m_Transform = transform;
-	updatePositionRotationScaleFromTransform(m_TransformBuffer.m_Transform);
+	m_TransformBuffer.transform = transform;
+	updatePositionRotationScaleFromTransform(m_TransformBuffer.transform);
 	m_IsAbsoluteTransformDirty = true;
 }
 
@@ -94,20 +96,23 @@ void TransformComponent::setAbsoluteTransform(const Matrix& transform)
 
 void TransformComponent::setBounds(const BoundingBox& bounds)
 {
-	m_TransformBuffer.m_BoundingBox = bounds;
+	if (!m_OverrideBoundingBox)
+	{
+		m_TransformBuffer.boundingBox = bounds;
+	}
 }
 
 void TransformComponent::setRotationPosition(const Matrix& transform)
 {
-	m_TransformBuffer.m_Transform = Matrix::CreateScale(m_TransformBuffer.m_Scale) * transform;
-	updatePositionRotationScaleFromTransform(m_TransformBuffer.m_Transform);
+	m_TransformBuffer.transform = Matrix::CreateScale(m_TransformBuffer.scale) * transform;
+	updatePositionRotationScaleFromTransform(m_TransformBuffer.transform);
 	m_IsAbsoluteTransformDirty = true;
 }
 
 void TransformComponent::setAbsoluteRotationPosition(const Matrix& transform)
 {
-	setAbsoluteTransform(Matrix::CreateScale(m_TransformBuffer.m_Scale) * transform);
-	updatePositionRotationScaleFromTransform(m_TransformBuffer.m_Transform);
+	setAbsoluteTransform(Matrix::CreateScale(m_TransformBuffer.scale) * transform);
+	updatePositionRotationScaleFromTransform(m_TransformBuffer.transform);
 	m_IsAbsoluteTransformDirty = true;
 }
 
@@ -125,7 +130,7 @@ void TransformComponent::addTransform(const Matrix& applyTransform)
 
 void TransformComponent::addQuaternion(const Quaternion& applyQuaternion)
 {
-	m_TransformBuffer.m_Rotation = Quaternion::Concatenate(applyQuaternion, m_TransformBuffer.m_Rotation);
+	m_TransformBuffer.rotation = Quaternion::Concatenate(applyQuaternion, m_TransformBuffer.rotation);
 	updateTransformFromPositionRotationScale();
 	m_IsAbsoluteTransformDirty = true;
 }
@@ -137,7 +142,7 @@ void TransformComponent::addRotation(float yaw, float pitch, float roll)
 
 BoundingBox TransformComponent::getWorldSpaceBounds()
 {
-	BoundingBox transformedBox = m_TransformBuffer.m_BoundingBox;
+	BoundingBox transformedBox = m_TransformBuffer.boundingBox;
 	transformedBox.Transform(transformedBox, getAbsoluteTransform());
 	return transformedBox;
 }
@@ -186,10 +191,11 @@ JSON::json TransformComponent::getJSON() const
 {
 	JSON::json j;
 
-	j["position"] = m_TransformBuffer.m_Position;
-	j["rotation"] = m_TransformBuffer.m_Rotation;
-	j["scale"] = m_TransformBuffer.m_Scale;
-	j["boundingBox"] = m_TransformBuffer.m_BoundingBox;
+	j["position"] = m_TransformBuffer.position;
+	j["rotation"] = m_TransformBuffer.rotation;
+	j["scale"] = m_TransformBuffer.scale;
+	j["boundingBox"] = m_TransformBuffer.boundingBox;
+	j["overrideBoundingBox"] = m_OverrideBoundingBox;
 	j["passDown"] = m_TransformPassDown;
 
 	return j;
@@ -199,14 +205,20 @@ void TransformComponent::draw()
 {
 	highlight();
 
-	ImGui::DragFloat3("##Position", &m_TransformBuffer.m_Position.x, 0.01f);
+	if (ImGui::DragFloat3("##Position", &m_TransformBuffer.position.x, 0.01f))
+	{
+		setPosition(m_TransformBuffer.position);
+	}
 	ImGui::SameLine();
 	if (ImGui::Button("Position"))
 	{
-		m_TransformBuffer.m_Position = { 0.0f, 0.0f, 0.0f };
+		setPosition({ 0.0f, 0.0f, 0.0f });
 	}
 
-	ImGui::DragFloat4("##Rotation", &m_TransformBuffer.m_Rotation.x, 0.01f);
+	if (ImGui::DragFloat4("##Rotation", &m_TransformBuffer.rotation.x, 0.01f))
+	{
+		setRotationQuaternion(m_TransformBuffer.rotation);
+	}
 
 	ImGui::SameLine();
 	if (ImGui::Button("Rotation"))
@@ -214,65 +226,45 @@ void TransformComponent::draw()
 		setRotation(0.0f, 0.0f, 0.0f);
 	}
 
-	static bool lockedFirstFrame = false;
-	if (m_LockScale)
+	static bool lockedScale = false;
+	Vector3 savedScale = m_TransformBuffer.scale;
+	if (ImGui::DragFloat3("##Scale", &m_TransformBuffer.scale.x, 0.1f, 0.001f, 10000.0f))
 	{
-		static Vector3 lockedScale;
-		static float scaleRatioYX;
-		static float scaleRatioZX;
-		if (!lockedFirstFrame)
+		if (lockedScale && savedScale != Vector3::Zero)
 		{
-			lockedScale = m_TransformBuffer.m_Scale;
-			scaleRatioYX = lockedScale.y / lockedScale.x;
-			scaleRatioZX = lockedScale.z / lockedScale.x;
-			lockedFirstFrame = true;
+			Vector3 proportions = Vector3((m_TransformBuffer.scale - savedScale)) / savedScale;
+			float ratio = proportions.x + proportions.y + proportions.z;
+			setScale(savedScale * (1.0f + ratio));
 		}
-
-		if (lockedScale.x - m_TransformBuffer.m_Scale.x)
+		else
 		{
-			lockedScale.y = lockedScale.x * scaleRatioYX;
-			lockedScale.z = lockedScale.x * scaleRatioZX;
+			setScale(m_TransformBuffer.scale);
 		}
-		else if (lockedScale.y - m_TransformBuffer.m_Scale.y)
-		{
-			lockedScale.x = lockedScale.y / scaleRatioYX;
-			lockedScale.z = lockedScale.y * scaleRatioZX / scaleRatioYX;
-		}
-		else if (lockedScale.z - m_TransformBuffer.m_Scale.z)
-		{
-			lockedScale.x = lockedScale.z / scaleRatioZX;
-			lockedScale.y = lockedScale.z * scaleRatioYX / scaleRatioZX;
-		}
-
-		m_TransformBuffer.m_Scale = { lockedScale.x, lockedScale.y, lockedScale.z };
-		ImGui::DragFloat3("##Scale", &lockedScale.x, 0.01f, 0.0f, 0.0f);
 	}
-	else
-	{
-		lockedFirstFrame = false;
-		ImGui::DragFloat3("##Scale", &m_TransformBuffer.m_Scale.x, 0.01f, 0.0f, 0.0f);
-	}
-
 	ImGui::SameLine();
 	if (ImGui::Button("Scale"))
 	{
-		m_TransformBuffer.m_Scale = { 1.0f, 1.0f, 1.0f };
+		setScale({ 1.0f, 1.0f, 1.0f });
 	}
+	ImGui::Checkbox("Lock Scale", &lockedScale);
 
-	ImGui::Checkbox("Lock Scale", &m_LockScale);
+	ImGui::Checkbox("Override bounds", &m_OverrideBoundingBox);
 
-	ImGui::DragFloat3("##Center", &m_TransformBuffer.m_BoundingBox.Center.x, 0.01f);
-	ImGui::SameLine();
-	if (ImGui::Button("Center"))
+	if (m_OverrideBoundingBox)
 	{
-		m_TransformBuffer.m_BoundingBox.Center = { 0.0f, 0.0f, 0.0f };
-	}
+		ImGui::DragFloat3("##Center", &m_TransformBuffer.boundingBox.Center.x, 0.01f, 0.0f, FLT_MAX);
+		ImGui::SameLine();
+		if (ImGui::Button("Center"))
+		{
+			m_TransformBuffer.boundingBox.Center = Vector3::Zero;
+		}
 
-	ImGui::DragFloat3("##Bounds", &m_TransformBuffer.m_BoundingBox.Extents.x, 0.01f);
-	ImGui::SameLine();
-	if (ImGui::Button("Extents"))
-	{
-		m_Owner->onAllComponentsAdded();
+		ImGui::DragFloat3("##Extents", &m_TransformBuffer.boundingBox.Extents.x, 0.01f, 0.0f, FLT_MAX);
+		ImGui::SameLine();
+		if (ImGui::Button("Extents"))
+		{
+			m_TransformBuffer.boundingBox.Extents = 0.5f * Vector3::One;
+		}
 	}
 
 	if (ImGui::TreeNode("Pass Down"))
