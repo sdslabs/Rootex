@@ -47,7 +47,7 @@
                         "lodDistance": 10.0,
                         "lodEnable": true,
                         "materialOverrides": {
-                            "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
+                            "rootex/assets/materials/default.basic.rmat": "game/assets/materials/rootex.basic.rmat"
                         },
                         "renderPass": 1,
                         "resFile": "rootex/assets/cube.obj"
@@ -65,6 +65,7 @@
                                 "z": 0.5
                             }
                         },
+                        "overrideBoundingBox": false,
                         "passDown": 5,
                         "position": {
                             "x": 1.5033964473332162e-07,
@@ -117,10 +118,12 @@
                                 "lodDistance": 10.0,
                                 "lodEnable": true,
                                 "materialOverrides": {
-                                    "rootex/assets/materials/default.anim.rmat": "rootex/assets/materials/default.anim.rmat"
+                                    "game/assets/materials/animation/Material.anim.rmat": "game/assets/materials/glass.anim.rmat"
                                 },
                                 "renderPass": 1,
                                 "resFile": "rootex/assets/animation.dae",
+                                "rootExclusion": 1,
+                                "speedMultiplier": 1.0,
                                 "transitionTime": 1.0
                             },
                             "TransformComponent": {
@@ -136,6 +139,7 @@
                                         "z": 1.7636620998382568
                                     }
                                 },
+                                "overrideBoundingBox": false,
                                 "passDown": 7,
                                 "position": {
                                     "x": 0.0,
@@ -214,6 +218,7 @@
                                 "z": 1.7636620998382568
                             }
                         },
+                        "overrideBoundingBox": false,
                         "passDown": 7,
                         "position": {
                             "x": 0.0,
@@ -260,7 +265,7 @@
                         "lodDistance": 2.0,
                         "lodEnable": true,
                         "materialOverrides": {
-                            "rootex/assets/materials/default.basic.rmat": "game/assets/materials/rootex_logo_textured.rmat"
+                            "rootex/assets/materials/default.basic.rmat": "game/assets/materials/rootex.basic.rmat"
                         },
                         "renderPass": 1,
                         "resFile": "game/assets/test/sphere.obj"
@@ -305,6 +310,7 @@
                                 "z": 19.737079620361328
                             }
                         },
+                        "overrideBoundingBox": false,
                         "passDown": 7,
                         "position": {
                             "x": 0.0,
@@ -355,6 +361,7 @@
                         "z": 0.5
                     }
                 },
+                "overrideBoundingBox": false,
                 "passDown": 7,
                 "position": {
                     "x": 0.0,

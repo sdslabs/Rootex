@@ -22,8 +22,8 @@
                                         "lodDistance": 10.0,
                                         "lodEnable": true,
                                         "materialOverrides": {
-                                            "game/assets/materials/Condensation.rmat": "game/assets/materials/Condensation.rmat",
-                                            "game/assets/materials/Glass.rmat": "game/assets/materials/Glass.rmat"
+                                            "game/assets/materials/glass/Condensation.basic.rmat": "game/assets/materials/glass/Condensation.basic.rmat",
+                                            "game/assets/materials/glass/Glass.basic.rmat": "game/assets/materials/glass/Glass.basic.rmat"
                                         },
                                         "renderPass": 1,
                                         "resFile": "game/assets/test/glass.obj"
@@ -41,6 +41,7 @@
                                                 "z": 0.0495000034570694
                                             }
                                         },
+                                        "overrideBoundingBox": false,
                                         "passDown": 7,
                                         "position": {
                                             "x": 0.0,
@@ -278,17 +279,18 @@
                                         "z": 0.5
                                     }
                                 },
+                                "overrideBoundingBox": false,
                                 "passDown": 7,
                                 "position": {
-                                    "x": 3.148167133331299,
+                                    "x": 2.384185791015625e-07,
                                     "y": 0.0,
                                     "z": -8.0
                                 },
                                 "rotation": {
-                                    "w": 1.0,
+                                    "w": 0.9574342370033264,
                                     "x": -0.0,
                                     "y": 0.0,
-                                    "z": -0.0
+                                    "z": -0.2886515259742737
                                 },
                                 "scale": {
                                     "x": 1.0,
@@ -328,6 +330,7 @@
                                 "z": 0.5
                             }
                         },
+                        "overrideBoundingBox": false,
                         "passDown": 7,
                         "position": {
                             "x": 0.0,

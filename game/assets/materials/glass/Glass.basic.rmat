@@ -1,0 +1,21 @@
+{
+    "affectedBySky": 1,
+    "alpha": false,
+    "color": {
+        "a": 1.0,
+        "b": 1.0,
+        "g": 0.8634057641029358,
+        "r": 0.6123761534690857
+    },
+    "diffuse": "rootex/assets/white.png",
+    "hasNormal": 1,
+    "isLit": 0,
+    "lightmap": "rootex/assets/white.png",
+    "normal": "game/assets/test/WaterDropletsMixedBubbled001_NRM16_1K.png",
+    "reflect": 0.33000001311302185,
+    "refract": 0.6700000166893005,
+    "refractionConstant": 0.800000011920929,
+    "specIntensity": 1.0,
+    "specPower": 30.0,
+    "specular": "rootex/assets/white.png"
+}

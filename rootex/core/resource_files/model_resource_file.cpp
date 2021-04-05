@@ -46,15 +46,15 @@ void ModelResourceFile::reimport()
 		ZeroMemory(&vertex, sizeof(VertexData));
 		for (unsigned int v = 0; v < mesh->mNumVertices; v++)
 		{
-			vertex.m_Position.x = mesh->mVertices[v].x;
-			vertex.m_Position.y = mesh->mVertices[v].y;
-			vertex.m_Position.z = mesh->mVertices[v].z;
+			vertex.position.x = mesh->mVertices[v].x;
+			vertex.position.y = mesh->mVertices[v].y;
+			vertex.position.z = mesh->mVertices[v].z;
 
 			if (mesh->mNormals)
 			{
-				vertex.m_Normal.x = mesh->mNormals[v].x;
-				vertex.m_Normal.y = mesh->mNormals[v].y;
-				vertex.m_Normal.z = mesh->mNormals[v].z;
+				vertex.normal.x = mesh->mNormals[v].x;
+				vertex.normal.y = mesh->mNormals[v].y;
+				vertex.normal.z = mesh->mNormals[v].z;
 			}
 
 			if (mesh->mTextureCoords)
@@ -62,16 +62,16 @@ void ModelResourceFile::reimport()
 				if (mesh->mTextureCoords[0])
 				{
 					// Assuming the model has texture coordinates and taking only the first texture coordinate in case of multiple texture coordinates
-					vertex.m_TextureCoord.x = mesh->mTextureCoords[0][v].x;
-					vertex.m_TextureCoord.y = mesh->mTextureCoords[0][v].y;
+					vertex.textureCoord.x = mesh->mTextureCoords[0][v].x;
+					vertex.textureCoord.y = mesh->mTextureCoords[0][v].y;
 				}
 			}
 
 			if (mesh->mTangents)
 			{
-				vertex.m_Tangent.x = mesh->mTangents[v].x;
-				vertex.m_Tangent.y = mesh->mTangents[v].y;
-				vertex.m_Tangent.z = mesh->mTangents[v].z;
+				vertex.tangent.x = mesh->mTangents[v].x;
+				vertex.tangent.y = mesh->mTangents[v].y;
+				vertex.tangent.z = mesh->mTangents[v].z;
 			}
 
 			vertices.push_back(vertex);
@@ -106,7 +106,7 @@ void ModelResourceFile::reimport()
 			    &lod[0],
 			    indices.data(),
 			    indices.size(),
-			    &vertices[0].m_Position.x,
+			    &vertices[0].position.x,
 			    vertices.size(),
 			    sizeof(VertexData),
 			    targetIndexCount);

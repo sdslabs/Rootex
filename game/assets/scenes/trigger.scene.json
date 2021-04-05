@@ -112,7 +112,7 @@
                         "lodDistance": 10.0,
                         "lodEnable": true,
                         "materialOverrides": {
-                            "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
+                            "rootex/assets/materials/default.basic.rmat": "game/assets/materials/rootex.basic.rmat"
                         },
                         "renderPass": 1,
                         "resFile": "game/assets/test/sphere.obj"
@@ -228,7 +228,7 @@
                         "overrideBoundingBox": false,
                         "passDown": 7,
                         "position": {
-                            "x": -3.881686210632324,
+                            "x": 1.7570972442626953,
                             "y": 0.13474920392036438,
                             "z": -9.829999923706055
                         },
@@ -272,9 +272,9 @@
                         "lodDistance": 10.0,
                         "lodEnable": true,
                         "materialOverrides": {
-                            "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
+                            "rootex/assets/materials/default.basic.rmat": "game/assets/materials/touch.basic.rmat"
                         },
-                        "renderPass": 1,
+                        "renderPass": 4,
                         "resFile": "rootex/assets/cube.obj"
                     },
                     "TransformComponent": {
