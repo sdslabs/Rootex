@@ -125,7 +125,7 @@
                         "overrideBoundingBox": false,
                         "passDown": 7,
                         "position": {
-                            "x": 4.817785263061523,
+                            "x": -15.474970817565918,
                             "y": 1.3999991416931152,
                             "z": -16.664287567138672
                         },
@@ -374,7 +374,7 @@
                                     "gaussianBlurMultiplier": 1.0,
                                     "isASSAO": true,
                                     "isBloom": true,
-                                    "isFXAA": false,
+                                    "isFXAA": true,
                                     "isGaussianBlur": false,
                                     "isMonochrome": false,
                                     "isPostProcessing": true,
