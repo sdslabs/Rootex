@@ -74,16 +74,19 @@ void AnimatedModelComponent::render(float viewDistance)
 	bool uploadBones = true;
 	for (auto& [material, meshes] : m_AnimatedModelResourceFile->getMeshes())
 	{
-		if (uploadBones)
+		if (Ref<AnimatedBasicMaterialResourceFile> overridingMaterial = std::dynamic_pointer_cast<AnimatedBasicMaterialResourceFile>(m_MaterialOverrides[material]))
 		{
-			material->uploadAnimationBuffer(PerModelAnimationVSCBData(m_FinalTransforms));
-			uploadBones = false;
-		}
-		RenderSystem::GetSingleton()->getRenderer()->bind(m_MaterialOverrides[material].get());
+			if (uploadBones)
+			{
+				overridingMaterial->uploadAnimationBuffer(PerModelAnimationVSCBData(m_FinalTransforms));
+				uploadBones = false;
+			}
+			RenderSystem::GetSingleton()->getRenderer()->bind(overridingMaterial.get());
 
-		for (auto& mesh : meshes)
-		{
-			RenderSystem::GetSingleton()->getRenderer()->draw(mesh.m_VertexBuffer.get(), mesh.getLOD(getLODFactor(viewDistance)).get());
+			for (auto& mesh : meshes)
+			{
+				RenderSystem::GetSingleton()->getRenderer()->draw(mesh.m_VertexBuffer.get(), mesh.getLOD(getLODFactor(viewDistance)).get());
+			}
 		}
 	}
 }
@@ -275,14 +278,14 @@ void AnimatedModelComponent::draw()
 
 	if (ImGui::Button("Start"))
 	{
-		m_IsPlaying = true;
+		play();
 	}
 	ImGui::SameLine();
 	ImGui::SliderFloat("", &m_CurrentTimePosition, 0.0f, m_AnimatedModelResourceFile->getAnimationEndTime(m_CurrentAnimationName));
 	ImGui::SameLine();
 	if (ImGui::Button("Stop"))
 	{
-		m_IsPlaying = false;
+		stop();
 	}
 
 	ImGui::DragFloat("Speed Multiplier", &m_SpeedMultiplier, 0.01f, 0.0f, 10.0f);

@@ -190,10 +190,6 @@ void RenderSystem::update(float deltaMilliseconds)
 			ZoneNamedN(basicRenderPass, "Basic Render Pass", true);
 			renderPassRender(deltaMilliseconds, RenderPass::Basic);
 		}
-		{
-			ZoneNamedN(alphaRenderPass, "Alpha Render Pass", true);
-			renderPassRender(deltaMilliseconds, RenderPass::Alpha);
-		}
 		renderLines();
 	}
 	{
@@ -216,6 +212,10 @@ void RenderSystem::update(float deltaMilliseconds)
 		}
 		RenderingDevice::GetSingleton()->setRSType(currentRS);
 		RenderingDevice::GetSingleton()->disableSkyDSS();
+	}
+	{
+		ZoneNamedN(alphaRenderPass, "Alpha Render Pass", true);
+		renderPassRender(deltaMilliseconds, RenderPass::Alpha);
 	}
 }
 

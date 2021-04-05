@@ -161,15 +161,15 @@ void AnimatedModelResourceFile::reimport()
 
 		for (int j = 0; j < mesh->mNumVertices; j++)
 		{
-			vertex.m_Position.x = mesh->mVertices[j].x;
-			vertex.m_Position.y = mesh->mVertices[j].y;
-			vertex.m_Position.z = mesh->mVertices[j].z;
+			vertex.position.x = mesh->mVertices[j].x;
+			vertex.position.y = mesh->mVertices[j].y;
+			vertex.position.z = mesh->mVertices[j].z;
 
 			if (mesh->mNormals)
 			{
-				vertex.m_Normal.x = mesh->mNormals[j].x;
-				vertex.m_Normal.y = mesh->mNormals[j].y;
-				vertex.m_Normal.z = mesh->mNormals[j].z;
+				vertex.normal.x = mesh->mNormals[j].x;
+				vertex.normal.y = mesh->mNormals[j].y;
+				vertex.normal.z = mesh->mNormals[j].z;
 			}
 
 			if (mesh->mTextureCoords)
@@ -177,16 +177,16 @@ void AnimatedModelResourceFile::reimport()
 				if (mesh->mTextureCoords[0])
 				{
 					// Assuming the model has texture coordinates and taking the only the first texture coordinate in case of multiple texture coordinates
-					vertex.m_TextureCoord.x = mesh->mTextureCoords[0][j].x;
-					vertex.m_TextureCoord.y = mesh->mTextureCoords[0][j].y;
+					vertex.textureCoord.x = mesh->mTextureCoords[0][j].x;
+					vertex.textureCoord.y = mesh->mTextureCoords[0][j].y;
 				}
 			}
 
 			if (mesh->mTangents)
 			{
-				vertex.m_Tangent.x = mesh->mTangents[j].x;
-				vertex.m_Tangent.y = mesh->mTangents[j].y;
-				vertex.m_Tangent.z = mesh->mTangents[j].z;
+				vertex.tangent.x = mesh->mTangents[j].x;
+				vertex.tangent.y = mesh->mTangents[j].y;
+				vertex.tangent.z = mesh->mTangents[j].z;
 			}
 
 			vertices.push_back(vertex);
@@ -220,7 +220,7 @@ void AnimatedModelResourceFile::reimport()
 			    &lod[0],
 			    indices.data(),
 			    indices.size(),
-			    &vertices[0].m_Position.x,
+			    &vertices[0].position.x,
 			    vertices.size(),
 			    sizeof(AnimatedVertexData),
 			    targetIndexCount);
@@ -380,19 +380,19 @@ void AnimatedModelResourceFile::reimport()
 		for (auto& [vertexID, boneIndices] : verticesIndex)
 		{
 			boneIndices.resize(4);
-			vertices[vertexID].m_BoneIndices[0] = boneIndices[0];
-			vertices[vertexID].m_BoneIndices[1] = boneIndices[1];
-			vertices[vertexID].m_BoneIndices[2] = boneIndices[2];
-			vertices[vertexID].m_BoneIndices[3] = boneIndices[3];
+			vertices[vertexID].boneIndices[0] = boneIndices[0];
+			vertices[vertexID].boneIndices[1] = boneIndices[1];
+			vertices[vertexID].boneIndices[2] = boneIndices[2];
+			vertices[vertexID].boneIndices[3] = boneIndices[3];
 		}
 
 		for (auto& [vertexID, boneWeights] : verticesWeights)
 		{
 			boneWeights.resize(4);
-			vertices[vertexID].m_BoneWeights.x = boneWeights[0];
-			vertices[vertexID].m_BoneWeights.y = boneWeights[1];
-			vertices[vertexID].m_BoneWeights.z = boneWeights[2];
-			vertices[vertexID].m_BoneWeights.w = boneWeights[3];
+			vertices[vertexID].boneWeights.x = boneWeights[0];
+			vertices[vertexID].boneWeights.y = boneWeights[1];
+			vertices[vertexID].boneWeights.z = boneWeights[2];
+			vertices[vertexID].boneWeights.w = boneWeights[3];
 		}
 
 		Mesh extractedMesh;
