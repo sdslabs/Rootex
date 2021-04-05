@@ -63,7 +63,7 @@ void UIComponent::draw()
 	ImGui::SameLine();
 	if (ImGui::Button("Document"))
 	{
-		EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, m_FilePath);
+		EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { m_FilePath, (int)ResourceFile::Type::Text });
 	}
 	ImGui::EndGroup();
 

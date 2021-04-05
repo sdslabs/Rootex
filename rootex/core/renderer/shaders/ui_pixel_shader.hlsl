@@ -1,7 +1,7 @@
 #include "register_locations_pixel_shader.h"
 
-Texture2D ShaderTexture;
-SamplerState SampleType;
+Texture2D ShaderTexture : register(DIFFUSE_PS_HLSL);
+SamplerState SampleType : register(SAMPLER_PS_HLSL);
 
 struct UIPixelInput
 {

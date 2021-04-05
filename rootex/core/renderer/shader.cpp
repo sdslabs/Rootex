@@ -4,18 +4,16 @@
 
 #include "shaders/register_locations_pixel_shader.h"
 
-Shader::Shader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat)
-    : m_VertexPath(vertexPath)
-    , m_PixelPath(pixelPath)
+Shader::Shader(const String& vertexPath, const String& pixelPath, const BufferFormat& vertexBufferFormat)
 {
-	Microsoft::WRL::ComPtr<ID3DBlob> vertexShaderBlob = RenderingDevice::GetSingleton()->createBlob(vertexPath);
+	Microsoft::WRL::ComPtr<ID3DBlob> vertexShaderBlob = RenderingDevice::GetSingleton()->compileShader(vertexPath, "main", "vs_5_0");
 	if (!vertexShaderBlob)
 	{
 		ERR("Vertex Shader not found");
 	}
 	m_VertexShader = RenderingDevice::GetSingleton()->createVS(vertexShaderBlob.Get());
 
-	Microsoft::WRL::ComPtr<ID3DBlob> pixelShaderBlob = RenderingDevice::GetSingleton()->createBlob(pixelPath);
+	Microsoft::WRL::ComPtr<ID3DBlob> pixelShaderBlob = RenderingDevice::GetSingleton()->compileShader(pixelPath, "main", "ps_5_0");
 	if (!pixelShaderBlob)
 	{
 		ERR("Pixel Shader not found");
@@ -52,125 +50,9 @@ Shader::Shader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const Buffer
 	    vertexDescArray.size());
 }
 
-Shader::~Shader()
-{
-}
-
 void Shader::bind() const
 {
 	RenderingDevice::GetSingleton()->bind(m_VertexShader.Get());
 	RenderingDevice::GetSingleton()->bind(m_PixelShader.Get());
 	RenderingDevice::GetSingleton()->bind(m_InputLayout.Get());
-}
-
-ColorShader::ColorShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat)
-    : Shader(vertexPath, pixelPath, vertexBufferFormat)
-{
-}
-
-BasicShader::BasicShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat)
-    : Shader(vertexPath, pixelPath, vertexBufferFormat)
-{
-	m_SamplerState = RenderingDevice::GetSingleton()->createSS();
-}
-
-void BasicShader::set(const Texture* texture, int slot)
-{
-	RenderingDevice::GetSingleton()->setInPixelShader(slot, 1, texture->getTextureResourceView());
-}
-
-void BasicShader::bind() const
-{
-	Shader::bind();
-	RenderingDevice::GetSingleton()->setInPixelShader(m_SamplerState.Get());
-}
-
-ParticlesShader::ParticlesShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat)
-    : Shader(vertexPath, pixelPath, vertexBufferFormat)
-{
-	m_SamplerState = RenderingDevice::GetSingleton()->createSS();
-}
-
-void ParticlesShader::bind() const
-{
-	Shader::bind();
-	RenderingDevice::GetSingleton()->setInPixelShader(m_SamplerState.Get());
-}
-
-void ParticlesShader::set(const Texture* texture, int slot)
-{
-	RenderingDevice::GetSingleton()->setInPixelShader(slot, 1, texture->getTextureResourceView());
-}
-
-GridShader::GridShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat)
-    : Shader(vertexPath, pixelPath, vertexBufferFormat)
-{
-}
-
-SkyShader::SkyShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat)
-    : Shader(vertexPath, pixelPath, vertexBufferFormat)
-{
-	m_SamplerState = RenderingDevice::GetSingleton()->createSS();
-}
-
-void SkyShader::bind() const
-{
-	Shader::bind();
-	RenderingDevice::GetSingleton()->setInPixelShader(m_SamplerState.Get());
-}
-
-void SkyShader::setSkyTexture(const TextureCube* texture)
-{
-	RenderingDevice::GetSingleton()->setInPixelShader(SKY_PS_CPP, 1, texture->getTextureResourceView());
-}
-
-AnimationShader::AnimationShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat)
-    : Shader(vertexPath, pixelPath, vertexBufferFormat)
-{
-	m_SamplerState = RenderingDevice::GetSingleton()->createSS();
-}
-
-void AnimationShader::bind() const
-{
-	Shader::bind();
-	RenderingDevice::GetSingleton()->setInPixelShader(m_SamplerState.Get());
-}
-
-void AnimationShader::set(const Texture* texture, int slot)
-{
-	RenderingDevice::GetSingleton()->setInPixelShader(slot, 1, texture->getTextureResourceView());
-}
-
-FXAAShader::FXAAShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat)
-    : Shader(vertexPath, pixelPath, vertexBufferFormat)
-{
-	m_SamplerState = RenderingDevice::GetSingleton()->createSSAnisotropic();
-}
-
-void FXAAShader::bind() const
-{
-	Shader::bind();
-	RenderingDevice::GetSingleton()->setInPixelShader(m_SamplerState.Get());
-}
-
-void FXAAShader::set(ID3D11ShaderResourceView* srv)
-{
-	RenderingDevice::GetSingleton()->setInPixelShader(0, 1, srv);
-}
-
-LumaShader::LumaShader(const LPCWSTR& vertexPath, const LPCWSTR& pixelPath, const BufferFormat& vertexBufferFormat)
-    : Shader(vertexPath, pixelPath, vertexBufferFormat)
-{
-	m_SamplerState = RenderingDevice::GetSingleton()->createSSAnisotropic();
-}
-
-void LumaShader::bind() const
-{
-	Shader::bind();
-	RenderingDevice::GetSingleton()->setInPixelShader(m_SamplerState.Get());
-}
-
-void LumaShader::set(ID3D11ShaderResourceView* srv)
-{
-	RenderingDevice::GetSingleton()->setInPixelShader(0, 1, srv);
 }

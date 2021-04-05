@@ -67,7 +67,7 @@ void ShortMusicComponent::draw()
 	ImGui::SameLine();
 	if (ImGui::Button("Audio File"))
 	{
-		EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, m_AudioFile->getPath().string());
+		EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { m_AudioFile->getPath().generic_string(), (int)m_AudioFile->getType() });
 	}
 	ImGui::SameLine();
 	if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Select Audio"))

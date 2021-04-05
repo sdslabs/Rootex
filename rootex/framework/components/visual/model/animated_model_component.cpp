@@ -4,8 +4,6 @@
 #include "framework/entity.h"
 #include "renderer/render_pass.h"
 #include "framework/systems/render_system.h"
-#include "renderer/materials/animated_material.h"
-#include "renderer/material_library.h"
 #include "scene_loader.h"
 
 Ptr<Component> AnimatedModelComponent::Create(const JSON::json& componentData)
@@ -73,9 +71,14 @@ void AnimatedModelComponent::render(float viewDistance)
 
 	std::sort(m_AnimatedModelResourceFile->getMeshes().begin(), m_AnimatedModelResourceFile->getMeshes().end(), CompareMaterials);
 
+	bool uploadBones = true;
 	for (auto& [material, meshes] : m_AnimatedModelResourceFile->getMeshes())
 	{
-		(std::dynamic_pointer_cast<AnimatedMaterial>(material))->setVSConstantBuffer(VSAnimationConstantBuffer(m_FinalTransforms));
+		if (uploadBones)
+		{
+			material->uploadAnimationBuffer(PerModelAnimationVSCBData(m_FinalTransforms));
+			uploadBones = false;
+		}
 		RenderSystem::GetSingleton()->getRenderer()->bind(m_MaterialOverrides[material].get());
 
 		for (auto& mesh : meshes)
@@ -210,8 +213,9 @@ void AnimatedModelComponent::assignOverrides(Ref<AnimatedModelResourceFile> file
 	}
 	for (auto& [oldMaterial, newMaterial] : materialOverrides)
 	{
-		MaterialLibrary::CreateNewMaterialFile(newMaterial, MaterialLibrary::GetMaterial(oldMaterial)->getTypeName());
-		setMaterialOverride(MaterialLibrary::GetMaterial(oldMaterial), MaterialLibrary::GetMaterial(newMaterial));
+		setMaterialOverride(
+		    ResourceLoader::CreateNewAnimatedBasicMaterialResourceFile(oldMaterial),
+		    ResourceLoader::CreateNewAnimatedBasicMaterialResourceFile(newMaterial));
 	}
 }
 
@@ -258,7 +262,7 @@ void AnimatedModelComponent::draw()
 	ImGui::SameLine();
 	if (ImGui::Button("Model"))
 	{
-		EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, m_AnimatedModelResourceFile->getPath().string());
+		EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { m_AnimatedModelResourceFile->getPath().generic_string(), (int)m_AnimatedModelResourceFile->getType() });
 	}
 	ImGui::SameLine();
 	if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Animated Model File"))

@@ -1,9 +1,9 @@
 #include "renderable_component.h"
 
+#include "core/resource_loader.h"
 #include "components/visual/light/static_point_light_component.h"
 #include "system.h"
 #include "systems/render_system.h"
-#include "renderer/material_library.h"
 #include "scene_loader.h"
 
 RenderableComponent::RenderableComponent(
@@ -22,6 +22,7 @@ RenderableComponent::RenderableComponent(
     , m_LODEnable(lodEnable)
     , m_DependencyOnTransformComponent(this)
 {
+	m_PerModelCB = RenderingDevice::GetSingleton()->createBuffer<PerModelPSCB>(PerModelPSCB(), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
 }
 
 float RenderableComponent::getLODFactor(float viewDistance)
@@ -67,7 +68,9 @@ void RenderableComponent::render(float viewDistance)
 		perModel.staticPointsLightsAffecting[i].id = m_AffectingStaticLights[i];
 	}
 	perModel.staticPointsLightsAffectingCount = m_AffectingStaticLights.size();
-	Material::SetPSConstantBuffer(perModel, m_PerModelCB, PER_MODEL_PS_CPP);
+
+	RenderingDevice::GetSingleton()->editBuffer(perModel, m_PerModelCB.Get());
+	RenderingDevice::GetSingleton()->setPSCB(PER_MODEL_PS_CPP, 1, m_PerModelCB.GetAddressOf());
 }
 
 void RenderableComponent::postRender()
@@ -131,9 +134,16 @@ void RenderableComponent::setVisibility(bool enabled)
 	m_IsVisible = enabled;
 }
 
-void RenderableComponent::setMaterialOverride(Ref<Material> oldMaterial, Ref<Material> newMaterial)
+void RenderableComponent::setMaterialOverride(Ref<MaterialResourceFile> oldMaterial, Ref<MaterialResourceFile> newMaterial)
 {
-	m_MaterialOverrides[oldMaterial] = newMaterial;
+	if (oldMaterial && newMaterial)
+	{
+		m_MaterialOverrides[oldMaterial] = newMaterial;
+	}
+	else
+	{
+		WARN("Skipping nullptr material override");
+	}
 }
 
 JSON::json RenderableComponent::getJSON() const
@@ -146,7 +156,7 @@ JSON::json RenderableComponent::getJSON() const
 	j["materialOverrides"] = {};
 	for (auto& [oldMaterial, newMaterial] : m_MaterialOverrides)
 	{
-		j["materialOverrides"][oldMaterial->getFileName()] = newMaterial->getFileName();
+		j["materialOverrides"][oldMaterial->getPath().generic_string()] = newMaterial->getPath().generic_string();
 	}
 	j["affectingStaticLights"] = m_AffectingStaticLightIDs;
 
@@ -230,27 +240,27 @@ void RenderableComponent::draw()
 		{
 			ImGui::Image(oldMaterial->getPreview(), { 50, 50 });
 			ImGui::SameLine();
-			ImGui::Text("%s", FilePath(oldMaterial->getFileName()).filename().generic_string().c_str());
+			ImGui::Text("%s", oldMaterial->getPath().filename().generic_string().c_str());
 			ImGui::NextColumn();
 			ImGui::Image(newMaterial->getPreview(), { 50, 50 });
 			ImGui::SameLine();
 
 			ImGui::BeginGroup();
-			ImGui::Text("%s", FilePath(newMaterial->getFileName()).filename().generic_string().c_str());
-			if (ImGui::Button((ICON_ROOTEX_SEARCH "##" + newMaterial->getFileName()).c_str()))
+			ImGui::Text("%s", newMaterial->getPath().filename().generic_string().c_str());
+			if (ImGui::Button((ICON_ROOTEX_SEARCH "##" + newMaterial->getPath().generic_string()).c_str()))
 			{
-				EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, newMaterial->getFileName());
+				EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { newMaterial->getPath().generic_string(), (int)newMaterial->getType() });
 			}
 			ImGui::SameLine();
-			if (ImGui::Button((ICON_ROOTEX_PENCIL_SQUARE_O "##" + newMaterial->getFileName()).c_str()))
+			if (ImGui::Button((ICON_ROOTEX_PENCIL_SQUARE_O "##" + newMaterial->getPath().generic_string()).c_str()))
 			{
 				if (Optional<String> result = OS::SelectFile("Material(*.rmat)\0*.rmat\0", "game/assets/materials/"))
 				{
-					setMaterialOverride(oldMaterial, MaterialLibrary::GetMaterial(*result));
+					setMaterialOverride(oldMaterial, ResourceLoader::CreateMaterialResourceFile(*result));
 				}
 			}
 			ImGui::SameLine();
-			if (ImGui::Button((ICON_ROOTEX_REFRESH "##" + oldMaterial->getFileName()).c_str()))
+			if (ImGui::Button((ICON_ROOTEX_REFRESH "##" + oldMaterial->getPath().generic_string()).c_str()))
 			{
 				setMaterialOverride(oldMaterial, oldMaterial);
 			}

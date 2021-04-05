@@ -17,9 +17,6 @@ public:
 	explicit TextResourceFile(TextResourceFile&&) = delete;
 	virtual ~TextResourceFile() = default;
 
-	void reimport() override;
-	bool save() override;
-
 	/// Replace old data string with new data string.
 	void putString(const String& newData);
 	/// Remove 1 character from the end of the data buffer.
@@ -28,4 +25,7 @@ public:
 	/// Get the resource data buffer as a readable String.
 	String getString() const;
 	size_t getSize() const { return m_FileString.size(); }
+
+	void reimport() override;
+	bool save() override;
 };

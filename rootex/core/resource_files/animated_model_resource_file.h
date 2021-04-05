@@ -3,6 +3,7 @@
 #include "resource_file.h"
 #include "renderer/mesh.h"
 #include "core/animation/animation.h"
+#include "animated_basic_material_resource_file.h"
 
 #include "assimp/scene.h"
 
@@ -13,15 +14,13 @@ enum class RootExclusion : int
 	All = 2
 };
 
-class Material;
-
 /// Representation of an animated 3D model file. Supports .dae files
 class AnimatedModelResourceFile : public ResourceFile
 {
 private:
 	explicit AnimatedModelResourceFile(const FilePath& resData);
 
-	Vector<Pair<Ref<Material>, Vector<Mesh>>> m_Meshes;
+	Vector<Pair<Ref<AnimatedBasicMaterialResourceFile>, Vector<Mesh>>> m_Meshes;
 
 	HashMap<String, unsigned int> m_BoneMapping;
 	Vector<Matrix> m_BoneOffsets;
@@ -42,7 +41,7 @@ public:
 
 	void reimport() override;
 
-	Vector<Pair<Ref<Material>, Vector<Mesh>>>& getMeshes() { return m_Meshes; }
+	Vector<Pair<Ref<AnimatedBasicMaterialResourceFile>, Vector<Mesh>>>& getMeshes() { return m_Meshes; }
 	HashMap<String, SkeletalAnimation>& getAnimations() { return m_Animations; }
 	size_t getBoneCount() const { return m_BoneOffsets.size(); }
 

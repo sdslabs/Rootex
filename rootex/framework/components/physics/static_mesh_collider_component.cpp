@@ -67,7 +67,7 @@ void StaticMeshColliderComponent::draw()
 	ImGui::SameLine();
 	if (ImGui::Button("Collision Model"))
 	{
-		EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, m_CollisionModel->getPath().string());
+		EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { m_CollisionModel->getPath().generic_string(), (int)m_CollisionModel->getType() });
 	}
 	ImGui::SameLine();
 	if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Collision Model File"))

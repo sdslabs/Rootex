@@ -2,13 +2,13 @@
 
 #include "model_component.h"
 #include "renderer/render_pass.h"
-#include "renderer/material_library.h"
+#include "core/resource_files/basic_material_resource_file.h"
 
 class GridModelComponent : public ModelComponent
 {
 	DEFINE_COMPONENT(GridModelComponent);
 
-	Ref<Material> m_ColorMaterial;
+	Ref<BasicMaterialResourceFile> m_ColorMaterial;
 	Ptr<VertexBuffer> m_VertexBuffer;
 	Ptr<IndexBuffer> m_IndexBuffer;
 

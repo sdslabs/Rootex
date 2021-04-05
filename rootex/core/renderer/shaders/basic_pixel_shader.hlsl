@@ -3,13 +3,14 @@
 #include "basic_material.hlsli"
 #include "sky.hlsli"
 
-Texture2D ShaderTexture : register(DIFFUSE_PS_HLSL);
 TextureCube SkyTexture : register(SKY_PS_HLSL);
+
+Texture2D ShaderTexture : register(DIFFUSE_PS_HLSL);
 Texture2D NormalTexture : register(NORMAL_PS_HLSL);
 Texture2D SpecularTexture : register(SPECULAR_PS_HLSL);
 Texture2D LightmapTexture : register(LIGHTMAP_PS_HLSL);
 
-SamplerState SampleType;
+SamplerState SampleType : register(SAMPLER_PS_HLSL);
 
 struct PixelInputType
 {

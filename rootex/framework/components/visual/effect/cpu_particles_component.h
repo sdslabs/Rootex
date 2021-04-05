@@ -1,7 +1,7 @@
 #pragma once
 
 #include "renderer/vertex_data.h"
-#include "renderer/materials/particles_material.h"
+#include "core/resource_files/instancing_basic_material_resource_file.h"
 #include "components/visual/model/model_component.h"
 
 #define MAX_PARTICLES 5000
@@ -48,7 +48,7 @@ class CPUParticlesComponent : public ModelComponent
 
 	ParticleTemplate m_ParticleTemplate;
 	Vector<Particle> m_ParticlePool;
-	Ref<ParticlesMaterial> m_ParticlesMaterial;
+	Ref<InstancingBasicMaterialResourceFile> m_ParticlesMaterial;
 	size_t m_PoolIndex;
 	float m_EmitRate;
 
@@ -79,11 +79,10 @@ public:
 	    unsigned int renderPass);
 	~CPUParticlesComponent() = default;
 
-	void setMaterial(Ref<ParticlesMaterial> particlesMaterial);
+	void setMaterial(Ref<InstancingBasicMaterialResourceFile> particlesMaterial);
 	void emit(const ParticleTemplate& particleTemplate);
 	void expandPool(const size_t& poolSize);
 
-	bool setupData() override;
 	bool preRender(float deltaMilliseconds) override;
 	void render(float viewDistance) override;
 
