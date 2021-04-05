@@ -2,6 +2,7 @@
 
 #include "core/renderer/renderer.h"
 #include "core/renderer/render_pass.h"
+#include "core/resource_files/basic_material_resource_file.h"
 #include "main/window.h"
 #include "framework/ecs_factory.h"
 #include "framework/scene.h"
@@ -11,8 +12,6 @@
 #include "components/visual/model/animated_model_component.h"
 
 #include "ASSAO/ASSAO.h"
-
-class BasicMaterial;
 
 class RenderSystem : public System
 {
@@ -27,13 +26,14 @@ class RenderSystem : public System
 	Ptr<Renderer> m_Renderer;
 	Vector<Matrix> m_TransformationStack;
 
-	Ref<BasicMaterial> m_LineMaterial;
+	Ref<BasicMaterialResourceFile> m_LineMaterial;
 	LineRequests m_CurrentFrameLines;
 
-	Microsoft::WRL::ComPtr<ID3D11Buffer> m_VSPerFrameConstantBuffer;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> m_VSProjectionConstantBuffer;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> m_PSPerFrameConstantBuffer;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> m_PSPerLevelConstantBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> m_PerFrameVSCB;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> m_PerCameraChangeVSCB;
+
+	Microsoft::WRL::ComPtr<ID3D11Buffer> m_PerFramePSCB;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> m_PerScenePSCB;
 
 	bool m_IsEditorRenderPassEnabled;
 
@@ -72,10 +72,10 @@ public:
 	void enableWireframeRasterizer();
 	void resetDefaultRasterizer();
 
-	void setProjectionConstantBuffers();
-	void perFrameVSCBBinds(float fogStart, float fogEnd);
-	void perFramePSCBBinds(const Color& fogColor);
-	void perScenePSCBBinds();
+	void setPerCameraVSCBs();
+	void setPerFrameVSCBs(float fogStart, float fogEnd);
+	void setPerFramePSCBs(const Color& fogColor);
+	void setPerScenePSCBs();
 	void updateStaticLights();
 	void updatePerSceneBinds();
 

@@ -44,7 +44,7 @@
                         "lodDistance": 13.0,
                         "lodEnable": true,
                         "materialOverrides": {
-                            "rootex/assets/materials/default.rmat": "game/assets/materials/Door.rmat"
+                            "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
                         },
                         "renderPass": 1,
                         "resFile": "rootex/assets/capsule.obj"
@@ -58,7 +58,7 @@
                         "playOnStart": true,
                         "referenceDistance": 1.0,
                         "rollOffFactor": 1.0,
-                        "volume": 1.0
+                        "volume": 5.0
                     },
                     "TransformAnimationComponent": {
                         "animationMode": 2,
@@ -125,7 +125,7 @@
                         "overrideBoundingBox": false,
                         "passDown": 7,
                         "position": {
-                            "x": 0.5615081787109375,
+                            "x": 4.817785263061523,
                             "y": 1.3999991416931152,
                             "z": -16.664287567138672
                         },
@@ -200,18 +200,18 @@
                         "lodDistance": 31.0,
                         "lodEnable": true,
                         "materialOverrides": {
-                            "game/assets/materials/Alpha_Body_MAT.rmat": "game/assets/materials/Alpha_Body_MAT.rmat",
-                            "game/assets/materials/Alpha_Joints_MAT.rmat": "game/assets/materials/Alpha_Joints_MAT.rmat",
-                            "game/assets/materials/Material.001.rmat": "game/assets/materials/Material.001.rmat",
-                            "game/assets/materials/Material.002.rmat": "game/assets/materials/Material.002.rmat",
-                            "game/assets/materials/Material.003.rmat": "game/assets/materials/Material.003.rmat",
-                            "game/assets/materials/Material.004.rmat": "game/assets/materials/Material.004.rmat",
-                            "game/assets/materials/Material.006.rmat": "game/assets/materials/Material.006.rmat",
-                            "game/assets/materials/emision_1.rmat": "game/assets/materials/emision_1.rmat",
-                            "game/assets/materials/emision_2.rmat": "game/assets/materials/emision_2.rmat",
-                            "game/assets/materials/glass.rmat": "game/assets/materials/glass.rmat",
-                            "game/assets/materials/glass_1.rmat": "game/assets/materials/glass_1.rmat",
-                            "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                            "game/assets/materials/office/Alpha_Body_MAT.basic.rmat": "game/assets/materials/office/Alpha_Body_MAT.basic.rmat",
+                            "game/assets/materials/office/Alpha_Joints_MAT.basic.rmat": "game/assets/materials/office/Alpha_Joints_MAT.basic.rmat",
+                            "game/assets/materials/office/Material.001.basic.rmat": "game/assets/materials/office/Material.001.basic.rmat",
+                            "game/assets/materials/office/Material.002.basic.rmat": "game/assets/materials/office/Material.002.basic.rmat",
+                            "game/assets/materials/office/Material.003.basic.rmat": "game/assets/materials/office/Material.003.basic.rmat",
+                            "game/assets/materials/office/Material.004.basic.rmat": "game/assets/materials/office/Material.004.basic.rmat",
+                            "game/assets/materials/office/Material.006.basic.rmat": "game/assets/materials/office/Material.006.basic.rmat",
+                            "game/assets/materials/office/emision_1.basic.rmat": "game/assets/materials/office/emision_1.basic.rmat",
+                            "game/assets/materials/office/emision_2.basic.rmat": "game/assets/materials/office/emision_2.basic.rmat",
+                            "game/assets/materials/office/glass.basic.rmat": "game/assets/materials/office/glass.basic.rmat",
+                            "game/assets/materials/office/glass_1.basic.rmat": "game/assets/materials/office/glass_1.basic.rmat",
+                            "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
                         },
                         "renderPass": 1,
                         "resFile": "game/assets/office.fbx"
@@ -272,17 +272,17 @@
                     "DirectionalLightComponent": {
                         "ambientColor": {
                             "a": 1.0,
-                            "b": 0.21147412061691284,
-                            "g": 0.4615384340286255,
-                            "r": 0.3900911808013916
+                            "b": 0.8327759504318237,
+                            "g": 1.0,
+                            "r": 0.9522217512130737
                         },
                         "diffuseColor": {
                             "a": 1.0,
-                            "b": 0.21071776747703552,
-                            "g": 0.38461536169052124,
-                            "r": 0.18523281812667847
+                            "b": 0.9999912977218628,
+                            "g": 1.0,
+                            "r": 0.9999899864196777
                         },
-                        "diffuseIntensity": 3.4000000953674316
+                        "diffuseIntensity": 5.400000095367432
                     },
                     "TransformComponent": {
                         "boundingBox": {
@@ -355,26 +355,26 @@
                                     "assaoAdaptiveQualityLimit": 0.2529999911785126,
                                     "assaoBlurPassCount": 6,
                                     "assaoDetailShadowStrength": 2.0199999809265137,
-                                    "assaoFadeOutFrom": 38.0,
-                                    "assaoFadeOutTo": 43.0,
+                                    "assaoFadeOutFrom": 22.0,
+                                    "assaoFadeOutTo": 33.0,
                                     "assaoHorizonAngleThreshold": 0.14000000059604645,
                                     "assaoQualityLevel": 3,
-                                    "assaoRadius": 0.800000011920929,
+                                    "assaoRadius": 2.799999952316284,
                                     "assaoShadowClamp": 0.15000000596046448,
-                                    "assaoShadowMultiplier": 0.75,
-                                    "assaoShadowPower": 2.549999952316284,
+                                    "assaoShadowMultiplier": 0.8899999856948853,
+                                    "assaoShadowPower": 3.1700000762939453,
                                     "assaoSharpness": 1.0,
-                                    "bloomBase": 1.9900000095367432,
-                                    "bloomBaseSaturation": 1.4700000286102295,
-                                    "bloomBrightness": 0.9100000262260437,
-                                    "bloomSaturation": 1.059999942779541,
-                                    "bloomSize": 4.199999809265137,
-                                    "bloomThreshold": 0.23999999463558197,
-                                    "bloomValue": 1.2400000095367432,
-                                    "gaussianBlurMultiplier": 1.8899999856948853,
+                                    "bloomBase": 1.2000000476837158,
+                                    "bloomBaseSaturation": 1.0,
+                                    "bloomBrightness": 3.509999990463257,
+                                    "bloomSaturation": 1.0,
+                                    "bloomSize": 18.739999771118164,
+                                    "bloomThreshold": 0.6700000166893005,
+                                    "bloomValue": 1.3200000524520874,
+                                    "gaussianBlurMultiplier": 1.0,
                                     "isASSAO": true,
                                     "isBloom": true,
-                                    "isFXAA": true,
+                                    "isFXAA": false,
                                     "isGaussianBlur": false,
                                     "isMonochrome": false,
                                     "isPostProcessing": true,
@@ -393,7 +393,7 @@
                                 "lodDistance": 10.0,
                                 "lodEnable": true,
                                 "materialOverrides": {
-                                    "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                                    "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
                                 },
                                 "renderPass": 1,
                                 "resFile": "rootex/assets/cube.obj"
@@ -466,10 +466,10 @@
                         "isPlayOnStart": true,
                         "isVisible": true,
                         "lodBias": 0.0,
-                        "lodDistance": 50.0,
+                        "lodDistance": 30.0,
                         "lodEnable": true,
                         "materialOverrides": {
-                            "game/assets/materials/Akai_MAT.rmat": "game/assets/materials/Akai_MAT.rmat"
+                            "game/assets/materials/female/Akai_MAT.anim.rmat": "game/assets/materials/female/Akai_MAT.anim.rmat"
                         },
                         "renderPass": 1,
                         "resFile": "game/assets/animations/female/female.fbx",
@@ -559,12 +559,12 @@
             "FogComponent": {
                 "color": {
                     "a": 1.0,
-                    "b": 0.8833234906196594,
-                    "g": 0.9966555237770081,
-                    "r": 0.9688321948051453
+                    "b": 0.5117056965827942,
+                    "g": 1.0,
+                    "r": 0.900531530380249
                 },
-                "far": 44.0,
-                "near": 7.0
+                "far": 67.0,
+                "near": 5.0
             },
             "ModelComponent": {
                 "affectingStaticLights": [],
@@ -573,26 +573,26 @@
                 "lodDistance": 22.0,
                 "lodEnable": true,
                 "materialOverrides": {
-                    "game/assets/materials/Door.rmat": "game/assets/materials/Door.rmat",
-                    "game/assets/materials/Fence.rmat": "game/assets/materials/Fence.rmat",
-                    "game/assets/materials/Foothpath.rmat": "game/assets/materials/Foothpath.rmat",
-                    "game/assets/materials/Grass.rmat": "game/assets/materials/Grass.rmat",
-                    "game/assets/materials/Landscape.rmat": "game/assets/materials/Landscape.rmat",
-                    "game/assets/materials/Leaf.rmat": "game/assets/materials/Leaf.rmat",
-                    "game/assets/materials/Road.rmat": "game/assets/materials/Road.rmat",
-                    "game/assets/materials/Rock.rmat": "game/assets/materials/Rock.rmat",
-                    "game/assets/materials/Roof.001.rmat": "game/assets/materials/Roof.001.rmat",
-                    "game/assets/materials/Roof.002.rmat": "game/assets/materials/Roof.002.rmat",
-                    "game/assets/materials/Roof.rmat": "game/assets/materials/Roof.rmat",
-                    "game/assets/materials/Topper.rmat": "game/assets/materials/Topper.rmat",
-                    "game/assets/materials/Tree.rmat": "game/assets/materials/Tree.rmat",
-                    "game/assets/materials/Window.rmat": "game/assets/materials/Window.rmat",
-                    "game/assets/materials/Window_aligment.001.rmat": "game/assets/materials/Window_aligment.001.rmat",
-                    "game/assets/materials/Window_aligment.rmat": "game/assets/materials/Window_aligment.rmat",
-                    "game/assets/materials/house.001.rmat": "game/assets/materials/house.001.rmat",
-                    "game/assets/materials/house.002.rmat": "game/assets/materials/house.002.rmat",
-                    "game/assets/materials/house.rmat": "game/assets/materials/house.rmat",
-                    "game/assets/materials/water.rmat": "game/assets/materials/water.rmat"
+                    "game/assets/materials/terrain/Door.basic.rmat": "game/assets/materials/terrain/Door.basic.rmat",
+                    "game/assets/materials/terrain/Fence.basic.rmat": "game/assets/materials/terrain/Fence.basic.rmat",
+                    "game/assets/materials/terrain/Foothpath.basic.rmat": "game/assets/materials/terrain/Foothpath.basic.rmat",
+                    "game/assets/materials/terrain/Grass.basic.rmat": "game/assets/materials/terrain/Grass.basic.rmat",
+                    "game/assets/materials/terrain/Landscape.basic.rmat": "game/assets/materials/terrain/Landscape.basic.rmat",
+                    "game/assets/materials/terrain/Leaf.basic.rmat": "game/assets/materials/terrain/Leaf.basic.rmat",
+                    "game/assets/materials/terrain/Road.basic.rmat": "game/assets/materials/terrain/Road.basic.rmat",
+                    "game/assets/materials/terrain/Rock.basic.rmat": "game/assets/materials/terrain/Rock.basic.rmat",
+                    "game/assets/materials/terrain/Roof.001.basic.rmat": "game/assets/materials/terrain/Roof.001.basic.rmat",
+                    "game/assets/materials/terrain/Roof.002.basic.rmat": "game/assets/materials/terrain/Roof.002.basic.rmat",
+                    "game/assets/materials/terrain/Roof.basic.rmat": "game/assets/materials/terrain/Roof.basic.rmat",
+                    "game/assets/materials/terrain/Topper.basic.rmat": "game/assets/materials/terrain/Topper.basic.rmat",
+                    "game/assets/materials/terrain/Tree.basic.rmat": "game/assets/materials/terrain/Tree.basic.rmat",
+                    "game/assets/materials/terrain/Window.basic.rmat": "game/assets/materials/terrain/Window.basic.rmat",
+                    "game/assets/materials/terrain/Window_aligment.001.basic.rmat": "game/assets/materials/terrain/Window_aligment.001.basic.rmat",
+                    "game/assets/materials/terrain/Window_aligment.basic.rmat": "game/assets/materials/terrain/Window_aligment.basic.rmat",
+                    "game/assets/materials/terrain/house.001.basic.rmat": "game/assets/materials/terrain/house.001.basic.rmat",
+                    "game/assets/materials/terrain/house.002.basic.rmat": "game/assets/materials/terrain/house.002.basic.rmat",
+                    "game/assets/materials/terrain/house.basic.rmat": "game/assets/materials/terrain/house.basic.rmat",
+                    "game/assets/materials/terrain/water.basic.rmat": "game/assets/materials/terrain/water.basic.rmat"
                 },
                 "renderPass": 1,
                 "resFile": "rootex/assets/terrain.obj"

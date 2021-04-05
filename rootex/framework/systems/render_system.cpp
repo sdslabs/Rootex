@@ -1,5 +1,6 @@
 #include "render_system.h"
 
+#include "core/resource_loader.h"
 #include "components/visual/effect/fog_component.h"
 #include "components/visual/effect/sky_component.h"
 #include "components/visual/model/grid_model_component.h"
@@ -7,7 +8,6 @@
 #include "renderer/shaders/register_locations_vertex_shader.h"
 #include "renderer/shaders/register_locations_pixel_shader.h"
 #include "light_system.h"
-#include "renderer/material_library.h"
 #include "application.h"
 #include "scene_loader.h"
 
@@ -29,11 +29,15 @@ RenderSystem::RenderSystem()
 
 	m_Camera = SceneLoader::GetSingleton()->getRootScene()->getEntity()->getComponent<CameraComponent>();
 	m_TransformationStack.push_back(Matrix::Identity);
-	setProjectionConstantBuffers();
 
-	m_LineMaterial = std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetMaterial("rootex/assets/materials/line.rmat"));
+	m_LineMaterial = ResourceLoader::CreateBasicMaterialResourceFile("rootex/assets/materials/line.basic.rmat");
 	m_CurrentFrameLines.m_Endpoints.reserve(LINE_MAX_VERTEX_COUNT * LINE_VERTEX_COUNT * 3);
 	m_CurrentFrameLines.m_Indices.reserve(LINE_MAX_VERTEX_COUNT * LINE_VERTEX_COUNT);
+
+	m_PerFrameVSCB = RenderingDevice::GetSingleton()->createBuffer(PerFrameVSCB(), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
+	m_PerCameraChangeVSCB = RenderingDevice::GetSingleton()->createBuffer(Matrix(), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
+	m_PerFramePSCB = RenderingDevice::GetSingleton()->createBuffer(PerFramePSCB(), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
+	m_PerScenePSCB = RenderingDevice::GetSingleton()->createBuffer(PerScenePSCB(), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
 }
 
 void RenderSystem::recoverLostDevice()
@@ -169,9 +173,9 @@ void RenderSystem::update(float deltaMilliseconds)
 		RenderingDevice::GetSingleton()->setDSS();
 		RenderingDevice::GetSingleton()->setAlphaBS();
 
-		perFrameVSCBBinds(fogStart, fogEnd);
+		setPerFrameVSCBs(fogStart, fogEnd);
 		const Color& fogColor = clearColor;
-		perFramePSCBBinds(fogColor);
+		setPerFramePSCBs(fogColor);
 	}
 	{
 		ZoneNamedN(renderPasses, "Render Passes", true);
@@ -223,7 +227,7 @@ void RenderSystem::renderLines()
 
 		enableLineRenderMode();
 
-		VertexBuffer vb(m_CurrentFrameLines.m_Endpoints);
+		VertexBuffer vb((const char*)m_CurrentFrameLines.m_Endpoints.data(), m_CurrentFrameLines.m_Endpoints.size() / 3, sizeof(float) * 3, D3D11_USAGE_IMMUTABLE, 0);
 		IndexBuffer ib(m_CurrentFrameLines.m_Indices);
 
 		m_Renderer->draw(&vb, &ib);
@@ -370,27 +374,33 @@ void RenderSystem::resetDefaultRasterizer()
 	RenderingDevice::GetSingleton()->setRSType(RenderingDevice::RasterizerState::Default);
 }
 
-void RenderSystem::setProjectionConstantBuffers()
+void RenderSystem::setPerCameraVSCBs()
 {
 	const Matrix& projection = getCamera()->getProjectionMatrix();
-	Material::SetVSConstantBuffer(projection.Transpose(), m_VSProjectionConstantBuffer, PER_CAMERA_CHANGE_VS_CPP);
+	RenderingDevice::GetSingleton()->editBuffer(projection.Transpose(), m_PerCameraChangeVSCB.Get());
+
+	RenderingDevice::GetSingleton()->setVSCB(PER_CAMERA_CHANGE_VS_CPP, 1, m_PerCameraChangeVSCB.GetAddressOf());
 }
 
-void RenderSystem::perFrameVSCBBinds(float fogStart, float fogEnd)
+void RenderSystem::setPerFrameVSCBs(float fogStart, float fogEnd)
 {
 	const Matrix& view = getCamera()->getViewMatrix();
-	Material::SetVSConstantBuffer(PerFrameVSCB({ view.Transpose(), -fogStart, -fogEnd }), m_VSPerFrameConstantBuffer, PER_FRAME_VS_CPP);
+	RenderingDevice::GetSingleton()->editBuffer(PerFrameVSCB { view.Transpose(), -fogStart, -fogEnd }, m_PerFrameVSCB.Get());
+
+	RenderingDevice::GetSingleton()->setVSCB(PER_FRAME_VS_CPP, 1, m_PerFrameVSCB.GetAddressOf());
 }
 
-void RenderSystem::perFramePSCBBinds(const Color& fogColor)
+void RenderSystem::setPerFramePSCBs(const Color& fogColor)
 {
 	PerFramePSCB perFrame;
 	perFrame.lights = LightSystem::GetSingleton()->getDynamicLights();
 	perFrame.fogColor = fogColor;
-	Material::SetPSConstantBuffer(perFrame, m_PSPerFrameConstantBuffer, PER_FRAME_PS_CPP);
+	RenderingDevice::GetSingleton()->editBuffer(perFrame, m_PerFramePSCB.Get());
+
+	RenderingDevice::GetSingleton()->setPSCB(PER_FRAME_PS_CPP, 1, m_PerFramePSCB.GetAddressOf());
 }
 
-void RenderSystem::perScenePSCBBinds()
+void RenderSystem::setPerScenePSCBs()
 {
 	calculateTransforms(SceneLoader::GetSingleton()->getRootScene());
 	updateStaticLights();
@@ -398,14 +408,16 @@ void RenderSystem::perScenePSCBBinds()
 
 void RenderSystem::updateStaticLights()
 {
-	PerLevelPSCB perScene;
+	PerScenePSCB perScene;
 	perScene.staticLights = LightSystem::GetSingleton()->getStaticPointLights();
-	Material::SetPSConstantBuffer(perScene, m_PSPerLevelConstantBuffer, PER_SCENE_PS_CPP);
+	RenderingDevice::GetSingleton()->editBuffer(perScene, m_PerScenePSCB.Get());
+
+	RenderingDevice::GetSingleton()->setPSCB(PER_SCENE_PS_CPP, 1, m_PerScenePSCB.GetAddressOf());
 }
 
 void RenderSystem::updatePerSceneBinds()
 {
-	perScenePSCBBinds();
+	setPerScenePSCBs();
 }
 
 void RenderSystem::enableLineRenderMode()
@@ -423,7 +435,7 @@ void RenderSystem::setCamera(CameraComponent* camera)
 	if (camera)
 	{
 		m_Camera = camera;
-		setProjectionConstantBuffers();
+		setPerCameraVSCBs();
 	}
 }
 

@@ -202,11 +202,11 @@ void Entity::draw()
 	{
 		if (ImGui::Selectable(m_Script->getFilePath().c_str()))
 		{
-			EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, m_Script->getFilePath());
+			EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { m_Script->getFilePath(), (int)ResourceFile::Type::Text });
 		}
 		if (ImGui::Button(ICON_ROOTEX_EXTERNAL_LINK "##Open Script"))
 		{
-			EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, m_Script->getFilePath());
+			EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { m_Script->getFilePath(), (int)ResourceFile::Type::Text });
 		}
 		ImGui::SameLine();
 		if (ImGui::Button(ICON_ROOTEX_REFRESH "##Reload"))

@@ -2,7 +2,6 @@
 
 #include "resource_loader.h"
 #include "image_resource_file.h"
-#include "renderer/material_library.h"
 #include "renderer/vertex_data.h"
 #include "renderer/vertex_buffer.h"
 #include "renderer/index_buffer.h"
@@ -243,32 +242,31 @@ void AnimatedModelResourceFile::reimport()
 			WARN("Material does not have alpha: " + String(material->GetName().C_Str()));
 		}
 
-		Ref<AnimatedMaterial> extractedMaterial;
+		Ref<AnimatedBasicMaterialResourceFile> extractedMaterial;
 
-		String materialPath;
+		String materialPath(material->GetName().C_Str());
 
-		if (String(material->GetName().C_Str()) == "DefaultMaterial")
+		if (materialPath == "DefaultMaterial" || materialPath == "None" || materialPath.empty())
 		{
-			materialPath = MaterialLibrary::s_AnimatedDefaultMaterialPath;
+			materialPath = "rootex/assets/materials/default.anim.rmat";
 		}
 		else
 		{
-			materialPath = "game/assets/materials/" + String(material->GetName().C_Str()) + ".rmat";
+			String dir = "game/assets/materials/" + getPath().stem().generic_string();
+			if (!OS::IsExists(dir))
+			{
+				OS::CreateDirectoryName(dir);
+			}
+			materialPath = dir + "/" + String(material->GetName().C_Str()) + ".anim.rmat";
 		}
 
 		if (OS::IsExists(materialPath))
 		{
-			extractedMaterial = std::dynamic_pointer_cast<AnimatedMaterial>(MaterialLibrary::GetMaterial(materialPath));
-			if (!extractedMaterial)
-			{
-				WARN("Material loaded was not an AnimatedMaterial. Replacing with default AnimatedMaterial: " + materialPath);
-				extractedMaterial = std::dynamic_pointer_cast<AnimatedMaterial>(MaterialLibrary::GetDefaultAnimatedMaterial());
-			}
+			extractedMaterial = ResourceLoader::CreateAnimatedBasicMaterialResourceFile(materialPath);
 		}
 		else
 		{
-			MaterialLibrary::CreateNewMaterialFile(materialPath, "AnimatedMaterial");
-			extractedMaterial = std::dynamic_pointer_cast<AnimatedMaterial>(MaterialLibrary::GetMaterial(materialPath));
+			extractedMaterial = ResourceLoader::CreateNewAnimatedBasicMaterialResourceFile(materialPath);
 			extractedMaterial->setColor({ color.r, color.g, color.b, alpha });
 
 			for (int i = 0; i < material->GetTextureCount(aiTextureType_DIFFUSE); i++)
@@ -285,7 +283,7 @@ void AnimatedModelResourceFile::reimport()
 
 					if (image)
 					{
-						extractedMaterial->setDiffuseTexture(image);
+						extractedMaterial->setDiffuse(image);
 					}
 					else
 					{
@@ -294,7 +292,7 @@ void AnimatedModelResourceFile::reimport()
 				}
 				else
 				{
-					WARN("Embedded diffuse texture found in material: " + extractedMaterial->getFullName() + ". Embedded textures are unsupported.");
+					WARN("Embedded diffuse texture found in material: " + materialPath + ". Embedded textures are unsupported.");
 				}
 			}
 
@@ -310,16 +308,16 @@ void AnimatedModelResourceFile::reimport()
 
 					if (image)
 					{
-						extractedMaterial->setNormalTexture(image);
+						extractedMaterial->setNormal(image);
 					}
 					else
 					{
-						WARN("Could not set material normal map texture: " + texturePath);
+						WARN("Could not set material normal texture: " + texturePath);
 					}
 				}
 				else
 				{
-					WARN("Embedded normal texture found in material: " + extractedMaterial->getFullName() + ". Embedded textures are unsupported.");
+					WARN("Embedded normal texture found in material: " + materialPath + ". Embedded textures are unsupported.");
 				}
 			}
 
@@ -335,16 +333,16 @@ void AnimatedModelResourceFile::reimport()
 
 					if (image)
 					{
-						extractedMaterial->setSpecularTexture(image);
+						extractedMaterial->setSpecular(image);
 					}
 					else
 					{
-						WARN("Could not set material specular map texture: " + texturePath);
+						WARN("Could not set material specular texture: " + texturePath);
 					}
 				}
 				else
 				{
-					WARN("Embedded specular texture found in material: " + extractedMaterial->getFullName() + ". Embedded textures are unsupported.");
+					WARN("Embedded specular texture found in material: " + materialPath + ". Embedded textures are unsupported.");
 				}
 			}
 		}
@@ -398,7 +396,7 @@ void AnimatedModelResourceFile::reimport()
 		}
 
 		Mesh extractedMesh;
-		extractedMesh.m_VertexBuffer.reset(new VertexBuffer(vertices));
+		extractedMesh.m_VertexBuffer.reset(new VertexBuffer((const char*)vertices.data(), vertices.size(), sizeof(AnimatedVertexData), D3D11_USAGE_IMMUTABLE, 0));
 		extractedMesh.addLOD(std::make_shared<IndexBuffer>(indices), 1.0f);
 		for (int i = 0; i < MAX_LOD_COUNT - 1; i++)
 		{
@@ -434,7 +432,7 @@ void AnimatedModelResourceFile::reimport()
 
 		if (!found && extractedMaterial)
 		{
-			getMeshes().push_back(Pair<Ref<Material>, Vector<Mesh>>(extractedMaterial, { extractedMesh }));
+			getMeshes().push_back(Pair<Ref<AnimatedBasicMaterialResourceFile>, Vector<Mesh>>(extractedMaterial, { extractedMesh }));
 		}
 	}
 

@@ -19,7 +19,7 @@
                                 "lodDistance": 10.0,
                                 "lodEnable": true,
                                 "materialOverrides": {
-                                    "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                                    "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
                                 },
                                 "renderPass": 1,
                                 "resFile": "rootex/assets/cube.obj"
@@ -37,6 +37,8 @@
                                         "z": 0.5
                                     }
                                 },
+                                "overrideBoundingBox": false,
+                                "passDown": 7,
                                 "position": {
                                     "x": 1.4000000953674316,
                                     "y": -0.10000002384185791,
@@ -88,9 +90,9 @@
                                 "lodDistance": 0.0,
                                 "lodEnable": false,
                                 "materialOverrides": {
-                                    "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                                    "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
                                 },
-                                "materialPath": "game/assets/materials/test_particles.rmat",
+                                "materialPath": "rootex/assets/materials/default.anim.rmat",
                                 "particleTemplate": {
                                     "angularVelocityVariation": 0.5,
                                     "colorBegin": {
@@ -246,9 +248,11 @@
                                         "z": 0.5
                                     }
                                 },
+                                "overrideBoundingBox": false,
+                                "passDown": 7,
                                 "position": {
-                                    "x": 3.8000001907348633,
-                                    "y": 0.5541576147079468,
+                                    "x": -4.199999809265137,
+                                    "y": 1.410984754562378,
                                     "z": -6.579999923706055
                                 },
                                 "rotation": {
@@ -297,9 +301,9 @@
                                 "lodDistance": 0.0,
                                 "lodEnable": false,
                                 "materialOverrides": {
-                                    "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                                    "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
                                 },
-                                "materialPath": "game/assets/materials/test_particles.rmat",
+                                "materialPath": "rootex/assets/materials/default.instance.rmat",
                                 "particleTemplate": {
                                     "angularVelocityVariation": 12.0,
                                     "colorBegin": {
@@ -455,9 +459,11 @@
                                         "z": 0.5
                                     }
                                 },
+                                "overrideBoundingBox": false,
+                                "passDown": 7,
                                 "position": {
-                                    "x": -1.9100725650787354,
-                                    "y": -1.8125958442687988,
+                                    "x": 4.4707441329956055,
+                                    "y": 0.3365797996520996,
                                     "z": -9.449999809265137
                                 },
                                 "rotation": {
@@ -498,7 +504,7 @@
                         "lodDistance": 10.0,
                         "lodEnable": true,
                         "materialOverrides": {
-                            "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                            "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
                         },
                         "renderPass": 1,
                         "resFile": "rootex/assets/cube.obj"
@@ -516,6 +522,8 @@
                                 "z": 0.5
                             }
                         },
+                        "overrideBoundingBox": false,
+                        "passDown": 7,
                         "position": {
                             "x": 0.0,
                             "y": 0.0,

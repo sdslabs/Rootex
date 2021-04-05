@@ -30,7 +30,7 @@ public:
 	Vector3 getAt() const;
 	RigidBodyComponent* getCollider() const;
 
-	JSON::json getJSON() const;
+	JSON::json getJSON() const override;
 	void onRemove() override;
 	void draw() override;
 };

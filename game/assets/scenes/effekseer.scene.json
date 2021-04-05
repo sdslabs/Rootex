@@ -61,10 +61,6 @@
         "listener": 1,
         "preloads": [
             [
-                10,
-                "game/assets/sandstorm.efkefc"
-            ],
-            [
                 8,
                 "rootex/assets/sky.dds"
             ]

@@ -47,7 +47,7 @@
                         "lodDistance": 10.0,
                         "lodEnable": true,
                         "materialOverrides": {
-                            "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                            "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
                         },
                         "renderPass": 1,
                         "resFile": "rootex/assets/cube.obj"
@@ -117,7 +117,7 @@
                                 "lodDistance": 10.0,
                                 "lodEnable": true,
                                 "materialOverrides": {
-                                    "rootex/assets/materials/animated_default.rmat": "rootex/assets/materials/animated_default.rmat"
+                                    "rootex/assets/materials/default.anim.rmat": "rootex/assets/materials/default.anim.rmat"
                                 },
                                 "renderPass": 1,
                                 "resFile": "rootex/assets/animation.dae",
@@ -260,7 +260,7 @@
                         "lodDistance": 2.0,
                         "lodEnable": true,
                         "materialOverrides": {
-                            "rootex/assets/materials/default.rmat": "game/assets/materials/rootex_logo_textured.rmat"
+                            "rootex/assets/materials/default.basic.rmat": "game/assets/materials/rootex_logo_textured.rmat"
                         },
                         "renderPass": 1,
                         "resFile": "game/assets/test/sphere.obj"

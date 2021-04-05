@@ -3,8 +3,9 @@ file(GLOB_RECURSE GameHeaders ./**.h)
 file(GLOB_RECURSE GameLuaScripts ./**.lua)
 file(GLOB_RECURSE GameJSONs ./**.json)
 
-set_source_files_properties(${GameLuaScripts} ${GameJSONs} PROPERTIES
-    HEADER_FILE_ONLY TRUE
+set_source_files_properties(${GameLuaScripts} ${GameJSONs}
+    PROPERTIES
+        HEADER_FILE_ONLY TRUE
 )
 
 add_executable(Game ${GameSource} ${GameHeaders} ${GameLuaScripts} ${GameJSONs})

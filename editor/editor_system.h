@@ -64,7 +64,7 @@ class EditorSystem : public System
 	Variant autoSave(const Event* event);
 	Variant saveBeforeQuit(const Event* event);
 	Variant createNewScene(const Event* event);
-	Variant createNewMaterial(const Event* event);
+	Variant createNewFile(const Event* event);
 
 public:
 	static EditorSystem* GetSingleton();

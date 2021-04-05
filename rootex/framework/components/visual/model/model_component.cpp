@@ -8,11 +8,10 @@
 #include "systems/light_system.h"
 #include "systems/render_system.h"
 #include "components/visual/light/static_point_light_component.h"
-#include "renderer/material_library.h"
 #include "renderer/render_pass.h"
 #include "scene_loader.h"
 
-bool CompareMaterials(const Pair<Ref<Material>, Vector<Mesh>>& a, const Pair<Ref<Material>, Vector<Mesh>>& b)
+bool CompareMaterials(const Pair<Ref<MaterialResourceFile>, Vector<Mesh>>& a, const Pair<Ref<MaterialResourceFile>, Vector<Mesh>>& b)
 {
 	// Alpha materials final last
 	return !a.first->isAlpha() && b.first->isAlpha();
@@ -139,8 +138,7 @@ void ModelComponent::assignOverrides(Ref<ModelResourceFile> newModel, const Hash
 	}
 	for (auto& [oldMaterial, newMaterial] : materialOverrides)
 	{
-		MaterialLibrary::CreateNewMaterialFile(newMaterial, MaterialLibrary::GetMaterial(oldMaterial)->getTypeName());
-		setMaterialOverride(MaterialLibrary::GetMaterial(oldMaterial), MaterialLibrary::GetMaterial(newMaterial));
+		setMaterialOverride(ResourceLoader::CreateBasicMaterialResourceFile(oldMaterial), ResourceLoader::CreateBasicMaterialResourceFile(newMaterial));
 	}
 }
 
@@ -162,7 +160,7 @@ void ModelComponent::draw()
 	ImGui::SameLine();
 	if (ImGui::Button("Model"))
 	{
-		EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, m_ModelResourceFile->getPath().string());
+		EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { m_ModelResourceFile->getPath().generic_string(), (int)m_ModelResourceFile->getType() });
 	}
 	ImGui::SameLine();
 	if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Model File"))

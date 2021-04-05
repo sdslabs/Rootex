@@ -85,7 +85,7 @@
                                 "lodDistance": 10.0,
                                 "lodEnable": true,
                                 "materialOverrides": {
-                                    "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                                    "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
                                 },
                                 "renderPass": 1,
                                 "resFile": "rootex/assets/cube.obj"

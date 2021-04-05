@@ -47,7 +47,7 @@
                         "lodDistance": 10.0,
                         "lodEnable": true,
                         "materialOverrides": {
-                            "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                            "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
                         },
                         "renderPass": 1,
                         "resFile": "rootex/assets/cube.obj"
@@ -65,6 +65,8 @@
                                 "z": 0.5
                             }
                         },
+                        "overrideBoundingBox": false,
+                        "passDown": 7,
                         "position": {
                             "x": 0.0,
                             "y": -1.600000023841858,
@@ -110,10 +112,29 @@
                         "lodDistance": 10.0,
                         "lodEnable": true,
                         "materialOverrides": {
-                            "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                            "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
                         },
                         "renderPass": 1,
                         "resFile": "game/assets/test/sphere.obj"
+                    },
+                    "PointLightComponent": {
+                        "ambientColor": {
+                            "a": 1.0,
+                            "b": 0.5,
+                            "g": 0.5,
+                            "r": 0.5
+                        },
+                        "attConst": 0.04500000178813934,
+                        "attLin": 1.0,
+                        "attQuad": 0.007499999832361937,
+                        "diffuseColor": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "diffuseIntensity": 1.0,
+                        "range": 10.0
                     },
                     "SphereColliderComponent": {
                         "angularFactor": {
@@ -204,8 +225,10 @@
                                 "z": 19.737079620361328
                             }
                         },
+                        "overrideBoundingBox": false,
+                        "passDown": 7,
                         "position": {
-                            "x": -3.877593994140625,
+                            "x": -3.881686210632324,
                             "y": 0.13474920392036438,
                             "z": -9.829999923706055
                         },
@@ -249,7 +272,7 @@
                         "lodDistance": 10.0,
                         "lodEnable": true,
                         "materialOverrides": {
-                            "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                            "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
                         },
                         "renderPass": 1,
                         "resFile": "rootex/assets/cube.obj"
@@ -267,6 +290,8 @@
                                 "z": 0.5
                             }
                         },
+                        "overrideBoundingBox": false,
+                        "passDown": 7,
                         "position": {
                             "x": -0.058719128370285034,
                             "y": -0.01304885745048523,
@@ -335,7 +360,8 @@
                         "maxDistance": 4.0,
                         "playOnStart": false,
                         "referenceDistance": 1.0,
-                        "rollOffFactor": 1.0
+                        "rollOffFactor": 1.0,
+                        "volume": 1.0
                     },
                     "TextUIComponent": {
                         "color": {
@@ -366,6 +392,8 @@
                                 "z": 0.5
                             }
                         },
+                        "overrideBoundingBox": false,
+                        "passDown": 7,
                         "position": {
                             "x": 4.171079158782959,
                             "y": 0.015003561973571777,

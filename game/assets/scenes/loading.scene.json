@@ -61,6 +61,7 @@
                         "z": 0.5
                     }
                 },
+                "overrideBoundingBox": false,
                 "passDown": 7,
                 "position": {
                     "x": 0.0,

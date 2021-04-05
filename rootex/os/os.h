@@ -64,6 +64,7 @@ public:
 	static bool IsExistsAbsolute(String absPath);
 	static bool IsExists(String relativePath);
 	static FileBuffer LoadFileContents(String stringPath);
+	static JSON::json LoadFileContentsToJSONObject(String stringPath);
 	static FileBuffer LoadFileContentsAbsolute(String absPath);
 	static FilePath GetAbsolutePath(String stringPath);
 	static FilePath GetRootRelativePath(String stringPath);

@@ -500,6 +500,23 @@ FileBuffer OS::LoadFileContents(String stringPath)
 	return LoadFileContentsAbsolute(path.generic_string());
 }
 
+JSON::json OS::LoadFileContentsToJSONObject(String stringPath)
+{
+	const FileBuffer& fileBuffer = LoadFileContents(stringPath);
+	String fileString(fileBuffer.begin(), fileBuffer.end());
+
+	JSON::json j = JSON::json::object();
+	try
+	{
+		j = JSON::json::parse(fileString);
+	}
+	catch (std::exception j)
+	{
+		WARN("File not loaded correctly into JSON: " + stringPath);
+	}
+	return j;
+}
+
 FileBuffer OS::LoadFileContentsAbsolute(String absPath)
 {
 	if (!IsExistsAbsolute(absPath))

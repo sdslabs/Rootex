@@ -5,8 +5,6 @@
 #include "systems/render_system.h"
 #include "timer.h"
 
-#include "renderer/material_library.h"
-
 void to_json(JSON::json& j, const ParticleTemplate p)
 {
 	j["velocity"] = p.velocity;
@@ -40,7 +38,7 @@ Ptr<Component> CPUParticlesComponent::Create(const JSON::json& componentData)
 	return std::make_unique<CPUParticlesComponent>(
 	    componentData.value("poolSize", 1000),
 	    componentData.value("resFile", "rootex/assets/cube.obj"),
-	    componentData.value("materialPath", "rootex/assets/materials/default_particles.rmat"),
+	    componentData.value("materialPath", "rootex/assets/materials/default.instance.rmat"),
 	    componentData.value("particleTemplate", ParticleTemplate()),
 	    (EmitMode)componentData.value("emitMode", (int)EmitMode::Point),
 	    componentData.value("emitRate", 1),
@@ -68,26 +66,21 @@ CPUParticlesComponent::CPUParticlesComponent(
         0.0f,
         0.0f,
         {})
-    , m_ParticlesMaterial(std::dynamic_pointer_cast<ParticlesMaterial>(MaterialLibrary::GetMaterial(materialPath)))
     , m_ParticleTemplate(particleTemplate)
     , m_CurrentEmitMode(emitMode)
     , m_EmitterDimensions(emitterDimensions)
     , m_EmitRate(emitRate)
 {
-	m_InstanceBufferData.resize(MAX_PARTICLES);
-	m_InstanceBuffer.reset(new VertexBuffer(m_InstanceBufferData));
-	expandPool(poolSize);
-}
+	m_ParticlesMaterial = ResourceLoader::CreateInstancingBasicMaterialResourceFile(materialPath);
 
-bool CPUParticlesComponent::setupData()
-{
-	m_TransformComponent = m_Owner->getComponent<TransformComponent>();
-	if (!m_TransformComponent)
-	{
-		ERR("Transform Component not found on entity with CPU Particles Component: " + m_Owner->getFullName());
-		return false;
-	}
-	return true;
+	m_InstanceBufferData.resize(MAX_PARTICLES);
+	m_InstanceBuffer.reset(new VertexBuffer(
+	    (const char*)m_InstanceBufferData.data(),
+	    m_InstanceBufferData.size(),
+	    sizeof(InstanceData),
+	    D3D11_USAGE_DYNAMIC,
+	    D3D11_CPU_ACCESS_WRITE));
+	expandPool(poolSize);
 }
 
 bool CPUParticlesComponent::preRender(float deltaMilliseconds)
@@ -169,8 +162,11 @@ void CPUParticlesComponent::render(float viewDistance)
 {
 	ZoneScoped;
 
+	RenderingDevice::GetSingleton()->editBuffer((const char*)m_InstanceBufferLiveData.data(), sizeof(InstanceData) * m_InstanceBufferLiveData.size(), m_InstanceBuffer->getBuffer());
+
+	m_ParticlesMaterial->uploadInstanceBuffer(m_InstanceBufferLiveData);
+
 	RenderSystem::GetSingleton()->getRenderer()->bind(m_ParticlesMaterial.get());
-	m_InstanceBuffer->setData(m_InstanceBufferLiveData);
 	for (auto& [material, meshes] : m_ModelResourceFile->getMeshes())
 	{
 		for (auto& mesh : meshes)
@@ -180,11 +176,11 @@ void CPUParticlesComponent::render(float viewDistance)
 	}
 }
 
-void CPUParticlesComponent::setMaterial(Ref<ParticlesMaterial> particlesMaterial)
+void CPUParticlesComponent::setMaterial(Ref<InstancingBasicMaterialResourceFile> particlesMaterial)
 {
 	if (!particlesMaterial)
 	{
-		WARN("Particles was tried to set to nullptr. Reverted to previously set material");
+		WARN("Instancing material was tried to set to nullptr. Ignored attempt.");
 		return;
 	}
 
@@ -269,6 +265,7 @@ void CPUParticlesComponent::expandPool(const size_t& poolSize)
 		return;
 	}
 
+	m_ParticlesMaterial->resizeBuffer(poolSize);
 	m_ParticlePool.resize(poolSize);
 	m_InstanceBufferData.resize(poolSize);
 	m_PoolIndex = poolSize - 1;
@@ -278,7 +275,7 @@ JSON::json CPUParticlesComponent::getJSON() const
 {
 	JSON::json& j = ModelComponent::getJSON();
 
-	j["materialPath"] = m_ParticlesMaterial->getFileName();
+	j["materialPath"] = m_ParticlesMaterial->getPath().generic_string();
 	j["poolSize"] = m_ParticlePool.size();
 	j["particleTemplate"] = m_ParticleTemplate;
 	j["emitMode"] = (int)m_CurrentEmitMode;
@@ -299,24 +296,20 @@ void CPUParticlesComponent::draw()
 	ImGui::Text("%s", "Particles Material");
 	ImGui::Image(m_ParticlesMaterial->getPreview(), { 50, 50 });
 	ImGui::SameLine();
+
 	ImGui::BeginGroup();
-	ImGui::Text("%s", m_ParticlesMaterial->getFileName().c_str());
+	ImGui::Text("%s", m_ParticlesMaterial->getPath().generic_string().c_str());
 	if (ImGui::Button(ICON_ROOTEX_SEARCH "##Particles Material"))
 	{
-		EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, m_ParticlesMaterial->getFileName());
+		EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { m_ParticlesMaterial->getPath().generic_string(), (int)m_ParticlesMaterial->getType() });
 	}
 	ImGui::SameLine();
 	if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Particles Material"))
 	{
 		if (Optional<String> result = OS::SelectFile("Material(*.rmat)\0*.rmat\0", "game/assets/materials/"))
 		{
-			setMaterial(std::dynamic_pointer_cast<ParticlesMaterial>(MaterialLibrary::GetMaterial(*result)));
+			setMaterial(ResourceLoader::CreateInstancingBasicMaterialResourceFile(*result));
 		}
-	}
-	ImGui::SameLine();
-	if (ImGui::Button((ICON_ROOTEX_REFRESH "##Particles Material")))
-	{
-		setMaterial(std::dynamic_pointer_cast<ParticlesMaterial>(MaterialLibrary::GetDefaultParticlesMaterial()));
 	}
 	ImGui::EndGroup();
 

@@ -13,7 +13,6 @@ class FileViewer
 {
 	bool m_IsFileOpened;
 	bool m_IsEventJustReceived;
-	FilePath m_OpenFilePath;
 
 	AudioPlayer m_AudioPlayer;
 	ImageViewer m_ImageViewer;

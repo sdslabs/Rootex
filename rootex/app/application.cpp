@@ -5,8 +5,6 @@
 #include "core/resource_loader.h"
 #include "core/resource_files/lua_text_resource_file.h"
 #include "core/input/input_manager.h"
-#include "core/renderer/shader_library.h"
-#include "core/renderer/material_library.h"
 #include "script/interpreter.h"
 
 #include "systems/audio_system.h"
@@ -91,7 +89,7 @@ Application::Application(const String& appTitle, const String& settingsFile)
 	inputSystemSettings["height"] = m_Window->getHeight();
 	InputSystem::GetSingleton()->initialize(inputSystemSettings);
 
-	ShaderLibrary::MakeShaders();
+	ResourceLoader::Initialize();
 	PhysicsSystem::GetSingleton()->initialize(systemsSettings["PhysicsSystem"]);
 	TriggerSystem::GetSingleton();
 
@@ -138,7 +136,7 @@ Application::~Application()
 	SceneLoader::GetSingleton()->destroyAllScenes();
 	AudioSystem::GetSingleton()->shutDown();
 	UISystem::GetSingleton()->shutDown();
-	ShaderLibrary::DestroyShaders();
+	ResourceLoader::Destroy();
 	EventManager::GetSingleton()->releaseAllEventListeners();
 }
 

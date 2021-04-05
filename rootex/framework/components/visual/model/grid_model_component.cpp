@@ -1,5 +1,6 @@
 #include "grid_model_component.h"
 
+#include "resource_loader.h"
 #include "framework/systems/render_system.h"
 
 Ptr<Component> GridModelComponent::Create(const JSON::json& componentData)
@@ -15,7 +16,7 @@ GridModelComponent::GridModelComponent(const Vector2& cellSize, const int& cellC
     : ModelComponent(renderPass, nullptr, {}, isVisible, false, 1.0f, 1.0f, {})
     , m_CellCount(cellCount)
     , m_CellSize(cellSize)
-    , m_ColorMaterial(MaterialLibrary::GetMaterial("rootex/assets/materials/grid.rmat"))
+    , m_ColorMaterial(ResourceLoader::CreateBasicMaterialResourceFile("rootex/assets/materials/grid.basic.rmat"))
 {
 }
 
@@ -88,7 +89,7 @@ void GridModelComponent::refreshVertexBuffers()
 		indices.push_back(i);
 	}
 
-	m_VertexBuffer.reset(new VertexBuffer(vertices));
+	m_VertexBuffer.reset(new VertexBuffer((const char*)vertices.data(), vertices.size(), sizeof(float) * 3, D3D11_USAGE_IMMUTABLE, 0));
 	m_IndexBuffer.reset(new IndexBuffer(indices));
 }
 

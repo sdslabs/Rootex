@@ -51,6 +51,8 @@ void FlipbookDecorator::RenderElement(Rml::Element* element, Rml::DecoratorDataH
 	FlipbookElementData* data = (FlipbookElementData*)elementData;
 	Rml::RenderInterface* renderInterface = element->GetRenderInterface();
 
+	data->geometry.Release();
+
 	Vector<Rml::Vertex>& vertices = data->geometry.GetVertices();
 	vertices.resize(4);
 	Vector<int>& indices = data->geometry.GetIndices();
@@ -90,7 +92,6 @@ void FlipbookDecorator::RenderElement(Rml::Element* element, Rml::DecoratorDataH
 	indices[4] = 2;
 	indices[5] = 3;
 
-	data->geometry.Release();
 	data->geometry.Render(element->GetAbsoluteOffset(Rml::Box::PADDING));
 }
 

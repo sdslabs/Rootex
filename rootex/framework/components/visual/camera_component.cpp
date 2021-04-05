@@ -153,26 +153,26 @@ void CameraComponent::draw()
 	if (ImGui::DragFloat2("##Aspect", &m_AspectRatio.x, 0.01f, 0.1f, 100.0f))
 	{
 		refreshProjectionMatrix();
-		RenderSystem::GetSingleton()->setProjectionConstantBuffers();
+		RenderSystem::GetSingleton()->setPerCameraVSCBs();
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("Aspect Ratio"))
 	{
 		m_AspectRatio = { 16.0f, 9.0f };
 		refreshProjectionMatrix();
-		RenderSystem::GetSingleton()->setProjectionConstantBuffers();
+		RenderSystem::GetSingleton()->setPerCameraVSCBs();
 	}
 
 	if (ImGui::SliderAngle("Field of View", &m_FoV, 1.0f, 180.0f))
 	{
 		refreshProjectionMatrix();
-		RenderSystem::GetSingleton()->setProjectionConstantBuffers();
+		RenderSystem::GetSingleton()->setPerCameraVSCBs();
 	}
 
 	if (ImGui::DragFloatRange2("Range", &m_Near, &m_Far, 0.01f, 0.1f, 1000.0f))
 	{
 		refreshProjectionMatrix();
-		RenderSystem::GetSingleton()->setProjectionConstantBuffers();
+		RenderSystem::GetSingleton()->setPerCameraVSCBs();
 	}
 
 	ImGui::Checkbox("Post Processing", &m_PostProcessingDetails.isPostProcessing);

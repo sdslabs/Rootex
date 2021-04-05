@@ -3,8 +3,9 @@ file(GLOB_RECURSE EditorHeaders ./**.h)
 file(GLOB_RECURSE EditorLuaScripts ./**.lua)
 file(GLOB_RECURSE EditorJSONs ./**.json)
 
-set_source_files_properties(${EditorLuaScripts} ${EditorJSONs} PROPERTIES
-    HEADER_FILE_ONLY TRUE
+set_source_files_properties(${EditorLuaScripts} ${EditorJSONs}
+    PROPERTIES
+        HEADER_FILE_ONLY TRUE
 )
 
 add_executable(Editor ${EditorSource} ${EditorHeaders} ${EditorLuaScripts} ${EditorJSONs})

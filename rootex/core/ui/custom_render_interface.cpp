@@ -7,18 +7,27 @@
 
 unsigned int CustomRenderInterface::s_TextureCount = 1; // 0 is reserved for white texture
 
+struct PerUIVSCB
+{
+	Matrix Model;
+	PerUIVSCB() = default;
+	PerUIVSCB(const Matrix& model)
+	{
+		Model = model.Transpose();
+	}
+};
+
 void CustomRenderInterface::render(GeometryData* geometry, const Rml::Vector2f& translation)
 {
 	geometry->vertexBuffer.bind();
 	geometry->indexBuffer.bind();
-	m_UIShader->bind();
+	m_Shader->bind();
 
-	Material::SetVSConstantBuffer(
-	    VSSolidConstantBuffer(Matrix::CreateTranslation(translation.x, translation.y, 0.0f) * m_UITransform * Matrix::CreateOrthographic(m_Width, m_Height, 0.0f, 10000.0f)),
-	    m_ModelMatrixBuffer,
-	    PER_OBJECT_VS_CPP);
+	RenderingDevice::GetSingleton()->editBuffer(PerUIVSCB(Matrix::CreateTranslation(translation.x, translation.y, 0.0f) * m_UITransform * Matrix::CreateOrthographic(m_Width, m_Height, 0.0f, 10000.0f)), m_ModelMatrixBuffer.Get());
+	RenderingDevice::GetSingleton()->setVSCB(PER_OBJECT_VS_CPP, 1, m_ModelMatrixBuffer.GetAddressOf());
 
-	RenderingDevice::GetSingleton()->setInPixelShader(0, 1, m_Textures[geometry->textureHandle]->getTextureResourceView());
+	ID3D11ShaderResourceView* textures[] = { m_Textures[geometry->textureHandle]->getTextureResourceView() };
+	RenderingDevice::GetSingleton()->setPSSRV(DIFFUSE_PS_CPP, 1, textures);
 	RenderingDevice::GetSingleton()->drawIndexed(geometry->indexBuffer.getCount());
 }
 
@@ -40,10 +49,11 @@ CustomRenderInterface::CustomRenderInterface(int width, int height)
 	format.push(VertexBufferElement::Type::FloatFloat, "POSITION", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
 	format.push(VertexBufferElement::Type::ByteByteByteByte, "COLOR", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
 	format.push(VertexBufferElement::Type::FloatFloat, "TEXCOORD", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
-
-	m_UIShader.reset(new BasicShader(L"rootex/assets/shaders/ui_vertex_shader.cso", L"rootex/assets/shaders/ui_pixel_shader.cso", format));
+	m_Shader.reset(new Shader("rootex/core/renderer/shaders/ui_vertex_shader.hlsl", "rootex/core/renderer/shaders/ui_pixel_shader.hlsl", format));
 
 	m_Textures[0] = ResourceLoader::CreateImageResourceFile("rootex/assets/white.png")->getTexture();
+
+	m_ModelMatrixBuffer = RenderingDevice::GetSingleton()->createBuffer<PerUIVSCB>(PerUIVSCB(), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
 }
 
 void CustomRenderInterface::RenderGeometry(Rml::Vertex* vertices, int numVertices, int* indices, int numIndices, Rml::TextureHandle texture, const Rml::Vector2f& translation)
@@ -125,7 +135,7 @@ void CustomRenderInterface::SetTransform(const Rml::Matrix4f* transform)
 }
 
 CustomRenderInterface::GeometryData::GeometryData(const UIVertexData* vertices, size_t verticesSize, int* indices, size_t indicesSize, Rml::TextureHandle texture)
-    : vertexBuffer(vertices, verticesSize)
+    : vertexBuffer((const char*)vertices, verticesSize, sizeof(UIVertexData), D3D11_USAGE_IMMUTABLE, 0)
     , indexBuffer(indices, indicesSize)
     , textureHandle(texture)
 {

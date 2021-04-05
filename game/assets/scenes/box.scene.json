@@ -16,7 +16,7 @@
                         "lodDistance": 10.0,
                         "lodEnable": true,
                         "materialOverrides": {
-                            "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                            "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
                         },
                         "renderPass": 1,
                         "resFile": "rootex/assets/cube.obj"
@@ -85,9 +85,9 @@
                         "lodDistance": 0.0,
                         "lodEnable": false,
                         "materialOverrides": {
-                            "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                            "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
                         },
-                        "materialPath": "game/assets/materials/test_particles.rmat",
+                        "materialPath": "rootex/assets/materials/default.instance.rmat",
                         "particleTemplate": {
                             "angularVelocityVariation": 0.5,
                             "colorBegin": {
@@ -294,9 +294,9 @@
                         "lodDistance": 0.0,
                         "lodEnable": false,
                         "materialOverrides": {
-                            "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                            "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
                         },
-                        "materialPath": "game/assets/materials/test_particles.rmat",
+                        "materialPath": "rootex/assets/materials/default.instance.rmat",
                         "particleTemplate": {
                             "angularVelocityVariation": 12.0,
                             "colorBegin": {
@@ -495,7 +495,7 @@
                 "lodDistance": 10.0,
                 "lodEnable": true,
                 "materialOverrides": {
-                    "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                    "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
                 },
                 "renderPass": 1,
                 "resFile": "rootex/assets/cube.obj"

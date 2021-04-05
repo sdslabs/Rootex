@@ -2,7 +2,8 @@
 
 #include "component.h"
 #include "components/space/transform_component.h"
-#include "renderer/material.h"
+#include "resource_files/basic_material_resource_file.h"
+#include "renderer/constant_buffer.h"
 #include "scene.h"
 
 class RenderableComponent : public Component
@@ -18,7 +19,7 @@ protected:
 	float m_LODBias;
 	float m_LODDistance;
 
-	HashMap<Ref<Material>, Ref<Material>> m_MaterialOverrides;
+	HashMap<Ref<MaterialResourceFile>, Ref<MaterialResourceFile>> m_MaterialOverrides;
 	Vector<SceneID> m_AffectingStaticLightIDs;
 	Vector<int> m_AffectingStaticLights;
 
@@ -49,7 +50,7 @@ public:
 	virtual bool addAffectingStaticLight(SceneID id);
 	virtual void removeAffectingStaticLight(SceneID id);
 
-	void setMaterialOverride(Ref<Material> oldMaterial, Ref<Material> newMaterial);
+	void setMaterialOverride(Ref<MaterialResourceFile> oldMaterial, Ref<MaterialResourceFile> newMaterial);
 
 	unsigned int getRenderPass() const { return m_RenderPass; }
 
