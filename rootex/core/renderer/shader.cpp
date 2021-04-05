@@ -6,14 +6,14 @@
 
 Shader::Shader(const String& vertexPath, const String& pixelPath, const BufferFormat& vertexBufferFormat)
 {
-	Microsoft::WRL::ComPtr<ID3DBlob> vertexShaderBlob = RenderingDevice::GetSingleton()->compileShader(vertexPath, "main", "vs_5_0");
+	Microsoft::WRL::ComPtr<ID3DBlob> vertexShaderBlob = RenderingDevice::GetSingleton()->compileShader(vertexPath, "main", "vs_4_0");
 	if (!vertexShaderBlob)
 	{
 		ERR("Vertex Shader not found");
 	}
 	m_VertexShader = RenderingDevice::GetSingleton()->createVS(vertexShaderBlob.Get());
 
-	Microsoft::WRL::ComPtr<ID3DBlob> pixelShaderBlob = RenderingDevice::GetSingleton()->compileShader(pixelPath, "main", "ps_5_0");
+	Microsoft::WRL::ComPtr<ID3DBlob> pixelShaderBlob = RenderingDevice::GetSingleton()->compileShader(pixelPath, "main", "ps_4_0");
 	if (!pixelShaderBlob)
 	{
 		ERR("Pixel Shader not found");
