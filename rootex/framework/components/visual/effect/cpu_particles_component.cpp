@@ -72,14 +72,6 @@ CPUParticlesComponent::CPUParticlesComponent(
     , m_EmitRate(emitRate)
 {
 	m_ParticlesMaterial = ResourceLoader::CreateInstancingBasicMaterialResourceFile(materialPath);
-
-	m_InstanceBufferData.resize(MAX_PARTICLES);
-	m_InstanceBuffer.reset(new VertexBuffer(
-	    (const char*)m_InstanceBufferData.data(),
-	    m_InstanceBufferData.size(),
-	    sizeof(InstanceData),
-	    D3D11_USAGE_DYNAMIC,
-	    D3D11_CPU_ACCESS_WRITE));
 	expandPool(poolSize);
 }
 
@@ -143,7 +135,7 @@ bool CPUParticlesComponent::preRender(float deltaMilliseconds)
 		// Copy live particles to the buffer which will be sent to the GPU
 		if (m_InstanceBufferLiveData.size() < m_LiveParticlesCount)
 		{
-			m_InstanceBufferLiveData.resize(m_LiveParticlesCount);
+			expandInstanceData(m_LiveParticlesCount);
 		}
 		int liveCount = 0;
 		for (int i = 0; i < m_ParticlePool.size(); i++)
@@ -163,8 +155,6 @@ void CPUParticlesComponent::render(float viewDistance)
 	ZoneScoped;
 
 	RenderingDevice::GetSingleton()->editBuffer((const char*)m_InstanceBufferLiveData.data(), sizeof(InstanceData) * m_InstanceBufferLiveData.size(), m_InstanceBuffer->getBuffer());
-
-	m_ParticlesMaterial->uploadInstanceBuffer(m_InstanceBufferLiveData);
 
 	RenderSystem::GetSingleton()->getRenderer()->bind(m_ParticlesMaterial.get());
 	for (auto& [material, meshes] : m_ModelResourceFile->getMeshes())
@@ -252,6 +242,17 @@ void CPUParticlesComponent::emit(const ParticleTemplate& particleTemplate)
 	m_PoolIndex = --m_PoolIndex % m_ParticlePool.size();
 }
 
+void CPUParticlesComponent::expandInstanceData(const size_t& poolSize)
+{
+	m_InstanceBufferLiveData.resize(poolSize);
+	m_InstanceBuffer.reset(new VertexBuffer(
+	    (const char*)m_InstanceBufferLiveData.data(),
+	    m_InstanceBufferLiveData.size(),
+	    sizeof(InstanceData),
+	    D3D11_USAGE_DYNAMIC,
+	    D3D11_CPU_ACCESS_WRITE));
+}
+
 void CPUParticlesComponent::expandPool(const size_t& poolSize)
 {
 	if (poolSize < 1)
@@ -265,9 +266,9 @@ void CPUParticlesComponent::expandPool(const size_t& poolSize)
 		return;
 	}
 
-	m_ParticlesMaterial->resizeBuffer(poolSize);
 	m_ParticlePool.resize(poolSize);
 	m_InstanceBufferData.resize(poolSize);
+	expandInstanceData(poolSize);
 	m_PoolIndex = poolSize - 1;
 }
 

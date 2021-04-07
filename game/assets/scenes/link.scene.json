@@ -60,7 +60,7 @@
                     },
                     "importStyle": 0,
                     "name": "box",
-                    "sceneFile": "",
+                    "sceneFile": "game/assets/scenes/box.scene.json",
                     "settings": {
                         "camera": 1,
                         "inputSchemes": {},
@@ -92,7 +92,7 @@
                                 "materialOverrides": {
                                     "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
                                 },
-                                "materialPath": "rootex/assets/materials/default.anim.rmat",
+                                "materialPath": "game/assets/materials/rootex.instance.rmat",
                                 "particleTemplate": {
                                     "angularVelocityVariation": 0.5,
                                     "colorBegin": {
@@ -120,8 +120,27 @@
                                     "velocityVariation": 0.8700000047683716
                                 },
                                 "poolSize": 340,
-                                "renderPass": 1,
+                                "renderPass": 4,
                                 "resFile": "rootex/assets/cube.obj"
+                            },
+                            "PointLightComponent": {
+                                "ambientColor": {
+                                    "a": 1.0,
+                                    "b": 0.5,
+                                    "g": 0.5,
+                                    "r": 0.5
+                                },
+                                "attConst": 0.04500000178813934,
+                                "attLin": 1.0,
+                                "attQuad": 0.007499999832361937,
+                                "diffuseColor": {
+                                    "a": 1.0,
+                                    "b": 1.0,
+                                    "g": 1.0,
+                                    "r": 1.0
+                                },
+                                "diffuseIntensity": 1.0,
+                                "range": 10.0
                             },
                             "TransformAnimationComponent": {
                                 "animationMode": 1,
@@ -251,8 +270,8 @@
                                 "overrideBoundingBox": false,
                                 "passDown": 7,
                                 "position": {
-                                    "x": -4.199999809265137,
-                                    "y": 1.410984754562378,
+                                    "x": -0.9363088607788086,
+                                    "y": -2.1592040061950684,
                                     "z": -6.579999923706055
                                 },
                                 "rotation": {
@@ -303,7 +322,7 @@
                                 "materialOverrides": {
                                     "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
                                 },
-                                "materialPath": "rootex/assets/materials/default.instance.rmat",
+                                "materialPath": "game/assets/materials/rootex.instance.rmat",
                                 "particleTemplate": {
                                     "angularVelocityVariation": 12.0,
                                     "colorBegin": {
@@ -320,19 +339,38 @@
                                     },
                                     "lifeTime": 1.8700000047683716,
                                     "rotationVariation": 3.1415927410125732,
-                                    "sizeBegin": 1.0499999523162842,
-                                    "sizeEnd": 1.0499999523162842,
+                                    "sizeBegin": 0.5299999713897705,
+                                    "sizeEnd": 0.0,
                                     "sizeVariation": 0.0,
                                     "velocity": {
                                         "x": 0.0,
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "velocityVariation": 0.0
+                                    "velocityVariation": 1.2899999618530273
                                 },
                                 "poolSize": 966,
-                                "renderPass": 1,
+                                "renderPass": 4,
                                 "resFile": "rootex/assets/cube.obj"
+                            },
+                            "PointLightComponent": {
+                                "ambientColor": {
+                                    "a": 1.0,
+                                    "b": 0.5,
+                                    "g": 0.5,
+                                    "r": 0.5
+                                },
+                                "attConst": 0.04500000178813934,
+                                "attLin": 1.0,
+                                "attQuad": 0.007499999832361937,
+                                "diffuseColor": {
+                                    "a": 1.0,
+                                    "b": 1.0,
+                                    "g": 1.0,
+                                    "r": 1.0
+                                },
+                                "diffuseIntensity": 1.0,
+                                "range": 10.0
                             },
                             "TransformAnimationComponent": {
                                 "animationMode": 1,
@@ -462,8 +500,8 @@
                                 "overrideBoundingBox": false,
                                 "passDown": 7,
                                 "position": {
-                                    "x": 4.4707441329956055,
-                                    "y": 0.3365797996520996,
+                                    "x": -2.28458309173584,
+                                    "y": 1.420892357826233,
                                     "z": -9.449999809265137
                                 },
                                 "rotation": {
