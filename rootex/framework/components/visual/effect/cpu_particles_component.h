@@ -66,6 +66,8 @@ class CPUParticlesComponent : public ModelComponent
 
 	float m_EmitCount = 0;
 
+	void expandInstanceData(const size_t& poolSize);
+
 public:
 	CPUParticlesComponent(
 	    size_t poolSize,

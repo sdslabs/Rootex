@@ -20,6 +20,7 @@ struct PixelInputType
 	float2 tex : TEXCOORD0;
 	float fogFactor : FOG;
 	float3 tangent : TANGENT;
+    float4 color : COLOR;
 };
 
 cbuffer CBuf : register(PER_OBJECT_PS_HLSL)
@@ -35,7 +36,7 @@ cbuffer CBuf : register(PER_MODEL_PS_HLSL)
 
 float4 main(PixelInputType input) : SV_TARGET
 {
-    float4 materialColor = ShaderTexture.Sample(SampleType, input.tex) * material.color;
+    float4 materialColor = ShaderTexture.Sample(SampleType, input.tex) * material.color * input.color;
     float4 finalColor = materialColor;
     
     clip(finalColor.a - 0.0001f);
