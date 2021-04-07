@@ -142,7 +142,6 @@ Ptr<Scene> Scene::CreateRootScene()
 
 	Ptr<Scene> root = std::make_unique<Scene>(ROOT_SCENE_ID, "Root", SceneSettings(), ImportStyle::Local, "");
 	root->m_Entity = ECSFactory::CreateRootEntity(root.get());
-	s_Scenes.push_back(root.get());
 
 	called = true;
 	return root;
