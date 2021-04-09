@@ -11,7 +11,7 @@ bool CompareMaterials(const Pair<Ref<MaterialResourceFile>, Vector<Mesh>>& a, co
 
 class ModelComponent : public RenderableComponent
 {
-	DEFINE_COMPONENT(ModelComponent);
+	DEFINE_COMPONENT(ModelComponent, Category::Model);
 
 protected:
 	Ref<ModelResourceFile> m_ModelResourceFile;
@@ -20,15 +20,7 @@ protected:
 	void assignOverrides(Ref<ModelResourceFile> newModel, const HashMap<String, String>& materialOverrides);
 
 public:
-	ModelComponent(
-	    unsigned int renderPass,
-	    Ref<ModelResourceFile> resFile,
-	    const HashMap<String, String>& materialOverrides,
-	    bool isVisible,
-	    bool lodEnable,
-	    float lodBias,
-	    float lodDistance,
-	    const Vector<SceneID>& affectingStaticLightIDs);
+	ModelComponent(Entity& owner, const JSON::json& data);
 	virtual ~ModelComponent() = default;
 
 	bool preRender(float deltaMilliseconds) override;

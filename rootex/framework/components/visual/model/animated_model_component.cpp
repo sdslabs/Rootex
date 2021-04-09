@@ -6,48 +6,17 @@
 #include "framework/systems/render_system.h"
 #include "scene_loader.h"
 
-Ptr<Component> AnimatedModelComponent::Create(const JSON::json& componentData)
-{
-	return std::make_unique<AnimatedModelComponent>(
-	    componentData.value("isPlayOnStart", false),
-	    componentData.value("speedMultiplier", 1.0f),
-	    componentData.value("rootExclusion", RootExclusion::None),
-	    ResourceLoader::CreateAnimatedModelResourceFile(componentData.value("resFile", "rootex/assets/animation.dae")),
-	    componentData.value("currentAnimationName", ""),
-	    (AnimationMode)componentData.value("animationMode", (int)AnimationMode::None),
-	    componentData.value("renderPass", (int)RenderPass::Basic),
-	    componentData.value("materialOverrides", HashMap<String, String>()),
-	    componentData.value("isVisible", true),
-	    componentData.value("lodEnable", true),
-	    componentData.value("lodBias", 0.0f),
-	    componentData.value("lodDistance", 10.0f),
-	    componentData.value("affectingStaticLights", Vector<SceneID>()));
-}
-
-AnimatedModelComponent::AnimatedModelComponent(
-    bool isPlayOnStart,
-    float speedMultiplier,
-    RootExclusion rootExclusion,
-    Ref<AnimatedModelResourceFile> resFile,
-    const String& currentAnimationName,
-    AnimationMode mode,
-    unsigned int renderPass,
-    const HashMap<String, String>& materialOverrides,
-    bool isVisible,
-    bool lodEnable,
-    float lodBias,
-    float lodDistance,
-    const Vector<SceneID>& affectingStaticLightIDs)
-    : RenderableComponent(renderPass, materialOverrides, isVisible, lodEnable, lodBias, lodDistance, affectingStaticLightIDs)
+AnimatedModelComponent::AnimatedModelComponent(Entity& owner, const JSON::json& data)
+    : RenderableComponent(owner, data)
+    , m_RootExclusion(data.value("rootExclusion", RootExclusion::None))
+    , m_SpeedMultiplier(data.value("speedMultiplier", 1.0f))
+    , m_IsPlaying(data.value("isPlayOnStart", false))
+    , m_IsPlayOnStart(data.value("isPlayOnStart", false))
+    , m_AnimationMode((AnimationMode)data.value("animationMode", (int)AnimationMode::None))
+    , m_CurrentAnimationName(data.value("currentAnimationName", ""))
     , m_CurrentTimePosition(0.0f)
-    , m_RootExclusion(rootExclusion)
-    , m_SpeedMultiplier(speedMultiplier)
-    , m_IsPlaying(isPlayOnStart)
-    , m_IsPlayOnStart(isPlayOnStart)
-    , m_AnimationMode(mode)
-    , m_CurrentAnimationName(currentAnimationName)
 {
-	assignOverrides(resFile, materialOverrides);
+	assignOverrides(ResourceLoader::CreateAnimatedModelResourceFile(data.value("resFile", "rootex/assets/animation.dae")), data.value("materialOverrides", HashMap<String, String>()));
 	m_FinalTransforms.resize(m_AnimatedModelResourceFile->getBoneCount());
 }
 
@@ -196,7 +165,7 @@ void AnimatedModelComponent::assignBoundingBox()
 				}
 			}
 		}
-		m_TransformComponent->setBounds(bigBox);
+		getTransformComponent()->setBounds(bigBox);
 	}
 }
 

@@ -7,7 +7,7 @@
 
 class StaticMeshColliderComponent : public RigidBodyComponent
 {
-	DEFINE_COMPONENT(StaticMeshColliderComponent);
+	DEFINE_COMPONENT(StaticMeshColliderComponent, Category::Physics);
 
 	btBvhTriangleMeshShape* m_MeshShape;
 	Ref<CollisionModelResourceFile> m_CollisionModel;
@@ -15,13 +15,7 @@ class StaticMeshColliderComponent : public RigidBodyComponent
 	void createStaticMesh();
 
 public:
-	StaticMeshColliderComponent(
-	    Ref<CollisionModelResourceFile> file,
-	    const Vector3& offset,
-	    const PhysicsMaterial& material,
-	    int collisionGroup,
-	    int collisionMask,
-	    bool generatesHitEvents);
+	StaticMeshColliderComponent(Entity& owner, const JSON::json& data);
 	~StaticMeshColliderComponent() = default;
 
 	bool setupData() override;

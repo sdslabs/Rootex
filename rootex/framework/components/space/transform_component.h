@@ -16,7 +16,7 @@ void from_json(const JSON::json& j, TransformPassDown& t);
 
 class TransformComponent : public Component
 {
-	DEFINE_COMPONENT(TransformComponent);
+	DEFINE_COMPONENT(TransformComponent, Category::General);
 
 	struct TransformBuffer
 	{
@@ -48,7 +48,7 @@ class TransformComponent : public Component
 	friend class RenderSystem;
 
 public:
-	TransformComponent(const Vector3& position, const Quaternion& rotation, const Vector3& scale, int transformPassDown, const BoundingBox& bounds, bool overrideBounds);
+	TransformComponent(Entity& owner, const JSON::json& data);
 	~TransformComponent() = default;
 
 	void setPosition(const Vector3& position);

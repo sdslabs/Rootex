@@ -20,14 +20,17 @@ struct ParticleTemplate
 	float lifeTime = 1.0f;
 };
 
+void to_json(JSON::json& j, const ParticleTemplate p);
+void from_json(const JSON::json& j, ParticleTemplate& p);
+
 class CPUParticlesComponent : public ModelComponent
 {
-	DEFINE_COMPONENT(CPUParticlesComponent);
+	DEFINE_COMPONENT(CPUParticlesComponent, Category::Effect);
 
 	Vector<InstanceData> m_InstanceBufferData;
 	Vector<InstanceData> m_InstanceBufferLiveData;
 	int m_LiveParticlesCount;
-	Ptr<VertexBuffer> m_InstanceBuffer;
+	Ref<VertexBuffer> m_InstanceBuffer;
 
 	struct Particle
 	{
@@ -69,16 +72,7 @@ class CPUParticlesComponent : public ModelComponent
 	void expandInstanceData(const size_t& poolSize);
 
 public:
-	CPUParticlesComponent(
-	    size_t poolSize,
-	    const String& particleModelPath,
-	    const String& materialPath,
-	    const ParticleTemplate& particleTemplate,
-	    EmitMode emitMode,
-	    int emitRate,
-	    const Vector3& emitterDimensions,
-	    bool visibility,
-	    unsigned int renderPass);
+	CPUParticlesComponent(Entity& owner, const JSON::json& data);
 	~CPUParticlesComponent() = default;
 
 	void setMaterial(Ref<InstancingBasicMaterialResourceFile> particlesMaterial);

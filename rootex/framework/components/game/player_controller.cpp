@@ -1,12 +1,8 @@
 #include "player_controller.h"
 
-Ptr<Component> PlayerController::Create(const JSON::json& componentData)
-{
-	return std::make_unique<PlayerController>();
-}
-
-PlayerController::PlayerController()
-    : m_DependencyOnAnimatedModelComponent(this)
+PlayerController::PlayerController(Entity& owner, const JSON::json& data)
+    : Component(owner)
+    , m_DependencyOnAnimatedModelComponent(this)
     , m_DependencyOnCapsuleColliderComponent(this)
     , m_DependencyOnTransformComponent(this)
 {

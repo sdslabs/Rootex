@@ -20,14 +20,13 @@ void RenderUISystem::update(float deltaMilliseconds)
 {
 	ZoneScoped;
 	RenderingDevice::GetSingleton()->beginDrawUI();
-	for (auto& c : ECSFactory::GetComponents<TextUIComponent>())
+	for (auto& tui : ECSFactory::GetAllTextUIComponent())
 	{
-		TextUIComponent* tui = (TextUIComponent*)c;
-		if (tui->isVisible())
+		if (tui.isVisible())
 		{
-			tui->preRender();
-			tui->render();
-			tui->postRender();
+			tui.preRender();
+			tui.render();
+			tui.postRender();
 		}
 	}
 	RenderingDevice::GetSingleton()->endDrawUI();

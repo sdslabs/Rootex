@@ -27,7 +27,7 @@ RenderSystem::RenderSystem()
 {
 	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::OpenedScene, onOpenedScene);
 
-	m_Camera = SceneLoader::GetSingleton()->getRootScene()->getEntity()->getComponent<CameraComponent>();
+	m_Camera = SceneLoader::GetSingleton()->getRootScene()->getEntity().getComponent<CameraComponent>();
 	m_TransformationStack.push_back(Matrix::Identity);
 
 	m_LineMaterial = ResourceLoader::CreateBasicMaterialResourceFile("rootex/assets/materials/line.basic.rmat");
@@ -55,14 +55,7 @@ void RenderSystem::setConfig(const SceneSettings& sceneSettings)
 		return;
 	}
 
-	if (!cameraScene->getEntity())
-	{
-		ERR("Entity not found in camera scene " + cameraScene->getFullName());
-		restoreCamera();
-		return;
-	}
-
-	CameraComponent* camera = cameraScene->getEntity()->getComponent<CameraComponent>();
+	CameraComponent* camera = cameraScene->getEntity().getComponent<CameraComponent>();
 	if (!camera)
 	{
 		ERR("CameraComponent not found on entity " + cameraScene->getFullName());
@@ -77,61 +70,108 @@ void RenderSystem::setConfig(const SceneSettings& sceneSettings)
 
 void RenderSystem::calculateTransforms(Scene* scene)
 {
-	if (Entity* entity = scene->getEntity())
+	Entity& entity = scene->getEntity();
+	if (TransformComponent* transform = entity.getComponent<TransformComponent>())
 	{
-		if (TransformComponent* transform = entity->getComponent<TransformComponent>())
-		{
-			int passDown = transform->getPassDowns();
+		int passDown = transform->getPassDowns();
 
-			if (passDown == (int)TransformPassDown::All)
-			{
-				pushMatrix(transform->getLocalTransform());
-			}
-			else
-			{
-				Matrix matrix = Matrix::Identity;
-				if (passDown & (int)TransformPassDown::Position)
-				{
-					matrix = Matrix::CreateTranslation(transform->getPosition()) * matrix;
-				}
-				if (passDown & (int)TransformPassDown::Rotation)
-				{
-					matrix = Matrix::CreateFromQuaternion(transform->getRotation()) * matrix;
-				}
-				if (passDown & (int)TransformPassDown::Scale)
-				{
-					matrix = Matrix::CreateScale(transform->getScale()) * matrix;
-				}
-				pushMatrix(matrix);
-			}
+		if (passDown == (int)TransformPassDown::All)
+		{
+			pushMatrix(transform->getLocalTransform());
 		}
 		else
 		{
-			pushMatrix(Matrix::Identity);
-		}
-
-		for (auto& child : scene->getChildren())
-		{
-			if (Entity* childEntity = child->getEntity())
+			Matrix matrix = Matrix::Identity;
+			if (passDown & (int)TransformPassDown::Position)
 			{
-				if (TransformComponent* childTransform = childEntity->getComponent<TransformComponent>())
-				{
-					childTransform->setParentAbsoluteTransform(getCurrentMatrix());
-				}
+				matrix = Matrix::CreateTranslation(transform->getPosition()) * matrix;
 			}
-
-			calculateTransforms(child.get());
+			if (passDown & (int)TransformPassDown::Rotation)
+			{
+				matrix = Matrix::CreateFromQuaternion(transform->getRotation()) * matrix;
+			}
+			if (passDown & (int)TransformPassDown::Scale)
+			{
+				matrix = Matrix::CreateScale(transform->getScale()) * matrix;
+			}
+			pushMatrix(matrix);
 		}
-		popMatrix();
 	}
+	else
+	{
+		pushMatrix(Matrix::Identity);
+	}
+
+	for (auto& child : scene->getChildren())
+	{
+		Entity& childEntity = child->getEntity();
+		if (TransformComponent* childTransform = childEntity.getComponent<TransformComponent>())
+		{
+			childTransform->setParentAbsoluteTransform(getCurrentMatrix());
+		}
+
+		calculateTransforms(child.get());
+	}
+	popMatrix();
 }
 
 void RenderSystem::renderPassRender(float deltaMilliseconds, RenderPass renderPass)
 {
-	renderComponents<ModelComponent>(deltaMilliseconds, renderPass);
-	renderComponents<GridModelComponent>(deltaMilliseconds, renderPass);
-	renderComponents<CPUParticlesComponent>(deltaMilliseconds, renderPass);
-	renderComponents<AnimatedModelComponent>(deltaMilliseconds, renderPass);
+	for (auto& mc : ECSFactory::GetAllModelComponent())
+	{
+		if (mc.getRenderPass() & (unsigned int)renderPass)
+		{
+			mc.preRender(deltaMilliseconds);
+			if (mc.isVisible())
+			{
+				Vector3 viewDistance = mc.getTransformComponent()->getAbsolutePosition() - m_Camera->getAbsolutePosition();
+				mc.render(viewDistance.Length());
+			}
+			mc.postRender();
+		}
+	}
+
+	for (auto& mc : ECSFactory::GetAllGridModelComponent())
+	{
+		if (mc.getRenderPass() & (unsigned int)renderPass)
+		{
+			mc.preRender(deltaMilliseconds);
+			if (mc.isVisible())
+			{
+				Vector3 viewDistance = mc.getTransformComponent()->getAbsolutePosition() - m_Camera->getAbsolutePosition();
+				mc.render(viewDistance.Length());
+			}
+			mc.postRender();
+		}
+	}
+
+	for (auto& mc : ECSFactory::GetAllCPUParticlesComponent())
+	{
+		if (mc.getRenderPass() & (unsigned int)renderPass)
+		{
+			mc.preRender(deltaMilliseconds);
+			if (mc.isVisible())
+			{
+				Vector3 viewDistance = mc.getTransformComponent()->getAbsolutePosition() - m_Camera->getAbsolutePosition();
+				mc.render(viewDistance.Length());
+			}
+			mc.postRender();
+		}
+	}
+
+	for (auto& mc : ECSFactory::GetAllAnimatedModelComponent())
+	{
+		if (mc.getRenderPass() & (unsigned int)renderPass)
+		{
+			mc.preRender(deltaMilliseconds);
+			if (mc.isVisible())
+			{
+				Vector3 viewDistance = mc.getTransformComponent()->getAbsolutePosition() - m_Camera->getAbsolutePosition();
+				mc.render(viewDistance.Length());
+			}
+			mc.postRender();
+		}
+	}
 }
 
 void RenderSystem::update(float deltaMilliseconds)
@@ -146,17 +186,16 @@ void RenderSystem::update(float deltaMilliseconds)
 	float fogEnd = -1000.0f;
 	{
 		ZoneNamedN(fogCalculation, "Fog", true);
-		if (!ECSFactory::GetComponents<FogComponent>().empty())
+		if (!ECSFactory::GetAllFogComponent().empty())
 		{
-			FogComponent* firstFog = (FogComponent*)ECSFactory::GetComponents<FogComponent>().front();
-			clearColor = firstFog->getColor();
+			FogComponent& firstFog = ECSFactory::GetAllFogComponent().front();
+			clearColor = firstFog.getColor();
 
-			for (auto& c : ECSFactory::GetComponents<FogComponent>())
+			for (auto& fog : ECSFactory::GetAllFogComponent())
 			{
-				FogComponent* fog = (FogComponent*)c;
-				clearColor = Color::Lerp(clearColor, fog->getColor(), 0.5f);
-				fogStart = fog->getNearDistance();
-				fogEnd = fog->getFarDistance();
+				clearColor = Color::Lerp(clearColor, fog.getColor(), 0.5f);
+				fogStart = fog.getNearDistance();
+				fogEnd = fog.getFarDistance();
 			}
 		}
 		Application::GetSingleton()->getWindow()->clearOffScreen(clearColor);
@@ -198,12 +237,11 @@ void RenderSystem::update(float deltaMilliseconds)
 		RenderingDevice::RasterizerState currentRS = RenderingDevice::GetSingleton()->getRSType();
 		RenderingDevice::GetSingleton()->setRSType(RenderingDevice::RasterizerState::Sky);
 		RenderingDevice::GetSingleton()->setCurrentRS();
-		for (auto& c : ECSFactory::GetComponents<SkyComponent>())
+		for (auto& sky : ECSFactory::GetAllSkyComponent())
 		{
-			SkyComponent* sky = (SkyComponent*)c;
-			for (auto& [material, meshes] : sky->getSkySphere()->getMeshes())
+			for (auto& [material, meshes] : sky.getSkySphere()->getMeshes())
 			{
-				m_Renderer->bind(sky->getSkyMaterial());
+				m_Renderer->bind(sky.getSkyMaterial());
 				for (auto& mesh : meshes)
 				{
 					m_Renderer->draw(mesh.m_VertexBuffer.get(), mesh.getLOD(1.0f).get());
@@ -443,7 +481,7 @@ void RenderSystem::restoreCamera()
 {
 	if (SceneLoader::GetSingleton()->getRootScene())
 	{
-		setCamera(SceneLoader::GetSingleton()->getRootScene()->getEntity()->getComponent<CameraComponent>());
+		setCamera(SceneLoader::GetSingleton()->getRootScene()->getEntity().getComponent<CameraComponent>());
 	}
 }
 
@@ -466,14 +504,13 @@ void RenderSystem::draw()
 
 	ImGui::Text("Camera");
 	ImGui::NextColumn();
-	if (ImGui::BeginCombo("##Camera", RenderSystem::GetSingleton()->getCamera()->getOwner()->getFullName().c_str()))
+	if (ImGui::BeginCombo("##Camera", RenderSystem::GetSingleton()->getCamera()->getOwner().getFullName().c_str()))
 	{
-		for (auto& c : ECSFactory::GetComponents<CameraComponent>())
+		for (auto& camera : ECSFactory::GetAllCameraComponent())
 		{
-			CameraComponent* camera = (CameraComponent*)c;
-			if (ImGui::MenuItem(camera->getOwner()->getFullName().c_str()))
+			if (ImGui::MenuItem(camera.getOwner().getFullName().c_str()))
 			{
-				RenderSystem::GetSingleton()->setCamera(camera);
+				RenderSystem::GetSingleton()->setCamera(&camera);
 			}
 		}
 

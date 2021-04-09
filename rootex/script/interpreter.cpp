@@ -275,7 +275,6 @@ void LuaInterpreter::registerTypes()
 	{
 		sol::usertype<Scene> scene = rootex.new_usertype<Scene>("Scene");
 		scene["CreateEmpty"] = &Scene::CreateEmpty;
-		scene["CreateEmptyWithEntity"] = &Scene::CreateEmptyWithEntity;
 		scene["CreateFromFile"] = &Scene::CreateFromFile;
 		scene["FindScenesByName"] = &Scene::FindScenesByName;
 		scene["FindSceneByID"] = &Scene::FindSceneByID;
@@ -283,7 +282,6 @@ void LuaInterpreter::registerTypes()
 		scene["removeChild"] = &Scene::removeChild;
 		scene["snatchChild"] = &Scene::snatchChild;
 		scene["setName"] = &Scene::setName;
-		scene["setEntity"] = &Scene::setEntity;
 		scene["getID"] = &Scene::getID;
 		scene["getParent"] = &Scene::getParent;
 		scene["getChildren"] = &Scene::getChildren;

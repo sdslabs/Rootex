@@ -3,8 +3,8 @@
 #include "entity.h"
 #include "ecs_factory.h"
 
-Component::Component()
-    : m_Owner(nullptr)
+Component::Component(Entity& owner)
+    : m_Owner(&owner)
 {
 }
 

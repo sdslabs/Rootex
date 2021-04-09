@@ -32,8 +32,8 @@ struct PixelInputType
     float3 normal : NORMAL;
     float4 worldPosition : POSITION;
     float2 tex : TEXCOORD0;
-	float fogFactor : FOG;
-	float3 tangent : TANGENT;
+    float fogFactor : FOG;
+    float3 tangent : TANGENT;
     float4 color : COLOR;
 };
 

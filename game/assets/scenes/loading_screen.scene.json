@@ -2,11 +2,9 @@
     "ID": 8,
     "children": [],
     "entity": {
-        "Entity": {
-            "script": {
-                "overrides": null,
-                "path": "game/assets/scripts/loading.lua"
-            }
+        "script": {
+            "overrides": null,
+            "path": "game/assets/scripts/loading.lua"
         },
         "components": {
             "UIComponent": {

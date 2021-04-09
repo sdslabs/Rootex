@@ -33,46 +33,15 @@ void from_json(const JSON::json& j, ParticleTemplate& p)
 	p.lifeTime = j.at("lifeTime");
 }
 
-Ptr<Component> CPUParticlesComponent::Create(const JSON::json& componentData)
+CPUParticlesComponent::CPUParticlesComponent(Entity& owner, const JSON::json& data)
+    : ModelComponent(owner, data)
+    , m_ParticleTemplate(data.value("particleTemplate", ParticleTemplate()))
+    , m_CurrentEmitMode((EmitMode)data.value("emitMode", (int)EmitMode::Point))
+    , m_EmitterDimensions(data.value("emitterDimensions", Vector3 { 1.0f, 1.0f, 1.0f }))
+    , m_EmitRate(data.value("emitRate", 1))
 {
-	return std::make_unique<CPUParticlesComponent>(
-	    componentData.value("poolSize", 1000),
-	    componentData.value("resFile", "rootex/assets/cube.obj"),
-	    componentData.value("materialPath", "rootex/assets/materials/default.instance.rmat"),
-	    componentData.value("particleTemplate", ParticleTemplate()),
-	    (EmitMode)componentData.value("emitMode", (int)EmitMode::Point),
-	    componentData.value("emitRate", 1),
-	    componentData.value("emitterDimensions", Vector3 { 1.0f, 1.0f, 1.0f }),
-	    componentData.value("isVisible", true),
-	    componentData.value("renderPass", (unsigned int)RenderPass::Basic));
-}
-
-CPUParticlesComponent::CPUParticlesComponent(
-    size_t poolSize,
-    const String& particleModelPath,
-    const String& materialPath,
-    const ParticleTemplate& particleTemplate,
-    EmitMode emitMode,
-    int emitRate,
-    const Vector3& emitterDimensions,
-    bool visibility,
-    unsigned int renderPass)
-    : ModelComponent(
-        renderPass,
-        ResourceLoader::CreateModelResourceFile(particleModelPath),
-        {},
-        visibility,
-        false,
-        0.0f,
-        0.0f,
-        {})
-    , m_ParticleTemplate(particleTemplate)
-    , m_CurrentEmitMode(emitMode)
-    , m_EmitterDimensions(emitterDimensions)
-    , m_EmitRate(emitRate)
-{
-	m_ParticlesMaterial = ResourceLoader::CreateInstancingBasicMaterialResourceFile(materialPath);
-	expandPool(poolSize);
+	m_ParticlesMaterial = ResourceLoader::CreateInstancingBasicMaterialResourceFile(data.value("materialPath", "rootex/assets/materials/default.instance.rmat"));
+	expandPool(data.value("poolSize", 1000));
 }
 
 bool CPUParticlesComponent::preRender(float deltaMilliseconds)
@@ -233,11 +202,11 @@ void CPUParticlesComponent::emit(const ParticleTemplate& particleTemplate)
 	    particleTemplate.rotationVariation * Random::Float(),
 	    particleTemplate.rotationVariation * Random::Float());
 	initialTransform = Matrix::CreateFromQuaternion(rotation) * initialTransform;
-	m_InstanceBufferData[m_PoolIndex].transform = initialTransform * m_TransformComponent->getAbsoluteTransform();
+	m_InstanceBufferData[m_PoolIndex].transform = initialTransform * getTransformComponent()->getAbsoluteTransform();
 
-	particle.position = position + m_TransformComponent->getAbsolutePosition();
-	particle.rotation = Quaternion::Concatenate(rotation, m_TransformComponent->getAbsoluteRotation());
-	particle.scale = m_TransformComponent->getAbsoluteScale();
+	particle.position = position + getTransformComponent()->getAbsolutePosition();
+	particle.rotation = Quaternion::Concatenate(rotation, getTransformComponent()->getAbsoluteRotation());
+	particle.scale = getTransformComponent()->getAbsoluteScale();
 
 	m_PoolIndex = --m_PoolIndex % m_ParticlePool.size();
 }

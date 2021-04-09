@@ -6,13 +6,13 @@
 
 class SkyComponent : public Component
 {
-	DEFINE_COMPONENT(SkyComponent);
+	DEFINE_COMPONENT(SkyComponent, Category::Effect);
 
 	Ref<ModelResourceFile> m_SkySphere;
 	Ref<SkyMaterialResourceFile> m_SkyMaterial;
 
 public:
-	SkyComponent(Ref<ModelResourceFile> skySphere, Ref<SkyMaterialResourceFile> skyMaterial);
+	SkyComponent(Entity& owner, const JSON::json& data);
 	~SkyComponent() = default;
 
 	ModelResourceFile* getSkySphere() const { return m_SkySphere.get(); }

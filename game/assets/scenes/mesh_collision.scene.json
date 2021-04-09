@@ -5,9 +5,6 @@
             "ID": 6,
             "children": [],
             "entity": {
-                "Entity": {
-                    "script": null
-                },
                 "components": {
                     "CapsuleColliderComponent": {
                         "angularFactor": {
@@ -125,7 +122,7 @@
                         "overrideBoundingBox": false,
                         "passDown": 7,
                         "position": {
-                            "x": -15.474970817565918,
+                            "x": -14.610790252685547,
                             "y": 1.3999991416931152,
                             "z": -16.664287567138672
                         },
@@ -141,7 +138,8 @@
                             "z": 1.0000001192092896
                         }
                     }
-                }
+                },
+                "script": null
             },
             "importStyle": 0,
             "name": "SonicCapsule",
@@ -158,9 +156,6 @@
             "ID": 18,
             "children": [],
             "entity": {
-                "Entity": {
-                    "script": null
-                },
                 "components": {
                     "BoxColliderComponent": {
                         "angularFactor": {
@@ -248,7 +243,8 @@
                             "z": 0.0010000000474974513
                         }
                     }
-                }
+                },
+                "script": null
             },
             "importStyle": 0,
             "name": "Office",
@@ -265,9 +261,6 @@
             "ID": 23,
             "children": [],
             "entity": {
-                "Entity": {
-                    "script": null
-                },
                 "components": {
                     "DirectionalLightComponent": {
                         "ambientColor": {
@@ -316,7 +309,8 @@
                             "z": 1.0000112056732178
                         }
                     }
-                }
+                },
+                "script": null
             },
             "importStyle": 0,
             "name": "Light",
@@ -336,9 +330,6 @@
                     "ID": 13,
                     "children": [],
                     "entity": {
-                        "Entity": {
-                            "script": null
-                        },
                         "components": {
                             "AudioListenerComponent": {
                                 "volume": 1.0
@@ -430,7 +421,8 @@
                                     "z": 1.0
                                 }
                             }
-                        }
+                        },
+                        "script": null
                     },
                     "importStyle": 0,
                     "name": "Camera",
@@ -445,19 +437,6 @@
                 }
             ],
             "entity": {
-                "Entity": {
-                    "script": {
-                        "overrides": {
-                            "idleAnim": "\"Armature|idle\"",
-                            "jumpAnim": "\"Armature|jump\"",
-                            "runAnim": "\"Armature|run\"",
-                            "runSpeed": "0.002",
-                            "walkAnim": "\"Armature|walk\"",
-                            "walkSpeed": "0.0009"
-                        },
-                        "path": "game/assets/scripts/new_player_control.lua"
-                    }
-                },
                 "components": {
                     "AnimatedModelComponent": {
                         "affectingStaticLights": [],
@@ -537,6 +516,17 @@
                             "z": 0.5
                         }
                     }
+                },
+                "script": {
+                    "overrides": {
+                        "idleAnim": "\"Armature|idle\"",
+                        "jumpAnim": "\"Armature|jump\"",
+                        "runAnim": "\"Armature|run\"",
+                        "runSpeed": "0.002",
+                        "walkAnim": "\"Armature|walk\"",
+                        "walkSpeed": "0.0009"
+                    },
+                    "path": "game/assets/scripts/new_player_control.lua"
                 }
             },
             "importStyle": 0,
@@ -552,9 +542,6 @@
         }
     ],
     "entity": {
-        "Entity": {
-            "script": null
-        },
         "components": {
             "FogComponent": {
                 "color": {
@@ -656,7 +643,8 @@
                     "z": 1.0
                 }
             }
-        }
+        },
+        "script": null
     },
     "importStyle": 0,
     "name": "mesh_collision",

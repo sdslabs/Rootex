@@ -5,9 +5,6 @@
             "ID": 5,
             "children": [],
             "entity": {
-                "Entity": {
-                    "script": null
-                },
                 "components": {
                     "BoxColliderComponent": {
                         "angularFactor": {
@@ -84,7 +81,8 @@
                             "z": 6.099999904632568
                         }
                     }
-                }
+                },
+                "script": null
             },
             "importStyle": 0,
             "name": "Floor",
@@ -101,9 +99,6 @@
             "ID": 6,
             "children": [],
             "entity": {
-                "Entity": {
-                    "script": null
-                },
                 "components": {
                     "ModelComponent": {
                         "affectingStaticLights": [],
@@ -120,9 +115,9 @@
                     "PointLightComponent": {
                         "ambientColor": {
                             "a": 1.0,
-                            "b": 0.5,
-                            "g": 0.5,
-                            "r": 0.5
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
                         },
                         "attConst": 0.04500000178813934,
                         "attLin": 1.0,
@@ -228,7 +223,7 @@
                         "overrideBoundingBox": false,
                         "passDown": 7,
                         "position": {
-                            "x": 1.7570972442626953,
+                            "x": -3.640951633453369,
                             "y": 0.13474920392036438,
                             "z": -9.829999923706055
                         },
@@ -244,7 +239,8 @@
                             "z": 0.03999999910593033
                         }
                     }
-                }
+                },
+                "script": null
             },
             "importStyle": 0,
             "name": "Sphere",
@@ -261,9 +257,6 @@
             "ID": 7,
             "children": [],
             "entity": {
-                "Entity": {
-                    "script": null
-                },
                 "components": {
                     "ModelComponent": {
                         "affectingStaticLights": [],
@@ -326,7 +319,8 @@
                             8
                         ]
                     }
-                }
+                },
+                "script": null
             },
             "importStyle": 0,
             "name": "Trigger",
@@ -343,14 +337,6 @@
             "ID": 8,
             "children": [],
             "entity": {
-                "Entity": {
-                    "script": {
-                        "overrides": {
-                            "variable": ""
-                        },
-                        "path": "game/assets/scripts/trigger.lua"
-                    }
-                },
                 "components": {
                     "ShortMusicComponent": {
                         "attenuationModel": 53251,
@@ -377,6 +363,7 @@
                             "x": 45.0,
                             "y": 41.0
                         },
+                        "rotation": 0.0,
                         "text": "Hello Rootex!"
                     },
                     "TransformComponent": {
@@ -411,6 +398,12 @@
                             "z": 1.0000001192092896
                         }
                     }
+                },
+                "script": {
+                    "overrides": {
+                        "variable": ""
+                    },
+                    "path": "game/assets/scripts/trigger.lua"
                 }
             },
             "importStyle": 0,
@@ -426,10 +419,8 @@
         }
     ],
     "entity": {
-        "Entity": {
-            "script": null
-        },
-        "components": null
+        "components": null,
+        "script": null
     },
     "importStyle": 0,
     "name": "trigger",

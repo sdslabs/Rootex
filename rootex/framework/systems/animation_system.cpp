@@ -16,12 +16,11 @@ AnimationSystem::AnimationSystem()
 
 void AnimationSystem::update(float deltaMilliseconds)
 {
-	for (auto& component : ECSFactory::GetComponents<AnimatedModelComponent>())
+	for (auto& amc : ECSFactory::GetAllAnimatedModelComponent())
 	{
-		AnimatedModelComponent* amc = (AnimatedModelComponent*)component;
-		if (amc->isPlaying() && !amc->hasEnded())
+		if (amc.isPlaying() && !amc.hasEnded())
 		{
-			amc->update(deltaMilliseconds);
+			amc.update(deltaMilliseconds);
 		}
 	}
 }

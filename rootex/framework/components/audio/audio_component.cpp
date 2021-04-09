@@ -6,6 +6,7 @@
 #include "components/physics/capsule_collider_component.h"
 
 AudioComponent::AudioComponent(
+    Entity& owner,
     bool playOnStart,
     float volume,
     bool isLooping,
@@ -14,7 +15,8 @@ AudioComponent::AudioComponent(
     ALfloat rolloffFactor,
     ALfloat referenceDistance,
     ALfloat maxDistance)
-    : m_IsPlayOnStart(playOnStart)
+    : Component(owner)
+    , m_IsPlayOnStart(playOnStart)
     , m_Volume(volume)
     , m_IsAttenuated(attenuation)
     , m_IsLooping(isLooping)
@@ -29,19 +31,19 @@ AudioComponent::AudioComponent(
 {
 }
 
-RigidBodyComponent* AudioComponent::getCollider() const
+RigidBodyComponent* AudioComponent::getCollider()
 {
-	if (m_BoxColliderComponent)
+	if (getBoxColliderComponent())
 	{
-		return m_BoxColliderComponent;
+		return getBoxColliderComponent();
 	}
-	if (m_SphereColliderComponent)
+	if (getSphereColliderComponent())
 	{
-		return m_SphereColliderComponent;
+		return getSphereColliderComponent();
 	}
-	if (m_CapsuleColliderComponent)
+	if (getCapsuleColliderComponent())
 	{
-		return m_CapsuleColliderComponent;
+		return getCapsuleColliderComponent();
 	}
 	return nullptr;
 }
@@ -50,7 +52,7 @@ bool AudioComponent::setupData()
 {
 	if (m_IsAttenuated)
 	{
-		getAudioSource()->setPosition(m_TransformComponent->getParentAbsoluteTransform().Translation());
+		getAudioSource()->setPosition(getTransformComponent()->getParentAbsoluteTransform().Translation());
 		getAudioSource()->setModel(m_AttenuationModel);
 		getAudioSource()->setRollOffFactor(m_RolloffFactor);
 		getAudioSource()->setReferenceDistance(m_ReferenceDistance);
@@ -81,7 +83,7 @@ void AudioComponent::update()
 {
 	if (m_IsAttenuated)
 	{
-		getAudioSource()->setPosition(m_TransformComponent->getAbsoluteTransform().Translation());
+		getAudioSource()->setPosition(getTransformComponent()->getAbsoluteTransform().Translation());
 	}
 
 	if (RigidBodyComponent* physicsBody = getCollider())
@@ -125,7 +127,7 @@ void AudioComponent::setLooping(bool enabled)
 
 void AudioComponent::draw()
 {
-	RenderSystem::GetSingleton()->submitSphere(m_TransformComponent->getAbsoluteTransform().Translation(), m_MaxDistance);
+	RenderSystem::GetSingleton()->submitSphere(getTransformComponent()->getAbsoluteTransform().Translation(), m_MaxDistance);
 
 	ImGui::Checkbox("Play On Start", &m_IsPlayOnStart);
 	if (ImGui::Checkbox("Looping", &m_IsLooping))

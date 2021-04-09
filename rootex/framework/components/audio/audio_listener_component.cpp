@@ -3,14 +3,9 @@
 #include "entity.h"
 #include "systems/audio_system.h"
 
-Ptr<Component> AudioListenerComponent::Create(const JSON::json& componentData)
-{
-	return std::make_unique<AudioListenerComponent>(
-	    componentData.value("volume", 1.0f));
-}
-
-AudioListenerComponent::AudioListenerComponent(float volume)
-    : m_Volume(volume)
+AudioListenerComponent::AudioListenerComponent(Entity& owner, const JSON::json& data)
+    : Component(owner)
+    , m_Volume(data.value("volume", 1.0f))
     , m_DependencyOnTransformComponent(this)
     , m_DependencyOnBoxColliderComponent(this)
     , m_DependencyOnCapsuleColliderComponent(this)
@@ -59,34 +54,34 @@ void AudioListenerComponent::update()
 	}
 }
 
-Vector3 AudioListenerComponent::getPosition() const
+Vector3 AudioListenerComponent::getPosition()
 {
-	return m_TransformComponent->getAbsoluteTransform().Translation();
+	return getTransformComponent()->getAbsoluteTransform().Translation();
 }
 
-Vector3 AudioListenerComponent::getUp() const
+Vector3 AudioListenerComponent::getUp()
 {
-	return m_TransformComponent->getAbsoluteTransform().Up();
+	return getTransformComponent()->getAbsoluteTransform().Up();
 }
 
-Vector3 AudioListenerComponent::getAt() const
+Vector3 AudioListenerComponent::getAt()
 {
-	return m_TransformComponent->getAbsoluteTransform().Forward();
+	return getTransformComponent()->getAbsoluteTransform().Forward();
 }
 
-RigidBodyComponent* AudioListenerComponent::getCollider() const
+RigidBodyComponent* AudioListenerComponent::getCollider()
 {
-	if (m_BoxColliderComponent)
+	if (getBoxColliderComponent())
 	{
-		return m_BoxColliderComponent;
+		return getBoxColliderComponent();
 	}
-	if (m_SphereColliderComponent)
+	if (getSphereColliderComponent())
 	{
-		return m_SphereColliderComponent;
+		return getSphereColliderComponent();
 	}
-	if (m_CapsuleColliderComponent)
+	if (getCapsuleColliderComponent())
 	{
-		return m_CapsuleColliderComponent;
+		return getCapsuleColliderComponent();
 	}
 	return nullptr;
 }

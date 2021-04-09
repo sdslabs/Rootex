@@ -10,7 +10,7 @@
 
 class AnimatedModelComponent : public RenderableComponent
 {
-	DEFINE_COMPONENT(AnimatedModelComponent);
+	DEFINE_COMPONENT(AnimatedModelComponent, Category::Model);
 
 public:
 	enum class AnimationMode : int
@@ -36,20 +36,7 @@ protected:
 	Vector<Matrix> m_FinalTransforms;
 
 public:
-	AnimatedModelComponent(
-	    bool isPlayOnStart,
-	    float speedMultiplier,
-	    RootExclusion rootExclusion,
-	    Ref<AnimatedModelResourceFile> resFile,
-	    const String& currentAnimationName,
-	    AnimationMode mode,
-	    unsigned int renderPass,
-	    const HashMap<String, String>& materialOverrides,
-	    bool isVisible,
-	    bool lodEnable,
-	    float lodBias,
-	    float lodDistance,
-	    const Vector<SceneID>& affectingStaticLightIDs);
+	AnimatedModelComponent(Entity& owner, const JSON::json& data);
 	~AnimatedModelComponent() = default;
 
 	bool preRender(float deltaMilliseconds) override;

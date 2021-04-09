@@ -3,26 +3,17 @@
 #include "resource_loader.h"
 #include "framework/systems/render_system.h"
 
-Ptr<Component> GridModelComponent::Create(const JSON::json& componentData)
-{
-	return std::make_unique<GridModelComponent>(
-	    componentData.value("cellSize", Vector2 { 1.0f, 1.0f }),
-	    componentData.value("cellCount", 100),
-	    componentData.value("renderPass", (unsigned int)RenderPass::Editor),
-	    componentData.value("isVisible", true));
-}
-
-GridModelComponent::GridModelComponent(const Vector2& cellSize, const int& cellCount, const unsigned int& renderPass, bool isVisible)
-    : ModelComponent(renderPass, nullptr, {}, isVisible, false, 1.0f, 1.0f, {})
-    , m_CellCount(cellCount)
-    , m_CellSize(cellSize)
+GridModelComponent::GridModelComponent(Entity& owner, const JSON::json& data)
+    : ModelComponent(owner, data)
+    , m_CellCount(data.value("cellCount", 100))
+    , m_CellSize(data.value("cellSize", Vector2 { 1.0f, 1.0f }))
     , m_ColorMaterial(ResourceLoader::CreateBasicMaterialResourceFile("rootex/assets/materials/grid.basic.rmat"))
 {
 }
 
 void GridModelComponent::refreshVertexBuffers()
 {
-	const Vector3& origin = m_TransformComponent->getAbsoluteTransform().Translation();
+	const Vector3& origin = getTransformComponent()->getAbsoluteTransform().Translation();
 
 	Vector<float> vertices;
 	Vector<unsigned short> indices;

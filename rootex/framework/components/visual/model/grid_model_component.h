@@ -6,11 +6,11 @@
 
 class GridModelComponent : public ModelComponent
 {
-	DEFINE_COMPONENT(GridModelComponent);
+	DEFINE_COMPONENT(GridModelComponent, Category::Model);
 
 	Ref<BasicMaterialResourceFile> m_ColorMaterial;
-	Ptr<VertexBuffer> m_VertexBuffer;
-	Ptr<IndexBuffer> m_IndexBuffer;
+	Ref<VertexBuffer> m_VertexBuffer;
+	Ref<IndexBuffer> m_IndexBuffer;
 
 	Vector2 m_CellSize;
 	int m_CellCount;
@@ -18,7 +18,7 @@ class GridModelComponent : public ModelComponent
 	void refreshVertexBuffers();
 
 public:
-	GridModelComponent(const Vector2& cellSize, const int& cellCount, const unsigned int& renderPass, bool isVisible);
+	GridModelComponent(Entity& owner, const JSON::json& data);
 	~GridModelComponent() = default;
 
 	void render(float viewDistance) override;

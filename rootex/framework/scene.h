@@ -4,7 +4,7 @@
 #include "entity.h"
 #include "core/input/input_manager.h"
 
-typedef unsigned int SceneID;
+class Entity;
 
 #define ROOT_SCENE_ID 1
 
@@ -44,8 +44,8 @@ private:
 	ImportStyle m_ImportStyle;
 	/// Contains the current file name if local, else contains the linked scene file
 	String m_SceneFile;
-	Ptr<Entity> m_Entity;
 	SceneSettings m_Settings;
+	Entity m_Entity;
 
 	Scene* m_ParentScene = nullptr;
 	Vector<Ptr<Scene>> m_ChildrenScenes;
@@ -59,7 +59,6 @@ public:
 	static Ptr<Scene> CreateFromFile(const String& sceneFile);
 	static Ptr<Scene> CreateEmpty();
 	static Ptr<Scene> CreateEmptyAtPath(const String& sceneFile);
-	static Ptr<Scene> CreateEmptyWithEntity();
 	static Ptr<Scene> CreateRootScene();
 
 	static Vector<Scene*> FindScenesByName(const String& name);
@@ -77,7 +76,6 @@ public:
 	bool addChild(Ptr<Scene>& child);
 	bool removeChild(Scene* toRemove);
 
-	void setEntity(Ptr<Entity>& entity) { m_Entity = std::move(entity); }
 	void setName(const String& name);
 
 	JSON::json getJSON() const;
@@ -86,7 +84,7 @@ public:
 	ImportStyle getImportStyle() const { return m_ImportStyle; }
 	String getScenePath() const { return m_SceneFile; }
 	Scene* getParent() const { return m_ParentScene; }
-	Entity* getEntity() const { return m_Entity.get(); }
+	Entity& getEntity() { return m_Entity; }
 	const String& getName() const { return m_Name; }
 	const String& getFullName() const { return m_FullName; }
 	SceneSettings& getSettings() { return m_Settings; }

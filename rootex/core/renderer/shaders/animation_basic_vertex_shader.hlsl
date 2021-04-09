@@ -35,12 +35,13 @@ struct VertexInputType
 
 struct PixelInputType
 {
-	float4 screenPosition : SV_POSITION;
-	float3 normal : NORMAL;
-	float4 worldPosition : POSITION;
-	float2 tex : TEXCOORD0;
-	float fogFactor : FOG;
+    float4 screenPosition : SV_POSITION;
+    float3 normal : NORMAL;
+    float4 worldPosition : POSITION;
+    float2 tex : TEXCOORD0;
+    float fogFactor : FOG;
     float3 tangent : TANGENT;
+    float4 color : COLOR;
 };
 
 PixelInputType main(VertexInputType input)
@@ -61,6 +62,7 @@ PixelInputType main(VertexInputType input)
 	
     output.tex.x = input.tex.x;
     output.tex.y = input.tex.y;
+    output.color = float4(1.0f, 1.0f, 1.0f, 1.0f);
 	
     output.tangent = mul(input.tangent, (float3x3)M);
 	

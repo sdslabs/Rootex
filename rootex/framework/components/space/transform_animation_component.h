@@ -5,7 +5,7 @@
 
 class TransformAnimationComponent : public Component
 {
-	DEFINE_COMPONENT(TransformAnimationComponent);
+	DEFINE_COMPONENT(TransformAnimationComponent, Category::General);
 	DEPENDS_ON(TransformComponent);
 
 public:
@@ -44,7 +44,7 @@ private:
 	friend class TransformAnimationSystem;
 
 public:
-	TransformAnimationComponent(const Vector<Keyframe> keyframes, bool isPlayOnStart, AnimationMode animationMode, TransitionType transition);
+	TransformAnimationComponent(Entity& owner, const JSON::json& data);
 	~TransformAnimationComponent() = default;
 
 	void pushKeyframe(const Keyframe& keyFrame);

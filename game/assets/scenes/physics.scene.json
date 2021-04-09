@@ -5,9 +5,6 @@
             "ID": 9,
             "children": [],
             "entity": {
-                "Entity": {
-                    "script": null
-                },
                 "components": {
                     "BoxColliderComponent": {
                         "angularFactor": {
@@ -84,7 +81,8 @@
                             "z": 6.659997463226318
                         }
                     }
-                }
+                },
+                "script": null
             },
             "importStyle": 0,
             "name": "Floor",
@@ -104,9 +102,6 @@
                     "ID": 13,
                     "children": [],
                     "entity": {
-                        "Entity": {
-                            "script": null
-                        },
                         "components": {
                             "AnimatedModelComponent": {
                                 "affectingStaticLights": [],
@@ -158,7 +153,8 @@
                                     "z": 1.0
                                 }
                             }
-                        }
+                        },
+                        "script": null
                     },
                     "importStyle": 0,
                     "name": "CowboyBody",
@@ -173,9 +169,6 @@
                 }
             ],
             "entity": {
-                "Entity": {
-                    "script": null
-                },
                 "components": {
                     "CapsuleColliderComponent": {
                         "angularFactor": {
@@ -237,7 +230,8 @@
                             "z": 0.20000004768371582
                         }
                     }
-                }
+                },
+                "script": null
             },
             "importStyle": 0,
             "name": "Cowboy",
@@ -254,9 +248,6 @@
             "ID": 10,
             "children": [],
             "entity": {
-                "Entity": {
-                    "script": null
-                },
                 "components": {
                     "ModelComponent": {
                         "affectingStaticLights": [],
@@ -329,7 +320,8 @@
                             "z": 0.11999999731779099
                         }
                     }
-                }
+                },
+                "script": null
             },
             "importStyle": 0,
             "name": "Sphere",
@@ -344,9 +336,6 @@
         }
     ],
     "entity": {
-        "Entity": {
-            "script": null
-        },
         "components": {
             "TransformComponent": {
                 "boundingBox": {
@@ -380,7 +369,8 @@
                     "z": 1.0
                 }
             }
-        }
+        },
+        "script": null
     },
     "importStyle": 0,
     "name": "physics",
