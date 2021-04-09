@@ -10,7 +10,7 @@
 /// Useful for marking 3D sound attenuation in moving listeners
 class AudioListenerComponent : public Component
 {
-	DEFINE_COMPONENT(AudioListenerComponent);
+	DEFINE_COMPONENT(AudioListenerComponent, Category::Audio);
 
 	DEPENDS_ON(TransformComponent);
 	SOFT_DEPENDS_ON(CapsuleColliderComponent);
@@ -20,15 +20,15 @@ class AudioListenerComponent : public Component
 	float m_Volume;
 
 public:
-	AudioListenerComponent(float volume);
+	AudioListenerComponent(Entity& owner, const JSON::json& data);
 	~AudioListenerComponent() = default;
 
 	void update();
 
-	Vector3 getPosition() const;
-	Vector3 getUp() const;
-	Vector3 getAt() const;
-	RigidBodyComponent* getCollider() const;
+	Vector3 getPosition();
+	Vector3 getUp();
+	Vector3 getAt();
+	RigidBodyComponent* getCollider();
 
 	JSON::json getJSON() const override;
 	void onRemove() override;

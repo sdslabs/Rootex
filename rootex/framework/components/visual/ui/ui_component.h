@@ -8,13 +8,13 @@
 
 class UIComponent : public Component
 {
-	DEFINE_COMPONENT(UIComponent);
+	DEFINE_COMPONENT(UIComponent, Category::UI);
 
 	String m_FilePath;
 	Rml::ElementDocument* m_Document;
 
 public:
-	UIComponent(const String& path);
+	UIComponent(Entity& owner, const JSON::json& data);
 	~UIComponent();
 
 	Rml::ElementDocument* getDocument() { return m_Document; };

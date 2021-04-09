@@ -85,7 +85,7 @@ Ptr<Scene> Scene::Create(const JSON::json& sceneData, const bool assignNewIDs)
 	// Make entity and children scenes
 	if (sceneData.contains("entity"))
 	{
-		thisScene->m_Entity = ECSFactory::CreateEntity(thisScene.get(), sceneData["entity"]);
+		ECSFactory::FillEntity(thisScene->m_Entity, sceneData["entity"]);
 	}
 	if (sceneData.contains("children"))
 	{
@@ -126,11 +126,6 @@ Ptr<Scene> Scene::CreateEmptyAtPath(const String& sceneFile)
 	return Create({ { "entity", {} }, { "sceneFile", sceneFile } }, false);
 }
 
-Ptr<Scene> Scene::CreateEmptyWithEntity()
-{
-	return Create({ { "entity", {} } }, false);
-}
-
 Ptr<Scene> Scene::CreateRootScene()
 {
 	static bool called = false;
@@ -141,7 +136,7 @@ Ptr<Scene> Scene::CreateRootScene()
 	}
 
 	Ptr<Scene> root = std::make_unique<Scene>(ROOT_SCENE_ID, "Root", SceneSettings(), ImportStyle::Local, "");
-	root->m_Entity = ECSFactory::CreateRootEntity(root.get());
+	ECSFactory::FillRootEntity(root->getEntity());
 
 	called = true;
 	return root;
@@ -205,13 +200,10 @@ void Scene::reimport()
 	t->reimport();
 
 	const JSON::json& sceneData = JSON::json::parse(t->getString());
+	m_Entity.clear();
 	if (sceneData.contains("entity"))
 	{
-		setEntity(ECSFactory::CreateEntity(this, sceneData["entity"]));
-	}
-	else
-	{
-		setEntity(Ptr<Entity>());
+		ECSFactory::FillEntity(m_Entity, sceneData["entity"]);
 	}
 
 	m_ChildrenScenes.clear();
@@ -229,10 +221,7 @@ void Scene::reimport()
 
 void Scene::onLoad()
 {
-	if (m_Entity)
-	{
-		m_Entity->onAllEntitiesAdded();
-	}
+	m_Entity.onAllEntitiesAdded();
 	for (auto& child : m_ChildrenScenes)
 	{
 		child->onLoad();
@@ -317,11 +306,7 @@ JSON::json Scene::getJSON() const
 	j["name"] = m_Name;
 	j["importStyle"] = m_ImportStyle;
 	j["sceneFile"] = m_SceneFile;
-	j["entity"] = nullptr;
-	if (m_Entity)
-	{
-		j["entity"] = m_Entity->getJSON();
-	}
+	j["entity"] = m_Entity.getJSON();
 	j["settings"] = m_Settings;
 
 	j["children"] = JSON::json::array();
@@ -339,6 +324,7 @@ Scene::Scene(SceneID id, const String& name, const SceneSettings& settings, Impo
     , m_Settings(settings)
     , m_ImportStyle(importStyle)
     , m_SceneFile(sceneFile)
+    , m_Entity(this)
 {
 	setName(m_Name);
 	s_Scenes.push_back(this);

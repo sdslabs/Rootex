@@ -62,7 +62,7 @@ void SkyMaterialResourceFile::bindVSCB()
 {
 	RenderingDevice::GetSingleton()->editBuffer(
 	    PerModelVSCBData(Matrix::CreateTranslation(
-	        RenderSystem::GetSingleton()->getCamera()->getOwner()->getComponent<TransformComponent>()->getAbsoluteTransform().Translation())),
+	        RenderSystem::GetSingleton()->getCamera()->getOwner().getComponent<TransformComponent>()->getAbsoluteTransform().Translation())),
 	    m_VSCB.Get());
 	RenderingDevice::GetSingleton()->setVSCB(PER_OBJECT_VS_CPP, 1, m_VSCB.GetAddressOf());
 }

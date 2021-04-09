@@ -100,6 +100,11 @@ using Vector = std::vector<T>;
 
 Vector<String> Split(const String& s, char delim);
 
+#include <array>
+/// std::array
+template <class T, int N>
+using Array = std::array<T, N>;
+
 #include <stack>
 /// std::stack
 template <class T>

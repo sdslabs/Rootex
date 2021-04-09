@@ -3,16 +3,10 @@
 #include "resource_loader.h"
 #include "resource_files/model_resource_file.h"
 
-Ptr<Component> SkyComponent::Create(const JSON::json& componentData)
-{
-	return std::make_unique<SkyComponent>(
-	    ResourceLoader::CreateModelResourceFile(componentData.value("skySphere", "rootex/assets/sky.obj")),
-	    ResourceLoader::CreateSkyMaterialResourceFile(componentData.value("skyMaterial", "rootex/assets/materials/default.sky.rmat")));
-}
-
-SkyComponent::SkyComponent(Ref<ModelResourceFile> skySphere, Ref<SkyMaterialResourceFile> skyMaterial)
-    : m_SkyMaterial(skyMaterial)
-    , m_SkySphere(skySphere)
+SkyComponent::SkyComponent(Entity& owner, const JSON::json& data)
+    : Component(owner)
+    , m_SkyMaterial(ResourceLoader::CreateSkyMaterialResourceFile(data.value("skyMaterial", "rootex/assets/materials/default.sky.rmat")))
+    , m_SkySphere(ResourceLoader::CreateModelResourceFile(data.value("skySphere", "rootex/assets/sky.obj")))
 {
 }
 

@@ -9,7 +9,7 @@
 
 class TriggerComponent : public CollisionComponent
 {
-	DEFINE_COMPONENT(TriggerComponent);
+	DEFINE_COMPONENT(TriggerComponent, Category::Physics);
 	DEPENDS_ON(TransformComponent);
 
 	Ref<btBoxShape> m_BoxShape;
@@ -47,14 +47,7 @@ class TriggerComponent : public CollisionComponent
 	friend class TriggerSystem;
 
 public:
-	TriggerComponent(
-	    const Vector3& dimensions,
-	    bool entryRepeat,
-	    const Vector<SceneID>& entryTargets,
-	    bool exitRepeat,
-	    const Vector<SceneID>& exitTargets,
-	    int collisionGroup,
-	    int collisionMask);
+	TriggerComponent(Entity& owner, const JSON::json& data);
 	~TriggerComponent() = default;
 
 	bool isEntryRepeat() { return m_EntryRepeat; }

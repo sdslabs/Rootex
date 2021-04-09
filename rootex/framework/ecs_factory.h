@@ -3,84 +3,179 @@
 #include "common/common.h"
 #include "core/resource_files/text_resource_file.h"
 
+#include "scene.h"
 #include "entity.h"
 #include "component.h"
 
-/// Function pointer to a function that constructs a component, taking in a set of component data.
-typedef Ptr<Component> (*ComponentCreator)(const JSON::json& componentDescription);
+#include "components/audio/audio_listener_component.h"
+#include "components/audio/music_component.h"
+#include "components/physics/box_collider_component.h"
+#include "components/physics/sphere_collider_component.h"
+#include "components/physics/capsule_collider_component.h"
+#include "components/physics/static_mesh_collider_component.h"
+#include "components/physics/trigger_component.h"
+#include "components/audio/short_music_component.h"
+#include "components/space/transform_animation_component.h"
+#include "components/space/transform_component.h"
+#include "components/visual/camera_component.h"
+#include "components/visual/effect/cpu_particles_component.h"
+#include "components/visual/light/directional_light_component.h"
+#include "components/visual/effect/fog_component.h"
+#include "components/visual/model/grid_model_component.h"
+#include "components/visual/model/model_component.h"
+#include "components/visual/light/point_light_component.h"
+#include "components/visual/light/static_point_light_component.h"
+#include "components/visual/effect/sky_component.h"
+#include "components/visual/light/spot_light_component.h"
+#include "components/visual/ui/text_ui_component.h"
+#include "components/visual/ui/ui_component.h"
+#include "components/visual/model/animated_model_component.h"
+#include "components/visual/effect/particle_effect_component.h"
+#include "components/game/player_controller.h"
 
-struct ComponentTypeData
+#define MAX_COMPONENT_ARRAY_SIZE 1000
+
+class BaseComponentSet
 {
-	String componentName;
-	ComponentID componentID;
-	String category;
-	ComponentCreator creator;
+public:
+	virtual bool addComponent(Entity& owner, const JSON::json& componentData, bool checks = true) = 0;
+	virtual bool addDefaultComponent(Entity& owner, bool checks) = 0;
+	virtual bool removeComponent(Entity& entity) = 0;
+	virtual const String& getName() const = 0;
+	virtual const String& getCategory() const = 0;
+	virtual const ComponentID& getID() const = 0;
 };
 
-/// Collection of meta info about a component.
-typedef Vector<ComponentTypeData> ComponentDatabase;
-/// Collection of all components active inside the scene.
-typedef HashMap<ComponentID, Vector<Component*>> ComponentInstanceDatabase;
+template <class T>
+class ComponentSet : public BaseComponentSet
+{
+	Vector<T> m_Instances;
 
-#define REGISTER_COMPONENT(ComponentType, componentCategory) ECSFactory::RegisterComponent<ComponentType>(#ComponentType, componentCategory);
+public:
+	ComponentSet()
+	{
+		m_Instances.reserve(MAX_COMPONENT_ARRAY_SIZE); // To disallow resize if max size is detected later
+	}
+
+	Vector<T>& getAll() { return m_Instances; }
+
+	bool addComponent(Entity& owner, const JSON::json& componentData, bool checks) override
+	{
+		if (m_Instances.size() == MAX_COMPONENT_ARRAY_SIZE)
+		{
+			ERR("Component set for " + T::s_Name + " is full. Reduce component count or increase max size");
+		}
+
+		if (!owner.hasComponent(T::s_ID))
+		{
+			m_Instances.emplace_back(owner, componentData);
+			T& instance = m_Instances.back();
+
+			owner.registerComponent(&instance);
+
+			if (checks && !owner.onAllComponentsAdded())
+			{
+				if (owner.hasComponent(T::s_ID))
+				{
+					owner.removeComponent(T::s_ID, true);
+				}
+				return false;
+			}
+			return true;
+		}
+
+		WARN("Entity already has a " + T::s_Name + ": " + owner.getFullName());
+		return false;
+	}
+
+	bool addDefaultComponent(Entity& owner, bool checks) override
+	{
+		return addComponent(owner, JSON::json::object(), checks);
+	}
+
+	bool removeComponent(Entity& entity) override
+	{
+		auto& findIt = std::find_if(m_Instances.begin(), m_Instances.end(), [&entity](T& c) {
+			return c.getOwner().getID() == entity.getID();
+		});
+
+		if (findIt != m_Instances.end())
+		{
+			findIt->onRemove();
+			m_Instances.erase(findIt);
+			return true;
+		}
+		return false;
+	}
+
+	const String& getName() const override { return T::s_Name; };
+	const String& getCategory() const override { return T::s_Category; };
+	const ComponentID& getID() const override { return T::s_ID; };
+};
+
+#define REGISTER_COMPONENT(Type)                                                              \
+	static inline ComponentSet<Type> s_SetOf##Type;                                           \
+                                                                                              \
+	static bool Add##Type(Entity& owner, const JSON::json& componentData, bool checks = true) \
+	{                                                                                         \
+		return s_SetOf##Type.addComponent(owner, componentData, checks);                      \
+	}                                                                                         \
+                                                                                              \
+	static bool AddDefault##Type(Entity& owner, bool checks = true)                           \
+	{                                                                                         \
+		return s_SetOf##Type.addDefaultComponent(owner, checks);                              \
+	}                                                                                         \
+                                                                                              \
+	static bool Remove##Type(Entity& entity)                                                  \
+	{                                                                                         \
+		return s_SetOf##Type.removeComponent(entity);                                         \
+	}                                                                                         \
+	static Vector<Type>& GetAll##Type()                                                       \
+	{                                                                                         \
+		return s_SetOf##Type.getAll();                                                        \
+	}
 
 class ECSFactory
 {
-	struct Category
-	{
-		static inline const String General = "General";
-		static inline const String Audio = "Audio";
-		static inline const String Game = "Game";
-		static inline const String Physics = "Physics";
-		static inline const String Model = "Model";
-		static inline const String Effect = "Effect";
-		static inline const String Light = "Light";
-		static inline const String UI = "UI";
-	};
-
-	static inline ComponentDatabase s_ComponentCreators;
-	static inline ComponentInstanceDatabase s_ComponentInstances;
-
 public:
-	template <class T>
-	static Vector<Component*>& GetComponents();
+	static inline HashMap<String, BaseComponentSet*> s_ComponentSets;
 
 	static void Initialize();
+	static void FillEntity(Entity& entity, const JSON::json& entityJSON);
+	static void FillEntityFromFile(Entity& entity, TextResourceFile* textResourceFile);
+	static void FillRootEntity(Entity& root);
 
-	static bool AddComponent(Entity* entity, Ptr<Component>& component);
-	static Ptr<Component> CreateComponent(const String& componentName, const JSON::json& componentData);
-	static Ptr<Component> CreateDefaultComponent(const String& componentName);
-
-	static Ptr<Entity> CreateEntity(Scene* scene, const JSON::json& entityJSON);
-	static Ptr<Entity> CreateEntityFromFile(Scene* scene, TextResourceFile* textResourceFile);
-	static Ptr<Entity> CreateEmptyEntity(Scene* scene);
-	static Ptr<Entity> CreateRootEntity(Scene* scene);
-	static Ptr<Entity> CopyEntity(Scene* scene, Entity& entity);
-
+	static void CopyEntity(Entity& entity, Entity& copyTarget);
 	static String GetComponentNameByID(ComponentID componentID);
-	static const ComponentDatabase& GetComponentDatabase() { return s_ComponentCreators; }
+	static ComponentID GetComponentIDByName(const String& componentName);
 
-	template <class T>
-	static void RegisterComponent(const String& name, const String& category);
+	static bool AddComponent(Entity& entity, ComponentID componentID, const JSON::json& componentData, bool checks = true);
+	static bool AddDefaultComponent(Entity& entity, ComponentID componentID, bool checks = true);
+	static bool RemoveComponent(Entity& entity, ComponentID componentID);
 
-	static void RegisterComponentInstance(Component* component);
-	static void DeregisterComponentInstance(Component* component);
+	REGISTER_COMPONENT(PlayerController);
+	REGISTER_COMPONENT(CameraComponent);
+	REGISTER_COMPONENT(TransformComponent);
+	REGISTER_COMPONENT(TransformAnimationComponent);
+	REGISTER_COMPONENT(AudioListenerComponent);
+	REGISTER_COMPONENT(MusicComponent);
+	REGISTER_COMPONENT(ShortMusicComponent);
+	REGISTER_COMPONENT(BoxColliderComponent);
+	REGISTER_COMPONENT(CapsuleColliderComponent);
+	REGISTER_COMPONENT(SphereColliderComponent);
+	REGISTER_COMPONENT(StaticMeshColliderComponent);
+	REGISTER_COMPONENT(TriggerComponent);
+	REGISTER_COMPONENT(ModelComponent);
+	REGISTER_COMPONENT(AnimatedModelComponent);
+	REGISTER_COMPONENT(GridModelComponent);
+	REGISTER_COMPONENT(PointLightComponent);
+	REGISTER_COMPONENT(SpotLightComponent);
+	REGISTER_COMPONENT(DirectionalLightComponent);
+	REGISTER_COMPONENT(StaticPointLightComponent);
+	REGISTER_COMPONENT(TextUIComponent);
+	REGISTER_COMPONENT(UIComponent);
+	REGISTER_COMPONENT(FogComponent);
+	REGISTER_COMPONENT(SkyComponent);
+	REGISTER_COMPONENT(CPUParticlesComponent);
+	REGISTER_COMPONENT(ParticleEffectComponent);
 };
-
-template <class T>
-inline Vector<Component*>& ECSFactory::GetComponents()
-{
-	return s_ComponentInstances[T::s_ID];
-}
-
-template <class T>
-inline void ECSFactory::RegisterComponent(const String& name, const String& category)
-{
-	ComponentTypeData data;
-	data.category = category;
-	data.componentID = T::s_ID;
-	data.componentName = name;
-	data.creator = T::Create;
-
-	s_ComponentCreators.push_back(data);
-}

@@ -17,38 +17,11 @@ bool CompareMaterials(const Pair<Ref<MaterialResourceFile>, Vector<Mesh>>& a, co
 	return !a.first->isAlpha() && b.first->isAlpha();
 }
 
-Ptr<Component> ModelComponent::Create(const JSON::json& componentData)
+ModelComponent::ModelComponent(Entity& owner, const JSON::json& data)
+    : RenderableComponent(owner, data)
+    , m_ModelResourceFile(ResourceLoader::CreateModelResourceFile(data.value("resFile", "rootex/assets/cube.obj")))
 {
-	return std::make_unique<ModelComponent>(
-	    componentData.value("renderPass", (int)RenderPass::Basic),
-	    ResourceLoader::CreateModelResourceFile(componentData.value("resFile", "rootex/assets/cube.obj")),
-	    componentData.value("materialOverrides", HashMap<String, String>()),
-	    componentData.value("isVisible", true),
-	    componentData.value("lodEnable", true),
-	    componentData.value("lodBias", 0.0f),
-	    componentData.value("lodDistance", 10.0f),
-	    componentData.value("affectingStaticLights", Vector<SceneID>()));
-}
-
-ModelComponent::ModelComponent(
-    unsigned int renderPass,
-    Ref<ModelResourceFile> resFile,
-    const HashMap<String, String>& materialOverrides,
-    bool visibility,
-    bool lodEnable,
-    float lodBias,
-    float lodDistance,
-    const Vector<SceneID>& affectingStaticLightIDs)
-    : RenderableComponent(
-        renderPass,
-        materialOverrides,
-        visibility,
-        lodEnable,
-        lodBias,
-        lodDistance,
-        affectingStaticLightIDs)
-{
-	assignOverrides(resFile, materialOverrides);
+	assignOverrides(m_ModelResourceFile, data.value("materialOverrides", HashMap<String, String>()));
 }
 
 bool ModelComponent::setupData()
@@ -118,18 +91,18 @@ void ModelComponent::assignBoundingBox()
 				}
 			}
 		}
-		m_TransformComponent->setBounds(bigBox);
+		getTransformComponent()->setBounds(bigBox);
 	}
 }
 
 void ModelComponent::assignOverrides(Ref<ModelResourceFile> newModel, const HashMap<String, String>& materialOverrides)
 {
-	m_ModelResourceFile = newModel;
-
 	if (!newModel)
 	{
 		return;
 	}
+
+	m_ModelResourceFile = newModel;
 
 	m_MaterialOverrides.clear();
 	for (auto& [material, meshes] : m_ModelResourceFile->getMeshes())

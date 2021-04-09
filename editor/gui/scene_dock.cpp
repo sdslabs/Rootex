@@ -61,24 +61,26 @@ void SceneDock::showSceneTree(Ptr<Scene>& scene)
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("RearrangeScene"))
 				{
 					Ptr<Scene>& rearrangeScene = *(Ptr<Scene>*)(payload->Data);
-					if (rearrangeScene->findScene(scene->getID()) == nullptr)
+					if (!rearrangeScene->findScene(scene->getID()))
 					{
-						Entity* victimEntity = rearrangeScene->getEntity();
-						Entity* thiefEntity = scene->getEntity();
-						if (victimEntity && thiefEntity)
+						Entity& victimEntity = rearrangeScene->getEntity();
+						Entity& thiefEntity = scene->getEntity();
+
+						TransformComponent* victimTransform = victimEntity.getComponent<TransformComponent>();
+						TransformComponent* thiefTransform = thiefEntity.getComponent<TransformComponent>();
+
+						if (victimTransform && thiefTransform)
 						{
-							TransformComponent* victimTransform = victimEntity->getComponent<TransformComponent>();
-							TransformComponent* thiefTransform = thiefEntity->getComponent<TransformComponent>();
-							if (victimTransform && thiefTransform)
-							{
-								victimTransform->setTransform(victimTransform->getAbsoluteTransform() * thiefTransform->getAbsoluteTransform().Invert());
-							}
+							victimTransform->setTransform(victimTransform->getAbsoluteTransform() * thiefTransform->getAbsoluteTransform().Invert());
 						}
+
 						Scene* rearrangeScenePtr = rearrangeScene.get();
 						Scene* scenePtr = scene.get();
+
 						EventManager::GetSingleton()->defer([=]() {
 							scenePtr->snatchChild(rearrangeScenePtr);
 						});
+
 						openScene(scenePtr);
 					}
 				}

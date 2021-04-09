@@ -6,15 +6,18 @@
 #include "entity.h"
 #include "systems/render_system.h"
 
-Ptr<Component> TransformComponent::Create(const JSON::json& componentData)
+TransformComponent::TransformComponent(Entity& owner, const JSON::json& data)
+    : Component(owner)
+    , m_TransformBuffer(
+          { data.value("position", Vector3::Zero),
+              data.value("rotation", Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, 0.0f)),
+              data.value("scale", Vector3 { 1.0f, 1.0f, 1.0f }),
+              data.value("boundingBox", BoundingBox { Vector3::Zero, Vector3 { 0.5f, 0.5f, 0.5f } }),
+              Matrix::Identity })
+    , m_TransformPassDown(data.value("passDown", (int)TransformPassDown::All))
+    , m_OverrideBoundingBox(data.value("overrideBoundingBox", false))
 {
-	return std::make_unique<TransformComponent>(
-	    componentData.value("position", Vector3::Zero),
-	    componentData.value("rotation", Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, 0.0f)),
-	    componentData.value("scale", Vector3 { 1.0f, 1.0f, 1.0f }),
-	    componentData.value("passDown", (int)TransformPassDown::All),
-	    componentData.value("boundingBox", BoundingBox { Vector3::Zero, Vector3 { 0.5f, 0.5f, 0.5f } }),
-	    componentData.value("overrideBoundingBox", false));
+	updateTransformFromPositionRotationScale();
 }
 
 void TransformComponent::updateAbsoluteTransformValues()
@@ -34,18 +37,6 @@ void TransformComponent::updateTransformFromPositionRotationScale()
 void TransformComponent::updatePositionRotationScaleFromTransform(Matrix& transform)
 {
 	transform.Decompose(m_TransformBuffer.scale, m_TransformBuffer.rotation, m_TransformBuffer.position);
-}
-
-TransformComponent::TransformComponent(const Vector3& position, const Quaternion& rotation, const Vector3& scale, int transformPassDown, const BoundingBox& bounds, bool overrideBounds)
-    : m_TransformPassDown(transformPassDown)
-    , m_OverrideBoundingBox(overrideBounds)
-{
-	m_TransformBuffer.position = position;
-	m_TransformBuffer.rotation = rotation;
-	m_TransformBuffer.scale = scale;
-	m_TransformBuffer.boundingBox = bounds;
-
-	updateTransformFromPositionRotationScale();
 }
 
 void TransformComponent::setPosition(const Vector3& position)

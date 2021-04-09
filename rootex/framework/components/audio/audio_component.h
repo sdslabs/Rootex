@@ -33,6 +33,7 @@ protected:
 
 public:
 	AudioComponent(
+	    Entity& owner,
 	    bool playOnStart,
 	    float volume,
 	    bool isLooping,
@@ -56,7 +57,7 @@ public:
 	bool isLooping();
 
 	AudioSource* getAudioSource() { return m_AudioSource; }
-	RigidBodyComponent* getCollider() const;
+	RigidBodyComponent* getCollider();
 
 	bool setupData() override;
 	JSON::json getJSON() const;

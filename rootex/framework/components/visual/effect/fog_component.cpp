@@ -1,17 +1,10 @@
 #include "fog_component.h"
 
-Ptr<Component> FogComponent::Create(const JSON::json& componentData)
-{
-	return std::make_unique<FogComponent>(
-	    componentData.value("near", 0.0f),
-	    componentData.value("far", 100.0f),
-	    componentData.value("color", (Color)ColorPresets::Cyan));
-}
-
-FogComponent::FogComponent(float nearDistance, float farDistance, const Color& color)
-    : m_Near(nearDistance)
-    , m_Far(farDistance)
-    , m_Color(color)
+FogComponent::FogComponent(Entity& owner, const JSON::json& data)
+    : Component(owner)
+    , m_Near(data.value("near", 0.0f))
+    , m_Far(data.value("far", 100.0f))
+    , m_Color(data.value("color", (Color)ColorPresets::Green))
 {
 }
 

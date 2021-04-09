@@ -3,29 +3,17 @@
 #include "entity.h"
 #include "systems/render_system.h"
 
-Ptr<Component> PointLightComponent::Create(const JSON::json& componentData)
+PointLightComponent::PointLightComponent(Entity& owner, const JSON::json& data)
+    : Component(owner)
+    , m_DependencyOnTransformComponent(this)
 {
-	return std::make_unique<PointLightComponent>(
-	    componentData.value("attConst", 0.045f),
-	    componentData.value("attLin", 1.0f),
-	    componentData.value("attQuad", 0.0075f),
-	    componentData.value("range", 10.0f),
-	    componentData.value("diffuseIntensity", 1.0f),
-	    componentData.value("diffuseColor", Color(1.0f, 1.0f, 1.0f, 1.0f)),
-	    componentData.value("ambientColor", Color(0.5f, 0.5f, 0.5f, 1.0f)));
-}
-
-PointLightComponent::PointLightComponent(const float constAtt, const float linAtt, const float quadAtt,
-    const float range, const float diffuseIntensity, const Color& diffuseColor, const Color& ambientColor)
-    : m_DependencyOnTransformComponent(this)
-{
-	m_PointLight.ambientColor = ambientColor;
-	m_PointLight.attConst = constAtt;
-	m_PointLight.attLin = linAtt;
-	m_PointLight.attQuad = quadAtt;
-	m_PointLight.diffuseColor = diffuseColor;
-	m_PointLight.diffuseIntensity = diffuseIntensity;
-	m_PointLight.range = range;
+	m_PointLight.ambientColor = data.value("diffuseColor", Color(1.0f, 1.0f, 1.0f, 1.0f));
+	m_PointLight.attConst = data.value("attConst", 0.045f);
+	m_PointLight.attLin = data.value("attLin", 1.0f);
+	m_PointLight.attQuad = data.value("attQuad", 0.0075f);
+	m_PointLight.diffuseColor = data.value("diffuseColor", Color(1.0f, 1.0f, 1.0f, 1.0f));
+	m_PointLight.diffuseIntensity = data.value("diffuseIntensity", 1.0f);
+	m_PointLight.range = data.value("range", 10.0f);
 }
 
 JSON::json PointLightComponent::getJSON() const
@@ -45,7 +33,7 @@ JSON::json PointLightComponent::getJSON() const
 
 void PointLightComponent::draw()
 {
-	RenderSystem::GetSingleton()->submitSphere(m_TransformComponent->getAbsoluteTransform().Translation(), m_PointLight.range);
+	RenderSystem::GetSingleton()->submitSphere(getTransformComponent()->getAbsoluteTransform().Translation(), m_PointLight.range);
 
 	ImGui::DragFloat("Diffuse Intensity##Point", &m_PointLight.diffuseIntensity, 0.1f);
 	ImGui::ColorEdit4("Diffuse Color##Point", &m_PointLight.diffuseColor.x);

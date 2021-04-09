@@ -8,23 +8,9 @@
 #include "script/script.h"
 #include "resource_loader.h"
 
-#include "scene.h"
-
-Entity::Entity(Scene* scene, const JSON::json& script)
+Entity::Entity(Scene* scene)
     : m_Scene(scene)
 {
-	if (!script.is_null() && !script["path"].is_null())
-	{
-		if (OS::IsExists(script["path"]))
-		{
-			m_Script.reset(new Script(script));
-			ScriptSystem::GetSingleton()->addInitScriptEntity(this);
-		}
-		else
-		{
-			ERR("Could not find script file: " + (String)script["path"]);
-		}
-	}
 }
 
 Entity::~Entity()
@@ -42,11 +28,11 @@ JSON::json Entity::getJSON() const
 	}
 	if (m_Script)
 	{
-		j["Entity"]["script"] = m_Script->getJSON();
+		j["script"] = m_Script->getJSON();
 	}
 	else
 	{
-		j["Entity"]["script"] = {};
+		j["script"] = {};
 	}
 
 	return j;
@@ -83,27 +69,39 @@ bool Entity::onAllEntitiesAdded()
 	return status;
 }
 
+void Entity::clear()
+{
+	for (auto& [id, component] : m_Components)
+	{
+		ECSFactory::RemoveComponent(*this, id);
+	}
+	m_Components.clear();
+}
+
 void Entity::destroy()
 {
 	call("destroy", { this });
 
-	for (auto& component : m_Components)
+	for (auto& [componentID, component] : m_Components)
 	{
-		component.second->onRemove();
-		ECSFactory::DeregisterComponentInstance(component.second.get());
-		component.second.reset();
+		ECSFactory::RemoveComponent(*this, componentID);
 	}
 	m_Components.clear();
 }
 
 bool Entity::addDefaultComponent(const String& componentName)
 {
-	return ECSFactory::AddComponent(this, ECSFactory::CreateDefaultComponent(componentName));
+	return ECSFactory::AddDefaultComponent(*this, ECSFactory::GetComponentIDByName(componentName));
 }
 
 bool Entity::addComponent(const String& componentName, const JSON::json& componentData)
 {
-	return ECSFactory::AddComponent(this, ECSFactory::CreateComponent(componentName, componentData));
+	return ECSFactory::AddComponent(*this, ECSFactory::GetComponentIDByName(componentName), componentData);
+}
+
+void Entity::registerComponent(Component* component)
+{
+	m_Components[component->getComponentID()] = component;
 }
 
 bool Entity::removeComponent(ComponentID toRemoveComponentID, bool hardRemove)
@@ -124,9 +122,8 @@ bool Entity::removeComponent(ComponentID toRemoveComponentID, bool hardRemove)
 		}
 	}
 
-	toRemoveComponent->onRemove();
-	ECSFactory::DeregisterComponentInstance(toRemoveComponent);
-	m_Components.erase(toRemoveComponent->getComponentID());
+	ECSFactory::RemoveComponent(*this, toRemoveComponentID);
+	m_Components.erase(toRemoveComponentID);
 
 	return true;
 }
@@ -136,7 +133,7 @@ bool Entity::hasComponent(ComponentID componentID)
 	return m_Components.find(componentID) != m_Components.end();
 }
 
-const HashMap<ComponentID, Ptr<Component>>& Entity::getAllComponents() const
+const HashMap<ComponentID, Component*>& Entity::getAllComponents() const
 {
 	return m_Components;
 }
@@ -163,6 +160,25 @@ void Entity::evaluateScriptOverrides()
 	}
 };
 
+bool Entity::setScriptJSON(const JSON::json& script)
+{
+	if (script.contains("path"))
+	{
+		if (OS::IsExists(script["path"]))
+		{
+			m_Script.reset(new Script(script));
+			ScriptSystem::GetSingleton()->addInitScriptEntity(this);
+			return true;
+		}
+		else
+		{
+			ERR("Could not find script file: " + (String)script["path"]);
+			return false;
+		}
+	}
+	return false;
+}
+
 bool Entity::setScript(const String& path)
 {
 	if (path.empty())
@@ -176,6 +192,7 @@ bool Entity::setScript(const String& path)
 		j["path"] = path;
 		j["overrides"] = {};
 		m_Script.reset(new Script(j));
+		ScriptSystem::GetSingleton()->addInitScriptEntity(this);
 		return m_Script->setup(this);
 	}
 	else
@@ -188,6 +205,11 @@ bool Entity::setScript(const String& path)
 const String& Entity::getName() const
 {
 	return m_Scene->getName();
+}
+
+const SceneID Entity::getID() const
+{
+	return m_Scene->getID();
 }
 
 const String& Entity::getFullName() const

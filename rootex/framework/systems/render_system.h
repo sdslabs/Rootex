@@ -42,9 +42,6 @@ class RenderSystem : public System
 
 	void renderPassRender(float deltaMilliseconds, RenderPass renderPass);
 
-	template <class T>
-	void renderComponents(float deltaMilliseconds, RenderPass renderPass);
-
 	Variant onOpenedScene(const Event* event);
 
 public:
@@ -91,22 +88,3 @@ public:
 
 	void draw() override;
 };
-
-template <class T>
-inline void RenderSystem::renderComponents(float deltaMilliseconds, RenderPass renderPass)
-{
-	for (auto& c : ECSFactory::GetComponents<T>())
-	{
-		T* tc = (T*)c;
-		if (tc->getRenderPass() & (unsigned int)renderPass)
-		{
-			tc->preRender(deltaMilliseconds);
-			if (tc->isVisible())
-			{
-				Vector3 viewDistance = tc->getTransformComponent()->getAbsolutePosition() - m_Camera->getAbsolutePosition();
-				tc->render(viewDistance.Length());
-			}
-			tc->postRender();
-		}
-	}
-}

@@ -8,17 +8,16 @@
 /// Component to apply dynamic point lights to the scene
 class PointLightComponent : public Component
 {
-	DEFINE_COMPONENT(PointLightComponent);
+	DEFINE_COMPONENT(PointLightComponent, Category::Light);
 	DEPENDS_ON(TransformComponent);
 
 	PointLight m_PointLight;
 
 public:
-	PointLightComponent::PointLightComponent(const float constAtt, const float linAtt, const float quadAtt,
-	    const float range, const float diffuseIntensity, const Color& diffuseColor, const Color& ambientColor);
+	PointLightComponent::PointLightComponent(Entity& owner, const JSON::json& data);
 	~PointLightComponent() = default;
 
-	Matrix getAbsoluteTransform() const { return m_TransformComponent->getAbsoluteTransform(); }
+	Matrix getAbsoluteTransform() { return getTransformComponent()->getAbsoluteTransform(); }
 	const PointLight& getPointLight() const { return m_PointLight; }
 
 	JSON::json getJSON() const override;

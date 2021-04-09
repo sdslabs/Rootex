@@ -6,7 +6,7 @@
 
 class CameraComponent : public Component
 {
-	DEFINE_COMPONENT(CameraComponent);
+	DEFINE_COMPONENT(CameraComponent, Category::General);
 	DEPENDS_ON(TransformComponent);
 
 	bool m_Active;
@@ -23,12 +23,12 @@ class CameraComponent : public Component
 	void refreshViewMatrix();
 
 public:
-	CameraComponent(const Vector2& aspectRatio, float fov, float nearPlane, float farPlane, const PostProcessingDetails& postProcesing);
+	CameraComponent(Entity& owner, const JSON::json& data);
 	~CameraComponent() = default;
 
 	Matrix& getViewMatrix();
 	Matrix& getProjectionMatrix();
-	Vector3 getAbsolutePosition() const { return m_TransformComponent->getAbsoluteTransform().Translation(); }
+	Vector3 getAbsolutePosition() { return getTransformComponent()->getAbsoluteTransform().Translation(); }
 
 	PostProcessingDetails getPostProcessingDetails() const { return m_PostProcessingDetails; }
 

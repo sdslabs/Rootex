@@ -8,13 +8,13 @@
 
 class PlayerController : public Component
 {
-	DEFINE_COMPONENT(PlayerController);
+	DEFINE_COMPONENT(PlayerController, Category::Game);
 	DEPENDS_ON(TransformComponent);
 	DEPENDS_ON(AnimatedModelComponent);
 	DEPENDS_ON(CapsuleColliderComponent);
 
 public:
-	PlayerController();
+	PlayerController(Entity& owner, const JSON::json& data);
 	~PlayerController() = default;
 
 	bool setupData() override;

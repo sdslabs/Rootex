@@ -3,34 +3,19 @@
 #include "entity.h"
 #include "systems/render_system.h"
 
-Ptr<Component> SpotLightComponent::Create(const JSON::json& componentData)
+SpotLightComponent::SpotLightComponent(Entity& owner, const JSON::json& data)
+    : Component(owner)
+    , m_DependencyOnTransformComponent(this)
 {
-	return std::make_unique<SpotLightComponent>(
-	    componentData.value("attConst", 1.0f),
-	    componentData.value("attLin", 0.045f),
-	    componentData.value("attQuad", 0.075f),
-	    componentData.value("range", 100.0f),
-	    componentData.value("diffuseIntensity", 1.0f),
-	    componentData.value("diffuseColor", Color(1.0f, 1.0f, 1.0f, 1.0f)),
-	    componentData.value("ambientColor", Color(1.0f, 1.0f, 1.0f, 1.0f)),
-	    componentData.value("spot", 4.0f),
-	    componentData.value("angleRange", DirectX::XMConvertToRadians(30.0f)));
-}
-
-SpotLightComponent::SpotLightComponent(const float constAtt, const float linAtt, const float quadAtt,
-    const float range, const float diffuseIntensity, const Color& diffuseColor, const Color& ambientColor,
-    float spot, float angleRange)
-    : m_DependencyOnTransformComponent(this)
-{
-	m_SpotLight.ambientColor = ambientColor;
-	m_SpotLight.angleRange = angleRange;
-	m_SpotLight.attConst = constAtt;
-	m_SpotLight.attLin = linAtt;
-	m_SpotLight.attQuad = quadAtt;
-	m_SpotLight.diffuseColor = diffuseColor;
-	m_SpotLight.diffuseIntensity = diffuseIntensity;
-	m_SpotLight.spot = spot;
-	m_SpotLight.range = range;
+	m_SpotLight.ambientColor = data.value("diffuseColor", Color(1.0f, 1.0f, 1.0f, 1.0f));
+	m_SpotLight.attConst = data.value("attConst", 0.045f);
+	m_SpotLight.attLin = data.value("attLin", 1.0f);
+	m_SpotLight.attQuad = data.value("attQuad", 0.0075f);
+	m_SpotLight.diffuseColor = data.value("diffuseColor", Color(1.0f, 1.0f, 1.0f, 1.0f));
+	m_SpotLight.diffuseIntensity = data.value("diffuseIntensity", 1.0f);
+	m_SpotLight.range = data.value("range", 10.0f);
+	m_SpotLight.spot = data.value("spot", 4.0f);
+	m_SpotLight.angleRange = data.value("angleRange", DirectX::XMConvertToRadians(30.0f));
 }
 
 JSON::json SpotLightComponent::getJSON() const
@@ -52,7 +37,7 @@ JSON::json SpotLightComponent::getJSON() const
 
 void SpotLightComponent::draw()
 {
-	RenderSystem::GetSingleton()->submitCone(m_TransformComponent->getAbsoluteTransform(), m_SpotLight.range, m_SpotLight.angleRange * m_SpotLight.range);
+	RenderSystem::GetSingleton()->submitCone(getTransformComponent()->getAbsoluteTransform(), m_SpotLight.range, m_SpotLight.angleRange * m_SpotLight.range);
 
 	ImGui::DragFloat("Diffuse Intensity##Spot", &m_SpotLight.diffuseIntensity, 0.1f);
 	ImGui::ColorEdit4("Diffuse Color##Spot", &m_SpotLight.diffuseColor.x);

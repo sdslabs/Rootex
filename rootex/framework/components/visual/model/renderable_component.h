@@ -8,7 +8,6 @@
 
 class RenderableComponent : public Component
 {
-	DEFINE_COMPONENT(RenderableComponent);
 	DEPENDS_ON(TransformComponent);
 
 protected:
@@ -25,15 +24,7 @@ protected:
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_PerModelCB;
 
-	RenderableComponent(
-	    unsigned int renderPass,
-	    const HashMap<String, String>& materialOverrides,
-	    bool visibility,
-	    bool lodEnable,
-	    float lodBias,
-	    float lodDistance,
-	    const Vector<SceneID>& affectingStaticLightIDs);
-	RenderableComponent(RenderableComponent&) = delete;
+	RenderableComponent(Entity& owner, const JSON::json& data);
 
 	float getLODFactor(float viewDistance);
 

@@ -4,14 +4,14 @@
 
 class FogComponent : public Component
 {
-	DEFINE_COMPONENT(FogComponent);
+	DEFINE_COMPONENT(FogComponent, Category::Effect);
 
 	float m_Near;
 	float m_Far;
 	Color m_Color;
 
 public:
-	FogComponent(float nearDistance, float farDistance, const Color& color);
+	FogComponent(Entity& owner, const JSON::json& data);
 	FogComponent() = default;
 
 	Color getColor() const { return m_Color; }

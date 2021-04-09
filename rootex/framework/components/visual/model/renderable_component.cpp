@@ -6,20 +6,14 @@
 #include "systems/render_system.h"
 #include "scene_loader.h"
 
-RenderableComponent::RenderableComponent(
-    unsigned int renderPass,
-    const HashMap<String, String>& materialOverrides,
-    bool visibility,
-    bool lodEnable,
-    float lodBias,
-    float lodDistance,
-    const Vector<SceneID>& affectingStaticLightIDs)
-    : m_RenderPass(renderPass)
-    , m_IsVisible(visibility)
-    , m_AffectingStaticLightIDs(affectingStaticLightIDs)
-    , m_LODDistance(lodDistance)
-    , m_LODBias(lodBias)
-    , m_LODEnable(lodEnable)
+RenderableComponent::RenderableComponent(Entity& owner, const JSON::json& data)
+    : Component(owner)
+    , m_RenderPass(data.value("renderPass", (int)RenderPass::Basic))
+    , m_IsVisible(data.value("isVisible", true))
+    , m_AffectingStaticLightIDs(data.value("affectingStaticLights", Vector<SceneID>()))
+    , m_LODEnable(data.value("lodEnable", true))
+    , m_LODBias(data.value("lodBias", 0.0f))
+    , m_LODDistance(data.value("lodDistance", 10.0f))
     , m_DependencyOnTransformComponent(this)
 {
 	m_PerModelCB = RenderingDevice::GetSingleton()->createBuffer<PerModelPSCB>(PerModelPSCB(), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
@@ -49,14 +43,7 @@ bool RenderableComponent::setupEntities()
 
 bool RenderableComponent::preRender(float deltaMilliseconds)
 {
-	if (m_TransformComponent)
-	{
-		RenderSystem::GetSingleton()->pushMatrixOverride(m_TransformComponent->getAbsoluteTransform());
-	}
-	else
-	{
-		RenderSystem::GetSingleton()->pushMatrixOverride(Matrix::Identity);
-	}
+	RenderSystem::GetSingleton()->pushMatrixOverride(getTransformComponent()->getAbsoluteTransform());
 	return true;
 }
 
@@ -81,19 +68,11 @@ void RenderableComponent::postRender()
 bool RenderableComponent::addAffectingStaticLight(SceneID ID)
 {
 	Scene* light = SceneLoader::GetSingleton()->getCurrentScene()->findScene(ID);
-	if (!light->getEntity())
-	{
-		WARN("Static light entity referred to not found: " + std::to_string(ID));
-		{
-			return false;
-		};
-	}
 
 	int lightID = 0;
-	for (auto& component : ECSFactory::GetComponents<StaticPointLightComponent>())
+	for (auto& staticLight : ECSFactory::GetAllStaticPointLightComponent())
 	{
-		StaticPointLightComponent* staticLight = (StaticPointLightComponent*)component;
-		if (light->getEntity()->getComponent<StaticPointLightComponent>() == staticLight)
+		if (light->getEntity().getComponent<StaticPointLightComponent>() == &staticLight)
 		{
 			m_AffectingStaticLightIDs.push_back(ID);
 			m_AffectingStaticLights.push_back(lightID);
@@ -188,11 +167,11 @@ void RenderableComponent::draw()
 	{
 		ImGui::Indent();
 		int slot = 0;
-		EntityID toRemove = -1;
+		SceneID toRemove = -1;
 		for (auto& slotSceneID : m_AffectingStaticLightIDs)
 		{
 			Scene* staticLight = SceneLoader::GetSingleton()->getCurrentScene()->findScene(slotSceneID);
-			RenderSystem::GetSingleton()->submitLine(m_TransformComponent->getAbsoluteTransform().Translation(), staticLight->getEntity()->getComponent<TransformComponent>()->getAbsoluteTransform().Translation());
+			RenderSystem::GetSingleton()->submitLine(getTransformComponent()->getAbsoluteTransform().Translation(), staticLight->getEntity().getComponent<TransformComponent>()->getAbsoluteTransform().Translation());
 
 			String displayName = staticLight->getFullName();
 			if (ImGui::SmallButton(("x##" + std::to_string(slot)).c_str()))
@@ -213,11 +192,11 @@ void RenderableComponent::draw()
 		{
 			if (ImGui::BeginCombo(("Light " + std::to_string(slot)).c_str(), "None"))
 			{
-				for (auto& staticLight : ECSFactory::GetComponents<StaticPointLightComponent>())
+				for (auto& staticLight : ECSFactory::GetAllStaticPointLightComponent())
 				{
-					if (ImGui::Selectable(staticLight->getOwner()->getFullName().c_str()))
+					if (ImGui::Selectable(staticLight.getOwner().getFullName().c_str()))
 					{
-						addAffectingStaticLight(staticLight->getOwner()->getScene()->getID());
+						addAffectingStaticLight(staticLight.getOwner().getScene()->getID());
 					}
 				}
 				ImGui::EndCombo();

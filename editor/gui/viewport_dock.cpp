@@ -18,37 +18,36 @@ ViewportDock::ViewportDock(const JSON::json& viewportJSON)
 {
 	m_ViewportDockSettings.m_AspectRatio = (float)viewportJSON["aspectRatio"]["x"] / (float)viewportJSON["aspectRatio"]["y"];
 
-	Ptr<Scene>& editorCamera = Scene::CreateEmptyWithEntity();
+	Ptr<Scene>& editorCamera = Scene::CreateEmpty();
 	editorCamera->setName("EditorCamera");
 	m_EditorCamera = editorCamera.get();
-	ECSFactory::AddComponent(m_EditorCamera->getEntity(), ECSFactory::CreateDefaultComponent("TransformComponent"));
-	ECSFactory::AddComponent(m_EditorCamera->getEntity(), ECSFactory::CreateDefaultComponent("CameraComponent"));
-	RenderSystem::GetSingleton()->setCamera(m_EditorCamera->getEntity()->getComponent<CameraComponent>());
+	ECSFactory::AddDefaultTransformComponent(m_EditorCamera->getEntity());
+	ECSFactory::AddDefaultCameraComponent(m_EditorCamera->getEntity());
+	RenderSystem::GetSingleton()->setCamera(m_EditorCamera->getEntity().getComponent<CameraComponent>());
 	SceneLoader::GetSingleton()->getRootScene()->addChild(editorCamera);
 
-	Ptr<Scene>& editorGrid = Scene::CreateEmptyWithEntity();
+	Ptr<Scene>& editorGrid = Scene::CreateEmpty();
 	editorGrid->setName("EditorGrid");
 	m_EditorGrid = editorGrid.get();
-	ECSFactory::AddComponent(m_EditorGrid->getEntity(), ECSFactory::CreateDefaultComponent("TransformComponent"));
-	ECSFactory::AddComponent(m_EditorGrid->getEntity(), ECSFactory::CreateDefaultComponent("GridModelComponent"));
+	ECSFactory::AddDefaultTransformComponent(m_EditorGrid->getEntity());
+	ECSFactory::AddDefaultGridModelComponent(m_EditorGrid->getEntity());
 	SceneLoader::GetSingleton()->getRootScene()->addChild(editorGrid);
 }
 
 void FindSelectedEntity(Entity*& result, Scene* scene, const Ray& ray, float minimumDistance)
 {
-	if (Entity* entity = scene->getEntity())
+	Entity& entity = scene->getEntity();
+
+	if (TransformComponent* transform = entity.getComponent<TransformComponent>())
 	{
-		if (TransformComponent* transform = entity->getComponent<TransformComponent>())
+		static float distance = 0.0f;
+		BoundingBox boundingBox = transform->getWorldSpaceBounds();
+		if (ray.Intersects(boundingBox, distance))
 		{
-			static float distance = 0.0f;
-			BoundingBox boundingBox = transform->getWorldSpaceBounds();
-			if (ray.Intersects(boundingBox, distance))
+			if (0.0f < distance && distance < minimumDistance)
 			{
-				if (0.0f < distance && distance < minimumDistance)
-				{
-					minimumDistance = distance;
-					result = entity;
-				}
+				minimumDistance = distance;
+				result = &entity;
 			}
 		}
 	}
@@ -155,15 +154,13 @@ void ViewportDock::draw(float deltaMilliseconds)
 				ImGui::DragFloat("Speed", &m_EditorCameraSpeed, 0.1f, 0.1f, 1000.0f);
 				ImGui::DragFloat("Sensitivity", &m_EditorCameraSensitivity, 1.0f, 0.1f, 1000.0f);
 
-				if (ImGui::BeginCombo("Camera", RenderSystem::GetSingleton()->getCamera()->getOwner()->getFullName().c_str()))
+				if (ImGui::BeginCombo("Camera", RenderSystem::GetSingleton()->getCamera()->getOwner().getFullName().c_str()))
 				{
-					for (auto& c : ECSFactory::GetComponents<CameraComponent>())
+					for (auto& camera : ECSFactory::GetAllCameraComponent())
 					{
-						CameraComponent* camera = (CameraComponent*)c;
-
-						if (ImGui::MenuItem(camera->getOwner()->getFullName().c_str()))
+						if (ImGui::MenuItem(camera.getOwner().getFullName().c_str()))
 						{
-							RenderSystem::GetSingleton()->setCamera(camera);
+							RenderSystem::GetSingleton()->setCamera(&camera);
 						}
 					}
 					ImGui::EndCombo();
@@ -177,10 +174,10 @@ void ViewportDock::draw(float deltaMilliseconds)
 			Matrix proj = RenderSystem::GetSingleton()->getCamera()->getProjectionMatrix();
 
 			Scene* openedScene = InspectorDock::GetSingleton()->getOpenedScene();
-			if (openedScene && openedScene->getEntity() && openedScene->getEntity()->getComponent<TransformComponent>())
+			if (openedScene && openedScene->getEntity().getComponent<TransformComponent>())
 			{
-				Entity* openedEntity = openedScene->getEntity();
-				TransformComponent* transform = openedEntity->getComponent<TransformComponent>();
+				Entity& openedEntity = openedScene->getEntity();
+				TransformComponent* transform = openedEntity.getComponent<TransformComponent>();
 
 				ImGuizmo::SetRect(imagePos.x, imagePos.y, region.x, region.y);
 
@@ -270,7 +267,7 @@ void ViewportDock::draw(float deltaMilliseconds)
 
 					ImGui::SetCursorPos({ ImGui::GetMousePos().x - ImGui::GetWindowPos().x + 10.0f, ImGui::GetMousePos().y - ImGui::GetWindowPos().y - 20.0f });
 					EditorSystem::GetSingleton()->pushBoldFont();
-					ImGui::TextColored(EditorSystem::GetSingleton()->getNormalColor(), "%s", transform->getOwner()->getFullName().c_str());
+					ImGui::TextColored(EditorSystem::GetSingleton()->getNormalColor(), "%s", transform->getOwner().getFullName().c_str());
 					EditorSystem::GetSingleton()->popFont();
 
 					if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
@@ -316,12 +313,12 @@ void ViewportDock::draw(float deltaMilliseconds)
 
 				SetCursorPos(cursorWhenActivated.x, cursorWhenActivated.y);
 
-				m_EditorCamera->getEntity()->getComponent<TransformComponent>()->setRotation(
+				m_EditorCamera->getEntity().getComponent<TransformComponent>()->setRotation(
 				    m_EditorCameraYaw * m_EditorCameraSensitivity / m_EditorCameraRotationNormalizer,
 				    m_EditorCameraPitch * m_EditorCameraSensitivity / m_EditorCameraRotationNormalizer,
 				    0.0f);
 
-				m_ApplyCameraMatrix = m_EditorCamera->getEntity()->getComponent<TransformComponent>()->getLocalTransform();
+				m_ApplyCameraMatrix = m_EditorCamera->getEntity().getComponent<TransformComponent>()->getLocalTransform();
 
 				static const Vector3& forward = { 0.0f, 0.0f, -1.0f };
 				static const Vector3& right = { 1.0f, 0.0f, 0.0f };
@@ -359,7 +356,7 @@ void ViewportDock::draw(float deltaMilliseconds)
 					m_IsCameraMoving = false;
 				}
 			}
-			m_EditorCamera->getEntity()->getComponent<TransformComponent>()->setPosition(m_ApplyCameraMatrix.Translation());
+			m_EditorCamera->getEntity().getComponent<TransformComponent>()->setPosition(m_ApplyCameraMatrix.Translation());
 		}
 		ImGui::End();
 	}

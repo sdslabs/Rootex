@@ -31,6 +31,7 @@ protected:
 	btVector3 m_LocalInertia;
 
 	RigidBodyComponent(
+	    Entity& owner,
 	    const PhysicsMaterial& material,
 	    float volume,
 	    const Vector3& offset,
