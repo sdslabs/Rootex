@@ -10,7 +10,7 @@
 /// Useful for marking 3D sound attenuation in moving listeners
 class AudioListenerComponent : public Component
 {
-	DEFINE_COMPONENT(AudioListenerComponent, Category::Audio);
+	COMPONENT(AudioListenerComponent, Category::Audio);
 
 	DEPENDS_ON(TransformComponent);
 	SOFT_DEPENDS_ON(CapsuleColliderComponent);
@@ -34,3 +34,5 @@ public:
 	void onRemove() override;
 	void draw() override;
 };
+
+DECLARE_COMPONENT(AudioListenerComponent);

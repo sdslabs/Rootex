@@ -6,7 +6,7 @@
 
 class SkyComponent : public Component
 {
-	DEFINE_COMPONENT(SkyComponent, Category::Effect);
+	COMPONENT(SkyComponent, Category::Effect);
 
 	Ref<ModelResourceFile> m_SkySphere;
 	Ref<SkyMaterialResourceFile> m_SkyMaterial;
@@ -21,3 +21,5 @@ public:
 	JSON::json getJSON() const override;
 	void draw() override;
 };
+
+DECLARE_COMPONENT(SkyComponent);

@@ -3,6 +3,8 @@
 #include "systems/render_ui_system.h"
 #include "renderer/rendering_device.h"
 
+DEFINE_COMPONENT(TextUIComponent);
+
 TextUIComponent::TextUIComponent(Entity& owner, const JSON::json& data)
     : RenderUIComponent(owner, data)
     , m_FontFile(ResourceLoader::CreateFontResourceFile(data.value("fontResource", "rootex/assets/fonts/lato_30_regular.spritefont")))

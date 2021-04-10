@@ -1,6 +1,8 @@
 #include "capsule_collider_component.h"
 #include "framework/systems/physics_system.h"
 
+DEFINE_COMPONENT(CapsuleColliderComponent);
+
 CapsuleColliderComponent::CapsuleColliderComponent(Entity& owner, const JSON::json& data)
     : RigidBodyComponent(
         owner,

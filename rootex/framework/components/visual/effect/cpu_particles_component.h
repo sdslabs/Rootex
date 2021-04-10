@@ -25,7 +25,7 @@ void from_json(const JSON::json& j, ParticleTemplate& p);
 
 class CPUParticlesComponent : public ModelComponent
 {
-	DEFINE_COMPONENT(CPUParticlesComponent, Category::Effect);
+	COMPONENT(CPUParticlesComponent, Category::Effect);
 
 	Vector<InstanceData> m_InstanceBufferData;
 	Vector<InstanceData> m_InstanceBufferLiveData;
@@ -85,3 +85,5 @@ public:
 	JSON::json getJSON() const override;
 	void draw() override;
 };
+
+DECLARE_COMPONENT(CPUParticlesComponent);

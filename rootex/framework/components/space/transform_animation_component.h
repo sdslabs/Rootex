@@ -5,7 +5,7 @@
 
 class TransformAnimationComponent : public Component
 {
-	DEFINE_COMPONENT(TransformAnimationComponent, Category::General);
+	COMPONENT(TransformAnimationComponent, Category::General);
 	DEPENDS_ON(TransformComponent);
 
 public:
@@ -64,3 +64,5 @@ public:
 	JSON::json getJSON() const override;
 	void draw() override;
 };
+
+DECLARE_COMPONENT(TransformAnimationComponent);

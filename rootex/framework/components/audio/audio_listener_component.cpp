@@ -3,6 +3,8 @@
 #include "entity.h"
 #include "systems/audio_system.h"
 
+DEFINE_COMPONENT(AudioListenerComponent);
+
 AudioListenerComponent::AudioListenerComponent(Entity& owner, const JSON::json& data)
     : Component(owner)
     , m_Volume(data.value("volume", 1.0f))

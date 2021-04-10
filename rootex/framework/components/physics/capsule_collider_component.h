@@ -6,7 +6,7 @@
 
 class CapsuleColliderComponent : public RigidBodyComponent
 {
-	DEFINE_COMPONENT(CapsuleColliderComponent, Category::Physics);
+	COMPONENT(CapsuleColliderComponent, Category::Physics);
 
 	float m_Radius;
 	float m_SideHeight;
@@ -25,3 +25,5 @@ public:
 	JSON::json getJSON() const override;
 	void draw() override;
 };
+
+DECLARE_COMPONENT(CapsuleColliderComponent);

@@ -9,7 +9,7 @@
 
 class ShortMusicComponent : public AudioComponent
 {
-	DEFINE_COMPONENT(ShortMusicComponent, Category::Audio);
+	COMPONENT(ShortMusicComponent, Category::Audio);
 
 	Ref<StaticAudioSource> m_StaticAudioSource;
 	Ref<StaticAudioBuffer> m_StaticAudioBuffer;
@@ -26,3 +26,5 @@ public:
 	JSON::json getJSON() const override;
 	void draw() override;
 };
+
+DECLARE_COMPONENT(ShortMusicComponent);

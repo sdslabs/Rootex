@@ -1,6 +1,8 @@
 #include "sphere_collider_component.h"
 #include "framework/systems/physics_system.h"
 
+DEFINE_COMPONENT(SphereColliderComponent);
+
 SphereColliderComponent::SphereColliderComponent(Entity& owner, const JSON::json& data)
     : RigidBodyComponent(
         owner,

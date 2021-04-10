@@ -11,7 +11,7 @@ bool CompareMaterials(const Pair<Ref<MaterialResourceFile>, Vector<Mesh>>& a, co
 
 class ModelComponent : public RenderableComponent
 {
-	DEFINE_COMPONENT(ModelComponent, Category::Model);
+	COMPONENT(ModelComponent, Category::Model);
 
 protected:
 	Ref<ModelResourceFile> m_ModelResourceFile;
@@ -35,3 +35,5 @@ public:
 	JSON::json getJSON() const override;
 	void draw() override;
 };
+
+DECLARE_COMPONENT(ModelComponent);

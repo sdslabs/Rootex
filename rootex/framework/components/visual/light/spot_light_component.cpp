@@ -3,6 +3,8 @@
 #include "entity.h"
 #include "systems/render_system.h"
 
+DEFINE_COMPONENT(SpotLightComponent);
+
 SpotLightComponent::SpotLightComponent(Entity& owner, const JSON::json& data)
     : Component(owner)
     , m_DependencyOnTransformComponent(this)

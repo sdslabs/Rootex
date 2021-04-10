@@ -4,7 +4,7 @@
 
 class FogComponent : public Component
 {
-	DEFINE_COMPONENT(FogComponent, Category::Effect);
+	COMPONENT(FogComponent, Category::Effect);
 
 	float m_Near;
 	float m_Far;
@@ -21,3 +21,5 @@ public:
 	JSON::json getJSON() const override;
 	void draw() override;
 };
+
+DECLARE_COMPONENT(FogComponent);

@@ -5,6 +5,8 @@
 #include "systems/render_system.h"
 #include "utility/maths.h"
 
+DEFINE_COMPONENT(TransformAnimationComponent);
+
 void to_json(JSON::json& j, const TransformAnimationComponent::Keyframe& k)
 {
 	j["timePosition"] = k.timePosition;

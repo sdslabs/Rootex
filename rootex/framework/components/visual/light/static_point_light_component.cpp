@@ -2,6 +2,8 @@
 
 #include "systems/render_system.h"
 
+DEFINE_COMPONENT(StaticPointLightComponent);
+
 StaticPointLightComponent::StaticPointLightComponent(Entity& owner, const JSON::json& data)
     : PointLightComponent(owner, data)
 {

@@ -5,6 +5,8 @@
 #include "resource_loader.h"
 #include "editor/editor_events.h"
 
+DEFINE_COMPONENT(UIComponent);
+
 UIComponent::UIComponent(Entity& owner, const JSON::json& data)
     : Component(owner)
     , m_FilePath(data.value("filePath", "rootex/assets/rml/demo.rml"))

@@ -3,9 +3,36 @@
 #include "common/common.h"
 #include "script/interpreter.h"
 #include "components/component_ids.h"
+#include "ecs_factory.h"
 
-typedef unsigned int ComponentID;
 class Component;
+
+#define DECLARE_COMPONENT(Type)                                                             \
+	namespace ECSFactory                                                                    \
+	{                                                                                       \
+		bool Add##Type(Entity& owner, const JSON::json& componentData, bool checks = true); \
+		bool AddDefault##Type(Entity& owner, bool checks = true);                           \
+		bool Remove##Type(Entity& entity);                                                  \
+		Vector<Type>& GetAll##Type();                                                       \
+	}
+
+#define DEFINE_COMPONENT(Type)                                                              \
+	bool ECSFactory::Add##Type(Entity& owner, const JSON::json& componentData, bool checks) \
+	{                                                                                       \
+		return s_ComponentSets[Type::s_Name]->addComponent(owner, componentData, checks);   \
+	}                                                                                       \
+	bool ECSFactory::AddDefault##Type(Entity& owner, bool checks)                           \
+	{                                                                                       \
+		return s_ComponentSets[Type::s_Name]->addDefaultComponent(owner, checks);           \
+	}                                                                                       \
+	bool ECSFactory::Remove##Type(Entity& entity)                                           \
+	{                                                                                       \
+		return s_ComponentSets[Type::s_Name]->removeComponent(entity);                      \
+	}                                                                                       \
+	Vector<Type>& ECSFactory::GetAll##Type()                                                \
+	{                                                                                       \
+		return ((ComponentSet<Type>*)(s_ComponentSets[Type::s_Name].get()))->getAll();      \
+	}
 
 class Dependable
 {
@@ -57,7 +84,7 @@ private:
 #define SOFT_DEPENDS_ON(ComponentType) DEPENDENCY(ComponentType, true)
 #endif
 
-#define DEFINE_COMPONENT(ComponentType, category)                                    \
+#define COMPONENT(ComponentType, category)                                           \
 public:                                                                              \
 	static inline const String s_Name = #ComponentType;                              \
 	static inline const ComponentID s_ID = (ComponentID)ComponentIDs::ComponentType; \
@@ -76,7 +103,6 @@ class Component
 	/// Perform setting up dependencies and internal data. Return true if successful.
 	bool setup();
 
-	friend class ECSFactory;
 	friend class Entity;
 
 protected:

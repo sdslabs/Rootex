@@ -8,7 +8,7 @@
 
 class UIComponent : public Component
 {
-	DEFINE_COMPONENT(UIComponent, Category::UI);
+	COMPONENT(UIComponent, Category::UI);
 
 	String m_FilePath;
 	Rml::ElementDocument* m_Document;
@@ -23,3 +23,5 @@ public:
 	JSON::json getJSON() const override;
 	void draw() override;
 };
+
+DECLARE_COMPONENT(UIComponent);

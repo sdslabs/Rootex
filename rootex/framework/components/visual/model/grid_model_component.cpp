@@ -3,6 +3,8 @@
 #include "resource_loader.h"
 #include "framework/systems/render_system.h"
 
+DEFINE_COMPONENT(GridModelComponent);
+
 GridModelComponent::GridModelComponent(Entity& owner, const JSON::json& data)
     : ModelComponent(owner, data)
     , m_CellCount(data.value("cellCount", 100))

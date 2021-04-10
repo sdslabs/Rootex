@@ -6,7 +6,7 @@
 
 class SphereColliderComponent : public RigidBodyComponent
 {
-	DEFINE_COMPONENT(SphereColliderComponent, Category::Physics);
+	COMPONENT(SphereColliderComponent, Category::Physics);
 
 	float m_Radius;
 	btSphereShape* m_SphereShape;
@@ -21,3 +21,5 @@ public:
 	JSON::json getJSON() const override;
 	void draw() override;
 };
+
+DECLARE_COMPONENT(SphereColliderComponent);

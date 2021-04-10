@@ -6,7 +6,7 @@
 
 class BoxColliderComponent : public RigidBodyComponent
 {
-	DEFINE_COMPONENT(BoxColliderComponent, Category::Physics);
+	COMPONENT(BoxColliderComponent, Category::Physics);
 
 	Vector3 m_Dimensions;
 	btBoxShape* m_BoxShape;
@@ -21,3 +21,5 @@ public:
 	JSON::json getJSON() const override;
 	void draw() override;
 };
+
+DECLARE_COMPONENT(BoxColliderComponent);

@@ -3,6 +3,8 @@
 #include "entity.h"
 #include "systems/render_system.h"
 
+DEFINE_COMPONENT(PointLightComponent);
+
 PointLightComponent::PointLightComponent(Entity& owner, const JSON::json& data)
     : Component(owner)
     , m_DependencyOnTransformComponent(this)

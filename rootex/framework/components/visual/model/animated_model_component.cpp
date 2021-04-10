@@ -6,6 +6,8 @@
 #include "framework/systems/render_system.h"
 #include "scene_loader.h"
 
+DEFINE_COMPONENT(AnimatedModelComponent);
+
 AnimatedModelComponent::AnimatedModelComponent(Entity& owner, const JSON::json& data)
     : RenderableComponent(owner, data)
     , m_RootExclusion(data.value("rootExclusion", RootExclusion::None))

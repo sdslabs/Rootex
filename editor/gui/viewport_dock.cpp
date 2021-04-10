@@ -7,6 +7,7 @@
 #include "framework/ecs_factory.h"
 #include "framework/scene_loader.h"
 #include "framework/systems/render_system.h"
+#include "framework/components/visual/model/grid_model_component.h"
 
 #include "editor/editor_system.h"
 #include "editor/editor_application.h"

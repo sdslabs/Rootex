@@ -3,8 +3,35 @@
 #include "system.h"
 
 #include "scene.h"
+#include "components/audio/audio_listener_component.h"
+#include "components/audio/music_component.h"
+#include "components/physics/box_collider_component.h"
+#include "components/physics/sphere_collider_component.h"
+#include "components/physics/capsule_collider_component.h"
+#include "components/physics/static_mesh_collider_component.h"
+#include "components/physics/trigger_component.h"
+#include "components/audio/short_music_component.h"
+#include "components/space/transform_animation_component.h"
+#include "components/space/transform_component.h"
+#include "components/visual/camera_component.h"
+#include "components/visual/effect/cpu_particles_component.h"
+#include "components/visual/light/directional_light_component.h"
+#include "components/visual/effect/fog_component.h"
+#include "components/visual/model/grid_model_component.h"
+#include "components/visual/model/model_component.h"
+#include "components/visual/light/point_light_component.h"
+#include "components/visual/light/static_point_light_component.h"
+#include "components/visual/effect/sky_component.h"
+#include "components/visual/light/spot_light_component.h"
+#include "components/visual/ui/text_ui_component.h"
+#include "components/visual/ui/ui_component.h"
+#include "components/visual/model/animated_model_component.h"
+#include "components/visual/effect/particle_effect_component.h"
+#include "components/game/player_controller.h"
 
-#define ASSIGN_COMPONENT_SET(ComponentType) s_ComponentSets[ComponentType::s_Name] = &s_SetOf##ComponentType
+HashMap<String, Ptr<BaseComponentSet>> ECSFactory::s_ComponentSets;
+
+#define ASSIGN_COMPONENT_SET(ComponentType) s_ComponentSets[ComponentType::s_Name] = std::make_unique<ComponentSet<ComponentType>>()
 
 void ECSFactory::FillEntity(Entity& entity, const JSON::json& entityJSON)
 {
@@ -72,12 +99,12 @@ bool ECSFactory::RemoveComponent(Entity& entity, ComponentID componentID)
 
 void ECSFactory::FillRootEntity(Entity& root)
 {
-	AddDefaultTransformComponent(root);
-	AddDefaultModelComponent(root);
+	ECSFactory::AddDefaultTransformComponent(root);
+	ECSFactory::AddDefaultModelComponent(root);
 	root.getComponent<ModelComponent>()->setVisibility(false);
-	AddDefaultCameraComponent(root);
-	AddDefaultAudioListenerComponent(root);
-	AddDefaultSkyComponent(root);
+	ECSFactory::AddDefaultCameraComponent(root);
+	ECSFactory::AddDefaultAudioListenerComponent(root);
+	ECSFactory::AddDefaultSkyComponent(root);
 }
 
 void ECSFactory::Initialize()

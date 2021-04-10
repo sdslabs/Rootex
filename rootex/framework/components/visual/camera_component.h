@@ -6,7 +6,7 @@
 
 class CameraComponent : public Component
 {
-	DEFINE_COMPONENT(CameraComponent, Category::General);
+	COMPONENT(CameraComponent, Category::General);
 	DEPENDS_ON(TransformComponent);
 
 	bool m_Active;
@@ -37,3 +37,5 @@ public:
 	JSON::json getJSON() const override;
 	void draw() override;
 };
+
+DECLARE_COMPONENT(CameraComponent);

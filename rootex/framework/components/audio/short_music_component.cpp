@@ -1,5 +1,7 @@
 #include "short_music_component.h"
 
+DEFINE_COMPONENT(ShortMusicComponent);
+
 ShortMusicComponent::ShortMusicComponent(Entity& owner, const JSON::json& data)
     : AudioComponent(
         owner,
