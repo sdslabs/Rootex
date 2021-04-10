@@ -6,7 +6,7 @@
 
 class GridModelComponent : public ModelComponent
 {
-	DEFINE_COMPONENT(GridModelComponent, Category::Model);
+	COMPONENT(GridModelComponent, Category::Model);
 
 	Ref<BasicMaterialResourceFile> m_ColorMaterial;
 	Ref<VertexBuffer> m_VertexBuffer;
@@ -27,3 +27,5 @@ public:
 	JSON::json getJSON() const override;
 	void draw() override;
 };
+
+DECLARE_COMPONENT(GridModelComponent);

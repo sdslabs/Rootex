@@ -8,7 +8,7 @@
 
 class PlayerController : public Component
 {
-	DEFINE_COMPONENT(PlayerController, Category::Game);
+	COMPONENT(PlayerController, Category::Game);
 	DEPENDS_ON(TransformComponent);
 	DEPENDS_ON(AnimatedModelComponent);
 	DEPENDS_ON(CapsuleColliderComponent);
@@ -21,3 +21,5 @@ public:
 	JSON::json getJSON() const override;
 	void draw() override;
 };
+
+DECLARE_COMPONENT(PlayerController);

@@ -270,7 +270,8 @@ void LuaInterpreter::registerTypes()
 		particleEffectResourceFile["getEffect"] = &ParticleEffectResourceFile::getEffect;
 	}
 	{
-		sol::usertype<ECSFactory> ecsFactory = rootex.new_usertype<ECSFactory>("ECSFactory");
+		sol::table& ecs = rootex.create_named("ECS");
+		ecs["AddComponent"] = &ECSFactory::AddComponent;
 	}
 	{
 		sol::usertype<Scene> scene = rootex.new_usertype<Scene>("Scene");

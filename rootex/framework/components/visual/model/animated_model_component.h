@@ -10,7 +10,7 @@
 
 class AnimatedModelComponent : public RenderableComponent
 {
-	DEFINE_COMPONENT(AnimatedModelComponent, Category::Model);
+	COMPONENT(AnimatedModelComponent, Category::Model);
 
 public:
 	enum class AnimationMode : int
@@ -72,3 +72,5 @@ public:
 	JSON::json getJSON() const override;
 	void draw() override;
 };
+
+DECLARE_COMPONENT(AnimatedModelComponent);

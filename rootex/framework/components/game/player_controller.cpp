@@ -1,5 +1,7 @@
 #include "player_controller.h"
 
+DEFINE_COMPONENT(PlayerController);
+
 PlayerController::PlayerController(Entity& owner, const JSON::json& data)
     : Component(owner)
     , m_DependencyOnAnimatedModelComponent(this)

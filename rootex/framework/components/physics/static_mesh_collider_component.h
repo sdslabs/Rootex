@@ -7,7 +7,7 @@
 
 class StaticMeshColliderComponent : public RigidBodyComponent
 {
-	DEFINE_COMPONENT(StaticMeshColliderComponent, Category::Physics);
+	COMPONENT(StaticMeshColliderComponent, Category::Physics);
 
 	btBvhTriangleMeshShape* m_MeshShape;
 	Ref<CollisionModelResourceFile> m_CollisionModel;
@@ -24,3 +24,5 @@ public:
 	JSON::json getJSON() const override;
 	void draw() override;
 };
+
+DECLARE_COMPONENT(StaticMeshColliderComponent);

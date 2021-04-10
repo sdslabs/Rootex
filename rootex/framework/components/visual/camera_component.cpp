@@ -1,6 +1,8 @@
 #include "camera_component.h"
 #include "systems/render_system.h"
 
+DEFINE_COMPONENT(CameraComponent);
+
 void to_json(JSON::json& j, const PostProcessingDetails& p)
 {
 	j["isPostProcessing"] = p.isPostProcessing;

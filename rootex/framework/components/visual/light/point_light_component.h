@@ -8,7 +8,7 @@
 /// Component to apply dynamic point lights to the scene
 class PointLightComponent : public Component
 {
-	DEFINE_COMPONENT(PointLightComponent, Category::Light);
+	COMPONENT(PointLightComponent, Category::Light);
 	DEPENDS_ON(TransformComponent);
 
 	PointLight m_PointLight;
@@ -23,3 +23,5 @@ public:
 	JSON::json getJSON() const override;
 	void draw() override;
 };
+
+DECLARE_COMPONENT(PointLightComponent);

@@ -1,5 +1,7 @@
 #include "directional_light_component.h"
 
+DEFINE_COMPONENT(DirectionalLightComponent);
+
 DirectionalLightComponent::DirectionalLightComponent(Entity& owner, const JSON::json& data)
     : Component(owner)
     , m_DirectionalLight(

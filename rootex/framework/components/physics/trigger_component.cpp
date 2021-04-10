@@ -4,6 +4,8 @@
 #include "core/physics/bullet_conversions.h"
 #include "systems/physics_system.h"
 
+DEFINE_COMPONENT(TriggerComponent);
+
 TriggerComponent::TriggerComponent(Entity& owner, const JSON::json& data)
     : CollisionComponent(
         owner,

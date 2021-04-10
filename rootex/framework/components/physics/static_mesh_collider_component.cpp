@@ -3,6 +3,8 @@
 #include "systems/physics_system.h"
 #include "event_manager.h"
 
+DEFINE_COMPONENT(StaticMeshColliderComponent);
+
 StaticMeshColliderComponent::StaticMeshColliderComponent(Entity& owner, const JSON::json& data)
     : RigidBodyComponent(
         owner,

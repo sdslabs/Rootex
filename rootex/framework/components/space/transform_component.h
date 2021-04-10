@@ -16,7 +16,7 @@ void from_json(const JSON::json& j, TransformPassDown& t);
 
 class TransformComponent : public Component
 {
-	DEFINE_COMPONENT(TransformComponent, Category::General);
+	COMPONENT(TransformComponent, Category::General);
 
 	struct TransformBuffer
 	{
@@ -86,3 +86,5 @@ public:
 	void draw() override;
 	void highlight();
 };
+
+DECLARE_COMPONENT(TransformComponent);

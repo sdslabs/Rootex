@@ -9,7 +9,7 @@
 /// Component to apply dynamic spot lights to the scene
 class SpotLightComponent : public Component
 {
-	DEFINE_COMPONENT(SpotLightComponent, Category::Light);
+	COMPONENT(SpotLightComponent, Category::Light);
 	DEPENDS_ON(TransformComponent);
 
 	SpotLight m_SpotLight;
@@ -24,3 +24,5 @@ public:
 	JSON::json getJSON() const override;
 	void draw() override;
 };
+
+DECLARE_COMPONENT(SpotLightComponent);

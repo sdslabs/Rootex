@@ -5,6 +5,8 @@
 #include "systems/render_system.h"
 #include "timer.h"
 
+DEFINE_COMPONENT(CPUParticlesComponent);
+
 void to_json(JSON::json& j, const ParticleTemplate p)
 {
 	j["velocity"] = p.velocity;

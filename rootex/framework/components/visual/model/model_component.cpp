@@ -11,6 +11,8 @@
 #include "renderer/render_pass.h"
 #include "scene_loader.h"
 
+DEFINE_COMPONENT(ModelComponent);
+
 bool CompareMaterials(const Pair<Ref<MaterialResourceFile>, Vector<Mesh>>& a, const Pair<Ref<MaterialResourceFile>, Vector<Mesh>>& b)
 {
 	// Alpha materials final last

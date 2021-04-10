@@ -1,5 +1,7 @@
 #include "fog_component.h"
 
+DEFINE_COMPONENT(FogComponent);
+
 FogComponent::FogComponent(Entity& owner, const JSON::json& data)
     : Component(owner)
     , m_Near(data.value("near", 0.0f))

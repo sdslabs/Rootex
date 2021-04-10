@@ -8,7 +8,7 @@
 
 class ParticleEffectComponent : public Component
 {
-	DEFINE_COMPONENT(ParticleEffectComponent, Category::Effect);
+	COMPONENT(ParticleEffectComponent, Category::Effect);
 	DEPENDS_ON(TransformComponent);
 
 	Effekseer::Handle m_EffectHandle;
@@ -44,3 +44,5 @@ public:
 	JSON::json getJSON() const override;
 	void draw() override;
 };
+
+DECLARE_COMPONENT(ParticleEffectComponent);

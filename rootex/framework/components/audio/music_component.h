@@ -9,7 +9,7 @@
 
 class MusicComponent : public AudioComponent
 {
-	DEFINE_COMPONENT(MusicComponent, Category::Audio);
+	COMPONENT(MusicComponent, Category::Audio);
 
 	Ref<StreamingAudioSource> m_StreamingAudioSource;
 	Ref<StreamingAudioBuffer> m_StreamingAudioBuffer;
@@ -26,3 +26,5 @@ public:
 	JSON::json getJSON() const override;
 	void draw() override;
 };
+
+DECLARE_COMPONENT(MusicComponent);

@@ -10,7 +10,7 @@
 /// inside the final render.
 class StaticPointLightComponent : public PointLightComponent
 {
-	DEFINE_COMPONENT(StaticPointLightComponent, Category::Light);
+	COMPONENT(StaticPointLightComponent, Category::Light);
 
 public:
 	StaticPointLightComponent::StaticPointLightComponent(Entity& owner, const JSON::json& data);
@@ -18,3 +18,5 @@ public:
 
 	void draw() override;
 };
+
+DECLARE_COMPONENT(StaticPointLightComponent);

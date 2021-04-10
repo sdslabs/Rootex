@@ -7,7 +7,7 @@
 /// Component to render 2D UI Text
 class TextUIComponent : public RenderUIComponent
 {
-	DEFINE_COMPONENT(TextUIComponent, Category::UI);
+	COMPONENT(TextUIComponent, Category::UI);
 
 public:
 	/// DirectXTK flipping modes for sprites
@@ -45,3 +45,5 @@ public:
 	JSON::json getJSON() const override;
 	void draw() override;
 };
+
+DECLARE_COMPONENT(TextUIComponent);

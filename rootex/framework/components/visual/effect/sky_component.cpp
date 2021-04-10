@@ -3,6 +3,8 @@
 #include "resource_loader.h"
 #include "resource_files/model_resource_file.h"
 
+DEFINE_COMPONENT(SkyComponent);
+
 SkyComponent::SkyComponent(Entity& owner, const JSON::json& data)
     : Component(owner)
     , m_SkyMaterial(ResourceLoader::CreateSkyMaterialResourceFile(data.value("skyMaterial", "rootex/assets/materials/default.sky.rmat")))

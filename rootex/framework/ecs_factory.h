@@ -5,35 +5,11 @@
 
 #include "scene.h"
 #include "entity.h"
-#include "component.h"
-
-#include "components/audio/audio_listener_component.h"
-#include "components/audio/music_component.h"
-#include "components/physics/box_collider_component.h"
-#include "components/physics/sphere_collider_component.h"
-#include "components/physics/capsule_collider_component.h"
-#include "components/physics/static_mesh_collider_component.h"
-#include "components/physics/trigger_component.h"
-#include "components/audio/short_music_component.h"
-#include "components/space/transform_animation_component.h"
-#include "components/space/transform_component.h"
-#include "components/visual/camera_component.h"
-#include "components/visual/effect/cpu_particles_component.h"
-#include "components/visual/light/directional_light_component.h"
-#include "components/visual/effect/fog_component.h"
-#include "components/visual/model/grid_model_component.h"
-#include "components/visual/model/model_component.h"
-#include "components/visual/light/point_light_component.h"
-#include "components/visual/light/static_point_light_component.h"
-#include "components/visual/effect/sky_component.h"
-#include "components/visual/light/spot_light_component.h"
-#include "components/visual/ui/text_ui_component.h"
-#include "components/visual/ui/ui_component.h"
-#include "components/visual/model/animated_model_component.h"
-#include "components/visual/effect/particle_effect_component.h"
-#include "components/game/player_controller.h"
 
 #define MAX_COMPONENT_ARRAY_SIZE 1000
+
+typedef unsigned int ComponentID;
+class Component;
 
 class BaseComponentSet
 {
@@ -113,69 +89,21 @@ public:
 	const ComponentID& getID() const override { return T::s_ID; };
 };
 
-#define REGISTER_COMPONENT(Type)                                                              \
-	static inline ComponentSet<Type> s_SetOf##Type;                                           \
-                                                                                              \
-	static bool Add##Type(Entity& owner, const JSON::json& componentData, bool checks = true) \
-	{                                                                                         \
-		return s_SetOf##Type.addComponent(owner, componentData, checks);                      \
-	}                                                                                         \
-                                                                                              \
-	static bool AddDefault##Type(Entity& owner, bool checks = true)                           \
-	{                                                                                         \
-		return s_SetOf##Type.addDefaultComponent(owner, checks);                              \
-	}                                                                                         \
-                                                                                              \
-	static bool Remove##Type(Entity& entity)                                                  \
-	{                                                                                         \
-		return s_SetOf##Type.removeComponent(entity);                                         \
-	}                                                                                         \
-	static Vector<Type>& GetAll##Type()                                                       \
-	{                                                                                         \
-		return s_SetOf##Type.getAll();                                                        \
-	}
-
-class ECSFactory
+namespace ECSFactory
 {
-public:
-	static inline HashMap<String, BaseComponentSet*> s_ComponentSets;
+extern HashMap<String, Ptr<BaseComponentSet>> s_ComponentSets;
 
-	static void Initialize();
-	static void FillEntity(Entity& entity, const JSON::json& entityJSON);
-	static void FillEntityFromFile(Entity& entity, TextResourceFile* textResourceFile);
-	static void FillRootEntity(Entity& root);
+void Initialize();
 
-	static void CopyEntity(Entity& entity, Entity& copyTarget);
-	static String GetComponentNameByID(ComponentID componentID);
-	static ComponentID GetComponentIDByName(const String& componentName);
+void FillEntity(Entity& entity, const JSON::json& entityJSON);
+void FillEntityFromFile(Entity& entity, TextResourceFile* textResourceFile);
+void FillRootEntity(Entity& root);
 
-	static bool AddComponent(Entity& entity, ComponentID componentID, const JSON::json& componentData, bool checks = true);
-	static bool AddDefaultComponent(Entity& entity, ComponentID componentID, bool checks = true);
-	static bool RemoveComponent(Entity& entity, ComponentID componentID);
+void CopyEntity(Entity& entity, Entity& copyTarget);
+String GetComponentNameByID(ComponentID componentID);
+ComponentID GetComponentIDByName(const String& componentName);
 
-	REGISTER_COMPONENT(PlayerController);
-	REGISTER_COMPONENT(CameraComponent);
-	REGISTER_COMPONENT(TransformComponent);
-	REGISTER_COMPONENT(TransformAnimationComponent);
-	REGISTER_COMPONENT(AudioListenerComponent);
-	REGISTER_COMPONENT(MusicComponent);
-	REGISTER_COMPONENT(ShortMusicComponent);
-	REGISTER_COMPONENT(BoxColliderComponent);
-	REGISTER_COMPONENT(CapsuleColliderComponent);
-	REGISTER_COMPONENT(SphereColliderComponent);
-	REGISTER_COMPONENT(StaticMeshColliderComponent);
-	REGISTER_COMPONENT(TriggerComponent);
-	REGISTER_COMPONENT(ModelComponent);
-	REGISTER_COMPONENT(AnimatedModelComponent);
-	REGISTER_COMPONENT(GridModelComponent);
-	REGISTER_COMPONENT(PointLightComponent);
-	REGISTER_COMPONENT(SpotLightComponent);
-	REGISTER_COMPONENT(DirectionalLightComponent);
-	REGISTER_COMPONENT(StaticPointLightComponent);
-	REGISTER_COMPONENT(TextUIComponent);
-	REGISTER_COMPONENT(UIComponent);
-	REGISTER_COMPONENT(FogComponent);
-	REGISTER_COMPONENT(SkyComponent);
-	REGISTER_COMPONENT(CPUParticlesComponent);
-	REGISTER_COMPONENT(ParticleEffectComponent);
+bool AddComponent(Entity& entity, ComponentID componentID, const JSON::json& componentData, bool checks = true);
+bool AddDefaultComponent(Entity& entity, ComponentID componentID, bool checks = true);
+bool RemoveComponent(Entity& entity, ComponentID componentID);
 };

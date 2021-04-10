@@ -9,7 +9,7 @@
 
 class TriggerComponent : public CollisionComponent
 {
-	DEFINE_COMPONENT(TriggerComponent, Category::Physics);
+	COMPONENT(TriggerComponent, Category::Physics);
 	DEPENDS_ON(TransformComponent);
 
 	Ref<btBoxShape> m_BoxShape;
@@ -66,3 +66,5 @@ public:
 	JSON::json getJSON() const override;
 	void draw() override;
 };
+
+DECLARE_COMPONENT(TriggerComponent);

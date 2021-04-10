@@ -5,6 +5,8 @@
 
 #define EFFECT_ERROR_HANDLE -1
 
+DEFINE_COMPONENT(ParticleEffectComponent);
+
 ParticleEffectComponent::ParticleEffectComponent(Entity& owner, const JSON::json& data)
     : Component(owner)
     , m_EffectHandle(EFFECT_ERROR_HANDLE)

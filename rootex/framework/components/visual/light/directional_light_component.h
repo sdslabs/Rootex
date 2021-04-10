@@ -8,7 +8,7 @@
 /// Component to apply a dynamic directional light to the scene, only the first created instance is used in case of multiple such components
 class DirectionalLightComponent : public Component
 {
-	DEFINE_COMPONENT(DirectionalLightComponent, Category::Light);
+	COMPONENT(DirectionalLightComponent, Category::Light);
 	DEPENDS_ON(TransformComponent);
 
 	DirectionalLight m_DirectionalLight;
@@ -23,3 +23,5 @@ public:
 	JSON::json getJSON() const override;
 	void draw() override;
 };
+
+DECLARE_COMPONENT(DirectionalLightComponent);
