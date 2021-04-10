@@ -32,6 +32,8 @@ public:
 	{
 		m_Instances.reserve(MAX_COMPONENT_ARRAY_SIZE); // To disallow resize if max size is detected later
 	}
+	ComponentSet(const ComponentSet&) = delete;
+	ComponentSet& operator=(const ComponentSet&) = delete;
 
 	Vector<T>& getAll() { return m_Instances; }
 

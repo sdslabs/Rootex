@@ -11,6 +11,7 @@
 #include "rootex/framework/systems/physics_system.h"
 #include "rootex/framework/systems/audio_system.h"
 #include "rootex/framework/systems/input_system.h"
+#include "rootex/framework/systems/player_system.h"
 
 EditorApplication* EditorApplication::s_Instance = nullptr;
 
@@ -45,9 +46,10 @@ EditorApplication::EditorApplication()
 	PhysicsSystem::GetSingleton()->setActive(false);
 	AudioSystem::GetSingleton()->setActive(false);
 	ScriptSystem::GetSingleton()->setActive(false);
+	PlayerSystem::GetSingleton()->setActive(false);
 
 	InputSystem::GetSingleton()->loadSchemes(m_ApplicationSettings->getJSON()["systems"]["InputSystem"]["inputSchemes"]);
-	InputSystem::GetSingleton()->setScheme(m_ApplicationSettings->getJSON()["systems"]["InputSystem"]["startScheme"]);
+	InputSystem::GetSingleton()->enableScheme(m_ApplicationSettings->getJSON()["systems"]["InputSystem"]["startScheme"], true);
 	InputSystem::GetSingleton()->setSchemeLock(true);
 	InputInterface::s_IsEnabled = false;
 	EditorSystem::GetSingleton()->initialize(m_ApplicationSettings->getJSON()["systems"]["EditorSystem"]);
