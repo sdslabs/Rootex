@@ -23,7 +23,7 @@ void InputManager::setEnabled(bool enabled)
 	if (enabled)
 	{
 		PRINT("Input enabled");
-		setScheme(m_CurrentInputScheme);
+		enableScheme(m_CurrentInputScheme, enabled);
 		m_GainputMap.AddListener(&m_Listener);
 	}
 	else
@@ -35,29 +35,56 @@ void InputManager::setEnabled(bool enabled)
 	m_IsEnabled = enabled;
 }
 
-void InputManager::setSchemes(const HashMap<String, InputScheme>& inputSchemes)
+void InputManager::addScheme(const String& name, const InputScheme& inputScheme)
 {
-	m_InputSchemes = inputSchemes;
+	if (m_InputSchemes.find(name) != m_InputSchemes.end())
+	{
+		WARN("Overriding an already existing input scheme: " + name);
+	}
+
+	m_InputSchemes[name] = inputScheme;
 }
 
-void InputManager::setScheme(const String& schemeName)
+void InputManager::enableScheme(const String& schemeName, bool enabled)
 {
 	if (schemeName.empty())
 	{
 		return;
 	}
 
-	m_GainputMap.Clear();
-	const InputScheme& scheme = m_InputSchemes.at(schemeName);
-	for (auto& boolBinding : scheme.bools)
-	{
-		mapBool(boolBinding.inputEvent, boolBinding.device, boolBinding.button);
-	}
-	for (auto& floatBinding : scheme.floats)
-	{
-		mapFloat(floatBinding.inputEvent, floatBinding.device, floatBinding.button);
-	}
 	m_CurrentInputScheme = schemeName;
+
+	const InputScheme& scheme = m_InputSchemes.at(schemeName);
+	if (enabled)
+	{
+		for (auto& boolBinding : scheme.bools)
+		{
+			mapBool(boolBinding.inputEvent, boolBinding.device, boolBinding.button);
+		}
+		for (auto& floatBinding : scheme.floats)
+		{
+			mapFloat(floatBinding.inputEvent, floatBinding.device, floatBinding.button);
+		}
+	}
+	else
+	{
+		for (auto& boolBinding : scheme.bools)
+		{
+			unmap(boolBinding.inputEvent);
+		}
+		for (auto& floatBinding : scheme.floats)
+		{
+			unmap(floatBinding.inputEvent);
+		}
+	}
+}
+
+void InputManager::clearSchemes()
+{
+	m_InputEventIDNames.clear();
+	m_InputEventNameIDs.clear();
+	m_InputSchemes.clear();
+	m_GainputMap.Clear();
 }
 
 void InputManager::mapBool(const Event::Type& action, Device device, DeviceButtonID button)
@@ -87,20 +114,17 @@ void InputManager::unmap(const Event::Type& action)
 
 bool InputManager::isPressed(const Event::Type& action)
 {
-	if (m_IsEnabled)
-	{
-		return m_GainputMap.GetBool((gainput::UserButtonId)m_InputEventNameIDs[action]);
-	}
-	return false;
+	return m_IsEnabled && m_GainputMap.GetBool((gainput::UserButtonId)m_InputEventNameIDs[action]);
 }
 
 bool InputManager::wasPressed(const Event::Type& action)
 {
-	if (m_IsEnabled)
-	{
-		return m_GainputMap.GetBoolWasDown((gainput::UserButtonId)m_InputEventNameIDs[action]);
-	}
-	return false;
+	return m_IsEnabled && m_GainputMap.GetBoolWasDown((gainput::UserButtonId)m_InputEventNameIDs[action]);
+}
+
+bool InputManager::hasPressed(const Event::Type& action)
+{
+	return m_IsEnabled && m_GainputMap.GetBoolIsNew((gainput::UserButtonId)m_InputEventNameIDs[action]);
 }
 
 float InputManager::getFloat(const Event::Type& action)

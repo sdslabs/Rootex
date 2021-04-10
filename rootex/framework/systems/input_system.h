@@ -17,7 +17,8 @@ public:
 	static InputSystem* GetSingleton();
 
 	void loadSchemes(const HashMap<String, InputScheme>& schemes);
-	void setScheme(const String& scheme);
+	void addScheme(const String& name, const InputScheme& inputScheme);
+	void enableScheme(const String& scheme, bool enabled);
 	void setSchemeLock(bool enabled);
 
 	bool initialize(const JSON::json& systemData) override;

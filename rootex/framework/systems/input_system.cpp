@@ -23,14 +23,22 @@ InputSystem* InputSystem::GetSingleton()
 
 void InputSystem::loadSchemes(const HashMap<String, InputScheme>& schemes)
 {
-	InputManager::GetSingleton()->setSchemes(schemes);
+	for (auto& [name, scheme] : schemes)
+	{
+		InputManager::GetSingleton()->addScheme(name, scheme);
+	}
 }
 
-void InputSystem::setScheme(const String& scheme)
+void InputSystem::addScheme(const String& name, const InputScheme& inputScheme)
+{
+	InputManager::GetSingleton()->addScheme(name, inputScheme);
+}
+
+void InputSystem::enableScheme(const String& scheme, bool enabled)
 {
 	if (!m_SchemeLock)
 	{
-		InputManager::GetSingleton()->setScheme(scheme);
+		InputManager::GetSingleton()->enableScheme(scheme, enabled);
 	}
 }
 
@@ -48,7 +56,7 @@ bool InputSystem::initialize(const JSON::json& systemData)
 void InputSystem::setConfig(const SceneSettings& sceneSettings)
 {
 	loadSchemes(sceneSettings.inputSchemes);
-	setScheme(sceneSettings.startScheme);
+	enableScheme(sceneSettings.startScheme, true);
 }
 
 void InputSystem::update(float deltaMilliseconds)

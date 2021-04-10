@@ -1,0 +1,21 @@
+{
+    "affectedBySky": 0,
+    "alpha": false,
+    "color": {
+        "a": 1.0,
+        "b": 1.0,
+        "g": 1.0,
+        "r": 1.0
+    },
+    "diffuse": "game/assets/models/player/textures/akai_diffuse.png",
+    "hasNormal": 1,
+    "isLit": 1,
+    "lightmap": "rootex/assets/white.png",
+    "normal": "game/assets/models/player/textures/akai_normal.png",
+    "reflect": 0.0,
+    "refract": 0.0,
+    "refractionConstant": 0.800000011920929,
+    "specIntensity": 0.23999999463558197,
+    "specPower": 100.0,
+    "specular": "rootex/assets/white.png"
+}

@@ -1,5 +1,7 @@
 #include "player_system.h"
 
+#include "components/game/player_controller.h"
+
 PlayerSystem::PlayerSystem()
     : System("PlayerSystem", UpdateOrder::PostUpdate, true)
 {
@@ -26,6 +28,10 @@ void PlayerSystem::begin()
 
 void PlayerSystem::update(float deltaMilliseconds)
 {
+	for (auto& p : ECSFactory::GetAllPlayerController())
+	{
+		p.update(deltaMilliseconds);
+	}
 }
 
 void PlayerSystem::end()

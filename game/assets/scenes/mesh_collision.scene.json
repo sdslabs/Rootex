@@ -122,7 +122,7 @@
                         "overrideBoundingBox": false,
                         "passDown": 7,
                         "position": {
-                            "x": -14.610790252685547,
+                            "x": 0.5012435913085938,
                             "y": 1.3999991416931152,
                             "z": -16.664287567138672
                         },
@@ -275,7 +275,7 @@
                             "g": 1.0,
                             "r": 0.9999899864196777
                         },
-                        "diffuseIntensity": 5.400000095367432
+                        "diffuseIntensity": 1.2999999523162842
                     },
                     "TransformComponent": {
                         "boundingBox": {
@@ -445,13 +445,13 @@
                         "isPlayOnStart": true,
                         "isVisible": true,
                         "lodBias": 0.0,
-                        "lodDistance": 30.0,
-                        "lodEnable": true,
+                        "lodDistance": 77.0,
+                        "lodEnable": false,
                         "materialOverrides": {
-                            "game/assets/materials/female/Akai_MAT.anim.rmat": "game/assets/materials/female/Akai_MAT.anim.rmat"
+                            "game/assets/materials/player/Akai_MAT.anim.rmat": "game/assets/materials/player/Akai_MAT.anim.rmat"
                         },
                         "renderPass": 1,
-                        "resFile": "game/assets/animations/female/female.fbx",
+                        "resFile": "game/assets/models/player/player.fbx",
                         "rootExclusion": 0,
                         "speedMultiplier": 1.0,
                         "transitionTime": 1.0
@@ -484,6 +484,7 @@
                         "sideHeight": 0.800000011920929,
                         "volume": 0.08149710297584534
                     },
+                    "PlayerController": {},
                     "TransformComponent": {
                         "boundingBox": {
                             "center": {
@@ -517,17 +518,7 @@
                         }
                     }
                 },
-                "script": {
-                    "overrides": {
-                        "idleAnim": "\"Armature|idle\"",
-                        "jumpAnim": "\"Armature|jump\"",
-                        "runAnim": "\"Armature|run\"",
-                        "runSpeed": "0.002",
-                        "walkAnim": "\"Armature|walk\"",
-                        "walkSpeed": "0.0009"
-                    },
-                    "path": "game/assets/scripts/new_player_control.lua"
-                }
+                "script": null
             },
             "importStyle": 0,
             "name": "player",
@@ -722,20 +713,8 @@
                 "rootex/assets/cube.obj"
             ],
             [
-                7,
-                "game/assets/animations/female/textures/akai_normal.png"
-            ],
-            [
-                7,
-                "game/assets/animations/female/textures/akai_diffuse.png"
-            ],
-            [
                 2,
                 "game/assets/droplet.wav"
-            ],
-            [
-                5,
-                "game/assets/animations/female/female.fbx"
             ],
             [
                 2,
@@ -768,6 +747,22 @@
             [
                 7,
                 "game/assets/sponza/textures/sponza_ceiling_a_diff.png"
+            ],
+            [
+                13,
+                "game/assets/materials/player/Akai_MAT.anim.rmat"
+            ],
+            [
+                5,
+                "game/assets/models/player/player.fbx"
+            ],
+            [
+                7,
+                "game/assets/models/player/textures/akai_diffuse.png"
+            ],
+            [
+                7,
+                "game/assets/models/player/textures/akai_normal.png"
             ]
         ],
         "startScheme": "Controls"
