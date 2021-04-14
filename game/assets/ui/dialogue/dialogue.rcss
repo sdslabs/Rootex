@@ -6,5 +6,5 @@
 .testClass
 {
     background-color : red;
-    color : white;
+    color : black;
 }

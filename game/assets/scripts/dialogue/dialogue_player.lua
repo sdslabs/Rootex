@@ -20,10 +20,13 @@ function DialoguePlayer:begin(entity)
 	self.currentActor = ""
 	if self.story.variables["default_color"] then
 		self.default_color = self.story.variables["default_color"]
-		print(1)
 	else 
 		self.default_color = "white"
-		print(0)
+	end
+	if self.story.variables["default_actor_color"] then
+		self.default_actor_color = self.story.variables["default_actor_color"]
+	else 
+		self.default_actor_color = "white"
 	end
 	self:getDocument():Show()
 end
@@ -51,6 +54,19 @@ function DialoguePlayer:update(entity, delta)
 		end
 		
 		if RTX.Input.WasPressed(self.exports.next) then
+			local choices = self.story:getChoices()
+			if choices[self.currentChoice+1].tags then
+				for _, tag in ipairs(choices[self.currentChoice].tags) do
+					local args = {}
+					for str in string.gmatch(tag, "[^%s]+") do
+							table.insert(args, str)
+					end
+					if args[1] == "onselect" then
+						RTX.CallEvent(RTX.Event.new(args[2], args[3]))
+						print("event " .. args[2] .. " emitted")
+					end
+				end
+			end
 			self.story:choose(self.currentChoice)
 			self.currentChoice = 1
 		end
@@ -68,7 +84,7 @@ function DialoguePlayer:presentParagraphs(paragraphs)
 	local text = ""
 	local actor = ""
 	local color = self.default_color
-	local actorColor = ""
+	local actorColor = self.default_actor_color
 	local class = ""
 	for _, paragraph in ipairs(paragraphs) do
 		text = text .. "<br />" .. paragraph.text
