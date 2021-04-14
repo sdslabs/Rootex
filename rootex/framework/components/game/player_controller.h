@@ -5,8 +5,7 @@
 #include "framework/components/space/transform_component.h"
 #include "framework/components/visual/model/animated_model_component.h"
 #include "framework/components/physics/capsule_collider_component.h"
-
-class State;
+#include "core/state_manager.h"
 
 class PlayerController : public Component
 {
@@ -15,55 +14,32 @@ class PlayerController : public Component
 	DEPENDS_ON(AnimatedModelComponent);
 	DEPENDS_ON(CapsuleColliderComponent);
 
-	State* m_PlayerState = nullptr;
-
 public:
+	String m_PlayerAnimation;
+	String m_WalkAnimation;
+	String m_RunAnimation;
+	String m_IdleAnimation;
+	String m_TurnLeftAnimation;
+	String m_TurnRightAnimation;
+	float m_MaxWalkSpeed;
+	float m_MaxRunSpeed;
+	float m_SpeedModifier;
+	float m_StoppingPower;
+	float m_IdleThreshold;
+
+	Ref<StateManager> m_StateManager;
+	float m_Acceleration;
+	Vector3 m_Velocity;
+
 	PlayerController(Entity& owner, const JSON::json& data);
-	~PlayerController();
+	~PlayerController() = default;
 
 	void update(float deltaMilliseconds);
 
 	bool setupData() override;
+	JSON::json getJSON() const override;
 	void draw() override;
+	void drawAnimation(const char* animation, String& editing);
 };
 
 DECLARE_COMPONENT(PlayerController);
-
-enum class PlayerInput
-{
-	Forward,
-	Back,
-	Right,
-	Left
-};
-
-inline const HashMap<PlayerInput, Event::Type> PlayerInputEvents = {
-	{ PlayerInput::Forward, "PlayerForward" },
-	{ PlayerInput::Back, "PlayerBack" },
-	{ PlayerInput::Right, "PlayerRight" },
-	{ PlayerInput::Left, "PlayerLeft" },
-};
-
-class State
-{
-public:
-	virtual ~State() = default;
-	virtual State* handleInput(PlayerController& p, PlayerInput input) { return nullptr; };
-	virtual void update(PlayerController& p, float deltaMilliseconds) {};
-	virtual void enter(PlayerController& p) {};
-	virtual void exit(PlayerController& p) {};
-};
-
-class Running : public State
-{
-public:
-	State* handleInput(PlayerController& p, PlayerInput input) override;
-	void enter(PlayerController& p) override;
-};
-
-class Idle : public State
-{
-public:
-	State* handleInput(PlayerController& p, PlayerInput input) override;
-	void enter(PlayerController& p) override;
-};

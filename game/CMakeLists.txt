@@ -15,7 +15,7 @@ target_include_directories(Game PUBLIC ../)
 target_link_libraries(Game PUBLIC Rootex)
 add_dependencies(Game Rootex)
 
-source_group(TREE "../game/"
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}
     PREFIX "Game"
     FILES ${GameSource} ${GameHeaders} ${GameLuaScripts} ${GameJSONs}
 )

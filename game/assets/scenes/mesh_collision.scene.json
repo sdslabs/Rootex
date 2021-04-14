@@ -122,7 +122,7 @@
                         "overrideBoundingBox": false,
                         "passDown": 7,
                         "position": {
-                            "x": 0.5012435913085938,
+                            "x": -1.140127182006836,
                             "y": 1.3999991416931152,
                             "z": -16.664287567138672
                         },
@@ -382,7 +382,7 @@
                                 "isVisible": true,
                                 "lodBias": 0.0,
                                 "lodDistance": 10.0,
-                                "lodEnable": true,
+                                "lodEnable": false,
                                 "materialOverrides": {
                                     "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
                                 },
@@ -405,15 +405,15 @@
                                 "overrideBoundingBox": false,
                                 "passDown": 7,
                                 "position": {
-                                    "x": 0.6399999856948853,
-                                    "y": 1.4600000381469727,
-                                    "z": 2.8299999237060547
+                                    "x": 0.8500000238418579,
+                                    "y": 1.1699999570846558,
+                                    "z": 3.390000104904175
                                 },
                                 "rotation": {
                                     "w": 1.0,
-                                    "x": 0.0,
+                                    "x": -0.0,
                                     "y": 0.0,
-                                    "z": 0.0
+                                    "z": -0.0
                                 },
                                 "scale": {
                                     "x": 1.0,
@@ -484,7 +484,20 @@
                         "sideHeight": 0.800000011920929,
                         "volume": 0.08149710297584534
                     },
-                    "PlayerController": {},
+                    "PlayerController": {
+                        "acceleration": 7.0,
+                        "idle": "Armature|idle",
+                        "idleThreshold": 0.5,
+                        "maxRunSpeed": 2.0,
+                        "maxWalkSpeed": 1.0,
+                        "playerAnimation": "game/assets/models/player/player.fbx",
+                        "run": "Armature|run",
+                        "speedModifier": 1.0,
+                        "stoppingPower": 4.0,
+                        "turnLeft": "Armature|idle",
+                        "turnRight": "Armature|idle",
+                        "walk": "Armature|walk"
+                    },
                     "TransformComponent": {
                         "boundingBox": {
                             "center": {
@@ -502,14 +515,14 @@
                         "passDown": 5,
                         "position": {
                             "x": 1.9000000953674316,
-                            "y": 0.5299999713897705,
+                            "y": 0.2200000286102295,
                             "z": -2.7939677238464355e-09
                         },
                         "rotation": {
                             "w": 1.0,
-                            "x": 0.0,
+                            "x": -0.0,
                             "y": 0.0,
-                            "z": 0.0
+                            "z": -0.0
                         },
                         "scale": {
                             "x": 0.5,
@@ -642,38 +655,7 @@
     "sceneFile": "game/assets/scenes/mesh_collision.scene.json",
     "settings": {
         "camera": 13,
-        "inputSchemes": {
-            "Controls": {
-                "bools": [
-                    {
-                        "button": 87,
-                        "device": 1,
-                        "inputEvent": "Forward"
-                    },
-                    {
-                        "button": 83,
-                        "device": 1,
-                        "inputEvent": "Backward"
-                    },
-                    {
-                        "button": 65,
-                        "device": 1,
-                        "inputEvent": "Left"
-                    },
-                    {
-                        "button": 68,
-                        "device": 1,
-                        "inputEvent": "Right"
-                    },
-                    {
-                        "button": 32,
-                        "device": 1,
-                        "inputEvent": "Punch"
-                    }
-                ],
-                "floats": []
-            }
-        },
+        "inputSchemes": {},
         "listener": 13,
         "preloads": [
             [
@@ -765,6 +747,6 @@
                 "game/assets/models/player/textures/akai_normal.png"
             ]
         ],
-        "startScheme": "Controls"
+        "startScheme": ""
     }
 }

@@ -46,15 +46,18 @@ float4 main(PixelInputType input) : SV_TARGET
     finalColor.rgb = lerp(finalColor.rgb, float3(0.0f, 0.0f, 0.0f), material.isLit);
     input.normal = normalize(input.normal);
 
-    float3 normalMapSample = NormalTexture.Sample(SampleType, input.tex).rgb;
-    float3 uncompressedNormal = 2.0f * normalMapSample - 1.0f;
-    float3 N = input.normal;
-    float3 T = normalize(input.tangent - dot(input.tangent, N) * N);
-    float3 B = cross(N, T);
+    if (material.hasNormalMap)
+    {
+        float3 normalMapSample = NormalTexture.Sample(SampleType, input.tex).rgb;
+        float3 uncompressedNormal = 2.0f * normalMapSample - 1.0f;
+        float3 N = input.normal;
+        float3 T = normalize(input.tangent - dot(input.tangent, N) * N);
+        float3 B = cross(N, T);
 
-    float3x3 TBN = float3x3(T, B, N);
+        float3x3 TBN = float3x3(T, B, N);
 
-    input.normal = lerp(input.normal, mul(uncompressedNormal, TBN), material.hasNormalMap);
+        input.normal = mul(uncompressedNormal, TBN);
+    }
 
     float3 specularColor = SpecularTexture.Sample(SampleType, input.tex).rgb;
     for (int i = 0; i < pointLightCount; i++)
