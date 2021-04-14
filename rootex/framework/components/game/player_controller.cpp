@@ -53,10 +53,12 @@ protected:
 	bool isAnyReleased() const { return isForwardReleased() || isBackReleased() || isLeftReleased() || isRightReleased(); }
 };
 
-class ForwardRunState : public PlayerState
+class RunState : public PlayerState
 {
+	Vector3 m_Direction;
+
 public:
-	ForwardRunState(PlayerController& p);
+	RunState(PlayerController& p, const Vector3& direction);
 	void update(StateManager& manager, float deltaMilliseconds) override;
 	void enter(StateManager& manager) override;
 	Ptr<State> exit(StateManager& manager, float deltaMilliseconds) override;
@@ -85,18 +87,17 @@ public:
 	}
 };
 
-ForwardRunState::ForwardRunState(PlayerController& p)
+RunState::RunState(PlayerController& p, const Vector3& direction)
     : PlayerState(p)
 {
+	direction.Normalize(m_Direction);
 }
 
-void ForwardRunState::update(StateManager& manager, float deltaMilliseconds)
+void RunState::update(StateManager& manager, float deltaMilliseconds)
 {
-	if (isForwardPressed())
+	if (isAnyPressed())
 	{
-		Vector3 front;
-		m_Player.getTransformComponent()->getAbsoluteTransform().Forward().Normalize(front);
-		m_Player.m_Velocity += front * m_Player.m_SpeedModifier * m_Player.m_Acceleration * deltaMilliseconds * MS_TO_S;
+		m_Player.m_Velocity += m_Direction * m_Player.m_Acceleration * deltaMilliseconds * MS_TO_S;
 	}
 	else
 	{
@@ -117,19 +118,45 @@ void ForwardRunState::update(StateManager& manager, float deltaMilliseconds)
 	    m_Player.m_Velocity.Length() / m_Player.m_MaxRunSpeed);
 };
 
-void ForwardRunState::enter(StateManager& manager)
+void RunState::enter(StateManager& manager)
 {
 	m_Player.getAnimatedModelComponent()->transition(m_Player.m_RunAnimation, 1.0f);
 }
 
-Ptr<State> ForwardRunState::exit(StateManager& manager, float deltaMilliseconds)
+Ptr<State> RunState::exit(StateManager& manager, float deltaMilliseconds)
 {
-	if (isForwardPressed())
+	if (isAnyPressed())
 	{
+		m_Direction = Vector3::Zero;
+		if (isForwardPressed())
+		{
+			m_Direction += m_Player.getTransformComponent()->getAbsoluteTransform().Forward();
+		}
+		if (isBackPressed())
+		{
+			m_Direction += m_Player.getTransformComponent()->getAbsoluteTransform().Backward();
+		}
+		if (isLeftPressed())
+		{
+			m_Direction += m_Player.getTransformComponent()->getAbsoluteTransform().Left();
+		}
+		if (isRightPressed())
+		{
+			m_Direction += m_Player.getTransformComponent()->getAbsoluteTransform().Right();
+		}
+
+		float angle = DirectX::XM_PI + atan2(m_Direction.x, m_Direction.z);
+		Quaternion q;
+		q.x = 0;
+		q.y = 1 * sin(angle / 2);
+		q.z = 0;
+		q.w = cos(angle / 2);
+		m_Player.getTransformComponent()->setRotationQuaternion(q);
+
 		return nullptr;
 	}
 
-	if (m_Player.getCapsuleColliderComponent()->getVelocity().Length() < m_Player.m_IdleThreshold)
+	if (m_Player.m_Velocity.Length() < m_Player.m_IdleThreshold)
 	{
 		return std::make_unique<IdleState>(m_Player);
 	}
@@ -150,9 +177,32 @@ void IdleState::enter(StateManager& manager)
 
 Ptr<State> IdleState::exit(StateManager& manager, float deltaMilliseconds)
 {
+	Vector3 direction = Vector3::Zero;
+	bool changed = false;
 	if (isForwardPressed())
 	{
-		return std::make_unique<ForwardRunState>(m_Player);
+		direction += m_Player.getTransformComponent()->getAbsoluteTransform().Forward();
+		changed = true;
+	}
+	if (isBackPressed())
+	{
+		direction += m_Player.getTransformComponent()->getAbsoluteTransform().Backward();
+		changed = true;
+	}
+	if (isLeftPressed())
+	{
+		direction += m_Player.getTransformComponent()->getAbsoluteTransform().Left();
+		changed = true;
+	}
+	if (isRightPressed())
+	{
+		direction += m_Player.getTransformComponent()->getAbsoluteTransform().Right();
+		changed = true;
+	}
+
+	if (changed)
+	{
+		return std::make_unique<RunState>(m_Player, direction);
 	}
 	return nullptr;
 }
@@ -167,7 +217,6 @@ PlayerController::PlayerController(Entity& owner, const JSON::json& data)
     , m_PlayerAnimation(data.value("playerAnimation", "game/assets/models/player/player.fbx"))
     , m_MaxWalkSpeed(data.value("maxWalkSpeed", 0.5f))
     , m_MaxRunSpeed(data.value("maxRunSpeed", 1.0f))
-    , m_SpeedModifier(data.value("speedModifier", 1.0f))
     , m_StoppingPower(data.value("stoppingPower", 1.0f))
     , m_IdleThreshold(data.value("idleThreshold", 0.1f))
     , m_Acceleration(data.value("acceleration", 1.0f))
@@ -212,7 +261,6 @@ JSON::json PlayerController::getJSON() const
 	j["maxWalkSpeed"] = m_MaxWalkSpeed;
 	j["maxRunSpeed"] = m_MaxRunSpeed;
 	j["acceleration"] = m_Acceleration;
-	j["speedModifier"] = m_SpeedModifier;
 	j["stoppingPower"] = m_StoppingPower;
 	j["idleThreshold"] = m_IdleThreshold;
 
@@ -228,11 +276,10 @@ void PlayerController::draw()
 	drawAnimation("Turn Right", m_TurnRightAnimation);
 
 	ImGui::DragFloat("Idle Threshold", &m_IdleThreshold, 0.01f, 0.0f, 1.0f);
-	ImGui::DragFloat("Acceleration", &m_Acceleration, 0.01f, 0.0f, 5.0f);
+	ImGui::DragFloat("Acceleration", &m_Acceleration, 0.01f, 0.0f, 10.0f);
+	ImGui::DragFloat("Stopping Power", &m_StoppingPower, 0.01f, 0.0f, 10.0f);
 	ImGui::DragFloat("Max Walk Speed", &m_MaxWalkSpeed, 0.01f, 0.001f, 100.0f);
 	ImGui::DragFloat("Max Run Speed", &m_MaxRunSpeed, 0.01f, 0.001f, 100.0f);
-	ImGui::DragFloat("Speed Modifier", &m_SpeedModifier, 0.01f, 0.0f, 100.0f);
-	ImGui::DragFloat("Stopping Power", &m_StoppingPower, 0.01f, 0.0f, 1.0f);
 }
 
 void PlayerController::drawAnimation(const char* animation, String& editing)
