@@ -138,7 +138,11 @@ function DialoguePlayer:presentChoices(choices)
 				end
 			end
 		end
-		text = text .. "<br />" ..  selection .. "<div class = \"" .. class .. "\" style = \"color:".. choice_color .. "\">" .. choice.text .. "</div>"
+		text = text .. "<br />" ..  selection .. "<div class = \"" .. class 
+		if choice_color ~= "" then
+			text = text .. "\" style = \"color:".. choice_color  
+		end
+		text = text .. "\">" .. choice.text .. "</div>"
 	end
 	self:getDocument():GetElementById("choices").inner_rml = text
 end
