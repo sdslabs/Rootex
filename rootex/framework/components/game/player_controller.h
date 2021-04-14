@@ -23,7 +23,6 @@ public:
 	String m_TurnRightAnimation;
 	float m_MaxWalkSpeed;
 	float m_MaxRunSpeed;
-	float m_SpeedModifier;
 	float m_StoppingPower;
 	float m_IdleThreshold;
 

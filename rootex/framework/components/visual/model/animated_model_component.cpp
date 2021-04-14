@@ -119,14 +119,25 @@ void AnimatedModelComponent::stop()
 
 void AnimatedModelComponent::setAnimation(const String& name)
 {
+	swapAnimation(name);
+	m_CurrentTimePosition = 0.0f;
+}
+
+void AnimatedModelComponent::swapAnimation(const String& name)
+{
 	PANIC(m_AnimatedModelResourceFile->getAnimations().find(name) == m_AnimatedModelResourceFile->getAnimations().end(), "Animation name not found: " + name);
 	m_CurrentAnimationName = name;
-	m_CurrentTimePosition = 0.0f;
 }
 
 void AnimatedModelComponent::transition(const String& name, float transitionTime)
 {
-	setAnimation(name);
+	swapTransition(name, transitionTime);
+	m_CurrentTimePosition = 0.0f;
+}
+
+void AnimatedModelComponent::swapTransition(const String& name, float transitionTime)
+{
+	swapAnimation(name);
 	m_TransitionTime = transitionTime;
 	m_RemainingTransitionTime = m_TransitionTime;
 }

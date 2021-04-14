@@ -54,7 +54,9 @@ public:
 	void stop();
 
 	void setAnimation(const String& name);
+	void swapAnimation(const String& name);
 	void transition(const String& name, float transitionTime);
+	void swapTransition(const String& name, float transitionTime);
 
 	void setSpeedMultiplier(float speedMul) { m_SpeedMultiplier = speedMul; }
 
