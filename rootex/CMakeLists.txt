@@ -54,7 +54,7 @@ set_property(TARGET Rootex PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFI
 
 target_precompile_headers(Rootex PUBLIC ${PCHHeader})
 
-source_group(TREE "../"
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}
     PREFIX "Rootex"
     FILES ${ROOTEX_SOURCES} ${EngineLuaScripts}
 )

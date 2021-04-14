@@ -553,6 +553,7 @@ void SceneSettings::draw()
 	if (inputSchemeToRemove)
 	{
 		inputSchemes.erase(*inputSchemeToRemove);
+		startScheme = "";
 	}
 
 	ImGui::Separator();

@@ -15,7 +15,7 @@ target_include_directories(Editor PUBLIC ../)
 target_link_libraries(Editor PUBLIC Rootex)
 add_dependencies(Editor Rootex Game)
 
-source_group(TREE "../editor/"
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}
     PREFIX "Editor"
     FILES ${EditorSource} ${EditorHeaders} ${EditorLuaScripts} ${EditorJSONs}
 )

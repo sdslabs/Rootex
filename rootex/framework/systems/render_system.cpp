@@ -205,7 +205,7 @@ void RenderSystem::update(float deltaMilliseconds)
 		calculateTransforms(SceneLoader::GetSingleton()->getRootScene());
 	}
 	{
-		ZoneNamedN(stateSet, "Render State Reset", true);
+		ZoneNamedN(stateSet, "Render PlayerState Reset", true);
 		// Render geometry
 		RenderingDevice::GetSingleton()->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		RenderingDevice::GetSingleton()->setCurrentRS();

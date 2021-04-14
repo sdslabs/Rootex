@@ -56,6 +56,8 @@ public:
 	void setAnimation(const String& name);
 	void transition(const String& name, float transitionTime);
 
+	void setSpeedMultiplier(float speedMul) { m_SpeedMultiplier = speedMul; }
+
 	float getStartTime() const;
 	float getEndTime() const;
 

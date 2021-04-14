@@ -121,7 +121,7 @@ void AnimatedModelComponent::setAnimation(const String& name)
 {
 	PANIC(m_AnimatedModelResourceFile->getAnimations().find(name) == m_AnimatedModelResourceFile->getAnimations().end(), "Animation name not found: " + name);
 	m_CurrentAnimationName = name;
-	//m_CurrentTimePosition = 0.0f;
+	m_CurrentTimePosition = 0.0f;
 }
 
 void AnimatedModelComponent::transition(const String& name, float transitionTime)
