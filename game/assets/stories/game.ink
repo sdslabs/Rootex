@@ -1,6 +1,6 @@
 - I looked at Monsieur Fogg # call test baba  
 * ... and I could contain myself no longer.   
-    'What is the purpose of our journey, Monsieur?'
+    'What is the purpose of our journey, Monsieur?' # actor Monsieur #color yellow #actorColor blue
     'A wager,' he replied.
     * * 'A wager!'[] I returned.
             He nodded. 

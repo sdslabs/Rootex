@@ -17,6 +17,7 @@ function DialoguePlayer:begin(entity)
 	self.ui = entity:getUI()
 	self.currentChoice = 1
 	self.maxChoices = 1
+	self.currentActor = ""
 	self:getDocument():Show()
 end
 
@@ -58,6 +59,7 @@ end
 
 function DialoguePlayer:presentParagraphs(paragraphs)
 	local text = ""
+	local actor = ""
 	for _, paragraph in ipairs(paragraphs) do
 		text = text .. "<br />" .. paragraph.text
 		if paragraph.tags then
@@ -68,13 +70,19 @@ function DialoguePlayer:presentParagraphs(paragraphs)
 				end
 				if args[1] == "call" then
 					RTX.CallEvent(RTX.Event.new(args[2], args[3]))
+				elseif args[1] == "actor" then
+					actor = args[2]
+				elseif args[1] == "color" then
+					self:getDocument():GetElementById("paragraphs").style.color = args[2]
+				elseif args[1] == "actorColor" then
+					self:getDocument():GetElementById("actor").style.color = args[2]
 				end
-
 			end
 		end
 	end
-
+	self.currentActor = actor
 	self:getDocument():GetElementById("paragraphs").inner_rml = text
+	self:getDocument():GetElementById("actor").inner_rml = actor
 end
 
 function DialoguePlayer:presentChoices(choices)
