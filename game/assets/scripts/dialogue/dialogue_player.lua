@@ -18,6 +18,13 @@ function DialoguePlayer:begin(entity)
 	self.currentChoice = 1
 	self.maxChoices = 1
 	self.currentActor = ""
+	if self.story.variables["default_color"] then
+		self.default_color = self.story.variables["default_color"]
+		print(1)
+	else 
+		self.default_color = "white"
+		print(0)
+	end
 	self:getDocument():Show()
 end
 
@@ -60,6 +67,9 @@ end
 function DialoguePlayer:presentParagraphs(paragraphs)
 	local text = ""
 	local actor = ""
+	local color = self.default_color
+	local actorColor = ""
+	local class = ""
 	for _, paragraph in ipairs(paragraphs) do
 		text = text .. "<br />" .. paragraph.text
 		if paragraph.tags then
@@ -73,15 +83,19 @@ function DialoguePlayer:presentParagraphs(paragraphs)
 				elseif args[1] == "actor" then
 					actor = args[2]
 				elseif args[1] == "color" then
-					self:getDocument():GetElementById("paragraphs").style.color = args[2]
+					color = args[2]
 				elseif args[1] == "actorColor" then
-					self:getDocument():GetElementById("actor").style.color = args[2]
+					actorColor = args[2]
+				elseif args[1] == "class" then
+					class = args[2]
 				end
 			end
 		end
 	end
 	self.currentActor = actor
-	self:getDocument():GetElementById("paragraphs").inner_rml = text
+	self:getDocument():GetElementById("actor").style.color = actorColor
+	self:getDocument():GetElementById("paragraphs").style.color = color
+	self:getDocument():GetElementById("paragraphs").inner_rml ="<div class = \"" .. class .. "\">" .. text .. "</div>"
 	self:getDocument():GetElementById("actor").inner_rml = actor
 end
 

@@ -1,4 +1,5 @@
-- I looked at Monsieur Fogg # call test baba  
+VAR default_color = "blue"
+- I looked at Monsieur Fogg # call test baba  #class testClass 
 * ... and I could contain myself no longer. #color yellow  
     'What is the purpose of our journey, Monsieur?' # actor Monsieur #color yellow #actorColor blue
     'A wager,' he replied.
