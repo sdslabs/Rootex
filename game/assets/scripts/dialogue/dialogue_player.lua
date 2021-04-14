@@ -93,7 +93,22 @@ function DialoguePlayer:presentChoices(choices)
 		if self.currentChoice == i then
 			selection = "> "
 		end
-		text = text .. "<br />" .. selection .. choice.text
+		local choice_color = ""
+		local class = ""
+		if choice.tags then
+			for _, tag in ipairs(choice.tags) do
+				local args = {}
+				for str in string.gmatch(tag, "[^%s]+") do
+						table.insert(args, str)
+				end
+				if args[1] == "color" then
+					choice_color = args[2]
+				elseif args[1] == "class" then
+					class = args[2]
+				end
+			end
+		end
+		text = text .. "<br />" ..  selection .. "<div class = \"" .. class .. "\" style = \"color:".. choice_color .. "\">" .. choice.text .. "</div>"
 	end
 	self:getDocument():GetElementById("choices").inner_rml = text
 end

@@ -1,5 +1,5 @@
 - I looked at Monsieur Fogg # call test baba  
-* ... and I could contain myself no longer.   
+* ... and I could contain myself no longer. #color yellow  
     'What is the purpose of our journey, Monsieur?' # actor Monsieur #color yellow #actorColor blue
     'A wager,' he replied.
     * * 'A wager!'[] I returned.
@@ -14,6 +14,6 @@
             * * * I asked nothing further of him then[.], and after a final, polite cough, he offered nothing more to me. <>
     * * 'Ah[.'],' I replied, uncertain what I thought.
     - - After that, <>
-* ... but I said nothing[] and <> 
+* ... but I said nothing[] and <> #class testClass #color black
 - we passed the day in silence.
 - -> END
