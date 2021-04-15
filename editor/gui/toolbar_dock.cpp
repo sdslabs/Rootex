@@ -33,6 +33,7 @@ void ToolbarDock::draw(float deltaMilliseconds)
 				};
 
 				static bool inEditorPlaying = false;
+				static String startPlayingScene;
 				if (inEditorPlaying)
 				{
 					ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)(EditorSystem::GetSingleton()->getFatalColor()));
@@ -40,7 +41,8 @@ void ToolbarDock::draw(float deltaMilliseconds)
 					{
 						inEditorPlaying = false;
 						EditorApplication::GetSingleton()->setGameMode(false);
-						SceneLoader::GetSingleton()->loadScene(SceneLoader::GetSingleton()->getCurrentScene()->getScenePath(), {});
+						SceneLoader::GetSingleton()->loadScene(startPlayingScene, {});
+						startPlayingScene.clear();
 						PRINT("Stopped Scene in Editor");
 					}
 					ImGui::PopStyleColor();
@@ -53,9 +55,10 @@ void ToolbarDock::draw(float deltaMilliseconds)
 						{
 						case 0:
 							inEditorPlaying = true;
+							startPlayingScene = SceneLoader::GetSingleton()->getCurrentScene()->getScenePath();
 							EventManager::GetSingleton()->call(EditorEvents::EditorSaveAll);
 							EditorApplication::GetSingleton()->setGameMode(true);
-							SceneLoader::GetSingleton()->loadScene(SceneLoader::GetSingleton()->getCurrentScene()->getScenePath(), {});
+							SceneLoader::GetSingleton()->loadScene(startPlayingScene, {});
 							PRINT("Loaded Scene in Editor");
 							break;
 						case 1:
