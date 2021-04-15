@@ -34,6 +34,7 @@ InspectorDock::InspectorDock()
 {
 	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorOpenScene, openScene);
 	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorCloseScene, closeScene);
+	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorReset, closeScene);
 
 	if (!s_Singleton)
 	{

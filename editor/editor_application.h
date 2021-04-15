@@ -19,5 +19,7 @@ public:
 	EditorApplication(EditorApplication&) = delete;
 	~EditorApplication();
 
+	void setGameMode(bool enabled);
+
 	virtual void process(float deltaMilliseconds) override;
 };
