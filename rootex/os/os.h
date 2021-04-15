@@ -14,6 +14,9 @@
 typedef Vector<char> FileBuffer;
 typedef std::chrono::time_point<std::filesystem::file_time_type::clock> FileTimePoint;
 
+std::wstring StringToWideString(const String& str);
+String WideStringToString(const std::wstring& wstr);
+
 /// Provides features that are provided directly by the OS.
 class OS
 {
@@ -40,6 +43,10 @@ public:
 	static String GetBuildTime();
 	static String GetBuildType();
 	static String GetGameExecutablePath();
+	static String GetOrganizationName();
+
+	static String GetAppDataFolder();
+	static String GetAbsoluteSaveGameFolder(const String& appName);
 
 	static int GetDisplayWidth();
 	static int GetDisplayHeight();
@@ -54,8 +61,11 @@ public:
 	static void EditFileInSystemEditor(const String& filePath);
 	static FileTimePoint GetFileLastChangedTime(const String& filePath);
 
+	static bool IsExistsAbsolute(String absPath);
 	static bool IsExists(String relativePath);
 	static FileBuffer LoadFileContents(String stringPath);
+	static JSON::json LoadFileContentsToJSONObject(String stringPath);
+	static FileBuffer LoadFileContentsAbsolute(String absPath);
 	static FilePath GetAbsolutePath(String stringPath);
 	static FilePath GetRootRelativePath(String stringPath);
 	static FilePath GetRelativePath(String stringPath, String base);
@@ -70,10 +80,13 @@ public:
 	static bool IsDirectory(const String& path);
 	static bool IsFile(const String& path);
 
-	static void CreateDirectoryName(const String& dirPath);
+	static bool CreateDirectoryName(const String& dirPath);
+	static bool CreateDirectoryAbsoluteName(const String& dirPath);
 	static InputOutputFileStream CreateFileName(const String& filePath);
+	static InputOutputFileStream CreateFileNameAbsolute(const String& absFilePath);
 
 	static bool SaveFile(const FilePath& filePath, const char* fileBuffer, size_t fileSize);
+	static bool SaveFileAbsolute(const FilePath& absFilePath, const char* fileBuffer, size_t fileSize);
 
 	static void Print(const String& msg, const String& type = "Print");
 	static void PrintInline(const String& msg, const String& type = "Print");

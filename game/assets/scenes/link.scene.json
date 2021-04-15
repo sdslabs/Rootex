@@ -8,9 +8,6 @@
                     "ID": 15,
                     "children": [],
                     "entity": {
-                        "Entity": {
-                            "script": null
-                        },
                         "components": {
                             "ModelComponent": {
                                 "affectingStaticLights": [],
@@ -19,7 +16,7 @@
                                 "lodDistance": 10.0,
                                 "lodEnable": true,
                                 "materialOverrides": {
-                                    "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                                    "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
                                 },
                                 "renderPass": 1,
                                 "resFile": "rootex/assets/cube.obj"
@@ -37,6 +34,8 @@
                                         "z": 0.5
                                     }
                                 },
+                                "overrideBoundingBox": false,
+                                "passDown": 7,
                                 "position": {
                                     "x": 1.4000000953674316,
                                     "y": -0.10000002384185791,
@@ -54,11 +53,12 @@
                                     "z": 0.5299999713897705
                                 }
                             }
-                        }
+                        },
+                        "script": null
                     },
                     "importStyle": 0,
                     "name": "box",
-                    "sceneFile": "",
+                    "sceneFile": "game/assets/scenes/box.scene.json",
                     "settings": {
                         "camera": 1,
                         "inputSchemes": {},
@@ -71,9 +71,6 @@
                     "ID": 16,
                     "children": [],
                     "entity": {
-                        "Entity": {
-                            "script": null
-                        },
                         "components": {
                             "CPUParticlesComponent": {
                                 "affectingStaticLights": [],
@@ -88,38 +85,57 @@
                                 "lodDistance": 0.0,
                                 "lodEnable": false,
                                 "materialOverrides": {
-                                    "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                                    "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
                                 },
-                                "materialPath": "game/assets/materials/test_particles.rmat",
+                                "materialPath": "game/assets/materials/rootex.instance.rmat",
                                 "particleTemplate": {
-                                    "angularVelocityVariation": 0.5,
+                                    "angularVelocityVariation": 0.33000001311302185,
                                     "colorBegin": {
                                         "a": 1.0,
-                                        "b": 0.16666674613952637,
+                                        "b": 0.9999921321868896,
                                         "g": 1.0,
-                                        "r": 0.0
+                                        "r": 0.9999899864196777
                                     },
                                     "colorEnd": {
                                         "a": 1.0,
-                                        "b": 0.1244952604174614,
-                                        "g": 0.44551774859428406,
-                                        "r": 0.8862876296043396
+                                        "b": 1.0,
+                                        "g": 1.0,
+                                        "r": 1.0
                                     },
-                                    "lifeTime": 8.529999732971191,
-                                    "rotationVariation": 3.1415927410125732,
-                                    "sizeBegin": 0.3700000047683716,
-                                    "sizeEnd": 0.10000000149011612,
-                                    "sizeVariation": 0.10000000149011612,
+                                    "lifeTime": 9.0,
+                                    "rotationVariation": 1.5707963705062866,
+                                    "sizeBegin": 1.0,
+                                    "sizeEnd": 1.0,
+                                    "sizeVariation": 0.0,
                                     "velocity": {
                                         "x": 0.0,
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "velocityVariation": 0.8700000047683716
+                                    "velocityVariation": 0.0
                                 },
-                                "poolSize": 340,
-                                "renderPass": 1,
+                                "poolSize": 388,
+                                "renderPass": 4,
                                 "resFile": "rootex/assets/cube.obj"
+                            },
+                            "PointLightComponent": {
+                                "ambientColor": {
+                                    "a": 1.0,
+                                    "b": 1.0,
+                                    "g": 1.0,
+                                    "r": 1.0
+                                },
+                                "attConst": 0.0,
+                                "attLin": 0.0,
+                                "attQuad": 4.369999885559082,
+                                "diffuseColor": {
+                                    "a": 1.0,
+                                    "b": 1.0,
+                                    "g": 1.0,
+                                    "r": 1.0
+                                },
+                                "diffuseIntensity": 20.100000381469727,
+                                "range": 10.800000190734863
                             },
                             "TransformAnimationComponent": {
                                 "animationMode": 1,
@@ -140,8 +156,8 @@
                                             0.0,
                                             1.0,
                                             0.0,
-                                            -4.199999809265137,
-                                            -2.200000047683716,
+                                            -3.993593692779541,
+                                            -2.0400357246398926,
                                             -6.579999923706055,
                                             1.0
                                         ]
@@ -161,8 +177,8 @@
                                             0.0,
                                             1.0,
                                             0.0,
-                                            -4.199999809265137,
-                                            1.999999761581421,
+                                            -3.993594169616699,
+                                            2.0258004665374756,
                                             -6.579999923706055,
                                             1.0
                                         ]
@@ -182,9 +198,9 @@
                                             0.0,
                                             1.0,
                                             0.0,
-                                            3.8000001907348633,
-                                            1.999999761581421,
-                                            -6.579999923706055,
+                                            3.9857659339904785,
+                                            2.0309605598449707,
+                                            -6.580000400543213,
                                             1.0
                                         ]
                                     },
@@ -203,8 +219,8 @@
                                             0.0,
                                             1.0,
                                             0.0,
-                                            3.8000001907348633,
-                                            -2.1000001430511475,
+                                            3.980605125427246,
+                                            -2.0225980281829834,
                                             -6.579999923706055,
                                             1.0
                                         ]
@@ -224,8 +240,8 @@
                                             0.0,
                                             1.0,
                                             0.0,
-                                            -4.199999809265137,
-                                            -2.200000047683716,
+                                            -3.978114128112793,
+                                            -2.019395112991333,
                                             -6.579999923706055,
                                             1.0
                                         ]
@@ -246,9 +262,11 @@
                                         "z": 0.5
                                     }
                                 },
+                                "overrideBoundingBox": false,
+                                "passDown": 7,
                                 "position": {
-                                    "x": 3.8000001907348633,
-                                    "y": 0.5541576147079468,
+                                    "x": -0.2570967674255371,
+                                    "y": 2.02821683883667,
                                     "z": -6.579999923706055
                                 },
                                 "rotation": {
@@ -263,7 +281,8 @@
                                     "z": 1.0
                                 }
                             }
-                        }
+                        },
+                        "script": null
                     },
                     "importStyle": 0,
                     "name": "Particles",
@@ -280,9 +299,6 @@
                     "ID": 17,
                     "children": [],
                     "entity": {
-                        "Entity": {
-                            "script": null
-                        },
                         "components": {
                             "CPUParticlesComponent": {
                                 "affectingStaticLights": [],
@@ -297,9 +313,9 @@
                                 "lodDistance": 0.0,
                                 "lodEnable": false,
                                 "materialOverrides": {
-                                    "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                                    "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
                                 },
-                                "materialPath": "game/assets/materials/test_particles.rmat",
+                                "materialPath": "game/assets/materials/rootex.instance.rmat",
                                 "particleTemplate": {
                                     "angularVelocityVariation": 12.0,
                                     "colorBegin": {
@@ -314,21 +330,40 @@
                                         "g": 1.0,
                                         "r": 0.8762542009353638
                                     },
-                                    "lifeTime": 1.8700000047683716,
+                                    "lifeTime": 8.119999885559082,
                                     "rotationVariation": 3.1415927410125732,
-                                    "sizeBegin": 1.0499999523162842,
-                                    "sizeEnd": 1.0499999523162842,
+                                    "sizeBegin": 0.5299999713897705,
+                                    "sizeEnd": 0.0,
                                     "sizeVariation": 0.0,
                                     "velocity": {
                                         "x": 0.0,
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "velocityVariation": 0.0
+                                    "velocityVariation": 1.2899999618530273
                                 },
                                 "poolSize": 966,
-                                "renderPass": 1,
+                                "renderPass": 4,
                                 "resFile": "rootex/assets/cube.obj"
+                            },
+                            "PointLightComponent": {
+                                "ambientColor": {
+                                    "a": 1.0,
+                                    "b": 1.0,
+                                    "g": 1.0,
+                                    "r": 1.0
+                                },
+                                "attConst": 0.04500000178813934,
+                                "attLin": 1.0,
+                                "attQuad": 0.007499999832361937,
+                                "diffuseColor": {
+                                    "a": 1.0,
+                                    "b": 1.0,
+                                    "g": 1.0,
+                                    "r": 1.0
+                                },
+                                "diffuseIntensity": 1.0,
+                                "range": 10.0
                             },
                             "TransformAnimationComponent": {
                                 "animationMode": 1,
@@ -455,9 +490,11 @@
                                         "z": 0.5
                                     }
                                 },
+                                "overrideBoundingBox": false,
+                                "passDown": 7,
                                 "position": {
-                                    "x": -1.9100725650787354,
-                                    "y": -1.8125958442687988,
+                                    "x": 2.8118221759796143,
+                                    "y": -1.3111571073532104,
                                     "z": -9.449999809265137
                                 },
                                 "rotation": {
@@ -472,7 +509,8 @@
                                     "z": 1.0
                                 }
                             }
-                        }
+                        },
+                        "script": null
                     },
                     "importStyle": 0,
                     "name": "Particles",
@@ -487,9 +525,6 @@
                 }
             ],
             "entity": {
-                "Entity": {
-                    "script": null
-                },
                 "components": {
                     "ModelComponent": {
                         "affectingStaticLights": [],
@@ -498,7 +533,7 @@
                         "lodDistance": 10.0,
                         "lodEnable": true,
                         "materialOverrides": {
-                            "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                            "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
                         },
                         "renderPass": 1,
                         "resFile": "rootex/assets/cube.obj"
@@ -516,6 +551,8 @@
                                 "z": 0.5
                             }
                         },
+                        "overrideBoundingBox": false,
+                        "passDown": 7,
                         "position": {
                             "x": 0.0,
                             "y": 0.0,
@@ -523,9 +560,9 @@
                         },
                         "rotation": {
                             "w": 1.0,
-                            "x": -0.0,
+                            "x": 0.0,
                             "y": 0.0,
-                            "z": -0.0
+                            "z": 0.0
                         },
                         "scale": {
                             "x": 1.0,
@@ -533,7 +570,8 @@
                             "z": 1.0
                         }
                     }
-                }
+                },
+                "script": null
             },
             "importStyle": 1,
             "name": "box",
@@ -548,10 +586,8 @@
         }
     ],
     "entity": {
-        "Entity": {
-            "script": null
-        },
-        "components": null
+        "components": null,
+        "script": null
     },
     "importStyle": 0,
     "name": "link",

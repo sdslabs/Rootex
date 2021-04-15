@@ -8,18 +8,20 @@
 /// Component to apply a dynamic directional light to the scene, only the first created instance is used in case of multiple such components
 class DirectionalLightComponent : public Component
 {
-	DEFINE_COMPONENT(DirectionalLightComponent);
+	COMPONENT(DirectionalLightComponent, Category::Light);
 	DEPENDS_ON(TransformComponent);
 
 	DirectionalLight m_DirectionalLight;
 
 public:
-	DirectionalLightComponent(const float diffuseIntensity, const Color& diffuseColor, const Color& ambientColor);
+	DirectionalLightComponent(Entity& owner, const JSON::json& data);
 	~DirectionalLightComponent() = default;
 
-	Vector3 getDirection() const { return m_TransformComponent->getAbsoluteTransform().Forward(); }
+	Vector3 getDirection() { return getTransformComponent()->getAbsoluteTransform().Forward(); }
 	const DirectionalLight& getDirectionalLight() const { return m_DirectionalLight; }
 
 	JSON::json getJSON() const override;
 	void draw() override;
 };
+
+DECLARE_COMPONENT(DirectionalLightComponent);

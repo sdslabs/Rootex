@@ -11,6 +11,7 @@
 #include "rootex/framework/systems/physics_system.h"
 #include "rootex/framework/systems/audio_system.h"
 #include "rootex/framework/systems/input_system.h"
+#include "rootex/framework/systems/player_system.h"
 
 EditorApplication* EditorApplication::s_Instance = nullptr;
 
@@ -30,7 +31,7 @@ void EditorApplication::SetSingleton(EditorApplication* app)
 }
 
 EditorApplication::EditorApplication()
-    : Application("editor/editor.app.json")
+    : Application("RootexEditor", "editor/editor.app.json")
 {
 	if (!s_Instance)
 	{
@@ -45,16 +46,24 @@ EditorApplication::EditorApplication()
 	PhysicsSystem::GetSingleton()->setActive(false);
 	AudioSystem::GetSingleton()->setActive(false);
 	ScriptSystem::GetSingleton()->setActive(false);
+	PlayerSystem::GetSingleton()->setActive(false);
 
 	InputSystem::GetSingleton()->loadSchemes(m_ApplicationSettings->getJSON()["systems"]["InputSystem"]["inputSchemes"]);
-	InputSystem::GetSingleton()->setScheme(m_ApplicationSettings->getJSON()["systems"]["InputSystem"]["startScheme"]);
+	InputSystem::GetSingleton()->enableScheme(m_ApplicationSettings->getJSON()["systems"]["InputSystem"]["startScheme"], true);
 	InputSystem::GetSingleton()->setSchemeLock(true);
 	InputInterface::s_IsEnabled = false;
 	EditorSystem::GetSingleton()->initialize(m_ApplicationSettings->getJSON()["systems"]["EditorSystem"]);
 
 	destroySplashWindow();
 
+	loadSave(0);
+
 	m_PointAtLast10Second = m_ApplicationTimer.Now();
+}
+
+EditorApplication::~EditorApplication()
+{
+	saveSlot();
 }
 
 void EditorApplication::process(float deltaMilliseconds)

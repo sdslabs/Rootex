@@ -51,6 +51,8 @@ void FlipbookDecorator::RenderElement(Rml::Element* element, Rml::DecoratorDataH
 	FlipbookElementData* data = (FlipbookElementData*)elementData;
 	Rml::RenderInterface* renderInterface = element->GetRenderInterface();
 
+	data->geometry.Release();
+
 	Vector<Rml::Vertex>& vertices = data->geometry.GetVertices();
 	vertices.resize(4);
 	Vector<int>& indices = data->geometry.GetIndices();

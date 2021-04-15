@@ -5,8 +5,6 @@
 #include "core/resource_loader.h"
 #include "core/resource_files/lua_text_resource_file.h"
 #include "core/input/input_manager.h"
-#include "core/renderer/shader_library.h"
-#include "core/renderer/material_library.h"
 #include "script/interpreter.h"
 
 #include "systems/audio_system.h"
@@ -20,17 +18,24 @@
 #include "systems/script_system.h"
 #include "systems/transform_animation_system.h"
 #include "systems/trigger_system.h"
+#include "systems/player_system.h"
 
 #include "Tracy/Tracy.hpp"
 
 Application* Application::s_Singleton = nullptr;
+
+String Application::getSaveSlotPath(int slot)
+{
+	return OS::GetAbsoluteSaveGameFolder(getAppTitle()) + "/save_" + std::to_string(slot) + ".json";
+}
 
 Application* Application::GetSingleton()
 {
 	return s_Singleton;
 }
 
-Application::Application(const String& settingsFile)
+Application::Application(const String& appTitle, const String& settingsFile)
+    : m_ApplicationTitle(appTitle)
 {
 	if (!s_Singleton)
 	{
@@ -44,6 +49,11 @@ Application::Application(const String& settingsFile)
 	if (!OS::Initialize())
 	{
 		ERR("Application OS was not initialized");
+	}
+
+	if (!OS::CreateDirectoryAbsoluteName(OS::GetAbsoluteSaveGameFolder(getAppTitle())))
+	{
+		WARN("Could not create save slots folder");
 	}
 
 	m_ApplicationSettings.reset(new ApplicationSettings(ResourceLoader::CreateTextResourceFile(settingsFile)));
@@ -79,7 +89,7 @@ Application::Application(const String& settingsFile)
 	inputSystemSettings["height"] = m_Window->getHeight();
 	InputSystem::GetSingleton()->initialize(inputSystemSettings);
 
-	ShaderLibrary::MakeShaders();
+	ResourceLoader::Initialize();
 	PhysicsSystem::GetSingleton()->initialize(systemsSettings["PhysicsSystem"]);
 	TriggerSystem::GetSingleton();
 
@@ -103,6 +113,8 @@ Application::Application(const String& settingsFile)
 		ERR("Audio System was not initialized");
 	}
 
+	PlayerSystem::GetSingleton();
+
 	auto&& postInitialize = m_ApplicationSettings->find("postInitialize");
 	if (postInitialize != m_ApplicationSettings->end())
 	{
@@ -124,7 +136,7 @@ Application::~Application()
 	SceneLoader::GetSingleton()->destroyAllScenes();
 	AudioSystem::GetSingleton()->shutDown();
 	UISystem::GetSingleton()->shutDown();
-	ShaderLibrary::DestroyShaders();
+	ResourceLoader::Destroy();
 	EventManager::GetSingleton()->releaseAllEventListeners();
 }
 
@@ -164,6 +176,54 @@ void Application::process(float deltaMilliseconds)
 
 void Application::end()
 {
+}
+
+void Application::createSaveSlot(int slot)
+{
+	String slotPath = getSaveSlotPath(slot);
+	if (OS::CreateFileNameAbsolute(slotPath))
+	{
+		PRINT("Created save:" + slotPath);
+	}
+	else
+	{
+		WARN("Could not create save: " + slotPath);
+	}
+
+	OS::SaveFileAbsolute(slotPath, "{}", 3);
+}
+
+bool Application::loadSave(int slot)
+{
+	String savePath = getSaveSlotPath(slot);
+	if (!OS::IsExistsAbsolute(savePath))
+	{
+		PRINT("Save slot doesn't exist. Creating new one at slot " + std::to_string(slot) + ": " + savePath);
+		createSaveSlot(slot);
+	}
+
+	try
+	{
+		m_CurrentSaveData = JSON::json::parse(OS::LoadFileContents(savePath));
+		m_CurrentSaveSlot = slot;
+	}
+	catch (std::exception e)
+	{
+		ERR("Could not load save slot" + std::to_string(slot) + " " + e.what());
+		return false;
+	}
+	return true;
+}
+
+JSON::json& Application::getSaveData()
+{
+	return m_CurrentSaveData;
+}
+
+bool Application::saveSlot()
+{
+	String saveSlotContents = m_CurrentSaveData.dump(4);
+	return OS::SaveFileAbsolute(getSaveSlotPath(m_CurrentSaveSlot), saveSlotContents.c_str(), saveSlotContents.size());
 }
 
 Vector<FilePath> Application::getLibrariesPaths()

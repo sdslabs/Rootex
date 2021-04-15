@@ -2,16 +2,14 @@
     "ID": 4,
     "children": [],
     "entity": {
-        "Entity": {
-            "script": {
-                "overrides": {
-                    "entityName": "",
-                    "variable": "\"New value!\""
-                },
-                "path": "game/assets/scripts/new_script_test.lua"
-            }
-        },
-        "components": null
+        "components": null,
+        "script": {
+            "overrides": {
+                "entityName": "",
+                "variable": "\"New value!\""
+            },
+            "path": "game/assets/scripts/new_script_test.lua"
+        }
     },
     "importStyle": 0,
     "name": "script_test",

@@ -11,7 +11,7 @@ class RenderUIComponent : public Component
 protected:
 	bool m_IsVisible;
 
-	RenderUIComponent(bool isVisible);
+	RenderUIComponent(Entity& owner, const JSON::json& data);
 
 public:
 	virtual ~RenderUIComponent() = default;

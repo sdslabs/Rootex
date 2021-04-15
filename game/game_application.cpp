@@ -53,7 +53,7 @@ Variant GameApplication::onExitEvent(const Event* event)
 }
 
 GameApplication::GameApplication()
-    : Application("game/game.app.json")
+    : Application("RootexGame", "game/game.app.json")
 {
 	String levelName = getLevelNameFromCommandLine(GetCommandLine());
 

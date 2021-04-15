@@ -5,15 +5,13 @@
             "ID": 22,
             "children": [],
             "entity": {
-                "Entity": {
-                    "script": {
-                        "overrides": {
-                            "loadScene": "\"game/assets/scenes/model.scene.json\""
-                        },
-                        "path": "game/assets/scripts/level_change.lua"
-                    }
-                },
-                "components": null
+                "components": null,
+                "script": {
+                    "overrides": {
+                        "loadScene": "\"game/assets/scenes/model.scene.json\""
+                    },
+                    "path": "game/assets/scripts/level_change.lua"
+                }
             },
             "importStyle": 0,
             "name": "loader",
@@ -28,9 +26,6 @@
         }
     ],
     "entity": {
-        "Entity": {
-            "script": null
-        },
         "components": {
             "TextUIComponent": {
                 "color": {
@@ -46,6 +41,7 @@
                     "x": 45.0,
                     "y": 62.0
                 },
+                "rotation": 0.0,
                 "text": "Press A to load level"
             },
             "TransformComponent": {
@@ -61,6 +57,7 @@
                         "z": 0.5
                     }
                 },
+                "overrideBoundingBox": false,
                 "passDown": 7,
                 "position": {
                     "x": 0.0,
@@ -79,7 +76,8 @@
                     "z": 0.9999659061431885
                 }
             }
-        }
+        },
+        "script": null
     },
     "importStyle": 0,
     "name": "loading",

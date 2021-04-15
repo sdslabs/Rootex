@@ -5,9 +5,7 @@
 #include "framework/components/visual/camera_component.h"
 #include "vertex_buffer.h"
 #include "index_buffer.h"
-#include "material.h"
 #include "shader.h"
-#include "shader_library.h"
 
 #include "Tracy.hpp"
 
@@ -318,13 +316,15 @@ class FXAAPostProcess : public PostProcess
 {
 	Ptr<DirectX::BasicPostProcess> m_BasicPostProcess;
 
-	FXAAShader* m_FXAAShader;
-	LumaShader* m_LumaShader;
+	Shader m_FXAAShader;
+	Shader m_LumaShader;
 
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_LumaCacheRTV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_LumaCacheSRV;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_CacheRTV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_CacheSRV;
+
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_LumaSS;
 
 	Ptr<VertexBuffer> m_FrameVertexBuffer;
 	Ptr<IndexBuffer> m_FrameIndexBuffer;
@@ -340,24 +340,41 @@ class FXAAPostProcess : public PostProcess
 
 public:
 	FXAAPostProcess()
-	    : m_FXAAShader(ShaderLibrary::GetFXAAShader())
-	    , m_LumaShader(ShaderLibrary::GetLumaShader())
 	{
 		BIND_EVENT_MEMBER_FUNCTION(RootexEvents::WindowResized, FXAAPostProcess::loadRTVAndSRV);
+
+		BufferFormat fxaaFormat;
+		fxaaFormat.push(VertexBufferElement::Type::FloatFloatFloat, "POSITION", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
+		fxaaFormat.push(VertexBufferElement::Type::FloatFloat, "TEXCOORD", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
+		m_FXAAShader = Shader("rootex/core/renderer/shaders/fxaa_vertex_shader.hlsl", "rootex/core/renderer/shaders/fxaa_pixel_shader.hlsl", fxaaFormat);
+
+		BufferFormat lumaFormat;
+		lumaFormat.push(VertexBufferElement::Type::FloatFloatFloat, "POSITION", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
+		lumaFormat.push(VertexBufferElement::Type::FloatFloat, "TEXCOORD", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
+		m_LumaShader = Shader("rootex/core/renderer/shaders/luma_vertex_shader.hlsl", "rootex/core/renderer/shaders/luma_pixel_shader.hlsl", lumaFormat);
+
+		m_LumaSS = RenderingDevice::GetSingleton()->createSS(RenderingDevice::SamplerState::Anisotropic);
 
 		loadRTVAndSRV(nullptr);
 
 		m_BasicPostProcess.reset(new DirectX::BasicPostProcess(RenderingDevice::GetSingleton()->getDevice()));
 
-		m_FrameVertexBuffer.reset(new VertexBuffer(Vector<FXAAData> {
-		    // Position                    // Texcoord
-		    { Vector3(-1.0f, -1.0f, 0.0f), Vector2(0.0f, 1.0f) },
-		    { Vector3(1.0f, -1.0f, 0.0f), Vector2(1.0f, 1.0f) },
-		    { Vector3(1.0f, 1.0f, 0.0f), Vector2(1.0f, 0.0f) },
-		    { Vector3(-1.0f, 1.0f, 0.0f), Vector2(0.0f, 0.0f) } }));
-		m_FrameIndexBuffer.reset(new IndexBuffer(Vector<unsigned int> {
-		    0, 2, 1,
-		    0, 3, 2 }));
+		Vector<FXAAData> fxaaData = {
+			// Position                    // Texcoord
+			{ Vector3(-1.0f, -1.0f, 0.0f), Vector2(0.0f, 1.0f) },
+			{ Vector3(1.0f, -1.0f, 0.0f), Vector2(1.0f, 1.0f) },
+			{ Vector3(1.0f, 1.0f, 0.0f), Vector2(1.0f, 0.0f) },
+			{ Vector3(-1.0f, 1.0f, 0.0f), Vector2(0.0f, 0.0f) }
+		};
+		m_FrameVertexBuffer.reset(new VertexBuffer((const char*)fxaaData.data(), fxaaData.size(), sizeof(FXAAData), D3D11_USAGE_IMMUTABLE, 0));
+
+		Vector<unsigned int> fxaaDataIndices = {
+			0, 2, 1,
+			0, 3, 2
+		};
+		m_FrameIndexBuffer.reset(new IndexBuffer(fxaaDataIndices));
+
+		m_FXAAPSCB = RenderingDevice::GetSingleton()->createBuffer<PSFXAACB>(PSFXAACB(), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
 	}
 
 	void draw(CameraComponent* camera, ID3D11ShaderResourceView*& nextSource) override
@@ -378,9 +395,9 @@ public:
 				// Perform RGBA to RGBL step
 				m_FrameVertexBuffer->bind();
 				m_FrameIndexBuffer->bind();
-				m_LumaShader->bind();
+				m_LumaShader.bind();
 
-				m_LumaShader->set(nextSource);
+				RenderingDevice::GetSingleton()->setPSSRV(0, 1, &nextSource);
 				RenderingDevice::GetSingleton()->drawIndexed(m_FrameIndexBuffer->getCount());
 			}
 			// Apply FXAA
@@ -390,13 +407,15 @@ public:
 
 				m_FrameVertexBuffer->bind();
 				m_FrameIndexBuffer->bind();
-				m_FXAAShader->bind();
+				m_FXAAShader.bind();
 
 				PSFXAACB cb;
 				Window* window = Application::GetSingleton()->getWindow();
 				cb.rcpFrame = Vector4(1.0f / window->getWidth(), 1.0f / window->getHeight(), 0.0f, 0.0f);
-				Material::SetPSConstantBuffer(cb, m_FXAAPSCB, 0);
-				m_FXAAShader->set(m_LumaCacheSRV.Get());
+				RenderingDevice::GetSingleton()->editBuffer<PSFXAACB>(cb, m_FXAAPSCB.Get());
+				RenderingDevice::GetSingleton()->setPSCB(0, 1, m_FXAAPSCB.GetAddressOf());
+
+				RenderingDevice::GetSingleton()->setPSSRV(0, 1, m_LumaCacheSRV.GetAddressOf());
 				RenderingDevice::GetSingleton()->drawIndexed(m_FrameIndexBuffer->getCount());
 			}
 

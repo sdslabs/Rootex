@@ -2,9 +2,6 @@
     "ID": 4,
     "children": [],
     "entity": {
-        "Entity": {
-            "script": null
-        },
         "components": {
             "UIComponent": {
                 "filePath": "game/assets/ui/dialogue/dialogue.rml"

@@ -3,15 +3,16 @@
 #include "systems/render_ui_system.h"
 #include "render_ui_component.h"
 
-RenderUIComponent::RenderUIComponent(bool isVisible)
-    : m_IsVisible(isVisible)
+RenderUIComponent::RenderUIComponent(Entity& owner, const JSON::json& data)
+    : Component(owner)
+    , m_IsVisible(data.value("isVisible", true))
     , m_DependencyOnTransformComponent(this)
 {
 }
 
 bool RenderUIComponent::preRender()
 {
-	RenderUISystem::GetSingleton()->pushUIMatrix(m_TransformComponent->getLocalTransform());
+	RenderUISystem::GetSingleton()->pushUIMatrix(getTransformComponent()->getLocalTransform());
 	return true;
 }
 

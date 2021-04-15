@@ -2,12 +2,6 @@
 
 #include "core/physics/bullet_conversions.h"
 #include "framework/systems/render_system.h"
-#include "renderer/materials/basic_material.h"
-
-DebugDrawer::DebugDrawer()
-{
-	m_BasicMaterial = std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetMaterial("rootex/assets/materials/collision.rmat"));
-}
 
 void DebugDrawer::drawLine(const btVector3& from, const btVector3& to, const btVector3& color)
 {

@@ -13,11 +13,11 @@ struct EditorEvents
 	/// Create new scene from scene file path
 	DEFINE_EVENT(EditorCreateNewScene, String);
 
-	/// Create new material from [material path, material type]
-	DEFINE_EVENT(EditorCreateNewMaterial);
+	/// Create new file at path
+	DEFINE_EVENT(EditorCreateNewFile, String);
 
-	/// Open file at the path passed in inside File Viewer
-	DEFINE_EVENT(EditorOpenFile, String);
+	/// Open file at the path passed in inside File Viewer with the ResourceFile::Type to load it as
+	DEFINE_EVENT(EditorOpenFile, String, int);
 
 	/// Open scene in Inspector
 	DEFINE_EVENT(EditorOpenScene, Scene*);

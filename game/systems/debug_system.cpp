@@ -47,16 +47,14 @@ void DebugSystem::drawSceneTree(Scene* scene)
 	{
 		if (m_IsEditing)
 		{
-			if (Entity* entity = scene->getEntity())
+			Entity& entity = scene->getEntity();
+			entity.draw();
+			for (auto& [componentID, component] : entity.getAllComponents())
 			{
-				entity->draw();
-				for (auto& [componentID, component] : entity->getAllComponents())
+				if (ImGui::TreeNodeEx(component->getName()))
 				{
-					if (ImGui::TreeNodeEx(component->getName()))
-					{
-						component->draw();
-						ImGui::TreePop();
-					}
+					component->draw();
+					ImGui::TreePop();
 				}
 			}
 		}
