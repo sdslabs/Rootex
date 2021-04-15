@@ -8,7 +8,7 @@ class EditorApplication : public Application
 	static void SetSingleton(EditorApplication* app);
 
 	unsigned int m_AutoSaveDurationS = 300.0f;
-
+	bool m_IsAutoSave = true;
 	TimePoint m_PointAtLast10Second;
 	FrameTimer m_FrameTimer;
 

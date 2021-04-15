@@ -8,10 +8,10 @@ function LevelChange:initialize(entity)
     self.timeSinceLoad = 0
     self.transform = entity:getTransform()
     self.text = entity:getTextUI()
-    RTX.BindMemberFunction(self, LevelChange.onLoadLevel, "A")
 end
 
-function LevelChange:begin(entity)
+function LevelChange:enter(entity)
+    RTX.BindMemberFunction(self, LevelChange.onLoadLevel, "A")
 end
 
 function LevelChange:update(entity, delta)

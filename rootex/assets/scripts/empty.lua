@@ -6,8 +6,11 @@ function EmptyScript:initialize(entity)
     }
 end
 
-function EmptyScript:begin(entity)
+function EmptyScript:enter(entity)
     print("Nothing is true")
+end
+
+function EmptyScript:begin(entity)
 end
 
 function EmptyScript:update(entity, delta)

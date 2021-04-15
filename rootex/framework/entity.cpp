@@ -15,6 +15,9 @@ Entity::Entity(Scene* scene)
 
 Entity::~Entity()
 {
+	ScriptSystem::GetSingleton()->removeInitScriptEntity(this);
+	ScriptSystem::GetSingleton()->removeEnterScriptEntity(this);
+
 	destroy();
 }
 

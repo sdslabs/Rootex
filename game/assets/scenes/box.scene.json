@@ -50,7 +50,8 @@
                             "z": 0.5299999713897705
                         }
                     }
-                }
+                },
+                "script": null
             },
             "importStyle": 0,
             "name": "box",
@@ -261,9 +262,9 @@
                         "overrideBoundingBox": false,
                         "passDown": 7,
                         "position": {
-                            "x": -3.993594169616699,
-                            "y": 1.2069249153137207,
-                            "z": -6.579999923706055
+                            "x": 2.7898435592651367,
+                            "y": 2.0301871299743652,
+                            "z": -6.580000400543213
                         },
                         "rotation": {
                             "w": 1.0,
@@ -277,7 +278,8 @@
                             "z": 1.0
                         }
                     }
-                }
+                },
+                "script": null
             },
             "importStyle": 0,
             "name": "Particles",
@@ -344,9 +346,9 @@
                     "PointLightComponent": {
                         "ambientColor": {
                             "a": 1.0,
-                            "b": 0.5,
-                            "g": 0.5,
-                            "r": 0.5
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
                         },
                         "attConst": 0.04500000178813934,
                         "attLin": 1.0,
@@ -488,8 +490,8 @@
                         "overrideBoundingBox": false,
                         "passDown": 7,
                         "position": {
-                            "x": 4.152700424194336,
-                            "y": 0.48336923122406006,
+                            "x": 0.8643732070922852,
+                            "y": -2.3803446292877197,
                             "z": -9.449999809265137
                         },
                         "rotation": {
@@ -504,7 +506,8 @@
                             "z": 1.0
                         }
                     }
-                }
+                },
+                "script": null
             },
             "importStyle": 0,
             "name": "Particles",
@@ -564,7 +567,8 @@
                     "z": 1.0
                 }
             }
-        }
+        },
+        "script": null
     },
     "importStyle": 0,
     "name": "box",

@@ -122,7 +122,7 @@
                         "overrideBoundingBox": false,
                         "passDown": 7,
                         "position": {
-                            "x": -0.7749042510986328,
+                            "x": -10.127618789672852,
                             "y": 1.3999991416931152,
                             "z": -16.664287567138672
                         },
@@ -346,6 +346,9 @@
                         "speedMultiplier": 1.0,
                         "transitionTime": 1.0
                     },
+                    "AudioListenerComponent": {
+                        "volume": 1.0
+                    },
                     "CapsuleColliderComponent": {
                         "angularFactor": {
                             "x": 0.0,
@@ -380,7 +383,6 @@
                         "idleThreshold": 0.5,
                         "maxRunSpeed": 2.0,
                         "maxWalkSpeed": 1.0,
-                        "playerAnimation": "game/assets/models/player/player.fbx",
                         "run": "Armature|run",
                         "stoppingPower": 4.0,
                         "turnLeft": "Armature|idle",
@@ -403,14 +405,14 @@
                         "overrideBoundingBox": true,
                         "passDown": 5,
                         "position": {
-                            "x": 1.4141045808792114,
+                            "x": 1.4141044616699219,
                             "y": 0.23136299848556519,
                             "z": -2.6910319328308105
                         },
                         "rotation": {
                             "w": 0.9999966025352478,
                             "x": -0.0,
-                            "y": -0.002618087688460946,
+                            "y": -0.0026180879212915897,
                             "z": -0.0
                         },
                         "scale": {
@@ -438,9 +440,6 @@
             "children": [],
             "entity": {
                 "components": {
-                    "AudioListenerComponent": {
-                        "volume": 1.0
-                    },
                     "CameraComponent": {
                         "aspectRatio": {
                             "x": 16.0,
@@ -654,7 +653,7 @@
     "settings": {
         "camera": 13,
         "inputSchemes": {},
-        "listener": 13,
+        "listener": 31,
         "preloads": [
             [
                 8,

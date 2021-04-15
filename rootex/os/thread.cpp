@@ -209,7 +209,7 @@ void ThreadPool::submit(Vector<Ref<Task>>& tasks)
 
 bool ThreadPool::isCompleted() const
 {
-	return m_TaskQueue.m_QueueJobs.size() == m_TasksComplete.m_Jobs;
+	return m_TaskQueue.m_QueueJobs.size() >= m_TasksComplete.m_Jobs;
 }
 
 void ThreadPool::join() const
