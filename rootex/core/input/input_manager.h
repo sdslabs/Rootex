@@ -62,7 +62,7 @@ class InputManager
 	bool m_IsEnabled;
 	HashMap<Device, unsigned int> DeviceIDs;
 	HashMap<String, InputScheme> m_InputSchemes;
-	String m_CurrentInputScheme;
+	Vector<String> m_CurrentSchemeStack;
 
 	HashMap<unsigned int, Event::Type> m_InputEventIDNames;
 	HashMap<Event::Type, unsigned int> m_InputEventNameIDs;
@@ -78,7 +78,8 @@ class InputManager
 
 	friend class Window;
 
-	unsigned int getNextID();
+	unsigned int getNextID(int device, int button);
+	void buildBindings();
 
 public:
 	static InputManager* GetSingleton();
@@ -96,9 +97,11 @@ public:
 
 	void setEnabled(bool enabled);
 
+	void loadSchemes(const HashMap<String, InputScheme>& inputSchemes);
 	void addScheme(const String& name, const InputScheme& inputScheme);
-	void enableScheme(const String& schemeName, bool enabled);
-	void clearSchemes();
+	void pushScheme(const String& schemeName);
+	void popScheme();
+	void flushSchemes();
 
 	/// Bind an event to a button on a device.
 	void mapBool(const Event::Type& action, Device device, DeviceButtonID button);

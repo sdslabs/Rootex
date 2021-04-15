@@ -214,7 +214,6 @@ PlayerController::PlayerController(Entity& owner, const JSON::json& data)
     , m_IdleAnimation(data.value("idle", ""))
     , m_TurnLeftAnimation(data.value("turnLeft", ""))
     , m_TurnRightAnimation(data.value("turnRight", ""))
-    , m_PlayerAnimation(data.value("playerAnimation", "game/assets/models/player/player.fbx"))
     , m_MaxWalkSpeed(data.value("maxWalkSpeed", 0.5f))
     , m_MaxRunSpeed(data.value("maxRunSpeed", 1.0f))
     , m_StoppingPower(data.value("stoppingPower", 1.0f))
@@ -234,16 +233,13 @@ void PlayerController::update(float deltaMilliseconds)
 
 bool PlayerController::setupData()
 {
-	getAnimatedModelComponent()->setAnimatedResourceFile(ResourceLoader::CreateAnimatedModelResourceFile(m_PlayerAnimation), {});
-	getCapsuleColliderComponent()->setMoveable(true);
-
 	InputScheme scheme;
 	scheme.bools.push_back(InputDescription { Device::Keyboard, KeyboardButton::KeyW, PlayerInputEvents.at(PlayerInput::Forward) });
 	scheme.bools.push_back(InputDescription { Device::Keyboard, KeyboardButton::KeyA, PlayerInputEvents.at(PlayerInput::Left) });
 	scheme.bools.push_back(InputDescription { Device::Keyboard, KeyboardButton::KeyS, PlayerInputEvents.at(PlayerInput::Back) });
 	scheme.bools.push_back(InputDescription { Device::Keyboard, KeyboardButton::KeyD, PlayerInputEvents.at(PlayerInput::Right) });
 	InputManager::GetSingleton()->addScheme("Player", scheme);
-	InputSystem::GetSingleton()->enableScheme("Player", true);
+	InputSystem::GetSingleton()->pushScheme("Player");
 
 	return true;
 }
@@ -252,7 +248,6 @@ JSON::json PlayerController::getJSON() const
 {
 	JSON::json j;
 
-	j["playerAnimation"] = m_PlayerAnimation;
 	j["walk"] = m_WalkAnimation;
 	j["run"] = m_RunAnimation;
 	j["idle"] = m_IdleAnimation;
