@@ -149,7 +149,7 @@ bool Entity::call(const String& function, const Vector<Variant>& args)
 		status = m_Script->call(function, args);
 		if (!status)
 		{
-			WARN("Script error (" + getFullName() + ")");
+			WARN("Script error in " + m_Script->getFilePath() + " on " + getFullName() + " during " + function);
 		}
 	}
 	return status;
