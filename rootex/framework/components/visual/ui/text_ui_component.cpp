@@ -3,24 +3,16 @@
 #include "systems/render_ui_system.h"
 #include "renderer/rendering_device.h"
 
-Ptr<Component> TextUIComponent::Create(const JSON::json& componentData)
-{
-	return std::make_unique<TextUIComponent>(
-	    ResourceLoader::CreateFontResourceFile(componentData.value("fontResource", "rootex/assets/fonts/lato_30_regular.spritefont")),
-	    componentData.value("text", "Hello Rootex!"),
-	    componentData.value("color", (Color)ColorPresets::White),
-	    (Mode)(int)componentData.value("mode", (int)Mode::None),
-	    componentData.value("origin", Vector2::Zero),
-	    componentData.value("isVisible", true));
-}
+DEFINE_COMPONENT(TextUIComponent);
 
-TextUIComponent::TextUIComponent(Ref<FontResourceFile> font, const String& text, const Color& color, const Mode& mode, const Vector2& origin, const bool& isVisible)
-    : RenderUIComponent(isVisible)
-    , m_FontFile(font)
-    , m_Text(text)
-    , m_Color(color)
-    , m_Mode(mode)
-    , m_Origin(origin)
+TextUIComponent::TextUIComponent(Entity& owner, const JSON::json& data)
+    : RenderUIComponent(owner, data)
+    , m_FontFile(ResourceLoader::CreateFontResourceFile(data.value("fontResource", "rootex/assets/fonts/lato_30_regular.spritefont")))
+    , m_Text(data.value("text", "Hello Rootex!"))
+    , m_Color(data.value("color", (Color)ColorPresets::White))
+    , m_Mode((Mode)(int)data.value("mode", (int)Mode::None))
+    , m_Origin(data.value("origin", Vector2::Zero))
+    , m_Rotation(data.value("rotation", 0.0f))
 {
 }
 
@@ -28,18 +20,16 @@ void TextUIComponent::render()
 {
 	static Vector3 position;
 	static Quaternion rotation;
-	static float rotationAngle;
 	static Vector3 scale;
 
 	RenderUISystem::GetSingleton()->getTopUIMatrix().Decompose(scale, rotation, position);
-	rotationAngle = Vector3::Transform(Vector3(0.0f, 0.0f, 1.0f), rotation).z;
 
 	m_FontFile->getFont()->DrawString(
 	    RenderingDevice::GetSingleton()->getUIBatch().get(),
 	    m_Text.c_str(),
 	    position,
 	    m_Color,
-	    rotationAngle,
+	    m_Rotation,
 	    -m_Origin,
 	    scale,
 	    (DirectX::SpriteEffects)m_Mode);
@@ -53,6 +43,7 @@ JSON::json TextUIComponent::getJSON() const
 	j["text"] = m_Text;
 	j["color"] = m_Color;
 	j["origin"] = m_Origin;
+	j["rotation"] = m_Rotation;
 	j["mode"] = (int)m_Mode;
 
 	return j;
@@ -63,6 +54,7 @@ void TextUIComponent::draw()
 	ImGui::InputText("Text", &m_Text);
 	ImGui::ColorEdit4("Color", &m_Color.x);
 	ImGui::DragFloat2("Origin", &m_Origin.x);
+	ImGui::DragFloat("Rotation", &m_Rotation);
 
 	static const char* modes[] = {
 		"None",

@@ -1,51 +1,25 @@
 #include "box_collider_component.h"
 #include "framework/systems/physics_system.h"
 
-Ptr<Component> BoxColliderComponent::Create(const JSON::json& boxComponentData)
-{
-	return std::make_unique<BoxColliderComponent>(
-	    boxComponentData.value("dimensions", Vector3 { 0.5f, 0.5f, 0.5f }),
-	    boxComponentData.value("offset", Vector3(0.0f, 0.0f, 0.0f)),
-	    boxComponentData.value("material", PhysicsMaterial::Air),
-	    boxComponentData.value("angularFactor", Vector3::One),
-	    boxComponentData.value("gravity", Vector3(0.0f, -9.8f, 0.0f)),
-	    boxComponentData.value("collisionGroup", (int)CollisionMask::All),
-	    boxComponentData.value("collisionMask", (int)CollisionMask::All),
-	    boxComponentData.value("isMoveable", false),
-	    boxComponentData.value("isKinematic", false),
-	    boxComponentData.value("isGeneratesHitEvents", false),
-	    boxComponentData.value("isSleepable", true),
-	    boxComponentData.value("isCCD", false));
-}
+DEFINE_COMPONENT(BoxColliderComponent);
 
-BoxColliderComponent::BoxColliderComponent(
-    const Vector3& dimensions,
-    const Vector3& offset,
-    const PhysicsMaterial& material,
-    const Vector3& angularFactor,
-    const Vector3& gravity,
-    int collisionGroup,
-    int collisionMask,
-    bool isMoveable,
-    bool isKinematic,
-    bool generatesHitEvents,
-    bool isSleepable,
-    bool isCCD)
+BoxColliderComponent::BoxColliderComponent(Entity& owner, const JSON::json& data)
     : RigidBodyComponent(
-        material,
-        dimensions.x * dimensions.y * dimensions.z,
-        offset,
-        gravity,
-        angularFactor,
-        collisionGroup,
-        collisionMask,
-        isMoveable,
-        isKinematic,
-        generatesHitEvents,
-        isSleepable,
-        isCCD,
-        Ref<btBoxShape>(new btBoxShape(VecTobtVector3(dimensions))))
-    , m_Dimensions(dimensions)
+        owner,
+        data.value("material", PhysicsMaterial::Air),
+        data.value("dimensions", Vector3 { 0.5f, 0.5f, 0.5f }).x * data.value("dimensions", Vector3 { 0.5f, 0.5f, 0.5f }).y * data.value("dimensions", Vector3 { 0.5f, 0.5f, 0.5f }).z,
+        data.value("offset", Vector3(0.0f, 0.0f, 0.0f)),
+        data.value("gravity", Vector3(0.0f, -9.8f, 0.0f)),
+        data.value("angularFactor", Vector3::One),
+        data.value("collisionGroup", (int)CollisionMask::All),
+        data.value("collisionMask", (int)CollisionMask::All),
+        data.value("isMoveable", false),
+        data.value("isKinematic", false),
+        data.value("isGeneratesHitEvents", false),
+        data.value("isSleepable", true),
+        data.value("isCCD", false),
+        Ref<btBoxShape>(new btBoxShape(VecTobtVector3(data.value("dimensions", Vector3 { 0.5f, 0.5f, 0.5f })))))
+    , m_Dimensions(data.value("dimensions", Vector3 { 0.5f, 0.5f, 0.5f }))
 {
 	m_BoxShape = (btBoxShape*)m_CollisionShape.get();
 }

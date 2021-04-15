@@ -100,12 +100,11 @@ bool ParticleSystem::initialize(const JSON::json& systemData)
 
 void ParticleSystem::begin()
 {
-	for (auto& c : ECSFactory::GetComponents<ParticleEffectComponent>())
+	for (auto& pec : ECSFactory::GetAllParticleEffectComponent())
 	{
-		ParticleEffectComponent* pec = (ParticleEffectComponent*)c;
-		if (pec->isPlayOnStart())
+		if (pec.isPlayOnStart())
 		{
-			pec->play();
+			pec.play();
 		}
 	}
 }
@@ -118,12 +117,11 @@ void ParticleSystem::update(float deltaMilliseconds)
 	m_Renderer->SetProjectionMatrix(cameraProj);
 	m_Renderer->SetCameraMatrix(MatrixToEffekseer44(camera->getViewMatrix()));
 
-	for (auto& c : ECSFactory::GetComponents<ParticleEffectComponent>())
+	for (auto& pec : ECSFactory::GetAllParticleEffectComponent())
 	{
-		ParticleEffectComponent* pec = (ParticleEffectComponent*)c;
-		if (pec->isMoving())
+		if (pec.isMoving())
 		{
-			setMatrix(pec->getHandle(), pec->getTransformComponent()->getAbsoluteTransform());
+			setMatrix(pec.getHandle(), pec.getTransformComponent()->getAbsoluteTransform());
 		}
 	}
 

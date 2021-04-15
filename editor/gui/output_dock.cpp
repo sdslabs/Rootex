@@ -45,7 +45,7 @@ void OutputDock::draw(float deltaMilliseconds)
 					ImGui::PushStyleColor(ImGuiCol_Text, (const ImVec4&)EditorSystem::GetSingleton()->getNormalColor());
 				}
 
-				ImGui::TextUnformatted(outputString.second.c_str());
+				ImGui::Text("%s", outputString.second.c_str());
 
 				ImGui::PopStyleColor(1);
 			}

@@ -4,32 +4,18 @@
 #include "core/physics/bullet_conversions.h"
 #include "systems/physics_system.h"
 
-Ptr<Component> TriggerComponent::Create(const JSON::json& componentData)
-{
-	return std::make_unique<TriggerComponent>(
-	    componentData.value("dimensions", Vector3 { 0.5f, 0.5f, 0.5f }),
-	    componentData.value("entryRepeat", false),
-	    componentData.value("entryTargets", Vector<SceneID>()),
-	    componentData.value("exitRepeat", false),
-	    componentData.value("exitTargets", Vector<SceneID>()),
-	    componentData.value("collisionGroup", (int)CollisionMask::TriggerVolume),
-	    componentData.value("collisionMask", (int)CollisionMask::Player));
-}
+DEFINE_COMPONENT(TriggerComponent);
 
-TriggerComponent::TriggerComponent(
-    const Vector3& dimensions,
-    bool entryRepeat,
-    const Vector<SceneID>& entryTargets,
-    bool exitRepeat,
-    const Vector<SceneID>& exitTargets,
-    int collisionGroup,
-    int collisionMask)
-    : CollisionComponent(collisionGroup, collisionMask)
-    , m_EntryTargetIDs(entryTargets)
-    , m_ExitTargetIDs(exitTargets)
-    , m_EntryRepeat(entryRepeat)
-    , m_ExitRepeat(exitRepeat)
-    , m_Dimensions(dimensions)
+TriggerComponent::TriggerComponent(Entity& owner, const JSON::json& data)
+    : CollisionComponent(
+        owner,
+        data.value("collisionGroup", (int)CollisionMask::TriggerVolume),
+        data.value("collisionMask", (int)CollisionMask::Player))
+    , m_EntryTargetIDs(data.value("entryTargets", Vector<SceneID>()))
+    , m_ExitTargetIDs(data.value("exitTargets", Vector<SceneID>()))
+    , m_EntryRepeat(data.value("entryRepeat", false))
+    , m_ExitRepeat(data.value("exitRepeat", false))
+    , m_Dimensions(data.value("dimensions", Vector3 { 0.5f, 0.5f, 0.5f }))
     , m_DependencyOnTransformComponent(this)
 {
 }
@@ -72,14 +58,12 @@ void TriggerComponent::notifyEntry()
 	{
 		if (Scene* scene = Scene::FindSceneByID(entryID))
 		{
-			if (Entity* entity = scene->getEntity())
-			{
-				entity->call("enter", { entity, getOwner() });
-			}
+			Entity& entity = scene->getEntity();
+			entity.call("enter", { &entity, &getOwner() });
 		}
 		else
 		{
-			WARN("Scene not found during enter trigger: " + std::to_string(entryID) + " from trigger entity " + getOwner()->getFullName());
+			WARN("Scene not found during enter trigger: " + std::to_string(entryID) + " from trigger entity " + getOwner().getFullName());
 		}
 	}
 	m_IsEntryNotified = true;
@@ -91,14 +75,12 @@ void TriggerComponent::notifyExit()
 	{
 		if (Scene* scene = Scene::FindSceneByID(exitID))
 		{
-			if (Entity* entity = scene->getEntity())
-			{
-				entity->call("exit", { entity, getOwner() });
-			}
+			Entity& entity = scene->getEntity();
+			entity.call("exit", { &entity, &getOwner() });
 		}
 		else
 		{
-			WARN("Scene not found during exit trigger: " + std::to_string(exitID) + " from trigger entity " + getOwner()->getFullName());
+			WARN("Scene not found during exit trigger: " + std::to_string(exitID) + " from trigger entity " + getOwner().getFullName());
 		}
 	}
 	m_IsExitNotified = true;
@@ -154,7 +136,7 @@ void TriggerComponent::removeTarget(Vector<SceneID>& list, SceneID toRemove)
 
 void TriggerComponent::updateTransform()
 {
-	btTransform transform = MatTobtTransform(m_TransformComponent->getRotationPosition());
+	btTransform transform = MatTobtTransform(getTransformComponent()->getRotationPosition());
 	m_Body->activate(true);
 	m_Body->setWorldTransform(transform);
 }
@@ -290,25 +272,23 @@ void TriggerComponent::draw()
 
 	if (ImGui::BeginPopup("Select Entity"))
 	{
-		for (const Scene* scene : Scene::FindAllScenes())
+		for (Scene* scene : Scene::FindAllScenes())
 		{
-			if (Entity* entity = scene->getEntity())
+			Entity& entity = scene->getEntity();
+			if (ImGui::MenuItem(scene->getFullName().c_str()))
 			{
-				if (ImGui::MenuItem(scene->getFullName().c_str()))
+				switch (addMode)
 				{
-					switch (addMode)
-					{
-					case TargetAddMode::None:
-						break;
-					case TargetAddMode::Entry:
-						addEntryTarget(scene->getID());
-						break;
-					case TargetAddMode::Exit:
-						addExitTarget(scene->getID());
-						break;
-					default:
-						break;
-					}
+				case TargetAddMode::None:
+					break;
+				case TargetAddMode::Entry:
+					addEntryTarget(scene->getID());
+					break;
+				case TargetAddMode::Exit:
+					addExitTarget(scene->getID());
+					break;
+				default:
+					break;
 				}
 			}
 		}

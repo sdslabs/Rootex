@@ -21,10 +21,7 @@ void ScriptSystem::addInitScriptEntity(Entity* e)
 
 void CallUpdateForScene(Scene* scene, float deltaMilliseconds)
 {
-	if (Entity* entity = scene->getEntity())
-	{
-		entity->call("update", { entity, deltaMilliseconds });
-	}
+	scene->getEntity().call("update", { &scene->getEntity(), deltaMilliseconds });
 
 	for (auto& child : scene->getChildren())
 	{
@@ -52,10 +49,7 @@ void ScriptSystem::update(float deltaMilliseconds)
 
 void CallDestroyForScene(Scene* scene)
 {
-	if (Entity* entity = scene->getEntity())
-	{
-		entity->call("destroy", { entity });
-	}
+	scene->getEntity().call("destroy", { &scene->getEntity() });
 
 	for (auto& child : scene->getChildren())
 	{

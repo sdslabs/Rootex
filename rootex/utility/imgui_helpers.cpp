@@ -28,7 +28,7 @@ void RootexFPSGraph(const char* name, Vector<float>& fpsRecords, float lastFPS)
 	ImGui::Combo("Target FPS", &targetFPSChoice, "30\0 60\0 120\0 144\0");
 }
 
-void RootexSelectableImage(const char* name, ImageResourceFile* image, Function<void(const String&)> onSelected)
+void RootexSelectableImage(const char* name, Ref<ImageResourceFile> image, Function<void(const String&)> onSelected)
 {
 	if (ImGui::Button((name + String("##Button")).c_str()))
 	{
@@ -40,7 +40,7 @@ void RootexSelectableImage(const char* name, ImageResourceFile* image, Function<
 
 	if (image && ImGui::ImageButton(image->getTexture()->getTextureResourceView(), { 50, 50 }))
 	{
-		EventManager::GetSingleton()->deferredCall(EditorEvents::EditorOpenFile, image->getPath().string());
+		EventManager::GetSingleton()->deferredCall(EditorEvents::EditorOpenFile, VariantVector { image->getPath().generic_string(), (int)image->getType() });
 	}
 	if (image)
 	{
@@ -49,7 +49,7 @@ void RootexSelectableImage(const char* name, ImageResourceFile* image, Function<
 	}
 }
 
-void RootexSelectableImageCube(const char* name, ImageCubeResourceFile* image, Function<void(const String&)> onSelected)
+void RootexSelectableImageCube(const char* name, Ref<ImageCubeResourceFile> image, Function<void(const String&)> onSelected)
 {
 	if (ImGui::Button((name + String("##Button")).c_str()))
 	{
@@ -61,7 +61,7 @@ void RootexSelectableImageCube(const char* name, ImageCubeResourceFile* image, F
 
 	if (image && ImGui::ImageButton(image->getTexture()->getTextureResourceView(), { 50, 50 }))
 	{
-		EventManager::GetSingleton()->deferredCall(EditorEvents::EditorOpenFile, image->getPath().string());
+		EventManager::GetSingleton()->deferredCall(EditorEvents::EditorOpenFile, VariantVector { image->getPath().generic_string(), (int)image->getType() });
 	}
 	if (image)
 	{

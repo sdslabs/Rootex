@@ -5,16 +5,14 @@
 #include "resource_loader.h"
 #include "editor/editor_events.h"
 
-Ptr<Component> UIComponent::Create(const JSON::json& componentData)
-{
-	return std::make_unique<UIComponent>(componentData.value("filePath", "rootex/assets/rml/demo.rml"));
-}
+DEFINE_COMPONENT(UIComponent);
 
-UIComponent::UIComponent(const String& path)
-    : m_FilePath(path)
+UIComponent::UIComponent(Entity& owner, const JSON::json& data)
+    : Component(owner)
+    , m_FilePath(data.value("filePath", "rootex/assets/rml/demo.rml"))
     , m_Document(nullptr)
 {
-	setDocument(path);
+	setDocument(m_FilePath);
 }
 
 UIComponent::~UIComponent()
@@ -63,7 +61,7 @@ void UIComponent::draw()
 	ImGui::SameLine();
 	if (ImGui::Button("Document"))
 	{
-		EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, m_FilePath);
+		EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { m_FilePath, (int)ResourceFile::Type::Text });
 	}
 	ImGui::EndGroup();
 

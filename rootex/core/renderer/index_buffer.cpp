@@ -4,73 +4,33 @@
 
 #include "Tracy/Tracy.hpp"
 
-IndexBuffer::IndexBuffer(const Vector<unsigned short>& indices)
+IndexBuffer::IndexBuffer(const Vector<unsigned short>& indices, bool dynamicWrite)
     : m_Count(indices.size())
+    , m_Format(DXGI_FORMAT_R16_UINT)
 {
-	D3D11_BUFFER_DESC ibd = { 0 };
-	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	ibd.Usage = D3D11_USAGE_DYNAMIC;
-	ibd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	ibd.MiscFlags = 0u;
-	ibd.ByteWidth = indices.size() * sizeof(unsigned short);
-	ibd.StructureByteStride = 0;
-	D3D11_SUBRESOURCE_DATA isd = { 0 };
-	isd.pSysMem = indices.data();
+	D3D11_USAGE usageFlag = D3D11_USAGE_IMMUTABLE;
+	int cpuAccess = 0;
+	if (dynamicWrite)
+	{
+		usageFlag = D3D11_USAGE_DYNAMIC;
+		cpuAccess = D3D11_CPU_ACCESS_WRITE;
+	}
 
-	m_Format = DXGI_FORMAT_R16_UINT;
-	m_IndexBuffer = RenderingDevice::GetSingleton()->createBuffer(&ibd, &isd);
+	m_IndexBuffer = RenderingDevice::GetSingleton()->createBuffer((const char*)indices.data(), sizeof(unsigned short) * indices.size(), D3D11_BIND_INDEX_BUFFER, usageFlag, cpuAccess);
 }
 
 IndexBuffer::IndexBuffer(const Vector<unsigned int>& indices)
     : m_Count(indices.size())
+    , m_Format(DXGI_FORMAT_R32_UINT)
 {
-	D3D11_BUFFER_DESC ibd = { 0 };
-	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	ibd.Usage = D3D11_USAGE_DYNAMIC;
-	ibd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	ibd.MiscFlags = 0u;
-	ibd.ByteWidth = indices.size() * sizeof(unsigned int);
-	ibd.StructureByteStride = 0;
-	D3D11_SUBRESOURCE_DATA isd = { 0 };
-	isd.pSysMem = indices.data();
-
-	m_Format = DXGI_FORMAT_R32_UINT;
-	m_IndexBuffer = RenderingDevice::GetSingleton()->createBuffer(&ibd, &isd);
+	m_IndexBuffer = RenderingDevice::GetSingleton()->createBuffer((const char*)indices.data(), sizeof(unsigned int) * indices.size(), D3D11_BIND_INDEX_BUFFER, D3D11_USAGE_IMMUTABLE, 0);
 }
 
 IndexBuffer::IndexBuffer(const int* indices, size_t size)
     : m_Count(size)
+    , m_Format(DXGI_FORMAT_R32_UINT)
 {
-	D3D11_BUFFER_DESC ibd = { 0 };
-	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	ibd.Usage = D3D11_USAGE_DYNAMIC;
-	ibd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	ibd.MiscFlags = 0u;
-	ibd.ByteWidth = size * sizeof(int);
-	ibd.StructureByteStride = 0;
-	D3D11_SUBRESOURCE_DATA isd = { 0 };
-	isd.pSysMem = indices;
-
-	m_Format = DXGI_FORMAT_R32_UINT;
-	m_IndexBuffer = RenderingDevice::GetSingleton()->createBuffer(&ibd, &isd);
-}
-
-void IndexBuffer::setData(const Vector<unsigned short>& indices)
-{
-	D3D11_MAPPED_SUBRESOURCE subresource = { 0 };
-	RenderingDevice::GetSingleton()->mapBuffer(m_IndexBuffer.Get(), subresource);
-	memcpy(subresource.pData, indices.data(), indices.size() * sizeof(unsigned short));
-	RenderingDevice::GetSingleton()->unmapBuffer(m_IndexBuffer.Get());
-	m_Count = indices.size();
-}
-
-void IndexBuffer::setData(const Vector<unsigned int>& indices)
-{
-	D3D11_MAPPED_SUBRESOURCE subresource = { 0 };
-	RenderingDevice::GetSingleton()->mapBuffer(m_IndexBuffer.Get(), subresource);
-	memcpy(subresource.pData, indices.data(), indices.size() * sizeof(unsigned int));
-	RenderingDevice::GetSingleton()->unmapBuffer(m_IndexBuffer.Get());
-	m_Count = indices.size();
+	m_IndexBuffer = RenderingDevice::GetSingleton()->createBuffer((const char*)indices, sizeof(int) * size, D3D11_BIND_INDEX_BUFFER, D3D11_USAGE_IMMUTABLE, 0);
 }
 
 void IndexBuffer::bind() const

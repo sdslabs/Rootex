@@ -5,8 +5,6 @@
 
 #include "btBulletCollisionCommon.h"
 
-class Material;
-
 /// Representation of a 3D model file used to initialise a mesh collider.
 class CollisionModelResourceFile : public ResourceFile
 {

@@ -13,7 +13,6 @@ class FileViewer
 {
 	bool m_IsFileOpened;
 	bool m_IsEventJustReceived;
-	FilePath m_OpenFilePath;
 
 	AudioPlayer m_AudioPlayer;
 	ImageViewer m_ImageViewer;
@@ -24,6 +23,7 @@ class FileViewer
 
 	void drawFileInfo();
 
+	Variant unloadAllResources(const Event* event);
 	Variant openFile(const Event* event);
 
 public:

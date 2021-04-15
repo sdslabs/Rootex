@@ -6,25 +6,13 @@
 
 class BoxColliderComponent : public RigidBodyComponent
 {
-	DEFINE_COMPONENT(BoxColliderComponent);
+	COMPONENT(BoxColliderComponent, Category::Physics);
 
 	Vector3 m_Dimensions;
 	btBoxShape* m_BoxShape;
 
 public:
-	BoxColliderComponent(
-	    const Vector3& dimensions,
-	    const Vector3& offset,
-	    const PhysicsMaterial& material,
-	    const Vector3& angularFactor,
-	    const Vector3& gravity,
-	    int collisionGroup,
-	    int collisionMask,
-	    bool isMoveable,
-	    bool isKinematic,
-	    bool generatesHitEvents,
-	    bool isSleepable,
-	    bool isCCD);
+	BoxColliderComponent(Entity& owner, const JSON::json& data);
 	~BoxColliderComponent() = default;
 
 	void setDimensions(const Vector3& dimensions);
@@ -33,3 +21,5 @@ public:
 	JSON::json getJSON() const override;
 	void draw() override;
 };
+
+DECLARE_COMPONENT(BoxColliderComponent);

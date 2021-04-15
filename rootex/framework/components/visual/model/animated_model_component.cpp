@@ -4,46 +4,21 @@
 #include "framework/entity.h"
 #include "renderer/render_pass.h"
 #include "framework/systems/render_system.h"
-#include "renderer/materials/animated_material.h"
-#include "renderer/material_library.h"
 #include "scene_loader.h"
 
-Ptr<Component> AnimatedModelComponent::Create(const JSON::json& componentData)
-{
-	return std::make_unique<AnimatedModelComponent>(
-	    componentData.value("isPlayOnStart", false),
-	    ResourceLoader::CreateAnimatedModelResourceFile(componentData.value("resFile", "rootex/assets/animation.dae")),
-	    componentData.value("currentAnimationName", ""),
-	    (AnimationMode)componentData.value("animationMode", (int)AnimationMode::None),
-	    componentData.value("renderPass", (int)RenderPass::Basic),
-	    componentData.value("materialOverrides", HashMap<String, String>()),
-	    componentData.value("isVisible", true),
-	    componentData.value("lodEnable", true),
-	    componentData.value("lodBias", 0.0f),
-	    componentData.value("lodDistance", 10.0f),
-	    componentData.value("affectingStaticLights", Vector<SceneID>()));
-}
+DEFINE_COMPONENT(AnimatedModelComponent);
 
-AnimatedModelComponent::AnimatedModelComponent(
-    bool isPlayOnStart,
-    Ref<AnimatedModelResourceFile> resFile,
-    const String& currentAnimationName,
-    AnimationMode mode,
-    unsigned int renderPass,
-    const HashMap<String, String>& materialOverrides,
-    bool isVisible,
-    bool lodEnable,
-    float lodBias,
-    float lodDistance,
-    const Vector<SceneID>& affectingStaticLightIDs)
-    : RenderableComponent(renderPass, materialOverrides, isVisible, lodEnable, lodBias, lodDistance, affectingStaticLightIDs)
+AnimatedModelComponent::AnimatedModelComponent(Entity& owner, const JSON::json& data)
+    : RenderableComponent(owner, data)
+    , m_RootExclusion(data.value("rootExclusion", RootExclusion::None))
+    , m_SpeedMultiplier(data.value("speedMultiplier", 1.0f))
+    , m_IsPlaying(data.value("isPlayOnStart", false))
+    , m_IsPlayOnStart(data.value("isPlayOnStart", false))
+    , m_AnimationMode((AnimationMode)data.value("animationMode", (int)AnimationMode::None))
+    , m_CurrentAnimationName(data.value("currentAnimationName", ""))
     , m_CurrentTimePosition(0.0f)
-    , m_IsPlaying(isPlayOnStart)
-    , m_IsPlayOnStart(isPlayOnStart)
-    , m_AnimationMode(mode)
-    , m_CurrentAnimationName(currentAnimationName)
 {
-	assignOverrides(resFile, materialOverrides);
+	assignOverrides(ResourceLoader::CreateAnimatedModelResourceFile(data.value("resFile", "rootex/assets/animation.dae")), data.value("materialOverrides", HashMap<String, String>()));
 	m_FinalTransforms.resize(m_AnimatedModelResourceFile->getBoneCount());
 }
 
@@ -67,20 +42,40 @@ void AnimatedModelComponent::render(float viewDistance)
 
 	std::sort(m_AnimatedModelResourceFile->getMeshes().begin(), m_AnimatedModelResourceFile->getMeshes().end(), CompareMaterials);
 
+	bool uploadBones = true;
 	for (auto& [material, meshes] : m_AnimatedModelResourceFile->getMeshes())
 	{
-		(std::dynamic_pointer_cast<AnimatedMaterial>(material))->setVSConstantBuffer(VSAnimationConstantBuffer(m_FinalTransforms));
-		RenderSystem::GetSingleton()->getRenderer()->bind(m_MaterialOverrides[material].get());
-
-		for (auto& mesh : meshes)
+		if (Ref<AnimatedBasicMaterialResourceFile> overridingMaterial = std::dynamic_pointer_cast<AnimatedBasicMaterialResourceFile>(m_MaterialOverrides[material]))
 		{
-			RenderSystem::GetSingleton()->getRenderer()->draw(mesh.m_VertexBuffer.get(), mesh.getLOD(getLODFactor(viewDistance)).get());
+			if (uploadBones)
+			{
+				overridingMaterial->uploadAnimationBuffer(PerModelAnimationVSCBData(m_FinalTransforms));
+				uploadBones = false;
+			}
+			RenderSystem::GetSingleton()->getRenderer()->bind(overridingMaterial.get());
+
+			for (auto& mesh : meshes)
+			{
+				RenderSystem::GetSingleton()->getRenderer()->draw(mesh.m_VertexBuffer.get(), mesh.getLOD(getLODFactor(viewDistance)).get());
+			}
 		}
+	}
+}
+
+void AnimatedModelComponent::checkCurrentAnimationExists()
+{
+	const HashMap<String, SkeletalAnimation>& animations = m_AnimatedModelResourceFile->getAnimations();
+	if (animations.find(m_CurrentAnimationName) == animations.end())
+	{
+		WARN("Animation " + m_CurrentAnimationName + " doesn't exist on " + m_AnimatedModelResourceFile->getPath().generic_string());
+		setAnimation(animations.begin()->first);
 	}
 }
 
 void AnimatedModelComponent::update(float deltaMilliseconds)
 {
+	checkCurrentAnimationExists();
+
 	switch (m_AnimationMode)
 	{
 	case AnimationMode::None:
@@ -100,11 +95,11 @@ void AnimatedModelComponent::update(float deltaMilliseconds)
 		deltaMilliseconds *= m_TimeDirection;
 		break;
 	}
-	m_CurrentTimePosition += deltaMilliseconds * MS_TO_S;
+	m_CurrentTimePosition += deltaMilliseconds * m_SpeedMultiplier * MS_TO_S;
 	m_RemainingTransitionTime -= deltaMilliseconds * MS_TO_S;
 	m_RemainingTransitionTime = std::max(m_RemainingTransitionTime, 0.0f);
 
-	m_AnimatedModelResourceFile->getFinalTransforms(m_FinalTransforms, m_CurrentAnimationName, m_CurrentTimePosition, std::max(0.2f, 1.0f - m_RemainingTransitionTime / m_TransitionTime));
+	m_AnimatedModelResourceFile->getFinalTransforms(m_FinalTransforms, m_CurrentAnimationName, m_CurrentTimePosition, std::max(0.2f, 1.0f - m_RemainingTransitionTime / m_TransitionTime), m_RootExclusion);
 }
 
 void AnimatedModelComponent::setPlaying(bool enabled)
@@ -124,13 +119,25 @@ void AnimatedModelComponent::stop()
 
 void AnimatedModelComponent::setAnimation(const String& name)
 {
+	swapAnimation(name);
+	m_CurrentTimePosition = 0.0f;
+}
+
+void AnimatedModelComponent::swapAnimation(const String& name)
+{
 	PANIC(m_AnimatedModelResourceFile->getAnimations().find(name) == m_AnimatedModelResourceFile->getAnimations().end(), "Animation name not found: " + name);
 	m_CurrentAnimationName = name;
 }
 
 void AnimatedModelComponent::transition(const String& name, float transitionTime)
 {
-	setAnimation(name);
+	swapTransition(name, transitionTime);
+	m_CurrentTimePosition = 0.0f;
+}
+
+void AnimatedModelComponent::swapTransition(const String& name, float transitionTime)
+{
+	swapAnimation(name);
 	m_TransitionTime = transitionTime;
 	m_RemainingTransitionTime = m_TransitionTime;
 }
@@ -171,7 +178,7 @@ void AnimatedModelComponent::assignBoundingBox()
 				}
 			}
 		}
-		m_TransformComponent->setBounds(bigBox);
+		getTransformComponent()->setBounds(bigBox);
 	}
 }
 
@@ -191,8 +198,9 @@ void AnimatedModelComponent::assignOverrides(Ref<AnimatedModelResourceFile> file
 	}
 	for (auto& [oldMaterial, newMaterial] : materialOverrides)
 	{
-		MaterialLibrary::CreateNewMaterialFile(newMaterial, MaterialLibrary::GetMaterial(oldMaterial)->getTypeName());
-		setMaterialOverride(MaterialLibrary::GetMaterial(oldMaterial), MaterialLibrary::GetMaterial(newMaterial));
+		setMaterialOverride(
+		    ResourceLoader::CreateNewAnimatedBasicMaterialResourceFile(oldMaterial),
+		    ResourceLoader::CreateNewAnimatedBasicMaterialResourceFile(newMaterial));
 	}
 }
 
@@ -223,6 +231,8 @@ JSON::json AnimatedModelComponent::getJSON() const
 	j["currentAnimationName"] = m_CurrentAnimationName;
 	j["animationMode"] = (int)m_AnimationMode;
 	j["transitionTime"] = m_TransitionTime;
+	j["speedMultiplier"] = m_SpeedMultiplier;
+	j["rootExclusion"] = m_RootExclusion;
 
 	return j;
 }
@@ -237,7 +247,7 @@ void AnimatedModelComponent::draw()
 	ImGui::SameLine();
 	if (ImGui::Button("Model"))
 	{
-		EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, m_AnimatedModelResourceFile->getPath().string());
+		EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { m_AnimatedModelResourceFile->getPath().generic_string(), (int)m_AnimatedModelResourceFile->getType() });
 	}
 	ImGui::SameLine();
 	if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Animated Model File"))
@@ -250,15 +260,17 @@ void AnimatedModelComponent::draw()
 
 	if (ImGui::Button("Start"))
 	{
-		m_IsPlaying = true;
+		play();
 	}
 	ImGui::SameLine();
 	ImGui::SliderFloat("", &m_CurrentTimePosition, 0.0f, m_AnimatedModelResourceFile->getAnimationEndTime(m_CurrentAnimationName));
 	ImGui::SameLine();
 	if (ImGui::Button("Stop"))
 	{
-		m_IsPlaying = false;
+		stop();
 	}
+
+	ImGui::DragFloat("Speed Multiplier", &m_SpeedMultiplier, 0.01f, 0.0f, 10.0f);
 
 	if (ImGui::BeginCombo("Animation Name", m_CurrentAnimationName.c_str()))
 	{
@@ -273,6 +285,7 @@ void AnimatedModelComponent::draw()
 	}
 
 	ImGui::Combo("Animation Mode", (int*)&m_AnimationMode, "None\0Looping\0Alternating\0");
+	ImGui::Combo("Root Exclusion", (int*)&m_RootExclusion, "None\0Translation\0All\0");
 
 	RenderableComponent::draw();
 }

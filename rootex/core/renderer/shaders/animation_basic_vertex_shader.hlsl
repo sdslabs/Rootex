@@ -20,7 +20,7 @@ cbuffer CBuf : register(PER_CAMERA_CHANGE_VS_HLSL)
 
 cbuffer CBuf : register(BONES_VS_HLSL)
 {
-	matrix FinalTransforms[256];
+	matrix FinalTransforms[MAX_BONES];
 }
 
 struct VertexInputType
@@ -35,12 +35,13 @@ struct VertexInputType
 
 struct PixelInputType
 {
-	float4 screenPosition : SV_POSITION;
-	float3 normal : NORMAL;
-	float4 worldPosition : POSITION;
-	float2 tex : TEXCOORD0;
-	float fogFactor : FOG;
+    float4 screenPosition : SV_POSITION;
+    float3 normal : NORMAL;
+    float4 worldPosition : POSITION;
+    float2 tex : TEXCOORD0;
+    float fogFactor : FOG;
     float3 tangent : TANGENT;
+    float4 color : COLOR;
 };
 
 PixelInputType main(VertexInputType input)
@@ -61,6 +62,7 @@ PixelInputType main(VertexInputType input)
 	
     output.tex.x = input.tex.x;
     output.tex.y = input.tex.y;
+    output.color = float4(1.0f, 1.0f, 1.0f, 1.0f);
 	
     output.tangent = mul(input.tangent, (float3x3)M);
 	

@@ -28,5 +28,6 @@ enum class ComponentIDs : unsigned int
 	StaticPointLightComponent,
 	AnimatedModelComponent,
 	RenderableComponent,
-	ParticleEffectComponent
+	ParticleEffectComponent,
+	PlayerController
 };

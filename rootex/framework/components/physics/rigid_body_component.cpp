@@ -8,6 +8,7 @@
 #include "entity.h"
 
 RigidBodyComponent::RigidBodyComponent(
+    Entity& owner,
     const PhysicsMaterial& material,
     float volume,
     const Vector3& offset,
@@ -21,7 +22,7 @@ RigidBodyComponent::RigidBodyComponent(
     bool isSleepable,
     bool isCCD,
     const Ref<btCollisionShape>& collisionShape)
-    : CollisionComponent(collisionGroup, collisionMask)
+    : CollisionComponent(owner, collisionGroup, collisionMask)
     , m_Material(material)
     , m_Volume(volume)
     , m_Offset(offset)
@@ -78,12 +79,12 @@ bool RigidBodyComponent::setupData()
 
 void RigidBodyComponent::getWorldTransform(btTransform& worldTrans) const
 {
-	worldTrans = MatTobtTransform(m_TransformComponent->getRotationPosition() * Matrix::CreateTranslation(m_Offset));
+	worldTrans = MatTobtTransform(getTransformComponent()->getRotationPosition() * Matrix::CreateTranslation(m_Offset));
 }
 
 void RigidBodyComponent::setWorldTransform(const btTransform& worldTrans)
 {
-	m_TransformComponent->setAbsoluteRotationPosition(Matrix::CreateTranslation(-m_Offset) * BtTransformToMat(worldTrans));
+	getTransformComponent()->setAbsoluteRotationPosition(Matrix::CreateTranslation(-m_Offset) * BtTransformToMat(worldTrans));
 }
 
 void RigidBodyComponent::updateTransform()

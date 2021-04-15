@@ -49,8 +49,8 @@ class ResourceFile;
 /// Audio System responsible for streaming and static audio
 class AudioSystem : public System
 {
-	ALCdevice* m_Device;
-	ALCcontext* m_Context;
+	ALCdevice* m_Device = nullptr;
+	ALCcontext* m_Context = nullptr;
 
 	AudioListenerComponent* m_Listener = nullptr;
 

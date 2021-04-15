@@ -16,7 +16,7 @@ void FileViewer::drawFileInfo()
 
 	ImGui::Text("Type");
 	ImGui::NextColumn();
-	ImGui::Text(m_OpenFilePath.extension().string().c_str());
+	ImGui::Text(ResourceFile::s_TypeNames.at(m_OpenFile->getType()).c_str());
 	ImGui::NextColumn();
 
 	ImGui::Text("Last Modified");
@@ -31,34 +31,43 @@ void FileViewer::drawFileInfo()
 	ImGui::Columns(1);
 }
 
+Variant FileViewer::unloadAllResources(const Event* event)
+{
+	m_AudioPlayer.unload();
+	m_ImageViewer.unload();
+	m_TextViewer.unload();
+	m_MaterialViewer.unload();
+	return true;
+}
+
 Variant FileViewer::openFile(const Event* event)
 {
 	m_IsFileOpened = true;
 	m_IsEventJustReceived = true;
 
-	m_AudioPlayer.unload();
-	m_ImageViewer.unload();
-	m_TextViewer.unload();
-	m_MaterialViewer.unload();
+	unloadAllResources(nullptr);
 
-	m_OpenFilePath = Extract<String>(event->getData());
+	VariantVector pathType = Extract<VariantVector>(event->getData());
 
-	const String& ext = m_OpenFilePath.extension().string();
+	String path = Extract<String>(pathType[0]);
+	ResourceFile::Type type = (ResourceFile::Type)Extract<int>(pathType[1]);
+
+	const String& ext = FilePath(path).extension().string();
 	if (IsFileSupported(ext, ResourceFile::Type::Audio))
 	{
-		m_OpenFile = m_AudioPlayer.load(m_OpenFilePath);
+		m_OpenFile = m_AudioPlayer.load(path);
 	}
 	else if (IsFileSupported(ext, ResourceFile::Type::Image))
 	{
-		m_OpenFile = m_ImageViewer.load(m_OpenFilePath);
+		m_OpenFile = m_ImageViewer.load(path);
 	}
 	else if (ext == ".rmat")
 	{
-		m_OpenFile = m_MaterialViewer.load(m_OpenFilePath);
+		m_OpenFile = m_MaterialViewer.load(path);
 	}
 	else
 	{
-		m_OpenFile = m_TextViewer.load(m_OpenFilePath);
+		m_OpenFile = m_TextViewer.load(path);
 	}
 
 	return true;
@@ -69,6 +78,7 @@ FileViewer::FileViewer()
     , m_IsEventJustReceived(false)
 {
 	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorOpenFile, openFile);
+	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::ApplicationExit, unloadAllResources);
 }
 
 void FileViewer::draw(float deltaMilliseconds)
@@ -85,25 +95,25 @@ void FileViewer::draw(float deltaMilliseconds)
 		{
 			if (ImGui::Button("Open"))
 			{
-				OS::OpenFileInSystemEditor(m_OpenFilePath.string());
+				OS::OpenFileInSystemEditor(m_OpenFile->getPath().string());
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Show In File Explorer"))
 			{
-				OS::OpenFileInExplorer(m_OpenFilePath.string());
+				OS::OpenFileInExplorer(m_OpenFile->getPath().string());
 			}
 
 			drawFileInfo();
 
-			if (IsFileSupported(m_OpenFilePath.extension().generic_string(), ResourceFile::Type::Audio))
+			if (IsFileSupported(m_OpenFile->getPath().extension().generic_string(), ResourceFile::Type::Audio))
 			{
 				m_AudioPlayer.draw(deltaMilliseconds);
 			}
-			else if (IsFileSupported(m_OpenFilePath.extension().generic_string(), ResourceFile::Type::Image))
+			else if (IsFileSupported(m_OpenFile->getPath().extension().generic_string(), ResourceFile::Type::Image))
 			{
 				m_ImageViewer.draw(deltaMilliseconds);
 			}
-			else if (m_OpenFilePath.extension() == ".rmat")
+			else if (m_OpenFile->getPath().extension() == ".rmat")
 			{
 				m_MaterialViewer.draw(deltaMilliseconds);
 			}

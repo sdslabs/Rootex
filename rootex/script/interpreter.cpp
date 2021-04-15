@@ -270,12 +270,12 @@ void LuaInterpreter::registerTypes()
 		particleEffectResourceFile["getEffect"] = &ParticleEffectResourceFile::getEffect;
 	}
 	{
-		sol::usertype<ECSFactory> ecsFactory = rootex.new_usertype<ECSFactory>("ECSFactory");
+		sol::table& ecs = rootex.create_named("ECS");
+		ecs["AddComponent"] = &ECSFactory::AddComponent;
 	}
 	{
 		sol::usertype<Scene> scene = rootex.new_usertype<Scene>("Scene");
 		scene["CreateEmpty"] = &Scene::CreateEmpty;
-		scene["CreateEmptyWithEntity"] = &Scene::CreateEmptyWithEntity;
 		scene["CreateFromFile"] = &Scene::CreateFromFile;
 		scene["FindScenesByName"] = &Scene::FindScenesByName;
 		scene["FindSceneByID"] = &Scene::FindSceneByID;
@@ -283,7 +283,6 @@ void LuaInterpreter::registerTypes()
 		scene["removeChild"] = &Scene::removeChild;
 		scene["snatchChild"] = &Scene::snatchChild;
 		scene["setName"] = &Scene::setName;
-		scene["setEntity"] = &Scene::setEntity;
 		scene["getID"] = &Scene::getID;
 		scene["getParent"] = &Scene::getParent;
 		scene["getChildren"] = &Scene::getChildren;
@@ -436,6 +435,7 @@ void LuaInterpreter::registerTypes()
 		rigidBodyComponent["getVelocity"] = &RigidBodyComponent::getVelocity;
 		rigidBodyComponent["setVelocity"] = &RigidBodyComponent::setVelocity;
 		rigidBodyComponent["applyForce"] = &RigidBodyComponent::applyForce;
+		rigidBodyComponent["translate"] = &RigidBodyComponent::translate;
 	}
 	{
 		sol::usertype<BoxColliderComponent> bcc = rootex.new_usertype<BoxColliderComponent>(

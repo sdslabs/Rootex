@@ -1,16 +1,23 @@
 #include "audio_component.h"
 
 #include "systems/render_system.h"
+#include "components/physics/box_collider_component.h"
+#include "components/physics/sphere_collider_component.h"
+#include "components/physics/capsule_collider_component.h"
 
 AudioComponent::AudioComponent(
+    Entity& owner,
     bool playOnStart,
+    float volume,
     bool isLooping,
     bool attenuation,
     AudioSource::AttenuationModel model,
     ALfloat rolloffFactor,
     ALfloat referenceDistance,
     ALfloat maxDistance)
-    : m_IsPlayOnStart(playOnStart)
+    : Component(owner)
+    , m_IsPlayOnStart(playOnStart)
+    , m_Volume(volume)
     , m_IsAttenuated(attenuation)
     , m_IsLooping(isLooping)
     , m_AttenuationModel(model)
@@ -18,18 +25,39 @@ AudioComponent::AudioComponent(
     , m_ReferenceDistance(referenceDistance)
     , m_MaxDistance(maxDistance)
     , m_DependencyOnTransformComponent(this)
+    , m_DependencyOnBoxColliderComponent(this)
+    , m_DependencyOnCapsuleColliderComponent(this)
+    , m_DependencyOnSphereColliderComponent(this)
 {
+}
+
+RigidBodyComponent* AudioComponent::getCollider()
+{
+	if (getBoxColliderComponent())
+	{
+		return getBoxColliderComponent();
+	}
+	if (getSphereColliderComponent())
+	{
+		return getSphereColliderComponent();
+	}
+	if (getCapsuleColliderComponent())
+	{
+		return getCapsuleColliderComponent();
+	}
+	return nullptr;
 }
 
 bool AudioComponent::setupData()
 {
 	if (m_IsAttenuated)
 	{
-		getAudioSource()->setPosition(m_TransformComponent->getParentAbsoluteTransform().Translation());
+		getAudioSource()->setPosition(getTransformComponent()->getParentAbsoluteTransform().Translation());
 		getAudioSource()->setModel(m_AttenuationModel);
 		getAudioSource()->setRollOffFactor(m_RolloffFactor);
 		getAudioSource()->setReferenceDistance(m_ReferenceDistance);
 		getAudioSource()->setMaxDistance(m_MaxDistance);
+		getAudioSource()->setVolume(m_Volume);
 	}
 
 	getAudioSource()->setLooping(m_IsLooping);
@@ -46,6 +74,7 @@ JSON::json AudioComponent::getJSON() const
 	j["rollOffFactor"] = m_RolloffFactor;
 	j["referenceDistance"] = m_ReferenceDistance;
 	j["maxDistance"] = m_MaxDistance;
+	j["volume"] = m_Volume;
 
 	return j;
 }
@@ -54,7 +83,12 @@ void AudioComponent::update()
 {
 	if (m_IsAttenuated)
 	{
-		getAudioSource()->setPosition(m_TransformComponent->getAbsoluteTransform().Translation());
+		getAudioSource()->setPosition(getTransformComponent()->getAbsoluteTransform().Translation());
+	}
+
+	if (RigidBodyComponent* physicsBody = getCollider())
+	{
+		getAudioSource()->setVelocity(physicsBody->getVelocity());
 	}
 }
 
@@ -93,7 +127,7 @@ void AudioComponent::setLooping(bool enabled)
 
 void AudioComponent::draw()
 {
-	RenderSystem::GetSingleton()->submitSphere(m_TransformComponent->getAbsoluteTransform().Translation(), m_MaxDistance);
+	RenderSystem::GetSingleton()->submitSphere(getTransformComponent()->getAbsoluteTransform().Translation(), m_MaxDistance);
 
 	ImGui::Checkbox("Play On Start", &m_IsPlayOnStart);
 	if (ImGui::Checkbox("Looping", &m_IsLooping))
@@ -139,6 +173,7 @@ void AudioComponent::draw()
 	}
 
 	ImGui::DragFloat("Reference Distance", &m_ReferenceDistance, 1.0f, 0.0f, 100.0f);
-	ImGui::DragFloat("Rolloff Factor", &m_RolloffFactor, 1.0f, 0, 100.0f);
-	ImGui::DragFloat("Max Distance", &m_MaxDistance, 1.0f, 0, 100.0f);
+	ImGui::DragFloat("Rolloff Factor", &m_RolloffFactor, 1.0f, 0.0f, 100.0f);
+	ImGui::DragFloat("Max Distance", &m_MaxDistance, 1.0f, 0.0f, 100.0f);
+	ImGui::DragFloat("Volume", &m_Volume, 0.01f, 0.0f, 100.0f);
 }
