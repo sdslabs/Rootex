@@ -27,4 +27,7 @@ struct EditorEvents
 
 	/// Set editor to save all
 	DEFINE_EVENT(EditorSaveAll);
+
+	/// Reset editor window states
+	DEFINE_EVENT(EditorReset);
 };

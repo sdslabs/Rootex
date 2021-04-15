@@ -23,30 +23,72 @@ void ToolbarDock::draw(float deltaMilliseconds)
 	{
 		if (ImGui::Begin("Toolbar"))
 		{
-			ImGui::Columns(2);
-
 			if (SceneLoader::GetSingleton()->getCurrentScene())
 			{
-				ImGui::Text("Play Scene");
-				ImGui::SameLine();
-				if (ImGui::ArrowButton("Play Scene", ImGuiDir_Right))
+				static int playModeSelected = 0;
+				static const char* playModes[3] = {
+					"Play Scene in Editor",
+					"Play Scene in Game",
+					"Play Game"
+				};
+
+				static bool inEditorPlaying = false;
+				if (inEditorPlaying)
 				{
-					EventManager::GetSingleton()->call(EditorEvents::EditorSaveAll);
-					OS::RunApplication("\"" + OS::GetGameExecutablePath() + "\" " + SceneLoader::GetSingleton()->getCurrentScene()->getScenePath());
-					PRINT("Launched Game process");
+					ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)(EditorSystem::GetSingleton()->getFatalColor()));
+					if (ImGui::Button("Stop " ICON_ROOTEX_WINDOW_CLOSE, { ImGui::GetContentRegionAvailWidth(), 40.0f }))
+					{
+						inEditorPlaying = false;
+						EditorApplication::GetSingleton()->setGameMode(false);
+						SceneLoader::GetSingleton()->loadScene(SceneLoader::GetSingleton()->getCurrentScene()->getScenePath(), {});
+						PRINT("Stopped Scene in Editor");
+					}
+					ImGui::PopStyleColor();
+				}
+				else
+				{
+					if (ImGui::Button("Play " ICON_ROOTEX_FORT_AWESOME, { ImGui::GetContentRegionAvailWidth(), 40.0f }))
+					{
+						switch (playModeSelected)
+						{
+						case 0:
+							inEditorPlaying = true;
+							EventManager::GetSingleton()->call(EditorEvents::EditorSaveAll);
+							EditorApplication::GetSingleton()->setGameMode(true);
+							SceneLoader::GetSingleton()->loadScene(SceneLoader::GetSingleton()->getCurrentScene()->getScenePath(), {});
+							PRINT("Loaded Scene in Editor");
+							break;
+						case 1:
+							inEditorPlaying = false;
+							EventManager::GetSingleton()->call(EditorEvents::EditorSaveAll);
+							OS::RunApplication("\"" + OS::GetGameExecutablePath() + "\" " + SceneLoader::GetSingleton()->getCurrentScene()->getScenePath());
+							PRINT("Launched Game process with Scene");
+							break;
+						case 2:
+							inEditorPlaying = false;
+							EventManager::GetSingleton()->call(EditorEvents::EditorSaveAll);
+							OS::RunApplication("\"" + OS::GetGameExecutablePath() + "\"");
+							PRINT("Launched Game process");
+							break;
+						default:
+							WARN("Unknown play mode found");
+						}
+					}
+				}
+
+				ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
+				if (ImGui::BeginCombo("##Play Mode", playModes[playModeSelected]))
+				{
+					for (int i = 0; i < sizeof(playModes) / sizeof(playModes[0]); i++)
+					{
+						if (ImGui::MenuItem(playModes[i]))
+						{
+							playModeSelected = i;
+						}
+					}
+					ImGui::EndCombo();
 				}
 			}
-			ImGui::NextColumn();
-
-			ImGui::Text("Play Game");
-			ImGui::SameLine();
-			if (ImGui::ArrowButton("Play Game", ImGuiDir_Right))
-			{
-				EventManager::GetSingleton()->call(EditorEvents::EditorSaveAll);
-				OS::RunApplication("\"" + OS::GetGameExecutablePath() + "\"");
-				PRINT("Launched Game process");
-			}
-			ImGui::NextColumn();
 
 #ifdef TRACY_ENABLE
 			ImGui::Text("Profiler");

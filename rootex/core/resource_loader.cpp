@@ -95,10 +95,11 @@ int ResourceLoader::Preload(ResourceCollection paths, Atomic<int>& progress)
 
 	/// TODO: Fix the need for this dummy task (blocks the main thread if no resources are preloaded)
 	tasks.push_back(std::make_shared<Task>([]() {}));
+	progress++;
 
 	Application::GetSingleton()->getThreadPool().submit(tasks);
 
-	return tasks.size() - 1;
+	return tasks.size();
 }
 
 void ResourceLoader::Persist(Ref<ResourceFile> res)

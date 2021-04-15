@@ -43,16 +43,10 @@ EditorApplication::EditorApplication()
 	}
 
 	RenderSystem::GetSingleton()->setIsEditorRenderPass(true);
-	PhysicsSystem::GetSingleton()->setActive(false);
-	AudioSystem::GetSingleton()->setActive(false);
-	ScriptSystem::GetSingleton()->setActive(false);
-	PlayerSystem::GetSingleton()->setActive(false);
-
 	InputSystem::GetSingleton()->loadSchemes(m_ApplicationSettings->getJSON()["systems"]["InputSystem"]["inputSchemes"]);
 	InputSystem::GetSingleton()->enableScheme(m_ApplicationSettings->getJSON()["systems"]["InputSystem"]["startScheme"], true);
-	InputSystem::GetSingleton()->setSchemeLock(true);
-	InputInterface::s_IsEnabled = false;
 	EditorSystem::GetSingleton()->initialize(m_ApplicationSettings->getJSON()["systems"]["EditorSystem"]);
+	setGameMode(false);
 
 	destroySplashWindow();
 
@@ -64,6 +58,18 @@ EditorApplication::EditorApplication()
 EditorApplication::~EditorApplication()
 {
 	saveSlot();
+}
+
+void EditorApplication::setGameMode(bool enabled)
+{
+	PhysicsSystem::GetSingleton()->setActive(enabled);
+	AudioSystem::GetSingleton()->setActive(enabled);
+	ScriptSystem::GetSingleton()->setActive(enabled);
+	PlayerSystem::GetSingleton()->setActive(enabled);
+	InputInterface::s_IsEnabled = enabled;
+	InputSystem::GetSingleton()->setSchemeLock(!enabled);
+
+	EventManager::GetSingleton()->call(EditorEvents::EditorReset);
 }
 
 void EditorApplication::process(float deltaMilliseconds)
