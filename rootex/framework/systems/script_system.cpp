@@ -76,7 +76,7 @@ void ScriptSystem::update(float deltaMilliseconds)
 	{
 		if (entity)
 		{
-			entity->call("enter", { entity });
+			entity->call("enterScene", { entity });
 		}
 	}
 	m_ScriptEntitiesToEnter.clear();
