@@ -6,7 +6,7 @@ function EmptyScript:initialize(entity)
     }
 end
 
-function EmptyScript:enter(entity)
+function EmptyScript:enterScene(entity)
     print("Nothing is true")
 end
 
@@ -18,6 +18,12 @@ end
 
 function EmptyScript:destroy(entity)
     print("Everything is permitted")
+end
+
+function EmptyScript:enterTrigger(entity, trigger)
+end
+
+function EmptyScript:exitTrigger(entity, trigger)
 end
 
 return EmptyScript

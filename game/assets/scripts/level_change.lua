@@ -10,7 +10,7 @@ function LevelChange:initialize(entity)
     self.text = entity:getTextUI()
 end
 
-function LevelChange:enter(entity)
+function LevelChange:enterScene(entity)
     entity:bind("A", LevelChange.onLoadLevel)
 end
 

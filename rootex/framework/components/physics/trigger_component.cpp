@@ -59,7 +59,7 @@ void TriggerComponent::notifyEntry()
 		if (Scene* scene = Scene::FindSceneByID(entryID))
 		{
 			Entity& entity = scene->getEntity();
-			entity.call("enter", { &entity, &getOwner() });
+			entity.call("enterTrigger", { &entity, &getOwner() });
 		}
 		else
 		{
@@ -76,7 +76,7 @@ void TriggerComponent::notifyExit()
 		if (Scene* scene = Scene::FindSceneByID(exitID))
 		{
 			Entity& entity = scene->getEntity();
-			entity.call("exit", { &entity, &getOwner() });
+			entity.call("exitTrigger", { &entity, &getOwner() });
 		}
 		else
 		{

@@ -11,9 +11,6 @@
                             "ID": 6,
                             "children": [],
                             "entity": {
-                                "Entity": {
-                                    "script": null
-                                },
                                 "components": {
                                     "ModelComponent": {
                                         "affectingStaticLights": [],
@@ -60,7 +57,8 @@
                                             "z": 8.170000076293945
                                         }
                                     }
-                                }
+                                },
+                                "script": null
                             },
                             "importStyle": 0,
                             "name": "Child",
@@ -75,9 +73,6 @@
                         }
                     ],
                     "entity": {
-                        "Entity": {
-                            "script": null
-                        },
                         "components": {
                             "ModelComponent": {
                                 "affectingStaticLights": [],
@@ -282,15 +277,15 @@
                                 "overrideBoundingBox": false,
                                 "passDown": 7,
                                 "position": {
-                                    "x": 2.384185791015625e-07,
+                                    "x": 3.350982904434204,
                                     "y": 0.0,
                                     "z": -8.0
                                 },
                                 "rotation": {
-                                    "w": 0.9574342370033264,
+                                    "w": 1.0,
                                     "x": -0.0,
                                     "y": 0.0,
-                                    "z": -0.2886515259742737
+                                    "z": -0.0
                                 },
                                 "scale": {
                                     "x": 1.0,
@@ -298,7 +293,8 @@
                                     "z": 1.0
                                 }
                             }
-                        }
+                        },
+                        "script": null
                     },
                     "importStyle": 0,
                     "name": "Parent",
@@ -313,9 +309,6 @@
                 }
             ],
             "entity": {
-                "Entity": {
-                    "script": null
-                },
                 "components": {
                     "TransformComponent": {
                         "boundingBox": {
@@ -349,7 +342,8 @@
                             "z": 1.0
                         }
                     }
-                }
+                },
+                "script": null
             },
             "importStyle": 0,
             "name": "Grandparent",
@@ -364,10 +358,8 @@
         }
     ],
     "entity": {
-        "Entity": {
-            "script": null
-        },
-        "components": null
+        "components": null,
+        "script": null
     },
     "importStyle": 0,
     "name": "pass_down",
