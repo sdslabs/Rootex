@@ -18,6 +18,8 @@ class CustomSystemInterface : public Rml::SystemInterface
 
 class UISystem : public System
 {
+	EventBinder<UISystem> m_Binder;
+
 	Ptr<CustomSystemInterface> m_RmlSystemInterface;
 	Ptr<CustomRenderInterface> m_RmlRenderInterface;
 	Rml::Context* m_Context;

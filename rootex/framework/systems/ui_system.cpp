@@ -44,9 +44,10 @@ bool CustomSystemInterface::LogMessage(Rml::Log::Type type, const String& messag
 UISystem::UISystem()
     : System("UISystem", UpdateOrder::UI, true)
     , m_Context(nullptr)
+    , m_Binder(this)
 {
-	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::UISystemEnableDebugger, UISystem::enableDebugger);
-	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::UISystemDisableDebugger, UISystem::disableDebugger);
+	m_Binder.bind(RootexEvents::UISystemEnableDebugger, &UISystem::enableDebugger);
+	m_Binder.bind(RootexEvents::UISystemDisableDebugger, &UISystem::disableDebugger);
 }
 
 Variant UISystem::enableDebugger(const Event* event)
@@ -123,8 +124,8 @@ bool UISystem::initialize(const JSON::json& systemData)
 
 	Rml::Debugger::Initialise(m_Context);
 
-	InputInterface::Initialise();
-	InputInterface::SetContext(m_Context);
+	InputInterface::GetSingleton()->Initialise();
+	InputInterface::GetSingleton()->SetContext(m_Context);
 
 	return true;
 }
@@ -162,5 +163,9 @@ void UISystem::draw()
 		setDebugger(debugger);
 	}
 
-	ImGui::Checkbox("Take Inputs", &InputInterface::s_IsEnabled);
+	bool enabled = InputInterface::GetSingleton()->m_IsEnabled;
+	if (ImGui::Checkbox("Take Inputs", &enabled))
+	{
+		InputInterface::GetSingleton()->m_IsEnabled = enabled;
+	}
 }

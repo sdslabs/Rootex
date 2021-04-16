@@ -7,8 +7,9 @@
 
 SceneLoader::SceneLoader()
     : m_RootScene(Scene::CreateRootScene())
+    , m_Binder(this)
 {
-	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::DeleteScene, deleteScene);
+	m_Binder.bind(RootexEvents::DeleteScene, &SceneLoader::deleteScene);
 }
 
 SceneLoader* SceneLoader::GetSingleton()

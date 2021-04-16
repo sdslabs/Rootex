@@ -52,6 +52,7 @@ int HandleLuaException(lua_State* L, sol::optional<const std::exception&> maybeE
 }
 
 LuaInterpreter::LuaInterpreter()
+    : m_Binder(this)
 {
 	m_Lua.set_exception_handler(&HandleLuaException);
 	m_Lua.open_libraries(sol::lib::base);
@@ -161,15 +162,11 @@ void LuaInterpreter::registerTypes()
 		event["getData"] = &Event::getData;
 	}
 	{
-		rootex["AddEvent"] = [](const String& eventType) { EventManager::GetSingleton()->addEvent(eventType); };
-		rootex["RemoveEvent"] = [](const String& eventType) { EventManager::GetSingleton()->removeEvent(eventType); };
 		rootex["CallEvent"] = [](const Event& event) { EventManager::GetSingleton()->call(event); };
 		rootex["DeferredCallEvent"] = [](const Ref<Event>& event) { EventManager::GetSingleton()->deferredCall(event); };
 		rootex["ReturnCallEvent"] = [](const Event& event) { return EventManager::GetSingleton()->returnCall(event); };
-		rootex["BindFunction"] = [](const Function<Variant(const Event*)>& function, const String& eventName) { BIND_EVENT_FUNCTION(eventName, function); };
-		rootex["BindMemberFunction"] = [](const sol::object& self, const Function<Variant(const sol::object&, const Event*)>& function, const String& eventName) {
-			BIND_EVENT_FUNCTION(eventName, [=](const Event* e) -> Variant { return function(self, e); });
-		};
+		rootex["Bind"] = [this](const Event::Type& event, Function<Variant(const Event*)> function) { m_Binder.bind(event, function); };
+		rootex["Unbind"] = [this](const Event::Type& event, Function<Variant(const Event*)> function) { m_Binder.unbind(event, function); };
 	}
 	{
 		sol::usertype<Atomic<int>> atomicInt = rootex.new_usertype<Atomic<int>>("AtomicInt", sol::constructors<Atomic<int>(), Atomic<int>(int)>());
@@ -300,6 +297,7 @@ void LuaInterpreter::registerTypes()
 		entity["getScene"] = &Entity::getScene;
 		entity["getName"] = &Entity::getName;
 		entity["setScript"] = &Entity::setScript;
+		entity["bind"] = &Entity::bind;
 		entity[sol::meta_function::new_index] = [](Entity* e, const String& newIndex) -> sol::object {
 			if (Script* s = e->getScript())
 			{

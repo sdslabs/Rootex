@@ -22,6 +22,8 @@ ImColor ColorToImColor(Color& c);
 
 class EditorSystem : public System
 {
+	EventBinder<EditorSystem> m_Binder;
+
 	int m_DockSpaceID;
 	String m_MenuAction;
 	String m_PopupCause;

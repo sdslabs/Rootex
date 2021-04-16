@@ -145,7 +145,7 @@ LRESULT CALLBACK Window::WindowsProc(HWND windowHandler, UINT msg, WPARAM wParam
 	break;
 	}
 
-	InputInterface::ProcessWindowsEvent(msg, wParam, lParam);
+	InputInterface::GetSingleton()->ProcessWindowsEvent(msg, wParam, lParam);
 	InputManager::GetSingleton()->forwardMessage({ windowHandler, msg, wParam, lParam });
 
 	return DefWindowProc(windowHandler, msg, wParam, lParam);
@@ -154,12 +154,13 @@ LRESULT CALLBACK Window::WindowsProc(HWND windowHandler, UINT msg, WPARAM wParam
 Window::Window(int xOffset, int yOffset, int width, int height, const String& title, bool isEditor, bool fullScreen, const String& icon)
     : m_Width(width)
     , m_Height(height)
+    , m_Binder(this)
 {
-	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::QuitWindowRequest, Window::quitWindow);
-	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::QuitEditorWindow, Window::quitEditorWindow);
-	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::WindowToggleFullscreen, Window::toggleFullscreen);
-	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::WindowGetScreenState, Window::getScreenState);
-	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::WindowResized, Window::windowResized);
+	m_Binder.bind(RootexEvents::QuitWindowRequest, &Window::quitWindow);
+	m_Binder.bind(RootexEvents::QuitEditorWindow, &Window::quitEditorWindow);
+	m_Binder.bind(RootexEvents::WindowToggleFullscreen, &Window::toggleFullscreen);
+	m_Binder.bind(RootexEvents::WindowGetScreenState, &Window::getScreenState);
+	m_Binder.bind(RootexEvents::WindowResized, &Window::windowResized);
 
 	WNDCLASSEX windowClass = { 0 };
 	LPCSTR className = title.c_str();
