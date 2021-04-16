@@ -12,6 +12,8 @@
 
 class CustomRenderInterface : public Rml::RenderInterface
 {
+	EventBinder<CustomRenderInterface> m_Binder;
+
 	struct GeometryData
 	{
 		VertexBuffer vertexBuffer;

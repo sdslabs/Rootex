@@ -89,13 +89,13 @@ void ViewportDock::draw(float deltaMilliseconds)
 			ImVec2 imageSize = ImGui::GetItemRectSize();
 			ImVec2 imagePos = ImGui::GetItemRectMin();
 
-			InputInterface::s_ScaleX = Application::GetSingleton()->getWindow()->getWidth() / imageSize.x;
-			InputInterface::s_ScaleY = Application::GetSingleton()->getWindow()->getHeight() / imageSize.y;
+			InputInterface::GetSingleton()->m_ScaleX = Application::GetSingleton()->getWindow()->getWidth() / imageSize.x;
+			InputInterface::GetSingleton()->m_ScaleY = Application::GetSingleton()->getWindow()->getHeight() / imageSize.y;
 
-			InputInterface::s_Left = imagePos.x;
-			InputInterface::s_Right = InputInterface::s_Left + imageSize.x;
-			InputInterface::s_Top = imagePos.y;
-			InputInterface::s_Bottom = InputInterface::s_Top + imageSize.y;
+			InputInterface::GetSingleton()->m_Left = imagePos.x;
+			InputInterface::GetSingleton()->m_Right = InputInterface::GetSingleton()->m_Left + imageSize.x;
+			InputInterface::GetSingleton()->m_Top = imagePos.y;
+			InputInterface::GetSingleton()->m_Bottom = InputInterface::GetSingleton()->m_Top + imageSize.y;
 
 			ImGui::SetCursorPos({ windowStart.x + 3, windowStart.y + 3 });
 			static ImGuizmo::OPERATION gizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
@@ -280,7 +280,7 @@ void ViewportDock::draw(float deltaMilliseconds)
 
 				if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Escape)))
 				{
-					EventManager::GetSingleton()->call(EditorEvents::EditorCloseScene);
+					InspectorDock::GetSingleton()->closeScene(nullptr);
 				}
 			}
 

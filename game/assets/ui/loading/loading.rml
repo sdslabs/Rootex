@@ -90,7 +90,7 @@ end
 
 function LoadingRML.loaded(document)
     LoadingRML.document = document
-    RTX.BindFunction(LoadingRML.onGameLevelSwitch, "GameLevelSwitch")
+    RTX.Bind("GameLevelSwitch", LoadingRML.onGameLevelSwitch)
 end
         </script>
     </head>

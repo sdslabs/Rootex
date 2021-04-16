@@ -11,6 +11,8 @@
 
 class FileViewer
 {
+	EventBinder<FileViewer> m_Binder;
+
 	bool m_IsFileOpened;
 	bool m_IsEventJustReceived;
 

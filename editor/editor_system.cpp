@@ -19,14 +19,18 @@
 
 #define DOCUMENTATION_LINK String("https://rootex.readthedocs.io/")
 
+EditorSystem::EditorSystem()
+    : System("EditorSystem", UpdateOrder::Editor, true)
+{
+	m_Binder.bind(EditorEvents::EditorSaveBeforeQuit, this, &EditorSystem::saveBeforeQuit);
+	m_Binder.bind(EditorEvents::EditorSaveAll, this, &EditorSystem::saveAll);
+	m_Binder.bind(EditorEvents::EditorAutoSave, this, &EditorSystem::autoSave);
+	m_Binder.bind(EditorEvents::EditorCreateNewScene, this, &EditorSystem::createNewScene);
+	m_Binder.bind(EditorEvents::EditorCreateNewFile, this, &EditorSystem::createNewFile);
+}
+
 bool EditorSystem::initialize(const JSON::json& systemData)
 {
-	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorSaveBeforeQuit, EditorSystem::saveBeforeQuit);
-	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorSaveAll, EditorSystem::saveAll);
-	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorAutoSave, EditorSystem::autoSave);
-	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorCreateNewScene, EditorSystem::createNewScene);
-	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorCreateNewFile, EditorSystem::createNewFile);
-
 	m_Scene.reset(new SceneDock());
 	m_Output.reset(new OutputDock());
 	m_Toolbar.reset(new ToolbarDock());
@@ -180,11 +184,6 @@ void EditorSystem::update(float deltaMilliseconds)
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 	RenderingDevice::GetSingleton()->setOffScreenRTVDSV();
-}
-
-EditorSystem::EditorSystem()
-    : System("EditorSystem", UpdateOrder::Editor, true)
-{
 }
 
 EditorSystem::~EditorSystem()
@@ -545,16 +544,12 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 				static String openedLuaClass;
 				if (ImGui::ListBoxHeader("##Lua Classes", { 0, ImGui::GetContentRegionAvail().y }))
 				{
-					for (auto& [key, value] : LuaInterpreter::GetSingleton()->getLuaState().registry())
+					for (const auto& [key, value] : LuaInterpreter::GetSingleton()->getLuaState().registry())
 					{
 						if (key.is<String>())
 						{
 							sol::object luaClass = value;
 							String typeName = key.as<String>();
-							if (luaClass.is<sol::table>() && luaClass.as<sol::table>()["__type"] != sol::nil)
-							{
-								typeName = luaClass.as<sol::table>()["__type"]["typeName"];
-							}
 
 							bool shouldMatch = false;
 							for (int i = 0; i < typeName.size(); i++)
@@ -566,7 +561,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 							{
 								if (ImGui::MenuItem(typeName.c_str()))
 								{
-									openedLuaClass = key.as<String>();
+									openedLuaClass = typeName;
 								}
 							}
 						}
@@ -579,18 +574,13 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 					if (!openedLuaClass.empty())
 					{
 						sol::object luaClass = LuaInterpreter::GetSingleton()->getLuaState().registry()[openedLuaClass];
-						String typeName = openedLuaClass;
-						if (luaClass.is<sol::table>() && luaClass.as<sol::table>()["__type"] != sol::nil)
-						{
-							typeName = luaClass.as<sol::table>()["__type"]["typeName"];
-						}
 
 						EditorSystem::GetSingleton()->pushBoldFont();
-						ImGui::Text("%s", typeName.c_str());
+						ImGui::Text("%s", openedLuaClass.c_str());
 						EditorSystem::GetSingleton()->popFont();
 
 						ImGui::SetNextItemOpen(true);
-						showDocumentation(typeName, luaClass);
+						showDocumentation(openedLuaClass, luaClass);
 					}
 					ImGui::ListBoxFooter();
 				}
@@ -725,7 +715,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 
 		if (totalProgress == progress)
 		{
-			EventManager::GetSingleton()->call(EditorEvents::EditorCloseScene);
+			EventManager::GetSingleton()->call(EditorEvents::EditorSceneIsClosing);
 			SceneLoader::GetSingleton()->loadPreloadedScene(loadingScene, {});
 			SetWindowText(GetActiveWindow(), ("Rootex Editor: " + loadingScene).c_str());
 			totalProgress = -1;
@@ -833,6 +823,7 @@ Variant EditorSystem::saveBeforeQuit(const Event* event)
 	}
 	else
 	{
+		EventManager::GetSingleton()->call(EditorEvents::EditorSceneIsClosing);
 		EventManager::GetSingleton()->call(RootexEvents::QuitEditorWindow);
 	}
 	return true;

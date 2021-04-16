@@ -45,8 +45,8 @@ UISystem::UISystem()
     : System("UISystem", UpdateOrder::UI, true)
     , m_Context(nullptr)
 {
-	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::UISystemEnableDebugger, UISystem::enableDebugger);
-	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::UISystemDisableDebugger, UISystem::disableDebugger);
+	m_Binder.bind(RootexEvents::UISystemEnableDebugger, this, &UISystem::enableDebugger);
+	m_Binder.bind(RootexEvents::UISystemDisableDebugger, this, &UISystem::disableDebugger);
 }
 
 Variant UISystem::enableDebugger(const Event* event)
@@ -123,8 +123,8 @@ bool UISystem::initialize(const JSON::json& systemData)
 
 	Rml::Debugger::Initialise(m_Context);
 
-	InputInterface::Initialise();
-	InputInterface::SetContext(m_Context);
+	InputInterface::GetSingleton()->initialise();
+	InputInterface::GetSingleton()->setContext(m_Context);
 
 	return true;
 }
@@ -162,5 +162,9 @@ void UISystem::draw()
 		setDebugger(debugger);
 	}
 
-	ImGui::Checkbox("Take Inputs", &InputInterface::s_IsEnabled);
+	bool enabled = InputInterface::GetSingleton()->m_IsEnabled;
+	if (ImGui::Checkbox("Take Inputs", &enabled))
+	{
+		InputInterface::GetSingleton()->m_IsEnabled = enabled;
+	}
 }

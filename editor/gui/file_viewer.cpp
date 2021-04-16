@@ -77,8 +77,8 @@ FileViewer::FileViewer()
     : m_IsFileOpened(false)
     , m_IsEventJustReceived(false)
 {
-	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorOpenFile, openFile);
-	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::ApplicationExit, unloadAllResources);
+	m_Binder.bind(EditorEvents::EditorOpenFile, this, &FileViewer::openFile);
+	m_Binder.bind(RootexEvents::ApplicationExit, this, &FileViewer::unloadAllResources);
 }
 
 void FileViewer::draw(float deltaMilliseconds)

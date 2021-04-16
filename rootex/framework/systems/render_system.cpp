@@ -25,7 +25,7 @@ RenderSystem::RenderSystem()
     , m_Renderer(new Renderer())
     , m_IsEditorRenderPassEnabled(false)
 {
-	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::OpenedScene, onOpenedScene);
+	m_Binder.bind(RootexEvents::OpenedScene, this, &RenderSystem::onOpenedScene);
 
 	m_Camera = SceneLoader::GetSingleton()->getRootScene()->getEntity().getComponent<CameraComponent>();
 	m_TransformationStack.push_back(Matrix::Identity);

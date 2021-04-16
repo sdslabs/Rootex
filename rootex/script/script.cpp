@@ -44,6 +44,11 @@ bool Script::isSuccessful(const sol::function_result& result)
 
 bool Script::call(const String& function, const Vector<Variant>& args)
 {
+	if (!m_ScriptInstance[function].valid())
+	{
+		return true;
+	}
+
 	bool status = isSuccessful(m_ScriptInstance[function](m_ScriptInstance, sol::as_args(args)));
 	if (!status)
 	{

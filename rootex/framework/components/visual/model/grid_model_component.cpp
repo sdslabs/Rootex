@@ -82,7 +82,7 @@ void GridModelComponent::refreshVertexBuffers()
 		indices.push_back(i);
 	}
 
-	m_VertexBuffer.reset(new VertexBuffer((const char*)vertices.data(), vertices.size(), sizeof(float) * 3, D3D11_USAGE_IMMUTABLE, 0));
+	m_VertexBuffer.reset(new VertexBuffer((const char*)vertices.data(), vertices.size() / 3, sizeof(float) * 3, D3D11_USAGE_IMMUTABLE, 0));
 	m_IndexBuffer.reset(new IndexBuffer(indices));
 }
 

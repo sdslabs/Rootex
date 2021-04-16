@@ -3,7 +3,6 @@
 #include <locale>
 
 #include "common/common.h"
-#include "core/event_manager.h"
 #include "dxgi_debug_interface.h"
 
 #include "vendor/DirectXTK/Inc/DDSTextureLoader.h"
@@ -17,7 +16,7 @@
 
 RenderingDevice::RenderingDevice()
 {
-	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::WindowResized, RenderingDevice::windowResized);
+	m_Binder.bind(RootexEvents::WindowResized, this, &RenderingDevice::windowResized);
 
 	GFX_ERR_CHECK(CoInitialize(nullptr));
 }
