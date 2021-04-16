@@ -19,14 +19,19 @@
 
 #define DOCUMENTATION_LINK String("https://rootex.readthedocs.io/")
 
-bool EditorSystem::initialize(const JSON::json& systemData)
+EditorSystem::EditorSystem()
+    : System("EditorSystem", UpdateOrder::Editor, true)
+    , m_Binder(this)
 {
 	m_Binder.bind(EditorEvents::EditorSaveBeforeQuit, &EditorSystem::saveBeforeQuit);
 	m_Binder.bind(EditorEvents::EditorSaveAll, &EditorSystem::saveAll);
 	m_Binder.bind(EditorEvents::EditorAutoSave, &EditorSystem::autoSave);
 	m_Binder.bind(EditorEvents::EditorCreateNewScene, &EditorSystem::createNewScene);
 	m_Binder.bind(EditorEvents::EditorCreateNewFile, &EditorSystem::createNewFile);
+}
 
+bool EditorSystem::initialize(const JSON::json& systemData)
+{
 	m_Scene.reset(new SceneDock());
 	m_Output.reset(new OutputDock());
 	m_Toolbar.reset(new ToolbarDock());
@@ -180,12 +185,6 @@ void EditorSystem::update(float deltaMilliseconds)
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 	RenderingDevice::GetSingleton()->setOffScreenRTVDSV();
-}
-
-EditorSystem::EditorSystem()
-    : System("EditorSystem", UpdateOrder::Editor, true)
-    , m_Binder(this)
-{
 }
 
 EditorSystem::~EditorSystem()

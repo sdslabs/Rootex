@@ -15,7 +15,7 @@ static Rml::Input::KeyIdentifier KeyIdentifierMap[KEYMAP_SIZE];
 InputInterface::InputInterface()
     : m_Binder(this)
 {
-	m_Binder.bind(RootexEvents::WindowResized, &InputInterface::WindowResized);
+	m_Binder.bind(RootexEvents::WindowResized, &InputInterface::windowResized);
 }
 
 InputInterface* InputInterface::GetSingleton()
@@ -24,7 +24,7 @@ InputInterface* InputInterface::GetSingleton()
 	return &singleton;
 }
 
-bool InputInterface::Initialise()
+bool InputInterface::initialise()
 {
 	m_Left = 0;
 	m_Right = OS::GetDisplayWidth() + m_Left;
@@ -35,11 +35,7 @@ bool InputInterface::Initialise()
 	return true;
 }
 
-void InputInterface::Shutdown()
-{
-}
-
-char ascii_map[4][51] = {
+char ASCIIMap[4][51] = {
 	// shift off and capslock off
 	{
 	    0,
@@ -298,13 +294,13 @@ char KeypadMap[2][18] = {
 };
 
 // Sets the context to send input events to.
-void InputInterface::SetContext(Rml::Context* context)
+void InputInterface::setContext(Rml::Context* context)
 {
 	m_Context = context;
 }
 
 // Returns the character code for a key identifer / key modifier combination.
-Rml::Character InputInterface::GetCharacterCode(Rml::Input::KeyIdentifier keyIdentifier, int keyModifierState)
+Rml::Character InputInterface::getCharacterCode(Rml::Input::KeyIdentifier keyIdentifier, int keyModifierState)
 {
 	using Rml::Character;
 
@@ -318,15 +314,15 @@ Rml::Character InputInterface::GetCharacterCode(Rml::Input::KeyIdentifier keyIde
 
 		// Return character code based on identifier and modifiers
 		if (shift && !capslock)
-			return (Character)ascii_map[1][keyIdentifier];
+			return (Character)ASCIIMap[1][keyIdentifier];
 
 		if (shift && capslock)
-			return (Character)ascii_map[2][keyIdentifier];
+			return (Character)ASCIIMap[2][keyIdentifier];
 
 		if (!shift && capslock)
-			return (Character)ascii_map[3][keyIdentifier];
+			return (Character)ASCIIMap[3][keyIdentifier];
 
-		return (Character)ascii_map[0][keyIdentifier];
+		return (Character)ASCIIMap[0][keyIdentifier];
 	}
 
 	// Check if we have a keycode from the numeric keypad.
@@ -344,7 +340,7 @@ Rml::Character InputInterface::GetCharacterCode(Rml::Input::KeyIdentifier keyIde
 	return Character::Null;
 }
 
-Variant InputInterface::WindowResized(const Event* event)
+Variant InputInterface::windowResized(const Event* event)
 {
 	Vector2 size = Extract<Vector2>(event->getData());
 	m_Left = 0;
@@ -355,7 +351,7 @@ Variant InputInterface::WindowResized(const Event* event)
 	return true;
 }
 
-void InputInterface::ProcessWindowsEvent(UINT message, WPARAM wParam, LPARAM lParam)
+void InputInterface::processWindowsEvent(UINT message, WPARAM wParam, LPARAM lParam)
 {
 	if (m_Context == nullptr)
 	{

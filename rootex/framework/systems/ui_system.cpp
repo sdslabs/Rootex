@@ -124,8 +124,8 @@ bool UISystem::initialize(const JSON::json& systemData)
 
 	Rml::Debugger::Initialise(m_Context);
 
-	InputInterface::GetSingleton()->Initialise();
-	InputInterface::GetSingleton()->SetContext(m_Context);
+	InputInterface::GetSingleton()->initialise();
+	InputInterface::GetSingleton()->setContext(m_Context);
 
 	return true;
 }

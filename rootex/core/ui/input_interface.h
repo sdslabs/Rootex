@@ -25,16 +25,15 @@ public:
 	int m_Top = 0;
 	int m_Bottom = 0;
 
-	bool Initialise();
-	void Shutdown();
+	bool initialise();
 
 	/// Process the Windows message.
-	void ProcessWindowsEvent(UINT message, WPARAM wParam, LPARAM lParam);
+	void processWindowsEvent(UINT message, WPARAM wParam, LPARAM lParam);
 
-	void SetContext(Rml::Context* context);
-	Rml::Character GetCharacterCode(Rml::Input::KeyIdentifier keyIdentifier, int keyModifier_state);
+	void setContext(Rml::Context* context);
+	Rml::Character getCharacterCode(Rml::Input::KeyIdentifier keyIdentifier, int keyModifier_state);
 
-	Variant WindowResized(const Event* event);
+	Variant windowResized(const Event* event);
 
 protected:
 	Rml::Context* m_Context = nullptr;

@@ -72,6 +72,11 @@ LuaInterpreter::LuaInterpreter()
 	runScripts();
 }
 
+LuaInterpreter::~LuaInterpreter()
+{
+	m_Binder.unbindAll();
+}
+
 LuaInterpreter* LuaInterpreter::GetSingleton()
 {
 	static LuaInterpreter singleton;

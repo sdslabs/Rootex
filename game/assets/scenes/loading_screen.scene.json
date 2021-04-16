@@ -2,14 +2,14 @@
     "ID": 8,
     "children": [],
     "entity": {
-        "script": {
-            "overrides": null,
-            "path": "game/assets/scripts/loading.lua"
-        },
         "components": {
             "UIComponent": {
                 "filePath": "game/assets/ui/loading/loading.rml"
             }
+        },
+        "script": {
+            "overrides": null,
+            "path": "game/assets/scripts/loading.lua"
         }
     },
     "importStyle": 0,

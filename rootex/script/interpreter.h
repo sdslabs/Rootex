@@ -38,7 +38,7 @@ class LuaInterpreter
 
 	LuaInterpreter();
 	LuaInterpreter(LuaInterpreter&) = delete;
-	~LuaInterpreter() = default;
+	~LuaInterpreter();
 
 	void registerTypes();
 	void runScripts();

@@ -145,7 +145,7 @@ LRESULT CALLBACK Window::WindowsProc(HWND windowHandler, UINT msg, WPARAM wParam
 	break;
 	}
 
-	InputInterface::GetSingleton()->ProcessWindowsEvent(msg, wParam, lParam);
+	InputInterface::GetSingleton()->processWindowsEvent(msg, wParam, lParam);
 	InputManager::GetSingleton()->forwardMessage({ windowHandler, msg, wParam, lParam });
 
 	return DefWindowProc(windowHandler, msg, wParam, lParam);
