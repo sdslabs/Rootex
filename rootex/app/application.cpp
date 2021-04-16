@@ -137,7 +137,6 @@ Application::~Application()
 	AudioSystem::GetSingleton()->shutDown();
 	UISystem::GetSingleton()->shutDown();
 	ResourceLoader::Destroy();
-	EventManager::GetSingleton()->releaseAllEventListeners();
 }
 
 void Application::run()

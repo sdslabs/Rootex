@@ -5,7 +5,7 @@
 InputSystem::InputSystem()
     : System("InputSystem", UpdateOrder::Input, true)
 {
-	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::WindowResized, InputSystem::windowResized);
+	m_Binder.bind(RootexEvents::WindowResized, this, &InputSystem::windowResized);
 }
 
 Variant InputSystem::windowResized(const Event* event)
@@ -23,28 +23,27 @@ InputSystem* InputSystem::GetSingleton()
 
 void InputSystem::loadSchemes(const HashMap<String, InputScheme>& schemes)
 {
-	for (auto& [name, scheme] : schemes)
-	{
-		InputManager::GetSingleton()->addScheme(name, scheme);
-	}
+	InputManager::GetSingleton()->loadSchemes(schemes);
 }
 
-void InputSystem::addScheme(const String& name, const InputScheme& inputScheme)
+void InputSystem::addScheme(const String& name, const InputScheme& scheme)
 {
-	InputManager::GetSingleton()->addScheme(name, inputScheme);
+	InputManager::GetSingleton()->addScheme(name, scheme);
 }
 
-void InputSystem::enableScheme(const String& scheme, bool enabled)
+void InputSystem::pushScheme(const String& name)
 {
-	if (!m_SchemeLock)
-	{
-		InputManager::GetSingleton()->enableScheme(scheme, enabled);
-	}
+	InputManager::GetSingleton()->pushScheme(name);
 }
 
-void InputSystem::setSchemeLock(bool enabled)
+void InputSystem::popScheme()
 {
-	m_SchemeLock = enabled;
+	InputManager::GetSingleton()->popScheme();
+}
+
+void InputSystem::flushSchemes()
+{
+	InputManager::GetSingleton()->flushSchemes();
 }
 
 bool InputSystem::initialize(const JSON::json& systemData)
@@ -56,7 +55,7 @@ bool InputSystem::initialize(const JSON::json& systemData)
 void InputSystem::setConfig(const SceneSettings& sceneSettings)
 {
 	loadSchemes(sceneSettings.inputSchemes);
-	enableScheme(sceneSettings.startScheme, true);
+	pushScheme(sceneSettings.startScheme);
 }
 
 void InputSystem::update(float deltaMilliseconds)

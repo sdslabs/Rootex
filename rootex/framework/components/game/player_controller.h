@@ -15,7 +15,6 @@ class PlayerController : public Component
 	DEPENDS_ON(CapsuleColliderComponent);
 
 public:
-	String m_PlayerAnimation;
 	String m_WalkAnimation;
 	String m_RunAnimation;
 	String m_IdleAnimation;

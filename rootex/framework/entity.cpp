@@ -15,6 +15,9 @@ Entity::Entity(Scene* scene)
 
 Entity::~Entity()
 {
+	ScriptSystem::GetSingleton()->removeInitScriptEntity(this);
+	ScriptSystem::GetSingleton()->removeEnterScriptEntity(this);
+
 	destroy();
 }
 
@@ -138,6 +141,11 @@ const HashMap<ComponentID, Component*>& Entity::getAllComponents() const
 	return m_Components;
 }
 
+void Entity::bind(const Event::Type& event, const sol::function& function)
+{
+	m_Binder.bind(event, [this, function](const Event* e) -> Variant { return function.call<Variant>(m_Script->getScriptInstance(), this, e); });
+}
+
 bool Entity::call(const String& function, const Vector<Variant>& args)
 {
 	bool status = false;
@@ -146,7 +154,7 @@ bool Entity::call(const String& function, const Vector<Variant>& args)
 		status = m_Script->call(function, args);
 		if (!status)
 		{
-			WARN("Script error (" + getFullName() + ")");
+			WARN("Script error in " + m_Script->getFilePath() + " on " + getFullName() + " during " + function);
 		}
 	}
 	return status;

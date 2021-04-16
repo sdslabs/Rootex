@@ -42,17 +42,8 @@ EditorApplication::EditorApplication()
 		ERR("More than 1 instances of Editor Application detected");
 	}
 
-	RenderSystem::GetSingleton()->setIsEditorRenderPass(true);
-	PhysicsSystem::GetSingleton()->setActive(false);
-	AudioSystem::GetSingleton()->setActive(false);
-	ScriptSystem::GetSingleton()->setActive(false);
-	PlayerSystem::GetSingleton()->setActive(false);
-
-	InputSystem::GetSingleton()->loadSchemes(m_ApplicationSettings->getJSON()["systems"]["InputSystem"]["inputSchemes"]);
-	InputSystem::GetSingleton()->enableScheme(m_ApplicationSettings->getJSON()["systems"]["InputSystem"]["startScheme"], true);
-	InputSystem::GetSingleton()->setSchemeLock(true);
-	InputInterface::s_IsEnabled = false;
 	EditorSystem::GetSingleton()->initialize(m_ApplicationSettings->getJSON()["systems"]["EditorSystem"]);
+	setGameMode(false);
 
 	destroySplashWindow();
 
@@ -66,9 +57,25 @@ EditorApplication::~EditorApplication()
 	saveSlot();
 }
 
+void EditorApplication::setGameMode(bool enabled)
+{
+	PhysicsSystem::GetSingleton()->setActive(enabled);
+	AudioSystem::GetSingleton()->setActive(enabled);
+	ScriptSystem::GetSingleton()->setActive(enabled);
+	PlayerSystem::GetSingleton()->setActive(enabled);
+	RenderSystem::GetSingleton()->setIsEditorRenderPass(!enabled);
+	InputSystem::GetSingleton()->flushSchemes();
+	InputSystem::GetSingleton()->loadSchemes(m_ApplicationSettings->getJSON()["systems"]["InputSystem"]["inputSchemes"]);
+	InputSystem::GetSingleton()->pushScheme(m_ApplicationSettings->getJSON()["systems"]["InputSystem"]["startScheme"]);
+	InputInterface::GetSingleton()->m_IsEnabled = enabled;
+	m_IsAutoSave = !enabled;
+
+	EventManager::GetSingleton()->call(EditorEvents::EditorReset);
+}
+
 void EditorApplication::process(float deltaMilliseconds)
 {
-	if (((m_ApplicationTimer.Now() - m_PointAtLast10Second).count()) * NS_TO_MS * MS_TO_S > m_AutoSaveDurationS)
+	if (m_IsAutoSave && ((m_ApplicationTimer.Now() - m_PointAtLast10Second).count()) * NS_TO_MS * MS_TO_S > m_AutoSaveDurationS)
 	{
 		EventManager::GetSingleton()->call(EditorEvents::EditorAutoSave);
 		m_PointAtLast10Second = m_ApplicationTimer.Now();

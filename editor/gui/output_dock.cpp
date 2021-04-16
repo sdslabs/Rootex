@@ -20,7 +20,7 @@ Variant OutputDock::catchOutput(const Event* event)
 
 OutputDock::OutputDock()
 {
-	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::OSPrint, catchOutput);
+	m_Binder.bind(RootexEvents::OSPrint, this, &OutputDock::catchOutput);
 }
 
 void OutputDock::draw(float deltaMilliseconds)

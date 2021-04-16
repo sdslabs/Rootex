@@ -15,6 +15,8 @@
 
 class RenderSystem : public System
 {
+	EventBinder<RenderSystem> m_Binder;
+
 	struct LineRequests
 	{
 		Vector<float> m_Endpoints;

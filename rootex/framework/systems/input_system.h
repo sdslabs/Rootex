@@ -5,7 +5,7 @@
 
 class InputSystem : public System
 {
-	bool m_SchemeLock = false;
+	EventBinder<InputSystem> m_Binder;
 
 	InputSystem();
 	InputSystem(InputSystem&) = delete;
@@ -17,9 +17,10 @@ public:
 	static InputSystem* GetSingleton();
 
 	void loadSchemes(const HashMap<String, InputScheme>& schemes);
-	void addScheme(const String& name, const InputScheme& inputScheme);
-	void enableScheme(const String& scheme, bool enabled);
-	void setSchemeLock(bool enabled);
+	void addScheme(const String& name, const InputScheme& scheme);
+	void pushScheme(const String& name);
+	void popScheme();
+	void flushSchemes();
 
 	bool initialize(const JSON::json& systemData) override;
 	void setConfig(const SceneSettings& sceneSettings) override;

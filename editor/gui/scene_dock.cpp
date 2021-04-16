@@ -115,7 +115,7 @@ Variant SceneDock::selectOpenScene(const Event* event)
 
 SceneDock::SceneDock()
 {
-	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorOpenScene, SceneDock::selectOpenScene);
+	m_Binder.bind(EditorEvents::EditorOpenScene, this, &SceneDock::selectOpenScene);
 }
 
 void SceneDock::draw(float deltaMilliseconds)

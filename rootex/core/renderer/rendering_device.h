@@ -5,12 +5,16 @@
 #include <d3d11.h>
 #include <d3dcompiler.h>
 
+#include "event_manager.h"
+
 #include "vendor/DirectXTK/Inc/SpriteBatch.h"
 #include "vendor/DirectXTK/Inc/SpriteFont.h"
 
 /// The boss of all rendering, all DirectX API calls requiring the Device or Context go through this
 class RenderingDevice
 {
+	EventBinder<RenderingDevice> m_Binder;
+
 public:
 	enum class RasterizerState
 	{

@@ -3,6 +3,7 @@
 #include "ecs_factory.h"
 #include "resource_loader.h"
 #include "scene_loader.h"
+#include "systems/script_system.h"
 
 static SceneID NextSceneID = ROOT_SCENE_ID + 1;
 Vector<Scene*> Scene::s_Scenes;
@@ -274,9 +275,14 @@ bool Scene::addChild(Ptr<Scene>& child)
 	{
 		child->m_ParentScene = this;
 		m_ChildrenScenes.emplace_back(std::move(child));
-		return true;
+		ScriptSystem::GetSingleton()->addEnterScriptEntity(&m_ChildrenScenes.back()->getEntity());
 	}
-	return false;
+	else
+	{
+		ERR("Tried to add a duplicate child " + child->getFullName() + " to " + getFullName());
+		return false;
+	}
+	return true;
 }
 
 bool Scene::removeChild(Scene* toRemove)
