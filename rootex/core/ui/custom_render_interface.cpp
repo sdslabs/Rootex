@@ -42,9 +42,8 @@ Variant CustomRenderInterface::windowResized(const Event* event)
 CustomRenderInterface::CustomRenderInterface(int width, int height)
     : m_Width(width)
     , m_Height(height)
-    , m_Binder(this)
 {
-	m_Binder.bind(RootexEvents::WindowResized, &CustomRenderInterface::windowResized);
+	m_Binder.bind(RootexEvents::WindowResized, this, &CustomRenderInterface::windowResized);
 
 	BufferFormat format;
 	format.push(VertexBufferElement::Type::FloatFloat, "POSITION", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);

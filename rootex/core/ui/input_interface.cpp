@@ -13,9 +13,8 @@ static void InitialiseKeymap();
 static Rml::Input::KeyIdentifier KeyIdentifierMap[KEYMAP_SIZE];
 
 InputInterface::InputInterface()
-    : m_Binder(this)
 {
-	m_Binder.bind(RootexEvents::WindowResized, &InputInterface::windowResized);
+	m_Binder.bind(RootexEvents::WindowResized, this, &InputInterface::windowResized);
 }
 
 InputInterface* InputInterface::GetSingleton()

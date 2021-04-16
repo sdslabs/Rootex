@@ -19,9 +19,8 @@ Variant OutputDock::catchOutput(const Event* event)
 }
 
 OutputDock::OutputDock()
-    : m_Binder(this)
 {
-	m_Binder.bind(RootexEvents::OSPrint, &OutputDock::catchOutput);
+	m_Binder.bind(RootexEvents::OSPrint, this, &OutputDock::catchOutput);
 }
 
 void OutputDock::draw(float deltaMilliseconds)

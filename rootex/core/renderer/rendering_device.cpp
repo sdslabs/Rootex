@@ -15,9 +15,8 @@
 #define ADAPTER_DESCRIPTION_STRING(desc, info) "\n" + #info + ": " + std::to_string(desc.info)
 
 RenderingDevice::RenderingDevice()
-    : m_Binder(this)
 {
-	m_Binder.bind(RootexEvents::WindowResized, &RenderingDevice::windowResized);
+	m_Binder.bind(RootexEvents::WindowResized, this, &RenderingDevice::windowResized);
 
 	GFX_ERR_CHECK(CoInitialize(nullptr));
 }
