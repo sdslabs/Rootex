@@ -70,6 +70,8 @@ public:
 
 class GaussianPostProcess : public PostProcess
 {
+	EventBinder<GaussianPostProcess> m_Binder;
+
 	Ptr<DirectX::BasicPostProcess> m_BasicPostProcess;
 
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_CacheRTV;
@@ -83,8 +85,9 @@ class GaussianPostProcess : public PostProcess
 
 public:
 	GaussianPostProcess()
+	    : m_Binder(this)
 	{
-		BIND_EVENT_MEMBER_FUNCTION(RootexEvents::WindowResized, GaussianPostProcess::loadRTVAndSRV);
+		m_Binder.bind(RootexEvents::WindowResized, &GaussianPostProcess::loadRTVAndSRV);
 
 		loadRTVAndSRV(nullptr);
 
@@ -111,6 +114,8 @@ public:
 
 class MonochromePostProcess : public PostProcess
 {
+	EventBinder<MonochromePostProcess> m_Binder;
+
 	Ptr<DirectX::BasicPostProcess> m_BasicPostProcess;
 
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_CacheRTV;
@@ -124,8 +129,9 @@ class MonochromePostProcess : public PostProcess
 
 public:
 	MonochromePostProcess()
+	    : m_Binder(this)
 	{
-		BIND_EVENT_MEMBER_FUNCTION(RootexEvents::WindowResized, MonochromePostProcess::loadRTVAndSRV);
+		m_Binder.bind(RootexEvents::WindowResized, &MonochromePostProcess::loadRTVAndSRV);
 
 		loadRTVAndSRV(nullptr);
 
@@ -151,6 +157,8 @@ public:
 
 class SepiaPostProcess : public PostProcess
 {
+	EventBinder<SepiaPostProcess> m_Binder;
+
 	Ptr<DirectX::BasicPostProcess> m_BasicPostProcess;
 
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_CacheRTV;
@@ -164,8 +172,9 @@ class SepiaPostProcess : public PostProcess
 
 public:
 	SepiaPostProcess()
+	    : m_Binder(this)
 	{
-		BIND_EVENT_MEMBER_FUNCTION(RootexEvents::WindowResized, SepiaPostProcess::loadRTVAndSRV);
+		m_Binder.bind(RootexEvents::WindowResized, &SepiaPostProcess::loadRTVAndSRV);
 
 		loadRTVAndSRV(nullptr);
 
@@ -191,6 +200,8 @@ public:
 
 class BloomPostProcess : public PostProcess
 {
+	EventBinder<BloomPostProcess> m_Binder;
+
 	Ptr<DirectX::BasicPostProcess> m_BasicPostProcess;
 	Ptr<DirectX::DualPostProcess> m_DualPostProcess;
 
@@ -217,8 +228,9 @@ class BloomPostProcess : public PostProcess
 
 public:
 	BloomPostProcess()
+	    : m_Binder(this)
 	{
-		BIND_EVENT_MEMBER_FUNCTION(RootexEvents::WindowResized, BloomPostProcess::loadRTVAndSRV);
+		m_Binder.bind(RootexEvents::WindowResized, &BloomPostProcess::loadRTVAndSRV);
 
 		loadRTVAndSRV(nullptr);
 
@@ -271,6 +283,8 @@ public:
 
 class ToneMapPostProcess : public PostProcess
 {
+	EventBinder<ToneMapPostProcess> m_Binder;
+
 	Ptr<DirectX::ToneMapPostProcess> m_ToneMapPostProcess;
 
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_CacheRTV;
@@ -284,8 +298,9 @@ class ToneMapPostProcess : public PostProcess
 
 public:
 	ToneMapPostProcess()
+	    : m_Binder(this)
 	{
-		BIND_EVENT_MEMBER_FUNCTION(RootexEvents::WindowResized, ToneMapPostProcess::loadRTVAndSRV);
+		m_Binder.bind(RootexEvents::WindowResized, &ToneMapPostProcess::loadRTVAndSRV);
 
 		loadRTVAndSRV(nullptr);
 
@@ -314,6 +329,8 @@ public:
 
 class FXAAPostProcess : public PostProcess
 {
+	EventBinder<FXAAPostProcess> m_Binder;
+
 	Ptr<DirectX::BasicPostProcess> m_BasicPostProcess;
 
 	Shader m_FXAAShader;
@@ -340,8 +357,9 @@ class FXAAPostProcess : public PostProcess
 
 public:
 	FXAAPostProcess()
+	    : m_Binder(this)
 	{
-		BIND_EVENT_MEMBER_FUNCTION(RootexEvents::WindowResized, FXAAPostProcess::loadRTVAndSRV);
+		m_Binder.bind(RootexEvents::WindowResized, &FXAAPostProcess::loadRTVAndSRV);
 
 		BufferFormat fxaaFormat;
 		fxaaFormat.push(VertexBufferElement::Type::FloatFloatFloat, "POSITION", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);

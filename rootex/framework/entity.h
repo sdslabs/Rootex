@@ -2,7 +2,7 @@
 
 #include "common/common.h"
 #include "script/interpreter.h"
-#include "event.h"
+#include "event_manager.h"
 
 class Component;
 class Scene;
@@ -14,6 +14,8 @@ typedef unsigned int SceneID;
 /// A collection of ECS style components that define an ECS style entity.
 class Entity
 {
+	EventBinder<Entity> m_Binder;
+
 protected:
 	Scene* m_Scene;
 	HashMap<ComponentID, Component*> m_Components;
@@ -55,6 +57,7 @@ public:
 	const String& getFullName() const;
 	const HashMap<ComponentID, Component*>& getAllComponents() const;
 
+	void bind(const Event::Type& event, const sol::function& function);
 	bool call(const String& function, const Vector<Variant>& args);
 	void evaluateScriptOverrides();
 	bool setScript(const String& path);

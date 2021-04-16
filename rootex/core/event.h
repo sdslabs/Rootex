@@ -1,7 +1,6 @@
 #pragma once
 
 #include "common/common.h"
-#include "entity.h"
 
 #define DEFINE_EVENT(eventName, ...) const static inline Event::Type eventName = #eventName
 
@@ -17,7 +16,7 @@ private:
 	Variant m_Data;
 
 public:
-	Event(const Type type, const Variant data);
+	Event(const Type& type, const Variant& data);
 	Event(Event&) = delete;
 	~Event() = default;
 

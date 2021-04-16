@@ -21,11 +21,11 @@
 
 bool EditorSystem::initialize(const JSON::json& systemData)
 {
-	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorSaveBeforeQuit, EditorSystem::saveBeforeQuit);
-	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorSaveAll, EditorSystem::saveAll);
-	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorAutoSave, EditorSystem::autoSave);
-	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorCreateNewScene, EditorSystem::createNewScene);
-	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorCreateNewFile, EditorSystem::createNewFile);
+	m_Binder.bind(EditorEvents::EditorSaveBeforeQuit, &EditorSystem::saveBeforeQuit);
+	m_Binder.bind(EditorEvents::EditorSaveAll, &EditorSystem::saveAll);
+	m_Binder.bind(EditorEvents::EditorAutoSave, &EditorSystem::autoSave);
+	m_Binder.bind(EditorEvents::EditorCreateNewScene, &EditorSystem::createNewScene);
+	m_Binder.bind(EditorEvents::EditorCreateNewFile, &EditorSystem::createNewFile);
 
 	m_Scene.reset(new SceneDock());
 	m_Output.reset(new OutputDock());
@@ -184,6 +184,7 @@ void EditorSystem::update(float deltaMilliseconds)
 
 EditorSystem::EditorSystem()
     : System("EditorSystem", UpdateOrder::Editor, true)
+    , m_Binder(this)
 {
 }
 
@@ -725,7 +726,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 
 		if (totalProgress == progress)
 		{
-			EventManager::GetSingleton()->call(EditorEvents::EditorCloseScene);
+			EventManager::GetSingleton()->call(EditorEvents::EditorSceneIsClosing);
 			SceneLoader::GetSingleton()->loadPreloadedScene(loadingScene, {});
 			SetWindowText(GetActiveWindow(), ("Rootex Editor: " + loadingScene).c_str());
 			totalProgress = -1;
@@ -833,6 +834,7 @@ Variant EditorSystem::saveBeforeQuit(const Event* event)
 	}
 	else
 	{
+		EventManager::GetSingleton()->call(EditorEvents::EditorSceneIsClosing);
 		EventManager::GetSingleton()->call(RootexEvents::QuitEditorWindow);
 	}
 	return true;

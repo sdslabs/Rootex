@@ -30,11 +30,11 @@ Variant InspectorDock::closeScene(const Event* event)
 }
 
 InspectorDock::InspectorDock()
-    : m_OpenedScene(nullptr)
+    : m_Binder(this)
 {
-	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorOpenScene, openScene);
-	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorCloseScene, closeScene);
-	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorReset, closeScene);
+	m_Binder.bind(EditorEvents::EditorOpenScene, &InspectorDock::openScene);
+	m_Binder.bind(EditorEvents::EditorSceneIsClosing, &InspectorDock::closeScene);
+	m_Binder.bind(EditorEvents::EditorReset, &InspectorDock::closeScene);
 
 	if (!s_Singleton)
 	{
@@ -138,7 +138,7 @@ void InspectorDock::drawSceneActions(Scene* scene)
 		if (ImGui::Selectable("Delete Scene"))
 		{
 			EventManager::GetSingleton()->deferredCall(RootexEvents::DeleteScene, m_ActionScene);
-			EventManager::GetSingleton()->deferredCall(EditorEvents::EditorCloseScene);
+			closeScene(nullptr);
 		}
 	}
 }

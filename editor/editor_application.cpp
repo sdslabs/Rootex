@@ -67,7 +67,7 @@ void EditorApplication::setGameMode(bool enabled)
 	InputSystem::GetSingleton()->flushSchemes();
 	InputSystem::GetSingleton()->loadSchemes(m_ApplicationSettings->getJSON()["systems"]["InputSystem"]["inputSchemes"]);
 	InputSystem::GetSingleton()->pushScheme(m_ApplicationSettings->getJSON()["systems"]["InputSystem"]["startScheme"]);
-	InputInterface::s_IsEnabled = enabled;
+	InputInterface::GetSingleton()->m_IsEnabled = enabled;
 	m_IsAutoSave = !enabled;
 
 	EventManager::GetSingleton()->call(EditorEvents::EditorReset);

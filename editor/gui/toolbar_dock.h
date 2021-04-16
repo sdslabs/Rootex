@@ -4,6 +4,8 @@
 
 class ToolbarDock
 {
+	EventBinder<ToolbarDock> m_Binder;
+
 	float m_LastUpdateTime = 0.0f;
 
 public:
@@ -16,6 +18,10 @@ private:
 	ToolbarDockSettings m_ToolbarDockSettings;
 	Vector<float> m_FPSRecords;
 	unsigned int m_FPSRecordsPoolSize = 100;
+	bool m_InEditorPlaying = false;
+	String m_StartPlayingScene;
+
+	Variant disablePlayInEditor(const Event* e);
 
 public:
 	ToolbarDock();

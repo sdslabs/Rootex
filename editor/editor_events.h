@@ -8,7 +8,7 @@ struct EditorEvents
 	DEFINE_EVENT(EditorAutoSave);
 
 	/// Close any scene opened in Inspector
-	DEFINE_EVENT(EditorCloseScene);
+	DEFINE_EVENT(EditorSceneIsClosing);
 
 	/// Create new scene from scene file path
 	DEFINE_EVENT(EditorCreateNewScene, String);

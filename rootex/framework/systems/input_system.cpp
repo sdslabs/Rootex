@@ -4,8 +4,9 @@
 
 InputSystem::InputSystem()
     : System("InputSystem", UpdateOrder::Input, true)
+    , m_Binder(this)
 {
-	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::WindowResized, InputSystem::windowResized);
+	m_Binder.bind(RootexEvents::WindowResized, &InputSystem::windowResized);
 }
 
 Variant InputSystem::windowResized(const Event* event)

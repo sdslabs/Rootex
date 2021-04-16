@@ -5,6 +5,8 @@
 
 class InputSystem : public System
 {
+	EventBinder<InputSystem> m_Binder;
+
 	InputSystem();
 	InputSystem(InputSystem&) = delete;
 	~InputSystem() = default;
