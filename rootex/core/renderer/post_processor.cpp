@@ -85,9 +85,8 @@ class GaussianPostProcess : public PostProcess
 
 public:
 	GaussianPostProcess()
-	    : m_Binder(this)
 	{
-		m_Binder.bind(RootexEvents::WindowResized, &GaussianPostProcess::loadRTVAndSRV);
+		m_Binder.bind(RootexEvents::WindowResized, this, &GaussianPostProcess::loadRTVAndSRV);
 
 		loadRTVAndSRV(nullptr);
 
@@ -129,9 +128,8 @@ class MonochromePostProcess : public PostProcess
 
 public:
 	MonochromePostProcess()
-	    : m_Binder(this)
 	{
-		m_Binder.bind(RootexEvents::WindowResized, &MonochromePostProcess::loadRTVAndSRV);
+		m_Binder.bind(RootexEvents::WindowResized, this, &MonochromePostProcess::loadRTVAndSRV);
 
 		loadRTVAndSRV(nullptr);
 
@@ -172,9 +170,8 @@ class SepiaPostProcess : public PostProcess
 
 public:
 	SepiaPostProcess()
-	    : m_Binder(this)
 	{
-		m_Binder.bind(RootexEvents::WindowResized, &SepiaPostProcess::loadRTVAndSRV);
+		m_Binder.bind(RootexEvents::WindowResized, this, &SepiaPostProcess::loadRTVAndSRV);
 
 		loadRTVAndSRV(nullptr);
 
@@ -228,9 +225,8 @@ class BloomPostProcess : public PostProcess
 
 public:
 	BloomPostProcess()
-	    : m_Binder(this)
 	{
-		m_Binder.bind(RootexEvents::WindowResized, &BloomPostProcess::loadRTVAndSRV);
+		m_Binder.bind(RootexEvents::WindowResized, this, &BloomPostProcess::loadRTVAndSRV);
 
 		loadRTVAndSRV(nullptr);
 
@@ -298,9 +294,8 @@ class ToneMapPostProcess : public PostProcess
 
 public:
 	ToneMapPostProcess()
-	    : m_Binder(this)
 	{
-		m_Binder.bind(RootexEvents::WindowResized, &ToneMapPostProcess::loadRTVAndSRV);
+		m_Binder.bind(RootexEvents::WindowResized, this, &ToneMapPostProcess::loadRTVAndSRV);
 
 		loadRTVAndSRV(nullptr);
 
@@ -357,9 +352,8 @@ class FXAAPostProcess : public PostProcess
 
 public:
 	FXAAPostProcess()
-	    : m_Binder(this)
 	{
-		m_Binder.bind(RootexEvents::WindowResized, &FXAAPostProcess::loadRTVAndSRV);
+		m_Binder.bind(RootexEvents::WindowResized, this, &FXAAPostProcess::loadRTVAndSRV);
 
 		BufferFormat fxaaFormat;
 		fxaaFormat.push(VertexBufferElement::Type::FloatFloatFloat, "POSITION", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);

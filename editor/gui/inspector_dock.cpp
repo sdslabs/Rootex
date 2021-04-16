@@ -30,11 +30,10 @@ Variant InspectorDock::closeScene(const Event* event)
 }
 
 InspectorDock::InspectorDock()
-    : m_Binder(this)
 {
-	m_Binder.bind(EditorEvents::EditorOpenScene, &InspectorDock::openScene);
-	m_Binder.bind(EditorEvents::EditorSceneIsClosing, &InspectorDock::closeScene);
-	m_Binder.bind(EditorEvents::EditorReset, &InspectorDock::closeScene);
+	m_Binder.bind(EditorEvents::EditorOpenScene, this, &InspectorDock::openScene);
+	m_Binder.bind(EditorEvents::EditorSceneIsClosing, this, &InspectorDock::closeScene);
+	m_Binder.bind(EditorEvents::EditorReset, this, &InspectorDock::closeScene);
 
 	if (!s_Singleton)
 	{

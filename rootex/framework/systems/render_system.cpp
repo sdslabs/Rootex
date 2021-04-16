@@ -24,9 +24,8 @@ RenderSystem::RenderSystem()
     : System("RenderSystem", UpdateOrder::Render, true)
     , m_Renderer(new Renderer())
     , m_IsEditorRenderPassEnabled(false)
-    , m_Binder(this)
 {
-	m_Binder.bind(RootexEvents::OpenedScene, &RenderSystem::onOpenedScene);
+	m_Binder.bind(RootexEvents::OpenedScene, this, &RenderSystem::onOpenedScene);
 
 	m_Camera = SceneLoader::GetSingleton()->getRootScene()->getEntity().getComponent<CameraComponent>();
 	m_TransformationStack.push_back(Matrix::Identity);

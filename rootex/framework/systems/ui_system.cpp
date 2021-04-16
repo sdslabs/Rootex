@@ -44,10 +44,9 @@ bool CustomSystemInterface::LogMessage(Rml::Log::Type type, const String& messag
 UISystem::UISystem()
     : System("UISystem", UpdateOrder::UI, true)
     , m_Context(nullptr)
-    , m_Binder(this)
 {
-	m_Binder.bind(RootexEvents::UISystemEnableDebugger, &UISystem::enableDebugger);
-	m_Binder.bind(RootexEvents::UISystemDisableDebugger, &UISystem::disableDebugger);
+	m_Binder.bind(RootexEvents::UISystemEnableDebugger, this, &UISystem::enableDebugger);
+	m_Binder.bind(RootexEvents::UISystemDisableDebugger, this, &UISystem::disableDebugger);
 }
 
 Variant UISystem::enableDebugger(const Event* event)

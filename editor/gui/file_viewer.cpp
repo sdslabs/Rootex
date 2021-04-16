@@ -76,10 +76,9 @@ Variant FileViewer::openFile(const Event* event)
 FileViewer::FileViewer()
     : m_IsFileOpened(false)
     , m_IsEventJustReceived(false)
-    , m_Binder(this)
 {
-	m_Binder.bind(EditorEvents::EditorOpenFile, &FileViewer::openFile);
-	m_Binder.bind(RootexEvents::ApplicationExit, &FileViewer::unloadAllResources);
+	m_Binder.bind(EditorEvents::EditorOpenFile, this, &FileViewer::openFile);
+	m_Binder.bind(RootexEvents::ApplicationExit, this, &FileViewer::unloadAllResources);
 }
 
 void FileViewer::draw(float deltaMilliseconds)

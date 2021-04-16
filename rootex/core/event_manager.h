@@ -16,12 +16,10 @@ class EventBinder : public EventBinderBase
 {
 	typedef Function<Variant(const Event*)> EventFunction;
 
-	T* m_Self;
 	HashMap<Event::Type, EventFunction> m_Bindings;
 
 public:
-	EventBinder(T* self)
-	    : m_Self(self)
+	EventBinder()
 	{
 		EventManager::GetSingleton()->addBinder(this);
 	}
@@ -32,17 +30,17 @@ public:
 	}
 
 	/// Duplicate bindings will override the previous ones
-	void bind(const Event::Type& event, Variant (T::*eventFunction)(const Event*))
+	void bind(const Event::Type& event, T* self, Variant (T::*eventFunction)(const Event*))
 	{
-		m_Bindings.emplace(event, [this, eventFunction](const Event* e) { return (m_Self->*eventFunction)(e); });
+		m_Bindings.emplace(event, [self, eventFunction](const Event* e) { return (self->*eventFunction)(e); });
 	}
 
-	void bind(const Event::Type& event, const EventFunction& function)
+	void bind(const Event::Type& event, EventFunction function)
 	{
 		m_Bindings.emplace(event, function);
 	}
 
-	void unbind(const Event::Type& event, EventFunction eventFunction)
+	void unbind(const Event::Type& event)
 	{
 		m_Bindings.erase(event);
 	}

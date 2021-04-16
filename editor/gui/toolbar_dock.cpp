@@ -25,10 +25,9 @@ Variant ToolbarDock::disablePlayInEditor(const Event* e)
 }
 
 ToolbarDock::ToolbarDock()
-    : m_Binder(this)
 {
-	m_Binder.bind(EditorEvents::EditorSceneIsClosing, &ToolbarDock::disablePlayInEditor);
-	m_Binder.bind(RootexEvents::QuitEditorWindow, &ToolbarDock::disablePlayInEditor);
+	m_Binder.bind(EditorEvents::EditorSceneIsClosing, this, &ToolbarDock::disablePlayInEditor);
+	m_Binder.bind(RootexEvents::QuitEditorWindow, this, &ToolbarDock::disablePlayInEditor);
 
 	m_FPSRecords.resize(m_FPSRecordsPoolSize, 0.0f);
 }

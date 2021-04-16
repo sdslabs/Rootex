@@ -21,13 +21,12 @@
 
 EditorSystem::EditorSystem()
     : System("EditorSystem", UpdateOrder::Editor, true)
-    , m_Binder(this)
 {
-	m_Binder.bind(EditorEvents::EditorSaveBeforeQuit, &EditorSystem::saveBeforeQuit);
-	m_Binder.bind(EditorEvents::EditorSaveAll, &EditorSystem::saveAll);
-	m_Binder.bind(EditorEvents::EditorAutoSave, &EditorSystem::autoSave);
-	m_Binder.bind(EditorEvents::EditorCreateNewScene, &EditorSystem::createNewScene);
-	m_Binder.bind(EditorEvents::EditorCreateNewFile, &EditorSystem::createNewFile);
+	m_Binder.bind(EditorEvents::EditorSaveBeforeQuit, this, &EditorSystem::saveBeforeQuit);
+	m_Binder.bind(EditorEvents::EditorSaveAll, this, &EditorSystem::saveAll);
+	m_Binder.bind(EditorEvents::EditorAutoSave, this, &EditorSystem::autoSave);
+	m_Binder.bind(EditorEvents::EditorCreateNewScene, this, &EditorSystem::createNewScene);
+	m_Binder.bind(EditorEvents::EditorCreateNewFile, this, &EditorSystem::createNewFile);
 }
 
 bool EditorSystem::initialize(const JSON::json& systemData)
@@ -545,16 +544,12 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 				static String openedLuaClass;
 				if (ImGui::ListBoxHeader("##Lua Classes", { 0, ImGui::GetContentRegionAvail().y }))
 				{
-					for (auto& [key, value] : LuaInterpreter::GetSingleton()->getLuaState().registry())
+					for (const auto& [key, value] : LuaInterpreter::GetSingleton()->getLuaState().registry())
 					{
 						if (key.is<String>())
 						{
 							sol::object luaClass = value;
 							String typeName = key.as<String>();
-							if (luaClass.is<sol::table>() && luaClass.as<sol::table>()["__type"] != sol::nil)
-							{
-								typeName = luaClass.as<sol::table>()["__type"]["typeName"];
-							}
 
 							bool shouldMatch = false;
 							for (int i = 0; i < typeName.size(); i++)
@@ -566,7 +561,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 							{
 								if (ImGui::MenuItem(typeName.c_str()))
 								{
-									openedLuaClass = key.as<String>();
+									openedLuaClass = typeName;
 								}
 							}
 						}
@@ -579,18 +574,13 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 					if (!openedLuaClass.empty())
 					{
 						sol::object luaClass = LuaInterpreter::GetSingleton()->getLuaState().registry()[openedLuaClass];
-						String typeName = openedLuaClass;
-						if (luaClass.is<sol::table>() && luaClass.as<sol::table>()["__type"] != sol::nil)
-						{
-							typeName = luaClass.as<sol::table>()["__type"]["typeName"];
-						}
 
 						EditorSystem::GetSingleton()->pushBoldFont();
-						ImGui::Text("%s", typeName.c_str());
+						ImGui::Text("%s", openedLuaClass.c_str());
 						EditorSystem::GetSingleton()->popFont();
 
 						ImGui::SetNextItemOpen(true);
-						showDocumentation(typeName, luaClass);
+						showDocumentation(openedLuaClass, luaClass);
 					}
 					ImGui::ListBoxFooter();
 				}

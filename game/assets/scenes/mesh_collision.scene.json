@@ -122,7 +122,7 @@
                         "overrideBoundingBox": false,
                         "passDown": 7,
                         "position": {
-                            "x": -1.7514572143554688,
+                            "x": 8.797370910644531,
                             "y": 1.3999991416931152,
                             "z": -16.664287567138672
                         },
@@ -343,7 +343,7 @@
                         "renderPass": 1,
                         "resFile": "game/assets/models/player/player.fbx",
                         "rootExclusion": 0,
-                        "speedMultiplier": 1.0,
+                        "speedMultiplier": 0.24084733426570892,
                         "transitionTime": 1.0
                     },
                     "AudioListenerComponent": {
@@ -405,15 +405,15 @@
                         "overrideBoundingBox": true,
                         "passDown": 5,
                         "position": {
-                            "x": 1.4141044616699219,
-                            "y": 0.23136299848556519,
-                            "z": -2.6910319328308105
+                            "x": 1.3899999856948853,
+                            "y": 0.27000001072883606,
+                            "z": -2.3299999237060547
                         },
                         "rotation": {
-                            "w": 0.9999966025352478,
-                            "x": -0.0,
-                            "y": -0.0026180879212915897,
-                            "z": -0.0
+                            "w": 1.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
                         },
                         "scale": {
                             "x": 0.5,

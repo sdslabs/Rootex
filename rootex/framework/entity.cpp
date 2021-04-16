@@ -10,7 +10,6 @@
 
 Entity::Entity(Scene* scene)
     : m_Scene(scene)
-    , m_Binder(this)
 {
 }
 
@@ -144,7 +143,7 @@ const HashMap<ComponentID, Component*>& Entity::getAllComponents() const
 
 void Entity::bind(const Event::Type& event, const sol::function& function)
 {
-	m_Binder.bind(event, [this, function](const Event* e) { return function(m_Script->getScriptInstance(), this, e); });
+	m_Binder.bind(event, [this, function](const Event* e) -> Variant { return function.call<Variant>(m_Script->getScriptInstance(), this, e); });
 }
 
 bool Entity::call(const String& function, const Vector<Variant>& args)
