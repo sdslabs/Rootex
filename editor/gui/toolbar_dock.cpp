@@ -89,6 +89,14 @@ void ToolbarDock::draw(float deltaMilliseconds)
 					}
 				}
 
+#ifdef TRACY_ENABLE
+				if (ImGui::Button("Start Tracy " ICON_ROOTEX_EXTERNAL_LINK " "))
+				{
+					OS::OpenFileInSystemEditor("rootex/vendor/Tracy/Tracy.exe");
+				}
+				ImGui::SameLine();
+#endif // TRACY_ENABLE
+
 				ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
 				if (ImGui::BeginCombo("##Play Mode", playModes[playModeSelected]))
 				{
@@ -102,18 +110,6 @@ void ToolbarDock::draw(float deltaMilliseconds)
 					ImGui::EndCombo();
 				}
 			}
-
-#ifdef TRACY_ENABLE
-			ImGui::Text("Profiler");
-			ImGui::NextColumn();
-			if (ImGui::Button("Start Tracy " ICON_ROOTEX_EXTERNAL_LINK " "))
-			{
-				OS::OpenFileInSystemEditor("rootex/vendor/Tracy/Tracy.exe");
-			}
-			ImGui::NextColumn();
-#endif // TRACY_ENABLE
-
-			ImGui::Columns(1);
 
 			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
 			ImGui::SliderFloat("##Delta Multiplier", Application::GetSingleton()->getDeltaMultiplierPtr(), -2.0f, 2.0f, "");
