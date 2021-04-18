@@ -6,7 +6,7 @@
 /// Application that runs when game is run without the editor
 class GameApplication : public Application
 {
-	String getLevelNameFromCommandLine(const char* s);
+	Optional<String> getSceneNameFromCommandLine(const char* s);
 	Variant onExitEvent(const Event* event);
 
 public:
