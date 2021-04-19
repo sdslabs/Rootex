@@ -1,10 +1,10 @@
 VAR default_color = "blue"
 VAR default_actor_color = "white"
-- I looked at Monsieur Fogg # call test baba  #class testClass 
-* ... and I could contain myself no longer. #color yellow #onselect test baba
-    'What is the purpose of our journey, Monsieur?' # actor Monsieur #color yellow #actorColor blue
+- I looked at Monsieur Fogg # call test baba  #class testClass # actor smiley angry
+* ... and I could contain myself no longer. #color yellow #onselect test   baba
+    'What is the purpose of our journey, Monsieur?' # actor smiley happy #color yellow #actorColor blue
     'A wager,' he replied.
-    * * 'A wager!'[] I returned.
+    * * 'A wager!'[] I returned. # actor   smiley   sad
             He nodded. 
             * * * 'But surely that is foolishness!'
             * * * 'A most serious matter then!'

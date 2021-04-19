@@ -28,6 +28,13 @@ function DialoguePlayer:begin(entity)
 	else 
 		self.default_actor_color = "white"
 	end
+	self.actors = {
+		["smiley"] = {
+			["happy"] = "images/smiley_happy.jpg",
+			angry = "images/smiley_angry.jpg",
+			sad = "images/smiley_sad.jpg"
+		}
+	}
 	self:getDocument():Show()
 end
 
@@ -97,7 +104,14 @@ function DialoguePlayer:presentParagraphs(paragraphs)
 				if args[1] == "call" then
 					RTX.CallEvent(RTX.Event.new(args[2], args[3]))
 				elseif args[1] == "actor" then
-					actor = args[2]
+					print(self.actors[args[2]])
+					if self.actors[args[2]] then
+						if self.actors[args[2]][args[3]] then
+							self:getDocument():GetElementById("portraitContainer").inner_rml =  "<img id=\"portrait\" src = \"" .. self.actors[args[2]][args[3]] .. "\"/>"
+						end
+						print("actor " .. args[2] .. "'s emotion : " .. args[3] .. " not found.")
+					end
+					print("actor " .. args[2] .. " not found.")
 				elseif args[1] == "color" then
 					color = args[2]
 				elseif args[1] == "actorColor" then
