@@ -82,7 +82,12 @@
                         }
                     }
                 },
-                "script": null
+                "script": {
+                    "overrides": {
+                        "variable": ""
+                    },
+                    "path": "game/assets/scripts/tween_test.lua"
+                }
             },
             "importStyle": 0,
             "name": "Floor",

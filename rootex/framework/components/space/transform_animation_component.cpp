@@ -103,11 +103,11 @@ void TransformAnimationComponent::interpolate(float deltaSeconds)
 
 	if (m_CurrentTimePosition <= getStartTime())
 	{
-		getTransformComponent()->setTransform(m_Keyframes.front().transform);
+		getTransformComponent()->setLocalTransform(m_Keyframes.front().transform);
 	}
 	else if (m_CurrentTimePosition >= getEndTime())
 	{
-		getTransformComponent()->setTransform(m_Keyframes.back().transform);
+		getTransformComponent()->setLocalTransform(m_Keyframes.back().transform);
 	}
 	else
 	{
@@ -139,7 +139,7 @@ void TransformAnimationComponent::interpolate(float deltaSeconds)
 				Matrix& rightMat = m_Keyframes[i + 1u].transform;
 
 				Matrix finalMat = Interpolate(leftMat, rightMat, lerpFactor);
-				getTransformComponent()->setTransform(finalMat);
+				getTransformComponent()->setLocalTransform(finalMat);
 
 				// No need to check futher. This will be the only one needed.
 				break;
@@ -209,7 +209,7 @@ void TransformAnimationComponent::draw()
 				{
 					isJumping = true;
 					jumpingOn = &keyframe;
-					getTransformComponent()->setTransform(keyframe.transform);
+					getTransformComponent()->setLocalTransform(keyframe.transform);
 				}
 			}
 			ImGui::Separator();
