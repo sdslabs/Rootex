@@ -16,7 +16,7 @@
                             "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
                         },
                         "renderPass": 1,
-                        "resFile": "rootex/assets/cube.obj"
+                        "resFile": "game/assets/test/teapot.obj"
                     },
                     "TransformComponent": {
                         "boundingBox": {
@@ -26,9 +26,9 @@
                                 "z": 0.0
                             },
                             "extents": {
-                                "x": 0.5,
-                                "y": 0.5,
-                                "z": 0.5
+                                "x": 16.0703125,
+                                "y": 7.875,
+                                "z": 10.0
                             }
                         },
                         "overrideBoundingBox": false,
@@ -36,18 +36,18 @@
                         "position": {
                             "x": 0.0,
                             "y": 0.0,
-                            "z": -5.670000076293945
+                            "z": -4.0
                         },
                         "rotation": {
                             "w": 1.0,
-                            "x": 0.0,
+                            "x": -0.0,
                             "y": 0.0,
-                            "z": 0.0
+                            "z": -0.0
                         },
                         "scale": {
-                            "x": 1.0,
-                            "y": 1.0,
-                            "z": 1.0
+                            "x": 0.02979999966919422,
+                            "y": 0.02979999966919422,
+                            "z": 0.02979999966919422
                         }
                     }
                 },

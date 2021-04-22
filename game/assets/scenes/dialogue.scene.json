@@ -6,7 +6,8 @@
             "UIComponent": {
                 "filePath": "game/assets/ui/dialogue/dialogue.rml"
             }
-        }
+        },
+        "script": null
     },
     "importStyle": 0,
     "name": "dialogue",
