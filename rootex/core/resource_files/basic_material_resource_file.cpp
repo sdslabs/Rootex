@@ -181,25 +181,25 @@ void BasicMaterialResourceFile::draw()
 {
 	MaterialResourceFile::draw();
 
-	RootexSelectableImage("Diffuse Texture " ICON_ROOTEX_PENCIL_SQUARE_O, m_DiffuseImageFile, [this](const String& selectedFile) { setDiffuse(ResourceLoader::CreateImageResourceFile(selectedFile)); });
+	RootexSelectableImage("Diffuse Texture " ICON_ROOTEX_FOLDER_OPEN, m_DiffuseImageFile, [this](const String& selectedFile) { setDiffuse(ResourceLoader::CreateImageResourceFile(selectedFile)); });
 	ImGui::SameLine();
 	if (ImGui::Button(ICON_ROOTEX_REFRESH "##Diffuse Texture"))
 	{
 		setDiffuse(ResourceLoader::CreateImageResourceFile("rootex/assets/white.png"));
 	}
-	RootexSelectableImage("Normal Texture " ICON_ROOTEX_PENCIL_SQUARE_O, m_NormalImageFile, [this](const String& selectedFile) { setNormal(ResourceLoader::CreateImageResourceFile(selectedFile)); });
+	RootexSelectableImage("Normal Texture " ICON_ROOTEX_FOLDER_OPEN, m_NormalImageFile, [this](const String& selectedFile) { setNormal(ResourceLoader::CreateImageResourceFile(selectedFile)); });
 	ImGui::SameLine();
 	if (ImGui::Button(ICON_ROOTEX_REFRESH "##Normal Texture"))
 	{
 		setNormal(nullptr);
 	}
-	RootexSelectableImage("Specular Texture " ICON_ROOTEX_PENCIL_SQUARE_O, m_SpecularImageFile, [this](const String& selectedFile) { setSpecular(ResourceLoader::CreateImageResourceFile(selectedFile)); });
+	RootexSelectableImage("Specular Texture " ICON_ROOTEX_FOLDER_OPEN, m_SpecularImageFile, [this](const String& selectedFile) { setSpecular(ResourceLoader::CreateImageResourceFile(selectedFile)); });
 	ImGui::SameLine();
 	if (ImGui::Button(ICON_ROOTEX_REFRESH "##Specular Texture"))
 	{
 		setSpecular(ResourceLoader::CreateImageResourceFile("rootex/assets/white.png"));
 	}
-	RootexSelectableImage("Lightmap Texture " ICON_ROOTEX_PENCIL_SQUARE_O, m_LightmapImageFile, [this](const String& selectedFile) { setLightmap(ResourceLoader::CreateImageResourceFile(selectedFile)); });
+	RootexSelectableImage("Lightmap Texture " ICON_ROOTEX_FOLDER_OPEN, m_LightmapImageFile, [this](const String& selectedFile) { setLightmap(ResourceLoader::CreateImageResourceFile(selectedFile)); });
 	ImGui::SameLine();
 	if (ImGui::Button(ICON_ROOTEX_REFRESH "##Lightmap Texture"))
 	{

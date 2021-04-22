@@ -37,6 +37,7 @@ bool EditorSystem::initialize(const JSON::json& systemData)
 	m_Viewport.reset(new ViewportDock(systemData["viewport"]));
 	m_Inspector.reset(new InspectorDock());
 	m_FileViewer.reset(new FileViewer());
+	m_FileEditor.reset(new FileEditor());
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -173,10 +174,11 @@ void EditorSystem::update(float deltaMilliseconds)
 	drawDefaultUI(deltaMilliseconds);
 	m_Scene->draw(deltaMilliseconds);
 	m_Toolbar->draw(deltaMilliseconds);
-	m_Viewport->draw(deltaMilliseconds);
 	m_Inspector->draw(deltaMilliseconds);
 	m_FileViewer->draw(deltaMilliseconds);
+	m_FileEditor->draw(deltaMilliseconds);
 	m_Output->draw(deltaMilliseconds);
+	m_Viewport->draw(deltaMilliseconds);
 
 	popFont();
 

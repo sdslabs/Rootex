@@ -19,6 +19,9 @@ struct EditorEvents
 	/// Open file at the path passed in inside File Viewer with the ResourceFile::Type to load it as
 	DEFINE_EVENT(EditorOpenFile, String, int);
 
+	/// Edit file at the path passed in inside File Editor
+	DEFINE_EVENT(EditorEditFile, String);
+
 	/// Open scene in Inspector
 	DEFINE_EVENT(EditorOpenScene, Scene*);
 

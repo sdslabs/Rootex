@@ -2,14 +2,12 @@
     "ID": 4,
     "children": [],
     "entity": {
-        "Entity": {
-            "script": null
-        },
         "components": {
             "UIComponent": {
                 "filePath": "game/assets/ui/flipbook/flipbook.rml"
             }
-        }
+        },
+        "script": null
     },
     "importStyle": 0,
     "name": "flipbook",

@@ -65,7 +65,7 @@ void UIComponent::draw()
 	}
 	ImGui::EndGroup();
 
-	if (ImGui::Button(ICON_ROOTEX_EXTERNAL_LINK "##Document"))
+	if (ImGui::Button(ICON_ROOTEX_FOLDER_OPEN "##Document"))
 	{
 		if (Optional<String> result = OS::SelectFile("RML Document(*.rml)\0*.rml\0", "game/assets/"))
 		{

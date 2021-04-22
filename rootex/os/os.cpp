@@ -390,7 +390,7 @@ InputOutputFileStream OS::CreateFileNameAbsolute(const String& absFilePath)
 
 void OS::OpenFileInSystemEditor(const String& filePath)
 {
-	const String& absolutePath = GetAbsolutePath(filePath).string();
+	const String& absolutePath = GetAbsolutePath(filePath).generic_string();
 	HINSTANCE error = 0;
 	SHELLEXECUTEINFO cmdInfo;
 	ZeroMemory(&cmdInfo, sizeof(cmdInfo));
