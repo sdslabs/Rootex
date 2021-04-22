@@ -89,7 +89,7 @@ void ParticleEffectComponent::draw()
 {
 	ImGui::Text("%s", m_EffectResource->getPath().generic_string().c_str());
 
-	if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O))
+	if (ImGui::Button(ICON_ROOTEX_FOLDER_OPEN))
 	{
 		if (Optional<String> result = OS::SelectFile(SupportedFiles.at(ResourceFile::Type::ParticleEffect), "game/assets/"))
 		{

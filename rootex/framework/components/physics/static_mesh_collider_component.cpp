@@ -69,7 +69,7 @@ void StaticMeshColliderComponent::draw()
 		EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { m_CollisionModel->getPath().generic_string(), (int)m_CollisionModel->getType() });
 	}
 	ImGui::SameLine();
-	if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Collision Model File"))
+	if (ImGui::Button(ICON_ROOTEX_FOLDER_OPEN "##Collision Model File"))
 	{
 		if (Optional<String> result = OS::SelectFile(SupportedFiles.at(ResourceFile::Type::CollisionModel), "game/assets/"))
 		{

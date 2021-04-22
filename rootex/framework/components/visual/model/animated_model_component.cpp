@@ -250,7 +250,7 @@ void AnimatedModelComponent::draw()
 		EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { m_AnimatedModelResourceFile->getPath().generic_string(), (int)m_AnimatedModelResourceFile->getType() });
 	}
 	ImGui::SameLine();
-	if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Animated Model File"))
+	if (ImGui::Button(ICON_ROOTEX_FOLDER_OPEN "##Animated Model File"))
 	{
 		if (Optional<String> result = OS::SelectFile(SupportedFiles.at(ResourceFile::Type::AnimatedModel), "game/assets/"))
 		{

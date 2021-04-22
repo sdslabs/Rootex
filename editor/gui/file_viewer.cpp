@@ -95,7 +95,12 @@ void FileViewer::draw(float deltaMilliseconds)
 		{
 			if (ImGui::Button("Open"))
 			{
-				OS::OpenFileInSystemEditor(m_OpenFile->getPath().string());
+				OS::OpenFileInSystemEditor(m_OpenFile->getPath().generic_string());
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Edit"))
+			{
+				EventManager::GetSingleton()->call(EditorEvents::EditorEditFile, m_OpenFile->getPath().string());
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Show In File Explorer"))

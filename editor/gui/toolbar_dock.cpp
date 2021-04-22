@@ -50,12 +50,15 @@ void ToolbarDock::draw(float deltaMilliseconds)
 
 				if (m_InEditorPlaying)
 				{
-					ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)(EditorSystem::GetSingleton()->getFatalColor()));
+					ImColor lightErrorColor = EditorSystem::GetSingleton()->getFatalColor();
+					lightErrorColor.Value.x *= 0.8f;
+					ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)lightErrorColor);
+					ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)(EditorSystem::GetSingleton()->getFatalColor()));
 					if (ImGui::Button("Stop " ICON_ROOTEX_WINDOW_CLOSE, { ImGui::GetContentRegionAvailWidth(), 40.0f }))
 					{
 						disablePlayInEditor(nullptr);
 					}
-					ImGui::PopStyleColor();
+					ImGui::PopStyleColor(2);
 				}
 				else
 				{

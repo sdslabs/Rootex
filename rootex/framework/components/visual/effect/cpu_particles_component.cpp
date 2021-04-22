@@ -271,12 +271,12 @@ void CPUParticlesComponent::draw()
 
 	ImGui::BeginGroup();
 	ImGui::Text("%s", m_ParticlesMaterial->getPath().generic_string().c_str());
-	if (ImGui::Button(ICON_ROOTEX_SEARCH "##Particles Material"))
+	if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Particles Material"))
 	{
 		EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { m_ParticlesMaterial->getPath().generic_string(), (int)m_ParticlesMaterial->getType() });
 	}
 	ImGui::SameLine();
-	if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Particles Material"))
+	if (ImGui::Button(ICON_ROOTEX_FOLDER_OPEN "##Particles Material"))
 	{
 		if (Optional<String> result = OS::SelectFile("Material(*.rmat)\0*.rmat\0", "game/assets/materials/"))
 		{

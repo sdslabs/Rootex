@@ -107,7 +107,7 @@ bool SkyMaterialResourceFile::save()
 void SkyMaterialResourceFile::draw()
 {
 	MaterialResourceFile::draw();
-	RootexSelectableImageCube("Sky Texture" ICON_ROOTEX_EXTERNAL_LINK, m_SkyFile, [this](const String& selectedFile) { setSky(ResourceLoader::CreateImageCubeResourceFile(selectedFile)); });
+	RootexSelectableImageCube("Sky Texture" ICON_ROOTEX_FOLDER_OPEN, m_SkyFile, [this](const String& selectedFile) { setSky(ResourceLoader::CreateImageCubeResourceFile(selectedFile)); });
 	ImGui::SameLine();
 	if (ImGui::Button(ICON_ROOTEX_REFRESH "##Sky Texture"))
 	{
