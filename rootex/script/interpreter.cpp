@@ -164,6 +164,7 @@ void LuaInterpreter::registerTypes()
 		rootex["AddEvent"] = [](const String& eventType) { EventManager::GetSingleton()->addEvent(eventType); };
 		rootex["RemoveEvent"] = [](const String& eventType) { EventManager::GetSingleton()->removeEvent(eventType); };
 		rootex["CallEvent"] = [](const Event& event) { EventManager::GetSingleton()->call(event); };
+		rootex["Call"] = [](const Event::Type& type, const Variant& data) { EventManager::GetSingleton()->call(type, data); };
 		rootex["DeferredCallEvent"] = [](const Ref<Event>& event) { EventManager::GetSingleton()->deferredCall(event); };
 		rootex["ReturnCallEvent"] = [](const Event& event) { return EventManager::GetSingleton()->returnCall(event); };
 		rootex["BindFunction"] = [](const Function<Variant(const Event*)>& function, const String& eventName) { BIND_EVENT_FUNCTION(eventName, function); };
