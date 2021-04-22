@@ -74,7 +74,7 @@ void TransformComponent::setScale(const Vector3& scale)
 	m_IsAbsoluteTransformDirty = true;
 }
 
-void TransformComponent::setTransform(const Matrix& transform)
+void TransformComponent::setLocalTransform(const Matrix& transform)
 {
 	m_TransformBuffer.transform = transform;
 	updatePositionRotationScaleFromTransform(m_TransformBuffer.transform);
@@ -83,7 +83,7 @@ void TransformComponent::setTransform(const Matrix& transform)
 
 void TransformComponent::setAbsoluteTransform(const Matrix& transform)
 {
-	setTransform(transform * m_ParentAbsoluteTransform.Invert());
+	setLocalTransform(transform * m_ParentAbsoluteTransform.Invert());
 	m_IsAbsoluteTransformDirty = true;
 }
 
@@ -115,9 +115,9 @@ void TransformComponent::setParentAbsoluteTransform(const Matrix& parentTransfor
 	m_IsAbsoluteTransformDirty = true;
 }
 
-void TransformComponent::addTransform(const Matrix& applyTransform)
+void TransformComponent::addLocalTransform(const Matrix& applyTransform)
 {
-	setTransform(getLocalTransform() * applyTransform);
+	setLocalTransform(getLocalTransform() * applyTransform);
 	m_IsAbsoluteTransformDirty = true;
 }
 

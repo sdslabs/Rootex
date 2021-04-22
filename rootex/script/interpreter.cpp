@@ -20,6 +20,8 @@
 #include "components/physics/box_collider_component.h"
 #include "components/physics/capsule_collider_component.h"
 #include "components/physics/sphere_collider_component.h"
+#include "components/physics/static_mesh_collider_component.h"
+#include "components/physics/trigger_component.h"
 #include "components/visual/ui/ui_component.h"
 #include "components/visual/effect/particle_effect_component.h"
 #include "systems/input_system.h"
@@ -96,6 +98,7 @@ void LuaInterpreter::runScripts()
 	dbg["auto_where"] = 2;
 
 	m_Lua.do_string("package.path = package.path .. ';rootex/vendor/Narrator/?.lua'");
+	m_Lua.do_string("package.path = package.path .. ';rootex/vendor/Flux/?.lua'");
 }
 
 void LuaInterpreter::registerTypes()
@@ -106,7 +109,11 @@ void LuaInterpreter::registerTypes()
 		    "Vector2",
 		    sol::constructors<Vector2(), Vector2(float, float)>(),
 		    sol::meta_function::addition, [](Vector2& l, Vector2& r) { return l + r; },
-		    sol::meta_function::subtraction, [](Vector2& l, Vector2& r) { return l - r; });
+		    sol::meta_function::subtraction, [](Vector2& l, Vector2& r) { return l - r; },
+		    sol::meta_function::multiplication, [](Vector2& l, Vector2& r) { return l * r; },
+		    sol::meta_function::multiplication, [](Vector2& l, float r) { return l * r; },
+		    sol::meta_function::division, [](Vector2& l, float r) { return l / r; },
+		    sol::meta_function::division, [](Vector2& l, Vector2& r) { return l / r; });
 		vector2["dot"] = &Vector2::Dot;
 		vector2["cross"] = [](const Vector2& l, const Vector2& r) { return l.Cross(r); };
 		vector2["x"] = &Vector2::x;
@@ -118,7 +125,10 @@ void LuaInterpreter::registerTypes()
 		    sol::constructors<Vector3(), Vector3(float, float, float)>(),
 		    sol::meta_function::addition, [](Vector3& l, Vector3& r) { return l + r; },
 		    sol::meta_function::subtraction, [](Vector3& l, Vector3& r) { return l - r; },
-		    sol::meta_function::multiplication, [](float l, Vector3& r) { return l * r; });
+		    sol::meta_function::multiplication, [](float l, Vector3& r) { return l * r; },
+		    sol::meta_function::multiplication, [](Vector3& l, float r) { return l * r; },
+		    sol::meta_function::division, [](Vector3& l, float r) { return l / r; },
+		    sol::meta_function::division, [](Vector3& l, Vector3& r) { return l / r; });
 		vector3["dot"] = &Vector3::Dot;
 		vector3["cross"] = [](const Vector3& l, const Vector3& r) { return l.Cross(r); };
 		vector3["x"] = &Vector3::x;
@@ -129,7 +139,11 @@ void LuaInterpreter::registerTypes()
 		sol::usertype<Vector4> vector4 = rootex.new_usertype<Vector4>(
 		    "Vector4", sol::constructors<Vector4(), Vector4(float, float, float, float)>(),
 		    sol::meta_function::addition, [](Vector4& l, Vector4& r) { return l + r; },
-		    sol::meta_function::subtraction, [](Vector4& l, Vector4& r) { return l - r; });
+		    sol::meta_function::subtraction, [](Vector4& l, Vector4& r) { return l - r; },
+		    sol::meta_function::multiplication, [](Vector4& l, Vector4& r) { return l * r; },
+		    sol::meta_function::multiplication, [](Vector4& l, float r) { return l * r; },
+		    sol::meta_function::division, [](Vector4& l, Vector4& r) { return l / r; },
+		    sol::meta_function::division, [](Vector4& l, float r) { return l / r; });
 		vector4["dot"] = &Vector4::Dot;
 		vector4["cross"] = [](const Vector4& l, const Vector4& r) { return l.Cross(l, r); };
 		vector4["x"] = &Vector4::x;
@@ -138,11 +152,15 @@ void LuaInterpreter::registerTypes()
 		vector4["w"] = &Vector4::w;
 	}
 	{
-		sol::usertype<Color> color = rootex.new_usertype<Color>("Color", sol::constructors<Color(), Color(float, float, float, float)>());
-		color["x"] = &Vector4::x;
-		color["y"] = &Vector4::y;
-		color["z"] = &Vector4::z;
-		color["w"] = &Vector4::w;
+		sol::usertype<Color> color = rootex.new_usertype<Color>(
+		    "Color", sol::constructors<Color(), Color(float, float, float, float)>(),
+		    sol::meta_function::addition, [](Color& l, Color& r) { return l + r; },
+		    sol::meta_function::subtraction, [](Color& l, Color& r) { return l - r; },
+		    sol::meta_function::multiplication, [](Color& l, Color& r) { return l * r; });
+		color["x"] = &Color::x;
+		color["y"] = &Color::y;
+		color["z"] = &Color::z;
+		color["w"] = &Color::w;
 	}
 	{
 		sol::usertype<Quaternion> quaternion = rootex.new_usertype<Quaternion>("Quaternion", sol::constructors<Quaternion(), Quaternion(float, float, float, float)>());
@@ -227,7 +245,7 @@ void LuaInterpreter::registerTypes()
 		sol::usertype<AudioResourceFile> audioResourceFile = rootex.new_usertype<AudioResourceFile>(
 		    "AudioResourceFile",
 		    sol::base_classes, sol::bases<ResourceFile>());
-		audioResourceFile["getAudioDataSize"] = &AudioResourceFile::getAudioDataSize;
+		audioResourceFile["audioDataSize"] = &AudioResourceFile::getAudioDataSize;
 		audioResourceFile["getFormat"] = &AudioResourceFile::getFormat;
 		audioResourceFile["getFrequency"] = &AudioResourceFile::getFrequency;
 		audioResourceFile["getBitDepth"] = &AudioResourceFile::getBitDepth;
@@ -275,7 +293,11 @@ void LuaInterpreter::registerTypes()
 		ecs["AddComponent"] = &ECSFactory::AddComponent;
 	}
 	{
-		sol::usertype<Scene> scene = rootex.new_usertype<Scene>("Scene");
+		sol::usertype<Scene> scene = rootex.new_usertype<Scene>("Scene",
+		    "name", sol::property(&Scene::getName, &Scene::setName),
+		    "parent", sol::property(&Scene::getParent),
+		    "children", sol::property(&Scene::getChildren),
+		    "entity", sol::property(&Scene::getEntity));
 		scene["CreateEmpty"] = &Scene::CreateEmpty;
 		scene["CreateFromFile"] = &Scene::CreateFromFile;
 		scene["FindScenesByName"] = &Scene::FindScenesByName;
@@ -283,16 +305,26 @@ void LuaInterpreter::registerTypes()
 		scene["addChild"] = &Scene::addChild;
 		scene["removeChild"] = &Scene::removeChild;
 		scene["snatchChild"] = &Scene::snatchChild;
-		scene["setName"] = &Scene::setName;
 		scene["getID"] = &Scene::getID;
-		scene["getParent"] = &Scene::getParent;
-		scene["getChildren"] = &Scene::getChildren;
-		scene["getEntity"] = &Scene::getEntity;
-		scene["getName"] = &Scene::getName;
 		scene["getFullName"] = &Scene::getFullName;
 	}
 	{
-		sol::usertype<Entity> entity = rootex.new_usertype<Entity>("Entity");
+		sol::usertype<Entity> entity = rootex.new_usertype<Entity>("Entity",
+		    "transform", sol::property(&Entity::getComponent<TransformComponent>),
+		    "model", sol::property(&Entity::getComponent<ModelComponent>),
+		    "animatedModel", sol::property(&Entity::getComponent<AnimatedModelComponent>),
+		    "particleEffect", sol::property(&Entity::getComponent<ParticleEffectComponent>),
+		    "textUI", sol::property(&Entity::getComponent<TextUIComponent>),
+		    "ui", &Entity::getComponent<UIComponent>,
+		    "shortMusic", &Entity::getComponent<ShortMusicComponent>,
+		    "music", &Entity::getComponent<MusicComponent>,
+		    "boxCollider", &Entity::getComponent<BoxColliderComponent>,
+		    "sphereCollider", &Entity::getComponent<SphereColliderComponent>,
+		    "capsuleCollider", &Entity::getComponent<CapsuleColliderComponent>,
+		    "staticMeshCollider", &Entity::getComponent<StaticMeshColliderComponent>,
+		    "trigger", &Entity::getComponent<TriggerComponent>,
+		    "script", sol::property(&Entity::getScript),
+		    "scene", sol::property(&Entity::getScene));
 		entity["addComponent"] = &Entity::addComponent;
 		entity["addDefaultComponent"] = &Entity::addDefaultComponent;
 		entity["removeComponent"] = &Entity::removeComponent;
@@ -302,70 +334,69 @@ void LuaInterpreter::registerTypes()
 		entity["getName"] = &Entity::getName;
 		entity["setScript"] = &Entity::setScript;
 		entity["bind"] = &Entity::bind;
-		entity[sol::meta_function::new_index] = [](Entity* e, const String& newIndex) -> sol::object {
-			if (Script* s = e->getScript())
-			{
-				return s->getScriptInstance()[newIndex];
-			};
-			return sol::nil;
-		};
 	}
 	{
-		sol::usertype<Component> component = rootex.new_usertype<Component>("Component");
-		component["getOwner"] = &Component::getOwner;
-		component["getComponentID"] = &Component::getComponentID;
-		component["getName"] = &Component::getName;
+		sol::usertype<Component> component = rootex.new_usertype<Component>("Component",
+		    "owner", sol::property(&Component::getOwner),
+		    "ID", sol::property(&Component::getComponentID),
+		    "name", sol::property(&Component::getName));
 	}
 	{
 		sol::usertype<TransformComponent> transformComponent = rootex.new_usertype<TransformComponent>(
 		    "TransformComponent",
-		    sol::base_classes, sol::bases<Component>());
+		    sol::base_classes, sol::bases<Component>(),
+		    "position", sol::property(&TransformComponent::getPosition, &TransformComponent::setPosition),
+		    "scale", sol::property(&TransformComponent::getScale, &TransformComponent::setScale),
+		    "rotation", sol::property(&TransformComponent::getRotation, &TransformComponent::setRotation),
+		    "localTransform", sol::property(&TransformComponent::getLocalTransform, &TransformComponent::setLocalTransform),
+		    "absoluteTransform", sol::property(&TransformComponent::getAbsoluteTransform, &TransformComponent::setAbsoluteTransform));
 
-		rootex["Entity"]["getTransform"] = &Entity::getComponent<TransformComponent>;
+		transformComponent["getPosition"] = &TransformComponent::getPosition;
 		transformComponent["setPosition"] = &TransformComponent::setPosition;
-		transformComponent["setRotation"] = &TransformComponent::setRotation;
+
+		transformComponent["getScale"] = &TransformComponent::getScale;
 		transformComponent["setScale"] = &TransformComponent::setScale;
-		transformComponent["setTransform"] = &TransformComponent::setTransform;
-		transformComponent["addTransform"] = &TransformComponent::addTransform;
+
+		transformComponent["getRotation"] = &TransformComponent::getRotation;
+		transformComponent["setRotation"] = &TransformComponent::setRotation;
 		transformComponent["addQuaternion"] = &TransformComponent::addQuaternion;
 		transformComponent["addRotation"] = &TransformComponent::addRotation;
-		transformComponent["getPosition"] = &TransformComponent::getPosition;
-		transformComponent["getAbsolutePosition"] = &TransformComponent::getAbsolutePosition;
-		transformComponent["setAbsolutePosition"] = &TransformComponent::setAbsolutePosition;
-		transformComponent["getRotation"] = &TransformComponent::getRotation;
-		transformComponent["getScale"] = &TransformComponent::getScale;
+
+		transformComponent["setLocalTransform"] = &TransformComponent::setLocalTransform;
 		transformComponent["getLocalTransform"] = &TransformComponent::getLocalTransform;
+		transformComponent["addLocalTransform"] = &TransformComponent::addLocalTransform;
+
 		transformComponent["getAbsoluteTransform"] = &TransformComponent::getAbsoluteTransform;
 		transformComponent["setAbsoluteTransform"] = &TransformComponent::setAbsoluteTransform;
-		transformComponent["getParentAbsoluteTransform"] = &TransformComponent::getParentAbsoluteTransform;
-		transformComponent["getComponentID"] = &TransformComponent::getComponentID;
-		transformComponent["getName"] = &TransformComponent::getName;
 	}
 	{
 		sol::usertype<RenderableComponent> renderableComponent = rootex.new_usertype<RenderableComponent>(
 		    "RenderableComponent",
-		    sol::base_classes, sol::bases<Component>());
+		    sol::base_classes, sol::bases<Component>(),
+		    "visible", sol::property(&RenderableComponent::isVisible, &RenderableComponent::setVisible));
 		renderableComponent["isVisible"] = &RenderableComponent::isVisible;
-		renderableComponent["setVisibility"] = &RenderableComponent::setVisibility;
+		renderableComponent["setVisible"] = &RenderableComponent::setVisible;
 	}
 	{
 		sol::usertype<ModelComponent> modelComponent = rootex.new_usertype<ModelComponent>(
 		    "ModelComponent",
 		    sol::base_classes, sol::bases<Component, RenderableComponent>());
-		rootex["Entity"]["getModel"] = &Entity::getComponent<ModelComponent>;
 	}
 	{
 		sol::usertype<AnimatedModelComponent> animatedModelComponent = rootex.new_usertype<AnimatedModelComponent>(
 		    "AnimatedModelComponent",
-		    sol::base_classes, sol::bases<Component, RenderableComponent>());
+		    sol::base_classes, sol::bases<Component, RenderableComponent>(),
+		    "animatedResourceFile", sol::property(&AnimatedModelComponent::getAnimatedResourceFile, &AnimatedModelComponent::setAnimatedResourceFile));
 		animatedModelComponent["getAnimatedResourceFile"] = &AnimatedModelComponent::getAnimatedResourceFile;
 		animatedModelComponent["setAnimatedResourceFile"] = &AnimatedModelComponent::setAnimatedResourceFile;
+
+		animatedModelComponent["getCurrentAnimation"] = &AnimatedModelComponent::getCurrentAnimationName;
 		animatedModelComponent["setAnimation"] = &AnimatedModelComponent::setAnimation;
+
 		animatedModelComponent["transition"] = &AnimatedModelComponent::transition;
 		animatedModelComponent["play"] = &AnimatedModelComponent::play;
 		animatedModelComponent["stop"] = &AnimatedModelComponent::stop;
 		animatedModelComponent["setPlaying"] = &AnimatedModelComponent::setPlaying;
-		rootex["Entity"]["getAnimatedModel"] = &Entity::getComponent<AnimatedModelComponent>;
 	}
 	{
 		sol::usertype<ParticleEffectComponent> particleEffectComponent = rootex.new_usertype<ParticleEffectComponent>(
@@ -378,7 +409,6 @@ void LuaInterpreter::registerTypes()
 		particleEffectComponent["isPaused"] = &ParticleEffectComponent::isPaused;
 		particleEffectComponent["isMoving"] = &ParticleEffectComponent::isMoving;
 		particleEffectComponent["setMoving"] = &ParticleEffectComponent::setMoving;
-		rootex["Entity"]["getParticleEffect"] = &Entity::getComponent<ParticleEffectComponent>;
 	}
 	{
 		sol::usertype<RenderUIComponent> renderUIComponent = rootex.new_usertype<RenderUIComponent>(
@@ -389,15 +419,14 @@ void LuaInterpreter::registerTypes()
 		sol::usertype<TextUIComponent> textUIComponent = rootex.new_usertype<TextUIComponent>(
 		    "TextUIComponent",
 		    sol::base_classes, sol::bases<Component, RenderUIComponent>());
-		rootex["Entity"]["getTextUI"] = &Entity::getComponent<TextUIComponent>;
 		textUIComponent["setFont"] = &TextUIComponent::setFont;
 		textUIComponent["setText"] = &TextUIComponent::setText;
 	}
 	{
 		sol::usertype<UIComponent> ui = rootex.new_usertype<UIComponent>(
 		    "UIComponent",
-		    sol::base_classes, sol::bases<Component>());
-		rootex["Entity"]["getUI"] = &Entity::getComponent<UIComponent>;
+		    sol::base_classes, sol::bases<Component>(),
+		    "document", sol::property(&UIComponent::getDocument));
 		ui["getDocumentID"] = [](UIComponent* ui) { return ui->getDocument()->GetId(); };
 	}
 	{
@@ -412,13 +441,11 @@ void LuaInterpreter::registerTypes()
 		sol::usertype<ShortMusicComponent> shortMusicComponent = rootex.new_usertype<ShortMusicComponent>(
 		    "ShortMusicComponent",
 		    sol::base_classes, sol::bases<Component, AudioComponent>());
-		rootex["Entity"]["getShortMusic"] = &Entity::getComponent<ShortMusicComponent>;
 	}
 	{
 		sol::usertype<MusicComponent> musicComponent = rootex.new_usertype<MusicComponent>(
 		    "MusicComponent",
 		    sol::base_classes, sol::bases<Component, AudioComponent>());
-		rootex["Entity"]["getMusic"] = &Entity::getComponent<MusicComponent>;
 	}
 	{
 		sol::usertype<Hit> hit = rootex.new_usertype<Hit>("Hit");
@@ -433,28 +460,58 @@ void LuaInterpreter::registerTypes()
 	{
 		sol::usertype<RigidBodyComponent> rigidBodyComponent = rootex.new_usertype<RigidBodyComponent>(
 		    "RigidBodyComponent",
-		    sol::base_classes, sol::bases<CollisionComponent, Component>());
+		    sol::base_classes, sol::bases<CollisionComponent, Component>(),
+		    "velocity", sol::property(&RigidBodyComponent::getVelocity, &RigidBodyComponent::setVelocity),
+		    "gravity", sol::property(&RigidBodyComponent::getGravity, &RigidBodyComponent::setGravity),
+		    "offset", sol::property(&RigidBodyComponent::getOffset, &RigidBodyComponent::setOffset),
+		    "angularFactor", sol::property(&RigidBodyComponent::getAngularFactor, &RigidBodyComponent::setAngularFactor),
+		    "angularVelocity", sol::property(&RigidBodyComponent::getAngularVelocity, &RigidBodyComponent::setAngularVelocity),
+		    "material", sol::property(&RigidBodyComponent::getMaterial),
+		    "generatesHitEvents", sol::property(&RigidBodyComponent::isGeneratesHitEvents, &RigidBodyComponent::setGeneratedHitEvents),
+		    "ccd", sol::property(&RigidBodyComponent::isCCD, &RigidBodyComponent::setCCD),
+		    "moveable", sol::property(&RigidBodyComponent::isMoveable, &RigidBodyComponent::setMoveable),
+		    "kinematic", sol::property(&RigidBodyComponent::isKinematic, &RigidBodyComponent::setKinematic),
+		    "sleepable", sol::property(&RigidBodyComponent::canSleep, &RigidBodyComponent::setSleepable));
+
 		rigidBodyComponent["getVelocity"] = &RigidBodyComponent::getVelocity;
 		rigidBodyComponent["setVelocity"] = &RigidBodyComponent::setVelocity;
+
 		rigidBodyComponent["applyForce"] = &RigidBodyComponent::applyForce;
+		rigidBodyComponent["applyTorque"] = &RigidBodyComponent::applyTorque;
+		rigidBodyComponent["setAxisLock"] = &RigidBodyComponent::setAxisLock;
 		rigidBodyComponent["translate"] = &RigidBodyComponent::translate;
 	}
 	{
 		sol::usertype<BoxColliderComponent> bcc = rootex.new_usertype<BoxColliderComponent>(
 		    "BoxColliderComponent",
 		    sol::base_classes, sol::bases<Component, CollisionComponent, RigidBodyComponent>());
-		rootex["Entity"]["getBoxCollider"] = &Entity::getComponent<BoxColliderComponent>;
 	}
 	{
 		sol::usertype<SphereColliderComponent> scc = rootex.new_usertype<SphereColliderComponent>(
 		    "SphereColliderComponent",
 		    sol::base_classes, sol::bases<Component, CollisionComponent, RigidBodyComponent>());
-		rootex["Entity"]["getSphereCollider"] = &Entity::getComponent<SphereColliderComponent>;
 	}
 	{
 		sol::usertype<CapsuleColliderComponent> ccc = rootex.new_usertype<CapsuleColliderComponent>(
 		    "CapsuleColliderComponent",
 		    sol::base_classes, sol::bases<Component, CollisionComponent, RigidBodyComponent>());
-		rootex["Entity"]["getCapsuleCollider"] = &Entity::getComponent<CapsuleColliderComponent>;
+	}
+	{
+		sol::usertype<StaticMeshColliderComponent> smc = rootex.new_usertype<StaticMeshColliderComponent>(
+		    "StaticMeshColliderComponent",
+		    sol::base_classes, sol::bases<Component, CollisionComponent, RigidBodyComponent>());
+		smc["setCollisionModel"] = &StaticMeshColliderComponent::setCollisionModel;
+	}
+	{
+		sol::usertype<TriggerComponent> trigger = rootex.new_usertype<TriggerComponent>(
+		    "TriggerComponent",
+		    sol::base_classes, sol::bases<Component, CollisionComponent>());
+		trigger["addEntryTarget"] = &TriggerComponent::addEntryTarget;
+		trigger["removeEntryTarget"] = &TriggerComponent::removeEntryTarget;
+		trigger["addExitTarget"] = &TriggerComponent::addEntryTarget;
+		trigger["removeExitTarget"] = &TriggerComponent::removeEntryTarget;
+		trigger["isEntryRepeat"] = &TriggerComponent::isEntryRepeat;
+		trigger["isExitRepeat"] = &TriggerComponent::isExitRepeat;
+		trigger["setDimensions"] = &TriggerComponent::setDimensions;
 	}
 }
