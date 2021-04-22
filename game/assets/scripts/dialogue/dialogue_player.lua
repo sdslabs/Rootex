@@ -18,19 +18,19 @@ function DialoguePlayer:begin(entity)
 	self.currentChoice = 1
 	self.maxChoices = 1
 	self.currentActor = ""
-	if self.story.variables["default_color"] then
-		self.default_color = self.story.variables["default_color"]
+	if self.story.variables["defaultColor"] then
+		self.defaultColor = self.story.variables["defaultColor"]
 	else 
-		self.default_color = "white"
+		self.defaultColor = "white"
 	end
-	if self.story.variables["default_actor_color"] then
-		self.default_actor_color = self.story.variables["default_actor_color"]
+	if self.story.variables["defaultActorColor"] then
+		self.defaultActorColor = self.story.variables["defaultActorColor"]
 	else 
-		self.default_actor_color = "white"
+		self.defaultActorColor = "white"
 	end
 	self.actors = {
-		["smiley"] = {
-			["happy"] = "images/smiley_happy.jpg",
+		smiley = {
+			happy = "images/smiley_happy.jpg",
 			angry = "images/smiley_angry.jpg",
 			sad = "images/smiley_sad.jpg"
 		}
@@ -69,7 +69,7 @@ function DialoguePlayer:update(entity, delta)
 							table.insert(args, str)
 					end
 					if args[1] == "onselect" then
-						RTX.CallEvent(RTX.Event.new(args[2], args[3]))
+						RTX.Call(args[2], args[3])
 						print("event " .. args[2] .. " emitted")
 					end
 				end
@@ -90,9 +90,9 @@ end
 function DialoguePlayer:presentParagraphs(paragraphs)
 	local text = ""
 	local actor = ""
-	local color = self.default_color
-	local actorColor = self.default_actor_color
-	local class = ""
+	local color = self.defaultColor
+	local actorColor = self.defaultActorColor
+	local className = ""
 	for _, paragraph in ipairs(paragraphs) do
 		text = text .. "<br />" .. paragraph.text
 		if paragraph.tags then
@@ -102,22 +102,24 @@ function DialoguePlayer:presentParagraphs(paragraphs)
 						table.insert(args, str)
 				end
 				if args[1] == "call" then
-					RTX.CallEvent(RTX.Event.new(args[2], args[3]))
+					RTX.Call(args[2], args[3])
 				elseif args[1] == "actor" then
-					print(self.actors[args[2]])
+					actor = args[2]
 					if self.actors[args[2]] then
 						if self.actors[args[2]][args[3]] then
 							self:getDocument():GetElementById("portraitContainer").inner_rml =  "<img id=\"portrait\" src = \"" .. self.actors[args[2]][args[3]] .. "\"/>"
-						end
+						else 
 						print("actor " .. args[2] .. "'s emotion : " .. args[3] .. " not found.")
-					end
+						end
+					else 
 					print("actor " .. args[2] .. " not found.")
+					end
 				elseif args[1] == "color" then
 					color = args[2]
 				elseif args[1] == "actorColor" then
 					actorColor = args[2]
 				elseif args[1] == "class" then
-					class = args[2]
+					className = args[2]
 				end
 			end
 		end
@@ -125,7 +127,7 @@ function DialoguePlayer:presentParagraphs(paragraphs)
 	self.currentActor = actor
 	self:getDocument():GetElementById("actor").style.color = actorColor
 	self:getDocument():GetElementById("paragraphs").style.color = color
-	self:getDocument():GetElementById("paragraphs").inner_rml ="<div class = \"" .. class .. "\">" .. text .. "</div>"
+	self:getDocument():GetElementById("paragraphs").inner_rml ="<div class = \"" .. className .. "\">" .. text .. "</div>"
 	self:getDocument():GetElementById("actor").inner_rml = actor
 end
 
@@ -137,8 +139,8 @@ function DialoguePlayer:presentChoices(choices)
 		if self.currentChoice == i then
 			selection = "> "
 		end
-		local choice_color = ""
-		local class = ""
+		local choiceColor = ""
+		local className = ""
 		if choice.tags then
 			for _, tag in ipairs(choice.tags) do
 				local args = {}
@@ -146,15 +148,15 @@ function DialoguePlayer:presentChoices(choices)
 						table.insert(args, str)
 				end
 				if args[1] == "color" then
-					choice_color = args[2]
+					choiceColor = args[2]
 				elseif args[1] == "class" then
-					class = args[2]
+					className = args[2]
 				end
 			end
 		end
-		text = text .. "<br />" ..  selection .. "<div class = \"" .. class 
-		if choice_color ~= "" then
-			text = text .. "\" style = \"color:".. choice_color  
+		text = text .. "<br />" ..  selection .. "<div class = \"" .. className 
+		if choiceColor ~= "" then
+			text = text .. "\" style = \"color:".. choiceColor  
 		end
 		text = text .. "\">" .. choice.text .. "</div>"
 	end
