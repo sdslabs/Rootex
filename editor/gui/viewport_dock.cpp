@@ -197,7 +197,7 @@ void ViewportDock::draw(float deltaMilliseconds)
 				if (ImGuizmo::IsUsing())
 				{
 					matrix *= transform->getParentAbsoluteTransform().Invert();
-					transform->setTransform(matrix);
+					transform->setLocalTransform(matrix);
 				}
 			}
 

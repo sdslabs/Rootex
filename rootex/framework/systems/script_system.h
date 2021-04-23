@@ -12,6 +12,8 @@ class ScriptSystem : public System
 	Vector<Entity*> m_ScriptEntitiesToInit;
 	Vector<Entity*> m_ScriptEntitiesToEnter;
 
+	sol::table m_FluxTweener;
+
 public:
 	static ScriptSystem* GetSingleton();
 
