@@ -902,7 +902,6 @@ void EditorSystem::drawProgressBar(Atomic<int>& progress, float& currentProgress
 	ImGui::ProgressBar(currentProgress);
 }
 
-
 EditorSystem* EditorSystem::GetSingleton()
 {
 	static EditorSystem singleton;
