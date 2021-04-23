@@ -55,14 +55,14 @@ public:
 	void setRotation(const float& yaw, const float& pitch, const float& roll);
 	void setRotationQuaternion(const Quaternion& rotation);
 	void setScale(const Vector3& scale);
-	void setTransform(const Matrix& transform);
+	void setLocalTransform(const Matrix& transform);
 	void setAbsoluteTransform(const Matrix& transform);
 	void setBounds(const BoundingBox& bounds);
 	void setRotationPosition(const Matrix& transform);
 	void setAbsoluteRotationPosition(const Matrix& transform);
 	void setParentAbsoluteTransform(const Matrix& parentTransform);
 
-	void addTransform(const Matrix& applyTransform);
+	void addLocalTransform(const Matrix& applyTransform);
 	void addQuaternion(const Quaternion& applyQuaternion);
 	void addRotation(float yaw, float pitch, float roll);
 

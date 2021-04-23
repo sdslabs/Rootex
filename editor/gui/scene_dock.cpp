@@ -71,7 +71,7 @@ void SceneDock::showSceneTree(Ptr<Scene>& scene)
 
 						if (victimTransform && thiefTransform)
 						{
-							victimTransform->setTransform(victimTransform->getAbsoluteTransform() * thiefTransform->getAbsoluteTransform().Invert());
+							victimTransform->setLocalTransform(victimTransform->getAbsoluteTransform() * thiefTransform->getAbsoluteTransform().Invert());
 						}
 
 						Scene* rearrangeScenePtr = rearrangeScene.get();
