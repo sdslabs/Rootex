@@ -116,6 +116,8 @@ public:
 	float getFloat(const Event::Type& action);
 	float getFloatDelta(const Event::Type& action);
 
+	Vector2 getMousePosition();
+
 	void update();
 	void setDisplaySize(const Vector2& newSize);
 

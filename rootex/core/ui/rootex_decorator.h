@@ -12,7 +12,7 @@ public:
 	static void UpdateAll(float deltaSeconds);
 
 	RootexDecorator();
-	~RootexDecorator();
+	virtual ~RootexDecorator();
 
 	virtual void update(float deltaSeconds) = 0;
 };

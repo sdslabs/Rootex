@@ -14,10 +14,14 @@ public:
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> m_PixelShader;
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> m_InputLayout;
 
+	bool m_IsValid = true;
+
 public:
 	Shader() = default;
 	Shader(const String& vertexPath, const String& pixelPath, const BufferFormat& vertexBufferFormat);
 	~Shader() = default;
 
 	void bind() const;
+
+	bool isValid() const { return m_IsValid; }
 };

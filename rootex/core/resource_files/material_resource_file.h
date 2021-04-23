@@ -49,6 +49,15 @@ struct PerModelPSCBData
 	int hasNormalMap = 0;
 };
 
+struct PerModelCustomPSCBData
+{
+	float timeMs;
+	float deltaTimeMs;
+	Vector2 resolution;
+	Vector2 mouse;
+	float pad[2];
+};
+
 struct PerModelVSCBData
 {
 	Matrix model;
@@ -94,3 +103,12 @@ struct SkyMaterialData
 
 void to_json(JSON::json& j, const SkyMaterialData& s);
 void from_json(const JSON::json& j, SkyMaterialData& s);
+
+struct CustomMaterialData
+{
+	String pixelShaderPath;
+	PerModelCustomPSCBData pixelBufferData;
+};
+
+void to_json(JSON::json& j, const CustomMaterialData& s);
+void from_json(const JSON::json& j, CustomMaterialData& s);

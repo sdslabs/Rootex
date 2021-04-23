@@ -47,6 +47,8 @@ Ref<ResourceFile> ResourceLoader::CreateResourceFile(const ResourceFile::Type& t
 		return CreateAnimatedBasicMaterialResourceFile(path);
 	case ResourceFile::Type::SkyMaterial:
 		return CreateSkyMaterialResourceFile(path);
+	case ResourceFile::Type::CustomMaterial:
+		return CreateCustomMaterialResourceFile(path);
 	// Not in use due to threading issues
 	case ResourceFile::Type::ParticleEffect:
 	default:
@@ -291,6 +293,10 @@ Ref<MaterialResourceFile> ResourceLoader::CreateMaterialResourceFile(const Strin
 	{
 		return CreateSkyMaterialResourceFile(path);
 	}
+	if (IsFileSupported(extension, ResourceFile::Type::CustomMaterial))
+	{
+		return CreateCustomMaterialResourceFile(path);
+	}
 
 	return nullptr;
 }
@@ -313,4 +319,9 @@ Ref<AnimatedBasicMaterialResourceFile> ResourceLoader::CreateAnimatedBasicMateri
 Ref<SkyMaterialResourceFile> ResourceLoader::CreateSkyMaterialResourceFile(const String& path)
 {
 	return GetCachedResource<SkyMaterialResourceFile>(ResourceFile::Type::SkyMaterial, FilePath(path));
+}
+
+Ref<CustomMaterialResourceFile> ResourceLoader::CreateCustomMaterialResourceFile(const String& path)
+{
+	return GetCachedResource<CustomMaterialResourceFile>(ResourceFile::Type::CustomMaterial, FilePath(path));
 }

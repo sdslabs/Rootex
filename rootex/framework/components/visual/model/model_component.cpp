@@ -113,7 +113,7 @@ void ModelComponent::assignOverrides(Ref<ModelResourceFile> newModel, const Hash
 	}
 	for (auto& [oldMaterial, newMaterial] : materialOverrides)
 	{
-		setMaterialOverride(ResourceLoader::CreateBasicMaterialResourceFile(oldMaterial), ResourceLoader::CreateBasicMaterialResourceFile(newMaterial));
+		setMaterialOverride(ResourceLoader::CreateMaterialResourceFile(oldMaterial), ResourceLoader::CreateMaterialResourceFile(newMaterial));
 	}
 }
 
