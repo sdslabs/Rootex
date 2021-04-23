@@ -92,6 +92,7 @@ public:
 	static float GetFloat(const Event::Type& action) { return GetSingleton()->getFloat(action); };
 	static float GetFloatDelta(const Event::Type& action) { return GetSingleton()->getFloatDelta(action); };
 	static void Unmap(const Event::Type& action) { GetSingleton()->unmap(action); };
+	static Vector2 GetMousePosition() { return GetSingleton()->getMousePosition(); };
 
 	void initialize(unsigned int width, unsigned int height);
 
