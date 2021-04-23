@@ -7,7 +7,15 @@
                 "filePath": "game/assets/ui/dialogue/dialogue.rml"
             }
         },
-        "script": null
+        "script": {
+            "overrides": {
+                "down": "\"Down\"",
+                "next": "\"Next\"",
+                "story": "\"game/assets/stories/game.ink\"",
+                "up": "\"Up\""
+            },
+            "path": "game/assets/scripts/dialogue/dialogue_player.lua"
+        }
     },
     "importStyle": 0,
     "name": "dialogue",

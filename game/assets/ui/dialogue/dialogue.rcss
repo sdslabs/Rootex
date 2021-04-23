@@ -1,0 +1,10 @@
+#actor
+{
+    font-size : 50dp;
+}
+
+.testClass
+{
+    background-color : red;
+    color : black;
+}

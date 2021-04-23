@@ -185,6 +185,7 @@ void LuaInterpreter::registerTypes()
 	}
 	{
 		rootex["CallEvent"] = [](const Event& event) { EventManager::GetSingleton()->call(event); };
+		rootex["Call"] = [](const Event::Type& type, const Variant& data) { EventManager::GetSingleton()->call(type, data); };
 		rootex["DeferredCallEvent"] = [](const Ref<Event>& event) { EventManager::GetSingleton()->deferredCall(event); };
 		rootex["ReturnCallEvent"] = [](const Event& event) { return EventManager::GetSingleton()->returnCall(event); };
 		rootex["Bind"] = [this](const Event::Type& event, sol::function function) { m_Binder.bind(event, function); };
