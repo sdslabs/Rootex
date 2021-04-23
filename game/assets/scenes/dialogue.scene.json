@@ -2,6 +2,11 @@
     "ID": 4,
     "children": [],
     "entity": {
+        "components": {
+            "UIComponent": {
+                "filePath": "game/assets/ui/dialogue/dialogue.rml"
+            }
+        },
         "script": {
             "overrides": {
                 "down": "\"Down\"",
@@ -10,11 +15,6 @@
                 "up": "\"Up\""
             },
             "path": "game/assets/scripts/dialogue/dialogue_player.lua"
-        }
-        "components": {
-            "UIComponent": {
-                "filePath": "game/assets/ui/dialogue/dialogue.rml"
-            }
         }
     },
     "importStyle": 0,

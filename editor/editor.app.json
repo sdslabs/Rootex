@@ -20,7 +20,7 @@
             }
         },
         "InputSystem": {
-            "height": 1001,
+            "height": 1387,
             "inputSchemes": {
                 "Editor": {
                     "bools": [
@@ -69,7 +69,7 @@
                 }
             },
             "startScheme": "Editor",
-            "width": 1920
+            "width": 2560
         },
         "ParticleSystem": {
             "culling": {
@@ -86,8 +86,8 @@
         },
         "PhysicsSystem": {},
         "UISystem": {
-            "height": 1001,
-            "width": 1920
+            "height": 1387,
+            "width": 2560
         }
     },
     "version": 1.0,
