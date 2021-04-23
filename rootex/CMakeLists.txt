@@ -71,6 +71,7 @@ target_link_libraries(Rootex PUBLIC
     DirectXTK
     JSON
     ImGui
+    ImGuiColorTextEdit
     ImGuizmo
     Gainput
     Bullet3D

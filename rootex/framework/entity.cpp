@@ -239,6 +239,11 @@ void Entity::draw()
 			EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { m_Script->getFilePath(), (int)ResourceFile::Type::Text });
 		}
 		ImGui::SameLine();
+		if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Edit Script"))
+		{
+			EventManager::GetSingleton()->call(EditorEvents::EditorEditFile, m_Script->getFilePath());
+		}
+		ImGui::SameLine();
 		if (ImGui::Button(ICON_ROOTEX_REFRESH "##Reload"))
 		{
 			JSON::json& j = m_Script->getJSON();
@@ -250,21 +255,18 @@ void Entity::draw()
 		{
 			m_Script.reset();
 		}
+
+		m_Script->draw();
 	}
 	else
 	{
 		ImGui::SameLine();
-		if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Choose Script"))
+		if (ImGui::Button(ICON_ROOTEX_FOLDER_OPEN "##Choose Script"))
 		{
 			if (Optional<String> result = OS::SelectFile(SupportedFiles.at(ResourceFile::Type::Lua), "game/assets/scripts/"))
 			{
 				setScript(*result);
 			}
 		}
-	}
-
-	if (m_Script)
-	{
-		m_Script->draw();
 	}
 }

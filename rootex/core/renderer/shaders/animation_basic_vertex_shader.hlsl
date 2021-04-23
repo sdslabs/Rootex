@@ -53,7 +53,7 @@ PixelInputType main(VertexInputType input)
     transform += mul(input.weights.z, FinalTransforms[input.indices.z]);
     transform += mul(input.weights.w, FinalTransforms[input.indices.w]);
     
-    float3 pos = mul(input.position, transform);
+    float3 pos = mul(input.position, transform).xyz;
     output.screenPosition = mul(float4(pos, 1.0f), mul(M, mul(V, P)));
     
     float3 nor = normalize(mul(input.normal, transform).xyz);
