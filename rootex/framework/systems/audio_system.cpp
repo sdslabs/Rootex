@@ -6,6 +6,7 @@
 #include "framework/ecs_factory.h"
 #include "components/audio/music_component.h"
 #include "components/audio/short_music_component.h"
+#include "components/physics/rigid_body_component.h"
 #include "core/audio/audio_source.h"
 #include "core/audio/static_audio_buffer.h"
 #include "core/audio/streaming_audio_buffer.h"
@@ -90,20 +91,18 @@ bool AudioSystem::initialize(const JSON::json& systemData)
 
 void AudioSystem::begin()
 {
-	for (auto& c : ECSFactory::GetComponents<MusicComponent>())
+	for (auto& mc : ECSFactory::GetAllMusicComponent())
 	{
-		MusicComponent* mc = (MusicComponent*)c;
-		if (mc->isPlayOnStart())
+		if (mc.isPlayOnStart())
 		{
-			mc->getAudioSource()->play();
+			mc.getAudioSource()->play();
 		}
 	}
-	for (auto& c : ECSFactory::GetComponents<ShortMusicComponent>())
+	for (auto& smc : ECSFactory::GetAllShortMusicComponent())
 	{
-		ShortMusicComponent* smc = (ShortMusicComponent*)c;
-		if (smc->isPlayOnStart())
+		if (smc.isPlayOnStart())
 		{
-			smc->getAudioSource()->play();
+			smc.getAudioSource()->play();
 		}
 	}
 }
@@ -112,22 +111,19 @@ void AudioSystem::update(float deltaMilliseconds)
 {
 	ZoneScoped;
 
-	for (auto& c : ECSFactory::GetComponents<MusicComponent>())
+	for (auto& mc : ECSFactory::GetAllMusicComponent())
 	{
-		MusicComponent* mc = (MusicComponent*)c;
-		mc->getAudioSource()->queueNewBuffers();
-		mc->update();
+		mc.getAudioSource()->queueNewBuffers();
+		mc.update();
 	}
-	for (auto& c : ECSFactory::GetComponents<ShortMusicComponent>())
+	for (auto& smc : ECSFactory::GetAllShortMusicComponent())
 	{
-		ShortMusicComponent* smc = (ShortMusicComponent*)c;
-		smc->update();
+		smc.update();
 	}
 
 	if (m_Listener)
 	{
-		const Vector3& listenerPosition = m_Listener->getPosition();
-		AL_CHECK(alListener3f(AL_POSITION, listenerPosition.x, listenerPosition.y, listenerPosition.z));
+		m_Listener->update();
 	}
 }
 
@@ -139,15 +135,13 @@ AudioSystem* AudioSystem::GetSingleton()
 
 void AudioSystem::end()
 {
-	for (auto& c : ECSFactory::GetComponents<MusicComponent>())
+	for (auto& mc : ECSFactory::GetAllMusicComponent())
 	{
-		MusicComponent* mc = (MusicComponent*)c;
-		mc->getAudioSource()->stop();
+		mc.getAudioSource()->stop();
 	}
-	for (auto& c : ECSFactory::GetComponents<ShortMusicComponent>())
+	for (auto& smc : ECSFactory::GetAllShortMusicComponent())
 	{
-		ShortMusicComponent* smc = (ShortMusicComponent*)c;
-		smc->getAudioSource()->stop();
+		smc.getAudioSource()->stop();
 	}
 }
 
@@ -166,14 +160,7 @@ void AudioSystem::setConfig(const SceneSettings& sceneSettings)
 		return;
 	}
 
-	if (!listenerScene->getEntity())
-	{
-		ERR("Entity not found in listener scene " + listenerScene->getFullName());
-		restoreListener();
-		return;
-	}
-
-	AudioListenerComponent* listen = listenerScene->getEntity()->getComponent<AudioListenerComponent>();
+	AudioListenerComponent* listen = listenerScene->getEntity().getComponent<AudioListenerComponent>();
 	if (!listen)
 	{
 		ERR("AudioListenerComponent not found on entity " + listenerScene->getFullName());
@@ -188,7 +175,7 @@ void AudioSystem::restoreListener()
 {
 	if (SceneLoader::GetSingleton()->getRootScene())
 	{
-		setListener(SceneLoader::GetSingleton()->getRootScene()->getEntity()->getComponent<AudioListenerComponent>());
+		setListener(SceneLoader::GetSingleton()->getRootScene()->getEntity().getComponent<AudioListenerComponent>());
 	}
 }
 
@@ -199,8 +186,5 @@ void AudioSystem::shutDown()
 
 AudioSystem::AudioSystem()
     : System("AudioSystem", UpdateOrder::Async, true)
-    , m_Context(nullptr)
-    , m_Device(nullptr)
-    , m_Listener(nullptr)
 {
 }

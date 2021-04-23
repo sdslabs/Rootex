@@ -5,9 +5,6 @@
             "ID": 5,
             "children": [],
             "entity": {
-                "Entity": {
-                    "script": null
-                },
                 "components": {
                     "BoxColliderComponent": {
                         "angularFactor": {
@@ -47,7 +44,7 @@
                         "lodDistance": 10.0,
                         "lodEnable": true,
                         "materialOverrides": {
-                            "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                            "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
                         },
                         "renderPass": 1,
                         "resFile": "rootex/assets/cube.obj"
@@ -65,6 +62,8 @@
                                 "z": 0.5
                             }
                         },
+                        "overrideBoundingBox": false,
+                        "passDown": 7,
                         "position": {
                             "x": 0.0,
                             "y": -1.600000023841858,
@@ -82,10 +81,12 @@
                             "z": 6.099999904632568
                         }
                     }
-                }
+                },
+                "script": null
             },
-            "file": "",
+            "importStyle": 0,
             "name": "Floor",
+            "sceneFile": "",
             "settings": {
                 "camera": 1,
                 "inputSchemes": {},
@@ -98,9 +99,6 @@
             "ID": 6,
             "children": [],
             "entity": {
-                "Entity": {
-                    "script": null
-                },
                 "components": {
                     "ModelComponent": {
                         "affectingStaticLights": [],
@@ -109,10 +107,29 @@
                         "lodDistance": 10.0,
                         "lodEnable": true,
                         "materialOverrides": {
-                            "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                            "rootex/assets/materials/default.basic.rmat": "game/assets/materials/rootex.basic.rmat"
                         },
                         "renderPass": 1,
                         "resFile": "game/assets/test/sphere.obj"
+                    },
+                    "PointLightComponent": {
+                        "ambientColor": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "attConst": 0.04500000178813934,
+                        "attLin": 1.0,
+                        "attQuad": 0.007499999832361937,
+                        "diffuseColor": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "diffuseIntensity": 1.0,
+                        "range": 10.0
                     },
                     "SphereColliderComponent": {
                         "angularFactor": {
@@ -203,8 +220,10 @@
                                 "z": 19.737079620361328
                             }
                         },
+                        "overrideBoundingBox": false,
+                        "passDown": 7,
                         "position": {
-                            "x": 4.435557842254639,
+                            "x": 3.2667016983032227,
                             "y": 0.13474920392036438,
                             "z": -9.829999923706055
                         },
@@ -220,10 +239,12 @@
                             "z": 0.03999999910593033
                         }
                     }
-                }
+                },
+                "script": null
             },
-            "file": "",
+            "importStyle": 0,
             "name": "Sphere",
+            "sceneFile": "",
             "settings": {
                 "camera": 1,
                 "inputSchemes": {},
@@ -236,9 +257,6 @@
             "ID": 7,
             "children": [],
             "entity": {
-                "Entity": {
-                    "script": null
-                },
                 "components": {
                     "ModelComponent": {
                         "affectingStaticLights": [],
@@ -247,9 +265,9 @@
                         "lodDistance": 10.0,
                         "lodEnable": true,
                         "materialOverrides": {
-                            "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                            "rootex/assets/materials/default.basic.rmat": "game/assets/materials/touch.basic.rmat"
                         },
-                        "renderPass": 1,
+                        "renderPass": 4,
                         "resFile": "rootex/assets/cube.obj"
                     },
                     "TransformComponent": {
@@ -265,6 +283,8 @@
                                 "z": 0.5
                             }
                         },
+                        "overrideBoundingBox": false,
+                        "passDown": 7,
                         "position": {
                             "x": -0.058719128370285034,
                             "y": -0.01304885745048523,
@@ -299,10 +319,12 @@
                             8
                         ]
                     }
-                }
+                },
+                "script": null
             },
-            "file": "",
+            "importStyle": 0,
             "name": "Trigger",
+            "sceneFile": "",
             "settings": {
                 "camera": 1,
                 "inputSchemes": {},
@@ -315,14 +337,6 @@
             "ID": 8,
             "children": [],
             "entity": {
-                "Entity": {
-                    "script": {
-                        "overrides": {
-                            "variable": ""
-                        },
-                        "path": "game/assets/scripts/trigger.lua"
-                    }
-                },
                 "components": {
                     "ShortMusicComponent": {
                         "attenuationModel": 53251,
@@ -332,7 +346,8 @@
                         "maxDistance": 4.0,
                         "playOnStart": false,
                         "referenceDistance": 1.0,
-                        "rollOffFactor": 1.0
+                        "rollOffFactor": 1.0,
+                        "volume": 1.0
                     },
                     "TextUIComponent": {
                         "color": {
@@ -341,13 +356,14 @@
                             "g": 0.52173912525177,
                             "r": 1.0
                         },
-                        "fontResource": "game/assets/fonts/noto_sans_50_regular.spritefont",
+                        "fontResource": "rootex/assets/fonts/lato_30_regular.spritefont",
                         "isVisible": true,
                         "mode": 0,
                         "origin": {
                             "x": 45.0,
                             "y": 41.0
                         },
+                        "rotation": 0.0,
                         "text": "Hello Rootex!"
                     },
                     "TransformComponent": {
@@ -363,6 +379,8 @@
                                 "z": 0.5
                             }
                         },
+                        "overrideBoundingBox": false,
+                        "passDown": 7,
                         "position": {
                             "x": 4.171079158782959,
                             "y": 0.015003561973571777,
@@ -380,10 +398,17 @@
                             "z": 1.0000001192092896
                         }
                     }
+                },
+                "script": {
+                    "overrides": {
+                        "variable": ""
+                    },
+                    "path": "game/assets/scripts/trigger.lua"
                 }
             },
-            "file": "",
+            "importStyle": 0,
             "name": "Target",
+            "sceneFile": "",
             "settings": {
                 "camera": 1,
                 "inputSchemes": {},
@@ -394,13 +419,12 @@
         }
     ],
     "entity": {
-        "Entity": {
-            "script": null
-        },
-        "components": null
+        "components": null,
+        "script": null
     },
-    "file": "game/assets/scenes/trigger.scene.json",
+    "importStyle": 0,
     "name": "trigger",
+    "sceneFile": "game/assets/scenes/trigger.scene.json",
     "settings": {
         "camera": 1,
         "inputSchemes": {},

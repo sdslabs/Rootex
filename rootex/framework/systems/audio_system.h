@@ -4,9 +4,10 @@
 
 #include "components/space/transform_component.h"
 #include "components/audio/audio_listener_component.h"
-#include "vendor/OpenAL/include/al.h"
-#include "vendor/OpenAL/include/alc.h"
-#include "AL/alut.h"
+
+#include "al.h"
+#include "alc.h"
+#include "alut.h"
 
 #include "system.h"
 
@@ -48,8 +49,8 @@ class ResourceFile;
 /// Audio System responsible for streaming and static audio
 class AudioSystem : public System
 {
-	ALCdevice* m_Device;
-	ALCcontext* m_Context;
+	ALCdevice* m_Device = nullptr;
+	ALCcontext* m_Context = nullptr;
 
 	AudioListenerComponent* m_Listener = nullptr;
 

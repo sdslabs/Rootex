@@ -12,33 +12,29 @@ static void InitialiseKeymap();
 #define KEYMAP_SIZE 256
 static Rml::Input::KeyIdentifier KeyIdentifierMap[KEYMAP_SIZE];
 
-bool InputInterface::s_IsMouseOver = false;
-bool InputInterface::s_IsEnabled = true;
-float InputInterface::s_ScaleX = 1;
-float InputInterface::s_ScaleY = 1;
-int InputInterface::s_Left = 0;
-int InputInterface::s_Right = 0;
-int InputInterface::s_Top = 0;
-int InputInterface::s_Bottom = 0;
-
-bool InputInterface::Initialise()
+InputInterface::InputInterface()
 {
-	BIND_EVENT_FUNCTION(RootexEvents::WindowResized, InputInterface::WindowResized);
+	m_Binder.bind(RootexEvents::WindowResized, this, &InputInterface::windowResized);
+}
 
-	s_Left = 0;
-	s_Right = OS::GetDisplayWidth() + s_Left;
-	s_Top = 0;
-	s_Bottom = OS::GetDisplayHeight() + s_Top;
+InputInterface* InputInterface::GetSingleton()
+{
+	static InputInterface singleton;
+	return &singleton;
+}
+
+bool InputInterface::initialise()
+{
+	m_Left = 0;
+	m_Right = OS::GetDisplayWidth() + m_Left;
+	m_Top = 0;
+	m_Bottom = OS::GetDisplayHeight() + m_Top;
 
 	InitialiseKeymap();
 	return true;
 }
 
-void InputInterface::Shutdown()
-{
-}
-
-char ascii_map[4][51] = {
+char ASCIIMap[4][51] = {
 	// shift off and capslock off
 	{
 	    0,
@@ -296,16 +292,14 @@ char KeypadMap[2][18] = {
 	    '=' }
 };
 
-Rml::Context* InputInterface::s_Context = nullptr;
-
 // Sets the context to send input events to.
-void InputInterface::SetContext(Rml::Context* context)
+void InputInterface::setContext(Rml::Context* context)
 {
-	s_Context = context;
+	m_Context = context;
 }
 
 // Returns the character code for a key identifer / key modifier combination.
-Rml::Character InputInterface::GetCharacterCode(Rml::Input::KeyIdentifier keyIdentifier, int keyModifierState)
+Rml::Character InputInterface::getCharacterCode(Rml::Input::KeyIdentifier keyIdentifier, int keyModifierState)
 {
 	using Rml::Character;
 
@@ -319,15 +313,15 @@ Rml::Character InputInterface::GetCharacterCode(Rml::Input::KeyIdentifier keyIde
 
 		// Return character code based on identifier and modifiers
 		if (shift && !capslock)
-			return (Character)ascii_map[1][keyIdentifier];
+			return (Character)ASCIIMap[1][keyIdentifier];
 
 		if (shift && capslock)
-			return (Character)ascii_map[2][keyIdentifier];
+			return (Character)ASCIIMap[2][keyIdentifier];
 
 		if (!shift && capslock)
-			return (Character)ascii_map[3][keyIdentifier];
+			return (Character)ASCIIMap[3][keyIdentifier];
 
-		return (Character)ascii_map[0][keyIdentifier];
+		return (Character)ASCIIMap[0][keyIdentifier];
 	}
 
 	// Check if we have a keycode from the numeric keypad.
@@ -345,20 +339,20 @@ Rml::Character InputInterface::GetCharacterCode(Rml::Input::KeyIdentifier keyIde
 	return Character::Null;
 }
 
-Variant InputInterface::WindowResized(const Event* event)
+Variant InputInterface::windowResized(const Event* event)
 {
 	Vector2 size = Extract<Vector2>(event->getData());
-	s_Left = 0;
-	s_Top = 0;
-	s_Right = size.x;
-	s_Bottom = size.y;
+	m_Left = 0;
+	m_Top = 0;
+	m_Right = size.x;
+	m_Bottom = size.y;
 
 	return true;
 }
 
-void InputInterface::ProcessWindowsEvent(UINT message, WPARAM wParam, LPARAM lParam)
+void InputInterface::processWindowsEvent(UINT message, WPARAM wParam, LPARAM lParam)
 {
-	if (s_Context == nullptr)
+	if (m_Context == nullptr)
 	{
 		return;
 	}
@@ -368,14 +362,14 @@ void InputInterface::ProcessWindowsEvent(UINT message, WPARAM wParam, LPARAM lPa
 		const int& x = LOWORD(lParam);
 		const int& y = HIWORD(lParam);
 
-		s_IsMouseOver = (x >= s_Left && x < s_Right) && (y >= s_Top && y <= s_Bottom);
-		if (s_IsMouseOver)
+		m_IsMouseOver = (x >= m_Left && x < m_Right) && (y >= m_Top && y <= m_Bottom);
+		if (m_IsMouseOver)
 		{
-			s_Context->ProcessMouseMove((x - s_Left) * s_ScaleX, (y - s_Top) * s_ScaleY, GetKeyModifierState());
+			m_Context->ProcessMouseMove((x - m_Left) * m_ScaleX, (y - m_Top) * m_ScaleY, GetKeyModifierState());
 		}
 	}
 
-	if (!s_IsMouseOver || !s_IsEnabled)
+	if (!m_IsMouseOver || !m_IsEnabled)
 	{
 		return;
 	}
@@ -383,31 +377,31 @@ void InputInterface::ProcessWindowsEvent(UINT message, WPARAM wParam, LPARAM lPa
 	switch (message)
 	{
 	case WM_LBUTTONDOWN:
-		s_Context->ProcessMouseButtonDown(0, GetKeyModifierState());
+		m_Context->ProcessMouseButtonDown(0, GetKeyModifierState());
 		break;
 
 	case WM_LBUTTONUP:
-		s_Context->ProcessMouseButtonUp(0, GetKeyModifierState());
+		m_Context->ProcessMouseButtonUp(0, GetKeyModifierState());
 		break;
 
 	case WM_RBUTTONDOWN:
-		s_Context->ProcessMouseButtonDown(1, GetKeyModifierState());
+		m_Context->ProcessMouseButtonDown(1, GetKeyModifierState());
 		break;
 
 	case WM_RBUTTONUP:
-		s_Context->ProcessMouseButtonUp(1, GetKeyModifierState());
+		m_Context->ProcessMouseButtonUp(1, GetKeyModifierState());
 		break;
 
 	case WM_MBUTTONDOWN:
-		s_Context->ProcessMouseButtonDown(2, GetKeyModifierState());
+		m_Context->ProcessMouseButtonDown(2, GetKeyModifierState());
 		break;
 
 	case WM_MBUTTONUP:
-		s_Context->ProcessMouseButtonUp(2, GetKeyModifierState());
+		m_Context->ProcessMouseButtonUp(2, GetKeyModifierState());
 		break;
 
 	case WM_MOUSEWHEEL:
-		s_Context->ProcessMouseWheel(static_cast<float>((short)HIWORD(wParam)) / static_cast<float>(-WHEEL_DELTA), GetKeyModifierState());
+		m_Context->ProcessMouseWheel(static_cast<float>((short)HIWORD(wParam)) / static_cast<float>(-WHEEL_DELTA), GetKeyModifierState());
 		break;
 
 	case WM_KEYDOWN:
@@ -422,7 +416,7 @@ void InputInterface::ProcessWindowsEvent(UINT message, WPARAM wParam, LPARAM lPa
 			break;
 		}
 
-		s_Context->ProcessKeyDown(key_identifier, keyModifierState);
+		m_Context->ProcessKeyDown(key_identifier, keyModifierState);
 	}
 	break;
 
@@ -457,13 +451,13 @@ void InputInterface::ProcessWindowsEvent(UINT message, WPARAM wParam, LPARAM lPa
 
 			// Only send through printable characters.
 			if (((char32_t)character >= 32 || character == (Rml::Character)'\n') && character != (Rml::Character)127)
-				s_Context->ProcessTextInput(character);
+				m_Context->ProcessTextInput(character);
 		}
 	}
 	break;
 
 	case WM_KEYUP:
-		s_Context->ProcessKeyUp(KeyIdentifierMap[wParam], GetKeyModifierState());
+		m_Context->ProcessKeyUp(KeyIdentifierMap[wParam], GetKeyModifierState());
 		break;
 	}
 }

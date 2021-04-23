@@ -1,7 +1,7 @@
 #define FXAA_PC 1
 #define FXAA_QUALITY__PRESET 15
 #define FXAA_HLSL_4 1
-#include "nvidia_fxaa_3_11.hlsli"
+#include "rootex/vendor/FXAA/FXAA3_11.h"
 
 cbuffer cbFxaa : register(b0)
 {

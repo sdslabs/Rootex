@@ -2,24 +2,24 @@
     "ID": 8,
     "children": [],
     "entity": {
-        "Entity": {
-            "script": {
-                "overrides": null,
-                "path": "game/assets/scripts/loading.lua"
-            }
-        },
         "components": {
             "UIComponent": {
                 "filePath": "game/assets/ui/loading/loading.rml"
             }
+        },
+        "script": {
+            "overrides": null,
+            "path": "game/assets/scripts/loading.lua"
         }
     },
-    "file": "game/assets/scenes/loading_screen.scene.json",
+    "importStyle": 0,
     "name": "loading_screen",
+    "sceneFile": "game/assets/scenes/loading_screen.scene.json",
     "settings": {
         "camera": 1,
         "inputSchemes": {},
         "listener": 1,
+        "preloads": [],
         "startScheme": ""
     }
 }

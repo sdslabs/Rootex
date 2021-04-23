@@ -7,7 +7,7 @@
 /// Component to render 2D UI Text
 class TextUIComponent : public RenderUIComponent
 {
-	DEFINE_COMPONENT(TextUIComponent);
+	COMPONENT(TextUIComponent, Category::UI);
 
 public:
 	/// DirectXTK flipping modes for sprites
@@ -30,9 +30,11 @@ private:
 	Mode m_Mode;
 	/// 2D origin of the Font
 	Vector2 m_Origin;
+	/// Flat rotation
+	float m_Rotation;
 
 public:
-	TextUIComponent(Ref<FontResourceFile> font, const String& text, const Color& color, const Mode& mode, const Vector2& origin, const bool& isVisible);
+	TextUIComponent(Entity& owner, const JSON::json& data);
 	~TextUIComponent() = default;
 
 	void setFont(Ref<FontResourceFile> fontFile) { m_FontFile = fontFile; }
@@ -43,3 +45,5 @@ public:
 	JSON::json getJSON() const override;
 	void draw() override;
 };
+
+DECLARE_COMPONENT(TextUIComponent);

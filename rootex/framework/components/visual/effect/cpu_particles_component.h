@@ -1,7 +1,7 @@
 #pragma once
 
 #include "renderer/vertex_data.h"
-#include "renderer/materials/particles_material.h"
+#include "core/resource_files/instancing_basic_material_resource_file.h"
 #include "components/visual/model/model_component.h"
 
 #define MAX_PARTICLES 5000
@@ -20,14 +20,17 @@ struct ParticleTemplate
 	float lifeTime = 1.0f;
 };
 
+void to_json(JSON::json& j, const ParticleTemplate p);
+void from_json(const JSON::json& j, ParticleTemplate& p);
+
 class CPUParticlesComponent : public ModelComponent
 {
-	DEFINE_COMPONENT(CPUParticlesComponent);
+	COMPONENT(CPUParticlesComponent, Category::Effect);
 
 	Vector<InstanceData> m_InstanceBufferData;
 	Vector<InstanceData> m_InstanceBufferLiveData;
 	int m_LiveParticlesCount;
-	Ptr<VertexBuffer> m_InstanceBuffer;
+	Ref<VertexBuffer> m_InstanceBuffer;
 
 	struct Particle
 	{
@@ -48,7 +51,7 @@ class CPUParticlesComponent : public ModelComponent
 
 	ParticleTemplate m_ParticleTemplate;
 	Vector<Particle> m_ParticlePool;
-	Ref<ParticlesMaterial> m_ParticlesMaterial;
+	Ref<InstancingBasicMaterialResourceFile> m_ParticlesMaterial;
 	size_t m_PoolIndex;
 	float m_EmitRate;
 
@@ -66,27 +69,21 @@ class CPUParticlesComponent : public ModelComponent
 
 	float m_EmitCount = 0;
 
+	void expandInstanceData(const size_t& poolSize);
+
 public:
-	CPUParticlesComponent(
-	    size_t poolSize,
-	    const String& particleModelPath,
-	    const String& materialPath,
-	    const ParticleTemplate& particleTemplate,
-	    EmitMode emitMode,
-	    int emitRate,
-	    const Vector3& emitterDimensions,
-	    bool visibility,
-	    unsigned int renderPass);
+	CPUParticlesComponent(Entity& owner, const JSON::json& data);
 	~CPUParticlesComponent() = default;
 
-	void setMaterial(Ref<ParticlesMaterial> particlesMaterial);
+	void setMaterial(Ref<InstancingBasicMaterialResourceFile> particlesMaterial);
 	void emit(const ParticleTemplate& particleTemplate);
 	void expandPool(const size_t& poolSize);
 
-	bool setupData() override;
 	bool preRender(float deltaMilliseconds) override;
 	void render(float viewDistance) override;
 
 	JSON::json getJSON() const override;
 	void draw() override;
 };
+
+DECLARE_COMPONENT(CPUParticlesComponent);

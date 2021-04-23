@@ -3,21 +3,32 @@
 #include "common/common.h"
 #include "component.h"
 
+enum class TransformPassDown : int
+{
+	Position = 1 << 0,
+	Rotation = 1 << 1,
+	Scale = 1 << 2,
+	All = Position | Rotation | Scale
+};
+
+void to_json(JSON::json& j, const TransformPassDown& t);
+void from_json(const JSON::json& j, TransformPassDown& t);
+
 class TransformComponent : public Component
 {
-	DEFINE_COMPONENT(TransformComponent);
+	COMPONENT(TransformComponent, Category::General);
 
 	struct TransformBuffer
 	{
-		Vector3 m_Position;
-		Quaternion m_Rotation;
-		Vector3 m_Scale;
-		BoundingBox m_BoundingBox;
+		Vector3 position;
+		Quaternion rotation;
+		Vector3 scale;
+		BoundingBox boundingBox;
 
-		Matrix m_Transform;
+		Matrix transform;
 	};
 	TransformBuffer m_TransformBuffer;
-
+	int m_TransformPassDown;
 	Matrix m_ParentAbsoluteTransform;
 
 	Matrix m_AbsoluteTransform;
@@ -25,8 +36,7 @@ class TransformComponent : public Component
 	Quaternion m_AbsoluteRotation;
 	Vector3 m_AbsoluteScale;
 	bool m_IsAbsoluteTransformDirty = true;
-
-	bool m_LockScale = false;
+	bool m_OverrideBoundingBox;
 
 	const TransformBuffer* getTransformBuffer() const { return &m_TransformBuffer; };
 
@@ -38,7 +48,7 @@ class TransformComponent : public Component
 	friend class RenderSystem;
 
 public:
-	TransformComponent(const Vector3& position, const Quaternion& rotation, const Vector3& scale, const BoundingBox& bounds);
+	TransformComponent(Entity& owner, const JSON::json& data);
 	~TransformComponent() = default;
 
 	void setPosition(const Vector3& position);
@@ -56,12 +66,13 @@ public:
 	void addQuaternion(const Quaternion& applyQuaternion);
 	void addRotation(float yaw, float pitch, float roll);
 
-	Vector3 getPosition() const { return m_TransformBuffer.m_Position; }
-	Quaternion getRotation() const { return m_TransformBuffer.m_Rotation; };
-	const Vector3& getScale() const { return m_TransformBuffer.m_Scale; }
-	const Matrix& getLocalTransform() const { return m_TransformBuffer.m_Transform; }
-	Matrix getRotationPosition() const { return Matrix::CreateFromQuaternion(m_TransformBuffer.m_Rotation) * Matrix::CreateTranslation(m_TransformBuffer.m_Position) * m_ParentAbsoluteTransform; }
+	Vector3 getPosition() const { return m_TransformBuffer.position; }
+	Quaternion getRotation() const { return m_TransformBuffer.rotation; };
+	const Vector3& getScale() const { return m_TransformBuffer.scale; }
+	const Matrix& getLocalTransform() const { return m_TransformBuffer.transform; }
+	Matrix getRotationPosition() const { return Matrix::CreateFromQuaternion(m_TransformBuffer.rotation) * Matrix::CreateTranslation(m_TransformBuffer.position) * m_ParentAbsoluteTransform; }
 	Matrix getParentAbsoluteTransform() const { return m_ParentAbsoluteTransform; }
+	int getPassDowns() const { return m_TransformPassDown; }
 
 	BoundingBox getWorldSpaceBounds();
 
@@ -75,3 +86,5 @@ public:
 	void draw() override;
 	void highlight();
 };
+
+DECLARE_COMPONENT(TransformComponent);

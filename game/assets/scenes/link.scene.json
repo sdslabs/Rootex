@@ -1,0 +1,602 @@
+{
+    "ID": 4,
+    "children": [
+        {
+            "ID": 13,
+            "children": [
+                {
+                    "ID": 15,
+                    "children": [],
+                    "entity": {
+                        "components": {
+                            "ModelComponent": {
+                                "affectingStaticLights": [],
+                                "isVisible": true,
+                                "lodBias": 0.0,
+                                "lodDistance": 10.0,
+                                "lodEnable": true,
+                                "materialOverrides": {
+                                    "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
+                                },
+                                "renderPass": 1,
+                                "resFile": "rootex/assets/cube.obj"
+                            },
+                            "TransformComponent": {
+                                "boundingBox": {
+                                    "center": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "extents": {
+                                        "x": 0.5,
+                                        "y": 0.5,
+                                        "z": 0.5
+                                    }
+                                },
+                                "overrideBoundingBox": false,
+                                "passDown": 7,
+                                "position": {
+                                    "x": 1.4000000953674316,
+                                    "y": -0.10000002384185791,
+                                    "z": 0.0
+                                },
+                                "rotation": {
+                                    "w": 1.0,
+                                    "x": -0.0,
+                                    "y": 0.0,
+                                    "z": -0.0
+                                },
+                                "scale": {
+                                    "x": 0.5299999713897705,
+                                    "y": 0.5299999713897705,
+                                    "z": 0.5299999713897705
+                                }
+                            }
+                        },
+                        "script": null
+                    },
+                    "importStyle": 0,
+                    "name": "box",
+                    "sceneFile": "game/assets/scenes/box.scene.json",
+                    "settings": {
+                        "camera": 1,
+                        "inputSchemes": {},
+                        "listener": 1,
+                        "preloads": [],
+                        "startScheme": ""
+                    }
+                },
+                {
+                    "ID": 16,
+                    "children": [],
+                    "entity": {
+                        "components": {
+                            "CPUParticlesComponent": {
+                                "affectingStaticLights": [],
+                                "emitMode": 0,
+                                "emitterDimensions": {
+                                    "x": 1.0,
+                                    "y": 1.0,
+                                    "z": 1.0
+                                },
+                                "isVisible": true,
+                                "lodBias": 0.0,
+                                "lodDistance": 0.0,
+                                "lodEnable": false,
+                                "materialOverrides": {
+                                    "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
+                                },
+                                "materialPath": "game/assets/materials/rootex.instance.rmat",
+                                "particleTemplate": {
+                                    "angularVelocityVariation": 0.33000001311302185,
+                                    "colorBegin": {
+                                        "a": 1.0,
+                                        "b": 0.9999921321868896,
+                                        "g": 1.0,
+                                        "r": 0.9999899864196777
+                                    },
+                                    "colorEnd": {
+                                        "a": 1.0,
+                                        "b": 1.0,
+                                        "g": 1.0,
+                                        "r": 1.0
+                                    },
+                                    "lifeTime": 9.0,
+                                    "rotationVariation": 1.5707963705062866,
+                                    "sizeBegin": 1.0,
+                                    "sizeEnd": 1.0,
+                                    "sizeVariation": 0.0,
+                                    "velocity": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "velocityVariation": 0.0
+                                },
+                                "poolSize": 388,
+                                "renderPass": 4,
+                                "resFile": "rootex/assets/cube.obj"
+                            },
+                            "PointLightComponent": {
+                                "ambientColor": {
+                                    "a": 1.0,
+                                    "b": 1.0,
+                                    "g": 1.0,
+                                    "r": 1.0
+                                },
+                                "attConst": 0.0,
+                                "attLin": 0.0,
+                                "attQuad": 4.369999885559082,
+                                "diffuseColor": {
+                                    "a": 1.0,
+                                    "b": 1.0,
+                                    "g": 1.0,
+                                    "r": 1.0
+                                },
+                                "diffuseIntensity": 20.100000381469727,
+                                "range": 10.800000190734863
+                            },
+                            "TransformAnimationComponent": {
+                                "animationMode": 1,
+                                "isPlayOnStart": true,
+                                "keyframes": [
+                                    {
+                                        "timePosition": 0.0,
+                                        "transform": [
+                                            1.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            1.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            1.0,
+                                            0.0,
+                                            -3.993593692779541,
+                                            -2.0400357246398926,
+                                            -6.579999923706055,
+                                            1.0
+                                        ]
+                                    },
+                                    {
+                                        "timePosition": 1.0,
+                                        "transform": [
+                                            1.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            1.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            1.0,
+                                            0.0,
+                                            -3.993594169616699,
+                                            2.0258004665374756,
+                                            -6.579999923706055,
+                                            1.0
+                                        ]
+                                    },
+                                    {
+                                        "timePosition": 2.0,
+                                        "transform": [
+                                            1.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            1.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            1.0,
+                                            0.0,
+                                            3.9857659339904785,
+                                            2.0309605598449707,
+                                            -6.580000400543213,
+                                            1.0
+                                        ]
+                                    },
+                                    {
+                                        "timePosition": 3.0,
+                                        "transform": [
+                                            1.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            1.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            1.0,
+                                            0.0,
+                                            3.980605125427246,
+                                            -2.0225980281829834,
+                                            -6.579999923706055,
+                                            1.0
+                                        ]
+                                    },
+                                    {
+                                        "timePosition": 4.0,
+                                        "transform": [
+                                            1.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            1.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            1.0,
+                                            0.0,
+                                            -3.978114128112793,
+                                            -2.019395112991333,
+                                            -6.579999923706055,
+                                            1.0
+                                        ]
+                                    }
+                                ],
+                                "transitionType": 0
+                            },
+                            "TransformComponent": {
+                                "boundingBox": {
+                                    "center": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "extents": {
+                                        "x": 0.5,
+                                        "y": 0.5,
+                                        "z": 0.5
+                                    }
+                                },
+                                "overrideBoundingBox": false,
+                                "passDown": 7,
+                                "position": {
+                                    "x": 3.0545668601989746,
+                                    "y": -2.0222253799438477,
+                                    "z": -6.579999923706055
+                                },
+                                "rotation": {
+                                    "w": 1.0,
+                                    "x": -0.0,
+                                    "y": 0.0,
+                                    "z": -0.0
+                                },
+                                "scale": {
+                                    "x": 1.0,
+                                    "y": 1.0,
+                                    "z": 1.0
+                                }
+                            }
+                        },
+                        "script": null
+                    },
+                    "importStyle": 0,
+                    "name": "Particles",
+                    "sceneFile": "",
+                    "settings": {
+                        "camera": 1,
+                        "inputSchemes": {},
+                        "listener": 1,
+                        "preloads": [],
+                        "startScheme": ""
+                    }
+                },
+                {
+                    "ID": 17,
+                    "children": [],
+                    "entity": {
+                        "components": {
+                            "CPUParticlesComponent": {
+                                "affectingStaticLights": [],
+                                "emitMode": 0,
+                                "emitterDimensions": {
+                                    "x": 1.0,
+                                    "y": 1.0,
+                                    "z": 1.0
+                                },
+                                "isVisible": true,
+                                "lodBias": 0.0,
+                                "lodDistance": 0.0,
+                                "lodEnable": false,
+                                "materialOverrides": {
+                                    "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
+                                },
+                                "materialPath": "game/assets/materials/rootex.instance.rmat",
+                                "particleTemplate": {
+                                    "angularVelocityVariation": 12.0,
+                                    "colorBegin": {
+                                        "a": 1.0,
+                                        "b": 0.0,
+                                        "g": 0.0,
+                                        "r": 1.0
+                                    },
+                                    "colorEnd": {
+                                        "a": 1.0,
+                                        "b": 0.0,
+                                        "g": 1.0,
+                                        "r": 0.8762542009353638
+                                    },
+                                    "lifeTime": 8.119999885559082,
+                                    "rotationVariation": 3.1415927410125732,
+                                    "sizeBegin": 0.5299999713897705,
+                                    "sizeEnd": 0.0,
+                                    "sizeVariation": 0.0,
+                                    "velocity": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "velocityVariation": 1.2899999618530273
+                                },
+                                "poolSize": 966,
+                                "renderPass": 4,
+                                "resFile": "rootex/assets/cube.obj"
+                            },
+                            "PointLightComponent": {
+                                "ambientColor": {
+                                    "a": 1.0,
+                                    "b": 1.0,
+                                    "g": 1.0,
+                                    "r": 1.0
+                                },
+                                "attConst": 0.04500000178813934,
+                                "attLin": 1.0,
+                                "attQuad": 0.007499999832361937,
+                                "diffuseColor": {
+                                    "a": 1.0,
+                                    "b": 1.0,
+                                    "g": 1.0,
+                                    "r": 1.0
+                                },
+                                "diffuseIntensity": 1.0,
+                                "range": 10.0
+                            },
+                            "TransformAnimationComponent": {
+                                "animationMode": 1,
+                                "isPlayOnStart": true,
+                                "keyframes": [
+                                    {
+                                        "timePosition": 0.0,
+                                        "transform": [
+                                            1.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            1.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            1.0,
+                                            0.0,
+                                            5.960464477539063e-07,
+                                            2.3999998569488525,
+                                            -9.449999809265137,
+                                            1.0
+                                        ]
+                                    },
+                                    {
+                                        "timePosition": 1.0,
+                                        "transform": [
+                                            1.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            1.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            1.0,
+                                            0.0,
+                                            5.200000762939453,
+                                            -2.384185791015625e-07,
+                                            -9.449999809265137,
+                                            1.0
+                                        ]
+                                    },
+                                    {
+                                        "timePosition": 2.0,
+                                        "transform": [
+                                            1.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            1.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            1.0,
+                                            0.0,
+                                            0.10000085830688477,
+                                            -2.8000001907348633,
+                                            -9.449999809265137,
+                                            1.0
+                                        ]
+                                    },
+                                    {
+                                        "timePosition": 3.0,
+                                        "transform": [
+                                            1.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            1.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            1.0,
+                                            0.0,
+                                            -5.59999942779541,
+                                            -2.384185791015625e-07,
+                                            -9.449999809265137,
+                                            1.0
+                                        ]
+                                    },
+                                    {
+                                        "timePosition": 4.0,
+                                        "transform": [
+                                            1.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            1.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            1.0,
+                                            0.0,
+                                            4.76837158203125e-07,
+                                            2.3999996185302734,
+                                            -9.449999809265137,
+                                            1.0
+                                        ]
+                                    }
+                                ],
+                                "transitionType": 0
+                            },
+                            "TransformComponent": {
+                                "boundingBox": {
+                                    "center": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "extents": {
+                                        "x": 0.5,
+                                        "y": 0.5,
+                                        "z": 0.5
+                                    }
+                                },
+                                "overrideBoundingBox": false,
+                                "passDown": 7,
+                                "position": {
+                                    "x": -4.948410511016846,
+                                    "y": 0.27925217151641846,
+                                    "z": -9.449999809265137
+                                },
+                                "rotation": {
+                                    "w": 1.0,
+                                    "x": -0.0,
+                                    "y": 0.0,
+                                    "z": -0.0
+                                },
+                                "scale": {
+                                    "x": 1.0,
+                                    "y": 1.0,
+                                    "z": 1.0
+                                }
+                            }
+                        },
+                        "script": null
+                    },
+                    "importStyle": 0,
+                    "name": "Particles",
+                    "sceneFile": "",
+                    "settings": {
+                        "camera": 1,
+                        "inputSchemes": {},
+                        "listener": 1,
+                        "preloads": [],
+                        "startScheme": ""
+                    }
+                }
+            ],
+            "entity": {
+                "components": {
+                    "ModelComponent": {
+                        "affectingStaticLights": [],
+                        "isVisible": true,
+                        "lodBias": 0.0,
+                        "lodDistance": 10.0,
+                        "lodEnable": true,
+                        "materialOverrides": {
+                            "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
+                        },
+                        "renderPass": 1,
+                        "resFile": "rootex/assets/cube.obj"
+                    },
+                    "TransformComponent": {
+                        "boundingBox": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "extents": {
+                                "x": 0.5,
+                                "y": 0.5,
+                                "z": 0.5
+                            }
+                        },
+                        "overrideBoundingBox": false,
+                        "passDown": 7,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "rotation": {
+                            "w": 1.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        }
+                    }
+                },
+                "script": null
+            },
+            "importStyle": 1,
+            "name": "box",
+            "sceneFile": "game/assets/scenes/box.scene.json",
+            "settings": {
+                "camera": 1,
+                "inputSchemes": {},
+                "listener": 1,
+                "preloads": [],
+                "startScheme": ""
+            }
+        }
+    ],
+    "entity": {
+        "components": null,
+        "script": null
+    },
+    "importStyle": 0,
+    "name": "link",
+    "sceneFile": "game/assets/scenes/link.scene.json",
+    "settings": {
+        "camera": 1,
+        "inputSchemes": {},
+        "listener": 1,
+        "preloads": [],
+        "startScheme": ""
+    }
+}

@@ -3,6 +3,7 @@
 #include "ecs_factory.h"
 #include "resource_loader.h"
 #include "scene_loader.h"
+#include "systems/script_system.h"
 
 static SceneID NextSceneID = ROOT_SCENE_ID + 1;
 Vector<Scene*> Scene::s_Scenes;
@@ -32,18 +33,29 @@ void from_json(const JSON::json& j, SceneSettings& s)
 	s.startScheme = j.value("startScheme", String());
 }
 
+void to_json(JSON::json& j, const Scene::ImportStyle& s)
+{
+	j = (int)s;
+}
+
+void from_json(const JSON::json& j, Scene::ImportStyle& s)
+{
+	s = (Scene::ImportStyle)(int)j;
+}
+
 void Scene::ResetNextID()
 {
 	NextSceneID = ROOT_SCENE_ID + 1;
 }
 
-Ptr<Scene> Scene::Create(const JSON::json& sceneData, bool isACopy)
+Ptr<Scene> Scene::Create(const JSON::json& sceneData, const bool assignNewIDs)
 {
+	// Decide ID
 	SceneID thisSceneID;
 	if (sceneData.contains("ID"))
 	{
 		NextSceneID = std::max(NextSceneID, (SceneID)sceneData["ID"]);
-		if (!isACopy)
+		if (!assignNewIDs)
 		{
 			thisSceneID = sceneData["ID"];
 		}
@@ -58,18 +70,29 @@ Ptr<Scene> Scene::Create(const JSON::json& sceneData, bool isACopy)
 	}
 	NextSceneID++;
 
-	Ptr<Scene> thisScene(std::make_unique<Scene>(thisSceneID, sceneData.value("name", String("Untitled")), sceneData.value("file", String()), sceneData.value("settings", SceneSettings())));
-	s_Scenes.push_back(thisScene.get());
+	// Decide how to import
+	if (sceneData.contains("importStyle") && sceneData["importStyle"] != ImportStyle::Local && sceneData.value("sceneFile", "") == "")
+	{
+		ERR("Found empty scene file path for an externally imported scene");
+	}
 
+	Ptr<Scene> thisScene(std::make_unique<Scene>(
+	    thisSceneID,
+	    sceneData.value("name", String("Untitled")),
+	    sceneData.value("settings", SceneSettings()),
+	    sceneData.value("importStyle", ImportStyle::Local),
+	    sceneData.value("sceneFile", "")));
+
+	// Make entity and children scenes
 	if (sceneData.contains("entity"))
 	{
-		thisScene->m_Entity = ECSFactory::CreateEntity(thisScene.get(), sceneData["entity"]);
+		ECSFactory::FillEntity(thisScene->m_Entity, sceneData["entity"]);
 	}
 	if (sceneData.contains("children"))
 	{
 		for (auto& childScene : sceneData["children"])
 		{
-			if (!thisScene->addChild(Create(childScene)))
+			if (!thisScene->addChild(Create(childScene, assignNewIDs)))
 			{
 				WARN("Could not add child scene to " + thisScene->getName() + " scene");
 			}
@@ -86,24 +109,22 @@ Ptr<Scene> Scene::CreateFromFile(const String& sceneFile)
 		{
 			t->reimport();
 		}
-		return Create(JSON::json::parse(t->getString()));
+		JSON::json importedScene = JSON::json::parse(t->getString());
+		importedScene["importStyle"] = ImportStyle::External;
+		importedScene["sceneFile"] = sceneFile;
+		return Create(importedScene, true);
 	}
 	return nullptr;
 }
 
 Ptr<Scene> Scene::CreateEmpty()
 {
-	return Create(JSON::json::object());
+	return Create(JSON::json::object(), false);
 }
 
 Ptr<Scene> Scene::CreateEmptyAtPath(const String& sceneFile)
 {
-	return Create({ { "entity", {} }, { "file", sceneFile } });
-}
-
-Ptr<Scene> Scene::CreateEmptyWithEntity()
-{
-	return Create({ { "entity", {} } });
+	return Create({ { "entity", {} }, { "sceneFile", sceneFile } }, false);
 }
 
 Ptr<Scene> Scene::CreateRootScene()
@@ -115,9 +136,8 @@ Ptr<Scene> Scene::CreateRootScene()
 		return nullptr;
 	}
 
-	Ptr<Scene> root = std::make_unique<Scene>(ROOT_SCENE_ID, "Root", "", SceneSettings());
-	root->m_Entity = ECSFactory::CreateRootEntity(root.get());
-	s_Scenes.push_back(root.get());
+	Ptr<Scene> root = std::make_unique<Scene>(ROOT_SCENE_ID, "Root", SceneSettings(), ImportStyle::Local, "");
+	ECSFactory::FillRootEntity(root->getEntity());
 
 	called = true;
 	return root;
@@ -169,10 +189,11 @@ Scene* Scene::findScene(SceneID scene)
 	return nullptr;
 }
 
-void Scene::reload()
+void Scene::reimport()
 {
-	if (m_SceneFile.empty())
+	if (m_ImportStyle != ImportStyle::External)
 	{
+		WARN("Did not reimport local scene. Needs to be external to be reimported.");
 		return;
 	}
 
@@ -180,13 +201,10 @@ void Scene::reload()
 	t->reimport();
 
 	const JSON::json& sceneData = JSON::json::parse(t->getString());
+	m_Entity.clear();
 	if (sceneData.contains("entity"))
 	{
-		setEntity(ECSFactory::CreateEntity(this, sceneData["entity"]));
-	}
-	else
-	{
-		setEntity(Ptr<Entity>());
+		ECSFactory::FillEntity(m_Entity, sceneData["entity"]);
 	}
 
 	m_ChildrenScenes.clear();
@@ -194,7 +212,7 @@ void Scene::reload()
 	{
 		for (auto& childScene : sceneData["children"])
 		{
-			if (!addChild(Create(childScene)))
+			if (!addChild(Create(childScene, false)))
 			{
 				WARN("Could not add child scene to " + getName() + " scene");
 			}
@@ -204,10 +222,7 @@ void Scene::reload()
 
 void Scene::onLoad()
 {
-	if (m_Entity)
-	{
-		m_Entity->onAllEntitiesAdded();
-	}
+	m_Entity.onAllEntitiesAdded();
 	for (auto& child : m_ChildrenScenes)
 	{
 		child->onLoad();
@@ -236,7 +251,7 @@ bool Scene::snatchChild(Scene* child)
 
 bool Scene::checkCycle(Scene* child)
 {
-	if (child->findScene(this->getID()) != nullptr)
+	if (child->findScene(m_ID) != nullptr)
 	{
 		WARN("Tried to make a scene its own child's child");
 		return false;
@@ -260,9 +275,14 @@ bool Scene::addChild(Ptr<Scene>& child)
 	{
 		child->m_ParentScene = this;
 		m_ChildrenScenes.emplace_back(std::move(child));
-		return true;
+		ScriptSystem::GetSingleton()->addEnterScriptEntity(&m_ChildrenScenes.back()->getEntity());
 	}
-	return false;
+	else
+	{
+		ERR("Tried to add a duplicate child " + child->getFullName() + " to " + getFullName());
+		return false;
+	}
+	return true;
 }
 
 bool Scene::removeChild(Scene* toRemove)
@@ -288,14 +308,11 @@ JSON::json Scene::getJSON() const
 {
 	JSON::json j;
 
-	j["name"] = m_Name;
-	j["file"] = m_SceneFile;
 	j["ID"] = m_ID;
-	j["entity"] = nullptr;
-	if (m_Entity)
-	{
-		j["entity"] = m_Entity->getJSON();
-	}
+	j["name"] = m_Name;
+	j["importStyle"] = m_ImportStyle;
+	j["sceneFile"] = m_SceneFile;
+	j["entity"] = m_Entity.getJSON();
 	j["settings"] = m_Settings;
 
 	j["children"] = JSON::json::array();
@@ -307,13 +324,16 @@ JSON::json Scene::getJSON() const
 	return j;
 }
 
-Scene::Scene(SceneID id, const String& name, const String& sceneFile, const SceneSettings& settings)
+Scene::Scene(SceneID id, const String& name, const SceneSettings& settings, ImportStyle importStyle, const String& sceneFile)
     : m_Name(name)
     , m_ID(id)
     , m_Settings(settings)
+    , m_ImportStyle(importStyle)
     , m_SceneFile(sceneFile)
+    , m_Entity(this)
 {
 	setName(m_Name);
+	s_Scenes.push_back(this);
 }
 
 Scene::~Scene()
@@ -539,6 +559,7 @@ void SceneSettings::draw()
 	if (inputSchemeToRemove)
 	{
 		inputSchemes.erase(*inputSchemeToRemove);
+		startScheme = "";
 	}
 
 	ImGui::Separator();

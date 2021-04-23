@@ -5,9 +5,6 @@
             "ID": 9,
             "children": [],
             "entity": {
-                "Entity": {
-                    "script": null
-                },
                 "components": {
                     "BoxColliderComponent": {
                         "angularFactor": {
@@ -20,7 +17,7 @@
                         "dimensions": {
                             "x": 4.900000095367432,
                             "y": 0.5,
-                            "z": 3.3299999237060547
+                            "z": 3.450000047683716
                         },
                         "gravity": {
                             "x": 0.0,
@@ -38,7 +35,7 @@
                             "y": 0.0,
                             "z": 0.0
                         },
-                        "volume": 8.158499717712402
+                        "volume": 8.452500343322754
                     },
                     "ModelComponent": {
                         "affectingStaticLights": [],
@@ -47,7 +44,7 @@
                         "lodDistance": 10.0,
                         "lodEnable": true,
                         "materialOverrides": {
-                            "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                            "rootex/assets/materials/default.basic.rmat": "game/assets/materials/rootex.basic.rmat"
                         },
                         "renderPass": 1,
                         "resFile": "rootex/assets/cube.obj"
@@ -65,27 +62,180 @@
                                 "z": 0.5
                             }
                         },
+                        "overrideBoundingBox": false,
+                        "passDown": 5,
                         "position": {
-                            "x": 0.0,
-                            "y": -1.4880571365356445,
-                            "z": -4.909999370574951
+                            "x": 1.5033964473332162e-07,
+                            "y": -0.09148872643709183,
+                            "z": -17.71396255493164
                         },
                         "rotation": {
-                            "w": 1.0,
-                            "x": -0.0,
-                            "y": 0.0,
-                            "z": -0.0
+                            "w": 0.9237861037254333,
+                            "x": 0.3829089403152466,
+                            "y": 7.121572309642943e-08,
+                            "z": 1.0394531813062713e-07
                         },
                         "scale": {
-                            "x": 9.859999656677246,
-                            "y": 1.0,
-                            "z": 6.659999847412109
+                            "x": 9.85999584197998,
+                            "y": 0.9999999403953552,
+                            "z": 6.659997463226318
                         }
                     }
-                }
+                },
+                "script": null
             },
-            "file": "",
+            "importStyle": 0,
             "name": "Floor",
+            "sceneFile": "",
+            "settings": {
+                "camera": 1,
+                "inputSchemes": {},
+                "listener": 1,
+                "preloads": [],
+                "startScheme": ""
+            }
+        },
+        {
+            "ID": 11,
+            "children": [
+                {
+                    "ID": 13,
+                    "children": [],
+                    "entity": {
+                        "components": {
+                            "AnimatedModelComponent": {
+                                "affectingStaticLights": [],
+                                "animationMode": 1,
+                                "currentAnimationName": "",
+                                "isPlayOnStart": true,
+                                "isVisible": true,
+                                "lodBias": 0.0,
+                                "lodDistance": 10.0,
+                                "lodEnable": true,
+                                "materialOverrides": {
+                                    "game/assets/materials/animation/Material.anim.rmat": "game/assets/materials/glass.anim.rmat"
+                                },
+                                "renderPass": 1,
+                                "resFile": "rootex/assets/animation.dae",
+                                "rootExclusion": 1,
+                                "speedMultiplier": 1.0,
+                                "transitionTime": 1.0
+                            },
+                            "TransformComponent": {
+                                "boundingBox": {
+                                    "center": {
+                                        "x": 0.0,
+                                        "y": 4.339252948760986,
+                                        "z": 0.013939738273620605
+                                    },
+                                    "extents": {
+                                        "x": 2.7054710388183594,
+                                        "y": 4.359586238861084,
+                                        "z": 1.7636620998382568
+                                    }
+                                },
+                                "overrideBoundingBox": false,
+                                "passDown": 7,
+                                "position": {
+                                    "x": 0.0,
+                                    "y": 0.0,
+                                    "z": 0.0
+                                },
+                                "rotation": {
+                                    "w": 1.0,
+                                    "x": 0.0,
+                                    "y": 0.0,
+                                    "z": 0.0
+                                },
+                                "scale": {
+                                    "x": 1.0,
+                                    "y": 1.0,
+                                    "z": 1.0
+                                }
+                            }
+                        },
+                        "script": null
+                    },
+                    "importStyle": 0,
+                    "name": "CowboyBody",
+                    "sceneFile": "",
+                    "settings": {
+                        "camera": 1,
+                        "inputSchemes": {},
+                        "listener": 1,
+                        "preloads": [],
+                        "startScheme": ""
+                    }
+                }
+            ],
+            "entity": {
+                "components": {
+                    "CapsuleColliderComponent": {
+                        "angularFactor": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "collisionGroup": 31,
+                        "collisionMask": 31,
+                        "gravity": {
+                            "x": 0.0,
+                            "y": -9.800000190734863,
+                            "z": 0.0
+                        },
+                        "isCCD": true,
+                        "isGeneratesHitEvents": false,
+                        "isKinematic": false,
+                        "isMoveable": true,
+                        "isSleepable": true,
+                        "material": 2,
+                        "offset": {
+                            "x": -0.23000000417232513,
+                            "y": 0.25999999046325684,
+                            "z": 0.009999999776482582
+                        },
+                        "radius": 0.2800000011920929,
+                        "sideHeight": 1.0800000429153442,
+                        "volume": 0.35795727372169495
+                    },
+                    "TransformComponent": {
+                        "boundingBox": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 4.339252948760986,
+                                "z": 0.013939738273620605
+                            },
+                            "extents": {
+                                "x": 2.7054710388183594,
+                                "y": 4.359586238861084,
+                                "z": 1.7636620998382568
+                            }
+                        },
+                        "overrideBoundingBox": false,
+                        "passDown": 7,
+                        "position": {
+                            "x": 0.0,
+                            "y": 3.1072638034820557,
+                            "z": -17.610000610351563
+                        },
+                        "rotation": {
+                            "w": 0.9257116913795471,
+                            "x": -0.0,
+                            "y": 0.0,
+                            "z": 0.37822988629341125
+                        },
+                        "scale": {
+                            "x": 0.2000000923871994,
+                            "y": 0.2000000923871994,
+                            "z": 0.20000004768371582
+                        }
+                    }
+                },
+                "script": null
+            },
+            "importStyle": 0,
+            "name": "Cowboy",
+            "sceneFile": "",
             "settings": {
                 "camera": 1,
                 "inputSchemes": {},
@@ -98,9 +248,6 @@
             "ID": 10,
             "children": [],
             "entity": {
-                "Entity": {
-                    "script": null
-                },
                 "components": {
                     "ModelComponent": {
                         "affectingStaticLights": [],
@@ -109,7 +256,7 @@
                         "lodDistance": 2.0,
                         "lodEnable": true,
                         "materialOverrides": {
-                            "rootex/assets/materials/default.rmat": "game/assets/materials/rootex_logo_textured.rmat"
+                            "rootex/assets/materials/default.basic.rmat": "game/assets/materials/rootex.basic.rmat"
                         },
                         "renderPass": 1,
                         "resFile": "game/assets/test/sphere.obj"
@@ -138,8 +285,8 @@
                             "y": 0.0,
                             "z": 0.0
                         },
-                        "radius": 0.6000000238418579,
-                        "volume": 0.904778778553009
+                        "radius": 2.4000000953674316,
+                        "volume": 57.90584182739258
                     },
                     "TransformComponent": {
                         "boundingBox": {
@@ -154,10 +301,12 @@
                                 "z": 19.737079620361328
                             }
                         },
+                        "overrideBoundingBox": false,
+                        "passDown": 7,
                         "position": {
-                            "x": 0.09157752990722656,
-                            "y": 4.529402732849121,
-                            "z": -5.059999942779541
+                            "x": 0.0,
+                            "y": 7.715848922729492,
+                            "z": -19.309999465942383
                         },
                         "rotation": {
                             "w": 1.0,
@@ -166,107 +315,17 @@
                             "z": -0.0
                         },
                         "scale": {
-                            "x": 0.029999999329447746,
-                            "y": 0.029999999329447746,
-                            "z": 0.029999999329447746
+                            "x": 0.11999999731779099,
+                            "y": 0.11999999731779099,
+                            "z": 0.11999999731779099
                         }
                     }
-                }
-            },
-            "file": "",
-            "name": "Sphere",
-            "settings": {
-                "camera": 1,
-                "inputSchemes": {},
-                "listener": 1,
-                "preloads": [],
-                "startScheme": ""
-            }
-        },
-        {
-            "ID": 11,
-            "children": [],
-            "entity": {
-                "Entity": {
-                    "script": null
                 },
-                "components": {
-                    "AnimatedModelComponent": {
-                        "affectingStaticLights": [],
-                        "currentAnimationName": "",
-                        "isPlayOnStart": true,
-                        "isVisible": true,
-                        "lodBias": -0.029999999329447746,
-                        "lodDistance": 18.0,
-                        "lodEnable": true,
-                        "materialOverrides": {
-                            "rootex/assets/materials/animated_default.rmat": "rootex/assets/materials/animated_default.rmat"
-                        },
-                        "renderPass": 1,
-                        "resFile": "rootex/assets/animation.dae"
-                    },
-                    "CapsuleColliderComponent": {
-                        "angularFactor": {
-                            "x": 1.0,
-                            "y": 1.0,
-                            "z": 1.0
-                        },
-                        "collisionGroup": 31,
-                        "collisionMask": 31,
-                        "gravity": {
-                            "x": 0.0,
-                            "y": -9.800000190734863,
-                            "z": 0.0
-                        },
-                        "isCCD": true,
-                        "isGeneratesHitEvents": false,
-                        "isKinematic": false,
-                        "isMoveable": true,
-                        "isSleepable": true,
-                        "material": 2,
-                        "offset": {
-                            "x": 0.0,
-                            "y": 0.6399999856948853,
-                            "z": 0.0
-                        },
-                        "radius": 0.8500000238418579,
-                        "sideHeight": 2.0799999237060547,
-                        "volume": 1.3089970350265503
-                    },
-                    "TransformComponent": {
-                        "boundingBox": {
-                            "center": {
-                                "x": 0.0,
-                                "y": 1.0199999809265137,
-                                "z": 0.0
-                            },
-                            "extents": {
-                                "x": 1.774999976158142,
-                                "y": -4.359586238861084,
-                                "z": 1.7636620998382568
-                            }
-                        },
-                        "position": {
-                            "x": 0.126132994890213,
-                            "y": 0.6722005009651184,
-                            "z": -5.345313549041748
-                        },
-                        "rotation": {
-                            "w": -0.39496809244155884,
-                            "x": 0.0,
-                            "y": 0.9186948537826538,
-                            "z": 0.0
-                        },
-                        "scale": {
-                            "x": 0.41000160574913025,
-                            "y": 0.4100000262260437,
-                            "z": 0.41000160574913025
-                        }
-                    }
-                }
+                "script": null
             },
-            "file": "",
-            "name": "Cowboy",
+            "importStyle": 0,
+            "name": "Sphere",
+            "sceneFile": "",
             "settings": {
                 "camera": 1,
                 "inputSchemes": {},
@@ -277,9 +336,6 @@
         }
     ],
     "entity": {
-        "Entity": {
-            "script": null
-        },
         "components": {
             "TransformComponent": {
                 "boundingBox": {
@@ -294,16 +350,18 @@
                         "z": 0.5
                     }
                 },
+                "overrideBoundingBox": false,
+                "passDown": 7,
                 "position": {
                     "x": 0.0,
-                    "y": -1.25,
-                    "z": -4.570000171661377
+                    "y": 0.0,
+                    "z": 0.0
                 },
                 "rotation": {
                     "w": 1.0,
-                    "x": -0.0,
+                    "x": 0.0,
                     "y": 0.0,
-                    "z": -0.0
+                    "z": 0.0
                 },
                 "scale": {
                     "x": 1.0,
@@ -311,10 +369,12 @@
                     "z": 1.0
                 }
             }
-        }
+        },
+        "script": null
     },
-    "file": "game/assets/scenes/physics.scene.json",
+    "importStyle": 0,
     "name": "physics",
+    "sceneFile": "game/assets/scenes/physics.scene.json",
     "settings": {
         "camera": 1,
         "inputSchemes": {},

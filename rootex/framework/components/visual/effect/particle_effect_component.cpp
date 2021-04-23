@@ -3,29 +3,21 @@
 #include "core/resource_loader.h"
 #include "systems/particle_system.h"
 
-Ptr<Component> ParticleEffectComponent::Create(const JSON::json& componentData)
-{
-	return std::make_unique<ParticleEffectComponent>(
-	    ResourceLoader::CreateParticleEffectResourceFile(componentData.value("resFile", "rootex/assets/toon.efkefc")),
-	    componentData.value("playOnStart", false),
-	    componentData.value("isMoving", false),
-	    componentData.value("startFrame", 0),
-	    componentData.value("useSpeed", false),
-	    componentData.value("speed", 1.0f),
-	    componentData.value("useTarget", false),
-	    componentData.value("target", Vector3::Zero));
-}
+#define EFFECT_ERROR_HANDLE -1
 
-ParticleEffectComponent::ParticleEffectComponent(Ref<ParticleEffectResourceFile> effect, bool playOnStart, bool isMoving, int startFrame, bool useSpeed, float speed, bool useTarget, const Vector3& targetLocation)
-    : m_EffectHandle(0)
-    , m_EffectResource(effect)
-    , m_StartFrame(startFrame)
-    , m_PlayOnStart(playOnStart)
-    , m_IsMoving(isMoving)
-    , m_UseSpeed(useSpeed)
-    , m_Speed(speed)
-    , m_UseTarget(useTarget)
-    , m_TargetLocation(targetLocation)
+DEFINE_COMPONENT(ParticleEffectComponent);
+
+ParticleEffectComponent::ParticleEffectComponent(Entity& owner, const JSON::json& data)
+    : Component(owner)
+    , m_EffectHandle(EFFECT_ERROR_HANDLE)
+    , m_EffectResource(ResourceLoader::CreateParticleEffectResourceFile(data.value("resFile", "rootex/assets/effects/rootex.efkefc")))
+    , m_StartFrame(data.value("startFrame", 0))
+    , m_PlayOnStart(data.value("playOnStart", false))
+    , m_IsMoving(data.value("isMoving", false))
+    , m_UseSpeed(data.value("useSpeed", false))
+    , m_Speed(data.value("speed", 1.0f))
+    , m_UseTarget(data.value("useTarget", false))
+    , m_TargetLocation(data.value("target", Vector3::Zero))
     , m_DependencyOnTransformComponent(this)
 {
 }
@@ -39,8 +31,13 @@ void ParticleEffectComponent::setPlaying(bool enabled)
 {
 	if (enabled)
 	{
-		m_EffectHandle = ParticleSystem::GetSingleton()->play(m_EffectResource->getEffect(), m_TransformComponent->getAbsolutePosition(), m_StartFrame);
-		ParticleSystem::GetSingleton()->setMatrix(m_EffectHandle, m_TransformComponent->getAbsoluteTransform());
+		if (m_EffectHandle != EFFECT_ERROR_HANDLE)
+		{
+			stop();
+		}
+
+		m_EffectHandle = ParticleSystem::GetSingleton()->play(m_EffectResource->getEffect(), getTransformComponent()->getAbsolutePosition(), m_StartFrame);
+		ParticleSystem::GetSingleton()->setMatrix(m_EffectHandle, getTransformComponent()->getAbsoluteTransform());
 
 		if (m_UseSpeed)
 		{
@@ -108,6 +105,11 @@ void ParticleEffectComponent::draw()
 	if (ImGui::Button("Stop"))
 	{
 		stop();
+	}
+	ImGui::SameLine();
+	if (ImGui::Button(ICON_ROOTEX_REFRESH))
+	{
+		m_EffectResource->reimport();
 	}
 
 	ImGui::DragInt("Start Frame", &m_StartFrame, 0.5f, 0, INT_MAX, "Frame %d", ImGuiSliderFlags_AlwaysClamp);

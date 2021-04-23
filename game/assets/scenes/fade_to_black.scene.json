@@ -2,17 +2,21 @@
     "ID": 5,
     "children": [],
     "entity": {
+        "Entity": {
+            "script": null
+        },
         "components": {
             "UIComponent": {
                 "filePath": "game/assets/ui/fade_to_black/fade_to_black.rml"
             }
         }
     },
-    "file": "game/assets/scenes/fade_to_black.scene.json",
+    "importStyle": 0,
     "name": "fade_to_black",
+    "sceneFile": "game/assets/scenes/fade_to_black.scene.json",
     "settings": {
         "camera": 1,
-        "inputSchemes": null,
+        "inputSchemes": {},
         "listener": 1,
         "preloads": [],
         "startScheme": ""

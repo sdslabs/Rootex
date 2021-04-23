@@ -30,10 +30,10 @@ Variant InspectorDock::closeScene(const Event* event)
 }
 
 InspectorDock::InspectorDock()
-    : m_OpenedScene(nullptr)
 {
-	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorOpenScene, openScene);
-	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorCloseScene, closeScene);
+	m_Binder.bind(EditorEvents::EditorOpenScene, this, &InspectorDock::openScene);
+	m_Binder.bind(EditorEvents::EditorSceneIsClosing, this, &InspectorDock::closeScene);
+	m_Binder.bind(EditorEvents::EditorReset, this, &InspectorDock::closeScene);
 
 	if (!s_Singleton)
 	{
@@ -54,74 +54,79 @@ void InspectorDock::drawSceneActions(Scene* scene)
 	}
 	if (m_ActionScene != SceneLoader::GetSingleton()->getRootScene())
 	{
-		if (ImGui::MenuItem("Reload"))
+		if (ImGui::MenuItem("Reimport"))
 		{
-			m_ActionScene->reload();
+			m_ActionScene->reimport();
 		}
 
-		if (Entity* entity = m_ActionScene->getEntity())
+		Entity& entity = m_ActionScene->getEntity();
+
+		if (ImGui::BeginMenu("Edit Components"))
 		{
-			if (ImGui::BeginMenu("Edit Components"))
+			static String searchString;
+			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
+			ImGui::SetItemDefaultFocus();
+			ImGui::InputText("##SearchComponent", &searchString);
+
+			for (const auto& [componentName, componentData] : ECSFactory::s_ComponentSets)
 			{
-				for (const auto& [componentID, componentName, componentCreator] : ECSFactory::GetComponentDatabase())
+				bool shouldMatch = false;
+				for (int i = 0; i < componentName.size(); i++)
 				{
-					bool isAddedAlready = entity->getComponentFromID(componentID) != nullptr;
-					if (ImGui::Checkbox(componentName.c_str(), &isAddedAlready))
+					shouldMatch |= componentName.compare(i, searchString.size(), searchString) == 0;
+				}
+
+				if (shouldMatch)
+				{
+					bool isAddedAlready = entity.getComponentFromID(componentData->getID()) != nullptr;
+					if (ImGui::Checkbox(componentData->getName().c_str(), &isAddedAlready))
 					{
 						if (isAddedAlready)
 						{
-							if (ECSFactory::AddComponent(entity, ECSFactory::CreateDefaultComponent(componentName)))
+							if (ECSFactory::AddDefaultComponent(entity, componentData->getID()))
 							{
-								PRINT("Added " + componentName + " to " + entity->getFullName());
+								PRINT("Added " + componentData->getName() + " to " + entity.getFullName());
 							}
 						}
 						else
 						{
-							if (entity->removeComponent(componentID))
+							if (entity.removeComponent(componentData->getID()))
 							{
-								PRINT("Removed " + componentName + " from " + entity->getFullName());
+								PRINT("Removed " + componentData->getName() + " from " + entity.getFullName());
 							}
 						}
 					}
+					ImGui::SameLine();
+					ImGui::TextColored(EditorSystem::GetSingleton()->getSuccessColor(), "%s", componentData->getCategory().c_str());
 				}
+			}
 
-				ImGui::EndMenu();
-			}
-			if (ImGui::MenuItem("Reset"))
-			{
-				PANIC(entity->onAllComponentsAdded() == false, "Could not setup entity: " + entity->getFullName());
-			}
-			if (ImGui::MenuItem("Remove Entity"))
-			{
-				m_ActionScene->setEntity(Ptr<Entity>());
-			}
+			ImGui::EndMenu();
 		}
-		else
+		if (ImGui::MenuItem("Setup"))
 		{
-			if (ImGui::MenuItem("Add Entity"))
-			{
-				m_ActionScene->setEntity(ECSFactory::CreateEmptyEntity(m_ActionScene));
-			}
+			PANIC(entity.onAllComponentsAdded() == false, "Could not setup entity: " + entity.getFullName());
 		}
+
 		ImGui::Separator();
 
 		if (ImGui::MenuItem("Add Empty Scene"))
 		{
-			m_ActionScene->addChild(Scene::CreateEmpty());
-		}
-
-		if (ImGui::MenuItem("Add Empty Scene Entity"))
-		{
-			m_ActionScene->addChild(Scene::CreateEmptyWithEntity());
+			Ptr<Scene> childScene = Scene::CreateEmpty();
+			Scene* childScenePtr = childScene.get();
+			m_ActionScene->addChild(childScene);
+			EventManager::GetSingleton()->call(EditorEvents::EditorOpenScene, childScenePtr);
 		}
 
 		if (ImGui::Selectable("Copy Scene"))
 		{
 			Scene* actionScenePtr = m_ActionScene;
 			EventManager::GetSingleton()->defer([=]() {
-				if (Ptr<Scene>& copiedScene = Scene::Create(actionScenePtr->getJSON(), true))
+				if (Ptr<Scene> copiedScene = Scene::Create(actionScenePtr->getJSON(), true))
 				{
+					Scene* copiedScenePtr = copiedScene.get();
 					actionScenePtr->getParent()->addChild(copiedScene);
+					EventManager::GetSingleton()->call(EditorEvents::EditorOpenScene, copiedScenePtr);
 				}
 				else
 				{
@@ -132,7 +137,7 @@ void InspectorDock::drawSceneActions(Scene* scene)
 		if (ImGui::Selectable("Delete Scene"))
 		{
 			EventManager::GetSingleton()->deferredCall(RootexEvents::DeleteScene, m_ActionScene);
-			EventManager::GetSingleton()->deferredCall(EditorEvents::EditorCloseScene);
+			closeScene(nullptr);
 		}
 	}
 }
@@ -146,6 +151,13 @@ void InspectorDock::draw(float deltaMilliseconds)
 		{
 			if (m_OpenedScene)
 			{
+				String addition;
+				if (m_OpenedScene->getImportStyle() == Scene::ImportStyle::External)
+				{
+					addition = ICON_ROOTEX_EXTERNAL_LINK;
+					ImGui::PushStyleColor(ImGuiCol_Header, (ImVec4)EditorSystem::GetSingleton()->getLinkColor());
+				}
+
 				if (m_IsNameBeingEdited)
 				{
 					if (ImGui::InputText("Scene Name", &m_OpenedSceneName, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
@@ -161,12 +173,17 @@ void InspectorDock::draw(float deltaMilliseconds)
 				else
 				{
 					EditorSystem::GetSingleton()->pushBoldFont();
-					ImGui::TreeNodeEx(m_OpenedScene->getFullName().c_str(), ImGuiTreeNodeFlags_CollapsingHeader | ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_Selected);
+					ImGui::TreeNodeEx((m_OpenedScene->getFullName() + " " + addition).c_str(), ImGuiTreeNodeFlags_CollapsingHeader | ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_Selected);
 					if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
 					{
 						m_IsNameBeingEdited = true;
 					}
 					EditorSystem::GetSingleton()->popFont();
+
+					if (m_OpenedScene->getImportStyle() == Scene::ImportStyle::External)
+					{
+						ImGui::TextColored(EditorSystem::GetSingleton()->getLinkColor(), "%s", ("Imported from " + m_OpenedScene->getScenePath()).c_str());
+					}
 				}
 
 				ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
@@ -197,28 +214,32 @@ void InspectorDock::draw(float deltaMilliseconds)
 
 				ImGui::Separator();
 
-				if (Entity* entity = m_OpenedScene->getEntity())
-				{
-					entity->draw();
+				Entity& entity = m_OpenedScene->getEntity();
 
-					EditorSystem::GetSingleton()->pushBoldFont();
-					if (ImGui::BeginTabBar("Components", ImGuiTabBarFlags_AutoSelectNewTabs | ImGuiTabBarFlags_NoCloseWithMiddleMouseButton | ImGuiTabBarFlags_FittingPolicyMask_))
+				entity.draw();
+
+				EditorSystem::GetSingleton()->pushBoldFont();
+				if (ImGui::BeginTabBar("Components", ImGuiTabBarFlags_AutoSelectNewTabs | ImGuiTabBarFlags_NoCloseWithMiddleMouseButton | ImGuiTabBarFlags_FittingPolicyMask_))
+				{
+					ImGui::PushStyleColor(ImGuiCol_Text, (const ImVec4&)EditorSystem::GetSingleton()->getNormalColor());
+					for (auto& [componentID, component] : entity.getAllComponents())
 					{
-						ImGui::PushStyleColor(ImGuiCol_Text, (const ImVec4&)EditorSystem::GetSingleton()->getNormalColor());
-						for (auto& component : entity->getAllComponents())
+						if (ImGui::BeginTabItem(component->getName(), nullptr, ImGuiTabItemFlags_NoCloseWithMiddleMouseButton))
 						{
-							if (ImGui::BeginTabItem(component.second->getName(), nullptr, ImGuiTabItemFlags_NoCloseWithMiddleMouseButton))
-							{
-								EditorSystem::GetSingleton()->pushRegularFont();
-								component.second->draw();
-								EditorSystem::GetSingleton()->popFont();
-								ImGui::EndTabItem();
-							}
+							EditorSystem::GetSingleton()->pushRegularFont();
+							component->draw();
+							EditorSystem::GetSingleton()->popFont();
+							ImGui::EndTabItem();
 						}
-						ImGui::PopStyleColor();
-						ImGui::EndTabBar();
 					}
-					EditorSystem::GetSingleton()->popFont();
+					ImGui::PopStyleColor();
+					ImGui::EndTabBar();
+				}
+				EditorSystem::GetSingleton()->popFont();
+
+				if (m_OpenedScene->getImportStyle() == Scene::ImportStyle::External)
+				{
+					ImGui::PopStyleColor();
 				}
 			}
 		}

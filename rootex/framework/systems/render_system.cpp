@@ -1,5 +1,6 @@
 #include "render_system.h"
 
+#include "core/resource_loader.h"
 #include "components/visual/effect/fog_component.h"
 #include "components/visual/effect/sky_component.h"
 #include "components/visual/model/grid_model_component.h"
@@ -7,9 +8,11 @@
 #include "renderer/shaders/register_locations_vertex_shader.h"
 #include "renderer/shaders/register_locations_pixel_shader.h"
 #include "light_system.h"
-#include "renderer/material_library.h"
 #include "application.h"
 #include "scene_loader.h"
+
+#define LINE_MAX_VERTEX_COUNT 1000
+#define LINE_VERTEX_COUNT 2
 
 RenderSystem* RenderSystem::GetSingleton()
 {
@@ -20,21 +23,21 @@ RenderSystem* RenderSystem::GetSingleton()
 RenderSystem::RenderSystem()
     : System("RenderSystem", UpdateOrder::Render, true)
     , m_Renderer(new Renderer())
-    , m_VSProjectionConstantBuffer(nullptr)
-    , m_VSPerFrameConstantBuffer(nullptr)
-    , m_PSPerFrameConstantBuffer(nullptr)
-    , m_PSPerLevelConstantBuffer(nullptr)
     , m_IsEditorRenderPassEnabled(false)
 {
-	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::OpenedScene, onOpenedScene);
+	m_Binder.bind(RootexEvents::OpenedScene, this, &RenderSystem::onOpenedScene);
 
-	m_Camera = SceneLoader::GetSingleton()->getRootScene()->getEntity()->getComponent<CameraComponent>();
+	m_Camera = SceneLoader::GetSingleton()->getRootScene()->getEntity().getComponent<CameraComponent>();
 	m_TransformationStack.push_back(Matrix::Identity);
-	setProjectionConstantBuffers();
 
-	m_LineMaterial = std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetMaterial("rootex/assets/materials/line.rmat"));
-	m_CurrentFrameLines.m_Endpoints.reserve(LINE_INITIAL_RENDER_CACHE * 2 * 3);
-	m_CurrentFrameLines.m_Indices.reserve(LINE_INITIAL_RENDER_CACHE * 2);
+	m_LineMaterial = ResourceLoader::CreateBasicMaterialResourceFile("rootex/assets/materials/line.basic.rmat");
+	m_CurrentFrameLines.m_Endpoints.reserve(LINE_MAX_VERTEX_COUNT * LINE_VERTEX_COUNT * 3);
+	m_CurrentFrameLines.m_Indices.reserve(LINE_MAX_VERTEX_COUNT * LINE_VERTEX_COUNT);
+
+	m_PerFrameVSCB = RenderingDevice::GetSingleton()->createBuffer(PerFrameVSCB(), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
+	m_PerCameraChangeVSCB = RenderingDevice::GetSingleton()->createBuffer(Matrix(), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
+	m_PerFramePSCB = RenderingDevice::GetSingleton()->createBuffer(PerFramePSCB(), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
+	m_PerScenePSCB = RenderingDevice::GetSingleton()->createBuffer(PerScenePSCB(), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
 }
 
 void RenderSystem::recoverLostDevice()
@@ -52,14 +55,7 @@ void RenderSystem::setConfig(const SceneSettings& sceneSettings)
 		return;
 	}
 
-	if (!cameraScene->getEntity())
-	{
-		ERR("Entity not found in camera scene " + cameraScene->getFullName());
-		restoreCamera();
-		return;
-	}
-
-	CameraComponent* camera = cameraScene->getEntity()->getComponent<CameraComponent>();
+	CameraComponent* camera = cameraScene->getEntity().getComponent<CameraComponent>();
 	if (!camera)
 	{
 		ERR("CameraComponent not found on entity " + cameraScene->getFullName());
@@ -68,43 +64,114 @@ void RenderSystem::setConfig(const SceneSettings& sceneSettings)
 	}
 
 	setCamera(camera);
+
+	calculateTransforms(SceneLoader::GetSingleton()->getRootScene());
 }
 
 void RenderSystem::calculateTransforms(Scene* scene)
 {
-	if (Entity* entity = scene->getEntity())
+	Entity& entity = scene->getEntity();
+	if (TransformComponent* transform = entity.getComponent<TransformComponent>())
 	{
-		if (TransformComponent* transform = entity->getComponent<TransformComponent>())
+		int passDown = transform->getPassDowns();
+
+		if (passDown == (int)TransformPassDown::All)
 		{
-			pushMatrix(entity->getComponent<TransformComponent>()->getLocalTransform());
+			pushMatrix(transform->getLocalTransform());
 		}
 		else
 		{
-			pushMatrix(Matrix::Identity);
-		}
-
-		for (auto& child : scene->getChildren())
-		{
-			if (Entity* childEntity = child->getEntity())
+			Matrix matrix = Matrix::Identity;
+			if (passDown & (int)TransformPassDown::Position)
 			{
-				if (TransformComponent* childTransform = childEntity->getComponent<TransformComponent>())
-				{
-					childTransform->setParentAbsoluteTransform(getCurrentMatrix());
-				}
+				matrix = Matrix::CreateTranslation(transform->getPosition()) * matrix;
 			}
-
-			calculateTransforms(child.get());
+			if (passDown & (int)TransformPassDown::Rotation)
+			{
+				matrix = Matrix::CreateFromQuaternion(transform->getRotation()) * matrix;
+			}
+			if (passDown & (int)TransformPassDown::Scale)
+			{
+				matrix = Matrix::CreateScale(transform->getScale()) * matrix;
+			}
+			pushMatrix(matrix);
 		}
-		popMatrix();
 	}
+	else
+	{
+		pushMatrix(Matrix::Identity);
+	}
+
+	for (auto& child : scene->getChildren())
+	{
+		Entity& childEntity = child->getEntity();
+		if (TransformComponent* childTransform = childEntity.getComponent<TransformComponent>())
+		{
+			childTransform->setParentAbsoluteTransform(getCurrentMatrix());
+		}
+
+		calculateTransforms(child.get());
+	}
+	popMatrix();
 }
 
 void RenderSystem::renderPassRender(float deltaMilliseconds, RenderPass renderPass)
 {
-	renderComponents<ModelComponent>(deltaMilliseconds, renderPass);
-	renderComponents<GridModelComponent>(deltaMilliseconds, renderPass);
-	renderComponents<CPUParticlesComponent>(deltaMilliseconds, renderPass);
-	renderComponents<AnimatedModelComponent>(deltaMilliseconds, renderPass);
+	for (auto& mc : ECSFactory::GetAllModelComponent())
+	{
+		if (mc.getRenderPass() & (unsigned int)renderPass)
+		{
+			mc.preRender(deltaMilliseconds);
+			if (mc.isVisible())
+			{
+				Vector3 viewDistance = mc.getTransformComponent()->getAbsolutePosition() - m_Camera->getAbsolutePosition();
+				mc.render(viewDistance.Length());
+			}
+			mc.postRender();
+		}
+	}
+
+	for (auto& mc : ECSFactory::GetAllGridModelComponent())
+	{
+		if (mc.getRenderPass() & (unsigned int)renderPass)
+		{
+			mc.preRender(deltaMilliseconds);
+			if (mc.isVisible())
+			{
+				Vector3 viewDistance = mc.getTransformComponent()->getAbsolutePosition() - m_Camera->getAbsolutePosition();
+				mc.render(viewDistance.Length());
+			}
+			mc.postRender();
+		}
+	}
+
+	for (auto& mc : ECSFactory::GetAllCPUParticlesComponent())
+	{
+		if (mc.getRenderPass() & (unsigned int)renderPass)
+		{
+			mc.preRender(deltaMilliseconds);
+			if (mc.isVisible())
+			{
+				Vector3 viewDistance = mc.getTransformComponent()->getAbsolutePosition() - m_Camera->getAbsolutePosition();
+				mc.render(viewDistance.Length());
+			}
+			mc.postRender();
+		}
+	}
+
+	for (auto& mc : ECSFactory::GetAllAnimatedModelComponent())
+	{
+		if (mc.getRenderPass() & (unsigned int)renderPass)
+		{
+			mc.preRender(deltaMilliseconds);
+			if (mc.isVisible())
+			{
+				Vector3 viewDistance = mc.getTransformComponent()->getAbsolutePosition() - m_Camera->getAbsolutePosition();
+				mc.render(viewDistance.Length());
+			}
+			mc.postRender();
+		}
+	}
 }
 
 void RenderSystem::update(float deltaMilliseconds)
@@ -119,17 +186,16 @@ void RenderSystem::update(float deltaMilliseconds)
 	float fogEnd = -1000.0f;
 	{
 		ZoneNamedN(fogCalculation, "Fog", true);
-		if (!ECSFactory::GetComponents<FogComponent>().empty())
+		if (!ECSFactory::GetAllFogComponent().empty())
 		{
-			FogComponent* firstFog = (FogComponent*)ECSFactory::GetComponents<FogComponent>().front();
-			clearColor = firstFog->getColor();
+			FogComponent& firstFog = ECSFactory::GetAllFogComponent().front();
+			clearColor = firstFog.getColor();
 
-			for (auto& c : ECSFactory::GetComponents<FogComponent>())
+			for (auto& fog : ECSFactory::GetAllFogComponent())
 			{
-				FogComponent* fog = (FogComponent*)c;
-				clearColor = Color::Lerp(clearColor, fog->getColor(), 0.5f);
-				fogStart = fog->getNearDistance();
-				fogEnd = fog->getFarDistance();
+				clearColor = Color::Lerp(clearColor, fog.getColor(), 0.5f);
+				fogStart = fog.getNearDistance();
+				fogEnd = fog.getFarDistance();
 			}
 		}
 		Application::GetSingleton()->getWindow()->clearOffScreen(clearColor);
@@ -139,16 +205,16 @@ void RenderSystem::update(float deltaMilliseconds)
 		calculateTransforms(SceneLoader::GetSingleton()->getRootScene());
 	}
 	{
-		ZoneNamedN(stateSet, "Render State Reset", true);
+		ZoneNamedN(stateSet, "Render PlayerState Reset", true);
 		// Render geometry
 		RenderingDevice::GetSingleton()->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		RenderingDevice::GetSingleton()->setCurrentRS();
 		RenderingDevice::GetSingleton()->setDSS();
 		RenderingDevice::GetSingleton()->setAlphaBS();
 
-		perFrameVSCBBinds(fogStart, fogEnd);
+		setPerFrameVSCBs(fogStart, fogEnd);
 		const Color& fogColor = clearColor;
-		perFramePSCBBinds(fogColor);
+		setPerFramePSCBs(fogColor);
 	}
 	{
 		ZoneNamedN(renderPasses, "Render Passes", true);
@@ -163,10 +229,6 @@ void RenderSystem::update(float deltaMilliseconds)
 			ZoneNamedN(basicRenderPass, "Basic Render Pass", true);
 			renderPassRender(deltaMilliseconds, RenderPass::Basic);
 		}
-		{
-			ZoneNamedN(alphaRenderPass, "Alpha Render Pass", true);
-			renderPassRender(deltaMilliseconds, RenderPass::Alpha);
-		}
 		renderLines();
 	}
 	{
@@ -175,12 +237,11 @@ void RenderSystem::update(float deltaMilliseconds)
 		RenderingDevice::RasterizerState currentRS = RenderingDevice::GetSingleton()->getRSType();
 		RenderingDevice::GetSingleton()->setRSType(RenderingDevice::RasterizerState::Sky);
 		RenderingDevice::GetSingleton()->setCurrentRS();
-		for (auto& c : ECSFactory::GetComponents<SkyComponent>())
+		for (auto& sky : ECSFactory::GetAllSkyComponent())
 		{
-			SkyComponent* sky = (SkyComponent*)c;
-			for (auto& [material, meshes] : sky->getSkySphere()->getMeshes())
+			for (auto& [material, meshes] : sky.getSkySphere()->getMeshes())
 			{
-				m_Renderer->bind(sky->getSkyMaterial());
+				m_Renderer->bind(sky.getSkyMaterial());
 				for (auto& mesh : meshes)
 				{
 					m_Renderer->draw(mesh.m_VertexBuffer.get(), mesh.getLOD(1.0f).get());
@@ -189,6 +250,10 @@ void RenderSystem::update(float deltaMilliseconds)
 		}
 		RenderingDevice::GetSingleton()->setRSType(currentRS);
 		RenderingDevice::GetSingleton()->disableSkyDSS();
+	}
+	{
+		ZoneNamedN(alphaRenderPass, "Alpha Render Pass", true);
+		renderPassRender(deltaMilliseconds, RenderPass::Alpha);
 	}
 }
 
@@ -200,7 +265,7 @@ void RenderSystem::renderLines()
 
 		enableLineRenderMode();
 
-		VertexBuffer vb(m_CurrentFrameLines.m_Endpoints);
+		VertexBuffer vb((const char*)m_CurrentFrameLines.m_Endpoints.data(), m_CurrentFrameLines.m_Endpoints.size() / 3, sizeof(float) * 3, D3D11_USAGE_IMMUTABLE, 0);
 		IndexBuffer ib(m_CurrentFrameLines.m_Indices);
 
 		m_Renderer->draw(&vb, &ib);
@@ -347,27 +412,33 @@ void RenderSystem::resetDefaultRasterizer()
 	RenderingDevice::GetSingleton()->setRSType(RenderingDevice::RasterizerState::Default);
 }
 
-void RenderSystem::setProjectionConstantBuffers()
+void RenderSystem::setPerCameraVSCBs()
 {
 	const Matrix& projection = getCamera()->getProjectionMatrix();
-	Material::SetVSConstantBuffer(projection.Transpose(), m_VSProjectionConstantBuffer, PER_CAMERA_CHANGE_VS_CPP);
+	RenderingDevice::GetSingleton()->editBuffer(projection.Transpose(), m_PerCameraChangeVSCB.Get());
+
+	RenderingDevice::GetSingleton()->setVSCB(PER_CAMERA_CHANGE_VS_CPP, 1, m_PerCameraChangeVSCB.GetAddressOf());
 }
 
-void RenderSystem::perFrameVSCBBinds(float fogStart, float fogEnd)
+void RenderSystem::setPerFrameVSCBs(float fogStart, float fogEnd)
 {
 	const Matrix& view = getCamera()->getViewMatrix();
-	Material::SetVSConstantBuffer(PerFrameVSCB({ view.Transpose(), -fogStart, -fogEnd }), m_VSPerFrameConstantBuffer, PER_FRAME_VS_CPP);
+	RenderingDevice::GetSingleton()->editBuffer(PerFrameVSCB { view.Transpose(), -fogStart, -fogEnd }, m_PerFrameVSCB.Get());
+
+	RenderingDevice::GetSingleton()->setVSCB(PER_FRAME_VS_CPP, 1, m_PerFrameVSCB.GetAddressOf());
 }
 
-void RenderSystem::perFramePSCBBinds(const Color& fogColor)
+void RenderSystem::setPerFramePSCBs(const Color& fogColor)
 {
 	PerFramePSCB perFrame;
 	perFrame.lights = LightSystem::GetSingleton()->getDynamicLights();
 	perFrame.fogColor = fogColor;
-	Material::SetPSConstantBuffer(perFrame, m_PSPerFrameConstantBuffer, PER_FRAME_PS_CPP);
+	RenderingDevice::GetSingleton()->editBuffer(perFrame, m_PerFramePSCB.Get());
+
+	RenderingDevice::GetSingleton()->setPSCB(PER_FRAME_PS_CPP, 1, m_PerFramePSCB.GetAddressOf());
 }
 
-void RenderSystem::perScenePSCBBinds()
+void RenderSystem::setPerScenePSCBs()
 {
 	calculateTransforms(SceneLoader::GetSingleton()->getRootScene());
 	updateStaticLights();
@@ -375,14 +446,16 @@ void RenderSystem::perScenePSCBBinds()
 
 void RenderSystem::updateStaticLights()
 {
-	PerLevelPSCB perScene;
+	PerScenePSCB perScene;
 	perScene.staticLights = LightSystem::GetSingleton()->getStaticPointLights();
-	Material::SetPSConstantBuffer(perScene, m_PSPerLevelConstantBuffer, PER_SCENE_PS_CPP);
+	RenderingDevice::GetSingleton()->editBuffer(perScene, m_PerScenePSCB.Get());
+
+	RenderingDevice::GetSingleton()->setPSCB(PER_SCENE_PS_CPP, 1, m_PerScenePSCB.GetAddressOf());
 }
 
 void RenderSystem::updatePerSceneBinds()
 {
-	perScenePSCBBinds();
+	setPerScenePSCBs();
 }
 
 void RenderSystem::enableLineRenderMode()
@@ -400,7 +473,7 @@ void RenderSystem::setCamera(CameraComponent* camera)
 	if (camera)
 	{
 		m_Camera = camera;
-		setProjectionConstantBuffers();
+		setPerCameraVSCBs();
 	}
 }
 
@@ -408,7 +481,7 @@ void RenderSystem::restoreCamera()
 {
 	if (SceneLoader::GetSingleton()->getRootScene())
 	{
-		setCamera(SceneLoader::GetSingleton()->getRootScene()->getEntity()->getComponent<CameraComponent>());
+		setCamera(SceneLoader::GetSingleton()->getRootScene()->getEntity().getComponent<CameraComponent>());
 	}
 }
 
@@ -431,14 +504,13 @@ void RenderSystem::draw()
 
 	ImGui::Text("Camera");
 	ImGui::NextColumn();
-	if (ImGui::BeginCombo("##Camera", RenderSystem::GetSingleton()->getCamera()->getOwner()->getFullName().c_str()))
+	if (ImGui::BeginCombo("##Camera", RenderSystem::GetSingleton()->getCamera()->getOwner().getFullName().c_str()))
 	{
-		for (auto& c : ECSFactory::GetComponents<CameraComponent>())
+		for (auto& camera : ECSFactory::GetAllCameraComponent())
 		{
-			CameraComponent* camera = (CameraComponent*)c;
-			if (ImGui::MenuItem(camera->getOwner()->getFullName().c_str()))
+			if (ImGui::MenuItem(camera.getOwner().getFullName().c_str()))
 			{
-				RenderSystem::GetSingleton()->setCamera(camera);
+				RenderSystem::GetSingleton()->setCamera(&camera);
 			}
 		}
 

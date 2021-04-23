@@ -5,9 +5,6 @@
             "ID": 16,
             "children": [],
             "entity": {
-                "Entity": {
-                    "script": null
-                },
                 "components": {
                     "DirectionalLightComponent": {
                         "ambientColor": {
@@ -37,6 +34,8 @@
                                 "z": 0.5
                             }
                         },
+                        "overrideBoundingBox": false,
+                        "passDown": 7,
                         "position": {
                             "x": 0.7700214982032776,
                             "y": 0.0,
@@ -54,10 +53,12 @@
                             "z": 1.0001286268234253
                         }
                     }
-                }
+                },
+                "script": null
             },
-            "file": "",
+            "importStyle": 0,
             "name": "Light",
+            "sceneFile": "",
             "settings": {
                 "camera": 1,
                 "inputSchemes": {},
@@ -70,16 +71,13 @@
             "ID": 17,
             "children": [],
             "entity": {
-                "Entity": {
-                    "script": null
-                },
                 "components": {
                     "StaticPointLightComponent": {
                         "ambientColor": {
                             "a": 1.0,
-                            "b": 0.5,
-                            "g": 0.5,
-                            "r": 0.5
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
                         },
                         "attConst": 0.04500000178813934,
                         "attLin": 1.0,
@@ -106,6 +104,8 @@
                                 "z": 0.5
                             }
                         },
+                        "overrideBoundingBox": false,
+                        "passDown": 7,
                         "position": {
                             "x": -1251.62255859375,
                             "y": 145.1632537841797,
@@ -123,10 +123,12 @@
                             "z": 1.0003547668457031
                         }
                     }
-                }
+                },
+                "script": null
             },
-            "file": "",
+            "importStyle": 0,
             "name": "StaticLight",
+            "sceneFile": "",
             "settings": {
                 "camera": 1,
                 "inputSchemes": {},
@@ -139,16 +141,13 @@
             "ID": 18,
             "children": [],
             "entity": {
-                "Entity": {
-                    "script": null
-                },
                 "components": {
                     "StaticPointLightComponent": {
                         "ambientColor": {
                             "a": 1.0,
-                            "b": 0.5,
-                            "g": 0.5,
-                            "r": 0.5
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
                         },
                         "attConst": 0.04500000178813934,
                         "attLin": 1.0,
@@ -175,6 +174,8 @@
                                 "z": 0.5
                             }
                         },
+                        "overrideBoundingBox": false,
+                        "passDown": 7,
                         "position": {
                             "x": -538.7600708007813,
                             "y": 116.14680480957031,
@@ -192,10 +193,12 @@
                             "z": 1.00058114528656
                         }
                     }
-                }
+                },
+                "script": null
             },
-            "file": "",
+            "importStyle": 0,
             "name": "StaticLight",
+            "sceneFile": "",
             "settings": {
                 "camera": 1,
                 "inputSchemes": {},
@@ -208,16 +211,13 @@
             "ID": 19,
             "children": [],
             "entity": {
-                "Entity": {
-                    "script": null
-                },
                 "components": {
                     "StaticPointLightComponent": {
                         "ambientColor": {
                             "a": 1.0,
-                            "b": 0.5,
-                            "g": 0.5,
-                            "r": 0.5
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
                         },
                         "attConst": 0.04500000178813934,
                         "attLin": 1.0,
@@ -244,6 +244,8 @@
                                 "z": 0.5
                             }
                         },
+                        "overrideBoundingBox": false,
+                        "passDown": 7,
                         "position": {
                             "x": -158.13319396972656,
                             "y": 116.14904022216797,
@@ -261,10 +263,12 @@
                             "z": 1.0006088018417358
                         }
                     }
-                }
+                },
+                "script": null
             },
-            "file": "",
+            "importStyle": 0,
             "name": "StaticLight",
+            "sceneFile": "",
             "settings": {
                 "camera": 1,
                 "inputSchemes": {},
@@ -277,16 +281,13 @@
             "ID": 20,
             "children": [],
             "entity": {
-                "Entity": {
-                    "script": null
-                },
                 "components": {
                     "StaticPointLightComponent": {
                         "ambientColor": {
                             "a": 1.0,
-                            "b": 0.5,
-                            "g": 0.5,
-                            "r": 0.5
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
                         },
                         "attConst": 0.04500000178813934,
                         "attLin": 1.0,
@@ -313,6 +314,8 @@
                                 "z": 0.5
                             }
                         },
+                        "overrideBoundingBox": false,
+                        "passDown": 7,
                         "position": {
                             "x": -725.975830078125,
                             "y": 119.38725280761719,
@@ -330,10 +333,12 @@
                             "z": 1.000769853591919
                         }
                     }
-                }
+                },
+                "script": null
             },
-            "file": "",
+            "importStyle": 0,
             "name": "StaticLight",
+            "sceneFile": "",
             "settings": {
                 "camera": 1,
                 "inputSchemes": {},
@@ -346,17 +351,16 @@
             "ID": 21,
             "children": [],
             "entity": {
-                "Entity": {
-                    "script": null
-                },
                 "components": {
                     "UIComponent": {
                         "filePath": "game/assets/ui/fade_in_from_black/fade_in_from_black.rml"
                     }
-                }
+                },
+                "script": null
             },
-            "file": "",
+            "importStyle": 0,
             "name": "FadeIn",
+            "sceneFile": "",
             "settings": {
                 "camera": 1,
                 "inputSchemes": {},
@@ -369,18 +373,17 @@
             "ID": 15,
             "children": [],
             "entity": {
-                "Entity": {
-                    "script": null
-                },
                 "components": {
-                    "AudioListenerComponent": null,
+                    "AudioListenerComponent": {
+                        "volume": 1.0
+                    },
                     "CameraComponent": {
                         "aspectRatio": {
                             "x": 16.0,
                             "y": 9.0
                         },
                         "far": 100.0,
-                        "fov": 0.7853981852531433,
+                        "fov": 0.6108652949333191,
                         "near": 0.10000000149011612,
                         "postProcessingDetails": {
                             "assaoAdaptiveQualityLimit": 0.16699999570846558,
@@ -395,17 +398,17 @@
                             "assaoShadowMultiplier": 0.4699999988079071,
                             "assaoShadowPower": 4.159999847412109,
                             "assaoSharpness": 1.0,
-                            "bloomBase": 1.0,
+                            "bloomBase": 0.3799999952316284,
                             "bloomBaseSaturation": 1.0,
-                            "bloomBrightness": 1.0,
-                            "bloomSaturation": 1.0,
-                            "bloomSize": 1.0,
-                            "bloomThreshold": 0.800000011920929,
-                            "bloomValue": 1.0,
-                            "gaussianBlurMultiplier": 1.0,
+                            "bloomBrightness": 2.180000066757202,
+                            "bloomSaturation": 1.0399999618530273,
+                            "bloomSize": 6.429999828338623,
+                            "bloomThreshold": 0.550000011920929,
+                            "bloomValue": 1.399999976158142,
+                            "gaussianBlurMultiplier": 1.0199999809265137,
                             "isASSAO": true,
-                            "isBloom": false,
-                            "isFXAA": true,
+                            "isBloom": true,
+                            "isFXAA": false,
                             "isGaussianBlur": false,
                             "isMonochrome": false,
                             "isPostProcessing": true,
@@ -500,27 +503,31 @@
                                 "z": 0.5
                             }
                         },
+                        "overrideBoundingBox": false,
+                        "passDown": 7,
                         "position": {
-                            "x": 60.35546875,
+                            "x": -485.73443603515625,
                             "y": 174.26275634765625,
                             "z": -17.46019172668457
                         },
                         "rotation": {
-                            "w": 0.7069492340087891,
+                            "w": 0.026943422853946686,
                             "x": 0.0,
-                            "y": 0.7072643041610718,
+                            "y": 0.9996369481086731,
                             "z": 0.0
                         },
                         "scale": {
-                            "x": 1.0006250143051147,
-                            "y": 1.0007661581039429,
-                            "z": 1.0006250143051147
+                            "x": 1.0007355213165283,
+                            "y": 1.0009022951126099,
+                            "z": 1.0007355213165283
                         }
                     }
-                }
+                },
+                "script": null
             },
-            "file": "",
+            "importStyle": 0,
             "name": "Camera",
+            "sceneFile": "",
             "settings": {
                 "camera": 1,
                 "inputSchemes": {},
@@ -531,9 +538,6 @@
         }
     ],
     "entity": {
-        "Entity": {
-            "script": null
-        },
         "components": {
             "ModelComponent": {
                 "affectingStaticLights": [
@@ -547,31 +551,31 @@
                 "lodDistance": 123.0,
                 "lodEnable": true,
                 "materialOverrides": {
-                    "game/assets/materials/Material__25.rmat": "game/assets/materials/Material__25.rmat",
-                    "game/assets/materials/Material__298.rmat": "game/assets/materials/Material__298.rmat",
-                    "game/assets/materials/Material__47.rmat": "game/assets/materials/Material__47.rmat",
-                    "game/assets/materials/VasePlant.rmat": "game/assets/materials/VasePlant.rmat",
-                    "game/assets/materials/arch.rmat": "game/assets/materials/arch.rmat",
-                    "game/assets/materials/bricks.rmat": "game/assets/materials/bricks.rmat",
-                    "game/assets/materials/ceiling.rmat": "game/assets/materials/ceiling.rmat",
-                    "game/assets/materials/chain.rmat": "game/assets/materials/chain.rmat",
-                    "game/assets/materials/column_a.rmat": "game/assets/materials/column_a.rmat",
-                    "game/assets/materials/column_b.rmat": "game/assets/materials/column_b.rmat",
-                    "game/assets/materials/column_c.rmat": "game/assets/materials/column_c.rmat",
-                    "game/assets/materials/details.rmat": "game/assets/materials/details.rmat",
-                    "game/assets/materials/fabric_a.rmat": "game/assets/materials/fabric_a.rmat",
-                    "game/assets/materials/fabric_c.rmat": "game/assets/materials/fabric_c.rmat",
-                    "game/assets/materials/fabric_d.rmat": "game/assets/materials/fabric_d.rmat",
-                    "game/assets/materials/fabric_e.rmat": "game/assets/materials/fabric_e.rmat",
-                    "game/assets/materials/fabric_f.rmat": "game/assets/materials/fabric_f.rmat",
-                    "game/assets/materials/fabric_g.rmat": "game/assets/materials/fabric_g.rmat",
-                    "game/assets/materials/flagpole.rmat": "game/assets/materials/flagpole.rmat",
-                    "game/assets/materials/floor.rmat": "game/assets/materials/floor.rmat",
-                    "game/assets/materials/leaf.rmat": "game/assets/materials/leaf.rmat",
-                    "game/assets/materials/roof.rmat": "game/assets/materials/roof.rmat",
-                    "game/assets/materials/vase.rmat": "game/assets/materials/vase.rmat",
-                    "game/assets/materials/vase_hanging.rmat": "game/assets/materials/vase_hanging.rmat",
-                    "game/assets/materials/vase_round.rmat": "game/assets/materials/vase_round.rmat"
+                    "game/assets/materials/sponza/Material__25.basic.rmat": "game/assets/materials/sponza/Material__25.basic.rmat",
+                    "game/assets/materials/sponza/Material__298.basic.rmat": "game/assets/materials/sponza/Material__298.basic.rmat",
+                    "game/assets/materials/sponza/Material__47.basic.rmat": "game/assets/materials/sponza/Material__47.basic.rmat",
+                    "game/assets/materials/sponza/VasePlant.basic.rmat": "game/assets/materials/sponza/VasePlant.basic.rmat",
+                    "game/assets/materials/sponza/arch.basic.rmat": "game/assets/materials/sponza/arch.basic.rmat",
+                    "game/assets/materials/sponza/bricks.basic.rmat": "game/assets/materials/sponza/bricks.basic.rmat",
+                    "game/assets/materials/sponza/ceiling.basic.rmat": "game/assets/materials/sponza/ceiling.basic.rmat",
+                    "game/assets/materials/sponza/chain.basic.rmat": "game/assets/materials/sponza/chain.basic.rmat",
+                    "game/assets/materials/sponza/column_a.basic.rmat": "game/assets/materials/sponza/column_a.basic.rmat",
+                    "game/assets/materials/sponza/column_b.basic.rmat": "game/assets/materials/sponza/column_b.basic.rmat",
+                    "game/assets/materials/sponza/column_c.basic.rmat": "game/assets/materials/sponza/column_c.basic.rmat",
+                    "game/assets/materials/sponza/details.basic.rmat": "game/assets/materials/sponza/details.basic.rmat",
+                    "game/assets/materials/sponza/fabric_a.basic.rmat": "game/assets/materials/sponza/fabric_a.basic.rmat",
+                    "game/assets/materials/sponza/fabric_c.basic.rmat": "game/assets/materials/sponza/fabric_c.basic.rmat",
+                    "game/assets/materials/sponza/fabric_d.basic.rmat": "game/assets/materials/sponza/fabric_d.basic.rmat",
+                    "game/assets/materials/sponza/fabric_e.basic.rmat": "game/assets/materials/sponza/fabric_e.basic.rmat",
+                    "game/assets/materials/sponza/fabric_f.basic.rmat": "game/assets/materials/sponza/fabric_f.basic.rmat",
+                    "game/assets/materials/sponza/fabric_g.basic.rmat": "game/assets/materials/sponza/fabric_g.basic.rmat",
+                    "game/assets/materials/sponza/flagpole.basic.rmat": "game/assets/materials/sponza/flagpole.basic.rmat",
+                    "game/assets/materials/sponza/floor.basic.rmat": "game/assets/materials/sponza/floor.basic.rmat",
+                    "game/assets/materials/sponza/leaf.basic.rmat": "game/assets/materials/sponza/leaf.basic.rmat",
+                    "game/assets/materials/sponza/roof.basic.rmat": "game/assets/materials/sponza/roof.basic.rmat",
+                    "game/assets/materials/sponza/vase.basic.rmat": "game/assets/materials/sponza/vase.basic.rmat",
+                    "game/assets/materials/sponza/vase_hanging.basic.rmat": "game/assets/materials/sponza/vase_hanging.basic.rmat",
+                    "game/assets/materials/sponza/vase_round.basic.rmat": "game/assets/materials/sponza/vase_round.basic.rmat"
                 },
                 "renderPass": 1,
                 "resFile": "game/assets/sponza/sponza.obj"
@@ -589,6 +593,8 @@
                         "z": 1144.1165771484375
                     }
                 },
+                "overrideBoundingBox": false,
+                "passDown": 7,
                 "position": {
                     "x": 0.0,
                     "y": 0.0,
@@ -609,10 +615,12 @@
             "UIComponent": {
                 "filePath": "rootex/assets/rml/demo.rml"
             }
-        }
+        },
+        "script": null
     },
-    "file": "game/assets/scenes/model.scene.json",
+    "importStyle": 0,
     "name": "model",
+    "sceneFile": "game/assets/scenes/model.scene.json",
     "settings": {
         "camera": 15,
         "inputSchemes": {

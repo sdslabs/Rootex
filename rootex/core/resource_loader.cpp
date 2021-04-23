@@ -39,6 +39,14 @@ Ref<ResourceFile> ResourceLoader::CreateResourceFile(const ResourceFile::Type& t
 		return CreateAnimatedModelResourceFile(path);
 	case ResourceFile::Type::CollisionModel:
 		return CreateCollisionModelResourceFile(path);
+	case ResourceFile::Type::BasicMaterial:
+		return CreateBasicMaterialResourceFile(path);
+	case ResourceFile::Type::InstancingBasicMaterial:
+		return CreateInstancingBasicMaterialResourceFile(path);
+	case ResourceFile::Type::AnimatedBasicMaterial:
+		return CreateAnimatedBasicMaterialResourceFile(path);
+	case ResourceFile::Type::SkyMaterial:
+		return CreateSkyMaterialResourceFile(path);
 	// Not in use due to threading issues
 	case ResourceFile::Type::ParticleEffect:
 	default:
@@ -87,10 +95,11 @@ int ResourceLoader::Preload(ResourceCollection paths, Atomic<int>& progress)
 
 	/// TODO: Fix the need for this dummy task (blocks the main thread if no resources are preloaded)
 	tasks.push_back(std::make_shared<Task>([]() {}));
+	progress++;
 
 	Application::GetSingleton()->getThreadPool().submit(tasks);
 
-	return tasks.size() - 1; // One less for the dummy task
+	return tasks.size();
 }
 
 void ResourceLoader::Persist(Ref<ResourceFile> res)
@@ -105,9 +114,48 @@ void ResourceLoader::ClearPersistentResources()
 	s_PersistentResources.clear();
 }
 
+void ResourceLoader::Initialize()
+{
+	BasicMaterialResourceFile::Load();
+	AnimatedBasicMaterialResourceFile::Load();
+	InstancingBasicMaterialResourceFile::Load();
+	SkyMaterialResourceFile::Load();
+}
+
+void ResourceLoader::Destroy()
+{
+	BasicMaterialResourceFile::Destroy();
+	AnimatedBasicMaterialResourceFile::Destroy();
+	InstancingBasicMaterialResourceFile::Destroy();
+	SkyMaterialResourceFile::Destroy();
+}
+
 const HashMap<ResourceFile::Type, Vector<Weak<ResourceFile>>>& ResourceLoader::GetResources()
 {
 	return s_ResourcesDataFiles;
+}
+
+const char* ResourceLoader::GetCreatableExtension(ResourceFile::Type type)
+{
+	if (CreatableFiles.find(type) != CreatableFiles.end())
+	{
+		return CreatableFiles.at(type);
+	}
+	return nullptr;
+}
+
+void ResourceLoader::SaveResources(ResourceFile::Type type)
+{
+	for (auto& file : s_ResourcesDataFiles[type])
+	{
+		if (Ref<ResourceFile> resFile = file.lock())
+		{
+			if (resFile->getPath().string().substr(0, 6) != "rootex")
+			{
+				resFile->save();
+			}
+		}
+	}
 }
 
 void ResourceLoader::ClearDeadResources()
@@ -138,6 +186,24 @@ Ref<TextResourceFile> ResourceLoader::CreateNewTextResourceFile(const String& pa
 		OS::CreateFileName(path);
 	}
 	return CreateTextResourceFile(path);
+}
+
+Ref<BasicMaterialResourceFile> ResourceLoader::CreateNewBasicMaterialResourceFile(const String& path)
+{
+	if (!OS::IsExists(path))
+	{
+		OS::CreateFileName(path);
+	}
+	return CreateBasicMaterialResourceFile(path);
+}
+
+Ref<AnimatedBasicMaterialResourceFile> ResourceLoader::CreateNewAnimatedBasicMaterialResourceFile(const String& path)
+{
+	if (!OS::IsExists(path))
+	{
+		OS::CreateFileName(path);
+	}
+	return CreateAnimatedBasicMaterialResourceFile(path);
 }
 
 Ref<LuaTextResourceFile> ResourceLoader::CreateLuaTextResourceFile(const String& path)
@@ -183,4 +249,68 @@ Ref<FontResourceFile> ResourceLoader::CreateFontResourceFile(const String& path)
 Ref<ParticleEffectResourceFile> ResourceLoader::CreateParticleEffectResourceFile(const String& path)
 {
 	return GetCachedResource<ParticleEffectResourceFile>(ResourceFile::Type::ParticleEffect, FilePath(path));
+}
+
+Ref<MaterialResourceFile> ResourceLoader::CreateMaterialResourceFile(const String& path)
+{
+	String extension;
+	int dotCount = 0;
+	for (int ch = path.size() - 1; ch >= 0; ch--)
+	{
+		if (path[ch] == '.')
+		{
+			dotCount++;
+			// When e.g. ".basic.rmat" has been found
+			if (dotCount == 2)
+			{
+				extension = path.substr(ch, path.size());
+				break;
+			}
+		}
+	}
+
+	if (extension.empty())
+	{
+		WARN("Couldn't deduce material type from file extension");
+		return nullptr;
+	}
+
+	if (IsFileSupported(extension, ResourceFile::Type::BasicMaterial))
+	{
+		return CreateBasicMaterialResourceFile(path);
+	}
+	if (IsFileSupported(extension, ResourceFile::Type::AnimatedBasicMaterial))
+	{
+		return CreateAnimatedBasicMaterialResourceFile(path);
+	}
+	if (IsFileSupported(extension, ResourceFile::Type::InstancingBasicMaterial))
+	{
+		return CreateInstancingBasicMaterialResourceFile(path);
+	}
+	if (IsFileSupported(extension, ResourceFile::Type::SkyMaterial))
+	{
+		return CreateSkyMaterialResourceFile(path);
+	}
+
+	return nullptr;
+}
+
+Ref<BasicMaterialResourceFile> ResourceLoader::CreateBasicMaterialResourceFile(const String& path)
+{
+	return GetCachedResource<BasicMaterialResourceFile>(ResourceFile::Type::BasicMaterial, FilePath(path));
+}
+
+Ref<InstancingBasicMaterialResourceFile> ResourceLoader::CreateInstancingBasicMaterialResourceFile(const String& path)
+{
+	return GetCachedResource<InstancingBasicMaterialResourceFile>(ResourceFile::Type::InstancingBasicMaterial, FilePath(path));
+}
+
+Ref<AnimatedBasicMaterialResourceFile> ResourceLoader::CreateAnimatedBasicMaterialResourceFile(const String& path)
+{
+	return GetCachedResource<AnimatedBasicMaterialResourceFile>(ResourceFile::Type::AnimatedBasicMaterial, FilePath(path));
+}
+
+Ref<SkyMaterialResourceFile> ResourceLoader::CreateSkyMaterialResourceFile(const String& path)
+{
+	return GetCachedResource<SkyMaterialResourceFile>(ResourceFile::Type::SkyMaterial, FilePath(path));
 }

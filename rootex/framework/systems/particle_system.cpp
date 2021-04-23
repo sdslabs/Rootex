@@ -1,7 +1,5 @@
 #include "particle_system.h"
 
-#include <codecvt>
-
 #include "components/visual/effect/particle_effect_component.h"
 #include "renderer/rendering_device.h"
 #include "systems/render_system.h"
@@ -40,7 +38,6 @@ Effekseer::Vector3D Vector3ToEffekseer(const Vector3& v)
 ParticleSystem::ParticleSystem()
     : System("ParticleSystem", UpdateOrder::Render, true)
     , m_TargetUPS(0.0f)
-    , m_FrameProgression(0.0f)
 {
 }
 
@@ -59,7 +56,10 @@ ParticleSystem* ParticleSystem::GetSingleton()
 
 bool ParticleSystem::initialize(const JSON::json& systemData)
 {
-	m_Renderer = EffekseerRendererDX11::Renderer::Create(RenderingDevice::GetSingleton()->getDevice(), RenderingDevice::GetSingleton()->getContext(), systemData["maxSquares"]);
+	m_Renderer = EffekseerRendererDX11::Renderer::Create(
+	    RenderingDevice::GetSingleton()->getDevice(),
+	    RenderingDevice::GetSingleton()->getContext(),
+	    systemData["maxSquares"]);
 	if (!m_Renderer)
 	{
 		ERR("Could not initialize Effekseer renderer");
@@ -100,12 +100,11 @@ bool ParticleSystem::initialize(const JSON::json& systemData)
 
 void ParticleSystem::begin()
 {
-	for (auto& c : ECSFactory::GetComponents<ParticleEffectComponent>())
+	for (auto& pec : ECSFactory::GetAllParticleEffectComponent())
 	{
-		ParticleEffectComponent* pec = (ParticleEffectComponent*)c;
-		if (pec->isPlayOnStart())
+		if (pec.isPlayOnStart())
 		{
-			pec->play();
+			pec.play();
 		}
 	}
 }
@@ -118,18 +117,15 @@ void ParticleSystem::update(float deltaMilliseconds)
 	m_Renderer->SetProjectionMatrix(cameraProj);
 	m_Renderer->SetCameraMatrix(MatrixToEffekseer44(camera->getViewMatrix()));
 
-	for (auto& c : ECSFactory::GetComponents<ParticleEffectComponent>())
+	for (auto& pec : ECSFactory::GetAllParticleEffectComponent())
 	{
-		ParticleEffectComponent* pec = (ParticleEffectComponent*)c;
-		if (pec->isMoving())
+		if (pec.isMoving())
 		{
-			setMatrix(pec->getHandle(), pec->getTransformComponent()->getAbsoluteTransform());
+			setMatrix(pec.getHandle(), pec.getTransformComponent()->getAbsoluteTransform());
 		}
 	}
 
-	m_FrameProgression += m_TargetUPS * (deltaMilliseconds * MS_TO_S);
-	m_Manager->Update(m_FrameProgression);
-	m_FrameProgression = 0.0f;
+	m_Manager->Update(m_TargetUPS * (deltaMilliseconds * MS_TO_S));
 
 	RenderingDevice::GetSingleton()->setAlphaBS();
 	RenderingDevice::GetSingleton()->setTemporaryUIRS();
@@ -171,13 +167,16 @@ bool ParticleSystem::getPaused(Effekseer::Handle handle)
 
 Effekseer::Effect* ParticleSystem::loadEffect(const String& path)
 {
-	static std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> convert;
-
-	std::wstring uPath = convert.from_bytes(path);
-	Effekseer::Effect* effect = Effekseer::Effect::Create(m_Manager, (const char16_t*)uPath.c_str());
+	std::wstring uPath = s_Convert.from_bytes(path);
+	Effekseer::Effect* effect = Effekseer::Effect::Create(m_Manager, (const char16_t*)uPath.c_str(), 1.0f);
 	if (!effect)
 	{
 		WARN("Could not load effect: " + path);
 	}
 	return effect;
+}
+
+void ParticleSystem::release(Effekseer::Effect* effect)
+{
+	effect->Release();
 }

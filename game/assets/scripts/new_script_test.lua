@@ -1,5 +1,5 @@
 function makeBoxScene()
-    local box = RTX.Scene.CreateEmptyWithEntity()
+    local box = RTX.Scene.CreateEmpty()
     box:getEntity():addDefaultComponent("TransformComponent")
     box:getEntity():addDefaultComponent("ModelComponent")
     return box

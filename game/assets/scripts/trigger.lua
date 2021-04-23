@@ -9,15 +9,15 @@ function Trigger:initialize(entity)
     self.enterCount = 0
 end
 
-function Trigger:enter(entity, trigger)
-    if self.enterCount == 0 then 
-        self.sound:play() 
+function Trigger:enterTrigger(entity, trigger)
+    if self.enterCount == 0 then
+        self.sound:play()
     end
     self.enterCount = self.enterCount + 1
     self.text:setText(trigger:getScene():getFullName() .. ": " .. entity:getScene():getFullName() .. " entered (" .. tostring(self.enterCount) .. ")")
 end
 
-function Trigger:exit(entity, trigger)
+function Trigger:exitTrigger(entity, trigger)
     self.sound:play()
     self.text:setText(trigger:getScene():getFullName() .. ": " .. entity:getScene():getFullName() .. " exited")
     self.enterCount = 0

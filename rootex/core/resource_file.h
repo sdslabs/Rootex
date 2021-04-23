@@ -12,19 +12,23 @@ public:
 	{
 		/// Signifies an error in loading. Every valid ResourceFile will have a non-None type.
 		None = 0,
-		Lua,
-		Audio,
-		Text,
-		Model,
-		AnimatedModel,
-		CollisionModel,
-		Image,
-		ImageCube,
-		Font,
-		ParticleEffect
+		Lua = 1,
+		Audio = 2,
+		Text = 3,
+		Model = 4,
+		AnimatedModel = 5,
+		CollisionModel = 6,
+		Image = 7,
+		ImageCube = 8,
+		Font = 9,
+		ParticleEffect = 10,
+		BasicMaterial = 11,
+		InstancingBasicMaterial = 12,
+		AnimatedBasicMaterial = 13,
+		SkyMaterial = 14
 	};
 
-	static const inline Map<Type, String> s_TypeNames = {
+	static const inline Map<Type, const String> s_TypeNames = {
 		{ Type::None, "None" },
 		{ Type::Lua, "Lua" },
 		{ Type::Audio, "Audio" },
@@ -35,15 +39,19 @@ public:
 		{ Type::Image, "Image" },
 		{ Type::ImageCube, "ImageCube" },
 		{ Type::Font, "Font" },
-		{ Type::ParticleEffect, "ParticleEffect" }
+		{ Type::ParticleEffect, "ParticleEffect" },
+		{ Type::BasicMaterial, "BasicMaterial" },
+		{ Type::InstancingBasicMaterial, "InstancingBasicMaterial" },
+		{ Type::AnimatedBasicMaterial, "AnimatedBasicMaterial" },
+		{ Type::SkyMaterial, "SkyMaterial" }
 	};
 
-protected:
 	Type m_Type;
 	FilePath m_Path;
 	FileTimePoint m_LastReadTime;
 	FileTimePoint m_LastChangedTime;
 
+protected:
 	explicit ResourceFile(const Type& type, const FilePath& path);
 
 	friend class ResourceLoader;
@@ -56,6 +64,7 @@ public:
 	/// Reload the file buffer from disk.
 	virtual void reimport();
 	virtual bool save();
+	virtual void draw();
 
 	/// If the file has been changed on disk.
 	bool isDirty();
