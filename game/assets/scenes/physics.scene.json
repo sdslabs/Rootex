@@ -44,7 +44,7 @@
                         "lodDistance": 10.0,
                         "lodEnable": true,
                         "materialOverrides": {
-                            "rootex/assets/materials/default.basic.rmat": "game/assets/materials/rootex.basic.rmat"
+                            "rootex/assets/materials/default.basic.rmat": "game/assets/materials/test.custom.rmat"
                         },
                         "renderPass": 1,
                         "resFile": "rootex/assets/cube.obj"
@@ -70,15 +70,15 @@
                             "z": -17.71396255493164
                         },
                         "rotation": {
-                            "w": 0.9237861037254333,
-                            "x": 0.3829089403152466,
-                            "y": 7.121572309642943e-08,
-                            "z": 1.0394531813062713e-07
+                            "w": 0.9238795042037964,
+                            "x": 0.3826834559440613,
+                            "y": 0.0,
+                            "z": -0.0
                         },
                         "scale": {
-                            "x": 9.85999584197998,
+                            "x": 9.859990119934082,
                             "y": 0.9999999403953552,
-                            "z": 6.659997463226318
+                            "z": 6.660032272338867
                         }
                     }
                 },
@@ -214,9 +214,9 @@
                         "overrideBoundingBox": false,
                         "passDown": 7,
                         "position": {
-                            "x": 0.0,
-                            "y": 3.1072638034820557,
-                            "z": -17.610000610351563
+                            "x": 0.1645699441432953,
+                            "y": 5.509953498840332,
+                            "z": -19.21000099182129
                         },
                         "rotation": {
                             "w": 0.9257116913795471,
@@ -252,14 +252,33 @@
                     "ModelComponent": {
                         "affectingStaticLights": [],
                         "isVisible": true,
-                        "lodBias": 1.600000023841858,
-                        "lodDistance": 2.0,
-                        "lodEnable": true,
+                        "lodBias": 0.0,
+                        "lodDistance": 1.0,
+                        "lodEnable": false,
                         "materialOverrides": {
-                            "rootex/assets/materials/default.basic.rmat": "game/assets/materials/rootex.basic.rmat"
+                            "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
                         },
-                        "renderPass": 1,
+                        "renderPass": 4,
                         "resFile": "game/assets/test/sphere.obj"
+                    },
+                    "PointLightComponent": {
+                        "ambientColor": {
+                            "a": 1.0,
+                            "b": 0.8190129399299622,
+                            "g": 0.4477802515029907,
+                            "r": 0.9632107019424438
+                        },
+                        "attConst": 0.04500000178813934,
+                        "attLin": 1.0,
+                        "attQuad": 0.007499999832361937,
+                        "diffuseColor": {
+                            "a": 1.0,
+                            "b": 0.8190129399299622,
+                            "g": 0.4477802515029907,
+                            "r": 0.9632107019424438
+                        },
+                        "diffuseIntensity": 3.4000000953674316,
+                        "range": 14.600000381469727
                     },
                     "SphereColliderComponent": {
                         "angularFactor": {
@@ -285,8 +304,8 @@
                             "y": 0.0,
                             "z": 0.0
                         },
-                        "radius": 2.4000000953674316,
-                        "volume": 57.90584182739258
+                        "radius": 1.0199999809265137,
+                        "volume": 4.44517707824707
                     },
                     "TransformComponent": {
                         "boundingBox": {
@@ -296,16 +315,16 @@
                                 "z": 0.0
                             },
                             "extents": {
-                                "x": 19.737079620361328,
-                                "y": 19.737079620361328,
-                                "z": 19.737079620361328
+                                "x": 1.0,
+                                "y": 1.0,
+                                "z": 1.0
                             }
                         },
                         "overrideBoundingBox": false,
                         "passDown": 7,
                         "position": {
                             "x": 0.0,
-                            "y": 7.715848922729492,
+                            "y": 4.115849018096924,
                             "z": -19.309999465942383
                         },
                         "rotation": {
@@ -315,9 +334,9 @@
                             "z": -0.0
                         },
                         "scale": {
-                            "x": 0.11999999731779099,
-                            "y": 0.11999999731779099,
-                            "z": 0.11999999731779099
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
                         }
                     }
                 },
