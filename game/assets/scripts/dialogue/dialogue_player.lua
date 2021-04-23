@@ -62,7 +62,7 @@ function DialoguePlayer:update(entity, delta)
 		
 		if RTX.Input.WasPressed(self.exports.next) then
 			local choices = self.story:getChoices()
-			if choices[self.currentChoice+1].tags then
+			if choices[self.currentChoice].tags then
 				for _, tag in ipairs(choices[self.currentChoice].tags) do
 					local args = {}
 					for str in string.gmatch(tag, "[^%s]+") do
