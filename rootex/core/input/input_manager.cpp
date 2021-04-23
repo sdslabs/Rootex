@@ -180,6 +180,11 @@ float InputManager::getFloatDelta(const Event::Type& action)
 	return 0;
 }
 
+Vector2 InputManager::getMousePosition()
+{
+	return { getMouse()->GetFloat(MouseButton::MouseAxisX), getMouse()->GetFloat(MouseButton::MouseAxisY) };
+}
+
 void InputManager::update()
 {
 	m_GainputManager.Update();

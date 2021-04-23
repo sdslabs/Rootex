@@ -67,6 +67,12 @@ void FileEditor::draw(float deltaMilliseconds)
 			if (ImGui::MenuItem("Save", "", nullptr, !m_EditFilePath.empty()))
 			{
 				String textToSave = m_Editor.GetText();
+
+				// Workaround bug in the text editor which adds an extra newline
+				if (textToSave.back() == '\n')
+				{
+					textToSave.pop_back();
+				}
 				PANIC(!OS::SaveFile(m_EditFilePath, textToSave.c_str(), textToSave.size()), "Could not save file: " + m_EditFilePath);
 			}
 			ImGui::EndMenu();

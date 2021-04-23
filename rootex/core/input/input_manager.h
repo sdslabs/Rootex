@@ -92,6 +92,7 @@ public:
 	static float GetFloat(const Event::Type& action) { return GetSingleton()->getFloat(action); };
 	static float GetFloatDelta(const Event::Type& action) { return GetSingleton()->getFloatDelta(action); };
 	static void Unmap(const Event::Type& action) { GetSingleton()->unmap(action); };
+	static Vector2 GetMousePosition() { return GetSingleton()->getMousePosition(); };
 
 	void initialize(unsigned int width, unsigned int height);
 
@@ -115,6 +116,8 @@ public:
 	bool wasPressed(const Event::Type& action);
 	float getFloat(const Event::Type& action);
 	float getFloatDelta(const Event::Type& action);
+
+	Vector2 getMousePosition();
 
 	void update();
 	void setDisplaySize(const Vector2& newSize);
