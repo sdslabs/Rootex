@@ -43,11 +43,15 @@ class ResourceLoader
 
 	static inline RecursiveMutex s_PersistMutex;
 	static inline RecursiveMutex s_ResourceDataMutex;
+	static inline Atomic<bool> m_CopyFailed;
+
+	static inline String m_CurrExportDir;
 
 	template <class T>
 	static Ref<T> GetCachedResource(ResourceFile::Type type, const FilePath& path);
 
 public:
+
 	static const HashMap<ResourceFile::Type, Vector<Weak<ResourceFile>>>& GetResources();
 	static void ClearDeadResources();
 
@@ -68,8 +72,11 @@ public:
 	/// Load all the files passed in parallely. Return total tasks generated.
 	static int Preload(ResourceCollection paths, Atomic<int>& progress);
 
+#ifdef RELEASE_BUILD
 	/// Copy/Generate all export files parallely. Return total tasks generated.
 	static int Export(const String& sceneName, const String& sceneFilePath, Atomic<int>& progress);
+	static void PostExport();
+#endif
 
 	/// Add a resource to be kept alive till explicitly ordered to clear them. Internally synchronised.
 	static void Persist(Ref<ResourceFile> res);

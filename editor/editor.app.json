@@ -20,7 +20,7 @@
             }
         },
         "InputSystem": {
-            "height": 1057,
+            "height": 1017,
             "inputSchemes": {
                 "Editor": {
                     "bools": [
@@ -86,7 +86,7 @@
         },
         "PhysicsSystem": {},
         "UISystem": {
-            "height": 1057,
+            "height": 1017,
             "width": 1920
         }
     },

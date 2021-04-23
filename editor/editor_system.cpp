@@ -213,7 +213,10 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 
 	static String loadingScene;
+
+#ifdef RELEASE_BUILD
 	static Scene* exportScene = nullptr;
+#endif
 
 	ImGui::Begin("Rootex Editor", nullptr, windowFlags);
 	{
@@ -323,10 +326,12 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 				{
 					EventManager::GetSingleton()->call(EditorEvents::EditorSaveAll);
 				}
+#ifdef RELEASE_BUILD
 				if (ImGui::MenuItem("Export Scene", "", false, (bool)SceneLoader::GetSingleton()->getCurrentScene()))
 				{
 					exportScene = SceneLoader::GetSingleton()->getCurrentScene();
 				}
+#endif
 				if (ImGui::MenuItem("Preferences"))
 				{
 					EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, ApplicationSettings::GetSingleton()->getTextFile()->getPath().string());
@@ -714,6 +719,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 		ImGui::EndPopup();
 	}
 
+#ifdef RELEASE_BUILD
 	static Atomic<int> exportSceneProgress;
 	static float exportSceneCurrentProgress = 0.0f;
 	static int exportSceneTotalProgress = -1;
@@ -739,10 +745,12 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 			exportSceneProgress = 0;
 			exportScene = nullptr;
 			ImGui::CloseCurrentPopup();
+			SceneLoader::GetSingleton()->postExport();
 		}
 
 		ImGui::EndPopup();
 	}
+#endif
 
 	ImGui::End();
 }
