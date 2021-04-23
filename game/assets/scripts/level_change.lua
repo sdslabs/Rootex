@@ -6,8 +6,6 @@ function LevelChange:initialize(entity)
     }
     self.running = false
     self.timeSinceLoad = 0
-    self.transform = entity:getTransform()
-    self.text = entity:getTextUI()
 end
 
 function LevelChange:enterScene(entity)

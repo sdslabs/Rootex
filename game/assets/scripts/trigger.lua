@@ -4,22 +4,20 @@ function Trigger:initialize(entity)
     self.exports = {
         variable = "Hello Rootex!"
     }
-    self.text = entity:getTextUI()
-    self.sound = entity:getShortMusic()
     self.enterCount = 0
 end
 
 function Trigger:enterTrigger(entity, trigger)
     if self.enterCount == 0 then
-        self.sound:play()
+        entity.shortMusic:play()
     end
     self.enterCount = self.enterCount + 1
-    self.text:setText(trigger:getScene():getFullName() .. ": " .. entity:getScene():getFullName() .. " entered (" .. tostring(self.enterCount) .. ")")
+    entity.textUI:setText(trigger:getScene():getFullName() .. ": " .. entity:getScene():getFullName() .. " entered (" .. tostring(self.enterCount) .. ")")
 end
 
 function Trigger:exitTrigger(entity, trigger)
-    self.sound:play()
-    self.text:setText(trigger:getScene():getFullName() .. ": " .. entity:getScene():getFullName() .. " exited")
+    entity.shortMusic:play()
+    entity.textUI:setText(trigger:getScene():getFullName() .. ": " .. entity:getScene():getFullName() .. " exited")
     self.enterCount = 0
 end
 

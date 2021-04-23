@@ -5,6 +5,7 @@
 
 ScriptSystem::ScriptSystem()
     : System("ScriptSystem", UpdateOrder::Update, true)
+    , m_FluxTweener(LuaInterpreter::GetSingleton()->getLuaState().require_file("flux", "rootex/vendor/Flux/flux.lua"))
 {
 }
 
@@ -83,6 +84,8 @@ void ScriptSystem::update(float deltaMilliseconds)
 
 	Scene* root = SceneLoader::GetSingleton()->getRootScene();
 	CallUpdateForScene(root, deltaMilliseconds);
+
+	m_FluxTweener["update"](deltaMilliseconds * MS_TO_S);
 }
 
 void CallDestroyForScene(Scene* scene)

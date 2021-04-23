@@ -14,7 +14,7 @@ function DialoguePlayer:begin(entity)
 	local book = self.narrator.parseFile(self.exports.story)
 	self.story = self.narrator.initStory(book)
 	self.story:begin()
-	self.ui = entity:getUI()
+	self.ui = entity.ui
 	self.currentChoice = 1
 	self.maxChoices = 1
 	self.currentActor = ""

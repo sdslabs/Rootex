@@ -31,7 +31,7 @@ protected:
 public:
 	virtual ~RenderableComponent() = default;
 
-	void setVisibility(bool enabled);
+	void setVisible(bool enabled);
 	bool isVisible() const;
 
 	virtual bool preRender(float deltaMilliseconds);

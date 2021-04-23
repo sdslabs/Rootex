@@ -101,7 +101,7 @@ void ECSFactory::FillRootEntity(Entity& root)
 {
 	ECSFactory::AddDefaultTransformComponent(root);
 	ECSFactory::AddDefaultModelComponent(root);
-	root.getComponent<ModelComponent>()->setVisibility(false);
+	root.getComponent<ModelComponent>()->setVisible(false);
 	ECSFactory::AddDefaultCameraComponent(root);
 	ECSFactory::AddDefaultAudioListenerComponent(root);
 	ECSFactory::AddDefaultSkyComponent(root);
