@@ -28,7 +28,10 @@ public:
 	int preloadScene(const String& sceneFile, Atomic<int>& progress);
 	void loadPreloadedScene(const String& sceneFile, const Vector<String>& arguments);
 	void loadScene(const String& sceneFile, const Vector<String>& arguments);
+#ifdef RELEASE_BUILD
 	int exportScene(Scene* scene, Atomic<int>& progress);
+	void postExport();
+#endif
 	bool saveScene(Scene* scene);
 	bool saveSceneAtFile(Scene* scene, const String& filePath);
 	void destroyAllScenes();

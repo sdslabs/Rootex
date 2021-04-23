@@ -93,6 +93,7 @@ int ResourceLoader::Preload(ResourceCollection paths, Atomic<int>& progress)
 	return tasks.size() - 1; // One less for the dummy task
 }
 
+#ifdef RELEASE_BUILD
 int ResourceLoader::Export(const String& sceneName, const String& sceneFilePath, Atomic<int>& progress)
 {
 	Vector<Pair<String, String>> toCopy = {
@@ -112,42 +113,41 @@ int ResourceLoader::Export(const String& sceneName, const String& sceneFilePath,
 		{ "THIRDPARTY.md", "THIRDPARTY.md" }
 	};
 
-	String currExportDir;
 	int i = 0;
 	do
 	{
-		currExportDir = "exports/" + sceneName;
+		m_CurrExportDir = "exports/" + sceneName;
 		if (i != 0)
 		{
-			currExportDir += std::to_string(i);
+			m_CurrExportDir += std::to_string(i);
 		}
-		currExportDir += "/";
+		m_CurrExportDir += "/";
 		i++;
-	} while (OS::IsExists(currExportDir));
+	} while (OS::IsExists(m_CurrExportDir));
 
-	OS::CreateDirectoryName(currExportDir);
-	OS::CreateDirectoryName(currExportDir + "game/assets/");
-	OS::CreateDirectoryName(currExportDir + "rootex/assets/");
+	OS::CreateDirectoryName(m_CurrExportDir);
+	OS::CreateDirectoryName(m_CurrExportDir + "game/assets/");
+	OS::CreateDirectoryName(m_CurrExportDir + "rootex/assets/");
 
 	JSON::json gameConfig = JSON::json::parse(ResourceLoader::CreateTextResourceFile("game/game.app.json")->getString());
 	gameConfig["startLevel"] = sceneFilePath;
-	Ref<TextResourceFile> newGameConfig = ResourceLoader::CreateNewTextResourceFile(currExportDir + "game/game.app.json");
+	Ref<TextResourceFile> newGameConfig = ResourceLoader::CreateNewTextResourceFile(m_CurrExportDir + "game/game.app.json");
 	newGameConfig->putString(gameConfig.dump(4));
 
 	if (!newGameConfig->save())
 	{
 		WARN("Could not save application settings file");
-		OS::DeleteDirectory(currExportDir);
-		return false;
+		OS::DeleteDirectory(m_CurrExportDir);
+		return 0;
 	}
 
-	Ref<TextResourceFile> readme = ResourceLoader::CreateNewTextResourceFile(currExportDir + "readme.txt");
+	Ref<TextResourceFile> readme = ResourceLoader::CreateNewTextResourceFile(m_CurrExportDir + "readme.txt");
 	readme->putString("This Game was build using Rootex Game Engine. Find the source code here http://github.com/SDSLabs/Rootex.");
 	if (!readme->save())
 	{
 		WARN("Could not save readme file");
-		OS::DeleteDirectory(currExportDir);
-		return false;
+		OS::DeleteDirectory(m_CurrExportDir);
+		return 0;
 	}
 
 	Vector<FilePath> assetFiles = OS::GetAllFilesInDirectory("game/assets/");
@@ -159,22 +159,23 @@ int ResourceLoader::Export(const String& sceneName, const String& sceneFilePath,
 		toCopy.push_back({ file.generic_string(), file.generic_string() });
 	}
 
-	Atomic<bool> copyFailed = false;
 	Vector<Ref<Task>> tasks;
+	m_CopyFailed = false;
 
 	for (auto& filePair : toCopy)
 	{
-		tasks.push_back(std::make_shared<Task>([=, &copyFailed]() {
-			if (copyFailed)
+		tasks.push_back(std::make_shared<Task>([=, &progress]() {
+			if (m_CopyFailed)
 			{
 				return;
 			}
-			copyFailed = !OS::RelativeCopyFile(filePair.first, currExportDir + filePair.second);
-			if (copyFailed)
+			m_CopyFailed = !OS::RelativeCopyFile(filePair.first, m_CurrExportDir + filePair.second);
+			if (m_CopyFailed)
 			{
-				ERR_SILENT("Could not copy asset files, investigate console logs");
-				OS::DeleteDirectory(currExportDir);
+				ERR_SILENT("Could not copy asset files, investigate console logs ");
+				OS::DeleteDirectory(m_CurrExportDir);
 			}
+			progress++;
 		}));
 	}
 
@@ -184,10 +185,17 @@ int ResourceLoader::Export(const String& sceneName, const String& sceneFilePath,
 	ThreadPool& threadPool = Application::GetSingleton()->getThreadPool();
 	threadPool.submit(tasks);
 
-	PRINT("Successfully exported to " + currExportDir)
+	PRINT("Exporting to " + m_CurrExportDir)
 
 	return toCopy.size();
 }
+
+void ResourceLoader::PostExport()
+{
+	PRINT("Successfully exported to " + m_CurrExportDir);
+	m_CurrExportDir = "";
+}
+#endif
 
 void ResourceLoader::Persist(Ref<ResourceFile> res)
 {
