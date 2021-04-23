@@ -1,0 +1,21 @@
+{
+    "affectedBySky": 0,
+    "alpha": false,
+    "color": {
+        "a": 1.0,
+        "b": 0.19749876856803894,
+        "g": 0.1786404401063919,
+        "r": 0.7066760063171387
+    },
+    "diffuse": "rootex/assets/white.png",
+    "hasNormal": 0,
+    "isLit": 1,
+    "lightmap": "rootex/assets/white.png",
+    "normal": "rootex/assets/white.png",
+    "reflect": 0.0,
+    "refract": 0.0,
+    "refractionConstant": 0.800000011920929,
+    "specIntensity": 1.0,
+    "specPower": 30.0,
+    "specular": "rootex/assets/white.png"
+}

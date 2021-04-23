@@ -1,0 +1,33 @@
+<rml>
+    <head>
+        <title>Flipbook</title>
+        <style>
+            @spritesheet theme 
+            {
+                src: spritesheet.png;
+                
+                sprite-1: 0px 0px 130px 130px;
+                sprite-2: 130px 0px 130px 130px;
+                sprite-3: 0px 130px 130px 130px;
+                sprite-4: 130px 130px 130px 130px;
+            }
+            body {
+                font: "Lato";
+                width: 100%;
+                height: 100%;
+                font-size: 100px;
+            }
+            #center-div {
+                position: absolute;
+                width: 260px;
+                height: 260px;
+                decorator: flipbook(7, sprite-1 sprite-2 sprite-3 sprite-4);
+            }
+        </style>
+    </head>
+
+    <body>
+        <button id="center-div">
+        </button>
+    </body>
+</rml>

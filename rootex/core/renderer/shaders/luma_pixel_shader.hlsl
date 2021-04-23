@@ -1,3 +1,5 @@
+#include "register_locations_pixel_shader.h"
+
 SamplerState AnisotropicSampler : register(s0);
 Texture2D InputTexture : register(t0);
 

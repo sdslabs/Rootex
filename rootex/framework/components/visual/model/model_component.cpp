@@ -8,48 +8,22 @@
 #include "systems/light_system.h"
 #include "systems/render_system.h"
 #include "components/visual/light/static_point_light_component.h"
-#include "renderer/material_library.h"
 #include "renderer/render_pass.h"
 #include "scene_loader.h"
 
-bool CompareMaterials(const Pair<Ref<Material>, Vector<Mesh>>& a, const Pair<Ref<Material>, Vector<Mesh>>& b)
+DEFINE_COMPONENT(ModelComponent);
+
+bool CompareMaterials(const Pair<Ref<MaterialResourceFile>, Vector<Mesh>>& a, const Pair<Ref<MaterialResourceFile>, Vector<Mesh>>& b)
 {
 	// Alpha materials final last
 	return !a.first->isAlpha() && b.first->isAlpha();
 }
 
-Ptr<Component> ModelComponent::Create(const JSON::json& componentData)
+ModelComponent::ModelComponent(Entity& owner, const JSON::json& data)
+    : RenderableComponent(owner, data)
+    , m_ModelResourceFile(ResourceLoader::CreateModelResourceFile(data.value("resFile", "rootex/assets/cube.obj")))
 {
-	return std::make_unique<ModelComponent>(
-	    componentData.value("renderPass", (int)RenderPass::Basic),
-	    ResourceLoader::CreateModelResourceFile(componentData.value("resFile", "rootex/assets/cube.obj")),
-	    componentData.value("materialOverrides", HashMap<String, String>()),
-	    componentData.value("isVisible", true),
-	    componentData.value("lodEnable", true),
-	    componentData.value("lodBias", 0.0f),
-	    componentData.value("lodDistance", 10.0f),
-	    componentData.value("affectingStaticLights", Vector<SceneID>()));
-}
-
-ModelComponent::ModelComponent(
-    unsigned int renderPass,
-    Ref<ModelResourceFile> resFile,
-    const HashMap<String, String>& materialOverrides,
-    bool visibility,
-    bool lodEnable,
-    float lodBias,
-    float lodDistance,
-    const Vector<SceneID>& affectingStaticLightIDs)
-    : RenderableComponent(
-        renderPass,
-        materialOverrides,
-        visibility,
-        lodEnable,
-        lodBias,
-        lodDistance,
-        affectingStaticLightIDs)
-{
-	assignOverrides(resFile, materialOverrides);
+	assignOverrides(m_ModelResourceFile, data.value("materialOverrides", HashMap<String, String>()));
 }
 
 bool ModelComponent::setupData()
@@ -119,18 +93,18 @@ void ModelComponent::assignBoundingBox()
 				}
 			}
 		}
-		m_TransformComponent->setBounds(bigBox);
+		getTransformComponent()->setBounds(bigBox);
 	}
 }
 
 void ModelComponent::assignOverrides(Ref<ModelResourceFile> newModel, const HashMap<String, String>& materialOverrides)
 {
-	m_ModelResourceFile = newModel;
-
 	if (!newModel)
 	{
 		return;
 	}
+
+	m_ModelResourceFile = newModel;
 
 	m_MaterialOverrides.clear();
 	for (auto& [material, meshes] : m_ModelResourceFile->getMeshes())
@@ -139,8 +113,7 @@ void ModelComponent::assignOverrides(Ref<ModelResourceFile> newModel, const Hash
 	}
 	for (auto& [oldMaterial, newMaterial] : materialOverrides)
 	{
-		MaterialLibrary::CreateNewMaterialFile(newMaterial, MaterialLibrary::GetMaterial(oldMaterial)->getTypeName());
-		setMaterialOverride(MaterialLibrary::GetMaterial(oldMaterial), MaterialLibrary::GetMaterial(newMaterial));
+		setMaterialOverride(ResourceLoader::CreateMaterialResourceFile(oldMaterial), ResourceLoader::CreateMaterialResourceFile(newMaterial));
 	}
 }
 
@@ -162,10 +135,10 @@ void ModelComponent::draw()
 	ImGui::SameLine();
 	if (ImGui::Button("Model"))
 	{
-		EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, m_ModelResourceFile->getPath().string());
+		EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { m_ModelResourceFile->getPath().generic_string(), (int)m_ModelResourceFile->getType() });
 	}
 	ImGui::SameLine();
-	if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Model File"))
+	if (ImGui::Button(ICON_ROOTEX_FOLDER_OPEN "##Model File"))
 	{
 		if (Optional<String> result = OS::SelectFile(SupportedFiles.at(ResourceFile::Type::Model), "game/assets/"))
 		{

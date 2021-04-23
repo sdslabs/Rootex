@@ -11,8 +11,24 @@
 #include "vendor/ImGUI/imgui_impl_dx11.h"
 #include "vendor/ImGUI/imgui_impl_win32.h"
 
+Variant ToolbarDock::disablePlayInEditor(const Event* e)
+{
+	m_InEditorPlaying = false;
+	EditorApplication::GetSingleton()->setGameMode(false);
+	if (!m_StartPlayingScene.empty())
+	{
+		SceneLoader::GetSingleton()->loadScene(m_StartPlayingScene, {});
+		m_StartPlayingScene.clear();
+	}
+	PRINT("Stopped Scene in Editor");
+	return true;
+}
+
 ToolbarDock::ToolbarDock()
 {
+	m_Binder.bind(EditorEvents::EditorSceneIsClosing, this, &ToolbarDock::disablePlayInEditor);
+	m_Binder.bind(RootexEvents::QuitEditorWindow, this, &ToolbarDock::disablePlayInEditor);
+
 	m_FPSRecords.resize(m_FPSRecordsPoolSize, 0.0f);
 }
 
@@ -23,42 +39,80 @@ void ToolbarDock::draw(float deltaMilliseconds)
 	{
 		if (ImGui::Begin("Toolbar"))
 		{
-			ImGui::Columns(2);
-
 			if (SceneLoader::GetSingleton()->getCurrentScene())
 			{
-				ImGui::Text("Play Scene");
-				ImGui::SameLine();
-				if (ImGui::ArrowButton("Play Scene", ImGuiDir_Right))
-				{
-					EventManager::GetSingleton()->call(EditorEvents::EditorSaveAll);
-					OS::RunApplication("\"" + OS::GetGameExecutablePath() + "\" " + SceneLoader::GetSingleton()->getCurrentScene()->getSceneFilePath());
-					PRINT("Launched Game process");
-				}
-			}
-			ImGui::NextColumn();
+				static int playModeSelected = 0;
+				static const char* playModes[3] = {
+					"Play Scene in Editor",
+					"Play Scene in Game",
+					"Play Game"
+				};
 
-			ImGui::Text("Play Game");
-			ImGui::SameLine();
-			if (ImGui::ArrowButton("Play Game", ImGuiDir_Right))
-			{
-				EventManager::GetSingleton()->call(EditorEvents::EditorSaveAll);
-				OS::RunApplication("\"" + OS::GetGameExecutablePath() + "\"");
-				PRINT("Launched Game process");
-			}
-			ImGui::NextColumn();
+				if (m_InEditorPlaying)
+				{
+					ImColor lightErrorColor = EditorSystem::GetSingleton()->getFatalColor();
+					lightErrorColor.Value.x *= 0.8f;
+					ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)lightErrorColor);
+					ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)(EditorSystem::GetSingleton()->getFatalColor()));
+					if (ImGui::Button("Stop " ICON_ROOTEX_WINDOW_CLOSE, { ImGui::GetContentRegionAvailWidth(), 40.0f }))
+					{
+						disablePlayInEditor(nullptr);
+					}
+					ImGui::PopStyleColor(2);
+				}
+				else
+				{
+					if (ImGui::Button("Play " ICON_ROOTEX_FORT_AWESOME, { ImGui::GetContentRegionAvailWidth(), 40.0f }))
+					{
+						switch (playModeSelected)
+						{
+						case 0:
+							m_InEditorPlaying = true;
+							m_StartPlayingScene = SceneLoader::GetSingleton()->getCurrentScene()->getScenePath();
+							EventManager::GetSingleton()->call(EditorEvents::EditorSaveAll);
+							EditorApplication::GetSingleton()->setGameMode(true);
+							SceneLoader::GetSingleton()->loadScene(m_StartPlayingScene, {});
+							PRINT("Loaded Scene in Editor");
+							break;
+						case 1:
+							m_InEditorPlaying = false;
+							EventManager::GetSingleton()->call(EditorEvents::EditorSaveAll);
+							OS::RunApplication("\"" + OS::GetGameExecutablePath() + "\" " + SceneLoader::GetSingleton()->getCurrentScene()->getScenePath());
+							PRINT("Launched Game process with Scene");
+							break;
+						case 2:
+							m_InEditorPlaying = false;
+							EventManager::GetSingleton()->call(EditorEvents::EditorSaveAll);
+							OS::RunApplication("\"" + OS::GetGameExecutablePath() + "\"");
+							PRINT("Launched Game process");
+							break;
+						default:
+							WARN("Unknown play mode found");
+						}
+					}
+				}
 
 #ifdef TRACY_ENABLE
-			ImGui::Text("Profiler");
-			ImGui::NextColumn();
-			if (ImGui::Button("Start Tracy " ICON_ROOTEX_EXTERNAL_LINK " "))
-			{
-				OS::OpenFileInSystemEditor("rootex/vendor/Tracy/Tracy.exe");
-			}
-			ImGui::NextColumn();
+				if (ImGui::Button("Start Tracy " ICON_ROOTEX_EXTERNAL_LINK " "))
+				{
+					OS::OpenFileInSystemEditor("rootex/vendor/Tracy/Tracy.exe");
+				}
+				ImGui::SameLine();
 #endif // TRACY_ENABLE
 
-			ImGui::Columns(1);
+				ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
+				if (ImGui::BeginCombo("##Play Mode", playModes[playModeSelected]))
+				{
+					for (int i = 0; i < sizeof(playModes) / sizeof(playModes[0]); i++)
+					{
+						if (ImGui::MenuItem(playModes[i]))
+						{
+							playModeSelected = i;
+						}
+					}
+					ImGui::EndCombo();
+				}
+			}
 
 			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
 			ImGui::SliderFloat("##Delta Multiplier", Application::GetSingleton()->getDeltaMultiplierPtr(), -2.0f, 2.0f, "");
@@ -70,15 +124,6 @@ void ToolbarDock::draw(float deltaMilliseconds)
 			if (ImGui::TreeNodeEx("Editor"))
 			{
 				RootexFPSGraph("FPS", m_FPSRecords, EditorApplication::GetSingleton()->getAppFrameTimer().getLastFPS());
-				ImGui::TreePop();
-			}
-
-			if (ImGui::TreeNodeEx("Events"))
-			{
-				for (auto&& [eventType, eventHandlers] : EventManager::GetSingleton()->getRegisteredEvents())
-				{
-					ImGui::Text((eventType + " (" + std::to_string(eventHandlers.size()) + ")").c_str());
-				}
 				ImGui::TreePop();
 			}
 

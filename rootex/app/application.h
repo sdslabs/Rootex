@@ -18,15 +18,20 @@ protected:
 	FrameTimer m_FrameTimer;
 	ThreadPool m_ThreadPool;
 	float m_DeltaMultiplier = 1.0f;
+	String m_ApplicationTitle;
+	int m_CurrentSaveSlot;
+	JSON::json m_CurrentSaveData;
 
 	Ptr<SplashWindow> m_SplashWindow;
 	Ptr<Window> m_Window;
 	Ptr<ApplicationSettings> m_ApplicationSettings;
 
+	String getSaveSlotPath(int slot);
+
 public:
 	static Application* GetSingleton();
 
-	Application(const String& settingsFile);
+	Application(const String& appTitle, const String& settingsFile);
 	Application(Application&) = delete;
 	virtual ~Application();
 
@@ -34,7 +39,12 @@ public:
 	virtual void process(float deltaMilliseconds);
 	void end();
 
-	virtual String getAppTitle() const { return "Rootex Application"; }
+	void createSaveSlot(int slot);
+	bool loadSave(int slot);
+	JSON::json& getSaveData();
+	bool saveSlot();
+
+	const String& getAppTitle() const { return m_ApplicationTitle; };
 	const Timer& getAppTimer() const { return m_ApplicationTimer; };
 	ThreadPool& getThreadPool() { return m_ThreadPool; };
 	const FrameTimer& getAppFrameTimer() const { return m_FrameTimer; }

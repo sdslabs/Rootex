@@ -33,37 +33,14 @@ file(GLOB ShaderFiles
     ./core/renderer/shaders/*.hlsl
 )
 
-file(GLOB VertexShaderFiles
-    ./core/renderer/shaders/*vertex_shader.hlsl
-)
-
-file(GLOB PixelShaderFiles
-    ./core/renderer/shaders/*pixel_shader.hlsl
-)
-
 set(ROOTEX_SOURCES
     ${ROOTEX_SOURCES}
     ${ShaderFiles}
 CACHE INTERNAL "")
 
-string(CONCAT ShaderCompileDestination ${CMAKE_CURRENT_LIST_DIR} "/assets/shaders/%\(Filename\).cso")
-
 set_source_files_properties(${ShaderFiles} 
     PROPERTIES
-        VS_SHADER_MODEL 4.0
-        VS_SHADER_OBJECT_FILE_NAME ${ShaderCompileDestination}
-        VS_SHADER_ENABLE_DEBUG false
-        VS_SHADER_DISABLE_OPTIMIZATIONS false
-)
-
-set_source_files_properties(${VertexShaderFiles}
-    PROPERTIES 
-        VS_SHADER_TYPE Vertex
-)
-
-set_source_files_properties(${PixelShaderFiles}
-    PROPERTIES 
-        VS_SHADER_TYPE Pixel
+        HEADER_FILE_ONLY TRUE
 )
 
 file(GLOB_RECURSE EngineLuaScripts script/**.lua)
@@ -77,7 +54,7 @@ set_property(TARGET Rootex PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFI
 
 target_precompile_headers(Rootex PUBLIC ${PCHHeader})
 
-source_group(TREE "../"
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}
     PREFIX "Rootex"
     FILES ${ROOTEX_SOURCES} ${EngineLuaScripts}
 )
@@ -94,6 +71,7 @@ target_link_libraries(Rootex PUBLIC
     DirectXTK
     JSON
     ImGui
+    ImGuiColorTextEdit
     ImGuizmo
     Gainput
     Bullet3D

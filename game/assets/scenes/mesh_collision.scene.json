@@ -5,9 +5,6 @@
             "ID": 6,
             "children": [],
             "entity": {
-                "Entity": {
-                    "script": null
-                },
                 "components": {
                     "CapsuleColliderComponent": {
                         "angularFactor": {
@@ -16,18 +13,18 @@
                             "z": 1.0
                         },
                         "collisionGroup": 31,
-                        "collisionMask": 31,
+                        "collisionMask": 0,
                         "gravity": {
                             "x": 0.0,
                             "y": -9.800000190734863,
                             "z": 1.0
                         },
-                        "isCCD": true,
+                        "isCCD": false,
                         "isGeneratesHitEvents": false,
-                        "isKinematic": false,
+                        "isKinematic": true,
                         "isMoveable": true,
-                        "isSleepable": true,
-                        "material": 1,
+                        "isSleepable": false,
+                        "material": 2,
                         "offset": {
                             "x": 0.0,
                             "y": 0.0,
@@ -44,24 +41,25 @@
                         "lodDistance": 13.0,
                         "lodEnable": true,
                         "materialOverrides": {
-                            "rootex/assets/materials/default.rmat": "game/assets/materials/Door.rmat"
+                            "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
                         },
                         "renderPass": 1,
                         "resFile": "rootex/assets/capsule.obj"
                     },
                     "MusicComponent": {
-                        "attenuationModel": 53251,
-                        "audio": "game/assets/forever.wav",
+                        "attenuationModel": 53249,
+                        "audio": "game/assets/music/birds_chirping_mono.wav",
                         "isAttenuated": true,
                         "isLooping": true,
-                        "maxDistance": 8.0,
+                        "maxDistance": 100.0,
                         "playOnStart": true,
                         "referenceDistance": 1.0,
-                        "rollOffFactor": 1.0
+                        "rollOffFactor": 1.0,
+                        "volume": 5.0
                     },
                     "TransformAnimationComponent": {
                         "animationMode": 2,
-                        "isPlayOnStart": false,
+                        "isPlayOnStart": true,
                         "keyframes": [
                             {
                                 "timePosition": 0.0,
@@ -78,14 +76,14 @@
                                     0.0,
                                     1.0000001192092896,
                                     0.0,
-                                    1.4999792575836182,
-                                    5.499999046325684,
-                                    -12.229997634887695,
+                                    -19.70262908935547,
+                                    1.3999991416931152,
+                                    -16.664287567138672,
                                     1.0
                                 ]
                             },
                             {
-                                "timePosition": 1.0,
+                                "timePosition": 2.0,
                                 "transform": [
                                     1.0000001192092896,
                                     0.0,
@@ -99,9 +97,9 @@
                                     0.0,
                                     1.0000001192092896,
                                     0.0,
-                                    1.4999792575836182,
-                                    5.399999141693115,
-                                    -9.429997444152832,
+                                    8.797370910644531,
+                                    1.3999991416931152,
+                                    -16.664287567138672,
                                     1.0
                                 ]
                             }
@@ -121,10 +119,12 @@
                                 "z": 0.5
                             }
                         },
+                        "overrideBoundingBox": false,
+                        "passDown": 7,
                         "position": {
-                            "x": 0.0,
-                            "y": 5.413672924041748,
-                            "z": -9.812860488891602
+                            "x": 7.424802780151367,
+                            "y": 1.3999991416931152,
+                            "z": -16.664287567138672
                         },
                         "rotation": {
                             "w": 1.0,
@@ -133,15 +133,17 @@
                             "z": -0.0
                         },
                         "scale": {
-                            "x": 1.0,
-                            "y": 1.0,
-                            "z": 1.0
+                            "x": 1.0000001192092896,
+                            "y": 1.0000004768371582,
+                            "z": 1.0000001192092896
                         }
                     }
-                }
+                },
+                "script": null
             },
-            "file": "",
+            "importStyle": 0,
             "name": "SonicCapsule",
+            "sceneFile": "",
             "settings": {
                 "camera": 1,
                 "inputSchemes": {},
@@ -154,9 +156,6 @@
             "ID": 18,
             "children": [],
             "entity": {
-                "Entity": {
-                    "script": null
-                },
                 "components": {
                     "BoxColliderComponent": {
                         "angularFactor": {
@@ -196,18 +195,18 @@
                         "lodDistance": 31.0,
                         "lodEnable": true,
                         "materialOverrides": {
-                            "game/assets/materials/Alpha_Body_MAT.rmat": "game/assets/materials/Alpha_Body_MAT.rmat",
-                            "game/assets/materials/Alpha_Joints_MAT.rmat": "game/assets/materials/Alpha_Joints_MAT.rmat",
-                            "game/assets/materials/Material.001.rmat": "game/assets/materials/Material.001.rmat",
-                            "game/assets/materials/Material.002.rmat": "game/assets/materials/Material.002.rmat",
-                            "game/assets/materials/Material.003.rmat": "game/assets/materials/Material.003.rmat",
-                            "game/assets/materials/Material.004.rmat": "game/assets/materials/Material.004.rmat",
-                            "game/assets/materials/Material.006.rmat": "game/assets/materials/Material.006.rmat",
-                            "game/assets/materials/emision_1.rmat": "game/assets/materials/emision_1.rmat",
-                            "game/assets/materials/emision_2.rmat": "game/assets/materials/emision_2.rmat",
-                            "game/assets/materials/glass.rmat": "game/assets/materials/glass.rmat",
-                            "game/assets/materials/glass_1.rmat": "game/assets/materials/glass_1.rmat",
-                            "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                            "game/assets/materials/office/Alpha_Body_MAT.basic.rmat": "game/assets/materials/office/Alpha_Body_MAT.basic.rmat",
+                            "game/assets/materials/office/Alpha_Joints_MAT.basic.rmat": "game/assets/materials/office/Alpha_Joints_MAT.basic.rmat",
+                            "game/assets/materials/office/Material.001.basic.rmat": "game/assets/materials/office/Material.001.basic.rmat",
+                            "game/assets/materials/office/Material.002.basic.rmat": "game/assets/materials/office/Material.002.basic.rmat",
+                            "game/assets/materials/office/Material.003.basic.rmat": "game/assets/materials/office/Material.003.basic.rmat",
+                            "game/assets/materials/office/Material.004.basic.rmat": "game/assets/materials/office/Material.004.basic.rmat",
+                            "game/assets/materials/office/Material.006.basic.rmat": "game/assets/materials/office/Material.006.basic.rmat",
+                            "game/assets/materials/office/emision_1.basic.rmat": "game/assets/materials/office/emision_1.basic.rmat",
+                            "game/assets/materials/office/emision_2.basic.rmat": "game/assets/materials/office/emision_2.basic.rmat",
+                            "game/assets/materials/office/glass.basic.rmat": "game/assets/materials/office/glass.basic.rmat",
+                            "game/assets/materials/office/glass_1.basic.rmat": "game/assets/materials/office/glass_1.basic.rmat",
+                            "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
                         },
                         "renderPass": 1,
                         "resFile": "game/assets/office.fbx"
@@ -225,6 +224,8 @@
                                 "z": 1187.4342041015625
                             }
                         },
+                        "overrideBoundingBox": false,
+                        "passDown": 7,
                         "position": {
                             "x": 1.399999976158142,
                             "y": 0.0,
@@ -242,10 +243,12 @@
                             "z": 0.0010000000474974513
                         }
                     }
-                }
+                },
+                "script": null
             },
-            "file": "",
+            "importStyle": 0,
             "name": "Office",
+            "sceneFile": "",
             "settings": {
                 "camera": 1,
                 "inputSchemes": {},
@@ -255,160 +258,97 @@
             }
         },
         {
-            "ID": 20,
-            "children": [
-                {
-                    "ID": 22,
-                    "children": [],
-                    "entity": {
-                        "Entity": {
-                            "script": null
-                        },
-                        "components": {
-                            "TransformComponent": {
-                                "boundingBox": {
-                                    "center": {
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "extents": {
-                                        "x": 0.5,
-                                        "y": 0.5,
-                                        "z": 0.5
-                                    }
-                                },
-                                "position": {
-                                    "x": 0.0,
-                                    "y": 6.5989990234375,
-                                    "z": 23.353052139282227
-                                },
-                                "rotation": {
-                                    "w": 0.9972501397132874,
-                                    "x": -0.07410888373851776,
-                                    "y": 0.0,
-                                    "z": -0.0
-                                },
-                                "scale": {
-                                    "x": 1.0,
-                                    "y": 0.9999992847442627,
-                                    "z": 0.9999992847442627
-                                }
-                            }
-                        }
-                    },
-                    "file": "",
-                    "name": "CameraAnchor",
-                    "settings": {
-                        "camera": 1,
-                        "inputSchemes": {},
-                        "listener": 1,
-                        "preloads": [],
-                        "startScheme": ""
-                    }
-                },
-                {
-                    "ID": 25,
-                    "children": [],
-                    "entity": {
-                        "Entity": {
-                            "script": null
-                        },
-                        "components": {
-                            "PointLightComponent": {
-                                "ambientColor": {
-                                    "a": 1.0,
-                                    "b": 0.9999902844429016,
-                                    "g": 1.0,
-                                    "r": 0.9999899864196777
-                                },
-                                "attConst": 0.11500000208616257,
-                                "attLin": 1.2699999809265137,
-                                "attQuad": 0.6100000143051147,
-                                "diffuseColor": {
-                                    "a": 1.0,
-                                    "b": 0.9999899864196777,
-                                    "g": 0.9999899864196777,
-                                    "r": 1.0
-                                },
-                                "diffuseIntensity": 64.5,
-                                "range": 2.299999952316284
-                            },
-                            "TransformComponent": {
-                                "boundingBox": {
-                                    "center": {
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "extents": {
-                                        "x": 0.5,
-                                        "y": 0.5,
-                                        "z": 0.5
-                                    }
-                                },
-                                "position": {
-                                    "x": 0.0,
-                                    "y": 2.999999523162842,
-                                    "z": 0.0
-                                },
-                                "rotation": {
-                                    "w": 1.0,
-                                    "x": -0.0,
-                                    "y": 0.0,
-                                    "z": -0.0
-                                },
-                                "scale": {
-                                    "x": 1.0,
-                                    "y": 1.0,
-                                    "z": 1.0
-                                }
-                            }
-                        }
-                    },
-                    "file": "",
-                    "name": "Torch",
-                    "settings": {
-                        "camera": 1,
-                        "inputSchemes": {},
-                        "listener": 1,
-                        "preloads": [],
-                        "startScheme": ""
-                    }
-                }
-            ],
+            "ID": 23,
+            "children": [],
             "entity": {
-                "Entity": {
-                    "script": {
-                        "overrides": {
-                            "variable": ""
+                "components": {
+                    "DirectionalLightComponent": {
+                        "ambientColor": {
+                            "a": 1.0,
+                            "b": 0.8327759504318237,
+                            "g": 1.0,
+                            "r": 0.9522217512130737
                         },
-                        "path": "game/assets/scripts/new_player_control.lua"
+                        "diffuseColor": {
+                            "a": 1.0,
+                            "b": 0.9999912977218628,
+                            "g": 1.0,
+                            "r": 0.9999899864196777
+                        },
+                        "diffuseIntensity": 1.2999999523162842
+                    },
+                    "TransformComponent": {
+                        "boundingBox": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "extents": {
+                                "x": 0.5,
+                                "y": 0.5,
+                                "z": 0.5
+                            }
+                        },
+                        "overrideBoundingBox": false,
+                        "passDown": 7,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "rotation": {
+                            "w": -0.24645598232746124,
+                            "x": 0.8678367137908936,
+                            "y": -0.11774357408285141,
+                            "z": -0.41503652930259705
+                        },
+                        "scale": {
+                            "x": 1.0000108480453491,
+                            "y": 1.0000067949295044,
+                            "z": 1.0000112056732178
+                        }
                     }
                 },
+                "script": null
+            },
+            "importStyle": 0,
+            "name": "Light",
+            "sceneFile": "",
+            "settings": {
+                "camera": 1,
+                "inputSchemes": {},
+                "listener": 1,
+                "preloads": [],
+                "startScheme": ""
+            }
+        },
+        {
+            "ID": 31,
+            "children": [],
+            "entity": {
                 "components": {
                     "AnimatedModelComponent": {
                         "affectingStaticLights": [],
                         "animationMode": 1,
-                        "currentAnimationName": "HumanArmature|Man_Idle",
+                        "currentAnimationName": "Armature|idle",
                         "isPlayOnStart": true,
                         "isVisible": true,
-                        "lodBias": 1.0,
-                        "lodDistance": 26.0,
-                        "lodEnable": true,
+                        "lodBias": 0.0,
+                        "lodDistance": 77.0,
+                        "lodEnable": false,
                         "materialOverrides": {
-                            "game/assets/materials/Eyes.rmat": "game/assets/materials/Eyes.rmat",
-                            "game/assets/materials/Hair.rmat": "game/assets/materials/Hair.rmat",
-                            "game/assets/materials/Pants.rmat": "game/assets/materials/Pants.rmat",
-                            "game/assets/materials/Shirt.rmat": "game/assets/materials/Shirt.rmat",
-                            "game/assets/materials/Skin.rmat": "game/assets/materials/Skin.rmat",
-                            "game/assets/materials/Socks.rmat": "game/assets/materials/Socks.rmat"
+                            "game/assets/materials/player/Akai_MAT.anim.rmat": "game/assets/materials/player/Akai_MAT.anim.rmat"
                         },
                         "renderPass": 1,
-                        "resFile": "game/assets/Male_Casual.fbx",
+                        "resFile": "game/assets/models/player/player.fbx",
+                        "rootExclusion": 0,
+                        "speedMultiplier": 0.24084733426570892,
                         "transitionTime": 1.0
                     },
-                    "AudioListenerComponent": null,
+                    "AudioListenerComponent": {
+                        "volume": 1.0
+                    },
                     "CapsuleColliderComponent": {
                         "angularFactor": {
                             "x": 0.0,
@@ -430,47 +370,63 @@
                         "material": 2,
                         "offset": {
                             "x": 0.0,
-                            "y": 0.5099999904632568,
+                            "y": 0.550000011920929,
                             "z": 0.0
                         },
-                        "radius": 0.17000000178813934,
-                        "sideHeight": 0.6899999976158142,
-                        "volume": 0.0832260325551033
+                        "radius": 0.1599999964237213,
+                        "sideHeight": 0.800000011920929,
+                        "volume": 0.08149710297584534
+                    },
+                    "PlayerController": {
+                        "acceleration": 7.0,
+                        "idle": "Armature|idle",
+                        "idleThreshold": 0.5,
+                        "maxRunSpeed": 2.0,
+                        "maxWalkSpeed": 1.0,
+                        "run": "Armature|run",
+                        "stoppingPower": 4.0,
+                        "turnLeft": "Armature|idle",
+                        "turnRight": "Armature|idle",
+                        "walk": "Armature|walk"
                     },
                     "TransformComponent": {
                         "boundingBox": {
                             "center": {
                                 "x": 0.0,
-                                "y": 2.423985481262207,
-                                "z": -0.07197563350200653
+                                "y": 0.9599999785423279,
+                                "z": 0.0
                             },
                             "extents": {
-                                "x": 2.5985825061798096,
-                                "y": 2.420626640319824,
-                                "z": 0.47139012813568115
+                                "x": 0.4099999964237213,
+                                "y": 1.0700000524520874,
+                                "z": 0.4399999976158142
                             }
                         },
+                        "overrideBoundingBox": true,
+                        "passDown": 5,
                         "position": {
-                            "x": 1.2569971084594727,
-                            "y": 0.24300000071525574,
-                            "z": -4.309000015258789
+                            "x": 1.3899999856948853,
+                            "y": 0.27000001072883606,
+                            "z": -2.3299999237060547
                         },
                         "rotation": {
                             "w": 1.0,
-                            "x": -0.0,
+                            "x": 0.0,
                             "y": 0.0,
-                            "z": -0.0
+                            "z": 0.0
                         },
                         "scale": {
-                            "x": 0.20000000298023224,
-                            "y": 0.20000000298023224,
-                            "z": 0.20000000298023224
+                            "x": 0.5,
+                            "y": 0.5,
+                            "z": 0.5
                         }
                     }
-                }
+                },
+                "script": null
             },
-            "file": "",
-            "name": "Cowboy",
+            "importStyle": 0,
+            "name": "player",
+            "sceneFile": "",
             "settings": {
                 "camera": 1,
                 "inputSchemes": {},
@@ -483,9 +439,6 @@
             "ID": 13,
             "children": [],
             "entity": {
-                "Entity": {
-                    "script": null
-                },
                 "components": {
                     "CameraComponent": {
                         "aspectRatio": {
@@ -499,35 +452,35 @@
                             "assaoAdaptiveQualityLimit": 0.2529999911785126,
                             "assaoBlurPassCount": 6,
                             "assaoDetailShadowStrength": 2.0199999809265137,
-                            "assaoFadeOutFrom": 38.0,
-                            "assaoFadeOutTo": 43.0,
+                            "assaoFadeOutFrom": 22.0,
+                            "assaoFadeOutTo": 33.0,
                             "assaoHorizonAngleThreshold": 0.14000000059604645,
                             "assaoQualityLevel": 3,
-                            "assaoRadius": 0.800000011920929,
+                            "assaoRadius": 2.799999952316284,
                             "assaoShadowClamp": 0.15000000596046448,
-                            "assaoShadowMultiplier": 0.75,
-                            "assaoShadowPower": 2.549999952316284,
+                            "assaoShadowMultiplier": 0.8899999856948853,
+                            "assaoShadowPower": 3.1700000762939453,
                             "assaoSharpness": 1.0,
-                            "bloomBase": 1.0,
+                            "bloomBase": 1.2000000476837158,
                             "bloomBaseSaturation": 1.0,
-                            "bloomBrightness": 1.0,
+                            "bloomBrightness": 3.509999990463257,
                             "bloomSaturation": 1.0,
-                            "bloomSize": 1.0,
-                            "bloomThreshold": 0.800000011920929,
-                            "bloomValue": 1.0,
+                            "bloomSize": 18.739999771118164,
+                            "bloomThreshold": 0.6700000166893005,
+                            "bloomValue": 1.3200000524520874,
                             "gaussianBlurMultiplier": 1.0,
                             "isASSAO": true,
-                            "isBloom": false,
+                            "isBloom": true,
                             "isFXAA": true,
                             "isGaussianBlur": false,
                             "isMonochrome": false,
                             "isPostProcessing": true,
                             "isSepia": false,
                             "isToneMap": false,
-                            "toneMapExposure": 0.0,
-                            "toneMapOperator": 0,
-                            "toneMapTransferFunction": 0,
-                            "toneMapWhiteNits": 200.0
+                            "toneMapExposure": 0.27000001072883606,
+                            "toneMapOperator": 3,
+                            "toneMapTransferFunction": 1,
+                            "toneMapWhiteNits": 243.0
                         }
                     },
                     "ModelComponent": {
@@ -535,9 +488,9 @@
                         "isVisible": true,
                         "lodBias": 0.0,
                         "lodDistance": 10.0,
-                        "lodEnable": true,
+                        "lodEnable": false,
                         "materialOverrides": {
-                            "rootex/assets/materials/default.rmat": "rootex/assets/materials/default.rmat"
+                            "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
                         },
                         "renderPass": 1,
                         "resFile": "rootex/assets/cube.obj"
@@ -555,158 +508,31 @@
                                 "z": 0.5
                             }
                         },
+                        "overrideBoundingBox": false,
+                        "passDown": 7,
                         "position": {
-                            "x": 1.2799999713897705,
-                            "y": 4.360000133514404,
-                            "z": 3.039999485015869
+                            "x": 1.2251160144805908,
+                            "y": 4.301031112670898,
+                            "z": 4.066394805908203
                         },
                         "rotation": {
-                            "w": 0.9914448857307434,
-                            "x": -0.13052605092525482,
-                            "y": 0.0,
-                            "z": -0.0
+                            "w": 0.9926518797874451,
+                            "x": -0.12100492417812347,
+                            "y": 4.339224091154392e-09,
+                            "z": -4.45441683538661e-09
                         },
                         "scale": {
-                            "x": 1.0,
-                            "y": 1.0,
-                            "z": 1.0
+                            "x": 0.5,
+                            "y": 0.5000020861625671,
+                            "z": 0.5000032186508179
                         }
                     }
-                }
+                },
+                "script": null
             },
-            "file": "",
+            "importStyle": 0,
             "name": "Camera",
-            "settings": {
-                "camera": 1,
-                "inputSchemes": {},
-                "listener": 1,
-                "preloads": [],
-                "startScheme": ""
-            }
-        },
-        {
-            "ID": 26,
-            "children": [],
-            "entity": {
-                "Entity": {
-                    "script": null
-                },
-                "components": {
-                    "TextUIComponent": {
-                        "color": {
-                            "a": 1.0,
-                            "b": 0.903010368347168,
-                            "g": 0.0,
-                            "r": 1.0
-                        },
-                        "fontResource": "game/assets/fonts/noto_sans_50_regular.spritefont",
-                        "isVisible": true,
-                        "mode": 0,
-                        "origin": {
-                            "x": 9.0,
-                            "y": 0.0
-                        },
-                        "text": "WASD to move. Hold Space to punch"
-                    },
-                    "TransformComponent": {
-                        "boundingBox": {
-                            "center": {
-                                "x": 0.0,
-                                "y": 0.0,
-                                "z": 0.0
-                            },
-                            "extents": {
-                                "x": 0.5,
-                                "y": 0.5,
-                                "z": 0.5
-                            }
-                        },
-                        "position": {
-                            "x": 0.0,
-                            "y": 0.0,
-                            "z": 0.0
-                        },
-                        "rotation": {
-                            "w": 0.710101842880249,
-                            "x": -0.7024624943733215,
-                            "y": 0.03374163806438446,
-                            "z": -0.034108664840459824
-                        },
-                        "scale": {
-                            "x": 1.0,
-                            "y": 1.0,
-                            "z": 1.0000063180923462
-                        }
-                    }
-                }
-            },
-            "file": "",
-            "name": "Text",
-            "settings": {
-                "camera": 1,
-                "inputSchemes": {},
-                "listener": 1,
-                "preloads": [],
-                "startScheme": ""
-            }
-        },
-        {
-            "ID": 23,
-            "children": [],
-            "entity": {
-                "Entity": {
-                    "script": null
-                },
-                "components": {
-                    "DirectionalLightComponent": {
-                        "ambientColor": {
-                            "a": 1.0,
-                            "b": 0.21147412061691284,
-                            "g": 0.4615384340286255,
-                            "r": 0.3900911808013916
-                        },
-                        "diffuseColor": {
-                            "a": 1.0,
-                            "b": 0.21071776747703552,
-                            "g": 0.38461536169052124,
-                            "r": 0.18523281812667847
-                        },
-                        "diffuseIntensity": 3.4000000953674316
-                    },
-                    "TransformComponent": {
-                        "boundingBox": {
-                            "center": {
-                                "x": 0.0,
-                                "y": 0.0,
-                                "z": 0.0
-                            },
-                            "extents": {
-                                "x": 0.5,
-                                "y": 0.5,
-                                "z": 0.5
-                            }
-                        },
-                        "position": {
-                            "x": 0.0,
-                            "y": 0.0,
-                            "z": 0.0
-                        },
-                        "rotation": {
-                            "w": -0.24645598232746124,
-                            "x": 0.8678367137908936,
-                            "y": -0.11774357408285141,
-                            "z": -0.41503652930259705
-                        },
-                        "scale": {
-                            "x": 1.0000108480453491,
-                            "y": 1.0000067949295044,
-                            "z": 1.0000112056732178
-                        }
-                    }
-                }
-            },
-            "file": "",
-            "name": "Light",
+            "sceneFile": "",
             "settings": {
                 "camera": 1,
                 "inputSchemes": {},
@@ -717,19 +543,16 @@
         }
     ],
     "entity": {
-        "Entity": {
-            "script": null
-        },
         "components": {
             "FogComponent": {
                 "color": {
                     "a": 1.0,
-                    "b": 0.8833234906196594,
-                    "g": 0.9966555237770081,
-                    "r": 0.9688321948051453
+                    "b": 0.5117056965827942,
+                    "g": 1.0,
+                    "r": 0.900531530380249
                 },
-                "far": 44.0,
-                "near": 7.0
+                "far": 67.0,
+                "near": 5.0
             },
             "ModelComponent": {
                 "affectingStaticLights": [],
@@ -738,26 +561,26 @@
                 "lodDistance": 22.0,
                 "lodEnable": true,
                 "materialOverrides": {
-                    "game/assets/materials/Door.rmat": "game/assets/materials/Door.rmat",
-                    "game/assets/materials/Fence.rmat": "game/assets/materials/Fence.rmat",
-                    "game/assets/materials/Foothpath.rmat": "game/assets/materials/Foothpath.rmat",
-                    "game/assets/materials/Grass.rmat": "game/assets/materials/Grass.rmat",
-                    "game/assets/materials/Landscape.rmat": "game/assets/materials/Landscape.rmat",
-                    "game/assets/materials/Leaf.rmat": "game/assets/materials/Leaf.rmat",
-                    "game/assets/materials/Road.rmat": "game/assets/materials/Road.rmat",
-                    "game/assets/materials/Rock.rmat": "game/assets/materials/Rock.rmat",
-                    "game/assets/materials/Roof.001.rmat": "game/assets/materials/Roof.001.rmat",
-                    "game/assets/materials/Roof.002.rmat": "game/assets/materials/Roof.002.rmat",
-                    "game/assets/materials/Roof.rmat": "game/assets/materials/Roof.rmat",
-                    "game/assets/materials/Topper.rmat": "game/assets/materials/Topper.rmat",
-                    "game/assets/materials/Tree.rmat": "game/assets/materials/Tree.rmat",
-                    "game/assets/materials/Window.rmat": "game/assets/materials/Window.rmat",
-                    "game/assets/materials/Window_aligment.001.rmat": "game/assets/materials/Window_aligment.001.rmat",
-                    "game/assets/materials/Window_aligment.rmat": "game/assets/materials/Window_aligment.rmat",
-                    "game/assets/materials/house.001.rmat": "game/assets/materials/house.001.rmat",
-                    "game/assets/materials/house.002.rmat": "game/assets/materials/house.002.rmat",
-                    "game/assets/materials/house.rmat": "game/assets/materials/house.rmat",
-                    "game/assets/materials/water.rmat": "game/assets/materials/water.rmat"
+                    "game/assets/materials/terrain/Door.basic.rmat": "game/assets/materials/terrain/Door.basic.rmat",
+                    "game/assets/materials/terrain/Fence.basic.rmat": "game/assets/materials/terrain/Fence.basic.rmat",
+                    "game/assets/materials/terrain/Foothpath.basic.rmat": "game/assets/materials/terrain/Foothpath.basic.rmat",
+                    "game/assets/materials/terrain/Grass.basic.rmat": "game/assets/materials/terrain/Grass.basic.rmat",
+                    "game/assets/materials/terrain/Landscape.basic.rmat": "game/assets/materials/terrain/Landscape.basic.rmat",
+                    "game/assets/materials/terrain/Leaf.basic.rmat": "game/assets/materials/terrain/Leaf.basic.rmat",
+                    "game/assets/materials/terrain/Road.basic.rmat": "game/assets/materials/terrain/Road.basic.rmat",
+                    "game/assets/materials/terrain/Rock.basic.rmat": "game/assets/materials/terrain/Rock.basic.rmat",
+                    "game/assets/materials/terrain/Roof.001.basic.rmat": "game/assets/materials/terrain/Roof.001.basic.rmat",
+                    "game/assets/materials/terrain/Roof.002.basic.rmat": "game/assets/materials/terrain/Roof.002.basic.rmat",
+                    "game/assets/materials/terrain/Roof.basic.rmat": "game/assets/materials/terrain/Roof.basic.rmat",
+                    "game/assets/materials/terrain/Topper.basic.rmat": "game/assets/materials/terrain/Topper.basic.rmat",
+                    "game/assets/materials/terrain/Tree.basic.rmat": "game/assets/materials/terrain/Tree.basic.rmat",
+                    "game/assets/materials/terrain/Window.basic.rmat": "game/assets/materials/terrain/Window.basic.rmat",
+                    "game/assets/materials/terrain/Window_aligment.001.basic.rmat": "game/assets/materials/terrain/Window_aligment.001.basic.rmat",
+                    "game/assets/materials/terrain/Window_aligment.basic.rmat": "game/assets/materials/terrain/Window_aligment.basic.rmat",
+                    "game/assets/materials/terrain/house.001.basic.rmat": "game/assets/materials/terrain/house.001.basic.rmat",
+                    "game/assets/materials/terrain/house.002.basic.rmat": "game/assets/materials/terrain/house.002.basic.rmat",
+                    "game/assets/materials/terrain/house.basic.rmat": "game/assets/materials/terrain/house.basic.rmat",
+                    "game/assets/materials/terrain/water.basic.rmat": "game/assets/materials/terrain/water.basic.rmat"
                 },
                 "renderPass": 1,
                 "resFile": "rootex/assets/terrain.obj"
@@ -802,6 +625,8 @@
                         "z": 37.3461799621582
                     }
                 },
+                "overrideBoundingBox": false,
+                "passDown": 7,
                 "position": {
                     "x": 0.0,
                     "y": 0.0,
@@ -819,50 +644,17 @@
                     "z": 1.0
                 }
             }
-        }
+        },
+        "script": null
     },
-    "file": "game/assets/scenes/mesh_collision.scene.json",
+    "importStyle": 0,
     "name": "mesh_collision",
+    "sceneFile": "game/assets/scenes/mesh_collision.scene.json",
     "settings": {
         "camera": 13,
-        "inputSchemes": {
-            "Controls": {
-                "bools": [
-                    {
-                        "button": 87,
-                        "device": 1,
-                        "inputEvent": "Forward"
-                    },
-                    {
-                        "button": 83,
-                        "device": 1,
-                        "inputEvent": "Backward"
-                    },
-                    {
-                        "button": 65,
-                        "device": 1,
-                        "inputEvent": "Left"
-                    },
-                    {
-                        "button": 68,
-                        "device": 1,
-                        "inputEvent": "Right"
-                    },
-                    {
-                        "button": 32,
-                        "device": 1,
-                        "inputEvent": "Punch"
-                    }
-                ],
-                "floats": []
-            }
-        },
-        "listener": 20,
+        "inputSchemes": {},
+        "listener": 31,
         "preloads": [
-            [
-                2,
-                "game/assets/forever.wav"
-            ],
             [
                 8,
                 "rootex/assets/sky.dds"
@@ -888,22 +680,70 @@
                 "game/assets/office.fbx"
             ],
             [
-                5,
-                "game/assets/Male_Casual.fbx"
-            ],
-            [
                 6,
                 "rootex/assets/terrain.obj"
             ],
             [
                 9,
-                "game/assets/fonts/noto_sans_50_regular.spritefont"
+                "rootex/assets/fonts/lato_30_regular.spritefont"
             ],
             [
                 4,
                 "rootex/assets/cube.obj"
+            ],
+            [
+                2,
+                "game/assets/droplet.wav"
+            ],
+            [
+                2,
+                "game/assets/music/birds_chirping_mono.wav"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_thorn_spec.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_thorn_ddn.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_roof_diff.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/spnza_bricks_a_spec.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_thorn_diff.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/spnza_bricks_a_ddn.png"
+            ],
+            [
+                7,
+                "game/assets/sponza/textures/sponza_ceiling_a_diff.png"
+            ],
+            [
+                13,
+                "game/assets/materials/player/Akai_MAT.anim.rmat"
+            ],
+            [
+                5,
+                "game/assets/models/player/player.fbx"
+            ],
+            [
+                7,
+                "game/assets/models/player/textures/akai_diffuse.png"
+            ],
+            [
+                7,
+                "game/assets/models/player/textures/akai_normal.png"
             ]
         ],
-        "startScheme": "Controls"
+        "startScheme": ""
     }
 }

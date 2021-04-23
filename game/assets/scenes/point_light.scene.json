@@ -2,16 +2,13 @@
     "ID": 12,
     "children": [],
     "entity": {
-        "Entity": {
-            "script": null
-        },
         "components": {
             "PointLightComponent": {
                 "ambientColor": {
                     "a": 1.0,
-                    "b": 0.5,
-                    "g": 0.5,
-                    "r": 0.5
+                    "b": 1.0,
+                    "g": 1.0,
+                    "r": 1.0
                 },
                 "attConst": 0.04500000178813934,
                 "attLin": 1.0,
@@ -38,6 +35,8 @@
                         "z": 0.5
                     }
                 },
+                "overrideBoundingBox": false,
+                "passDown": 7,
                 "position": {
                     "x": 0.0,
                     "y": 0.0,
@@ -55,10 +54,12 @@
                     "z": 1.0
                 }
             }
-        }
+        },
+        "script": null
     },
-    "file": "game/assets/scenes/point_light.scene.json",
+    "importStyle": 0,
     "name": "Point Light",
+    "sceneFile": "game/assets/scenes/point_light.scene.json",
     "settings": {
         "camera": 1,
         "inputSchemes": {},

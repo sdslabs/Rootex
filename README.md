@@ -42,6 +42,7 @@ This game will be a product of a join effort of SDSLabs and [Design Studio](http
   * Environment effects like Sky sphere, sky reflections, refractions and depth fog
   * Supports basic transform and skeletal animations
   * Automatic LOD (level-of-detail) generation for 3D models and animations
+  * Custom materials using custom HLSL shaders
   * And few more things...
 * RmlUi integration which allows writing/debugging UI overlays in an HTML/CSS-like language and Lua
 * Physics engine powered by Bullet Physics 3, allows an easy-to-work-with interface for making physics simulations
@@ -49,6 +50,7 @@ This game will be a product of a join effort of SDSLabs and [Design Studio](http
 * Lua scripting engine with functionality exposed for easy game curation
   * Uses an object-oriented approach with Lua scripting for making intuitive scope declarations and reducing garbage generation
   * Lua debugger integration
+  * Equipped with a tweening API provided by [flux](https://github.com/rxi/flux)
 * Applies the event-based programming paradigm for better maitainability of game code
 * Being developed for an actual game
   * Some game-specific features are also present like the Inky [Lua runtime integration](https://github.com/astrochili/narrator/) which allows writing dialogue in the [Ink language](https://www.inklestudios.com/ink/) and running them inside Rootex.

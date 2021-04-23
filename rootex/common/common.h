@@ -28,6 +28,16 @@
 	{                           \
 		WARN(m_Msg);            \
 	}
+/// Panic, but only in debug mode
+#if defined(DEBUG) || defined(_DEBUG)
+#define DEBUG_PANIC(m_IfTtrue, m_Msg) \
+	if (m_IfTtrue)                    \
+	{                                 \
+		WARN(m_Msg);                  \
+	}
+#else
+#define DEBUG_PANIC(m_IfTtrue, m_Msg)
+#endif
 /// Logs file, function, message in red color
 #define ERR_CUSTOM(m_file, m_func, m_Msg)                                          \
 	{                                                                              \

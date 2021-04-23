@@ -8,7 +8,7 @@
 SceneLoader::SceneLoader()
     : m_RootScene(Scene::CreateRootScene())
 {
-	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::DeleteScene, deleteScene);
+	m_Binder.bind(RootexEvents::DeleteScene, this, &SceneLoader::deleteScene);
 }
 
 SceneLoader* SceneLoader::GetSingleton()
@@ -69,7 +69,7 @@ void SceneLoader::loadPreloadedScene(const String& sceneFile, const Vector<Strin
 		{
 			sceneResFile->reimport();
 		}
-		Ptr<Scene>& scene = Scene::Create(JSON::json::parse(sceneResFile->getString()));
+		Ptr<Scene>& scene = Scene::Create(JSON::json::parse(sceneResFile->getString()), false);
 		m_CurrentScene = scene.get();
 		m_RootScene->addChild(scene);
 		setArguments(arguments);
@@ -111,7 +111,7 @@ int SceneLoader::exportScene(Scene* scene, Atomic<int>& progress)
 {
 	if (saveScene(scene))
 	{
-		return ResourceLoader::Export(scene->getName(), scene->getSceneFilePath(), progress);
+		return ResourceLoader::Export(scene->getName(), scene->getScenePath(), progress);
 	}
 	return 0;
 }
@@ -124,7 +124,7 @@ void SceneLoader::postExport()
 
 bool SceneLoader::saveScene(Scene* scene)
 {
-	return saveSceneAtFile(scene, scene->getSceneFilePath());
+	return saveSceneAtFile(scene, scene->getScenePath());
 }
 
 bool SceneLoader::saveSceneAtFile(Scene* scene, const String& filePath)

@@ -4,6 +4,8 @@
 #include "event_manager.h"
 #include "core/ui/custom_render_interface.h"
 
+#include "core/ui/flipbook_decorator.h"
+
 #undef interface
 #include "RmlUi/Core/SystemInterface.h"
 #define interface __STRUCT__
@@ -16,9 +18,13 @@ class CustomSystemInterface : public Rml::SystemInterface
 
 class UISystem : public System
 {
+	EventBinder<UISystem> m_Binder;
+
 	Ptr<CustomSystemInterface> m_RmlSystemInterface;
 	Ptr<CustomRenderInterface> m_RmlRenderInterface;
 	Rml::Context* m_Context;
+
+	Ptr<FlipbookDecoratorInstancer> m_FlipbookInstancer;
 
 	UISystem();
 	virtual ~UISystem() = default;

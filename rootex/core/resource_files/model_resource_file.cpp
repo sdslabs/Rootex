@@ -2,7 +2,6 @@
 
 #include "resource_loader.h"
 #include "image_resource_file.h"
-#include "renderer/material_library.h"
 #include "renderer/mesh.h"
 #include "renderer/vertex_buffer.h"
 #include "renderer/index_buffer.h"
@@ -47,15 +46,15 @@ void ModelResourceFile::reimport()
 		ZeroMemory(&vertex, sizeof(VertexData));
 		for (unsigned int v = 0; v < mesh->mNumVertices; v++)
 		{
-			vertex.m_Position.x = mesh->mVertices[v].x;
-			vertex.m_Position.y = mesh->mVertices[v].y;
-			vertex.m_Position.z = mesh->mVertices[v].z;
+			vertex.position.x = mesh->mVertices[v].x;
+			vertex.position.y = mesh->mVertices[v].y;
+			vertex.position.z = mesh->mVertices[v].z;
 
 			if (mesh->mNormals)
 			{
-				vertex.m_Normal.x = mesh->mNormals[v].x;
-				vertex.m_Normal.y = mesh->mNormals[v].y;
-				vertex.m_Normal.z = mesh->mNormals[v].z;
+				vertex.normal.x = mesh->mNormals[v].x;
+				vertex.normal.y = mesh->mNormals[v].y;
+				vertex.normal.z = mesh->mNormals[v].z;
 			}
 
 			if (mesh->mTextureCoords)
@@ -63,16 +62,16 @@ void ModelResourceFile::reimport()
 				if (mesh->mTextureCoords[0])
 				{
 					// Assuming the model has texture coordinates and taking only the first texture coordinate in case of multiple texture coordinates
-					vertex.m_TextureCoord.x = mesh->mTextureCoords[0][v].x;
-					vertex.m_TextureCoord.y = mesh->mTextureCoords[0][v].y;
+					vertex.textureCoord.x = mesh->mTextureCoords[0][v].x;
+					vertex.textureCoord.y = mesh->mTextureCoords[0][v].y;
 				}
 			}
 
 			if (mesh->mTangents)
 			{
-				vertex.m_Tangent.x = mesh->mTangents[v].x;
-				vertex.m_Tangent.y = mesh->mTangents[v].y;
-				vertex.m_Tangent.z = mesh->mTangents[v].z;
+				vertex.tangent.x = mesh->mTangents[v].x;
+				vertex.tangent.y = mesh->mTangents[v].y;
+				vertex.tangent.z = mesh->mTangents[v].z;
 			}
 
 			vertices.push_back(vertex);
@@ -107,7 +106,7 @@ void ModelResourceFile::reimport()
 			    &lod[0],
 			    indices.data(),
 			    indices.size(),
-			    &vertices[0].m_Position.x,
+			    &vertices[0].position.x,
 			    vertices.size(),
 			    sizeof(VertexData),
 			    targetIndexCount);
@@ -118,7 +117,7 @@ void ModelResourceFile::reimport()
 
 		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
-		aiColor3D color(0.0f, 0.0f, 0.0f);
+		aiColor3D color(1.0f, 1.0f, 1.0f);
 		float alpha = 1.0f;
 		if (AI_SUCCESS != material->Get(AI_MATKEY_COLOR_DIFFUSE, color))
 		{
@@ -129,26 +128,32 @@ void ModelResourceFile::reimport()
 			WARN("Material does not have alpha: " + String(material->GetName().C_Str()));
 		}
 
-		Ref<BasicMaterial> extractedMaterial;
+		Ref<BasicMaterialResourceFile> extractedMaterial;
 
 		String materialPath(material->GetName().C_Str());
 		if (materialPath == "DefaultMaterial" || materialPath == "None" || materialPath.empty())
 		{
-			materialPath = MaterialLibrary::s_DefaultMaterialPath;
+			materialPath = "rootex/assets/materials/default.basic.rmat";
 		}
 		else
 		{
-			materialPath = "game/assets/materials/" + String(material->GetName().C_Str()) + ".rmat";
+			String dir = "game/assets/materials/" + getPath().stem().generic_string();
+			if (!OS::IsExists(dir))
+			{
+				OS::CreateDirectoryName(dir);
+			}
+
+			materialPath = dir + "/" + String(material->GetName().C_Str()) + ".basic.rmat";
 		}
 
 		if (OS::IsExists(materialPath))
 		{
-			extractedMaterial = std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetMaterial(materialPath));
+			extractedMaterial = ResourceLoader::CreateBasicMaterialResourceFile(materialPath);
 		}
 		else
 		{
-			MaterialLibrary::CreateNewMaterialFile(materialPath, "BasicMaterial");
-			extractedMaterial = std::dynamic_pointer_cast<BasicMaterial>(MaterialLibrary::GetMaterial(materialPath));
+			extractedMaterial = ResourceLoader::CreateNewBasicMaterialResourceFile(materialPath);
+
 			extractedMaterial->setColor({ color.r, color.g, color.b, alpha });
 
 			for (int i = 0; i < material->GetTextureCount(aiTextureType_DIFFUSE); i++)
@@ -165,16 +170,16 @@ void ModelResourceFile::reimport()
 
 					if (image)
 					{
-						extractedMaterial->setDiffuseTexture(image);
+						extractedMaterial->setDiffuse(image);
 					}
 					else
 					{
-						WARN("Could not set material diffuse texture: " + texturePath);
+						WARN("Could not set material diffuse image: " + texturePath);
 					}
 				}
 				else
 				{
-					WARN("Embedded diffuse texture found in material: " + extractedMaterial->getFullName() + ". Embedded textures are unsupported.");
+					WARN("Embedded diffuse texture found in material: " + materialPath + ". Embedded textures are unsupported.");
 				}
 			}
 
@@ -190,7 +195,7 @@ void ModelResourceFile::reimport()
 
 					if (image)
 					{
-						extractedMaterial->setNormalTexture(image);
+						extractedMaterial->setNormal(image);
 					}
 					else
 					{
@@ -199,7 +204,7 @@ void ModelResourceFile::reimport()
 				}
 				else
 				{
-					WARN("Embedded normal texture found in material: " + extractedMaterial->getFullName() + ". Embedded textures are unsupported.");
+					WARN("Embedded normal texture found in material: " + materialPath + ". Embedded textures are unsupported.");
 				}
 			}
 
@@ -215,7 +220,7 @@ void ModelResourceFile::reimport()
 
 					if (image)
 					{
-						extractedMaterial->setSpecularTexture(image);
+						extractedMaterial->setSpecular(image);
 					}
 					else
 					{
@@ -224,7 +229,7 @@ void ModelResourceFile::reimport()
 				}
 				else
 				{
-					WARN("Embedded specular texture found in material: " + extractedMaterial->getFullName() + ". Embedded textures are unsupported.");
+					WARN("Embedded specular texture found in material: " + materialPath + ". Embedded textures are unsupported.");
 				}
 			}
 
@@ -240,7 +245,7 @@ void ModelResourceFile::reimport()
 
 					if (image)
 					{
-						extractedMaterial->setLightmapTexture(image);
+						extractedMaterial->setLightmap(image);
 					}
 					else
 					{
@@ -249,13 +254,13 @@ void ModelResourceFile::reimport()
 				}
 				else
 				{
-					WARN("Embedded lightmaptexture found in material: " + extractedMaterial->getFullName() + ". Embedded textures are unsupported.");
+					WARN("Embedded lightmaptexture found in material: " + materialPath + ". Embedded textures are unsupported.");
 				}
 			}
 		}
 
 		Mesh extractedMesh;
-		extractedMesh.m_VertexBuffer.reset(new VertexBuffer(vertices));
+		extractedMesh.m_VertexBuffer.reset(new VertexBuffer((const char*)vertices.data(), vertices.size(), sizeof(VertexData), D3D11_USAGE_IMMUTABLE, 0));
 		extractedMesh.addLOD(std::make_shared<IndexBuffer>(indices), 1.0f);
 		for (int i = 0; i < MAX_LOD_COUNT - 1; i++)
 		{
@@ -286,7 +291,7 @@ void ModelResourceFile::reimport()
 
 		if (!found && extractedMaterial)
 		{
-			getMeshes().push_back(Pair<Ref<Material>, Vector<Mesh>>(extractedMaterial, { extractedMesh }));
+			getMeshes().push_back(Pair<Ref<BasicMaterialResourceFile>, Vector<Mesh>>(extractedMaterial, { extractedMesh }));
 		}
 	}
 }

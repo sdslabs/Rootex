@@ -6,12 +6,10 @@ function LevelChange:initialize(entity)
     }
     self.running = false
     self.timeSinceLoad = 0
-    self.transform = entity:getTransform()
-    self.text = entity:getTextUI()
-    RTX.BindMemberFunction(self, LevelChange.onLoadLevel, "A")
 end
 
-function LevelChange:begin(entity)
+function LevelChange:enterScene(entity)
+    entity:bind("A", LevelChange.onLoadLevel)
 end
 
 function LevelChange:update(entity, delta)
@@ -27,7 +25,7 @@ function LevelChange:update(entity, delta)
     end
 end
 
-function LevelChange:onLoadLevel(event)
+function LevelChange:onLoadLevel(entity, event)
     if event:getData().y == 1 and self.running == false then
         RTX.GetCurrentScene():addChild(RTX.Scene.CreateFromFile("game/assets/scenes/fade_to_black.scene.json"))
         self.running = true

@@ -9,6 +9,8 @@
 /// Handles window creation.
 class Window
 {
+	EventBinder<Window> m_Binder;
+
 protected:
 	int m_Width;
 	int m_Height;

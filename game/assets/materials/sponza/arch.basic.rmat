@@ -1,0 +1,21 @@
+{
+    "affectedBySky": 0,
+    "alpha": false,
+    "color": {
+        "a": 1.0,
+        "b": 0.9998999834060669,
+        "g": 0.9998999834060669,
+        "r": 1.0
+    },
+    "diffuse": "game/assets/sponza/textures/sponza_arch_diff.png",
+    "hasNormal": 1,
+    "isLit": 1,
+    "lightmap": "rootex/assets/white.png",
+    "normal": "game/assets/sponza/textures/sponza_arch_ddn.png",
+    "reflect": 0.0,
+    "refract": 0.0,
+    "refractionConstant": 0.800000011920929,
+    "specIntensity": 0.7900000214576721,
+    "specPower": 48.0,
+    "specular": "game/assets/sponza/textures/sponza_arch_spec.png"
+}

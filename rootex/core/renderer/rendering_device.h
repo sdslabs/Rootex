@@ -5,12 +5,16 @@
 #include <d3d11.h>
 #include <d3dcompiler.h>
 
+#include "event_manager.h"
+
 #include "vendor/DirectXTK/Inc/SpriteBatch.h"
 #include "vendor/DirectXTK/Inc/SpriteFont.h"
 
 /// The boss of all rendering, all DirectX API calls requiring the Device or Context go through this
 class RenderingDevice
 {
+	EventBinder<RenderingDevice> m_Binder;
+
 public:
 	enum class RasterizerState
 	{
@@ -19,6 +23,12 @@ public:
 		UIScissor,
 		Wireframe,
 		Sky
+	};
+
+	enum class SamplerState
+	{
+		Default,
+		Anisotropic
 	};
 
 private:
@@ -84,21 +94,33 @@ public:
 	void disableSkyDSS();
 
 	void createRTVAndSRV(Microsoft::WRL::ComPtr<ID3D11RenderTargetView>& rtv, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& srv);
-	Microsoft::WRL::ComPtr<ID3D11Buffer> createBuffer(D3D11_BUFFER_DESC* bd, D3D11_SUBRESOURCE_DATA* sd);
-	Microsoft::WRL::ComPtr<ID3D11Buffer> createVSCB(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd);
-	Microsoft::WRL::ComPtr<ID3D11Buffer> createPSCB(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd);
+
+	Microsoft::WRL::ComPtr<ID3D11Buffer> createBuffer(const char* data, size_t size, D3D11_BIND_FLAG bindFlags, D3D11_USAGE usage, int cpuAccess);
+	void editBuffer(const char* data, size_t byteSize, ID3D11Buffer* bufferPointer);
+
+	template <class T>
+	Microsoft::WRL::ComPtr<ID3D11Buffer> createBuffer(const T& data, D3D11_BIND_FLAG bindFlags, D3D11_USAGE usage, D3D11_CPU_ACCESS_FLAG cpuAccess);
+	template <typename T>
+	void editBuffer(const T& data, ID3D11Buffer* bufferPointer);
+
+	/// To hold shader blobs loaded from the compiled shader files
+	Microsoft::WRL::ComPtr<ID3DBlob> compileShader(const String& shaderPath, const char* entryPoint, const char* profile);
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> createPS(ID3DBlob* blob);
 	Microsoft::WRL::ComPtr<ID3D11VertexShader> createVS(ID3DBlob* blob);
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> createVL(ID3DBlob* vertexShaderBlob, const D3D11_INPUT_ELEMENT_DESC* ied, UINT size);
 
 	Ref<DirectX::SpriteFont> createFont(const String& fontFilePath);
-	/// To hold shader blobs loaded from the compiled shader files
-	Microsoft::WRL::ComPtr<ID3DBlob> createBlob(LPCWSTR path);
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createDDSTexture(const char* imageDDSFileData, size_t size);
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createTexture(const char* imageFileData, size_t size);
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createTextureFromPixels(const char* imageRawData, unsigned int width, unsigned int height);
-	Microsoft::WRL::ComPtr<ID3D11SamplerState> createSS();
-	Microsoft::WRL::ComPtr<ID3D11SamplerState> createSSAnisotropic();
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> createSS(SamplerState type);
+
+	void setVSSRV(unsigned int slot, unsigned int count, ID3D11ShaderResourceView** texture);
+	void setPSSRV(unsigned int slot, unsigned int count, ID3D11ShaderResourceView** texture);
+	void setVSSS(unsigned int slot, unsigned int count, ID3D11SamplerState** samplerState);
+	void setPSSS(unsigned int slot, unsigned int count, ID3D11SamplerState** samplerState);
+	void setVSCB(unsigned int slot, unsigned int count, ID3D11Buffer** constantBuffer);
+	void setPSCB(unsigned int slot, unsigned int count, ID3D11Buffer** constantBuffer);
 
 	void bind(ID3D11Buffer* const* vertexBuffer, int count, const unsigned int* stride, const unsigned int* offset);
 	void bind(ID3D11Buffer* indexBuffer, DXGI_FORMAT format);
@@ -108,15 +130,6 @@ public:
 
 	void mapBuffer(ID3D11Buffer* buffer, D3D11_MAPPED_SUBRESOURCE& subresource);
 	void unmapBuffer(ID3D11Buffer* buffer);
-
-	/// Binds textures used in Pixel Shader
-	void setInPixelShader(unsigned int slot, unsigned int number, ID3D11ShaderResourceView* texture);
-	/// Binds sampler used in sampling textures in Pixel Shader
-	void setInPixelShader(ID3D11SamplerState* samplerState);
-
-	void setVSCB(ID3D11Buffer* constantBuffer, UINT slot);
-	void setPSCB(ID3D11Buffer* constantBuffer, UINT slot);
-
 	void setDefaultBS();
 	void setAlphaBS();
 
@@ -163,3 +176,15 @@ public:
 	void clearOffScreenRT(float r, float g, float b, float a);
 	void clearDSV();
 };
+
+template <class T>
+inline Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createBuffer(const T& data, D3D11_BIND_FLAG bindFlags, D3D11_USAGE usage, D3D11_CPU_ACCESS_FLAG cpuAccess)
+{
+	return createBuffer((const char*)&data, sizeof(T), bindFlags, usage, cpuAccess);
+}
+
+template <typename T>
+inline void RenderingDevice::editBuffer(const T& data, ID3D11Buffer* bufferPointer)
+{
+	editBuffer((const char*)&data, sizeof(T), bufferPointer);
+}

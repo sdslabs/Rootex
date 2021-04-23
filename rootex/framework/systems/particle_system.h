@@ -1,5 +1,7 @@
 #pragma once
 
+#include <codecvt>
+
 #include "system.h"
 
 #include "Effekseer.h"
@@ -8,11 +10,12 @@
 
 class ParticleSystem : public System
 {
+	static inline std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> s_Convert;
+
 	EffekseerRendererDX11::Renderer* m_Renderer = nullptr;
 	Effekseer::Manager* m_Manager = nullptr;
 	EffekseerSound::Sound* m_Sound = nullptr;
 
-	float m_FrameProgression;
 	float m_TargetUPS;
 
 	ParticleSystem();
@@ -21,10 +24,6 @@ class ParticleSystem : public System
 
 public:
 	static ParticleSystem* GetSingleton();
-
-	bool initialize(const JSON::json& systemData) override;
-	void begin() override;
-	void update(float deltaMilliseconds) override;
 
 	Effekseer::Handle play(Effekseer::Effect* effect, const Vector3& position, int startFrame);
 	void stop(Effekseer::Handle handle);
@@ -36,4 +35,9 @@ public:
 	bool getPaused(Effekseer::Handle handle);
 
 	Effekseer::Effect* loadEffect(const String& path);
+	void release(Effekseer::Effect* effect);
+
+	bool initialize(const JSON::json& systemData) override;
+	void begin() override;
+	void update(float deltaMilliseconds) override;
 };

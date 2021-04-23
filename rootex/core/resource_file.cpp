@@ -5,7 +5,7 @@ ResourceFile::ResourceFile(const Type& type, const FilePath& path)
     , m_Path(path.generic_string())
 {
 	m_LastReadTime = OS::s_FileSystemClock.now();
-	m_LastChangedTime = OS::GetFileLastChangedTime(getPath().string());
+	m_LastChangedTime = OS::GetFileLastChangedTime(m_Path.generic_string());
 }
 
 FilePath ResourceFile::getPath() const
@@ -20,19 +20,23 @@ ResourceFile::Type ResourceFile::getType() const
 
 const FileTimePoint& ResourceFile::getLastChangedTime()
 {
-	m_LastChangedTime = OS::GetFileLastChangedTime(getPath().generic_string());
+	m_LastChangedTime = OS::GetFileLastChangedTime(m_Path.generic_string());
 	return m_LastChangedTime;
 }
 
 void ResourceFile::reimport()
 {
 	m_LastReadTime = OS::s_FileSystemClock.now();
-	m_LastChangedTime = OS::GetFileLastChangedTime(getPath().string());
+	m_LastChangedTime = OS::GetFileLastChangedTime(m_Path.generic_string());
 }
 
 bool ResourceFile::save()
 {
 	return false;
+}
+
+void ResourceFile::draw()
+{
 }
 
 bool ResourceFile::isDirty()

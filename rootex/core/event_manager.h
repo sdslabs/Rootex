@@ -3,54 +3,94 @@
 #include "common/common.h"
 #include "event.h"
 
-/// Bind a member function of a class to an event.
-#define BIND_EVENT_FUNCTION(stringEventType, function) EventManager::GetSingleton()->addListener(stringEventType, function)
-/// Bind a global function to an event.
-#define BIND_EVENT_MEMBER_FUNCTION(stringEventType, classFunction) EventManager::GetSingleton()->addListener(stringEventType, [this](const Event* event) -> Variant { return this->classFunction(event); })
+class EventBinderBase
+{
+public:
+	virtual bool hasBinding(const Event::Type& binding) const = 0;
+	/// Call only if binding exists
+	virtual Variant handle(const Event& event) = 0;
+};
 
-/// Number of event queues used to organise events in EventManager.
-const unsigned int EVENTMANAGER_NUM_QUEUES = 2;
+template <class T>
+class EventBinder : public EventBinderBase
+{
+	typedef Function<Variant(const Event*)> EventFunction;
 
-/// Function object for storing a function that handles an event.
-typedef Function<Variant(const Event*)> EventFunction;
+	HashMap<Event::Type, EventFunction> m_Bindings;
+
+public:
+	EventBinder()
+	{
+		EventManager::GetSingleton()->addBinder(this);
+	}
+
+	~EventBinder()
+	{
+		EventManager::GetSingleton()->removeBinder(this);
+	}
+
+	/// Duplicate bindings will override the previous ones
+	void bind(const Event::Type& event, T* self, Variant (T::*eventFunction)(const Event*))
+	{
+		m_Bindings.emplace(event, [self, eventFunction](const Event* e) { return (self->*eventFunction)(e); });
+	}
+
+	void bind(const Event::Type& event, EventFunction function)
+	{
+		m_Bindings.emplace(event, function);
+	}
+
+	void unbind(const Event::Type& event)
+	{
+		m_Bindings.erase(event);
+	}
+
+	void unbindAll()
+	{
+		m_Bindings.clear();
+	}
+
+	bool hasBinding(const Event::Type& binding) const override
+	{
+		return m_Bindings.find(binding) != m_Bindings.end();
+	}
+
+	Variant handle(const Event& event) override
+	{
+		return m_Bindings.at(event.getType())(&event);
+	}
+};
 
 /// An Event dispatcher and registrar that also allows looking up registered events.
 class EventManager
 {
+	HashMap<EventBinderBase*, bool> m_EventBinders;
 	Vector<Function<void()>> m_DeferList;
-	HashMap<Event::Type, Vector<EventFunction>> m_EventListeners;
-	Vector<Ref<Event>> m_Queues[EVENTMANAGER_NUM_QUEUES];
-	unsigned int m_ActiveQueue;
-
-	EventManager();
-	~EventManager() = default;
+	Vector<Ref<Event>> m_DeferredCalls;
 
 public:
 	static EventManager* GetSingleton();
 
-	enum Constant
-	{
-		Infinite = 0xffffffff
-	};
-
+	/// Defer a singular function till the end of the frame.
 	void defer(Function<void()> function);
-	/// Add an event. Returns false if it already exists.
-	bool addEvent(const Event::Type& event);
-	void removeEvent(const Event::Type& event);
-	/// Add an event handler for an event. Creates a new event is not already existing. Returns false if the handler is already added.
-	bool addListener(const Event::Type& type, EventFunction instance);
+
+	/// Add an event binder which binds to several events per object. Does not need to be called externally.
+	void addBinder(EventBinderBase* binder);
+	void removeBinder(EventBinderBase* binder);
+
 	/// Publish an event. Returns the result of the first event handled.
-	Variant returnCall(const Event& event);
-	Variant returnCall(const Event::Type& eventType, const Variant& data = 0);
-	void call(const Event& event);
-	void call(const Event::Type& eventType, const Variant& data = 0);
+	Variant returnCall(const Event& event) const;
+	Variant returnCall(const Event::Type& eventType, const Variant& data = 0) const;
+
+	void call(const Event& event) const;
+	void call(const Event::Type& eventType, const Variant& data = 0) const;
+
 	/// Publish an event that gets evaluated the end of the current frame.
 	void deferredCall(Ref<Event> event);
 	void deferredCall(const Event::Type& eventType, const Variant& data = 0);
+
 	/// Dispatch deferred events collected so far.
-	bool dispatchDeferred(unsigned long maxMillis = Infinite);
+	void dispatchDeferred();
 
-	void releaseAllEventListeners();
-
-	const HashMap<Event::Type, Vector<EventFunction>>& getRegisteredEvents() const { return m_EventListeners; }
+	const HashMap<EventBinderBase*, bool>& getBinders() const { return m_EventBinders; }
 };

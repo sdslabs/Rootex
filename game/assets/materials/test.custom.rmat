@@ -1,0 +1,4 @@
+{
+    "alpha": true,
+    "pixelShader": "game/assets/shaders/test.hlsl"
+}

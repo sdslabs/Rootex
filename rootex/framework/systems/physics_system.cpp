@@ -110,12 +110,12 @@ void PhysicsSystem::InternalTickCallback(btDynamicsWorld* const world, btScalar 
 		CollisionComponent* collider0 = (CollisionComponent*)body0->getUserPointer();
 		CollisionComponent* collider1 = (CollisionComponent*)body1->getUserPointer();
 
-		Entity* entity0 = collider0->getOwner();
-		Entity* entity1 = collider1->getOwner();
+		Entity& entity0 = collider0->getOwner();
+		Entity& entity1 = collider1->getOwner();
 
-		Hit h0 = Hit(entity0, entity1);
+		Hit h0 = Hit(&entity0, &entity1);
 		collider0->handleHit(&h0);
-		Hit h1 = Hit(entity1, entity0);
+		Hit h1 = Hit(&entity1, &entity0);
 		collider1->handleHit(&h1);
 	}
 }

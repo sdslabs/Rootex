@@ -2,17 +2,24 @@
     "ID": 4,
     "children": [],
     "entity": {
-        "Entity": {
-            "script": null
-        },
         "components": {
             "UIComponent": {
                 "filePath": "game/assets/ui/dialogue/dialogue.rml"
             }
+        },
+        "script": {
+            "overrides": {
+                "down": "\"Down\"",
+                "next": "\"Next\"",
+                "story": "\"game/assets/stories/game.ink\"",
+                "up": "\"Up\""
+            },
+            "path": "game/assets/scripts/dialogue/dialogue_player.lua"
         }
     },
-    "file": "game/assets/scenes/dialogue.scene.json",
+    "importStyle": 0,
     "name": "dialogue",
+    "sceneFile": "game/assets/scenes/dialogue.scene.json",
     "settings": {
         "camera": 1,
         "inputSchemes": {

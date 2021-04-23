@@ -4,6 +4,8 @@
 
 class SceneDock
 {
+	EventBinder<SceneDock> m_Binder;
+
 public:
 	struct SceneDockSettings
 	{

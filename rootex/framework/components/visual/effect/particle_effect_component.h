@@ -8,7 +8,7 @@
 
 class ParticleEffectComponent : public Component
 {
-	DEFINE_COMPONENT(ParticleEffectComponent);
+	COMPONENT(ParticleEffectComponent, Category::Effect);
 	DEPENDS_ON(TransformComponent);
 
 	Effekseer::Handle m_EffectHandle;
@@ -23,15 +23,7 @@ class ParticleEffectComponent : public Component
 	Vector3 m_TargetLocation;
 
 public:
-	ParticleEffectComponent(
-	    Ref<ParticleEffectResourceFile> effect,
-	    bool playOnStart,
-	    bool isMoving,
-	    int startFrame,
-	    bool useSpeed,
-	    float speed,
-	    bool useTarget,
-	    const Vector3& targetLocation);
+	ParticleEffectComponent(Entity& owner, const JSON::json& data);
 	~ParticleEffectComponent() = default;
 
 	bool isPlayOnStart() const { return m_PlayOnStart; }
@@ -52,3 +44,5 @@ public:
 	JSON::json getJSON() const override;
 	void draw() override;
 };
+
+DECLARE_COMPONENT(ParticleEffectComponent);

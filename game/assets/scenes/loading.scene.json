@@ -5,18 +5,17 @@
             "ID": 22,
             "children": [],
             "entity": {
-                "Entity": {
-                    "script": {
-                        "overrides": {
-                            "loadScene": "\"game/assets/scenes/model.scene.json\""
-                        },
-                        "path": "game/assets/scripts/level_change.lua"
-                    }
-                },
-                "components": null
+                "components": null,
+                "script": {
+                    "overrides": {
+                        "loadScene": "\"game/assets/scenes/model.scene.json\""
+                    },
+                    "path": "game/assets/scripts/level_change.lua"
+                }
             },
-            "file": "",
+            "importStyle": 0,
             "name": "loader",
+            "sceneFile": "",
             "settings": {
                 "camera": 1,
                 "inputSchemes": {},
@@ -27,9 +26,6 @@
         }
     ],
     "entity": {
-        "Entity": {
-            "script": null
-        },
         "components": {
             "TextUIComponent": {
                 "color": {
@@ -38,13 +34,14 @@
                     "g": 0.0,
                     "r": 0.0
                 },
-                "fontResource": "game/assets/fonts/lato_30_bold.spritefont",
+                "fontResource": "rootex/assets/fonts/lato_30_bold.spritefont",
                 "isVisible": true,
                 "mode": 0,
                 "origin": {
                     "x": 45.0,
                     "y": 62.0
                 },
+                "rotation": 0.0,
                 "text": "Press A to load level"
             },
             "TransformComponent": {
@@ -60,6 +57,8 @@
                         "z": 0.5
                     }
                 },
+                "overrideBoundingBox": false,
+                "passDown": 7,
                 "position": {
                     "x": 0.0,
                     "y": 0.0,
@@ -77,10 +76,12 @@
                     "z": 0.9999659061431885
                 }
             }
-        }
+        },
+        "script": null
     },
-    "file": "game/assets/scenes/loading.scene.json",
+    "importStyle": 0,
     "name": "loading",
+    "sceneFile": "game/assets/scenes/loading.scene.json",
     "settings": {
         "camera": 1,
         "inputSchemes": {

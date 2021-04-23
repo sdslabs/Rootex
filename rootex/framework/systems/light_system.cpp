@@ -22,14 +22,14 @@ LightSystem* LightSystem::GetSingleton()
 StaticPointLightsInfo LightSystem::getStaticPointLights()
 {
 	StaticPointLightsInfo staticLights;
-	Vector<Component*>& staticPointLightComponents = ECSFactory::GetComponents<StaticPointLightComponent>();
+	Vector<StaticPointLightComponent>& staticPointLightComponents = ECSFactory::GetAllStaticPointLightComponent();
 
 	int i = 0;
 	for (; i < staticPointLightComponents.size() && i < MAX_STATIC_POINT_LIGHTS; i++)
 	{
-		StaticPointLightComponent* staticLight = (StaticPointLightComponent*)staticPointLightComponents[i];
-		Vector3 transformedPosition = staticLight->getAbsoluteTransform().Translation();
-		const PointLight& pointLight = staticLight->getPointLight();
+		StaticPointLightComponent& staticLight = staticPointLightComponents[i];
+		Vector3 transformedPosition = staticLight.getAbsoluteTransform().Translation();
+		const PointLight& pointLight = staticLight.getPointLight();
 
 		staticLights.pointLightInfos[i].ambientColor = pointLight.ambientColor;
 		staticLights.pointLightInfos[i].diffuseColor = pointLight.diffuseColor;
@@ -50,21 +50,21 @@ LightsInfo LightSystem::getDynamicLights()
 	Vector3 cameraPos = RenderSystem::GetSingleton()->getCamera()->getAbsolutePosition();
 	lights.cameraPos = cameraPos;
 
-	static auto sortingLambda = [&cameraPos](const Component* a, const Component* b) -> bool {
-		Vector3& aa = a->getOwner()->getComponent<TransformComponent>()->getAbsoluteTransform().Translation();
-		Vector3& bb = b->getOwner()->getComponent<TransformComponent>()->getAbsoluteTransform().Translation();
+	static auto pointLightSortingLambda = [&cameraPos](PointLightComponent& a, PointLightComponent& b) -> bool {
+		Vector3& aa = a.getTransformComponent()->getAbsoluteTransform().Translation();
+		Vector3& bb = b.getTransformComponent()->getAbsoluteTransform().Translation();
 		return Vector3::DistanceSquared(cameraPos, aa) < Vector3::DistanceSquared(cameraPos, bb);
 	};
 
-	Vector<Component*>& pointLightComponents = ECSFactory::GetComponents<PointLightComponent>();
-	sort(pointLightComponents.begin(), pointLightComponents.end(), sortingLambda);
+	Vector<PointLightComponent>& pointLightComponents = ECSFactory::GetAllPointLightComponent();
+	sort(pointLightComponents.begin(), pointLightComponents.end(), pointLightSortingLambda);
 
 	int i = 0;
 	for (; i < pointLightComponents.size() && i < MAX_DYNAMIC_POINT_LIGHTS; i++)
 	{
-		PointLightComponent* light = (PointLightComponent*)pointLightComponents[i];
-		Vector3 transformedPosition = light->getAbsoluteTransform().Translation();
-		const PointLight& pointLight = light->getPointLight();
+		PointLightComponent& light = pointLightComponents[i];
+		Vector3 transformedPosition = light.getAbsoluteTransform().Translation();
+		const PointLight& pointLight = light.getPointLight();
 
 		lights.pointLightInfos[i].ambientColor = pointLight.ambientColor;
 		lights.pointLightInfos[i].diffuseColor = pointLight.diffuseColor;
@@ -77,18 +77,17 @@ LightsInfo LightSystem::getDynamicLights()
 	}
 	lights.pointLightCount = i;
 
-	const Vector<Component*>& directionalLightComponents = ECSFactory::GetComponents<DirectionalLightComponent>();
-
-	if (directionalLightComponents.size() > 1)
-	{
-		WARN("Directional lights specified are greater than 1. Using only the first directional light found.");
-	}
-
+	Vector<DirectionalLightComponent>& directionalLightComponents = ECSFactory::GetAllDirectionalLightComponent();
 	if (directionalLightComponents.size() > 0)
 	{
-		DirectionalLightComponent* light = (DirectionalLightComponent*)directionalLightComponents[0];
-		const DirectionalLight& directionalLight = light->getDirectionalLight();
-		const Vector3& forward = light->getDirection();
+		if (directionalLightComponents.size() > 1)
+		{
+			WARN("Directional lights specified are greater than 1. Using only the first directional light found.");
+		}
+
+		DirectionalLightComponent& light = directionalLightComponents[0];
+		const DirectionalLight& directionalLight = light.getDirectionalLight();
+		const Vector3& forward = light.getDirection();
 
 		lights.directionalLightInfo = {
 			forward,
@@ -99,15 +98,21 @@ LightsInfo LightSystem::getDynamicLights()
 		lights.directionalLightPresent = 1;
 	}
 
-	Vector<Component*>& spotLightComponents = ECSFactory::GetComponents<SpotLightComponent>();
-	sort(spotLightComponents.begin(), spotLightComponents.end(), sortingLambda);
+	static auto spotLightSortingLambda = [&cameraPos](SpotLightComponent& a, SpotLightComponent& b) -> bool {
+		Vector3& aa = a.getTransformComponent()->getAbsoluteTransform().Translation();
+		Vector3& bb = b.getTransformComponent()->getAbsoluteTransform().Translation();
+		return Vector3::DistanceSquared(cameraPos, aa) < Vector3::DistanceSquared(cameraPos, bb);
+	};
+
+	Vector<SpotLightComponent>& spotLightComponents = ECSFactory::GetAllSpotLightComponent();
+	sort(spotLightComponents.begin(), spotLightComponents.end(), spotLightSortingLambda);
 
 	i = 0;
 	for (; i < spotLightComponents.size() && i < MAX_DYNAMIC_SPOT_LIGHTS; i++)
 	{
-		SpotLightComponent* light = (SpotLightComponent*)spotLightComponents[i];
-		Matrix transform = light->getAbsoluteTransform();
-		const SpotLight& spotLight = light->getSpotLight();
+		SpotLightComponent& light = spotLightComponents[i];
+		Matrix transform = light.getAbsoluteTransform();
+		const SpotLight& spotLight = light.getSpotLight();
 
 		lights.spotLightInfos[i] = {
 			spotLight.ambientColor,

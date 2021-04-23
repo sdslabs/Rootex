@@ -1,54 +1,26 @@
 #include "capsule_collider_component.h"
 #include "framework/systems/physics_system.h"
 
-Ptr<Component> CapsuleColliderComponent::Create(const JSON::json& capsuleComponentData)
-{
-	return std::make_unique<CapsuleColliderComponent>(
-	    capsuleComponentData.value("radius", 0.5f),
-	    capsuleComponentData.value("sideHeight", 1.0f),
-	    capsuleComponentData.value("offset", Vector3(0.0f, 0.0f, 0.0f)),
-	    capsuleComponentData.value("material", PhysicsMaterial::Air),
-	    capsuleComponentData.value("angularFactor", Vector3::One),
-	    capsuleComponentData.value("gravity", Vector3(0.0f, -9.8f, 0.0f)),
-	    capsuleComponentData.value("collisionGroup", (int)CollisionMask::All),
-	    capsuleComponentData.value("collisionMask", (int)CollisionMask::All),
-	    capsuleComponentData.value("isMoveable", false),
-	    capsuleComponentData.value("isKinematic", false),
-	    capsuleComponentData.value("isGeneratesHitEvents", false),
-	    capsuleComponentData.value("isSleepable", true),
-	    capsuleComponentData.value("isCCD", false));
-}
+DEFINE_COMPONENT(CapsuleColliderComponent);
 
-CapsuleColliderComponent::CapsuleColliderComponent(
-    float radius,
-    float sideHeight,
-    const Vector3& offset,
-    const PhysicsMaterial& material,
-    const Vector3& angularFactor,
-    const Vector3& gravity,
-    int collisionGroup,
-    int collisionMask,
-    bool isMoveable,
-    bool isKinematic,
-    bool generatesHitEvents,
-    bool isSleepable,
-    bool isCCD)
+CapsuleColliderComponent::CapsuleColliderComponent(Entity& owner, const JSON::json& data)
     : RigidBodyComponent(
-        material,
-        DirectX::XM_PI * radius * radius * ((4.0f / 3.0f) * radius + sideHeight),
-        offset,
-        gravity,
-        angularFactor,
-        collisionGroup,
-        collisionMask,
-        isMoveable,
-        isKinematic,
-        generatesHitEvents,
-        isSleepable,
-        isCCD,
-        Ref<btCapsuleShape>(new btCapsuleShape(radius, sideHeight)))
-    , m_Radius(radius)
-    , m_SideHeight(sideHeight)
+        owner,
+        data.value("material", PhysicsMaterial::Air),
+        DirectX::XM_PI * data.value("radius", 0.5f) * data.value("radius", 0.5f) * ((4.0f / 3.0f) * data.value("radius", 0.5f) + data.value("sideHeight", 1.0f)),
+        data.value("offset", Vector3(0.0f, 0.0f, 0.0f)),
+        data.value("gravity", Vector3(0.0f, -9.8f, 0.0f)),
+        data.value("angularFactor", Vector3::One),
+        data.value("collisionGroup", (int)CollisionMask::All),
+        data.value("collisionMask", (int)CollisionMask::All),
+        data.value("isMoveable", false),
+        data.value("isKinematic", false),
+        data.value("isGeneratesHitEvents", false),
+        data.value("isSleepable", true),
+        data.value("isCCD", false),
+        Ref<btCapsuleShape>(new btCapsuleShape(data.value("radius", 0.5f), data.value("sideHeight", 1.0f))))
+    , m_Radius(data.value("radius", 0.5f))
+    , m_SideHeight(data.value("sideHeight", 1.0f))
 {
 	m_CapsuleShape = (btCapsuleShape*)m_CollisionShape.get();
 }

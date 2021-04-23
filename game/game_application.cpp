@@ -18,32 +18,15 @@ Ref<Application> CreateRootexApplication()
 	return Ref<Application>(new GameApplication());
 }
 
-String GameApplication::getLevelNameFromCommandLine(const char* s)
+Optional<String> GameApplication::getSceneNameFromCommandLine(const char* s)
 {
-	/// https://github.com/wine-mirror/wine/blob/7ec5f555b05152dda53b149d5994152115e2c623/dlls/shell32/shell32_main.c#L58
-	if (*s == '"')
+	String cmdLine = s;
+	size_t found = cmdLine.find("game/assets/");
+	if (found != String::npos)
 	{
-		++s;
-		while (*s)
-		{
-			if (*s++ == '"')
-			{
-				break;
-			}
-		}
+		return cmdLine.substr(found, cmdLine.size() - 1);
 	}
-	else
-	{
-		while (*s && *s != ' ' && *s != '\t')
-		{
-			++s;
-		}
-	}
-	/* (optionally) skip spaces preceding the first argument */
-	while (*s == ' ' || *s == '\t')
-		s++;
-
-	return String(s);
+	return {};
 }
 
 Variant GameApplication::onExitEvent(const Event* event)
@@ -53,17 +36,17 @@ Variant GameApplication::onExitEvent(const Event* event)
 }
 
 GameApplication::GameApplication()
-    : Application("game/game.app.json")
+    : Application("RootexGame", "game/game.app.json")
 {
-	String levelName = getLevelNameFromCommandLine(GetCommandLine());
+	Optional<String> scenePath = getSceneNameFromCommandLine(GetCommandLine());
 
-	if (levelName.empty())
+	if (scenePath)
 	{
-		SceneLoader::GetSingleton()->loadScene(m_ApplicationSettings->getJSON()["startLevel"], {});
+		SceneLoader::GetSingleton()->loadScene(*scenePath, {});
 	}
 	else
 	{
-		SceneLoader::GetSingleton()->loadScene(levelName, {});
+		SceneLoader::GetSingleton()->loadScene(m_ApplicationSettings->getJSON()["startScene"], {});
 	}
 
 	GameRenderSystem::GetSingleton()->initialize({});
