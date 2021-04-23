@@ -211,6 +211,7 @@ void LuaInterpreter::registerTypes()
 		inputManager["GetFloat"] = &InputManager::GetFloat;
 		inputManager["GetFloatDelta"] = &InputManager::GetFloatDelta;
 		inputManager["Unmap"] = &InputManager::Unmap;
+		inputManager["GetMousePosition"] = &InputManager::GetMousePosition;
 	}
 	{
 		sol::usertype<ResourceLoader> resourceLoader = rootex.new_usertype<ResourceLoader>("ResourceLoader");

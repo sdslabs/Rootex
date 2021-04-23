@@ -181,7 +181,7 @@ void RenderSystem::update(float deltaMilliseconds)
 	RenderingDevice::GetSingleton()->setOffScreenRTVDSV();
 	m_Renderer->resetCurrentShader();
 
-	Color clearColor = { 0.15f, 0.15f, 0.15f, 1.0f };
+	Color clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
 	float fogStart = 0.0f;
 	float fogEnd = -1000.0f;
 	{

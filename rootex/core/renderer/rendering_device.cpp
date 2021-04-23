@@ -465,7 +465,7 @@ Microsoft::WRL::ComPtr<ID3DBlob> RenderingDevice::compileShader(const String& sh
 	        &errorBlob));
 	if (errorBlob)
 	{
-		OutputDebugStringA((char*)errorBlob->GetBufferPointer());
+		ERR("Shader compilation error: " + String((char*)errorBlob->GetBufferPointer()));
 	}
 
 	return shaderBlob;

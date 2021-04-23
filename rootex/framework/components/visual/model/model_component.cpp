@@ -113,7 +113,7 @@ void ModelComponent::assignOverrides(Ref<ModelResourceFile> newModel, const Hash
 	}
 	for (auto& [oldMaterial, newMaterial] : materialOverrides)
 	{
-		setMaterialOverride(ResourceLoader::CreateBasicMaterialResourceFile(oldMaterial), ResourceLoader::CreateBasicMaterialResourceFile(newMaterial));
+		setMaterialOverride(ResourceLoader::CreateMaterialResourceFile(oldMaterial), ResourceLoader::CreateMaterialResourceFile(newMaterial));
 	}
 }
 
@@ -138,7 +138,7 @@ void ModelComponent::draw()
 		EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { m_ModelResourceFile->getPath().generic_string(), (int)m_ModelResourceFile->getType() });
 	}
 	ImGui::SameLine();
-	if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Model File"))
+	if (ImGui::Button(ICON_ROOTEX_FOLDER_OPEN "##Model File"))
 	{
 		if (Optional<String> result = OS::SelectFile(SupportedFiles.at(ResourceFile::Type::Model), "game/assets/"))
 		{

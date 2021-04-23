@@ -58,7 +58,7 @@ void ShortMusicComponent::draw()
 		EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { m_AudioFile->getPath().generic_string(), (int)m_AudioFile->getType() });
 	}
 	ImGui::SameLine();
-	if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Select Audio"))
+	if (ImGui::Button(ICON_ROOTEX_FOLDER_OPEN "##Select Audio"))
 	{
 		if (Optional<String> result = OS::SelectFile(SupportedFiles.at(ResourceFile::Type::Audio), "game/assets/"))
 		{

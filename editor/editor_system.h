@@ -11,6 +11,7 @@
 #include "gui/viewport_dock.h"
 #include "gui/inspector_dock.h"
 #include "gui/file_viewer.h"
+#include "gui/file_editor.h"
 
 #include "vendor/ImGUI/imgui.h"
 #include "vendor/ImGUI/imgui_impl_dx11.h"
@@ -53,6 +54,7 @@ class EditorSystem : public System
 	Ptr<ViewportDock> m_Viewport;
 	Ptr<InspectorDock> m_Inspector;
 	Ptr<FileViewer> m_FileViewer;
+	Ptr<FileEditor> m_FileEditor;
 
 	EditorSystem();
 	EditorSystem(const EditorSystem&) = delete;
