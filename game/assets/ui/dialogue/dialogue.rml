@@ -14,7 +14,8 @@
 </head>
 
 <body id="dialogue">
-    <img id="portrait" src="../../../assets/test/blue.png" />
+    <div id = portraitContainer><img id="portrait" src="../../../assets/test/blue.png" /></div><br/>
+    <div id ="actor">Actor</div>
     <div id="paragraphs">Paragraph</div>
     <div id="choices">Choices</div>
 </body>
