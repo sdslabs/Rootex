@@ -2,6 +2,7 @@
 
 #include "app/application.h"
 #include "core/ui/input_interface.h"
+#include "core/ui/rootex_decorator.h"
 
 #undef interface
 #include "RmlUi/Core.h"
@@ -44,8 +45,8 @@ UISystem::UISystem()
     : System("UISystem", UpdateOrder::UI, true)
     , m_Context(nullptr)
 {
-	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::UISystemEnableDebugger, UISystem::enableDebugger);
-	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::UISystemDisableDebugger, UISystem::disableDebugger);
+	m_Binder.bind(RootexEvents::UISystemEnableDebugger, this, &UISystem::enableDebugger);
+	m_Binder.bind(RootexEvents::UISystemDisableDebugger, this, &UISystem::disableDebugger);
 }
 
 Variant UISystem::enableDebugger(const Event* event)
@@ -110,6 +111,9 @@ bool UISystem::initialize(const JSON::json& systemData)
 		return false;
 	}
 
+	m_FlipbookInstancer.reset(new FlipbookDecoratorInstancer());
+	Rml::Factory::RegisterDecoratorInstancer("flipbook", m_FlipbookInstancer.get());
+
 	Rml::Lua::Initialise(LuaInterpreter::GetSingleton()->getLuaState().lua_state());
 	Rml::Lottie::Initialise();
 
@@ -119,8 +123,8 @@ bool UISystem::initialize(const JSON::json& systemData)
 
 	Rml::Debugger::Initialise(m_Context);
 
-	InputInterface::Initialise();
-	InputInterface::SetContext(m_Context);
+	InputInterface::GetSingleton()->initialise();
+	InputInterface::GetSingleton()->setContext(m_Context);
 
 	return true;
 }
@@ -129,6 +133,9 @@ void UISystem::update(float deltaMilliseconds)
 {
 	ZoneScoped;
 	m_Context->Update();
+
+	RootexDecorator::UpdateAll(deltaMilliseconds * MS_TO_S);
+
 	RenderingDevice::GetSingleton()->setAlphaBS();
 	RenderingDevice::GetSingleton()->setTemporaryUIRS();
 	m_Context->Render();
@@ -155,5 +162,9 @@ void UISystem::draw()
 		setDebugger(debugger);
 	}
 
-	ImGui::Checkbox("Take Inputs", &InputInterface::s_IsEnabled);
+	bool enabled = InputInterface::GetSingleton()->m_IsEnabled;
+	if (ImGui::Checkbox("Take Inputs", &enabled))
+	{
+		InputInterface::GetSingleton()->m_IsEnabled = enabled;
+	}
 }

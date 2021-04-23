@@ -28,7 +28,7 @@ protected:
 	void attachCollisionObject();
 
 public:
-	CollisionComponent(int collisionGroup, int collisionMask);
+	CollisionComponent(Entity& owner, int collisionGroup, int collisionMask);
 	virtual ~CollisionComponent() = default;
 
 	virtual void handleHit(Hit* h);

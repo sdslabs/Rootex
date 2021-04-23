@@ -13,12 +13,10 @@ protected:
 	DXGI_FORMAT m_Format;
 
 public:
-	IndexBuffer(const Vector<unsigned short>& indices);
+	IndexBuffer(const Vector<unsigned short>& indices, bool dynamicWrite = false);
 	IndexBuffer(const Vector<unsigned int>& indices);
+	IndexBuffer(const int* indices, size_t size);
 	~IndexBuffer() = default;
-
-	void setData(const Vector<unsigned short>& indices);
-	void setData(const Vector<unsigned int>& indices);
 
 	void bind() const;
 	unsigned int getCount() const;

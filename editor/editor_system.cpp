@@ -2,7 +2,6 @@
 
 #include "core/random.h"
 #include "core/renderer/rendering_device.h"
-#include "core/renderer/material_library.h"
 #include "core/resource_loader.h"
 #include "core/resource_files/lua_text_resource_file.h"
 #include "core/input/input_manager.h"
@@ -20,26 +19,18 @@
 
 #define DOCUMENTATION_LINK String("https://rootex.readthedocs.io/")
 
-Vector<String> Split(const String& s, char delim)
+EditorSystem::EditorSystem()
+    : System("EditorSystem", UpdateOrder::Editor, true)
 {
-	Vector<String> elems;
-	std::stringstream ss(s);
-	std::string item;
-	while (std::getline(ss, item, delim))
-	{
-		elems.push_back(item);
-	}
-	return elems;
+	m_Binder.bind(EditorEvents::EditorSaveBeforeQuit, this, &EditorSystem::saveBeforeQuit);
+	m_Binder.bind(EditorEvents::EditorSaveAll, this, &EditorSystem::saveAll);
+	m_Binder.bind(EditorEvents::EditorAutoSave, this, &EditorSystem::autoSave);
+	m_Binder.bind(EditorEvents::EditorCreateNewScene, this, &EditorSystem::createNewScene);
+	m_Binder.bind(EditorEvents::EditorCreateNewFile, this, &EditorSystem::createNewFile);
 }
 
 bool EditorSystem::initialize(const JSON::json& systemData)
 {
-	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorSaveBeforeQuit, EditorSystem::saveBeforeQuit);
-	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorSaveAll, EditorSystem::saveAll);
-	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorAutoSave, EditorSystem::autoSave);
-	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorCreateNewScene, EditorSystem::createNewScene);
-	BIND_EVENT_MEMBER_FUNCTION(EditorEvents::EditorCreateNewMaterial, EditorSystem::createNewMaterial);
-
 	m_Scene.reset(new SceneDock());
 	m_Output.reset(new OutputDock());
 	m_Toolbar.reset(new ToolbarDock());
@@ -58,17 +49,38 @@ bool EditorSystem::initialize(const JSON::json& systemData)
 	fontConfig.PixelSnapH = true;
 	fontConfig.OversampleH = 1;
 	m_EditorFont = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/DroidSans/DroidSans.ttf", 18.0f, &fontConfig);
-
-	static const ImWchar iconsRanges[] = { ICON_MIN_ROOTEX, ICON_MAX_ROOTEX, 0 };
-	ImFontConfig iconsConfig;
-	iconsConfig.MergeMode = true;
-	iconsConfig.PixelSnapH = true;
-	io.Fonts->AddFontFromMemoryCompressedBase85TTF(FONT_ICON_BUFFER_NAME_ROOTEX, 18.0f, &iconsConfig, iconsRanges);
+	{
+		static const ImWchar iconsRanges[] = { ICON_MIN_ROOTEX, ICON_MAX_ROOTEX, 0 };
+		ImFontConfig iconsConfig;
+		iconsConfig.MergeMode = true;
+		iconsConfig.PixelSnapH = true;
+		io.Fonts->AddFontFromMemoryCompressedBase85TTF(FONT_ICON_BUFFER_NAME_ROOTEX, 18.0f, &iconsConfig, iconsRanges);
+	}
 
 	m_EditorFontItalic = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/Cousine/Cousine-Italic.ttf", 18.0f, &fontConfig);
+	{
+		static const ImWchar iconsRanges[] = { ICON_MIN_ROOTEX, ICON_MAX_ROOTEX, 0 };
+		ImFontConfig iconsConfig;
+		iconsConfig.MergeMode = true;
+		iconsConfig.PixelSnapH = true;
+		io.Fonts->AddFontFromMemoryCompressedBase85TTF(FONT_ICON_BUFFER_NAME_ROOTEX, 18.0f, &iconsConfig, iconsRanges);
+	}
 	m_EditorFontBold = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/DroidSans/DroidSans-Bold.ttf", 18.0f, &fontConfig);
+	{
+		static const ImWchar iconsRanges[] = { ICON_MIN_ROOTEX, ICON_MAX_ROOTEX, 0 };
+		ImFontConfig iconsConfig;
+		iconsConfig.MergeMode = true;
+		iconsConfig.PixelSnapH = true;
+		io.Fonts->AddFontFromMemoryCompressedBase85TTF(FONT_ICON_BUFFER_NAME_ROOTEX, 18.0f, &iconsConfig, iconsRanges);
+	}
 	m_EditorFontMonospace = io.Fonts->AddFontFromFileTTF("editor/assets/fonts/Cousine/Cousine-Regular.ttf", 18.0f, &fontConfig);
-
+	{
+		static const ImWchar iconsRanges[] = { ICON_MIN_ROOTEX, ICON_MAX_ROOTEX, 0 };
+		ImFontConfig iconsConfig;
+		iconsConfig.MergeMode = true;
+		iconsConfig.PixelSnapH = true;
+		io.Fonts->AddFontFromMemoryCompressedBase85TTF(FONT_ICON_BUFFER_NAME_ROOTEX, 18.0f, &iconsConfig, iconsRanges);
+	}
 	ImGui_ImplWin32_Init(Application::GetSingleton()->getWindow()->getWindowHandle());
 	ImGui_ImplDX11_Init(RenderingDevice::GetSingleton()->getDevice(), RenderingDevice::GetSingleton()->getContext());
 	ImGui::StyleColorsDark();
@@ -174,11 +186,6 @@ void EditorSystem::update(float deltaMilliseconds)
 	RenderingDevice::GetSingleton()->setOffScreenRTVDSV();
 }
 
-EditorSystem::EditorSystem()
-    : System("EditorSystem", UpdateOrder::Editor, true)
-{
-}
-
 EditorSystem::~EditorSystem()
 {
 	ImGui_ImplDX11_Shutdown();
@@ -230,28 +237,41 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 		{
 			static String newSceneName;
 			static String openSceneName;
-			static String newMaterialName;
-			static String newMaterialType;
+			static String newFileName;
+			static String newFileTypeName;
+			static String newFileExtension;
 			if (ImGui::BeginMenu("File"))
 			{
-				if (ImGui::BeginMenu("Create Material"))
+				if (ImGui::BeginMenu("Create Resource"))
 				{
-					if (ImGui::BeginCombo("Material Type", newMaterialType.c_str()))
+					if (ImGui::BeginCombo("Resource Type", newFileTypeName.c_str()))
 					{
-						for (auto& [materialType, materialCreators] : MaterialLibrary::GetMaterialDatabase())
+						for (auto& [type, typeName] : ResourceFile::s_TypeNames)
 						{
-							if (ImGui::Selectable(materialType.c_str(), ""))
+							if (const char* ext = ResourceLoader::GetCreatableExtension(type))
 							{
-								newMaterialType = materialType;
+								if (ImGui::Selectable(typeName.c_str()))
+								{
+									newFileExtension = ext;
+									newFileTypeName = typeName;
+								}
 							}
 						}
 						ImGui::EndCombo();
 					}
-					ImGui::InputText("Material Name", &newMaterialName, ImGuiInputTextFlags_AlwaysInsertMode);
-					if (!newMaterialName.empty() && !newMaterialType.empty() && ImGui::Button("Create"))
+					if (!newFileTypeName.empty())
 					{
-						Vector<String> newMaterialInfo = { "game/assets/materials/" + newMaterialName + ".rmat", newMaterialType };
-						EventManager::GetSingleton()->call(EditorEvents::EditorCreateNewMaterial, newMaterialInfo);
+						ImGui::InputText("Resource Name", &newFileName);
+
+						String finalNewFileName = "game/assets/materials/" + newFileName + newFileExtension;
+						ImGui::Text("File Name: %s", finalNewFileName.c_str());
+
+						if (!newFileName.empty()
+						    && newFileName.find('.') == String::npos
+						    && ImGui::Button("Create"))
+						{
+							EventManager::GetSingleton()->call(EditorEvents::EditorCreateNewFile, finalNewFileName);
+						}
 					}
 
 					ImGui::EndMenu();
@@ -259,22 +279,25 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 				static String newScript;
 				if (ImGui::BeginMenu("Create Script"))
 				{
-					ImGui::InputText("Script Name", &newScript, ImGuiInputTextFlags_AlwaysInsertMode);
+					ImGui::InputText("Script Name", &newScript);
+
+					String finalNewScriptName = "game/assets/scripts/" + newScript + ".lua";
+					ImGui::Text("File Name: %s", finalNewScriptName.c_str());
+
 					if (!newScript.empty() && ImGui::Button("Create"))
 					{
-						newScript = "game/assets/scripts/" + newScript + ".lua";
-						if (!OS::IsExists(newScript))
+						if (!OS::IsExists(finalNewScriptName))
 						{
-							InputOutputFileStream file = OS::CreateFileName(newScript);
+							InputOutputFileStream file = OS::CreateFileName(finalNewScriptName);
 							String defaultScript = ResourceLoader::CreateLuaTextResourceFile("rootex/assets/scripts/empty.lua")->getString();
 							file.write(defaultScript.c_str(), strlen(defaultScript.c_str()));
 							file.close();
-							PRINT("Successfully created script: " + newScript);
+							PRINT("Successfully created script: " + finalNewScriptName);
 							newScript = "";
 						}
 						else
 						{
-							WARN("Script already exists: " + newScript);
+							WARN("Script already exists: " + finalNewScriptName);
 						}
 					}
 					ImGui::EndMenu();
@@ -324,7 +347,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 				}
 				if (ImGui::MenuItem("Preferences"))
 				{
-					EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, ApplicationSettings::GetSingleton()->getTextFile()->getPath().string());
+					EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { ApplicationSettings::GetSingleton()->getTextFile()->getPath().generic_string(), (int)ApplicationSettings::GetSingleton()->getTextFile()->getType() });
 				}
 				ImGui::Separator();
 				if (ImGui::MenuItem("Quit", ""))
@@ -369,6 +392,8 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 							{
 								ImGui::Text(file->getPath().generic_string().c_str());
 							}
+							ImGui::SameLine();
+							ImGui::BulletText("%s", ResourceFile::s_TypeNames.at(file->getType()).c_str());
 							ImGui::PopID();
 							id++;
 						}
@@ -427,7 +452,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 					{
 						if (ImGui::MenuItem(file.generic_string().c_str()))
 						{
-							EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, file.generic_string());
+							EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { file.generic_string(), (int)ResourceFile::Type::Text });
 						}
 					}
 					ImGui::EndMenu();
@@ -440,7 +465,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 					{
 						if (ImGui::MenuItem(file.generic_string().c_str()))
 						{
-							EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, file.generic_string());
+							EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { file.generic_string(), (int)ResourceFile::Type::Text });
 						}
 					}
 					ImGui::EndMenu();
@@ -453,7 +478,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 					{
 						if (ImGui::MenuItem(file.generic_string().c_str()))
 						{
-							EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, file.generic_string());
+							EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { file.generic_string(), (int)ResourceFile::Type::Text });
 						}
 					}
 					ImGui::EndMenu();
@@ -519,16 +544,12 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 				static String openedLuaClass;
 				if (ImGui::ListBoxHeader("##Lua Classes", { 0, ImGui::GetContentRegionAvail().y }))
 				{
-					for (auto& [key, value] : LuaInterpreter::GetSingleton()->getLuaState().registry())
+					for (const auto& [key, value] : LuaInterpreter::GetSingleton()->getLuaState().registry())
 					{
 						if (key.is<String>())
 						{
 							sol::object luaClass = value;
 							String typeName = key.as<String>();
-							if (luaClass.is<sol::table>() && luaClass.as<sol::table>()["__type"] != sol::nil)
-							{
-								typeName = luaClass.as<sol::table>()["__type"]["name"];
-							}
 
 							bool shouldMatch = false;
 							for (int i = 0; i < typeName.size(); i++)
@@ -540,7 +561,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 							{
 								if (ImGui::MenuItem(typeName.c_str()))
 								{
-									openedLuaClass = key.as<String>();
+									openedLuaClass = typeName;
 								}
 							}
 						}
@@ -553,18 +574,13 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 					if (!openedLuaClass.empty())
 					{
 						sol::object luaClass = LuaInterpreter::GetSingleton()->getLuaState().registry()[openedLuaClass];
-						String typeName = openedLuaClass;
-						if (luaClass.is<sol::table>() && luaClass.as<sol::table>()["__type"] != sol::nil)
-						{
-							typeName = luaClass.as<sol::table>()["__type"]["name"];
-						}
 
 						EditorSystem::GetSingleton()->pushBoldFont();
-						ImGui::Text("%s", typeName.c_str());
+						ImGui::Text("%s", openedLuaClass.c_str());
 						EditorSystem::GetSingleton()->popFont();
 
 						ImGui::SetNextItemOpen(true);
-						showDocumentation(typeName, luaClass);
+						showDocumentation(openedLuaClass, luaClass);
 					}
 					ImGui::ListBoxFooter();
 				}
@@ -699,7 +715,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 
 		if (totalProgress == progress)
 		{
-			EventManager::GetSingleton()->call(EditorEvents::EditorCloseScene);
+			EventManager::GetSingleton()->call(EditorEvents::EditorSceneIsClosing);
 			SceneLoader::GetSingleton()->loadPreloadedScene(loadingScene, {});
 			SetWindowText(GetActiveWindow(), ("Rootex Editor: " + loadingScene).c_str());
 			totalProgress = -1;
@@ -777,7 +793,10 @@ Variant EditorSystem::saveAll(const Event* event)
 {
 	if (SceneLoader::GetSingleton()->getCurrentScene())
 	{
-		MaterialLibrary::SaveAll();
+		for (auto& [fileType, fileExt] : CreatableFiles)
+		{
+			ResourceLoader::SaveResources(fileType);
+		}
 		SceneLoader::GetSingleton()->saveScene(SceneLoader::GetSingleton()->getCurrentScene());
 		PRINT("Successfully saved current scene: " + SceneLoader::GetSingleton()->getCurrentScene()->getFullName());
 	}
@@ -804,6 +823,7 @@ Variant EditorSystem::saveBeforeQuit(const Event* event)
 	}
 	else
 	{
+		EventManager::GetSingleton()->call(EditorEvents::EditorSceneIsClosing);
 		EventManager::GetSingleton()->call(RootexEvents::QuitEditorWindow);
 	}
 	return true;
@@ -815,7 +835,7 @@ Variant EditorSystem::createNewScene(const Event* event)
 	const String& newScenePath = "game/assets/scenes/" + sceneName + ".scene.json";
 	if (OS::IsExists(newScenePath))
 	{
-		WARN("Found a level with the same name: " + newScenePath);
+		WARN("Found a scene with the same typeName: " + newScenePath);
 		return true;
 	}
 
@@ -825,10 +845,9 @@ Variant EditorSystem::createNewScene(const Event* event)
 	return true;
 }
 
-Variant EditorSystem::createNewMaterial(const Event* event)
+Variant EditorSystem::createNewFile(const Event* event)
 {
-	const Vector<String>& materialInfo = Extract<Vector<String>>(event->getData());
-	MaterialLibrary::CreateNewMaterialFile(materialInfo[0], materialInfo[1]);
+	OS::CreateFileName(Extract<String>(event->getData()));
 	return true;
 }
 

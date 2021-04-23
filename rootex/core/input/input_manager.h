@@ -62,7 +62,7 @@ class InputManager
 	bool m_IsEnabled;
 	HashMap<Device, unsigned int> DeviceIDs;
 	HashMap<String, InputScheme> m_InputSchemes;
-	String m_CurrentInputScheme;
+	Vector<String> m_CurrentSchemeStack;
 
 	HashMap<unsigned int, Event::Type> m_InputEventIDNames;
 	HashMap<Event::Type, unsigned int> m_InputEventNameIDs;
@@ -78,7 +78,8 @@ class InputManager
 
 	friend class Window;
 
-	unsigned int getNextID();
+	unsigned int getNextID(int device, int button);
+	void buildBindings();
 
 public:
 	static InputManager* GetSingleton();
@@ -86,6 +87,7 @@ public:
 	static void MapBool(const Event::Type& action, Device device, DeviceButtonID button) { GetSingleton()->mapBool(action, device, button); };
 	static void MapFloat(const Event::Type& action, Device device, DeviceButtonID button) { GetSingleton()->mapBool(action, device, button); };
 	static bool IsPressed(const Event::Type& action) { return GetSingleton()->isPressed(action); };
+	static bool HasPressed(const Event::Type& action) { return GetSingleton()->hasPressed(action); };
 	static bool WasPressed(const Event::Type& action) { return GetSingleton()->wasPressed(action); };
 	static float GetFloat(const Event::Type& action) { return GetSingleton()->getFloat(action); };
 	static float GetFloatDelta(const Event::Type& action) { return GetSingleton()->getFloatDelta(action); };
@@ -95,8 +97,11 @@ public:
 
 	void setEnabled(bool enabled);
 
-	void setSchemes(const HashMap<String, InputScheme>& inputSchemes);
-	void setScheme(const String& schemeName);
+	void loadSchemes(const HashMap<String, InputScheme>& inputSchemes);
+	void addScheme(const String& name, const InputScheme& inputScheme);
+	void pushScheme(const String& schemeName);
+	void popScheme();
+	void flushSchemes();
 
 	/// Bind an event to a button on a device.
 	void mapBool(const Event::Type& action, Device device, DeviceButtonID button);
@@ -106,6 +111,7 @@ public:
 	void unmap(const Event::Type& action);
 
 	bool isPressed(const Event::Type& action);
+	bool hasPressed(const Event::Type& action);
 	bool wasPressed(const Event::Type& action);
 	float getFloat(const Event::Type& action);
 	float getFloatDelta(const Event::Type& action);

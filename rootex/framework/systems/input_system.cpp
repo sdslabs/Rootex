@@ -5,7 +5,7 @@
 InputSystem::InputSystem()
     : System("InputSystem", UpdateOrder::Input, true)
 {
-	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::WindowResized, InputSystem::windowResized);
+	m_Binder.bind(RootexEvents::WindowResized, this, &InputSystem::windowResized);
 }
 
 Variant InputSystem::windowResized(const Event* event)
@@ -23,20 +23,27 @@ InputSystem* InputSystem::GetSingleton()
 
 void InputSystem::loadSchemes(const HashMap<String, InputScheme>& schemes)
 {
-	InputManager::GetSingleton()->setSchemes(schemes);
+	InputManager::GetSingleton()->loadSchemes(schemes);
 }
 
-void InputSystem::setScheme(const String& scheme)
+void InputSystem::addScheme(const String& name, const InputScheme& scheme)
 {
-	if (!m_SchemeLock)
-	{
-		InputManager::GetSingleton()->setScheme(scheme);
-	}
+	InputManager::GetSingleton()->addScheme(name, scheme);
 }
 
-void InputSystem::setSchemeLock(bool enabled)
+void InputSystem::pushScheme(const String& name)
 {
-	m_SchemeLock = enabled;
+	InputManager::GetSingleton()->pushScheme(name);
+}
+
+void InputSystem::popScheme()
+{
+	InputManager::GetSingleton()->popScheme();
+}
+
+void InputSystem::flushSchemes()
+{
+	InputManager::GetSingleton()->flushSchemes();
 }
 
 bool InputSystem::initialize(const JSON::json& systemData)
@@ -48,7 +55,7 @@ bool InputSystem::initialize(const JSON::json& systemData)
 void InputSystem::setConfig(const SceneSettings& sceneSettings)
 {
 	loadSchemes(sceneSettings.inputSchemes);
-	setScheme(sceneSettings.startScheme);
+	pushScheme(sceneSettings.startScheme);
 }
 
 void InputSystem::update(float deltaMilliseconds)

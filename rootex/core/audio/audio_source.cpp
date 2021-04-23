@@ -73,6 +73,16 @@ ALuint AudioSource::getSourceID() const
 	return m_SourceID;
 }
 
+void AudioSource::setVelocity(const Vector3& velocity)
+{
+	AL_CHECK(alSourcefv(m_SourceID, AL_VELOCITY, &velocity.x));
+}
+
+void AudioSource::setVolume(float volume)
+{
+	AL_CHECK(alSourcef(m_SourceID, AL_GAIN, volume));
+}
+
 void AudioSource::setPosition(Vector3& position)
 {
 	AL_CHECK(alSource3f(m_SourceID, AL_POSITION, position.x, position.y, position.z));
@@ -123,7 +133,9 @@ float StaticAudioSource::getElapsedTimeS()
 
 void StaticAudioSource::unqueueBuffers()
 {
-	AL_CHECK(alSourceUnqueueBuffers(m_SourceID, 1, &m_StaticAudio->getBuffer()));
+	ALint processed;
+	AL_CHECK(alGetSourcei(m_SourceID, AL_BUFFERS_PROCESSED, &processed));
+	AL_CHECK(alSourceUnqueueBuffers(m_SourceID, processed, &m_StaticAudio->getBuffer()));
 }
 
 float StaticAudioSource::getDuration() const
@@ -182,7 +194,6 @@ void StreamingAudioSource::unqueueBuffers()
 {
 	int numUsedUp;
 	AL_CHECK(alGetSourcei(m_SourceID, AL_BUFFERS_PROCESSED, &numUsedUp));
-
 	AL_CHECK(alSourceUnqueueBuffers(m_SourceID, numUsedUp, m_StreamingAudio->getBuffers()));
 }
 

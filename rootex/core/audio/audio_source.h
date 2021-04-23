@@ -1,5 +1,6 @@
 #pragma once
-#include "rootex\vendor\OpenAL\include\al.h"
+
+#include "al.h"
 
 class StreamingAudioBuffer;
 class StaticAudioBuffer;
@@ -49,6 +50,8 @@ public:
 	/// Get audio duration in seconds.
 	virtual float getDuration() const = 0;
 
+	void setVelocity(const Vector3& velocity);
+	void setVolume(float volume);
 	void setPosition(Vector3& position);
 	void setModel(AttenuationModel distanceModel);
 	/// Roll Off Factor: The rate of change of attenuation

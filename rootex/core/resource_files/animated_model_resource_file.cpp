@@ -2,7 +2,6 @@
 
 #include "resource_loader.h"
 #include "image_resource_file.h"
-#include "renderer/material_library.h"
 #include "renderer/vertex_data.h"
 #include "renderer/vertex_buffer.h"
 #include "renderer/index_buffer.h"
@@ -12,6 +11,8 @@
 #include "assimp/postprocess.h"
 
 #include "meshoptimizer.h"
+
+#include "Tracy/Tracy.hpp"
 
 AnimatedModelResourceFile::AnimatedModelResourceFile(const FilePath& path)
     : ResourceFile(Type::AnimatedModel, path)
@@ -62,18 +63,21 @@ void AnimatedModelResourceFile::setNodeHierarchy(aiNode* currentAiNode, Ptr<Skel
 	}
 }
 
-void AnimatedModelResourceFile::getFinalTransforms(Vector<Matrix>& transforms, const String& animationName, float currentTime, float transitionTightness)
+void AnimatedModelResourceFile::getFinalTransforms(Vector<Matrix>& transforms, const String& animationName, float currentTime, float transitionTightness, RootExclusion rootExclusion)
 {
+	ZoneScoped;
+
 	bool rootFoundFlag = false;
-	setAnimationTransforms(m_RootNode, currentTime, animationName, Matrix::Identity, transitionTightness, rootFoundFlag);
+	setAnimationTransforms(m_RootNode, currentTime, animationName, Matrix::Identity, transitionTightness, rootExclusion, rootFoundFlag);
 
 	for (unsigned int i = 0; i < getBoneCount(); i++)
 	{
+		ZoneNamedN(matrixMultiplications, "Matrix transformation", true);
 		transforms[i] = m_BoneOffsets[i] * m_AnimationTransforms[i] * m_RootInverseTransform;
 	}
 }
 
-void AnimatedModelResourceFile::setAnimationTransforms(Ptr<SkeletonNode>& node, float currentTime, const String& animationName, const Matrix& parentModelTransform, float transitionTightness, bool isRootFound)
+void AnimatedModelResourceFile::setAnimationTransforms(Ptr<SkeletonNode>& node, float currentTime, const String& animationName, const Matrix& parentModelTransform, float transitionTightness, RootExclusion rootExclusion, bool isRootFound)
 {
 	Matrix boneSpaceTransform = m_Animations[animationName].interpolate(node->m_Name.c_str(), currentTime);
 	if (boneSpaceTransform == Matrix::Identity)
@@ -87,7 +91,22 @@ void AnimatedModelResourceFile::setAnimationTransforms(Ptr<SkeletonNode>& node, 
 	{
 		if (!isRootFound)
 		{
-			m_RootInverseTransform = currentModelTransform.Invert();
+			switch (rootExclusion)
+			{
+			case RootExclusion::None:
+				m_RootInverseTransform = Matrix::Identity;
+				break;
+			case RootExclusion::Translation:
+				m_RootInverseTransform = Matrix::CreateTranslation(-currentModelTransform.Translation());
+				break;
+			case RootExclusion::All:
+				m_RootInverseTransform = currentModelTransform.Invert();
+				break;
+			default:
+				WARN("Unknown root exclusion setting found");
+				break;
+			}
+
 			isRootFound = true;
 		}
 
@@ -97,7 +116,7 @@ void AnimatedModelResourceFile::setAnimationTransforms(Ptr<SkeletonNode>& node, 
 
 	for (auto& child : node->m_Children)
 	{
-		setAnimationTransforms(child, currentTime, animationName, currentModelTransform, transitionTightness, isRootFound);
+		setAnimationTransforms(child, currentTime, animationName, currentModelTransform, transitionTightness, rootExclusion, isRootFound);
 	}
 }
 
@@ -124,6 +143,11 @@ void AnimatedModelResourceFile::reimport()
 
 	unsigned int boneCount = 0;
 	m_Meshes.clear();
+	m_BoneMapping.clear();
+	m_BoneOffsets.clear();
+	m_AnimationTransforms.clear();
+	m_RootInverseTransform = Matrix::Identity;
+	m_Animations.clear();
 
 	for (int i = 0; i < scene->mNumMeshes; i++)
 	{
@@ -137,15 +161,15 @@ void AnimatedModelResourceFile::reimport()
 
 		for (int j = 0; j < mesh->mNumVertices; j++)
 		{
-			vertex.m_Position.x = mesh->mVertices[j].x;
-			vertex.m_Position.y = mesh->mVertices[j].y;
-			vertex.m_Position.z = mesh->mVertices[j].z;
+			vertex.position.x = mesh->mVertices[j].x;
+			vertex.position.y = mesh->mVertices[j].y;
+			vertex.position.z = mesh->mVertices[j].z;
 
 			if (mesh->mNormals)
 			{
-				vertex.m_Normal.x = mesh->mNormals[j].x;
-				vertex.m_Normal.y = mesh->mNormals[j].y;
-				vertex.m_Normal.z = mesh->mNormals[j].z;
+				vertex.normal.x = mesh->mNormals[j].x;
+				vertex.normal.y = mesh->mNormals[j].y;
+				vertex.normal.z = mesh->mNormals[j].z;
 			}
 
 			if (mesh->mTextureCoords)
@@ -153,16 +177,16 @@ void AnimatedModelResourceFile::reimport()
 				if (mesh->mTextureCoords[0])
 				{
 					// Assuming the model has texture coordinates and taking the only the first texture coordinate in case of multiple texture coordinates
-					vertex.m_TextureCoord.x = mesh->mTextureCoords[0][j].x;
-					vertex.m_TextureCoord.y = mesh->mTextureCoords[0][j].y;
+					vertex.textureCoord.x = mesh->mTextureCoords[0][j].x;
+					vertex.textureCoord.y = mesh->mTextureCoords[0][j].y;
 				}
 			}
 
 			if (mesh->mTangents)
 			{
-				vertex.m_Tangent.x = mesh->mTangents[j].x;
-				vertex.m_Tangent.y = mesh->mTangents[j].y;
-				vertex.m_Tangent.z = mesh->mTangents[j].z;
+				vertex.tangent.x = mesh->mTangents[j].x;
+				vertex.tangent.y = mesh->mTangents[j].y;
+				vertex.tangent.z = mesh->mTangents[j].z;
 			}
 
 			vertices.push_back(vertex);
@@ -196,7 +220,7 @@ void AnimatedModelResourceFile::reimport()
 			    &lod[0],
 			    indices.data(),
 			    indices.size(),
-			    &vertices[0].m_Position.x,
+			    &vertices[0].position.x,
 			    vertices.size(),
 			    sizeof(AnimatedVertexData),
 			    targetIndexCount);
@@ -218,32 +242,31 @@ void AnimatedModelResourceFile::reimport()
 			WARN("Material does not have alpha: " + String(material->GetName().C_Str()));
 		}
 
-		Ref<AnimatedMaterial> extractedMaterial;
+		Ref<AnimatedBasicMaterialResourceFile> extractedMaterial;
 
-		String materialPath;
+		String materialPath(material->GetName().C_Str());
 
-		if (String(material->GetName().C_Str()) == "DefaultMaterial")
+		if (materialPath == "DefaultMaterial" || materialPath == "None" || materialPath.empty())
 		{
-			materialPath = MaterialLibrary::s_AnimatedDefaultMaterialPath;
+			materialPath = "rootex/assets/materials/default.anim.rmat";
 		}
 		else
 		{
-			materialPath = "game/assets/materials/" + String(material->GetName().C_Str()) + ".rmat";
+			String dir = "game/assets/materials/" + getPath().stem().generic_string();
+			if (!OS::IsExists(dir))
+			{
+				OS::CreateDirectoryName(dir);
+			}
+			materialPath = dir + "/" + String(material->GetName().C_Str()) + ".anim.rmat";
 		}
 
 		if (OS::IsExists(materialPath))
 		{
-			extractedMaterial = std::dynamic_pointer_cast<AnimatedMaterial>(MaterialLibrary::GetMaterial(materialPath));
-			if (!extractedMaterial)
-			{
-				WARN("Material loaded was not an AnimatedMaterial. Replacing with default AnimatedMaterial: " + materialPath);
-				extractedMaterial = std::dynamic_pointer_cast<AnimatedMaterial>(MaterialLibrary::GetDefaultAnimatedMaterial());
-			}
+			extractedMaterial = ResourceLoader::CreateAnimatedBasicMaterialResourceFile(materialPath);
 		}
 		else
 		{
-			MaterialLibrary::CreateNewMaterialFile(materialPath, "AnimatedMaterial");
-			extractedMaterial = std::dynamic_pointer_cast<AnimatedMaterial>(MaterialLibrary::GetMaterial(materialPath));
+			extractedMaterial = ResourceLoader::CreateNewAnimatedBasicMaterialResourceFile(materialPath);
 			extractedMaterial->setColor({ color.r, color.g, color.b, alpha });
 
 			for (int i = 0; i < material->GetTextureCount(aiTextureType_DIFFUSE); i++)
@@ -260,7 +283,7 @@ void AnimatedModelResourceFile::reimport()
 
 					if (image)
 					{
-						extractedMaterial->setDiffuseTexture(image);
+						extractedMaterial->setDiffuse(image);
 					}
 					else
 					{
@@ -269,7 +292,7 @@ void AnimatedModelResourceFile::reimport()
 				}
 				else
 				{
-					WARN("Embedded diffuse texture found in material: " + extractedMaterial->getFullName() + ". Embedded textures are unsupported.");
+					WARN("Embedded diffuse texture found in material: " + materialPath + ". Embedded textures are unsupported.");
 				}
 			}
 
@@ -285,16 +308,16 @@ void AnimatedModelResourceFile::reimport()
 
 					if (image)
 					{
-						extractedMaterial->setNormalTexture(image);
+						extractedMaterial->setNormal(image);
 					}
 					else
 					{
-						WARN("Could not set material normal map texture: " + texturePath);
+						WARN("Could not set material normal texture: " + texturePath);
 					}
 				}
 				else
 				{
-					WARN("Embedded normal texture found in material: " + extractedMaterial->getFullName() + ". Embedded textures are unsupported.");
+					WARN("Embedded normal texture found in material: " + materialPath + ". Embedded textures are unsupported.");
 				}
 			}
 
@@ -310,16 +333,16 @@ void AnimatedModelResourceFile::reimport()
 
 					if (image)
 					{
-						extractedMaterial->setSpecularTexture(image);
+						extractedMaterial->setSpecular(image);
 					}
 					else
 					{
-						WARN("Could not set material specular map texture: " + texturePath);
+						WARN("Could not set material specular texture: " + texturePath);
 					}
 				}
 				else
 				{
-					WARN("Embedded specular texture found in material: " + extractedMaterial->getFullName() + ". Embedded textures are unsupported.");
+					WARN("Embedded specular texture found in material: " + materialPath + ". Embedded textures are unsupported.");
 				}
 			}
 		}
@@ -357,23 +380,23 @@ void AnimatedModelResourceFile::reimport()
 		for (auto& [vertexID, boneIndices] : verticesIndex)
 		{
 			boneIndices.resize(4);
-			vertices[vertexID].m_BoneIndices[0] = boneIndices[0];
-			vertices[vertexID].m_BoneIndices[1] = boneIndices[1];
-			vertices[vertexID].m_BoneIndices[2] = boneIndices[2];
-			vertices[vertexID].m_BoneIndices[3] = boneIndices[3];
+			vertices[vertexID].boneIndices[0] = boneIndices[0];
+			vertices[vertexID].boneIndices[1] = boneIndices[1];
+			vertices[vertexID].boneIndices[2] = boneIndices[2];
+			vertices[vertexID].boneIndices[3] = boneIndices[3];
 		}
 
 		for (auto& [vertexID, boneWeights] : verticesWeights)
 		{
 			boneWeights.resize(4);
-			vertices[vertexID].m_BoneWeights.x = boneWeights[0];
-			vertices[vertexID].m_BoneWeights.y = boneWeights[1];
-			vertices[vertexID].m_BoneWeights.z = boneWeights[2];
-			vertices[vertexID].m_BoneWeights.w = boneWeights[3];
+			vertices[vertexID].boneWeights.x = boneWeights[0];
+			vertices[vertexID].boneWeights.y = boneWeights[1];
+			vertices[vertexID].boneWeights.z = boneWeights[2];
+			vertices[vertexID].boneWeights.w = boneWeights[3];
 		}
 
 		Mesh extractedMesh;
-		extractedMesh.m_VertexBuffer.reset(new VertexBuffer(vertices));
+		extractedMesh.m_VertexBuffer.reset(new VertexBuffer((const char*)vertices.data(), vertices.size(), sizeof(AnimatedVertexData), D3D11_USAGE_IMMUTABLE, 0));
 		extractedMesh.addLOD(std::make_shared<IndexBuffer>(indices), 1.0f);
 		for (int i = 0; i < MAX_LOD_COUNT - 1; i++)
 		{
@@ -409,7 +432,7 @@ void AnimatedModelResourceFile::reimport()
 
 		if (!found && extractedMaterial)
 		{
-			getMeshes().push_back(Pair<Ref<Material>, Vector<Mesh>>(extractedMaterial, { extractedMesh }));
+			getMeshes().push_back(Pair<Ref<AnimatedBasicMaterialResourceFile>, Vector<Mesh>>(extractedMaterial, { extractedMesh }));
 		}
 	}
 

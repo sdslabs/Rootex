@@ -18,12 +18,12 @@
 
 #include "Tracy/Tracy.hpp"
 
-class HierarchyGraph;
-
 ImColor ColorToImColor(Color& c);
 
 class EditorSystem : public System
 {
+	EventBinder<EditorSystem> m_Binder;
+
 	int m_DockSpaceID;
 	String m_MenuAction;
 	String m_PopupCause;
@@ -66,7 +66,7 @@ class EditorSystem : public System
 	Variant autoSave(const Event* event);
 	Variant saveBeforeQuit(const Event* event);
 	Variant createNewScene(const Event* event);
-	Variant createNewMaterial(const Event* event);
+	Variant createNewFile(const Event* event);
 
 public:
 	static EditorSystem* GetSingleton();
@@ -85,4 +85,5 @@ public:
 	ImColor getFatalColor() const { return ColorToImColor((Color)ColorPresets::IndianRed); }
 	ImColor getSuccessColor() const { return ColorToImColor((Color)ColorPresets::LimeGreen); }
 	ImColor getNormalColor() const { return ColorToImColor((Color)ColorPresets::White); }
+	ImColor getLinkColor() const { return ColorToImColor((Color)ColorPresets::SteelBlue); }
 };

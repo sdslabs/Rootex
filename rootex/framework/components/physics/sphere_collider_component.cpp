@@ -1,51 +1,25 @@
 #include "sphere_collider_component.h"
 #include "framework/systems/physics_system.h"
 
-Ptr<Component> SphereColliderComponent::Create(const JSON::json& sphereComponentData)
-{
-	return std::make_unique<SphereColliderComponent>(
-	    sphereComponentData.value("radius", 1.0f),
-	    sphereComponentData.value("offset", Vector3(0.0f, 0.0f, 0.0f)),
-	    sphereComponentData.value("material", PhysicsMaterial::Air),
-	    sphereComponentData.value("angularFactor", Vector3::One),
-	    sphereComponentData.value("gravity", Vector3(0.0f, -9.8f, 0.0f)),
-	    sphereComponentData.value("collisionGroup", (int)CollisionMask::All),
-	    sphereComponentData.value("collisionMask", (int)CollisionMask::All),
-	    sphereComponentData.value("isMoveable", false),
-	    sphereComponentData.value("isKinematic", false),
-	    sphereComponentData.value("isGeneratesHitEvents", false),
-	    sphereComponentData.value("isSleepable", true),
-	    sphereComponentData.value("isCCD", false));
-}
+DEFINE_COMPONENT(SphereColliderComponent);
 
-SphereColliderComponent::SphereColliderComponent(
-    float radius,
-    const Vector3& offset,
-    const PhysicsMaterial& material,
-    const Vector3& angularFactor,
-    const Vector3& gravity,
-    int collisionGroup,
-    int collisionMask,
-    bool isMoveable,
-    bool isKinematic,
-    bool generatesHitEvents,
-    bool isSleepable,
-    bool isCCD)
+SphereColliderComponent::SphereColliderComponent(Entity& owner, const JSON::json& data)
     : RigidBodyComponent(
-        material,
-        (4.0f / 3.0f) * DirectX::XM_PI * radius * radius * radius,
-        offset,
-        gravity,
-        angularFactor,
-        collisionGroup,
-        collisionMask,
-        isMoveable,
-        isKinematic,
-        generatesHitEvents,
-        isSleepable,
-        isCCD,
-        Ref<btSphereShape>(new btSphereShape(radius)))
-    , m_Radius(radius)
+        owner,
+        data.value("material", PhysicsMaterial::Air),
+        (4.0f / 3.0f) * DirectX::XM_PI * data.value("radius", 1.0f) * data.value("radius", 1.0f) * data.value("radius", 1.0f),
+        data.value("offset", Vector3(0.0f, 0.0f, 0.0f)),
+        data.value("gravity", Vector3(0.0f, -9.8f, 0.0f)),
+        data.value("angularFactor", Vector3::One),
+        data.value("collisionGroup", (int)CollisionMask::All),
+        data.value("collisionMask", (int)CollisionMask::All),
+        data.value("isMoveable", false),
+        data.value("isKinematic", false),
+        data.value("isGeneratesHitEvents", false),
+        data.value("isSleepable", true),
+        data.value("isCCD", false),
+        Ref<btSphereShape>(new btSphereShape(data.value("radius", 1.0f))))
+    , m_Radius(data.value("radius", 1.0f))
 {
 	m_SphereShape = (btSphereShape*)m_CollisionShape.get();
 }

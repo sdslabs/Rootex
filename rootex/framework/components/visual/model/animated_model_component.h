@@ -10,7 +10,7 @@
 
 class AnimatedModelComponent : public RenderableComponent
 {
-	DEFINE_COMPONENT(AnimatedModelComponent);
+	COMPONENT(AnimatedModelComponent, Category::Model);
 
 public:
 	enum class AnimationMode : int
@@ -28,24 +28,15 @@ protected:
 	Ref<AnimatedModelResourceFile> m_AnimatedModelResourceFile;
 	String m_CurrentAnimationName;
 	float m_CurrentTimePosition;
+	float m_SpeedMultiplier;
+	RootExclusion m_RootExclusion;
 	bool m_IsPlaying;
 	bool m_IsPlayOnStart;
 	AnimationMode m_AnimationMode;
 	Vector<Matrix> m_FinalTransforms;
 
 public:
-	AnimatedModelComponent(
-	    bool isPlayOnStart,
-	    Ref<AnimatedModelResourceFile> resFile,
-	    const String& currentAnimationName,
-	    AnimationMode mode,
-	    unsigned int renderPass,
-	    const HashMap<String, String>& materialOverrides,
-	    bool isVisible,
-	    bool lodEnable,
-	    float lodBias,
-	    float lodDistance,
-	    const Vector<SceneID>& affectingStaticLightIDs);
+	AnimatedModelComponent(Entity& owner, const JSON::json& data);
 	~AnimatedModelComponent() = default;
 
 	bool preRender(float deltaMilliseconds) override;
@@ -54,6 +45,8 @@ public:
 	String getCurrentAnimationName() const { return m_CurrentAnimationName; }
 	float getCurrentTime() const { return m_CurrentTimePosition; }
 
+	void checkCurrentAnimationExists();
+
 	void update(float deltaMilliseconds);
 
 	void setPlaying(bool enabled);
@@ -61,7 +54,11 @@ public:
 	void stop();
 
 	void setAnimation(const String& name);
+	void swapAnimation(const String& name);
 	void transition(const String& name, float transitionTime);
+	void swapTransition(const String& name, float transitionTime);
+
+	void setSpeedMultiplier(float speedMul) { m_SpeedMultiplier = speedMul; }
 
 	float getStartTime() const;
 	float getEndTime() const;
@@ -79,3 +76,5 @@ public:
 	JSON::json getJSON() const override;
 	void draw() override;
 };
+
+DECLARE_COMPONENT(AnimatedModelComponent);

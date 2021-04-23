@@ -17,12 +17,11 @@ TransformAnimationSystem::TransformAnimationSystem()
 void TransformAnimationSystem::begin()
 {
 	TransformAnimationComponent* animation = nullptr;
-	for (auto& component : ECSFactory::GetComponents<TransformAnimationComponent>())
+	for (auto& animation : ECSFactory::GetAllTransformAnimationComponent())
 	{
-		animation = (TransformAnimationComponent*)component;
-		if (animation->isPlayOnStart())
+		if (animation.isPlayOnStart())
 		{
-			animation->setPlaying(true);
+			animation.setPlaying(true);
 		}
 	}
 }
@@ -31,12 +30,11 @@ void TransformAnimationSystem::update(float deltaMilliseconds)
 {
 	ZoneScoped;
 	TransformAnimationComponent* animation = nullptr;
-	for (auto& component : ECSFactory::GetComponents<TransformAnimationComponent>())
+	for (auto& animation : ECSFactory::GetAllTransformAnimationComponent())
 	{
-		animation = (TransformAnimationComponent*)component;
-		if (animation->isPlaying() && !animation->hasEnded())
+		if (animation.isPlaying() && !animation.hasEnded())
 		{
-			animation->interpolate(deltaMilliseconds * MS_TO_S);
+			animation.interpolate(deltaMilliseconds * MS_TO_S);
 		}
 	}
 }

@@ -5,7 +5,7 @@
 #include "systems/render_system.h"
 #include "timer.h"
 
-#include "renderer/material_library.h"
+DEFINE_COMPONENT(CPUParticlesComponent);
 
 void to_json(JSON::json& j, const ParticleTemplate p)
 {
@@ -35,59 +35,15 @@ void from_json(const JSON::json& j, ParticleTemplate& p)
 	p.lifeTime = j.at("lifeTime");
 }
 
-Ptr<Component> CPUParticlesComponent::Create(const JSON::json& componentData)
+CPUParticlesComponent::CPUParticlesComponent(Entity& owner, const JSON::json& data)
+    : ModelComponent(owner, data)
+    , m_ParticleTemplate(data.value("particleTemplate", ParticleTemplate()))
+    , m_CurrentEmitMode((EmitMode)data.value("emitMode", (int)EmitMode::Point))
+    , m_EmitterDimensions(data.value("emitterDimensions", Vector3 { 1.0f, 1.0f, 1.0f }))
+    , m_EmitRate(data.value("emitRate", 1))
 {
-	return std::make_unique<CPUParticlesComponent>(
-	    componentData.value("poolSize", 1000),
-	    componentData.value("resFile", "rootex/assets/cube.obj"),
-	    componentData.value("materialPath", "rootex/assets/materials/default_particles.rmat"),
-	    componentData.value("particleTemplate", ParticleTemplate()),
-	    (EmitMode)componentData.value("emitMode", (int)EmitMode::Point),
-	    componentData.value("emitRate", 1),
-	    componentData.value("emitterDimensions", Vector3 { 1.0f, 1.0f, 1.0f }),
-	    componentData.value("isVisible", true),
-	    componentData.value("renderPass", (unsigned int)RenderPass::Basic));
-}
-
-CPUParticlesComponent::CPUParticlesComponent(
-    size_t poolSize,
-    const String& particleModelPath,
-    const String& materialPath,
-    const ParticleTemplate& particleTemplate,
-    EmitMode emitMode,
-    int emitRate,
-    const Vector3& emitterDimensions,
-    bool visibility,
-    unsigned int renderPass)
-    : ModelComponent(
-        renderPass,
-        ResourceLoader::CreateModelResourceFile(particleModelPath),
-        {},
-        visibility,
-        false,
-        0.0f,
-        0.0f,
-        {})
-    , m_ParticlesMaterial(std::dynamic_pointer_cast<ParticlesMaterial>(MaterialLibrary::GetMaterial(materialPath)))
-    , m_ParticleTemplate(particleTemplate)
-    , m_CurrentEmitMode(emitMode)
-    , m_EmitterDimensions(emitterDimensions)
-    , m_EmitRate(emitRate)
-{
-	m_InstanceBufferData.resize(MAX_PARTICLES);
-	m_InstanceBuffer.reset(new VertexBuffer(m_InstanceBufferData));
-	expandPool(poolSize);
-}
-
-bool CPUParticlesComponent::setupData()
-{
-	m_TransformComponent = m_Owner->getComponent<TransformComponent>();
-	if (!m_TransformComponent)
-	{
-		ERR("Transform Component not found on entity with CPU Particles Component: " + m_Owner->getFullName());
-		return false;
-	}
-	return true;
+	m_ParticlesMaterial = ResourceLoader::CreateInstancingBasicMaterialResourceFile(data.value("materialPath", "rootex/assets/materials/default.instance.rmat"));
+	expandPool(data.value("poolSize", 1000));
 }
 
 bool CPUParticlesComponent::preRender(float deltaMilliseconds)
@@ -150,7 +106,7 @@ bool CPUParticlesComponent::preRender(float deltaMilliseconds)
 		// Copy live particles to the buffer which will be sent to the GPU
 		if (m_InstanceBufferLiveData.size() < m_LiveParticlesCount)
 		{
-			m_InstanceBufferLiveData.resize(m_LiveParticlesCount);
+			expandInstanceData(m_LiveParticlesCount);
 		}
 		int liveCount = 0;
 		for (int i = 0; i < m_ParticlePool.size(); i++)
@@ -169,8 +125,9 @@ void CPUParticlesComponent::render(float viewDistance)
 {
 	ZoneScoped;
 
+	RenderingDevice::GetSingleton()->editBuffer((const char*)m_InstanceBufferLiveData.data(), sizeof(InstanceData) * m_InstanceBufferLiveData.size(), m_InstanceBuffer->getBuffer());
+
 	RenderSystem::GetSingleton()->getRenderer()->bind(m_ParticlesMaterial.get());
-	m_InstanceBuffer->setData(m_InstanceBufferLiveData);
 	for (auto& [material, meshes] : m_ModelResourceFile->getMeshes())
 	{
 		for (auto& mesh : meshes)
@@ -180,11 +137,11 @@ void CPUParticlesComponent::render(float viewDistance)
 	}
 }
 
-void CPUParticlesComponent::setMaterial(Ref<ParticlesMaterial> particlesMaterial)
+void CPUParticlesComponent::setMaterial(Ref<InstancingBasicMaterialResourceFile> particlesMaterial)
 {
 	if (!particlesMaterial)
 	{
-		WARN("Particles was tried to set to nullptr. Reverted to previously set material");
+		WARN("Instancing material was tried to set to nullptr. Ignored attempt.");
 		return;
 	}
 
@@ -247,13 +204,24 @@ void CPUParticlesComponent::emit(const ParticleTemplate& particleTemplate)
 	    particleTemplate.rotationVariation * Random::Float(),
 	    particleTemplate.rotationVariation * Random::Float());
 	initialTransform = Matrix::CreateFromQuaternion(rotation) * initialTransform;
-	m_InstanceBufferData[m_PoolIndex].transform = initialTransform * m_TransformComponent->getAbsoluteTransform();
+	m_InstanceBufferData[m_PoolIndex].transform = initialTransform * getTransformComponent()->getAbsoluteTransform();
 
-	particle.position = position + m_TransformComponent->getAbsolutePosition();
-	particle.rotation = Quaternion::Concatenate(rotation, m_TransformComponent->getAbsoluteRotation());
-	particle.scale = m_TransformComponent->getAbsoluteScale();
+	particle.position = position + getTransformComponent()->getAbsolutePosition();
+	particle.rotation = Quaternion::Concatenate(rotation, getTransformComponent()->getAbsoluteRotation());
+	particle.scale = getTransformComponent()->getAbsoluteScale();
 
 	m_PoolIndex = --m_PoolIndex % m_ParticlePool.size();
+}
+
+void CPUParticlesComponent::expandInstanceData(const size_t& poolSize)
+{
+	m_InstanceBufferLiveData.resize(poolSize);
+	m_InstanceBuffer.reset(new VertexBuffer(
+	    (const char*)m_InstanceBufferLiveData.data(),
+	    m_InstanceBufferLiveData.size(),
+	    sizeof(InstanceData),
+	    D3D11_USAGE_DYNAMIC,
+	    D3D11_CPU_ACCESS_WRITE));
 }
 
 void CPUParticlesComponent::expandPool(const size_t& poolSize)
@@ -271,6 +239,7 @@ void CPUParticlesComponent::expandPool(const size_t& poolSize)
 
 	m_ParticlePool.resize(poolSize);
 	m_InstanceBufferData.resize(poolSize);
+	expandInstanceData(poolSize);
 	m_PoolIndex = poolSize - 1;
 }
 
@@ -278,7 +247,7 @@ JSON::json CPUParticlesComponent::getJSON() const
 {
 	JSON::json& j = ModelComponent::getJSON();
 
-	j["materialPath"] = m_ParticlesMaterial->getFileName();
+	j["materialPath"] = m_ParticlesMaterial->getPath().generic_string();
 	j["poolSize"] = m_ParticlePool.size();
 	j["particleTemplate"] = m_ParticleTemplate;
 	j["emitMode"] = (int)m_CurrentEmitMode;
@@ -299,24 +268,20 @@ void CPUParticlesComponent::draw()
 	ImGui::Text("%s", "Particles Material");
 	ImGui::Image(m_ParticlesMaterial->getPreview(), { 50, 50 });
 	ImGui::SameLine();
+
 	ImGui::BeginGroup();
-	ImGui::Text("%s", m_ParticlesMaterial->getFileName().c_str());
+	ImGui::Text("%s", m_ParticlesMaterial->getPath().generic_string().c_str());
 	if (ImGui::Button(ICON_ROOTEX_SEARCH "##Particles Material"))
 	{
-		EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, m_ParticlesMaterial->getFileName());
+		EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { m_ParticlesMaterial->getPath().generic_string(), (int)m_ParticlesMaterial->getType() });
 	}
 	ImGui::SameLine();
 	if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Particles Material"))
 	{
 		if (Optional<String> result = OS::SelectFile("Material(*.rmat)\0*.rmat\0", "game/assets/materials/"))
 		{
-			setMaterial(std::dynamic_pointer_cast<ParticlesMaterial>(MaterialLibrary::GetMaterial(*result)));
+			setMaterial(ResourceLoader::CreateInstancingBasicMaterialResourceFile(*result));
 		}
-	}
-	ImGui::SameLine();
-	if (ImGui::Button((ICON_ROOTEX_REFRESH "##Particles Material")))
-	{
-		setMaterial(std::dynamic_pointer_cast<ParticlesMaterial>(MaterialLibrary::GetDefaultParticlesMaterial()));
 	}
 	ImGui::EndGroup();
 

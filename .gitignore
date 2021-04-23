@@ -3,6 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# VSCode
+.vscode/
+
 # User-specific files
 *.suo
 *.user
@@ -335,5 +338,5 @@ ASALocalRun/
 # please don't ignore our obj loader
 !/rootex/vendor/Assimp/assimp/code/Obj/
 
-# Save static third-party builds
-!/rootex/vendor/RmlUi/Bin/
+# Don't ignore OpenAL-soft binaries
+!/rootex/vendor/OpenALSoft/bin/
