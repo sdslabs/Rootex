@@ -12,8 +12,9 @@ void CollisionComponent::attachCollisionObject()
 	PhysicsSystem::GetSingleton()->addCollisionObject(m_CollisionObject.get(), m_CollisionGroup, m_CollisionMask);
 }
 
-CollisionComponent::CollisionComponent(int collisionGroup, int collisionMask)
-    : m_CollisionGroup(collisionGroup)
+CollisionComponent::CollisionComponent(Entity& owner, int collisionGroup, int collisionMask)
+    : Component(owner)
+    , m_CollisionGroup(collisionGroup)
     , m_CollisionMask(collisionMask)
 {
 }

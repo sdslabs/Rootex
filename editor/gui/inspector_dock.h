@@ -6,6 +6,8 @@
 
 class InspectorDock
 {
+	EventBinder<InspectorDock> m_Binder;
+
 public:
 	struct InspectorSettings
 	{
@@ -23,10 +25,11 @@ private:
 	Scene* m_ActionScene = nullptr;
 
 	Variant openScene(const Event* event);
-	Variant closeScene(const Event* event);
 
 public:
 	static InspectorDock* GetSingleton() { return s_Singleton; };
+
+	Variant closeScene(const Event* event);
 
 	InspectorDock();
 	InspectorDock(InspectorDock&) = delete;

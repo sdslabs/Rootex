@@ -1,8 +1,8 @@
 #pragma once
 
 #include "resource_file.h"
+#include "basic_material_resource_file.h"
 
-class Material;
 class ResourceFile;
 class Mesh;
 
@@ -11,7 +11,7 @@ class ModelResourceFile : public ResourceFile
 {
 	explicit ModelResourceFile(const FilePath& path);
 
-	Vector<Pair<Ref<Material>, Vector<Mesh>>> m_Meshes;
+	Vector<Pair<Ref<BasicMaterialResourceFile>, Vector<Mesh>>> m_Meshes;
 
 	friend class ResourceLoader;
 
@@ -22,5 +22,5 @@ public:
 
 	void reimport() override;
 
-	Vector<Pair<Ref<Material>, Vector<Mesh>>>& getMeshes() { return m_Meshes; }
+	Vector<Pair<Ref<BasicMaterialResourceFile>, Vector<Mesh>>>& getMeshes() { return m_Meshes; }
 };

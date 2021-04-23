@@ -2,6 +2,8 @@
 
 #include "common.h"
 
+#include "event_manager.h"
+
 #include "vendor/Lua/src/lua.hpp"
 #define SOL_ALL_SAFETIES_ON 1
 #define SOL_USING_CXX_LUA 1
@@ -30,11 +32,13 @@
 /// Lua interpreter that runs all Lua scripts inside the same Lua state. This means that all Lua code-snippets that are run can cross-reference each other.
 class LuaInterpreter
 {
+	EventBinder<LuaInterpreter> m_Binder;
+
 	sol::state m_Lua;
 
 	LuaInterpreter();
 	LuaInterpreter(LuaInterpreter&) = delete;
-	~LuaInterpreter() = default;
+	~LuaInterpreter();
 
 	void registerTypes();
 	void runScripts();

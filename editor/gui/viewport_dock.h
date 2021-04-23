@@ -23,7 +23,7 @@ private:
 	ViewportDockSettings m_ViewportDockSettings;
 	Matrix m_ApplyCameraMatrix = Matrix::Identity;
 
-	bool m_IsCameraMoving;
+	bool m_IsCameraMoving = false;
 
 	float m_EditorCameraPitch = 0.0f;
 	float m_EditorCameraYaw = 0.0f;

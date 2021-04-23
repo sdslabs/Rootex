@@ -16,34 +16,32 @@ TriggerSystem* TriggerSystem::GetSingleton()
 
 void TriggerSystem::update(float deltaMilliseconds)
 {
-	for (auto& c : ECSFactory::GetComponents<TriggerComponent>())
+	for (auto& trigger : ECSFactory::GetAllTriggerComponent())
 	{
-		TriggerComponent* trigger = (TriggerComponent*)c;
-
-		trigger->openRegister();
+		trigger.openRegister();
 		{
-			btGhostObject* triggerGhost = trigger->getGhostObject();
+			btGhostObject* triggerGhost = trigger.getGhostObject();
 			for (int i = 0; i < triggerGhost->getNumOverlappingObjects(); i++)
 			{
-				if (trigger->canNotifyEntry())
+				if (trigger.canNotifyEntry())
 				{
-					trigger->notifyEntry();
+					trigger.notifyEntry();
 				}
 				CollisionComponent* entrantComponent = (CollisionComponent*)triggerGhost->getOverlappingObject(i)->getUserPointer();
-				trigger->registerEntry(entrantComponent->getOwner()->getScene()->getID());
+				trigger.registerEntry(entrantComponent->getOwner().getID());
 			}
 
-			int exitCount = trigger->findExitCount();
+			int exitCount = trigger.findExitCount();
 			for (int i = 0; i < exitCount; i++)
 			{
-				if (trigger->canNotifyExit())
+				if (trigger.canNotifyExit())
 				{
-					trigger->notifyExit();
+					trigger.notifyExit();
 				}
 			}
 		}
-		trigger->closeRegister();
+		trigger.closeRegister();
 
-		trigger->updateTransform();
+		trigger.updateTransform();
 	}
 }

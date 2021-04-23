@@ -5,6 +5,8 @@
 #include "systems/render_system.h"
 #include "utility/maths.h"
 
+DEFINE_COMPONENT(TransformAnimationComponent);
+
 void to_json(JSON::json& j, const TransformAnimationComponent::Keyframe& k)
 {
 	j["timePosition"] = k.timePosition;
@@ -17,22 +19,14 @@ void from_json(const JSON::json& j, TransformAnimationComponent::Keyframe& k)
 	k.transform = j.at("transform");
 }
 
-Ptr<Component> TransformAnimationComponent::Create(const JSON::json& componentData)
-{
-	return std::make_unique<TransformAnimationComponent>(
-	    componentData.value("keyframes", Vector<TransformAnimationComponent::Keyframe>()),
-	    componentData.value("isPlayOnStart", false),
-	    (AnimationMode)(int)componentData.value("animationMode", (int)AnimationMode::None),
-	    (TransitionType)(int)componentData.value("transitionType", (int)TransitionType::SmashSmash));
-}
-
-TransformAnimationComponent::TransformAnimationComponent(const Vector<Keyframe> keyframes, bool isPlayOnStart, AnimationMode animationMode, TransitionType transition)
-    : m_Keyframes(keyframes)
-    , m_CurrentTimePosition(0.0f)
-    , m_IsPlayOnStart(isPlayOnStart)
-    , m_AnimationMode(animationMode)
+TransformAnimationComponent::TransformAnimationComponent(Entity& owner, const JSON::json& data)
+    : Component(owner)
+    , m_Keyframes(data.value("keyframes", Vector<TransformAnimationComponent::Keyframe>()))
+    , m_IsPlayOnStart(data.value("isPlayOnStart", false))
+    , m_AnimationMode((AnimationMode)(int)data.value("animationMode", (int)AnimationMode::None))
+    , m_TransitionType((TransitionType)(int)data.value("transitionType", (int)TransitionType::SmashSmash))
     , m_IsPlaying(false)
-    , m_TransitionType(transition)
+    , m_CurrentTimePosition(0.0f)
     , m_TimeDirection(1.0f)
     , m_DependencyOnTransformComponent(this)
 {
@@ -44,7 +38,7 @@ bool TransformAnimationComponent::setupData()
 	{
 		Keyframe initialKeyframe;
 		initialKeyframe.timePosition = 0.0f;
-		initialKeyframe.transform = m_TransformComponent->getLocalTransform();
+		initialKeyframe.transform = getTransformComponent()->getLocalTransform();
 		m_Keyframes.push_back(initialKeyframe);
 	}
 	return true;
@@ -109,11 +103,11 @@ void TransformAnimationComponent::interpolate(float deltaSeconds)
 
 	if (m_CurrentTimePosition <= getStartTime())
 	{
-		m_TransformComponent->setTransform(m_Keyframes.front().transform);
+		getTransformComponent()->setLocalTransform(m_Keyframes.front().transform);
 	}
 	else if (m_CurrentTimePosition >= getEndTime())
 	{
-		m_TransformComponent->setTransform(m_Keyframes.back().transform);
+		getTransformComponent()->setLocalTransform(m_Keyframes.back().transform);
 	}
 	else
 	{
@@ -145,7 +139,7 @@ void TransformAnimationComponent::interpolate(float deltaSeconds)
 				Matrix& rightMat = m_Keyframes[i + 1u].transform;
 
 				Matrix finalMat = Interpolate(leftMat, rightMat, lerpFactor);
-				m_TransformComponent->setTransform(finalMat);
+				getTransformComponent()->setLocalTransform(finalMat);
 
 				// No need to check futher. This will be the only one needed.
 				break;
@@ -192,8 +186,8 @@ void TransformAnimationComponent::draw()
 		for (int i = 0; i < m_Keyframes.size() - 1; i++)
 		{
 			RenderSystem::GetSingleton()->submitLine(
-			    (m_TransformComponent->getParentAbsoluteTransform() * m_Keyframes[i].transform).Translation(),
-			    (m_TransformComponent->getParentAbsoluteTransform() * m_Keyframes[i + 1u].transform).Translation());
+			    (getTransformComponent()->getParentAbsoluteTransform() * m_Keyframes[i].transform).Translation(),
+			    (getTransformComponent()->getParentAbsoluteTransform() * m_Keyframes[i + 1u].transform).Translation());
 		}
 
 		unsigned int keyFrameNumber = 1;
@@ -215,7 +209,7 @@ void TransformAnimationComponent::draw()
 				{
 					isJumping = true;
 					jumpingOn = &keyframe;
-					m_TransformComponent->setTransform(keyframe.transform);
+					getTransformComponent()->setLocalTransform(keyframe.transform);
 				}
 			}
 			ImGui::Separator();
@@ -228,7 +222,7 @@ void TransformAnimationComponent::draw()
 			{
 				Keyframe newKeyframe;
 				newKeyframe.timePosition = m_Keyframes.back().timePosition + 1.0f;
-				newKeyframe.transform = m_TransformComponent->getLocalTransform();
+				newKeyframe.transform = getTransformComponent()->getLocalTransform();
 				pushKeyframe(newKeyframe);
 			}
 			if (m_Keyframes.size() > 1)
@@ -246,6 +240,6 @@ void TransformAnimationComponent::draw()
 
 	if (isJumping)
 	{
-		jumpingOn->transform = m_TransformComponent->getLocalTransform();
+		jumpingOn->transform = getTransformComponent()->getLocalTransform();
 	}
 }

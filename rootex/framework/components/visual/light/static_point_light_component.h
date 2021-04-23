@@ -10,18 +10,13 @@
 /// inside the final render.
 class StaticPointLightComponent : public PointLightComponent
 {
-	DEFINE_COMPONENT(StaticPointLightComponent);
+	COMPONENT(StaticPointLightComponent, Category::Light);
 
 public:
-	StaticPointLightComponent::StaticPointLightComponent(
-	    const float constAtt,
-	    const float linAtt,
-	    const float quadAtt,
-	    const float range,
-	    const float diffuseIntensity,
-	    const Color& diffuseColor,
-	    const Color& ambientColor);
+	StaticPointLightComponent::StaticPointLightComponent(Entity& owner, const JSON::json& data);
 	~StaticPointLightComponent() = default;
 
 	void draw() override;
 };
+
+DECLARE_COMPONENT(StaticPointLightComponent);

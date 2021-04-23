@@ -1,6 +1,8 @@
 #include "camera_component.h"
 #include "systems/render_system.h"
 
+DEFINE_COMPONENT(CameraComponent);
+
 void to_json(JSON::json& j, const PostProcessingDetails& p)
 {
 	j["isPostProcessing"] = p.isPostProcessing;
@@ -73,23 +75,14 @@ void from_json(const JSON::json& j, PostProcessingDetails& p)
 	p.toneMapWhiteNits = j.at("toneMapWhiteNits");
 }
 
-Ptr<Component> CameraComponent::Create(const JSON::json& componentData)
-{
-	return std::make_unique<CameraComponent>(
-	    componentData.value("aspectRatio", Vector2 { 16.0f, 9.0f }),
-	    componentData.value("fov", DirectX::XM_PI / 4.0f),
-	    componentData.value("near", 0.1f),
-	    componentData.value("far", 100.0f),
-	    componentData.value("postProcessingDetails", PostProcessingDetails()));
-}
-
-CameraComponent::CameraComponent(const Vector2& aspectRatio, float fov, float nearPlane, float farPlane, const PostProcessingDetails& postProcesing)
-    : m_Active(false)
-    , m_FoV(fov)
-    , m_AspectRatio(aspectRatio)
-    , m_Near(nearPlane)
-    , m_Far(farPlane)
-    , m_PostProcessingDetails(postProcesing)
+CameraComponent::CameraComponent(Entity& owner, const JSON::json& data)
+    : Component(owner)
+    , m_FoV(data.value("fov", DirectX::XM_PI / 4.0f))
+    , m_AspectRatio(data.value("aspectRatio", Vector2 { 16.0f, 9.0f }))
+    , m_Near(data.value("near", 0.1f))
+    , m_Far(data.value("far", 100.0f))
+    , m_PostProcessingDetails(data.value("postProcessingDetails", PostProcessingDetails()))
+    , m_Active(false)
     , m_DependencyOnTransformComponent(this)
 {
 }
@@ -101,7 +94,7 @@ void CameraComponent::refreshProjectionMatrix()
 
 void CameraComponent::refreshViewMatrix()
 {
-	const Matrix& absoluteTransform = m_TransformComponent->getAbsoluteTransform();
+	const Matrix& absoluteTransform = getTransformComponent()->getAbsoluteTransform();
 	m_ViewMatrix = Matrix::CreateLookAt(
 	    absoluteTransform.Translation(),
 	    absoluteTransform.Translation() + absoluteTransform.Forward(),
@@ -153,26 +146,26 @@ void CameraComponent::draw()
 	if (ImGui::DragFloat2("##Aspect", &m_AspectRatio.x, 0.01f, 0.1f, 100.0f))
 	{
 		refreshProjectionMatrix();
-		RenderSystem::GetSingleton()->setProjectionConstantBuffers();
+		RenderSystem::GetSingleton()->setPerCameraVSCBs();
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("Aspect Ratio"))
 	{
 		m_AspectRatio = { 16.0f, 9.0f };
 		refreshProjectionMatrix();
-		RenderSystem::GetSingleton()->setProjectionConstantBuffers();
+		RenderSystem::GetSingleton()->setPerCameraVSCBs();
 	}
 
 	if (ImGui::SliderAngle("Field of View", &m_FoV, 1.0f, 180.0f))
 	{
 		refreshProjectionMatrix();
-		RenderSystem::GetSingleton()->setProjectionConstantBuffers();
+		RenderSystem::GetSingleton()->setPerCameraVSCBs();
 	}
 
 	if (ImGui::DragFloatRange2("Range", &m_Near, &m_Far, 0.01f, 0.1f, 1000.0f))
 	{
 		refreshProjectionMatrix();
-		RenderSystem::GetSingleton()->setProjectionConstantBuffers();
+		RenderSystem::GetSingleton()->setPerCameraVSCBs();
 	}
 
 	ImGui::Checkbox("Post Processing", &m_PostProcessingDetails.isPostProcessing);

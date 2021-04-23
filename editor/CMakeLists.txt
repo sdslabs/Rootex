@@ -3,8 +3,9 @@ file(GLOB_RECURSE EditorHeaders ./**.h)
 file(GLOB_RECURSE EditorLuaScripts ./**.lua)
 file(GLOB_RECURSE EditorJSONs ./**.json)
 
-set_source_files_properties(${EditorLuaScripts} ${EditorJSONs} PROPERTIES
-    HEADER_FILE_ONLY TRUE
+set_source_files_properties(${EditorLuaScripts} ${EditorJSONs}
+    PROPERTIES
+        HEADER_FILE_ONLY TRUE
 )
 
 add_executable(Editor ${EditorSource} ${EditorHeaders} ${EditorLuaScripts} ${EditorJSONs})
@@ -14,7 +15,7 @@ target_include_directories(Editor PUBLIC ../)
 target_link_libraries(Editor PUBLIC Rootex)
 add_dependencies(Editor Rootex Game)
 
-source_group(TREE "../editor/"
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}
     PREFIX "Editor"
     FILES ${EditorSource} ${EditorHeaders} ${EditorLuaScripts} ${EditorJSONs}
 )

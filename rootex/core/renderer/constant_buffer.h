@@ -57,43 +57,11 @@ struct StaticLightID
 	Vector3 pad;
 };
 
-// Constant buffer uploaded once per model being rendered
 struct PerModelPSCB
 {
 	int staticPointsLightsAffectingCount = 0;
 	float pad[3];
 	StaticLightID staticPointsLightsAffecting[MAX_STATIC_POINT_LIGHTS_AFFECTING_1_OBJECT];
-};
-
-/// Lighting properties of a material
-struct PSDiffuseConstantBufferMaterial
-{
-	Color color;
-	int isLit = 0;
-	/// Describes brightness of specular spot, high for metallic material
-	float specularIntensity = 2.0f;
-	/// Describes angular fall-off of specular spot, high for metallic material
-	float specularPower = 30.0f;
-	float reflectivity = 0.0f;
-	float refractionConstant = 0.5f;
-	float refractivity = 0.0f;
-	int affectedBySky = 0;
-	int hasNormalMap = 0;
-};
-
-/// Lighting properties of a material
-struct PSParticlesConstantBufferMaterial
-{
-	int isLit = 0;
-	/// Describes brightness of specular spot, high for metallic material
-	float specularIntensity = 2.0f;
-	/// Describes angular fall-off of specular spot, high for metallic material
-	float specularPower = 30.0f;
-	float reflectivity = 0.0f;
-	float refractionConstant = 0.5f;
-	float refractivity = 0.0f;
-	int affectedBySky = 0;
-	int hasNormalMap = 0;
 };
 
 struct StaticPointLightsInfo
@@ -130,54 +98,10 @@ struct PerFrameVSCB
 	float pad[2];
 };
 
-/// Constant buffer uploaded once per frame in the PS
-struct PerLevelPSCB
+/// Constant buffer uploaded at least once per scene load in the PS
+struct PerScenePSCB
 {
 	StaticPointLightsInfo staticLights;
-};
-
-/// Pixel Shader constant buffer for material not affected by lighting and single color
-struct PSSolidConstantBuffer
-{
-	Color color;
-};
-
-/// Vertex Shader constant buffer for material not affected by lighting
-struct VSSolidConstantBuffer
-{
-	Matrix Model;
-	explicit VSSolidConstantBuffer() = delete;
-	VSSolidConstantBuffer(const Matrix& model)
-	{
-		Model = model.Transpose();
-	}
-};
-
-/// Vertex Shader constant buffer for material affected by lighting
-struct VSDiffuseConstantBuffer
-{
-	Matrix Model;
-	Matrix ModelInverseTranspose;
-	explicit VSDiffuseConstantBuffer() = delete; // https://stackoverflow.com/a/43694276
-	VSDiffuseConstantBuffer(const Matrix& model)
-	{
-		Model = model.Transpose();
-		ModelInverseTranspose = model.Invert();
-	}
-};
-
-/// Vertex Shader constant buffer for animated models
-struct VSAnimationConstantBuffer
-{
-	Matrix m_BoneTransforms[256];
-	explicit VSAnimationConstantBuffer() = delete;
-	VSAnimationConstantBuffer(const Vector<Matrix>& transforms)
-	{
-		for (int i = 0; i < transforms.size(); i++)
-		{
-			m_BoneTransforms[i] = transforms[i].Transpose();
-		}
-	}
 };
 
 /// PS constant buffer used during the FXAA post process.

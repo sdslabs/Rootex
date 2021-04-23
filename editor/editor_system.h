@@ -11,6 +11,7 @@
 #include "gui/viewport_dock.h"
 #include "gui/inspector_dock.h"
 #include "gui/file_viewer.h"
+#include "gui/file_editor.h"
 
 #include "vendor/ImGUI/imgui.h"
 #include "vendor/ImGUI/imgui_impl_dx11.h"
@@ -18,12 +19,12 @@
 
 #include "Tracy/Tracy.hpp"
 
-class HierarchyGraph;
-
 ImColor ColorToImColor(Color& c);
 
 class EditorSystem : public System
 {
+	EventBinder<EditorSystem> m_Binder;
+
 	int m_DockSpaceID;
 	String m_MenuAction;
 	String m_PopupCause;
@@ -53,12 +54,14 @@ class EditorSystem : public System
 	Ptr<ViewportDock> m_Viewport;
 	Ptr<InspectorDock> m_Inspector;
 	Ptr<FileViewer> m_FileViewer;
+	Ptr<FileEditor> m_FileEditor;
 
 	EditorSystem();
 	EditorSystem(const EditorSystem&) = delete;
 	~EditorSystem();
 
 	void drawDefaultUI(float deltaMilliseconds);
+	void drawProgressBar(Atomic<int>& progress, float& currentProgress, int& totalProgress);
 
 	void showDocumentation(const String& name, const sol::table& table);
 
@@ -66,8 +69,7 @@ class EditorSystem : public System
 	Variant autoSave(const Event* event);
 	Variant saveBeforeQuit(const Event* event);
 	Variant createNewScene(const Event* event);
-	Variant createNewMaterial(const Event* event);
-	void drawProgressBar(Atomic<int>& progress, float& currentProgress, int& totalProgress);
+	Variant createNewFile(const Event* event);
 
 public:
 	static EditorSystem* GetSingleton();
@@ -86,4 +88,5 @@ public:
 	ImColor getFatalColor() const { return ColorToImColor((Color)ColorPresets::IndianRed); }
 	ImColor getSuccessColor() const { return ColorToImColor((Color)ColorPresets::LimeGreen); }
 	ImColor getNormalColor() const { return ColorToImColor((Color)ColorPresets::White); }
+	ImColor getLinkColor() const { return ColorToImColor((Color)ColorPresets::SteelBlue); }
 };

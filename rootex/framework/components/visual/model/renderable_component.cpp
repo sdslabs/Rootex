@@ -1,27 +1,22 @@
 #include "renderable_component.h"
 
+#include "core/resource_loader.h"
 #include "components/visual/light/static_point_light_component.h"
 #include "system.h"
 #include "systems/render_system.h"
-#include "renderer/material_library.h"
 #include "scene_loader.h"
 
-RenderableComponent::RenderableComponent(
-    unsigned int renderPass,
-    const HashMap<String, String>& materialOverrides,
-    bool visibility,
-    bool lodEnable,
-    float lodBias,
-    float lodDistance,
-    const Vector<SceneID>& affectingStaticLightIDs)
-    : m_RenderPass(renderPass)
-    , m_IsVisible(visibility)
-    , m_AffectingStaticLightIDs(affectingStaticLightIDs)
-    , m_LODDistance(lodDistance)
-    , m_LODBias(lodBias)
-    , m_LODEnable(lodEnable)
+RenderableComponent::RenderableComponent(Entity& owner, const JSON::json& data)
+    : Component(owner)
+    , m_RenderPass(data.value("renderPass", (int)RenderPass::Basic))
+    , m_IsVisible(data.value("isVisible", true))
+    , m_AffectingStaticLightIDs(data.value("affectingStaticLights", Vector<SceneID>()))
+    , m_LODEnable(data.value("lodEnable", true))
+    , m_LODBias(data.value("lodBias", 0.0f))
+    , m_LODDistance(data.value("lodDistance", 10.0f))
     , m_DependencyOnTransformComponent(this)
 {
+	m_PerModelCB = RenderingDevice::GetSingleton()->createBuffer<PerModelPSCB>(PerModelPSCB(), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
 }
 
 float RenderableComponent::getLODFactor(float viewDistance)
@@ -48,14 +43,7 @@ bool RenderableComponent::setupEntities()
 
 bool RenderableComponent::preRender(float deltaMilliseconds)
 {
-	if (m_TransformComponent)
-	{
-		RenderSystem::GetSingleton()->pushMatrixOverride(m_TransformComponent->getAbsoluteTransform());
-	}
-	else
-	{
-		RenderSystem::GetSingleton()->pushMatrixOverride(Matrix::Identity);
-	}
+	RenderSystem::GetSingleton()->pushMatrixOverride(getTransformComponent()->getAbsoluteTransform());
 	return true;
 }
 
@@ -67,7 +55,9 @@ void RenderableComponent::render(float viewDistance)
 		perModel.staticPointsLightsAffecting[i].id = m_AffectingStaticLights[i];
 	}
 	perModel.staticPointsLightsAffectingCount = m_AffectingStaticLights.size();
-	Material::SetPSConstantBuffer(perModel, m_PerModelCB, PER_MODEL_PS_CPP);
+
+	RenderingDevice::GetSingleton()->editBuffer(perModel, m_PerModelCB.Get());
+	RenderingDevice::GetSingleton()->setPSCB(PER_MODEL_PS_CPP, 1, m_PerModelCB.GetAddressOf());
 }
 
 void RenderableComponent::postRender()
@@ -78,19 +68,11 @@ void RenderableComponent::postRender()
 bool RenderableComponent::addAffectingStaticLight(SceneID ID)
 {
 	Scene* light = SceneLoader::GetSingleton()->getCurrentScene()->findScene(ID);
-	if (!light->getEntity())
-	{
-		WARN("Static light entity referred to not found: " + std::to_string(ID));
-		{
-			return false;
-		};
-	}
 
 	int lightID = 0;
-	for (auto& component : ECSFactory::GetComponents<StaticPointLightComponent>())
+	for (auto& staticLight : ECSFactory::GetAllStaticPointLightComponent())
 	{
-		StaticPointLightComponent* staticLight = (StaticPointLightComponent*)component;
-		if (light->getEntity()->getComponent<StaticPointLightComponent>() == staticLight)
+		if (light->getEntity().getComponent<StaticPointLightComponent>() == &staticLight)
 		{
 			m_AffectingStaticLightIDs.push_back(ID);
 			m_AffectingStaticLights.push_back(lightID);
@@ -126,14 +108,21 @@ bool RenderableComponent::isVisible() const
 	return m_IsVisible;
 }
 
-void RenderableComponent::setVisibility(bool enabled)
+void RenderableComponent::setVisible(bool enabled)
 {
 	m_IsVisible = enabled;
 }
 
-void RenderableComponent::setMaterialOverride(Ref<Material> oldMaterial, Ref<Material> newMaterial)
+void RenderableComponent::setMaterialOverride(Ref<MaterialResourceFile> oldMaterial, Ref<MaterialResourceFile> newMaterial)
 {
-	m_MaterialOverrides[oldMaterial] = newMaterial;
+	if (oldMaterial && newMaterial)
+	{
+		m_MaterialOverrides[oldMaterial] = newMaterial;
+	}
+	else
+	{
+		WARN("Skipping nullptr material override");
+	}
 }
 
 JSON::json RenderableComponent::getJSON() const
@@ -146,7 +135,7 @@ JSON::json RenderableComponent::getJSON() const
 	j["materialOverrides"] = {};
 	for (auto& [oldMaterial, newMaterial] : m_MaterialOverrides)
 	{
-		j["materialOverrides"][oldMaterial->getFileName()] = newMaterial->getFileName();
+		j["materialOverrides"][oldMaterial->getPath().generic_string()] = newMaterial->getPath().generic_string();
 	}
 	j["affectingStaticLights"] = m_AffectingStaticLightIDs;
 
@@ -178,11 +167,11 @@ void RenderableComponent::draw()
 	{
 		ImGui::Indent();
 		int slot = 0;
-		EntityID toRemove = -1;
+		SceneID toRemove = -1;
 		for (auto& slotSceneID : m_AffectingStaticLightIDs)
 		{
 			Scene* staticLight = SceneLoader::GetSingleton()->getCurrentScene()->findScene(slotSceneID);
-			RenderSystem::GetSingleton()->submitLine(m_TransformComponent->getAbsoluteTransform().Translation(), staticLight->getEntity()->getComponent<TransformComponent>()->getAbsoluteTransform().Translation());
+			RenderSystem::GetSingleton()->submitLine(getTransformComponent()->getAbsoluteTransform().Translation(), staticLight->getEntity().getComponent<TransformComponent>()->getAbsoluteTransform().Translation());
 
 			String displayName = staticLight->getFullName();
 			if (ImGui::SmallButton(("x##" + std::to_string(slot)).c_str()))
@@ -203,11 +192,11 @@ void RenderableComponent::draw()
 		{
 			if (ImGui::BeginCombo(("Light " + std::to_string(slot)).c_str(), "None"))
 			{
-				for (auto& staticLight : ECSFactory::GetComponents<StaticPointLightComponent>())
+				for (auto& staticLight : ECSFactory::GetAllStaticPointLightComponent())
 				{
-					if (ImGui::Selectable(staticLight->getOwner()->getFullName().c_str()))
+					if (ImGui::Selectable(staticLight.getOwner().getFullName().c_str()))
 					{
-						addAffectingStaticLight(staticLight->getOwner()->getScene()->getID());
+						addAffectingStaticLight(staticLight.getOwner().getScene()->getID());
 					}
 				}
 				ImGui::EndCombo();
@@ -230,27 +219,27 @@ void RenderableComponent::draw()
 		{
 			ImGui::Image(oldMaterial->getPreview(), { 50, 50 });
 			ImGui::SameLine();
-			ImGui::Text("%s", FilePath(oldMaterial->getFileName()).filename().generic_string().c_str());
+			ImGui::Text("%s", oldMaterial->getPath().filename().generic_string().c_str());
 			ImGui::NextColumn();
 			ImGui::Image(newMaterial->getPreview(), { 50, 50 });
 			ImGui::SameLine();
 
 			ImGui::BeginGroup();
-			ImGui::Text("%s", FilePath(newMaterial->getFileName()).filename().generic_string().c_str());
-			if (ImGui::Button((ICON_ROOTEX_SEARCH "##" + newMaterial->getFileName()).c_str()))
+			ImGui::Text("%s", newMaterial->getPath().filename().generic_string().c_str());
+			if (ImGui::Button((ICON_ROOTEX_PENCIL_SQUARE_O "##" + newMaterial->getPath().generic_string()).c_str()))
 			{
-				EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, newMaterial->getFileName());
+				EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { newMaterial->getPath().generic_string(), (int)newMaterial->getType() });
 			}
 			ImGui::SameLine();
-			if (ImGui::Button((ICON_ROOTEX_PENCIL_SQUARE_O "##" + newMaterial->getFileName()).c_str()))
+			if (ImGui::Button((ICON_ROOTEX_FOLDER_OPEN "##" + newMaterial->getPath().generic_string()).c_str()))
 			{
 				if (Optional<String> result = OS::SelectFile("Material(*.rmat)\0*.rmat\0", "game/assets/materials/"))
 				{
-					setMaterialOverride(oldMaterial, MaterialLibrary::GetMaterial(*result));
+					setMaterialOverride(oldMaterial, ResourceLoader::CreateMaterialResourceFile(*result));
 				}
 			}
 			ImGui::SameLine();
-			if (ImGui::Button((ICON_ROOTEX_REFRESH "##" + oldMaterial->getFileName()).c_str()))
+			if (ImGui::Button((ICON_ROOTEX_REFRESH "##" + oldMaterial->getPath().generic_string()).c_str()))
 			{
 				setMaterialOverride(oldMaterial, oldMaterial);
 			}

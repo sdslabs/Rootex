@@ -3,11 +3,11 @@
 #include "common/common.h"
 
 #include "resource_file.h"
-#include "rootex/core/renderer/material.h"
+#include "core/resource_files/material_resource_file.h"
 
 class MaterialViewer
 {
-	Ref<Material> m_OpenedMaterial;
+	Ref<MaterialResourceFile> m_OpenedMaterial;
 
 public:
 	Ref<ResourceFile> load(const FilePath& filePath);

@@ -9,22 +9,14 @@
 
 class MusicComponent : public AudioComponent
 {
-	DEFINE_COMPONENT(MusicComponent);
+	COMPONENT(MusicComponent, Category::Audio);
 
 	Ref<StreamingAudioSource> m_StreamingAudioSource;
 	Ref<StreamingAudioBuffer> m_StreamingAudioBuffer;
 	Ref<AudioResourceFile> m_AudioFile;
 
 public:
-	MusicComponent(
-	    Ref<AudioResourceFile> audioFile,
-	    bool playOnStart,
-	    bool isLooping,
-	    bool attenuation,
-	    AudioSource::AttenuationModel model,
-	    ALfloat rolloffFactor,
-	    ALfloat referenceDistance,
-	    ALfloat maxDistance);
+	MusicComponent(Entity& owner, const JSON::json& data);
 	~MusicComponent();
 
 	AudioResourceFile* getAudioFile() const { return m_AudioFile.get(); }
@@ -34,3 +26,5 @@ public:
 	JSON::json getJSON() const override;
 	void draw() override;
 };
+
+DECLARE_COMPONENT(MusicComponent);

@@ -2,15 +2,15 @@
 
 #include "model_component.h"
 #include "renderer/render_pass.h"
-#include "renderer/material_library.h"
+#include "core/resource_files/basic_material_resource_file.h"
 
 class GridModelComponent : public ModelComponent
 {
-	DEFINE_COMPONENT(GridModelComponent);
+	COMPONENT(GridModelComponent, Category::Model);
 
-	Ref<Material> m_ColorMaterial;
-	Ptr<VertexBuffer> m_VertexBuffer;
-	Ptr<IndexBuffer> m_IndexBuffer;
+	Ref<BasicMaterialResourceFile> m_ColorMaterial;
+	Ref<VertexBuffer> m_VertexBuffer;
+	Ref<IndexBuffer> m_IndexBuffer;
 
 	Vector2 m_CellSize;
 	int m_CellCount;
@@ -18,7 +18,7 @@ class GridModelComponent : public ModelComponent
 	void refreshVertexBuffers();
 
 public:
-	GridModelComponent(const Vector2& cellSize, const int& cellCount, const unsigned int& renderPass, bool isVisible);
+	GridModelComponent(Entity& owner, const JSON::json& data);
 	~GridModelComponent() = default;
 
 	void render(float viewDistance) override;
@@ -27,3 +27,5 @@ public:
 	JSON::json getJSON() const override;
 	void draw() override;
 };
+
+DECLARE_COMPONENT(GridModelComponent);

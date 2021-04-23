@@ -8,16 +8,19 @@ struct EditorEvents
 	DEFINE_EVENT(EditorAutoSave);
 
 	/// Close any scene opened in Inspector
-	DEFINE_EVENT(EditorCloseScene);
+	DEFINE_EVENT(EditorSceneIsClosing);
 
 	/// Create new scene from scene file path
 	DEFINE_EVENT(EditorCreateNewScene, String);
 
-	/// Create new material from [material path, material type]
-	DEFINE_EVENT(EditorCreateNewMaterial);
+	/// Create new file at path
+	DEFINE_EVENT(EditorCreateNewFile, String);
 
-	/// Open file at the path passed in inside File Viewer
-	DEFINE_EVENT(EditorOpenFile, String);
+	/// Open file at the path passed in inside File Viewer with the ResourceFile::Type to load it as
+	DEFINE_EVENT(EditorOpenFile, String, int);
+
+	/// Edit file at the path passed in inside File Editor
+	DEFINE_EVENT(EditorEditFile, String);
 
 	/// Open scene in Inspector
 	DEFINE_EVENT(EditorOpenScene, Scene*);
@@ -28,6 +31,6 @@ struct EditorEvents
 	/// Set editor to save all
 	DEFINE_EVENT(EditorSaveAll);
 
-	/// Set editor to save all
-	DEFINE_EVENT(EditorExportScene);
+	/// Reset editor window states
+	DEFINE_EVENT(EditorReset);
 };

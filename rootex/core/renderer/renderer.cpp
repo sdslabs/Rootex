@@ -7,8 +7,6 @@
 #include <array>
 #include <iostream>
 
-#include "shader_library.h"
-
 #include "Tracy/Tracy.hpp"
 
 Renderer::Renderer()
@@ -27,16 +25,19 @@ void Renderer::resetCurrentShader()
 	m_CurrentShader = nullptr;
 }
 
-void Renderer::bind(Material* material)
+void Renderer::bind(MaterialResourceFile* material)
 {
 	ZoneNamedN(materialBind, "Render Material Bind", true);
 	if (material->getShader() != m_CurrentShader)
 	{
 		ZoneNamedN(materialBind, "Shader Bind", true);
 		m_CurrentShader = material->getShader();
-		m_CurrentShader->bind();
+		material->bindShader();
 	}
-	material->bind();
+	material->bindSamplers();
+	material->bindTextures();
+	material->bindVSCB();
+	material->bindPSCB();
 }
 
 void Renderer::draw(const VertexBuffer* vertexBuffer, const IndexBuffer* indexBuffer) const

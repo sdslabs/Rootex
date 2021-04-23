@@ -8,27 +8,16 @@
 #include "script/script.h"
 #include "resource_loader.h"
 
-#include "scene.h"
-
-Entity::Entity(Scene* scene, const JSON::json& script)
+Entity::Entity(Scene* scene)
     : m_Scene(scene)
 {
-	if (!script.is_null() && !script["path"].is_null())
-	{
-		if (OS::IsExists(script["path"]))
-		{
-			m_Script.reset(new Script(script));
-			ScriptSystem::GetSingleton()->addInitScriptEntity(this);
-		}
-		else
-		{
-			ERR("Could not find script file: " + (String)script["path"]);
-		}
-	}
 }
 
 Entity::~Entity()
 {
+	ScriptSystem::GetSingleton()->removeInitScriptEntity(this);
+	ScriptSystem::GetSingleton()->removeEnterScriptEntity(this);
+
 	destroy();
 }
 
@@ -42,11 +31,11 @@ JSON::json Entity::getJSON() const
 	}
 	if (m_Script)
 	{
-		j["Entity"]["script"] = m_Script->getJSON();
+		j["script"] = m_Script->getJSON();
 	}
 	else
 	{
-		j["Entity"]["script"] = {};
+		j["script"] = {};
 	}
 
 	return j;
@@ -83,27 +72,39 @@ bool Entity::onAllEntitiesAdded()
 	return status;
 }
 
+void Entity::clear()
+{
+	for (auto& [id, component] : m_Components)
+	{
+		ECSFactory::RemoveComponent(*this, id);
+	}
+	m_Components.clear();
+}
+
 void Entity::destroy()
 {
 	call("destroy", { this });
 
-	for (auto& component : m_Components)
+	for (auto& [componentID, component] : m_Components)
 	{
-		component.second->onRemove();
-		ECSFactory::DeregisterComponentInstance(component.second.get());
-		component.second.reset();
+		ECSFactory::RemoveComponent(*this, componentID);
 	}
 	m_Components.clear();
 }
 
 bool Entity::addDefaultComponent(const String& componentName)
 {
-	return ECSFactory::AddComponent(this, ECSFactory::CreateDefaultComponent(componentName));
+	return ECSFactory::AddDefaultComponent(*this, ECSFactory::GetComponentIDByName(componentName));
 }
 
 bool Entity::addComponent(const String& componentName, const JSON::json& componentData)
 {
-	return ECSFactory::AddComponent(this, ECSFactory::CreateComponent(componentName, componentData));
+	return ECSFactory::AddComponent(*this, ECSFactory::GetComponentIDByName(componentName), componentData);
+}
+
+void Entity::registerComponent(Component* component)
+{
+	m_Components[component->getComponentID()] = component;
 }
 
 bool Entity::removeComponent(ComponentID toRemoveComponentID, bool hardRemove)
@@ -124,9 +125,8 @@ bool Entity::removeComponent(ComponentID toRemoveComponentID, bool hardRemove)
 		}
 	}
 
-	toRemoveComponent->onRemove();
-	ECSFactory::DeregisterComponentInstance(toRemoveComponent);
-	m_Components.erase(toRemoveComponent->getComponentID());
+	ECSFactory::RemoveComponent(*this, toRemoveComponentID);
+	m_Components.erase(toRemoveComponentID);
 
 	return true;
 }
@@ -136,9 +136,14 @@ bool Entity::hasComponent(ComponentID componentID)
 	return m_Components.find(componentID) != m_Components.end();
 }
 
-const HashMap<ComponentID, Ptr<Component>>& Entity::getAllComponents() const
+const HashMap<ComponentID, Component*>& Entity::getAllComponents() const
 {
 	return m_Components;
+}
+
+void Entity::bind(const Event::Type& event, const sol::function& function)
+{
+	m_Binder.bind(event, [this, function](const Event* e) -> Variant { return function.call<Variant>(m_Script->getScriptInstance(), this, e); });
 }
 
 bool Entity::call(const String& function, const Vector<Variant>& args)
@@ -149,7 +154,7 @@ bool Entity::call(const String& function, const Vector<Variant>& args)
 		status = m_Script->call(function, args);
 		if (!status)
 		{
-			WARN("Script error (" + getFullName() + ")");
+			WARN("Script error in " + m_Script->getFilePath() + " on " + getFullName() + " during " + function);
 		}
 	}
 	return status;
@@ -162,6 +167,25 @@ void Entity::evaluateScriptOverrides()
 		m_Script->evaluateOverrides();
 	}
 };
+
+bool Entity::setScriptJSON(const JSON::json& script)
+{
+	if (script.contains("path"))
+	{
+		if (OS::IsExists(script["path"]))
+		{
+			m_Script.reset(new Script(script));
+			ScriptSystem::GetSingleton()->addInitScriptEntity(this);
+			return true;
+		}
+		else
+		{
+			ERR("Could not find script file: " + (String)script["path"]);
+			return false;
+		}
+	}
+	return false;
+}
 
 bool Entity::setScript(const String& path)
 {
@@ -176,6 +200,7 @@ bool Entity::setScript(const String& path)
 		j["path"] = path;
 		j["overrides"] = {};
 		m_Script.reset(new Script(j));
+		ScriptSystem::GetSingleton()->addInitScriptEntity(this);
 		return m_Script->setup(this);
 	}
 	else
@@ -190,6 +215,11 @@ const String& Entity::getName() const
 	return m_Scene->getName();
 }
 
+const SceneID Entity::getID() const
+{
+	return m_Scene->getID();
+}
+
 const String& Entity::getFullName() const
 {
 	return m_Scene->getFullName();
@@ -202,11 +232,16 @@ void Entity::draw()
 	{
 		if (ImGui::Selectable(m_Script->getFilePath().c_str()))
 		{
-			EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, m_Script->getFilePath());
+			EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { m_Script->getFilePath(), (int)ResourceFile::Type::Text });
 		}
 		if (ImGui::Button(ICON_ROOTEX_EXTERNAL_LINK "##Open Script"))
 		{
-			EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, m_Script->getFilePath());
+			EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { m_Script->getFilePath(), (int)ResourceFile::Type::Text });
+		}
+		ImGui::SameLine();
+		if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Edit Script"))
+		{
+			EventManager::GetSingleton()->call(EditorEvents::EditorEditFile, m_Script->getFilePath());
 		}
 		ImGui::SameLine();
 		if (ImGui::Button(ICON_ROOTEX_REFRESH "##Reload"))
@@ -220,21 +255,18 @@ void Entity::draw()
 		{
 			m_Script.reset();
 		}
+
+		m_Script->draw();
 	}
 	else
 	{
 		ImGui::SameLine();
-		if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Choose Script"))
+		if (ImGui::Button(ICON_ROOTEX_FOLDER_OPEN "##Choose Script"))
 		{
 			if (Optional<String> result = OS::SelectFile(SupportedFiles.at(ResourceFile::Type::Lua), "game/assets/scripts/"))
 			{
 				setScript(*result);
 			}
 		}
-	}
-
-	if (m_Script)
-	{
-		m_Script->draw();
 	}
 }

@@ -7,6 +7,8 @@ class Scene;
 
 class SceneLoader
 {
+	EventBinder<SceneLoader> m_Binder;
+
 	Scene* m_CurrentScene = nullptr;
 	Ptr<Scene> m_RootScene;
 

@@ -8,6 +8,8 @@
 
 class OutputDock
 {
+	EventBinder<OutputDock> m_Binder;
+
 public:
 	struct OutputDockSettings
 	{

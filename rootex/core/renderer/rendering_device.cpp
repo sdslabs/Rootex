@@ -1,10 +1,8 @@
 #include "rendering_device.h"
 
 #include <locale>
-#include <codecvt>
 
 #include "common/common.h"
-#include "core/event_manager.h"
 #include "dxgi_debug_interface.h"
 
 #include "vendor/DirectXTK/Inc/DDSTextureLoader.h"
@@ -12,28 +10,13 @@
 
 #include "Tracy/Tracy.hpp"
 
-std::wstring StringToWideString(const std::string& str);
-std::string WideStringToString(const std::wstring& wstr);
-
 #define FEATURE_STRING(features, featureName) "\n" + #featureName + ": " + std::to_string(features.featureName)
 #define ADAPTER_DESCRIPTION_WSTRING(desc, info) "\n" + #info + ": " + WideStringToString(desc.info)
 #define ADAPTER_DESCRIPTION_STRING(desc, info) "\n" + #info + ": " + std::to_string(desc.info)
 
-std::wstring StringToWideString(const std::string& str)
-{
-	static std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converterX;
-	return converterX.from_bytes(str);
-}
-
-std::string WideStringToString(const std::wstring& wstr)
-{
-	static std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converterX;
-	return converterX.to_bytes(wstr);
-}
-
 RenderingDevice::RenderingDevice()
 {
-	BIND_EVENT_MEMBER_FUNCTION(RootexEvents::WindowResized, RenderingDevice::windowResized);
+	m_Binder.bind(RootexEvents::WindowResized, this, &RenderingDevice::windowResized);
 
 	GFX_ERR_CHECK(CoInitialize(nullptr));
 }
@@ -191,7 +174,7 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height)
 		rsDesc.DepthClipEnable = TRUE;
 		rsDesc.ScissorEnable = FALSE;
 		rsDesc.MultisampleEnable = FALSE;
-		rsDesc.AntialiasedLineEnable = TRUE;
+		rsDesc.AntialiasedLineEnable = FALSE;
 
 		GFX_ERR_CHECK(m_Device->CreateRasterizerState(&rsDesc, &m_DefaultRS));
 	}
@@ -206,7 +189,7 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height)
 		rsDesc.DepthClipEnable = TRUE;
 		rsDesc.ScissorEnable = FALSE;
 		rsDesc.MultisampleEnable = FALSE;
-		rsDesc.AntialiasedLineEnable = TRUE;
+		rsDesc.AntialiasedLineEnable = FALSE;
 
 		GFX_ERR_CHECK(m_Device->CreateRasterizerState(&rsDesc, &m_SkyRS));
 	}
@@ -221,7 +204,7 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height)
 		rsDesc.DepthClipEnable = FALSE;
 		rsDesc.ScissorEnable = FALSE;
 		rsDesc.MultisampleEnable = FALSE;
-		rsDesc.AntialiasedLineEnable = TRUE;
+		rsDesc.AntialiasedLineEnable = FALSE;
 
 		GFX_ERR_CHECK(m_Device->CreateRasterizerState(&rsDesc, &m_UIRS));
 	}
@@ -236,7 +219,7 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height)
 		rsDesc.DepthClipEnable = TRUE;
 		rsDesc.ScissorEnable = TRUE;
 		rsDesc.MultisampleEnable = FALSE;
-		rsDesc.AntialiasedLineEnable = TRUE;
+		rsDesc.AntialiasedLineEnable = FALSE;
 
 		GFX_ERR_CHECK(m_Device->CreateRasterizerState(&rsDesc, &m_UIScissoredRS));
 	}
@@ -251,7 +234,7 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height)
 		wireframeDesc.DepthClipEnable = TRUE;
 		wireframeDesc.ScissorEnable = FALSE;
 		wireframeDesc.MultisampleEnable = FALSE;
-		wireframeDesc.AntialiasedLineEnable = TRUE;
+		wireframeDesc.AntialiasedLineEnable = FALSE;
 
 		GFX_ERR_CHECK(m_Device->CreateRasterizerState(&wireframeDesc, &m_WireframeRS));
 	}
@@ -381,13 +364,6 @@ Ref<DirectX::SpriteFont> RenderingDevice::createFont(const String& fontFilePath)
 	return Ref<DirectX::SpriteFont>(new DirectX::SpriteFont(m_Device.Get(), StringToWideString(fontFilePath.c_str()).c_str()));
 }
 
-Microsoft::WRL::ComPtr<ID3DBlob> RenderingDevice::createBlob(LPCWSTR path)
-{
-	Microsoft::WRL::ComPtr<ID3DBlob> pBlob = nullptr;
-	GFX_ERR_CHECK(D3DReadFileToBlob(path, &pBlob));
-	return pBlob;
-}
-
 void RenderingDevice::enableSkyDSS()
 {
 	m_Context->OMSetDepthStencilState(m_SkyDSState.Get(), 0);
@@ -438,25 +414,61 @@ void RenderingDevice::createRTVAndSRV(Microsoft::WRL::ComPtr<ID3D11RenderTargetV
 	GFX_ERR_CHECK(m_Device->CreateShaderResourceView(texture.Get(), &shaderResourceViewDesc, &srv));
 }
 
-Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createBuffer(D3D11_BUFFER_DESC* bd, D3D11_SUBRESOURCE_DATA* sd)
+Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createBuffer(const char* data, size_t size, D3D11_BIND_FLAG bindFlags, D3D11_USAGE usage, int cpuAccess)
 {
-	Microsoft::WRL::ComPtr<ID3D11Buffer> buffer = nullptr;
-	GFX_ERR_CHECK(m_Device->CreateBuffer(bd, sd, &buffer));
+	D3D11_BUFFER_DESC bd = { 0 };
+	bd.BindFlags = bindFlags;
+	bd.Usage = usage;
+	bd.CPUAccessFlags = cpuAccess;
+	bd.MiscFlags = 0u;
+	bd.ByteWidth = size;
+	bd.StructureByteStride = 0u;
+	D3D11_SUBRESOURCE_DATA sd = { 0 };
+	sd.pSysMem = data;
+
+	Microsoft::WRL::ComPtr<ID3D11Buffer> buffer;
+	GFX_ERR_CHECK(m_Device->CreateBuffer(&bd, &sd, &buffer));
 	return buffer;
 }
 
-Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createVSCB(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
+void RenderingDevice::editBuffer(const char* data, size_t byteSize, ID3D11Buffer* bufferPointer)
 {
-	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer = nullptr;
-	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &constantBuffer));
-	return constantBuffer;
+	D3D11_MAPPED_SUBRESOURCE subresource;
+	RenderingDevice::GetSingleton()->mapBuffer(bufferPointer, subresource);
+	memcpy(subresource.pData, data, byteSize);
+	RenderingDevice::GetSingleton()->unmapBuffer(bufferPointer);
 }
 
-Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createPSCB(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd)
+Microsoft::WRL::ComPtr<ID3DBlob> RenderingDevice::compileShader(const String& shaderPath, const char* entryPoint, const char* profile)
 {
-	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer = nullptr;
-	GFX_ERR_CHECK(m_Device->CreateBuffer(cbd, csd, &constantBuffer));
-	return constantBuffer;
+	Microsoft::WRL::ComPtr<ID3DBlob> shaderBlob;
+	Microsoft::WRL::ComPtr<ID3DBlob> errorBlob;
+
+	UINT flags = D3DCOMPILE_ENABLE_STRICTNESS;
+#if defined(DEBUG) || defined(_DEBUG)
+	flags |= D3DCOMPILE_DEBUG;
+#else
+	flags |= D3DCOMPILE_OPTIMIZATION_LEVEL3;
+#endif
+
+	const D3D_SHADER_MACRO defines[1] = { NULL, NULL };
+	GFX_ERR_CHECK(
+	    D3DCompileFromFile(
+	        StringToWideString(shaderPath).c_str(),
+	        defines,
+	        D3D_COMPILE_STANDARD_FILE_INCLUDE,
+	        entryPoint,
+	        profile,
+	        flags,
+	        0,
+	        &shaderBlob,
+	        &errorBlob));
+	if (errorBlob)
+	{
+		ERR("Shader compilation error: " + String((char*)errorBlob->GetBufferPointer()));
+	}
+
+	return shaderBlob;
 }
 
 Microsoft::WRL::ComPtr<ID3D11PixelShader> RenderingDevice::createPS(ID3DBlob* blob)
@@ -590,24 +602,34 @@ void RenderingDevice::unmapBuffer(ID3D11Buffer* buffer)
 	m_Context->Unmap(buffer, 0);
 }
 
-void RenderingDevice::setInPixelShader(unsigned int slot, unsigned int number, ID3D11ShaderResourceView* texture)
+void RenderingDevice::setVSSRV(unsigned int slot, unsigned int count, ID3D11ShaderResourceView** texture)
 {
-	m_Context->PSSetShaderResources(slot, number, &texture);
+	m_Context->VSSetShaderResources(slot, count, texture);
 }
 
-void RenderingDevice::setInPixelShader(ID3D11SamplerState* samplerState)
+void RenderingDevice::setPSSRV(unsigned int slot, unsigned int count, ID3D11ShaderResourceView** texture)
 {
-	m_Context->PSSetSamplers(0, 1, &samplerState);
+	m_Context->PSSetShaderResources(slot, count, texture);
 }
 
-void RenderingDevice::setVSCB(ID3D11Buffer* constantBuffer, UINT slot)
+void RenderingDevice::setVSSS(unsigned int slot, unsigned int count, ID3D11SamplerState** samplerState)
 {
-	m_Context->VSSetConstantBuffers(slot, 1u, &constantBuffer);
+	m_Context->VSSetSamplers(slot, count, samplerState);
 }
 
-void RenderingDevice::setPSCB(ID3D11Buffer* constantBuffer, UINT slot)
+void RenderingDevice::setPSSS(unsigned int slot, unsigned int count, ID3D11SamplerState** samplerState)
 {
-	m_Context->PSSetConstantBuffers(slot, 1u, &constantBuffer);
+	m_Context->PSSetSamplers(slot, count, samplerState);
+}
+
+void RenderingDevice::setVSCB(unsigned int slot, unsigned int count, ID3D11Buffer** constantBuffer)
+{
+	m_Context->VSSetConstantBuffers(slot, count, constantBuffer);
+}
+
+void RenderingDevice::setPSCB(unsigned int slot, unsigned int count, ID3D11Buffer** constantBuffer)
+{
+	m_Context->PSSetConstantBuffers(slot, count, constantBuffer);
 }
 
 void RenderingDevice::unbindSRVs()
@@ -769,15 +791,13 @@ void RenderingDevice::setViewport(const D3D11_VIEWPORT* vp)
 	}
 }
 
-Microsoft::WRL::ComPtr<ID3D11SamplerState> RenderingDevice::createSS()
+Microsoft::WRL::ComPtr<ID3D11SamplerState> RenderingDevice::createSS(SamplerState type)
 {
 	D3D11_SAMPLER_DESC samplerDesc;
-	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.MipLODBias = 0.0f;
-	samplerDesc.MaxAnisotropy = 1;
 	samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
 	samplerDesc.BorderColor[0] = 0;
 	samplerDesc.BorderColor[1] = 0;
@@ -786,31 +806,19 @@ Microsoft::WRL::ComPtr<ID3D11SamplerState> RenderingDevice::createSS()
 	samplerDesc.MinLOD = 0;
 	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
-	Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerState;
-	if (FAILED(m_Device->CreateSamplerState(&samplerDesc, &samplerState)))
+	switch (type)
 	{
-		ERR("SamplerState could not be created");
+	case RenderingDevice::SamplerState::Default:
+		samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+		samplerDesc.MaxAnisotropy = 1;
+		break;
+	case RenderingDevice::SamplerState::Anisotropic:
+		samplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+		samplerDesc.MaxAnisotropy = D3D11_MAX_MAXANISOTROPY;
+		break;
+	default:
+		break;
 	}
-
-	return samplerState;
-}
-
-Microsoft::WRL::ComPtr<ID3D11SamplerState> RenderingDevice::createSSAnisotropic()
-{
-	D3D11_SAMPLER_DESC samplerDesc;
-	samplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
-	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.MipLODBias = 0.0f;
-	samplerDesc.MaxAnisotropy = D3D11_MAX_MAXANISOTROPY;
-	samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-	samplerDesc.BorderColor[0] = 0;
-	samplerDesc.BorderColor[1] = 0;
-	samplerDesc.BorderColor[2] = 0;
-	samplerDesc.BorderColor[3] = 0;
-	samplerDesc.MinLOD = 0;
-	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerState;
 	if (FAILED(m_Device->CreateSamplerState(&samplerDesc, &samplerState)))
