@@ -15,10 +15,16 @@ private:
 
 	Ptr<Shader> m_Shader;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_VSCB;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> m_PSCB;
+
+	void pushTexture(Ref<ImageResourceFile> texture);
+	void setTexture(const String& newtexturePath, int position);
+	void popTexture();
 
 public:
 	static inline const String s_DefaultCustomShaderPath = "rootex/core/renderer/shaders/custom_pixel_shader.hlsl";
+
+	static void Load();
+	static void Destroy();
 
 	explicit CustomMaterialResourceFile(const FilePath& path);
 	~CustomMaterialResourceFile() = default;
