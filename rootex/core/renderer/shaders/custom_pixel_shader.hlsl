@@ -1,12 +1,17 @@
 #include "rootex/core/renderer/shaders/register_locations_pixel_shader.h"
 
-cbuffer PerObject : register(PER_OBJECT_PS_HLSL)
+TextureCube SkyTexture : register(SKY_PS_HLSL);
+SamplerState SampleType : register(SAMPLER_PS_HLSL);
+
+cbuffer PerFrame : register(CUSTOM_PER_FRAME_PS_HLSL)
 {
     float timeMs;
     float deltaTimeMs;
     float2 resolution;
     float2 mouse;
 };
+
+Texture2D Texture0 : register(CUSTOM_TEXTURE_0_PS_HLSL);
 
 struct PixelInputType
 {
@@ -21,5 +26,5 @@ struct PixelInputType
 
 float4 main(PixelInputType input) : SV_TARGET
 {
-    return float4(1.0f, 1.0f, 1.0f, 1.0f);
+    return Texture0.Sample(SampleType, input.tex);
 }

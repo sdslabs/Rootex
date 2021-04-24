@@ -34,6 +34,7 @@ class RenderSystem : public System
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_PerFrameVSCB;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_PerCameraChangeVSCB;
 
+	Microsoft::WRL::ComPtr<ID3D11Buffer> m_PerFrameCustomPSCB;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_PerFramePSCB;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_PerScenePSCB;
 
