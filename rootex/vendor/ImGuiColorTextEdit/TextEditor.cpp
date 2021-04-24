@@ -768,7 +768,38 @@ void TextEditor::HandleKeyboardInputs()
 			{
 				auto c = io.InputQueueCharacters[i];
 				if (c != 0 && (c == '\n' || c >= 32))
+				{
 					EnterCharacter(c, shift);
+					if (c == '(')
+					{
+						EnterCharacter(')', false);
+						mState.mCursorPosition.mColumn -= 1;
+						EnsureCursorVisible();
+					}
+					if (c == '[')
+					{
+						EnterCharacter(']', false);
+						mState.mCursorPosition.mColumn -= 1;
+						EnsureCursorVisible();
+					}
+					else if (c == '{')
+					{
+						EnterCharacter('}', false);
+						mState.mCursorPosition.mColumn -= 1;
+						EnsureCursorVisible();
+						EnterCharacter('\n', false);
+						EnterCharacter('\n', false);
+						mState.mCursorPosition.mLine -= 1;
+						EnsureCursorVisible();
+						EnterCharacter('\t', false);
+					}
+					else if (c == '"')
+					{
+						EnterCharacter('"', false);
+						mState.mCursorPosition.mColumn -= 1;
+						EnsureCursorVisible();
+					}
+				}
 			}
 			io.InputQueueCharacters.resize(0);
 		}
