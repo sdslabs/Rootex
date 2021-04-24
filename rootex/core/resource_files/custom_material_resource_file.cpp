@@ -4,15 +4,74 @@
 #include "core/renderer/shaders/register_locations_pixel_shader.h"
 #include "core/renderer/shaders/register_locations_vertex_shader.h"
 #include "framework/systems/render_system.h"
+#include "resource_loader.h"
 
 void to_json(JSON::json& j, const CustomMaterialData& s)
 {
 	j["pixelShader"] = s.pixelShaderPath;
+	j["textures"] = JSON::json::array();
+	for (auto& texture : s.textures)
+	{
+		j["textures"].push_back(texture->getPath().generic_string());
+	}
 }
 
 void from_json(const JSON::json& j, CustomMaterialData& s)
 {
 	s.pixelShaderPath = j.value("pixelShader", CustomMaterialResourceFile::s_DefaultCustomShaderPath);
+	for (auto& texturePath : j.value("textures", Vector<String>({ "rootex/assets/rootex.png" })))
+	{
+		if (Ref<ImageResourceFile> texture = ResourceLoader::CreateImageResourceFile(texturePath))
+		{
+			s.textures.push_back(texture);
+		}
+	}
+}
+
+void CustomMaterialResourceFile::pushTexture(Ref<ImageResourceFile> texture)
+{
+	if (!texture)
+	{
+		WARN("Skipping null texture which was tried to be pushed");
+		return;
+	}
+
+	m_MaterialData.textures.push_back(texture);
+}
+
+void CustomMaterialResourceFile::setTexture(const String& newtexturePath, int position)
+{
+	if (position >= m_MaterialData.textures.size() || position < 0)
+	{
+		WARN("Position being set is out of bounds: " + std::to_string(position));
+		return;
+	}
+
+	if (Ref<ImageResourceFile> image = ResourceLoader::CreateImageResourceFile(newtexturePath))
+	{
+		m_MaterialData.textures[position] = image;
+	}
+}
+
+void CustomMaterialResourceFile::popTexture()
+{
+	if (m_MaterialData.textures.empty())
+	{
+		WARN("We don't pop anymore. Texture list is empty.");
+		return;
+	}
+
+	m_MaterialData.textures.pop_back();
+}
+
+void CustomMaterialResourceFile::Load()
+{
+	s_Sampler = RenderingDevice::GetSingleton()->createSS(RenderingDevice::SamplerState::Default);
+}
+
+void CustomMaterialResourceFile::Destroy()
+{
+	s_Sampler.Reset();
 }
 
 CustomMaterialResourceFile::CustomMaterialResourceFile(const FilePath& path)
@@ -65,14 +124,16 @@ void CustomMaterialResourceFile::bindVSCB()
 
 void CustomMaterialResourceFile::bindPSCB()
 {
-	m_MaterialData.pixelBufferData.timeMs = Application::GetSingleton()->getAppTimer().getTimeMs();
-	m_MaterialData.pixelBufferData.deltaTimeMs = Application::GetSingleton()->getAppFrameTimer().getLastFrameTime();
-	m_MaterialData.pixelBufferData.resolution.x = Application::GetSingleton()->getWindow()->getWidth();
-	m_MaterialData.pixelBufferData.resolution.y = Application::GetSingleton()->getWindow()->getHeight();
-	m_MaterialData.pixelBufferData.mouse = InputManager::GetSingleton()->getMousePosition();
+	if (!m_MaterialData.textures.empty())
+	{
+		Vector<ID3D11ShaderResourceView*> textureSRVs;
+		for (auto& texture : m_MaterialData.textures)
+		{
+			textureSRVs.push_back(texture->getTexture()->getTextureResourceView());
+		}
 
-	RenderingDevice::GetSingleton()->editBuffer(m_MaterialData.pixelBufferData, m_PSCB.Get());
-	RenderingDevice::GetSingleton()->setPSCB(PER_OBJECT_PS_CPP, 1, m_PSCB.GetAddressOf());
+		RenderingDevice::GetSingleton()->setPSSRV(CUSTOM_TEXTURE_0_PS_CPP, textureSRVs.size(), textureSRVs.data());
+	}
 }
 
 JSON::json CustomMaterialResourceFile::getJSON() const
@@ -100,7 +161,6 @@ void CustomMaterialResourceFile::reimport()
 
 	setPixelShader(m_MaterialData.pixelShaderPath);
 	m_VSCB = RenderingDevice::GetSingleton()->createBuffer<PerModelVSCBData>(PerModelVSCBData(), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
-	m_PSCB = RenderingDevice::GetSingleton()->createBuffer<PerModelCustomPSCBData>(m_MaterialData.pixelBufferData, D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
 }
 
 bool CustomMaterialResourceFile::save()
@@ -176,4 +236,36 @@ void CustomMaterialResourceFile::draw()
 
 		ImGui::EndPopup();
 	}
+
+	if (ImGui::ListBoxHeader("Textures"))
+	{
+		int i = 0;
+		for (auto& texture : m_MaterialData.textures)
+		{
+			String textureName = "Texture " + std::to_string(i) + " " + ICON_ROOTEX_FOLDER_OPEN;
+			RootexSelectableImage(textureName.c_str(), texture, [this, i](const String& newTexturePath) { setTexture(newTexturePath, i); });
+			i++;
+			ImGui::Separator();
+		}
+
+		ImGui::ListBoxFooter();
+	}
+
+	ImGui::BeginGroup();
+	if (ImGui::Button(ICON_ROOTEX_PLUS "##Push Texture"))
+	{
+		if (Optional<String> result = OS::SelectFile(SupportedFiles.at(ResourceFile::Type::Image), "game/assets/"))
+		{
+			if (Ref<ImageResourceFile> image = ResourceLoader::CreateImageResourceFile(*result))
+			{
+				pushTexture(image);
+			}
+		}
+	}
+	ImGui::SameLine();
+	if (ImGui::Button(ICON_ROOTEX_MINUS "##Pop Texture"))
+	{
+		popTexture();
+	}
+	ImGui::EndGroup();
 }

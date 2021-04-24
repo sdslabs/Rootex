@@ -1,4 +1,7 @@
 {
     "alpha": true,
-    "pixelShader": "game/assets/shaders/test.hlsl"
+    "pixelShader": "game/assets/shaders/test.hlsl",
+    "textures": [
+        "rootex/assets/rootex.png"
+    ]
 }
