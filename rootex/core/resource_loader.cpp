@@ -104,7 +104,6 @@ int ResourceLoader::Preload(ResourceCollection paths, Atomic<int>& progress)
 	return tasks.size(); // One less for the dummy task
 }
 
-#ifdef RELEASE_BUILD
 int ResourceLoader::Export(const String& sceneName, const String& sceneFilePath, Atomic<int>& progress)
 {
 	Vector<Pair<String, String>> toCopy = {
@@ -153,7 +152,7 @@ int ResourceLoader::Export(const String& sceneName, const String& sceneFilePath,
 	}
 
 	Ref<TextResourceFile> readme = ResourceLoader::CreateNewTextResourceFile(m_CurrExportDir + "readme.txt");
-	readme->putString("This Game was build using Rootex Game Engine. Find the source code here http://github.com/SDSLabs/Rootex.");
+	readme->putString("This Game was built using Rootex Game Engine. Find the source code here http://github.com/SDSLabs/Rootex.");
 	if (!readme->save())
 	{
 		WARN("Could not save readme file");
@@ -185,7 +184,7 @@ int ResourceLoader::Export(const String& sceneName, const String& sceneFilePath,
 			m_CopyFailed = !OS::RelativeCopyFile(filePair.first, m_CurrExportDir + filePair.second);
 			if (m_CopyFailed)
 			{
-				ERR_SILENT("Could not copy asset files, investigate console logs ");
+				ERR_SILENT("Could not copy asset files, investigate console logs");
 				OS::DeleteDirectory(m_CurrExportDir);
 			}
 			progress++;
@@ -209,7 +208,6 @@ void ResourceLoader::PostExport()
 	PRINT("Successfully exported to " + m_CurrExportDir);
 	m_CurrExportDir = "";
 }
-#endif
 
 void ResourceLoader::Persist(Ref<ResourceFile> res)
 {
