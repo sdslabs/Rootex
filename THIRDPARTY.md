@@ -1856,6 +1856,10 @@ Compiled and linked as is. Build process modified. Source weeded and restructure
 
 https://github.com/BalazsJako/ImGuiColorTextEdit/commit/0a88824f7de8d0bd11d8419066caa7d3469395c4
 
+### Changes
+
+https://github.com/sdslabs/Rootex/pull/457
+
 ### License
 
 <details>
