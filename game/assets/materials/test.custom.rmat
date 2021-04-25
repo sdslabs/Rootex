@@ -1,7 +1,11 @@
 {
     "alpha": true,
-    "pixelShader": "game/assets/shaders/test.hlsl",
-    "textures": [
+    "pixelShader": "game/assets/shaders/test_pixel_shader.hlsl",
+    "pixelShaderTextures": [
         "rootex/assets/rootex.png"
+    ],
+    "vertexShader": "game/assets/shaders/test_vertex_shader.hlsl",
+    "vertexShaderTextures": [
+        "game/assets/test/yellow.png"
     ]
 }

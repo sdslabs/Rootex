@@ -107,8 +107,10 @@ void from_json(const JSON::json& j, SkyMaterialData& s);
 
 struct CustomMaterialData
 {
+	String vertexShaderPath;
 	String pixelShaderPath;
-	Vector<Ref<ImageResourceFile>> textures;
+	Vector<Ref<ImageResourceFile>> vertexShaderTextures;
+	Vector<Ref<ImageResourceFile>> pixelShaderTextures;
 };
 
 void to_json(JSON::json& j, const CustomMaterialData& s);
