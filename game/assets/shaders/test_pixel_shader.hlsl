@@ -35,5 +35,5 @@ float4 main(PixelInputType input) : SV_TARGET
 	float4 finalColor = 100.0f * (color1 / d1 + color2 / d2) * Texture0.Sample(SampleType, input.tex);
 	finalColor.a = 1.0f;
 	
-	return finalColor;
+	return finalColor * input.color;
 }
