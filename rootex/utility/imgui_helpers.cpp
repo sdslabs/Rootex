@@ -30,6 +30,16 @@ void RootexFPSGraph(const char* name, Vector<float>& fpsRecords, float lastFPS)
 
 void RootexSelectableImage(const char* name, Ref<ImageResourceFile> image, Function<void(const String&)> onSelected)
 {
+	if (image)
+	{
+		if (ImGui::ImageButton(image->getTexture()->getTextureResourceView(), { 50, 50 }))
+		{
+			EventManager::GetSingleton()->deferredCall(EditorEvents::EditorOpenFile, VariantVector { image->getPath().generic_string(), (int)image->getType() });
+		}
+		ImGui::SameLine();
+	}
+
+	ImGui::BeginGroup();
 	if (ImGui::Button((name + String("##Button")).c_str()))
 	{
 		if (Optional<String> result = OS::SelectFile(SupportedFiles.at(ResourceFile::Type::Image), "game/assets/"))
@@ -37,35 +47,35 @@ void RootexSelectableImage(const char* name, Ref<ImageResourceFile> image, Funct
 			onSelected(*result);
 		}
 	}
-
-	if (image && ImGui::ImageButton(image->getTexture()->getTextureResourceView(), { 50, 50 }))
-	{
-		EventManager::GetSingleton()->deferredCall(EditorEvents::EditorOpenFile, VariantVector { image->getPath().generic_string(), (int)image->getType() });
-	}
 	if (image)
 	{
-		ImGui::SameLine();
 		ImGui::Text(image->getPath().string().c_str());
 	}
+	ImGui::EndGroup();
 }
 
 void RootexSelectableImageCube(const char* name, Ref<ImageCubeResourceFile> image, Function<void(const String&)> onSelected)
 {
+	if (image)
+	{
+		if (ImGui::ImageButton(image->getTexture()->getTextureResourceView(), { 50, 50 }))
+		{
+			EventManager::GetSingleton()->deferredCall(EditorEvents::EditorOpenFile, VariantVector { image->getPath().generic_string(), (int)image->getType() });
+		}
+		ImGui::SameLine();
+	}
+
+	ImGui::BeginGroup();
 	if (ImGui::Button((name + String("##Button")).c_str()))
 	{
-		if (Optional<String> result = OS::SelectFile(SupportedFiles.at(ResourceFile::Type::ImageCube), "game/assets/"))
+		if (Optional<String> result = OS::SelectFile(SupportedFiles.at(ResourceFile::Type::Image), "game/assets/"))
 		{
 			onSelected(*result);
 		}
 	}
-
-	if (image && ImGui::ImageButton(image->getTexture()->getTextureResourceView(), { 50, 50 }))
-	{
-		EventManager::GetSingleton()->deferredCall(EditorEvents::EditorOpenFile, VariantVector { image->getPath().generic_string(), (int)image->getType() });
-	}
 	if (image)
 	{
-		ImGui::SameLine();
 		ImGui::Text(image->getPath().string().c_str());
 	}
+	ImGui::EndGroup();
 }
