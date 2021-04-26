@@ -5,14 +5,6 @@
 #include "framework/system.h"
 #include "utility/imgui_helpers.h"
 
-#include "gui/scene_dock.h"
-#include "gui/output_dock.h"
-#include "gui/toolbar_dock.h"
-#include "gui/viewport_dock.h"
-#include "gui/inspector_dock.h"
-#include "gui/file_viewer.h"
-#include "gui/file_editor.h"
-
 #include "vendor/ImGUI/imgui.h"
 #include "vendor/ImGUI/imgui_impl_dx11.h"
 #include "vendor/ImGUI/imgui_impl_win32.h"
@@ -20,6 +12,14 @@
 #include "Tracy/Tracy.hpp"
 
 ImColor ColorToImColor(Color& c);
+
+class SceneDock;
+class OutputDock;
+class ToolbarDock;
+class ViewportDock;
+class InspectorDock;
+class FileViewer;
+class FileEditor;
 
 class EditorSystem : public System
 {
