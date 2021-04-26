@@ -1,6 +1,7 @@
 #include "scene_dock.h"
 
 #include "editor/editor_system.h"
+#include "editor/gui/inspector_dock.h"
 
 #include "framework/scene_loader.h"
 #include "framework/systems/render_system.h"

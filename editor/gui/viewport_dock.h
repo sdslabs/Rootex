@@ -21,15 +21,16 @@ private:
 	Scene* m_EditorCamera;
 	Scene* m_EditorGrid;
 	ViewportDockSettings m_ViewportDockSettings;
-	Matrix m_ApplyCameraMatrix = Matrix::Identity;
+	Matrix m_ApplyCameraMatrix;
 
 	bool m_IsCameraMoving = false;
 
 	float m_EditorCameraPitch = 0.0f;
 	float m_EditorCameraYaw = 0.0f;
-	float m_EditorCameraSpeed = 10.0f;
+	float m_EditorCameraSpeed = 50.0f;
 	float m_EditorCameraSensitivity = 300.0f;
 	float m_EditorCameraRotationNormalizer = 1000.0f;
+	float m_EditorCameraSmoothness = 0.9f;
 
 public:
 	ViewportDock(const JSON::json& viewportJSON);
