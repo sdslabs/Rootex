@@ -152,6 +152,7 @@ void ViewportDock::draw(float deltaMilliseconds)
 					currentSnap = &scaleSnap;
 				}
 
+				ImGui::DragFloat("Smoothness", &m_EditorCameraSmoothness, 0.01f, 0.001f, 1.0f);
 				ImGui::DragFloat("Speed", &m_EditorCameraSpeed, 0.1f, 0.1f, 1000.0f);
 				ImGui::DragFloat("Sensitivity", &m_EditorCameraSensitivity, 1.0f, 0.1f, 1000.0f);
 
@@ -319,33 +320,40 @@ void ViewportDock::draw(float deltaMilliseconds)
 				    m_EditorCameraPitch * m_EditorCameraSensitivity / m_EditorCameraRotationNormalizer,
 				    0.0f);
 
-				m_ApplyCameraMatrix = m_EditorCamera->getEntity().getComponent<TransformComponent>()->getLocalTransform();
+				if (InputManager::GetSingleton()->isPressed("InputCameraForward")
+				    || InputManager::GetSingleton()->isPressed("InputCameraBackward")
+				    || InputManager::GetSingleton()->isPressed("InputCameraLeft")
+				    || InputManager::GetSingleton()->isPressed("InputCameraRight")
+				    || InputManager::GetSingleton()->isPressed("InputCameraUp")
+				    || InputManager::GetSingleton()->isPressed("InputCameraDown"))
+				{
+					m_ApplyCameraMatrix = m_EditorCamera->getEntity().getComponent<TransformComponent>()->getLocalTransform();
+				}
 
-				static const Vector3& forward = { 0.0f, 0.0f, -1.0f };
-				static const Vector3& right = { 1.0f, 0.0f, 0.0f };
+				float delta = deltaMilliseconds * MS_TO_S;
 				if (InputManager::GetSingleton()->isPressed("InputCameraForward"))
 				{
-					m_ApplyCameraMatrix = Matrix::CreateTranslation(forward * m_EditorCameraSpeed * deltaMilliseconds * 1e-3) * m_ApplyCameraMatrix;
+					m_ApplyCameraMatrix = Matrix::CreateTranslation(Vector3::Forward * m_EditorCameraSpeed * delta) * m_ApplyCameraMatrix;
 				}
 				if (InputManager::GetSingleton()->isPressed("InputCameraBackward"))
 				{
-					m_ApplyCameraMatrix = Matrix::CreateTranslation(-forward * m_EditorCameraSpeed * deltaMilliseconds * 1e-3) * m_ApplyCameraMatrix;
+					m_ApplyCameraMatrix = Matrix::CreateTranslation(Vector3::Backward * m_EditorCameraSpeed * delta) * m_ApplyCameraMatrix;
 				}
 				if (InputManager::GetSingleton()->isPressed("InputCameraLeft"))
 				{
-					m_ApplyCameraMatrix = Matrix::CreateTranslation(-right * m_EditorCameraSpeed * deltaMilliseconds * 1e-3) * m_ApplyCameraMatrix;
+					m_ApplyCameraMatrix = Matrix::CreateTranslation(Vector3::Left * m_EditorCameraSpeed * delta) * m_ApplyCameraMatrix;
 				}
 				if (InputManager::GetSingleton()->isPressed("InputCameraRight"))
 				{
-					m_ApplyCameraMatrix = Matrix::CreateTranslation(right * m_EditorCameraSpeed * deltaMilliseconds * 1e-3) * m_ApplyCameraMatrix;
+					m_ApplyCameraMatrix = Matrix::CreateTranslation(Vector3::Right * m_EditorCameraSpeed * delta) * m_ApplyCameraMatrix;
 				}
 				if (InputManager::GetSingleton()->isPressed("InputCameraUp"))
 				{
-					m_ApplyCameraMatrix = Matrix::CreateTranslation(Vector3(0.0f, 1.0f, 0.0f) * m_EditorCameraSpeed * deltaMilliseconds * 1e-3) * m_ApplyCameraMatrix;
+					m_ApplyCameraMatrix = Matrix::CreateTranslation(Vector3::Up * m_EditorCameraSpeed * delta) * m_ApplyCameraMatrix;
 				}
 				if (InputManager::GetSingleton()->isPressed("InputCameraDown"))
 				{
-					m_ApplyCameraMatrix = Matrix::CreateTranslation(Vector3(0.0f, -1.0f, 0.0f) * m_EditorCameraSpeed * deltaMilliseconds * 1e-3) * m_ApplyCameraMatrix;
+					m_ApplyCameraMatrix = Matrix::CreateTranslation(Vector3::Down * m_EditorCameraSpeed * delta) * m_ApplyCameraMatrix;
 				}
 			}
 			else
@@ -357,8 +365,11 @@ void ViewportDock::draw(float deltaMilliseconds)
 					m_IsCameraMoving = false;
 				}
 			}
-			m_EditorCamera->getEntity().getComponent<TransformComponent>()->setPosition(m_ApplyCameraMatrix.Translation());
 		}
+
+		m_EditorCamera->getEntity().getComponent<TransformComponent>()->setPosition(
+		    m_EditorCameraSmoothness * m_EditorCamera->getEntity().getComponent<TransformComponent>()->getPosition() + (1.0f - m_EditorCameraSmoothness) * m_ApplyCameraMatrix.Translation());
+
 		ImGui::End();
 	}
 }
