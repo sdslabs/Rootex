@@ -87,9 +87,14 @@ target_link_libraries(Rootex PUBLIC
     LPeg
     Meshoptimizer
     Effekseer
+    MediaFoundation
     
     Shell32.lib
     d3d11.lib
     xinput.lib
     D3DCompiler.lib
+    mf.lib
+    mfplat.lib
+    mfuuid.lib
+    strmiids.lib
 )
