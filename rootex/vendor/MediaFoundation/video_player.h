@@ -36,7 +36,7 @@ const UINT WM_APP_PLAYER_EVENT = WM_APP + 1;
 
     // WPARAM = IMFMediaEvent*, WPARAM = MediaEventType
 
-enum PlayerState
+enum VideoPlayerState
 {
     Closed = 0,     // No session.
     Ready,          // Session was created, ready to open a file. 
@@ -72,7 +72,7 @@ public:
     HRESULT       Stop();
     HRESULT       Shutdown();
     HRESULT       HandleEvent(UINT_PTR pUnkPtr);
-    PlayerState   GetState() const { return m_state; }
+    VideoPlayerState   GetState() const { return m_state; }
 
     // Video functionality
     HRESULT       Repaint();
@@ -113,7 +113,7 @@ protected:
 
     HWND                    m_hwndVideo;        // Video window.
     HWND                    m_hwndEvent;        // App window to receive events.
-    PlayerState             m_state;            // Current state of the media session.
+    VideoPlayerState             m_state;            // Current state of the media session.
     HANDLE                  m_hCloseEvent;      // Event to wait on while closing.
 };
 

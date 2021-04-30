@@ -5,7 +5,7 @@
 //
 // Copyright (c) Microsoft Corporation. All rights reserved.
 
-#include "Player.h"
+#include "video_player.h"
 #include <assert.h>
 
 #pragma comment(lib, "shlwapi")
