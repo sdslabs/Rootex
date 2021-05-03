@@ -106,20 +106,6 @@ void SceneLoader::loadScene(const String& sceneFile, const Vector<String>& argum
 	loadPreloadedScene(sceneFile, arguments);
 }
 
-int SceneLoader::exportScene(Scene* scene, Atomic<int>& progress)
-{
-	if (saveScene(scene))
-	{
-		return ResourceLoader::Export(scene->getName(), scene->getScenePath(), progress);
-	}
-	return 0;
-}
-
-void SceneLoader::postExport()
-{
-	ResourceLoader::PostExport();
-}
-
 bool SceneLoader::saveScene(Scene* scene)
 {
 	return saveSceneAtFile(scene, scene->getScenePath());

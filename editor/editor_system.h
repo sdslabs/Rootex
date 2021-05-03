@@ -56,6 +56,9 @@ class EditorSystem : public System
 	Ptr<FileViewer> m_FileViewer;
 	Ptr<FileEditor> m_FileEditor;
 
+	Atomic<bool> m_IsCopyFailed;
+	String m_CurrExportDir;
+
 	EditorSystem();
 	EditorSystem(const EditorSystem&) = delete;
 	~EditorSystem();
@@ -70,6 +73,8 @@ class EditorSystem : public System
 	Variant saveBeforeQuit(const Event* event);
 	Variant createNewScene(const Event* event);
 	Variant createNewFile(const Event* event);
+	int exportScene(const String& sceneName, const String& sceneFilePath, Atomic<int>& progress);
+	void postExport();
 
 public:
 	static EditorSystem* GetSingleton();

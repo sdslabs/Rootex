@@ -21,6 +21,8 @@
 
 EditorSystem::EditorSystem()
     : System("EditorSystem", UpdateOrder::Editor, true)
+    , m_CurrExportDir("")
+    , m_IsCopyFailed(false)
 {
 	m_Binder.bind(EditorEvents::EditorSaveBeforeQuit, this, &EditorSystem::saveBeforeQuit);
 	m_Binder.bind(EditorEvents::EditorSaveAll, this, &EditorSystem::saveAll);
@@ -743,7 +745,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 	if (exportScene && exportSceneTotalProgress == -1)
 	{
 		ImGui::OpenPopup("Export Scene");
-		exportSceneTotalProgress = SceneLoader::GetSingleton()->exportScene(exportScene, exportSceneProgress);
+		exportSceneTotalProgress = EditorSystem::exportScene(exportScene->getName(), exportScene->getScenePath(), exportSceneProgress);
 		exportSceneCurrentProgress = 0.0f;
 	}
 
@@ -761,7 +763,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 			exportSceneProgress = 0;
 			exportScene = nullptr;
 			ImGui::CloseCurrentPopup();
-			SceneLoader::GetSingleton()->postExport();
+			postExport();
 		}
 
 		ImGui::EndPopup();
@@ -889,6 +891,111 @@ Variant EditorSystem::createNewFile(const Event* event)
 {
 	OS::CreateFileName(Extract<String>(event->getData()));
 	return true;
+}
+
+int EditorSystem::exportScene(const String& sceneName, const String& sceneFilePath, Atomic<int>& progress)
+{
+	JSON::json exportTemplate = JSON::json::parse(ResourceLoader::CreateTextResourceFile("editor/export.template.json")->getString());
+
+	Vector<Pair<String, String>> toCopy;
+
+	for (auto& paths : exportTemplate["fileMappings"].items())
+	{
+		toCopy.push_back({ paths.key(), paths.value() });
+	}
+
+	int i = 0;
+	do
+	{
+		m_CurrExportDir = "exports/" + sceneName;
+		if (i != 0)
+		{
+			m_CurrExportDir += std::to_string(i);
+		}
+		m_CurrExportDir += "/";
+		i++;
+	} while (OS::IsExists(m_CurrExportDir));
+
+	OS::CreateDirectoryName(m_CurrExportDir);
+	OS::CreateDirectoryName(m_CurrExportDir + "game/assets/");
+	OS::CreateDirectoryName(m_CurrExportDir + "rootex/assets/");
+
+	JSON::json gameConfig = JSON::json::parse(ResourceLoader::CreateTextResourceFile("game/game.app.json")->getString());
+	gameConfig["startScene"] = sceneFilePath;
+	Ref<TextResourceFile> newGameConfig = ResourceLoader::CreateNewTextResourceFile(m_CurrExportDir + "game/game.app.json");
+	newGameConfig->putString(gameConfig.dump(4));
+
+	if (!newGameConfig->save())
+	{
+		WARN("Could not save application settings file");
+		OS::DeleteDirectory(m_CurrExportDir);
+		return 0;
+	}
+
+	Ref<TextResourceFile> readme = ResourceLoader::CreateNewTextResourceFile(m_CurrExportDir + "readme.txt");
+	readme->putString("This Game was built using Rootex Game Engine. Find the source code here http://github.com/SDSLabs/Rootex.");
+	if (!readme->save())
+	{
+		WARN("Could not save readme file");
+		OS::DeleteDirectory(m_CurrExportDir);
+		return 0;
+	}
+
+	Vector<FilePath> assetFiles = OS::GetAllFilesInDirectory("game/assets/");
+	Vector<FilePath> rootexAssetFiles = OS::GetAllFilesInDirectory("rootex/assets/");
+	Vector<FilePath> shaderFiles = OS::GetAllFilesInDirectory("rootex/core/renderer/shaders");
+	assetFiles.insert(assetFiles.end(), rootexAssetFiles.begin(), rootexAssetFiles.end());
+	assetFiles.insert(assetFiles.end(), shaderFiles.begin(), shaderFiles.end());
+
+	for (auto& file : assetFiles)
+	{
+		toCopy.push_back({ file.generic_string(), file.generic_string() });
+	}
+
+	Vector<Ref<Task>> tasks;
+	m_IsCopyFailed = false;
+
+	for (auto& filePair : toCopy)
+	{
+		tasks.push_back(std::make_shared<Task>([=, &progress]() {
+			if (m_IsCopyFailed)
+			{
+				return;
+			}
+			m_IsCopyFailed = !OS::RelativeCopyFile(filePair.first, m_CurrExportDir + filePair.second);
+			if (m_IsCopyFailed)
+			{
+				ERR_SILENT("Could not copy asset files, investigate console logs");
+				OS::DeleteDirectory(m_CurrExportDir);
+			}
+			progress++;
+		}));
+	}
+
+	/// TODO: Fix the need for this dummy task (blocks the main thread while tasks are running)
+	tasks.push_back(std::make_shared<Task>([]() {}));
+	progress++;
+
+	ThreadPool& threadPool = Application::GetSingleton()->getThreadPool();
+	threadPool.submit(tasks);
+
+	PRINT("Exporting to " + m_CurrExportDir)
+
+	return tasks.size();
+}
+
+void EditorSystem::postExport()
+{
+	if (m_IsCopyFailed)
+	{
+		PRINT("Export failed");
+	}
+	else
+	{
+		PRINT("Successfully exported to " + m_CurrExportDir);
+	}
+	m_CurrExportDir = "";
+	m_IsCopyFailed = false;
 }
 
 void EditorSystem::drawProgressBar(Atomic<int>& progress, float& currentProgress, int& totalProgress)
