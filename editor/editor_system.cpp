@@ -705,7 +705,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 		}
 	}
 
-	static Atomic<int> loadingSceneProgress;
+	static Atomic<int> loadingSceneProgress = 0;
 	static float loadingSceneCurrentProgress = 0.0f;
 	static int loadingSceneTotalProgress = -1;
 
@@ -738,7 +738,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 		ImGui::EndPopup();
 	}
 
-	static Atomic<int> exportSceneProgress;
+	static Atomic<int> exportSceneProgress = 0;
 	static float exportSceneCurrentProgress = 0.0f;
 	static int exportSceneTotalProgress = -1;
 
@@ -895,6 +895,8 @@ Variant EditorSystem::createNewFile(const Event* event)
 
 int EditorSystem::exportScene(const String& sceneName, const String& sceneFilePath, Atomic<int>& progress)
 {
+	progress = 0;
+
 	JSON::json exportTemplate = JSON::json::parse(ResourceLoader::CreateTextResourceFile("editor/export.template.json")->getString());
 
 	Vector<Pair<String, String>> toCopy;
@@ -958,17 +960,12 @@ int EditorSystem::exportScene(const String& sceneName, const String& sceneFilePa
 	for (auto& filePair : toCopy)
 	{
 		tasks.push_back(std::make_shared<Task>([=, &progress]() {
+			progress++;
 			if (m_IsCopyFailed)
 			{
 				return;
 			}
 			m_IsCopyFailed = !OS::RelativeCopyFile(filePair.first, m_CurrExportDir + filePair.second);
-			if (m_IsCopyFailed)
-			{
-				ERR_SILENT("Could not copy asset files, investigate console logs");
-				OS::DeleteDirectory(m_CurrExportDir);
-			}
-			progress++;
 		}));
 	}
 
