@@ -2,6 +2,7 @@
 
 #include "core/renderer/shader.h"
 #include "resource_file.h"
+#include "image_resource_file.h"
 #include "renderer/shaders/register_locations_pixel_shader.h"
 #include "renderer/shaders/register_locations_vertex_shader.h"
 
@@ -49,7 +50,7 @@ struct PerModelPSCBData
 	int hasNormalMap = 0;
 };
 
-struct PerModelCustomPSCBData
+struct PerFrameCustomPSCBData
 {
 	float timeMs;
 	float deltaTimeMs;
@@ -106,8 +107,10 @@ void from_json(const JSON::json& j, SkyMaterialData& s);
 
 struct CustomMaterialData
 {
+	String vertexShaderPath;
 	String pixelShaderPath;
-	PerModelCustomPSCBData pixelBufferData;
+	Vector<Ref<ImageResourceFile>> vertexShaderTextures;
+	Vector<Ref<ImageResourceFile>> pixelShaderTextures;
 };
 
 void to_json(JSON::json& j, const CustomMaterialData& s);
