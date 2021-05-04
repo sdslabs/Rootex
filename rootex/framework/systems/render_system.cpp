@@ -37,6 +37,7 @@ RenderSystem::RenderSystem()
 	m_PerFrameVSCB = RenderingDevice::GetSingleton()->createBuffer(PerFrameVSCB(), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
 	m_PerCameraChangeVSCB = RenderingDevice::GetSingleton()->createBuffer(Matrix(), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
 	m_PerFramePSCB = RenderingDevice::GetSingleton()->createBuffer(PerFramePSCB(), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
+	m_PerFrameCustomPSCB = RenderingDevice::GetSingleton()->createBuffer(PerFrameCustomPSCBData(), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
 	m_PerScenePSCB = RenderingDevice::GetSingleton()->createBuffer(PerScenePSCB(), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
 }
 
@@ -434,8 +435,16 @@ void RenderSystem::setPerFramePSCBs(const Color& fogColor)
 	perFrame.lights = LightSystem::GetSingleton()->getDynamicLights();
 	perFrame.fogColor = fogColor;
 	RenderingDevice::GetSingleton()->editBuffer(perFrame, m_PerFramePSCB.Get());
-
 	RenderingDevice::GetSingleton()->setPSCB(PER_FRAME_PS_CPP, 1, m_PerFramePSCB.GetAddressOf());
+
+	PerFrameCustomPSCBData perFrameCustom;
+	perFrameCustom.timeMs = Application::GetSingleton()->getAppTimer().getTimeMs();
+	perFrameCustom.deltaTimeMs = Application::GetSingleton()->getAppFrameTimer().getLastFrameTime();
+	perFrameCustom.resolution.x = Application::GetSingleton()->getWindow()->getWidth();
+	perFrameCustom.resolution.y = Application::GetSingleton()->getWindow()->getHeight();
+	perFrameCustom.mouse = InputManager::GetSingleton()->getMousePosition();
+	RenderingDevice::GetSingleton()->editBuffer(perFrameCustom, m_PerFrameCustomPSCB.Get());
+	RenderingDevice::GetSingleton()->setPSCB(CUSTOM_PER_FRAME_PS_CPP, 1, m_PerFrameCustomPSCB.GetAddressOf());
 }
 
 void RenderSystem::setPerScenePSCBs()

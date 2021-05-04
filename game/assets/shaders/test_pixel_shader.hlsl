@@ -26,5 +26,14 @@ struct PixelInputType
 
 float4 main(PixelInputType input) : SV_TARGET
 {
-    return Texture0.Sample(SampleType, input.tex);
+	float4 color1 = { 1.0f, 0.3f, 0.3f, 1.0f };
+	float4 color2 = { 0.3f, 1.0f, 0.3f, 1.0f };
+	
+	float d1 = length(mouse * resolution - input.screenPosition.xy);
+	float d2 = 0.7f * d1;
+	
+	float4 finalColor = 100.0f * (color1 / d1 + color2 / d2) * Texture0.Sample(SampleType, input.tex);
+	finalColor.a = 1.0f;
+	
+	return finalColor * input.color;
 }

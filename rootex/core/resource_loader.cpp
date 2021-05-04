@@ -122,6 +122,7 @@ void ResourceLoader::Initialize()
 	AnimatedBasicMaterialResourceFile::Load();
 	InstancingBasicMaterialResourceFile::Load();
 	SkyMaterialResourceFile::Load();
+	CustomMaterialResourceFile::Load();
 }
 
 void ResourceLoader::Destroy()
@@ -130,6 +131,7 @@ void ResourceLoader::Destroy()
 	AnimatedBasicMaterialResourceFile::Destroy();
 	InstancingBasicMaterialResourceFile::Destroy();
 	SkyMaterialResourceFile::Destroy();
+	CustomMaterialResourceFile::Destroy();
 }
 
 const HashMap<ResourceFile::Type, Vector<Weak<ResourceFile>>>& ResourceLoader::GetResources()

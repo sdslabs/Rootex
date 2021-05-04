@@ -14,6 +14,14 @@
 #include "editor_application.h"
 #include "main/window.h"
 
+#include "gui/scene_dock.h"
+#include "gui/output_dock.h"
+#include "gui/toolbar_dock.h"
+#include "gui/viewport_dock.h"
+#include "gui/inspector_dock.h"
+#include "gui/file_viewer.h"
+#include "gui/file_editor.h"
+
 #include "imgui_stdlib.h"
 #include "ImGuizmo.h"
 

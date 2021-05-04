@@ -41,7 +41,7 @@
                         "lodDistance": 13.0,
                         "lodEnable": true,
                         "materialOverrides": {
-                            "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
+                            "rootex/assets/materials/default.basic.rmat": "game/assets/materials/test.custom.rmat"
                         },
                         "renderPass": 1,
                         "resFile": "rootex/assets/capsule.obj"
@@ -122,7 +122,7 @@
                         "overrideBoundingBox": false,
                         "passDown": 7,
                         "position": {
-                            "x": 7.424802780151367,
+                            "x": 1.7213516235351563,
                             "y": 1.3999991416931152,
                             "z": -16.664287567138672
                         },
