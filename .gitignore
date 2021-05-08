@@ -338,5 +338,12 @@ ASALocalRun/
 # please don't ignore our obj loader
 !/rootex/vendor/Assimp/assimp/code/Obj/
 
+# Save static third-party builds
+!/rootex/vendor/RmlUi/Bin/
+
+# Ignore exports dir
+exports/
+
 # Don't ignore OpenAL-soft binaries
 !/rootex/vendor/OpenALSoft/bin/
+
