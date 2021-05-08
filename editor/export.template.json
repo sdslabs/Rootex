@@ -1,0 +1,16 @@
+{
+    "fileMappings":
+    {
+		 "build/game/Release/Game.exe" : "Game.exe" ,
+		 "build/game/Release/alut.dll" : "alut.dll" ,
+		 "build/game/Release/OpenAL32.dll" : "OpenAL32.dll" ,
+		 "rootex.root" : "rootex.root" ,
+		 "rootex/vendor/Debugger/Debugger.lua" : "rootex/vendor/Debugger/Debugger.lua" ,
+		 "game/startup.lua" : "game/startup.lua" ,
+		 "rootex/vendor/ASSAO/ASSAO.hlsl" : "rootex/vendor/ASSAO/ASSAO.hlsl" ,
+		 "rootex/vendor/Middleclass/Middleclass.lua" : "rootex/vendor/Middleclass/Middleclass.lua" ,
+		 "THIRDPARTY.md" : "THIRDPARTY.md" ,
+		 "rootex/vendor/FXAA/FXAA3_11.h" : "rootex/vendor/FXAA/FXAA3_11.h" ,
+		 "rootex/vendor/Flux/flux.lua" : "rootex/vendor/Flux/flux.lua" 
+    }
+}
