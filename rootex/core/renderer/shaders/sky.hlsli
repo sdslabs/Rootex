@@ -7,7 +7,8 @@ float3 GetReflectionFromSky(float4 finalColor, float3 toEye, float3 normal, Text
 {
 	float3 incident = -toEye;
 	float3 reflectionVector = reflect(incident, normal);
-	float4 reflectionColor = sky.Sample(sampleType, reflectionVector);
+	float fresnelPower = pow(saturate(1 + dot(incident, normal)), 2) * 4;
+	float4 reflectionColor = sky.Sample(sampleType, reflectionVector) * fresnelPower;
 	return lerp(finalColor, reflectionColor, reflectivity * affectedBySky).rgb;
 }
 
