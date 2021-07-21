@@ -76,7 +76,7 @@ float4 main(PixelInputType input) : SV_TARGET
         finalColor += saturate(GetColorFromSpotLight(spotLightInfos[i], toEye, input.normal, input.worldPosition, materialColor, specularColor, material.specPow, material.specularIntensity, material.isLit));
     }
 
-    finalColor.rgb = GetReflectionFromSky(finalColor, toEye, input.normal, SkyTexture, SampleType, material.reflectivity, material.affectedBySky);
+    finalColor.rgb = GetReflectionFromSky(finalColor, toEye, input.normal, SkyTexture, SampleType, material.reflectivity, material.affectedBySky, material.fresnelPower, material.fresnelBrightness);
 	finalColor.rgb = GetRefractionFromSky(finalColor, input.normal, input.worldPosition, cameraPos, SkyTexture, SampleType, material.refractionConstant, material.refractivity, material.affectedBySky);
 
     finalColor = finalColor * LightmapTexture.Sample(SampleType, input.tex);
