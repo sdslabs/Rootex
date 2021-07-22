@@ -46,7 +46,7 @@ PixelInputType main(VertexInputType input)
     output.tex.x = input.tex.x;
     output.tex.y = 1 - input.tex.y;
     output.color = float4(1.0f, 1.0f, 1.0f, 1.0f);
-    
+
     output.tangent = mul(input.tangent, (float3x3)M);
 	
     float4 cameraPosition = mul(input.position, mul(M, V));

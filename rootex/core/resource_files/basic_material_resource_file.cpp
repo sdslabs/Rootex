@@ -18,6 +18,8 @@ void from_json(const JSON::json& j, BasicMaterialData& b)
 	b.pixelBufferData.specularPower = j.value("specPower", 30.0f);
 	b.pixelBufferData.reflectivity = j.value("reflect", 0.0f);
 	b.pixelBufferData.refractionConstant = j.value("refractionConstant", 0.8f);
+	b.pixelBufferData.fresnelPower = j.value("fresnelPower", 0.8f);
+	b.pixelBufferData.fresnelBrightness = j.value("fresnelBrightness", 0.8f);
 	b.pixelBufferData.refractivity = j.value("refract", 0.0f);
 	b.pixelBufferData.hasNormalMap = j.value("hasNormal", 0);
 	b.pixelBufferData.affectedBySky = j.value("affectedBySky", 0);
@@ -36,6 +38,8 @@ void to_json(JSON::json& j, const BasicMaterialData& b)
 	j["color"] = b.pixelBufferData.color;
 	j["specIntensity"] = b.pixelBufferData.specularIntensity;
 	j["specPower"] = b.pixelBufferData.specularPower;
+	j["fresnelPower"] = b.pixelBufferData.fresnelPower;
+	j["fresnelBrightness"] = b.pixelBufferData.fresnelBrightness;
 	j["reflect"] = b.pixelBufferData.reflectivity;
 	j["refractionConstant"] = b.pixelBufferData.refractionConstant;
 	j["refract"] = b.pixelBufferData.refractivity;
@@ -224,4 +228,6 @@ void BasicMaterialResourceFile::draw()
 	ImGui::DragFloat("Reflectivity", &m_MaterialData.pixelBufferData.reflectivity, 0.01f, 0.0f, 1.0f);
 	ImGui::DragFloat("Refraction Constant", &m_MaterialData.pixelBufferData.refractionConstant, 0.01f, 0.0f, 10.0f);
 	ImGui::DragFloat("Refractivity", &m_MaterialData.pixelBufferData.refractivity, 0.01f, 0.0f, 1.0f);
+	ImGui::DragFloat("Fresnel Power", &m_MaterialData.pixelBufferData.fresnelPower, 0.001f, 0.0f, 5.0f);
+	ImGui::DragFloat("Fresnel Brightness", &m_MaterialData.pixelBufferData.fresnelBrightness, 0.01f, 1.0f, 100.0f);
 }
