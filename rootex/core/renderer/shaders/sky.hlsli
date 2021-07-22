@@ -3,11 +3,12 @@
 
 #include "basic_material.hlsli"
 
-float3 GetReflectionFromSky(float4 finalColor, float3 toEye, float3 normal, TextureCube sky, SamplerState sampleType, float reflectivity, float affectedBySky)
+float3 GetReflectionFromSky(float4 finalColor, float3 toEye, float3 normal, TextureCube sky, SamplerState sampleType, float reflectivity, float affectedBySky, float fresnelPower, float fresnelBrightness)
 {
 	float3 incident = -toEye;
 	float3 reflectionVector = reflect(incident, normal);
-	float4 reflectionColor = sky.Sample(sampleType, reflectionVector);
+	float fresnelEffect = pow(saturate(1 + dot(incident, normal)), fresnelPower) * fresnelBrightness;
+	float4 reflectionColor = sky.Sample(sampleType, reflectionVector) * fresnelEffect;
 	return lerp(finalColor, reflectionColor, reflectivity * affectedBySky).rgb;
 }
 

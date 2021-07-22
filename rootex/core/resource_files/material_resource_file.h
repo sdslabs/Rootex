@@ -48,6 +48,9 @@ struct PerModelPSCBData
 	float refractivity = 0.0f;
 	int affectedBySky = 0;
 	int hasNormalMap = 0;
+	float fresnelPower = 0.0f;
+	float fresnelBrightness = 0.0f;
+	float pad[2];
 };
 
 struct PerFrameCustomPSCBData

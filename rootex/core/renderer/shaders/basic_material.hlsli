@@ -14,6 +14,8 @@ struct BasicMaterial
     float refractivity;
     int affectedBySky;
     int hasNormalMap;
+	float fresnelPower;
+	float fresnelBrightness;
 };
 
 #endif
