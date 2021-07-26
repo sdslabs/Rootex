@@ -28,8 +28,27 @@ void OutputDock::draw(float deltaMilliseconds)
 	ZoneScoped;
 	if (m_OutputDockSettings.m_IsActive)
 	{
-		if (ImGui::Begin("Output"))
+		static unsigned int filter = (int)OutputState::All;
+
+		static bool outputActive;
+
+		if (ImGui::Begin("Output", &outputActive, ImGuiWindowFlags_MenuBar))
 		{
+			if (ImGui::BeginMenuBar())
+			{
+				ImGui::CheckboxFlags("General", &filter, (int)OutputState::General);
+				ImGui::CheckboxFlags("Warning", &filter, (int)OutputState::Warning);
+				ImGui::CheckboxFlags("Error", &filter, (int)OutputState::Error);
+				ImGui::CheckboxFlags("All", &filter, (int)OutputState::All);
+
+				if (ImGui::SmallButton("Clear"))
+				{
+					m_CaughtOutputs.clear();
+				}
+
+				ImGui::EndMenuBar();
+			}
+
 			for (auto&& outputString : m_CaughtOutputs)
 			{
 				if (outputString.first == "Error")
@@ -45,7 +64,10 @@ void OutputDock::draw(float deltaMilliseconds)
 					ImGui::PushStyleColor(ImGuiCol_Text, (const ImVec4&)EditorSystem::GetSingleton()->getNormalColor());
 				}
 
-				ImGui::Text("%s", outputString.second.c_str());
+				if (((filter & (int)OutputState::General) && !(outputString.first == "Warning" || outputString.first == "Error")) || ((filter & (int)OutputState::Warning) && (outputString.first == "Warning")) || ((filter & (int)OutputState::Error) && (outputString.first == "Error")))
+				{
+					ImGui::Text("%s", outputString.second.c_str());
+				}
 
 				ImGui::PopStyleColor(1);
 			}
@@ -72,6 +94,7 @@ void OutputDock::draw(float deltaMilliseconds)
 			ImGui::SetScrollHere(1.0f);
 			m_IsOutputJustCaught = false;
 		}
+
 		ImGui::End();
 	}
 }
