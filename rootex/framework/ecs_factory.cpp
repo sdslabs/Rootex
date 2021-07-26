@@ -28,6 +28,7 @@
 #include "components/visual/model/animated_model_component.h"
 #include "components/visual/effect/particle_effect_component.h"
 #include "components/game/player_controller.h"
+#include "components/game/spring_arm_component.h"
 
 HashMap<String, Ptr<BaseComponentSet>> ECSFactory::s_ComponentSets;
 
@@ -141,6 +142,7 @@ void ECSFactory::Initialize()
 	ASSIGN_COMPONENT_SET(SkyComponent);
 	ASSIGN_COMPONENT_SET(CPUParticlesComponent);
 	ASSIGN_COMPONENT_SET(ParticleEffectComponent);
+	ASSIGN_COMPONENT_SET(SpringArmComponent);
 }
 
 bool ECSFactory::AddComponent(Entity& entity, ComponentID componentID, const JSON::json& componentData, bool checks)

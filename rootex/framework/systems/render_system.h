@@ -65,7 +65,6 @@ public:
 	void setCamera(CameraComponent* camera);
 	void restoreCamera();
 
-	void calculateTransforms(Scene* scene);
 	void pushMatrix(const Matrix& transform);
 	void pushMatrixOverride(const Matrix& transform);
 	void popMatrix();

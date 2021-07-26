@@ -29,5 +29,6 @@ enum class ComponentIDs : unsigned int
 	AnimatedModelComponent,
 	RenderableComponent,
 	ParticleEffectComponent,
-	PlayerController
+	PlayerController,
+	SpringArmComponent
 };
