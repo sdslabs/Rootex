@@ -17,3 +17,6 @@ Running the Editor
 .. image:: images/editor.png
 	:alt: Editor UI
 	:align: center
+
+.. note::
+	If you get an error along the lines of ``dxgidebug.dll not loaded`` while opening the executable, install **Graphics Tools** by following this `guide <https://docs.microsoft.com/en-us/windows/uwp/gaming/use-the-directx-runtime-and-visual-studio-graphics-diagnostic-features>`_.
