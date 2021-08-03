@@ -71,6 +71,8 @@ Rootex runs only on Windows and there are no plans to port it to other platforms
 
 Now you can start reading the [documentation](https://rootex.readthedocs.io/) and build games on Rootex!
 
+> **_NOTE:_**  If you get the error `dxgidebug.dll not loaded` while opening the Rootex Editor, install *Graphics Tools* by following this [guide](https://docs.microsoft.com/en-us/windows/uwp/gaming/use-the-directx-runtime-and-visual-studio-graphics-diagnostic-features).
+
 ## <a name=how>How can I contribute?
 
 Read [here](CONTRIBUTING.md) to know our contribution guidelines. Join our [Discord server](https://discord.gg/dXkVEgTPu9) or optionally ping us at chat.sdslabs.co to get guidance. You can start with setting up Rootex on your Windows machine and try solving a few bugs listed here: https://github.com/sdslabs/Rootex/issues
