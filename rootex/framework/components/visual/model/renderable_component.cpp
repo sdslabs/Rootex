@@ -4,6 +4,7 @@
 #include "components/visual/light/static_point_light_component.h"
 #include "system.h"
 #include "systems/render_system.h"
+#include "systems/transform_system.h"
 #include "scene_loader.h"
 
 RenderableComponent::RenderableComponent(Entity& owner, const JSON::json& data)
@@ -43,7 +44,7 @@ bool RenderableComponent::setupEntities()
 
 bool RenderableComponent::preRender(float deltaMilliseconds)
 {
-	RenderSystem::GetSingleton()->pushMatrixOverride(getTransformComponent()->getAbsoluteTransform());
+	TransformSystem::GetSingleton()->pushMatrixOverride(getTransformComponent()->getAbsoluteTransform());
 	return true;
 }
 
@@ -62,7 +63,7 @@ void RenderableComponent::render(float viewDistance)
 
 void RenderableComponent::postRender()
 {
-	RenderSystem::GetSingleton()->popMatrix();
+	TransformSystem::GetSingleton()->popMatrix();
 }
 
 bool RenderableComponent::addAffectingStaticLight(SceneID ID)

@@ -4,32 +4,33 @@ DEFINE_COMPONENT(SpringArmComponent);
 
 SpringArmComponent::SpringArmComponent(Entity& owner, const JSON::json& data)
     : Component(owner)
+    , m_DesiredLocalPosition(data.value("desiredLocalPosition", Vector3::Zero))
+    , m_Lerp(data.value("lerp", 0.0f))
     , m_DependencyOnTransformComponent(this)
 {
 }
 
 JSON::json SpringArmComponent::getJSON() const
 {
-	return JSON::json::object();
-}
+	JSON::json j;
 
-bool SpringArmComponent::setupData()
-{
-	m_DesiredLocalPosition = m_DependencyOnTransformComponent.getComponent()->getPosition();
-	return true;
+	j["lerp"] = m_Lerp;
+	j["desiredLocalPosition"] = m_DesiredLocalPosition;
+
+	return j;
 }
 
 void SpringArmComponent::draw()
 {
-	TransformComponent* transform = this->getOwner().getComponent<TransformComponent>();
+	TransformComponent* transform = getTransformComponent();
 
-	if (ImGui::DragFloat3("##Position", &m_DesiredLocalPosition.x, 0.01f))
+	if (ImGui::DragFloat3("##DesiredLocalPosition", &m_DesiredLocalPosition.x, 0.01f))
 	{
 
 		transform->setPosition(m_DesiredLocalPosition);
 	}
 	ImGui::SameLine();
-	if (ImGui::Button("Position"))
+	if (ImGui::Button("DesiredLocalPosition"))
 	{
 		setDesiredLocalPosition({ 0.0f, 5.0f, 10.0f });
 	}

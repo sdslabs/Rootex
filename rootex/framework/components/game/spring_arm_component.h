@@ -1,13 +1,8 @@
 #pragma once
 
-#include "component.h"
-#include "components/space/transform_component.h"
 #include "common/common.h"
 #include "framework/component.h"
 #include "framework/components/space/transform_component.h"
-#include "framework/components/visual/model/animated_model_component.h"
-#include "framework/components/physics/capsule_collider_component.h"
-#include "core/state_manager.h"
 
 class SpringArmComponent : public Component
 {
@@ -15,20 +10,19 @@ class SpringArmComponent : public Component
 	DEPENDS_ON(TransformComponent);
 
 	Vector3 m_DesiredLocalPosition;
+	float m_Lerp;
 
 public:
 	SpringArmComponent(Entity& owner, const JSON::json& data);
 	~SpringArmComponent() = default;
 
-	float m_Lerp;
-
-	virtual JSON::json getJSON() const override;
-	bool setupData() override;
-
 	Vector3 getDesiredLocalPosition() { return m_DesiredLocalPosition; }
 	void setDesiredLocalPosition(const Vector3& position) { m_DesiredLocalPosition = position; }
+	float getLerp() { return m_Lerp; }
+	void setLerp(const float& value) { m_Lerp = value; }
 
-	void draw();
+	virtual JSON::json getJSON() const override;
+	void draw() override;
 };
 
 DECLARE_COMPONENT(SpringArmComponent);

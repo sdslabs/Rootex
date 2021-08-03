@@ -115,6 +115,7 @@ void ECSFactory::Initialize()
 	ASSIGN_COMPONENT_SET(CameraComponent);
 	ASSIGN_COMPONENT_SET(TransformComponent);
 	ASSIGN_COMPONENT_SET(TransformAnimationComponent);
+	ASSIGN_COMPONENT_SET(SpringArmComponent);
 
 	ASSIGN_COMPONENT_SET(AudioListenerComponent);
 	ASSIGN_COMPONENT_SET(MusicComponent);
@@ -142,7 +143,6 @@ void ECSFactory::Initialize()
 	ASSIGN_COMPONENT_SET(SkyComponent);
 	ASSIGN_COMPONENT_SET(CPUParticlesComponent);
 	ASSIGN_COMPONENT_SET(ParticleEffectComponent);
-	ASSIGN_COMPONENT_SET(SpringArmComponent);
 }
 
 bool ECSFactory::AddComponent(Entity& entity, ComponentID componentID, const JSON::json& componentData, bool checks)

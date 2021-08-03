@@ -29,7 +29,6 @@ RenderSystem::RenderSystem()
 	m_Binder.bind(RootexEvents::OpenedScene, this, &RenderSystem::onOpenedScene);
 
 	m_Camera = SceneLoader::GetSingleton()->getRootScene()->getEntity().getComponent<CameraComponent>();
-	m_TransformationStack.push_back(Matrix::Identity);
 
 	m_LineMaterial = ResourceLoader::CreateBasicMaterialResourceFile("rootex/assets/materials/line.basic.rmat");
 	m_CurrentFrameLines.m_Endpoints.reserve(LINE_MAX_VERTEX_COUNT * LINE_VERTEX_COUNT * 3);
@@ -342,21 +341,6 @@ void RenderSystem::submitCone(const Matrix& transform, const float& height, cons
 	submitLine(center, end - right);
 }
 
-void RenderSystem::pushMatrix(const Matrix& transform)
-{
-	m_TransformationStack.push_back(transform * m_TransformationStack.back());
-}
-
-void RenderSystem::pushMatrixOverride(const Matrix& transform)
-{
-	m_TransformationStack.push_back(transform);
-}
-
-void RenderSystem::popMatrix()
-{
-	m_TransformationStack.pop_back();
-}
-
 void RenderSystem::enableWireframeRasterizer()
 {
 	RenderingDevice::GetSingleton()->setRSType(RenderingDevice::RasterizerState::Wireframe);
@@ -446,11 +430,6 @@ void RenderSystem::restoreCamera()
 	{
 		setCamera(SceneLoader::GetSingleton()->getRootScene()->getEntity().getComponent<CameraComponent>());
 	}
-}
-
-const Matrix& RenderSystem::getCurrentMatrix() const
-{
-	return m_TransformationStack.back();
 }
 
 Variant RenderSystem::onOpenedScene(const Event* event)

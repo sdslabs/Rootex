@@ -122,7 +122,7 @@
                         "overrideBoundingBox": false,
                         "passDown": 7,
                         "position": {
-                            "x": 1.7213516235351563,
+                            "x": 0.8989124298095703,
                             "y": 1.3999991416931152,
                             "z": -16.664287567138672
                         },
@@ -325,7 +325,122 @@
         },
         {
             "ID": 31,
-            "children": [],
+            "children": [
+                {
+                    "ID": 13,
+                    "children": [],
+                    "entity": {
+                        "components": {
+                            "CameraComponent": {
+                                "aspectRatio": {
+                                    "x": 16.0,
+                                    "y": 9.0
+                                },
+                                "far": 100.0,
+                                "fov": 0.7853981852531433,
+                                "near": 0.10000000149011612,
+                                "postProcessingDetails": {
+                                    "assaoAdaptiveQualityLimit": 0.2529999911785126,
+                                    "assaoBlurPassCount": 6,
+                                    "assaoDetailShadowStrength": 2.0199999809265137,
+                                    "assaoFadeOutFrom": 22.0,
+                                    "assaoFadeOutTo": 33.0,
+                                    "assaoHorizonAngleThreshold": 0.14000000059604645,
+                                    "assaoQualityLevel": 3,
+                                    "assaoRadius": 2.799999952316284,
+                                    "assaoShadowClamp": 0.15000000596046448,
+                                    "assaoShadowMultiplier": 0.8899999856948853,
+                                    "assaoShadowPower": 3.1700000762939453,
+                                    "assaoSharpness": 1.0,
+                                    "bloomBase": 1.2000000476837158,
+                                    "bloomBaseSaturation": 1.0,
+                                    "bloomBrightness": 3.509999990463257,
+                                    "bloomSaturation": 1.0,
+                                    "bloomSize": 18.739999771118164,
+                                    "bloomThreshold": 0.6700000166893005,
+                                    "bloomValue": 1.3200000524520874,
+                                    "gaussianBlurMultiplier": 1.0,
+                                    "isASSAO": true,
+                                    "isBloom": true,
+                                    "isFXAA": true,
+                                    "isGaussianBlur": false,
+                                    "isMonochrome": false,
+                                    "isPostProcessing": true,
+                                    "isSepia": false,
+                                    "isToneMap": false,
+                                    "toneMapExposure": 0.27000001072883606,
+                                    "toneMapOperator": 3,
+                                    "toneMapTransferFunction": 1,
+                                    "toneMapWhiteNits": 243.0
+                                }
+                            },
+                            "ModelComponent": {
+                                "affectingStaticLights": [],
+                                "isVisible": true,
+                                "lodBias": 0.0,
+                                "lodDistance": 10.0,
+                                "lodEnable": false,
+                                "materialOverrides": {
+                                    "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
+                                },
+                                "renderPass": 1,
+                                "resFile": "rootex/assets/cube.obj"
+                            },
+                            "SpringArmComponent": {
+                                "desiredlocalposition": {
+                                    "x": 0.0,
+                                    "y": 5.0,
+                                    "z": 10.0
+                                },
+                                "lerp": 0.057999998331069946
+                            },
+                            "TransformComponent": {
+                                "boundingBox": {
+                                    "center": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "extents": {
+                                        "x": 0.5,
+                                        "y": 0.5,
+                                        "z": 0.5
+                                    }
+                                },
+                                "overrideBoundingBox": false,
+                                "passDown": 0,
+                                "position": {
+                                    "x": 1.0037529468536377,
+                                    "y": 5.231362819671631,
+                                    "z": 5.038917064666748
+                                },
+                                "rotation": {
+                                    "w": 0.9926518797874451,
+                                    "x": -0.12100491672754288,
+                                    "y": 4.221959670758224e-09,
+                                    "z": -4.456068403158042e-09
+                                },
+                                "scale": {
+                                    "x": 1.0,
+                                    "y": 1.0000041723251343,
+                                    "z": 1.0000064373016357
+                                }
+                            }
+                        },
+                        "script": null
+                    },
+                    "importStyle": 0,
+                    "name": "Camera",
+                    "sceneFile": "",
+                    "settings": {
+                        "camera": 1,
+                        "inputSchemes": {},
+                        "listener": 1,
+                        "preloads": [],
+                        "startScheme": ""
+                    }
+                }
+            ],
             "entity": {
                 "components": {
                     "AnimatedModelComponent": {
@@ -343,7 +458,7 @@
                         "renderPass": 1,
                         "resFile": "game/assets/models/player/player.fbx",
                         "rootExclusion": 0,
-                        "speedMultiplier": 0.24084733426570892,
+                        "speedMultiplier": 0.2309710532426834,
                         "transitionTime": 1.0
                     },
                     "AudioListenerComponent": {
@@ -403,17 +518,17 @@
                             }
                         },
                         "overrideBoundingBox": true,
-                        "passDown": 5,
+                        "passDown": 0,
                         "position": {
-                            "x": 1.3899999856948853,
-                            "y": 0.27000001072883606,
-                            "z": -2.3299999237060547
+                            "x": 0.34841620922088623,
+                            "y": 0.23136287927627563,
+                            "z": -5.454139709472656
                         },
                         "rotation": {
-                            "w": 1.0,
-                            "x": 0.0,
-                            "y": 0.0,
-                            "z": 0.0
+                            "w": 0.9999966025352478,
+                            "x": -0.0,
+                            "y": -0.002618059515953064,
+                            "z": -0.0
                         },
                         "scale": {
                             "x": 0.5,
@@ -426,112 +541,6 @@
             },
             "importStyle": 0,
             "name": "player",
-            "sceneFile": "",
-            "settings": {
-                "camera": 1,
-                "inputSchemes": {},
-                "listener": 1,
-                "preloads": [],
-                "startScheme": ""
-            }
-        },
-        {
-            "ID": 13,
-            "children": [],
-            "entity": {
-                "components": {
-                    "CameraComponent": {
-                        "aspectRatio": {
-                            "x": 16.0,
-                            "y": 9.0
-                        },
-                        "far": 100.0,
-                        "fov": 0.7853981852531433,
-                        "near": 0.10000000149011612,
-                        "postProcessingDetails": {
-                            "assaoAdaptiveQualityLimit": 0.2529999911785126,
-                            "assaoBlurPassCount": 6,
-                            "assaoDetailShadowStrength": 2.0199999809265137,
-                            "assaoFadeOutFrom": 22.0,
-                            "assaoFadeOutTo": 33.0,
-                            "assaoHorizonAngleThreshold": 0.14000000059604645,
-                            "assaoQualityLevel": 3,
-                            "assaoRadius": 2.799999952316284,
-                            "assaoShadowClamp": 0.15000000596046448,
-                            "assaoShadowMultiplier": 0.8899999856948853,
-                            "assaoShadowPower": 3.1700000762939453,
-                            "assaoSharpness": 1.0,
-                            "bloomBase": 1.2000000476837158,
-                            "bloomBaseSaturation": 1.0,
-                            "bloomBrightness": 3.509999990463257,
-                            "bloomSaturation": 1.0,
-                            "bloomSize": 18.739999771118164,
-                            "bloomThreshold": 0.6700000166893005,
-                            "bloomValue": 1.3200000524520874,
-                            "gaussianBlurMultiplier": 1.0,
-                            "isASSAO": true,
-                            "isBloom": true,
-                            "isFXAA": true,
-                            "isGaussianBlur": false,
-                            "isMonochrome": false,
-                            "isPostProcessing": true,
-                            "isSepia": false,
-                            "isToneMap": false,
-                            "toneMapExposure": 0.27000001072883606,
-                            "toneMapOperator": 3,
-                            "toneMapTransferFunction": 1,
-                            "toneMapWhiteNits": 243.0
-                        }
-                    },
-                    "ModelComponent": {
-                        "affectingStaticLights": [],
-                        "isVisible": true,
-                        "lodBias": 0.0,
-                        "lodDistance": 10.0,
-                        "lodEnable": false,
-                        "materialOverrides": {
-                            "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
-                        },
-                        "renderPass": 1,
-                        "resFile": "rootex/assets/cube.obj"
-                    },
-                    "TransformComponent": {
-                        "boundingBox": {
-                            "center": {
-                                "x": 0.0,
-                                "y": 0.0,
-                                "z": 0.0
-                            },
-                            "extents": {
-                                "x": 0.5,
-                                "y": 0.5,
-                                "z": 0.5
-                            }
-                        },
-                        "overrideBoundingBox": false,
-                        "passDown": 7,
-                        "position": {
-                            "x": 1.2251160144805908,
-                            "y": 4.301031112670898,
-                            "z": 4.066394805908203
-                        },
-                        "rotation": {
-                            "w": 0.9926518797874451,
-                            "x": -0.12100492417812347,
-                            "y": 4.339224091154392e-09,
-                            "z": -4.45441683538661e-09
-                        },
-                        "scale": {
-                            "x": 0.5,
-                            "y": 0.5000020861625671,
-                            "z": 0.5000032186508179
-                        }
-                    }
-                },
-                "script": null
-            },
-            "importStyle": 0,
-            "name": "Camera",
             "sceneFile": "",
             "settings": {
                 "camera": 1,

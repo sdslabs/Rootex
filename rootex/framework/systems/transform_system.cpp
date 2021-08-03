@@ -1,18 +1,6 @@
 #include "transform_system.h"
 
-#include "core/resource_loader.h"
-#include "components/visual/effect/fog_component.h"
-#include "components/visual/effect/sky_component.h"
-#include "components/visual/model/grid_model_component.h"
-#include "components/visual/effect/cpu_particles_component.h"
-#include "renderer/shaders/register_locations_vertex_shader.h"
-#include "renderer/shaders/register_locations_pixel_shader.h"
-#include "light_system.h"
-#include "application.h"
-#include "scene_loader.h"
-#include "render_system.h"
-#include "ecs_factory.h"
-#include "../utility/maths.h"
+#include "components/game/spring_arm_component.h"
 
 #define LINE_MAX_VERTEX_COUNT 1000
 #define LINE_VERTEX_COUNT 2
@@ -26,6 +14,7 @@ TransformSystem* TransformSystem::GetSingleton()
 TransformSystem::TransformSystem()
     : System("TransformSystem", UpdateOrder::Async, true)
 {
+	m_TransformationStack.push_back(Matrix::Identity);
 }
 
 void TransformSystem::calculateTransforms(Scene* scene)
@@ -36,16 +25,20 @@ void TransformSystem::calculateTransforms(Scene* scene)
 		int passDown = transform->getPassDowns();
 		if (SpringArmComponent* springArm = entity.getComponent<SpringArmComponent>())
 		{
-			Vector3 parentPosition = transform->getParentAbsoluteTransform().Translation();
-			Vector3 childPosition = transform->getPosition();
-			Vector3 intialPosition = parentPosition + childPosition;
-			Vector3 finalPosition = parentPosition + springArm->getDesiredLocalPosition();
+			Vector3 parentAbsolutePosition = entity.getScene()->getParent()->getEntity().getComponent<TransformComponent>()->getAbsolutePosition();
+			Vector3 initialPosition = transform->getAbsolutePosition() - parentAbsolutePosition;
+			Vector3 finalPosition = springArm->getDesiredLocalPosition();
 
-			transform->setAbsolutePosition(Vector3::Lerp(intialPosition, finalPosition, springArm->m_Lerp));
+			Vector3 diff = finalPosition - initialPosition;
+
+			if (springArm->getLerp() > 0.05 && (std::abs(diff.x) > 0.01 || std::abs(diff.y) > 0.01 || std::abs(diff.z) > 0.01))
+			{
+				transform->setPosition(parentAbsolutePosition + Vector3::Lerp(initialPosition, finalPosition, springArm->getLerp()));
+			}
 		}
 		if (passDown == (int)TransformPassDown::All)
 		{
-			RenderSystem::GetSingleton()->pushMatrix(transform->getLocalTransform());
+			pushMatrix(transform->getLocalTransform());
 		}
 		else
 		{
@@ -62,12 +55,12 @@ void TransformSystem::calculateTransforms(Scene* scene)
 			{
 				matrix = Matrix::CreateScale(transform->getScale()) * matrix;
 			}
-			RenderSystem::GetSingleton()->pushMatrix(matrix);
+			pushMatrix(matrix);
 		}
 	}
 	else
 	{
-		RenderSystem::GetSingleton()->pushMatrix(Matrix::Identity);
+		pushMatrix(Matrix::Identity);
 	}
 
 	for (auto& child : scene->getChildren())
@@ -75,10 +68,37 @@ void TransformSystem::calculateTransforms(Scene* scene)
 		Entity& childEntity = child->getEntity();
 		if (TransformComponent* childTransform = childEntity.getComponent<TransformComponent>())
 		{
-			childTransform->setParentAbsoluteTransform(RenderSystem::GetSingleton()->getCurrentMatrix());
+			if (childEntity.getComponent<SpringArmComponent>())
+			{
+				childTransform->setParentAbsoluteTransform(Matrix::Identity);
+			}
+			else
+			{
+				childTransform->setParentAbsoluteTransform(getCurrentMatrix());
+			}
 		}
 
 		calculateTransforms(child.get());
 	}
-	RenderSystem::GetSingleton()->popMatrix();
+	popMatrix();
+}
+
+void TransformSystem::pushMatrix(const Matrix& transform)
+{
+	m_TransformationStack.push_back(transform * m_TransformationStack.back());
+}
+
+void TransformSystem::pushMatrixOverride(const Matrix& transform)
+{
+	m_TransformationStack.push_back(transform);
+}
+
+void TransformSystem::popMatrix()
+{
+	m_TransformationStack.pop_back();
+}
+
+const Matrix& TransformSystem::getCurrentMatrix() const
+{
+	return m_TransformationStack.back();
 }

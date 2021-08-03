@@ -3,7 +3,7 @@
 #include "application.h"
 #include "core/renderer/shaders/register_locations_pixel_shader.h"
 #include "core/renderer/shaders/register_locations_vertex_shader.h"
-#include "framework/systems/render_system.h"
+#include "framework/systems/transform_system.h"
 #include "resource_loader.h"
 
 void to_json(JSON::json& j, const CustomMaterialData& s)
@@ -207,7 +207,7 @@ void CustomMaterialResourceFile::bindSamplers()
 
 void CustomMaterialResourceFile::bindVSCB()
 {
-	RenderingDevice::GetSingleton()->editBuffer(PerModelVSCBData(RenderSystem::GetSingleton()->getCurrentMatrix()), m_VSCB.Get());
+	RenderingDevice::GetSingleton()->editBuffer(PerModelVSCBData(TransformSystem::GetSingleton()->getCurrentMatrix()), m_VSCB.Get());
 	RenderingDevice::GetSingleton()->setVSCB(PER_OBJECT_VS_CPP, 1, m_VSCB.GetAddressOf());
 }
 
