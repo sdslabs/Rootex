@@ -111,6 +111,16 @@ void BasicMaterialResourceFile::setLightmap(Ref<ImageResourceFile> lightmap)
 	m_MaterialData.lightmapImage = lightmap->getPath().generic_string();
 }
 
+Vector<Ref<GPUTexture>> BasicMaterialResourceFile::getTextures() const
+{
+	return Vector<Ref<GPUTexture>> {
+		m_DiffuseImageFile->getGPUTexture(),
+		m_MaterialData.pixelBufferData.hasNormalMap ? m_NormalImageFile->getGPUTexture() : nullptr,
+		m_SpecularImageFile->getGPUTexture(),
+		m_LightmapImageFile->getGPUTexture()
+	};
+}
+
 void BasicMaterialResourceFile::bindShader()
 {
 	s_Shader->bind();

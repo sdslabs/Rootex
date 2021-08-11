@@ -47,6 +47,8 @@ public:
 	Ref<ImageResourceFile> getLightmap() { return m_LightmapImageFile; };
 
 	const Shader* getShader() const override { return s_Shader.get(); };
+	Vector<Ref<GPUTexture>> getTextures() const override;
+
 	void bindShader() override;
 	void bindTextures() override;
 	void bindSamplers() override;
