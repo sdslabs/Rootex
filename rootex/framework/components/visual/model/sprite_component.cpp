@@ -10,23 +10,16 @@ DEFINE_COMPONENT(SpriteComponent);
 
 SpriteComponent::SpriteComponent(Entity& owner, const JSON::json& data)
     : RenderableComponent(owner, data)
-    , m_ImageResourceFile(ResourceLoader::CreateImageResourceFile(data.value("resFile", "rootex/assets/white.png")))
-    , m_ImageMaterial(ResourceLoader::CreateBasicMaterialResourceFile("rootex/assets/materials/default.basic.rmat"))
+    , m_ImageMaterialResourceFile(ResourceLoader::CreateBasicMaterialResourceFile("rootex/assets/materials/sprite.basic.rmat"))
 {
-	configureImageMaterial();
 	configureBoundingRectangle();
-}
-
-void SpriteComponent::configureImageMaterial()
-{
-	m_ImageMaterial->setDiffuse(m_ImageResourceFile);
 }
 
 void SpriteComponent::configureBoundingRectangle()
 {
 	float m_ImageScaleFactor = 0.001;
 
-	Ref<Texture> imageTexture = m_ImageResourceFile->getTexture();
+	Ref<Texture> imageTexture = m_ImageMaterialResourceFile->getDiffuseImageFile()->getTexture();
 	float rectWidth = imageTexture->getWidth() * m_ImageScaleFactor;
 	float rectHeight = imageTexture->getHeight() * m_ImageScaleFactor;
 
@@ -44,6 +37,10 @@ void SpriteComponent::configureBoundingRectangle()
 		vertex.position.x = u * rectWidth / 2;
 		vertex.position.y = v * rectHeight / 2;
 		vertex.position.z = 0;
+
+		vertex.normal.x = 0;
+		vertex.normal.y = 0;
+		vertex.normal.z = 1;
 
 		vertex.textureCoord.x = u;
 		vertex.textureCoord.y = v;
@@ -69,20 +66,19 @@ void SpriteComponent::render(float viewDistance)
 	ZoneNamedN(componentRender, "Sprite Render", true);
 	RenderableComponent::render(viewDistance);
 
-	RenderSystem::GetSingleton()->getRenderer()->bind(m_ImageMaterial.get());
+	RenderSystem::GetSingleton()->getRenderer()->bind(m_ImageMaterialResourceFile.get());
 	RenderSystem::GetSingleton()->getRenderer()->draw(m_VertexBuffer.get(), m_IndexBuffer.get());
 }
 
-void SpriteComponent::setImageResourceFile(Ref<ImageResourceFile> newImage)
+void SpriteComponent::setImageMaterialResourceFile(Ref<BasicMaterialResourceFile> newMaterial)
 {
-	if (!newImage)
+	if (!newMaterial)
 	{
-		WARN("Tried to set a null sprite image resource file");
+		WARN("Tried to set a null material resource file");
 		return;
 	}
 
-	m_ImageResourceFile = newImage;
-	configureImageMaterial();
+	m_ImageMaterialResourceFile = newMaterial;
 	configureBoundingRectangle();
 }
 
@@ -90,7 +86,7 @@ JSON::json SpriteComponent::getJSON() const
 {
 	JSON::json j = RenderableComponent::getJSON();
 
-	j["resFile"] = m_ImageResourceFile->getPath().string();
+	j["resFile"] = m_ImageMaterialResourceFile->getPath().string();
 
 	return j;
 }
@@ -99,21 +95,33 @@ void SpriteComponent::draw()
 {
 	ImGui::Checkbox("Visible", &m_IsVisible);
 
-	String filePath = m_ImageResourceFile->getPath().generic_string();
-	ImGui::Text("%s", filePath.c_str());
-	ImGui::SameLine();
-	if (ImGui::Button("Image"))
+	int renderPassUI = log2(m_RenderPass);
+	if (ImGui::Combo("Renderpass", &renderPassUI, "Basic\0Editor\0Alpha"))
 	{
-		EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { m_ImageResourceFile->getPath().generic_string(), (int)m_ImageResourceFile->getType() });
-	}
-	ImGui::SameLine();
-	if (ImGui::Button(ICON_ROOTEX_FOLDER_OPEN "##Image File"))
-	{
-		if (Optional<String> result = OS::SelectFile(SupportedFiles.at(ResourceFile::Type::Image), "game/assets/"))
-		{
-			setImageResourceFile(ResourceLoader::CreateImageResourceFile(*result));
-		}
+		m_RenderPass = pow(2, renderPassUI);
 	}
 
-	RenderableComponent::draw();
+	ImGui::Text("Material");
+	ImGui::Indent();
+
+	ImGui::Image(m_ImageMaterialResourceFile->getPreview(), { 100, 100 });
+	ImGui::SameLine();
+
+	ImGui::BeginGroup();
+	ImGui::Text("%s", m_ImageMaterialResourceFile->getPath().filename().generic_string().c_str());
+	if (ImGui::Button((ICON_ROOTEX_PENCIL_SQUARE_O "##" + m_ImageMaterialResourceFile->getPath().generic_string()).c_str()))
+	{
+		EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { m_ImageMaterialResourceFile->getPath().generic_string(), (int)m_ImageMaterialResourceFile->getType() });
+	}
+	ImGui::SameLine();
+	if (ImGui::Button((ICON_ROOTEX_FOLDER_OPEN "##" + m_ImageMaterialResourceFile->getPath().generic_string()).c_str()))
+	{
+		if (Optional<String> result = OS::SelectFile("Material(*.rmat)\0*.rmat\0", "game/assets/materials/"))
+		{
+			setImageMaterialResourceFile(ResourceLoader::CreateBasicMaterialResourceFile(*result));
+		}
+	}
+	ImGui::EndGroup();
+
+	ImGui::Unindent();
 }

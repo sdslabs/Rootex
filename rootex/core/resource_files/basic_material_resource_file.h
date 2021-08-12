@@ -45,6 +45,8 @@ public:
 	void bindVSCB() override;
 	void bindPSCB() override;
 
+	Ref<ImageResourceFile> getDiffuseImageFile() { return m_DiffuseImageFile; }
+
 	JSON::json getJSON() const override;
 	ID3D11ShaderResourceView* getPreview() const override;
 

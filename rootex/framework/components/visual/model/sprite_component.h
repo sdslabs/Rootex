@@ -10,13 +10,10 @@ class SpriteComponent : public RenderableComponent
 {
 	COMPONENT(SpriteComponent, Category::Model);
 
-	Ref<ImageResourceFile> m_ImageResourceFile;
-
-	Ref<BasicMaterialResourceFile> m_ImageMaterial;
+	Ref<BasicMaterialResourceFile> m_ImageMaterialResourceFile;
 	Ref<VertexBuffer> m_VertexBuffer;
 	Ref<IndexBuffer> m_IndexBuffer;
 
-	void configureImageMaterial();
 	void configureBoundingRectangle();
 
 public:
@@ -26,8 +23,8 @@ public:
 	bool preRender(float deltaMilliseconds) override;
 	void render(float viewDistance) override;
 
-	void setImageResourceFile(Ref<ImageResourceFile> newImage);
-	ImageResourceFile* getImageResourceFile() const { return m_ImageResourceFile.get() ; }
+	void setImageMaterialResourceFile(Ref<BasicMaterialResourceFile> newMaterial);
+	BasicMaterialResourceFile* getImageMaterialResourceFile() const { return m_ImageMaterialResourceFile.get() ; }
 
 	JSON::json getJSON() const override;
 	void draw() override;
