@@ -132,6 +132,20 @@ void RenderSystem::renderPassRender(float deltaMilliseconds, RenderPass renderPa
 		}
 	}
 
+	for (auto& mc : ECSFactory::GetAllSpriteComponent())
+	{
+		if (mc.getRenderPass() & (unsigned int)renderPass)
+		{
+			mc.preRender(deltaMilliseconds);
+			if (mc.isVisible())
+			{
+				Vector3 viewDistance = mc.getTransformComponent()->getAbsolutePosition() - m_Camera->getAbsolutePosition();
+				mc.render(viewDistance.Length());
+			}
+			mc.postRender();
+		}
+	}
+
 	for (auto& mc : ECSFactory::GetAllGridModelComponent())
 	{
 		if (mc.getRenderPass() & (unsigned int)renderPass)

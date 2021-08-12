@@ -45,6 +45,10 @@ void SpriteComponent::configureBoundingRectangle()
 		vertex.position.y = v * rectHeight / 2;
 		vertex.position.z = 0;
 
+		vertex.normal.x = 0;
+		vertex.normal.y = 0;
+		vertex.normal.z = 1;
+
 		vertex.textureCoord.x = u;
 		vertex.textureCoord.y = v;
 
