@@ -9,9 +9,12 @@
 DEFINE_COMPONENT(SpriteComponent);
 
 SpriteComponent::SpriteComponent(Entity& owner, const JSON::json& data)
-    : RenderableComponent(owner, data)
+    : Component(owner)
+    , m_RenderPass(data.value("renderPass", (int)RenderPass::Basic))
+    , m_IsVisible(data.value("isVisible", true))
     , m_ImageResourceFile(ResourceLoader::CreateImageResourceFile(data.value("resFile", "rootex/assets/white.png")))
     , m_ImageMaterial(ResourceLoader::CreateBasicMaterialResourceFile("rootex/assets/materials/default.basic.rmat"))
+    , m_DependencyOnTransformComponent(this)
 {
 	configureImageMaterial();
 	configureBoundingRectangle();
@@ -45,10 +48,6 @@ void SpriteComponent::configureBoundingRectangle()
 		vertex.position.y = v * rectHeight / 2;
 		vertex.position.z = 0;
 
-		vertex.normal.x = 0;
-		vertex.normal.y = 0;
-		vertex.normal.z = 1;
-
 		vertex.textureCoord.x = u;
 		vertex.textureCoord.y = v;
 
@@ -64,17 +63,21 @@ void SpriteComponent::configureBoundingRectangle()
 bool SpriteComponent::preRender(float deltaMilliseconds)
 {
 	ZoneNamedN(componentPreRender, "Sprite Pre-Render", true);
-	RenderableComponent::preRender(deltaMilliseconds);
+	RenderSystem::GetSingleton()->pushMatrixOverride(getTransformComponent()->getAbsoluteTransform());
 	return true;
 }
 
 void SpriteComponent::render(float viewDistance)
 {
 	ZoneNamedN(componentRender, "Sprite Render", true);
-	RenderableComponent::render(viewDistance);
 
 	RenderSystem::GetSingleton()->getRenderer()->bind(m_ImageMaterial.get());
 	RenderSystem::GetSingleton()->getRenderer()->draw(m_VertexBuffer.get(), m_IndexBuffer.get());
+}
+
+void SpriteComponent::postRender()
+{
+	RenderSystem::GetSingleton()->popMatrix();
 }
 
 void SpriteComponent::setImageResourceFile(Ref<ImageResourceFile> newImage)
@@ -90,9 +93,22 @@ void SpriteComponent::setImageResourceFile(Ref<ImageResourceFile> newImage)
 	configureBoundingRectangle();
 }
 
+bool SpriteComponent::isVisible() const
+{
+	return m_IsVisible;
+}
+
+void SpriteComponent::setVisible(bool enabled)
+{
+	m_IsVisible = enabled;
+}
+
 JSON::json SpriteComponent::getJSON() const
 {
-	JSON::json j = RenderableComponent::getJSON();
+	JSON::json j;
+
+	j["isVisible"] = m_IsVisible;
+	j["renderPass"] = m_RenderPass;
 
 	j["resFile"] = m_ImageResourceFile->getPath().string();
 
@@ -119,5 +135,9 @@ void SpriteComponent::draw()
 		}
 	}
 
-	RenderableComponent::draw();
+	int renderPassUI = log2(m_RenderPass);
+	if (ImGui::Combo("Renderpass", &renderPassUI, "Basic\0Editor\0Alpha"))
+	{
+		m_RenderPass = pow(2, renderPassUI);
+	}
 }
