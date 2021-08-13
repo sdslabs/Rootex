@@ -45,6 +45,12 @@ FilePath OS::GetRelativePath(String stringPath, String base)
 	return std::filesystem::relative(GetAbsolutePath(stringPath), GetAbsolutePath(base));
 }
 
+FilePath OS::ReplaceExtension(String stringPath, String newExtension)
+{
+	FilePath currFilePath = GetAbsolutePath(stringPath);
+	return currFilePath.replace_extension(newExtension);
+}
+
 Vector<FilePath> OS::GetDirectoriesInDirectory(const String& directory)
 {
 	if (!std::filesystem::is_directory(GetAbsolutePath(directory)))
@@ -95,6 +101,8 @@ bool OS::Rename(const String& sourcePath, const String& destinationPath)
 	}
 	return false;
 }
+
+
 
 Vector<FilePath> OS::GetAllFilesInDirectory(const String& directory)
 {

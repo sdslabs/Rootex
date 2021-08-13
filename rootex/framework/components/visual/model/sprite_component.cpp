@@ -13,16 +13,10 @@ SpriteComponent::SpriteComponent(Entity& owner, const JSON::json& data)
     , m_RenderPass(data.value("renderPass", (int)RenderPass::Basic))
     , m_IsVisible(data.value("isVisible", true))
     , m_ImageResourceFile(ResourceLoader::CreateImageResourceFile(data.value("resFile", "rootex/assets/white.png")))
-    , m_ImageMaterial(ResourceLoader::CreateBasicMaterialResourceFile("rootex/assets/materials/default.basic.rmat"))
     , m_DependencyOnTransformComponent(this)
 {
-	configureImageMaterial();
+	m_ImageResourceFile->treatAsSprite();
 	configureBoundingRectangle();
-}
-
-void SpriteComponent::configureImageMaterial()
-{
-	m_ImageMaterial->setDiffuse(m_ImageResourceFile);
 }
 
 void SpriteComponent::configureBoundingRectangle()
@@ -71,7 +65,7 @@ void SpriteComponent::render(float viewDistance)
 {
 	ZoneNamedN(componentRender, "Sprite Render", true);
 
-	RenderSystem::GetSingleton()->getRenderer()->bind(m_ImageMaterial.get());
+	RenderSystem::GetSingleton()->getRenderer()->bind(m_ImageResourceFile.get());
 	RenderSystem::GetSingleton()->getRenderer()->draw(m_VertexBuffer.get(), m_IndexBuffer.get());
 }
 
@@ -89,7 +83,7 @@ void SpriteComponent::setImageResourceFile(Ref<ImageResourceFile> newImage)
 	}
 
 	m_ImageResourceFile = newImage;
-	configureImageMaterial();
+	m_ImageResourceFile->treatAsSprite();
 	configureBoundingRectangle();
 }
 

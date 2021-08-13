@@ -14,14 +14,11 @@ class SpriteComponent : public Component
 	bool m_IsVisible;
 	unsigned int m_RenderPass;
 
-
 	Ref<ImageResourceFile> m_ImageResourceFile;
 
-	Ref<BasicMaterialResourceFile> m_ImageMaterial;
 	Ref<VertexBuffer> m_VertexBuffer;
 	Ref<IndexBuffer> m_IndexBuffer;
 
-	void configureImageMaterial();
 	void configureBoundingRectangle();
 
 public:

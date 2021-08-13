@@ -22,6 +22,7 @@ public:
 
 	void resetCurrentShader();
 	void bind(MaterialResourceFile* material);
+	void bind(ImageResourceFile* image);
 	void draw(const VertexBuffer* vertexBuffer, const IndexBuffer* indexBuffer) const;
 	void drawInstanced(const VertexBuffer* vertexBuffer, const IndexBuffer* indexBuffer, const VertexBuffer* instanceBuffer, unsigned int instances) const;
 };

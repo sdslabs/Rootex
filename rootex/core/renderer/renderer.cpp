@@ -40,6 +40,12 @@ void Renderer::bind(MaterialResourceFile* material)
 	material->bindPSCB();
 }
 
+void Renderer::bind(ImageResourceFile* image)
+{
+	ZoneNamedN(materialBind, "Sprite Image Bind", true);
+	image->bindAll();
+}
+
 void Renderer::draw(const VertexBuffer* vertexBuffer, const IndexBuffer* indexBuffer) const
 {
 	vertexBuffer->bind();
