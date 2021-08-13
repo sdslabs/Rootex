@@ -96,6 +96,7 @@ public:
 
 	static Ref<TextResourceFile> CreateNewTextResourceFile(const String& path);
 	static Ref<BasicMaterialResourceFile> CreateNewBasicMaterialResourceFile(const String& path);
+	static Ref<BasicMaterialResourceFile> CreateNewSpriteBasicMaterialResourceFile(const String& path);
 	static Ref<AnimatedBasicMaterialResourceFile> CreateNewAnimatedBasicMaterialResourceFile(const String& path);
 
 	/// Load all the files passed in parallely. Return total tasks generated.

@@ -16,7 +16,7 @@ class ImageResourceFile : public ResourceFile
 
 	bool m_IsSprite;
 
-	Ref<BasicMaterialResourceFile> m_BasicMaterialResourceFile;
+	Ref<BasicMaterialResourceFile> m_SpriteBasicMaterialResourceFile;
 
 public:
 	explicit ImageResourceFile(const ImageResourceFile&) = delete;

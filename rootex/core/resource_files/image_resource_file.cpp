@@ -24,7 +24,9 @@ void ImageResourceFile::treatAsSprite()
 		return;
 
 	FilePath spriteMaterialResourceFilePath = OS::ReplaceExtension(m_Path.generic_string(), String("meta.rmat"));
-	m_BasicMaterialResourceFile = ResourceLoader::CreateNewBasicMaterialResourceFile(spriteMaterialResourceFilePath.generic_string());
+	m_SpriteBasicMaterialResourceFile = ResourceLoader::CreateNewSpriteBasicMaterialResourceFile(spriteMaterialResourceFilePath.generic_string());
+
+	m_SpriteBasicMaterialResourceFile->setDiffuse(ResourceLoader::CreateImageResourceFile(m_Path.generic_string()));
 
 	m_IsSprite = true;
 }
@@ -33,4 +35,8 @@ void ImageResourceFile::bindAll()
 {
 	treatAsSprite();
 
+	m_SpriteBasicMaterialResourceFile->bindSamplers();
+	m_SpriteBasicMaterialResourceFile->bindTextures();
+	m_SpriteBasicMaterialResourceFile->bindVSCB();
+	m_SpriteBasicMaterialResourceFile->bindPSCB();
 }

@@ -201,6 +201,15 @@ Ref<BasicMaterialResourceFile> ResourceLoader::CreateNewBasicMaterialResourceFil
 	return CreateBasicMaterialResourceFile(path);
 }
 
+Ref<BasicMaterialResourceFile> ResourceLoader::CreateNewSpriteBasicMaterialResourceFile(const String& path)
+{
+	if (!OS::IsExists(path))
+	{
+		OS::RelativeCopyFile(String("rootex/assets/materials/sprite.template.rmat"), path);
+	}
+	return CreateBasicMaterialResourceFile(path);
+}
+
 Ref<AnimatedBasicMaterialResourceFile> ResourceLoader::CreateNewAnimatedBasicMaterialResourceFile(const String& path)
 {
 	if (!OS::IsExists(path))
