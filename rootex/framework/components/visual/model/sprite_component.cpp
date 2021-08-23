@@ -23,19 +23,16 @@ void SpriteComponent::configureBoundingRectangle()
 	float rectWidth = imageTexture->getWidth() * m_ImageScaleFactor;
 	float rectHeight = imageTexture->getHeight() * m_ImageScaleFactor;
 
-	PRINT("Rect Width: " + std::to_string(rectWidth));
-	PRINT("Rect Height: " + std::to_string(rectHeight));
-
 	Vector<VertexData> vertices;
 	VertexData vertex;
 	ZeroMemory(&vertex, sizeof(VertexData));
 	for (int i = 0; i < 4; i++)
 	{
 		int u = (i == 1 || i == 2) ? 1 : 0;
-		int v = (i == 2 || i == 3) ? 1 : 0; 
+		int v = (i == 2 || i == 3) ? 1 : 0;
 
-		vertex.position.x = u * rectWidth / 2;
-		vertex.position.y = v * rectHeight / 2;
+		vertex.position.x = u * rectWidth;
+		vertex.position.y = v * rectHeight;
 		vertex.position.z = 0;
 
 		vertex.normal.x = 0;

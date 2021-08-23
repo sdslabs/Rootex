@@ -24,7 +24,7 @@ public:
 	void render(float viewDistance) override;
 
 	void setImageMaterialResourceFile(Ref<BasicMaterialResourceFile> newMaterial);
-	BasicMaterialResourceFile* getImageMaterialResourceFile() const { return m_ImageMaterialResourceFile.get() ; }
+	BasicMaterialResourceFile* getImageMaterialResourceFile() const { return m_ImageMaterialResourceFile.get(); }
 
 	JSON::json getJSON() const override;
 	void draw() override;
