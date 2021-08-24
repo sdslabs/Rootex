@@ -9,8 +9,8 @@
 DEFINE_COMPONENT(SpriteComponent);
 
 SpriteComponent::SpriteComponent(Entity& owner, const JSON::json& data)
-    : RenderableComponent(owner, data)
-    , m_ImageMaterialResourceFile(ResourceLoader::CreateBasicMaterialResourceFile("rootex/assets/materials/sprite.basic.rmat"))
+    : ModelComponent(owner, data)
+    , m_ImageMaterialResourceFile(ResourceLoader::CreateBasicMaterialResourceFile(data.value("spriteImageResFile", "rootex/assets/materials/sprite.basic.rmat")))
 {
 	configureBoundingRectangle();
 }
@@ -31,8 +31,8 @@ void SpriteComponent::configureBoundingRectangle()
 		int u = (i == 1 || i == 2) ? 1 : 0;
 		int v = (i == 2 || i == 3) ? 1 : 0;
 
-		vertex.position.x = u * rectWidth;
-		vertex.position.y = v * rectHeight;
+		vertex.position.x = u * rectWidth - rectWidth / 2;
+		vertex.position.y = v * rectHeight - rectHeight / 2;
 		vertex.position.z = 0;
 
 		vertex.normal.x = 0;
@@ -51,17 +51,9 @@ void SpriteComponent::configureBoundingRectangle()
 	m_IndexBuffer.reset(new IndexBuffer(indices));
 }
 
-bool SpriteComponent::preRender(float deltaMilliseconds)
-{
-	ZoneNamedN(componentPreRender, "Sprite Pre-Render", true);
-	RenderableComponent::preRender(deltaMilliseconds);
-	return true;
-}
-
 void SpriteComponent::render(float viewDistance)
 {
 	ZoneNamedN(componentRender, "Sprite Render", true);
-	RenderableComponent::render(viewDistance);
 
 	RenderSystem::GetSingleton()->getRenderer()->bind(m_ImageMaterialResourceFile.get());
 	RenderSystem::GetSingleton()->getRenderer()->draw(m_VertexBuffer.get(), m_IndexBuffer.get());
@@ -81,9 +73,9 @@ void SpriteComponent::setImageMaterialResourceFile(Ref<BasicMaterialResourceFile
 
 JSON::json SpriteComponent::getJSON() const
 {
-	JSON::json j = RenderableComponent::getJSON();
+	JSON::json j = ModelComponent::getJSON();
 
-	j["resFile"] = m_ImageMaterialResourceFile->getPath().string();
+	j["spriteImageResFile"] = m_ImageMaterialResourceFile->getPath().string();
 
 	return j;
 }

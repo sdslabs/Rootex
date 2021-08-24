@@ -1,12 +1,10 @@
 #pragma once
 
-#include "component.h"
-#include "renderable_component.h"
+#include "model_component.h"
 #include "core/resource_files/image_resource_file.h"
 #include "core/resource_files/basic_material_resource_file.h"
-#include "core/renderer/mesh.h"
 
-class SpriteComponent : public RenderableComponent
+class SpriteComponent : public ModelComponent
 {
 	COMPONENT(SpriteComponent, Category::Model);
 
@@ -20,7 +18,6 @@ public:
 	SpriteComponent(Entity& owner, const JSON::json& data);
 	~SpriteComponent() = default;
 
-	bool preRender(float deltaMilliseconds) override;
 	void render(float viewDistance) override;
 
 	void setImageMaterialResourceFile(Ref<BasicMaterialResourceFile> newMaterial);
