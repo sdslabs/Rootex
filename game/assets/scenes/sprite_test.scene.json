@@ -1,0 +1,63 @@
+{
+    "ID": 4,
+    "children": [],
+    "entity": {
+        "components": {
+            "SpriteComponent": {
+                "affectingStaticLights": [],
+                "isVisible": true,
+                "lodBias": 0.0,
+                "lodDistance": 10.0,
+                "lodEnable": true,
+                "materialOverrides": {
+                    "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/sprite.basic.rmat"
+                },
+                "renderPass": 1,
+                "resFile": "rootex/assets/square.obj"
+            },
+            "TransformComponent": {
+                "boundingBox": {
+                    "center": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "extents": {
+                        "x": 0.5,
+                        "y": 0.5,
+                        "z": 0.0
+                    }
+                },
+                "overrideBoundingBox": false,
+                "passDown": 7,
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": -10.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 3.4190001487731934,
+                    "y": 3.4190001487731934,
+                    "z": 1.0
+                }
+            }
+        },
+        "script": null
+    },
+    "importStyle": 0,
+    "name": "sprite_test",
+    "sceneFile": "game/assets/scenes/sprite_test.scene.json",
+    "settings": {
+        "camera": 1,
+        "inputSchemes": {},
+        "listener": 1,
+        "preloads": [],
+        "startScheme": ""
+    }
+}
