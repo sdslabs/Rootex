@@ -17,6 +17,8 @@ public:
 	bool saveMaterialData(const JSON::json& j);
 
 	virtual const Shader* getShader() const = 0;
+	virtual Vector<Ref<Texture>> getTextures() const { return Vector<Ref<Texture>> {}; }
+
 	virtual void bindShader() = 0;
 	virtual void bindTextures() = 0;
 	virtual void bindSamplers() = 0;

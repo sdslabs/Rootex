@@ -39,13 +39,13 @@ public:
 	void setLightmap(Ref<ImageResourceFile> lightmap);
 
 	const Shader* getShader() const override { return s_Shader.get(); };
+	Vector<Ref<Texture>> getTextures() const override;
+
 	void bindShader() override;
 	void bindTextures() override;
 	void bindSamplers() override;
 	void bindVSCB() override;
 	void bindPSCB() override;
-
-	ImageResourceFile* getDiffuseImageFile() { return m_DiffuseImageFile.get(); }
 
 	JSON::json getJSON() const override;
 	ID3D11ShaderResourceView* getPreview() const override;
