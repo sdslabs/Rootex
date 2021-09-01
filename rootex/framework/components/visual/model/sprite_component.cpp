@@ -34,13 +34,12 @@ bool SpriteComponent::setupData()
 
 void SpriteComponent::adjustScaling()
 {
-	float m_ImageScaleFactor = 0.001;
+	float defaultHeight = 1.0f;
 
 	Ref<Texture> imageTexture = getSpriteMaterialResourceFile()->getTextures()[0];
-	float rectWidth = imageTexture->getWidth() * m_ImageScaleFactor;
-	float rectHeight = imageTexture->getHeight() * m_ImageScaleFactor;
+	float aspectRatio = imageTexture->getWidth() / imageTexture->getHeight();
 
-	getTransformComponent()->setScale(Vector3 { rectWidth, rectHeight, 1.0f });
+	getTransformComponent()->setScale(Vector3 { aspectRatio * defaultHeight, defaultHeight, 1.0f });
 }
 
 Ref<MaterialResourceFile> SpriteComponent::getSpriteMaterialResourceFile()
