@@ -9,6 +9,8 @@ class SpriteComponent : public ModelComponent
 	COMPONENT(SpriteComponent, Category::Model);
 
 private:
+	bool m_IsBillboarded;
+
 	void adjustScaling();
 	void setMaterialOverride(Ref<MaterialResourceFile> oldMaterial, Ref<MaterialResourceFile> newMaterial) override;
 
@@ -20,7 +22,12 @@ public:
 
 	Ref<MaterialResourceFile> getSpriteMaterialResourceFile();
 
+	bool preRender(float deltaMilliseconds) override;
+	void postRender() override;
+
 	bool setupData() override;
+	JSON::json getJSON() const override;
+	void draw() override;
 };
 
 DECLARE_COMPONENT(SpriteComponent);

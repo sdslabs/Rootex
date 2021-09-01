@@ -17,6 +17,7 @@ JSON::json SpriteComponent::InjectSpriteModel(const JSON::json& data)
 
 SpriteComponent::SpriteComponent(Entity& owner, const JSON::json& data)
     : ModelComponent(owner, SpriteComponent::InjectSpriteModel(data))
+    , m_IsBillboarded(data.value("isBillboarded", false))
 {
 }
 
@@ -42,6 +43,33 @@ void SpriteComponent::adjustScaling()
 	getTransformComponent()->setScale(Vector3 { aspectRatio * defaultHeight, defaultHeight, 1.0f });
 }
 
+bool SpriteComponent::preRender(float deltaMilliseconds)
+{
+	if (m_IsBillboarded)
+	{
+		CameraComponent* renderCamera = RenderSystem::GetSingleton()->getCamera();
+		const Matrix& cameraTransform = renderCamera->getTransformComponent()->getAbsoluteTransform();
+
+		Matrix billboardMatrix = Matrix::CreateBillboard(
+		    getTransformComponent()->getAbsolutePosition(),
+		    cameraTransform.Translation(),
+		    cameraTransform.Up());
+
+		RenderSystem::GetSingleton()->pushMatrix(billboardMatrix);
+	}
+
+	ModelComponent::preRender(deltaMilliseconds);
+	return true;
+}
+
+void SpriteComponent::postRender()
+{
+	ModelComponent::postRender();
+
+	if (m_IsBillboarded)
+		RenderSystem::GetSingleton()->popMatrix();
+}
+
 Ref<MaterialResourceFile> SpriteComponent::getSpriteMaterialResourceFile()
 {
 	auto& [material, meshes] = getMeshes()[0];
@@ -52,4 +80,20 @@ void SpriteComponent::setMaterialOverride(Ref<MaterialResourceFile> oldMaterial,
 {
 	RenderableComponent::setMaterialOverride(oldMaterial, newMaterial);
 	adjustScaling();
+}
+
+JSON::json SpriteComponent::getJSON() const
+{
+	JSON::json j = ModelComponent::getJSON();
+
+	j["isBillboarded"] = m_IsBillboarded;
+
+	return j;
+}
+
+void SpriteComponent::draw()
+{
+	ModelComponent::draw();
+
+	ImGui::Checkbox("Billboarded", &m_IsBillboarded);
 }
