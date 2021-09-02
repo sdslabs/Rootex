@@ -1,0 +1,101 @@
+{
+    "ID": 21,
+    "children": [
+        {
+            "ID": 22,
+            "children": [],
+            "entity": {
+                "components": null,
+                "script": {
+                    "overrides": null,
+                    "path": "game/assets/scripts/pause.lua"
+                }
+            },
+            "importStyle": 0,
+            "name": "pauser",
+            "sceneFile": "",
+            "settings": {
+                "camera": 1,
+                "inputSchemes": {},
+                "listener": 1,
+                "preloads": [],
+                "startScheme": ""
+            }
+        }
+    ],
+    "entity": {
+        "components": {
+            "TextUIComponent": {
+                "color": {
+                    "a": 1.0,
+                    "b": 0.0,
+                    "g": 0.0,
+                    "r": 0.0
+                },
+                "fontResource": "rootex/assets/fonts/lato_30_bold.spritefont",
+                "isVisible": true,
+                "mode": 0,
+                "origin": {
+                    "x": 45.0,
+                    "y": 62.0
+                },
+                "rotation": 0.0,
+                "text": ""
+            },
+            "TransformComponent": {
+                "boundingBox": {
+                    "center": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "extents": {
+                        "x": 0.5,
+                        "y": 0.5,
+                        "z": 0.5
+                    }
+                },
+                "overrideBoundingBox": false,
+                "passDown": 7,
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 0.7073882222175598,
+                    "x": -0.7068251967430115,
+                    "y": 0.0,
+                    "z": -0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 0.9999659061431885,
+                    "z": 0.9999659061431885
+                }
+            }
+        },
+        "script": null
+    },
+    "importStyle": 0,
+    "name": "pausing",
+    "sceneFile": "game/assets/scenes/pause.scene.json",
+    "settings": {
+        "camera": 1,
+        "inputSchemes": {
+            "Load": {
+                "bools": [
+                    {
+                        "button": 0,
+                        "device": 1,
+                        "inputEvent": "esc"
+                    }
+                ],
+                "floats": []
+            }
+        },
+        "listener": 1,
+        "preloads": [],
+        "startScheme": "Load"
+    }
+}

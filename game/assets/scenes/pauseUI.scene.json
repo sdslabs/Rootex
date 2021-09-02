@@ -1,0 +1,22 @@
+{
+    "ID": 5,
+    "children": [],
+    "entity": {
+        "components": {
+            "UIComponent": {
+                "filePath": "game/assets/ui/pause/pauseUI.rml"
+            }
+        },
+        "script": null
+    },
+    "importStyle": 0,
+    "name": "pause",
+    "sceneFile": "game/assets/scenes/pauseUI.scene.json",
+    "settings": {
+        "camera": 1,
+        "inputSchemes": {},
+        "listener": 1,
+        "preloads": [],
+        "startScheme": ""
+    }
+}
