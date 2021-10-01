@@ -4,6 +4,7 @@
 
 #include "PostProcess.h"
 #include "ASSAO.h"
+#include "shader.h"
 
 class CameraComponent;
 
@@ -14,6 +15,7 @@ struct PostProcessingDetails
 	bool isBloom = false;
 	bool isSepia = false;
 	bool isMonochrome = false;
+	Map<String, bool> customPostProcessing;
 	bool isGaussianBlur = false;
 	bool isToneMap = false;
 	bool isFXAA = false;
@@ -52,11 +54,31 @@ public:
 	virtual void draw(CameraComponent* camera, ID3D11ShaderResourceView*& nextSource) = 0;
 };
 
+class CustomPostProcess : public PostProcess
+{
+	String m_PostProcessPath;
+
+	EventBinder<CustomPostProcess> m_Binder;
+
+	BufferFormat s_BufferFormat;
+
+	Ptr<Shader> shader;
+
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_CacheRTV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_CacheSRV;
+
+	Variant loadRTVAndSRV(const Event* event);
+
+public:
+	CustomPostProcess(const String& path);
+
+	void draw(CameraComponent* camera, ID3D11ShaderResourceView*& nextSource) override;
+};
+
 class PostProcessor
 {
-	Vector<Ptr<PostProcess>> m_PostProcesses;
-
 	Ptr<DirectX::BasicPostProcess> m_BasicPostProcess;
+	Vector<Ptr<PostProcess>> m_PostProcesses;
 
 public:
 	PostProcessor();
@@ -64,4 +86,6 @@ public:
 	~PostProcessor() = default;
 
 	void draw(CameraComponent* camera);
+
+	friend class PostProcessSystem;
 };
