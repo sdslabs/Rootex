@@ -53,6 +53,26 @@ float4 PSMonochrome(VSInputTx pin) : SV_Target0
 }
 
 
+// Pixel shader: test.
+float4 PSTest(VSInputTx pin) : SV_Target0
+{
+	float2 uv = pin.TexCoord;
+    float4 color = Texture.Sample(Sampler, pin.TexCoord);
+    
+    
+    float3 grayscale = float3(0.8f, 0.4f, 0.02f);
+    float3 o = dot(color.rgb, grayscale);
+    o.r*=o.r;
+    o.b*=o.b;
+    float4 fragColor = float4(o, color.a);
+    if(uv.x*uv.x+uv.y*uv.y>0.5)
+    {
+        fragColor=0;
+    }
+    return fragColor;
+}
+
+
 // Pixel shader: sepia.
 float4 PSSepia(VSInputTx pin) : SV_Target0
 {

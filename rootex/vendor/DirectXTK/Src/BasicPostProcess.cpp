@@ -63,6 +63,7 @@ namespace
 
     #include "Shaders/Compiled/PostProcess_PSCopy.inc"
     #include "Shaders/Compiled/PostProcess_PSMonochrome.inc"
+    #include "Shaders/Compiled/PostProcess_PSTest.inc"
     #include "Shaders/Compiled/PostProcess_PSSepia.inc"
     #include "Shaders/Compiled/PostProcess_PSDownScale2x2.inc"
     #include "Shaders/Compiled/PostProcess_PSDownScale4x4.inc"
@@ -84,6 +85,7 @@ namespace
     {
         { PostProcess_PSCopy,                   sizeof(PostProcess_PSCopy) },
         { PostProcess_PSMonochrome,             sizeof(PostProcess_PSMonochrome) },
+	    { PostProcess_PSTest,                   sizeof(PostProcess_PSTest) },
         { PostProcess_PSSepia,                  sizeof(PostProcess_PSSepia) },
         { PostProcess_PSDownScale2x2,           sizeof(PostProcess_PSDownScale2x2) },
         { PostProcess_PSDownScale4x4,           sizeof(PostProcess_PSDownScale4x4) },

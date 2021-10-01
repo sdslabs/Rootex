@@ -8,6 +8,8 @@
         "r": 1.0
     },
     "diffuse": "rootex/assets/white.png",
+    "fresnelBrightness": 0.800000011920929,
+    "fresnelPower": 0.800000011920929,
     "hasNormal": 0,
     "isLit": 1,
     "lightmap": "rootex/assets/white.png",

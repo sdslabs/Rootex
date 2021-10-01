@@ -8,6 +8,8 @@
         "r": 1.0
     },
     "diffuse": "game/assets/sponza/textures/sponza_thorn_diff.png",
+    "fresnelBrightness": 0.800000011920929,
+    "fresnelPower": 0.800000011920929,
     "hasNormal": 1,
     "isLit": 1,
     "lightmap": "game/assets/sponza/textures/sponza_thorn_mask.png",

@@ -153,6 +153,48 @@ public:
 	}
 };
 
+class TestPostProcess : public PostProcess
+{
+	EventBinder<TestPostProcess> m_Binder;
+
+	Ptr<DirectX::BasicPostProcess> m_BasicPostProcess;
+
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_CacheRTV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_CacheSRV;
+
+	Variant loadRTVAndSRV(const Event* event)
+	{
+		RenderingDevice::GetSingleton()->createRTVAndSRV(m_CacheRTV, m_CacheSRV);
+		return true;
+	}
+
+public:
+	TestPostProcess()
+	{
+		m_Binder.bind(RootexEvents::WindowResized, this, &TestPostProcess::loadRTVAndSRV);
+
+		loadRTVAndSRV(nullptr);
+
+		m_BasicPostProcess.reset(new DirectX::BasicPostProcess(RenderingDevice::GetSingleton()->getDevice()));
+	}
+
+	void draw(CameraComponent* camera, ID3D11ShaderResourceView*& nextSource) override
+	{
+		const PostProcessingDetails& postProcessingDetails = camera->getPostProcessingDetails();
+		if (postProcessingDetails.isTest)
+		{
+			RenderingDevice::GetSingleton()->unbindSRVs();
+			RenderingDevice::GetSingleton()->setRTV(m_CacheRTV.Get());
+
+			m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Test);
+			m_BasicPostProcess->SetSourceTexture(nextSource);
+			m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+
+			nextSource = m_CacheSRV.Get();
+		}
+	}
+};
+
 class SepiaPostProcess : public PostProcess
 {
 	EventBinder<SepiaPostProcess> m_Binder;
@@ -443,6 +485,7 @@ PostProcessor::PostProcessor()
 	m_PostProcesses.emplace_back(new ASSAOPostProcess());
 	m_PostProcesses.emplace_back(new GaussianPostProcess());
 	m_PostProcesses.emplace_back(new MonochromePostProcess());
+	m_PostProcesses.emplace_back(new TestPostProcess());
 	m_PostProcesses.emplace_back(new SepiaPostProcess());
 	m_PostProcesses.emplace_back(new BloomPostProcess());
 	m_PostProcesses.emplace_back(new ToneMapPostProcess());

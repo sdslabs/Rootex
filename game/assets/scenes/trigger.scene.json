@@ -65,8 +65,8 @@
                         "overrideBoundingBox": false,
                         "passDown": 7,
                         "position": {
-                            "x": 0.0,
-                            "y": -1.600000023841858,
+                            "x": -0.30000001192092896,
+                            "y": -3.3000001907348633,
                             "z": -9.220000267028809
                         },
                         "rotation": {
@@ -114,33 +114,33 @@
                     },
                     "PointLightComponent": {
                         "ambientColor": {
-                            "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
+                            "a": 0.7137255072593689,
+                            "b": 0.13333334028720856,
+                            "g": 0.0,
+                            "r": 0.24705882370471954
                         },
-                        "attConst": 0.04500000178813934,
-                        "attLin": 1.0,
-                        "attQuad": 0.007499999832361937,
+                        "attConst": -1.434999942779541,
+                        "attLin": 0.7099999785423279,
+                        "attQuad": 0.03700000047683716,
                         "diffuseColor": {
-                            "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
+                            "a": 0.0941176488995552,
+                            "b": 0.7843137383460999,
+                            "g": 0.9058823585510254,
+                            "r": 0.0784313753247261
                         },
-                        "diffuseIntensity": 1.0,
-                        "range": 10.0
+                        "diffuseIntensity": 1.399999976158142,
+                        "range": 20.299999237060547
                     },
                     "SphereColliderComponent": {
                         "angularFactor": {
-                            "x": 1.0,
-                            "y": 1.0,
-                            "z": 1.0
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
                         },
                         "collisionGroup": 31,
                         "collisionMask": 31,
                         "gravity": {
-                            "x": 0.0,
+                            "x": 0.009999999776482582,
                             "y": 0.0,
                             "z": 0.0
                         },
@@ -155,7 +155,7 @@
                             "y": 0.0,
                             "z": 0.0
                         },
-                        "radius": 0.800000011920929,
+                        "radius": 2.4700000286102295,
                         "volume": 2.144660711288452
                     },
                     "TransformAnimationComponent": {
@@ -205,7 +205,7 @@
                                 ]
                             }
                         ],
-                        "transitionType": 1
+                        "transitionType": 0
                     },
                     "TransformComponent": {
                         "boundingBox": {
@@ -215,15 +215,15 @@
                                 "z": 0.0
                             },
                             "extents": {
-                                "x": 19.737079620361328,
-                                "y": 19.737079620361328,
-                                "z": 19.737079620361328
+                                "x": 1.0,
+                                "y": 1.0,
+                                "z": 1.0
                             }
                         },
                         "overrideBoundingBox": false,
                         "passDown": 7,
                         "position": {
-                            "x": -3.2526309490203857,
+                            "x": -1.5411396026611328,
                             "y": 0.13474920392036438,
                             "z": -9.829999923706055
                         },
@@ -261,8 +261,8 @@
                     "ModelComponent": {
                         "affectingStaticLights": [],
                         "isVisible": true,
-                        "lodBias": 0.0,
-                        "lodDistance": 10.0,
+                        "lodBias": 3.450000047683716,
+                        "lodDistance": 203.0,
                         "lodEnable": true,
                         "materialOverrides": {
                             "rootex/assets/materials/default.basic.rmat": "game/assets/materials/touch.basic.rmat"
@@ -286,8 +286,8 @@
                         "overrideBoundingBox": false,
                         "passDown": 7,
                         "position": {
-                            "x": -0.058719128370285034,
-                            "y": -0.01304885745048523,
+                            "x": -1.2587190866470337,
+                            "y": 0.7869511842727661,
                             "z": -8.230000495910645
                         },
                         "rotation": {

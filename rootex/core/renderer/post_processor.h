@@ -14,6 +14,7 @@ struct PostProcessingDetails
 	bool isBloom = false;
 	bool isSepia = false;
 	bool isMonochrome = false;
+	bool isTest = false;
 	bool isGaussianBlur = false;
 	bool isToneMap = false;
 	bool isFXAA = false;

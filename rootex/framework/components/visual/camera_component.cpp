@@ -10,6 +10,7 @@ void to_json(JSON::json& j, const PostProcessingDetails& p)
 	j["isBloom"] = p.isBloom;
 	j["isSepia"] = p.isSepia;
 	j["isMonochrome"] = p.isMonochrome;
+	j["isTest"] = p.isTest;
 	j["isGaussianBlur"] = p.isGaussianBlur;
 	j["isToneMap"] = p.isToneMap;
 	j["isFXAA"] = p.isFXAA;
@@ -46,6 +47,7 @@ void from_json(const JSON::json& j, PostProcessingDetails& p)
 	p.isBloom = j.at("isBloom");
 	p.isSepia = j.at("isSepia");
 	p.isMonochrome = j.at("isMonochrome");
+	p.isTest = j.at("isTest");
 	p.isGaussianBlur = j.at("isGaussianBlur");
 	p.isToneMap = j.at("isToneMap");
 	p.isFXAA = j.value("isFXAA", false);
@@ -207,6 +209,8 @@ void CameraComponent::draw()
 		}
 
 		ImGui::Checkbox("Monochrome", &m_PostProcessingDetails.isMonochrome);
+
+		ImGui::Checkbox("Test", &m_PostProcessingDetails.isTest);
 
 		ImGui::Checkbox("Sepia", &m_PostProcessingDetails.isSepia);
 

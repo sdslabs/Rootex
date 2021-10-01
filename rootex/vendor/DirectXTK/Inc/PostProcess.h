@@ -52,6 +52,7 @@ namespace DirectX
         {
             Copy,
             Monochrome,
+            Test,
             Sepia,
             DownScale_2x2,
             DownScale_4x4,
