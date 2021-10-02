@@ -35,7 +35,7 @@ bool SpriteComponent::setupData()
 
 void SpriteComponent::adjustScaling()
 {
-	float defaultHeight = 1.0f;
+	float defaultHeight = getTransformComponent()->getAbsoluteScale().y;
 
 	Ref<Texture> imageTexture = getSpriteMaterialResourceFile()->getTextures()[0];
 	float aspectRatio = imageTexture->getWidth() / imageTexture->getHeight();
@@ -45,29 +45,41 @@ void SpriteComponent::adjustScaling()
 
 bool SpriteComponent::preRender(float deltaMilliseconds)
 {
+	ModelComponent::preRender(deltaMilliseconds);
+
 	if (m_IsBillboarded)
 	{
+		const Vector3& scaling = getTransformComponent()->getAbsoluteScale();
+
 		CameraComponent* renderCamera = RenderSystem::GetSingleton()->getCamera();
-		const Matrix& cameraTransform = renderCamera->getTransformComponent()->getAbsoluteTransform();
+		Matrix& cameraTransform = renderCamera->getTransformComponent()->getAbsoluteTransform();
 
 		Matrix billboardMatrix = Matrix::CreateBillboard(
 		    getTransformComponent()->getAbsolutePosition(),
 		    cameraTransform.Translation(),
-		    cameraTransform.Up());
+		    cameraTransform.Up(),
+		    &cameraTransform.Forward());
 
-		RenderSystem::GetSingleton()->pushMatrix(billboardMatrix);
+		billboardMatrix.Right(billboardMatrix.Left());
+		billboardMatrix.Forward(billboardMatrix.Backward());
+
+		billboardMatrix.Right(billboardMatrix.Right() * scaling.x);
+		billboardMatrix.Up(billboardMatrix.Up() * scaling.y);
+		billboardMatrix.Backward(billboardMatrix.Backward() * scaling.z);
+
+		RenderSystem::GetSingleton()->pushMatrixOverride(billboardMatrix);
 	}
 
-	ModelComponent::preRender(deltaMilliseconds);
 	return true;
 }
 
 void SpriteComponent::postRender()
 {
-	ModelComponent::postRender();
-
 	if (m_IsBillboarded)
+	{
 		RenderSystem::GetSingleton()->popMatrix();
+	}
+	ModelComponent::postRender();
 }
 
 Ref<MaterialResourceFile> SpriteComponent::getSpriteMaterialResourceFile()

@@ -5,6 +5,7 @@
         "components": {
             "SpriteComponent": {
                 "affectingStaticLights": [],
+                "isBillboarded": false,
                 "isVisible": true,
                 "lodBias": 0.0,
                 "lodDistance": 10.0,
@@ -33,7 +34,7 @@
                 "position": {
                     "x": 0.0,
                     "y": 0.0,
-                    "z": -10.0
+                    "z": -5.0
                 },
                 "rotation": {
                     "w": 1.0,
@@ -42,8 +43,8 @@
                     "z": 0.0
                 },
                 "scale": {
-                    "x": 3.4190001487731934,
-                    "y": 3.4190001487731934,
+                    "x": 1.0,
+                    "y": 1.0,
                     "z": 1.0
                 }
             }
