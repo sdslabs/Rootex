@@ -1,0 +1,3 @@
+[submodule "assets"]
+	path = game/assets
+	url = https://gitlab.com/sdslabs/rootex-assets.git
