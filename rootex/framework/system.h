@@ -35,6 +35,7 @@ protected:
 	String m_SystemName;
 	UpdateOrder m_UpdateOrder;
 	bool m_IsActive;
+	bool m_Pause;
 
 public:
 	static const Vector<Vector<System*>>& GetSystems() { return s_Systems; }
@@ -55,6 +56,8 @@ public:
 	bool isActive() const { return m_IsActive; }
 
 	void setActive(bool enabled);
+	static void pause();
+	static void unpause();
 
 	virtual void draw();
 };

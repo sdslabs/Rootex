@@ -7,7 +7,9 @@
             "entity": {
                 "components": null,
                 "script": {
-                    "overrides": null,
+                    "overrides": {
+                        "pauseScene": ""
+                    },
                     "path": "game/assets/scripts/pause.lua"
                 }
             },
@@ -25,6 +27,17 @@
     ],
     "entity": {
         "components": {
+            "MusicComponent": {
+                "attenuationModel": 53251,
+                "audio": "rootex/assets/ball.wav",
+                "isAttenuated": false,
+                "isLooping": true,
+                "maxDistance": 100.0,
+                "playOnStart": true,
+                "referenceDistance": 1.0,
+                "rollOffFactor": 1.0,
+                "volume": 1.0
+            },
             "TextUIComponent": {
                 "color": {
                     "a": 1.0,

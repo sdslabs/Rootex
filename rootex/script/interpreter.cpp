@@ -6,6 +6,7 @@
 #include "scene.h"
 #include "scene_loader.h"
 #include "ecs_factory.h"
+#include "system.h"
 #include "script.h"
 #include "components/audio/audio_component.h"
 #include "components/audio/short_music_component.h"
@@ -309,6 +310,11 @@ void LuaInterpreter::registerTypes()
 		scene["snatchChild"] = &Scene::snatchChild;
 		scene["getID"] = &Scene::getID;
 		scene["getFullName"] = &Scene::getFullName;
+	}
+	{
+		sol::usertype<System> system = rootex.new_usertype<System>("System");
+		system["pause"] = &System::pause;
+		system["unpause"] = &System::unpause;
 	}
 	{
 		sol::usertype<Entity> entity = rootex.new_usertype<Entity>("Entity",
