@@ -3,6 +3,7 @@
 #include "core/resource_loader.h"
 #include "components/visual/effect/fog_component.h"
 #include "components/visual/effect/sky_component.h"
+#include "components/visual/effect/decal_component.h"
 #include "components/visual/model/grid_model_component.h"
 #include "components/visual/effect/cpu_particles_component.h"
 #include "renderer/shaders/register_locations_vertex_shader.h"
@@ -229,6 +230,21 @@ void RenderSystem::update(float deltaMilliseconds)
 		{
 			ZoneNamedN(basicRenderPass, "Basic Render Pass", true);
 			renderPassRender(deltaMilliseconds, RenderPass::Basic);
+		}
+		{
+			ZoneNamedN(decalRenderPass, "Decal Render Pass", true);
+			RenderingDevice::GetSingleton()->setOffScreenRTVOnly();
+			for (auto& decal : ECSFactory::GetAllDecalComponent())
+			{
+				decal.preRender(deltaMilliseconds);
+				if (decal.isVisible())
+				{
+					Vector3 viewDistance = decal.getTransformComponent()->getAbsolutePosition() - m_Camera->getAbsolutePosition();
+					decal.render(viewDistance.Length());
+				}
+				decal.postRender();
+			}
+			RenderingDevice::GetSingleton()->setOffScreenRTVDSV();
 		}
 		renderLines();
 	}

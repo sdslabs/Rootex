@@ -5,6 +5,7 @@ enum class ComponentIDs : unsigned int
 	ModelComponent,
 	GridModelComponent,
 	CPUParticlesComponent,
+	DecalComponent,
 	TextUIComponent,
 	UIComponent,
 	CameraComponent,
