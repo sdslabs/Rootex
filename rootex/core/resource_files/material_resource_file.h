@@ -88,6 +88,11 @@ struct PerModelAnimationVSCBData
 	}
 };
 
+struct PerModelDecalPSCBData
+{
+	Color color;
+};
+
 struct BasicMaterialData
 {
 	String diffuseImage;
@@ -118,3 +123,12 @@ struct CustomMaterialData
 
 void to_json(JSON::json& j, const CustomMaterialData& s);
 void from_json(const JSON::json& j, CustomMaterialData& s);
+
+struct DecalMaterialData
+{
+	String decalImage;
+	PerModelDecalPSCBData pixelBufferData;
+};
+
+void to_json(JSON::json& j, const DecalMaterialData& d);
+void from_json(const JSON::json& j, DecalMaterialData& d);

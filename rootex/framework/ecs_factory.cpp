@@ -17,6 +17,7 @@
 #include "components/visual/effect/cpu_particles_component.h"
 #include "components/visual/light/directional_light_component.h"
 #include "components/visual/effect/fog_component.h"
+#include "components/visual/effect/decal_component.h"
 #include "components/visual/model/grid_model_component.h"
 #include "components/visual/model/model_component.h"
 #include "components/visual/light/point_light_component.h"
@@ -141,6 +142,7 @@ void ECSFactory::Initialize()
 	ASSIGN_COMPONENT_SET(SkyComponent);
 	ASSIGN_COMPONENT_SET(CPUParticlesComponent);
 	ASSIGN_COMPONENT_SET(ParticleEffectComponent);
+	ASSIGN_COMPONENT_SET(DecalComponent);
 }
 
 bool ECSFactory::AddComponent(Entity& entity, ComponentID componentID, const JSON::json& componentData, bool checks)

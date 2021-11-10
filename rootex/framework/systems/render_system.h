@@ -34,6 +34,7 @@ class RenderSystem : public System
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_PerFrameVSCB;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_PerCameraChangeVSCB;
 
+	Microsoft::WRL::ComPtr<ID3D11Buffer> m_PerCameraChangePSCB;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_PerFrameCustomPSCB;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_PerFramePSCB;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_PerScenePSCB;
@@ -75,6 +76,7 @@ public:
 
 	void setPerCameraVSCBs();
 	void setPerFrameVSCBs(float fogStart, float fogEnd);
+	void setPerCameraChangePSCBs();
 	void setPerFramePSCBs(const Color& fogColor);
 	void setPerScenePSCBs();
 	void updateStaticLights();

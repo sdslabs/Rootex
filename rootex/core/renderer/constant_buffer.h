@@ -64,6 +64,20 @@ struct PerModelPSCB
 	StaticLightID staticPointsLightsAffecting[MAX_STATIC_POINT_LIGHTS_AFFECTING_1_OBJECT];
 };
 
+struct PerDecalPSCB
+{
+	Vector3 decalRight;
+	float pad1;
+	Vector3 decalForward;
+	float pad2;
+	Vector3 decalUp;
+	float pad3;
+	Vector3 decalHalfScale;
+	float pad4;
+	Vector3 decalViewspacePosition;
+	float pad5;
+};
+
 struct StaticPointLightsInfo
 {
 	PointLightInfo pointLightInfos[MAX_STATIC_POINT_LIGHTS];
@@ -80,6 +94,14 @@ struct LightsInfo
 	int spotLightCount = 0;
 	float pad3[3];
 	SpotLightInfo spotLightInfos[MAX_DYNAMIC_SPOT_LIGHTS];
+};
+
+struct PerCameraChangePSCB
+{
+	Vector2 DepthUnpackConsts;
+	Vector2 Viewport2xPixelSize;
+	Vector2 CameraTanHalfFOV;
+	Vector2 pad;
 };
 
 /// Constant buffer uploaded once per frame in the PS
