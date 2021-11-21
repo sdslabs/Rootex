@@ -1,0 +1,253 @@
+{
+    "ID": 4,
+    "children": [
+        {
+            "ID": 5,
+            "children": [],
+            "entity": {
+                "components": {
+                    "DecalComponent": {
+                        "affectingStaticLights": [],
+                        "isVisible": true,
+                        "lodBias": 0.0,
+                        "lodDistance": 10.0,
+                        "lodEnable": true,
+                        "materialOverrides": {
+                            "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
+                        },
+                        "renderPass": 1,
+                        "resFile": "rootex/assets/cube.obj"
+                    },
+                    "TransformComponent": {
+                        "boundingBox": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "extents": {
+                                "x": 0.5,
+                                "y": 0.5,
+                                "z": 0.5
+                            }
+                        },
+                        "overrideBoundingBox": false,
+                        "passDown": 7,
+                        "position": {
+                            "x": -0.3799999952316284,
+                            "y": -0.4350000023841858,
+                            "z": -3.9000000953674316
+                        },
+                        "rotation": {
+                            "w": 1.0,
+                            "x": -0.0,
+                            "y": 0.0,
+                            "z": -0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        }
+                    }
+                },
+                "script": null
+            },
+            "importStyle": 0,
+            "name": "decal_projector",
+            "sceneFile": "",
+            "settings": {
+                "camera": 1,
+                "inputSchemes": {},
+                "listener": 1,
+                "preloads": [],
+                "startScheme": ""
+            }
+        },
+        {
+            "ID": 6,
+            "children": [],
+            "entity": {
+                "components": {
+                    "ModelComponent": {
+                        "affectingStaticLights": [],
+                        "isVisible": true,
+                        "lodBias": 0.0,
+                        "lodDistance": 10.0,
+                        "lodEnable": true,
+                        "materialOverrides": {
+                            "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
+                        },
+                        "renderPass": 1,
+                        "resFile": "rootex/assets/cube.obj"
+                    },
+                    "TransformComponent": {
+                        "boundingBox": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "extents": {
+                                "x": 0.5,
+                                "y": 0.5,
+                                "z": 0.5
+                            }
+                        },
+                        "overrideBoundingBox": false,
+                        "passDown": 7,
+                        "position": {
+                            "x": 0.022659003734588623,
+                            "y": 0.0,
+                            "z": -6.920000076293945
+                        },
+                        "rotation": {
+                            "w": 1.0,
+                            "x": -0.0,
+                            "y": 0.0,
+                            "z": -0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        }
+                    }
+                },
+                "script": null
+            },
+            "importStyle": 0,
+            "name": "tobedecaled",
+            "sceneFile": "",
+            "settings": {
+                "camera": 1,
+                "inputSchemes": {},
+                "listener": 1,
+                "preloads": [],
+                "startScheme": ""
+            }
+        },
+        {
+            "ID": 7,
+            "children": [],
+            "entity": {
+                "components": {
+                    "ModelComponent": {
+                        "affectingStaticLights": [],
+                        "isVisible": true,
+                        "lodBias": 0.0,
+                        "lodDistance": 10.0,
+                        "lodEnable": true,
+                        "materialOverrides": {
+                            "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
+                        },
+                        "renderPass": 1,
+                        "resFile": "rootex/assets/cube.obj"
+                    },
+                    "TransformComponent": {
+                        "boundingBox": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "extents": {
+                                "x": 0.5,
+                                "y": 0.5,
+                                "z": 0.5
+                            }
+                        },
+                        "overrideBoundingBox": false,
+                        "passDown": 7,
+                        "position": {
+                            "x": 0.46382004022598267,
+                            "y": 0.14000000059604645,
+                            "z": -3.4600000381469727
+                        },
+                        "rotation": {
+                            "w": 1.0,
+                            "x": -0.0,
+                            "y": 0.0,
+                            "z": -0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        }
+                    }
+                },
+                "script": null
+            },
+            "importStyle": 0,
+            "name": "tobedecaled",
+            "sceneFile": "",
+            "settings": {
+                "camera": 1,
+                "inputSchemes": {},
+                "listener": 1,
+                "preloads": [],
+                "startScheme": ""
+            }
+        }
+    ],
+    "entity": {
+        "components": {
+            "DecalComponent": {
+                "affectingStaticLights": [],
+                "isVisible": true,
+                "lodBias": 0.0,
+                "lodDistance": 10.0,
+                "lodEnable": true,
+                "materialOverrides": {
+                    "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
+                },
+                "renderPass": 1,
+                "resFile": "rootex/assets/cube.obj"
+            },
+            "TransformComponent": {
+                "boundingBox": {
+                    "center": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "extents": {
+                        "x": 0.5,
+                        "y": 0.5,
+                        "z": 0.5
+                    }
+                },
+                "overrideBoundingBox": false,
+                "passDown": 7,
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            }
+        },
+        "script": null
+    },
+    "importStyle": 0,
+    "name": "decal",
+    "sceneFile": "game/assets/scenes/decal.scene.json",
+    "settings": {
+        "camera": 1,
+        "inputSchemes": {},
+        "listener": 1,
+        "preloads": [],
+        "startScheme": ""
+    }
+}
