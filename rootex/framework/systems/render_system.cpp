@@ -233,7 +233,9 @@ void RenderSystem::update(float deltaMilliseconds)
 		}
 		{
 			ZoneNamedN(decalRenderPass, "Decal Render Pass", true);
+			RenderingDevice::GetSingleton()->unbindSRVs();
 			RenderingDevice::GetSingleton()->setOffScreenRTVOnly();
+			RenderingDevice::GetSingleton()->disableDSS();
 			for (auto& decal : ECSFactory::GetAllDecalComponent())
 			{
 				decal.preRender(deltaMilliseconds);
@@ -244,6 +246,8 @@ void RenderSystem::update(float deltaMilliseconds)
 				}
 				decal.postRender();
 			}
+			RenderingDevice::GetSingleton()->unbindDepthSRV();
+			RenderingDevice::GetSingleton()->enableDSS();
 			RenderingDevice::GetSingleton()->setOffScreenRTVDSV();
 		}
 		renderLines();

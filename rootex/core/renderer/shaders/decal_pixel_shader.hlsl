@@ -14,7 +14,6 @@ struct DecalPixelInputType
 	float3 normal : NORMAL;
 	float4 worldPosition : POSITION;
 	float2 tex : TEXCOORD0;
-	float fogFactor : FOG;
 	float3 tangent : TANGENT;
 	float4 color : COLOR;
 	float3 decalRight : TEXCOORD1;
@@ -40,14 +39,16 @@ float4 main(DecalPixelInputType input)
 	float4 materialColor = ShaderTexture.Sample(SampleType, input.tex) * material.color * input.color;
 	float4 finalColor = materialColor;
 
-	float depth = DepthTexture.Sample(SampleType, input.tex).r;
-	finalColor.rgb = float3(depth, depth, depth);
+	uint3 index = uint3(input.screenPosition.x, input.screenPosition.y, 0);
+	float depth = DepthTexture.Load(index).r;
+	finalColor.rgb = float3(depth, 0.0f, 0.0f);
 
 	// finalColor = float4(depth, depth, depth, 0.0f);
 
 	// finalColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
 
-	clip(finalColor.a - 0.0001f);
+	// clip(finalColor.a - 0.0001f);
 
+	finalColor.a = 1.0f;
 	return finalColor;
 }

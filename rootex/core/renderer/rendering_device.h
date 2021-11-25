@@ -93,6 +93,9 @@ public:
 	void enableSkyDSS();
 	void disableSkyDSS();
 
+	void disableDSS();
+	void enableDSS();
+
 	void createRTVAndSRV(Microsoft::WRL::ComPtr<ID3D11RenderTargetView>& rtv, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& srv);
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> createBuffer(const char* data, size_t size, D3D11_BIND_FLAG bindFlags, D3D11_USAGE usage, int cpuAccess);
@@ -154,6 +157,8 @@ public:
 
 	void unbindSRVs();
 	void unbindRTVs();
+
+	void unbindDepthSRV();
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> getMainSRV();
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> getDepthSSRV();

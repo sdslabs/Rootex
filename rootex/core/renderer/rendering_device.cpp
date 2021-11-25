@@ -374,6 +374,16 @@ void RenderingDevice::disableSkyDSS()
 	m_Context->OMSetDepthStencilState(m_DSState.Get(), m_StencilRef);
 }
 
+void RenderingDevice::disableDSS()
+{
+	m_Context->OMSetDepthStencilState(nullptr, 0);
+}
+
+void RenderingDevice::enableDSS()
+{
+	m_Context->OMSetDepthStencilState(m_DSState.Get(), m_StencilRef);
+}
+
 void RenderingDevice::createRTVAndSRV(Microsoft::WRL::ComPtr<ID3D11RenderTargetView>& rtv, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& srv)
 {
 	RECT rect;
@@ -636,6 +646,12 @@ void RenderingDevice::unbindSRVs()
 {
 	ID3D11ShaderResourceView* nullSRV[2] = { nullptr, nullptr };
 	m_Context->PSSetShaderResources(0, 2, nullSRV);
+}
+
+void RenderingDevice::unbindDepthSRV()
+{
+	ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
+	m_Context->PSSetShaderResources(11, 1, nullSRV);
 }
 
 void RenderingDevice::unbindRTVs()
