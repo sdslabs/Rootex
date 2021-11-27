@@ -75,6 +75,7 @@ float4 main(PixelInputType input)
 	float distortionStrength = 0.1;
 
 	float2 uv = input.tex;
+	uv.y = 1 - uv.y;
 	float time = timeMs * 0.34 / 1000;
 
 	float2 movingFireMovement = float2(fireMovement.x * time, fireMovement.y * time);
@@ -88,7 +89,9 @@ float4 main(PixelInputType input)
 	float3 weightedColor = float3(240., 120., 0.) / 255.;
 
 	float3 finalColor = (finalNoise * weightedColor);
-	return float4(finalColor,1.0f);
+	int power = 3;
+	float alpha =( pow(finalColor.r, power) + pow(finalColor.b, power) + pow(finalColor.g, power) )/ 3.0f;
+	return float4(finalColor,alpha);
 	//return float4((time*50%100)/100, 1.0f, 1.0f, 1.0f);
 }
 
