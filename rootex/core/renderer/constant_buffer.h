@@ -82,6 +82,14 @@ struct LightsInfo
 	SpotLightInfo spotLightInfos[MAX_DYNAMIC_SPOT_LIGHTS];
 };
 
+struct PerCameraChangePSCB
+{
+	Vector2 DepthUnpackConsts;
+	Vector2 Viewport2xPixelSize;
+	Vector2 CameraTanHalfFOV;
+	Vector2 pad;
+};
+
 /// Constant buffer uploaded once per frame in the PS
 struct PerFramePSCB
 {

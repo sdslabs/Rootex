@@ -34,10 +34,11 @@ struct DecalPixelInputType
 	float2 tex : TEXCOORD0;
 	float3 tangent : TANGENT;
 	float4 color : COLOR;
-	float3 decalRight : TEXCOORD1;
-	float3 decalForward : TEXCOORD2;
-	float3 decalUp : TEXCOORD3;
-	float3 decalHalfScale : TEXCOORD4;
+	nointerpolation float3 decalRight : TEXCOORD1;
+	nointerpolation float3 decalForward : TEXCOORD2;
+	nointerpolation float3 decalUp : TEXCOORD3;
+	nointerpolation float3 decalHalfScale : TEXCOORD4;
+	nointerpolation float4 decalViewspacePosition : TEXCOORD5;
 };
 
 DecalPixelInputType main(VertexInputType input)
@@ -50,10 +51,26 @@ DecalPixelInputType main(VertexInputType input)
 
 	output.worldPosition = mul(float4(0.0f, 0.0f, 0.0f, 1.0f), M);
 
+	/* output.worldPosition = mul(float4(0.0f, 0.0f, 0.0f, 1.0f), M);
 	output.decalRight = mul(float4(1.0f, 0.0f, 0.0f, 1.0f), M).xyz - output.worldPosition.xyz;
 	output.decalForward = mul(float4(0.0f, 0.0f, -1.0f, 1.0f), M).xyz - output.worldPosition.xyz;
 	output.decalUp = mul(float4(0.0f, 1.0f, 0.0f, 1.0f), M).xyz - output.worldPosition.xyz;
 	output.decalHalfScale = float3(length(output.decalRight), length(output.decalForward), length(output.decalUp)) / 2.0f;
+	*/
+
+	float4x4 MV = mul(M, V);
+
+	output.decalViewspacePosition = mul(float4(0.0f, 0.0f, 0.0f, 1.0f), MV);
+
+	output.decalRight = mul(float4(1.0f, 0.0f, 0.0f, 1.0f), MV).xyz - output.decalViewspacePosition.xyz;
+	output.decalForward = mul(float4(0.0f, 0.0f, -1.0f, 1.0f), MV).xyz - output.decalViewspacePosition.xyz;
+	output.decalUp = mul(float4(0.0f, 1.0f, 0.0f, 1.0f), MV).xyz - output.decalViewspacePosition.xyz;
+
+	output.decalHalfScale = float3(length(output.decalRight), length(output.decalForward), length(output.decalUp)) / 2.0f;
+	
+	output.decalRight = normalize(output.decalRight);
+	output.decalForward = normalize(output.decalForward);
+	output.decalUp = normalize(output.decalUp);
 
 	output.normal = normalize(mul(float3(0.0f, 0.0f, 1.0f), (float3x3)MInverseTranspose));
 	output.tangent = mul(float3(1.0f, 0.0f, 0.0f), (float3x3)M);
