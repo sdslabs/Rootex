@@ -20,6 +20,7 @@ class ViewportDock;
 class InspectorDock;
 class FileViewer;
 class FileEditor;
+class ContentBrowser;
 
 class EditorSystem : public System
 {
@@ -55,6 +56,7 @@ class EditorSystem : public System
 	Ptr<InspectorDock> m_Inspector;
 	Ptr<FileViewer> m_FileViewer;
 	Ptr<FileEditor> m_FileEditor;
+	Ptr<ContentBrowser> m_ContentBrowser;
 
 	Atomic<bool> m_IsCopyFailed;
 	String m_CurrExportDir;

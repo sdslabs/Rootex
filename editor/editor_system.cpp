@@ -21,6 +21,7 @@
 #include "gui/inspector_dock.h"
 #include "gui/file_viewer.h"
 #include "gui/file_editor.h"
+#include "gui/content_browser.h"
 
 #include "imgui_stdlib.h"
 #include "ImGuizmo.h"
@@ -48,6 +49,7 @@ bool EditorSystem::initialize(const JSON::json& systemData)
 	m_Inspector.reset(new InspectorDock());
 	m_FileViewer.reset(new FileViewer());
 	m_FileEditor.reset(new FileEditor());
+	m_ContentBrowser.reset(new ContentBrowser());
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -189,7 +191,7 @@ void EditorSystem::update(float deltaMilliseconds)
 	m_FileEditor->draw(deltaMilliseconds);
 	m_Output->draw(deltaMilliseconds);
 	m_Viewport->draw(deltaMilliseconds);
-
+	m_ContentBrowser->draw(deltaMilliseconds);
 	popFont();
 
 	RenderingDevice::GetSingleton()->setMainRT();
@@ -452,6 +454,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 					ImGui::Checkbox("Scene", &m_Scene->getSettings().m_IsActive);
 					ImGui::Checkbox("Viewport", &m_Viewport->getSettings().m_IsActive);
 					ImGui::Checkbox("Inspector", &m_Inspector->getSettings().m_IsActive);
+					ImGui::Checkbox("Content Browser", &m_ContentBrowser->getSettings().m_IsActive);
 					ImGui::EndMenu();
 				}
 				ImGui::EndMenu();
