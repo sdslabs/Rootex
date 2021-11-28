@@ -37,6 +37,14 @@ public:
 	void setNormal(Ref<ImageResourceFile> normal);
 	void setSpecular(Ref<ImageResourceFile> spec);
 	void setLightmap(Ref<ImageResourceFile> lightmap);
+	void setAffectedBySky(bool status) { m_MaterialData.pixelBufferData.affectedBySky = status; }
+	void setAffectedByLight(bool status) { m_MaterialData.pixelBufferData.isLit = status; }
+
+	Color getColor() { return m_MaterialData.pixelBufferData.color; };
+	Ref<ImageResourceFile> getDiffuse() { return m_DiffuseImageFile; };
+	Ref<ImageResourceFile> getNormal() { return m_NormalImageFile; };
+	Ref<ImageResourceFile> getSpecular() { return m_SpecularImageFile; };
+	Ref<ImageResourceFile> getLightmap() { return m_LightmapImageFile; };
 
 	const Shader* getShader() const override { return s_Shader.get(); };
 	void bindShader() override;

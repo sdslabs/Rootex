@@ -22,4 +22,6 @@ struct Mesh
 
 	/// LOD level can range from 0.0f to 1.0f, returns the appropriate LOD
 	Ref<IndexBuffer> getLOD(float lodLevel) const;
+	Ref<VertexBuffer> getVertexBuffer() { return m_VertexBuffer; };
+	const BoundingBox& getBoundingBox() { return m_BoundingBox; };
 };

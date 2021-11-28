@@ -119,10 +119,10 @@ void BasicMaterialResourceFile::bindShader()
 void BasicMaterialResourceFile::bindTextures()
 {
 	ID3D11ShaderResourceView* textures[] = {
-		m_DiffuseImageFile->getTexture()->getTextureResourceView(),
-		m_MaterialData.pixelBufferData.hasNormalMap ? m_NormalImageFile->getTexture()->getTextureResourceView() : nullptr,
-		m_SpecularImageFile->getTexture()->getTextureResourceView(),
-		m_LightmapImageFile->getTexture()->getTextureResourceView()
+		m_DiffuseImageFile->getGPUTexture()->getTextureResourceView(),
+		m_MaterialData.pixelBufferData.hasNormalMap ? m_NormalImageFile->getGPUTexture()->getTextureResourceView() : nullptr,
+		m_SpecularImageFile->getGPUTexture()->getTextureResourceView(),
+		m_LightmapImageFile->getGPUTexture()->getTextureResourceView()
 	};
 	RenderingDevice::GetSingleton()->setPSSRV(DIFFUSE_PS_CPP, sizeof(textures) / sizeof(textures[0]), textures);
 }
@@ -155,7 +155,7 @@ JSON::json BasicMaterialResourceFile::getJSON() const
 
 ID3D11ShaderResourceView* BasicMaterialResourceFile::getPreview() const
 {
-	return m_DiffuseImageFile->getTexture()->getTextureResourceView();
+	return m_DiffuseImageFile->getGPUTexture()->getTextureResourceView();
 }
 
 void BasicMaterialResourceFile::reimport()

@@ -32,7 +32,7 @@ void RootexSelectableImage(const char* name, Ref<ImageResourceFile> image, Funct
 {
 	if (image)
 	{
-		if (ImGui::ImageButton(image->getTexture()->getTextureResourceView(), { 50, 50 }))
+		if (ImGui::ImageButton(image->getGPUTexture()->getTextureResourceView(), { 50, 50 }))
 		{
 			EventManager::GetSingleton()->deferredCall(EditorEvents::EditorOpenFile, VariantVector { image->getPath().generic_string(), (int)image->getType() });
 		}

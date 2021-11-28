@@ -674,14 +674,14 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 				static Ref<ImageResourceFile> editorImage = ResourceLoader::CreateImageResourceFile("editor/assets/editor.png");
 
 				ImGui::BeginGroup();
-				ImGui::Image(engineImage->getTexture()->getTextureResourceView(), { 200, 200 });
+				ImGui::Image(engineImage->getGPUTexture()->getTextureResourceView(), { 200, 200 });
 				ImGui::Text("Rootex Engine");
 				ImGui::EndGroup();
 
 				ImGui::SameLine();
 
 				ImGui::BeginGroup();
-				ImGui::Image(editorImage->getTexture()->getTextureResourceView(), { 200, 200 });
+				ImGui::Image(editorImage->getGPUTexture()->getTextureResourceView(), { 200, 200 });
 				ImGui::Text("Rootex Editor");
 				ImGui::EndGroup();
 
