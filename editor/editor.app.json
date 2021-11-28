@@ -20,7 +20,11 @@
             }
         },
         "InputSystem": {
+<<<<<<< HEAD
             "height": 801,
+=======
+            "height": 1001,
+>>>>>>> 31dac5c6 (improve content browser's appearance)
             "inputSchemes": {
                 "Editor": {
                     "bools": [
@@ -91,8 +95,8 @@
         },
         "PhysicsSystem": {},
         "UISystem": {
-            "height": 801,
-            "width": 1536
+            "height": 1001,
+            "width": 1920
         }
     },
     "version": 1.0,

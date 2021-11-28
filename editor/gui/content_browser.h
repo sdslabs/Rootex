@@ -1,7 +1,7 @@
 #pragma once
 
 #include "scene.h"
-
+#include "resource_loader.h"
 class ContentBrowser
 {
 	EventBinder<ContentBrowser> m_Binder;
@@ -17,6 +17,12 @@ private:
 	const std::filesystem::path m_AssetsDirectory {"game\\assets"};
 	std::filesystem::path m_CurrentDirectory { m_AssetsDirectory };
 	bool m_ReloadPending = true;
+
+	Ref<ImageResourceFile> m_DirectoryImage;
+	Ref<ImageResourceFile> m_ScriptImage;
+	Ref<ImageResourceFile> m_MusicImage;
+
+	float m_IconWidth = 128;
 
 public:
 	ContentBrowser();
