@@ -7,8 +7,6 @@
 #include "vendor/ImGUI/imgui_impl_dx11.h"
 #include "vendor/ImGUI/imgui_impl_win32.h"
 
-#include <filesystem>
-
 ContentBrowser::ContentBrowser()
 {
 	m_DirectoryImage = ResourceLoader::CreateImageResourceFile("editor\\assets\\icons\\folder.png");
@@ -28,11 +26,11 @@ void ContentBrowser::draw(float deltaMilliseconds)
 			{
 				if (ImGui::Button("<-"))
 				{
-					m_CurrentDirectory = m_CurrentDirectory.parent_path();
+					m_CurrentDirectory = OS::GetParentPath(m_CurrentDirectory).string();
 				}
 			}
 			ImGui::SameLine();
-			ImGui::Text(std::filesystem::relative(m_CurrentDirectory, m_AssetsDirectory).string().c_str());
+			ImGui::Text(OS::GetRelativePath(m_CurrentDirectory, m_AssetsDirectory).string().c_str());
 			ImGui::SameLine(ImGui::GetWindowWidth() - 85);
 			if (ImGui::Button("Reload"))
 			{
@@ -52,34 +50,35 @@ void ContentBrowser::draw(float deltaMilliseconds)
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.f, 0.f, 0.f, 0.f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.f, 1.f, 1.f, 0.5f));
 			int id = 0;
-			for (auto const& directoryIterator : std::filesystem::directory_iterator(m_CurrentDirectory))
+			for (FilePath directoryIterator : OS::GetAllInDirectory(m_CurrentDirectory))
 			{
 				ImGui::PushID(id++);
-				if (directoryIterator.is_directory())
+				String directoryIteratorString = directoryIterator.string();
+				if (OS::IsDirectory(directoryIteratorString))
 				{
 					if (ImGui::ImageButton(m_DirectoryImage->getTexture()->getTextureResourceView(), { m_IconWidth, ((float)m_DirectoryImage->getTexture()->getHeight()) * m_IconWidth / ((float)m_DirectoryImage->getTexture()->getWidth()) }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, 12, { 0.0f, 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }))
 					{
-						m_CurrentDirectory = directoryIterator.path();
-						std::cout << directoryIterator.path().string().c_str() << std::endl;
-						std::cout << m_CurrentDirectory.string().c_str() << std::endl;
+						m_CurrentDirectory = directoryIterator.string();
+						//std::cout << directoryIterator.path().string().c_str() << std::endl;
+						//std::cout << m_CurrentDirectory.string().c_str() << std::endl;
 					}
 				}
-				else if (directoryIterator.path().extension().string() == ".wav")
+				else if (directoryIterator.extension().string() == ".wav")
 				{
 					if (ImGui::ImageButton(m_MusicImage->getTexture()->getTextureResourceView(), { m_IconWidth, ((float)m_MusicImage->getTexture()->getHeight()) * m_IconWidth / ((float)m_MusicImage->getTexture()->getWidth()) }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, 12, { 0.0f, 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }))
 					{
-						std::cout << directoryIterator.path().string().c_str() << std::endl;
+						//std::cout << directoryIterator.string().c_str() << std::endl;
 					}
 				}
 				else
 				{
 					if (ImGui::ImageButton(m_ScriptImage->getTexture()->getTextureResourceView(), { m_IconWidth, ((float)m_ScriptImage->getTexture()->getHeight()) * m_IconWidth / ((float)m_ScriptImage->getTexture()->getWidth()) }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, 12, { 0.0f, 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }))
 					{
-						std::cout << directoryIterator.path().string().c_str() << std::endl;
+						//std::cout << directoryIterator.string().c_str() << std::endl;
 					}
 				}
 				ImGui::PopID();
-				ImGui::Text(directoryIterator.path().filename().string().c_str());
+				ImGui::Text(directoryIterator.filename().string().c_str());
 				ImGui::NextColumn();
 			}
 

@@ -2,6 +2,8 @@
 
 #include "scene.h"
 #include "resource_loader.h"
+#include <os.h>
+
 class ContentBrowser
 {
 	EventBinder<ContentBrowser> m_Binder;
@@ -14,8 +16,8 @@ public:
 
 private:
 	ContentBrowserSettings m_ContentBrowserSettings;
-	const std::filesystem::path m_AssetsDirectory {"game\\assets"};
-	std::filesystem::path m_CurrentDirectory { m_AssetsDirectory };
+	String m_AssetsDirectory = "game\\assets";
+	String m_CurrentDirectory = m_AssetsDirectory;
 	bool m_ReloadPending = true;
 
 	Ref<ImageResourceFile> m_DirectoryImage;

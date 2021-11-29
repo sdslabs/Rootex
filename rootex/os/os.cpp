@@ -50,6 +50,11 @@ String OS::GetFileStem(String stringPath)
 	return GetAbsolutePath(stringPath).filename().generic_string();
 }
 
+FilePath OS::GetParentPath(String stringPath)
+{
+	return GetAbsolutePath(stringPath).parent_path();
+}
+
 Vector<FilePath> OS::GetDirectoriesInDirectory(const String& directory)
 {
 	if (!std::filesystem::is_directory(GetAbsolutePath(directory)))
