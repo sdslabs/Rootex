@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <fstream>
 #include <chrono>
+#include <tchar.h>
 
 #include "common/types.h"
 
@@ -83,6 +84,8 @@ public:
 
 	static bool IsDirectory(const String& path);
 	static bool IsFile(const String& path);
+
+	static void RegisterFileSystemWatcher(const String& path, void (*callback)(PVOID, BOOLEAN));
 
 	static bool CreateDirectoryName(const String& dirPath);
 	static bool CreateDirectoryAbsoluteName(const String& dirPath);
