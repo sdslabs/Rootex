@@ -161,6 +161,14 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height)
 
 		GFX_ERR_CHECK(m_Device->CreateDepthStencilState(&dssDesc, &m_SkyDSState));
 	}
+	{
+		D3D11_DEPTH_STENCIL_DESC disableDepthTestDesc;
+		ZeroMemory(&disableDepthTestDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
+		disableDepthTestDesc.DepthEnable = FALSE;
+		disableDepthTestDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+		disableDepthTestDesc.DepthFunc = D3D11_COMPARISON_ALWAYS;
+		GFX_ERR_CHECK(m_Device->CreateDepthStencilState(&disableDepthTestDesc, &m_DisableDepthTestDSState));
+	}
 
 	//REMARK- reversed winding order to allow ccw .obj files to be rendered properly, can trouble later
 	{
@@ -376,7 +384,7 @@ void RenderingDevice::disableSkyDSS()
 
 void RenderingDevice::disableDSS()
 {
-	m_Context->OMSetDepthStencilState(nullptr, 0);
+	m_Context->OMSetDepthStencilState(m_DisableDepthTestDSState.Get(), 0);
 }
 
 void RenderingDevice::enableDSS()

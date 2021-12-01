@@ -49,6 +49,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_DSState;
 	UINT m_StencilRef;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_SkyDSState;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_DisableDepthTestDSState;
 
 	Ref<DirectX::SpriteBatch> m_FontBatch;
 
