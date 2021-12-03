@@ -91,12 +91,15 @@ float4 main(DecalPixelInputType input)
 	float3 viewspacePosition = float3(viewPos.x, -viewPos.y, -viewPos.z);
 	// float3 viewspacePosition = viewPos;
 
-	finalColor = float4(1.0f, 1.0f, 1.0f, 0.0f);
+	finalColor = float4(1.0f, 0.0f, 0.0f, 1.0f); // only for debugging; should be alpha zero
 
 	float3 decalViewspacePosition = input.decalViewspacePosition.xyz / input.decalViewspacePosition.w;
 	if (IsPointInDecalBounds(viewspacePosition, decalViewspacePosition, input.decalRight, input.decalForward, input.decalUp, input.decalHalfScale))
 	{
-		finalColor.a = 1.0f;
+		float3 r = viewspacePosition - decalViewspacePosition;
+		float localX = dot(r, input.decalRight) / (2 * input.decalHalfScale.x) + 0.5f;
+		float localY = -dot(r, input.decalUp) / (2 * input.decalHalfScale.y) + 0.5f;
+		finalColor = ShaderTexture.Sample(SampleType, float2(localX, localY));
 	}
 
 	// finalColor = float4(depth, depth, depth, 0.0f);
