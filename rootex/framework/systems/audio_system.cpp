@@ -129,6 +129,31 @@ void AudioSystem::update(float deltaMilliseconds)
 			m_Listener->update();
 		}
 	}
+	else
+	{
+		ZoneScoped;
+
+		for (auto& mc : ECSFactory::GetAllMusicComponent())
+		{
+			if (!(mc.getOwner().getScene()->m_ScenePause))
+			{
+				mc.getAudioSource()->queueNewBuffers();
+				mc.update();
+			}
+		}
+		for (auto& smc : ECSFactory::GetAllShortMusicComponent())
+		{
+			if (!(smc.getOwner().getScene()->m_ScenePause))
+			{
+				smc.update();
+			}
+		}
+
+		if (m_Listener)
+		{
+			m_Listener->update();
+		}
+	}
 }
 
 AudioSystem* AudioSystem::GetSingleton()

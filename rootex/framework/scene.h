@@ -53,6 +53,7 @@ private:
 	bool checkCycle(Scene* child);
 
 public:
+	bool m_ScenePause;
 	static void ResetNextID();
 
 	static Ptr<Scene> Create(const JSON::json& sceneData, const bool assignNewIDs);
