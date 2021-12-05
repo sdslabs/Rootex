@@ -16,7 +16,7 @@ public:
 
 private:
 	ContentBrowserSettings m_ContentBrowserSettings;
-	String m_AssetsDirectory = "game\\assets";
+	String m_AssetsDirectory = "game\\assets\\";
 	String m_CurrentDirectory = m_AssetsDirectory;
 	bool m_ReloadPending = true;
 
@@ -33,6 +33,9 @@ public:
 
 	void draw(float deltaMilliseconds);
 
+	ContentBrowser* GetSingleton();
+
 	ContentBrowserSettings& getSettings() { return m_ContentBrowserSettings; }
 	void setActive(bool enabled) { m_ContentBrowserSettings.m_IsActive = enabled; }
+	//void CALLBACK notifyFileSystemChanges(PVOID lpParam, BOOLEAN TimerOrWaitFired);
 };

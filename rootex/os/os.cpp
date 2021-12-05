@@ -10,6 +10,8 @@
 #include <commctrl.h>
 #include <shellapi.h>
 #include <shlobj_core.h>
+#include <strsafe.h>
+#include <windows.h>
 
 std::filesystem::file_time_type::clock OS::s_FileSystemClock;
 const std::chrono::time_point<std::chrono::system_clock> OS::s_ApplicationStartTime = std::chrono::system_clock::now();
@@ -355,7 +357,8 @@ bool OS::IsFile(const String& path)
 
 void OS::RegisterFileSystemWatcher(const String& path, void (*callback)(PVOID, BOOLEAN))
 {
-	LPCSTR lpDir = path.c_str();
+	LPCSTR lpDir = GetAbsolutePath(path).string().c_str();
+	printf("File path : %s", GetAbsolutePath(path).string().c_str());
 	DWORD dwWaitStatus;
 	HANDLE dwChangeHandles[2];
 	TCHAR lpDrive[4];
@@ -368,17 +371,17 @@ void OS::RegisterFileSystemWatcher(const String& path, void (*callback)(PVOID, B
 
 	lpDrive[2] = (TCHAR)'\\';
 	lpDrive[3] = (TCHAR)'\0';
-
+	_tprintf(TEXT("Directory tree (%s) changed.\n"), lpDrive);
 	// Watch the directory for file creation and deletion.
-
 	dwChangeHandles[0] = FindFirstChangeNotification(
 	    lpDir, // directory to watch
-	    TRUE, // do not watch subtree
+	    FALSE, // do not watch subtree
 	    FILE_NOTIFY_CHANGE_FILE_NAME); // watch file name changes
 
 	if (dwChangeHandles[0] == INVALID_HANDLE_VALUE)
 	{
 		WARN("FindFirstChangeNotification function failed.\n");
+		
 	}
 
 	// Watch the subtree for directory creation and deletion.
@@ -391,6 +394,31 @@ void OS::RegisterFileSystemWatcher(const String& path, void (*callback)(PVOID, B
 	if (dwChangeHandles[1] == INVALID_HANDLE_VALUE)
 	{
 		WARN("FindFirstChangeNotification function failed.\n");
+		LPVOID lpMsgBuf;
+		LPVOID lpDisplayBuf;
+		DWORD dw = GetLastError();
+
+		FormatMessage(
+		    FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+		    NULL,
+		    dw,
+		    MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		    (LPTSTR)&lpMsgBuf,
+		    0, NULL);
+
+		// Display the error message and exit the process
+
+		lpDisplayBuf = (LPVOID)LocalAlloc(LMEM_ZEROINIT,
+		    (lstrlen((LPCTSTR)lpMsgBuf) + lstrlen((LPCTSTR)"FindFirstChangeNotification") + 40) * sizeof(TCHAR));
+		StringCchPrintf((LPTSTR)lpDisplayBuf,
+		    LocalSize(lpDisplayBuf) / sizeof(TCHAR),
+		    TEXT("%s failed with error %d: %s"),
+		    "FindFirstChangeNotification", dw, lpMsgBuf);
+		MessageBox(NULL, (LPCTSTR)lpDisplayBuf, TEXT("Error"), MB_OK);
+
+		LocalFree(lpMsgBuf);
+		LocalFree(lpDisplayBuf);
+		printf("%d", GetLastError());
 	}
 
 	// Make a final validation check on our handles.
@@ -402,8 +430,14 @@ void OS::RegisterFileSystemWatcher(const String& path, void (*callback)(PVOID, B
 
 	// Change notification is set. Now wait on both notification
 	// handles and refresh accordingly.
-	if (!RegisterWaitForSingleObject(&waitHandle, dwChangeHandles[0], (WAITORTIMERCALLBACK)callback, &arg, INFINITE, WT_EXECUTEDEFAULT));
-	if (!RegisterWaitForSingleObject(&waitHandle, dwChangeHandles[1], (WAITORTIMERCALLBACK)callback, &arg, INFINITE, WT_EXECUTEDEFAULT));
+	if (!RegisterWaitForSingleObject(&waitHandle, dwChangeHandles[0], (WAITORTIMERCALLBACK)callback, &arg, INFINITE, WT_EXECUTEDEFAULT))
+	{
+		WARN("ERROR: Could not register file watcher notifier");
+	}
+	if (!RegisterWaitForSingleObject(&waitHandle, dwChangeHandles[1], (WAITORTIMERCALLBACK)callback, &arg, INFINITE, WT_EXECUTEDEFAULT))
+	{
+		WARN("ERROR: Could not register file watcher notifier");
+	}
 	/*
 	while (TRUE)
 	{
