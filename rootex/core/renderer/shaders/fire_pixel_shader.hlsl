@@ -89,7 +89,7 @@ float4 main(PixelInputType input)
 	float3 weightedColor = float3(240., 120., 0.) / 255.;
 
 	float3 finalColor = (finalNoise * weightedColor);
-	int power = 3;
+	float power = 3; //Maybe As a tweakable factor???
 	float alpha =( pow(finalColor.r, power) + pow(finalColor.b, power) + pow(finalColor.g, power) )/ 3.0f;
 	return float4(finalColor,alpha);
 	//return float4((time*50%100)/100, 1.0f, 1.0f, 1.0f);
