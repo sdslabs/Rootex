@@ -23,4 +23,7 @@ public:
 	void reimport() override;
 
 	Vector<Pair<Ref<BasicMaterialResourceFile>, Vector<Mesh>>>& getMeshes() { return m_Meshes; }
+	int getMaterialCount() { return m_Meshes.size(); }
+	Ref<BasicMaterialResourceFile> getMaterialAt(int i) { return m_Meshes[i].first; }
+	Vector<Mesh>& getMeshesOfMaterialAt(int i) { return m_Meshes[i].second; }
 };

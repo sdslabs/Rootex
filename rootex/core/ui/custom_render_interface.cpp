@@ -51,7 +51,7 @@ CustomRenderInterface::CustomRenderInterface(int width, int height)
 	format.push(VertexBufferElement::Type::FloatFloat, "TEXCOORD", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
 	m_Shader.reset(new Shader("rootex/core/renderer/shaders/ui_vertex_shader.hlsl", "rootex/core/renderer/shaders/ui_pixel_shader.hlsl", format));
 
-	m_Textures[0] = ResourceLoader::CreateImageResourceFile("rootex/assets/white.png")->getTexture();
+	m_Textures[0] = ResourceLoader::CreateImageResourceFile("rootex/assets/white.png")->getGPUTexture();
 
 	m_ModelMatrixBuffer = RenderingDevice::GetSingleton()->createBuffer<PerUIVSCB>(PerUIVSCB(), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
 }
@@ -84,7 +84,7 @@ bool CustomRenderInterface::LoadTexture(Rml::TextureHandle& textureHandle, Rml::
 	if (image)
 	{
 		textureHandle = s_TextureCount;
-		m_Textures[textureHandle] = image->getTexture();
+		m_Textures[textureHandle] = image->getGPUTexture();
 		textureDimensions.x = image->getWidth();
 		textureDimensions.y = image->getHeight();
 		s_TextureCount++;
@@ -97,7 +97,7 @@ bool CustomRenderInterface::LoadTexture(Rml::TextureHandle& textureHandle, Rml::
 bool CustomRenderInterface::GenerateTexture(Rml::TextureHandle& textureHandle, const byte* source, const Rml::Vector2i& sourceDimensions)
 {
 	textureHandle = s_TextureCount;
-	m_Textures[textureHandle].reset(new Texture((const char*)source, sourceDimensions.x, sourceDimensions.y));
+	m_Textures[textureHandle].reset(new GPUTexture((const char*)source, sourceDimensions.x, sourceDimensions.y));
 	s_TextureCount++;
 	return m_Textures[textureHandle] != nullptr;
 }

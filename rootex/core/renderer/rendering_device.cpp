@@ -562,6 +562,40 @@ Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::createTextureF
 	return textureSRV;
 }
 
+unsigned char* RenderingDevice::downloadTexture(ID3D11Texture2D* texture, unsigned int width, unsigned int height)
+{
+	ID3D11Texture2D* staging = nullptr;
+
+	D3D11_TEXTURE2D_DESC textureDesc;
+	textureDesc.Width = width;
+	textureDesc.Height = height;
+	textureDesc.MipLevels = 0;
+	textureDesc.ArraySize = 1;
+	textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	textureDesc.SampleDesc.Count = 1;
+	textureDesc.SampleDesc.Quality = 0;
+	textureDesc.BindFlags = 0;
+	textureDesc.MiscFlags = 0;
+	textureDesc.Usage = D3D11_USAGE_STAGING;
+	textureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+
+	m_Device->CreateTexture2D(&textureDesc, NULL, &staging);
+
+	m_Context->CopyResource(staging, texture);
+
+	D3D11_MAPPED_SUBRESOURCE resourceDesc = {};
+	m_Context->Map(staging, 0, D3D11_MAP_READ, 0, &resourceDesc);
+
+	unsigned char* pixelsMapped = (unsigned char*)resourceDesc.pData;
+	unsigned char* pixelsRet = new unsigned char[width * height * 4];
+
+	std::memcpy(pixelsRet, pixelsMapped, sizeof(unsigned char) * width * height * 4);
+
+	m_Context->Unmap(staging, 0);
+
+	return pixelsRet;
+}
+
 void RenderingDevice::bind(ID3D11Buffer* const* vertexBuffer, int count, const unsigned int* stride, const unsigned int* offset)
 {
 	m_Context->IASetVertexBuffers(0u, count, vertexBuffer, stride, offset);

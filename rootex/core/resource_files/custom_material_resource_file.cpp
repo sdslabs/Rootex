@@ -181,7 +181,7 @@ void CustomMaterialResourceFile::bindTextures()
 		textureSRVs.clear();
 		for (auto& texture : m_MaterialData.pixelShaderTextures)
 		{
-			textureSRVs.push_back(texture->getTexture()->getTextureResourceView());
+			textureSRVs.push_back(texture->getGPUTexture()->getTextureResourceView());
 		}
 
 		RenderingDevice::GetSingleton()->setPSSRV(CUSTOM_TEXTURE_0_PS_CPP, textureSRVs.size(), textureSRVs.data());
@@ -193,7 +193,7 @@ void CustomMaterialResourceFile::bindTextures()
 		textureSRVs.clear();
 		for (auto& texture : m_MaterialData.vertexShaderTextures)
 		{
-			textureSRVs.push_back(texture->getTexture()->getTextureResourceView());
+			textureSRVs.push_back(texture->getGPUTexture()->getTextureResourceView());
 		}
 
 		RenderingDevice::GetSingleton()->setVSSRV(CUSTOM_TEXTURE_0_VS_CPP, textureSRVs.size(), textureSRVs.data());

@@ -161,6 +161,10 @@ void LuaInterpreter::registerTypes()
 		color["y"] = &Color::y;
 		color["z"] = &Color::z;
 		color["w"] = &Color::w;
+		color["r"] = &Color::x;
+		color["g"] = &Color::y;
+		color["b"] = &Color::z;
+		color["a"] = &Color::w;
 	}
 	{
 		sol::usertype<Quaternion> quaternion = rootex.new_usertype<Quaternion>("Quaternion", sol::constructors<Quaternion(), Quaternion(float, float, float, float)>());
@@ -255,9 +259,42 @@ void LuaInterpreter::registerTypes()
 		audioResourceFile["getDuration"] = &AudioResourceFile::getDuration;
 	}
 	{
+		sol::usertype<MaterialResourceFile> materialResourceFile = rootex.new_usertype<MaterialResourceFile>(
+		    "MaterialResourceFile",
+		    sol::base_classes, sol::bases<ResourceFile>(),
+		    "alpha", sol::property(&MaterialResourceFile::isAlpha, &MaterialResourceFile::setAlpha));
+		materialResourceFile["isAlpha"] = &MaterialResourceFile::isAlpha;
+		materialResourceFile["setAlpha"] = &MaterialResourceFile::setAlpha;
+	}
+	{
+		sol::usertype<BasicMaterialResourceFile> basicMaterialResourceFile = rootex.new_usertype<BasicMaterialResourceFile>(
+		    "BasicMaterialResourceFile",
+		    sol::base_classes, sol::bases<ResourceFile, MaterialResourceFile>());
+		basicMaterialResourceFile["setColor"] = &BasicMaterialResourceFile::setColor;
+		basicMaterialResourceFile["setDiffuse"] = &BasicMaterialResourceFile::setDiffuse;
+		basicMaterialResourceFile["setNormal"] = &BasicMaterialResourceFile::setNormal;
+		basicMaterialResourceFile["setSpecular"] = &BasicMaterialResourceFile::setSpecular;
+		basicMaterialResourceFile["setLightmap"] = &BasicMaterialResourceFile::setLightmap;
+		basicMaterialResourceFile["setAffectedBySky"] = &BasicMaterialResourceFile::setAffectedBySky;
+		basicMaterialResourceFile["setAffectedByLight"] = &BasicMaterialResourceFile::setAffectedByLight;
+		basicMaterialResourceFile["getColor"] = &BasicMaterialResourceFile::getColor;
+		basicMaterialResourceFile["getDiffuse"] = &BasicMaterialResourceFile::getDiffuse;
+		basicMaterialResourceFile["getNormal"] = &BasicMaterialResourceFile::getNormal;
+		basicMaterialResourceFile["getSpecular"] = &BasicMaterialResourceFile::getSpecular;
+		basicMaterialResourceFile["getLightmap"] = &BasicMaterialResourceFile::getLightmap;
+	}
+	{
+		sol::usertype<Mesh> mesh = rootex.new_usertype<Mesh>("Mesh");
+		mesh["getBoundingBox"] = &Mesh::getBoundingBox;
+		mesh["addLOD"] = &Mesh::addLOD;
+	}
+	{
 		sol::usertype<ModelResourceFile> modelResourceFile = rootex.new_usertype<ModelResourceFile>(
 		    "ModelResourceFile",
 		    sol::base_classes, sol::bases<ResourceFile>());
+		modelResourceFile["getMeshesOfMaterialAt"] = &ModelResourceFile::getMeshesOfMaterialAt;
+		modelResourceFile["getMaterialCount"] = &ModelResourceFile::getMaterialCount;
+		modelResourceFile["getMaterialAt"] = &ModelResourceFile::getMaterialAt;
 	}
 	{
 		sol::usertype<AnimatedModelResourceFile> animatedModelResourceFile = rootex.new_usertype<AnimatedModelResourceFile>(
@@ -270,9 +307,21 @@ void LuaInterpreter::registerTypes()
 		    sol::base_classes, sol::bases<ResourceFile>());
 	}
 	{
+		sol::usertype<CPUTexture> cpuTexture = rootex.new_usertype<CPUTexture>("CPUTexture");
+		cpuTexture["getPixel"] = &CPUTexture::getPixel;
+		cpuTexture["setPixel"] = &CPUTexture::setPixel;
+		cpuTexture["getWidth"] = &CPUTexture::getWidth;
+		cpuTexture["getHeight"] = &CPUTexture::getHeight;
+	}
+	{
 		sol::usertype<ImageResourceFile> imageResourceFile = rootex.new_usertype<ImageResourceFile>(
 		    "ImageResourceFile",
-		    sol::base_classes, sol::bases<ResourceFile>());
+		    sol::base_classes, sol::bases<ResourceFile>(),
+		    "cpuAccess", sol::property(&ImageResourceFile::isCPUAccess, &ImageResourceFile::setCPUAccess));
+		imageResourceFile["getCPUTexture"] = &ImageResourceFile::getCPUTexture;
+		imageResourceFile["uploadCPUTexturetoGPU"] = &ImageResourceFile::uploadCPUTexturetoGPU;
+		imageResourceFile["setCPUAccess"] = &ImageResourceFile::setCPUAccess;
+		imageResourceFile["isCPUAccess"] = &ImageResourceFile::isCPUAccess;
 	}
 	{
 		sol::usertype<ImageCubeResourceFile> imageCubeResourceFile = rootex.new_usertype<ImageCubeResourceFile>(
@@ -383,6 +432,7 @@ void LuaInterpreter::registerTypes()
 		sol::usertype<ModelComponent> modelComponent = rootex.new_usertype<ModelComponent>(
 		    "ModelComponent",
 		    sol::base_classes, sol::bases<Component, RenderableComponent>());
+		modelComponent["getModelResourceFile"] = &ModelComponent::getModelResourceFile;
 	}
 	{
 		sol::usertype<AnimatedModelComponent> animatedModelComponent = rootex.new_usertype<AnimatedModelComponent>(

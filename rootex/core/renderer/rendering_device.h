@@ -113,6 +113,7 @@ public:
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createDDSTexture(const char* imageDDSFileData, size_t size);
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createTexture(const char* imageFileData, size_t size);
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createTextureFromPixels(const char* imageRawData, unsigned int width, unsigned int height);
+	unsigned char* downloadTexture(ID3D11Texture2D* texture, unsigned int width, unsigned int height);
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> createSS(SamplerState type);
 
 	void setVSSRV(unsigned int slot, unsigned int count, ID3D11ShaderResourceView** texture);

@@ -20,7 +20,7 @@ void ImageViewer::draw(float deltaMilliseconds)
 	ImGui::Separator();
 	ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
 	ImGui::SliderFloat("##Zoom", &m_Zoom, m_MinZoom, m_MaxZoom, "Zoom %.3fx");
-	ImGui::Image(m_ImageResourceFile->getTexture()->getTextureResourceView(), { m_Zoom * (float)m_ImageResourceFile->getTexture()->getWidth(), m_Zoom * (float)m_ImageResourceFile->getTexture()->getHeight() }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f, 1.0f });
+	ImGui::Image(m_ImageResourceFile->getGPUTexture()->getTextureResourceView(), { m_Zoom * (float)m_ImageResourceFile->getGPUTexture()->getWidth(), m_Zoom * (float)m_ImageResourceFile->getGPUTexture()->getHeight() }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f, 1.0f });
 }
 
 void ImageViewer::drawFileInfo()
@@ -29,12 +29,12 @@ void ImageViewer::drawFileInfo()
 
 	ImGui::Text("Dimensions");
 	ImGui::NextColumn();
-	ImGui::Text((std::to_string(m_ImageResourceFile->getTexture()->getWidth()) + "x" + std::to_string(m_ImageResourceFile->getTexture()->getHeight())).c_str());
+	ImGui::Text((std::to_string(m_ImageResourceFile->getGPUTexture()->getWidth()) + "x" + std::to_string(m_ImageResourceFile->getGPUTexture()->getHeight())).c_str());
 	ImGui::NextColumn();
 
 	ImGui::Text("Mip Levels");
 	ImGui::NextColumn();
-	ImGui::Text(std::to_string(m_ImageResourceFile->getTexture()->getMipLevels()).c_str());
+	ImGui::Text(std::to_string(m_ImageResourceFile->getGPUTexture()->getMipLevels()).c_str());
 	ImGui::NextColumn();
 
 	ImGui::Columns(1);

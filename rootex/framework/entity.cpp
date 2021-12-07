@@ -255,8 +255,10 @@ void Entity::draw()
 		{
 			m_Script.reset();
 		}
-
-		m_Script->draw();
+		if (m_Script)
+		{
+			m_Script->draw();
+		}
 	}
 	else
 	{

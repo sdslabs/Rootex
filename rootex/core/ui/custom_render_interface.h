@@ -26,7 +26,7 @@ class CustomRenderInterface : public Rml::RenderInterface
 	static unsigned int s_TextureCount;
 
 	Ptr<Shader> m_Shader;
-	HashMap<unsigned int, Ref<Texture>> m_Textures;
+	HashMap<unsigned int, Ref<GPUTexture>> m_Textures;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_ModelMatrixBuffer;
 	Matrix m_UITransform;
 	int m_Width;
