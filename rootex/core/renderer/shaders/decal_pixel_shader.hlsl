@@ -68,7 +68,7 @@ float3 ScreenSpaceToViewSpacePosition(float2 screenPos, float viewspaceDepth)
 
 bool IsPointInDecalBounds(float3 pos, float3 decalPos, float3 decalRight, float3 decalForward, float3 decalUp, float3 decalHalfScale)
 {
-	float3 scale = decalHalfScale * 2.0f;
+	float3 scale = decalHalfScale;
 	float3 p = pos - decalPos;
 	bool inX = (abs(dot(p, decalRight)) <= scale.x);
 	bool inY = (abs(dot(p, decalForward)) <= scale.y);
@@ -89,10 +89,8 @@ float4 main(DecalPixelInputType input)
 	float viewspaceDepth = ScreenSpaceToViewSpaceDepth(depth);
 	float3 viewPos = ScreenSpaceToViewSpacePosition(input.screenPosition.xy, viewspaceDepth);
 	float3 viewspacePosition = float3(viewPos.x, -viewPos.y, -viewPos.z);
-	// float3 viewspacePosition = viewPos;
 
-	finalColor = float4(1.0f, 0.0f, 0.0f, 1.0f); // only for debugging; should be alpha zero
-
+	finalColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
 	float3 decalViewspacePosition = input.decalViewspacePosition.xyz / input.decalViewspacePosition.w;
 	if (IsPointInDecalBounds(viewspacePosition, decalViewspacePosition, input.decalRight, input.decalForward, input.decalUp, input.decalHalfScale))
 	{
@@ -101,14 +99,6 @@ float4 main(DecalPixelInputType input)
 		float localY = -dot(r, input.decalUp) / (2 * input.decalHalfScale.y) + 0.5f;
 		finalColor = ShaderTexture.Sample(SampleType, float2(localX, localY));
 	}
-
-	// finalColor = float4(depth, depth, depth, 0.0f);
-
-	// finalColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
-
-	// clip(finalColor.a - 0.0001f);
-	// finalColor.rgb = abs(viewspacePosition) / 10.0f;
-	// finalColor.rgb = float3(1.0f, 0.0f, 0.0f);
 
 	return finalColor;
 }

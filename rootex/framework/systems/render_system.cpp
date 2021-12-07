@@ -465,7 +465,7 @@ void RenderSystem::setPerCameraChangePSCBs()
 
 	float tanHalfFOVY = 1.0f / proj.m[1][1];
 	float tanHalfFOVX = 1.0f / proj.m[0][0];
-	Vector2 cameraTanHalfFOV = { tanHalfFOVX, tanHalfFOVX };
+	Vector2 cameraTanHalfFOV = { tanHalfFOVX, tanHalfFOVY };
 
 	PerCameraChangePSCB perCameraChange;
 	perCameraChange.DepthUnpackConsts = depthUnpackConsts;

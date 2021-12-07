@@ -51,13 +51,6 @@ DecalPixelInputType main(VertexInputType input)
 
 	output.worldPosition = mul(float4(0.0f, 0.0f, 0.0f, 1.0f), M);
 
-	/* output.worldPosition = mul(float4(0.0f, 0.0f, 0.0f, 1.0f), M);
-	output.decalRight = mul(float4(1.0f, 0.0f, 0.0f, 1.0f), M).xyz - output.worldPosition.xyz;
-	output.decalForward = mul(float4(0.0f, 0.0f, -1.0f, 1.0f), M).xyz - output.worldPosition.xyz;
-	output.decalUp = mul(float4(0.0f, 1.0f, 0.0f, 1.0f), M).xyz - output.worldPosition.xyz;
-	output.decalHalfScale = float3(length(output.decalRight), length(output.decalForward), length(output.decalUp)) / 2.0f;
-	*/
-
 	float4x4 MV = mul(M, V);
 
 	output.decalViewspacePosition = mul(float4(0.0f, 0.0f, 0.0f, 1.0f), MV);
@@ -65,9 +58,8 @@ DecalPixelInputType main(VertexInputType input)
 	output.decalRight = mul(float4(1.0f, 0.0f, 0.0f, 1.0f), MV).xyz - output.decalViewspacePosition.xyz;
 	output.decalForward = mul(float4(0.0f, 0.0f, -1.0f, 1.0f), MV).xyz - output.decalViewspacePosition.xyz;
 	output.decalUp = mul(float4(0.0f, 1.0f, 0.0f, 1.0f), MV).xyz - output.decalViewspacePosition.xyz;
-
 	output.decalHalfScale = float3(length(output.decalRight), length(output.decalForward), length(output.decalUp)) / 2.0f;
-	
+
 	output.decalRight = normalize(output.decalRight);
 	output.decalForward = normalize(output.decalForward);
 	output.decalUp = normalize(output.decalUp);

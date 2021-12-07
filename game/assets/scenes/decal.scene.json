@@ -13,7 +13,7 @@
                         "lodDistance": 10.0,
                         "lodEnable": true,
                         "materialOverrides": {
-                            "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
+                            "rootex/assets/materials/default.basic.rmat": "game/assets/materials/rootex.basic.rmat"
                         },
                         "renderPass": 1,
                         "resFile": "rootex/assets/cube.obj"
@@ -34,9 +34,9 @@
                         "overrideBoundingBox": false,
                         "passDown": 7,
                         "position": {
-                            "x": -0.3799999952316284,
-                            "y": -0.4350000023841858,
-                            "z": -3.9000000953674316
+                            "x": -0.10000000149011612,
+                            "y": 0.0,
+                            "z": -4.900000095367432
                         },
                         "rotation": {
                             "w": 1.0,
@@ -54,7 +54,7 @@
                 "script": null
             },
             "importStyle": 0,
-            "name": "decal_projector",
+            "name": "DecalProjector",
             "sceneFile": "",
             "settings": {
                 "camera": 1,
@@ -97,9 +97,9 @@
                         "overrideBoundingBox": false,
                         "passDown": 7,
                         "position": {
-                            "x": 0.022659003734588623,
-                            "y": 0.0,
-                            "z": -6.920000076293945
+                            "x": 0.0,
+                            "y": -0.10000000149011612,
+                            "z": -5.5
                         },
                         "rotation": {
                             "w": 1.0,
@@ -117,7 +117,7 @@
                 "script": null
             },
             "importStyle": 0,
-            "name": "tobedecaled",
+            "name": "ToBeDecaled",
             "sceneFile": "",
             "settings": {
                 "camera": 1,
@@ -128,21 +128,52 @@
             }
         },
         {
-            "ID": 7,
+            "ID": 8,
             "children": [],
             "entity": {
                 "components": {
-                    "ModelComponent": {
-                        "affectingStaticLights": [],
-                        "isVisible": true,
-                        "lodBias": 0.0,
-                        "lodDistance": 10.0,
-                        "lodEnable": true,
-                        "materialOverrides": {
-                            "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
+                    "CameraComponent": {
+                        "aspectRatio": {
+                            "x": 16.0,
+                            "y": 9.0
                         },
-                        "renderPass": 1,
-                        "resFile": "rootex/assets/cube.obj"
+                        "far": 100.0,
+                        "fov": 0.7853981852531433,
+                        "near": 0.10000000149011612,
+                        "postProcessingDetails": {
+                            "assaoAdaptiveQualityLimit": 0.44999998807907104,
+                            "assaoBlurPassCount": 2,
+                            "assaoDetailShadowStrength": 0.5,
+                            "assaoFadeOutFrom": 50.0,
+                            "assaoFadeOutTo": 300.0,
+                            "assaoHorizonAngleThreshold": 0.05999999865889549,
+                            "assaoQualityLevel": 2,
+                            "assaoRadius": 1.2000000476837158,
+                            "assaoShadowClamp": 0.9800000190734863,
+                            "assaoShadowMultiplier": 1.0,
+                            "assaoShadowPower": 1.5,
+                            "assaoSharpness": 0.9800000190734863,
+                            "bloomBase": 1.0,
+                            "bloomBaseSaturation": 1.0,
+                            "bloomBrightness": 1.0,
+                            "bloomSaturation": 1.0,
+                            "bloomSize": 1.0,
+                            "bloomThreshold": 0.800000011920929,
+                            "bloomValue": 1.0,
+                            "gaussianBlurMultiplier": 1.0,
+                            "isASSAO": false,
+                            "isBloom": false,
+                            "isFXAA": false,
+                            "isGaussianBlur": false,
+                            "isMonochrome": false,
+                            "isPostProcessing": false,
+                            "isSepia": false,
+                            "isToneMap": false,
+                            "toneMapExposure": 0.0,
+                            "toneMapOperator": 0,
+                            "toneMapTransferFunction": 0,
+                            "toneMapWhiteNits": 200.0
+                        }
                     },
                     "TransformComponent": {
                         "boundingBox": {
@@ -160,14 +191,14 @@
                         "overrideBoundingBox": false,
                         "passDown": 7,
                         "position": {
-                            "x": 0.46382004022598267,
-                            "y": 0.14000000059604645,
-                            "z": -3.4600000381469727
+                            "x": -5.0,
+                            "y": 0.0,
+                            "z": 0.0
                         },
                         "rotation": {
-                            "w": 1.0,
+                            "w": 0.9239729642868042,
                             "x": -0.0,
-                            "y": 0.0,
+                            "y": -0.3824578523635864,
                             "z": -0.0
                         },
                         "scale": {
@@ -180,7 +211,7 @@
                 "script": null
             },
             "importStyle": 0,
-            "name": "tobedecaled",
+            "name": "my_cam",
             "sceneFile": "",
             "settings": {
                 "camera": 1,
@@ -192,57 +223,12 @@
         }
     ],
     "entity": {
-        "components": {
-            "DecalComponent": {
-                "affectingStaticLights": [],
-                "isVisible": true,
-                "lodBias": 0.0,
-                "lodDistance": 10.0,
-                "lodEnable": true,
-                "materialOverrides": {
-                    "rootex/assets/materials/default.basic.rmat": "rootex/assets/materials/default.basic.rmat"
-                },
-                "renderPass": 1,
-                "resFile": "rootex/assets/cube.obj"
-            },
-            "TransformComponent": {
-                "boundingBox": {
-                    "center": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 0.0
-                    },
-                    "extents": {
-                        "x": 0.5,
-                        "y": 0.5,
-                        "z": 0.5
-                    }
-                },
-                "overrideBoundingBox": false,
-                "passDown": 7,
-                "position": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                }
-            }
-        },
+        "components": null,
         "script": null
     },
     "importStyle": 0,
-    "name": "decal",
-    "sceneFile": "game/assets/scenes/decal.scene.json",
+    "name": "better_decals",
+    "sceneFile": "game/assets/scenes/better_decals.scene.json",
     "settings": {
         "camera": 1,
         "inputSchemes": {},
