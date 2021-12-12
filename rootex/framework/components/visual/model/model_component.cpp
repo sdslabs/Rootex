@@ -51,7 +51,7 @@ void ModelComponent::render(float viewDistance)
 
 	for (auto& [material, meshes] : m_ModelResourceFile->getMeshes())
 	{
-		RenderSystem::GetSingleton()->getRenderer()->bind(m_MaterialOverrides.at(material).get());
+		RenderSystem::GetSingleton()->getRenderer()->bind(m_MaterialOverrides.at(material).get(), material.get());
 		i++;
 
 		for (auto& mesh : meshes)

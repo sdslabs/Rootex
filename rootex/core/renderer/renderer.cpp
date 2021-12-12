@@ -1,6 +1,7 @@
 #include "renderer.h"
 
 #include <d3d11.h>
+#include "core/resource_files/basic_material_resource_file.h"
 #include <wrl.h>
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
@@ -25,6 +26,38 @@ void Renderer::resetCurrentShader()
 	m_CurrentShader = nullptr;
 }
 
+void Renderer::bind(MaterialResourceFile* newMaterial, MaterialResourceFile* oldMaterial)
+{
+	BasicMaterialResourceFile* BasicMaterialResourceFilePointer = dynamic_cast<BasicMaterialResourceFile*>(newMaterial);
+	if (BasicMaterialResourceFilePointer != nullptr)
+	{
+		ZoneNamedN(materialBind, "Render Material Bind", true);
+		if (newMaterial->getShader() != m_CurrentShader)
+		{
+			ZoneNamedN(materialBind, "Shader Bind", true);
+			m_CurrentShader = newMaterial->getShader();
+			newMaterial->bindShader();
+		}
+		newMaterial->bindSamplers();
+		newMaterial->bindTextures();
+		newMaterial->bindVSCB();
+		newMaterial->bindPSCB();
+	}
+	else
+	{
+		ZoneNamedN(materialBind, "Render Material Bind", true);
+		if (newMaterial->getShader() != m_CurrentShader)
+		{
+			ZoneNamedN(materialBind, "Shader Bind", true);
+			m_CurrentShader = newMaterial->getShader();
+			newMaterial->bindShader();
+		}
+		oldMaterial->bindSamplers();
+		oldMaterial->bindTextures();
+		oldMaterial->bindVSCB();
+		oldMaterial->bindPSCB();
+	}
+}
 void Renderer::bind(MaterialResourceFile* material)
 {
 	ZoneNamedN(materialBind, "Render Material Bind", true);

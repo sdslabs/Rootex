@@ -219,7 +219,13 @@ void RenderableComponent::draw()
 		{
 			ImGui::Image(oldMaterial->getPreview(), { 50, 50 });
 			ImGui::SameLine();
+			ImGui::BeginGroup();
 			ImGui::Text("%s", oldMaterial->getPath().filename().generic_string().c_str());
+			if (ImGui::Button((ICON_ROOTEX_PENCIL_SQUARE_O "##" + oldMaterial->getPath().generic_string()).c_str()))
+			{
+				EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { oldMaterial->getPath().generic_string(), (int)oldMaterial->getType() });
+			}
+			ImGui::EndGroup();
 			ImGui::NextColumn();
 			ImGui::Image(newMaterial->getPreview(), { 50, 50 });
 			ImGui::SameLine();
@@ -244,7 +250,6 @@ void RenderableComponent::draw()
 				setMaterialOverride(oldMaterial, oldMaterial);
 			}
 			ImGui::EndGroup();
-
 			ImGui::NextColumn();
 			ImGui::Separator();
 		}
