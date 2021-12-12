@@ -33,7 +33,6 @@ cbuffer CBuf : register(PER_MODEL_PS_HLSL)
 	int staticPointsLightsAffecting[MAX_STATIC_POINT_LIGHTS_AFFECTING_1_OBJECT];
 };
 
-
 float4 main(PixelInputType input)
     : SV_TARGET
 {
@@ -44,7 +43,7 @@ float4 main(PixelInputType input)
 
 	float3 toEye = normalize(cameraPos - (float3)input.worldPosition);
 
-	finalColor.rgb = lerp(finalColor.rgb, float3(0.0f, 0.0f, 0.0f), material.isLit);
+	finalColor.rgb = lerp(finalColor.rgb, float3(0.0f, 0.0f, 0.0f), 1);
 	input.normal = normalize(input.normal);
 
 	if (material.hasNormalMap)
@@ -63,39 +62,33 @@ float4 main(PixelInputType input)
 	float3 specularColor = SpecularTexture.Sample(SampleType, input.tex).rgb;
 	for (int i = 0; i < pointLightCount; i++)
 	{
-		finalColor += saturate(GetCelColorFromPointLight(pointLightInfos[i], toEye, input.normal, input.worldPosition, materialColor, specularColor, material.specPow, material.specularIntensity, material.isLit));
+		finalColor += saturate(GetCelColorFromPointLight(pointLightInfos[i], toEye, input.normal, input.worldPosition, materialColor, specularColor, material.specPow, material.specularIntensity, 1));
 	}
-
 
 	for (i = 0; i < staticPointLightAffectingCount; i++)
 	{
-		finalColor += saturate(GetCelColorFromPointLight(staticPointLightInfos[staticPointsLightsAffecting[i]], toEye, input.normal, input.worldPosition, materialColor, specularColor, material.specPow, material.specularIntensity, material.isLit));
+		finalColor += saturate(GetCelColorFromPointLight(staticPointLightInfos[staticPointsLightsAffecting[i]], toEye, input.normal, input.worldPosition, materialColor, specularColor, material.specPow, material.specularIntensity, 1));
 	}
 
-	finalColor += saturate(GetCelColorFromDirectionalLight(directionalLightInfo, toEye, input.normal, materialColor, specularColor, material.specPow, material.specularIntensity, material.isLit));
+	finalColor += saturate(GetCelColorFromDirectionalLight(directionalLightInfo, toEye, input.normal, materialColor, specularColor, material.specPow, material.specularIntensity, 1));
 
 	for (i = 0; i < spotLightCount; i++)
 	{
-		finalColor += saturate(GetCelColorFromSpotLight(spotLightInfos[i], toEye, input.normal, input.worldPosition, materialColor, specularColor, material.specPow, material.specularIntensity, material.isLit));
+		finalColor += saturate(GetCelColorFromSpotLight(spotLightInfos[i], toEye, input.normal, input.worldPosition, materialColor, specularColor, material.specPow, material.specularIntensity, 1));
 	}
 
 	finalColor.rgb = GetReflectionFromSky(finalColor, toEye, input.normal, SkyTexture, SampleType, material.reflectivity, material.affectedBySky, material.fresnelPower, material.fresnelBrightness);
 	finalColor.rgb = GetRefractionFromSky(finalColor, input.normal, input.worldPosition, cameraPos, SkyTexture, SampleType, material.refractionConstant, material.refractivity, material.affectedBySky);
 
-
-	float4 lightColor = LightmapTexture.Sample(SampleType, input.tex);
-
-	finalColor = finalColor* lightColor;
+	finalColor = finalColor * LightmapTexture.Sample(SampleType, input.tex);
 	finalColor.rgb = (lerp(fogColor, finalColor, input.fogFactor)).rgb;
 
 	return finalColor;
-
 	float intensity = (finalColor.r + finalColor.g + finalColor.b) / 3.; //Maybe use dot(dirOfLight, surfaceNormal)
-	const float SHADES = 5.0f;
+	const float SHADES = 3.0f;
 	float shade = floor(intensity * float(SHADES));
 	float brightnessOfShade = shade / float(SHADES);
 	float factor = intensity / brightnessOfShade;
 	finalColor.rgb /= factor;
 	return finalColor;
-	
 }
