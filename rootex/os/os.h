@@ -75,6 +75,7 @@ public:
 
 	static Vector<FilePath> GetAllFilesInDirectory(const String& directory);
 	static Vector<FilePath> GetAllInDirectory(const String& directory);
+	static Vector<FilePath> GetAllInDirectoryRoot(const String& directory);
 	static Vector<FilePath> GetDirectoriesInDirectory(const String& directory);
 	static bool DeleteDirectory(const String& dirPath);
 	static bool Rename(const String& sourcePath, const String& destinationPath);

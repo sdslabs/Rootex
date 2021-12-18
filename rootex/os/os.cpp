@@ -127,6 +127,22 @@ Vector<FilePath> OS::GetAllFilesInDirectory(const String& directory)
 	return result;
 }
 
+Vector<FilePath> OS::GetAllInDirectoryRoot(const String& directory)
+{
+	if (!std::filesystem::is_directory(GetAbsolutePath(directory)))
+	{
+		WARN("Not a directory: " + directory);
+		return {};
+	}
+
+	Vector<FilePath> result;
+	for (auto&& file : std::filesystem::directory_iterator(GetAbsolutePath(directory)))
+	{
+		result.push_back(GetRootRelativePath(((FilePath)file).generic_string()));
+	}
+	return result;
+}
+
 Vector<FilePath> OS::GetAllInDirectory(const String& directory)
 {
 	if (!std::filesystem::is_directory(GetAbsolutePath(directory)))
@@ -381,7 +397,6 @@ void OS::RegisterFileSystemWatcher(const String& path, void (*callback)(PVOID, B
 	if (dwChangeHandles[0] == INVALID_HANDLE_VALUE)
 	{
 		WARN("FindFirstChangeNotification function failed.\n");
-		
 	}
 
 	// Watch the subtree for directory creation and deletion.
@@ -409,7 +424,7 @@ void OS::RegisterFileSystemWatcher(const String& path, void (*callback)(PVOID, B
 		// Display the error message and exit the process
 
 		lpDisplayBuf = (LPVOID)LocalAlloc(LMEM_ZEROINIT,
-		    (lstrlen((LPCTSTR)lpMsgBuf) + lstrlen((LPCTSTR)"FindFirstChangeNotification") + 40) * sizeof(TCHAR));
+		    (lstrlen((LPCTSTR)lpMsgBuf) + lstrlen((LPCTSTR) "FindFirstChangeNotification") + 40) * sizeof(TCHAR));
 		StringCchPrintf((LPTSTR)lpDisplayBuf,
 		    LocalSize(lpDisplayBuf) / sizeof(TCHAR),
 		    TEXT("%s failed with error %d: %s"),

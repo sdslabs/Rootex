@@ -39,6 +39,7 @@ void ContentBrowser::draw(float deltaMilliseconds)
 				if (ImGui::Button("<-"))
 				{
 					m_CurrentDirectory = OS::GetParentPath(m_CurrentDirectory).string();
+					m_ReloadPending = true;
 				}
 			}
 			ImGui::SameLine();
@@ -62,7 +63,7 @@ void ContentBrowser::draw(float deltaMilliseconds)
 			{
 				try
 				{
-					Vector<FilePath> filepaths = OS::GetAllInDirectory(m_CurrentDirectory);
+					Vector<FilePath> filepaths = OS::GetAllInDirectoryRoot(m_CurrentDirectory);
 					m_thumbnail_cache.clear();
 					for (FilePath directoryIterator : filepaths)
 					{
@@ -74,6 +75,10 @@ void ContentBrowser::draw(float deltaMilliseconds)
 						else if (directoryIterator.extension().string() == ".wav")
 						{
 							m_thumbnail_cache[directoryIteratorString] = m_MusicImage;
+						}
+						else if (directoryIterator.extension().string() == ".png")
+						{
+							m_thumbnail_cache[directoryIteratorString] = ResourceLoader::CreateImageResourceFile(directoryIteratorString);
 						}
 						else
 						{
@@ -102,6 +107,7 @@ void ContentBrowser::draw(float deltaMilliseconds)
 					if (ImGui::ImageButton(m_thumbnail_cache[directoryIteratorString]->getTexture()->getTextureResourceView(), { m_IconWidth, ((float)m_DirectoryImage->getTexture()->getHeight()) * m_IconWidth / ((float)m_DirectoryImage->getTexture()->getWidth()) }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, 12, { 0.0f, 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }))
 					{
 						m_CurrentDirectory = directoryIterator.string();
+						m_ReloadPending = true;
 						//std::cout << directoryIterator.path().string().c_str() << std::endl;
 						//std::cout << m_CurrentDirectory.string().c_str() << std::endl;
 					}
