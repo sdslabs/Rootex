@@ -17,7 +17,7 @@ ContentBrowser::ContentBrowser()
 	m_DirectoryImage = ResourceLoader::CreateImageResourceFile("editor\\assets\\icons\\folder.png");
 	m_ScriptImage = ResourceLoader::CreateImageResourceFile("editor\\assets\\icons\\script.png");
 	m_MusicImage = ResourceLoader::CreateImageResourceFile("editor\\assets\\icons\\music.png");
-	OS::RegisterFileSystemWatcher(m_AssetsDirectory, &notifyFileSystemChanges);
+	//OS::RegisterFileSystemWatcher(m_AssetsDirectory, &notifyFileSystemChanges);
 }
 
 ContentBrowser* ContentBrowser::GetSingleton()
@@ -58,50 +58,72 @@ void ContentBrowser::draw(float deltaMilliseconds)
 			}
 			ImGui::Columns(num_columns, 0, false);
 
+			if (m_ReloadPending)
+			{
+				try
+				{
+					Vector<FilePath> filepaths = OS::GetAllInDirectory(m_CurrentDirectory);
+					m_thumbnail_cache.clear();
+					for (FilePath directoryIterator : filepaths)
+					{
+						String directoryIteratorString = directoryIterator.string();
+						if (OS::IsDirectory(directoryIteratorString))
+						{
+							m_thumbnail_cache[directoryIteratorString] = m_DirectoryImage;
+						}
+						else if (directoryIterator.extension().string() == ".wav")
+						{
+							m_thumbnail_cache[directoryIteratorString] = m_MusicImage;
+						}
+						else
+						{
+							m_thumbnail_cache[directoryIteratorString] = m_ScriptImage;
+						}
+					}
+					m_filepaths_cache = filepaths;
+					m_ReloadPending = false;
+				}
+				catch (...)
+				{
+					WARN("Recursive iteration on assets directory failed.")
+				}
+			}
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.f, 0.f, 0.f, 0.f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.f, 0.f, 0.f, 0.f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.f, 1.f, 1.f, 0.5f));
 			int id = 0;
-			try
+			for (FilePath directoryIterator : m_filepaths_cache)
 			{
-				Vector<FilePath> filepaths = OS::GetAllInDirectory(m_CurrentDirectory);
-				for (FilePath directoryIterator : filepaths)
-				{
-					ImGui::PushID(id++);
-					String directoryIteratorString = directoryIterator.string();
-					if (OS::IsDirectory(directoryIteratorString))
-					{
-						if (ImGui::ImageButton(m_DirectoryImage->getTexture()->getTextureResourceView(), { m_IconWidth, ((float)m_DirectoryImage->getTexture()->getHeight()) * m_IconWidth / ((float)m_DirectoryImage->getTexture()->getWidth()) }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, 12, { 0.0f, 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }))
-						{
-							m_CurrentDirectory = directoryIterator.string();
-							//std::cout << directoryIterator.path().string().c_str() << std::endl;
-							//std::cout << m_CurrentDirectory.string().c_str() << std::endl;
-						}
-					}
-					else if (directoryIterator.extension().string() == ".wav")
-					{
-						if (ImGui::ImageButton(m_MusicImage->getTexture()->getTextureResourceView(), { m_IconWidth, ((float)m_MusicImage->getTexture()->getHeight()) * m_IconWidth / ((float)m_MusicImage->getTexture()->getWidth()) }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, 12, { 0.0f, 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }))
-						{
-							//std::cout << directoryIterator.string().c_str() << std::endl;
-						}
-					}
-					else
-					{
-						if (ImGui::ImageButton(m_ScriptImage->getTexture()->getTextureResourceView(), { m_IconWidth, ((float)m_ScriptImage->getTexture()->getHeight()) * m_IconWidth / ((float)m_ScriptImage->getTexture()->getWidth()) }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, 12, { 0.0f, 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }))
-						{
-							//std::cout << directoryIterator.string().c_str() << std::endl;
-						}
-					}
-					ImGui::PopID();
-					ImGui::Text(directoryIterator.filename().string().c_str());
-					ImGui::NextColumn();
-				}
-			}
-			catch (...)
-			{
-				WARN("Recursive iteration on assets directory failed.")
-			}
+				ImGui::PushID(id++);
+				String directoryIteratorString = directoryIterator.string();
 
+				if (OS::IsDirectory(directoryIteratorString))
+				{
+					if (ImGui::ImageButton(m_thumbnail_cache[directoryIteratorString]->getTexture()->getTextureResourceView(), { m_IconWidth, ((float)m_DirectoryImage->getTexture()->getHeight()) * m_IconWidth / ((float)m_DirectoryImage->getTexture()->getWidth()) }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, 12, { 0.0f, 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }))
+					{
+						m_CurrentDirectory = directoryIterator.string();
+						//std::cout << directoryIterator.path().string().c_str() << std::endl;
+						//std::cout << m_CurrentDirectory.string().c_str() << std::endl;
+					}
+				}
+				else if (directoryIterator.extension().string() == ".wav")
+				{
+					if (ImGui::ImageButton(m_thumbnail_cache[directoryIteratorString]->getTexture()->getTextureResourceView(), { m_IconWidth, ((float)m_MusicImage->getTexture()->getHeight()) * m_IconWidth / ((float)m_MusicImage->getTexture()->getWidth()) }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, 12, { 0.0f, 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }))
+					{
+						//std::cout << directoryIterator.string().c_str() << std::endl;
+					}
+				}
+				else
+				{
+					if (ImGui::ImageButton(m_thumbnail_cache[directoryIteratorString]->getTexture()->getTextureResourceView(), { m_IconWidth, ((float)m_ScriptImage->getTexture()->getHeight()) * m_IconWidth / ((float)m_ScriptImage->getTexture()->getWidth()) }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, 12, { 0.0f, 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }))
+					{
+						//std::cout << directoryIterator.string().c_str() << std::endl;
+					}
+				}
+				ImGui::PopID();
+				ImGui::Text(directoryIterator.filename().string().c_str());
+				ImGui::NextColumn();
+			}
 			ImGui::PopStyleColor(3);
 
 			ImGui::Columns(5);

@@ -24,6 +24,9 @@ private:
 	Ref<ImageResourceFile> m_ScriptImage;
 	Ref<ImageResourceFile> m_MusicImage;
 
+	Vector<FilePath> m_filepaths_cache;
+	HashMap<String, Ref<ImageResourceFile>> m_thumbnail_cache;
+
 	float m_IconWidth = 128;
 
 public:
