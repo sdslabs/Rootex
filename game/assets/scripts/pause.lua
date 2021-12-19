@@ -8,7 +8,7 @@ function Pause:initialize(entity)
 end
 
 function Pause:enterScene(entity)
-    entity:bind("esc", Pause.onPauseLevel)
+    entity:bind("InputPause", Pause.onPauseLevel)
 end
 
 function Pause:onPauseLevel(entity, event)

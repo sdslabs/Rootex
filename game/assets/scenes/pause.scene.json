@@ -15,6 +15,7 @@
             },
             "importStyle": 0,
             "name": "pauser",
+            "pause": false,
             "sceneFile": "",
             "settings": {
                 "camera": 1,
@@ -92,21 +93,11 @@
     },
     "importStyle": 0,
     "name": "pausing",
+    "pause": true,
     "sceneFile": "game/assets/scenes/pause.scene.json",
     "settings": {
         "camera": 1,
-        "inputSchemes": {
-            "Load": {
-                "bools": [
-                    {
-                        "button": 0,
-                        "device": 1,
-                        "inputEvent": "esc"
-                    }
-                ],
-                "floats": []
-            }
-        },
+        "inputSchemes": {},
         "listener": 1,
         "preloads": [],
         "startScheme": "Load"
