@@ -100,7 +100,7 @@ void ContentBrowser::draw(float deltaMilliseconds)
 			for (FilePath directoryIterator : m_filepaths_cache)
 			{
 				ImGui::PushID(id++);
-				String directoryIteratorString = directoryIterator.string();
+				const String directoryIteratorString = directoryIterator.string();
 
 				if (OS::IsDirectory(directoryIteratorString))
 				{
@@ -125,6 +125,13 @@ void ContentBrowser::draw(float deltaMilliseconds)
 					{
 						//std::cout << directoryIterator.string().c_str() << std::endl;
 					}
+				}
+				if (ImGui::BeginDragDropSource())
+				{
+					//const wchar_t* path = directoryIterator.c_str();
+					//std::cout << directoryIteratorString;
+					ImGui::SetDragDropPayload("CONTENT_BROWSER_PAYLOAD", directoryIteratorString.c_str(), (directoryIteratorString.size()+1)*sizeof(char), ImGuiCond_Once);
+					ImGui::EndDragDropSource();
 				}
 				ImGui::PopID();
 				ImGui::Text(directoryIterator.filename().string().c_str());

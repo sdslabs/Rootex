@@ -84,6 +84,15 @@ void ViewportDock::draw(float deltaMilliseconds)
 			    region,
 			    { 0, 0 },
 			    { 1, 1 });
+
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_PAYLOAD"))
+				{
+					const char* path = (const char*)payload->Data;
+					EditorSystem::GetSingleton()->openScene(path);
+				}
+			}
 			static const ImVec2 viewportEnd = ImGui::GetCursorPos();
 
 			ImVec2 imageSize = ImGui::GetItemRectSize();

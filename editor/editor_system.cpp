@@ -233,8 +233,6 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 
-	static String loadingScene;
-
 	static Scene* exportScene = nullptr;
 
 	ImGui::Begin("Rootex Editor", nullptr, windowFlags);
@@ -252,7 +250,6 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 		if (ImGui::BeginMenuBar())
 		{
 			static String newSceneName;
-			static String openSceneName;
 			static String newFileName;
 			static String newFileTypeName;
 			static String newFileExtension;
@@ -343,16 +340,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 					{
 						if (ImGui::MenuItem(levelName.generic_string().c_str()))
 						{
-							if (SceneLoader::GetSingleton()->getCurrentScene())
-							{
-								openSceneName = levelName.generic_string();
-								m_MenuAction = "Save";
-								m_PopupCause = "open";
-							}
-							else
-							{
-								loadingScene = levelName.generic_string();
-							}
+							openScene(levelName.generic_string());
 						}
 					}
 					ImGui::EndMenu();
@@ -839,6 +827,20 @@ void EditorSystem::showDocumentation(const String& name, const sol::table& table
 			}
 		}
 		ImGui::Unindent();
+	}
+}
+
+void EditorSystem::openScene(String sceneName)
+{
+	if (SceneLoader::GetSingleton()->getCurrentScene())
+	{
+		openSceneName = sceneName;
+		m_MenuAction = "Save";
+		m_PopupCause = "open";
+	}
+	else
+	{
+		loadingScene = sceneName;
 	}
 }
 

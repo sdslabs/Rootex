@@ -34,6 +34,9 @@ class EditorSystem : public System
 	bool m_WireframeMode = false;
 	bool m_WorldMode = true;
 
+	String openSceneName;
+	String loadingScene;
+
 	ImFont* m_EditorFont;
 	ImFont* m_EditorFontItalic;
 	ImFont* m_EditorFontBold;
@@ -90,6 +93,8 @@ public:
 	void pushMonospaceFont() { ImGui::PushFont(m_EditorFontMonospace); }
 
 	void popFont() { ImGui::PopFont(); }
+
+	void openScene(String sceneName);
 
 	ImColor getWarningColor() const { return ColorToImColor((Color)ColorPresets::LightYellow); }
 	ImColor getFatalColor() const { return ColorToImColor((Color)ColorPresets::IndianRed); }
