@@ -87,7 +87,7 @@ void ViewportDock::draw(float deltaMilliseconds)
 
 			if (ImGui::BeginDragDropTarget())
 			{
-				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_PAYLOAD"))
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("SCENE_PAYLOAD"))
 				{
 					const char* path = (const char*)payload->Data;
 					EditorSystem::GetSingleton()->openScene(path);

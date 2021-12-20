@@ -90,7 +90,7 @@ void ContentBrowser::draw(float deltaMilliseconds)
 				}
 				catch (...)
 				{
-					WARN("Recursive iteration on assets directory failed.")
+					WARN("Iteration on assets directory failed.")
 				}
 			}
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.f, 0.f, 0.f, 0.f));
@@ -108,31 +108,32 @@ void ContentBrowser::draw(float deltaMilliseconds)
 					{
 						m_CurrentDirectory = directoryIterator.string();
 						m_ReloadPending = true;
-						//std::cout << directoryIterator.path().string().c_str() << std::endl;
-						//std::cout << m_CurrentDirectory.string().c_str() << std::endl;
 					}
 				}
 				else if (directoryIterator.extension().string() == ".wav")
 				{
 					if (ImGui::ImageButton(m_thumbnail_cache[directoryIteratorString]->getTexture()->getTextureResourceView(), { m_IconWidth, ((float)m_MusicImage->getTexture()->getHeight()) * m_IconWidth / ((float)m_MusicImage->getTexture()->getWidth()) }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, 12, { 0.0f, 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }))
 					{
-						//std::cout << directoryIterator.string().c_str() << std::endl;
+					}
+				}
+				else if (directoryIterator.extension().string() == ".json")
+				{
+					if (ImGui::ImageButton(m_thumbnail_cache[directoryIteratorString]->getTexture()->getTextureResourceView(), { m_IconWidth, ((float)m_MusicImage->getTexture()->getHeight()) * m_IconWidth / ((float)m_MusicImage->getTexture()->getWidth()) }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, 12, { 0.0f, 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }))
+					{
+					}
+					if (ImGui::BeginDragDropSource())
+					{
+						ImGui::SetDragDropPayload("SCENE_PAYLOAD", directoryIteratorString.c_str(), (directoryIteratorString.size() + 1) * sizeof(char), ImGuiCond_Once);
+						ImGui::EndDragDropSource();
 					}
 				}
 				else
 				{
 					if (ImGui::ImageButton(m_thumbnail_cache[directoryIteratorString]->getTexture()->getTextureResourceView(), { m_IconWidth, ((float)m_ScriptImage->getTexture()->getHeight()) * m_IconWidth / ((float)m_ScriptImage->getTexture()->getWidth()) }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, 12, { 0.0f, 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }))
 					{
-						//std::cout << directoryIterator.string().c_str() << std::endl;
 					}
 				}
-				if (ImGui::BeginDragDropSource())
-				{
-					//const wchar_t* path = directoryIterator.c_str();
-					//std::cout << directoryIteratorString;
-					ImGui::SetDragDropPayload("CONTENT_BROWSER_PAYLOAD", directoryIteratorString.c_str(), (directoryIteratorString.size()+1)*sizeof(char), ImGuiCond_Once);
-					ImGui::EndDragDropSource();
-				}
+				
 				ImGui::PopID();
 				ImGui::Text(directoryIterator.filename().string().c_str());
 				ImGui::NextColumn();
