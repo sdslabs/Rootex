@@ -144,6 +144,57 @@ void AudioSystem::end()
 		smc.getAudioSource()->stop();
 	}
 }
+void AudioSystem::addNewBus()
+{
+	// adds a new bus to the vector and the tree
+}
+
+void AudioSystem::removeBus(AudioBus* bus)
+{
+	// removes an audio bus from the vector and the tree
+}
+
+void AudioBus::addAudioComponent(Ref<AudioComponent> cp)
+{
+	m_AudioComponents.push_back(cp);
+}
+
+void AudioSystem::draw()
+{
+	System::draw();
+	for (auto& bus : m_Buses)
+	{
+		ImGui::Text(bus->getBusName().c_str());
+
+		if (ImGui::Button(ICON_ROOTEX_MINUS "##Remove Bus"))
+		{
+			removeBus(bus);
+		}
+
+		// volume of the bus
+		ImGui::DragFloat("Volume", &bus->getBusVolume(), 0.01f, 0.0f, 100.0f);
+
+		// selecting the parent
+		if (ImGui::BeginCombo("Parent", m_Buses[0]->getBusName().c_str()))
+		{
+			for (auto& cp : m_Buses)
+			{
+				if (ImGui::Selectable(cp->getBusName().c_str()))
+				{
+					bus->setParent(cp);
+				}
+			}
+			ImGui::EndCombo();
+		}
+	}
+
+	if (ImGui::Button(ICON_ROOTEX_PLUS "##Add Bus"))
+	{
+		addNewBus();
+	}
+
+	ImGui::Text("AudioMixerSystem");
+}
 
 void AudioSystem::setListener(AudioListenerComponent* listenerComponent)
 {
@@ -187,4 +238,22 @@ void AudioSystem::shutDown()
 AudioSystem::AudioSystem()
     : System("AudioSystem", UpdateOrder::Async, true)
 {
+}
+
+void AudioBus::onVolumeChange(float delta)
+{
+	for (auto& ac : m_AudioComponents)
+	{
+		// the fraction of change is to be decided
+	}
+
+	for (auto& child : m_Children)
+	{
+		child->onVolumeChange(delta);
+	}
+}
+
+void AudioBus::setParent(AudioBus* parent)
+{
+	m_Parent = parent;
 }

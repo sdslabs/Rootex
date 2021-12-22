@@ -125,6 +125,12 @@ void AudioComponent::setLooping(bool enabled)
 	m_AudioSource->setLooping(enabled);
 }
 
+void AudioComponent::setAudioBus(AudioBus* bus)
+{
+	m_AudioBus = bus;
+	bus->addAudioComponent(Ref<AudioComponent>(this));
+}
+
 void AudioComponent::draw()
 {
 	RenderSystem::GetSingleton()->submitSphere(getTransformComponent()->getAbsoluteTransform().Translation(), m_MaxDistance);
@@ -176,4 +182,17 @@ void AudioComponent::draw()
 	ImGui::DragFloat("Rolloff Factor", &m_RolloffFactor, 1.0f, 0.0f, 100.0f);
 	ImGui::DragFloat("Max Distance", &m_MaxDistance, 1.0f, 0.0f, 100.0f);
 	ImGui::DragFloat("Volume", &m_Volume, 0.01f, 0.0f, 100.0f);
+
+	// Audio mixer UI
+	if (ImGui::BeginCombo("Bus", AudioSystem::GetSingleton()->getAudioBuses()[0]->getBusName().c_str()))
+	{
+		for (auto& cp : AudioSystem::GetSingleton()->getAudioBuses())
+		{
+			if (ImGui::Selectable(cp->getBusName().c_str()))
+			{
+				setAudioBus(cp);
+			}
+		}
+		ImGui::EndCombo();
+	}
 }
