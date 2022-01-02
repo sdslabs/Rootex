@@ -117,6 +117,7 @@ void RenderableComponent::setMaterialOverride(Ref<MaterialResourceFile> oldMater
 {
 	if (oldMaterial && newMaterial)
 	{
+
 		m_MaterialOverrides[oldMaterial] = newMaterial;
 	}
 	else

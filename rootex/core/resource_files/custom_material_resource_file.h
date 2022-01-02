@@ -53,4 +53,8 @@ public:
 	bool save() override;
 	void draw() override;
 	void drawTextureSlots(const char* label, Vector<Ref<ImageResourceFile>>& textures);
+	std::string getClassName()
+	{
+		return std::string("CustomMaterialResourceFile");
+	}
 };

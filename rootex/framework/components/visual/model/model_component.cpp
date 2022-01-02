@@ -51,7 +51,7 @@ void ModelComponent::render(float viewDistance)
 
 	for (auto& [material, meshes] : m_ModelResourceFile->getMeshes())
 	{
-		RenderSystem::GetSingleton()->getRenderer()->bind(m_MaterialOverrides.at(material).get());
+		RenderSystem::GetSingleton()->getRenderer()->bind(m_MaterialOverrides.at(material).get(), material.get());
 		i++;
 
 		for (auto& mesh : meshes)
@@ -113,7 +113,11 @@ void ModelComponent::assignOverrides(Ref<ModelResourceFile> newModel, const Hash
 	}
 	for (auto& [oldMaterial, newMaterial] : materialOverrides)
 	{
-		setMaterialOverride(ResourceLoader::CreateMaterialResourceFile(oldMaterial), ResourceLoader::CreateMaterialResourceFile(newMaterial));
+		Ref<MaterialResourceFile> oldMaterialResourceFile = ResourceLoader::CreateMaterialResourceFile(oldMaterial);
+		Ref<MaterialResourceFile> newMaterialResourceFile = ResourceLoader::CreateMaterialResourceFile(newMaterial);
+
+
+		setMaterialOverride(oldMaterialResourceFile, newMaterialResourceFile);
 	}
 }
 

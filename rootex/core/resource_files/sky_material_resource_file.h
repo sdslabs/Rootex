@@ -40,4 +40,8 @@ public:
 	void reimport() override;
 	bool save() override;
 	void draw() override;
+	std::string getClassName()
+	{
+		return std::string("SkyMaterialResourceFile");
+	}
 };

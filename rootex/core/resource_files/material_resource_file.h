@@ -32,6 +32,7 @@ public:
 	bool isAlpha() const { return m_IsAlpha; }
 
 	void draw() override;
+	virtual string getClassName() = 0;
 };
 
 /// Kept separate from the main data buffer class because it needs proper packing

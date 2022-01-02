@@ -21,7 +21,8 @@ public:
 	void setViewport(Viewport& viewport);
 
 	void resetCurrentShader();
-	void bind(MaterialResourceFile* material);
+	void bind(MaterialResourceFile* newMaterial, MaterialResourceFile* oldMaterial);
+	void bind(MaterialResourceFile* Material);
 	void draw(const VertexBuffer* vertexBuffer, const IndexBuffer* indexBuffer) const;
 	void drawInstanced(const VertexBuffer* vertexBuffer, const IndexBuffer* indexBuffer, const VertexBuffer* instanceBuffer, unsigned int instances) const;
 };

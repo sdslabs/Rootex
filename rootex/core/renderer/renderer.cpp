@@ -25,6 +25,38 @@ void Renderer::resetCurrentShader()
 	m_CurrentShader = nullptr;
 }
 
+void Renderer::bind(MaterialResourceFile* newMaterial, MaterialResourceFile* oldMaterial)
+{
+	if (oldMaterial->getClassName() == "BasicMaterialResourceFile")
+	{
+
+		ZoneNamedN(materialBind, "Render Material Bind", true);
+		if (newMaterial->getShader() != m_CurrentShader)
+		{
+			ZoneNamedN(materialBind, "Shader Bind", true);
+			m_CurrentShader = newMaterial->getShader();
+			newMaterial->bindShader();
+		}
+		newMaterial->bindSamplers();
+		newMaterial->bindTextures();
+		newMaterial->bindVSCB();
+		newMaterial->bindPSCB();
+	}
+	else
+	{
+		ZoneNamedN(materialBind, "Render Material Bind", true);
+		if (newMaterial->getShader() != m_CurrentShader)
+		{
+			ZoneNamedN(materialBind, "Shader Bind", true);
+			m_CurrentShader = newMaterial->getShader();
+			newMaterial->bindShader();
+		}
+		oldMaterial->bindSamplers();
+		oldMaterial->bindTextures();
+		oldMaterial->bindVSCB();
+		oldMaterial->bindPSCB();
+	}
+}
 void Renderer::bind(MaterialResourceFile* material)
 {
 	ZoneNamedN(materialBind, "Render Material Bind", true);

@@ -6,11 +6,11 @@
 #define NUMBEROFSHADES float(2.)
 
 TextureCube SkyTexture : register(SKY_PS_HLSL);
-
-Texture2D ShaderTexture : register(CUSTOM_TEXTURE_0_PS_HLSL);
+Texture2D ShaderTexture : register(DIFFUSE_PS_HLSL);
 Texture2D NormalTexture : register(NORMAL_PS_HLSL);
 Texture2D SpecularTexture : register(SPECULAR_PS_HLSL);
 Texture2D LightmapTexture : register(LIGHTMAP_PS_HLSL);
+//Texture2D ShaderTexture : register(CUSTOM_TEXTURE_0_PS_HLSL);
 SamplerState SampleType : register(SAMPLER_PS_HLSL);
 
 struct PixelInputType

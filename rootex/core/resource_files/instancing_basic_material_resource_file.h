@@ -22,4 +22,8 @@ public:
 	const Shader* getShader() const override { return s_Shader.get(); };
 
 	void bindShader() override;
+	std::string getClassName()
+	{
+		return std::string("InstancingBasicMaterialResourceFile");
+	}
 };
