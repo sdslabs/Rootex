@@ -11,6 +11,7 @@ enum class ComponentIDs : unsigned int
 	TransformComponent,
 	PointLightComponent,
 	DirectionalLightComponent,
+	GodRaysComponent,
 	SpotLightComponent,
 	PhysicsColliderComponent,
 	SphereColliderComponent,

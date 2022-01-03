@@ -110,3 +110,13 @@ struct PSFXAACB
 	/// { 1.0f / screenWidth, 1.0f / screenHeight, 0.0f, 0.0f }
 	Vector4 rcpFrame;
 };
+
+struct PSGodRaysCB
+{
+	Vector3 sunScreenSpacePos;
+	int numSamples = 0;
+	float density;
+	float weight;
+	float decay;
+	float exposure;
+};

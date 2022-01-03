@@ -233,6 +233,16 @@ void RenderSystem::update(float deltaMilliseconds)
 		renderLines();
 	}
 	{
+		ZoneNamedN(godRays, "God Rays Rendering", true);
+		GodRaysMidPostProcessor::GetSingleton()->preDraw();
+		for (auto& grc : ECSFactory::GetAllGodRaysComponent())
+		{
+			grc.render();
+			GodRaysMidPostProcessor::GetSingleton()->draw();
+		}
+		GodRaysMidPostProcessor::GetSingleton()->postDraw();
+	}
+	{
 		ZoneNamedN(skyRendering, "Sky Rendering", true);
 		RenderingDevice::GetSingleton()->enableSkyDSS();
 		RenderingDevice::RasterizerState currentRS = RenderingDevice::GetSingleton()->getRSType();
