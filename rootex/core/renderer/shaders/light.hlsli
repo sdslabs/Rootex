@@ -66,7 +66,8 @@ float4 GetColorFromPointLight(PointLightInfo pointLight, float3 toEye, float3 no
     float cosAngle = max(0.0f, dot(normalizedRelative, normal));
     float3 diffuse = (pointLight.diffuseColor * pointLight.diffuseIntensity * cosAngle).rgb;
     float3 reflected = reflect(-normalizedRelative, normal);
-    float specFactor = pow(max(dot(normalize(reflected), toEye), 0.0f), specPow);
+	float3 halfwayDir = normalize(normalize(reflected) + toEye);
+	float specFactor = pow(max(dot(halfwayDir, normal), 0.0f), specPow);
     float3 specular = specularColor * specFactor * specularIntensity;
         
     totalColor = float4(((diffuse + (float3) pointLight.ambientColor) * (float3) materialColor + specular) * att, 0.0f);
@@ -79,8 +80,9 @@ float4 GetColorFromDirectionalLight(DirectionalLightInfo directionalLight, float
     float cosAngle = max(0.0f, dot(-direction, normal));
     float3 diffuse = (directionalLight.diffuseColor * directionalLight.diffuseIntensity * cosAngle).rgb;
     float3 reflected = reflect(-direction, normal);
-    float specFactor = pow(max(dot(normalize(reflected), toEye), 0.0f), specPow);
-    float3 specular = specularColor * specFactor * specularIntensity;
+	float3 halfwayDir = normalize(normalize(reflected) + toEye);
+	float specFactor = pow(max(dot(halfwayDir, normal), 0.0f), specPow);
+	float3 specular = specularColor * specFactor * specularIntensity;
     float4 totalColor = float4((diffuse + (float3) directionalLightInfo.ambientColor) * (float3) materialColor + specular, 0.0f);
     return totalColor * isLit;
 }
@@ -98,8 +100,9 @@ float4 GetColorFromSpotLight(SpotLightInfo spotLight, float3 toEye, float3 norma
     float att = 1.0f / (spotLight.attConst + spotLight.attLin * dist + spotLight.attQuad * (dist * dist));
     float3 diffuse = (spotLight.diffuseColor * spotLight.diffuseIntensity * cosAngle).rgb;
     float3 reflected = reflect(-normalizedRelative, normal);
-    float specFactor = pow(max(dot(normalize(reflected), toEye), 0.0f), specPow);
-    float3 specular = specularColor * specFactor * specularIntensity;
+	float3 halfwayDir = normalize(normalize(reflected) + toEye);
+	float specFactor = pow(max(dot(halfwayDir, normal), 0.0f), specPow);
+	float3 specular = specularColor * specFactor * specularIntensity;
     float spotFactor = pow(rangeAngle, spotLight.spot);
         
     totalColor = float4(((diffuse + (float3) spotLight.ambientColor) * (float3) materialColor + specular) * att * spotFactor, 0.0f);
