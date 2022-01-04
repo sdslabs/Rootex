@@ -10,10 +10,13 @@ class CustomMaterialResourceFile : public MaterialResourceFile
 {
 private:
 	static inline Microsoft::WRL::ComPtr<ID3D11SamplerState> s_Sampler;
+	Vector<float> customConstantBuffers;
+	Vector<float> typeOfCustomConstantBuffers; // 1.0 -> float, 2.0 -> float3, 3.0 -> Color
 
 	CustomMaterialData m_MaterialData;
 
 	Ptr<Shader> m_Shader;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> m_PSCB;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_VSCB;
 
 	void pushPSTexture(Ref<ImageResourceFile> texture);
