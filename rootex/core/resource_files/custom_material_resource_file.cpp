@@ -228,6 +228,9 @@ void CustomMaterialResourceFile::bindVSCB()
 
 void CustomMaterialResourceFile::bindPSCB()
 {
+	int size = customConstantBuffers.size() * sizeof(float);
+	RenderingDevice::GetSingleton()->editBuffer((const char*)customConstantBuffers.data(), size, m_PSCB.Get());
+	RenderingDevice::GetSingleton()->setPSCB(CUSTOM_PER_OBJECT_PS_CPP, 1, m_PSCB.GetAddressOf());
 }
 
 JSON::json CustomMaterialResourceFile::getJSON() const
@@ -254,6 +257,8 @@ void CustomMaterialResourceFile::reimport()
 	MaterialResourceFile::readJSON(j);
 
 	recompileShaders();
+	float fakeArray[64];
+	m_PSCB = RenderingDevice::GetSingleton()->createBuffer((const char*)fakeArray,64 * sizeof(float), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
 	m_VSCB = RenderingDevice::GetSingleton()->createBuffer<PerModelVSCBData>(PerModelVSCBData(), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
 }
 
@@ -441,5 +446,103 @@ void CustomMaterialResourceFile::draw()
 		}
 
 		ImGui::TreePop();
+	}
+
+	int i = 0;
+	int j = 0;
+	float tempFloat3[3];
+	float* addressesFloat3[3];
+	float tempColor[4];
+	float* addressesColor[4];
+	for (auto&& cb : customConstantBuffers)
+	{
+		if (typeOfCustomConstantBuffers[i / 4] == 1.0)
+		{
+			if (i % 4 == 0)
+			{
+				String customConstantBufferName = "CB Slot " + std::to_string(i / 4);
+				ImGui::DragFloat(customConstantBufferName.c_str(), &cb, 0.01f, 0.0f, 10.0f);
+				ImGui::Separator();
+			}
+		}
+		if (typeOfCustomConstantBuffers[i / 4] == 2.0)
+		{
+			tempFloat3[j % 3] = cb;
+			addressesFloat3[j % 3] = &cb;
+			if (i % 4 != 3)
+			{
+				j++;
+				i++;
+				continue;
+			}
+			String customConstantBufferName = "CB Slot " + std::to_string(i / 4);
+			ImGui::DragFloat3(customConstantBufferName.c_str(), tempFloat3, 0.01f, 0.0f, 10.0f);
+			for (int k = 0; k < 3; k++)
+			{
+				*addressesFloat3[k] = tempFloat3[k];
+			}
+			ImGui::Separator();
+		}
+		if (typeOfCustomConstantBuffers[i / 4] == 3.0)
+		{
+			tempColor[i % 4] = cb;
+			addressesColor[i % 4] = &cb;
+			if (i % 4 != 3)
+			{
+				i++;
+				continue;
+			}
+			String customConstantBufferName = "CB Slot " + std::to_string(i / 4);
+			ImGui::ColorPicker4(customConstantBufferName.c_str(), tempColor);
+			for (int k = 0; k < 4; k++)
+			{
+				*addressesColor[k] = tempColor[k];
+			}
+			ImGui::Separator();
+		}
+		i++;
+		continue;
+	}
+
+	if (ImGui::Button(ICON_ROOTEX_PLUS "Push float CB"))
+	{
+		float value = 1.0;
+		customConstantBuffers.push_back(value);
+		customConstantBuffers.push_back(value);
+		customConstantBuffers.push_back(value);
+		customConstantBuffers.push_back(value);
+		typeOfCustomConstantBuffers.push_back(1.0);
+	}
+	ImGui::SameLine();
+
+	if (ImGui::Button(ICON_ROOTEX_PLUS "Push float3 CB"))
+	{
+		float value = 1.0;
+		customConstantBuffers.push_back(value);
+		customConstantBuffers.push_back(value);
+		customConstantBuffers.push_back(value);
+		customConstantBuffers.push_back(value);
+		typeOfCustomConstantBuffers.push_back(2.0);
+	}
+	ImGui::SameLine();
+
+	if (ImGui::Button(ICON_ROOTEX_PLUS "Push Color CB"))
+	{
+		float value = 1.0;
+		customConstantBuffers.push_back(value);
+		customConstantBuffers.push_back(value);
+		customConstantBuffers.push_back(value);
+		customConstantBuffers.push_back(value);
+		typeOfCustomConstantBuffers.push_back(3.0);
+	}
+	ImGui::SameLine();
+
+	if (ImGui::Button(ICON_ROOTEX_MINUS "Pop CB"))
+	{
+		customConstantBuffers.pop_back();
+		customConstantBuffers.pop_back();
+		customConstantBuffers.pop_back();
+		customConstantBuffers.pop_back();
+		typeOfCustomConstantBuffers.pop_back();
 	}
 }

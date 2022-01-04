@@ -28,35 +28,27 @@ void Renderer::resetCurrentShader()
 
 void Renderer::bind(MaterialResourceFile* newMaterial, MaterialResourceFile* oldMaterial)
 {
-	BasicMaterialResourceFile* BasicMaterialResourceFilePointer = dynamic_cast<BasicMaterialResourceFile*>(newMaterial);
-	if (BasicMaterialResourceFilePointer != nullptr)
+	ZoneNamedN(materialBind, "Render Material Bind", true);
+	BasicMaterialResourceFile* basicMaterialResourceFilePointer = dynamic_cast<BasicMaterialResourceFile*>(newMaterial);
+	if (basicMaterialResourceFilePointer != nullptr)
 	{
-		ZoneNamedN(materialBind, "Render Material Bind", true);
-		if (newMaterial->getShader() != m_CurrentShader)
-		{
-			ZoneNamedN(materialBind, "Shader Bind", true);
-			m_CurrentShader = newMaterial->getShader();
-			newMaterial->bindShader();
-		}
 		newMaterial->bindSamplers();
 		newMaterial->bindTextures();
-		newMaterial->bindVSCB();
-		newMaterial->bindPSCB();
 	}
 	else
 	{
-		ZoneNamedN(materialBind, "Render Material Bind", true);
-		if (newMaterial->getShader() != m_CurrentShader)
-		{
-			ZoneNamedN(materialBind, "Shader Bind", true);
-			m_CurrentShader = newMaterial->getShader();
-			newMaterial->bindShader();
-		}
 		oldMaterial->bindSamplers();
 		oldMaterial->bindTextures();
-		oldMaterial->bindVSCB();
 		oldMaterial->bindPSCB();
 	}
+	if (newMaterial->getShader() != m_CurrentShader)
+	{
+		ZoneNamedN(materialBind, "Shader Bind", true);
+		m_CurrentShader = newMaterial->getShader();
+		newMaterial->bindShader();
+	}
+	newMaterial->bindVSCB();
+	newMaterial->bindPSCB();
 }
 void Renderer::bind(MaterialResourceFile* material)
 {
