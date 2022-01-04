@@ -52,7 +52,7 @@ void AnimatedModelComponent::render(float viewDistance)
 				overridingMaterial->uploadAnimationBuffer(PerModelAnimationVSCBData(m_FinalTransforms));
 				uploadBones = false;
 			}
-			RenderSystem::GetSingleton()->getRenderer()->bind(overridingMaterial.get());
+			RenderSystem::GetSingleton()->getRenderer()->bind(overridingMaterial.get(), material.get());
 
 			for (auto& mesh : meshes)
 			{
