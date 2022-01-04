@@ -24,7 +24,6 @@ struct PixelInputType
 	float4 color : COLOR;
 };
 
-
 float2 hash(float2 p)
 {
 	p = float2(dot(p, float2(127.1, 311.7)),
@@ -32,8 +31,8 @@ float2 hash(float2 p)
 
 	return -1.0 + 2.0 * frac(sin(p) * 43758.5453123);
 }
-float noise(in float2 p)
-{
+
+float noise(in float2 p) //simplex noise: https://en.wikipedia.org/wiki/Simplex_noise
 	const float K1 = 0.366025404; // (sqrt(3)-1)/2;
 	const float K2 = 0.211324865; // (3-sqrt(3))/6;
 
@@ -50,7 +49,8 @@ float noise(in float2 p)
 
 	return dot(n, float3(70.0,70.0,70.0));
 }
-float fbm(in float2 p)
+
+float fbm(in float2 p) //Fractal Brownian Motion: https://en.wikipedia.org/wiki/Fractional_Brownian_motion
 {
 	float f = 0.0;
 	float2x2 m = float2x2(1.6, 1.2, -1.2, 1.6);
@@ -86,12 +86,11 @@ float4 main(PixelInputType input)
 
 	float gradient = pow(1.0 - uv.y, 2.0) * 5.;
 	float finalNoise = movingNoise * gradient;
-	float3 weightedColor = float3(240., 120., 0.) / 255.;
+	float3 weightedColor = float3(240.0, 120.0, 0.0) / 255.;
 
 	float3 finalColor = (finalNoise * weightedColor);
 	float power = 3; //Maybe As a tweakable factor???
 	float alpha =( pow(finalColor.r, power) + pow(finalColor.b, power) + pow(finalColor.g, power) )/ 3.0f;
 	return float4(finalColor,alpha);
-	//return float4((time*50%100)/100, 1.0f, 1.0f, 1.0f);
 }
 

@@ -3,7 +3,7 @@
 #include "basic_material.hlsli"
 #include "sky.hlsli"
 
-#define NUMBER_OF_SHADES float(2.)
+#define NUMBER_OF_SHADES float(2.0)
 
 TextureCube SkyTexture : register(SKY_PS_HLSL);
 Texture2D ShaderTexture : register(DIFFUSE_PS_HLSL);
