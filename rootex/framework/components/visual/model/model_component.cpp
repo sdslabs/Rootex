@@ -131,6 +131,7 @@ void ModelComponent::draw()
 	ImGui::Checkbox("Visible", &m_IsVisible);
 
 	String filePath = m_ModelResourceFile->getPath().generic_string();
+	ImGui::BeginGroup();
 	ImGui::Text("%s", filePath.c_str());
 	ImGui::SameLine();
 	if (ImGui::Button("Model"))
@@ -143,6 +144,15 @@ void ModelComponent::draw()
 		if (Optional<String> result = OS::SelectFile(SupportedFiles.at(ResourceFile::Type::Model), "game/assets/"))
 		{
 			setModelResourceFile(ResourceLoader::CreateModelResourceFile(*result), {});
+		}
+	}
+	ImGui::EndGroup();
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("MODEL_PAYLOAD"))
+		{
+			const char* path = (const char*)payload->Data;
+			setModelResourceFile(ResourceLoader::CreateModelResourceFile(path), {});
 		}
 	}
 

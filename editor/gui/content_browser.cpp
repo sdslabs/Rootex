@@ -117,33 +117,16 @@ void ContentBrowser::draw(float deltaMilliseconds)
 					{
 					}
 				}
-				if (directoryIterator.extension().string() == ".wav")
+				if (m_PayloadTypes.find(directoryIterator.extension().string()) != m_PayloadTypes.end())
 				{
-					if (ImGui::BeginDragDropSource())
+					for (const char* it : m_PayloadTypes.at(directoryIterator.extension().string()))
 					{
-						ImGui::SetDragDropPayload("AUDIO_PAYLOAD", directoryIteratorString.c_str(), (directoryIteratorString.size() + 1) * sizeof(char), ImGuiCond_Once);
-						ImGui::EndDragDropSource();
+						if (ImGui::BeginDragDropSource())
+						{
+							ImGui::SetDragDropPayload(it, directoryIteratorString.c_str(), (directoryIteratorString.size() + 1) * sizeof(char), ImGuiCond_Once);
+							ImGui::EndDragDropSource();
+						}
 					}
-				}
-				else if (directoryIterator.extension().string() == ".json")
-				{
-					if (ImGui::BeginDragDropSource())
-					{
-						ImGui::SetDragDropPayload("SCENE_PAYLOAD", directoryIteratorString.c_str(), (directoryIteratorString.size() + 1) * sizeof(char), ImGuiCond_Once);
-						ImGui::EndDragDropSource();
-					}
-				}
-				else if (directoryIterator.extension().string() == ".lua")
-				{
-					if (ImGui::BeginDragDropSource())
-					{
-						ImGui::SetDragDropPayload("SCRIPT_PAYLOAD", directoryIteratorString.c_str(), (directoryIteratorString.size() + 1) * sizeof(char), ImGuiCond_Once);
-						ImGui::EndDragDropSource();
-					}
-				}
-				else
-				{
-					//ek GENERIC_PAYLOAD bhi bana hi denge
 				}
 
 				ImGui::PopID();
