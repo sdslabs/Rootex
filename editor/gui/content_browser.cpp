@@ -1,6 +1,7 @@
 #include "content_browser.h"
 
 #include "editor/editor_system.h"
+#include "core/resource_loader.h"
 
 #include "utility/imgui_helpers.h"
 #include "vendor/ImGUI/imgui.h"
@@ -110,17 +111,22 @@ void ContentBrowser::draw(float deltaMilliseconds)
 						m_ReloadPending = true;
 					}
 				}
-				else if (directoryIterator.extension().string() == ".wav")
+				else
 				{
 					if (ImGui::ImageButton(m_thumbnail_cache[directoryIteratorString]->getTexture()->getTextureResourceView(), { m_IconWidth, ((float)m_MusicImage->getTexture()->getHeight()) * m_IconWidth / ((float)m_MusicImage->getTexture()->getWidth()) }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, 12, { 0.0f, 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }))
 					{
 					}
 				}
+				if (directoryIterator.extension().string() == ".wav")
+				{
+					if (ImGui::BeginDragDropSource())
+					{
+						ImGui::SetDragDropPayload("AUDIO_PAYLOAD", directoryIteratorString.c_str(), (directoryIteratorString.size() + 1) * sizeof(char), ImGuiCond_Once);
+						ImGui::EndDragDropSource();
+					}
+				}
 				else if (directoryIterator.extension().string() == ".json")
 				{
-					if (ImGui::ImageButton(m_thumbnail_cache[directoryIteratorString]->getTexture()->getTextureResourceView(), { m_IconWidth, ((float)m_MusicImage->getTexture()->getHeight()) * m_IconWidth / ((float)m_MusicImage->getTexture()->getWidth()) }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, 12, { 0.0f, 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }))
-					{
-					}
 					if (ImGui::BeginDragDropSource())
 					{
 						ImGui::SetDragDropPayload("SCENE_PAYLOAD", directoryIteratorString.c_str(), (directoryIteratorString.size() + 1) * sizeof(char), ImGuiCond_Once);
@@ -129,9 +135,6 @@ void ContentBrowser::draw(float deltaMilliseconds)
 				}
 				else if (directoryIterator.extension().string() == ".lua")
 				{
-					if (ImGui::ImageButton(m_thumbnail_cache[directoryIteratorString]->getTexture()->getTextureResourceView(), { m_IconWidth, ((float)m_MusicImage->getTexture()->getHeight()) * m_IconWidth / ((float)m_MusicImage->getTexture()->getWidth()) }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, 12, { 0.0f, 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }))
-					{
-					}
 					if (ImGui::BeginDragDropSource())
 					{
 						ImGui::SetDragDropPayload("SCRIPT_PAYLOAD", directoryIteratorString.c_str(), (directoryIteratorString.size() + 1) * sizeof(char), ImGuiCond_Once);
@@ -140,11 +143,9 @@ void ContentBrowser::draw(float deltaMilliseconds)
 				}
 				else
 				{
-					if (ImGui::ImageButton(m_thumbnail_cache[directoryIteratorString]->getTexture()->getTextureResourceView(), { m_IconWidth, ((float)m_ScriptImage->getTexture()->getHeight()) * m_IconWidth / ((float)m_ScriptImage->getTexture()->getWidth()) }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, 12, { 0.0f, 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }))
-					{
-					}
+					//ek GENERIC_PAYLOAD bhi bana hi denge
 				}
-				
+
 				ImGui::PopID();
 				ImGui::Text(directoryIterator.filename().string().c_str());
 				ImGui::NextColumn();

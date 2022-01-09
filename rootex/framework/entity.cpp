@@ -229,7 +229,6 @@ const String& Entity::getFullName() const
 void Entity::draw()
 {
 	ImGui::BeginGroup();
-
 	ImGui::Text("Script");
 	if (m_Script)
 	{
@@ -271,14 +270,6 @@ void Entity::draw()
 			if (Optional<String> result = OS::SelectFile(SupportedFiles.at(ResourceFile::Type::Lua), "game/assets/scripts/"))
 			{
 				setScript(*result);
-			}
-		}
-		if (ImGui::BeginDragDropTarget())
-		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("SCRIPT_PAYLOAD"))
-			{
-				const char* path = (const char*)payload->Data;
-				setScript(path);
 			}
 		}
 	}
