@@ -127,6 +127,17 @@ void ContentBrowser::draw(float deltaMilliseconds)
 						ImGui::EndDragDropSource();
 					}
 				}
+				else if (directoryIterator.extension().string() == ".lua")
+				{
+					if (ImGui::ImageButton(m_thumbnail_cache[directoryIteratorString]->getTexture()->getTextureResourceView(), { m_IconWidth, ((float)m_MusicImage->getTexture()->getHeight()) * m_IconWidth / ((float)m_MusicImage->getTexture()->getWidth()) }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, 12, { 0.0f, 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }))
+					{
+					}
+					if (ImGui::BeginDragDropSource())
+					{
+						ImGui::SetDragDropPayload("SCRIPT_PAYLOAD", directoryIteratorString.c_str(), (directoryIteratorString.size() + 1) * sizeof(char), ImGuiCond_Once);
+						ImGui::EndDragDropSource();
+					}
+				}
 				else
 				{
 					if (ImGui::ImageButton(m_thumbnail_cache[directoryIteratorString]->getTexture()->getTextureResourceView(), { m_IconWidth, ((float)m_ScriptImage->getTexture()->getHeight()) * m_IconWidth / ((float)m_ScriptImage->getTexture()->getWidth()) }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, 12, { 0.0f, 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }))
