@@ -181,6 +181,22 @@ void LuaInterpreter::registerTypes()
 		    sol::meta_function::subtraction, [](Matrix& l, Matrix& r) { return l - r; },
 		    sol::meta_function::multiplication, [](Matrix& l, Matrix& r) { return l * r; });
 		matrix["Identity"] = sol::var(Matrix::Identity);
+		matrix["_11"] = &Matrix::_11;
+		matrix["_12"] = &Matrix::_12;
+		matrix["_13"] = &Matrix::_13;
+		matrix["_14"] = &Matrix::_14;
+		matrix["_21"] = &Matrix::_21;
+		matrix["_22"] = &Matrix::_22;
+		matrix["_23"] = &Matrix::_23;
+		matrix["_24"] = &Matrix::_24;
+		matrix["_31"] = &Matrix::_31;
+		matrix["_32"] = &Matrix::_32;
+		matrix["_33"] = &Matrix::_33;
+		matrix["_34"] = &Matrix::_34;
+		matrix["_41"] = &Matrix::_41;
+		matrix["_42"] = &Matrix::_42;
+		matrix["_43"] = &Matrix::_43;
+		matrix["_44"] = &Matrix::_44;
 	}
 	{
 		sol::usertype<Event> event = rootex.new_usertype<Event>("Event", sol::constructors<Event(const Event::Type, const Variant)>());
