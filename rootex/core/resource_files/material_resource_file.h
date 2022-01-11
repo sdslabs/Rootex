@@ -34,6 +34,8 @@ public:
 	bool isAlpha() const { return m_IsAlpha; }
 
 	void draw() override;
+	template <class T>
+	T* as() { return dynamic_cast<T*>(this); }
 };
 
 /// Kept separate from the main data buffer class because it needs proper packing

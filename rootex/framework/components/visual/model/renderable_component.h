@@ -18,7 +18,7 @@ protected:
 	float m_LODBias;
 	float m_LODDistance;
 
-	HashMap<Ref<MaterialResourceFile>, Ref<MaterialResourceFile>> m_MaterialOverrides;
+	HashMap<MaterialResourceFile*, Ref<MaterialResourceFile>> m_MaterialOverrides;
 	Vector<SceneID> m_AffectingStaticLightIDs;
 	Vector<int> m_AffectingStaticLights;
 
@@ -41,7 +41,8 @@ public:
 	virtual bool addAffectingStaticLight(SceneID id);
 	virtual void removeAffectingStaticLight(SceneID id);
 
-	virtual void setMaterialOverride(Ref<MaterialResourceFile> oldMaterial, Ref<MaterialResourceFile> newMaterial);
+	void setMaterialOverride(MaterialResourceFile* oldMaterial, Ref<MaterialResourceFile> newMaterial);
+	Ref<MaterialResourceFile> getMaterialOverride(MaterialResourceFile* material) { return m_MaterialOverrides.at(material); }
 
 	unsigned int getRenderPass() const { return m_RenderPass; }
 
