@@ -58,4 +58,12 @@ public:
 	bool save() override;
 	void draw() override;
 	void drawTextureSlots(const char* label, Vector<Ref<ImageResourceFile>>& textures);
+
+	float getFloat(int index);
+	Vector<float> getFloat3(int index);
+	Vector<float> getColor(int index);
+
+	void setFloat(int index, float value);
+	void setFloat3(int index, Vector3 value);
+	void setColor(int index, Color value);
 };

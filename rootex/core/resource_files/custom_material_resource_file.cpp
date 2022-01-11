@@ -258,13 +258,57 @@ void CustomMaterialResourceFile::reimport()
 
 	recompileShaders();
 	float fakeArray[64];
-	m_PSCB = RenderingDevice::GetSingleton()->createBuffer((const char*)fakeArray,64 * sizeof(float), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
+	m_PSCB = RenderingDevice::GetSingleton()->createBuffer((const char*)fakeArray, 64 * sizeof(float), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
 	m_VSCB = RenderingDevice::GetSingleton()->createBuffer<PerModelVSCBData>(PerModelVSCBData(), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
 }
 
 bool CustomMaterialResourceFile::save()
 {
 	return saveMaterialData(getJSON());
+}
+
+float CustomMaterialResourceFile::getFloat(int index)
+{
+	return customConstantBuffers[index];
+}
+
+Vector<float> CustomMaterialResourceFile::getFloat3(int index)
+{
+	Vector<float> temp;
+	temp.push_back(customConstantBuffers[index]);
+	temp.push_back(customConstantBuffers[index + 1]);
+	temp.push_back(customConstantBuffers[index + 2]);
+	return temp;
+}
+
+Vector<float> CustomMaterialResourceFile::getColor(int index)
+{
+	Vector<float> temp;
+	temp.push_back(customConstantBuffers[index]);
+	temp.push_back(customConstantBuffers[index + 1]);
+	temp.push_back(customConstantBuffers[index + 2]);
+	temp.push_back(customConstantBuffers[index + 3]);
+	return temp;
+}
+
+void CustomMaterialResourceFile::setFloat(int index, float value)
+{
+	customConstantBuffers[index] = value;
+}
+
+void CustomMaterialResourceFile::setFloat3(int index, Vector3 value)
+{
+	customConstantBuffers[index] = value.x;
+	customConstantBuffers[index + 1] = value.y;
+	customConstantBuffers[index + 2] = value.z;
+}
+
+void CustomMaterialResourceFile::setColor(int index, Color value)
+{
+	customConstantBuffers[index] = value.x;
+	customConstantBuffers[index + 1] = value.y;
+	customConstantBuffers[index + 2] = value.z;
+	customConstantBuffers[index + 3] = value.w;
 }
 
 void CustomMaterialResourceFile::draw()

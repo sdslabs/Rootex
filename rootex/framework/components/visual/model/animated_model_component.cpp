@@ -45,7 +45,7 @@ void AnimatedModelComponent::render(float viewDistance)
 	bool uploadBones = true;
 	for (auto& [material, meshes] : m_AnimatedModelResourceFile->getMeshes())
 	{
-		if (Ref<AnimatedBasicMaterialResourceFile> overridingMaterial = std::dynamic_pointer_cast<AnimatedBasicMaterialResourceFile>(m_MaterialOverrides[material]))
+		if (Ref<AnimatedBasicMaterialResourceFile> overridingMaterial = std::dynamic_pointer_cast<AnimatedBasicMaterialResourceFile>(m_MaterialOverrides[material.get()]))
 		{
 			if (uploadBones)
 			{
@@ -194,12 +194,12 @@ void AnimatedModelComponent::assignOverrides(Ref<AnimatedModelResourceFile> file
 	m_MaterialOverrides.clear();
 	for (auto& [material, meshes] : m_AnimatedModelResourceFile->getMeshes())
 	{
-		setMaterialOverride(material, material);
+		setMaterialOverride(material.get(), material);
 	}
 	for (auto& [oldMaterial, newMaterial] : materialOverrides)
 	{
 		setMaterialOverride(
-		    ResourceLoader::CreateNewAnimatedBasicMaterialResourceFile(oldMaterial),
+		    ResourceLoader::CreateNewAnimatedBasicMaterialResourceFile(oldMaterial).get(),
 		    ResourceLoader::CreateNewAnimatedBasicMaterialResourceFile(newMaterial));
 	}
 }
