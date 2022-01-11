@@ -62,30 +62,58 @@ void CallUpdateForScene(Scene* scene, float deltaMilliseconds)
 void ScriptSystem::update(float deltaMilliseconds)
 {
 	ZoneScoped;
-
-	for (auto& entity : m_ScriptEntitiesToInit)
+	if (!(m_Pause))
 	{
-		if (entity)
+		for (auto& entity : m_ScriptEntitiesToInit)
 		{
-			entity->evaluateScriptOverrides();
-			entity->call("begin", { entity });
+			if (entity)
+			{
+				entity->evaluateScriptOverrides();
+				entity->call("begin", { entity });
+			}
 		}
-	}
-	m_ScriptEntitiesToInit.clear();
+		m_ScriptEntitiesToInit.clear();
 
-	for (auto& entity : m_ScriptEntitiesToEnter)
+		for (auto& entity : m_ScriptEntitiesToEnter)
+		{
+			if (entity)
+			{
+				entity->call("enterScene", { entity });
+			}
+		}
+		m_ScriptEntitiesToEnter.clear();
+
+		Scene* root = SceneLoader::GetSingleton()->getRootScene();
+		CallUpdateForScene(root, deltaMilliseconds);
+
+		m_FluxTweener["update"](deltaMilliseconds * MS_TO_S);
+	}
+	else
 	{
-		if (entity)
+		for (auto& entity : m_ScriptEntitiesToInit)
 		{
-			entity->call("enterScene", { entity });
+			if (entity && (!(entity->getScene()->m_ScenePause)))
+			{
+				entity->evaluateScriptOverrides();
+				entity->call("begin", { entity });
+			}
 		}
+		m_ScriptEntitiesToInit.clear();
+
+		for (auto& entity : m_ScriptEntitiesToEnter)
+		{
+			if (entity && (!(entity->getScene()->m_ScenePause)))
+			{
+				entity->call("enterScene", { entity });
+			}
+		}
+		m_ScriptEntitiesToEnter.clear();
+
+		Scene* root = SceneLoader::GetSingleton()->getRootScene();
+		CallUpdateForScene(root, deltaMilliseconds);
+
+		m_FluxTweener["update"](deltaMilliseconds * MS_TO_S);
 	}
-	m_ScriptEntitiesToEnter.clear();
-
-	Scene* root = SceneLoader::GetSingleton()->getRootScene();
-	CallUpdateForScene(root, deltaMilliseconds);
-
-	m_FluxTweener["update"](deltaMilliseconds * MS_TO_S);
 }
 
 void CallDestroyForScene(Scene* scene)

@@ -82,7 +82,7 @@ Ptr<Scene> Scene::Create(const JSON::json& sceneData, const bool assignNewIDs)
 	    sceneData.value("settings", SceneSettings()),
 	    sceneData.value("importStyle", ImportStyle::Local),
 	    sceneData.value("sceneFile", "")));
-
+	SceneSettings().inputSchemes;
 	// Make entity and children scenes
 	if (sceneData.contains("entity"))
 	{
@@ -138,6 +138,7 @@ Ptr<Scene> Scene::CreateRootScene()
 	}
 
 	Ptr<Scene> root = std::make_unique<Scene>(ROOT_SCENE_ID, "Root", SceneSettings(), ImportStyle::Local, "");
+
 	ECSFactory::FillRootEntity(root->getEntity());
 
 	called = true;
