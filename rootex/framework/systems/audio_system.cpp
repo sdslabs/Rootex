@@ -7,6 +7,7 @@
 #include "components/audio/music_component.h"
 #include "components/audio/short_music_component.h"
 #include "components/physics/rigid_body_component.h"
+#include "core/event.h"
 #include "core/audio/audio_source.h"
 #include "core/audio/static_audio_buffer.h"
 #include "core/audio/streaming_audio_buffer.h"
@@ -109,21 +110,24 @@ void AudioSystem::begin()
 
 void AudioSystem::update(float deltaMilliseconds)
 {
-	ZoneScoped;
+	if (!(m_Pause))
+	{
+		ZoneScoped;
 
-	for (auto& mc : ECSFactory::GetAllMusicComponent())
-	{
-		mc.getAudioSource()->queueNewBuffers();
-		mc.update();
-	}
-	for (auto& smc : ECSFactory::GetAllShortMusicComponent())
-	{
-		smc.update();
-	}
+		for (auto& mc : ECSFactory::GetAllMusicComponent())
+		{
+			mc.getAudioSource()->queueNewBuffers();
+			mc.update();
+		}
+		for (auto& smc : ECSFactory::GetAllShortMusicComponent())
+		{
+			smc.update();
+		}
 
-	if (m_Listener)
-	{
-		m_Listener->update();
+		if (m_Listener)
+		{
+			m_Listener->update();
+		}
 	}
 }
 

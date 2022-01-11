@@ -52,6 +52,27 @@ void System::setActive(bool enabled)
 	m_IsActive = enabled;
 }
 
+void System::pause()
+{
+	for (auto s : GetSystems())
+	{
+		for (auto t : s)
+		{
+			t->m_Pause = true;
+		}
+	}
+}
+void System::unpause()
+{
+	for (auto s : GetSystems())
+	{
+		for (auto t : s)
+		{
+			t->m_Pause = false;
+		}
+	}
+}
+
 void System::draw()
 {
 	ImGui::Columns(2);
