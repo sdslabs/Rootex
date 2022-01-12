@@ -35,7 +35,7 @@ float4 main(GodRaysVSOutput input) : SV_TARGET
 		texCoord -= deltaTexCoord;
 		float4 rawSmpl = InputTexture.Sample(SampleType, texCoord);
 		float3 smpl = smoothstep(THRESHOLD, 1.0f, rawSmpl.xyz);
-		smpl *= illumination * weight * rawSmpl.a;
+		smpl *= illumination * weight;
 		color += smpl;
 		illumination *= decay;
 	}
@@ -45,7 +45,7 @@ float4 main(GodRaysVSOutput input) : SV_TARGET
 	float4 origColor = InputTexture.Sample(SampleType, input.tex);
 	float4 raysColor = float4(lum, lum, lum, 1.0f);
 
-	float4 finalColor = lerp(origColor * 1.2 - float4(0.2f, 0.2f, 0.2f, 0.2f), raysColor, 0.3f);
+	float4 finalColor = lerp(origColor, raysColor, 0.1f);
 
 	return float4(finalColor.xyz, 1.0);
 }

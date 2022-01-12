@@ -27,10 +27,12 @@ void GodRaysComponent::render()
 	const Matrix& model = getTransformComponent()->getAbsoluteTransform();
 
 	Matrix mvp = model * view * proj;
-	Vector3 screenSpacePosition = Vector4::Transform(Vector4(0.0f, 0.0f, 0.0f, 1.0f), mvp);
+	Vector4 dc = Vector4::Transform(Vector4(0.0f, 0.0f, 0.0f, 1.0f), mvp);
+	Vector3 ndc = Vector3(dc.x, -dc.y, dc.z) / dc.w;
+	Vector3 screenSpacePos = ndc / 2.0f + Vector3(0.5f, 0.5f, 0.5f);
 
 	PSGodRaysCB cb;
-	cb.sunScreenSpacePos = screenSpacePosition;
+	cb.sunScreenSpacePos = screenSpacePos;
 	cb.numSamples = m_NumSamples;
 	cb.density = m_Density;
 	cb.weight = m_Weight;
