@@ -9,7 +9,6 @@ IF "%1"=="assets-test" (
         git config --file=.gitmodules submodule.assets.url git@gitlab.com:sdslabs/rootex-assets.git
     )
     git config --file=.gitmodules submodule.assets.branch main
-    git submodule update --init --recursive --remote
 )
 IF "%1"=="assets-game" (
     git submodule deinit -f game/assets
@@ -21,7 +20,6 @@ IF "%1"=="assets-game" (
         git config --file=.gitmodules submodule.assets.url git@gitlab.com:sdslabs/rootex-game.git
     )
     git config --file=.gitmodules submodule.assets.branch main
-    git submodule update --init --recursive --remote
 )
 
 IF "%1"=="assets-custom" (
@@ -30,5 +28,5 @@ IF "%1"=="assets-custom" (
     rm -r --force .git\modules\assets
     git config --file=.gitmodules submodule.assets.url %2
     git config --file=.gitmodules submodule.assets.branch main
-    git submodule update --init --recursive --remote
 )
+echo Submodule updated. Run 'git submodule update --init --recursive --remote' for changes to reflect in game/assets
