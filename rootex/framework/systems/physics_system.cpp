@@ -137,7 +137,7 @@ void PhysicsSystem::debugDrawComponent(const btTransform& worldTransform, const 
 
 void PhysicsSystem::update(float deltaMilliseconds)
 {
-	if (!(m_Pause))
+	if (!(m_IsSystemPaused))
 	{
 		ZoneScoped;
 		m_DynamicsWorld->stepSimulation(deltaMilliseconds * MS_TO_S, 10);

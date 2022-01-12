@@ -13,6 +13,7 @@ System::System(const String& name, const UpdateOrder& order, bool isGameplay)
 
 	s_Systems[(int)order].push_back(this);
 	setActive(isGameplay);
+	m_IsSystemPaused = false;
 }
 
 System::~System()
@@ -54,21 +55,21 @@ void System::setActive(bool enabled)
 
 void System::pause()
 {
-	for (auto s : GetSystems())
+	for (auto& systemType : GetSystems())
 	{
-		for (auto t : s)
+		for (auto& system : systemType)
 		{
-			t->m_Pause = true;
+			system->m_IsSystemPaused = true;
 		}
 	}
 }
-void System::unpause()
+void System::unPause()
 {
-	for (auto s : GetSystems())
+	for (auto& systemType : GetSystems())
 	{
-		for (auto t : s)
+		for (auto& system : systemType)
 		{
-			t->m_Pause = false;
+			system->m_IsSystemPaused = false;
 		}
 	}
 }

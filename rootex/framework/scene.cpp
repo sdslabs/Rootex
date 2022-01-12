@@ -82,7 +82,7 @@ Ptr<Scene> Scene::Create(const JSON::json& sceneData, const bool assignNewIDs)
 	    sceneData.value("settings", SceneSettings()),
 	    sceneData.value("importStyle", ImportStyle::Local),
 	    sceneData.value("sceneFile", "")));
-	SceneSettings().inputSchemes;
+
 	// Make entity and children scenes
 	if (sceneData.contains("entity"))
 	{
@@ -98,7 +98,7 @@ Ptr<Scene> Scene::Create(const JSON::json& sceneData, const bool assignNewIDs)
 			}
 		}
 	}
-	thisScene->m_ScenePause = sceneData.value("pause", false);
+	thisScene->m_IsScenePaused = sceneData.value("pause", true);
 	return thisScene;
 }
 
@@ -304,7 +304,6 @@ void Scene::setName(const String& name)
 {
 	m_Name = name;
 	m_FullName = name + " # " + std::to_string(m_ID);
-	m_ScenePause = false;
 }
 
 JSON::json Scene::getJSON() const
@@ -317,7 +316,7 @@ JSON::json Scene::getJSON() const
 	j["sceneFile"] = m_SceneFile;
 	j["entity"] = m_Entity.getJSON();
 	j["settings"] = m_Settings;
-	j["pause"] = m_ScenePause;
+	j["pause"] = m_IsScenePaused;
 
 	j["children"] = JSON::json::array();
 	for (auto& child : m_ChildrenScenes)
