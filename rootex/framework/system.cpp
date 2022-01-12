@@ -54,21 +54,21 @@ void System::setActive(bool enabled)
 
 void System::pause()
 {
-	for (auto s : GetSystems())
+	for (auto systemType : GetSystems())
 	{
-		for (auto t : s)
+		for (auto system : systemType)
 		{
-			t->m_Pause = true;
+			system->m_SystemPause = true;
 		}
 	}
 }
 void System::unpause()
 {
-	for (auto s : GetSystems())
+	for (auto systemType : GetSystems())
 	{
-		for (auto t : s)
+		for (auto system : systemType)
 		{
-			t->m_Pause = false;
+			system->m_SystemPause = false;
 		}
 	}
 }

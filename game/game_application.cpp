@@ -12,7 +12,6 @@
 #include "systems/debug_system.h"
 #include "systems/input_system.h"
 
-
 #include "systems/game_render_system.h"
 
 Ref<Application> CreateRootexApplication()

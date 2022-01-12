@@ -82,7 +82,7 @@ Ptr<Scene> Scene::Create(const JSON::json& sceneData, const bool assignNewIDs)
 	    sceneData.value("settings", SceneSettings()),
 	    sceneData.value("importStyle", ImportStyle::Local),
 	    sceneData.value("sceneFile", "")));
-	SceneSettings().inputSchemes;
+
 	// Make entity and children scenes
 	if (sceneData.contains("entity"))
 	{
@@ -305,6 +305,12 @@ void Scene::setName(const String& name)
 	m_Name = name;
 	m_FullName = name + " # " + std::to_string(m_ID);
 	m_ScenePause = false;
+}
+
+void Scene::setScenePause(bool pause)
+{
+	m_ScenePause = pause;
+	return;
 }
 
 JSON::json Scene::getJSON() const

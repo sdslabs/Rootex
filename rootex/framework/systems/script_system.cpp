@@ -62,7 +62,7 @@ void CallUpdateForScene(Scene* scene, float deltaMilliseconds)
 void ScriptSystem::update(float deltaMilliseconds)
 {
 	ZoneScoped;
-	if (!(m_Pause))
+	if (!(m_SystemPause))
 	{
 		for (auto& entity : m_ScriptEntitiesToInit)
 		{
@@ -92,7 +92,7 @@ void ScriptSystem::update(float deltaMilliseconds)
 	{
 		for (auto& entity : m_ScriptEntitiesToInit)
 		{
-			if (entity && (!(entity->getScene()->m_ScenePause)))
+			if (entity && (!(entity->getScene()->getScenePause())))
 			{
 				entity->evaluateScriptOverrides();
 				entity->call("begin", { entity });
@@ -102,7 +102,7 @@ void ScriptSystem::update(float deltaMilliseconds)
 
 		for (auto& entity : m_ScriptEntitiesToEnter)
 		{
-			if (entity && (!(entity->getScene()->m_ScenePause)))
+			if (entity && (!(entity->getScene()->getScenePause())))
 			{
 				entity->call("enterScene", { entity });
 			}

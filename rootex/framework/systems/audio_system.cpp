@@ -7,7 +7,6 @@
 #include "components/audio/music_component.h"
 #include "components/audio/short_music_component.h"
 #include "components/physics/rigid_body_component.h"
-#include "core/event.h"
 #include "core/audio/audio_source.h"
 #include "core/audio/static_audio_buffer.h"
 #include "core/audio/streaming_audio_buffer.h"
@@ -110,7 +109,7 @@ void AudioSystem::begin()
 
 void AudioSystem::update(float deltaMilliseconds)
 {
-	if (!(m_Pause))
+	if (!(m_SystemPause))
 	{
 		ZoneScoped;
 
@@ -135,7 +134,7 @@ void AudioSystem::update(float deltaMilliseconds)
 
 		for (auto& mc : ECSFactory::GetAllMusicComponent())
 		{
-			if (mc.getOwner().getScene()->m_ScenePause)
+			if (mc.getOwner().getScene()->getScenePause())
 			{
 				continue;
 			}
@@ -144,7 +143,7 @@ void AudioSystem::update(float deltaMilliseconds)
 		}
 		for (auto& smc : ECSFactory::GetAllShortMusicComponent())
 		{
-			if (smc.getOwner().getScene()->m_ScenePause)
+			if (smc.getOwner().getScene()->getScenePause())
 			{
 				continue;
 			}
