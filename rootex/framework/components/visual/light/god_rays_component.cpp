@@ -4,6 +4,80 @@
 #include "entity.h"
 #include "systems/render_system.h"
 
+DEFINE_COMPONENT(GodRaysComponent);
+
+GodRaysComponent::GodRaysComponent(Entity& owner, const JSON::json& data)
+    : Component(owner)
+    , m_NumSamples(data.value("numSamples", 100))
+    , m_Density(data.value("density", 1.0f))
+    , m_Weight(data.value("weight", 0.01f))
+    , m_Decay(data.value("decay", 1.0f))
+    , m_Exposure(data.value("exposure", 1.0f))
+    , m_DependencyOnTransformComponent(this)
+{
+	m_GodRaysMidPostProcessor = new GodRaysMidPostProcessor();
+}
+
+void GodRaysComponent::render()
+{
+	CameraComponent* renderCamera = RenderSystem::GetSingleton()->getCamera();
+
+	const Matrix& view = renderCamera->getViewMatrix();
+	const Matrix& proj = renderCamera->getProjectionMatrix();
+	const Matrix& model = getTransformComponent()->getAbsoluteTransform();
+
+	Matrix mvp = model * view * proj;
+	Vector3 screenSpacePosition = Vector4::Transform(Vector4(0.0f, 0.0f, 0.0f, 1.0f), mvp);
+
+	PSGodRaysCB cb;
+	cb.sunScreenSpacePos = screenSpacePosition;
+	cb.numSamples = m_NumSamples;
+	cb.density = m_Density;
+	cb.weight = m_Weight;
+	cb.decay = m_Decay;
+	cb.exposure = m_Exposure;
+
+	m_GodRaysMidPostProcessor->preDraw(cb);
+	m_GodRaysMidPostProcessor->draw();
+	m_GodRaysMidPostProcessor->postDraw();
+}
+
+JSON::json GodRaysComponent::getJSON() const
+{
+	JSON::json j;
+
+	j["numSamples"] = m_NumSamples;
+	j["density"] = m_Density;
+	j["weight"] = m_Weight;
+	j["decay"] = m_Decay;
+	j["exposure"] = m_Exposure;
+
+	return j;
+}
+
+void GodRaysComponent::draw()
+{
+	int minNumSamples = 0;
+	int maxNumSamples = 100;
+	ImGui::DragInt("Num Samples", &m_NumSamples, 1.0f, minNumSamples, maxNumSamples);
+
+	float minDensity = 0.0f;
+	float maxDensity = 2.0f;
+	ImGui::DragFloat("Density", &m_Density, 0.01f, minDensity, maxDensity);
+
+	float minWeight = 0.0f;
+	float maxWeight = 0.1f;
+	ImGui::DragFloat("Weight", &m_Weight, 0.001f, minWeight, maxWeight);
+
+	float minDecay = 0.95f;
+	float maxDecay = 1.05f;
+	ImGui::DragFloat("Decay", &m_Decay, 0.001f, minDecay, maxDecay);
+
+	float minExposure = 0.0f;
+	float maxExposure = 2.0f;
+	ImGui::DragFloat("Exposure", &m_Exposure, 0.02f, minExposure, maxExposure);
+}
+
 GodRaysMidPostProcessor::GodRaysMidPostProcessor()
 {
 	m_Binder.bind(RootexEvents::WindowResized, this, &GodRaysMidPostProcessor::loadRTVAndSRV);
@@ -37,19 +111,13 @@ GodRaysMidPostProcessor::GodRaysMidPostProcessor()
 	m_GodRaysPSCB = RenderingDevice::GetSingleton()->createBuffer<PSGodRaysCB>(PSGodRaysCB(), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
 }
 
-GodRaysMidPostProcessor* GodRaysMidPostProcessor::GetSingleton()
-{
-	static GodRaysMidPostProcessor singleton;
-	return &singleton;
-}
-
 Variant GodRaysMidPostProcessor::loadRTVAndSRV(const Event* event)
 {
 	RenderingDevice::GetSingleton()->createRTVAndSRV(m_CacheRTV, m_CacheSRV);
 	return true;
 }
 
-void GodRaysMidPostProcessor::preDraw()
+void GodRaysMidPostProcessor::preDraw(const PSGodRaysCB& cb)
 {
 	m_SourceSRV = RenderingDevice::GetSingleton()->getOffScreenSRV().Get();
 
@@ -67,6 +135,11 @@ void GodRaysMidPostProcessor::preDraw()
 	m_FrameIndexBuffer->bind();
 	m_GodRaysShader.bind();
 
+	RenderingDevice::GetSingleton()->setPSSS(0, 1, m_GodRaysSS.GetAddressOf());
+
+	RenderingDevice::GetSingleton()->editBuffer<PSGodRaysCB>(cb, m_GodRaysPSCB.Get());
+	RenderingDevice::GetSingleton()->setPSCB(0, 1, m_GodRaysPSCB.GetAddressOf());
+
 	RenderingDevice::GetSingleton()->setPSSRV(0, 1, &m_SourceSRV);
 }
 
@@ -82,63 +155,4 @@ void GodRaysMidPostProcessor::postDraw()
 	m_BasicPostProcess->SetSourceTexture(m_CacheSRV.Get());
 	m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Copy);
 	m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
-}
-
-DEFINE_COMPONENT(GodRaysComponent);
-
-GodRaysComponent::GodRaysComponent(Entity& owner, const JSON::json& data)
-    : Component(owner)
-    , m_NumSamples(data.value("numSamples", 100))
-    , m_Density(data.value("density", 1.0f))
-    , m_Weight(data.value("weight", 0.01f))
-    , m_Decay(data.value("decay", 1.0f))
-    , m_Exposure(data.value("exposure", 1.0f))
-    , m_DependencyOnTransformComponent(this)
-{
-}
-
-void GodRaysComponent::render()
-{
-	PSGodRaysCB cb;
-	cb.numSamples = m_NumSamples;
-	cb.density = m_Density;
-	cb.weight = m_Weight;
-	cb.decay = m_Decay;
-	cb.exposure = m_Exposure;
-
-	// TODO
-}
-
-JSON::json GodRaysComponent::getJSON() const
-{
-	JSON::json j;
-
-	j["numSamples"] = m_NumSamples;
-	j["density"] = m_Density;
-	j["weight"] = m_Weight;
-	j["decay"] = m_Decay;
-	j["exposure"] = m_Exposure;
-}
-
-void GodRaysComponent::draw()
-{
-	int minNumSamples = 0;
-	int maxNumSamples = 100;
-	ImGui::DragInt("Num Samples", &m_NumSamples, 1.0f, minNumSamples, maxNumSamples);
-
-	float minDensity = 0.0f;
-	float maxDensity = 2.0f;
-	ImGui::DragFloat("Density", &m_Density, 0.01f, minDensity, maxDensity);
-
-	float minWeight = 0.0f;
-	float maxWeight = 0.1f;
-	ImGui::DragFloat("Weight", &m_Weight, 0.001f, minWeight, maxWeight);
-
-	float minDecay = 0.95f;
-	float maxDecay = 1.05f;
-	ImGui::DragFloat("Decay", &m_Decay, 0.001f, minDecay, maxDecay);
-
-	float minExposure = 0.0f;
-	float maxExposure = 2.0f;
-	ImGui::DragFloat("Exposure", &m_Exposure, 0.02f, minExposure, maxExposure);
 }

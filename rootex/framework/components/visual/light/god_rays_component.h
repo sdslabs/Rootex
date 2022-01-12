@@ -4,6 +4,7 @@
 #include "component.h"
 #include "components/space/transform_component.h"
 #include "core/renderer/rendering_device.h"
+#include "core/renderer/renderer.h"
 #include "PostProcess.h"
 #include "core/renderer/vertex_buffer.h"
 #include "core/renderer/index_buffer.h"
@@ -30,14 +31,12 @@ class GodRaysMidPostProcessor
 
 	ID3D11ShaderResourceView* m_SourceSRV;
 
+public:
 	GodRaysMidPostProcessor();
 	GodRaysMidPostProcessor(GodRaysMidPostProcessor&) = delete;
 	~GodRaysMidPostProcessor() = default;
 
-public:
-	static GodRaysMidPostProcessor* GetSingleton();
-
-	void preDraw();
+	void preDraw(const PSGodRaysCB& cb);
 	void draw();
 	void postDraw();
 };
@@ -52,6 +51,8 @@ class GodRaysComponent : public Component
 	float m_Weight;
 	float m_Decay;
 	float m_Exposure;
+
+	GodRaysMidPostProcessor* m_GodRaysMidPostProcessor;
 
 public:
 	GodRaysComponent::GodRaysComponent(Entity& owner, const JSON::json& data);
