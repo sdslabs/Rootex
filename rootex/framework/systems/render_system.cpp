@@ -233,20 +233,6 @@ void RenderSystem::update(float deltaMilliseconds)
 		renderLines();
 	}
 	{
-		ZoneNamedN(godRays, "God Rays Rendering", true);
-		Vector<GodRaysComponent>& godRaysComponents = ECSFactory::GetAllGodRaysComponent();
-		if (godRaysComponents.size() > 0)
-		{
-			if (godRaysComponents.size() > 1)
-			{
-				WARN("GodRaysComponents specified are greater than 1. Using only the first GodRaysComponent found.");
-			}
-
-			GodRaysComponent& grc = godRaysComponents[0];
-			grc.render();
-		}
-	}
-	{
 		ZoneNamedN(skyRendering, "Sky Rendering", true);
 		RenderingDevice::GetSingleton()->enableSkyDSS();
 		RenderingDevice::RasterizerState currentRS = RenderingDevice::GetSingleton()->getRSType();

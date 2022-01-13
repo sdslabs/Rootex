@@ -3,43 +3,6 @@
 #include "common/common.h"
 #include "component.h"
 #include "components/space/transform_component.h"
-#include "core/renderer/rendering_device.h"
-#include "core/renderer/renderer.h"
-#include "PostProcess.h"
-#include "core/renderer/vertex_buffer.h"
-#include "core/renderer/index_buffer.h"
-
-class GodRaysMidPostProcessor
-{
-	EventBinder<GodRaysMidPostProcessor> m_Binder;
-
-	Ptr<DirectX::BasicPostProcess> m_BasicPostProcess;
-
-	Shader m_GodRaysShader;
-
-	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_CacheRTV;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_CacheSRV;
-
-	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_GodRaysSS;
-
-	Ptr<VertexBuffer> m_FrameVertexBuffer;
-	Ptr<IndexBuffer> m_FrameIndexBuffer;
-
-	Microsoft::WRL::ComPtr<ID3D11Buffer> m_GodRaysPSCB;
-
-	Variant loadRTVAndSRV(const Event* event);
-
-	ID3D11ShaderResourceView* m_SourceSRV;
-
-public:
-	GodRaysMidPostProcessor();
-	GodRaysMidPostProcessor(GodRaysMidPostProcessor&) = delete;
-	~GodRaysMidPostProcessor() = default;
-
-	void preDraw(const PSGodRaysCB& cb);
-	void draw();
-	void postDraw();
-};
 
 class GodRaysComponent : public Component
 {
@@ -52,11 +15,17 @@ class GodRaysComponent : public Component
 	float m_Decay;
 	float m_Exposure;
 
-	GodRaysMidPostProcessor* m_GodRaysMidPostProcessor;
-
 public:
 	GodRaysComponent::GodRaysComponent(Entity& owner, const JSON::json& data);
 	~GodRaysComponent() = default;
+
+	int getNumSamples() { return m_NumSamples; };
+	float getDensity() { return m_Density; };
+	float getWeight() { return m_Weight; };
+	float getDecay() { return m_Decay; };
+	float getExposure() { return m_Exposure; };
+
+	Vector3 getScreenSpacePosition();
 
 	void render();
 

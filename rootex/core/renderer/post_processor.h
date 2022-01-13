@@ -10,6 +10,7 @@ class CameraComponent;
 struct PostProcessingDetails
 {
 	bool isPostProcessing = false;
+	bool isGodRays = false;
 	bool isASSAO = false;
 	bool isBloom = false;
 	bool isSepia = false;

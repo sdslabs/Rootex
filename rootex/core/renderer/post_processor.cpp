@@ -2,12 +2,122 @@
 
 #include "application.h"
 #include "core/renderer/rendering_device.h"
+#include "framework/ecs_factory.h"
 #include "framework/components/visual/camera_component.h"
+#include "framework/components/visual/light/god_rays_component.h"
 #include "vertex_buffer.h"
 #include "index_buffer.h"
 #include "shader.h"
 
 #include "Tracy.hpp"
+
+class GodRaysPostProcess : public PostProcess
+{
+	EventBinder<GodRaysPostProcess> m_Binder;
+
+	Ptr<DirectX::BasicPostProcess> m_BasicPostProcess;
+
+	Shader m_GodRaysShader;
+
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_CacheRTV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_CacheSRV;
+
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_GodRaysSS;
+
+	Ptr<VertexBuffer> m_FrameVertexBuffer;
+	Ptr<IndexBuffer> m_FrameIndexBuffer;
+
+	Microsoft::WRL::ComPtr<ID3D11Buffer> m_GodRaysPSCB;
+
+	Variant loadRTVAndSRV(const Event* event)
+	{
+		RenderingDevice::GetSingleton()->createRTVAndSRV(m_CacheRTV, m_CacheSRV);
+		return true;
+	}
+
+public:
+	GodRaysPostProcess()
+	{
+		m_Binder.bind(RootexEvents::WindowResized, this, &GodRaysPostProcess::loadRTVAndSRV);
+
+		BufferFormat godRaysFormat;
+		godRaysFormat.push(VertexBufferElement::Type::FloatFloatFloat, "POSITION", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
+		godRaysFormat.push(VertexBufferElement::Type::FloatFloat, "TEXCOORD", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
+		m_GodRaysShader = Shader("rootex/core/renderer/shaders/god_rays_vertex_shader.hlsl", "rootex/core/renderer/shaders/god_rays_pixel_shader.hlsl", godRaysFormat);
+
+		m_GodRaysSS = RenderingDevice::GetSingleton()->createSS(RenderingDevice::SamplerState::Default);
+
+		loadRTVAndSRV(nullptr);
+
+		m_BasicPostProcess.reset(new DirectX::BasicPostProcess(RenderingDevice::GetSingleton()->getDevice()));
+
+		Vector<GodRaysData> godRaysData = {
+			// Position                    // Texcoord
+			{ Vector3(-1.0f, -1.0f, 0.0f), Vector2(0.0f, 1.0f) },
+			{ Vector3(1.0f, -1.0f, 0.0f), Vector2(1.0f, 1.0f) },
+			{ Vector3(1.0f, 1.0f, 0.0f), Vector2(1.0f, 0.0f) },
+			{ Vector3(-1.0f, 1.0f, 0.0f), Vector2(0.0f, 0.0f) }
+		};
+		m_FrameVertexBuffer.reset(new VertexBuffer((const char*)godRaysData.data(), godRaysData.size(), sizeof(GodRaysData), D3D11_USAGE_IMMUTABLE, 0));
+
+		Vector<unsigned int> godRaysDataIndices = {
+			0, 2, 1,
+			0, 3, 2
+		};
+		m_FrameIndexBuffer.reset(new IndexBuffer(godRaysDataIndices));
+
+		m_GodRaysPSCB = RenderingDevice::GetSingleton()->createBuffer<PSGodRaysCB>(PSGodRaysCB(), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
+	}
+
+	void draw(CameraComponent* camera, ID3D11ShaderResourceView*& nextSource) override
+	{
+		const PostProcessingDetails& postProcessingDetails = camera->getPostProcessingDetails();
+		if (postProcessingDetails.isGodRays)
+		{
+			Vector<GodRaysComponent>& godRaysComponents = ECSFactory::GetAllGodRaysComponent();
+			if (godRaysComponents.size() > 0)
+			{
+				if (godRaysComponents.size() > 1)
+				{
+					WARN("GodRaysComponents specified are greater than 1. Using only the first GodRaysComponent found.");
+				}
+
+				GodRaysComponent& grc = godRaysComponents[0];
+
+				RenderingDevice::GetSingleton()->unbindSRVs();
+				RenderingDevice::GetSingleton()->setRTV(m_CacheRTV.Get());
+
+				// Copy source to working buffer
+				{
+					m_BasicPostProcess->SetSourceTexture(nextSource);
+					m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Copy);
+					m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
+				}
+
+				m_FrameVertexBuffer->bind();
+				m_FrameIndexBuffer->bind();
+				m_GodRaysShader.bind();
+
+				RenderingDevice::GetSingleton()->setPSSS(0, 1, m_GodRaysSS.GetAddressOf());
+
+				PSGodRaysCB cb;
+				cb.sunScreenSpacePos = grc.getScreenSpacePosition();
+				cb.numSamples = grc.getNumSamples();
+				cb.density = grc.getDensity();
+				cb.weight = grc.getWeight();
+				cb.decay = grc.getDecay();
+				cb.exposure = grc.getExposure();
+				RenderingDevice::GetSingleton()->editBuffer<PSGodRaysCB>(cb, m_GodRaysPSCB.Get());
+				RenderingDevice::GetSingleton()->setPSCB(0, 1, m_GodRaysPSCB.GetAddressOf());
+
+				RenderingDevice::GetSingleton()->setPSSRV(0, 1, &nextSource);
+				RenderingDevice::GetSingleton()->drawIndexed(m_FrameIndexBuffer->getCount());
+
+				nextSource = m_CacheSRV.Get();
+			}
+		}
+	};
+};
 
 class ASSAOPostProcess : public PostProcess
 {
@@ -440,6 +550,7 @@ PostProcessor::PostProcessor()
 {
 	m_BasicPostProcess.reset(new DirectX::BasicPostProcess(RenderingDevice::GetSingleton()->getDevice()));
 
+	m_PostProcesses.emplace_back(new GodRaysPostProcess());
 	m_PostProcesses.emplace_back(new ASSAOPostProcess());
 	m_PostProcesses.emplace_back(new GaussianPostProcess());
 	m_PostProcesses.emplace_back(new MonochromePostProcess());

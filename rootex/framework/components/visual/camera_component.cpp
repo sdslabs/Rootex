@@ -6,6 +6,7 @@ DEFINE_COMPONENT(CameraComponent);
 void to_json(JSON::json& j, const PostProcessingDetails& p)
 {
 	j["isPostProcessing"] = p.isPostProcessing;
+	j["isGodRays"] = p.isGodRays;
 	j["isASSAO"] = p.isASSAO;
 	j["isBloom"] = p.isBloom;
 	j["isSepia"] = p.isSepia;
@@ -42,6 +43,7 @@ void to_json(JSON::json& j, const PostProcessingDetails& p)
 void from_json(const JSON::json& j, PostProcessingDetails& p)
 {
 	p.isPostProcessing = j.at("isPostProcessing");
+	p.isGodRays = j.value("isGodRays", false);
 	p.isASSAO = j.value("isASSAO", false);
 	p.isBloom = j.at("isBloom");
 	p.isSepia = j.at("isSepia");
@@ -171,6 +173,8 @@ void CameraComponent::draw()
 	ImGui::Checkbox("Post Processing", &m_PostProcessingDetails.isPostProcessing);
 	if (m_PostProcessingDetails.isPostProcessing)
 	{
+		ImGui::Checkbox("God Rays", &m_PostProcessingDetails.isGodRays);
+
 		ImGui::Checkbox("Adaptive SSAO", &m_PostProcessingDetails.isASSAO);
 		if (m_PostProcessingDetails.isASSAO)
 		{
