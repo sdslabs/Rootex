@@ -16,7 +16,6 @@
 #include "components/visual/camera_component.h"
 #include "components/visual/effect/cpu_particles_component.h"
 #include "components/visual/light/directional_light_component.h"
-#include "components/visual/light/god_rays_component.h"
 #include "components/visual/effect/fog_component.h"
 #include "components/visual/model/grid_model_component.h"
 #include "components/visual/model/model_component.h"
@@ -133,7 +132,6 @@ void ECSFactory::Initialize()
 	ASSIGN_COMPONENT_SET(PointLightComponent);
 	ASSIGN_COMPONENT_SET(SpotLightComponent);
 	ASSIGN_COMPONENT_SET(DirectionalLightComponent);
-	ASSIGN_COMPONENT_SET(GodRaysComponent);
 	ASSIGN_COMPONENT_SET(StaticPointLightComponent);
 
 	ASSIGN_COMPONENT_SET(TextUIComponent);

@@ -10,7 +10,6 @@
 #include "framework/components/visual/camera_component.h"
 #include "components/visual/model/model_component.h"
 #include "components/visual/model/animated_model_component.h"
-#include "components/visual/light/god_rays_component.h"
 
 #include "ASSAO/ASSAO.h"
 

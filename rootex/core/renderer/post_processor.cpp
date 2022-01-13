@@ -4,12 +4,71 @@
 #include "core/renderer/rendering_device.h"
 #include "framework/ecs_factory.h"
 #include "framework/components/visual/camera_component.h"
-#include "framework/components/visual/light/god_rays_component.h"
+#include "framework/components/visual/light/directional_light_component.h"
 #include "vertex_buffer.h"
 #include "index_buffer.h"
 #include "shader.h"
 
 #include "Tracy.hpp"
+
+class ASSAOPostProcess : public PostProcess
+{
+	ASSAO_Effect* m_ASSAO = nullptr;
+
+public:
+	ASSAOPostProcess()
+	{
+		const FileBuffer& assaoShader = OS::LoadFileContents("rootex/vendor/ASSAO/ASSAO.hlsl");
+		ASSAO_CreateDescDX11 assaoDesc(RenderingDevice::GetSingleton()->getDevice(), assaoShader.data(), assaoShader.size());
+		m_ASSAO = ASSAO_Effect::CreateInstance(&assaoDesc);
+	}
+
+	~ASSAOPostProcess()
+	{
+		ASSAO_Effect::DestroyInstance(m_ASSAO);
+	}
+
+	void draw(CameraComponent* camera, ID3D11ShaderResourceView*& nextSource) override
+	{
+		const PostProcessingDetails& postProcessingDetails = camera->getPostProcessingDetails();
+		if (postProcessingDetails.isASSAO)
+		{
+			RenderingDevice::GetSingleton()->unbindSRVs();
+			RenderingDevice::GetSingleton()->setOffScreenRTVOnly();
+
+			ASSAO_InputsDX11 assaoInputs;
+			assaoInputs.ViewportX = 0;
+			assaoInputs.ViewportY = 0;
+			assaoInputs.ViewportHeight = Application::GetSingleton()->getWindow()->getHeight();
+			assaoInputs.ViewportWidth = Application::GetSingleton()->getWindow()->getWidth();
+			assaoInputs.ProjectionMatrix = *reinterpret_cast<ASSAO_Float4x4*>(&camera->getProjectionMatrix());
+			assaoInputs.MatricesRowMajorOrder = true;
+			assaoInputs.DrawOpaque = false;
+			assaoInputs.DeviceContext = RenderingDevice::GetSingleton()->getContext();
+			assaoInputs.DepthSRV = RenderingDevice::GetSingleton()->getDepthSSRV().Get();
+			assaoInputs.NormalSRV = nullptr;
+			assaoInputs.OverrideOutputRTV = nullptr;
+			ASSAO_Settings assaoSettings;
+			assaoSettings.Radius = postProcessingDetails.assaoRadius;
+			assaoSettings.DetailShadowStrength = postProcessingDetails.assaoDetailShadowStrength;
+			assaoSettings.BlurPassCount = postProcessingDetails.assaoBlurPassCount;
+			assaoSettings.FadeOutFrom = postProcessingDetails.assaoFadeOutFrom;
+			assaoSettings.FadeOutTo = postProcessingDetails.assaoFadeOutTo;
+			assaoSettings.HorizonAngleThreshold = postProcessingDetails.assaoHorizonAngleThreshold;
+			assaoSettings.QualityLevel = postProcessingDetails.assaoQualityLevel;
+			assaoSettings.ShadowClamp = postProcessingDetails.assaoShadowClamp;
+			assaoSettings.ShadowMultiplier = postProcessingDetails.assaoShadowMultiplier;
+			assaoSettings.ShadowPower = postProcessingDetails.assaoShadowPower;
+			assaoSettings.Sharpness = postProcessingDetails.assaoSharpness;
+			assaoSettings.AdaptiveQualityLimit = postProcessingDetails.assaoAdaptiveQualityLimit;
+			m_ASSAO->Draw(assaoSettings, &assaoInputs);
+
+			RenderingDevice::GetSingleton()->setOffScreenRTVDSV();
+
+			nextSource = nextSource;
+		}
+	}
+};
 
 class GodRaysPostProcess : public PostProcess
 {
@@ -74,15 +133,15 @@ public:
 		const PostProcessingDetails& postProcessingDetails = camera->getPostProcessingDetails();
 		if (postProcessingDetails.isGodRays)
 		{
-			Vector<GodRaysComponent>& godRaysComponents = ECSFactory::GetAllGodRaysComponent();
-			if (godRaysComponents.size() > 0)
+			Vector<DirectionalLightComponent>& directionalLightComponents = ECSFactory::GetAllDirectionalLightComponent();
+			if (directionalLightComponents.size() > 0)
 			{
-				if (godRaysComponents.size() > 1)
+				if (directionalLightComponents.size() > 1)
 				{
-					WARN("GodRaysComponents specified are greater than 1. Using only the first GodRaysComponent found.");
+					WARN("Directional lights specified are greater than 1. Using only the first directional light found.");
 				}
 
-				GodRaysComponent& grc = godRaysComponents[0];
+				DirectionalLightComponent& sun = directionalLightComponents[0];
 
 				RenderingDevice::GetSingleton()->unbindSRVs();
 				RenderingDevice::GetSingleton()->setRTV(m_CacheRTV.Get());
@@ -100,13 +159,22 @@ public:
 
 				RenderingDevice::GetSingleton()->setPSSS(0, 1, m_GodRaysSS.GetAddressOf());
 
+				const Matrix& view = camera->getViewMatrix();
+				const Matrix& proj = camera->getProjectionMatrix();
+				const Matrix& model = sun.getTransformComponent()->getAbsoluteTransform();
+
+				Matrix mvp = model * view * proj;
+				Vector4 dc = Vector4::Transform(Vector4(0.0f, 0.0f, 0.0f, 1.0f), mvp);
+				Vector3 ndc = Vector3(dc.x, -dc.y, dc.z) / dc.w;
+				Vector3 sunScreenSpacePos = ndc / 2.0f + Vector3(0.5f, 0.5f, 0.5f);
+
 				PSGodRaysCB cb;
-				cb.sunScreenSpacePos = grc.getScreenSpacePosition();
-				cb.numSamples = grc.getNumSamples();
-				cb.density = grc.getDensity();
-				cb.weight = grc.getWeight();
-				cb.decay = grc.getDecay();
-				cb.exposure = grc.getExposure();
+				cb.sunScreenSpacePos = sunScreenSpacePos;
+				cb.numSamples = postProcessingDetails.godRaysNumSamples;
+				cb.density = postProcessingDetails.godRaysDensity;
+				cb.weight = postProcessingDetails.godRaysWeight;
+				cb.decay = postProcessingDetails.godRaysDecay;
+				cb.exposure = postProcessingDetails.godRaysExposure;
 				RenderingDevice::GetSingleton()->editBuffer<PSGodRaysCB>(cb, m_GodRaysPSCB.Get());
 				RenderingDevice::GetSingleton()->setPSCB(0, 1, m_GodRaysPSCB.GetAddressOf());
 
@@ -117,65 +185,6 @@ public:
 			}
 		}
 	};
-};
-
-class ASSAOPostProcess : public PostProcess
-{
-	ASSAO_Effect* m_ASSAO = nullptr;
-
-public:
-	ASSAOPostProcess()
-	{
-		const FileBuffer& assaoShader = OS::LoadFileContents("rootex/vendor/ASSAO/ASSAO.hlsl");
-		ASSAO_CreateDescDX11 assaoDesc(RenderingDevice::GetSingleton()->getDevice(), assaoShader.data(), assaoShader.size());
-		m_ASSAO = ASSAO_Effect::CreateInstance(&assaoDesc);
-	}
-
-	~ASSAOPostProcess()
-	{
-		ASSAO_Effect::DestroyInstance(m_ASSAO);
-	}
-
-	void draw(CameraComponent* camera, ID3D11ShaderResourceView*& nextSource) override
-	{
-		const PostProcessingDetails& postProcessingDetails = camera->getPostProcessingDetails();
-		if (postProcessingDetails.isASSAO)
-		{
-			RenderingDevice::GetSingleton()->unbindSRVs();
-			RenderingDevice::GetSingleton()->setOffScreenRTVOnly();
-
-			ASSAO_InputsDX11 assaoInputs;
-			assaoInputs.ViewportX = 0;
-			assaoInputs.ViewportY = 0;
-			assaoInputs.ViewportHeight = Application::GetSingleton()->getWindow()->getHeight();
-			assaoInputs.ViewportWidth = Application::GetSingleton()->getWindow()->getWidth();
-			assaoInputs.ProjectionMatrix = *reinterpret_cast<ASSAO_Float4x4*>(&camera->getProjectionMatrix());
-			assaoInputs.MatricesRowMajorOrder = true;
-			assaoInputs.DrawOpaque = false;
-			assaoInputs.DeviceContext = RenderingDevice::GetSingleton()->getContext();
-			assaoInputs.DepthSRV = RenderingDevice::GetSingleton()->getDepthSSRV().Get();
-			assaoInputs.NormalSRV = nullptr;
-			assaoInputs.OverrideOutputRTV = nullptr;
-			ASSAO_Settings assaoSettings;
-			assaoSettings.Radius = postProcessingDetails.assaoRadius;
-			assaoSettings.DetailShadowStrength = postProcessingDetails.assaoDetailShadowStrength;
-			assaoSettings.BlurPassCount = postProcessingDetails.assaoBlurPassCount;
-			assaoSettings.FadeOutFrom = postProcessingDetails.assaoFadeOutFrom;
-			assaoSettings.FadeOutTo = postProcessingDetails.assaoFadeOutTo;
-			assaoSettings.HorizonAngleThreshold = postProcessingDetails.assaoHorizonAngleThreshold;
-			assaoSettings.QualityLevel = postProcessingDetails.assaoQualityLevel;
-			assaoSettings.ShadowClamp = postProcessingDetails.assaoShadowClamp;
-			assaoSettings.ShadowMultiplier = postProcessingDetails.assaoShadowMultiplier;
-			assaoSettings.ShadowPower = postProcessingDetails.assaoShadowPower;
-			assaoSettings.Sharpness = postProcessingDetails.assaoSharpness;
-			assaoSettings.AdaptiveQualityLimit = postProcessingDetails.assaoAdaptiveQualityLimit;
-			m_ASSAO->Draw(assaoSettings, &assaoInputs);
-
-			RenderingDevice::GetSingleton()->setOffScreenRTVDSV();
-
-			nextSource = nextSource;
-		}
-	}
 };
 
 class GaussianPostProcess : public PostProcess
@@ -550,8 +559,8 @@ PostProcessor::PostProcessor()
 {
 	m_BasicPostProcess.reset(new DirectX::BasicPostProcess(RenderingDevice::GetSingleton()->getDevice()));
 
-	m_PostProcesses.emplace_back(new GodRaysPostProcess());
 	m_PostProcesses.emplace_back(new ASSAOPostProcess());
+	m_PostProcesses.emplace_back(new GodRaysPostProcess());
 	m_PostProcesses.emplace_back(new GaussianPostProcess());
 	m_PostProcesses.emplace_back(new MonochromePostProcess());
 	m_PostProcesses.emplace_back(new SepiaPostProcess());
