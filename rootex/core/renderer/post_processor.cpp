@@ -168,6 +168,10 @@ public:
 				Vector3 ndc = Vector3(dc.x, -dc.y, dc.z) / dc.w;
 				Vector3 sunScreenSpacePos = ndc / 2.0f + Vector3(0.5f, 0.5f, 0.5f);
 
+				float screenWidth = Application::GetSingleton()->getWindow()->getWidth();
+				float screenHeight = Application::GetSingleton()->getWindow()->getHeight();
+				Vector2 screenDims = { screenWidth, screenHeight };
+
 				PSGodRaysCB cb;
 				cb.sunScreenSpacePos = sunScreenSpacePos;
 				cb.numSamples = postProcessingDetails.godRaysNumSamples;
@@ -175,10 +179,13 @@ public:
 				cb.weight = postProcessingDetails.godRaysWeight;
 				cb.decay = postProcessingDetails.godRaysDecay;
 				cb.exposure = postProcessingDetails.godRaysExposure;
+				cb.screenDims = screenDims;
 				RenderingDevice::GetSingleton()->editBuffer<PSGodRaysCB>(cb, m_GodRaysPSCB.Get());
 				RenderingDevice::GetSingleton()->setPSCB(0, 1, m_GodRaysPSCB.GetAddressOf());
 
 				RenderingDevice::GetSingleton()->setPSSRV(0, 1, &nextSource);
+				RenderingDevice::GetSingleton()->setPSSRV(1, 1, RenderingDevice::GetSingleton()->getStencilSRV().GetAddressOf());
+
 				RenderingDevice::GetSingleton()->drawIndexed(m_FrameIndexBuffer->getCount());
 
 				nextSource = m_CacheSRV.Get();
