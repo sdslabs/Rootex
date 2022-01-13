@@ -92,6 +92,14 @@ void RenderingDevice::createDepthStencil(DXGI_SWAP_CHAIN_DESC& sd, float width, 
 	depthSRVDesc.Texture2D.MipLevels = 1;
 
 	GFX_ERR_CHECK(m_Device->CreateShaderResourceView(depthStencil.Get(), &depthSRVDesc, &m_MainDSSRV));
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC stencilSRVDesc;
+	stencilSRVDesc.Format = DXGI_FORMAT_X32_TYPELESS_G8X24_UINT;
+	stencilSRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	stencilSRVDesc.Texture2D.MostDetailedMip = 0;
+	stencilSRVDesc.Texture2D.MipLevels = 1;
+
+	GFX_ERR_CHECK(m_Device->CreateShaderResourceView(depthStencil.Get(), &stencilSRVDesc, &m_MainStencilSRV));
 }
 
 void RenderingDevice::setScreenState(bool fullscreen)
@@ -789,6 +797,11 @@ Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::getMainSRV()
 Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::getDepthSSRV()
 {
 	return m_MainDSSRV;
+}
+
+Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::getStencilSRV()
+{
+	return m_MainStencilSRV;
 }
 
 Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::getOffScreenSRV()
