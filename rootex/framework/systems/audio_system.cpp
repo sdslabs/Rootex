@@ -109,7 +109,7 @@ void AudioSystem::begin()
 
 void AudioSystem::update(float deltaMilliseconds)
 {
-	if (!(m_SystemPause))
+	if (!(m_IsSystemPaused))
 	{
 		ZoneScoped;
 
@@ -134,20 +134,18 @@ void AudioSystem::update(float deltaMilliseconds)
 
 		for (auto& mc : ECSFactory::GetAllMusicComponent())
 		{
-			if (mc.getOwner().getScene()->getScenePause())
+			if (!(mc.getOwner().getScene()->getIsScenePaused()))
 			{
-				continue;
+				mc.getAudioSource()->queueNewBuffers();
+				mc.update();
 			}
-			mc.getAudioSource()->queueNewBuffers();
-			mc.update();
 		}
 		for (auto& smc : ECSFactory::GetAllShortMusicComponent())
 		{
-			if (smc.getOwner().getScene()->getScenePause())
+			if (!(smc.getOwner().getScene()->getIsScenePaused()))
 			{
-				continue;
+				smc.update();
 			}
-			smc.update();
 		}
 
 		if (m_Listener)

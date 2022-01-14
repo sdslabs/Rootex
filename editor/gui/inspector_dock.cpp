@@ -211,7 +211,7 @@ void InspectorDock::draw(float deltaMilliseconds)
 						}
 					}
 				}
-				ImGui::Checkbox("Stop work on Pause", &m_OpenedScene->getScenePause());
+				ImGui::Checkbox("Stop Scene during Pause", &m_OpenedScene->getIsScenePaused());
 
 				ImGui::Separator();
 

@@ -8,7 +8,7 @@
         "title": "Rootex Splash",
         "width": 400
     },
-    "startScene": "game/assets/scenes/physics.scene.json",
+    "startScene": "game/assets/scenes/mesh_collision.scene.json",
     "systems": {
         "AudioSystem": {},
         "DebugSystem": {

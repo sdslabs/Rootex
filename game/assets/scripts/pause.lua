@@ -19,7 +19,7 @@ function Pause:onPauseLevel(entity, event)
     elseif event:getData().y == 1 and self.running == true then
         RTX.GetCurrentScene():removeChild(RTX.Scene.FindScenesByName("pause")[1])
         self.running = false
-        RTX.System.unpause()
+        RTX.System.unPause()
     end 
     
     return true

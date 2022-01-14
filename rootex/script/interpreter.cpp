@@ -314,7 +314,7 @@ void LuaInterpreter::registerTypes()
 	{
 		sol::usertype<System> system = rootex.new_usertype<System>("System");
 		system["pause"] = &System::pause;
-		system["unpause"] = &System::unpause;
+		system["unPause"] = &System::unPause;
 	}
 	{
 		sol::usertype<Entity> entity = rootex.new_usertype<Entity>("Entity",
