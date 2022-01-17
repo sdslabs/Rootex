@@ -1,4 +1,4 @@
 [submodule "assets"]
 	path = game/assets
-	url = https://gitlab.com/sdslabs/rootex-assets.git
+	url = https://gitlab.com/sdslabs/rootex-game.git
 	branch = main
