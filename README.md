@@ -72,9 +72,8 @@ Rootex runs only on Windows and there are no plans to port it to other platforms
 Assets Workflow :
  
 1. Assets are stored in separate repositories and added as git submodules. The testing assets are stored at https://gitlab.com/sdslabs/rootex-assets while the assets for the game are stored at https://gitlab.com/sdslabs/rootex-game.
-2. The `assets.bat` script has two subcommands to make switching of the submodules between the testing and game repository easier. Use `assets.bat assets-test` to switch to the test repository and `assets.bat assets-game` to switch to the game repository. The script assumes you want to clone with SSH by default. To clone with HTTPS, use `assets.bat assets-test https` or `assets.bat assets-game https`.
-3. You can also add your own repository as an assets submodule. Use `assets.bat assets-custom <url>` for that.
-4. However, all that the batch file will do is tell the git config to track the said repository. For the changes to actually reflect in the "game/assets/" directory, You will also have to run `git submodule update --init --recursive --remote`
+2. The `assets.bat` script has two subcommands to make switching of the submodules between the testing and game repository easier. Use `assets.bat assets-test` to switch to the test repository and `assets.bat assets-game` to switch to the game repository. The submodule will have two remote urls set. The `origin` points to the HTTPS url while `upstream` points to the SSH url.
+3. You can also add your own repository as an assets submodule. Use `assets.bat assets-custom <url>` for that. If setting a custom url, use an HTTPS url here and then set an SSH remote afterwards.
 
 Now you can start reading the [documentation](https://rootex.readthedocs.io/) and build games on Rootex!
 
