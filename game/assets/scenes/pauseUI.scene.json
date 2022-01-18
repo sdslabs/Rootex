@@ -11,6 +11,7 @@
     },
     "importStyle": 0,
     "name": "pause",
+    "pause": true,
     "sceneFile": "game/assets/scenes/pauseUI.scene.json",
     "settings": {
         "camera": 1,
