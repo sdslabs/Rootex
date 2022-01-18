@@ -20,6 +20,14 @@ void to_json(JSON::json& j, const CustomMaterialData& s)
 	{
 		j["vertexShaderTextures"].push_back(texture->getPath().generic_string());
 	}
+	for (auto& customConstantBuffers : s.customConstantBuffers)
+	{
+		j["customConstantBuffers"].push_back(customConstantBuffers);
+	}
+	for (auto& typeOfCustomConstantBuffers : s.typeOfCustomConstantBuffers)
+	{
+		j["typeOfCustomConstantBuffers"].push_back(typeOfCustomConstantBuffers);
+	}
 }
 
 void from_json(const JSON::json& j, CustomMaterialData& s)
@@ -39,6 +47,14 @@ void from_json(const JSON::json& j, CustomMaterialData& s)
 		{
 			s.vertexShaderTextures.push_back(texture);
 		}
+	}
+	for (auto& customConstantBuffers : j.value("customConstantBuffers", Vector<float>()))
+	{
+		s.customConstantBuffers.push_back(customConstantBuffers);
+	}
+	for (auto& typeOfCustomConstantBuffers : j.value("typeOfCustomConstantBuffers", Vector<float>()))
+	{
+		s.typeOfCustomConstantBuffers.push_back(typeOfCustomConstantBuffers);
 	}
 }
 
@@ -256,6 +272,9 @@ void CustomMaterialResourceFile::reimport()
 	m_MaterialData = j;
 	MaterialResourceFile::readJSON(j);
 
+	customConstantBuffers = m_MaterialData.customConstantBuffers;
+	typeOfCustomConstantBuffers = m_MaterialData.typeOfCustomConstantBuffers;
+
 	recompileShaders();
 	float fakeArray[64];
 	m_PSCB = RenderingDevice::GetSingleton()->createBuffer((const char*)fakeArray, 64 * sizeof(float), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
@@ -269,46 +288,46 @@ bool CustomMaterialResourceFile::save()
 
 float CustomMaterialResourceFile::getFloat(int index)
 {
-	return customConstantBuffers[index];
+	return customConstantBuffers[4 * index];
 }
 
 Vector<float> CustomMaterialResourceFile::getFloat3(int index)
 {
 	Vector<float> temp;
-	temp.push_back(customConstantBuffers[index]);
-	temp.push_back(customConstantBuffers[index + 1]);
-	temp.push_back(customConstantBuffers[index + 2]);
+	temp.push_back(customConstantBuffers[4 * index]);
+	temp.push_back(customConstantBuffers[4 * index + 1]);
+	temp.push_back(customConstantBuffers[4 * index + 2]);
 	return temp;
 }
 
 Vector<float> CustomMaterialResourceFile::getColor(int index)
 {
 	Vector<float> temp;
-	temp.push_back(customConstantBuffers[index]);
-	temp.push_back(customConstantBuffers[index + 1]);
-	temp.push_back(customConstantBuffers[index + 2]);
-	temp.push_back(customConstantBuffers[index + 3]);
+	temp.push_back(customConstantBuffers[4 * index]);
+	temp.push_back(customConstantBuffers[4 * index + 1]);
+	temp.push_back(customConstantBuffers[4 * index + 2]);
+	temp.push_back(customConstantBuffers[4 * index + 3]);
 	return temp;
 }
 
 void CustomMaterialResourceFile::setFloat(int index, float value)
 {
-	customConstantBuffers[index] = value;
+	customConstantBuffers[4 * index] = value;
 }
 
 void CustomMaterialResourceFile::setFloat3(int index, Vector3 value)
 {
-	customConstantBuffers[index] = value.x;
-	customConstantBuffers[index + 1] = value.y;
-	customConstantBuffers[index + 2] = value.z;
+	customConstantBuffers[4 * index] = value.x;
+	customConstantBuffers[4 * index + 1] = value.y;
+	customConstantBuffers[4 * index + 2] = value.z;
 }
 
 void CustomMaterialResourceFile::setColor(int index, Color value)
 {
-	customConstantBuffers[index] = value.x;
-	customConstantBuffers[index + 1] = value.y;
-	customConstantBuffers[index + 2] = value.z;
-	customConstantBuffers[index + 3] = value.w;
+	customConstantBuffers[4 * index] = value.x;
+	customConstantBuffers[4 * index + 1] = value.y;
+	customConstantBuffers[4 * index + 2] = value.z;
+	customConstantBuffers[4 * index + 3] = value.w;
 }
 
 void CustomMaterialResourceFile::draw()
@@ -589,4 +608,6 @@ void CustomMaterialResourceFile::draw()
 		customConstantBuffers.pop_back();
 		typeOfCustomConstantBuffers.pop_back();
 	}
+	m_MaterialData.customConstantBuffers = customConstantBuffers;
+	m_MaterialData.typeOfCustomConstantBuffers = typeOfCustomConstantBuffers;
 }
