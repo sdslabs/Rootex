@@ -28,9 +28,22 @@ void PlayerSystem::begin()
 
 void PlayerSystem::update(float deltaMilliseconds)
 {
-	for (auto& p : ECSFactory::GetAllPlayerController())
+	if (!(m_IsSystemPaused))
 	{
-		p.update(deltaMilliseconds);
+		for (auto& p : ECSFactory::GetAllPlayerController())
+		{
+			p.update(deltaMilliseconds);
+		}
+	}
+	else
+	{
+		for (auto& p : ECSFactory::GetAllPlayerController())
+		{
+			if (!(p.getOwner().getScene()->getIsScenePaused()))
+			{
+				p.update(deltaMilliseconds);
+			}
+		}
 	}
 }
 

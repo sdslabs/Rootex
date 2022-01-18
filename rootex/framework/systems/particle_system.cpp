@@ -116,12 +116,27 @@ void ParticleSystem::update(float deltaMilliseconds)
 
 	m_Renderer->SetProjectionMatrix(cameraProj);
 	m_Renderer->SetCameraMatrix(MatrixToEffekseer44(camera->getViewMatrix()));
-
-	for (auto& pec : ECSFactory::GetAllParticleEffectComponent())
+	if (!(m_IsSystemPaused))
 	{
-		if (pec.isMoving())
+		for (auto& pec : ECSFactory::GetAllParticleEffectComponent())
 		{
-			setMatrix(pec.getHandle(), pec.getTransformComponent()->getAbsoluteTransform());
+			if (pec.isMoving())
+			{
+				setMatrix(pec.getHandle(), pec.getTransformComponent()->getAbsoluteTransform());
+			}
+		}
+	}
+	else
+	{
+		for (auto& pec : ECSFactory::GetAllParticleEffectComponent())
+		{
+			if (!(pec.getOwner().getScene()->getIsScenePaused()))
+			{
+				if (pec.isMoving())
+				{
+					setMatrix(pec.getHandle(), pec.getTransformComponent()->getAbsoluteTransform());
+				}
+			}
 		}
 	}
 
