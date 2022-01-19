@@ -6,6 +6,7 @@
 #include "script/script.h"
 #include "editor/editor_system.h"
 #include "utility/imgui_helpers.h"
+#include "framework/systems/pause_system.h"
 
 #include "imgui.h"
 #include "imgui_stdlib.h"
@@ -138,6 +139,23 @@ void InspectorDock::drawSceneActions(Scene* scene)
 		{
 			EventManager::GetSingleton()->deferredCall(RootexEvents::DeleteScene, m_ActionScene);
 			closeScene(nullptr);
+		}
+	}
+	else
+	{
+		if (PauseSystem::GetSingleton()->getIsPausingEnabled())
+		{
+			if (ImGui::MenuItem("Remove Pause Scene"))
+			{
+				PauseSystem::GetSingleton()->setIsPausingEnabled(false);
+			}
+		}
+		else
+		{
+			if (ImGui::MenuItem("Add Pause Scene"))
+			{
+				PauseSystem::GetSingleton()->setIsPausingEnabled(true);
+			}
 		}
 	}
 }
