@@ -26,6 +26,7 @@
 #include "components/visual/ui/ui_component.h"
 #include "components/visual/effect/particle_effect_component.h"
 #include "systems/input_system.h"
+#include "systems/pause_system.h"
 #include "core/resource_files/audio_resource_file.h"
 #include "core/resource_files/font_resource_file.h"
 #include "core/resource_files/image_resource_file.h"
@@ -315,6 +316,11 @@ void LuaInterpreter::registerTypes()
 		sol::usertype<System> system = rootex.new_usertype<System>("System");
 		system["pause"] = &System::pause;
 		system["unPause"] = &System::unPause;
+	}
+	{
+		sol::usertype<PauseSystem> pauseSystem = rootex.new_usertype<PauseSystem>("PauseSystem");
+		pauseSystem["getIsPausingEnabled"] = []() { return PauseSystem::GetSingleton()->getIsPausingEnabled(); };
+		pauseSystem["setIsPausingEnabled"] = [](bool pausing) { PauseSystem::GetSingleton()->setIsPausingEnabled(pausing); };
 	}
 	{
 		sol::usertype<Entity> entity = rootex.new_usertype<Entity>("Entity",
