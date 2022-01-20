@@ -18,7 +18,7 @@ ContentBrowser::ContentBrowser()
 	m_DirectoryImage = ResourceLoader::CreateImageResourceFile("editor\\assets\\icons\\folder.png");
 	m_ScriptImage = ResourceLoader::CreateImageResourceFile("editor\\assets\\icons\\script.png");
 	m_MusicImage = ResourceLoader::CreateImageResourceFile("editor\\assets\\icons\\music.png");
-	//OS::RegisterFileSystemWatcher(m_AssetsDirectory, &notifyFileSystemChanges);
+	OS::RegisterFileSystemWatcher(m_AssetsDirectory, &notifyFileSystemChanges);
 }
 
 ContentBrowser* ContentBrowser::GetSingleton()

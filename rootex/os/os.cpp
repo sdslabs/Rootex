@@ -390,7 +390,7 @@ void OS::RegisterFileSystemWatcher(const String& path, void (*callback)(PVOID, B
 	_tprintf(TEXT("Directory tree (%s) changed.\n"), lpDrive);
 	// Watch the directory for file creation and deletion.
 	dwChangeHandles[0] = FindFirstChangeNotification(
-	    lpDir, // directory to watch
+	    lpDrive, // directory to watch
 	    FALSE, // do not watch subtree
 	    FILE_NOTIFY_CHANGE_FILE_NAME); // watch file name changes
 
@@ -422,17 +422,9 @@ void OS::RegisterFileSystemWatcher(const String& path, void (*callback)(PVOID, B
 		    0, NULL);
 
 		// Display the error message and exit the process
-
-		lpDisplayBuf = (LPVOID)LocalAlloc(LMEM_ZEROINIT,
-		    (lstrlen((LPCTSTR)lpMsgBuf) + lstrlen((LPCTSTR) "FindFirstChangeNotification") + 40) * sizeof(TCHAR));
-		StringCchPrintf((LPTSTR)lpDisplayBuf,
-		    LocalSize(lpDisplayBuf) / sizeof(TCHAR),
-		    TEXT("%s failed with error %d: %s"),
-		    "FindFirstChangeNotification", dw, lpMsgBuf);
-		MessageBox(NULL, (LPCTSTR)lpDisplayBuf, TEXT("Error"), MB_OK);
+		printf("%s failed with error %d: %s", "FindFirstChangeNotification", dw, lpMsgBuf);
 
 		LocalFree(lpMsgBuf);
-		LocalFree(lpDisplayBuf);
 		printf("%d", GetLastError());
 	}
 
