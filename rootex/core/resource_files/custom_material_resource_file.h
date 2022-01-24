@@ -11,7 +11,7 @@ class CustomMaterialResourceFile : public MaterialResourceFile
 private:
 	static inline Microsoft::WRL::ComPtr<ID3D11SamplerState> s_Sampler;
 	Vector<float> customConstantBuffers;
-	Vector<float> typeOfCustomConstantBuffers; // 1.0 -> float, 2.0 -> float3, 3.0 -> Color
+	Vector<TYPES_OF_BUFFERS> typeOfCustomConstantBuffers;
 
 	CustomMaterialData m_MaterialData;
 
@@ -60,10 +60,10 @@ public:
 	void drawTextureSlots(const char* label, Vector<Ref<ImageResourceFile>>& textures);
 
 	float getFloat(int index);
-	Vector<float> getFloat3(int index);
-	Vector<float> getColor(int index);
+	Vector3 getFloat3(int index);
+	Color getColor(int index);
 
-	void setFloat(int index, float value);
-	void setFloat3(int index, Vector3 value);
-	void setColor(int index, Color value);
+	bool setFloat(int index, float value);
+	bool setFloat3(int index, Vector3 value);
+	bool setColor(int index, Color value);
 };

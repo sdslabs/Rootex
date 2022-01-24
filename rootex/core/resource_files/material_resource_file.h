@@ -117,6 +117,13 @@ struct SkyMaterialData
 void to_json(JSON::json& j, const SkyMaterialData& s);
 void from_json(const JSON::json& j, SkyMaterialData& s);
 
+enum class TYPES_OF_BUFFERS
+{
+	FLOATCB,
+	FLOAT3CB,
+	COLORCB
+};
+
 struct CustomMaterialData
 {
 	String vertexShaderPath;
@@ -124,7 +131,7 @@ struct CustomMaterialData
 	Vector<Ref<ImageResourceFile>> vertexShaderTextures;
 	Vector<Ref<ImageResourceFile>> pixelShaderTextures;
 	Vector<float> customConstantBuffers;
-	Vector<float> typeOfCustomConstantBuffers;
+	Vector<TYPES_OF_BUFFERS> typeOfCustomConstantBuffers;
 };
 
 void to_json(JSON::json& j, const CustomMaterialData& s);

@@ -30,7 +30,7 @@ void Renderer::bind(MaterialResourceFile* newMaterial, MaterialResourceFile* old
 {
 	ZoneNamedN(materialBind, "Render Material Bind", true);
 	BasicMaterialResourceFile* basicMaterialResourceFilePointer = dynamic_cast<BasicMaterialResourceFile*>(newMaterial);
-	if (basicMaterialResourceFilePointer != nullptr)
+	if (basicMaterialResourceFilePointer)
 	{
 		newMaterial->bindSamplers();
 		newMaterial->bindTextures();

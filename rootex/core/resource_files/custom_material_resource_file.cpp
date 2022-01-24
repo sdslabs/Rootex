@@ -5,6 +5,7 @@
 #include "core/renderer/shaders/register_locations_vertex_shader.h"
 #include "framework/systems/render_system.h"
 #include "resource_loader.h"
+#define MAX_NUMBER_OF_CUSTOM_CB 8
 
 void to_json(JSON::json& j, const CustomMaterialData& s)
 {
@@ -52,7 +53,7 @@ void from_json(const JSON::json& j, CustomMaterialData& s)
 	{
 		s.customConstantBuffers.push_back(customConstantBuffers);
 	}
-	for (auto& typeOfCustomConstantBuffers : j.value("typeOfCustomConstantBuffers", Vector<float>()))
+	for (auto& typeOfCustomConstantBuffers : j.value("typeOfCustomConstantBuffers", Vector<TYPES_OF_BUFFERS>()))
 	{
 		s.typeOfCustomConstantBuffers.push_back(typeOfCustomConstantBuffers);
 	}
@@ -276,8 +277,8 @@ void CustomMaterialResourceFile::reimport()
 	typeOfCustomConstantBuffers = m_MaterialData.typeOfCustomConstantBuffers;
 
 	recompileShaders();
-	float fakeArray[64];
-	m_PSCB = RenderingDevice::GetSingleton()->createBuffer((const char*)fakeArray, 64 * sizeof(float), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
+	float fakeArray[MAX_NUMBER_OF_CUSTOM_CB * 4];
+	m_PSCB = RenderingDevice::GetSingleton()->createBuffer((const char*)fakeArray, sizeof(fakeArray), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
 	m_VSCB = RenderingDevice::GetSingleton()->createBuffer<PerModelVSCBData>(PerModelVSCBData(), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
 }
 
@@ -288,46 +289,69 @@ bool CustomMaterialResourceFile::save()
 
 float CustomMaterialResourceFile::getFloat(int index)
 {
-	return customConstantBuffers[4 * index];
+	if (4 * index < customConstantBuffers.size())
+		return customConstantBuffers[4 * index];
+	return 0.0f;
 }
 
-Vector<float> CustomMaterialResourceFile::getFloat3(int index)
+Vector3 CustomMaterialResourceFile::getFloat3(int index)
 {
-	Vector<float> temp;
-	temp.push_back(customConstantBuffers[4 * index]);
-	temp.push_back(customConstantBuffers[4 * index + 1]);
-	temp.push_back(customConstantBuffers[4 * index + 2]);
+	Vector3 temp = { 0.0f, 0.0f, 0.0f };
+	if (4 * index < customConstantBuffers.size())
+	{
+		temp.x = customConstantBuffers[4 * index];
+		temp.y = customConstantBuffers[4 * index + 1];
+		temp.z = customConstantBuffers[4 * index + 2];
+	}
 	return temp;
 }
 
-Vector<float> CustomMaterialResourceFile::getColor(int index)
+Color CustomMaterialResourceFile::getColor(int index)
 {
-	Vector<float> temp;
-	temp.push_back(customConstantBuffers[4 * index]);
-	temp.push_back(customConstantBuffers[4 * index + 1]);
-	temp.push_back(customConstantBuffers[4 * index + 2]);
-	temp.push_back(customConstantBuffers[4 * index + 3]);
+	Color temp = { 0.0f, 0.0f, 0.0f, 0.0f };
+	if (4 * index < customConstantBuffers.size())
+	{
+		temp.x = customConstantBuffers[4 * index];
+		temp.y = customConstantBuffers[4 * index + 1];
+		temp.z = customConstantBuffers[4 * index + 2];
+		temp.w = customConstantBuffers[4 * index + 3];
+	}
 	return temp;
 }
 
-void CustomMaterialResourceFile::setFloat(int index, float value)
+bool CustomMaterialResourceFile::setFloat(int index, float value)
 {
-	customConstantBuffers[4 * index] = value;
+	if (4 * index < customConstantBuffers.size())
+	{
+		customConstantBuffers[4 * index] = value;
+		return true;
+	}
+	return false;
 }
 
-void CustomMaterialResourceFile::setFloat3(int index, Vector3 value)
+bool CustomMaterialResourceFile::setFloat3(int index, Vector3 value)
 {
-	customConstantBuffers[4 * index] = value.x;
-	customConstantBuffers[4 * index + 1] = value.y;
-	customConstantBuffers[4 * index + 2] = value.z;
+	if (4 * index < customConstantBuffers.size())
+	{
+		customConstantBuffers[4 * index] = value.x;
+		customConstantBuffers[4 * index + 1] = value.y;
+		customConstantBuffers[4 * index + 2] = value.z;
+		return true;
+	}
+	return false;
 }
 
-void CustomMaterialResourceFile::setColor(int index, Color value)
+bool CustomMaterialResourceFile::setColor(int index, Color value)
 {
-	customConstantBuffers[4 * index] = value.x;
-	customConstantBuffers[4 * index + 1] = value.y;
-	customConstantBuffers[4 * index + 2] = value.z;
-	customConstantBuffers[4 * index + 3] = value.w;
+	if (4 * index < customConstantBuffers.size())
+	{
+		customConstantBuffers[4 * index] = value.x;
+		customConstantBuffers[4 * index + 1] = value.y;
+		customConstantBuffers[4 * index + 2] = value.z;
+		customConstantBuffers[4 * index + 3] = value.w;
+		return true;
+	}
+	return false;
 }
 
 void CustomMaterialResourceFile::draw()
@@ -511,95 +535,59 @@ void CustomMaterialResourceFile::draw()
 		ImGui::TreePop();
 	}
 
-	int i = 0;
-	int j = 0;
-	float tempFloat3[3];
-	float* addressesFloat3[3];
-	float tempColor[4];
-	float* addressesColor[4];
-	for (auto&& cb : customConstantBuffers)
+	for (int i = 0; i < customConstantBuffers.size(); i += 4)
 	{
-		if (typeOfCustomConstantBuffers[i / 4] == 1.0)
+		String customConstantBufferName = "CB Slot " + std::to_string(i / 4);
+		switch (typeOfCustomConstantBuffers[i / 4])
 		{
-			if (i % 4 == 0)
-			{
-				String customConstantBufferName = "CB Slot " + std::to_string(i / 4);
-				ImGui::DragFloat(customConstantBufferName.c_str(), &cb, 0.01f, 0.0f, 10.0f);
-				ImGui::Separator();
-			}
+		case TYPES_OF_BUFFERS::FLOATCB:
+			ImGui::DragFloat(customConstantBufferName.c_str(), &customConstantBuffers[i], 0.01f, 0.0f, 10.0f);
+			break;
+		case TYPES_OF_BUFFERS::FLOAT3CB:
+			ImGui::DragFloat3(customConstantBufferName.c_str(), &customConstantBuffers[i], 0.01f, 0.0f, 10.0f);
+			break;
+		case TYPES_OF_BUFFERS::COLORCB:
+			ImGui::ColorPicker4(customConstantBufferName.c_str(), &customConstantBuffers[i]);
+			break;
 		}
-		if (typeOfCustomConstantBuffers[i / 4] == 2.0)
+		ImGui::Separator();
+	}
+
+	if (customConstantBuffers.size() < MAX_NUMBER_OF_CUSTOM_CB * sizeof(float))
+	{
+		if (ImGui::Button(ICON_ROOTEX_PLUS "Push float CB"))
 		{
-			tempFloat3[j % 3] = cb;
-			addressesFloat3[j % 3] = &cb;
-			if (i % 4 != 3)
-			{
-				j++;
-				i++;
-				continue;
-			}
-			String customConstantBufferName = "CB Slot " + std::to_string(i / 4);
-			ImGui::DragFloat3(customConstantBufferName.c_str(), tempFloat3, 0.01f, 0.0f, 10.0f);
-			for (int k = 0; k < 3; k++)
-			{
-				*addressesFloat3[k] = tempFloat3[k];
-			}
-			ImGui::Separator();
+			float value = 1.0;
+			customConstantBuffers.push_back(value);
+			customConstantBuffers.push_back(value);
+			customConstantBuffers.push_back(value);
+			customConstantBuffers.push_back(value);
+			typeOfCustomConstantBuffers.push_back(TYPES_OF_BUFFERS::FLOATCB);
 		}
-		if (typeOfCustomConstantBuffers[i / 4] == 3.0)
+		ImGui::SameLine();
+
+		if (ImGui::Button(ICON_ROOTEX_PLUS "Push float3 CB"))
 		{
-			tempColor[i % 4] = cb;
-			addressesColor[i % 4] = &cb;
-			if (i % 4 != 3)
-			{
-				i++;
-				continue;
-			}
-			String customConstantBufferName = "CB Slot " + std::to_string(i / 4);
-			ImGui::ColorPicker4(customConstantBufferName.c_str(), tempColor);
-			for (int k = 0; k < 4; k++)
-			{
-				*addressesColor[k] = tempColor[k];
-			}
-			ImGui::Separator();
+			float value = 1.0;
+			customConstantBuffers.push_back(value);
+			customConstantBuffers.push_back(value);
+			customConstantBuffers.push_back(value);
+			customConstantBuffers.push_back(value);
+			typeOfCustomConstantBuffers.push_back(TYPES_OF_BUFFERS::FLOAT3CB);
 		}
-		i++;
-		continue;
-	}
+		ImGui::SameLine();
 
-	if (ImGui::Button(ICON_ROOTEX_PLUS "Push float CB"))
-	{
-		float value = 1.0;
-		customConstantBuffers.push_back(value);
-		customConstantBuffers.push_back(value);
-		customConstantBuffers.push_back(value);
-		customConstantBuffers.push_back(value);
-		typeOfCustomConstantBuffers.push_back(1.0);
+		if (ImGui::Button(ICON_ROOTEX_PLUS "Push Color CB"))
+		{
+			float value = 1.0;
+			customConstantBuffers.push_back(value);
+			customConstantBuffers.push_back(value);
+			customConstantBuffers.push_back(value);
+			customConstantBuffers.push_back(value);
+			typeOfCustomConstantBuffers.push_back(TYPES_OF_BUFFERS::COLORCB);
+		}
+		ImGui::SameLine();
 	}
-	ImGui::SameLine();
-
-	if (ImGui::Button(ICON_ROOTEX_PLUS "Push float3 CB"))
-	{
-		float value = 1.0;
-		customConstantBuffers.push_back(value);
-		customConstantBuffers.push_back(value);
-		customConstantBuffers.push_back(value);
-		customConstantBuffers.push_back(value);
-		typeOfCustomConstantBuffers.push_back(2.0);
-	}
-	ImGui::SameLine();
-
-	if (ImGui::Button(ICON_ROOTEX_PLUS "Push Color CB"))
-	{
-		float value = 1.0;
-		customConstantBuffers.push_back(value);
-		customConstantBuffers.push_back(value);
-		customConstantBuffers.push_back(value);
-		customConstantBuffers.push_back(value);
-		typeOfCustomConstantBuffers.push_back(3.0);
-	}
-	ImGui::SameLine();
-
 	if (ImGui::Button(ICON_ROOTEX_MINUS "Pop CB"))
 	{
 		customConstantBuffers.pop_back();
