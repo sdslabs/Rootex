@@ -16,26 +16,13 @@ AnimationSystem::AnimationSystem()
 
 void AnimationSystem::update(float deltaMilliseconds)
 {
-	if (!(m_IsSystemPaused))
+	for (auto& amc : ECSFactory::GetAllAnimatedModelComponent())
 	{
-		for (auto& amc : ECSFactory::GetAllAnimatedModelComponent())
+		if (!(amc.getOwner().getScene()->getIsScenePaused() && m_IsSystemPaused))
 		{
 			if (amc.isPlaying() && !amc.hasEnded())
 			{
 				amc.update(deltaMilliseconds);
-			}
-		}
-	}
-	else
-	{
-		for (auto& amc : ECSFactory::GetAllAnimatedModelComponent())
-		{
-			if (!(amc.getOwner().getScene()->getIsScenePaused()))
-			{
-				if (amc.isPlaying() && !amc.hasEnded())
-				{
-					amc.update(deltaMilliseconds);
-				}
 			}
 		}
 	}

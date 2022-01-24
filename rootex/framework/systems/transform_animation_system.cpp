@@ -30,26 +30,14 @@ void TransformAnimationSystem::update(float deltaMilliseconds)
 {
 	ZoneScoped;
 	TransformAnimationComponent* animation = nullptr;
-	if (!(m_IsSystemPaused))
+
+	for (auto& animation : ECSFactory::GetAllTransformAnimationComponent())
 	{
-		for (auto& animation : ECSFactory::GetAllTransformAnimationComponent())
+		if (!(animation.getOwner().getScene()->getIsScenePaused() && m_IsSystemPaused))
 		{
 			if (animation.isPlaying() && !animation.hasEnded())
 			{
 				animation.interpolate(deltaMilliseconds * MS_TO_S);
-			}
-		}
-	}
-	else
-	{
-		for (auto& animation : ECSFactory::GetAllTransformAnimationComponent())
-		{
-			if (!(animation.getOwner().getScene()->getIsScenePaused()))
-			{
-				if (animation.isPlaying() && !animation.hasEnded())
-				{
-					animation.interpolate(deltaMilliseconds * MS_TO_S);
-				}
 			}
 		}
 	}

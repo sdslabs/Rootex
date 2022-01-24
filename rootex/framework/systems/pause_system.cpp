@@ -1,8 +1,5 @@
 #include "pause_system.h"
 
-#define LINE_MAX_VERTEX_COUNT 1000
-#define LINE_VERTEX_COUNT 2
-
 PauseSystem* PauseSystem::GetSingleton()
 {
 	static PauseSystem singleton;
