@@ -62,48 +62,26 @@ void CallUpdateForScene(Scene* scene, float deltaMilliseconds)
 void ScriptSystem::update(float deltaMilliseconds)
 {
 	ZoneScoped;
-	if (!(m_IsSystemPaused))
-	{
-		for (auto& entity : m_ScriptEntitiesToInit)
-		{
-			if (entity)
-			{
-				entity->evaluateScriptOverrides();
-				entity->call("begin", { entity });
-			}
-		}
-		m_ScriptEntitiesToInit.clear();
 
-		for (auto& entity : m_ScriptEntitiesToEnter)
-		{
-			if (entity)
-			{
-				entity->call("enterScene", { entity });
-			}
-		}
-		m_ScriptEntitiesToEnter.clear();
-	}
-	else
+	for (auto& entity : m_ScriptEntitiesToInit)
 	{
-		for (auto& entity : m_ScriptEntitiesToInit)
+		if (entity && (!(entity->getScene()->getIsScenePaused() && m_IsSystemPaused)))
 		{
-			if (entity && (!(entity->getScene()->getIsScenePaused())))
-			{
-				entity->evaluateScriptOverrides();
-				entity->call("begin", { entity });
-			}
+			entity->evaluateScriptOverrides();
+			entity->call("begin", { entity });
 		}
-		m_ScriptEntitiesToInit.clear();
-
-		for (auto& entity : m_ScriptEntitiesToEnter)
-		{
-			if (entity && (!(entity->getScene()->getIsScenePaused())))
-			{
-				entity->call("enterScene", { entity });
-			}
-		}
-		m_ScriptEntitiesToEnter.clear();
 	}
+	m_ScriptEntitiesToInit.clear();
+
+	for (auto& entity : m_ScriptEntitiesToEnter)
+	{
+		if (entity && (!(entity->getScene()->getIsScenePaused() && m_IsSystemPaused)))
+		{
+			entity->call("enterScene", { entity });
+		}
+	}
+	m_ScriptEntitiesToEnter.clear();
+
 	Scene* root = SceneLoader::GetSingleton()->getRootScene();
 	CallUpdateForScene(root, deltaMilliseconds);
 

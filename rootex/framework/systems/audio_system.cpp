@@ -109,49 +109,27 @@ void AudioSystem::begin()
 
 void AudioSystem::update(float deltaMilliseconds)
 {
-	if (!(m_IsSystemPaused))
-	{
-		ZoneScoped;
+	ZoneScoped;
 
-		for (auto& mc : ECSFactory::GetAllMusicComponent())
+	for (auto& mc : ECSFactory::GetAllMusicComponent())
+	{
+		if (!(mc.getOwner().getScene()->getIsScenePaused() && m_IsSystemPaused))
 		{
 			mc.getAudioSource()->queueNewBuffers();
 			mc.update();
 		}
-		for (auto& smc : ECSFactory::GetAllShortMusicComponent())
+	}
+	for (auto& smc : ECSFactory::GetAllShortMusicComponent())
+	{
+		if (!(smc.getOwner().getScene()->getIsScenePaused() && m_IsSystemPaused))
 		{
 			smc.update();
 		}
-
-		if (m_Listener)
-		{
-			m_Listener->update();
-		}
 	}
-	else
+
+	if (m_Listener)
 	{
-		ZoneScoped;
-
-		for (auto& mc : ECSFactory::GetAllMusicComponent())
-		{
-			if (!(mc.getOwner().getScene()->getIsScenePaused()))
-			{
-				mc.getAudioSource()->queueNewBuffers();
-				mc.update();
-			}
-		}
-		for (auto& smc : ECSFactory::GetAllShortMusicComponent())
-		{
-			if (!(smc.getOwner().getScene()->getIsScenePaused()))
-			{
-				smc.update();
-			}
-		}
-
-		if (m_Listener)
-		{
-			m_Listener->update();
-		}
+		m_Listener->update();
 	}
 }
 
