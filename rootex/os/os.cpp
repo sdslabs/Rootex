@@ -373,13 +373,16 @@ bool OS::IsFile(const String& path)
 
 void OS::RegisterFileSystemWatcher(const String& path, void (*callback)(PVOID, BOOLEAN))
 {
-	LPCSTR lpDir = GetAbsolutePath(path).string().c_str();
-	printf("File path : %s", GetAbsolutePath(path).string().c_str());
+	String absolute_path = GetAbsolutePath(path).string();
+	LPTSTR lpDir = new TCHAR[absolute_path.size() + 1];
+	strcpy(lpDir, absolute_path.c_str());
+	std::cout << "Long String is : " << lpDir << std::endl;
 	DWORD dwWaitStatus;
 	HANDLE dwChangeHandles[2];
 	TCHAR lpDrive[4];
 	TCHAR lpFile[_MAX_FNAME];
 	TCHAR lpExt[_MAX_EXT];
+
 	HANDLE waitHandle;
 	int arg = 123;
 
@@ -387,16 +390,18 @@ void OS::RegisterFileSystemWatcher(const String& path, void (*callback)(PVOID, B
 
 	lpDrive[2] = (TCHAR)'\\';
 	lpDrive[3] = (TCHAR)'\0';
-	_tprintf(TEXT("Directory tree (%s) changed.\n"), lpDrive);
+
 	// Watch the directory for file creation and deletion.
+
 	dwChangeHandles[0] = FindFirstChangeNotification(
-	    lpDrive, // directory to watch
+	    lpDir, // directory to watch
 	    FALSE, // do not watch subtree
 	    FILE_NOTIFY_CHANGE_FILE_NAME); // watch file name changes
 
 	if (dwChangeHandles[0] == INVALID_HANDLE_VALUE)
 	{
-		WARN("FindFirstChangeNotification function failed.\n");
+		printf("\n ERROR: FindFirstChangeNotification function failed.\n");
+		ExitProcess(GetLastError());
 	}
 
 	// Watch the subtree for directory creation and deletion.
@@ -408,33 +413,19 @@ void OS::RegisterFileSystemWatcher(const String& path, void (*callback)(PVOID, B
 
 	if (dwChangeHandles[1] == INVALID_HANDLE_VALUE)
 	{
-		WARN("FindFirstChangeNotification function failed.\n");
-		LPVOID lpMsgBuf;
-		LPVOID lpDisplayBuf;
-		DWORD dw = GetLastError();
-
-		FormatMessage(
-		    FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-		    NULL,
-		    dw,
-		    MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-		    (LPTSTR)&lpMsgBuf,
-		    0, NULL);
-
-		// Display the error message and exit the process
-		printf("%s failed with error %d: %s", "FindFirstChangeNotification", dw, lpMsgBuf);
-
-		LocalFree(lpMsgBuf);
-		printf("%d", GetLastError());
+		printf("\n ERROR: FindFirstChangeNotification function failed.\n");
+		ExitProcess(GetLastError());
 	}
 
 	// Make a final validation check on our handles.
 
 	if ((dwChangeHandles[0] == NULL) || (dwChangeHandles[1] == NULL))
 	{
-		WARN("ERROR: Unexpected NULL from FindFirstChangeNotification.");
+		printf("\n ERROR: Unexpected NULL from FindFirstChangeNotification.\n");
+		ExitProcess(GetLastError());
 	}
 
+	
 	// Change notification is set. Now wait on both notification
 	// handles and refresh accordingly.
 	if (!RegisterWaitForSingleObject(&waitHandle, dwChangeHandles[0], (WAITORTIMERCALLBACK)callback, &arg, INFINITE, WT_EXECUTEDEFAULT))
