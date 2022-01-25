@@ -9,6 +9,8 @@
 #include "components/physics/capsule_collider_component.h"
 #include "systems/audio_system.h"
 
+class AudioBus;
+
 class AudioComponent : public Component
 {
 	DEPENDS_ON(TransformComponent);
@@ -66,4 +68,5 @@ public:
 	void draw() override;
 
 	void setAudioBus(AudioBus* bus);
+	void changeVolume(float delta);
 };

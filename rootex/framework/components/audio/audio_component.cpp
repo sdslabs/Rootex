@@ -28,7 +28,9 @@ AudioComponent::AudioComponent(
     , m_DependencyOnBoxColliderComponent(this)
     , m_DependencyOnCapsuleColliderComponent(this)
     , m_DependencyOnSphereColliderComponent(this)
+    , m_AudioBus(nullptr) // get the master bus ptr => getMasterBus()
 {
+	// By default the audio component's bus should be master
 }
 
 RigidBodyComponent* AudioComponent::getCollider()
@@ -127,8 +129,19 @@ void AudioComponent::setLooping(bool enabled)
 
 void AudioComponent::setAudioBus(AudioBus* bus)
 {
-	m_AudioBus = bus;
+	m_AudioBus = bus; // to be thought upon whether, using BusName here would be better or a pointer
 	bus->addAudioComponent(Ref<AudioComponent>(this));
+}
+
+void AudioComponent::changeVolume(float delta)
+{
+	if (delta > 1.0f)
+	{
+		return;
+		WARN("Wrong volume change");
+	}
+
+	m_Volume = m_Volume * (1.0f - delta);
 }
 
 void AudioComponent::draw()

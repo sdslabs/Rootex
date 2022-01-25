@@ -154,6 +154,16 @@ void AudioSystem::removeBus(AudioBus* bus)
 	// removes an audio bus from the vector and the tree
 }
 
+AudioBus::AudioBus()
+    : m_Volume(100.0f)
+    , m_BusName("Bus " + AudioSystem::GetSingleton()->getAudioBuses().size()) // naming logic to be seen
+    , m_Parent(nullptr) // if not the first bus, then we need to see how to assign this to the master bus in the starting
+    , m_IsMaster(false)
+{
+	m_AudioComponents.clear();
+	m_Children.clear();
+}
+
 void AudioBus::addAudioComponent(Ref<AudioComponent> cp)
 {
 	m_AudioComponents.push_back(cp);
@@ -162,8 +172,9 @@ void AudioBus::addAudioComponent(Ref<AudioComponent> cp)
 void AudioSystem::draw()
 {
 	System::draw();
-	for (auto& bus : m_Buses)
+	for (int i = 0; i < m_Buses.size(); i++)
 	{
+		AudioBus* bus = m_Buses[i];
 		ImGui::Text(bus->getBusName().c_str());
 
 		if (ImGui::Button(ICON_ROOTEX_MINUS "##Remove Bus"))
@@ -172,13 +183,14 @@ void AudioSystem::draw()
 		}
 
 		// volume of the bus
-		ImGui::DragFloat("Volume", &bus->getBusVolume(), 0.01f, 0.0f, 100.0f);
+		ImGui::DragFloat("Volume", &bus->getBusVolume(), 1.0f, 0.0f, 100.0f);
 
 		// selecting the parent
 		if (ImGui::BeginCombo("Parent", m_Buses[0]->getBusName().c_str()))
 		{
-			for (auto& cp : m_Buses)
+			for (int j = 0; j < i; j++)
 			{
+				AudioBus* cp = m_Buses[j];
 				if (ImGui::Selectable(cp->getBusName().c_str()))
 				{
 					bus->setParent(cp);
@@ -238,12 +250,15 @@ void AudioSystem::shutDown()
 AudioSystem::AudioSystem()
     : System("AudioSystem", UpdateOrder::Async, true)
 {
+	m_Buses.clear();
+	m_Buses.push_back(nullptr); // add the master audio bus here => new AudioBus(is_Master = true)
 }
 
 void AudioBus::onVolumeChange(float delta)
 {
 	for (auto& ac : m_AudioComponents)
 	{
+		ac->changeVolume(delta);
 		// the fraction of change is to be decided
 	}
 
