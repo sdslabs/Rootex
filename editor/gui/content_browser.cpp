@@ -12,7 +12,6 @@ void CALLBACK notifyFileSystemChanges(PVOID lpParam, BOOLEAN TimerOrWaitFired)
 {
 	OS::RegisterFileSystemWatcher("game\\assets\\", &notifyFileSystemChanges);
 	ContentBrowser::m_ReloadPending = true;
-	printf("Callback trigerred, yuayayayaya \n");
 }
 
 ContentBrowser::ContentBrowser()

@@ -376,7 +376,6 @@ void OS::RegisterFileSystemWatcher(const String& path, void (*callback)(PVOID, B
 	String absolute_path = GetAbsolutePath(path).string();
 	LPTSTR lpDir = new TCHAR[absolute_path.size() + 1];
 	strcpy(lpDir, absolute_path.c_str());
-	std::cout << "Long String is : " << lpDir << std::endl;
 	DWORD dwWaitStatus;
 	HANDLE dwChangeHandles[2];
 	TCHAR lpDrive[4];
@@ -384,7 +383,7 @@ void OS::RegisterFileSystemWatcher(const String& path, void (*callback)(PVOID, B
 	TCHAR lpExt[_MAX_EXT];
 
 	HANDLE waitHandle;
-	int arg = 123;
+	int arg = 0;
 
 	_tsplitpath_s(lpDir, lpDrive, 4, NULL, 0, lpFile, _MAX_FNAME, lpExt, _MAX_EXT);
 
@@ -400,8 +399,8 @@ void OS::RegisterFileSystemWatcher(const String& path, void (*callback)(PVOID, B
 
 	if (dwChangeHandles[0] == INVALID_HANDLE_VALUE)
 	{
-		printf("\n ERROR: FindFirstChangeNotification function failed.\n");
-		ExitProcess(GetLastError());
+		WARN("ERROR: FindFirstChangeNotification function failed.");
+		return;
 	}
 
 	// Watch the subtree for directory creation and deletion.
@@ -413,16 +412,16 @@ void OS::RegisterFileSystemWatcher(const String& path, void (*callback)(PVOID, B
 
 	if (dwChangeHandles[1] == INVALID_HANDLE_VALUE)
 	{
-		printf("\n ERROR: FindFirstChangeNotification function failed.\n");
-		ExitProcess(GetLastError());
+		WARN("ERROR: FindFirstChangeNotification function failed.");
+		return;
 	}
 
 	// Make a final validation check on our handles.
 
 	if ((dwChangeHandles[0] == NULL) || (dwChangeHandles[1] == NULL))
 	{
-		printf("\n ERROR: Unexpected NULL from FindFirstChangeNotification.\n");
-		ExitProcess(GetLastError());
+		WARN("ERROR: Unexpected NULL from FindFirstChangeNotification.");
+		return;
 	}
 
 	// Change notification is set. Now wait on both notification
