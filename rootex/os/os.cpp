@@ -428,11 +428,11 @@ void OS::RegisterFileSystemWatcher(const String& path, void (*callback)(PVOID, B
 	
 	// Change notification is set. Now wait on both notification
 	// handles and refresh accordingly.
-	if (!RegisterWaitForSingleObject(&waitHandle, dwChangeHandles[0], (WAITORTIMERCALLBACK)callback, &arg, INFINITE, WT_EXECUTEDEFAULT))
+	if (!RegisterWaitForSingleObject(&waitHandle, dwChangeHandles[0], (WAITORTIMERCALLBACK)callback, &arg, INFINITE, WT_EXECUTEDEFAULT | WT_EXECUTEONLYONCE))
 	{
 		WARN("ERROR: Could not register file watcher notifier");
 	}
-	if (!RegisterWaitForSingleObject(&waitHandle, dwChangeHandles[1], (WAITORTIMERCALLBACK)callback, &arg, INFINITE, WT_EXECUTEDEFAULT))
+	if (!RegisterWaitForSingleObject(&waitHandle, dwChangeHandles[1], (WAITORTIMERCALLBACK)callback, &arg, INFINITE, WT_EXECUTEDEFAULT | WT_EXECUTEONLYONCE))
 	{
 		WARN("ERROR: Could not register file watcher notifier");
 	}

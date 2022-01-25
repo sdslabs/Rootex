@@ -10,6 +10,7 @@
 
 void CALLBACK notifyFileSystemChanges(PVOID lpParam, BOOLEAN TimerOrWaitFired)
 {
+	OS::RegisterFileSystemWatcher("game\\assets\\", &notifyFileSystemChanges);
 	printf("Callback trigerred, yuayayayaya \n");
 }
 
