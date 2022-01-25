@@ -20,7 +20,7 @@
             }
         },
         "InputSystem": {
-            "height": 801,
+            "height": 1057,
             "inputSchemes": {
                 "Editor": {
                     "bools": [
@@ -63,18 +63,13 @@
                             "button": 129,
                             "device": 1,
                             "inputEvent": "InputCameraDown"
-                        },
-                        {
-                            "button": 0,
-                            "device": 1,
-                            "inputEvent": "InputPause"
                         }
                     ],
                     "floats": {}
                 }
             },
             "startScheme": "Editor",
-            "width": 1536
+            "width": 1920
         },
         "ParticleSystem": {
             "culling": {
@@ -91,8 +86,8 @@
         },
         "PhysicsSystem": {},
         "UISystem": {
-            "height": 801,
-            "width": 1536
+            "height": 1057,
+            "width": 1920
         }
     },
     "version": 1.0,

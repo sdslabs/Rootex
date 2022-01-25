@@ -119,12 +119,9 @@ void ParticleSystem::update(float deltaMilliseconds)
 
 	for (auto& pec : ECSFactory::GetAllParticleEffectComponent())
 	{
-		if (!(pec.getOwner().getScene()->getIsScenePaused() && m_IsSystemPaused))
+		if (pec.isMoving())
 		{
-			if (pec.isMoving())
-			{
-				setMatrix(pec.getHandle(), pec.getTransformComponent()->getAbsoluteTransform());
-			}
+			setMatrix(pec.getHandle(), pec.getTransformComponent()->getAbsoluteTransform());
 		}
 	}
 

@@ -175,7 +175,6 @@ bool Entity::setScriptJSON(const JSON::json& script)
 		if (OS::IsExists(script["path"]))
 		{
 			m_Script.reset(new Script(script));
-			m_Script->setup(this);
 			ScriptSystem::GetSingleton()->addInitScriptEntity(this);
 			return true;
 		}

@@ -10,7 +10,6 @@
 #include "framework/systems/physics_system.h"
 #include "framework/systems/transform_animation_system.h"
 #include "systems/debug_system.h"
-#include "systems/input_system.h"
 
 #include "systems/game_render_system.h"
 
@@ -52,8 +51,6 @@ GameApplication::GameApplication()
 
 	GameRenderSystem::GetSingleton()->initialize({});
 	DebugSystem::GetSingleton()->initialize(m_ApplicationSettings->getJSON()["systems"]["DebugSystem"]);
-	InputSystem::GetSingleton()->flushSchemes();
-	InputSystem::GetSingleton()->loadSchemes(m_ApplicationSettings->getJSON()["systems"]["InputSystem"]["inputSchemes"]);
-	InputSystem::GetSingleton()->pushScheme(m_ApplicationSettings->getJSON()["systems"]["InputSystem"]["startScheme"]);
+
 	destroySplashWindow();
 }

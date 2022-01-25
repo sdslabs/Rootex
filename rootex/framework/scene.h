@@ -38,8 +38,6 @@ public:
 	};
 
 private:
-	bool m_IsScenePaused;
-
 	static Vector<Scene*> s_Scenes;
 
 	SceneID m_ID;
@@ -83,8 +81,6 @@ public:
 	void setName(const String& name);
 
 	JSON::json getJSON() const;
-	bool& getIsScenePaused() { return m_IsScenePaused; }
-	void setIsScenePaused(bool pause) { m_IsScenePaused = pause; }
 	Vector<Ptr<Scene>>& getChildren() { return m_ChildrenScenes; }
 	SceneID getID() const { return m_ID; }
 	ImportStyle getImportStyle() const { return m_ImportStyle; }

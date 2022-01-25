@@ -65,7 +65,7 @@ void ScriptSystem::update(float deltaMilliseconds)
 
 	for (auto& entity : m_ScriptEntitiesToInit)
 	{
-		if (entity && (!(entity->getScene()->getIsScenePaused() && m_IsSystemPaused)))
+		if (entity)
 		{
 			entity->evaluateScriptOverrides();
 			entity->call("begin", { entity });
@@ -75,7 +75,7 @@ void ScriptSystem::update(float deltaMilliseconds)
 
 	for (auto& entity : m_ScriptEntitiesToEnter)
 	{
-		if (entity && (!(entity->getScene()->getIsScenePaused() && m_IsSystemPaused)))
+		if (entity)
 		{
 			entity->call("enterScene", { entity });
 		}

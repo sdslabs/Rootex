@@ -113,18 +113,12 @@ void AudioSystem::update(float deltaMilliseconds)
 
 	for (auto& mc : ECSFactory::GetAllMusicComponent())
 	{
-		if (!(mc.getOwner().getScene()->getIsScenePaused() && m_IsSystemPaused))
-		{
-			mc.getAudioSource()->queueNewBuffers();
-			mc.update();
-		}
+		mc.getAudioSource()->queueNewBuffers();
+		mc.update();
 	}
 	for (auto& smc : ECSFactory::GetAllShortMusicComponent())
 	{
-		if (!(smc.getOwner().getScene()->getIsScenePaused() && m_IsSystemPaused))
-		{
-			smc.update();
-		}
+		smc.update();
 	}
 
 	if (m_Listener)
