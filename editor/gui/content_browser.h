@@ -13,18 +13,20 @@ public:
 	{
 		bool m_IsActive = true;
 	};
-	static inline bool m_ReloadPending;
 
 private:
 	ContentBrowserSettings m_ContentBrowserSettings;
 	String m_AssetsDirectory = "game\\assets\\";
 	String m_CurrentDirectory = m_AssetsDirectory;
 
+	bool m_ReloadPending;
+
 	Ref<ImageResourceFile> m_DirectoryImage;
 	Ref<ImageResourceFile> m_ScriptImage;
 	Ref<ImageResourceFile> m_MusicImage;
 
 	Vector<FilePath> m_filepaths_cache;
+	Vector<FilePath> m_dir_cache;
 	HashMap<String, Ref<ImageResourceFile>> m_thumbnail_cache;
 
 	static const inline HashMap<String, Vector<const char*>> m_PayloadTypes = {

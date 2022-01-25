@@ -371,7 +371,7 @@ bool OS::IsFile(const String& path)
 	return std::filesystem::is_regular_file(GetAbsolutePath(path));
 }
 
-void OS::RegisterFileSystemWatcher(const String& path, void (*callback)(PVOID, BOOLEAN))
+void OS::RegisterFileSystemWatcher(const String& path, void (*callback)(PVOID, BOOLEAN), PVOID param)
 {
 	String absolute_path = GetAbsolutePath(path).string();
 	LPTSTR lpDir = new TCHAR[absolute_path.size() + 1];
@@ -383,7 +383,6 @@ void OS::RegisterFileSystemWatcher(const String& path, void (*callback)(PVOID, B
 	TCHAR lpExt[_MAX_EXT];
 
 	HANDLE waitHandle;
-	int arg = 0;
 
 	_tsplitpath_s(lpDir, lpDrive, 4, NULL, 0, lpFile, _MAX_FNAME, lpExt, _MAX_EXT);
 
@@ -426,11 +425,11 @@ void OS::RegisterFileSystemWatcher(const String& path, void (*callback)(PVOID, B
 
 	// Change notification is set. Now wait on both notification
 	// handles and refresh accordingly.
-	if (!RegisterWaitForSingleObject(&waitHandle, dwChangeHandles[0], (WAITORTIMERCALLBACK)callback, &arg, INFINITE, WT_EXECUTEDEFAULT | WT_EXECUTEONLYONCE))
+	if (!RegisterWaitForSingleObject(&waitHandle, dwChangeHandles[0], (WAITORTIMERCALLBACK)callback, param, INFINITE, WT_EXECUTEDEFAULT | WT_EXECUTEONLYONCE))
 	{
 		WARN("ERROR: Could not register file watcher notifier");
 	}
-	if (!RegisterWaitForSingleObject(&waitHandle, dwChangeHandles[1], (WAITORTIMERCALLBACK)callback, &arg, INFINITE, WT_EXECUTEDEFAULT | WT_EXECUTEONLYONCE))
+	if (!RegisterWaitForSingleObject(&waitHandle, dwChangeHandles[1], (WAITORTIMERCALLBACK)callback, param, INFINITE, WT_EXECUTEDEFAULT | WT_EXECUTEONLYONCE))
 	{
 		WARN("ERROR: Could not register file watcher notifier");
 	}

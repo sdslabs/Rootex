@@ -86,7 +86,7 @@ public:
 	static bool IsDirectory(const String& path);
 	static bool IsFile(const String& path);
 
-	static void RegisterFileSystemWatcher(const String& path, void (*callback)(PVOID, BOOLEAN));
+	static void RegisterFileSystemWatcher(const String& path, void (*callback)(PVOID, BOOLEAN), PVOID param);
 
 	static bool CreateDirectoryName(const String& dirPath);
 	static bool CreateDirectoryAbsoluteName(const String& dirPath);

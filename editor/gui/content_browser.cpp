@@ -10,8 +10,9 @@
 
 void CALLBACK notifyFileSystemChanges(PVOID lpParam, BOOLEAN TimerOrWaitFired)
 {
-	OS::RegisterFileSystemWatcher("game\\assets\\", &notifyFileSystemChanges);
-	ContentBrowser::m_ReloadPending = true;
+	bool* ReloadPending = (bool*)lpParam;
+	OS::RegisterFileSystemWatcher("game\\assets\\", &notifyFileSystemChanges, ReloadPending);
+	*ReloadPending = true;
 }
 
 ContentBrowser::ContentBrowser()
@@ -20,7 +21,7 @@ ContentBrowser::ContentBrowser()
 	m_DirectoryImage = ResourceLoader::CreateImageResourceFile("editor\\assets\\icons\\folder.png");
 	m_ScriptImage = ResourceLoader::CreateImageResourceFile("editor\\assets\\icons\\script.png");
 	m_MusicImage = ResourceLoader::CreateImageResourceFile("editor\\assets\\icons\\music.png");
-	OS::RegisterFileSystemWatcher(m_AssetsDirectory, &notifyFileSystemChanges);
+	OS::RegisterFileSystemWatcher(m_AssetsDirectory, &notifyFileSystemChanges, &m_ReloadPending);
 }
 
 ContentBrowser* ContentBrowser::GetSingleton()
@@ -67,6 +68,8 @@ void ContentBrowser::draw(float deltaMilliseconds)
 				try
 				{
 					Vector<FilePath> filepaths = OS::GetAllInDirectoryRoot(m_CurrentDirectory);
+					Vector<FilePath> temp_files;
+					Vector<FilePath> temp_dirs;
 					m_thumbnail_cache.clear();
 					for (FilePath directoryIterator : filepaths)
 					{
@@ -74,21 +77,26 @@ void ContentBrowser::draw(float deltaMilliseconds)
 						if (OS::IsDirectory(directoryIteratorString))
 						{
 							m_thumbnail_cache[directoryIteratorString] = m_DirectoryImage;
+							temp_dirs.push_back(directoryIteratorString);
 						}
 						else if (directoryIterator.extension().string() == ".wav")
 						{
 							m_thumbnail_cache[directoryIteratorString] = m_MusicImage;
+							temp_files.push_back(directoryIteratorString);
 						}
 						else if (directoryIterator.extension().string() == ".png")
 						{
 							m_thumbnail_cache[directoryIteratorString] = ResourceLoader::CreateImageResourceFile(directoryIteratorString);
+							temp_files.push_back(directoryIteratorString);
 						}
 						else
 						{
 							m_thumbnail_cache[directoryIteratorString] = m_ScriptImage;
+							temp_files.push_back(directoryIteratorString);
 						}
 					}
-					m_filepaths_cache = filepaths;
+					m_filepaths_cache = temp_files;
+					m_dir_cache = temp_dirs;
 					m_ReloadPending = false;
 				}
 				catch (...)
@@ -100,24 +108,27 @@ void ContentBrowser::draw(float deltaMilliseconds)
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.f, 0.f, 0.f, 0.f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.f, 1.f, 1.f, 0.5f));
 			int id = 0;
+			for (FilePath directoryIterator : m_dir_cache)
+			{
+				ImGui::PushID(id++);
+				const String directoryIteratorString = directoryIterator.string();
+				if (ImGui::ImageButton(m_DirectoryImage->getTexture()->getTextureResourceView(), { m_IconWidth, ((float)m_DirectoryImage->getTexture()->getHeight()) * m_IconWidth / ((float)m_DirectoryImage->getTexture()->getWidth()) }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, 12, { 0.0f, 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }))
+				{
+					m_CurrentDirectory = directoryIterator.string();
+					m_ReloadPending = true;
+				}
+
+				ImGui::PopID();
+				ImGui::Text(directoryIterator.filename().string().c_str());
+				ImGui::NextColumn();
+			}
 			for (FilePath directoryIterator : m_filepaths_cache)
 			{
 				ImGui::PushID(id++);
 				const String directoryIteratorString = directoryIterator.string();
 
-				if (OS::IsDirectory(directoryIteratorString))
+				if (ImGui::ImageButton(m_thumbnail_cache[directoryIteratorString]->getTexture()->getTextureResourceView(), { m_IconWidth, ((float)m_MusicImage->getTexture()->getHeight()) * m_IconWidth / ((float)m_MusicImage->getTexture()->getWidth()) }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, 12, { 0.0f, 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }))
 				{
-					if (ImGui::ImageButton(m_thumbnail_cache[directoryIteratorString]->getTexture()->getTextureResourceView(), { m_IconWidth, ((float)m_DirectoryImage->getTexture()->getHeight()) * m_IconWidth / ((float)m_DirectoryImage->getTexture()->getWidth()) }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, 12, { 0.0f, 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }))
-					{
-						m_CurrentDirectory = directoryIterator.string();
-						m_ReloadPending = true;
-					}
-				}
-				else
-				{
-					if (ImGui::ImageButton(m_thumbnail_cache[directoryIteratorString]->getTexture()->getTextureResourceView(), { m_IconWidth, ((float)m_MusicImage->getTexture()->getHeight()) * m_IconWidth / ((float)m_MusicImage->getTexture()->getWidth()) }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, 12, { 0.0f, 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }))
-					{
-					}
 				}
 				if (m_PayloadTypes.find(directoryIterator.extension().string()) != m_PayloadTypes.end())
 				{
