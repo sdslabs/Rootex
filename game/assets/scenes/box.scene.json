@@ -55,6 +55,7 @@
             },
             "importStyle": 0,
             "name": "box",
+            "pause": false,
             "sceneFile": "game/assets/scenes/box.scene.json",
             "settings": {
                 "camera": 1,
@@ -262,9 +263,9 @@
                         "overrideBoundingBox": false,
                         "passDown": 7,
                         "position": {
-                            "x": 3.9808225631713867,
-                            "y": -1.8517546653747559,
-                            "z": -6.579999923706055
+                            "x": 3.9855504035949707,
+                            "y": 1.861695647239685,
+                            "z": -6.580000400543213
                         },
                         "rotation": {
                             "w": 1.0,
@@ -283,6 +284,7 @@
             },
             "importStyle": 0,
             "name": "Particles",
+            "pause": false,
             "sceneFile": "",
             "settings": {
                 "camera": 1,
@@ -490,8 +492,8 @@
                         "overrideBoundingBox": false,
                         "passDown": 7,
                         "position": {
-                            "x": -5.359764575958252,
-                            "y": -0.11801028251647949,
+                            "x": -0.13801465928554535,
+                            "y": -2.6830801963806152,
                             "z": -9.449999809265137
                         },
                         "rotation": {
@@ -511,6 +513,7 @@
             },
             "importStyle": 0,
             "name": "Particles",
+            "pause": false,
             "sceneFile": "",
             "settings": {
                 "camera": 1,
@@ -518,6 +521,111 @@
                 "listener": 1,
                 "preloads": [],
                 "startScheme": ""
+            }
+        },
+        {
+            "ID": 21,
+            "children": [
+                {
+                    "ID": 22,
+                    "children": [],
+                    "entity": {
+                        "components": null,
+                        "script": {
+                            "overrides": {
+                                "pauseScene": ""
+                            },
+                            "path": "game/assets/scripts/pause.lua"
+                        }
+                    },
+                    "importStyle": 0,
+                    "name": "pauser",
+                    "pause": false,
+                    "sceneFile": "",
+                    "settings": {
+                        "camera": 1,
+                        "inputSchemes": {},
+                        "listener": 1,
+                        "preloads": [],
+                        "startScheme": ""
+                    }
+                }
+            ],
+            "entity": {
+                "components": {
+                    "MusicComponent": {
+                        "attenuationModel": 53251,
+                        "audio": "rootex/assets/ball.wav",
+                        "isAttenuated": false,
+                        "isLooping": true,
+                        "maxDistance": 100.0,
+                        "playOnStart": true,
+                        "referenceDistance": 1.0,
+                        "rollOffFactor": 1.0,
+                        "volume": 1.0
+                    },
+                    "TextUIComponent": {
+                        "color": {
+                            "a": 1.0,
+                            "b": 0.0,
+                            "g": 0.0,
+                            "r": 0.0
+                        },
+                        "fontResource": "rootex/assets/fonts/lato_30_bold.spritefont",
+                        "isVisible": true,
+                        "mode": 0,
+                        "origin": {
+                            "x": 45.0,
+                            "y": 62.0
+                        },
+                        "rotation": 0.0,
+                        "text": ""
+                    },
+                    "TransformComponent": {
+                        "boundingBox": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "extents": {
+                                "x": 0.5,
+                                "y": 0.5,
+                                "z": 0.5
+                            }
+                        },
+                        "overrideBoundingBox": false,
+                        "passDown": 7,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "rotation": {
+                            "w": 0.7073882222175598,
+                            "x": -0.7068251967430115,
+                            "y": 0.0,
+                            "z": -0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 0.9999659061431885,
+                            "z": 0.9999659061431885
+                        }
+                    }
+                },
+                "script": null
+            },
+            "importStyle": 1,
+            "name": "pausing",
+            "pause": true,
+            "sceneFile": "game/assets/scenes/pause.scene.json",
+            "settings": {
+                "camera": 1,
+                "inputSchemes": {},
+                "listener": 1,
+                "preloads": [],
+                "startScheme": "Load"
             }
         }
     ],
@@ -572,6 +680,7 @@
     },
     "importStyle": 0,
     "name": "box",
+    "pause": false,
     "sceneFile": "game/assets/scenes/box.scene.json",
     "settings": {
         "camera": 1,

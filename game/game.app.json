@@ -19,8 +19,21 @@
             "width": 2560
         },
         "InputSystem": {
-            "height": 1387,
-            "width": 2560
+            "height": 801,
+            "inputSchemes": {
+                "Game": {
+                    "bools": [
+                        {
+                            "button": 0,
+                            "device": 1,
+                            "inputEvent": "InputPause"
+                        }
+                    ],
+                    "floats": {}
+                }
+            },
+            "startScheme": "Game",
+            "width": 1536
         },
         "ParticleSystem": {
             "culling": {
@@ -37,8 +50,8 @@
         },
         "PhysicsSystem": {},
         "UISystem": {
-            "height": 1387,
-            "width": 2560
+            "height": 801,
+            "width": 1536
         }
     },
     "version": 1.0,
