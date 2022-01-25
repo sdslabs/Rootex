@@ -18,7 +18,6 @@ private:
 	ContentBrowserSettings m_ContentBrowserSettings;
 	String m_AssetsDirectory = "game\\assets\\";
 	String m_CurrentDirectory = m_AssetsDirectory;
-	bool m_ReloadPending = true;
 
 	Ref<ImageResourceFile> m_DirectoryImage;
 	Ref<ImageResourceFile> m_ScriptImage;

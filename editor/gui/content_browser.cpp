@@ -8,9 +8,11 @@
 #include "vendor/ImGUI/imgui_impl_dx11.h"
 #include "vendor/ImGUI/imgui_impl_win32.h"
 
+bool m_ReloadPending = true;
 void CALLBACK notifyFileSystemChanges(PVOID lpParam, BOOLEAN TimerOrWaitFired)
 {
 	OS::RegisterFileSystemWatcher("game\\assets\\", &notifyFileSystemChanges);
+	m_ReloadPending = true;
 	printf("Callback trigerred, yuayayayaya \n");
 }
 

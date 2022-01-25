@@ -395,7 +395,7 @@ void OS::RegisterFileSystemWatcher(const String& path, void (*callback)(PVOID, B
 
 	dwChangeHandles[0] = FindFirstChangeNotification(
 	    lpDir, // directory to watch
-	    FALSE, // do not watch subtree
+	    TRUE, // do not watch subtree
 	    FILE_NOTIFY_CHANGE_FILE_NAME); // watch file name changes
 
 	if (dwChangeHandles[0] == INVALID_HANDLE_VALUE)
@@ -425,7 +425,6 @@ void OS::RegisterFileSystemWatcher(const String& path, void (*callback)(PVOID, B
 		ExitProcess(GetLastError());
 	}
 
-	
 	// Change notification is set. Now wait on both notification
 	// handles and refresh accordingly.
 	if (!RegisterWaitForSingleObject(&waitHandle, dwChangeHandles[0], (WAITORTIMERCALLBACK)callback, &arg, INFINITE, WT_EXECUTEDEFAULT | WT_EXECUTEONLYONCE))
@@ -436,60 +435,6 @@ void OS::RegisterFileSystemWatcher(const String& path, void (*callback)(PVOID, B
 	{
 		WARN("ERROR: Could not register file watcher notifier");
 	}
-	/*
-	while (TRUE)
-	{
-		// Wait for notification.
-
-		printf("\nWaiting for notification...\n");
-
-		dwWaitStatus = WaitForMultipleObjects(2, dwChangeHandles,
-		    FALSE, INFINITE);
-
-		switch (dwWaitStatus)
-		{
-		case WAIT_OBJECT_0:
-
-			// A file was created, renamed, or deleted in the directory.
-			// Refresh this directory and restart the notification.
-
-			//RefreshDirectory(lpDir);
-			if (FindNextChangeNotification(dwChangeHandles[0]) == FALSE)
-			{
-				printf("\n ERROR: FindNextChangeNotification function failed.\n");
-				ExitProcess(GetLastError());
-			}
-			break;
-
-		case WAIT_OBJECT_0 + 1:
-
-			// A directory was created, renamed, or deleted.
-			// Refresh the tree and restart the notification.
-
-			//RefreshTree(lpDrive);
-			if (FindNextChangeNotification(dwChangeHandles[1]) == FALSE)
-			{
-				printf("\n ERROR: FindNextChangeNotification function failed.\n");
-				ExitProcess(GetLastError());
-			}
-			break;
-
-		case WAIT_TIMEOUT:
-
-			// A timeout occurred, this would happen if some value other
-			// than INFINITE is used in the Wait call and no changes occur.
-			// In a single-threaded environment you might not want an
-			// INFINITE wait.
-
-			printf("\nNo changes in the timeout period.\n");
-			break;
-
-		default:
-			printf("\n ERROR: Unhandled dwWaitStatus.\n");
-			ExitProcess(GetLastError());
-			break;
-		}
-	}*/
 }
 
 bool OS::CreateDirectoryName(const String& dirPath)
