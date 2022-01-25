@@ -928,3 +928,13 @@ ID3D11DeviceContext* RenderingDevice::getContext()
 {
 	return m_Context.Get();
 }
+
+void RenderingDevice::draw(UINT vertexCount, UINT startVertexLocation)
+{
+	m_Context.Get()->Draw(vertexCount, startVertexLocation);
+}
+
+void RenderingDevice::setInputLayout(ID3D11InputLayout* inputLayout)
+{
+	m_Context.Get()->IASetInputLayout(inputLayout);
+}

@@ -35,6 +35,7 @@ public:
 	bool setupData() override;
 	void onRemove() override;
 	JSON::json getJSON() const override;
+	void addCustomPostProcessingDetails(const String& path);
 	void draw() override;
 };
 
