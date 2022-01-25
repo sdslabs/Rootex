@@ -13,6 +13,7 @@ public:
 	{
 		bool m_IsActive = true;
 	};
+	static inline bool m_ReloadPending;
 
 private:
 	ContentBrowserSettings m_ContentBrowserSettings;
@@ -53,7 +54,7 @@ public:
 
 	void draw(float deltaMilliseconds);
 
-	ContentBrowser* GetSingleton();
+	static ContentBrowser* GetSingleton();
 
 	ContentBrowserSettings& getSettings() { return m_ContentBrowserSettings; }
 	void setActive(bool enabled) { m_ContentBrowserSettings.m_IsActive = enabled; }
