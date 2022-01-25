@@ -16,7 +16,6 @@ struct SceneSettings
 	HashMap<String, InputScheme> inputSchemes;
 	String startScheme = {};
 
-	void drawSceneSelectables(Scene* scene, SceneID& toSet);
 	void drawCameraSceneSelectables(Scene* scene, SceneID& toSet);
 	void drawListenerSceneSelectables(Scene* scene, SceneID& toSet);
 	void drawInputScheme(InputDescription& floatInput);

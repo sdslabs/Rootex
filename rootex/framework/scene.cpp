@@ -353,18 +353,6 @@ Scene::~Scene()
 	PRINT("Deleted scene: " + getFullName());
 }
 
-void SceneSettings::drawSceneSelectables(Scene* scene, SceneID& toSet)
-{
-	if (ImGui::Selectable(scene->getFullName().c_str()))
-	{
-		toSet = scene->getID();
-	}
-	for (auto& child : scene->getChildren())
-	{
-		drawSceneSelectables(child.get(), toSet);
-	}
-}
-
 void SceneSettings::drawCameraSceneSelectables(Scene* scene, SceneID& toSet)
 {
 	if (scene->getEntity().getComponent<CameraComponent>())
