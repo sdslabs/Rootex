@@ -69,6 +69,7 @@ public:
 	static FilePath GetAbsolutePath(String stringPath);
 	static FilePath GetRootRelativePath(String stringPath);
 	static FilePath GetRelativePath(String stringPath, String base);
+	static String GetFileStem(String stringPath);
 
 	static Vector<FilePath> GetAllFilesInDirectory(const String& directory);
 	static Vector<FilePath> GetAllInDirectory(const String& directory);

@@ -1,5 +1,8 @@
 #include "camera_component.h"
 #include "systems/render_system.h"
+#include "core/resource_loader.h"
+#include "core/renderer/post_processor.h"
+#include "framework/systems/post_process_system.h"
 
 DEFINE_COMPONENT(CameraComponent);
 
@@ -37,6 +40,10 @@ void to_json(JSON::json& j, const PostProcessingDetails& p)
 	j["assaoShadowMultiplier"] = p.assaoShadowMultiplier;
 	j["assaoShadowPower"] = p.assaoShadowPower;
 	j["assaoSharpness"] = p.assaoSharpness;
+	for (auto&& customPostProcessing : p.customPostProcessing)
+	{
+		j["customPostProcessing"][customPostProcessing.first] = customPostProcessing.second;
+	}
 }
 
 void from_json(const JSON::json& j, PostProcessingDetails& p)
@@ -73,6 +80,11 @@ void from_json(const JSON::json& j, PostProcessingDetails& p)
 	p.toneMapOperator = j.at("toneMapOperator");
 	p.toneMapTransferFunction = j.at("toneMapTransferFunction");
 	p.toneMapWhiteNits = j.at("toneMapWhiteNits");
+	for (auto&& customPostProcessing : j.at("customPostProcessing").items())
+	{
+		p.customPostProcessing.insert({ (String)customPostProcessing.key(), (bool)customPostProcessing.value() });
+		PostProcessSystem::GetSingleton()->addCustomPostProcessing(customPostProcessing.key());
+	}
 }
 
 CameraComponent::CameraComponent(Entity& owner, const JSON::json& data)
@@ -139,6 +151,11 @@ JSON::json CameraComponent::getJSON() const
 	j["postProcessingDetails"] = m_PostProcessingDetails;
 
 	return j;
+}
+
+void CameraComponent::addCustomPostProcessingDetails(const String& path)
+{
+	m_PostProcessingDetails.customPostProcessing.insert({ path, true });
 }
 
 void CameraComponent::draw()
@@ -242,5 +259,18 @@ void CameraComponent::draw()
 		}
 
 		ImGui::Checkbox("FXAA", &m_PostProcessingDetails.isFXAA);
+
+		for (auto&& customPostProcessing : m_PostProcessingDetails.customPostProcessing)
+		{
+			ImGui::Checkbox(OS::GetFileStem(customPostProcessing.first).c_str(), &customPostProcessing.second);
+		}
+
+		if (ImGui::Button(ICON_ROOTEX_FOLDER_OPEN "##Custom Post Processing"))
+		{
+			if (Optional<String> result = OS::SelectFile("Pixel Shader(*.hlsl)\0*.hlsl\0", "rootex/core/renderer/shaders"))
+			{
+				PostProcessSystem::GetSingleton()->addCustomPostProcessing(*result);
+			}
+		}
 	}
 }

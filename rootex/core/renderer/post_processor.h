@@ -4,6 +4,7 @@
 
 #include "PostProcess.h"
 #include "ASSAO.h"
+#include "shader.h"
 
 class CameraComponent;
 
@@ -41,6 +42,7 @@ struct PostProcessingDetails
 	int toneMapOperator = 0;
 	int toneMapTransferFunction = 0;
 	float toneMapWhiteNits = 200.0f;
+	Map<String, bool> customPostProcessing;
 };
 
 class PostProcess
@@ -50,6 +52,28 @@ public:
 
 	/// Performs the post processing step. The source for next post process step is altered when a post process step takes place.
 	virtual void draw(CameraComponent* camera, ID3D11ShaderResourceView*& nextSource) = 0;
+};
+
+class CustomPostProcess : public PostProcess
+{
+	Vector<Ptr<PostProcess>> m_PostProcesses;
+	String m_PostProcessPath;
+
+	EventBinder<CustomPostProcess> m_Binder;
+
+	BufferFormat s_BufferFormat;
+
+	Ptr<Shader> shader;
+
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_CacheRTV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_CacheSRV;
+
+	Variant loadRTVAndSRV(const Event* event);
+
+public:
+	CustomPostProcess(const String& path);
+
+	void draw(CameraComponent* camera, ID3D11ShaderResourceView*& nextSource) override;
 };
 
 class PostProcessor
@@ -64,4 +88,6 @@ public:
 	~PostProcessor() = default;
 
 	void draw(CameraComponent* camera);
+
+	friend class PostProcessSystem;
 };

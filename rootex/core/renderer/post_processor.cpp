@@ -438,6 +438,56 @@ public:
 	}
 };
 
+Variant CustomPostProcess::loadRTVAndSRV(const Event* event)
+{
+	RenderingDevice::GetSingleton()->createRTVAndSRV(m_CacheRTV, m_CacheSRV);
+	return true;
+}
+
+CustomPostProcess::CustomPostProcess(const String& path)
+{
+	m_PostProcessPath = path;
+
+	m_Binder.bind(RootexEvents::WindowResized, this, &CustomPostProcess::loadRTVAndSRV);
+
+	loadRTVAndSRV(nullptr);
+
+	s_BufferFormat.push(VertexBufferElement::Type::FloatFloatFloat, "POSITION", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
+	s_BufferFormat.push(VertexBufferElement::Type::FloatFloatFloat, "NORMAL", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
+	s_BufferFormat.push(VertexBufferElement::Type::FloatFloat, "TEXCOORD", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
+	s_BufferFormat.push(VertexBufferElement::Type::FloatFloatFloat, "TANGENT", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
+
+	if (!shader)
+	{
+		shader.reset(new Shader("rootex/core/renderer/shaders/custom_post_processing_vertex_shader.hlsl", m_PostProcessPath, s_BufferFormat));
+	}
+}
+
+void CustomPostProcess::draw(CameraComponent* camera, ID3D11ShaderResourceView*& nextSource)
+{
+	const PostProcessingDetails& postProcessingDetails = camera->getPostProcessingDetails();
+
+	Map<String, bool> customPostProcessingDetails = postProcessingDetails.customPostProcessing;
+
+	if (customPostProcessingDetails[m_PostProcessPath] == true)
+	{
+		RenderingDevice::GetSingleton()->unbindSRVs();
+		RenderingDevice::GetSingleton()->setRTV(m_CacheRTV.Get());
+
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> texture = nextSource;
+		ID3D11ShaderResourceView* textures[1] = { texture.Get() };
+		RenderingDevice::GetSingleton()->setPSSRV(0, 1, textures);
+
+		shader->bind();
+
+		RenderingDevice::GetSingleton()->setInputLayout(nullptr);
+		RenderingDevice::GetSingleton()->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		RenderingDevice::GetSingleton()->draw(3, 0);
+
+		nextSource = m_CacheSRV.Get();
+	}
+}
+
 PostProcessor::PostProcessor()
 {
 	m_BasicPostProcess.reset(new DirectX::BasicPostProcess(RenderingDevice::GetSingleton()->getDevice()));
