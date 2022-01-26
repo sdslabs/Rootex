@@ -65,7 +65,7 @@ void DecalMaterialResourceFile::bindShader()
 void DecalMaterialResourceFile::bindTextures()
 {
 	ID3D11ShaderResourceView* decalTexture[] = {
-		m_DecalImageFile->getTexture()->getTextureResourceView()
+		m_DecalImageFile->getGPUTexture()->getTextureResourceView()
 	};
 	RenderingDevice::GetSingleton()->setPSSRV(DIFFUSE_PS_CPP, 1, decalTexture);
 
@@ -103,7 +103,7 @@ JSON::json DecalMaterialResourceFile::getJSON() const
 
 ID3D11ShaderResourceView* DecalMaterialResourceFile::getPreview() const
 {
-	return m_DecalImageFile->getTexture()->getTextureResourceView();
+	return m_DecalImageFile->getGPUTexture()->getTextureResourceView();
 }
 
 void DecalMaterialResourceFile::reimport()
