@@ -137,6 +137,30 @@ void ContentBrowser::draw(float deltaMilliseconds)
 
 				if (ImGui::ImageButton(m_thumbnail_cache[directoryIteratorString]->getTexture()->getTextureResourceView(), { m_IconWidth, ((float)m_MusicImage->getTexture()->getHeight()) * m_IconWidth / ((float)m_MusicImage->getTexture()->getWidth()) }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, 12, { 0.0f, 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }))
 				{
+					if (m_PayloadTypes.find(directoryIterator.extension().string()) != m_PayloadTypes.end())
+					{
+						String payload_type = m_PayloadTypes.at(directoryIterator.extension().string())[0];
+						if (directoryIterator.extension().string() == ".lua" || directoryIterator.extension().string() == ".rml")
+						{
+							printf("TEXT\n");
+							EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { directoryIteratorString, (int)ResourceFile::Type::Text });
+						}
+						else if (payload_type == "MODEL_PAYLOAD")
+						{
+							printf("MODEL\n");
+							EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { directoryIteratorString, (int)ResourceFile::Type::Model });
+						}
+						else if (payload_type == "IMAGE_PAYLOAD")
+						{
+							printf("IMAGE\n");
+							EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { directoryIteratorString, (int)ResourceFile::Type::Image });
+						}
+						else if (payload_type == "AUDIO_PAYLOAD")
+						{
+							printf("AUDIO\n");
+							EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { directoryIteratorString, (int)ResourceFile::Type::Audio });
+						}
+					}
 				}
 				if (m_PayloadTypes.find(directoryIterator.extension().string()) != m_PayloadTypes.end())
 				{

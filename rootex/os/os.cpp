@@ -443,7 +443,7 @@ void OS::RegisterDirectoryChangesWatcher(const String& path, void (*callback)(PV
 
 	// Make a final validation check on our handles.
 
-	if (dwChangeHandle== NULL)
+	if (dwChangeHandle == NULL)
 	{
 		WARN("ERROR: Unexpected NULL from FindFirstChangeNotification.");
 		return;
