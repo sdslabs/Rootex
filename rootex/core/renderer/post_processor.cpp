@@ -409,6 +409,8 @@ public:
 				m_FrameIndexBuffer->bind();
 				m_LumaShader.bind();
 
+				RenderingDevice::GetSingleton()->setPSSS(0, 1, m_LumaSS.GetAddressOf());
+
 				RenderingDevice::GetSingleton()->setPSSRV(0, 1, &nextSource);
 				RenderingDevice::GetSingleton()->drawIndexed(m_FrameIndexBuffer->getCount());
 			}
