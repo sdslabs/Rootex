@@ -26,7 +26,8 @@ public:
 		InstancingBasicMaterial = 12,
 		AnimatedBasicMaterial = 13,
 		SkyMaterial = 14,
-		CustomMaterial = 15
+		CustomMaterial = 15,
+		DecalMaterial = 16
 	};
 
 	static const inline Map<Type, const String> s_TypeNames = {
@@ -45,7 +46,8 @@ public:
 		{ Type::InstancingBasicMaterial, "InstancingBasicMaterial" },
 		{ Type::AnimatedBasicMaterial, "AnimatedBasicMaterial" },
 		{ Type::SkyMaterial, "SkyMaterial" },
-		{ Type::CustomMaterial, "CustomMaterial" }
+		{ Type::CustomMaterial, "CustomMaterial" },
+		{ Type::DecalMaterial, "DecalMaterial" }
 	};
 
 	Type m_Type;

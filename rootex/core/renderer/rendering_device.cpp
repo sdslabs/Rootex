@@ -3,6 +3,7 @@
 #include <locale>
 
 #include "common/common.h"
+#include "shaders/register_locations_pixel_shader.h"
 #include "dxgi_debug_interface.h"
 
 #include "vendor/DirectXTK/Inc/DDSTextureLoader.h"
@@ -160,6 +161,14 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height)
 		dssDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 
 		GFX_ERR_CHECK(m_Device->CreateDepthStencilState(&dssDesc, &m_SkyDSState));
+	}
+	{
+		D3D11_DEPTH_STENCIL_DESC disableDepthTestDesc;
+		ZeroMemory(&disableDepthTestDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
+		disableDepthTestDesc.DepthEnable = FALSE;
+		disableDepthTestDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+		disableDepthTestDesc.DepthFunc = D3D11_COMPARISON_ALWAYS;
+		GFX_ERR_CHECK(m_Device->CreateDepthStencilState(&disableDepthTestDesc, &m_DisableDepthTestDSState));
 	}
 
 	//REMARK- reversed winding order to allow ccw .obj files to be rendered properly, can trouble later
@@ -370,6 +379,16 @@ void RenderingDevice::enableSkyDSS()
 }
 
 void RenderingDevice::disableSkyDSS()
+{
+	m_Context->OMSetDepthStencilState(m_DSState.Get(), m_StencilRef);
+}
+
+void RenderingDevice::disableDSS()
+{
+	m_Context->OMSetDepthStencilState(m_DisableDepthTestDSState.Get(), 0);
+}
+
+void RenderingDevice::enableDSS()
 {
 	m_Context->OMSetDepthStencilState(m_DSState.Get(), m_StencilRef);
 }
@@ -670,6 +689,12 @@ void RenderingDevice::unbindSRVs()
 {
 	ID3D11ShaderResourceView* nullSRV[2] = { nullptr, nullptr };
 	m_Context->PSSetShaderResources(0, 2, nullSRV);
+}
+
+void RenderingDevice::unbindDepthSRV()
+{
+	ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
+	m_Context->PSSetShaderResources(DEPTH_TEXTURE_PS_CPP, 1, nullSRV);
 }
 
 void RenderingDevice::unbindRTVs()

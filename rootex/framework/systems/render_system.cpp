@@ -3,6 +3,7 @@
 #include "core/resource_loader.h"
 #include "components/visual/effect/fog_component.h"
 #include "components/visual/effect/sky_component.h"
+#include "components/visual/effect/decal_component.h"
 #include "components/visual/model/grid_model_component.h"
 #include "components/visual/effect/cpu_particles_component.h"
 #include "renderer/shaders/register_locations_vertex_shader.h"
@@ -36,6 +37,7 @@ RenderSystem::RenderSystem()
 
 	m_PerFrameVSCB = RenderingDevice::GetSingleton()->createBuffer(PerFrameVSCB(), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
 	m_PerCameraChangeVSCB = RenderingDevice::GetSingleton()->createBuffer(Matrix(), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
+	m_PerCameraChangePSCB = RenderingDevice::GetSingleton()->createBuffer(PerCameraChangePSCB(), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
 	m_PerFramePSCB = RenderingDevice::GetSingleton()->createBuffer(PerFramePSCB(), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
 	m_PerFrameCustomPSCB = RenderingDevice::GetSingleton()->createBuffer(PerFrameCustomPSCBData(), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
 	m_PerScenePSCB = RenderingDevice::GetSingleton()->createBuffer(PerScenePSCB(), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
@@ -229,6 +231,25 @@ void RenderSystem::update(float deltaMilliseconds)
 		{
 			ZoneNamedN(basicRenderPass, "Basic Render Pass", true);
 			renderPassRender(deltaMilliseconds, RenderPass::Basic);
+		}
+		{
+			ZoneNamedN(decalRenderPass, "Decal Render Pass", true);
+			RenderingDevice::GetSingleton()->unbindSRVs();
+			RenderingDevice::GetSingleton()->setOffScreenRTVOnly();
+			RenderingDevice::GetSingleton()->disableDSS();
+			for (auto& decal : ECSFactory::GetAllDecalComponent())
+			{
+				decal.preRender(deltaMilliseconds);
+				if (decal.isVisible())
+				{
+					Vector3 viewDistance = decal.getTransformComponent()->getAbsolutePosition() - m_Camera->getAbsolutePosition();
+					decal.render(viewDistance.Length());
+				}
+				decal.postRender();
+			}
+			RenderingDevice::GetSingleton()->unbindDepthSRV();
+			RenderingDevice::GetSingleton()->enableDSS();
+			RenderingDevice::GetSingleton()->setOffScreenRTVDSV();
 		}
 		renderLines();
 	}
@@ -429,6 +450,32 @@ void RenderSystem::setPerFrameVSCBs(float fogStart, float fogEnd)
 	RenderingDevice::GetSingleton()->setVSCB(PER_FRAME_VS_CPP, 1, m_PerFrameVSCB.GetAddressOf());
 }
 
+void RenderSystem::setPerCameraChangePSCBs()
+{
+	const Matrix& proj = getCamera()->getProjectionMatrix();
+	float depthLinearizeMul = -proj.m[3][2];
+	float depthLinearizeAdd = proj.m[2][2];
+	if (depthLinearizeMul * depthLinearizeAdd < 0)
+		depthLinearizeAdd = -depthLinearizeAdd;
+	Vector2 depthUnpackConsts = { depthLinearizeMul, depthLinearizeAdd };
+
+	float width = Application::GetSingleton()->getWindow()->getWidth();
+	float height = Application::GetSingleton()->getWindow()->getHeight();
+	Vector2 viewport2xPixelSize = { 2.0f / width, 2.0f / height };
+
+	float tanHalfFOVY = 1.0f / proj.m[1][1];
+	float tanHalfFOVX = 1.0f / proj.m[0][0];
+	Vector2 cameraTanHalfFOV = { tanHalfFOVX, tanHalfFOVY };
+
+	PerCameraChangePSCB perCameraChange;
+	perCameraChange.DepthUnpackConsts = depthUnpackConsts;
+	perCameraChange.Viewport2xPixelSize = viewport2xPixelSize;
+	perCameraChange.CameraTanHalfFOV = cameraTanHalfFOV;
+
+	RenderingDevice::GetSingleton()->editBuffer(perCameraChange, m_PerCameraChangePSCB.Get());
+	RenderingDevice::GetSingleton()->setPSCB(PER_CAMERA_CHANGE_PS_CPP, 1, m_PerCameraChangePSCB.GetAddressOf());
+}
+
 void RenderSystem::setPerFramePSCBs(const Color& fogColor)
 {
 	PerFramePSCB perFrame;
@@ -483,6 +530,7 @@ void RenderSystem::setCamera(CameraComponent* camera)
 	{
 		m_Camera = camera;
 		setPerCameraVSCBs();
+		setPerCameraChangePSCBs();
 	}
 }
 

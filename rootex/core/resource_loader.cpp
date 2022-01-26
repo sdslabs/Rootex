@@ -49,6 +49,8 @@ Ref<ResourceFile> ResourceLoader::CreateResourceFile(const ResourceFile::Type& t
 		return CreateSkyMaterialResourceFile(path);
 	case ResourceFile::Type::CustomMaterial:
 		return CreateCustomMaterialResourceFile(path);
+	case ResourceFile::Type::DecalMaterial:
+		return CreateDecalMaterialResourceFile(path);
 	// Not in use due to threading issues
 	case ResourceFile::Type::ParticleEffect:
 	default:
@@ -123,6 +125,7 @@ void ResourceLoader::Initialize()
 	InstancingBasicMaterialResourceFile::Load();
 	SkyMaterialResourceFile::Load();
 	CustomMaterialResourceFile::Load();
+	DecalMaterialResourceFile::Load();
 }
 
 void ResourceLoader::Destroy()
@@ -132,6 +135,7 @@ void ResourceLoader::Destroy()
 	InstancingBasicMaterialResourceFile::Destroy();
 	SkyMaterialResourceFile::Destroy();
 	CustomMaterialResourceFile::Destroy();
+	DecalMaterialResourceFile::Destroy();
 }
 
 const HashMap<ResourceFile::Type, Vector<Weak<ResourceFile>>>& ResourceLoader::GetResources()
@@ -299,6 +303,10 @@ Ref<MaterialResourceFile> ResourceLoader::CreateMaterialResourceFile(const Strin
 	{
 		return CreateCustomMaterialResourceFile(path);
 	}
+	if (IsFileSupported(extension, ResourceFile::Type::DecalMaterial))
+	{
+		return CreateDecalMaterialResourceFile(path);
+	}
 
 	return nullptr;
 }
@@ -326,4 +334,9 @@ Ref<SkyMaterialResourceFile> ResourceLoader::CreateSkyMaterialResourceFile(const
 Ref<CustomMaterialResourceFile> ResourceLoader::CreateCustomMaterialResourceFile(const String& path)
 {
 	return GetCachedResource<CustomMaterialResourceFile>(ResourceFile::Type::CustomMaterial, FilePath(path));
+}
+
+Ref<DecalMaterialResourceFile> ResourceLoader::CreateDecalMaterialResourceFile(const String& path)
+{
+	return GetCachedResource<DecalMaterialResourceFile>(ResourceFile::Type::DecalMaterial, FilePath(path));
 }
