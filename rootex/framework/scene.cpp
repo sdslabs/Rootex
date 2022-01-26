@@ -4,6 +4,8 @@
 #include "resource_loader.h"
 #include "scene_loader.h"
 #include "systems/script_system.h"
+#include "components/visual/camera_component.h"
+#include "components/audio/audio_listener_component.h"
 
 static SceneID NextSceneID = ROOT_SCENE_ID + 1;
 Vector<Scene*> Scene::s_Scenes;
@@ -351,15 +353,32 @@ Scene::~Scene()
 	PRINT("Deleted scene: " + getFullName());
 }
 
-void SceneSettings::drawSceneSelectables(Scene* scene, SceneID& toSet)
+void SceneSettings::drawCameraSceneSelectables(Scene* scene, SceneID& toSet)
 {
-	if (ImGui::Selectable(scene->getFullName().c_str()))
+	if (scene->getEntity().getComponent<CameraComponent>())
 	{
-		toSet = scene->getID();
+		if (ImGui::Selectable(scene->getFullName().c_str()))
+		{
+			toSet = scene->getID();
+		}
 	}
 	for (auto& child : scene->getChildren())
 	{
-		drawSceneSelectables(child.get(), toSet);
+		drawCameraSceneSelectables(child.get(), toSet);
+	}
+}
+void SceneSettings::drawListenerSceneSelectables(Scene* scene, SceneID& toSet)
+{
+	if (scene->getEntity().getComponent<AudioListenerComponent>())
+	{
+		if (ImGui::Selectable(scene->getFullName().c_str()))
+		{
+			toSet = scene->getID();
+		}
+	}
+	for (auto& child : scene->getChildren())
+	{
+		drawListenerSceneSelectables(child.get(), toSet);
 	}
 }
 
@@ -443,7 +462,7 @@ void SceneSettings::draw()
 	}
 	if (ImGui::BeginCombo("Camera", cameraScene->getFullName().c_str()))
 	{
-		drawSceneSelectables(SceneLoader::GetSingleton()->getRootScene(), camera);
+		drawCameraSceneSelectables(SceneLoader::GetSingleton()->getRootScene(), camera);
 		ImGui::EndCombo();
 	}
 
@@ -454,7 +473,7 @@ void SceneSettings::draw()
 	}
 	if (ImGui::BeginCombo("Listener", listenerScene->getFullName().c_str()))
 	{
-		drawSceneSelectables(SceneLoader::GetSingleton()->getRootScene(), listener);
+		drawListenerSceneSelectables(SceneLoader::GetSingleton()->getRootScene(), listener);
 		ImGui::EndCombo();
 	}
 
