@@ -8,10 +8,17 @@
 #include "vendor/ImGUI/imgui_impl_dx11.h"
 #include "vendor/ImGUI/imgui_impl_win32.h"
 
-void CALLBACK notifyFileSystemChanges(PVOID lpParam, BOOLEAN TimerOrWaitFired)
+void CALLBACK notifyFileChanges(PVOID lpParam, BOOLEAN TimerOrWaitFired)
 {
 	bool* ReloadPending = (bool*)lpParam;
-	OS::RegisterFileSystemWatcher("game\\assets\\", &notifyFileSystemChanges, ReloadPending);
+	OS::RegisterFileChangesWatcher("game\\assets\\", &notifyFileChanges, ReloadPending);
+	*ReloadPending = true;
+}
+
+void CALLBACK notifyDirectoryChanges(PVOID lpParam, BOOLEAN TimerOrWaitFired)
+{
+	bool* ReloadPending = (bool*)lpParam;
+	OS::RegisterDirectoryChangesWatcher("game\\assets\\", &notifyDirectoryChanges, ReloadPending);
 	*ReloadPending = true;
 }
 
@@ -21,7 +28,8 @@ ContentBrowser::ContentBrowser()
 	m_DirectoryImage = ResourceLoader::CreateImageResourceFile("editor\\assets\\icons\\folder.png");
 	m_ScriptImage = ResourceLoader::CreateImageResourceFile("editor\\assets\\icons\\script.png");
 	m_MusicImage = ResourceLoader::CreateImageResourceFile("editor\\assets\\icons\\music.png");
-	OS::RegisterFileSystemWatcher(m_AssetsDirectory, &notifyFileSystemChanges, &m_ReloadPending);
+	OS::RegisterDirectoryChangesWatcher(m_AssetsDirectory, &notifyDirectoryChanges, &m_ReloadPending);
+	OS::RegisterFileChangesWatcher(m_AssetsDirectory, &notifyFileChanges, &m_ReloadPending);
 }
 
 ContentBrowser* ContentBrowser::GetSingleton()

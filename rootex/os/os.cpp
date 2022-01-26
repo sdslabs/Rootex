@@ -371,13 +371,52 @@ bool OS::IsFile(const String& path)
 	return std::filesystem::is_regular_file(GetAbsolutePath(path));
 }
 
-void OS::RegisterFileSystemWatcher(const String& path, void (*callback)(PVOID, BOOLEAN), PVOID param)
+void OS::RegisterFileChangesWatcher(const String& path, void (*callback)(PVOID, BOOLEAN), PVOID param)
 {
 	String absolute_path = GetAbsolutePath(path).string();
 	LPTSTR lpDir = new TCHAR[absolute_path.size() + 1];
 	strcpy(lpDir, absolute_path.c_str());
 	DWORD dwWaitStatus;
-	HANDLE dwChangeHandles[2];
+	HANDLE dwChangeHandle;
+
+	HANDLE waitHandle;
+
+	// Watch the directory for file creation and deletion.
+
+	dwChangeHandle = FindFirstChangeNotification(
+	    lpDir, // directory to watch
+	    TRUE, // do not watch subtree
+	    FILE_NOTIFY_CHANGE_FILE_NAME); // watch file name changes
+
+	if (dwChangeHandle == INVALID_HANDLE_VALUE)
+	{
+		WARN("ERROR: FindFirstChangeNotification function failed.");
+		return;
+	}
+
+	// Make a final validation check on our handles.
+
+	if (dwChangeHandle == NULL)
+	{
+		WARN("ERROR: Unexpected NULL from FindFirstChangeNotification.");
+		return;
+	}
+
+	// Change notification is set. Now wait on both notification
+	// handles and refresh accordingly.
+	if (!RegisterWaitForSingleObject(&waitHandle, dwChangeHandle, (WAITORTIMERCALLBACK)callback, param, INFINITE, WT_EXECUTEDEFAULT | WT_EXECUTEONLYONCE))
+	{
+		WARN("ERROR: Could not register file watcher notifier");
+	}
+}
+
+void OS::RegisterDirectoryChangesWatcher(const String& path, void (*callback)(PVOID, BOOLEAN), PVOID param)
+{
+	String absolute_path = GetAbsolutePath(path).string();
+	LPTSTR lpDir = new TCHAR[absolute_path.size() + 1];
+	strcpy(lpDir, absolute_path.c_str());
+	DWORD dwWaitStatus;
+	HANDLE dwChangeHandle;
 	TCHAR lpDrive[4];
 	TCHAR lpFile[_MAX_FNAME];
 	TCHAR lpExt[_MAX_EXT];
@@ -389,27 +428,14 @@ void OS::RegisterFileSystemWatcher(const String& path, void (*callback)(PVOID, B
 	lpDrive[2] = (TCHAR)'\\';
 	lpDrive[3] = (TCHAR)'\0';
 
-	// Watch the directory for file creation and deletion.
-
-	dwChangeHandles[0] = FindFirstChangeNotification(
-	    lpDir, // directory to watch
-	    TRUE, // do not watch subtree
-	    FILE_NOTIFY_CHANGE_FILE_NAME); // watch file name changes
-
-	if (dwChangeHandles[0] == INVALID_HANDLE_VALUE)
-	{
-		WARN("ERROR: FindFirstChangeNotification function failed.");
-		return;
-	}
-
 	// Watch the subtree for directory creation and deletion.
 
-	dwChangeHandles[1] = FindFirstChangeNotification(
+	dwChangeHandle = FindFirstChangeNotification(
 	    lpDrive, // directory to watch
 	    TRUE, // watch the subtree
 	    FILE_NOTIFY_CHANGE_DIR_NAME); // watch dir name changes
 
-	if (dwChangeHandles[1] == INVALID_HANDLE_VALUE)
+	if (dwChangeHandle == INVALID_HANDLE_VALUE)
 	{
 		WARN("ERROR: FindFirstChangeNotification function failed.");
 		return;
@@ -417,7 +443,7 @@ void OS::RegisterFileSystemWatcher(const String& path, void (*callback)(PVOID, B
 
 	// Make a final validation check on our handles.
 
-	if ((dwChangeHandles[0] == NULL) || (dwChangeHandles[1] == NULL))
+	if (dwChangeHandle== NULL)
 	{
 		WARN("ERROR: Unexpected NULL from FindFirstChangeNotification.");
 		return;
@@ -425,11 +451,7 @@ void OS::RegisterFileSystemWatcher(const String& path, void (*callback)(PVOID, B
 
 	// Change notification is set. Now wait on both notification
 	// handles and refresh accordingly.
-	if (!RegisterWaitForSingleObject(&waitHandle, dwChangeHandles[0], (WAITORTIMERCALLBACK)callback, param, INFINITE, WT_EXECUTEDEFAULT | WT_EXECUTEONLYONCE))
-	{
-		WARN("ERROR: Could not register file watcher notifier");
-	}
-	if (!RegisterWaitForSingleObject(&waitHandle, dwChangeHandles[1], (WAITORTIMERCALLBACK)callback, param, INFINITE, WT_EXECUTEDEFAULT | WT_EXECUTEONLYONCE))
+	if (!RegisterWaitForSingleObject(&waitHandle, dwChangeHandle, (WAITORTIMERCALLBACK)callback, param, INFINITE, WT_EXECUTEDEFAULT | WT_EXECUTEONLYONCE))
 	{
 		WARN("ERROR: Could not register file watcher notifier");
 	}
