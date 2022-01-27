@@ -23,9 +23,11 @@ void PostProcessSystem::update(float deltaMilliseconds)
 
 void PostProcessSystem::addCustomPostProcessing(const String& path)
 {
-	for (auto&& postProcess : m_Processor.m_PostProcesses) {
+	for (auto&& postProcess : m_Processor.m_PostProcesses)
+	{
 		CustomPostProcess* customPostProcess = dynamic_cast<CustomPostProcess*>(postProcess.get());
-		if (customPostProcess && customPostProcess->m_PostProcessPath == path) {
+		if (customPostProcess && customPostProcess->m_PostProcessPath == path)
+		{
 			return;
 		}
 	}
