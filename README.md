@@ -74,6 +74,8 @@ Assets Workflow :
 1. Assets are stored in separate repositories and added as git submodules. The testing assets are stored at https://gitlab.com/sdslabs/rootex-assets while the assets for the game are stored at https://gitlab.com/sdslabs/rootex-game.
 2. The `assets.bat` script has two subcommands to make switching of the submodules between the testing and game repository easier. Use `assets.bat assets-test` to switch to the test repository and `assets.bat assets-game` to switch to the game repository. The submodule will have two remote urls set. The `origin` points to the HTTPS url while `upstream` points to the SSH url.
 3. You can also add your own repository as an assets submodule. Use `assets.bat assets-custom <url>` for that. If setting a custom url, use an HTTPS url here and then set an SSH remote afterwards.
+ 
+**__WARNING__** : Running `assets.bat` will delete the `game/assets/` folder. Be sure to backup any unsaved progress before running it.
 
 Now you can start reading the [documentation](https://rootex.readthedocs.io/) and build games on Rootex!
 
