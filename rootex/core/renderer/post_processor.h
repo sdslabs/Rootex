@@ -57,7 +57,6 @@ public:
 class CustomPostProcess : public PostProcess
 {
 	Vector<Ptr<PostProcess>> m_PostProcesses;
-	String m_PostProcessPath;
 
 	EventBinder<CustomPostProcess> m_Binder;
 
@@ -71,6 +70,8 @@ class CustomPostProcess : public PostProcess
 	Variant loadRTVAndSRV(const Event* event);
 
 public:
+	String m_PostProcessPath;
+
 	CustomPostProcess(const String& path);
 
 	void draw(CameraComponent* camera, ID3D11ShaderResourceView*& nextSource) override;
