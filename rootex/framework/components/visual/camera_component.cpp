@@ -155,6 +155,7 @@ JSON::json CameraComponent::getJSON() const
 
 void CameraComponent::addCustomPostProcessingDetails(const String& path)
 {
+	PostProcessSystem::GetSingleton()->addCustomPostProcessing(path);
 	m_PostProcessingDetails.customPostProcessing.insert({ path, true });
 }
 
@@ -269,7 +270,7 @@ void CameraComponent::draw()
 		{
 			if (Optional<String> result = OS::SelectFile("Pixel Shader(*.hlsl)\0*.hlsl\0", "rootex/core/renderer/shaders"))
 			{
-				PostProcessSystem::GetSingleton()->addCustomPostProcessing(*result);
+				addCustomPostProcessingDetails(*result);
 			}
 		}
 	}

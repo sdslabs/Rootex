@@ -23,12 +23,12 @@ void PostProcessSystem::update(float deltaMilliseconds)
 
 void PostProcessSystem::addCustomPostProcessing(const String& path)
 {
-	CameraComponent* camera = RenderSystem::GetSingleton()->getCamera();
-	m_PostProcessingDetails = camera->getPostProcessingDetails();
-
-	if (m_PostProcessingDetails.customPostProcessing.find(path) == m_PostProcessingDetails.customPostProcessing.end())
-	{
-		camera->addCustomPostProcessingDetails(path);
-		m_Processor.m_PostProcesses.emplace_back(new CustomPostProcess(path));
+	for (auto&& postProcess : m_Processor.m_PostProcesses) {
+		CustomPostProcess* customPostProcess = dynamic_cast<CustomPostProcess*>(postProcess.get());
+		if (customPostProcess && customPostProcess->m_PostProcessPath == path) {
+			return;
+		}
 	}
+
+	m_Processor.m_PostProcesses.emplace_back(new CustomPostProcess(path));
 }
