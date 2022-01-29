@@ -100,6 +100,7 @@ Ptr<Scene> Scene::Create(const JSON::json& sceneData, const bool assignNewIDs)
 			}
 		}
 	}
+	thisScene->m_IsScenePaused = sceneData.value("pause", true);
 	return thisScene;
 }
 
@@ -139,6 +140,7 @@ Ptr<Scene> Scene::CreateRootScene()
 	}
 
 	Ptr<Scene> root = std::make_unique<Scene>(ROOT_SCENE_ID, "Root", SceneSettings(), ImportStyle::Local, "");
+
 	ECSFactory::FillRootEntity(root->getEntity());
 
 	called = true;
@@ -316,6 +318,7 @@ JSON::json Scene::getJSON() const
 	j["sceneFile"] = m_SceneFile;
 	j["entity"] = m_Entity.getJSON();
 	j["settings"] = m_Settings;
+	j["pause"] = m_IsScenePaused;
 
 	j["children"] = JSON::json::array();
 	for (auto& child : m_ChildrenScenes)

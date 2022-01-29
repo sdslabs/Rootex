@@ -6,7 +6,23 @@
 #include "scene.h"
 #include "scene_loader.h"
 #include "ecs_factory.h"
+#include "system.h"
 #include "script.h"
+#include "systems/animation_system.h"
+#include "systems/audio_system.h"
+#include "systems/input_system.h"
+#include "systems/light_system.h"
+#include "systems/particle_system.h"
+#include "systems/pause_system.h"
+#include "systems/physics_system.h"
+#include "systems/player_system.h"
+#include "systems/post_process_system.h"
+#include "systems/render_system.h"
+#include "systems/render_ui_system.h"
+#include "systems/script_system.h"
+#include "systems/transform_animation_system.h"
+#include "systems/trigger_system.h"
+#include "systems/ui_system.h"
 #include "components/audio/audio_component.h"
 #include "components/audio/short_music_component.h"
 #include "components/audio/music_component.h"
@@ -24,7 +40,6 @@
 #include "components/physics/trigger_component.h"
 #include "components/visual/ui/ui_component.h"
 #include "components/visual/effect/particle_effect_component.h"
-#include "systems/input_system.h"
 #include "core/resource_files/audio_resource_file.h"
 #include "core/resource_files/font_resource_file.h"
 #include "core/resource_files/image_resource_file.h"
@@ -374,6 +389,49 @@ void LuaInterpreter::registerTypes()
 		scene["snatchChild"] = &Scene::snatchChild;
 		scene["getID"] = &Scene::getID;
 		scene["getFullName"] = &Scene::getFullName;
+	}
+	{
+		sol::usertype<System> system = rootex.new_usertype<System>("System");
+		system["pause"] = &System::pause;
+		system["unPause"] = &System::unPause;
+
+		sol::table& systems = rootex.create_named("Systems");
+		{
+			sol::usertype<AnimationSystem> animationSystem = systems.new_usertype<AnimationSystem>("AnimationSystem", sol::base_classes, sol::bases<System>());
+			sol::usertype<AudioSystem> audioSystem = systems.new_usertype<AudioSystem>("AudioSystem", sol::base_classes, sol::bases<System>());
+			sol::usertype<InputSystem> inputSystem = systems.new_usertype<InputSystem>("InputSystem", sol::base_classes, sol::bases<System>());
+			sol::usertype<LightSystem> lightSystem = systems.new_usertype<LightSystem>("LightSystem", sol::base_classes, sol::bases<System>());
+			sol::usertype<ParticleSystem> particleSystem = systems.new_usertype<ParticleSystem>("ParticleSystem", sol::base_classes, sol::bases<System>());
+			sol::usertype<PauseSystem> pauseSystem = systems.new_usertype<PauseSystem>("PauseSystem", sol::base_classes, sol::bases<System>());
+			sol::usertype<PhysicsSystem> physicsSystem = systems.new_usertype<PhysicsSystem>("PhysicsSystem", sol::base_classes, sol::bases<System>());
+			sol::usertype<PlayerSystem> playerSystem = systems.new_usertype<PlayerSystem>("PlayerSystem", sol::base_classes, sol::bases<System>());
+			sol::usertype<PostProcessSystem> postProcessSystem = systems.new_usertype<PostProcessSystem>("PostProcessSystem", sol::base_classes, sol::bases<System>());
+			sol::usertype<RenderSystem> renderSystem = systems.new_usertype<RenderSystem>("RenderSystem", sol::base_classes, sol::bases<System>());
+			sol::usertype<RenderUISystem> renderUISystem = systems.new_usertype<RenderUISystem>("RenderUISystem", sol::base_classes, sol::bases<System>());
+			sol::usertype<ScriptSystem> scriptSystem = systems.new_usertype<ScriptSystem>("ScriptSystem", sol::base_classes, sol::bases<System>());
+			sol::usertype<TransformAnimationSystem> transformAnimationSystem = systems.new_usertype<TransformAnimationSystem>("TransformAnimationSystem", sol::base_classes, sol::bases<System>());
+			sol::usertype<TriggerSystem> triggerSystem = systems.new_usertype<TriggerSystem>("TriggerSystem", sol::base_classes, sol::bases<System>());
+			sol::usertype<UISystem> uiSystem = systems.new_usertype<UISystem>("UISystem", sol::base_classes, sol::bases<System>());
+
+			systems["Animation"] = sol::property(&AnimationSystem::GetSingleton);
+			systems["Audio"] = sol::property(&AudioSystem::GetSingleton);
+			systems["Input"] = sol::property(&InputSystem::GetSingleton);
+			systems["Light"] = sol::property(&LightSystem::GetSingleton);
+			systems["Particle"] = sol::property(&ParticleSystem::GetSingleton);
+			systems["Pause"] = sol::property(&PauseSystem::GetSingleton);
+			systems["Physics"] = sol::property(&PhysicsSystem::GetSingleton);
+			systems["Player"] = sol::property(&PlayerSystem::GetSingleton);
+			systems["PostProcess"] = sol::property(&PostProcessSystem::GetSingleton);
+			systems["Render"] = sol::property(&RenderSystem::GetSingleton);
+			systems["RenderUI"] = sol::property(&RenderUISystem::GetSingleton);
+			systems["Script"] = sol::property(&ScriptSystem::GetSingleton);
+			systems["TransformAnimation"] = sol::property(&TransformAnimationSystem::GetSingleton);
+			systems["Trigger"] = sol::property(&TriggerSystem::GetSingleton);
+			systems["UI"] = sol::property(&UISystem::GetSingleton);
+
+			pauseSystem["getIsPausingEnabled"] = &PauseSystem::getIsPausingEnabled;
+			pauseSystem["setIsPausingEnabled"] = &PauseSystem::setIsPausingEnabled;
+		}
 	}
 	{
 		sol::usertype<Entity> entity = rootex.new_usertype<Entity>("Entity",

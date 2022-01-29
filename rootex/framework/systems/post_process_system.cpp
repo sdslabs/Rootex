@@ -20,3 +20,17 @@ void PostProcessSystem::update(float deltaMilliseconds)
 	RenderingDevice::GetSingleton()->unbindSRVs();
 	RenderingDevice::GetSingleton()->setOffScreenRTVDSV();
 }
+
+void PostProcessSystem::addCustomPostProcessing(const String& path)
+{
+	for (auto&& postProcess : m_Processor.m_PostProcesses)
+	{
+		CustomPostProcess* customPostProcess = dynamic_cast<CustomPostProcess*>(postProcess.get());
+		if (customPostProcess && customPostProcess->m_PostProcessPath == path)
+		{
+			return;
+		}
+	}
+
+	m_Processor.m_PostProcesses.emplace_back(new CustomPostProcess(path));
+}

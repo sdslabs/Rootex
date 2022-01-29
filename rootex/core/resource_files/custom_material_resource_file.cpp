@@ -130,6 +130,21 @@ void CustomMaterialResourceFile::popVSTexture()
 	m_MaterialData.vertexShaderTextures.pop_back();
 }
 
+Vector<Ref<GPUTexture>> CustomMaterialResourceFile::getTextures() const
+{
+	Vector<Ref<GPUTexture>> textures;
+	for (auto& imageRes : m_MaterialData.vertexShaderTextures)
+	{
+		textures.push_back(imageRes->getGPUTexture());
+	}
+	for (auto& imageRes : m_MaterialData.pixelShaderTextures)
+	{
+		textures.push_back(imageRes->getGPUTexture());
+	}
+
+	return textures;
+}
+
 void CustomMaterialResourceFile::setShaders(const String& vertexShader, const String& pixelShader)
 {
 	if (!OS::IsExists(pixelShader) || !OS::IsExists(vertexShader))

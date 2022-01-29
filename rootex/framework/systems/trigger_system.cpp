@@ -18,30 +18,33 @@ void TriggerSystem::update(float deltaMilliseconds)
 {
 	for (auto& trigger : ECSFactory::GetAllTriggerComponent())
 	{
-		trigger.openRegister();
+		if (!(trigger.getOwner().getScene()->getIsScenePaused() && m_IsSystemPaused))
 		{
-			btGhostObject* triggerGhost = trigger.getGhostObject();
-			for (int i = 0; i < triggerGhost->getNumOverlappingObjects(); i++)
+			trigger.openRegister();
 			{
-				if (trigger.canNotifyEntry())
+				btGhostObject* triggerGhost = trigger.getGhostObject();
+				for (int i = 0; i < triggerGhost->getNumOverlappingObjects(); i++)
 				{
-					trigger.notifyEntry();
+					if (trigger.canNotifyEntry())
+					{
+						trigger.notifyEntry();
+					}
+					CollisionComponent* entrantComponent = (CollisionComponent*)triggerGhost->getOverlappingObject(i)->getUserPointer();
+					trigger.registerEntry(entrantComponent->getOwner().getID());
 				}
-				CollisionComponent* entrantComponent = (CollisionComponent*)triggerGhost->getOverlappingObject(i)->getUserPointer();
-				trigger.registerEntry(entrantComponent->getOwner().getID());
-			}
 
-			int exitCount = trigger.findExitCount();
-			for (int i = 0; i < exitCount; i++)
-			{
-				if (trigger.canNotifyExit())
+				int exitCount = trigger.findExitCount();
+				for (int i = 0; i < exitCount; i++)
 				{
-					trigger.notifyExit();
+					if (trigger.canNotifyExit())
+					{
+						trigger.notifyExit();
+					}
 				}
 			}
+			trigger.closeRegister();
+
+			trigger.updateTransform();
 		}
-		trigger.closeRegister();
-
-		trigger.updateTransform();
 	}
 }

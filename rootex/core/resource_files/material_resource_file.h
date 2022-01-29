@@ -17,6 +17,8 @@ public:
 	bool saveMaterialData(const JSON::json& j);
 
 	virtual const Shader* getShader() const = 0;
+	virtual Vector<Ref<GPUTexture>> getTextures() const = 0;
+
 	virtual void bindShader() = 0;
 	virtual void bindTextures() = 0;
 	virtual void bindSamplers() = 0;

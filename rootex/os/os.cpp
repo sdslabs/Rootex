@@ -45,6 +45,11 @@ FilePath OS::GetRelativePath(String stringPath, String base)
 	return std::filesystem::relative(GetAbsolutePath(stringPath), GetAbsolutePath(base));
 }
 
+String OS::GetFileStem(String stringPath)
+{
+	return GetAbsolutePath(stringPath).filename().generic_string();
+}
+
 Vector<FilePath> OS::GetDirectoriesInDirectory(const String& directory)
 {
 	if (!std::filesystem::is_directory(GetAbsolutePath(directory)))

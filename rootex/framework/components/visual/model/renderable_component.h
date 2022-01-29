@@ -41,7 +41,7 @@ public:
 	virtual bool addAffectingStaticLight(SceneID id);
 	virtual void removeAffectingStaticLight(SceneID id);
 
-	void setMaterialOverride(Ref<MaterialResourceFile> oldMaterial, Ref<MaterialResourceFile> newMaterial);
+	virtual void setMaterialOverride(Ref<MaterialResourceFile> oldMaterial, Ref<MaterialResourceFile> newMaterial);
 
 	unsigned int getRenderPass() const { return m_RenderPass; }
 
