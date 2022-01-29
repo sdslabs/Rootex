@@ -20,6 +20,7 @@
 #include "components/visual/effect/decal_component.h"
 #include "components/visual/model/grid_model_component.h"
 #include "components/visual/model/model_component.h"
+#include "components/visual/model/sprite_component.h"
 #include "components/visual/light/point_light_component.h"
 #include "components/visual/light/static_point_light_component.h"
 #include "components/visual/effect/sky_component.h"
@@ -128,6 +129,7 @@ void ECSFactory::Initialize()
 
 	ASSIGN_COMPONENT_SET(ModelComponent);
 	ASSIGN_COMPONENT_SET(AnimatedModelComponent);
+	ASSIGN_COMPONENT_SET(SpriteComponent);
 	ASSIGN_COMPONENT_SET(GridModelComponent);
 
 	ASSIGN_COMPONENT_SET(PointLightComponent);

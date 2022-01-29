@@ -28,6 +28,8 @@ public:
 	void setSky(Ref<ImageCubeResourceFile> sky);
 
 	const Shader* getShader() const override { return s_Shader.get(); };
+	Vector<Ref<GPUTexture>> getTextures() const override { return Vector<Ref<GPUTexture>> {}; };
+
 	void bindShader() override;
 	void bindTextures() override;
 	void bindSamplers() override;

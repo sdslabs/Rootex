@@ -4,6 +4,7 @@ enum class ComponentIDs : unsigned int
 {
 	ModelComponent,
 	GridModelComponent,
+	SpriteComponent,
 	CPUParticlesComponent,
 	DecalComponent,
 	TextUIComponent,
