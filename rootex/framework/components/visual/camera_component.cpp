@@ -80,10 +80,13 @@ void from_json(const JSON::json& j, PostProcessingDetails& p)
 	p.toneMapOperator = j.at("toneMapOperator");
 	p.toneMapTransferFunction = j.at("toneMapTransferFunction");
 	p.toneMapWhiteNits = j.at("toneMapWhiteNits");
-	for (auto&& customPostProcessing : j.at("customPostProcessing").items())
+	if (j.contains("customPostProcessing"))
 	{
-		p.customPostProcessing.insert({ (String)customPostProcessing.key(), (bool)customPostProcessing.value() });
-		PostProcessSystem::GetSingleton()->addCustomPostProcessing(customPostProcessing.key());
+		for (auto&& customPostProcessing : j.at("customPostProcessing").items())
+		{
+			p.customPostProcessing.insert({ (String)customPostProcessing.key(), (bool)customPostProcessing.value() });
+			PostProcessSystem::GetSingleton()->addCustomPostProcessing(customPostProcessing.key());
+		}
 	}
 }
 
