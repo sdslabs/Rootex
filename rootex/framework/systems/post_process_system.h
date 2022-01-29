@@ -8,6 +8,7 @@
 class PostProcessSystem : public System
 {
 	PostProcessor m_Processor;
+	PostProcessingDetails m_PostProcessingDetails;
 
 	PostProcessSystem();
 	PostProcessSystem(const PostProcessSystem&) = delete;
@@ -17,4 +18,6 @@ public:
 	static PostProcessSystem* GetSingleton();
 
 	void update(float deltaMilliseconds) override;
+
+	void addCustomPostProcessing(const String& path);
 };

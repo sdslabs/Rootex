@@ -156,6 +156,7 @@ public:
 	void setMainRT();
 	void setRTV(Microsoft::WRL::ComPtr<ID3D11RenderTargetView> rtv);
 	void setRTV(ID3D11RenderTargetView* rtv);
+	void setInputLayout(ID3D11InputLayout* inputLayout);
 
 	void unbindSRVs();
 	void unbindRTVs();
@@ -177,6 +178,7 @@ public:
 
 	void beginDrawUI();
 	void endDrawUI();
+	void draw(UINT vertexCount, UINT startVertexLocation);
 
 	void clearRTV(Microsoft::WRL::ComPtr<ID3D11RenderTargetView> rtv, float r, float g, float b, float a);
 	void clearMainRT(float r, float g, float b, float a);
