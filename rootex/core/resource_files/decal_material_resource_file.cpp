@@ -57,6 +57,13 @@ void DecalMaterialResourceFile::setDecal(Ref<ImageResourceFile> decal)
 	m_MaterialData.decalImage = decal->getPath().generic_string();
 }
 
+Vector<Ref<GPUTexture>> DecalMaterialResourceFile::getTextures() const
+{
+	return Vector<Ref<GPUTexture>> {
+		m_DecalImageFile->getGPUTexture(),
+	};
+}
+
 void DecalMaterialResourceFile::bindShader()
 {
 	s_Shader->bind();
