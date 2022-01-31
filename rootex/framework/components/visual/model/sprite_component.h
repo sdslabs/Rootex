@@ -12,7 +12,7 @@ private:
 	bool m_IsBillboarded;
 
 	void adjustScaling();
-	void setMaterialOverride(Ref<MaterialResourceFile> oldMaterial, Ref<MaterialResourceFile> newMaterial) override;
+	void setMaterialOverride(MaterialResourceFile* oldMaterial, Ref<MaterialResourceFile> newMaterial) override;
 
 	static JSON::json InjectSpriteModel(const JSON::json& data);
 
