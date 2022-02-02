@@ -20,11 +20,7 @@
             }
         },
         "InputSystem": {
-<<<<<<< HEAD
-            "height": 801,
-=======
-            "height": 1001,
->>>>>>> 31dac5c6 (improve content browser's appearance)
+            "height": 991,
             "inputSchemes": {
                 "Editor": {
                     "bools": [
@@ -78,7 +74,7 @@
                 }
             },
             "startScheme": "Editor",
-            "width": 1536
+            "width": 1920
         },
         "ParticleSystem": {
             "culling": {
@@ -95,7 +91,7 @@
         },
         "PhysicsSystem": {},
         "UISystem": {
-            "height": 1001,
+            "height": 991,
             "width": 1920
         }
     },

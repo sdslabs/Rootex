@@ -120,7 +120,7 @@ void ContentBrowser::draw(float deltaMilliseconds)
 			{
 				ImGui::PushID(id++);
 				const String directoryIteratorString = directoryIterator.string();
-				if (ImGui::ImageButton(m_DirectoryImage->getTexture()->getTextureResourceView(), { m_IconWidth, ((float)m_DirectoryImage->getTexture()->getHeight()) * m_IconWidth / ((float)m_DirectoryImage->getTexture()->getWidth()) }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, 12, { 0.0f, 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }))
+				if (ImGui::ImageButton(m_DirectoryImage->getGPUTexture()->getTextureResourceView(), { m_IconWidth, ((float)m_DirectoryImage->getGPUTexture()->getHeight()) * m_IconWidth / ((float)m_DirectoryImage->getGPUTexture()->getWidth()) }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, 12, { 0.0f, 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }))
 				{
 					m_CurrentDirectory = directoryIterator.string();
 					m_ReloadPending = true;
@@ -135,7 +135,7 @@ void ContentBrowser::draw(float deltaMilliseconds)
 				ImGui::PushID(id++);
 				const String directoryIteratorString = directoryIterator.string();
 
-				if (ImGui::ImageButton(m_thumbnail_cache[directoryIteratorString]->getTexture()->getTextureResourceView(), { m_IconWidth, ((float)m_MusicImage->getTexture()->getHeight()) * m_IconWidth / ((float)m_MusicImage->getTexture()->getWidth()) }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, 12, { 0.0f, 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }))
+				if (ImGui::ImageButton(m_thumbnail_cache[directoryIteratorString]->getGPUTexture()->getTextureResourceView(), { m_IconWidth, ((float)m_MusicImage->getGPUTexture()->getHeight()) * m_IconWidth / ((float)m_MusicImage->getGPUTexture()->getWidth()) }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, 12, { 0.0f, 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }))
 				{
 					if (m_PayloadTypes.find(directoryIterator.extension().string()) != m_PayloadTypes.end())
 					{
