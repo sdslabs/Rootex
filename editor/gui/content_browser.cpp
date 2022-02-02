@@ -142,22 +142,18 @@ void ContentBrowser::draw(float deltaMilliseconds)
 						String payload_type = m_PayloadTypes.at(directoryIterator.extension().string())[0];
 						if (directoryIterator.extension().string() == ".lua" || directoryIterator.extension().string() == ".rml")
 						{
-							printf("TEXT\n");
 							EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { directoryIteratorString, (int)ResourceFile::Type::Text });
 						}
 						else if (payload_type == "MODEL_PAYLOAD")
 						{
-							printf("MODEL\n");
 							EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { directoryIteratorString, (int)ResourceFile::Type::Model });
 						}
 						else if (payload_type == "IMAGE_PAYLOAD")
 						{
-							printf("IMAGE\n");
 							EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { directoryIteratorString, (int)ResourceFile::Type::Image });
 						}
 						else if (payload_type == "AUDIO_PAYLOAD")
 						{
-							printf("AUDIO\n");
 							EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { directoryIteratorString, (int)ResourceFile::Type::Audio });
 						}
 					}
