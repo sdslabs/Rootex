@@ -40,6 +40,8 @@ public:
 	void recompileShaders();
 
 	const Shader* getShader() const override { return m_Shader.get(); };
+	Vector<Ref<GPUTexture>> getTextures() const override;
+
 	void bindShader() override;
 	void bindTextures() override;
 	void bindSamplers() override;

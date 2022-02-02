@@ -49,6 +49,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_DSState;
 	UINT m_StencilRef;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_SkyDSState;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_DisableDepthTestDSState;
 
 	Ref<DirectX::SpriteBatch> m_FontBatch;
 
@@ -92,6 +93,9 @@ public:
 
 	void enableSkyDSS();
 	void disableSkyDSS();
+
+	void disableDSS();
+	void enableDSS();
 
 	void createRTVAndSRV(Microsoft::WRL::ComPtr<ID3D11RenderTargetView>& rtv, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& srv);
 
@@ -152,9 +156,12 @@ public:
 	void setMainRT();
 	void setRTV(Microsoft::WRL::ComPtr<ID3D11RenderTargetView> rtv);
 	void setRTV(ID3D11RenderTargetView* rtv);
+	void setInputLayout(ID3D11InputLayout* inputLayout);
 
 	void unbindSRVs();
 	void unbindRTVs();
+
+	void unbindDepthSRV();
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> getMainSRV();
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> getDepthSSRV();
@@ -171,6 +178,7 @@ public:
 
 	void beginDrawUI();
 	void endDrawUI();
+	void draw(UINT vertexCount, UINT startVertexLocation);
 
 	void clearRTV(Microsoft::WRL::ComPtr<ID3D11RenderTargetView> rtv, float r, float g, float b, float a);
 	void clearMainRT(float r, float g, float b, float a);

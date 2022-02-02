@@ -66,7 +66,7 @@ void OutputDock::draw(float deltaMilliseconds)
 
 				if (((filter & (int)OutputState::General) && !(outputString.first == "Warning" || outputString.first == "Error")) || ((filter & (int)OutputState::Warning) && (outputString.first == "Warning")) || ((filter & (int)OutputState::Error) && (outputString.first == "Error")))
 				{
-					ImGui::Text("%s", outputString.second.c_str());
+					ImGui::TextWrapped("%s", outputString.second.c_str());
 				}
 
 				ImGui::PopStyleColor(1);

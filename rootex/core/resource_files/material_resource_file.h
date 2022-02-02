@@ -17,6 +17,8 @@ public:
 	bool saveMaterialData(const JSON::json& j);
 
 	virtual const Shader* getShader() const = 0;
+	virtual Vector<Ref<GPUTexture>> getTextures() const = 0;
+
 	virtual void bindShader() = 0;
 	virtual void bindTextures() = 0;
 	virtual void bindSamplers() = 0;
@@ -88,6 +90,11 @@ struct PerModelAnimationVSCBData
 	}
 };
 
+struct PerModelDecalPSCBData
+{
+	Color color;
+};
+
 struct BasicMaterialData
 {
 	String diffuseImage;
@@ -118,3 +125,12 @@ struct CustomMaterialData
 
 void to_json(JSON::json& j, const CustomMaterialData& s);
 void from_json(const JSON::json& j, CustomMaterialData& s);
+
+struct DecalMaterialData
+{
+	String decalImage;
+	PerModelDecalPSCBData pixelBufferData;
+};
+
+void to_json(JSON::json& j, const DecalMaterialData& d);
+void from_json(const JSON::json& j, DecalMaterialData& d);

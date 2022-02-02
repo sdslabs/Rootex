@@ -19,6 +19,7 @@
 #include "resource_files/animated_basic_material_resource_file.h"
 #include "resource_files/sky_material_resource_file.h"
 #include "resource_files/custom_material_resource_file.h"
+#include "resource_files/decal_material_resource_file.h"
 
 static const inline HashMap<ResourceFile::Type, const char*> SupportedFiles = {
 	{ ResourceFile::Type::Image, "Image(*.png;*.jpeg;*.jpg;*.dds)\0*.png;*.jpeg;*.jpg;*.dds\0" },
@@ -36,6 +37,7 @@ static const inline HashMap<ResourceFile::Type, const char*> SupportedFiles = {
 	{ ResourceFile::Type::AnimatedBasicMaterial, "Animated material(*.anim.rmat)\0*.anim.rmat\0" },
 	{ ResourceFile::Type::SkyMaterial, "Sky material(*.sky.rmat)\0*.sky.rmat\0" },
 	{ ResourceFile::Type::CustomMaterial, "Custom material(*.custom.rmat)\0*.custom.rmat\0" },
+	{ ResourceFile::Type::DecalMaterial, "Decal material(*.decal.rmat)\0*.decal.rmat\0" },
 	{ ResourceFile::Type::None, "All(*.*)\0*.*\0" }
 };
 
@@ -47,6 +49,7 @@ static const inline HashMap<ResourceFile::Type, const char*> CreatableFiles = {
 	{ ResourceFile::Type::AnimatedBasicMaterial, ".anim.rmat" },
 	{ ResourceFile::Type::SkyMaterial, ".sky.rmat" },
 	{ ResourceFile::Type::CustomMaterial, ".custom.rmat" },
+	{ ResourceFile::Type::DecalMaterial, ".decal.rmat" },
 };
 
 bool IsFileSupported(const String& extension, ResourceFile::Type supportedFileType);
@@ -91,6 +94,7 @@ public:
 	static Ref<AnimatedBasicMaterialResourceFile> CreateAnimatedBasicMaterialResourceFile(const String& path);
 	static Ref<SkyMaterialResourceFile> CreateSkyMaterialResourceFile(const String& path);
 	static Ref<CustomMaterialResourceFile> CreateCustomMaterialResourceFile(const String& path);
+	static Ref<DecalMaterialResourceFile> CreateDecalMaterialResourceFile(const String& path);
 
 	static Ref<ResourceFile> CreateResourceFile(const ResourceFile::Type& type, const String& path);
 
