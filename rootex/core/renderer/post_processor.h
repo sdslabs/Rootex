@@ -60,9 +60,11 @@ class CustomPostProcess : public PostProcess
 
 	EventBinder<CustomPostProcess> m_Binder;
 
-	BufferFormat s_BufferFormat;
+	BufferFormat m_BufferFormat;
 
-	Ptr<Shader> shader;
+	static inline Microsoft::WRL::ComPtr<ID3D11SamplerState> s_Sampler;
+
+	Ptr<Shader> m_Shader;
 
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_CacheRTV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_CacheSRV;

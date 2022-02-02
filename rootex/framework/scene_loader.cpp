@@ -115,7 +115,9 @@ bool SceneLoader::saveSceneAtFile(Scene* scene, const String& filePath)
 {
 	if (Ref<TextResourceFile> file = ResourceLoader::CreateNewTextResourceFile(filePath))
 	{
-		file->putString(scene->getJSON().dump(4));
+		JSON::json& j = scene->getJSON();
+		PRINT(j.dump(4));
+		file->putString(j.dump(4));
 		return file->save();
 	}
 	return false;

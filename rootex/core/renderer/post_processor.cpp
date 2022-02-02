@@ -452,14 +452,18 @@ CustomPostProcess::CustomPostProcess(const String& path)
 
 	loadRTVAndSRV(nullptr);
 
-	s_BufferFormat.push(VertexBufferElement::Type::FloatFloatFloat, "POSITION", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
-	s_BufferFormat.push(VertexBufferElement::Type::FloatFloatFloat, "NORMAL", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
-	s_BufferFormat.push(VertexBufferElement::Type::FloatFloat, "TEXCOORD", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
-	s_BufferFormat.push(VertexBufferElement::Type::FloatFloatFloat, "TANGENT", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
+	m_BufferFormat.push(VertexBufferElement::Type::FloatFloatFloat, "POSITION", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
+	m_BufferFormat.push(VertexBufferElement::Type::FloatFloatFloat, "NORMAL", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
+	m_BufferFormat.push(VertexBufferElement::Type::FloatFloat, "TEXCOORD", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
+	m_BufferFormat.push(VertexBufferElement::Type::FloatFloatFloat, "TANGENT", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
 
-	if (!shader)
+	if (!s_Sampler) {
+		s_Sampler = RenderingDevice::GetSingleton()->createSS(RenderingDevice::SamplerState::Default);
+	}
+
+	if (!m_Shader)
 	{
-		shader.reset(new Shader("rootex/core/renderer/shaders/custom_post_processing_vertex_shader.hlsl", m_PostProcessPath, s_BufferFormat));
+		m_Shader.reset(new Shader("rootex/core/renderer/shaders/custom_post_processing_vertex_shader.hlsl", m_PostProcessPath, m_BufferFormat));
 	}
 }
 
@@ -476,9 +480,11 @@ void CustomPostProcess::draw(CameraComponent* camera, ID3D11ShaderResourceView*&
 
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> texture = nextSource;
 		ID3D11ShaderResourceView* textures[1] = { texture.Get() };
-		RenderingDevice::GetSingleton()->setPSSRV(0, 1, textures);
+		RenderingDevice::GetSingleton()->setPSSRV(CUSTOM_TEXTURE_0_PS_CPP, 1, textures);
 
-		shader->bind();
+		RenderingDevice::GetSingleton()->setPSSS(SAMPLER_PS_CPP, 1, s_Sampler.GetAddressOf());
+
+		m_Shader->bind();
 
 		RenderingDevice::GetSingleton()->setInputLayout(nullptr);
 		RenderingDevice::GetSingleton()->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

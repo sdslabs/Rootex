@@ -742,8 +742,10 @@ bool OS::SaveFileAbsolute(const FilePath& absFilePath, const char* fileBuffer, s
 
 	try
 	{
-		outFile.open(absFilePath.generic_string(), std::ios::out | std::ios::binary);
+		String path = "C:\\Users\\kesha\\OneDrive\\Documents\\Rootex\\game\\assets\\scenes\\mesh_collision.scene.json";
+		outFile.open(path, std::ios::out | std::ios::binary);
 		outFile.write(fileBuffer, fileSize);
+		outFile << std::flush;
 	}
 	catch (std::exception e)
 	{
