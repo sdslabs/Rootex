@@ -32,6 +32,7 @@ class EditorSystem : public System
 	unsigned int m_EditorStyleVarPushCount;
 	bool m_WireframeMode = false;
 	bool m_WorldMode = true;
+	bool m_Autosave = false;
 
 	ImFont* m_EditorFont;
 	ImFont* m_EditorFontItalic;
