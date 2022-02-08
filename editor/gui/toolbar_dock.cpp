@@ -13,7 +13,7 @@
 
 Variant ToolbarDock::disablePlayInEditor(const Event* e)
 {
-	m_InEditorPlaying = false;
+	m_ToolbarDockSettings.m_InEditorPlaying = false;
 	EditorApplication::GetSingleton()->setGameMode(false);
 	if (!m_StartPlayingScene.empty())
 	{
@@ -48,7 +48,7 @@ void ToolbarDock::draw(float deltaMilliseconds)
 					"Play Game"
 				};
 
-				if (m_InEditorPlaying)
+				if (m_ToolbarDockSettings.m_InEditorPlaying)
 				{
 					ImColor lightErrorColor = EditorSystem::GetSingleton()->getFatalColor();
 					lightErrorColor.Value.x *= 0.8f;
@@ -67,7 +67,7 @@ void ToolbarDock::draw(float deltaMilliseconds)
 						switch (playModeSelected)
 						{
 						case 0:
-							m_InEditorPlaying = true;
+							m_ToolbarDockSettings.m_InEditorPlaying = true;
 							m_StartPlayingScene = SceneLoader::GetSingleton()->getCurrentScene()->getScenePath();
 							EventManager::GetSingleton()->call(EditorEvents::EditorSaveAll);
 							EditorApplication::GetSingleton()->setGameMode(true);
@@ -75,13 +75,13 @@ void ToolbarDock::draw(float deltaMilliseconds)
 							PRINT("Loaded Scene in Editor");
 							break;
 						case 1:
-							m_InEditorPlaying = false;
+							m_ToolbarDockSettings.m_InEditorPlaying = false;
 							EventManager::GetSingleton()->call(EditorEvents::EditorSaveAll);
 							OS::RunApplication("\"" + OS::GetGameExecutablePath() + "\" " + SceneLoader::GetSingleton()->getCurrentScene()->getScenePath());
 							PRINT("Launched Game process with Scene");
 							break;
 						case 2:
-							m_InEditorPlaying = false;
+							m_ToolbarDockSettings.m_InEditorPlaying = false;
 							EventManager::GetSingleton()->call(EditorEvents::EditorSaveAll);
 							OS::RunApplication("\"" + OS::GetGameExecutablePath() + "\"");
 							PRINT("Launched Game process");
