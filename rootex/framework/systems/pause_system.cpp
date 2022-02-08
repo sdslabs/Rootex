@@ -19,7 +19,7 @@ void PauseSystem::update(float deltaMilliseconds)
 	{
 		if (!(Scene::FindScenesByName("PauseScene").size()))
 		{
-			Ptr<Scene>& pauseScene = Scene::CreateFromFile("game/assets/scenes/pause.scene.json");
+			Ptr<Scene>& pauseScene = Scene::CreateFromFile("rootex/assets/scenes/pause.scene.json");
 			pauseScene->setName("PauseScene");
 			root->addChild(pauseScene);
 		}
