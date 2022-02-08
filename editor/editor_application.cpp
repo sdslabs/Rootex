@@ -68,14 +68,13 @@ void EditorApplication::setGameMode(bool enabled)
 	InputSystem::GetSingleton()->loadSchemes(m_ApplicationSettings->getJSON()["systems"]["InputSystem"]["inputSchemes"]);
 	InputSystem::GetSingleton()->pushScheme(m_ApplicationSettings->getJSON()["systems"]["InputSystem"]["startScheme"]);
 	InputInterface::GetSingleton()->m_IsEnabled = enabled;
-	m_IsAutoSave = !enabled;
 
 	EventManager::GetSingleton()->call(EditorEvents::EditorReset);
 }
 
 void EditorApplication::process(float deltaMilliseconds)
 {
-	if (m_IsAutoSave && ((m_ApplicationTimer.Now() - m_PointAtLast10Second).count()) * NS_TO_MS * MS_TO_S > m_AutoSaveDurationS)
+	if (((m_ApplicationTimer.Now() - m_PointAtLast10Second).count()) * NS_TO_MS * MS_TO_S > m_AutoSaveDurationS)
 	{
 		EventManager::GetSingleton()->call(EditorEvents::EditorAutoSave);
 		m_PointAtLast10Second = m_ApplicationTimer.Now();
