@@ -74,9 +74,7 @@ class GodRaysPostProcess : public PostProcess
 {
 	EventBinder<GodRaysPostProcess> m_Binder;
 
-	Ptr<DirectX::BasicPostProcess> m_BasicPostProcess;
-
-	Shader m_GodRaysShader;
+	Ptr<Shader> m_GodRaysShader;
 
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_CacheRTV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_CacheSRV;
@@ -99,16 +97,17 @@ public:
 	{
 		m_Binder.bind(RootexEvents::WindowResized, this, &GodRaysPostProcess::loadRTVAndSRV);
 
-		BufferFormat godRaysFormat;
-		godRaysFormat.push(VertexBufferElement::Type::FloatFloatFloat, "POSITION", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
-		godRaysFormat.push(VertexBufferElement::Type::FloatFloat, "TEXCOORD", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
-		m_GodRaysShader = Shader("rootex/core/renderer/shaders/god_rays_vertex_shader.hlsl", "rootex/core/renderer/shaders/god_rays_pixel_shader.hlsl", godRaysFormat);
+		if (!m_GodRaysShader)
+		{
+			BufferFormat godRaysFormat;
+			godRaysFormat.push(VertexBufferElement::Type::FloatFloatFloat, "POSITION", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
+			godRaysFormat.push(VertexBufferElement::Type::FloatFloat, "TEXCOORD", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
+			m_GodRaysShader.reset(new Shader("rootex/core/renderer/shaders/custom_post_processing_vertex_shader.hlsl", "rootex/core/renderer/shaders/god_rays_pixel_shader.hlsl", godRaysFormat));
+		}
 
 		m_GodRaysSS = RenderingDevice::GetSingleton()->createSS(RenderingDevice::SamplerState::Default);
 
 		loadRTVAndSRV(nullptr);
-
-		m_BasicPostProcess.reset(new DirectX::BasicPostProcess(RenderingDevice::GetSingleton()->getDevice()));
 
 		Vector<GodRaysData> godRaysData = {
 			// Position                    // Texcoord
@@ -146,16 +145,9 @@ public:
 				RenderingDevice::GetSingleton()->unbindSRVs();
 				RenderingDevice::GetSingleton()->setRTV(m_CacheRTV.Get());
 
-				// Copy source to working buffer
-				{
-					m_BasicPostProcess->SetSourceTexture(nextSource);
-					m_BasicPostProcess->SetEffect(DirectX::BasicPostProcess::Effect::Copy);
-					m_BasicPostProcess->Process(RenderingDevice::GetSingleton()->getContext());
-				}
-
 				m_FrameVertexBuffer->bind();
 				m_FrameIndexBuffer->bind();
-				m_GodRaysShader.bind();
+				m_GodRaysShader->bind();
 
 				RenderingDevice::GetSingleton()->setPSSS(0, 1, m_GodRaysSS.GetAddressOf());
 
@@ -168,10 +160,6 @@ public:
 				Vector3 ndc = Vector3(dc.x, -dc.y, dc.z) / dc.w;
 				Vector3 sunScreenSpacePos = ndc / 2.0f + Vector3(0.5f, 0.5f, 0.5f);
 
-				float screenWidth = Application::GetSingleton()->getWindow()->getWidth();
-				float screenHeight = Application::GetSingleton()->getWindow()->getHeight();
-				Vector2 screenDims = { screenWidth, screenHeight };
-
 				PSGodRaysCB cb;
 				cb.sunScreenSpacePos = sunScreenSpacePos;
 				cb.numSamples = postProcessingDetails.godRaysNumSamples;
@@ -179,9 +167,8 @@ public:
 				cb.weight = postProcessingDetails.godRaysWeight;
 				cb.decay = postProcessingDetails.godRaysDecay;
 				cb.exposure = postProcessingDetails.godRaysExposure;
-				cb.screenDims = screenDims;
 				RenderingDevice::GetSingleton()->editBuffer<PSGodRaysCB>(cb, m_GodRaysPSCB.Get());
-				RenderingDevice::GetSingleton()->setPSCB(0, 1, m_GodRaysPSCB.GetAddressOf());
+				RenderingDevice::GetSingleton()->setPSCB(GOD_RAYS_PS_CPP, 1, m_GodRaysPSCB.GetAddressOf());
 
 				RenderingDevice::GetSingleton()->setPSSRV(0, 1, &nextSource);
 				RenderingDevice::GetSingleton()->setPSSRV(1, 1, RenderingDevice::GetSingleton()->getStencilSRV().GetAddressOf());

@@ -141,6 +141,4 @@ struct PSGodRaysCB
 	float weight;
 	float decay;
 	float exposure;
-	Vector2 screenDims;
-	float pad[2];
 };
