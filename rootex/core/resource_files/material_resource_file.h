@@ -34,6 +34,8 @@ public:
 	bool isAlpha() const { return m_IsAlpha; }
 
 	void draw() override;
+	template <class T>
+	T* as() { return dynamic_cast<T*>(this); }
 };
 
 /// Kept separate from the main data buffer class because it needs proper packing
@@ -115,12 +117,21 @@ struct SkyMaterialData
 void to_json(JSON::json& j, const SkyMaterialData& s);
 void from_json(const JSON::json& j, SkyMaterialData& s);
 
+enum class TYPES_OF_BUFFERS
+{
+	FLOATCB,
+	FLOAT3CB,
+	COLORCB
+};
+
 struct CustomMaterialData
 {
 	String vertexShaderPath;
 	String pixelShaderPath;
 	Vector<Ref<ImageResourceFile>> vertexShaderTextures;
 	Vector<Ref<ImageResourceFile>> pixelShaderTextures;
+	Vector<float> customConstantBuffers;
+	Vector<TYPES_OF_BUFFERS> typeOfCustomConstantBuffers;
 };
 
 void to_json(JSON::json& j, const CustomMaterialData& s);

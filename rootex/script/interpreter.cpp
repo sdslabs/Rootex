@@ -296,6 +296,8 @@ void LuaInterpreter::registerTypes()
 		    "alpha", sol::property(&MaterialResourceFile::isAlpha, &MaterialResourceFile::setAlpha));
 		materialResourceFile["isAlpha"] = &MaterialResourceFile::isAlpha;
 		materialResourceFile["setAlpha"] = &MaterialResourceFile::setAlpha;
+		materialResourceFile["asBasic"] = &MaterialResourceFile::as<BasicMaterialResourceFile>;
+		materialResourceFile["asCustom"] = &MaterialResourceFile::as<CustomMaterialResourceFile>;
 	}
 	{
 		sol::usertype<BasicMaterialResourceFile> basicMaterialResourceFile = rootex.new_usertype<BasicMaterialResourceFile>(
@@ -313,6 +315,17 @@ void LuaInterpreter::registerTypes()
 		basicMaterialResourceFile["getNormal"] = &BasicMaterialResourceFile::getNormal;
 		basicMaterialResourceFile["getSpecular"] = &BasicMaterialResourceFile::getSpecular;
 		basicMaterialResourceFile["getLightmap"] = &BasicMaterialResourceFile::getLightmap;
+	}
+	{
+		sol::usertype<CustomMaterialResourceFile> customMaterialResourceFile = rootex.new_usertype<CustomMaterialResourceFile>(
+		    "CustomMaterialResourceFile",
+		    sol::base_classes, sol::bases<ResourceFile, MaterialResourceFile>());
+		customMaterialResourceFile["setFloat"] = &CustomMaterialResourceFile::setFloat;
+		customMaterialResourceFile["setFloat3"] = &CustomMaterialResourceFile::setFloat3;
+		customMaterialResourceFile["setColor"] = &CustomMaterialResourceFile::setColor;
+		customMaterialResourceFile["getFloat"] = &CustomMaterialResourceFile::getFloat;
+		customMaterialResourceFile["getFloat3"] = &CustomMaterialResourceFile::getFloat3;
+		customMaterialResourceFile["getColor"] = &CustomMaterialResourceFile::getColor;
 	}
 	{
 		sol::usertype<Mesh> mesh = rootex.new_usertype<Mesh>("Mesh");
@@ -501,6 +514,7 @@ void LuaInterpreter::registerTypes()
 		    "visible", sol::property(&RenderableComponent::isVisible, &RenderableComponent::setVisible));
 		renderableComponent["isVisible"] = &RenderableComponent::isVisible;
 		renderableComponent["setVisible"] = &RenderableComponent::setVisible;
+		renderableComponent["getMaterialOverride"] = &RenderableComponent::getMaterialOverride;
 	}
 	{
 		sol::usertype<ModelComponent> modelComponent = rootex.new_usertype<ModelComponent>(
