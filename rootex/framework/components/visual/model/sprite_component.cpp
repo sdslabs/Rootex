@@ -85,10 +85,10 @@ void SpriteComponent::postRender()
 Ref<MaterialResourceFile> SpriteComponent::getOverridingMaterialResourceFile()
 {
 	auto& [material, meshes] = getMeshes()[0];
-	return m_MaterialOverrides.at(material);
+	return m_MaterialOverrides.at(material.get());
 }
 
-void SpriteComponent::setMaterialOverride(Ref<MaterialResourceFile> oldMaterial, Ref<MaterialResourceFile> newMaterial)
+void SpriteComponent::setMaterialOverride(MaterialResourceFile* oldMaterial, Ref<MaterialResourceFile> newMaterial)
 {
 	RenderableComponent::setMaterialOverride(oldMaterial, newMaterial);
 	adjustScaling();

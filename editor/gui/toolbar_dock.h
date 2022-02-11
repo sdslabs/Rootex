@@ -13,13 +13,13 @@ public:
 	struct ToolbarDockSettings
 	{
 		bool m_IsActive = true;
+		bool m_InEditorPlaying = false;
 	};
 
 private:
 	ToolbarDockSettings m_ToolbarDockSettings;
 	Vector<float> m_FPSRecords;
 	unsigned int m_FPSRecordsPoolSize = 100;
-	bool m_InEditorPlaying = false;
 	String m_StartPlayingScene;
 
 	Variant disablePlayInEditor(const Event* e);

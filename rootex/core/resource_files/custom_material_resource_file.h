@@ -10,10 +10,13 @@ class CustomMaterialResourceFile : public MaterialResourceFile
 {
 private:
 	static inline Microsoft::WRL::ComPtr<ID3D11SamplerState> s_Sampler;
+	Vector<float> customConstantBuffers;
+	Vector<TYPES_OF_BUFFERS> typeOfCustomConstantBuffers;
 
 	CustomMaterialData m_MaterialData;
 
 	Ptr<Shader> m_Shader;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> m_PSCB;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_VSCB;
 
 	void pushPSTexture(Ref<ImageResourceFile> texture);
@@ -55,4 +58,12 @@ public:
 	bool save() override;
 	void draw() override;
 	void drawTextureSlots(const char* label, Vector<Ref<ImageResourceFile>>& textures);
+
+	float getFloat(int index);
+	Vector3 getFloat3(int index);
+	Color getColor(int index);
+
+	bool setFloat(int index, float value);
+	bool setFloat3(int index, Vector3 value);
+	bool setColor(int index, Color value);
 };

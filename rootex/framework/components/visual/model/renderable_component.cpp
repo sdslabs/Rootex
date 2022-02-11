@@ -113,7 +113,7 @@ void RenderableComponent::setVisible(bool enabled)
 	m_IsVisible = enabled;
 }
 
-void RenderableComponent::setMaterialOverride(Ref<MaterialResourceFile> oldMaterial, Ref<MaterialResourceFile> newMaterial)
+void RenderableComponent::setMaterialOverride(MaterialResourceFile* oldMaterial, Ref<MaterialResourceFile> newMaterial)
 {
 	if (oldMaterial && newMaterial)
 	{
@@ -245,9 +245,12 @@ void RenderableComponent::draw()
 				}
 			}
 			ImGui::SameLine();
-			if (ImGui::Button((ICON_ROOTEX_REFRESH "##" + oldMaterial->getPath().generic_string()).c_str()))
+			if (ImGui::Button((ICON_ROOTEX_FOLDER_OPEN "##" + oldMaterial->getPath().generic_string()).c_str()))
 			{
-				setMaterialOverride(oldMaterial, oldMaterial);
+				if (Optional<String> result = OS::SelectFile("Material(*.rmat)\0*.rmat\0", "game/assets/materials/"))
+				{
+					setMaterialOverride(oldMaterial, ResourceLoader::CreateMaterialResourceFile(*result));
+				}
 			}
 			ImGui::EndGroup();
 			if (ImGui::BeginDragDropTarget())
