@@ -329,7 +329,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 						else
 						{
 							EventManager::GetSingleton()->call(EditorEvents::EditorCreateNewScene, newSceneName);
-							loadingScene = "game/assets/scenes/" + newSceneName + ".scene.json";
+							m_loadingScene = "game/assets/scenes/" + newSceneName + ".scene.json";
 						}
 					}
 					ImGui::EndMenu();
@@ -617,14 +617,14 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 					{
 						saveAll(nullptr);
 						EventManager::GetSingleton()->call(EditorEvents::EditorCreateNewScene, newSceneName);
-						loadingScene = "game/assets/scenes/" + newSceneName + ".scene.json";
+						m_loadingScene = "game/assets/scenes/" + newSceneName + ".scene.json";
 						ImGui::CloseCurrentPopup();
 						m_MenuAction = "";
 					}
 					else if (m_PopupCause == "open")
 					{
 						saveAll(nullptr);
-						loadingScene = openSceneName;
+						m_loadingScene = m_openSceneName;
 						ImGui::CloseCurrentPopup();
 						m_MenuAction = "";
 					}
@@ -640,13 +640,13 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 					else if (m_PopupCause == "create")
 					{
 						EventManager::GetSingleton()->call(EditorEvents::EditorCreateNewScene, newSceneName);
-						loadingScene = "game/assets/scenes/" + newSceneName + ".scene.json";
+						m_loadingScene = "game/assets/scenes/" + newSceneName + ".scene.json";
 						ImGui::CloseCurrentPopup();
 						m_MenuAction = "";
 					}
 					else if (m_PopupCause == "open")
 					{
-						loadingScene = openSceneName;
+						m_loadingScene = m_openSceneName;
 						ImGui::CloseCurrentPopup();
 						m_MenuAction = "";
 					}
@@ -710,16 +710,16 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 	static float loadingSceneCurrentProgress = 0.0f;
 	static int loadingSceneTotalProgress = -1;
 
-	if (!loadingScene.empty() && loadingSceneTotalProgress == -1)
+	if (!m_loadingScene.empty() && loadingSceneTotalProgress == -1)
 	{
 		ImGui::OpenPopup("Load Scene");
-		loadingSceneTotalProgress = SceneLoader::GetSingleton()->preloadScene(loadingScene, loadingSceneProgress);
+		loadingSceneTotalProgress = SceneLoader::GetSingleton()->preloadScene(m_loadingScene, loadingSceneProgress);
 		loadingSceneCurrentProgress = 0.0f;
 	}
 
 	if (ImGui::BeginPopupModal("Load Scene", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
 	{
-		ImGui::Text("Loading scene: %s", loadingScene.c_str());
+		ImGui::Text("Loading scene: %s", m_loadingScene.c_str());
 
 		ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
 
@@ -728,11 +728,11 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 		if (loadingSceneTotalProgress == loadingSceneProgress)
 		{
 			EventManager::GetSingleton()->call(EditorEvents::EditorSceneIsClosing);
-			SceneLoader::GetSingleton()->loadPreloadedScene(loadingScene, {});
-			SetWindowText(GetActiveWindow(), ("Rootex Editor: " + loadingScene).c_str());
+			SceneLoader::GetSingleton()->loadPreloadedScene(m_loadingScene, {});
+			SetWindowText(GetActiveWindow(), ("Rootex Editor: " + m_loadingScene).c_str());
 			loadingSceneTotalProgress = -1;
 			loadingSceneProgress = 0;
-			loadingScene = "";
+			m_loadingScene = "";
 			ImGui::CloseCurrentPopup();
 		}
 
@@ -836,13 +836,13 @@ void EditorSystem::openScene(String sceneName)
 {
 	if (SceneLoader::GetSingleton()->getCurrentScene())
 	{
-		openSceneName = sceneName;
+		m_openSceneName = sceneName;
 		m_MenuAction = "Save";
 		m_PopupCause = "open";
 	}
 	else
 	{
-		loadingScene = sceneName;
+		m_loadingScene = sceneName;
 	}
 }
 

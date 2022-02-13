@@ -25,9 +25,9 @@ private:
 	Ref<ImageResourceFile> m_ScriptImage;
 	Ref<ImageResourceFile> m_MusicImage;
 
-	Vector<FilePath> m_filepaths_cache;
-	Vector<FilePath> m_dir_cache;
-	HashMap<String, Ref<ImageResourceFile>> m_thumbnail_cache;
+	Vector<FilePath> m_FilepathsCache;
+	Vector<FilePath> m_DirectoryCache;
+	HashMap<String, Ref<ImageResourceFile>> m_ThumbnailsCache;
 
 	static const inline HashMap<String, Vector<const char*>> m_PayloadTypes = {
 		{ ".png", { "IMAGE_PAYLOAD" } },
