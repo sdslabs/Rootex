@@ -208,7 +208,7 @@ void RenderSystem::update(float deltaMilliseconds)
 			FogComponent& firstFog = ECSFactory::GetAllFogComponent().front();
 			clearColor = firstFog.getColor();
 
-			for (auto& fog : ECSFactory::GetAllFogComponent())
+			for (auto&& fog : ECSFactory::GetAllFogComponent())
 			{
 				clearColor = Color::Lerp(clearColor, fog.getColor(), 0.5f);
 				fogStart = fog.getNearDistance();

@@ -22,12 +22,11 @@ LightSystem* LightSystem::GetSingleton()
 StaticPointLightsInfo LightSystem::getStaticPointLights()
 {
 	StaticPointLightsInfo staticLights;
-	Vector<StaticPointLightComponent>& staticPointLightComponents = ECSFactory::GetAllStaticPointLightComponent();
+	ComponentArray<StaticPointLightComponent>& staticPointLightComponents = ECSFactory::GetAllStaticPointLightComponent();
 
 	int i = 0;
-	for (; i < staticPointLightComponents.size() && i < MAX_STATIC_POINT_LIGHTS; i++)
+	for (auto&& staticLight : staticPointLightComponents)
 	{
-		StaticPointLightComponent& staticLight = staticPointLightComponents[i];
 		Vector3 transformedPosition = staticLight.getAbsoluteTransform().Translation();
 		const PointLight& pointLight = staticLight.getPointLight();
 
@@ -39,6 +38,11 @@ StaticPointLightsInfo LightSystem::getStaticPointLights()
 		staticLights.pointLightInfos[i].attQuad = pointLight.attQuad;
 		staticLights.pointLightInfos[i].lightPos = transformedPosition;
 		staticLights.pointLightInfos[i].range = pointLight.range;
+		i++;
+		if (i == MAX_STATIC_POINT_LIGHTS)
+		{
+			break;
+		}
 	}
 	return staticLights;
 }
@@ -56,13 +60,12 @@ LightsInfo LightSystem::getDynamicLights()
 		return Vector3::DistanceSquared(cameraPos, aa) < Vector3::DistanceSquared(cameraPos, bb);
 	};
 
-	Vector<PointLightComponent>& pointLightComponents = ECSFactory::GetAllPointLightComponent();
-	sort(pointLightComponents.begin(), pointLightComponents.end(), pointLightSortingLambda);
+	ComponentArray<PointLightComponent>& pointLightComponents = ECSFactory::GetAllPointLightComponent();
+	//sort(pointLightComponents.begin(), pointLightComponents.end(), pointLightSortingLambda);
 
 	int i = 0;
-	for (; i < pointLightComponents.size() && i < MAX_DYNAMIC_POINT_LIGHTS; i++)
+	for (auto && light: pointLightComponents)
 	{
-		PointLightComponent& light = pointLightComponents[i];
 		Vector3 transformedPosition = light.getAbsoluteTransform().Translation();
 		const PointLight& pointLight = light.getPointLight();
 
@@ -74,10 +77,14 @@ LightsInfo LightSystem::getDynamicLights()
 		lights.pointLightInfos[i].attQuad = pointLight.attQuad;
 		lights.pointLightInfos[i].lightPos = transformedPosition;
 		lights.pointLightInfos[i].range = pointLight.range;
+		if (i == MAX_DYNAMIC_POINT_LIGHTS)
+		{
+			break;
+		}
 	}
 	lights.pointLightCount = i;
 
-	Vector<DirectionalLightComponent>& directionalLightComponents = ECSFactory::GetAllDirectionalLightComponent();
+	ComponentArray<DirectionalLightComponent>& directionalLightComponents = ECSFactory::GetAllDirectionalLightComponent();
 	if (directionalLightComponents.size() > 0)
 	{
 		if (directionalLightComponents.size() > 1)
@@ -85,7 +92,7 @@ LightsInfo LightSystem::getDynamicLights()
 			WARN("Directional lights specified are greater than 1. Using only the first directional light found.");
 		}
 
-		DirectionalLightComponent& light = directionalLightComponents[0];
+		DirectionalLightComponent& light = *directionalLightComponents.begin();
 		const DirectionalLight& directionalLight = light.getDirectionalLight();
 		const Vector3& forward = light.getDirection();
 
@@ -104,13 +111,12 @@ LightsInfo LightSystem::getDynamicLights()
 		return Vector3::DistanceSquared(cameraPos, aa) < Vector3::DistanceSquared(cameraPos, bb);
 	};
 
-	Vector<SpotLightComponent>& spotLightComponents = ECSFactory::GetAllSpotLightComponent();
-	sort(spotLightComponents.begin(), spotLightComponents.end(), spotLightSortingLambda);
+	ComponentArray<SpotLightComponent>& spotLightComponents = ECSFactory::GetAllSpotLightComponent();
+	//sort(spotLightComponents.begin(), spotLightComponents.end(), spotLightSortingLambda);
 
 	i = 0;
-	for (; i < spotLightComponents.size() && i < MAX_DYNAMIC_SPOT_LIGHTS; i++)
+	for (auto &&light: spotLightComponents)
 	{
-		SpotLightComponent& light = spotLightComponents[i];
 		Matrix transform = light.getAbsoluteTransform();
 		const SpotLight& spotLight = light.getSpotLight();
 
