@@ -2,7 +2,9 @@
 
 #include "application.h"
 #include "core/renderer/rendering_device.h"
+#include "framework/ecs_factory.h"
 #include "framework/components/visual/camera_component.h"
+#include "framework/components/visual/light/directional_light_component.h"
 #include "vertex_buffer.h"
 #include "index_buffer.h"
 #include "shader.h"
@@ -66,6 +68,117 @@ public:
 			nextSource = nextSource;
 		}
 	}
+};
+
+class GodRaysPostProcess : public PostProcess
+{
+	EventBinder<GodRaysPostProcess> m_Binder;
+
+	Ptr<Shader> m_GodRaysShader;
+
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_CacheRTV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_CacheSRV;
+
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_GodRaysSS;
+
+	Ptr<VertexBuffer> m_FrameVertexBuffer;
+	Ptr<IndexBuffer> m_FrameIndexBuffer;
+
+	Microsoft::WRL::ComPtr<ID3D11Buffer> m_GodRaysPSCB;
+
+	Variant loadRTVAndSRV(const Event* event)
+	{
+		RenderingDevice::GetSingleton()->createRTVAndSRV(m_CacheRTV, m_CacheSRV);
+		return true;
+	}
+
+public:
+	GodRaysPostProcess()
+	{
+		m_Binder.bind(RootexEvents::WindowResized, this, &GodRaysPostProcess::loadRTVAndSRV);
+
+		if (!m_GodRaysShader)
+		{
+			BufferFormat godRaysFormat;
+			godRaysFormat.push(VertexBufferElement::Type::FloatFloatFloat, "POSITION", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
+			godRaysFormat.push(VertexBufferElement::Type::FloatFloat, "TEXCOORD", D3D11_INPUT_PER_VERTEX_DATA, 0, false, 0);
+			m_GodRaysShader.reset(new Shader("rootex/core/renderer/shaders/custom_post_processing_vertex_shader.hlsl", "rootex/core/renderer/shaders/god_rays_pixel_shader.hlsl", godRaysFormat));
+		}
+
+		m_GodRaysSS = RenderingDevice::GetSingleton()->createSS(RenderingDevice::SamplerState::Default);
+
+		loadRTVAndSRV(nullptr);
+
+		Vector<GodRaysData> godRaysData = {
+			// Position                    // Texcoord
+			{ Vector3(-1.0f, -1.0f, 0.0f), Vector2(0.0f, 1.0f) },
+			{ Vector3(1.0f, -1.0f, 0.0f), Vector2(1.0f, 1.0f) },
+			{ Vector3(1.0f, 1.0f, 0.0f), Vector2(1.0f, 0.0f) },
+			{ Vector3(-1.0f, 1.0f, 0.0f), Vector2(0.0f, 0.0f) }
+		};
+		m_FrameVertexBuffer.reset(new VertexBuffer((const char*)godRaysData.data(), godRaysData.size(), sizeof(GodRaysData), D3D11_USAGE_IMMUTABLE, 0));
+
+		Vector<unsigned int> godRaysDataIndices = {
+			0, 2, 1,
+			0, 3, 2
+		};
+		m_FrameIndexBuffer.reset(new IndexBuffer(godRaysDataIndices));
+
+		m_GodRaysPSCB = RenderingDevice::GetSingleton()->createBuffer<PSGodRaysCB>(PSGodRaysCB(), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
+	}
+
+	void draw(CameraComponent* camera, ID3D11ShaderResourceView*& nextSource) override
+	{
+		const PostProcessingDetails& postProcessingDetails = camera->getPostProcessingDetails();
+		if (postProcessingDetails.isGodRays)
+		{
+			Vector<DirectionalLightComponent>& directionalLightComponents = ECSFactory::GetAllDirectionalLightComponent();
+			if (directionalLightComponents.size() > 0)
+			{
+				if (directionalLightComponents.size() > 1)
+				{
+					WARN("Directional lights specified are greater than 1. Using only the first directional light found.");
+				}
+
+				DirectionalLightComponent& sun = directionalLightComponents[0];
+
+				RenderingDevice::GetSingleton()->unbindSRVs();
+				RenderingDevice::GetSingleton()->setRTV(m_CacheRTV.Get());
+
+				m_FrameVertexBuffer->bind();
+				m_FrameIndexBuffer->bind();
+				m_GodRaysShader->bind();
+
+				RenderingDevice::GetSingleton()->setPSSS(0, 1, m_GodRaysSS.GetAddressOf());
+
+				const Matrix& view = camera->getViewMatrix();
+				const Matrix& proj = camera->getProjectionMatrix();
+				const Matrix& model = sun.getTransformComponent()->getAbsoluteTransform();
+
+				Matrix mvp = model * view * proj;
+				Vector4 dc = Vector4::Transform(Vector4(0.0f, 0.0f, 0.0f, 1.0f), mvp);
+				Vector3 ndc = Vector3(dc.x, -dc.y, dc.z) / dc.w;
+				Vector3 sunScreenSpacePos = ndc / 2.0f + Vector3(0.5f, 0.5f, 0.5f);
+
+				PSGodRaysCB cb;
+				cb.sunScreenSpacePos = sunScreenSpacePos;
+				cb.numSamples = postProcessingDetails.godRaysNumSamples;
+				cb.density = postProcessingDetails.godRaysDensity;
+				cb.weight = postProcessingDetails.godRaysWeight;
+				cb.decay = postProcessingDetails.godRaysDecay;
+				cb.exposure = postProcessingDetails.godRaysExposure;
+				RenderingDevice::GetSingleton()->editBuffer<PSGodRaysCB>(cb, m_GodRaysPSCB.Get());
+				RenderingDevice::GetSingleton()->setPSCB(GOD_RAYS_PS_CPP, 1, m_GodRaysPSCB.GetAddressOf());
+
+				RenderingDevice::GetSingleton()->setPSSRV(0, 1, &nextSource);
+				RenderingDevice::GetSingleton()->setPSSRV(1, 1, RenderingDevice::GetSingleton()->getStencilSRV().GetAddressOf());
+
+				RenderingDevice::GetSingleton()->drawIndexed(m_FrameIndexBuffer->getCount());
+
+				nextSource = m_CacheSRV.Get();
+			}
+		}
+	};
 };
 
 class GaussianPostProcess : public PostProcess
@@ -493,6 +606,7 @@ PostProcessor::PostProcessor()
 	m_BasicPostProcess.reset(new DirectX::BasicPostProcess(RenderingDevice::GetSingleton()->getDevice()));
 
 	m_PostProcesses.emplace_back(new ASSAOPostProcess());
+	m_PostProcesses.emplace_back(new GodRaysPostProcess());
 	m_PostProcesses.emplace_back(new GaussianPostProcess());
 	m_PostProcesses.emplace_back(new MonochromePostProcess());
 	m_PostProcesses.emplace_back(new SepiaPostProcess());
