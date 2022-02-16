@@ -12,7 +12,7 @@ Running the Editor
 
 2. Once editor is open you are greeted by the editor UI.
 
-3. Try to open a level from the File menu > Open Level option.
+3. Try to open a scene from the File menu > Open Scene option.
 
 .. image:: images/editor.png
 	:alt: Editor UI

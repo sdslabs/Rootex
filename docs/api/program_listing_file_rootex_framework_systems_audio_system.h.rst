@@ -14,11 +14,12 @@ Program Listing for File audio_system.h
    
    #include "common/common.h"
    
-   #include "framework/components/transform_component.h"
-   #include "framework/components/audio_listener_component.h"
-   #include "vendor/OpenAL/include/al.h"
-   #include "vendor/OpenAL/include/alc.h"
-   #include "AL/alut.h"
+   #include "components/space/transform_component.h"
+   #include "components/audio/audio_listener_component.h"
+   
+   #include "al.h"
+   #include "alc.h"
+   #include "alut.h"
    
    #include "system.h"
    
@@ -59,8 +60,8 @@ Program Listing for File audio_system.h
    
    class AudioSystem : public System
    {
-       ALCdevice* m_Device;
-       ALCcontext* m_Context;
+       ALCdevice* m_Device = nullptr;
+       ALCcontext* m_Context = nullptr;
    
        AudioListenerComponent* m_Listener = nullptr;
    

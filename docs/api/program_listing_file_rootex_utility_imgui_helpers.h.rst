@@ -19,6 +19,8 @@ Program Listing for File imgui_helpers.h
    #include "imgui.h"
    #include "imgui_stdlib.h"
    
+   class Entity;
+   
    #define FONT_ICON_BUFFER_NAME_ROOTEX ROOTEX_compressed_data_base85
    #define FONT_ICON_BUFFER_SIZE_ROOTEX 0x1527
    
@@ -92,5 +94,6 @@ Program Listing for File imgui_helpers.h
                                                                      "%m>PEl-vLF%DHoD8LofG4'Zu'vm@uBD5O$HDq16M58('F9C4,H:%VeG_Wb'%u2J:C6sXdM<-5bFb1)7'02YVC'6kjE?r>LF-k=nE7vtB%p)fUC;=F`%+SV.GT88bF01v<-*G#W-w;q92"
                                                                      "pYV<Bh[G<B7HFHM/6w0F=^M'J=L+6B+dYhFO`=HM1wvgF_P,]5Q%fV1*SM*Hr;Zw&,-]:CEqFnB-gOVC(PUV$+oe,qa%###";
    
-   void RootexSelectableImage(const char* name, ImageResourceFile* image, Function<void(const String&)> onSelected);
-   void RootexSelectableImageCube(const char* name, ImageCubeResourceFile* image, Function<void(const String&)> onSelected);
+   void RootexFPSGraph(const char* name, Vector<float>& fpsRecords, float lastFPS);
+   void RootexSelectableImage(const char* name, Ref<ImageResourceFile> image, Function<void(const String&)> onSelected);
+   void RootexSelectableImageCube(const char* name, Ref<ImageCubeResourceFile> image, Function<void(const String&)> onSelected);

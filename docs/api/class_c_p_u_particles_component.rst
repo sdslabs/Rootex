@@ -3,7 +3,7 @@
 Class CPUParticlesComponent
 ===========================
 
-- Defined in :ref:`file_rootex_framework_components_visual_cpu_particles_component.h`
+- Defined in :ref:`file_rootex_framework_components_visual_effect_cpu_particles_component.h`
 
 
 Nested Relationships

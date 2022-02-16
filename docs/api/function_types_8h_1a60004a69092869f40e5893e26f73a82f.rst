@@ -1,0 +1,13 @@
+.. _exhale_function_types_8h_1a60004a69092869f40e5893e26f73a82f:
+
+Function Split
+==============
+
+- Defined in :ref:`file_rootex_common_types.h`
+
+
+Function Documentation
+----------------------
+
+
+.. doxygenfunction:: Split(const String&, char)

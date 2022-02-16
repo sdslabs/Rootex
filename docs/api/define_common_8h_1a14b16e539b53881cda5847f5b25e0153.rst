@@ -1,0 +1,13 @@
+.. _exhale_define_common_8h_1a14b16e539b53881cda5847f5b25e0153:
+
+Define DEBUG_PANIC
+==================
+
+- Defined in :ref:`file_rootex_common_common.h`
+
+
+Define Documentation
+--------------------
+
+
+.. doxygendefine:: DEBUG_PANIC

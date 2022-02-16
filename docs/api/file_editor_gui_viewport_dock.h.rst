@@ -37,12 +37,6 @@ Includes
 
 
 
-Included By
------------
-
-
-- :ref:`file_editor_editor_system.h`
-
 
 
 

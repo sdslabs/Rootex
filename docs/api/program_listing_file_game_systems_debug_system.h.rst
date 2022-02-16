@@ -19,6 +19,7 @@ Program Listing for File debug_system.h
    class DebugSystem : public System
    {
        bool m_IsEditing = false;
+       Vector<float> m_FPSRecords;
    
        DebugSystem();
        DebugSystem(DebugSystem&) = delete;

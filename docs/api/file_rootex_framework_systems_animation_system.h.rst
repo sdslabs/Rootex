@@ -33,7 +33,7 @@ Included By
 -----------
 
 
-- :ref:`file_rootex_framework_components_visual_animated_model_component.h`
+- :ref:`file_rootex_framework_components_visual_model_animated_model_component.h`
 
 
 

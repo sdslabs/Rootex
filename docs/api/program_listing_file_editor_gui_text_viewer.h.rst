@@ -18,12 +18,12 @@ Program Listing for File text_viewer.h
    
    class TextViewer
    {
-       TextResourceFile* m_TextResourceFile;
+       Ref<TextResourceFile> m_TextResourceFile;
    
        void drawFileInfo();
    
    public:
-       ResourceFile* load(const FilePath& filePath);
+       Ref<ResourceFile> load(const FilePath& filePath);
        void unload();
        void draw(float deltaMilliseconds);
    };

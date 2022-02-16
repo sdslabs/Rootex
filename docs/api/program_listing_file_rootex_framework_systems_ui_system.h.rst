@@ -16,6 +16,8 @@ Program Listing for File ui_system.h
    #include "event_manager.h"
    #include "core/ui/custom_render_interface.h"
    
+   #include "core/ui/flipbook_decorator.h"
+   
    #undef interface
    #include "RmlUi/Core/SystemInterface.h"
    #define interface __STRUCT__
@@ -28,9 +30,13 @@ Program Listing for File ui_system.h
    
    class UISystem : public System
    {
+       EventBinder<UISystem> m_Binder;
+   
        Ptr<CustomSystemInterface> m_RmlSystemInterface;
        Ptr<CustomRenderInterface> m_RmlRenderInterface;
        Rml::Context* m_Context;
+   
+       Ptr<FlipbookDecoratorInstancer> m_FlipbookInstancer;
    
        UISystem();
        virtual ~UISystem() = default;

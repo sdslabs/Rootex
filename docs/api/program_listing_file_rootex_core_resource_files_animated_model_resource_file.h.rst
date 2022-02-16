@@ -14,16 +14,24 @@ Program Listing for File animated_model_resource_file.h
    
    #include "resource_file.h"
    #include "renderer/mesh.h"
-   #include <Assimp/scene.h>
    #include "core/animation/animation.h"
+   #include "animated_basic_material_resource_file.h"
    
-   class Material;
+   #include "assimp/scene.h"
+   
+   enum class RootExclusion : int
+   {
+       None = 0,
+       Translation = 1,
+       All = 2
+   };
    
    class AnimatedModelResourceFile : public ResourceFile
    {
+   private:
        explicit AnimatedModelResourceFile(const FilePath& resData);
    
-       Vector<Pair<Ref<Material>, Vector<Mesh>>> m_Meshes;
+       Vector<Pair<Ref<AnimatedBasicMaterialResourceFile>, Vector<Mesh>>> m_Meshes;
    
        HashMap<String, unsigned int> m_BoneMapping;
        Vector<Matrix> m_BoneOffsets;
@@ -44,14 +52,16 @@ Program Listing for File animated_model_resource_file.h
    
        void reimport() override;
    
-       Vector<Pair<Ref<Material>, Vector<Mesh>>>& getMeshes() { return m_Meshes; }
+       Vector<Pair<Ref<AnimatedBasicMaterialResourceFile>, Vector<Mesh>>>& getMeshes() { return m_Meshes; }
        HashMap<String, SkeletalAnimation>& getAnimations() { return m_Animations; }
        size_t getBoneCount() const { return m_BoneOffsets.size(); }
    
        void setNodeHierarchy(aiNode* currentAiNode, Ptr<SkeletonNode>& currentNode);
-       void setAnimationTransforms(Ptr<SkeletonNode>& node, float currentTime, const String& animationName, const Matrix& parentModelTransform, bool isRootFound);
+       void setAnimationTransforms(Ptr<SkeletonNode>& node, float currentTime, const String& animationName, const Matrix& parentModelTransform, float transitionTightness, RootExclusion rootExclusion, bool isRootFound);
    
        Vector<String> getAnimationNames();
-       float getAnimationEndTime(const String& animationName);
-       void getFinalTransforms(const String& animationName, float currentTime, Vector<Matrix>& transforms);
+       float getAnimationStartTime(const String& animationName) const;
+       float getAnimationEndTime(const String& animationName) const;
+   
+       void getFinalTransforms(Vector<Matrix>& transforms, const String& animationName, float currentTime, float transitionTightness, RootExclusion rootExclusion);
    };

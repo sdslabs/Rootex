@@ -17,11 +17,15 @@ Program Listing for File rendering_device.h
    #include <d3d11.h>
    #include <d3dcompiler.h>
    
+   #include "event_manager.h"
+   
    #include "vendor/DirectXTK/Inc/SpriteBatch.h"
    #include "vendor/DirectXTK/Inc/SpriteFont.h"
    
    class RenderingDevice
    {
+       EventBinder<RenderingDevice> m_Binder;
+   
    public:
        enum class RasterizerState
        {
@@ -30,6 +34,12 @@ Program Listing for File rendering_device.h
            UIScissor,
            Wireframe,
            Sky
+       };
+   
+       enum class SamplerState
+       {
+           Default,
+           Anisotropic
        };
    
    private:
@@ -50,6 +60,7 @@ Program Listing for File rendering_device.h
        Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_DSState;
        UINT m_StencilRef;
        Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_SkyDSState;
+       Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_DisableDepthTestDSState;
    
        Ref<DirectX::SpriteBatch> m_FontBatch;
    
@@ -70,13 +81,19 @@ Program Listing for File rendering_device.h
        RenderingDevice(RenderingDevice&) = delete;
        ~RenderingDevice();
    
+       void createSwapChainBufferViews();
+       void createDepthStencil(DXGI_SWAP_CHAIN_DESC& sd, float width, float height);
+   
        void swapBuffers();
+   
+       Variant windowResized(const Event* event);
    
        friend class Window;
    
    public:
        static RenderingDevice* GetSingleton();
        void initialize(HWND hWnd, int width, int height);
+       void createOffScreenViews(int width, int height);
        void createSwapChainAndRTVs(int width, int height, const HWND& hWnd);
        void setScreenState(bool fullscreen);
    
@@ -86,21 +103,37 @@ Program Listing for File rendering_device.h
        void enableSkyDSS();
        void disableSkyDSS();
    
+       void disableDSS();
+       void enableDSS();
+   
        void createRTVAndSRV(Microsoft::WRL::ComPtr<ID3D11RenderTargetView>& rtv, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& srv);
-       Microsoft::WRL::ComPtr<ID3D11Buffer> createBuffer(D3D11_BUFFER_DESC* bd, D3D11_SUBRESOURCE_DATA* sd);
-       Microsoft::WRL::ComPtr<ID3D11Buffer> createVSCB(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd);
-       Microsoft::WRL::ComPtr<ID3D11Buffer> createPSCB(D3D11_BUFFER_DESC* cbd, D3D11_SUBRESOURCE_DATA* csd);
+   
+       Microsoft::WRL::ComPtr<ID3D11Buffer> createBuffer(const char* data, size_t size, D3D11_BIND_FLAG bindFlags, D3D11_USAGE usage, int cpuAccess);
+       void editBuffer(const char* data, size_t byteSize, ID3D11Buffer* bufferPointer);
+   
+       template <class T>
+       Microsoft::WRL::ComPtr<ID3D11Buffer> createBuffer(const T& data, D3D11_BIND_FLAG bindFlags, D3D11_USAGE usage, D3D11_CPU_ACCESS_FLAG cpuAccess);
+       template <typename T>
+       void editBuffer(const T& data, ID3D11Buffer* bufferPointer);
+   
+       Microsoft::WRL::ComPtr<ID3DBlob> compileShader(const String& shaderPath, const char* entryPoint, const char* profile);
        Microsoft::WRL::ComPtr<ID3D11PixelShader> createPS(ID3DBlob* blob);
        Microsoft::WRL::ComPtr<ID3D11VertexShader> createVS(ID3DBlob* blob);
        Microsoft::WRL::ComPtr<ID3D11InputLayout> createVL(ID3DBlob* vertexShaderBlob, const D3D11_INPUT_ELEMENT_DESC* ied, UINT size);
    
        Ref<DirectX::SpriteFont> createFont(const String& fontFilePath);
-       Microsoft::WRL::ComPtr<ID3DBlob> createBlob(LPCWSTR path);
        Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createDDSTexture(const char* imageDDSFileData, size_t size);
        Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createTexture(const char* imageFileData, size_t size);
        Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> createTextureFromPixels(const char* imageRawData, unsigned int width, unsigned int height);
-       Microsoft::WRL::ComPtr<ID3D11SamplerState> createSS();
-       Microsoft::WRL::ComPtr<ID3D11SamplerState> createSSAnisotropic();
+       unsigned char* downloadTexture(ID3D11Texture2D* texture, unsigned int width, unsigned int height);
+       Microsoft::WRL::ComPtr<ID3D11SamplerState> createSS(SamplerState type);
+   
+       void setVSSRV(unsigned int slot, unsigned int count, ID3D11ShaderResourceView** texture);
+       void setPSSRV(unsigned int slot, unsigned int count, ID3D11ShaderResourceView** texture);
+       void setVSSS(unsigned int slot, unsigned int count, ID3D11SamplerState** samplerState);
+       void setPSSS(unsigned int slot, unsigned int count, ID3D11SamplerState** samplerState);
+       void setVSCB(unsigned int slot, unsigned int count, ID3D11Buffer** constantBuffer);
+       void setPSCB(unsigned int slot, unsigned int count, ID3D11Buffer** constantBuffer);
    
        void bind(ID3D11Buffer* const* vertexBuffer, int count, const unsigned int* stride, const unsigned int* offset);
        void bind(ID3D11Buffer* indexBuffer, DXGI_FORMAT format);
@@ -110,13 +143,6 @@ Program Listing for File rendering_device.h
    
        void mapBuffer(ID3D11Buffer* buffer, D3D11_MAPPED_SUBRESOURCE& subresource);
        void unmapBuffer(ID3D11Buffer* buffer);
-   
-       void setInPixelShader(unsigned int slot, unsigned int number, ID3D11ShaderResourceView* texture);
-       void setInPixelShader(ID3D11SamplerState* samplerState);
-   
-       void setVSCB(ID3D11Buffer* constantBuffer, UINT slot);
-       void setPSCB(ID3D11Buffer* constantBuffer, UINT slot);
-   
        void setDefaultBS();
        void setAlphaBS();
    
@@ -131,14 +157,19 @@ Program Listing for File rendering_device.h
    
        void setScissorRectangle(int x, int y, int width, int height);
    
+       void setResolutionAndRefreshRate(int width, int height, int refreshRateNum, int refreshRateDeno);
+   
        void setOffScreenRTVDSV();
        void setOffScreenRTVOnly();
        void setMainRT();
        void setRTV(Microsoft::WRL::ComPtr<ID3D11RenderTargetView> rtv);
        void setRTV(ID3D11RenderTargetView* rtv);
+       void setInputLayout(ID3D11InputLayout* inputLayout);
    
        void unbindSRVs();
        void unbindRTVs();
+   
+       void unbindDepthSRV();
    
        Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> getMainSRV();
        Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> getDepthSSRV();
@@ -154,9 +185,22 @@ Program Listing for File rendering_device.h
    
        void beginDrawUI();
        void endDrawUI();
+       void draw(UINT vertexCount, UINT startVertexLocation);
    
        void clearRTV(Microsoft::WRL::ComPtr<ID3D11RenderTargetView> rtv, float r, float g, float b, float a);
        void clearMainRT(float r, float g, float b, float a);
        void clearOffScreenRT(float r, float g, float b, float a);
        void clearDSV();
    };
+   
+   template <class T>
+   inline Microsoft::WRL::ComPtr<ID3D11Buffer> RenderingDevice::createBuffer(const T& data, D3D11_BIND_FLAG bindFlags, D3D11_USAGE usage, D3D11_CPU_ACCESS_FLAG cpuAccess)
+   {
+       return createBuffer((const char*)&data, sizeof(T), bindFlags, usage, cpuAccess);
+   }
+   
+   template <typename T>
+   inline void RenderingDevice::editBuffer(const T& data, ID3D11Buffer* bufferPointer)
+   {
+       editBuffer((const char*)&data, sizeof(T), bufferPointer);
+   }

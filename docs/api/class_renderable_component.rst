@@ -3,7 +3,7 @@
 Class RenderableComponent
 =========================
 
-- Defined in :ref:`file_rootex_framework_components_visual_renderable_component.h`
+- Defined in :ref:`file_rootex_framework_components_visual_model_renderable_component.h`
 
 
 Inheritance Relationships

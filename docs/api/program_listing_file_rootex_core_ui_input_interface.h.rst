@@ -13,7 +13,7 @@ Program Listing for File input_interface.h
    #pragma once
    
    #include "common/common.h"
-   #include "event.h"
+   #include "event_manager.h"
    
    #undef interface
    #include "RmlUi/Core.h"
@@ -21,24 +21,31 @@ Program Listing for File input_interface.h
    
    class InputInterface
    {
+       EventBinder<InputInterface> m_Binder;
+   
+       InputInterface();
+   
    public:
-       static bool s_IsMouseOver;
-       static bool s_IsEnabled;
-       static float s_ScaleX;
-       static float s_ScaleY;
-       static int s_Left;
-       static int s_Right;
-       static int s_Top;
-       static int s_Bottom;
+       static InputInterface* GetSingleton();
    
-       static bool Initialise();
-       static void Shutdown();
+       bool m_IsMouseOver = false;
+       bool m_IsEnabled = true;
+       float m_ScaleX = 1.0f;
+       float m_ScaleY = 1.0f;
+       int m_Left = 0;
+       int m_Right = 0;
+       int m_Top = 0;
+       int m_Bottom = 0;
    
-       static void ProcessWindowsEvent(UINT message, WPARAM wParam, LPARAM lParam);
+       bool initialise();
    
-       static void SetContext(Rml::Context* context);
-       static Rml::Character GetCharacterCode(Rml::Input::KeyIdentifier keyIdentifier, int keyModifier_state);
+       void processWindowsEvent(UINT message, WPARAM wParam, LPARAM lParam);
+   
+       void setContext(Rml::Context* context);
+       Rml::Character getCharacterCode(Rml::Input::KeyIdentifier keyIdentifier, int keyModifier_state);
+   
+       Variant windowResized(const Event* event);
    
    protected:
-       static Rml::Context* s_Context;
+       Rml::Context* m_Context = nullptr;
    };

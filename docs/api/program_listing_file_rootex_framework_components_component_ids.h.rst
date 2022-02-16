@@ -14,11 +14,11 @@ Program Listing for File component_ids.h
    
    enum class ComponentIDs : unsigned int
    {
-       TestComponent,
-       DebugComponent,
        ModelComponent,
        GridModelComponent,
+       SpriteComponent,
        CPUParticlesComponent,
+       DecalComponent,
        TextUIComponent,
        UIComponent,
        CameraComponent,
@@ -31,6 +31,7 @@ Program Listing for File component_ids.h
        BoxColliderComponent,
        CapsuleColliderComponent,
        StaticMeshColliderComponent,
+       TriggerComponent,
        ScriptComponent,
        MusicComponent,
        ShortMusicComponent,
@@ -40,5 +41,7 @@ Program Listing for File component_ids.h
        FogComponent,
        StaticPointLightComponent,
        AnimatedModelComponent,
-       RenderableComponent
+       RenderableComponent,
+       ParticleEffectComponent,
+       PlayerController
    };
