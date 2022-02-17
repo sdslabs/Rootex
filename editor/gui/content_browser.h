@@ -29,24 +29,6 @@ private:
 	Vector<FilePath> m_DirectoryCache;
 	HashMap<String, Ref<ImageResourceFile>> m_ThumbnailsCache;
 
-	static const inline HashMap<String, Vector<const char*>> m_PayloadTypes = {
-		{ ".png", { "IMAGE_PAYLOAD" } },
-		{ ".jpg", { "IMAGE_PAYLOAD" } },
-		{ ".jpeg", { "IMAGE_PAYLOAD" } },
-		{ ".dds", { "IMAGE_PAYLOAD", "IMAGE_CUBE_PAYLOAD" } },
-		{ ".wav", { "AUDIO_PAYLOAD" } },
-		{ ".3ds", { "MODEL_PAYLOAD" } },
-		{ ".fbx", { "MODEL_PAYLOAD", "ANIMATED_MODEL_PAYLOAD" } },
-		{ ".obj", { "MODEL_PAYLOAD", "COLLISION_MODEL_PAYLOAD" } },
-		{ ".blend", { "MODEL_PAYLOAD" } },
-		{ ".dae", { "MODEL_PAYLOAD", "ANIMATED_MODEL_PAYLOAD" } },
-		{ ".gltf", { "ANIMATED_MODEL_PAYLOAD" } },
-		{ ".lua", { "SCRIPT_PAYLOAD" } },
-		{ ".rml", { "RML_PAYLOAD" } },
-		{ ".rmat", { "MATERIAL_PAYLOAD" } },
-		{ ".json", { "SCENE_PAYLOAD" } },
-	};
-
 	float m_IconWidth = 128;
 
 public:

@@ -82,33 +82,29 @@ void ContentBrowser::draw(float deltaMilliseconds)
 					for (FilePath directoryIterator : filepaths)
 					{
 						String directoryIteratorString = directoryIterator.string();
-						bool thumbnailFound = false;
 						if (OS::IsDirectory(directoryIteratorString))
 						{
 							m_ThumbnailsCache[directoryIteratorString] = m_DirectoryImage;
 							temp_dirs.push_back(directoryIteratorString);
-							thumbnailFound = true;
 						}
-						else if (m_PayloadTypes.find(directoryIterator.extension().string()) != m_PayloadTypes.end())
+						else
 						{
-							String payload_type = m_PayloadTypes.at(directoryIterator.extension().string())[0];
+							String payload_type = GetPayloadTypes(directoryIterator.extension().string())[0];
 							if (payload_type == "AUDIO_PAYLOAD")
 							{
 								m_ThumbnailsCache[directoryIteratorString] = m_MusicImage;
 								temp_files.push_back(directoryIteratorString);
-								thumbnailFound = true;
 							}
 							else if (payload_type == "IMAGE_PAYLOAD")
 							{
 								m_ThumbnailsCache[directoryIteratorString] = ResourceLoader::CreateImageResourceFile(directoryIteratorString);
 								temp_files.push_back(directoryIteratorString);
-								thumbnailFound = true;
 							}
-						}
-						if (!thumbnailFound)
-						{
-							m_ThumbnailsCache[directoryIteratorString] = m_ScriptImage;
-							temp_files.push_back(directoryIteratorString);
+							else
+							{
+								m_ThumbnailsCache[directoryIteratorString] = m_ScriptImage;
+								temp_files.push_back(directoryIteratorString);
+							}
 						}
 					}
 					m_FilepathsCache = temp_files;
@@ -142,39 +138,34 @@ void ContentBrowser::draw(float deltaMilliseconds)
 			{
 				ImGui::PushID(id++);
 				const String directoryIteratorString = directoryIterator.string();
-
+				Vector<const char*> payloadTypes = GetPayloadTypes(directoryIterator.extension().string());
 				if (ImGui::ImageButton(m_ThumbnailsCache[directoryIteratorString]->getGPUTexture()->getTextureResourceView(), { m_IconWidth, ((float)m_MusicImage->getGPUTexture()->getHeight()) * m_IconWidth / ((float)m_MusicImage->getGPUTexture()->getWidth()) }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, 12, { 0.0f, 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }))
 				{
-					if (m_PayloadTypes.find(directoryIterator.extension().string()) != m_PayloadTypes.end())
+					String payload_type = payloadTypes[0];
+					if (payload_type == "SCRIPT_PAYLOAD" || payload_type == "RML_PAYLOAD")
 					{
-						String payload_type = m_PayloadTypes.at(directoryIterator.extension().string())[0];
-						if (directoryIterator.extension().string() == ".lua" || directoryIterator.extension().string() == ".rml")
-						{
-							EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { directoryIteratorString, (int)ResourceFile::Type::Text });
-						}
-						else if (payload_type == "MODEL_PAYLOAD")
-						{
-							EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { directoryIteratorString, (int)ResourceFile::Type::Model });
-						}
-						else if (payload_type == "IMAGE_PAYLOAD")
-						{
-							EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { directoryIteratorString, (int)ResourceFile::Type::Image });
-						}
-						else if (payload_type == "AUDIO_PAYLOAD")
-						{
-							EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { directoryIteratorString, (int)ResourceFile::Type::Audio });
-						}
+						EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { directoryIteratorString, (int)ResourceFile::Type::Text });
+					}
+					else if (payload_type == "MODEL_PAYLOAD")
+					{
+						EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { directoryIteratorString, (int)ResourceFile::Type::Model });
+					}
+					else if (payload_type == "IMAGE_PAYLOAD")
+					{
+						EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { directoryIteratorString, (int)ResourceFile::Type::Image });
+					}
+					else if (payload_type == "AUDIO_PAYLOAD")
+					{
+						EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { directoryIteratorString, (int)ResourceFile::Type::Audio });
 					}
 				}
-				if (m_PayloadTypes.find(directoryIterator.extension().string()) != m_PayloadTypes.end())
+
+				for (const char* it : payloadTypes)
 				{
-					for (const char* it : m_PayloadTypes.at(directoryIterator.extension().string()))
+					if (ImGui::BeginDragDropSource())
 					{
-						if (ImGui::BeginDragDropSource())
-						{
-							ImGui::SetDragDropPayload(it, directoryIteratorString.c_str(), (directoryIteratorString.size() + 1) * sizeof(char), ImGuiCond_Once);
-							ImGui::EndDragDropSource();
-						}
+						ImGui::SetDragDropPayload(it, directoryIteratorString.c_str(), (directoryIteratorString.size() + 1) * sizeof(char), ImGuiCond_Once);
+						ImGui::EndDragDropSource();
 					}
 				}
 
