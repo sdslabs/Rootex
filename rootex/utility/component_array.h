@@ -3,20 +3,21 @@
 #include "common/types.h"
 #include "custom_iterator.h"
 
-#define MAX_COMPONENT_ARRAY_arraySize 10000
+#define MAX_COMPONENT_ARRAY_SIZE 10000
 
 template <typename component, class A = std::allocator<component>>
 class ComponentArray // component array
 {
-	component m_data[MAX_COMPONENT_ARRAY_arraySize];
-	bool m_isValid[MAX_COMPONENT_ARRAY_arraySize];
+	std::vector<component> m_data;
+	bool m_isValid[MAX_COMPONENT_ARRAY_SIZE];
 	int curr;
 	size_t arraySize;
 
 public:
 	ComponentArray() //default constructor
 	{
-		for (int i = 0; i < MAX_COMPONENT_ARRAY_arraySize; i++)
+		m_data.reserve(MAX_COMPONENT_ARRAY_SIZE);
+		for (int i = 0; i < MAX_COMPONENT_ARRAY_SIZE; i++)
 		{
 			m_isValid[i] = true;
 			//m_data[i] = component();
@@ -31,21 +32,21 @@ public:
 		{
 			index++;
 		}
-		return CustomIterator<component>(m_isValid, m_data + index);
+		return CustomIterator<component>(m_isValid, &(*(m_data.begin() + index)));
 	}
 
 	CustomIterator<component> end() // end of the iterator
 	{
-		return CustomIterator<component>(m_data + curr);
+		return CustomIterator<component>(&(*(m_data.begin() + curr)));
 	}
 
 	void push_back(const component& item)
 	{
-		if (arraySize == MAX_COMPONENT_ARRAY_arraySize)
+		if (arraySize == MAX_COMPONENT_ARRAY_SIZE)
 		{
 			ERR("Component set for " + component::s_Name + " is full. Reduce component count or increase max arraySize");
 		}
-		for (int i = 0; i < MAX_COMPONENT_ARRAY_arraySize; i++)
+		for (int i = 0; i < MAX_COMPONENT_ARRAY_SIZE; i++)
 		{
 			if (!m_isValid[i])
 			{
@@ -60,24 +61,24 @@ public:
 
 	void emplace_back(Entity& owner, const JSON::json& componentData)
 	{
-		if (arraySize == MAX_COMPONENT_ARRAY_arraySize)
+		if (arraySize == MAX_COMPONENT_ARRAY_SIZE)
 		{
 			ERR("Component set for " + component::s_Name + " is full. Reduce component count or increase max arraySize");
 		}
 		component& instance = component(owner, componentData);
 		owner.registerComponent(&instance);
 
-		for (int i = 0; i < MAX_COMPONENT_ARRAY_arraySize; i++)
+		for (int i = 0; i < curr; i++)
 		{
 			if (!m_isValid[i])
 			{
-				new (m_data + i) component(owner, componentData);
+				m_data[i] = component(owner, componentData);
 				m_isValid[i] = true;
 				arraySize++;
 				return;
 			}
 		}
-		new (m_data + curr) component(owner, componentData);
+		m_data.emplace_back(owner, componentData);
 		curr++;
 		arraySize++;
 	}
