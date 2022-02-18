@@ -12,36 +12,21 @@ Program Listing for File capsule_collider_component.h
 
    #pragma once
    
-   #include "physics_collider_component.h"
+   #include "rigid_body_component.h"
    
    #include "btBulletDynamicsCommon.h"
    
-   class CapsuleColliderComponent : public PhysicsColliderComponent
+   class CapsuleColliderComponent : public RigidBodyComponent
    {
-       static Component* Create(const JSON::json& capsuleComponentData);
+       COMPONENT(CapsuleColliderComponent, Category::Physics);
    
        float m_Radius;
        float m_SideHeight;
-       Ref<btCapsuleShape> m_CapsuleShape;
-   
-       friend class ECSFactory;
+       btCapsuleShape* m_CapsuleShape;
    
    public:
-       static const ComponentID s_ID = (ComponentID)ComponentIDs::CapsuleColliderComponent;
-   
-       CapsuleColliderComponent(
-           float radius,
-           float sideHeight,
-           const PhysicsMaterial& material,
-           const Vector3& angularFactor,
-           const Vector3& gravity,
-           int collisionGroup,
-           int collisionMask,
-           bool isMoveable,
-           bool isKinematic,
-           bool generatesHitEvents,
-           bool isSleepable,
-           bool isCCD);
+       CapsuleColliderComponent(Entity& owner, const JSON::json& data);
+       ~CapsuleColliderComponent() = default;
    
        float getSideHeight() const { return m_SideHeight; }
        void setSideHeight(float s);
@@ -49,9 +34,8 @@ Program Listing for File capsule_collider_component.h
        float getRadius() const { return m_Radius; }
        void setRadius(float r);
    
-       virtual const char* getName() const override { return "CapsuleColliderComponent"; };
-       virtual JSON::json getJSON() const override;
-       virtual ComponentID getComponentID() const override { return s_ID; }
-   
+       JSON::json getJSON() const override;
        void draw() override;
    };
+   
+   DECLARE_COMPONENT(CapsuleColliderComponent);

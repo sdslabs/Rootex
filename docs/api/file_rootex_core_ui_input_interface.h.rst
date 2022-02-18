@@ -29,7 +29,7 @@ Includes
 
 - ``common/common.h``
 
-- ``event.h`` (:ref:`file_rootex_core_event.h`)
+- ``event_manager.h`` (:ref:`file_rootex_core_event_manager.h`)
 
 
 

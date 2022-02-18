@@ -12,7 +12,7 @@ Inheritance Relationships
 Base Type
 *********
 
-- ``public PhysicsColliderComponent`` (:ref:`exhale_class_class_physics_collider_component`)
+- ``public RigidBodyComponent`` (:ref:`exhale_class_class_rigid_body_component`)
 
 
 Class Documentation

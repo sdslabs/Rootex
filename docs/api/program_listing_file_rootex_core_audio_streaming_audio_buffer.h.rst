@@ -31,7 +31,7 @@ Program Listing for File streaming_audio_buffer.h
        void destroyBuffers() override;
    
    public:
-       StreamingAudioBuffer(AudioResourceFile* audioFile);
+       StreamingAudioBuffer(Ref<AudioResourceFile> audioFile);
        ~StreamingAudioBuffer();
    
        void loadNewBuffers(int count, bool isLooping);

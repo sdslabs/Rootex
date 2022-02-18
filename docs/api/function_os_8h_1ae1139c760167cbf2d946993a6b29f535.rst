@@ -1,0 +1,13 @@
+.. _exhale_function_os_8h_1ae1139c760167cbf2d946993a6b29f535:
+
+Function StringToWideString
+===========================
+
+- Defined in :ref:`file_rootex_os_os.h`
+
+
+Function Documentation
+----------------------
+
+
+.. doxygenfunction:: StringToWideString(const String&)

@@ -25,9 +25,9 @@ Includes
 --------
 
 
-- ``component.h`` (:ref:`file_rootex_framework_components_visual_animated_model_component.h`)
+- ``component.h`` (:ref:`file_rootex_framework_components_visual_model_animated_model_component.h`)
 
-- ``components/transform_component.h``
+- ``components/space/transform_component.h``
 
 - ``core/renderer/post_processor.h``
 
@@ -47,4 +47,11 @@ Classes
 
 
 - :ref:`exhale_class_class_camera_component`
+
+
+Functions
+---------
+
+
+- :ref:`exhale_function_camera__component_8h_1acec16a2c16b7aa4ee08f5f931dbaf495`
 

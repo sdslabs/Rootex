@@ -20,7 +20,6 @@ Program Listing for File editor_application.h
        static void SetSingleton(EditorApplication* app);
    
        unsigned int m_AutoSaveDurationS = 300.0f;
-   
        TimePoint m_PointAtLast10Second;
        FrameTimer m_FrameTimer;
    
@@ -29,9 +28,9 @@ Program Listing for File editor_application.h
    
        EditorApplication();
        EditorApplication(EditorApplication&) = delete;
-       virtual ~EditorApplication() = default;
+       ~EditorApplication();
+   
+       void setGameMode(bool enabled);
    
        virtual void process(float deltaMilliseconds) override;
-   
-       virtual String getAppTitle() const override { return "Rootex Editor"; }
    };

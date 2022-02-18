@@ -35,17 +35,11 @@ Includes
 
 - ``material_viewer.h`` (:ref:`file_editor_gui_material_viewer.h`)
 
-- ``resource_file.h`` (:ref:`file_rootex_core_resource_files_animated_model_resource_file.h`)
+- ``resource_file.h`` (:ref:`file_rootex_core_resource_files_animated_basic_material_resource_file.h`)
 
 - ``text_viewer.h`` (:ref:`file_editor_gui_text_viewer.h`)
 
 
-
-Included By
------------
-
-
-- :ref:`file_editor_editor_system.h`
 
 
 

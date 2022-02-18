@@ -12,6 +12,7 @@ Program Listing for File script.h
 
    #pragma once
    
+   #include "common.h"
    #include "script/interpreter.h"
    
    class LuaTextResourceFile;

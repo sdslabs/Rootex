@@ -23,19 +23,21 @@ Program Listing for File file_viewer.h
    
    class FileViewer
    {
+       EventBinder<FileViewer> m_Binder;
+   
        bool m_IsFileOpened;
        bool m_IsEventJustReceived;
-       FilePath m_OpenFilePath;
    
        AudioPlayer m_AudioPlayer;
        ImageViewer m_ImageViewer;
        TextViewer m_TextViewer;
        MaterialViewer m_MaterialViewer;
    
-       ResourceFile* m_OpenFile;
+       Ref<ResourceFile> m_OpenFile;
    
        void drawFileInfo();
    
+       Variant unloadAllResources(const Event* event);
        Variant openFile(const Event* event);
    
    public:

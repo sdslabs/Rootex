@@ -3,7 +3,7 @@
 Class ModelComponent
 ====================
 
-- Defined in :ref:`file_rootex_framework_components_visual_model_component.h`
+- Defined in :ref:`file_rootex_framework_components_visual_model_model_component.h`
 
 
 Inheritance Relationships
@@ -19,7 +19,9 @@ Derived Types
 *************
 
 - ``public CPUParticlesComponent`` (:ref:`exhale_class_class_c_p_u_particles_component`)
+- ``public DecalComponent`` (:ref:`exhale_class_class_decal_component`)
 - ``public GridModelComponent`` (:ref:`exhale_class_class_grid_model_component`)
+- ``public SpriteComponent`` (:ref:`exhale_class_class_sprite_component`)
 
 
 Class Documentation

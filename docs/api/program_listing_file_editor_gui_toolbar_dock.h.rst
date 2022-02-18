@@ -13,21 +13,28 @@ Program Listing for File toolbar_dock.h
    #pragma once
    
    #include "common/common.h"
+   #include "event_manager.h"
    
    class ToolbarDock
    {
+       EventBinder<ToolbarDock> m_Binder;
+   
        float m_LastUpdateTime = 0.0f;
    
    public:
        struct ToolbarDockSettings
        {
            bool m_IsActive = true;
+           bool m_InEditorPlaying = false;
        };
    
    private:
        ToolbarDockSettings m_ToolbarDockSettings;
        Vector<float> m_FPSRecords;
        unsigned int m_FPSRecordsPoolSize = 100;
+       String m_StartPlayingScene;
+   
+       Variant disablePlayInEditor(const Event* e);
    
    public:
        ToolbarDock();
