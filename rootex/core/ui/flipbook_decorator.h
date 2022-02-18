@@ -10,6 +10,7 @@
 #include "RmlUi/Core/Geometry.h"
 #include "RmlUi/Core/GeometryUtilities.h"
 
+/// UI element to show a simple image based animations using a sequence of sprites. 
 class FlipbookDecorator : public RootexDecorator
 {
 	struct FlipbookElementData

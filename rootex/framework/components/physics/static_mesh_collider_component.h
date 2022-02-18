@@ -5,6 +5,7 @@
 
 #include "btBulletCollisionCommon.h"
 
+/// Collision component with a 3D model as its shape.
 class StaticMeshColliderComponent : public RigidBodyComponent
 {
 	COMPONENT(StaticMeshColliderComponent, Category::Physics);

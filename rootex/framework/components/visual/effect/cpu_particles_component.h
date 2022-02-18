@@ -23,6 +23,7 @@ struct ParticleTemplate
 void to_json(JSON::json& j, const ParticleTemplate p);
 void from_json(const JSON::json& j, ParticleTemplate& p);
 
+/// Creates particle systems on the CPU. Not preferred over ParticleEffectComponent.
 class CPUParticlesComponent : public ModelComponent
 {
 	COMPONENT(CPUParticlesComponent, Category::Effect);
