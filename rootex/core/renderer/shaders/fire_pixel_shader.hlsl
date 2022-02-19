@@ -11,7 +11,7 @@ cbuffer PerFrame : register(CUSTOM_PER_FRAME_PS_HLSL)
 	float2 mouse;
 };
 
-Texture2D Texture0 : register(CUSTOM_TEXTURE_0_PS_HLSL);
+Texture2D Texture0 : register(DIFFUSE_PS_HLSL);
 
 struct PixelInputType
 {
@@ -92,6 +92,8 @@ float4 main(PixelInputType input)
 	float3 finalColor = (finalNoise * weightedColor);
 	float power = 3; //Maybe As a tweakable factor???
 	float alpha =( pow(finalColor.r, power) + pow(finalColor.b, power) + pow(finalColor.g, power) )/ 3.0f;
-	return float4(finalColor,alpha);
+
+	float3 texColor = Texture0.Sample(SampleType, input.tex).rgb;
+	return float4(lerp(finalColor, texColor, 0.5f), 1.0f);
 }
 
