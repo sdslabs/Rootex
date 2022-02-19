@@ -33,6 +33,7 @@ float2 hash(float2 p)
 }
 
 float noise(in float2 p) //simplex noise: https://en.wikipedia.org/wiki/Simplex_noise
+{
 	const float K1 = 0.366025404; // (sqrt(3)-1)/2;
 	const float K2 = 0.211324865; // (3-sqrt(3))/6;
 
