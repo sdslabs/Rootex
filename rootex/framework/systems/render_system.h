@@ -14,6 +14,7 @@
 
 #include "ASSAO/ASSAO.h"
 
+/// Responsible for handling all the rendering in the editor.
 class RenderSystem : public System
 {
 	EventBinder<RenderSystem> m_Binder;
