@@ -195,10 +195,13 @@ Clicking on the pencil icon opens an editor from which you can customise it.
 .. image:: images/graphics_tutorial/edit_the_default_fire_pixel_shader_2.png
 	:alt: Edit Fire Pixel Shader
 	:align: center
-
 .. image:: images/graphics_tutorial/edited_the_default_fire_pixel_shader.png
 	:alt: Final Fire Pixel Shader
 	:align: center
+.. image:: images/graphics_tutorial/fire_shader_sample.gif
+	:alt: Fire Shader Sample
+	:align: center
+
 
 ***************
 Decal Component
@@ -227,3 +230,7 @@ By default the decal shader projects on the negative z-axis. You can rotate it t
 .. image:: images/graphics_tutorial/change_decal_material_texture.png
 	:alt: Change Decal Material
 	:align: center
+.. image:: images/graphics_tutorial/decal_sample.gif
+	:alt: Decal Sample
+	:align: center
+
