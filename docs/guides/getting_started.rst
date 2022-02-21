@@ -15,4 +15,5 @@ Any user coming from ECS based game engines should be able to pick up the interf
 
 	running_the_editor
 	editor_layout
+	graphics_tutorial
 	getting_help
