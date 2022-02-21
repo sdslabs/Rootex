@@ -21,8 +21,8 @@ Add a UIComponent to this scene
 
 Make an empty scene with a TransformComponent and ModelComponent (basic cube)
 
-..image::images/uidemo_1.png
-  :scale: 50
+.. image::images/uidemo_1.png
+   :scale: 50
 
 Now add the following RML script to the UIComponent
 
@@ -63,16 +63,16 @@ Now add the following RML script to the UIComponent
 
 This will add sample text to the top left of our viewport which will react on mouse hover.
 
-..image::images/uidemo_2.png
-  :scale: 50
+.. image::images/uidemo_2.png
+   :scale: 50
 
 Upon playing this scene and switching to EditorCamera, when we move the EditorCamera around, we can see the view of the cube changing, but the HUD stays in place.
 
-..image::images/uidemo_3.png
-  :scale: 50
+.. image::images/uidemo_3.png
+   :scale: 50
 
-..image::images/uidemo_4.png
-  :scale: 50
+.. image::images/uidemo_4.png
+   :scale: 50
 
 Fade-In effect
 ==============
