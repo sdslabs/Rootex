@@ -4,6 +4,7 @@
 
 #include "RmlUi/Core/Decorator.h"
 
+/// Base class for other decorator elements like Flipbook Decorator
 class RootexDecorator : public Rml::Decorator
 {
 	static inline Vector<RootexDecorator*> s_DecoratorInstances;

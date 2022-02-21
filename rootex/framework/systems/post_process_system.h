@@ -5,6 +5,7 @@
 
 #include "core/renderer/post_processor.h"
 
+/// Handles all the custom post processes
 class PostProcessSystem : public System
 {
 	PostProcessor m_Processor;

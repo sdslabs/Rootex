@@ -6,6 +6,7 @@
 #include "renderer/shaders/register_locations_pixel_shader.h"
 #include "renderer/shaders/register_locations_vertex_shader.h"
 
+/// Representation of a material file. Every material type is inherited from this class.
 class MaterialResourceFile : public ResourceFile
 {
 	bool m_IsAlpha = false;

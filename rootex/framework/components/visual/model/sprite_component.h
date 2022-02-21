@@ -4,6 +4,7 @@
 #include "core/resource_files/image_resource_file.h"
 #include "core/resource_files/basic_material_resource_file.h"
 
+/// Component for rendering sprites. Supports billboarding.
 class SpriteComponent : public ModelComponent
 {
 	COMPONENT(SpriteComponent, Category::Model);

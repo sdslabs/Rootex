@@ -2,6 +2,7 @@
 
 #include "system.h"
 
+/// System which handles the initialisation and updation of transform animations.
 class TransformAnimationSystem : public System
 {
 public:

@@ -8,6 +8,7 @@
 #include "components/physics/sphere_collider_component.h"
 #include "components/physics/capsule_collider_component.h"
 
+/// Component that plays audio according to the listener's position relative to the component.
 class AudioComponent : public Component
 {
 	DEPENDS_ON(TransformComponent);
