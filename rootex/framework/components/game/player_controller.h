@@ -7,6 +7,7 @@
 #include "framework/components/physics/capsule_collider_component.h"
 #include "core/state_manager.h"
 
+/// Defines a PlayerController that can be directly used to create a controllable player element.
 class PlayerController : public Component
 {
 	COMPONENT(PlayerController, Category::Game);

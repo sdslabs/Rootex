@@ -3,6 +3,7 @@
 #include "system.h"
 #include "event_manager.h"
 
+/// Input system responsible for registering and loading inputs.
 class InputSystem : public System
 {
 	EventBinder<InputSystem> m_Binder;

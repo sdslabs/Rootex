@@ -3,6 +3,7 @@
 #include "common/common.h"
 #include "framework/system.h"
 
+/// Player system to update the player controller.
 class PlayerSystem : public System
 {
 	PlayerSystem();

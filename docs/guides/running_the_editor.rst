@@ -6,7 +6,7 @@ Rootex comes with a separate editor for making games, called the Rootex Editor.
 Rootex Editor is built using `Dear ImGui <https://github.com/ocornut/imgui>`_ . The editor UI is subject to change but the overall workings shall remain the same.
 
 Running the Editor
-==================
+------------------
 
 1. Run the editor by opening the editor executable.
 
