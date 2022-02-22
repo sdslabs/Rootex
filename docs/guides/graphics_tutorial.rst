@@ -1,11 +1,15 @@
-=================
-Graphics Tutorial
-=================
+=============================================
+Exploring the Graphical capabilities of Rootex
+=============================================
+
+This documentation aims to showcase the graphical capabilities of rootex and act as a tutorial for beginners to get started.
+
+Let's start by creating a scene.
 
 Create a scene
 ***************
 
-To create a scene 
+To Create a Scene 
 
 * Go to `file->CreateScene`.
 
@@ -17,6 +21,7 @@ To create a scene
 
 |
 
+Now we Create an Empty Scene. An empty scene is nothing but objects. You can have different components in it, more on that later.
 
 Create Empty scene
 ******************
@@ -24,7 +29,7 @@ Create Empty scene
 To create an empty scene.
 
 * Right-click the root scene.
-* Click create an empty scene
+* Click Add Empty Scene
 
 .. image:: images/graphics_tutorial/add_empty_scene.png
 	:alt: Create Empty Scene
@@ -36,18 +41,18 @@ To create an empty scene.
 
 |
 
-Give appropriate components. Transform component is a must.
+*****************
+Giving Components
+*****************
 
-***************
-Model Component
-***************
+Now we give components to the empty scene. 
 
 * Right-click the empty scene.
 * Click Edit Components.
-* Check model component.
+* Check the appropriate components, in this case, transform and Model. Note: Transform Component is a must.
 * Open inspector
 * Go to the model component in the inspector.
-* Click the folder icon next to model.
+* Click the folder icon next to Model.
 
 .. image:: images/graphics_tutorial/add_model_component_and_transform_component.png
 	:alt: Components Added
@@ -68,7 +73,7 @@ For sponza initially, it would look like this:
 
 |
 
-set scale to (0.0031, 0.031, 0.031) and set LOD distance to 123:
+This is due to the default settings of the sponza obj file. To get a better view, set the scale to (0.0031, 0.031, 0.031) and set the LOD distance to 123:
 
 .. image:: images/graphics_tutorial/change_model_scale.png
 	:alt: Change Model Scale and LOD Distance
@@ -76,11 +81,13 @@ set scale to (0.0031, 0.031, 0.031) and set LOD distance to 123:
 
 |
 
+We need to create an empty scene and add a light component to it to add light.
+
 ***************
 Light Component
 ***************
 
-To add light we now create an empty scene.
+To add light, we now create an empty scene.
 
 * Name the scene.
 * Add transform and directional light components.
@@ -94,15 +101,18 @@ To add light we now create an empty scene.
 
 |
 
+To move freely, we can change our camera mode to Editor Camera. This allows us to move freely.
+
 *************
 Editor Camera
 *************
 
-To have full control of movement you can use an editor camera
+To have complete control of movement, you can use an editor camera.
 
-* Click the image icon.
-* Go to editor camera.
-* To move you have to hold the right mouse button and then use WASD space and shift keys to move. The cursor for direction. Space to move up and shift to move down.
+* Click the image icon at the top left of the viewport.
+* Open dropdown of camera.
+* Select editor camera.
+* To move, you have to hold the right mouse button and then use WASD space and shift keys to move. The cursor for direction. Space to move up and shift to move down.
 .. image:: images/graphics_tutorial/change_to_editor_camera.png
 	:alt: Change To Editor Camera
 	:align: center
@@ -116,6 +126,8 @@ To have full control of movement you can use an editor camera
 Point Light
 ***********
 
+A point light is helpful if you have a source of light, e.g. a candle, bulb etc. To add a point light, follow the given steps.
+
 * Add an empty scene and give it a point light component.
 * You can tweak its transformation value by either inputting it or dragging it left or right. 
 
@@ -124,8 +136,8 @@ Point Light
 	:align: center
 
 
-If you press ‘q’ a transform gizmo will appear on the object you have selected. You can adjust light location through it.
-For rotation and scaling gizmo press ‘w’ and ‘e’ respectively.
+If you press 'q', a transform gizmo will appear on the object you have selected. You can adjust light location through it.
+For rotation and scaling gizmo, press 'w' and 'e', respectively.
 
 .. image:: images/graphics_tutorial/translate_point_light.png
 	:alt: Translate Point Light 1
@@ -141,6 +153,8 @@ For rotation and scaling gizmo press ‘w’ and ‘e’ respectively.
 *********************
 Overriding a material
 *********************
+
+To change the properties of one object without changing the original material, we can use overriding materials. To override a material:
 
 * Create a new material by going to file -> Create Resource.
 * Name the material.
@@ -164,8 +178,11 @@ Now you can change its basic textures by clicking on the pencil icon.
 Custom Material
 ***************
 
-* Go to create resource -> Custom Material.
+
+
+* Go to create Resource -> Custom Material.
 * Enter material name.
+* Now go to Inspector -> ModelComponent and then to Materials.
 * Click on the folder icon and choose the material.
 
 .. image:: images/graphics_tutorial/create_custom_material.png
@@ -182,12 +199,15 @@ Custom Material
 Adding a shader
 ***************
 
+To Add shader:
+
 * Click on the pencil icon on the overriding custom material.
-* Now you’ll get options to add vertex and pixel shaders.
+* Now, you'll get options to add vertex and pixel shaders.
 
 You can use fire_pixel_shader from rootex/core/renderer/shaders
 
-Clicking on the pencil icon opens an editor from which you can customise it.
+Clicking on the pencil icon opens an editor to customise the shader.
+Note: You can only add shaders to custom materials. If you want to use default material, override the original default material with custom material and then add a shader to the overriding material. The overriding material does inherit the textures of the original materials.
 
 .. image:: images/graphics_tutorial/changed_the_custom_material_pixel_shader_to_fire_shader.png
 	:alt: Change Shader To Fire Shader
@@ -207,7 +227,7 @@ Clicking on the pencil icon opens an editor from which you can customise it.
 Decal Component
 ***************
 
-To add a decal component
+To add a decal component.
 
 * Make a component DECAL and give it transform and Decal Component.
 * Now go to the inspector and click DecalComponent. 
@@ -215,7 +235,7 @@ To add a decal component
 * Select a decal texture.
 * Shift its position by manipulating the transform component.
 
-By default the decal shader projects on the negative z-axis. You can rotate it till you get the desired result.
+By default, the decal shader projects on the negative z-axis. You can rotate it till you get the desired result.
 
 
 .. image:: images/graphics_tutorial/add_decal_component.png
