@@ -17,6 +17,7 @@ enum class CollisionMask : unsigned int
 	All = Player | Enemy | Architecture | TriggerVolume | Other
 };
 
+/// Base class for collider components.
 class CollisionComponent : public Component
 {
 protected:

@@ -3,6 +3,7 @@
 #include "components/visual/model/model_component.h"
 #include "resource_files/decal_material_resource_file.h"
 
+/// Used to add decals (textures rendered on a surface like a sticker) to a object.
 class DecalComponent : public ModelComponent
 {
 	COMPONENT(DecalComponent, Category::Effect);

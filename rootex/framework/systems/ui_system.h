@@ -16,6 +16,7 @@ class CustomSystemInterface : public Rml::SystemInterface
 	virtual bool LogMessage(Rml::Log::Type type, const String& message) override;
 };
 
+/// Manages the UI rendering using RmlUi.
 class UISystem : public System
 {
 	EventBinder<UISystem> m_Binder;

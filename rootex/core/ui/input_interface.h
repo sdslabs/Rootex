@@ -7,6 +7,7 @@
 #include "RmlUi/Core.h"
 #define interface __STRUCT__
 
+/// Provides an interface to pass user input into RmlUi.
 class InputInterface
 {
 	EventBinder<InputInterface> m_Binder;

@@ -4,6 +4,7 @@
 #include "renderer/render_pass.h"
 #include "core/resource_files/basic_material_resource_file.h"
 
+/// Renders a grid uptil the view distance.
 class GridModelComponent : public ModelComponent
 {
 	COMPONENT(GridModelComponent, Category::Model);

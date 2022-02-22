@@ -2,6 +2,7 @@
 
 #include "component.h"
 
+/// Adds fog and obscures objects w.r.t the near and far values.
 class FogComponent : public Component
 {
 	COMPONENT(FogComponent, Category::Effect);
