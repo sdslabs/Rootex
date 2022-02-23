@@ -11,9 +11,9 @@ Create a scene
 
 To Create a Scene 
 
-* Go to `file->CreateScene`.
+1) Go to `file->CreateScene`.
 
-* Name the scene and click create.
+2) Name the scene and click create.
 
 .. image:: images/graphics_tutorial/create_scene.png
 	:alt: Create Scene
@@ -28,8 +28,8 @@ Create Empty scene
 
 To create an empty scene.
 
-* Right-click the root scene.
-* Click Add Empty Scene
+1) Right-click the root scene.
+2) Click Add Empty Scene
 
 .. image:: images/graphics_tutorial/add_empty_scene.png
 	:alt: Create Empty Scene
@@ -47,16 +47,17 @@ Giving Components
 
 Now we give components to the empty scene. 
 
-* Right-click the empty scene.
-* Click Edit Components.
-* Check the appropriate components, in this case, transform and Model. Note: Transform Component is a must.
-* Open inspector
-* Go to the model component in the inspector.
-* Click the folder icon next to Model.
+1) Right-click the empty scene.
+2) Click Edit Components.
+3) Check the appropriate components, in this case, transform and Model. **Note**: Transform Component is a must.
 
 .. image:: images/graphics_tutorial/add_model_component_and_transform_component.png
 	:alt: Components Added
 	:align: center
+	
+4) Open inspector
+5) Go to the model component in the inspector.
+6) Click the folder icon next to Model.
 
 .. image:: images/graphics_tutorial/select_model_file.png
 	:alt: Selecting File
@@ -89,8 +90,8 @@ Light Component
 
 To add light, we now create an empty scene.
 
-* Name the scene.
-* Add transform and directional light components.
+1) Name the scene.
+2) Add transform and directional light components.
 
 .. image:: images/graphics_tutorial/add_sun_scene.png
 	:alt: Directional Light Added
@@ -109,17 +110,20 @@ Editor Camera
 
 To have complete control of movement, you can use an editor camera.
 
-* Click the image icon at the top left of the viewport.
-* Open dropdown of camera.
-* Select editor camera.
-* To move, you have to hold the right mouse button and then use WASD space and shift keys to move. The cursor for direction. Space to move up and shift to move down.
+1) Click the image icon at the top left of the viewport.
+2) Open dropdown of camera.
+3) Select editor camera.
+
 .. image:: images/graphics_tutorial/change_to_editor_camera.png
 	:alt: Change To Editor Camera
 	:align: center
+	
+To move, you have to hold the right mouse button and then use WASD space and shift keys to move. The cursor for direction. Space to move up and shift to move down.
 
 .. image:: images/graphics_tutorial/navigate_with_editor_camera.png
 	:alt: Navigate With Editor Camera
 	:align: center
+	
 
 
 ***********
@@ -128,8 +132,8 @@ Point Light
 
 A point light is helpful if you have a source of light, e.g. a candle, bulb etc. To add a point light, follow the given steps.
 
-* Add an empty scene and give it a point light component.
-* You can tweak its transformation value by either inputting it or dragging it left or right. 
+1) Add an empty scene and give it a point light component.
+2) You can tweak its transformation value by either inputting it or dragging it left or right. 
 
 .. image:: images/graphics_tutorial/add_point_light_texture.png
 	:alt: Add Point Light
@@ -156,19 +160,23 @@ Overriding a material
 
 To change the properties of one object without changing the original material, we can use overriding materials. To override a material:
 
-* Create a new material by going to file -> Create Resource.
-* Name the material.
-* Go to the `inspector-> model component->Materials`.
-* click on the folder icon on the corresponding overriding material.
+1) Create a new material by going to file -> Create Resource.
+2) Name the material and click create.
 
 .. image:: images/graphics_tutorial/create_basic_material.png
 	:alt: Create Basic Material
 	:align: center
+
+3) Go to the `inspector-> model component->Materials`.
+4) click on the folder icon on the corresponding overriding material.
+
 .. image:: images/graphics_tutorial/select_the_newly_created_basic_material.png
 	:alt: Select Basic Material
 	:align: center
 
-Now you can change its basic textures by clicking on the pencil icon.
+Now you can change its basic textures by 
+1)clicking on the pencil icon 
+2)In the file viewer now click on the diffuse texture and select the appropriate diffuse texture.
 
 .. image:: images/graphics_tutorial/change_basic_material_texture.png
 	:alt: Change Basic Material Texture
@@ -180,19 +188,18 @@ Custom Material
 
 
 
-* Go to create Resource -> Custom Material.
-* Enter material name.
-* Now go to Inspector -> ModelComponent and then to Materials.
-* Click on the folder icon and choose the material.
+1) Go to create Resource -> Custom Material.
 
 .. image:: images/graphics_tutorial/create_custom_material.png
 	:alt: Create Custom Material
 	:align: center
+
+2) Enter material name.
+3) Now go to Inspector -> ModelComponent and then to Materials.
+4) Click on the folder icon and choose the material.
+
 .. image:: images/graphics_tutorial/select_the_newly_created_custom_material.png
 	:alt: Select Custom Material
-	:align: center
-.. image:: images/graphics_tutorial/change_custom_material_pixel_shader.png
-	:alt: Change Custom Material Pixel Shader
 	:align: center
 
 ***************
@@ -201,13 +208,19 @@ Adding a shader
 
 To Add shader:
 
-* Click on the pencil icon on the overriding custom material.
-* Now, you'll get options to add vertex and pixel shaders.
+1) Click on the pencil icon on the overriding custom material.
+2) Now, in the file viewer you'll get options to add vertex and pixel shaders.
+3) Click on the pixel shader. A dialog box will open now you can just select the shader.
+
+.. image:: images/graphics_tutorial/change_custom_material_pixel_shader.png
+	:alt: Change Custom Material Pixel Shader
+	:align: center
 
 You can use fire_pixel_shader from rootex/core/renderer/shaders
 
 Clicking on the pencil icon opens an editor to customise the shader.
-Note: You can only add shaders to custom materials. If you want to use default material, override the original default material with custom material and then add a shader to the overriding material. The overriding material does inherit the textures of the original materials.
+
+**Note:** You can only add shaders to custom materials. If you want to use default material, override the original default material with custom material and then add a shader to the overriding material. The overriding material does inherit the textures of the original materials.
 
 .. image:: images/graphics_tutorial/changed_the_custom_material_pixel_shader_to_fire_shader.png
 	:alt: Change Shader To Fire Shader
@@ -227,29 +240,39 @@ Note: You can only add shaders to custom materials. If you want to use default m
 Decal Component
 ***************
 
-To add a decal component.
+To add a decal component. 
 
-* Make a component DECAL and give it transform and Decal Component.
-* Now go to the inspector and click DecalComponent. 
-* Click on the pencil icon.
-* Select a decal texture.
-* Shift its position by manipulating the transform component.
-
-By default, the decal shader projects on the negative z-axis. You can rotate it till you get the desired result.
-
+1) Make a component DECAL and give it transform and Decal Component.
 
 .. image:: images/graphics_tutorial/add_decal_component.png
 	:alt: Add Decal Component
 	:align: center
+2) Create a decal material. By going to File -> CreateResource. And then slect Decal material in resource type dropdown.
+
 .. image:: images/graphics_tutorial/create_decal_material.png
 	:alt: Create Decal Material
 	:align: center
+	
+2) Now go to the inspector and click DecalComponent. 
+3) Click on the folder icon and select the decal material.
+
 .. image:: images/graphics_tutorial/select_the_newly_created_decal_material.png
 	:alt: Select Decal Material
 	:align: center
+	
+4) Click on the pencil icon and the in the file viewer click on Decal Texture.
+
 .. image:: images/graphics_tutorial/change_decal_material_texture.png
 	:alt: Change Decal Material
 	:align: center
+	
+5) Shift its position by manipulating the transform component.
+
+By default, the decal shader projects on the negative z-axis. You can rotate it till you get the desired result.
+
+
+
+
 .. image:: images/graphics_tutorial/decal_sample.gif
 	:alt: Decal Sample
 	:align: center
