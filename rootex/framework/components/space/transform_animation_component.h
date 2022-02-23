@@ -3,6 +3,7 @@
 #include "component.h"
 #include "components/space/transform_component.h"
 
+/// Manages animations based on provided keyframes.
 class TransformAnimationComponent : public Component
 {
 	COMPONENT(TransformAnimationComponent, Category::General);

@@ -3,7 +3,7 @@
 Class PointLightComponent
 =========================
 
-- Defined in :ref:`file_rootex_framework_components_visual_point_light_component.h`
+- Defined in :ref:`file_rootex_framework_components_visual_light_point_light_component.h`
 
 
 Inheritance Relationships

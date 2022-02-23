@@ -58,7 +58,6 @@ Program Listing for File constant_buffer.h
        Vector3 pad;
    };
    
-   // Constant buffer uploaded once per model being rendered
    struct PerModelPSCB
    {
        int staticPointsLightsAffectingCount = 0;
@@ -66,29 +65,18 @@ Program Listing for File constant_buffer.h
        StaticLightID staticPointsLightsAffecting[MAX_STATIC_POINT_LIGHTS_AFFECTING_1_OBJECT];
    };
    
-   struct PSDiffuseConstantBufferMaterial
+   struct PerDecalPSCB
    {
-       Color color;
-       int isLit = 0;
-       float specularIntensity = 2.0f;
-       float specularPower = 30.0f;
-       float reflectivity = 0.0f;
-       float refractionConstant = 0.5f;
-       float refractivity = 0.0f;
-       int affectedBySky = 0;
-       int hasNormalMap = 0;
-   };
-   
-   struct PSParticlesConstantBufferMaterial
-   {
-       int isLit = 0;
-       float specularIntensity = 2.0f;
-       float specularPower = 30.0f;
-       float reflectivity = 0.0f;
-       float refractionConstant = 0.5f;
-       float refractivity = 0.0f;
-       int affectedBySky = 0;
-       int hasNormalMap = 0;
+       Vector3 decalRight;
+       float pad1;
+       Vector3 decalForward;
+       float pad2;
+       Vector3 decalUp;
+       float pad3;
+       Vector3 decalHalfScale;
+       float pad4;
+       Vector3 decalViewspacePosition;
+       float pad5;
    };
    
    struct StaticPointLightsInfo
@@ -109,6 +97,14 @@ Program Listing for File constant_buffer.h
        SpotLightInfo spotLightInfos[MAX_DYNAMIC_SPOT_LIGHTS];
    };
    
+   struct PerCameraChangePSCB
+   {
+       Vector2 DepthUnpackConsts;
+       Vector2 Viewport2xPixelSize;
+       Vector2 CameraTanHalfFOV;
+       Vector2 pad;
+   };
+   
    struct PerFramePSCB
    {
        LightsInfo lights;
@@ -123,49 +119,9 @@ Program Listing for File constant_buffer.h
        float pad[2];
    };
    
-   struct PerLevelPSCB
+   struct PerScenePSCB
    {
        StaticPointLightsInfo staticLights;
-   };
-   
-   struct PSSolidConstantBuffer
-   {
-       Color color;
-   };
-   
-   struct VSSolidConstantBuffer
-   {
-       Matrix Model;
-       explicit VSSolidConstantBuffer() = delete;
-       VSSolidConstantBuffer(const Matrix& model)
-       {
-           Model = model.Transpose();
-       }
-   };
-   
-   struct VSDiffuseConstantBuffer
-   {
-       Matrix Model;
-       Matrix ModelInverseTranspose;
-       explicit VSDiffuseConstantBuffer() = delete; // https://stackoverflow.com/a/43694276
-       VSDiffuseConstantBuffer(const Matrix& model)
-       {
-           Model = model.Transpose();
-           ModelInverseTranspose = model.Invert();
-       }
-   };
-   
-   struct VSAnimationConstantBuffer
-   {
-       Matrix m_BoneTransforms[256];
-       explicit VSAnimationConstantBuffer() = delete;
-       VSAnimationConstantBuffer(const Vector<Matrix>& transforms)
-       {
-           for (int i = 0; i < transforms.size(); i++)
-           {
-               m_BoneTransforms[i] = transforms[i].Transpose();
-           }
-       }
    };
    
    struct PSFXAACB

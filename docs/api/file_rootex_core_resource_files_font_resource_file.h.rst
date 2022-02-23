@@ -27,7 +27,7 @@ Includes
 
 - ``SpriteFont.h``
 
-- ``resource_file.h`` (:ref:`file_rootex_core_resource_files_animated_model_resource_file.h`)
+- ``resource_file.h`` (:ref:`file_rootex_core_resource_files_animated_basic_material_resource_file.h`)
 
 
 
@@ -37,7 +37,7 @@ Included By
 
 - :ref:`file_rootex_core_resource_loader.h`
 
-- :ref:`file_rootex_framework_components_visual_text_ui_component.h`
+- :ref:`file_rootex_framework_components_visual_ui_text_ui_component.h`
 
 
 

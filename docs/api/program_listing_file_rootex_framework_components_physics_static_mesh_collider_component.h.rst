@@ -12,36 +12,29 @@ Program Listing for File static_mesh_collider_component.h
 
    #pragma once
    
-   #include "physics_collider_component.h"
+   #include "rigid_body_component.h"
    #include "resource_files/collision_model_resource_file.h"
    
    #include "btBulletCollisionCommon.h"
    
-   class StaticMeshColliderComponent : public PhysicsColliderComponent
+   class StaticMeshColliderComponent : public RigidBodyComponent
    {
-       static Component* Create(const JSON::json& staticMeshComponentData);
+       COMPONENT(StaticMeshColliderComponent, Category::Physics);
    
-       Ref<btBvhTriangleMeshShape> m_MeshShape;
-       CollisionModelResourceFile* m_CollisionModel;
+       btBvhTriangleMeshShape* m_MeshShape;
+       Ref<CollisionModelResourceFile> m_CollisionModel;
    
-       friend class ECSFactory;
+       void createStaticMesh();
    
    public:
-       static const ComponentID s_ID = (ComponentID)ComponentIDs::StaticMeshColliderComponent;
-   
-       StaticMeshColliderComponent(
-           const String& collisionModelPath,
-           const PhysicsMaterial& material,
-           int collisionGroup,
-           int collisionMask,
-           bool generatesHitEvents);
+       StaticMeshColliderComponent(Entity& owner, const JSON::json& data);
+       ~StaticMeshColliderComponent() = default;
    
        bool setupData() override;
-       void setCollisionModel(CollisionModelResourceFile* file);
+       void setCollisionModel(Ref<CollisionModelResourceFile> file);
    
-       virtual const char* getName() const override { return "StaticMeshColliderComponent"; };
-       virtual JSON::json getJSON() const override;
-       virtual ComponentID getComponentID() const override { return s_ID; }
-   
+       JSON::json getJSON() const override;
        void draw() override;
    };
+   
+   DECLARE_COMPONENT(StaticMeshColliderComponent);

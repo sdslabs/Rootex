@@ -6,6 +6,7 @@
 class Material;
 class BasicMaterial;
 
+/// Provides an API for Bullet3D to draw debug information
 class DebugDrawer : public btIDebugDraw
 {
 public:

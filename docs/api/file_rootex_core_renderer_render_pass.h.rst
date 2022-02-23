@@ -27,7 +27,7 @@ Included By
 -----------
 
 
-- :ref:`file_rootex_framework_components_visual_grid_model_component.h`
+- :ref:`file_rootex_framework_components_visual_model_grid_model_component.h`
 
 - :ref:`file_rootex_framework_systems_render_system.h`
 

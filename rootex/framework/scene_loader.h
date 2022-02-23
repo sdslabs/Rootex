@@ -5,6 +5,7 @@
 
 class Scene;
 
+/// Loads, saves and destroys scenes.
 class SceneLoader
 {
 	EventBinder<SceneLoader> m_Binder;

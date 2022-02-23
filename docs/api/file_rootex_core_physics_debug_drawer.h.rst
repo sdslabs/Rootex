@@ -29,8 +29,6 @@ Includes
 
 - ``common/common.h``
 
-- ``core/renderer/material_library.h``
-
 
 
 Included By

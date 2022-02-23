@@ -19,12 +19,16 @@ Derived Types
 - ``public GameRenderSystem`` (:ref:`exhale_class_class_game_render_system`)
 - ``public InputSystem`` (:ref:`exhale_class_class_input_system`)
 - ``public LightSystem`` (:ref:`exhale_class_class_light_system`)
+- ``public ParticleSystem`` (:ref:`exhale_class_class_particle_system`)
+- ``public PauseSystem`` (:ref:`exhale_class_class_pause_system`)
 - ``public PhysicsSystem`` (:ref:`exhale_class_class_physics_system`)
+- ``public PlayerSystem`` (:ref:`exhale_class_class_player_system`)
+- ``public PostProcessSystem`` (:ref:`exhale_class_class_post_process_system`)
 - ``public RenderSystem`` (:ref:`exhale_class_class_render_system`)
 - ``public RenderUISystem`` (:ref:`exhale_class_class_render_u_i_system`)
 - ``public ScriptSystem`` (:ref:`exhale_class_class_script_system`)
-- ``public TestSystem`` (:ref:`exhale_class_class_test_system`)
 - ``public TransformAnimationSystem`` (:ref:`exhale_class_class_transform_animation_system`)
+- ``public TriggerSystem`` (:ref:`exhale_class_class_trigger_system`)
 - ``public UISystem`` (:ref:`exhale_class_class_u_i_system`)
 
 

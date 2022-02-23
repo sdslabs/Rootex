@@ -6,6 +6,7 @@
 
 #include "Effekseer.h"
 
+/// Creates particle systems using the Effekseer library.
 class ParticleEffectComponent : public Component
 {
 	COMPONENT(ParticleEffectComponent, Category::Effect);

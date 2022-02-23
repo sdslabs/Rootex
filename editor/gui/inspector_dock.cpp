@@ -69,8 +69,21 @@ void InspectorDock::drawSceneActions(Scene* scene)
 			ImGui::SetItemDefaultFocus();
 			ImGui::InputText("##SearchComponent", &searchString);
 
-			for (const auto& [componentName, componentData] : ECSFactory::s_ComponentSets)
+			static bool isSorted = false;
+			static Vector<String> components = {};
+
+			if (!(isSorted))
 			{
+				for (const auto& [componentName, componentData] : ECSFactory::s_ComponentSets)
+				{
+					components.push_back(componentName);
+				}
+				std::sort(components.begin(), components.end());
+				isSorted = true;
+			}
+			for (const auto& componentName : components)
+			{
+				auto& componentData = ECSFactory::s_ComponentSets[componentName];
 				bool shouldMatch = false;
 				for (int i = 0; i < componentName.size(); i++)
 				{

@@ -13,10 +13,11 @@ Program Listing for File physics_system.h
    #pragma once
    
    #include "core/physics/debug_drawer.h"
-   
-   #include "btBulletDynamicsCommon.h"
    #include "entity.h"
    #include "framework/system.h"
+   
+   #include "btBulletDynamicsCommon.h"
+   #include "BulletCollision/CollisionDispatch/btGhostObject.h"
    
    enum PhysicsMaterial
    {
@@ -45,6 +46,8 @@ Program Listing for File physics_system.h
    
        Ptr<btDefaultCollisionConfiguration> m_CollisionConfiguration;
    
+       Ptr<btGhostPairCallback> m_GhostPairCallback;
+   
        DebugDrawer m_DebugDrawer;
    
        Vector<PhysicsMaterialData> m_PhysicsMaterialTable;
@@ -65,6 +68,8 @@ Program Listing for File physics_system.h
    
        void addRigidBody(btRigidBody* body, int group, int mask);
        void removeRigidBody(btRigidBody* rigidBody);
+   
+       void addCollisionObject(btCollisionObject* body, int group, int mask);
        void removeCollisionObject(btCollisionObject* collisionObject);
    
        const PhysicsMaterialData& getMaterialData(PhysicsMaterial material);

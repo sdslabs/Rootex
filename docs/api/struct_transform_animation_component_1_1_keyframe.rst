@@ -3,7 +3,7 @@
 Struct TransformAnimationComponent::Keyframe
 ============================================
 
-- Defined in :ref:`file_rootex_framework_components_transform_animation_component.h`
+- Defined in :ref:`file_rootex_framework_components_space_transform_animation_component.h`
 
 
 Nested Relationships

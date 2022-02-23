@@ -14,6 +14,7 @@ enum class TransformPassDown : int
 void to_json(JSON::json& j, const TransformPassDown& t);
 void from_json(const JSON::json& j, TransformPassDown& t);
 
+/// Stores the transform (position, rotation, scale) information of any entity.
 class TransformComponent : public Component
 {
 	COMPONENT(TransformComponent, Category::General);

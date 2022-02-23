@@ -16,6 +16,8 @@ Program Listing for File scene_dock.h
    
    class SceneDock
    {
+       EventBinder<SceneDock> m_Binder;
+   
    public:
        struct SceneDockSettings
        {

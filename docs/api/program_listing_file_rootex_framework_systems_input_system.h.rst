@@ -17,7 +17,7 @@ Program Listing for File input_system.h
    
    class InputSystem : public System
    {
-       bool m_SchemeLock = false;
+       EventBinder<InputSystem> m_Binder;
    
        InputSystem();
        InputSystem(InputSystem&) = delete;
@@ -29,8 +29,10 @@ Program Listing for File input_system.h
        static InputSystem* GetSingleton();
    
        void loadSchemes(const HashMap<String, InputScheme>& schemes);
-       void setScheme(const String& scheme);
-       void setSchemeLock(bool enabled);
+       void addScheme(const String& name, const InputScheme& scheme);
+       void pushScheme(const String& name);
+       void popScheme();
+       void flushSchemes();
    
        bool initialize(const JSON::json& systemData) override;
        void setConfig(const SceneSettings& sceneSettings) override;

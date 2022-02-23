@@ -12,41 +12,26 @@ Program Listing for File sphere_collider_component.h
 
    #pragma once
    
-   #include "physics_collider_component.h"
+   #include "rigid_body_component.h"
    
    #include "btBulletDynamicsCommon.h"
    
-   class SphereColliderComponent : public PhysicsColliderComponent
+   class SphereColliderComponent : public RigidBodyComponent
    {
-       static Component* Create(const JSON::json& sphereComponentData);
+       COMPONENT(SphereColliderComponent, Category::Physics);
    
        float m_Radius;
-       Ref<btSphereShape> m_SphereShape;
-   
-       friend class ECSFactory;
+       btSphereShape* m_SphereShape;
    
    public:
-       static const ComponentID s_ID = (ComponentID)ComponentIDs::SphereColliderComponent;
-   
-       SphereColliderComponent(
-           float radius,
-           const PhysicsMaterial& material,
-           const Vector3& angularFactor,
-           const Vector3& gravity,
-           int collisionGroup,
-           int collisionMask,
-           bool isMoveable,
-           bool isKinematic,
-           bool generatesHitEvents,
-           bool isSleepable,
-           bool isCCD);
+       SphereColliderComponent(Entity& owner, const JSON::json& data);
+       ~SphereColliderComponent() = default;
    
        float getRadius() const { return m_Radius; }
        void setRadius(float r);
    
-       virtual const char* getName() const override { return "SphereColliderComponent"; };
-       virtual JSON::json getJSON() const override;
-       virtual ComponentID getComponentID() const override { return s_ID; }
-   
+       JSON::json getJSON() const override;
        void draw() override;
    };
+   
+   DECLARE_COMPONENT(SphereColliderComponent);
