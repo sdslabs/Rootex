@@ -55,7 +55,7 @@ Now we give components to the empty scene.
 	:alt: Components Added
 	:align: center
 	
-4) Open inspector
+4) Open inspector.
 5) Go to the model component in the inspector.
 6) Click the folder icon next to Model.
 
@@ -74,7 +74,7 @@ For sponza initially, it would look like this:
 
 |
 
-This is due to the default settings of the sponza obj file. To get a better view, set the scale to (0.0031, 0.031, 0.031) and set the LOD distance to 123:
+This is due to the default settings of the sponza obj file. To get a better view, set the scale to (0.031, 0.031, 0.031) and set the LOD distance to 123:
 
 .. image:: images/graphics_tutorial/change_model_scale.png
 	:alt: Change Model Scale and LOD Distance
@@ -160,7 +160,7 @@ Overriding a material
 
 To change the properties of one object without changing the original material, we can use overriding materials. To override a material:
 
-1) Create a new material by going to file -> Create Resource.
+1) Create a new basic material by going to file -> Create Resource.
 2) Name the material and click create.
 
 .. image:: images/graphics_tutorial/create_basic_material.png
@@ -220,7 +220,8 @@ You can use fire_pixel_shader from rootex/core/renderer/shaders
 
 Clicking on the pencil icon opens an editor to customise the shader.
 
-**Note:** You can only add shaders to custom materials. If you want to use default material, override the original default material with custom material and then add a shader to the overriding material. The overriding material does inherit the textures of the original materials.
+.. note:: 
+	You can only add shaders to custom materials. If you want to use default material, override the original default material with custom material and then add a shader to the overriding material. The overriding material does inherit the textures of the original materials.
 
 .. image:: images/graphics_tutorial/changed_the_custom_material_pixel_shader_to_fire_shader.png
 	:alt: Change Shader To Fire Shader
@@ -242,7 +243,7 @@ Decal Component
 
 To add a decal component. 
 
-1) Make a component DECAL and give it transform and Decal Component.
+1) Make a scene DECAL and give it transform and Decal Component.
 
 .. image:: images/graphics_tutorial/add_decal_component.png
 	:alt: Add Decal Component
@@ -253,20 +254,20 @@ To add a decal component.
 	:alt: Create Decal Material
 	:align: center
 	
-2) Now go to the inspector and click DecalComponent. 
-3) Click on the folder icon and select the decal material.
+3) Now go to the inspector and click DecalComponent. 
+4) Click on the folder icon and select the decal material.
 
 .. image:: images/graphics_tutorial/select_the_newly_created_decal_material.png
 	:alt: Select Decal Material
 	:align: center
 	
-4) Click on the pencil icon and the in the file viewer click on Decal Texture.
+5) Click on the pencil icon and the in the file viewer click on Decal Texture.
 
 .. image:: images/graphics_tutorial/change_decal_material_texture.png
 	:alt: Change Decal Material
 	:align: center
 	
-5) Shift its position by manipulating the transform component.
+6) Shift its position by manipulating the transform component.
 
 By default, the decal shader projects on the negative z-axis. You can rotate it till you get the desired result.
 
