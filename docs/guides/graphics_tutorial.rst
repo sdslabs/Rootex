@@ -58,6 +58,7 @@ Now we give components to the empty scene.
 4) Open inspector.
 5) Go to the model component in the inspector.
 6) Click the folder icon next to Model.
+7) Select the sponza 3D model file located at ``Rootex\game\assets\sponza\sponza.obj``
 
 .. image:: images/graphics_tutorial/select_model_file.png
 	:alt: Selecting File
@@ -167,8 +168,9 @@ To change the properties of one object without changing the original material, w
 	:alt: Create Basic Material
 	:align: center
 
-3) Go to the `inspector-> model component->Materials`.
-4) click on the folder icon on the corresponding overriding material.
+3) Go to the ``Inspector-> Model Component->Materials``.
+4) Click on the folder icon on the corresponding overriding material.
+5) Select the newly created basic material located at ``Rootex\game\assets\materials\new_cloth.basic.rmat``
 
 .. image:: images/graphics_tutorial/select_the_newly_created_basic_material.png
 	:alt: Select Basic Material
