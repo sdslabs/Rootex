@@ -15,7 +15,8 @@ To Create a Scene
 
 2) Name the scene and click create.
 
-.. image:: images/graphics_tutorial/create_scene.png
+|
+.. figure:: images/graphics_tutorial/create_scene.png
 	:alt: Create Scene
 	:align: center
 
@@ -31,11 +32,13 @@ To create an empty scene.
 1) Right-click the root scene.
 2) Click Add Empty Scene
 
-.. image:: images/graphics_tutorial/add_empty_scene.png
+|
+
+.. figure:: images/graphics_tutorial/add_empty_scene.png
 	:alt: Create Empty Scene
 	:align: center
 
-.. image:: images/graphics_tutorial/empty_scene_created.png
+.. figure:: images/graphics_tutorial/empty_scene_created.png
 	:alt: Empty Scene Created
 	:align: center
 
@@ -51,7 +54,9 @@ Now we give components to the empty scene.
 2) Click Edit Components.
 3) Check the appropriate components, in this case, transform and Model. **Note**: Transform Component is a must.
 
-.. image:: images/graphics_tutorial/add_model_component_and_transform_component.png
+|
+
+.. figure:: images/graphics_tutorial/add_model_component_and_transform_component.png
 	:alt: Components Added
 	:align: center
 	
@@ -60,7 +65,9 @@ Now we give components to the empty scene.
 6) Click the folder icon next to Model.
 7) Select the sponza 3D model file located at ``Rootex\game\assets\sponza\sponza.obj``
 
-.. image:: images/graphics_tutorial/select_model_file.png
+|
+
+.. figure:: images/graphics_tutorial/select_model_file.png
 	:alt: Selecting File
 	:align: center
 
@@ -69,7 +76,9 @@ Now we give components to the empty scene.
 
 For sponza initially, it would look like this:
 
-.. image:: images/graphics_tutorial/model_file_just_added.png
+|
+
+.. figure:: images/graphics_tutorial/model_file_just_added.png
 	:alt: Model File Just Added
 	:align: center
 
@@ -77,7 +86,9 @@ For sponza initially, it would look like this:
 
 This is due to the default settings of the sponza obj file. To get a better view, set the scale to (0.031, 0.031, 0.031) and set the LOD distance to 123:
 
-.. image:: images/graphics_tutorial/change_model_scale.png
+|
+
+.. figure:: images/graphics_tutorial/change_model_scale.png
 	:alt: Change Model Scale and LOD Distance
 	:align: center
 
@@ -94,10 +105,12 @@ To add light, we now create an empty scene.
 1) Name the scene.
 2) Add transform and directional light components.
 
-.. image:: images/graphics_tutorial/add_sun_scene.png
+|
+
+.. figure:: images/graphics_tutorial/add_sun_scene.png
 	:alt: Directional Light Added
 	:align: center
-.. image:: images/graphics_tutorial/edit_sun_components.png
+.. figure:: images/graphics_tutorial/edit_sun_components.png
 	:alt: Added Components
 	:align: center
 
@@ -111,17 +124,19 @@ Editor Camera
 
 To have complete control of movement, you can use an editor camera.
 
-1) Click the image icon at the top left of the viewport.
+1) Click the figure icon at the top left of the viewport.
 2) Open dropdown of camera.
 3) Select editor camera.
 
-.. image:: images/graphics_tutorial/change_to_editor_camera.png
+|
+
+.. figure:: images/graphics_tutorial/change_to_editor_camera.png
 	:alt: Change To Editor Camera
 	:align: center
 	
 To move, you have to hold the right mouse button and then use WASD space and shift keys to move. The cursor for direction. Space to move up and shift to move down.
 
-.. image:: images/graphics_tutorial/navigate_with_editor_camera.png
+.. figure:: images/graphics_tutorial/navigate_with_editor_camera.png
 	:alt: Navigate With Editor Camera
 	:align: center
 	
@@ -136,7 +151,9 @@ A point light is helpful if you have a source of light, e.g. a candle, bulb etc.
 1) Add an empty scene and give it a point light component.
 2) You can tweak its transformation value by either inputting it or dragging it left or right. 
 
-.. image:: images/graphics_tutorial/add_point_light_texture.png
+|
+
+.. figure:: images/graphics_tutorial/add_point_light_texture.png
 	:alt: Add Point Light
 	:align: center
 
@@ -144,15 +161,25 @@ A point light is helpful if you have a source of light, e.g. a candle, bulb etc.
 If you press 'q', a transform gizmo will appear on the object you have selected. You can adjust light location through it.
 For rotation and scaling gizmo, press 'w' and 'e', respectively.
 
-.. image:: images/graphics_tutorial/translate_point_light.png
+|
+
+.. figure:: images/graphics_tutorial/translate_point_light.png
 	:alt: Translate Point Light 1
 	:align: center
-.. image:: images/graphics_tutorial/translate_point_light_2.png
+	
+|
+
+.. figure:: images/graphics_tutorial/translate_point_light_2.png
 	:alt: Translate Point Light 2
 	:align: center
-.. image:: images/graphics_tutorial/translate_point_light_3.png
+	
+|
+	
+.. figure:: images/graphics_tutorial/translate_point_light_3.png
 	:alt: Translate Point Light 3
 	:align: center
+
+|
 
 
 *********************
@@ -164,7 +191,9 @@ To change the properties of one object without changing the original material, w
 1) Create a new basic material by going to file -> Create Resource.
 2) Name the material and click create.
 
-.. image:: images/graphics_tutorial/create_basic_material.png
+|
+
+.. figure:: images/graphics_tutorial/create_basic_material.png
 	:alt: Create Basic Material
 	:align: center
 
@@ -172,7 +201,9 @@ To change the properties of one object without changing the original material, w
 4) Click on the folder icon on the corresponding overriding material.
 5) Select the newly created basic material located at ``Rootex\game\assets\materials\new_cloth.basic.rmat``
 
-.. image:: images/graphics_tutorial/select_the_newly_created_basic_material.png
+|
+
+.. figure:: images/graphics_tutorial/select_the_newly_created_basic_material.png
 	:alt: Select Basic Material
 	:align: center
 
@@ -180,7 +211,9 @@ Now you can change its basic textures by
 1)clicking on the pencil icon 
 2)In the file viewer now click on the diffuse texture and select the appropriate diffuse texture.
 
-.. image:: images/graphics_tutorial/change_basic_material_texture.png
+|
+
+.. figure:: images/graphics_tutorial/change_basic_material_texture.png
 	:alt: Change Basic Material Texture
 	:align: center
 
@@ -192,7 +225,9 @@ Custom Material
 
 1) Go to create Resource -> Custom Material.
 
-.. image:: images/graphics_tutorial/create_custom_material.png
+|
+
+.. figure:: images/graphics_tutorial/create_custom_material.png
 	:alt: Create Custom Material
 	:align: center
 
@@ -200,7 +235,9 @@ Custom Material
 3) Now go to Inspector -> ModelComponent and then to Materials.
 4) Click on the folder icon and choose the material.
 
-.. image:: images/graphics_tutorial/select_the_newly_created_custom_material.png
+|
+
+.. figure:: images/graphics_tutorial/select_the_newly_created_custom_material.png
 	:alt: Select Custom Material
 	:align: center
 
@@ -214,7 +251,9 @@ To Add shader:
 2) Now, in the file viewer you'll get options to add vertex and pixel shaders.
 3) Click on the pixel shader. A dialog box will open now you can just select the shader.
 
-.. image:: images/graphics_tutorial/change_custom_material_pixel_shader.png
+|
+
+.. figure:: images/graphics_tutorial/change_custom_material_pixel_shader.png
 	:alt: Change Custom Material Pixel Shader
 	:align: center
 
@@ -225,16 +264,27 @@ Clicking on the pencil icon opens an editor to customise the shader.
 .. note:: 
 	You can only add shaders to custom materials. If you want to use default material, override the original default material with custom material and then add a shader to the overriding material. The overriding material does inherit the textures of the original materials.
 
-.. image:: images/graphics_tutorial/changed_the_custom_material_pixel_shader_to_fire_shader.png
+|
+
+.. figure:: images/graphics_tutorial/changed_the_custom_material_pixel_shader_to_fire_shader.png
 	:alt: Change Shader To Fire Shader
 	:align: center
-.. image:: images/graphics_tutorial/edit_the_default_fire_pixel_shader_2.png
+	
+|
+
+.. figure:: images/graphics_tutorial/edit_the_default_fire_pixel_shader_2.png
 	:alt: Edit Fire Pixel Shader
 	:align: center
-.. image:: images/graphics_tutorial/edited_the_default_fire_pixel_shader.png
+	
+|
+	
+.. figure:: images/graphics_tutorial/edited_the_default_fire_pixel_shader.png
 	:alt: Final Fire Pixel Shader
 	:align: center
-.. image:: images/graphics_tutorial/fire_shader_sample.gif
+	
+|
+	
+.. figure:: images/graphics_tutorial/fire_shader_sample.gif
 	:alt: Fire Shader Sample
 	:align: center
 
@@ -247,25 +297,33 @@ To add a decal component.
 
 1) Make a scene DECAL and give it transform and Decal Component.
 
-.. image:: images/graphics_tutorial/add_decal_component.png
+|
+
+.. figure:: images/graphics_tutorial/add_decal_component.png
 	:alt: Add Decal Component
 	:align: center
 2) Create a decal material. By going to File -> CreateResource. And then slect Decal material in resource type dropdown.
 
-.. image:: images/graphics_tutorial/create_decal_material.png
+|
+
+.. figure:: images/graphics_tutorial/create_decal_material.png
 	:alt: Create Decal Material
 	:align: center
 	
 3) Now go to the inspector and click DecalComponent. 
 4) Click on the folder icon and select the decal material.
 
-.. image:: images/graphics_tutorial/select_the_newly_created_decal_material.png
+|
+
+.. figure:: images/graphics_tutorial/select_the_newly_created_decal_material.png
 	:alt: Select Decal Material
 	:align: center
 	
 5) Click on the pencil icon and the in the file viewer click on Decal Texture.
 
-.. image:: images/graphics_tutorial/change_decal_material_texture.png
+|
+
+.. figure:: images/graphics_tutorial/change_decal_material_texture.png
 	:alt: Change Decal Material
 	:align: center
 	
@@ -273,10 +331,10 @@ To add a decal component.
 
 By default, the decal shader projects on the negative z-axis. You can rotate it till you get the desired result.
 
+|
 
 
-
-.. image:: images/graphics_tutorial/decal_sample.gif
+.. figure:: images/graphics_tutorial/decal_sample.gif
 	:alt: Decal Sample
 	:align: center
 
