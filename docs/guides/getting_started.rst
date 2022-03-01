@@ -16,4 +16,6 @@ Any user coming from ECS based game engines should be able to pick up the interf
 	running_the_editor
 	editor_layout
 	using_TransformAnimationComponent
+	making_HUD_using_ui-component
+	effects_using_ParticleEffectComponent
 	getting_help

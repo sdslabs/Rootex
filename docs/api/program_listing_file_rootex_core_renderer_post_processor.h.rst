@@ -16,6 +16,7 @@ Program Listing for File post_processor.h
    
    #include "PostProcess.h"
    #include "ASSAO.h"
+   #include "shader.h"
    
    class CameraComponent;
    
@@ -53,6 +54,7 @@ Program Listing for File post_processor.h
        int toneMapOperator = 0;
        int toneMapTransferFunction = 0;
        float toneMapWhiteNits = 200.0f;
+       Map<String, bool> customPostProcessing;
    };
    
    class PostProcess
@@ -63,18 +65,41 @@ Program Listing for File post_processor.h
        virtual void draw(CameraComponent* camera, ID3D11ShaderResourceView*& nextSource) = 0;
    };
    
+   class CustomPostProcess : public PostProcess
+   {
+       Vector<Ptr<PostProcess>> m_PostProcesses;
+   
+       EventBinder<CustomPostProcess> m_Binder;
+   
+       BufferFormat s_BufferFormat;
+   
+       Ptr<Shader> shader;
+   
+       Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_CacheRTV;
+       Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_CacheSRV;
+   
+       Variant loadRTVAndSRV(const Event* event);
+   
+   public:
+       String m_PostProcessPath;
+   
+       CustomPostProcess(const String& path);
+   
+       void draw(CameraComponent* camera, ID3D11ShaderResourceView*& nextSource) override;
+   };
+   
    class PostProcessor
    {
        Vector<Ptr<PostProcess>> m_PostProcesses;
    
        Ptr<DirectX::BasicPostProcess> m_BasicPostProcess;
    
+   public:
        PostProcessor();
        PostProcessor(PostProcessor&) = delete;
        ~PostProcessor() = default;
    
-   public:
-       static PostProcessor* GetSingleton();
-   
        void draw(CameraComponent* camera);
+   
+       friend class PostProcessSystem;
    };

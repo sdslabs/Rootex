@@ -3,7 +3,7 @@
 Class GridModelComponent
 ========================
 
-- Defined in :ref:`file_rootex_framework_components_visual_grid_model_component.h`
+- Defined in :ref:`file_rootex_framework_components_visual_model_grid_model_component.h`
 
 
 Inheritance Relationships

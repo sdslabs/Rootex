@@ -3,7 +3,7 @@
 Class RenderUIComponent
 =======================
 
-- Defined in :ref:`file_rootex_framework_components_visual_render_ui_component.h`
+- Defined in :ref:`file_rootex_framework_components_visual_ui_render_ui_component.h`
 
 
 Inheritance Relationships

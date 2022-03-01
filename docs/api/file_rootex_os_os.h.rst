@@ -33,6 +33,8 @@ Includes
 
 - ``fstream``
 
+- ``tchar.h``
+
 
 
 Included By
@@ -40,6 +42,10 @@ Included By
 
 
 - :ref:`file_rootex_common_common.h`
+
+- :ref:`file_editor_gui_content_browser.h`
+
+- :ref:`file_rootex_core_resource_file.h`
 
 
 
@@ -49,6 +55,15 @@ Classes
 
 
 - :ref:`exhale_class_class_o_s`
+
+
+Functions
+---------
+
+
+- :ref:`exhale_function_os_8h_1ae1139c760167cbf2d946993a6b29f535`
+
+- :ref:`exhale_function_os_8h_1acdcaac29f3694765a099cd8adfadc40e`
 
 
 Defines

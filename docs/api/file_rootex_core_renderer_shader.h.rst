@@ -41,9 +41,25 @@ Included By
 -----------
 
 
-- :ref:`file_rootex_core_renderer_material.h`
+- :ref:`file_rootex_core_resource_files_animated_basic_material_resource_file.h`
 
-- :ref:`file_rootex_core_renderer_shader_library.h`
+- :ref:`file_rootex_core_resource_files_basic_material_resource_file.h`
+
+- :ref:`file_rootex_core_resource_files_custom_material_resource_file.h`
+
+- :ref:`file_rootex_core_ui_custom_render_interface.h`
+
+- :ref:`file_rootex_core_resource_files_decal_material_resource_file.h`
+
+- :ref:`file_rootex_core_resource_files_instancing_basic_material_resource_file.h`
+
+- :ref:`file_rootex_core_resource_files_material_resource_file.h`
+
+- :ref:`file_rootex_core_renderer_post_processor.h`
+
+- :ref:`file_rootex_core_renderer_renderer.h`
+
+- :ref:`file_rootex_core_resource_files_sky_material_resource_file.h`
 
 
 
@@ -52,21 +68,5 @@ Classes
 -------
 
 
-- :ref:`exhale_class_class_animation_shader`
-
-- :ref:`exhale_class_class_basic_shader`
-
-- :ref:`exhale_class_class_color_shader`
-
-- :ref:`exhale_class_class_f_x_a_a_shader`
-
-- :ref:`exhale_class_class_grid_shader`
-
-- :ref:`exhale_class_class_luma_shader`
-
-- :ref:`exhale_class_class_particles_shader`
-
 - :ref:`exhale_class_class_shader`
-
-- :ref:`exhale_class_class_sky_shader`
 

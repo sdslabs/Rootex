@@ -458,6 +458,8 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 			}
 			if (ImGui::BeginMenu("Scene"))
 			{
+				ImGui::Checkbox("Autosave", &m_Autosave);
+
 				if (SceneLoader::GetSingleton()->getCurrentScene())
 				{
 					SceneLoader::GetSingleton()->getCurrentScene()->getSettings().draw();
@@ -859,9 +861,14 @@ Variant EditorSystem::saveAll(const Event* event)
 
 Variant EditorSystem::autoSave(const Event* event)
 {
-	PRINT("Auto-saving current scene...");
-	saveAll(nullptr);
-	return true;
+	if (m_Autosave && !(m_Toolbar->getSettings().m_InEditorPlaying))
+	{
+		PRINT("Auto-saving current scene...");
+		saveAll(nullptr);
+		return true;
+	}
+
+	return false;
 }
 
 Variant EditorSystem::saveBeforeQuit(const Event* event)

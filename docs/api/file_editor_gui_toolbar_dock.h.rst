@@ -27,13 +27,9 @@ Includes
 
 - ``common/common.h``
 
+- ``event_manager.h`` (:ref:`file_rootex_core_event_manager.h`)
 
 
-Included By
------------
-
-
-- :ref:`file_editor_editor_system.h`
 
 
 

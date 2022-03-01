@@ -29,6 +29,8 @@ Includes
 
 - ``core/ui/custom_render_interface.h``
 
+- ``core/ui/flipbook_decorator.h``
+
 - ``event_manager.h`` (:ref:`file_rootex_core_event_manager.h`)
 
 - ``system.h`` (:ref:`file_rootex_framework_systems_animation_system.h`)

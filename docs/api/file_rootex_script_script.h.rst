@@ -25,6 +25,8 @@ Includes
 --------
 
 
+- ``common.h`` (:ref:`file_rootex_common_common.h`)
+
 - ``script/interpreter.h``
 
 

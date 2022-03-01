@@ -9,6 +9,7 @@
 
 bool CompareMaterials(const Pair<Ref<MaterialResourceFile>, Vector<Mesh>>& a, const Pair<Ref<MaterialResourceFile>, Vector<Mesh>>& b);
 
+/// Used to render static 3D models.
 class ModelComponent : public RenderableComponent
 {
 	COMPONENT(ModelComponent, Category::Model);

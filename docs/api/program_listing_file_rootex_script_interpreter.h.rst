@@ -12,6 +12,10 @@ Program Listing for File interpreter.h
 
    #pragma once
    
+   #include "common.h"
+   
+   #include "event_manager.h"
+   
    #include "vendor/Lua/src/lua.hpp"
    #define SOL_ALL_SAFETIES_ON 1
    #define SOL_USING_CXX_LUA 1
@@ -39,11 +43,13 @@ Program Listing for File interpreter.h
    
    class LuaInterpreter
    {
+       EventBinder<LuaInterpreter> m_Binder;
+   
        sol::state m_Lua;
    
        LuaInterpreter();
        LuaInterpreter(LuaInterpreter&) = delete;
-       ~LuaInterpreter() = default;
+       ~LuaInterpreter();
    
        void registerTypes();
        void runScripts();

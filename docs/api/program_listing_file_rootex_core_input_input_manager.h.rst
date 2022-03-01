@@ -61,7 +61,7 @@ Program Listing for File input_manager.h
        bool m_IsEnabled;
        HashMap<Device, unsigned int> DeviceIDs;
        HashMap<String, InputScheme> m_InputSchemes;
-       String m_CurrentInputScheme;
+       Vector<String> m_CurrentSchemeStack;
    
        HashMap<unsigned int, Event::Type> m_InputEventIDNames;
        HashMap<Event::Type, unsigned int> m_InputEventNameIDs;
@@ -77,7 +77,8 @@ Program Listing for File input_manager.h
    
        friend class Window;
    
-       unsigned int getNextID();
+       unsigned int getNextID(int device, int button);
+       void buildBindings();
    
    public:
        static InputManager* GetSingleton();
@@ -85,17 +86,22 @@ Program Listing for File input_manager.h
        static void MapBool(const Event::Type& action, Device device, DeviceButtonID button) { GetSingleton()->mapBool(action, device, button); };
        static void MapFloat(const Event::Type& action, Device device, DeviceButtonID button) { GetSingleton()->mapBool(action, device, button); };
        static bool IsPressed(const Event::Type& action) { return GetSingleton()->isPressed(action); };
+       static bool HasPressed(const Event::Type& action) { return GetSingleton()->hasPressed(action); };
        static bool WasPressed(const Event::Type& action) { return GetSingleton()->wasPressed(action); };
        static float GetFloat(const Event::Type& action) { return GetSingleton()->getFloat(action); };
        static float GetFloatDelta(const Event::Type& action) { return GetSingleton()->getFloatDelta(action); };
        static void Unmap(const Event::Type& action) { GetSingleton()->unmap(action); };
+       static Vector2 GetMousePosition() { return GetSingleton()->getMousePosition(); };
    
        void initialize(unsigned int width, unsigned int height);
    
        void setEnabled(bool enabled);
    
-       void setSchemes(const HashMap<String, InputScheme>& inputSchemes);
-       void setScheme(const String& schemeName);
+       void loadSchemes(const HashMap<String, InputScheme>& inputSchemes);
+       void addScheme(const String& name, const InputScheme& inputScheme);
+       void pushScheme(const String& schemeName);
+       void popScheme();
+       void flushSchemes();
    
        void mapBool(const Event::Type& action, Device device, DeviceButtonID button);
        void mapFloat(const Event::Type& action, Device device, DeviceButtonID button);
@@ -103,9 +109,12 @@ Program Listing for File input_manager.h
        void unmap(const Event::Type& action);
    
        bool isPressed(const Event::Type& action);
+       bool hasPressed(const Event::Type& action);
        bool wasPressed(const Event::Type& action);
        float getFloat(const Event::Type& action);
        float getFloatDelta(const Event::Type& action);
+   
+       Vector2 getMousePosition();
    
        void update();
        void setDisplaySize(const Vector2& newSize);

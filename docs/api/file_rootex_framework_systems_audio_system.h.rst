@@ -25,19 +25,19 @@ Includes
 --------
 
 
-- ``AL/alut.h``
+- ``al.h``
+
+- ``alc.h``
+
+- ``alut.h``
 
 - ``common/common.h``
 
-- ``framework/components/audio_listener_component.h``
+- ``components/audio/audio_listener_component.h``
 
-- ``framework/components/transform_component.h``
+- ``components/space/transform_component.h``
 
 - ``system.h`` (:ref:`file_rootex_framework_systems_animation_system.h`)
-
-- ``vendor/OpenAL/include/al.h``
-
-- ``vendor/OpenAL/include/alc.h``
 
 
 

@@ -29,13 +29,13 @@ Includes
 
 - ``JSON/json.hpp``
 
+- ``array``
+
 - ``atomic``
 
 - ``d3d11.h``
 
 - ``editor/editor_events.h``
-
-- ``event.h`` (:ref:`file_rootex_core_event.h`)
 
 - ``filesystem``
 
@@ -50,6 +50,8 @@ Includes
 - ``map``
 
 - ``memory``
+
+- ``mutex``
 
 - ``optional``
 
@@ -83,9 +85,27 @@ Included By
 -----------
 
 
+- :ref:`file_rootex_core_physics_bullet_conversions.h`
+
+- :ref:`file_rootex_framework_components_physics_collision_component.h`
+
 - :ref:`file_rootex_common_common.h`
 
+- :ref:`file_rootex_utility_maths.h`
+
+- :ref:`file_rootex_core_renderer_mesh.h`
+
 - :ref:`file_rootex_os_os.h`
+
+- :ref:`file_rootex_framework_components_visual_effect_particle_effect_component.h`
+
+- :ref:`file_rootex_core_resource_files_particle_effect_resource_file.h`
+
+- :ref:`file_rootex_framework_systems_post_process_system.h`
+
+- :ref:`file_rootex_core_resource_file.h`
+
+- :ref:`file_rootex_main_splash_window.h`
 
 
 
@@ -122,6 +142,8 @@ Functions
 
 - :ref:`exhale_function_types_8h_1adb954f0e8bd14c18a6b826057fb91e7b`
 
+- :ref:`exhale_function_types_8h_1a60004a69092869f40e5893e26f73a82f`
+
 
 Defines
 -------
@@ -141,10 +163,14 @@ Defines
 
 - :ref:`exhale_define_types_8h_1a8a7c30a576d5706b6c0821834d01cbbc`
 
+- :ref:`exhale_define_types_8h_1a966cd377b9f3fdeb1432460c33352af1`
+
 
 Typedefs
 --------
 
+
+- :ref:`exhale_typedef_types_8h_1a02a4d2ff451c16850ec9bccb6f4a651c`
 
 - :ref:`exhale_typedef_types_8h_1ad193c890cb266cb98b80471731fed249`
 
@@ -168,6 +194,8 @@ Typedefs
 
 - :ref:`exhale_typedef_types_8h_1a24e73d18a34576ef690245cc0ce1b692`
 
+- :ref:`exhale_typedef_types_8h_1a2cdb1fa98da4079d3a6c4ad3e2afe4af`
+
 - :ref:`exhale_typedef_types_8h_1aaf8f4d77efd311ec7818ab421294ef82`
 
 - :ref:`exhale_typedef_types_8h_1a51dee55bd8f33a93ce7ad3933586eee8`
@@ -182,6 +210,8 @@ Typedefs
 
 - :ref:`exhale_typedef_types_8h_1aa6864dcd9d3028d31437452d4e5541c5`
 
+- :ref:`exhale_typedef_types_8h_1ad7c45ea6d2ca18ba1698071f198b86a6`
+
 - :ref:`exhale_typedef_types_8h_1add5e90b302c31b74a46619f240214bcc`
 
 - :ref:`exhale_typedef_types_8h_1ad5001f0ee725caf5aed41c7eda1fd0a1`
@@ -192,7 +222,7 @@ Typedefs
 
 - :ref:`exhale_typedef_types_8h_1a2815493df44cd8157eacb7ef39d58138`
 
-- :ref:`exhale_typedef_types_8h_1ab10036d197bc23eea4d105ef1d9026b1`
+- :ref:`exhale_typedef_types_8h_1a3adce165484849ad66a6aec621b6753d`
 
 - :ref:`exhale_typedef_types_8h_1a74283f33f14838a6a65abe8b6207fc54`
 

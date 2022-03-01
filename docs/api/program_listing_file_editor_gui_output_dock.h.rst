@@ -20,6 +20,17 @@ Program Listing for File output_dock.h
    
    class OutputDock
    {
+       enum class OutputState : unsigned int
+       {
+           None = 0,
+           General = 1 << 0,
+           Warning = 1 << 1,
+           Error = 1 << 2,
+           All = General | Warning | Error
+       };
+   
+       EventBinder<OutputDock> m_Binder;
+   
    public:
        struct OutputDockSettings
        {

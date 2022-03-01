@@ -4,6 +4,7 @@
 #include "core/resource_files/model_resource_file.h"
 #include "core/resource_files/sky_material_resource_file.h"
 
+/// Used to add a skybox to the scene.
 class SkyComponent : public Component
 {
 	COMPONENT(SkyComponent, Category::Effect);

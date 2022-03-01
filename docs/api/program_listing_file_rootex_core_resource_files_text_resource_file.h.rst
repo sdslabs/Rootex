@@ -28,12 +28,12 @@ Program Listing for File text_resource_file.h
        explicit TextResourceFile(TextResourceFile&&) = delete;
        virtual ~TextResourceFile() = default;
    
-       void reimport() override;
-       bool save() override;
-   
        void putString(const String& newData);
        void popBack();
        void append(const String& add);
        String getString() const;
        size_t getSize() const { return m_FileString.size(); }
+   
+       void reimport() override;
+       bool save() override;
    };

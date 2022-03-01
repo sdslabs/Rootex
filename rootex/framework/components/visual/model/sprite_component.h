@@ -4,6 +4,7 @@
 #include "core/resource_files/image_resource_file.h"
 #include "core/resource_files/basic_material_resource_file.h"
 
+/// Component for rendering sprites. Supports billboarding.
 class SpriteComponent : public ModelComponent
 {
 	COMPONENT(SpriteComponent, Category::Model);
@@ -12,7 +13,7 @@ private:
 	bool m_IsBillboarded;
 
 	void adjustScaling();
-	void setMaterialOverride(Ref<MaterialResourceFile> oldMaterial, Ref<MaterialResourceFile> newMaterial) override;
+	void setMaterialOverride(MaterialResourceFile* oldMaterial, Ref<MaterialResourceFile> newMaterial) override;
 
 	static JSON::json InjectSpriteModel(const JSON::json& data);
 

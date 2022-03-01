@@ -4,6 +4,7 @@
 #include "framework/scene_loader.h"
 #include "framework/system.h"
 
+/// System which handles the change in behavior of everything on pausing and playing.
 class PauseSystem : public System
 {
 	PauseSystem();

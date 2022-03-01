@@ -27,7 +27,7 @@ Includes
 
 - ``renderer/texture.h``
 
-- ``resource_file.h`` (:ref:`file_rootex_core_resource_files_animated_model_resource_file.h`)
+- ``resource_file.h`` (:ref:`file_rootex_core_resource_files_animated_basic_material_resource_file.h`)
 
 
 
@@ -35,11 +35,11 @@ Included By
 -----------
 
 
-- :ref:`file_rootex_core_renderer_materials_sky_material.h`
+- :ref:`file_rootex_utility_imgui_helpers.h`
 
 - :ref:`file_rootex_core_resource_loader.h`
 
-- :ref:`file_rootex_utility_imgui_helpers.h`
+- :ref:`file_rootex_core_resource_files_sky_material_resource_file.h`
 
 
 

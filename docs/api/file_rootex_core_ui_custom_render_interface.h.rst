@@ -27,7 +27,13 @@ Includes
 
 - ``RmlUi/Core.h``
 
-- ``core/renderer/material_library.h``
+- ``core/renderer/index_buffer.h``
+
+- ``core/renderer/shader.h``
+
+- ``core/renderer/vertex_buffer.h``
+
+- ``core/renderer/vertex_data.h``
 
 - ``event_manager.h`` (:ref:`file_rootex_core_event_manager.h`)
 
@@ -45,6 +51,8 @@ Included By
 Classes
 -------
 
+
+- :ref:`exhale_struct_struct_custom_render_interface_1_1_geometry_data`
 
 - :ref:`exhale_class_class_custom_render_interface`
 

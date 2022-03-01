@@ -4,6 +4,7 @@
 
 #include "btBulletDynamicsCommon.h"
 
+/// Collider component in the shape of a box.
 class BoxColliderComponent : public RigidBodyComponent
 {
 	COMPONENT(BoxColliderComponent, Category::Physics);

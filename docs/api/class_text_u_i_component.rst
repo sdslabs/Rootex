@@ -3,7 +3,7 @@
 Class TextUIComponent
 =====================
 
-- Defined in :ref:`file_rootex_framework_components_visual_text_ui_component.h`
+- Defined in :ref:`file_rootex_framework_components_visual_ui_text_ui_component.h`
 
 
 Inheritance Relationships

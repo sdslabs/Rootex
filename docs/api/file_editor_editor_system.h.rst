@@ -35,18 +35,6 @@ Includes
 
 - ``framework/system.h``
 
-- ``gui/file_viewer.h``
-
-- ``gui/inspector_dock.h``
-
-- ``gui/output_dock.h``
-
-- ``gui/scene_dock.h``
-
-- ``gui/toolbar_dock.h``
-
-- ``gui/viewport_dock.h``
-
 - ``script/interpreter.h``
 
 - ``utility/imgui_helpers.h``
