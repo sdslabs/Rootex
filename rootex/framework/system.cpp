@@ -55,23 +55,29 @@ void System::setActive(bool enabled)
 
 void System::pause()
 {
-	for (auto& systemType : GetSystems())
-	{
-		for (auto& system : systemType)
-		{
-			system->m_IsSystemPaused = true;
-		}
-	}
+	EventManager::GetSingleton()->defer([]()
+	    {
+		    for (auto& systemType : GetSystems())
+		    {
+			    for (auto& system : systemType)
+			    {
+				    system->m_IsSystemPaused = true;
+			    }
+		    }
+	    });
 }
 void System::unPause()
 {
-	for (auto& systemType : GetSystems())
-	{
-		for (auto& system : systemType)
-		{
-			system->m_IsSystemPaused = false;
-		}
-	}
+	EventManager::GetSingleton()->defer([]()
+	    {
+		    for (auto& systemType : GetSystems())
+		    {
+			    for (auto& system : systemType)
+			    {
+				    system->m_IsSystemPaused = false;
+			    }
+		    }
+	    });
 }
 
 void System::draw()

@@ -49,12 +49,12 @@ protected:
 	void getWorldTransform(btTransform& worldTrans) const override;
 	void setWorldTransform(const btTransform& worldTrans) override;
 
-	void updateTransform();
-
 	void handleHit(Hit* hit) override;
 
 public:
 	virtual ~RigidBodyComponent() = default;
+
+	void updateTransform();
 
 	void applyForce(const Vector3& force);
 	void applyTorque(const Vector3& torque);
