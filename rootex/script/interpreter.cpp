@@ -260,6 +260,7 @@ void LuaInterpreter::registerTypes()
 		resourceLoader["CreateAnimatedModel"] = &ResourceLoader::CreateAnimatedModelResourceFile;
 		resourceLoader["CreateCollisionModel"] = &ResourceLoader::CreateAnimatedModelResourceFile;
 		resourceLoader["CreateParticleEffectResourceFile"] = &ResourceLoader::CreateParticleEffectResourceFile;
+		resourceLoader["CreateMaterialResourceFile"] = &ResourceLoader::CreateMaterialResourceFile;
 	}
 	{
 		sol::usertype<ResourceFile> resourceFile = rootex.new_usertype<ResourceFile>("ResourceFile");
@@ -491,7 +492,7 @@ void LuaInterpreter::registerTypes()
 
 		transformComponent["getPosition"] = &TransformComponent::getPosition;
 		transformComponent["setPosition"] = &TransformComponent::setPosition;
-
+		
 		transformComponent["getScale"] = &TransformComponent::getScale;
 		transformComponent["setScale"] = &TransformComponent::setScale;
 
@@ -521,6 +522,8 @@ void LuaInterpreter::registerTypes()
 		    "ModelComponent",
 		    sol::base_classes, sol::bases<Component, RenderableComponent>());
 		modelComponent["getModelResourceFile"] = &ModelComponent::getModelResourceFile;
+		modelComponent["setMaterialOverride"] = &RenderableComponent::setMaterialOverride;
+		modelComponent["getMaterialOverride"] = &RenderableComponent::getMaterialOverride;
 	}
 	{
 		sol::usertype<AnimatedModelComponent> animatedModelComponent = rootex.new_usertype<AnimatedModelComponent>(
@@ -620,6 +623,8 @@ void LuaInterpreter::registerTypes()
 		rigidBodyComponent["applyTorque"] = &RigidBodyComponent::applyTorque;
 		rigidBodyComponent["setAxisLock"] = &RigidBodyComponent::setAxisLock;
 		rigidBodyComponent["translate"] = &RigidBodyComponent::translate;
+
+		rigidBodyComponent["update"] = &RigidBodyComponent::updateTransform;
 	}
 	{
 		sol::usertype<BoxColliderComponent> bcc = rootex.new_usertype<BoxColliderComponent>(
