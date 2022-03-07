@@ -129,7 +129,7 @@ void LuaInterpreter::registerTypes()
 		    sol::meta_function::multiplication, [](Vector2& l, float r) { return l * r; },
 		    sol::meta_function::division, [](Vector2& l, float r) { return l / r; },
 		    sol::meta_function::division, [](Vector2& l, Vector2& r) { return l / r; });
-		vector2["dot"] = &Vector2::Dot;
+		vector2["dot"] = [](const Vector2& l, const Vector2& r) { return l.Dot(r); };
 		vector2["cross"] = [](const Vector2& l, const Vector2& r) { return l.Cross(r); };
 		vector2["x"] = &Vector2::x;
 		vector2["y"] = &Vector2::y;
@@ -144,7 +144,7 @@ void LuaInterpreter::registerTypes()
 		    sol::meta_function::multiplication, [](Vector3& l, float r) { return l * r; },
 		    sol::meta_function::division, [](Vector3& l, float r) { return l / r; },
 		    sol::meta_function::division, [](Vector3& l, Vector3& r) { return l / r; });
-		vector3["dot"] = &Vector3::Dot;
+		vector3["dot"] = [](const Vector3& l, const Vector3& r) { return l.Dot(r); };
 		vector3["cross"] = [](const Vector3& l, const Vector3& r) { return l.Cross(r); };
 		vector3["x"] = &Vector3::x;
 		vector3["y"] = &Vector3::y;
@@ -159,7 +159,7 @@ void LuaInterpreter::registerTypes()
 		    sol::meta_function::multiplication, [](Vector4& l, float r) { return l * r; },
 		    sol::meta_function::division, [](Vector4& l, Vector4& r) { return l / r; },
 		    sol::meta_function::division, [](Vector4& l, float r) { return l / r; });
-		vector4["dot"] = &Vector4::Dot;
+		vector4["dot"] = [](const Vector4& l, const Vector4& r) { return l.Dot(r); };
 		vector4["cross"] = [](const Vector4& l, const Vector4& r) { return l.Cross(l, r); };
 		vector4["x"] = &Vector4::x;
 		vector4["y"] = &Vector4::y;

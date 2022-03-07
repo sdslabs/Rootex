@@ -35,7 +35,7 @@ Included By
 -----------
 
 
-- :ref:`file_rootex_framework_components_music_component.h`
+- :ref:`file_rootex_framework_components_audio_music_component.h`
 
 
 

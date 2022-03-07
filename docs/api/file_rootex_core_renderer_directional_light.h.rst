@@ -33,7 +33,7 @@ Included By
 -----------
 
 
-- :ref:`file_rootex_framework_components_visual_directional_light_component.h`
+- :ref:`file_rootex_framework_components_visual_light_directional_light_component.h`
 
 
 

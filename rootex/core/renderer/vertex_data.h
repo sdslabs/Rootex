@@ -44,3 +44,9 @@ struct FXAAData
 	Vector3 position;
 	Vector2 texturecoord;
 };
+
+struct GodRaysData
+{
+	Vector3 position;
+	Vector2 texturecoord;
+};

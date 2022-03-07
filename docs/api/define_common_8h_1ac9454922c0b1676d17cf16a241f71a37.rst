@@ -1,0 +1,13 @@
+.. _exhale_define_common_8h_1ac9454922c0b1676d17cf16a241f71a37:
+
+Define PANIC_SILENT
+===================
+
+- Defined in :ref:`file_rootex_common_common.h`
+
+
+Define Documentation
+--------------------
+
+
+.. doxygendefine:: PANIC_SILENT

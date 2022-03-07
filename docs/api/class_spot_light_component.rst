@@ -3,7 +3,7 @@
 Class SpotLightComponent
 ========================
 
-- Defined in :ref:`file_rootex_framework_components_visual_spot_light_component.h`
+- Defined in :ref:`file_rootex_framework_components_visual_light_spot_light_component.h`
 
 
 Inheritance Relationships

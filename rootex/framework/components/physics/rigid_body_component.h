@@ -9,6 +9,7 @@
 
 enum PhysicsMaterial;
 
+/// Component that reacts to and moves according to physics.
 class RigidBodyComponent : public CollisionComponent, public btMotionState
 {
 	DEPENDS_ON(TransformComponent);

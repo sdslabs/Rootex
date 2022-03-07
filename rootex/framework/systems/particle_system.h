@@ -8,6 +8,7 @@
 #include "EffekseerRendererDX11.h"
 #include "EffekseerSoundAL.h"
 
+/// System for handling particle effects made using the Effekseer libary.
 class ParticleSystem : public System
 {
 	static inline std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> s_Convert;

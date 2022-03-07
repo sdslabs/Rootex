@@ -93,6 +93,14 @@ void RenderingDevice::createDepthStencil(DXGI_SWAP_CHAIN_DESC& sd, float width, 
 	depthSRVDesc.Texture2D.MipLevels = 1;
 
 	GFX_ERR_CHECK(m_Device->CreateShaderResourceView(depthStencil.Get(), &depthSRVDesc, &m_MainDSSRV));
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC stencilSRVDesc;
+	stencilSRVDesc.Format = DXGI_FORMAT_X32_TYPELESS_G8X24_UINT;
+	stencilSRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	stencilSRVDesc.Texture2D.MostDetailedMip = 0;
+	stencilSRVDesc.Texture2D.MipLevels = 1;
+
+	GFX_ERR_CHECK(m_Device->CreateShaderResourceView(depthStencil.Get(), &stencilSRVDesc, &m_MainStencilSRV));
 }
 
 void RenderingDevice::setScreenState(bool fullscreen)
@@ -149,6 +157,18 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height)
 		dsDesc.DepthEnable = TRUE;
 		dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
 		dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+		dsDesc.StencilEnable = TRUE;
+		dsDesc.StencilReadMask = 0xff;
+		dsDesc.StencilWriteMask = 0xff;
+		dsDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+		dsDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
+		dsDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_REPLACE;
+		dsDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+		dsDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+		dsDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
+		dsDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_REPLACE;
+		dsDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
 		GFX_ERR_CHECK(m_Device->CreateDepthStencilState(&dsDesc, &m_DSState));
 		m_Context->OMSetDepthStencilState(m_DSState.Get(), 1u);
 		m_StencilRef = 1u;
@@ -159,6 +179,17 @@ void RenderingDevice::initialize(HWND hWnd, int width, int height)
 		dssDesc.DepthEnable = true;
 		dssDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 		dssDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+		dssDesc.StencilEnable = true;
+		dssDesc.StencilReadMask = 0xff;
+		dssDesc.StencilWriteMask = 0xff;
+		dssDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+		dssDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
+		dssDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_REPLACE;
+		dssDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+		dssDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+		dssDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
+		dssDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_REPLACE;
+		dssDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
 		GFX_ERR_CHECK(m_Device->CreateDepthStencilState(&dssDesc, &m_SkyDSState));
 	}
@@ -827,6 +858,11 @@ Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::getDepthSSRV()
 	return m_MainDSSRV;
 }
 
+Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::getStencilSRV()
+{
+	return m_MainStencilSRV;
+}
+
 Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderingDevice::getOffScreenSRV()
 {
 	return m_OffScreenSRV;
@@ -941,7 +977,7 @@ void RenderingDevice::clearOffScreenRT(float r, float g, float b, float a)
 
 void RenderingDevice::clearDSV()
 {
-	m_Context->ClearDepthStencilView(m_MainDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
+	m_Context->ClearDepthStencilView(m_MainDSV.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0u);
 }
 
 ID3D11Device* RenderingDevice::getDevice()

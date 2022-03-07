@@ -33,9 +33,9 @@ Included By
 -----------
 
 
-- :ref:`file_rootex_framework_components_short_music_component.h`
-
 - :ref:`file_editor_gui_audio_player.h`
+
+- :ref:`file_rootex_framework_components_audio_short_music_component.h`
 
 
 

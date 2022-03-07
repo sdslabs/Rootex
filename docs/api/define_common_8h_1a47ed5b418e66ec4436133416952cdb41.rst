@@ -1,0 +1,13 @@
+.. _exhale_define_common_8h_1a47ed5b418e66ec4436133416952cdb41:
+
+Define PRINT_SILENT
+===================
+
+- Defined in :ref:`file_rootex_common_common.h`
+
+
+Define Documentation
+--------------------
+
+
+.. doxygendefine:: PRINT_SILENT

@@ -7,4 +7,11 @@ Events (:ref:`Class Event`) in Rootex are the equivalent of broadcast messages o
 
 :ref:`Class EventManager` is a singleton, and all engine level events are passed by it. User events can also be channeled through with no issues. E.g. Input events that are configured by the user are sent through the engine level event manager.
 
+Optionally EventManager allows :ref:`Typedef Variant` data to be passed along with an event call, which are further of 2 types:
+
+* Call: The registered handlers are called immediately. This is useful for non destructive activity.
+* Deferred Call: The registered handlers are called at the end of a frame. This is especially useful for destrutive activity related to entities, components and systems, as the engine is very likely to be iterating on them and deletion may lead to corruption.
+
+Rootex editor has been made on top of the rootex engine. The engine is never aware of the existence of editor. This is made possible by the help of events.
+
 See :ref:`Struct RootexEvents`, :ref:`Struct EditorEvents`, :ref:`Class Event`
