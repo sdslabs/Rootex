@@ -232,12 +232,12 @@ void RenderableComponent::draw()
 
 			ImGui::BeginGroup();
 			ImGui::Text("%s", newMaterial->getPath().filename().generic_string().c_str());
-			if (ImGui::Button((ICON_ROOTEX_PENCIL_SQUARE_O "##" + newMaterial->getPath().generic_string()).c_str()))
+			if (ImGui::Button((ICON_ROOTEX_PENCIL_SQUARE_O "##1" + newMaterial->getPath().generic_string()).c_str()))
 			{
 				EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { newMaterial->getPath().generic_string(), (int)newMaterial->getType() });
 			}
 			ImGui::SameLine();
-			if (ImGui::Button((ICON_ROOTEX_FOLDER_OPEN "##" + newMaterial->getPath().generic_string()).c_str()))
+			if (ImGui::Button((ICON_ROOTEX_FOLDER_OPEN "##2" + newMaterial->getPath().generic_string()).c_str()))
 			{
 				if (Optional<String> result = OS::SelectFile("Material(*.rmat)\0*.rmat\0", "game/assets/materials/"))
 				{
@@ -245,13 +245,6 @@ void RenderableComponent::draw()
 				}
 			}
 			ImGui::SameLine();
-			if (ImGui::Button((ICON_ROOTEX_FOLDER_OPEN "##" + oldMaterial->getPath().generic_string()).c_str()))
-			{
-				if (Optional<String> result = OS::SelectFile("Material(*.rmat)\0*.rmat\0", "game/assets/materials/"))
-				{
-					setMaterialOverride(oldMaterial, ResourceLoader::CreateMaterialResourceFile(*result));
-				}
-			}
 			ImGui::EndGroup();
 			ImGui::NextColumn();
 			ImGui::Separator();
