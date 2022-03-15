@@ -258,6 +258,11 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 			{
 				if (ImGui::BeginMenu("Create Resource"))
 				{
+					if (!OS::IsDirectory("game/assets/materials"))
+					{
+						OS::CreateDirectoryName("game/assets/materials");
+					}
+
 					if (ImGui::BeginCombo("Resource Type", newFileTypeName.c_str()))
 					{
 						for (auto& [type, typeName] : ResourceFile::s_TypeNames)
@@ -295,6 +300,11 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 				{
 					ImGui::InputText("Script Name", &newScript);
 
+					if (!OS::IsDirectory("game/assets/scripts"))
+					{
+						OS::CreateDirectoryName("game/assets/scripts");
+					}
+
 					String finalNewScriptName = "game/assets/scripts/" + newScript + ".lua";
 					ImGui::Text("File Name: %s", finalNewScriptName.c_str());
 
@@ -319,6 +329,10 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 				ImGui::Separator();
 				if (ImGui::BeginMenu("Create Scene"))
 				{
+					if (!OS::IsDirectory("game/assets/scenes"))
+					{
+						OS::CreateDirectoryName("game/assets/scenes");
+					}
 					ImGui::InputText("Scene Name", &newSceneName, ImGuiInputTextFlags_AlwaysInsertMode);
 					if (!newSceneName.empty() && ImGui::Button("Create"))
 					{
@@ -337,6 +351,10 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 				}
 				if (ImGui::BeginMenu("Open Scene"))
 				{
+					if (!OS::IsDirectory("game/assets/scenes"))
+					{
+						OS::CreateDirectoryName("game/assets/scenes");
+					}
 					for (auto&& levelName : OS::GetFilesInDirectory("game/assets/scenes/"))
 					{
 						if (ImGui::MenuItem(levelName.generic_string().c_str()))
