@@ -336,7 +336,7 @@ ASALocalRun/
 *.cso
 
 # please don't ignore our obj loader
-!/rootex/vendor/Assimp/assimp/code/Obj/
+!/rootex/vendor/Assimp/assimp/code/AssetLib/Obj/
 
 # Save static third-party builds
 !/rootex/vendor/RmlUi/Bin/
