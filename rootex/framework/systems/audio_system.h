@@ -4,6 +4,7 @@
 
 #include "components/space/transform_component.h"
 #include "components/audio/audio_listener_component.h"
+#include "components/audio/audio_component.h"
 
 #include "al.h"
 #include "alc.h"
@@ -45,6 +46,30 @@ class AudioSource;
 class StreamingAudioSource;
 
 class ResourceFile;
+class AudioComponent;
+
+class AudioBus
+{
+private:
+	String m_BusName;
+	AudioBus* m_Parent = nullptr;
+	Vector<Ref<AudioComponent>> m_AudioComponents;
+	Vector<AudioBus*> m_Children;
+	bool m_IsMaster; // really needed?
+	float m_Volume;
+
+	AudioBus();
+	AudioBus(AudioBus&) = delete;
+	~AudioBus() = default;
+
+public:
+	void addAudioComponent(Ref<AudioComponent> cp);
+	void onVolumeChange(float delta);
+	void setParent(AudioBus* parent);
+	String getBusName() { return m_BusName; };
+	float& getBusVolume() { return m_Volume; };
+};
+
 
 /// Audio System responsible for streaming and static audio
 class AudioSystem : public System
@@ -53,6 +78,8 @@ class AudioSystem : public System
 	ALCcontext* m_Context = nullptr;
 
 	AudioListenerComponent* m_Listener = nullptr;
+	AudioBus* m_RootAudioBus = nullptr;
+	Vector<AudioBus*> m_Buses;
 
 	AudioSystem();
 	AudioSystem(AudioSystem&) = delete;
@@ -84,4 +111,9 @@ public:
 	void update(float deltaMilliseconds) override;
 	void begin() override;
 	void end() override;
+	void draw() override;
+
+	Vector<AudioBus*> getAudioBuses() const { return m_Buses; };
+	void addNewBus();
+	void removeBus(AudioBus* bus);
 };

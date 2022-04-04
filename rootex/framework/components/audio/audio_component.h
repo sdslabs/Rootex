@@ -7,6 +7,9 @@
 #include "components/physics/box_collider_component.h"
 #include "components/physics/sphere_collider_component.h"
 #include "components/physics/capsule_collider_component.h"
+#include "systems/audio_system.h"
+
+class AudioBus;
 
 /// Component that plays audio according to the listener's position relative to the component.
 class AudioComponent : public Component
@@ -23,6 +26,7 @@ class AudioComponent : public Component
 	ALfloat m_MaxDistance;
 	ALfloat m_Volume;
 	AudioSource* m_AudioSource;
+	AudioBus* m_AudioBus;
 
 protected:
 	bool m_IsPlayOnStart;
@@ -63,4 +67,7 @@ public:
 	bool setupData() override;
 	JSON::json getJSON() const;
 	void draw() override;
+
+	void setAudioBus(AudioBus* bus);
+	void changeVolume(float delta);
 };
