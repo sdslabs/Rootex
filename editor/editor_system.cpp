@@ -49,6 +49,23 @@ bool EditorSystem::initialize(const JSON::json& systemData)
 	m_FileViewer.reset(new FileViewer());
 	m_FileEditor.reset(new FileEditor());
 
+	{
+		if (!OS::IsDirectory("game/assets/materials"))
+		{
+			OS::CreateDirectoryName("game/assets/materials");
+		}
+
+		if (!OS::IsDirectory("game/assets/scripts"))
+		{
+			OS::CreateDirectoryName("game/assets/scripts");
+		}
+
+		if (!OS::IsDirectory("game/assets/scenes"))
+		{
+			OS::CreateDirectoryName("game/assets/scenes");
+		}
+	}
+
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
