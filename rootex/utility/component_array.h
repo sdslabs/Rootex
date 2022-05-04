@@ -8,14 +8,16 @@
 template <typename component, class A = std::allocator<component>>
 class ComponentArray // component array
 {
-	std::vector<component> m_data;
-	bool m_isValid[MAX_COMPONENT_ARRAY_SIZE];
+private:
+	Vector<component> m_data;
+	Vector<bool> m_isValid;
 	int curr;
 	size_t arraySize;
 
 public:
 	ComponentArray() //default constructor
 	{
+		m_data.reserve(MAX_COMPONENT_ARRAY_SIZE);
 		m_data.reserve(MAX_COMPONENT_ARRAY_SIZE);
 		for (int i = 0; i < MAX_COMPONENT_ARRAY_SIZE; i++)
 		{
@@ -25,6 +27,7 @@ public:
 		curr = 0;
 		arraySize = 0;
 	}
+
 	CustomIterator<component> begin() // begining of the iterator
 	{
 		int index = 0;
@@ -32,12 +35,12 @@ public:
 		{
 			index++;
 		}
-		return CustomIterator<component>(m_isValid, &(*(m_data.begin() + index)));
+		return CustomIterator<component>(m_isValid, m_data.begin() + index);
 	}
 
 	CustomIterator<component> end() // end of the iterator
 	{
-		return CustomIterator<component>(&(*(m_data.begin() + curr)));
+		return CustomIterator<component>(m_data.begin() + curr);
 	}
 
 	void push_back(const component& item)
@@ -65,20 +68,20 @@ public:
 		{
 			ERR("Component set for " + component::s_Name + " is full. Reduce component count or increase max arraySize");
 		}
-		component& instance = component(owner, componentData);
-		owner.registerComponent(&instance);
 
 		for (int i = 0; i < curr; i++)
 		{
 			if (!m_isValid[i])
 			{
-				m_data[i] = component(owner, componentData);
+				new (&m_data[i]) component(owner, componentData); //Create a new component at m_data[i]
+				owner.registerComponent(&m_data[i]);
 				m_isValid[i] = true;
 				arraySize++;
 				return;
 			}
 		}
 		m_data.emplace_back(owner, componentData);
+		owner.registerComponent(&m_data[curr]);
 		curr++;
 		arraySize++;
 	}
@@ -86,9 +89,7 @@ public:
 	void erase(int index)
 	{
 		if (index < curr)
-		{
 			m_isValid[index] = false;
-		}
 		arraySize--;
 	}
 
@@ -105,6 +106,7 @@ public:
 	{
 		return *(this->begin());
 	}
+
 	component back()
 	{
 		return *(this->end());

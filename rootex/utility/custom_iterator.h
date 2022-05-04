@@ -6,9 +6,9 @@ template <typename dataType>
 class CustomIterator
 {
 protected:
-	dataType* m_ptr;
+	typename Vector<dataType>::iterator m_itr;
 	int m_index;
-	bool* m_isValid;
+	Vector<bool> m_isValid;
 
 public:
 	using iterator_category = std::random_access_iterator_tag;
@@ -18,15 +18,15 @@ public:
 	using reference = dataType&;
 
 	// Constructors
-	CustomIterator(bool* m_isValid, dataType* ptr = nullptr)
+	CustomIterator(Vector<bool>& isValid, typename Vector<dataType>::iterator itr)
 	{
-		this->m_isValid = m_isValid;
-		m_ptr = ptr;
+		m_isValid = isValid;
+		m_itr = itr;
 		m_index = 0;
 	}
-	CustomIterator(dataType* ptr = nullptr)
+	CustomIterator(typename Vector<dataType>::iterator itr)
 	{
-		m_ptr = ptr;
+		m_itr = itr;
 		m_index = 0;
 	}
 	CustomIterator(const CustomIterator<dataType>& rawIterator) = default; // Copy constructor
@@ -34,22 +34,22 @@ public:
 
 	// Overloading = operator
 	CustomIterator<dataType>& operator=(const CustomIterator<dataType>& rawIterator) = default;
-	CustomIterator<dataType>& operator=(dataType* ptr)
+	CustomIterator<dataType>& operator=(typename Vector<dataType>::iterator itr)
 	{
-		m_ptr = ptr;
+		m_itr = itr;
 		return (*(this));
 	}
 
 	operator bool() const
 	{
-		if (m_ptr)
+		if (m_itr)
 			return true;
 		else
 			return false;
 	}
 
-	bool operator==(const CustomIterator<dataType>& rawIterator) const { return (m_ptr == rawIterator.getConstPtr()); }
-	bool operator!=(const CustomIterator<dataType>& rawIterator) const { return (m_ptr != rawIterator.getConstPtr()); }
+	bool operator==(const CustomIterator<dataType>& rawIterator) const { return (m_itr == rawIterator.getConstItr()); }
+	bool operator!=(const CustomIterator<dataType>& rawIterator) const { return !(m_itr == rawIterator.getConstItr()); }
 
 	// Airthmatic Overloading
 	CustomIterator<dataType> operator++()
@@ -57,17 +57,17 @@ public:
 		while (!(*(this->m_isValid + m_index + 1)))
 		{
 			m_index++;
-			++m_ptr;
+			++m_itr;
 		}
 		m_index++;
-		m_ptr++;
+		m_itr++;
 		return (*(this));
 	}
 
-	dataType& operator*() { return *m_ptr; }
-	const dataType& operator*() const { return *m_ptr; }
-	dataType* operator->() { return m_ptr; }
+	typename Vector<dataType>::iterator& operator*() { return m_itr; }
+	const typename Vector<dataType>::iterator& operator*() const { return m_itr; }
+	typename Vector<dataType>::iterator operator->() { return m_itr; }
 
-	dataType* getPtr() const { return m_ptr; }
-	const dataType* getConstPtr() const { return m_ptr; }
+	typename Vector<dataType>::iterator getItr() const { return m_itr; }
+	const typename Vector<dataType>::iterator getConstItr() const { return m_itr; }
 };

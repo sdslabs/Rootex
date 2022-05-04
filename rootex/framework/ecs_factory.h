@@ -69,8 +69,8 @@ public:
 		if (findIt != m_Instances.end())
 		{
 			findIt->onRemove();
-			int index = (int)(findIt - m_Instances.begin());
-			m_Instances.erase(index);
+			//int index = (int)(findIt - m_Instances.begin());
+			m_Instances.erase(findIt);
 			return true;
 		}
 		return false;
