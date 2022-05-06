@@ -8,7 +8,7 @@ class CustomIterator
 protected:
 	typename Vector<dataType>::iterator m_itr;
 	int m_index;
-	Vector<bool> m_isValid;
+	Vector<bool>* m_isValid;
 
 public:
 	using iterator_category = std::random_access_iterator_tag;
@@ -20,7 +20,7 @@ public:
 	// Constructors
 	CustomIterator(Vector<bool>& isValid, typename Vector<dataType>::iterator itr)
 	{
-		m_isValid = isValid;
+		m_isValid = &isValid;
 		m_itr = itr;
 		m_index = 0;
 	}
@@ -40,21 +40,13 @@ public:
 		return (*(this));
 	}
 
-	operator bool() const
-	{
-		if (m_itr)
-			return true;
-		else
-			return false;
-	}
-
 	bool operator==(const CustomIterator<dataType>& rawIterator) const { return (m_itr == rawIterator.getConstItr()); }
 	bool operator!=(const CustomIterator<dataType>& rawIterator) const { return !(m_itr == rawIterator.getConstItr()); }
 
-	// Airthmatic Overloading
+	// Custom definition of ++ Overloading
 	CustomIterator<dataType> operator++()
 	{
-		while (!(*(this->m_isValid + m_index + 1)))
+		while ((*m_isValid)[m_index + 1] == false)
 		{
 			m_index++;
 			++m_itr;
@@ -64,9 +56,9 @@ public:
 		return (*(this));
 	}
 
-	typename Vector<dataType>::iterator& operator*() { return m_itr; }
-	const typename Vector<dataType>::iterator& operator*() const { return m_itr; }
-	typename Vector<dataType>::iterator operator->() { return m_itr; }
+	dataType& operator*() { return *m_itr; }
+	const dataType& operator*() const { return *m_itr; }
+	typename Vector<dataType>::iterator operator->() { return *m_itr; }
 
 	typename Vector<dataType>::iterator getItr() const { return m_itr; }
 	const typename Vector<dataType>::iterator getConstItr() const { return m_itr; }

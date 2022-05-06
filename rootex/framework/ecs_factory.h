@@ -62,15 +62,19 @@ public:
 
 	bool removeComponent(Entity& entity) override
 	{
-		auto& findIt = std::find_if(m_Instances.begin(), m_Instances.end(), [&entity](T& c) {
-			return c.getOwner().getID() == entity.getID();
-		});
-
-		if (findIt != m_Instances.end())
+		int index = 0;
+		for (auto x: m_Instances)
 		{
-			findIt->onRemove();
-			//int index = (int)(findIt - m_Instances.begin());
-			m_Instances.erase(findIt);
+			if (x.getOwner().getID() == entity.getID())
+			{
+				break;
+			}
+			index++;
+		}
+
+		if (index != m_Instances.size())
+		{
+			m_Instances.erase(index);
 			return true;
 		}
 		return false;
