@@ -21,6 +21,7 @@
 #include "gui/inspector_dock.h"
 #include "gui/file_viewer.h"
 #include "gui/file_editor.h"
+#include "gui/content_browser.h"
 
 #include "imgui_stdlib.h"
 #include "ImGuizmo.h"
@@ -48,6 +49,7 @@ bool EditorSystem::initialize(const JSON::json& systemData)
 	m_Inspector.reset(new InspectorDock());
 	m_FileViewer.reset(new FileViewer());
 	m_FileEditor.reset(new FileEditor());
+	m_ContentBrowser.reset(new ContentBrowser());
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -189,7 +191,7 @@ void EditorSystem::update(float deltaMilliseconds)
 	m_FileEditor->draw(deltaMilliseconds);
 	m_Output->draw(deltaMilliseconds);
 	m_Viewport->draw(deltaMilliseconds);
-
+	m_ContentBrowser->draw(deltaMilliseconds);
 	popFont();
 
 	RenderingDevice::GetSingleton()->setMainRT();
@@ -231,8 +233,6 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 
-	static String loadingScene;
-
 	static Scene* exportScene = nullptr;
 
 	ImGui::Begin("Rootex Editor", nullptr, windowFlags);
@@ -250,7 +250,6 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 		if (ImGui::BeginMenuBar())
 		{
 			static String newSceneName;
-			static String openSceneName;
 			static String newFileName;
 			static String newFileTypeName;
 			static String newFileExtension;
@@ -330,7 +329,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 						else
 						{
 							EventManager::GetSingleton()->call(EditorEvents::EditorCreateNewScene, newSceneName);
-							loadingScene = "game/assets/scenes/" + newSceneName + ".scene.json";
+							m_LoadingScene = "game/assets/scenes/" + newSceneName + ".scene.json";
 						}
 					}
 					ImGui::EndMenu();
@@ -341,16 +340,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 					{
 						if (ImGui::MenuItem(levelName.generic_string().c_str()))
 						{
-							if (SceneLoader::GetSingleton()->getCurrentScene())
-							{
-								openSceneName = levelName.generic_string();
-								m_MenuAction = "Save";
-								m_PopupCause = "open";
-							}
-							else
-							{
-								loadingScene = levelName.generic_string();
-							}
+							openScene(levelName.generic_string());
 						}
 					}
 					ImGui::EndMenu();
@@ -452,6 +442,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 					ImGui::Checkbox("Scene", &m_Scene->getSettings().m_IsActive);
 					ImGui::Checkbox("Viewport", &m_Viewport->getSettings().m_IsActive);
 					ImGui::Checkbox("Inspector", &m_Inspector->getSettings().m_IsActive);
+					ImGui::Checkbox("Content Browser", &m_ContentBrowser->getSettings().m_IsActive);
 					ImGui::EndMenu();
 				}
 				ImGui::EndMenu();
@@ -626,14 +617,14 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 					{
 						saveAll(nullptr);
 						EventManager::GetSingleton()->call(EditorEvents::EditorCreateNewScene, newSceneName);
-						loadingScene = "game/assets/scenes/" + newSceneName + ".scene.json";
+						m_LoadingScene = "game/assets/scenes/" + newSceneName + ".scene.json";
 						ImGui::CloseCurrentPopup();
 						m_MenuAction = "";
 					}
 					else if (m_PopupCause == "open")
 					{
 						saveAll(nullptr);
-						loadingScene = openSceneName;
+						m_LoadingScene = m_OpenSceneName;
 						ImGui::CloseCurrentPopup();
 						m_MenuAction = "";
 					}
@@ -649,13 +640,13 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 					else if (m_PopupCause == "create")
 					{
 						EventManager::GetSingleton()->call(EditorEvents::EditorCreateNewScene, newSceneName);
-						loadingScene = "game/assets/scenes/" + newSceneName + ".scene.json";
+						m_LoadingScene = "game/assets/scenes/" + newSceneName + ".scene.json";
 						ImGui::CloseCurrentPopup();
 						m_MenuAction = "";
 					}
 					else if (m_PopupCause == "open")
 					{
-						loadingScene = openSceneName;
+						m_LoadingScene = m_OpenSceneName;
 						ImGui::CloseCurrentPopup();
 						m_MenuAction = "";
 					}
@@ -719,16 +710,16 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 	static float loadingSceneCurrentProgress = 0.0f;
 	static int loadingSceneTotalProgress = -1;
 
-	if (!loadingScene.empty() && loadingSceneTotalProgress == -1)
+	if (!m_LoadingScene.empty() && loadingSceneTotalProgress == -1)
 	{
 		ImGui::OpenPopup("Load Scene");
-		loadingSceneTotalProgress = SceneLoader::GetSingleton()->preloadScene(loadingScene, loadingSceneProgress);
+		loadingSceneTotalProgress = SceneLoader::GetSingleton()->preloadScene(m_LoadingScene, loadingSceneProgress);
 		loadingSceneCurrentProgress = 0.0f;
 	}
 
 	if (ImGui::BeginPopupModal("Load Scene", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
 	{
-		ImGui::Text("Loading scene: %s", loadingScene.c_str());
+		ImGui::Text("Loading scene: %s", m_LoadingScene.c_str());
 
 		ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
 
@@ -737,11 +728,11 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 		if (loadingSceneTotalProgress == loadingSceneProgress)
 		{
 			EventManager::GetSingleton()->call(EditorEvents::EditorSceneIsClosing);
-			SceneLoader::GetSingleton()->loadPreloadedScene(loadingScene, {});
-			SetWindowText(GetActiveWindow(), ("Rootex Editor: " + loadingScene).c_str());
+			SceneLoader::GetSingleton()->loadPreloadedScene(m_LoadingScene, {});
+			SetWindowText(GetActiveWindow(), ("Rootex Editor: " + m_LoadingScene).c_str());
 			loadingSceneTotalProgress = -1;
 			loadingSceneProgress = 0;
-			loadingScene = "";
+			m_LoadingScene = "";
 			ImGui::CloseCurrentPopup();
 		}
 
@@ -838,6 +829,20 @@ void EditorSystem::showDocumentation(const String& name, const sol::table& table
 			}
 		}
 		ImGui::Unindent();
+	}
+}
+
+void EditorSystem::openScene(String sceneName)
+{
+	if (SceneLoader::GetSingleton()->getCurrentScene())
+	{
+		m_OpenSceneName = sceneName;
+		m_MenuAction = "Save";
+		m_PopupCause = "open";
+	}
+	else
+	{
+		m_LoadingScene = sceneName;
 	}
 }
 

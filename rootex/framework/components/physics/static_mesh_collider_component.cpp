@@ -61,6 +61,7 @@ void StaticMeshColliderComponent::draw()
 {
 	RigidBodyComponent::draw();
 
+	ImGui::BeginGroup();
 	String filePath = m_CollisionModel->getPath().generic_string();
 	ImGui::Text("%s", filePath.c_str());
 	ImGui::SameLine();
@@ -74,6 +75,15 @@ void StaticMeshColliderComponent::draw()
 		if (Optional<String> result = OS::SelectFile(SupportedFiles.at(ResourceFile::Type::CollisionModel), "game/assets/"))
 		{
 			setCollisionModel(ResourceLoader::CreateCollisionModelResourceFile(*result));
+		}
+	}
+	ImGui::EndGroup();
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("COLLISION_MODEL_PAYLOAD"))
+		{
+			const char* path = (const char*)payload->Data;
+			setCollisionModel(ResourceLoader::CreateCollisionModelResourceFile(path));
 		}
 	}
 }

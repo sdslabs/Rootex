@@ -10,6 +10,8 @@
 #include <commctrl.h>
 #include <shellapi.h>
 #include <shlobj_core.h>
+#include <strsafe.h>
+#include <windows.h>
 
 std::filesystem::file_time_type::clock OS::s_FileSystemClock;
 const std::chrono::time_point<std::chrono::system_clock> OS::s_ApplicationStartTime = std::chrono::system_clock::now();
@@ -48,6 +50,11 @@ FilePath OS::GetRelativePath(String stringPath, String base)
 String OS::GetFileStem(String stringPath)
 {
 	return GetAbsolutePath(stringPath).filename().generic_string();
+}
+
+FilePath OS::GetParentPath(String stringPath)
+{
+	return GetAbsolutePath(stringPath).parent_path();
 }
 
 Vector<FilePath> OS::GetDirectoriesInDirectory(const String& directory)
@@ -116,6 +123,22 @@ Vector<FilePath> OS::GetAllFilesInDirectory(const String& directory)
 		{
 			result.push_back(GetRootRelativePath(((FilePath)file).generic_string()));
 		}
+	}
+	return result;
+}
+
+Vector<FilePath> OS::GetAllInDirectoryRoot(const String& directory)
+{
+	if (!std::filesystem::is_directory(GetAbsolutePath(directory)))
+	{
+		WARN("Not a directory: " + directory);
+		return {};
+	}
+
+	Vector<FilePath> result;
+	for (auto&& file : std::filesystem::directory_iterator(GetAbsolutePath(directory)))
+	{
+		result.push_back(GetRootRelativePath(((FilePath)file).generic_string()));
 	}
 	return result;
 }
@@ -346,6 +369,92 @@ bool OS::IsDirectory(const String& path)
 bool OS::IsFile(const String& path)
 {
 	return std::filesystem::is_regular_file(GetAbsolutePath(path));
+}
+
+void OS::RegisterFileChangesWatcher(const String& path, void (*callback)(PVOID, BOOLEAN), PVOID param)
+{
+	String absolute_path = GetAbsolutePath(path).string();
+	LPTSTR lpDir = new TCHAR[absolute_path.size() + 1];
+	strcpy(lpDir, absolute_path.c_str());
+	DWORD dwWaitStatus;
+	HANDLE dwChangeHandle;
+
+	HANDLE waitHandle;
+
+	// Watch the directory for file creation and deletion.
+
+	dwChangeHandle = FindFirstChangeNotification(
+	    lpDir, // directory to watch
+	    TRUE, // do not watch subtree
+	    FILE_NOTIFY_CHANGE_FILE_NAME); // watch file name changes
+
+	if (dwChangeHandle == INVALID_HANDLE_VALUE)
+	{
+		WARN("ERROR: FindFirstChangeNotification function failed.");
+		return;
+	}
+
+	// Make a final validation check on our handles.
+
+	if (dwChangeHandle == NULL)
+	{
+		WARN("ERROR: Unexpected NULL from FindFirstChangeNotification.");
+		return;
+	}
+
+	// Change notification is set. Now wait on both notification
+	// handles and refresh accordingly.
+	if (!RegisterWaitForSingleObject(&waitHandle, dwChangeHandle, (WAITORTIMERCALLBACK)callback, param, INFINITE, WT_EXECUTEDEFAULT | WT_EXECUTEONLYONCE))
+	{
+		WARN("ERROR: Could not register file watcher notifier");
+	}
+}
+
+void OS::RegisterDirectoryChangesWatcher(const String& path, void (*callback)(PVOID, BOOLEAN), PVOID param)
+{
+	String absolute_path = GetAbsolutePath(path).string();
+	LPTSTR lpDir = new TCHAR[absolute_path.size() + 1];
+	strcpy(lpDir, absolute_path.c_str());
+	DWORD dwWaitStatus;
+	HANDLE dwChangeHandle;
+	TCHAR lpDrive[4];
+	TCHAR lpFile[_MAX_FNAME];
+	TCHAR lpExt[_MAX_EXT];
+
+	HANDLE waitHandle;
+
+	_tsplitpath_s(lpDir, lpDrive, 4, NULL, 0, lpFile, _MAX_FNAME, lpExt, _MAX_EXT);
+
+	lpDrive[2] = (TCHAR)'\\';
+	lpDrive[3] = (TCHAR)'\0';
+
+	// Watch the subtree for directory creation and deletion.
+
+	dwChangeHandle = FindFirstChangeNotification(
+	    lpDrive, // directory to watch
+	    TRUE, // watch the subtree
+	    FILE_NOTIFY_CHANGE_DIR_NAME); // watch dir name changes
+
+	if (dwChangeHandle == INVALID_HANDLE_VALUE)
+	{
+		WARN("ERROR: FindFirstChangeNotification function failed.");
+		return;
+	}
+
+	// Make a final validation check on our handles.
+
+	if (dwChangeHandle == NULL)
+	{
+		WARN("ERROR: Unexpected NULL from FindFirstChangeNotification.");
+		return;
+	}
+
+	// Change notification is set. Now wait on both notification
+	// handles and refresh accordingly.
+	if (!RegisterWaitForSingleObject(&waitHandle, dwChangeHandle, (WAITORTIMERCALLBACK)callback, param, INFINITE, WT_EXECUTEDEFAULT | WT_EXECUTEONLYONCE))
+	{
+		WARN("ERROR: Could not register file watcher notifier");
+	}
 }
 
 bool OS::CreateDirectoryName(const String& dirPath)

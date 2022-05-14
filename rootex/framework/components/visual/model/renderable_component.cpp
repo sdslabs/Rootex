@@ -253,6 +253,14 @@ void RenderableComponent::draw()
 				}
 			}
 			ImGui::EndGroup();
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("MATERIAL_PAYLOAD"))
+				{
+					const char* path = (const char*)payload->Data;
+					setMaterialOverride(oldMaterial, ResourceLoader::CreateMaterialResourceFile(path));
+				}
+			}
 			ImGui::NextColumn();
 			ImGui::Separator();
 		}
