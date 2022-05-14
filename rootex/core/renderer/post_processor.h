@@ -11,6 +11,7 @@ class CameraComponent;
 struct PostProcessingDetails
 {
 	bool isPostProcessing = false;
+	bool isGodRays = false;
 	bool isASSAO = false;
 	bool isBloom = false;
 	bool isSepia = false;
@@ -18,6 +19,11 @@ struct PostProcessingDetails
 	bool isGaussianBlur = false;
 	bool isToneMap = false;
 	bool isFXAA = false;
+	int godRaysNumSamples = 100;
+	float godRaysDensity = 1.0f;
+	float godRaysWeight = 0.01f;
+	float godRaysDecay = 1.0f;
+	float godRaysExposure = 1.0f;
 	float assaoRadius = 1.2f;
 	float assaoDetailShadowStrength = 0.5f;
 	int assaoBlurPassCount = 2;

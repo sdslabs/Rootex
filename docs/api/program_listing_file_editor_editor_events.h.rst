@@ -18,17 +18,21 @@ Program Listing for File editor_events.h
    {
        DEFINE_EVENT(EditorAutoSave);
    
-       DEFINE_EVENT(EditorCloseScene);
+       DEFINE_EVENT(EditorSceneIsClosing);
    
        DEFINE_EVENT(EditorCreateNewScene, String);
    
-       DEFINE_EVENT(EditorCreateNewMaterial);
+       DEFINE_EVENT(EditorCreateNewFile, String);
    
-       DEFINE_EVENT(EditorOpenFile, String);
+       DEFINE_EVENT(EditorOpenFile, String, int);
+   
+       DEFINE_EVENT(EditorEditFile, String);
    
        DEFINE_EVENT(EditorOpenScene, Scene*);
    
        DEFINE_EVENT(EditorSaveBeforeQuit);
    
        DEFINE_EVENT(EditorSaveAll);
+   
+       DEFINE_EVENT(EditorReset);
    };

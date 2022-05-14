@@ -3,7 +3,7 @@
 Class ShortMusicComponent
 =========================
 
-- Defined in :ref:`file_rootex_framework_components_short_music_component.h`
+- Defined in :ref:`file_rootex_framework_components_audio_short_music_component.h`
 
 
 Inheritance Relationships

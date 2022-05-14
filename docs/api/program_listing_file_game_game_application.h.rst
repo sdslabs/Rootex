@@ -15,17 +15,13 @@ Program Listing for File game_application.h
    #include "rootex/app/application.h"
    #include "framework/systems/script_system.h"
    
-   class HierarchyGraph;
-   
    class GameApplication : public Application
    {
-       String getLevelNameFromCommandLine(const char* s);
+       Optional<String> getSceneNameFromCommandLine(const char* s);
        Variant onExitEvent(const Event* event);
    
    public:
        GameApplication();
        GameApplication(GameApplication&) = delete;
        ~GameApplication() = default;
-   
-       String getAppTitle() const override { return "Game"; }
    };

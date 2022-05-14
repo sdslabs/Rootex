@@ -3,7 +3,7 @@
 Class DirectionalLightComponent
 ===============================
 
-- Defined in :ref:`file_rootex_framework_components_visual_directional_light_component.h`
+- Defined in :ref:`file_rootex_framework_components_visual_light_directional_light_component.h`
 
 
 Inheritance Relationships

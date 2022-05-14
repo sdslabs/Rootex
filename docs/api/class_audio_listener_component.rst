@@ -3,7 +3,7 @@
 Class AudioListenerComponent
 ============================
 
-- Defined in :ref:`file_rootex_framework_components_audio_listener_component.h`
+- Defined in :ref:`file_rootex_framework_components_audio_audio_listener_component.h`
 
 
 Inheritance Relationships

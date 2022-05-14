@@ -27,13 +27,21 @@ Includes
 
 - ``common/common.h``
 
-- ``resource_file.h`` (:ref:`file_rootex_core_resource_files_animated_model_resource_file.h`)
+- ``resource_file.h`` (:ref:`file_rootex_core_resource_files_animated_basic_material_resource_file.h`)
+
+- ``resource_files/animated_basic_material_resource_file.h``
 
 - ``resource_files/animated_model_resource_file.h``
 
 - ``resource_files/audio_resource_file.h``
 
+- ``resource_files/basic_material_resource_file.h``
+
 - ``resource_files/collision_model_resource_file.h``
+
+- ``resource_files/custom_material_resource_file.h``
+
+- ``resource_files/decal_material_resource_file.h``
 
 - ``resource_files/font_resource_file.h``
 
@@ -41,9 +49,15 @@ Includes
 
 - ``resource_files/image_resource_file.h``
 
+- ``resource_files/instancing_basic_material_resource_file.h``
+
 - ``resource_files/lua_text_resource_file.h``
 
 - ``resource_files/model_resource_file.h``
+
+- ``resource_files/particle_effect_resource_file.h``
+
+- ``resource_files/sky_material_resource_file.h``
 
 - ``resource_files/text_resource_file.h``
 
@@ -53,15 +67,17 @@ Included By
 -----------
 
 
-- :ref:`file_rootex_framework_components_music_component.h`
-
-- :ref:`file_rootex_framework_components_short_music_component.h`
-
-- :ref:`file_rootex_framework_components_visual_text_ui_component.h`
-
 - :ref:`file_editor_gui_audio_player.h`
 
+- :ref:`file_editor_gui_content_browser.h`
+
 - :ref:`file_editor_gui_image_viewer.h`
+
+- :ref:`file_rootex_framework_components_audio_music_component.h`
+
+- :ref:`file_rootex_framework_components_audio_short_music_component.h`
+
+- :ref:`file_rootex_framework_components_visual_ui_text_ui_component.h`
 
 - :ref:`file_editor_gui_text_viewer.h`
 
@@ -85,6 +101,8 @@ Functions
 Variables
 ---------
 
+
+- :ref:`exhale_variable_resource__loader_8h_1a748c18293c6e7aa6be6a90e4e83a16ce`
 
 - :ref:`exhale_variable_resource__loader_8h_1af6e641d166ae37fdfd5ea9ef6a6f2df2`
 

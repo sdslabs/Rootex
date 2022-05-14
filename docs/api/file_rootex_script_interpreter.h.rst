@@ -25,6 +25,10 @@ Includes
 --------
 
 
+- ``common.h`` (:ref:`file_rootex_common_common.h`)
+
+- ``event_manager.h`` (:ref:`file_rootex_core_event_manager.h`)
+
 - ``sol/sol.hpp``
 
 - ``vendor/Lua/src/lua.hpp``
@@ -39,11 +43,11 @@ Included By
 
 - :ref:`file_rootex_framework_component.h`
 
+- :ref:`file_editor_editor_system.h`
+
 - :ref:`file_rootex_framework_entity.h`
 
 - :ref:`file_rootex_script_script.h`
-
-- :ref:`file_editor_editor_system.h`
 
 - :ref:`file_editor_gui_viewport_dock.h`
 

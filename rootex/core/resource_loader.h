@@ -25,7 +25,7 @@ static const inline HashMap<ResourceFile::Type, const char*> SupportedFiles = {
 	{ ResourceFile::Type::Image, "Image(*.png;*.jpeg;*.jpg;*.dds)\0*.png;*.jpeg;*.jpg;*.dds\0" },
 	{ ResourceFile::Type::ImageCube, "Image Cube(*.dds)\0*.dds\0" },
 	{ ResourceFile::Type::Audio, "Audio(*.wav)\0*.wav\0" },
-	{ ResourceFile::Type::Model, "Model(*.3ds;*.fbx;*.dae)\0*.obj;*.blend;*.3ds;*.fbx;*.dae\0" },
+	{ ResourceFile::Type::Model, "Model(*.3ds;*.fbx;*.dae;*.gltf)\0*.obj;*.blend;*.3ds;*.fbx;*.dae;*.gltf\0" },
 	{ ResourceFile::Type::AnimatedModel, "Animated Model(*.dae;*.fbx;*.gltf)\0*.dae;*.fbx;*.gltf\0" },
 	{ ResourceFile::Type::CollisionModel, "Collision Model(*.obj)\0*.obj\0" },
 	{ ResourceFile::Type::Lua, "Lua(*.lua)\0*.lua\0" },

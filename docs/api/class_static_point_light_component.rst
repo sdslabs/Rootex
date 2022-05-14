@@ -3,7 +3,7 @@
 Class StaticPointLightComponent
 ===============================
 
-- Defined in :ref:`file_rootex_framework_components_visual_static_point_light_component.h`
+- Defined in :ref:`file_rootex_framework_components_visual_light_static_point_light_component.h`
 
 
 Inheritance Relationships

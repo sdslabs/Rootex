@@ -13,15 +13,16 @@ Program Listing for File model_resource_file.h
    #pragma once
    
    #include "resource_file.h"
-   #include "renderer/mesh.h"
+   #include "basic_material_resource_file.h"
    
-   class Material;
+   class ResourceFile;
+   class Mesh;
    
    class ModelResourceFile : public ResourceFile
    {
        explicit ModelResourceFile(const FilePath& path);
    
-       Vector<Pair<Ref<Material>, Vector<Mesh>>> m_Meshes;
+       Vector<Pair<Ref<BasicMaterialResourceFile>, Vector<Mesh>>> m_Meshes;
    
        friend class ResourceLoader;
    
@@ -32,5 +33,8 @@ Program Listing for File model_resource_file.h
    
        void reimport() override;
    
-       Vector<Pair<Ref<Material>, Vector<Mesh>>>& getMeshes() { return m_Meshes; }
+       Vector<Pair<Ref<BasicMaterialResourceFile>, Vector<Mesh>>>& getMeshes() { return m_Meshes; }
+       int getMaterialCount() { return m_Meshes.size(); }
+       Ref<BasicMaterialResourceFile> getMaterialAt(int i) { return m_Meshes[i].first; }
+       Vector<Mesh>& getMeshesOfMaterialAt(int i) { return m_Meshes[i].second; }
    };

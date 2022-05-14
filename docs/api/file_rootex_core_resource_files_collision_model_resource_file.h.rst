@@ -29,7 +29,7 @@ Includes
 
 - ``renderer/mesh.h``
 
-- ``resource_file.h`` (:ref:`file_rootex_core_resource_files_animated_model_resource_file.h`)
+- ``resource_file.h`` (:ref:`file_rootex_core_resource_files_animated_basic_material_resource_file.h`)
 
 
 

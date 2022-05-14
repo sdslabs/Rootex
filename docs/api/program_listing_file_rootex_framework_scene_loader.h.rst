@@ -19,10 +19,11 @@ Program Listing for File scene_loader.h
    
    class SceneLoader
    {
+       EventBinder<SceneLoader> m_Binder;
+   
        Scene* m_CurrentScene = nullptr;
        Ptr<Scene> m_RootScene;
    
-       Vector<String> m_UnloadCache;
        Vector<String> m_SceneArguments;
    
        SceneLoader();
@@ -31,6 +32,7 @@ Program Listing for File scene_loader.h
        void endSystems();
    
        void setArguments(const Vector<String>& arguments) { m_SceneArguments = arguments; }
+       Vector<String> findResourcePaths(const JSON::json& sceneJSON);
    
        Variant deleteScene(const Event* event);
    

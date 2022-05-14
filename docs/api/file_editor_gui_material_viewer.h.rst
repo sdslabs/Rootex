@@ -27,9 +27,9 @@ Includes
 
 - ``common/common.h``
 
-- ``resource_file.h`` (:ref:`file_rootex_core_resource_files_animated_model_resource_file.h`)
+- ``core/resource_files/material_resource_file.h``
 
-- ``rootex/core/renderer/material.h``
+- ``resource_file.h`` (:ref:`file_rootex_core_resource_files_animated_basic_material_resource_file.h`)
 
 
 

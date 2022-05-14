@@ -4,7 +4,7 @@
 #include "renderer/shader.h"
 #include "material_resource_file.h"
 #include "image_resource_file.h"
-
+/// Representation of a material used for drawing decals. Uses ImageResourceFile to store the Decal's texture.
 class DecalMaterialResourceFile : public MaterialResourceFile
 {
 private:

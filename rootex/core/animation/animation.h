@@ -20,6 +20,7 @@ struct ScalingKeyframe
 	Vector3 m_Scaling;
 };
 
+/// Represents a node in the skeleton heirarchy(a tree like structure) of an animated model.
 struct SkeletonNode
 {
 	Vector<Ptr<SkeletonNode>> m_Children;
@@ -27,6 +28,7 @@ struct SkeletonNode
 	Matrix m_LocalBindTransform;
 };
 
+/// Stores the animation keyframes for a bone.
 class BoneAnimation
 {
 	Vector<TranslationKeyframe> m_Translation;
@@ -45,9 +47,11 @@ public:
 	void addRotationKeyframe(RotationKeyframe& keyframe) { m_Rotation.push_back(keyframe); }
 	void addScalingKeyframe(ScalingKeyframe& keyframe) { m_Scaling.push_back(keyframe); }
 
+	/// Lineary interpolates the two nearest keyframes to the current time.
 	Matrix interpolate(float time);
 };
 
+/// Represents a single animation of a model with its bone animation data.
 class SkeletalAnimation
 {
 	float m_Duration;
@@ -58,6 +62,7 @@ public:
 	SkeletalAnimation(const SkeletalAnimation&) = default;
 	~SkeletalAnimation() = default;
 
+	/// Calls the interpolate() function of each BoneAnimation
 	Matrix interpolate(const String& nodeName, float currentTime);
 
 	float getStartTime() const;

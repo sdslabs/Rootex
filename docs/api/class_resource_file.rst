@@ -18,7 +18,9 @@ Derived Types
 - ``public FontResourceFile`` (:ref:`exhale_class_class_font_resource_file`)
 - ``public ImageCubeResourceFile`` (:ref:`exhale_class_class_image_cube_resource_file`)
 - ``public ImageResourceFile`` (:ref:`exhale_class_class_image_resource_file`)
+- ``public MaterialResourceFile`` (:ref:`exhale_class_class_material_resource_file`)
 - ``public ModelResourceFile`` (:ref:`exhale_class_class_model_resource_file`)
+- ``public ParticleEffectResourceFile`` (:ref:`exhale_class_class_particle_effect_resource_file`)
 - ``public TextResourceFile`` (:ref:`exhale_class_class_text_resource_file`)
 
 

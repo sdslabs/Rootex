@@ -9,41 +9,48 @@ See Middleclass (https://github.com/kikito/middleclass) for details on the ``cla
 
 .. code-block:: javascript
 
-    PlayerControl = class("PlayerControl")
+    EmptyScript = class("EmptyScript")
 
-    function PlayerControl:initialize(entity)
-        self.exports = {
-            variable = "Hello Rootex!"
-        }
-        self.collider = entity:getSphereCollider() or entity:getBoxCollider() or entity:getCapsuleCollider()
+    -- First method called after script initialisation
+    -- not safe to refer other entity script tables here
+    -- setup initial data members here that don't refer entities
+    function EmptyScript:begin(entity)
     end
 
-    function PlayerControl:begin(entity)
+    -- Called after all `begin` for the frame have been called
+    -- safe to assume that all scripts have `begin`ed and have 
+    -- data members
+    function EmptyScript:enterScene(entity)
+        print("Nothing is true")
     end
 
-    function PlayerControl:update(entity, delta)
-        if RTX.Input.IsPressed("Forward") then
-            self.collider:applyForce(RTX.Vector3.new(0, 0, -0.1))
-        end
-        if RTX.Input.IsPressed("Backward") then
-            self.collider:applyForce(RTX.Vector3.new(0, 0, 0.1))
-        end
-        if RTX.Input.IsPressed("Left") then
-            self.collider:applyForce(RTX.Vector3.new(-0.1, 0, 0))
-        end
-        if RTX.Input.IsPressed("Right") then
-            self.collider:applyForce(RTX.Vector3.new(0.1, 0, 0))
-        end
+    -- called once every frame
+    function EmptyScript:update(entity, delta)
     end
 
-    function PlayerControl:destroy(entity)
+    -- called during entity destruction
+    function EmptyScript:destroy(entity)
+        print("Everything is permitted")
     end
 
-    return PlayerControl
+    -- called when Collider of the entity detects a hit
+    function EmptyScript:hit(hit)
+        print("Everything is permitted")
+    end
+
+    -- called when entity enters a TriggerComponent
+    function EmptyScript:enterTrigger(entity, trigger)
+    end
+
+    -- called when entity exits a TriggerComponent
+    function EmptyScript:exitTrigger(entity, trigger)
+    end
+
+    return EmptyScript
 
 The functions are called into Lua from Rootex on the command of the :ref:`Class ScriptSystem`.
 
-The script files are run in a Lua VM and the Rootex functions available are registed by the :ref:`Class LuaInterpreter`'s implementation. The Lua scripting interface for Rootex mostly looks the same as the Rootex engine API that the engine uses internally to provide as vast a scripting environment as possible. All Rootex class names and functions are hidden under the ``RTX`` global Lua variable.
+The script files are run in a Lua VM and the Rootex functions available are registed by the :ref:`Class LuaInterpreter`'s implementation. The Lua scripting interface for Rootex mostly looks the same as the Rootex engine API that the engine uses internally to provide as vast a scripting environment as possible. All Rootex class names and functions are hidden under the ``RTX`` global Lua variable. An object which has its constructor registered can be constructed from scripts as ``RTX.Type.new(args)``.
 
 Scripting API
 =============

@@ -27,9 +27,9 @@ Includes
 
 - ``btBulletCollisionCommon.h``
 
-- ``physics_collider_component.h`` (:ref:`file_rootex_framework_components_physics_physics_collider_component.h`)
-
 - ``resource_files/collision_model_resource_file.h``
+
+- ``rigid_body_component.h`` (:ref:`file_rootex_framework_components_physics_rigid_body_component.h`)
 
 
 
@@ -41,4 +41,11 @@ Classes
 
 
 - :ref:`exhale_class_class_static_mesh_collider_component`
+
+
+Functions
+---------
+
+
+- :ref:`exhale_function_static__mesh__collider__component_8h_1a306ac0b947805915ff6bc78e2acc1b21`
 

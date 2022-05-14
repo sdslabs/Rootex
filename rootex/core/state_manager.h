@@ -15,6 +15,7 @@ public:
 	virtual Ptr<State> exit(StateManager& manager, float deltaMilliseconds) = 0;
 };
 
+/// A state-machine-like class used to mantain and update states in classes like the PlayerController.
 class StateManager
 {
 protected:

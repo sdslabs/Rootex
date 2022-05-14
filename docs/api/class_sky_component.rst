@@ -3,7 +3,7 @@
 Class SkyComponent
 ==================
 
-- Defined in :ref:`file_rootex_framework_components_visual_sky_component.h`
+- Defined in :ref:`file_rootex_framework_components_visual_effect_sky_component.h`
 
 
 Inheritance Relationships

@@ -6,6 +6,7 @@
 #include "renderer/constant_buffer.h"
 #include "scene.h"
 
+/// Base class for all components related to rendering.
 class RenderableComponent : public Component
 {
 	DEPENDS_ON(TransformComponent);

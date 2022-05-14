@@ -20,6 +20,8 @@ Program Listing for File window.h
    
    class Window
    {
+       EventBinder<Window> m_Binder;
+   
    protected:
        int m_Width;
        int m_Height;
@@ -41,10 +43,13 @@ Program Listing for File window.h
        Window(const Window&) = delete;
        Window& operator=(const Window&) = delete;
        ~Window() = default;
+   
        void show();
        std::optional<int> processMessages();
-       void applyDefaultViewport();
+   
        void swapBuffers();
+   
+       void applyDefaultViewport();
        void clipCursor(RECT clip);
        void resetClipCursor();
        void showCursor(bool enabled);
@@ -58,6 +63,7 @@ Program Listing for File window.h
        int getHeight() const;
        int getTitleBarHeight() const;
        HWND getWindowHandle();
+   
        void setWindowTitle(String title);
        void setWindowSize(const Vector2& newSize);
    };
