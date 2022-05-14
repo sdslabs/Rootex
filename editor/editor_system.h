@@ -35,8 +35,8 @@ class EditorSystem : public System
 	bool m_WorldMode = true;
 	bool m_Autosave = false;
 
-	String m_openSceneName;
-	String m_loadingScene;
+	String m_OpenSceneName;
+	String m_LoadingScene;
 
 	ImFont* m_EditorFont;
 	ImFont* m_EditorFontItalic;

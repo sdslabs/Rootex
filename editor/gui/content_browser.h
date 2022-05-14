@@ -42,5 +42,4 @@ public:
 
 	ContentBrowserSettings& getSettings() { return m_ContentBrowserSettings; }
 	void setActive(bool enabled) { m_ContentBrowserSettings.m_IsActive = enabled; }
-	//void CALLBACK notifyFileSystemChanges(PVOID lpParam, BOOLEAN TimerOrWaitFired);
 };
