@@ -34,6 +34,10 @@ RenderSystem::RenderSystem()
 	m_LineMaterial = ResourceLoader::CreateBasicMaterialResourceFile("rootex/assets/materials/line.basic.rmat");
 	m_CurrentFrameLines.m_Endpoints.reserve(LINE_MAX_VERTEX_COUNT * LINE_VERTEX_COUNT * 3);
 	m_CurrentFrameLines.m_Indices.reserve(LINE_MAX_VERTEX_COUNT * LINE_VERTEX_COUNT);
+	m_CurrentFrameLinesOnTop.m_Endpoints.reserve(LINE_MAX_VERTEX_COUNT * LINE_VERTEX_COUNT * 3);
+	m_CurrentFrameLinesOnTop.m_Indices.reserve(LINE_MAX_VERTEX_COUNT * LINE_VERTEX_COUNT);
+
+	m_SubmitLinesOnTop = false;
 
 	m_PerFrameVSCB = RenderingDevice::GetSingleton()->createBuffer(PerFrameVSCB(), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
 	m_PerCameraChangeVSCB = RenderingDevice::GetSingleton()->createBuffer(Matrix(), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
@@ -291,6 +295,9 @@ void RenderSystem::update(float deltaMilliseconds)
 		ZoneNamedN(alphaRenderPass, "Alpha Render Pass", true);
 		renderPassRender(deltaMilliseconds, RenderPass::Alpha);
 	}
+	{
+		renderLinesOnTop();
+	}
 }
 
 void RenderSystem::renderLines()
@@ -313,18 +320,52 @@ void RenderSystem::renderLines()
 	}
 }
 
+void RenderSystem::renderLinesOnTop()
+{
+	if (m_CurrentFrameLinesOnTop.m_Endpoints.size())
+	{
+		m_Renderer->bind(m_LineMaterial.get());
+
+		enableLineRenderMode();
+		RenderingDevice::GetSingleton()->disableDSS();
+
+		VertexBuffer vb((const char*)m_CurrentFrameLinesOnTop.m_Endpoints.data(), m_CurrentFrameLinesOnTop.m_Endpoints.size() / 3, sizeof(float) * 3, D3D11_USAGE_IMMUTABLE, 0);
+		IndexBuffer ib(m_CurrentFrameLinesOnTop.m_Indices);
+
+		m_Renderer->draw(&vb, &ib);
+
+		m_CurrentFrameLinesOnTop.m_Endpoints.clear();
+		m_CurrentFrameLinesOnTop.m_Indices.clear();
+
+		RenderingDevice::GetSingleton()->enableDSS();
+		resetRenderMode();
+	}
+}
+
+void RenderSystem::enableSubmitLinesOnTop()
+{
+	m_SubmitLinesOnTop = true;
+}
+
+void RenderSystem::disableSubmitLinesOnTop()
+{
+	m_SubmitLinesOnTop = false;
+}
+
 void RenderSystem::submitLine(const Vector3& from, const Vector3& to)
 {
-	m_CurrentFrameLines.m_Endpoints.push_back(from.x);
-	m_CurrentFrameLines.m_Endpoints.push_back(from.y);
-	m_CurrentFrameLines.m_Endpoints.push_back(from.z);
+	LineRequests& currentFrameLines = m_SubmitLinesOnTop ? m_CurrentFrameLinesOnTop : m_CurrentFrameLines;
 
-	m_CurrentFrameLines.m_Endpoints.push_back(to.x);
-	m_CurrentFrameLines.m_Endpoints.push_back(to.y);
-	m_CurrentFrameLines.m_Endpoints.push_back(to.z);
+	currentFrameLines.m_Endpoints.push_back(from.x);
+	currentFrameLines.m_Endpoints.push_back(from.y);
+	currentFrameLines.m_Endpoints.push_back(from.z);
 
-	m_CurrentFrameLines.m_Indices.push_back(m_CurrentFrameLines.m_Indices.size());
-	m_CurrentFrameLines.m_Indices.push_back(m_CurrentFrameLines.m_Indices.size());
+	currentFrameLines.m_Endpoints.push_back(to.x);
+	currentFrameLines.m_Endpoints.push_back(to.y);
+	currentFrameLines.m_Endpoints.push_back(to.z);
+
+	currentFrameLines.m_Indices.push_back(currentFrameLines.m_Indices.size());
+	currentFrameLines.m_Indices.push_back(currentFrameLines.m_Indices.size());
 }
 
 void RenderSystem::submitBox(const Vector3& min, const Vector3& max)
