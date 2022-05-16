@@ -122,6 +122,14 @@ public:
 	void update();
 	void setDisplaySize(const Vector2& newSize);
 
+	Array<String, 23> getMouseButtonName();
+	Array<String, 166> getKeyboardButtonName();
+	Array<String, 20> getPadButtonName();
+
+	static Array<String, 23> GetMouseButtonName() { return GetSingleton()->getMouseButtonName(); }
+	static Array<String, 166> GetKeyboardButtonName() { return GetSingleton()->getKeyboardButtonName(); }
+	static Array<String, 20> GetPadButtonName() { return GetSingleton()->getPadButtonName(); }
+
 	const gainput::InputMap& getMap() const { return m_GainputMap; }
 	gainput::InputDeviceMouse* getMouse() { return static_cast<gainput::InputDeviceMouse*>(m_GainputManager.GetDevice(DeviceIDs[Device::Mouse])); }
 	gainput::InputDeviceKeyboard* getKeyboard() { return static_cast<gainput::InputDeviceKeyboard*>(m_GainputManager.GetDevice(DeviceIDs[Device::Keyboard])); }
