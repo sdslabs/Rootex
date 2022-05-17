@@ -18,10 +18,10 @@ public:
 	ComponentArray() //default constructor
 	{
 		m_data.reserve(MAX_COMPONENT_ARRAY_SIZE);
-		m_data.reserve(MAX_COMPONENT_ARRAY_SIZE);
+		m_isValid.reserve(MAX_COMPONENT_ARRAY_SIZE);
 		for (int i = 0; i < MAX_COMPONENT_ARRAY_SIZE; i++)
 		{
-			m_isValid[i] = true;
+			m_isValid.push_back(true);
 			//m_data[i] = component();
 		}
 		curr = 0;

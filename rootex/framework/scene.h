@@ -92,5 +92,6 @@ public:
 	Entity& getEntity() { return m_Entity; }
 	const String& getName() const { return m_Name; }
 	const String& getFullName() const { return m_FullName; }
+	void setFullName(String& name) { m_FullName = name; }
 	SceneSettings& getSettings() { return m_Settings; }
 };

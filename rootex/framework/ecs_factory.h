@@ -62,20 +62,14 @@ public:
 
 	bool removeComponent(Entity& entity) override
 	{
-		int index = 0;
+		//auto itr = m_Instances.begin();
 		for (auto x: m_Instances)
 		{
 			if (x.getOwner().getID() == entity.getID())
 			{
-				break;
+				m_Instances.erase(x - m_Instances.begin());
+				return true;
 			}
-			index++;
-		}
-
-		if (index != m_Instances.size())
-		{
-			m_Instances.erase(index);
-			return true;
 		}
 		return false;
 	}
