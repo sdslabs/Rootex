@@ -13,14 +13,13 @@ Program Listing for File camera_component.h
    #pragma once
    
    #include "component.h"
-   #include "components/transform_component.h"
+   #include "components/space/transform_component.h"
    #include "core/renderer/post_processor.h"
    
    class CameraComponent : public Component
    {
+       COMPONENT(CameraComponent, Category::General);
        DEPENDS_ON(TransformComponent);
-   
-       static Component* Create(const JSON::json& componentData);
    
        bool m_Active;
        float m_FoV;
@@ -32,31 +31,24 @@ Program Listing for File camera_component.h
        Matrix m_ViewMatrix;
        Matrix m_ProjectionMatrix;
    
-       CameraComponent(const Vector2& aspectRatio, float fov, float nearPlane, float farPlane, const PostProcessingDetails& postProcesing);
-       CameraComponent(CameraComponent&) = delete;
-       ~CameraComponent() = default;
-   
-       friend class ECSFactory;
-   
        void refreshProjectionMatrix();
        void refreshViewMatrix();
    
    public:
-       static const ComponentID s_ID = (ComponentID)ComponentIDs::CameraComponent;
+       CameraComponent(Entity& owner, const JSON::json& data);
+       ~CameraComponent() = default;
    
-       virtual bool setupData() override;
-       void onRemove() override;
-   
-       virtual Matrix& getViewMatrix();
-       virtual Matrix& getProjectionMatrix();
-       Vector3 getAbsolutePosition() const { return m_TransformComponent->getAbsoluteTransform().Translation(); }
-       virtual const char* getName() const override { return "CameraComponent"; }
+       Matrix& getViewMatrix();
+       Matrix& getProjectionMatrix();
+       Vector3 getAbsolutePosition() { return getTransformComponent()->getAbsoluteTransform().Translation(); }
    
        PostProcessingDetails getPostProcessingDetails() const { return m_PostProcessingDetails; }
    
-       ComponentID getComponentID() const { return s_ID; }
-   
-       virtual JSON::json getJSON() const override;
-   
+       bool setupData() override;
+       void onRemove() override;
+       JSON::json getJSON() const override;
+       void addCustomPostProcessingDetails(const String& path);
        void draw() override;
    };
+   
+   DECLARE_COMPONENT(CameraComponent);

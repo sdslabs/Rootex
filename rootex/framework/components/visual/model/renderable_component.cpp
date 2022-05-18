@@ -245,7 +245,7 @@ void RenderableComponent::draw()
 				}
 			}
 			ImGui::SameLine();
-			if (ImGui::Button((ICON_ROOTEX_FOLDER_OPEN "##" + oldMaterial->getPath().generic_string()).c_str()))
+			if (ImGui::Button((ICON_ROOTEX_REFRESH "##" + oldMaterial->getPath().generic_string()).c_str()))
 			{
 				if (Optional<String> result = OS::SelectFile("Material(*.rmat)\0*.rmat\0", "game/assets/materials/"))
 				{
@@ -253,6 +253,14 @@ void RenderableComponent::draw()
 				}
 			}
 			ImGui::EndGroup();
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("MATERIAL_PAYLOAD"))
+				{
+					const char* path = (const char*)payload->Data;
+					setMaterialOverride(oldMaterial, ResourceLoader::CreateMaterialResourceFile(path));
+				}
+			}
 			ImGui::NextColumn();
 			ImGui::Separator();
 		}

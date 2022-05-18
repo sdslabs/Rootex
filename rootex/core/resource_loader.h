@@ -25,7 +25,7 @@ static const inline HashMap<ResourceFile::Type, const char*> SupportedFiles = {
 	{ ResourceFile::Type::Image, "Image(*.png;*.jpeg;*.jpg;*.dds)\0*.png;*.jpeg;*.jpg;*.dds\0" },
 	{ ResourceFile::Type::ImageCube, "Image Cube(*.dds)\0*.dds\0" },
 	{ ResourceFile::Type::Audio, "Audio(*.wav)\0*.wav\0" },
-	{ ResourceFile::Type::Model, "Model(*.3ds;*.fbx;*.dae)\0*.obj;*.blend;*.3ds;*.fbx;*.dae\0" },
+	{ ResourceFile::Type::Model, "Model(*.3ds;*.fbx;*.dae;*.gltf)\0*.obj;*.blend;*.3ds;*.fbx;*.dae;*.gltf\0" },
 	{ ResourceFile::Type::AnimatedModel, "Animated Model(*.dae;*.fbx;*.gltf)\0*.dae;*.fbx;*.gltf\0" },
 	{ ResourceFile::Type::CollisionModel, "Collision Model(*.obj)\0*.obj\0" },
 	{ ResourceFile::Type::Lua, "Lua(*.lua)\0*.lua\0" },
@@ -52,7 +52,26 @@ static const inline HashMap<ResourceFile::Type, const char*> CreatableFiles = {
 	{ ResourceFile::Type::DecalMaterial, ".decal.rmat" },
 };
 
+static const inline HashMap<String, Vector<const char*>> m_PayloadTypes = {
+	{ ".png", { "IMAGE_PAYLOAD" } },
+	{ ".jpg", { "IMAGE_PAYLOAD" } },
+	{ ".jpeg", { "IMAGE_PAYLOAD" } },
+	{ ".dds", { "IMAGE_PAYLOAD", "IMAGE_CUBE_PAYLOAD" } },
+	{ ".wav", { "AUDIO_PAYLOAD" } },
+	{ ".3ds", { "MODEL_PAYLOAD" } },
+	{ ".fbx", { "MODEL_PAYLOAD", "ANIMATED_MODEL_PAYLOAD" } },
+	{ ".obj", { "MODEL_PAYLOAD", "COLLISION_MODEL_PAYLOAD" } },
+	{ ".blend", { "MODEL_PAYLOAD" } },
+	{ ".dae", { "MODEL_PAYLOAD", "ANIMATED_MODEL_PAYLOAD" } },
+	{ ".gltf", { "ANIMATED_MODEL_PAYLOAD" } },
+	{ ".lua", { "SCRIPT_PAYLOAD" } },
+	{ ".rml", { "RML_PAYLOAD" } },
+	{ ".rmat", { "MATERIAL_PAYLOAD" } },
+	{ ".json", { "SCENE_PAYLOAD" } },
+};
+
 bool IsFileSupported(const String& extension, ResourceFile::Type supportedFileType);
+Vector<const char*> GetPayloadTypes(const String& extension);
 
 /// Factory for ResourceFile objects. Implements creating, loading and saving files.                                \n
 /// Maintains an internal cache that doesn't let the same file to be loaded twice. Cache misses force file loading. \n

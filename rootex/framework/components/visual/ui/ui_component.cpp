@@ -64,7 +64,14 @@ void UIComponent::draw()
 		EventManager::GetSingleton()->call(EditorEvents::EditorOpenFile, VariantVector { m_FilePath, (int)ResourceFile::Type::Text });
 	}
 	ImGui::EndGroup();
-
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("RML_PAYLOAD"))
+		{
+			const char* path = (const char*)payload->Data;
+			setDocument(path);
+		}
+	}
 	if (ImGui::Button(ICON_ROOTEX_FOLDER_OPEN "##Document"))
 	{
 		if (Optional<String> result = OS::SelectFile("RML Document(*.rml)\0*.rml\0", "game/assets/"))

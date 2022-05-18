@@ -195,29 +195,69 @@ void BasicMaterialResourceFile::draw()
 {
 	MaterialResourceFile::draw();
 
+	ImGui::BeginGroup();
 	RootexSelectableImage("Diffuse Texture " ICON_ROOTEX_FOLDER_OPEN, m_DiffuseImageFile, [this](const String& selectedFile) { setDiffuse(ResourceLoader::CreateImageResourceFile(selectedFile)); });
 	ImGui::SameLine();
 	if (ImGui::Button(ICON_ROOTEX_REFRESH "##Diffuse Texture"))
 	{
 		setDiffuse(ResourceLoader::CreateImageResourceFile("rootex/assets/white.png"));
 	}
+	ImGui::EndGroup();
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("IMAGE_PAYLOAD"))
+		{
+			const char* path = (const char*)payload->Data;
+			setDiffuse(ResourceLoader::CreateImageResourceFile(path));
+		}
+	}
+	ImGui::BeginGroup();
 	RootexSelectableImage("Normal Texture " ICON_ROOTEX_FOLDER_OPEN, m_NormalImageFile, [this](const String& selectedFile) { setNormal(ResourceLoader::CreateImageResourceFile(selectedFile)); });
 	ImGui::SameLine();
 	if (ImGui::Button(ICON_ROOTEX_REFRESH "##Normal Texture"))
 	{
 		setNormal(nullptr);
 	}
+	ImGui::EndGroup();
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("IMAGE_PAYLOAD"))
+		{
+			const char* path = (const char*)payload->Data;
+			setNormal(ResourceLoader::CreateImageResourceFile(path));
+		}
+	}
+	ImGui::BeginGroup();
 	RootexSelectableImage("Specular Texture " ICON_ROOTEX_FOLDER_OPEN, m_SpecularImageFile, [this](const String& selectedFile) { setSpecular(ResourceLoader::CreateImageResourceFile(selectedFile)); });
 	ImGui::SameLine();
 	if (ImGui::Button(ICON_ROOTEX_REFRESH "##Specular Texture"))
 	{
 		setSpecular(ResourceLoader::CreateImageResourceFile("rootex/assets/white.png"));
 	}
+	ImGui::EndGroup();
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("IMAGE_PAYLOAD"))
+		{
+			const char* path = (const char*)payload->Data;
+			setSpecular(ResourceLoader::CreateImageResourceFile(path));
+		}
+	}
+	ImGui::BeginGroup();
 	RootexSelectableImage("Lightmap Texture " ICON_ROOTEX_FOLDER_OPEN, m_LightmapImageFile, [this](const String& selectedFile) { setLightmap(ResourceLoader::CreateImageResourceFile(selectedFile)); });
 	ImGui::SameLine();
 	if (ImGui::Button(ICON_ROOTEX_REFRESH "##Lightmap Texture"))
 	{
 		setLightmap(ResourceLoader::CreateImageResourceFile("rootex/assets/white.png"));
+	}
+	ImGui::EndGroup();
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("IMAGE_PAYLOAD"))
+		{
+			const char* path = (const char*)payload->Data;
+			setLightmap(ResourceLoader::CreateImageResourceFile(path));
+		}
 	}
 
 	ImGui::ColorEdit4("Color", &m_MaterialData.pixelBufferData.color.x, ImGuiColorEditFlags_PickerHueWheel);

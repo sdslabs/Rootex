@@ -8,6 +8,7 @@ IF "%1"=="assets-test" (
     git submodule update --init --recursive --remote
     cd game/assets
     git remote add upstream git@gitlab.com:sdslabs/rootex-assets.git
+    cd ../..
 )
 IF "%1"=="assets-game" (
     git submodule deinit -f game/assets
@@ -18,6 +19,7 @@ IF "%1"=="assets-game" (
     git submodule update --init --recursive --remote
     cd game/assets
     git remote add upstream git@gitlab.com:sdslabs/rootex-game.git
+    cd ../..
 )
 
 IF "%1"=="assets-custom" (
@@ -27,4 +29,5 @@ IF "%1"=="assets-custom" (
     git config --file=.gitmodules submodule.assets.url %2
     git config --file=.gitmodules submodule.assets.branch main
     git submodule update --init --recursive --remote
+    cd ../..
 )

@@ -41,6 +41,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_MainRTSRV;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_MainDSV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_MainDSSRV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_MainStencilSRV;
 
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> m_OffScreenTexture;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_OffScreenRTV;
@@ -165,6 +166,7 @@ public:
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> getMainSRV();
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> getDepthSSRV();
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> getStencilSRV();
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> getOffScreenSRV();
 
 	Ref<DirectX::SpriteBatch> getUIBatch();

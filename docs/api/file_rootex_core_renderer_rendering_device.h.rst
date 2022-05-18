@@ -31,6 +31,8 @@ Includes
 
 - ``d3dcompiler.h``
 
+- ``event_manager.h`` (:ref:`file_rootex_core_event_manager.h`)
+
 - ``vendor/DirectXTK/Inc/SpriteBatch.h``
 
 - ``vendor/DirectXTK/Inc/SpriteFont.h``

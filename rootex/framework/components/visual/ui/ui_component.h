@@ -6,6 +6,7 @@
 #include "RmlUi/Core.h"
 #define interface __STRUCT__
 
+/// UI component for RmlUi.
 class UIComponent : public Component
 {
 	COMPONENT(UIComponent, Category::UI);

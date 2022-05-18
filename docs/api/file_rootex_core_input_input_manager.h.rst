@@ -70,9 +70,9 @@ Functions
 
 - :ref:`exhale_function_input__manager_8h_1a8370145cc8dc75cc36f7599ccb6f822d`
 
-- :ref:`exhale_function_input__manager_8h_1a8409ec4fceb6f7cae1d2a2967267a8c4`
-
 - :ref:`exhale_function_input__manager_8h_1a7924ded2d5bbc414c1096f880d6298a8`
+
+- :ref:`exhale_function_input__manager_8h_1a8409ec4fceb6f7cae1d2a2967267a8c4`
 
 
 Typedefs

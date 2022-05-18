@@ -5,7 +5,7 @@ Rootex is a Windows based 3D multithreaded game engine written in C++ and powers
 
 - Issue Tracker: http://github.com/sdslabs/rootex/issues
 - Source Code: http://github.com/sdslabs/rootex
-- Discord : https://discord.gg/RKkaKyk
+- Discord : https://discord.gg/ZDxvjm9dX8
 
 Support
 -------

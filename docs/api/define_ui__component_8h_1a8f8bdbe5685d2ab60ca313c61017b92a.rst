@@ -3,7 +3,7 @@
 Define interface
 ================
 
-- Defined in :ref:`file_rootex_framework_components_visual_ui_component.h`
+- Defined in :ref:`file_rootex_framework_components_visual_ui_ui_component.h`
 
 
 Define Documentation

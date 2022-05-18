@@ -14,6 +14,7 @@ Program Listing for File types.h
    
    // target Windows 7 or later
    #ifndef _WIN32_WINNT
+   #define WINVER 0x0601
    #define _WIN32_WINNT 0x0601
    #endif // !_WIN32_WINNT
    #include <sdkddkver.h>
@@ -34,6 +35,10 @@ Program Listing for File types.h
    #include <future>
    template <class T>
    using Promise = std::promise<T>;
+   
+   #include <mutex>
+   typedef std::mutex Mutex;
+   typedef std::recursive_mutex RecursiveMutex;
    
    #include <atomic>
    template <class T>
@@ -83,6 +88,12 @@ Program Listing for File types.h
    template <class T>
    using Vector = std::vector<T>;
    
+   Vector<String> Split(const String& s, char delim);
+   
+   #include <array>
+   template <class T, int N>
+   using Array = std::array<T, N>;
+   
    #include <stack>
    template <class T>
    using Stack = std::stack<T>;
@@ -109,7 +120,8 @@ Program Listing for File types.h
    typedef Vector<std::variant<bool, int, char, float, String, Vector2, Vector3, Vector4, Matrix>> VariantVector;
    class Scene;
    class Entity;
-   using Variant = std::variant<bool, int, char, float, String, Vector2, Vector3, Vector4, Matrix, VariantVector, Scene*, Entity*, Vector<String>>;
+   struct Hit;
+   using Variant = std::variant<bool, int, char, float, String, Vector<String>, Vector2, Vector3, Vector4, Matrix, VariantVector, Scene*, Entity*, Hit*>;
    template <typename P, typename Q>
    P Extract(const Q& v)
    {
@@ -259,4 +271,3 @@ Program Listing for File types.h
    #include "imgui.h"
    #include "utility/imgui_helpers.h"
    #include "editor/editor_events.h"
-   #include "event.h"

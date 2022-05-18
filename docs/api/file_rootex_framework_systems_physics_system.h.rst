@@ -25,6 +25,8 @@ Includes
 --------
 
 
+- ``BulletCollision/CollisionDispatch/btGhostObject.h``
+
 - ``btBulletDynamicsCommon.h``
 
 - ``core/physics/debug_drawer.h``

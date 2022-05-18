@@ -33,6 +33,12 @@ Included By
 -----------
 
 
+- :ref:`file_rootex_framework_components_visual_effect_cpu_particles_component.h`
+
+- :ref:`file_rootex_core_ui_custom_render_interface.h`
+
+- :ref:`file_rootex_core_resource_files_instancing_basic_material_resource_file.h`
+
 - :ref:`file_rootex_core_renderer_vertex_buffer.h`
 
 

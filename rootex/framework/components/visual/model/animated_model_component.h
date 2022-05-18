@@ -8,6 +8,7 @@
 #include "components/space/transform_component.h"
 #include "systems/animation_system.h"
 
+///  Component for skeletal animation models.
 class AnimatedModelComponent : public RenderableComponent
 {
 	COMPONENT(AnimatedModelComponent, Category::Model);

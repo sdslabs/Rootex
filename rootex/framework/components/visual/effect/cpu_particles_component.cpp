@@ -284,6 +284,14 @@ void CPUParticlesComponent::draw()
 		}
 	}
 	ImGui::EndGroup();
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("MATERIAL_PAYLOAD"))
+		{
+			const char* path = (const char*)payload->Data;
+			setMaterial(ResourceLoader::CreateInstancingBasicMaterialResourceFile(path));
+		}
+	}
 
 	ImGui::Separator();
 

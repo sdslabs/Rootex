@@ -17,8 +17,6 @@ Program Listing for File collision_model_resource_file.h
    
    #include "btBulletCollisionCommon.h"
    
-   class Material;
-   
    class CollisionModelResourceFile : public ResourceFile
    {
        explicit CollisionModelResourceFile(const FilePath& path);
