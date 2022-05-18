@@ -530,6 +530,8 @@ void LuaInterpreter::registerTypes()
 		    sol::base_classes, sol::bases<Component>());
 		transformAnimationComponent["play"] = &TransformAnimationComponent::setPlaying;
 		transformAnimationComponent["reset"] = &TransformAnimationComponent::reset;
+		transformAnimationComponent["isPlaying"] = &TransformAnimationComponent::isPlaying;
+		transformAnimationComponent["hasEnded"] = &TransformAnimationComponent::hasEnded;
 	}
 	{
 		sol::usertype<AnimatedModelComponent> animatedModelComponent = rootex.new_usertype<AnimatedModelComponent>(
