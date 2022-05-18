@@ -62,16 +62,7 @@ public:
 
 	bool removeComponent(Entity& entity) override
 	{
-		//auto itr = m_Instances.begin();
-		for (auto x: m_Instances)
-		{
-			if (x.getOwner().getID() == entity.getID())
-			{
-				m_Instances.erase(x - m_Instances.begin());
-				return true;
-			}
-		}
-		return false;
+		return m_Instances.erase(entity);
 	}
 
 	const String& getName() const override { return T::s_Name; };

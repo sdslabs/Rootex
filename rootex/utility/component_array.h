@@ -86,11 +86,17 @@ public:
 		arraySize++;
 	}
 
-	void erase(int index)
+	bool erase(Entity& entity)
 	{
-		if (index < curr)
-			m_isValid[index] = false;
-		arraySize--;
+		for (int i=0; i<=curr; i++)
+		{
+			if (m_isValid[i]  && (m_data[i].getOwner().getID() == entity.getID()))
+			{
+				m_isValid[i] = false;
+				return true;
+			}
+		}
+		return false;
 	}
 
 	ComponentArray<component> getALL()
