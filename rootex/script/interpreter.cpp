@@ -50,6 +50,7 @@
 #include "core/resource_files/text_resource_file.h"
 #include "core/resource_files/particle_effect_resource_file.h"
 #include "event_manager.h"
+#include "components/space/transform_animation_component.h"
 
 extern "C" int luaopen_lpeg(lua_State* L);
 
@@ -449,6 +450,7 @@ void LuaInterpreter::registerTypes()
 	{
 		sol::usertype<Entity> entity = rootex.new_usertype<Entity>("Entity",
 		    "transform", sol::property(&Entity::getComponent<TransformComponent>),
+		    "transformAnimationComponent", sol::property(&Entity::getComponent<TransformAnimationComponent>),
 		    "model", sol::property(&Entity::getComponent<ModelComponent>),
 		    "animatedModel", sol::property(&Entity::getComponent<AnimatedModelComponent>),
 		    "particleEffect", sol::property(&Entity::getComponent<ParticleEffectComponent>),
@@ -521,6 +523,13 @@ void LuaInterpreter::registerTypes()
 		    "ModelComponent",
 		    sol::base_classes, sol::bases<Component, RenderableComponent>());
 		modelComponent["getModelResourceFile"] = &ModelComponent::getModelResourceFile;
+	}
+	{
+		sol::usertype<TransformAnimationComponent> transformAnimationComponent = rootex.new_usertype<TransformAnimationComponent>(
+		    "TransformAnimationComponent",
+		    sol::base_classes, sol::bases<Component>());
+		transformAnimationComponent["play"] = &TransformAnimationComponent::setPlaying;
+		transformAnimationComponent["reset"] = &TransformAnimationComponent::reset;
 	}
 	{
 		sol::usertype<AnimatedModelComponent> animatedModelComponent = rootex.new_usertype<AnimatedModelComponent>(
