@@ -64,7 +64,7 @@ LightsInfo LightSystem::getDynamicLights()
 	//sort(pointLightComponents.begin(), pointLightComponents.end(), pointLightSortingLambda);
 
 	int i = 0;
-	for (auto && light: pointLightComponents)
+	for (auto&& light : pointLightComponents)
 	{
 		Vector3 transformedPosition = light.getAbsoluteTransform().Translation();
 		const PointLight& pointLight = light.getPointLight();
@@ -115,7 +115,7 @@ LightsInfo LightSystem::getDynamicLights()
 	//sort(spotLightComponents.begin(), spotLightComponents.end(), spotLightSortingLambda);
 
 	i = 0;
-	for (auto &&light: spotLightComponents)
+	for (auto&& light : spotLightComponents)
 	{
 		Matrix transform = light.getAbsoluteTransform();
 		const SpotLight& spotLight = light.getSpotLight();

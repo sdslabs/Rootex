@@ -29,7 +29,7 @@ class Component;
 	{                                                                                       \
 		return s_ComponentSets[Type::s_Name]->removeComponent(entity);                      \
 	}                                                                                       \
-	ComponentArray<Type>& ECSFactory::GetAll##Type()                                                \
+	ComponentArray<Type>& ECSFactory::GetAll##Type()                                        \
 	{                                                                                       \
 		return ((ComponentSet<Type>*)(s_ComponentSets[Type::s_Name].get()))->getAll();      \
 	}

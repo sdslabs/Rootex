@@ -38,7 +38,7 @@ public:
 	{
 		if (!owner.hasComponent(T::s_ID))
 		{
-			m_Instances.emplace_back( owner, componentData);
+			m_Instances.emplace_back(owner, componentData);
 
 			if (checks && !owner.onAllComponentsAdded())
 			{

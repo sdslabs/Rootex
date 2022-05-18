@@ -88,9 +88,9 @@ public:
 
 	bool erase(Entity& entity)
 	{
-		for (int i=0; i<=curr; i++)
+		for (int i = 0; i <= curr; i++)
 		{
-			if (m_isValid[i]  && (m_data[i].getOwner().getID() == entity.getID()))
+			if (m_isValid[i] && (m_data[i].getOwner().getID() == entity.getID()))
 			{
 				m_isValid[i] = false;
 				return true;
