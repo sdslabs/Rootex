@@ -450,7 +450,7 @@ void LuaInterpreter::registerTypes()
 	{
 		sol::usertype<Entity> entity = rootex.new_usertype<Entity>("Entity",
 		    "transform", sol::property(&Entity::getComponent<TransformComponent>),
-		    "transformAnimationComponent", sol::property(&Entity::getComponent<TransformAnimationComponent>),
+		    "transformAnimation", sol::property(&Entity::getComponent<TransformAnimationComponent>),
 		    "model", sol::property(&Entity::getComponent<ModelComponent>),
 		    "animatedModel", sol::property(&Entity::getComponent<AnimatedModelComponent>),
 		    "particleEffect", sol::property(&Entity::getComponent<ParticleEffectComponent>),
@@ -528,7 +528,7 @@ void LuaInterpreter::registerTypes()
 		sol::usertype<TransformAnimationComponent> transformAnimationComponent = rootex.new_usertype<TransformAnimationComponent>(
 		    "TransformAnimationComponent",
 		    sol::base_classes, sol::bases<Component>());
-		transformAnimationComponent["play"] = &TransformAnimationComponent::setPlaying;
+		transformAnimationComponent["setPlaying"] = &TransformAnimationComponent::setPlaying;
 		transformAnimationComponent["reset"] = &TransformAnimationComponent::reset;
 		transformAnimationComponent["isPlaying"] = &TransformAnimationComponent::isPlaying;
 		transformAnimationComponent["hasEnded"] = &TransformAnimationComponent::hasEnded;
