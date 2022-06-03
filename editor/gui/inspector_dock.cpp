@@ -236,7 +236,7 @@ void InspectorDock::draw(float deltaMilliseconds)
 				{
 					if (Optional<String> result = OS::SaveSelectFile("Scene(*.scene.json)\0*.scene.json\0", "game/assets/scenes/"))
 					{
-						if (!SceneLoader::GetSingleton()->saveSceneAtFile(m_OpenedScene, *result))
+						if (!SceneLoader::GetSingleton()->saveSceneAtFile(m_OpenedScene, *result + ".scene.json"))
 						{
 							WARN("Could not save selected scene to file: " + *result);
 						}
