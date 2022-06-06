@@ -158,8 +158,8 @@ void RenderableComponent::draw()
 	if (m_LODEnable)
 	{
 		ImGui::Indent();
-		ImGui::DragFloat("LOD Bias", &m_LODBias, 0.01f, 0.0f, FLT_MAX / INT_MAX);
-		ImGui::DragFloat("LOD Distance", &m_LODDistance, 0.1f, 0.1f, FLT_MAX / INT_MAX);
+		ImGui::DragFloat("LOD Bias", &m_LODBias, 0.01f, 0.0f, FLT_MAX);
+		ImGui::DragFloat("LOD Distance", &m_LODDistance, 0.1f, 0.1f, FLT_MAX);
 		ImGui::Unindent();
 	}
 
