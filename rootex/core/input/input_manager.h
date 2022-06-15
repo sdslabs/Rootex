@@ -40,6 +40,7 @@ struct InputScheme
 {
 	Vector<InputDescription> bools;
 	Vector<InputDescription> floats;
+	bool isActive;
 };
 
 void to_json(JSON::json& j, const InputScheme& s);

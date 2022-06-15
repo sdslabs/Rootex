@@ -278,6 +278,13 @@ bool Scene::addChild(Ptr<Scene>& child)
 	if (findIt == m_ChildrenScenes.end())
 	{
 		child->m_ParentScene = this;
+		if (getID() != ROOT_SCENE_ID && getName() != "EditorCamera" && getName() != "EditorGrid")
+		{
+			for (auto&& inputScheme : child->getSettings().inputSchemes)
+			{
+				m_Settings.inputSchemes.insert(inputScheme);
+			}
+		}
 		m_ChildrenScenes.emplace_back(std::move(child));
 		ScriptSystem::GetSingleton()->addEnterScriptEntity(&m_ChildrenScenes.back()->getEntity());
 	}
@@ -493,13 +500,15 @@ void SceneSettings::draw()
 		ImGui::EndCombo();
 	}
 
-	ImGui::Text("Input Schemes");
+	ImGui::Text("Input Schemes:");
+	ImGui::Separator();
 	int i = 0;
 	const String* inputSchemeToRemove = nullptr;
 	for (auto& [name, inputScheme] : inputSchemes)
 	{
 		ImGui::PushID(i);
-
+		ImGui::Text(name.c_str());
+		ImGui::Checkbox("Active", &inputScheme.isActive);
 		ImGui::SetNextItemWidth(ImGui::GetFontSize() * 100);
 		if (ImGui::ListBoxHeader(name.c_str()))
 		{
@@ -549,10 +558,6 @@ void SceneSettings::draw()
 
 			ImGui::ListBoxFooter();
 		}
-		if (ImGui::Button("Remove Scheme"))
-		{
-			inputSchemeToRemove = &name;
-		}
 
 		static int type = 0;
 		ImGui::Combo("Type", &type, "Bool\0Float\0");
@@ -573,8 +578,12 @@ void SceneSettings::draw()
 				inputScheme.floats.push_back(inputDesc);
 			}
 		}
-
+		if (ImGui::Button("Remove Scheme"))
+		{
+			inputSchemeToRemove = &name;
+		}
 		ImGui::PopID();
+		ImGui::Separator();
 		i++;
 	}
 
@@ -583,8 +592,6 @@ void SceneSettings::draw()
 		inputSchemes.erase(*inputSchemeToRemove);
 		startScheme = "";
 	}
-
-	ImGui::Separator();
 
 	static String newSchemeName = "New Scheme";
 	ImGui::InputText("##New Scheme", &newSchemeName);

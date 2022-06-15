@@ -491,6 +491,7 @@ void to_json(JSON::json& j, const InputScheme& s)
 {
 	j["bools"] = s.bools;
 	j["floats"] = s.floats;
+	j["active"] = s.isActive;
 }
 
 void from_json(const JSON::json& j, InputScheme& s)
@@ -505,4 +506,5 @@ void from_json(const JSON::json& j, InputScheme& s)
 		InputDescription id = floatInput;
 		s.floats.push_back(id);
 	}
+	s.isActive = j.value("active", false);
 }
