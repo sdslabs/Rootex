@@ -27,9 +27,9 @@ Includes
 
 - ``AL/alut.h``
 
-- ``al.h`` (:ref:`file_rootex_core_renderer_materials_animated_material.h`)
+- ``al.h``
 
-- ``resource_file.h`` (:ref:`file_rootex_core_resource_files_animated_model_resource_file.h`)
+- ``resource_file.h`` (:ref:`file_rootex_core_resource_files_animated_basic_material_resource_file.h`)
 
 
 

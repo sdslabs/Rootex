@@ -16,10 +16,10 @@ Program Listing for File vertex_data.h
    
    struct VertexData
    {
-       Vector3 m_Position;
-       Vector3 m_Normal;
-       Vector2 m_TextureCoord;
-       Vector3 m_Tangent = { 0.0f, 0.0f, 0.0f };
+       Vector3 position;
+       Vector3 normal;
+       Vector2 textureCoord;
+       Vector3 tangent;
    };
    
    struct InstanceData
@@ -39,19 +39,19 @@ Program Listing for File vertex_data.h
    
    struct UIVertexData
    {
-       Vector2 m_Position;
-       char m_Color[4];
-       Vector2 m_TextureCoord;
+       Vector2 position;
+       char color[4];
+       Vector2 textureCoord;
    };
    
    struct AnimatedVertexData : public VertexData
    {
-       int m_BoneIndices[4];
-       Vector4 m_BoneWeights;
+       int boneIndices[4];
+       Vector4 boneWeights;
    };
    
    struct FXAAData
    {
-       Vector3 m_Position;
-       Vector2 m_Texturecoord;
+       Vector3 position;
+       Vector2 texturecoord;
    };

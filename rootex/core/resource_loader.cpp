@@ -13,6 +13,22 @@ bool IsFileSupported(const String& extension, ResourceFile::Type supportedFileTy
 	return extensions.find(extension) != String::npos;
 }
 
+Vector<const char*> GetPayloadTypes(const String& extension)
+{
+	if (extension.empty())
+	{
+		return { "OTHER_PAYLOAD" };
+	}
+	if (m_PayloadTypes.find(extension) != m_PayloadTypes.end())
+	{
+		return m_PayloadTypes.at(extension);
+	}
+	else
+	{
+		return { "OTHER_PAYLOAD" };
+	}
+}
+
 Ref<ResourceFile> ResourceLoader::CreateResourceFile(const ResourceFile::Type& type, const String& path)
 {
 	if (SupportedFiles.find(type) == SupportedFiles.end())

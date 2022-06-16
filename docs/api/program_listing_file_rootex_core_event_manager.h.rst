@@ -15,44 +15,86 @@ Program Listing for File event_manager.h
    #include "common/common.h"
    #include "event.h"
    
-   #define BIND_EVENT_FUNCTION(stringEventType, function) EventManager::GetSingleton()->addListener(stringEventType, function)
-   #define BIND_EVENT_MEMBER_FUNCTION(stringEventType, classFunction) EventManager::GetSingleton()->addListener(stringEventType, [this](const Event* event) -> Variant { return this->classFunction(event); })
+   class EventBinderBase
+   {
+   public:
+       virtual bool hasBinding(const Event::Type& binding) const = 0;
+       virtual Variant handle(const Event& event) = 0;
+   };
    
-   const unsigned int EVENTMANAGER_NUM_QUEUES = 2;
+   template <class T>
+   class EventBinder : public EventBinderBase
+   {
+       typedef Function<Variant(const Event*)> EventFunction;
    
-   typedef Function<Variant(const Event*)> EventFunction;
+       HashMap<Event::Type, EventFunction> m_Bindings;
+   
+   public:
+       EventBinder()
+       {
+           EventManager::GetSingleton()->addBinder(this);
+       }
+   
+       ~EventBinder()
+       {
+           EventManager::GetSingleton()->removeBinder(this);
+       }
+   
+       void bind(const Event::Type& event, T* self, Variant (T::*eventFunction)(const Event*))
+       {
+           m_Bindings.emplace(event, [self, eventFunction](const Event* e) { return (self->*eventFunction)(e); });
+       }
+   
+       void bind(const Event::Type& event, EventFunction function)
+       {
+           m_Bindings.emplace(event, function);
+       }
+   
+       void unbind(const Event::Type& event)
+       {
+           m_Bindings.erase(event);
+       }
+   
+       void unbindAll()
+       {
+           m_Bindings.clear();
+       }
+   
+       bool hasBinding(const Event::Type& binding) const override
+       {
+           return m_Bindings.find(binding) != m_Bindings.end();
+       }
+   
+       Variant handle(const Event& event) override
+       {
+           return m_Bindings.at(event.getType())(&event);
+       }
+   };
    
    class EventManager
    {
+       HashMap<EventBinderBase*, bool> m_EventBinders;
        Vector<Function<void()>> m_DeferList;
-       HashMap<Event::Type, Vector<EventFunction>> m_EventListeners;
-       Vector<Ref<Event>> m_Queues[EVENTMANAGER_NUM_QUEUES];
-       unsigned int m_ActiveQueue;
-   
-       EventManager();
-       ~EventManager() = default;
+       Vector<Ref<Event>> m_DeferredCalls;
    
    public:
        static EventManager* GetSingleton();
    
-       enum Constant
-       {
-           Infinite = 0xffffffff
-       };
-   
        void defer(Function<void()> function);
-       bool addEvent(const Event::Type& event);
-       void removeEvent(const Event::Type& event);
-       bool addListener(const Event::Type& type, EventFunction instance);
-       Variant returnCall(const Event& event);
-       Variant returnCall(const Event::Type& eventType, const Variant& data = 0);
-       void call(const Event& event);
-       void call(const Event::Type& eventType, const Variant& data = 0);
+   
+       void addBinder(EventBinderBase* binder);
+       void removeBinder(EventBinderBase* binder);
+   
+       Variant returnCall(const Event& event) const;
+       Variant returnCall(const Event::Type& eventType, const Variant& data = 0) const;
+   
+       void call(const Event& event) const;
+       void call(const Event::Type& eventType, const Variant& data = 0) const;
+   
        void deferredCall(Ref<Event> event);
        void deferredCall(const Event::Type& eventType, const Variant& data = 0);
-       bool dispatchDeferred(unsigned long maxMillis = Infinite);
    
-       void releaseAllEventListeners();
+       void dispatchDeferred();
    
-       const HashMap<Event::Type, Vector<EventFunction>>& getRegisteredEvents() const { return m_EventListeners; }
+       const HashMap<EventBinderBase*, bool>& getBinders() const { return m_EventBinders; }
    };

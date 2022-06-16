@@ -13,7 +13,6 @@ Program Listing for File event.h
    #pragma once
    
    #include "common/common.h"
-   #include "entity.h"
    
    #define DEFINE_EVENT(eventName, ...) const static inline Event::Type eventName = #eventName
    
@@ -27,7 +26,7 @@ Program Listing for File event.h
        Variant m_Data;
    
    public:
-       Event(const Type type, const Variant data);
+       Event(const Type& type, const Variant& data);
        Event(Event&) = delete;
        ~Event() = default;
    

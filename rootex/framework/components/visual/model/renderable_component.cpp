@@ -11,7 +11,7 @@ RenderableComponent::RenderableComponent(Entity& owner, const JSON::json& data)
     , m_RenderPass(data.value("renderPass", (int)RenderPass::Basic))
     , m_IsVisible(data.value("isVisible", true))
     , m_AffectingStaticLightIDs(data.value("affectingStaticLights", Vector<SceneID>()))
-    , m_LODEnable(data.value("lodEnable", true))
+    , m_LODEnable(data.value("lodEnable", false))
     , m_LODBias(data.value("lodBias", 0.0f))
     , m_LODDistance(data.value("lodDistance", 10.0f))
     , m_DependencyOnTransformComponent(this)
@@ -158,8 +158,8 @@ void RenderableComponent::draw()
 	if (m_LODEnable)
 	{
 		ImGui::Indent();
-		ImGui::DragFloat("LOD Bias", &m_LODBias, 0.01f);
-		ImGui::DragFloat("LOD Distance", &m_LODDistance, 1.0f, 0.0f);
+		ImGui::DragFloat("LOD Bias", &m_LODBias, 0.01f, 0.0f, FLT_MAX);
+		ImGui::DragFloat("LOD Distance", &m_LODDistance, 0.1f, 0.1f, FLT_MAX);
 		ImGui::Unindent();
 	}
 
@@ -245,7 +245,7 @@ void RenderableComponent::draw()
 				}
 			}
 			ImGui::SameLine();
-			if (ImGui::Button((ICON_ROOTEX_FOLDER_OPEN "##" + oldMaterial->getPath().generic_string()).c_str()))
+			if (ImGui::Button((ICON_ROOTEX_REFRESH "##" + oldMaterial->getPath().generic_string()).c_str()))
 			{
 				if (Optional<String> result = OS::SelectFile("Material(*.rmat)\0*.rmat\0", "game/assets/materials/"))
 				{
@@ -253,6 +253,14 @@ void RenderableComponent::draw()
 				}
 			}
 			ImGui::EndGroup();
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("MATERIAL_PAYLOAD"))
+				{
+					const char* path = (const char*)payload->Data;
+					setMaterialOverride(oldMaterial, ResourceLoader::CreateMaterialResourceFile(path));
+				}
+			}
 			ImGui::NextColumn();
 			ImGui::Separator();
 		}

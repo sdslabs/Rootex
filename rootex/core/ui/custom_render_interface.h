@@ -10,6 +10,7 @@
 #include "RmlUi/Core.h"
 #define interface __STRUCT__
 
+/// Provides a render interface for RmlUi.
 class CustomRenderInterface : public Rml::RenderInterface
 {
 	EventBinder<CustomRenderInterface> m_Binder;

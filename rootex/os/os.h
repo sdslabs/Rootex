@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <fstream>
 #include <chrono>
+#include <tchar.h>
 
 #include "common/types.h"
 
@@ -70,9 +71,11 @@ public:
 	static FilePath GetRootRelativePath(String stringPath);
 	static FilePath GetRelativePath(String stringPath, String base);
 	static String GetFileStem(String stringPath);
+	static FilePath GetParentPath(String stringPath);
 
 	static Vector<FilePath> GetAllFilesInDirectory(const String& directory);
 	static Vector<FilePath> GetAllInDirectory(const String& directory);
+	static Vector<FilePath> GetAllInDirectoryRoot(const String& directory);
 	static Vector<FilePath> GetDirectoriesInDirectory(const String& directory);
 	static bool DeleteDirectory(const String& dirPath);
 	static bool Rename(const String& sourcePath, const String& destinationPath);
@@ -82,6 +85,9 @@ public:
 
 	static bool IsDirectory(const String& path);
 	static bool IsFile(const String& path);
+
+	static void RegisterFileChangesWatcher(const String& path, void (*callback)(PVOID, BOOLEAN), PVOID param);
+	static void RegisterDirectoryChangesWatcher(const String& path, void (*callback)(PVOID, BOOLEAN), PVOID param);
 
 	static bool CreateDirectoryName(const String& dirPath);
 	static bool CreateDirectoryAbsoluteName(const String& dirPath);

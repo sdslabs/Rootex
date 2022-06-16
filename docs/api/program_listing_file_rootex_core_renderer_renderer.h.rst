@@ -14,13 +14,14 @@ Program Listing for File renderer.h
    
    #include "vertex_buffer.h"
    #include "index_buffer.h"
-   #include "material.h"
+   #include "core/resource_files/material_resource_file.h"
    #include "rendering_device.h"
+   #include "shader.h"
    #include "viewport.h"
    
    class Renderer
    {
-       Shader* m_CurrentShader;
+       const Shader* m_CurrentShader;
    
    public:
        Renderer();
@@ -31,7 +32,8 @@ Program Listing for File renderer.h
        void setViewport(Viewport& viewport);
    
        void resetCurrentShader();
-       void bind(Material* material);
+       void bind(MaterialResourceFile* newMaterial, MaterialResourceFile* oldMaterial);
+       void bind(MaterialResourceFile* Material);
        void draw(const VertexBuffer* vertexBuffer, const IndexBuffer* indexBuffer) const;
        void drawInstanced(const VertexBuffer* vertexBuffer, const IndexBuffer* indexBuffer, const VertexBuffer* instanceBuffer, unsigned int instances) const;
    };

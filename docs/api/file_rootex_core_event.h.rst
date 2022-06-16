@@ -27,25 +27,17 @@ Includes
 
 - ``common/common.h``
 
-- ``entity.h`` (:ref:`file_rootex_framework_entity.h`)
-
 
 
 Included By
 -----------
 
 
-- :ref:`file_rootex_common_types.h`
+- :ref:`file_editor_editor_events.h`
 
 - :ref:`file_rootex_core_event_manager.h`
 
 - :ref:`file_rootex_core_input_input_manager.h`
-
-- :ref:`file_rootex_core_ui_input_interface.h`
-
-- :ref:`file_rootex_framework_entity.h`
-
-- :ref:`file_editor_editor_events.h`
 
 
 

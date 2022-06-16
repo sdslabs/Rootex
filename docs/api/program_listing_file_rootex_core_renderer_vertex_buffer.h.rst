@@ -24,17 +24,10 @@ Program Listing for File vertex_buffer.h
        unsigned int m_Count;
    
    public:
-       VertexBuffer(const Vector<VertexData>& buffer);
-       VertexBuffer(const Vector<InstanceData>& buffer);
-       VertexBuffer(const Vector<UIVertexData>& buffer);
-       VertexBuffer(const Vector<AnimatedVertexData>& buffer);
-       VertexBuffer(const Vector<float>& buffer);
-       VertexBuffer(const Vector<FXAAData>& buffer);
+       VertexBuffer(const char* buffer, unsigned int elementCount, unsigned int stride, D3D11_USAGE usage, int cpuAccess);
        ~VertexBuffer() = default;
    
        void bind() const;
-   
-       void setData(const Vector<InstanceData>& buffer);
    
        unsigned int getCount() const { return m_Count; }
        unsigned int getStride() const { return m_Stride; }

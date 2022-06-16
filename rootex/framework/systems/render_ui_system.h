@@ -2,6 +2,7 @@
 
 #include "system.h"
 
+/// Render system for the UI.
 class RenderUISystem : public System
 {
 	Vector<Matrix> m_UITransformationStack;

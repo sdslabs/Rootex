@@ -2,6 +2,7 @@
 
 #include "system.h"
 
+/// System that handles all skeletal animations.
 class AnimationSystem : public System
 {
 	AnimationSystem();

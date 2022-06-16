@@ -51,6 +51,7 @@ void ShortMusicComponent::setAudioFile(Ref<AudioResourceFile> audioFile)
 
 void ShortMusicComponent::draw()
 {
+	ImGui::BeginGroup();
 	ImGui::Text("%s", m_AudioFile->getPath().generic_string().c_str());
 	ImGui::SameLine();
 	if (ImGui::Button("Audio File"))
@@ -65,6 +66,14 @@ void ShortMusicComponent::draw()
 			setAudioFile(ResourceLoader::CreateAudioResourceFile(*result));
 		}
 	}
-
+	ImGui::EndGroup();
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("AUDIO_PAYLOAD"))
+		{
+			const char* path = (const char*)payload->Data;
+			setAudioFile(ResourceLoader::CreateAudioResourceFile(path));
+		}
+	}
 	AudioComponent::draw();
 }

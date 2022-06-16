@@ -27,13 +27,17 @@ Includes
 
 - ``ASSAO/ASSAO.h``
 
-- ``components/visual/animated_model_component.h``
+- ``components/visual/model/animated_model_component.h``
 
-- ``components/visual/model_component.h``
+- ``components/visual/model/model_component.h``
+
+- ``components/visual/model/sprite_component.h``
 
 - ``core/renderer/render_pass.h``
 
 - ``core/renderer/renderer.h``
+
+- ``core/resource_files/basic_material_resource_file.h``
 
 - ``framework/components/visual/camera_component.h``
 
@@ -57,11 +61,4 @@ Classes
 - :ref:`exhale_struct_struct_render_system_1_1_line_requests`
 
 - :ref:`exhale_class_class_render_system`
-
-
-Defines
--------
-
-
-- :ref:`exhale_define_render__system_8h_1a759124dbafebd9cd7eb18f6d563d7a27`
 

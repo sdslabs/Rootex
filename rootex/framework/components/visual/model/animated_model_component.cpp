@@ -243,6 +243,8 @@ void AnimatedModelComponent::draw()
 	ImGui::Checkbox("Play on Start", &m_IsPlayOnStart);
 
 	String filePath = m_AnimatedModelResourceFile->getPath().generic_string();
+
+	ImGui::BeginGroup();
 	ImGui::Text("%s", filePath.c_str());
 	ImGui::SameLine();
 	if (ImGui::Button("Model"))
@@ -255,6 +257,15 @@ void AnimatedModelComponent::draw()
 		if (Optional<String> result = OS::SelectFile(SupportedFiles.at(ResourceFile::Type::AnimatedModel), "game/assets/"))
 		{
 			setAnimatedResourceFile(ResourceLoader::CreateAnimatedModelResourceFile(*result), {});
+		}
+	}
+	ImGui::EndGroup();
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ANIMATED_MODEL_PAYLOAD"))
+		{
+			const char* path = (const char*)payload->Data;
+			setAnimatedResourceFile(ResourceLoader::CreateAnimatedModelResourceFile(path), {});
 		}
 	}
 

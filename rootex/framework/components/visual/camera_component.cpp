@@ -9,6 +9,7 @@ DEFINE_COMPONENT(CameraComponent);
 void to_json(JSON::json& j, const PostProcessingDetails& p)
 {
 	j["isPostProcessing"] = p.isPostProcessing;
+	j["isGodRays"] = p.isGodRays;
 	j["isASSAO"] = p.isASSAO;
 	j["isBloom"] = p.isBloom;
 	j["isSepia"] = p.isSepia;
@@ -44,11 +45,17 @@ void to_json(JSON::json& j, const PostProcessingDetails& p)
 	{
 		j["customPostProcessing"][customPostProcessing.first] = customPostProcessing.second;
 	}
+	j["godRaysNumSamples"] = p.godRaysNumSamples;
+	j["godRaysDensity"] = p.godRaysDensity;
+	j["godRaysWeight"] = p.godRaysWeight;
+	j["godRaysDecay"] = p.godRaysDecay;
+	j["godRaysExposure"] = p.godRaysExposure;
 }
 
 void from_json(const JSON::json& j, PostProcessingDetails& p)
 {
 	p.isPostProcessing = j.at("isPostProcessing");
+	p.isGodRays = j.value("isGodRays", false);
 	p.isASSAO = j.value("isASSAO", false);
 	p.isBloom = j.at("isBloom");
 	p.isSepia = j.at("isSepia");
@@ -88,6 +95,11 @@ void from_json(const JSON::json& j, PostProcessingDetails& p)
 			PostProcessSystem::GetSingleton()->addCustomPostProcessing(customPostProcessing.key());
 		}
 	}
+	p.godRaysNumSamples = j.value("godRaysNumSamples", 100);
+	p.godRaysDensity = j.value("godRaysDensity", 1.0f);
+	p.godRaysWeight = j.value("godRaysWeight", 0.01f);
+	p.godRaysDecay = j.value("godRaysDecay", 1.0f);
+	p.godRaysExposure = j.value("godRaysExposure", 1.0f);
 }
 
 CameraComponent::CameraComponent(Entity& owner, const JSON::json& data)
@@ -212,6 +224,34 @@ void CameraComponent::draw()
 				ImGui::DragFloat("Shadow Multiplier", &m_PostProcessingDetails.assaoShadowMultiplier, 0.01f, 0.0f, 5.0f);
 				ImGui::DragFloat("Shadow Power", &m_PostProcessingDetails.assaoShadowPower, 0.01f, 0.5f, 5.0f);
 				ImGui::DragFloat("Sharpness", &m_PostProcessingDetails.assaoSharpness, 0.01f, 0.0f, 1.0f);
+
+				ImGui::TreePop();
+			}
+		}
+		ImGui::Checkbox("God Rays", &m_PostProcessingDetails.isGodRays);
+		if (m_PostProcessingDetails.isGodRays)
+		{
+			if (ImGui::TreeNodeEx("God Rays Settings"))
+			{
+				int minNumSamples = 0;
+				int maxNumSamples = 100;
+				ImGui::DragInt("Num Samples", &m_PostProcessingDetails.godRaysNumSamples, 1.0f, minNumSamples, maxNumSamples);
+
+				float minDensity = 0.0f;
+				float maxDensity = 2.0f;
+				ImGui::DragFloat("Density", &m_PostProcessingDetails.godRaysDensity, 0.01f, minDensity, maxDensity);
+
+				float minWeight = 0.0f;
+				float maxWeight = 0.1f;
+				ImGui::DragFloat("Weight", &m_PostProcessingDetails.godRaysWeight, 0.001f, minWeight, maxWeight);
+
+				float minDecay = 0.95f;
+				float maxDecay = 1.05f;
+				ImGui::DragFloat("Decay", &m_PostProcessingDetails.godRaysDecay, 0.001f, minDecay, maxDecay);
+
+				float minExposure = 0.0f;
+				float maxExposure = 2.0f;
+				ImGui::DragFloat("Exposure", &m_PostProcessingDetails.godRaysExposure, 0.02f, minExposure, maxExposure);
 
 				ImGui::TreePop();
 			}

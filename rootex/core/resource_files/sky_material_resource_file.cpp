@@ -107,10 +107,20 @@ bool SkyMaterialResourceFile::save()
 void SkyMaterialResourceFile::draw()
 {
 	MaterialResourceFile::draw();
+	ImGui::BeginGroup();
 	RootexSelectableImageCube("Sky Texture" ICON_ROOTEX_FOLDER_OPEN, m_SkyFile, [this](const String& selectedFile) { setSky(ResourceLoader::CreateImageCubeResourceFile(selectedFile)); });
 	ImGui::SameLine();
 	if (ImGui::Button(ICON_ROOTEX_REFRESH "##Sky Texture"))
 	{
 		setSky(ResourceLoader::CreateImageCubeResourceFile("rootex/assets/sky.dds"));
+	}
+	ImGui::EndGroup();
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("IMAGE_CUBE_PAYLOAD"))
+		{
+			const char* path = (const char*)payload->Data;
+			setSky(ResourceLoader::CreateImageCubeResourceFile(path));
+		}
 	}
 }

@@ -17,9 +17,13 @@ Program Listing for File image_resource_file.h
    
    class ImageResourceFile : public ResourceFile
    {
-       Ref<Texture> m_ImageTexture;
+       Ref<GPUTexture> m_GPUImageTexture;
+       Ref<CPUTexture> m_CPUImageTexture;
+       bool m_IsCPUAccess;
    
-       explicit ImageResourceFile(const FilePath& path);
+       explicit ImageResourceFile(const FilePath& path, bool cpuAccess = false);
+   
+       void loadCPUTexture();
    
        friend class ResourceLoader;
    
@@ -30,7 +34,14 @@ Program Listing for File image_resource_file.h
    
        void reimport() override;
    
-       const Ref<Texture> getTexture() { return m_ImageTexture; }
-       unsigned int getWidth() const { return m_ImageTexture->getWidth(); }
-       unsigned int getHeight() const { return m_ImageTexture->getHeight(); }
+       const Ref<GPUTexture> getGPUTexture() { return m_GPUImageTexture; }
+       const Ref<CPUTexture> getCPUTexture() { return m_CPUImageTexture; }
+   
+       unsigned int getWidth() const { return m_GPUImageTexture->getWidth(); }
+       unsigned int getHeight() const { return m_GPUImageTexture->getHeight(); }
+   
+       void setCPUAccess(bool cpuAccess);
+       bool isCPUAccess() { return m_IsCPUAccess; };
+   
+       void uploadCPUTexturetoGPU();
    };

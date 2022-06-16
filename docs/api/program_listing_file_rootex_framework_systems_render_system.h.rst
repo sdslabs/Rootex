@@ -14,20 +14,22 @@ Program Listing for File render_system.h
    
    #include "core/renderer/renderer.h"
    #include "core/renderer/render_pass.h"
+   #include "core/resource_files/basic_material_resource_file.h"
    #include "main/window.h"
    #include "framework/ecs_factory.h"
    #include "framework/scene.h"
    #include "framework/system.h"
    #include "framework/components/visual/camera_component.h"
-   #include "components/visual/model_component.h"
-   #include "components/visual/animated_model_component.h"
+   #include "components/visual/model/model_component.h"
+   #include "components/visual/model/animated_model_component.h"
+   #include "components/visual/model/sprite_component.h"
    
    #include "ASSAO/ASSAO.h"
    
-   #define LINE_INITIAL_RENDER_CACHE 1000
-   
    class RenderSystem : public System
    {
+       EventBinder<RenderSystem> m_Binder;
+   
        struct LineRequests
        {
            Vector<float> m_Endpoints;
@@ -39,13 +41,16 @@ Program Listing for File render_system.h
        Ptr<Renderer> m_Renderer;
        Vector<Matrix> m_TransformationStack;
    
-       Ref<BasicMaterial> m_LineMaterial;
+       Ref<BasicMaterialResourceFile> m_LineMaterial;
        LineRequests m_CurrentFrameLines;
    
-       Microsoft::WRL::ComPtr<ID3D11Buffer> m_VSPerFrameConstantBuffer;
-       Microsoft::WRL::ComPtr<ID3D11Buffer> m_VSProjectionConstantBuffer;
-       Microsoft::WRL::ComPtr<ID3D11Buffer> m_PSPerFrameConstantBuffer;
-       Microsoft::WRL::ComPtr<ID3D11Buffer> m_PSPerLevelConstantBuffer;
+       Microsoft::WRL::ComPtr<ID3D11Buffer> m_PerFrameVSCB;
+       Microsoft::WRL::ComPtr<ID3D11Buffer> m_PerCameraChangeVSCB;
+   
+       Microsoft::WRL::ComPtr<ID3D11Buffer> m_PerCameraChangePSCB;
+       Microsoft::WRL::ComPtr<ID3D11Buffer> m_PerFrameCustomPSCB;
+       Microsoft::WRL::ComPtr<ID3D11Buffer> m_PerFramePSCB;
+       Microsoft::WRL::ComPtr<ID3D11Buffer> m_PerScenePSCB;
    
        bool m_IsEditorRenderPassEnabled;
    
@@ -53,9 +58,6 @@ Program Listing for File render_system.h
        RenderSystem(RenderSystem&) = delete;
    
        void renderPassRender(float deltaMilliseconds, RenderPass renderPass);
-   
-       template <class T>
-       void renderComponents(float deltaMilliseconds, RenderPass renderPass);
    
        Variant onOpenedScene(const Event* event);
    
@@ -67,6 +69,7 @@ Program Listing for File render_system.h
        void renderLines();
    
        void submitLine(const Vector3& from, const Vector3& to);
+   
        void submitBox(const Vector3& min, const Vector3& max);
        void submitSphere(const Vector3& center, const float& radius);
        void submitCone(const Matrix& transform, const float& height, const float& radius);
@@ -84,10 +87,12 @@ Program Listing for File render_system.h
        void enableWireframeRasterizer();
        void resetDefaultRasterizer();
    
-       void setProjectionConstantBuffers();
-       void perFrameVSCBBinds(float fogStart, float fogEnd);
-       void perFramePSCBBinds(const Color& fogColor);
-       void perScenePSCBBinds();
+       void setPerCameraVSCBs();
+       void setPerFrameVSCBs(float fogStart, float fogEnd);
+       void setPerCameraChangePSCBs();
+       void setPerFramePSCBs(const Color& fogColor);
+       void setPerScenePSCBs();
+       void updateStaticLights();
        void updatePerSceneBinds();
    
        void setIsEditorRenderPass(bool enabled) { m_IsEditorRenderPassEnabled = enabled; }
@@ -101,21 +106,3 @@ Program Listing for File render_system.h
    
        void draw() override;
    };
-   
-   template <class T>
-   inline void RenderSystem::renderComponents(float deltaMilliseconds, RenderPass renderPass)
-   {
-       for (auto& c : ECSFactory::GetComponents<T>())
-       {
-           T* tc = (T*)c;
-           if (tc->getRenderPass() & (unsigned int)renderPass)
-           {
-               tc->preRender(deltaMilliseconds);
-               if (tc->isVisible())
-               {
-                   tc->render();
-               }
-               tc->postRender();
-           }
-       }
-   }

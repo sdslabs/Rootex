@@ -20,6 +20,7 @@ class ViewportDock;
 class InspectorDock;
 class FileViewer;
 class FileEditor;
+class ContentBrowser;
 
 class EditorSystem : public System
 {
@@ -33,6 +34,9 @@ class EditorSystem : public System
 	bool m_WireframeMode = false;
 	bool m_WorldMode = true;
 	bool m_Autosave = false;
+
+	String m_OpenSceneName;
+	String m_LoadingScene;
 
 	ImFont* m_EditorFont;
 	ImFont* m_EditorFontItalic;
@@ -56,6 +60,7 @@ class EditorSystem : public System
 	Ptr<InspectorDock> m_Inspector;
 	Ptr<FileViewer> m_FileViewer;
 	Ptr<FileEditor> m_FileEditor;
+	Ptr<ContentBrowser> m_ContentBrowser;
 
 	Atomic<bool> m_IsCopyFailed;
 	String m_CurrExportDir;
@@ -89,6 +94,8 @@ public:
 	void pushMonospaceFont() { ImGui::PushFont(m_EditorFontMonospace); }
 
 	void popFont() { ImGui::PopFont(); }
+
+	void openScene(String sceneName);
 
 	ImColor getWarningColor() const { return ColorToImColor((Color)ColorPresets::LightYellow); }
 	ImColor getFatalColor() const { return ColorToImColor((Color)ColorPresets::IndianRed); }

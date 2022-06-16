@@ -29,6 +29,8 @@ Includes
 
 - ``core/event_manager.h``
 
+- ``main/splash_window.h``
+
 - ``main/window.h``
 
 - ``os/thread.h``
@@ -41,9 +43,9 @@ Included By
 -----------
 
 
-- :ref:`file_game_game_application.h`
-
 - :ref:`file_editor_editor_application.h`
+
+- :ref:`file_game_game_application.h`
 
 
 
@@ -59,5 +61,5 @@ Functions
 ---------
 
 
-- :ref:`exhale_function_application_8h_1a883d10f0382522e2e7a1af253903d346`
+- :ref:`exhale_function_application_8h_1ae428f54b9a1d8274553c86f6dc423e52`
 

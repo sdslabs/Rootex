@@ -25,11 +25,13 @@ Includes
 --------
 
 
+- ``core/resource_files/material_resource_file.h``
+
 - ``index_buffer.h`` (:ref:`file_rootex_core_renderer_index_buffer.h`)
 
-- ``material.h`` (:ref:`file_rootex_core_renderer_materials_animated_material.h`)
-
 - ``rendering_device.h`` (:ref:`file_rootex_core_renderer_rendering_device.h`)
+
+- ``shader.h`` (:ref:`file_rootex_core_renderer_shaders_register_locations_pixel_shader.h`)
 
 - ``vertex_buffer.h`` (:ref:`file_rootex_core_renderer_vertex_buffer.h`)
 

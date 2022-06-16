@@ -3,7 +3,7 @@
 Class MusicComponent
 ====================
 
-- Defined in :ref:`file_rootex_framework_components_music_component.h`
+- Defined in :ref:`file_rootex_framework_components_audio_music_component.h`
 
 
 Inheritance Relationships
