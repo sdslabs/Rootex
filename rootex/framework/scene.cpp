@@ -567,7 +567,7 @@ void SceneSettings::draw()
 			InputDescription inputDesc;
 			inputDesc.device = Device::Mouse;
 			inputDesc.button = MouseButton::MouseButtonLeft;
-			inputDesc.inputEvent = "GameBoolEvent";
+			inputDesc.inputEvent = name + "::GameBoolEvent";
 
 			if (type == 0)
 			{
