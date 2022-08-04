@@ -12,7 +12,6 @@ System::System(const String& name, const UpdateOrder& order, bool isGameplay)
 	}
 
 	s_Systems[(int)order].push_back(this);
-	setActive(isGameplay);
 	m_IsSystemPaused = false;
 }
 
@@ -46,11 +45,6 @@ void System::update(float deltaMilliseconds)
 
 void System::end()
 {
-}
-
-void System::setActive(bool enabled)
-{
-	m_IsActive = enabled;
 }
 
 void System::pause()

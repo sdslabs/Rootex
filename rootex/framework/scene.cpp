@@ -1,5 +1,5 @@
 #include "scene.h"
-
+#include <vector>
 #include "ecs_factory.h"
 #include "resource_loader.h"
 #include "scene_loader.h"
@@ -303,7 +303,7 @@ bool Scene::removeChild(Scene* toRemove)
 }
 
 void Scene::setName(const String& name)
-{
+{ 
 	m_Name = name;
 	m_FullName = name + " # " + std::to_string(m_ID);
 }

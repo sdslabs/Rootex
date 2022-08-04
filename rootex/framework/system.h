@@ -34,7 +34,6 @@ protected:
 
 	String m_SystemName;
 	UpdateOrder m_UpdateOrder;
-	bool m_IsActive;
 	bool m_IsSystemPaused;
 
 public:
@@ -53,9 +52,8 @@ public:
 
 	String getName() const { return m_SystemName; }
 	const UpdateOrder& getUpdateOrder() const { return m_UpdateOrder; }
-	bool isActive() const { return m_IsActive; }
+	 bool isActive() const { return !(m_IsSystemPaused); }
 
-	void setActive(bool enabled);
 	static void pause();
 	static void unPause();
 

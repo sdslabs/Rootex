@@ -23,7 +23,7 @@ DebugSystem* DebugSystem::GetSingleton()
 
 bool DebugSystem::initialize(const JSON::json& systemData)
 {
-	setActive(systemData["active"]);
+	// setActive(systemData["active"]);
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();

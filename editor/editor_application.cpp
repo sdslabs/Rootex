@@ -59,10 +59,10 @@ EditorApplication::~EditorApplication()
 
 void EditorApplication::setGameMode(bool enabled)
 {
-	PhysicsSystem::GetSingleton()->setActive(enabled);
-	AudioSystem::GetSingleton()->setActive(enabled);
-	ScriptSystem::GetSingleton()->setActive(enabled);
-	PlayerSystem::GetSingleton()->setActive(enabled);
+	//PhysicsSystem::GetSingleton()->setActive(enabled);
+	//AudioSystem::GetSingleton()->setActive(enabled);
+	//ScriptSystem::GetSingleton()->setActive(enabled);
+	//PlayerSystem::GetSingleton()->setActive(enabled);
 	RenderSystem::GetSingleton()->setIsEditorRenderPass(!enabled);
 	InputSystem::GetSingleton()->flushSchemes();
 	InputSystem::GetSingleton()->loadSchemes(m_ApplicationSettings->getJSON()["systems"]["InputSystem"]["inputSchemes"]);
