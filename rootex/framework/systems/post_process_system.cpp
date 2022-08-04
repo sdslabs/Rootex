@@ -28,6 +28,7 @@ void PostProcessSystem::addCustomPostProcessing(const String& path)
 		CustomPostProcess* customPostProcess = dynamic_cast<CustomPostProcess*>(postProcess.get());
 		if (customPostProcess && customPostProcess->m_PostProcessPath == path)
 		{
+			postProcess.reset(new CustomPostProcess(path));
 			return;
 		}
 	}
