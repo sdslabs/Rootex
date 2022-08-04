@@ -11,6 +11,7 @@
 #include "components/visual/model/model_component.h"
 #include "components/visual/model/animated_model_component.h"
 #include "components/visual/model/sprite_component.h"
+#include "transform_system.h"
 
 #include "ASSAO/ASSAO.h"
 
@@ -28,7 +29,6 @@ class RenderSystem : public System
 	CameraComponent* m_Camera;
 
 	Ptr<Renderer> m_Renderer;
-	Vector<Matrix> m_TransformationStack;
 
 	Ref<BasicMaterialResourceFile> m_LineMaterial;
 	LineRequests m_CurrentFrameLines;
@@ -68,11 +68,6 @@ public:
 	void setCamera(CameraComponent* camera);
 	void restoreCamera();
 
-	void calculateTransforms(Scene* scene);
-	void pushMatrix(const Matrix& transform);
-	void pushMatrixOverride(const Matrix& transform);
-	void popMatrix();
-
 	void enableWireframeRasterizer();
 	void resetDefaultRasterizer();
 
@@ -90,7 +85,6 @@ public:
 	void resetRenderMode();
 
 	CameraComponent* getCamera() const { return m_Camera; }
-	const Matrix& getCurrentMatrix() const;
 	Renderer* getRenderer() const { return m_Renderer.get(); }
 
 	void draw() override;
