@@ -28,6 +28,20 @@
 
 #define DOCUMENTATION_LINK String("https://rootex.readthedocs.io/")
 
+bool checkReservedName(std::string sceneName)
+{
+	std::vector<std::string> Reserved_Names_List { "pause", "pauseUI" };
+	for (auto& Reserved_Name : Reserved_Names_List)
+	{
+		if (Reserved_Name == sceneName)
+		{
+			WARN("Cannot Use reserved Names");
+			return true;
+		}
+	}
+	return false;
+}
+
 EditorSystem::EditorSystem()
     : System("EditorSystem", UpdateOrder::Editor, true)
     , m_CurrExportDir("")
@@ -329,7 +343,10 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 						else
 						{
 							EventManager::GetSingleton()->call(EditorEvents::EditorCreateNewScene, newSceneName);
-							m_LoadingScene = "game/assets/scenes/" + newSceneName + ".scene.json";
+							if (!checkReservedName(newSceneName))
+							{
+								m_LoadingScene = "game/assets/scenes/" + newSceneName + ".scene.json";
+							}
 						}
 					}
 					ImGui::EndMenu();
@@ -617,9 +634,12 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 					{
 						saveAll(nullptr);
 						EventManager::GetSingleton()->call(EditorEvents::EditorCreateNewScene, newSceneName);
-						m_LoadingScene = "game/assets/scenes/" + newSceneName + ".scene.json";
-						ImGui::CloseCurrentPopup();
-						m_MenuAction = "";
+						if (!checkReservedName(newSceneName))
+						{
+							m_LoadingScene = "game/assets/scenes/" + newSceneName + ".scene.json";
+							ImGui::CloseCurrentPopup();
+							m_MenuAction = "";
+						}
 					}
 					else if (m_PopupCause == "open")
 					{
@@ -640,9 +660,12 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 					else if (m_PopupCause == "create")
 					{
 						EventManager::GetSingleton()->call(EditorEvents::EditorCreateNewScene, newSceneName);
-						m_LoadingScene = "game/assets/scenes/" + newSceneName + ".scene.json";
-						ImGui::CloseCurrentPopup();
-						m_MenuAction = "";
+						if (!checkReservedName(newSceneName))
+						{
+							m_LoadingScene = "game/assets/scenes/" + newSceneName + ".scene.json";
+							ImGui::CloseCurrentPopup();
+							m_MenuAction = "";
+						}
 					}
 					else if (m_PopupCause == "open")
 					{
@@ -894,6 +917,10 @@ Variant EditorSystem::saveBeforeQuit(const Event* event)
 Variant EditorSystem::createNewScene(const Event* event)
 {
 	const String& sceneName = Extract<String>(event->getData());
+	if (checkReservedName(sceneName))
+	{
+		return false;
+	}
 	const String& newScenePath = "game/assets/scenes/" + sceneName + ".scene.json";
 	if (OS::IsExists(newScenePath))
 	{
