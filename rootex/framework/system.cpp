@@ -50,7 +50,6 @@ void System::end()
 
 void System::setActive(bool enabled)
 {
-	m_IsActive = enabled;
 }
 
 void System::pause()
