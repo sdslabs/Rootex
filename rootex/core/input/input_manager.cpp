@@ -185,9 +185,9 @@ Vector2 InputManager::getMousePosition()
 	return { getMouse()->GetFloat(MouseButton::MouseAxisX), getMouse()->GetFloat(MouseButton::MouseAxisY) };
 }
 
-Array<String, 23> InputManager::getMouseButtonName()
+Array<String, 23> InputManager::getMouseButtonNames()
 {
-	Array<String, 23> mouseKeys = {
+	static Array<String, 23> mouseKeys = {
 		"mouse_left",
 		"mouse_middle",
 		"mouse_right",
@@ -215,9 +215,9 @@ Array<String, 23> InputManager::getMouseButtonName()
 	return mouseKeys;
 }
 
-Array<String, 166> InputManager::getKeyboardButtonName()
+Array<String, 166> InputManager::getKeyboardButtonNames()
 {
-	Array<String, 166> keyboardKeys = {
+	static Array<String, 166> keyboardKeys = {
 		"escape",
 		"f1",
 		"f2",
@@ -388,9 +388,9 @@ Array<String, 166> InputManager::getKeyboardButtonName()
 	return keyboardKeys;
 }
 
-Array<String, 20> InputManager::getPadButtonName()
+Array<String, 20> InputManager::getPadButtonNames()
 {
-	Array<String, 20> padKeys = {
+	static Array<String, 20> padKeys = {
 		"pad_left_stick_x",
 		"pad_left_stick_y",
 		"pad_right_stick_x",

@@ -616,7 +616,7 @@ void SceneSettings::drawInputScheme(InputDescription& inputDesc)
 	if (inputDesc.device == Device::Mouse)
 	{
 		inputDesc.button = originalDevice == inputDesc.device ? inputDesc.button : 0;
-		auto mouseKeys = InputManager::GetMouseButtonName();
+		auto mouseKeys = InputManager::GetMouseButtonNames();
 		char buffer[20] = {};
 		InputManager::GetSingleton()->getMouse()->GetButtonName(inputDesc.button, buffer, 20);
 		String key = buffer;
@@ -633,7 +633,7 @@ void SceneSettings::drawInputScheme(InputDescription& inputDesc)
 	else if (inputDesc.device == Device::Keyboard)
 	{
 		inputDesc.button = originalDevice == inputDesc.device ? inputDesc.button : 0;
-		auto keyboardKeys = InputManager::GetKeyboardButtonName();
+		auto keyboardKeys = InputManager::GetKeyboardButtonNames();
 		char buffer[20] = {};
 		InputManager::GetSingleton()->getKeyboard()->GetButtonName(inputDesc.button, buffer, 20);
 		String key = buffer;
@@ -650,7 +650,7 @@ void SceneSettings::drawInputScheme(InputDescription& inputDesc)
 	else if (inputDesc.device == Device::Pad1 || inputDesc.device == Device::Pad2)
 	{
 		inputDesc.button = originalDevice == inputDesc.device ? inputDesc.button : 0;
-		auto padKeys = InputManager::GetPadButtonName();
+		auto padKeys = InputManager::GetPadButtonNames();
 		char buffer[20] = {};
 		InputManager::GetSingleton()->getPad1()->GetButtonName(inputDesc.button, buffer, 20);
 		String key = buffer;

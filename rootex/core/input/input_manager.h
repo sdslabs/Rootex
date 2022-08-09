@@ -123,13 +123,13 @@ public:
 	void update();
 	void setDisplaySize(const Vector2& newSize);
 
-	Array<String, 23> getMouseButtonName();
-	Array<String, 166> getKeyboardButtonName();
-	Array<String, 20> getPadButtonName();
+	Array<String, 23> getMouseButtonNames();
+	Array<String, 166> getKeyboardButtonNames();
+	Array<String, 20> getPadButtonNames();
 
-	static Array<String, 23> GetMouseButtonName() { return GetSingleton()->getMouseButtonName(); }
-	static Array<String, 166> GetKeyboardButtonName() { return GetSingleton()->getKeyboardButtonName(); }
-	static Array<String, 20> GetPadButtonName() { return GetSingleton()->getPadButtonName(); }
+	static Array<String, 23> GetMouseButtonNames() { return GetSingleton()->getMouseButtonNames(); }
+	static Array<String, 166> GetKeyboardButtonNames() { return GetSingleton()->getKeyboardButtonNames(); }
+	static Array<String, 20> GetPadButtonNames() { return GetSingleton()->getPadButtonNames(); }
 
 	const gainput::InputMap& getMap() const { return m_GainputMap; }
 	gainput::InputDeviceMouse* getMouse() { return static_cast<gainput::InputDeviceMouse*>(m_GainputManager.GetDevice(DeviceIDs[Device::Mouse])); }
