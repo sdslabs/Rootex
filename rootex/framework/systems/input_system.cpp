@@ -55,7 +55,13 @@ bool InputSystem::initialize(const JSON::json& systemData)
 void InputSystem::setConfig(const SceneSettings& sceneSettings)
 {
 	loadSchemes(sceneSettings.inputSchemes);
-	pushScheme(sceneSettings.startScheme);
+	for (auto&& inputScheme : sceneSettings.inputSchemes)
+	{
+		if (inputScheme.second.isActive)
+		{
+			pushScheme(inputScheme.first);
+		}
+	}
 }
 
 void InputSystem::update(float deltaMilliseconds)
