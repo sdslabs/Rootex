@@ -11,7 +11,6 @@
 #include "light_system.h"
 #include "application.h"
 #include "scene_loader.h"
-#include "transform_system.h"
 
 #define LINE_MAX_VERTEX_COUNT 1000
 #define LINE_VERTEX_COUNT 2

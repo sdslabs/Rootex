@@ -1,9 +1,4 @@
-#include "render_system.h"
-#include "core/resource_loader.h"
-#include "application.h"
-#include "scene_loader.h"
 #include "transform_system.h"
-#include "SimpleMath.h"
 
 TransformSystem* TransformSystem::GetSingleton()
 {
