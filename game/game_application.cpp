@@ -14,6 +14,21 @@
 
 #include "systems/game_render_system.h"
 
+bool checkReservedName(std::string sceneName)
+{
+	std::vector<std::string> reserved_names_list { "pause.scene", "pauseUI.scene" };
+	for (auto& reservedName : reserved_names_list)
+	{
+		size_t found = sceneName.find(reservedName);
+		if (found != String::npos)
+		{
+			WARN("Cannot Use reserved Names");
+			return true;
+		}
+	}
+	return false;
+}
+
 Ref<Application> CreateRootexApplication()
 {
 	return Ref<Application>(new GameApplication());
@@ -22,12 +37,19 @@ Ref<Application> CreateRootexApplication()
 Optional<String> GameApplication::getSceneNameFromCommandLine(const char* s)
 {
 	String cmdLine = s;
-	size_t found = cmdLine.find("game/assets/");
-	if (found != String::npos)
+	if (checkReservedName(cmdLine))
 	{
-		return cmdLine.substr(found, cmdLine.size() - 1);
+		size_t found = cmdLine.find("game/assets/");
+		if (found != String::npos)
+		{
+			return cmdLine.substr(found, cmdLine.size() - 1);
+		}
+		return {};
 	}
-	return {};
+	else
+	{
+		return {};
+	}
 }
 
 Variant GameApplication::onExitEvent(const Event* event)
@@ -47,7 +69,11 @@ GameApplication::GameApplication()
 	}
 	else
 	{
-		SceneLoader::GetSingleton()->loadScene(m_ApplicationSettings->getJSON()["startScene"], {});
+		std::string sceneName = m_ApplicationSettings->getJSON()["startScene"];
+		if (checkReservedName(sceneName))
+		{
+			SceneLoader::GetSingleton()->loadScene(sceneName, {});
+		}
 	}
 
 	GameRenderSystem::GetSingleton()->initialize({});

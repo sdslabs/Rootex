@@ -30,10 +30,10 @@
 
 bool checkReservedName(std::string sceneName)
 {
-	std::vector<std::string> Reserved_Names_List { "pause", "pauseUI" };
-	for (auto& Reserved_Name : Reserved_Names_List)
+	std::vector<std::string> reserved_names_list { "pause", "pauseUI" };
+	for (auto& reservedName : reserved_names_list)
 	{
-		if (Reserved_Name == sceneName)
+		if (reservedName == sceneName)
 		{
 			WARN("Cannot Use reserved Names");
 			return true;
