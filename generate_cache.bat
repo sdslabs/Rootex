@@ -1,5 +1,6 @@
 @echo off
 set res=F
+if "%1"=="/22" set res=T
 if "%1"=="/19" set res=T
 if "%1"=="/17" set res=T
 if "%res%"=="T" (
@@ -7,6 +8,9 @@ if "%res%"=="T" (
     mkdir build
     cd build
     del /F CMakeCache.txt
+    if "%1"=="/22" (
+        cmake .. -G "Visual Studio 17 2022" -A x64
+    )
     if "%1"=="/19" (
         cmake .. -G "Visual Studio 16 2019" -A x64
     )
