@@ -3,6 +3,7 @@
 #include "common/types.h"
 
 #include "framework/systems/physics_system.h"
+#include "framework/systems/render_system.h"
 #include "script/script.h"
 
 #include "entity.h"
@@ -230,10 +231,12 @@ void RigidBodyComponent::setKinematic(bool enabled)
 
 void RigidBodyComponent::highlight()
 {
+	RenderSystem::GetSingleton()->enableSubmitLinesOnTop();
 	PhysicsSystem::GetSingleton()->debugDrawComponent(
 	    m_Body->getWorldTransform(),
 	    m_CollisionShape.get(),
 	    VecTobtVector3({ 0.8f, 0.1f, 0.1f }));
+	RenderSystem::GetSingleton()->disableSubmitLinesOnTop();
 }
 
 JSON::json RigidBodyComponent::getJSON() const

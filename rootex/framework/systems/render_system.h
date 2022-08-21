@@ -32,6 +32,9 @@ class RenderSystem : public System
 
 	Ref<BasicMaterialResourceFile> m_LineMaterial;
 	LineRequests m_CurrentFrameLines;
+	LineRequests m_CurrentFrameLinesOnTop; // these lines will be rendered on top of everything else
+
+	bool m_SubmitLinesOnTop;
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_PerFrameVSCB;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_PerCameraChangeVSCB;
@@ -56,6 +59,10 @@ public:
 	void setConfig(const SceneSettings& sceneSettings) override;
 	void update(float deltaMilliseconds) override;
 	void renderLines();
+	void renderLinesOnTop();
+
+	void enableSubmitLinesOnTop();
+	void disableSubmitLinesOnTop();
 
 	void submitLine(const Vector3& from, const Vector3& to);
 
