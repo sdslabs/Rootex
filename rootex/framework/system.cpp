@@ -63,8 +63,7 @@ void System::pause()
 			    {
 				    system->m_IsSystemPaused = true;
 			    }
-		    }
-	    });
+		    } });
 }
 void System::unPause()
 {
@@ -76,8 +75,7 @@ void System::unPause()
 			    {
 				    system->m_IsSystemPaused = false;
 			    }
-		    }
-	    });
+		    } });
 }
 
 void System::draw()
