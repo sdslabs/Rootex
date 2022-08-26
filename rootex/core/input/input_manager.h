@@ -40,6 +40,7 @@ struct InputScheme
 {
 	Vector<InputDescription> bools;
 	Vector<InputDescription> floats;
+	bool isActive;
 };
 
 void to_json(JSON::json& j, const InputScheme& s);
@@ -121,6 +122,14 @@ public:
 
 	void update();
 	void setDisplaySize(const Vector2& newSize);
+
+	Array<String, 23> getMouseButtonNames();
+	Array<String, 166> getKeyboardButtonNames();
+	Array<String, 20> getPadButtonNames();
+
+	static Array<String, 23> GetMouseButtonNames() { return GetSingleton()->getMouseButtonNames(); }
+	static Array<String, 166> GetKeyboardButtonNames() { return GetSingleton()->getKeyboardButtonNames(); }
+	static Array<String, 20> GetPadButtonNames() { return GetSingleton()->getPadButtonNames(); }
 
 	const gainput::InputMap& getMap() const { return m_GainputMap; }
 	gainput::InputDeviceMouse* getMouse() { return static_cast<gainput::InputDeviceMouse*>(m_GainputManager.GetDevice(DeviceIDs[Device::Mouse])); }
