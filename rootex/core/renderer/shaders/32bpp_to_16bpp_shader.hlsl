@@ -20,6 +20,7 @@ float4 closest(float r,float g, float b) {
     r=round( r * 31. ) / 31.;
     b=round( b * 31. ) / 31.;
     g=round( g * 63. ) / 63.;
+
 	return float4( r, g, b, 1.0 );
 
 }
@@ -52,5 +53,6 @@ float4 main(DamageVSOutput input) : SV_TARGET
     float b=dithering( uv, rgbl.b );
     float g=dithering( uv, rgbl.g );
 	rgbl = closest( r, g, b );
+
     return rgbl;
 } 
