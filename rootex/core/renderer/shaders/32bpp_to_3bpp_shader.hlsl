@@ -74,4 +74,4 @@ float4 main(DamageVSOutput input) : SV_TARGET
 	rgbl = closest( r, g, b );
 
     return rgbl;
-} 
+}
