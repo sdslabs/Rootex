@@ -7,7 +7,7 @@
 #include "components/visual/camera_component.h"
 #include "components/audio/audio_listener_component.h"
 
-static SceneID NextSceneID = ROOT_SCENE_ID + 1;
+
 Vector<Scene*> Scene::s_Scenes;
 
 void to_json(JSON::json& j, const SceneSettings& s)

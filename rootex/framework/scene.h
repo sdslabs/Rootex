@@ -7,7 +7,7 @@
 class Entity;
 
 #define ROOT_SCENE_ID 1
-
+static SceneID NextSceneID = ROOT_SCENE_ID + 1;
 struct SceneSettings
 {
 	ResourceCollection preloads;

@@ -14,6 +14,7 @@
 #include "editor_application.h"
 #include "main/window.h"
 
+
 #include "gui/scene_dock.h"
 #include "gui/output_dock.h"
 #include "gui/toolbar_dock.h"
@@ -25,6 +26,7 @@
 
 #include "imgui_stdlib.h"
 #include "ImGuizmo.h"
+#include "scene.h"
 
 #define DOCUMENTATION_LINK String("https://rootex.readthedocs.io/")
 
@@ -253,6 +255,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 			static String newFileName;
 			static String newFileTypeName;
 			static String newFileExtension;
+			unsigned int BaseID;
 			if (ImGui::BeginMenu("File"))
 			{
 				if (ImGui::BeginMenu("Create Resource"))
@@ -318,7 +321,12 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 				ImGui::Separator();
 				if (ImGui::BeginMenu("Create Scene"))
 				{
+					const ImU32 u32_zero = 0, u32_one = 1;
+					static ImU32 u32_v = (ImU32)-1;
+					static bool inputs_step = true;
+
 					ImGui::InputText("Scene Name", &newSceneName, ImGuiInputTextFlags_AlwaysInsertMode);
+					ImGui::InputScalar("input u32", ImGuiDataType_U32, &BaseID, inputs_step ? &u32_one : NULL, NULL, "%u");    
 					if (!newSceneName.empty() && ImGui::Button("Create"))
 					{
 						if (SceneLoader::GetSingleton()->getCurrentScene())
@@ -328,6 +336,9 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 						}
 						else
 						{
+							std::cout << "OKOKOKOKOKOKOKOKOKOKOKO  " << BaseID << "  ds  " << NextSceneID << "--hmmmmm";
+							NextSceneID = BaseID;
+							std::cout << "Ononononononononononono  " << BaseID << "  ds  " << NextSceneID << "--hmmmmm";
 							EventManager::GetSingleton()->call(EditorEvents::EditorCreateNewScene, newSceneName);
 							m_LoadingScene = "game/assets/scenes/" + newSceneName + ".scene.json";
 						}
