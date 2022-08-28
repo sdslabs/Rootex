@@ -28,9 +28,9 @@
 
 #define DOCUMENTATION_LINK String("https://rootex.readthedocs.io/")
 
-bool checkReservedName(std::string sceneName)
+bool isReservedName(String sceneName)
 {
-	std::vector<std::string> reserved_names_list { "pause", "pauseUI" };
+	Vector<String> reserved_names_list { "pause", "pauseUI" };
 	for (auto& reservedName : reserved_names_list)
 	{
 		if (reservedName == sceneName)
@@ -343,7 +343,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 						else
 						{
 							EventManager::GetSingleton()->call(EditorEvents::EditorCreateNewScene, newSceneName);
-							if (!checkReservedName(newSceneName))
+							if (!isReservedName(newSceneName))
 							{
 								m_LoadingScene = "game/assets/scenes/" + newSceneName + ".scene.json";
 							}
@@ -634,7 +634,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 					{
 						saveAll(nullptr);
 						EventManager::GetSingleton()->call(EditorEvents::EditorCreateNewScene, newSceneName);
-						if (!checkReservedName(newSceneName))
+						if (!isReservedName(newSceneName))
 						{
 							m_LoadingScene = "game/assets/scenes/" + newSceneName + ".scene.json";
 							ImGui::CloseCurrentPopup();
@@ -660,7 +660,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 					else if (m_PopupCause == "create")
 					{
 						EventManager::GetSingleton()->call(EditorEvents::EditorCreateNewScene, newSceneName);
-						if (!checkReservedName(newSceneName))
+						if (!isReservedName(newSceneName))
 						{
 							m_LoadingScene = "game/assets/scenes/" + newSceneName + ".scene.json";
 							ImGui::CloseCurrentPopup();
@@ -917,8 +917,9 @@ Variant EditorSystem::saveBeforeQuit(const Event* event)
 Variant EditorSystem::createNewScene(const Event* event)
 {
 	const String& sceneName = Extract<String>(event->getData());
-	if (checkReservedName(sceneName))
+	if (isReservedName(sceneName))
 	{
+		WARN("Cannot use Reserved Names as Scene name");
 		return false;
 	}
 	const String& newScenePath = "game/assets/scenes/" + sceneName + ".scene.json";
