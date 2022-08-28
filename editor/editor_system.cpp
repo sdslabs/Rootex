@@ -28,20 +28,6 @@
 
 #define DOCUMENTATION_LINK String("https://rootex.readthedocs.io/")
 
-bool isReservedName(String sceneName)
-{
-	Vector<String> reserved_names_list { "pause", "pauseUI" };
-	for (auto& reservedName : reserved_names_list)
-	{
-		if (reservedName == sceneName)
-		{
-			WARN("Cannot Use reserved Names");
-			return true;
-		}
-	}
-	return false;
-}
-
 EditorSystem::EditorSystem()
     : System("EditorSystem", UpdateOrder::Editor, true)
     , m_CurrExportDir("")
@@ -343,7 +329,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 						else
 						{
 							EventManager::GetSingleton()->call(EditorEvents::EditorCreateNewScene, newSceneName);
-							if (!isReservedName(newSceneName))
+							if (!Scene::isReservedName(newSceneName))
 							{
 								m_LoadingScene = "game/assets/scenes/" + newSceneName + ".scene.json";
 							}
@@ -634,7 +620,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 					{
 						saveAll(nullptr);
 						EventManager::GetSingleton()->call(EditorEvents::EditorCreateNewScene, newSceneName);
-						if (!isReservedName(newSceneName))
+						if (!Scene::isReservedName(newSceneName))
 						{
 							m_LoadingScene = "game/assets/scenes/" + newSceneName + ".scene.json";
 							ImGui::CloseCurrentPopup();
@@ -660,7 +646,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 					else if (m_PopupCause == "create")
 					{
 						EventManager::GetSingleton()->call(EditorEvents::EditorCreateNewScene, newSceneName);
-						if (!isReservedName(newSceneName))
+						if (!Scene::isReservedName(newSceneName))
 						{
 							m_LoadingScene = "game/assets/scenes/" + newSceneName + ".scene.json";
 							ImGui::CloseCurrentPopup();
@@ -917,7 +903,7 @@ Variant EditorSystem::saveBeforeQuit(const Event* event)
 Variant EditorSystem::createNewScene(const Event* event)
 {
 	const String& sceneName = Extract<String>(event->getData());
-	if (isReservedName(sceneName))
+	if (Scene::isReservedName(sceneName))
 	{
 		WARN("Cannot use Reserved Names as Scene name");
 		return false;
