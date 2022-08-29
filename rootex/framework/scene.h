@@ -42,7 +42,7 @@ private:
 	static Vector<Scene*> s_Scenes;
 
 	SceneID m_ID;
-	unsigned int m_baseID;
+	unsigned int m_BaseID;
 	String m_Name;
 	String m_FullName;
 	ImportStyle m_ImportStyle;
@@ -81,6 +81,7 @@ public:
 	bool removeChild(Scene* toRemove);
 
 	void setName(const String& name);
+	void setBaseID(const unsigned int& BaseID);
 
 	JSON::json getJSON() const;
 	bool& getIsScenePaused() { return m_IsScenePaused; }

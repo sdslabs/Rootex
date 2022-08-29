@@ -315,12 +315,17 @@ void Scene::setName(const String& name)
 	m_FullName = name + " # " + std::to_string(m_ID);
 }
 
+void Scene::setBaseID(const unsigned int& BaseID)
+{
+	m_BaseID = BaseID;
+}
+
 JSON::json Scene::getJSON() const
 {
 	JSON::json j;
 
 	j["ID"] = m_ID;
-	j["BaseID"] = m_baseID;
+	j["BaseID"] = m_BaseID;
 	j["name"] = m_Name;
 	j["importStyle"] = m_ImportStyle;
 	j["sceneFile"] = m_SceneFile;
@@ -346,6 +351,7 @@ Scene::Scene(SceneID id, const String& name, const SceneSettings& settings, Impo
     , m_Entity(this)
 {
 	setName(m_Name);
+	setBaseID(NextSceneID - 5);
 	s_Scenes.push_back(this);
 }
 
