@@ -56,7 +56,6 @@ Ptr<Scene> Scene::Create(const JSON::json& sceneData, const bool assignNewIDs)
 	SceneID thisSceneID;
 	if (sceneData.contains("ID"))
 	{
-		std::cout << "SCENE>CPP MAI NEXT SCENE IS IS A -- " << NextSceneID;
 		NextSceneID = std::max(NextSceneID, (SceneID)sceneData["ID"]);
 		if (!assignNewIDs)
 		{
@@ -64,13 +63,11 @@ Ptr<Scene> Scene::Create(const JSON::json& sceneData, const bool assignNewIDs)
 		}
 		else
 		{
-			std::cout << "SCENE>CPP MAI NEXT SCENE IS IS B -- " << NextSceneID;
 			thisSceneID = NextSceneID;
 		}
 	}
 	else
 	{
-		std::cout << "SCENE>CPP MAI NEXT SCENE IS IS C -- " << NextSceneID;
 		thisSceneID = NextSceneID;
 	}
 	NextSceneID++;

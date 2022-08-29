@@ -26,7 +26,7 @@
 
 #include "imgui_stdlib.h"
 #include "ImGuizmo.h"
-#include "scene.h"
+#include "scene.cpp"
 
 #define DOCUMENTATION_LINK String("https://rootex.readthedocs.io/")
 
@@ -255,7 +255,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 			static String newFileName;
 			static String newFileTypeName;
 			static String newFileExtension;
-			unsigned int BaseID;
+			static unsigned int BaseID;
 		
 			if (ImGui::BeginMenu("File"))
 			{
@@ -323,7 +323,6 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 				if (ImGui::BeginMenu("Create Scene"))
 				{
 					const ImU32 u32_zero = 0, u32_one = 1;
-					static ImU32 u32_v = (ImU32)-1;
 					static bool inputs_step = true;
 
 					ImGui::InputText("Scene Name", &newSceneName, ImGuiInputTextFlags_AlwaysInsertMode);
@@ -337,11 +336,11 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 						}
 						else
 						{
-							std::cout << "OKOKOKOKOKOKOKOKOKOKOKO  " << BaseID << "  ds  " << NextSceneID << "--hmmmmm";
-							BaseID = 67;
 							NextSceneID = BaseID;
-
-							std::cout << "Ononononononononononono  " << BaseID << "  ds  " << NextSceneID << "--hmmmmm";
+							if (NextSceneID <= 4)
+							{
+								NextSceneID = 4;
+							}
 							EventManager::GetSingleton()->call(EditorEvents::EditorCreateNewScene, newSceneName);
 							m_LoadingScene = "game/assets/scenes/" + newSceneName + ".scene.json";
 						}
@@ -630,6 +629,11 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 					else if (m_PopupCause == "create")
 					{
 						saveAll(nullptr);
+						NextSceneID = BaseID;
+						if (NextSceneID <= 4)
+						{
+							NextSceneID = 4;
+						}
 						EventManager::GetSingleton()->call(EditorEvents::EditorCreateNewScene, newSceneName);
 						m_LoadingScene = "game/assets/scenes/" + newSceneName + ".scene.json";
 						ImGui::CloseCurrentPopup();
@@ -653,6 +657,11 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 					}
 					else if (m_PopupCause == "create")
 					{
+						NextSceneID = BaseID;
+						if (NextSceneID <= 4)
+						{
+							NextSceneID = 4;
+						}
 						EventManager::GetSingleton()->call(EditorEvents::EditorCreateNewScene, newSceneName);
 						m_LoadingScene = "game/assets/scenes/" + newSceneName + ".scene.json";
 						ImGui::CloseCurrentPopup();
