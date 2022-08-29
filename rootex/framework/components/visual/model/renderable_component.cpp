@@ -43,7 +43,7 @@ bool RenderableComponent::setupEntities()
 
 bool RenderableComponent::preRender(float deltaMilliseconds)
 {
-	RenderSystem::GetSingleton()->pushMatrixOverride(getTransformComponent()->getAbsoluteTransform());
+	TransformSystem::GetSingleton()->pushMatrixOverride(getTransformComponent()->getAbsoluteTransform());
 	return true;
 }
 
@@ -62,7 +62,7 @@ void RenderableComponent::render(float viewDistance)
 
 void RenderableComponent::postRender()
 {
-	RenderSystem::GetSingleton()->popMatrix();
+	TransformSystem::GetSingleton()->popMatrix();
 }
 
 bool RenderableComponent::addAffectingStaticLight(SceneID ID)
