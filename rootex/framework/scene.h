@@ -42,6 +42,7 @@ private:
 	static Vector<Scene*> s_Scenes;
 
 	SceneID m_ID;
+	unsigned int m_baseID;
 	String m_Name;
 	String m_FullName;
 	ImportStyle m_ImportStyle;

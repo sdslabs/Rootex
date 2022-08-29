@@ -256,6 +256,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 			static String newFileTypeName;
 			static String newFileExtension;
 			unsigned int BaseID;
+		
 			if (ImGui::BeginMenu("File"))
 			{
 				if (ImGui::BeginMenu("Create Resource"))
@@ -337,7 +338,9 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 						else
 						{
 							std::cout << "OKOKOKOKOKOKOKOKOKOKOKO  " << BaseID << "  ds  " << NextSceneID << "--hmmmmm";
+							BaseID = 67;
 							NextSceneID = BaseID;
+
 							std::cout << "Ononononononononononono  " << BaseID << "  ds  " << NextSceneID << "--hmmmmm";
 							EventManager::GetSingleton()->call(EditorEvents::EditorCreateNewScene, newSceneName);
 							m_LoadingScene = "game/assets/scenes/" + newSceneName + ".scene.json";
