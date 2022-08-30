@@ -40,9 +40,10 @@ private:
 	bool m_IsScenePaused;
 
 	static Vector<Scene*> s_Scenes;
-
+	static SceneID BaseID;
 	SceneID m_ID;
 	String m_Name;
+	SceneID m_BaseID;
 	String m_FullName;
 	ImportStyle m_ImportStyle;
 	/// Contains the current file name if local, else contains the linked scene file
@@ -57,6 +58,7 @@ private:
 
 public:
 	static void ResetNextID();
+	static void SetBaseID(const SceneID& inputBaseID);
 
 	static Ptr<Scene> Create(const JSON::json& sceneData, const bool assignNewIDs);
 	static Ptr<Scene> CreateFromFile(const String& sceneFile);
@@ -80,6 +82,7 @@ public:
 	bool removeChild(Scene* toRemove);
 
 	void setName(const String& name);
+	void setBaseID() { m_BaseID = BaseID; }
 
 	JSON::json getJSON() const;
 	bool& getIsScenePaused() { return m_IsScenePaused; }
