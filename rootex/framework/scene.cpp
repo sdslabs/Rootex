@@ -309,7 +309,7 @@ bool Scene::isReservedName(String sceneName)
 	{
 		if (reservedName == sceneName)
 		{
-			WARN("Cannot Use reserved Names");
+			WARN("Cannot use reserved Scene names");
 			return true;
 		}
 	}
