@@ -22,14 +22,13 @@ Ref<Application> CreateRootexApplication()
 Optional<String> GameApplication::getSceneNameFromCommandLine(const char* s)
 {
 	String cmdLine = s;
-	if (Scene::isReservedName(cmdLine))
+	if (!Scene::isReservedName(cmdLine))
 	{
 		size_t found = cmdLine.find("game/assets/");
 		if (found != String::npos)
 		{
 			return cmdLine.substr(found, cmdLine.size() - 1);
 		}
-		return {};
 	}
 	return {};
 }
