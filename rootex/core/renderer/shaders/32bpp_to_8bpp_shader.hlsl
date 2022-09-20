@@ -4,10 +4,10 @@ SamplerState AnisotropicSampler : register(s0);
 
 cbuffer PerFrame : register(CUSTOM_PER_FRAME_PS_HLSL)
 {
-	float timeMs;
-	float deltaTimeMs;
-	float2 resolution;
-	float2 mouse;
+    float timeMs;
+    float deltaTimeMs;
+    float2 resolution;
+    float2 mouse;
 };
 
 struct DamageVSOutput
@@ -18,11 +18,11 @@ struct DamageVSOutput
 
 float4 closest(float r,float g, float b) {
 
-	r = round( r * 7. ) / 7.;
-	g = round( g * 7. )/7.;
-	b = round( b * 3. ) / 3.;
+    r = round( r * 7. ) / 7.;
+    g = round( g * 7. )/7.;
+    b = round( b * 3. ) / 3.;
     
-	return float4( r, g, b, 1. );
+    return float4( r, g, b, 1. );
 };
 
 float dithering(in float2 coord, inout float v)
@@ -39,9 +39,9 @@ float dithering(in float2 coord, inout float v)
 
     };
     float offset = (float(ordered_matrix[(int)(coord.x) & 7][(int)(coord.y) & 7]) + 1 ) / 64. - 0.5;
-	v = v + offset * 0.4;
+    v = v + offset * 0.4;
 
-	return v;
+    return v;
 }
 
 float4 main(DamageVSOutput input) : SV_TARGET
@@ -51,7 +51,7 @@ float4 main(DamageVSOutput input) : SV_TARGET
     float r=dithering( uv, rgbl.r );
     float b=dithering( uv, rgbl.b );
     float g=dithering( uv, rgbl.g );
-	rgbl = closest( r, g, b );
+    rgbl = closest( r, g, b );
 
     return rgbl;
 } 
