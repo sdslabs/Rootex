@@ -34,11 +34,11 @@ float4 closest(float r,float g, float b) {
     for (int i = 0; i < 8; i++) {
     float3 tr = float3( Palette[i] );
     float3 error = tr - curr;
-        float err = dot( error, error );
-        if ( err < m ) {
-            m = err;
-            closest = tr;
-        }
+    float err = dot( error, error );
+    if ( err < m ) {
+        m = err;
+        closest = tr;
+    }
     }
 
     return float4( closest, 1. );
