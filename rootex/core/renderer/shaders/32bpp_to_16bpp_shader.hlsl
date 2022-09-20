@@ -21,24 +21,24 @@ float4 closest(float r,float g, float b) {
     b=round( b * 31. ) / 31.;
     g=round( g * 63. ) / 63.;
 
-	return float4( r, g, b, 1.0 );
+	return float4( r, g, b, 1. );
 
 }
 
 float dithering(in float2 coord, inout float v)
 {
-	float M[8][8] = {
-		{ 0., 32., 8., 40., 2., 34., 10., 42. }, 
-		{ 48., 16., 56., 24., 50., 18., 58., 26. },
-		{ 12., 44., 4., 36., 14., 46., 6., 38. },
-		{ 60., 28., 52., 20., 62., 30., 54., 22. },
-		{ 3., 35., 11., 43., 1., 33., 9., 41. },
-		{ 51., 19., 59., 27., 49., 17., 57., 25. },
-		{ 15., 47., 7., 39., 13., 45., 5., 37. },
-		{ 63., 31., 55., 23., 61., 29., 53., 21. } 
+    int ordered_matrix[8][8] = {
+        { 0, 32, 8, 40, 2, 34, 10, 42 },
+        { 48, 16, 56, 24, 50, 18, 58, 26 },
+        { 12, 44, 4, 36, 14, 46, 6, 38 },
+        { 60, 28, 52, 20, 62, 30, 54, 22 },
+        { 3, 35, 11, 43, 1, 33, 9, 41 },
+        { 51, 19, 59, 27, 49, 17, 57, 25 },
+        { 15, 47, 7, 39, 13, 45, 5, 37 },
+        { 63, 31, 55, 23, 61, 29, 53, 21 }
 
-	};
-	float offset=( float( M[ ( coord.x ) % 8.0 ][ ( coord.y ) % 8. ]) + 1. ) / 64. - 0.5;
+    };
+    float offset = (float(ordered_matrix[(int)(coord.x) & 7][(int)(coord.y) & 7] ) + 1 ) / 64. - 0.5;
 	v = v + offset * 0.4;
 
 	return v;
@@ -53,6 +53,6 @@ float4 main(DamageVSOutput input) : SV_TARGET
     float b=dithering( uv, rgbl.b );
     float g=dithering( uv, rgbl.g );
 	rgbl = closest( r, g, b );
-
+	
     return rgbl;
 } 
