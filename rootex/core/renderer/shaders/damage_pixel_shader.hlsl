@@ -25,7 +25,7 @@ float4 main(DamageVSOutput input) : SV_TARGET
 	float intensity = max( abs(uv.x), abs(uv.y) );
     intensity = max( intensity, (abs(uv.x) + abs(uv.y)) * 0.66667);
 	float sinTime = abs( sin( time ) );
-	float div = ( sinTime + 1.0 );
+	float div = ( sinTime + 1. );
 	float3 col = float3( ( (intensity) * sinTime + rgbl.r ) / div, rgbl.g / div, rgbl.b / div);
     rgbl = ( float4( col, 1. ) );
 
