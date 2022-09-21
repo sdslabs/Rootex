@@ -67,7 +67,7 @@ bool SpriteComponent::preRender(float deltaMilliseconds)
 		billboardMatrix.Up(billboardMatrix.Up() * scaling.y);
 		billboardMatrix.Backward(billboardMatrix.Backward() * scaling.z);
 
-		RenderSystem::GetSingleton()->pushMatrixOverride(billboardMatrix);
+		TransformSystem::GetSingleton()->pushMatrixOverride(billboardMatrix);
 	}
 
 	return true;
@@ -77,7 +77,7 @@ void SpriteComponent::postRender()
 {
 	if (m_IsBillboarded)
 	{
-		RenderSystem::GetSingleton()->popMatrix();
+		TransformSystem::GetSingleton()->popMatrix();
 	}
 	ModelComponent::postRender();
 }

@@ -29,7 +29,6 @@ RenderSystem::RenderSystem()
 	m_Binder.bind(RootexEvents::OpenedScene, this, &RenderSystem::onOpenedScene);
 
 	m_Camera = SceneLoader::GetSingleton()->getRootScene()->getEntity().getComponent<CameraComponent>();
-	m_TransformationStack.push_back(Matrix::Identity);
 
 	m_LineMaterial = ResourceLoader::CreateBasicMaterialResourceFile("rootex/assets/materials/line.basic.rmat");
 	m_CurrentFrameLines.m_Endpoints.reserve(LINE_MAX_VERTEX_COUNT * LINE_VERTEX_COUNT * 3);
@@ -68,54 +67,7 @@ void RenderSystem::setConfig(const SceneSettings& sceneSettings)
 
 	setCamera(camera);
 
-	calculateTransforms(SceneLoader::GetSingleton()->getRootScene());
-}
-
-void RenderSystem::calculateTransforms(Scene* scene)
-{
-	Entity& entity = scene->getEntity();
-	if (TransformComponent* transform = entity.getComponent<TransformComponent>())
-	{
-		int passDown = transform->getPassDowns();
-
-		if (passDown == (int)TransformPassDown::All)
-		{
-			pushMatrix(transform->getLocalTransform());
-		}
-		else
-		{
-			Matrix matrix = Matrix::Identity;
-			if (passDown & (int)TransformPassDown::Position)
-			{
-				matrix = Matrix::CreateTranslation(transform->getPosition()) * matrix;
-			}
-			if (passDown & (int)TransformPassDown::Rotation)
-			{
-				matrix = Matrix::CreateFromQuaternion(transform->getRotation()) * matrix;
-			}
-			if (passDown & (int)TransformPassDown::Scale)
-			{
-				matrix = Matrix::CreateScale(transform->getScale()) * matrix;
-			}
-			pushMatrix(matrix);
-		}
-	}
-	else
-	{
-		pushMatrix(Matrix::Identity);
-	}
-
-	for (auto& child : scene->getChildren())
-	{
-		Entity& childEntity = child->getEntity();
-		if (TransformComponent* childTransform = childEntity.getComponent<TransformComponent>())
-		{
-			childTransform->setParentAbsoluteTransform(getCurrentMatrix());
-		}
-
-		calculateTransforms(child.get());
-	}
-	popMatrix();
+	TransformSystem::GetSingleton()->calculateTransforms(SceneLoader::GetSingleton()->getRootScene());
 }
 
 void RenderSystem::renderPassRender(float deltaMilliseconds, RenderPass renderPass)
@@ -219,7 +171,7 @@ void RenderSystem::update(float deltaMilliseconds)
 	}
 	{
 		ZoneNamedN(absoluteTransform, "Absolute Transformations", true);
-		calculateTransforms(SceneLoader::GetSingleton()->getRootScene());
+		TransformSystem::GetSingleton()->calculateTransforms(SceneLoader::GetSingleton()->getRootScene());
 	}
 	{
 		ZoneNamedN(stateSet, "Render PlayerState Reset", true);
@@ -423,21 +375,6 @@ void RenderSystem::submitCone(const Matrix& transform, const float& height, cons
 	submitLine(center, end - right);
 }
 
-void RenderSystem::pushMatrix(const Matrix& transform)
-{
-	m_TransformationStack.push_back(transform * m_TransformationStack.back());
-}
-
-void RenderSystem::pushMatrixOverride(const Matrix& transform)
-{
-	m_TransformationStack.push_back(transform);
-}
-
-void RenderSystem::popMatrix()
-{
-	m_TransformationStack.pop_back();
-}
-
 void RenderSystem::enableWireframeRasterizer()
 {
 	RenderingDevice::GetSingleton()->setRSType(RenderingDevice::RasterizerState::Wireframe);
@@ -510,7 +447,7 @@ void RenderSystem::setPerFramePSCBs(const Color& fogColor)
 
 void RenderSystem::setPerScenePSCBs()
 {
-	calculateTransforms(SceneLoader::GetSingleton()->getRootScene());
+	TransformSystem::GetSingleton()->calculateTransforms(SceneLoader::GetSingleton()->getRootScene());
 	updateStaticLights();
 }
 
@@ -554,11 +491,6 @@ void RenderSystem::restoreCamera()
 	{
 		setCamera(SceneLoader::GetSingleton()->getRootScene()->getEntity().getComponent<CameraComponent>());
 	}
-}
-
-const Matrix& RenderSystem::getCurrentMatrix() const
-{
-	return m_TransformationStack.back();
 }
 
 Variant RenderSystem::onOpenedScene(const Event* event)
