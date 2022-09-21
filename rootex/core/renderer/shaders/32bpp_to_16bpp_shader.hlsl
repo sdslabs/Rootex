@@ -17,11 +17,11 @@ struct DamageVSOutput
 };
 
 float4 closest(float r,float g, float b) {
-    r=round( r * 31. ) / 31.;
-    b=round( b * 31. ) / 31.;
-    g=round( g * 63. ) / 63.;
+    r=round( r * 31.0f ) / 31.0f;
+    b=round( b * 31.0f ) / 31.0f;
+    g=round( g * 63.0f ) / 63.0f;
 
-    return float4( r, g, b, 1. );
+    return float4( r, g, b, 1.0f );
 }
 
 float dithering(in float2 coord, inout float v)
@@ -36,7 +36,7 @@ float dithering(in float2 coord, inout float v)
         { 15, 47, 7, 39, 13, 45, 5, 37 },
         { 63, 31, 55, 23, 61, 29, 53, 21 }
     };
-    float offset = (float(ordered_matrix[(int)(coord.x) & 7][(int)(coord.y) & 7] ) + 1 ) / 64. - 0.5;
+    float offset = (float(ordered_matrix[(int)(coord.x) & 7][(int)(coord.y) & 7] ) + 1 ) / 64.0f - 0.5;
     v = v + offset * 0.4;
 
     return v;
@@ -46,7 +46,7 @@ float dithering(in float2 coord, inout float v)
 float4 main(DamageVSOutput input) : SV_TARGET
 {
     float4 rgbl = InputTexture.Sample(AnisotropicSampler, input.tex);
-    float2 uv=float2( input.tex * resolution / 3. );
+    float2 uv=float2( input.tex * resolution / 3.0f );
     float r=dithering( uv, rgbl.r );
     float b=dithering( uv, rgbl.b );
     float g=dithering( uv, rgbl.g );
