@@ -11,7 +11,7 @@ struct DamageVSOutput
 float4 main(DamageVSOutput input) : SV_TARGET
 {
     float4 rgbl = InputTexture.Sample(AnisotropicSampler, input.tex);
-    rgbl = ( float4( rgbl.r, rgbl.g, rgbl.b, 1. ) );
+    rgbl = ( float4( rgbl.r, rgbl.g, rgbl.b, 1.0f ) );
     
     return rgbl;
 } 
