@@ -36,7 +36,6 @@ float dithering(in float2 coord, inout float v)
         { 51, 19, 59, 27, 49, 17, 57, 25 },
         { 15, 47, 7, 39, 13, 45, 5, 37 },
         { 63, 31, 55, 23, 61, 29, 53, 21 }
-
     };
     float offset = (float(ordered_matrix[(int)(coord.x) & 7][(int)(coord.y) & 7]) + 1 ) / 64. - 0.5;
     v = v + offset * 0.4;

@@ -32,13 +32,13 @@ float4 closest(float r,float g, float b) {
     float3 closest = { 1., 1., 1. };
     float3 curr = float3( r, g, b );
     for (int i = 0; i < 8; i++) {
-    float3 tr = float3( Palette[i] );
-    float3 error = tr - curr;
-    float err = dot( error, error );
-    if ( err < m ) {
-        m = err;
-        closest = tr;
-    }
+        float3 tr = float3( Palette[i] );
+        float3 error = tr - curr;
+        float err = dot( error, error );
+        if ( err < m ) {
+            m = err;
+            closest = tr;
+        }
     }
 
     return float4( closest, 1. );
@@ -55,7 +55,6 @@ float dithering(in float2 coord, inout float v)
         { 51, 19, 59, 27, 49, 17, 57, 25 },
         { 15, 47, 7, 39, 13, 45, 5, 37 },
         { 63, 31, 55, 23, 61, 29, 53, 21 }
-
     };
     float offset = (float(ordered_matrix[(int)(coord.x) & 7][(int)( coord.y ) & 7 ]) + 1 ) / 64. - 0.5;
     v = v + offset * 0.4;
