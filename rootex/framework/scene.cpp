@@ -302,9 +302,9 @@ bool Scene::removeChild(Scene* toRemove)
 	return false;
 }
 
-bool Scene::isReservedName(String sceneName)
+bool Scene::isReservedName(const String& sceneName)
 {
-	Vector<String> reservedNames { "pause", "pauseUI" };
+	static Vector<String> reservedNames { "pause", "pauseUI" };
 	for (auto& reservedName : reservedNames)
 	{
 		if (reservedName == sceneName)
