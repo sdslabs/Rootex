@@ -3,7 +3,23 @@ name: C/C++ CI
 on: [push]
 
 jobs:
-  build-windows:
+  build-windows-22:
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-2022]
+    
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: configure
+      run: ./generate_cache.bat /22
+    
+    - name: build
+      run: ./build.bat
+
+  build-windows-19:
 
     runs-on: ${{ matrix.os }}
     strategy:

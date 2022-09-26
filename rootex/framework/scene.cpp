@@ -278,6 +278,13 @@ bool Scene::addChild(Ptr<Scene>& child)
 	if (findIt == m_ChildrenScenes.end())
 	{
 		child->m_ParentScene = this;
+		if (getID() != ROOT_SCENE_ID && getName() != "EditorCamera" && getName() != "EditorGrid")
+		{
+			for (auto&& inputScheme : child->getSettings().inputSchemes)
+			{
+				m_Settings.inputSchemes.insert(inputScheme);
+			}
+		}
 		m_ChildrenScenes.emplace_back(std::move(child));
 		ScriptSystem::GetSingleton()->addEnterScriptEntity(&m_ChildrenScenes.back()->getEntity());
 	}
@@ -507,13 +514,15 @@ void SceneSettings::draw()
 		ImGui::EndCombo();
 	}
 
-	ImGui::Text("Input Schemes");
+	ImGui::Text("Input Schemes:");
+	ImGui::Separator();
 	int i = 0;
 	const String* inputSchemeToRemove = nullptr;
 	for (auto& [name, inputScheme] : inputSchemes)
 	{
 		ImGui::PushID(i);
-
+		ImGui::Text(name.c_str());
+		ImGui::Checkbox("Active", &inputScheme.isActive);
 		ImGui::SetNextItemWidth(ImGui::GetFontSize() * 100);
 		if (ImGui::ListBoxHeader(name.c_str()))
 		{
@@ -563,10 +572,6 @@ void SceneSettings::draw()
 
 			ImGui::ListBoxFooter();
 		}
-		if (ImGui::Button("Remove Scheme"))
-		{
-			inputSchemeToRemove = &name;
-		}
 
 		static int type = 0;
 		ImGui::Combo("Type", &type, "Bool\0Float\0");
@@ -576,7 +581,7 @@ void SceneSettings::draw()
 			InputDescription inputDesc;
 			inputDesc.device = Device::Mouse;
 			inputDesc.button = MouseButton::MouseButtonLeft;
-			inputDesc.inputEvent = "GameBoolEvent";
+			inputDesc.inputEvent = name + "::GameBoolEvent";
 
 			if (type == 0)
 			{
@@ -587,8 +592,12 @@ void SceneSettings::draw()
 				inputScheme.floats.push_back(inputDesc);
 			}
 		}
-
+		if (ImGui::Button("Remove Scheme"))
+		{
+			inputSchemeToRemove = &name;
+		}
 		ImGui::PopID();
+		ImGui::Separator();
 		i++;
 	}
 
@@ -597,8 +606,6 @@ void SceneSettings::draw()
 		inputSchemes.erase(*inputSchemeToRemove);
 		startScheme = "";
 	}
-
-	ImGui::Separator();
 
 	static String newSchemeName = "New Scheme";
 	ImGui::InputText("##New Scheme", &newSchemeName);
@@ -611,18 +618,65 @@ void SceneSettings::draw()
 
 void SceneSettings::drawInputScheme(InputDescription& inputDesc)
 {
-	int device = (int)inputDesc.device;
+	Device originalDevice = inputDesc.device;
+	int device = (int)originalDevice;
 	ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth() / 3.0f);
 	if (ImGui::Combo("##device", &device, "Mouse\0Keyboard\0Pad1\0Pad2\0"))
 	{
 		inputDesc.device = (Device)device;
 	}
 	ImGui::SameLine();
-	int button = inputDesc.button;
 	ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth() / 3.0f);
-	if (ImGui::InputInt("##button", &button))
+	if (inputDesc.device == Device::Mouse)
 	{
-		inputDesc.button = (DeviceButtonID)button;
+		inputDesc.button = originalDevice == inputDesc.device ? inputDesc.button : 0;
+		auto mouseKeys = InputManager::GetMouseButtonNames();
+		char buffer[20] = {};
+		InputManager::GetSingleton()->getMouse()->GetButtonName(inputDesc.button, buffer, 20);
+		String key = buffer;
+		Array<const char*, mouseKeys.size()> mouseKeysBuffer;
+		int currentKey = 0;
+		for (int i = 0; i < mouseKeys.size(); i++)
+		{
+			mouseKeysBuffer[i] = mouseKeys[i].c_str();
+			currentKey = (key == mouseKeys[i]) ? i : currentKey;
+		}
+		ImGui::Combo("##mouseInput", &currentKey, mouseKeysBuffer.data(), mouseKeysBuffer.size());
+		inputDesc.button = InputManager::GetSingleton()->getMouse()->GetButtonByName(mouseKeys[currentKey].c_str());
+	}
+	else if (inputDesc.device == Device::Keyboard)
+	{
+		inputDesc.button = originalDevice == inputDesc.device ? inputDesc.button : 0;
+		auto keyboardKeys = InputManager::GetKeyboardButtonNames();
+		char buffer[20] = {};
+		InputManager::GetSingleton()->getKeyboard()->GetButtonName(inputDesc.button, buffer, 20);
+		String key = buffer;
+		Array<const char*, keyboardKeys.size()> keyboardKeysBuffer;
+		int currentKey = 0;
+		for (int i = 0; i < keyboardKeys.size(); i++)
+		{
+			keyboardKeysBuffer[i] = keyboardKeys[i].c_str();
+			currentKey = (key == keyboardKeys[i]) ? i : currentKey;
+		}
+		ImGui::Combo("", &currentKey, keyboardKeysBuffer.data(), keyboardKeysBuffer.size());
+		inputDesc.button = InputManager::GetSingleton()->getKeyboard()->GetButtonByName(keyboardKeys[currentKey].c_str());
+	}
+	else if (inputDesc.device == Device::Pad1 || inputDesc.device == Device::Pad2)
+	{
+		inputDesc.button = originalDevice == inputDesc.device ? inputDesc.button : 0;
+		auto padKeys = InputManager::GetPadButtonNames();
+		char buffer[20] = {};
+		InputManager::GetSingleton()->getPad1()->GetButtonName(inputDesc.button, buffer, 20);
+		String key = buffer;
+		Array<const char*, padKeys.size()> padKeysBuffer;
+		int currentKey = 0;
+		for (int i = 0; i < padKeys.size(); i++)
+		{
+			padKeysBuffer[i] = padKeys[i].c_str();
+			currentKey = (key == padKeys[i]) ? i : currentKey;
+		}
+		ImGui::Combo("##padInput", &currentKey, padKeysBuffer.data(), padKeysBuffer.size());
+		inputDesc.button = InputManager::GetSingleton()->getPad1()->GetButtonByName(padKeys[currentKey].c_str());
 	}
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth() / 3.0f);
