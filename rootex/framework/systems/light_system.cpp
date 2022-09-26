@@ -61,6 +61,8 @@ LightsInfo LightSystem::getDynamicLights()
 	};
 
 	ComponentArray<PointLightComponent>& pointLightComponents = ECSFactory::GetAllPointLightComponent();
+    // TODO: Implement sorting. Currently due to raw pointers in components it is not possible to sort without garranting there
+    // won't be any memory corruption.
 	//sort(pointLightComponents.begin(), pointLightComponents.end(), pointLightSortingLambda);
 
 	int i = 0;
@@ -113,6 +115,8 @@ LightsInfo LightSystem::getDynamicLights()
 	};
 
 	ComponentArray<SpotLightComponent>& spotLightComponents = ECSFactory::GetAllSpotLightComponent();
+    // TODO: Implement sorting. Currently due to raw pointers in components it is not possible to sort without garranting there
+    // won't be any memory corruption.
 	//sort(spotLightComponents.begin(), spotLightComponents.end(), spotLightSortingLambda);
 
 	i = 0;

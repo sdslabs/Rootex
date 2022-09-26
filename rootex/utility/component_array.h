@@ -5,45 +5,44 @@
 
 #define MAX_COMPONENT_ARRAY_SIZE 10000
 
-template <typename component, class A = std::allocator<component>>
-class ComponentArray // component array
+template <typename Component, class A = std::allocator<component>>
+class ComponentArray 
 {
 private:
-	Vector<component> m_Data;
+	Vector<Component> m_Data;
 	Vector<bool> m_IsValid;
-	int m_Curr;
+	size_t m_Curr;
 	size_t m_ArraySize;
 
 public:
-	ComponentArray() //default constructor
+	ComponentArray()
 	{
 		m_Data.reserve(MAX_COMPONENT_ARRAY_SIZE);
 		m_IsValid.reserve(MAX_COMPONENT_ARRAY_SIZE);
 		for (int i = 0; i < MAX_COMPONENT_ARRAY_SIZE; i++)
 		{
 			m_IsValid.push_back(true);
-			//m_Data[i] = component();
 		}
 		m_Curr = 0;
 		m_ArraySize = 0;
 	}
 
-	CustomIterator<component> begin() // begining of the iterator
+	CustomIterator<Component> begin() 
 	{
 		int index = 0;
 		while (!m_IsValid[index])
 		{
 			index++;
 		}
-		return CustomIterator<component>(m_IsValid, m_Data.begin() + index);
+		return CustomIterator<Component>(m_IsValid, m_Data.begin() + index);
 	}
 
-	CustomIterator<component> end() // end of the iterator
+	CustomIterator<Component> end() 
 	{
-		return CustomIterator<component>(m_Data.begin() + m_Curr);
+		return CustomIterator<Component>(m_Data.begin() + m_Curr);
 	}
 
-	void push_back(const component& item)
+	void push_back(const Component& item)
 	{
 		if (m_ArraySize == MAX_COMPONENT_ARRAY_SIZE)
 		{
@@ -73,7 +72,7 @@ public:
 		{
 			if (!m_IsValid[i])
 			{
-				new (&m_Data[i]) component(owner, componentData); //Create a new component at m_data[i]
+				new (&m_Data[i]) Component(owner, componentData); //Create a new component at m_data[i]
 				owner.registerComponent(&m_Data[i]);
 				m_IsValid[i] = true;
 				m_ArraySize++;
@@ -99,22 +98,11 @@ public:
 		return false;
 	}
 
-	ComponentArray<component> getALL()
-	{
-		return *this;
-	}
-
 	size_t size() const { return m_ArraySize; }
 
 	bool empty() const { return m_ArraySize == 0; }
 
-	component front()
-	{
-		return *(this->begin());
-	}
+	Component front() { return *begin(); }
 
-	component back()
-	{
-		return *(this->end());
-	}
+	Component back() { return *end(); }
 };
