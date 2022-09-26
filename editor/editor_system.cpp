@@ -319,7 +319,7 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 				if (ImGui::BeginMenu("Create Scene"))
 				{
 					ImGui::InputText("Scene Name", &newSceneName, ImGuiInputTextFlags_AlwaysInsertMode);
-					if (!newSceneName.empty() && ImGui::Button("Create"))
+					if (!newSceneName.empty() && ImGui::Button("Create") && !Scene::isReservedName(newSceneName))
 					{
 						if (SceneLoader::GetSingleton()->getCurrentScene())
 						{
