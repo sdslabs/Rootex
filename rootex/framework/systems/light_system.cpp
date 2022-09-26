@@ -95,7 +95,7 @@ LightsInfo LightSystem::getDynamicLights()
 			WARN("Directional lights specified are greater than 1. Using only the first directional light found.");
 		}
 
-		DirectionalLightComponent& light = *directionalLightComponents.begin();
+		DirectionalLightComponent& light = directionalLightComponents[0];
 		const DirectionalLight& directionalLight = light.getDirectionalLight();
 		const Vector3& forward = light.getDirection();
 

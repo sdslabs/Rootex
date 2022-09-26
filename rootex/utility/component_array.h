@@ -97,7 +97,29 @@ public:
 		}
 		return false;
 	}
+        
+    Component& ComponentArray::operator[](int index)
+    {
+        if (index >= m_Curr)
+        {
+            std::cerr << "Array index out of bound, exiting";
+        }
 
+        int actualIndex = 0;
+        int i = 0;
+        for (i = 0; i < m_ArraySize; i++)
+        {
+            if (m_IsValid[i])
+            {
+                actualIndex++;
+            }
+            if (actualIndex == index)
+            {
+                break;
+            }
+        }
+        return m_Data[i];
+    }
 	size_t size() const { return m_ArraySize; }
 
 	bool empty() const { return m_ArraySize == 0; }
