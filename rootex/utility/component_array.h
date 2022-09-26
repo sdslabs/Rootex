@@ -5,7 +5,7 @@
 
 #define MAX_COMPONENT_ARRAY_SIZE 10000
 
-template <typename Component, class A = std::allocator<component>>
+template <typename Component, class A = std::allocator<Component>>
 class ComponentArray 
 {
 private:
@@ -27,26 +27,26 @@ public:
 		m_ArraySize = 0;
 	}
 
-	CustomIterator<Component> begin() 
+	ComponentArrayIterator<Component> begin() 
 	{
 		int index = 0;
 		while (!m_IsValid[index])
 		{
 			index++;
 		}
-		return CustomIterator<Component>(m_IsValid, m_Data.begin() + index);
+		return ComponentArrayIterator<Component>(m_IsValid, m_Data.begin() + index);
 	}
 
-	CustomIterator<Component> end() 
+	ComponentArrayIterator<Component> end() 
 	{
-		return CustomIterator<Component>(m_Data.begin() + m_Curr);
+		return ComponentArrayIterator<Component>(m_Data.begin() + m_Curr);
 	}
 
 	void push_back(const Component& item)
 	{
 		if (m_ArraySize == MAX_COMPONENT_ARRAY_SIZE)
 		{
-			ERR("Component set for " + component::s_Name + " is full. Reduce component count or increase max m_ArraySize");
+			ERR("Component set for " + Component::s_Name + " is full. Reduce component count or increase max m_ArraySize");
 		}
 		for (int i = 0; i < MAX_COMPONENT_ARRAY_SIZE; i++)
 		{
@@ -65,7 +65,7 @@ public:
 	{
 		if (m_ArraySize == MAX_COMPONENT_ARRAY_SIZE)
 		{
-			ERR("Component set for " + component::s_Name + " is full. Reduce component count or increase max m_ArraySize");
+			ERR("Component set for " + Component::s_Name + " is full. Reduce component count or increase max m_ArraySize");
 		}
 
 		for (int i = 0; i < m_Curr; i++)
@@ -113,7 +113,7 @@ public:
 			{
 				actualIndex++;
 			}
-i			if (actualIndex == index)
+			if (actualIndex == index)
 			{
 				break;
 			}

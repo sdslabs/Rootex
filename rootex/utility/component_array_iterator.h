@@ -28,11 +28,11 @@ public:
 		m_Itr = itr;
 		m_Index = 0;
 	}
-	ComponentArrayIterator(const CustomArrayIterator<DataType>& rawIterator) = default; // Copy constructor
+	ComponentArrayIterator(const ComponentArrayIterator<DataType>& rawIterator) = default; // Copy constructor
 	~ComponentArrayIterator() { }
 
-	ComponentArrayIterator<DataType>& operator=(const CustomArrayIterator<dataType>& rawIterator) = default;
-	ComponentArrayIterator<DataType>& operator=(typename Vector<dataType>::iterator itr)
+	ComponentArrayIterator<DataType>& operator=(const ComponentArrayIterator<DataType>& rawIterator) = default;
+	ComponentArrayIterator<DataType>& operator=(typename Vector<DataType>::iterator itr)
 	{
 		m_Itr = itr;
 		return *this;

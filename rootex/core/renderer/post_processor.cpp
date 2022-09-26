@@ -140,7 +140,7 @@ public:
 					WARN("Directional lights specified are greater than 1. Using only the first directional light found.");
 				}
 
-				DirectionalLightComponent& sun = *directionalLightComponents.begin();
+				DirectionalLightComponent& sun = directionalLightComponents[0];
 
 				RenderingDevice::GetSingleton()->unbindSRVs();
 				RenderingDevice::GetSingleton()->setRTV(m_CacheRTV.Get());
