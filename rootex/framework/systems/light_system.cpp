@@ -61,6 +61,8 @@ LightsInfo LightSystem::getDynamicLights()
 	};
 
 	ComponentArray<PointLightComponent>& pointLightComponents = ECSFactory::GetAllPointLightComponent();
+    // TODO: Implement sorting. Currently due to raw pointers in components it is not possible to sort without garranting there
+    // won't be any memory corruption.
 	//sort(pointLightComponents.begin(), pointLightComponents.end(), pointLightSortingLambda);
 
 	int i = 0;
@@ -77,6 +79,7 @@ LightsInfo LightSystem::getDynamicLights()
 		lights.pointLightInfos[i].attQuad = pointLight.attQuad;
 		lights.pointLightInfos[i].lightPos = transformedPosition;
 		lights.pointLightInfos[i].range = pointLight.range;
+		i++;
 		if (i == MAX_DYNAMIC_POINT_LIGHTS)
 		{
 			break;
@@ -92,7 +95,7 @@ LightsInfo LightSystem::getDynamicLights()
 			WARN("Directional lights specified are greater than 1. Using only the first directional light found.");
 		}
 
-		DirectionalLightComponent& light = *directionalLightComponents.begin();
+		DirectionalLightComponent& light = directionalLightComponents[0];
 		const DirectionalLight& directionalLight = light.getDirectionalLight();
 		const Vector3& forward = light.getDirection();
 
@@ -112,6 +115,8 @@ LightsInfo LightSystem::getDynamicLights()
 	};
 
 	ComponentArray<SpotLightComponent>& spotLightComponents = ECSFactory::GetAllSpotLightComponent();
+    // TODO: Implement sorting. Currently due to raw pointers in components it is not possible to sort without garranting there
+    // won't be any memory corruption.
 	//sort(spotLightComponents.begin(), spotLightComponents.end(), spotLightSortingLambda);
 
 	i = 0;

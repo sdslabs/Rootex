@@ -402,7 +402,6 @@ void LuaInterpreter::registerTypes()
 		scene["snatchChild"] = &Scene::snatchChild;
 		scene["getID"] = &Scene::getID;
 		scene["getFullName"] = &Scene::getFullName;
-		scene["setFullName"] = &Scene::setFullName;
 	}
 	{
 		sol::usertype<System> system = rootex.new_usertype<System>("System");

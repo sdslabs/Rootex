@@ -1,120 +1,131 @@
 #pragma once
 
 #include "common/types.h"
-#include "custom_iterator.h"
+#include "component_array_iterator.h"
 
 #define MAX_COMPONENT_ARRAY_SIZE 10000
 
-template <typename component, class A = std::allocator<component>>
-class ComponentArray // component array
+template <typename Component, class A = std::allocator<component>>
+class ComponentArray 
 {
 private:
-	Vector<component> m_data;
-	Vector<bool> m_isValid;
-	int curr;
-	size_t arraySize;
+	Vector<Component> m_Data;
+	Vector<bool> m_IsValid;
+	size_t m_Curr;
+	size_t m_ArraySize;
 
 public:
-	ComponentArray() //default constructor
+	ComponentArray()
 	{
-		m_data.reserve(MAX_COMPONENT_ARRAY_SIZE);
-		m_isValid.reserve(MAX_COMPONENT_ARRAY_SIZE);
+		m_Data.reserve(MAX_COMPONENT_ARRAY_SIZE);
+		m_IsValid.reserve(MAX_COMPONENT_ARRAY_SIZE);
 		for (int i = 0; i < MAX_COMPONENT_ARRAY_SIZE; i++)
 		{
-			m_isValid.push_back(true);
-			//m_data[i] = component();
+			m_IsValid.push_back(true);
 		}
-		curr = 0;
-		arraySize = 0;
+		m_Curr = 0;
+		m_ArraySize = 0;
 	}
 
-	CustomIterator<component> begin() // begining of the iterator
+	CustomIterator<Component> begin() 
 	{
 		int index = 0;
-		while (!m_isValid[index])
+		while (!m_IsValid[index])
 		{
 			index++;
 		}
-		return CustomIterator<component>(m_isValid, m_data.begin() + index);
+		return CustomIterator<Component>(m_IsValid, m_Data.begin() + index);
 	}
 
-	CustomIterator<component> end() // end of the iterator
+	CustomIterator<Component> end() 
 	{
-		return CustomIterator<component>(m_data.begin() + curr);
+		return CustomIterator<Component>(m_Data.begin() + m_Curr);
 	}
 
-	void push_back(const component& item)
+	void push_back(const Component& item)
 	{
-		if (arraySize == MAX_COMPONENT_ARRAY_SIZE)
+		if (m_ArraySize == MAX_COMPONENT_ARRAY_SIZE)
 		{
-			ERR("Component set for " + component::s_Name + " is full. Reduce component count or increase max arraySize");
+			ERR("Component set for " + component::s_Name + " is full. Reduce component count or increase max m_ArraySize");
 		}
 		for (int i = 0; i < MAX_COMPONENT_ARRAY_SIZE; i++)
 		{
-			if (!m_isValid[i])
+			if (!m_IsValid[i])
 			{
-				m_data[i] = item;
-				m_isValid[i] = true;
+				m_Data[i] = item;
+				m_IsValid[i] = true;
 				return;
 			}
 		}
-		m_data[curr] = item;
-		curr++;
+		m_Data[m_Curr] = item;
+		m_Curr++;
 	}
 
 	void emplace_back(Entity& owner, const JSON::json& componentData)
 	{
-		if (arraySize == MAX_COMPONENT_ARRAY_SIZE)
+		if (m_ArraySize == MAX_COMPONENT_ARRAY_SIZE)
 		{
-			ERR("Component set for " + component::s_Name + " is full. Reduce component count or increase max arraySize");
+			ERR("Component set for " + component::s_Name + " is full. Reduce component count or increase max m_ArraySize");
 		}
 
-		for (int i = 0; i < curr; i++)
+		for (int i = 0; i < m_Curr; i++)
 		{
-			if (!m_isValid[i])
+			if (!m_IsValid[i])
 			{
-				new (&m_data[i]) component(owner, componentData); //Create a new component at m_data[i]
-				owner.registerComponent(&m_data[i]);
-				m_isValid[i] = true;
-				arraySize++;
+				new (&m_Data[i]) Component(owner, componentData); //Create a new component at m_data[i]
+				owner.registerComponent(&m_Data[i]);
+				m_IsValid[i] = true;
+				m_ArraySize++;
 				return;
 			}
 		}
-		m_data.emplace_back(owner, componentData);
-		owner.registerComponent(&m_data[curr]);
-		curr++;
-		arraySize++;
+		m_Data.emplace_back(owner, componentData);
+		owner.registerComponent(&m_Data[m_Curr]);
+		m_Curr++;
+		m_ArraySize++;
 	}
 
 	bool erase(Entity& entity)
 	{
-		for (int i = 0; i <= curr; i++)
+		for (int i = 0; i <= m_Curr; i++)
 		{
-			if (m_isValid[i] && (m_data[i].getOwner().getID() == entity.getID()))
+			if (m_IsValid[i] && (m_Data[i].getOwner().getID() == entity.getID()))
 			{
-				m_isValid[i] = false;
+				m_IsValid[i] = false;
 				return true;
 			}
 		}
 		return false;
 	}
 
-	ComponentArray<component> getALL()
+	Component& ComponentArray::operator[](int index)
 	{
-		return *this;
+		if (index >= m_Curr)
+		{
+			std::cerr << "Array index out of bound, exiting";
+		}
+
+		int actualIndex = 0;
+		int i = 0;
+		for (i = 0; i < m_ArraySize; i++)
+		{
+			if (m_IsValid[i])
+			{
+				actualIndex++;
+			}
+i			if (actualIndex == index)
+			{
+				break;
+			}
+		}
+		return m_Data[i];
 	}
 
-	size_t size() const { return arraySize; }
+	size_t size() const { return m_ArraySize; }
 
-	bool empty() const { return arraySize == 0; }
+	bool empty() const { return m_ArraySize == 0; }
 
-	component front()
-	{
-		return *(this->begin());
-	}
+	Component front() { return *begin(); }
 
-	component back()
-	{
-		return *(this->end());
-	}
+	Component back() { return *end(); }
 };
