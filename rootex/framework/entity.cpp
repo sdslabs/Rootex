@@ -46,7 +46,6 @@ bool Entity::onAllComponentsAdded()
 	bool status = true;
 	for (auto& component : m_Components)
 	{
-
 		status = status && component.second->setup();
 	}
 	return status;

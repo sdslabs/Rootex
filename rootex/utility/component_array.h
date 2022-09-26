@@ -37,13 +37,13 @@ public:
 		return ComponentArrayIterator<Component>(m_IsValid, m_Data.begin() + index);
 	}
 
-	ComponentArrayIterator<Component> end() { return ComponentArrayIterator<Component>(m_Data.begin() + m_Curr); }
+	ComponentArrayIterator<Component> end() { return ComponentArrayIterator<Component>(m_IsValid, m_Data.begin() + m_Curr); }
 
 	void push_back(const Component& item)
 	{
 		if (m_ArraySize == MAX_COMPONENT_ARRAY_SIZE)
 		{
-			ERR("Component set for " + Component::s_Name + " is full. Reduce component count or increase max m_ArraySize");
+			ERR("Component set for " + Component::s_Name + " is full. Reduce component count or increase MAX_COMPONENT_ARRAY_SIZE");
 		}
 		for (int i = 0; i < MAX_COMPONENT_ARRAY_SIZE; i++)
 		{
@@ -62,7 +62,7 @@ public:
 	{
 		if (m_ArraySize == MAX_COMPONENT_ARRAY_SIZE)
 		{
-			ERR("Component set for " + Component::s_Name + " is full. Reduce component count or increase max m_ArraySize");
+			ERR("Component set for " + Component::s_Name + " is full. Reduce component count or increase max MAX_COMPONENT_ARRAY_SIZE");
 		}
 
 		for (int i = 0; i < m_Curr; i++)
@@ -99,7 +99,7 @@ public:
 	{
 		if (index >= m_Curr)
 		{
-			std::cerr << "Array index out of bound, exiting";
+			ERR("Array index out of bound");
 		}
 
 		int actualIndex = 0;
