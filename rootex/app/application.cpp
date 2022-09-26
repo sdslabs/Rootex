@@ -61,10 +61,10 @@ Application::Application(const String& appTitle, const String& settingsFile)
 	const JSON::json& splashSettings = m_ApplicationSettings->getJSON()["splash"];
 	m_SplashWindow.reset(new SplashWindow(
 	    splashSettings["title"],
-        splashSettings["icon"],
-        splashSettings["image"],
-        splashSettings["width"],
-        splashSettings["height"]));
+	    splashSettings["icon"],
+	    splashSettings["image"],
+	    splashSettings["width"],
+	    splashSettings["height"]));
 
 	PANIC(!OS::ElevateThreadPriority(), "Could not elevate main thread priority");
 	PRINT("Current main thread priority: " + std::to_string(OS::GetCurrentThreadPriority()));

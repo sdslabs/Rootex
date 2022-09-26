@@ -38,7 +38,7 @@ StaticPointLightsInfo LightSystem::getStaticPointLights()
 		staticLights.pointLightInfos[i].attQuad = pointLight.attQuad;
 		staticLights.pointLightInfos[i].lightPos = transformedPosition;
 		staticLights.pointLightInfos[i].range = pointLight.range;
-        i++;
+		i++;
 		if (i == MAX_STATIC_POINT_LIGHTS)
 		{
 			break;
@@ -79,7 +79,7 @@ LightsInfo LightSystem::getDynamicLights()
 		lights.pointLightInfos[i].attQuad = pointLight.attQuad;
 		lights.pointLightInfos[i].lightPos = transformedPosition;
 		lights.pointLightInfos[i].range = pointLight.range;
-        i++;
+		i++;
 		if (i == MAX_DYNAMIC_POINT_LIGHTS)
 		{
 			break;
