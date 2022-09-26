@@ -6,7 +6,7 @@
 #define MAX_COMPONENT_ARRAY_SIZE 10000
 
 template <typename Component, class A = std::allocator<Component>>
-class ComponentArray 
+class ComponentArray
 {
 private:
 	Vector<Component> m_Data;
@@ -27,7 +27,7 @@ public:
 		m_ArraySize = 0;
 	}
 
-	ComponentArrayIterator<Component> begin() 
+	ComponentArrayIterator<Component> begin()
 	{
 		int index = 0;
 		while (!m_IsValid[index])
@@ -37,10 +37,7 @@ public:
 		return ComponentArrayIterator<Component>(m_IsValid, m_Data.begin() + index);
 	}
 
-	ComponentArrayIterator<Component> end() 
-	{
-		return ComponentArrayIterator<Component>(m_Data.begin() + m_Curr);
-	}
+	ComponentArrayIterator<Component> end() { return ComponentArrayIterator<Component>(m_Data.begin() + m_Curr); }
 
 	void push_back(const Component& item)
 	{
