@@ -1,7 +1,7 @@
 #pragma once
 
 #include "common/types.h"
-#include "custom_iterator.h"
+#include "component_array_iterator.h"
 
 #define MAX_COMPONENT_ARRAY_SIZE 10000
 
