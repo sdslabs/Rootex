@@ -193,7 +193,10 @@ void InspectorDock::draw(float deltaMilliseconds)
 				{
 					if (ImGui::InputText("Scene Name", &m_OpenedSceneName, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
 					{
-						m_OpenedScene->setName(m_OpenedSceneName);
+						if (!Scene::isReservedName(m_OpenedSceneName))
+						{
+							m_OpenedScene->setName(m_OpenedSceneName);
+						}
 						m_IsNameBeingEdited = false;
 					}
 					if (!ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left))

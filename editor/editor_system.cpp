@@ -982,14 +982,14 @@ int EditorSystem::exportScene(const String& sceneName, const String& sceneFilePa
 
 	for (auto& filePair : toCopy)
 	{
-		tasks.push_back(std::make_shared<Task>([=, &progress]() {
+		tasks.push_back(std::make_shared<Task>([=, &progress]()
+		    {
 			progress++;
 			if (m_IsCopyFailed)
 			{
 				return;
 			}
-			m_IsCopyFailed = !OS::RelativeCopyFile(filePair.first, m_CurrExportDir + filePair.second);
-		}));
+			m_IsCopyFailed = !OS::RelativeCopyFile(filePair.first, m_CurrExportDir + filePair.second); }));
 	}
 
 	/// TODO: Fix the need for this dummy task (blocks the main thread while tasks are running)

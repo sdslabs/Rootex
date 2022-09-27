@@ -317,6 +317,20 @@ bool Scene::removeChild(Scene* toRemove)
 	return false;
 }
 
+bool Scene::isReservedName(const String& sceneName)
+{
+	static Vector<String> reservedNames { "pause", "pauseUI" };
+	for (auto& reservedName : reservedNames)
+	{
+		if (reservedName == sceneName)
+		{
+			WARN("Cannot use reserved scene names");
+			return true;
+		}
+	}
+	return false;
+}
+
 void Scene::setName(const String& name)
 {
 	m_Name = name;

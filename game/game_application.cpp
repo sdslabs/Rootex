@@ -22,10 +22,13 @@ Ref<Application> CreateRootexApplication()
 Optional<String> GameApplication::getSceneNameFromCommandLine(const char* s)
 {
 	String cmdLine = s;
-	size_t found = cmdLine.find("game/assets/");
-	if (found != String::npos)
+	if (!Scene::isReservedName(cmdLine))
 	{
-		return cmdLine.substr(found, cmdLine.size() - 1);
+		size_t found = cmdLine.find("game/assets/");
+		if (found != String::npos)
+		{
+			return cmdLine.substr(found, cmdLine.size() - 1);
+		}
 	}
 	return {};
 }
@@ -47,7 +50,11 @@ GameApplication::GameApplication()
 	}
 	else
 	{
-		SceneLoader::GetSingleton()->loadScene(m_ApplicationSettings->getJSON()["startScene"], {});
+		String sceneName = m_ApplicationSettings->getJSON()["startScene"];
+		if (Scene::isReservedName(sceneName))
+		{
+			SceneLoader::GetSingleton()->loadScene(sceneName, {});
+		}
 	}
 
 	GameRenderSystem::GetSingleton()->initialize({});

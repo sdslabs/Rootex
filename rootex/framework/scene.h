@@ -65,6 +65,7 @@ public:
 	static Ptr<Scene> CreateEmpty();
 	static Ptr<Scene> CreateEmptyAtPath(const String& sceneFile);
 	static Ptr<Scene> CreateRootScene();
+	static bool isReservedName(const String& sceneName);
 
 	static Vector<Scene*> FindScenesByName(const String& name);
 	static Scene* FindSceneByID(const SceneID& id);
