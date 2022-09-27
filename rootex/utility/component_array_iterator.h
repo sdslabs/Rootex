@@ -11,8 +11,6 @@ protected:
 	Vector<bool>* m_IsValid;
 
 public:
-	using iterator_category = std::random_access_iterator_tag;
-
 	ComponentArrayIterator(Vector<bool>& isValid, typename Vector<DataType>::iterator itr)
 	{
 		m_IsValid = &isValid;
@@ -23,11 +21,6 @@ public:
 	~ComponentArrayIterator() { }
 
 	ComponentArrayIterator<DataType>& operator=(const ComponentArrayIterator<DataType>& rawIterator) = default;
-	ComponentArrayIterator<DataType>& operator=(typename Vector<DataType>::iterator itr)
-	{
-		m_Itr = itr;
-		return *this;
-	}
 
 	bool operator==(const ComponentArrayIterator<DataType>& rawIterator) const { return (m_Itr == rawIterator.m_Itr); }
 	bool operator!=(const ComponentArrayIterator<DataType>& rawIterator) const { return !(m_Itr == rawIterator.m_Itr); }
