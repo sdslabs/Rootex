@@ -982,8 +982,7 @@ int EditorSystem::exportScene(const String& sceneName, const String& sceneFilePa
 
 	for (auto& filePair : toCopy)
 	{
-		tasks.push_back(std::make_shared<Task>([=, &progress]()
-		    {
+		tasks.push_back(std::make_shared<Task>([=, &progress]() {
 			progress++;
 			if (m_IsCopyFailed)
 			{
