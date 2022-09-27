@@ -39,5 +39,4 @@ public:
 
 	DataType& operator*() { return *m_Itr; }
 	const DataType& operator*() const { return *m_Itr; }
-	typename Vector<DataType>::iterator operator->() { return *m_Itr; }
 };
