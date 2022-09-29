@@ -45,17 +45,19 @@ public:
 		{
 			ERR("Component set for " + Component::s_Name + " is full. Reduce component count or increase MAX_COMPONENT_ARRAY_SIZE");
 		}
-		for (int i = 0; i < MAX_COMPONENT_ARRAY_SIZE; i++)
+		for (int i = 0; i < m_Curr; i++)
 		{
 			if (!m_IsValid[i])
 			{
 				m_Data[i] = item;
 				m_IsValid[i] = true;
+				m_ArraySize++;
 				return;
 			}
 		}
 		m_Data[m_Curr] = item;
 		m_Curr++;
+		m_ArraySize++;
 	}
 
 	void emplace_back(Entity& owner, const JSON::json& componentData)
@@ -89,6 +91,7 @@ public:
 			if (m_IsValid[i] && (m_Data[i].getOwner().getID() == entity.getID()))
 			{
 				m_IsValid[i] = false;
+				m_ArraySize--;
 				return true;
 			}
 		}
@@ -97,14 +100,14 @@ public:
 
 	Component& ComponentArray::operator[](int index)
 	{
-		if (index >= m_Curr)
+		if (index >= m_ArraySize)
 		{
 			ERR("Array index out of bound");
 		}
 
 		int actualIndex = 0;
 		int i = 0;
-		for (i = 0; i < m_ArraySize; i++)
+		for (i = 0; i < m_Curr; i++)
 		{
 			if (m_IsValid[i])
 			{
