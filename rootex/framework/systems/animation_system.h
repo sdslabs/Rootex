@@ -7,7 +7,6 @@ class AnimationSystem : public System
 {
 	AnimationSystem();
 	AnimationSystem(AnimationSystem&) = delete;
-	~AnimationSystem() = default;
 
 public:
 	static AnimationSystem* GetSingleton();
