@@ -302,6 +302,7 @@ bool Scene::removeChild(Scene* toRemove)
 	{
 		if ((*child).get() == toRemove)
 		{
+			EventManager::GetSingleton()->call(EditorEvents::EditorReset);
 			m_ChildrenScenes.erase(child);
 			return true;
 		}
