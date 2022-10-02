@@ -134,7 +134,7 @@ public:
 	/// Perform setting up operations which are possible only after all entities have been set up.
 	virtual bool setupEntities() { return true; }
 	/// Perform operations prior to detachment from owning entity and destruction.
-	virtual void onRemove() { }
+	virtual void onRemove() { this->~Component(); }
 
 	Entity& getOwner() { return *m_Owner; }
 	virtual ComponentID getComponentID() const = 0;

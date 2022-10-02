@@ -91,6 +91,7 @@ public:
 			if (m_IsValid[i] && (m_Data[i].getOwner().getID() == entity.getID()))
 			{
 				m_IsValid[i] = false;
+				m_Data[i].onRemove();
 				m_ArraySize--;
 				return true;
 			}
