@@ -28,7 +28,6 @@ class UISystem : public System
 	Ptr<FlipbookDecoratorInstancer> m_FlipbookInstancer;
 
 	UISystem();
-	virtual ~UISystem() = default;
 
 	Variant enableDebugger(const Event* event);
 	Variant disableDebugger(const Event* event);

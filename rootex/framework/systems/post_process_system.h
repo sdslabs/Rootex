@@ -13,7 +13,6 @@ class PostProcessSystem : public System
 
 	PostProcessSystem();
 	PostProcessSystem(const PostProcessSystem&) = delete;
-	~PostProcessSystem() = default;
 
 public:
 	static PostProcessSystem* GetSingleton();

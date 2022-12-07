@@ -8,7 +8,6 @@ class PlayerSystem : public System
 {
 	PlayerSystem();
 	PlayerSystem(const PlayerSystem&) = delete;
-	virtual ~PlayerSystem() = default;
 
 public:
 	static PlayerSystem* GetSingleton();

@@ -56,7 +56,6 @@ class AudioSystem : public System
 
 	AudioSystem();
 	AudioSystem(AudioSystem&) = delete;
-	virtual ~AudioSystem() = default;
 
 public:
 	static AudioSystem* GetSingleton();
