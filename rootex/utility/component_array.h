@@ -109,13 +109,13 @@ public:
 		int i = 0;
 		for (i = 0; i < m_Curr; i++)
 		{
-			if (m_IsValid[i])
-			{
-				actualIndex++;
-			}
 			if (actualIndex == index)
 			{
 				break;
+			}
+			if (m_IsValid[i])
+			{
+				actualIndex++;
 			}
 		}
 		return m_Data[i];
