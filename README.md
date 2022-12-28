@@ -64,9 +64,9 @@ Rootex is the direct successor of [Rubeus, our 2D Game Engine](https://github.co
 
 Rootex runs only on Windows and there are no plans to port it to other platforms.
 
-1. Install [Visual Studio 2022 or Visual Studio 2019 or Visual Studio 2017](https://visualstudio.microsoft.com/vs/), [CMake build system](https://cmake.org/download/).
+1. Install [Visual Studio 2022 or Visual Studio 2019](https://visualstudio.microsoft.com/vs/), [CMake build system](https://cmake.org/download/).
 2. Install Visual Studio Desktop C++ development pack (or anything similar, since C++ is no longer a default language since at least Visual Studio 19)
-3. Run `generate_cache.bat /22` for VS 2022 or `generate_cache.bat /19` for VS 2019 or `generate_cache.bat /17` for VS 2017.
+3. Run `generate_cache.bat /22` for VS 2022 or `generate_cache.bat /19` for VS 2019.
 4. Use `build.bat` to build Rootex.
  
 Assets Workflow :

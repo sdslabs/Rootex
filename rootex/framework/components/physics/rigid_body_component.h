@@ -98,6 +98,7 @@ public:
 	bool isKinematic() { return m_IsKinematic; }
 	void setKinematic(bool enabled);
 
+	void setupRigidBody();
 	bool setupData() override;
 
 	JSON::json getJSON() const override;

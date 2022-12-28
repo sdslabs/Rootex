@@ -38,7 +38,7 @@ RigidBodyComponent::RigidBodyComponent(
 	m_CollisionShape = collisionShape;
 }
 
-bool RigidBodyComponent::setupData()
+void RigidBodyComponent::setupRigidBody()
 {
 	if (m_Body)
 	{
@@ -66,9 +66,14 @@ bool RigidBodyComponent::setupData()
 	m_Body = (btRigidBody*)m_CollisionObject.get();
 	m_Body->setUserPointer((CollisionComponent*)this);
 	PhysicsSystem::GetSingleton()->addRigidBody(m_Body, m_CollisionGroup, m_CollisionMask);
+}
+
+bool RigidBodyComponent::setupData()
+{
+
+	setupRigidBody();
 
 	setGravity(m_Gravity);
-	setMoveable(m_IsMoveable);
 	setKinematic(m_IsKinematic);
 	setAngularFactor(m_AngularFactor);
 	setSleepable(m_IsSleepable);
@@ -154,7 +159,11 @@ Matrix RigidBodyComponent::getTransform()
 
 void RigidBodyComponent::setMoveable(bool enabled)
 {
+
 	m_IsMoveable = enabled;
+
+	setupRigidBody();
+
 	if (enabled)
 	{
 		m_Mass = m_Volume * PhysicsSystem::GetSingleton()->getMaterialData(m_Material).specificGravity;

@@ -20,6 +20,7 @@
 #include "systems/render_system.h"
 #include "systems/render_ui_system.h"
 #include "systems/script_system.h"
+#include "systems/transform_system.h"
 #include "systems/transform_animation_system.h"
 #include "systems/trigger_system.h"
 #include "systems/ui_system.h"
@@ -422,6 +423,7 @@ void LuaInterpreter::registerTypes()
 			sol::usertype<RenderSystem> renderSystem = systems.new_usertype<RenderSystem>("RenderSystem", sol::base_classes, sol::bases<System>());
 			sol::usertype<RenderUISystem> renderUISystem = systems.new_usertype<RenderUISystem>("RenderUISystem", sol::base_classes, sol::bases<System>());
 			sol::usertype<ScriptSystem> scriptSystem = systems.new_usertype<ScriptSystem>("ScriptSystem", sol::base_classes, sol::bases<System>());
+			sol::usertype<TransformSystem> transformSystem = systems.new_usertype<TransformSystem>("TransformSystem", sol::base_classes, sol::bases<System>());
 			sol::usertype<TransformAnimationSystem> transformAnimationSystem = systems.new_usertype<TransformAnimationSystem>("TransformAnimationSystem", sol::base_classes, sol::bases<System>());
 			sol::usertype<TriggerSystem> triggerSystem = systems.new_usertype<TriggerSystem>("TriggerSystem", sol::base_classes, sol::bases<System>());
 			sol::usertype<UISystem> uiSystem = systems.new_usertype<UISystem>("UISystem", sol::base_classes, sol::bases<System>());
@@ -438,6 +440,7 @@ void LuaInterpreter::registerTypes()
 			systems["Render"] = sol::property(&RenderSystem::GetSingleton);
 			systems["RenderUI"] = sol::property(&RenderUISystem::GetSingleton);
 			systems["Script"] = sol::property(&ScriptSystem::GetSingleton);
+			systems["Transform"] = sol::property(&TransformSystem::GetSingleton);
 			systems["TransformAnimation"] = sol::property(&TransformAnimationSystem::GetSingleton);
 			systems["Trigger"] = sol::property(&TriggerSystem::GetSingleton);
 			systems["UI"] = sol::property(&UISystem::GetSingleton);
