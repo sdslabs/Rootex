@@ -61,6 +61,7 @@ public:
 	void submitCone(const Matrix& transform, const float& height, const float& radius);
 
 	void recoverLostDevice();
+	void getDirectionalLightComponent();
 
 	void setCamera(CameraComponent* camera);
 	void restoreCamera();

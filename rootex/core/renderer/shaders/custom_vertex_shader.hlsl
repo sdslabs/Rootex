@@ -6,6 +6,11 @@ cbuffer CBuf : register(PER_OBJECT_VS_HLSL)
     matrix MInverseTranspose;
 };
 
+cbuffer CBuf : register(PER_FRAME_DL_VS_HLSL)
+{
+    matrix DLTC;
+};
+
 cbuffer CBuf : register(PER_FRAME_VS_HLSL)
 {
     matrix V;
