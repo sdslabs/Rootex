@@ -13,7 +13,7 @@ class Component;
 		bool Add##Type(Entity& owner, const JSON::json& componentData, bool checks = true); \
 		bool AddDefault##Type(Entity& owner, bool checks = true);                           \
 		bool Remove##Type(Entity& entity);                                                  \
-		Vector<Type>& GetAll##Type();                                                       \
+		ComponentArray<Type>& GetAll##Type();                                               \
 	}
 
 #define DEFINE_COMPONENT(Type)                                                              \
@@ -29,7 +29,7 @@ class Component;
 	{                                                                                       \
 		return s_ComponentSets[Type::s_Name]->removeComponent(entity);                      \
 	}                                                                                       \
-	Vector<Type>& ECSFactory::GetAll##Type()                                                \
+	ComponentArray<Type>& ECSFactory::GetAll##Type()                                        \
 	{                                                                                       \
 		return ((ComponentSet<Type>*)(s_ComponentSets[Type::s_Name].get()))->getAll();      \
 	}

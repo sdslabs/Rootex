@@ -7,7 +7,6 @@ class TriggerSystem : public System
 {
 	TriggerSystem();
 	TriggerSystem(const TriggerSystem&) = delete;
-	~TriggerSystem() = default;
 
 public:
 	static TriggerSystem* GetSingleton();

@@ -17,7 +17,7 @@ void PauseSystem::update(float deltaMilliseconds)
 	Scene* root = SceneLoader::GetSingleton()->getCurrentScene();
 	if (m_IsPausingEnabled)
 	{
-		if (!(Scene::FindScenesByName("PauseScene").size()))
+		if (SceneLoader::GetSingleton()->getCurrentScene() && !(Scene::FindScenesByName("PauseScene").size()))
 		{
 			Ptr<Scene>& pauseScene = Scene::CreateFromFile("rootex/assets/scenes/pause.scene.json");
 			pauseScene->setName("PauseScene");

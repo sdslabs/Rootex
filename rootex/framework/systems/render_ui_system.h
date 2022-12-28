@@ -9,7 +9,6 @@ class RenderUISystem : public System
 
 	RenderUISystem();
 	RenderUISystem(RenderUISystem&) = delete;
-	virtual ~RenderUISystem() = default;
 
 public:
 	static RenderUISystem* GetSingleton();

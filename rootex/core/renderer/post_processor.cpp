@@ -132,7 +132,7 @@ public:
 		const PostProcessingDetails& postProcessingDetails = camera->getPostProcessingDetails();
 		if (postProcessingDetails.isGodRays)
 		{
-			Vector<DirectionalLightComponent>& directionalLightComponents = ECSFactory::GetAllDirectionalLightComponent();
+			ComponentArray<DirectionalLightComponent>& directionalLightComponents = ECSFactory::GetAllDirectionalLightComponent();
 			if (directionalLightComponents.size() > 0)
 			{
 				if (directionalLightComponents.size() > 1)

@@ -10,7 +10,6 @@ class InputSystem : public System
 
 	InputSystem();
 	InputSystem(InputSystem&) = delete;
-	~InputSystem() = default;
 
 	Variant windowResized(const Event* event);
 

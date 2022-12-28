@@ -21,10 +21,11 @@ class ParticleSystem : public System
 
 	ParticleSystem();
 	ParticleSystem(const ParticleSystem&) = delete;
-	~ParticleSystem();
 
 public:
 	static ParticleSystem* GetSingleton();
+
+	~ParticleSystem();
 
 	Effekseer::Handle play(Effekseer::Effect* effect, const Vector3& position, int startFrame);
 	void stop(Effekseer::Handle handle);

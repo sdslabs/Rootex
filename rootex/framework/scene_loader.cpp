@@ -41,7 +41,13 @@ Variant SceneLoader::deleteScene(const Event* event)
 	Scene* scene = Extract<Scene*>(event->getData());
 	if (Scene* parent = scene->getParent())
 	{
-		parent->removeChild(scene);
+		if (parent->removeChild(scene))
+		{
+			if (m_CurrentScene == scene)
+			{
+				m_CurrentScene = nullptr;
+			}
+		}
 	}
 	else
 	{
