@@ -48,14 +48,6 @@ void RenderSystem::recoverLostDevice()
 	ERR("Fatal error: D3D Device lost");
 }
 
-void RenderSystem::getDirectionalLightComponent()
-{
-	std::cout << "hello";
-	DirectionalLightComponent& first = ECSFactory::GetAllDirectionalLightComponent().front();
-	std::cout << first.getTransformComponent();
-	RenderingDevice::GetSingleton()->setVSCB(PER_FRAME_VS_CPP, 1, m_PerFrameVSCB.GetAddressOf());
-}
-
 void RenderSystem::setConfig(const SceneSettings& sceneSettings)
 {
 	Scene* cameraScene = SceneLoader::GetSingleton()->getRootScene()->findScene(sceneSettings.camera);
@@ -407,14 +399,12 @@ void RenderSystem::setPerFrameVSCBs(float fogStart, float fogEnd)
 	if (!ECSFactory::GetAllDirectionalLightComponent().empty())
 	{
 		DirectionalLightComponent& first = ECSFactory::GetAllDirectionalLightComponent().front();
-		//std::cout << first.getTransformComponent() << std::endl;
 		Vector3 directionalLightPosition = first.getTransformComponent()->getAbsolutePosition();
-		//std::cout << "x component: " << directionalLightPosition.x << "y component: " << directionalLightPosition.y << "z component: " << directionalLightPosition.z << std::endl;
 		RenderingDevice::GetSingleton()->editBuffer(PerFrameVSCB { first.getTransformComponent()->getAbsoluteTransform() }, m_PerFrameVSCB.Get());
 		RenderingDevice::GetSingleton()->setVSCB(PER_FRAME_DL_VS_CPP, 1, m_PerFrameVSCB.GetAddressOf());
-	}				
+	}
 
- 	const Matrix& view = getCamera()->getViewMatrix();
+	const Matrix& view = getCamera()->getViewMatrix();
 	RenderingDevice::GetSingleton()->editBuffer(PerFrameVSCB { view.Transpose(), -fogStart, -fogEnd }, m_PerFrameVSCB.Get());
 
 	RenderingDevice::GetSingleton()->setVSCB(PER_FRAME_VS_CPP, 1, m_PerFrameVSCB.GetAddressOf());
@@ -498,15 +488,6 @@ void RenderSystem::setCamera(CameraComponent* camera)
 {
 	if (camera)
 	{
-		std::cout << "heyo"<<std::endl;
-		if (!ECSFactory::GetAllDirectionalLightComponent().empty())
-		{
-			DirectionalLightComponent& first = ECSFactory::GetAllDirectionalLightComponent().front();
-			std::cout << first.getTransformComponent() << std::endl;
-			std::cout << "function works" << std::endl;
-			Vector3 directionalLightPosition = first.getTransformComponent()->getAbsolutePosition();
-			std::cout << "x component: " << directionalLightPosition.x << "y component: " << directionalLightPosition.y << "z component: " << directionalLightPosition.z << std::endl; 
-		}				
 		m_Camera = camera;
 		setPerCameraVSCBs();
 		setPerCameraChangePSCBs();
