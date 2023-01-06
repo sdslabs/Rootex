@@ -117,6 +117,7 @@ struct PerFrameVSCB
 	Matrix view;
 	float fogStart;
 	float fogEnd;
+	LightsInfo light;
 	float pad[2];
 };
 

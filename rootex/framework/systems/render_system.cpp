@@ -396,7 +396,8 @@ void RenderSystem::setPerCameraVSCBs()
 void RenderSystem::setPerFrameVSCBs(float fogStart, float fogEnd)
 {
 	const Matrix& view = getCamera()->getViewMatrix();
-	RenderingDevice::GetSingleton()->editBuffer(PerFrameVSCB { view.Transpose(), -fogStart, -fogEnd }, m_PerFrameVSCB.Get());
+	LightsInfo light = LightSystem::GetSingleton()->getDynamicLights();
+	RenderingDevice::GetSingleton()->editBuffer(PerFrameVSCB { view.Transpose(), -fogStart, -fogEnd, light }, m_PerFrameVSCB.Get());
 
 	RenderingDevice::GetSingleton()->setVSCB(PER_FRAME_VS_CPP, 1, m_PerFrameVSCB.GetAddressOf());
 }

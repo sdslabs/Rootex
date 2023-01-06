@@ -144,7 +144,7 @@ void BasicMaterialResourceFile::bindSamplers()
 
 void BasicMaterialResourceFile::bindVSCB()
 {
-	RenderingDevice::GetSingleton()->editBuffer(PerModelVSCBData(TransformSystem::GetSingleton()->getCurrentMatrix()), m_VSCB.Get());
+	RenderingDevice::GetSingleton()->editBuffer(PerModelVSCBData(TransformSystem::GetSingleton()->getCurrentMatrix(), m_MaterialData.pixelBufferData), m_VSCB.Get());
 	RenderingDevice::GetSingleton()->setVSCB(PER_OBJECT_VS_CPP, 1, m_VSCB.GetAddressOf());
 }
 

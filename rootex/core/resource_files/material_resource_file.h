@@ -71,11 +71,18 @@ struct PerModelVSCBData
 {
 	Matrix model;
 	Matrix modelInverseTranspose;
+	PerModelPSCBData material;
 	PerModelVSCBData() = default;
 	PerModelVSCBData(const Matrix& modelMatrix)
 	{
 		model = modelMatrix.Transpose();
 		modelInverseTranspose = modelMatrix.Invert();
+	}
+	PerModelVSCBData(const Matrix& modelMatrix, PerModelPSCBData material)
+	{
+		model = modelMatrix.Transpose();
+		modelInverseTranspose = modelMatrix.Invert();
+		this->material = material;
 	}
 };
 
