@@ -54,7 +54,7 @@ cbuffer CBuf : register(PER_OBJECT_VS_HLSL)
 {
 	matrix M;
 	matrix MInverseTranspose;
-	BasicMaterial material;
+	float hasNormalMap;
 };
 
 cbuffer CBuf : register(PER_FRAME_VS_HLSL)
@@ -139,7 +139,7 @@ PixelInputType main(VertexInputType input)
 		output.spotLightPos[3] = spotLightInfos[3].lightPos;
 
 	// apply transformation in case of Normal Map
-	if (material.hasNormalMap)
+	if (hasNormalMap)
 	{
 		// calculating Transformation Matrix
 		float3 N = output.normal;
