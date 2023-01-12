@@ -71,10 +71,10 @@ struct PerModelVSCBData
 {
 	Matrix model;
 	Matrix modelInverseTranspose;
-	float hasNormalMap;
-	float pad[3];
+	int hasNormalMap;
+	int pad[3];
 	PerModelVSCBData() = default;
-	PerModelVSCBData(const Matrix& modelMatrix, float hasNormalMap = 0.0f)
+	PerModelVSCBData(const Matrix& modelMatrix, int hasNormalMap = 0)
 	{
 		model = modelMatrix.Transpose();
 		modelInverseTranspose = modelMatrix.Invert();
