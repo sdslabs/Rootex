@@ -8,7 +8,11 @@
 #include "components/audio/audio_listener_component.h"
 
 static SceneID NextSceneID = ROOT_SCENE_ID + 1;
-Vector<Scene*> Scene::s_Scenes;
+// AARYA
+Scene* rootScene;
+Scene* editorGrid;
+Scene* editorCamera;
+// Vector<Scene*> Scene::s_Scenes;
 
 void to_json(JSON::json& j, const SceneSettings& s)
 {
@@ -140,6 +144,10 @@ Ptr<Scene> Scene::CreateRootScene()
 	}
 
 	Ptr<Scene> root = std::make_unique<Scene>(ROOT_SCENE_ID, "Root", SceneSettings(), ImportStyle::Local, "");
+	Ptr<Scene> editorGrid = std::make_unique<Scene>(ROOT_SCENE_ID, "EditorGrid", SceneSettings(), ImportStyle::Local, "");
+	Ptr<Scene> editorCamera = std::make_unique<Scene>(ROOT_SCENE_ID, "EditorCamera", SceneSettings(), ImportStyle::Local, "");
+
+	// AARYA
 
 	ECSFactory::FillRootEntity(root->getEntity());
 
