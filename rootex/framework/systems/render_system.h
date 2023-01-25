@@ -10,7 +10,6 @@
 #include "components/visual/model/sprite_component.h"
 #include "transform_system.h"
 #include "components/space/transform_component.h"
-#include "components/visual/light/directional_light_component.h"
 
 #include "ASSAO/ASSAO.h"
 
@@ -26,7 +25,6 @@ class RenderSystem : public System
 	};
 
 	CameraComponent* m_Camera;
-	DirectionalLightComponent* m_DLC;
 
 	Ptr<Renderer> m_Renderer;
 

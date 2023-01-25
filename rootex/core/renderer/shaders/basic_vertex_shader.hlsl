@@ -40,7 +40,7 @@ struct PixelInputType
 PixelInputType main(VertexInputType input)
 {
     PixelInputType output;
-    output.screenPosition = mul(input.position, mul(M, mul(V, P)));
+    output.screenPosition = mul(input.position, mul(M, mul(DLTC, P)));
 	output.normal = normalize(mul((float3)input.normal, (float3x3)MInverseTranspose));
     output.worldPosition = mul(input.position, M);
     output.tex.x = input.tex.x;
