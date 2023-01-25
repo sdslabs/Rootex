@@ -40,8 +40,8 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_MainRTV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_MainRTSRV;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_MainDSV;
-	Microsoft::WRL::ComPtr<ID3D11ShadowTextureView> m_ShadowTextureDSV;
-	Microsoft::WRL::ComPtr<ID3D11ShadowTextureDSSRVView> m_ShadowTextureDSSRV;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_ShadowTextureDSV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_ShadowTextureDSSRV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_MainDSSRV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_MainStencilSRV;
 

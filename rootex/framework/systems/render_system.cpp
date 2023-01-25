@@ -30,6 +30,7 @@ RenderSystem::RenderSystem()
 	m_Binder.bind(RootexEvents::OpenedScene, this, &RenderSystem::onOpenedScene);
 
 	m_Camera = SceneLoader::GetSingleton()->getRootScene()->getEntity().getComponent<CameraComponent>();
+	m_DLC = SceneLoader::GetSingleton()->getRootScene()->getEntity().getComponent<DirectionalLightComponent>();
 
 	m_LineMaterial = ResourceLoader::CreateBasicMaterialResourceFile("rootex/assets/materials/line.basic.rmat");
 	m_CurrentFrameLines.m_Endpoints.reserve(LINE_MAX_VERTEX_COUNT * LINE_VERTEX_COUNT * 3);
@@ -278,6 +279,21 @@ void RenderSystem::submitLine(const Vector3& from, const Vector3& to)
 
 	m_CurrentFrameLines.m_Indices.push_back(m_CurrentFrameLines.m_Indices.size());
 	m_CurrentFrameLines.m_Indices.push_back(m_CurrentFrameLines.m_Indices.size());
+}
+
+void RenderSystem::refreshViewMatrixForShadowRender()
+{
+	const Matrix& absoluteTransform = m_DLC->getTransformComponent()->getAbsoluteTransform();
+	m_ViewMatrixForShadowRender = Matrix::CreateLookAt(
+	    absoluteTransform.Translation(),
+	    absoluteTransform.Translation() + absoluteTransform.Forward(),
+	    absoluteTransform.Up());
+}
+
+Matrix RenderSystem::setViewMatrixForShadowRender()
+{
+	refreshViewMatrixForShadowRender();
+	return m_ViewMatrixForShadowRender;
 }
 
 void RenderSystem::submitBox(const Vector3& min, const Vector3& max)
