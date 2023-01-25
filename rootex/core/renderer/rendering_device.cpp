@@ -65,6 +65,7 @@ void RenderingDevice::createSwapChainBufferViews()
 
 void RenderingDevice::createDepthStencil(DXGI_SWAP_CHAIN_DESC& sd, float width, float height)
 {
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> depthStencil = nullptr;
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> shadowTexture = nullptr;
 	D3D11_TEXTURE2D_DESC descDepth = { 0 };
 	descDepth.Width = width;
@@ -77,6 +78,7 @@ void RenderingDevice::createDepthStencil(DXGI_SWAP_CHAIN_DESC& sd, float width, 
 	descDepth.Usage = D3D11_USAGE_DEFAULT;
 	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
 
+	GFX_ERR_CHECK(m_Device->CreateTexture2D(&descDepth, nullptr, &depthStencil));
 	GFX_ERR_CHECK(m_Device->CreateTexture2D(&descDepth, nullptr, &shadowTexture));
 
 	D3D11_DEPTH_STENCIL_VIEW_DESC descDSView = {};
@@ -84,6 +86,7 @@ void RenderingDevice::createDepthStencil(DXGI_SWAP_CHAIN_DESC& sd, float width, 
 	descDSView.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	descDSView.Texture2D.MipSlice = 0u;
 
+	GFX_ERR_CHECK(m_Device->CreateDepthStencilView(depthStencil.Get(), &descDSView, &m_MainDSV));
 	GFX_ERR_CHECK(m_Device->CreateDepthStencilView(shadowTexture.Get(), &descDSView, &m_ShadowTextureDSV));
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC depthSRVDesc;
@@ -92,6 +95,7 @@ void RenderingDevice::createDepthStencil(DXGI_SWAP_CHAIN_DESC& sd, float width, 
 	depthSRVDesc.Texture2D.MostDetailedMip = 0;
 	depthSRVDesc.Texture2D.MipLevels = 1;
 
+	GFX_ERR_CHECK(m_Device->CreateShaderResourceView(depthStencil.Get(), &depthSRVDesc, &m_MainDSSRV));
 	GFX_ERR_CHECK(m_Device->CreateShaderResourceView(shadowTexture.Get(), &depthSRVDesc, &m_ShadowTextureDSSRV));
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC stencilSRVDesc;
@@ -100,7 +104,7 @@ void RenderingDevice::createDepthStencil(DXGI_SWAP_CHAIN_DESC& sd, float width, 
 	stencilSRVDesc.Texture2D.MostDetailedMip = 0;
 	stencilSRVDesc.Texture2D.MipLevels = 1;
 
-	GFX_ERR_CHECK(m_Device->CreateShaderResourceView(shadowTexture.Get(), &stencilSRVDesc, &m_MainStencilSRV));
+	GFX_ERR_CHECK(m_Device->CreateShaderResourceView(depthStencil.Get(), &stencilSRVDesc, &m_MainStencilSRV));
 }
 
 void RenderingDevice::setScreenState(bool fullscreen)
