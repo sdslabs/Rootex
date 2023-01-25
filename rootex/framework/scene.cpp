@@ -12,7 +12,7 @@ static SceneID NextSceneID = ROOT_SCENE_ID + 1;
 Scene* rootScene;
 Scene* editorGrid;
 Scene* editorCamera;
-// Vector<Scene*> Scene::s_Scenes;
+Vector<Scene*> Scene::s_Scenes;
 
 void to_json(JSON::json& j, const SceneSettings& s)
 {
@@ -248,15 +248,26 @@ bool Scene::snatchChild(Scene* child)
 		return false;
 	}
 
-	Vector<Ptr<Scene>>& children = child->getParent()->getChildren();
+	Unordered_set<Ptr<Scene>>& children = child->getParent()->getChildren();
+	for (auto& child_scene : children)
+	{
+		if (child_scene.get() == child)
+		{
+			m_ChildrenScenes.insert(std::move(child_scene));
+			children.erase(child_scene);
+		}
+	}
+
+	/*
 	for (int i = 0; i < children.size(); i++)
 	{
 		if (children.at(i).get() == child)
 		{
-			m_ChildrenScenes.push_back(std::move(children[i]));
+			m_ChildrenScenes.insert(std::move(children[i]));
 			children.erase(children.begin() + i);
 		}
 	}
+	*/
 	child->m_ParentScene = this;
 	return true;
 }
@@ -293,8 +304,10 @@ bool Scene::addChild(Ptr<Scene>& child)
 				m_Settings.inputSchemes.insert(inputScheme);
 			}
 		}
-		m_ChildrenScenes.emplace_back(std::move(child));
-		ScriptSystem::GetSingleton()->addEnterScriptEntity(&m_ChildrenScenes.back()->getEntity());
+		m_ChildrenScenes.insert(std::move(child));
+
+		//aarya
+		//ScriptSystem::GetSingleton()->addEnterScriptEntity(&m_ChildrenScenes.back()->getEntity());
 	}
 	else
 	{

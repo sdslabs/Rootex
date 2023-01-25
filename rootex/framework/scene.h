@@ -51,7 +51,7 @@ private:
 	Entity m_Entity;
 
 	Scene* m_ParentScene = nullptr;
-	Vector<Ptr<Scene>> m_ChildrenScenes;
+	Unordered_set<Ptr<Scene>> m_ChildrenScenes;
 
 	bool checkCycle(Scene* child);
 
@@ -85,7 +85,7 @@ public:
 	JSON::json getJSON() const;
 	bool& getIsScenePaused() { return m_IsScenePaused; }
 	void setIsScenePaused(bool pause) { m_IsScenePaused = pause; }
-	Vector<Ptr<Scene>>& getChildren() { return m_ChildrenScenes; }
+	Unordered_set<Ptr<Scene>>& getChildren() { return m_ChildrenScenes; }
 	SceneID getID() const { return m_ID; }
 	ImportStyle getImportStyle() const { return m_ImportStyle; }
 	String getScenePath() const { return m_SceneFile; }
