@@ -280,14 +280,15 @@ void RenderSystem::submitLine(const Vector3& from, const Vector3& to)
 	m_CurrentFrameLines.m_Indices.push_back(m_CurrentFrameLines.m_Indices.size());
 }
 
-Matrix RenderSystem::setViewMatrixForShadowRender()
+void RenderSystem::setViewMatrixForShadowRender()
 {
 	if (!ECSFactory::GetAllDirectionalLightComponent().empty())
 	{
 		DirectionalLightComponent& first = ECSFactory::GetAllDirectionalLightComponent().front();
-		return first.getTransformComponent()->getAbsoluteTransform();
+		const Matrix& directionalLight = first.getTransformComponent()->getAbsoluteTransform();
+		RenderingDevice::GetSingleton()->editBuffer(PerFrameVSCB { first.getTransformComponent()->getAbsoluteTransform() }, m_PerFrameVSCB.Get());
+		RenderingDevice::GetSingleton()->setVSCB(PER_FRAME_DL_VS_CPP, 1, m_PerFrameVSCB.GetAddressOf());
 	};
-	return Matrix(); 
 }
 
 void RenderSystem::submitBox(const Vector3& min, const Vector3& max)

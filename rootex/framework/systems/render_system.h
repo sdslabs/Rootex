@@ -65,8 +65,7 @@ public:
 	void getDirectionalLightComponent();
 
 	Matrix m_ViewMatrixForShadowRender;
-	Matrix setViewMatrixForShadowRender();
-	void refreshViewMatrixForShadowRender();
+	void setViewMatrixForShadowRender();
 
 	void setCamera(CameraComponent* camera);
 	void restoreCamera();

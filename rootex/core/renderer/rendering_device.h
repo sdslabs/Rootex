@@ -47,6 +47,7 @@ private:
 
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> m_OffScreenTexture;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_OffScreenRTV;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_ShadowTextureDSV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_OffScreenSRV;
 
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_DSState;
@@ -156,6 +157,7 @@ public:
 
 	void setOffScreenRTVDSV();
 	void setOffScreenRTVOnly();
+	void setShadowTextureDSV();
 	void setMainRT();
 	void setRTV(Microsoft::WRL::ComPtr<ID3D11RenderTargetView> rtv);
 	void setRTV(ID3D11RenderTargetView* rtv);

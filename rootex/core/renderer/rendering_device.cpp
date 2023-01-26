@@ -837,6 +837,11 @@ void RenderingDevice::setOffScreenRTVOnly()
 	m_Context->OMSetRenderTargets(1, m_OffScreenRTV.GetAddressOf(), nullptr);
 }
 
+void RenderingDevice::setShadowTextureDSV()
+{
+	m_Context->OMSetRenderTargets(1, m_ShadowTextureDSV.GetAddressOf(), nullptr);
+}
+
 void RenderingDevice::setMainRT()
 {
 	m_Context->OMSetRenderTargets(1, m_MainRTV.GetAddressOf(), nullptr);
