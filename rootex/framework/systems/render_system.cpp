@@ -286,7 +286,7 @@ void RenderSystem::setViewMatrixForShadowRender()
 	{
 		DirectionalLightComponent& first = ECSFactory::GetAllDirectionalLightComponent().front();
 		const Matrix& directionalLight = first.getTransformComponent()->getAbsoluteTransform();
-		RenderingDevice::GetSingleton()->editBuffer(PerFrameVSCB { first.getTransformComponent()->getAbsoluteTransform() }, m_PerFrameVSCB.Get());
+		RenderingDevice::GetSingleton()->editBuffer(PerFrameVSCB { first.getTransformComponent()->getAbsoluteTransform().Transpose( }, m_PerFrameVSCB.Get());
 		RenderingDevice::GetSingleton()->setVSCB(PER_FRAME_DL_VS_CPP, 1, m_PerFrameVSCB.GetAddressOf());
 	};
 }

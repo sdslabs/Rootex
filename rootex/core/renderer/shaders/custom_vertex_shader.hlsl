@@ -50,7 +50,7 @@ PixelInputType main(VertexInputType input)
     output.worldPosition = mul(input.position, M);
     output.tex.x = input.tex.x;
     output.tex.y = 1 - input.tex.y;
-    output.color = float4(1.0f, 1.0f, 1.0f, DLTC._41);
+    output.color = float4(1.0f, 1.0f, 1.0f, 1.0f);
     
     output.tangent = mul(input.tangent, (float3x3)M);
 	
