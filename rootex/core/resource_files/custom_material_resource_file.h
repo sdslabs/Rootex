@@ -15,7 +15,10 @@ private:
 
 	CustomMaterialData m_MaterialData;
 
-	Ptr<Shader> m_Shader;
+	String m_DummyVertexShaderPath;
+	int m_PixelShaderCount;
+	int index=0;
+	std::vector<Ptr<Shader>> m_Shader;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_PSCB;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_VSCB;
 
@@ -37,12 +40,20 @@ public:
 	explicit CustomMaterialResourceFile(const FilePath& path);
 	~CustomMaterialResourceFile() = default;
 
-	void setShaders(const String& vertexShader, const String& pixelShader);
-	void setVS(const String& vertexShader);
-	void setPS(const String& pixelShader);
-	void recompileShaders();
+	void setShaders(int ind,const String& vertexShader, const String& pixelShader);
+	void setVS(int ind,const String& vertexShader);
+	void setPS(int ind,const String& pixelShader);
+	void recompileShaders(int ind);
 
-	const Shader* getShader() const override { return m_Shader.get(); };
+	const Shader* getShader() const override
+	{
+		if (!(m_Shader.empty()))
+		{
+			return m_Shader[0].get();
+		}
+		else
+			return nullptr;
+	}; // doubt??
 	Vector<Ref<GPUTexture>> getTextures() const override;
 
 	void bindShader() override;

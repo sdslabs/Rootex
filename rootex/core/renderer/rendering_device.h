@@ -47,6 +47,11 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_OffScreenRTV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_OffScreenSRV;
 
+	Microsoft::WRL::ComPtr<ID3D11Device> m_DeviceBg;
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> m_ShaderPass;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_ShaderPassRTV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_ShaderPassSRV;
+
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_DSState;
 	UINT m_StencilRef;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_SkyDSState;
@@ -85,6 +90,7 @@ public:
 	static RenderingDevice* GetSingleton();
 	void initialize(HWND hWnd, int width, int height);
 	void createOffScreenViews(int width, int height);
+	void createShaderPasses(int width, int height);
 	/// Create resources which depend on window height and width
 	void createSwapChainAndRTVs(int width, int height, const HWND& hWnd);
 	void setScreenState(bool fullscreen);

@@ -6,10 +6,12 @@
 #include "framework/systems/render_system.h"
 #include "resource_loader.h"
 #define MAX_NUMBER_OF_CUSTOM_CB 8
+#define MAX_NUMBER_OF_PIXEL_SHADERS 64
 
 void to_json(JSON::json& j, const CustomMaterialData& s)
 {
 	j["pixelShader"] = s.pixelShaderPath;
+	j["pixelShaderCount"] = s.pixelShaderCount;
 	j["pixelShaderTextures"] = JSON::json::array();
 	for (auto& texture : s.pixelShaderTextures)
 	{
@@ -29,12 +31,15 @@ void to_json(JSON::json& j, const CustomMaterialData& s)
 	{
 		j["typeOfCustomConstantBuffers"].push_back(typeOfCustomConstantBuffers);
 	}
+	j["vertexShaderPath"] = s.dummyVertexShaderPath;
 }
 
 void from_json(const JSON::json& j, CustomMaterialData& s)
 {
 	s.vertexShaderPath = j.value("vertexShader", CustomMaterialResourceFile::s_DefaultCustomVSPath);
 	s.pixelShaderPath = j.value("pixelShader", CustomMaterialResourceFile::s_DefaultCustomPSPath);
+	s.pixelShaderCount = j.value("pixelShaderCount", 1);
+	s.dummyVertexShaderPath = j.value("vertexShaderPath", CustomMaterialResourceFile::s_DefaultCustomVSPath);
 	for (auto& texturePath : j.value("pixelShaderTextures", Vector<String>({ "rootex/assets/rootex.png" })))
 	{
 		if (Ref<ImageResourceFile> texture = ResourceLoader::CreateImageResourceFile(texturePath))
@@ -72,6 +77,8 @@ void CustomMaterialResourceFile::Destroy()
 CustomMaterialResourceFile::CustomMaterialResourceFile(const FilePath& path)
     : MaterialResourceFile(ResourceFile::Type::CustomMaterial, path)
 {
+	m_PixelShaderCount=0;
+	m_DummyVertexShaderPath = "rootex/core/renderer/shaders/custom_pixel_shader.hlsl";
 	reimport();
 }
 
@@ -162,7 +169,7 @@ Vector<Ref<GPUTexture>> CustomMaterialResourceFile::getTextures() const
 	return textures;
 }
 
-void CustomMaterialResourceFile::setShaders(const String& vertexShader, const String& pixelShader)
+void CustomMaterialResourceFile::setShaders(int ind, const String& vertexShader, const String& pixelShader)
 {
 	if (!OS::IsExists(pixelShader) || !OS::IsExists(vertexShader))
 	{
@@ -181,28 +188,39 @@ void CustomMaterialResourceFile::setShaders(const String& vertexShader, const St
 	{
 		m_MaterialData.pixelShaderPath = pixelShader;
 		m_MaterialData.vertexShaderPath = vertexShader;
-		m_Shader = std::move(shader);
+		if (ind >= m_PixelShaderCount)
+		{
+			m_Shader.push_back(std::move(shader)); //read
+		}
+		else
+		{
+			m_Shader[ind] = std::move(shader); // current changes
+		}
 	}
 }
 
-void CustomMaterialResourceFile::setVS(const String& vertexShader)
+void CustomMaterialResourceFile::setVS(int ind,const String& vertexShader)
 {
-	setShaders(vertexShader, m_MaterialData.pixelShaderPath);
+	setShaders(ind,vertexShader, m_MaterialData.pixelShaderPath);
 }
 
-void CustomMaterialResourceFile::setPS(const String& pixelShader)
+void CustomMaterialResourceFile::setPS(int ind,const String& pixelShader)
 {
-	setShaders(m_MaterialData.vertexShaderPath, pixelShader);
+	if(ind==0) setShaders(ind,m_MaterialData.vertexShaderPath, pixelShader);
+	else setShaders(ind,m_DummyVertexShaderPath, pixelShader);
 }
 
-void CustomMaterialResourceFile::recompileShaders()
+void CustomMaterialResourceFile::recompileShaders(int ind)
 {
-	setShaders(m_MaterialData.vertexShaderPath, m_MaterialData.pixelShaderPath);
+	setShaders(ind, m_MaterialData.vertexShaderPath, m_MaterialData.pixelShaderPath);
 }
 
-void CustomMaterialResourceFile::bindShader()
+void CustomMaterialResourceFile::bindShader() //doubt??
 {
-	m_Shader->bind();
+	//for (int ind = 0; ind < m_PixelShaderCount; ind++)
+	//{
+	m_Shader[index]->bind();
+	//}
 }
 
 void CustomMaterialResourceFile::bindTextures()
@@ -276,7 +294,9 @@ void CustomMaterialResourceFile::reimport()
 	customConstantBuffers = m_MaterialData.customConstantBuffers;
 	typeOfCustomConstantBuffers = m_MaterialData.typeOfCustomConstantBuffers;
 
-	recompileShaders();
+	for(int i=0;i<m_PixelShaderCount;i++) {
+		recompileShaders(i);
+	}
 	float fakeArray[MAX_NUMBER_OF_CUSTOM_CB * 4];
 	m_PSCB = RenderingDevice::GetSingleton()->createBuffer((const char*)fakeArray, sizeof(fakeArray), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
 	m_VSCB = RenderingDevice::GetSingleton()->createBuffer<PerModelVSCBData>(PerModelVSCBData(), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
@@ -360,14 +380,18 @@ void CustomMaterialResourceFile::draw()
 
 	if (ImGui::Button("Recompile " ICON_ROOTEX_REFRESH))
 	{
-		recompileShaders();
+		for(int ind=0;ind<m_PixelShaderCount;ind++)
+		recompileShaders(ind);
 	}
 
 	if (ImGui::TreeNode("Vertex Shader"))
 	{
 		if (ImGui::InputTextWithHint("Path", "Path to Vertex Shader", &m_MaterialData.vertexShaderPath, ImGuiInputTextFlags_EnterReturnsTrue))
 		{
-			setVS(m_MaterialData.vertexShaderPath);
+			for(int ind=0;ind<m_PixelShaderCount;ind++) {
+				if(ind==0) setVS(ind, m_MaterialData.vertexShaderPath);
+				else setVS(ind, m_DummyVertexShaderPath);
+			}
 		}
 
 		if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Edit VS"))
@@ -379,7 +403,10 @@ void CustomMaterialResourceFile::draw()
 		{
 			if (Optional<String> result = OS::SelectFile("Vertex Shader(*.hlsl)\0*.hlsl\0", "game/assets/shaders/"))
 			{
-				setVS(*result);
+				for(int ind=0;ind<m_PixelShaderCount;ind++) {
+				if(ind==0) setVS(ind,*result);
+				else setVS(ind, m_DummyVertexShaderPath);
+			}
 			}
 		}
 		ImGui::SameLine();
@@ -390,7 +417,10 @@ void CustomMaterialResourceFile::draw()
 		ImGui::SameLine();
 		if (ImGui::Button(ICON_ROOTEX_WINDOW_CLOSE "##Reset VS"))
 		{
-			setVS(s_DefaultCustomVSPath);
+			for(int ind=0;ind<m_PixelShaderCount;ind++) {
+				if(ind==0) setVS(ind,s_DefaultCustomVSPath);
+				else setVS(ind, m_DummyVertexShaderPath);
+			}
 		}
 
 		if (ImGui::ListBoxHeader("Textures##VS"))
@@ -436,7 +466,11 @@ void CustomMaterialResourceFile::draw()
 				FileBuffer defaultShaderBuffer = OS::LoadFileContents(s_DefaultCustomVSPath);
 				OS::SaveFile(shaderFileName, defaultShaderBuffer.data(), defaultShaderBuffer.size());
 
-				setVS(shaderFileName);
+				for(int ind=0;ind<m_PixelShaderCount;ind++) 
+				{
+					if(ind==0) setVS(ind,shaderFileName);
+					else setVS(ind, m_DummyVertexShaderPath);
+				}
 				EventManager::GetSingleton()->call(EditorEvents::EditorEditFile, shaderFileName);
 				newVSPath.clear();
 
@@ -451,9 +485,11 @@ void CustomMaterialResourceFile::draw()
 
 	if (ImGui::TreeNode("Pixel Shader"))
 	{
+		int ind=0;
+		index = ind;
 		if (ImGui::InputTextWithHint("Path", "Path to Pixel Shader", &m_MaterialData.pixelShaderPath, ImGuiInputTextFlags_EnterReturnsTrue))
 		{
-			setPS(m_MaterialData.pixelShaderPath);
+			setPS(ind, m_MaterialData.pixelShaderPath);
 		}
 
 		if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Edit PS"))
@@ -465,7 +501,7 @@ void CustomMaterialResourceFile::draw()
 		{
 			if (Optional<String> result = OS::SelectFile("Pixel Shader(*.hlsl)\0*.hlsl\0", "game/assets/shaders/"))
 			{
-				setPS(*result);
+				setPS(ind, *result);
 			}
 		}
 		ImGui::SameLine();
@@ -476,7 +512,7 @@ void CustomMaterialResourceFile::draw()
 		ImGui::SameLine();
 		if (ImGui::Button(ICON_ROOTEX_WINDOW_CLOSE "##Reset PS"))
 		{
-			setPS(s_DefaultCustomPSPath);
+			setPS(ind, s_DefaultCustomPSPath);
 		}
 
 		if (ImGui::ListBoxHeader("Textures##PS"))
@@ -485,7 +521,8 @@ void CustomMaterialResourceFile::draw()
 			for (auto& texture : m_MaterialData.pixelShaderTextures)
 			{
 				String textureName = "Slot " + std::to_string(i) + " " + ICON_ROOTEX_FOLDER_OPEN;
-				RootexSelectableImage(textureName.c_str(), texture, [this, i](const String& newTexturePath) { setPSTexture(newTexturePath, i); });
+				RootexSelectableImage(textureName.c_str(), texture, [this, i](const String& newTexturePath)
+				    { setPSTexture(newTexturePath, i); });
 				i++;
 				ImGui::Separator();
 			}
@@ -508,6 +545,142 @@ void CustomMaterialResourceFile::draw()
 
 			ImGui::ListBoxFooter();
 		}
+		// Remove current pixel shader
+		if (ImGui::Button("Remove This Shader"))
+		{
+			if (m_PixelShaderCount > 0)
+			{
+				//std::vector<Ptr<Shader>> temp;
+				//for (int j = 1; j < m_PixelShaderCount; j++)
+				//{
+					//temp.push_back(m_Shader[j]);
+				//}
+				int i = 0;
+				auto itr = m_Shader.begin();
+				while (i != ind)
+				{
+					itr++;
+					i++;
+				}
+				m_Shader.erase(itr);
+				m_PixelShaderCount--;
+				//m_Shader.clear();
+				//for (int j = 0; j < m_PixelShaderCount; j++)
+				//{
+					//m_Shader.push_back(temp[j]);
+				//}
+			}
+			else
+			{
+				ERROR("No pixel shaders left to be removed");
+			}
+		}
+		for (ind = 1; ind < m_PixelShaderCount; ind++)
+		{
+			setPS(ind, s_DefaultCustomPSPath);
+			if (ImGui::InputTextWithHint("Path", "Path to Pixel Shader", &m_MaterialData.pixelShaderPath, ImGuiInputTextFlags_EnterReturnsTrue))
+			{
+				setPS(ind,m_MaterialData.pixelShaderPath);
+			}
+
+			if (ImGui::Button(ICON_ROOTEX_PENCIL_SQUARE_O "##Edit PS"))
+			{
+				EventManager::GetSingleton()->call(EditorEvents::EditorEditFile, m_MaterialData.pixelShaderPath);
+			}
+			ImGui::SameLine();
+			if (ImGui::Button(ICON_ROOTEX_FOLDER_OPEN "##Find PS"))
+			{
+				if (Optional<String> result = OS::SelectFile("Pixel Shader(*.hlsl)\0*.hlsl\0", "game/assets/shaders/"))
+				{
+					setPS(ind,*result);
+				}
+			}
+			ImGui::SameLine();
+			if (ImGui::Button(ICON_ROOTEX_PLUS "##Create PS"))
+			{
+				ImGui::OpenPopup("Create PS");
+			}
+			ImGui::SameLine();
+			if (ImGui::Button(ICON_ROOTEX_WINDOW_CLOSE "##Reset PS"))
+			{
+				setPS(ind,s_DefaultCustomPSPath);
+			}
+
+			if (ImGui::ListBoxHeader("Textures##PS"))
+			{
+				int i = 0; //i->ind
+				for (auto& texture : m_MaterialData.pixelShaderTextures)
+				{
+					String textureName = "Slot " + std::to_string(i) + " " + ICON_ROOTEX_FOLDER_OPEN;
+					RootexSelectableImage(textureName.c_str(), texture, [this, i](const String& newTexturePath) { setPSTexture(newTexturePath, i); });
+					i++;
+					ImGui::Separator();
+				}
+
+				if (ImGui::Button(ICON_ROOTEX_PLUS "##Push PS"))
+				{
+					if (Optional<String> result = OS::SelectFile(SupportedFiles.at(ResourceFile::Type::Image), "game/assets/"))
+					{
+						if (Ref<ImageResourceFile> image = ResourceLoader::CreateImageResourceFile(*result))
+						{
+							pushPSTexture(image);
+						}
+					}
+				}
+				ImGui::SameLine();
+				if (ImGui::Button(ICON_ROOTEX_MINUS "##Pop PS"))
+				{
+					popPSTexture();
+				}
+
+				ImGui::ListBoxFooter();
+			}
+			//Remove current pixel shader
+			if (ImGui::Button("Remove This Shader"))
+			{
+				if (m_PixelShaderCount > 0)
+				{
+					//std::vector<Ptr<Shader>> temp;
+					int j = 0;
+					auto itr = m_Shader.begin();
+					while (ind != j)
+					{
+						j++;
+						itr++;
+					}
+					//for (int j = 0; j < m_PixelShaderCount; j++)
+					//{
+						//if (j != ind)
+						//{
+							//temp.push_back(std::move((m_Shader[j])));
+						//}
+					//}
+					m_Shader.erase(itr);
+					m_PixelShaderCount--;
+					//m_Shader.clear();
+					//for (int j = 0; j < m_PixelShaderCount; j++)
+					//{
+						//m_Shader.push_back(std::move((temp[j])));
+					//}
+				}
+				else
+				{
+					ERROR("No pixel shaders left to be removed");
+				}
+			}
+		}
+		
+		if (ImGui::Button("Add Pixel Shader"))
+		{
+			if (m_PixelShaderCount < MAX_NUMBER_OF_PIXEL_SHADERS)
+			{
+				m_PixelShaderCount++;
+			}
+			else
+			{
+				ERROR("Exceeded maximum pixel shader count");
+			}
+		}
 
 		if (ImGui::BeginPopup("Create PS"))
 		{
@@ -522,7 +695,8 @@ void CustomMaterialResourceFile::draw()
 				FileBuffer defaultShaderBuffer = OS::LoadFileContents(s_DefaultCustomPSPath);
 				OS::SaveFile(shaderFileName, defaultShaderBuffer.data(), defaultShaderBuffer.size());
 
-				setPS(shaderFileName);
+				for(int ind=0;ind<m_PixelShaderCount;ind++)
+				setPS(ind,shaderFileName);
 				EventManager::GetSingleton()->call(EditorEvents::EditorEditFile, shaderFileName);
 				newPSPath.clear();
 
@@ -598,4 +772,6 @@ void CustomMaterialResourceFile::draw()
 	}
 	m_MaterialData.customConstantBuffers = customConstantBuffers;
 	m_MaterialData.typeOfCustomConstantBuffers = typeOfCustomConstantBuffers;
+	m_MaterialData.dummyVertexShaderPath = m_DummyVertexShaderPath;
+	m_MaterialData.pixelShaderCount = m_PixelShaderCount;
 }
