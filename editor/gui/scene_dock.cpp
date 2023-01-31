@@ -12,7 +12,7 @@
 #include "vendor/ImGUI/imgui_impl_dx11.h"
 #include "vendor/ImGUI/imgui_impl_win32.h"
 
-void SceneDock::showSceneTree(const Ptr<Scene>& scene)
+void SceneDock::showSceneTree(Ptr<Scene>& scene)
 {
 	ZoneScoped;
 
@@ -78,8 +78,9 @@ void SceneDock::showSceneTree(const Ptr<Scene>& scene)
 						Scene* rearrangeScenePtr = rearrangeScene.get();
 						Scene* scenePtr = scene.get();
 
-						EventManager::GetSingleton()->defer([=]()
-						    { scenePtr->snatchChild(rearrangeScenePtr); });
+						EventManager::GetSingleton()->defer([=]() {
+							scenePtr->snatchChild(rearrangeScenePtr);
+						});
 
 						openScene(scenePtr);
 					}
@@ -87,7 +88,7 @@ void SceneDock::showSceneTree(const Ptr<Scene>& scene)
 				ImGui::EndDragDropTarget();
 			}
 
-			for (auto&& child : scene->getChildren())
+			for (auto& child : scene->getChildren())
 			{
 				showSceneTree(child);
 			}
