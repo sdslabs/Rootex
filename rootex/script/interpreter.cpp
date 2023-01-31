@@ -388,22 +388,23 @@ void LuaInterpreter::registerTypes()
 		sol::table& ecs = rootex.create_named("ECS");
 		ecs["AddComponent"] = &ECSFactory::AddComponent;
 	}
-	{
-		sol::usertype<Scene> scene = rootex.new_usertype<Scene>("Scene",
-		    "name", sol::property(&Scene::getName, &Scene::setName),
-		    "parent", sol::property(&Scene::getParent),
-		    "children", sol::property(&Scene::getChildren),
-		    "entity", sol::property(&Scene::getEntity));
-		scene["CreateEmpty"] = &Scene::CreateEmpty;
-		scene["CreateFromFile"] = &Scene::CreateFromFile;
-		scene["FindScenesByName"] = &Scene::FindScenesByName;
-		scene["FindSceneByID"] = &Scene::FindSceneByID;
-		scene["addChild"] = &Scene::addChild;
-		scene["removeChild"] = &Scene::removeChild;
-		scene["snatchChild"] = &Scene::snatchChild;
-		scene["getID"] = &Scene::getID;
-		scene["getFullName"] = &Scene::getFullName;
-	}
+	//NEEDS TO BE FIXED
+	//{
+	//	sol::usertype<Scene> scene = rootex.new_usertype<Scene>("Scene",
+	//	    "name", sol::property(&Scene::getName, &Scene::setName),
+	//	    "parent", sol::property(&Scene::getParent),
+	//	    "children", sol::property(&Scene::getChildren),
+	//	    "entity", sol::property(&Scene::getEntity));
+	//	scene["CreateEmpty"] = &Scene::CreateEmpty;
+	//	scene["CreateFromFile"] = &Scene::CreateFromFile;
+	//	scene["FindScenesByName"] = &Scene::FindScenesByName;
+	//	scene["FindSceneByID"] = &Scene::FindSceneByID;
+	//	scene["addChild"] = &Scene::addChild;
+	//	scene["removeChild"] = &Scene::removeChild;
+	//	scene["snatchChild"] = &Scene::snatchChild;
+	//	scene["getID"] = &Scene::getID;
+	//	scene["getFullName"] = &Scene::getFullName;
+	//}
 	{
 		sol::usertype<System> system = rootex.new_usertype<System>("System");
 		system["pause"] = &System::pause;

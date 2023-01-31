@@ -249,15 +249,17 @@ bool Scene::snatchChild(Scene* child)
 	}
 
 	Unordered_set<Ptr<Scene>>& children = child->getParent()->getChildren();
-	for (auto& child_scene : children)
+	for (auto&& child_scene : children)
 	{
 		if (child_scene.get() == child)
 		{
-			m_ChildrenScenes.insert(std::move(child_scene));
-			children.erase(child_scene);
+			auto nh = children.extract(child_scene);
+			m_ChildrenScenes.insert(std::move(nh));
+			child->m_ParentScene = this;
+			return true;
 		}
 	}
-
+	
 	/*
 	for (int i = 0; i < children.size(); i++)
 	{
@@ -268,8 +270,7 @@ bool Scene::snatchChild(Scene* child)
 		}
 	}
 	*/
-	child->m_ParentScene = this;
-	return true;
+	return false;
 }
 
 bool Scene::checkCycle(Scene* child)
@@ -306,8 +307,10 @@ bool Scene::addChild(Ptr<Scene>& child)
 		}
 		m_ChildrenScenes.insert(std::move(child));
 
-		//aarya
-		//ScriptSystem::GetSingleton()->addEnterScriptEntity(&m_ChildrenScenes.back()->getEntity());
+		
+		auto it = m_ChildrenScenes.end();
+		--it;
+		ScriptSystem::GetSingleton()->addEnterScriptEntity(&(*it)->getEntity());
 	}
 	else
 	{
