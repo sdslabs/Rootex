@@ -78,9 +78,8 @@ void SceneDock::showSceneTree(const Ptr<Scene>& scene)
 						Scene* rearrangeScenePtr = rearrangeScene.get();
 						Scene* scenePtr = scene.get();
 
-						EventManager::GetSingleton()->defer([=]() {
-							scenePtr->snatchChild(rearrangeScenePtr);
-						});
+						EventManager::GetSingleton()->defer([=]()
+						    { scenePtr->snatchChild(rearrangeScenePtr); });
 
 						openScene(scenePtr);
 					}

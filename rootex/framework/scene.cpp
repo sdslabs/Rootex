@@ -259,15 +259,15 @@ bool Scene::snatchChild(Scene* child)
 			return true;
 		}
 	}
-	
+
 	/*
 	for (int i = 0; i < children.size(); i++)
 	{
-		if (children.at(i).get() == child)
-		{
-			m_ChildrenScenes.insert(std::move(children[i]));
-			children.erase(children.begin() + i);
-		}
+	    if (children.at(i).get() == child)
+	    {
+	        m_ChildrenScenes.insert(std::move(children[i]));
+	        children.erase(children.begin() + i);
+	    }
 	}
 	*/
 	return false;
@@ -307,7 +307,6 @@ bool Scene::addChild(Ptr<Scene>& child)
 		}
 		m_ChildrenScenes.insert(std::move(child));
 
-		
 		auto it = m_ChildrenScenes.end();
 		--it;
 		ScriptSystem::GetSingleton()->addEnterScriptEntity(&(*it)->getEntity());
