@@ -124,14 +124,22 @@ void LuaInterpreter::registerTypes()
 		sol::usertype<Vector2> vector2 = rootex.new_usertype<Vector2>(
 		    "Vector2",
 		    sol::constructors<Vector2(), Vector2(float, float)>(),
-		    sol::meta_function::addition, [](Vector2& l, Vector2& r) { return l + r; },
-		    sol::meta_function::subtraction, [](Vector2& l, Vector2& r) { return l - r; },
-		    sol::meta_function::multiplication, [](Vector2& l, Vector2& r) { return l * r; },
-		    sol::meta_function::multiplication, [](Vector2& l, float r) { return l * r; },
-		    sol::meta_function::division, [](Vector2& l, float r) { return l / r; },
-		    sol::meta_function::division, [](Vector2& l, Vector2& r) { return l / r; });
-		vector2["dot"] = [](const Vector2& l, const Vector2& r) { return l.Dot(r); };
-		vector2["cross"] = [](const Vector2& l, const Vector2& r) { return l.Cross(r); };
+		    sol::meta_function::addition, [](Vector2& l, Vector2& r)
+		    { return l + r; },
+		    sol::meta_function::subtraction, [](Vector2& l, Vector2& r)
+		    { return l - r; },
+		    sol::meta_function::multiplication, [](Vector2& l, Vector2& r)
+		    { return l * r; },
+		    sol::meta_function::multiplication, [](Vector2& l, float r)
+		    { return l * r; },
+		    sol::meta_function::division, [](Vector2& l, float r)
+		    { return l / r; },
+		    sol::meta_function::division, [](Vector2& l, Vector2& r)
+		    { return l / r; });
+		vector2["dot"] = [](const Vector2& l, const Vector2& r)
+		{ return l.Dot(r); };
+		vector2["cross"] = [](const Vector2& l, const Vector2& r)
+		{ return l.Cross(r); };
 		vector2["x"] = &Vector2::x;
 		vector2["y"] = &Vector2::y;
 	}
@@ -139,14 +147,22 @@ void LuaInterpreter::registerTypes()
 		sol::usertype<Vector3> vector3 = rootex.new_usertype<Vector3>(
 		    "Vector3",
 		    sol::constructors<Vector3(), Vector3(float, float, float)>(),
-		    sol::meta_function::addition, [](Vector3& l, Vector3& r) { return l + r; },
-		    sol::meta_function::subtraction, [](Vector3& l, Vector3& r) { return l - r; },
-		    sol::meta_function::multiplication, [](float l, Vector3& r) { return l * r; },
-		    sol::meta_function::multiplication, [](Vector3& l, float r) { return l * r; },
-		    sol::meta_function::division, [](Vector3& l, float r) { return l / r; },
-		    sol::meta_function::division, [](Vector3& l, Vector3& r) { return l / r; });
-		vector3["dot"] = [](const Vector3& l, const Vector3& r) { return l.Dot(r); };
-		vector3["cross"] = [](const Vector3& l, const Vector3& r) { return l.Cross(r); };
+		    sol::meta_function::addition, [](Vector3& l, Vector3& r)
+		    { return l + r; },
+		    sol::meta_function::subtraction, [](Vector3& l, Vector3& r)
+		    { return l - r; },
+		    sol::meta_function::multiplication, [](float l, Vector3& r)
+		    { return l * r; },
+		    sol::meta_function::multiplication, [](Vector3& l, float r)
+		    { return l * r; },
+		    sol::meta_function::division, [](Vector3& l, float r)
+		    { return l / r; },
+		    sol::meta_function::division, [](Vector3& l, Vector3& r)
+		    { return l / r; });
+		vector3["dot"] = [](const Vector3& l, const Vector3& r)
+		{ return l.Dot(r); };
+		vector3["cross"] = [](const Vector3& l, const Vector3& r)
+		{ return l.Cross(r); };
 		vector3["x"] = &Vector3::x;
 		vector3["y"] = &Vector3::y;
 		vector3["z"] = &Vector3::z;
@@ -154,14 +170,22 @@ void LuaInterpreter::registerTypes()
 	{
 		sol::usertype<Vector4> vector4 = rootex.new_usertype<Vector4>(
 		    "Vector4", sol::constructors<Vector4(), Vector4(float, float, float, float)>(),
-		    sol::meta_function::addition, [](Vector4& l, Vector4& r) { return l + r; },
-		    sol::meta_function::subtraction, [](Vector4& l, Vector4& r) { return l - r; },
-		    sol::meta_function::multiplication, [](Vector4& l, Vector4& r) { return l * r; },
-		    sol::meta_function::multiplication, [](Vector4& l, float r) { return l * r; },
-		    sol::meta_function::division, [](Vector4& l, Vector4& r) { return l / r; },
-		    sol::meta_function::division, [](Vector4& l, float r) { return l / r; });
-		vector4["dot"] = [](const Vector4& l, const Vector4& r) { return l.Dot(r); };
-		vector4["cross"] = [](const Vector4& l, const Vector4& r) { return l.Cross(l, r); };
+		    sol::meta_function::addition, [](Vector4& l, Vector4& r)
+		    { return l + r; },
+		    sol::meta_function::subtraction, [](Vector4& l, Vector4& r)
+		    { return l - r; },
+		    sol::meta_function::multiplication, [](Vector4& l, Vector4& r)
+		    { return l * r; },
+		    sol::meta_function::multiplication, [](Vector4& l, float r)
+		    { return l * r; },
+		    sol::meta_function::division, [](Vector4& l, Vector4& r)
+		    { return l / r; },
+		    sol::meta_function::division, [](Vector4& l, float r)
+		    { return l / r; });
+		vector4["dot"] = [](const Vector4& l, const Vector4& r)
+		{ return l.Dot(r); };
+		vector4["cross"] = [](const Vector4& l, const Vector4& r)
+		{ return l.Cross(l, r); };
 		vector4["x"] = &Vector4::x;
 		vector4["y"] = &Vector4::y;
 		vector4["z"] = &Vector4::z;
@@ -170,9 +194,12 @@ void LuaInterpreter::registerTypes()
 	{
 		sol::usertype<Color> color = rootex.new_usertype<Color>(
 		    "Color", sol::constructors<Color(), Color(float, float, float, float)>(),
-		    sol::meta_function::addition, [](Color& l, Color& r) { return l + r; },
-		    sol::meta_function::subtraction, [](Color& l, Color& r) { return l - r; },
-		    sol::meta_function::multiplication, [](Color& l, Color& r) { return l * r; });
+		    sol::meta_function::addition, [](Color& l, Color& r)
+		    { return l + r; },
+		    sol::meta_function::subtraction, [](Color& l, Color& r)
+		    { return l - r; },
+		    sol::meta_function::multiplication, [](Color& l, Color& r)
+		    { return l * r; });
 		color["x"] = &Color::x;
 		color["y"] = &Color::y;
 		color["z"] = &Color::z;
@@ -193,9 +220,12 @@ void LuaInterpreter::registerTypes()
 		sol::usertype<Matrix> matrix = rootex.new_usertype<Matrix>(
 		    "Matrix",
 		    sol::constructors<Matrix()>(),
-		    sol::meta_function::addition, [](Matrix& l, Matrix& r) { return l + r; },
-		    sol::meta_function::subtraction, [](Matrix& l, Matrix& r) { return l - r; },
-		    sol::meta_function::multiplication, [](Matrix& l, Matrix& r) { return l * r; });
+		    sol::meta_function::addition, [](Matrix& l, Matrix& r)
+		    { return l + r; },
+		    sol::meta_function::subtraction, [](Matrix& l, Matrix& r)
+		    { return l - r; },
+		    sol::meta_function::multiplication, [](Matrix& l, Matrix& r)
+		    { return l * r; });
 		matrix["Identity"] = sol::var(Matrix::Identity);
 		matrix["_11"] = &Matrix::_11;
 		matrix["_12"] = &Matrix::_12;
@@ -220,22 +250,34 @@ void LuaInterpreter::registerTypes()
 		event["getData"] = &Event::getData;
 	}
 	{
-		rootex["CallEvent"] = [](const Event& event) { EventManager::GetSingleton()->call(event); };
-		rootex["Call"] = [](const Event::Type& type, const Variant& data) { EventManager::GetSingleton()->call(type, data); };
-		rootex["DeferredCallEvent"] = [](const Ref<Event>& event) { EventManager::GetSingleton()->deferredCall(event); };
-		rootex["ReturnCallEvent"] = [](const Event& event) { return EventManager::GetSingleton()->returnCall(event); };
-		rootex["Bind"] = [this](const Event::Type& event, sol::function function) { m_Binder.bind(event, function); };
-		rootex["Unbind"] = [this](const Event::Type& event) { m_Binder.unbind(event); };
+		rootex["CallEvent"] = [](const Event& event)
+		{ EventManager::GetSingleton()->call(event); };
+		rootex["Call"] = [](const Event::Type& type, const Variant& data)
+		{ EventManager::GetSingleton()->call(type, data); };
+		rootex["DeferredCallEvent"] = [](const Ref<Event>& event)
+		{ EventManager::GetSingleton()->deferredCall(event); };
+		rootex["ReturnCallEvent"] = [](const Event& event)
+		{ return EventManager::GetSingleton()->returnCall(event); };
+		rootex["Bind"] = [this](const Event::Type& event, sol::function function)
+		{ m_Binder.bind(event, function); };
+		rootex["Unbind"] = [this](const Event::Type& event)
+		{ m_Binder.unbind(event); };
 	}
 	{
 		sol::usertype<Atomic<int>> atomicInt = rootex.new_usertype<Atomic<int>>("AtomicInt", sol::constructors<Atomic<int>(), Atomic<int>(int)>());
-		atomicInt["load"] = [](Atomic<int>* a) { return a->load(); };
+		atomicInt["load"] = [](Atomic<int>* a)
+		{ return a->load(); };
 
-		rootex["LoadScene"] = [](const String& sceneFile, const sol::table& arguments) { SceneLoader::GetSingleton()->loadScene(sceneFile, arguments.as<Vector<String>>()); };
-		rootex["PreloadScene"] = [](const String& sceneFile, Atomic<int>& progress) { return SceneLoader::GetSingleton()->preloadScene(sceneFile, progress); };
-		rootex["LoadPreloadedScene"] = [](const String& sceneFile, const sol::nested<Vector<String>>& arguments) { SceneLoader::GetSingleton()->loadPreloadedScene(sceneFile, arguments.value()); };
-		rootex["GetSceneArguments"] = []() { return SceneLoader::GetSingleton()->getArguments(); };
-		rootex["GetCurrentScene"] = []() { return SceneLoader::GetSingleton()->getCurrentScene(); };
+		rootex["LoadScene"] = [](const String& sceneFile, const sol::table& arguments)
+		{ SceneLoader::GetSingleton()->loadScene(sceneFile, arguments.as<Vector<String>>()); };
+		rootex["PreloadScene"] = [](const String& sceneFile, Atomic<int>& progress)
+		{ return SceneLoader::GetSingleton()->preloadScene(sceneFile, progress); };
+		rootex["LoadPreloadedScene"] = [](const String& sceneFile, const sol::nested<Vector<String>>& arguments)
+		{ SceneLoader::GetSingleton()->loadPreloadedScene(sceneFile, arguments.value()); };
+		rootex["GetSceneArguments"] = []()
+		{ return SceneLoader::GetSingleton()->getArguments(); };
+		rootex["GetCurrentScene"] = []()
+		{ return SceneLoader::GetSingleton()->getCurrentScene(); };
 	}
 	{
 		sol::usertype<InputManager> inputManager = rootex.new_usertype<InputManager>("Input");
@@ -265,7 +307,8 @@ void LuaInterpreter::registerTypes()
 	{
 		sol::usertype<ResourceFile> resourceFile = rootex.new_usertype<ResourceFile>("ResourceFile");
 		resourceFile["isDirty"] = &ResourceFile::isDirty;
-		resourceFile["getPath"] = [](ResourceFile& f) { return f.getPath().string(); };
+		resourceFile["getPath"] = [](ResourceFile& f)
+		{ return f.getPath().string(); };
 		resourceFile["getType"] = &ResourceFile::getType;
 	}
 	{
@@ -388,22 +431,23 @@ void LuaInterpreter::registerTypes()
 		sol::table& ecs = rootex.create_named("ECS");
 		ecs["AddComponent"] = &ECSFactory::AddComponent;
 	}
-	{
-		sol::usertype<Scene> scene = rootex.new_usertype<Scene>("Scene",
-		    "name", sol::property(&Scene::getName, &Scene::setName),
-		    "parent", sol::property(&Scene::getParent),
-		    "children", sol::property(&Scene::getChildren),
-		    "entity", sol::property(&Scene::getEntity));
-		scene["CreateEmpty"] = &Scene::CreateEmpty;
-		scene["CreateFromFile"] = &Scene::CreateFromFile;
-		scene["FindScenesByName"] = &Scene::FindScenesByName;
-		scene["FindSceneByID"] = &Scene::FindSceneByID;
-		scene["addChild"] = &Scene::addChild;
-		scene["removeChild"] = &Scene::removeChild;
-		scene["snatchChild"] = &Scene::snatchChild;
-		scene["getID"] = &Scene::getID;
-		scene["getFullName"] = &Scene::getFullName;
-	}
+	// NEEDS TO BE FIXED
+	//{
+	//	sol::usertype<Scene> scene = rootex.new_usertype<Scene>("Scene",
+	//	    "name", sol::property(&Scene::getName, &Scene::setName),
+	//	    "parent", sol::property(&Scene::getParent),
+	//	    "children", sol::property(&Scene::getChildren),
+	//	    "entity", sol::property(&Scene::getEntity));
+	//	scene["CreateEmpty"] = &Scene::CreateEmpty;
+	//	scene["CreateFromFile"] = &Scene::CreateFromFile;
+	//	scene["FindScenesByName"] = &Scene::FindScenesByName;
+	//	scene["FindSceneByID"] = &Scene::FindSceneByID;
+	//	scene["addChild"] = &Scene::addChild;
+	//	scene["removeChild"] = &Scene::removeChild;
+	//	scene["snatchChild"] = &Scene::snatchChild;
+	//	scene["getID"] = &Scene::getID;
+	//	scene["getFullName"] = &Scene::getFullName;
+	// }
 	{
 		sol::usertype<System> system = rootex.new_usertype<System>("System");
 		system["pause"] = &System::pause;
@@ -570,7 +614,8 @@ void LuaInterpreter::registerTypes()
 		    "UIComponent",
 		    sol::base_classes, sol::bases<Component>(),
 		    "document", sol::property(&UIComponent::getDocument));
-		ui["getDocumentID"] = [](UIComponent* ui) { return ui->getDocument()->GetId(); };
+		ui["getDocumentID"] = [](UIComponent* ui)
+		{ return ui->getDocument()->GetId(); };
 	}
 	{
 		sol::usertype<AudioComponent> audioComponent = rootex.new_usertype<AudioComponent>(
