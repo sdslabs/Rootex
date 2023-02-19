@@ -22,9 +22,9 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_PSCB;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_VSCB;
 
-	void pushPSTexture(Ref<ImageResourceFile> texture);
-	void setPSTexture(const String& newtexturePath, int position);
-	void popPSTexture();
+	void pushPSTexture(Ref<ImageResourceFile> texture, int ind);
+	void setPSTexture(const String& newtexturePath, int position, int ind);
+	void popPSTexture(int ind);
 
 	void pushVSTexture(Ref<ImageResourceFile> texture);
 	void setVSTexture(const String& newtexturePath, int position);
