@@ -64,7 +64,8 @@ int SceneLoader::preloadScene(const String& sceneFile, Atomic<int>& progress)
 
 void SceneLoader::loadPreloadedScene(const String& sceneFile, const Vector<String>& arguments)
 {
-	EventManager::GetSingleton()->defer([this, sceneFile, arguments]() {
+	EventManager::GetSingleton()->defer([this, sceneFile, arguments]()
+	    {
 		endSystems();
 		m_RootScene->removeChild(m_CurrentScene);
 		Scene::ResetNextID();
@@ -93,8 +94,7 @@ void SceneLoader::loadPreloadedScene(const String& sceneFile, const Vector<Strin
 		ResourceLoader::ClearPersistentResources();
 
 		beginSystems();
-		EventManager::GetSingleton()->deferredCall(RootexEvents::OpenedScene);
-	});
+		EventManager::GetSingleton()->deferredCall(RootexEvents::OpenedScene); });
 }
 
 void SceneLoader::loadScene(const String& sceneFile, const Vector<String>& arguments)

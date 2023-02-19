@@ -7,6 +7,8 @@
 
 #include "BulletCollision/CollisionDispatch/btGhostObject.h"
 
+Scene* rootScene;
+
 /// Component that notifies all targets when a scene enters its bounds.
 class TriggerComponent : public CollisionComponent
 {

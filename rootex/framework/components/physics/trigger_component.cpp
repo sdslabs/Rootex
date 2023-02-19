@@ -272,7 +272,8 @@ void TriggerComponent::draw()
 
 	if (ImGui::BeginPopup("Select Entity"))
 	{
-		for (Scene* scene : Scene::FindAllScenes())
+		Vector<Scene*> foundScenes;
+		for (Scene* scene : Scene::FindAllScenes(foundScenes))
 		{
 			Entity& entity = scene->getEntity();
 			if (ImGui::MenuItem(scene->getFullName().c_str()))

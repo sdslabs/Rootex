@@ -146,8 +146,9 @@ Ptr<Scene> Scene::CreateRootScene()
 	Ptr<Scene> root = std::make_unique<Scene>(ROOT_SCENE_ID, "Root", SceneSettings(), ImportStyle::Local, "");
 	Ptr<Scene> editorGrid = std::make_unique<Scene>(ROOT_SCENE_ID, "EditorGrid", SceneSettings(), ImportStyle::Local, "");
 	Ptr<Scene> editorCamera = std::make_unique<Scene>(ROOT_SCENE_ID, "EditorCamera", SceneSettings(), ImportStyle::Local, "");
-
+	rootScene = root.get();
 	// AARYA
+	std::cout << "\n\n\n\n\n\n"<< rootScene->getName() << "\n\n\n\n\n\n\\n";
 
 	ECSFactory::FillRootEntity(root->getEntity());
 
@@ -155,34 +156,34 @@ Ptr<Scene> Scene::CreateRootScene()
 	return root;
 }
 
-Vector<Scene*> Scene::FindScenesByName(const String& name)
+Vector<Scene*>& Scene::FindScenesByName(Vector<Scene*>& foundScenes, Scene* scene, const String& name)
 {
-	Vector<Scene*> foundScenes;
-	for (auto& scene : s_Scenes)
+	if (scene->m_Name == name)
 	{
-		if (scene->m_Name == name)
-		{
-			foundScenes.push_back(scene);
-		}
+		foundScenes.push_back(scene);
+	}
+	for (auto& child : scene->m_ChildrenScenes)
+	{
+		Scene* child_scene = child.get();
+		FindScenesByName(foundScenes, child_scene, name);
 	}
 	return foundScenes;
 }
 
 Scene* Scene::FindSceneByID(const SceneID& id)
 {
-	for (auto& scene : s_Scenes)
-	{
-		if (scene->m_ID == id)
-		{
-			return scene;
-		}
-	}
-	return nullptr;
+	return rootScene->findScene(id);
 }
 
-const Vector<Scene*>& Scene::FindAllScenes()
+const Vector<Scene*>& Scene::FindAllScenes(Vector<Scene*>& foundScenes, Scene* scene)
 {
-	return s_Scenes;
+	foundScenes.push_back(scene);
+	for (auto& child : scene->m_ChildrenScenes)
+	{
+		Scene* child_scene = child.get();
+		FindAllScenes(foundScenes, child_scene);
+	}
+	return foundScenes;
 }
 
 Scene* Scene::findScene(SceneID scene)
@@ -259,17 +260,6 @@ bool Scene::snatchChild(Scene* child)
 			return true;
 		}
 	}
-
-	/*
-	for (int i = 0; i < children.size(); i++)
-	{
-	    if (children.at(i).get() == child)
-	    {
-	        m_ChildrenScenes.insert(std::move(children[i]));
-	        children.erase(children.begin() + i);
-	    }
-	}
-	*/
 	return false;
 }
 
@@ -382,11 +372,13 @@ Scene::Scene(SceneID id, const String& name, const SceneSettings& settings, Impo
     , m_Entity(this)
 {
 	setName(m_Name);
+	//delete this
 	s_Scenes.push_back(this);
 }
 
 Scene::~Scene()
 {
+	
 	int index;
 	for (int i = 0; i < s_Scenes.size(); i++)
 	{
@@ -396,8 +388,16 @@ Scene::~Scene()
 		}
 	}
 	s_Scenes.erase(s_Scenes.begin() + index);
+	
+	/*
+	BT
+	getParent()->m_ChildrenScenes.erase(this);
+	*/
+
 	m_ChildrenScenes.clear();
+
 	PRINT("Deleted scene: " + getFullName());
+
 }
 
 void SceneSettings::drawCameraSceneSelectables(Scene* scene, SceneID& toSet)

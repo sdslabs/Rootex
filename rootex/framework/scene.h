@@ -36,10 +36,15 @@ public:
 		External
 	};
 
+public:
+	static Scene* rootScene;
+
 private:
 	bool m_IsScenePaused;
 
+	
 	static Vector<Scene*> s_Scenes;
+	
 
 	SceneID m_ID;
 	String m_Name;
@@ -56,6 +61,7 @@ private:
 	bool checkCycle(Scene* child);
 
 public:
+
 	static void ResetNextID();
 
 	static Ptr<Scene> Create(const JSON::json& sceneData, const bool assignNewIDs);
@@ -65,9 +71,9 @@ public:
 	static Ptr<Scene> CreateRootScene();
 	static bool isReservedName(const String& sceneName);
 
-	static Vector<Scene*> FindScenesByName(const String& name);
+	static Vector<Scene*>& FindScenesByName(Vector<Scene*>& foundScenes, Scene* scene, const String& name);
 	static Scene* FindSceneByID(const SceneID& id);
-	static const Vector<Scene*>& FindAllScenes();
+	static const Vector<Scene*>& Scene::FindAllScenes(Vector<Scene*>& foundScenes, Scene* scene = rootScene);
 
 	Scene(SceneID id, const String& name, const SceneSettings& settings, ImportStyle importStyle, const String& sceneFile);
 	~Scene();

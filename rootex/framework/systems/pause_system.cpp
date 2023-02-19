@@ -17,7 +17,8 @@ void PauseSystem::update(float deltaMilliseconds)
 	Scene* root = SceneLoader::GetSingleton()->getCurrentScene();
 	if (m_IsPausingEnabled)
 	{
-		if (SceneLoader::GetSingleton()->getCurrentScene() && !(Scene::FindScenesByName("PauseScene").size()))
+		Vector<Scene*> foundScenes;
+		if (SceneLoader::GetSingleton()->getCurrentScene() && !(Scene::FindScenesByName(foundScenes,root,"PauseScene").size()))
 		{
 			Ptr<Scene>& pauseScene = Scene::CreateFromFile("rootex/assets/scenes/pause.scene.json");
 			pauseScene->setName("PauseScene");
@@ -26,7 +27,8 @@ void PauseSystem::update(float deltaMilliseconds)
 	}
 	else
 	{
-		Vector<Scene*> pauseScenes = Scene::FindScenesByName("PauseScene");
+		Vector<Scene*> foundScenes;
+		Vector<Scene*> pauseScenes = Scene::FindScenesByName(foundScenes,root,"PauseScene");
 		for (auto& pauseScene : pauseScenes)
 		{
 			root->removeChild(pauseScene);
