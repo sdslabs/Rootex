@@ -73,7 +73,7 @@ public:
 
 	static Vector<Scene*>& FindScenesByName(Vector<Scene*>& foundScenes, Scene* scene, const String& name);
 	static Scene* FindSceneByID(const SceneID& id);
-	static const Vector<Scene*>& Scene::FindAllScenes(Vector<Scene*>& foundScenes, Scene* scene = rootScene);
+	static const Vector<Scene*>& Scene::FindAllScenes(Vector<Scene*>& foundScenes, Scene* scene=rootScene);
 
 	Scene(SceneID id, const String& name, const SceneSettings& settings, ImportStyle importStyle, const String& sceneFile);
 	~Scene();

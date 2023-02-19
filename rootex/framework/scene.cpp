@@ -9,7 +9,7 @@
 
 static SceneID NextSceneID = ROOT_SCENE_ID + 1;
 // AARYA
-Scene* rootScene;
+Scene* Scene::rootScene;
 Scene* editorGrid;
 Scene* editorCamera;
 Vector<Scene*> Scene::s_Scenes;
