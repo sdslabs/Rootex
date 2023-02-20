@@ -486,8 +486,7 @@ void CustomMaterialResourceFile::draw()
 			for (auto& texture : m_MaterialData.vertexShaderTextures)
 			{
 				String textureName = "Slot " + std::to_string(i) + " " + ICON_ROOTEX_FOLDER_OPEN;
-				RootexSelectableImage(textureName.c_str(), texture, [this, i](const String& newTexturePath)
-				    { setVSTexture(newTexturePath, i); });
+				RootexSelectableImage(textureName.c_str(), texture, [this, i](const String& newTexturePath) { setVSTexture(newTexturePath, i); });
 				i++;
 				ImGui::Separator();
 			}
@@ -595,8 +594,7 @@ void CustomMaterialResourceFile::draw()
 				{
 					Ref<ImageResourceFile> texture = m_MaterialData.pixelShaderTextures[i];
 					String textureName = "Slot " + std::to_string((i)) + " " + ICON_ROOTEX_FOLDER_OPEN;
-					RootexSelectableImage(textureName.c_str(), texture, [this, i, ind, a](const String& newTexturePath)
-					    { setPSTexture(newTexturePath, i - a, ind); });
+					RootexSelectableImage(textureName.c_str(), texture, [this, i, ind, a](const String& newTexturePath) { setPSTexture(newTexturePath, i - a, ind); });
 					ImGui::Separator();
 				}
 
