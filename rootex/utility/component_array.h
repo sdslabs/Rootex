@@ -92,6 +92,8 @@ public:
 			{
 				m_IsValid[i] = false;
 				m_Data[i].onRemove();
+				m_Data[i].~Component();
+				memset(&m_Data[i], 0, sizeof(m_Data[i]));
 				m_ArraySize--;
 				return true;
 			}
