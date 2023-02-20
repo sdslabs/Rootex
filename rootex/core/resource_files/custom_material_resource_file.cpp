@@ -118,34 +118,22 @@ void CustomMaterialResourceFile::pushPSTexture(Ref<ImageResourceFile> texture, i
 
 void CustomMaterialResourceFile::setPSTexture(const String& newtexturePath, int position, int ind)
 {
-	if (position >= m_MaterialData.pixelShaderTextures.size() || position < 0) //make changes
+	if (position >= m_MaterialData.pixelShaderTextures.size() || position < 0)
 	{
 		WARN("PS position being set is out of bounds: " + std::to_string(position));
 		return;
 	}
 
 	int a = m_MaterialData.pixelShaderTexturesMapping[ind];
-	//Ref<ImageResourceFile> nextTexture,texture;
 	if (Ref<ImageResourceFile> image = ResourceLoader::CreateImageResourceFile(newtexturePath))
 	{
 		m_MaterialData.pixelShaderTextures[a + position] = image;
 	}
-	//for (int i = a; i < m_MaterialData.pixelShaderTextures.size()-1; i++)
-	//{
-	//	nextTexture = m_MaterialData.pixelShaderTextures[i];
-	//	m_MaterialData.pixelShaderTextures[i] = texture;
-	//	texture = nextTexture;
-	//}
-	//for (int i = ind + 1; i < m_MaterialData.pixelShaderTexturesMapping.size(); i++)
-	//{
-	//	m_MaterialData.pixelShaderTexturesMapping[i]++;
-	//}
-	//m_MaterialData.pixelShaderTextures.push_back(texture); //changes
 }
 
 void CustomMaterialResourceFile::popPSTexture(int ind)
 {
-	if (m_MaterialData.pixelShaderTextures.empty()) //make changes
+	if (m_MaterialData.pixelShaderTextures.empty()) 
 	{
 		WARN("PS texture list is empty.");
 		return;
@@ -273,13 +261,10 @@ void CustomMaterialResourceFile::recompileShaders(int ind)
 	setShaders(ind, m_MaterialData.vertexShaderPath, m_MaterialData.pixelShaderPath);
 }
 
-void CustomMaterialResourceFile::bindShader() //doubt??
+void CustomMaterialResourceFile::bindShader() 
 {
 	int k = 0;
-	//for (int ind = 0; ind < m_PixelShaderCount; ind++)
-	//{
 	m_Shader[index]->bind();
-	//}
 	k = 1;
 }
 
@@ -618,7 +603,6 @@ void CustomMaterialResourceFile::draw()
 
 				ImGui::ListBoxFooter();
 			}
-			// Remove current pixel shader
 			if (ImGui::Button("Remove This Shader"))
 			{
 				if (m_PixelShaderCount > 0)
@@ -630,7 +614,6 @@ void CustomMaterialResourceFile::draw()
 						itr++;
 						i++;
 					}
-					//remove textures from the vector: make a new vector
 					int a = m_MaterialData.pixelShaderTexturesMapping[ind];
 					int b = m_MaterialData.pixelShaderTextures.size();
 
@@ -647,7 +630,7 @@ void CustomMaterialResourceFile::draw()
 					m_MaterialData.pixelShaderTexturesMapping.pop_back();
 					if (m_Shader.size() > ind)
 					{
-						m_Shader.erase(itr); // not working
+						m_Shader.erase(itr); 
 						m_PixelShaderCount--;
 					}
 				}

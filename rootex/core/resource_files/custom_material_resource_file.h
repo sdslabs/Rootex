@@ -53,7 +53,7 @@ public:
 		}
 		else
 			return nullptr;
-	}; // doubt??
+	}; 
 	Vector<Ref<GPUTexture>> getTextures() const override;
 
 	void bindShader() override;
