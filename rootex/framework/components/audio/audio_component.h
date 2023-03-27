@@ -53,6 +53,7 @@ public:
 	void setPlaying(bool enabled);
 	void play();
 	void stop();
+	// void getVolume(float ratio) { m_Volume=ratio*m_Volume; }
 
 	void setLooping(bool enabled);
 	bool isLooping();

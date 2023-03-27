@@ -1,6 +1,8 @@
 #include "audio_component.h"
 
+#include "al.h"
 #include "systems/render_system.h"
+#include "systems/audio_system.h"
 #include "components/physics/box_collider_component.h"
 #include "components/physics/sphere_collider_component.h"
 #include "components/physics/capsule_collider_component.h"
@@ -175,5 +177,8 @@ void AudioComponent::draw()
 	ImGui::DragFloat("Reference Distance", &m_ReferenceDistance, 1.0f, 0.0f, 100.0f);
 	ImGui::DragFloat("Rolloff Factor", &m_RolloffFactor, 1.0f, 0.0f, 100.0f);
 	ImGui::DragFloat("Max Distance", &m_MaxDistance, 1.0f, 0.0f, 100.0f);
-	ImGui::DragFloat("Volume", &m_Volume, 0.01f, 0.0f, 100.0f);
+	if(ImGui::DragFloat("Volume", &m_Volume, 0.01f, 0.0f, 100.0f))
+	{
+		AL_CHECK(alSourcef(1, AL_GAIN, m_Volume));
+	}
 }
