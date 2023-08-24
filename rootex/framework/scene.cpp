@@ -7,8 +7,9 @@
 #include "components/visual/camera_component.h"
 #include "components/audio/audio_listener_component.h"
 
-static SceneID NextSceneID = ROOT_SCENE_ID + 1;
 Vector<Scene*> Scene::s_Scenes;
+SceneID Scene::BaseID;
+static SceneID NextSceneID = ROOT_SCENE_ID + 1;
 
 void to_json(JSON::json& j, const SceneSettings& s)
 {
@@ -48,6 +49,13 @@ void from_json(const JSON::json& j, Scene::ImportStyle& s)
 void Scene::ResetNextID()
 {
 	NextSceneID = ROOT_SCENE_ID + 1;
+}
+
+void Scene::SetBaseID(const SceneID& inputBaseID)
+{
+	BaseID = inputBaseID;
+	SceneID SceneIDOffset = 4;
+	NextSceneID = std::max(std::max(BaseID, NextSceneID), SceneIDOffset);
 }
 
 Ptr<Scene> Scene::Create(const JSON::json& sceneData, const bool assignNewIDs)
@@ -335,6 +343,7 @@ JSON::json Scene::getJSON() const
 
 	j["ID"] = m_ID;
 	j["name"] = m_Name;
+	j["BaseID"] = m_BaseID;
 	j["importStyle"] = m_ImportStyle;
 	j["sceneFile"] = m_SceneFile;
 	j["entity"] = m_Entity.getJSON();
@@ -359,6 +368,7 @@ Scene::Scene(SceneID id, const String& name, const SceneSettings& settings, Impo
     , m_Entity(this)
 {
 	setName(m_Name);
+	setBaseID();
 	s_Scenes.push_back(this);
 }
 

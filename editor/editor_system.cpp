@@ -318,7 +318,10 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 				ImGui::Separator();
 				if (ImGui::BeginMenu("Create Scene"))
 				{
+					SceneID inputBaseID = 0;
 					ImGui::InputText("Scene Name", &newSceneName, ImGuiInputTextFlags_AlwaysInsertMode);
+					ImGui::InputScalar("Scene BaseID", ImGuiDataType_U32, &inputBaseID);
+					Scene::SetBaseID(inputBaseID);
 					if (!newSceneName.empty() && ImGui::Button("Create") && !Scene::isReservedName(newSceneName))
 					{
 						if (SceneLoader::GetSingleton()->getCurrentScene())
@@ -985,8 +988,7 @@ int EditorSystem::exportScene(const String& sceneName, const String& sceneFilePa
 			{
 				return;
 			}
-			m_IsCopyFailed = !OS::RelativeCopyFile(filePair.first, m_CurrExportDir + filePair.second);
-		}));
+			m_IsCopyFailed = !OS::RelativeCopyFile(filePair.first, m_CurrExportDir + filePair.second); }));
 	}
 
 	/// TODO: Fix the need for this dummy task (blocks the main thread while tasks are running)
