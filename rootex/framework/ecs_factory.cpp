@@ -4,6 +4,7 @@
 
 #include "scene.h"
 #include "components/audio/audio_listener_component.h"
+#include "components/audio/audio_bus.h"
 #include "components/audio/music_component.h"
 #include "components/physics/box_collider_component.h"
 #include "components/physics/sphere_collider_component.h"
@@ -106,6 +107,7 @@ void ECSFactory::FillRootEntity(Entity& root)
 	root.getComponent<ModelComponent>()->setVisible(false);
 	ECSFactory::AddDefaultCameraComponent(root);
 	ECSFactory::AddDefaultAudioListenerComponent(root);
+	//ECSFactory::AddDefaultAudioBusCollection(root);
 	ECSFactory::AddDefaultSkyComponent(root);
 }
 
@@ -118,6 +120,7 @@ void ECSFactory::Initialize()
 	ASSIGN_COMPONENT_SET(TransformAnimationComponent);
 
 	ASSIGN_COMPONENT_SET(AudioListenerComponent);
+	ASSIGN_COMPONENT_SET(AudioBusCollection);
 	ASSIGN_COMPONENT_SET(MusicComponent);
 	ASSIGN_COMPONENT_SET(ShortMusicComponent);
 

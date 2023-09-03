@@ -1,4 +1,4 @@
-#pragma once
+	#pragma once
 
 enum class ComponentIDs : unsigned int
 {
@@ -24,6 +24,7 @@ enum class ComponentIDs : unsigned int
 	MusicComponent,
 	ShortMusicComponent,
 	AudioListenerComponent,
+	AudioBusCollection,
 	TransformAnimationComponent,
 	SkyComponent,
 	FogComponent,
