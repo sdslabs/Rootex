@@ -134,8 +134,11 @@ struct CustomMaterialData
 	String pixelShaderPath;
 	Vector<Ref<ImageResourceFile>> vertexShaderTextures;
 	Vector<Ref<ImageResourceFile>> pixelShaderTextures;
+	Vector<int> pixelShaderTexturesMapping;
 	Vector<float> customConstantBuffers;
 	Vector<TYPES_OF_BUFFERS> typeOfCustomConstantBuffers;
+	String dummyVertexShaderPath;
+	int pixelShaderCount;
 };
 
 void to_json(JSON::json& j, const CustomMaterialData& s);

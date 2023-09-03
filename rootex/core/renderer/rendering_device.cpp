@@ -354,6 +354,39 @@ void RenderingDevice::createOffScreenViews(int width, int height)
 	GFX_ERR_CHECK(m_Device->CreateShaderResourceView(m_OffScreenTexture.Get(), &shaderResourceViewDesc, &m_OffScreenSRV));
 }
 
+void RenderingDevice::createShaderPasses(int width, int height)
+{
+	D3D11_TEXTURE2D_DESC bufferTexture;
+	ZeroMemory(&bufferTexture, sizeof(bufferTexture));
+	bufferTexture.Width = width;
+	bufferTexture.Height = height;
+	bufferTexture.MipLevels = 1;
+	bufferTexture.ArraySize = 1;
+	bufferTexture.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	bufferTexture.SampleDesc.Count = 1;
+	bufferTexture.Usage = D3D11_USAGE_DEFAULT;
+	bufferTexture.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	bufferTexture.CPUAccessFlags = 0;
+	bufferTexture.MiscFlags = 0;
+
+	GFX_ERR_CHECK(m_DeviceBg->CreateTexture2D(&bufferTexture, NULL, &m_ShaderPass));
+
+	D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewBuffer;
+	renderTargetViewBuffer.Format = bufferTexture.Format;
+	renderTargetViewBuffer.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+	renderTargetViewBuffer.Texture2D.MipSlice = 0;
+	//enable a scene to be rendered to a temporary intermediate buffer, rather than to the back buffer to be rendered to the screen
+	GFX_ERR_CHECK(m_DeviceBg->CreateRenderTargetView(m_ShaderPass.Get(), &renderTargetViewBuffer, &m_ShaderPassRTV));
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewBuffer;
+	shaderResourceViewBuffer.Format = bufferTexture.Format;
+	shaderResourceViewBuffer.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	shaderResourceViewBuffer.Texture2D.MostDetailedMip = 0;
+	shaderResourceViewBuffer.Texture2D.MipLevels = 1;
+	//typically wrap textures in a format that the shaders can access them
+	GFX_ERR_CHECK(m_DeviceBg->CreateShaderResourceView(m_ShaderPass.Get(), &shaderResourceViewBuffer, &m_ShaderPassSRV));
+}
+
 void RenderingDevice::createSwapChainAndRTVs(int width, int height, const HWND& hWnd)
 {
 	DXGI_SWAP_CHAIN_DESC sd = { 0 };
