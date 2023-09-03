@@ -98,6 +98,11 @@ using Optional = std::optional<T>;
 template <class T>
 using Vector = std::vector<T>;
 
+#include <unordered_set>
+/// std::unordered_set
+template <class T>
+using Unordered_set = std::unordered_set<T>;
+
 Vector<String> Split(const String& s, char delim);
 
 #include <array>
