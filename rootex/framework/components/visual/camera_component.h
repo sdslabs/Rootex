@@ -22,6 +22,8 @@ class CameraComponent : public Component
 	void refreshProjectionMatrix();
 	void refreshViewMatrix();
 
+	void drawCameraViewFrustum();
+
 public:
 	CameraComponent(Entity& owner, const JSON::json& data);
 	~CameraComponent() = default;

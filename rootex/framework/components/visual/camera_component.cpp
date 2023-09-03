@@ -174,8 +174,56 @@ void CameraComponent::addCustomPostProcessingDetails(const String& path)
 	m_PostProcessingDetails.customPostProcessing.insert({ path, true });
 }
 
+void CameraComponent::drawCameraViewFrustum()
+{
+	float a = 0.5f;
+	float b = a * m_AspectRatio.y / m_AspectRatio.x;
+	float c = b * getProjectionMatrix().m[1][1];
+
+	float epsilon = b / 10;
+
+	Vector3 corners[8];
+
+	// frustum
+	corners[0] = Vector3(0.0f, 0.0f, 0.0f);
+	corners[1] = Vector3(a, b, -c);
+	corners[2] = Vector3(-a, b, -c);
+	corners[3] = Vector3(-a, -b, -c);
+	corners[4] = Vector3(a, -b, -c);
+
+	// triangle on top of frustum
+	corners[5] = Vector3(a / 2, b + epsilon, -c);
+	corners[6] = Vector3(0, b + epsilon + b / 2, -c);
+	corners[7] = Vector3(-a, b + epsilon, -c);
+
+	const Matrix& camTransform = getTransformComponent()->getAbsoluteTransform();
+	for (int i = 0; i < 8; i++)
+	{
+		Vector3::Transform(corners[i], camTransform, corners[i]);
+	}
+
+	// frustum's rectangle
+	RenderSystem::GetSingleton()->submitLine(corners[1], corners[2]);
+	RenderSystem::GetSingleton()->submitLine(corners[2], corners[3]);
+	RenderSystem::GetSingleton()->submitLine(corners[3], corners[4]);
+	RenderSystem::GetSingleton()->submitLine(corners[4], corners[1]);
+
+	// join frustum rectangle to frustum origin
+	RenderSystem::GetSingleton()->submitLine(corners[0], corners[1]);
+	RenderSystem::GetSingleton()->submitLine(corners[0], corners[2]);
+	RenderSystem::GetSingleton()->submitLine(corners[0], corners[3]);
+	RenderSystem::GetSingleton()->submitLine(corners[0], corners[4]);
+
+	// triangle on top of frustum
+	RenderSystem::GetSingleton()->submitLine(corners[5], corners[6]);
+	RenderSystem::GetSingleton()->submitLine(corners[6], corners[7]);
+	RenderSystem::GetSingleton()->submitLine(corners[7], corners[5]);
+}
+
 void CameraComponent::draw()
 {
+	drawCameraViewFrustum();
+
 	if (ImGui::DragFloat2("##Aspect", &m_AspectRatio.x, 0.01f, 0.1f, 100.0f))
 	{
 		refreshProjectionMatrix();
