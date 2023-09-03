@@ -9,6 +9,7 @@
 #include "components/visual/model/animated_model_component.h"
 #include "components/visual/model/sprite_component.h"
 #include "transform_system.h"
+#include "components/space/transform_component.h"
 
 #include "ASSAO/ASSAO.h"
 
@@ -61,6 +62,10 @@ public:
 	void submitCone(const Matrix& transform, const float& height, const float& radius);
 
 	void recoverLostDevice();
+	void getDirectionalLightComponent();
+
+	Matrix m_ViewMatrixForShadowRender;
+	void setViewMatrixForShadowRender();
 
 	void setCamera(CameraComponent* camera);
 	void restoreCamera();

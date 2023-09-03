@@ -11,6 +11,7 @@
 #include "light_system.h"
 #include "application.h"
 #include "scene_loader.h"
+#include "components/visual/light/directional_light_component.h"
 
 #define LINE_MAX_VERTEX_COUNT 1000
 #define LINE_VERTEX_COUNT 2
@@ -279,6 +280,17 @@ void RenderSystem::submitLine(const Vector3& from, const Vector3& to)
 	m_CurrentFrameLines.m_Indices.push_back(m_CurrentFrameLines.m_Indices.size());
 }
 
+void RenderSystem::setViewMatrixForShadowRender()
+{
+	if (!ECSFactory::GetAllDirectionalLightComponent().empty())
+	{
+		DirectionalLightComponent& first = ECSFactory::GetAllDirectionalLightComponent().front();
+		const Matrix& directionalLight = first.getTransformComponent()->getAbsoluteTransform();
+		RenderingDevice::GetSingleton()->editBuffer(PerFrameVSCB { first.getTransformComponent()->getAbsoluteTransform().Transpose( }, m_PerFrameVSCB.Get());
+		RenderingDevice::GetSingleton()->setVSCB(PER_FRAME_DL_VS_CPP, 1, m_PerFrameVSCB.GetAddressOf());
+	};
+}
+
 void RenderSystem::submitBox(const Vector3& min, const Vector3& max)
 {
 	Vector3 d = max - min;
@@ -395,6 +407,13 @@ void RenderSystem::setPerCameraVSCBs()
 
 void RenderSystem::setPerFrameVSCBs(float fogStart, float fogEnd)
 {
+	if (!ECSFactory::GetAllDirectionalLightComponent().empty())
+	{
+		DirectionalLightComponent& first = ECSFactory::GetAllDirectionalLightComponent().front();
+		RenderingDevice::GetSingleton()->editBuffer(PerFrameVSCB { first.getTransformComponent()->getAbsoluteTransform() }, m_PerFrameVSCB.Get());
+		RenderingDevice::GetSingleton()->setVSCB(PER_FRAME_DL_VS_CPP, 1, m_PerFrameVSCB.GetAddressOf());
+	}
+
 	const Matrix& view = getCamera()->getViewMatrix();
 	LightsInfo light = LightSystem::GetSingleton()->getDynamicLights();
 	RenderingDevice::GetSingleton()->editBuffer(PerFrameVSCB { view.Transpose(), -fogStart, -fogEnd, light }, m_PerFrameVSCB.Get());

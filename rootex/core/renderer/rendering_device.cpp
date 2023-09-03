@@ -66,6 +66,7 @@ void RenderingDevice::createSwapChainBufferViews()
 void RenderingDevice::createDepthStencil(DXGI_SWAP_CHAIN_DESC& sd, float width, float height)
 {
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> depthStencil = nullptr;
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> shadowTexture = nullptr;
 	D3D11_TEXTURE2D_DESC descDepth = { 0 };
 	descDepth.Width = width;
 	descDepth.Height = height;
@@ -78,6 +79,7 @@ void RenderingDevice::createDepthStencil(DXGI_SWAP_CHAIN_DESC& sd, float width, 
 	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
 
 	GFX_ERR_CHECK(m_Device->CreateTexture2D(&descDepth, nullptr, &depthStencil));
+	GFX_ERR_CHECK(m_Device->CreateTexture2D(&descDepth, nullptr, &shadowTexture));
 
 	D3D11_DEPTH_STENCIL_VIEW_DESC descDSView = {};
 	descDSView.Format = DXGI_FORMAT_D32_FLOAT_S8X24_UINT;
@@ -85,6 +87,7 @@ void RenderingDevice::createDepthStencil(DXGI_SWAP_CHAIN_DESC& sd, float width, 
 	descDSView.Texture2D.MipSlice = 0u;
 
 	GFX_ERR_CHECK(m_Device->CreateDepthStencilView(depthStencil.Get(), &descDSView, &m_MainDSV));
+	GFX_ERR_CHECK(m_Device->CreateDepthStencilView(shadowTexture.Get(), &descDSView, &m_ShadowTextureDSV));
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC depthSRVDesc;
 	depthSRVDesc.Format = DXGI_FORMAT_R32_FLOAT_X8X24_TYPELESS;
@@ -93,6 +96,7 @@ void RenderingDevice::createDepthStencil(DXGI_SWAP_CHAIN_DESC& sd, float width, 
 	depthSRVDesc.Texture2D.MipLevels = 1;
 
 	GFX_ERR_CHECK(m_Device->CreateShaderResourceView(depthStencil.Get(), &depthSRVDesc, &m_MainDSSRV));
+	GFX_ERR_CHECK(m_Device->CreateShaderResourceView(shadowTexture.Get(), &depthSRVDesc, &m_ShadowTextureDSSRV));
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC stencilSRVDesc;
 	stencilSRVDesc.Format = DXGI_FORMAT_X32_TYPELESS_G8X24_UINT;
@@ -831,6 +835,11 @@ void RenderingDevice::setOffScreenRTVDSV()
 void RenderingDevice::setOffScreenRTVOnly()
 {
 	m_Context->OMSetRenderTargets(1, m_OffScreenRTV.GetAddressOf(), nullptr);
+}
+
+void RenderingDevice::setShadowTextureDSV()
+{
+	m_Context->OMSetRenderTargets(1, m_ShadowTextureDSV.GetAddressOf(), nullptr);
 }
 
 void RenderingDevice::setMainRT()
