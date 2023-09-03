@@ -571,6 +571,7 @@ void LuaInterpreter::registerTypes()
 		    sol::base_classes, sol::bases<Component>(),
 		    "document", sol::property(&UIComponent::getDocument));
 		ui["getDocumentID"] = [](UIComponent* ui) { return ui->getDocument()->GetId(); };
+		ui["setDocument"] = &UIComponent::setDocument;
 	}
 	{
 		sol::usertype<AudioComponent> audioComponent = rootex.new_usertype<AudioComponent>(
