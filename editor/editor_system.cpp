@@ -96,11 +96,12 @@ bool EditorSystem::initialize(const JSON::json& systemData)
 	}
 	ImGui_ImplWin32_Init(Application::GetSingleton()->getWindow()->getWindowHandle());
 	ImGui_ImplDX11_Init(RenderingDevice::GetSingleton()->getDevice(), RenderingDevice::GetSingleton()->getContext());
-		
+
 	m_Themes.push_back(std::make_unique<DarkTheme>());
+	m_Themes.push_back(std::make_unique<LightTheme>());
 	m_CurrentTheme = m_Themes.front().get();
 	m_CurrentTheme->apply();
-	
+
 	return true;
 }
 
@@ -923,18 +924,18 @@ int EditorSystem::exportScene(const String& sceneName, const String& sceneFilePa
 
 	for (auto& filePair : toCopy)
 	{
-		tasks.push_back(std::make_shared<Task>([=, &progress]() {
+		tasks.push_back(std::make_shared<Task>([=, &progress]()
+		    {
 			progress++;
 			if (m_IsCopyFailed)
 			{
 				return;
 			}
-			m_IsCopyFailed = !OS::RelativeCopyFile(filePair.first, m_CurrExportDir + filePair.second);
-		}));
+			m_IsCopyFailed = !OS::RelativeCopyFile(filePair.first, m_CurrExportDir + filePair.second); }));
 	}
 
 	/// TODO: Fix the need for this dummy task (blocks the main thread while tasks are running)
-	tasks.push_back(std::make_shared<Task>([]() {}));
+	tasks.push_back(std::make_shared<Task>([]() { }));
 	progress++;
 
 	ThreadPool& threadPool = Application::GetSingleton()->getThreadPool();

@@ -13,6 +13,7 @@
 
 #include "themes/theme.h"
 #include "themes/dark_theme.h"
+#include "themes/light_theme.h"
 
 ImColor ColorToImColor(Color& c);
 
