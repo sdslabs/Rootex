@@ -1,5 +1,5 @@
 file(GLOB_RECURSE EditorSource ./**.cpp)
-file(GLOB_RECURSE EditorHeaders ./**.h)
+file(GLOB_RECURSE EditorHeaders ./**.h ./**.hpp)
 file(GLOB_RECURSE EditorLuaScripts ./**.lua)
 file(GLOB_RECURSE EditorJSONs ./**.json)
 

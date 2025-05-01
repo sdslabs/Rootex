@@ -12,8 +12,6 @@
 #include "Tracy/Tracy.hpp"
 
 #include "themes/theme.h"
-#include "themes/dark_theme.h"
-#include "themes/light_theme.h"
 
 ImColor ColorToImColor(Color& c);
 
@@ -86,8 +84,7 @@ class EditorSystem : public System
 	int exportScene(const String& sceneName, const String& sceneFilePath, Atomic<int>& progress);
 	void postExport();
 
-	Vector<std::unique_ptr<Theme>> m_Themes;
-	Theme* m_CurrentTheme = nullptr;
+	Vector<ThemeDefinition> m_ThemeDefinitions;
 
 public:
 	static EditorSystem* GetSingleton();
