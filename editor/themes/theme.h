@@ -1,7 +1,7 @@
 #pragma once
 
 #include "common/types.h"
-#include "json.hpp"
+#include "../../rootex/vendor/JSON/json.hpp"
 #include <fstream>
 
 struct ThemeDefinition
