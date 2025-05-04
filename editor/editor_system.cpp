@@ -97,7 +97,7 @@ bool EditorSystem::initialize(const JSON::json& systemData)
 	ImGui_ImplWin32_Init(Application::GetSingleton()->getWindow()->getWindowHandle());
 	ImGui_ImplDX11_Init(RenderingDevice::GetSingleton()->getDevice(), RenderingDevice::GetSingleton()->getContext());
 
-	// --- Apply layout with default values ---
+	// Apply layout with default values
 	ImGui::StyleColorsDark();
 
 	{
@@ -1007,8 +1007,7 @@ int EditorSystem::exportScene(const String& sceneName, const String& sceneFilePa
 
 	for (auto& filePair : toCopy)
 	{
-		tasks.push_back(std::make_shared<Task>([=, &progress]()
-		    {
+		tasks.push_back(std::make_shared<Task>([=, &progress]() {
 			progress++;
 			if (m_IsCopyFailed)
 			{
@@ -1018,7 +1017,7 @@ int EditorSystem::exportScene(const String& sceneName, const String& sceneFilePa
 	}
 
 	/// TODO: Fix the need for this dummy task (blocks the main thread while tasks are running)
-	tasks.push_back(std::make_shared<Task>([]() { }));
+	tasks.push_back(std::make_shared<Task>([]() {}));
 	progress++;
 
 	ThreadPool& threadPool = Application::GetSingleton()->getThreadPool();

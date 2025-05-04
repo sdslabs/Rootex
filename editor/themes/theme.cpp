@@ -108,7 +108,8 @@ void ThemeDefinition::apply() const
 		setColor(c, "TextSelectedBg", colors[ImGuiCol_TextSelectedBg]);
 		setColor(c, "DragDropTarget", colors[ImGuiCol_DragDropTarget]);
 		setColor(c, "NavHighlight", colors[ImGuiCol_NavHighlight]);
-		setColor(c, "NavWindowingHighlight", colors[ImGuiCol_NavWindowingHighlight]);
+		setColor(c, "NavWindowingHighlight",
+		    colors[ImGuiCol_NavWindowingHighlight]);
 		setColor(c, "NavWindowingDimBg", colors[ImGuiCol_NavWindowingDimBg]);
 		setColor(c, "ModalWindowDimBg", colors[ImGuiCol_ModalWindowDimBg]);
 	}
