@@ -2,9 +2,14 @@
 
 void setVec2(const JSON::json& j, const char* key, ImVec2& ref)
 {
-	if (j.contains(key) && j[key].is_array() && j[key].size() == 2)
+	if (j.contains(key))
 	{
-		ref = ImVec2(j[key][0], j[key][1]);
+		if (j[key].is_array() && j[key].size() == 2)
+		{
+			ref = ImVec2(j[key][0], j[key][1]);
+			return;
+		}
+		WARN("Theme key: " + key + " is not a valid array of size 2");
 	}
 }
 
@@ -12,15 +17,25 @@ void setFloat(const JSON::json& j, const char* key, float& ref)
 {
 	if (j.contains(key))
 	{
-		ref = j[key].get<float>();
+		if (j[key].is_number())
+		{
+			ref = j[key].get<float>();
+			return;
+		}
+		WARN("Theme key: " + key + " is not a valid number");
 	}
 }
 
 void setColor(const JSON::json& j, const char* key, ImVec4& ref)
 {
-	if (j.contains(key) && j[key].is_array() && j[key].size() == 4)
+	if (j.contains(key))
 	{
-		ref = ImVec4(j[key][0], j[key][1], j[key][2], j[key][3]);
+		if (j[key].is_array() && j[key].size() == 4)
+		{
+			ref = ImVec4(j[key][0], j[key][1], j[key][2], j[key][3]);
+			return;
+		}
+		WARN("Theme key: " + key + " is not a valid array of size 4");
 	}
 }
 
@@ -108,8 +123,7 @@ void ThemeDefinition::apply() const
 		setColor(c, "TextSelectedBg", colors[ImGuiCol_TextSelectedBg]);
 		setColor(c, "DragDropTarget", colors[ImGuiCol_DragDropTarget]);
 		setColor(c, "NavHighlight", colors[ImGuiCol_NavHighlight]);
-		setColor(c, "NavWindowingHighlight",
-		    colors[ImGuiCol_NavWindowingHighlight]);
+		setColor(c, "NavWindowingHighlight", colors[ImGuiCol_NavWindowingHighlight]);
 		setColor(c, "NavWindowingDimBg", colors[ImGuiCol_NavWindowingDimBg]);
 		setColor(c, "ModalWindowDimBg", colors[ImGuiCol_ModalWindowDimBg]);
 	}

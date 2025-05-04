@@ -1,8 +1,8 @@
 #pragma once
 
 #include "core/event_manager.h"
-#include "framework/system.h"
 #include "script/interpreter.h"
+#include "framework/system.h"
 #include "utility/imgui_helpers.h"
 
 #include "vendor/ImGUI/imgui.h"
@@ -72,8 +72,7 @@ class EditorSystem : public System
 	~EditorSystem();
 
 	void drawDefaultUI(float deltaMilliseconds);
-	void drawProgressBar(Atomic<int>& progress, float& currentProgress,
-	    int& totalProgress);
+	void drawProgressBar(Atomic<int>& progress, float& currentProgress, int& totalProgress);
 
 	void showDocumentation(const String& name, const sol::table& table);
 
@@ -82,8 +81,7 @@ class EditorSystem : public System
 	Variant saveBeforeQuit(const Event* event);
 	Variant createNewScene(const Event* event);
 	Variant createNewFile(const Event* event);
-	int exportScene(const String& sceneName, const String& sceneFilePath,
-	    Atomic<int>& progress);
+	int exportScene(const String& sceneName, const String& sceneFilePath, Atomic<int>& progress);
 	void postExport();
 
 	Vector<ThemeDefinition> m_ThemeDefinitions;
@@ -103,24 +101,9 @@ public:
 
 	void openScene(String sceneName);
 
-	ImColor getWarningColor() const
-	{
-		return ColorToImColor((Color)ColorPresets::LightYellow);
-	}
-	ImColor getFatalColor() const
-	{
-		return ColorToImColor((Color)ColorPresets::IndianRed);
-	}
-	ImColor getSuccessColor() const
-	{
-		return ColorToImColor((Color)ColorPresets::LimeGreen);
-	}
-	ImColor getNormalColor() const
-	{
-		return ColorToImColor((Color)ColorPresets::White);
-	}
-	ImColor getLinkColor() const
-	{
-		return ColorToImColor((Color)ColorPresets::SteelBlue);
-	}
+	ImColor getWarningColor() const { return ColorToImColor((Color)ColorPresets::LightYellow); }
+	ImColor getFatalColor() const { return ColorToImColor((Color)ColorPresets::IndianRed); }
+	ImColor getSuccessColor() const { return ColorToImColor((Color)ColorPresets::LimeGreen); }
+	ImColor getNormalColor() const { return ColorToImColor((Color)ColorPresets::White); }
+	ImColor getLinkColor() const { return ColorToImColor((Color)ColorPresets::SteelBlue); }
 };

@@ -172,17 +172,15 @@ bool EditorSystem::initialize(const JSON::json& systemData)
 		colors[ImGuiCol_ModalWindowDimBg] = ImVec4(1.00f, 0.98f, 0.95f, 0.73f);
 	}
 
-	// --- Load json theme data ---
+	// Load json theme data
 	for (const auto& entry : std::filesystem::directory_iterator("editor/themes"))
 	{
 		if (entry.path().extension() == ".json")
 		{
-			std::ifstream f(entry.path());
-			nlohmann::json data;
+			InputFileStream f(entry.path());
+			JSON::json data;
 			f >> data;
-			m_ThemeDefinitions.push_back({ data.value("name", entry.path().stem().string()),
-			    entry.path().string(),
-			    data });
+			m_ThemeDefinitions.push_back( { data.value("name", entry.path().stem().string()), entry.path().string(), data } );
 		}
 	}
 
@@ -1013,7 +1011,8 @@ int EditorSystem::exportScene(const String& sceneName, const String& sceneFilePa
 			{
 				return;
 			}
-			m_IsCopyFailed = !OS::RelativeCopyFile(filePair.first, m_CurrExportDir + filePair.second); }));
+			m_IsCopyFailed = !OS::RelativeCopyFile(filePair.first, m_CurrExportDir + filePair.second);
+		}));
 	}
 
 	/// TODO: Fix the need for this dummy task (blocks the main thread while tasks are running)
