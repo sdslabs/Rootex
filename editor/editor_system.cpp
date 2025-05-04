@@ -96,6 +96,8 @@ bool EditorSystem::initialize(const JSON::json& systemData)
 	}
 	ImGui_ImplWin32_Init(Application::GetSingleton()->getWindow()->getWindowHandle());
 	ImGui_ImplDX11_Init(RenderingDevice::GetSingleton()->getDevice(), RenderingDevice::GetSingleton()->getContext());
+
+	// Apply layout with default values
 	ImGui::StyleColorsDark();
 
 	{
@@ -168,6 +170,18 @@ bool EditorSystem::initialize(const JSON::json& systemData)
 		colors[ImGuiCol_NavWindowingHighlight] = ImVec4(1.00f, 1.00f, 1.00f, 0.70f);
 		colors[ImGuiCol_NavWindowingDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
 		colors[ImGuiCol_ModalWindowDimBg] = ImVec4(1.00f, 0.98f, 0.95f, 0.73f);
+	}
+
+	// Load json theme data
+	for (const auto& entry : std::filesystem::directory_iterator("editor/themes"))
+	{
+		if (entry.path().extension() == ".json")
+		{
+			InputFileStream f(entry.path());
+			JSON::json data;
+			f >> data;
+			m_ThemeDefinitions.push_back( { data.value("name", entry.path().stem().string()), entry.path().string(), data } );
+		}
 	}
 
 	return true;
@@ -416,6 +430,18 @@ void EditorSystem::drawDefaultUI(float deltaMilliseconds)
 			static bool styleEditor = false;
 			if (ImGui::BeginMenu("View"))
 			{
+				if (ImGui::BeginMenu("Themes"))
+				{
+					for (size_t i = 0; i < m_ThemeDefinitions.size(); ++i)
+					{
+						if (ImGui::MenuItem(m_ThemeDefinitions[i].m_Name.c_str()))
+						{
+							m_ThemeDefinitions[i].apply();
+						}
+					}
+					ImGui::EndMenu();
+				}
+
 				if (ImGui::Checkbox("Wireframe Mode", &m_WireframeMode))
 				{
 					if (m_WireframeMode)

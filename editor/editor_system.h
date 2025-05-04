@@ -11,6 +11,8 @@
 
 #include "Tracy/Tracy.hpp"
 
+#include "themes/theme.h"
+
 ImColor ColorToImColor(Color& c);
 
 class SceneDock;
@@ -81,6 +83,8 @@ class EditorSystem : public System
 	Variant createNewFile(const Event* event);
 	int exportScene(const String& sceneName, const String& sceneFilePath, Atomic<int>& progress);
 	void postExport();
+
+	Vector<ThemeDefinition> m_ThemeDefinitions;
 
 public:
 	static EditorSystem* GetSingleton();
